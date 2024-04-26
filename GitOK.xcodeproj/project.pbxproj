@@ -66,6 +66,7 @@
 		0BCC6D112BD94B5B006ADA94 /* BtnLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCC6D102BD94B5B006ADA94 /* BtnLog.swift */; };
 		0BCC6D132BD94D15006ADA94 /* BtnLogs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCC6D122BD94D15006ADA94 /* BtnLogs.swift */; };
 		0BCC6D152BD9526F006ADA94 /* GitCommit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCC6D142BD9526F006ADA94 /* GitCommit.swift */; };
+		0BD15C4A2BDBE026004024CF /* Resources in Resources */ = {isa = PBXBuildFile; fileRef = 0BD15C492BDBE026004024CF /* Resources */; };
 		0BDE61A32BDB3C9B006E23EA /* Projects.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BDE61A22BDB3C9B006E23EA /* Projects.swift */; };
 		0BDE61A52BDB408F006E23EA /* RevListExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BDE61A42BDB408F006E23EA /* RevListExt.swift */; };
 		0BDE61A72BDB4541006E23EA /* StatusExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BDE61A62BDB4541006E23EA /* StatusExt.swift */; };
@@ -151,6 +152,7 @@
 		0BCC6D102BD94B5B006ADA94 /* BtnLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BtnLog.swift; sourceTree = "<group>"; };
 		0BCC6D122BD94D15006ADA94 /* BtnLogs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BtnLogs.swift; sourceTree = "<group>"; };
 		0BCC6D142BD9526F006ADA94 /* GitCommit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitCommit.swift; sourceTree = "<group>"; };
+		0BD15C492BDBE026004024CF /* Resources */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Resources; sourceTree = "<group>"; };
 		0BDE61A22BDB3C9B006E23EA /* Projects.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Projects.swift; sourceTree = "<group>"; };
 		0BDE61A42BDB408F006E23EA /* RevListExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RevListExt.swift; sourceTree = "<group>"; };
 		0BDE61A62BDB4541006E23EA /* StatusExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusExt.swift; sourceTree = "<group>"; };
@@ -203,6 +205,7 @@
 				0B0E16892BD89A910078942B /* Preview Content */,
 				0BDE61A12BDB37C6006E23EA /* Shell */,
 				0B0E16912BD89C240078942B /* Views */,
+				0BD15C492BDBE026004024CF /* Resources */,
 			);
 			path = GitOK;
 			sourceTree = "<group>";
@@ -442,6 +445,7 @@
 			files = (
 				0B0E168B2BD89A910078942B /* Preview Assets.xcassets in Resources */,
 				0B0E16872BD89A910078942B /* Assets.xcassets in Resources */,
+				0BD15C4A2BDBE026004024CF /* Resources in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
