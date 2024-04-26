@@ -14,6 +14,10 @@ extension Git {
                 Branch.fromShellLine($0)
             }
     }
+    
+    static func setBranch(_ b: Branch, _ path: String, debugPrint: Bool = false) -> String {
+        Git.run("checkout \(b.name)", path: path, debugPrint: debugPrint)
+    }
 }
 
 #Preview {

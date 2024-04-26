@@ -13,8 +13,8 @@ class Git {
         Git.run("remote get-url origin", path: path)
     }
 
-    static func run(_ arguments: String, path: String) -> String {
-        Shell.run("cd \(path) && git \(arguments)")
+    static func run(_ arguments: String, path: String, debugPrint: Bool = false) -> String {
+        Shell.run("cd \(path) && git \(arguments)", debugPrint: debugPrint)
     }
 }
 

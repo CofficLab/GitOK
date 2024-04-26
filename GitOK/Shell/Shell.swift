@@ -37,6 +37,20 @@ class Shell {
             
         let outputData = outputPipe.fileHandleForReading.readDataToEndOfFile()
         let errorData = errorPipe.fileHandleForReading.readDataToEndOfFile()
+        
+        if debugPrint {
+            print(outputData)
+            print(errorData)
+        }
+        
+        if let errorOutput = String(data: errorData, encoding: .utf8), errorOutput.count > 0 {
+            if debugPrint {
+                os_log("\(self.label)错误：")
+                print(errorOutput)
+            }
+            
+            return errorOutput
+        }
             
         if let output = String(data: outputData, encoding: .utf8) {
             if debugPrint {
@@ -44,15 +58,6 @@ class Shell {
             }
             
             return output
-        }
-            
-        if let errorOutput = String(data: errorData, encoding: .utf8) {
-            if debugPrint {
-                os_log("\(self.label)错误：")
-                print(errorOutput)
-            }
-            
-            return errorOutput
         }
         
         return "无输出"

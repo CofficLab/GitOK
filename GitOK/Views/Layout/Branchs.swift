@@ -1,10 +1,11 @@
 import SwiftUI
 
-struct BranchPicker: View {
+struct Branchs: View {
     @EnvironmentObject var app: AppManager
     
     @State var branches: [Branch] = []
     @Binding var branch: Branch?
+    @Binding var message: String
     
     var project: Project
     
@@ -22,6 +23,11 @@ struct BranchPicker: View {
         .onChange(of: project, {
             self.branches = Git.getBranches(project.path)
             self.branch = branches.first
+        })
+        .onChange(of: branch, {
+            if let b = branch {
+                message = Git.setBranch(b, project.path, debugPrint: true)
+            }
         })
     }
 }
