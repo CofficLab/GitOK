@@ -18,6 +18,10 @@ extension Git {
     static func setBranch(_ b: Branch, _ path: String, debugPrint: Bool = false) -> String {
         Git.run("checkout \(b.name)", path: path, debugPrint: debugPrint)
     }
+    
+    static func merge(_ from: Branch, _ path: String, debugPrint: Bool = false) -> String {
+        Git.run("merge \(from.name)", path: path, debugPrint: debugPrint)
+    }
 }
 
 #Preview {

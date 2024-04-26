@@ -15,6 +15,8 @@ struct HeadDetail: View {
 
     var body: some View {
         VStack {
+            MergeForm(message: $message, project: project)
+            
             CommitForm(message: $message, project: project)
             
             Spacer()
