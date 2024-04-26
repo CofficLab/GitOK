@@ -17,6 +17,8 @@ struct Content: View {
         } content: {
             if let project = project, let branch = branch {
                 History(selection: $gitLog, item: project, branch: branch)
+                    .frame(idealWidth: 300)
+                    .frame(minWidth: 250)
             }
         } detail: {
             if let project = project, let gitLog = gitLog {
