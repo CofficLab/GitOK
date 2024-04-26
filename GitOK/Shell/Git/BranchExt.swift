@@ -11,7 +11,7 @@ extension Git {
                 $0.count != 0
             })
             .map {
-                Branch($0)
+                Branch.fromShellLine($0)
             }
     }
 }

@@ -8,6 +8,10 @@ struct Branch {
     init(_ name: String) {
         self.name = name
     }
+    
+    static func fromShellLine(_ l: String) -> Branch {
+        Branch(l.trimmingCharacters(in: CharacterSet(charactersIn: "*")).trimmingCharacters(in: .whitespacesAndNewlines))
+    }
 }
 
 extension Branch: Hashable {
