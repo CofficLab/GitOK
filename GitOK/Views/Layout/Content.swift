@@ -23,9 +23,9 @@ struct Content: View {
         } detail: {
             VSplitView {
                 if let project = project, let gitLog = gitLog {
-                    Detail(project, log: gitLog)
+                    Detail(message: $message, project: project, log: gitLog)
                 }
-                
+
                 ScrollView {
                     Text(message)
                         .padding()

@@ -2,15 +2,11 @@ import SwiftUI
 
 struct Detail: View {
     @EnvironmentObject var app: AppManager
-    @State var message = ""
+    
+    @Binding var message: String
 
     var project: Project
     var log: GitCommit
-
-    init(_ item: Project, log: GitCommit) {
-        self.project = item
-        self.log = log
-    }
 
     var body: some View {
         VStack {
