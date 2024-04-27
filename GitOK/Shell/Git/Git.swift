@@ -6,7 +6,13 @@ class Git {
     static var label: String = "🔮 git "
 
     static func push(_ path: String, debugPrint: Bool = false) throws -> String {
-        try Git.run("push", path: path, debugPrint: debugPrint)
+//        let noNeed = try Git.run("log origin/dev..HEAD", path: path).isEmpty
+//        
+//        if noNeed {
+//            return "已经同步"
+//        }
+        
+        return try Git.run("push --porcelain", path: path, debugPrint: debugPrint)
     }
 
     static func getRemote(_ path: String) -> String {
