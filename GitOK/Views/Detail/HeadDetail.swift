@@ -6,15 +6,15 @@ struct HeadDetail: View {
     @State var files: [File] = []
 
     var project: Project
-    var log: GitCommit
 
-    init(_ item: Project, log: GitCommit) {
+    init(_ item: Project) {
         self.project = item
-        self.log = log
     }
 
     var body: some View {
         VStack {
+            MergeForm(message: $message, project: project)
+            
             CommitForm(message: $message, project: project)
             
             Spacer()
@@ -23,6 +23,8 @@ struct HeadDetail: View {
                 GroupBox {
                     Text(message)
                 }
+                
+                NoChanges()
             } else {
                 FileList(files: files)
             }
@@ -33,11 +35,16 @@ struct HeadDetail: View {
             refreshFiles()
             EventManager().onCommitted(refreshFiles)
         }
-        .onChange(of: log, refreshStatus)
+        .onChange(of: project, refreshAll)
+    }
+    
+    func refreshAll() {
+        self.refreshFiles()
+        self.refreshStatus()
     }
     
     func refreshFiles() {
-        files = Git.changedFile(project.path)
+        files = try! Git.changedFile(project.path)
         
         if files.isEmpty {
             refreshStatus()
@@ -45,7 +52,7 @@ struct HeadDetail: View {
     }
     
     func refreshStatus() {
-        message = Git.status(project.path)
+        message = try! Git.status(project.path)
     }
 }
 

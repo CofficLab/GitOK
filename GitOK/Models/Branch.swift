@@ -3,16 +3,21 @@ import SwiftData
 import SwiftUI
 
 struct Branch {
+    var uuid: String
     var name: String
+    var isCurrent = false
 
-    init(_ name: String) {
-        self.name = name
+    static func fromShellLine(_ l: String) -> Branch {
+        Branch(uuid: UUID().uuidString,
+               name: l.trimmingCharacters(in: CharacterSet(charactersIn: "*"))
+                   .trimmingCharacters(in: .whitespacesAndNewlines),
+               isCurrent: l.hasPrefix("*"))
     }
 }
 
 extension Branch: Hashable {
     static func == (lhs: Branch, rhs: Branch) -> Bool {
-        lhs.name == rhs.name
+        lhs.uuid == rhs.uuid
     }
 }
 

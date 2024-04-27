@@ -27,8 +27,8 @@ struct GitCommit {
         return GitCommit(path: path, hash: hash, message: message)
     }
     
-    func checkIfSynced() -> Bool {
-        isHead ? true : !Git.notSynced(path).contains(where: {
+    func checkIfSynced() throws -> Bool {
+        isHead ? true : try! !Git.notSynced(path).contains(where: {
             $0.hash == self.hash
         })
     }

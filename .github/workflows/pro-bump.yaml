@@ -22,7 +22,7 @@ jobs:
         run: |
 
           # 读取配置文件路径
-          projectFile=$(find $(pwd) -type f -name "*.pbxproj" | head -n 1)
+          projectFile=$(find $(pwd) ! -path "*Resources*" -type f -name "*.pbxproj" | head -n 1)
 
           # 读取文件中的版本号
           version=$(grep -o 'MARKETING_VERSION = [^"]*' $projectFile | head -n 1 | grep -o '[0-9]\+\.[0-9]\+\.[0-9]\+')
@@ -55,7 +55,7 @@ jobs:
         run: |
 
           # 读取配置文件路径
-          projectFile=$(find $(pwd) -type f -name "*.pbxproj" | head -n 1)
+          projectFile=$(find $(pwd) ! -path "*Resources*" -type f -name "*.pbxproj" | head -n 1)
 
           # 读取文件中的版本号
           version=$(grep -o 'MARKETING_VERSION = [^"]*' $projectFile | head -n 1 | grep -o '[0-9]\+\.[0-9]\+\.[0-9]\+')
@@ -68,7 +68,7 @@ jobs:
       - name: 打标签并推送到仓库
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
-          commit_message: 'chore(workflow): Bump a new version'
+          commit_message: '🎨 Bump a new version'
           commit_user_name: GitHub Action
           tagging_message: ${{ env.tag }}
   rebase:

@@ -6,14 +6,14 @@ class Shell {
     static var label: String = "🐚 Shell::"
     
     static func pwd() -> String {
-        Shell.run("pwd")
+        try! Shell.run("pwd")
     }
     
     static func whoami() -> String {
-        Shell.run("whoami")
+        try! Shell.run("whoami")
     }
     
-    static func run(_ command: String, debugPrint: Bool = false) -> String {
+    static func run(_ command: String, debugPrint: Bool = false) throws -> String {
         let task = Process()
         task.launchPath = "/bin/bash"
         task.arguments = ["-c", command]
@@ -37,6 +37,13 @@ class Shell {
             
         let outputData = outputPipe.fileHandleForReading.readDataToEndOfFile()
         let errorData = errorPipe.fileHandleForReading.readDataToEndOfFile()
+        
+        if let errorOutput = String(data: errorData, encoding: .utf8), errorOutput.count > 0 {
+            os_log("\(self.label)错误")
+            print(errorOutput)
+            
+            throw SmartError.ShellError(output: errorOutput)
+        }
             
         if let output = String(data: outputData, encoding: .utf8) {
             if debugPrint {
@@ -44,15 +51,6 @@ class Shell {
             }
             
             return output
-        }
-            
-        if let errorOutput = String(data: errorData, encoding: .utf8) {
-            if debugPrint {
-                os_log("\(self.label)错误：")
-                print(errorOutput)
-            }
-            
-            return errorOutput
         }
         
         return "无输出"

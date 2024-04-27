@@ -15,7 +15,7 @@
 		0B0E16932BD89C340078942B /* Detail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B0E16922BD89C340078942B /* Detail.swift */; };
 		0B1C67B02BD9099800502EB1 /* AppPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1C67AF2BD9099800502EB1 /* AppPreview.swift */; };
 		0B1C67B32BD90B5700502EB1 /* AppManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1C67B22BD90B5700502EB1 /* AppManager.swift */; };
-		0B1C67B52BD9115F00502EB1 /* BranchPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1C67B42BD9115F00502EB1 /* BranchPicker.swift */; };
+		0B1C67B52BD9115F00502EB1 /* Branchs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1C67B42BD9115F00502EB1 /* Branchs.swift */; };
 		0B1C67B82BD9128000502EB1 /* BtnStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1C67B72BD9128000502EB1 /* BtnStatus.swift */; };
 		0B1C67BA2BD912D900502EB1 /* BtnCommit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1C67B92BD912D900502EB1 /* BtnCommit.swift */; };
 		0B1C67BC2BD9132500502EB1 /* Git.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1C67BB2BD9132500502EB1 /* Git.swift */; };
@@ -66,6 +66,12 @@
 		0BCC6D112BD94B5B006ADA94 /* BtnLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCC6D102BD94B5B006ADA94 /* BtnLog.swift */; };
 		0BCC6D132BD94D15006ADA94 /* BtnLogs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCC6D122BD94D15006ADA94 /* BtnLogs.swift */; };
 		0BCC6D152BD9526F006ADA94 /* GitCommit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCC6D142BD9526F006ADA94 /* GitCommit.swift */; };
+		0BD15C4A2BDBE026004024CF /* Resources in Resources */ = {isa = PBXBuildFile; fileRef = 0BD15C492BDBE026004024CF /* Resources */; };
+		0BD15C4C2BDBE959004024CF /* StateExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD15C4B2BDBE959004024CF /* StateExt.swift */; };
+		0BD15C4E2BDBF360004024CF /* BtnMerge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD15C4D2BDBF360004024CF /* BtnMerge.swift */; };
+		0BD15C502BDBF3BD004024CF /* MergeForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD15C4F2BDBF3BD004024CF /* MergeForm.swift */; };
+		0BD15C522BDC8D91004024CF /* SmartError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD15C512BDC8D91004024CF /* SmartError.swift */; };
+		0BD15C542BDCAF45004024CF /* NoChanges.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD15C532BDCAF45004024CF /* NoChanges.swift */; };
 		0BDE61A32BDB3C9B006E23EA /* Projects.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BDE61A22BDB3C9B006E23EA /* Projects.swift */; };
 		0BDE61A52BDB408F006E23EA /* RevListExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BDE61A42BDB408F006E23EA /* RevListExt.swift */; };
 		0BDE61A72BDB4541006E23EA /* StatusExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BDE61A62BDB4541006E23EA /* StatusExt.swift */; };
@@ -98,7 +104,7 @@
 		0B0E16922BD89C340078942B /* Detail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Detail.swift; sourceTree = "<group>"; };
 		0B1C67AF2BD9099800502EB1 /* AppPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppPreview.swift; sourceTree = "<group>"; };
 		0B1C67B22BD90B5700502EB1 /* AppManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppManager.swift; sourceTree = "<group>"; };
-		0B1C67B42BD9115F00502EB1 /* BranchPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BranchPicker.swift; sourceTree = "<group>"; };
+		0B1C67B42BD9115F00502EB1 /* Branchs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Branchs.swift; sourceTree = "<group>"; };
 		0B1C67B72BD9128000502EB1 /* BtnStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BtnStatus.swift; sourceTree = "<group>"; };
 		0B1C67B92BD912D900502EB1 /* BtnCommit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BtnCommit.swift; sourceTree = "<group>"; };
 		0B1C67BB2BD9132500502EB1 /* Git.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Git.swift; sourceTree = "<group>"; };
@@ -151,6 +157,12 @@
 		0BCC6D102BD94B5B006ADA94 /* BtnLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BtnLog.swift; sourceTree = "<group>"; };
 		0BCC6D122BD94D15006ADA94 /* BtnLogs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BtnLogs.swift; sourceTree = "<group>"; };
 		0BCC6D142BD9526F006ADA94 /* GitCommit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitCommit.swift; sourceTree = "<group>"; };
+		0BD15C492BDBE026004024CF /* Resources */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Resources; sourceTree = "<group>"; };
+		0BD15C4B2BDBE959004024CF /* StateExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StateExt.swift; sourceTree = "<group>"; };
+		0BD15C4D2BDBF360004024CF /* BtnMerge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BtnMerge.swift; sourceTree = "<group>"; };
+		0BD15C4F2BDBF3BD004024CF /* MergeForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MergeForm.swift; sourceTree = "<group>"; };
+		0BD15C512BDC8D91004024CF /* SmartError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmartError.swift; sourceTree = "<group>"; };
+		0BD15C532BDCAF45004024CF /* NoChanges.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoChanges.swift; sourceTree = "<group>"; };
 		0BDE61A22BDB3C9B006E23EA /* Projects.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Projects.swift; sourceTree = "<group>"; };
 		0BDE61A42BDB408F006E23EA /* RevListExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RevListExt.swift; sourceTree = "<group>"; };
 		0BDE61A62BDB4541006E23EA /* StatusExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusExt.swift; sourceTree = "<group>"; };
@@ -203,6 +215,7 @@
 				0B0E16892BD89A910078942B /* Preview Content */,
 				0BDE61A12BDB37C6006E23EA /* Shell */,
 				0B0E16912BD89C240078942B /* Views */,
+				0BD15C492BDBE026004024CF /* Resources */,
 			);
 			path = GitOK;
 			sourceTree = "<group>";
@@ -259,6 +272,7 @@
 				0BCC6D0C2BD948AB006ADA94 /* BtnSave.swift */,
 				0B1C67B72BD9128000502EB1 /* BtnStatus.swift */,
 				0B6BE4602BDA603000C8ACB2 /* BtnWhoami.swift */,
+				0BD15C4D2BDBF360004024CF /* BtnMerge.swift */,
 			);
 			path = Button;
 			sourceTree = "<group>";
@@ -269,6 +283,8 @@
 				0B1C67C32BD915F200502EB1 /* AppConfig.swift */,
 				0B1C67BE2BD9157100502EB1 /* DBExt.swift */,
 				0BCC6D022BD932DA006ADA94 /* PathExt.swift */,
+				0BD15C4B2BDBE959004024CF /* StateExt.swift */,
+				0BD15C512BDC8D91004024CF /* SmartError.swift */,
 			);
 			path = Config;
 			sourceTree = "<group>";
@@ -314,7 +330,7 @@
 		0B1C67F62BD9E5E700502EB1 /* Layout */ = {
 			isa = PBXGroup;
 			children = (
-				0B1C67B42BD9115F00502EB1 /* BranchPicker.swift */,
+				0B1C67B42BD9115F00502EB1 /* Branchs.swift */,
 				0B0E16822BD89A8F0078942B /* Content.swift */,
 				0B0E16922BD89C340078942B /* Detail.swift */,
 				0BCC6D0E2BD949B6006ADA94 /* History.swift */,
@@ -332,6 +348,8 @@
 				0B1C67FB2BD9ED7300502EB1 /* HeadDetail.swift */,
 				0BDE61AA2BDB4AB8006E23EA /* FileList.swift */,
 				0BDE61AC2BDB4E86006E23EA /* FileTile.swift */,
+				0BD15C4F2BDBF3BD004024CF /* MergeForm.swift */,
+				0BD15C532BDCAF45004024CF /* NoChanges.swift */,
 			);
 			path = Detail;
 			sourceTree = "<group>";
@@ -442,6 +460,7 @@
 			files = (
 				0B0E168B2BD89A910078942B /* Preview Assets.xcassets in Resources */,
 				0B0E16872BD89A910078942B /* Assets.xcassets in Resources */,
+				0BD15C4A2BDBE026004024CF /* Resources in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -455,7 +474,8 @@
 				0B1C67D82BD9162F00502EB1 /* BackgroundView.swift in Sources */,
 				0B1C67B32BD90B5700502EB1 /* AppManager.swift in Sources */,
 				0B1C67B82BD9128000502EB1 /* BtnStatus.swift in Sources */,
-				0B1C67B52BD9115F00502EB1 /* BranchPicker.swift in Sources */,
+				0BD15C4E2BDBF360004024CF /* BtnMerge.swift in Sources */,
+				0B1C67B52BD9115F00502EB1 /* Branchs.swift in Sources */,
 				0B1C67F32BD9E21B00502EB1 /* BtnOpenRemote.swift in Sources */,
 				0B44BCC62BDA947B00FBCF2F /* Branch.swift in Sources */,
 				0BCC6D0B2BD93E8C006ADA94 /* BtnAdd.swift in Sources */,
@@ -484,6 +504,7 @@
 				0B1C67E12BD9162F00502EB1 /* iCloudHelper.swift in Sources */,
 				0BDE61A52BDB408F006E23EA /* RevListExt.swift in Sources */,
 				0BCC6D072BD939BA006ADA94 /* Shell.swift in Sources */,
+				0BD15C522BDC8D91004024CF /* SmartError.swift in Sources */,
 				0B1C67DE2BD9162F00502EB1 /* Extensions.swift in Sources */,
 				0BCC6D092BD939FD006ADA94 /* BtnPwd.swift in Sources */,
 				0B1C67E22BD9162F00502EB1 /* ImageHelper.swift in Sources */,
@@ -502,7 +523,10 @@
 				0BB555242BDB7B300044048B /* BranchExt.swift in Sources */,
 				0B1C68022BD9F7B500502EB1 /* BtnOpen.swift in Sources */,
 				0B0E16812BD89A8F0078942B /* GitOKApp.swift in Sources */,
+				0BD15C542BDCAF45004024CF /* NoChanges.swift in Sources */,
 				0B1C67BC2BD9132500502EB1 /* Git.swift in Sources */,
+				0BD15C502BDBF3BD004024CF /* MergeForm.swift in Sources */,
+				0BD15C4C2BDBE959004024CF /* StateExt.swift in Sources */,
 				0B1C67DC2BD9162F00502EB1 /* CloudKit.swift in Sources */,
 				0BCC6D012BD92CB2006ADA94 /* DebugCommand.swift in Sources */,
 				0B1C67D92BD9162F00502EB1 /* CardView.swift in Sources */,
@@ -638,12 +662,12 @@
 		0B0E168F2BD89A910078942B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-Dev";
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = GitOK/GitOK.entitlements;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 15;
+				CURRENT_PROJECT_VERSION = 32;
 				DEVELOPMENT_ASSET_PATHS = "\"GitOK/Preview Content\"";
 				DEVELOPMENT_TEAM = Y6HZ9JJYV6;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -666,7 +690,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 1.0.19;
+				MARKETING_VERSION = 1.0.31;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yueyi.GitOK;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
@@ -685,7 +709,7 @@
 				CODE_SIGN_ENTITLEMENTS = GitOK/GitOK.entitlements;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 15;
+				CURRENT_PROJECT_VERSION = 32;
 				DEVELOPMENT_ASSET_PATHS = "\"GitOK/Preview Content\"";
 				DEVELOPMENT_TEAM = Y6HZ9JJYV6;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -708,7 +732,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 1.0.19;
+				MARKETING_VERSION = 1.0.31;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yueyi.GitOK;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;

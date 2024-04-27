@@ -1,6 +1,6 @@
+import OSLog
 import SwiftData
 import SwiftUI
-import OSLog
 
 struct Content: View {
     @Environment(\.modelContext) private var modelContext
@@ -17,11 +17,23 @@ struct Content: View {
         } content: {
             if let project = project, let branch = branch {
                 History(selection: $gitLog, item: project, branch: branch)
+                    .frame(idealWidth: 300)
+                    .frame(minWidth: 50)
             }
         } detail: {
-            if let project = project, let gitLog = gitLog {
-                Detail(project, log: gitLog)
+            VSplitView {
+                if let project = project, let gitLog = gitLog {
+                    Detail(project, log: gitLog)
+                }
+                
+                ScrollView {
+                    Text(message)
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                }
+                .frame(maxWidth: .infinity)
             }
+            .frame(maxWidth: .infinity)
         }
         .navigationTitle(project?.title ?? "")
         .toolbar(content: {
@@ -33,7 +45,7 @@ struct Content: View {
                     BtnFinder(url: project.url)
                     BtnOpenRemote(message: $message, path: project.path)
                     BtnSave(message: $message, path: project.path)
-                    BranchPicker(branch: $branch, project: project)
+                    Branchs(branch: $branch, message: $message, project: project)
                 })
             }
         })

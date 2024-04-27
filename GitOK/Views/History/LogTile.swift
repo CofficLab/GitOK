@@ -24,7 +24,7 @@ struct LogTile: View {
         }
         .onAppear {
             Task.detached(operation: {
-                let isSynced = await commit.checkIfSynced()
+                let isSynced = try! await commit.checkIfSynced()
 
                 DispatchQueue.main.async {
                     self.isSynced = isSynced

@@ -47,17 +47,6 @@ extension AppConfig {
     }
 }
 
-// MARK: APP状态
-
-extension AppConfig {
-    @AppStorage("App.CurrentTaskUUID")
-    static var currentTaskUUID: String = ""
-    
-    static func setcurrentTaskUUID(_ id: String) {
-        AppConfig.currentTaskUUID = id
-    }
-}
-
 
 #Preview {
     AppPreview()

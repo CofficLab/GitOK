@@ -4,7 +4,7 @@ struct History: View {
     @EnvironmentObject var app: AppManager
 
     @Binding var selection: GitCommit?
-    
+
     @State var message = ""
     @State var logs: [GitCommit] = []
 
@@ -21,23 +21,27 @@ struct History: View {
                 project: item,
                 branch: branch
             )
-                .tag($0 as GitCommit?)
+            .tag($0 as GitCommit?)
         })
         .onAppear {
-            logs = Git.logs(item.path)
+            logs = try! Git.logs(item.path)
             selection = allLogs.first
-            
+
             EventManager().onCommitted({
-                logs = Git.logs(item.path)
+                logs = try! Git.logs(item.path)
             })
         }
-        .onChange(of: item, {
-            logs = Git.logs(item.path)
-            selection = allLogs.first
-        })
+        .onChange(of: item, refresh)
+        .onChange(of: branch.name, refresh)
+    }
+
+    func refresh() {
+        logs = try! Git.logs(item.path)
+        selection = allLogs.first
     }
 }
 
 #Preview {
     AppPreview()
+        .frame(width: 800)
 }

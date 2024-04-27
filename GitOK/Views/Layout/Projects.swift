@@ -22,8 +22,16 @@ struct Projects: View {
             .onDelete(perform: deleteItems)
         }
         .onAppear {
-            project = projects.first
+            let currentProjectPath = AppConfig.projectPath
+            if !currentProjectPath.isEmpty {
+                project = projects.first(where: {
+                    $0.url.path == currentProjectPath
+                }) ?? projects.first
+            }
         }
+        .onChange(of: project, {
+            AppConfig.setProject(project?.path ?? "")
+        })
         .toolbar(content: {
             ToolbarItem {
                 BtnAdd()
