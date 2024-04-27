@@ -20,7 +20,7 @@ extension Git {
     }
 
     static func setBranch(_ b: Branch, _ path: String, debugPrint: Bool = false) throws -> String {
-        try Git.run("checkout \(b.name)", path: path, debugPrint: debugPrint)
+        try Git.run("checkout \(b.name) -q", path: path, debugPrint: debugPrint)
     }
 
     static func merge(_ from: Branch, _ path: String, debugPrint: Bool = false) throws -> String {
