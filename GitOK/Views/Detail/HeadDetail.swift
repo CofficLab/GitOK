@@ -20,10 +20,6 @@ struct HeadDetail: View {
             Spacer()
 
             if files.isEmpty {
-                GroupBox {
-                    Text(message)
-                }
-                
                 NoChanges()
             } else {
                 FileList(files: files)
