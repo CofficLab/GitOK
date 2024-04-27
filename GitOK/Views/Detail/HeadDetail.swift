@@ -6,11 +6,9 @@ struct HeadDetail: View {
     @State var files: [File] = []
 
     var project: Project
-    var log: GitCommit
 
-    init(_ item: Project, log: GitCommit) {
+    init(_ item: Project) {
         self.project = item
-        self.log = log
     }
 
     var body: some View {
@@ -37,7 +35,12 @@ struct HeadDetail: View {
             refreshFiles()
             EventManager().onCommitted(refreshFiles)
         }
-        .onChange(of: log, refreshStatus)
+        .onChange(of: project, refreshAll)
+    }
+    
+    func refreshAll() {
+        self.refreshFiles()
+        self.refreshStatus()
     }
     
     func refreshFiles() {
