@@ -38,3 +38,7 @@ GitOK 是一个综合性的项目管理工具。
 对于用户进行盈利或商业用途的情况，用户必须购买商业许可证，以获得相应的商业使用权。
 
 请在这里留言: <https://github.com/CofficLab/GitOK/issues>
+
+## 参考
+
+- [git commit emoji 使用指南](https://github.com/liuchengxu/git-commit-emoji-cn)
