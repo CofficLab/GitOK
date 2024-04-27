@@ -25,8 +25,11 @@ GitOK 是一个综合性的项目管理工具。
   - 初始化 Git 仓库及远程仓库
   - 准备好 CI/CD 脚本
 - 辅助人类提交良好格式的 `commit message`
+- 快速生成 APP 的多个平台的图标
 
 ## 许可证
+
+### 个人用户
 
 对于个人用户，许可证持有者授予其使用本开源项目的权利，遵守 [GNU GENERAL PUBLIC LICENSE](./LICENSE) 版本的条款和条件。
 
