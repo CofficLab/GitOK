@@ -5,8 +5,8 @@ import SwiftUI
 class Git {
     static var label: String = "🔮 git "
 
-    static func push(_ path: String) -> String {
-        try! Git.run("push", path: path)
+    static func push(_ path: String) throws -> String {
+        try Git.run("push", path: path)
     }
 
     static func getRemote(_ path: String) -> String {

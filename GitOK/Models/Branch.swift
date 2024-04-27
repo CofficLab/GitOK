@@ -4,13 +4,12 @@ import SwiftUI
 
 struct Branch {
     var name: String
+    var isCurrent = false
 
-    init(_ name: String) {
-        self.name = name
-    }
-    
     static func fromShellLine(_ l: String) -> Branch {
-        Branch(l.trimmingCharacters(in: CharacterSet(charactersIn: "*")).trimmingCharacters(in: .whitespacesAndNewlines))
+        Branch(name: l.trimmingCharacters(in: CharacterSet(charactersIn: "*"))
+            .trimmingCharacters(in: .whitespacesAndNewlines),
+            isCurrent: l.hasPrefix("*"))
     }
 }
 

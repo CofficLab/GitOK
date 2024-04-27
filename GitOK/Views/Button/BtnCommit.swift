@@ -14,7 +14,7 @@ struct BtnCommit: View {
     func commitAndPush() {
         do {
             try message = Git.commit(path, commit: commit)
-            message = Git.push(path)
+            message = try Git.push(path)
             
             EventManager().emitCommitted()
         } catch let error {
