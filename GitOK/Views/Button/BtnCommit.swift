@@ -16,13 +16,19 @@ struct BtnCommit: View {
     }
 
     func commitAndPush() {
-        do {
-            message = try Git.commitAndPush(path, commit: commit, debugPrint: true)
+        Task.detached(operation: {
+            do {
+                _ = try await Git.commitAndPush(path, commit: commit, debugPrint: true)
 
-            EventManager().emitCommitted()
-        } catch let error {
-            app.alert("提交出错", info: error.localizedDescription)
-        }
+                DispatchQueue.main.async {
+                    EventManager().emitCommitted()
+                }
+            } catch let error {
+                DispatchQueue.main.async {
+                    app.alert("提交出错", info: error.localizedDescription)
+                }
+            }
+        })
     }
 }
 
