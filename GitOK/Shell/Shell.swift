@@ -37,11 +37,10 @@ class Shell {
             
         let outputData = outputPipe.fileHandleForReading.readDataToEndOfFile()
         let errorData = errorPipe.fileHandleForReading.readDataToEndOfFile()
-
         
         if let errorOutput = String(data: errorData, encoding: .utf8), errorOutput.count > 0 {
             if debugPrint {
-                os_log("\(self.label)错误：")
+                os_log("\(self.label)错误")
                 print(errorOutput)
             }
             

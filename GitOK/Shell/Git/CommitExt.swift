@@ -10,6 +10,15 @@ extension Git {
     static func commit(_ path: String, commit: String) throws -> String {
         try Git.run("commit -a -m '\(commit)'", path: path)
     }
+    
+    static func commitAndPush(_ path: String, commit: String, debugPrint: Bool = false) throws -> String {
+        do {
+            _ = try Git.run("commit -a -m '\(commit)'", path: path)
+            return try Git.run("push", path: path, debugPrint: debugPrint)
+        } catch let error {
+            throw error
+        }
+    }
 
     static func getShortHash(_ path: String, _ hash: String) throws -> String {
         try Git.run("rev-parse --short", path: path)

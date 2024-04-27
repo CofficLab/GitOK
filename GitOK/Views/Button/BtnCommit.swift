@@ -2,9 +2,9 @@ import SwiftUI
 
 struct BtnCommit: View {
     @EnvironmentObject var app: AppManager
-    
+
     @Binding var message: String
-    
+
     @State var working = false
 
     var path: String
@@ -14,12 +14,11 @@ struct BtnCommit: View {
         Button("提交", action: commitAndPush)
             .disabled(working)
     }
-    
+
     func commitAndPush() {
         do {
-            message = try Git.commit(path, commit: commit)
-            message = try Git.push(path, debugPrint: true)
-            
+            message = try Git.commitAndPush(path, commit: commit, debugPrint: true)
+
             EventManager().emitCommitted()
         } catch let error {
             app.alert("提交出错", info: error.localizedDescription)
