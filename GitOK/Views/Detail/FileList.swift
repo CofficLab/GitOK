@@ -3,7 +3,7 @@ import SwiftUI
 struct FileList: View {
     @EnvironmentObject var app: AppManager
     
-    @State var file: File? = nil
+    @Binding var file: File?
     
     var files: [File] = []
 

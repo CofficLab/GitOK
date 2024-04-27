@@ -5,7 +5,9 @@ struct HeadDetail: View {
     
     @State var message = ""
     @State var diff = ""
+    @State var diffOfFile = ""
     @State var files: [File] = []
+    @State var file: File?
 
     var project: Project
 
@@ -24,11 +26,11 @@ struct HeadDetail: View {
             if files.isEmpty {
                 NoChanges()
             } else {
-                FileList(files: files)
+                FileList(file: $file, files: files)
                 
                 GroupBox {
                     ScrollView {
-                        Text(diff)
+                        Text(diffOfFile)
                     }
                 }
             }
@@ -40,6 +42,11 @@ struct HeadDetail: View {
             EventManager().onCommitted(refreshFiles)
         }
         .onChange(of: project, refreshAll)
+        .onChange(of: file, {
+            if let f = file {
+                self.diffOfFile = try! Git.diffOfFile(project.path, file: f)
+            }
+        })
     }
     
     func refreshAll() {

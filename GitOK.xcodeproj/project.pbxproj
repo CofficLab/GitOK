@@ -72,6 +72,7 @@
 		0BD15C502BDBF3BD004024CF /* MergeForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD15C4F2BDBF3BD004024CF /* MergeForm.swift */; };
 		0BD15C522BDC8D91004024CF /* SmartError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD15C512BDC8D91004024CF /* SmartError.swift */; };
 		0BD15C542BDCAF45004024CF /* NoChanges.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD15C532BDCAF45004024CF /* NoChanges.swift */; };
+		0BD15C562BDD23E1004024CF /* DiffExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD15C552BDD23E1004024CF /* DiffExt.swift */; };
 		0BDE61A32BDB3C9B006E23EA /* Projects.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BDE61A22BDB3C9B006E23EA /* Projects.swift */; };
 		0BDE61A52BDB408F006E23EA /* RevListExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BDE61A42BDB408F006E23EA /* RevListExt.swift */; };
 		0BDE61A72BDB4541006E23EA /* StatusExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BDE61A62BDB4541006E23EA /* StatusExt.swift */; };
@@ -163,6 +164,7 @@
 		0BD15C4F2BDBF3BD004024CF /* MergeForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MergeForm.swift; sourceTree = "<group>"; };
 		0BD15C512BDC8D91004024CF /* SmartError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmartError.swift; sourceTree = "<group>"; };
 		0BD15C532BDCAF45004024CF /* NoChanges.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoChanges.swift; sourceTree = "<group>"; };
+		0BD15C552BDD23E1004024CF /* DiffExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiffExt.swift; sourceTree = "<group>"; };
 		0BDE61A22BDB3C9B006E23EA /* Projects.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Projects.swift; sourceTree = "<group>"; };
 		0BDE61A42BDB408F006E23EA /* RevListExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RevListExt.swift; sourceTree = "<group>"; };
 		0BDE61A62BDB4541006E23EA /* StatusExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusExt.swift; sourceTree = "<group>"; };
@@ -386,6 +388,7 @@
 				0BDE61A42BDB408F006E23EA /* RevListExt.swift */,
 				0BDE61A62BDB4541006E23EA /* StatusExt.swift */,
 				0BB555232BDB7B300044048B /* BranchExt.swift */,
+				0BD15C552BDD23E1004024CF /* DiffExt.swift */,
 			);
 			path = Git;
 			sourceTree = "<group>";
@@ -519,6 +522,7 @@
 				0B1C67DF2BD9162F00502EB1 /* FileHelper.swift in Sources */,
 				0B6BE4652BDA7B5300C8ACB2 /* CommitExt.swift in Sources */,
 				0B1C67EF2BD9DACF00502EB1 /* CommitForm.swift in Sources */,
+				0BD15C562BDD23E1004024CF /* DiffExt.swift in Sources */,
 				0B1C67B02BD9099800502EB1 /* AppPreview.swift in Sources */,
 				0BB555242BDB7B300044048B /* BranchExt.swift in Sources */,
 				0B1C68022BD9F7B500502EB1 /* BtnOpen.swift in Sources */,

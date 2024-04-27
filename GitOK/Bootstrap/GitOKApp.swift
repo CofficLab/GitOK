@@ -3,6 +3,7 @@ import SwiftData
 
 @main
 struct GitOKApp: App {
+    
     var body: some Scene {
         WindowGroup {
             Content()

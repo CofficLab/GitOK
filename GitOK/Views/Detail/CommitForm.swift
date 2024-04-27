@@ -22,7 +22,7 @@ struct CommitForm: View {
         Group {
             HStack {
                 CommitCategoryPicker(selection: $category, project: project)
-                TextField("commit", text: $text)
+                TextField("commijjjt", text: $text)
                     .textFieldStyle(.roundedBorder)
                 BtnCommit(message: $message, path: project.path, commit: commitMessage)
             }

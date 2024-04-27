@@ -24,7 +24,7 @@ struct File {
 
 extension File: Hashable {
     static func ==(lhs: File, rhs: File) -> Bool {
-        lhs.name == rhs.name
+        lhs.uuid == rhs.uuid
     }
 }
 

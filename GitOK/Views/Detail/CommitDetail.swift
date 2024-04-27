@@ -22,7 +22,7 @@ struct CommitDetail: View {
                 Text(commitInfo)
             }
             
-            FileList(files: files)
+            FileList(file: $file, files: files)
         }
         .onAppear {
             commitInfo = try! Git.show(item.path, hash: commit.hash)
