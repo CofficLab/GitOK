@@ -1,11 +1,12 @@
 import SwiftUI
 
+
 struct HeadDetail: View {
     @EnvironmentObject var app: AppManager
     
     @State var message = ""
     @State var diff = ""
-    @State var diffOfFile = ""
+    @State var diffBlock: DiffBlock? = nil
     @State var files: [File] = []
     @State var file: File?
 
@@ -28,10 +29,10 @@ struct HeadDetail: View {
             } else {
                 FileList(file: $file, files: files)
                 
-                GroupBox {
-                    ScrollView {
-                        Text(diffOfFile)
-                    }
+                if let diffs = diffBlock?.getDiffs() {
+                    List(diffs, rowContent: {
+                        Text($0.message)
+                    })
                 }
             }
         }
@@ -44,7 +45,7 @@ struct HeadDetail: View {
         .onChange(of: project, refreshAll)
         .onChange(of: file, {
             if let f = file {
-                self.diffOfFile = try! Git.diffOfFile(project.path, file: f)
+                self.diffBlock = try! Git.diffOfFile(project.path, file: f)
             }
         })
     }
