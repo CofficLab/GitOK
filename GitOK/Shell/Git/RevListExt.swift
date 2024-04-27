@@ -4,7 +4,8 @@ import SwiftUI
 
 extension Git {
     static func revList(_ path: String) throws -> String {
-        try Git.run("rev-list HEAD ^origin/dev", path: path)
+        let currentBranch = try Git.getCurrentBranch(path)
+        return try Git.run("rev-list HEAD ^origin/\(currentBranch.name)", path: path)
     }
 }
 
