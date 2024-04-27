@@ -7,7 +7,6 @@ xcuserdata/
 ## Xcode 8 and earlier
 *.xcscmblueprint
 *.xccheckout
-*.xcuserstate 
-.DS_Store
+*.xcuserstate
 
 temp/
