@@ -1,39 +1,42 @@
+import CodeEditorView
+import LanguageSupport
+import Rearrange
 import SwiftUI
-
 
 struct HeadDetail: View {
     @EnvironmentObject var app: AppManager
-    
+
     @State var message = ""
     @State var diff = ""
     @State var diffBlock: DiffBlock? = nil
     @State var files: [File] = []
     @State var file: File?
+    @State var codeMessages: Set<TextLocated<Message>> = Set()
+
+    @State private var text: String = "My awesome code..."
+    @State private var position: CodeEditor.Position = CodeEditor.Position()
+    @State private var messages: Set<TextLocated<Message>> = Set()
+    @Environment(\.colorScheme) private var colorScheme: ColorScheme
 
     var project: Project
 
     init(_ item: Project) {
-        self.project = item
+        project = item
     }
 
     var body: some View {
         VStack {
             MergeForm(message: $message, project: project)
-            
+
             CommitForm(message: $message, project: project)
-            
+
             Spacer()
 
             if files.isEmpty {
                 NoChanges()
             } else {
                 FileList(file: $file, files: files)
-                
-                if let diffs = diffBlock?.getDiffs() {
-                    List(diffs, rowContent: {
-                        Text($0.message)
-                    })
-                }
+                DiffView(diffBlock)
             }
         }
         .padding()
@@ -46,24 +49,25 @@ struct HeadDetail: View {
         .onChange(of: file, {
             if let f = file {
                 self.diffBlock = try! Git.diffOfFile(project.path, file: f)
+                self.text = diffBlock?.block ?? ""
             }
         })
     }
-    
+
     func refreshAll() {
-        self.refreshFiles()
-        self.refreshStatus()
-        self.diff = try! Git.diff(project.path)
+        refreshFiles()
+        refreshStatus()
+        diff = try! Git.diff(project.path)
     }
-    
+
     func refreshFiles() {
         files = try! Git.changedFile(project.path)
-        
+
         if files.isEmpty {
             refreshStatus()
         }
     }
-    
+
     func refreshStatus() {
         message = try! Git.status(project.path)
     }
