@@ -13,10 +13,9 @@ struct Detail: View {
             if log.isHead {
                 HeadDetail(project)
             } else {
-                LogDetail(project, log: log)
+                CommitDetail(project, log: log)
             }
         }
-        .padding()
         .frame(maxWidth: .infinity)
         .onAppear {
             message = try! Git.status(project.path)

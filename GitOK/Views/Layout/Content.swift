@@ -26,12 +26,12 @@ struct Content: View {
                     Detail(message: $message, project: project, log: gitLog)
                 }
 
-                ScrollView {
-                    Text(message)
-                        .padding()
-                        .frame(maxWidth: .infinity)
-                }
-                .frame(maxWidth: .infinity)
+//                ScrollView {
+//                    Text(message)
+//                        .padding()
+//                        .frame(maxWidth: .infinity)
+//                }
+//                .frame(maxWidth: .infinity)
             }
             .frame(maxWidth: .infinity)
         }
