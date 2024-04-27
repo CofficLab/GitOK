@@ -7,7 +7,7 @@ struct BtnStatus: View {
     
     var body: some View {
         Button(action: {
-            message = Git.status(path)
+            message = try! Git.status(path)
         }, label: {
             Label("检查", systemImage: "arrow.clockwise.circle")
         })

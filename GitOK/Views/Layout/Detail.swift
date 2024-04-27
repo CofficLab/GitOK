@@ -23,7 +23,7 @@ struct Detail: View {
         .padding()
         .frame(maxWidth: .infinity)
         .onAppear {
-            message = Git.status(item.path)
+            message = try! Git.status(item.path)
         }
         .background(BackgroundView.type1.opacity(0.3))
     }

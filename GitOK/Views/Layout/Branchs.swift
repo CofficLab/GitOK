@@ -16,19 +16,31 @@ struct Branchs: View {
                     .tag($0 as Branch?)
             })
         })
-        .onAppear {
-            self.branches = Git.getBranches(project.path)
-            self.branch = branches.first
-        }
-        .onChange(of: project, {
-            self.branches = Git.getBranches(project.path)
-            self.branch = branches.first
-        })
+        .onAppear(perform: refresh)
+        .onChange(of: project, refresh)
         .onChange(of: branch, {
             if let b = branch {
-                message = Git.setBranch(b, project.path, debugPrint: true)
+                setBranch(b)
             }
         })
+    }
+    
+    func refresh() {
+        do {
+            try self.branches = Git.getBranches(project.path)
+            self.branch = branches.first
+        } catch let error {
+            app.alert("获取分支发生错误", info: error.localizedDescription)
+        }
+    }
+    
+    func setBranch(_ branch: Branch) {
+        do {
+            try message = Git.setBranch(branch, project.path, debugPrint: true)
+        } catch let error {
+            app.alert("切换分支发生错误", info: error.localizedDescription)
+            self.branch = try! Git.getCurrentBranch(project.path)
+        }
     }
 }
 

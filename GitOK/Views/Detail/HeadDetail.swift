@@ -39,7 +39,7 @@ struct HeadDetail: View {
     }
     
     func refreshFiles() {
-        files = Git.changedFile(project.path)
+        files = try! Git.changedFile(project.path)
         
         if files.isEmpty {
             refreshStatus()
@@ -47,7 +47,7 @@ struct HeadDetail: View {
     }
     
     func refreshStatus() {
-        message = Git.status(project.path)
+        message = try! Git.status(project.path)
     }
 }
 

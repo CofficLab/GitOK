@@ -9,8 +9,8 @@ struct BtnMerge: View {
 
     var body: some View {
         Button("Merge", action: {
-            message = Git.setBranch(to, path)
-            message = Git.merge(from, path)
+            message = try! Git.setBranch(to, path)
+            message = try! Git.merge(from, path)
         })
     }
 }

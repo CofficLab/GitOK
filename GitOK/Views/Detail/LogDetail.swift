@@ -32,7 +32,7 @@ struct LogDetail: View {
         .padding()
         .frame(maxWidth: .infinity)
         .onAppear {
-            message = Git.status(item.path)
+            message = try! Git.status(item.path)
         }
     }
 }

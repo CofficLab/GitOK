@@ -45,7 +45,7 @@ struct MergeForm: View {
             }
         }
         .onAppear(perform: {
-            self.branches = Git.getBranches(project.path)
+            self.branches = try! Git.getBranches(project.path)
             self.branch1 = branches.first
             self.branch2 = branches.first
 

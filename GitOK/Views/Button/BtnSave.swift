@@ -13,9 +13,9 @@ struct BtnSave: View {
         Button(action: {
             self.working = true
             Task.detached {
-                message = Git.commit(path, commit: GitCommit.autoCommitMessage)
+                message = try! Git.commit(path, commit: GitCommit.autoCommitMessage)
                 message = Git.push(path)
-                message = Git.status(path)
+                message = try! Git.status(path)
                 
                 DispatchQueue.main.async {
                     self.working = false

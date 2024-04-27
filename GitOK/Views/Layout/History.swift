@@ -24,11 +24,11 @@ struct History: View {
             .tag($0 as GitCommit?)
         })
         .onAppear {
-            logs = Git.logs(item.path)
+            logs = try! Git.logs(item.path)
             selection = allLogs.first
 
             EventManager().onCommitted({
-                logs = Git.logs(item.path)
+                logs = try! Git.logs(item.path)
             })
         }
         .onChange(of: item, refresh)
@@ -36,7 +36,7 @@ struct History: View {
     }
 
     func refresh() {
-        logs = Git.logs(item.path)
+        logs = try! Git.logs(item.path)
         selection = allLogs.first
     }
 }

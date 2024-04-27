@@ -3,8 +3,8 @@ import OSLog
 import SwiftUI
 
 extension Git {
-    static func getBranches(_ path: String) -> [Branch] {
-        Git.run("branch", path: path)
+    static func getBranches(_ path: String) throws -> [Branch] {
+        try Git.run("branch", path: path)
             .components(separatedBy: "\n")
             .compactMap { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
             .filter({
@@ -15,12 +15,16 @@ extension Git {
             }
     }
     
-    static func setBranch(_ b: Branch, _ path: String, debugPrint: Bool = false) -> String {
-        Git.run("checkout \(b.name)", path: path, debugPrint: debugPrint)
+    static func getCurrentBranch(_ path: String) throws -> Branch {
+        Branch.fromShellLine(try Git.run("branch --show-current", path: path))
     }
-    
-    static func merge(_ from: Branch, _ path: String, debugPrint: Bool = false) -> String {
-        Git.run("merge \(from.name)", path: path, debugPrint: debugPrint)
+
+    static func setBranch(_ b: Branch, _ path: String, debugPrint: Bool = false) throws -> String {
+        try Git.run("checkout \(b.name)", path: path, debugPrint: debugPrint)
+    }
+
+    static func merge(_ from: Branch, _ path: String, debugPrint: Bool = false) throws -> String {
+        try Git.run("merge \(from.name)", path: path, debugPrint: debugPrint)
     }
 }
 

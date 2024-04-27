@@ -7,7 +7,7 @@ struct BtnLog: View {
 
     var body: some View {
         Button("Log", action: {
-            message = Git.log(path)
+            message = try! Git.log(path)
         })
     }
 }

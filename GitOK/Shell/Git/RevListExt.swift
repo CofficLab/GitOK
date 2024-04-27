@@ -3,8 +3,8 @@ import OSLog
 import SwiftUI
 
 extension Git {
-    static func revList(_ path: String) -> String {
-        Git.run("rev-list HEAD ^origin/dev", path: path)
+    static func revList(_ path: String) throws -> String {
+        try Git.run("rev-list HEAD ^origin/dev", path: path)
     }
 }
 
