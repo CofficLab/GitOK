@@ -20,7 +20,6 @@ struct Detail: View {
         .onAppear {
             message = try! Git.status(project.path)
         }
-        .background(BackgroundView.type1.opacity(0.3))
     }
 }
 

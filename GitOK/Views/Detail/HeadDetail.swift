@@ -2,7 +2,9 @@ import SwiftUI
 
 struct HeadDetail: View {
     @EnvironmentObject var app: AppManager
+    
     @State var message = ""
+    @State var diff = ""
     @State var files: [File] = []
 
     var project: Project
@@ -23,12 +25,18 @@ struct HeadDetail: View {
                 NoChanges()
             } else {
                 FileList(files: files)
+                
+                GroupBox {
+                    ScrollView {
+                        Text(diff)
+                    }
+                }
             }
         }
         .padding()
         .frame(maxWidth: .infinity)
         .onAppear {
-            refreshFiles()
+            refreshAll()
             EventManager().onCommitted(refreshFiles)
         }
         .onChange(of: project, refreshAll)
@@ -37,6 +45,7 @@ struct HeadDetail: View {
     func refreshAll() {
         self.refreshFiles()
         self.refreshStatus()
+        self.diff = try! Git.diff(project.path)
     }
     
     func refreshFiles() {

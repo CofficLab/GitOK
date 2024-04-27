@@ -18,9 +18,9 @@ struct CommitDetail: View {
 
     var body: some View {
         VStack {
-//            GroupBox {
-//                Text(commitInfo)
-//            }
+            GroupBox {
+                Text(commitInfo)
+            }
             
             List(files, id: \.self, selection: $file) {
                 Text($0.name)
