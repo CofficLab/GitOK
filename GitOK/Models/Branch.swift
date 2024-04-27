@@ -17,7 +17,7 @@ struct Branch {
 
 extension Branch: Hashable {
     static func == (lhs: Branch, rhs: Branch) -> Bool {
-        lhs.name == rhs.name
+        lhs.uuid == rhs.uuid
     }
 }
 
