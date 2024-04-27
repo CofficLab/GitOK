@@ -37,7 +37,7 @@ struct Branchs: View {
     func setBranch(_ branch: Branch) {
         do {
             let current = try Git.getCurrentBranch(project.path)
-            if current == branch {
+            if current.name == branch.name {
                 return
             }
             

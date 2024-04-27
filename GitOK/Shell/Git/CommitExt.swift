@@ -15,7 +15,7 @@ extension Git {
         do {
             let message = try Git.run("commit -a -m '\(commit)'", path: path)
             os_log("\(self.label)commitAndPush commit message->\(message)")
-            let pushMessage = try Git.run("push", path: path, debugPrint: debugPrint)
+            let pushMessage = try Git.run("push --porcelain", path: path, debugPrint: debugPrint)
             os_log("\(self.label)commitAndPush push message->\(pushMessage)")
             
             return pushMessage
