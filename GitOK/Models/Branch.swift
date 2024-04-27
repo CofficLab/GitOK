@@ -3,13 +3,15 @@ import SwiftData
 import SwiftUI
 
 struct Branch {
+    var uuid: String
     var name: String
     var isCurrent = false
 
     static func fromShellLine(_ l: String) -> Branch {
-        Branch(name: l.trimmingCharacters(in: CharacterSet(charactersIn: "*"))
-            .trimmingCharacters(in: .whitespacesAndNewlines),
-            isCurrent: l.hasPrefix("*"))
+        Branch(uuid: UUID().uuidString,
+               name: l.trimmingCharacters(in: CharacterSet(charactersIn: "*"))
+                   .trimmingCharacters(in: .whitespacesAndNewlines),
+               isCurrent: l.hasPrefix("*"))
     }
 }
 
