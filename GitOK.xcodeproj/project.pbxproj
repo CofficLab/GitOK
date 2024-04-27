@@ -71,6 +71,7 @@
 		0BD15C4E2BDBF360004024CF /* BtnMerge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD15C4D2BDBF360004024CF /* BtnMerge.swift */; };
 		0BD15C502BDBF3BD004024CF /* MergeForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD15C4F2BDBF3BD004024CF /* MergeForm.swift */; };
 		0BD15C522BDC8D91004024CF /* SmartError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD15C512BDC8D91004024CF /* SmartError.swift */; };
+		0BD15C542BDCAF45004024CF /* NoChanges.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD15C532BDCAF45004024CF /* NoChanges.swift */; };
 		0BDE61A32BDB3C9B006E23EA /* Projects.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BDE61A22BDB3C9B006E23EA /* Projects.swift */; };
 		0BDE61A52BDB408F006E23EA /* RevListExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BDE61A42BDB408F006E23EA /* RevListExt.swift */; };
 		0BDE61A72BDB4541006E23EA /* StatusExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BDE61A62BDB4541006E23EA /* StatusExt.swift */; };
@@ -161,6 +162,7 @@
 		0BD15C4D2BDBF360004024CF /* BtnMerge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BtnMerge.swift; sourceTree = "<group>"; };
 		0BD15C4F2BDBF3BD004024CF /* MergeForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MergeForm.swift; sourceTree = "<group>"; };
 		0BD15C512BDC8D91004024CF /* SmartError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmartError.swift; sourceTree = "<group>"; };
+		0BD15C532BDCAF45004024CF /* NoChanges.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoChanges.swift; sourceTree = "<group>"; };
 		0BDE61A22BDB3C9B006E23EA /* Projects.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Projects.swift; sourceTree = "<group>"; };
 		0BDE61A42BDB408F006E23EA /* RevListExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RevListExt.swift; sourceTree = "<group>"; };
 		0BDE61A62BDB4541006E23EA /* StatusExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusExt.swift; sourceTree = "<group>"; };
@@ -347,6 +349,7 @@
 				0BDE61AA2BDB4AB8006E23EA /* FileList.swift */,
 				0BDE61AC2BDB4E86006E23EA /* FileTile.swift */,
 				0BD15C4F2BDBF3BD004024CF /* MergeForm.swift */,
+				0BD15C532BDCAF45004024CF /* NoChanges.swift */,
 			);
 			path = Detail;
 			sourceTree = "<group>";
@@ -520,6 +523,7 @@
 				0BB555242BDB7B300044048B /* BranchExt.swift in Sources */,
 				0B1C68022BD9F7B500502EB1 /* BtnOpen.swift in Sources */,
 				0B0E16812BD89A8F0078942B /* GitOKApp.swift in Sources */,
+				0BD15C542BDCAF45004024CF /* NoChanges.swift in Sources */,
 				0B1C67BC2BD9132500502EB1 /* Git.swift in Sources */,
 				0BD15C502BDBF3BD004024CF /* MergeForm.swift in Sources */,
 				0BD15C4C2BDBE959004024CF /* StateExt.swift in Sources */,

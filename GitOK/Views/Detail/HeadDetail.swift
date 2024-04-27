@@ -25,6 +25,8 @@ struct HeadDetail: View {
                 GroupBox {
                     Text(message)
                 }
+                
+                NoChanges()
             } else {
                 FileList(files: files)
             }
