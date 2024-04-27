@@ -2,17 +2,20 @@ import SwiftUI
 
 struct Detail: View {
     @EnvironmentObject var app: AppManager
-    
+
     @Binding var message: String
 
     var project: Project
-    var log: GitCommit
+    var log: GitCommit?
+    @Binding var file: File?
 
     var body: some View {
         VStack {
-            if log.isHead {
-                HeadDetail(project)
-            } else {
+            if file != nil {
+                HeadDetail(file: $file, project: project)
+            }
+            
+            if let log = log {
                 CommitDetail(project, log: log)
             }
         }

@@ -7,37 +7,51 @@ struct History: View {
 
     @State var message = ""
     @State var logs: [GitCommit] = []
+    @Binding var file: File?
 
-    var item: Project
+    var project: Project
     var branch: Branch
-    var allLogs: [GitCommit] {
-        [GitCommit.head] + logs
-    }
 
     var body: some View {
-        List(allLogs, id: \.self, selection: $selection, rowContent: {
-            LogTile(
-                commit: $0,
-                project: item,
-                branch: branch
-            )
-            .tag($0 as GitCommit?)
-        })
-        .onAppear {
-            logs = try! Git.logs(item.path)
-            selection = allLogs.first
+        VStack {
+            HeadTile(file: $file, project: project)
 
-            EventManager().onCommitted({
-                logs = try! Git.logs(item.path)
+            List(logs, id: \.self, selection: $selection, rowContent: {
+                LogTile(
+                    commit: $0,
+                    project: project,
+                    branch: branch
+                )
+                .tag($0 as GitCommit?)
             })
         }
-        .onChange(of: item, refresh)
+        .onAppear {
+            logs = try! Git.logs(project.path)
+            selection = logs.first
+
+            EventManager().onCommitted({
+                logs = try! Git.logs(project.path)
+            })
+        }
+        .onChange(of: project, refresh)
         .onChange(of: branch.name, refresh)
+        .onChange(of: file, {
+            if file != nil {
+                selection = nil
+            }
+        })
+        .onChange(of: selection, {
+            if selection != nil {
+                file = nil
+            }
+        })
     }
 
     func refresh() {
-        logs = try! Git.logs(item.path)
-        selection = allLogs.first
+        logs = try! Git.logs(project.path)
+        if file == nil {
+            selection = logs.first
+        }
     }
 }
 

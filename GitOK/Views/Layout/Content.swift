@@ -10,20 +10,21 @@ struct Content: View {
     @State var branch: Branch? = nil
     @State var gitLog: GitCommit? = nil
     @State var message: String = ""
+    @State var file: File?
 
     var body: some View {
         NavigationSplitView {
             Projects(project: $project)
         } content: {
             if let project = project, let branch = branch {
-                History(selection: $gitLog, item: project, branch: branch)
+                History(selection: $gitLog, file: $file, project: project, branch: branch)
                     .frame(idealWidth: 300)
                     .frame(minWidth: 50)
             }
         } detail: {
             VSplitView {
-                if let project = project, let gitLog = gitLog {
-                    Detail(message: $message, project: project, log: gitLog)
+                if let project = project {
+                    Detail(message: $message, project: project, log: gitLog, file: $file)
                 }
             }
             .frame(maxWidth: .infinity)

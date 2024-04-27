@@ -10,7 +10,7 @@ struct HeadDetail: View {
     @State var diff = ""
     @State var diffBlock: DiffBlock? = nil
     @State var files: [File] = []
-    @State var file: File?
+    @Binding var file: File?
     @State var codeMessages: Set<TextLocated<Message>> = Set()
 
     @State private var text: String = "My awesome code..."
@@ -19,10 +19,6 @@ struct HeadDetail: View {
     @Environment(\.colorScheme) private var colorScheme: ColorScheme
 
     var project: Project
-
-    init(_ item: Project) {
-        project = item
-    }
 
     var body: some View {
         VStack {
@@ -35,7 +31,6 @@ struct HeadDetail: View {
             if files.isEmpty {
                 NoChanges()
             } else {
-                FileList(file: $file, files: files)
                 DiffView(diffBlock)
             }
         }
