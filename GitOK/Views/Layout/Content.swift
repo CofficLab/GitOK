@@ -25,13 +25,6 @@ struct Content: View {
                 if let project = project, let gitLog = gitLog {
                     Detail(message: $message, project: project, log: gitLog)
                 }
-
-//                ScrollView {
-//                    Text(message)
-//                        .padding()
-//                        .frame(maxWidth: .infinity)
-//                }
-//                .frame(maxWidth: .infinity)
             }
             .frame(maxWidth: .infinity)
         }

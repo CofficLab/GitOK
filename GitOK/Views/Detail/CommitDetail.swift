@@ -22,10 +22,7 @@ struct CommitDetail: View {
                 Text(commitInfo)
             }
             
-            List(files, id: \.self, selection: $file) {
-                Text($0.name)
-                    .tag($0 as File?)
-            }
+            FileList(files: files)
         }
         .onAppear {
             commitInfo = try! Git.show(item.path, hash: commit.hash)
