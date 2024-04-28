@@ -41,6 +41,7 @@ function makeEditor(original: string, modified: string): monaco.editor.IStandalo
     var diffEditor = monaco.editor.createDiffEditor(
         document.getElementById("container")!,
         {
+            inDiffEditor: true,
             // You can optionally disable the resizing
             enableSplitViewResizing: false,
             renderSideBySide: false,
@@ -48,6 +49,20 @@ function makeEditor(original: string, modified: string): monaco.editor.IStandalo
             minimap: {
                 enabled: false,
                 side: "left",
+            },
+            ignoreTrimWhitespace: false,
+            folding: true,
+            diffCodeLens: true,
+
+            /**
+             * If the diff editor should only show the difference review mode.
+             */
+            onlyShowAccessibleDiffViewer: false,
+            hideUnchangedRegions: {
+                enabled: true,
+                revealLineCount: 10,
+                minimumLineCount: 1,
+                // contextLineCount: 1000,
             }
         }
     );

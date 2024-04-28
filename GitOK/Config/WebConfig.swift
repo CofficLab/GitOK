@@ -12,12 +12,12 @@ class WebConfig: ObservableObject {
     }
 
     static func makeView() -> WebView {
-        #if DEBUG && false
+        #if DEBUG && true
         let view = WebView(
                 .url(URL(string: "http://127.0.0.1:5173")!)
             )
         #else
-            var view = WebView(
+        let view = WebView(
                 .file(WebConfig.htmlFile)
             )
         #endif
