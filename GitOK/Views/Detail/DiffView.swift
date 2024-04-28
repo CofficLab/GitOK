@@ -14,7 +14,7 @@ struct DiffView: View {
 
     var body: some View {
         view
-//            .frame(maxWidth: .infinity)
+            .frame(maxWidth: .infinity)
             .onAppear {
             EventManager().onJSReady {
                 view.content.setOriginal(file?.lastContent ?? "")

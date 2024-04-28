@@ -16,13 +16,15 @@ class WebContent: WKWebView {
         }
 
         os_log("📶 JS Code: \(shortJsCode)")
-        evaluateJavaScript(jsCode, completionHandler: { _, error in
-            if error == nil {
-                os_log("📶 执行JS代码成功")
-            } else {
-                os_log("📶 执行JS代码失败-> \(String(describing: error))")
-            }
-        })
+        DispatchQueue.main.async {
+            self.evaluateJavaScript(jsCode, completionHandler: { _, error in
+                if error == nil {
+                    os_log("📶 执行JS代码成功")
+                } else {
+                    os_log("📶 执行JS代码失败-> \(String(describing: error))")
+                }
+            })
+        }
     }
 }
 
