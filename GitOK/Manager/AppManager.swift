@@ -10,6 +10,7 @@ class AppManager: NSObject, ObservableObject, AVAudioPlayerDelegate {
     @Published var branches: [String] = []
     @Published var commit: GitCommit?
     @Published var project: Project?
+    @Published var file: File?
     
     func alert(_ message: String, info: String) {
         // 显示错误提示

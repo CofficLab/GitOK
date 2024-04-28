@@ -1,5 +1,5 @@
-import SwiftUI
 import OSLog
+import SwiftUI
 
 struct History: View {
     @EnvironmentObject var app: AppManager
@@ -7,40 +7,47 @@ struct History: View {
     @State var commitId: String = ""
     @State var message = ""
     @State var commits: [GitCommit] = []
-    
+    @State var file: File? = nil
+    @State var files: [File] = []
+
     var body: some View {
         if let project = app.project {
-            List(selection: $commitId) {
-                ForEach(Stage.allCases, id: \.self) { stage in
-                    if Stage(rawValue: stage.rawValue) == .Head {
-                        Section("当前", content: {
-                            ForEach([GitCommit.headFor(project.path)]) { commit in
-                                HistoryTile(
-                                    commit: commit,
-                                    project: project
-                                )
-                            }
-                        })
-                    } else {
-                        Section("历史", content: {
-                            ForEach(commits) { commit in
-                                HistoryTile(
-                                    commit: commit,
-                                    project: project
-                                )
-                            }
-                        })
+            VStack {
+                List(selection: $commitId) {
+                    ForEach(Stage.allCases, id: \.self) { stage in
+                        if Stage(rawValue: stage.rawValue) == .Head {
+                            Section("当前", content: {
+                                ForEach([GitCommit.headFor(project.path)]) { commit in
+                                    HistoryTile(
+                                        commit: commit,
+                                        project: project
+                                    )
+                                }
+                            })
+                        } else {
+                            Section("历史", content: {
+                                ForEach(commits) { commit in
+                                    HistoryTile(
+                                        commit: commit,
+                                        project: project
+                                    )
+                                }
+                            })
+                        }
                     }
+                }
+
+                List(files, id: \.self, selection: $file) {
+                    FileTile(file: $0)
                 }
             }
             .onAppear {
-                commits = project.getCommits()
-                commitId = commits.first?.id ?? ""
+                refresh()
 
                 EventManager().onCommitted {
                     refresh()
                 }
-                
+
                 EventManager().onRefresh {
                     refresh()
                 }
@@ -51,7 +58,12 @@ struct History: View {
                 app.commit = project.getCommitsWithHead().first(where: {
                     $0.id == commitId
                 })
+                
+                refreshFile()
             }
+            .onChange(of: file, {
+                app.file = file
+            })
         }
     }
 
@@ -59,8 +71,21 @@ struct History: View {
         guard let project = app.project else {
             return
         }
-        
-        commits = try! Git.logs(project.path)
+
+        commits = project.getCommits()
+        commitId = commits.first?.id ?? ""
+        app.commit = project.getCommitsWithHead().first(where: {
+            $0.id == commitId
+        })
+    }
+
+    func refreshFile() {
+        guard let commit = app.commit else {
+            return
+        }
+
+        files = commit.getFiles()
+        file = files.first
     }
 }
 

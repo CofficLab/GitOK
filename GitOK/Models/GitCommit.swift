@@ -46,6 +46,15 @@ struct GitCommit {
             return try! Git.commitFiles(path, hash: hash)
         }
     }
+    
+    func getTitle() -> String {
+        if isHead == false {
+            return message
+        } else {
+            let count = getFiles().count
+            return "\(count) 个变动"
+        }
+    }
 }
 
 extension GitCommit: Identifiable {

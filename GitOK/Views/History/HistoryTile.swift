@@ -11,7 +11,7 @@ struct HistoryTile: View {
     var body: some View {
         VStack(spacing: 0) {
             HStack {
-                Text(commit.message)
+                Text(commit.getTitle())
 
                 Spacer()
 
