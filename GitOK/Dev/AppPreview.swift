@@ -5,6 +5,7 @@ struct AppPreview: View {
         Content()
             .modelContainer(AppConfig.getContainer())
             .environmentObject(AppManager())
+            .environmentObject(WebConfig())
     }
 }
 
