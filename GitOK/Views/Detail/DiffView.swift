@@ -5,10 +5,10 @@ struct DiffView: View {
     @EnvironmentObject var app: AppManager
     @EnvironmentObject var webConfig: WebConfig
 
-    var file: File?
+    var file: File
     var view: WebView { webConfig.view }
 
-    init(_ file: File?) {
+    init(_ file: File) {
         self.file = file
     }
 
@@ -17,14 +17,15 @@ struct DiffView: View {
             .frame(maxWidth: .infinity)
             .onAppear {
             EventManager().onJSReady {
-                view.content.setOriginal(file?.lastContent ?? "")
-                view.content.setModified(file?.content ?? "")
+                refresh()
             }
         }
-        .onChange(of: file, {
-            view.content.setOriginal(file?.lastContent ?? "")
-            view.content.setModified(file?.content ?? "")
-        })
+        .onChange(of: file, refresh)
+    }
+    
+    func refresh() {
+        view.content.setOriginal(file.lastContent)
+        view.content.setModified(file.content)
     }
 }
 

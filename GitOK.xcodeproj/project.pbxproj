@@ -27,8 +27,6 @@
 		0B1C67EF2BD9DACF00502EB1 /* CommitForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1C67EE2BD9DACF00502EB1 /* CommitForm.swift */; };
 		0B1C67F12BD9DB1F00502EB1 /* CommitCategoryPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1C67F02BD9DB1F00502EB1 /* CommitCategoryPicker.swift */; };
 		0B1C67F32BD9E21B00502EB1 /* BtnOpenRemote.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1C67F22BD9E21B00502EB1 /* BtnOpenRemote.swift */; };
-		0B1C67F52BD9E4A400502EB1 /* CommitDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1C67F42BD9E4A400502EB1 /* CommitDetail.swift */; };
-		0B1C67FC2BD9ED7300502EB1 /* HeadDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1C67FB2BD9ED7300502EB1 /* HeadDetail.swift */; };
 		0B1C67FE2BD9F12000502EB1 /* EventManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1C67FD2BD9F12000502EB1 /* EventManager.swift */; };
 		0B1C68002BD9F68F00502EB1 /* BtnFinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1C67FF2BD9F68F00502EB1 /* BtnFinder.swift */; };
 		0B1C68022BD9F7B500502EB1 /* BtnOpen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1C68012BD9F7B500502EB1 /* BtnOpen.swift */; };
@@ -120,8 +118,6 @@
 		0B1C67EE2BD9DACF00502EB1 /* CommitForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommitForm.swift; sourceTree = "<group>"; };
 		0B1C67F02BD9DB1F00502EB1 /* CommitCategoryPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommitCategoryPicker.swift; sourceTree = "<group>"; };
 		0B1C67F22BD9E21B00502EB1 /* BtnOpenRemote.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BtnOpenRemote.swift; sourceTree = "<group>"; };
-		0B1C67F42BD9E4A400502EB1 /* CommitDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommitDetail.swift; sourceTree = "<group>"; };
-		0B1C67FB2BD9ED7300502EB1 /* HeadDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeadDetail.swift; sourceTree = "<group>"; };
 		0B1C67FD2BD9F12000502EB1 /* EventManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventManager.swift; sourceTree = "<group>"; };
 		0B1C67FF2BD9F68F00502EB1 /* BtnFinder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BtnFinder.swift; sourceTree = "<group>"; };
 		0B1C68012BD9F7B500502EB1 /* BtnOpen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BtnOpen.swift; sourceTree = "<group>"; };
@@ -341,12 +337,10 @@
 			isa = PBXGroup;
 			children = (
 				0B1C67F02BD9DB1F00502EB1 /* CommitCategoryPicker.swift */,
-				0B1C67F42BD9E4A400502EB1 /* CommitDetail.swift */,
 				0B1C67EE2BD9DACF00502EB1 /* CommitForm.swift */,
 				0BD15C602BDD33CC004024CF /* DiffView.swift */,
 				0BDE61AA2BDB4AB8006E23EA /* FileList.swift */,
 				0BDE61AC2BDB4E86006E23EA /* FileTile.swift */,
-				0B1C67FB2BD9ED7300502EB1 /* HeadDetail.swift */,
 				0BD15C4F2BDBF3BD004024CF /* MergeForm.swift */,
 				0BD15C532BDCAF45004024CF /* NoChanges.swift */,
 			);
@@ -580,8 +574,6 @@
 				0B1C68002BD9F68F00502EB1 /* BtnFinder.swift in Sources */,
 				0BCC6D0F2BD949B6006ADA94 /* History.swift in Sources */,
 				0B6BE4612BDA603000C8ACB2 /* BtnWhoami.swift in Sources */,
-				0B1C67FC2BD9ED7300502EB1 /* HeadDetail.swift in Sources */,
-				0B1C67F52BD9E4A400502EB1 /* CommitDetail.swift in Sources */,
 				0B76FD122BDDFF7200501F1F /* LoggerExt.swift in Sources */,
 				0B76FD1B2BDE2B2F00501F1F /* WebHandler.swift in Sources */,
 				0B76FD182BDE27D000501F1F /* DefaultMessageHandler.swift in Sources */,
