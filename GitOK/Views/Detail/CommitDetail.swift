@@ -2,7 +2,7 @@ import SwiftUI
 
 struct CommitDetail: View {
     @EnvironmentObject var app: AppManager
-    
+
     @State var message = ""
     @State var files: [File] = []
     @State var file: File? = nil
@@ -12,34 +12,38 @@ struct CommitDetail: View {
 
     init(_ item: Project, log: GitCommit) {
         self.item = item
-        self.commit = log
+        commit = log
     }
 
     var body: some View {
         GeometryReader { geo in
-        VStack {
+            VStack {
                 List(files, id: \.self, selection: $file) {
                     FileTile(file: $0)
                 }
-                .frame(maxHeight: geo.size.height/2)
+                .frame(maxHeight: geo.size.height / 2)
                 .onAppear {
                     self.file = files.first
                 }
-                
-                DiffView(file)
-                .frame(maxHeight: .infinity)
+
+                if files.isEmpty {
+                    Text("本地无变动")
+                } else {
+                    DiffView(file)
+                        .frame(maxHeight: .infinity)
+                }
             }
         }
         .onAppear {
             refresh()
-            
+
             EventManager().onCommitted {
                 refresh()
             }
         }
         .onChange(of: commit.hash, refresh)
     }
-    
+
     func refresh() {
         files = commit.getFiles()
     }
