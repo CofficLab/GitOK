@@ -12,7 +12,7 @@ class WebConfig: ObservableObject {
     }
 
     static func makeView() -> WebView {
-        #if DEBUG && true
+        #if DEBUG && false
         let view = WebView(
                 .url(URL(string: "http://127.0.0.1:5173")!)
             )
@@ -33,8 +33,8 @@ class WebConfig: ObservableObject {
     static var htmlFile = Bundle.main.url(
         forResource: "index",
         withExtension: "html",
-        subdirectory: "web"
-    )
+        subdirectory: "webview/dist"
+    )!
 }
 
 #Preview("App") {
