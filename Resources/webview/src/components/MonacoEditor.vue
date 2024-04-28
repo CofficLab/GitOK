@@ -4,15 +4,37 @@
 
 <script setup lang="ts">
 import * as monaco from "monaco-editor";
-import { onMounted } from "vue";
+import { useAppStore } from "../store/AppStore";
+import { onMounted, watch } from "vue";
+
+const appStore = useAppStore();
+var editor: monaco.editor.IStandaloneDiffEditor;
 
 onMounted(() => {
+    editor = makeEditor(appStore.original, appStore.modified);
+});
+
+watch(() => appStore.original, (newValue) => {
+    editor.setModel({
+        original: monaco.editor.createModel(newValue, "text/plain"),
+        modified: monaco.editor.createModel(appStore.modified, "text/plain"),
+    });
+})
+
+watch(() => appStore.modified, (newValue) => {
+    editor.setModel({
+        original: monaco.editor.createModel(appStore.original, "text/plain"),
+        modified: monaco.editor.createModel(newValue, "text/plain"),
+    });
+})
+
+function makeEditor(original: string, modified: string): monaco.editor.IStandaloneDiffEditor {
     var originalModel = monaco.editor.createModel(
-        "This line is removed on the right.\njust some text\nabcd\nefgh\nSome more text",
+        original,
         "text/plain"
     );
     var modifiedModel = monaco.editor.createModel(
-        "just some text\nabcz\nzzzzefgh\nSome more text.\nThis line is removed on the left.",
+        modified,
         "text/plain"
     );
 
@@ -33,7 +55,9 @@ onMounted(() => {
         original: originalModel,
         modified: modifiedModel,
     });
-})
+
+    return diffEditor;
+}
 </script>
 
 <style scoped>
