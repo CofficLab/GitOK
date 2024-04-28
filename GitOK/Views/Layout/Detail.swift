@@ -11,24 +11,24 @@ struct Detail: View {
 
     var body: some View {
         VStack {
-            if commit?.isHead ?? false {
-                CommitForm()
-            }
-
             VStack {
-                List(files, id: \.self, selection: $file) {
-                    FileTile(file: $0)
-                }
-                .onAppear {
-                    self.file = files.first
-                }
-
-                if let file = file {
-                    DiffView(file)
-                }
-
                 if files.isEmpty {
-                    Text("本地无变动")
+                    NoChanges()
+                } else {
+                    if commit?.isHead ?? false {
+                        CommitForm().padding()
+                    }
+                    
+                    List(files, id: \.self, selection: $file) {
+                        FileTile(file: $0)
+                    }
+                    .onAppear {
+                        self.file = files.first
+                    }
+                    
+                    if let file = file {
+                        DiffView(file)
+                    }
                 }
             }
         }
