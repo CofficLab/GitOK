@@ -19,6 +19,12 @@ final class Project {
         self.timestamp = .now
         self.url = url
     }
+    
+    func getCommits() -> [GitCommit] {
+        let commits = try! Git.logs(path)
+        
+        return [GitCommit.headFor(path)] + commits
+    }
 }
 
 #Preview {

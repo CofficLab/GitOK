@@ -28,7 +28,6 @@
 		0B1C67F12BD9DB1F00502EB1 /* CommitCategoryPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1C67F02BD9DB1F00502EB1 /* CommitCategoryPicker.swift */; };
 		0B1C67F32BD9E21B00502EB1 /* BtnOpenRemote.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1C67F22BD9E21B00502EB1 /* BtnOpenRemote.swift */; };
 		0B1C67F52BD9E4A400502EB1 /* CommitDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1C67F42BD9E4A400502EB1 /* CommitDetail.swift */; };
-		0B1C67FA2BD9E69100502EB1 /* LogTile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1C67F92BD9E69100502EB1 /* LogTile.swift */; };
 		0B1C67FC2BD9ED7300502EB1 /* HeadDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1C67FB2BD9ED7300502EB1 /* HeadDetail.swift */; };
 		0B1C67FE2BD9F12000502EB1 /* EventManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1C67FD2BD9F12000502EB1 /* EventManager.swift */; };
 		0B1C68002BD9F68F00502EB1 /* BtnFinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1C67FF2BD9F68F00502EB1 /* BtnFinder.swift */; };
@@ -81,6 +80,7 @@
 		0BDE61A92BDB4746006E23EA /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BDE61A82BDB4746006E23EA /* File.swift */; };
 		0BDE61AB2BDB4AB8006E23EA /* FileList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BDE61AA2BDB4AB8006E23EA /* FileList.swift */; };
 		0BDE61AD2BDB4E87006E23EA /* FileTile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BDE61AC2BDB4E86006E23EA /* FileTile.swift */; };
+		0BF75EE02BDE4C0C00A553CD /* HistoryTile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BF75EDF2BDE4C0C00A553CD /* HistoryTile.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -120,7 +120,6 @@
 		0B1C67F02BD9DB1F00502EB1 /* CommitCategoryPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommitCategoryPicker.swift; sourceTree = "<group>"; };
 		0B1C67F22BD9E21B00502EB1 /* BtnOpenRemote.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BtnOpenRemote.swift; sourceTree = "<group>"; };
 		0B1C67F42BD9E4A400502EB1 /* CommitDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommitDetail.swift; sourceTree = "<group>"; };
-		0B1C67F92BD9E69100502EB1 /* LogTile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogTile.swift; sourceTree = "<group>"; };
 		0B1C67FB2BD9ED7300502EB1 /* HeadDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeadDetail.swift; sourceTree = "<group>"; };
 		0B1C67FD2BD9F12000502EB1 /* EventManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventManager.swift; sourceTree = "<group>"; };
 		0B1C67FF2BD9F68F00502EB1 /* BtnFinder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BtnFinder.swift; sourceTree = "<group>"; };
@@ -175,6 +174,7 @@
 		0BDE61A82BDB4746006E23EA /* File.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = File.swift; sourceTree = "<group>"; };
 		0BDE61AA2BDB4AB8006E23EA /* FileList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileList.swift; sourceTree = "<group>"; };
 		0BDE61AC2BDB4E86006E23EA /* FileTile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileTile.swift; sourceTree = "<group>"; };
+		0BF75EDF2BDE4C0C00A553CD /* HistoryTile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryTile.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -353,8 +353,8 @@
 		0B1C67F82BD9E67E00502EB1 /* History */ = {
 			isa = PBXGroup;
 			children = (
-				0B1C67F92BD9E69100502EB1 /* LogTile.swift */,
 				0BD15C642BDD429A004024CF /* HeadTile.swift */,
+				0BF75EDF2BDE4C0C00A553CD /* HistoryTile.swift */,
 			);
 			path = History;
 			sourceTree = "<group>";
@@ -527,7 +527,6 @@
 				0BD15C632BDD40E1004024CF /* ListPlay.swift in Sources */,
 				0B1C68042BD9FAE500502EB1 /* BtnOpenXcode.swift in Sources */,
 				0BCC6D112BD94B5B006ADA94 /* BtnLog.swift in Sources */,
-				0B1C67FA2BD9E69100502EB1 /* LogTile.swift in Sources */,
 				0B76FCF12BDDD18400501F1F /* WebView.swift in Sources */,
 				0BDE61A32BDB3C9B006E23EA /* Projects.swift in Sources */,
 				0BD15C612BDD33CC004024CF /* DiffView.swift in Sources */,
@@ -542,6 +541,7 @@
 				0B0E16852BD89A8F0078942B /* Item.swift in Sources */,
 				0B76FCF42BDDD1BD00501F1F /* WebContent.swift in Sources */,
 				0BCC6D0D2BD948AB006ADA94 /* BtnSave.swift in Sources */,
+				0BF75EE02BDE4C0C00A553CD /* HistoryTile.swift in Sources */,
 				0B1C67EB2BD9181200502EB1 /* BtnPush.swift in Sources */,
 				0B1C67C22BD9159900502EB1 /* Project.swift in Sources */,
 				0B1C67BF2BD9157100502EB1 /* DBExt.swift in Sources */,

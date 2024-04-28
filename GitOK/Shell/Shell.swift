@@ -42,6 +42,9 @@ class Shell {
         
         if let errorOutput = String(data: errorData, encoding: .utf8), errorOutput.count > 0 {
             os_log("\(self.label)错误")
+            print("\(self.label)")
+            print("\(command)")
+            print("\n")
             print(errorOutput)
             
             throw SmartError.ShellError(output: errorOutput)

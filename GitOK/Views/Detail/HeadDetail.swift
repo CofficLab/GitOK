@@ -16,6 +16,8 @@ struct HeadDetail: View {
             MergeForm(message: $message, project: project)
 
             CommitForm(message: $message, project: project)
+            
+            FileList(file: $file, files: files)
 
             Spacer()
 

@@ -16,14 +16,25 @@ struct CommitDetail: View {
     }
 
     var body: some View {
+        GeometryReader { geo in
         VStack {
-            FileList(file: $file, files: files)
+                List(files, id: \.self, selection: $file) {
+                    FileTile(file: $0)
+                }
+                .frame(maxHeight: geo.size.height/2)
+                .onAppear {
+                    self.file = files.first
+                }
+                
+                DiffView(file)
+                .frame(maxHeight: .infinity)
+            }
         }
         .onAppear {
-            files = try! Git.commitFiles(item.path, hash: commit.hash)
+            files = commit.getFiles()
         }
         .onChange(of: commit.hash, {
-            files = try! Git.commitFiles(item.path, hash: commit.hash)
+            files = commit.getFiles()
         })
     }
 }

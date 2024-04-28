@@ -4,19 +4,19 @@ struct Detail: View {
     @EnvironmentObject var app: AppManager
 
     @Binding var message: String
+    @Binding var file: File?
 
     var project: Project
-    var log: GitCommit?
-    @Binding var file: File?
+    var commit: GitCommit?
 
     var body: some View {
         VStack {
-            if file != nil {
-                HeadDetail(file: $file, project: project)
+            if commit?.isHead ?? false {
+                CommitForm(message: $message, project: project)
             }
             
-            if let log = log {
-                CommitDetail(project, log: log)
+            if let commit = commit {
+                CommitDetail(project, log: commit)
             }
         }
         .frame(maxWidth: .infinity)

@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct LogTile: View {
+struct HistoryTile: View {
     @EnvironmentObject var app: AppManager
 
     @State var isSynced = true

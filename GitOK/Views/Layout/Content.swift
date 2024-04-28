@@ -24,7 +24,7 @@ struct Content: View {
         } detail: {
             VSplitView {
                 if let project = project {
-                    Detail(message: $message, project: project, log: gitLog, file: $file)
+                    Detail(message: $message, file: $file, project: project, commit: gitLog)
                 }
             }
             .frame(maxWidth: .infinity)

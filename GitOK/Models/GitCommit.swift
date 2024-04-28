@@ -2,7 +2,9 @@ import Foundation
 import SwiftUI
 
 struct GitCommit {
-    static var head: GitCommit = .init(isHead: true, message: "当前")
+    static func headFor(_ path: String) -> GitCommit {
+        .init(isHead: true, path: path, message: "当前")
+    }
 
     var path: String
     var uuid: String
@@ -31,6 +33,14 @@ struct GitCommit {
         isHead ? true : try! !Git.notSynced(path).contains(where: {
             $0.hash == self.hash
         })
+    }
+    
+    func getFiles() -> [File] {
+        if isHead {
+            return try! Git.changedFile(path)
+        } else {
+            return try! Git.commitFiles(path, hash: hash)
+        }
     }
 }
 

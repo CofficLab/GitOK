@@ -6,7 +6,7 @@ struct History: View {
     @Binding var selection: GitCommit?
 
     @State var message = ""
-    @State var logs: [GitCommit] = []
+    @State var commits: [GitCommit] = []
     @Binding var file: File?
 
     var project: Project
@@ -14,43 +14,40 @@ struct History: View {
 
     var body: some View {
         VStack {
-            HeadTile(file: $file, project: project)
-
-            List(logs, id: \.self, selection: $selection, rowContent: {
-                LogTile(
-                    commit: $0,
+            List(commits, id: \.self, selection: $selection, rowContent: { commit in
+                HistoryTile(
+                    commit: commit,
                     project: project,
                     branch: branch
-                )
-                .tag($0 as GitCommit?)
+                ).tag(commit as GitCommit?)
             })
         }
         .onAppear {
-            logs = try! Git.logs(project.path)
-            selection = logs.first
+            commits = project.getCommits()
+            selection = commits.first
 
-            EventManager().onCommitted({
-                logs = try! Git.logs(project.path)
-            })
+            EventManager().onCommitted {
+                commits = project.getCommits()
+            }
         }
         .onChange(of: project, refresh)
         .onChange(of: branch.name, refresh)
-        .onChange(of: file, {
+        .onChange(of: file) {
             if file != nil {
                 selection = nil
             }
-        })
-        .onChange(of: selection, {
+        }
+        .onChange(of: selection) {
             if selection != nil {
                 file = nil
             }
-        })
+        }
     }
 
     func refresh() {
-        logs = try! Git.logs(project.path)
+        commits = try! Git.logs(project.path)
         if file == nil {
-            selection = logs.first
+            selection = commits.first
         }
     }
 }
