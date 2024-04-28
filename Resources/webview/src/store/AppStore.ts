@@ -5,8 +5,8 @@ export const useAppStore = defineStore('app-store', {
     state: () => {
         return {
             ready: false,
-            original: "333",
-            modified: "e333"
+            original: "",
+            modified: ""
         }
     },
 
