@@ -31,11 +31,17 @@ struct CommitDetail: View {
             }
         }
         .onAppear {
-            files = commit.getFiles()
+            refresh()
+            
+            EventManager().onCommitted {
+                refresh()
+            }
         }
-        .onChange(of: commit.hash, {
-            files = commit.getFiles()
-        })
+        .onChange(of: commit.hash, refresh)
+    }
+    
+    func refresh() {
+        files = commit.getFiles()
     }
 }
 
