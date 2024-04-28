@@ -6,7 +6,11 @@ struct NoChanges: View {
     var body: some View {
         VStack {
             Spacer()
-            Text("本地无变动")
+            HStack {
+                Spacer()
+                Text("本地无变动")
+                Spacer()
+            }
             Spacer()
         }
     }
