@@ -59,8 +59,8 @@
 		0B76FCF12BDDD18400501F1F /* WebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B76FCF02BDDD18400501F1F /* WebView.swift */; };
 		0B76FCF42BDDD1BD00501F1F /* WebContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B76FCF32BDDD1BD00501F1F /* WebContent.swift */; };
 		0B76FCF62BDDD1DE00501F1F /* WebViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B76FCF52BDDD1DE00501F1F /* WebViewDelegate.swift */; };
-		0B76FCFA2BDDD4D300501F1F /* web in Resources */ = {isa = PBXBuildFile; fileRef = 0B76FCF82BDDD4D300501F1F /* web */; };
 		0B76FCFB2BDDD4D300501F1F /* sample_macOS in Resources */ = {isa = PBXBuildFile; fileRef = 0B76FCF92BDDD4D300501F1F /* sample_macOS */; };
+		0B76FCFD2BDDE0E700501F1F /* webview in Resources */ = {isa = PBXBuildFile; fileRef = 0B76FCFC2BDDE0E700501F1F /* webview */; };
 		0BB555242BDB7B300044048B /* BranchExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BB555232BDB7B300044048B /* BranchExt.swift */; };
 		0BCC6D012BD92CB2006ADA94 /* DebugCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCC6D002BD92CB2006ADA94 /* DebugCommand.swift */; };
 		0BCC6D032BD932DA006ADA94 /* PathExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCC6D022BD932DA006ADA94 /* PathExt.swift */; };
@@ -163,8 +163,8 @@
 		0B76FCF02BDDD18400501F1F /* WebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebView.swift; sourceTree = "<group>"; };
 		0B76FCF32BDDD1BD00501F1F /* WebContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebContent.swift; sourceTree = "<group>"; };
 		0B76FCF52BDDD1DE00501F1F /* WebViewDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewDelegate.swift; sourceTree = "<group>"; };
-		0B76FCF82BDDD4D300501F1F /* web */ = {isa = PBXFileReference; lastKnownFileType = folder; path = web; sourceTree = "<group>"; };
 		0B76FCF92BDDD4D300501F1F /* sample_macOS */ = {isa = PBXFileReference; lastKnownFileType = folder; path = sample_macOS; sourceTree = "<group>"; };
+		0B76FCFC2BDDE0E700501F1F /* webview */ = {isa = PBXFileReference; lastKnownFileType = folder; path = webview; sourceTree = "<group>"; };
 		0BB555232BDB7B300044048B /* BranchExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BranchExt.swift; sourceTree = "<group>"; };
 		0BCC6D002BD92CB2006ADA94 /* DebugCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugCommand.swift; sourceTree = "<group>"; };
 		0BCC6D022BD932DA006ADA94 /* PathExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PathExt.swift; sourceTree = "<group>"; };
@@ -408,8 +408,8 @@
 		0B76FCF72BDDD4C600501F1F /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				0B76FCFC2BDDE0E700501F1F /* webview */,
 				0B76FCF92BDDD4D300501F1F /* sample_macOS */,
-				0B76FCF82BDDD4D300501F1F /* web */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -518,8 +518,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0B76FCFD2BDDE0E700501F1F /* webview in Resources */,
 				0B0E168B2BD89A910078942B /* Preview Assets.xcassets in Resources */,
-				0B76FCFA2BDDD4D300501F1F /* web in Resources */,
 				0B76FCFB2BDDD4D300501F1F /* sample_macOS in Resources */,
 				0B0E16872BD89A910078942B /* Assets.xcassets in Resources */,
 			);
