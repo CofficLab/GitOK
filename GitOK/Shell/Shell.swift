@@ -1,6 +1,6 @@
 import Foundation
-import SwiftUI
 import OSLog
+import SwiftUI
 
 class Shell {
     static var label: String = "🐚 Shell::"
@@ -23,9 +23,11 @@ class Shell {
         let errorPipe = Pipe()
         var isDir: ObjCBool = true
         
-//        print("\(self.label)")
-//        print("\(command)")
-//        print("\n")
+        if debugPrint {
+            print("\(self.label)")
+            print("\(command)")
+            print("\n")
+        }
         
         if !FileManager.default.fileExists(atPath: current, isDirectory: &isDir) {
             return "不存在这个路径：\(current)"

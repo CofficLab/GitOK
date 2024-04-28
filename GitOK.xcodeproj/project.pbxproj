@@ -47,8 +47,12 @@
 		0B76FD062BDDF79600501F1F /* WebApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B76FD052BDDF79600501F1F /* WebApi.swift */; };
 		0B76FD102BDDFC0100501F1F /* WebOption.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B76FD0F2BDDFC0100501F1F /* WebOption.swift */; };
 		0B76FD122BDDFF7200501F1F /* LoggerExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B76FD112BDDFF7200501F1F /* LoggerExt.swift */; };
-		0B76FD162BDE21D300501F1F /* MessageHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B76FD152BDE21D300501F1F /* MessageHandler.swift */; };
-		0B76FD182BDE27D000501F1F /* DefaultHanlder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B76FD172BDE27D000501F1F /* DefaultHanlder.swift */; };
+		0B76FD182BDE27D000501F1F /* DefaultMessageHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B76FD172BDE27D000501F1F /* DefaultMessageHandler.swift */; };
+		0B76FD1B2BDE2B2F00501F1F /* WebHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B76FD1A2BDE2B2F00501F1F /* WebHandler.swift */; };
+		0B76FD1D2BDE2D7900501F1F /* DefaultDownloadHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B76FD1C2BDE2D7900501F1F /* DefaultDownloadHandler.swift */; };
+		0B76FD1F2BDE2FB700501F1F /* DefaultReadyHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B76FD1E2BDE2FB700501F1F /* DefaultReadyHandler.swift */; };
+		0B76FD222BDE315800501F1F /* ReadyHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B76FD212BDE315800501F1F /* ReadyHandler.swift */; };
+		0B76FD242BDE326300501F1F /* FileExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B76FD232BDE326300501F1F /* FileExt.swift */; };
 		0BB555242BDB7B300044048B /* BranchExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BB555232BDB7B300044048B /* BranchExt.swift */; };
 		0BCC6D012BD92CB2006ADA94 /* DebugCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCC6D002BD92CB2006ADA94 /* DebugCommand.swift */; };
 		0BCC6D032BD932DA006ADA94 /* PathExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCC6D022BD932DA006ADA94 /* PathExt.swift */; };
@@ -137,8 +141,12 @@
 		0B76FD052BDDF79600501F1F /* WebApi.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebApi.swift; sourceTree = "<group>"; };
 		0B76FD0F2BDDFC0100501F1F /* WebOption.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebOption.swift; sourceTree = "<group>"; };
 		0B76FD112BDDFF7200501F1F /* LoggerExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoggerExt.swift; sourceTree = "<group>"; };
-		0B76FD152BDE21D300501F1F /* MessageHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageHandler.swift; sourceTree = "<group>"; };
-		0B76FD172BDE27D000501F1F /* DefaultHanlder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultHanlder.swift; sourceTree = "<group>"; };
+		0B76FD172BDE27D000501F1F /* DefaultMessageHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultMessageHandler.swift; sourceTree = "<group>"; };
+		0B76FD1A2BDE2B2F00501F1F /* WebHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebHandler.swift; sourceTree = "<group>"; };
+		0B76FD1C2BDE2D7900501F1F /* DefaultDownloadHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultDownloadHandler.swift; sourceTree = "<group>"; };
+		0B76FD1E2BDE2FB700501F1F /* DefaultReadyHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultReadyHandler.swift; sourceTree = "<group>"; };
+		0B76FD212BDE315800501F1F /* ReadyHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadyHandler.swift; sourceTree = "<group>"; };
+		0B76FD232BDE326300501F1F /* FileExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileExt.swift; sourceTree = "<group>"; };
 		0BB555232BDB7B300044048B /* BranchExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BranchExt.swift; sourceTree = "<group>"; };
 		0BCC6D002BD92CB2006ADA94 /* DebugCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugCommand.swift; sourceTree = "<group>"; };
 		0BCC6D022BD932DA006ADA94 /* PathExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PathExt.swift; sourceTree = "<group>"; };
@@ -214,7 +222,7 @@
 				0B0E16892BD89A910078942B /* Preview Content */,
 				0BDE61A12BDB37C6006E23EA /* Shell */,
 				0B0E16912BD89C240078942B /* Views */,
-				0B76FD042BDDF77900501F1F /* WebView */,
+				0B76FD202BDE302C00501F1F /* WebView */,
 			);
 			path = GitOK;
 			sourceTree = "<group>";
@@ -354,12 +362,13 @@
 		0B76FCF22BDDD1B000501F1F /* WebView */ = {
 			isa = PBXGroup;
 			children = (
+				0B76FD192BDE2AFF00501F1F /* Hanlder */,
 				0B76FCF02BDDD18400501F1F /* WebView.swift */,
 				0B76FCF32BDDD1BD00501F1F /* WebContent.swift */,
 				0B76FCF52BDDD1DE00501F1F /* WKDelegate.swift */,
 				0B76FCFE2BDDE6F200501F1F /* WebApiSample.swift */,
 				0B76FD0F2BDDFC0100501F1F /* WebOption.swift */,
-				0B76FD172BDE27D000501F1F /* DefaultHanlder.swift */,
+				0B76FD1A2BDE2B2F00501F1F /* WebHandler.swift */,
 			);
 			path = WebView;
 			sourceTree = "<group>";
@@ -373,11 +382,21 @@
 			path = Resources;
 			sourceTree = "<group>";
 		};
-		0B76FD042BDDF77900501F1F /* WebView */ = {
+		0B76FD192BDE2AFF00501F1F /* Hanlder */ = {
+			isa = PBXGroup;
+			children = (
+				0B76FD172BDE27D000501F1F /* DefaultMessageHandler.swift */,
+				0B76FD1C2BDE2D7900501F1F /* DefaultDownloadHandler.swift */,
+				0B76FD1E2BDE2FB700501F1F /* DefaultReadyHandler.swift */,
+			);
+			path = Hanlder;
+			sourceTree = "<group>";
+		};
+		0B76FD202BDE302C00501F1F /* WebView */ = {
 			isa = PBXGroup;
 			children = (
 				0B76FD052BDDF79600501F1F /* WebApi.swift */,
-				0B76FD152BDE21D300501F1F /* MessageHandler.swift */,
+				0B76FD212BDE315800501F1F /* ReadyHandler.swift */,
 			);
 			path = WebView;
 			sourceTree = "<group>";
@@ -407,6 +426,7 @@
 				0BDE61A62BDB4541006E23EA /* StatusExt.swift */,
 				0BB555232BDB7B300044048B /* BranchExt.swift */,
 				0BD15C552BDD23E1004024CF /* DiffExt.swift */,
+				0B76FD232BDE326300501F1F /* FileExt.swift */,
 			);
 			path = Git;
 			sourceTree = "<group>";
@@ -512,10 +532,10 @@
 				0BDE61A32BDB3C9B006E23EA /* Projects.swift in Sources */,
 				0BD15C612BDD33CC004024CF /* DiffView.swift in Sources */,
 				0BCC6D132BD94D15006ADA94 /* BtnLogs.swift in Sources */,
+				0B76FD222BDE315800501F1F /* ReadyHandler.swift in Sources */,
 				0BCC6D152BD9526F006ADA94 /* GitCommit.swift in Sources */,
 				0BDE61A92BDB4746006E23EA /* File.swift in Sources */,
 				0BDE61A72BDB4541006E23EA /* StatusExt.swift in Sources */,
-				0B76FD162BDE21D300501F1F /* MessageHandler.swift in Sources */,
 				0B76FCFF2BDDE6F200501F1F /* WebApiSample.swift in Sources */,
 				0B1C67C42BD915F200502EB1 /* AppConfig.swift in Sources */,
 				0B0E16832BD89A8F0078942B /* Content.swift in Sources */,
@@ -532,6 +552,7 @@
 				0BCC6D032BD932DA006ADA94 /* PathExt.swift in Sources */,
 				0BDE61AB2BDB4AB8006E23EA /* FileList.swift in Sources */,
 				0B1C67FE2BD9F12000502EB1 /* EventManager.swift in Sources */,
+				0B76FD242BDE326300501F1F /* FileExt.swift in Sources */,
 				0BD15C652BDD429A004024CF /* HeadTile.swift in Sources */,
 				0BDE61AD2BDB4E87006E23EA /* FileTile.swift in Sources */,
 				0B0E16932BD89C340078942B /* Detail.swift in Sources */,
@@ -550,6 +571,7 @@
 				0BD15C502BDBF3BD004024CF /* MergeForm.swift in Sources */,
 				0BD15C582BDD26DE004024CF /* Diff.swift in Sources */,
 				0BD15C4C2BDBE959004024CF /* StateExt.swift in Sources */,
+				0B76FD1D2BDE2D7900501F1F /* DefaultDownloadHandler.swift in Sources */,
 				0BCC6D012BD92CB2006ADA94 /* DebugCommand.swift in Sources */,
 				0B1C67BA2BD912D900502EB1 /* BtnCommit.swift in Sources */,
 				0B1C68002BD9F68F00502EB1 /* BtnFinder.swift in Sources */,
@@ -558,8 +580,10 @@
 				0B1C67FC2BD9ED7300502EB1 /* HeadDetail.swift in Sources */,
 				0B1C67F52BD9E4A400502EB1 /* CommitDetail.swift in Sources */,
 				0B76FD122BDDFF7200501F1F /* LoggerExt.swift in Sources */,
-				0B76FD182BDE27D000501F1F /* DefaultHanlder.swift in Sources */,
+				0B76FD1B2BDE2B2F00501F1F /* WebHandler.swift in Sources */,
+				0B76FD182BDE27D000501F1F /* DefaultMessageHandler.swift in Sources */,
 				0B76FD102BDDFC0100501F1F /* WebOption.swift in Sources */,
+				0B76FD1F2BDE2FB700501F1F /* DefaultReadyHandler.swift in Sources */,
 				0B1C67ED2BD9D9CB00502EB1 /* CommitCategory.swift in Sources */,
 				0B76FD062BDDF79600501F1F /* WebApi.swift in Sources */,
 				0B76FCEF2BDDD12A00501F1F /* WebConfig.swift in Sources */,

@@ -8,6 +8,7 @@ struct GitOKApp: App {
         WindowGroup {
             Content()
                 .environmentObject(AppManager())
+                .environmentObject(WebConfig())
         }
         .modelContainer(AppConfig.getContainer())
         .commands(content: {

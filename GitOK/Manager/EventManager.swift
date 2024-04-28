@@ -17,9 +17,29 @@ class EventManager: NSObject, ObservableObject, AVAudioPlayerDelegate {
         )
     }
     
+    func emitJSReady() {
+        NotificationCenter.default.post(
+            name: NSNotification.Name(Event.JSReady.name),
+            object: nil,
+            userInfo: [:]
+        )
+    }
+    
     func onCommitted(_ callback: @escaping () -> Void) {
         n.addObserver(
             forName: NSNotification.Name(Event.Committed.name),
+            object: nil,
+            queue: .main,
+            using: { notification in
+                self.queue.async {
+                    callback()
+                }
+            })
+    }
+    
+    func onJSReady(_ callback: @escaping () -> Void) {
+        n.addObserver(
+            forName: NSNotification.Name(Event.JSReady.name),
             object: nil,
             queue: .main,
             using: { notification in
@@ -37,6 +57,7 @@ class EventManager: NSObject, ObservableObject, AVAudioPlayerDelegate {
         case Committed
         case AudioUpdated
         case Delete
+        case JSReady
         
         var name: String {
             String(describing: self)

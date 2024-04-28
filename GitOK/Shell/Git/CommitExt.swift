@@ -13,7 +13,7 @@ extension Git {
         try Git.run("show \(hash) --pretty='' --name-only", path: path)
             .components(separatedBy: "\n")
             .map({
-                File.fromLine($0)
+                File.fromLine($0, path: path)
             })
     }
     

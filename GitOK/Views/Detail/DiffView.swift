@@ -1,22 +1,30 @@
 import SwiftUI
+import OSLog
 
 struct DiffView: View {
     @EnvironmentObject var app: AppManager
+    @EnvironmentObject var webConfig: WebConfig
 
-    var diffBlock: DiffBlock?
-    var view: WebView
+    var file: File?
+    var view: WebView { webConfig.view }
 
-    init(_ diffBlock: DiffBlock?) {
-        self.diffBlock = diffBlock
-        self.view = WebConfig.makeView()
+    init(_ file: File?) {
+        self.file = file
     }
 
     var body: some View {
-        Button("SSS") {
-            view.content.setModified("xxxxxxxx")
-        }
-        
         view
+//            .frame(maxWidth: .infinity)
+            .onAppear {
+            EventManager().onJSReady {
+                view.content.setOriginal(file?.lastContent ?? "")
+                view.content.setModified(file?.content ?? "")
+            }
+        }
+        .onChange(of: file, {
+            view.content.setOriginal(file?.lastContent ?? "")
+            view.content.setModified(file?.content ?? "")
+        })
     }
 }
 

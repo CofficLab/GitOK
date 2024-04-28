@@ -13,7 +13,7 @@ class WebConfig: ObservableObject {
 
     static func makeView() -> WebView {
         #if DEBUG && true
-            var view = WebView(
+        let view = WebView(
                 .url(URL(string: "http://127.0.0.1:5173")!)
             )
         #else
@@ -22,7 +22,8 @@ class WebConfig: ObservableObject {
             )
         #endif
         
-        view.addHanlder(MessageHandler(), channel: MessageHandler.channel)
+        view.removeHanlders()
+        view.addHanlder(ReadyHandler())
         
         return view
     }

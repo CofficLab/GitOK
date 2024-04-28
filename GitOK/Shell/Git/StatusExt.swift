@@ -8,12 +8,12 @@ extension Git {
     }
 
     static func changedFile(_ path: String) throws -> [File] {
-        try Git.run("status --porcelain", path: path)
+        try Git.run("status --porcelain | awk '{print $2}'", path: path)
             .trimmingCharacters(in: .whitespacesAndNewlines)
             .components(separatedBy: .newlines)
             .filter({ $0.count > 0 })
             .map {
-                File.fromLine($0.trimmingCharacters(in: .whitespacesAndNewlines))
+                File.fromLine($0.trimmingCharacters(in: .whitespacesAndNewlines), path: path)
             }
     }
 }

@@ -37,11 +37,17 @@ struct WebView {
         self.content.isInspectable = true
         
         // 处理JS发送的消息
-        self.addHanlder(DefaultHanlder(), channel: DefaultHanlder.channel)
+        self.addHanlder(DefaultMessageHandler())
+        self.addHanlder(DefaultDownloadHandler())
+        self.addHanlder(DefaultReadyHandler())
     }
     
-    func addHanlder(_ h: WKScriptMessageHandler, channel: String) {
-        self.controller.add(h, name: channel)
+    func addHanlder(_ h: WebHandler) {
+        self.controller.add(h, name: h.functionName)
+    }
+    
+    func removeHanlders() {
+        self.controller.removeAllScriptMessageHandlers()
     }
 }
 

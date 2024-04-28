@@ -3,22 +3,39 @@ import SwiftData
 import SwiftUI
 
 struct File {
+    var projectPath: String
     var name: String
     var type: ChangeType = .modified
     var uuid: String
     
-    static func fromLine(_ l: String) -> File {
+    var lastContent: String {
+        do {
+            return try Git.getFileLastContent(projectPath, file: name)
+        } catch let error {
+            return ""
+        }
+    }
+    
+    var content: String {
+        do {
+            return try Git.getFileContent(projectPath, file: name)
+        } catch let error {
+            return ""
+        }
+    }
+    
+    static func fromLine(_ l: String, path: String) -> File {
         let ll = l.trimmingCharacters(in: .whitespacesAndNewlines)
         
         if ll.hasPrefix("A") {
-            return File(name: l, type: .add, uuid: UUID().uuidString)
+            return File(projectPath: path, name: l, type: .add, uuid: UUID().uuidString)
         }
         
         if ll.hasPrefix("M") {
-            return File(name: l, type: .modified, uuid: UUID().uuidString)
+            return File(projectPath: path, name: l, type: .modified, uuid: UUID().uuidString)
         }
         
-        return File(name: l, uuid: UUID().uuidString)
+        return File(projectPath: path, name: l, uuid: UUID().uuidString)
     }
 }
 

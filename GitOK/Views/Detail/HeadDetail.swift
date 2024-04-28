@@ -22,7 +22,7 @@ struct HeadDetail: View {
             if files.isEmpty {
                 NoChanges()
             } else {
-                DiffView(diffBlock)
+                DiffView(file)
             }
         }
         .padding()
