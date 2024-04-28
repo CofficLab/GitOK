@@ -44,13 +44,11 @@
 		0B76FCFB2BDDD4D300501F1F /* sample_macOS in Resources */ = {isa = PBXBuildFile; fileRef = 0B76FCF92BDDD4D300501F1F /* sample_macOS */; };
 		0B76FCFD2BDDE0E700501F1F /* webview in Resources */ = {isa = PBXBuildFile; fileRef = 0B76FCFC2BDDE0E700501F1F /* webview */; };
 		0B76FCFF2BDDE6F200501F1F /* WebApiSample.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B76FCFE2BDDE6F200501F1F /* WebApiSample.swift */; };
-		0B76FD032BDDEF1700501F1F /* WebChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B76FD022BDDEF1700501F1F /* WebChannel.swift */; };
 		0B76FD062BDDF79600501F1F /* WebApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B76FD052BDDF79600501F1F /* WebApi.swift */; };
-		0B76FD0C2BDDFA5600501F1F /* DefaultWebAgent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B76FD0B2BDDFA5600501F1F /* DefaultWebAgent.swift */; };
 		0B76FD102BDDFC0100501F1F /* WebOption.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B76FD0F2BDDFC0100501F1F /* WebOption.swift */; };
 		0B76FD122BDDFF7200501F1F /* LoggerExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B76FD112BDDFF7200501F1F /* LoggerExt.swift */; };
-		0B76FD142BDE145400501F1F /* WebPlatform.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B76FD132BDE145400501F1F /* WebPlatform.swift */; };
-		0B76FD162BDE21D300501F1F /* WebAgent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B76FD152BDE21D300501F1F /* WebAgent.swift */; };
+		0B76FD162BDE21D300501F1F /* MessageHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B76FD152BDE21D300501F1F /* MessageHandler.swift */; };
+		0B76FD182BDE27D000501F1F /* DefaultHanlder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B76FD172BDE27D000501F1F /* DefaultHanlder.swift */; };
 		0BB555242BDB7B300044048B /* BranchExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BB555232BDB7B300044048B /* BranchExt.swift */; };
 		0BCC6D012BD92CB2006ADA94 /* DebugCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCC6D002BD92CB2006ADA94 /* DebugCommand.swift */; };
 		0BCC6D032BD932DA006ADA94 /* PathExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCC6D022BD932DA006ADA94 /* PathExt.swift */; };
@@ -70,8 +68,6 @@
 		0BD15C562BDD23E1004024CF /* DiffExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD15C552BDD23E1004024CF /* DiffExt.swift */; };
 		0BD15C582BDD26DE004024CF /* Diff.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD15C572BDD26DE004024CF /* Diff.swift */; };
 		0BD15C5A2BDD275C004024CF /* DiffBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD15C592BDD275C004024CF /* DiffBlock.swift */; };
-		0BD15C5D2BDD2EC2004024CF /* CodeEditorView in Frameworks */ = {isa = PBXBuildFile; productRef = 0BD15C5C2BDD2EC2004024CF /* CodeEditorView */; };
-		0BD15C5F2BDD2EC2004024CF /* LanguageSupport in Frameworks */ = {isa = PBXBuildFile; productRef = 0BD15C5E2BDD2EC2004024CF /* LanguageSupport */; };
 		0BD15C612BDD33CC004024CF /* DiffView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD15C602BDD33CC004024CF /* DiffView.swift */; };
 		0BD15C632BDD40E1004024CF /* ListPlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD15C622BDD40E1004024CF /* ListPlay.swift */; };
 		0BD15C652BDD429A004024CF /* HeadTile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD15C642BDD429A004024CF /* HeadTile.swift */; };
@@ -138,13 +134,11 @@
 		0B76FCF92BDDD4D300501F1F /* sample_macOS */ = {isa = PBXFileReference; lastKnownFileType = folder; path = sample_macOS; sourceTree = "<group>"; };
 		0B76FCFC2BDDE0E700501F1F /* webview */ = {isa = PBXFileReference; lastKnownFileType = folder; path = webview; sourceTree = "<group>"; };
 		0B76FCFE2BDDE6F200501F1F /* WebApiSample.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebApiSample.swift; sourceTree = "<group>"; };
-		0B76FD022BDDEF1700501F1F /* WebChannel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebChannel.swift; sourceTree = "<group>"; };
 		0B76FD052BDDF79600501F1F /* WebApi.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebApi.swift; sourceTree = "<group>"; };
-		0B76FD0B2BDDFA5600501F1F /* DefaultWebAgent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultWebAgent.swift; sourceTree = "<group>"; };
 		0B76FD0F2BDDFC0100501F1F /* WebOption.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebOption.swift; sourceTree = "<group>"; };
 		0B76FD112BDDFF7200501F1F /* LoggerExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoggerExt.swift; sourceTree = "<group>"; };
-		0B76FD132BDE145400501F1F /* WebPlatform.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebPlatform.swift; sourceTree = "<group>"; };
-		0B76FD152BDE21D300501F1F /* WebAgent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebAgent.swift; sourceTree = "<group>"; };
+		0B76FD152BDE21D300501F1F /* MessageHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageHandler.swift; sourceTree = "<group>"; };
+		0B76FD172BDE27D000501F1F /* DefaultHanlder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultHanlder.swift; sourceTree = "<group>"; };
 		0BB555232BDB7B300044048B /* BranchExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BranchExt.swift; sourceTree = "<group>"; };
 		0BCC6D002BD92CB2006ADA94 /* DebugCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugCommand.swift; sourceTree = "<group>"; };
 		0BCC6D022BD932DA006ADA94 /* PathExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PathExt.swift; sourceTree = "<group>"; };
@@ -180,8 +174,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0BD15C5F2BDD2EC2004024CF /* LanguageSupport in Frameworks */,
-				0BD15C5D2BDD2EC2004024CF /* CodeEditorView in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -366,10 +358,8 @@
 				0B76FCF32BDDD1BD00501F1F /* WebContent.swift */,
 				0B76FCF52BDDD1DE00501F1F /* WKDelegate.swift */,
 				0B76FCFE2BDDE6F200501F1F /* WebApiSample.swift */,
-				0B76FD022BDDEF1700501F1F /* WebChannel.swift */,
-				0B76FD0B2BDDFA5600501F1F /* DefaultWebAgent.swift */,
 				0B76FD0F2BDDFC0100501F1F /* WebOption.swift */,
-				0B76FD132BDE145400501F1F /* WebPlatform.swift */,
+				0B76FD172BDE27D000501F1F /* DefaultHanlder.swift */,
 			);
 			path = WebView;
 			sourceTree = "<group>";
@@ -387,7 +377,7 @@
 			isa = PBXGroup;
 			children = (
 				0B76FD052BDDF79600501F1F /* WebApi.swift */,
-				0B76FD152BDE21D300501F1F /* WebAgent.swift */,
+				0B76FD152BDE21D300501F1F /* MessageHandler.swift */,
 			);
 			path = WebView;
 			sourceTree = "<group>";
@@ -448,8 +438,6 @@
 			);
 			name = GitOK;
 			packageProductDependencies = (
-				0BD15C5C2BDD2EC2004024CF /* CodeEditorView */,
-				0BD15C5E2BDD2EC2004024CF /* LanguageSupport */,
 			);
 			productName = GitOK;
 			productReference = 0B0E167D2BD89A8F0078942B /* GitOK.app */;
@@ -480,7 +468,6 @@
 			);
 			mainGroup = 0B0E16742BD89A8F0078942B;
 			packageReferences = (
-				0BD15C5B2BDD2EC2004024CF /* XCRemoteSwiftPackageReference "CodeEditorView" */,
 			);
 			productRefGroup = 0B0E167E2BD89A8F0078942B /* Products */;
 			projectDirPath = "";
@@ -528,18 +515,16 @@
 				0BCC6D152BD9526F006ADA94 /* GitCommit.swift in Sources */,
 				0BDE61A92BDB4746006E23EA /* File.swift in Sources */,
 				0BDE61A72BDB4541006E23EA /* StatusExt.swift in Sources */,
-				0B76FD162BDE21D300501F1F /* WebAgent.swift in Sources */,
+				0B76FD162BDE21D300501F1F /* MessageHandler.swift in Sources */,
 				0B76FCFF2BDDE6F200501F1F /* WebApiSample.swift in Sources */,
 				0B1C67C42BD915F200502EB1 /* AppConfig.swift in Sources */,
 				0B0E16832BD89A8F0078942B /* Content.swift in Sources */,
-				0B76FD0C2BDDFA5600501F1F /* DefaultWebAgent.swift in Sources */,
 				0B0E16852BD89A8F0078942B /* Item.swift in Sources */,
 				0B76FCF42BDDD1BD00501F1F /* WebContent.swift in Sources */,
 				0BCC6D0D2BD948AB006ADA94 /* BtnSave.swift in Sources */,
 				0B1C67EB2BD9181200502EB1 /* BtnPush.swift in Sources */,
 				0B1C67C22BD9159900502EB1 /* Project.swift in Sources */,
 				0B1C67BF2BD9157100502EB1 /* DBExt.swift in Sources */,
-				0B76FD032BDDEF1700501F1F /* WebChannel.swift in Sources */,
 				0BDE61A52BDB408F006E23EA /* RevListExt.swift in Sources */,
 				0BCC6D072BD939BA006ADA94 /* Shell.swift in Sources */,
 				0BD15C522BDC8D91004024CF /* SmartError.swift in Sources */,
@@ -570,10 +555,10 @@
 				0B1C68002BD9F68F00502EB1 /* BtnFinder.swift in Sources */,
 				0BCC6D0F2BD949B6006ADA94 /* History.swift in Sources */,
 				0B6BE4612BDA603000C8ACB2 /* BtnWhoami.swift in Sources */,
-				0B76FD142BDE145400501F1F /* WebPlatform.swift in Sources */,
 				0B1C67FC2BD9ED7300502EB1 /* HeadDetail.swift in Sources */,
 				0B1C67F52BD9E4A400502EB1 /* CommitDetail.swift in Sources */,
 				0B76FD122BDDFF7200501F1F /* LoggerExt.swift in Sources */,
+				0B76FD182BDE27D000501F1F /* DefaultHanlder.swift in Sources */,
 				0B76FD102BDDFC0100501F1F /* WebOption.swift in Sources */,
 				0B1C67ED2BD9D9CB00502EB1 /* CommitCategory.swift in Sources */,
 				0B76FD062BDDF79600501F1F /* WebApi.swift in Sources */,
@@ -804,30 +789,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCRemoteSwiftPackageReference section */
-		0BD15C5B2BDD2EC2004024CF /* XCRemoteSwiftPackageReference "CodeEditorView" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/mchakravarty/CodeEditorView?tab=readme-ov-file";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.13.0;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		0BD15C5C2BDD2EC2004024CF /* CodeEditorView */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 0BD15C5B2BDD2EC2004024CF /* XCRemoteSwiftPackageReference "CodeEditorView" */;
-			productName = CodeEditorView;
-		};
-		0BD15C5E2BDD2EC2004024CF /* LanguageSupport */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 0BD15C5B2BDD2EC2004024CF /* XCRemoteSwiftPackageReference "CodeEditorView" */;
-			productName = LanguageSupport;
-		};
-/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 0B0E16752BD89A8F0078942B /* Project object */;
 }

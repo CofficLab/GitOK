@@ -3,6 +3,12 @@ import OSLog
 import SwiftUI
 import WebKit
 
+#if os(iOS)
+    typealias ViewRepresentable = UIViewRepresentable
+#elseif os(macOS)
+    typealias ViewRepresentable = NSViewRepresentable
+#endif
+
 struct WebView {
     /// 配置
     var option: WebOption? = nil
@@ -19,7 +25,6 @@ struct WebView {
         os_log("🚩 初始化 Webview")
         self.option = option
         self.controller = WKUserContentController()
-//        self.controller.add(DefaultWebAgent(), name: "sendMessage")
 
         // 初始化网络内容部分
 
@@ -30,11 +35,18 @@ struct WebView {
 
         self.content = WebContent(frame: .zero, configuration: config)
         self.content.isInspectable = true
+        
+        // 处理JS发送的消息
+        self.addHanlder(DefaultHanlder(), channel: DefaultHanlder.channel)
+    }
+    
+    func addHanlder(_ h: WKScriptMessageHandler, channel: String) {
+        self.controller.add(h, name: channel)
     }
 }
 
 /// 将 WebContent 封装成一个普通的 View
-extension WebView: WebPlatform.ViewRepresentable {
+extension WebView: ViewRepresentable {
     #if os(iOS)
         public func makeUIView(context: Context) -> WKWebView {
             makeView()

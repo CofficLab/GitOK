@@ -1,6 +1,3 @@
-import CodeEditorView
-import LanguageSupport
-import Rearrange
 import SwiftUI
 
 struct HeadDetail: View {
@@ -11,12 +8,6 @@ struct HeadDetail: View {
     @State var diffBlock: DiffBlock? = nil
     @State var files: [File] = []
     @Binding var file: File?
-    @State var codeMessages: Set<TextLocated<Message>> = Set()
-
-    @State private var text: String = "My awesome code..."
-    @State private var position: CodeEditor.Position = CodeEditor.Position()
-    @State private var messages: Set<TextLocated<Message>> = Set()
-    @Environment(\.colorScheme) private var colorScheme: ColorScheme
 
     var project: Project
 
@@ -44,7 +35,6 @@ struct HeadDetail: View {
         .onChange(of: file, {
             if let f = file {
                 self.diffBlock = try! Git.diffOfFile(project.path, file: f)
-                self.text = diffBlock?.block ?? ""
             }
         })
     }

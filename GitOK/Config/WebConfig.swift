@@ -22,7 +22,7 @@ class WebConfig: ObservableObject {
             )
         #endif
         
-        view.controller.add(WebAgent(), name: "sendMessage")
+        view.addHanlder(MessageHandler(), channel: MessageHandler.channel)
         
         return view
     }

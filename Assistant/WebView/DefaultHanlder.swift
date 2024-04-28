@@ -2,7 +2,9 @@ import SwiftUI
 import WebKit
 import OSLog
 
-class DefaultWebAgent: NSObject, WKScriptMessageHandler {
+class DefaultHanlder: NSObject, WKScriptMessageHandler {
+    static var channel: String = "sendMessage"
+
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
         os_log("收到JS发送的消息但未处理：\(message.name)")
     }

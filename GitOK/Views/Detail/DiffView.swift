@@ -1,6 +1,3 @@
-import CodeEditorView
-import LanguageSupport
-import Rearrange
 import SwiftUI
 
 struct DiffView: View {

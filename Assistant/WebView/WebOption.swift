@@ -6,7 +6,6 @@ struct WebOption {
     var html: String? = nil
     var code: String? = nil
     var htmlFile: URL? = nil
-    var agent: WKScriptMessageHandler = DefaultWebAgent()
     
     static func url(_ url: URL) -> WebOption {
         WebOption(url: url)

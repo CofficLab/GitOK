@@ -2,24 +2,13 @@ import SwiftUI
 import WebKit
 import OSLog
 
-class WebAgent: NSObject, WKScriptMessageHandler {
+class MessageHandler: NSObject, WKScriptMessageHandler {
+    static var channel: String = "sendMessage2"
     private var eventManager = EventManager()
     
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
         if message.name == "sendMessage" {
-            let data = message.body as! [String: String]
-            let channel = WebChannel.from(data["channel"] ?? "")
-            
-            os_log("📶 JS 消息通道：\(channel.name)")
-            
-            switch channel {
-            case .downloadFile:
-                downloadFile(message: message)
-            case .pageLoaded:
-                pageLoaded(message: message)
-            case .unknown(let c):
-                os_log("JS 消息来自未知通道：\(c)")
-            }
+            os_log("📶 JS 消息通道：\(message.name)")
         } else {
             os_log("收到JS发送的消息但未处理：\(message.name)")
         }
