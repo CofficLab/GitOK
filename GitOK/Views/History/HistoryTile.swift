@@ -7,7 +7,6 @@ struct HistoryTile: View {
 
     var commit: GitCommit
     var project: Project
-    var branch: Branch
 
     var body: some View {
         VStack(spacing: 0) {

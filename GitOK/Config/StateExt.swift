@@ -11,6 +11,15 @@ extension AppConfig {
     static func setProject(_ path: String) {
         AppConfig.projectPath = path
     }
+    
+    static func getProject() -> Project? {
+        nil
+//        if let url = URL(string: AppConfig.projectPath) {
+//            Project(url)
+//        } else {
+//            nil
+//        }
+    }
 }
 
 #Preview {

@@ -1,19 +1,23 @@
 import Foundation
 import SwiftUI
+import OSLog
 
 struct GitCommit {
     static func headFor(_ path: String) -> GitCommit {
-        .init(isHead: true, path: path, message: "当前")
+        .init(isHead: true, path: path, hash: "HEAD", message: "当前")
     }
 
     var path: String
-    var uuid: String
     var isHead = false
     var hash: String
     var message: String
 
-    init(isHead: Bool = false, path: String = "/", hash: String = "", message: String = "") {
-        uuid = UUID().uuidString
+    init(
+        isHead: Bool = false,
+        path: String = "/",
+        hash: String = "",
+        message: String = ""
+    ) {
         self.isHead = isHead
         self.path = path
         self.hash = hash
@@ -37,8 +41,10 @@ struct GitCommit {
     
     func getFiles() -> [File] {
         if isHead {
+            os_log("getFiles for HEAD")
             return try! Git.changedFile(path)
         } else {
+            os_log("getFiles for commit")
             return try! Git.commitFiles(path, hash: hash)
         }
     }
@@ -46,7 +52,7 @@ struct GitCommit {
 
 extension GitCommit: Identifiable {
     var id: String {
-        uuid
+        hash
     }
 }
 

@@ -8,11 +8,8 @@ struct Projects: View {
     @Query(sort: [
         SortDescriptor<Project>(\.timestamp, order: .reverse)
     ]) var projects: [Project]
-
-    @Binding var project: Project?
-    @State var branch: Branch? = nil
-    @State var gitLog: GitCommit? = nil
-    @State var message: String = ""
+    
+    @State var project: Project?
 
     var body: some View {
         List(selection: $project) {
@@ -22,15 +19,10 @@ struct Projects: View {
             .onDelete(perform: deleteItems)
         }
         .onAppear {
-            let currentProjectPath = AppConfig.projectPath
-            if !currentProjectPath.isEmpty {
-                project = projects.first(where: {
-                    $0.url.path == currentProjectPath
-                }) ?? projects.first
-            }
+            self.project = app.project
         }
         .onChange(of: project, {
-            AppConfig.setProject(project?.path ?? "")
+            app.setProject(project)
         })
         .toolbar(content: {
             ToolbarItem {

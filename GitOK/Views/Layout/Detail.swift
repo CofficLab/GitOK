@@ -3,25 +3,21 @@ import SwiftUI
 struct Detail: View {
     @EnvironmentObject var app: AppManager
 
-    @Binding var message: String
-    @Binding var file: File?
-
-    var project: Project
-    var commit: GitCommit?
+    var project: Project? { app.project }
+    var commit: GitCommit? { app.commit }
 
     var body: some View {
-        VStack {
-            if commit?.isHead ?? false {
-                CommitForm(message: $message, project: project)
+        if let project = project {
+            VStack {
+                if commit?.isHead ?? false {
+                    CommitForm()
+                }
+                
+                if let commit = commit {
+                    CommitDetail(project, log: commit)
+                }
             }
-            
-            if let commit = commit {
-                CommitDetail(project, log: commit)
-            }
-        }
-        .frame(maxWidth: .infinity)
-        .onAppear {
-            message = try! Git.status(project.path)
+            .frame(maxWidth: .infinity)
         }
     }
 }

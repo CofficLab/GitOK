@@ -3,7 +3,6 @@ import SwiftUI
 struct HeadDetail: View {
     @EnvironmentObject var app: AppManager
 
-    @State var message = ""
     @State var diff = ""
     @State var diffBlock: DiffBlock? = nil
     @State var files: [File] = []
@@ -13,9 +12,9 @@ struct HeadDetail: View {
 
     var body: some View {
         VStack {
-            MergeForm(message: $message, project: project)
+            MergeForm(project: project)
 
-            CommitForm(message: $message, project: project)
+            CommitForm()
             
             FileList(file: $file, files: files)
 
@@ -56,7 +55,7 @@ struct HeadDetail: View {
     }
 
     func refreshStatus() {
-        message = try! Git.status(project.path)
+        _ = try! Git.status(project.path)
     }
 }
 

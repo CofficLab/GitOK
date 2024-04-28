@@ -3,8 +3,6 @@ import SwiftUI
 struct BtnCommit: View {
     @EnvironmentObject var app: AppManager
 
-    @Binding var message: String
-
     @State var working = false
 
     var path: String

@@ -3,31 +3,23 @@ import SwiftData
 import SwiftUI
 
 struct Content: View {
-    @Environment(\.modelContext) private var modelContext
     @EnvironmentObject var app: AppManager
 
-    @State var project: Project? = nil
     @State var branch: Branch? = nil
-    @State var gitLog: GitCommit? = nil
+    @State var gitLog: String? = nil
     @State var message: String = ""
-    @State var file: File?
+
+    var project: Project? { app.project }
 
     var body: some View {
         NavigationSplitView {
-            Projects(project: $project)
+            Projects()
         } content: {
-            if let project = project, let branch = branch {
-                History(selection: $gitLog, file: $file, project: project, branch: branch)
-                    .frame(idealWidth: 300)
-                    .frame(minWidth: 50)
-            }
+            History()
+                .frame(idealWidth: 300)
+                .frame(minWidth: 50)
         } detail: {
-            VSplitView {
-                if let project = project {
-                    Detail(message: $message, file: $file, project: project, commit: gitLog)
-                }
-            }
-            .frame(maxWidth: .infinity)
+            Detail()
         }
         .navigationTitle(project?.title ?? "")
         .toolbar(content: {

@@ -1,70 +1,64 @@
 import SwiftUI
+import OSLog
 
 struct History: View {
     @EnvironmentObject var app: AppManager
 
-    @Binding var selection: GitCommit?
-
+    @State var commitId: String = ""
     @State var message = ""
     @State var commits: [GitCommit] = []
-    @Binding var file: File?
-
-    var project: Project
-    var branch: Branch
-
+    
     var body: some View {
-        List(selection: $selection) {
-            ForEach(Stage.allCases) { stage in
-                if Stage(rawValue: stage.rawValue) == .Head {
-//                    Section("当前", content: {
-//                        HistoryTile(
-//                            commit: GitCommit.headFor(project.path),
-//                            project: project,
-//                            branch: branch
-//                        ).tag(GitCommit.headFor(project.path) as GitCommit?)
-//                    })
-                } else {
-                    Section("历史", content: {
-                        ForEach(commits) { commit in
-                            HistoryTile(
-                                commit: commit,
-                                project: project,
-                                branch: branch
-                            ).tag(commit as GitCommit?)
-                        }
-                    })
+        if let project = app.project {
+            List(selection: $commitId) {
+                ForEach(Stage.allCases, id: \.self) { stage in
+                    if Stage(rawValue: stage.rawValue) == .Head {
+                        Section("当前", content: {
+                            ForEach([GitCommit.headFor(project.path)]) { commit in
+                                HistoryTile(
+                                    commit: commit,
+                                    project: project
+                                )
+                            }
+                        })
+                    } else {
+                        Section("历史", content: {
+                            ForEach(commits) { commit in
+                                HistoryTile(
+                                    commit: commit,
+                                    project: project
+                                )
+                            }
+                        })
+                    }
                 }
             }
-            
-        }
-
-        .onAppear {
-            commits = project.getCommits()
-            selection = commits.first
-
-            EventManager().onCommitted {
+            .onAppear {
                 commits = project.getCommits()
+                commitId = commits.first?.id ?? ""
+
+                EventManager().onCommitted {
+                    commits = project.getCommits()
+                }
             }
-        }
-        .onChange(of: project, refresh)
-        .onChange(of: branch.name, refresh)
-        .onChange(of: file) {
-            if file != nil {
-                selection = nil
-            }
-        }
-        .onChange(of: selection) {
-            if selection != nil {
-                file = nil
+            .onChange(of: app.project, refresh)
+            .onChange(of: app.branch, refresh)
+            .onChange(of: commitId) {
+                os_log("commitId changed to \(commitId)")
+                app.commit = project.getCommitsWithHead().first(where: {
+                    $0.id == commitId
+                })
+                print(app.commit)
             }
         }
     }
 
     func refresh() {
-        commits = try! Git.logs(project.path)
-        if file == nil {
-            selection = commits.first
+        guard let project = app.project else {
+            return
         }
+        
+        commits = try! Git.logs(project.path)
     }
 }
 

@@ -3,8 +3,6 @@ import SwiftUI
 struct MergeForm: View {
     @EnvironmentObject var app: AppManager
 
-    @Binding var message: String
-
     @State var branches: [Branch] = []
     @State var text: String = ""
     @State var category: CommitCategory = .Chore
@@ -40,7 +38,7 @@ struct MergeForm: View {
                 })
 
                 if let branch1 = branch1, let branch2 = branch2 {
-                    BtnMerge(message: $message, path: project.path, from: branch1, to: branch2)
+                    BtnMerge(path: project.path, from: branch1, to: branch2)
                 }
             }
         }

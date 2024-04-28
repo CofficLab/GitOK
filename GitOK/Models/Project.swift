@@ -23,6 +23,16 @@ final class Project {
     func getCommits() -> [GitCommit] {
         try! Git.logs(path)
     }
+    
+    func getCommitsWithHead() -> [GitCommit] {
+        [GitCommit.headFor(path)] + getCommits()
+    }
+}
+
+extension Project: Identifiable {
+    var id: URL {
+        self.url
+    }
 }
 
 #Preview {
