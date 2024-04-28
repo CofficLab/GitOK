@@ -4,7 +4,6 @@ struct CommitDetail: View {
     @EnvironmentObject var app: AppManager
     
     @State var message = ""
-    @State var commitInfo: String = ""
     @State var files: [File] = []
     @State var file: File? = nil
 
@@ -18,18 +17,12 @@ struct CommitDetail: View {
 
     var body: some View {
         VStack {
-            GroupBox {
-                Text(commitInfo)
-            }
-            
             FileList(file: $file, files: files)
         }
         .onAppear {
-            commitInfo = try! Git.show(item.path, hash: commit.hash)
             files = try! Git.commitFiles(item.path, hash: commit.hash)
         }
         .onChange(of: commit.hash, {
-            commitInfo = try! Git.show(item.path, hash: commit.hash)
             files = try! Git.commitFiles(item.path, hash: commit.hash)
         })
     }
