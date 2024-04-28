@@ -18,14 +18,7 @@ struct DiffView: View {
     }
 
     var body: some View {
-        CodeEditor(
-            text: .constant(diffBlock?.block ?? ""),
-            position: $position,
-            messages: $messages,
-            language: .swift(),
-            layout: .init(showMinimap: false, wrapText: true))
-            .environment(\.codeEditorTheme,
-                         colorScheme == .dark ? Theme.defaultDark : Theme.defaultLight)
+        WebConfig.makeView()
     }
 }
 
