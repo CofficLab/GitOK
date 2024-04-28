@@ -1,6 +1,7 @@
 import Foundation
 import OSLog
 import WebKit
+import SwiftUI
 
 /// 负责渲染 Web 内容，与 JS 交互等
 class WebContent: WKWebView {    
@@ -23,26 +24,8 @@ class WebContent: WKWebView {
             }
         })
     }
+}
 
-    /// 以同步的方式与 JS 通信，获取当前的 NodeType
-    @objc func getNodeType() -> String {
-        dispatchPrecondition(condition: .onQueue(.main))
-
-        var result: String?
-
-        evaluateJavaScript("api.app.selectionType") { response, error in
-            if error != nil {
-                result = ""
-                return
-            }
-
-            result = response as? String ?? ""
-        }
-
-        while result == nil {
-            RunLoop.main.run(until: Date(timeIntervalSinceNow: 0.01))
-        }
-
-        return result ?? ""
-    }
+#Preview {
+    AppPreview()
 }

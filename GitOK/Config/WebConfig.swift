@@ -20,13 +20,11 @@ class WebConfig: ObservableObject {
     static func makeView() -> WebView {
         #if DEBUG && true
             WebView(
-                url: URL(string: "http://127.0.0.1:5173"),
-                config: getViewConfig()
+                url: URL(string: "http://127.0.0.1:5173")
             )
         #else
             WebView(
-                htmlFile: WebConfig.htmlFile,
-                config: getViewConfig()
+                htmlFile: WebConfig.htmlFile
             )
         #endif
     }
@@ -38,18 +36,6 @@ class WebConfig: ObservableObject {
         withExtension: "html",
         subdirectory: "web"
     )
-
-    static func getViewConfig() -> WKWebViewConfiguration {
-        let userContentController = WKUserContentController()
-        let config = WKWebViewConfiguration()
-
-//        userContentController.add(JSHandler(), name: "sendMessage")
-
-        config.userContentController = userContentController
-        config.preferences.setValue(true, forKey: "allowFileAccessFromFileURLs")
-
-        return config
-    }
 }
 
 #Preview("App") {

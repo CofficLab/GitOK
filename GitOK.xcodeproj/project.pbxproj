@@ -58,9 +58,12 @@
 		0B76FCEF2BDDD12A00501F1F /* WebConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B76FCEE2BDDD12A00501F1F /* WebConfig.swift */; };
 		0B76FCF12BDDD18400501F1F /* WebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B76FCF02BDDD18400501F1F /* WebView.swift */; };
 		0B76FCF42BDDD1BD00501F1F /* WebContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B76FCF32BDDD1BD00501F1F /* WebContent.swift */; };
-		0B76FCF62BDDD1DE00501F1F /* WebViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B76FCF52BDDD1DE00501F1F /* WebViewDelegate.swift */; };
+		0B76FCF62BDDD1DE00501F1F /* WKDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B76FCF52BDDD1DE00501F1F /* WKDelegate.swift */; };
 		0B76FCFB2BDDD4D300501F1F /* sample_macOS in Resources */ = {isa = PBXBuildFile; fileRef = 0B76FCF92BDDD4D300501F1F /* sample_macOS */; };
 		0B76FCFD2BDDE0E700501F1F /* webview in Resources */ = {isa = PBXBuildFile; fileRef = 0B76FCFC2BDDE0E700501F1F /* webview */; };
+		0B76FCFF2BDDE6F200501F1F /* WebApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B76FCFE2BDDE6F200501F1F /* WebApi.swift */; };
+		0B76FD012BDDEE4000501F1F /* WebAgent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B76FD002BDDEE4000501F1F /* WebAgent.swift */; };
+		0B76FD032BDDEF1700501F1F /* WebChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B76FD022BDDEF1700501F1F /* WebChannel.swift */; };
 		0BB555242BDB7B300044048B /* BranchExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BB555232BDB7B300044048B /* BranchExt.swift */; };
 		0BCC6D012BD92CB2006ADA94 /* DebugCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCC6D002BD92CB2006ADA94 /* DebugCommand.swift */; };
 		0BCC6D032BD932DA006ADA94 /* PathExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCC6D022BD932DA006ADA94 /* PathExt.swift */; };
@@ -162,9 +165,12 @@
 		0B76FCEE2BDDD12A00501F1F /* WebConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebConfig.swift; sourceTree = "<group>"; };
 		0B76FCF02BDDD18400501F1F /* WebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebView.swift; sourceTree = "<group>"; };
 		0B76FCF32BDDD1BD00501F1F /* WebContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebContent.swift; sourceTree = "<group>"; };
-		0B76FCF52BDDD1DE00501F1F /* WebViewDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewDelegate.swift; sourceTree = "<group>"; };
+		0B76FCF52BDDD1DE00501F1F /* WKDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WKDelegate.swift; sourceTree = "<group>"; };
 		0B76FCF92BDDD4D300501F1F /* sample_macOS */ = {isa = PBXFileReference; lastKnownFileType = folder; path = sample_macOS; sourceTree = "<group>"; };
 		0B76FCFC2BDDE0E700501F1F /* webview */ = {isa = PBXFileReference; lastKnownFileType = folder; path = webview; sourceTree = "<group>"; };
+		0B76FCFE2BDDE6F200501F1F /* WebApi.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebApi.swift; sourceTree = "<group>"; };
+		0B76FD002BDDEE4000501F1F /* WebAgent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebAgent.swift; sourceTree = "<group>"; };
+		0B76FD022BDDEF1700501F1F /* WebChannel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebChannel.swift; sourceTree = "<group>"; };
 		0BB555232BDB7B300044048B /* BranchExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BranchExt.swift; sourceTree = "<group>"; };
 		0BCC6D002BD92CB2006ADA94 /* DebugCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugCommand.swift; sourceTree = "<group>"; };
 		0BCC6D022BD932DA006ADA94 /* PathExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PathExt.swift; sourceTree = "<group>"; };
@@ -211,10 +217,11 @@
 		0B0E16742BD89A8F0078942B = {
 			isa = PBXGroup;
 			children = (
-				0B76FCF72BDDD4C600501F1F /* Resources */,
-				0B332F052BDA01E600DFA5BB /* README.md */,
 				0B0E167F2BD89A8F0078942B /* GitOK */,
+				0B1C67D72BD9162F00502EB1 /* Assistant */,
 				0B0E167E2BD89A8F0078942B /* Products */,
+				0B332F052BDA01E600DFA5BB /* README.md */,
+				0B76FCF72BDDD4C600501F1F /* Resources */,
 			);
 			sourceTree = "<group>";
 		};
@@ -229,14 +236,12 @@
 		0B0E167F2BD89A8F0078942B /* GitOK */ = {
 			isa = PBXGroup;
 			children = (
-				0B76FCF22BDDD1B000501F1F /* WebView */,
 				0B0E16862BD89A910078942B /* Assets.xcassets */,
 				0BCC6CFE2BD92C31006ADA94 /* Bootstrap */,
 				0BCC6CFF2BD92CA2006ADA94 /* Command */,
 				0B1C67BD2BD9156600502EB1 /* Config */,
 				0B1C67AE2BD9098400502EB1 /* Dev */,
 				0B0E16882BD89A910078942B /* GitOK.entitlements */,
-				0B1C67D72BD9162F00502EB1 /* Helper */,
 				0B332F062BDA02BC00DFA5BB /* Info.plist */,
 				0B1C67B12BD90B4A00502EB1 /* Manager */,
 				0B1C67C02BD9157A00502EB1 /* Models */,
@@ -333,9 +338,10 @@
 			path = Models;
 			sourceTree = "<group>";
 		};
-		0B1C67D72BD9162F00502EB1 /* Helper */ = {
+		0B1C67D72BD9162F00502EB1 /* Assistant */ = {
 			isa = PBXGroup;
 			children = (
+				0B76FCF22BDDD1B000501F1F /* WebView */,
 				0B1C67C52BD9162F00502EB1 /* BackgroundView.swift */,
 				0B1C67C62BD9162F00502EB1 /* CardView.swift */,
 				0B1C67C72BD9162F00502EB1 /* Centered.swift */,
@@ -355,7 +361,7 @@
 				0B1C67D62BD9162F00502EB1 /* ViewHelper.swift */,
 				0B6BE4622BDA783000C8ACB2 /* AppHelper.swift */,
 			);
-			path = Helper;
+			path = Assistant;
 			sourceTree = "<group>";
 		};
 		0B1C67F62BD9E5E700502EB1 /* Layout */ = {
@@ -400,7 +406,10 @@
 			children = (
 				0B76FCF02BDDD18400501F1F /* WebView.swift */,
 				0B76FCF32BDDD1BD00501F1F /* WebContent.swift */,
-				0B76FCF52BDDD1DE00501F1F /* WebViewDelegate.swift */,
+				0B76FCF52BDDD1DE00501F1F /* WKDelegate.swift */,
+				0B76FCFE2BDDE6F200501F1F /* WebApi.swift */,
+				0B76FD002BDDEE4000501F1F /* WebAgent.swift */,
+				0B76FD022BDDEF1700501F1F /* WebChannel.swift */,
 			);
 			path = WebView;
 			sourceTree = "<group>";
@@ -537,6 +546,7 @@
 				0B1C67B82BD9128000502EB1 /* BtnStatus.swift in Sources */,
 				0BD15C4E2BDBF360004024CF /* BtnMerge.swift in Sources */,
 				0B1C67B52BD9115F00502EB1 /* Branchs.swift in Sources */,
+				0B76FD012BDDEE4000501F1F /* WebAgent.swift in Sources */,
 				0B1C67F32BD9E21B00502EB1 /* BtnOpenRemote.swift in Sources */,
 				0B44BCC62BDA947B00FBCF2F /* Branch.swift in Sources */,
 				0BCC6D0B2BD93E8C006ADA94 /* BtnAdd.swift in Sources */,
@@ -553,6 +563,7 @@
 				0BDE61A92BDB4746006E23EA /* File.swift in Sources */,
 				0B1C67DD2BD9162F00502EB1 /* CommonHelp.swift in Sources */,
 				0BDE61A72BDB4541006E23EA /* StatusExt.swift in Sources */,
+				0B76FCFF2BDDE6F200501F1F /* WebApi.swift in Sources */,
 				0B1C67E92BD9162F00502EB1 /* ViewHelper.swift in Sources */,
 				0B1C67C42BD915F200502EB1 /* AppConfig.swift in Sources */,
 				0B0E16832BD89A8F0078942B /* Content.swift in Sources */,
@@ -566,6 +577,7 @@
 				0B1C67C22BD9159900502EB1 /* Project.swift in Sources */,
 				0B1C67BF2BD9157100502EB1 /* DBExt.swift in Sources */,
 				0B1C67E62BD9162F00502EB1 /* MenuTile.swift in Sources */,
+				0B76FD032BDDEF1700501F1F /* WebChannel.swift in Sources */,
 				0B1C67E12BD9162F00502EB1 /* iCloudHelper.swift in Sources */,
 				0BDE61A52BDB408F006E23EA /* RevListExt.swift in Sources */,
 				0BCC6D072BD939BA006ADA94 /* Shell.swift in Sources */,
@@ -588,7 +600,7 @@
 				0BD15C562BDD23E1004024CF /* DiffExt.swift in Sources */,
 				0B1C67B02BD9099800502EB1 /* AppPreview.swift in Sources */,
 				0BD15C5A2BDD275C004024CF /* DiffBlock.swift in Sources */,
-				0B76FCF62BDDD1DE00501F1F /* WebViewDelegate.swift in Sources */,
+				0B76FCF62BDDD1DE00501F1F /* WKDelegate.swift in Sources */,
 				0BB555242BDB7B300044048B /* BranchExt.swift in Sources */,
 				0B1C68022BD9F7B500502EB1 /* BtnOpen.swift in Sources */,
 				0B0E16812BD89A8F0078942B /* GitOKApp.swift in Sources */,

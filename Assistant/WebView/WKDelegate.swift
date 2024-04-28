@@ -3,7 +3,7 @@ import OSLog
 import SwiftUI
 import WebKit
 
-class WebViewDelegate: NSObject, WKUIDelegate, ObservableObject, WKNavigationDelegate {
+class WKDelegate: NSObject, WKUIDelegate, ObservableObject, WKNavigationDelegate {
     @Environment(\.openURL) var openURL
 
     func webView(_ webView: WKWebView, didReceiveServerRedirectForProvisionalNavigation navigation: WKNavigation!) {

@@ -7,18 +7,22 @@ struct DiffView: View {
     @EnvironmentObject var app: AppManager
 
     var diffBlock: DiffBlock?
-    @State var codeMessages: Set<TextLocated<Message>> = Set()
-
-    @State private var position: CodeEditor.Position = CodeEditor.Position()
-    @State private var messages: Set<TextLocated<Message>> = Set()
-    @Environment(\.colorScheme) private var colorScheme: ColorScheme
+    var view: WebView
 
     init(_ diffBlock: DiffBlock?) {
         self.diffBlock = diffBlock
+        self.view = WebConfig.makeView()
     }
 
     var body: some View {
-        WebConfig.makeView()
+        Button("SSS") {
+            view.content.setModified("xxxxxxxx")
+        }
+        
+        view.onAppear {
+//            view.content.setOriginal("xxxxx")
+//            view.content.setModified("xxxxxxxx")
+        }
     }
 }
 

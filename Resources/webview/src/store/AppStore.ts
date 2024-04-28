@@ -1,8 +1,10 @@
 import { defineStore } from 'pinia'
+import webkit from '../entities/WebKit'
 
 export const useAppStore = defineStore('app-store', {
     state: () => {
         return {
+            ready: false,
             original: "333",
             modified: "e333"
         }
@@ -16,6 +18,10 @@ export const useAppStore = defineStore('app-store', {
         setModified: function (data: string) {
             console.log('🍋 AppStore: setModified')
             this.modified = data
+        },
+        setReady() {
+            this.ready = true
+            webkit.pageLoaded()
         },
     },
 })

@@ -23,9 +23,9 @@ class Shell {
         let errorPipe = Pipe()
         var isDir: ObjCBool = true
         
-        print("\(self.label)")
-        print("\(command)")
-        print("\n")
+//        print("\(self.label)")
+//        print("\(command)")
+//        print("\n")
         
         if !FileManager.default.fileExists(atPath: current, isDirectory: &isDir) {
             return "不存在这个路径：\(current)"
