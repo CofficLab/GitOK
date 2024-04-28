@@ -26,7 +26,7 @@ struct Detail: View {
                     if let file = file {
                         DiffView(file)
                             .frame(maxWidth: .infinity)
-                            .frame(height: geo.size.height * 0.6)
+                            .frame(height: geo.size.height * 0.7)
                     }
                 }
             }
