@@ -13,15 +13,31 @@ struct History: View {
     var branch: Branch
 
     var body: some View {
-        VStack {
-            List(commits, id: \.self, selection: $selection, rowContent: { commit in
-                HistoryTile(
-                    commit: commit,
-                    project: project,
-                    branch: branch
-                ).tag(commit as GitCommit?)
-            })
+        List(selection: $selection) {
+            ForEach(Stage.allCases) { stage in
+                if Stage(rawValue: stage.rawValue) == .Head {
+//                    Section("当前", content: {
+//                        HistoryTile(
+//                            commit: GitCommit.headFor(project.path),
+//                            project: project,
+//                            branch: branch
+//                        ).tag(GitCommit.headFor(project.path) as GitCommit?)
+//                    })
+                } else {
+                    Section("历史", content: {
+                        ForEach(commits) { commit in
+                            HistoryTile(
+                                commit: commit,
+                                project: project,
+                                branch: branch
+                            ).tag(commit as GitCommit?)
+                        }
+                    })
+                }
+            }
+            
         }
+
         .onAppear {
             commits = project.getCommits()
             selection = commits.first

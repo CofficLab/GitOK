@@ -21,9 +21,7 @@ final class Project {
     }
     
     func getCommits() -> [GitCommit] {
-        let commits = try! Git.logs(path)
-        
-        return [GitCommit.headFor(path)] + commits
+        try! Git.logs(path)
     }
 }
 

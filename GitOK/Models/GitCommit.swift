@@ -44,6 +44,12 @@ struct GitCommit {
     }
 }
 
+extension GitCommit: Identifiable {
+    var id: String {
+        uuid
+    }
+}
+
 extension GitCommit: Hashable {}
 
 extension GitCommit {

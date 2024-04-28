@@ -81,6 +81,7 @@
 		0BDE61AB2BDB4AB8006E23EA /* FileList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BDE61AA2BDB4AB8006E23EA /* FileList.swift */; };
 		0BDE61AD2BDB4E87006E23EA /* FileTile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BDE61AC2BDB4E86006E23EA /* FileTile.swift */; };
 		0BF75EE02BDE4C0C00A553CD /* HistoryTile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BF75EDF2BDE4C0C00A553CD /* HistoryTile.swift */; };
+		0BF75EE22BDE5CE500A553CD /* Stage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BF75EE12BDE5CE500A553CD /* Stage.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -175,6 +176,7 @@
 		0BDE61AA2BDB4AB8006E23EA /* FileList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileList.swift; sourceTree = "<group>"; };
 		0BDE61AC2BDB4E86006E23EA /* FileTile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileTile.swift; sourceTree = "<group>"; };
 		0BF75EDF2BDE4C0C00A553CD /* HistoryTile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryTile.swift; sourceTree = "<group>"; };
+		0BF75EE12BDE5CE500A553CD /* Stage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stage.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -309,6 +311,7 @@
 				0BDE61A82BDB4746006E23EA /* File.swift */,
 				0BD15C572BDD26DE004024CF /* Diff.swift */,
 				0BD15C592BDD275C004024CF /* DiffBlock.swift */,
+				0BF75EE12BDE5CE500A553CD /* Stage.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -584,6 +587,7 @@
 				0B76FD182BDE27D000501F1F /* DefaultMessageHandler.swift in Sources */,
 				0B76FD102BDDFC0100501F1F /* WebOption.swift in Sources */,
 				0B76FD1F2BDE2FB700501F1F /* DefaultReadyHandler.swift in Sources */,
+				0BF75EE22BDE5CE500A553CD /* Stage.swift in Sources */,
 				0B1C67ED2BD9D9CB00502EB1 /* CommitCategory.swift in Sources */,
 				0B76FD062BDDF79600501F1F /* WebApi.swift in Sources */,
 				0B76FCEF2BDDD12A00501F1F /* WebConfig.swift in Sources */,
