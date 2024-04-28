@@ -6,7 +6,6 @@ struct File {
     var projectPath: String
     var name: String
     var type: ChangeType = .modified
-    var uuid: String
     
     var lastContent: String {
         do {
@@ -28,26 +27,26 @@ struct File {
         let ll = l.trimmingCharacters(in: .whitespacesAndNewlines)
         
         if ll.hasPrefix("A") {
-            return File(projectPath: path, name: l, type: .add, uuid: UUID().uuidString)
+            return File(projectPath: path, name: l, type: .add)
         }
         
         if ll.hasPrefix("M") {
-            return File(projectPath: path, name: l, type: .modified, uuid: UUID().uuidString)
+            return File(projectPath: path, name: l, type: .modified)
         }
         
-        return File(projectPath: path, name: l, uuid: UUID().uuidString)
+        return File(projectPath: path, name: l)
     }
 }
 
 extension File: Hashable {
     static func ==(lhs: File, rhs: File) -> Bool {
-        lhs.uuid == rhs.uuid
+        lhs.id == rhs.id
     }
 }
 
 extension File: Identifiable {
     var id: String {
-        uuid
+        projectPath + name
     }
 }
 

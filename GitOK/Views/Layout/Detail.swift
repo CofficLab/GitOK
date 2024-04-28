@@ -2,7 +2,7 @@ import SwiftUI
 
 struct Detail: View {
     @EnvironmentObject var app: AppManager
-    
+
     @State var files: [File] = []
     @State var file: File? = nil
 
@@ -10,49 +10,48 @@ struct Detail: View {
     var commit: GitCommit? { app.commit }
 
     var body: some View {
-        if let project = project {
+        VStack {
+            if commit?.isHead ?? false {
+                CommitForm()
+            }
+
             VStack {
-                if commit?.isHead ?? false {
-                    CommitForm()
+                List(files, id: \.self, selection: $file) {
+                    FileTile(file: $0)
                 }
-                
-                if let commit = commit {
-                    VStack {
-                        List(files, id: \.self, selection: $file) {
-                            FileTile(file: $0)
-                        }
-                        .onAppear {
-                            self.file = files.first
-                        }
-                        
-                        if let file = file {
-                            DiffView(file)
-                                .frame(maxHeight: .infinity)
-                        }
+                .onAppear {
+                    self.file = files.first
+                }
 
-                        if files.isEmpty {
-                            Text("本地无变动")
-                        }
-                    }
+                if let file = file {
+                    DiffView(file)
+                }
+
+                if files.isEmpty {
+                    Text("本地无变动")
                 }
             }
-            .frame(maxWidth: .infinity)
-            .onAppear {
-                refresh()
-
-                EventManager().onCommitted {
-                    refresh()
-                }
-            }
-            .onChange(of: commit, refresh)
         }
+        .frame(maxWidth: .infinity)
+        .onAppear {
+            refresh()
+
+            EventManager().onCommitted {
+                refresh()
+            }
+        }
+        .onChange(of: commit, refresh)
     }
-    
+
     func refresh() {
         guard let commit = commit else {
             return
         }
+
         files = commit.getFiles()
+        if let file = file, !files.contains(file) {
+            self.file = nil
+        }
     }
 }
 
