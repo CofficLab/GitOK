@@ -9,7 +9,7 @@ class AppManager: NSObject, ObservableObject, AVAudioPlayerDelegate {
     @Published var branch: String = ""
     @Published var branches: [String] = []
     @Published var commit: GitCommit?
-    @Published var project: Project? = AppConfig.getProject()
+    @Published var project: Project?
     
     func alert(_ message: String, info: String) {
         // 显示错误提示
@@ -22,8 +22,9 @@ class AppManager: NSObject, ObservableObject, AVAudioPlayerDelegate {
     }
     
     func setProject(_ p: Project?) {
+        os_log("Set Project to \(p?.path ?? "")")
         self.project = p
-        AppConfig.setProject(p?.path ?? "")
+        AppConfig.setProject(p)
     }
 }
 

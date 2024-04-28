@@ -19,7 +19,10 @@ struct Projects: View {
             .onDelete(perform: deleteItems)
         }
         .onAppear {
-            self.project = app.project
+            self.project = projects.first(where: {
+                $0.path == AppConfig.projectPath
+            })
+            app.setProject(self.project)
         }
         .onChange(of: project, {
             app.setProject(project)
