@@ -38,17 +38,19 @@ struct History: View {
                 commitId = commits.first?.id ?? ""
 
                 EventManager().onCommitted {
-                    commits = project.getCommits()
+                    refresh()
+                }
+                
+                EventManager().onRefresh {
+                    refresh()
                 }
             }
             .onChange(of: app.project, refresh)
             .onChange(of: app.branch, refresh)
             .onChange(of: commitId) {
-                os_log("commitId changed to \(commitId)")
                 app.commit = project.getCommitsWithHead().first(where: {
                     $0.id == commitId
                 })
-                print(app.commit)
             }
         }
     }

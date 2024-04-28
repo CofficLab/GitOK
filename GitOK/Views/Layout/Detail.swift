@@ -10,7 +10,7 @@ struct Detail: View {
     var commit: GitCommit? { app.commit }
 
     var body: some View {
-        VStack {
+        GeometryReader { geo in
             VStack {
                 if files.isEmpty {
                     NoChanges()
@@ -18,16 +18,15 @@ struct Detail: View {
                     if commit?.isHead ?? false {
                         CommitForm().padding()
                     }
-                    
+
                     List(files, id: \.self, selection: $file) {
                         FileTile(file: $0)
-                    }
-                    .onAppear {
-                        self.file = files.first
                     }
                     
                     if let file = file {
                         DiffView(file)
+                            .frame(maxWidth: .infinity)
+                            .frame(height: geo.size.height * 0.6)
                     }
                 }
             }
@@ -37,6 +36,10 @@ struct Detail: View {
             refresh()
 
             EventManager().onCommitted {
+                refresh()
+            }
+
+            EventManager().onRefresh {
                 refresh()
             }
         }
@@ -49,9 +52,7 @@ struct Detail: View {
         }
 
         files = commit.getFiles()
-        if let file = file, !files.contains(file) {
-            self.file = nil
-        }
+        file = files.first
     }
 }
 

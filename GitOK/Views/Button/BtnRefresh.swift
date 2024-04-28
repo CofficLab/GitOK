@@ -1,15 +1,15 @@
 import SwiftUI
 
-struct BtnStatus: View {
+struct BtnRefresh: View {
     @Binding var message: String
     
     var path: String
     
     var body: some View {
         Button(action: {
-            message = try! Git.status(path)
+            EventManager().emitRefresh()
         }, label: {
-            Label("检查", systemImage: "arrow.clockwise.circle")
+            Label("刷新", systemImage: "arrow.clockwise.circle")
         })
     }
 }

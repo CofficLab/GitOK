@@ -41,10 +41,8 @@ struct GitCommit {
     
     func getFiles() -> [File] {
         if isHead {
-            os_log("getFiles for HEAD")
             return try! Git.changedFile(path)
         } else {
-            os_log("getFiles for commit")
             return try! Git.commitFiles(path, hash: hash)
         }
     }

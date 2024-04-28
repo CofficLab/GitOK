@@ -9,6 +9,14 @@ class EventManager: NSObject, ObservableObject, AVAudioPlayerDelegate {
     var n = NotificationCenter.default
     var queue = DispatchQueue(label: "EventQueue")
     
+    func emitRefresh() {
+        NotificationCenter.default.post(
+            name: NSNotification.Name(Event.Refresh.name),
+            object: nil,
+            userInfo: [:]
+        )
+    }
+    
     func emitCommitted() {
         NotificationCenter.default.post(
             name: NSNotification.Name(Event.Committed.name),
@@ -28,6 +36,18 @@ class EventManager: NSObject, ObservableObject, AVAudioPlayerDelegate {
     func onCommitted(_ callback: @escaping () -> Void) {
         n.addObserver(
             forName: NSNotification.Name(Event.Committed.name),
+            object: nil,
+            queue: .main,
+            using: { notification in
+                self.queue.async {
+                    callback()
+                }
+            })
+    }
+    
+    func onRefresh(_ callback: @escaping () -> Void) {
+        n.addObserver(
+            forName: NSNotification.Name(Event.Refresh.name),
             object: nil,
             queue: .main,
             using: { notification in
@@ -58,6 +78,7 @@ class EventManager: NSObject, ObservableObject, AVAudioPlayerDelegate {
         case AudioUpdated
         case Delete
         case JSReady
+        case Refresh
         
         var name: String {
             String(describing: self)
