@@ -19,10 +19,7 @@ struct DiffView: View {
             view.content.setModified("xxxxxxxx")
         }
         
-        view.onAppear {
-//            view.content.setOriginal("xxxxx")
-//            view.content.setModified("xxxxxxxx")
-        }
+        view
     }
 }
 

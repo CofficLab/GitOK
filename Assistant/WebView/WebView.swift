@@ -1,44 +1,40 @@
 import Foundation
-import SwiftUI
 import OSLog
+import SwiftUI
 import WebKit
 
-#if os(iOS)
-    typealias ViewRepresentable = UIViewRepresentable
-#elseif os(macOS)
-    typealias ViewRepresentable = NSViewRepresentable
-#endif
+struct WebView {
+    /// 配置
+    var option: WebOption? = nil
 
-/// 将 WebContent 封装成一个普通的 View
-struct WebView: ViewRepresentable {
-    public init(
-        url: URL? = nil,
-        html: String? = "",
-        code: String? = "",
-        htmlFile: URL? = nil,
-        config: WKWebViewConfiguration? = nil
-    ) {
-        os_log("🚩 初始化 Webview")
-        self.url = url
-        self.html = html
-        self.config = config ?? WebView.getViewConfig()
-        self.code = code
-        self.htmlFile = htmlFile
-        content = WebContent(frame: .zero, configuration: self.config)
-        content.isInspectable = true
-    }
-
-    private let url: URL?
-    private let html: String?
-    private let code: String?
-    private let htmlFile: URL?
-    private let config: WKWebViewConfiguration
-    
     /// 网页内容
     var content: WebContent
     
-    @StateObject var delegate = WKDelegate()
+    /// JS脚本处理器
+    var controller: WKUserContentController
 
+    @StateObject var delegate: WKDelegate = .init()
+
+    init(_ option: WebOption) {
+        os_log("🚩 初始化 Webview")
+        self.option = option
+        self.controller = WKUserContentController()
+//        self.controller.add(DefaultWebAgent(), name: "sendMessage")
+
+        // 初始化网络内容部分
+
+        let config = WKWebViewConfiguration()
+
+        config.userContentController = self.controller
+        config.preferences.setValue(true, forKey: "allowFileAccessFromFileURLs")
+
+        self.content = WebContent(frame: .zero, configuration: config)
+        self.content.isInspectable = true
+    }
+}
+
+/// 将 WebContent 封装成一个普通的 View
+extension WebView: WebPlatform.ViewRepresentable {
     #if os(iOS)
         public func makeUIView(context: Context) -> WKWebView {
             makeView()
@@ -58,37 +54,25 @@ struct WebView: ViewRepresentable {
     #endif
 
     func makeView() -> WKWebView {
-        if url != nil {
-            content.load(URLRequest(url: url!))
+        if let option = option, let url = option.url {
+            content.load(URLRequest(url: url))
         }
 
-        if html != "" {
-            content.loadHTMLString(html!, baseURL: nil)
+        if let option = option, let html = option.html, !html.isEmpty {
+            content.loadHTMLString(html, baseURL: nil)
         }
 
-        if htmlFile != nil {
-            content.loadFileURL(htmlFile!, allowingReadAccessTo: htmlFile!)
+        if let option = option, let htmlFile = option.htmlFile {
+            content.loadFileURL(htmlFile, allowingReadAccessTo: htmlFile)
         }
 
-        if code != nil && code!.count > 0 {
-            content.run(code!)
+        if let option = option, let code = option.code, !code.isEmpty {
+            content.run(code)
         }
 
         content.uiDelegate = delegate
 
         return content
-    }
-
-    static func getViewConfig() -> WKWebViewConfiguration {
-        let userContentController = WKUserContentController()
-        let config = WKWebViewConfiguration()
-
-        userContentController.add(WebAgent(), name: "sendMessage")
-
-        config.userContentController = userContentController
-        config.preferences.setValue(true, forKey: "allowFileAccessFromFileURLs")
-
-        return config
     }
 }
 

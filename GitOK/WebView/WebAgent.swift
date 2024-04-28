@@ -1,8 +1,7 @@
+import SwiftUI
 import WebKit
 import OSLog
-import SwiftUI
 
-/// 与JS通信
 class WebAgent: NSObject, WKScriptMessageHandler {
     private var eventManager = EventManager()
     
@@ -26,11 +25,11 @@ class WebAgent: NSObject, WKScriptMessageHandler {
         }
     }
     
-    private func pageLoaded(message: WKScriptMessage) {
+    func pageLoaded(message: WKScriptMessage) {
         os_log("📶 JS Said: Ready")
     }
     
-    private func downloadFile(message: WKScriptMessage) {
+    func downloadFile(message: WKScriptMessage) {
         os_log("📶 JS Said: DownloadFile")
         
         let data = message.body as! [String: String]
@@ -38,11 +37,11 @@ class WebAgent: NSObject, WKScriptMessageHandler {
         downloadFile(base64: data["base64"] ?? "", name: data["name"] ?? "")
     }
     
-    private func updateDrawing(message: WKScriptMessage) {
+    func updateDrawing(message: WKScriptMessage) {
         os_log("📶 JS Said: UpdateDrawing")
     }
     
-    private func downloadFile(base64: String, name: String) {
+    func downloadFile(base64: String, name: String) {
         let panel = NSOpenPanel()
         panel.allowsMultipleSelection = false
         panel.canChooseDirectories = true
@@ -64,6 +63,6 @@ class WebAgent: NSObject, WKScriptMessageHandler {
     }
 }
 
-#Preview("APP") {
-    AppPreview().frame(width: 700, height: 600)
+#Preview {
+    AppPreview()
 }
