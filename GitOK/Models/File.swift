@@ -11,7 +11,7 @@ struct File {
     var lastContent: String {
         do {
             return try Git.getFileLastContent(projectPath, file: name)
-        } catch let error {
+        } catch _ {
             return ""
         }
     }
@@ -19,7 +19,7 @@ struct File {
     var content: String {
         do {
             return try Git.getFileContent(projectPath, file: name)
-        } catch let error {
+        } catch _ {
             return ""
         }
     }
