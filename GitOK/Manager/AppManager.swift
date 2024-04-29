@@ -49,7 +49,7 @@ class AppManager: NSObject, ObservableObject, AVAudioPlayerDelegate {
             return
         }
         
-        _ = try Git.setBranch(branch, project.path, verbose: false)
+        _ = try Git.setBranch(branch, project.path, verbose: true)
     }
 }
 
