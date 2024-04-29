@@ -30,6 +30,10 @@ extension Git {
     }
     
     static func commitAndPush(_ path: String, commit: String, verbose: Bool = false) throws -> String {
+        if verbose {
+            os_log("\(self.label)CommitAndPush")
+        }
+        
         do {
             try Git.add(path)
             _ = try Git.run("commit -a -m '\(commit)'", path: path)

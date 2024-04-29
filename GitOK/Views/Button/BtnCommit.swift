@@ -18,7 +18,7 @@ struct BtnCommit: View {
         
         Task.detached(operation: {
             do {
-                _ = try await Git.commitAndPush(path, commit: commit, verbose: true)
+                _ = try await Git.commitAndPush(path, commit: commit, verbose: false)
 
                 DispatchQueue.main.async {
                     EventManager().emitCommitted()
