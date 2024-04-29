@@ -89,6 +89,10 @@ jobs:
           #   --key-id=${{ secrets.APP_STORE_CONNECT_KEY_ID }} \
           #   --issuer ${{ secrets.APP_STORE_CONNECT_KEY_ISSER_ID }} 
           xcrun stapler staple "$file"
+      - name: 公证结果
+        continue-on-error: true
+        run: |
+          file=$(find . -maxdepth 1 -type f -name "*.dmg" | head -n 1)
           stapler validate -v "$file"
       # - name: Generate Changelog
       #   run: echo ""> ${{ github.workspace }}-CHANGELOG.txt
