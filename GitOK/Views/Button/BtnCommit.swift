@@ -14,16 +14,20 @@ struct BtnCommit: View {
     }
 
     func commitAndPush() {
+        self.working = true
+        
         Task.detached(operation: {
             do {
                 _ = try await Git.commitAndPush(path, commit: commit, verbose: true)
 
                 DispatchQueue.main.async {
                     EventManager().emitCommitted()
+                    self.working = false
                 }
             } catch let error {
                 DispatchQueue.main.async {
                     app.alert("提交出错", info: error.localizedDescription)
+                    self.working = false
                 }
             }
         })
