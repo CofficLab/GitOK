@@ -45,6 +45,10 @@ class AppManager: NSObject, ObservableObject, AVAudioPlayerDelegate {
             return
         }
         
+        if branch.name == currentBranch?.name {
+            return
+        }
+        
         _ = try Git.setBranch(branch, project.path, verbose: false)
     }
 }
