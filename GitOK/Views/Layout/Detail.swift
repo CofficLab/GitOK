@@ -20,8 +20,10 @@ struct Detail: View {
                         MergeForm().padding()
                     }
 
-                    DiffView()
-                        .frame(maxHeight: .infinity)
+                    if let commit = commit {
+                        DiffView(commit: commit)
+                            .frame(maxHeight: .infinity)
+                    }
                 }
             }
         }

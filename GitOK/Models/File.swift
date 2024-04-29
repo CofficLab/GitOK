@@ -23,6 +23,22 @@ struct File {
         }
     }
     
+    func originalContentOfCommit(_ commit: GitCommit) -> String {
+        do {
+            return try Git.run("show \(commit.hash)^:\(name)", path: projectPath)
+        } catch _ {
+            return ""
+        }
+    }
+    
+    func contentOfCommit(_ commit: GitCommit) -> String {
+        do {
+            return try Git.run("show \(commit.hash):\(name)", path: projectPath)
+        } catch _ {
+            return ""
+        }
+    }
+    
     static func fromLine(_ l: String, path: String) -> File {
         let ll = l.trimmingCharacters(in: .whitespacesAndNewlines)
         

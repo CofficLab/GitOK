@@ -7,6 +7,7 @@ struct DiffView: View {
 
     var file: File? { app.file }
     var view: WebView { webConfig.view }
+    var commit: GitCommit
 
     var body: some View {
         if let file = file {
@@ -39,9 +40,15 @@ struct DiffView: View {
         guard let file = file else {
             return
         }
-
-        view.content.setOriginal(file.lastContent)
-        view.content.setModified(file.content)
+        
+        if commit.isHead {
+            view.content.setOriginal(file.lastContent)
+            view.content.setModified(file.content)
+        } else {
+            view.content.setOriginal(file.originalContentOfCommit(commit))
+            view.content.setModified(file.contentOfCommit(commit))
+        }
+        
     }
 }
 
