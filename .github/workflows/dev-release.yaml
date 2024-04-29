@@ -63,16 +63,19 @@ jobs:
       #     /usr/bin/codesign --force -s Y6HZ9JJYV6 temp/Build/Products/Release/${{ env.SCHEME }}.app -v
       - name: 打包
         run: |
-          brew install create-dmg
+          # brew install create-dmg
 
-          create-dmg \
-            --volname "${{ env.SCHEME }}" \
-            --window-pos 200 120 \
-            --window-size 800 400 \
-            --icon-size 100 \
-            --app-drop-link 600 185 \
-            "${{ env.SCHEME }}.dmg" \
-            "temp/Build/Products/Release/${{ env.SCHEME }}.app"
+          # create-dmg \
+          #   --volname "${{ env.SCHEME }}" \
+          #   --window-pos 200 120 \
+          #   --window-size 800 400 \
+          #   --icon-size 100 \
+          #   --app-drop-link 600 185 \
+          #   "${{ env.SCHEME }}.dmg" \
+          #   "temp/Build/Products/Release/${{ env.SCHEME }}.app"
+
+          npm i -g create-dmg
+          create-dmg "temp/Build/Products/Release/${{ env.SCHEME }}.app"
       # - name: Generate Changelog
       #   run: echo ""> ${{ github.workspace }}-CHANGELOG.txt
       - uses: softprops/action-gh-release@v2
