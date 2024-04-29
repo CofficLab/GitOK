@@ -22,6 +22,7 @@ struct HeadTile: View {
         }
     }
     
+    @MainActor
     func refresh() {
         files = try! Git.changedFile(project.path)
     }

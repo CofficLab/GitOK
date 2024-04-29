@@ -21,6 +21,7 @@ struct DiffView: View {
         }
     }
     
+    @MainActor
     func refresh() {
         guard let file = file else {
             return
