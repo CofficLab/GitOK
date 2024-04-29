@@ -8,14 +8,18 @@ struct Detail: View {
 
     var body: some View {
         GeometryReader { geo in
-            VStack {
-                if commit?.isHead ?? false {
-                    CommitForm().padding()
-                }
+            if commit?.getFiles().count == 0 {
+                NoChanges()
+            } else {
+                VStack {
+                    if commit?.isHead ?? false {
+                        CommitForm().padding()
+                    }
 
-                DiffView()
-                    .frame(maxWidth: .infinity)
-                    .frame(maxHeight: .infinity)
+                    DiffView()
+                        .frame(maxWidth: .infinity)
+                        .frame(maxHeight: .infinity)
+                }
             }
         }
         .frame(maxWidth: .infinity)
