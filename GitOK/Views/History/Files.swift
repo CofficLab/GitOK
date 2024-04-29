@@ -32,7 +32,7 @@ struct Files: View {
                     if verbose {
                         os_log("\(self.label)Refresh because of: Committed")
                     }
-                    
+
                     refresh()
                 }
 
@@ -47,6 +47,7 @@ struct Files: View {
         }
     }
 
+    @MainActor
     func refresh() {
         guard let commit = app.commit else {
             return
