@@ -26,6 +26,7 @@ struct Content: View {
             if let project = project {
                 ToolbarItemGroup(placement: .cancellationAction, content: {
                     BtnRefresh(message: $message, path: project.path)
+                    BtnOpenTerminal(url: project.url)
                     BtnOpenXcode(url: project.url)
                     BtnOpen(url: project.url)
                     BtnFinder(url: project.url)

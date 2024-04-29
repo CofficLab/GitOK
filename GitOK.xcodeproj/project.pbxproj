@@ -82,6 +82,7 @@
 		0BF75EE42BDF2CCD00A553CD /* Commits.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BF75EE32BDF2CCD00A553CD /* Commits.swift */; };
 		0BF75EE62BDF2CFB00A553CD /* Files.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BF75EE52BDF2CFB00A553CD /* Files.swift */; };
 		0BF75EE82BDF39B500A553CD /* PushExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BF75EE72BDF39B500A553CD /* PushExt.swift */; };
+		0BF75EEA2BDFA2FB00A553CD /* BtnOpenTerminal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BF75EE92BDFA2FB00A553CD /* BtnOpenTerminal.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -177,6 +178,7 @@
 		0BF75EE32BDF2CCD00A553CD /* Commits.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Commits.swift; sourceTree = "<group>"; };
 		0BF75EE52BDF2CFB00A553CD /* Files.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Files.swift; sourceTree = "<group>"; };
 		0BF75EE72BDF39B500A553CD /* PushExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushExt.swift; sourceTree = "<group>"; };
+		0BF75EE92BDFA2FB00A553CD /* BtnOpenTerminal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BtnOpenTerminal.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -274,15 +276,16 @@
 				0B1C67FF2BD9F68F00502EB1 /* BtnFinder.swift */,
 				0BCC6D102BD94B5B006ADA94 /* BtnLog.swift */,
 				0BCC6D122BD94D15006ADA94 /* BtnLogs.swift */,
+				0BD15C4D2BDBF360004024CF /* BtnMerge.swift */,
 				0B1C68012BD9F7B500502EB1 /* BtnOpen.swift */,
 				0B1C67F22BD9E21B00502EB1 /* BtnOpenRemote.swift */,
+				0BF75EE92BDFA2FB00A553CD /* BtnOpenTerminal.swift */,
 				0B1C68032BD9FAE500502EB1 /* BtnOpenXcode.swift */,
 				0B1C67EA2BD9181200502EB1 /* BtnPush.swift */,
 				0BCC6D082BD939FD006ADA94 /* BtnPwd.swift */,
-				0BCC6D0C2BD948AB006ADA94 /* BtnSave.swift */,
 				0B1C67B72BD9128000502EB1 /* BtnRefresh.swift */,
+				0BCC6D0C2BD948AB006ADA94 /* BtnSave.swift */,
 				0B6BE4602BDA603000C8ACB2 /* BtnWhoami.swift */,
-				0BD15C4D2BDBF360004024CF /* BtnMerge.swift */,
 			);
 			path = Button;
 			sourceTree = "<group>";
@@ -538,6 +541,7 @@
 				0B76FD222BDE315800501F1F /* ReadyHandler.swift in Sources */,
 				0BCC6D152BD9526F006ADA94 /* GitCommit.swift in Sources */,
 				0BDE61A92BDB4746006E23EA /* File.swift in Sources */,
+				0BF75EEA2BDFA2FB00A553CD /* BtnOpenTerminal.swift in Sources */,
 				0BDE61A72BDB4541006E23EA /* StatusExt.swift in Sources */,
 				0B76FCFF2BDDE6F200501F1F /* WebApiSample.swift in Sources */,
 				0B1C67C42BD915F200502EB1 /* AppConfig.swift in Sources */,
