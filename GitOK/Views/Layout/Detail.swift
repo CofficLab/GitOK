@@ -14,6 +14,7 @@ struct Detail: View {
                 VStack {
                     if commit?.isHead ?? false {
                         CommitForm().padding()
+                        MergeForm().padding()
                     }
 
                     DiffView()

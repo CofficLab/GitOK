@@ -40,13 +40,13 @@ struct Commits: View {
             .onAppear {
                 refresh()
 
-//                EventManager().onCommitted {
-//                    if verbose {
-//                        os_log("\(self.label)Refresh because of: Committed")
-//                    }
-//                    
-//                    refresh()
-//                }
+                EventManager().onCommitted {
+                    if verbose {
+                        os_log("\(self.label)Refresh because of: Committed")
+                    }
+                    
+                    refresh()
+                }
 
                 EventManager().onRefresh {
                     refresh()
@@ -70,6 +70,7 @@ struct Commits: View {
         }
     }
 
+    @MainActor
     func refresh() {
         guard let project = app.project else {
             return
