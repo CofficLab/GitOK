@@ -81,6 +81,7 @@ jobs:
           mkdir -p ./private_keys
           echo -n "${{ secrets.APP_STORE_CONNECT_KEY_BASE64 }}" | base64 --decode -o ./private_keys/AuthKey_${{ secrets.APP_STORE_CONNECT_KEY_ID }}.p8
       - name: 公证
+        continue-on-error: true
         run: |
           file=$(find . -maxdepth 1 -type f -name "*.dmg" | head -n 1)
           # xcrun notarytool submit "$file" \
