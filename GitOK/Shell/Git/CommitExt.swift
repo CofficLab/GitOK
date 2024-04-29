@@ -18,7 +18,7 @@ extension Git {
     }
     
     static func add(_ path: String) throws -> String {
-        try Git.run("add .", path: path)
+        try Git.run("add -A .", path: path)
     }
 
     static func commit(_ path: String, commit: String) throws -> String {
