@@ -17,7 +17,7 @@ struct Commits: View {
                     ForEach(Stage.allCases, id: \.self) { stage in
                         if Stage(rawValue: stage.rawValue) == .Head {
                             Section("当前", content: {
-                                ForEach([GitCommit.headFor(project.path)]) { commit in
+                                ForEach([project.headCommit]) { commit in
                                     CommitTile(
                                         commit: commit,
                                         project: project
@@ -77,7 +77,7 @@ struct Commits: View {
         }
 
         commits = project.getCommits()
-        commitId = commits.first?.id ?? ""
+        commitId = project.headCommit.id
     }
 }
 

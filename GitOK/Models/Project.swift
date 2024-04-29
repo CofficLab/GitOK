@@ -15,6 +15,10 @@ final class Project {
         url.path
     }
     
+    var headCommit: GitCommit {
+        GitCommit.headFor(path)
+    }
+    
     init(_ url: URL) {
         self.timestamp = .now
         self.url = url
@@ -25,7 +29,7 @@ final class Project {
     }
     
     func getCommitsWithHead() -> [GitCommit] {
-        [GitCommit.headFor(path)] + getCommits()
+        [self.headCommit] + getCommits()
     }
 }
 
