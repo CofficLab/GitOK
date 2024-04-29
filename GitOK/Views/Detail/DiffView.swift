@@ -40,15 +40,12 @@ struct DiffView: View {
         guard let file = file else {
             return
         }
-        
+
         if commit.isHead {
-            view.content.setOriginal(file.lastContent)
-            view.content.setModified(file.content)
+            view.content.setTexts(file.lastContent, file.content)
         } else {
-            view.content.setOriginal(file.originalContentOfCommit(commit))
-            view.content.setModified(file.contentOfCommit(commit))
+            view.content.setTexts(file.originalContentOfCommit(commit), file.contentOfCommit(commit))
         }
-        
     }
 }
 
