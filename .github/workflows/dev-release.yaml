@@ -83,7 +83,7 @@ jobs:
       - name: 公证
         run: |
           file=$(find . -maxdepth 1 -type f -name "*.dmg" | head -n 1)
-          xcrun notarytool submit $file \
+          xcrun notarytool submit "$file" \
             --key ./private_keys/AuthKey_${{ secrets.APP_STORE_CONNECT_KEY_ID }}.p8 \
             --key-id=${{ secrets.APP_STORE_CONNECT_KEY_ID }} \
             --issuer ${{ secrets.APP_STORE_CONNECT_KEY_ISSER_ID }} 
