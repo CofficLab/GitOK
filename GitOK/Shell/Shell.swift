@@ -6,11 +6,19 @@ class Shell {
     static var label: String = "🐚 Shell::"
     
     static func pwd() -> String {
-        try! Shell.run("pwd")
+        do {
+            return try Shell.run("pwd")
+        } catch let error {
+            return error.localizedDescription
+        }
     }
     
     static func whoami() -> String {
-        try! Shell.run("whoami")
+        do {
+            return try Shell.run("whoami")
+        } catch let error {
+            return error.localizedDescription
+        }
     }
     
     static func run(_ command: String, verbose: Bool = false) throws -> String {

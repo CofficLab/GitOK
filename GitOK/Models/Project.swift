@@ -26,7 +26,7 @@ final class Project {
     }
     
     var isGit: Bool {
-        try! Git.isGitProject(path: path)
+        Git.isGitProject(path: path)
     }
     
     var isNotGit: Bool { !isGit }

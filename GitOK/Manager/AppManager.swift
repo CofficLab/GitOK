@@ -17,7 +17,11 @@ class AppManager: NSObject, ObservableObject, AVAudioPlayerDelegate {
             return nil
         }
         
-        return try! Git.getCurrentBranch(project.path)
+        do {
+            return try Git.getCurrentBranch(project.path)
+        } catch let error {
+            return nil
+        }
     }
     
     var label = "🏠 AppManager::"

@@ -7,18 +7,26 @@ extension Git {
         try Git.run("status", path: path)
     }
 
-    static func changedFile(_ path: String, verbose: Bool = false) throws -> [File] {
-        if try Git.isGitProject(path: path) == false {
+    static func changedFile(_ path: String, verbose: Bool = false) -> [File] {
+        do {
+            if try Git.isGitProject(path: path) == false {
+                return []
+            }
+        } catch _ {
             return []
         }
         
-        return try Git.run("status --porcelain | awk '{print $2}'", path: path, verbose: verbose)
-            .trimmingCharacters(in: .whitespacesAndNewlines)
-            .components(separatedBy: .newlines)
-            .filter({ $0.count > 0 })
-            .map {
-                File.fromLine($0.trimmingCharacters(in: .whitespacesAndNewlines), path: path)
-            }
+        do {
+            return try Git.run("status --porcelain | awk '{print $2}'", path: path, verbose: verbose)
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+                .components(separatedBy: .newlines)
+                .filter({ $0.count > 0 })
+                .map {
+                    File.fromLine($0.trimmingCharacters(in: .whitespacesAndNewlines), path: path)
+                }
+        } catch _ {
+            return []
+        }
     }
 }
 

@@ -34,14 +34,22 @@ struct GitCommit {
     }
     
     func checkIfSynced() throws -> Bool {
-        isHead ? true : try! !Git.notSynced(path).contains(where: {
-            $0.hash == self.hash
-        })
+        if isHead {
+            return true
+        }
+        
+        do {
+            return try !Git.notSynced(path).contains(where: {
+                $0.hash == self.hash
+            })
+        } catch let error {
+            return true
+        }
     }
     
     func getFiles() -> [File] {
         if isHead {
-            return try! Git.changedFile(path)
+            return Git.changedFile(path)
         } else {
             return try! Git.commitFiles(path, hash: hash)
         }

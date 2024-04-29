@@ -3,30 +3,34 @@ import OSLog
 import SwiftUI
 
 extension Git {
-    static func getBranches(_ path: String, verbose: Bool = false) throws -> [Branch] {
-        if try Git.isGitProject(path: path) == false {
+    static func getBranches(_ path: String, verbose: Bool = false) -> [Branch] {
+        if Git.isGitProject(path: path) == false {
             return []
         }
-        
-        let branches = try Git.run("branch", path: path)
-            .trimmingCharacters(in: .whitespacesAndNewlines)
-            .components(separatedBy: "\n")
-            .compactMap { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
-            .filter({
-                $0.count != 0
-            })
-            .map {
-                Branch.fromShellLine($0)
-            }
-        
+
+        var branches: [Branch] = []
+
+        do {
+            branches = try Git.run("branch", path: path)
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+                .components(separatedBy: "\n")
+                .compactMap { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+                .filter({
+                    $0.count != 0
+                })
+                .map {
+                    Branch.fromShellLine($0)
+                }
+        } catch let error { }
+
         if verbose {
-            os_log("\(self.label)GetBranches")
+            os_log("\(label)GetBranches")
             print(branches)
         }
-        
+
         return branches
     }
-    
+
     static func getCurrentBranch(_ path: String, verbose: Bool = false) throws -> Branch {
         Branch.fromShellLine(try Git.run("branch --show-current", path: path, verbose: verbose))
     }
