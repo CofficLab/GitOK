@@ -87,8 +87,8 @@ jobs:
           #   --key ./private_keys/AuthKey_${{ secrets.APP_STORE_CONNECT_KEY_ID }}.p8 \
           #   --key-id=${{ secrets.APP_STORE_CONNECT_KEY_ID }} \
           #   --issuer ${{ secrets.APP_STORE_CONNECT_KEY_ISSER_ID }} 
-          xcrun stapler staple $file
-          stapler validate -v $file
+          xcrun stapler staple "$file"
+          stapler validate -v "$file"
       # - name: Generate Changelog
       #   run: echo ""> ${{ github.workspace }}-CHANGELOG.txt
       - uses: softprops/action-gh-release@v2
