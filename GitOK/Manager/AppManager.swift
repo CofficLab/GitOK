@@ -6,7 +6,7 @@ import OSLog
 import SwiftUI
 
 class AppManager: NSObject, ObservableObject, AVAudioPlayerDelegate {
-    @Published var branch: String = ""
+    @Published var branch: Branch?
     @Published var branches: [String] = []
     @Published var commit: GitCommit?
     @Published var commitId: String?

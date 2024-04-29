@@ -13,7 +13,7 @@ class Shell {
         try! Shell.run("whoami")
     }
     
-    static func run(_ command: String, debugPrint: Bool = false) throws -> String {
+    static func run(_ command: String, verbose: Bool = false) throws -> String {
         let task = Process()
         task.launchPath = "/bin/bash"
         task.arguments = ["-c", command]
@@ -23,10 +23,8 @@ class Shell {
         let errorPipe = Pipe()
         var isDir: ObjCBool = true
         
-        if debugPrint {
-            print("\(self.label)")
-            print("\(command)")
-            print("\n")
+        if verbose {
+            print("\(self.label)\n\(command)")
         }
         
         if !FileManager.default.fileExists(atPath: current, isDirectory: &isDir) {
@@ -42,17 +40,15 @@ class Shell {
         
         if let errorOutput = String(data: errorData, encoding: .utf8), errorOutput.count > 0 {
             os_log("\(self.label)错误")
-            print("\(self.label)")
             print("\(command)")
-            print("\n")
-            print(errorOutput)
+            os_log(.error, "\(errorOutput)")
             
             throw SmartError.ShellError(output: errorOutput)
         }
             
         if let output = String(data: outputData, encoding: .utf8) {
-            if debugPrint {
-                print("\(self.label)输出：\n---\n\(output)---\n")
+            if verbose {
+                os_log(.debug, "\(self.label)输出：\n\(output)")
             }
             
             return output

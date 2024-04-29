@@ -25,12 +25,12 @@ extension Git {
         try Git.run("commit -a -m '\(commit)'", path: path)
     }
     
-    static func commitAndPush(_ path: String, commit: String, debugPrint: Bool = false) throws -> String {
+    static func commitAndPush(_ path: String, commit: String, verbose: Bool = false) throws -> String {
         do {
             let addMessage = try Git.add(path)
             let message = try Git.run("commit -a -m '\(commit)'", path: path)
             os_log("\(self.label)commitAndPush commit message->\(message)")
-            let pushMessage = try Git.run("push --porcelain", path: path, debugPrint: debugPrint)
+            let pushMessage = try Git.run("push --porcelain", path: path, verbose: verbose)
             os_log("\(self.label)commitAndPush push message->\(pushMessage)")
             
             return pushMessage

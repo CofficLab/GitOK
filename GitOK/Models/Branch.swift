@@ -1,15 +1,17 @@
 import Foundation
 import SwiftData
 import SwiftUI
+import OSLog
 
 struct Branch {
-    var uuid: String
+    static var label = "🌿 Branch::"
+    
     var name: String
     var isCurrent = false
 
     static func fromShellLine(_ l: String) -> Branch {
-        Branch(uuid: UUID().uuidString,
-               name: l.trimmingCharacters(in: CharacterSet(charactersIn: "*"))
+        os_log("\(self.label)Init from shell line -> \(l)")
+        return Branch(name: l.trimmingCharacters(in: CharacterSet(charactersIn: "*"))
                    .trimmingCharacters(in: .whitespacesAndNewlines),
                isCurrent: l.hasPrefix("*"))
     }
@@ -17,7 +19,7 @@ struct Branch {
 
 extension Branch: Hashable {
     static func == (lhs: Branch, rhs: Branch) -> Bool {
-        lhs.uuid == rhs.uuid
+        lhs.name == rhs.name
     }
 }
 

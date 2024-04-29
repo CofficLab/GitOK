@@ -16,15 +16,15 @@ extension Git {
     }
     
     static func getCurrentBranch(_ path: String) throws -> Branch {
-        Branch.fromShellLine(try Git.run("branch --show-current", path: path))
+        Branch.fromShellLine(try Git.run("branch --show-current", path: path, verbose: true))
     }
 
-    static func setBranch(_ b: Branch, _ path: String, debugPrint: Bool = false) throws -> String {
-        try Git.run("checkout \(b.name) -q", path: path, debugPrint: debugPrint)
+    static func setBranch(_ b: Branch, _ path: String, verbose: Bool = false) throws -> String {
+        try Git.run("checkout \(b.name) -q", path: path, verbose: verbose)
     }
 
-    static func merge(_ from: Branch, _ path: String, debugPrint: Bool = false) throws -> String {
-        try Git.run("merge \(from.name)", path: path, debugPrint: debugPrint)
+    static func merge(_ from: Branch, _ path: String, verbose: Bool = false) throws -> String {
+        try Git.run("merge \(from.name)", path: path, verbose: verbose)
     }
 }
 
