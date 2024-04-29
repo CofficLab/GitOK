@@ -40,9 +40,13 @@ struct Commits: View {
             .onAppear {
                 refresh()
 
-                EventManager().onCommitted {
-                    refresh()
-                }
+//                EventManager().onCommitted {
+//                    if verbose {
+//                        os_log("\(self.label)Refresh because of: Committed")
+//                    }
+//                    
+//                    refresh()
+//                }
 
                 EventManager().onRefresh {
                     refresh()

@@ -13,6 +13,7 @@ struct Files: View {
     @State var files: [File] = []
 
     var commit: GitCommit? { app.commit }
+    var verbose = true
     var label = "🖥️ Files::"
 
     var body: some View {
@@ -28,6 +29,10 @@ struct Files: View {
                 refresh()
 
                 EventManager().onCommitted {
+                    if verbose {
+                        os_log("\(self.label)Refresh because of: Committed")
+                    }
+                    
                     refresh()
                 }
 
