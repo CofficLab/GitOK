@@ -28,13 +28,13 @@ struct Files: View {
             .onAppear {
                 refresh()
 
-//                EventManager().onCommitted {
-//                    if verbose {
-//                        os_log("\(self.label)Refresh because of: Committed")
-//                    }
-//                    
-//                    refresh()
-//                }
+                EventManager().onCommitted {
+                    if verbose {
+                        os_log("\(self.label)Refresh because of: Committed")
+                    }
+                    
+                    refresh()
+                }
 
                 EventManager().onRefresh {
                     refresh()
