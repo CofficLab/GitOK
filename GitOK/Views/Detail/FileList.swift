@@ -3,16 +3,14 @@ import SwiftUI
 struct FileList: View {
     @EnvironmentObject var app: AppManager
     
-    @Binding var file: File?
-    
     var files: [File] = []
 
     var body: some View {
-        List(files, id: \.self, selection: $file) {
+        List(files, id: \.self, selection: $app.file) {
             FileTile(file: $0)
         }
         .onAppear {
-            self.file = files.first
+            app.file = files.first
         }
     }
 }

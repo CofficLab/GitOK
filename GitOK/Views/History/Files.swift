@@ -4,12 +4,6 @@ import SwiftUI
 struct Files: View {
     @EnvironmentObject var app: AppManager
 
-    @State var file: File? = nil {
-        didSet {
-            app.file = file
-        }
-    }
-
     @State var files: [File] = []
 
     var commit: GitCommit? { app.commit }
@@ -20,7 +14,7 @@ struct Files: View {
         if app.project != nil {
             VStack {
                 if files.count > 0 {
-                    List(files, id: \.self, selection: $file) {
+                    List(files, id: \.self, selection: $app.file) {
                         FileTile(file: $0)
                     }
                 }
@@ -54,7 +48,7 @@ struct Files: View {
         }
 
         files = commit.getFiles()
-        file = files.first
+        app.file = files.first
     }
 }
 

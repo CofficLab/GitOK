@@ -18,7 +18,6 @@ struct Detail: View {
                     }
 
                     DiffView()
-                        .frame(maxWidth: .infinity)
                         .frame(maxHeight: .infinity)
                 }
             }
