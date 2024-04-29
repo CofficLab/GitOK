@@ -71,6 +71,7 @@
 		0BD15C5A2BDD275C004024CF /* DiffBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD15C592BDD275C004024CF /* DiffBlock.swift */; };
 		0BD15C612BDD33CC004024CF /* DiffView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD15C602BDD33CC004024CF /* DiffView.swift */; };
 		0BD15C632BDD40E1004024CF /* ListPlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD15C622BDD40E1004024CF /* ListPlay.swift */; };
+		0BD15C672BDFE4F9004024CF /* NotGit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD15C662BDFE4F9004024CF /* NotGit.swift */; };
 		0BDE61A32BDB3C9B006E23EA /* Projects.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BDE61A22BDB3C9B006E23EA /* Projects.swift */; };
 		0BDE61A52BDB408F006E23EA /* RevListExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BDE61A42BDB408F006E23EA /* RevListExt.swift */; };
 		0BDE61A72BDB4541006E23EA /* StatusExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BDE61A62BDB4541006E23EA /* StatusExt.swift */; };
@@ -167,6 +168,7 @@
 		0BD15C592BDD275C004024CF /* DiffBlock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiffBlock.swift; sourceTree = "<group>"; };
 		0BD15C602BDD33CC004024CF /* DiffView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiffView.swift; sourceTree = "<group>"; };
 		0BD15C622BDD40E1004024CF /* ListPlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListPlay.swift; sourceTree = "<group>"; };
+		0BD15C662BDFE4F9004024CF /* NotGit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotGit.swift; sourceTree = "<group>"; };
 		0BDE61A22BDB3C9B006E23EA /* Projects.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Projects.swift; sourceTree = "<group>"; };
 		0BDE61A42BDB408F006E23EA /* RevListExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RevListExt.swift; sourceTree = "<group>"; };
 		0BDE61A62BDB4541006E23EA /* StatusExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusExt.swift; sourceTree = "<group>"; };
@@ -336,6 +338,7 @@
 				0B0E16922BD89C340078942B /* Detail.swift */,
 				0BCC6D0E2BD949B6006ADA94 /* History.swift */,
 				0BDE61A22BDB3C9B006E23EA /* Projects.swift */,
+				0BD15C662BDFE4F9004024CF /* NotGit.swift */,
 			);
 			path = Layout;
 			sourceTree = "<group>";
@@ -589,6 +592,7 @@
 				0BF75EE62BDF2CFB00A553CD /* Files.swift in Sources */,
 				0B76FD1B2BDE2B2F00501F1F /* WebHandler.swift in Sources */,
 				0B76FD182BDE27D000501F1F /* DefaultMessageHandler.swift in Sources */,
+				0BD15C672BDFE4F9004024CF /* NotGit.swift in Sources */,
 				0B76FD102BDDFC0100501F1F /* WebOption.swift in Sources */,
 				0B76FD1F2BDE2FB700501F1F /* DefaultReadyHandler.swift in Sources */,
 				0BF75EE22BDE5CE500A553CD /* Stage.swift in Sources */,

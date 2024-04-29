@@ -6,6 +6,7 @@ struct Files: View {
 
     @State var files: [File] = []
 
+    var project: Project? { app.project }
     var commit: GitCommit? { app.commit }
     var verbose = true
     var label = "🖥️ Files::"
@@ -36,6 +37,10 @@ struct Files: View {
             }
             .onChange(of: commit?.id) {
                 os_log("\(self.label)Commit Changed, Refresh")
+                refresh()
+            }
+            .onChange(of: project?.id) {
+                os_log("\(self.label)Project Changed, Refresh")
                 refresh()
             }
         }

@@ -14,7 +14,11 @@ class Git {
     }
 
     static func run(_ arguments: String, path: String, verbose: Bool = false) throws -> String {
-        try Shell.run("cd \(path) && git \(arguments)", verbose: verbose)
+        try Shell.run("cd '\(path)' && git \(arguments)", verbose: verbose)
+    }
+    
+    static func isGitProject(path: String, verbose: Bool = false) throws -> Bool {
+        try Shell.run("ls -a '\(path)' | grep .git", verbose: verbose).count > 0
     }
 }
 

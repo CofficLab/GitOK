@@ -3,7 +3,11 @@ import OSLog
 import SwiftUI
 
 extension Git {
-    static func getBranches(_ path: String, verbose: Bool = true) throws -> [Branch] {
+    static func getBranches(_ path: String, verbose: Bool = false) throws -> [Branch] {
+        if try Git.isGitProject(path: path) == false {
+            return []
+        }
+        
         let branches = try Git.run("branch", path: path)
             .trimmingCharacters(in: .whitespacesAndNewlines)
             .components(separatedBy: "\n")

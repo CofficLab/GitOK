@@ -9,7 +9,7 @@ permissions:
   contents: write
 
 env:
-  TAG: ${{ github.ref_name }}
+  TAG: ${{ github.sha }}
   SCHEME: GitOK
   DESTINATION: 'generic/platform=macOS'
   ArchivePath: './myapp'
