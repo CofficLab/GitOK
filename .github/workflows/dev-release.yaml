@@ -76,6 +76,19 @@ jobs:
 
           npm i -g create-dmg
           create-dmg "temp/Build/Products/Release/${{ env.SCHEME }}.app"
+      - name: 生成 App Store Connect API 的 AuthKey
+        run: |
+          mkdir -p ./private_keys
+          echo -n "${{ secrets.APP_STORE_CONNECT_KEY_BASE64 }}" | base64 --decode -o ./private_keys/AuthKey_${{ secrets.APP_STORE_CONNECT_KEY_ID }}.p8
+      - name: 公证
+        run: |
+          file=$(find . -maxdepth 1 -type f -name "*.dmg" | head -n 1)
+          xcrun notarytool submit $file \
+            --key ./private_keys/AuthKey_${{ secrets.APP_STORE_CONNECT_KEY_ID }}.p8 \
+            --key-id=${{ secrets.APP_STORE_CONNECT_KEY_ID }} \
+            --issuer ${{ secrets.APP_STORE_CONNECT_KEY_ISSER_ID }} 
+          xcrun stapler staple $file
+          stapler validate -v $file
       # - name: Generate Changelog
       #   run: echo ""> ${{ github.workspace }}-CHANGELOG.txt
       - uses: softprops/action-gh-release@v2
