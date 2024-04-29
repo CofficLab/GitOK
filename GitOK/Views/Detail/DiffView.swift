@@ -29,6 +29,7 @@ struct DiffView: View {
                         }
                     }
                     .onChange(of: file, refresh)
+                    .onChange(of: commit, refresh)
             }
         } else {
             Text("选择一个文件以查看变动")
