@@ -19,7 +19,11 @@ struct Content: View {
                 .frame(idealWidth: 300)
                 .frame(minWidth: 50)
         } detail: {
-            Detail()
+            if project?.isNotGit ?? false {
+                NotGit()
+            } else {
+                Detail()
+            }
         }
         .navigationTitle(project?.title ?? "")
         .toolbar(content: {

@@ -8,7 +8,11 @@ extension Git {
     }
 
     static func changedFile(_ path: String, verbose: Bool = false) throws -> [File] {
-        try Git.run("status --porcelain | awk '{print $2}'", path: path, verbose: verbose)
+        if try Git.isGitProject(path: path) == false {
+            return []
+        }
+        
+        return try Git.run("status --porcelain | awk '{print $2}'", path: path, verbose: verbose)
             .trimmingCharacters(in: .whitespacesAndNewlines)
             .components(separatedBy: .newlines)
             .filter({ $0.count > 0 })

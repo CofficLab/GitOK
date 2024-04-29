@@ -1,6 +1,7 @@
 import Foundation
 import SwiftData
 import SwiftUI
+import OSLog
 
 @Model
 final class Project {
@@ -8,6 +9,7 @@ final class Project {
         SortDescriptor<Project>(\.timestamp, order: .reverse)
     ]
     
+    var label = "🌳 Project::"
     var timestamp: Date
     var url: URL
     
@@ -23,13 +25,25 @@ final class Project {
         GitCommit.headFor(path)
     }
     
+    var isGit: Bool {
+        try! Git.isGitProject(path: path)
+    }
+    
+    var isNotGit: Bool { !isGit }
+    
     init(_ url: URL) {
         self.timestamp = .now
         self.url = url
     }
     
     func getCommits() -> [GitCommit] {
-        try! Git.logs(path)
+        do {
+            return try Git.logs(path)
+        } catch let error {
+            os_log(.error, "\(self.label)GetCommits has error")
+            print(error)
+            return []
+        }
     }
     
     func getCommitsWithHead() -> [GitCommit] {
