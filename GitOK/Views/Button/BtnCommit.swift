@@ -9,7 +9,7 @@ struct BtnCommit: View {
     var commit: String
 
     var body: some View {
-        Button("提交", action: commitAndPush)
+        Button(working ? "..." : "提交", action: commitAndPush)
             .disabled(working)
     }
 
