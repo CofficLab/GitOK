@@ -78,8 +78,10 @@
 		0BDE61A92BDB4746006E23EA /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BDE61A82BDB4746006E23EA /* File.swift */; };
 		0BDE61AB2BDB4AB8006E23EA /* FileList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BDE61AA2BDB4AB8006E23EA /* FileList.swift */; };
 		0BDE61AD2BDB4E87006E23EA /* FileTile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BDE61AC2BDB4E86006E23EA /* FileTile.swift */; };
-		0BF75EE02BDE4C0C00A553CD /* HistoryTile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BF75EDF2BDE4C0C00A553CD /* HistoryTile.swift */; };
+		0BF75EE02BDE4C0C00A553CD /* CommitTile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BF75EDF2BDE4C0C00A553CD /* CommitTile.swift */; };
 		0BF75EE22BDE5CE500A553CD /* Stage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BF75EE12BDE5CE500A553CD /* Stage.swift */; };
+		0BF75EE42BDF2CCD00A553CD /* Commits.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BF75EE32BDF2CCD00A553CD /* Commits.swift */; };
+		0BF75EE62BDF2CFB00A553CD /* Files.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BF75EE52BDF2CFB00A553CD /* Files.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -171,8 +173,10 @@
 		0BDE61A82BDB4746006E23EA /* File.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = File.swift; sourceTree = "<group>"; };
 		0BDE61AA2BDB4AB8006E23EA /* FileList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileList.swift; sourceTree = "<group>"; };
 		0BDE61AC2BDB4E86006E23EA /* FileTile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileTile.swift; sourceTree = "<group>"; };
-		0BF75EDF2BDE4C0C00A553CD /* HistoryTile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryTile.swift; sourceTree = "<group>"; };
+		0BF75EDF2BDE4C0C00A553CD /* CommitTile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommitTile.swift; sourceTree = "<group>"; };
 		0BF75EE12BDE5CE500A553CD /* Stage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stage.swift; sourceTree = "<group>"; };
+		0BF75EE32BDF2CCD00A553CD /* Commits.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Commits.swift; sourceTree = "<group>"; };
+		0BF75EE52BDF2CFB00A553CD /* Files.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Files.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -351,7 +355,9 @@
 			isa = PBXGroup;
 			children = (
 				0BD15C642BDD429A004024CF /* HeadTile.swift */,
-				0BF75EDF2BDE4C0C00A553CD /* HistoryTile.swift */,
+				0BF75EDF2BDE4C0C00A553CD /* CommitTile.swift */,
+				0BF75EE32BDF2CCD00A553CD /* Commits.swift */,
+				0BF75EE52BDF2CFB00A553CD /* Files.swift */,
 			);
 			path = History;
 			sourceTree = "<group>";
@@ -538,7 +544,7 @@
 				0B0E16852BD89A8F0078942B /* Item.swift in Sources */,
 				0B76FCF42BDDD1BD00501F1F /* WebContent.swift in Sources */,
 				0BCC6D0D2BD948AB006ADA94 /* BtnSave.swift in Sources */,
-				0BF75EE02BDE4C0C00A553CD /* HistoryTile.swift in Sources */,
+				0BF75EE02BDE4C0C00A553CD /* CommitTile.swift in Sources */,
 				0B1C67EB2BD9181200502EB1 /* BtnPush.swift in Sources */,
 				0B1C67C22BD9159900502EB1 /* Project.swift in Sources */,
 				0B1C67BF2BD9157100502EB1 /* DBExt.swift in Sources */,
@@ -548,6 +554,7 @@
 				0BCC6D092BD939FD006ADA94 /* BtnPwd.swift in Sources */,
 				0BCC6D032BD932DA006ADA94 /* PathExt.swift in Sources */,
 				0BDE61AB2BDB4AB8006E23EA /* FileList.swift in Sources */,
+				0BF75EE42BDF2CCD00A553CD /* Commits.swift in Sources */,
 				0B1C67FE2BD9F12000502EB1 /* EventManager.swift in Sources */,
 				0B76FD242BDE326300501F1F /* FileExt.swift in Sources */,
 				0BD15C652BDD429A004024CF /* HeadTile.swift in Sources */,
@@ -575,6 +582,7 @@
 				0BCC6D0F2BD949B6006ADA94 /* History.swift in Sources */,
 				0B6BE4612BDA603000C8ACB2 /* BtnWhoami.swift in Sources */,
 				0B76FD122BDDFF7200501F1F /* LoggerExt.swift in Sources */,
+				0BF75EE62BDF2CFB00A553CD /* Files.swift in Sources */,
 				0B76FD1B2BDE2B2F00501F1F /* WebHandler.swift in Sources */,
 				0B76FD182BDE27D000501F1F /* DefaultMessageHandler.swift in Sources */,
 				0B76FD102BDDFC0100501F1F /* WebOption.swift in Sources */,

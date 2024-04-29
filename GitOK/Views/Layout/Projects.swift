@@ -1,5 +1,6 @@
 import SwiftData
 import SwiftUI
+import OSLog
 
 struct Projects: View {
     @Environment(\.modelContext) private var modelContext
@@ -10,6 +11,8 @@ struct Projects: View {
     ]) var projects: [Project]
     
     @State var project: Project?
+    
+    var label = "🖥️ ProjectsView::"
 
     var body: some View {
         List(selection: $project) {
@@ -22,6 +25,7 @@ struct Projects: View {
             self.project = projects.first(where: {
                 $0.path == AppConfig.projectPath
             })
+            os_log("\(self.label)Set Project=\(project?.title ?? "nil")")
             app.setProject(self.project)
         }
         .onChange(of: project, {

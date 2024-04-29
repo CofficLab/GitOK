@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct HistoryTile: View {
+struct CommitTile: View {
     @EnvironmentObject var app: AppManager
 
     @State var isSynced = true
