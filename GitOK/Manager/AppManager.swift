@@ -46,6 +46,7 @@ class AppManager: NSObject, ObservableObject, AVAudioPlayerDelegate {
         }
         
         if branch.name == currentBranch?.name {
+            os_log("\(self.label)Alrady on branch \(branch.name)")
             return
         }
         
