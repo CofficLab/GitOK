@@ -8,6 +8,7 @@ struct Commits: View {
     @State var commits: [GitCommit] = []
     
     var label = "🖥️ Commits::"
+    var verbose = false
 
     var body: some View {
         if let project = app.project {
@@ -48,7 +49,9 @@ struct Commits: View {
                 }
             }
             .onChange(of: commitId, {
-                os_log("\(self.label)CommitId did set ->\(commitId)")
+                if verbose {
+                    os_log("\(self.label)CommitId did set ->\(commitId)")
+                }
                 
                 guard let project = app.project else {
                     return

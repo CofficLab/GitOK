@@ -19,7 +19,7 @@ class WebContent: WKWebView {
         DispatchQueue.main.async {
             self.evaluateJavaScript(jsCode, completionHandler: { _, error in
                 if error == nil {
-                    os_log("📶 执行JS代码成功")
+                    os_log("📶 JS Done 🎉🎉🎉")
                 } else {
                     os_log("📶 执行JS代码失败-> \(String(describing: error))")
                 }

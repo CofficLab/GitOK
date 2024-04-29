@@ -9,8 +9,11 @@ struct Branch {
     var name: String
     var isCurrent = false
 
-    static func fromShellLine(_ l: String) -> Branch {
-        os_log("\(self.label)Init from shell line -> \(l)")
+    static func fromShellLine(_ l: String, verbose: Bool = false) -> Branch {
+        if verbose {
+            os_log("\(self.label)Init from shell line -> \(l)")
+        }
+        
         return Branch(name: l.trimmingCharacters(in: CharacterSet(charactersIn: "*"))
                    .trimmingCharacters(in: .whitespacesAndNewlines),
                isCurrent: l.hasPrefix("*"))

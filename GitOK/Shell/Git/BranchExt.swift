@@ -15,8 +15,8 @@ extension Git {
             }
     }
     
-    static func getCurrentBranch(_ path: String) throws -> Branch {
-        Branch.fromShellLine(try Git.run("branch --show-current", path: path, verbose: true))
+    static func getCurrentBranch(_ path: String, verbose: Bool = false) throws -> Branch {
+        Branch.fromShellLine(try Git.run("branch --show-current", path: path, verbose: verbose))
     }
 
     static func setBranch(_ b: Branch, _ path: String, verbose: Bool = false) throws -> String {

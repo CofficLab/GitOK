@@ -17,8 +17,12 @@ extension Git {
             })
     }
     
-    static func add(_ path: String) throws -> String {
-        try Git.run("add -A .", path: path)
+    static func add(_ path: String, verbose: Bool = false) throws {
+        let message = try Git.run("add -A .", path: path)
+        
+        if verbose {
+            os_log("\(self.label)Add -> \(message)")
+        }
     }
 
     static func commit(_ path: String, commit: String) throws -> String {
@@ -27,11 +31,9 @@ extension Git {
     
     static func commitAndPush(_ path: String, commit: String, verbose: Bool = false) throws -> String {
         do {
-            let addMessage = try Git.add(path)
-            let message = try Git.run("commit -a -m '\(commit)'", path: path)
-            os_log("\(self.label)commitAndPush commit message->\(message)")
+            try Git.add(path)
+            _ = try Git.run("commit -a -m '\(commit)'", path: path)
             let pushMessage = try Git.run("push --porcelain", path: path, verbose: verbose)
-            os_log("\(self.label)commitAndPush push message->\(pushMessage)")
             
             return pushMessage
         } catch let error {
