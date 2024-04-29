@@ -37,8 +37,10 @@ struct History: View {
                     }
                 }
 
-                List(files, id: \.self, selection: $file) {
-                    FileTile(file: $0)
+                if files.count > 0 {
+                    List(files, id: \.self, selection: $file) {
+                        FileTile(file: $0)
+                    }
                 }
             }
             .onAppear {
