@@ -3,7 +3,7 @@ name: Dev Release
 on:
   push:
     branches:
-      - dev
+      - devx
 
 permissions:
   contents: write
