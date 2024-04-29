@@ -3,8 +3,9 @@ import OSLog
 import SwiftUI
 
 extension Git {
-    static func getBranches(_ path: String) throws -> [Branch] {
-        try Git.run("branch", path: path)
+    static func getBranches(_ path: String, verbose: Bool = true) throws -> [Branch] {
+        let branches = try Git.run("branch", path: path)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
             .components(separatedBy: "\n")
             .compactMap { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
             .filter({
@@ -13,6 +14,13 @@ extension Git {
             .map {
                 Branch.fromShellLine($0)
             }
+        
+        if verbose {
+            os_log("\(self.label)GetBranches")
+            print(branches)
+        }
+        
+        return branches
     }
     
     static func getCurrentBranch(_ path: String, verbose: Bool = false) throws -> Branch {
