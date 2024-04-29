@@ -39,9 +39,7 @@ class EventManager: NSObject, ObservableObject, AVAudioPlayerDelegate {
             object: nil,
             queue: .main,
             using: { notification in
-                self.queue.async {
-                    callback()
-                }
+                callback()
             })
     }
     
