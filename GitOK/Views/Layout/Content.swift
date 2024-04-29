@@ -31,7 +31,7 @@ struct Content: View {
                     BtnFinder(url: project.url)
                     BtnOpenRemote(message: $message, path: project.path)
                     BtnSave(message: $message, path: project.path)
-                    Branchs()
+                    Branches()
                 })
             }
         })

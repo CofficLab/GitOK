@@ -1,36 +1,41 @@
+import OSLog
 import SwiftData
 import SwiftUI
-import OSLog
 
 struct Projects: View {
     @Environment(\.modelContext) private var modelContext
     @EnvironmentObject var app: AppManager
 
-    @Query(sort: [
-        SortDescriptor<Project>(\.timestamp, order: .reverse)
-    ]) var projects: [Project]
-    
-    @State var project: Project?
-    
+    @Query(sort: Project.orderReverse) var projects: [Project]
+
+    @State var project: Project? = nil
+
     var label = "🖥️ ProjectsView::"
+    var verbose = false
 
     var body: some View {
-        List(selection: $project) {
-            ForEach(projects, id: \.self) { item in
-                Text(item.title).tag(item as Project?)
+        ZStack {
+            List(selection: $project) {
+                ForEach(projects, id: \.self) { item in
+                    Text(item.title).tag(item as Project?)
+                }
+                .onDelete(perform: deleteItems)
             }
-            .onDelete(perform: deleteItems)
         }
         .onAppear {
             self.project = projects.first(where: {
                 $0.path == AppConfig.projectPath
             })
-            os_log("\(self.label)Set Project=\(project?.title ?? "nil")")
-            app.setProject(self.project)
-        }
-        .onChange(of: project, {
+
+            if verbose {
+                os_log("\(self.label)Set Project=\(project?.title ?? "nil")")
+            }
+
             app.setProject(project)
-        })
+        }
+        .onChange(of: project) {
+            app.setProject(project)
+        }
         .toolbar(content: {
             ToolbarItem {
                 BtnAdd()

@@ -4,6 +4,10 @@ import SwiftUI
 
 @Model
 final class Project {
+    static var orderReverse = [
+        SortDescriptor<Project>(\.timestamp, order: .reverse)
+    ]
+    
     var timestamp: Date
     var url: URL
     

@@ -6,12 +6,19 @@ import OSLog
 import SwiftUI
 
 class AppManager: NSObject, ObservableObject, AVAudioPlayerDelegate {
-    @Published var branch: Branch?
     @Published var branches: [String] = []
     @Published var commit: GitCommit?
     @Published var commitId: String?
     @Published var project: Project?
     @Published var file: File?
+    
+    var currentBranch: Branch? {
+        guard let project = project else {
+            return nil
+        }
+        
+        return try! Git.getCurrentBranch(project.path)
+    }
     
     var label = "🏠 AppManager::"
     
@@ -28,7 +35,17 @@ class AppManager: NSObject, ObservableObject, AVAudioPlayerDelegate {
     func setProject(_ p: Project?) {
         os_log("\(self.label)Set Project to \(p?.path ?? "")")
         self.project = p
-        AppConfig.setProject(p)
+        AppConfig.setProjectPath(p?.path ?? "")
+    }
+    
+    func setBranch(_ branch: Branch?) throws {
+        os_log("\(self.label)Set Branch to \(branch?.name ?? "-")")
+        
+        guard let project = project, let branch = branch else {
+            return
+        }
+        
+        _ = try Git.setBranch(branch, project.path, verbose: false)
     }
 }
 

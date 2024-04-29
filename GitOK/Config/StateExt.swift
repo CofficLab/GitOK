@@ -8,8 +8,8 @@ extension AppConfig {
     @AppStorage("App.Project")
     static var projectPath: String = ""
     
-    static func setProject(_ project: Project?) {
-        AppConfig.projectPath = project?.path ?? ""
+    static func setProjectPath(_ p: String) {
+        AppConfig.projectPath = p
     }
 }
 
