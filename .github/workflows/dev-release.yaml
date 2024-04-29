@@ -3,7 +3,7 @@ name: Dev Release
 on:
   push:
     branches:
-      - devx
+      - dev
 
 permissions:
   contents: write
@@ -57,6 +57,10 @@ jobs:
           ls -alh
           ls -alh temp
           ls -alh temp/Build/Products
+      - name: Codesign executable
+        run: |
+          security find-identity -v
+          /usr/bin/codesign --force -s Y6HZ9JJYV6 temp/Build/Products/Release/${{ env.SCHEME }}.app -v
       - name: 打包
         run: |
           brew install create-dmg
