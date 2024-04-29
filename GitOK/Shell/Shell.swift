@@ -24,7 +24,8 @@ class Shell {
         var isDir: ObjCBool = true
         
         if verbose {
-            print("\(self.label)\n\(command)")
+            os_log("\(self.label)Run")
+            print(command)
         }
         
         if !FileManager.default.fileExists(atPath: current, isDirectory: &isDir) {
@@ -48,7 +49,8 @@ class Shell {
             
         if let output = String(data: outputData, encoding: .utf8) {
             if verbose {
-                os_log(.debug, "\(self.label)输出：\n\(output)")
+                os_log(.debug, "\(self.label)输出")
+                print(output)
             }
             
             return output
