@@ -9,7 +9,10 @@ struct Detail: View {
     var body: some View {
         GeometryReader { geo in
             if commit?.getFiles().count == 0 {
-                NoChanges()
+                VStack {
+                    MergeForm().padding()
+                    NoChanges().frame(maxHeight: .infinity)
+                }
             } else {
                 VStack {
                     if commit?.isHead ?? false {
