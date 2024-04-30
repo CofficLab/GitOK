@@ -6,11 +6,9 @@ struct TabBtn: View {
     @State private var isButtonTapped = false
     @State private var showTips: Bool = false
 
-    var tab: ActionTab
+    var title: String
+    var imageName: String
     var selected = false
-    
-    var title: String { tab.rawValue }
-    var imageName: String { tab.imageName }
     var onTap: () -> Void = {
         os_log("点击了button")
     }

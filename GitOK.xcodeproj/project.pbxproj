@@ -99,10 +99,8 @@
 		0B8C7B212BE0A86000B4E817 /* ShellFileExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7B202BE0A86000B4E817 /* ShellFileExt.swift */; };
 		0B8C7B232BE0AD1D00B4E817 /* BannerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7B222BE0AD1D00B4E817 /* BannerModel.swift */; };
 		0B8C7B252BE0BB7500B4E817 /* BannerList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7B242BE0BB7500B4E817 /* BannerList.swift */; };
-		0B8C7B272BE0C46900B4E817 /* BtnAddBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7B262BE0C46900B4E817 /* BtnAddBanner.swift */; };
-		0B8C7B292BE0C6DB00B4E817 /* IconModel2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7B282BE0C6DB00B4E817 /* IconModel2.swift */; };
+		0B8C7B292BE0C6DB00B4E817 /* IconModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7B282BE0C6DB00B4E817 /* IconModel.swift */; };
 		0B8C7B2B2BE0C8F100B4E817 /* IconList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7B2A2BE0C8F100B4E817 /* IconList.swift */; };
-		0B8C7B2D2BE0C9B300B4E817 /* BtnAddIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7B2C2BE0C9B300B4E817 /* BtnAddIcon.swift */; };
 		0B8C7B2F2BE0E5F100B4E817 /* Tabs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7B2E2BE0E5F100B4E817 /* Tabs.swift */; };
 		0B8C7B332BE0EAE900B4E817 /* ActionTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7B322BE0EAE900B4E817 /* ActionTab.swift */; };
 		0BB555242BDB7B300044048B /* BranchExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BB555232BDB7B300044048B /* BranchExt.swift */; };
@@ -252,10 +250,8 @@
 		0B8C7B202BE0A86000B4E817 /* ShellFileExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShellFileExt.swift; sourceTree = "<group>"; };
 		0B8C7B222BE0AD1D00B4E817 /* BannerModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerModel.swift; sourceTree = "<group>"; };
 		0B8C7B242BE0BB7500B4E817 /* BannerList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerList.swift; sourceTree = "<group>"; };
-		0B8C7B262BE0C46900B4E817 /* BtnAddBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BtnAddBanner.swift; sourceTree = "<group>"; };
-		0B8C7B282BE0C6DB00B4E817 /* IconModel2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconModel2.swift; sourceTree = "<group>"; };
+		0B8C7B282BE0C6DB00B4E817 /* IconModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconModel.swift; sourceTree = "<group>"; };
 		0B8C7B2A2BE0C8F100B4E817 /* IconList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconList.swift; sourceTree = "<group>"; };
-		0B8C7B2C2BE0C9B300B4E817 /* BtnAddIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BtnAddIcon.swift; sourceTree = "<group>"; };
 		0B8C7B2E2BE0E5F100B4E817 /* Tabs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tabs.swift; sourceTree = "<group>"; };
 		0B8C7B322BE0EAE900B4E817 /* ActionTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionTab.swift; sourceTree = "<group>"; };
 		0BB555232BDB7B300044048B /* BranchExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BranchExt.swift; sourceTree = "<group>"; };
@@ -392,8 +388,6 @@
 			isa = PBXGroup;
 			children = (
 				0BCC6D0A2BD93E8C006ADA94 /* BtnAdd.swift */,
-				0B8C7B262BE0C46900B4E817 /* BtnAddBanner.swift */,
-				0B8C7B2C2BE0C9B300B4E817 /* BtnAddIcon.swift */,
 				0B1C67B92BD912D900502EB1 /* BtnCommit.swift */,
 				0B1C67FF2BD9F68F00502EB1 /* BtnFinder.swift */,
 				0BCC6D102BD94B5B006ADA94 /* BtnLog.swift */,
@@ -434,7 +428,7 @@
 			children = (
 				0B8C7B222BE0AD1D00B4E817 /* BannerModel.swift */,
 				0B8C7A542BE08BA600B4E817 /* Git */,
-				0B8C7B282BE0C6DB00B4E817 /* IconModel2.swift */,
+				0B8C7B282BE0C6DB00B4E817 /* IconModel.swift */,
 				0B8C7A582BE08BF600B4E817 /* IconPng.swift */,
 			);
 			path = Models;
@@ -620,7 +614,6 @@
 				0B8C7AE22BE08E2200B4E817 /* IconFields.swift */,
 				0B8C7AE32BE08E2200B4E817 /* IconHome.swift */,
 				0B8C7AE42BE08E2200B4E817 /* IconItem.swift */,
-				0B8C7B2A2BE0C8F100B4E817 /* IconList.swift */,
 				0B8C7AE62BE08E2200B4E817 /* IconMaker.swift */,
 			);
 			path = Icon;
@@ -688,6 +681,7 @@
 		0BFA2E602BE11E7200AD98D7 /* Content */ = {
 			isa = PBXGroup;
 			children = (
+				0B8C7B2A2BE0C8F100B4E817 /* IconList.swift */,
 				0BFA2E5E2BE111AA00AD98D7 /* TabBtn.swift */,
 				0B8C7B322BE0EAE900B4E817 /* ActionTab.swift */,
 				0B8C7B2E2BE0E5F100B4E817 /* Tabs.swift */,
@@ -826,7 +820,6 @@
 				0B8C7AF32BE08E2D00B4E817 /* Message.swift in Sources */,
 				0B8C7B0E2BE08EDA00B4E817 /* Card.swift in Sources */,
 				0BDE61A52BDB408F006E23EA /* RevListExt.swift in Sources */,
-				0B8C7B272BE0C46900B4E817 /* BtnAddBanner.swift in Sources */,
 				0BCC6D072BD939BA006ADA94 /* Shell.swift in Sources */,
 				0BD15C522BDC8D91004024CF /* SmartError.swift in Sources */,
 				0BCC6D092BD939FD006ADA94 /* BtnPwd.swift in Sources */,
@@ -841,7 +834,6 @@
 				0B8C7B132BE08EDA00B4E817 /* TimeHelper.swift in Sources */,
 				0B1C67FE2BD9F12000502EB1 /* EventManager.swift in Sources */,
 				0B76FD242BDE326300501F1F /* FileExt.swift in Sources */,
-				0B8C7B2D2BE0C9B300B4E817 /* BtnAddIcon.swift in Sources */,
 				0BDE61AD2BDB4E87006E23EA /* FileTile.swift in Sources */,
 				0B0E16932BD89C340078942B /* Detail.swift in Sources */,
 				0B1C67F12BD9DB1F00502EB1 /* CommitCategoryPicker.swift in Sources */,
@@ -882,7 +874,7 @@
 				0B8C7AC62BE08E0F00B4E817 /* ScreeniPhone.swift in Sources */,
 				0B6BE4612BDA603000C8ACB2 /* BtnWhoami.swift in Sources */,
 				0B8C7A6C2BE08CA800B4E817 /* Device.swift in Sources */,
-				0B8C7B292BE0C6DB00B4E817 /* IconModel2.swift in Sources */,
+				0B8C7B292BE0C6DB00B4E817 /* IconModel.swift in Sources */,
 				0B8C7AEB2BE08E2200B4E817 /* IconItem.swift in Sources */,
 				0B76FD122BDDFF7200501F1F /* LoggerExt.swift in Sources */,
 				0B8C7B112BE08EDA00B4E817 /* CloudKitHelper.swift in Sources */,

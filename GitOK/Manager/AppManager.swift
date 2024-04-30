@@ -15,7 +15,7 @@ class AppManager: NSObject, ObservableObject, AVAudioPlayerDelegate {
     @Published var iconId: Int = 1
     @Published var backgroudId: String = "1"
     @Published var banner: BannerModel?
-    @Published var icon: IconModel2?
+    @Published var icon: IconModel?
 
     func setMessage(_ m: String) {
         message = m

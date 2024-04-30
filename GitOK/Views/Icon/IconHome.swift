@@ -5,7 +5,7 @@ struct IconHome: View {
     @EnvironmentObject var app: AppManager
     @Environment(\.modelContext) var context: ModelContext
 
-    @Binding var icon: IconModel2?
+    @Binding var icon: IconModel?
     @State var iconId = 1
     @State var snapshotTapped: Bool = false
     @State var backgroundId: String = "4"

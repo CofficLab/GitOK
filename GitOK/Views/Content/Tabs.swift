@@ -8,7 +8,8 @@ struct Tabs: View {
             HStack(spacing: 0) {
                 ForEach(ActionTab.allCases, id: \.self) { t in
                     TabBtn(
-                        tab: t,
+                        title: t.rawValue,
+                        imageName: t.imageName,
                         selected: tab == t,
                         onTap: {
                             self.tab = t
