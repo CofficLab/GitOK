@@ -10,7 +10,9 @@ struct RootView<Content>: View where Content: View {
 
     var body: some View {
         content
+            .modelContainer(AppConfig.getContainer())
             .environmentObject(AppManager())
+            .environmentObject(WebConfig())
     }
 }
 

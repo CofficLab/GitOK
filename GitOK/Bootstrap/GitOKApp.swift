@@ -6,9 +6,9 @@ struct GitOKApp: App {
     
     var body: some Scene {
         WindowGroup {
-            Content()
-                .environmentObject(AppManager())
-                .environmentObject(WebConfig())
+            RootView {
+                Content()
+            }
         }
         .modelContainer(AppConfig.getContainer())
         .commands(content: {
