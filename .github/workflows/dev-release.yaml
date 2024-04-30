@@ -71,9 +71,9 @@ jobs:
       - name: Build
         run: xcodebuild -scheme ${{ env.SCHEME }} -configuration Release -derivedDataPath ${{ env.BuildPath }} clean build
       - name: Codesign
-        run: |
-          codesign --force --option=runtime temp/Build/Products/Release/${{ env.SCHEME }}.app
-          codesign -dv temp/Build/Products/Release/${{ env.SCHEME }}.app
+        run: codesign --option=runtime temp/Build/Products/Release/${{ env.SCHEME }}.app
+      - name: Codesign Check
+        run: codesign -dv temp/Build/Products/Release/${{ env.SCHEME }}.app
       - name: Create DMG
         run: |
           npm i -g create-dmg
