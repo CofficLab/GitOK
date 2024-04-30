@@ -54,5 +54,5 @@ struct BannerList: View {
 #Preview {
     AppPreview()
         .frame(width: 800)
-        .frame(height: 800)
+        .frame(height: 500)
 }
