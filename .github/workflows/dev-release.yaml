@@ -10,6 +10,7 @@ permissions:
 
 env:
   TAG: ${{ github.sha }}
+  Identity: ''
   SCHEME: GitOK
   DESTINATION: 'generic/platform=macOS'
   ArchivePath: './myapp'
@@ -70,8 +71,12 @@ jobs:
       - run: security find-identity -v
       - name: Build
         run: xcodebuild -scheme ${{ env.SCHEME }} -configuration Release -derivedDataPath ${{ env.BuildPath }} clean build
+      - name: find identity
+        run: |
+          i=$(security find-identity -v -p codesigning | grep '^[[:space:]]*1)' | awk -F'[(|)]' '{print $3}')
+          echo "Identity=$i" >> $GITHUB_ENV
       - name: Codesign
-        run: codesign --option=runtime temp/Build/Products/Release/${{ env.SCHEME }}.app
+        run: codesign --force -s ${{ env.Identity }} --option=runtime temp/Build/Products/Release/${{ env.SCHEME }}.app
       - name: Codesign Check
         run: codesign -dv temp/Build/Products/Release/${{ env.SCHEME }}.app
       - name: Create DMG
