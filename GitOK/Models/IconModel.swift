@@ -39,6 +39,11 @@ extension IconModel {
 
         // 创建 FileManager 实例
         let fileManager = FileManager.default
+        
+        var isDir: ObjCBool = true
+        if !fileManager.fileExists(atPath: directoryPath, isDirectory: &isDir) {
+            return []
+        }
 
         // 存储文件路径的数组
         var fileURLs: [URL] = []

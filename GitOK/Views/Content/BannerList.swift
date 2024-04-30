@@ -32,6 +32,7 @@ struct BannerList: View {
             }
         }
         .onAppear(perform: getBanners)
+        .onChange(of: app.project, getBanners)
         .onChange(of: banner) {
             app.banner = banner
         }

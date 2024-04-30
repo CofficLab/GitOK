@@ -58,14 +58,17 @@ struct Files: View {
     }
 
     func refresh() {
+        os_log("\(self.label)Refresh")
         guard let commit = app.commit else {
+            os_log("\(self.label)Update")
+            self.files = []
+            app.file = nil
             return
         }
 
         self.loading = true
         
         DispatchQueue.global().async {
-            os_log("\(self.label)Refresh")
             let files = commit.getFiles()
             let file = files.first
             

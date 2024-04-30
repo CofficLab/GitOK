@@ -68,7 +68,7 @@ struct Commits: View {
                     return
                 }
                 
-                if commitId == GitCommit.headId {
+                if commitId == project.headCommit.id {
                     app.commit = project.headCommit
                 } else {
                     app.commit = self.commits.first(where: {

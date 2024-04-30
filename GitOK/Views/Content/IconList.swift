@@ -27,11 +27,14 @@ struct IconList: View {
         .onChange(of: icon) {
             app.icon = icon
         }
-        .onAppear {
-            if let project = app.project {
-                self.icons = IconModel.all(project.path)
-                self.icon = icons.first
-            }
+        .onChange(of: app.project, refresh)
+        .onAppear(perform: refresh)
+    }
+    
+    func refresh() {
+        if let project = app.project {
+            self.icons = IconModel.all(project.path)
+            self.icon = icons.first
         }
     }
 }
