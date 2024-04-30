@@ -8,11 +8,11 @@ enum ActionTab: String, CaseIterable {
     var imageName: String {
         switch self {
         case .Git:
-            "tree"
+            "folder"
         case .Banner:
-            "photo.artframe"
+            "camera"
         case .Icon:
-            "tray.circle"
+            "globe.europe.africa"
         }
     }
 }

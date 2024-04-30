@@ -7,7 +7,7 @@ struct IconFields: View {
 
     @State var title = ""
 
-    var icon: IconModel2
+    var icon: IconModel
 
     var body: some View {
         VStack {

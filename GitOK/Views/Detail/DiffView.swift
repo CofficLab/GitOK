@@ -20,7 +20,7 @@ struct DiffView: View {
                     Spacer()
                 }
                 .background(Color.accentColor.opacity(0.5))
-
+                
                 view
                     .frame(maxWidth: .infinity)
                     .frame(maxHeight: .infinity)
@@ -33,17 +33,13 @@ struct DiffView: View {
                     .onChange(of: commit, refresh)
             }
         } else {
-            noFileView
-        }
-    }
-    
-    var noFileView: some View {
-        VStack {
-            Spacer()
-            HStack {
+            VStack {
                 Spacer()
-                Text("选择一个文件以查看变动")
-                Spacer()
+                HStack {
+                    Spacer()
+                    Text("选择一个文件以查看变动")
+                    Spacer()
+                }
             }
         }
     }

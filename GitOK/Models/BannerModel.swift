@@ -3,7 +3,7 @@ import OSLog
 import SwiftData
 import SwiftUI
 
-struct BannerModel: TaskItem {
+struct BannerModel {
     static var root: String = ".gitok/banners"
     static var label = "💿 BannerModel::"
 
@@ -12,10 +12,9 @@ struct BannerModel: TaskItem {
     var features: [String] = []
     var imageURL: URL?
     var backgroundId: String = "1"
-    var uuid: String
     var inScreen = false
     var device: String = Device.iMac.rawValue
-    var projectPath: String
+    var projectPath: String?
 
     init(
         title: String = "",
@@ -30,7 +29,6 @@ struct BannerModel: TaskItem {
         self.imageURL = imageURL
         self.features = features
         self.backgroundId = backgroundId
-        self.uuid = UUID().uuidString
         self.projectPath = projectPath
 
         self.save()
@@ -41,10 +39,18 @@ struct BannerModel: TaskItem {
     }
 
     func save() {
-        let fullPath = "\(self.projectPath)/\(BannerModel.root)/\(self.title).json"
+        guard let p = projectPath else {
+            return
+        }
+        
+        let fullPath = "\(p)/\(BannerModel.root)/\(title).json"
         self.saveToFile(atPath: fullPath)
     }
+}
 
+// MARK: Store
+
+extension BannerModel {
     // 将对象转换为 JSON 字符串
     func toJSONString() -> String? {
         do {
@@ -98,16 +104,40 @@ struct BannerModel: TaskItem {
 
 extension BannerModel: Identifiable {
     var id: String {
-        uuid
+        projectPath ?? "" + title
     }
 }
 
-extension BannerModel: Codable {}
+// MARK: Hashable
+
+extension BannerModel: Hashable {
+    
+}
+
+// MARK: Equatable
+
+extension BannerModel: Equatable {
+    
+}
+
+// MARK: Codeable
+
+extension BannerModel: Codable {
+    enum CodingKeys: String, CodingKey {
+        case title
+        case subTitle
+        case features
+        case imageURL
+        case backgroundId
+        case inScreen
+        case device
+    }
+}
 
 // MARK: 查
 
 extension BannerModel {
-    static func getBannersFromProject(_ projectPath: String) -> [BannerModel] {
+    static func all(_ projectPath: String) -> [BannerModel] {
         var models: [BannerModel] = []
 
         // 目录路径
@@ -166,4 +196,5 @@ extension BannerModel {
 
 #Preview {
     AppPreview()
+        .frame(width: 800)
 }

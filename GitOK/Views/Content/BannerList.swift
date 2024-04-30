@@ -12,23 +12,27 @@ struct BannerList: View {
     var verbose = true
 
     var body: some View {
-        VStack {
+        VStack(spacing: 0) {
             List(banners, id: \.self, selection: $banner) { banner in
                 Text(banner.title)
                     .tag(banner as BannerModel?)
                     .id(banner.id)
             }
-            .onAppear(perform: getBanners)
-
-            Spacer()
+            .frame(maxHeight: .infinity)
+            .background(.blue)
 
             // 操作
-            HStack {
-                BtnAddBanner(callback: {
-                    self.banners.append($0)
-                })
+            if let project = app.project {
+                HStack(spacing: 0) {
+                    TabBtn(title: "新建 Banner", imageName: "plus.circle", onTap: {
+                        self.banners.append(BannerModel.new(project))
+                    })
+                }
+                .frame(height: 25)
+                .labelStyle(.iconOnly)
             }
         }
+        .onAppear(perform: getBanners)
         .onChange(of: banner) {
             app.banner = banner
         }
@@ -41,10 +45,11 @@ struct BannerList: View {
         
         if let project = app.project {
             DispatchQueue.global().async {
-                let banners = BannerModel.getBannersFromProject(project.path)
+                let banners = BannerModel.all(project.path)
 
                 DispatchQueue.main.async {
                     self.banners = banners
+                    self.banner = banners.first
                 }
             }
         }
@@ -54,5 +59,5 @@ struct BannerList: View {
 #Preview {
     AppPreview()
         .frame(width: 800)
-        .frame(height: 800)
+        .frame(height: 500)
 }

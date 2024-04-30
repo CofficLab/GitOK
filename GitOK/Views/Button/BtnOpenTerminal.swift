@@ -14,7 +14,7 @@ struct BtnOpenTerminal: View {
             Label(
                 title: { Text("用终端打开") },
                 icon: {
-                    Image("Terminal").resizable().scaledToFit().scaleEffect(0.85)
+                    Image(systemName: "apple.terminal.circle")
                 }
             )
         })

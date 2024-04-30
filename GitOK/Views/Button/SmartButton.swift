@@ -10,6 +10,7 @@ struct SmartButton: View {
     var tips: String = ""
     var systemImage: String = "home"
     var resize = false
+    var height: CGFloat = 30
     var selected = false
     var onTap: () -> Void = {
         os_log("点击了button")
@@ -17,10 +18,10 @@ struct SmartButton: View {
 
     var body: some View {
         ZStack {
+            GeometryReader { geo in
             if resize == false {
-                makeButton()
+                makeButton(geo)
             } else {
-                GeometryReader { geo in
                     HStack {
                         Spacer()
                         VStack {
@@ -36,11 +37,17 @@ struct SmartButton: View {
     }
 
     func makeButton(_ geo: GeometryProxy? = nil) -> some View {
-        Label(title, systemImage: systemImage)
+        Label(title: {
+        Text(title)}, icon: {
+            Image(systemName: systemImage)
+                .resizable()
+                .scaledToFit()
+                .frame(height: height)
+        })
             .font(getSize(geo))
             .padding()
-            .clipShape(RoundedRectangle(cornerRadius: 5.0))
             .background(hovered || selected ? Color.gray.opacity(0.4) : .clear)
+            .clipShape(RoundedRectangle(cornerRadius: 5.0))
             .onHover(perform: { hovering in
                 withAnimation(.easeInOut) {
                     hovered = hovering
