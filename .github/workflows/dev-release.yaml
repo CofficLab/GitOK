@@ -91,7 +91,8 @@ jobs:
             --key ./private_keys/AuthKey_${{ secrets.APP_STORE_CONNECT_KEY_ID }}.p8 \
             --key-id=${{ secrets.APP_STORE_CONNECT_KEY_ID }} \
             --issuer ${{ secrets.APP_STORE_CONNECT_KEY_ISSER_ID }} \
-            --wait
+            --wait \
+            --timeout 10m
           stapler staple "$file"
 
           # 如果出现错误，查询日志
