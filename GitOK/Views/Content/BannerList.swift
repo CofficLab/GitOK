@@ -45,7 +45,7 @@ struct BannerList: View {
         
         if let project = app.project {
             DispatchQueue.global().async {
-                let banners = BannerModel.getBannersFromProject(project.path)
+                let banners = BannerModel.all(project.path)
 
                 DispatchQueue.main.async {
                     self.banners = banners
