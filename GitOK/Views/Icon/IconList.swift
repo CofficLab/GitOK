@@ -17,7 +17,7 @@ struct IconList: View {
             
             // 操作
             HStack {
-                BtnAddIcon2(callback: {
+                BtnAddIcon(callback: {
                     self.icons.append($0)
                 })
             }

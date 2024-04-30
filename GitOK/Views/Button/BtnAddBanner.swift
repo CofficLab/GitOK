@@ -2,7 +2,7 @@ import Foundation
 import SwiftData
 import SwiftUI
 
-struct BtnAddBanner2: View {
+struct BtnAddBanner: View {
     @Environment(\.modelContext) var context: ModelContext
     @EnvironmentObject var app: AppManager
     

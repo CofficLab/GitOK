@@ -17,7 +17,7 @@ struct BannerList: View {
             
             // 操作
             HStack {
-                BtnAddBanner2(callback: {
+                BtnAddBanner(callback: {
                     self.banners.append($0)
                 })
             }
