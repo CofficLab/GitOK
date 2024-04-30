@@ -9,18 +9,18 @@ struct BannerFields: View {
     @State var subTitle = ""
     @State var features: [String] = []
     
-    var banner: BannerModel
+    var banner: BannerModel2
 
     var body: some View {
         VStack {
             GroupBox {
                 TextField("title", text: $title)
                     .onChange(of: title) {
-                        updateTitle(title)
+//                        updateTitle(title)
                     }
                 TextField("subTitle", text: $subTitle)
                     .onChange(of: subTitle) {
-                        updateSubTitle(subTitle)
+//                        updateSubTitle(subTitle)
                     }
             }
 
@@ -43,7 +43,7 @@ struct BannerFields: View {
                         Label("增加新特性", systemImage: "plus.rectangle")
                     }
                         .onChange(of: features) {
-                            updateFeatures(features)
+//                            updateFeatures(features)
                         }
                     Spacer()
                 }
@@ -60,7 +60,7 @@ struct BannerFields: View {
                             let storeURL = AppConfig.imagesDir.appendingPathComponent("\(TimeHelper.getTimeString()).\(ext)")
                             do {
                                 try FileManager.default.copyItem(at: url, to: storeURL)
-                                updateImage(storeURL)
+//                                updateImage(storeURL)
                             } catch let e {
                                 print(e)
                             }
@@ -83,19 +83,19 @@ struct BannerFields: View {
         })
     }
     
-    func updateTitle(_ t: String) {
+    mutating func updateTitle(_ t: String) {
         banner.title = t
     }
     
-    func updateSubTitle(_ t: String) {
+    mutating func updateSubTitle(_ t: String) {
         banner.subTitle = t
     }
     
-    func updateFeatures(_ features: [String]) {
+    mutating func updateFeatures(_ features: [String]) {
         banner.features = features
     }
     
-    func updateImage(_ image: URL) {
+    mutating func updateImage(_ image: URL) {
         banner.imageURL = image
     }
 }

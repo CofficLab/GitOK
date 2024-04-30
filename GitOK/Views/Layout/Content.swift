@@ -27,12 +27,19 @@ struct Content: View {
                     .tabItem({
                         Text("Task")
                     })
+                BannerList()
+                    .tag("banner")
+                    .tabItem({
+                        Text("Banner")
+                    })
             }
             .frame(idealWidth: 300)
             .frame(minWidth: 50)
         } detail: {
             if tab == "task" {
                 TaskHome()
+            } else if tab == "banner" {
+                BannerHome(banner: $app.banner)
             } else {
                 if project?.isNotGit ?? false {
                     NotGit()

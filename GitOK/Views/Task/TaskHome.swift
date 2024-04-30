@@ -47,9 +47,9 @@ struct TaskHome: View {
                         .frame(height: 15)
                     }
 
-                    if banner != nil {
-                        BannerHome(banner: $banner)
-                    }
+//                    if banner != nil {
+//                        BannerHome(banner: $banner)
+//                    }
 
                     if icon != nil {
                         IconHome(icon: $icon)

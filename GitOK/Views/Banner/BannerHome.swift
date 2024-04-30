@@ -3,7 +3,7 @@ import SwiftUI
 struct BannerHome: View {
     @EnvironmentObject var app: AppManager
 
-    @Binding var banner: BannerModel?
+    @Binding var banner: BannerModel2?
     @State var snapshotTapped: Bool = false
     @State var backgroundId: String = "3"
     @State var inScreen: Bool = false
@@ -76,9 +76,7 @@ struct BannerHome: View {
             })
         })
         .onChange(of: backgroundId) {
-            if let banner = banner {
-                banner.backgroundId = backgroundId
-            }
+            self.banner?.updateBackgroundId(backgroundId)
         }
     }
 }

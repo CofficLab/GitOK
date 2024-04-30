@@ -35,8 +35,8 @@ final class BannerModel: TaskItem {
         self.taskUUID = task.uuid
         self.projectPath = projectPath
         
-        let banner2 = BannerModel2(title: self.title, task: task, projectPath: projectPath)
-        banner2.saveOnDisk()
+        let banner2 = BannerModel2(title: self.title, projectPath: projectPath)
+        banner2.save()
     }
     
     func getDevice() -> Device {

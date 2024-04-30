@@ -1,17 +1,18 @@
 import Foundation
+import OSLog
 import SwiftData
 import SwiftUI
 
 struct BannerModel2: TaskItem {
     static var root: String = ".gitok/banners"
-    
+    static var label = "💿 BannerModel::"
+
     var title = ""
     var subTitle = ""
     var features: [String] = []
     var imageURL: URL?
     var backgroundId: String = "1"
     var uuid: String
-    var taskUUID: String
     var inScreen = false
     var device: String = Device.iMac.rawValue
     var projectPath: String
@@ -22,7 +23,6 @@ struct BannerModel2: TaskItem {
         features: [String] = [],
         imageURL: URL? = nil,
         backgroundId: String = "1",
-        task: TaskModel,
         projectPath: String
     ) {
         self.title = title
@@ -31,29 +31,24 @@ struct BannerModel2: TaskItem {
         self.features = features
         self.backgroundId = backgroundId
         self.uuid = UUID().uuidString
-        self.taskUUID = task.uuid
         self.projectPath = projectPath
-        
-        self.saveOnDisk()
+
+        self.save()
     }
-    
+
     func getDevice() -> Device {
         Device(rawValue: self.device)!
     }
-    
+
     func toDoc() -> Doc {
         Doc(uuid: self.uuid, title: self.title, image: "photo.artframe")
     }
-    
-    func saveOnDisk() {
-        let dir = "\(self.projectPath)/\(BannerModel.root)"
-        let fullPath = "\(dir)/\(self.title).json"
-//        Shell.makeDir(dir)
-//        Shell.makeFile(fullPath, content: toJSONString() ?? "")
-        
+
+    func save() {
+        let fullPath = "\(self.projectPath)/\(BannerModel.root)/\(self.title).json"
         self.saveToFile(atPath: fullPath)
     }
-    
+
     // 将对象转换为 JSON 字符串
     func toJSONString() -> String? {
         do {
@@ -82,7 +77,7 @@ struct BannerModel2: TaskItem {
             } catch {
                 print("Error creating directory: \(error)")
             }
-            
+
             do {
                 try jsonString.write(toFile: path, atomically: true, encoding: .utf8)
                 print("JSON saved to file: \(path)")
@@ -90,6 +85,18 @@ struct BannerModel2: TaskItem {
                 print("Error saving JSON to file: \(error)")
             }
         }
+    }
+
+    static func fromJSONFile(_ jsonFile: URL) -> BannerModel2? {
+        if let jsonData = try? Data(contentsOf: URL(fileURLWithPath: jsonFile.path)) {
+            do {
+                return try JSONDecoder().decode(BannerModel2.self, from: jsonData)
+            } catch {
+                print("Error decoding JSON: \(error)")
+            }
+        }
+
+        return nil
     }
 }
 
@@ -99,8 +106,69 @@ extension BannerModel2: Identifiable {
     }
 }
 
-extension BannerModel2: Codable {
+extension BannerModel2: Codable {}
 
+// MARK: 从项目目录获取Banner列表
+
+extension BannerModel2 {
+    static func getBannersFromProject(_ projectPath: String) -> [BannerModel2] {
+        var models: [BannerModel2] = []
+
+        // 目录路径
+        let directoryPath = "\(projectPath)/\(Self.root)"
+
+        os_log("\(BannerModel2.label)GetBanners from ->\(directoryPath)")
+
+        // 创建 FileManager 实例
+        let fileManager = FileManager.default
+
+        // 存储文件路径的数组
+        var fileURLs: [URL] = []
+
+        do {
+            // 获取指定目录下的文件列表
+            let files = try fileManager.contentsOfDirectory(atPath: directoryPath)
+
+            // 遍历文件列表，获取完整路径并存入数组
+            for file in files {
+                let fileURL = URL(fileURLWithPath: directoryPath).appendingPathComponent(file)
+                fileURLs.append(fileURL)
+
+                if let model = BannerModel2.fromJSONFile(fileURL) {
+                    models.append(model)
+                }
+            }
+
+            // 输出文件路径数组
+            print(fileURLs)
+        } catch {
+            print("Error while enumerating files: \(error.localizedDescription)")
+        }
+
+        return models
+    }
+}
+
+// MARK: 新建
+
+extension BannerModel2 {
+    static func new(_ project: Project) -> BannerModel2 {
+        BannerModel2(title: "\(Int.random(in: 1 ... 100))", subTitle: "sub3", features: [
+            "Feature 1",
+            "Feature 2",
+            "Feature 3",
+            "Feature 4",
+        ], projectPath: project.path)
+    }
+}
+
+// MARK: 更新
+
+extension BannerModel2 {
+    mutating func updateBackgroundId(_ id: String) {
+        self.backgroundId = id
+        self.save()
+    }
 }
 
 #Preview {
