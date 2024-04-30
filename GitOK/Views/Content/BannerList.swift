@@ -18,7 +18,6 @@ struct BannerList: View {
                     .tag(banner as BannerModel?)
                     .id(banner.id)
             }
-            .onAppear(perform: getBanners)
             .frame(maxHeight: .infinity)
             .background(.blue)
 
@@ -33,6 +32,7 @@ struct BannerList: View {
                 .labelStyle(.iconOnly)
             }
         }
+        .onAppear(perform: getBanners)
         .onChange(of: banner) {
             app.banner = banner
         }
@@ -49,6 +49,7 @@ struct BannerList: View {
 
                 DispatchQueue.main.async {
                     self.banners = banners
+                    self.banner = banners.first
                 }
             }
         }

@@ -30,6 +30,7 @@ struct IconList: View {
         .onAppear {
             if let project = app.project {
                 self.icons = IconModel.fromProject(project.path)
+                self.icon = icons.first
             }
         }
     }
