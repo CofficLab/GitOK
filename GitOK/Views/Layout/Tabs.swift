@@ -16,7 +16,7 @@ struct Tabs: View {
                     )
                 }
             }
-            .frame(height: 30)
+            .frame(height: 25)
             .labelStyle(.iconOnly)
 
             ZStack {

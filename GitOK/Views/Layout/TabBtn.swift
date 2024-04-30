@@ -25,7 +25,7 @@ struct TabBtn: View {
         .padding(.horizontal, 8)
         .padding(.vertical, 4)
             .background(hovered || selected ? Color.gray.opacity(0.4) : .clear)
-            .clipShape(RoundedRectangle(cornerRadius: 5.0))
+            .clipShape(RoundedRectangle(cornerRadius: 0))
             .onHover(perform: { hovering in
                 withAnimation(.easeInOut) {
                     hovered = hovering
