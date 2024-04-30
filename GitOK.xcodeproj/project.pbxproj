@@ -67,7 +67,6 @@
 		0B8C7ABA2BE08E0200B4E817 /* DocTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7AB42BE08E0200B4E817 /* DocTab.swift */; };
 		0B8C7ABB2BE08E0200B4E817 /* DocTabs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7AB52BE08E0200B4E817 /* DocTabs.swift */; };
 		0B8C7ABC2BE08E0200B4E817 /* TaskHome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7AB62BE08E0200B4E817 /* TaskHome.swift */; };
-		0B8C7ABD2BE08E0200B4E817 /* TaskList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7AB72BE08E0200B4E817 /* TaskList.swift */; };
 		0B8C7ABE2BE08E0200B4E817 /* TaskTitle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7AB82BE08E0200B4E817 /* TaskTitle.swift */; };
 		0B8C7AC42BE08E0F00B4E817 /* ScreeniMac.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7ABF2BE08E0F00B4E817 /* ScreeniMac.swift */; };
 		0B8C7AC52BE08E0F00B4E817 /* ScreeniPad.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7AC02BE08E0F00B4E817 /* ScreeniPad.swift */; };
@@ -110,6 +109,7 @@
 		0B8C7B162BE08EDA00B4E817 /* MenuTile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7B0C2BE08EDA00B4E817 /* MenuTile.swift */; };
 		0B8C7B172BE08EDA00B4E817 /* Loading.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7B0D2BE08EDA00B4E817 /* Loading.swift */; };
 		0B8C7B192BE0916800B4E817 /* BtnAddTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7B182BE0916800B4E817 /* BtnAddTask.swift */; };
+		0B8C7B1B2BE092B000B4E817 /* TaskList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7B1A2BE092B000B4E817 /* TaskList.swift */; };
 		0BB555242BDB7B300044048B /* BranchExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BB555232BDB7B300044048B /* BranchExt.swift */; };
 		0BCC6D012BD92CB2006ADA94 /* DebugCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCC6D002BD92CB2006ADA94 /* DebugCommand.swift */; };
 		0BCC6D032BD932DA006ADA94 /* PathExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCC6D022BD932DA006ADA94 /* PathExt.swift */; };
@@ -224,7 +224,6 @@
 		0B8C7AB42BE08E0200B4E817 /* DocTab.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DocTab.swift; sourceTree = "<group>"; };
 		0B8C7AB52BE08E0200B4E817 /* DocTabs.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DocTabs.swift; sourceTree = "<group>"; };
 		0B8C7AB62BE08E0200B4E817 /* TaskHome.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TaskHome.swift; sourceTree = "<group>"; };
-		0B8C7AB72BE08E0200B4E817 /* TaskList.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TaskList.swift; sourceTree = "<group>"; };
 		0B8C7AB82BE08E0200B4E817 /* TaskTitle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TaskTitle.swift; sourceTree = "<group>"; };
 		0B8C7ABF2BE08E0F00B4E817 /* ScreeniMac.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScreeniMac.swift; sourceTree = "<group>"; };
 		0B8C7AC02BE08E0F00B4E817 /* ScreeniPad.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScreeniPad.swift; sourceTree = "<group>"; };
@@ -267,6 +266,7 @@
 		0B8C7B0C2BE08EDA00B4E817 /* MenuTile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MenuTile.swift; sourceTree = "<group>"; };
 		0B8C7B0D2BE08EDA00B4E817 /* Loading.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Loading.swift; sourceTree = "<group>"; };
 		0B8C7B182BE0916800B4E817 /* BtnAddTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BtnAddTask.swift; sourceTree = "<group>"; };
+		0B8C7B1A2BE092B000B4E817 /* TaskList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskList.swift; sourceTree = "<group>"; };
 		0BB555232BDB7B300044048B /* BranchExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BranchExt.swift; sourceTree = "<group>"; };
 		0BCC6D002BD92CB2006ADA94 /* DebugCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugCommand.swift; sourceTree = "<group>"; };
 		0BCC6D022BD932DA006ADA94 /* PathExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PathExt.swift; sourceTree = "<group>"; };
@@ -603,8 +603,8 @@
 				0B8C7AB42BE08E0200B4E817 /* DocTab.swift */,
 				0B8C7AB52BE08E0200B4E817 /* DocTabs.swift */,
 				0B8C7AB62BE08E0200B4E817 /* TaskHome.swift */,
-				0B8C7AB72BE08E0200B4E817 /* TaskList.swift */,
 				0B8C7AB82BE08E0200B4E817 /* TaskTitle.swift */,
+				0B8C7B1A2BE092B000B4E817 /* TaskList.swift */,
 			);
 			path = Task;
 			sourceTree = "<group>";
@@ -793,11 +793,11 @@
 				0B76FCF12BDDD18400501F1F /* WebView.swift in Sources */,
 				0BDE61A32BDB3C9B006E23EA /* Projects.swift in Sources */,
 				0BD15C612BDD33CC004024CF /* DiffView.swift in Sources */,
-				0B8C7ABD2BE08E0200B4E817 /* TaskList.swift in Sources */,
 				0BCC6D132BD94D15006ADA94 /* BtnLogs.swift in Sources */,
 				0B76FD222BDE315800501F1F /* ReadyHandler.swift in Sources */,
 				0BCC6D152BD9526F006ADA94 /* GitCommit.swift in Sources */,
 				0BDE61A92BDB4746006E23EA /* File.swift in Sources */,
+				0B8C7B1B2BE092B000B4E817 /* TaskList.swift in Sources */,
 				0B8C7A622BE08C6600B4E817 /* TaskItem.swift in Sources */,
 				0B8C7AD62BE08E1900B4E817 /* Badges.swift in Sources */,
 				0BF75EEA2BDFA2FB00A553CD /* BtnOpenTerminal.swift in Sources */,

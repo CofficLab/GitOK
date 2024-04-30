@@ -41,7 +41,7 @@ struct BannerHome: View {
             }
         }
         .toolbar(content: {
-            ToolbarItem(placement: .navigation) {
+            ToolbarItem(placement: .cancellationAction) {
                 Picker("设备", selection: $device) {
                     Text("iMac").tag(Device.iMac)
                     Text("MacBook").tag(Device.MacBook)
@@ -57,7 +57,7 @@ struct BannerHome: View {
                 }
             }
 
-            ToolbarItem(placement: .navigation) {
+            ToolbarItem(placement: .cancellationAction) {
                 Toggle(isOn: $inScreen, label: {
                     Text("显示边框")
                 })
