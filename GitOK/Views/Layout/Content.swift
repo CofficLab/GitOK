@@ -31,7 +31,7 @@ struct Content: View {
 
                     ToolbarItemGroup(placement: .primaryAction) {
                         Spacer()
-                        BtnAdd()
+                        BtnAddTask()
                     }
                 }
             }

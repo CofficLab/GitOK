@@ -109,6 +109,7 @@
 		0B8C7B152BE08EDA00B4E817 /* Toast.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7B0B2BE08EDA00B4E817 /* Toast.swift */; };
 		0B8C7B162BE08EDA00B4E817 /* MenuTile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7B0C2BE08EDA00B4E817 /* MenuTile.swift */; };
 		0B8C7B172BE08EDA00B4E817 /* Loading.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7B0D2BE08EDA00B4E817 /* Loading.swift */; };
+		0B8C7B192BE0916800B4E817 /* BtnAddTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7B182BE0916800B4E817 /* BtnAddTask.swift */; };
 		0BB555242BDB7B300044048B /* BranchExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BB555232BDB7B300044048B /* BranchExt.swift */; };
 		0BCC6D012BD92CB2006ADA94 /* DebugCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCC6D002BD92CB2006ADA94 /* DebugCommand.swift */; };
 		0BCC6D032BD932DA006ADA94 /* PathExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCC6D022BD932DA006ADA94 /* PathExt.swift */; };
@@ -265,6 +266,7 @@
 		0B8C7B0B2BE08EDA00B4E817 /* Toast.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Toast.swift; sourceTree = "<group>"; };
 		0B8C7B0C2BE08EDA00B4E817 /* MenuTile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MenuTile.swift; sourceTree = "<group>"; };
 		0B8C7B0D2BE08EDA00B4E817 /* Loading.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Loading.swift; sourceTree = "<group>"; };
+		0B8C7B182BE0916800B4E817 /* BtnAddTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BtnAddTask.swift; sourceTree = "<group>"; };
 		0BB555232BDB7B300044048B /* BranchExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BranchExt.swift; sourceTree = "<group>"; };
 		0BCC6D002BD92CB2006ADA94 /* DebugCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugCommand.swift; sourceTree = "<group>"; };
 		0BCC6D022BD932DA006ADA94 /* PathExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PathExt.swift; sourceTree = "<group>"; };
@@ -422,6 +424,7 @@
 				0BCC6D0C2BD948AB006ADA94 /* BtnSave.swift */,
 				0B6BE4602BDA603000C8ACB2 /* BtnWhoami.swift */,
 				0B8C7B022BE08EB000B4E817 /* BtnAddBanner.swift */,
+				0B8C7B182BE0916800B4E817 /* BtnAddTask.swift */,
 			);
 			path = Button;
 			sourceTree = "<group>";
@@ -859,6 +862,7 @@
 				0B1C67BC2BD9132500502EB1 /* Git.swift in Sources */,
 				0BD15C502BDBF3BD004024CF /* MergeForm.swift in Sources */,
 				0BD15C582BDD26DE004024CF /* Diff.swift in Sources */,
+				0B8C7B192BE0916800B4E817 /* BtnAddTask.swift in Sources */,
 				0B8C7AC42BE08E0F00B4E817 /* ScreeniMac.swift in Sources */,
 				0BD15C4C2BDBE959004024CF /* StateExt.swift in Sources */,
 				0B76FD1D2BDE2D7900501F1F /* DefaultDownloadHandler.swift in Sources */,
