@@ -8,7 +8,7 @@ class Shell {
     static func pwd() -> String {
         do {
             return try Shell.run("pwd")
-        } catch let error {
+        } catch {
             return error.localizedDescription
         }
     }
@@ -16,11 +16,11 @@ class Shell {
     static func whoami() -> String {
         do {
             return try Shell.run("whoami")
-        } catch let error {
+        } catch {
             return error.localizedDescription
         }
     }
-    
+
     static func run(_ command: String, verbose: Bool = false) throws -> String {
         let task = Process()
         task.launchPath = "/bin/bash"

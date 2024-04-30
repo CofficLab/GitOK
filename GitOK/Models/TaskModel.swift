@@ -31,7 +31,7 @@ import SwiftUI
         return task
     }
 
-    func addBanner() {
+    func addBanner(_ project: Project) {
         let banner = BannerModel(title: "\(Int.random(in: 1 ... 100))", subTitle: "sub3", features: [
             "Feature 1",
             "Feature 2",
@@ -42,6 +42,8 @@ import SwiftUI
         if let context = modelContext {
             context.insert(banner)
         }
+        
+        BannerShell.new(banner.title, path: project.path)
     }
 
     func addIcon() {
