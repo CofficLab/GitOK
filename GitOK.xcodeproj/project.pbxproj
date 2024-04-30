@@ -359,16 +359,12 @@
 		0B0E16912BD89C240078942B /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				0B8C7AF12BE08E2D00B4E817 /* Backgrounds.swift */,
-				0B8C7AEF2BE08E2D00B4E817 /* Message.swift */,
-				0B8C7AEE2BE08E2D00B4E817 /* Operator.swift */,
-				0B8C7AF02BE08E2D00B4E817 /* Snapshot.swift */,
-				0B8C7AE72BE08E2200B4E817 /* Icon */,
 				0B8C7AD42BE08E1900B4E817 /* Banner */,
-				0B8C7AC32BE08E0F00B4E817 /* Screens */,
-				0B1C67F82BD9E67E00502EB1 /* History */,
 				0B1C67B62BD9127000502EB1 /* Button */,
+				0BFA2E602BE11E7200AD98D7 /* Content */,
 				0B1C67F72BD9E60500502EB1 /* Detail */,
+				0B1C67F82BD9E67E00502EB1 /* History */,
+				0B8C7AE72BE08E2200B4E817 /* Icon */,
 				0B1C67F62BD9E5E700502EB1 /* Layout */,
 			);
 			path = Views;
@@ -462,9 +458,6 @@
 				0BCC6D0E2BD949B6006ADA94 /* History.swift */,
 				0BDE61A22BDB3C9B006E23EA /* Projects.swift */,
 				0BD15C662BDFE4F9004024CF /* NotGit.swift */,
-				0B8C7B2E2BE0E5F100B4E817 /* Tabs.swift */,
-				0B8C7B322BE0EAE900B4E817 /* ActionTab.swift */,
-				0BFA2E5E2BE111AA00AD98D7 /* TabBtn.swift */,
 			);
 			path = Layout;
 			sourceTree = "<group>";
@@ -475,7 +468,6 @@
 				0B1C67F02BD9DB1F00502EB1 /* CommitCategoryPicker.swift */,
 				0B1C67EE2BD9DACF00502EB1 /* CommitForm.swift */,
 				0BD15C602BDD33CC004024CF /* DiffView.swift */,
-				0BDE61AA2BDB4AB8006E23EA /* FileList.swift */,
 				0BDE61AC2BDB4E86006E23EA /* FileTile.swift */,
 				0BD15C4F2BDBF3BD004024CF /* MergeForm.swift */,
 				0BD15C532BDCAF45004024CF /* NoChanges.swift */,
@@ -600,6 +592,7 @@
 		0B8C7AD42BE08E1900B4E817 /* Banner */ = {
 			isa = PBXGroup;
 			children = (
+				0B8C7AF12BE08E2D00B4E817 /* Backgrounds.swift */,
 				0B8C7AC82BE08E1900B4E817 /* Badge.swift */,
 				0B8C7AC92BE08E1900B4E817 /* Badges.swift */,
 				0B8C7ACA2BE08E1900B4E817 /* Banner.swift */,
@@ -611,7 +604,10 @@
 				0B8C7AD12BE08E1900B4E817 /* BannerMac.swift */,
 				0B8C7AD22BE08E1900B4E817 /* BannerMacBook.swift */,
 				0B8C7AD32BE08E1900B4E817 /* BannerMaker.swift */,
-				0B8C7B242BE0BB7500B4E817 /* BannerList.swift */,
+				0B8C7AEF2BE08E2D00B4E817 /* Message.swift */,
+				0B8C7AEE2BE08E2D00B4E817 /* Operator.swift */,
+				0B8C7AC32BE08E0F00B4E817 /* Screens */,
+				0B8C7AF02BE08E2D00B4E817 /* Snapshot.swift */,
 			);
 			path = Banner;
 			sourceTree = "<group>";
@@ -687,6 +683,18 @@
 				0BDE619E2BDB2C51006E23EA /* Git */,
 			);
 			path = Terminal;
+			sourceTree = "<group>";
+		};
+		0BFA2E602BE11E7200AD98D7 /* Content */ = {
+			isa = PBXGroup;
+			children = (
+				0BFA2E5E2BE111AA00AD98D7 /* TabBtn.swift */,
+				0B8C7B322BE0EAE900B4E817 /* ActionTab.swift */,
+				0B8C7B2E2BE0E5F100B4E817 /* Tabs.swift */,
+				0B8C7B242BE0BB7500B4E817 /* BannerList.swift */,
+				0BDE61AA2BDB4AB8006E23EA /* FileList.swift */,
+			);
+			path = Content;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
