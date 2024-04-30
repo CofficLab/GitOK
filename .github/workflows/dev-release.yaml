@@ -3,7 +3,7 @@ name: Dev Release
 on:
   push:
     branches:
-      - devx
+      - dev
 
 permissions:
   contents: write
@@ -53,42 +53,34 @@ jobs:
       - run: security find-identity -v
       - name: Build
         run: xcodebuild -scheme ${{ env.SCHEME }} -configuration Release -derivedDataPath ${{ env.BuildPath }} clean build
-      - name: 检查结果
+      - name: Codesign
         run: |
-          ls -alh
-          ls -alh temp
-          ls -alh temp/Build/Products
-      # - name: Codesign executable
-      #   run: |
-      #     /usr/bin/codesign --force -s Y6HZ9JJYV6 temp/Build/Products/Release/${{ env.SCHEME }}.app -v
-      - name: 打包
+          codesign --force --option=runtime -s Y6HZ9JJYV6 temp/Build/Products/Release/${{ env.SCHEME }}.app
+          codesign -dv temp/Build/Products/Release/${{ env.SCHEME }}.app
+      - name: Create DMG
         run: |
-          # brew install create-dmg
-
-          # create-dmg \
-          #   --volname "${{ env.SCHEME }}" \
-          #   --window-pos 200 120 \
-          #   --window-size 800 400 \
-          #   --icon-size 100 \
-          #   --app-drop-link 600 185 \
-          #   "${{ env.SCHEME }}.dmg" \
-          #   "temp/Build/Products/Release/${{ env.SCHEME }}.app"
-
           npm i -g create-dmg
           create-dmg "temp/Build/Products/Release/${{ env.SCHEME }}.app"
       - name: 生成 App Store Connect API 的 AuthKey
         run: |
           mkdir -p ./private_keys
           echo -n "${{ secrets.APP_STORE_CONNECT_KEY_BASE64 }}" | base64 --decode -o ./private_keys/AuthKey_${{ secrets.APP_STORE_CONNECT_KEY_ID }}.p8
-      - name: 公证
+      - name: Notary
         continue-on-error: true
         run: |
           file=$(find . -maxdepth 1 -type f -name "*.dmg" | head -n 1)
-          # xcrun notarytool submit "$file" \
+          xcrun notarytool submit "$file" \
+            --key ./private_keys/AuthKey_${{ secrets.APP_STORE_CONNECT_KEY_ID }}.p8 \
+            --key-id=${{ secrets.APP_STORE_CONNECT_KEY_ID }} \
+            --issuer ${{ secrets.APP_STORE_CONNECT_KEY_ISSER_ID }} \
+            --wait
+          stapler staple "$file"
+
+          # 如果出现错误，查询日志
+          # xcrun notarytool log f66d58e3-d03a-4202-937e-5fca4e7cea83 
           #   --key ./private_keys/AuthKey_${{ secrets.APP_STORE_CONNECT_KEY_ID }}.p8 \
-          #   --key-id=${{ secrets.APP_STORE_CONNECT_KEY_ID }} \
-          #   --issuer ${{ secrets.APP_STORE_CONNECT_KEY_ISSER_ID }} 
-          xcrun stapler staple "$file"
+          #   --key-id ${{ secrets.APP_STORE_CONNECT_KEY_ID }} \
+          #   --issuer ${{ secrets.APP_STORE_CONNECT_KEY_ISSER_ID }}
       - name: 公证结果
         continue-on-error: true
         run: |
