@@ -7,19 +7,19 @@ struct BannerBackground: View {
     
     @State var bannerId: String = ""
     
-    var banner: BannerModel
+    var banner: BannerModel2
     
     var body: some View {
         Backgrounds(current: $bannerId)
             .padding(.vertical, 10)
             .onChange(of: bannerId, {
-                updateBanner(bannerId)
+//                updateBanner(bannerId)
             })
     }
     
-    func updateBanner(_ id: String) {
+    mutating func updateBanner(_ id: String) {
         print("set banner background -> \(id)")
-        banner.backgroundId = id
+        banner.updateBackgroundId(id)
     }
 }
 

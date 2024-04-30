@@ -15,7 +15,7 @@ struct IconHome: View {
             HStack {
                 // MARK: 图标列表
 
-                IconList(iconId: $iconId)
+                IconAsset(iconId: $iconId)
                     .frame(width: geo.size.width * 0.2)
 
                 // MARK: 图标生成器

@@ -40,12 +40,8 @@ struct BannerModel2: TaskItem {
         Device(rawValue: self.device)!
     }
 
-    func toDoc() -> Doc {
-        Doc(uuid: self.uuid, title: self.title, image: "photo.artframe")
-    }
-
     func save() {
-        let fullPath = "\(self.projectPath)/\(BannerModel.root)/\(self.title).json"
+        let fullPath = "\(self.projectPath)/\(BannerModel2.root)/\(self.title).json"
         self.saveToFile(atPath: fullPath)
     }
 

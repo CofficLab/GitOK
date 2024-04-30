@@ -24,10 +24,6 @@ struct IconModel2: TaskItem {
         
         self.save()
     }
-    
-    func toDoc() -> Doc {
-        Doc(uuid: self.uuid, title: self.title, image: "globe.europe.africa")
-    }
 }
 
 // MARK: 磁盘读写

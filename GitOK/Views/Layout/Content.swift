@@ -27,7 +27,7 @@ struct Content: View {
                     .tabItem({
                         Text("Banner")
                     })
-                IconList2()
+                IconList()
                     .tag("icon")
                     .tabItem({
                         Text("Icon")

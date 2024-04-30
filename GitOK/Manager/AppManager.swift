@@ -16,20 +16,12 @@ class AppManager: NSObject, ObservableObject, AVAudioPlayerDelegate {
     @Published var backgroudId: String = "1"
     @Published var banner: BannerModel2?
     @Published var icon: IconModel2?
-    
-    @Published var currentTask: TaskModel? = nil
-    @Published var doc: Doc? = nil
 
     func setMessage(_ m: String) {
         message = m
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
             self.message = ""
         }
-    }
-    
-    func setCurrentTask(_ task: TaskModel) {
-        self.currentTask = task
-        AppConfig.setcurrentTaskUUID(task.uuid)
     }
     
     var currentBranch: Branch? {

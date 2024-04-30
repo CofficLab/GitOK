@@ -1,56 +1,40 @@
-import os
+import SwiftData
 import SwiftUI
 
 struct IconList: View {
-    @Binding var iconId: Int
+    @EnvironmentObject var app: AppManager
 
-    @State var gridItems: [GridItem] = Array(repeating: .init(.flexible()), count: 10)
-
-    var iconsCount: Int = IconPng.getTotalCount()
+    @State var icon: IconModel2?
+    @State var icons: [IconModel2] = []
 
     var body: some View {
-        GeometryReader { geo in
-            GroupBox {
-                ScrollView {
-                    VStack {
-                        LazyVGrid(columns: gridItems, spacing: 10) {
-                            ForEach(0 ..< iconsCount, id: \.self) { i in
-                                IconItem(selected: i == iconId, iconId: i)
-                                    .onTapGesture {
-                                        iconId = i
-                                    }
-                            }
-                        }
-                        .onAppear {
-                            gridItems = getGridItems(geo)
-                        }
-                        .onChange(of: geo.size.width) {
-                            gridItems = getGridItems(geo)
-                        }
-                    }
-                }
+        VStack {
+            List(icons, id: \.self, selection: $icon) { icon in
+                Text(icon.title)
+            }
+            
+            Spacer()
+            
+            // 操作
+            HStack {
+                BtnAddIcon2(callback: {
+                    self.icons.append($0)
+                })
+            }
+        }
+        .onChange(of: icon) {
+            app.icon = icon
+        }
+        .onAppear {
+            if let project = app.project {
+                self.icons = IconModel2.fromProject(project.path)
             }
         }
     }
-
-    func getGridItems(_ geo: GeometryProxy) -> [GridItem] {
-        Array(repeating: .init(.flexible()), count: calculateColumns(geo.size.width))
-    }
-
-    func calculateColumns(_ width: CGFloat) -> Int {
-        let columns = Int(width / 80)
-        return columns
-    }
 }
 
 #Preview {
     AppPreview()
-        .frame(height: 800)
         .frame(width: 800)
-}
-
-#Preview {
-    AppPreview()
-        .frame(height: 500)
-        .frame(width: 500)
+        .frame(height: 800)
 }
