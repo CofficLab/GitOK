@@ -18,20 +18,33 @@ struct IconMaker: View {
 
     var iconId: Int
     var backgroundId: String
+    var withBorder = false
 
     var body: some View {
         TabView(content: {
             ImageHelper.makeImage(macOSView)
                 .resizable()
                 .scaledToFit()
-                .overlay { ViewHelper.dashedBorder }
+                .overlay {
+                    ZStack {
+                        if withBorder {
+                            ViewHelper.dashedBorder
+                        }
+                    }
+                }
                 .tag("macOS")
                 .tabItem { Label("macOS", systemImage: "plus") }
 
             ImageHelper.makeImage(iOSView)
                 .resizable()
                 .scaledToFit()
-                .overlay { ViewHelper.dashedBorder }
+                .overlay {
+                    ZStack {
+                        if withBorder {
+                            ViewHelper.dashedBorder
+                        }
+                    }
+                }
                 .tag("iOS")
                 .tabItem { Label("iOS", systemImage: "plus") }
         })
