@@ -19,7 +19,6 @@ struct BannerList: View {
                     .id(banner.id)
             }
             .frame(maxHeight: .infinity)
-            .background(.blue)
 
             // 操作
             if let project = app.project {
