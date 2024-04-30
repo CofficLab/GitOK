@@ -7,7 +7,7 @@ struct IconFields: View {
 
     @State var title = ""
 
-    var icon: IconModel
+    var icon: IconModel2
 
     var body: some View {
         VStack {
@@ -18,7 +18,7 @@ struct IconFields: View {
                         panel.allowsMultipleSelection = false
                         panel.canChooseDirectories = false
                         if panel.runModal() == .OK, let url = panel.url {
-                            icon.imageURL = url
+//                            self.icon.updateImageURL(url)
                         }
                     }
 
@@ -35,11 +35,11 @@ struct IconFields: View {
     }
 
     func updateTitle(_ t: String) {
-        icon.title = t
+//        icon.title = t
     }
 
     func updateImage(_ image: URL) {
-        icon.imageURL = image
+//        icon.imageURL = image
     }
 }
 

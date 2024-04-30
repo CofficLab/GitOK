@@ -66,7 +66,6 @@
 		0B8C7AB32BE08DD100B4E817 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7AB22BE08DD100B4E817 /* RootView.swift */; };
 		0B8C7ABA2BE08E0200B4E817 /* DocTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7AB42BE08E0200B4E817 /* DocTab.swift */; };
 		0B8C7ABB2BE08E0200B4E817 /* DocTabs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7AB52BE08E0200B4E817 /* DocTabs.swift */; };
-		0B8C7ABC2BE08E0200B4E817 /* TaskHome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7AB62BE08E0200B4E817 /* TaskHome.swift */; };
 		0B8C7ABE2BE08E0200B4E817 /* TaskTitle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7AB82BE08E0200B4E817 /* TaskTitle.swift */; };
 		0B8C7AC42BE08E0F00B4E817 /* ScreeniMac.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7ABF2BE08E0F00B4E817 /* ScreeniMac.swift */; };
 		0B8C7AC52BE08E0F00B4E817 /* ScreeniPad.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7AC02BE08E0F00B4E817 /* ScreeniPad.swift */; };
@@ -115,6 +114,9 @@
 		0B8C7B232BE0AD1D00B4E817 /* BannerModel2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7B222BE0AD1D00B4E817 /* BannerModel2.swift */; };
 		0B8C7B252BE0BB7500B4E817 /* BannerList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7B242BE0BB7500B4E817 /* BannerList.swift */; };
 		0B8C7B272BE0C46900B4E817 /* BtnAddBanner2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7B262BE0C46900B4E817 /* BtnAddBanner2.swift */; };
+		0B8C7B292BE0C6DB00B4E817 /* IconModel2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7B282BE0C6DB00B4E817 /* IconModel2.swift */; };
+		0B8C7B2B2BE0C8F100B4E817 /* IconList2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7B2A2BE0C8F100B4E817 /* IconList2.swift */; };
+		0B8C7B2D2BE0C9B300B4E817 /* BtnAddIcon2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7B2C2BE0C9B300B4E817 /* BtnAddIcon2.swift */; };
 		0BB555242BDB7B300044048B /* BranchExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BB555232BDB7B300044048B /* BranchExt.swift */; };
 		0BCC6D012BD92CB2006ADA94 /* DebugCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCC6D002BD92CB2006ADA94 /* DebugCommand.swift */; };
 		0BCC6D032BD932DA006ADA94 /* PathExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCC6D022BD932DA006ADA94 /* PathExt.swift */; };
@@ -228,7 +230,6 @@
 		0B8C7AB22BE08DD100B4E817 /* RootView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		0B8C7AB42BE08E0200B4E817 /* DocTab.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DocTab.swift; sourceTree = "<group>"; };
 		0B8C7AB52BE08E0200B4E817 /* DocTabs.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DocTabs.swift; sourceTree = "<group>"; };
-		0B8C7AB62BE08E0200B4E817 /* TaskHome.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TaskHome.swift; sourceTree = "<group>"; };
 		0B8C7AB82BE08E0200B4E817 /* TaskTitle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TaskTitle.swift; sourceTree = "<group>"; };
 		0B8C7ABF2BE08E0F00B4E817 /* ScreeniMac.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScreeniMac.swift; sourceTree = "<group>"; };
 		0B8C7AC02BE08E0F00B4E817 /* ScreeniPad.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScreeniPad.swift; sourceTree = "<group>"; };
@@ -277,6 +278,9 @@
 		0B8C7B222BE0AD1D00B4E817 /* BannerModel2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerModel2.swift; sourceTree = "<group>"; };
 		0B8C7B242BE0BB7500B4E817 /* BannerList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerList.swift; sourceTree = "<group>"; };
 		0B8C7B262BE0C46900B4E817 /* BtnAddBanner2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BtnAddBanner2.swift; sourceTree = "<group>"; };
+		0B8C7B282BE0C6DB00B4E817 /* IconModel2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconModel2.swift; sourceTree = "<group>"; };
+		0B8C7B2A2BE0C8F100B4E817 /* IconList2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconList2.swift; sourceTree = "<group>"; };
+		0B8C7B2C2BE0C9B300B4E817 /* BtnAddIcon2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BtnAddIcon2.swift; sourceTree = "<group>"; };
 		0BB555232BDB7B300044048B /* BranchExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BranchExt.swift; sourceTree = "<group>"; };
 		0BCC6D002BD92CB2006ADA94 /* DebugCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugCommand.swift; sourceTree = "<group>"; };
 		0BCC6D022BD932DA006ADA94 /* PathExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PathExt.swift; sourceTree = "<group>"; };
@@ -436,6 +440,7 @@
 				0B6BE4602BDA603000C8ACB2 /* BtnWhoami.swift */,
 				0B8C7AF62BE08E4200B4E817 /* SmartButton.swift */,
 				0B8C7B262BE0C46900B4E817 /* BtnAddBanner2.swift */,
+				0B8C7B2C2BE0C9B300B4E817 /* BtnAddIcon2.swift */,
 			);
 			path = Button;
 			sourceTree = "<group>";
@@ -462,10 +467,11 @@
 				0B8C7A592BE08BF600B4E817 /* BannerModel.swift */,
 				0B8C7B222BE0AD1D00B4E817 /* BannerModel2.swift */,
 				0B8C7A5A2BE08BF600B4E817 /* Doc.swift */,
+				0B8C7A542BE08BA600B4E817 /* Git */,
 				0B8C7A562BE08BF500B4E817 /* IconModel.swift */,
+				0B8C7B282BE0C6DB00B4E817 /* IconModel2.swift */,
 				0B8C7A582BE08BF600B4E817 /* IconPng.swift */,
 				0B8C7A572BE08BF600B4E817 /* TaskModel.swift */,
-				0B8C7A542BE08BA600B4E817 /* Git */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -614,7 +620,6 @@
 			children = (
 				0B8C7AB42BE08E0200B4E817 /* DocTab.swift */,
 				0B8C7AB52BE08E0200B4E817 /* DocTabs.swift */,
-				0B8C7AB62BE08E0200B4E817 /* TaskHome.swift */,
 				0B8C7AB82BE08E0200B4E817 /* TaskTitle.swift */,
 				0B8C7B1A2BE092B000B4E817 /* TaskList.swift */,
 			);
@@ -661,6 +666,7 @@
 				0B8C7AE42BE08E2200B4E817 /* IconItem.swift */,
 				0B8C7AE52BE08E2200B4E817 /* IconList.swift */,
 				0B8C7AE62BE08E2200B4E817 /* IconMaker.swift */,
+				0B8C7B2A2BE0C8F100B4E817 /* IconList2.swift */,
 			);
 			path = Icon;
 			sourceTree = "<group>";
@@ -864,6 +870,7 @@
 				0BCC6D072BD939BA006ADA94 /* Shell.swift in Sources */,
 				0BD15C522BDC8D91004024CF /* SmartError.swift in Sources */,
 				0BCC6D092BD939FD006ADA94 /* BtnPwd.swift in Sources */,
+				0B8C7B2B2BE0C8F100B4E817 /* IconList2.swift in Sources */,
 				0B8C7AF72BE08E4200B4E817 /* SmartButton.swift in Sources */,
 				0BCC6D032BD932DA006ADA94 /* PathExt.swift in Sources */,
 				0B8C7ADC2BE08E1900B4E817 /* BanneriPad.swift in Sources */,
@@ -873,6 +880,7 @@
 				0B8C7B132BE08EDA00B4E817 /* TimeHelper.swift in Sources */,
 				0B1C67FE2BD9F12000502EB1 /* EventManager.swift in Sources */,
 				0B76FD242BDE326300501F1F /* FileExt.swift in Sources */,
+				0B8C7B2D2BE0C9B300B4E817 /* BtnAddIcon2.swift in Sources */,
 				0BDE61AD2BDB4E87006E23EA /* FileTile.swift in Sources */,
 				0B0E16932BD89C340078942B /* Detail.swift in Sources */,
 				0B8C7A5C2BE08BF600B4E817 /* TaskModel.swift in Sources */,
@@ -912,11 +920,11 @@
 				0B8C7ADB2BE08E1900B4E817 /* BanneriMac.swift in Sources */,
 				0B8C7AFD2BE08E5300B4E817 /* BtnAddIcon.swift in Sources */,
 				0BCC6D0F2BD949B6006ADA94 /* History.swift in Sources */,
-				0B8C7ABC2BE08E0200B4E817 /* TaskHome.swift in Sources */,
 				0B8C7A672BE08C8700B4E817 /* DBTask.swift in Sources */,
 				0B8C7AC62BE08E0F00B4E817 /* ScreeniPhone.swift in Sources */,
 				0B6BE4612BDA603000C8ACB2 /* BtnWhoami.swift in Sources */,
 				0B8C7A6C2BE08CA800B4E817 /* Device.swift in Sources */,
+				0B8C7B292BE0C6DB00B4E817 /* IconModel2.swift in Sources */,
 				0B8C7AEB2BE08E2200B4E817 /* IconItem.swift in Sources */,
 				0B76FD122BDDFF7200501F1F /* LoggerExt.swift in Sources */,
 				0B8C7B112BE08EDA00B4E817 /* CloudKitHelper.swift in Sources */,

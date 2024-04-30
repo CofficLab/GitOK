@@ -22,24 +22,24 @@ struct Content: View {
                     .tabItem({
                         Text("Git")
                     })
-                TaskList()
-                    .tag("task")
-                    .tabItem({
-                        Text("Task")
-                    })
                 BannerList()
                     .tag("banner")
                     .tabItem({
                         Text("Banner")
                     })
+                IconList2()
+                    .tag("icon")
+                    .tabItem({
+                        Text("Icon")
+                    })
             }
             .frame(idealWidth: 300)
             .frame(minWidth: 50)
         } detail: {
-            if tab == "task" {
-                TaskHome()
-            } else if tab == "banner" {
+            if tab == "banner" {
                 BannerHome(banner: $app.banner)
+            } else if tab == "icon" {
+                IconHome(icon: $app.icon)
             } else {
                 if project?.isNotGit ?? false {
                     NotGit()

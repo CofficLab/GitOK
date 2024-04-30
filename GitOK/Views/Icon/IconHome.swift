@@ -5,7 +5,7 @@ struct IconHome: View {
     @EnvironmentObject var app: AppManager
     @Environment(\.modelContext) var context: ModelContext
 
-    @Binding var icon: IconModel?
+    @Binding var icon: IconModel2?
     @State var iconId = 1
     @State var snapshotTapped: Bool = false
     @State var backgroundId: String = "4"
@@ -60,12 +60,10 @@ struct IconHome: View {
             self.iconId = icon?.iconId ?? 1
         }
         .onChange(of: iconId) {
-            if let icon = icon {
-                icon.iconId = iconId
-            }
+            self.icon?.updateIconId(iconId)
         }
         .onChange(of: backgroundId) {
-            icon?.backgroundId = backgroundId
+            icon?.updateBackgroundId(backgroundId)
         }
     }
 }

@@ -3,6 +3,9 @@ import SwiftData
 import SwiftUI
 
 @Model class IconModel: Identifiable, TaskItem {
+    static var root: String = ".gitok/banners"
+    static var label = "💿 IconModel::"
+    
     var title: String = "1"
     var iconId: Int = 1
     var backgroundId: String = "2"
