@@ -5,11 +5,12 @@ import OSLog
 
 @Model
 final class Project {
+    static var verbose = true
     static var orderReverse = [
         SortDescriptor<Project>(\.timestamp, order: .reverse)
     ]
     
-    var label = "🌳 Project::"
+    var label: String { "\(Logger.isMain)🌳 Project::" }
     var timestamp: Date
     var url: URL
     
@@ -36,7 +37,11 @@ final class Project {
         self.url = url
     }
     
-    func getCommits() -> [GitCommit] {
+    func getCommits(_ reason: String) -> [GitCommit] {
+        if Self.verbose {
+            os_log("\(self.label)GetCommit with reason->\(reason)")
+        }
+        
         do {
             return try Git.logs(path)
         } catch let error {
@@ -46,8 +51,12 @@ final class Project {
         }
     }
     
-    func getCommitsWithHead() -> [GitCommit] {
-        [self.headCommit] + getCommits()
+    func getCommitsWithHead(_ reason: String) -> [GitCommit] {
+        if Self.verbose {
+            os_log("\(self.label)GetCommitWithHead with reason->\(reason)")
+        }
+        
+        return [self.headCommit] + getCommits(reason)
     }
 }
 

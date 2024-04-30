@@ -6,12 +6,12 @@ struct BtnAddBanner: View {
     @Environment(\.modelContext) var context: ModelContext
     @EnvironmentObject var app: AppManager
     
-    var callback: (_ banner: BannerModel2) -> Void
+    var callback: (_ banner: BannerModel) -> Void
 
     var body: some View {
         Button(action: {
             if let project = app.project {
-                let banner = BannerModel2.new(project)
+                let banner = BannerModel.new(project)
                 callback(banner)
             }
         }, label: {

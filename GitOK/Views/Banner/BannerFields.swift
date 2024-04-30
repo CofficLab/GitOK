@@ -9,7 +9,7 @@ struct BannerFields: View {
     @State var subTitle = ""
     @State var features: [String] = []
     
-    var banner: BannerModel2
+    var banner: BannerModel
 
     var body: some View {
         VStack {

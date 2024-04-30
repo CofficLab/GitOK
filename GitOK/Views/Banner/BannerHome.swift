@@ -3,7 +3,7 @@ import SwiftUI
 struct BannerHome: View {
     @EnvironmentObject var app: AppManager
 
-    @Binding var banner: BannerModel2?
+    @Binding var banner: BannerModel?
     @State var snapshotTapped: Bool = false
     @State var backgroundId: String = "3"
     @State var inScreen: Bool = false

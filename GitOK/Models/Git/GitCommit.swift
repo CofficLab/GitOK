@@ -3,8 +3,9 @@ import SwiftUI
 import OSLog
 
 struct GitCommit {
+    static var headId = "HEAD"
     static func headFor(_ path: String) -> GitCommit {
-        .init(isHead: true, path: path, hash: "HEAD", message: "当前")
+        .init(isHead: true, path: path, hash: Self.headId, message: "当前")
     }
 
     var path: String

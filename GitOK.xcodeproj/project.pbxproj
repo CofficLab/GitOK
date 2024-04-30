@@ -97,7 +97,7 @@
 		0B8C7B172BE08EDA00B4E817 /* Loading.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7B0D2BE08EDA00B4E817 /* Loading.swift */; };
 		0B8C7B1E2BE09B1500B4E817 /* BannerShell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7B1D2BE09B1500B4E817 /* BannerShell.swift */; };
 		0B8C7B212BE0A86000B4E817 /* ShellFileExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7B202BE0A86000B4E817 /* ShellFileExt.swift */; };
-		0B8C7B232BE0AD1D00B4E817 /* BannerModel2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7B222BE0AD1D00B4E817 /* BannerModel2.swift */; };
+		0B8C7B232BE0AD1D00B4E817 /* BannerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7B222BE0AD1D00B4E817 /* BannerModel.swift */; };
 		0B8C7B252BE0BB7500B4E817 /* BannerList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7B242BE0BB7500B4E817 /* BannerList.swift */; };
 		0B8C7B272BE0C46900B4E817 /* BtnAddBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7B262BE0C46900B4E817 /* BtnAddBanner.swift */; };
 		0B8C7B292BE0C6DB00B4E817 /* IconModel2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7B282BE0C6DB00B4E817 /* IconModel2.swift */; };
@@ -247,7 +247,7 @@
 		0B8C7B0D2BE08EDA00B4E817 /* Loading.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Loading.swift; sourceTree = "<group>"; };
 		0B8C7B1D2BE09B1500B4E817 /* BannerShell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerShell.swift; sourceTree = "<group>"; };
 		0B8C7B202BE0A86000B4E817 /* ShellFileExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShellFileExt.swift; sourceTree = "<group>"; };
-		0B8C7B222BE0AD1D00B4E817 /* BannerModel2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerModel2.swift; sourceTree = "<group>"; };
+		0B8C7B222BE0AD1D00B4E817 /* BannerModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerModel.swift; sourceTree = "<group>"; };
 		0B8C7B242BE0BB7500B4E817 /* BannerList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerList.swift; sourceTree = "<group>"; };
 		0B8C7B262BE0C46900B4E817 /* BtnAddBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BtnAddBanner.swift; sourceTree = "<group>"; };
 		0B8C7B282BE0C6DB00B4E817 /* IconModel2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconModel2.swift; sourceTree = "<group>"; };
@@ -430,7 +430,7 @@
 		0B1C67C02BD9157A00502EB1 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				0B8C7B222BE0AD1D00B4E817 /* BannerModel2.swift */,
+				0B8C7B222BE0AD1D00B4E817 /* BannerModel.swift */,
 				0B8C7A542BE08BA600B4E817 /* Git */,
 				0B8C7B282BE0C6DB00B4E817 /* IconModel2.swift */,
 				0B8C7A582BE08BF600B4E817 /* IconPng.swift */,
@@ -764,7 +764,7 @@
 				0BD15C4E2BDBF360004024CF /* BtnMerge.swift in Sources */,
 				0B8C7A6F2BE08CA800B4E817 /* ToolName.swift in Sources */,
 				0B1C67B52BD9115F00502EB1 /* Branches.swift in Sources */,
-				0B8C7B232BE0AD1D00B4E817 /* BannerModel2.swift in Sources */,
+				0B8C7B232BE0AD1D00B4E817 /* BannerModel.swift in Sources */,
 				0B1C67F32BD9E21B00502EB1 /* BtnOpenRemote.swift in Sources */,
 				0B8C7AF52BE08E2D00B4E817 /* Backgrounds.swift in Sources */,
 				0B44BCC62BDA947B00FBCF2F /* Branch.swift in Sources */,

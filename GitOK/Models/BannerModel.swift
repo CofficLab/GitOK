@@ -3,7 +3,7 @@ import OSLog
 import SwiftData
 import SwiftUI
 
-struct BannerModel2: TaskItem {
+struct BannerModel: TaskItem {
     static var root: String = ".gitok/banners"
     static var label = "💿 BannerModel::"
 
@@ -41,7 +41,7 @@ struct BannerModel2: TaskItem {
     }
 
     func save() {
-        let fullPath = "\(self.projectPath)/\(BannerModel2.root)/\(self.title).json"
+        let fullPath = "\(self.projectPath)/\(BannerModel.root)/\(self.title).json"
         self.saveToFile(atPath: fullPath)
     }
 
@@ -83,10 +83,10 @@ struct BannerModel2: TaskItem {
         }
     }
 
-    static func fromJSONFile(_ jsonFile: URL) -> BannerModel2? {
+    static func fromJSONFile(_ jsonFile: URL) -> BannerModel? {
         if let jsonData = try? Data(contentsOf: URL(fileURLWithPath: jsonFile.path)) {
             do {
-                return try JSONDecoder().decode(BannerModel2.self, from: jsonData)
+                return try JSONDecoder().decode(BannerModel.self, from: jsonData)
             } catch {
                 print("Error decoding JSON: \(error)")
             }
@@ -96,24 +96,24 @@ struct BannerModel2: TaskItem {
     }
 }
 
-extension BannerModel2: Identifiable {
+extension BannerModel: Identifiable {
     var id: String {
         uuid
     }
 }
 
-extension BannerModel2: Codable {}
+extension BannerModel: Codable {}
 
-// MARK: 从项目目录获取Banner列表
+// MARK: 查
 
-extension BannerModel2 {
-    static func getBannersFromProject(_ projectPath: String) -> [BannerModel2] {
-        var models: [BannerModel2] = []
+extension BannerModel {
+    static func getBannersFromProject(_ projectPath: String) -> [BannerModel] {
+        var models: [BannerModel] = []
 
         // 目录路径
         let directoryPath = "\(projectPath)/\(Self.root)"
 
-        os_log("\(BannerModel2.label)GetBanners from ->\(directoryPath)")
+        os_log("\(BannerModel.label)GetBanners from ->\(directoryPath)")
 
         // 创建 FileManager 实例
         let fileManager = FileManager.default
@@ -130,13 +130,10 @@ extension BannerModel2 {
                 let fileURL = URL(fileURLWithPath: directoryPath).appendingPathComponent(file)
                 fileURLs.append(fileURL)
 
-                if let model = BannerModel2.fromJSONFile(fileURL) {
+                if let model = BannerModel.fromJSONFile(fileURL) {
                     models.append(model)
                 }
             }
-
-            // 输出文件路径数组
-            print(fileURLs)
         } catch {
             print("Error while enumerating files: \(error.localizedDescription)")
         }
@@ -147,9 +144,9 @@ extension BannerModel2 {
 
 // MARK: 新建
 
-extension BannerModel2 {
-    static func new(_ project: Project) -> BannerModel2 {
-        BannerModel2(title: "\(Int.random(in: 1 ... 100))", subTitle: "sub3", features: [
+extension BannerModel {
+    static func new(_ project: Project) -> BannerModel {
+        BannerModel(title: "\(Int.random(in: 1 ... 100))", subTitle: "sub3", features: [
             "Feature 1",
             "Feature 2",
             "Feature 3",
@@ -160,7 +157,7 @@ extension BannerModel2 {
 
 // MARK: 更新
 
-extension BannerModel2 {
+extension BannerModel {
     mutating func updateBackgroundId(_ id: String) {
         self.backgroundId = id
         self.save()
