@@ -139,6 +139,7 @@
 		0BF75EE62BDF2CFB00A553CD /* Files.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BF75EE52BDF2CFB00A553CD /* Files.swift */; };
 		0BF75EE82BDF39B500A553CD /* PushExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BF75EE72BDF39B500A553CD /* PushExt.swift */; };
 		0BF75EEA2BDFA2FB00A553CD /* BtnOpenTerminal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BF75EE92BDFA2FB00A553CD /* BtnOpenTerminal.swift */; };
+		0BFA2E5F2BE111AA00AD98D7 /* TabBtn.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BFA2E5E2BE111AA00AD98D7 /* TabBtn.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -291,6 +292,7 @@
 		0BF75EE52BDF2CFB00A553CD /* Files.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Files.swift; sourceTree = "<group>"; };
 		0BF75EE72BDF39B500A553CD /* PushExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushExt.swift; sourceTree = "<group>"; };
 		0BF75EE92BDFA2FB00A553CD /* BtnOpenTerminal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BtnOpenTerminal.swift; sourceTree = "<group>"; };
+		0BFA2E5E2BE111AA00AD98D7 /* TabBtn.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBtn.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -462,6 +464,7 @@
 				0BD15C662BDFE4F9004024CF /* NotGit.swift */,
 				0B8C7B2E2BE0E5F100B4E817 /* Tabs.swift */,
 				0B8C7B322BE0EAE900B4E817 /* ActionTab.swift */,
+				0BFA2E5E2BE111AA00AD98D7 /* TabBtn.swift */,
 			);
 			path = Layout;
 			sourceTree = "<group>";
@@ -798,6 +801,7 @@
 				0B8C7AED2BE08E2200B4E817 /* IconMaker.swift in Sources */,
 				0B76FCFF2BDDE6F200501F1F /* WebApiSample.swift in Sources */,
 				0B1C67C42BD915F200502EB1 /* AppConfig.swift in Sources */,
+				0BFA2E5F2BE111AA00AD98D7 /* TabBtn.swift in Sources */,
 				0B0E16832BD89A8F0078942B /* Content.swift in Sources */,
 				0B0E16852BD89A8F0078942B /* Item.swift in Sources */,
 				0B76FCF42BDDD1BD00501F1F /* WebContent.swift in Sources */,

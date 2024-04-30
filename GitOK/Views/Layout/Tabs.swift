@@ -2,31 +2,34 @@ import SwiftUI
 
 struct Tabs: View {
     @Binding var tab: ActionTab
-    
+
     var body: some View {
         VStack(spacing: 0) {
-            HStack {
+            HStack(spacing: 0) {
                 ForEach(ActionTab.allCases, id: \.self) { t in
-                    GroupBox {
-                        HStack {
-                            Image(systemName: t.imageName)
-                            Text(t.rawValue)
+                    TabBtn(
+                        tab: t,
+                        selected: tab == t,
+                        onTap: {
+                            self.tab = t
                         }
-                        .foregroundStyle(tab == t ? .primary : .secondary)
-                        .onTapGesture { self.tab = t }
-                    }
+                    )
                 }
-            }.padding(.vertical, 2)
-            
-            if self.tab == .Git {
-                History()
-            } else if self.tab == .Banner {
-                BannerList()
-            } else if self.tab == .Icon {
-                IconList()
-            } else {
-                Spacer()
             }
+            .frame(height: 30)
+            .labelStyle(.iconOnly)
+
+            ZStack {
+                if self.tab == .Git {
+                    History()
+                } else if self.tab == .Banner {
+                    BannerList()
+                } else if self.tab == .Icon {
+                    IconList()
+                } else {
+                    Spacer()
+                }
+            }.frame(maxHeight: .infinity)
         }
     }
 }
