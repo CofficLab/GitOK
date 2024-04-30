@@ -35,9 +35,9 @@ struct MergeForm: View {
                 }
             }
             .onAppear(perform: {
-                self.branches = try! Git.getBranches(project.path)
+                self.branches = Git.getBranches(project.path)
                 self.branch1 = branches.first
-                self.branch2 = branches.first
+                self.branch2 = branches.count >= 2 ? branches[1] : branches.first
 
                 EventManager().onCommitted {
                     self.text = ""
