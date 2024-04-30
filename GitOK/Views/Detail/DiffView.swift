@@ -8,6 +8,7 @@ struct DiffView: View {
     var file: File? { app.file }
     var view: WebView { webConfig.view }
     var commit: GitCommit
+    var label: String { "\(Logger.isMain)🍺 DiffView::" }
 
     var body: some View {
         if let file = file {
@@ -32,16 +33,27 @@ struct DiffView: View {
                     .onChange(of: commit, refresh)
             }
         } else {
-            Text("选择一个文件以查看变动")
+            noFileView
+        }
+    }
+    
+    var noFileView: some View {
+        VStack {
+            Spacer()
+            HStack {
+                Spacer()
+                Text("选择一个文件以查看变动")
+                Spacer()
+            }
         }
     }
 
-    @MainActor
     func refresh() {
         guard let file = file else {
             return
         }
 
+        os_log("\(self.label)Refresh")
         if commit.isHead {
             view.content.setTexts(file.lastContent, file.content)
         } else {

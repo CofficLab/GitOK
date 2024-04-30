@@ -8,7 +8,7 @@ struct Content: View {
     @State var branch: Branch? = nil
     @State var gitLog: String? = nil
     @State var message: String = ""
-    @State var tab: String = ""
+    @State var tab: ActionTab = .Git
 
     var project: Project? { app.project }
 
@@ -16,29 +16,13 @@ struct Content: View {
         NavigationSplitView {
             Projects()
         } content: {
-            TabView(selection: $tab) {
-                History()
-                    .tag("history")
-                    .tabItem({
-                        Text("Git")
-                    })
-                BannerList()
-                    .tag("banner")
-                    .tabItem({
-                        Text("Banner")
-                    })
-                IconList()
-                    .tag("icon")
-                    .tabItem({
-                        Text("Icon")
-                    })
-            }
+            Tabs(tab: $tab)
             .frame(idealWidth: 300)
             .frame(minWidth: 50)
         } detail: {
-            if tab == "banner" {
+            if tab == .Banner {
                 BannerHome(banner: $app.banner)
-            } else if tab == "icon" {
+            } else if tab == .Icon {
                 IconHome(icon: $app.icon)
             } else {
                 if project?.isNotGit ?? false {

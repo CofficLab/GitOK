@@ -1,16 +1,22 @@
 import SwiftData
 import SwiftUI
+import OSLog
 
 struct BannerList: View {
     @EnvironmentObject var app: AppManager
 
-    @State var banner: BannerModel?
+    @State var banner: BannerModel? = nil
     @State var banners: [BannerModel] = []
+    
+    var label: String { "\(Logger.isMain)🌹 BannerList::"}
+    var verbose = true
 
     var body: some View {
         VStack {
             List(banners, id: \.self, selection: $banner) { banner in
                 Text(banner.title)
+                    .tag(banner as BannerModel?)
+                    .id(banner.id)
             }
             .onAppear(perform: getBanners)
 
@@ -29,6 +35,10 @@ struct BannerList: View {
     }
 
     func getBanners() {
+        if verbose {
+            os_log("\(self.label)GetBanners")
+        }
+        
         if let project = app.project {
             DispatchQueue.global().async {
                 let banners = BannerModel.getBannersFromProject(project.path)

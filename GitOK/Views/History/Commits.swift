@@ -15,7 +15,9 @@ struct Commits: View {
         if let project = app.project {
             VStack {
                 if loading {
+                    Spacer()
                     Text("loading...")
+                    Spacer()
                 } else {
                     List(selection: $commitId) {
                         ForEach(Stage.allCases, id: \.self) { stage in
@@ -73,11 +75,14 @@ struct Commits: View {
                         $0.id == commitId
                     })
                 }
+                
+                if verbose {
+                    os_log("\(self.label)app.commit=\(commitId)")
+                }
             })
             .onChange(of: app.project, {
                 self.refresh("\(self.label)Project Changed")
             })
-//            .onChange(of: app.branch, refresh)
         }
     }
 

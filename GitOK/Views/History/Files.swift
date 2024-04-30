@@ -10,7 +10,7 @@ struct Files: View {
     var project: Project? { app.project }
     var commit: GitCommit? { app.commit }
     var verbose = true
-    var label: String { "\(Logger.isMain)🖥️ Files::" }
+    var label: String { "\(Logger.isMain)🍊 Files::" }
 
     var body: some View {
         ZStack {
@@ -65,10 +65,12 @@ struct Files: View {
         self.loading = true
         
         DispatchQueue.global().async {
+            os_log("\(self.label)Refresh")
             let files = commit.getFiles()
             let file = files.first
             
             DispatchQueue.main.async {
+                os_log("\(self.label)Update")
                 self.files = files
                 app.file = file
                 self.loading = false
