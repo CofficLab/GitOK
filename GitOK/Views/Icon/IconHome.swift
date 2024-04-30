@@ -60,7 +60,7 @@ struct IconHome: View {
             self.iconId = icon?.iconId ?? 1
         }
         .onChange(of: iconId) {
-            self.icon?.updateIconId(iconId)
+            icon?.updateIconId(iconId)
         }
         .onChange(of: backgroundId) {
             icon?.updateBackgroundId(backgroundId)

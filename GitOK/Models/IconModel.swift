@@ -13,6 +13,8 @@ struct IconModel {
     var imageURL: URL? = nil
     var projectPath: String?
     
+    var label: String { IconModel.label }
+    
     init(title: String = "1", iconId: Int = 1, backgroundId: String = "3", imageURL: URL? = nil, projectPath: String) {
         self.title = title
         self.iconId = iconId
@@ -24,10 +26,10 @@ struct IconModel {
     }
 }
 
-// MARK: 磁盘读写
+// MARK: 查
 
 extension IconModel {
-    static func fromProject(_ projectPath: String) -> [IconModel] {
+    static func all(_ projectPath: String) -> [IconModel] {
         var models: [IconModel] = []
 
         // 目录路径
@@ -50,13 +52,11 @@ extension IconModel {
                 let fileURL = URL(fileURLWithPath: directoryPath).appendingPathComponent(file)
                 fileURLs.append(fileURL)
 
-                if let model = IconModel.fromJSONFile(fileURL) {
+                if var model = IconModel.fromJSONFile(fileURL) {
+                    model.projectPath = projectPath
                     models.append(model)
                 }
             }
-
-            // 输出文件路径数组
-            print(fileURLs)
         } catch {
             print("Error while enumerating files: \(error.localizedDescription)")
         }
@@ -127,7 +127,9 @@ extension IconModel {
 
 extension IconModel {
     func save() {
+        os_log("\(IconModel.label)Save")
         guard let p = projectPath else {
+            os_log("\(label)Can't Save, no projectPath")
             return
         }
         
