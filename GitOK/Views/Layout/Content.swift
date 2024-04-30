@@ -15,9 +15,28 @@ struct Content: View {
         NavigationSplitView {
             Projects()
         } content: {
-            History()
-                .frame(idealWidth: 300)
-                .frame(minWidth: 50)
+            TabView {
+                History()
+                    .tabItem({
+                        Text("Git")
+                    })
+                    .frame(idealWidth: 300)
+                    .frame(minWidth: 50)
+                #if DEBUG
+                History()
+                    .tabItem({
+                        Text("Icon")
+                    })
+                    .frame(idealWidth: 300)
+                    .frame(minWidth: 50)
+                History()
+                    .tabItem({
+                        Text("Banner")
+                    })
+                    .frame(idealWidth: 300)
+                    .frame(minWidth: 50)
+                #endif
+            }
         } detail: {
             if project?.isNotGit ?? false {
                 NotGit()
