@@ -3,7 +3,9 @@ import SwiftData
 import SwiftUI
 
 @Model
-class BannerModel: TaskItem {
+final class BannerModel: TaskItem {
+    static var root: String = ".gitok/banners"
+    
     var title = ""
     var subTitle = ""
     var features: [String] = []
@@ -13,6 +15,7 @@ class BannerModel: TaskItem {
     var taskUUID: String
     var inScreen = false
     var device: String = Device.iMac.rawValue
+    var projectPath: String
 
     init(
         title: String = "",
@@ -20,7 +23,8 @@ class BannerModel: TaskItem {
         features: [String] = [],
         imageURL: URL? = nil,
         backgroundId: String = "1",
-        task: TaskModel
+        task: TaskModel,
+        projectPath: String
     ) {
         self.title = title
         self.subTitle = subTitle
@@ -29,6 +33,10 @@ class BannerModel: TaskItem {
         self.backgroundId = backgroundId
         self.uuid = UUID().uuidString
         self.taskUUID = task.uuid
+        self.projectPath = projectPath
+        
+        let banner2 = BannerModel2(title: self.title, task: task, projectPath: projectPath)
+        banner2.saveOnDisk()
     }
     
     func getDevice() -> Device {

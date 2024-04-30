@@ -13,19 +13,19 @@ import SwiftUI
         uuid = UUID().uuidString
     }
 
-    static func makeSample() -> TaskModel {
+    static func makeSample(_ projectPath: String) -> TaskModel {
         let task = TaskModel()
         task.title = "新任务\(Int.random(in: 1 ... 100))"
         task.subTitle = "let us make it easy"
         _ = [
-            BannerModel(title: "\(Int.random(in: 1 ... 100))", subTitle: "sub1", task: task),
-            BannerModel(title: "\(Int.random(in: 1 ... 100))", subTitle: "sub2", task: task),
+            BannerModel(title: "\(Int.random(in: 1 ... 100))", subTitle: "sub1", task: task, projectPath: projectPath),
+            BannerModel(title: "\(Int.random(in: 1 ... 100))", subTitle: "sub2", task: task, projectPath: projectPath),
             BannerModel(title: "\(Int.random(in: 1 ... 100))", subTitle: "sub3", features: [
                 "Feature 1",
                 "Feature 2",
                 "Feature 3",
                 "Feature 4",
-            ], task: task),
+            ], task: task, projectPath: projectPath),
         ]
 
         return task
@@ -37,13 +37,11 @@ import SwiftUI
             "Feature 2",
             "Feature 3",
             "Feature 4",
-        ], task: self)
+        ], task: self, projectPath: project.path)
 
         if let context = modelContext {
             context.insert(banner)
         }
-        
-        BannerShell.new(banner.title, path: project.path)
     }
 
     func addIcon() {

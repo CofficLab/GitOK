@@ -8,10 +8,12 @@ struct BtnAddTask: View {
 
     var body: some View {
         Button(action: {
-            let task = TaskModel.makeSample()
-            context.insert(task)
-            
-            app.setCurrentTask(task)
+            if let project = app.project {
+                let task = TaskModel.makeSample(project.path)
+                context.insert(task)
+                
+                app.setCurrentTask(task)
+            }
         }, label: {
             Label("添加", systemImage: "plus.circle")
         })
