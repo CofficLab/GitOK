@@ -71,6 +71,6 @@ struct IconHome: View {
 #Preview("IconHome") {
     AppPreview()
         .frame(width: 800)
-        .frame(height: 800)
+        .frame(height: 500)
         .frame(maxWidth: .infinity)
 }

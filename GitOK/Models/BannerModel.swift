@@ -196,4 +196,5 @@ extension BannerModel {
 
 #Preview {
     AppPreview()
+        .frame(width: 800)
 }

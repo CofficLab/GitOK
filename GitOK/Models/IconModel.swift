@@ -3,7 +3,7 @@ import SwiftData
 import SwiftUI
 import OSLog
 
-struct IconModel: TaskItem {
+struct IconModel {
     static var root: String = ".gitok/icons"
     static var label = "💿 IconModel::"
     
@@ -11,15 +11,13 @@ struct IconModel: TaskItem {
     var iconId: Int = 1
     var backgroundId: String = "2"
     var imageURL: URL? = nil
-    var uuid: String = ""
-    var projectPath: String
+    var projectPath: String?
     
     init(title: String = "1", iconId: Int = 1, backgroundId: String = "3", imageURL: URL? = nil, projectPath: String) {
         self.title = title
         self.iconId = iconId
         self.backgroundId = backgroundId
         self.imageURL = imageURL
-        self.uuid = UUID().uuidString
         self.projectPath = projectPath
         
         self.save()
@@ -69,12 +67,33 @@ extension IconModel {
 
 // MARK: Codable
 
-extension IconModel: Codable {}
+extension IconModel: Codable {
+    enum CodingKeys: String, CodingKey {
+        case title
+        case iconId
+        case backgroundId
+        case imageURL
+    }
+}
+
+// MARK: Hashable
+
+extension IconModel: Hashable {
+    
+}
+
+// MARK: Equatable
+
+extension IconModel: Equatable {
+    
+}
 
 // MARK: Identifiable
 
 extension IconModel: Identifiable {
-    var id: String { uuid }
+    var id: String {
+        projectPath ?? "" + title
+    }
 }
 
 // MARK: 新建
@@ -108,7 +127,11 @@ extension IconModel {
 
 extension IconModel {
     func save() {
-        let fullPath = "\(self.projectPath)/\(Self.root)/\(self.title).json"
+        guard let p = projectPath else {
+            return
+        }
+        
+        let fullPath = "\(p)/\(Self.root)/\(title).json"
         self.saveToFile(atPath: fullPath)
     }
 
