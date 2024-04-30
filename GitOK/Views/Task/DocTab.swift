@@ -28,7 +28,7 @@ struct DocTab: View {
 }
 
 #Preview {
-    BannerPreview()
+    AppPreview()
         .frame(width: 800)
         .frame(height: 800)
 }

@@ -175,13 +175,13 @@ struct IconMaker: View {
 }
 
 #Preview("APP") {
-    BannerPreview()
+    AppPreview()
         .frame(width: 800)
         .frame(height: 800)
 }
 
 #Preview("APP") {
-    BannerPreview()
+    AppPreview()
         .frame(width: 800)
         .frame(height: 400)
 }

@@ -23,5 +23,5 @@ struct BtnDel: View {
 }
 
 #Preview {
-    BannerPreview()
+    AppPreview()
 }

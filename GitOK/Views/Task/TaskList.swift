@@ -38,7 +38,7 @@ struct TaskList: View {
 }
 
 #Preview {
-    BannerPreview()
+    AppPreview()
         .frame(width: 800)
         .frame(height: 800)
 }

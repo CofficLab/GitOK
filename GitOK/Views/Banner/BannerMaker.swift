@@ -102,6 +102,6 @@ struct BannerMaker: View {
 }
 
 #Preview {
-    BannerPreview()
+    AppPreview()
         .frame(width: 800)
 }

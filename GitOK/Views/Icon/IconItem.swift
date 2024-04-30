@@ -27,5 +27,5 @@ struct IconItem: View {
 }
 
 #Preview("1号") {
-    BannerPreview()
+    AppPreview()
 }

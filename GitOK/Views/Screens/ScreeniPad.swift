@@ -112,7 +112,7 @@ struct ScreeniPad<Content>: View where Content: View {
 }
 
 #Preview("1号") {
-    BannerPreview()
+    AppPreview()
         .frame(width: 800)
         .frame(height: 800)
 }

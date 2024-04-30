@@ -44,13 +44,13 @@ struct IconList: View {
 }
 
 #Preview {
-    BannerPreview()
+    AppPreview()
         .frame(height: 800)
         .frame(width: 800)
 }
 
 #Preview {
-    BannerPreview()
+    AppPreview()
         .frame(height: 500)
         .frame(width: 500)
 }

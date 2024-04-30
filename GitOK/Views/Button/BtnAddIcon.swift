@@ -14,5 +14,5 @@ struct BtnAddIcon: View {
 }
 
 #Preview {
-    BannerPreview()
+    AppPreview()
 }

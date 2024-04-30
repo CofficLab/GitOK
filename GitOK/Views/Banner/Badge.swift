@@ -13,5 +13,5 @@ struct Badge: View {
 }
 
 #Preview("APP") {
-    BannerPreview().frame(height: 800)
+    AppPreview().frame(height: 800)
 }

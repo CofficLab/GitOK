@@ -58,6 +58,6 @@ struct TaskTitle: View {
 }
 
 #Preview {
-    BannerPreview()
+    AppPreview()
         .frame(width: 700)
 }

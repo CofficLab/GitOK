@@ -30,7 +30,7 @@ struct Backgrounds: View {
 }
 
 #Preview("App") {
-    BannerPreview()
+    AppPreview()
         .frame(width: 800)
         .frame(height: 800)
 }

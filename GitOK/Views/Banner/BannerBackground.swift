@@ -24,5 +24,5 @@ struct BannerBackground: View {
 }
 
 #Preview {
-    BannerPreview()
+    AppPreview()
 }

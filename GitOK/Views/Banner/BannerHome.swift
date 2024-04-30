@@ -84,7 +84,7 @@ struct BannerHome: View {
 }
 
 #Preview("APP") {
-    BannerPreview()
+    AppPreview()
         .frame(width: 800)
         .frame(height: 800)
 }

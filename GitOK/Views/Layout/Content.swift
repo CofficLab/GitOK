@@ -20,23 +20,23 @@ struct Content: View {
                     .tabItem({
                         Text("Git")
                     })
-                    .frame(idealWidth: 300)
-                    .frame(minWidth: 50)
-                #if DEBUG
-                History()
-                    .tabItem({
-                        Text("Icon")
-                    })
-                    .frame(idealWidth: 300)
-                    .frame(minWidth: 50)
-                History()
+                TaskHome()
                     .tabItem({
                         Text("Banner")
                     })
-                    .frame(idealWidth: 300)
-                    .frame(minWidth: 50)
-                #endif
+                    .toolbar {
+                    ToolbarItem(placement: .principal, content: {
+                        TaskTitle().frame(maxWidth: .infinity)
+                    })
+
+                    ToolbarItemGroup(placement: .primaryAction) {
+                        Spacer()
+                        BtnAdd()
+                    }
+                }
             }
+            .frame(idealWidth: 300)
+            .frame(minWidth: 50)
         } detail: {
             if project?.isNotGit ?? false {
                 NotGit()

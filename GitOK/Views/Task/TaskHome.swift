@@ -82,7 +82,7 @@ struct TaskHome: View {
 }
 
 #Preview {
-    BannerPreview()
+    AppPreview()
         .frame(width: 800)
         .frame(height: 400)
 }

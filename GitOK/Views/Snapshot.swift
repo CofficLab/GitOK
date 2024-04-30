@@ -71,5 +71,5 @@ struct Snapshot<Content>: View where Content: View {
 }
 
 #Preview("APP") {
-    BannerPreview()
+    AppPreview()
 }

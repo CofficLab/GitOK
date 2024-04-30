@@ -76,5 +76,5 @@ struct MyButtonStyle: ButtonStyle {
 }
 
 #Preview("App") {
-    BannerPreview()
+    AppPreview()
 }

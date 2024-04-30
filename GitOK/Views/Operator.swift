@@ -28,5 +28,5 @@ struct Operator: View {
 }
 
 #Preview("APP") {
-    BannerPreview()
+    AppPreview()
 }

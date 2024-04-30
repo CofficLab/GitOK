@@ -34,5 +34,5 @@ struct BtnDelDoc: View {
 }
 
 #Preview {
-    BannerPreview()
+    AppPreview()
 }
