@@ -116,6 +116,6 @@ jobs:
         with:
           tag_name: ${{ env.TAG }}
           # body_path: ${{ github.workspace }}-CHANGELOG.txt
-          prerelease: true
+          prerelease: false
           files: |
             ./**/*.dmg

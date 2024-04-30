@@ -11,6 +11,9 @@ extension AppConfig {
         let url = AppConfig.getDBFolderURL().appendingPathComponent(dbFileName)
 
         let schema = Schema([
+            TaskModel.self,
+            BannerModel.self,
+            IconModel.self,
             Item.self,
             Project.self
         ])
