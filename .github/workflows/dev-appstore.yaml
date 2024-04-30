@@ -1,9 +1,9 @@
-name: Dev Release
+name: Dev AppStore
 
 on:
   push:
     branches:
-      - dev
+      - devx
 
 permissions:
   contents: write
@@ -22,19 +22,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-      - name: 读取版本号
-        run: |
-          # 读取配置文件路径
-          projectFile=$(find $(pwd) ! -path "*Resources*" -type f -name "*.pbxproj" | head -n 1)
-
-          # 读取文件中的版本号
-          version=$(grep -o 'MARKETING_VERSION = [^"]*' $projectFile | head -n 1 | grep -o '[0-9]\+\.[0-9]\+\.[0-9]\+')
-
-          echo "版本号->$version"
-
-          build=$(agvtool what-version -terse)
-
-          echo "TAG=d$version($build)" >> $GITHUB_ENV
       # https://docs.github.com/zh/actions/deployment/deploying-xcode-applications/installing-an-apple-certificate-on-macos-runners-for-xcode-development
       - name: Install the Apple certificate and provisioning profile
         env:
@@ -63,48 +50,51 @@ jobs:
           # apply provisioning profile
           mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
           cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
-      - name: 生成 App Store Connect API 的 AuthKey
-        run: |
-          mkdir -p ./private_keys
-          echo -n "${{ secrets.APP_STORE_CONNECT_KEY_BASE64 }}" | base64 --decode -o ./private_keys/AuthKey_${{ secrets.APP_STORE_CONNECT_KEY_ID }}.p8
       - run: security find-identity -v
       - name: Build
         run: xcodebuild -scheme ${{ env.SCHEME }} -configuration Release -derivedDataPath ${{ env.BuildPath }} clean build
       - name: Codesign
         run: |
-          codesign --force --option=runtime temp/Build/Products/Release/${{ env.SCHEME }}.app
+          codesign --force --option=runtime -s Y6HZ9JJYV6 temp/Build/Products/Release/${{ env.SCHEME }}.app
           codesign -dv temp/Build/Products/Release/${{ env.SCHEME }}.app
       - name: Create DMG
         run: |
           npm i -g create-dmg
           create-dmg "temp/Build/Products/Release/${{ env.SCHEME }}.app"
-      - name: Notary
-        continue-on-error: true
+      - name: 生成 App Store Connect API 的 AuthKey
         run: |
-          file=$(find . -maxdepth 1 -type f -name "*.dmg" | head -n 1)
-          xcrun notarytool submit "$file" \
-            --key ./private_keys/AuthKey_${{ secrets.APP_STORE_CONNECT_KEY_ID }}.p8 \
-            --key-id=${{ secrets.APP_STORE_CONNECT_KEY_ID }} \
-            --issuer ${{ secrets.APP_STORE_CONNECT_KEY_ISSER_ID }} \
-            --wait
-          stapler staple "$file"
-
-          # 如果出现错误，查询日志
-          # xcrun notarytool log f66d58e3-d03a-4202-937e-5fca4e7cea83 
-          #   --key ./private_keys/AuthKey_${{ secrets.APP_STORE_CONNECT_KEY_ID }}.p8 \
-          #   --key-id ${{ secrets.APP_STORE_CONNECT_KEY_ID }} \
-          #   --issuer ${{ secrets.APP_STORE_CONNECT_KEY_ISSER_ID }}
-      - name: 公证结果
-        continue-on-error: true
+          mkdir -p ./private_keys
+          echo -n "${{ secrets.APP_STORE_CONNECT_KEY_BASE64 }}" | base64 --decode -o ./private_keys/AuthKey_${{ secrets.APP_STORE_CONNECT_KEY_ID }}.p8
+      - name: Archive
         run: |
-          file=$(find . -maxdepth 1 -type f -name "*.dmg" | head -n 1)
-          stapler validate "$file"
-      # - name: Generate Changelog
-      #   run: echo ""> ${{ github.workspace }}-CHANGELOG.txt
-      - uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ env.TAG }}
-          # body_path: ${{ github.workspace }}-CHANGELOG.txt
-          prerelease: true
-          files: |
-            ./**/*.dmg
+          echo ${{ env.ArchivePath }}
+          xcodebuild archive \
+            -scheme ${{ env.SCHEME }} \
+            -configuration Release \
+            -archivePath ${{ env.ArchivePath }} \
+            -destination ${{ env.DESTINATION }}
+    #   - name: Export Archive
+    #     env:
+    #       APPSTORE_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+    #       APPSTORE_API_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ISSER_ID }}
+    #     run: |
+    #       xcodebuild -exportArchive \
+    #         -archivePath ci/myapp.xcarchive \
+    #         -exportOptionsPlist .github/exportOptions.plist \
+    #         -exportPath ci/pkg \
+    #         -destination ${{ env.DESTINATION }} \
+    #         -allowProvisioningUpdates \
+    #         -authenticationKeyPath $(pwd)/private_keys/AuthKey_$APPSTORE_API_KEY_ID.p8 \
+    #         -authenticationKeyID $APPSTORE_API_KEY_ID \
+    #         -authenticationKeyIssuerID $APPSTORE_API_ISSUER_ID
+    #   - name: 上传到 App Store
+    #     env:
+    #       APPSTORE_API_KEY_ID: ${{ secrets.APPSTORE_API_KEY_ID }}
+    #       APPSTORE_API_ISSUER_ID: ${{ secrets.APPSTORE_API_ISSUER_ID }}
+    #     run: |
+    #         # 执行 xcrun altool -h 查看文档得知：私钥文件 AuthKey_<api_key>.p8 放在 ./private_keys 目录，会自动使用
+    #         xcrun altool --upload-app \
+    #           --type macos \
+    #           -f ci/pkg/快易知.pkg \
+    #           --apiKey $APPSTORE_API_KEY_ID \
+    #           --apiIssuer $APPSTORE_API_ISSUER_ID
