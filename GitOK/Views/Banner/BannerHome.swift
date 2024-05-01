@@ -29,7 +29,7 @@ struct BannerHome: View {
 
                     VStack {
                         Spacer()
-                        BannerFields(banner: banner)
+                        BannerFields(banner: $banner)
 
                         GroupBox {
                             Backgrounds(current: $backgroundId)

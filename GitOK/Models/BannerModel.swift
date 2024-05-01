@@ -165,7 +165,8 @@ extension BannerModel {
                 let fileURL = URL(fileURLWithPath: directoryPath).appendingPathComponent(file)
                 fileURLs.append(fileURL)
 
-                if let model = BannerModel.fromJSONFile(fileURL) {
+                if var model = BannerModel.fromJSONFile(fileURL) {
+                    model.projectPath = projectPath
                     models.append(model)
                 }
             }
@@ -195,6 +196,27 @@ extension BannerModel {
 extension BannerModel {
     mutating func updateBackgroundId(_ id: String) {
         self.backgroundId = id
+        self.save()
+    }
+    
+    mutating func updateTitle(_ t: String) {
+        os_log("\(BannerModel.label)UpdateTitle->\(t)")
+        self.title = t
+        self.save()
+    }
+    
+    mutating func updateSubTitle(_ t: String) {
+        self.subTitle = t
+        self.save()
+    }
+    
+    mutating func updateImage(_ u: URL) {
+        self.imageURL = u
+        self.save()
+    }
+    
+    mutating func updateFeatures(_ f: [String]) {
+        self.features = f
         self.save()
     }
 }
