@@ -17,20 +17,10 @@ struct Content: View {
             Projects()
         } content: {
             Tabs(tab: $tab)
-            .frame(idealWidth: 300)
-            .frame(minWidth: 50)
+                .frame(idealWidth: 300)
+                .frame(minWidth: 50)
         } detail: {
-            if tab == .Banner {
-                BannerHome(banner: $app.banner)
-            } else if tab == .Icon {
-                IconHome(icon: $app.icon)
-            } else {
-                if project?.isNotGit ?? false {
-                    NotGit()
-                } else {
-                    Detail()
-                }
-            }
+            Detail(tab: $tab)
         }
         .navigationTitle(project?.title ?? "")
         .toolbar(content: {

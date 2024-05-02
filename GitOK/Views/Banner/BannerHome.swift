@@ -75,9 +75,6 @@ struct BannerHome: View {
                 })
             })
         })
-        .onChange(of: backgroundId) {
-            self.banner?.updateBackgroundId(backgroundId)
-        }
     }
 }
 

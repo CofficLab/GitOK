@@ -14,7 +14,7 @@ struct BannerModel {
     var backgroundId: String = "1"
     var inScreen = false
     var device: String = Device.iMac.rawValue
-    var projectPath: String?
+    var path: String?
 
     init(
         title: String = "",
@@ -22,14 +22,14 @@ struct BannerModel {
         features: [String] = [],
         imageURL: URL? = nil,
         backgroundId: String = "1",
-        projectPath: String
+        path: String
     ) {
         self.title = title
         self.subTitle = subTitle
         self.imageURL = imageURL
         self.features = features
         self.backgroundId = backgroundId
-        self.projectPath = projectPath
+        self.path = path
 
         self.save()
     }
@@ -39,12 +39,11 @@ struct BannerModel {
     }
 
     func save() {
-        guard let p = projectPath else {
+        guard let p = path else {
             return
         }
         
-        let fullPath = "\(p)/\(BannerModel.root)/\(title).json"
-        self.saveToFile(atPath: fullPath)
+        self.saveToFile(atPath: p)
     }
 }
 
@@ -89,10 +88,13 @@ extension BannerModel {
         }
     }
 
-    static func fromJSONFile(_ jsonFile: URL) -> BannerModel? {
+    static func fromFile(_ jsonFile: URL) -> BannerModel? {
         if let jsonData = try? Data(contentsOf: URL(fileURLWithPath: jsonFile.path)) {
             do {
-                return try JSONDecoder().decode(BannerModel.self, from: jsonData)
+                var banner = try JSONDecoder().decode(BannerModel.self, from: jsonData)
+                banner.path = jsonFile.path
+                
+                return banner
             } catch {
                 print("Error decoding JSON: \(error)")
             }
@@ -104,7 +106,7 @@ extension BannerModel {
 
 extension BannerModel: Identifiable {
     var id: String {
-        projectPath ?? "" + title
+        path ?? "" + title
     }
 }
 
@@ -137,6 +139,12 @@ extension BannerModel: Codable {
 // MARK: 查
 
 extension BannerModel {
+    static func find(_ path: String) -> BannerModel? {
+        let fileURL = URL(fileURLWithPath: path)
+
+        return BannerModel.fromFile(fileURL)
+    }
+    
     static func all(_ projectPath: String) -> [BannerModel] {
         var models: [BannerModel] = []
 
@@ -165,8 +173,7 @@ extension BannerModel {
                 let fileURL = URL(fileURLWithPath: directoryPath).appendingPathComponent(file)
                 fileURLs.append(fileURL)
 
-                if var model = BannerModel.fromJSONFile(fileURL) {
-                    model.projectPath = projectPath
+                if var model = BannerModel.fromFile(fileURL) {
                     models.append(model)
                 }
             }
@@ -187,7 +194,7 @@ extension BannerModel {
             "Feature 2",
             "Feature 3",
             "Feature 4",
-        ], projectPath: project.path)
+        ], path: project.path + "/" + BannerModel.root + "/" + UUID().uuidString + ".json")
     }
 }
 

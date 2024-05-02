@@ -1,12 +1,10 @@
 {
-  "inScreen" : false,
-  "device" : "iMac",
-  "uuid" : "724D75C3-32BA-4DC4-8956-3F52FBC71D71",
-  "projectPath" : "\/Users\/angel\/Code\/Yueyi\/GitOK",
+  "backgroundId" : "1",
   "features" : [
 
   ],
-  "backgroundId" : "1",
   "title" : "11",
-  "subTitle" : ""
+  "subTitle" : "",
+  "inScreen" : false,
+  "device" : "iMac"
 }

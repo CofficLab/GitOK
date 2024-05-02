@@ -1,12 +1,10 @@
 {
-  "projectPath" : "\/Users\/angel\/Code\/Yueyi\/GitOK",
-  "title" : "27",
-  "uuid" : "B8DFAB06-EC22-4296-9CFB-56DA95FF229A",
-  "subTitle" : "",
-  "device" : "iMac",
   "inScreen" : false,
-  "backgroundId" : "2A_opaque",
+  "subTitle" : "",
+  "title" : "27",
   "features" : [
 
-  ]
+  ],
+  "backgroundId" : "2A_opaque",
+  "device" : "iMac"
 }
