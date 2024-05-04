@@ -1,15 +1,13 @@
 {
-  "subTitle" : "sub3",
-  "title" : "53",
-  "projectPath" : "\/Users\/angel\/Code\/Yueyi\/GitOK",
-  "device" : "iMac",
-  "inScreen" : false,
-  "backgroundId" : "1",
-  "uuid" : "F475EBA7-02DC-4ADE-9114-89E538EC93AF",
   "features" : [
     "Feature 1",
     "Feature 2",
     "Feature 3",
     "Feature 4"
-  ]
+  ],
+  "backgroundId" : "1",
+  "inScreen" : false,
+  "device" : "iMac",
+  "title" : "53",
+  "subTitle" : "sub3"
 }

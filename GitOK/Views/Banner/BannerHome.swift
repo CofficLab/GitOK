@@ -37,6 +37,9 @@ struct BannerHome: View {
                     }
                     .padding(.trailing, 10)
                     .frame(width: geo.size.width * 0.3)
+                    .onChange(of: backgroundId, {
+                        self.banner?.updateBackgroundId(backgroundId)
+                    })
                 }.padding()
             }
         }

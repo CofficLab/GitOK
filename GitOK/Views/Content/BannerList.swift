@@ -35,6 +35,7 @@ struct BannerList: View {
         .onChange(of: app.project, getBanners)
         .onChange(of: banner) {
             app.banner = banner
+            getBanners()
         }
     }
 
@@ -49,7 +50,14 @@ struct BannerList: View {
 
                 DispatchQueue.main.async {
                     self.banners = banners
-                    self.banner = banners.first
+                    
+                    if let banner = self.banner {
+                        if !banners.contains(banner) {
+                            self.banner = banners.first
+                        }
+                    } else {
+                        self.banner = banners.first
+                    }
                 }
             }
         }

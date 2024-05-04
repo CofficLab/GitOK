@@ -1,10 +1,10 @@
 {
-  "inScreen" : false,
+  "device" : "iMac",
   "subTitle" : "",
-  "title" : "27",
+  "inScreen" : false,
   "features" : [
 
   ],
-  "backgroundId" : "2A_opaque",
-  "device" : "iMac"
+  "title" : "27",
+  "backgroundId" : "2A_opaque"
 }

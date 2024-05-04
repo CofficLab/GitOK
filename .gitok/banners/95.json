@@ -1,13 +1,10 @@
 {
-  "inScreen" : false,
-  "taskUUID" : "D285207E-E100-497D-9446-F2009CA6D2DC",
-  "title" : "95",
+  "device" : "iMac",
   "backgroundId" : "1",
-  "projectPath" : "\/Users\/angel\/Code\/Yueyi\/GitOK",
+  "subTitle" : "",
+  "title" : "95",
   "features" : [
 
   ],
-  "subTitle" : "",
-  "uuid" : "5DAF57DD-222E-419C-9340-CDF88B8C41B5",
-  "device" : "iMac"
+  "inScreen" : false
 }
