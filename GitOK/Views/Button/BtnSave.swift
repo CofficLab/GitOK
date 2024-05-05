@@ -22,9 +22,9 @@ struct BtnSave: View {
 
         AppConfig.bgQueue.async {
             do {
-                message = try Git.commit(path, commit: GitCommit.autoCommitMessage)
+                try Git.add(path)
+                message = try Git.commit(path, commit: commitMessage)
                 message = try Git.push(path)
-                message = try Git.status(path)
 
                 AppConfig.mainQueue.async {
                     self.working = false
