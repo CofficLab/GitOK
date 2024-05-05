@@ -1,10 +1,10 @@
 {
   "subTitle" : "",
-  "title" : "13",
+  "device" : "iMac",
+  "inScreen" : false,
   "backgroundId" : "1",
+  "title" : "13",
   "features" : [
 
-  ],
-  "inScreen" : false,
-  "device" : "iMac"
+  ]
 }

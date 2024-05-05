@@ -1,10 +1,10 @@
 {
+  "backgroundId" : "1",
+  "subTitle" : "",
   "inScreen" : false,
+  "device" : "iMac",
+  "title" : "12",
   "features" : [
 
-  ],
-  "device" : "iMac",
-  "backgroundId" : "1",
-  "title" : "12",
-  "subTitle" : ""
+  ]
 }

@@ -26,6 +26,7 @@ struct IconList: View {
         }
         .onChange(of: icon) {
             app.icon = icon
+            refresh()
         }
         .onChange(of: app.project, refresh)
         .onAppear(perform: refresh)
@@ -34,6 +35,11 @@ struct IconList: View {
     func refresh() {
         if let project = app.project {
             self.icons = IconModel.all(project.path)
+            
+            if let i = self.icon, icons.contains(i) {
+                return
+            }
+            
             self.icon = icons.first
         }
     }
