@@ -1,10 +1,10 @@
 {
-  "device" : "iMac",
-  "inScreen" : false,
-  "subTitle" : "",
-  "title" : "61",
-  "backgroundId" : "2A_opaque",
+  "inScreen" : true,
   "features" : [
 
-  ]
+  ],
+  "device" : "iPhoneBig",
+  "title" : "61",
+  "subTitle" : "",
+  "backgroundId" : "6"
 }

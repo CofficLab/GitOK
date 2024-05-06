@@ -9,20 +9,42 @@ struct Content: View {
     @State var gitLog: String? = nil
     @State var message: String = ""
     @State var tab: ActionTab = .Git
+    @State var columnVisibility: NavigationSplitViewVisibility = .automatic
 
     var project: Project? { app.project }
 
     var body: some View {
-        NavigationSplitView {
+        NavigationSplitView(columnVisibility: $columnVisibility) {
             Projects()
         } content: {
             Tabs(tab: $tab)
                 .frame(idealWidth: 300)
                 .frame(minWidth: 50)
         } detail: {
-            Detail(tab: $tab)
+            ZStack {
+                Detail(tab: $tab)
+                Message()
+            }
         }
         .navigationTitle(project?.title ?? "")
+        .onAppear {
+            if app.sidebarVisibility {
+                self.columnVisibility = .all
+            }
+            
+            if app.sidebarVisibility == false {
+                self.columnVisibility = .doubleColumn
+            }
+        }
+        .onChange(of: self.columnVisibility, {
+            if columnVisibility == .doubleColumn {
+                app.hideSidebar()
+            }
+            
+            if columnVisibility == .automatic || columnVisibility == .all {
+                app.showSidebar()
+            }
+        })
         .toolbar(content: {
             if let project = project {
                 ToolbarItemGroup(placement: .cancellationAction, content: {

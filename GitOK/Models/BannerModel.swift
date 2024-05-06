@@ -126,13 +126,13 @@ extension BannerModel: Equatable {
 
 extension BannerModel: Codable {
     enum CodingKeys: String, CodingKey {
-        case title
-        case subTitle
-        case features
-        case imageURL
         case backgroundId
-        case inScreen
         case device
+        case features
+        case inScreen
+        case imageURL
+        case subTitle
+        case title
     }
 }
 
@@ -173,7 +173,7 @@ extension BannerModel {
                 let fileURL = URL(fileURLWithPath: directoryPath).appendingPathComponent(file)
                 fileURLs.append(fileURL)
 
-                if var model = BannerModel.fromFile(fileURL) {
+                if let model = BannerModel.fromFile(fileURL) {
                     models.append(model)
                 }
             }
