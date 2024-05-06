@@ -3,7 +3,7 @@ import SwiftData
 import SwiftUI
 import OSLog
 
-struct IconModel {
+struct IconModel: JsonModel {
     static var root: String = ".gitok/icons"
     static var label = "💿 IconModel::"
     
@@ -11,7 +11,7 @@ struct IconModel {
     var iconId: Int = 1
     var backgroundId: String = "2"
     var imageURL: URL? = nil
-    var projectPath: String?
+    var path: String?
     
     var label: String { IconModel.label }
     
@@ -20,7 +20,7 @@ struct IconModel {
         self.iconId = iconId
         self.backgroundId = backgroundId
         self.imageURL = imageURL
-        self.projectPath = projectPath
+        self.path = projectPath
         
         self.save()
     }
@@ -58,7 +58,7 @@ extension IconModel {
                 fileURLs.append(fileURL)
 
                 if var model = IconModel.fromJSONFile(fileURL) {
-                    model.projectPath = projectPath
+                    model.path = fileURL.path
                     models.append(model)
                 }
             }
@@ -97,7 +97,7 @@ extension IconModel: Equatable {
 
 extension IconModel: Identifiable {
     var id: String {
-        projectPath ?? "" + title
+        path ?? "" + title
     }
 }
 
@@ -131,17 +131,6 @@ extension IconModel {
 // MARK: 保存
 
 extension IconModel {
-    func save() {
-        os_log("\(IconModel.label)Save")
-        guard let p = projectPath else {
-            os_log("\(label)Can't Save, no projectPath")
-            return
-        }
-        
-        let fullPath = "\(p)/\(Self.root)/\(title).json"
-        self.saveToFile(atPath: fullPath)
-    }
-
     // 将对象转换为 JSON 字符串
     func toJSONString() -> String? {
         do {
