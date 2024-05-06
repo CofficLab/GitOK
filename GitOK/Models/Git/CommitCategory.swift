@@ -3,6 +3,7 @@ import SwiftUI
 
 enum CommitCategory: String, CaseIterable {
     static var auto = "\(CommitCategory.Chore.text) Auto Committed by GitOK"
+    static var merge = "\(CommitCategory.CI.text) Merged by GitOK"
 
     case Bugfix
     case Chore
