@@ -1,0 +1,13 @@
+{
+  "device" : "iMac",
+  "backgroundId" : "6",
+  "subTitle" : "sub3",
+  "inScreen" : true,
+  "title" : "35",
+  "features" : [
+    "Feature 1",
+    "Feature 2",
+    "Feature 3",
+    "Feature 4"
+  ]
+}

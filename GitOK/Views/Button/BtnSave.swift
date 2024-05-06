@@ -2,13 +2,14 @@ import SwiftUI
 
 struct BtnSave: View {
     @EnvironmentObject var app: AppManager
+
     @Binding var message: String
 
     @State var working = false
 
     var path: String
 
-    var commitMessage: String = "\(CommitCategory.Chore.text): Auto Committed by GitOK"
+    var commitMessage = CommitCategory.auto
 
     var body: some View {
         Button(action: save, label: {
@@ -19,18 +20,23 @@ struct BtnSave: View {
     func save() {
         working = true
 
-        do {
-            message = try Git.commit(path, commit: GitCommit.autoCommitMessage)
-            message = try Git.push(path)
-            message = try Git.status(path)
+        AppConfig.bgQueue.async {
+            do {
+                try Git.add(path)
+                message = try Git.commit(path, commit: commitMessage)
+                message = try Git.push(path)
 
-            DispatchQueue.main.async {
-                self.working = false
+                AppConfig.mainQueue.async {
+                    self.working = false
+                }
+
+                EventManager().emitCommitted()
+            } catch let error {
+                app.alert("保存出错", info: error.localizedDescription)
+                AppConfig.mainQueue.async {
+                    self.working = false
+                }
             }
-
-            EventManager().emitCommitted()
-        } catch let error {
-            app.alert("保存出错", info: error.localizedDescription)
         }
     }
 }

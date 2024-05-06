@@ -3,7 +3,7 @@ import SwiftData
 import SwiftUI
 import OSLog
 
-struct IconModel {
+struct IconModel: JsonModel {
     static var root: String = ".gitok/icons"
     static var label = "💿 IconModel::"
     
@@ -11,23 +11,25 @@ struct IconModel {
     var iconId: Int = 1
     var backgroundId: String = "2"
     var imageURL: URL? = nil
-    var projectPath: String?
+    var path: String?
     
-    init(title: String = "1", iconId: Int = 1, backgroundId: String = "3", imageURL: URL? = nil, projectPath: String) {
+    var label: String { IconModel.label }
+    
+    init(title: String = "1", iconId: Int = 1, backgroundId: String = "3", imageURL: URL? = nil, path: String) {
         self.title = title
         self.iconId = iconId
         self.backgroundId = backgroundId
         self.imageURL = imageURL
-        self.projectPath = projectPath
+        self.path = path
         
         self.save()
     }
 }
 
-// MARK: 磁盘读写
+// MARK: 查
 
 extension IconModel {
-    static func fromProject(_ projectPath: String) -> [IconModel] {
+    static func all(_ projectPath: String) -> [IconModel] {
         var models: [IconModel] = []
 
         // 目录路径
@@ -37,6 +39,11 @@ extension IconModel {
 
         // 创建 FileManager 实例
         let fileManager = FileManager.default
+        
+        var isDir: ObjCBool = true
+        if !fileManager.fileExists(atPath: directoryPath, isDirectory: &isDir) {
+            return []
+        }
 
         // 存储文件路径的数组
         var fileURLs: [URL] = []
@@ -50,13 +57,11 @@ extension IconModel {
                 let fileURL = URL(fileURLWithPath: directoryPath).appendingPathComponent(file)
                 fileURLs.append(fileURL)
 
-                if let model = IconModel.fromJSONFile(fileURL) {
+                if var model = IconModel.fromJSONFile(fileURL) {
+                    model.path = fileURL.path
                     models.append(model)
                 }
             }
-
-            // 输出文件路径数组
-            print(fileURLs)
         } catch {
             print("Error while enumerating files: \(error.localizedDescription)")
         }
@@ -92,7 +97,7 @@ extension IconModel: Equatable {
 
 extension IconModel: Identifiable {
     var id: String {
-        projectPath ?? "" + title
+        path ?? "" + title
     }
 }
 
@@ -100,7 +105,7 @@ extension IconModel: Identifiable {
 
 extension IconModel {
     static func new(_ project: Project) -> Self {
-        IconModel(title: "\(Int.random(in: 1 ... 100))", projectPath: project.path)
+        IconModel(title: "\(Int.random(in: 1 ... 100))", path: project.path + "/" + IconModel.root + "/" + UUID().uuidString + ".json")
     }
 }
 
@@ -126,20 +131,11 @@ extension IconModel {
 // MARK: 保存
 
 extension IconModel {
-    func save() {
-        guard let p = projectPath else {
-            return
-        }
-        
-        let fullPath = "\(p)/\(Self.root)/\(title).json"
-        self.saveToFile(atPath: fullPath)
-    }
-
     // 将对象转换为 JSON 字符串
     func toJSONString() -> String? {
         do {
             let encoder = JSONEncoder()
-            encoder.outputFormatting = .prettyPrinted
+            encoder.outputFormatting = .sortedKeys
             let jsonData = try encoder.encode(self)
             if let jsonString = String(data: jsonData, encoding: .utf8) {
                 return jsonString
@@ -188,4 +184,5 @@ extension IconModel {
 
 #Preview {
     AppPreview()
+        .frame(width: 800)
 }

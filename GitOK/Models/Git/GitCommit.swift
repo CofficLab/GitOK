@@ -12,6 +12,10 @@ struct GitCommit {
     var isHead = false
     var hash: String
     var message: String
+    
+    var label: String {
+        "\(Logger.isMain)🌊 GitCommit::"
+    }
 
     init(
         isHead: Bool = false,
@@ -49,6 +53,7 @@ struct GitCommit {
     }
     
     func getFiles() -> [File] {
+        os_log("\(self.label)GetFiles->\(path)")
         if isHead {
             return Git.changedFile(path)
         } else {
@@ -68,7 +73,7 @@ struct GitCommit {
 
 extension GitCommit: Identifiable {
     var id: String {
-        hash
+        path+hash
     }
 }
 

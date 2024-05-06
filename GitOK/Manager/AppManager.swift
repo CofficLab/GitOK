@@ -16,6 +16,8 @@ class AppManager: NSObject, ObservableObject, AVAudioPlayerDelegate {
     @Published var backgroudId: String = "1"
     @Published var banner: BannerModel?
     @Published var icon: IconModel?
+    @Published var currentTab: ActionTab = (ActionTab(rawValue: AppConfig.currentTab) ?? .Git)
+    @Published var sidebarVisibility = AppConfig.sidebarVisibility
 
     func setMessage(_ m: String) {
         message = m
@@ -31,7 +33,7 @@ class AppManager: NSObject, ObservableObject, AVAudioPlayerDelegate {
         
         do {
             return try Git.getCurrentBranch(project.path)
-        } catch let error {
+        } catch _ {
             return nil
         }
     }
@@ -54,6 +56,12 @@ class AppManager: NSObject, ObservableObject, AVAudioPlayerDelegate {
         AppConfig.setProjectPath(p?.path ?? "")
     }
     
+    func setTab(_ t: ActionTab) {
+        os_log("\(self.label)Set Tab to \(t.rawValue)")
+        self.currentTab = t
+        AppConfig.setcurrentTab(t)
+    }
+    
     func setBranch(_ branch: Branch?) throws {
         os_log("\(self.label)Set Branch to \(branch?.name ?? "-")")
         
@@ -67,6 +75,19 @@ class AppManager: NSObject, ObservableObject, AVAudioPlayerDelegate {
         }
         
         _ = try Git.setBranch(branch, project.path, verbose: true)
+    }
+    
+    func hideSidebar() {
+        os_log("\(self.label)Hide Siedebar")
+        self.sidebarVisibility = false
+        AppConfig.setSidebarVisibility(false)
+        print(AppConfig.sidebarVisibility)
+    }
+    
+    func showSidebar() {
+        os_log("\(self.label)Show Sidebar")
+        self.sidebarVisibility = true
+        AppConfig.setSidebarVisibility(true)
     }
 }
 

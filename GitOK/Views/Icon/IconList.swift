@@ -19,7 +19,7 @@ struct IconList: View {
             // 操作
             if let project = app.project {
                 HStack(spacing: 0) {
-                    TabBtn(title: "新建 Icon", imageName: "plus.circle", onTap: {
+                    TabBtn(title: "新建 Banner", imageName: "plus.circle", onTap: {
                         self.icons.append(IconModel.new(project))
                     })
                 }

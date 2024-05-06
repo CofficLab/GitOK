@@ -1,12 +1,12 @@
-import SwiftUI
 import OSLog
+import SwiftUI
 
 struct Branches: View {
     @EnvironmentObject var app: AppManager
 
     @State var branches: [Branch] = []
     @State var selection: Branch?
-    
+
     var label = "🌿 BranchesView::"
     var verbose = true
 
@@ -33,19 +33,15 @@ struct Branches: View {
         guard let project = app.project else {
             return
         }
-        
+
         if verbose {
-            os_log("\(self.label)Refresh")
+            os_log("\(label)Refresh")
         }
-        
-        do {
-            try branches = Git.getBranches(project.path)
-            self.selection = branches.first(where: {
-                $0.name == app.currentBranch?.name
-            })
-        } catch let error {
-            app.alert("获取分支发生错误", info: error.localizedDescription)
-        }
+
+        branches = Git.getBranches(project.path)
+        selection = branches.first(where: {
+            $0.name == app.currentBranch?.name
+        })
     }
 }
 
