@@ -1,6 +1,6 @@
 {
+  "inScreen" : false,
   "device" : "iMac",
-  "backgroundId" : "1",
   "subTitle" : "sub3",
   "title" : "53",
   "features" : [
@@ -9,5 +9,5 @@
     "Feature 3",
     "Feature 4"
   ],
-  "inScreen" : false
+  "backgroundId" : "1"
 }
