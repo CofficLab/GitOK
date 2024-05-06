@@ -15,12 +15,12 @@ struct IconModel: JsonModel {
     
     var label: String { IconModel.label }
     
-    init(title: String = "1", iconId: Int = 1, backgroundId: String = "3", imageURL: URL? = nil, projectPath: String) {
+    init(title: String = "1", iconId: Int = 1, backgroundId: String = "3", imageURL: URL? = nil, path: String) {
         self.title = title
         self.iconId = iconId
         self.backgroundId = backgroundId
         self.imageURL = imageURL
-        self.path = projectPath
+        self.path = path
         
         self.save()
     }
@@ -105,7 +105,7 @@ extension IconModel: Identifiable {
 
 extension IconModel {
     static func new(_ project: Project) -> Self {
-        IconModel(title: "\(Int.random(in: 1 ... 100))", projectPath: project.path)
+        IconModel(title: "\(Int.random(in: 1 ... 100))", path: project.path + "/" + IconModel.root + "/" + UUID().uuidString + ".json")
     }
 }
 

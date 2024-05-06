@@ -254,7 +254,7 @@
 		0B8C7B222BE0AD1D00B4E817 /* BannerModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerModel.swift; sourceTree = "<group>"; };
 		0B8C7B242BE0BB7500B4E817 /* BannerList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerList.swift; sourceTree = "<group>"; };
 		0B8C7B282BE0C6DB00B4E817 /* IconModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconModel.swift; sourceTree = "<group>"; };
-		0B8C7B2A2BE0C8F100B4E817 /* IconList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconList.swift; sourceTree = "<group>"; };
+		0B8C7B2A2BE0C8F100B4E817 /* IconList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = IconList.swift; path = ../Content/IconList.swift; sourceTree = "<group>"; };
 		0B8C7B2E2BE0E5F100B4E817 /* Tabs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tabs.swift; sourceTree = "<group>"; };
 		0B8C7B322BE0EAE900B4E817 /* ActionTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionTab.swift; sourceTree = "<group>"; };
 		0BB4278D2BE72512004E6F82 /* QueueExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QueueExt.swift; sourceTree = "<group>"; };
@@ -615,6 +615,7 @@
 			isa = PBXGroup;
 			children = (
 				0B8C7AE12BE08E2200B4E817 /* Icon.swift */,
+				0B8C7B2A2BE0C8F100B4E817 /* IconList.swift */,
 				0B8C7AE52BE08E2200B4E817 /* IconAsset.swift */,
 				0B8C7AE22BE08E2200B4E817 /* IconFields.swift */,
 				0B8C7AE32BE08E2200B4E817 /* IconHome.swift */,
@@ -710,7 +711,6 @@
 		0BFA2E602BE11E7200AD98D7 /* Content */ = {
 			isa = PBXGroup;
 			children = (
-				0B8C7B2A2BE0C8F100B4E817 /* IconList.swift */,
 				0BFA2E5E2BE111AA00AD98D7 /* TabBtn.swift */,
 				0B8C7B322BE0EAE900B4E817 /* ActionTab.swift */,
 				0B8C7B2E2BE0E5F100B4E817 /* Tabs.swift */,
