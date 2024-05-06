@@ -1,10 +1,10 @@
 {
+  "title" : "61",
+  "backgroundId" : "6",
   "inScreen" : true,
+  "subTitle" : "",
+  "device" : "iPhoneBig",
   "features" : [
 
-  ],
-  "device" : "iPhoneBig",
-  "title" : "61",
-  "subTitle" : "",
-  "backgroundId" : "6"
+  ]
 }

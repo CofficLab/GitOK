@@ -78,11 +78,14 @@ class AppManager: NSObject, ObservableObject, AVAudioPlayerDelegate {
     }
     
     func hideSidebar() {
+        os_log("\(self.label)Hide Siedebar")
         self.sidebarVisibility = false
         AppConfig.setSidebarVisibility(false)
+        print(AppConfig.sidebarVisibility)
     }
     
     func showSidebar() {
+        os_log("\(self.label)Show Sidebar")
         self.sidebarVisibility = true
         AppConfig.setSidebarVisibility(true)
     }

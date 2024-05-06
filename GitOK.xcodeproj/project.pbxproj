@@ -585,6 +585,7 @@
 				0B8C7AC82BE08E1900B4E817 /* Badge.swift */,
 				0B8C7AC92BE08E1900B4E817 /* Badges.swift */,
 				0B8C7ACA2BE08E1900B4E817 /* Banner.swift */,
+				0BB543DC2BE86AD100D7A2B2 /* BannerBar.swift */,
 				0B8C7ACC2BE08E1900B4E817 /* BannerFields.swift */,
 				0B8C7ACD2BE08E1900B4E817 /* BannerHome.swift */,
 				0B8C7ACE2BE08E1900B4E817 /* BanneriMac.swift */,
@@ -596,7 +597,6 @@
 				0B8C7AEE2BE08E2D00B4E817 /* Operator.swift */,
 				0B8C7AC32BE08E0F00B4E817 /* Screens */,
 				0B8C7AF02BE08E2D00B4E817 /* Snapshot.swift */,
-				0BB543DC2BE86AD100D7A2B2 /* BannerBar.swift */,
 			);
 			path = Banner;
 			sourceTree = "<group>";

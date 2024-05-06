@@ -28,20 +28,22 @@ struct Content: View {
         }
         .navigationTitle(project?.title ?? "")
         .onAppear {
-            if app.sidebarVisibility {
+            print("on appear sideddd \(app.sidebarVisibility)")
+            if app.sidebarVisibility == true {
                 self.columnVisibility = .all
             }
             
             if app.sidebarVisibility == false {
+                print("hide sidebar")
                 self.columnVisibility = .doubleColumn
             }
         }
         .onChange(of: self.columnVisibility, {
+            print(self.columnVisibility)
             if columnVisibility == .doubleColumn {
+                print("hide sidebar")
                 app.hideSidebar()
-            }
-            
-            if columnVisibility == .automatic || columnVisibility == .all {
+            } else if columnVisibility == .automatic || columnVisibility == .all {
                 app.showSidebar()
             }
         })
