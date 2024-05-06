@@ -2,7 +2,7 @@ import Foundation
 import SwiftUI
 
 enum CommitCategory: String, CaseIterable {
-    static var auto = "\(CommitCategory.Chore.text): Auto Committed by GitOK"
+    static var auto = "\(CommitCategory.Chore.text) Auto Committed by GitOK"
 
     case Bugfix
     case Chore
