@@ -136,6 +136,22 @@ extension BannerModel: Codable {
     }
 }
 
+// MARK: 删除
+
+extension BannerModel {
+    func delete() {
+        guard let path = self.path else {
+            return
+        }
+        
+        do {
+            try FileManager.default.removeItem(atPath: path)
+        } catch let e {
+            print(e)
+        }
+    }
+}
+
 // MARK: 查
 
 extension BannerModel {

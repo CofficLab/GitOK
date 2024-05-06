@@ -1,14 +1,14 @@
+import OSLog
 import SwiftData
 import SwiftUI
-import OSLog
 
 struct BannerList: View {
     @EnvironmentObject var app: AppManager
 
     @State var banner: BannerModel? = nil
     @State var banners: [BannerModel] = []
-    
-    var label: String { "\(Logger.isMain)🌹 BannerList::"}
+
+    var label: String { "\(Logger.isMain)🌹 BannerList::" }
     var verbose = true
 
     var body: some View {
@@ -17,6 +17,9 @@ struct BannerList: View {
                 Text(banner.title)
                     .tag(banner as BannerModel?)
                     .id(banner.id)
+                    .contextMenu(ContextMenu(menuItems: {
+                        BtnDelBanner(banner: banner, callback: getBanners)
+                    }))
             }
             .frame(maxHeight: .infinity)
 
@@ -43,14 +46,14 @@ struct BannerList: View {
         if verbose {
             os_log("\(self.label)GetBanners")
         }
-        
+
         if let project = app.project {
             DispatchQueue.global().async {
                 let banners = BannerModel.all(project.path)
 
                 DispatchQueue.main.async {
                     self.banners = banners
-                    
+
                     if let banner = self.banner {
                         if !banners.contains(banner) {
                             self.banner = banners.first
