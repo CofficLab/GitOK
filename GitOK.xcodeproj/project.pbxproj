@@ -106,6 +106,7 @@
 		0BB543DD2BE86AD100D7A2B2 /* BannerBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BB543DC2BE86AD100D7A2B2 /* BannerBar.swift */; };
 		0BB543E02BE8875700D7A2B2 /* BtnDelBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BB543DF2BE8875700D7A2B2 /* BtnDelBanner.swift */; };
 		0BB543E92BE890F200D7A2B2 /* JsonModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BB543E82BE890F200D7A2B2 /* JsonModel.swift */; };
+		0BB543EC2BE8932300D7A2B2 /* BtnDelIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BB543EB2BE8932300D7A2B2 /* BtnDelIcon.swift */; };
 		0BB555242BDB7B300044048B /* BranchExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BB555232BDB7B300044048B /* BranchExt.swift */; };
 		0BCC6D012BD92CB2006ADA94 /* DebugCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCC6D002BD92CB2006ADA94 /* DebugCommand.swift */; };
 		0BCC6D032BD932DA006ADA94 /* PathExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCC6D022BD932DA006ADA94 /* PathExt.swift */; };
@@ -260,6 +261,7 @@
 		0BB543DC2BE86AD100D7A2B2 /* BannerBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerBar.swift; sourceTree = "<group>"; };
 		0BB543DF2BE8875700D7A2B2 /* BtnDelBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BtnDelBanner.swift; sourceTree = "<group>"; };
 		0BB543E82BE890F200D7A2B2 /* JsonModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JsonModel.swift; sourceTree = "<group>"; };
+		0BB543EB2BE8932300D7A2B2 /* BtnDelIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BtnDelIcon.swift; sourceTree = "<group>"; };
 		0BB555232BDB7B300044048B /* BranchExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BranchExt.swift; sourceTree = "<group>"; };
 		0BCC6D002BD92CB2006ADA94 /* DebugCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugCommand.swift; sourceTree = "<group>"; };
 		0BCC6D022BD932DA006ADA94 /* PathExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PathExt.swift; sourceTree = "<group>"; };
@@ -393,6 +395,7 @@
 		0B1C67B62BD9127000502EB1 /* Button */ = {
 			isa = PBXGroup;
 			children = (
+				0BB543EA2BE8931500D7A2B2 /* Icon */,
 				0BB543DE2BE8874600D7A2B2 /* Banner */,
 				0BCC6D0A2BD93E8C006ADA94 /* BtnAdd.swift */,
 				0B1C67B92BD912D900502EB1 /* BtnCommit.swift */,
@@ -654,6 +657,14 @@
 			path = Contact;
 			sourceTree = "<group>";
 		};
+		0BB543EA2BE8931500D7A2B2 /* Icon */ = {
+			isa = PBXGroup;
+			children = (
+				0BB543EB2BE8932300D7A2B2 /* BtnDelIcon.swift */,
+			);
+			path = Icon;
+			sourceTree = "<group>";
+		};
 		0BCC6CFE2BD92C31006ADA94 /* Bootstrap */ = {
 			isa = PBXGroup;
 			children = (
@@ -799,6 +810,7 @@
 				0B44BCC62BDA947B00FBCF2F /* Branch.swift in Sources */,
 				0B8C7AC52BE08E0F00B4E817 /* ScreeniPad.swift in Sources */,
 				0B8C7AE02BE08E1900B4E817 /* BannerMaker.swift in Sources */,
+				0BB543EC2BE8932300D7A2B2 /* BtnDelIcon.swift in Sources */,
 				0B8C7B122BE08EDA00B4E817 /* ViewHelper.swift in Sources */,
 				0BCC6D0B2BD93E8C006ADA94 /* BtnAdd.swift in Sources */,
 				0B8C7AD92BE08E1900B4E817 /* BannerFields.swift in Sources */,

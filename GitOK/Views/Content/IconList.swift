@@ -11,6 +11,9 @@ struct IconList: View {
         VStack(spacing: 0) {
             List(icons, id: \.self, selection: $icon) { icon in
                 Text(icon.title)
+                    .contextMenu(ContextMenu(menuItems: {
+                        BtnDelIcon(icon: icon, callback: refresh)
+                    }))
             }
             
             // 操作
