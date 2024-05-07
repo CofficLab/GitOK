@@ -46,6 +46,10 @@ struct Files: View {
             EventManager().onRefresh {
                 refresh()
             }
+            
+            EventManager().onDidBecomeActive {
+                refresh()
+            }
         }
         .onChange(of: commit?.id) {
             os_log("\(self.label)Commit Changed, Refresh")

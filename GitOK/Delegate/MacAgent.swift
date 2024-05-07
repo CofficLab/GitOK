@@ -5,27 +5,30 @@ import CloudKit
 import OSLog
 
 class MacAgent: NSObject, NSApplicationDelegate, ObservableObject {
+    var label: String {"\(Logger.isMain)🍎 MacAgent::"}
+    
     func application(
         _ application: NSApplication,
         didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data
     ) {
-        os_log("\(Thread.isMainThread ? "[主]" : "[后]") 已注册远程通知")
+        os_log("\(self.label)已注册远程通知")
     }
 
     func applicationDidFinishLaunching(_ notification: Notification) {
-        os_log("\(Thread.isMainThread ? "[主]" : "[后]") Finish Lanunching")
+        os_log("\(self.label)Finish Lanunching")
     }
 
     func applicationWillTerminate(_ notification: Notification) {
-        os_log("\(Thread.isMainThread ? "[主]" : "[后]") Will Terminate")
+        os_log("\(self.label)Will Terminate")
     }
 
     func applicationDidBecomeActive(_ notification: Notification) {
-        //Logger.app.debug("Did Become Active")
+        os_log("\(self.label)Did Become Active")
+        EventManager().emitDidBecomeActive()
     }
 
     func applicationWillFinishLaunching(_ notification: Notification) {
-        os_log("\(Thread.isMainThread ? "[主]" : "[后]") Will Finish Launching")
+        os_log("\(self.label)Will Finish Launching")
     }
 
     // 收到远程通知
@@ -36,7 +39,7 @@ class MacAgent: NSObject, NSApplicationDelegate, ObservableObject {
         _ application: NSApplication,
         didReceiveRemoteNotification userInfo: [String: Any]
     ) {
-        os_log("\(Thread.isMainThread ? "[主]" : "[后]") 收到远程通知\n\(userInfo)")
+        os_log("\(self.label)收到远程通知\n\(userInfo)")
     }
 }
 

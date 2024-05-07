@@ -39,8 +39,13 @@ extension Git {
         try Git.run("checkout \(b.name) -q", path: path, verbose: verbose)
     }
 
-    static func merge(_ from: Branch, _ path: String, verbose: Bool = false) throws -> String {
-        try Git.run("merge \(from.name)", path: path, verbose: verbose)
+    static func merge(
+        _ from: Branch,
+        _ path: String,
+        verbose: Bool = false,
+        message: String = "merge"
+    ) throws {
+        _ = try Git.run("merge \(from.name) -m '\(message)'", path: path, verbose: verbose)
     }
 }
 

@@ -8,7 +8,7 @@ struct BtnMerge: View {
     var body: some View {
         Button("Merge", action: {
             _ = try! Git.setBranch(to, path)
-            _ = try! Git.merge(from, path)
+            try! Git.merge(from, path, message: CommitCategory.CI.text + "Merge \(from) by GitOK")
         })
     }
 }
