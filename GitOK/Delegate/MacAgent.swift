@@ -24,6 +24,7 @@ class MacAgent: NSObject, NSApplicationDelegate, ObservableObject {
 
     func applicationDidBecomeActive(_ notification: Notification) {
         os_log("\(self.label)Did Become Active")
+        EventManager().emitDidBecomeActive()
     }
 
     func applicationWillFinishLaunching(_ notification: Notification) {
