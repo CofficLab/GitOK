@@ -43,6 +43,18 @@ struct Detail: View {
     }
 }
 
+#Preview("Detail-Banner") {
+    RootView {
+        Detail(tab: Binding.constant(.Banner))
+    }
+}
+
+#Preview("Detail-Icon") {
+    RootView {
+        Detail(tab: Binding.constant(.Icon))
+    }
+}
+
 #Preview {
     AppPreview()
         .frame(width: 800)

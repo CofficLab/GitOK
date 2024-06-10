@@ -11,13 +11,13 @@ struct BannerHome: View {
         GeometryReader { geo in
             if let banner = banner {
                 VStack {
+                    // MARK: TopBar
                     BannerBar(snapshotTapped: $snapshotTapped, banner: $banner)
-                    
+
                     HStack {
                         BannerMaker(
                             snapshotTapped: $snapshotTapped,
                             onMessage: { message in
-                                print("set message")
                                 app.setMessage(message)
                             },
                             imageURL: banner.imageURL,
@@ -31,8 +31,10 @@ struct BannerHome: View {
 
                         VStack {
                             Spacer()
+                            // MARK: Fields
                             BannerFields(banner: $banner)
 
+                            // MARK: Background
                             GroupBox {
                                 Backgrounds(current: $backgroundId)
                             }
@@ -44,13 +46,41 @@ struct BannerHome: View {
                         })
                     }.padding()
                 }
+            } else {
+                HStack {
+                    Spacer()
+                    VStack {
+                        Spacer()
+                        Text("选择一个Banner")
+                        Spacer()
+                    }
+                    Spacer()
+                }
             }
         }
     }
 }
 
+#Preview("BannerHome") {
+    RootView {
+        BannerHome(banner: Binding.constant(BannerModel(
+            title: "精彩标题",
+            subTitle: "精彩小标题",
+            features: [
+                "无广告",
+                "好软件",
+                "无弹窗",
+                "无会员"
+            ],
+            path: ""
+        )))
+    }
+    .frame(width: 500)
+    .frame(height: 400)
+}
+
 #Preview("APP") {
     AppPreview()
         .frame(width: 800)
-        .frame(height: 800)
+        .frame(height: 500)
 }

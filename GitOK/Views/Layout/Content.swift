@@ -22,7 +22,10 @@ struct Content: View {
                 .frame(minWidth: 50)
         } detail: {
             ZStack {
+                // MARK: Detail
                 Detail(tab: $tab)
+                
+                // MARK: Message
                 Message()
             }
         }
@@ -67,6 +70,7 @@ struct Content: View {
 }
 
 #Preview {
-    AppPreview()
-        .frame(width: 800)
+    RootView {
+        Content()
+    }
 }

@@ -7,8 +7,8 @@ struct BannerModel: JsonModel {
     static var root: String = ".gitok/banners"
     static var label = "💿 BannerModel::"
 
-    var title = ""
-    var subTitle = ""
+    var title = "BannerModel-Title"
+    var subTitle = "BannerModel-SubTitle"
     var features: [String] = []
     var imageURL: URL?
     var backgroundId: String = "1"
@@ -168,4 +168,5 @@ extension BannerModel {
 #Preview {
     AppPreview()
         .frame(width: 800)
+        .frame(height: 600)
 }
