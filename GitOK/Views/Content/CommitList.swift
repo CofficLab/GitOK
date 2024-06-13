@@ -20,13 +20,16 @@ struct CommitList: View {
                     Text("loading...")
                     Spacer()
                 } else {
-                    List([project.headCommit]+commits, selection: $selection) { commit in
+                    List([project.headCommit] + commits, selection: $selection) { commit in
                         CommitTile(commit: commit, project: project, selection: selection)
                             .tag(commit)
                     }
-                    
-                    List(selection.getFiles(), id: \.self, selection: $selectionOfFile) {
-                        FileTile(file: $0, selected: selectionOfFile, commit: selection)
+
+                    if selection.isEmpty == false {
+                        List(selection.getFiles(), id: \.self, selection: $selectionOfFile) {
+                            FileTile(file: $0, selected: selectionOfFile, commit: selection)
+                        }
+                        
                     }
                 }
             }
@@ -60,11 +63,11 @@ struct CommitList: View {
             if verbose {
                 os_log("\(label)Refresh with reason->\(reason)")
             }
-            
+
             self.loading = true
             let commits = project.getCommits(reason)
             let commitId = project.headCommit.id
-            
+
             DispatchQueue.main.async {
                 if verbose {
                     os_log("\(label)Update")

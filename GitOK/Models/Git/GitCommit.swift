@@ -17,6 +17,8 @@ struct GitCommit {
     var label: String {
         "\(Logger.isMain)🌊 GitCommit::"
     }
+    
+    var isEmpty: Bool { self.path == "/" } 
 
     init(
         isHead: Bool = false,
