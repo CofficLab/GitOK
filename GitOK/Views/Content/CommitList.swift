@@ -20,34 +20,7 @@ struct CommitList: View {
                     Text("loading...")
                     Spacer()
                 } else {
-//                    List(selection: $selection) {
-//                        ForEach(Stage.allCases, id: \.self) { stage in
-//                            if Stage(rawValue: stage.rawValue) == .Head {
-//                                Section("当前", content: {
-//                                    ForEach([project.headCommit]) { commit in
-//                                        CommitTile(
-//                                            commit: commit,
-//                                            project: project,
-//                                            selection: selection
-//                                        )
-//                                        .tag(commit)
-//                                    }
-//                                })
-//                            } else {
-//                                Section("历史", content: {
-//                                    ForEach(commits) { commit in
-//                                        CommitTile(
-//                                            commit: commit,
-//                                            project: project
-//                                        )
-//                                        .tag(commit)
-//                                    }
-//                                })
-//                            }
-//                        }
-//                    }
-                    
-                    List(commits, selection: $selection) { commit in
+                    List([project.headCommit]+commits, selection: $selection) { commit in
                         CommitTile(commit: commit, project: project, selection: selection)
                             .tag(commit)
                     }
@@ -72,27 +45,6 @@ struct CommitList: View {
                     refresh("\(self.label)OnRefreshButton")
                 }
             }
-//            .onChange(of: commitId, {
-//                if verbose {
-//                    os_log("\(self.label)CommitId did set ->\(commitId)")
-//                }
-//
-//                guard let project = app.project else {
-//                    return
-//                }
-//                
-//                if commitId == project.headCommit.id {
-//                    app.commit = project.headCommit
-//                } else {
-//                    app.commit = self.commits.first(where: {
-//                        $0.id == commitId
-//                    })
-//                }
-//                
-//                if verbose {
-//                    os_log("\(self.label)app.commit=\(commitId)")
-//                }
-//            })
             .onChange(of: app.project, {
                 self.refresh("\(self.label)Project Changed")
             })

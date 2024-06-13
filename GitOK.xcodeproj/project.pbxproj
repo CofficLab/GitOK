@@ -12,7 +12,6 @@
 		0B0E16852BD89A8F0078942B /* Item.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B0E16842BD89A8F0078942B /* Item.swift */; };
 		0B0E16872BD89A910078942B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0B0E16862BD89A910078942B /* Assets.xcassets */; };
 		0B0E168B2BD89A910078942B /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0B0E168A2BD89A910078942B /* Preview Assets.xcassets */; };
-		0B0E16932BD89C340078942B /* GitDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B0E16922BD89C340078942B /* GitDetail.swift */; };
 		0B1C67B02BD9099800502EB1 /* AppPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1C67AF2BD9099800502EB1 /* AppPreview.swift */; };
 		0B1C67B32BD90B5700502EB1 /* AppManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1C67B22BD90B5700502EB1 /* AppManager.swift */; };
 		0B1C67B52BD9115F00502EB1 /* Branches.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1C67B42BD9115F00502EB1 /* Branches.swift */; };
@@ -119,11 +118,9 @@
 		0BD15C4E2BDBF360004024CF /* BtnMerge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD15C4D2BDBF360004024CF /* BtnMerge.swift */; };
 		0BD15C502BDBF3BD004024CF /* MergeForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD15C4F2BDBF3BD004024CF /* MergeForm.swift */; };
 		0BD15C522BDC8D91004024CF /* SmartError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD15C512BDC8D91004024CF /* SmartError.swift */; };
-		0BD15C542BDCAF45004024CF /* NoChanges.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD15C532BDCAF45004024CF /* NoChanges.swift */; };
 		0BD15C562BDD23E1004024CF /* DiffExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD15C552BDD23E1004024CF /* DiffExt.swift */; };
 		0BD15C582BDD26DE004024CF /* Diff.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD15C572BDD26DE004024CF /* Diff.swift */; };
 		0BD15C5A2BDD275C004024CF /* DiffBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD15C592BDD275C004024CF /* DiffBlock.swift */; };
-		0BD15C612BDD33CC004024CF /* DiffView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD15C602BDD33CC004024CF /* DiffView.swift */; };
 		0BD15C632BDD40E1004024CF /* ListPlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD15C622BDD40E1004024CF /* ListPlay.swift */; };
 		0BD15C672BDFE4F9004024CF /* NotGit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD15C662BDFE4F9004024CF /* NotGit.swift */; };
 		0BDE61A32BDB3C9B006E23EA /* Projects.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BDE61A22BDB3C9B006E23EA /* Projects.swift */; };
@@ -134,7 +131,6 @@
 		0BF75EE02BDE4C0C00A553CD /* CommitTile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BF75EDF2BDE4C0C00A553CD /* CommitTile.swift */; };
 		0BF75EE22BDE5CE500A553CD /* Stage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BF75EE12BDE5CE500A553CD /* Stage.swift */; };
 		0BF75EE42BDF2CCD00A553CD /* CommitList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BF75EE32BDF2CCD00A553CD /* CommitList.swift */; };
-		0BF75EE62BDF2CFB00A553CD /* Files.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BF75EE52BDF2CFB00A553CD /* Files.swift */; };
 		0BF75EE82BDF39B500A553CD /* PushExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BF75EE72BDF39B500A553CD /* PushExt.swift */; };
 		0BF75EEA2BDFA2FB00A553CD /* BtnOpenTerminal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BF75EE92BDFA2FB00A553CD /* BtnOpenTerminal.swift */; };
 		0BFA2E5F2BE111AA00AD98D7 /* TabBtn.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BFA2E5E2BE111AA00AD98D7 /* TabBtn.swift */; };
@@ -167,7 +163,6 @@
 		0B0E16862BD89A910078942B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		0B0E16882BD89A910078942B /* GitOK.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = GitOK.entitlements; sourceTree = "<group>"; };
 		0B0E168A2BD89A910078942B /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
-		0B0E16922BD89C340078942B /* GitDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitDetail.swift; sourceTree = "<group>"; };
 		0B1C67AF2BD9099800502EB1 /* AppPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppPreview.swift; sourceTree = "<group>"; };
 		0B1C67B22BD90B5700502EB1 /* AppManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppManager.swift; sourceTree = "<group>"; };
 		0B1C67B42BD9115F00502EB1 /* Branches.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Branches.swift; sourceTree = "<group>"; };
@@ -276,11 +271,9 @@
 		0BD15C4D2BDBF360004024CF /* BtnMerge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BtnMerge.swift; sourceTree = "<group>"; };
 		0BD15C4F2BDBF3BD004024CF /* MergeForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MergeForm.swift; sourceTree = "<group>"; };
 		0BD15C512BDC8D91004024CF /* SmartError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmartError.swift; sourceTree = "<group>"; };
-		0BD15C532BDCAF45004024CF /* NoChanges.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoChanges.swift; sourceTree = "<group>"; };
 		0BD15C552BDD23E1004024CF /* DiffExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiffExt.swift; sourceTree = "<group>"; };
 		0BD15C572BDD26DE004024CF /* Diff.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Diff.swift; sourceTree = "<group>"; };
 		0BD15C592BDD275C004024CF /* DiffBlock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiffBlock.swift; sourceTree = "<group>"; };
-		0BD15C602BDD33CC004024CF /* DiffView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiffView.swift; sourceTree = "<group>"; };
 		0BD15C622BDD40E1004024CF /* ListPlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListPlay.swift; sourceTree = "<group>"; };
 		0BD15C662BDFE4F9004024CF /* NotGit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotGit.swift; sourceTree = "<group>"; };
 		0BDE61A22BDB3C9B006E23EA /* Projects.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Projects.swift; sourceTree = "<group>"; };
@@ -291,7 +284,6 @@
 		0BF75EDF2BDE4C0C00A553CD /* CommitTile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommitTile.swift; sourceTree = "<group>"; };
 		0BF75EE12BDE5CE500A553CD /* Stage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stage.swift; sourceTree = "<group>"; };
 		0BF75EE32BDF2CCD00A553CD /* CommitList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommitList.swift; sourceTree = "<group>"; };
-		0BF75EE52BDF2CFB00A553CD /* Files.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Files.swift; sourceTree = "<group>"; };
 		0BF75EE72BDF39B500A553CD /* PushExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushExt.swift; sourceTree = "<group>"; };
 		0BF75EE92BDFA2FB00A553CD /* BtnOpenTerminal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BtnOpenTerminal.swift; sourceTree = "<group>"; };
 		0BFA2E5E2BE111AA00AD98D7 /* TabBtn.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBtn.swift; sourceTree = "<group>"; };
@@ -463,6 +455,7 @@
 				0B0E16822BD89A8F0078942B /* Content.swift */,
 				0BDE61A22BDB3C9B006E23EA /* Projects.swift */,
 				0BD15C662BDFE4F9004024CF /* NotGit.swift */,
+				0B8C7AEF2BE08E2D00B4E817 /* Message.swift */,
 			);
 			path = Layout;
 			sourceTree = "<group>";
@@ -470,17 +463,9 @@
 		0B1C67F72BD9E60500502EB1 /* Detail */ = {
 			isa = PBXGroup;
 			children = (
+				F545D16B2C1AF525006A6AFA /* Commit */,
 				0B8C7AD42BE08E1900B4E817 /* Banner */,
-				0B1C67F02BD9DB1F00502EB1 /* CommitCategoryPicker.swift */,
-				0B1C67EE2BD9DACF00502EB1 /* CommitForm.swift */,
-				0BD15C602BDD33CC004024CF /* DiffView.swift */,
-				F545D1672C1AEBF1006A6AFA /* FileDetail.swift */,
-				0B0E16922BD89C340078942B /* GitDetail.swift */,
 				0B8C7AE72BE08E2200B4E817 /* Icon */,
-				0BD15C4F2BDBF3BD004024CF /* MergeForm.swift */,
-				0B8C7AEF2BE08E2D00B4E817 /* Message.swift */,
-				0BD15C532BDCAF45004024CF /* NoChanges.swift */,
-				F545D1692C1AEF76006A6AFA /* CommitDetail.swift */,
 			);
 			path = Detail;
 			sourceTree = "<group>";
@@ -705,7 +690,6 @@
 				0B8C7B322BE0EAE900B4E817 /* ActionTab.swift */,
 				0B8C7B242BE0BB7500B4E817 /* BannerList.swift */,
 				F545D15F2C1AD436006A6AFA /* BannerTile.swift */,
-				0BF75EE52BDF2CFB00A553CD /* Files.swift */,
 				0BF75EE32BDF2CCD00A553CD /* CommitList.swift */,
 				0BF75EDF2BDE4C0C00A553CD /* CommitTile.swift */,
 				0BDE61AC2BDB4E86006E23EA /* FileTile.swift */,
@@ -715,6 +699,18 @@
 				0B8C7B2E2BE0E5F100B4E817 /* Tabs.swift */,
 			);
 			path = Content;
+			sourceTree = "<group>";
+		};
+		F545D16B2C1AF525006A6AFA /* Commit */ = {
+			isa = PBXGroup;
+			children = (
+				F545D1672C1AEBF1006A6AFA /* FileDetail.swift */,
+				0B1C67F02BD9DB1F00502EB1 /* CommitCategoryPicker.swift */,
+				F545D1692C1AEF76006A6AFA /* CommitDetail.swift */,
+				0B1C67EE2BD9DACF00502EB1 /* CommitForm.swift */,
+				0BD15C4F2BDBF3BD004024CF /* MergeForm.swift */,
+			);
+			path = Commit;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -817,7 +813,6 @@
 				0B76FCF12BDDD18400501F1F /* WebView.swift in Sources */,
 				0BDE61A32BDB3C9B006E23EA /* Projects.swift in Sources */,
 				0B8C7B212BE0A86000B4E817 /* ShellFileExt.swift in Sources */,
-				0BD15C612BDD33CC004024CF /* DiffView.swift in Sources */,
 				0BCC6D132BD94D15006ADA94 /* BtnLogs.swift in Sources */,
 				0B76FD222BDE315800501F1F /* ReadyHandler.swift in Sources */,
 				0BCC6D152BD9526F006ADA94 /* GitCommit.swift in Sources */,
@@ -865,7 +860,6 @@
 				0B1C67FE2BD9F12000502EB1 /* EventManager.swift in Sources */,
 				0B76FD242BDE326300501F1F /* FileExt.swift in Sources */,
 				0BDE61AD2BDB4E87006E23EA /* FileTile.swift in Sources */,
-				0B0E16932BD89C340078942B /* GitDetail.swift in Sources */,
 				0B1C67F12BD9DB1F00502EB1 /* CommitCategoryPicker.swift in Sources */,
 				0B6BE4652BDA7B5300C8ACB2 /* CommitExt.swift in Sources */,
 				0B8C7AEC2BE08E2200B4E817 /* IconAsset.swift in Sources */,
@@ -881,7 +875,6 @@
 				0B8C7B152BE08EDA00B4E817 /* Toast.swift in Sources */,
 				0B8C7AC72BE08E0F00B4E817 /* ScreenMacBook.swift in Sources */,
 				0B0E16812BD89A8F0078942B /* GitOKApp.swift in Sources */,
-				0BD15C542BDCAF45004024CF /* NoChanges.swift in Sources */,
 				0B8C7B102BE08EDA00B4E817 /* ImageHelper.swift in Sources */,
 				0B8C7B1E2BE09B1500B4E817 /* BannerShell.swift in Sources */,
 				0B1C67BC2BD9132500502EB1 /* Git.swift in Sources */,
@@ -907,7 +900,6 @@
 				0B8C7AEB2BE08E2200B4E817 /* IconItem.swift in Sources */,
 				0B76FD122BDDFF7200501F1F /* LoggerExt.swift in Sources */,
 				0B8C7B112BE08EDA00B4E817 /* CloudKitHelper.swift in Sources */,
-				0BF75EE62BDF2CFB00A553CD /* Files.swift in Sources */,
 				0BB543E92BE890F200D7A2B2 /* JsonModel.swift in Sources */,
 				0B76FD1B2BDE2B2F00501F1F /* WebHandler.swift in Sources */,
 				0B8C7ADF2BE08E1900B4E817 /* BannerMacBook.swift in Sources */,
