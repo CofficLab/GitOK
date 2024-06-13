@@ -3,6 +3,8 @@ import SwiftData
 import SwiftUI
 
 struct File {
+    static var empty = File(projectPath: "", name: "")
+    
     var projectPath: String
     var name: String
     var type: ChangeType = .modified

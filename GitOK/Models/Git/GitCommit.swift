@@ -4,6 +4,7 @@ import OSLog
 
 struct GitCommit {
     static var headId = "HEAD"
+    static var empty = GitCommit()
     static func headFor(_ path: String) -> GitCommit {
         .init(isHead: true, path: path, hash: Self.headId, message: "当前")
     }
@@ -57,7 +58,13 @@ struct GitCommit {
         if isHead {
             return Git.changedFile(path)
         } else {
-            return try! Git.commitFiles(path, hash: hash)
+            do {
+                return try Git.commitFiles(path, hash: hash)
+            } catch (let e) {
+                os_log(.error, "\(e.localizedDescription)")
+                
+                return []
+            }
         }
     }
     

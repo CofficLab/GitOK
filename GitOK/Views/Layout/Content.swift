@@ -22,9 +22,7 @@ struct Content: View {
                     .frame(idealWidth: 300)
                     .frame(minWidth: 50)
             } detail: {
-                if tab == .Git {
-                    Detail(tab: $tab)
-                }
+                Text("选择一个项目")
             }
             
             Message()

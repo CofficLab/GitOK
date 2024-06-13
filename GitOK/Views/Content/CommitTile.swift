@@ -2,11 +2,13 @@ import SwiftUI
 
 struct CommitTile: View {
     @EnvironmentObject var app: AppManager
-
+    
+    @State var isPresented: Bool = false
     @State var isSynced = true
 
     var commit: GitCommit
     var project: Project
+    var selection: GitCommit
 
     var body: some View {
         VStack(spacing: 0) {
@@ -21,6 +23,9 @@ struct CommitTile: View {
                 }
             }
         }
+        .navigationDestination(isPresented: $isPresented, destination: {
+            CommitDetail(commit: commit)
+        })
         .onAppear {
             Task.detached(operation: {
                 let isSynced = try! await commit.checkIfSynced()
@@ -29,7 +34,16 @@ struct CommitTile: View {
                     self.isSynced = isSynced
                 }
             })
+            
+            ifPresented()
         }
+        .onChange(of: selection, {
+            ifPresented()
+        })
+    }
+    
+    func ifPresented() {
+        self.isPresented = commit.id == selection.id
     }
 }
 

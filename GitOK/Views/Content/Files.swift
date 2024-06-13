@@ -1,7 +1,7 @@
 import OSLog
 import SwiftUI
 
-struct Files: View {
+struct FileList3: View {
     @EnvironmentObject var app: AppManager
 
     @State var files: [File] = []
@@ -20,8 +20,8 @@ struct Files: View {
                 if app.project != nil {
                     VStack {
                         if files.count > 0 {
-                            List(files, id: \.self, selection: $app.file) {
-                                FileTile(file: $0)
+                            List(files, id: \.self, selection: $app.file) {_ in 
+//                                FileTile(file: $0, selected: <#File#>)
                             }
                         }
                     }
