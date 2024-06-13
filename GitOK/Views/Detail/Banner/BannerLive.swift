@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct BannerMaker: View {
+struct BannerLive: View {
     @EnvironmentObject var app: AppManager
     @Binding var snapshotTapped: Bool
     @State var visible = false
@@ -8,16 +8,7 @@ struct BannerMaker: View {
     var onMessage: (_ message: String) -> Void
     var width: CGFloat = 1024
     var height: CGFloat = 1024
-    var url: URL? = nil
-    var iconId: String? = nil
-    var imageURL: URL?
-    var backgroundId: String
-
-    var device: Device
-    var title: String
-    var subTitle: String
-    var badges: [String]
-    var inScreen: Bool
+    var banner: BannerModel
 
     @MainActor private var imageSize: String {
         "\(ImageHelper.getViewWidth(content)) X \(ImageHelper.getViewHeigth(content))"
@@ -26,11 +17,11 @@ struct BannerMaker: View {
     var image: Image {
         var image = Image("Snapshot-1")
         
-        if device == .iPad {
+        if banner.getDevice() == .iPad {
             image = Image("Snapshot-iPad")
         }
 
-        if let url = imageURL, let data = try? Data(contentsOf: url),
+        if let url = banner.imageURL, let data = try? Data(contentsOf: url),
            let nsImage = NSImage(data: data)
         {
             image = Image(nsImage: nsImage)
@@ -62,7 +53,6 @@ struct BannerMaker: View {
                 ImageHelper.makeImage(content)
                     .resizable()
                     .scaledToFit()
-                    //.overlay { ViewHelper.dashedBorder }
                     .padding(.all, 20)
                 Spacer()
             }
@@ -70,7 +60,7 @@ struct BannerMaker: View {
         }
         .onChange(of: snapshotTapped, {
             if snapshotTapped {
-                onMessage(ImageHelper.snapshot(content, title: "\(device.rawValue)-\(self.getTimeString())"))
+                onMessage(ImageHelper.snapshot(content, title: "\(banner.device)-\(self.getTimeString())"))
                 self.snapshotTapped = false
             }
         })
@@ -78,20 +68,11 @@ struct BannerMaker: View {
 
     private var content: some View {
         ZStack {
-            Banner(
-                device: device,
-                title: title,
-                subTitle:
-                subTitle,
-                inScreen:
-                inScreen,
-                badges: badges,
-                image: image
-            )
+            BannerDevice(banner: banner, image: image)
         }
         .foregroundStyle(.white)
-        .frame(width: device.width, height: device.height)
-        .background(BackgroundView.all[backgroundId])
+        .frame(width: banner.getDevice().width, height: banner.getDevice().height)
+        .background(BackgroundView.all[banner.backgroundId])
     }
 
     private func getTimeString() -> String {

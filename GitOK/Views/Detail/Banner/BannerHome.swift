@@ -10,18 +10,12 @@ struct BannerHome: View {
         VStack {
             BannerTopBar(snapshotTapped: $snapshotTapped, banner: $banner)
 
-            BannerMaker(
+            BannerLive(
                 snapshotTapped: $snapshotTapped,
                 onMessage: { message in
                     app.setMessage(message)
                 },
-                imageURL: banner.imageURL,
-                backgroundId: banner.backgroundId,
-                device: banner.getDevice(),
-                title: banner.title,
-                subTitle: banner.subTitle,
-                badges: banner.features,
-                inScreen: banner.inScreen
+                 banner: banner
             )
         }
     }

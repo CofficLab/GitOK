@@ -64,14 +64,14 @@
 		0B8C7AC72BE08E0F00B4E817 /* ScreenMacBook.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7AC22BE08E0F00B4E817 /* ScreenMacBook.swift */; };
 		0B8C7AD52BE08E1900B4E817 /* Badge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7AC82BE08E1900B4E817 /* Badge.swift */; };
 		0B8C7AD62BE08E1900B4E817 /* Badges.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7AC92BE08E1900B4E817 /* Badges.swift */; };
-		0B8C7AD72BE08E1900B4E817 /* Banner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7ACA2BE08E1900B4E817 /* Banner.swift */; };
+		0B8C7AD72BE08E1900B4E817 /* BannerDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7ACA2BE08E1900B4E817 /* BannerDevice.swift */; };
 		0B8C7ADA2BE08E1900B4E817 /* BannerHome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7ACD2BE08E1900B4E817 /* BannerHome.swift */; };
 		0B8C7ADB2BE08E1900B4E817 /* BanneriMac.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7ACE2BE08E1900B4E817 /* BanneriMac.swift */; };
 		0B8C7ADC2BE08E1900B4E817 /* BanneriPad.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7ACF2BE08E1900B4E817 /* BanneriPad.swift */; };
 		0B8C7ADD2BE08E1900B4E817 /* BanneriPhone.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7AD02BE08E1900B4E817 /* BanneriPhone.swift */; };
 		0B8C7ADE2BE08E1900B4E817 /* BannerMac.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7AD12BE08E1900B4E817 /* BannerMac.swift */; };
 		0B8C7ADF2BE08E1900B4E817 /* BannerMacBook.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7AD22BE08E1900B4E817 /* BannerMacBook.swift */; };
-		0B8C7AE02BE08E1900B4E817 /* BannerMaker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7AD32BE08E1900B4E817 /* BannerMaker.swift */; };
+		0B8C7AE02BE08E1900B4E817 /* BannerLive.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7AD32BE08E1900B4E817 /* BannerLive.swift */; };
 		0B8C7AE82BE08E2200B4E817 /* Icon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7AE12BE08E2200B4E817 /* Icon.swift */; };
 		0B8C7AEA2BE08E2200B4E817 /* IconHome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7AE32BE08E2200B4E817 /* IconHome.swift */; };
 		0B8C7AEB2BE08E2200B4E817 /* IconItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7AE42BE08E2200B4E817 /* IconItem.swift */; };
@@ -217,14 +217,14 @@
 		0B8C7AC22BE08E0F00B4E817 /* ScreenMacBook.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScreenMacBook.swift; sourceTree = "<group>"; };
 		0B8C7AC82BE08E1900B4E817 /* Badge.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Badge.swift; sourceTree = "<group>"; };
 		0B8C7AC92BE08E1900B4E817 /* Badges.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Badges.swift; sourceTree = "<group>"; };
-		0B8C7ACA2BE08E1900B4E817 /* Banner.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Banner.swift; sourceTree = "<group>"; };
+		0B8C7ACA2BE08E1900B4E817 /* BannerDevice.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BannerDevice.swift; sourceTree = "<group>"; };
 		0B8C7ACD2BE08E1900B4E817 /* BannerHome.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BannerHome.swift; sourceTree = "<group>"; };
 		0B8C7ACE2BE08E1900B4E817 /* BanneriMac.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BanneriMac.swift; sourceTree = "<group>"; };
 		0B8C7ACF2BE08E1900B4E817 /* BanneriPad.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BanneriPad.swift; sourceTree = "<group>"; };
 		0B8C7AD02BE08E1900B4E817 /* BanneriPhone.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BanneriPhone.swift; sourceTree = "<group>"; };
 		0B8C7AD12BE08E1900B4E817 /* BannerMac.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BannerMac.swift; sourceTree = "<group>"; };
 		0B8C7AD22BE08E1900B4E817 /* BannerMacBook.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BannerMacBook.swift; sourceTree = "<group>"; };
-		0B8C7AD32BE08E1900B4E817 /* BannerMaker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BannerMaker.swift; sourceTree = "<group>"; };
+		0B8C7AD32BE08E1900B4E817 /* BannerLive.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BannerLive.swift; sourceTree = "<group>"; };
 		0B8C7AE12BE08E2200B4E817 /* Icon.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Icon.swift; sourceTree = "<group>"; };
 		0B8C7AE32BE08E2200B4E817 /* IconHome.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IconHome.swift; sourceTree = "<group>"; };
 		0B8C7AE42BE08E2200B4E817 /* IconItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IconItem.swift; sourceTree = "<group>"; };
@@ -572,14 +572,14 @@
 				0B8C7AF12BE08E2D00B4E817 /* Backgrounds.swift */,
 				0B8C7AC82BE08E1900B4E817 /* Badge.swift */,
 				0B8C7AC92BE08E1900B4E817 /* Badges.swift */,
-				0B8C7ACA2BE08E1900B4E817 /* Banner.swift */,
+				0B8C7ACA2BE08E1900B4E817 /* BannerDevice.swift */,
 				0B8C7ACD2BE08E1900B4E817 /* BannerHome.swift */,
 				0B8C7ACE2BE08E1900B4E817 /* BanneriMac.swift */,
 				0B8C7ACF2BE08E1900B4E817 /* BanneriPad.swift */,
 				0B8C7AD02BE08E1900B4E817 /* BanneriPhone.swift */,
 				0B8C7AD12BE08E1900B4E817 /* BannerMac.swift */,
 				0B8C7AD22BE08E1900B4E817 /* BannerMacBook.swift */,
-				0B8C7AD32BE08E1900B4E817 /* BannerMaker.swift */,
+				0B8C7AD32BE08E1900B4E817 /* BannerLive.swift */,
 				F545D1612C1AD6F1006A6AFA /* BannerTopBar.swift */,
 				0B8C7AEE2BE08E2D00B4E817 /* Operator.swift */,
 				0B8C7AC32BE08E0F00B4E817 /* Screens */,
@@ -803,7 +803,7 @@
 				0B8C7AF52BE08E2D00B4E817 /* Backgrounds.swift in Sources */,
 				0B44BCC62BDA947B00FBCF2F /* Branch.swift in Sources */,
 				0B8C7AC52BE08E0F00B4E817 /* ScreeniPad.swift in Sources */,
-				0B8C7AE02BE08E1900B4E817 /* BannerMaker.swift in Sources */,
+				0B8C7AE02BE08E1900B4E817 /* BannerLive.swift in Sources */,
 				0BB543EC2BE8932300D7A2B2 /* BtnDelIcon.swift in Sources */,
 				0B8C7B122BE08EDA00B4E817 /* ViewHelper.swift in Sources */,
 				0BCC6D0B2BD93E8C006ADA94 /* BtnAdd.swift in Sources */,
@@ -913,7 +913,7 @@
 				0BF75EE22BDE5CE500A553CD /* Stage.swift in Sources */,
 				0B1C67ED2BD9D9CB00502EB1 /* CommitCategory.swift in Sources */,
 				0B8C7AEA2BE08E2200B4E817 /* IconHome.swift in Sources */,
-				0B8C7AD72BE08E1900B4E817 /* Banner.swift in Sources */,
+				0B8C7AD72BE08E1900B4E817 /* BannerDevice.swift in Sources */,
 				0B8C7B142BE08EDA00B4E817 /* BackgroundView.swift in Sources */,
 				0BB543E02BE8875700D7A2B2 /* BtnDelBanner.swift in Sources */,
 				0B8C7B172BE08EDA00B4E817 /* Loading.swift in Sources */,

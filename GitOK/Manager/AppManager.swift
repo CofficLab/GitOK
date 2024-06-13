@@ -87,4 +87,5 @@ class AppManager: NSObject, ObservableObject, AVAudioPlayerDelegate {
 #Preview {
     AppPreview()
         .frame(width: 800)
+        .frame(height: 800)
 }
