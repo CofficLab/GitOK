@@ -31,6 +31,7 @@ struct BannerLive: View {
     }
     
     var body: some View {
+        // 异步加载banner，加快响应速度
         ZStack {
             if !visible {
                 ProgressView()
