@@ -1,13 +1,1 @@
-{
-  "subTitle" : "sub3",
-  "device" : "iMac",
-  "backgroundId" : "1",
-  "features" : [
-    "Feature 1",
-    "Feature 2",
-    "Feature 3",
-    "Feature 4"
-  ],
-  "inScreen" : false,
-  "title" : "62"
-}
+{"backgroundId":"1","device":"iMac","features":["Feature 1","Feature 2","Feature 3","Feature 4"],"inScreen":false,"subTitle":"sub3","title":"62"}

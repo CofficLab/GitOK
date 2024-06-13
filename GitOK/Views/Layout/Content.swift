@@ -21,13 +21,13 @@ struct Content: View {
                 .frame(idealWidth: 300)
                 .frame(minWidth: 50)
         } detail: {
-            ZStack {
-                // MARK: Detail
-                Detail(tab: $tab)
-                
-                // MARK: Message
-                Message()
-            }
+//            ZStack {
+//                // MARK: Detail
+//                Detail(tab: $tab)
+//                
+//                // MARK: Message
+//                Message()
+//            }
         }
         .navigationTitle(project?.title ?? "")
         .onAppear {

@@ -4,14 +4,15 @@ struct Backgrounds: View {
     @Binding var current: String
 
     var body: some View {
-        ScrollView {
-            VStack(spacing: 0) {
+        ScrollView(.horizontal) {
+            HStack(spacing: 0) {
                 ForEach(BackgroundView.all.sorted(by: { $0.key < $1.key }), id: \.key) { x, value in
                     makeItem(x, view: value)
+                        .frame(width: 100)
                 }
                 Divider()
             }
-            .frame(height: 700)
+            .frame(height: 100)
         }
     }
 

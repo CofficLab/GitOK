@@ -5,7 +5,7 @@ import SwiftUI
 struct BannerList: View {
     @EnvironmentObject var app: AppManager
 
-    @State var banner: BannerModel? = nil
+    @State var banner: BannerModel = .empty
     @State var banners: [BannerModel] = []
 
     var label: String { "\(Logger.isMain)🌹 BannerList::" }
@@ -13,13 +13,11 @@ struct BannerList: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            List(banners, id: \.self, selection: $banner) { banner in
-                Text(banner.title)
-                    .tag(banner as BannerModel?)
-                    .id(banner.id)
-                    .contextMenu(ContextMenu(menuItems: {
-                        BtnDelBanner(banner: banner, callback: getBanners)
-                    }))
+            List(banners, selection: $banner) { banner in
+                BannerTile(banner: banner, selected: self.banner) .contextMenu(ContextMenu(menuItems: {
+                    BtnDelBanner(banner: banner, callback: getBanners)
+                }))
+                .tag(banner)
             }
             .frame(maxHeight: .infinity)
 
@@ -36,15 +34,11 @@ struct BannerList: View {
         }
         .onAppear(perform: getBanners)
         .onChange(of: app.project, getBanners)
-        .onChange(of: banner) {
-            app.banner = banner
-            getBanners()
-        }
     }
 
     func getBanners() {
         if verbose {
-            os_log("\(self.label)GetBanners")
+            os_log("\(label)GetBanners")
         }
 
         if let project = app.project {
@@ -54,13 +48,10 @@ struct BannerList: View {
                 DispatchQueue.main.async {
                     self.banners = banners
 
-                    if let banner = self.banner {
+                    
                         if !banners.contains(banner) {
-                            self.banner = banners.first
+                            self.banner = banners.first ?? .empty
                         }
-                    } else {
-                        self.banner = banners.first
-                    }
                 }
             }
         }

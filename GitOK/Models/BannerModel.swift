@@ -6,6 +6,7 @@ import SwiftUI
 struct BannerModel: JsonModel {
     static var root: String = ".gitok/banners"
     static var label = "💿 BannerModel::"
+    static var empty = BannerModel(path: "")
 
     var title = "BannerModel-Title"
     var subTitle = "BannerModel-SubTitle"

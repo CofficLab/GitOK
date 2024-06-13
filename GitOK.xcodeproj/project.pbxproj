@@ -66,7 +66,6 @@
 		0B8C7AD52BE08E1900B4E817 /* Badge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7AC82BE08E1900B4E817 /* Badge.swift */; };
 		0B8C7AD62BE08E1900B4E817 /* Badges.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7AC92BE08E1900B4E817 /* Badges.swift */; };
 		0B8C7AD72BE08E1900B4E817 /* Banner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7ACA2BE08E1900B4E817 /* Banner.swift */; };
-		0B8C7AD92BE08E1900B4E817 /* BannerFields.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7ACC2BE08E1900B4E817 /* BannerFields.swift */; };
 		0B8C7ADA2BE08E1900B4E817 /* BannerHome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7ACD2BE08E1900B4E817 /* BannerHome.swift */; };
 		0B8C7ADB2BE08E1900B4E817 /* BanneriMac.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7ACE2BE08E1900B4E817 /* BanneriMac.swift */; };
 		0B8C7ADC2BE08E1900B4E817 /* BanneriPad.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7ACF2BE08E1900B4E817 /* BanneriPad.swift */; };
@@ -103,7 +102,6 @@
 		0B8C7B2F2BE0E5F100B4E817 /* Tabs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7B2E2BE0E5F100B4E817 /* Tabs.swift */; };
 		0B8C7B332BE0EAE900B4E817 /* ActionTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7B322BE0EAE900B4E817 /* ActionTab.swift */; };
 		0BB4278E2BE72512004E6F82 /* QueueExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BB4278D2BE72512004E6F82 /* QueueExt.swift */; };
-		0BB543DD2BE86AD100D7A2B2 /* BannerBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BB543DC2BE86AD100D7A2B2 /* BannerBar.swift */; };
 		0BB543E02BE8875700D7A2B2 /* BtnDelBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BB543DF2BE8875700D7A2B2 /* BtnDelBanner.swift */; };
 		0BB543E92BE890F200D7A2B2 /* JsonModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BB543E82BE890F200D7A2B2 /* JsonModel.swift */; };
 		0BB543EC2BE8932300D7A2B2 /* BtnDelIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BB543EB2BE8932300D7A2B2 /* BtnDelIcon.swift */; };
@@ -143,6 +141,8 @@
 		0BF75EE82BDF39B500A553CD /* PushExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BF75EE72BDF39B500A553CD /* PushExt.swift */; };
 		0BF75EEA2BDFA2FB00A553CD /* BtnOpenTerminal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BF75EE92BDFA2FB00A553CD /* BtnOpenTerminal.swift */; };
 		0BFA2E5F2BE111AA00AD98D7 /* TabBtn.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BFA2E5E2BE111AA00AD98D7 /* TabBtn.swift */; };
+		F545D1602C1AD436006A6AFA /* BannerTile.swift in Sources */ = {isa = PBXBuildFile; fileRef = F545D15F2C1AD436006A6AFA /* BannerTile.swift */; };
+		F545D1622C1AD6F1006A6AFA /* BannerTopBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = F545D1612C1AD6F1006A6AFA /* BannerTopBar.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -222,7 +222,6 @@
 		0B8C7AC82BE08E1900B4E817 /* Badge.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Badge.swift; sourceTree = "<group>"; };
 		0B8C7AC92BE08E1900B4E817 /* Badges.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Badges.swift; sourceTree = "<group>"; };
 		0B8C7ACA2BE08E1900B4E817 /* Banner.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Banner.swift; sourceTree = "<group>"; };
-		0B8C7ACC2BE08E1900B4E817 /* BannerFields.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BannerFields.swift; sourceTree = "<group>"; };
 		0B8C7ACD2BE08E1900B4E817 /* BannerHome.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BannerHome.swift; sourceTree = "<group>"; };
 		0B8C7ACE2BE08E1900B4E817 /* BanneriMac.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BanneriMac.swift; sourceTree = "<group>"; };
 		0B8C7ACF2BE08E1900B4E817 /* BanneriPad.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BanneriPad.swift; sourceTree = "<group>"; };
@@ -259,7 +258,6 @@
 		0B8C7B2E2BE0E5F100B4E817 /* Tabs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tabs.swift; sourceTree = "<group>"; };
 		0B8C7B322BE0EAE900B4E817 /* ActionTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionTab.swift; sourceTree = "<group>"; };
 		0BB4278D2BE72512004E6F82 /* QueueExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QueueExt.swift; sourceTree = "<group>"; };
-		0BB543DC2BE86AD100D7A2B2 /* BannerBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerBar.swift; sourceTree = "<group>"; };
 		0BB543DF2BE8875700D7A2B2 /* BtnDelBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BtnDelBanner.swift; sourceTree = "<group>"; };
 		0BB543E82BE890F200D7A2B2 /* JsonModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JsonModel.swift; sourceTree = "<group>"; };
 		0BB543EB2BE8932300D7A2B2 /* BtnDelIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BtnDelIcon.swift; sourceTree = "<group>"; };
@@ -299,6 +297,8 @@
 		0BF75EE72BDF39B500A553CD /* PushExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushExt.swift; sourceTree = "<group>"; };
 		0BF75EE92BDFA2FB00A553CD /* BtnOpenTerminal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BtnOpenTerminal.swift; sourceTree = "<group>"; };
 		0BFA2E5E2BE111AA00AD98D7 /* TabBtn.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBtn.swift; sourceTree = "<group>"; };
+		F545D15F2C1AD436006A6AFA /* BannerTile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerTile.swift; sourceTree = "<group>"; };
+		F545D1612C1AD6F1006A6AFA /* BannerTopBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerTopBar.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -365,7 +365,6 @@
 		0B0E16912BD89C240078942B /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				0B8C7AD42BE08E1900B4E817 /* Banner */,
 				0B1C67B62BD9127000502EB1 /* Button */,
 				0BFA2E602BE11E7200AD98D7 /* Content */,
 				0B1C67F72BD9E60500502EB1 /* Detail */,
@@ -473,6 +472,7 @@
 		0B1C67F72BD9E60500502EB1 /* Detail */ = {
 			isa = PBXGroup;
 			children = (
+				0B8C7AD42BE08E1900B4E817 /* Banner */,
 				0B8C7AEF2BE08E2D00B4E817 /* Message.swift */,
 				0B1C67F02BD9DB1F00502EB1 /* CommitCategoryPicker.swift */,
 				0B1C67EE2BD9DACF00502EB1 /* CommitForm.swift */,
@@ -597,16 +597,14 @@
 				0B8C7AC82BE08E1900B4E817 /* Badge.swift */,
 				0B8C7AC92BE08E1900B4E817 /* Badges.swift */,
 				0B8C7ACA2BE08E1900B4E817 /* Banner.swift */,
-				0BB543DC2BE86AD100D7A2B2 /* BannerBar.swift */,
-				0B8C7ACC2BE08E1900B4E817 /* BannerFields.swift */,
 				0B8C7ACD2BE08E1900B4E817 /* BannerHome.swift */,
 				0B8C7ACE2BE08E1900B4E817 /* BanneriMac.swift */,
 				0B8C7ACF2BE08E1900B4E817 /* BanneriPad.swift */,
 				0B8C7AD02BE08E1900B4E817 /* BanneriPhone.swift */,
-				0B8C7B242BE0BB7500B4E817 /* BannerList.swift */,
 				0B8C7AD12BE08E1900B4E817 /* BannerMac.swift */,
 				0B8C7AD22BE08E1900B4E817 /* BannerMacBook.swift */,
 				0B8C7AD32BE08E1900B4E817 /* BannerMaker.swift */,
+				F545D1612C1AD6F1006A6AFA /* BannerTopBar.swift */,
 				0B8C7AEE2BE08E2D00B4E817 /* Operator.swift */,
 				0B8C7AC32BE08E0F00B4E817 /* Screens */,
 				0B8C7AF02BE08E2D00B4E817 /* Snapshot.swift */,
@@ -714,10 +712,12 @@
 		0BFA2E602BE11E7200AD98D7 /* Content */ = {
 			isa = PBXGroup;
 			children = (
-				0BFA2E5E2BE111AA00AD98D7 /* TabBtn.swift */,
 				0B8C7B322BE0EAE900B4E817 /* ActionTab.swift */,
-				0B8C7B2E2BE0E5F100B4E817 /* Tabs.swift */,
+				0B8C7B242BE0BB7500B4E817 /* BannerList.swift */,
+				F545D15F2C1AD436006A6AFA /* BannerTile.swift */,
 				0BDE61AA2BDB4AB8006E23EA /* FileList.swift */,
+				0BFA2E5E2BE111AA00AD98D7 /* TabBtn.swift */,
+				0B8C7B2E2BE0E5F100B4E817 /* Tabs.swift */,
 			);
 			path = Content;
 			sourceTree = "<group>";
@@ -804,7 +804,6 @@
 				0BF75EE82BDF39B500A553CD /* PushExt.swift in Sources */,
 				0B1C67B82BD9128000502EB1 /* BtnRefresh.swift in Sources */,
 				0BD15C4E2BDBF360004024CF /* BtnMerge.swift in Sources */,
-				0BB543DD2BE86AD100D7A2B2 /* BannerBar.swift in Sources */,
 				0B8C7A6F2BE08CA800B4E817 /* ToolName.swift in Sources */,
 				0B1C67B52BD9115F00502EB1 /* Branches.swift in Sources */,
 				0B8C7B232BE0AD1D00B4E817 /* BannerModel.swift in Sources */,
@@ -816,7 +815,6 @@
 				0BB543EC2BE8932300D7A2B2 /* BtnDelIcon.swift in Sources */,
 				0B8C7B122BE08EDA00B4E817 /* ViewHelper.swift in Sources */,
 				0BCC6D0B2BD93E8C006ADA94 /* BtnAdd.swift in Sources */,
-				0B8C7AD92BE08E1900B4E817 /* BannerFields.swift in Sources */,
 				0BD15C632BDD40E1004024CF /* ListPlay.swift in Sources */,
 				0B1C68042BD9FAE500502EB1 /* BtnOpenXcode.swift in Sources */,
 				0BCC6D112BD94B5B006ADA94 /* BtnLog.swift in Sources */,
@@ -897,6 +895,7 @@
 				0BCC6D012BD92CB2006ADA94 /* DebugCommand.swift in Sources */,
 				0B8C7AE92BE08E2200B4E817 /* IconFields.swift in Sources */,
 				0B1C67BA2BD912D900502EB1 /* BtnCommit.swift in Sources */,
+				F545D1602C1AD436006A6AFA /* BannerTile.swift in Sources */,
 				0B8C7B252BE0BB7500B4E817 /* BannerList.swift in Sources */,
 				0B8C7ADD2BE08E1900B4E817 /* BanneriPhone.swift in Sources */,
 				0B1C68002BD9F68F00502EB1 /* BtnFinder.swift in Sources */,
@@ -922,6 +921,7 @@
 				0B8C7A662BE08C8700B4E817 /* DB.swift in Sources */,
 				0B76FD102BDDFC0100501F1F /* WebOption.swift in Sources */,
 				0B76FD1F2BDE2FB700501F1F /* DefaultReadyHandler.swift in Sources */,
+				F545D1622C1AD6F1006A6AFA /* BannerTopBar.swift in Sources */,
 				0BF75EE22BDE5CE500A553CD /* Stage.swift in Sources */,
 				0B1C67ED2BD9D9CB00502EB1 /* CommitCategory.swift in Sources */,
 				0B8C7AEA2BE08E2200B4E817 /* IconHome.swift in Sources */,

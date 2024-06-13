@@ -14,7 +14,7 @@ class AppManager: NSObject, ObservableObject, AVAudioPlayerDelegate {
     @Published var message: String = ""
     @Published var iconId: Int = 1
     @Published var backgroudId: String = "1"
-    @Published var banner: BannerModel?
+    @Published var banner: BannerModel = BannerModel.empty
     @Published var icon: IconModel?
     @Published var currentTab: ActionTab = (ActionTab(rawValue: AppConfig.currentTab) ?? .Git)
     @Published var sidebarVisibility = AppConfig.sidebarVisibility

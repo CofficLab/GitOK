@@ -10,7 +10,7 @@ struct Detail: View {
 
     var body: some View {
         if tab == .Banner {
-            BannerHome(banner: $app.banner)
+//            BannerHome(banner: $app.banner)
         } else if tab == .Icon {
             IconHome(icon: $app.icon)
         } else {
