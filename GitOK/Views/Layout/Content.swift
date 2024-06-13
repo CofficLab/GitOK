@@ -14,20 +14,20 @@ struct Content: View {
     var project: Project? { app.project }
 
     var body: some View {
-        NavigationSplitView(columnVisibility: $columnVisibility) {
-            Projects()
-        } content: {
-            Tabs(tab: $tab)
-                .frame(idealWidth: 300)
-                .frame(minWidth: 50)
-        } detail: {
-//            ZStack {
-//                // MARK: Detail
-//                Detail(tab: $tab)
-//                
-//                // MARK: Message
-//                Message()
-//            }
+        ZStack {
+            NavigationSplitView(columnVisibility: $columnVisibility) {
+                Projects()
+            } content: {
+                Tabs(tab: $tab)
+                    .frame(idealWidth: 300)
+                    .frame(minWidth: 50)
+            } detail: {
+                if tab == .Git {
+                    Detail(tab: $tab)
+                }
+            }
+            
+            Message()
         }
         .navigationTitle(project?.title ?? "")
         .onAppear {
@@ -65,7 +65,7 @@ struct Content: View {
                     }
                 })
             }
-        })
+    })
     }
 }
 
@@ -73,4 +73,5 @@ struct Content: View {
     RootView {
         Content()
     }
+    .frame(width: 800)
 }

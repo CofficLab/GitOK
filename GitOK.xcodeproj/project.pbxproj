@@ -74,7 +74,6 @@
 		0B8C7ADF2BE08E1900B4E817 /* BannerMacBook.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7AD22BE08E1900B4E817 /* BannerMacBook.swift */; };
 		0B8C7AE02BE08E1900B4E817 /* BannerMaker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7AD32BE08E1900B4E817 /* BannerMaker.swift */; };
 		0B8C7AE82BE08E2200B4E817 /* Icon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7AE12BE08E2200B4E817 /* Icon.swift */; };
-		0B8C7AE92BE08E2200B4E817 /* IconFields.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7AE22BE08E2200B4E817 /* IconFields.swift */; };
 		0B8C7AEA2BE08E2200B4E817 /* IconHome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7AE32BE08E2200B4E817 /* IconHome.swift */; };
 		0B8C7AEB2BE08E2200B4E817 /* IconItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7AE42BE08E2200B4E817 /* IconItem.swift */; };
 		0B8C7AEC2BE08E2200B4E817 /* IconAsset.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7AE52BE08E2200B4E817 /* IconAsset.swift */; };
@@ -143,6 +142,8 @@
 		0BFA2E5F2BE111AA00AD98D7 /* TabBtn.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BFA2E5E2BE111AA00AD98D7 /* TabBtn.swift */; };
 		F545D1602C1AD436006A6AFA /* BannerTile.swift in Sources */ = {isa = PBXBuildFile; fileRef = F545D15F2C1AD436006A6AFA /* BannerTile.swift */; };
 		F545D1622C1AD6F1006A6AFA /* BannerTopBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = F545D1612C1AD6F1006A6AFA /* BannerTopBar.swift */; };
+		F545D1642C1ADBD0006A6AFA /* IconTile.swift in Sources */ = {isa = PBXBuildFile; fileRef = F545D1632C1ADBD0006A6AFA /* IconTile.swift */; };
+		F545D1662C1ADE8B006A6AFA /* IconTopBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = F545D1652C1ADE8B006A6AFA /* IconTopBar.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -230,7 +231,6 @@
 		0B8C7AD22BE08E1900B4E817 /* BannerMacBook.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BannerMacBook.swift; sourceTree = "<group>"; };
 		0B8C7AD32BE08E1900B4E817 /* BannerMaker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BannerMaker.swift; sourceTree = "<group>"; };
 		0B8C7AE12BE08E2200B4E817 /* Icon.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Icon.swift; sourceTree = "<group>"; };
-		0B8C7AE22BE08E2200B4E817 /* IconFields.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IconFields.swift; sourceTree = "<group>"; };
 		0B8C7AE32BE08E2200B4E817 /* IconHome.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IconHome.swift; sourceTree = "<group>"; };
 		0B8C7AE42BE08E2200B4E817 /* IconItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IconItem.swift; sourceTree = "<group>"; };
 		0B8C7AE52BE08E2200B4E817 /* IconAsset.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IconAsset.swift; sourceTree = "<group>"; };
@@ -254,7 +254,7 @@
 		0B8C7B222BE0AD1D00B4E817 /* BannerModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerModel.swift; sourceTree = "<group>"; };
 		0B8C7B242BE0BB7500B4E817 /* BannerList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerList.swift; sourceTree = "<group>"; };
 		0B8C7B282BE0C6DB00B4E817 /* IconModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconModel.swift; sourceTree = "<group>"; };
-		0B8C7B2A2BE0C8F100B4E817 /* IconList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = IconList.swift; path = ../Content/IconList.swift; sourceTree = "<group>"; };
+		0B8C7B2A2BE0C8F100B4E817 /* IconList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconList.swift; sourceTree = "<group>"; };
 		0B8C7B2E2BE0E5F100B4E817 /* Tabs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tabs.swift; sourceTree = "<group>"; };
 		0B8C7B322BE0EAE900B4E817 /* ActionTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionTab.swift; sourceTree = "<group>"; };
 		0BB4278D2BE72512004E6F82 /* QueueExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QueueExt.swift; sourceTree = "<group>"; };
@@ -299,6 +299,8 @@
 		0BFA2E5E2BE111AA00AD98D7 /* TabBtn.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBtn.swift; sourceTree = "<group>"; };
 		F545D15F2C1AD436006A6AFA /* BannerTile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerTile.swift; sourceTree = "<group>"; };
 		F545D1612C1AD6F1006A6AFA /* BannerTopBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerTopBar.swift; sourceTree = "<group>"; };
+		F545D1632C1ADBD0006A6AFA /* IconTile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconTile.swift; sourceTree = "<group>"; };
+		F545D1652C1ADE8B006A6AFA /* IconTopBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconTopBar.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -369,7 +371,6 @@
 				0BFA2E602BE11E7200AD98D7 /* Content */,
 				0B1C67F72BD9E60500502EB1 /* Detail */,
 				0B1C67F82BD9E67E00502EB1 /* History */,
-				0B8C7AE72BE08E2200B4E817 /* Icon */,
 				0B1C67F62BD9E5E700502EB1 /* Layout */,
 			);
 			path = Views;
@@ -473,12 +474,13 @@
 			isa = PBXGroup;
 			children = (
 				0B8C7AD42BE08E1900B4E817 /* Banner */,
-				0B8C7AEF2BE08E2D00B4E817 /* Message.swift */,
 				0B1C67F02BD9DB1F00502EB1 /* CommitCategoryPicker.swift */,
 				0B1C67EE2BD9DACF00502EB1 /* CommitForm.swift */,
 				0BD15C602BDD33CC004024CF /* DiffView.swift */,
 				0BDE61AC2BDB4E86006E23EA /* FileTile.swift */,
+				0B8C7AE72BE08E2200B4E817 /* Icon */,
 				0BD15C4F2BDBF3BD004024CF /* MergeForm.swift */,
+				0B8C7AEF2BE08E2D00B4E817 /* Message.swift */,
 				0BD15C532BDCAF45004024CF /* NoChanges.swift */,
 			);
 			path = Detail;
@@ -616,12 +618,11 @@
 			isa = PBXGroup;
 			children = (
 				0B8C7AE12BE08E2200B4E817 /* Icon.swift */,
-				0B8C7B2A2BE0C8F100B4E817 /* IconList.swift */,
 				0B8C7AE52BE08E2200B4E817 /* IconAsset.swift */,
-				0B8C7AE22BE08E2200B4E817 /* IconFields.swift */,
 				0B8C7AE32BE08E2200B4E817 /* IconHome.swift */,
 				0B8C7AE42BE08E2200B4E817 /* IconItem.swift */,
 				0B8C7AE62BE08E2200B4E817 /* IconMaker.swift */,
+				F545D1652C1ADE8B006A6AFA /* IconTopBar.swift */,
 			);
 			path = Icon;
 			sourceTree = "<group>";
@@ -716,6 +717,8 @@
 				0B8C7B242BE0BB7500B4E817 /* BannerList.swift */,
 				F545D15F2C1AD436006A6AFA /* BannerTile.swift */,
 				0BDE61AA2BDB4AB8006E23EA /* FileList.swift */,
+				0B8C7B2A2BE0C8F100B4E817 /* IconList.swift */,
+				F545D1632C1ADBD0006A6AFA /* IconTile.swift */,
 				0BFA2E5E2BE111AA00AD98D7 /* TabBtn.swift */,
 				0B8C7B2E2BE0E5F100B4E817 /* Tabs.swift */,
 			);
@@ -808,6 +811,7 @@
 				0B1C67B52BD9115F00502EB1 /* Branches.swift in Sources */,
 				0B8C7B232BE0AD1D00B4E817 /* BannerModel.swift in Sources */,
 				0B1C67F32BD9E21B00502EB1 /* BtnOpenRemote.swift in Sources */,
+				F545D1662C1ADE8B006A6AFA /* IconTopBar.swift in Sources */,
 				0B8C7AF52BE08E2D00B4E817 /* Backgrounds.swift in Sources */,
 				0B44BCC62BDA947B00FBCF2F /* Branch.swift in Sources */,
 				0B8C7AC52BE08E0F00B4E817 /* ScreeniPad.swift in Sources */,
@@ -860,6 +864,7 @@
 				0B8C7B332BE0EAE900B4E817 /* ActionTab.swift in Sources */,
 				0BCC6D032BD932DA006ADA94 /* PathExt.swift in Sources */,
 				0B8C7ADC2BE08E1900B4E817 /* BanneriPad.swift in Sources */,
+				F545D1642C1ADBD0006A6AFA /* IconTile.swift in Sources */,
 				0BDE61AB2BDB4AB8006E23EA /* FileList.swift in Sources */,
 				0B8C7AF42BE08E2D00B4E817 /* Snapshot.swift in Sources */,
 				0BF75EE42BDF2CCD00A553CD /* Commits.swift in Sources */,
@@ -893,7 +898,6 @@
 				0BD15C4C2BDBE959004024CF /* StateExt.swift in Sources */,
 				0B76FD1D2BDE2D7900501F1F /* DefaultDownloadHandler.swift in Sources */,
 				0BCC6D012BD92CB2006ADA94 /* DebugCommand.swift in Sources */,
-				0B8C7AE92BE08E2200B4E817 /* IconFields.swift in Sources */,
 				0B1C67BA2BD912D900502EB1 /* BtnCommit.swift in Sources */,
 				F545D1602C1AD436006A6AFA /* BannerTile.swift in Sources */,
 				0B8C7B252BE0BB7500B4E817 /* BannerList.swift in Sources */,

@@ -6,6 +6,7 @@ import OSLog
 struct IconModel: JsonModel {
     static var root: String = ".gitok/icons"
     static var label = "💿 IconModel::"
+    static var empty = IconModel(path: "")
     
     var title: String = "1"
     var iconId: Int = 1

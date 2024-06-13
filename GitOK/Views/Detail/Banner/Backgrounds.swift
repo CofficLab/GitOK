@@ -8,11 +8,11 @@ struct Backgrounds: View {
             HStack(spacing: 0) {
                 ForEach(BackgroundView.all.sorted(by: { $0.key < $1.key }), id: \.key) { x, value in
                     makeItem(x, view: value)
-                        .frame(width: 100)
+                        .frame(width: 50)
                 }
                 Divider()
             }
-            .frame(height: 100)
+            .frame(height: 40)
         }
     }
 
@@ -27,6 +27,12 @@ struct Backgrounds: View {
         .onTapGesture {
             current = id
         }
+    }
+}
+
+#Preview("Backgrounds") {
+    RootView {
+        Backgrounds(current: .constant("3"))
     }
 }
 

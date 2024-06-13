@@ -9,11 +9,6 @@ struct Detail: View {
     var commit: GitCommit? { app.commit }
 
     var body: some View {
-        if tab == .Banner {
-//            BannerHome(banner: $app.banner)
-        } else if tab == .Icon {
-            IconHome(icon: $app.icon)
-        } else {
             if project?.isNotGit ?? false {
                 NotGit()
             } else {
@@ -39,7 +34,6 @@ struct Detail: View {
                 }
                 .frame(maxWidth: .infinity)
             }
-        }
     }
 }
 

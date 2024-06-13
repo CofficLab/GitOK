@@ -43,14 +43,8 @@ struct IconAsset: View {
     }
 }
 
-#Preview {
+#Preview("App") {
     AppPreview()
         .frame(height: 800)
         .frame(width: 800)
-}
-
-#Preview {
-    AppPreview()
-        .frame(height: 500)
-        .frame(width: 500)
 }
