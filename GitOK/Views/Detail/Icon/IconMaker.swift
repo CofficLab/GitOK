@@ -9,7 +9,7 @@ struct IconMaker: View {
     private let tag = TimeHelper.getTimeString()
     private var folderName: String { "AppIcon-\(tag).appiconset" }
     private var image: some View {
-        Icon(url: imageURL, iconId: iconId, background: BackgroundView.all[backgroundId])
+        Icon(url: imageURL, iconId: iconId, background: BackgroundGroup.all[backgroundId])
     }
 
     @State private var imageSet: [Any] = []

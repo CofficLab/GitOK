@@ -6,7 +6,7 @@ struct Backgrounds: View {
     var body: some View {
         ScrollView(.horizontal) {
             HStack(spacing: 0) {
-                ForEach(BackgroundView.all.sorted(by: { $0.key < $1.key }), id: \.key) { x, value in
+                ForEach(BackgroundGroup.all.sorted(by: { $0.key < $1.key }), id: \.key) { x, value in
                     makeItem(x, view: value)
                         .frame(width: 50)
                 }

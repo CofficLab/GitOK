@@ -12,7 +12,7 @@ struct Message: View {
                     .padding(.vertical, 20)
                     .foregroundStyle(.white)
             }
-            .background(BackgroundView.type1)
+            .background(BackgroundGroup.yellow2blue)
             .cornerRadius(8)
             .shadow(color: Color.gray, radius: 12, x: 2, y: 2)
         }

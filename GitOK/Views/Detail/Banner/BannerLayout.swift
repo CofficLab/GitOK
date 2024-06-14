@@ -42,7 +42,7 @@ struct BannerLayout: View {
                 }
             }
         }
-        .background(BackgroundView.all[banner.backgroundId])
+        .background(BackgroundGroup.all[banner.backgroundId])
     }
 }
 
