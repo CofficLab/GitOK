@@ -1,14 +1,10 @@
 import SwiftUI
 
 struct BanneriPhone: View {
-    var url: URL? = nil
-    var iconId: String? = nil
-    var device: Device
-    var title: String
-    var subTitle: String
-    var inScreen: Bool = true
-    var badges: [String]
-    var image: Image
+    @State var isEditingTitle = false
+    @State var isEditingSubTitle = false
+
+    @Binding var banner: BannerModel
 
     var body: some View {
         VStack(spacing: 0, content: {
@@ -16,16 +12,17 @@ struct BanneriPhone: View {
             Spacer()
             getContent().frame(maxHeight: .infinity)
         })
+        .background(BackgroundView.all[banner.backgroundId])
     }
 
     // MARK: 主标题与副标题
 
     private func getTitle() -> some View {
         VStack {
-            Text(title)
+            Text(banner.title)
                 .font(.system(size: 200))
                 .padding(.bottom, 50)
-            Text(subTitle)
+            Text(banner.subTitle)
                 .font(.system(size: 100))
                 .padding(.bottom, 50)
         }
@@ -35,20 +32,20 @@ struct BanneriPhone: View {
 
     private func getContent() -> some View {
         ZStack {
-            if inScreen {
+            if banner.inScreen {
                 ScreeniPhone(content: {
-                    image.resizable().scaledToFit()
+                    banner.getImage().resizable().scaledToFit()
                 })
             } else {
-                switch device.type {
+                switch banner.getDevice().type {
                 case .Mac:
-                    image.resizable()
+                    banner.getImage().resizable()
                         .scaledToFit()
                 case .iPhone:
-                    image.resizable()
+                    banner.getImage().resizable()
                         .scaledToFit()
                 case .iPad:
-                    image.resizable()
+                    banner.getImage().resizable()
                         .scaledToFit()
                 }
             }

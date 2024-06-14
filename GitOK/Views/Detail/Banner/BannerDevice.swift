@@ -9,14 +9,7 @@ struct BannerDevice: View {
             case .iMac,.MacBook:
                 BannerDesktop(banner: $banner)
             case .iPhoneSmall, .iPhoneBig:
-                BanneriPhone(
-                    device: Device(rawValue: banner.device)!,
-                    title: banner.title,
-                    subTitle: banner.subTitle,
-                    inScreen: banner.inScreen,
-                    badges: banner.features,
-                    image: banner.getImage()
-                )
+                BanneriPhone(banner: $banner)
             case .iPad,.none:
                 BanneriPad(
                     device: Device(rawValue: banner.device)!,
