@@ -20,7 +20,7 @@ struct Backgrounds: View {
         ZStack(alignment: .leading) {
             view
 
-            Text(id).padding(.leading, 10)
+//            Text(id).padding(.leading, 10)
         }
         .border(current == id ? .blue : .clear)
         .background(current == id ? .brown.opacity(0.8) : .clear)
