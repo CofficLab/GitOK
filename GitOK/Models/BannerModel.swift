@@ -6,9 +6,10 @@ import SwiftUI
 struct BannerModel: JsonModel {
     static var root: String = ".gitok/banners"
     static var label = "💿 BannerModel::"
+    static var empty = BannerModel(path: "")
 
-    var title = ""
-    var subTitle = ""
+    var title = "BannerModel-Title"
+    var subTitle = "BannerModel-SubTitle"
     var features: [String] = []
     var imageURL: URL?
     var backgroundId: String = "1"
@@ -32,11 +33,26 @@ struct BannerModel: JsonModel {
         self.backgroundId = backgroundId
         self.path = path
 
-        self.save()
+        save()
     }
 
     func getDevice() -> Device {
-        Device(rawValue: self.device)!
+        Device(rawValue: device)!
+    }
+
+    func getImage() -> Image {
+        var image = Image("Snapshot-1")
+
+        if getDevice() == .iPad {
+            image = Image("Snapshot-iPad")
+        }
+
+        if let url = imageURL, let data = try? Data(contentsOf: url),
+           let nsImage = NSImage(data: data) {
+            image = Image(nsImage: nsImage)
+        }
+
+        return image
     }
 }
 
@@ -48,7 +64,7 @@ extension BannerModel {
             do {
                 var banner = try JSONDecoder().decode(BannerModel.self, from: jsonData)
                 banner.path = jsonFile.path
-                
+
                 return banner
             } catch {
                 print("Error decoding JSON: \(error)")
@@ -81,7 +97,7 @@ extension BannerModel {
 
         return BannerModel.fromFile(fileURL)
     }
-    
+
     static func all(_ projectPath: String) -> [BannerModel] {
         var models: [BannerModel] = []
 
@@ -92,7 +108,7 @@ extension BannerModel {
 
         // 创建 FileManager 实例
         let fileManager = FileManager.default
-        
+
         var isDir: ObjCBool = true
         if !fileManager.fileExists(atPath: directoryPath, isDirectory: &isDir) {
             return []
@@ -138,34 +154,35 @@ extension BannerModel {
 // MARK: 更新
 
 extension BannerModel {
-    mutating func updateBackgroundId(_ id: String) {
-        self.backgroundId = id
-        self.save()
-    }
-    
-    mutating func updateTitle(_ t: String) {
-        os_log("\(BannerModel.label)UpdateTitle->\(t)")
-        self.title = t
-        self.save()
-    }
-    
-    mutating func updateSubTitle(_ t: String) {
-        self.subTitle = t
-        self.save()
-    }
-    
-    mutating func updateImage(_ u: URL) {
-        self.imageURL = u
-        self.save()
-    }
-    
-    mutating func updateFeatures(_ f: [String]) {
-        self.features = f
-        self.save()
-    }
+//    mutating func updateBackgroundId(_ id: String) {
+//        self.backgroundId = id
+//        self.save()
+//    }
+//
+//    mutating func updateTitle(_ t: String) {
+//        os_log("\(BannerModel.label)UpdateTitle->\(t)")
+//        self.title = t
+//        self.save()
+//    }
+//
+//    mutating func updateSubTitle(_ t: String) {
+//        self.subTitle = t
+//        self.save()
+//    }
+//
+//    mutating func updateImage(_ u: URL) {
+//        self.imageURL = u
+//        self.save()
+//    }
+//
+//    mutating func updateFeatures(_ f: [String]) {
+//        self.features = f
+//        self.save()
+//    }
 }
 
 #Preview {
     AppPreview()
         .frame(width: 800)
+        .frame(height: 600)
 }

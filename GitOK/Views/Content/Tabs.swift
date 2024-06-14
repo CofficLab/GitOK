@@ -2,7 +2,7 @@ import SwiftUI
 
 struct Tabs: View {
     @EnvironmentObject var app: AppManager
-    
+
     @Binding var tab: ActionTab
 
     var body: some View {
@@ -30,7 +30,7 @@ struct Tabs: View {
 
             ZStack {
                 if self.tab == .Git {
-                    History()
+                    CommitList()
                 } else if self.tab == .Banner {
                     BannerList()
                 } else if self.tab == .Icon {
@@ -45,4 +45,6 @@ struct Tabs: View {
 
 #Preview {
     AppPreview()
+        .frame(width: 800)
+        .frame(height: 800)
 }

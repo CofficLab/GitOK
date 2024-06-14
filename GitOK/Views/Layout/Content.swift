@@ -14,34 +14,32 @@ struct Content: View {
     var project: Project? { app.project }
 
     var body: some View {
-        NavigationSplitView(columnVisibility: $columnVisibility) {
-            Projects()
-        } content: {
-            Tabs(tab: $tab)
-                .frame(idealWidth: 300)
-                .frame(minWidth: 50)
-        } detail: {
-            ZStack {
-                Detail(tab: $tab)
-                Message()
+        ZStack {
+            NavigationSplitView(columnVisibility: $columnVisibility) {
+                Projects()
+            } content: {
+                Tabs(tab: $tab)
+                    .frame(idealWidth: 300)
+                    .frame(minWidth: 50)
+            } detail: {
+                Text("选择一个项目")
             }
+            
+            Message()
         }
         .navigationTitle(project?.title ?? "")
         .onAppear {
-            print("on appear sideddd \(app.sidebarVisibility)")
             if app.sidebarVisibility == true {
                 self.columnVisibility = .all
             }
             
             if app.sidebarVisibility == false {
-                print("hide sidebar")
                 self.columnVisibility = .doubleColumn
             }
         }
         .onChange(of: self.columnVisibility, {
             print(self.columnVisibility)
             if columnVisibility == .doubleColumn {
-                print("hide sidebar")
                 app.hideSidebar()
             } else if columnVisibility == .automatic || columnVisibility == .all {
                 app.showSidebar()
@@ -62,11 +60,13 @@ struct Content: View {
                     }
                 })
             }
-        })
+    })
     }
 }
 
 #Preview {
-    AppPreview()
-        .frame(width: 800)
+    RootView {
+        Content()
+    }
+    .frame(width: 800)
 }

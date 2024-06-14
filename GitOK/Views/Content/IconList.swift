@@ -4,16 +4,17 @@ import SwiftUI
 struct IconList: View {
     @EnvironmentObject var app: AppManager
 
-    @State var icon: IconModel?
+    @State var selection: IconModel = .empty
     @State var icons: [IconModel] = []
 
     var body: some View {
         VStack(spacing: 0) {
-            List(icons, id: \.self, selection: $icon) { icon in
-                Text(icon.title)
+            List(icons, selection: $selection) { icon in
+                IconTile(icon: icon, selected: self.selection)
                     .contextMenu(ContextMenu(menuItems: {
                         BtnDelIcon(icon: icon, callback: refresh)
                     }))
+                    .tag(icon)
             }
             
             // 操作
@@ -27,10 +28,6 @@ struct IconList: View {
                 .labelStyle(.iconOnly)
             }
         }
-        .onChange(of: icon) {
-            app.icon = icon
-            refresh()
-        }
         .onChange(of: app.project, refresh)
         .onAppear(perform: refresh)
     }
@@ -39,11 +36,11 @@ struct IconList: View {
         if let project = app.project {
             self.icons = IconModel.all(project.path)
             
-            if let i = self.icon, icons.contains(i) {
+            if icons.contains(selection) {
                 return
             }
             
-            self.icon = icons.first
+            self.selection = icons.first ?? .empty
         }
     }
 }

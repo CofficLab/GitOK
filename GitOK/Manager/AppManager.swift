@@ -7,15 +7,8 @@ import SwiftUI
 
 class AppManager: NSObject, ObservableObject, AVAudioPlayerDelegate {
     @Published var branches: [String] = []
-    @Published var commit: GitCommit?
-    @Published var commitId: String?
     @Published var project: Project?
-    @Published var file: File?
     @Published var message: String = ""
-    @Published var iconId: Int = 1
-    @Published var backgroudId: String = "1"
-    @Published var banner: BannerModel?
-    @Published var icon: IconModel?
     @Published var currentTab: ActionTab = (ActionTab(rawValue: AppConfig.currentTab) ?? .Git)
     @Published var sidebarVisibility = AppConfig.sidebarVisibility
 
@@ -94,4 +87,5 @@ class AppManager: NSObject, ObservableObject, AVAudioPlayerDelegate {
 #Preview {
     AppPreview()
         .frame(width: 800)
+        .frame(height: 800)
 }
