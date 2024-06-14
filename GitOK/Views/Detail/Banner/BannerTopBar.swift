@@ -1,8 +1,6 @@
 import SwiftUI
 
 struct BannerTopBar: View {
-    @State var tab: ActionTab = .Git
-    @State var inScreen: Bool = false
     @State var device: Device = .MacBook
 
     @Binding var snapshotTapped: Bool
@@ -28,35 +26,7 @@ struct BannerTopBar: View {
                     self.banner.device = device.rawValue
                 }
 
-                Toggle(isOn: $inScreen, label: {
-                    Text("显示边框")
-                })
-                .padding()
-                .onAppear {
-                    self.inScreen = self.banner.inScreen
-                }
-                .onChange(of: inScreen) {
-                    self.banner.inScreen = inScreen
-                }
-
                 Spacer()
-
-                // MARK: Change Image
-                Button("换图") {
-                    let panel = NSOpenPanel()
-                    panel.allowsMultipleSelection = false
-                    panel.canChooseDirectories = false
-                    if panel.runModal() == .OK, let url = panel.url {
-                        let ext = url.pathExtension
-                        let storeURL = AppConfig.imagesDir.appendingPathComponent("\(TimeHelper.getTimeString()).\(ext)")
-                        do {
-                            try FileManager.default.copyItem(at: url, to: storeURL)
-                            self.banner.imageURL = storeURL
-                        } catch let e {
-                            print(e)
-                        }
-                    }
-                }
 
                 TabBtn(
                     title: "截图",

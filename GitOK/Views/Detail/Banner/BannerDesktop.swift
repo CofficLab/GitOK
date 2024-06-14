@@ -3,9 +3,9 @@ import SwiftUI
 struct BannerDesktop: View {
     @State var isEditingTitle = false
     @State var isEditingSubTitle = false
-    
+
     @Binding var banner: BannerModel
-    
+
     var device: Device { banner.getDevice() }
     var image: Image { banner.getImage() }
 
@@ -50,7 +50,7 @@ struct BannerDesktop: View {
                         self.isEditingTitle = true
                     }
             }
-            
+
             if isEditingSubTitle {
                 GeometryReader { geo in
                     TextField("副标题", text: $banner.subTitle)
@@ -82,23 +82,56 @@ struct BannerDesktop: View {
     private func getContent() -> some View {
         ZStack {
             if banner.inScreen {
-                ScreeniMac(content: {
-                    image.resizable().scaledToFit()
-                })
-            } else {
-                switch device.type {
-                case .Mac:
-                    image.resizable()
-                        .scaledToFit()
-                case .iPhone:
-                    image.resizable()
-                        .scaledToFit()
+                switch banner.getDevice() {
+                case .iMac:
+                    ScreeniMac(content: {
+                        image.resizable().scaledToFit()
+                    })
+                case .MacBook:
+                    ScreenMacBook(content: {
+                        image.resizable().scaledToFit()
+                    })
+                case .iPhoneBig:
+                    ScreeniMac(content: {
+                        image.resizable().scaledToFit()
+                    })
+                case .iPhoneSmall:
+                    ScreeniMac(content: {
+                        image.resizable().scaledToFit()
+                    })
                 case .iPad:
-                    image.resizable()
-                        .scaledToFit()
+                    ScreeniMac(content: {
+                        image.resizable().scaledToFit()
+                    })
                 }
+            } else {
+                image.resizable()
+                    .scaledToFit()
             }
         }
+        .contextMenu(menuItems: {
+            Button("显示/隐藏边框") {
+                banner.inScreen.toggle()
+            }
+
+            // MARK: Change Image
+
+            Button("换图") {
+                let panel = NSOpenPanel()
+                panel.allowsMultipleSelection = false
+                panel.canChooseDirectories = false
+                if panel.runModal() == .OK, let url = panel.url {
+                    let ext = url.pathExtension
+                    let storeURL = AppConfig.imagesDir.appendingPathComponent("\(TimeHelper.getTimeString()).\(ext)")
+                    do {
+                        try FileManager.default.copyItem(at: url, to: storeURL)
+                        self.banner.imageURL = storeURL
+                    } catch let e {
+                        print(e)
+                    }
+                }
+            }
+        })
     }
 }
 
@@ -115,15 +148,15 @@ struct BannerDesktop: View {
         backgroundId: "1",
         path: "E"
     )
-    
+
     return RootView {
         GeometryReader { geo in
             BannerDesktop(banner: $banner)
-            .frame(width: geo.size.width)
-            .frame(height: geo.size.height)
-            .alignmentGuide(HorizontalAlignment.center) { _ in geo.size.width / 2 }
-            .alignmentGuide(VerticalAlignment.center) { _ in geo.size.height / 2 }
-            .scaleEffect(min(geo.size.width/Device.iMac.width, geo.size.height/Device.iMac.height))
+                .frame(width: geo.size.width)
+                .frame(height: geo.size.height)
+                .alignmentGuide(HorizontalAlignment.center) { _ in geo.size.width / 2 }
+                .alignmentGuide(VerticalAlignment.center) { _ in geo.size.height / 2 }
+                .scaleEffect(min(geo.size.width / Device.iMac.width, geo.size.height / Device.iMac.height))
         }
     }
     .frame(width: 800)
