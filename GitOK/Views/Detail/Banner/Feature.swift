@@ -21,7 +21,7 @@ struct Feature: View {
         }
         .padding(40)
         .font(.system(size: 80))
-        .background(BackgroundGroup.green2blue)
+        .background(BackgroundGroup.green2blue_tl2br)
         .cornerRadius(48)
     }
 }
