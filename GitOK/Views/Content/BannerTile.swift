@@ -14,6 +14,9 @@ struct BannerTile: View {
                 ifPresented()
             }
             .onAppear(perform: ifPresented)
+            .onChange(of: banner, {
+                banner.save()
+            })
     }
     
     func ifPresented() {
