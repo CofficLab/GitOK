@@ -4,32 +4,16 @@ struct BannerLive: View {
     @EnvironmentObject var app: AppManager
     @Binding var snapshotTapped: Bool
     @State var visible = false
-    
+
     var onMessage: (_ message: String) -> Void
     var width: CGFloat = 1024
     var height: CGFloat = 1024
-    var banner: BannerModel
+    @Binding var banner: BannerModel
 
     @MainActor private var imageSize: String {
         "\(ImageHelper.getViewWidth(content)) X \(ImageHelper.getViewHeigth(content))"
     }
-    
-    var image: Image {
-        var image = Image("Snapshot-1")
-        
-        if banner.getDevice() == .iPad {
-            image = Image("Snapshot-iPad")
-        }
 
-        if let url = banner.imageURL, let data = try? Data(contentsOf: url),
-           let nsImage = NSImage(data: data)
-        {
-            image = Image(nsImage: nsImage)
-        }
-
-        return image
-    }
-    
     var body: some View {
         // 异步加载banner，加快响应速度
         ZStack {
@@ -39,14 +23,32 @@ struct BannerLive: View {
                         visible = true
                     }
             }
-            
+
             if visible {
-                bannerBody
+                viewBody
             }
         }
+        .onChange(of: snapshotTapped, {
+            if snapshotTapped {
+                onMessage(ImageHelper.snapshot(content, title: "\(banner.device)-\(self.getTimeString())"))
+                self.snapshotTapped = false
+            }
+        })
     }
 
-    var bannerBody: some View {
+    var viewBody: some View {
+        GeometryReader { geo in
+            content
+                .frame(width: geo.size.width)
+                .frame(height: geo.size.height)
+                .alignmentGuide(HorizontalAlignment.center) { _ in geo.size.width / 2 }
+                .alignmentGuide(VerticalAlignment.center) { _ in geo.size.height / 2 }
+                .scaleEffect(min(geo.size.width / banner.getDevice().width, geo.size.height / banner.getDevice().height))
+        }
+        .padding()
+    }
+
+    var imageBody: some View {
         HStack {
             Spacer()
             VStack {
@@ -59,21 +61,10 @@ struct BannerLive: View {
             }
             Spacer()
         }
-        .onChange(of: snapshotTapped, {
-            if snapshotTapped {
-                onMessage(ImageHelper.snapshot(content, title: "\(banner.device)-\(self.getTimeString())"))
-                self.snapshotTapped = false
-            }
-        })
     }
 
     private var content: some View {
-        ZStack {
-            BannerDevice(banner: banner, image: image)
-        }
-        .foregroundStyle(.white)
-        .frame(width: banner.getDevice().width, height: banner.getDevice().height)
-        .background(BackgroundView.all[banner.backgroundId])
+        BannerDevice(banner: $banner)
     }
 
     private func getTimeString() -> String {

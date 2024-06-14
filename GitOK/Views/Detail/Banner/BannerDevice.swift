@@ -1,30 +1,13 @@
 import SwiftUI
 
 struct BannerDevice: View {
-    var banner: BannerModel
-    var image: Image
+    @Binding var banner: BannerModel
 
     var body: some View {
         ZStack {
             switch Device.init(rawValue: banner.device) {
-            case .iMac:
-                BanneriMac(
-                    device: Device(rawValue: banner.device)!,
-                    title: banner.title,
-                    subTitle: banner.subTitle,
-                    inScreen: banner.inScreen,
-                    badges: banner.features,
-                    image: image
-                )
-            case .MacBook:
-                BannerMacBook(
-                    device: Device(rawValue: banner.device)!,
-                    title: banner.title,
-                    subTitle: banner.subTitle,
-                    inScreen: banner.inScreen,
-                    badges: banner.features,
-                    image: image
-                )
+            case .iMac,.MacBook:
+                BannerDesktop(banner: $banner)
             case .iPhoneSmall, .iPhoneBig:
                 BanneriPhone(
                     device: Device(rawValue: banner.device)!,
@@ -32,7 +15,7 @@ struct BannerDevice: View {
                     subTitle: banner.subTitle,
                     inScreen: banner.inScreen,
                     badges: banner.features,
-                    image: image
+                    image: banner.getImage()
                 )
             case .iPad,.none:
                 BanneriPad(
@@ -41,7 +24,7 @@ struct BannerDevice: View {
                     subTitle: banner.subTitle,
                     inScreen: banner.inScreen,
                     badges: banner.features,
-                    image: image
+                    image: banner.getImage()
                 )
             }
         }

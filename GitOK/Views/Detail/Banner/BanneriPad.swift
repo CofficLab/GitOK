@@ -44,7 +44,7 @@ struct BanneriPad: View {
     private func getBadges() -> some View {
         VStack(spacing: 50) {
             ForEach(badges, id: \.self) { badge in
-                Badge(title: badge)
+//                Badge(title: badge)
             }
         }
     }

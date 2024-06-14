@@ -51,20 +51,12 @@ struct BannerTopBar: View {
                         let storeURL = AppConfig.imagesDir.appendingPathComponent("\(TimeHelper.getTimeString()).\(ext)")
                         do {
                             try FileManager.default.copyItem(at: url, to: storeURL)
-                            self.banner.updateImage(storeURL)
+                            self.banner.imageURL = storeURL
                         } catch let e {
                             print(e)
                         }
                     }
                 }
-                
-                // MARK: New Feature
-                Button(action: {
-                    banner.features.append("新特性")
-                }) {
-                    Label("增加新特性", systemImage: "plus")
-                }
-                .labelStyle(.iconOnly)
 
                 TabBtn(
                     title: "截图",
@@ -83,27 +75,6 @@ struct BannerTopBar: View {
             // MARK: Row2
             
             Backgrounds(current: $banner.backgroundId)
-            
-            // MARK: Row3
-            VStack {
-                GroupBox {
-                    TextField("title", text: $banner.title)
-                    TextField("subTitle", text: $banner.subTitle)
-                }
-
-                GroupBox {
-                    ForEach(0 ..< banner.features.count, id: \.self) { index in
-                        HStack {
-                            Button(action: {
-                                banner.features.remove(at: index)
-                            }) {
-                                Label("减少", systemImage: "minus")
-                            }.labelStyle(.iconOnly)
-                            TextField("输入特性", text: $banner.features[index])
-                        }
-                    }
-                }
-            }
         }
     }
 }
@@ -128,4 +99,5 @@ struct BannerTopBar: View {
 
 #Preview("App") {
     AppPreview()
+        .frame(height: 800)
 }

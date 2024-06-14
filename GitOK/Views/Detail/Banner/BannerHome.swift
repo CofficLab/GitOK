@@ -15,7 +15,7 @@ struct BannerHome: View {
                 onMessage: { message in
                     app.setMessage(message)
                 },
-                 banner: banner
+                 banner: $banner
             )
         }
     }
