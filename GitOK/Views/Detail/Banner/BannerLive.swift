@@ -65,6 +65,8 @@ struct BannerLive: View {
 
     private var content: some View {
         BannerDevice(banner: $banner)
+            .frame(width: banner.getDevice().width)
+            .frame(height: banner.getDevice().height)
     }
 
     private func getTimeString() -> String {
