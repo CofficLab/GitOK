@@ -2,7 +2,6 @@ import SwiftUI
 
 struct Features: View {
     @Binding var features: [String]
-
     @State var hovering = false
 
     var body: some View {
@@ -13,9 +12,8 @@ struct Features: View {
             ForEach(Array($features.enumerated()), id: \.offset) { i, badge in
                 Feature(title: badge)
                     .contextMenu(ContextMenu(menuItems: {
-                        Button("删除", action: {
-                            features.remove(atOffsets: [i])
-                        })
+                        btnDel(i)
+                        btnAdd
                     }))
             }
         }
@@ -23,19 +21,29 @@ struct Features: View {
         .background(.red.opacity(0.01))
         .clipShape(Rectangle())
         .contextMenu(menuItems: {
-            Button(action: {
-                features.append("新特性")
-            }) {
-                Label("增加新特性", systemImage: "plus")
-            }
+            btnAdd
         })
         .onHover(perform: { hovering in
             self.hovering = hovering
         })
     }
+
+    func btnDel(_ i: Int) -> some View {
+        Button("删除", action: {
+            features.remove(atOffsets: [i])
+        })
+    }
+
+    var btnAdd: some View {
+        Button(action: {
+            features.append("新特性")
+        }) {
+            Label("增加新特性", systemImage: "plus")
+        }
+    }
 }
 
-#Preview {
+#Preview("App") {
     RootView {
         Content()
     }
