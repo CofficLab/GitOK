@@ -43,6 +43,7 @@ struct BannerLayout: View {
             }
         }
         .background(BackgroundGroup.all[banner.backgroundId])
+        .opacity(banner.opacity)
     }
 }
 

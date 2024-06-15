@@ -27,6 +27,7 @@ struct BannerTopBar: View {
                 }
 
                 Spacer()
+                BannerOpacity(banner: $banner)
 
                 TabBtn(
                     title: "截图",

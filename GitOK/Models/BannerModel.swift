@@ -15,6 +15,7 @@ struct BannerModel: JsonModel {
     var backgroundId: String = "1"
     var inScreen = false
     var device: String = Device.iMac.rawValue
+    var opacity: Double = 1.0
     var path: String?
     var label: String = BannerModel.label
 
@@ -86,6 +87,7 @@ extension BannerModel: Codable {
         case imageURL
         case subTitle
         case title
+        case opacity
     }
 }
 
