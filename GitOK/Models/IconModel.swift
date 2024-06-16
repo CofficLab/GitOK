@@ -13,6 +13,21 @@ struct IconModel: JsonModel {
     var backgroundId: String = "2"
     var imageURL: URL? = nil
     var path: String?
+    var opacity: Double = 1
+    
+    
+    var image: Image {
+        if let url = self.imageURL {
+            return Image(nsImage: NSImage(data: try! Data(contentsOf: url))!)
+        }
+
+        return IconPng.getImage(self.iconId)
+    }
+    
+    var background: some View {
+        BackgroundGroup.all[self.backgroundId]
+            .opacity(self.opacity)
+    }
     
     var label: String { IconModel.label }
     

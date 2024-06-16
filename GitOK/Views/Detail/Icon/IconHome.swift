@@ -12,6 +12,8 @@ struct IconHome: View {
 
     var body: some View {
         VStack {
+            // MARK: IconTopBar
+            
             IconTopBar(snapshotTapped: $snapshotTapped, icon: $icon)
             GeometryReader { geo in
                 HStack {
@@ -24,8 +26,7 @@ struct IconHome: View {
 
                     IconMaker(
                         snapshotTapped: $snapshotTapped,
-                        iconId: icon.iconId,
-                        backgroundId: icon.backgroundId
+                        icon: $icon
                     )
                     .tag(Optional(icon))
                     .tabItem { Text(icon.title) }

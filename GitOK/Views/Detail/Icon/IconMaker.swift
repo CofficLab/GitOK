@@ -5,19 +5,16 @@ struct IconMaker: View {
     @EnvironmentObject var app: AppManager
 
     @Binding var snapshotTapped: Bool
+    @Binding var icon: IconModel
 
     private let tag = TimeHelper.getTimeString()
     private var folderName: String { "AppIcon-\(tag).appiconset" }
-    private var image: some View {
-        Icon(url: imageURL, iconId: iconId, background: BackgroundGroup.all[backgroundId])
-    }
+
 
     @State private var imageSet: [Any] = []
     @State private var folderPath: URL? = nil
     @State private var imageURL: URL? = nil
 
-    var iconId: Int
-    var backgroundId: String
     var withBorder = false
 
     var body: some View {
@@ -57,14 +54,24 @@ struct IconMaker: View {
     }
 
     var macOSView: some View {
-        image.clipShape(RoundedRectangle(cornerSize: CGSize(
+        ZStack {
+            // MARK: 背景色
+
+            icon.background
+
+            HStack {
+                icon.image.resizable().scaledToFit()
+            }.scaleEffect(1.8)
+        }
+        .frame(width: 1024, height: 1024)
+        .clipShape(RoundedRectangle(cornerSize: CGSize(
             width: 200,
             height: 200
         ))).padding(100)
     }
 
     var iOSView: some View {
-        image
+        icon.image
     }
 
     private func getContainerWidth(_ geo: GeometryProxy) -> CGFloat {

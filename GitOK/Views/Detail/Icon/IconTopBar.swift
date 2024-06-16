@@ -11,6 +11,7 @@ struct IconTopBar: View {
     var body: some View {
         VStack(spacing: 0) {
             HStack {
+                IconOpacity(icon: $icon)
                 Spacer()
                 Button("换图") {
                     let panel = NSOpenPanel()
