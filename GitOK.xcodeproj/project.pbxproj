@@ -141,7 +141,7 @@
 		F5F794DC2C5A0D7D00DCB824 /* CommitSample.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5F794DB2C5A0D7D00DCB824 /* CommitSample.swift */; };
 		F5F794E02C5A1D2600DCB824 /* FileList.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5F794DF2C5A1D2600DCB824 /* FileList.swift */; };
 		F5F794E92C5B192600DCB824 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = F5F794E82C5B192600DCB824 /* Sparkle */; };
-		F5F794EB2C5B3E8100DCB824 /* CheckForUpdatesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5F794EA2C5B3E8100DCB824 /* CheckForUpdatesViewModel.swift */; };
+		F5F794EB2C5B3E8100DCB824 /* UpdaterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5F794EA2C5B3E8100DCB824 /* UpdaterView.swift */; };
 		F5FBCC342C3FB96000CED4F1 /* Detail.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5FBCC332C3FB96000CED4F1 /* Detail.swift */; };
 /* End PBXBuildFile section */
 
@@ -296,7 +296,7 @@
 		F545D1702C1C155E006A6AFA /* BannerImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerImage.swift; sourceTree = "<group>"; };
 		F5F794DB2C5A0D7D00DCB824 /* CommitSample.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommitSample.swift; sourceTree = "<group>"; };
 		F5F794DF2C5A1D2600DCB824 /* FileList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileList.swift; sourceTree = "<group>"; };
-		F5F794EA2C5B3E8100DCB824 /* CheckForUpdatesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckForUpdatesViewModel.swift; sourceTree = "<group>"; };
+		F5F794EA2C5B3E8100DCB824 /* UpdaterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdaterView.swift; sourceTree = "<group>"; };
 		F5FBCC332C3FB96000CED4F1 /* Detail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Detail.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -654,7 +654,7 @@
 			children = (
 				0B0E16802BD89A8F0078942B /* GitOKApp.swift */,
 				0B8C7AB22BE08DD100B4E817 /* RootView.swift */,
-				F5F794EA2C5B3E8100DCB824 /* CheckForUpdatesViewModel.swift */,
+				F5F794EA2C5B3E8100DCB824 /* UpdaterView.swift */,
 			);
 			path = Bootstrap;
 			sourceTree = "<group>";
@@ -937,7 +937,7 @@
 				0BB543E02BE8875700D7A2B2 /* BtnDelBanner.swift in Sources */,
 				0B8C7B172BE08EDA00B4E817 /* Loading.swift in Sources */,
 				0B76FD062BDDF79600501F1F /* WebApi.swift in Sources */,
-				F5F794EB2C5B3E8100DCB824 /* CheckForUpdatesViewModel.swift in Sources */,
+				F5F794EB2C5B3E8100DCB824 /* UpdaterView.swift in Sources */,
 				0B76FCEF2BDDD12A00501F1F /* WebConfig.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1067,7 +1067,7 @@
 				CODE_SIGN_ENTITLEMENTS = GitOK/GitOK.entitlements;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 109;
+				CURRENT_PROJECT_VERSION = 110;
 				DEVELOPMENT_ASSET_PATHS = "\"GitOK/Preview Content\"";
 				DEVELOPMENT_TEAM = Y6HZ9JJYV6;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -1090,7 +1090,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 1.1.1;
+				MARKETING_VERSION = 1.1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yueyi.GitOK;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
@@ -1109,7 +1109,7 @@
 				CODE_SIGN_ENTITLEMENTS = GitOK/GitOK.entitlements;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 109;
+				CURRENT_PROJECT_VERSION = 110;
 				DEVELOPMENT_ASSET_PATHS = "\"GitOK/Preview Content\"";
 				DEVELOPMENT_TEAM = Y6HZ9JJYV6;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -1132,7 +1132,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 1.1.1;
+				MARKETING_VERSION = 1.1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yueyi.GitOK;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;

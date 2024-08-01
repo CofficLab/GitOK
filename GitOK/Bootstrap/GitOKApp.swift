@@ -23,7 +23,7 @@ struct GitOKApp: App {
             DebugCommand() 
             
             CommandGroup(after: .appInfo) {
-                CheckForUpdatesView(updater: updaterController.updater)
+                UpdaterView(updater: updaterController.updater)
             }
         })
         
