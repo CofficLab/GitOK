@@ -1,0 +1,14 @@
+diff --git a/GitOK/Resources/sample_macOS/GitOK.xcodeproj/project.xcworkspace/xcshareddata/IDEWorkspaceChecks.plist b/GitOK/Resources/sample_macOS/GitOK.xcodeproj/project.xcworkspace/xcshareddata/IDEWorkspaceChecks.plist
+deleted file mode 100644
+index 18d9810..0000000
+--- a/GitOK/Resources/sample_macOS/GitOK.xcodeproj/project.xcworkspace/xcshareddata/IDEWorkspaceChecks.plist
++++ /dev/null
+@@ -1,8 +0,0 @@
+-<?xml version="1.0" encoding="UTF-8"?>
+-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+-<plist version="1.0">
+-<dict>
+-	<key>IDEDidComputeMac32BitWarning</key>
+-	<true/>
+-</dict>
+-</plist>
