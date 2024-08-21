@@ -14,7 +14,7 @@ struct IconModel: JsonModel {
     var imageURL: URL? = nil
     var path: String?
     var opacity: Double = 1
-    
+    var scale: Double?
     
     var image: Image {
         if let url = self.imageURL {

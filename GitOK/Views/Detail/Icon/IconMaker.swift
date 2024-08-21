@@ -60,7 +60,11 @@ struct IconMaker: View {
             icon.background
 
             HStack {
-                icon.image.resizable().scaledToFit()
+                if let scale = icon.scale {
+                    icon.image.scaleEffect(scale)
+                } else {
+                    icon.image.resizable().scaledToFit()
+                }
             }.scaleEffect(1.8)
         }
         .frame(width: 1024, height: 1024)
@@ -71,7 +75,19 @@ struct IconMaker: View {
     }
 
     var iOSView: some View {
-        icon.image
+        ZStack {
+            // MARK: 背景色
+
+            icon.background
+
+            HStack {
+                if let scale = icon.scale {
+                    icon.image.scaleEffect(scale)
+                } else {
+                    icon.image.resizable().scaledToFit()
+                }
+            }.scaleEffect(1.8)
+        }
     }
 
     private func getContainerWidth(_ geo: GeometryProxy) -> CGFloat {
@@ -203,5 +219,5 @@ struct IconMaker: View {
 #Preview("APP") {
     AppPreview()
         .frame(width: 800)
-        .frame(height: 400)
+        .frame(height: 800)
 }
