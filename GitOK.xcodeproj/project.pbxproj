@@ -129,6 +129,7 @@
 		0BF75EE82BDF39B500A553CD /* PushExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BF75EE72BDF39B500A553CD /* PushExt.swift */; };
 		0BF75EEA2BDFA2FB00A553CD /* BtnOpenTerminal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BF75EE92BDFA2FB00A553CD /* BtnOpenTerminal.swift */; };
 		0BFA2E5F2BE111AA00AD98D7 /* TabBtn.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BFA2E5E2BE111AA00AD98D7 /* TabBtn.swift */; };
+		F53412912C75955F0006937C /* IconScale.swift in Sources */ = {isa = PBXBuildFile; fileRef = F53412902C75955F0006937C /* IconScale.swift */; };
 		F545D1602C1AD436006A6AFA /* BannerTile.swift in Sources */ = {isa = PBXBuildFile; fileRef = F545D15F2C1AD436006A6AFA /* BannerTile.swift */; };
 		F545D1622C1AD6F1006A6AFA /* BannerTopBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = F545D1612C1AD6F1006A6AFA /* BannerTopBar.swift */; };
 		F545D1642C1ADBD0006A6AFA /* IconTile.swift in Sources */ = {isa = PBXBuildFile; fileRef = F545D1632C1ADBD0006A6AFA /* IconTile.swift */; };
@@ -285,6 +286,7 @@
 		0BF75EE72BDF39B500A553CD /* PushExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushExt.swift; sourceTree = "<group>"; };
 		0BF75EE92BDFA2FB00A553CD /* BtnOpenTerminal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BtnOpenTerminal.swift; sourceTree = "<group>"; };
 		0BFA2E5E2BE111AA00AD98D7 /* TabBtn.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBtn.swift; sourceTree = "<group>"; };
+		F53412902C75955F0006937C /* IconScale.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconScale.swift; sourceTree = "<group>"; };
 		F545D15F2C1AD436006A6AFA /* BannerTile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerTile.swift; sourceTree = "<group>"; };
 		F545D1612C1AD6F1006A6AFA /* BannerTopBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerTopBar.swift; sourceTree = "<group>"; };
 		F545D1632C1ADBD0006A6AFA /* IconTile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconTile.swift; sourceTree = "<group>"; };
@@ -604,6 +606,7 @@
 				0B8C7AE62BE08E2200B4E817 /* IconMaker.swift */,
 				F545D1652C1ADE8B006A6AFA /* IconTopBar.swift */,
 				0B9EA3552C1ECF5A00A4059A /* IconOpacity.swift */,
+				F53412902C75955F0006937C /* IconScale.swift */,
 			);
 			path = Icon;
 			sourceTree = "<group>";
@@ -934,6 +937,7 @@
 				0B8C7AEA2BE08E2200B4E817 /* IconHome.swift in Sources */,
 				0B8C7AD72BE08E1900B4E817 /* BannerLayout.swift in Sources */,
 				0B8C7B142BE08EDA00B4E817 /* BackgroundGroup.swift in Sources */,
+				F53412912C75955F0006937C /* IconScale.swift in Sources */,
 				0BB543E02BE8875700D7A2B2 /* BtnDelBanner.swift in Sources */,
 				0B8C7B172BE08EDA00B4E817 /* Loading.swift in Sources */,
 				0B76FD062BDDF79600501F1F /* WebApi.swift in Sources */,

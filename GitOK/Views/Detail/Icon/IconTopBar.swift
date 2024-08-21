@@ -12,6 +12,7 @@ struct IconTopBar: View {
         VStack(spacing: 0) {
             HStack {
                 IconOpacity(icon: $icon)
+                IconScale(icon: $icon)
                 Spacer()
                 Button("换图") {
                     let panel = NSOpenPanel()
@@ -61,5 +62,5 @@ struct IconTopBar: View {
 #Preview("App") {
     AppPreview()
         .frame(width: 800)
-        .frame(height: 400)
+        .frame(height: 800)
 }
