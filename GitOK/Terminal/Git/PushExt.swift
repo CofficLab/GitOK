@@ -3,17 +3,12 @@ import OSLog
 import SwiftUI
 
 extension Git {
-    func push(_ path: String) throws -> String {
-        let verbose = true
-        if verbose {
-            os_log("\(self.label)Push")
-        }
-        
+    func push(_ path: String) throws {
+        let shell = Shell()
         do {
-            return try run("push --porcelain", path: path, verbose: verbose)
+            try shell.run("git push", at: path)
         } catch let error {
-            os_log(.error, "\(self.label)Push -> \(error.localizedDescription)")
-
+            os_log(.error, "推送失败: \(error.localizedDescription)")
             throw error
         }
     }

@@ -13,7 +13,7 @@ struct BtnPush: View {
     var body: some View {
         Button("推送", action: {
             do {
-                message = try git.push(path)
+                try git.push(path)
             } catch let error {
                 app.alert("Push出错", info: error.localizedDescription)
             }

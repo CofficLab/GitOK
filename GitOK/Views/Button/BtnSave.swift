@@ -24,7 +24,7 @@ struct BtnSave: View {
             do {
                 try git.add(path)
                 message = try git.commit(path, commit: commitMessage)
-                message = try git.push(path)
+                try git.push(path)
 
                 AppConfig.mainQueue.async {
                     self.working = false
