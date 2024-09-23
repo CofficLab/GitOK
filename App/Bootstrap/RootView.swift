@@ -13,6 +13,8 @@ struct RootView<Content>: View where Content: View {
             .modelContainer(AppConfig.getContainer())
             .environmentObject(AppProvider())
             .environmentObject(WebConfig())
+            .environmentObject(PluginProvider())
+            .environmentObject(MessageProvider())
     }
 }
 

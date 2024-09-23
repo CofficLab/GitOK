@@ -18,3 +18,23 @@ class TimeHelper {
         }
     }
 }
+
+extension Date {
+    /// "yyyy-MM-dd HH:mm:ss" 格式的字符串
+    var string: String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        dateFormatter.timeZone = TimeZone.current
+
+        return dateFormatter.string(from: self)
+    }
+    
+    /// "yyyyMMddHHmmss" 格式的字符串
+    var string2: String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyyMMddHHmmss"
+        dateFormatter.timeZone = TimeZone.current
+
+        return dateFormatter.string(from: self)
+    }
+}

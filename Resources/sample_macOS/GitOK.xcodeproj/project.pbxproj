@@ -646,7 +646,7 @@ index 86110bd..0000000
 -			buildSettings = {
 -				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 -				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
--				CODE_SIGN_ENTITLEMENTS = GitOK/GitOK.entitlements;
+-				CODE_SIGN_ENTITLEMENTS = GitOK.entitlements;
 -				CODE_SIGN_IDENTITY = "";
 -				CODE_SIGN_STYLE = Automatic;
 -				CURRENT_PROJECT_VERSION = 15;
@@ -655,7 +655,7 @@ index 86110bd..0000000
 -				ENABLE_HARDENED_RUNTIME = YES;
 -				ENABLE_PREVIEWS = YES;
 -				GENERATE_INFOPLIST_FILE = YES;
--				INFOPLIST_FILE = GitOK/Info.plist;
+-				INFOPLIST_FILE = Info.plist;
 -				INFOPLIST_KEY_CFBundleDisplayName = GitOK;
 -				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
 -				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
@@ -688,7 +688,7 @@ index 86110bd..0000000
 -			buildSettings = {
 -				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 -				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
--				CODE_SIGN_ENTITLEMENTS = GitOK/GitOK.entitlements;
+-				CODE_SIGN_ENTITLEMENTS = GitOK.entitlements;
 -				CODE_SIGN_IDENTITY = "";
 -				CODE_SIGN_STYLE = Automatic;
 -				CURRENT_PROJECT_VERSION = 15;
@@ -697,7 +697,7 @@ index 86110bd..0000000
 -				ENABLE_HARDENED_RUNTIME = YES;
 -				ENABLE_PREVIEWS = YES;
 -				GENERATE_INFOPLIST_FILE = YES;
--				INFOPLIST_FILE = GitOK/Info.plist;
+-				INFOPLIST_FILE = Info.plist;
 -				INFOPLIST_KEY_CFBundleDisplayName = GitOK;
 -				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
 -				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
