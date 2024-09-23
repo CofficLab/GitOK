@@ -2,8 +2,12 @@ import SwiftUI
 import OSLog
 
 struct BtnCommitAndPush: View, SuperLog {
+    static let defaultTitle = "Commit and Push"
+
     @State private var showAlert = false
     @State private var alertMessage = ""
+    @State private var isLoading = false
+    @State private var title = defaultTitle
     
     let emoji = "🐔"
     var repoPath: String
@@ -11,18 +15,39 @@ struct BtnCommitAndPush: View, SuperLog {
 
     var body: some View {
         VStack {
-            Button("Commit and Push") {
+            Button(title) {
+                isLoading = true
                 do {
                     let result = try commitAndPush()
-                    os_log("\(self.t)提交结果: \(result)")
                 } catch let error {
                     os_log(.error, "提交失败: \(error.localizedDescription)")
                     alertMessage = "提交失败: \(error.localizedDescription)"
                     showAlert = true
                 }
             }
+            .disabled(isLoading)
             .alert(isPresented: $showAlert) {
                 Alert(title: Text("错误"), message: Text(alertMessage), dismissButton: .default(Text("确定")))
+            }
+            .onReceive(NotificationCenter.default.publisher(for: .gitCommitStart)) { _ in
+                self.title = "Commiting..."
+                isLoading = true
+            }
+            .onReceive(NotificationCenter.default.publisher(for: .gitCommitSuccess)) { _ in
+                self.title = "Commit Success"
+                isLoading = false
+            }
+            .onReceive(NotificationCenter.default.publisher(for: .gitPushStart)) { _ in
+                self.title = "Pushing..."
+                isLoading = true
+            }
+            .onReceive(NotificationCenter.default.publisher(for: .gitPushSuccess)) { _ in
+                self.title = BtnCommitAndPush.defaultTitle
+                isLoading = false
+            }
+            .onReceive(NotificationCenter.default.publisher(for: .gitCommitFailed)) { _ in
+                self.title = BtnCommitAndPush.defaultTitle
+                isLoading = false
             }
         }
         .padding()
