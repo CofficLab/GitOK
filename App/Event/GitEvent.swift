@@ -3,7 +3,7 @@ import Foundation
 // MARK: Pull
 
 extension Notification.Name {
-    static let gitPulling = Notification.Name("gitPulling")
+    static let gitPullStart = Notification.Name("gitPullStart")
     static let gitPullSuccess = Notification.Name("gitPullSuccess")
     static let gitPullFailed = Notification.Name("gitPullFailed")
 }
@@ -12,7 +12,6 @@ extension Notification.Name {
 
 extension Notification.Name {
     static let gitPushStart = Notification.Name("gitPushStart")
-    static let gitPushing = Notification.Name("gitPushing")
     static let gitPushSuccess = Notification.Name("gitPushSuccess")
     static let gitPushFailed = Notification.Name("gitPushFailed")
 }

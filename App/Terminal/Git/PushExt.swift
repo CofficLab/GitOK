@@ -6,7 +6,7 @@ extension Git {
     func push(_ path: String) throws {
         let shell = Shell()
         do {
-            self.emitGitPushing()
+            self.emitGitPushStart()
             _ = try shell.run("git push", at: path)
             self.emitGitPushSuccess()
         } catch let error {
