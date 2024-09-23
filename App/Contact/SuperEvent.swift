@@ -29,6 +29,10 @@ extension SuperEvent {
 // MARK: Commit
 
 extension SuperEvent {
+    func emitGitCommitStart() {
+        NotificationCenter.default.post(name: .gitCommitStart, object: self)
+    }
+
     func emitGitCommitSuccess() {
         NotificationCenter.default.post(name: .gitCommitSuccess, object: self)
     }

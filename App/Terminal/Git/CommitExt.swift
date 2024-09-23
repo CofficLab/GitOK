@@ -26,7 +26,11 @@ extension Git {
     }
 
     func commit(_ path: String, commit: String) throws -> String {
-        try run("commit -a -m '\(commit)'", path: path)
+        self.emitGitCommitStart()
+        let result = try run("commit -a -m '\(commit)'", path: path)
+        self.emitGitCommitSuccess()
+        
+        return result
     }
 
     func getShortHash(_ path: String, _ hash: String) throws -> String {

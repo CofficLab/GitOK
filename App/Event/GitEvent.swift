@@ -12,6 +12,7 @@ extension Notification.Name {
 // MARK: Commit 
 
 extension Notification.Name {
+    static let gitCommitStart = Notification.Name("gitCommitStart")
     static let gitCommitSuccess = Notification.Name("gitCommitSuccess")
     static let gitCommitFailed = Notification.Name("gitCommitFailed")
 }
