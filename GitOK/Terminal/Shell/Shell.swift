@@ -48,9 +48,9 @@ class Shell {
         let errorData = errorPipe.fileHandleForReading.readDataToEndOfFile()
         
         if let errorOutput = String(data: errorData, encoding: .utf8), errorOutput.count > 0 {
-            os_log("\(self.label)错误")
-            print("\(command)")
-            os_log(.error, "\(errorOutput)")
+            os_log(.error, "\(self.label)错误")
+            os_log(.error, "  ➡️ \(command)")
+            os_log(.error, "  ⚠️ \(errorOutput)")
             
             throw SmartError.ShellError(output: errorOutput)
         }
