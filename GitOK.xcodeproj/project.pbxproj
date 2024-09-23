@@ -144,6 +144,7 @@
 		0BD650F32CA1A8F900BA3CB8 /* TileFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD650F22CA1A8F900BA3CB8 /* TileFile.swift */; };
 		0BD650F52CA1AA5D00BA3CB8 /* JSEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD650F42CA1AA5D00BA3CB8 /* JSEvent.swift */; };
 		0BD650F72CA1AC6700BA3CB8 /* AppEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD650F62CA1AC6400BA3CB8 /* AppEvent.swift */; };
+		0BD650F92CA1B98A00BA3CB8 /* CommitForm2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD650F82CA1B98A00BA3CB8 /* CommitForm2.swift */; };
 		0BDE61A32BDB3C9B006E23EA /* Projects.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BDE61A22BDB3C9B006E23EA /* Projects.swift */; };
 		0BDE61A52BDB408F006E23EA /* RevListExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BDE61A42BDB408F006E23EA /* RevListExt.swift */; };
 		0BDE61A72BDB4541006E23EA /* StatusExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BDE61A62BDB4541006E23EA /* StatusExt.swift */; };
@@ -161,7 +162,6 @@
 		F545D1642C1ADBD0006A6AFA /* IconTile.swift in Sources */ = {isa = PBXBuildFile; fileRef = F545D1632C1ADBD0006A6AFA /* IconTile.swift */; };
 		F545D1662C1ADE8B006A6AFA /* IconTopBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = F545D1652C1ADE8B006A6AFA /* IconTopBar.swift */; };
 		F545D1682C1AEBF1006A6AFA /* FileDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = F545D1672C1AEBF1006A6AFA /* FileDetail.swift */; };
-		F545D16A2C1AEF76006A6AFA /* CommitDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = F545D1692C1AEF76006A6AFA /* CommitDetail.swift */; };
 		F545D16D2C1BF6E9006A6AFA /* BannerTitle.swift in Sources */ = {isa = PBXBuildFile; fileRef = F545D16C2C1BF6E9006A6AFA /* BannerTitle.swift */; };
 		F545D16F2C1C0CF3006A6AFA /* BannerSubTitle.swift in Sources */ = {isa = PBXBuildFile; fileRef = F545D16E2C1C0CF3006A6AFA /* BannerSubTitle.swift */; };
 		F545D1712C1C155E006A6AFA /* BannerImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = F545D1702C1C155E006A6AFA /* BannerImage.swift */; };
@@ -331,6 +331,7 @@
 		0BD650F22CA1A8F900BA3CB8 /* TileFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TileFile.swift; sourceTree = "<group>"; };
 		0BD650F42CA1AA5D00BA3CB8 /* JSEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSEvent.swift; sourceTree = "<group>"; };
 		0BD650F62CA1AC6400BA3CB8 /* AppEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppEvent.swift; sourceTree = "<group>"; };
+		0BD650F82CA1B98A00BA3CB8 /* CommitForm2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommitForm2.swift; sourceTree = "<group>"; };
 		0BDE61A22BDB3C9B006E23EA /* Projects.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Projects.swift; sourceTree = "<group>"; };
 		0BDE61A42BDB408F006E23EA /* RevListExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RevListExt.swift; sourceTree = "<group>"; };
 		0BDE61A62BDB4541006E23EA /* StatusExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusExt.swift; sourceTree = "<group>"; };
@@ -348,7 +349,6 @@
 		F545D1632C1ADBD0006A6AFA /* IconTile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconTile.swift; sourceTree = "<group>"; };
 		F545D1652C1ADE8B006A6AFA /* IconTopBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconTopBar.swift; sourceTree = "<group>"; };
 		F545D1672C1AEBF1006A6AFA /* FileDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileDetail.swift; sourceTree = "<group>"; };
-		F545D1692C1AEF76006A6AFA /* CommitDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommitDetail.swift; sourceTree = "<group>"; };
 		F545D16C2C1BF6E9006A6AFA /* BannerTitle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerTitle.swift; sourceTree = "<group>"; };
 		F545D16E2C1C0CF3006A6AFA /* BannerSubTitle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerSubTitle.swift; sourceTree = "<group>"; };
 		F545D1702C1C155E006A6AFA /* BannerImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerImage.swift; sourceTree = "<group>"; };
@@ -889,6 +889,7 @@
 		0BFA2E602BE11E7200AD98D7 /* Content */ = {
 			isa = PBXGroup;
 			children = (
+				0BD650F82CA1B98A00BA3CB8 /* CommitForm2.swift */,
 				0B8C7B322BE0EAE900B4E817 /* ActionTab.swift */,
 				0B8C7B242BE0BB7500B4E817 /* BannerList.swift */,
 				F545D15F2C1AD436006A6AFA /* BannerTile.swift */,
@@ -907,7 +908,6 @@
 			isa = PBXGroup;
 			children = (
 				0B1C67F02BD9DB1F00502EB1 /* CommitCategoryPicker.swift */,
-				F545D1692C1AEF76006A6AFA /* CommitDetail.swift */,
 				0B1C67EE2BD9DACF00502EB1 /* CommitForm.swift */,
 				F545D1672C1AEBF1006A6AFA /* FileDetail.swift */,
 				0BD15C4F2BDBF3BD004024CF /* MergeForm.swift */,
@@ -1083,7 +1083,6 @@
 				0B76FCFF2BDDE6F200501F1F /* WebApiSample.swift in Sources */,
 				0B1C67C42BD915F200502EB1 /* AppConfig.swift in Sources */,
 				0BFA2E5F2BE111AA00AD98D7 /* TabBtn.swift in Sources */,
-				F545D16A2C1AEF76006A6AFA /* CommitDetail.swift in Sources */,
 				0B0E16832BD89A8F0078942B /* Content.swift in Sources */,
 				0B0E16852BD89A8F0078942B /* Item.swift in Sources */,
 				0B76FCF42BDDD1BD00501F1F /* WebContent.swift in Sources */,
@@ -1160,6 +1159,7 @@
 				0B8C7AEB2BE08E2200B4E817 /* IconItem.swift in Sources */,
 				0B8C7B112BE08EDA00B4E817 /* CloudKitHelper.swift in Sources */,
 				0BD650A12CA1856000BA3CB8 /* ConfigExt.swift in Sources */,
+				0BD650F92CA1B98A00BA3CB8 /* CommitForm2.swift in Sources */,
 				0BB543E92BE890F200D7A2B2 /* JsonModel.swift in Sources */,
 				0B76FD1B2BDE2B2F00501F1F /* WebHandler.swift in Sources */,
 				0B76FD182BDE27D000501F1F /* DefaultMessageHandler.swift in Sources */,

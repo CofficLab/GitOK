@@ -6,11 +6,6 @@ struct Detail: View {
     var body: some View {
         VSplitView {
             if let commit = app.commit {
-                CommitDetail(commit: commit)
-                    .frame(maxWidth: .infinity)
-                    .frame(minHeight: commit.isHead ? 150 : 60)
-                    .layoutPriority(1)
-
                 HSplitView {
                     FileList()
                         .frame(minWidth: 200)

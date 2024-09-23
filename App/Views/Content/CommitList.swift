@@ -19,6 +19,14 @@ struct CommitList: View, SuperThread {
                     Text("loading...")
                     Spacer()
                 } else {
+                    GroupBox {
+                        if selection?.getFiles().isNotEmpty ?? false {
+                            CommitForm2().padding()
+                        }
+                        
+                        MergeForm().padding()
+                    }.padding()
+                    
                     List([project.headCommit] + commits, selection: self.$selection) { commit in
                         CommitTile(commit: commit, project: project).tag(commit)
                     }

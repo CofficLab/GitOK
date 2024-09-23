@@ -17,7 +17,7 @@ struct MergeForm: View {
         if let project = project {
             Group {
                 HStack {
-                    Picker("from", selection: $branch1, content: {
+                    Picker("", selection: $branch1, content: {
                         ForEach(branches, id: \.self, content: {
                             Text($0.name)
                                 .tag($0 as Branch?)
