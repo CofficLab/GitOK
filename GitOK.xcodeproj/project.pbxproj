@@ -103,7 +103,7 @@
 		0BCC6D072BD939BA006ADA94 /* Shell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCC6D062BD939BA006ADA94 /* Shell.swift */; };
 		0BCC6D092BD939FD006ADA94 /* BtnPwd.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCC6D082BD939FD006ADA94 /* BtnPwd.swift */; };
 		0BCC6D0B2BD93E8C006ADA94 /* BtnAdd.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCC6D0A2BD93E8C006ADA94 /* BtnAdd.swift */; };
-		0BCC6D0D2BD948AB006ADA94 /* BtnSave.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCC6D0C2BD948AB006ADA94 /* BtnSave.swift */; };
+		0BCC6D0D2BD948AB006ADA94 /* BtnSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCC6D0C2BD948AB006ADA94 /* BtnSync.swift */; };
 		0BCC6D112BD94B5B006ADA94 /* BtnLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCC6D102BD94B5B006ADA94 /* BtnLog.swift */; };
 		0BCC6D132BD94D15006ADA94 /* BtnLogs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCC6D122BD94D15006ADA94 /* BtnLogs.swift */; };
 		0BCC6D152BD9526F006ADA94 /* GitCommit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCC6D142BD9526F006ADA94 /* GitCommit.swift */; };
@@ -289,7 +289,7 @@
 		0BCC6D062BD939BA006ADA94 /* Shell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shell.swift; sourceTree = "<group>"; };
 		0BCC6D082BD939FD006ADA94 /* BtnPwd.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BtnPwd.swift; sourceTree = "<group>"; };
 		0BCC6D0A2BD93E8C006ADA94 /* BtnAdd.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BtnAdd.swift; sourceTree = "<group>"; };
-		0BCC6D0C2BD948AB006ADA94 /* BtnSave.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BtnSave.swift; sourceTree = "<group>"; };
+		0BCC6D0C2BD948AB006ADA94 /* BtnSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BtnSync.swift; sourceTree = "<group>"; };
 		0BCC6D102BD94B5B006ADA94 /* BtnLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BtnLog.swift; sourceTree = "<group>"; };
 		0BCC6D122BD94D15006ADA94 /* BtnLogs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BtnLogs.swift; sourceTree = "<group>"; };
 		0BCC6D142BD9526F006ADA94 /* GitCommit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitCommit.swift; sourceTree = "<group>"; };
@@ -460,7 +460,6 @@
 		0B1C67B62BD9127000502EB1 /* Button */ = {
 			isa = PBXGroup;
 			children = (
-				0BB543EA2BE8931500D7A2B2 /* Icon */,
 				0BB543DE2BE8874600D7A2B2 /* Banner */,
 				0BCC6D0A2BD93E8C006ADA94 /* BtnAdd.swift */,
 				0B1C67B92BD912D900502EB1 /* BtnCommitAndPush.swift */,
@@ -475,8 +474,9 @@
 				0B1C67EA2BD9181200502EB1 /* BtnPush.swift */,
 				0BCC6D082BD939FD006ADA94 /* BtnPwd.swift */,
 				0B1C67B72BD9128000502EB1 /* BtnRefresh.swift */,
-				0BCC6D0C2BD948AB006ADA94 /* BtnSave.swift */,
+				0BCC6D0C2BD948AB006ADA94 /* BtnSync.swift */,
 				0B6BE4602BDA603000C8ACB2 /* BtnWhoami.swift */,
+				0BB543EA2BE8931500D7A2B2 /* Icon */,
 				0B8C7AF62BE08E4200B4E817 /* SmartButton.swift */,
 			);
 			path = Button;
@@ -1075,7 +1075,7 @@
 				0B0E16832BD89A8F0078942B /* Content.swift in Sources */,
 				0B0E16852BD89A8F0078942B /* Item.swift in Sources */,
 				0B76FCF42BDDD1BD00501F1F /* WebContent.swift in Sources */,
-				0BCC6D0D2BD948AB006ADA94 /* BtnSave.swift in Sources */,
+				0BCC6D0D2BD948AB006ADA94 /* BtnSync.swift in Sources */,
 				0B8C7A5D2BE08BF600B4E817 /* IconPng.swift in Sources */,
 				0B8C7AD52BE08E1900B4E817 /* Feature.swift in Sources */,
 				0BF75EE02BDE4C0C00A553CD /* CommitTile.swift in Sources */,

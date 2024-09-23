@@ -8,11 +8,15 @@ protocol SuperEvent {
 
 extension SuperEvent {
     func emitGitPullStart() {
-        NotificationCenter.default.post(name: .gitPullStart, object: self)
+        DispatchQueue.main.async {
+            NotificationCenter.default.post(name: .gitPullStart, object: self)
+        }
     }
 
     func emitGitPullSuccess() {
-        NotificationCenter.default.post(name: .gitPullSuccess, object: self)
+        DispatchQueue.main.async {
+            NotificationCenter.default.post(name: .gitPullSuccess, object: self)
+        }
     }
 }
 
@@ -20,15 +24,21 @@ extension SuperEvent {
 
 extension SuperEvent {
     func emitGitPushStart() { 
-        NotificationCenter.default.post(name: .gitPushStart, object: self)
+        DispatchQueue.main.async {
+            NotificationCenter.default.post(name: .gitPushStart, object: self)
+        }
     }
 
     func emitGitPushSuccess() {
-        NotificationCenter.default.post(name: .gitPushSuccess, object: self)
+        DispatchQueue.main.async {
+            NotificationCenter.default.post(name: .gitPushSuccess, object: self)
+        }
     }
 
     func emitGitPushFailed() {
-        NotificationCenter.default.post(name: .gitPushFailed, object: self)
+        DispatchQueue.main.async {
+            NotificationCenter.default.post(name: .gitPushFailed, object: self)
+        }
     }
 }
 
@@ -36,15 +46,21 @@ extension SuperEvent {
 
 extension SuperEvent {
     func emitGitCommitStart() {
-        NotificationCenter.default.post(name: .gitCommitStart, object: self)
+        DispatchQueue.main.async {
+            NotificationCenter.default.post(name: .gitCommitStart, object: self)
+        }
     }
 
     func emitGitCommitSuccess() {
-        NotificationCenter.default.post(name: .gitCommitSuccess, object: self)
+        DispatchQueue.main.async {
+            NotificationCenter.default.post(name: .gitCommitSuccess, object: self)
+        }
     }
 
     func emitGitCommitFailed() {
-        NotificationCenter.default.post(name: .gitCommitFailed, object: self)
+        DispatchQueue.main.async {
+            NotificationCenter.default.post(name: .gitCommitFailed, object: self)
+        }
     }
 
     

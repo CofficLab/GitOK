@@ -57,7 +57,7 @@ struct Content: View {
                     BtnOpen(url: project.url)
                     BtnFinder(url: project.url)
                     BtnOpenRemote(message: $message, path: project.path)
-                    BtnSave(message: $message, path: project.path)
+                    BtnSync(message: $message, path: project.path)
                     if project.isGit {
                         Branches()
                     }
