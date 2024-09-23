@@ -79,11 +79,12 @@ struct GitCommit {
         }
     }
     
-    // 新增方法：检查HTTPS凭据
+    // 检查HTTPS凭据
     func checkHttpsCredentials() -> Bool {
         let command = "git config --get credential.helper"
         do {
             let result = try Shell().run(command)
+            os_log("\(self.label)checkHttpsCredentials -> \(result)")
             return !result.isEmpty
         } catch {
             os_log(.error, "检查HTTPS凭据时出错: \(error.localizedDescription)")
