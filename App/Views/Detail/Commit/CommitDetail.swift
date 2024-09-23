@@ -14,8 +14,6 @@ struct CommitDetail: View {
                 }
                 .padding()
             }
-        } else {
-            Text(commit.message)
         }
     }
 }

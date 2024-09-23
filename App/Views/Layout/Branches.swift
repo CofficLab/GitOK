@@ -13,6 +13,7 @@ struct Branches: View {
 
     var body: some View {
         Picker("branch", selection: $selection, content: {
+            Text("None").tag(nil as Branch?) // Add a default tag for nil
             ForEach(branches, id: \.self, content: {
                 Text($0.name)
                     .tag($0 as Branch?)

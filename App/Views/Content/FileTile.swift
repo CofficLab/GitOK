@@ -8,7 +8,7 @@ struct FileTile: View {
     
     var body: some View {
         HStack {
-            Text(file.name)
+            Text(file.name).font(.footnote)
             Spacer()
             image
         }

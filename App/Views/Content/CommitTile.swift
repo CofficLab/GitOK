@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct CommitTile: View {
+struct CommitTile: View, SuperEvent, SuperThread {
     @EnvironmentObject var app: AppProvider
     
     @State var isSynced = true
@@ -21,14 +21,12 @@ struct CommitTile: View {
                 }
             }
         }
-        .onAppear {
-            Task.detached(operation: {
-                let isSynced = try! commit.checkIfSynced()
+        .onAppear() {
+            let isSynced = try! commit.checkIfSynced()
 
-                DispatchQueue.main.async {
-                    self.isSynced = isSynced
-                }
-            })
+            self.main.async {
+                self.isSynced = isSynced
+            }
         }
     }
 }

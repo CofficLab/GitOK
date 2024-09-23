@@ -22,6 +22,10 @@ class AppProvider: NSObject, ObservableObject, AVAudioPlayerDelegate {
             self.message = ""
         }
     }
+
+    func setCommit(_ c: GitCommit?) {
+        commit = c
+    }
     
     var currentBranch: Branch? {
         guard let project = project else {

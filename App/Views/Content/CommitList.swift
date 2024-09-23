@@ -6,6 +6,7 @@ struct CommitList: View, SuperThread {
 
     @State var commits: [GitCommit] = []
     @State var loading = false
+    @State var selection: GitCommit?
 
     var label: String { "🖥️ Commits::" }
     var verbose = true
@@ -18,24 +19,26 @@ struct CommitList: View, SuperThread {
                     Text("loading...")
                     Spacer()
                 } else {
-                    List([project.headCommit] + commits, selection: $app.commit) { commit in
-                        CommitTile(commit: commit, project: project)
-                            .tag(commit)
+                    List([project.headCommit] + commits, selection: self.$selection) { commit in
+                        CommitTile(commit: commit, project: project).tag(commit)
                     }
                 }
             }
             .onAppear {
                 refresh("\(self.label)OnApprear")
             }
+            .onChange(of: selection, {
+                app.setCommit(selection)
+            })
             .onChange(of: app.project, {
                 self.refresh("\(self.label)Project Changed")
             })
             .onReceive(NotificationCenter.default.publisher(for: .gitCommitSuccess)) { _ in
                 self.refresh("\(self.label)GitCommitSuccess")
             }
-            .onReceive(NotificationCenter.default.publisher(for: .appWillBecomeActive)) { _ in
-                self.refresh("\(self.label)AppWillBecomeActive")
-            }
+//            .onReceive(NotificationCenter.default.publisher(for: .appWillBecomeActive)) { _ in
+//                self.refresh("\(self.label)AppWillBecomeActive")
+//            }
         }
     }
 
@@ -50,10 +53,10 @@ struct CommitList: View, SuperThread {
 
         self.loading = true
 
-        DispatchQueue.global().async {
+        self.bg.async {
             let commits = project.getCommits(reason)
 
-            DispatchQueue.main.async {
+            self.main.async {
                 self.commits = commits
                 self.loading = false
             }

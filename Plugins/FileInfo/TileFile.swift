@@ -16,8 +16,15 @@ struct TileFile: View, SuperLog, SuperThread {
         if let file = file {
             HStack {
                 Image(systemName: "doc.text").padding(.leading)
-                Text(file.name)
-                    .padding(.vertical, 4)
+                Text(file.name).font(.footnote)
             }
+            .onHover(perform: { hovering in
+                hovered = hovering
+            })
+            .padding(.vertical, 6)
+            .padding(.horizontal, 8)
+            .clipShape(RoundedRectangle(cornerRadius: 0))
+            .background(hovered ? Color(.controlAccentColor).opacity(0.2) : .clear)
         }
-    }}
+    }
+}
