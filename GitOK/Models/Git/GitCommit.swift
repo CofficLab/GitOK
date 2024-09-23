@@ -15,7 +15,7 @@ struct GitCommit {
     var message: String
     
     var label: String {
-        "\(Logger.isMain)🌊 GitCommit::"
+        "🌊 GitCommit::"
     }
     
     var isEmpty: Bool { self.path == "/" } 
@@ -51,6 +51,7 @@ struct GitCommit {
                 $0.hash == self.hash
             })
         } catch let error {
+            os_log(.error, "\(error.localizedDescription)")
             return true
         }
     }

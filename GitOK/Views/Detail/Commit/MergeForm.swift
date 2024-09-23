@@ -1,4 +1,5 @@
 import SwiftUI
+import OSLog
 
 struct MergeForm: View {
     @EnvironmentObject var app: AppProvider
@@ -36,9 +37,13 @@ struct MergeForm: View {
                 }
             }
             .onAppear(perform: {
-                self.branches = git.getBranches(project.path)
-                self.branch1 = branches.first
-                self.branch2 = branches.count >= 2 ? branches[1] : branches.first
+                do {
+                    self.branches = try git.getBranches(project.path)
+                    self.branch1 = branches.first
+                    self.branch2 = branches.count >= 2 ? branches[1] : branches.first
+                } catch let error {
+                    os_log(.error, "\(error.localizedDescription)")
+                }
             })
         }
     }

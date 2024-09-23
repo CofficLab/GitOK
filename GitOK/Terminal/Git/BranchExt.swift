@@ -3,7 +3,7 @@ import OSLog
 import SwiftUI
 
 extension Git {
-    func getBranches(_ path: String, verbose: Bool = false) -> [Branch] {
+    func getBranches(_ path: String, verbose: Bool = false) throws -> [Branch] {
         if self.isGitProject(path: path) == false {
             return []
         }
@@ -21,7 +21,11 @@ extension Git {
                 .map {
                     Branch.fromShellLine($0)
                 }
-        } catch let error { }
+        } catch let error {
+            os_log(.error, "\(error.localizedDescription)")
+
+            throw error
+        }
 
         if verbose {
             os_log("\(self.label)GetBranches")

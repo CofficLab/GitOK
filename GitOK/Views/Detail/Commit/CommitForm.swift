@@ -31,7 +31,7 @@ struct CommitForm: View {
                                 self.text = self.category.defaultMessage
                             }
                         
-                        BtnCommit(repoPath: project.path, commitMessage: commitMessage)
+                        BtnCommitAndPush(repoPath: project.path, commitMessage: commitMessage)
                     }
                 }
             }

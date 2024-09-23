@@ -39,7 +39,12 @@ struct Branches: View {
             os_log("\(label)Refresh")
         }
 
-        branches = git.getBranches(project.path)
+        do {
+            branches = try git.getBranches(project.path)
+        } catch let error {
+            os_log(.error, "\(error.localizedDescription)")
+        }
+
         selection = branches.first(where: {
             $0.name == app.currentBranch?.name
         })

@@ -40,7 +40,7 @@ struct ListPlay: View {
                 // 下拉刷新
             }
             .searchable(text: $s) // 搜索
-            .onChange(of: s) { newValue in
+            .onChange(of: s) {
                 print("搜索关键字：\(s)")
             }
             

@@ -1,30 +1,25 @@
 import SwiftUI
 import OSLog
 
-struct BtnCommit: View {
+struct BtnCommitAndPush: View, SuperLog {
     @State private var showAlert = false
     @State private var alertMessage = ""
     
-    var repoPath: String // 新增变量
+    let emoji = "🐔"
+    var repoPath: String
     var commitMessage: String = ""
 
     var body: some View {
         VStack {
-            Button(action: {
+            Button("Commit and Push") {
                 do {
                     let result = try commitAndPush()
-                    os_log("提交结果: \(result)")
+                    os_log("\(self.t)提交结果: \(result)")
                 } catch let error {
                     os_log(.error, "提交失败: \(error.localizedDescription)")
                     alertMessage = "提交失败: \(error.localizedDescription)"
                     showAlert = true
                 }
-            }) {
-                Text("Commit and Push")
-                    .padding()
-                    .background(Color.blue)
-                    .foregroundColor(.white)
-                    .cornerRadius(8)
             }
             .alert(isPresented: $showAlert) {
                 Alert(title: Text("错误"), message: Text(alertMessage), dismissButton: .default(Text("确定")))
@@ -34,12 +29,12 @@ struct BtnCommit: View {
     }
 
     private func commitAndPush() throws -> String {
-        let path = repoPath // 使用传入的路径
+        let path = repoPath
         let git = Git()
         
         do {
             let helper = try git.getCredentialHelper(path)
-            os_log("get credential helper: \(helper)")
+            os_log("\(self.t)Get credential helper: \(helper)")
         } catch {
             os_log(.error, "\(error.localizedDescription)")
         }
@@ -56,7 +51,7 @@ struct BtnCommit: View {
         // 执行 commit
         do {
             try git.add(path)
-            try git.commit(path, commit: commitMessage)
+            _ = try git.commit(path, commit: commitMessage)
         } catch let error {
             os_log(.error, "提交失败: \(error.localizedDescription)")
             alertMessage = "提交失败: \(error.localizedDescription)"
@@ -79,5 +74,5 @@ struct BtnCommit: View {
 }
 
 #Preview {
-    BtnCommit(repoPath: "/path/to/your/repo") // 初始化时传入路径
+    BtnCommitAndPush(repoPath: "/path/to/your/repo") // 初始化时传入路径
 }

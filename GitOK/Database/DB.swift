@@ -15,7 +15,7 @@ actor DB: ModelActor {
     var label: String = DB.label
 
     init(_ container: ModelContainer) {
-        os_log("\(Logger.isMain)🚩 初始化 DB")
+        os_log("🚩 初始化 DB")
 
         self.modelContainer = container
         self.context = ModelContext(container)

@@ -4,8 +4,8 @@ import SwiftUI
 import CloudKit
 import OSLog
 
-class MacAgent: NSObject, NSApplicationDelegate, ObservableObject {
-    var label: String {"\(Logger.isMain)🍎 MacAgent::"}
+class MacAgent: NSObject, NSApplicationDelegate, ObservableObject, SuperLog {
+    var label: String {"🍎 MacAgent::"}
     
     func application(
         _ application: NSApplication,

@@ -8,7 +8,7 @@ struct BannerList: View {
     @State var banner: BannerModel = .empty
     @State var banners: [BannerModel] = []
 
-    var label: String { "\(Logger.isMain)🌹 BannerList::" }
+    var label: String { "🌹 BannerList::" }
     var verbose = true
 
     var body: some View {

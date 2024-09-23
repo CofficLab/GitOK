@@ -23,7 +23,7 @@ struct CommitTile: View {
         }
         .onAppear {
             Task.detached(operation: {
-                let isSynced = try! await commit.checkIfSynced()
+                let isSynced = try! commit.checkIfSynced()
 
                 DispatchQueue.main.async {
                     self.isSynced = isSynced

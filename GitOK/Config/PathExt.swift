@@ -50,9 +50,9 @@ extension AppConfig {
         if !fileManager.fileExists(atPath: url.path) {
             do {
                 try fileManager.createDirectory(at: url, withIntermediateDirectories: true)
-                os_log("\(Logger.isMain)🍋 DB::创建 Images 目录成功")
+                os_log("🍋 DB::创建 Images 目录成功")
             } catch {
-                os_log("\(Logger.isMain)创建 Images 目录失败 \(error.localizedDescription)")
+                os_log("创建 Images 目录失败 \(error.localizedDescription)")
             }
         }
 

@@ -1,13 +1,13 @@
 import OSLog
 import SwiftUI
 
-struct CommitList: View {
+struct CommitList: View, SuperThread {
     @EnvironmentObject var app: AppProvider
 
     @State var commits: [GitCommit] = []
     @State var loading = false
 
-    var label: String { "\(Logger.isMain)🖥️ Commits::" }
+    var label: String { "🖥️ Commits::" }
     var verbose = true
 
     var body: some View {
@@ -45,21 +45,17 @@ struct CommitList: View {
             return
         }
 
-        DispatchQueue.global().async {
-            if verbose {
-                os_log("\(label)Refresh with reason->\(reason)")
-            }
+        if verbose {
+            os_log("\(label)Refresh with reason->\(reason)")
+        }
 
-            self.loading = true
+        self.loading = true
+
+        DispatchQueue.global().async {
             let commits = project.getCommits(reason)
-            let commitId = project.headCommit.id
 
             DispatchQueue.main.async {
-                if verbose {
-                    os_log("\(label)Update")
-                }
                 self.commits = commits
-//                self.commitId = commitId
                 self.loading = false
             }
         }

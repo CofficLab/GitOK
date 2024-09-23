@@ -28,7 +28,7 @@ extension Shell {
     }
     
     func makeFile(_ path: String, content: String) {
-        try! self.run("""
+        _ = try! self.run("""
             echo "\(content)" > \(path)
         """)
     }

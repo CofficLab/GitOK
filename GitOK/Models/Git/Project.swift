@@ -10,7 +10,7 @@ final class Project {
         SortDescriptor<Project>(\.timestamp, order: .reverse)
     ]
     
-    var label: String { "\(Logger.isMain)🌳 Project::" }
+    var label: String { "🌳 Project::" }
     var timestamp: Date
     var url: URL
     

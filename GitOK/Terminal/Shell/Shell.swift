@@ -22,7 +22,7 @@ class Shell {
     }
 
     func run(_ command: String, at path: String? = nil) throws -> String {
-        let verbose = true
+        let verbose = false
         let process = Process()
 
         if verbose {

@@ -19,7 +19,7 @@ struct IconTopBar: View {
                     panel.allowsMultipleSelection = false
                     panel.canChooseDirectories = false
                     if panel.runModal() == .OK, let url = panel.url {
-//                            self.icon.updateImageURL(url)
+                        self.icon.updateImageURL(url)
                     }
                 }
                 TabBtn(
