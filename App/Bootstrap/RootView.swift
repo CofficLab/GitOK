@@ -25,6 +25,9 @@ struct RootView<Content>: View where Content: View {
             .onReceive(NotificationCenter.default.publisher(for: .gitCommitFailed)) { _ in
                 m.append("gitCommitFailed")
             }
+            .onReceive(NotificationCenter.default.publisher(for: .gitPushStart)) { _ in
+                m.append("gitPushStart")
+            }
             .onReceive(NotificationCenter.default.publisher(for: .gitPushSuccess)) { _ in
                 m.append("gitPushSuccess")
             }
