@@ -13,7 +13,9 @@ class AppProvider: NSObject, ObservableObject, AVAudioPlayerDelegate {
     @Published var message: String = ""
     @Published var currentTab: ActionTab = (ActionTab(rawValue: AppConfig.currentTab) ?? .Git)
     @Published var sidebarVisibility = AppConfig.sidebarVisibility
+    
     var git = Git()
+    
     func setMessage(_ m: String) {
         message = m
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
@@ -46,7 +48,11 @@ class AppProvider: NSObject, ObservableObject, AVAudioPlayerDelegate {
     }
     
     func setProject(_ p: Project?) {
-        os_log("\(self.label)Set Project to \(p?.path ?? "")")
+        let verbose = true
+
+        if verbose {
+            os_log("\(self.label)Set Project to \(p?.path ?? "")")
+        }
         self.project = p
         AppConfig.setProjectPath(p?.path ?? "")
     }

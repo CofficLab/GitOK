@@ -21,9 +21,14 @@ class Shell {
         }
     }
 
-    @discardableResult
     func run(_ command: String, at path: String? = nil) throws -> String {
+        let verbose = true
         let process = Process()
+
+        if verbose {
+            os_log("\(self.label)Run -> \(command)")
+        }
+
         process.launchPath = "/bin/bash"
         process.arguments = ["-c", command]
         

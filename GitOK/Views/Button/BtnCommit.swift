@@ -36,6 +36,13 @@ struct BtnCommit: View {
     private func commitAndPush() throws -> String {
         let path = repoPath // 使用传入的路径
         let git = Git()
+        
+        do {
+            let helper = try git.getCredentialHelper(path)
+            os_log("get credential helper: \(helper)")
+        } catch {
+            os_log(.error, "\(error.localizedDescription)")
+        }
 
         // 检查HTTPS凭据
         let commit = GitCommit.headFor(path)

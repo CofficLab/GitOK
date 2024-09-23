@@ -23,11 +23,8 @@ class Git: SuperEvent {
     }
     
     func isGitProject(path: String, verbose: Bool = false) -> Bool {
-        do {
-            return try shell.run("ls -a '\(path)' | grep .git").count > 0
-        } catch _ {
-            return false
-        }
+        let gitPath = URL(fileURLWithPath: path).appendingPathComponent(".git").path
+        return FileManager.default.fileExists(atPath: gitPath)
     }
 }
 

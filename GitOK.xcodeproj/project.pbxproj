@@ -118,6 +118,7 @@
 		0BD15C5A2BDD275C004024CF /* DiffBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD15C592BDD275C004024CF /* DiffBlock.swift */; };
 		0BD15C632BDD40E1004024CF /* ListPlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD15C622BDD40E1004024CF /* ListPlay.swift */; };
 		0BD15C672BDFE4F9004024CF /* NotGit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD15C662BDFE4F9004024CF /* NotGit.swift */; };
+		0BD650A12CA1856000BA3CB8 /* ConfigExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD650A02CA1855D00BA3CB8 /* ConfigExt.swift */; };
 		0BDE61A32BDB3C9B006E23EA /* Projects.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BDE61A22BDB3C9B006E23EA /* Projects.swift */; };
 		0BDE61A52BDB408F006E23EA /* RevListExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BDE61A42BDB408F006E23EA /* RevListExt.swift */; };
 		0BDE61A72BDB4541006E23EA /* StatusExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BDE61A62BDB4541006E23EA /* StatusExt.swift */; };
@@ -279,6 +280,7 @@
 		0BD15C592BDD275C004024CF /* DiffBlock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiffBlock.swift; sourceTree = "<group>"; };
 		0BD15C622BDD40E1004024CF /* ListPlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListPlay.swift; sourceTree = "<group>"; };
 		0BD15C662BDFE4F9004024CF /* NotGit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotGit.swift; sourceTree = "<group>"; };
+		0BD650A02CA1855D00BA3CB8 /* ConfigExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigExt.swift; sourceTree = "<group>"; };
 		0BDE61A22BDB3C9B006E23EA /* Projects.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Projects.swift; sourceTree = "<group>"; };
 		0BDE61A42BDB408F006E23EA /* RevListExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RevListExt.swift; sourceTree = "<group>"; };
 		0BDE61A62BDB4541006E23EA /* StatusExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusExt.swift; sourceTree = "<group>"; };
@@ -684,14 +686,15 @@
 		0BDE619E2BDB2C51006E23EA /* Git */ = {
 			isa = PBXGroup;
 			children = (
-				0B1C67BB2BD9132500502EB1 /* Git.swift */,
-				0B6BE4642BDA7B5300C8ACB2 /* CommitExt.swift */,
-				0BDE61A42BDB408F006E23EA /* RevListExt.swift */,
-				0BDE61A62BDB4541006E23EA /* StatusExt.swift */,
 				0BB555232BDB7B300044048B /* BranchExt.swift */,
+				0B6BE4642BDA7B5300C8ACB2 /* CommitExt.swift */,
+				0BD650A02CA1855D00BA3CB8 /* ConfigExt.swift */,
 				0BD15C552BDD23E1004024CF /* DiffExt.swift */,
 				0B76FD232BDE326300501F1F /* FileExt.swift */,
+				0B1C67BB2BD9132500502EB1 /* Git.swift */,
 				0BF75EE72BDF39B500A553CD /* PushExt.swift */,
+				0BDE61A42BDB408F006E23EA /* RevListExt.swift */,
+				0BDE61A62BDB4541006E23EA /* StatusExt.swift */,
 			);
 			path = Git;
 			sourceTree = "<group>";
@@ -953,6 +956,7 @@
 				0B8C7AEB2BE08E2200B4E817 /* IconItem.swift in Sources */,
 				0B76FD122BDDFF7200501F1F /* LoggerExt.swift in Sources */,
 				0B8C7B112BE08EDA00B4E817 /* CloudKitHelper.swift in Sources */,
+				0BD650A12CA1856000BA3CB8 /* ConfigExt.swift in Sources */,
 				0BB543E92BE890F200D7A2B2 /* JsonModel.swift in Sources */,
 				0B76FD1B2BDE2B2F00501F1F /* WebHandler.swift in Sources */,
 				0B76FD182BDE27D000501F1F /* DefaultMessageHandler.swift in Sources */,
