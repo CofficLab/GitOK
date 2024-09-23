@@ -13,7 +13,7 @@ class AppProvider: NSObject, ObservableObject, AVAudioPlayerDelegate {
     @Published var message: String = ""
     @Published var currentTab: ActionTab = (ActionTab(rawValue: AppConfig.currentTab) ?? .Git)
     @Published var sidebarVisibility = AppConfig.sidebarVisibility
-
+    var git = Git()
     func setMessage(_ m: String) {
         message = m
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
@@ -27,7 +27,7 @@ class AppProvider: NSObject, ObservableObject, AVAudioPlayerDelegate {
         }
         
         do {
-            return try Git.getCurrentBranch(project.path)
+            return try git.getCurrentBranch(project.path)
         } catch _ {
             return nil
         }
@@ -69,7 +69,7 @@ class AppProvider: NSObject, ObservableObject, AVAudioPlayerDelegate {
             return
         }
         
-        _ = try Git.setBranch(branch, project.path, verbose: true)
+        _ = try git.setBranch(branch, project.path, verbose: true)
     }
     
     func hideSidebar() {

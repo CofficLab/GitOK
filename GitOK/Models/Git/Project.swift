@@ -14,6 +14,9 @@ final class Project {
     var timestamp: Date
     var url: URL
     
+    @Transient
+    var git = Git()
+    
     var title: String {
         url.lastPathComponent
     }
@@ -27,7 +30,7 @@ final class Project {
     }
     
     var isGit: Bool {
-        Git.isGitProject(path: path)
+        git.isGitProject(path: path)
     }
     
     var isNotGit: Bool { !isGit }
@@ -43,7 +46,7 @@ final class Project {
         }
         
         do {
-            return try Git.logs(path)
+            return try git.logs(path)
         } catch let error {
             os_log(.error, "\(self.label)GetCommits has error")
             print(error)

@@ -6,10 +6,11 @@ struct BtnOpenRemote: View {
     @State var remote: String = ""
 
     var path: String
+    var git = Git()
 
     var body: some View {
         Button(action: {
-            remote = Git.getRemote(path)
+            remote = git.getRemote(path)
 
             if let url = URL(string: remote) {
                 NSWorkspace.shared.open(url)

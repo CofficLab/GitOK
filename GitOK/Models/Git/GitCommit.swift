@@ -47,7 +47,7 @@ struct GitCommit {
         }
         
         do {
-            return try !Git.notSynced(path).contains(where: {
+            return try !Git().notSynced(path).contains(where: {
                 $0.hash == self.hash
             })
         } catch let error {
@@ -76,6 +76,18 @@ struct GitCommit {
         } else {
             let count = getFiles().count
             return "\(count) 个变动"
+        }
+    }
+    
+    // 新增方法：检查HTTPS凭据
+    func checkHttpsCredentials() -> Bool {
+        let command = "git config --get credential.helper"
+        do {
+            let result = try Shell().run(command)
+            return !result.isEmpty
+        } catch {
+            os_log(.error, "检查HTTPS凭据时出错: \(error.localizedDescription)")
+            return false
         }
     }
 }

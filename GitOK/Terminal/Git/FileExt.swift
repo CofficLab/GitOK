@@ -5,12 +5,12 @@ import SwiftUI
 extension Git {
     // MARK: 查
     
-    static func getFileContent(_ path: String, file: String) throws -> String {
-        try Shell.run("cd \(path) && cat \(file)", verbose: false)
+    func getFileContent(_ path: String, file: String) throws -> String {
+        try run("cat \(file)", path: path)
     }
     
-    static func getFileLastContent(_ path: String, file: String) throws -> String {
-        try Git.run("show --textconv HEAD:\(file)", path: path, verbose: false)
+    func getFileLastContent(_ path: String, file: String) throws -> String {
+        try run("show --textconv HEAD:\(file)", path: path, verbose: false)
     }
 }
 

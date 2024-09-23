@@ -141,6 +141,7 @@
 		F545D1712C1C155E006A6AFA /* BannerImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = F545D1702C1C155E006A6AFA /* BannerImage.swift */; };
 		F588FB702CA15D5200F6AE42 /* GitEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = F588FB6F2CA15D5200F6AE42 /* GitEvent.swift */; };
 		F588FB722CA15DAD00F6AE42 /* SuperEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = F588FB712CA15DAD00F6AE42 /* SuperEvent.swift */; };
+		F588FB752CA16B4F00F6AE42 /* GitError.swift in Sources */ = {isa = PBXBuildFile; fileRef = F588FB742CA16B4F00F6AE42 /* GitError.swift */; };
 		F5F794DC2C5A0D7D00DCB824 /* CommitSample.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5F794DB2C5A0D7D00DCB824 /* CommitSample.swift */; };
 		F5F794E02C5A1D2600DCB824 /* FileList.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5F794DF2C5A1D2600DCB824 /* FileList.swift */; };
 		F5F794E92C5B192600DCB824 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = F5F794E82C5B192600DCB824 /* Sparkle */; };
@@ -300,6 +301,7 @@
 		F545D1702C1C155E006A6AFA /* BannerImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerImage.swift; sourceTree = "<group>"; };
 		F588FB6F2CA15D5200F6AE42 /* GitEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitEvent.swift; sourceTree = "<group>"; };
 		F588FB712CA15DAD00F6AE42 /* SuperEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuperEvent.swift; sourceTree = "<group>"; };
+		F588FB742CA16B4F00F6AE42 /* GitError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitError.swift; sourceTree = "<group>"; };
 		F5F794DB2C5A0D7D00DCB824 /* CommitSample.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommitSample.swift; sourceTree = "<group>"; };
 		F5F794DF2C5A1D2600DCB824 /* FileList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileList.swift; sourceTree = "<group>"; };
 		F5F794EA2C5B3E8100DCB824 /* UpdaterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdaterView.swift; sourceTree = "<group>"; };
@@ -350,6 +352,7 @@
 				0B1C67AE2BD9098400502EB1 /* Dev */,
 				F5F794DA2C5A0D6100DCB824 /* Entity */,
 				F588FB6E2CA15D4100F6AE42 /* Event */,
+				F588FB732CA16B3A00F6AE42 /* Exception */,
 				0B0E16882BD89A910078942B /* GitOK.entitlements */,
 				0B332F062BDA02BC00DFA5BB /* Info.plist */,
 				0B1C67C02BD9157A00502EB1 /* Models */,
@@ -738,6 +741,14 @@
 			path = Event;
 			sourceTree = "<group>";
 		};
+		F588FB732CA16B3A00F6AE42 /* Exception */ = {
+			isa = PBXGroup;
+			children = (
+				F588FB742CA16B4F00F6AE42 /* GitError.swift */,
+			);
+			path = Exception;
+			sourceTree = "<group>";
+		};
 		F5F794DA2C5A0D6100DCB824 /* Entity */ = {
 			isa = PBXGroup;
 			children = (
@@ -889,6 +900,7 @@
 				0BCC6D092BD939FD006ADA94 /* BtnPwd.swift in Sources */,
 				0B8C7B2B2BE0C8F100B4E817 /* IconList.swift in Sources */,
 				0B8C7AF72BE08E4200B4E817 /* SmartButton.swift in Sources */,
+				F588FB752CA16B4F00F6AE42 /* GitError.swift in Sources */,
 				0B8C7B332BE0EAE900B4E817 /* ActionTab.swift in Sources */,
 				0BCC6D032BD932DA006ADA94 /* PathExt.swift in Sources */,
 				F545D1642C1ADBD0006A6AFA /* IconTile.swift in Sources */,

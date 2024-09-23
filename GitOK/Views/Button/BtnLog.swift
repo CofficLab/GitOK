@@ -4,10 +4,11 @@ struct BtnLog: View {
     @Binding var message: String
 
     var path: String
+    var git = Git()
 
     var body: some View {
         Button("Log", action: {
-            message = try! Git.log(path)
+            message = try! git.log(path)
         })
     }
 }

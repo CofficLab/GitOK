@@ -3,69 +3,62 @@ import OSLog
 import SwiftUI
 
 class Shell {
-    static var label: String = "🐚 Shell::"
+    var label = "🐚 Shell::"
     
-    static func pwd() -> String {
+    func pwd() -> String {
         do {
-            return try Shell.run("pwd")
+            return try self.run("pwd")
         } catch {
             return error.localizedDescription
         }
     }
     
-    static func whoami() -> String {
+    func whoami() -> String {
         do {
-            return try Shell.run("whoami")
+            return try self.run("whoami")
         } catch {
             return error.localizedDescription
         }
     }
 
-    static func run(_ command: String, verbose: Bool = false) throws -> String {
-        let task = Process()
-        task.launchPath = "/bin/bash"
-        task.arguments = ["-c", command]
+    @discardableResult
+    func run(_ command: String, at path: String? = nil) throws -> String {
+        let process = Process()
+        process.launchPath = "/bin/bash"
+        process.arguments = ["-c", command]
         
-        let current = task.currentDirectoryURL?.path ?? "-"
-        let outputPipe = Pipe()
-        let errorPipe = Pipe()
-        var isDir: ObjCBool = true
-        
-        if verbose {
-            os_log("\(self.label)Run")
-            print(command)
+        if let path = path {
+            process.currentDirectoryPath = path
         }
         
-        if !FileManager.default.fileExists(atPath: current, isDirectory: &isDir) {
-            return "不存在这个路径：\(current)"
-        }
-            
-        task.standardOutput = outputPipe
-        task.standardError = errorPipe
-        task.launch()
-            
-        let outputData = outputPipe.fileHandleForReading.readDataToEndOfFile()
-        let errorData = errorPipe.fileHandleForReading.readDataToEndOfFile()
+        let pipe = Pipe()
+        process.standardOutput = pipe
+        process.standardError = pipe
         
-        if let errorOutput = String(data: errorData, encoding: .utf8), errorOutput.count > 0 {
-            os_log(.error, "\(self.label)错误")
-            os_log(.error, "  ➡️ \(command)")
-            os_log(.error, "  ⚠️ \(errorOutput)")
-            
-            throw SmartError.ShellError(output: errorOutput)
-        }
-            
-        if let output = String(data: outputData, encoding: .utf8) {
-            if verbose {
-                os_log(.debug, "\(self.label)输出")
-                print(output)
-            }
-            
-            return output
+        process.launch()
+        process.waitUntilExit()
+        
+        let data = pipe.fileHandleForReading.readDataToEndOfFile()
+        let output = String(data: data, encoding: .utf8) ?? ""
+        
+        if process.terminationStatus != 0 {
+            throw ShellError.commandFailed(output)
         }
         
-        return "无输出"
+        return output.trimmingCharacters(in: .whitespacesAndNewlines)
     }
+    
+    func configureGitCredentialCache() -> String {
+        do {
+            return try self.run("git config --global credential.helper cache")
+        } catch {
+            return error.localizedDescription
+        }
+    }
+}
+
+enum ShellError: Error {
+    case commandFailed(String)
 }
 
 #Preview {

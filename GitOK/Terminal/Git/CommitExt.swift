@@ -5,12 +5,12 @@ import SwiftUI
 extension Git {
     // MARK: 查
     
-    static func show(_ path: String, hash: String) throws -> String {
-        try Git.run("show \(hash)", path: path)
+    func show(_ path: String, hash: String) throws -> String {
+        try run("show \(hash)", path: path)
     }
     
     func commitFiles(_ path: String, hash: String) throws -> [File] {
-        try Git.run("show \(hash) --pretty='' --name-only", path: path)
+        try run("show \(hash) --pretty='' --name-only", path: path)
             .components(separatedBy: "\n")
             .map({
                 File.fromLine($0, path: path)
@@ -18,7 +18,7 @@ extension Git {
     }
     
     func add(_ path: String, verbose: Bool = false) throws {
-        let message = try Git.run("add -A .", path: path)
+        let message = try run("add -A .", path: path)
         
         if verbose {
             os_log("\(self.label)Add -> \(message)")
@@ -26,44 +26,44 @@ extension Git {
     }
 
     func commit(_ path: String, commit: String) throws -> String {
-        try Git.run("commit -a -m '\(commit)'", path: path)
+        try run("commit -a -m '\(commit)'", path: path)
     }
     
-    func commitAndPush(_ path: String, commit: String) throws -> String {
-        let verbose = true
-        if verbose {
-            os_log("\(self.label)CommitAndPush")
+    func commitAndPush(_ message: String, path: String) throws {
+        // 检查是否通过HTTPS进行push
+        let shell = Shell()
+        let remoteUrl = try shell.run("git config --get remote.origin.url", at: path)
+        if remoteUrl.starts(with: "https://") {
+            // 检查HTTPS凭据
+            let commit = GitCommit.headFor(path)
+            guard commit.checkHttpsCredentials() else {
+                os_log(.error, "HTTPS 凭据未配置")
+                throw GitError.credentialsNotConfigured
+            }
         }
-        
-        do {
-            emitGitPushing()
-            try self.add(path)
-            _ = try Git.run("commit -a -m '\(commit)'", path: path)
-            let pushMessage = try Git.run("push --porcelain", path: path, verbose: verbose)
-            emitGitPushSuccess()
-            return pushMessage
-        } catch let error {
-            emitGitCommitFailed()
-            throw error
-        }
+
+        // ... 现有代码 ...
+        try shell.run("git add .", at: path)
+        try shell.run("git commit -m \"\(message)\"", at: path)
+        try shell.run("git push", at: path)
     }
 
-    static func getShortHash(_ path: String, _ hash: String) throws -> String {
-        try Git.run("rev-parse --short", path: path)
+    func getShortHash(_ path: String, _ hash: String) throws -> String {
+        try run("rev-parse --short", path: path)
     }
 
-    static func log(_ path: String) throws -> String {
-        try Git.run("log", path: path)
+    func log(_ path: String) throws -> String {
+        try run("log", path: path)
     }
 
-    static func logs(_ path: String) throws -> [GitCommit] {
-        try Git.run("log --pretty=format:%H+%s", path: path).components(separatedBy: "\n").map {
+    func logs(_ path: String) throws -> [GitCommit] {
+        try run("log --pretty=format:%H+%s", path: path).components(separatedBy: "\n").map {
             GitCommit.fromShellLine($0, path: path, seprator: "+")
         }
     }
 
-    static func notSynced(_ path: String) throws -> [GitCommit] {
-        try Git.revList(path).components(separatedBy: "\n").map {
+    func notSynced(_ path: String) throws -> [GitCommit] {
+        try revList(path).components(separatedBy: "\n").map {
             GitCommit.fromShellLine($0, path: path, seprator: "+")
         }
     }

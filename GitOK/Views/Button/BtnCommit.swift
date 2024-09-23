@@ -19,7 +19,7 @@ struct BtnCommit: View {
         
         Task.detached(operation: {
             do {
-                _ = try await git.commitAndPush(path, commit: commit)
+                _ = try await git.commitAndPush(commit, path: path)
 
                 DispatchQueue.main.async {
                     self.working = false

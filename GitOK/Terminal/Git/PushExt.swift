@@ -8,7 +8,7 @@ extension Git {
             os_log("\(self.label)Push")
         }
         
-        return try Git.run("push --porcelain", path: path, verbose: verbose)
+        return try run("push --porcelain", path: path, verbose: verbose)
     }
 }
 

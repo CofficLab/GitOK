@@ -5,8 +5,8 @@ import SwiftUI
 extension Git {
     // MARK: 查
 
-    static func diffOfFile(_ path: String, file: File) throws -> DiffBlock {
-        DiffBlock(block: try Git.run("diff HEAD~1 -- \(file.name)", path: path))
+    func diffOfFile(_ path: String, file: File) throws -> DiffBlock {
+        DiffBlock(block: try run("diff HEAD~1 -- \(file.name)", path: path))
     }
 }
 

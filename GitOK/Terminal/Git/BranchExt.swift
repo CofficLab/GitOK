@@ -4,14 +4,14 @@ import SwiftUI
 
 extension Git {
     func getBranches(_ path: String, verbose: Bool = false) -> [Branch] {
-        if Git.isGitProject(path: path) == false {
+        if self.isGitProject(path: path) == false {
             return []
         }
 
         var branches: [Branch] = []
 
         do {
-            branches = try Git.run("branch", path: path)
+            branches = try run("branch", path: path)
                 .trimmingCharacters(in: .whitespacesAndNewlines)
                 .components(separatedBy: "\n")
                 .compactMap { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
@@ -31,21 +31,21 @@ extension Git {
         return branches
     }
 
-    static func getCurrentBranch(_ path: String, verbose: Bool = false) throws -> Branch {
-        Branch.fromShellLine(try Git.run("branch --show-current", path: path, verbose: verbose))
+    func getCurrentBranch(_ path: String, verbose: Bool = false) throws -> Branch {
+        Branch.fromShellLine(try run("branch --show-current", path: path, verbose: verbose))
     }
 
-    static func setBranch(_ b: Branch, _ path: String, verbose: Bool = false) throws -> String {
-        try Git.run("checkout \(b.name) -q", path: path, verbose: verbose)
+    func setBranch(_ b: Branch, _ path: String, verbose: Bool = false) throws -> String {
+        try run("checkout \(b.name) -q", path: path, verbose: verbose)
     }
 
-    static func merge(
+    func merge(
         _ from: Branch,
         _ path: String,
         verbose: Bool = false,
         message: String = "merge"
     ) throws {
-        _ = try Git.run("merge \(from.name) -m '\(message)'", path: path, verbose: verbose)
+        _ = try run("merge \(from.name) -m '\(message)'", path: path, verbose: verbose)
     }
 }
 
