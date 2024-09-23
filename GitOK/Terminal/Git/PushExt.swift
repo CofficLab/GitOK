@@ -12,7 +12,7 @@ extension Git {
         do {
             return try run("push --porcelain", path: path, verbose: verbose)
         } catch let error {
-            os_log(.error, "推送失败: \(error.localizedDescription)")
+            os_log(.error, "\(self.label)Push -> \(error.localizedDescription)")
             throw error
         }
     }

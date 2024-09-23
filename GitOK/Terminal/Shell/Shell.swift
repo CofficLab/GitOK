@@ -42,6 +42,7 @@ class Shell {
         let output = String(data: data, encoding: .utf8) ?? ""
         
         if process.terminationStatus != 0 {
+            os_log(.error, "\(self.label)Run -> \(output)")
             throw ShellError.commandFailed(output)
         }
         

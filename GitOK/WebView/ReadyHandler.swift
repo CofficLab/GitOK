@@ -7,7 +7,10 @@ class ReadyHandler: NSObject, WebHandler {
     var label = "👷 ReadyHandler::"
 
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
-        os_log("\(self.label)JS call \(message.name)")
+        let verbose = false 
+        if verbose {
+            os_log("\(self.label)JS call \(message.name)")
+        }
         EventManager().emitJSReady()
     }
 }
