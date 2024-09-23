@@ -58,9 +58,7 @@ class Shell {
     }
 }
 
-enum ShellError: Error {
-    case commandFailed(String)
-}
+
 
 #Preview {
     AppPreview()
