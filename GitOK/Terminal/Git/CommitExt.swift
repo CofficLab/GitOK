@@ -42,10 +42,15 @@ extension Git {
             }
         }
 
-        // ... 现有代码 ...
-        try shell.run("git add .", at: path)
-        try shell.run("git commit -m \"\(message)\"", at: path)
-        try shell.run("git push", at: path)
+        do {
+            try shell.run("git add .", at: path)
+            try shell.run("git commit -m \"\(message)\"", at: path)
+        } catch let error {
+            os_log(.error, "提交失败: \(error.localizedDescription)")
+            throw error
+        }
+
+        try self.push(path)
     }
 
     func getShortHash(_ path: String, _ hash: String) throws -> String {
