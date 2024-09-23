@@ -1103,7 +1103,7 @@
 				CODE_SIGN_ENTITLEMENTS = GitOK/GitOK.entitlements;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 113;
+				CURRENT_PROJECT_VERSION = 114;
 				DEVELOPMENT_ASSET_PATHS = "\"GitOK/Preview Content\"";
 				DEVELOPMENT_TEAM = Y6HZ9JJYV6;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -1126,7 +1126,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 1.1.5;
+				MARKETING_VERSION = 1.1.6;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yueyi.GitOK;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
@@ -1145,7 +1145,7 @@
 				CODE_SIGN_ENTITLEMENTS = GitOK/GitOK.entitlements;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 113;
+				CURRENT_PROJECT_VERSION = 114;
 				DEVELOPMENT_ASSET_PATHS = "\"GitOK/Preview Content\"";
 				DEVELOPMENT_TEAM = Y6HZ9JJYV6;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -1168,7 +1168,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 1.1.5;
+				MARKETING_VERSION = 1.1.6;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yueyi.GitOK;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
