@@ -35,11 +35,9 @@ struct CommitForm: View {
                     }
                 }
             }
-            .onAppear(perform: {
-                EventManager().onCommitted {
-                    self.text = ""
-                }
-            })
+            .onReceive(NotificationCenter.default.publisher(for: .gitCommitSuccess)) { _ in
+                self.text = self.category.defaultMessage
+            }
         }
     }
 }

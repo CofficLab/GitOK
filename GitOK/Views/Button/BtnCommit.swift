@@ -10,7 +10,7 @@ struct BtnCommit: View {
     var git = Git()
 
     var body: some View {
-        Button(working ? "..." : "提交", action: commitAndPush)
+        Button(working ? "..." : "Commit And Push", action: commitAndPush)
             .disabled(working)
     }
 
@@ -19,10 +19,9 @@ struct BtnCommit: View {
         
         Task.detached(operation: {
             do {
-                _ = try await git.commitAndPush(path, commit: commit, verbose: false)
+                _ = try await git.commitAndPush(path, commit: commit)
 
                 DispatchQueue.main.async {
-                    EventManager().emitCommitted()
                     self.working = false
                 }
             } catch let error {

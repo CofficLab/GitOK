@@ -29,8 +29,6 @@ struct BtnSave: View {
                 AppConfig.mainQueue.async {
                     self.working = false
                 }
-
-                EventManager().emitCommitted()
             } catch let error {
                 app.alert("保存出错", info: error.localizedDescription)
                 AppConfig.mainQueue.async {

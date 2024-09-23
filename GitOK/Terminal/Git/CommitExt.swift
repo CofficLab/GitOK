@@ -29,7 +29,8 @@ extension Git {
         try Git.run("commit -a -m '\(commit)'", path: path)
     }
     
-    func commitAndPush(_ path: String, commit: String, verbose: Bool = false) throws -> String {
+    func commitAndPush(_ path: String, commit: String) throws -> String {
+        let verbose = true
         if verbose {
             os_log("\(self.label)CommitAndPush")
         }
@@ -42,7 +43,7 @@ extension Git {
             emitGitPushSuccess()
             return pushMessage
         } catch let error {
-            emitGitPushFailed()
+            emitGitCommitFailed()
             throw error
         }
     }

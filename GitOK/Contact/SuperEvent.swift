@@ -4,6 +4,8 @@ protocol SuperEvent {
 
 }
 
+// MARK: Push
+
 extension SuperEvent {
     func emitGitPushing() {
         NotificationCenter.default.post(name: .gitPushing, object: self)
@@ -21,5 +23,19 @@ extension SuperEvent {
         NotificationCenter.default.post(name: .gitPushFailed, object: self)
     }
     
+    
+}
+
+// MARK: Commit
+
+extension SuperEvent {
+    func emitGitCommitSuccess() {
+        NotificationCenter.default.post(name: .gitCommitSuccess, object: self)
+    }
+
+    func emitGitCommitFailed() {
+        NotificationCenter.default.post(name: .gitCommitFailed, object: self)
+    }
+
     
 }

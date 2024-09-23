@@ -27,14 +27,6 @@ struct CommitList: View {
             .onAppear {
                 refresh("\(self.label)OnApprear")
 
-                EventManager().onCommitted {
-                    if verbose {
-                        os_log("\(self.label)Refresh because of: Committed")
-                    }
-
-                    refresh("\(self.label)OnCommitted")
-                }
-
                 EventManager().onRefresh {
                     refresh("\(self.label)OnRefreshButton")
                 }
@@ -42,6 +34,9 @@ struct CommitList: View {
             .onChange(of: app.project, {
                 self.refresh("\(self.label)Project Changed")
             })
+            .onReceive(NotificationCenter.default.publisher(for: .gitCommitSuccess)) { _ in
+                self.refresh("\(self.label)GitCommitSuccess")
+            }
         }
     }
 

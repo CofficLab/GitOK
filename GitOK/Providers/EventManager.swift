@@ -17,14 +17,6 @@ class EventManager: NSObject, ObservableObject, AVAudioPlayerDelegate {
         )
     }
     
-    func emitCommitted() {
-        NotificationCenter.default.post(
-            name: NSNotification.Name(AppConfig.Event.Committed.name),
-            object: nil,
-            userInfo: [:]
-        )
-    }
-    
     func emitDidBecomeActive() {
         NotificationCenter.default.post(
             name: NSNotification.Name(AppConfig.Event.DidBecomeActive.name),
@@ -39,16 +31,6 @@ class EventManager: NSObject, ObservableObject, AVAudioPlayerDelegate {
             object: nil,
             userInfo: [:]
         )
-    }
-    
-    func onCommitted(_ callback: @escaping () -> Void) {
-        n.addObserver(
-            forName: NSNotification.Name(AppConfig.Event.Committed.name),
-            object: nil,
-            queue: .main,
-            using: { notification in
-                callback()
-            })
     }
     
     func onRefresh(_ callback: @escaping () -> Void) {

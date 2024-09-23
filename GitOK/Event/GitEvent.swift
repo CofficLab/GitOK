@@ -8,3 +8,10 @@ extension Notification.Name {
     static let gitPullSuccess = Notification.Name("gitPullSuccess")
     static let gitPullFailed = Notification.Name("gitPullFailed")
 }
+
+// MARK: Commit 
+
+extension Notification.Name {
+    static let gitCommitSuccess = Notification.Name("gitCommitSuccess")
+    static let gitCommitFailed = Notification.Name("gitCommitFailed")
+}
