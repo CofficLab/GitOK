@@ -7,6 +7,7 @@ struct BtnCommit: View {
 
     var path: String
     var commit: String
+    var git = Git()
 
     var body: some View {
         Button(working ? "..." : "提交", action: commitAndPush)
@@ -18,7 +19,7 @@ struct BtnCommit: View {
         
         Task.detached(operation: {
             do {
-                _ = try await Git.commitAndPush(path, commit: commit, verbose: false)
+                _ = try await git.commitAndPush(path, commit: commit, verbose: false)
 
                 DispatchQueue.main.async {
                     EventManager().emitCommitted()
@@ -37,4 +38,5 @@ struct BtnCommit: View {
 #Preview {
     AppPreview()
         .frame(width: 800)
+        .frame(height: 1000)
 }

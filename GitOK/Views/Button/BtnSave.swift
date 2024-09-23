@@ -8,8 +8,8 @@ struct BtnSave: View {
     @State var working = false
 
     var path: String
-
     var commitMessage = CommitCategory.auto
+    var git = Git()
 
     var body: some View {
         Button(action: save, label: {
@@ -22,9 +22,9 @@ struct BtnSave: View {
 
         AppConfig.bgQueue.async {
             do {
-                try Git.add(path)
-                message = try Git.commit(path, commit: commitMessage)
-                message = try Git.push(path)
+                try git.add(path)
+                message = try git.commit(path, commit: commitMessage)
+                message = try git.push(path)
 
                 AppConfig.mainQueue.async {
                     self.working = false

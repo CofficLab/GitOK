@@ -9,7 +9,7 @@ extension Git {
         try Git.run("show \(hash)", path: path)
     }
     
-    static func commitFiles(_ path: String, hash: String) throws -> [File] {
+    func commitFiles(_ path: String, hash: String) throws -> [File] {
         try Git.run("show \(hash) --pretty='' --name-only", path: path)
             .components(separatedBy: "\n")
             .map({
@@ -17,7 +17,7 @@ extension Git {
             })
     }
     
-    static func add(_ path: String, verbose: Bool = false) throws {
+    func add(_ path: String, verbose: Bool = false) throws {
         let message = try Git.run("add -A .", path: path)
         
         if verbose {
@@ -25,22 +25,24 @@ extension Git {
         }
     }
 
-    static func commit(_ path: String, commit: String) throws -> String {
+    func commit(_ path: String, commit: String) throws -> String {
         try Git.run("commit -a -m '\(commit)'", path: path)
     }
     
-    static func commitAndPush(_ path: String, commit: String, verbose: Bool = false) throws -> String {
+    func commitAndPush(_ path: String, commit: String, verbose: Bool = false) throws -> String {
         if verbose {
             os_log("\(self.label)CommitAndPush")
         }
         
         do {
-            try Git.add(path)
+            emitGitPushing()
+            try self.add(path)
             _ = try Git.run("commit -a -m '\(commit)'", path: path)
             let pushMessage = try Git.run("push --porcelain", path: path, verbose: verbose)
-            
+            emitGitPushSuccess()
             return pushMessage
         } catch let error {
+            emitGitPushFailed()
             throw error
         }
     }
@@ -69,4 +71,5 @@ extension Git {
 #Preview {
     AppPreview()
         .frame(width: 800)
+        .frame(height: 1000)
 }

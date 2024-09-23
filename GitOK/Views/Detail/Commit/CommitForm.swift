@@ -47,5 +47,5 @@ struct CommitForm: View {
 #Preview {
     AppPreview()
         .frame(width: 800)
-        .frame(height: 500)
+        .frame(height: 1000)
 }

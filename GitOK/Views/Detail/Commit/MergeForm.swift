@@ -10,6 +10,7 @@ struct MergeForm: View {
     @State var branch2: Branch? = nil
 
     var project: Project? { app.project }
+    var git = Git()
 
     var body: some View {
         if let project = project {
@@ -35,7 +36,7 @@ struct MergeForm: View {
                 }
             }
             .onAppear(perform: {
-                self.branches = Git.getBranches(project.path)
+                self.branches = git.getBranches(project.path)
                 self.branch1 = branches.first
                 self.branch2 = branches.count >= 2 ? branches[1] : branches.first
 

@@ -7,7 +7,7 @@ extension Git {
         try Git.run("status", path: path)
     }
 
-    static func changedFile(_ path: String, verbose: Bool = false) -> [File] {
+    func changedFile(_ path: String, verbose: Bool = false) -> [File] {
         os_log("\(self.label)GetChangedFile for->\(path)")
         if Git.isGitProject(path: path) == false {
             return []

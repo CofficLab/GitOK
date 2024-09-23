@@ -3,7 +3,7 @@ import OSLog
 import SwiftUI
 
 extension Git {
-    static func getBranches(_ path: String, verbose: Bool = false) -> [Branch] {
+    func getBranches(_ path: String, verbose: Bool = false) -> [Branch] {
         if Git.isGitProject(path: path) == false {
             return []
         }
@@ -24,7 +24,7 @@ extension Git {
         } catch let error { }
 
         if verbose {
-            os_log("\(label)GetBranches")
+            os_log("\(self.label)GetBranches")
             print(branches)
         }
 

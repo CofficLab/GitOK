@@ -2,8 +2,8 @@ import Foundation
 import OSLog
 import SwiftUI
 
-class Git {
-    static var label: String = "🔮 git "
+class Git: SuperEvent {
+    var label: String = "🔮 git "
 
     static func getRemote(_ path: String) -> String {
         do {

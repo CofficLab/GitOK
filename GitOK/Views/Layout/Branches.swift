@@ -9,6 +9,7 @@ struct Branches: View {
 
     var label = "🌿 BranchesView::"
     var verbose = true
+    var git = Git()
 
     var body: some View {
         Picker("branch", selection: $selection, content: {
@@ -38,7 +39,7 @@ struct Branches: View {
             os_log("\(label)Refresh")
         }
 
-        branches = Git.getBranches(project.path)
+        branches = git.getBranches(project.path)
         selection = branches.first(where: {
             $0.name == app.currentBranch?.name
         })
@@ -48,4 +49,5 @@ struct Branches: View {
 #Preview {
     AppPreview()
         .frame(width: 800)
+        .frame(height: 1000)
 }

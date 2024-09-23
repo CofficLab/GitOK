@@ -58,10 +58,10 @@ struct GitCommit {
     func getFiles() -> [File] {
         os_log("\(self.label)GetFiles->\(path)")
         if isHead {
-            return Git.changedFile(path)
+            return Git().changedFile(path)
         } else {
             do {
-                return try Git.commitFiles(path, hash: hash)
+                return try Git().commitFiles(path, hash: hash)
             } catch (let e) {
                 os_log(.error, "\(e.localizedDescription)")
                 

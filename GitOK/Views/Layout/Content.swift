@@ -21,9 +21,6 @@ struct Content: View {
                 Tabs(tab: $tab)
                     .frame(idealWidth: 300)
                     .frame(minWidth: 50)
-                    .navigationDestination(isPresented: Binding.constant(true), destination: {
-                        Text("EEEEEEE")
-                    })
             } detail: {
                 Detail()
             }
@@ -72,4 +69,5 @@ struct Content: View {
         Content()
     }
     .frame(width: 800)
+    .frame(height: 1000)
 }

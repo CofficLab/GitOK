@@ -3,7 +3,7 @@ import OSLog
 import SwiftUI
 
 extension Git {
-    static func push(_ path: String, verbose: Bool = false) throws -> String {
+    func push(_ path: String, verbose: Bool = false) throws -> String {
         if verbose {
             os_log("\(self.label)Push")
         }
