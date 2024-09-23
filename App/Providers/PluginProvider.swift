@@ -16,6 +16,7 @@ class PluginProvider: ObservableObject, SuperLog, SuperThread {
 
     func getPlugins() -> some View {
         HStack(spacing: 0) {
+            TileFile()
             Spacer()
             TileMessage()
         }

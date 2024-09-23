@@ -62,6 +62,60 @@ extension SuperEvent {
             NotificationCenter.default.post(name: .gitCommitFailed, object: self)
         }
     }
+}
 
+// MARK: JS
+
+extension SuperEvent {
+    func emitJsReady() {
+        DispatchQueue.main.async {
+            NotificationCenter.default.post(name: .jsReady, object: self)
+        }
+    }
+}
+
+// MARK: App
+
+extension SuperEvent {
+    func emitAppReady() {
+        DispatchQueue.main.async {
+            NotificationCenter.default.post(name: .appReady, object: self)
+        }
+    }
+
+    func emitAppExit() {
+        DispatchQueue.main.async {
+            NotificationCenter.default.post(name: .appExit, object: self)
+        }
+    }
+
+    func emitAppError() {
+        DispatchQueue.main.async {
+            NotificationCenter.default.post(name: .appError, object: self)
+        }
+    }
+
+    func emitAppLog() {
+        DispatchQueue.main.async {
+            NotificationCenter.default.post(name: .appLog, object: self)
+        }
+    }
     
+    func emitAppDidBecomeActive() {
+        DispatchQueue.main.async {
+            NotificationCenter.default.post(name: .appDidBecomeActive, object: self)
+        }
+    }
+
+    func emitAppWillBecomeActive() {
+        DispatchQueue.main.async {
+            NotificationCenter.default.post(name: .appWillBecomeActive, object: self)
+        }
+    }
+
+    func emitAppWillResignActive() {
+        DispatchQueue.main.async {
+            NotificationCenter.default.post(name: .appWillResignActive, object: self)
+        }
+    }
 }

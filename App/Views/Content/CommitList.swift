@@ -26,16 +26,15 @@ struct CommitList: View, SuperThread {
             }
             .onAppear {
                 refresh("\(self.label)OnApprear")
-
-                EventManager().onRefresh {
-                    refresh("\(self.label)OnRefreshButton")
-                }
             }
             .onChange(of: app.project, {
                 self.refresh("\(self.label)Project Changed")
             })
             .onReceive(NotificationCenter.default.publisher(for: .gitCommitSuccess)) { _ in
                 self.refresh("\(self.label)GitCommitSuccess")
+            }
+            .onReceive(NotificationCenter.default.publisher(for: .appWillBecomeActive)) { _ in
+                self.refresh("\(self.label)AppWillBecomeActive")
             }
         }
     }

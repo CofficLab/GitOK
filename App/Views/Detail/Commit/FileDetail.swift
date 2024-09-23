@@ -9,24 +9,14 @@ struct FileDetail: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            HStack {
-                Image(systemName: "doc.text").padding(.leading)
-                Text(file.name)
-                    .padding(.vertical, 4)
-                Spacer()
-            }
-            .background(Color.accentColor.opacity(0.5))
-            
             view
                 .frame(maxWidth: .infinity)
                 .frame(maxHeight: .infinity)
-                .onAppear {
-                    EventManager().onJSReady {
-                        refresh()
-                    }
-                }
                 .onChange(of: file, refresh)
                 .onChange(of: commit, refresh)
+                .onReceive(NotificationCenter.default.publisher(for: .jsReady)) { _ in
+                    refresh()
+                }
         }
     }
     

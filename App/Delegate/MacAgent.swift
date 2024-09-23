@@ -4,7 +4,7 @@ import SwiftUI
 import CloudKit
 import OSLog
 
-class MacAgent: NSObject, NSApplicationDelegate, ObservableObject, SuperLog {
+class MacAgent: NSObject, NSApplicationDelegate, ObservableObject, SuperLog, SuperEvent {
     var label: String {"🍎 MacAgent::"}
     
     func application(
@@ -33,7 +33,8 @@ class MacAgent: NSObject, NSApplicationDelegate, ObservableObject, SuperLog {
         if verbose {
             os_log("\(self.label)Did Become Active")
         }
-        EventManager().emitDidBecomeActive()
+
+        emitAppDidBecomeActive()
     }
 
     func applicationWillFinishLaunching(_ notification: Notification) {
@@ -41,6 +42,15 @@ class MacAgent: NSObject, NSApplicationDelegate, ObservableObject, SuperLog {
         if verbose {
             os_log("\(self.label)Will Finish Launching")
         }
+    }
+    
+    func applicationWillBecomeActive(_ notification: Notification) {
+        let verbose = false 
+        if verbose {
+            os_log("\(self.label)Will Become Active")
+        }
+
+        emitAppWillBecomeActive()
     }
 
     // 收到远程通知

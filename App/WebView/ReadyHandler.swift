@@ -2,7 +2,7 @@ import SwiftUI
 import WebKit
 import OSLog
 
-class ReadyHandler: NSObject, WebHandler {
+class ReadyHandler: NSObject, WebHandler, SuperEvent {
     var functionName: String = "ready"
     var label = "👷 ReadyHandler::"
 
@@ -11,7 +11,7 @@ class ReadyHandler: NSObject, WebHandler {
         if verbose {
             os_log("\(self.label)JS call \(message.name)")
         }
-        EventManager().emitJSReady()
+        emitJsReady()
     }
 }
 

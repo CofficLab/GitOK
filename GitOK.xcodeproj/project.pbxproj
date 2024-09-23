@@ -15,7 +15,6 @@
 		0B1C67B02BD9099800502EB1 /* AppPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1C67AF2BD9099800502EB1 /* AppPreview.swift */; };
 		0B1C67B32BD90B5700502EB1 /* AppProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1C67B22BD90B5700502EB1 /* AppProvider.swift */; };
 		0B1C67B52BD9115F00502EB1 /* Branches.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1C67B42BD9115F00502EB1 /* Branches.swift */; };
-		0B1C67B82BD9128000502EB1 /* BtnRefresh.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1C67B72BD9128000502EB1 /* BtnRefresh.swift */; };
 		0B1C67BA2BD912D900502EB1 /* BtnCommitAndPush.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1C67B92BD912D900502EB1 /* BtnCommitAndPush.swift */; };
 		0B1C67BC2BD9132500502EB1 /* Git.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1C67BB2BD9132500502EB1 /* Git.swift */; };
 		0B1C67BF2BD9157100502EB1 /* DBExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1C67BE2BD9157100502EB1 /* DBExt.swift */; };
@@ -26,7 +25,6 @@
 		0B1C67EF2BD9DACF00502EB1 /* CommitForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1C67EE2BD9DACF00502EB1 /* CommitForm.swift */; };
 		0B1C67F12BD9DB1F00502EB1 /* CommitCategoryPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1C67F02BD9DB1F00502EB1 /* CommitCategoryPicker.swift */; };
 		0B1C67F32BD9E21B00502EB1 /* BtnOpenRemote.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1C67F22BD9E21B00502EB1 /* BtnOpenRemote.swift */; };
-		0B1C67FE2BD9F12000502EB1 /* EventManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1C67FD2BD9F12000502EB1 /* EventManager.swift */; };
 		0B1C68002BD9F68F00502EB1 /* BtnFinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1C67FF2BD9F68F00502EB1 /* BtnFinder.swift */; };
 		0B1C68022BD9F7B500502EB1 /* BtnOpen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1C68012BD9F7B500502EB1 /* BtnOpen.swift */; };
 		0B1C68042BD9FAE500502EB1 /* BtnOpenXcode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1C68032BD9FAE500502EB1 /* BtnOpenXcode.swift */; };
@@ -143,6 +141,9 @@
 		0BD650ED2CA196BD00BA3CB8 /* SmartMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD650EA2CA196BD00BA3CB8 /* SmartMessage.swift */; };
 		0BD650EE2CA196BD00BA3CB8 /* TileMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD650EB2CA196BD00BA3CB8 /* TileMessage.swift */; };
 		0BD650F02CA196EA00BA3CB8 /* MessageProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD650EF2CA196EA00BA3CB8 /* MessageProvider.swift */; };
+		0BD650F32CA1A8F900BA3CB8 /* TileFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD650F22CA1A8F900BA3CB8 /* TileFile.swift */; };
+		0BD650F52CA1AA5D00BA3CB8 /* JSEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD650F42CA1AA5D00BA3CB8 /* JSEvent.swift */; };
+		0BD650F72CA1AC6700BA3CB8 /* AppEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD650F62CA1AC6400BA3CB8 /* AppEvent.swift */; };
 		0BDE61A32BDB3C9B006E23EA /* Projects.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BDE61A22BDB3C9B006E23EA /* Projects.swift */; };
 		0BDE61A52BDB408F006E23EA /* RevListExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BDE61A42BDB408F006E23EA /* RevListExt.swift */; };
 		0BDE61A72BDB4541006E23EA /* StatusExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BDE61A62BDB4541006E23EA /* StatusExt.swift */; };
@@ -199,7 +200,6 @@
 		0B1C67AF2BD9099800502EB1 /* AppPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppPreview.swift; sourceTree = "<group>"; };
 		0B1C67B22BD90B5700502EB1 /* AppProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppProvider.swift; sourceTree = "<group>"; };
 		0B1C67B42BD9115F00502EB1 /* Branches.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Branches.swift; sourceTree = "<group>"; };
-		0B1C67B72BD9128000502EB1 /* BtnRefresh.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BtnRefresh.swift; sourceTree = "<group>"; };
 		0B1C67B92BD912D900502EB1 /* BtnCommitAndPush.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BtnCommitAndPush.swift; sourceTree = "<group>"; };
 		0B1C67BB2BD9132500502EB1 /* Git.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Git.swift; sourceTree = "<group>"; };
 		0B1C67BE2BD9157100502EB1 /* DBExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DBExt.swift; sourceTree = "<group>"; };
@@ -210,7 +210,6 @@
 		0B1C67EE2BD9DACF00502EB1 /* CommitForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommitForm.swift; sourceTree = "<group>"; };
 		0B1C67F02BD9DB1F00502EB1 /* CommitCategoryPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommitCategoryPicker.swift; sourceTree = "<group>"; };
 		0B1C67F22BD9E21B00502EB1 /* BtnOpenRemote.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BtnOpenRemote.swift; sourceTree = "<group>"; };
-		0B1C67FD2BD9F12000502EB1 /* EventManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventManager.swift; sourceTree = "<group>"; };
 		0B1C67FF2BD9F68F00502EB1 /* BtnFinder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BtnFinder.swift; sourceTree = "<group>"; };
 		0B1C68012BD9F7B500502EB1 /* BtnOpen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BtnOpen.swift; sourceTree = "<group>"; };
 		0B1C68032BD9FAE500502EB1 /* BtnOpenXcode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BtnOpenXcode.swift; sourceTree = "<group>"; };
@@ -329,6 +328,9 @@
 		0BD650EA2CA196BD00BA3CB8 /* SmartMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmartMessage.swift; sourceTree = "<group>"; };
 		0BD650EB2CA196BD00BA3CB8 /* TileMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TileMessage.swift; sourceTree = "<group>"; };
 		0BD650EF2CA196EA00BA3CB8 /* MessageProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageProvider.swift; sourceTree = "<group>"; };
+		0BD650F22CA1A8F900BA3CB8 /* TileFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TileFile.swift; sourceTree = "<group>"; };
+		0BD650F42CA1AA5D00BA3CB8 /* JSEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSEvent.swift; sourceTree = "<group>"; };
+		0BD650F62CA1AC6400BA3CB8 /* AppEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppEvent.swift; sourceTree = "<group>"; };
 		0BDE61A22BDB3C9B006E23EA /* Projects.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Projects.swift; sourceTree = "<group>"; };
 		0BDE61A42BDB408F006E23EA /* RevListExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RevListExt.swift; sourceTree = "<group>"; };
 		0BDE61A62BDB4541006E23EA /* StatusExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusExt.swift; sourceTree = "<group>"; };
@@ -452,7 +454,6 @@
 				0BD650EF2CA196EA00BA3CB8 /* MessageProvider.swift */,
 				0BD650E52CA195EA00BA3CB8 /* PluginProvider.swift */,
 				0B1C67B22BD90B5700502EB1 /* AppProvider.swift */,
-				0B1C67FD2BD9F12000502EB1 /* EventManager.swift */,
 			);
 			path = Providers;
 			sourceTree = "<group>";
@@ -473,7 +474,6 @@
 				0B1C68032BD9FAE500502EB1 /* BtnOpenXcode.swift */,
 				0B1C67EA2BD9181200502EB1 /* BtnPush.swift */,
 				0BCC6D082BD939FD006ADA94 /* BtnPwd.swift */,
-				0B1C67B72BD9128000502EB1 /* BtnRefresh.swift */,
 				0BCC6D0C2BD948AB006ADA94 /* BtnSync.swift */,
 				0B6BE4602BDA603000C8ACB2 /* BtnWhoami.swift */,
 				0BB543EA2BE8931500D7A2B2 /* Icon */,
@@ -828,6 +828,7 @@
 		0BD650E42CA1956D00BA3CB8 /* Plugins */ = {
 			isa = PBXGroup;
 			children = (
+				0BD650F12CA1A8E800BA3CB8 /* FileInfo */,
 				0BD650EC2CA196BD00BA3CB8 /* SmartMessage */,
 				0BD650E82CA1969100BA3CB8 /* SmartLog */,
 			);
@@ -849,6 +850,14 @@
 				0BD650EB2CA196BD00BA3CB8 /* TileMessage.swift */,
 			);
 			path = SmartMessage;
+			sourceTree = "<group>";
+		};
+		0BD650F12CA1A8E800BA3CB8 /* FileInfo */ = {
+			isa = PBXGroup;
+			children = (
+				0BD650F22CA1A8F900BA3CB8 /* TileFile.swift */,
+			);
+			path = FileInfo;
 			sourceTree = "<group>";
 		};
 		0BDE619E2BDB2C51006E23EA /* Git */ = {
@@ -909,6 +918,8 @@
 		F588FB6E2CA15D4100F6AE42 /* Event */ = {
 			isa = PBXGroup;
 			children = (
+				0BD650F62CA1AC6400BA3CB8 /* AppEvent.swift */,
+				0BD650F42CA1AA5D00BA3CB8 /* JSEvent.swift */,
 				F588FB6F2CA15D5200F6AE42 /* GitEvent.swift */,
 			);
 			path = Event;
@@ -1014,7 +1025,6 @@
 				0B1C67B32BD90B5700502EB1 /* AppProvider.swift in Sources */,
 				F588FB722CA15DAD00F6AE42 /* SuperEvent.swift in Sources */,
 				0BF75EE82BDF39B500A553CD /* PushExt.swift in Sources */,
-				0B1C67B82BD9128000502EB1 /* BtnRefresh.swift in Sources */,
 				0BD15C4E2BDBF360004024CF /* BtnMerge.swift in Sources */,
 				0B8C7A6F2BE08CA800B4E817 /* ToolName.swift in Sources */,
 				0B1C67B52BD9115F00502EB1 /* Branches.swift in Sources */,
@@ -1034,6 +1044,7 @@
 				0B1C68042BD9FAE500502EB1 /* BtnOpenXcode.swift in Sources */,
 				0BCC6D112BD94B5B006ADA94 /* BtnLog.swift in Sources */,
 				0B9EA3562C1ECF5A00A4059A /* IconOpacity.swift in Sources */,
+				0BD650F32CA1A8F900BA3CB8 /* TileFile.swift in Sources */,
 				0B76FCF12BDDD18400501F1F /* WebView.swift in Sources */,
 				0BDE61A32BDB3C9B006E23EA /* Projects.swift in Sources */,
 				0B8C7B212BE0A86000B4E817 /* ShellFileExt.swift in Sources */,
@@ -1053,6 +1064,7 @@
 				0BD650CB2CA18A7000BA3CB8 /* CollectionExt.swift in Sources */,
 				0BD650CC2CA18A7000BA3CB8 /* DataExt.swift in Sources */,
 				0BD650CD2CA18A7000BA3CB8 /* ContextExt.swift in Sources */,
+				0BD650F52CA1AA5D00BA3CB8 /* JSEvent.swift in Sources */,
 				0BD650CE2CA18A7000BA3CB8 /* SuperLog.swift in Sources */,
 				0BD650CF2CA18A7000BA3CB8 /* Markdown.swift in Sources */,
 				0BD650D02CA18A7000BA3CB8 /* MetaWrapper.swift in Sources */,
@@ -1103,7 +1115,6 @@
 				0B8C7AF42BE08E2D00B4E817 /* Snapshot.swift in Sources */,
 				0BF75EE42BDF2CCD00A553CD /* CommitList.swift in Sources */,
 				0B8C7B132BE08EDA00B4E817 /* TimeHelper.swift in Sources */,
-				0B1C67FE2BD9F12000502EB1 /* EventManager.swift in Sources */,
 				0B76FD242BDE326300501F1F /* FileExt.swift in Sources */,
 				0BDE61AD2BDB4E87006E23EA /* FileTile.swift in Sources */,
 				0B1C67F12BD9DB1F00502EB1 /* CommitCategoryPicker.swift in Sources */,
@@ -1116,6 +1127,7 @@
 				0BD15C5A2BDD275C004024CF /* DiffBlock.swift in Sources */,
 				0B76FCF62BDDD1DE00501F1F /* WKDelegate.swift in Sources */,
 				0BB555242BDB7B300044048B /* BranchExt.swift in Sources */,
+				0BD650F72CA1AC6700BA3CB8 /* AppEvent.swift in Sources */,
 				0B8C7B2F2BE0E5F100B4E817 /* Tabs.swift in Sources */,
 				0B1C68022BD9F7B500502EB1 /* BtnOpen.swift in Sources */,
 				0B8C7B152BE08EDA00B4E817 /* Toast.swift in Sources */,
