@@ -144,8 +144,6 @@ struct BtnCommitAndPush: View, SuperLog, SuperThread {
             return "提交失败: \(error.localizedDescription)"
         }
 
-        return ""
-
         // 执行 push
         do {
             try git.push(path, username: username, token: token)
