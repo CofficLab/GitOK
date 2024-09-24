@@ -70,7 +70,6 @@ struct BtnSync: View, SuperLog, SuperEvent, SuperThread {
     }
 
     func reset() {
-        os_log("reset")
         withAnimation {
             self.working = false
         }

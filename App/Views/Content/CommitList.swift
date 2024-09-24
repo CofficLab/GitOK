@@ -62,6 +62,12 @@ struct CommitList: View, SuperThread, SuperLog{
                     self.commits = commits
                 }
             }
+            .onReceive(NotificationCenter.default.publisher(for: .gitPullSuccess)) { _ in
+                self.refresh("\(self.t)GitPullSuccess")
+            }
+            .onReceive(NotificationCenter.default.publisher(for: .gitPushSuccess)) { _ in
+                self.refresh("\(self.t)GitPushSuccess")
+            }
 //            .onReceive(NotificationCenter.default.publisher(for: .appWillBecomeActive)) { _ in
 //                self.refresh("\(self.label)AppWillBecomeActive")
 //            }

@@ -11,6 +11,7 @@ struct Content: View, SuperThread {
     @State var message: String = ""
     @State var tab: ActionTab = .Git
     @State var columnVisibility: NavigationSplitViewVisibility = .automatic
+    @State var projectExists: Bool = true // 新增状态变量
 
     var project: Project? { g.project }
 
@@ -27,17 +28,31 @@ struct Content: View, SuperThread {
                 Tabs(tab: $tab)
                     .frame(idealWidth: 300)
                     .frame(minWidth: 50)
+                    .disabled(!projectExists) // 禁止点击
+                    .overlay(
+                        Group {
+                            if !projectExists {
+                                Color.black.opacity(0.3)
+                            }
+                        }
+                    )
             } detail: {
-                switch self.tab {
-                case .Git:
-                    VStack(spacing: 0) {
-                        Detail()
-                        StatusBar()
+                if projectExists {
+                    switch self.tab {
+                    case .Git:
+                        VStack(spacing: 0) {
+                            Detail()
+                            StatusBar()
+                        }
+                    case .Banner:
+                        Text("Banner")
+                    case .Icon:
+                        Text("icon")
                     }
-                case .Banner:
-                    Text("Banner")
-                case .Icon:
-                    Text("icon")
+                } else {
+                    Text("项目不存在")
+                        .foregroundColor(.red)
+                        .font(.headline)
                 }
             }
 
@@ -52,10 +67,24 @@ struct Content: View, SuperThread {
             if app.sidebarVisibility == false {
                 self.columnVisibility = .doubleColumn
             }
+
+            // 检查项目是否存在
+            if let project = project {
+                self.projectExists = FileManager.default.fileExists(atPath: project.path)
+            } else {
+                self.projectExists = false
+            }
         }
         .onChange(of: self.columnVisibility, checkColumnVisibility)
+        .onChange(of: g.project) {
+            if let newProject = g.project {
+                self.projectExists = FileManager.default.fileExists(atPath: newProject.path)
+            } else {
+                self.projectExists = false
+            }
+        }
         .toolbar(content: {
-            if let project = project {
+            if let project = project, projectExists {
                 ToolbarItemGroup(placement: .cancellationAction, content: {
                     BtnOpenTerminal(url: project.url)
                     BtnOpenXcode(url: project.url)

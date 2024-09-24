@@ -19,7 +19,13 @@ class Git: SuperEvent, SuperLog {
     }
 
     func run(_ arguments: String, path: String, verbose: Bool = false) throws -> String {
-        try self.shell.run("cd '\(path)' && git \(arguments)")
+        let command = "cd '\(path)' && git \(arguments)"
+        
+        if verbose {
+            os_log("\(self.t)Run -> \(command)")
+        }
+
+        return try self.shell.run(command, verbose: verbose)
     }
     
     func isGitProject(path: String, verbose: Bool = false) -> Bool {

@@ -51,7 +51,7 @@ final class Project {
             return try git.logs(path)
         } catch let error {
             os_log(.error, "\(self.label)GetCommits has error")
-            os_log("\(error)")
+            os_log(.error, "\(error)")
             
             return []
         }

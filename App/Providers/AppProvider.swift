@@ -56,7 +56,7 @@ class AppProvider: NSObject, ObservableObject, AVAudioPlayerDelegate, SuperLog {
     }
     
     func showSidebar() {
-        let verbose = true
+        let verbose = false
         if verbose {
             os_log("\(self.t)Show Sidebar")
         }

@@ -44,6 +44,9 @@ struct RootView<Content>: View where Content: View {
             .onReceive(NotificationCenter.default.publisher(for: .gitPullFailed)) { _ in
                 m.append("gitPullFailed")
             }
+            .onReceive(NotificationCenter.default.publisher(for: .gitBranchChanged)) { notification in
+                m.append("gitBranchChanged to \(notification.userInfo?["branch"] ?? "")")
+            }
     }
 }
 
