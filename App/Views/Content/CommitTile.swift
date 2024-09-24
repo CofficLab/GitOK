@@ -2,9 +2,10 @@ import SwiftUI
 
 struct CommitTile: View, SuperEvent, SuperThread {
     @EnvironmentObject var app: AppProvider
-    
+
     @State var isSynced = true
     @State var title = ""
+    @State var tag = ""
 
     var commit: GitCommit
     var project: Project
@@ -12,7 +13,12 @@ struct CommitTile: View, SuperEvent, SuperThread {
     var body: some View {
         VStack(spacing: 0) {
             HStack {
-                Text(title)
+                HStack {
+                    if commit.isHead {
+                        Image(systemName: "arrowshape.right")
+                    }
+                    Text(title)
+                }
 
                 Spacer()
 
@@ -20,13 +26,20 @@ struct CommitTile: View, SuperEvent, SuperThread {
                     Image(systemName: "arrowshape.up")
                         .opacity(0.8)
                 }
+
+                if tag.isNotEmpty && commit.isHead == false {
+                    Text(tag)
+                        .padding(3)
+                        .background(RoundedRectangle(cornerRadius: 5).fill(Color.gray.opacity(0.2)))
+                }
             }
         }
-        .onAppear() {
+        .onAppear {
             self.refreshTitle()
             self.refreshSynced()
+            self.refreshTag()
         }
-        .onReceive(NotificationCenter.default.publisher(for: .gitCommitSuccess)) {_ in 
+        .onReceive(NotificationCenter.default.publisher(for: .gitCommitSuccess)) { _ in
             self.refreshTitle()
         }
     }
@@ -46,6 +59,15 @@ struct CommitTile: View, SuperEvent, SuperThread {
             let title = commit.getTitle(reason: "CommitTile.RefreshTitle")
             self.main.async {
                 self.title = title
+            }
+        }
+    }
+
+    func refreshTag() {
+        self.bg.async {
+            let tag = commit.getTag()
+            self.main.async {
+                self.tag = tag
             }
         }
     }

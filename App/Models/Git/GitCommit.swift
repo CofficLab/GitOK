@@ -100,6 +100,10 @@ struct GitCommit {
             return false
         }
     }
+
+    func getTag() -> String {
+        try! Git().getTag(path, hash)
+    }
 }
 
 extension GitCommit: Identifiable {

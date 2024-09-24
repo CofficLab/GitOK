@@ -41,7 +41,11 @@ extension Git {
 
     @discardableResult
     func setBranch(_ b: Branch, _ path: String, verbose: Bool = false) throws -> String {
-        try run("checkout \(b.name) -q", path: path, verbose: verbose)
+        let result = try run("checkout \(b.name) -q", path: path, verbose: verbose)
+        
+        self.emitGitBranchChanged(branch: b.name)
+        
+        return result
     }
 
     func merge(

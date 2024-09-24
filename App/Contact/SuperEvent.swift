@@ -48,6 +48,16 @@ extension SuperEvent {
     }
 }
 
+// MARK: Branch
+
+extension SuperEvent {
+    func emitGitBranchChanged(branch: String) {
+        DispatchQueue.main.async {
+            NotificationCenter.default.post(name: .gitBranchChanged, object: self, userInfo: ["branch": branch])
+        }
+    }
+}
+
 // MARK: Commit
 
 extension SuperEvent {

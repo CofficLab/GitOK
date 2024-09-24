@@ -62,6 +62,10 @@ extension Git {
             GitCommit.fromShellLine($0, path: path, seprator: "+")
         }
     }
+
+    func getTag(_ path: String, _ hash: String) throws -> String {
+        try run("tag --points-at \(hash)", path: path)
+    }
 }
 
 #Preview {

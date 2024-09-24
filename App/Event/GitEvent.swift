@@ -23,3 +23,9 @@ extension Notification.Name {
     static let gitCommitSuccess = Notification.Name("gitCommitSuccess")
     static let gitCommitFailed = Notification.Name("gitCommitFailed")
 }
+
+// MARK: Branch
+
+extension Notification.Name {
+    static let gitBranchChanged = Notification.Name("gitBranchChanged")
+}
