@@ -47,7 +47,6 @@ extension AppConfig {
     }
 }
 
-
 #Preview {
     AppPreview()
 }

@@ -3,7 +3,7 @@ import OSLog
 import SwiftData
 import SwiftUI
 
-struct BannerModel: JsonModel {
+struct BannerModel: JsonModel, SuperLog {
     static var root: String = ".gitok/banners"
     static var label = "💿 BannerModel::"
     static var empty = BannerModel(path: "")
@@ -75,6 +75,35 @@ extension BannerModel {
         }
 
         return nil
+    }
+
+    func saveImage(_ url: URL) throws -> URL {
+        guard let path = self.path else {
+            return url
+        }
+        
+        let ext = url.pathExtension
+        let rootURL = URL(fileURLWithPath: path).deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent().appendingPathComponent(Self.root).deletingLastPathComponent()
+        let imagesFolder = rootURL.appendingPathComponent("images")
+        let storeURL = imagesFolder.appendingPathComponent("\(TimeHelper.getTimeString()).\(ext)")
+        
+        os_log("\(self.t)SaveImage")
+        os_log("  ➡️ \(url.relativeString)")
+        os_log("  ➡️ \(storeURL.relativeString)")
+        
+        do {
+            // Ensure the images directory exists
+            try FileManager.default.createDirectory(at: imagesFolder, withIntermediateDirectories: true, attributes: nil)
+            
+            // Copy the image to the new location
+            try FileManager.default.copyItem(at: url, to: storeURL)
+            return storeURL
+        } catch let e {
+            os_log(.error, "\(Self.label)SaveImage -> \(e.localizedDescription)")
+            os_log(.error, "  ⚠️ \(e)")
+
+            throw e
+        }
     }
 }
 
