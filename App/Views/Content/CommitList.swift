@@ -65,7 +65,7 @@ struct CommitList: View, SuperThread {
         }
 
         if verbose {
-            os_log("\(label)Refresh with reason->\(reason)")
+            os_log("\(label)Refresh(\(reason))")
         }
 
         self.loading = true

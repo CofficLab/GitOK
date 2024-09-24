@@ -42,14 +42,15 @@ final class Project {
     
     func getCommits(_ reason: String) -> [GitCommit] {
         if Self.verbose {
-            os_log("\(self.label)GetCommit with reason->\(reason)")
+            os_log("\(self.label)GetCommit(\(reason))")
         }
         
         do {
             return try git.logs(path)
         } catch let error {
             os_log(.error, "\(self.label)GetCommits has error")
-            print(error)
+            os_log("\(error)")
+            
             return []
         }
     }
