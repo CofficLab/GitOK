@@ -137,7 +137,3 @@ extension Git {
         }
     }
 }
-
-#Preview {
-    BtnCommitAndPush(repoPath: "/path/to/your/repo") // 初始化时传入路径
-}
