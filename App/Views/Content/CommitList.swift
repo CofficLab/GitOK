@@ -52,6 +52,7 @@ struct CommitList: View, SuperThread {
                 self.refresh("\(self.label)Project Changed")
             })
             .onReceive(NotificationCenter.default.publisher(for: .gitCommitSuccess)) { _ in
+                os_log("\(self.label)GitCommitSuccess")
                 self.commits = [project.headCommit] + project.getCommits("")
             }
 //            .onReceive(NotificationCenter.default.publisher(for: .appWillBecomeActive)) { _ in
