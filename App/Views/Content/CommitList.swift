@@ -21,7 +21,7 @@ struct CommitList: View, SuperThread {
                     Text("loading...")
                     Spacer()
                 } else {
-                    List([project.headCommit] + commits, selection: self.$selection) { commit in
+                    List(commits, selection: self.$selection) { commit in
                         CommitTile(commit: commit, project: project).tag(commit)
                     }
 
@@ -50,9 +50,9 @@ struct CommitList: View, SuperThread {
             .onChange(of: g.project, {
                 self.refresh("\(self.label)Project Changed")
             })
-//            .onReceive(NotificationCenter.default.publisher(for: .gitCommitSuccess)) { _ in
-//                self.refresh("\(self.label)GitCommitSuccess")
-//            }
+            .onReceive(NotificationCenter.default.publisher(for: .gitCommitSuccess)) { _ in
+                self.refresh("\(self.label)GitCommitSuccess")
+            }
 //            .onReceive(NotificationCenter.default.publisher(for: .appWillBecomeActive)) { _ in
 //                self.refresh("\(self.label)AppWillBecomeActive")
 //            }
@@ -74,7 +74,7 @@ struct CommitList: View, SuperThread {
             let commits = project.getCommits(reason)
 
             self.main.async {
-                self.commits = commits
+                self.commits = [project.headCommit] + commits
                 self.loading = false
             }
         }
