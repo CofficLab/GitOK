@@ -39,6 +39,7 @@ extension Git {
         Branch.fromShellLine(try run("branch --show-current", path: path, verbose: verbose))
     }
 
+    @discardableResult
     func setBranch(_ b: Branch, _ path: String, verbose: Bool = false) throws -> String {
         try run("checkout \(b.name) -q", path: path, verbose: verbose)
     }

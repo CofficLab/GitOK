@@ -1,7 +1,7 @@
 import OSLog
 import SwiftUI
 
-struct CommitList: View, SuperThread {
+struct CommitList: View, SuperThread, SuperLog{
     @EnvironmentObject var app: AppProvider
     @EnvironmentObject var g: GitProvider
 
@@ -11,7 +11,7 @@ struct CommitList: View, SuperThread {
     @State var showCommitForm = false
     @State private var isRefreshing = false
 
-    var label: String { "🖥️ Commits::" }
+    var emoji = "🖥️"
     var verbose = true
 
     var body: some View {
@@ -42,14 +42,14 @@ struct CommitList: View, SuperThread {
                 }
             }
             .onAppear {
-                refresh("\(self.label)OnApprear")
+                refresh("OnApprear")
                 self.showCommitForm = project.hasUnCommittedChanges()
             }
             .onChange(of: selection, {
                 g.setCommit(selection)
             })
             .onChange(of: g.project, {
-                self.refresh("\(self.label)Project Changed")
+                self.refresh("\(self.t)Project Changed")
             })
             .onReceive(NotificationCenter.default.publisher(for: .gitCommitSuccess)) { _ in
                 guard let project = g.project else {
@@ -69,7 +69,7 @@ struct CommitList: View, SuperThread {
     }
 
     func refresh(_ reason: String = "") {
-        let verbose = true
+        let verbose = false
         
         guard let project = g.project, !isRefreshing else {
             return
@@ -77,13 +77,13 @@ struct CommitList: View, SuperThread {
 
         isRefreshing = true
 
-        if verbose {
-            os_log("\(label)Refresh(\(reason))")
-        }
-
         self.loading = true
 
         self.bg.async {
+            if verbose {
+                os_log("\(t)Refresh(\(reason))")
+            }
+            
             let commits = [project.headCommit] + project.getCommits(reason)
 
             self.main.async {

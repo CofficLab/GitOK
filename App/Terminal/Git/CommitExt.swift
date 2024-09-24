@@ -10,7 +10,12 @@ extension Git {
     }
 
     func commitFiles(_ path: String, hash: String) throws -> [File] {
-        try run("show \(hash) --pretty='' --name-only", path: path)
+        let verbose = false
+        if verbose {
+            os_log("\(self.t)CommitFiles -> \(hash)")
+        }
+
+        return try run("show \(hash) --pretty='' --name-only", path: path)
             .components(separatedBy: "\n")
             .map({
                 File.fromLine($0, path: path)
@@ -26,6 +31,11 @@ extension Git {
     }
 
     func commit(_ path: String, commit: String) throws -> String {
+        let verbose = true
+        if verbose {
+            os_log("\(self.t)Commit -> \(commit)")
+        }
+
         self.emitGitCommitStart()
         let result = try run("commit -a -m '\(commit)'", path: path)
         self.emitGitCommitSuccess()

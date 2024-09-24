@@ -2,7 +2,7 @@ import OSLog
 import SwiftData
 import SwiftUI
 
-struct Projects: View {
+struct Projects: View, SuperLog {
     @Environment(\.modelContext) private var modelContext
     @EnvironmentObject var app: AppProvider
     @EnvironmentObject var g: GitProvider
@@ -11,8 +11,7 @@ struct Projects: View {
 
     @State var project: Project? = nil
 
-    var label = "🖥️ ProjectsView::"
-    var verbose = false
+    var emoji = "🖥️"
 
     var body: some View {
         ZStack {
@@ -29,24 +28,21 @@ struct Projects: View {
             }
         }
         .onAppear {
+            let verbose = true
+            
             self.project = projects.first(where: {
                 $0.path == AppConfig.projectPath
             })
 
             if verbose {
-                os_log("\(self.label)Set Project=\(project?.title ?? "nil")")
+                os_log("\(self.t)Set Project ➡️ \(project?.title ?? "nil")")
             }
 
-            g.setProject(project)
+            g.setProject(project, reason: "Projects.OnAppear")
         }
         .onChange(of: project) {
-            g.setProject(project)
+            g.setProject(project, reason: "Projects.OnChangeOfProject")
         }
-        .toolbar(content: {
-            ToolbarItem {
-                BtnAdd()
-            }
-        })
         .navigationSplitViewColumnWidth(min: 175, ideal: 175, max: 200)
     }
                                                  

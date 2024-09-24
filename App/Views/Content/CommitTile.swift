@@ -23,17 +23,30 @@ struct CommitTile: View, SuperEvent, SuperThread {
             }
         }
         .onAppear() {
-            self.title = commit.getTitle()
-            self.bg.async {
-                let isSynced = try! commit.checkIfSynced()
-
-                self.main.async {
-                    self.isSynced = isSynced
-                }
-            }
+            self.refreshTitle()
+            self.refreshSynced()
         }
         .onReceive(NotificationCenter.default.publisher(for: .gitCommitSuccess)) {_ in 
-            self.title = commit.getTitle()
+            self.refreshTitle()
+        }
+    }
+
+    func refreshSynced() {
+        self.bg.async {
+            let isSynced = try! commit.checkIfSynced()
+
+            self.main.async {
+                self.isSynced = isSynced
+            }
+        }
+    }
+
+    func refreshTitle() {
+        self.bg.async {
+            let title = commit.getTitle(reason: "CommitTile.RefreshTitle")
+            self.main.async {
+                self.title = title
+            }
         }
     }
 }

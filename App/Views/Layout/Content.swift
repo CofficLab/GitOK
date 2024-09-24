@@ -2,7 +2,7 @@ import OSLog
 import SwiftData
 import SwiftUI
 
-struct Content: View {
+struct Content: View, SuperThread {
     @EnvironmentObject var app: AppProvider
     @EnvironmentObject var g: GitProvider
 
@@ -18,6 +18,11 @@ struct Content: View {
         ZStack {
             NavigationSplitView(columnVisibility: $columnVisibility) {
                 Projects()
+                    .toolbar(content: {
+                        ToolbarItem {
+                            BtnAdd()
+                        }
+                    })
             } content: {
                 Tabs(tab: $tab)
                     .frame(idealWidth: 300)
@@ -34,9 +39,8 @@ struct Content: View {
                 case .Icon:
                     Text("icon")
                 }
-                
             }
-            
+
             Message()
         }
         .navigationTitle(project?.title ?? "")
@@ -44,19 +48,12 @@ struct Content: View {
             if app.sidebarVisibility == true {
                 self.columnVisibility = .all
             }
-            
+
             if app.sidebarVisibility == false {
                 self.columnVisibility = .doubleColumn
             }
         }
-        .onChange(of: self.columnVisibility, {
-            print(self.columnVisibility)
-            if columnVisibility == .doubleColumn {
-                app.hideSidebar()
-            } else if columnVisibility == .automatic || columnVisibility == .all {
-                app.showSidebar()
-            }
-        })
+        .onChange(of: self.columnVisibility, checkColumnVisibility)
         .toolbar(content: {
             if let project = project {
                 ToolbarItemGroup(placement: .cancellationAction, content: {
@@ -71,7 +68,17 @@ struct Content: View {
                     }
                 })
             }
-    })
+        })
+    }
+
+    func checkColumnVisibility() {
+        self.main.async {
+            if columnVisibility == .doubleColumn {
+                app.hideSidebar()
+            } else if columnVisibility == .automatic || columnVisibility == .all {
+                app.showSidebar()
+            }
+        }
     }
 }
 

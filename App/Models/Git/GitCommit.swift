@@ -56,7 +56,7 @@ struct GitCommit {
         }
     }
     
-    func getFiles() -> [File] {
+    func getFiles(reason: String) -> [File] {
         let verbose = false
 
         if verbose {
@@ -79,11 +79,11 @@ struct GitCommit {
         }
     }
     
-    func getTitle() -> String {
+    func getTitle(reason: String) -> String {
         if isHead == false {
             return message
         } else {
-            let count = getFiles().count
+            let count = getFiles(reason: "GitCommit.GetTitle").count
             return "\(count) 个变动"
         }
     }

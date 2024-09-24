@@ -1,6 +1,6 @@
 import SwiftUI
-
-struct FileList: View, SuperThread {
+import OSLog
+struct FileList: View, SuperThread, SuperLog {
     @EnvironmentObject var app: AppProvider
     @EnvironmentObject var g: GitProvider
 
@@ -19,15 +19,20 @@ struct FileList: View, SuperThread {
                     FileTile(file: $0, commit: commit)
                         .tag($0 as File?)
                 }
-                .onAppear {
-                    self.files = commit.getFiles()
-                    self.g.file = self.files.first
+                .task {
+                    self.refresh(scrollProxy)
                 }
                 .onChange(of: file, {
                     g.file = file
                 })
                 .onChange(of: commit, {
                     refresh(scrollProxy)
+                })
+                .onChange(of: files, {
+                    withAnimation {
+                        // 在主线程中调用 scrollTo 方法
+                        scrollProxy.scrollTo(self.file, anchor: .top)
+                    }
                 })
                 .background(.blue)
             }
@@ -42,15 +47,17 @@ struct FileList: View, SuperThread {
         self.isLoading = true
 
         self.bg.async {
-            let files = commit.getFiles()
+            let verbose = false
+            if verbose {
+                os_log("\(self.t)Refresh")
+            }
 
-            self.main.async {
+            let files = commit.getFiles(reason: "FileList.Refresh")
+
+            DispatchQueue.main.async {
                 self.files = files
                 self.isLoading = false
-
-                withAnimation {
-                    scrollProxy.scrollTo(1, anchor: .top)
-                }
+                self.file = self.files.first
             }
         }
     }

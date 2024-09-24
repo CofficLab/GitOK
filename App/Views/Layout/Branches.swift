@@ -1,15 +1,14 @@
 import OSLog
 import SwiftUI
 
-struct Branches: View {
+struct Branches: View, SuperThread, SuperLog {
     @EnvironmentObject var app: AppProvider
     @EnvironmentObject var g: GitProvider
 
     @State var branches: [Branch] = []
     @State var selection: Branch?
 
-    var label = "🌿 BranchesView::"
-    var verbose = true
+    var emoji = "🌿"
     var git = Git()
 
     var body: some View {
@@ -22,23 +21,29 @@ struct Branches: View {
         })
         .onAppear(perform: refresh)
         .onChange(of: g.project, refresh)
-        .onChange(of: selection, { oldValue, newValue in
+        .onChange(of: selection, setBranch)
+    }
+
+    func setBranch() {
+        self.bg.async {
             do {
-                try g.setBranch(newValue)
+                try g.setBranch(selection)
             } catch let error {
                 app.alert("切换分支发生错误", info: error.localizedDescription)
-                selection = oldValue
+                self.refresh()
             }
-        })
+        }
     }
 
     func refresh() {
+        let verbose = false
+        
         guard let project = g.project else {
             return
         }
 
         if verbose {
-            os_log("\(label)Refresh")
+            os_log("\(t)Refresh")
         }
 
         do {

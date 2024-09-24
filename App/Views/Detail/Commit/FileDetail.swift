@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct FileDetail: View {
+struct FileDetail: View, SuperLog, SuperEvent, SuperThread {
     @EnvironmentObject var webConfig: WebConfig
     
     var file: File
@@ -21,11 +21,13 @@ struct FileDetail: View {
     }
     
     func refresh() {
-//        if commit.isHead {
-//            view.content.setTexts(file.lastContent, file.content)
-//        } else {
-            view.content.setTexts(file.originalContentOfCommit(commit), file.contentOfCommit(commit))
-//        }
+        self.bg.async {
+            //        if commit.isHead {
+            //            view.content.setTexts(file.lastContent, file.content)
+            //        } else {
+                        view.content.setTexts(file.originalContentOfCommit(commit), file.contentOfCommit(commit))
+            //        }
+        }
     }
 }
 

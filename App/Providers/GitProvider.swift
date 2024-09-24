@@ -30,18 +30,20 @@ class GitProvider: NSObject, ObservableObject, SuperLog {
         }
     }
     
-    func setProject(_ p: Project?) {
-        let verbose = true
+    func setProject(_ p: Project?, reason: String) {
+        let verbose = false
 
         if verbose {
-            os_log("\(self.t)Set Project to \(p?.path ?? "")")
+            os_log("\(self.t)Set Project(\(reason))")
+            os_log("  ➡️ \(p?.path ?? "")")
         }
+        
         self.project = p
         AppConfig.setProjectPath(p?.path ?? "")
     }
     
     func setBranch(_ branch: Branch?) throws {
-        let verbose = true
+        let verbose = false
 
         if verbose {
             os_log("\(self.t)Set Branch to \(branch?.name ?? "-")")
@@ -55,7 +57,7 @@ class GitProvider: NSObject, ObservableObject, SuperLog {
             return
         }
         
-        _ = try git.setBranch(branch, project.path, verbose: true)
+        try git.setBranch(branch, project.path, verbose: true)
     }
 }
 
