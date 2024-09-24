@@ -10,7 +10,7 @@ struct BtnCommitAndPush: View, SuperLog {
     @State private var title = defaultTitle
     @State private var showCredentialsAlert = false
     @State private var username = ""
-    @State private var password = ""
+    @State private var token = ""
 
     let emoji = "🐔"
     var repoPath: String
@@ -18,7 +18,15 @@ struct BtnCommitAndPush: View, SuperLog {
 
     var body: some View {
         Button(title) {
-            showCredentialsAlert = true
+            isLoading = true
+            do {
+                try checkAndPush()
+            } catch let error {
+                os_log(.error, "提交失败: \(error.localizedDescription)")
+                alertMessage = "提交失败: \(error.localizedDescription)"
+                showAlert = true
+                isLoading = false
+            }
         }
         .disabled(isLoading)
         .alert(isPresented: $showAlert) {
@@ -28,7 +36,7 @@ struct BtnCommitAndPush: View, SuperLog {
             VStack {
                 Text("输入凭据")
                 TextField("用户名", text: $username)
-                SecureField("密码", text: $password)
+                SecureField("个人访问令牌", text: $token)
                 HStack {
                     Button("确定") {
                         isLoading = true
@@ -70,6 +78,19 @@ struct BtnCommitAndPush: View, SuperLog {
         }
     }
 
+    private func checkAndPush() throws {
+        let path = repoPath
+        let git = Git()
+
+        // 检查是否使用 HTTPS
+        let remoteUrl = try git.getRemoteUrl(path)
+        if remoteUrl.starts(with: "https://") {
+            showCredentialsAlert = true
+        } else {
+            try commitAndPush()
+        }
+    }
+
     private func commitAndPush() throws -> String {
         let path = repoPath
         let git = Git()
@@ -103,7 +124,7 @@ struct BtnCommitAndPush: View, SuperLog {
 
         // 执行 push
         do {
-            try git.push(path, username: username, password: password)
+            try git.push(path, username: username, token: token)
         } catch let error {
             os_log(.error, "推送失败: \(error.localizedDescription)")
             alertMessage = "推送失败: \(error.localizedDescription)"
@@ -116,11 +137,33 @@ struct BtnCommitAndPush: View, SuperLog {
 }
 
 extension Git {
-    func push(_ path: String, username: String, password: String) throws {
+    func getRemoteUrl(_ path: String) throws -> String {
+        let process = Process()
+        process.executableURL = URL(fileURLWithPath: "/usr/bin/git")
+        process.arguments = ["-C", path, "config", "--get", "remote.origin.url"]
+
+        let pipe = Pipe()
+        process.standardOutput = pipe
+        process.standardError = pipe
+
+        try process.run()
+        process.waitUntilExit()
+
+        let data = pipe.fileHandleForReading.readDataToEndOfFile()
+        let output = String(data: data, encoding: .utf8)?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+
+        if process.terminationStatus != 0 {
+            throw NSError(domain: "GitError", code: Int(process.terminationStatus), userInfo: [NSLocalizedDescriptionKey: output])
+        }
+
+        return output
+    }
+
+    func push(_ path: String, username: String, token: String) throws {
         let process = Process()
         process.executableURL = URL(fileURLWithPath: "/usr/bin/git")
         process.arguments = ["-C", path, "push"]
-        process.environment = ["GIT_ASKPASS": "echo", "GIT_USERNAME": username, "GIT_PASSWORD": password]
+        process.environment = ["GIT_ASKPASS": "echo", "GIT_USERNAME": username, "GIT_PASSWORD": token]
 
         let pipe = Pipe()
         process.standardOutput = pipe
@@ -136,4 +179,8 @@ extension Git {
             throw NSError(domain: "GitError", code: Int(process.terminationStatus), userInfo: [NSLocalizedDescriptionKey: output])
         }
     }
+}
+
+#Preview {
+    BtnCommitAndPush(repoPath: "/path/to/your/repo") // 初始化时传入路径
 }
