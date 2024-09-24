@@ -1,8 +1,10 @@
 import OSLog
 import SwiftUI
 
-struct BtnCommitAndPush: View, SuperLog {
+struct BtnCommitAndPush: View, SuperLog, SuperThread {
     static let defaultTitle = "Commit and Push"
+    
+    @EnvironmentObject var g: GitProvider
 
     @State private var showAlert = false
     @State private var alertMessage = ""
@@ -15,20 +17,19 @@ struct BtnCommitAndPush: View, SuperLog {
     let emoji = "🐔"
     var repoPath: String
     var commitMessage: String = ""
+    var git: Git { g.git }
 
     var body: some View {
         Button(title) {
             isLoading = true
-            DispatchQueue.global(qos: .userInitiated).async {
-                do {
-                    try checkAndPush()
-                } catch let error {
-                    DispatchQueue.main.async {
-                        os_log(.error, "提交失败: \(error.localizedDescription)")
-                        alertMessage = "提交失败: \(error.localizedDescription)"
-                        showAlert = true
-                        isLoading = false
-                    }
+            do {
+                try checkAndPush()
+            } catch let error {
+                self.main.async {
+                    os_log(.error, "提交失败: \(error.localizedDescription)")
+                    alertMessage = "提交失败: \(error.localizedDescription)"
+                    showAlert = true
+                    isLoading = false
                 }
             }
         }
@@ -49,7 +50,7 @@ struct BtnCommitAndPush: View, SuperLog {
                             do {
                                 _ = try commitAndPush()
                             } catch let error {
-                                DispatchQueue.main.async {
+                                self.main.async {
                                     os_log(.error, "提交失败: \(error.localizedDescription)")
                                     alertMessage = "提交失败: \(error.localizedDescription)"
                                     showAlert = true
@@ -89,17 +90,16 @@ struct BtnCommitAndPush: View, SuperLog {
 
     private func checkAndPush() throws {
         let path = repoPath
-        let git = Git()
 
         // 检查是否使用 HTTPS
         let remoteUrl = try git.getRemoteUrl(path)
-        DispatchQueue.main.async {
+        self.main.async {
             if remoteUrl.starts(with: "https://") {
                 showCredentialsAlert = true
                 isLoading = false
             } else {
                 do {
-                    try commitAndPush()
+                    _ = try commitAndPush()
                 } catch let error {
                     os_log(.error, "提交失败: \(error.localizedDescription)")
                     alertMessage = "提交失败: \(error.localizedDescription)"
@@ -112,7 +112,6 @@ struct BtnCommitAndPush: View, SuperLog {
 
     private func commitAndPush() throws -> String {
         let path = repoPath
-        let git = Git()
 
         do {
             let helper = try git.getCredentialHelper(path)
