@@ -37,7 +37,7 @@ extension Git {
         }
 
         self.emitGitCommitStart()
-        let result = try run("commit -a -m '\(commit)'", path: path)
+        let result = try run("commit -a -m '\(commit)'", path: path, verbose: true)
         self.emitGitCommitSuccess()
         
         return result
@@ -52,7 +52,14 @@ extension Git {
     }
 
     func logs(_ path: String) throws -> [GitCommit] {
-        try run("log --pretty=format:%H+%s", path: path).components(separatedBy: "\n").map {
+        let verbose = false
+        if verbose {
+            os_log("\(self.t)Logs")
+        }
+
+        let result = try run("--no-pager log --pretty=format:%H+%s", path: path, verbose: false)
+
+        return result.components(separatedBy: "\n").map {
             GitCommit.fromShellLine($0, path: path, seprator: "+")
         }
     }

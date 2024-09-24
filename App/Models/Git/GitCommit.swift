@@ -2,7 +2,7 @@ import Foundation
 import SwiftUI
 import OSLog
 
-struct GitCommit {
+struct GitCommit: SuperLog {
     static var headId = "HEAD"
     static var empty = GitCommit()
     static func headFor(_ path: String) -> GitCommit {
@@ -14,9 +14,7 @@ struct GitCommit {
     var hash: String
     var message: String
     
-    var label: String {
-        "🌊 GitCommit::"
-    }
+    var emoji = "🌊"
     
     var isEmpty: Bool { self.path == "/" } 
 
@@ -41,18 +39,28 @@ struct GitCommit {
         return GitCommit(path: path, hash: hash, message: message)
     }
     
-    func checkIfSynced() throws -> Bool {
+    func checkIfSynced(_ branch: String) throws -> Bool {
         if isHead {
             return true
         }
         
+        let command = "git rev-list --left-right --count \(hash)...origin/\(branch)"
         do {
-            return try !Git().notSynced(path).contains(where: {
-                $0.hash == self.hash
-            })
-        } catch let error {
-            os_log(.error, "\(error.localizedDescription)")
-            return true
+            let result = try Shell().run(command, at: path)
+            let components = result.trimmingCharacters(in: .whitespacesAndNewlines).components(separatedBy: "\t")
+            
+            if components.count == 2 {
+                return components[0] == "" || components[0] == "0"
+            }
+            
+            if components.count == 1 {
+                return true
+            }
+            
+            return false
+        } catch {
+            os_log(.error, "检查同步状态时出错: \(error.localizedDescription)")
+            return false
         }
     }
     
@@ -60,7 +68,7 @@ struct GitCommit {
         let verbose = false
 
         if verbose {
-            os_log("\(self.label)GetFiles")
+            os_log("\(self.t)GetFiles")
             os_log("  🫧 Message: \(self.message)")
             os_log("  🫧 Path: \(path)")
             os_log("  🫧 Hash: \(hash)")
@@ -93,7 +101,7 @@ struct GitCommit {
         let command = "git config --get credential.helper"
         do {
             let result = try Shell().run(command)
-            os_log("\(self.label)checkHttpsCredentials -> \(result)")
+            os_log("\(self.t)checkHttpsCredentials -> \(result)")
             return !result.isEmpty
         } catch {
             os_log(.error, "检查HTTPS凭据时出错: \(error.localizedDescription)")
@@ -101,8 +109,8 @@ struct GitCommit {
         }
     }
 
-    func getTag() -> String {
-        try! Git().getTag(path, hash)
+    func getTag() throws -> String {
+        try Git().getTag(path, hash)
     }
 }
 

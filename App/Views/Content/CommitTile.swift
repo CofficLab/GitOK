@@ -1,7 +1,9 @@
+import OSLog
 import SwiftUI
 
-struct CommitTile: View, SuperEvent, SuperThread {
+struct CommitTile: View, SuperEvent, SuperThread, SuperLog {
     @EnvironmentObject var app: AppProvider
+    @EnvironmentObject var g: GitProvider
 
     @State var isSynced = true
     @State var title = ""
@@ -28,9 +30,13 @@ struct CommitTile: View, SuperEvent, SuperThread {
                 }
 
                 if tag.isNotEmpty && commit.isHead == false {
-                    Text(tag)
-                        .padding(3)
-                        .background(RoundedRectangle(cornerRadius: 5).fill(Color.gray.opacity(0.2)))
+                    GeometryReader { geometry in
+                        Text(tag)
+                            .padding(.horizontal, 4)
+                            .padding(.vertical, 1)
+                            .background(.gray.opacity(0.3)).clipShape(RoundedRectangle(cornerRadius: 5))
+                            .frame(width: geometry.size.width, height: geometry.size.height, alignment: .trailing)
+                    }
                 }
             }
         }
@@ -45,11 +51,19 @@ struct CommitTile: View, SuperEvent, SuperThread {
     }
 
     func refreshSynced() {
-        self.bg.async {
-            let isSynced = try! commit.checkIfSynced()
+        guard let branch = g.currentBranch else {
+            return
+        }
 
-            self.main.async {
-                self.isSynced = isSynced
+        self.bg.async {
+            do {
+                let isSynced = try commit.checkIfSynced(branch.name)
+
+                self.main.async {
+                    self.isSynced = isSynced
+                }
+            } catch {
+                os_log(.error, "\(self.t)\(error.localizedDescription)")
             }
         }
     }
@@ -65,9 +79,13 @@ struct CommitTile: View, SuperEvent, SuperThread {
 
     func refreshTag() {
         self.bg.async {
-            let tag = commit.getTag()
-            self.main.async {
-                self.tag = tag
+            do {
+                let tag = try commit.getTag()
+                self.main.async {
+                    self.tag = tag
+                }
+            } catch {
+                os_log(.error, "\(error.localizedDescription)")
             }
         }
     }

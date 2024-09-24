@@ -3,18 +3,20 @@ import SwiftData
 import SwiftUI
 import OSLog
 
-struct Branch {
-    static var label = "🌿 Branch::"
+struct Branch: SuperLog {
+    var emoji = "🌿"
     
+    var path: String
     var name: String
     var isCurrent = false
 
-    static func fromShellLine(_ l: String, verbose: Bool = false) -> Branch {
+    static func fromShellLine(_ l: String, path: String) -> Branch {
+        let verbose = false
         if verbose {
-            os_log("\(self.label)Init from shell line -> \(l)")
+            os_log("Init Branch from shell line -> \(l)")
         }
         
-        return Branch(name: l.trimmingCharacters(in: CharacterSet(charactersIn: "*"))
+        return Branch(path: path, name: l.trimmingCharacters(in: CharacterSet(charactersIn: "*"))
                    .trimmingCharacters(in: .whitespacesAndNewlines),
                isCurrent: l.hasPrefix("*"))
     }
@@ -22,7 +24,7 @@ struct Branch {
 
 extension Branch: Hashable {
     static func == (lhs: Branch, rhs: Branch) -> Bool {
-        lhs.name == rhs.name
+        lhs.name == rhs.name && lhs.path == rhs.path
     }
 }
 

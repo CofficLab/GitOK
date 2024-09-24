@@ -19,7 +19,7 @@ extension Git {
                     $0.count != 0
                 })
                 .map {
-                    Branch.fromShellLine($0)
+                    Branch.fromShellLine($0, path: path)
                 }
         } catch let error {
             os_log(.error, "\(error.localizedDescription)")
@@ -36,7 +36,13 @@ extension Git {
     }
 
     func getCurrentBranch(_ path: String, verbose: Bool = false) throws -> Branch {
-        Branch.fromShellLine(try run("branch --show-current", path: path, verbose: verbose))
+        let verbose = false
+
+        if verbose {
+            os_log("\(self.t)GetCurrentBranch -> \(path)")
+        }
+
+        return Branch.fromShellLine(try run("branch --show-current", path: path, verbose: verbose), path: path)
     }
 
     @discardableResult

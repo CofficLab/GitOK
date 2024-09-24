@@ -22,14 +22,26 @@ struct Projects: View, SuperLog {
                             Button("删除") {
                                 deleteItem(item)
                             }
+                            
+                            if FileManager.default.fileExists(atPath: item.path) {
+                                Button("在Finder中显示") {
+                                    let url = URL(fileURLWithPath: item.path)
+                                    NSWorkspace.shared.activateFileViewerSelecting([url])
+                                }
+                            } else {
+                                Button("项目已不存在") {
+                                    // 禁止点击
+                                }
+                                .disabled(true)
+                            }
                         }))
                 }
                 .onDelete(perform: deleteItems)
             }
         }
         .onAppear {
-            let verbose = true
-            
+            let verbose = false
+
             self.project = projects.first(where: {
                 $0.path == AppConfig.projectPath
             })
@@ -45,12 +57,12 @@ struct Projects: View, SuperLog {
         }
         .navigationSplitViewColumnWidth(min: 175, ideal: 175, max: 200)
     }
-                                                 
+
     private func deleteItem(_ project: Project) {
-         withAnimation {
-                modelContext.delete(project)
-         }
-     }
+        withAnimation {
+            modelContext.delete(project)
+        }
+    }
 
     private func deleteItems(offsets: IndexSet) {
         withAnimation {
