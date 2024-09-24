@@ -8,7 +8,11 @@ extension Git {
     }
 
     func changedFile(_ path: String, verbose: Bool = false) -> [File] {
-        os_log("\(self.t)GetChangedFile for->\(path)")
+        let verbose = true
+        
+        if verbose {
+            os_log("\(self.t)GetChangedFile for -> \(path)")
+        }
         
         if isGitProject(path: path) == false {
             return []

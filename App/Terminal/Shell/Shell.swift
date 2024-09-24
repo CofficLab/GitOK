@@ -22,7 +22,7 @@ class Shell {
     }
 
     func run(_ command: String, at path: String? = nil) throws -> String {
-        let verbose = false
+        let verbose = true
         let process = Process()
 
         if verbose {
@@ -62,8 +62,6 @@ class Shell {
         }
     }
 }
-
-
 
 #Preview {
     AppPreview()
