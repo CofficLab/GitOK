@@ -8,6 +8,9 @@ struct BtnCommitAndPush: View, SuperLog {
     @State private var alertMessage = ""
     @State private var isLoading = false
     @State private var title = defaultTitle
+    @State private var showCredentialsAlert = false
+    @State private var username = ""
+    @State private var password = ""
 
     let emoji = "🐔"
     var repoPath: String
@@ -15,18 +18,35 @@ struct BtnCommitAndPush: View, SuperLog {
 
     var body: some View {
         Button(title) {
-            isLoading = true
-            do {
-                _ = try commitAndPush()
-            } catch let error {
-                os_log(.error, "提交失败: \(error.localizedDescription)")
-                alertMessage = "提交失败: \(error.localizedDescription)"
-                showAlert = true
-            }
+            showCredentialsAlert = true
         }
         .disabled(isLoading)
         .alert(isPresented: $showAlert) {
             Alert(title: Text("错误"), message: Text(alertMessage), dismissButton: .default(Text("确定")))
+        }
+        .sheet(isPresented: $showCredentialsAlert) {
+            VStack {
+                Text("输入凭据")
+                TextField("用户名", text: $username)
+                SecureField("密码", text: $password)
+                HStack {
+                    Button("确定") {
+                        isLoading = true
+                        showCredentialsAlert = false
+                        do {
+                            _ = try commitAndPush()
+                        } catch let error {
+                            os_log(.error, "提交失败: \(error.localizedDescription)")
+                            alertMessage = "提交失败: \(error.localizedDescription)"
+                            showAlert = true
+                        }
+                    }
+                    Button("取消") {
+                        showCredentialsAlert = false
+                    }
+                }
+            }
+            .padding()
         }
         .onReceive(NotificationCenter.default.publisher(for: .gitCommitStart)) { _ in
             self.title = "Commiting..."
@@ -83,7 +103,7 @@ struct BtnCommitAndPush: View, SuperLog {
 
         // 执行 push
         do {
-            try git.push(path)
+            try git.push(path, username: username, password: password)
         } catch let error {
             os_log(.error, "推送失败: \(error.localizedDescription)")
             alertMessage = "推送失败: \(error.localizedDescription)"
@@ -92,6 +112,29 @@ struct BtnCommitAndPush: View, SuperLog {
         }
 
         return "提交和推送成功"
+    }
+}
+
+extension Git {
+    func push(_ path: String, username: String, password: String) throws {
+        let process = Process()
+        process.executableURL = URL(fileURLWithPath: "/usr/bin/git")
+        process.arguments = ["-C", path, "push"]
+        process.environment = ["GIT_ASKPASS": "echo", "GIT_USERNAME": username, "GIT_PASSWORD": password]
+
+        let pipe = Pipe()
+        process.standardOutput = pipe
+        process.standardError = pipe
+
+        try process.run()
+        process.waitUntilExit()
+
+        let data = pipe.fileHandleForReading.readDataToEndOfFile()
+        let output = String(data: data, encoding: .utf8) ?? ""
+
+        if process.terminationStatus != 0 {
+            throw NSError(domain: "GitError", code: Int(process.terminationStatus), userInfo: [NSLocalizedDescriptionKey: output])
+        }
     }
 }
 

@@ -24,15 +24,15 @@ struct CommitList: View, SuperThread {
                     List([project.headCommit] + commits, selection: self.$selection) { commit in
                         CommitTile(commit: commit, project: project).tag(commit)
                     }
-                    
-                    GroupBox {
-                        if showCommitForm {
+
+                    if showCommitForm {
+                        GroupBox {
                             CommitForm2()
                         }
+                        .padding(.horizontal, 2)
+                        .padding(.vertical, 4)
                     }
-                    .padding(.horizontal, 2)
-                    .padding(.vertical, 4)
-                    
+
                     GroupBox {
                         MergeForm()
                     }
