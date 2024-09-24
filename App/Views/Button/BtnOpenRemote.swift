@@ -1,6 +1,9 @@
 import SwiftUI
+import OSLog
 
 struct BtnOpenRemote: View {
+    @EnvironmentObject var g: GitProvider
+    
     @Binding var message: String
 
     @State var remote: String = ""
@@ -11,6 +14,11 @@ struct BtnOpenRemote: View {
     var body: some View {
         Button(action: {
             remote = git.getRemote(path)
+
+            if remote.hasPrefix("git@") {
+                remote = remote.replacingOccurrences(of: ":", with: "/")
+                remote = remote.replacingOccurrences(of: "git@", with: "https://")
+            }
 
             if let url = URL(string: remote) {
                 NSWorkspace.shared.open(url)
