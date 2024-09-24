@@ -10,8 +10,6 @@ class AppProvider: NSObject, ObservableObject, AVAudioPlayerDelegate, SuperLog {
     @Published var currentTab: ActionTab = (ActionTab(rawValue: AppConfig.currentTab) ?? .Git)
     @Published var sidebarVisibility = AppConfig.sidebarVisibility
     
-    var git = Git()
-    
     func setMessage(_ m: String) {
         message = m
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {

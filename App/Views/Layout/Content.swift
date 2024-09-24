@@ -36,6 +36,12 @@ struct Content: View, SuperThread {
                             }
                         }
                     )
+                    .onChange(of: tab, {
+                        app.setTab(tab)
+                    })
+                    .onAppear {
+                        self.tab = app.currentTab
+                    }
             } detail: {
                 if projectExists {
                     VStack(spacing: 0) {

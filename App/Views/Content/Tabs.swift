@@ -1,8 +1,6 @@
 import SwiftUI
 
 struct Tabs: View {
-    @EnvironmentObject var app: AppProvider
-
     @Binding var tab: ActionTab
 
     var body: some View {
@@ -21,12 +19,6 @@ struct Tabs: View {
             }
             .frame(height: 25)
             .labelStyle(.iconOnly)
-            .onAppear {
-                self.tab = app.currentTab
-            }
-            .onChange(of: tab, {
-                app.setTab(tab)
-            })
 
             ZStack {
                 if self.tab == .Git {
