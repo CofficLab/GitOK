@@ -39,6 +39,7 @@ struct BannerList: View {
         }
         .onAppear(perform: getBanners)
         .onChange(of: g.project, getBanners)
+        .onChange(of: b.banner, getBanners)
     }
 
     func getBanners() {

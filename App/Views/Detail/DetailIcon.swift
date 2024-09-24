@@ -20,6 +20,7 @@ struct DetailIcon: View {
         })
         .onChange(of: self.icon, {
             self.icon.save()
+            i.setIcon(self.icon, reason: "OnChage")
         })
     }
 }

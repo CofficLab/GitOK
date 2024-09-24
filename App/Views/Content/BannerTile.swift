@@ -1,11 +1,19 @@
 import SwiftUI
 
 struct BannerTile: View {
-    var banner: BannerModel
-    
+    @EnvironmentObject var b: BannerProvider
+
+    @State var banner: BannerModel
+
     var body: some View {
         Text(banner.title)
-    }}
+            .onChange(of: b.banner, {
+                if b.banner.id == self.banner.id {
+                    self.banner = b.banner
+                }
+            })
+    }
+}
 
 #Preview {
     AppPreview()

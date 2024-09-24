@@ -19,6 +19,7 @@ struct DetailBanner: View {
         })
         .onChange(of: self.banner, {
             self.banner.save()
+            b.setBanner(self.banner, reason: "OnChage")
         })
     }
 }
