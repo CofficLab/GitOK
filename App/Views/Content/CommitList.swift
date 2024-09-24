@@ -54,7 +54,7 @@ struct CommitList: View, SuperThread {
             .onReceive(NotificationCenter.default.publisher(for: .gitCommitSuccess)) { _ in
                 os_log("\(self.label)GitCommitSuccess")
                 self.commits = []
-//                self.commits = [project.headCommit] + project.getCommits("")
+                self.commits = [project.headCommit] + project.getCommits("")
             }
 //            .onReceive(NotificationCenter.default.publisher(for: .appWillBecomeActive)) { _ in
 //                self.refresh("\(self.label)AppWillBecomeActive")
