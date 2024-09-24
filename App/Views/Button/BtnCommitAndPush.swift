@@ -19,13 +19,17 @@ struct BtnCommitAndPush: View, SuperLog {
     var body: some View {
         Button(title) {
             isLoading = true
-            do {
-                try checkAndPush()
-            } catch let error {
-                os_log(.error, "提交失败: \(error.localizedDescription)")
-                alertMessage = "提交失败: \(error.localizedDescription)"
-                showAlert = true
-                isLoading = false
+            DispatchQueue.global(qos: .userInitiated).async {
+                do {
+                    try checkAndPush()
+                } catch let error {
+                    DispatchQueue.main.async {
+                        os_log(.error, "提交失败: \(error.localizedDescription)")
+                        alertMessage = "提交失败: \(error.localizedDescription)"
+                        showAlert = true
+                        isLoading = false
+                    }
+                }
             }
         }
         .disabled(isLoading)
@@ -41,12 +45,17 @@ struct BtnCommitAndPush: View, SuperLog {
                     Button("确定") {
                         isLoading = true
                         showCredentialsAlert = false
-                        do {
-                            _ = try commitAndPush()
-                        } catch let error {
-                            os_log(.error, "提交失败: \(error.localizedDescription)")
-                            alertMessage = "提交失败: \(error.localizedDescription)"
-                            showAlert = true
+                        DispatchQueue.global(qos: .userInitiated).async {
+                            do {
+                                _ = try commitAndPush()
+                            } catch let error {
+                                DispatchQueue.main.async {
+                                    os_log(.error, "提交失败: \(error.localizedDescription)")
+                                    alertMessage = "提交失败: \(error.localizedDescription)"
+                                    showAlert = true
+                                    isLoading = false
+                                }
+                            }
                         }
                     }
                     Button("取消") {
@@ -84,10 +93,20 @@ struct BtnCommitAndPush: View, SuperLog {
 
         // 检查是否使用 HTTPS
         let remoteUrl = try git.getRemoteUrl(path)
-        if remoteUrl.starts(with: "https://") {
-            showCredentialsAlert = true
-        } else {
-            try commitAndPush()
+        DispatchQueue.main.async {
+            if remoteUrl.starts(with: "https://") {
+                showCredentialsAlert = true
+                isLoading = false
+            } else {
+                do {
+                    try commitAndPush()
+                } catch let error {
+                    os_log(.error, "提交失败: \(error.localizedDescription)")
+                    alertMessage = "提交失败: \(error.localizedDescription)"
+                    showAlert = true
+                    isLoading = false
+                }
+            }
         }
     }
 
@@ -106,8 +125,10 @@ struct BtnCommitAndPush: View, SuperLog {
         let commit = GitCommit.headFor(path)
         if !commit.checkHttpsCredentials() {
             // 要求用户输入凭据
-            alertMessage = "HTTPS 凭据未配置，请输入凭据。"
-            showAlert = true
+            DispatchQueue.main.async {
+                alertMessage = "HTTPS 凭据未配置，请输入凭据。"
+                showAlert = true
+            }
             return "HTTPS 凭据未配置"
         }
 
@@ -116,9 +137,11 @@ struct BtnCommitAndPush: View, SuperLog {
             try git.add(path)
             _ = try git.commit(path, commit: commitMessage)
         } catch let error {
-            os_log(.error, "提交失败: \(error.localizedDescription)")
-            alertMessage = "提交失败: \(error.localizedDescription)"
-            showAlert = true
+            DispatchQueue.main.async {
+                os_log(.error, "提交失败: \(error.localizedDescription)")
+                alertMessage = "提交失败: \(error.localizedDescription)"
+                showAlert = true
+            }
             return "提交失败: \(error.localizedDescription)"
         }
 
@@ -126,10 +149,16 @@ struct BtnCommitAndPush: View, SuperLog {
         do {
             try git.push(path, username: username, token: token)
         } catch let error {
-            os_log(.error, "推送失败: \(error.localizedDescription)")
-            alertMessage = "推送失败: \(error.localizedDescription)"
-            showAlert = true
+            DispatchQueue.main.async {
+                os_log(.error, "推送失败: \(error.localizedDescription)")
+                alertMessage = "推送失败: \(error.localizedDescription)"
+                showAlert = true
+            }
             return "推送失败: \(error.localizedDescription)"
+        }
+
+        DispatchQueue.main.async {
+            isLoading = false
         }
 
         return "提交和推送成功"
