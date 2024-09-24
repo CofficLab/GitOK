@@ -6,16 +6,16 @@ import OSLog
 import SwiftUI
 
 class IconProvider: NSObject, ObservableObject, SuperLog {
-    @Published var icon: IconModel?
+    @Published var icon: IconModel = .empty
 
     var emoji = "🌬️"
         
-    func setIcon(_ i: IconModel?, reason: String) {
+    func setIcon(_ i: IconModel, reason: String) {
         let verbose = false
         
         if verbose {
             os_log("\(self.t)Set Icon(\(reason))")
-            os_log("  ➡️ \(i?.title ?? "")")
+            os_log("  ➡️ \(i.title)")
         }
         
         self.icon = i

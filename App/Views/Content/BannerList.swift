@@ -5,6 +5,7 @@ import SwiftUI
 struct BannerList: View {
     @EnvironmentObject var app: AppProvider
     @EnvironmentObject var g: GitProvider
+    @EnvironmentObject var b: BannerProvider
 
     @State var banner: BannerModel = .empty
     @State var banners: [BannerModel] = []
@@ -15,12 +16,15 @@ struct BannerList: View {
     var body: some View {
         VStack(spacing: 0) {
             List(banners, selection: $banner) { banner in
-                BannerTile(banner: banner, selected: self.banner) .contextMenu(ContextMenu(menuItems: {
+                BannerTile(banner: banner).contextMenu(ContextMenu(menuItems: {
                     BtnDelBanner(banner: banner, callback: getBanners)
                 }))
                 .tag(banner)
             }
             .frame(maxHeight: .infinity)
+            .onChange(of: self.banner, {
+                b.setBanner(self.banner, reason: "BannerList.OnChageOfBanner")
+            })
 
             // 操作
             if let project = g.project {
@@ -49,10 +53,9 @@ struct BannerList: View {
                 DispatchQueue.main.async {
                     self.banners = banners
 
-                    
-                        if !banners.contains(banner) {
-                            self.banner = banners.first ?? .empty
-                        }
+                    if !banners.contains(banner) {
+                        self.banner = banners.first ?? .empty
+                    }
                 }
             }
         }

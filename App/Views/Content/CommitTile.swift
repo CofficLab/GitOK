@@ -41,9 +41,6 @@ struct CommitTile: View, SuperEvent, SuperThread, SuperLog {
                     }
                 }
             }
-            .navigationDestination(isPresented: $isPresented, destination: {
-                Detail(commit: self.commit)
-            })
 
         }
         .onAppear {

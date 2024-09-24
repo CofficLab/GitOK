@@ -3,8 +3,6 @@ import SwiftUI
 struct Detail: View {
     @EnvironmentObject var app: AppProvider
     @EnvironmentObject var g: GitProvider
-    
-    var commit: GitCommit
 
     var body: some View {
         VSplitView {

@@ -4,6 +4,7 @@ import SwiftUI
 struct IconList: View {
     @EnvironmentObject var app: AppProvider
     @EnvironmentObject var g: GitProvider
+    @EnvironmentObject var i: IconProvider
 
     @State var selection: IconModel = .empty
     @State var icons: [IconModel] = []
@@ -11,12 +12,15 @@ struct IconList: View {
     var body: some View {
         VStack(spacing: 0) {
             List(icons, selection: $selection) { icon in
-                IconTile(icon: icon, selected: self.selection)
+                IconTile(icon: icon)
                     .contextMenu(ContextMenu(menuItems: {
                         BtnDelIcon(icon: icon, callback: refresh)
                     }))
                     .tag(icon)
             }
+            .onChange(of: self.selection, {
+                i.setIcon(self.selection, reason: "IconList.OnChage")
+            })
             
             // 操作
             if let project = g.project {
