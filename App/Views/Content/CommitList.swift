@@ -52,7 +52,15 @@ struct CommitList: View, SuperThread {
                 self.refresh("\(self.label)Project Changed")
             })
             .onReceive(NotificationCenter.default.publisher(for: .gitCommitSuccess)) { _ in
-                self.refresh("GitCommitSuccess")
+                guard let project = g.project else {
+                    return
+                }
+                
+                let commits = [project.headCommit] + project.getCommits("")
+
+                self.main.async {
+                    self.commits = commits
+                }
             }
 //            .onReceive(NotificationCenter.default.publisher(for: .appWillBecomeActive)) { _ in
 //                self.refresh("\(self.label)AppWillBecomeActive")
