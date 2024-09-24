@@ -3,6 +3,7 @@ import OSLog
 
 struct MergeForm: View {
     @EnvironmentObject var app: AppProvider
+    @EnvironmentObject var g: GitProvider
 
     @State var branches: [Branch] = []
     @State var text: String = ""
@@ -10,7 +11,7 @@ struct MergeForm: View {
     @State var branch1: Branch? = nil
     @State var branch2: Branch? = nil
 
-    var project: Project? { app.project }
+    var project: Project? { g.project }
     var git = Git()
 
     var body: some View {

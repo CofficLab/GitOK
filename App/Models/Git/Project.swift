@@ -61,6 +61,10 @@ final class Project {
         
         return [self.headCommit] + getCommits(reason)
     }
+
+    func hasUnCommittedChanges() -> Bool {
+        git.hasUnCommittedChanges(path: path)
+    }
 }
 
 extension Project: Identifiable {

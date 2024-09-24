@@ -1,7 +1,7 @@
 import Foundation
 import OSLog
 import SwiftUI
-@preconcurrency import WebKit
+import WebKit
 
 class WKDelegate: NSObject, WKUIDelegate, ObservableObject, WKNavigationDelegate {
     @Environment(\.openURL) var openURL

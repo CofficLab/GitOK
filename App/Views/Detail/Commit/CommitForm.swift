@@ -2,6 +2,7 @@ import SwiftUI
 
 struct CommitForm: View {
     @EnvironmentObject var app: AppProvider
+    @EnvironmentObject var g: GitProvider
 
     @State var text: String = ""
     @State var category: CommitCategory = .Chore
@@ -16,7 +17,7 @@ struct CommitForm: View {
     }
 
     var body: some View {
-        if let project = app.project {
+        if let project = g.project {
             Group {
                 VStack {
                     HStack {

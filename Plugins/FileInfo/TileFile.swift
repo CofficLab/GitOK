@@ -4,12 +4,13 @@ import OSLog
 struct TileFile: View, SuperLog, SuperThread {
     @EnvironmentObject var a: AppProvider
     @EnvironmentObject var m: MessageProvider
+    @EnvironmentObject var g: GitProvider
     
     @State var hovered = false
     @State var isPresented = false
     @State var live = false
     
-    var file: File? { a.file }
+    var file: File? { g.file }
     var message: SmartMessage? { m.messages.first }
 
     var body: some View {

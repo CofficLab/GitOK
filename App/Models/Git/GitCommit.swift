@@ -57,7 +57,15 @@ struct GitCommit {
     }
     
     func getFiles() -> [File] {
-        os_log("\(self.label)GetFiles->\(path)")
+        let verbose = false
+
+        if verbose {
+            os_log("\(self.label)GetFiles")
+            os_log("  🫧 Message: \(self.message)")
+            os_log("  🫧 Path: \(path)")
+            os_log("  🫧 Hash: \(hash)")
+        }
+        
         if isHead {
             return Git().changedFile(path)
         } else {

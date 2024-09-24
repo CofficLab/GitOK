@@ -4,6 +4,7 @@ import SwiftUI
 
 struct Content: View {
     @EnvironmentObject var app: AppProvider
+    @EnvironmentObject var g: GitProvider
 
     @State var branch: Branch? = nil
     @State var gitLog: String? = nil
@@ -11,7 +12,7 @@ struct Content: View {
     @State var tab: ActionTab = .Git
     @State var columnVisibility: NavigationSplitViewVisibility = .automatic
 
-    var project: Project? { app.project }
+    var project: Project? { g.project }
 
     var body: some View {
         ZStack {
@@ -22,10 +23,18 @@ struct Content: View {
                     .frame(idealWidth: 300)
                     .frame(minWidth: 50)
             } detail: {
-                VStack(spacing: 0) {
-                    Detail()
-                    StatusBar()
+                switch self.tab {
+                case .Git:
+                    VStack(spacing: 0) {
+                        Detail()
+                        StatusBar()
+                    }
+                case .Banner:
+                    Text("Banner")
+                case .Icon:
+                    Text("icon")
                 }
+                
             }
             
             Message()

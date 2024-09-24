@@ -3,42 +3,51 @@ import SwiftUI
 
 struct CommitList: View, SuperThread {
     @EnvironmentObject var app: AppProvider
+    @EnvironmentObject var g: GitProvider
 
     @State var commits: [GitCommit] = []
     @State var loading = false
     @State var selection: GitCommit?
+    @State var showCommitForm = false
 
     var label: String { "🖥️ Commits::" }
     var verbose = true
 
     var body: some View {
-        if let project = app.project {
-            VStack {
+        if let project = g.project {
+            VStack(spacing: 0) {
                 if loading {
                     Spacer()
                     Text("loading...")
                     Spacer()
                 } else {
-                    GroupBox {
-                        if selection?.getFiles().isNotEmpty ?? false {
-                            CommitForm2().padding()
-                        }
-                        
-                        MergeForm().padding()
-                    }.padding()
-                    
                     List([project.headCommit] + commits, selection: self.$selection) { commit in
                         CommitTile(commit: commit, project: project).tag(commit)
                     }
+                    
+                    GroupBox {
+                        if showCommitForm {
+                            CommitForm2()
+                        }
+                    }
+                    .padding(.horizontal, 2)
+                    .padding(.vertical, 4)
+                    
+                    GroupBox {
+                        MergeForm()
+                    }
+                    .padding(.horizontal, 2)
+                    .padding(.vertical, 2)
                 }
             }
             .onAppear {
                 refresh("\(self.label)OnApprear")
+                self.showCommitForm = project.hasUnCommittedChanges()
             }
             .onChange(of: selection, {
-                app.setCommit(selection)
+                g.setCommit(selection)
             })
-            .onChange(of: app.project, {
+            .onChange(of: g.project, {
                 self.refresh("\(self.label)Project Changed")
             })
             .onReceive(NotificationCenter.default.publisher(for: .gitCommitSuccess)) { _ in
@@ -51,7 +60,7 @@ struct CommitList: View, SuperThread {
     }
 
     func refresh(_ reason: String = "") {
-        guard let project = app.project else {
+        guard let project = g.project else {
             return
         }
 
