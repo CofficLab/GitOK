@@ -5,6 +5,7 @@ import SwiftUI
 struct Projects: View {
     @Environment(\.modelContext) private var modelContext
     @EnvironmentObject var app: AppProvider
+    @EnvironmentObject var g: GitProvider
 
     @Query(sort: Project.orderReverse) var projects: [Project]
 
@@ -36,10 +37,10 @@ struct Projects: View {
                 os_log("\(self.label)Set Project=\(project?.title ?? "nil")")
             }
 
-            app.setProject(project)
+            g.setProject(project)
         }
         .onChange(of: project) {
-            app.setProject(project)
+            g.setProject(project)
         }
         .toolbar(content: {
             ToolbarItem {

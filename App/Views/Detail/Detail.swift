@@ -2,17 +2,18 @@ import SwiftUI
 
 struct Detail: View {
     @EnvironmentObject var app: AppProvider
+    @EnvironmentObject var g: GitProvider
 
     var body: some View {
         VSplitView {
-            if let commit = app.commit {
+            if let commit = g.commit {
                 HSplitView {
                     FileList()
                         .frame(minWidth: 200)
                         .layoutPriority(2)
                     
                     ZStack {
-                        if let file = app.file {
+                        if let file = g.file {
                             FileDetail(file: file, commit: commit)
                         } else {
                             Spacer()
@@ -21,6 +22,16 @@ struct Detail: View {
                     .layoutPriority(3)
                 }
                 .layoutPriority(6)
+            } else {
+                VStack {
+                    Spacer()
+                    HStack {
+                        Spacer()
+                        Text("选择一个 Commit")
+                        Spacer()
+                    }
+                    Spacer()
+                }
             }
         }
         .frame(maxWidth: .infinity)

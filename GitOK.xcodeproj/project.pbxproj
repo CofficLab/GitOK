@@ -169,6 +169,7 @@
 		F588FB722CA15DAD00F6AE42 /* SuperEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = F588FB712CA15DAD00F6AE42 /* SuperEvent.swift */; };
 		F588FB752CA16B4F00F6AE42 /* GitError.swift in Sources */ = {isa = PBXBuildFile; fileRef = F588FB742CA16B4F00F6AE42 /* GitError.swift */; };
 		F588FB772CA1718800F6AE42 /* ShellError.swift in Sources */ = {isa = PBXBuildFile; fileRef = F588FB762CA1718800F6AE42 /* ShellError.swift */; };
+		F588FB792CA2494E00F6AE42 /* GitProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = F588FB782CA2494E00F6AE42 /* GitProvider.swift */; };
 		F5F794DC2C5A0D7D00DCB824 /* CommitSample.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5F794DB2C5A0D7D00DCB824 /* CommitSample.swift */; };
 		F5F794E02C5A1D2600DCB824 /* FileList.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5F794DF2C5A1D2600DCB824 /* FileList.swift */; };
 		F5F794E92C5B192600DCB824 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = F5F794E82C5B192600DCB824 /* Sparkle */; };
@@ -356,6 +357,7 @@
 		F588FB712CA15DAD00F6AE42 /* SuperEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuperEvent.swift; sourceTree = "<group>"; };
 		F588FB742CA16B4F00F6AE42 /* GitError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitError.swift; sourceTree = "<group>"; };
 		F588FB762CA1718800F6AE42 /* ShellError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShellError.swift; sourceTree = "<group>"; };
+		F588FB782CA2494E00F6AE42 /* GitProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitProvider.swift; sourceTree = "<group>"; };
 		F5F794DB2C5A0D7D00DCB824 /* CommitSample.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommitSample.swift; sourceTree = "<group>"; };
 		F5F794DF2C5A1D2600DCB824 /* FileList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileList.swift; sourceTree = "<group>"; };
 		F5F794EA2C5B3E8100DCB824 /* UpdaterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdaterView.swift; sourceTree = "<group>"; };
@@ -451,9 +453,10 @@
 		0B1C67B12BD90B4A00502EB1 /* Providers */ = {
 			isa = PBXGroup;
 			children = (
+				0B1C67B22BD90B5700502EB1 /* AppProvider.swift */,
+				F588FB782CA2494E00F6AE42 /* GitProvider.swift */,
 				0BD650EF2CA196EA00BA3CB8 /* MessageProvider.swift */,
 				0BD650E52CA195EA00BA3CB8 /* PluginProvider.swift */,
-				0B1C67B22BD90B5700502EB1 /* AppProvider.swift */,
 			);
 			path = Providers;
 			sourceTree = "<group>";
@@ -1055,6 +1058,7 @@
 				0B8C7AD62BE08E1900B4E817 /* Features.swift in Sources */,
 				0BF75EEA2BDFA2FB00A553CD /* BtnOpenTerminal.swift in Sources */,
 				0BDE61A72BDB4541006E23EA /* StatusExt.swift in Sources */,
+				F588FB792CA2494E00F6AE42 /* GitProvider.swift in Sources */,
 				F545D1682C1AEBF1006A6AFA /* FileDetail.swift in Sources */,
 				0BB543F62BE9C3A800D7A2B2 /* EventExt.swift in Sources */,
 				0B8C7AED2BE08E2200B4E817 /* IconMaker.swift in Sources */,
@@ -1312,6 +1316,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = GitOK.entitlements;
 				CODE_SIGN_IDENTITY = "-";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 115;
 				DEAD_CODE_STRIPPING = YES;
@@ -1355,6 +1360,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = GitOK.entitlements;
 				CODE_SIGN_IDENTITY = "-";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 115;
 				DEAD_CODE_STRIPPING = YES;

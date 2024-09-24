@@ -3,6 +3,7 @@ import SwiftUI
 
 struct IconList: View {
     @EnvironmentObject var app: AppProvider
+    @EnvironmentObject var g: GitProvider
 
     @State var selection: IconModel = .empty
     @State var icons: [IconModel] = []
@@ -18,7 +19,7 @@ struct IconList: View {
             }
             
             // 操作
-            if let project = app.project {
+            if let project = g.project {
                 HStack(spacing: 0) {
                     TabBtn(title: "新建 Icon", imageName: "plus.circle", onTap: {
                         self.icons.append(IconModel.new(project))
@@ -28,12 +29,12 @@ struct IconList: View {
                 .labelStyle(.iconOnly)
             }
         }
-        .onChange(of: app.project, refresh)
+        .onChange(of: g.project, refresh)
         .onAppear(perform: refresh)
     }
     
     func refresh() {
-        if let project = app.project {
+        if let project = g.project {
             self.icons = IconModel.all(project.path)
             
             if icons.contains(selection) {

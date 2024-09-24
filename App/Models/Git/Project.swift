@@ -41,15 +41,18 @@ final class Project {
     }
     
     func getCommits(_ reason: String) -> [GitCommit] {
-        if Self.verbose {
-            os_log("\(self.label)GetCommit with reason->\(reason)")
+        let verbose = false
+        
+        if verbose {
+            os_log("\(self.label)GetCommit(\(reason))")
         }
         
         do {
             return try git.logs(path)
         } catch let error {
             os_log(.error, "\(self.label)GetCommits has error")
-            print(error)
+            os_log("\(error)")
+            
             return []
         }
     }
@@ -60,6 +63,10 @@ final class Project {
         }
         
         return [self.headCommit] + getCommits(reason)
+    }
+
+    func hasUnCommittedChanges() -> Bool {
+        git.hasUnCommittedChanges(path: path)
     }
 }
 

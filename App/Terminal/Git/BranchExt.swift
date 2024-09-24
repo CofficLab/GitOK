@@ -28,7 +28,7 @@ extension Git {
         }
 
         if verbose {
-            os_log("\(self.label)GetBranches")
+            os_log("\(self.t)GetBranches")
             print(branches)
         }
 

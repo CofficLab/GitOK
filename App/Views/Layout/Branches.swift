@@ -3,6 +3,7 @@ import SwiftUI
 
 struct Branches: View {
     @EnvironmentObject var app: AppProvider
+    @EnvironmentObject var g: GitProvider
 
     @State var branches: [Branch] = []
     @State var selection: Branch?
@@ -20,10 +21,10 @@ struct Branches: View {
             })
         })
         .onAppear(perform: refresh)
-        .onChange(of: app.project, refresh)
+        .onChange(of: g.project, refresh)
         .onChange(of: selection, { oldValue, newValue in
             do {
-                try app.setBranch(newValue)
+                try g.setBranch(newValue)
             } catch let error {
                 app.alert("切换分支发生错误", info: error.localizedDescription)
                 selection = oldValue
@@ -32,7 +33,7 @@ struct Branches: View {
     }
 
     func refresh() {
-        guard let project = app.project else {
+        guard let project = g.project else {
             return
         }
 
@@ -47,7 +48,7 @@ struct Branches: View {
         }
 
         selection = branches.first(where: {
-            $0.name == app.currentBranch?.name
+            $0.name == g.currentBranch?.name
         })
     }
 }

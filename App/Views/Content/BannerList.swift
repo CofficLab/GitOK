@@ -4,6 +4,7 @@ import SwiftUI
 
 struct BannerList: View {
     @EnvironmentObject var app: AppProvider
+    @EnvironmentObject var g: GitProvider
 
     @State var banner: BannerModel = .empty
     @State var banners: [BannerModel] = []
@@ -22,7 +23,7 @@ struct BannerList: View {
             .frame(maxHeight: .infinity)
 
             // 操作
-            if let project = app.project {
+            if let project = g.project {
                 HStack(spacing: 0) {
                     TabBtn(title: "新建 Banner", imageName: "plus.circle", onTap: {
                         self.banners.append(BannerModel.new(project))
@@ -33,7 +34,7 @@ struct BannerList: View {
             }
         }
         .onAppear(perform: getBanners)
-        .onChange(of: app.project, getBanners)
+        .onChange(of: g.project, getBanners)
     }
 
     func getBanners() {
@@ -41,7 +42,7 @@ struct BannerList: View {
             os_log("\(label)GetBanners")
         }
 
-        if let project = app.project {
+        if let project = g.project {
             DispatchQueue.global().async {
                 let banners = BannerModel.all(project.path)
 

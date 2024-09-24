@@ -19,35 +19,70 @@ enum CommitCategory: String, CaseIterable, Equatable {
     case Typo
     case UI
 
-    var text: String {
+    var emoji: String {
         switch self {
         case .Bugfix:
-            "🐛 Bugfix: "
+            "🐛"
         case .Chore:
-            "🎨 Chore: "
+            "🎨"
         case .CI:
-            "👷 CI: "
+            "👷"
         case .Config:
-            "🔧 Config: "
+            "🔧"
         case .Docker:
-            "🐳 Docker: "
+            "🐳"
         case .Document:
-            "📖 Document: "
+            "📖"
         case .Feature:
-            "🆕 Feature: "
+            "🆕"
         case .FirstCommit:
-            "🎉 First Commit: "
+            "🎉"
         case .Improve:
-            "🐎 Improve: "
+            "🐎"
         case .Release:
-            "🔖 Release: "
+            "🔖"
         case .Trash:
-            "🗑️ Trash: "
+            "🗑️"
         case .Typo:
-            "✏️ Typo: "
+            "✏️"
         case .UI:
-            "💄 UI: "
+            "💄"
         }
+    }
+
+    var title: String {
+        switch self {
+        case .Bugfix:
+            "Bugfix"
+        case .Chore:
+            "Chore"
+        case .CI:
+            "CI"
+        case .Config:
+            "Config"
+        case .Docker:
+            "Docker"
+        case .Document:
+            "Document"
+        case .Feature:
+            "Feature"
+        case .FirstCommit:
+            "First Commit"
+        case .Improve:
+            "Improve"
+        case .Release:
+            "Release"
+        case .Trash:
+            "Trash"
+        case .Typo:
+            "Typo"
+        case .UI:
+            "UI"
+        }
+    }
+
+    var text: String {
+        "\(self.emoji) \(self.title): "
     }
     
     var defaultMessage: String {

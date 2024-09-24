@@ -2,8 +2,8 @@ import Foundation
 import OSLog
 import SwiftUI
 
-class Git: SuperEvent {
-    var label: String = "🔮 git "
+class Git: SuperEvent, SuperLog {
+    var emoji = "🔮"
     var shell = Shell()
 
     func getRemote(_ path: String) -> String {
@@ -25,6 +25,13 @@ class Git: SuperEvent {
     func isGitProject(path: String, verbose: Bool = false) -> Bool {
         let gitPath = URL(fileURLWithPath: path).appendingPathComponent(".git").path
         return FileManager.default.fileExists(atPath: gitPath)
+    }
+
+    func hasUnCommittedChanges(path: String, verbose: Bool = false) -> Bool {
+        if let status = try? self.run("status", path: path, verbose: verbose) {
+            return status.contains("Changes not staged for commit")
+        }
+        return false
     }
 }
 

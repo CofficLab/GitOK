@@ -21,7 +21,7 @@ extension Git {
         let message = try run("add -A .", path: path)
 
         if verbose {
-            os_log("\(self.label)Add -> \(message)")
+            os_log("\(self.t)Add -> \(message)")
         }
     }
 

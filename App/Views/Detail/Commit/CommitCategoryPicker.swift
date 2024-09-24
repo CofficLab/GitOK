@@ -11,7 +11,7 @@ struct CommitCategoryPicker: View {
     var body: some View {
         Picker("", selection: $selection, content: {
             ForEach(CommitCategory.allCases, id: \.self, content: {
-                Text("\($0.text)")
+                Text("\($0.emoji) \($0.title)")
                     .tag($0 as CommitCategory?)
             })
         })

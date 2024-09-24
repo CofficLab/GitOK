@@ -63,8 +63,6 @@ class Shell {
     }
 }
 
-
-
 #Preview {
     AppPreview()
         .frame(width: 800)

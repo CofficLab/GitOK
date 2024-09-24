@@ -2,6 +2,7 @@ import SwiftUI
 
 struct CommitForm2: View {
     @EnvironmentObject var app: AppProvider
+    @EnvironmentObject var g: GitProvider
 
     @State var text: String = ""
     @State var category: CommitCategory = .Chore
@@ -16,13 +17,15 @@ struct CommitForm2: View {
     }
 
     var body: some View {
-        if let project = app.project {
+        if let project = g.project {
             VStack {
-                HStack {
+                HStack(spacing: 0) {
                     CommitCategoryPicker(selection: $category, project: project)
                         .onChange(of: category, {
                             self.text = category.defaultMessage
                         })
+                    
+                    Spacer()
 
                     BtnCommitAndPush(repoPath: project.path, commitMessage: commitMessage)
                 }

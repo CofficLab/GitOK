@@ -1,13 +1,15 @@
 import SwiftUI
 
-struct FileList: View {
+struct FileList: View, SuperThread {
     @EnvironmentObject var app: AppProvider
+    @EnvironmentObject var g: GitProvider
 
     @State var files: [File] = []
     @State var file: File?
+    @State var isLoading = false
 
     var commit: GitCommit? {
-        app.commit
+        g.commit
     }
 
     var body: some View {
@@ -19,19 +21,36 @@ struct FileList: View {
                 }
                 .onAppear {
                     self.files = commit.getFiles()
-                    self.app.file = self.files.first
+                    self.g.file = self.files.first
                 }
                 .onChange(of: file, {
-                    app.file = file
+                    g.file = file
                 })
                 .onChange(of: commit, {
-                    self.files = commit.getFiles()
-                    self.app.file = self.files.first
-                    withAnimation {
-                        scrollProxy.scrollTo(1, anchor: .top)
-                    }
+                    refresh(scrollProxy)
                 })
                 .background(.blue)
+            }
+        }
+    }
+
+    func refresh(_ scrollProxy: ScrollViewProxy) {
+        guard let commit = commit else {
+            return
+        }
+
+        self.isLoading = true
+
+        self.bg.async {
+            let files = commit.getFiles()
+
+            self.main.async {
+                self.files = files
+                self.isLoading = false
+
+                withAnimation {
+                    scrollProxy.scrollTo(1, anchor: .top)
+                }
             }
         }
     }
