@@ -41,7 +41,9 @@ final class Project {
     }
     
     func getCommits(_ reason: String) -> [GitCommit] {
-        if Self.verbose {
+        let verbose = false
+        
+        if verbose {
             os_log("\(self.label)GetCommit(\(reason))")
         }
         

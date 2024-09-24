@@ -9,6 +9,7 @@ struct CommitList: View, SuperThread {
     @State var loading = false
     @State var selection: GitCommit?
     @State var showCommitForm = false
+    @State private var isRefreshing = false
 
     var label: String { "🖥️ Commits::" }
     var verbose = true
@@ -51,7 +52,9 @@ struct CommitList: View, SuperThread {
                 self.refresh("\(self.label)Project Changed")
             })
             .onReceive(NotificationCenter.default.publisher(for: .gitCommitSuccess)) { _ in
-                self.refresh("\(self.label)GitCommitSuccess")
+                if !self.isRefreshing {
+                    self.refresh("\(self.label)GitCommitSuccess")
+                }
             }
 //            .onReceive(NotificationCenter.default.publisher(for: .appWillBecomeActive)) { _ in
 //                self.refresh("\(self.label)AppWillBecomeActive")
@@ -60,9 +63,11 @@ struct CommitList: View, SuperThread {
     }
 
     func refresh(_ reason: String = "") {
-        guard let project = g.project else {
+        guard let project = g.project, !isRefreshing else {
             return
         }
+
+        isRefreshing = true
 
         if verbose {
             os_log("\(label)Refresh(\(reason))")
@@ -76,6 +81,7 @@ struct CommitList: View, SuperThread {
             self.main.async {
                 self.commits = [project.headCommit] + commits
                 self.loading = false
+                self.isRefreshing = false
             }
         }
     }

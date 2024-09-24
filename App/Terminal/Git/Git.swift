@@ -2,8 +2,8 @@ import Foundation
 import OSLog
 import SwiftUI
 
-class Git: SuperEvent {
-    var label: String = "🔮 git "
+class Git: SuperEvent, SuperLog {
+    var emoji = "🔮"
     var shell = Shell()
 
     func getRemote(_ path: String) -> String {
