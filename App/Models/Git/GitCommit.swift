@@ -57,7 +57,7 @@ struct GitCommit {
     }
     
     func getFiles() -> [File] {
-        let verbose = false
+        let verbose = true
 
         if verbose {
             os_log("\(self.label)GetFiles")
