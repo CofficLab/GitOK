@@ -22,10 +22,12 @@ struct CommitTile: View, SuperEvent, SuperThread {
             }
         }
         .onAppear() {
-            let isSynced = try! commit.checkIfSynced()
+            self.bg.async {
+                let isSynced = try! commit.checkIfSynced()
 
-            self.main.async {
-                self.isSynced = isSynced
+                self.main.async {
+                    self.isSynced = isSynced
+                }
             }
         }
     }
