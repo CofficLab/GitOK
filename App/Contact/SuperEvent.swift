@@ -18,6 +18,12 @@ extension SuperEvent {
             NotificationCenter.default.post(name: .gitPullSuccess, object: self)
         }
     }
+
+    func emitGitPullFailed() {
+        DispatchQueue.main.async {
+            NotificationCenter.default.post(name: .gitPullFailed, object: self)
+        }
+    }
 }
 
 // MARK: Push

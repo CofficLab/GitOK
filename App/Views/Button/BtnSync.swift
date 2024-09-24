@@ -1,33 +1,56 @@
+import OSLog
 import SwiftUI
 
 struct BtnSync: View, SuperLog, SuperEvent, SuperThread {
     @EnvironmentObject var app: AppProvider
+    @EnvironmentObject var g: GitProvider
 
     @Binding var message: String
 
     @State var working = false
-    @State private var rotationAngle: Double = 0
+    @State var rotationAngle = 0.0
 
     var path: String
     var commitMessage = CommitCategory.auto
-    var git = Git()
+    var git: Git { g.git }
 
     var body: some View {
-        Button(action: save, label: {
-            Label("保存", systemImage: "arrow.trianglehead.2.clockwise.rotate.90")
-                .rotationEffect(Angle(degrees: rotationAngle))
-                .animation(working ? Animation.linear(duration: 1).repeatForever(autoreverses: false) : .default, value: rotationAngle)
-        }).disabled(working)
+        Button(action: sync, label: {
+            Label("同步", systemImage: "arrow.trianglehead.2.clockwise.rotate.90")
+                .rotationEffect(Angle(degrees: self.rotationAngle))
+        })
+        .disabled(working)
+        .onChange(of: working) {
+            let duration = 0.02
+            if working {
+                Timer.scheduledTimer(withTimeInterval: duration, repeats: true) { timer in
+                    if !working {
+                        timer.invalidate()
+                        withAnimation(.easeInOut(duration: duration)) {
+                            rotationAngle = 0.0
+                        }
+                    } else {
+                        withAnimation(.easeInOut(duration: duration)) {
+                            rotationAngle += 7
+                        }
+                    }
+                }
+            } else {
+                withAnimation(.easeInOut(duration: 0.1)) {
+                    rotationAngle = 0.0
+                }
+            }
+        }
     }
 
-    func save() {
+    func sync() {
         withAnimation {
             working = true
-            rotationAngle = 360
         }
 
         self.bg.async {
             do {
+                try git.pull(path)
                 try git.push(path)
 
                 self.reset()
@@ -47,11 +70,9 @@ struct BtnSync: View, SuperLog, SuperEvent, SuperThread {
     }
 
     func reset() {
-        self.main.async {
-            withAnimation {
-                self.working = false
-                self.rotationAngle = 0
-            }
+        os_log("reset")
+        withAnimation {
+            self.working = false
         }
     }
 }
