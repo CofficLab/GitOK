@@ -34,6 +34,7 @@ extension JsonModel {
 extension JsonModel {
     func save() {
         os_log("\(self.label)Save")
+        
         guard let p = path else {
             os_log("\(label)Can't Save, no path")
             return

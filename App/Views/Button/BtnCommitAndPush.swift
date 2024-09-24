@@ -94,7 +94,7 @@ struct BtnCommitAndPush: View, SuperLog, SuperThread {
         // 检查是否使用 HTTPS
         let remoteUrl = try git.getRemoteUrl(path)
         self.main.async {
-            if remoteUrl.starts(with: "https://") {
+            if remoteUrl.starts(with: "https://") && false {
                 showCredentialsAlert = true
                 isLoading = false
             } else {

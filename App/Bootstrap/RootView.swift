@@ -14,6 +14,8 @@ struct RootView<Content>: View where Content: View {
             .modelContainer(AppConfig.getContainer())
             .environmentObject(AppProvider())
             .environmentObject(GitProvider())
+            .environmentObject(BannerProvider())
+            .environmentObject(IconProvider())
             .environmentObject(WebConfig())
             .environmentObject(PluginProvider())
             .environmentObject(m)

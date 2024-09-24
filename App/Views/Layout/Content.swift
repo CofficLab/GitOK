@@ -37,23 +37,7 @@ struct Content: View, SuperThread {
                         }
                     )
             } detail: {
-                if projectExists {
-                    switch self.tab {
-                    case .Git:
-                        VStack(spacing: 0) {
-                            Detail()
-                            StatusBar()
-                        }
-                    case .Banner:
-                        Text("Banner")
-                    case .Icon:
-                        Text("icon")
-                    }
-                } else {
-                    Text("项目不存在")
-                        .foregroundColor(.red)
-                        .font(.headline)
-                }
+                Text("选择一个项目")
             }
 
             Message()

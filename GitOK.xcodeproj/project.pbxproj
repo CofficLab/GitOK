@@ -62,8 +62,6 @@
 		0B8C7AD52BE08E1900B4E817 /* Feature.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7AC82BE08E1900B4E817 /* Feature.swift */; };
 		0B8C7AD62BE08E1900B4E817 /* Features.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7AC92BE08E1900B4E817 /* Features.swift */; };
 		0B8C7AD72BE08E1900B4E817 /* BannerLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7ACA2BE08E1900B4E817 /* BannerLayout.swift */; };
-		0B8C7ADA2BE08E1900B4E817 /* BannerHome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7ACD2BE08E1900B4E817 /* BannerHome.swift */; };
-		0B8C7AEA2BE08E2200B4E817 /* IconHome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7AE32BE08E2200B4E817 /* IconHome.swift */; };
 		0B8C7AEB2BE08E2200B4E817 /* IconItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7AE42BE08E2200B4E817 /* IconItem.swift */; };
 		0B8C7AEC2BE08E2200B4E817 /* IconAsset.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7AE52BE08E2200B4E817 /* IconAsset.swift */; };
 		0B8C7AED2BE08E2200B4E817 /* IconMaker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7AE62BE08E2200B4E817 /* IconMaker.swift */; };
@@ -145,6 +143,10 @@
 		0BD650F52CA1AA5D00BA3CB8 /* JSEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD650F42CA1AA5D00BA3CB8 /* JSEvent.swift */; };
 		0BD650F72CA1AC6700BA3CB8 /* AppEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD650F62CA1AC6400BA3CB8 /* AppEvent.swift */; };
 		0BD650F92CA1B98A00BA3CB8 /* CommitForm2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD650F82CA1B98A00BA3CB8 /* CommitForm2.swift */; };
+		0BD650FB2CA2E09F00BA3CB8 /* BannerProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD650FA2CA2E09F00BA3CB8 /* BannerProvider.swift */; };
+		0BD650FD2CA2E49F00BA3CB8 /* IconProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD650FC2CA2E49F00BA3CB8 /* IconProvider.swift */; };
+		0BD650FF2CA2E9B100BA3CB8 /* BannerHome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD650FE2CA2E9B100BA3CB8 /* BannerHome.swift */; };
+		0BD651012CA2EA6800BA3CB8 /* IconHome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD651002CA2EA6800BA3CB8 /* IconHome.swift */; };
 		0BDE61A32BDB3C9B006E23EA /* Projects.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BDE61A22BDB3C9B006E23EA /* Projects.swift */; };
 		0BDE61A52BDB408F006E23EA /* RevListExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BDE61A42BDB408F006E23EA /* RevListExt.swift */; };
 		0BDE61A72BDB4541006E23EA /* StatusExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BDE61A62BDB4541006E23EA /* StatusExt.swift */; };
@@ -251,8 +253,6 @@
 		0B8C7AC82BE08E1900B4E817 /* Feature.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Feature.swift; sourceTree = "<group>"; };
 		0B8C7AC92BE08E1900B4E817 /* Features.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Features.swift; sourceTree = "<group>"; };
 		0B8C7ACA2BE08E1900B4E817 /* BannerLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BannerLayout.swift; sourceTree = "<group>"; };
-		0B8C7ACD2BE08E1900B4E817 /* BannerHome.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BannerHome.swift; sourceTree = "<group>"; };
-		0B8C7AE32BE08E2200B4E817 /* IconHome.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IconHome.swift; sourceTree = "<group>"; };
 		0B8C7AE42BE08E2200B4E817 /* IconItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IconItem.swift; sourceTree = "<group>"; };
 		0B8C7AE52BE08E2200B4E817 /* IconAsset.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IconAsset.swift; sourceTree = "<group>"; };
 		0B8C7AE62BE08E2200B4E817 /* IconMaker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IconMaker.swift; sourceTree = "<group>"; };
@@ -334,6 +334,10 @@
 		0BD650F42CA1AA5D00BA3CB8 /* JSEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSEvent.swift; sourceTree = "<group>"; };
 		0BD650F62CA1AC6400BA3CB8 /* AppEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppEvent.swift; sourceTree = "<group>"; };
 		0BD650F82CA1B98A00BA3CB8 /* CommitForm2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommitForm2.swift; sourceTree = "<group>"; };
+		0BD650FA2CA2E09F00BA3CB8 /* BannerProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerProvider.swift; sourceTree = "<group>"; };
+		0BD650FC2CA2E49F00BA3CB8 /* IconProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconProvider.swift; sourceTree = "<group>"; };
+		0BD650FE2CA2E9B100BA3CB8 /* BannerHome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerHome.swift; sourceTree = "<group>"; };
+		0BD651002CA2EA6800BA3CB8 /* IconHome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconHome.swift; sourceTree = "<group>"; };
 		0BDE61A22BDB3C9B006E23EA /* Projects.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Projects.swift; sourceTree = "<group>"; };
 		0BDE61A42BDB408F006E23EA /* RevListExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RevListExt.swift; sourceTree = "<group>"; };
 		0BDE61A62BDB4541006E23EA /* StatusExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusExt.swift; sourceTree = "<group>"; };
@@ -455,6 +459,8 @@
 		0B1C67B12BD90B4A00502EB1 /* Providers */ = {
 			isa = PBXGroup;
 			children = (
+				0BD650FC2CA2E49F00BA3CB8 /* IconProvider.swift */,
+				0BD650FA2CA2E09F00BA3CB8 /* BannerProvider.swift */,
 				0B1C67B22BD90B5700502EB1 /* AppProvider.swift */,
 				F588FB782CA2494E00F6AE42 /* GitProvider.swift */,
 				0BD650EF2CA196EA00BA3CB8 /* MessageProvider.swift */,
@@ -635,9 +641,9 @@
 		0B8C7AD42BE08E1900B4E817 /* Banner */ = {
 			isa = PBXGroup;
 			children = (
+				0BD650FE2CA2E9B100BA3CB8 /* BannerHome.swift */,
 				0B8C7AF12BE08E2D00B4E817 /* Backgrounds.swift */,
 				0B8C7ACA2BE08E1900B4E817 /* BannerLayout.swift */,
-				0B8C7ACD2BE08E1900B4E817 /* BannerHome.swift */,
 				F545D16C2C1BF6E9006A6AFA /* BannerTitle.swift */,
 				F545D1612C1AD6F1006A6AFA /* BannerTopBar.swift */,
 				0B8C7AC82BE08E1900B4E817 /* Feature.swift */,
@@ -655,8 +661,8 @@
 		0B8C7AE72BE08E2200B4E817 /* Icon */ = {
 			isa = PBXGroup;
 			children = (
+				0BD651002CA2EA6800BA3CB8 /* IconHome.swift */,
 				0B8C7AE52BE08E2200B4E817 /* IconAsset.swift */,
-				0B8C7AE32BE08E2200B4E817 /* IconHome.swift */,
 				0B8C7AE42BE08E2200B4E817 /* IconItem.swift */,
 				0B8C7AE62BE08E2200B4E817 /* IconMaker.swift */,
 				F545D1652C1ADE8B006A6AFA /* IconTopBar.swift */,
@@ -1070,6 +1076,7 @@
 				0BD650EE2CA196BD00BA3CB8 /* TileMessage.swift in Sources */,
 				0BD650C72CA18A7000BA3CB8 /* MenuTile.swift in Sources */,
 				0BD650CB2CA18A7000BA3CB8 /* CollectionExt.swift in Sources */,
+				0BD650FF2CA2E9B100BA3CB8 /* BannerHome.swift in Sources */,
 				0BD650CC2CA18A7000BA3CB8 /* DataExt.swift in Sources */,
 				0BD650CD2CA18A7000BA3CB8 /* ContextExt.swift in Sources */,
 				0BD650F52CA1AA5D00BA3CB8 /* JSEvent.swift in Sources */,
@@ -1100,18 +1107,19 @@
 				0BF75EE02BDE4C0C00A553CD /* CommitTile.swift in Sources */,
 				0BD650E32CA192E600BA3CB8 /* StatusBar.swift in Sources */,
 				0B8C7AB32BE08DD100B4E817 /* RootView.swift in Sources */,
-				0B8C7ADA2BE08E1900B4E817 /* BannerHome.swift in Sources */,
 				0B1C67EB2BD9181200502EB1 /* BtnPush.swift in Sources */,
 				0B1C67C22BD9159900502EB1 /* Project.swift in Sources */,
 				0B1C67BF2BD9157100502EB1 /* DBExt.swift in Sources */,
 				F545D1712C1C155E006A6AFA /* BannerImage.swift in Sources */,
 				0B8C7AF32BE08E2D00B4E817 /* Message.swift in Sources */,
 				0B8C7B0E2BE08EDA00B4E817 /* Card.swift in Sources */,
+				0BD650FB2CA2E09F00BA3CB8 /* BannerProvider.swift in Sources */,
 				0BB4278E2BE72512004E6F82 /* QueueExt.swift in Sources */,
 				0BDE61A52BDB408F006E23EA /* RevListExt.swift in Sources */,
 				0BCC6D072BD939BA006ADA94 /* Shell.swift in Sources */,
 				F5F794DC2C5A0D7D00DCB824 /* CommitSample.swift in Sources */,
 				0BD15C522BDC8D91004024CF /* SmartError.swift in Sources */,
+				0BD651012CA2EA6800BA3CB8 /* IconHome.swift in Sources */,
 				0BCC6D092BD939FD006ADA94 /* BtnPwd.swift in Sources */,
 				0B8C7B2B2BE0C8F100B4E817 /* IconList.swift in Sources */,
 				0B8C7AF72BE08E4200B4E817 /* SmartButton.swift in Sources */,
@@ -1181,8 +1189,8 @@
 				F545D1622C1AD6F1006A6AFA /* BannerTopBar.swift in Sources */,
 				0BF75EE22BDE5CE500A553CD /* Stage.swift in Sources */,
 				F588FB772CA1718800F6AE42 /* ShellError.swift in Sources */,
+				0BD650FD2CA2E49F00BA3CB8 /* IconProvider.swift in Sources */,
 				0B1C67ED2BD9D9CB00502EB1 /* CommitCategory.swift in Sources */,
-				0B8C7AEA2BE08E2200B4E817 /* IconHome.swift in Sources */,
 				0B8C7AD72BE08E1900B4E817 /* BannerLayout.swift in Sources */,
 				0B8C7B142BE08EDA00B4E817 /* BackgroundGroup.swift in Sources */,
 				F53412912C75955F0006937C /* IconScale.swift in Sources */,

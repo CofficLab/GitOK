@@ -34,7 +34,9 @@ struct BannerModel: JsonModel {
         self.backgroundId = backgroundId
         self.path = path
 
-        save()
+        if let path = self.path, path.isNotEmpty {
+            save()
+        }
     }
 
     func getDevice() -> Device {

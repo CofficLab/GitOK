@@ -8,9 +8,11 @@ struct CommitTile: View, SuperEvent, SuperThread, SuperLog {
     @State var isSynced = true
     @State var title = ""
     @State var tag = ""
+    @State var isPresented: Bool = false
 
     var commit: GitCommit
     var project: Project
+    var selected: GitCommit?
 
     var body: some View {
         VStack(spacing: 0) {
@@ -39,6 +41,10 @@ struct CommitTile: View, SuperEvent, SuperThread, SuperLog {
                     }
                 }
             }
+            .navigationDestination(isPresented: $isPresented, destination: {
+                Detail(commit: self.commit)
+            })
+
         }
         .onAppear {
             self.refreshTitle()
@@ -48,6 +54,9 @@ struct CommitTile: View, SuperEvent, SuperThread, SuperLog {
         .onReceive(NotificationCenter.default.publisher(for: .gitCommitSuccess)) { _ in
             self.refreshTitle()
         }
+        .onChange(of: selected, {
+            self.ifPresented()
+        })
     }
 
     func refreshSynced() {
@@ -88,6 +97,10 @@ struct CommitTile: View, SuperEvent, SuperThread, SuperLog {
                 os_log(.error, "\(error.localizedDescription)")
             }
         }
+    }
+    
+    func ifPresented() {
+        self.isPresented = commit.id == selected?.id
     }
 }
 
