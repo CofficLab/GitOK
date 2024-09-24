@@ -52,9 +52,7 @@ struct CommitList: View, SuperThread {
                 self.refresh("\(self.label)Project Changed")
             })
             .onReceive(NotificationCenter.default.publisher(for: .gitCommitSuccess)) { _ in
-                os_log("\(self.label)GitCommitSuccess")
-                self.commits = []
-                self.commits = [project.headCommit] + project.getCommits("")
+                self.refresh("GitCommitSuccess")
             }
 //            .onReceive(NotificationCenter.default.publisher(for: .appWillBecomeActive)) { _ in
 //                self.refresh("\(self.label)AppWillBecomeActive")
@@ -78,10 +76,10 @@ struct CommitList: View, SuperThread {
         self.loading = true
 
         self.bg.async {
-            let commits = project.getCommits(reason)
+            let commits = [project.headCommit] + project.getCommits(reason)
 
             self.main.async {
-                self.commits = [project.headCommit] + commits
+                self.commits = commits
                 self.loading = false
                 self.isRefreshing = false
             }
