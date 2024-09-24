@@ -63,6 +63,8 @@ struct CommitList: View, SuperThread {
     }
 
     func refresh(_ reason: String = "") {
+        let verbose = true
+        
         guard let project = g.project, !isRefreshing else {
             return
         }
