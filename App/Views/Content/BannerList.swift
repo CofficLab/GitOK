@@ -1,6 +1,7 @@
 import OSLog
 import SwiftData
 import SwiftUI
+import MagicKit
 
 struct BannerList: View, SuperThread {
     @EnvironmentObject var app: AppProvider

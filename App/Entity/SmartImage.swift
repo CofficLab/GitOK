@@ -3,6 +3,7 @@ import OSLog
 import SwiftData
 import SwiftUI
 import AppKit
+import MagicKit
 
 class SmartImage: SuperLog {
     static var dir: String = ".gitok/images"

@@ -1,5 +1,6 @@
 import SwiftUI
 import OSLog
+import MagicKit
 
 struct BannerImage: View, SuperLog {
     @EnvironmentObject var app: AppProvider

@@ -1,5 +1,6 @@
 import SwiftUI
 import OSLog
+import MagicKit
 
 struct TileMerge: View, SuperLog, SuperThread {
     @EnvironmentObject var m: MessageProvider

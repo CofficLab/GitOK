@@ -5,6 +5,7 @@ import Foundation
 import MediaPlayer
 import OSLog
 import SwiftUI
+import MagicKit
 
 class BannerProvider: NSObject, ObservableObject, SuperLog {
     @Published var bannerURL: URL?

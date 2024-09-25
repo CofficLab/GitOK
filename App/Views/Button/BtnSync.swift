@@ -1,5 +1,6 @@
 import OSLog
 import SwiftUI
+import MagicKit
 
 struct BtnSync: View, SuperLog, SuperEvent, SuperThread {
     @EnvironmentObject var m: MessageProvider

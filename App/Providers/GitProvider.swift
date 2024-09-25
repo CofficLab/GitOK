@@ -4,6 +4,7 @@ import Foundation
 import MediaPlayer
 import OSLog
 import SwiftUI
+import MagicKit
 
 class GitProvider: NSObject, ObservableObject, SuperLog {
     @Published var branches: [String] = []

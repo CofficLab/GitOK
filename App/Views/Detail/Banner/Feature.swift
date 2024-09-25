@@ -1,4 +1,5 @@
 import SwiftUI
+import MagicKit
 
 struct Feature: View {
     @State var isEditing = false

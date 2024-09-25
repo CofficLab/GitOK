@@ -1,5 +1,6 @@
 import OSLog
 import SwiftUI
+import MagicKit
 
 struct Branches: View, SuperThread, SuperLog {
     @EnvironmentObject var app: AppProvider

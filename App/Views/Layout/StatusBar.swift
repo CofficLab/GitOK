@@ -1,4 +1,5 @@
 import SwiftUI
+import MagicKit
 
 struct StatusBar: View {
     @EnvironmentObject var app: AppProvider

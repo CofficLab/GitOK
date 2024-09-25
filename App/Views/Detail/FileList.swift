@@ -1,5 +1,7 @@
 import SwiftUI
 import OSLog
+import MagicKit
+
 struct FileList: View, SuperThread, SuperLog {
     @EnvironmentObject var app: AppProvider
     @EnvironmentObject var g: GitProvider

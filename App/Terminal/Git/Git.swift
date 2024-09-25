@@ -1,6 +1,7 @@
 import Foundation
 import OSLog
 import SwiftUI
+import MagicKit
 
 class Git: SuperEvent, SuperLog {
     var emoji = "🔮"

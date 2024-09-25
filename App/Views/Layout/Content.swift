@@ -1,6 +1,7 @@
 import OSLog
 import SwiftData
 import SwiftUI
+import MagicKit
 
 struct Content: View, SuperThread, SuperEvent {
     @EnvironmentObject var app: AppProvider

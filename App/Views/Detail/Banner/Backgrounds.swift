@@ -1,4 +1,5 @@
 import SwiftUI
+import MagicKit
 
 struct Backgrounds: View {
     @Binding var current: String

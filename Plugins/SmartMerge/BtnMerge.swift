@@ -1,5 +1,6 @@
 import SwiftUI
 import OSLog
+import MagicKit
 
 struct BtnMerge: View, SuperEvent, SuperThread {
     @EnvironmentObject var m: MessageProvider

@@ -1,4 +1,5 @@
 import SwiftUI
+import MagicKit
 
 struct FileDetail: View, SuperLog, SuperEvent, SuperThread {
     @EnvironmentObject var webConfig: WebConfig
