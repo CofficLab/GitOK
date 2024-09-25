@@ -175,12 +175,14 @@ extension BannerModel {
 
 extension BannerModel {
     static func new(_ project: Project) -> BannerModel {
-        BannerModel(title: "\(Int.random(in: 1 ... 100))", subTitle: "sub3", features: [
+        let path = project.path + "/" + BannerModel.root + "/" + UUID().uuidString + ".json"
+        
+        return BannerModel(title: "\(Int.random(in: 1 ... 100))", subTitle: "sub3", features: [
             "Feature 1",
             "Feature 2",
             "Feature 3",
             "Feature 4",
-        ], path: project.path + "/" + BannerModel.root + "/" + UUID().uuidString + ".json")
+        ], path: path)
     }
 }
 
