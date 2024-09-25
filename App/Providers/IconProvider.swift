@@ -6,7 +6,7 @@ import OSLog
 import SwiftUI
 
 class IconProvider: NSObject, ObservableObject, SuperLog {
-    @Published var iconURL: URL = .null
+    @Published var iconURL: URL?
 
     let emoji = "🍒"
         
@@ -14,8 +14,12 @@ class IconProvider: NSObject, ObservableObject, SuperLog {
         self.iconURL = i
     }
 
-    func getIcon() throws -> IconModel {
-        try IconModel.fromJSONFile(iconURL)
+    func getIcon() throws -> IconModel? {
+        guard let iconURL = iconURL else {
+            return nil
+        }
+        
+        return try IconModel.fromJSONFile(iconURL)
     }
 }
 

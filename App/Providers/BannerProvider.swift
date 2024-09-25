@@ -7,7 +7,7 @@ import OSLog
 import SwiftUI
 
 class BannerProvider: NSObject, ObservableObject, SuperLog {
-    @Published var bannerURL: URL = .null
+    @Published var bannerURL: URL?
 
     var emoji = "🐘"
 
@@ -15,8 +15,12 @@ class BannerProvider: NSObject, ObservableObject, SuperLog {
         self.bannerURL = u
     }
 
-    func getBanner() throws -> BannerModel {
-        try BannerModel.fromFile(bannerURL)
+    func getBanner() throws -> BannerModel? {
+        guard let bannerURL = bannerURL else {
+            return nil
+        }
+
+        return try BannerModel.fromFile(bannerURL)
     }
 }
 

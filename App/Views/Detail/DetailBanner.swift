@@ -4,11 +4,13 @@ struct DetailBanner: View {
     @EnvironmentObject var app: AppProvider
     @EnvironmentObject var b: BannerProvider
 
-    @State var banner: BannerModel = .empty
+    @State var banner: BannerModel?
 
     var body: some View {
         VSplitView {
-            BannerHome(banner: self.$banner)
+            if let banner = Binding(self.$banner) {
+                BannerHome(banner: banner)
+            }
         }
         .frame(maxWidth: .infinity)
         .onAppear {
@@ -26,13 +28,17 @@ struct DetailBanner: View {
             }
         })
         .onChange(of: self.banner, {
+            guard let banner = self.banner else {
+                return
+            }
+            
             do {
-                try self.banner.saveToDisk()
+                try banner.saveToDisk()
             } catch {
                 self.app.setError(error)
             }
 
-            b.setBannerURL(URL(filePath: self.banner.path!))
+            b.setBannerURL(URL(filePath: banner.path!))
         })
     }
 }

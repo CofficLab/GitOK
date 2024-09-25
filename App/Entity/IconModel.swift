@@ -3,7 +3,7 @@ import SwiftData
 import SwiftUI
 import OSLog
 
-struct IconModel: JsonModel, SuperEvent {
+struct IconModel: JsonModel, SuperEvent, SuperLog {
     static var root: String = ".gitok/icons"
     static var label = "💿 IconModel::"
     static var empty = IconModel(path: "")
@@ -44,12 +44,15 @@ struct IconModel: JsonModel, SuperEvent {
 
 extension IconModel {
     static func all(_ projectPath: String) throws -> [IconModel] {
+        let verbose = false
         var models: [IconModel] = []
 
         // 目录路径
         let directoryPath = "\(projectPath)/\(Self.root)"
 
-        os_log("\(IconModel.label)GetIcons from ->\(directoryPath)")
+        if verbose {
+            os_log("\(IconModel.label)GetIcons from ->\(directoryPath)")
+        }
 
         // 创建 FileManager 实例
         let fileManager = FileManager.default
@@ -187,6 +190,8 @@ extension IconModel {
             return model
         } catch {
             os_log(.error, "Error decoding JSON: \(error)")
+            os_log(.error, "  ➡️ JSONFile: \(jsonFile)")
+            
             throw error
         }
     }

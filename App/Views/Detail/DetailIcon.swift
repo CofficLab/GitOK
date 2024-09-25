@@ -1,23 +1,30 @@
 import OSLog
 import SwiftUI
 
-struct DetailIcon: View {
+struct DetailIcon: View, SuperLog {
     @EnvironmentObject var app: AppProvider
     @EnvironmentObject var g: GitProvider
     @EnvironmentObject var i: IconProvider
 
-    @State var icon: IconModel = .empty
+    let emoji = "🦁"
+
+    @State var icon: IconModel?
 
     var body: some View {
         VStack {
-            IconHome(icon: self.$icon)
+            if let iconBinding = Binding($icon) {
+                IconHome(icon: iconBinding)
+            } else {
+                Text("没有可用的图标")
+            }
         }
         .frame(maxWidth: .infinity)
         .onAppear {
             do {
                 self.icon = try i.getIcon()
             } catch {
-                os_log(.error, "Error getting icon: \(error)")
+                os_log(.error, "\(self.t)Error getting icon: \(error.localizedDescription)")
+                os_log(.error, "  ⚠️ \(error)")
                 app.setError(error)
             }
         }
@@ -30,13 +37,17 @@ struct DetailIcon: View {
             }
         })
         .onChange(of: self.icon, {
+            guard let icon = self.icon else {
+                return
+            }
+            
             do {
-                try self.icon.saveToDisk()
+                try icon.saveToDisk()
             } catch {
                 self.app.setError(error)
             }
 
-            if let path = self.icon.path {
+            if let path = icon.path {
                 i.setIconURL(URL(filePath: path))
             }
         })

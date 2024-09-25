@@ -33,13 +33,17 @@ extension JsonModel {
 
 extension JsonModel {
     func save() throws {
+        let verbose = false
+
         guard let p = path else {
             os_log(.error, "\(label)Can't Save, no path")
 
             throw NSError(domain: "\(label)SaveError", code: 1, userInfo: [NSLocalizedDescriptionKey: "\(label)Can't Save, no path"])
         }
         
-        os_log("\(self.label)Save")
+        if verbose {
+            os_log("\(self.label)Save to \(p)")
+        }
 
         self.saveToFile(atPath: p)
     }

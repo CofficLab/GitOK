@@ -190,12 +190,16 @@ extension BannerModel {
     }
 
     static func all(_ project: Project) throws -> [BannerModel] {
+        let verbose = false
+            
         var models: [BannerModel] = []
 
         // 目录路径
         let directoryPath = "\(project.path)/\(Self.root)"
 
-        os_log("\(BannerModel.label)GetBanners from ->\(directoryPath)")
+        if verbose {
+            os_log("\(BannerModel.label)GetBanners from ➡️ \(directoryPath)")
+        }
 
         // 创建 FileManager 实例
         let fileManager = FileManager.default
@@ -205,20 +209,10 @@ extension BannerModel {
             return []
         }
 
-        // 存储文件路径的数组
-        var fileURLs: [URL] = []
-
         do {
-            // 获取指定目录下的文件列表
-            let files = try fileManager.contentsOfDirectory(atPath: directoryPath)
-
-            // 遍历文件列表，获取完整路径并存入数组
-            for file in files {
+            for file in try fileManager.contentsOfDirectory(atPath: directoryPath) {
                 let fileURL = URL(fileURLWithPath: directoryPath).appendingPathComponent(file)
-                fileURLs.append(fileURL)
-
-                let model = try BannerModel.fromFile(fileURL)
-                models.append(model)
+                models.append(try BannerModel.fromFile(fileURL))
             }
         } catch {
             print("Error while enumerating files: \(error.localizedDescription)")
