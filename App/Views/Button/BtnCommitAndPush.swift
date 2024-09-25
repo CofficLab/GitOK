@@ -71,8 +71,8 @@ struct BtnCommitAndPush: View, SuperLog, SuperThread {
             isLoading = true
         }
         .onReceive(NotificationCenter.default.publisher(for: .gitCommitSuccess)) { _ in
-            self.title = BtnCommitAndPush.defaultTitle
-            isLoading = false
+            self.title = "Commit Success"
+            isLoading = true
         }
         .onReceive(NotificationCenter.default.publisher(for: .gitPushStart)) { _ in
             self.title = "Pushing..."
