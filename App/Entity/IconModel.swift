@@ -3,7 +3,7 @@ import SwiftData
 import SwiftUI
 import OSLog
 
-struct IconModel: JsonModel {
+struct IconModel: JsonModel, SuperEvent {
     static var root: String = ".gitok/icons"
     static var label = "💿 IconModel::"
     static var empty = IconModel(path: "")
@@ -37,15 +37,13 @@ struct IconModel: JsonModel {
         self.backgroundId = backgroundId
         self.imageURL = imageURL
         self.path = path
-        
-        self.save()
     }
 }
 
 // MARK: 查
 
 extension IconModel {
-    static func all(_ projectPath: String) -> [IconModel] {
+    static func all(_ projectPath: String) throws -> [IconModel] {
         var models: [IconModel] = []
 
         // 目录路径
@@ -61,28 +59,19 @@ extension IconModel {
             return []
         }
 
-        // 存储文件路径的数组
-        var fileURLs: [URL] = []
-
         do {
-            // 获取指定目录下的文件列表
-            let files = try fileManager.contentsOfDirectory(atPath: directoryPath)
-
-            // 遍历文件列表，获取完整路径并存入数组
-            for file in files {
+            for file in try fileManager.contentsOfDirectory(atPath: directoryPath) {
                 let fileURL = URL(fileURLWithPath: directoryPath).appendingPathComponent(file)
-                fileURLs.append(fileURL)
 
-                if var model = IconModel.fromJSONFile(fileURL) {
-                    model.path = fileURL.path
-                    models.append(model)
-                }
+                models.append(try IconModel.fromJSONFile(fileURL))
             }
-        } catch {
-            print("Error while enumerating files: \(error.localizedDescription)")
-        }
 
-        return models
+            return models
+        } catch {
+            os_log(.error, "Error while enumerating files: \(error.localizedDescription)")
+
+            throw error
+        }
     }
 }
 
@@ -128,19 +117,19 @@ extension IconModel {
 // MARK: 更新
 
 extension IconModel {
-    mutating func updateBackgroundId(_ id: String) {
+    mutating func updateBackgroundId(_ id: String) throws {
         self.backgroundId = id
-        self.save()
+        try self.save()
     }
     
-    mutating func updateIconId(_ id: Int) {
+    mutating func updateIconId(_ id: Int) throws {
         self.iconId = id
-        self.save()
+        try self.save()
     }
     
-    mutating func updateImageURL(_ url: URL) {
+    mutating func updateImageURL(_ url: URL) throws {
         self.imageURL = url
-        self.save()
+        try self.save()
     }
 }
 
@@ -157,7 +146,7 @@ extension IconModel {
                 return jsonString
             }
         } catch {
-            print("Error encoding BannerModel to JSON: \(error)")
+            os_log(.error, "Error encoding BannerModel to JSON: \(error)")
         }
         return nil
     }
@@ -173,28 +162,33 @@ extension IconModel {
             do {
                 try fileManager.createDirectory(at: directoryURL, withIntermediateDirectories: true, attributes: nil)
             } catch {
-                print("Error creating directory: \(error)")
+                os_log(.error, "Error creating directory: \(error)")
             }
 
             do {
                 try jsonString.write(toFile: path, atomically: true, encoding: .utf8)
-                print("JSON saved to file: \(path)")
+                os_log(.info, "JSON saved to file: \(path)")
             } catch {
-                print("Error saving JSON to file: \(error)")
+                os_log(.error, "Error saving JSON to file: \(error)")
             }
         }
     }
-    
-    static func fromJSONFile(_ jsonFile: URL) -> Self? {
-        if let jsonData = try? Data(contentsOf: URL(fileURLWithPath: jsonFile.path)) {
-            do {
-                return try JSONDecoder().decode(IconModel.self, from: jsonData)
-            } catch {
-                print("Error decoding JSON: \(error)")
-            }
-        }
 
-        return nil
+    func saveToDisk() throws {
+        try self.save()
+        self.emitIconDidSave()
+    }
+    
+    static func fromJSONFile(_ jsonFile: URL) throws -> Self {
+        let jsonData = try Data(contentsOf: jsonFile)
+        do {
+            var model = try JSONDecoder().decode(IconModel.self, from: jsonData)
+            model.path = jsonFile.path
+            return model
+        } catch {
+            os_log(.error, "Error decoding JSON: \(error)")
+            throw error
+        }
     }
 }
 

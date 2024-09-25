@@ -1,7 +1,8 @@
 import SwiftData
 import SwiftUI
+import OSLog
 
-struct IconList: View {
+struct IconList: View, SuperLog {
     @EnvironmentObject var app: AppProvider
     @EnvironmentObject var g: GitProvider
     @EnvironmentObject var i: IconProvider
@@ -19,7 +20,9 @@ struct IconList: View {
                     .tag(icon)
             }
             .onChange(of: self.selection, {
-                i.setIcon(self.selection, reason: "IconList.OnChage")
+                if let path = self.selection.path {
+                    i.setIconURL(URL(fileURLWithPath: path))
+                }
             })
             
             // 操作
@@ -39,13 +42,19 @@ struct IconList: View {
     
     func refresh() {
         if let project = g.project {
-            self.icons = IconModel.all(project.path)
+            do {
+                self.icons = try project.getIcons()
             
-            if icons.contains(selection) {
-                return
+                if icons.contains(selection) {
+                    return
+                }
+                
+                self.selection = icons.first ?? .empty
+            } catch {
+                os_log("Error while enumerating files: \(error.localizedDescription)")
+
+                self.app.setError(error)
             }
-            
-            self.selection = icons.first ?? .empty
         }
     }
 }

@@ -1,5 +1,5 @@
-import SwiftUI
 import OSLog
+import SwiftUI
 
 protocol JsonModel: Encodable, Identifiable, Equatable, Hashable {
     var path: String? { get }
@@ -20,7 +20,7 @@ extension JsonModel {
         guard let path = self.path else {
             return
         }
-        
+
         do {
             try FileManager.default.removeItem(atPath: path)
         } catch let e {
@@ -32,17 +32,18 @@ extension JsonModel {
 // MARK: Store
 
 extension JsonModel {
-    func save() {
-        os_log("\(self.label)Save")
-        
+    func save() throws {
         guard let p = path else {
-            os_log("\(label)Can't Save, no path")
-            return
+            os_log(.error, "\(label)Can't Save, no path")
+
+            throw NSError(domain: "\(label)SaveError", code: 1, userInfo: [NSLocalizedDescriptionKey: "\(label)Can't Save, no path"])
         }
         
+        os_log("\(self.label)Save")
+
         self.saveToFile(atPath: p)
     }
-    
+
     // 将对象转换为 JSON 字符串
     func toJSONString() -> String? {
         do {

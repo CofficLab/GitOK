@@ -1,10 +1,11 @@
+import OSLog
 import SwiftUI
 
 struct DetailIcon: View {
     @EnvironmentObject var app: AppProvider
     @EnvironmentObject var g: GitProvider
     @EnvironmentObject var i: IconProvider
-    
+
     @State var icon: IconModel = .empty
 
     var body: some View {
@@ -13,14 +14,31 @@ struct DetailIcon: View {
         }
         .frame(maxWidth: .infinity)
         .onAppear {
-            self.icon = i.icon
+            do {
+                self.icon = try i.getIcon()
+            } catch {
+                os_log(.error, "Error getting icon: \(error)")
+                app.setError(error)
+            }
         }
-        .onChange(of: i.icon, {
-            self.icon = i.icon
+        .onChange(of: i.iconURL, {
+            do {
+                self.icon = try i.getIcon()
+            } catch {
+                os_log(.error, "Error getting icon: \(error)")
+                app.setError(error)
+            }
         })
         .onChange(of: self.icon, {
-            self.icon.save()
-            i.setIcon(self.icon, reason: "OnChage")
+            do {
+                try self.icon.saveToDisk()
+            } catch {
+                self.app.setError(error)
+            }
+
+            if let path = self.icon.path {
+                i.setIconURL(URL(filePath: path))
+            }
         })
     }
 }

@@ -13,7 +13,7 @@ struct IconHome: View {
     var body: some View {
         VStack {
             // MARK: IconTopBar
-            
+
             IconTopBar(snapshotTapped: $snapshotTapped, icon: $icon)
             GeometryReader { geo in
                 HStack {
@@ -40,10 +40,18 @@ struct IconHome: View {
                 self.iconId = icon.iconId
             }
             .onChange(of: iconId) {
-                icon.updateIconId(iconId)
+                do {
+                    try icon.updateIconId(iconId)
+                } catch {
+                    self.app.setError(error)
+                }
             }
             .onChange(of: backgroundId) {
-                icon.updateBackgroundId(backgroundId)
+                do {
+                    try icon.updateBackgroundId(backgroundId)
+                } catch {
+                    self.app.setError(error)
+                }
             }
         }
     }

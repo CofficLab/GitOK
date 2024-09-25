@@ -3,7 +3,7 @@ import SwiftUI
 struct DetailBanner: View {
     @EnvironmentObject var app: AppProvider
     @EnvironmentObject var b: BannerProvider
-    
+
     @State var banner: BannerModel = .empty
 
     var body: some View {
@@ -26,7 +26,12 @@ struct DetailBanner: View {
             }
         })
         .onChange(of: self.banner, {
-            self.banner.saveToDisk()
+            do {
+                try self.banner.saveToDisk()
+            } catch {
+                self.app.setError(error)
+            }
+
             b.setBannerURL(URL(filePath: self.banner.path!))
         })
     }

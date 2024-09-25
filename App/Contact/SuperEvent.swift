@@ -124,6 +124,28 @@ extension SuperEvent {
     }
 }
 
+// MARK: Icon
+
+extension SuperEvent {
+    func emitIconDidChange() {
+        DispatchQueue.main.async {
+            NotificationCenter.default.post(name: .iconDidChange, object: self)
+        }
+    }
+
+    func emitIconDidSave() {
+        DispatchQueue.main.async {
+            NotificationCenter.default.post(name: .iconDidSave, object: self)
+        }
+    }
+
+    func emitIconDidFail() {
+        DispatchQueue.main.async {
+            NotificationCenter.default.post(name: .iconDidFail, object: self)
+        }
+    }
+}
+
 // MARK: App
 
 extension SuperEvent {

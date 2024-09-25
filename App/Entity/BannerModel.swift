@@ -35,10 +35,6 @@ struct BannerModel: JsonModel, SuperLog, SuperEvent {
         self.backgroundId = backgroundId
         self.path = path
         self.project = Project(Self.getProjectURL(path))
-
-        if let path = self.path, path.isNotEmpty {
-            save()
-        }
     }
 
     func getDevice() -> Device {
@@ -74,7 +70,7 @@ struct BannerModel: JsonModel, SuperLog, SuperEvent {
 
         let newImageId = try SmartImage.saveImage(url, projectURL: self.project.url)
         self.imageId = newImageId
-        self.saveToDisk()
+        try self.saveToDisk()
     }
 }
 
@@ -136,8 +132,8 @@ extension BannerModel {
         }
     }
 
-    func saveToDisk() {
-        self.save()
+    func saveToDisk() throws {
+        try self.save()
         self.emitBannerTitleChanged(title: self.title, id: self.id)
         self.emitBannerChanged()
     }

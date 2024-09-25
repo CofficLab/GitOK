@@ -79,6 +79,16 @@ final class Project {
         
         return try BannerModel.all(self)
     }
+
+    func getIcons() throws -> [IconModel] {
+        let verbose = false
+        
+        if verbose {
+            os_log("\(self.label)GetIcons for project -> \(self.path)")
+        }
+        
+        return try IconModel.all(self.path)
+    }
 }
 
 extension Project: Identifiable {
