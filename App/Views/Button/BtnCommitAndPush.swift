@@ -115,6 +115,7 @@ struct BtnCommitAndPush: View, SuperLog, SuperThread {
 
         self.bg.async {
             // 执行 commit
+            os_log("\(self.t)Commit")
             do {
                 try git.add(repoPath)
                 try git.commit(repoPath, commit: commitMessage)
@@ -129,6 +130,7 @@ struct BtnCommitAndPush: View, SuperLog, SuperThread {
             }
 
             // 执行 push
+            os_log("\(self.t)Push")
             do {
                 try git.push(repoPath, username: username, token: token)
             } catch let error {
