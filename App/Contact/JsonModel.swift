@@ -1,5 +1,5 @@
-import SwiftUI
 import OSLog
+import SwiftUI
 
 protocol JsonModel: Encodable, Identifiable, Equatable, Hashable {
     var path: String? { get }
@@ -20,11 +20,11 @@ extension JsonModel {
         guard let path = self.path else {
             return
         }
-        
+
         do {
             try FileManager.default.removeItem(atPath: path)
         } catch let e {
-            print(e)
+            os_log(.error, "Error deleting item at path: \(path), error: \(e)")
         }
     }
 }
@@ -32,16 +32,22 @@ extension JsonModel {
 // MARK: Store
 
 extension JsonModel {
-    func save() {
-        os_log("\(self.label)Save")
+    func save() throws {
+        let verbose = false
+
         guard let p = path else {
-            os_log("\(label)Can't Save, no path")
-            return
+            os_log(.error, "\(label)Can't Save, no path")
+
+            throw NSError(domain: "\(label)SaveError", code: 1, userInfo: [NSLocalizedDescriptionKey: "\(label)Can't Save, no path"])
         }
         
+        if verbose {
+            os_log("\(self.label)Save to \(p)")
+        }
+
         self.saveToFile(atPath: p)
     }
-    
+
     // 将对象转换为 JSON 字符串
     func toJSONString() -> String? {
         do {
@@ -52,7 +58,7 @@ extension JsonModel {
                 return jsonString
             }
         } catch {
-            print("Error encoding BannerModel to JSON: \(error)")
+            os_log(.error, "Error encoding BannerModel to JSON: \(error)")
         }
         return nil
     }
@@ -68,14 +74,13 @@ extension JsonModel {
             do {
                 try fileManager.createDirectory(at: directoryURL, withIntermediateDirectories: true, attributes: nil)
             } catch {
-                print("Error creating directory: \(error)")
+                os_log(.error, "Error creating directory: \(error)")
             }
 
             do {
                 try jsonString.write(toFile: path, atomically: true, encoding: .utf8)
-                print("JSON saved to file: \(path)")
             } catch {
-                print("Error saving JSON to file: \(error)")
+                os_log(.error, "Error saving JSON to file: \(error)")
             }
         }
     }

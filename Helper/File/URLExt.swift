@@ -18,18 +18,36 @@ extension URL {
     }
     
     // MARK: FileManager
+
+    func removeItem() throws {
+        if self.isFileExist() {
+            try f.removeItem(at: self)
+        }
+
+        if self.isDirExist() {
+            try f.removeItem(at: self)
+        }
+    }
     
     func nearestFolder() -> URL {
         self.isFolder ? self : self.deletingLastPathComponent()
     }
     
     func isDirExist() -> String {
+        isDirExist() ? "是" : "否"
+    }
+
+    func isDirExist() -> Bool {
         var isDir: ObjCBool = true
-        return f.fileExists(atPath: self.path(), isDirectory: &isDir) ? "是" : "否"
+        return f.fileExists(atPath: self.path(), isDirectory: &isDir)
     }
     
     func isFileExist() -> String {
-        f.fileExists(atPath: self.path) ? "是" : "否"
+        isFileExist() ? "是" : "否"
+    }
+
+    func isFileExist() -> Bool {
+        f.fileExists(atPath: self.path)
     }
     
     func removeParentFolder() {

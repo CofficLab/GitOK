@@ -2,15 +2,25 @@ import SwiftUI
 import OSLog
 
 struct BtnMerge: View, SuperEvent, SuperThread {
-    @EnvironmentObject var app: AppProvider
+    @EnvironmentObject var m: MessageProvider
+
 
     var path: String
     var from: Branch
     var to: Branch
     var git = Git()
 
+    @State private var isHovering = false
+
     var body: some View {
         Button("Merge", action: merge)
+            .padding()
+            .cornerRadius(8)
+            .scaleEffect(isHovering ? 1.05 : 1.0)
+            .animation(.easeInOut(duration: 0.2), value: isHovering)
+            .onHover { hovering in
+                isHovering = hovering
+            }
     }
     
     func merge() {
@@ -21,7 +31,7 @@ struct BtnMerge: View, SuperEvent, SuperThread {
             } catch let error {
                 os_log(.error, "\(error.localizedDescription)")
 
-                self.app.setError(error)
+                m.setError(error)
             }
         }
     }

@@ -1,7 +1,7 @@
 import SwiftUI
 import OSLog
 
-struct TileFile: View, SuperLog, SuperThread {
+struct TileProject: View, SuperLog, SuperThread {
     @EnvironmentObject var a: AppProvider
     @EnvironmentObject var m: MessageProvider
     @EnvironmentObject var g: GitProvider
@@ -10,14 +10,14 @@ struct TileFile: View, SuperLog, SuperThread {
     @State var isPresented = false
     @State var live = false
     
-    var file: File? { g.file }
+    var project: Project? { g.project }
     var message: SmartMessage? { m.messages.first }
 
     var body: some View {
-        if let file = file, a.currentTab == .Git {
+        if let project = project, g.file == nil {
             HStack {
-                Image(systemName: "doc.text").padding(.leading)
-                Text(file.name).font(.footnote)
+                Image(systemName: "folder").padding(.leading)
+                Text(project.path).font(.footnote)
             }
             .onHover(perform: { hovering in
                 hovered = hovering
@@ -28,4 +28,10 @@ struct TileFile: View, SuperLog, SuperThread {
             .background(hovered ? Color(.controlAccentColor).opacity(0.2) : .clear)
         }
     }
+}
+
+#Preview {
+    AppPreview()
+        .frame(width: 800)
+        .frame(height: 800)
 }

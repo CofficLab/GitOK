@@ -1,26 +1,26 @@
 import SwiftUI
+import OSLog
 
 struct BannerTile: View {
-    @State var banner: BannerModel
-    @State var isPresented: Bool = false
-    var selected: BannerModel
+    @EnvironmentObject var b: BannerProvider
+    @EnvironmentObject var app: AppProvider
+
+    @State var title: String = ""
+
+    var banner: BannerModel
 
     var body: some View {
-        Text(banner.title)
-            .navigationDestination(isPresented: $isPresented, destination: {
-                BannerHome(banner: $banner)
+        Text(title)
+            .onAppear(perform: {
+                self.title = banner.title
             })
-            .onChange(of: selected) {
-                ifPresented()
+            .onReceive(NotificationCenter.default.publisher(for: .bannerTitleChanged)) { notification in
+                if let title = notification.userInfo?["title"] as? String, let id = notification.userInfo?["id"] as? String {
+                    if id == banner.id {
+                        self.title = title
+                    }
+                }
             }
-            .onAppear(perform: ifPresented)
-            .onChange(of: banner, {
-                banner.save()
-            })
-    }
-    
-    func ifPresented() {
-        self.isPresented = banner.id == selected.id
     }
 }
 

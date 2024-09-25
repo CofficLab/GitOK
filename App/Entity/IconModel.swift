@@ -1,21 +1,21 @@
 import Foundation
+import OSLog
 import SwiftData
 import SwiftUI
-import OSLog
 
-struct IconModel: JsonModel {
+struct IconModel: JsonModel, SuperEvent, SuperLog {
     static var root: String = ".gitok/icons"
     static var label = "💿 IconModel::"
     static var empty = IconModel(path: "")
-    
+
     var title: String = "1"
     var iconId: Int = 1
     var backgroundId: String = "2"
-    var imageURL: URL? = nil
+    var imageURL: URL?
     var path: String?
     var opacity: Double = 1
     var scale: Double?
-    
+
     var image: Image {
         if let url = self.imageURL {
             return Image(nsImage: NSImage(data: try! Data(contentsOf: url))!)
@@ -23,66 +23,57 @@ struct IconModel: JsonModel {
 
         return IconPng.getImage(self.iconId)
     }
-    
+
     var background: some View {
-        BackgroundGroup.all[self.backgroundId]
-            .opacity(self.opacity)
+        BackgroundGroup(for: self.backgroundId).opacity(self.opacity)
     }
-    
+
     var label: String { IconModel.label }
-    
+
     init(title: String = "1", iconId: Int = 1, backgroundId: String = "3", imageURL: URL? = nil, path: String) {
         self.title = title
         self.iconId = iconId
         self.backgroundId = backgroundId
         self.imageURL = imageURL
         self.path = path
-        
-        self.save()
     }
 }
 
 // MARK: 查
 
 extension IconModel {
-    static func all(_ projectPath: String) -> [IconModel] {
+    static func all(_ projectPath: String) throws -> [IconModel] {
+        let verbose = false
         var models: [IconModel] = []
 
         // 目录路径
         let directoryPath = "\(projectPath)/\(Self.root)"
 
-        os_log("\(IconModel.label)GetIcons from ->\(directoryPath)")
+        if verbose {
+            os_log("\(IconModel.label)GetIcons from ->\(directoryPath)")
+        }
 
         // 创建 FileManager 实例
         let fileManager = FileManager.default
-        
+
         var isDir: ObjCBool = true
         if !fileManager.fileExists(atPath: directoryPath, isDirectory: &isDir) {
             return []
         }
 
-        // 存储文件路径的数组
-        var fileURLs: [URL] = []
-
         do {
-            // 获取指定目录下的文件列表
-            let files = try fileManager.contentsOfDirectory(atPath: directoryPath)
-
-            // 遍历文件列表，获取完整路径并存入数组
-            for file in files {
+            for file in try fileManager.contentsOfDirectory(atPath: directoryPath) {
                 let fileURL = URL(fileURLWithPath: directoryPath).appendingPathComponent(file)
-                fileURLs.append(fileURL)
 
-                if var model = IconModel.fromJSONFile(fileURL) {
-                    model.path = fileURL.path
-                    models.append(model)
-                }
+                models.append(try IconModel.fromJSONFile(fileURL))
             }
-        } catch {
-            print("Error while enumerating files: \(error.localizedDescription)")
-        }
 
-        return models
+            return models
+        } catch {
+            os_log(.error, "Error while enumerating files: \(error.localizedDescription)")
+
+            throw error
+        }
     }
 }
 
@@ -100,13 +91,11 @@ extension IconModel: Codable {
 // MARK: Hashable
 
 extension IconModel: Hashable {
-    
 }
 
 // MARK: Equatable
 
 extension IconModel: Equatable {
-    
 }
 
 // MARK: Identifiable
@@ -128,19 +117,19 @@ extension IconModel {
 // MARK: 更新
 
 extension IconModel {
-    mutating func updateBackgroundId(_ id: String) {
+    mutating func updateBackgroundId(_ id: String) throws {
         self.backgroundId = id
-        self.save()
+        try self.save()
     }
-    
-    mutating func updateIconId(_ id: Int) {
+
+    mutating func updateIconId(_ id: Int) throws {
         self.iconId = id
-        self.save()
+        try self.save()
     }
-    
-    mutating func updateImageURL(_ url: URL) {
+
+    mutating func updateImageURL(_ url: URL) throws {
         self.imageURL = url
-        self.save()
+        try self.save()
     }
 }
 
@@ -157,7 +146,7 @@ extension IconModel {
                 return jsonString
             }
         } catch {
-            print("Error encoding BannerModel to JSON: \(error)")
+            os_log(.error, "Error encoding BannerModel to JSON: \(error)")
         }
         return nil
     }
@@ -173,28 +162,35 @@ extension IconModel {
             do {
                 try fileManager.createDirectory(at: directoryURL, withIntermediateDirectories: true, attributes: nil)
             } catch {
-                print("Error creating directory: \(error)")
+                os_log(.error, "Error creating directory: \(error)")
             }
 
             do {
                 try jsonString.write(toFile: path, atomically: true, encoding: .utf8)
-                print("JSON saved to file: \(path)")
+                os_log(.info, "JSON saved to file: \(path)")
             } catch {
-                print("Error saving JSON to file: \(error)")
+                os_log(.error, "Error saving JSON to file: \(error)")
             }
         }
     }
-    
-    static func fromJSONFile(_ jsonFile: URL) -> Self? {
-        if let jsonData = try? Data(contentsOf: URL(fileURLWithPath: jsonFile.path)) {
-            do {
-                return try JSONDecoder().decode(IconModel.self, from: jsonData)
-            } catch {
-                print("Error decoding JSON: \(error)")
-            }
-        }
 
-        return nil
+    func saveToDisk() throws {
+        try self.save()
+        self.emitIconDidSave()
+    }
+
+    static func fromJSONFile(_ jsonFile: URL) throws -> Self {
+        let jsonData = try Data(contentsOf: jsonFile)
+        do {
+            var model = try JSONDecoder().decode(IconModel.self, from: jsonData)
+            model.path = jsonFile.path
+            return model
+        } catch {
+            os_log(.error, "Error decoding JSON: \(error)")
+            os_log(.error, "  ➡️ JSONFile: \(jsonFile)")
+
+            throw error
+        }
     }
 }
 

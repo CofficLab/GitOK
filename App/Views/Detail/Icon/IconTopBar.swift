@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct IconTopBar: View {
+    @EnvironmentObject var m: MessageProvider
+
     @State var tab: ActionTab = .Git
     @State var inScreen: Bool = false
     @State var device: Device = .MacBook
@@ -19,7 +21,11 @@ struct IconTopBar: View {
                     panel.allowsMultipleSelection = false
                     panel.canChooseDirectories = false
                     if panel.runModal() == .OK, let url = panel.url {
-                        self.icon.updateImageURL(url)
+                        do {
+                            try self.icon.updateImageURL(url)
+                        } catch {
+                            m.setError(error)
+                        }
                     }
                 }
                 TabBtn(
@@ -36,7 +42,9 @@ struct IconTopBar: View {
             .labelStyle(.iconOnly)
             .background(.secondary.opacity(0.5))
             
-            Backgrounds(current: $icon.backgroundId)
+            GroupBox {
+                Backgrounds(current: $icon.backgroundId)
+            }.padding()
         }
     }
 }

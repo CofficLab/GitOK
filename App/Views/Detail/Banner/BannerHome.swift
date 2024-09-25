@@ -2,6 +2,7 @@ import SwiftUI
 
 struct BannerHome: View {
     @EnvironmentObject var app: AppProvider
+    @EnvironmentObject var m: MessageProvider
 
     @Binding var banner: BannerModel
     @State var snapshotTapped: Bool = false
@@ -15,7 +16,9 @@ struct BannerHome: View {
         VStack {
             BannerTopBar(snapshotTapped: $snapshotTapped, banner: $banner)
 
-            bodyBanner
+            GroupBox {
+                bodyBanner
+            }.padding()
         }
     }
     
@@ -35,7 +38,7 @@ struct BannerHome: View {
         }
         .onChange(of: snapshotTapped, {
             if snapshotTapped {
-                app.setMessage(ImageHelper.snapshot(content, title: "\(banner.device)-\(self.getTimeString())"))
+                m.setFlashMessage(ImageHelper.snapshot(content, title: "\(banner.device)-\(self.getTimeString())"))
                 self.snapshotTapped = false
             }
         })

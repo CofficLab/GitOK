@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct CommitForm2: View {
+struct CommitForm: View {
     @EnvironmentObject var app: AppProvider
     @EnvironmentObject var g: GitProvider
 
@@ -24,18 +24,17 @@ struct CommitForm2: View {
                         .onChange(of: category, {
                             self.text = category.defaultMessage
                         })
-                    
-                    Spacer()
 
-                    BtnCommitAndPush(repoPath: project.path, commitMessage: commitMessage)
+                    Spacer()
+                    TextField("commit", text: $text)
+                        .textFieldStyle(.roundedBorder)
+                        .onAppear {
+                            self.text = self.category.defaultMessage
+                        }
+                        .padding(.vertical)
                 }
 
-                TextField("commit", text: $text)
-                    .textFieldStyle(.roundedBorder)
-                    .onAppear {
-                        self.text = self.category.defaultMessage
-                    }
-                    .padding(.vertical)
+                BtnCommitAndPush(repoPath: project.path, commitMessage: commitMessage)
             }
             .onReceive(NotificationCenter.default.publisher(for: .gitCommitSuccess)) { _ in
                 self.text = self.category.defaultMessage

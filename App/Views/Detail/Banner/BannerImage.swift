@@ -1,6 +1,10 @@
 import SwiftUI
+import OSLog
 
-struct BannerImage: View {
+struct BannerImage: View, SuperLog {
+    @EnvironmentObject var app: AppProvider
+    @EnvironmentObject var m: MessageProvider
+
     @State var isEditingTitle = false
     
     @Binding var banner: BannerModel
@@ -48,14 +52,15 @@ struct BannerImage: View {
                     let panel = NSOpenPanel()
                     panel.allowsMultipleSelection = false
                     panel.canChooseDirectories = false
+                    
                     if panel.runModal() == .OK, let url = panel.url {
-                        let ext = url.pathExtension
-                        let storeURL = AppConfig.imagesDir.appendingPathComponent("\(TimeHelper.getTimeString()).\(ext)")
+                        os_log("\(self.t)Change Image -> \(url.relativeString)")
+                        
                         do {
-                            try FileManager.default.copyItem(at: url, to: storeURL)
-                            self.banner.imageURL = storeURL
+                            try self.banner.changeImage(url)
                         } catch let e {
-                            print(e)
+                            os_log(.error, "Error changing image: \(e)")
+                            m.setError(e)
                         }
                     }
                 }

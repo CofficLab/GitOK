@@ -2,9 +2,11 @@ import OSLog
 import SwiftData
 import SwiftUI
 
-struct BannerList: View {
+struct BannerList: View, SuperThread {
     @EnvironmentObject var app: AppProvider
     @EnvironmentObject var g: GitProvider
+    @EnvironmentObject var b: BannerProvider
+    @EnvironmentObject var m: MessageProvider
 
     @State var banner: BannerModel = .empty
     @State var banners: [BannerModel] = []
@@ -15,12 +17,15 @@ struct BannerList: View {
     var body: some View {
         VStack(spacing: 0) {
             List(banners, selection: $banner) { banner in
-                BannerTile(banner: banner, selected: self.banner) .contextMenu(ContextMenu(menuItems: {
+                BannerTile(banner: banner).contextMenu(ContextMenu(menuItems: {
                     BtnDelBanner(banner: banner, callback: getBanners)
                 }))
                 .tag(banner)
             }
             .frame(maxHeight: .infinity)
+            .onChange(of: self.banner, {
+                b.setBannerURL(URL(filePath: self.banner.path!))
+            })
 
             // 操作
             if let project = g.project {
@@ -35,24 +40,32 @@ struct BannerList: View {
         }
         .onAppear(perform: getBanners)
         .onChange(of: g.project, getBanners)
+//        .onChange(of: b.banner, getBanners)
     }
 
     func getBanners() {
+        let verbose = false
         if verbose {
             os_log("\(label)GetBanners")
         }
 
         if let project = g.project {
-            DispatchQueue.global().async {
-                let banners = BannerModel.all(project.path)
+            self.bg.async {
+                do {
+                    let banners = try project.getBanners()
 
-                DispatchQueue.main.async {
-                    self.banners = banners
+                    self.main.async {
+                        self.banners = banners
 
-                    
                         if !banners.contains(banner) {
                             self.banner = banners.first ?? .empty
                         }
+                    }
+                } catch {
+                    os_log(.error, "\(label)GetBanners error -> \(error)")
+                    self.main.async {
+                        m.setError(error)
+                    }
                 }
             }
         }

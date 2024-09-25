@@ -2,7 +2,7 @@ import SwiftData
 import SwiftUI
 
 struct IconHome: View {
-    @EnvironmentObject var app: AppProvider
+    @EnvironmentObject var m: MessageProvider
     @Environment(\.modelContext) var context: ModelContext
 
     @Binding var icon: IconModel
@@ -13,7 +13,7 @@ struct IconHome: View {
     var body: some View {
         VStack {
             // MARK: IconTopBar
-            
+
             IconTopBar(snapshotTapped: $snapshotTapped, icon: $icon)
             GeometryReader { geo in
                 HStack {
@@ -40,10 +40,18 @@ struct IconHome: View {
                 self.iconId = icon.iconId
             }
             .onChange(of: iconId) {
-                icon.updateIconId(iconId)
+                do {
+                    try icon.updateIconId(iconId)
+                } catch {
+                    m.setError(error)
+                }
             }
             .onChange(of: backgroundId) {
-                icon.updateBackgroundId(backgroundId)
+                do {
+                    try icon.updateBackgroundId(backgroundId)
+                } catch {
+                    m.setError(error)
+                }
             }
         }
     }

@@ -48,6 +48,16 @@ extension SuperEvent {
     }
 }
 
+// MARK: Project
+
+extension SuperEvent {
+    func emitGitProjectDeleted(path: String) {
+        DispatchQueue.main.async {
+            NotificationCenter.default.post(name: .gitProjectDeleted, object: self, userInfo: ["path": path])
+        }
+    }
+}
+
 // MARK: Branch
 
 extension SuperEvent {
@@ -86,6 +96,62 @@ extension SuperEvent {
     func emitJsReady() {
         DispatchQueue.main.async {
             NotificationCenter.default.post(name: .jsReady, object: self)
+        }
+    }
+}
+
+// MARK: Banner
+
+extension SuperEvent {
+    func emitBannerChanged() {
+        DispatchQueue.main.async {
+            NotificationCenter.default.post(name: .bannerChanged, object: self)
+        }
+    }
+
+    func emitBannerListChanged() {
+        DispatchQueue.main.async {
+            NotificationCenter.default.post(name: .bannerListChanged, object: self)
+        }
+    }
+
+    func emitBannerAdded() {
+        DispatchQueue.main.async {
+            NotificationCenter.default.post(name: .bannerAdded, object: self)
+        }
+    }
+
+    func emitBannerRemoved() {
+        DispatchQueue.main.async {
+            NotificationCenter.default.post(name: .bannerRemoved, object: self)
+        }
+    }
+
+    func emitBannerTitleChanged(title: String, id: String) {
+        DispatchQueue.main.async {
+            NotificationCenter.default.post(name: .bannerTitleChanged, object: self, userInfo: ["title": title, "id": id])
+        }
+    }
+}
+
+// MARK: Icon
+
+extension SuperEvent {
+    func emitIconDidChange() {
+        DispatchQueue.main.async {
+            NotificationCenter.default.post(name: .iconDidChange, object: self)
+        }
+    }
+
+    func emitIconDidSave() {
+        DispatchQueue.main.async {
+            NotificationCenter.default.post(name: .iconDidSave, object: self)
+        }
+    }
+
+    func emitIconDidFail() {
+        DispatchQueue.main.async {
+            NotificationCenter.default.post(name: .iconDidFail, object: self)
         }
     }
 }

@@ -23,26 +23,21 @@ struct CommitList: View, SuperThread, SuperLog{
                     Spacer()
                 } else {
                     List(commits, selection: self.$selection) { commit in
-                        CommitTile(commit: commit, project: project).tag(commit)
+                        CommitTile(commit: commit, project: project, selected: selection).tag(commit)
                     }
 
                     if showCommitForm {
                         GroupBox {
-                            CommitForm2()
+                            CommitForm()
                         }
-                        .padding(.horizontal, 2)
-                        .padding(.vertical, 4)
+                        .padding(.horizontal, 4)
+                        .padding(.vertical, 6)
+                        .background(BackgroundView.type2.opacity(0.1))
                     }
-
-                    GroupBox {
-                        MergeForm()
-                    }
-                    .padding(.horizontal, 2)
-                    .padding(.vertical, 2)
                 }
             }
             .onAppear {
-                refresh("OnApprear")
+                refresh("OnAppear")
                 self.showCommitForm = project.hasUnCommittedChanges()
             }
             .onChange(of: selection, {

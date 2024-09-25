@@ -39,6 +39,28 @@ class Git: SuperEvent, SuperLog {
         }
         return false
     }
+
+    func getRemoteUrl(_ path: String) throws -> String {
+        let process = Process()
+        process.executableURL = URL(fileURLWithPath: "/usr/bin/git")
+        process.arguments = ["-C", path, "config", "--get", "remote.origin.url"]
+
+        let pipe = Pipe()
+        process.standardOutput = pipe
+        process.standardError = pipe
+
+        try process.run()
+        process.waitUntilExit()
+
+        let data = pipe.fileHandleForReading.readDataToEndOfFile()
+        let output = String(data: data, encoding: .utf8)?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+
+        if process.terminationStatus != 0 {
+            throw NSError(domain: "GitError", code: Int(process.terminationStatus), userInfo: [NSLocalizedDescriptionKey: output])
+        }
+
+        return output
+    }
 }
 
 #Preview {

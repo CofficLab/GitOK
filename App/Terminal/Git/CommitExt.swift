@@ -30,6 +30,7 @@ extension Git {
         }
     }
 
+    @discardableResult
     func commit(_ path: String, commit: String) throws -> String {
         let verbose = true
         if verbose {

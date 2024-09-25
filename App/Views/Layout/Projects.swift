@@ -56,6 +56,13 @@ struct Projects: View, SuperLog {
             g.setProject(project, reason: "Projects.OnChangeOfProject")
         }
         .navigationSplitViewColumnWidth(min: 175, ideal: 175, max: 200)
+        .onReceive(NotificationCenter.default.publisher(for: .gitProjectDeleted)) { notification in 
+            if let path = notification.userInfo?["path"] as? String {
+                if self.project?.path == path {
+                    self.project = projects.first
+                }
+            }
+        }
     }
 
     private func deleteItem(_ project: Project) {

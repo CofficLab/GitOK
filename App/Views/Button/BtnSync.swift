@@ -2,7 +2,7 @@ import OSLog
 import SwiftUI
 
 struct BtnSync: View, SuperLog, SuperEvent, SuperThread {
-    @EnvironmentObject var app: AppProvider
+    @EnvironmentObject var m: MessageProvider
     @EnvironmentObject var g: GitProvider
 
     @Binding var message: String
@@ -57,7 +57,7 @@ struct BtnSync: View, SuperLog, SuperEvent, SuperThread {
             } catch let error {
                 self.reset()
                 self.main.async {
-                    app.alert("同步出错", info: error.localizedDescription)
+                    m.alert("同步出错", info: error.localizedDescription)
                 }
             }
         }
@@ -65,7 +65,7 @@ struct BtnSync: View, SuperLog, SuperEvent, SuperThread {
 
     func alert(error: Error) {
         self.main.async {
-            app.alert("同步出错", info: error.localizedDescription)
+            m.alert("同步出错", info: error.localizedDescription)
         }
     }
 

@@ -18,6 +18,7 @@ struct GitOKApp: App {
                 Content()
             }
         }
+        .windowToolbarStyle(.unified(showsTitle: false))
         .modelContainer(AppConfig.getContainer())
         .commands(content: {
             DebugCommand() 

@@ -1,18 +1,18 @@
 import SwiftUI
 
 struct Message: View {
-    @EnvironmentObject var app: AppProvider
+    @EnvironmentObject var m: MessageProvider
 
     var body: some View {
-        if !app.message.isEmpty {
+        if !m.message.isEmpty {
             VStack(alignment: .leading) {
-                Text(app.message)
+                Text(m.message)
                     .font(.title)
                     .padding(.horizontal, 20)
                     .padding(.vertical, 20)
                     .foregroundStyle(.white)
             }
-            .background(BackgroundGroup.yellow2blue_tl2br)
+            .background(BackgroundGroup(for: .yellow2blue_tl2br))
             .cornerRadius(8)
             .shadow(color: Color.gray, radius: 12, x: 2, y: 2)
         }
