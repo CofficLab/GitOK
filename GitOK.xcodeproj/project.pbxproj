@@ -21,7 +21,6 @@
 		0B1C67C42BD915F200502EB1 /* AppConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1C67C32BD915F200502EB1 /* AppConfig.swift */; };
 		0B1C67EB2BD9181200502EB1 /* BtnPush.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1C67EA2BD9181200502EB1 /* BtnPush.swift */; };
 		0B1C67ED2BD9D9CB00502EB1 /* CommitCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1C67EC2BD9D9CB00502EB1 /* CommitCategory.swift */; };
-		0B1C67EF2BD9DACF00502EB1 /* CommitForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1C67EE2BD9DACF00502EB1 /* CommitForm.swift */; };
 		0B1C67F12BD9DB1F00502EB1 /* CommitCategoryPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1C67F02BD9DB1F00502EB1 /* CommitCategoryPicker.swift */; };
 		0B1C67F32BD9E21B00502EB1 /* BtnOpenRemote.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1C67F22BD9E21B00502EB1 /* BtnOpenRemote.swift */; };
 		0B1C68002BD9F68F00502EB1 /* BtnFinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1C67FF2BD9F68F00502EB1 /* BtnFinder.swift */; };
@@ -141,7 +140,7 @@
 		0BD650F32CA1A8F900BA3CB8 /* TileFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD650F22CA1A8F900BA3CB8 /* TileFile.swift */; };
 		0BD650F52CA1AA5D00BA3CB8 /* JSEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD650F42CA1AA5D00BA3CB8 /* JSEvent.swift */; };
 		0BD650F72CA1AC6700BA3CB8 /* AppEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD650F62CA1AC6400BA3CB8 /* AppEvent.swift */; };
-		0BD650F92CA1B98A00BA3CB8 /* CommitForm2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD650F82CA1B98A00BA3CB8 /* CommitForm2.swift */; };
+		0BD650F92CA1B98A00BA3CB8 /* CommitForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD650F82CA1B98A00BA3CB8 /* CommitForm.swift */; };
 		0BD650FB2CA2E09F00BA3CB8 /* BannerProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD650FA2CA2E09F00BA3CB8 /* BannerProvider.swift */; };
 		0BD650FD2CA2E49F00BA3CB8 /* IconProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD650FC2CA2E49F00BA3CB8 /* IconProvider.swift */; };
 		0BD650FF2CA2E9B100BA3CB8 /* BannerHome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD650FE2CA2E9B100BA3CB8 /* BannerHome.swift */; };
@@ -173,6 +172,7 @@
 		F54DFA3E2CA395D800F81BE3 /* SmartImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = F54DFA3D2CA395C200F81BE3 /* SmartImage.swift */; };
 		F54DFA402CA3ABB800F81BE3 /* BannerEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = F54DFA3F2CA3ABB200F81BE3 /* BannerEvent.swift */; };
 		F54DFA422CA3B5B900F81BE3 /* IconEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = F54DFA412CA3B5B600F81BE3 /* IconEvent.swift */; };
+		F54DFA452CA3E5F200F81BE3 /* TileMerge.swift in Sources */ = {isa = PBXBuildFile; fileRef = F54DFA442CA3E5F200F81BE3 /* TileMerge.swift */; };
 		F588FB702CA15D5200F6AE42 /* GitEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = F588FB6F2CA15D5200F6AE42 /* GitEvent.swift */; };
 		F588FB722CA15DAD00F6AE42 /* SuperEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = F588FB712CA15DAD00F6AE42 /* SuperEvent.swift */; };
 		F588FB752CA16B4F00F6AE42 /* GitError.swift in Sources */ = {isa = PBXBuildFile; fileRef = F588FB742CA16B4F00F6AE42 /* GitError.swift */; };
@@ -215,7 +215,6 @@
 		0B1C67C32BD915F200502EB1 /* AppConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConfig.swift; sourceTree = "<group>"; };
 		0B1C67EA2BD9181200502EB1 /* BtnPush.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BtnPush.swift; sourceTree = "<group>"; };
 		0B1C67EC2BD9D9CB00502EB1 /* CommitCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommitCategory.swift; sourceTree = "<group>"; };
-		0B1C67EE2BD9DACF00502EB1 /* CommitForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommitForm.swift; sourceTree = "<group>"; };
 		0B1C67F02BD9DB1F00502EB1 /* CommitCategoryPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommitCategoryPicker.swift; sourceTree = "<group>"; };
 		0B1C67F22BD9E21B00502EB1 /* BtnOpenRemote.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BtnOpenRemote.swift; sourceTree = "<group>"; };
 		0B1C67FF2BD9F68F00502EB1 /* BtnFinder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BtnFinder.swift; sourceTree = "<group>"; };
@@ -337,7 +336,7 @@
 		0BD650F22CA1A8F900BA3CB8 /* TileFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TileFile.swift; sourceTree = "<group>"; };
 		0BD650F42CA1AA5D00BA3CB8 /* JSEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSEvent.swift; sourceTree = "<group>"; };
 		0BD650F62CA1AC6400BA3CB8 /* AppEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppEvent.swift; sourceTree = "<group>"; };
-		0BD650F82CA1B98A00BA3CB8 /* CommitForm2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommitForm2.swift; sourceTree = "<group>"; };
+		0BD650F82CA1B98A00BA3CB8 /* CommitForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommitForm.swift; sourceTree = "<group>"; };
 		0BD650FA2CA2E09F00BA3CB8 /* BannerProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerProvider.swift; sourceTree = "<group>"; };
 		0BD650FC2CA2E49F00BA3CB8 /* IconProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconProvider.swift; sourceTree = "<group>"; };
 		0BD650FE2CA2E9B100BA3CB8 /* BannerHome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerHome.swift; sourceTree = "<group>"; };
@@ -369,6 +368,7 @@
 		F54DFA3D2CA395C200F81BE3 /* SmartImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmartImage.swift; sourceTree = "<group>"; };
 		F54DFA3F2CA3ABB200F81BE3 /* BannerEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerEvent.swift; sourceTree = "<group>"; };
 		F54DFA412CA3B5B600F81BE3 /* IconEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconEvent.swift; sourceTree = "<group>"; };
+		F54DFA442CA3E5F200F81BE3 /* TileMerge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TileMerge.swift; sourceTree = "<group>"; };
 		F588FB6F2CA15D5200F6AE42 /* GitEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitEvent.swift; sourceTree = "<group>"; };
 		F588FB712CA15DAD00F6AE42 /* SuperEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuperEvent.swift; sourceTree = "<group>"; };
 		F588FB742CA16B4F00F6AE42 /* GitError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitError.swift; sourceTree = "<group>"; };
@@ -488,7 +488,6 @@
 				0B1C67FF2BD9F68F00502EB1 /* BtnFinder.swift */,
 				0BCC6D102BD94B5B006ADA94 /* BtnLog.swift */,
 				0BCC6D122BD94D15006ADA94 /* BtnLogs.swift */,
-				0BD15C4D2BDBF360004024CF /* BtnMerge.swift */,
 				0B1C68012BD9F7B500502EB1 /* BtnOpen.swift */,
 				0B1C67F22BD9E21B00502EB1 /* BtnOpenRemote.swift */,
 				0BF75EE92BDFA2FB00A553CD /* BtnOpenTerminal.swift */,
@@ -834,8 +833,9 @@
 			isa = PBXGroup;
 			children = (
 				0BD650F12CA1A8E800BA3CB8 /* FileInfo */,
-				0BD650EC2CA196BD00BA3CB8 /* SmartMessage */,
 				0BD650E82CA1969100BA3CB8 /* SmartLog */,
+				F54DFA432CA3E5E300F81BE3 /* SmartMerge */,
+				0BD650EC2CA196BD00BA3CB8 /* SmartMessage */,
 			);
 			path = Plugins;
 			sourceTree = "<group>";
@@ -895,7 +895,7 @@
 		0BFA2E602BE11E7200AD98D7 /* Content */ = {
 			isa = PBXGroup;
 			children = (
-				0BD650F82CA1B98A00BA3CB8 /* CommitForm2.swift */,
+				0BD650F82CA1B98A00BA3CB8 /* CommitForm.swift */,
 				0B8C7B322BE0EAE900B4E817 /* ActionTab.swift */,
 				0B8C7B242BE0BB7500B4E817 /* BannerList.swift */,
 				F545D15F2C1AD436006A6AFA /* BannerTile.swift */,
@@ -914,11 +914,19 @@
 			isa = PBXGroup;
 			children = (
 				0B1C67F02BD9DB1F00502EB1 /* CommitCategoryPicker.swift */,
-				0B1C67EE2BD9DACF00502EB1 /* CommitForm.swift */,
 				F545D1672C1AEBF1006A6AFA /* FileDetail.swift */,
-				0BD15C4F2BDBF3BD004024CF /* MergeForm.swift */,
 			);
 			path = Commit;
+			sourceTree = "<group>";
+		};
+		F54DFA432CA3E5E300F81BE3 /* SmartMerge */ = {
+			isa = PBXGroup;
+			children = (
+				0BD15C4D2BDBF360004024CF /* BtnMerge.swift */,
+				0BD15C4F2BDBF3BD004024CF /* MergeForm.swift */,
+				F54DFA442CA3E5F200F81BE3 /* TileMerge.swift */,
+			);
+			path = SmartMerge;
 			sourceTree = "<group>";
 		};
 		F588FB6E2CA15D4100F6AE42 /* Event */ = {
@@ -1119,6 +1127,7 @@
 				0B1C67C22BD9159900502EB1 /* Project.swift in Sources */,
 				0B1C67BF2BD9157100502EB1 /* DBExt.swift in Sources */,
 				F545D1712C1C155E006A6AFA /* BannerImage.swift in Sources */,
+				F54DFA452CA3E5F200F81BE3 /* TileMerge.swift in Sources */,
 				0B8C7AF32BE08E2D00B4E817 /* Message.swift in Sources */,
 				0B8C7B0E2BE08EDA00B4E817 /* Card.swift in Sources */,
 				0BD650FB2CA2E09F00BA3CB8 /* BannerProvider.swift in Sources */,
@@ -1145,7 +1154,6 @@
 				0B8C7AEC2BE08E2200B4E817 /* IconAsset.swift in Sources */,
 				F54DFA3C2CA38EFC00F81BE3 /* URLHelper.swift in Sources */,
 				F54DFA422CA3B5B900F81BE3 /* IconEvent.swift in Sources */,
-				0B1C67EF2BD9DACF00502EB1 /* CommitForm.swift in Sources */,
 				0BD15C562BDD23E1004024CF /* DiffExt.swift in Sources */,
 				0B8C7A6D2BE08CA800B4E817 /* DeviceType.swift in Sources */,
 				0B1C67B02BD9099800502EB1 /* AppPreview.swift in Sources */,
@@ -1187,7 +1195,7 @@
 				0B8C7AEB2BE08E2200B4E817 /* IconItem.swift in Sources */,
 				0B8C7B112BE08EDA00B4E817 /* CloudKitHelper.swift in Sources */,
 				0BD650A12CA1856000BA3CB8 /* ConfigExt.swift in Sources */,
-				0BD650F92CA1B98A00BA3CB8 /* CommitForm2.swift in Sources */,
+				0BD650F92CA1B98A00BA3CB8 /* CommitForm.swift in Sources */,
 				0BB543E92BE890F200D7A2B2 /* JsonModel.swift in Sources */,
 				0B76FD1B2BDE2B2F00501F1F /* WebHandler.swift in Sources */,
 				0B76FD182BDE27D000501F1F /* DefaultMessageHandler.swift in Sources */,

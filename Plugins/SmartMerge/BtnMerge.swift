@@ -9,8 +9,17 @@ struct BtnMerge: View, SuperEvent, SuperThread {
     var to: Branch
     var git = Git()
 
+    @State private var isHovering = false
+
     var body: some View {
         Button("Merge", action: merge)
+            .padding()
+            .cornerRadius(8)
+            .scaleEffect(isHovering ? 1.05 : 1.0)
+            .animation(.easeInOut(duration: 0.2), value: isHovering)
+            .onHover { hovering in
+                isHovering = hovering
+            }
     }
     
     func merge() {

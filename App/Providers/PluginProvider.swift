@@ -18,6 +18,7 @@ class PluginProvider: ObservableObject, SuperLog, SuperThread {
         HStack(spacing: 0) {
             TileFile()
             Spacer()
+            TileMerge()
             TileMessage()
         }
     }

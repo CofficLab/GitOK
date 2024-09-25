@@ -1,5 +1,5 @@
-import SwiftUI
 import OSLog
+import SwiftUI
 
 struct MergeForm: View {
     @EnvironmentObject var app: AppProvider
@@ -17,23 +17,29 @@ struct MergeForm: View {
     var body: some View {
         if let project = project {
             Group {
-                HStack {
-                    Picker("", selection: $branch1, content: {
-                        ForEach(branches, id: \.self, content: {
-                            Text($0.name)
-                                .tag($0 as Branch?)
+                VStack {
+                    VStack {
+                        Picker("", selection: $branch1, content: {
+                            ForEach(branches, id: \.self, content: {
+                                Text($0.name)
+                                    .tag($0 as Branch?)
+                            })
                         })
-                    })
-                    
-                    Picker("to", selection: $branch2, content: {
-                        ForEach(branches, id: \.self, content: {
-                            Text($0.name)
-                                .tag($0 as Branch?)
+
+                        Text("to").padding()
+
+                        Picker("", selection: $branch2, content: {
+                            ForEach(branches, id: \.self, content: {
+                                Text($0.name)
+                                    .tag($0 as Branch?)
+                            })
                         })
-                    })
+                    }
 
                     if let branch1 = branch1, let branch2 = branch2 {
                         BtnMerge(path: project.path, from: branch1, to: branch2)
+                            .padding(.top, 20)
+                            .controlSize(.extraLarge)
                     }
                 }
             }

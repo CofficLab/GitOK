@@ -13,6 +13,7 @@ struct BtnCommitAndPush: View, SuperLog, SuperThread {
     @State private var showCredentialsAlert = false
     @State private var username = ""
     @State private var token = ""
+    @State private var isHovered = false
 
     let emoji = "🐔"
     var repoPath: String
@@ -32,6 +33,12 @@ struct BtnCommitAndPush: View, SuperLog, SuperThread {
                     isLoading = false
                 }
             }
+        }
+        .cornerRadius(8)
+        .scaleEffect(isHovered ? 1.05 : 1.0)
+        .animation(.easeInOut(duration: 0.2), value: isHovered)
+        .onHover { hovering in
+            isHovered = hovering
         }
         .disabled(isLoading)
         .alert(isPresented: $showAlert) {
