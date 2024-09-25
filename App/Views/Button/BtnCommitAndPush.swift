@@ -114,36 +114,27 @@ struct BtnCommitAndPush: View, SuperLog, SuperThread {
         }
 
         self.bg.async {
-            // 执行 commit
             os_log("\(self.t)Commit")
             do {
                 try git.add(repoPath)
                 try git.commit(repoPath, commit: commitMessage)
-            } catch {
-                os_log(.error, "提交失败: \(error.localizedDescription)")
-                self.main.async {
-                    alertMessage = "提交失败: \(error.localizedDescription)"
-                    showAlert = true
-                }
-
-                return
-            }
-
-            // 执行 push
-            os_log("\(self.t)Push")
-            do {
                 try git.push(repoPath, username: username, token: token)
-            } catch let error {
-                os_log(.error, "推送失败: \(error.localizedDescription)")
-                self.main.async {
-                    alertMessage = "推送失败: \(error.localizedDescription)"
-                    showAlert = true
-                }
-            }
 
-            self.main.async {
-                isLoading = false
+                self.main.async {
+                    isLoading = false
+                }
+            } catch {
+                self.quitWithError(error)
             }
+        }
+    }
+
+    private func quitWithError(_ error: Error) {
+        os_log(.error, "提交失败: \(error.localizedDescription)")
+        self.main.async {
+            alertMessage = "提交失败: \(error.localizedDescription)"
+            showAlert = true
+            isLoading = false
         }
     }
 }
