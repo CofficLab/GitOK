@@ -17,6 +17,8 @@ extension Git {
     }
 
     func push(_ path: String, username: String, token: String) throws {
+        self.emitGitPushStart()
+
         let process = Process()
         process.executableURL = URL(fileURLWithPath: "/usr/bin/git")
         process.arguments = ["-C", path, "push"]
@@ -33,8 +35,11 @@ extension Git {
         let output = String(data: data, encoding: .utf8) ?? ""
 
         if process.terminationStatus != 0 {
+            self.emitGitPushFailed()
             throw NSError(domain: "GitError", code: Int(process.terminationStatus), userInfo: [NSLocalizedDescriptionKey: output])
         }
+
+        self.emitGitPushSuccess()
     }
 }
 
