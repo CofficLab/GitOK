@@ -3,7 +3,7 @@ import SwiftUI
 
 struct BtnCommitAndPush: View, SuperLog, SuperThread {
     static let defaultTitle = "Commit and Push"
-    
+
     @EnvironmentObject var g: GitProvider
 
     @State private var showAlert = false
@@ -48,7 +48,7 @@ struct BtnCommitAndPush: View, SuperLog, SuperThread {
                         showCredentialsAlert = false
                         DispatchQueue.global(qos: .userInitiated).async {
                             do {
-                                _ = try commitAndPush()
+                                try checkAndPush()
                             } catch let error {
                                 self.main.async {
                                     os_log(.error, "提交失败: \(error.localizedDescription)")
@@ -67,7 +67,7 @@ struct BtnCommitAndPush: View, SuperLog, SuperThread {
             .padding()
         }
         .onReceive(NotificationCenter.default.publisher(for: .gitCommitStart)) { _ in
-            self.title = "Commiting..."
+            self.title = "Committing..."
             isLoading = true
         }
         .onReceive(NotificationCenter.default.publisher(for: .gitCommitSuccess)) { _ in
@@ -89,122 +89,59 @@ struct BtnCommitAndPush: View, SuperLog, SuperThread {
     }
 
     private func checkAndPush() throws {
-        let path = repoPath
-
-        // 检查是否使用 HTTPS
-        let remoteUrl = try git.getRemoteUrl(path)
-        self.main.async {
-            if remoteUrl.starts(with: "https://") && false {
-                showCredentialsAlert = true
-                isLoading = false
-            } else {
-                do {
-                    _ = try commitAndPush()
-                } catch let error {
-                    os_log(.error, "提交失败: \(error.localizedDescription)")
-                    alertMessage = "提交失败: \(error.localizedDescription)"
-                    showAlert = true
-                    isLoading = false
-                }
-            }
-        }
-    }
-
-    private func commitAndPush() throws -> String {
-        let path = repoPath
+        let verbose = true
 
         do {
-            let helper = try git.getCredentialHelper(path)
-            os_log("\(self.t)Get credential helper: \(helper)")
+            let helper = try git.getCredentialHelper(repoPath)
+            if verbose {
+                os_log("\(self.t)Get credential helper: \(helper)")
+            }
         } catch {
             os_log(.error, "\(error.localizedDescription)")
+
+            throw error
         }
 
         // 检查HTTPS凭据
-        let commit = GitCommit.headFor(path)
+        let commit = GitCommit.headFor(repoPath)
         if !commit.checkHttpsCredentials() {
-            // 要求用户输入凭据
-            DispatchQueue.main.async {
+            self.main.async {
                 alertMessage = "HTTPS 凭据未配置，请输入凭据。"
                 showAlert = true
             }
-            return "HTTPS 凭据未配置"
+
+            throw GitError.credentialsNotConfigured
         }
 
-        // 执行 commit
-        do {
-            try git.add(path)
-            _ = try git.commit(path, commit: commitMessage)
-        } catch let error {
-            DispatchQueue.main.async {
+        self.bg.async {
+            // 执行 commit
+            do {
+                try git.add(repoPath)
+                try git.commit(repoPath, commit: commitMessage)
+            } catch {
                 os_log(.error, "提交失败: \(error.localizedDescription)")
-                alertMessage = "提交失败: \(error.localizedDescription)"
-                showAlert = true
-            }
-            return "提交失败: \(error.localizedDescription)"
-        }
+                self.main.async {
+                    alertMessage = "提交失败: \(error.localizedDescription)"
+                    showAlert = true
+                }
 
-        // 执行 push
-        do {
-            try git.push(path, username: username, token: token)
-        } catch let error {
-            DispatchQueue.main.async {
+                return
+            }
+
+            // 执行 push
+            do {
+                try git.push(repoPath, username: username, token: token)
+            } catch let error {
                 os_log(.error, "推送失败: \(error.localizedDescription)")
-                alertMessage = "推送失败: \(error.localizedDescription)"
-                showAlert = true
+                self.main.async {
+                    alertMessage = "推送失败: \(error.localizedDescription)"
+                    showAlert = true
+                }
             }
-            return "推送失败: \(error.localizedDescription)"
-        }
 
-        DispatchQueue.main.async {
-            isLoading = false
-        }
-
-        return "提交和推送成功"
-    }
-}
-
-extension Git {
-    func getRemoteUrl(_ path: String) throws -> String {
-        let process = Process()
-        process.executableURL = URL(fileURLWithPath: "/usr/bin/git")
-        process.arguments = ["-C", path, "config", "--get", "remote.origin.url"]
-
-        let pipe = Pipe()
-        process.standardOutput = pipe
-        process.standardError = pipe
-
-        try process.run()
-        process.waitUntilExit()
-
-        let data = pipe.fileHandleForReading.readDataToEndOfFile()
-        let output = String(data: data, encoding: .utf8)?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
-
-        if process.terminationStatus != 0 {
-            throw NSError(domain: "GitError", code: Int(process.terminationStatus), userInfo: [NSLocalizedDescriptionKey: output])
-        }
-
-        return output
-    }
-
-    func push(_ path: String, username: String, token: String) throws {
-        let process = Process()
-        process.executableURL = URL(fileURLWithPath: "/usr/bin/git")
-        process.arguments = ["-C", path, "push"]
-        process.environment = ["GIT_ASKPASS": "echo", "GIT_USERNAME": username, "GIT_PASSWORD": token]
-
-        let pipe = Pipe()
-        process.standardOutput = pipe
-        process.standardError = pipe
-
-        try process.run()
-        process.waitUntilExit()
-
-        let data = pipe.fileHandleForReading.readDataToEndOfFile()
-        let output = String(data: data, encoding: .utf8) ?? ""
-
-        if process.terminationStatus != 0 {
-            throw NSError(domain: "GitError", code: Int(process.terminationStatus), userInfo: [NSLocalizedDescriptionKey: output])
+            self.main.async {
+                isLoading = false
+            }
         }
     }
 }

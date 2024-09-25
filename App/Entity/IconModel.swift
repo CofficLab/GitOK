@@ -1,21 +1,21 @@
 import Foundation
+import OSLog
 import SwiftData
 import SwiftUI
-import OSLog
 
 struct IconModel: JsonModel, SuperEvent, SuperLog {
     static var root: String = ".gitok/icons"
     static var label = "💿 IconModel::"
     static var empty = IconModel(path: "")
-    
+
     var title: String = "1"
     var iconId: Int = 1
     var backgroundId: String = "2"
-    var imageURL: URL? = nil
+    var imageURL: URL?
     var path: String?
     var opacity: Double = 1
     var scale: Double?
-    
+
     var image: Image {
         if let url = self.imageURL {
             return Image(nsImage: NSImage(data: try! Data(contentsOf: url))!)
@@ -23,14 +23,14 @@ struct IconModel: JsonModel, SuperEvent, SuperLog {
 
         return IconPng.getImage(self.iconId)
     }
-    
+
     var background: some View {
         BackgroundGroup.all[self.backgroundId]
             .opacity(self.opacity)
     }
-    
+
     var label: String { IconModel.label }
-    
+
     init(title: String = "1", iconId: Int = 1, backgroundId: String = "3", imageURL: URL? = nil, path: String) {
         self.title = title
         self.iconId = iconId
@@ -56,7 +56,7 @@ extension IconModel {
 
         // 创建 FileManager 实例
         let fileManager = FileManager.default
-        
+
         var isDir: ObjCBool = true
         if !fileManager.fileExists(atPath: directoryPath, isDirectory: &isDir) {
             return []
@@ -92,13 +92,11 @@ extension IconModel: Codable {
 // MARK: Hashable
 
 extension IconModel: Hashable {
-    
 }
 
 // MARK: Equatable
 
 extension IconModel: Equatable {
-    
 }
 
 // MARK: Identifiable
@@ -124,12 +122,12 @@ extension IconModel {
         self.backgroundId = id
         try self.save()
     }
-    
+
     mutating func updateIconId(_ id: Int) throws {
         self.iconId = id
         try self.save()
     }
-    
+
     mutating func updateImageURL(_ url: URL) throws {
         self.imageURL = url
         try self.save()
@@ -181,7 +179,7 @@ extension IconModel {
         try self.save()
         self.emitIconDidSave()
     }
-    
+
     static func fromJSONFile(_ jsonFile: URL) throws -> Self {
         let jsonData = try Data(contentsOf: jsonFile)
         do {
@@ -191,7 +189,7 @@ extension IconModel {
         } catch {
             os_log(.error, "Error decoding JSON: \(error)")
             os_log(.error, "  ➡️ JSONFile: \(jsonFile)")
-            
+
             throw error
         }
     }
