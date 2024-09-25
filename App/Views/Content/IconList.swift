@@ -4,6 +4,7 @@ import OSLog
 
 struct IconList: View, SuperLog {
     @EnvironmentObject var app: AppProvider
+    @EnvironmentObject var m: MessageProvider
     @EnvironmentObject var g: GitProvider
     @EnvironmentObject var i: IconProvider
 
@@ -52,8 +53,7 @@ struct IconList: View, SuperLog {
                 self.selection = icons.first ?? .empty
             } catch {
                 os_log("Error while enumerating files: \(error.localizedDescription)")
-
-                self.app.setError(error)
+                m.setError(error)
             }
         }
     }

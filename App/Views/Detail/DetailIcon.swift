@@ -3,6 +3,7 @@ import SwiftUI
 
 struct DetailIcon: View, SuperLog {
     @EnvironmentObject var app: AppProvider
+    @EnvironmentObject var m: MessageProvider
     @EnvironmentObject var g: GitProvider
     @EnvironmentObject var i: IconProvider
 
@@ -25,7 +26,7 @@ struct DetailIcon: View, SuperLog {
             } catch {
                 os_log(.error, "\(self.t)Error getting icon: \(error.localizedDescription)")
                 os_log(.error, "  ⚠️ \(error)")
-                app.setError(error)
+                m.setError(error)
             }
         }
         .onChange(of: i.iconURL, {
@@ -33,7 +34,7 @@ struct DetailIcon: View, SuperLog {
                 self.icon = try i.getIcon()
             } catch {
                 os_log(.error, "Error getting icon: \(error)")
-                app.setError(error)
+                m.setError(error)
             }
         })
         .onChange(of: self.icon, {
@@ -44,7 +45,7 @@ struct DetailIcon: View, SuperLog {
             do {
                 try icon.saveToDisk()
             } catch {
-                self.app.setError(error)
+                m.setError(error)
             }
 
             if let path = icon.path {

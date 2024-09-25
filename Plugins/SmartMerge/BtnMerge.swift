@@ -2,7 +2,8 @@ import SwiftUI
 import OSLog
 
 struct BtnMerge: View, SuperEvent, SuperThread {
-    @EnvironmentObject var app: AppProvider
+    @EnvironmentObject var m: MessageProvider
+
 
     var path: String
     var from: Branch
@@ -30,7 +31,7 @@ struct BtnMerge: View, SuperEvent, SuperThread {
             } catch let error {
                 os_log(.error, "\(error.localizedDescription)")
 
-                self.app.setError(error)
+                m.setError(error)
             }
         }
     }

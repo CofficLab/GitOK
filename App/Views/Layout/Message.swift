@@ -1,12 +1,12 @@
 import SwiftUI
 
 struct Message: View {
-    @EnvironmentObject var app: AppProvider
+    @EnvironmentObject var m: MessageProvider
 
     var body: some View {
-        if !app.message.isEmpty {
+        if !m.message.isEmpty {
             VStack(alignment: .leading) {
-                Text(app.message)
+                Text(m.message)
                     .font(.title)
                     .padding(.horizontal, 20)
                     .padding(.vertical, 20)

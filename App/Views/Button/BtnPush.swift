@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct BtnPush: View {
-    @EnvironmentObject var app: AppProvider
+    @EnvironmentObject var m: MessageProvider
     
     @Binding var message: String
 
@@ -15,7 +15,7 @@ struct BtnPush: View {
             do {
                 try git.push(path)
             } catch let error {
-                app.alert("Push出错", info: error.localizedDescription)
+                m.alert("Push出错", info: error.localizedDescription)
             }
         })
         .disabled(isPushing)

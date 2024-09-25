@@ -3,6 +3,7 @@ import OSLog
 
 struct BannerImage: View, SuperLog {
     @EnvironmentObject var app: AppProvider
+    @EnvironmentObject var m: MessageProvider
 
     @State var isEditingTitle = false
     
@@ -59,7 +60,7 @@ struct BannerImage: View, SuperLog {
                             try self.banner.changeImage(url)
                         } catch let e {
                             os_log(.error, "Error changing image: \(e)")
-                            self.app.setError(e)
+                            m.setError(e)
                         }
                     }
                 }

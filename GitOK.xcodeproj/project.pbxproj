@@ -469,10 +469,10 @@
 		0B1C67B12BD90B4A00502EB1 /* Providers */ = {
 			isa = PBXGroup;
 			children = (
-				0BD650FC2CA2E49F00BA3CB8 /* IconProvider.swift */,
-				0BD650FA2CA2E09F00BA3CB8 /* BannerProvider.swift */,
 				0B1C67B22BD90B5700502EB1 /* AppProvider.swift */,
+				0BD650FA2CA2E09F00BA3CB8 /* BannerProvider.swift */,
 				F588FB782CA2494E00F6AE42 /* GitProvider.swift */,
+				0BD650FC2CA2E49F00BA3CB8 /* IconProvider.swift */,
 				0BD650EF2CA196EA00BA3CB8 /* MessageProvider.swift */,
 				0BD650E52CA195EA00BA3CB8 /* PluginProvider.swift */,
 			);

@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct IconTopBar: View {
-    @EnvironmentObject var app: AppProvider
+    @EnvironmentObject var m: MessageProvider
 
     @State var tab: ActionTab = .Git
     @State var inScreen: Bool = false
@@ -24,7 +24,7 @@ struct IconTopBar: View {
                         do {
                             try self.icon.updateImageURL(url)
                         } catch {
-                            self.app.setError(error)
+                            m.setError(error)
                         }
                     }
                 }

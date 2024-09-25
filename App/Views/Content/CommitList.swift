@@ -30,8 +30,8 @@ struct CommitList: View, SuperThread, SuperLog{
                         GroupBox {
                             CommitForm()
                         }
-                        .padding(.horizontal, 2)
-                        .padding(.vertical, 4)
+                        .padding(.horizontal, 4)
+                        .padding(.vertical, 6)
                         .background(BackgroundView.type2.opacity(0.1))
                     }
                 }

@@ -4,6 +4,7 @@ import SwiftUI
 struct Branches: View, SuperThread, SuperLog {
     @EnvironmentObject var app: AppProvider
     @EnvironmentObject var g: GitProvider
+    @EnvironmentObject var m: MessageProvider
 
     @State var branches: [Branch] = []
     @State var selection: Branch?
@@ -29,7 +30,7 @@ struct Branches: View, SuperThread, SuperLog {
             do {
                 try g.setBranch(selection)
             } catch let error {
-                app.alert("切换分支发生错误", info: error.localizedDescription)
+                m.alert("切换分支发生错误", info: error.localizedDescription)
                 self.refresh()
             }
         }

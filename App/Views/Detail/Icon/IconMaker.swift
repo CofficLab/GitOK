@@ -3,6 +3,7 @@ import UniformTypeIdentifiers
 
 struct IconMaker: View {
     @EnvironmentObject var app: AppProvider
+    @EnvironmentObject var m: MessageProvider
 
     @Binding var snapshotTapped: Bool
     @Binding var icon: IconModel
@@ -104,7 +105,7 @@ struct IconMaker: View {
 
         (message, folderPath) = getFolderPath()
         if folderPath == nil {
-            app.setMessage(message)
+            m.setFlashMessage(message)
             return
         }
 
@@ -112,7 +113,7 @@ struct IconMaker: View {
         makemacOSIcon(tag, folder: folderPath!)
         makeContentJson(folder: folderPath!)
 
-        app.setMessage("已存储到下载目录")
+        m.setFlashMessage("已存储到下载目录")
     }
 
     @MainActor private func makeContentJson(folder: URL) {

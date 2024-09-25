@@ -6,6 +6,7 @@ struct BannerList: View, SuperThread {
     @EnvironmentObject var app: AppProvider
     @EnvironmentObject var g: GitProvider
     @EnvironmentObject var b: BannerProvider
+    @EnvironmentObject var m: MessageProvider
 
     @State var banner: BannerModel = .empty
     @State var banners: [BannerModel] = []
@@ -30,12 +31,7 @@ struct BannerList: View, SuperThread {
             if let project = g.project {
                 HStack(spacing: 0) {
                     TabBtn(title: "新建 Banner", imageName: "plus.circle", onTap: {
-                        do {
-                            self.banners.append(try BannerModel.new(project))
-                        } catch {
-                            os_log(.error, "\(label)GetBanners error -> \(error)")
-                            app.setError(error)
-                        }
+                        self.banners.append(BannerModel.new(project))
                     })
                 }
                 .frame(height: 25)
@@ -68,7 +64,7 @@ struct BannerList: View, SuperThread {
                 } catch {
                     os_log(.error, "\(label)GetBanners error -> \(error)")
                     self.main.async {
-                        app.setError(error)
+                        m.setError(error)
                     }
                 }
             }

@@ -6,32 +6,10 @@ import OSLog
 import SwiftUI
 
 class AppProvider: NSObject, ObservableObject, AVAudioPlayerDelegate, SuperLog {
-    @Published var message: String = ""
     @Published var currentTab: ActionTab = (ActionTab(rawValue: AppConfig.currentTab) ?? .Git)
     @Published var sidebarVisibility = AppConfig.sidebarVisibility
-    
-    func setMessage(_ m: String) {
-        message = m
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-            self.message = ""
-        }
-    }
-    
+
     var emoji = "🏠"
-    
-    func alert(_ message: String, info: String) {
-        // 显示错误提示
-        let errorAlert = NSAlert()
-        errorAlert.messageText = message
-        errorAlert.informativeText = info
-        errorAlert.alertStyle = .critical
-        errorAlert.addButton(withTitle: "好的")
-        errorAlert.runModal()
-    }
-    
-    func setError(_ e: Error) {
-        self.alert("发生错误", info: e.localizedDescription)
-    }
     
     func setTab(_ t: ActionTab) {
         let verbose = true

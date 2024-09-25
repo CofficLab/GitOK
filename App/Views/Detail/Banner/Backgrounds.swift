@@ -12,7 +12,7 @@ struct Backgrounds: View {
                 }
                 Divider()
             }
-            .frame(height: 40)
+            .frame(height: 50)
         }
     }
 

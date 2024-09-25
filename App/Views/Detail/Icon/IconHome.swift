@@ -2,7 +2,7 @@ import SwiftData
 import SwiftUI
 
 struct IconHome: View {
-    @EnvironmentObject var app: AppProvider
+    @EnvironmentObject var m: MessageProvider
     @Environment(\.modelContext) var context: ModelContext
 
     @Binding var icon: IconModel
@@ -43,14 +43,14 @@ struct IconHome: View {
                 do {
                     try icon.updateIconId(iconId)
                 } catch {
-                    self.app.setError(error)
+                    m.setError(error)
                 }
             }
             .onChange(of: backgroundId) {
                 do {
                     try icon.updateBackgroundId(backgroundId)
                 } catch {
-                    self.app.setError(error)
+                    m.setError(error)
                 }
             }
         }
