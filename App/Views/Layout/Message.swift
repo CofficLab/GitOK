@@ -1,4 +1,5 @@
 import SwiftUI
+import MagicKit
 
 struct Message: View {
     @EnvironmentObject var m: MessageProvider

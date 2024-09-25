@@ -1,5 +1,6 @@
 import SwiftUI
 import UniformTypeIdentifiers
+import MagicKit
 
 struct Snapshot<Content>: View where Content: View {
     private let mark: String

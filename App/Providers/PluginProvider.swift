@@ -3,6 +3,7 @@ import OSLog
 import StoreKit
 import SwiftData
 import SwiftUI
+import MagicKit
 
 class PluginProvider: ObservableObject, SuperLog, SuperThread {
     let emoji = "🧩"

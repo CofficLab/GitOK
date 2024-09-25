@@ -1,5 +1,6 @@
 import OSLog
 import SwiftUI
+import MagicKit
 
 struct CommitList: View, SuperThread, SuperLog{
     @EnvironmentObject var app: AppProvider

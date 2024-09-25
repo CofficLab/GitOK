@@ -1,6 +1,7 @@
 import OSLog
 import SwiftData
 import SwiftUI
+import MagicKit
 
 struct Projects: View, SuperLog {
     @Environment(\.modelContext) private var modelContext

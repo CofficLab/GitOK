@@ -2,6 +2,7 @@ import Foundation
 import OSLog
 import SwiftData
 import SwiftUI
+import MagicKit
 
 class MessageProvider: ObservableObject, SuperLog, SuperThread, SuperEvent {
     @Published var messages: [SmartMessage] = []

@@ -2,7 +2,7 @@ import CloudKit
 import OSLog
 import SwiftData
 import SwiftUI
-import WebKit
+import MagicKit
 
 class WebConfig: ObservableObject {    
     var view: WebView

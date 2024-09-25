@@ -1,6 +1,7 @@
 import Foundation
 import OSLog
 import SwiftUI
+import MagicKit
 
 extension Git {
     func getBranches(_ path: String, verbose: Bool = false) throws -> [Branch] {

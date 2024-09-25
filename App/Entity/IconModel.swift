@@ -2,6 +2,7 @@ import Foundation
 import OSLog
 import SwiftData
 import SwiftUI
+import MagicKit
 
 struct IconModel: JsonModel, SuperEvent, SuperLog {
     static var root: String = ".gitok/icons"

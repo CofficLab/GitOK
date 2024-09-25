@@ -1,4 +1,5 @@
 import SwiftUI
+import MagicKit
 
 struct BannerLayout: View {
     @Binding var banner: BannerModel

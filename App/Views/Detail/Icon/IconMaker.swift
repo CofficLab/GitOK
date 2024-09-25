@@ -1,5 +1,6 @@
 import SwiftUI
 import UniformTypeIdentifiers
+import MagicKit
 
 struct IconMaker: View {
     @EnvironmentObject var app: AppProvider

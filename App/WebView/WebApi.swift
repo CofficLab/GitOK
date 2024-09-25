@@ -1,4 +1,5 @@
 import Foundation
+import MagicKit
 
 extension WebContent {
     @objc func setTexts(_ o: String, _ c: String) {

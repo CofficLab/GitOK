@@ -4,6 +4,7 @@ import Foundation
 import MediaPlayer
 import OSLog
 import SwiftUI
+import MagicKit
 
 class AppProvider: NSObject, ObservableObject, AVAudioPlayerDelegate, SuperLog {
     @Published var currentTab: ActionTab = (ActionTab(rawValue: AppConfig.currentTab) ?? .Git)

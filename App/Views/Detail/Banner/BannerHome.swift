@@ -1,4 +1,5 @@
 import SwiftUI
+import MagicKit
 
 struct BannerHome: View {
     @EnvironmentObject var app: AppProvider
