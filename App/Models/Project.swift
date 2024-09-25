@@ -6,6 +6,7 @@ import OSLog
 @Model
 final class Project {
     static var verbose = true
+    static var null = Project(URL(fileURLWithPath: ""))
     static var orderReverse = [
         SortDescriptor<Project>(\.timestamp, order: .reverse)
     ]
@@ -67,6 +68,16 @@ final class Project {
 
     func hasUnCommittedChanges() -> Bool {
         git.hasUnCommittedChanges(path: path)
+    }
+
+    func getBanners() throws -> [BannerModel] {
+        let verbose = false
+        
+        if verbose {
+            os_log("\(self.label)GetBanners for project -> \(self.path)")
+        }
+        
+        return try BannerModel.all(self)
     }
 }
 

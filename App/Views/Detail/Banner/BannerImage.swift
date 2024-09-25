@@ -2,6 +2,8 @@ import SwiftUI
 import OSLog
 
 struct BannerImage: View, SuperLog {
+    @EnvironmentObject var app: AppProvider
+
     @State var isEditingTitle = false
     
     @Binding var banner: BannerModel
@@ -54,9 +56,10 @@ struct BannerImage: View, SuperLog {
                         os_log("\(self.t)Change Image -> \(url.relativeString)")
                         
                         do {
-                            self.banner.imageURL = try self.banner.saveImage(url)
+                            try self.banner.changeImage(url)
                         } catch let e {
-                            print(e)
+                            os_log(.error, "Error changing image: \(e)")
+                            self.app.setError(e)
                         }
                     }
                 }

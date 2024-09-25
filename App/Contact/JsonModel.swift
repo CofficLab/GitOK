@@ -24,7 +24,7 @@ extension JsonModel {
         do {
             try FileManager.default.removeItem(atPath: path)
         } catch let e {
-            print(e)
+            os_log(.error, "Error deleting item at path: \(path), error: \(e)")
         }
     }
 }
@@ -53,7 +53,7 @@ extension JsonModel {
                 return jsonString
             }
         } catch {
-            print("Error encoding BannerModel to JSON: \(error)")
+            os_log(.error, "Error encoding BannerModel to JSON: \(error)")
         }
         return nil
     }
@@ -69,14 +69,13 @@ extension JsonModel {
             do {
                 try fileManager.createDirectory(at: directoryURL, withIntermediateDirectories: true, attributes: nil)
             } catch {
-                print("Error creating directory: \(error)")
+                os_log(.error, "Error creating directory: \(error)")
             }
 
             do {
                 try jsonString.write(toFile: path, atomically: true, encoding: .utf8)
-                print("JSON saved to file: \(path)")
             } catch {
-                print("Error saving JSON to file: \(error)")
+                os_log(.error, "Error saving JSON to file: \(error)")
             }
         }
     }

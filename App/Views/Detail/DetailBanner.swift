@@ -12,14 +12,22 @@ struct DetailBanner: View {
         }
         .frame(maxWidth: .infinity)
         .onAppear {
-            self.banner = b.banner
+            do {
+                self.banner = try b.getBanner()
+            } catch {
+                app.setError(error)
+            }
         }
-        .onChange(of: b.banner, {
-            self.banner = b.banner
+        .onChange(of: b.bannerURL, {
+            do {
+                self.banner = try b.getBanner()
+            } catch {
+                app.setError(error)
+            }
         })
         .onChange(of: self.banner, {
-            self.banner.save()
-            b.setBanner(self.banner, reason: "OnChage")
+            self.banner.saveToDisk()
+            b.setBannerURL(URL(filePath: self.banner.path!))
         })
     }
 }

@@ -3,7 +3,7 @@ import OSLog
 import SwiftData
 import SwiftUI
 
-struct BannerModel: JsonModel, SuperLog {
+struct BannerModel: JsonModel, SuperLog, SuperEvent {
     static var root: String = ".gitok/banners"
     static var label = "💿 BannerModel::"
     static var empty = BannerModel(path: "")
@@ -11,28 +11,30 @@ struct BannerModel: JsonModel, SuperLog {
     var title = "BannerModel-Title"
     var subTitle = "BannerModel-SubTitle"
     var features: [String] = []
-    var imageURL: URL?
+    var imageId: String?
     var backgroundId: String = "1"
     var inScreen = false
     var device: String = Device.iMac.rawValue
     var opacity: Double = 1.0
     var path: String?
     var label: String = BannerModel.label
+    var project: Project
 
     init(
         title: String = "",
         subTitle: String = "",
         features: [String] = [],
-        imageURL: URL? = nil,
+        imageId: String = "", // 更新参数名
         backgroundId: String = "1",
         path: String
     ) {
         self.title = title
         self.subTitle = subTitle
-        self.imageURL = imageURL
         self.features = features
+        self.imageId = imageId // 更新赋值
         self.backgroundId = backgroundId
         self.path = path
+        self.project = Project(Self.getProjectURL(path))
 
         if let path = self.path, path.isNotEmpty {
             save()
@@ -50,54 +52,82 @@ struct BannerModel: JsonModel, SuperLog {
             image = Image("Snapshot-iPad")
         }
 
-        if let url = imageURL, let data = try? Data(contentsOf: url),
-           let nsImage = NSImage(data: data) {
-            image = Image(nsImage: nsImage)
+        if let smartImage = getSmartImage() {
+            image = smartImage.getImage(self.project.url)
         }
 
         return image
+    }
+
+    func getSmartImage() -> SmartImage? {
+        guard let imageId = self.imageId else {
+            return nil
+        }
+        
+        return SmartImage.fromImageId(imageId)
+    }
+
+    mutating func changeImage(_ url: URL) throws {
+        if let imageId = self.imageId {
+            try SmartImage.removeImage(imageId, projectURL: self.project.url)
+        }
+
+        let newImageId = try SmartImage.saveImage(url, projectURL: self.project.url)
+        self.imageId = newImageId
+        self.saveToDisk()
+    }
+}
+
+// MARK: Set 
+
+extension BannerModel {
+    func setProject(_ project: Project) -> BannerModel {
+        var newBanner = self
+        newBanner.project = project
+        return newBanner
     }
 }
 
 // MARK: Store
 
 extension BannerModel {
-    static func fromFile(_ jsonFile: URL) -> BannerModel? {
-        if let jsonData = try? Data(contentsOf: URL(fileURLWithPath: jsonFile.path)) {
-            do {
-                var banner = try JSONDecoder().decode(BannerModel.self, from: jsonData)
-                banner.path = jsonFile.path
+    static func fromFile(_ jsonFile: URL) throws -> BannerModel {
+        let jsonData = try Data(contentsOf: jsonFile)
+        
+        do {
+            var banner = try JSONDecoder().decode(BannerModel.self, from: jsonData)
+            banner.path = jsonFile.path
+            banner.project = Project(Self.getProjectURL(jsonFile.path))
 
-                return banner
-            } catch {
-                print("Error decoding JSON: \(error)")
-            }
+            return banner
+        } catch {
+            os_log(.error, "Error decoding JSON: \(error)")
+            
+            throw error
         }
-
-        return nil
     }
 
-    func saveImage(_ url: URL) throws -> URL {
+    func saveImage(_ url: URL) throws -> String {
         guard let path = self.path else {
-            return url
+            return url.relativePath.replacingOccurrences(of: self.project.path, with: "")
         }
-        
+
         let ext = url.pathExtension
         let rootURL = URL(fileURLWithPath: path).deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent().appendingPathComponent(Self.root).deletingLastPathComponent()
         let imagesFolder = rootURL.appendingPathComponent("images")
         let storeURL = imagesFolder.appendingPathComponent("\(TimeHelper.getTimeString()).\(ext)")
-        
+
         os_log("\(self.t)SaveImage")
         os_log("  ➡️ \(url.relativeString)")
         os_log("  ➡️ \(storeURL.relativeString)")
-        
+
         do {
             // Ensure the images directory exists
             try FileManager.default.createDirectory(at: imagesFolder, withIntermediateDirectories: true, attributes: nil)
-            
+
             // Copy the image to the new location
             try FileManager.default.copyItem(at: url, to: storeURL)
-            return storeURL
+            return storeURL.relativePath.replacingOccurrences(of: self.project.path, with: "")
         } catch let e {
             os_log(.error, "\(Self.label)SaveImage -> \(e.localizedDescription)")
             os_log(.error, "  ⚠️ \(e)")
@@ -105,9 +135,15 @@ extension BannerModel {
             throw e
         }
     }
+
+    func saveToDisk() {
+        self.save()
+        self.emitBannerTitleChanged(title: self.title, id: self.id)
+        self.emitBannerChanged()
+    }
 }
 
-// MARK: Codeable
+// MARK: Codable
 
 extension BannerModel: Codable {
     enum CodingKeys: String, CodingKey {
@@ -115,27 +151,53 @@ extension BannerModel: Codable {
         case device
         case features
         case inScreen
-        case imageURL
+        case imageId
         case subTitle
         case title
         case opacity
+    }
+    
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        backgroundId = try container.decode(String.self, forKey: .backgroundId)
+        device = try container.decode(String.self, forKey: .device)
+        features = try container.decode([String].self, forKey: .features)
+        inScreen = try container.decode(Bool.self, forKey: .inScreen)
+        imageId = try container.decodeIfPresent(String.self, forKey: .imageId)
+        subTitle = try container.decode(String.self, forKey: .subTitle)
+        title = try container.decode(String.self, forKey: .title)
+        opacity = try container.decode(Double.self, forKey: .opacity)
+        
+        // 由于 project 不参与解码，我们需要设置一个默认值或者在其他地方设置
+        project = .null
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(backgroundId, forKey: .backgroundId)
+        try container.encode(device, forKey: .device)
+        try container.encode(features, forKey: .features)
+        try container.encode(inScreen, forKey: .inScreen)
+        try container.encode(imageId, forKey: .imageId)
+        try container.encode(subTitle, forKey: .subTitle)
+        try container.encode(title, forKey: .title)
+        try container.encode(opacity, forKey: .opacity)
+        // 注意：这里没有编码 project
     }
 }
 
 // MARK: 查
 
 extension BannerModel {
-    static func find(_ path: String) -> BannerModel? {
-        let fileURL = URL(fileURLWithPath: path)
-
-        return BannerModel.fromFile(fileURL)
+    static func find(_ path: String) throws -> BannerModel? {
+        try BannerModel.fromFile(URL(fileURLWithPath: path))
     }
 
-    static func all(_ projectPath: String) -> [BannerModel] {
+    static func all(_ project: Project) throws -> [BannerModel] {
         var models: [BannerModel] = []
 
         // 目录路径
-        let directoryPath = "\(projectPath)/\(Self.root)"
+        let directoryPath = "\(project.path)/\(Self.root)"
 
         os_log("\(BannerModel.label)GetBanners from ->\(directoryPath)")
 
@@ -159,15 +221,34 @@ extension BannerModel {
                 let fileURL = URL(fileURLWithPath: directoryPath).appendingPathComponent(file)
                 fileURLs.append(fileURL)
 
-                if let model = BannerModel.fromFile(fileURL) {
-                    models.append(model)
-                }
+                let model = try BannerModel.fromFile(fileURL)
+                models.append(model)
             }
         } catch {
             print("Error while enumerating files: \(error.localizedDescription)")
         }
 
         return models
+    }
+
+    static func getProjectURL(_ bannerPath: String, reason: String = "") -> URL {
+        let verbose = false
+        var projectURL = URL.null
+        
+        let pathURL = URL(fileURLWithPath: bannerPath)
+        let pathString = pathURL.path
+        if let range = pathString.range(of: "/\(Self.root)/") {
+            let projectPath = String(pathString[..<range.lowerBound])
+            
+            projectURL = URL(fileURLWithPath: projectPath)
+        }
+        
+        if verbose {
+            os_log("banner url -> \(bannerPath)")
+            os_log("banner project url -> \(projectURL.relativeString)")
+        }
+        
+        return projectURL
     }
 }
 
@@ -176,7 +257,7 @@ extension BannerModel {
 extension BannerModel {
     static func new(_ project: Project) -> BannerModel {
         let path = project.path + "/" + BannerModel.root + "/" + UUID().uuidString + ".json"
-        
+
         return BannerModel(title: "\(Int.random(in: 1 ... 100))", subTitle: "sub3", features: [
             "Feature 1",
             "Feature 2",
@@ -215,6 +296,14 @@ extension BannerModel {
 //        self.save()
 //    }
 }
+
+// MARK: Error
+
+enum BannerModelError: Error {
+    case bannerPathIsEmpty
+    case JSONError
+}
+
 
 #Preview {
     AppPreview()

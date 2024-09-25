@@ -2,7 +2,7 @@ import OSLog
 import SwiftData
 import SwiftUI
 
-struct BannerList: View {
+struct BannerList: View, SuperThread {
     @EnvironmentObject var app: AppProvider
     @EnvironmentObject var g: GitProvider
     @EnvironmentObject var b: BannerProvider
@@ -23,14 +23,19 @@ struct BannerList: View {
             }
             .frame(maxHeight: .infinity)
             .onChange(of: self.banner, {
-                b.setBanner(self.banner, reason: "BannerList.OnChageOfBanner")
+                b.setBannerURL(URL(filePath: self.banner.path!))
             })
 
             // 操作
             if let project = g.project {
                 HStack(spacing: 0) {
                     TabBtn(title: "新建 Banner", imageName: "plus.circle", onTap: {
-                        self.banners.append(BannerModel.new(project))
+                        do {
+                            self.banners.append(try BannerModel.new(project))
+                        } catch {
+                            os_log(.error, "\(label)GetBanners error -> \(error)")
+                            app.setError(error)
+                        }
                     })
                 }
                 .frame(height: 25)
@@ -43,19 +48,27 @@ struct BannerList: View {
     }
 
     func getBanners() {
+        let verbose = false
         if verbose {
             os_log("\(label)GetBanners")
         }
 
         if let project = g.project {
-            DispatchQueue.global().async {
-                let banners = BannerModel.all(project.path)
+            self.bg.async {
+                do {
+                    let banners = try project.getBanners()
 
-                DispatchQueue.main.async {
-                    self.banners = banners
+                    self.main.async {
+                        self.banners = banners
 
-                    if !banners.contains(banner) {
-                        self.banner = banners.first ?? .empty
+                        if !banners.contains(banner) {
+                            self.banner = banners.first ?? .empty
+                        }
+                    }
+                } catch {
+                    os_log(.error, "\(label)GetBanners error -> \(error)")
+                    self.main.async {
+                        app.setError(error)
                     }
                 }
             }

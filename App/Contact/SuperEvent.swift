@@ -90,6 +90,40 @@ extension SuperEvent {
     }
 }
 
+// MARK: Banner
+
+extension SuperEvent {
+    func emitBannerChanged() {
+        DispatchQueue.main.async {
+            NotificationCenter.default.post(name: .bannerChanged, object: self)
+        }
+    }
+
+    func emitBannerListChanged() {
+        DispatchQueue.main.async {
+            NotificationCenter.default.post(name: .bannerListChanged, object: self)
+        }
+    }
+
+    func emitBannerAdded() {
+        DispatchQueue.main.async {
+            NotificationCenter.default.post(name: .bannerAdded, object: self)
+        }
+    }
+
+    func emitBannerRemoved() {
+        DispatchQueue.main.async {
+            NotificationCenter.default.post(name: .bannerRemoved, object: self)
+        }
+    }
+
+    func emitBannerTitleChanged(title: String, id: String) {
+        DispatchQueue.main.async {
+            NotificationCenter.default.post(name: .bannerTitleChanged, object: self, userInfo: ["title": title, "id": id])
+        }
+    }
+}
+
 // MARK: App
 
 extension SuperEvent {

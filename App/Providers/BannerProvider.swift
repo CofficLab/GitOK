@@ -7,20 +7,16 @@ import OSLog
 import SwiftUI
 
 class BannerProvider: NSObject, ObservableObject, SuperLog {
-    @Published var banner: BannerModel = .empty
+    @Published var bannerURL: URL = .null
 
     var emoji = "🐘"
-        
-    func setBanner(_ b: BannerModel, reason: String) {
-        let verbose = true
-        
-        if verbose {
-            os_log("\(self.t)Set Banner(\(reason))")
-            os_log("  ➡️ \(b.title)")
-        }
-        
-        self.banner = b
-        self.banner.save()
+
+    func setBannerURL(_ u: URL) {
+        self.bannerURL = u
+    }
+
+    func getBanner() throws -> BannerModel {
+        try BannerModel.fromFile(bannerURL)
     }
 }
 
