@@ -4,28 +4,34 @@ struct Backgrounds: View {
     @Binding var current: String
 
     var body: some View {
-        ScrollView(.horizontal) {
-            HStack(spacing: 0) {
-                ForEach(BackgroundGroup.all.sorted(by: { $0.key < $1.key }), id: \.key) { x, value in
-                    makeItem(x, view: value)
-                        .frame(width: 50)
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 10) {
+                ForEach(0..<BackgroundGroup.all.count, id: \.self) { index in
+                    let gradient = BackgroundGroup.all[index]
+                    makeItem(gradient)
+                        .frame(width: 50, height: 50)
                 }
-                Divider()
             }
-            .frame(height: 50)
+            .padding(.horizontal, 10)
         }
+        .frame(height: 70)
     }
 
-    func makeItem(_ id: String, view: some View) -> some View {
-        ZStack(alignment: .leading) {
-            view
-
-//            Text(id).padding(.leading, 10)
+    func makeItem(_ gradient: BackgroundGroup.GradientName) -> some View {
+        Button(action: {
+            current = gradient.rawValue
+        }) {
+            ZStack {
+                BackgroundGroup(for: gradient)
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                
+                if current == gradient.rawValue {
+                    RoundedRectangle(cornerRadius: 8)
+                        .stroke(Color.red, lineWidth: 2)
+                }
+            }
         }
-        .border(current == id ? .red : .clear)
-        .onTapGesture {
-            current = id
-        }
+        .buttonStyle(PlainButtonStyle())
     }
 }
 
@@ -37,6 +43,5 @@ struct Backgrounds: View {
 
 #Preview("App") {
     AppPreview()
-        .frame(width: 800)
-        .frame(height: 800)
+        .frame(width: 800, height: 800)
 }

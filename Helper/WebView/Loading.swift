@@ -11,7 +11,7 @@ struct Loading: View {
             .background(Color.blue.opacity(0.1))
             .shadow(color: Color.green, radius: 12, x: 0, y: 2)
         }
-        .background(BackgroundGroup.yellow2blue_tl2br.opacity(0.3))
+        .background(BackgroundGroup(for: .yellow2blue_tl2br).opacity(0.3))
         .cornerRadius(8)
         .shadow(color: Color.gray, radius: 12, x: 2, y: 2)
     }

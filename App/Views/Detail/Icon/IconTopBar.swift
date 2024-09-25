@@ -42,7 +42,9 @@ struct IconTopBar: View {
             .labelStyle(.iconOnly)
             .background(.secondary.opacity(0.5))
             
-            Backgrounds(current: $icon.backgroundId)
+            GroupBox {
+                Backgrounds(current: $icon.backgroundId)
+            }.padding()
         }
     }
 }

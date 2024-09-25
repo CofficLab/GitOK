@@ -45,7 +45,9 @@ struct BannerTopBar: View {
             
             // MARK: Row2
             
-            Backgrounds(current: $banner.backgroundId)
+            GroupBox {
+                Backgrounds(current: $banner.backgroundId)
+            }.padding()
         }
     }
 }

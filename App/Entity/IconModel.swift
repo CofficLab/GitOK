@@ -25,8 +25,7 @@ struct IconModel: JsonModel, SuperEvent, SuperLog {
     }
 
     var background: some View {
-        BackgroundGroup.all[self.backgroundId]
-            .opacity(self.opacity)
+        BackgroundGroup(for: self.backgroundId).opacity(self.opacity)
     }
 
     var label: String { IconModel.label }
