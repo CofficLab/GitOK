@@ -173,6 +173,8 @@
 		F54DFA402CA3ABB800F81BE3 /* BannerEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = F54DFA3F2CA3ABB200F81BE3 /* BannerEvent.swift */; };
 		F54DFA422CA3B5B900F81BE3 /* IconEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = F54DFA412CA3B5B600F81BE3 /* IconEvent.swift */; };
 		F54DFA452CA3E5F200F81BE3 /* TileMerge.swift in Sources */ = {isa = PBXBuildFile; fileRef = F54DFA442CA3E5F200F81BE3 /* TileMerge.swift */; };
+		F54DFA472CA4034B00F81BE3 /* ProjectPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = F54DFA462CA4034600F81BE3 /* ProjectPicker.swift */; };
+		F54DFA4A2CA40BC100F81BE3 /* TileProject.swift in Sources */ = {isa = PBXBuildFile; fileRef = F54DFA492CA40BC100F81BE3 /* TileProject.swift */; };
 		F588FB702CA15D5200F6AE42 /* GitEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = F588FB6F2CA15D5200F6AE42 /* GitEvent.swift */; };
 		F588FB722CA15DAD00F6AE42 /* SuperEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = F588FB712CA15DAD00F6AE42 /* SuperEvent.swift */; };
 		F588FB752CA16B4F00F6AE42 /* GitError.swift in Sources */ = {isa = PBXBuildFile; fileRef = F588FB742CA16B4F00F6AE42 /* GitError.swift */; };
@@ -182,7 +184,7 @@
 		F5F794E02C5A1D2600DCB824 /* FileList.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5F794DF2C5A1D2600DCB824 /* FileList.swift */; };
 		F5F794E92C5B192600DCB824 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = F5F794E82C5B192600DCB824 /* Sparkle */; };
 		F5F794EB2C5B3E8100DCB824 /* UpdaterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5F794EA2C5B3E8100DCB824 /* UpdaterView.swift */; };
-		F5FBCC342C3FB96000CED4F1 /* Detail.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5FBCC332C3FB96000CED4F1 /* Detail.swift */; };
+		F5FBCC342C3FB96000CED4F1 /* DetailGit.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5FBCC332C3FB96000CED4F1 /* DetailGit.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -369,6 +371,8 @@
 		F54DFA3F2CA3ABB200F81BE3 /* BannerEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerEvent.swift; sourceTree = "<group>"; };
 		F54DFA412CA3B5B600F81BE3 /* IconEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconEvent.swift; sourceTree = "<group>"; };
 		F54DFA442CA3E5F200F81BE3 /* TileMerge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TileMerge.swift; sourceTree = "<group>"; };
+		F54DFA462CA4034600F81BE3 /* ProjectPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectPicker.swift; sourceTree = "<group>"; };
+		F54DFA492CA40BC100F81BE3 /* TileProject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TileProject.swift; sourceTree = "<group>"; };
 		F588FB6F2CA15D5200F6AE42 /* GitEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitEvent.swift; sourceTree = "<group>"; };
 		F588FB712CA15DAD00F6AE42 /* SuperEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuperEvent.swift; sourceTree = "<group>"; };
 		F588FB742CA16B4F00F6AE42 /* GitError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitError.swift; sourceTree = "<group>"; };
@@ -377,7 +381,7 @@
 		F5F794DB2C5A0D7D00DCB824 /* CommitSample.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommitSample.swift; sourceTree = "<group>"; };
 		F5F794DF2C5A1D2600DCB824 /* FileList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileList.swift; sourceTree = "<group>"; };
 		F5F794EA2C5B3E8100DCB824 /* UpdaterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdaterView.swift; sourceTree = "<group>"; };
-		F5FBCC332C3FB96000CED4F1 /* Detail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Detail.swift; sourceTree = "<group>"; };
+		F5FBCC332C3FB96000CED4F1 /* DetailGit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailGit.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -531,6 +535,7 @@
 		0B1C67F62BD9E5E700502EB1 /* Layout */ = {
 			isa = PBXGroup;
 			children = (
+				F54DFA462CA4034600F81BE3 /* ProjectPicker.swift */,
 				0B1C67B42BD9115F00502EB1 /* Branches.swift */,
 				0B0E16822BD89A8F0078942B /* Content.swift */,
 				0B8C7AEF2BE08E2D00B4E817 /* Message.swift */,
@@ -546,7 +551,7 @@
 			children = (
 				0B8C7AD42BE08E1900B4E817 /* Banner */,
 				F545D16B2C1AF525006A6AFA /* Commit */,
-				F5FBCC332C3FB96000CED4F1 /* Detail.swift */,
+				F5FBCC332C3FB96000CED4F1 /* DetailGit.swift */,
 				0BD651022CA2F51500BA3CB8 /* DetailBanner.swift */,
 				0BD651042CA2F52400BA3CB8 /* DetailIcon.swift */,
 				F5F794DF2C5A1D2600DCB824 /* FileList.swift */,
@@ -833,6 +838,7 @@
 			isa = PBXGroup;
 			children = (
 				0BD650F12CA1A8E800BA3CB8 /* FileInfo */,
+				F54DFA482CA40BB200F81BE3 /* ProjectInfo */,
 				0BD650E82CA1969100BA3CB8 /* SmartLog */,
 				F54DFA432CA3E5E300F81BE3 /* SmartMerge */,
 				0BD650EC2CA196BD00BA3CB8 /* SmartMessage */,
@@ -927,6 +933,14 @@
 				F54DFA442CA3E5F200F81BE3 /* TileMerge.swift */,
 			);
 			path = SmartMerge;
+			sourceTree = "<group>";
+		};
+		F54DFA482CA40BB200F81BE3 /* ProjectInfo */ = {
+			isa = PBXGroup;
+			children = (
+				F54DFA492CA40BC100F81BE3 /* TileProject.swift */,
+			);
+			path = ProjectInfo;
 			sourceTree = "<group>";
 		};
 		F588FB6E2CA15D4100F6AE42 /* Event */ = {
@@ -1080,6 +1094,7 @@
 				0B76FD222BDE315800501F1F /* ReadyHandler.swift in Sources */,
 				0BCC6D152BD9526F006ADA94 /* GitCommit.swift in Sources */,
 				0BDE61A92BDB4746006E23EA /* File.swift in Sources */,
+				F54DFA4A2CA40BC100F81BE3 /* TileProject.swift in Sources */,
 				0B8C7AD62BE08E1900B4E817 /* Features.swift in Sources */,
 				0BF75EEA2BDFA2FB00A553CD /* BtnOpenTerminal.swift in Sources */,
 				0BDE61A72BDB4541006E23EA /* StatusExt.swift in Sources */,
@@ -1171,6 +1186,7 @@
 				0BD651032CA2F51500BA3CB8 /* DetailBanner.swift in Sources */,
 				0B8C7B1E2BE09B1500B4E817 /* BannerShell.swift in Sources */,
 				0B1C67BC2BD9132500502EB1 /* Git.swift in Sources */,
+				F54DFA472CA4034B00F81BE3 /* ProjectPicker.swift in Sources */,
 				0BD15C502BDBF3BD004024CF /* MergeForm.swift in Sources */,
 				0BD15C582BDD26DE004024CF /* Diff.swift in Sources */,
 				0B8C7AC42BE08E0F00B4E817 /* ScreeniMac.swift in Sources */,
@@ -1199,7 +1215,7 @@
 				0BB543E92BE890F200D7A2B2 /* JsonModel.swift in Sources */,
 				0B76FD1B2BDE2B2F00501F1F /* WebHandler.swift in Sources */,
 				0B76FD182BDE27D000501F1F /* DefaultMessageHandler.swift in Sources */,
-				F5FBCC342C3FB96000CED4F1 /* Detail.swift in Sources */,
+				F5FBCC342C3FB96000CED4F1 /* DetailGit.swift in Sources */,
 				F545D16F2C1C0CF3006A6AFA /* BannerSubTitle.swift in Sources */,
 				0BD15C672BDFE4F9004024CF /* NotGit.swift in Sources */,
 				0B8C7A662BE08C8700B4E817 /* DB.swift in Sources */,

@@ -29,3 +29,9 @@ extension Notification.Name {
 extension Notification.Name {
     static let gitBranchChanged = Notification.Name("gitBranchChanged")
 }
+
+// MARK: Project
+
+extension Notification.Name {
+    static let gitProjectDeleted = Notification.Name("gitProjectDeleted")
+}

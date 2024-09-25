@@ -56,6 +56,5 @@ struct RootView<Content>: View where Content: View {
     RootView(content: {
         Content()
     })
-    .frame(height: 800)
-    .frame(width: 800)
+    .frame(width: 800, height: 800)
 }

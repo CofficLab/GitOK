@@ -89,6 +89,10 @@ final class Project {
         
         return try IconModel.all(self.path)
     }
+
+    func isExist() -> Bool {
+        return FileManager.default.fileExists(atPath: self.path)
+    }
 }
 
 extension Project: Identifiable {

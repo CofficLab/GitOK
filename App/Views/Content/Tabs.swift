@@ -5,20 +5,20 @@ struct Tabs: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            HStack(spacing: 0) {
-                ForEach(ActionTab.allCases, id: \.self) { t in
-                    TabBtn(
-                        title: t.rawValue,
-                        imageName: t.imageName,
-                        selected: tab == t,
-                        onTap: {
-                            self.tab = t
-                        }
-                    )
-                }
-            }
-            .frame(height: 25)
-            .labelStyle(.iconOnly)
+//            HStack(spacing: 0) {
+//                ForEach(ActionTab.allCases, id: \.self) { t in
+//                    TabBtn(
+//                        title: t.rawValue,
+//                        imageName: t.imageName,
+//                        selected: tab == t,
+//                        onTap: {
+//                            self.tab = t
+//                        }
+//                    )
+//                }
+//            }
+//            .frame(height: 25)
+//            .labelStyle(.iconOnly)
 
             ZStack {
                 if self.tab == .Git {

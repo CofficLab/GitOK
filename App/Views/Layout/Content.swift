@@ -2,9 +2,10 @@ import OSLog
 import SwiftData
 import SwiftUI
 
-struct Content: View, SuperThread {
+struct Content: View, SuperThread, SuperEvent {
     @EnvironmentObject var app: AppProvider
     @EnvironmentObject var g: GitProvider
+    @Environment(\.modelContext) private var modelContext
 
     @State var branch: Branch? = nil
     @State var gitLog: String? = nil
@@ -12,8 +13,6 @@ struct Content: View, SuperThread {
     @State var tab: ActionTab = .Git
     @State var columnVisibility: NavigationSplitViewVisibility = .automatic
     @State var projectExists: Bool = true // 新增状态变量
-
-    var project: Project? { g.project }
 
     var body: some View {
         ZStack {
@@ -47,7 +46,7 @@ struct Content: View, SuperThread {
                     VStack(spacing: 0) {
                         switch self.tab {
                         case .Git:
-                            Detail()
+                            DetailGit()
                         case .Banner:
                             DetailBanner()
                         case .Icon:
@@ -57,15 +56,22 @@ struct Content: View, SuperThread {
                         StatusBar()
                     }
                 } else {
-                    Text("项目不存在")
-                        .foregroundColor(.red)
-                        .font(.headline)
+                    VStack {
+                        Text("项目不存在")
+                            .foregroundColor(.red)
+                            .font(.headline)
+
+                        if let project = g.project {
+                            Button("删除") {
+                                deleteItem(project)
+                            }
+                        }
+                    }
                 }
             }
 
             Message()
         }
-        .navigationTitle(project?.title ?? "")
         .onAppear {
             if app.sidebarVisibility == true {
                 self.columnVisibility = .all
@@ -73,13 +79,6 @@ struct Content: View, SuperThread {
 
             if app.sidebarVisibility == false {
                 self.columnVisibility = .doubleColumn
-            }
-
-            // 检查项目是否存在
-            if let project = project {
-                self.projectExists = FileManager.default.fileExists(atPath: project.path)
-            } else {
-                self.projectExists = false
             }
         }
         .onChange(of: self.columnVisibility, checkColumnVisibility)
@@ -91,7 +90,21 @@ struct Content: View, SuperThread {
             }
         }
         .toolbar(content: {
-            if let project = project, projectExists {
+            ToolbarItem(placement: .navigation) {
+                ProjectPicker()
+            }
+
+            ToolbarItem(placement: .principal) {
+                Picker("选择标签", selection: $tab) {
+                    Text("Git").tag(ActionTab.Git)
+                    Text("Banner").tag(ActionTab.Banner)
+                    Text("Icon").tag(ActionTab.Icon)
+                }
+                .pickerStyle(SegmentedPickerStyle())
+                .frame(width: 200)
+            }
+
+            if let project = g.project, project.isExist() {
                 ToolbarItemGroup(placement: .cancellationAction, content: {
                     BtnOpenTerminal(url: project.url)
                     BtnOpenXcode(url: project.url)
@@ -116,12 +129,18 @@ struct Content: View, SuperThread {
             }
         }
     }
+
+    private func deleteItem(_ project: Project) {
+        let path = project.path
+        withAnimation {
+            modelContext.delete(project)
+            self.emitGitProjectDeleted(path: path)
+        }
+    }
 }
 
 #Preview {
-    RootView {
-        Content()
-    }
-    .frame(width: 800)
-    .frame(height: 1000)
+    AppPreview()
+        .frame(width: 800)
+        .frame(height: 800)
 }

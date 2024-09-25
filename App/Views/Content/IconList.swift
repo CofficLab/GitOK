@@ -8,7 +8,7 @@ struct IconList: View, SuperLog {
     @EnvironmentObject var g: GitProvider
     @EnvironmentObject var i: IconProvider
 
-    @State var selection: IconModel = .empty
+    @State var selection: IconModel?
     @State var icons: [IconModel] = []
 
     var body: some View {
@@ -21,8 +21,8 @@ struct IconList: View, SuperLog {
                     .tag(icon)
             }
             .onChange(of: self.selection, {
-                if let path = self.selection.path {
-                    i.setIconURL(URL(fileURLWithPath: path))
+                if let path = self.selection?.path, path.isNotEmpty {
+                    i.setIconURL(URL(fileURLWithPath: path), reason: "IconList")
                 }
             })
             
@@ -46,7 +46,7 @@ struct IconList: View, SuperLog {
             do {
                 self.icons = try project.getIcons()
             
-                if icons.contains(selection) {
+                if let selection = self.selection, icons.contains(selection) {
                     return
                 }
                 

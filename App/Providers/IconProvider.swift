@@ -10,7 +10,13 @@ class IconProvider: NSObject, ObservableObject, SuperLog {
 
     let emoji = "🍒"
         
-    func setIconURL(_ i: URL, reason: String = "") {
+    func setIconURL(_ i: URL, reason: String) {
+        let verbose = true
+
+        if verbose {
+            os_log(.debug, "\(self.t)Set Icon URL(\(reason)) ➡️ \(i)")
+        }
+
         self.iconURL = i
     }
 

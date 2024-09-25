@@ -48,6 +48,16 @@ extension SuperEvent {
     }
 }
 
+// MARK: Project
+
+extension SuperEvent {
+    func emitGitProjectDeleted(path: String) {
+        DispatchQueue.main.async {
+            NotificationCenter.default.post(name: .gitProjectDeleted, object: self, userInfo: ["path": path])
+        }
+    }
+}
+
 // MARK: Branch
 
 extension SuperEvent {

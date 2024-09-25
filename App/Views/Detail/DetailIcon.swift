@@ -33,7 +33,7 @@ struct DetailIcon: View, SuperLog {
             do {
                 self.icon = try i.getIcon()
             } catch {
-                os_log(.error, "Error getting icon: \(error)")
+                os_log(.error, "\(self.t)Error getting icon: \(error)")
                 m.setError(error)
             }
         })
@@ -49,7 +49,7 @@ struct DetailIcon: View, SuperLog {
             }
 
             if let path = icon.path {
-                i.setIconURL(URL(filePath: path))
+                i.setIconURL(URL(filePath: path), reason: "DetailIcon")
             }
         })
     }
