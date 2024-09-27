@@ -1,8 +1,8 @@
+import MagicKit
 import OSLog
 import SwiftUI
-import MagicKit
 
-struct CommitList: View, SuperThread, SuperLog{
+struct CommitList: View, SuperThread, SuperLog {
     @EnvironmentObject var app: AppProvider
     @EnvironmentObject var g: GitProvider
 
@@ -37,42 +37,19 @@ struct CommitList: View, SuperThread, SuperLog{
                     }
                 }
             }
-            .onAppear {
-                refresh("OnAppear")
-                self.showCommitForm = project.hasUnCommittedChanges()
-            }
-            .onChange(of: selection, {
-                g.setCommit(selection)
-            })
-            .onChange(of: g.project, {
-                self.refresh("\(self.t)Project Changed")
-            })
-            .onReceive(NotificationCenter.default.publisher(for: .gitCommitSuccess)) { _ in
-                guard let project = g.project else {
-                    return
-                }
-                
-                let commits = [project.headCommit] + project.getCommits("")
-
-                self.main.async {
-                    self.commits = commits
-                }
-            }
-            .onReceive(NotificationCenter.default.publisher(for: .gitPullSuccess)) { _ in
-                self.refresh("\(self.t)GitPullSuccess")
-            }
-            .onReceive(NotificationCenter.default.publisher(for: .gitPushSuccess)) { _ in
-                self.refresh("\(self.t)GitPushSuccess")
-            }
-//            .onReceive(NotificationCenter.default.publisher(for: .appWillBecomeActive)) { _ in
-//                self.refresh("\(self.label)AppWillBecomeActive")
-//            }
+            .onAppear(perform: onAppear)
+            .onChange(of: selection, onChangeOfSelection)
+            .onChange(of: g.project, onProjectChange)
+            .onReceive(NotificationCenter.default.publisher(for: .gitCommitSuccess), perform: onCommitSuccess)
+            .onReceive(NotificationCenter.default.publisher(for: .gitPullSuccess), perform: onPullSuccess)
+            .onReceive(NotificationCenter.default.publisher(for: .gitPushSuccess), perform: onPushSuccess)
+//            .onReceive(NotificationCenter.default.publisher(for: .appWillBecomeActive), perform: onAppWillBecomeActive)
         }
     }
 
     func refresh(_ reason: String = "") {
         let verbose = false
-        
+
         guard let project = g.project, !isRefreshing else {
             return
         }
@@ -85,15 +62,48 @@ struct CommitList: View, SuperThread, SuperLog{
             if verbose {
                 os_log("\(t)Refresh(\(reason))")
             }
-            
+
             let commits = [project.headCommit] + project.getCommits(reason)
 
             self.main.async {
                 self.commits = commits
                 self.loading = false
                 self.isRefreshing = false
+                self.showCommitForm = project.hasUnCommittedChanges()
             }
         }
+    }
+}
+
+// MARK: Event Handlers
+
+extension CommitList {
+    func onProjectChange() {
+        self.refresh("\(self.t)Project Changed")
+    }
+
+    func onCommitSuccess(_ notification: Notification) {
+        self.refresh("\(self.t)GitCommitSuccess")
+    }
+
+    func onAppear() {
+        refresh("OnAppear")
+    }
+
+    func onChangeOfSelection() {
+        g.setCommit(selection)
+    }
+
+    func onPullSuccess(_ notification: Notification) {
+        self.refresh("\(self.t)GitPullSuccess")
+    }
+
+    func onPushSuccess(_ notification: Notification) {
+        self.refresh("\(self.t)GitPushSuccess")
+    }
+
+    func onAppWillBecomeActive(_ notification: Notification) {
+        self.refresh("\(self.t)AppWillBecomeActive")
     }
 }
 
