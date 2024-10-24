@@ -7,17 +7,18 @@ enum CommitCategory: String, CaseIterable, Equatable {
 
     case Bugfix
     case Chore
+    case PackageUpdate
     case CI
     case Config
+    case Trash
+    case UI
+    case Improve
     case Docker
     case Document
     case Feature
     case FirstCommit
-    case Improve
     case Release
-    case Trash
     case Typo
-    case UI
 
     var emoji: String {
         switch self {
@@ -47,6 +48,8 @@ enum CommitCategory: String, CaseIterable, Equatable {
             "✏️"
         case .UI:
             "💄"
+        case .PackageUpdate:
+            "📦"
         }
     }
 
@@ -78,6 +81,8 @@ enum CommitCategory: String, CaseIterable, Equatable {
             "Typo"
         case .UI:
             "UI"
+        case .PackageUpdate:
+            "Package Update"
         }
     }
 
@@ -113,6 +118,8 @@ enum CommitCategory: String, CaseIterable, Equatable {
             return "Correct a typo"
         case .UI:
             return "Update user interface elements"
+        case .PackageUpdate:
+            return "Update package dependencies"
         }
     }
 }

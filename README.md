@@ -27,18 +27,19 @@ GitOK 是一个综合性的项目管理工具。
 - 辅助人类提交良好格式的 `commit message`
 - 快速生成 APP 的多个平台的图标
 
-## 许可证
+## About the Author
 
-### 个人用户
+Work for Joy & Live for Love ➡️ <https://github.com/nookery>
 
-对于个人用户，许可证持有者授予其使用本开源项目的权利，遵守 [GNU GENERAL PUBLIC LICENSE](./LICENSE) 版本的条款和条件。
+## License
 
-### 商业许可证
+JuiceEditor is released under a dual license:
 
-对于用户进行盈利或商业用途的情况，用户必须购买商业许可证，以获得相应的商业使用权。
+1. For non-commercial use: [MIT License](LICENSE)
+2. For commercial use or modifications: Please [contact the author](https://github.com/nookery) for a commercial license.
 
-请在这里留言: <https://github.com/CofficLab/GitOK/issues>
+Any use of this software for commercial purposes or any modifications to the source code require explicit permission from the author.
 
-## 参考
+## References
 
 - [git commit emoji 使用指南](https://github.com/liuchengxu/git-commit-emoji-cn)
