@@ -10,6 +10,7 @@ enum CommitCategory: String, CaseIterable, Equatable {
     case PackageUpdate
     case CI
     case Config
+    case Test
     case Trash
     case UI
     case Improve
@@ -50,6 +51,8 @@ enum CommitCategory: String, CaseIterable, Equatable {
             "💄"
         case .PackageUpdate:
             "📦"
+        case .Test:
+            "🧪"
         }
     }
 
@@ -83,6 +86,8 @@ enum CommitCategory: String, CaseIterable, Equatable {
             "UI"
         case .PackageUpdate:
             "Package Update"
+        case .Test:
+            "Test"
         }
     }
 
@@ -120,6 +125,8 @@ enum CommitCategory: String, CaseIterable, Equatable {
             return "Update user interface elements"
         case .PackageUpdate:
             return "Update package dependencies"
+        case .Test:
+            return "Add or update tests"
         }
     }
 }
