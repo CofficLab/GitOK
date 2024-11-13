@@ -74,7 +74,6 @@
 		0BB543E92BE890F200D7A2B2 /* JsonModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BB543E82BE890F200D7A2B2 /* JsonModel.swift */; };
 		0BB543EC2BE8932300D7A2B2 /* BtnDelIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BB543EB2BE8932300D7A2B2 /* BtnDelIcon.swift */; };
 		0BB543F62BE9C3A800D7A2B2 /* EventExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BB543F52BE9C3A800D7A2B2 /* EventExt.swift */; };
-		0BB555242BDB7B300044048B /* BranchExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BB555232BDB7B300044048B /* BranchExt.swift */; };
 		0BCC6D012BD92CB2006ADA94 /* DebugCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCC6D002BD92CB2006ADA94 /* DebugCommand.swift */; };
 		0BCC6D032BD932DA006ADA94 /* PathExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCC6D022BD932DA006ADA94 /* PathExt.swift */; };
 		0BCC6D072BD939BA006ADA94 /* Shell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCC6D062BD939BA006ADA94 /* Shell.swift */; };
@@ -85,8 +84,6 @@
 		0BCC6D132BD94D15006ADA94 /* BtnLogs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCC6D122BD94D15006ADA94 /* BtnLogs.swift */; };
 		0BCC6D152BD9526F006ADA94 /* GitCommit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCC6D142BD9526F006ADA94 /* GitCommit.swift */; };
 		0BD15C4C2BDBE959004024CF /* StateExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD15C4B2BDBE959004024CF /* StateExt.swift */; };
-		0BD15C4E2BDBF360004024CF /* BtnMerge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD15C4D2BDBF360004024CF /* BtnMerge.swift */; };
-		0BD15C502BDBF3BD004024CF /* MergeForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD15C4F2BDBF3BD004024CF /* MergeForm.swift */; };
 		0BD15C522BDC8D91004024CF /* SmartError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD15C512BDC8D91004024CF /* SmartError.swift */; };
 		0BD15C562BDD23E1004024CF /* DiffExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD15C552BDD23E1004024CF /* DiffExt.swift */; };
 		0BD15C582BDD26DE004024CF /* Diff.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD15C572BDD26DE004024CF /* Diff.swift */; };
@@ -134,11 +131,14 @@
 		F54DFA3E2CA395D800F81BE3 /* SmartImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = F54DFA3D2CA395C200F81BE3 /* SmartImage.swift */; };
 		F54DFA402CA3ABB800F81BE3 /* BannerEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = F54DFA3F2CA3ABB200F81BE3 /* BannerEvent.swift */; };
 		F54DFA422CA3B5B900F81BE3 /* IconEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = F54DFA412CA3B5B600F81BE3 /* IconEvent.swift */; };
-		F54DFA452CA3E5F200F81BE3 /* TileMerge.swift in Sources */ = {isa = PBXBuildFile; fileRef = F54DFA442CA3E5F200F81BE3 /* TileMerge.swift */; };
+		F54DFA452CA3E5F200F81BE3 /* TileQuickMerge.swift in Sources */ = {isa = PBXBuildFile; fileRef = F54DFA442CA3E5F200F81BE3 /* TileQuickMerge.swift */; };
 		F54DFA472CA4034B00F81BE3 /* ProjectPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = F54DFA462CA4034600F81BE3 /* ProjectPicker.swift */; };
 		F54DFA4A2CA40BC100F81BE3 /* TileProject.swift in Sources */ = {isa = PBXBuildFile; fileRef = F54DFA492CA40BC100F81BE3 /* TileProject.swift */; };
 		F580BF8C2CE4969A00977CFC /* Sidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = F580BF8B2CE4969A00977CFC /* Sidebar.swift */; };
 		F580BF982CE499ED00977CFC /* NoProject.swift in Sources */ = {isa = PBXBuildFile; fileRef = F580BF972CE499ED00977CFC /* NoProject.swift */; };
+		F580BF9D2CE4A24500977CFC /* TileMerge.swift in Sources */ = {isa = PBXBuildFile; fileRef = F580BF9C2CE4A24500977CFC /* TileMerge.swift */; };
+		F580BF9E2CE4A24500977CFC /* MergeForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = F580BF9B2CE4A24500977CFC /* MergeForm.swift */; };
+		F580BF9F2CE4A24500977CFC /* BtnMerge.swift in Sources */ = {isa = PBXBuildFile; fileRef = F580BF9A2CE4A24500977CFC /* BtnMerge.swift */; };
 		F588FB702CA15D5200F6AE42 /* GitEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = F588FB6F2CA15D5200F6AE42 /* GitEvent.swift */; };
 		F588FB722CA15DAD00F6AE42 /* SuperEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = F588FB712CA15DAD00F6AE42 /* SuperEvent.swift */; };
 		F588FB752CA16B4F00F6AE42 /* GitError.swift in Sources */ = {isa = PBXBuildFile; fileRef = F588FB742CA16B4F00F6AE42 /* GitError.swift */; };
@@ -236,7 +236,6 @@
 		0BB543E82BE890F200D7A2B2 /* JsonModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JsonModel.swift; sourceTree = "<group>"; };
 		0BB543EB2BE8932300D7A2B2 /* BtnDelIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BtnDelIcon.swift; sourceTree = "<group>"; };
 		0BB543F52BE9C3A800D7A2B2 /* EventExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventExt.swift; sourceTree = "<group>"; };
-		0BB555232BDB7B300044048B /* BranchExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BranchExt.swift; sourceTree = "<group>"; };
 		0BCC6D002BD92CB2006ADA94 /* DebugCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugCommand.swift; sourceTree = "<group>"; };
 		0BCC6D022BD932DA006ADA94 /* PathExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PathExt.swift; sourceTree = "<group>"; };
 		0BCC6D062BD939BA006ADA94 /* Shell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shell.swift; sourceTree = "<group>"; };
@@ -247,8 +246,6 @@
 		0BCC6D122BD94D15006ADA94 /* BtnLogs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BtnLogs.swift; sourceTree = "<group>"; };
 		0BCC6D142BD9526F006ADA94 /* GitCommit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitCommit.swift; sourceTree = "<group>"; };
 		0BD15C4B2BDBE959004024CF /* StateExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StateExt.swift; sourceTree = "<group>"; };
-		0BD15C4D2BDBF360004024CF /* BtnMerge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BtnMerge.swift; sourceTree = "<group>"; };
-		0BD15C4F2BDBF3BD004024CF /* MergeForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MergeForm.swift; sourceTree = "<group>"; };
 		0BD15C512BDC8D91004024CF /* SmartError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmartError.swift; sourceTree = "<group>"; };
 		0BD15C552BDD23E1004024CF /* DiffExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiffExt.swift; sourceTree = "<group>"; };
 		0BD15C572BDD26DE004024CF /* Diff.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Diff.swift; sourceTree = "<group>"; };
@@ -295,11 +292,14 @@
 		F54DFA3D2CA395C200F81BE3 /* SmartImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmartImage.swift; sourceTree = "<group>"; };
 		F54DFA3F2CA3ABB200F81BE3 /* BannerEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerEvent.swift; sourceTree = "<group>"; };
 		F54DFA412CA3B5B600F81BE3 /* IconEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconEvent.swift; sourceTree = "<group>"; };
-		F54DFA442CA3E5F200F81BE3 /* TileMerge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TileMerge.swift; sourceTree = "<group>"; };
+		F54DFA442CA3E5F200F81BE3 /* TileQuickMerge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TileQuickMerge.swift; sourceTree = "<group>"; };
 		F54DFA462CA4034600F81BE3 /* ProjectPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectPicker.swift; sourceTree = "<group>"; };
 		F54DFA492CA40BC100F81BE3 /* TileProject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TileProject.swift; sourceTree = "<group>"; };
 		F580BF8B2CE4969A00977CFC /* Sidebar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sidebar.swift; sourceTree = "<group>"; };
 		F580BF972CE499ED00977CFC /* NoProject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoProject.swift; sourceTree = "<group>"; };
+		F580BF9A2CE4A24500977CFC /* BtnMerge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BtnMerge.swift; sourceTree = "<group>"; };
+		F580BF9B2CE4A24500977CFC /* MergeForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MergeForm.swift; sourceTree = "<group>"; };
+		F580BF9C2CE4A24500977CFC /* TileMerge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TileMerge.swift; sourceTree = "<group>"; };
 		F588FB6F2CA15D5200F6AE42 /* GitEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitEvent.swift; sourceTree = "<group>"; };
 		F588FB712CA15DAD00F6AE42 /* SuperEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuperEvent.swift; sourceTree = "<group>"; };
 		F588FB742CA16B4F00F6AE42 /* GitError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitError.swift; sourceTree = "<group>"; };
@@ -635,6 +635,7 @@
 			children = (
 				0BD650F12CA1A8E800BA3CB8 /* FileInfo */,
 				F54DFA482CA40BB200F81BE3 /* ProjectInfo */,
+				F580BF992CE4A18700977CFC /* QuickMerge */,
 				0BD650E82CA1969100BA3CB8 /* SmartLog */,
 				F54DFA432CA3E5E300F81BE3 /* SmartMerge */,
 				0BD650EC2CA196BD00BA3CB8 /* SmartMessage */,
@@ -670,7 +671,6 @@
 		0BDE619E2BDB2C51006E23EA /* Git */ = {
 			isa = PBXGroup;
 			children = (
-				0BB555232BDB7B300044048B /* BranchExt.swift */,
 				0B6BE4642BDA7B5300C8ACB2 /* CommitExt.swift */,
 				0BD650A02CA1855D00BA3CB8 /* ConfigExt.swift */,
 				0BD15C552BDD23E1004024CF /* DiffExt.swift */,
@@ -723,9 +723,9 @@
 		F54DFA432CA3E5E300F81BE3 /* SmartMerge */ = {
 			isa = PBXGroup;
 			children = (
-				0BD15C4D2BDBF360004024CF /* BtnMerge.swift */,
-				0BD15C4F2BDBF3BD004024CF /* MergeForm.swift */,
-				F54DFA442CA3E5F200F81BE3 /* TileMerge.swift */,
+				F580BF9A2CE4A24500977CFC /* BtnMerge.swift */,
+				F580BF9B2CE4A24500977CFC /* MergeForm.swift */,
+				F580BF9C2CE4A24500977CFC /* TileMerge.swift */,
 			);
 			path = SmartMerge;
 			sourceTree = "<group>";
@@ -736,6 +736,14 @@
 				F54DFA492CA40BC100F81BE3 /* TileProject.swift */,
 			);
 			path = ProjectInfo;
+			sourceTree = "<group>";
+		};
+		F580BF992CE4A18700977CFC /* QuickMerge */ = {
+			isa = PBXGroup;
+			children = (
+				F54DFA442CA3E5F200F81BE3 /* TileQuickMerge.swift */,
+			);
+			path = QuickMerge;
 			sourceTree = "<group>";
 		};
 		F588FB6E2CA15D4100F6AE42 /* Event */ = {
@@ -863,7 +871,6 @@
 				0B1C67B32BD90B5700502EB1 /* AppProvider.swift in Sources */,
 				F588FB722CA15DAD00F6AE42 /* SuperEvent.swift in Sources */,
 				0BF75EE82BDF39B500A553CD /* PushExt.swift in Sources */,
-				0BD15C4E2BDBF360004024CF /* BtnMerge.swift in Sources */,
 				0B8C7A6F2BE08CA800B4E817 /* ToolName.swift in Sources */,
 				0B1C67B52BD9115F00502EB1 /* Branches.swift in Sources */,
 				F54DFA3A2CA2991500F81BE3 /* PullExt.swift in Sources */,
@@ -917,7 +924,7 @@
 				0B1C67C22BD9159900502EB1 /* Project.swift in Sources */,
 				0B1C67BF2BD9157100502EB1 /* DBExt.swift in Sources */,
 				F545D1712C1C155E006A6AFA /* BannerImage.swift in Sources */,
-				F54DFA452CA3E5F200F81BE3 /* TileMerge.swift in Sources */,
+				F54DFA452CA3E5F200F81BE3 /* TileQuickMerge.swift in Sources */,
 				0B8C7AF32BE08E2D00B4E817 /* Message.swift in Sources */,
 				0BD650FB2CA2E09F00BA3CB8 /* BannerProvider.swift in Sources */,
 				0BB4278E2BE72512004E6F82 /* QueueExt.swift in Sources */,
@@ -945,7 +952,6 @@
 				0B8C7A6D2BE08CA800B4E817 /* DeviceType.swift in Sources */,
 				0B1C67B02BD9099800502EB1 /* AppPreview.swift in Sources */,
 				0BD15C5A2BDD275C004024CF /* DiffBlock.swift in Sources */,
-				0BB555242BDB7B300044048B /* BranchExt.swift in Sources */,
 				0BD650F72CA1AC6700BA3CB8 /* AppEvent.swift in Sources */,
 				0B8C7B2F2BE0E5F100B4E817 /* Tabs.swift in Sources */,
 				0B1C68022BD9F7B500502EB1 /* BtnOpen.swift in Sources */,
@@ -955,7 +961,6 @@
 				0B8C7B1E2BE09B1500B4E817 /* BannerShell.swift in Sources */,
 				0B1C67BC2BD9132500502EB1 /* Git.swift in Sources */,
 				F54DFA472CA4034B00F81BE3 /* ProjectPicker.swift in Sources */,
-				0BD15C502BDBF3BD004024CF /* MergeForm.swift in Sources */,
 				0BD15C582BDD26DE004024CF /* Diff.swift in Sources */,
 				0B8C7AC42BE08E0F00B4E817 /* ScreeniMac.swift in Sources */,
 				0BD15C4C2BDBE959004024CF /* StateExt.swift in Sources */,
@@ -986,6 +991,9 @@
 				0BD650E92CA1969100BA3CB8 /* SmartLog.swift in Sources */,
 				F545D1622C1AD6F1006A6AFA /* BannerTopBar.swift in Sources */,
 				0BF75EE22BDE5CE500A553CD /* Stage.swift in Sources */,
+				F580BF9D2CE4A24500977CFC /* TileMerge.swift in Sources */,
+				F580BF9E2CE4A24500977CFC /* MergeForm.swift in Sources */,
+				F580BF9F2CE4A24500977CFC /* BtnMerge.swift in Sources */,
 				F588FB772CA1718800F6AE42 /* ShellError.swift in Sources */,
 				0BD650FD2CA2E49F00BA3CB8 /* IconProvider.swift in Sources */,
 				0B1C67ED2BD9D9CB00502EB1 /* CommitCategory.swift in Sources */,

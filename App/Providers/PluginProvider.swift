@@ -20,6 +20,7 @@ class PluginProvider: ObservableObject, SuperLog, SuperThread {
             TileFile()
             TileProject()
             Spacer()
+            TileQuickMerge()
             TileMerge()
             TileMessage()
         }

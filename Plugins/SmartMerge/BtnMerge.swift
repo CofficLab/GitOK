@@ -1,10 +1,9 @@
-import SwiftUI
-import OSLog
 import MagicKit
+import OSLog
+import SwiftUI
 
 struct BtnMerge: View, SuperEvent, SuperThread {
     @EnvironmentObject var m: MessageProvider
-
 
     var path: String
     var from: Branch
@@ -23,7 +22,7 @@ struct BtnMerge: View, SuperEvent, SuperThread {
                 isHovering = hovering
             }
     }
-    
+
     func merge() {
         self.bg.async {
             do {
