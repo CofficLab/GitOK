@@ -13,6 +13,10 @@ struct TileQuickMerge: View, SuperLog, SuperThread {
 
     var body: some View {
         HStack {
+            if hovered {
+                Text("合并到主分支")
+            }
+            
             Image(systemName: "arrowshape.zigzag.forward")
         }
         .onHover(perform: { hovering in
@@ -25,23 +29,19 @@ struct TileQuickMerge: View, SuperLog, SuperThread {
         .padding(.horizontal, 8)
         .background(hovered ? Color(.controlAccentColor).opacity(0.2) : .clear)
         .clipShape(RoundedRectangle(cornerRadius: 0))
-        .popover(isPresented: $hovered, content: {
-            VStack {
-                Text("合并当前分支到主分支")
-            }
-            .frame(height: 40)
-            .frame(width: 200)
-        })
     }
 
     func merge() {
         self.bg.async {
+            os_log("\(self.t)QuickMerge")
+            
             guard let project = project else {
+                os_log(.error, "\(self.t)No project")
                 return
             }
 
             do {
-                try git.mergeToMain(project.path, message: CommitCategory.CI.text + "Merge by GitOK")
+                try git.mergeToMain(project.path)
             } catch let error {
                 os_log(.error, "\(error.localizedDescription)")
 

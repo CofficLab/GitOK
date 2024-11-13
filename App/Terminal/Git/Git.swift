@@ -21,13 +21,7 @@ class Git: SuperEvent, SuperLog {
 
     @discardableResult
     func run(_ arguments: String, path: String, verbose: Bool = false) throws -> String {
-        let command = "cd '\(path)' && git \(arguments)"
-        
-        if verbose {
-            os_log("\(self.t)Run -> \(command)")
-        }
-
-        return try self.shell.run(command, verbose: verbose)
+        try self.shell.run("cd '\(path)' && git \(arguments)", verbose: verbose)
     }
     
     func isGitProject(path: String, verbose: Bool = false) -> Bool {
@@ -169,8 +163,8 @@ extension Git {
         try run("merge \(from.name) -m '\(message)'", path: path, verbose: verbose)
     }
     
-    func mergeToMain(_ path: String, message: String = "merge") throws {
-        try run("merge -m '\(message)'", path: path)
+    func mergeToMain(_ path: String, verbose: Bool = true) throws {
+        try run("merge main && git branch -f main HEAD", path: path, verbose: verbose)
     }
 }
 
