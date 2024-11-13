@@ -36,6 +36,14 @@ final class Project {
     
     var isNotGit: Bool { !isGit }
     
+    var isClean: Bool {
+        git.isGitProject(path: path) && git.hasChanges(path) == false
+    }
+    
+    var noUncommittedChanges: Bool {
+        git.hasChanges(path) == false
+    }
+    
     init(_ url: URL) {
         self.timestamp = .now
         self.url = url

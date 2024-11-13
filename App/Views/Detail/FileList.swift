@@ -56,7 +56,7 @@ struct FileList: View, SuperThread, SuperLog {
 
             let files = commit.getFiles(reason: "FileList.Refresh")
 
-            DispatchQueue.main.async {
+            self.main.async {
                 self.files = files
                 self.isLoading = false
                 self.file = self.files.first

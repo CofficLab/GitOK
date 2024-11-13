@@ -1,7 +1,7 @@
+import MagicKit
 import OSLog
 import SwiftData
 import SwiftUI
-import MagicKit
 
 struct Content: View, SuperThread, SuperEvent {
     @EnvironmentObject var app: AppProvider
@@ -12,84 +12,24 @@ struct Content: View, SuperThread, SuperEvent {
     @State var gitLog: String? = nil
     @State var message: String = ""
     @State var tab: ActionTab = .Git
-    @State var columnVisibility: NavigationSplitViewVisibility = .automatic
-    @State var projectExists: Bool = true // 新增状态变量
+    @State var columnVisibility: NavigationSplitViewVisibility = .detailOnly
+    @State var projectExists: Bool = true
 
     var body: some View {
-        ZStack {
-            NavigationSplitView(columnVisibility: $columnVisibility) {
-                Projects()
-                    .toolbar(content: {
-                        ToolbarItem {
-                            BtnAdd()
-                        }
-                    })
-            } content: {
-                Tabs(tab: $tab)
-                    .frame(idealWidth: 300)
-                    .frame(minWidth: 50)
-                    .disabled(!projectExists) // 禁止点击
-                    .overlay(
-                        Group {
-                            if !projectExists {
-                                Color.black.opacity(0.3)
-                            }
-                        }
-                    )
-                    .onChange(of: tab, {
-                        app.setTab(tab)
-                    })
-                    .onAppear {
-                        self.tab = app.currentTab
-                    }
-            } detail: {
+        Group {
+            ZStack {
                 if projectExists {
-                    VStack(spacing: 0) {
-                        switch self.tab {
-                        case .Git:
-                            DetailGit()
-                        case .Banner:
-                            DetailBanner()
-                        case .Icon:
-                            DetailIcon()
-                        }
-
-                        StatusBar()
-                    }
+                    hasProjectView
                 } else {
-                    VStack {
-                        Text("项目不存在")
-                            .foregroundColor(.red)
-                            .font(.headline)
-
-                        if let project = g.project {
-                            Button("删除") {
-                                deleteItem(project)
-                            }
-                        }
-                    }
+                    NoProject()
                 }
-            }
-
-            Message()
-        }
-        .onAppear {
-            if app.sidebarVisibility == true {
-                self.columnVisibility = .all
-            }
-
-            if app.sidebarVisibility == false {
-                self.columnVisibility = .doubleColumn
+                
+                Message()
             }
         }
+        .onAppear(perform: onAppear)
         .onChange(of: self.columnVisibility, checkColumnVisibility)
-        .onChange(of: g.project) {
-            if let newProject = g.project {
-                self.projectExists = FileManager.default.fileExists(atPath: newProject.path)
-            } else {
-                self.projectExists = false
-            }
-        }
+        .onChange(of: g.project, onProjectChange)
         .toolbar(content: {
             ToolbarItem(placement: .navigation) {
                 ProjectPicker()
@@ -131,11 +71,56 @@ struct Content: View, SuperThread, SuperEvent {
         }
     }
 
-    private func deleteItem(_ project: Project) {
-        let path = project.path
-        withAnimation {
-            modelContext.delete(project)
-            self.emitGitProjectDeleted(path: path)
+    var hasProjectView: some View {
+            NavigationSplitView(columnVisibility: $columnVisibility) {
+                Sidebar()
+            } content: {
+                if projectExists {
+                    Tabs(tab: $tab)
+                        .frame(idealWidth: 300)
+                        .frame(minWidth: 50)
+                        .onChange(of: tab, {
+                            app.setTab(tab)
+                        })
+                        .onAppear {
+                            self.tab = app.currentTab
+                        }
+                }
+            } detail: {
+                VStack(spacing: 0) {
+                    switch self.tab {
+                    case .Git:
+                        DetailGit()
+                    case .Banner:
+                        DetailBanner()
+                    case .Icon:
+                        DetailIcon()
+                    }
+
+                    StatusBar()
+                }
+            }
+    }
+}
+
+// MARK: Event Handlers
+
+extension Content {
+    func onProjectChange() {
+        if let newProject = g.project {
+            self.projectExists = FileManager.default.fileExists(atPath: newProject.path)
+        } else {
+            self.projectExists = false
+        }
+    }
+    
+    func onAppear() {
+        if app.sidebarVisibility == true {
+            self.columnVisibility = .all
+        }
+
+        if app.sidebarVisibility == false {
+            self.columnVisibility = .doubleColumn
         }
     }
 }

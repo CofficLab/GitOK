@@ -113,7 +113,6 @@
 		0BD652242CA4390C00BA3CB8 /* MagicKit in Frameworks */ = {isa = PBXBuildFile; productRef = 0BD652232CA4390C00BA3CB8 /* MagicKit */; };
 		0BDE61A32BDB3C9B006E23EA /* Projects.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BDE61A22BDB3C9B006E23EA /* Projects.swift */; };
 		0BDE61A52BDB408F006E23EA /* RevListExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BDE61A42BDB408F006E23EA /* RevListExt.swift */; };
-		0BDE61A72BDB4541006E23EA /* StatusExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BDE61A62BDB4541006E23EA /* StatusExt.swift */; };
 		0BDE61A92BDB4746006E23EA /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BDE61A82BDB4746006E23EA /* File.swift */; };
 		0BDE61AD2BDB4E87006E23EA /* FileTile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BDE61AC2BDB4E86006E23EA /* FileTile.swift */; };
 		0BF75EE02BDE4C0C00A553CD /* CommitTile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BF75EDF2BDE4C0C00A553CD /* CommitTile.swift */; };
@@ -138,6 +137,8 @@
 		F54DFA452CA3E5F200F81BE3 /* TileMerge.swift in Sources */ = {isa = PBXBuildFile; fileRef = F54DFA442CA3E5F200F81BE3 /* TileMerge.swift */; };
 		F54DFA472CA4034B00F81BE3 /* ProjectPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = F54DFA462CA4034600F81BE3 /* ProjectPicker.swift */; };
 		F54DFA4A2CA40BC100F81BE3 /* TileProject.swift in Sources */ = {isa = PBXBuildFile; fileRef = F54DFA492CA40BC100F81BE3 /* TileProject.swift */; };
+		F580BF8C2CE4969A00977CFC /* Sidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = F580BF8B2CE4969A00977CFC /* Sidebar.swift */; };
+		F580BF982CE499ED00977CFC /* NoProject.swift in Sources */ = {isa = PBXBuildFile; fileRef = F580BF972CE499ED00977CFC /* NoProject.swift */; };
 		F588FB702CA15D5200F6AE42 /* GitEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = F588FB6F2CA15D5200F6AE42 /* GitEvent.swift */; };
 		F588FB722CA15DAD00F6AE42 /* SuperEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = F588FB712CA15DAD00F6AE42 /* SuperEvent.swift */; };
 		F588FB752CA16B4F00F6AE42 /* GitError.swift in Sources */ = {isa = PBXBuildFile; fileRef = F588FB742CA16B4F00F6AE42 /* GitError.swift */; };
@@ -273,7 +274,6 @@
 		0BD651042CA2F52400BA3CB8 /* DetailIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailIcon.swift; sourceTree = "<group>"; };
 		0BDE61A22BDB3C9B006E23EA /* Projects.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Projects.swift; sourceTree = "<group>"; };
 		0BDE61A42BDB408F006E23EA /* RevListExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RevListExt.swift; sourceTree = "<group>"; };
-		0BDE61A62BDB4541006E23EA /* StatusExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusExt.swift; sourceTree = "<group>"; };
 		0BDE61A82BDB4746006E23EA /* File.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = File.swift; sourceTree = "<group>"; };
 		0BDE61AC2BDB4E86006E23EA /* FileTile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileTile.swift; sourceTree = "<group>"; };
 		0BF75EDF2BDE4C0C00A553CD /* CommitTile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommitTile.swift; sourceTree = "<group>"; };
@@ -298,6 +298,8 @@
 		F54DFA442CA3E5F200F81BE3 /* TileMerge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TileMerge.swift; sourceTree = "<group>"; };
 		F54DFA462CA4034600F81BE3 /* ProjectPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectPicker.swift; sourceTree = "<group>"; };
 		F54DFA492CA40BC100F81BE3 /* TileProject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TileProject.swift; sourceTree = "<group>"; };
+		F580BF8B2CE4969A00977CFC /* Sidebar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sidebar.swift; sourceTree = "<group>"; };
+		F580BF972CE499ED00977CFC /* NoProject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoProject.swift; sourceTree = "<group>"; };
 		F588FB6F2CA15D5200F6AE42 /* GitEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitEvent.swift; sourceTree = "<group>"; };
 		F588FB712CA15DAD00F6AE42 /* SuperEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuperEvent.swift; sourceTree = "<group>"; };
 		F588FB742CA16B4F00F6AE42 /* GitError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitError.swift; sourceTree = "<group>"; };
@@ -460,12 +462,14 @@
 		0B1C67F62BD9E5E700502EB1 /* Layout */ = {
 			isa = PBXGroup;
 			children = (
-				F54DFA462CA4034600F81BE3 /* ProjectPicker.swift */,
 				0B1C67B42BD9115F00502EB1 /* Branches.swift */,
 				0B0E16822BD89A8F0078942B /* Content.swift */,
 				0B8C7AEF2BE08E2D00B4E817 /* Message.swift */,
+				F580BF972CE499ED00977CFC /* NoProject.swift */,
 				0BD15C662BDFE4F9004024CF /* NotGit.swift */,
+				F54DFA462CA4034600F81BE3 /* ProjectPicker.swift */,
 				0BDE61A22BDB3C9B006E23EA /* Projects.swift */,
+				F580BF8B2CE4969A00977CFC /* Sidebar.swift */,
 				0BD650E22CA192E600BA3CB8 /* StatusBar.swift */,
 			);
 			path = Layout;
@@ -675,7 +679,6 @@
 				F54DFA392CA2991300F81BE3 /* PullExt.swift */,
 				0BF75EE72BDF39B500A553CD /* PushExt.swift */,
 				0BDE61A42BDB408F006E23EA /* RevListExt.swift */,
-				0BDE61A62BDB4541006E23EA /* StatusExt.swift */,
 			);
 			path = Git;
 			sourceTree = "<group>";
@@ -876,6 +879,7 @@
 				F588FB702CA15D5200F6AE42 /* GitEvent.swift in Sources */,
 				0BCC6D0B2BD93E8C006ADA94 /* BtnAdd.swift in Sources */,
 				0BD15C632BDD40E1004024CF /* ListPlay.swift in Sources */,
+				F580BF982CE499ED00977CFC /* NoProject.swift in Sources */,
 				0B1C68042BD9FAE500502EB1 /* BtnOpenXcode.swift in Sources */,
 				0BCC6D112BD94B5B006ADA94 /* BtnLog.swift in Sources */,
 				0B9EA3562C1ECF5A00A4059A /* IconOpacity.swift in Sources */,
@@ -888,8 +892,8 @@
 				0BDE61A92BDB4746006E23EA /* File.swift in Sources */,
 				F54DFA4A2CA40BC100F81BE3 /* TileProject.swift in Sources */,
 				0B8C7AD62BE08E1900B4E817 /* Features.swift in Sources */,
+				F580BF8C2CE4969A00977CFC /* Sidebar.swift in Sources */,
 				0BF75EEA2BDFA2FB00A553CD /* BtnOpenTerminal.swift in Sources */,
-				0BDE61A72BDB4541006E23EA /* StatusExt.swift in Sources */,
 				F588FB792CA2494E00F6AE42 /* GitProvider.swift in Sources */,
 				F545D1682C1AEBF1006A6AFA /* FileDetail.swift in Sources */,
 				0BB543F62BE9C3A800D7A2B2 /* EventExt.swift in Sources */,
