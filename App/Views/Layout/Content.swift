@@ -19,17 +19,44 @@ struct Content: View, SuperThread, SuperEvent {
         Group {
             ZStack {
                 if projectExists {
-                    hasProjectView
+                    NavigationSplitView(columnVisibility: $columnVisibility) {
+                        Sidebar()
+                    } content: {
+                        if projectExists {
+                            Tabs(tab: $tab)
+                                .frame(idealWidth: 300)
+                                .frame(minWidth: 50)
+                                .onChange(of: tab, {
+                                    app.setTab(tab)
+                                })
+                                .onAppear {
+                                    self.tab = app.currentTab
+                                }
+                        }
+                    } detail: {
+                        VStack(spacing: 0) {
+                            switch self.tab {
+                            case .Git:
+                                DetailGit()
+                            case .Banner:
+                                DetailBanner()
+                            case .Icon:
+                                DetailIcon()
+                            }
+
+                            StatusBar()
+                        }
+                    }
                 } else {
                     NoProject()
                 }
-                
+
                 Message()
             }
         }
         .onAppear(perform: onAppear)
-        .onChange(of: self.columnVisibility, checkColumnVisibility)
         .onChange(of: g.project, onProjectChange)
+        .onChange(of: columnVisibility, onCheckColumnVisibility)
         .toolbar(content: {
             ToolbarItem(placement: .navigation) {
                 ProjectPicker()
@@ -60,60 +87,21 @@ struct Content: View, SuperThread, SuperEvent {
             }
         })
     }
-
-    func checkColumnVisibility() {
-        self.main.async {
-            if columnVisibility == .doubleColumn {
-                app.hideSidebar()
-            } else if columnVisibility == .automatic || columnVisibility == .all {
-                app.showSidebar()
-            }
-        }
-    }
-
-    var hasProjectView: some View {
-            NavigationSplitView(columnVisibility: $columnVisibility) {
-                Sidebar()
-            } content: {
-                if projectExists {
-                    Tabs(tab: $tab)
-                        .frame(idealWidth: 300)
-                        .frame(minWidth: 50)
-                        .onChange(of: tab, {
-                            app.setTab(tab)
-                        })
-                        .onAppear {
-                            self.tab = app.currentTab
-                        }
-                }
-            } detail: {
-                VStack(spacing: 0) {
-                    switch self.tab {
-                    case .Git:
-                        DetailGit()
-                    case .Banner:
-                        DetailBanner()
-                    case .Icon:
-                        DetailIcon()
-                    }
-
-                    StatusBar()
-                }
-            }
-    }
 }
 
 // MARK: Event Handlers
 
 extension Content {
     func onProjectChange() {
-        if let newProject = g.project {
-            self.projectExists = FileManager.default.fileExists(atPath: newProject.path)
-        } else {
-            self.projectExists = false
+        withAnimation(.easeInOut(duration: 0.3)) {
+            if let newProject = g.project {
+                self.projectExists = FileManager.default.fileExists(atPath: newProject.path)
+            } else {
+                self.projectExists = false
+            }
         }
     }
-    
+
     func onAppear() {
         if app.sidebarVisibility == true {
             self.columnVisibility = .all
@@ -121,6 +109,16 @@ extension Content {
 
         if app.sidebarVisibility == false {
             self.columnVisibility = .doubleColumn
+        }
+    }
+
+    func onCheckColumnVisibility() {
+        self.main.async {
+            if columnVisibility == .doubleColumn {
+                app.hideSidebar()
+            } else if columnVisibility == .automatic || columnVisibility == .all {
+                app.showSidebar()
+            }
         }
     }
 }
