@@ -26,12 +26,7 @@ struct Content: View, SuperThread, SuperEvent {
                             Tabs(tab: $tab)
                                 .frame(idealWidth: 300)
                                 .frame(minWidth: 50)
-                                .onChange(of: tab, {
-                                    app.setTab(tab)
-                                })
-                                .onAppear {
-                                    self.tab = app.currentTab
-                                }
+                                .onChange(of: tab, onChangeOfTab)
                         }
                     } detail: {
                         VStack(spacing: 0) {
@@ -110,6 +105,8 @@ extension Content {
         if app.sidebarVisibility == false {
             self.columnVisibility = .doubleColumn
         }
+        
+        self.tab = app.currentTab
     }
 
     func onCheckColumnVisibility() {
@@ -120,6 +117,10 @@ extension Content {
                 app.showSidebar()
             }
         }
+    }
+    
+    func onChangeOfTab() {
+        app.setTab(tab)
     }
 }
 

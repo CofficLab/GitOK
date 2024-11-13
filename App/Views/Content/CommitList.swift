@@ -27,14 +27,10 @@ struct CommitList: View, SuperThread, SuperLog {
                         CommitTile(commit: commit, project: project, selected: selection).tag(commit)
                     }
 
-//                    if showCommitForm {
-                        GroupBox {
-                            CommitForm()
-                        }
+                    CommitForm()
                         .padding(.horizontal, 4)
                         .padding(.vertical, 6)
                         .background(BackgroundView.type2.opacity(0.1))
-//                    }
                 }
             }
             .onAppear(perform: onAppear)
