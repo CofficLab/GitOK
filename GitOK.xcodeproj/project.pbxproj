@@ -118,6 +118,7 @@
 		0BF75EE82BDF39B500A553CD /* PushExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BF75EE72BDF39B500A553CD /* PushExt.swift */; };
 		0BF75EEA2BDFA2FB00A553CD /* BtnOpenTerminal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BF75EE92BDFA2FB00A553CD /* BtnOpenTerminal.swift */; };
 		0BFA2E5F2BE111AA00AD98D7 /* TabBtn.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BFA2E5E2BE111AA00AD98D7 /* TabBtn.swift */; };
+		F511A69A2CE58734008C46DF /* BtnOpenCursor.swift in Sources */ = {isa = PBXBuildFile; fileRef = F511A6992CE58734008C46DF /* BtnOpenCursor.swift */; };
 		F53412912C75955F0006937C /* IconScale.swift in Sources */ = {isa = PBXBuildFile; fileRef = F53412902C75955F0006937C /* IconScale.swift */; };
 		F545D1602C1AD436006A6AFA /* BannerTile.swift in Sources */ = {isa = PBXBuildFile; fileRef = F545D15F2C1AD436006A6AFA /* BannerTile.swift */; };
 		F545D1622C1AD6F1006A6AFA /* BannerTopBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = F545D1612C1AD6F1006A6AFA /* BannerTopBar.swift */; };
@@ -279,6 +280,7 @@
 		0BF75EE72BDF39B500A553CD /* PushExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushExt.swift; sourceTree = "<group>"; };
 		0BF75EE92BDFA2FB00A553CD /* BtnOpenTerminal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BtnOpenTerminal.swift; sourceTree = "<group>"; };
 		0BFA2E5E2BE111AA00AD98D7 /* TabBtn.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBtn.swift; sourceTree = "<group>"; };
+		F511A6992CE58734008C46DF /* BtnOpenCursor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BtnOpenCursor.swift; sourceTree = "<group>"; };
 		F53412902C75955F0006937C /* IconScale.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconScale.swift; sourceTree = "<group>"; };
 		F545D15F2C1AD436006A6AFA /* BannerTile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerTile.swift; sourceTree = "<group>"; };
 		F545D1612C1AD6F1006A6AFA /* BannerTopBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerTopBar.swift; sourceTree = "<group>"; };
@@ -380,6 +382,7 @@
 		0B0E16912BD89C240078942B /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				F511A6982CE586FD008C46DF /* ToolBar */,
 				0B1C67B62BD9127000502EB1 /* Button */,
 				0BFA2E602BE11E7200AD98D7 /* Content */,
 				0B1C67F72BD9E60500502EB1 /* Detail */,
@@ -419,10 +422,6 @@
 				0B1C67FF2BD9F68F00502EB1 /* BtnFinder.swift */,
 				0BCC6D102BD94B5B006ADA94 /* BtnLog.swift */,
 				0BCC6D122BD94D15006ADA94 /* BtnLogs.swift */,
-				0B1C68012BD9F7B500502EB1 /* BtnOpen.swift */,
-				0B1C67F22BD9E21B00502EB1 /* BtnOpenRemote.swift */,
-				0BF75EE92BDFA2FB00A553CD /* BtnOpenTerminal.swift */,
-				0B1C68032BD9FAE500502EB1 /* BtnOpenXcode.swift */,
 				0B1C67EA2BD9181200502EB1 /* BtnPush.swift */,
 				0BCC6D082BD939FD006ADA94 /* BtnPwd.swift */,
 				0BCC6D0C2BD948AB006ADA94 /* BtnSync.swift */,
@@ -711,6 +710,18 @@
 			path = Content;
 			sourceTree = "<group>";
 		};
+		F511A6982CE586FD008C46DF /* ToolBar */ = {
+			isa = PBXGroup;
+			children = (
+				F511A6992CE58734008C46DF /* BtnOpenCursor.swift */,
+				0B1C68032BD9FAE500502EB1 /* BtnOpenXcode.swift */,
+				0BF75EE92BDFA2FB00A553CD /* BtnOpenTerminal.swift */,
+				0B1C67F22BD9E21B00502EB1 /* BtnOpenRemote.swift */,
+				0B1C68012BD9F7B500502EB1 /* BtnOpen.swift */,
+			);
+			path = ToolBar;
+			sourceTree = "<group>";
+		};
 		F545D16B2C1AF525006A6AFA /* Commit */ = {
 			isa = PBXGroup;
 			children = (
@@ -950,6 +961,7 @@
 				F54DFA422CA3B5B900F81BE3 /* IconEvent.swift in Sources */,
 				0BD15C562BDD23E1004024CF /* DiffExt.swift in Sources */,
 				0B8C7A6D2BE08CA800B4E817 /* DeviceType.swift in Sources */,
+				F511A69A2CE58734008C46DF /* BtnOpenCursor.swift in Sources */,
 				0B1C67B02BD9099800502EB1 /* AppPreview.swift in Sources */,
 				0BD15C5A2BDD275C004024CF /* DiffBlock.swift in Sources */,
 				0BD650F72CA1AC6700BA3CB8 /* AppEvent.swift in Sources */,

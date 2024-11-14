@@ -72,6 +72,7 @@ struct Content: View, SuperThread, SuperEvent {
                     BtnOpenTerminal(url: project.url)
                     BtnOpenXcode(url: project.url)
                     BtnOpen(url: project.url)
+                    BtnOpenCursor(url: project.url)
                     BtnFinder(url: project.url)
                     BtnOpenRemote(message: $message, path: project.path)
                     BtnSync(message: $message, path: project.path)
