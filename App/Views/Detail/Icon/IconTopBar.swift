@@ -51,7 +51,7 @@ struct IconTopBar: View {
 
 #Preview("BannerHome") {
     RootView {
-        BannerHome(banner: Binding.constant(BannerModel(
+        BannerEditor(banner: Binding.constant(BannerModel(
             title: "精彩标题",
             subTitle: "精彩小标题",
             features: [

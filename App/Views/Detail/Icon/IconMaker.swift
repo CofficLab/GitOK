@@ -106,7 +106,7 @@ struct IconMaker: View {
 
         (message, folderPath) = getFolderPath()
         if folderPath == nil {
-            m.setFlashMessage(message)
+            m.toast(message)
             return
         }
 
@@ -114,7 +114,7 @@ struct IconMaker: View {
         makemacOSIcon(tag, folder: folderPath!)
         makeContentJson(folder: folderPath!)
 
-        m.setFlashMessage("已存储到下载目录")
+        m.toast("已存储到下载目录")
     }
 
     @MainActor private func makeContentJson(folder: URL) {
