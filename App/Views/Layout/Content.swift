@@ -6,17 +6,23 @@ import SwiftUI
 struct Content: View, SuperThread, SuperEvent {
     @EnvironmentObject var app: AppProvider
     @EnvironmentObject var g: GitProvider
+    @EnvironmentObject var p: PluginProvider
     @Environment(\.modelContext) private var modelContext
 
     @State var branch: Branch? = nil
     @State var gitLog: String? = nil
     @State var message: String = ""
-    @State var tab: ActionTab = .Git
+    @State var tab: String = "Git"
     @State var columnVisibility: NavigationSplitViewVisibility = .detailOnly
     @State var projectExists: Bool = true
 
+    var tabPlugins: [SuperPlugin] {
+        p.plugins.filter { $0.isTab }
+    }
+
     var body: some View {
         Group {
+<<<<<<< Updated upstream
             ZStack {
                 if projectExists {
                     NavigationSplitView(columnVisibility: $columnVisibility) {
@@ -38,6 +44,21 @@ struct Content: View, SuperThread, SuperEvent {
                             case .Icon:
                                 DetailIcon()
                             }
+=======
+            if projectExists {
+                NavigationSplitView(columnVisibility: $columnVisibility) {
+                    Sidebar()
+                } content: {
+                    if projectExists {
+                        Tabs(tab: $tab)
+                            .frame(idealWidth: 300)
+                            .frame(minWidth: 50)
+                            .onChange(of: tab, onChangeOfTab)
+                    }
+                } detail: {
+                    VStack(spacing: 0) {
+                        tabPlugins.first { $0.label == tab }?.addDetailView()
+>>>>>>> Stashed changes
 
                             StatusBar()
                         }
@@ -58,10 +79,10 @@ struct Content: View, SuperThread, SuperEvent {
             }
 
             ToolbarItem(placement: .principal) {
-                Picker("选择标签", selection: $tab) {
-                    Text("Git").tag(ActionTab.Git)
-                    Text("Banner").tag(ActionTab.Banner)
-                    Text("Icon").tag(ActionTab.Icon)
+                Picker("选择模块", selection: $tab) {
+                    ForEach(tabPlugins, id: \.label) { plugin in
+                        Text(plugin.label).tag(plugin.label)
+                    }
                 }
                 .pickerStyle(SegmentedPickerStyle())
                 .frame(width: 200)

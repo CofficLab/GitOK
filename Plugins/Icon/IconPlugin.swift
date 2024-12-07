@@ -2,9 +2,9 @@ import MagicKit
 import OSLog
 import SwiftUI
 
-class BannerPlugin: SuperPlugin, SuperLog {
+class IconPlugin: SuperPlugin, SuperLog {
     let emoji = "📣"
-    var label: String = "Banner"
+    var label: String = "Icon"
     var isTab: Bool = true
 
     func addDBView() -> AnyView {
@@ -12,11 +12,11 @@ class BannerPlugin: SuperPlugin, SuperLog {
     }
 
     func addListView() -> AnyView {
-        AnyView(BannerList())
+        AnyView(IconList())
     }
 
     func addDetailView() -> AnyView {
-        AnyView(BannerDetail())
+        AnyView(DetailIcon())
     }
 
     func onInit() {
@@ -42,10 +42,4 @@ class BannerPlugin: SuperPlugin, SuperLog {
     func onPlayAssetUpdate() {
         os_log("\(self.t) onPlayAssetUpdate")
     }
-}
-
-#Preview {
-    AppPreview()
-        .frame(height: 800)
-        .frame(width: 800)
 }

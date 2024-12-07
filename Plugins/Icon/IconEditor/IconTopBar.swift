@@ -3,7 +3,6 @@ import SwiftUI
 struct IconTopBar: View {
     @EnvironmentObject var m: MessageProvider
 
-    @State var tab: ActionTab = .Git
     @State var inScreen: Bool = false
     @State var device: Device = .MacBook
 
