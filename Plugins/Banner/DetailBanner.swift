@@ -6,7 +6,7 @@ struct DetailBanner: View {
 
     var body: some View {
         VSplitView {
-            BannerHome()
+            BannerHome(banner: $b.banner)
         }
         .frame(maxWidth: .infinity)
         .onAppear(perform: onAppear)
