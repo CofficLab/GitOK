@@ -2,6 +2,13 @@ import SwiftUI
 
 struct BannerTitle: View {
     @State var isEditingTitle = false
+    @State private var isShowingColorPicker = false
+
+    // 预定义的颜色选项
+    private let colorOptions: [Color] = [
+        .red, .green, .yellow,
+        .white, .black, .blue,
+    ]
 
     @Binding var banner: BannerModel
 
@@ -10,7 +17,6 @@ struct BannerTitle: View {
             GeometryReader { geo in
                 TextField("", text: $banner.title)
                     .font(.system(size: 200))
-                    .foregroundColor(.white)
                     .padding(.horizontal)
                     .frame(width: geo.size.width)
                     .onSubmit {
@@ -18,12 +24,43 @@ struct BannerTitle: View {
                     }
             }
         } else {
-            Text(banner.title)
-                .font(.system(size: 200))
-                .foregroundColor(.white)
-                .onTapGesture {
-                    self.isEditingTitle = true
+            VStack(spacing: 0) {
+                HStack(spacing: 20) {
+                    ForEach(colorOptions, id: \.self) { color in
+                        Circle()
+                            .fill(color)
+                            .frame(width: 120, height: 120)
+                            .overlay(
+                                Circle()
+                                    .stroke(Color.white, lineWidth: 2)
+                            )
+                            .shadow(radius: 2)
+                            .onTapGesture {
+                                banner.titleColor = color
+                            }
+                    }
                 }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 8)
+                .background(
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(.background)
+                        .shadow(radius: 3)
+                )
+                .offset(y: -50)
+                .opacity(isShowingColorPicker ? 1 : 0)
+                .animation(.easeInOut, value: isShowingColorPicker)
+
+                Text(banner.title)
+                    .font(.system(size: 200))
+                    .foregroundColor(banner.titleColor ?? .white)
+                    .onTapGesture {
+                        self.isEditingTitle = true
+                    }
+            }
+            .onHover { isHovering in
+                isShowingColorPicker = isHovering
+            }
         }
     }
 }

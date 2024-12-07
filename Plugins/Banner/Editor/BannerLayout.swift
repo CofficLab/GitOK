@@ -15,8 +15,8 @@ struct BannerLayout: View {
                     VStack(spacing: 0, content: {
                         Spacer()
                         VStack(spacing: 50) {
-                            BannerTitle(banner: $banner)
-                            BannerSubTitle(banner: $banner)
+                            BannerTextEditor(banner: $banner, isTitle: true)
+                            BannerTextEditor(banner: $banner, isTitle: false)
                         }
                         .frame(height: device.height / 3)
                         Features(features: $banner.features)
@@ -41,8 +41,8 @@ struct BannerLayout: View {
                 }
             case .iPhoneSmall, .iPhoneBig:
                 VStack(spacing: 40, content: {
-                    BannerTitle(banner: $banner)
-                    BannerSubTitle(banner: $banner).padding()
+                    BannerTextEditor(banner: $banner, isTitle: true)
+                    BannerTextEditor(banner: $banner, isTitle: false)
                     Spacer()
                     BannerImage(banner: $banner)
                         .frame(maxHeight: .infinity)
@@ -54,8 +54,8 @@ struct BannerLayout: View {
                 })
             case .iPad, .none:
                 GeometryReader { _ in
-                    BannerTitle(banner: $banner)
-                    BannerSubTitle(banner: $banner)
+                    BannerTextEditor(banner: $banner, isTitle: true)
+                    BannerTextEditor(banner: $banner, isTitle: false)
                     Spacer()
                     BannerImage(banner: $banner)
                         .overlay(

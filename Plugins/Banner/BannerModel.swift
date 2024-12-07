@@ -20,6 +20,8 @@ struct BannerModel: JsonModel, SuperLog, SuperEvent {
     var path: String?
     var label: String = BannerModel.label
     var project: Project
+    var titleColor: Color?
+    var subTitleColor: Color?
 
     init(
         title: String = "",
