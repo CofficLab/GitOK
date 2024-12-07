@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -47,10 +47,6 @@
 		0B8C7A722BE08CBF00B4E817 /* MacAgent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7A702BE08CBF00B4E817 /* MacAgent.swift */; };
 		0B8C7AAF2BE08D1800B4E817 /* Icons in Resources */ = {isa = PBXBuildFile; fileRef = 0B8C7AAE2BE08D1800B4E817 /* Icons */; };
 		0B8C7AB32BE08DD100B4E817 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7AB22BE08DD100B4E817 /* RootView.swift */; };
-		0B8C7AC42BE08E0F00B4E817 /* ScreeniMac.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7ABF2BE08E0F00B4E817 /* ScreeniMac.swift */; };
-		0B8C7AC52BE08E0F00B4E817 /* ScreeniPad.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7AC02BE08E0F00B4E817 /* ScreeniPad.swift */; };
-		0B8C7AC62BE08E0F00B4E817 /* ScreeniPhone.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7AC12BE08E0F00B4E817 /* ScreeniPhone.swift */; };
-		0B8C7AC72BE08E0F00B4E817 /* ScreenMacBook.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7AC22BE08E0F00B4E817 /* ScreenMacBook.swift */; };
 		0B8C7AD52BE08E1900B4E817 /* Feature.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7AC82BE08E1900B4E817 /* Feature.swift */; };
 		0B8C7AD62BE08E1900B4E817 /* Features.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7AC92BE08E1900B4E817 /* Features.swift */; };
 		0B8C7AD72BE08E1900B4E817 /* BannerLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7ACA2BE08E1900B4E817 /* BannerLayout.swift */; };
@@ -214,10 +210,6 @@
 		0B8C7A702BE08CBF00B4E817 /* MacAgent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MacAgent.swift; sourceTree = "<group>"; };
 		0B8C7AAE2BE08D1800B4E817 /* Icons */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Icons; sourceTree = "<group>"; };
 		0B8C7AB22BE08DD100B4E817 /* RootView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
-		0B8C7ABF2BE08E0F00B4E817 /* ScreeniMac.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScreeniMac.swift; sourceTree = "<group>"; };
-		0B8C7AC02BE08E0F00B4E817 /* ScreeniPad.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScreeniPad.swift; sourceTree = "<group>"; };
-		0B8C7AC12BE08E0F00B4E817 /* ScreeniPhone.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScreeniPhone.swift; sourceTree = "<group>"; };
-		0B8C7AC22BE08E0F00B4E817 /* ScreenMacBook.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScreenMacBook.swift; sourceTree = "<group>"; };
 		0B8C7AC82BE08E1900B4E817 /* Feature.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Feature.swift; sourceTree = "<group>"; };
 		0B8C7AC92BE08E1900B4E817 /* Features.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Features.swift; sourceTree = "<group>"; };
 		0B8C7ACA2BE08E1900B4E817 /* BannerLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BannerLayout.swift; sourceTree = "<group>"; };
@@ -319,6 +311,11 @@
 		F5F794EA2C5B3E8100DCB824 /* UpdaterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdaterView.swift; sourceTree = "<group>"; };
 		F5FBCC332C3FB96000CED4F1 /* DetailGit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailGit.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		0B4EE4152D04A65000D7E963 /* Banner */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Banner; sourceTree = "<group>"; };
+		0B4EE4272D04A67D00D7E963 /* Screens */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Screens; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		0B0E167A2BD89A8F0078942B /* Frameworks */ = {
@@ -482,7 +479,7 @@
 		0B1C67F72BD9E60500502EB1 /* Detail */ = {
 			isa = PBXGroup;
 			children = (
-				0B8C7AD42BE08E1900B4E817 /* Banner */,
+				0B4EE4152D04A65000D7E963 /* Banner */,
 				F545D16B2C1AF525006A6AFA /* Commit */,
 				F5FBCC332C3FB96000CED4F1 /* DetailGit.swift */,
 				0BD651042CA2F52400BA3CB8 /* DetailIcon.swift */,
@@ -495,6 +492,7 @@
 		0B6B1B3C2D03D719007941F0 /* Banner */ = {
 			isa = PBXGroup;
 			children = (
+				0B4EE4272D04A67D00D7E963 /* Screens */,
 				0B6B1B5C2D045862007941F0 /* Buttons */,
 				0B6B1B5B2D044DF3007941F0 /* Editor */,
 				0BD651022CA2F51500BA3CB8 /* BannerDetail.swift */,
@@ -570,25 +568,6 @@
 				0B8C7A702BE08CBF00B4E817 /* MacAgent.swift */,
 			);
 			path = Delegate;
-			sourceTree = "<group>";
-		};
-		0B8C7AC32BE08E0F00B4E817 /* Screens */ = {
-			isa = PBXGroup;
-			children = (
-				0B8C7ABF2BE08E0F00B4E817 /* ScreeniMac.swift */,
-				0B8C7AC02BE08E0F00B4E817 /* ScreeniPad.swift */,
-				0B8C7AC12BE08E0F00B4E817 /* ScreeniPhone.swift */,
-				0B8C7AC22BE08E0F00B4E817 /* ScreenMacBook.swift */,
-			);
-			path = Screens;
-			sourceTree = "<group>";
-		};
-		0B8C7AD42BE08E1900B4E817 /* Banner */ = {
-			isa = PBXGroup;
-			children = (
-				0B8C7AC32BE08E0F00B4E817 /* Screens */,
-			);
-			path = Banner;
 			sourceTree = "<group>";
 		};
 		0B8C7AE72BE08E2200B4E817 /* Icon */ = {
@@ -840,6 +819,10 @@
 			);
 			dependencies = (
 			);
+			fileSystemSynchronizedGroups = (
+				0B4EE4152D04A65000D7E963 /* Banner */,
+				0B4EE4272D04A67D00D7E963 /* Screens */,
+			);
 			name = GitOK;
 			packageProductDependencies = (
 				F5F794E82C5B192600DCB824 /* Sparkle */,
@@ -919,7 +902,6 @@
 				F545D1662C1ADE8B006A6AFA /* IconTopBar.swift in Sources */,
 				0B8C7AF52BE08E2D00B4E817 /* Backgrounds.swift in Sources */,
 				0B44BCC62BDA947B00FBCF2F /* Branch.swift in Sources */,
-				0B8C7AC52BE08E0F00B4E817 /* ScreeniPad.swift in Sources */,
 				0BD650E62CA195EA00BA3CB8 /* PluginProvider.swift in Sources */,
 				0BB543EC2BE8932300D7A2B2 /* BtnDelIcon.swift in Sources */,
 				F545D16D2C1BF6E9006A6AFA /* BannerTitle.swift in Sources */,
@@ -999,14 +981,12 @@
 				0BD650F72CA1AC6700BA3CB8 /* AppEvent.swift in Sources */,
 				0B8C7B2F2BE0E5F100B4E817 /* Tabs.swift in Sources */,
 				0B1C68022BD9F7B500502EB1 /* BtnOpen.swift in Sources */,
-				0B8C7AC72BE08E0F00B4E817 /* ScreenMacBook.swift in Sources */,
 				0B0E16812BD89A8F0078942B /* GitOKApp.swift in Sources */,
 				0BD651032CA2F51500BA3CB8 /* BannerDetail.swift in Sources */,
 				0B8C7B1E2BE09B1500B4E817 /* BannerShell.swift in Sources */,
 				0B1C67BC2BD9132500502EB1 /* Git.swift in Sources */,
 				F54DFA472CA4034B00F81BE3 /* ProjectPicker.swift in Sources */,
 				0BD15C582BDD26DE004024CF /* Diff.swift in Sources */,
-				0B8C7AC42BE08E0F00B4E817 /* ScreeniMac.swift in Sources */,
 				0BD15C4C2BDBE959004024CF /* StateExt.swift in Sources */,
 				0BCC6D012BD92CB2006ADA94 /* DebugCommand.swift in Sources */,
 				0B1C67BA2BD912D900502EB1 /* BtnCommitAndPush.swift in Sources */,
@@ -1018,7 +998,6 @@
 				0B8C7A672BE08C8700B4E817 /* DBTask.swift in Sources */,
 				F5F794E02C5A1D2600DCB824 /* FileList.swift in Sources */,
 				0BD650F02CA196EA00BA3CB8 /* MessageProvider.swift in Sources */,
-				0B8C7AC62BE08E0F00B4E817 /* ScreeniPhone.swift in Sources */,
 				0B6BE4612BDA603000C8ACB2 /* BtnWhoami.swift in Sources */,
 				0B8C7A6C2BE08CA800B4E817 /* Device.swift in Sources */,
 				0B8C7B292BE0C6DB00B4E817 /* IconModel.swift in Sources */,
