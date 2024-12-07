@@ -1,16 +1,18 @@
+import AlertToast
 import SwiftData
 import SwiftUI
 
 struct RootView<Content>: View, SuperEvent where Content: View {
     var content: Content
-    var m = MessageProvider()
     var a = AppProvider()
     var g = GitProvider()
     var b = BannerProvider()
     var i = IconProvider()
-    @StateObject var p = PluginProvider()
     var c = AppConfig.getContainer()
     var w = WebConfig()
+    
+    @StateObject var p = PluginProvider()
+    @StateObject var m = MessageProvider()
 
     init(@ViewBuilder content: () -> Content) {
         self.content = content()
@@ -18,6 +20,26 @@ struct RootView<Content>: View, SuperEvent where Content: View {
 
     var body: some View {
         content
+            .toast(isPresenting: $m.showToast, alert: {
+                AlertToast(type: .systemImage("info.circle", .blue), title: m.toast)
+            }, completion: {
+                m.clearToast()
+            })
+            .toast(isPresenting: $m.showAlert, alert: {
+                AlertToast(displayMode: .alert, type: .error(.red), title: m.alert)
+            }, completion: {
+                m.clearAlert()
+            })
+            .toast(isPresenting: $m.showDone, alert: {
+                AlertToast(type: .complete(.green), title: m.doneMessage)
+            }, completion: {
+                m.clearDoneMessage()
+            })
+            .toast(isPresenting: $m.showError, duration: 0, tapToDismiss: true, alert: {
+                AlertToast(displayMode: .alert, type: .error(.indigo), title: m.error?.localizedDescription)
+            }, completion: {
+                m.clearError()
+            })
             .modelContainer(c)
             .environmentObject(a)
             .environmentObject(g)
