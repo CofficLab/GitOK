@@ -494,15 +494,14 @@
 		0B6B1B3C2D03D719007941F0 /* Banner */ = {
 			isa = PBXGroup;
 			children = (
+				0B6B1B5C2D045862007941F0 /* Buttons */,
 				0B6B1B5B2D044DF3007941F0 /* Editor */,
-				0B6B1B412D03D976007941F0 /* BannerBtnAdd.swift */,
 				0BD651022CA2F51500BA3CB8 /* BannerDetail.swift */,
 				0B8C7B242BE0BB7500B4E817 /* BannerList.swift */,
 				0B8C7B222BE0AD1D00B4E817 /* BannerModel.swift */,
 				0B6B1B3F2D03D7E4007941F0 /* BannerPlugin.swift */,
 				0BD650FA2CA2E09F00BA3CB8 /* BannerProvider.swift */,
 				F545D15F2C1AD436006A6AFA /* BannerTile.swift */,
-				0BB543DF2BE8875700D7A2B2 /* BtnDelBanner.swift */,
 			);
 			path = Banner;
 			sourceTree = "<group>";
@@ -515,6 +514,15 @@
 				F545D1612C1AD6F1006A6AFA /* BannerTopBar.swift */,
 			);
 			path = Editor;
+			sourceTree = "<group>";
+		};
+		0B6B1B5C2D045862007941F0 /* Buttons */ = {
+			isa = PBXGroup;
+			children = (
+				0B6B1B412D03D976007941F0 /* BannerBtnAdd.swift */,
+				0BB543DF2BE8875700D7A2B2 /* BtnDelBanner.swift */,
+			);
+			path = Buttons;
 			sourceTree = "<group>";
 		};
 		0B76FCF72BDDD4C600501F1F /* Resources */ = {

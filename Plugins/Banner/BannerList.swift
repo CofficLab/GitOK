@@ -14,15 +14,11 @@ struct BannerList: View, SuperThread {
     var body: some View {
         VStack(spacing: 0) {
             List(b.banners, selection: $selection) { banner in
-                BannerTile(banner: banner)
-                    .contextMenu(ContextMenu(menuItems: {
-                        BtnDelBanner(banner: banner)
-                    }))
-                    .tag(banner)
+                BannerTile(banner: banner).tag(banner)
             }
             .frame(maxHeight: .infinity)
 
-            HStack(spacing: 0) {
+            HStack() {
                 BannerBtnAdd()
                 BtnDelBanner(banner: b.banner)
             }
@@ -46,15 +42,15 @@ extension BannerList {
     func onBannerChange() {
         self.selection = b.banner.id
     }
-    
+
     func onProjectChange() {
         getBanners()
     }
-    
+
     func onAppear() {
         getBanners()
     }
-    
+
     func onSelectionChange() {
         b.setBanner(b.banners.first(where: { $0.id == selection }) ?? .empty)
     }
