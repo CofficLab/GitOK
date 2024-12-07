@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct Tabs: View {
+    @EnvironmentObject var p: PluginProvider
+
     @Binding var tab: ActionTab
 
     var body: some View {
@@ -9,7 +11,7 @@ struct Tabs: View {
                 if self.tab == .Git {
                     CommitList()
                 } else if self.tab == .Banner {
-                    BannerList()
+                    p.plugins.first { $0 is BannerPlugin }?.addListView()
                 } else if self.tab == .Icon {
                     IconList()
                 } else {

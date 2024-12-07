@@ -7,6 +7,9 @@ import MagicKit
 
 class PluginProvider: ObservableObject, SuperLog, SuperThread {
     let emoji = "🧩"
+    let plugins: [SuperPlugin] = [
+        BannerPlugin()
+    ]
 
     init() {
         let verbose = false

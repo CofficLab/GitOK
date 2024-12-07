@@ -27,6 +27,10 @@
 		0B1C68022BD9F7B500502EB1 /* BtnOpen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1C68012BD9F7B500502EB1 /* BtnOpen.swift */; };
 		0B1C68042BD9FAE500502EB1 /* BtnOpenXcode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1C68032BD9FAE500502EB1 /* BtnOpenXcode.swift */; };
 		0B44BCC62BDA947B00FBCF2F /* Branch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B44BCC52BDA947B00FBCF2F /* Branch.swift */; };
+		0B6B1B3E2D03D7BA007941F0 /* SuperPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B6B1B3D2D03D7BA007941F0 /* SuperPlugin.swift */; };
+		0B6B1B402D03D7E8007941F0 /* BannerPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B6B1B3F2D03D7E4007941F0 /* BannerPlugin.swift */; };
+		0B6B1B422D03D980007941F0 /* BannerBtnAdd.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B6B1B412D03D976007941F0 /* BannerBtnAdd.swift */; };
+		0B6B1B462D03DAAF007941F0 /* BannerListBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B6B1B452D03DAAF007941F0 /* BannerListBar.swift */; };
 		0B6BE4612BDA603000C8ACB2 /* BtnWhoami.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B6BE4602BDA603000C8ACB2 /* BtnWhoami.swift */; };
 		0B6BE4652BDA7B5300C8ACB2 /* CommitExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B6BE4642BDA7B5300C8ACB2 /* CommitExt.swift */; };
 		0B76FCEF2BDDD12A00501F1F /* WebConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B76FCEE2BDDD12A00501F1F /* WebConfig.swift */; };
@@ -190,6 +194,10 @@
 		0B332F052BDA01E600DFA5BB /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		0B332F062BDA02BC00DFA5BB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0B44BCC52BDA947B00FBCF2F /* Branch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Branch.swift; sourceTree = "<group>"; };
+		0B6B1B3D2D03D7BA007941F0 /* SuperPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuperPlugin.swift; sourceTree = "<group>"; };
+		0B6B1B3F2D03D7E4007941F0 /* BannerPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerPlugin.swift; sourceTree = "<group>"; };
+		0B6B1B412D03D976007941F0 /* BannerBtnAdd.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerBtnAdd.swift; sourceTree = "<group>"; };
+		0B6B1B452D03DAAF007941F0 /* BannerListBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerListBar.swift; sourceTree = "<group>"; };
 		0B6BE4602BDA603000C8ACB2 /* BtnWhoami.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BtnWhoami.swift; sourceTree = "<group>"; };
 		0B6BE4642BDA7B5300C8ACB2 /* CommitExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommitExt.swift; sourceTree = "<group>"; };
 		0B76FCEE2BDDD12A00501F1F /* WebConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebConfig.swift; sourceTree = "<group>"; };
@@ -404,7 +412,6 @@
 			isa = PBXGroup;
 			children = (
 				0B1C67B22BD90B5700502EB1 /* AppProvider.swift */,
-				0BD650FA2CA2E09F00BA3CB8 /* BannerProvider.swift */,
 				F588FB782CA2494E00F6AE42 /* GitProvider.swift */,
 				0BD650FC2CA2E49F00BA3CB8 /* IconProvider.swift */,
 				0BD650EF2CA196EA00BA3CB8 /* MessageProvider.swift */,
@@ -480,12 +487,27 @@
 				0B8C7AD42BE08E1900B4E817 /* Banner */,
 				F545D16B2C1AF525006A6AFA /* Commit */,
 				F5FBCC332C3FB96000CED4F1 /* DetailGit.swift */,
-				0BD651022CA2F51500BA3CB8 /* DetailBanner.swift */,
 				0BD651042CA2F52400BA3CB8 /* DetailIcon.swift */,
 				F5F794DF2C5A1D2600DCB824 /* FileList.swift */,
 				0B8C7AE72BE08E2200B4E817 /* Icon */,
 			);
 			path = Detail;
+			sourceTree = "<group>";
+		};
+		0B6B1B3C2D03D719007941F0 /* Banner */ = {
+			isa = PBXGroup;
+			children = (
+				0BD650FE2CA2E9B100BA3CB8 /* BannerHome.swift */,
+				0BD651022CA2F51500BA3CB8 /* DetailBanner.swift */,
+				F545D15F2C1AD436006A6AFA /* BannerTile.swift */,
+				0BD650FA2CA2E09F00BA3CB8 /* BannerProvider.swift */,
+				0B6B1B412D03D976007941F0 /* BannerBtnAdd.swift */,
+				0B8C7B242BE0BB7500B4E817 /* BannerList.swift */,
+				0B6B1B452D03DAAF007941F0 /* BannerListBar.swift */,
+				0B8C7B222BE0AD1D00B4E817 /* BannerModel.swift */,
+				0B6B1B3F2D03D7E4007941F0 /* BannerPlugin.swift */,
+			);
+			path = Banner;
 			sourceTree = "<group>";
 		};
 		0B76FCF72BDDD4C600501F1F /* Resources */ = {
@@ -538,7 +560,6 @@
 		0B8C7AD42BE08E1900B4E817 /* Banner */ = {
 			isa = PBXGroup;
 			children = (
-				0BD650FE2CA2E9B100BA3CB8 /* BannerHome.swift */,
 				0B8C7AF12BE08E2D00B4E817 /* Backgrounds.swift */,
 				0B8C7ACA2BE08E1900B4E817 /* BannerLayout.swift */,
 				F545D16C2C1BF6E9006A6AFA /* BannerTitle.swift */,
@@ -597,6 +618,7 @@
 		0BB543E72BE890DA00D7A2B2 /* Contact */ = {
 			isa = PBXGroup;
 			children = (
+				0B6B1B3D2D03D7BA007941F0 /* SuperPlugin.swift */,
 				0BB543E82BE890F200D7A2B2 /* JsonModel.swift */,
 				F588FB712CA15DAD00F6AE42 /* SuperEvent.swift */,
 			);
@@ -632,6 +654,7 @@
 		0BD650E42CA1956D00BA3CB8 /* Plugins */ = {
 			isa = PBXGroup;
 			children = (
+				0B6B1B3C2D03D719007941F0 /* Banner */,
 				0BD650F12CA1A8E800BA3CB8 /* FileInfo */,
 				F54DFA482CA40BB200F81BE3 /* ProjectInfo */,
 				F580BF992CE4A18700977CFC /* QuickMerge */,
@@ -697,8 +720,6 @@
 			children = (
 				0BD650F82CA1B98A00BA3CB8 /* CommitForm.swift */,
 				0B8C7B322BE0EAE900B4E817 /* ActionTab.swift */,
-				0B8C7B242BE0BB7500B4E817 /* BannerList.swift */,
-				F545D15F2C1AD436006A6AFA /* BannerTile.swift */,
 				0BF75EE32BDF2CCD00A553CD /* CommitList.swift */,
 				0BF75EDF2BDE4C0C00A553CD /* CommitTile.swift */,
 				0BDE61AC2BDB4E86006E23EA /* FileTile.swift */,
@@ -782,7 +803,6 @@
 			isa = PBXGroup;
 			children = (
 				F54DFA3D2CA395C200F81BE3 /* SmartImage.swift */,
-				0B8C7B222BE0AD1D00B4E817 /* BannerModel.swift */,
 				0B44BCC52BDA947B00FBCF2F /* Branch.swift */,
 				0B1C67EC2BD9D9CB00502EB1 /* CommitCategory.swift */,
 				F5F794DB2C5A0D7D00DCB824 /* CommitSample.swift */,
@@ -880,6 +900,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0B1C67B32BD90B5700502EB1 /* AppProvider.swift in Sources */,
+				0B6B1B462D03DAAF007941F0 /* BannerListBar.swift in Sources */,
 				F588FB722CA15DAD00F6AE42 /* SuperEvent.swift in Sources */,
 				0BF75EE82BDF39B500A553CD /* PushExt.swift in Sources */,
 				0B8C7A6F2BE08CA800B4E817 /* ToolName.swift in Sources */,
@@ -953,12 +974,15 @@
 				F545D1642C1ADBD0006A6AFA /* IconTile.swift in Sources */,
 				0B8C7AF42BE08E2D00B4E817 /* Snapshot.swift in Sources */,
 				0BF75EE42BDF2CCD00A553CD /* CommitList.swift in Sources */,
+				0B6B1B3E2D03D7BA007941F0 /* SuperPlugin.swift in Sources */,
 				0B76FD242BDE326300501F1F /* FileExt.swift in Sources */,
 				0BDE61AD2BDB4E87006E23EA /* FileTile.swift in Sources */,
 				0B1C67F12BD9DB1F00502EB1 /* CommitCategoryPicker.swift in Sources */,
+				0B6B1B402D03D7E8007941F0 /* BannerPlugin.swift in Sources */,
 				0B6BE4652BDA7B5300C8ACB2 /* CommitExt.swift in Sources */,
 				0B8C7AEC2BE08E2200B4E817 /* IconAsset.swift in Sources */,
 				F54DFA422CA3B5B900F81BE3 /* IconEvent.swift in Sources */,
+				0B6B1B422D03D980007941F0 /* BannerBtnAdd.swift in Sources */,
 				0BD15C562BDD23E1004024CF /* DiffExt.swift in Sources */,
 				0B8C7A6D2BE08CA800B4E817 /* DeviceType.swift in Sources */,
 				F511A69A2CE58734008C46DF /* BtnOpenCursor.swift in Sources */,
