@@ -4,8 +4,7 @@ import SwiftUI
 
 class BannerPlugin: SuperPlugin, SuperLog {
     let emoji = "📣"
-    var label: String = "Banner"
-    var isTab: Bool = true
+    var label: String = ""
 
     func addDBView() -> AnyView {
         AnyView(EmptyView())
@@ -13,10 +12,6 @@ class BannerPlugin: SuperPlugin, SuperLog {
 
     func addListView() -> AnyView {
         AnyView(BannerList())
-    }
-
-    func addDetailView() -> AnyView {
-        AnyView(BannerDetail())
     }
 
     func onInit() {
@@ -42,10 +37,4 @@ class BannerPlugin: SuperPlugin, SuperLog {
     func onPlayAssetUpdate() {
         os_log("\(self.t) onPlayAssetUpdate")
     }
-}
-
-#Preview {
-    AppPreview()
-        .frame(height: 800)
-        .frame(width: 800)
 }

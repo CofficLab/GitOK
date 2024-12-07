@@ -69,11 +69,8 @@
 		0B8C7B292BE0C6DB00B4E817 /* IconModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7B282BE0C6DB00B4E817 /* IconModel.swift */; };
 		0B8C7B2B2BE0C8F100B4E817 /* IconList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7B2A2BE0C8F100B4E817 /* IconList.swift */; };
 		0B8C7B2F2BE0E5F100B4E817 /* Tabs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7B2E2BE0E5F100B4E817 /* Tabs.swift */; };
-<<<<<<< Updated upstream
 		0B8C7B332BE0EAE900B4E817 /* ActionTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7B322BE0EAE900B4E817 /* ActionTab.swift */; };
 		0B9EA3542C1D314200A4059A /* BannerOpacity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B9EA3532C1D314200A4059A /* BannerOpacity.swift */; };
-=======
->>>>>>> Stashed changes
 		0B9EA3562C1ECF5A00A4059A /* IconOpacity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B9EA3552C1ECF5A00A4059A /* IconOpacity.swift */; };
 		0BB1C7122D045C0600C4EA70 /* AlertToast in Frameworks */ = {isa = PBXBuildFile; productRef = 0BB1C7112D045C0600C4EA70 /* AlertToast */; };
 		0BB4278E2BE72512004E6F82 /* QueueExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BB4278D2BE72512004E6F82 /* QueueExt.swift */; };
@@ -90,13 +87,6 @@
 		0BCC6D112BD94B5B006ADA94 /* BtnLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCC6D102BD94B5B006ADA94 /* BtnLog.swift */; };
 		0BCC6D132BD94D15006ADA94 /* BtnLogs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCC6D122BD94D15006ADA94 /* BtnLogs.swift */; };
 		0BCC6D152BD9526F006ADA94 /* GitCommit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCC6D142BD9526F006ADA94 /* GitCommit.swift */; };
-<<<<<<< Updated upstream
-=======
-		0BCFA9762D046FE0006A22F7 /* BannerBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCFA9752D046FE0006A22F7 /* BannerBackground.swift */; };
-		0BCFA97C2D048509006A22F7 /* BannerTextEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCFA97B2D048509006A22F7 /* BannerTextEditor.swift */; };
-		0BCFA9932D049E9B006A22F7 /* IconPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCFA9922D049E9B006A22F7 /* IconPlugin.swift */; };
-		0BCFA9962D04A119006A22F7 /* GitPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCFA9952D04A119006A22F7 /* GitPlugin.swift */; };
->>>>>>> Stashed changes
 		0BD15C4C2BDBE959004024CF /* StateExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD15C4B2BDBE959004024CF /* StateExt.swift */; };
 		0BD15C522BDC8D91004024CF /* SmartError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD15C512BDC8D91004024CF /* SmartError.swift */; };
 		0BD15C562BDD23E1004024CF /* DiffExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD15C552BDD23E1004024CF /* DiffExt.swift */; };
@@ -246,11 +236,8 @@
 		0B8C7B282BE0C6DB00B4E817 /* IconModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconModel.swift; sourceTree = "<group>"; };
 		0B8C7B2A2BE0C8F100B4E817 /* IconList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconList.swift; sourceTree = "<group>"; };
 		0B8C7B2E2BE0E5F100B4E817 /* Tabs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tabs.swift; sourceTree = "<group>"; };
-<<<<<<< Updated upstream
 		0B8C7B322BE0EAE900B4E817 /* ActionTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionTab.swift; sourceTree = "<group>"; };
 		0B9EA3532C1D314200A4059A /* BannerOpacity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerOpacity.swift; sourceTree = "<group>"; };
-=======
->>>>>>> Stashed changes
 		0B9EA3552C1ECF5A00A4059A /* IconOpacity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconOpacity.swift; sourceTree = "<group>"; };
 		0BB4278D2BE72512004E6F82 /* QueueExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QueueExt.swift; sourceTree = "<group>"; };
 		0BB543DF2BE8875700D7A2B2 /* BtnDelBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BtnDelBanner.swift; sourceTree = "<group>"; };
@@ -266,13 +253,6 @@
 		0BCC6D102BD94B5B006ADA94 /* BtnLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BtnLog.swift; sourceTree = "<group>"; };
 		0BCC6D122BD94D15006ADA94 /* BtnLogs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BtnLogs.swift; sourceTree = "<group>"; };
 		0BCC6D142BD9526F006ADA94 /* GitCommit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitCommit.swift; sourceTree = "<group>"; };
-<<<<<<< Updated upstream
-=======
-		0BCFA9752D046FE0006A22F7 /* BannerBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerBackground.swift; sourceTree = "<group>"; };
-		0BCFA97B2D048509006A22F7 /* BannerTextEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerTextEditor.swift; sourceTree = "<group>"; };
-		0BCFA9922D049E9B006A22F7 /* IconPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconPlugin.swift; sourceTree = "<group>"; };
-		0BCFA9952D04A119006A22F7 /* GitPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitPlugin.swift; sourceTree = "<group>"; };
->>>>>>> Stashed changes
 		0BD15C4B2BDBE959004024CF /* StateExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StateExt.swift; sourceTree = "<group>"; };
 		0BD15C512BDC8D91004024CF /* SmartError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmartError.swift; sourceTree = "<group>"; };
 		0BD15C552BDD23E1004024CF /* DiffExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiffExt.swift; sourceTree = "<group>"; };
@@ -413,6 +393,7 @@
 				F511A6982CE586FD008C46DF /* ToolBar */,
 				0B1C67B62BD9127000502EB1 /* Button */,
 				0BFA2E602BE11E7200AD98D7 /* Content */,
+				0B1C67F72BD9E60500502EB1 /* Detail */,
 				0B1C67F62BD9E5E700502EB1 /* Layout */,
 			);
 			path = Views;
@@ -499,10 +480,22 @@
 			path = Layout;
 			sourceTree = "<group>";
 		};
+		0B1C67F72BD9E60500502EB1 /* Detail */ = {
+			isa = PBXGroup;
+			children = (
+				0B8C7AD42BE08E1900B4E817 /* Banner */,
+				F545D16B2C1AF525006A6AFA /* Commit */,
+				F5FBCC332C3FB96000CED4F1 /* DetailGit.swift */,
+				0BD651042CA2F52400BA3CB8 /* DetailIcon.swift */,
+				F5F794DF2C5A1D2600DCB824 /* FileList.swift */,
+				0B8C7AE72BE08E2200B4E817 /* Icon */,
+			);
+			path = Detail;
+			sourceTree = "<group>";
+		};
 		0B6B1B3C2D03D719007941F0 /* Banner */ = {
 			isa = PBXGroup;
 			children = (
-				0B8C7AC32BE08E0F00B4E817 /* Screens */,
 				0B6B1B5C2D045862007941F0 /* Buttons */,
 				0B6B1B5B2D044DF3007941F0 /* Editor */,
 				0BD651022CA2F51500BA3CB8 /* BannerDetail.swift */,
@@ -581,7 +574,6 @@
 			path = Screens;
 			sourceTree = "<group>";
 		};
-<<<<<<< Updated upstream
 		0B8C7AD42BE08E1900B4E817 /* Banner */ = {
 			isa = PBXGroup;
 			children = (
@@ -600,9 +592,6 @@
 			sourceTree = "<group>";
 		};
 		0B8C7AE72BE08E2200B4E817 /* Icon */ = {
-=======
-		0B8C7AE72BE08E2200B4E817 /* IconEditor */ = {
->>>>>>> Stashed changes
 			isa = PBXGroup;
 			children = (
 				0BD651002CA2EA6800BA3CB8 /* IconHome.swift */,
@@ -613,7 +602,7 @@
 				0B9EA3552C1ECF5A00A4059A /* IconOpacity.swift */,
 				F53412902C75955F0006937C /* IconScale.swift */,
 			);
-			path = IconEditor;
+			path = Icon;
 			sourceTree = "<group>";
 		};
 		0B8C7B1C2BE09B0700B4E817 /* Banner */ = {
@@ -669,41 +658,11 @@
 			path = Command;
 			sourceTree = "<group>";
 		};
-		0BCFA9912D049E96006A22F7 /* Icon */ = {
-			isa = PBXGroup;
-			children = (
-				F545D1632C1ADBD0006A6AFA /* IconTile.swift */,
-				0B8C7AE72BE08E2200B4E817 /* IconEditor */,
-				0B8C7B2A2BE0C8F100B4E817 /* IconList.swift */,
-				0BCFA9922D049E9B006A22F7 /* IconPlugin.swift */,
-				0BD651042CA2F52400BA3CB8 /* DetailIcon.swift */,
-			);
-			path = Icon;
-			sourceTree = "<group>";
-		};
-		0BCFA9942D04A10F006A22F7 /* Git */ = {
-			isa = PBXGroup;
-			children = (
-				0BF75EDF2BDE4C0C00A553CD /* CommitTile.swift */,
-				0BDE61AC2BDB4E86006E23EA /* FileTile.swift */,
-				F545D1672C1AEBF1006A6AFA /* FileDetail.swift */,
-				F5FBCC332C3FB96000CED4F1 /* DetailGit.swift */,
-				0BF75EE32BDF2CCD00A553CD /* CommitList.swift */,
-				F5F794DF2C5A1D2600DCB824 /* FileList.swift */,
-				0BCFA9952D04A119006A22F7 /* GitPlugin.swift */,
-				0B1C67F02BD9DB1F00502EB1 /* CommitCategoryPicker.swift */,
-				0BD650F82CA1B98A00BA3CB8 /* CommitForm.swift */,
-			);
-			path = Git;
-			sourceTree = "<group>";
-		};
 		0BD650E42CA1956D00BA3CB8 /* Plugins */ = {
 			isa = PBXGroup;
 			children = (
 				0B6B1B3C2D03D719007941F0 /* Banner */,
 				0BD650F12CA1A8E800BA3CB8 /* FileInfo */,
-				0BCFA9942D04A10F006A22F7 /* Git */,
-				0BCFA9912D049E96006A22F7 /* Icon */,
 				F54DFA482CA40BB200F81BE3 /* ProjectInfo */,
 				F580BF992CE4A18700977CFC /* QuickMerge */,
 				0BD650E82CA1969100BA3CB8 /* SmartLog */,
@@ -766,6 +725,13 @@
 		0BFA2E602BE11E7200AD98D7 /* Content */ = {
 			isa = PBXGroup;
 			children = (
+				0BD650F82CA1B98A00BA3CB8 /* CommitForm.swift */,
+				0B8C7B322BE0EAE900B4E817 /* ActionTab.swift */,
+				0BF75EE32BDF2CCD00A553CD /* CommitList.swift */,
+				0BF75EDF2BDE4C0C00A553CD /* CommitTile.swift */,
+				0BDE61AC2BDB4E86006E23EA /* FileTile.swift */,
+				0B8C7B2A2BE0C8F100B4E817 /* IconList.swift */,
+				F545D1632C1ADBD0006A6AFA /* IconTile.swift */,
 				0BFA2E5E2BE111AA00AD98D7 /* TabBtn.swift */,
 				0B8C7B2E2BE0E5F100B4E817 /* Tabs.swift */,
 			);
@@ -782,6 +748,15 @@
 				0B1C68012BD9F7B500502EB1 /* BtnOpen.swift */,
 			);
 			path = ToolBar;
+			sourceTree = "<group>";
+		};
+		F545D16B2C1AF525006A6AFA /* Commit */ = {
+			isa = PBXGroup;
+			children = (
+				0B1C67F02BD9DB1F00502EB1 /* CommitCategoryPicker.swift */,
+				F545D1672C1AEBF1006A6AFA /* FileDetail.swift */,
+			);
+			path = Commit;
 			sourceTree = "<group>";
 		};
 		F54DFA432CA3E5E300F81BE3 /* SmartMerge */ = {
@@ -979,7 +954,6 @@
 				0B1C67C42BD915F200502EB1 /* AppConfig.swift in Sources */,
 				0BFA2E5F2BE111AA00AD98D7 /* TabBtn.swift in Sources */,
 				0B0E16832BD89A8F0078942B /* Content.swift in Sources */,
-				0BCFA9932D049E9B006A22F7 /* IconPlugin.swift in Sources */,
 				0BCC6D0D2BD948AB006ADA94 /* BtnSync.swift in Sources */,
 				0B8C7A5D2BE08BF600B4E817 /* IconPng.swift in Sources */,
 				0B8C7AD52BE08E1900B4E817 /* Feature.swift in Sources */,
@@ -1003,6 +977,7 @@
 				0B8C7B2B2BE0C8F100B4E817 /* IconList.swift in Sources */,
 				0B8C7AF72BE08E4200B4E817 /* SmartButton.swift in Sources */,
 				F588FB752CA16B4F00F6AE42 /* GitError.swift in Sources */,
+				0B8C7B332BE0EAE900B4E817 /* ActionTab.swift in Sources */,
 				0BCC6D032BD932DA006ADA94 /* PathExt.swift in Sources */,
 				F545D1642C1ADBD0006A6AFA /* IconTile.swift in Sources */,
 				0B8C7AF42BE08E2D00B4E817 /* Snapshot.swift in Sources */,
@@ -1028,7 +1003,6 @@
 				0B0E16812BD89A8F0078942B /* GitOKApp.swift in Sources */,
 				0BD651032CA2F51500BA3CB8 /* BannerDetail.swift in Sources */,
 				0B8C7B1E2BE09B1500B4E817 /* BannerShell.swift in Sources */,
-				0BCFA9962D04A119006A22F7 /* GitPlugin.swift in Sources */,
 				0B1C67BC2BD9132500502EB1 /* Git.swift in Sources */,
 				F54DFA472CA4034B00F81BE3 /* ProjectPicker.swift in Sources */,
 				0BD15C582BDD26DE004024CF /* Diff.swift in Sources */,
