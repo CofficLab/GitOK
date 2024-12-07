@@ -5,6 +5,7 @@ struct BannerTopBar: View {
 
     @Binding var snapshotTapped: Bool
     @Binding var banner: BannerModel
+    @Binding var showBorder: Bool
 
     var body: some View {
         VStack(spacing: 0) {
@@ -30,6 +31,15 @@ struct BannerTopBar: View {
                 BannerOpacity(banner: $banner)
 
                 TabBtn(
+                    title: "边框",
+                    imageName: "square.dashed",
+                    selected: showBorder,
+                    onTap: {
+                        self.showBorder.toggle()
+                    }
+                )
+
+                TabBtn(
                     title: "截图",
                     imageName: "camera.aperture",
                     selected: false,
@@ -42,9 +52,9 @@ struct BannerTopBar: View {
             .frame(maxWidth: .infinity)
             .labelStyle(.iconOnly)
             .background(.secondary.opacity(0.5))
-            
+
             // MARK: Row2
-            
+
             GroupBox {
                 Backgrounds(current: $banner.backgroundId)
             }.padding()
@@ -53,10 +63,10 @@ struct BannerTopBar: View {
 }
 
 #Preview("BannerHome") {
-    RootView {
-        BannerHome(banner: Binding.constant(BannerModel(
-            title: "精彩标题",
-            subTitle: "精彩小标题",
+    struct PreviewWrapper: View {
+        @State var previewBanner = BannerModel(
+            title: "制作海报",
+            subTitle: "简单又快捷",
             features: [
                 "无广告",
                 "好软件",
@@ -64,10 +74,26 @@ struct BannerTopBar: View {
                 "无会员",
             ],
             path: ""
-        )))
+        )
+
+        var body: some View {
+            RootView {
+                BannerEditor(banner: $previewBanner)
+            }
+            .frame(width: 500)
+            .frame(height: 500)
+        }
     }
-    .frame(width: 500)
-    .frame(height: 400)
+
+    return PreviewWrapper()
+}
+
+#Preview("APP") {
+    RootView {
+        BannerDetail()
+    }
+    .frame(width: 800)
+    .frame(height: 500)
 }
 
 #Preview("App") {

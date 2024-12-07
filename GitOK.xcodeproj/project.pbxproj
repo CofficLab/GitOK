@@ -87,6 +87,7 @@
 		0BCC6D112BD94B5B006ADA94 /* BtnLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCC6D102BD94B5B006ADA94 /* BtnLog.swift */; };
 		0BCC6D132BD94D15006ADA94 /* BtnLogs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCC6D122BD94D15006ADA94 /* BtnLogs.swift */; };
 		0BCC6D152BD9526F006ADA94 /* GitCommit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCC6D142BD9526F006ADA94 /* GitCommit.swift */; };
+		0BCFA9762D046FE0006A22F7 /* BannerBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCFA9752D046FE0006A22F7 /* BannerBackground.swift */; };
 		0BD15C4C2BDBE959004024CF /* StateExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD15C4B2BDBE959004024CF /* StateExt.swift */; };
 		0BD15C522BDC8D91004024CF /* SmartError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD15C512BDC8D91004024CF /* SmartError.swift */; };
 		0BD15C562BDD23E1004024CF /* DiffExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD15C552BDD23E1004024CF /* DiffExt.swift */; };
@@ -107,7 +108,7 @@
 		0BD650F92CA1B98A00BA3CB8 /* CommitForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD650F82CA1B98A00BA3CB8 /* CommitForm.swift */; };
 		0BD650FB2CA2E09F00BA3CB8 /* BannerProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD650FA2CA2E09F00BA3CB8 /* BannerProvider.swift */; };
 		0BD650FD2CA2E49F00BA3CB8 /* IconProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD650FC2CA2E49F00BA3CB8 /* IconProvider.swift */; };
-		0BD650FF2CA2E9B100BA3CB8 /* BannerHome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD650FE2CA2E9B100BA3CB8 /* BannerHome.swift */; };
+		0BD650FF2CA2E9B100BA3CB8 /* BannerEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD650FE2CA2E9B100BA3CB8 /* BannerEditor.swift */; };
 		0BD651012CA2EA6800BA3CB8 /* IconHome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD651002CA2EA6800BA3CB8 /* IconHome.swift */; };
 		0BD651032CA2F51500BA3CB8 /* BannerDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD651022CA2F51500BA3CB8 /* BannerDetail.swift */; };
 		0BD651052CA2F52400BA3CB8 /* DetailIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD651042CA2F52400BA3CB8 /* DetailIcon.swift */; };
@@ -253,6 +254,7 @@
 		0BCC6D102BD94B5B006ADA94 /* BtnLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BtnLog.swift; sourceTree = "<group>"; };
 		0BCC6D122BD94D15006ADA94 /* BtnLogs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BtnLogs.swift; sourceTree = "<group>"; };
 		0BCC6D142BD9526F006ADA94 /* GitCommit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitCommit.swift; sourceTree = "<group>"; };
+		0BCFA9752D046FE0006A22F7 /* BannerBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerBackground.swift; sourceTree = "<group>"; };
 		0BD15C4B2BDBE959004024CF /* StateExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StateExt.swift; sourceTree = "<group>"; };
 		0BD15C512BDC8D91004024CF /* SmartError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmartError.swift; sourceTree = "<group>"; };
 		0BD15C552BDD23E1004024CF /* DiffExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiffExt.swift; sourceTree = "<group>"; };
@@ -273,7 +275,7 @@
 		0BD650F82CA1B98A00BA3CB8 /* CommitForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommitForm.swift; sourceTree = "<group>"; };
 		0BD650FA2CA2E09F00BA3CB8 /* BannerProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerProvider.swift; sourceTree = "<group>"; };
 		0BD650FC2CA2E49F00BA3CB8 /* IconProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconProvider.swift; sourceTree = "<group>"; };
-		0BD650FE2CA2E9B100BA3CB8 /* BannerHome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerHome.swift; sourceTree = "<group>"; };
+		0BD650FE2CA2E9B100BA3CB8 /* BannerEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerEditor.swift; sourceTree = "<group>"; };
 		0BD651002CA2EA6800BA3CB8 /* IconHome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconHome.swift; sourceTree = "<group>"; };
 		0BD651022CA2F51500BA3CB8 /* BannerDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerDetail.swift; sourceTree = "<group>"; };
 		0BD651042CA2F52400BA3CB8 /* DetailIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailIcon.swift; sourceTree = "<group>"; };
@@ -512,8 +514,18 @@
 			isa = PBXGroup;
 			children = (
 				0B8C7AF12BE08E2D00B4E817 /* Backgrounds.swift */,
-				0BD650FE2CA2E9B100BA3CB8 /* BannerHome.swift */,
+				0BCFA9752D046FE0006A22F7 /* BannerBackground.swift */,
+				0BD650FE2CA2E9B100BA3CB8 /* BannerEditor.swift */,
+				F545D1702C1C155E006A6AFA /* BannerImage.swift */,
+				0B8C7ACA2BE08E1900B4E817 /* BannerLayout.swift */,
+				0B9EA3532C1D314200A4059A /* BannerOpacity.swift */,
+				F545D16E2C1C0CF3006A6AFA /* BannerSubTitle.swift */,
+				F545D16C2C1BF6E9006A6AFA /* BannerTitle.swift */,
 				F545D1612C1AD6F1006A6AFA /* BannerTopBar.swift */,
+				0B8C7AC82BE08E1900B4E817 /* Feature.swift */,
+				0B8C7AC92BE08E1900B4E817 /* Features.swift */,
+				0B8C7AEE2BE08E2D00B4E817 /* Operator.swift */,
+				0B8C7AF02BE08E2D00B4E817 /* Snapshot.swift */,
 			);
 			path = Editor;
 			sourceTree = "<group>";
@@ -577,16 +589,7 @@
 		0B8C7AD42BE08E1900B4E817 /* Banner */ = {
 			isa = PBXGroup;
 			children = (
-				0B8C7ACA2BE08E1900B4E817 /* BannerLayout.swift */,
-				F545D16C2C1BF6E9006A6AFA /* BannerTitle.swift */,
-				0B8C7AC82BE08E1900B4E817 /* Feature.swift */,
-				0B8C7AC92BE08E1900B4E817 /* Features.swift */,
-				0B8C7AEE2BE08E2D00B4E817 /* Operator.swift */,
 				0B8C7AC32BE08E0F00B4E817 /* Screens */,
-				0B8C7AF02BE08E2D00B4E817 /* Snapshot.swift */,
-				F545D16E2C1C0CF3006A6AFA /* BannerSubTitle.swift */,
-				F545D1702C1C155E006A6AFA /* BannerImage.swift */,
-				0B9EA3532C1D314200A4059A /* BannerOpacity.swift */,
 			);
 			path = Banner;
 			sourceTree = "<group>";
@@ -947,7 +950,7 @@
 				0B8C7AED2BE08E2200B4E817 /* IconMaker.swift in Sources */,
 				0BD650ED2CA196BD00BA3CB8 /* SmartMessage.swift in Sources */,
 				0BD650EE2CA196BD00BA3CB8 /* TileMessage.swift in Sources */,
-				0BD650FF2CA2E9B100BA3CB8 /* BannerHome.swift in Sources */,
+				0BD650FF2CA2E9B100BA3CB8 /* BannerEditor.swift in Sources */,
 				0BD650F52CA1AA5D00BA3CB8 /* JSEvent.swift in Sources */,
 				0BD651052CA2F52400BA3CB8 /* DetailIcon.swift in Sources */,
 				F54DFA3E2CA395D800F81BE3 /* SmartImage.swift in Sources */,
@@ -985,6 +988,7 @@
 				0B6B1B3E2D03D7BA007941F0 /* SuperPlugin.swift in Sources */,
 				0B76FD242BDE326300501F1F /* FileExt.swift in Sources */,
 				0BDE61AD2BDB4E87006E23EA /* FileTile.swift in Sources */,
+				0BCFA9762D046FE0006A22F7 /* BannerBackground.swift in Sources */,
 				0B1C67F12BD9DB1F00502EB1 /* CommitCategoryPicker.swift in Sources */,
 				0B6B1B402D03D7E8007941F0 /* BannerPlugin.swift in Sources */,
 				0B6BE4652BDA7B5300C8ACB2 /* CommitExt.swift in Sources */,

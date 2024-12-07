@@ -6,10 +6,9 @@ struct BannerDetail: View {
     @EnvironmentObject var m: MessageProvider
 
     var body: some View {
-        VSplitView {
-            BannerHome(banner: $b.banner)
-        }
+        BannerEditor(banner: $b.banner)
         .frame(maxWidth: .infinity)
+        .frame(maxHeight: .infinity)
         .onChange(of: b.banner, {
             do {
                 try b.banner.saveToDisk()
@@ -18,6 +17,13 @@ struct BannerDetail: View {
             }
         })
     }
+}
+
+#Preview {
+    RootView {
+        BannerDetail()
+    }
+    .frame(height: 800)
 }
 
 #Preview {
