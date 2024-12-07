@@ -2,8 +2,9 @@ import SwiftUI
 import OSLog
 
 struct BtnDelBanner: View {
+    @EnvironmentObject var b: BannerProvider
+    
     var banner: BannerModel
-    var callback: () -> Void
     
     var body: some View {
         Button(action: delete) {
@@ -11,9 +12,8 @@ struct BtnDelBanner: View {
         }
     }
     
-    private func delete() {
-        self.banner.delete()
-        self.callback()
+    func delete() {
+        self.b.removeBanner(banner)
     }
 }
 

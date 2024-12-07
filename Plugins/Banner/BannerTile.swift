@@ -1,5 +1,5 @@
-import SwiftUI
 import OSLog
+import SwiftUI
 
 struct BannerTile: View {
     @EnvironmentObject var b: BannerProvider

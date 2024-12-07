@@ -34,7 +34,7 @@ struct Content: View, SuperThread, SuperEvent {
                             case .Git:
                                 DetailGit()
                             case .Banner:
-                                DetailBanner()
+                                BannerDetail()
                             case .Icon:
                                 DetailIcon()
                             }

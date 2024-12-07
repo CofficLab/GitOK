@@ -30,7 +30,6 @@
 		0B6B1B3E2D03D7BA007941F0 /* SuperPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B6B1B3D2D03D7BA007941F0 /* SuperPlugin.swift */; };
 		0B6B1B402D03D7E8007941F0 /* BannerPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B6B1B3F2D03D7E4007941F0 /* BannerPlugin.swift */; };
 		0B6B1B422D03D980007941F0 /* BannerBtnAdd.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B6B1B412D03D976007941F0 /* BannerBtnAdd.swift */; };
-		0B6B1B462D03DAAF007941F0 /* BannerListBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B6B1B452D03DAAF007941F0 /* BannerListBar.swift */; };
 		0B6BE4612BDA603000C8ACB2 /* BtnWhoami.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B6BE4602BDA603000C8ACB2 /* BtnWhoami.swift */; };
 		0B6BE4652BDA7B5300C8ACB2 /* CommitExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B6BE4642BDA7B5300C8ACB2 /* CommitExt.swift */; };
 		0B76FCEF2BDDD12A00501F1F /* WebConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B76FCEE2BDDD12A00501F1F /* WebConfig.swift */; };
@@ -109,7 +108,7 @@
 		0BD650FD2CA2E49F00BA3CB8 /* IconProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD650FC2CA2E49F00BA3CB8 /* IconProvider.swift */; };
 		0BD650FF2CA2E9B100BA3CB8 /* BannerHome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD650FE2CA2E9B100BA3CB8 /* BannerHome.swift */; };
 		0BD651012CA2EA6800BA3CB8 /* IconHome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD651002CA2EA6800BA3CB8 /* IconHome.swift */; };
-		0BD651032CA2F51500BA3CB8 /* DetailBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD651022CA2F51500BA3CB8 /* DetailBanner.swift */; };
+		0BD651032CA2F51500BA3CB8 /* BannerDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD651022CA2F51500BA3CB8 /* BannerDetail.swift */; };
 		0BD651052CA2F52400BA3CB8 /* DetailIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD651042CA2F52400BA3CB8 /* DetailIcon.swift */; };
 		0BD652242CA4390C00BA3CB8 /* MagicKit in Frameworks */ = {isa = PBXBuildFile; productRef = 0BD652232CA4390C00BA3CB8 /* MagicKit */; };
 		0BDE61A32BDB3C9B006E23EA /* Projects.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BDE61A22BDB3C9B006E23EA /* Projects.swift */; };
@@ -197,7 +196,6 @@
 		0B6B1B3D2D03D7BA007941F0 /* SuperPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuperPlugin.swift; sourceTree = "<group>"; };
 		0B6B1B3F2D03D7E4007941F0 /* BannerPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerPlugin.swift; sourceTree = "<group>"; };
 		0B6B1B412D03D976007941F0 /* BannerBtnAdd.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerBtnAdd.swift; sourceTree = "<group>"; };
-		0B6B1B452D03DAAF007941F0 /* BannerListBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerListBar.swift; sourceTree = "<group>"; };
 		0B6BE4602BDA603000C8ACB2 /* BtnWhoami.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BtnWhoami.swift; sourceTree = "<group>"; };
 		0B6BE4642BDA7B5300C8ACB2 /* CommitExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommitExt.swift; sourceTree = "<group>"; };
 		0B76FCEE2BDDD12A00501F1F /* WebConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebConfig.swift; sourceTree = "<group>"; };
@@ -276,7 +274,7 @@
 		0BD650FC2CA2E49F00BA3CB8 /* IconProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconProvider.swift; sourceTree = "<group>"; };
 		0BD650FE2CA2E9B100BA3CB8 /* BannerHome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerHome.swift; sourceTree = "<group>"; };
 		0BD651002CA2EA6800BA3CB8 /* IconHome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconHome.swift; sourceTree = "<group>"; };
-		0BD651022CA2F51500BA3CB8 /* DetailBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailBanner.swift; sourceTree = "<group>"; };
+		0BD651022CA2F51500BA3CB8 /* BannerDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerDetail.swift; sourceTree = "<group>"; };
 		0BD651042CA2F52400BA3CB8 /* DetailIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailIcon.swift; sourceTree = "<group>"; };
 		0BDE61A22BDB3C9B006E23EA /* Projects.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Projects.swift; sourceTree = "<group>"; };
 		0BDE61A42BDB408F006E23EA /* RevListExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RevListExt.swift; sourceTree = "<group>"; };
@@ -423,7 +421,6 @@
 		0B1C67B62BD9127000502EB1 /* Button */ = {
 			isa = PBXGroup;
 			children = (
-				0BB543DE2BE8874600D7A2B2 /* Banner */,
 				0BCC6D0A2BD93E8C006ADA94 /* BtnAdd.swift */,
 				0B1C67B92BD912D900502EB1 /* BtnCommitAndPush.swift */,
 				0B1C67FF2BD9F68F00502EB1 /* BtnFinder.swift */,
@@ -497,17 +494,27 @@
 		0B6B1B3C2D03D719007941F0 /* Banner */ = {
 			isa = PBXGroup;
 			children = (
-				0BD650FE2CA2E9B100BA3CB8 /* BannerHome.swift */,
-				0BD651022CA2F51500BA3CB8 /* DetailBanner.swift */,
-				F545D15F2C1AD436006A6AFA /* BannerTile.swift */,
-				0BD650FA2CA2E09F00BA3CB8 /* BannerProvider.swift */,
+				0B6B1B5B2D044DF3007941F0 /* Editor */,
 				0B6B1B412D03D976007941F0 /* BannerBtnAdd.swift */,
+				0BD651022CA2F51500BA3CB8 /* BannerDetail.swift */,
 				0B8C7B242BE0BB7500B4E817 /* BannerList.swift */,
-				0B6B1B452D03DAAF007941F0 /* BannerListBar.swift */,
 				0B8C7B222BE0AD1D00B4E817 /* BannerModel.swift */,
 				0B6B1B3F2D03D7E4007941F0 /* BannerPlugin.swift */,
+				0BD650FA2CA2E09F00BA3CB8 /* BannerProvider.swift */,
+				F545D15F2C1AD436006A6AFA /* BannerTile.swift */,
+				0BB543DF2BE8875700D7A2B2 /* BtnDelBanner.swift */,
 			);
 			path = Banner;
+			sourceTree = "<group>";
+		};
+		0B6B1B5B2D044DF3007941F0 /* Editor */ = {
+			isa = PBXGroup;
+			children = (
+				0B8C7AF12BE08E2D00B4E817 /* Backgrounds.swift */,
+				0BD650FE2CA2E9B100BA3CB8 /* BannerHome.swift */,
+				F545D1612C1AD6F1006A6AFA /* BannerTopBar.swift */,
+			);
+			path = Editor;
 			sourceTree = "<group>";
 		};
 		0B76FCF72BDDD4C600501F1F /* Resources */ = {
@@ -560,10 +567,8 @@
 		0B8C7AD42BE08E1900B4E817 /* Banner */ = {
 			isa = PBXGroup;
 			children = (
-				0B8C7AF12BE08E2D00B4E817 /* Backgrounds.swift */,
 				0B8C7ACA2BE08E1900B4E817 /* BannerLayout.swift */,
 				F545D16C2C1BF6E9006A6AFA /* BannerTitle.swift */,
-				F545D1612C1AD6F1006A6AFA /* BannerTopBar.swift */,
 				0B8C7AC82BE08E1900B4E817 /* Feature.swift */,
 				0B8C7AC92BE08E1900B4E817 /* Features.swift */,
 				0B8C7AEE2BE08E2D00B4E817 /* Operator.swift */,
@@ -605,14 +610,6 @@
 				0B8C7B202BE0A86000B4E817 /* ShellFileExt.swift */,
 			);
 			path = Shell;
-			sourceTree = "<group>";
-		};
-		0BB543DE2BE8874600D7A2B2 /* Banner */ = {
-			isa = PBXGroup;
-			children = (
-				0BB543DF2BE8875700D7A2B2 /* BtnDelBanner.swift */,
-			);
-			path = Banner;
 			sourceTree = "<group>";
 		};
 		0BB543E72BE890DA00D7A2B2 /* Contact */ = {
@@ -900,7 +897,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				0B1C67B32BD90B5700502EB1 /* AppProvider.swift in Sources */,
-				0B6B1B462D03DAAF007941F0 /* BannerListBar.swift in Sources */,
 				F588FB722CA15DAD00F6AE42 /* SuperEvent.swift in Sources */,
 				0BF75EE82BDF39B500A553CD /* PushExt.swift in Sources */,
 				0B8C7A6F2BE08CA800B4E817 /* ToolName.swift in Sources */,
@@ -993,7 +989,7 @@
 				0B1C68022BD9F7B500502EB1 /* BtnOpen.swift in Sources */,
 				0B8C7AC72BE08E0F00B4E817 /* ScreenMacBook.swift in Sources */,
 				0B0E16812BD89A8F0078942B /* GitOKApp.swift in Sources */,
-				0BD651032CA2F51500BA3CB8 /* DetailBanner.swift in Sources */,
+				0BD651032CA2F51500BA3CB8 /* BannerDetail.swift in Sources */,
 				0B8C7B1E2BE09B1500B4E817 /* BannerShell.swift in Sources */,
 				0B1C67BC2BD9132500502EB1 /* Git.swift in Sources */,
 				F54DFA472CA4034B00F81BE3 /* ProjectPicker.swift in Sources */,

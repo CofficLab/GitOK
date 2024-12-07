@@ -6,6 +6,7 @@ struct BannerHome: View {
     @EnvironmentObject var m: MessageProvider
 
     @Binding var banner: BannerModel
+    
     @State var snapshotTapped: Bool = false
     @State var visible = false
 

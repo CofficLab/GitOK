@@ -1,7 +1,7 @@
+import OSLog
 import SwiftUI
 
-struct DetailBanner: View {
-    @EnvironmentObject var m: MessageProvider
+struct BannerDetail: View {
     @EnvironmentObject var b: BannerProvider
 
     var body: some View {
@@ -9,13 +9,6 @@ struct DetailBanner: View {
             BannerHome(banner: $b.banner)
         }
         .frame(maxWidth: .infinity)
-        .onAppear(perform: onAppear)
-    }
-}
-
-extension DetailBanner {
-    func onAppear() {
-
     }
 }
 

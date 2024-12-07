@@ -140,6 +140,12 @@ extension BannerModel {
     }
 }
 
+extension BannerModel: Identifiable {
+    var id: String {
+        self.path ?? ""
+    }
+}
+
 // MARK: Codable
 
 extension BannerModel: Codable {

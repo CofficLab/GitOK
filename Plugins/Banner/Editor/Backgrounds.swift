@@ -1,5 +1,6 @@
-import SwiftUI
 import MagicKit
+import SwiftUI
+import OSLog
 
 struct Backgrounds: View {
     @Binding var current: String
@@ -7,7 +8,7 @@ struct Backgrounds: View {
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 10) {
-                ForEach(0..<BackgroundGroup.all.count, id: \.self) { index in
+                ForEach(0 ..< BackgroundGroup.all.count, id: \.self) { index in
                     let gradient = BackgroundGroup.all[index]
                     makeItem(gradient)
                         .frame(width: 50, height: 50)
@@ -25,7 +26,7 @@ struct Backgrounds: View {
             ZStack {
                 BackgroundGroup(for: gradient)
                     .clipShape(RoundedRectangle(cornerRadius: 8))
-                
+
                 if current == gradient.rawValue {
                     RoundedRectangle(cornerRadius: 8)
                         .stroke(Color.red, lineWidth: 2)

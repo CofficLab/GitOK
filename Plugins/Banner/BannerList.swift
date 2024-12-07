@@ -9,28 +9,30 @@ struct BannerList: View, SuperThread {
     @EnvironmentObject var b: BannerProvider
     @EnvironmentObject var m: MessageProvider
 
-    @State var selection: BannerModel?
-
-    var label: String { "🌹 BannerList::" }
-    var verbose = true
+    @State var selection: BannerModel.ID?
 
     var body: some View {
         VStack(spacing: 0) {
             List(b.banners, selection: $selection) { banner in
-                BannerTile(banner: banner).contextMenu(ContextMenu(menuItems: {
-                    BtnDelBanner(banner: banner, callback: getBanners)
-                }))
-                .tag(banner)
+                BannerTile(banner: banner)
+                    .contextMenu(ContextMenu(menuItems: {
+                        BtnDelBanner(banner: banner)
+                    }))
+                    .tag(banner)
             }
             .frame(maxHeight: .infinity)
-            .onChange(of: selection, {
-                b.setBanner(selection ?? .empty)
-            })
 
-            BannerListBar()
+            HStack(spacing: 0) {
+                BannerBtnAdd()
+                BtnDelBanner(banner: b.banner)
+            }
+            .frame(height: 25)
+            .labelStyle(.iconOnly)
         }
-        .onAppear(perform: getBanners)
+        .onAppear(perform: onAppear)
         .onChange(of: g.project, onProjectChange)
+        .onChange(of: selection, onSelectionChange)
+        .onChange(of: b.banner, onBannerChange)
     }
 
     func getBanners() {
@@ -38,9 +40,23 @@ struct BannerList: View, SuperThread {
             b.setBanners(project)
         }
     }
+}
 
+extension BannerList {
+    func onBannerChange() {
+        self.selection = b.banner.id
+    }
+    
     func onProjectChange() {
         getBanners()
+    }
+    
+    func onAppear() {
+        getBanners()
+    }
+    
+    func onSelectionChange() {
+        b.setBanner(b.banners.first(where: { $0.id == selection }) ?? .empty)
     }
 }
 
