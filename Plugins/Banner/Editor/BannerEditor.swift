@@ -10,6 +10,8 @@ struct BannerEditor: View {
     @State var showBorder: Bool = false
     @State var snapshotTapped: Bool = false
     @State var visible = false
+    @State private var scale: CGFloat = 1.0
+    @State private var lastScale: CGFloat = 1.0
 
     @MainActor private var imageSize: String {
         "\(ImageHelper.getViewWidth(content)) X \(ImageHelper.getViewHeigth(content))"
@@ -60,7 +62,16 @@ struct BannerEditor: View {
                 .frame(height: geo.size.height)
                 .alignmentGuide(HorizontalAlignment.center) { _ in geo.size.width / 2 }
                 .alignmentGuide(VerticalAlignment.center) { _ in geo.size.height / 2 }
-                .scaleEffect(min(geo.size.width / banner.getDevice().width, geo.size.height / banner.getDevice().height))
+                .scaleEffect(min(geo.size.width / banner.getDevice().width, geo.size.height / banner.getDevice().height) * scale)
+                .gesture(
+                    MagnificationGesture()
+                        .onChanged { value in
+                            scale = lastScale * value
+                        }
+                        .onEnded { value in
+                            lastScale = scale
+                        }
+                )
         }
         .padding()
     }
