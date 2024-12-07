@@ -4,6 +4,7 @@ import SwiftUI
 struct BannerLayout: View {
     @Binding var banner: BannerModel
     @Binding var showBorder: Bool
+    @State private var showOpacityToolbar: Bool = false
 
     var device: Device { banner.getDevice() }
 
@@ -67,6 +68,19 @@ struct BannerLayout: View {
             }
         }
         .background(BannerBackground(banner: $banner))
+        .onTapGesture {
+            showOpacityToolbar.toggle()
+        }
+        .overlay(
+            showOpacityToolbar ? VStack {
+                Slider(value: $banner.opacity, in: 0...1)
+                    .frame(width: 200)
+                    .padding()
+                    .background(Color.white.opacity(0.8))
+                    .cornerRadius(8)
+                Spacer()
+            } : nil
+        )
     }
 }
 

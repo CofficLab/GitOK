@@ -70,7 +70,6 @@
 		0B8C7B2B2BE0C8F100B4E817 /* IconList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7B2A2BE0C8F100B4E817 /* IconList.swift */; };
 		0B8C7B2F2BE0E5F100B4E817 /* Tabs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7B2E2BE0E5F100B4E817 /* Tabs.swift */; };
 		0B8C7B332BE0EAE900B4E817 /* ActionTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7B322BE0EAE900B4E817 /* ActionTab.swift */; };
-		0B9EA3542C1D314200A4059A /* BannerOpacity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B9EA3532C1D314200A4059A /* BannerOpacity.swift */; };
 		0B9EA3562C1ECF5A00A4059A /* IconOpacity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B9EA3552C1ECF5A00A4059A /* IconOpacity.swift */; };
 		0BB1C7122D045C0600C4EA70 /* AlertToast in Frameworks */ = {isa = PBXBuildFile; productRef = 0BB1C7112D045C0600C4EA70 /* AlertToast */; };
 		0BB4278E2BE72512004E6F82 /* QueueExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BB4278D2BE72512004E6F82 /* QueueExt.swift */; };
@@ -239,7 +238,6 @@
 		0B8C7B2A2BE0C8F100B4E817 /* IconList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconList.swift; sourceTree = "<group>"; };
 		0B8C7B2E2BE0E5F100B4E817 /* Tabs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tabs.swift; sourceTree = "<group>"; };
 		0B8C7B322BE0EAE900B4E817 /* ActionTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionTab.swift; sourceTree = "<group>"; };
-		0B9EA3532C1D314200A4059A /* BannerOpacity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerOpacity.swift; sourceTree = "<group>"; };
 		0B9EA3552C1ECF5A00A4059A /* IconOpacity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconOpacity.swift; sourceTree = "<group>"; };
 		0BB4278D2BE72512004E6F82 /* QueueExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QueueExt.swift; sourceTree = "<group>"; };
 		0BB543DF2BE8875700D7A2B2 /* BtnDelBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BtnDelBanner.swift; sourceTree = "<group>"; };
@@ -520,7 +518,6 @@
 				0BD650FE2CA2E9B100BA3CB8 /* BannerEditor.swift */,
 				F545D1702C1C155E006A6AFA /* BannerImage.swift */,
 				0B8C7ACA2BE08E1900B4E817 /* BannerLayout.swift */,
-				0B9EA3532C1D314200A4059A /* BannerOpacity.swift */,
 				F545D16E2C1C0CF3006A6AFA /* BannerSubTitle.swift */,
 				0BCFA97B2D048509006A22F7 /* BannerTextEditor.swift */,
 				F545D16C2C1BF6E9006A6AFA /* BannerTitle.swift */,
@@ -1029,7 +1026,6 @@
 				0B6BE4612BDA603000C8ACB2 /* BtnWhoami.swift in Sources */,
 				0B8C7A6C2BE08CA800B4E817 /* Device.swift in Sources */,
 				0B8C7B292BE0C6DB00B4E817 /* IconModel.swift in Sources */,
-				0B9EA3542C1D314200A4059A /* BannerOpacity.swift in Sources */,
 				F54DFA402CA3ABB800F81BE3 /* BannerEvent.swift in Sources */,
 				0B8C7AEB2BE08E2200B4E817 /* IconItem.swift in Sources */,
 				0BCFA97C2D048509006A22F7 /* BannerTextEditor.swift in Sources */,
