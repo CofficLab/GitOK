@@ -17,36 +17,32 @@ struct Content: View, SuperThread, SuperEvent {
 
     var body: some View {
         Group {
-            ZStack {
-                if projectExists {
-                    NavigationSplitView(columnVisibility: $columnVisibility) {
-                        Sidebar()
-                    } content: {
-                        if projectExists {
-                            Tabs(tab: $tab)
-                                .frame(idealWidth: 300)
-                                .frame(minWidth: 50)
-                                .onChange(of: tab, onChangeOfTab)
-                        }
-                    } detail: {
-                        VStack(spacing: 0) {
-                            switch self.tab {
-                            case .Git:
-                                DetailGit()
-                            case .Banner:
-                                BannerDetail()
-                            case .Icon:
-                                DetailIcon()
-                            }
-
-                            StatusBar()
-                        }
+            if projectExists {
+                NavigationSplitView(columnVisibility: $columnVisibility) {
+                    Sidebar()
+                } content: {
+                    if projectExists {
+                        Tabs(tab: $tab)
+                            .frame(idealWidth: 300)
+                            .frame(minWidth: 50)
+                            .onChange(of: tab, onChangeOfTab)
                     }
-                } else {
-                    NoProject()
-                }
+                } detail: {
+                    VStack(spacing: 0) {
+                        switch self.tab {
+                        case .Git:
+                            DetailGit()
+                        case .Banner:
+                            BannerDetail()
+                        case .Icon:
+                            DetailIcon()
+                        }
 
-                Message()
+                        StatusBar()
+                    }
+                }
+            } else {
+                NoProject()
             }
         }
         .onAppear(perform: onAppear)
@@ -106,7 +102,7 @@ extension Content {
         if app.sidebarVisibility == false {
             self.columnVisibility = .doubleColumn
         }
-        
+
         self.tab = app.currentTab
     }
 
@@ -119,7 +115,7 @@ extension Content {
             }
         }
     }
-    
+
     func onChangeOfTab() {
         app.setTab(tab)
     }

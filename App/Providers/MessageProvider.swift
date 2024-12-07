@@ -40,24 +40,15 @@ class MessageProvider: ObservableObject, SuperLog, SuperThread, SuperEvent {
     func setError(_ e: Error) {
         self.alert("发生错误", info: e.localizedDescription)
     }
-
-    func setFlashMessage(_ m: String) {
-        message = m
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-            self.message = ""
+    
+    func append(_ message: String, channel: String = "default", isError: Bool = false) {
+        if !Thread.isMainThread {
+            assertionFailure("append called from background thread")
         }
 
-        self.append(m)
-    }
-
-    func append(_ message: String) {
-        main.async {
-            self.messages.insert(SmartMessage(description: message), at: 0)
-            self.main.asyncAfter(deadline: .now() + 3) {
-                if self.messages.count > 10 {
-                    _ = self.messages.popLast()
-                }
-            }
+        self.messages.insert(SmartMessage(description: message, channel: channel, isError: isError), at: 0)
+        if self.messages.count > self.maxMessageCount {
+            self.messages.removeLast()
         }
     }
 

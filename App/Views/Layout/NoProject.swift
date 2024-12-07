@@ -10,35 +10,31 @@ struct NoProject: View, SuperThread, SuperEvent {
     @State var columnVisibility: NavigationSplitViewVisibility = .doubleColumn
 
     var body: some View {
-        ZStack {
-            NavigationSplitView(columnVisibility: $columnVisibility) {
-                Sidebar()
-            } detail: {
-                VStack(spacing: 20) {
-                    Image(systemName: "folder.badge.questionmark")
-                        .font(.system(size: 60))
-                        .foregroundColor(.gray)
+        NavigationSplitView(columnVisibility: $columnVisibility) {
+            Sidebar()
+        } detail: {
+            VStack(spacing: 20) {
+                Image(systemName: "folder.badge.questionmark")
+                    .font(.system(size: 60))
+                    .foregroundColor(.gray)
 
-                    Text("项目不存在")
-                        .font(.title2)
-                        .foregroundColor(.secondary)
+                Text("项目不存在")
+                    .font(.title2)
+                    .foregroundColor(.secondary)
 
-                    if let project = g.project {
-                        Button(action: { deleteItem(project) }) {
-                            Label("删除项目", systemImage: "trash")
-                                .foregroundColor(.red)
-                        }
-                        .buttonStyle(.bordered)
+                if let project = g.project {
+                    Button(action: { deleteItem(project) }) {
+                        Label("删除项目", systemImage: "trash")
+                            .foregroundColor(.red)
                     }
+                    .buttonStyle(.bordered)
                 }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .background(Color(.windowBackgroundColor))
             }
-
-            Message()
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(Color(.windowBackgroundColor))
         }
     }
-    
+
     private func deleteItem(_ project: Project) {
         let path = project.path
         withAnimation {

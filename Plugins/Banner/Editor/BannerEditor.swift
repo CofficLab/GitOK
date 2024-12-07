@@ -47,7 +47,7 @@ struct BannerEditor: View {
         }
         .onChange(of: snapshotTapped, {
             if snapshotTapped {
-                m.setFlashMessage(ImageHelper.snapshot(content, title: "\(banner.device)-\(self.getTimeString())"))
+                m.toast(ImageHelper.snapshot(content, title: "\(banner.device)-\(self.getTimeString())"))
                 self.snapshotTapped = false
             }
         })
