@@ -10,7 +10,7 @@ struct NotGit: View {
             Spacer()
             HStack {
                 Spacer()
-                Text("不是Git项目")
+                Text("not_git_project", bundle: .main)
                 Spacer()
             }
             Spacer()

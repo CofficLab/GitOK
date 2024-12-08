@@ -7,7 +7,7 @@ struct GitCommit: SuperLog {
     static var headId = "HEAD"
     static var empty = GitCommit()
     static func headFor(_ path: String) -> GitCommit {
-        .init(isHead: true, path: path, hash: Self.headId, message: "当前")
+        .init(isHead: true, path: path, hash: Self.headId, message: String(localized: "current_head", bundle: .main))
     }
 
     var path: String

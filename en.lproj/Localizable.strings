@@ -1,0 +1,16 @@
+//
+//  Localizable.strings
+//  GitOK
+//
+//  Created by Angel on 2024/12/8.
+//
+
+"no_local_changes_title" = "No local changes";
+"no_local_changes_description" = "All changes have been committed to local repository";
+"select_commit_title" = "Select a Commit";
+"select_commit_description" = "Select a commit from the list on the left to view details";
+"current_head" = "Current";
+"not_git_project" = "Not a Git Project";
+"select_project" = "Select Project";
+"select_a_project" = "Select a project";
+

@@ -26,11 +26,11 @@ struct DetailGit: View {
                 .font(.system(size: 48))
                 .foregroundColor(.green)
 
-            Text("No local changes")
+            Text(LocalizedStringKey("no_local_changes_title"))
                 .font(.headline)
                 .padding()
 
-            Text("所有更改都已提交到本地仓库")
+            Text(LocalizedStringKey("no_local_changes_description"))
                 .font(.subheadline)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
@@ -45,11 +45,11 @@ struct DetailGit: View {
                 .font(.system(size: 48))
                 .foregroundColor(.secondary)
 
-            Text("选择一个 Commit")
+            Text(LocalizedStringKey("select_commit_title"))
                 .font(.headline)
                 .padding()
 
-            Text("在左侧列表中选择一个提交记录来查看详情")
+            Text(LocalizedStringKey("select_commit_description"))
                 .font(.subheadline)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)

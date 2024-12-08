@@ -14,7 +14,10 @@ struct LanuchView: View {
                             .progressViewStyle(CircularProgressViewStyle())
                             .padding()
 
-                        Text("正在加载").font(.title).foregroundStyle(.white)
+                        let welcomeLabel = UILabel()
+                        welcomeLabel.text = NSLocalizedString("welcome_message", comment: "Welcome message displayed on the home screen")
+
+                        Text(welcomeLabel.text).font(.title).foregroundStyle(.white)
                         
                         Spacer()
                     }

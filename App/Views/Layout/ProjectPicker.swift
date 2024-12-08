@@ -10,9 +10,9 @@ struct ProjectPicker: View {
     @Query(sort: Project.orderReverse) var projects: [Project]
 
     var body: some View {
-        Picker("选择项目", selection: $project) {
+        Picker("select_project", selection: $project) {
             if project == nil {
-                Text("选择一个项目").tag(nil as Project?)
+                Text("select_a_project").tag(nil as Project?)
             }
             ForEach(projects, id: \.self) { project in
                 Text(project.title).tag(project as Project?)

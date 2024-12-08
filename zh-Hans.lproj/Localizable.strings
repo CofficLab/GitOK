@@ -1,0 +1,16 @@
+//
+//  Localizable.strings
+//  GitOK
+//
+//  Created by Angel on 2024/12/8.
+//
+
+"no_local_changes_title" = "没有本地更改";
+"no_local_changes_description" = "所有更改都已提交到本地仓库";
+"select_commit_title" = "选择一个 Commit";
+"select_commit_description" = "在左侧列表中选择一个提交记录来查看详情";
+"current_head" = "当前";
+"not_git_project" = "不是Git项目";
+"select_project" = "选择项目";
+"select_a_project" = "选择一个项目";
+
