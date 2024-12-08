@@ -8,6 +8,8 @@ protocol SuperPlugin {
     func addDBView() -> AnyView
     func addListView() -> AnyView
     func addDetailView() -> AnyView
+    func addToolBarLeadingView() -> AnyView
+    func addToolBarTrailingView() -> AnyView
     
     func onInit() -> Void
     func onAppear() -> Void
@@ -15,4 +17,14 @@ protocol SuperPlugin {
     func onPlay() -> Void
     func onPlayStateUpdate() -> Void
     func onPlayAssetUpdate() -> Void
+}
+
+extension SuperPlugin {
+    func addToolBarLeadingView() -> AnyView {
+        AnyView(EmptyView())
+    }
+
+    func addToolBarTrailingView() -> AnyView {
+        AnyView(EmptyView())
+    }
 }

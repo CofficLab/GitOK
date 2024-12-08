@@ -2,26 +2,26 @@ import MagicKit
 import OSLog
 import SwiftUI
 
-class BannerPlugin: SuperPlugin, SuperLog {
+class SmartProjectPlugin: SuperPlugin, SuperLog {
     let emoji = "📣"
-    var label: String = "Banner"
-    var icon: String = "camera"
-    var isTab: Bool = true
+    var label: String = "SmartProject"
+    var icon: String = "folder.fill"
+    var isTab: Bool = false
 
     func addDBView() -> AnyView {
         AnyView(EmptyView())
     }
 
     func addListView() -> AnyView {
-        AnyView(BannerList())
+        AnyView(CommitList())
     }
 
     func addDetailView() -> AnyView {
-        AnyView(BannerDetail())
+        AnyView(DetailGit())
     }
     
-    func addToolBarTrailingView() -> AnyView {
-        AnyView(EmptyView())
+    func addToolBarLeadingView() -> AnyView {
+        AnyView(TileProject())
     }
 
     func onInit() {

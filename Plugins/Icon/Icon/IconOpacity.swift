@@ -14,6 +14,6 @@ struct IconOpacity: View {
 
 #Preview {
     RootView {
-        Content()
+        ContentView()
     }
 }

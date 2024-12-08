@@ -126,6 +126,11 @@ class MessageProvider: ObservableObject, SuperLog, SuperThread, SuperEvent {
         self.error = error
         self.showError = true
     }
+    
+    func getAllChannels() -> [String] {
+        let channels = Set(messages.map { $0.channel })
+        return Array(channels).sorted()
+    }
 
     func toast(_ toast: String) {
         if !Thread.isMainThread {

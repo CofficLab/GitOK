@@ -3,7 +3,7 @@ import OSLog
 import SwiftData
 import SwiftUI
 
-struct Content: View, SuperThread, SuperEvent {
+struct ContentView: View, SuperThread, SuperEvent {
     @EnvironmentObject var app: AppProvider
     @EnvironmentObject var g: GitProvider
     @EnvironmentObject var p: PluginProvider
@@ -81,7 +81,7 @@ struct Content: View, SuperThread, SuperEvent {
 
 // MARK: Event Handlers
 
-extension Content {
+extension ContentView {
     func onProjectChange() {
         withAnimation(.easeInOut(duration: 0.3)) {
             if let newProject = g.project {

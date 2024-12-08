@@ -7,7 +7,13 @@ struct StatusBar: View {
     
     var body: some View {
         HStack(spacing: 0) {
-            p.getPlugins()
+            ForEach(p.plugins, id: \.label) { plugin in
+                plugin.addToolBarLeadingView()
+            }
+            Spacer()
+            ForEach(p.plugins, id: \.label) { plugin in
+                plugin.addToolBarTrailingView()
+            }
         }
         .padding(.trailing, 10)
         .labelStyle(.iconOnly)

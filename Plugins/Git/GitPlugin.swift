@@ -19,6 +19,10 @@ class GitPlugin: SuperPlugin, SuperLog {
     func addDetailView() -> AnyView {
         AnyView(DetailGit())
     }
+    
+    func addToolBarTrailingView() -> AnyView {
+        AnyView(EmptyView())
+    }
 
     func onInit() {
         os_log("\(self.t) onInit")

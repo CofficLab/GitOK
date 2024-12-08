@@ -12,11 +12,7 @@ struct TileQuickMerge: View, SuperLog, SuperThread {
     var project: Project? { g.project }
 
     var body: some View {
-        HStack {
-            if hovered {
-                Text("合并到主分支")
-            }
-            
+        HStack {            
             Image(systemName: "arrowshape.zigzag.forward")
         }
         .onHover(perform: { hovering in

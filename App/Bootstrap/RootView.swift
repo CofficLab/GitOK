@@ -100,7 +100,7 @@ extension RootView {
 
 #Preview("APP") {
     RootView(content: {
-        Content()
+        ContentView()
     })
     .frame(width: 800, height: 800)
 }

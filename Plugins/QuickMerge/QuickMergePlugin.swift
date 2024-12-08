@@ -2,26 +2,26 @@ import MagicKit
 import OSLog
 import SwiftUI
 
-class BannerPlugin: SuperPlugin, SuperLog {
+class QuickMergePlugin: SuperPlugin, SuperLog {
     let emoji = "📣"
-    var label: String = "Banner"
-    var icon: String = "camera"
-    var isTab: Bool = true
+    var label: String = "QuickMerge"
+    var icon: String = "folder.fill"
+    var isTab: Bool = false
 
     func addDBView() -> AnyView {
         AnyView(EmptyView())
     }
 
     func addListView() -> AnyView {
-        AnyView(BannerList())
+        AnyView(CommitList())
     }
 
     func addDetailView() -> AnyView {
-        AnyView(BannerDetail())
+        AnyView(DetailGit())
     }
     
     func addToolBarTrailingView() -> AnyView {
-        AnyView(EmptyView())
+        AnyView(TileQuickMerge())
     }
 
     func onInit() {

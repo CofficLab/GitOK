@@ -1,16 +1,21 @@
 import Foundation
+import MagicKit
 import OSLog
 import StoreKit
 import SwiftData
 import SwiftUI
-import MagicKit
 
 class PluginProvider: ObservableObject, SuperLog, SuperThread {
     let emoji = "🧩"
     let plugins: [SuperPlugin] = [
         GitPlugin(),
         BannerPlugin(),
-        IconPlugin()
+        IconPlugin(),
+        SmartFilePlugin(),
+        SmartProjectPlugin(),
+        QuickMergePlugin(),
+        SmartMergePlugin(),
+        SmartMessagePlugin(),
     ]
 
     init() {
@@ -18,16 +23,15 @@ class PluginProvider: ObservableObject, SuperLog, SuperThread {
         if verbose {
             os_log("\(Logger.initLog) PluginProvider")
         }
-    }
 
-    func getPlugins() -> some View {
-        HStack(spacing: 0) {
-            TileFile()
-            TileProject()
-            Spacer()
-            TileQuickMerge()
-            TileMerge()
-            TileMessage()
+        var labelCounts: [String: Int] = [:]
+        for plugin in plugins {
+            labelCounts[plugin.label, default: 0] += 1
+        }
+
+        let duplicateLabels = labelCounts.filter { $0.value > 1 }.map { $0.key }
+        if !duplicateLabels.isEmpty {
+            assertionFailure("Duplicate labels: \(duplicateLabels)")
         }
     }
 }

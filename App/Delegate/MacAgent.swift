@@ -71,6 +71,6 @@ class MacAgent: NSObject, NSApplicationDelegate, ObservableObject, SuperLog, Sup
 
 #Preview("APP") {
     RootView(content: {
-        Content()
+        ContentView()
     }).frame(width: 700, height: 600)
 }

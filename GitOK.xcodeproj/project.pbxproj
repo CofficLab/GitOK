@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		0B0E16812BD89A8F0078942B /* GitOKApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B0E16802BD89A8F0078942B /* GitOKApp.swift */; };
-		0B0E16832BD89A8F0078942B /* Content.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B0E16822BD89A8F0078942B /* Content.swift */; };
+		0B0E16832BD89A8F0078942B /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B0E16822BD89A8F0078942B /* ContentView.swift */; };
 		0B0E16872BD89A910078942B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0B0E16862BD89A910078942B /* Assets.xcassets */; };
 		0B0E168B2BD89A910078942B /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0B0E168A2BD89A910078942B /* Preview Assets.xcassets */; };
 		0B1C67B02BD9099800502EB1 /* AppPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1C67AF2BD9099800502EB1 /* AppPreview.swift */; };
@@ -29,6 +29,12 @@
 		0B44BCC62BDA947B00FBCF2F /* Branch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B44BCC52BDA947B00FBCF2F /* Branch.swift */; };
 		0B4EE43E2D0528F600D7E963 /* IconPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4EE43D2D0528F600D7E963 /* IconPlugin.swift */; };
 		0B4EE4412D05297700D7E963 /* GitPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4EE4402D05297700D7E963 /* GitPlugin.swift */; };
+		0B4EE4432D05990E00D7E963 /* SmartMessagePlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4EE4422D05990E00D7E963 /* SmartMessagePlugin.swift */; };
+		0B4EE4452D059CD000D7E963 /* SmartMergePlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4EE4442D059CD000D7E963 /* SmartMergePlugin.swift */; };
+		0B4EE4472D05A0DD00D7E963 /* QuickMergePlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4EE4462D05A0DD00D7E963 /* QuickMergePlugin.swift */; };
+		0B4EE4492D05A11F00D7E963 /* SmartProjectPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4EE4482D05A11F00D7E963 /* SmartProjectPlugin.swift */; };
+		0B4EE44B2D05A14C00D7E963 /* SmartFilePlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4EE44A2D05A14C00D7E963 /* SmartFilePlugin.swift */; };
+		0B4EE4612D05A42900D7E963 /* MessageTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4EE4602D05A42900D7E963 /* MessageTable.swift */; };
 		0B6B1B3E2D03D7BA007941F0 /* SuperPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B6B1B3D2D03D7BA007941F0 /* SuperPlugin.swift */; };
 		0B6B1B402D03D7E8007941F0 /* BannerPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B6B1B3F2D03D7E4007941F0 /* BannerPlugin.swift */; };
 		0B6B1B422D03D980007941F0 /* BannerBtnAdd.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B6B1B412D03D976007941F0 /* BannerBtnAdd.swift */; };
@@ -169,7 +175,7 @@
 /* Begin PBXFileReference section */
 		0B0E167D2BD89A8F0078942B /* GitOK.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GitOK.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0B0E16802BD89A8F0078942B /* GitOKApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitOKApp.swift; sourceTree = "<group>"; };
-		0B0E16822BD89A8F0078942B /* Content.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Content.swift; sourceTree = "<group>"; };
+		0B0E16822BD89A8F0078942B /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		0B0E16862BD89A910078942B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		0B0E16882BD89A910078942B /* GitOK.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = GitOK.entitlements; sourceTree = "<group>"; };
 		0B0E168A2BD89A910078942B /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
@@ -193,6 +199,12 @@
 		0B44BCC52BDA947B00FBCF2F /* Branch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Branch.swift; sourceTree = "<group>"; };
 		0B4EE43D2D0528F600D7E963 /* IconPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconPlugin.swift; sourceTree = "<group>"; };
 		0B4EE4402D05297700D7E963 /* GitPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitPlugin.swift; sourceTree = "<group>"; };
+		0B4EE4422D05990E00D7E963 /* SmartMessagePlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmartMessagePlugin.swift; sourceTree = "<group>"; };
+		0B4EE4442D059CD000D7E963 /* SmartMergePlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmartMergePlugin.swift; sourceTree = "<group>"; };
+		0B4EE4462D05A0DD00D7E963 /* QuickMergePlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickMergePlugin.swift; sourceTree = "<group>"; };
+		0B4EE4482D05A11F00D7E963 /* SmartProjectPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmartProjectPlugin.swift; sourceTree = "<group>"; };
+		0B4EE44A2D05A14C00D7E963 /* SmartFilePlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmartFilePlugin.swift; sourceTree = "<group>"; };
+		0B4EE4602D05A42900D7E963 /* MessageTable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageTable.swift; sourceTree = "<group>"; };
 		0B6B1B3D2D03D7BA007941F0 /* SuperPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuperPlugin.swift; sourceTree = "<group>"; };
 		0B6B1B3F2D03D7E4007941F0 /* BannerPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerPlugin.swift; sourceTree = "<group>"; };
 		0B6B1B412D03D976007941F0 /* BannerBtnAdd.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerBtnAdd.swift; sourceTree = "<group>"; };
@@ -467,7 +479,7 @@
 			isa = PBXGroup;
 			children = (
 				0B1C67B42BD9115F00502EB1 /* Branches.swift */,
-				0B0E16822BD89A8F0078942B /* Content.swift */,
+				0B0E16822BD89A8F0078942B /* ContentView.swift */,
 				F580BF972CE499ED00977CFC /* NoProject.swift */,
 				0BD15C662BDFE4F9004024CF /* NotGit.swift */,
 				F54DFA462CA4034600F81BE3 /* ProjectPicker.swift */,
@@ -687,6 +699,8 @@
 		0BD650EC2CA196BD00BA3CB8 /* SmartMessage */ = {
 			isa = PBXGroup;
 			children = (
+				0B4EE4602D05A42900D7E963 /* MessageTable.swift */,
+				0B4EE4422D05990E00D7E963 /* SmartMessagePlugin.swift */,
 				0BD650EB2CA196BD00BA3CB8 /* TileMessage.swift */,
 			);
 			path = SmartMessage;
@@ -695,6 +709,7 @@
 		0BD650F12CA1A8E800BA3CB8 /* FileInfo */ = {
 			isa = PBXGroup;
 			children = (
+				0B4EE44A2D05A14C00D7E963 /* SmartFilePlugin.swift */,
 				0BD650F22CA1A8F900BA3CB8 /* TileFile.swift */,
 			);
 			path = FileInfo;
@@ -759,6 +774,7 @@
 		F54DFA432CA3E5E300F81BE3 /* SmartMerge */ = {
 			isa = PBXGroup;
 			children = (
+				0B4EE4442D059CD000D7E963 /* SmartMergePlugin.swift */,
 				F580BF9A2CE4A24500977CFC /* BtnMerge.swift */,
 				F580BF9B2CE4A24500977CFC /* MergeForm.swift */,
 				F580BF9C2CE4A24500977CFC /* TileMerge.swift */,
@@ -769,6 +785,7 @@
 		F54DFA482CA40BB200F81BE3 /* ProjectInfo */ = {
 			isa = PBXGroup;
 			children = (
+				0B4EE4482D05A11F00D7E963 /* SmartProjectPlugin.swift */,
 				F54DFA492CA40BC100F81BE3 /* TileProject.swift */,
 			);
 			path = ProjectInfo;
@@ -777,6 +794,7 @@
 		F580BF992CE4A18700977CFC /* QuickMerge */ = {
 			isa = PBXGroup;
 			children = (
+				0B4EE4462D05A0DD00D7E963 /* QuickMergePlugin.swift */,
 				F54DFA442CA3E5F200F81BE3 /* TileQuickMerge.swift */,
 			);
 			path = QuickMerge;
@@ -924,17 +942,20 @@
 				0BD650E62CA195EA00BA3CB8 /* PluginProvider.swift in Sources */,
 				0BB543EC2BE8932300D7A2B2 /* BtnDelIcon.swift in Sources */,
 				F545D16D2C1BF6E9006A6AFA /* BannerTitle.swift in Sources */,
+				0B4EE4492D05A11F00D7E963 /* SmartProjectPlugin.swift in Sources */,
 				F588FB702CA15D5200F6AE42 /* GitEvent.swift in Sources */,
 				0BCC6D0B2BD93E8C006ADA94 /* BtnAdd.swift in Sources */,
 				0BD15C632BDD40E1004024CF /* ListPlay.swift in Sources */,
 				F580BF982CE499ED00977CFC /* NoProject.swift in Sources */,
 				0B1C68042BD9FAE500502EB1 /* BtnOpenXcode.swift in Sources */,
+				0B4EE4472D05A0DD00D7E963 /* QuickMergePlugin.swift in Sources */,
 				0BCC6D112BD94B5B006ADA94 /* BtnLog.swift in Sources */,
 				0B9EA3562C1ECF5A00A4059A /* IconOpacity.swift in Sources */,
 				0BD650F32CA1A8F900BA3CB8 /* TileFile.swift in Sources */,
 				0BDE61A32BDB3C9B006E23EA /* Projects.swift in Sources */,
 				0B8C7B212BE0A86000B4E817 /* ShellFileExt.swift in Sources */,
 				0BCC6D132BD94D15006ADA94 /* BtnLogs.swift in Sources */,
+				0B4EE4432D05990E00D7E963 /* SmartMessagePlugin.swift in Sources */,
 				0B76FD222BDE315800501F1F /* ReadyHandler.swift in Sources */,
 				0BCC6D152BD9526F006ADA94 /* GitCommit.swift in Sources */,
 				0BDE61A92BDB4746006E23EA /* File.swift in Sources */,
@@ -951,10 +972,11 @@
 				0BD650FF2CA2E9B100BA3CB8 /* BannerEditor.swift in Sources */,
 				0BD650F52CA1AA5D00BA3CB8 /* JSEvent.swift in Sources */,
 				0BD651052CA2F52400BA3CB8 /* DetailIcon.swift in Sources */,
+				0B4EE4612D05A42900D7E963 /* MessageTable.swift in Sources */,
 				F54DFA3E2CA395D800F81BE3 /* SmartImage.swift in Sources */,
 				0B1C67C42BD915F200502EB1 /* AppConfig.swift in Sources */,
 				0BFA2E5F2BE111AA00AD98D7 /* TabBtn.swift in Sources */,
-				0B0E16832BD89A8F0078942B /* Content.swift in Sources */,
+				0B0E16832BD89A8F0078942B /* ContentView.swift in Sources */,
 				0BCC6D0D2BD948AB006ADA94 /* BtnSync.swift in Sources */,
 				0B4EE43E2D0528F600D7E963 /* IconPlugin.swift in Sources */,
 				0B8C7A5D2BE08BF600B4E817 /* IconPng.swift in Sources */,
@@ -987,6 +1009,7 @@
 				0BDE61AD2BDB4E87006E23EA /* FileTile.swift in Sources */,
 				0BCFA9762D046FE0006A22F7 /* BannerBackground.swift in Sources */,
 				0B1C67F12BD9DB1F00502EB1 /* CommitCategoryPicker.swift in Sources */,
+				0B4EE4452D059CD000D7E963 /* SmartMergePlugin.swift in Sources */,
 				0B6B1B402D03D7E8007941F0 /* BannerPlugin.swift in Sources */,
 				0B6BE4652BDA7B5300C8ACB2 /* CommitExt.swift in Sources */,
 				0B8C7AEC2BE08E2200B4E817 /* IconAsset.swift in Sources */,
@@ -1022,6 +1045,7 @@
 				0B8C7A6C2BE08CA800B4E817 /* Device.swift in Sources */,
 				0B8C7B292BE0C6DB00B4E817 /* IconModel.swift in Sources */,
 				F54DFA402CA3ABB800F81BE3 /* BannerEvent.swift in Sources */,
+				0B4EE44B2D05A14C00D7E963 /* SmartFilePlugin.swift in Sources */,
 				0B8C7AEB2BE08E2200B4E817 /* IconItem.swift in Sources */,
 				0BCFA97C2D048509006A22F7 /* BannerTextEditor.swift in Sources */,
 				0BD650A12CA1856000BA3CB8 /* ConfigExt.swift in Sources */,

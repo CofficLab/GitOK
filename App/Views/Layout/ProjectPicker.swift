@@ -33,7 +33,7 @@ struct ProjectPicker: View {
 
 #Preview {
     RootView {
-        Content()
+        ContentView()
     }
     .frame(width: 800)
     .frame(height: 1000)

@@ -19,6 +19,10 @@ class IconPlugin: SuperPlugin, SuperLog {
     func addDetailView() -> AnyView {
         AnyView(DetailIcon())
     }
+    
+    func addToolBarTrailingView() -> AnyView {
+        AnyView(EmptyView())
+    }
 
     func onInit() {
         os_log("\(self.t) onInit")
