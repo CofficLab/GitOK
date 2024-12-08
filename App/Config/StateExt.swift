@@ -22,8 +22,8 @@ extension AppConfig {
     @AppStorage("App.CurrentTab")
     static var currentTab: String = ""
 
-    static func setcurrentTab(_ tab: ActionTab) {
-        AppConfig.currentTab = tab.rawValue
+    static func setcurrentTab(_ tab: String) {
+        AppConfig.currentTab = tab
     }
     
     @AppStorage("App.SidebarVisibility")

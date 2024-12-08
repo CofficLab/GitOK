@@ -27,6 +27,8 @@
 		0B1C68022BD9F7B500502EB1 /* BtnOpen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1C68012BD9F7B500502EB1 /* BtnOpen.swift */; };
 		0B1C68042BD9FAE500502EB1 /* BtnOpenXcode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1C68032BD9FAE500502EB1 /* BtnOpenXcode.swift */; };
 		0B44BCC62BDA947B00FBCF2F /* Branch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B44BCC52BDA947B00FBCF2F /* Branch.swift */; };
+		0B4EE43E2D0528F600D7E963 /* IconPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4EE43D2D0528F600D7E963 /* IconPlugin.swift */; };
+		0B4EE4412D05297700D7E963 /* GitPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4EE4402D05297700D7E963 /* GitPlugin.swift */; };
 		0B6B1B3E2D03D7BA007941F0 /* SuperPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B6B1B3D2D03D7BA007941F0 /* SuperPlugin.swift */; };
 		0B6B1B402D03D7E8007941F0 /* BannerPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B6B1B3F2D03D7E4007941F0 /* BannerPlugin.swift */; };
 		0B6B1B422D03D980007941F0 /* BannerBtnAdd.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B6B1B412D03D976007941F0 /* BannerBtnAdd.swift */; };
@@ -64,7 +66,6 @@
 		0B8C7B292BE0C6DB00B4E817 /* IconModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7B282BE0C6DB00B4E817 /* IconModel.swift */; };
 		0B8C7B2B2BE0C8F100B4E817 /* IconList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7B2A2BE0C8F100B4E817 /* IconList.swift */; };
 		0B8C7B2F2BE0E5F100B4E817 /* Tabs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7B2E2BE0E5F100B4E817 /* Tabs.swift */; };
-		0B8C7B332BE0EAE900B4E817 /* ActionTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7B322BE0EAE900B4E817 /* ActionTab.swift */; };
 		0B9EA3562C1ECF5A00A4059A /* IconOpacity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B9EA3552C1ECF5A00A4059A /* IconOpacity.swift */; };
 		0BB1C7122D045C0600C4EA70 /* AlertToast in Frameworks */ = {isa = PBXBuildFile; productRef = 0BB1C7112D045C0600C4EA70 /* AlertToast */; };
 		0BB4278E2BE72512004E6F82 /* QueueExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BB4278D2BE72512004E6F82 /* QueueExt.swift */; };
@@ -190,6 +191,8 @@
 		0B332F052BDA01E600DFA5BB /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		0B332F062BDA02BC00DFA5BB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0B44BCC52BDA947B00FBCF2F /* Branch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Branch.swift; sourceTree = "<group>"; };
+		0B4EE43D2D0528F600D7E963 /* IconPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconPlugin.swift; sourceTree = "<group>"; };
+		0B4EE4402D05297700D7E963 /* GitPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitPlugin.swift; sourceTree = "<group>"; };
 		0B6B1B3D2D03D7BA007941F0 /* SuperPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuperPlugin.swift; sourceTree = "<group>"; };
 		0B6B1B3F2D03D7E4007941F0 /* BannerPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerPlugin.swift; sourceTree = "<group>"; };
 		0B6B1B412D03D976007941F0 /* BannerBtnAdd.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerBtnAdd.swift; sourceTree = "<group>"; };
@@ -227,7 +230,6 @@
 		0B8C7B282BE0C6DB00B4E817 /* IconModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconModel.swift; sourceTree = "<group>"; };
 		0B8C7B2A2BE0C8F100B4E817 /* IconList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconList.swift; sourceTree = "<group>"; };
 		0B8C7B2E2BE0E5F100B4E817 /* Tabs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tabs.swift; sourceTree = "<group>"; };
-		0B8C7B322BE0EAE900B4E817 /* ActionTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionTab.swift; sourceTree = "<group>"; };
 		0B9EA3552C1ECF5A00A4059A /* IconOpacity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconOpacity.swift; sourceTree = "<group>"; };
 		0BB4278D2BE72512004E6F82 /* QueueExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QueueExt.swift; sourceTree = "<group>"; };
 		0BB543DF2BE8875700D7A2B2 /* BtnDelBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BtnDelBanner.swift; sourceTree = "<group>"; };
@@ -481,12 +483,33 @@
 			children = (
 				0B4EE4152D04A65000D7E963 /* Banner */,
 				F545D16B2C1AF525006A6AFA /* Commit */,
-				F5FBCC332C3FB96000CED4F1 /* DetailGit.swift */,
 				0BD651042CA2F52400BA3CB8 /* DetailIcon.swift */,
-				F5F794DF2C5A1D2600DCB824 /* FileList.swift */,
-				0B8C7AE72BE08E2200B4E817 /* Icon */,
 			);
 			path = Detail;
+			sourceTree = "<group>";
+		};
+		0B4EE43C2D0528EC00D7E963 /* Icon */ = {
+			isa = PBXGroup;
+			children = (
+				0B8C7AE72BE08E2200B4E817 /* Icon */,
+				0B4EE43D2D0528F600D7E963 /* IconPlugin.swift */,
+				0B8C7B2A2BE0C8F100B4E817 /* IconList.swift */,
+				F545D1632C1ADBD0006A6AFA /* IconTile.swift */,
+			);
+			path = Icon;
+			sourceTree = "<group>";
+		};
+		0B4EE43F2D05297200D7E963 /* Git */ = {
+			isa = PBXGroup;
+			children = (
+				0BF75EE32BDF2CCD00A553CD /* CommitList.swift */,
+				0BF75EDF2BDE4C0C00A553CD /* CommitTile.swift */,
+				F5F794DF2C5A1D2600DCB824 /* FileList.swift */,
+				0B4EE4402D05297700D7E963 /* GitPlugin.swift */,
+				F5FBCC332C3FB96000CED4F1 /* DetailGit.swift */,
+				0BDE61AC2BDB4E86006E23EA /* FileTile.swift */,
+			);
+			path = Git;
 			sourceTree = "<group>";
 		};
 		0B6B1B3C2D03D719007941F0 /* Banner */ = {
@@ -640,6 +663,8 @@
 		0BD650E42CA1956D00BA3CB8 /* Plugins */ = {
 			isa = PBXGroup;
 			children = (
+				0B4EE43F2D05297200D7E963 /* Git */,
+				0B4EE43C2D0528EC00D7E963 /* Icon */,
 				0B6B1B3C2D03D719007941F0 /* Banner */,
 				0BD650F12CA1A8E800BA3CB8 /* FileInfo */,
 				F54DFA482CA40BB200F81BE3 /* ProjectInfo */,
@@ -704,12 +729,6 @@
 			isa = PBXGroup;
 			children = (
 				0BD650F82CA1B98A00BA3CB8 /* CommitForm.swift */,
-				0B8C7B322BE0EAE900B4E817 /* ActionTab.swift */,
-				0BF75EE32BDF2CCD00A553CD /* CommitList.swift */,
-				0BF75EDF2BDE4C0C00A553CD /* CommitTile.swift */,
-				0BDE61AC2BDB4E86006E23EA /* FileTile.swift */,
-				0B8C7B2A2BE0C8F100B4E817 /* IconList.swift */,
-				F545D1632C1ADBD0006A6AFA /* IconTile.swift */,
 				0BFA2E5E2BE111AA00AD98D7 /* TabBtn.swift */,
 				0B8C7B2E2BE0E5F100B4E817 /* Tabs.swift */,
 			);
@@ -937,6 +956,7 @@
 				0BFA2E5F2BE111AA00AD98D7 /* TabBtn.swift in Sources */,
 				0B0E16832BD89A8F0078942B /* Content.swift in Sources */,
 				0BCC6D0D2BD948AB006ADA94 /* BtnSync.swift in Sources */,
+				0B4EE43E2D0528F600D7E963 /* IconPlugin.swift in Sources */,
 				0B8C7A5D2BE08BF600B4E817 /* IconPng.swift in Sources */,
 				0B8C7AD52BE08E1900B4E817 /* Feature.swift in Sources */,
 				0BF75EE02BDE4C0C00A553CD /* CommitTile.swift in Sources */,
@@ -958,7 +978,6 @@
 				0B8C7B2B2BE0C8F100B4E817 /* IconList.swift in Sources */,
 				0B8C7AF72BE08E4200B4E817 /* SmartButton.swift in Sources */,
 				F588FB752CA16B4F00F6AE42 /* GitError.swift in Sources */,
-				0B8C7B332BE0EAE900B4E817 /* ActionTab.swift in Sources */,
 				0BCC6D032BD932DA006ADA94 /* PathExt.swift in Sources */,
 				F545D1642C1ADBD0006A6AFA /* IconTile.swift in Sources */,
 				0B8C7AF42BE08E2D00B4E817 /* Snapshot.swift in Sources */,
@@ -986,6 +1005,7 @@
 				0B8C7B1E2BE09B1500B4E817 /* BannerShell.swift in Sources */,
 				0B1C67BC2BD9132500502EB1 /* Git.swift in Sources */,
 				F54DFA472CA4034B00F81BE3 /* ProjectPicker.swift in Sources */,
+				0B4EE4412D05297700D7E963 /* GitPlugin.swift in Sources */,
 				0BD15C582BDD26DE004024CF /* Diff.swift in Sources */,
 				0BD15C4C2BDBE959004024CF /* StateExt.swift in Sources */,
 				0BCC6D012BD92CB2006ADA94 /* DebugCommand.swift in Sources */,

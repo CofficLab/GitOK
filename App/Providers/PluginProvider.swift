@@ -8,7 +8,9 @@ import MagicKit
 class PluginProvider: ObservableObject, SuperLog, SuperThread {
     let emoji = "🧩"
     let plugins: [SuperPlugin] = [
-        BannerPlugin()
+        GitPlugin(),
+        BannerPlugin(),
+        IconPlugin()
     ]
 
     init() {

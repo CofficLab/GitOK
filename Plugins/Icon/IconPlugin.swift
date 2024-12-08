@@ -2,10 +2,10 @@ import MagicKit
 import OSLog
 import SwiftUI
 
-class BannerPlugin: SuperPlugin, SuperLog {
+class IconPlugin: SuperPlugin, SuperLog {
     let emoji = "📣"
-    var label: String = "Banner"
-    var icon: String = "camera"
+    var label: String = "Icon"
+    var icon: String = "globe.europe.africa"
     var isTab: Bool = true
 
     func addDBView() -> AnyView {
@@ -13,11 +13,11 @@ class BannerPlugin: SuperPlugin, SuperLog {
     }
 
     func addListView() -> AnyView {
-        AnyView(BannerList())
+        AnyView(IconList())
     }
 
     func addDetailView() -> AnyView {
-        AnyView(BannerDetail())
+        AnyView(DetailIcon())
     }
 
     func onInit() {

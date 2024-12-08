@@ -7,15 +7,15 @@ import SwiftUI
 import MagicKit
 
 class AppProvider: NSObject, ObservableObject, AVAudioPlayerDelegate, SuperLog {
-    @Published var currentTab: ActionTab = (ActionTab(rawValue: AppConfig.currentTab) ?? .Git)
+    @Published var currentTab: String = "Git"
     @Published var sidebarVisibility = AppConfig.sidebarVisibility
 
     var emoji = "🏠"
     
-    func setTab(_ t: ActionTab) {
+    func setTab(_ t: String) {
         let verbose = true
         if verbose {
-            os_log("\(self.t)Set Tab to \(t.rawValue)")
+            os_log("\(self.t)Set Tab to \(t)")
         }
         
         self.currentTab = t
