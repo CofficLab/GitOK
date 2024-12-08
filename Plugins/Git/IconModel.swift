@@ -4,7 +4,7 @@ import SwiftData
 import SwiftUI
 import MagicKit
 
-struct IconModel: JsonModel, SuperEvent, SuperLog {
+struct IconModel: SuperJsonModel, SuperEvent, SuperLog {
     static var root: String = ".gitok/icons"
     static var label = "💿 IconModel::"
     static var empty = IconModel(path: "")

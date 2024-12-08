@@ -21,6 +21,7 @@ struct TileQuickMerge: View, SuperLog, SuperThread {
         .onTapGesture {
             merge()
             self.m.toast("已合并到主分支")
+            self.m.append("已合并到主分支", channel: "🌳 git")
         }
         .padding(.vertical, 6)
         .padding(.horizontal, 8)
@@ -30,10 +31,9 @@ struct TileQuickMerge: View, SuperLog, SuperThread {
 
     func merge() {
         self.bg.async {
-            os_log("\(self.t)QuickMerge")
-            
             guard let project = project else {
                 os_log(.error, "\(self.t)No project")
+                self.m.error(QuickMergeError.noProject)
                 return
             }
 
@@ -44,6 +44,17 @@ struct TileQuickMerge: View, SuperLog, SuperThread {
 
                 m.setError(error)
             }
+        }
+    }
+}
+
+enum QuickMergeError: Error, LocalizedError {
+    case noProject
+
+    var localizedDescription: String {
+        switch self {
+        case .noProject:
+            return "在快速合并时没有项目"
         }
     }
 }

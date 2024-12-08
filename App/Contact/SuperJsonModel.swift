@@ -1,13 +1,13 @@
 import OSLog
 import SwiftUI
 
-protocol JsonModel: Encodable, Identifiable, Equatable, Hashable {
+protocol SuperJsonModel: Encodable, Identifiable, Equatable, Hashable {
     var path: String? { get }
     var label: String { get }
     var title: String { get }
 }
 
-extension JsonModel {
+extension SuperJsonModel {
     var id: String {
         path ?? "" + title
     }
@@ -15,7 +15,7 @@ extension JsonModel {
 
 // MARK: 删除
 
-extension JsonModel {
+extension SuperJsonModel {
     func delete() {
         guard let path = self.path else {
             return
@@ -31,7 +31,7 @@ extension JsonModel {
 
 // MARK: Store
 
-extension JsonModel {
+extension SuperJsonModel {
     func save() throws {
         let verbose = false
 

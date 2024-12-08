@@ -4,7 +4,7 @@ import SwiftData
 import SwiftUI
 import MagicKit
 
-struct BannerModel: JsonModel, SuperLog, SuperEvent {
+struct BannerModel: SuperJsonModel, SuperLog, SuperEvent {
     static var root: String = ".gitok/banners"
     static var label = "💿 BannerModel::"
     static var empty = BannerModel(path: "")

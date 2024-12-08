@@ -13,37 +13,22 @@ enum AppConfig {
     /// iCloud容器的ID
     static let containerIdentifier = "iCloud.yueyi.cisum"
     static let logger = Logger.self
-    static let supportedExtensions = [
-        "mp3",
-        "m4a",
-        "flac",
-        "wav"
-    ]
-    
     static func getAppName() -> String {
         if let appName = Bundle.main.infoDictionary?["CFBundleName"] as? String {
             return appName
         } else {
             os_log("无法获取应用程序名称")
-            
+
             return ""
         }
     }
-}
 
-// MARK: 开发调试
-
-extension AppConfig {
     static var debug: Bool {
         #if DEBUG
-        true
+            true
         #else
-        false
+            false
         #endif
-    }
-    
-    static func makeBackground(_ color: Color = .red) -> Color {
-        debug ? color.opacity(0.3) : Color.clear
     }
 }
 

@@ -62,40 +62,52 @@ struct RootView<Content>: View, SuperEvent where Content: View {
 
 extension RootView {
     func onGitCommitStart(_ notification: Notification) {
-        m.append("gitCommitStart")
+        m.append("gitCommitStart", channel: "🌳 git")
     }
 
     func onGitPullStart(_ notification: Notification) {
-        m.append("gitPullStart")
+        m.append("gitPullStart", channel: "🌳 git")
     }
 
     func onGitBranchChanged(_ notification: Notification) {
-        m.append("gitBranchChanged to \(notification.userInfo?["branch"] ?? "")")
+        m.append("gitBranchChanged to \(notification.userInfo?["branch"] ?? "")", channel: "🌳 git")
     }
 
     func onGitCommitSuccess(_ notification: Notification) {
-        m.append("gitCommitSuccess")
+        m.append("gitCommitSuccess", channel: "🌳 git")
     }
 
     func onGitCommitFailed(_ notification: Notification) {
-        m.append("gitCommitFailed")
+        m.append("gitCommitFailed", channel: "🌳 git")
     }
 
     func onGitPushStart(_ notification: Notification) {
-        m.append("gitPushStart")
+        m.append("gitPushStart", channel: "🌳 git")
     }
 
     func onGitPushSuccess(_ notification: Notification) {
-        m.append("gitPushSuccess")
+        m.append("gitPushSuccess", channel: "🌳 git")
     }
 
     func onGitPushFailed(_ notification: Notification) {
-        m.append("gitPushFailed")
+        m.append("gitPushFailed", channel: "🌳 git")
     }
 
     func onAppear() {
         p.plugins.forEach { $0.onAppear() }
     }
+}
+
+struct AppPreview: View {
+    var body: some View {
+        RootView {
+            ContentView()
+        }
+    }
+}
+
+#Preview {
+    AppPreview()
 }
 
 #Preview("APP") {
