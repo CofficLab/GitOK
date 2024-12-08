@@ -7,4 +7,10 @@
 "not_git_project" = "Not a Git Project";
 "select_project" = "Select Project";
 "select_a_project" = "Select a project";
-
+"loading" = "Loading...";
+"no_commits" = "No commits";
+"no_commits_description" = "No commits yet";
+"no_branches" = "No branches";
+"no_branches_description" = "No branches yet";
+"no_tags" = "No tags";
+"no_tags_description" = "No tags yet";

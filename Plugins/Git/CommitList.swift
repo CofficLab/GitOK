@@ -20,7 +20,7 @@ struct CommitList: View, SuperThread, SuperLog {
             VStack(spacing: 0) {
                 if loading {
                     Spacer()
-                    Text("loading...")
+                    Text(LocalizedStringKey("loading"))
                     Spacer()
                 } else {
                     List(commits, selection: self.$selection) { commit in

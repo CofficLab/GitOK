@@ -7,4 +7,10 @@
 "not_git_project" = "不是Git项目";
 "select_project" = "选择项目";
 "select_a_project" = "选择一个项目";
-
+"loading" = "加载中...";
+"no_commits" = "没有提交记录";
+"no_commits_description" = "当前没有提交记录";
+"no_branches" = "没有分支";
+"no_branches_description" = "当前没有分支";
+"no_tags" = "没有标签";
+"no_tags_description" = "当前没有标签";
