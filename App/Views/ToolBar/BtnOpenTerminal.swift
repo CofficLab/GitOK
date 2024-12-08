@@ -14,7 +14,7 @@ struct BtnOpenTerminal: View {
             Label(
                 title: { Text("用终端打开") },
                 icon: {
-                    Image(systemName: "apple.terminal.circle")
+                    Image(systemName: "apple.terminal")
                 }
             )
         })
