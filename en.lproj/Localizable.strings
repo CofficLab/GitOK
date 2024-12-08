@@ -1,9 +1,3 @@
-//
-//  Localizable.strings
-//  GitOK
-//
-//  Created by Angel on 2024/12/8.
-//
 
 "no_local_changes_title" = "No local changes";
 "no_local_changes_description" = "All changes have been committed to local repository";
