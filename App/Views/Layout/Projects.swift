@@ -8,7 +8,7 @@ struct Projects: View, SuperLog {
     @EnvironmentObject var app: AppProvider
     @EnvironmentObject var g: GitProvider
 
-    @Query(sort: Project.orderReverse) var projects: [Project]
+    @Query(sort: Project.order) var projects: [Project]
 
     @State var project: Project? = nil
 
@@ -38,6 +38,7 @@ struct Projects: View, SuperLog {
                         }))
                 }
                 .onDelete(perform: deleteItems)
+                .onMove(perform: moveItems)
             }
         }
         .onAppear {
@@ -77,6 +78,46 @@ struct Projects: View, SuperLog {
             for index in offsets {
                 modelContext.delete(projects[index])
             }
+        }
+    }
+
+    private func moveItems(from source: IndexSet, to destination: Int) {
+        let itemsToMove = source.map { projects[$0] }
+        
+        os_log("Moving items: \(itemsToMove.map { $0.title }) from \(source) to \(destination)")
+
+        do {
+            // 创建一个临时数组来重新排序
+            var tempProjects = projects
+            
+            // 从原位置移除项目
+            for index in source.sorted(by: >) {
+                tempProjects.remove(at: index)
+            }
+            
+            // 修改：确保目标索引不会超出数组范围
+            let safeDestination = min(destination, tempProjects.count)
+            
+            // 在目标位置插入项目
+            for item in itemsToMove.reversed() {
+                tempProjects.insert(item, at: safeDestination)
+            }
+            
+            // 更新所有项目的order值
+            for (index, project) in tempProjects.enumerated() {
+                project.order = Int16(index)
+            }
+            
+            try modelContext.save()
+            os_log("Successfully moved items and saved context.")
+            
+            // 输出所有项目的新顺序
+            os_log("New project orders:")
+            for (index, project) in projects.enumerated() {
+                os_log("Project[\(index)]: \(project.title) - order: \(project.order)")
+            }
+        } catch {
+            os_log("Failed to move items: \(error.localizedDescription)")
         }
     }
 }

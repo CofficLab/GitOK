@@ -7,13 +7,17 @@ import OSLog
 final class Project {
     static var verbose = true
     static var null = Project(URL(fileURLWithPath: ""))
+    static var order = [
+        SortDescriptor<Project>(\.order, order: .forward)
+    ]
     static var orderReverse = [
-        SortDescriptor<Project>(\.timestamp, order: .reverse)
+        SortDescriptor<Project>(\.order, order: .reverse)
     ]
     
     var label: String { "🌳 Project::" }
     var timestamp: Date
     var url: URL
+    var order: Int16 = 0
     
     @Transient
     var git = Git()
