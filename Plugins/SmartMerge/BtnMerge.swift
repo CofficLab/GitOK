@@ -8,7 +8,7 @@ struct BtnMerge: View, SuperEvent, SuperThread {
     var path: String
     var from: Branch
     var to: Branch
-    var git = Git()
+    var git = GitShell()
 
     @State private var isHovering = false
 

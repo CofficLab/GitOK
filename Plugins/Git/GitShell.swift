@@ -3,7 +3,7 @@ import MagicKit
 import OSLog
 import SwiftUI
 
-class Git: SuperEvent, SuperLog {
+class GitShell: SuperEvent, SuperLog {
     var emoji = "🔮"
     var shell = Shell()
 

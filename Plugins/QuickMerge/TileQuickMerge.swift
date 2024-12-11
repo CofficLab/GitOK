@@ -8,7 +8,7 @@ struct TileQuickMerge: View, SuperLog, SuperThread {
 
     @State var hovered = false
 
-    var git = Git()
+    var git = GitShell()
     var project: Project? { g.project }
 
     var body: some View {

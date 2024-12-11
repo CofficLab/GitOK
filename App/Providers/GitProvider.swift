@@ -12,7 +12,7 @@ class GitProvider: NSObject, ObservableObject, SuperLog {
     @Published var commit: GitCommit?
     @Published var file: File?
     
-    var git = Git()
+    var git = GitShell()
     var emoji = "🏠"
 
     func setCommit(_ c: GitCommit?) {

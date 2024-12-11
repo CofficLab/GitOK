@@ -11,7 +11,7 @@ struct Branches: View, SuperThread, SuperLog {
     @State var selection: Branch?
 
     var emoji = "🌿"
-    var git = Git()
+    var git = GitShell()
 
     var body: some View {
         Picker("branch", selection: $selection, content: {

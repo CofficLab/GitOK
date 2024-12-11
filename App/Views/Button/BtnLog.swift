@@ -4,7 +4,7 @@ struct BtnLog: View {
     @Binding var message: String
 
     var path: String
-    var git = Git()
+    var git = GitShell()
 
     var body: some View {
         Button("Log", action: {

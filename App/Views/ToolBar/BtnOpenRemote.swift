@@ -9,7 +9,7 @@ struct BtnOpenRemote: View {
     @State var remote: String = ""
 
     var path: String
-    var git = Git()
+    var git = GitShell()
 
     var body: some View {
         Button(action: {

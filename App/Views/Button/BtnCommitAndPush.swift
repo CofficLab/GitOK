@@ -19,7 +19,7 @@ struct BtnCommitAndPush: View, SuperLog, SuperThread {
     let emoji = "🐔"
     var repoPath: String
     var commitMessage: String = ""
-    var git: Git { g.git }
+    var git: GitShell { g.git }
 
     var body: some View {
         Button(title) {

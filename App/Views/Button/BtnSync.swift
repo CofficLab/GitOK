@@ -13,7 +13,7 @@ struct BtnSync: View, SuperLog, SuperEvent, SuperThread {
 
     var path: String
     var commitMessage = CommitCategory.auto
-    var git: Git { g.git }
+    var git: GitShell { g.git }
 
     var body: some View {
         Button(action: sync, label: {

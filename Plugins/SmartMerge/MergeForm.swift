@@ -12,7 +12,7 @@ struct MergeForm: View {
     @State var branch2: Branch? = nil
 
     var project: Project? { g.project }
-    var git = Git()
+    var git = GitShell()
 
     var body: some View {
         if let project = project {

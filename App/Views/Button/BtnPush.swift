@@ -8,7 +8,7 @@ struct BtnPush: View {
     @State var isPushing = false
     
     var path: String
-    var git = Git()
+    var git = GitShell()
     
     var body: some View {
         Button("推送", action: {

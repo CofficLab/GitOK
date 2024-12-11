@@ -20,7 +20,7 @@ final class Project {
     var order: Int16 = 0
     
     @Transient
-    var git = Git()
+    var git = GitShell()
     
     var title: String {
         url.lastPathComponent
