@@ -75,6 +75,30 @@ class Git: SuperEvent, SuperLog {
         DiffBlock(block: try run("diff HEAD~1 -- \(file.name)", path: path))
     }
 
+    func diffFileFromCommit(path: String, hash: String, file: String) throws -> some View {
+        let diffCommand = try run("show \(hash) -- \(file)", path: path)
+        let diffBlock = DiffBlock(block: diffCommand)
+        let lines = diffBlock.block.components(separatedBy: "\n")
+        
+        return VStack(alignment: .leading) {
+            Text("Diff for \(file)")
+                .font(.headline)
+                .padding(.bottom, 4)
+            
+            ScrollView {
+                LazyVStack(alignment: .leading, spacing: 2) {
+                    ForEach(Array(lines.enumerated()), id: \.offset) { index, line in
+                        DiffLineView(line: line)
+                            .id(index)
+                    }
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            .frame(maxWidth: .infinity)
+        }
+        .padding()
+    }
+
     func getBranches(_ path: String, verbose: Bool = false) throws -> [Branch] {
         if self.isGitProject(path: path) == false {
             return []
@@ -307,6 +331,40 @@ class Git: SuperEvent, SuperLog {
 
     func status(_ path: String) throws -> String {
         try run("status", path: path)
+    }
+}
+
+fileprivate extension String {
+    var diffColor: Color {
+        if self.hasPrefix("+") {
+            return .green
+        } else if self.hasPrefix("-") {
+            return .red
+        }
+        return .primary
+    }
+    
+    var diffBackground: Color {
+        if self.hasPrefix("+") {
+            return Color.green.opacity(0.1)
+        } else if self.hasPrefix("-") {
+            return Color.red.opacity(0.1)
+        }
+        return Color.clear
+    }
+}
+
+// 添加一个新的视图组件来处理每一行
+private struct DiffLineView: View {
+    let line: String
+    
+    var body: some View {
+        Text(verbatim: line)
+            .font(.system(.body, design: .monospaced))
+            .foregroundColor(line.diffColor)
+            .padding(.horizontal, 8)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(line.diffBackground)
     }
 }
 

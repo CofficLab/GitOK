@@ -66,14 +66,23 @@ struct DetailGit: View {
                         .frame(minWidth: 200)
                         .layoutPriority(2)
 
-                    ZStack {
-                        if let file = g.file {
-                            FileDetail(file: file, commit: commit)
+                    Group {
+                        if let project = g.project, let file = g.file {
+                            try? g.git.diffFileFromCommit(path: project.path, hash: commit.hash, file: file.name)
                         } else {
                             Spacer()
                         }
                     }
                     .layoutPriority(3)
+
+//                    Group {
+//                        if let file = g.file {
+//                            FileDetail(file: file, commit: commit)
+//                        } else {
+//                            Spacer()
+//                        }
+//                    }
+//                    .layoutPriority(3)
                 }
                 .layoutPriority(6)
             }
