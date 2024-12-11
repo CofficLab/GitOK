@@ -1,5 +1,12 @@
 # GitOK
 
+## 现状
+
+基于 SwiftUI 的开发必须使用 Xcode， 而 Xcode 不像是我们这个时代的软件。  
+我们决定因为 Xcode 的差劲而放弃使用 SwiftUI。
+
+新的项目在这里：<https://github.com/CofficLab/GitOK_Flutter>
+
 ## What
 
 GitOK 是一个综合性的项目管理工具。
