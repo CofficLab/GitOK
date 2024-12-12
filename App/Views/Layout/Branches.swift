@@ -1,6 +1,6 @@
+import MagicKit
 import OSLog
 import SwiftUI
-import MagicKit
 
 struct Branches: View, SuperThread, SuperLog {
     @EnvironmentObject var app: AppProvider
@@ -26,19 +26,18 @@ struct Branches: View, SuperThread, SuperLog {
     }
 
     func setBranch() {
-        self.bg.async {
-            do {
-                try g.setBranch(selection)
-            } catch let error {
-                m.alert("切换分支发生错误", info: error.localizedDescription)
-                self.refresh()
-            }
+        do {
+            try g.setBranch(selection)
+            self.m.toast("已切换到 \(g.currentBranch?.name ?? "None")")
+        } catch let error {
+            m.alert("切换分支发生错误", info: error.localizedDescription)
+            self.refresh()
         }
     }
 
     func refresh() {
         let verbose = false
-        
+
         guard let project = g.project else {
             return
         }
@@ -51,6 +50,7 @@ struct Branches: View, SuperThread, SuperLog {
             branches = try GitShell.getBranches(project.path)
         } catch let error {
             os_log(.error, "\(error.localizedDescription)")
+            self.m.toast("刷新分支失败")
         }
 
         selection = branches.first(where: {
