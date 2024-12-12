@@ -6,6 +6,7 @@ struct GitDetail: View {
     @EnvironmentObject var m: MessageProvider
     
     @State var diffView: AnyView = AnyView(EmptyView())
+    @State var file: File?
 
     var body: some View {
         ZStack {
@@ -15,7 +16,7 @@ struct GitDetail: View {
                         noLocalChangesView
                     } else {
                         HSplitView {
-                            FileList()
+                            FileList(file: $file, commit: commit)
                                 .frame(idealWidth: 200)
                                 .frame(minWidth: 200, maxWidth: 300)
                                 .layoutPriority(1)
@@ -30,8 +31,10 @@ struct GitDetail: View {
                 }
             }
         }
-        .onChange(of: g.file) {
-            if let commit = g.commit, let file = g.file, let project = g.project {
+        .onChange(of: file) {
+            self.g.setFile(file)
+            
+            if let commit = g.commit, let file = file, let project = g.project {
                 do {
                     let v = try g.git.diffFileFromCommit(path: project.path, hash: commit.hash, file: file.name)
                     self.diffView = AnyView(v)

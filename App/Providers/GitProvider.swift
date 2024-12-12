@@ -14,10 +14,6 @@ class GitProvider: NSObject, ObservableObject, SuperLog {
     
     var git = GitShell()
     var emoji = "🏠"
-
-    func setCommit(_ c: GitCommit?) {
-        commit = c
-    }
     
     var currentBranch: Branch? {
         guard let project = project else {
@@ -29,6 +25,14 @@ class GitProvider: NSObject, ObservableObject, SuperLog {
         } catch _ {
             return nil
         }
+    }
+
+    func setFile(_ f: File?) {
+        file = f
+    }
+
+    func setCommit(_ c: GitCommit?) {
+        commit = c
     }
     
     func setProject(_ p: Project?, reason: String) {

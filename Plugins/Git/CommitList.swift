@@ -1,5 +1,4 @@
 import MagicKit
-import OSLog
 import SwiftUI
 
 struct CommitList: View, SuperThread, SuperLog {
@@ -68,8 +67,6 @@ struct CommitList: View, SuperThread, SuperLog {
                 let rowHeight: CGFloat = 31
                 let visibleRows = Int(ceil(geometry.size.height / rowHeight))
                 pageSize = max(self.pageSize, visibleRows + 5)
-                
-                os_log(.debug, "onAppear, pageSize=\(pageSize)")
                 onAppear()
             }
         }
@@ -82,13 +79,9 @@ struct CommitList: View, SuperThread, SuperLog {
     }
 
     private func loadMoreCommits() {
-        guard let project = g.project, !loading, hasMoreCommits else { 
-            os_log(.debug, "LoadMoreCommits skipped: loading=\(loading), hasMoreCommits=\(hasMoreCommits)")
-            return 
-        }
+        guard let project = g.project, !loading, hasMoreCommits else { return }
 
         loading = true
-        os_log(.debug, "Loading more commits: page=\(currentPage), pageSize=\(pageSize)")
 
         bg.async {
             do {
@@ -99,14 +92,11 @@ struct CommitList: View, SuperThread, SuperLog {
                 )
 
                 main.async {
-                    os_log(.debug, "Loaded \(newCommits.count) new commits")
                     if !newCommits.isEmpty {
                         commits.append(contentsOf: newCommits)
                         currentPage += 1
-                        os_log(.debug, "Updated page to \(currentPage)")
                     } else {
                         hasMoreCommits = false
-                        os_log(.debug, "No more commits available")
                     }
                     loading = false
                 }
@@ -114,18 +104,13 @@ struct CommitList: View, SuperThread, SuperLog {
                 main.async {
                     loading = false
                 }
-                os_log(.error, "Failed to load more commits: \(error)")
             }
         }
     }
 
     func refresh(_ reason: String = "") {
-        guard let project = g.project, !isRefreshing else {
-            os_log(.debug, "Refresh skipped: isRefreshing=\(isRefreshing)")
-            return 
-        }
+        guard let project = g.project, !isRefreshing else { return }
 
-        os_log(.debug, "Starting refresh: reason=\(reason)")
         isRefreshing = true
         loading = true
 
@@ -141,14 +126,12 @@ struct CommitList: View, SuperThread, SuperLog {
                 )
 
                 main.async {
-                    os_log(.debug, "Loaded \(initialCommits.count) initial commits")
                     commits = [project.headCommit] + initialCommits
                     loading = false
                     isRefreshing = false
                     currentPage = 1
 
                     let hasChanges = project.hasUnCommittedChanges()
-                    os_log(.debug, "Project has uncommitted changes: \(hasChanges)")
                     showCommitForm = hasChanges
                 }
             } catch {
@@ -156,7 +139,6 @@ struct CommitList: View, SuperThread, SuperLog {
                     loading = false
                     isRefreshing = false
                 }
-                os_log(.error, "Failed to refresh commits: \(error)")
             }
         }
     }
