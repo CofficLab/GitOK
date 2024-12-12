@@ -1,6 +1,7 @@
 import SwiftUI
+import MagicKit
 
-struct GitDetail: View {
+struct GitDetail: View, SuperEvent {
     @EnvironmentObject var app: AppProvider
     @EnvironmentObject var g: GitProvider
     @EnvironmentObject var m: MessageProvider
@@ -36,6 +37,7 @@ struct GitDetail: View {
         }
         .onAppear(perform: onAppear)
         .onChange(of: file, onFileChange)
+        .onReceive(nc.publisher(for: .gitCommitSuccess), perform: onGitCommitSuccess)
     }
 
     var noLocalChangesView: some View {
@@ -95,6 +97,11 @@ extension GitDetail {
                 m.error(error)
             }
         }
+    }
+
+    func onGitCommitSuccess(_ notification: Notification) {
+        isProjectClean = g.project?.isClean ?? true
+        self.m.toast("已提交")
     }
 }
 
