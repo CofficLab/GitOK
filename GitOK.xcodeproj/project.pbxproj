@@ -62,7 +62,6 @@
 		0B8C7AF52BE08E2D00B4E817 /* Backgrounds.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7AF12BE08E2D00B4E817 /* Backgrounds.swift */; };
 		0B8C7AF72BE08E4200B4E817 /* SmartButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7AF62BE08E4200B4E817 /* SmartButton.swift */; };
 		0B8C7B1E2BE09B1500B4E817 /* BannerShell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7B1D2BE09B1500B4E817 /* BannerShell.swift */; };
-		0B8C7B212BE0A86000B4E817 /* ShellFileExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7B202BE0A86000B4E817 /* ShellFileExt.swift */; };
 		0B8C7B232BE0AD1D00B4E817 /* BannerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7B222BE0AD1D00B4E817 /* BannerModel.swift */; };
 		0B8C7B252BE0BB7500B4E817 /* BannerList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7B242BE0BB7500B4E817 /* BannerList.swift */; };
 		0B8C7B292BE0C6DB00B4E817 /* IconModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7B282BE0C6DB00B4E817 /* IconModel.swift */; };
@@ -139,8 +138,8 @@
 		F588FB702CA15D5200F6AE42 /* GitEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = F588FB6F2CA15D5200F6AE42 /* GitEvent.swift */; };
 		F588FB722CA15DAD00F6AE42 /* SuperEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = F588FB712CA15DAD00F6AE42 /* SuperEvent.swift */; };
 		F588FB752CA16B4F00F6AE42 /* GitError.swift in Sources */ = {isa = PBXBuildFile; fileRef = F588FB742CA16B4F00F6AE42 /* GitError.swift */; };
-		F588FB772CA1718800F6AE42 /* ShellError.swift in Sources */ = {isa = PBXBuildFile; fileRef = F588FB762CA1718800F6AE42 /* ShellError.swift */; };
 		F588FB792CA2494E00F6AE42 /* GitProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = F588FB782CA2494E00F6AE42 /* GitProvider.swift */; };
+		F5940B4E2D0A79710009FB37 /* ProjectProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5940B4D2D0A79710009FB37 /* ProjectProvider.swift */; };
 		F5F794E02C5A1D2600DCB824 /* FileList.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5F794DF2C5A1D2600DCB824 /* FileList.swift */; };
 		F5F794E92C5B192600DCB824 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = F5F794E82C5B192600DCB824 /* Sparkle */; };
 		F5F794EB2C5B3E8100DCB824 /* UpdaterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5F794EA2C5B3E8100DCB824 /* UpdaterView.swift */; };
@@ -221,7 +220,6 @@
 		0B8C7AF12BE08E2D00B4E817 /* Backgrounds.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Backgrounds.swift; sourceTree = "<group>"; };
 		0B8C7AF62BE08E4200B4E817 /* SmartButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SmartButton.swift; sourceTree = "<group>"; };
 		0B8C7B1D2BE09B1500B4E817 /* BannerShell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerShell.swift; sourceTree = "<group>"; };
-		0B8C7B202BE0A86000B4E817 /* ShellFileExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShellFileExt.swift; sourceTree = "<group>"; };
 		0B8C7B222BE0AD1D00B4E817 /* BannerModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerModel.swift; sourceTree = "<group>"; };
 		0B8C7B242BE0BB7500B4E817 /* BannerList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerList.swift; sourceTree = "<group>"; };
 		0B8C7B282BE0C6DB00B4E817 /* IconModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconModel.swift; sourceTree = "<group>"; };
@@ -296,8 +294,8 @@
 		F588FB6F2CA15D5200F6AE42 /* GitEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitEvent.swift; sourceTree = "<group>"; };
 		F588FB712CA15DAD00F6AE42 /* SuperEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuperEvent.swift; sourceTree = "<group>"; };
 		F588FB742CA16B4F00F6AE42 /* GitError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitError.swift; sourceTree = "<group>"; };
-		F588FB762CA1718800F6AE42 /* ShellError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShellError.swift; sourceTree = "<group>"; };
 		F588FB782CA2494E00F6AE42 /* GitProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitProvider.swift; sourceTree = "<group>"; };
+		F5940B4D2D0A79710009FB37 /* ProjectProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectProvider.swift; sourceTree = "<group>"; };
 		F5F794DF2C5A1D2600DCB824 /* FileList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileList.swift; sourceTree = "<group>"; };
 		F5F794EA2C5B3E8100DCB824 /* UpdaterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdaterView.swift; sourceTree = "<group>"; };
 		F5FBCC332C3FB96000CED4F1 /* GitDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitDetail.swift; sourceTree = "<group>"; };
@@ -389,6 +387,7 @@
 				0BD650FC2CA2E49F00BA3CB8 /* IconProvider.swift */,
 				0BD650EF2CA196EA00BA3CB8 /* MessageProvider.swift */,
 				0BD650E52CA195EA00BA3CB8 /* PluginProvider.swift */,
+				F5940B4D2D0A79710009FB37 /* ProjectProvider.swift */,
 			);
 			path = Providers;
 			sourceTree = "<group>";
@@ -486,7 +485,7 @@
 				0B1C67BB2BD9132500502EB1 /* GitShell.swift */,
 				0B8C7B282BE0C6DB00B4E817 /* IconModel.swift */,
 				0B8C7A582BE08BF600B4E817 /* IconPng.swift */,
-				F588FB762CA1718800F6AE42 /* ShellError.swift */,
+				0BCC6D062BD939BA006ADA94 /* Shell.swift */,
 				F54DFA3D2CA395C200F81BE3 /* SmartImage.swift */,
 				0BD650EA2CA196BD00BA3CB8 /* SmartMessage.swift */,
 				0BF75EE12BDE5CE500A553CD /* Stage.swift */,
@@ -581,15 +580,6 @@
 			path = Banner;
 			sourceTree = "<group>";
 		};
-		0B8C7B1F2BE0A85200B4E817 /* Shell */ = {
-			isa = PBXGroup;
-			children = (
-				0BCC6D062BD939BA006ADA94 /* Shell.swift */,
-				0B8C7B202BE0A86000B4E817 /* ShellFileExt.swift */,
-			);
-			path = Shell;
-			sourceTree = "<group>";
-		};
 		0BB543E72BE890DA00D7A2B2 /* Contact */ = {
 			isa = PBXGroup;
 			children = (
@@ -673,7 +663,6 @@
 		0BDE61A12BDB37C6006E23EA /* Terminal */ = {
 			isa = PBXGroup;
 			children = (
-				0B8C7B1F2BE0A85200B4E817 /* Shell */,
 				0B8C7B1C2BE09B0700B4E817 /* Banner */,
 			);
 			path = Terminal;
@@ -858,7 +847,6 @@
 				0B9EA3562C1ECF5A00A4059A /* IconOpacity.swift in Sources */,
 				0BD650F32CA1A8F900BA3CB8 /* TileFile.swift in Sources */,
 				0BDE61A32BDB3C9B006E23EA /* Projects.swift in Sources */,
-				0B8C7B212BE0A86000B4E817 /* ShellFileExt.swift in Sources */,
 				0BCC6D132BD94D15006ADA94 /* BtnLogs.swift in Sources */,
 				0B4EE4432D05990E00D7E963 /* SmartMessagePlugin.swift in Sources */,
 				0B76FD222BDE315800501F1F /* ReadyHandler.swift in Sources */,
@@ -945,6 +933,7 @@
 				0B4EE44B2D05A14C00D7E963 /* SmartFilePlugin.swift in Sources */,
 				0B8C7AEB2BE08E2200B4E817 /* IconItem.swift in Sources */,
 				0BCFA97C2D048509006A22F7 /* BannerTextEditor.swift in Sources */,
+				F5940B4E2D0A79710009FB37 /* ProjectProvider.swift in Sources */,
 				0BD650F92CA1B98A00BA3CB8 /* CommitForm.swift in Sources */,
 				0BB543E92BE890F200D7A2B2 /* SuperJsonModel.swift in Sources */,
 				F5FBCC342C3FB96000CED4F1 /* GitDetail.swift in Sources */,
@@ -956,7 +945,6 @@
 				F580BF9D2CE4A24500977CFC /* TileMerge.swift in Sources */,
 				F580BF9E2CE4A24500977CFC /* MergeForm.swift in Sources */,
 				F580BF9F2CE4A24500977CFC /* BtnMerge.swift in Sources */,
-				F588FB772CA1718800F6AE42 /* ShellError.swift in Sources */,
 				0BD650FD2CA2E49F00BA3CB8 /* IconProvider.swift in Sources */,
 				0B1C67ED2BD9D9CB00502EB1 /* CommitCategory.swift in Sources */,
 				0B8C7AD72BE08E1900B4E817 /* BannerLayout.swift in Sources */,

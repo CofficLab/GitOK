@@ -3,9 +3,9 @@ import OSLog
 import SwiftUI
 
 class Shell {
-    var label = "🐚 Shell::"
+    static let label = "🐚 Shell::"
     
-    func pwd() -> String {
+    static func pwd() -> String {
         do {
             return try self.run("pwd")
         } catch {
@@ -13,7 +13,7 @@ class Shell {
         }
     }
     
-    func whoami() -> String {
+    static func whoami() -> String {
         do {
             return try self.run("whoami")
         } catch {
@@ -21,7 +21,7 @@ class Shell {
         }
     }
     
-    func run(_ command: String, at path: String? = nil, verbose: Bool = false) throws -> String {
+    static func run(_ command: String, at path: String? = nil, verbose: Bool = false) throws -> String {
         let process = Process()
         process.executableURL = URL(fileURLWithPath: "/bin/bash")
         process.arguments = ["-c", command]
@@ -59,11 +59,56 @@ class Shell {
         return output
     }
     
-    func configureGitCredentialCache() -> String {
+    static func configureGitCredentialCache() -> String {
         do {
             return try self.run("git config --global credential.helper cache")
         } catch {
             return error.localizedDescription
+        }
+    }
+}
+
+// MARK: File
+
+extension Shell {
+    func isDirExists(_ dir: String) -> Bool {
+        try! Shell.run("""
+            if [ ! -d "\(dir)" ]; then
+                echo "false"
+            else
+                echo "true"
+            fi
+        """) == "true"
+    }
+    
+    func makeDir(_ dir: String, verbose: Bool = true) {
+        if verbose {
+            os_log("\(Shell.label)MakeDir -> \(dir)")
+        }
+        
+        _ = try! Shell.run("""
+            if [ ! -d "\(dir)" ]; then
+                mkdir -p "\(dir)"
+            else
+                echo "\(dir) 已经存在"
+            fi
+        """)
+    }
+    
+    func makeFile(_ path: String, content: String) {
+        _ = try! Shell.run("""
+            echo "\(content)" > \(path)
+        """)
+    }
+}
+
+enum ShellError: Error, LocalizedError {
+    case commandFailed(String)
+
+    var errorDescription: String? {
+        switch self {
+        case .commandFailed(let output):
+            return "Command failed with output: \(output)"
         }
     }
 }

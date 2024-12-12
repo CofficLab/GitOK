@@ -5,7 +5,6 @@ import SwiftUI
 
 class GitShell: SuperEvent, SuperLog {
     var emoji = "🔮"
-    var shell = Shell()
 
     func add(_ path: String, verbose: Bool = false) throws {
         let message = try run("add -A .", path: path)
@@ -244,10 +243,9 @@ class GitShell: SuperEvent, SuperLog {
     }
 
     func pull(_ path: String) throws {
-        let shell = Shell()
         do {
             self.emitGitPullStart()
-            _ = try shell.run("git pull", at: path)
+            _ = try Shell.run("git pull", at: path)
             self.emitGitPullSuccess()
         } catch let error {
             os_log(.error, "拉取失败: \(error.localizedDescription)")
@@ -257,10 +255,9 @@ class GitShell: SuperEvent, SuperLog {
     }
 
     func push(_ path: String) throws {
-        let shell = Shell()
         do {
             self.emitGitPushStart()
-            _ = try shell.run("git push", at: path)
+            _ = try Shell.run("git push", at: path)
             self.emitGitPushSuccess()
         } catch let error {
             os_log(.error, "推送失败: \(error.localizedDescription)")
@@ -313,7 +310,7 @@ class GitShell: SuperEvent, SuperLog {
 
     @discardableResult
     func run(_ arguments: String, path: String, verbose: Bool = false) throws -> String {
-        try self.shell.run("cd '\(path)' && git \(arguments)", verbose: verbose)
+        try Shell.run("cd '\(path)' && git \(arguments)", verbose: verbose)
     }
 
     @discardableResult

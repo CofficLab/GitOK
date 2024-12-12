@@ -47,7 +47,7 @@ struct GitCommit: SuperLog {
         
         let command = "git rev-list --left-right --count \(hash)...origin/\(branch)"
         do {
-            let result = try Shell().run(command, at: path)
+            let result = try Shell.run(command, at: path)
             let components = result.trimmingCharacters(in: .whitespacesAndNewlines).components(separatedBy: "\t")
             
             if components.count == 2 {
@@ -101,7 +101,7 @@ struct GitCommit: SuperLog {
     func checkHttpsCredentials() -> Bool {
         let command = "git config --get credential.helper"
         do {
-            let result = try Shell().run(command)
+            let result = try Shell.run(command)
             os_log("\(self.t)checkHttpsCredentials -> \(result)")
             return !result.isEmpty
         } catch {

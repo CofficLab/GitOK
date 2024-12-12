@@ -199,6 +199,8 @@ extension CommitList {
     }
 }
 
+// MARK: CommitRow
+
 private struct CommitRow: View {
     let commit: GitCommit
     let isSelected: Bool
