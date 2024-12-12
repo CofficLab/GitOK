@@ -7,24 +7,30 @@ struct GitDetail: View {
     
     @State var diffView: AnyView = AnyView(EmptyView())
     @State var file: File?
-
+    @State private var isProjectClean: Bool = true
+    
     var body: some View {
         ZStack {
             if let project = g.project {
                 if let commit = g.commit {
-                    if commit.isHead, project.isClean {
-                        noLocalChangesView
-                    } else {
-                        HSplitView {
-                            FileList(file: $file, commit: commit)
-                                .frame(idealWidth: 200)
-                                .frame(minWidth: 200, maxWidth: 300)
-                                .layoutPriority(1)
+                    Group {
+                        if commit.isHead && isProjectClean {
+                            noLocalChangesView
+                        } else {
+                            HSplitView {
+                                FileList(file: $file, commit: commit)
+                                    .frame(idealWidth: 200)
+                                    .frame(minWidth: 200, maxWidth: 300)
+                                    .layoutPriority(1)
 
-                            diffView
-                                .frame(minWidth: 400, maxWidth: .infinity)
-                                .layoutPriority(2)
+                                diffView
+                                    .frame(minWidth: 400, maxWidth: .infinity)
+                                    .layoutPriority(2)
+                            }
                         }
+                    }
+                    .onAppear {
+                        isProjectClean = project.isClean
                     }
                 } else {
                     commitNotSelectedView

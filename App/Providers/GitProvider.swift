@@ -7,10 +7,10 @@ import SwiftUI
 import MagicKit
 
 class GitProvider: NSObject, ObservableObject, SuperLog {
-    @Published var branches: [String] = []
-    @Published var project: Project?
-    @Published var commit: GitCommit?
-    @Published var file: File?
+    @Published private(set) var branches: [String] = []
+    @Published private(set) var project: Project?
+    @Published private(set) var commit: GitCommit?
+    @Published private(set) var file: File?
     
     var emoji = "🏠"
     
@@ -31,6 +31,7 @@ class GitProvider: NSObject, ObservableObject, SuperLog {
     }
 
     func setCommit(_ c: GitCommit?) {
+        guard commit?.id != c?.id else { return }
         commit = c
     }
     
