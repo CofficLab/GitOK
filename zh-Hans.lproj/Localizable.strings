@@ -14,3 +14,5 @@
 "no_branches_description" = "当前没有分支";
 "no_tags" = "没有标签";
 "no_tags_description" = "当前没有标签";
+"project_not_exist" = "项目不存在";
+"delete_project" = "删除项目";

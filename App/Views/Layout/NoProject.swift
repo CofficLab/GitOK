@@ -18,13 +18,13 @@ struct NoProject: View, SuperThread, SuperEvent {
                     .font(.system(size: 60))
                     .foregroundColor(.gray)
 
-                Text("项目不存在")
+                Text("project_not_exist")
                     .font(.title2)
                     .foregroundColor(.secondary)
 
                 if let project = g.project {
                     Button(action: { deleteItem(project) }) {
-                        Label("删除项目", systemImage: "trash")
+                        Label("delete_project", systemImage: "trash")
                             .foregroundColor(.red)
                     }
                     .buttonStyle(.bordered)

@@ -3,18 +3,40 @@ import SwiftUI
 struct GitDetail: View {
     @EnvironmentObject var app: AppProvider
     @EnvironmentObject var g: GitProvider
+    @EnvironmentObject var m: MessageProvider
+    
+    @State var diffView: AnyView = AnyView(EmptyView())
 
     var body: some View {
-        Group {
+        ZStack {
             if let project = g.project {
                 if let commit = g.commit {
                     if commit.isHead, project.isClean {
                         noLocalChangesView
                     } else {
-                        filesAndChangesView
+                        HSplitView {
+                            FileList()
+                                .frame(width: 200)
+                                .frame(minWidth: 200, maxWidth: 300)
+                                .layoutPriority(1)
+
+                            diffView
+                                .frame(minWidth: 400, maxWidth: .infinity)
+                                .layoutPriority(2)
+                        }
                     }
                 } else {
                     commitNotSelectedView
+                }
+            }
+        }
+        .onChange(of: g.file) {
+            if let commit = g.commit, let file = g.file, let project = g.project {
+                do {
+                    let v = try g.git.diffFileFromCommit(path: project.path, hash: commit.hash, file: file.name)
+                    self.diffView = AnyView(v)
+                } catch {
+                    m.error(error)
                 }
             }
         }
@@ -56,38 +78,6 @@ struct GitDetail: View {
                 .padding(.horizontal)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-    }
-
-    var filesAndChangesView: some View {
-        VSplitView {
-            if let commit = g.commit {
-                HSplitView {
-                    FileList()
-                        .frame(minWidth: 200)
-                        .layoutPriority(2)
-
-                    Group {
-                        if let project = g.project, let file = g.file {
-                            try? g.git.diffFileFromCommit(path: project.path, hash: commit.hash, file: file.name)
-                        } else {
-                            Spacer()
-                        }
-                    }
-                    .layoutPriority(3)
-
-//                    Group {
-//                        if let file = g.file {
-//                            FileDetail(file: file, commit: commit)
-//                        } else {
-//                            Spacer()
-//                        }
-//                    }
-//                    .layoutPriority(3)
-                }
-                .layoutPriority(6)
-            }
-        }
-        .frame(maxWidth: .infinity)
     }
 }
 
