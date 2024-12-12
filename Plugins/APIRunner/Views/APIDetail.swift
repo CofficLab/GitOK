@@ -7,26 +7,12 @@ struct APIDetail: View {
     
     var body: some View {
         if let project = g.project {
-            if apiProvider.isEditing {
+            if apiProvider.isEditing, let editingRequest = apiProvider.editingRequest {
                 // 编辑模式
-                if let editingRequest = apiProvider.editingRequest {
-                    RequestEditor(request: .constant(editingRequest)) { savedRequest in
-                        // 保存请求
-                        var config = APIConfig.load(from: project)
-                        if let index = config.requests.firstIndex(where: { $0.id == savedRequest.id }) {
-                            config.requests[index] = savedRequest
-                        } else {
-                            config.requests.append(savedRequest)
-                        }
-                        try? config.save(to: project)
-                        
-                        // 更新状态
-                        apiProvider.selectedRequestId = savedRequest.id
-                        apiProvider.stopEditing()
-                    }
+                RequestEditor(request: .constant(editingRequest)) { savedRequest in
+                    apiProvider.saveRequest(savedRequest, to: project)
                 }
-            } else if let selectedRequest = APIConfig.load(from: project)
-                .requests.first(where: { $0.id == apiProvider.selectedRequestId }) {
+            } else if let selectedRequest = apiProvider.requests.first(where: { $0.id == apiProvider.selectedRequestId }) {
                 // 详情模式
                 VStack {
                     RequestDetailView(request: .constant(selectedRequest))
@@ -40,6 +26,22 @@ struct APIDetail: View {
                     Text("or create a new one")
                         .font(.subheadline)
                         .foregroundColor(.secondary)
+                    Text("Current project: \(g.project?.title ?? "None")")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+
+                    Text("Current request id: \(apiProvider.selectedRequestId?.uuidString ?? "None")")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+
+                    Text("Is editing: \(apiProvider.isEditing ? "Yes" : "No")")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+
+                    Text("Editing request id: \(apiProvider.editingRequest?.id.uuidString ?? "None")")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+
                     Spacer()
                 }
             }

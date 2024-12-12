@@ -6,7 +6,7 @@ struct APIList: View {
     @State private var requests: [APIRequest] = []
     @State private var selectedRequest: APIRequest? {
         willSet {
-            apiProvider.selectedRequestId = newValue?.id
+            apiProvider.setSelectedRequestId(newValue?.id)
         }
     }
 
@@ -61,6 +61,7 @@ struct APIList: View {
     private func loadConfig(project: Project) {
         let config = APIConfig.load(from: project)
         requests = config.requests
+        apiProvider.setRequests(requests)
     }
 
     private func saveConfig(project: Project) {

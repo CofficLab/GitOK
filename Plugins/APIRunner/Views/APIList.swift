@@ -3,17 +3,25 @@ import SwiftUI
 struct APIList: View {
     @EnvironmentObject var g: GitProvider
     @EnvironmentObject var apiProvider: APIProvider
-    @State private var requests: [APIRequest] = []
     
     var body: some View {
         if let project = g.project {
             List {
                 Section {
-                    ForEach(requests) { request in
+                    ForEach(apiProvider.requests) { request in
                         RequestListItem(request: request, isSelected: apiProvider.selectedRequestId == request.id)
                             .tag(request)
                             .onTapGesture {
-                                apiProvider.selectedRequestId = request.id
+                                if apiProvider.selectedRequestId == request.id {
+                                    apiProvider.startEditing(request)
+                                } else {
+                                    apiProvider.selectRequest(request)
+                                }
+                            }
+                            .contextMenu {
+                                Button("Edit") {
+                                    apiProvider.startEditing(request)
+                                }
                             }
                     }
                 }
@@ -25,18 +33,14 @@ struct APIList: View {
                 }
             }
             .onAppear {
-                loadConfig(project: project)
+                apiProvider.loadRequests(from: project)
             }
         }
     }
     
     private func createNewRequest() {
-        apiProvider.startEditing(APIRequest(name: "New Request", url: ""))
-    }
-    
-    private func loadConfig(project: Project) {
-        let config = APIConfig.load(from: project)
-        requests = config.requests
+        let newRequest = APIRequest(name: "New Request", url: "")
+        apiProvider.startEditing(newRequest)
     }
 }
 
