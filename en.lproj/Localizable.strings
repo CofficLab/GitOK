@@ -1,4 +1,3 @@
-
 "no_local_changes_title" = "No local changes";
 "no_local_changes_description" = "All changes have been committed to local repository";
 "select_commit_title" = "Select a Commit";
@@ -16,3 +15,10 @@
 "no_tags_description" = "No tags yet";
 "project_not_exist" = "Project not exist";
 "delete_project" = "Delete project";
+"select_table" = "Select Table";
+"select_table_description" = "Select a table from the list on the left to view data";
+"no_database" = "No Database Connected";
+"no_database_description" = "No database configuration found in current project";
+"database_error" = "Database Error";
+"mysql_connection_failed" = "MySQL Connection Failed";
+"sqlite_connection_failed" = "SQLite Connection Failed";

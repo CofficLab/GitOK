@@ -5,7 +5,6 @@ import SwiftUI
 struct RootView<Content>: View, SuperEvent where Content: View {
     var content: Content
     var a = AppProvider()
-    var g = GitProvider()
     var b = BannerProvider()
     var i = IconProvider()
     var c = AppConfig.getContainer()
@@ -13,6 +12,7 @@ struct RootView<Content>: View, SuperEvent where Content: View {
     
     @StateObject var p = PluginProvider()
     @StateObject var m = MessageProvider()
+    @StateObject var g = GitProvider()
 
     init(@ViewBuilder content: () -> Content) {
         self.content = content()
@@ -94,7 +94,7 @@ extension RootView {
     }
 
     func onAppear() {
-        p.plugins.forEach { $0.onAppear() }
+        p.plugins.forEach { $0.onAppear(project: g.project) }
     }
 }
 

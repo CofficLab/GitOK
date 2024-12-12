@@ -28,7 +28,7 @@ class SmartMergePlugin: SuperPlugin, SuperLog {
         os_log("\(self.t) onInit")
     }
 
-    func onAppear() {
+    func onAppear(project: Project?) {
         os_log("\(self.t) onAppear")
     }
 

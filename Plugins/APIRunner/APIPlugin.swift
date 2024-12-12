@@ -28,7 +28,7 @@ class APIPlugin: SuperPlugin {
         // 初始化操作
     }
 
-    func onAppear() {
+    func onAppear(project: Project?) {
         // 出现时的操作
     }
 

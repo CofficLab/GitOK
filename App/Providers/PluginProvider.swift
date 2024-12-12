@@ -12,6 +12,7 @@ class PluginProvider: ObservableObject, SuperLog, SuperThread {
         BannerPlugin(),
         IconPlugin(),
         APIPlugin(),
+//        DatabasePlugin(),
         SmartFilePlugin(),
         SmartProjectPlugin(),
         QuickMergePlugin(),

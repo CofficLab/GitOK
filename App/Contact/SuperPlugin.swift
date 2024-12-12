@@ -12,7 +12,7 @@ protocol SuperPlugin {
     func addToolBarTrailingView() -> AnyView
     
     func onInit() -> Void
-    func onAppear() -> Void
+    func onAppear(project: Project?) -> Void
     func onDisappear() -> Void
     func onPlay() -> Void
     func onPlayStateUpdate() -> Void

@@ -35,6 +35,10 @@
 		0B4EE44B2D05A14C00D7E963 /* SmartFilePlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4EE44A2D05A14C00D7E963 /* SmartFilePlugin.swift */; };
 		0B4EE4612D05A42900D7E963 /* MessageTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4EE4602D05A42900D7E963 /* MessageTable.swift */; };
 		0B4EE49E2D05C4CC00D7E963 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 0B4EE49D2D05C48900D7E963 /* Localizable.strings */; };
+		0B4FE98A2D0B25D300F45FE9 /* DatabaseProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4FE9882D0B25D300F45FE9 /* DatabaseProvider.swift */; };
+		0B4FE98B2D0B25D300F45FE9 /* DatabaseConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4FE9832D0B25D300F45FE9 /* DatabaseConfig.swift */; };
+		0B4FE98C2D0B25D300F45FE9 /* TableDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4FE9862D0B25D300F45FE9 /* TableDetail.swift */; };
+		0B4FE98D2D0B25D300F45FE9 /* DatabaseDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4FE9852D0B25D300F45FE9 /* DatabaseDetail.swift */; };
 		0B6B1B3E2D03D7BA007941F0 /* SuperPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B6B1B3D2D03D7BA007941F0 /* SuperPlugin.swift */; };
 		0B6B1B402D03D7E8007941F0 /* BannerPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B6B1B3F2D03D7E4007941F0 /* BannerPlugin.swift */; };
 		0B6B1B422D03D980007941F0 /* BannerBtnAdd.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B6B1B412D03D976007941F0 /* BannerBtnAdd.swift */; };
@@ -67,6 +71,9 @@
 		0B8C7B292BE0C6DB00B4E817 /* IconModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7B282BE0C6DB00B4E817 /* IconModel.swift */; };
 		0B8C7B2B2BE0C8F100B4E817 /* IconList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7B2A2BE0C8F100B4E817 /* IconList.swift */; };
 		0B8C7B2F2BE0E5F100B4E817 /* Tabs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7B2E2BE0E5F100B4E817 /* Tabs.swift */; };
+		0B8C7B392D0B27CC00480598 /* MySQLKit in Frameworks */ = {isa = PBXBuildFile; productRef = 0B8C7B382D0B27CC00480598 /* MySQLKit */; };
+		0B8C7B3B2D0B28D600480598 /* DatabasePlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7B3A2D0B28D600480598 /* DatabasePlugin.swift */; };
+		0B8C7B3D2D0B2A1D00480598 /* TableList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7B3C2D0B2A1D00480598 /* TableList.swift */; };
 		0B9EA3562C1ECF5A00A4059A /* IconOpacity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B9EA3552C1ECF5A00A4059A /* IconOpacity.swift */; };
 		0BB1C7122D045C0600C4EA70 /* AlertToast in Frameworks */ = {isa = PBXBuildFile; productRef = 0BB1C7112D045C0600C4EA70 /* AlertToast */; };
 		0BB4278E2BE72512004E6F82 /* QueueExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BB4278D2BE72512004E6F82 /* QueueExt.swift */; };
@@ -200,6 +207,10 @@
 		0B4EE4602D05A42900D7E963 /* MessageTable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageTable.swift; sourceTree = "<group>"; };
 		0B4EE49C2D05C48900D7E963 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		0B4EE49F2D05C4DD00D7E963 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
+		0B4FE9832D0B25D300F45FE9 /* DatabaseConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseConfig.swift; sourceTree = "<group>"; };
+		0B4FE9852D0B25D300F45FE9 /* DatabaseDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseDetail.swift; sourceTree = "<group>"; };
+		0B4FE9862D0B25D300F45FE9 /* TableDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableDetail.swift; sourceTree = "<group>"; };
+		0B4FE9882D0B25D300F45FE9 /* DatabaseProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseProvider.swift; sourceTree = "<group>"; };
 		0B6B1B3D2D03D7BA007941F0 /* SuperPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuperPlugin.swift; sourceTree = "<group>"; };
 		0B6B1B3F2D03D7E4007941F0 /* BannerPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerPlugin.swift; sourceTree = "<group>"; };
 		0B6B1B412D03D976007941F0 /* BannerBtnAdd.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerBtnAdd.swift; sourceTree = "<group>"; };
@@ -232,6 +243,8 @@
 		0B8C7B282BE0C6DB00B4E817 /* IconModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconModel.swift; sourceTree = "<group>"; };
 		0B8C7B2A2BE0C8F100B4E817 /* IconList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconList.swift; sourceTree = "<group>"; };
 		0B8C7B2E2BE0E5F100B4E817 /* Tabs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tabs.swift; sourceTree = "<group>"; };
+		0B8C7B3A2D0B28D600480598 /* DatabasePlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabasePlugin.swift; sourceTree = "<group>"; };
+		0B8C7B3C2D0B2A1D00480598 /* TableList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableList.swift; sourceTree = "<group>"; };
 		0B9EA3552C1ECF5A00A4059A /* IconOpacity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconOpacity.swift; sourceTree = "<group>"; };
 		0BB4278D2BE72512004E6F82 /* QueueExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QueueExt.swift; sourceTree = "<group>"; };
 		0BB543DF2BE8875700D7A2B2 /* BtnDelBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BtnDelBanner.swift; sourceTree = "<group>"; };
@@ -326,6 +339,7 @@
 			files = (
 				0BB1C7122D045C0600C4EA70 /* AlertToast in Frameworks */,
 				F5F794E92C5B192600DCB824 /* Sparkle in Frameworks */,
+				0B8C7B392D0B27CC00480598 /* MySQLKit in Frameworks */,
 				0BD652242CA4390C00BA3CB8 /* MagicKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -506,6 +520,35 @@
 			path = Git;
 			sourceTree = "<group>";
 		};
+		0B4FE9842D0B25D300F45FE9 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				0B4FE9832D0B25D300F45FE9 /* DatabaseConfig.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		0B4FE9872D0B25D300F45FE9 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				0B8C7B3C2D0B2A1D00480598 /* TableList.swift */,
+				0B4FE9852D0B25D300F45FE9 /* DatabaseDetail.swift */,
+				0B4FE9862D0B25D300F45FE9 /* TableDetail.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		0B4FE9892D0B25D300F45FE9 /* Database */ = {
+			isa = PBXGroup;
+			children = (
+				0B8C7B3A2D0B28D600480598 /* DatabasePlugin.swift */,
+				0B4FE9882D0B25D300F45FE9 /* DatabaseProvider.swift */,
+				0B4FE9842D0B25D300F45FE9 /* Models */,
+				0B4FE9872D0B25D300F45FE9 /* Views */,
+			);
+			path = Database;
+			sourceTree = "<group>";
+		};
 		0B6B1B3C2D03D719007941F0 /* Banner */ = {
 			isa = PBXGroup;
 			children = (
@@ -633,6 +676,7 @@
 		0BD650E42CA1956D00BA3CB8 /* Plugins */ = {
 			isa = PBXGroup;
 			children = (
+				0B4FE9892D0B25D300F45FE9 /* Database */,
 				F5940B5D2D0A99CD0009FB37 /* APIRunner */,
 				0B4EE43F2D05297200D7E963 /* Git */,
 				0B4EE43C2D0528EC00D7E963 /* Icon */,
@@ -805,6 +849,7 @@
 				F5F794E82C5B192600DCB824 /* Sparkle */,
 				0BD652232CA4390C00BA3CB8 /* MagicKit */,
 				0BB1C7112D045C0600C4EA70 /* AlertToast */,
+				0B8C7B382D0B27CC00480598 /* MySQLKit */,
 			);
 			productName = GitOK;
 			productReference = 0B0E167D2BD89A8F0078942B /* GitOK.app */;
@@ -839,6 +884,7 @@
 				F5F794E72C5B192600DCB824 /* XCRemoteSwiftPackageReference "Sparkle" */,
 				0BD652222CA4390C00BA3CB8 /* XCRemoteSwiftPackageReference "MagicKit" */,
 				0B6B1B5D2D045AB7007941F0 /* XCRemoteSwiftPackageReference "AlertToast" */,
+				0B8C7B372D0B27CC00480598 /* XCRemoteSwiftPackageReference "mysql-kit" */,
 			);
 			productRefGroup = 0B0E167E2BD89A8F0078942B /* Products */;
 			projectDirPath = "";
@@ -881,10 +927,15 @@
 				0B44BCC62BDA947B00FBCF2F /* Branch.swift in Sources */,
 				0BD650E62CA195EA00BA3CB8 /* PluginProvider.swift in Sources */,
 				0BB543EC2BE8932300D7A2B2 /* BtnDelIcon.swift in Sources */,
+				0B4FE98A2D0B25D300F45FE9 /* DatabaseProvider.swift in Sources */,
+				0B4FE98B2D0B25D300F45FE9 /* DatabaseConfig.swift in Sources */,
+				0B4FE98C2D0B25D300F45FE9 /* TableDetail.swift in Sources */,
+				0B4FE98D2D0B25D300F45FE9 /* DatabaseDetail.swift in Sources */,
 				F545D16D2C1BF6E9006A6AFA /* BannerTitle.swift in Sources */,
 				0B4EE4492D05A11F00D7E963 /* SmartProjectPlugin.swift in Sources */,
 				0BCC6D0B2BD93E8C006ADA94 /* BtnAdd.swift in Sources */,
 				F580BF982CE499ED00977CFC /* NoProject.swift in Sources */,
+				0B8C7B3B2D0B28D600480598 /* DatabasePlugin.swift in Sources */,
 				0B1C68042BD9FAE500502EB1 /* BtnOpenXcode.swift in Sources */,
 				0B4EE4472D05A0DD00D7E963 /* QuickMergePlugin.swift in Sources */,
 				0BCC6D112BD94B5B006ADA94 /* BtnLog.swift in Sources */,
@@ -991,6 +1042,7 @@
 				F545D16F2C1C0CF3006A6AFA /* BannerSubTitle.swift in Sources */,
 				0BD15C672BDFE4F9004024CF /* NotGit.swift in Sources */,
 				0BD650E92CA1969100BA3CB8 /* SmartLog.swift in Sources */,
+				0B8C7B3D2D0B2A1D00480598 /* TableList.swift in Sources */,
 				F545D1622C1AD6F1006A6AFA /* BannerTopBar.swift in Sources */,
 				0BF75EE22BDE5CE500A553CD /* Stage.swift in Sources */,
 				F580BF9D2CE4A24500977CFC /* TileMerge.swift in Sources */,
@@ -1261,6 +1313,14 @@
 				minimumVersion = 1.3.9;
 			};
 		};
+		0B8C7B372D0B27CC00480598 /* XCRemoteSwiftPackageReference "mysql-kit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/vapor/mysql-kit.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.9.0;
+			};
+		};
 		0BD652222CA4390C00BA3CB8 /* XCRemoteSwiftPackageReference "MagicKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/CofficLab/MagicKit";
@@ -1280,6 +1340,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		0B8C7B382D0B27CC00480598 /* MySQLKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0B8C7B372D0B27CC00480598 /* XCRemoteSwiftPackageReference "mysql-kit" */;
+			productName = MySQLKit;
+		};
 		0BB1C7112D045C0600C4EA70 /* AlertToast */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 0B6B1B5D2D045AB7007941F0 /* XCRemoteSwiftPackageReference "AlertToast" */;
