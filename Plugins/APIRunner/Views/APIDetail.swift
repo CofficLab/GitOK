@@ -5,31 +5,17 @@ struct APIDetail: View {
     @EnvironmentObject var g: GitProvider
     @EnvironmentObject var m: MessageProvider
     @EnvironmentObject var apiProvider: APIProvider
-    
+
     var body: some View {
         if let project = g.project {
-            if apiProvider.isEditing, var editingRequest = apiProvider.editingRequest {
-                // 编辑模式
-                RequestEditor(request: Binding(
-                    get: { editingRequest },
-                    set: { editingRequest = $0 }
-                )) { savedRequest in
-                    do {
-                        try apiProvider.updateRequest(savedRequest)
-                        m.toast("Request saved")
-                        apiProvider.selectRequest(savedRequest)
-                    } catch {
-                        m.error(error)
-                    }
-                }
-            } else if let selectedRequest = apiProvider.requests.first(where: { $0.id == apiProvider.selectedRequestId }) {
+            if let selectedRequest = apiProvider.requests.first(where: { $0.id == apiProvider.selectedRequestId }) {
                 // 详情模式
                 VStack {
                     RequestDetailView(request: Binding(
                         get: { selectedRequest },
                         set: { newValue in
                             do {
-                                try apiProvider.updateRequest(newValue)
+                                try apiProvider.updateRequest(newValue, reason: "Update")
                             } catch {
                                 m.error(error)
                             }
@@ -51,4 +37,3 @@ struct APIDetail: View {
         }
     }
 }
-

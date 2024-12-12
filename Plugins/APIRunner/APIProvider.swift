@@ -9,7 +9,7 @@ class APIProvider: ObservableObject {
     @Published private(set) var lastError: Error?
     @Published private(set) var selectedRequestId: UUID?
     @Published private(set) var isEditing = false
-    @Published private(set) var editingRequest: APIRequest?
+    @Published var editingRequest: APIRequest?
     @Published private(set) var requests: [APIRequest] = []
     
     private var currentProject: Project?
@@ -30,8 +30,10 @@ class APIProvider: ObservableObject {
         requests = config.requests
     }
     
-    func saveRequest(_ request: APIRequest, to project: Project) throws {
+    func saveRequest(_ request: APIRequest, to project: Project, reason: String) throws {
         os_log("saveRequest: starting save for request %@ to project %@", log: .default, type: .info, request.id.uuidString, project.title)
+        os_log("  ➡️ Title: \(request.name)")
+        os_log("  ➡️ Reason: \(reason)")
         
         // 更新内存中的请求列表
         if let index = requests.firstIndex(where: { $0.id == request.id }) {
@@ -45,15 +47,15 @@ class APIProvider: ObservableObject {
         // 保存到磁盘
         try saveRequests(to: project)
         
-        // 如果正在编辑这个请求，更新编辑中的请求
-        if editingRequest?.id == request.id {
-            editingRequest = request
-        }
-        
-        // 如果这个请求被选中，更新选中状态
-        if selectedRequestId == request.id {
-            selectRequest(request)
-        }
+//        // 如果正在编辑这个请求，更新编辑中的请求
+//        if editingRequest?.id == request.id {
+//            editingRequest = request
+//        }
+//        
+//        // 如果这个请求被选中，更新选中状态
+//        if selectedRequestId == request.id {
+//            selectRequest(request)
+//        }
         
         os_log("saveRequest: completed successfully", log: .default, type: .info)
     }
@@ -83,12 +85,12 @@ class APIProvider: ObservableObject {
         return newRequest
     }
     
-    func updateRequest(_ request: APIRequest) throws {
+    func updateRequest(_ request: APIRequest, reason: String) throws {
         guard let project = currentProject else {
             throw APIError.noProjectSelected
         }
         
-        try saveRequest(request, to: project)
+        try saveRequest(request, to: project, reason: reason + " 🐛 UpdateRequest")
     }
     
     func deleteRequest(_ request: APIRequest) throws {

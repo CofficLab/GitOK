@@ -78,22 +78,16 @@ struct RequestDetailView: View {
                             isEditing = false
                         }
                         Button("Save") {
-                            request.name = editingName
-                            request.url = editingUrl
-                            request.method = editingMethod
-                            request.headers = editingHeaders
-                            request.body = editingBody.isEmpty ? nil : editingBody
-                            request.contentType = editingContentType
-                            isEditing = false
+                            var updatedRequest = request
+                            updatedRequest.name = editingName
+                            updatedRequest.url = editingUrl
+                            updatedRequest.method = editingMethod
+                            updatedRequest.headers = editingHeaders
+                            updatedRequest.body = editingBody.isEmpty ? nil : editingBody
+                            updatedRequest.contentType = editingContentType
                             
-                            if let project = g.project {
-                                do {
-                                    try self.apiProvider.saveRequest(request, to: project)
-                                    m.toast("Request saved")
-                                } catch {
-                                    m.error(error)
-                                }
-                            }
+                            request = updatedRequest
+                            isEditing = false
                         }
                         .disabled(editingName.isEmpty || editingUrl.isEmpty)
                     }
