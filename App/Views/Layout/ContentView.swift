@@ -35,6 +35,8 @@ struct ContentView: View, SuperThread, SuperEvent {
                 } detail: {
                     VStack(spacing: 0) {
                         tabPlugins.first { $0.label == tab }?.addDetailView()
+                        
+                        Spacer()
 
                         StatusBar()
                     }
