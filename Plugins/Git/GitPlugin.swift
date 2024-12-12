@@ -17,7 +17,7 @@ class GitPlugin: SuperPlugin, SuperLog {
     }
 
     func addDetailView() -> AnyView {
-        AnyView(DetailGit())
+        AnyView(GitDetail())
     }
     
     func addToolBarTrailingView() -> AnyView {

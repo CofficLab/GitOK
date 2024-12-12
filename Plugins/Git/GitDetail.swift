@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct DetailGit: View {
+struct GitDetail: View {
     @EnvironmentObject var app: AppProvider
     @EnvironmentObject var g: GitProvider
 

@@ -17,7 +17,7 @@ class SmartProjectPlugin: SuperPlugin, SuperLog {
     }
 
     func addDetailView() -> AnyView {
-        AnyView(DetailGit())
+        AnyView(GitDetail())
     }
     
     func addToolBarLeadingView() -> AnyView {

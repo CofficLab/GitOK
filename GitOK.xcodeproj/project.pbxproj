@@ -146,7 +146,7 @@
 		F5F794E02C5A1D2600DCB824 /* FileList.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5F794DF2C5A1D2600DCB824 /* FileList.swift */; };
 		F5F794E92C5B192600DCB824 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = F5F794E82C5B192600DCB824 /* Sparkle */; };
 		F5F794EB2C5B3E8100DCB824 /* UpdaterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5F794EA2C5B3E8100DCB824 /* UpdaterView.swift */; };
-		F5FBCC342C3FB96000CED4F1 /* DetailGit.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5FBCC332C3FB96000CED4F1 /* DetailGit.swift */; };
+		F5FBCC342C3FB96000CED4F1 /* GitDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5FBCC332C3FB96000CED4F1 /* GitDetail.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -304,7 +304,7 @@
 		F5F794DB2C5A0D7D00DCB824 /* CommitSample.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommitSample.swift; sourceTree = "<group>"; };
 		F5F794DF2C5A1D2600DCB824 /* FileList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileList.swift; sourceTree = "<group>"; };
 		F5F794EA2C5B3E8100DCB824 /* UpdaterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdaterView.swift; sourceTree = "<group>"; };
-		F5FBCC332C3FB96000CED4F1 /* DetailGit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailGit.swift; sourceTree = "<group>"; };
+		F5FBCC332C3FB96000CED4F1 /* GitDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitDetail.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -479,13 +479,13 @@
 				0BF75EE32BDF2CCD00A553CD /* CommitList.swift */,
 				F5F794DB2C5A0D7D00DCB824 /* CommitSample.swift */,
 				0BF75EDF2BDE4C0C00A553CD /* CommitTile.swift */,
-				F5FBCC332C3FB96000CED4F1 /* DetailGit.swift */,
 				0BD15C572BDD26DE004024CF /* Diff.swift */,
 				0BD15C592BDD275C004024CF /* DiffBlock.swift */,
 				0BDE61A82BDB4746006E23EA /* File.swift */,
 				F5F794DF2C5A1D2600DCB824 /* FileList.swift */,
 				0BDE61AC2BDB4E86006E23EA /* FileTile.swift */,
 				0BCC6D142BD9526F006ADA94 /* GitCommit.swift */,
+				F5FBCC332C3FB96000CED4F1 /* GitDetail.swift */,
 				F588FB742CA16B4F00F6AE42 /* GitError.swift */,
 				F588FB6F2CA15D5200F6AE42 /* GitEvent.swift */,
 				0B4EE4402D05297700D7E963 /* GitPlugin.swift */,
@@ -955,7 +955,7 @@
 				0BCFA97C2D048509006A22F7 /* BannerTextEditor.swift in Sources */,
 				0BD650F92CA1B98A00BA3CB8 /* CommitForm.swift in Sources */,
 				0BB543E92BE890F200D7A2B2 /* SuperJsonModel.swift in Sources */,
-				F5FBCC342C3FB96000CED4F1 /* DetailGit.swift in Sources */,
+				F5FBCC342C3FB96000CED4F1 /* GitDetail.swift in Sources */,
 				F545D16F2C1C0CF3006A6AFA /* BannerSubTitle.swift in Sources */,
 				0BD15C672BDFE4F9004024CF /* NotGit.swift in Sources */,
 				0BD650E92CA1969100BA3CB8 /* SmartLog.swift in Sources */,
