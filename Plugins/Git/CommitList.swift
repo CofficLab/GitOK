@@ -13,53 +13,64 @@ struct CommitList: View, SuperThread, SuperLog {
     @State private var isRefreshing = false
     @State private var hasMoreCommits = true
     @State private var currentPage = 0
-
-    let pageSize = 20
+    @State private var pageSize: Int = 50
 
     var emoji = "🖥️"
     var verbose = true
 
     var body: some View {
-        VStack(spacing: 0) {
-            if loading && commits.isEmpty {
-                Spacer()
-                Text(LocalizedStringKey("loading"))
-                Spacer()
-            } else {
-                ScrollView {
-                    LazyVStack(spacing: 0, pinnedViews: []) {
-                        Divider()
-
-                        ForEach(commits) { commit in
-                            CommitRow(commit: commit,
-                                      isSelected: selection == commit,
-                                      onSelect: { selectCommit(commit) })
-                                .id(commit.id)
-                                .onAppear {
-                                    if commit == commits.last && hasMoreCommits && !loading {
-                                        loadMoreCommits()
-                                    }
-                                }
-                        }
-
-                        if loading && !commits.isEmpty {
-                            HStack {
-                                Spacer()
-                                ProgressView()
-                                Spacer()
-                            }
-                            .frame(height: 44)
-
+        GeometryReader { geometry in
+            VStack(spacing: 0) {
+                if loading && commits.isEmpty {
+                    Spacer()
+                    Text(LocalizedStringKey("loading"))
+                    Spacer()
+                } else {
+                    ScrollView {
+                        LazyVStack(spacing: 0, pinnedViews: []) {
                             Divider()
+
+                            ForEach(commits) { commit in
+                                CommitRow(commit: commit,
+                                          isSelected: selection == commit,
+                                          onSelect: { selectCommit(commit) })
+                                    .id(commit.id)
+                                    .onAppear {
+                                        let index = commits.firstIndex(of: commit) ?? 0
+                                        let threshold = Int(Double(commits.count) * 0.8)
+                                        if index >= threshold && hasMoreCommits && !loading {
+                                            loadMoreCommits()
+                                        }
+                                    }
+                            }
+
+                            if loading && !commits.isEmpty {
+                                HStack {
+                                    Spacer()
+                                    ProgressView()
+                                    Spacer()
+                                }
+                                .frame(height: 44)
+
+                                Divider()
+                            }
                         }
                     }
-                }
-                .background(Color(.controlBackgroundColor))
+                    .background(Color(.controlBackgroundColor))
 
-                CommitForm()
-                    .padding(.horizontal, 4)
-                    .padding(.vertical, 6)
-                    .background(BackgroundView.type2.opacity(0.1))
+                    CommitForm()
+                        .padding(.horizontal, 4)
+                        .padding(.vertical, 6)
+                        .background(BackgroundView.type2.opacity(0.1))
+                }
+            }
+            .onAppear {
+                let rowHeight: CGFloat = 31
+                let visibleRows = Int(ceil(geometry.size.height / rowHeight))
+                pageSize = max(self.pageSize, visibleRows + 5)
+                
+                os_log(.debug, "onAppear, pageSize=\(pageSize)")
+                onAppear()
             }
         }
         .onAppear(perform: onAppear)
@@ -71,9 +82,13 @@ struct CommitList: View, SuperThread, SuperLog {
     }
 
     private func loadMoreCommits() {
-        guard let project = g.project, !loading, hasMoreCommits else { return }
+        guard let project = g.project, !loading, hasMoreCommits else { 
+            os_log(.debug, "LoadMoreCommits skipped: loading=\(loading), hasMoreCommits=\(hasMoreCommits)")
+            return 
+        }
 
         loading = true
+        os_log(.debug, "Loading more commits: page=\(currentPage), pageSize=\(pageSize)")
 
         bg.async {
             do {
@@ -84,11 +99,14 @@ struct CommitList: View, SuperThread, SuperLog {
                 )
 
                 main.async {
+                    os_log(.debug, "Loaded \(newCommits.count) new commits")
                     if !newCommits.isEmpty {
                         commits.append(contentsOf: newCommits)
                         currentPage += 1
+                        os_log(.debug, "Updated page to \(currentPage)")
                     } else {
                         hasMoreCommits = false
+                        os_log(.debug, "No more commits available")
                     }
                     loading = false
                 }
@@ -102,12 +120,15 @@ struct CommitList: View, SuperThread, SuperLog {
     }
 
     func refresh(_ reason: String = "") {
-        guard let project = g.project, !isRefreshing else { return }
+        guard let project = g.project, !isRefreshing else {
+            os_log(.debug, "Refresh skipped: isRefreshing=\(isRefreshing)")
+            return 
+        }
 
+        os_log(.debug, "Starting refresh: reason=\(reason)")
         isRefreshing = true
         loading = true
 
-        // 重置分页状态
         currentPage = 0
         hasMoreCommits = true
 
@@ -120,13 +141,15 @@ struct CommitList: View, SuperThread, SuperLog {
                 )
 
                 main.async {
+                    os_log(.debug, "Loaded \(initialCommits.count) initial commits")
                     commits = [project.headCommit] + initialCommits
                     loading = false
                     isRefreshing = false
                     currentPage = 1
 
-                    // 检查是否需要显示提交表单
-                    showCommitForm = project.hasUnCommittedChanges()
+                    let hasChanges = project.hasUnCommittedChanges()
+                    os_log(.debug, "Project has uncommitted changes: \(hasChanges)")
+                    showCommitForm = hasChanges
                 }
             } catch {
                 main.async {
@@ -176,7 +199,6 @@ extension CommitList {
     }
 }
 
-// 简化的 CommitRow 组件
 private struct CommitRow: View {
     let commit: GitCommit
     let isSelected: Bool
@@ -193,6 +215,7 @@ private struct CommitRow: View {
                 }
                 .padding(.vertical, 6)
                 .padding(.horizontal, 8)
+                .frame(height: 25)
                 .contentShape(Rectangle())
             }
             .buttonStyle(PlainButtonStyle())
