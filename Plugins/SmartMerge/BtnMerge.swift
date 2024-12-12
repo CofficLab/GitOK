@@ -26,8 +26,8 @@ struct BtnMerge: View, SuperEvent, SuperThread {
     func merge() {
         self.bg.async {
             do {
-                try git.setBranch(to, path)
-                try git.merge(from, path, message: CommitCategory.CI.text + "Merge \(from.name) by GitOK")
+                try GitShell.setBranch(to, path)
+                try GitShell.merge(from, path, message: CommitCategory.CI.text + "Merge \(from.name) by GitOK")
             } catch let error {
                 os_log(.error, "\(error.localizedDescription)")
 

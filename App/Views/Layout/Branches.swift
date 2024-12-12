@@ -11,7 +11,6 @@ struct Branches: View, SuperThread, SuperLog {
     @State var selection: Branch?
 
     var emoji = "🌿"
-    var git = GitShell()
 
     var body: some View {
         Picker("branch", selection: $selection, content: {
@@ -49,7 +48,7 @@ struct Branches: View, SuperThread, SuperLog {
         }
 
         do {
-            branches = try git.getBranches(project.path)
+            branches = try GitShell.getBranches(project.path)
         } catch let error {
             os_log(.error, "\(error.localizedDescription)")
         }

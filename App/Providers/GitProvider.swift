@@ -12,7 +12,6 @@ class GitProvider: NSObject, ObservableObject, SuperLog {
     @Published var commit: GitCommit?
     @Published var file: File?
     
-    var git = GitShell()
     var emoji = "🏠"
     
     var currentBranch: Branch? {
@@ -21,7 +20,7 @@ class GitProvider: NSObject, ObservableObject, SuperLog {
         }
         
         do {
-            return try git.getCurrentBranch(project.path)
+            return try GitShell.getCurrentBranch(project.path)
         } catch _ {
             return nil
         }
@@ -62,7 +61,27 @@ class GitProvider: NSObject, ObservableObject, SuperLog {
             return
         }
         
-        try git.setBranch(branch, project.path, verbose: true)
+        try GitShell.setBranch(branch, project.path, verbose: true)
+    }
+
+    func commit(_ message: String) {
+        guard let project = self.project else { return }
+        
+        do {
+            try GitShell.commit(project.path, commit: message)
+        } catch {
+            // 错误处理...
+        }
+    }
+    
+    func pull() {
+        guard let project = self.project else { return }
+        
+        do {
+            try GitShell.pull(project.path)
+        } catch {
+            // 错误处理...
+        }
     }
 }
 

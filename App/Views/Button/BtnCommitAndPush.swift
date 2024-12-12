@@ -19,7 +19,6 @@ struct BtnCommitAndPush: View, SuperLog, SuperThread {
     let emoji = "🐔"
     var repoPath: String
     var commitMessage: String = ""
-    var git: GitShell { g.git }
 
     var body: some View {
         Button(title) {
@@ -100,7 +99,7 @@ struct BtnCommitAndPush: View, SuperLog, SuperThread {
         let verbose = true
 
         do {
-            let helper = try git.getCredentialHelper(repoPath)
+            let helper = try GitShell.getCredentialHelper(repoPath)
             if verbose {
                 os_log("\(self.t)Get credential helper: \(helper)")
             }
@@ -124,9 +123,9 @@ struct BtnCommitAndPush: View, SuperLog, SuperThread {
         self.bg.async {
             os_log("\(self.t)Commit")
             do {
-                try git.add(repoPath)
-                try git.commit(repoPath, commit: commitMessage)
-                try git.push(repoPath, username: username, token: token)
+                try GitShell.add(repoPath)
+                try GitShell.commit(repoPath, commit: commitMessage)
+                try GitShell.push(repoPath, username: username, token: token)
 
                 self.main.async {
                     isLoading = false

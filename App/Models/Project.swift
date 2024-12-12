@@ -19,9 +19,6 @@ final class Project {
     var url: URL
     var order: Int16 = 0
     
-    @Transient
-    var git = GitShell()
-    
     var title: String {
         url.lastPathComponent
     }
@@ -35,17 +32,17 @@ final class Project {
     }
     
     var isGit: Bool {
-        git.isGitProject(path: path)
+        GitShell.isGitProject(path: path)
     }
     
     var isNotGit: Bool { !isGit }
     
     var isClean: Bool {
-        git.isGitProject(path: path) && git.hasChanges(path) == false
+        GitShell.isGitProject(path: path) && GitShell.hasChanges(path) == false
     }
     
     var noUncommittedChanges: Bool {
-        git.hasChanges(path) == false
+        GitShell.hasChanges(path) == false
     }
     
     init(_ url: URL) {
@@ -61,7 +58,7 @@ final class Project {
         }
         
         do {
-            return try git.logs(path)
+            return try GitShell.logs(path)
         } catch let error {
             os_log(.error, "\(self.label)GetCommits has error")
             os_log(.error, "\(error)")
@@ -79,7 +76,7 @@ final class Project {
     }
 
     func hasUnCommittedChanges() -> Bool {
-        git.hasUnCommittedChanges(path: path)
+        GitShell.hasUnCommittedChanges(path: path)
     }
 
     func getBanners() throws -> [BannerModel] {

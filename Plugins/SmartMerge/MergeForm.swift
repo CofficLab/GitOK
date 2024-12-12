@@ -45,7 +45,7 @@ struct MergeForm: View {
             }
             .onAppear(perform: {
                 do {
-                    self.branches = try git.getBranches(project.path)
+                    self.branches = try GitShell.getBranches(project.path)
                     self.branch1 = branches.first
                     self.branch2 = branches.count >= 2 ? branches[1] : branches.first
                 } catch let error {

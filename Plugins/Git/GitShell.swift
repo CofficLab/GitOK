@@ -4,34 +4,34 @@ import OSLog
 import SwiftUI
 
 class GitShell: SuperEvent, SuperLog {
-    var emoji = "🔮"
+    static let emoji = "🔮"
 
-    func add(_ path: String, verbose: Bool = false) throws {
+    static func add(_ path: String, verbose: Bool = false) throws {
         let message = try run("add -A .", path: path)
 
         if verbose {
-            os_log("\(self.t)Add -> \(message)")
+            os_log("\(emoji)Add -> \(message)")
         }
     }
 
     @discardableResult
-    func commit(_ path: String, commit: String) throws -> String {
+    static func commit(_ path: String, commit: String) throws -> String {
         let verbose = true
         if verbose {
-            os_log("\(self.t)Commit -> \(commit)")
+            os_log("\(emoji)Commit -> \(commit)")
         }
 
-        self.emitGitCommitStart()
+        NotificationCenter.default.post(name: .gitCommitStart, object: nil)
         let result = try run("commit -a -m '\(commit)'", path: path, verbose: true)
-        self.emitGitCommitSuccess()
+        NotificationCenter.default.post(name: .gitCommitSuccess, object: nil)
 
         return result
     }
 
-    func commitFiles(_ path: String, hash: String) throws -> [File] {
+    static func commitFiles(_ path: String, hash: String) throws -> [File] {
         let verbose = false
         if verbose {
-            os_log("\(self.t)CommitFiles -> \(hash)")
+            os_log("\(emoji)CommitFiles -> \(hash)")
         }
 
         return try run("show \(hash) --pretty='' --name-only", path: path)
@@ -41,11 +41,11 @@ class GitShell: SuperEvent, SuperLog {
             })
     }
 
-    func changedFile(_ path: String) -> [File] {
+    static func changedFile(_ path: String) -> [File] {
         let verbose = false
 
         if verbose {
-            os_log("\(self.t)GetChangedFile")
+            os_log("\(emoji)GetChangedFile")
             os_log("  ➡️ Path -> \(path)")
         }
 
@@ -66,15 +66,15 @@ class GitShell: SuperEvent, SuperLog {
         }
     }
 
-    func diff(_ path: String, verbose: Bool = false) throws -> String {
-        try self.run("diff", path: path, verbose: verbose)
+    static func diff(_ path: String, verbose: Bool = false) throws -> String {
+        try run("diff", path: path, verbose: verbose)
     }
 
-    func diffOfFile(_ path: String, file: File) throws -> DiffBlock {
+    static func diffOfFile(_ path: String, file: File) throws -> DiffBlock {
         DiffBlock(block: try run("diff HEAD~1 -- \(file.name)", path: path))
     }
 
-    func diffFileFromCommit(path: String, hash: String, file: String) throws -> some View {
+    static func diffFileFromCommit(path: String, hash: String, file: String) throws -> some View {
         let diffCommand = try run("show \(hash) -- \(file)", path: path)
         let diffBlock = DiffBlock(block: diffCommand)
         let lines = diffBlock.block.components(separatedBy: "\n")
@@ -98,8 +98,8 @@ class GitShell: SuperEvent, SuperLog {
         .padding()
     }
 
-    func getBranches(_ path: String, verbose: Bool = false) throws -> [Branch] {
-        if self.isGitProject(path: path) == false {
+    static func getBranches(_ path: String, verbose: Bool = false) throws -> [Branch] {
+        if isGitProject(path: path) == false {
             return []
         }
 
@@ -123,49 +123,49 @@ class GitShell: SuperEvent, SuperLog {
         }
 
         if verbose {
-            os_log("\(self.t)GetBranches")
+            os_log("\(emoji)GetBranches")
             print(branches)
         }
 
         return branches
     }
 
-    func getCredentialHelper(_ path: String) throws -> String {
+    static func getCredentialHelper(_ path: String) throws -> String {
         do {
-            return try self.run("config credential.helper", path: path)
+            return try run("config credential.helper", path: path)
         } catch let error {
             os_log(.error, "获取凭证失败: \(error.localizedDescription)")
             throw error
         }
     }
 
-    func getCurrentBranch(_ path: String, verbose: Bool = false) throws -> Branch {
+    static func getCurrentBranch(_ path: String, verbose: Bool = false) throws -> Branch {
         let verbose = false
 
         if verbose {
-            os_log("\(self.t)GetCurrentBranch -> \(path)")
+            os_log("\(emoji)GetCurrentBranch -> \(path)")
         }
 
         return Branch.fromShellLine(try run("branch --show-current", path: path, verbose: verbose), path: path)
     }
 
-    func getFileContent(_ path: String, file: String) throws -> String {
+    static func getFileContent(_ path: String, file: String) throws -> String {
         try run("cat \(file)", path: path)
     }
 
-    func getFileLastContent(_ path: String, file: String) throws -> String {
+    static func getFileLastContent(_ path: String, file: String) throws -> String {
         try run("show --textconv HEAD:\(file)", path: path, verbose: false)
     }
 
-    func getRemote(_ path: String) -> String {
+    static func getRemote(_ path: String) -> String {
         do {
-            return try self.run("remote get-url origin", path: path)
+            return try run("remote get-url origin", path: path)
         } catch let error {
             return error.localizedDescription
         }
     }
 
-    func getRemoteUrl(_ path: String) throws -> String {
+    static func getRemoteUrl(_ path: String) throws -> String {
         let process = Process()
         process.executableURL = URL(fileURLWithPath: "/usr/bin/git")
         process.arguments = ["-C", path, "config", "--get", "remote.origin.url"]
@@ -187,38 +187,38 @@ class GitShell: SuperEvent, SuperLog {
         return output
     }
 
-    func getShortHash(_ path: String, _ hash: String) throws -> String {
+    static func getShortHash(_ path: String, _ hash: String) throws -> String {
         try run("rev-parse --short", path: path)
     }
 
-    func getTag(_ path: String, _ hash: String) throws -> String {
+    static func getTag(_ path: String, _ hash: String) throws -> String {
         try run("tag --points-at \(hash)", path: path)
     }
 
-    func hasChanges(_ path: String) -> Bool {
+    static func hasChanges(_ path: String) -> Bool {
         changedFile(path).count > 0
     }
 
-    func hasUnCommittedChanges(path: String, verbose: Bool = false) -> Bool {
-        if let status = try? self.run("status", path: path, verbose: verbose) {
+    static func hasUnCommittedChanges(path: String, verbose: Bool = false) -> Bool {
+        if let status = try? run("status", path: path, verbose: verbose) {
             return status.contains("Changes not staged for commit")
         }
         return false
     }
 
-    func isGitProject(path: String, verbose: Bool = false) -> Bool {
+    static func isGitProject(path: String, verbose: Bool = false) -> Bool {
         let gitPath = URL(fileURLWithPath: path).appendingPathComponent(".git").path
         return FileManager.default.fileExists(atPath: gitPath)
     }
 
-    func log(_ path: String) throws -> String {
+    static func log(_ path: String) throws -> String {
         try run("log", path: path)
     }
 
-    func logs(_ path: String) throws -> [GitCommit] {
+    static func logs(_ path: String) throws -> [GitCommit] {
         let verbose = false
         if verbose {
-            os_log("\(self.t)Logs")
+            os_log("\(emoji)Logs")
         }
 
         let result = try run("--no-pager log --pretty=format:%H+%s", path: path, verbose: false)
@@ -228,46 +228,46 @@ class GitShell: SuperEvent, SuperLog {
         }
     }
 
-    func merge(_ from: Branch, _ path: String, verbose: Bool = false, message: String = "merge") throws {
+    static func merge(_ from: Branch, _ path: String, verbose: Bool = false, message: String = "merge") throws {
         try run("merge \(from.name) -m '\(message)'", path: path, verbose: verbose)
     }
 
-    func mergeToMain(_ path: String, verbose: Bool = true) throws {
+    static func mergeToMain(_ path: String, verbose: Bool = true) throws {
         try run("merge main && git branch -f main HEAD", path: path, verbose: verbose)
     }
 
-    func notSynced(_ path: String) throws -> [GitCommit] {
+    static func notSynced(_ path: String) throws -> [GitCommit] {
         try revList(path).components(separatedBy: "\n").map {
             GitCommit.fromShellLine($0, path: path, seprator: "+")
         }
     }
 
-    func pull(_ path: String) throws {
+    static func pull(_ path: String) throws {
         do {
-            self.emitGitPullStart()
+            NotificationCenter.default.post(name: .gitPullStart, object: nil)
             _ = try Shell.run("git pull", at: path)
-            self.emitGitPullSuccess()
+            NotificationCenter.default.post(name: .gitPullSuccess, object: nil)
         } catch let error {
             os_log(.error, "拉取失败: \(error.localizedDescription)")
-            self.emitGitPullFailed()
+            NotificationCenter.default.post(name: .gitPullFailed, object: nil)
             throw error
         }
     }
 
-    func push(_ path: String) throws {
+    static func push(_ path: String) throws {
         do {
-            self.emitGitPushStart()
+            NotificationCenter.default.post(name: .gitPushStart, object: nil)
             _ = try Shell.run("git push", at: path)
-            self.emitGitPushSuccess()
+            NotificationCenter.default.post(name: .gitPushSuccess, object: nil)
         } catch let error {
             os_log(.error, "推送失败: \(error.localizedDescription)")
-            self.emitGitPushFailed()
+            NotificationCenter.default.post(name: .gitPushFailed, object: nil)
             throw error
         }
     }
 
-    func push(_ path: String, username: String, token: String) throws {
-        self.emitGitPushStart()
+    static func push(_ path: String, username: String, token: String) throws {
+        NotificationCenter.default.post(name: .gitPushStart, object: nil)
 
         let process = Process()
         process.executableURL = URL(fileURLWithPath: "/usr/bin/git")
@@ -285,14 +285,14 @@ class GitShell: SuperEvent, SuperLog {
         let output = String(data: data, encoding: .utf8) ?? ""
 
         if process.terminationStatus != 0 {
-            self.emitGitPushFailed()
+            NotificationCenter.default.post(name: .gitPushFailed, object: nil)
             throw NSError(domain: "GitError", code: Int(process.terminationStatus), userInfo: [NSLocalizedDescriptionKey: output])
         }
 
-        self.emitGitPushSuccess()
+        NotificationCenter.default.post(name: .gitPushSuccess, object: nil)
     }
 
-    func revList(_ path: String) throws -> String {
+    static func revList(_ path: String) throws -> String {
         let verbose = true
 
         if verbose {
@@ -305,35 +305,35 @@ class GitShell: SuperEvent, SuperLog {
             os_log("RevList -> \(currentBranch.name)")
         }
 
-        return try self.run("rev-list HEAD ^origin/\(currentBranch.name)", path: path)
+        return try run("rev-list HEAD ^origin/\(currentBranch.name)", path: path)
     }
 
     @discardableResult
-    func run(_ arguments: String, path: String, verbose: Bool = false) throws -> String {
+    static func run(_ arguments: String, path: String, verbose: Bool = false) throws -> String {
         try Shell.run("cd '\(path)' && git \(arguments)", verbose: verbose)
     }
 
     @discardableResult
-    func setBranch(_ b: Branch, _ path: String, verbose: Bool = false) throws -> String {
+    static func setBranch(_ b: Branch, _ path: String, verbose: Bool = false) throws -> String {
         let result = try run("checkout \(b.name) -q", path: path, verbose: verbose)
 
-        self.emitGitBranchChanged(branch: b.name)
+        NotificationCenter.default.post(name: .gitBranchChanged, object: b.name)
 
         return result
     }
 
-    func show(_ path: String, hash: String) throws -> String {
+    static func show(_ path: String, hash: String) throws -> String {
         try run("show \(hash)", path: path)
     }
 
-    func status(_ path: String) throws -> String {
+    static func status(_ path: String) throws -> String {
         try run("status", path: path)
     }
 
-    func logsWithPagination(_ path: String, skip: Int = 0, limit: Int = 30) throws -> [GitCommit] {
+    static func logsWithPagination(_ path: String, skip: Int = 0, limit: Int = 30) throws -> [GitCommit] {
         let verbose = false
         if verbose {
-            os_log("\(self.t)Logs with pagination: skip=\(skip), limit=\(limit)")
+            os_log("\(emoji)Logs with pagination: skip=\(skip), limit=\(limit)")
         }
 
         let result = try run("--no-pager log --pretty=format:%H+%s --skip=\(skip) -n \(limit)", path: path, verbose: false)

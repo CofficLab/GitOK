@@ -76,10 +76,10 @@ struct GitCommit: SuperLog {
         }
         
         if isHead {
-            return GitShell().changedFile(path)
+            return GitShell.changedFile(path)
         } else {
             do {
-                return try GitShell().commitFiles(path, hash: hash)
+                return try GitShell.commitFiles(path, hash: hash)
             } catch (let e) {
                 os_log(.error, "\(e.localizedDescription)")
                 
@@ -111,7 +111,7 @@ struct GitCommit: SuperLog {
     }
 
     func getTag() throws -> String {
-        try GitShell().getTag(path, hash)
+        try GitShell.getTag(path, hash)
     }
 }
 

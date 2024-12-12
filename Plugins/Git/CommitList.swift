@@ -85,7 +85,7 @@ struct CommitList: View, SuperThread, SuperLog {
 
         bg.async {
             do {
-                let newCommits = try GitShell().logsWithPagination(
+                let newCommits = try GitShell.logsWithPagination(
                     project.path,
                     skip: currentPage * pageSize,
                     limit: pageSize
@@ -119,7 +119,7 @@ struct CommitList: View, SuperThread, SuperLog {
 
         bg.async {
             do {
-                let initialCommits = try GitShell().logsWithPagination(
+                let initialCommits = try GitShell.logsWithPagination(
                     project.path,
                     skip: 0,
                     limit: pageSize

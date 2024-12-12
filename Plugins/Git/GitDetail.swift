@@ -36,7 +36,7 @@ struct GitDetail: View {
             
             if let commit = g.commit, let file = file, let project = g.project {
                 do {
-                    let v = try g.git.diffFileFromCommit(path: project.path, hash: commit.hash, file: file.name)
+                    let v = try GitShell.diffFileFromCommit(path: project.path, hash: commit.hash, file: file.name)
                     self.diffView = AnyView(v)
                 } catch {
                     m.error(error)

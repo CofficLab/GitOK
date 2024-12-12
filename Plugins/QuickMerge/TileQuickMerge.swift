@@ -38,7 +38,7 @@ struct TileQuickMerge: View, SuperLog, SuperThread {
             }
 
             do {
-                try git.mergeToMain(project.path)
+                try GitShell.mergeToMain(project.path)
             } catch let error {
                 os_log(.error, "\(error.localizedDescription)")
 

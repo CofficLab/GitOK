@@ -11,7 +11,7 @@ struct File {
     
     var lastContent: String {
         do {
-            return try GitShell().getFileLastContent(projectPath, file: name)
+            return try GitShell.getFileLastContent(projectPath, file: name)
         } catch _ {
             return ""
         }
@@ -19,7 +19,7 @@ struct File {
     
     var content: String {
         do {
-            return try GitShell().getFileContent(projectPath, file: name)
+            return try GitShell.getFileContent(projectPath, file: name)
         } catch _ {
             return ""
         }
@@ -27,7 +27,7 @@ struct File {
     
     func originalContentOfCommit(_ commit: GitCommit) -> String {
         do {
-            return try GitShell().run("show \(commit.hash)^:\(name)", path: projectPath)
+            return try GitShell.run("show \(commit.hash)^:\(name)", path: projectPath)
         } catch _ {
             return ""
         }
@@ -35,7 +35,7 @@ struct File {
     
     func contentOfCommit(_ commit: GitCommit) -> String {
         do {
-            return try GitShell().run("show \(commit.hash):\(name)", path: projectPath)
+            return try GitShell.run("show \(commit.hash):\(name)", path: projectPath)
         } catch _ {
             return ""
         }

@@ -9,11 +9,10 @@ struct BtnOpenRemote: View {
     @State var remote: String = ""
 
     var path: String
-    var git = GitShell()
 
     var body: some View {
         Button(action: {
-            remote = git.getRemote(path).trimmingCharacters(in: .whitespacesAndNewlines)
+            remote = GitShell.getRemote(path).trimmingCharacters(in: .whitespacesAndNewlines)
 
             if remote.hasPrefix("git@") {
                 remote = remote.replacingOccurrences(of: ":", with: "/")

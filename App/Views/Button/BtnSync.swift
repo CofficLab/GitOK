@@ -13,7 +13,6 @@ struct BtnSync: View, SuperLog, SuperEvent, SuperThread {
 
     var path: String
     var commitMessage = CommitCategory.auto
-    var git: GitShell { g.git }
 
     var body: some View {
         Button(action: sync, label: {
@@ -51,8 +50,8 @@ struct BtnSync: View, SuperLog, SuperEvent, SuperThread {
 
         self.bg.async {
             do {
-                try git.pull(path)
-                try git.push(path)
+                try GitShell.pull(path)
+                try GitShell.push(path)
 
                 self.reset()
             } catch let error {
