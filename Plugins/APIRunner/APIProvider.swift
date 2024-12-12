@@ -154,6 +154,7 @@ class APIProvider: ObservableObject {
                 throw APIError.invalidURL
             }
             
+            // 创建请求
             var urlRequest = URLRequest(url: url)
             urlRequest.httpMethod = request.method.rawValue
             urlRequest.allHTTPHeaderFields = request.headers
@@ -161,22 +162,98 @@ class APIProvider: ObservableObject {
             if let body = request.body {
                 urlRequest.httpBody = body.data(using: .utf8)
             }
-            
             urlRequest.setValue(request.contentType.rawValue, forHTTPHeaderField: "Content-Type")
             
-            let startTime = Date()
-            let (data, response) = try await URLSession.shared.data(for: urlRequest)
+            // 记录请求开始时间和信息
+            let requestTimestamp = Date()
+            var logs: [APIResponse.LogEntry] = []
+            logs.append(.init(
+                timestamp: requestTimestamp,
+                level: .info,
+                message: "Starting request to \(url.absoluteString)"
+            ))
+            
+            // 创建URLSession配置
+            let configuration = URLSessionConfiguration.default
+            configuration.httpCookieStorage = HTTPCookieStorage.shared
+            configuration.httpCookieAcceptPolicy = .always
+            
+            // 创建自定义URLSession以获取指标
+            let session = URLSession(configuration: configuration)
+            
+            // 发送请求并收集指标
+            var timeToFirstByte: TimeInterval?
+            var dnsLookupTime: TimeInterval?
+            var tcpConnectionTime: TimeInterval?
+            var tlsHandshakeTime: TimeInterval?
+            
+            let taskMetrics = TaskMetrics()
+            let (data, response) = try await session.data(for: urlRequest, delegate: taskMetrics)
             let httpResponse = response as! HTTPURLResponse
             
-            let responseBody = String(data: data, encoding: .utf8) ?? ""
-            let duration = Date().timeIntervalSince(startTime)
-            let headers = httpResponse.allHeaderFields as? [String: String] ?? [:]
+            // 处理响应
+            let responseTimestamp = Date()
+            let duration = responseTimestamp.timeIntervalSince(requestTimestamp)
             
+            // 获取响应体
+            let responseBody = String(data: data, encoding: .utf8) ?? ""
+            
+            // 获取Cookies
+            let cookies = HTTPCookieStorage.shared.cookies(for: url) ?? []
+            
+            // 获取TLS信息
+            var tlsInfo: APIResponse.TLSInfo?
+            if !taskMetrics.certificateChain.isEmpty {
+                tlsInfo = APIResponse.TLSInfo(
+                    tlsProtocol: taskMetrics.tlsProtocolVersion ?? "Unknown",
+                    cipherSuite: taskMetrics.tlsCipherSuite ?? "Unknown",
+                    certificateChain: taskMetrics.certificateChain.map { $0.base64EncodedString() },
+                    certificateExpirationDate: Date()
+                )
+            }
+            
+            // 创建APIResponse
             let apiResponse = APIResponse(
+                // 基本信息
                 statusCode: httpResponse.statusCode,
-                headers: headers,
+                headers: httpResponse.allHeaderFields as? [String: String] ?? [:],
                 body: responseBody,
-                duration: duration
+                duration: duration,
+                
+                // 请求信息
+                requestURL: url,
+                requestMethod: request.method.rawValue,
+                requestHeaders: request.headers,
+                requestBody: request.body,
+                requestTimestamp: requestTimestamp,
+                
+                // 响应详情
+                responseSize: data.count,
+                mimeType: httpResponse.mimeType,
+                textEncoding: httpResponse.textEncodingName,
+                suggestedFilename: httpResponse.suggestedFilename,
+                cookies: cookies,
+                
+                // 性能指标
+                timeToFirstByte: timeToFirstByte ?? 0,
+                dnsLookupTime: dnsLookupTime,
+                tcpConnectionTime: tcpConnectionTime,
+                tlsHandshakeTime: tlsHandshakeTime,
+                
+                // 错误信息
+                error: nil,
+                
+                // 日志
+                logs: logs,
+                
+                // 重定向信息
+                redirectChain: taskMetrics.redirects,
+                
+                // TLS信息
+                tlsInfo: tlsInfo,
+                
+                // 连接信息
+                connectionInfo: taskMetrics.connectionInfo
             )
             
             await MainActor.run {
@@ -189,6 +266,66 @@ class APIProvider: ObservableObject {
                 lastError = error
             }
             throw error
+        }
+    }
+}
+
+// URLSession指标收集器
+private class TaskMetrics: NSObject, URLSessionTaskDelegate, URLSessionDelegate {
+    var tlsProtocolVersion: String?
+    var tlsCipherSuite: String?
+    var redirects: [APIResponse.RedirectInfo] = []
+    var connectionInfo: APIResponse.ConnectionInfo?
+    var certificateChain: [Data] = []
+    
+    func urlSession(_ session: URLSession, 
+                   didReceive challenge: URLAuthenticationChallenge,
+                   completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
+        if let trust = challenge.protectionSpace.serverTrust,
+           let certificate = SecTrustGetCertificateAtIndex(trust, 0) {
+            let certificateData = SecCertificateCopyData(certificate) as Data
+            certificateChain.append(certificateData)
+        }
+        completionHandler(.performDefaultHandling, nil)
+    }
+    
+    func urlSession(_ session: URLSession, task: URLSessionTask, didFinishCollecting metrics: URLSessionTaskMetrics) {
+        if let lastMetric = metrics.transactionMetrics.last {
+            // 获取 TLS 协议版本
+            if let negotiatedTLSProtocolVersion = lastMetric.negotiatedTLSProtocolVersion {
+                tlsProtocolVersion = String(describing: negotiatedTLSProtocolVersion)
+            }
+            
+            // 获取密码套件
+            if let negotiatedCipherSuite = lastMetric.negotiatedTLSCipherSuite {
+                tlsCipherSuite = String(describing: negotiatedCipherSuite)
+            }
+        }
+        
+        // 收集重定向信息
+        for metric in metrics.transactionMetrics {
+            if let source = metric.request.url,
+               let destination = metric.response?.url,
+               let response = metric.response as? HTTPURLResponse,
+               let timestamp = metric.responseEndDate {
+                redirects.append(APIResponse.RedirectInfo(
+                    sourceURL: source,
+                    destinationURL: destination,
+                    statusCode: response.statusCode,
+                    timestamp: timestamp
+                ))
+            }
+        }
+        
+        // 收集连接信息
+        if let connMetrics = metrics.transactionMetrics.last {
+            if let remoteAddress = task.currentRequest?.url?.host {
+                connectionInfo = APIResponse.ConnectionInfo(
+                    localIP: "127.0.0.1", // 需要额外工作来获取实际本地IP
+                    remoteIP: remoteAddress,
+                    remotePort: task.currentRequest?.url?.port ?? 80
+                )
+            }
         }
     }
 }

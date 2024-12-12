@@ -187,14 +187,19 @@ struct ResponseView: View {
                 Text("Duration: \(String(format: "%.2f", response?.duration ?? 0))s")
                     .foregroundColor(.secondary)
                 
+                if let size = response?.responseSize {
+                    Text("Size: \(ByteCountFormatter.string(fromByteCount: Int64(size), countStyle: .file))")
+                        .foregroundColor(.secondary)
+                }
+                
                 Spacer()
             }
             .padding()
             
             // 选项卡
             HStack(spacing: 0) {
-                ForEach(["Body", "Cookies", "Headers", "Console", "Actual Request"], id: \.self) { tab in
-                    let count = tab == "Headers" ? response?.headers.count ?? 0 : 0
+                ForEach(tabs, id: \.self) { tab in
+                    let count = getCountForTab(tab)
                     Button(action: {
                         withAnimation {
                             selectedTab = tabs.firstIndex(of: tab) ?? 0
@@ -223,61 +228,44 @@ struct ResponseView: View {
             )
             
             // 内容区域
-            Group {
+            ScrollView {
                 switch selectedTab {
-                    case 0:
-                        // Body
-                        ScrollView {
-                            if let body = response?.body {
-                                HStack {
-                                    VStack(alignment: .leading) {
-                                        HStack {
-                                            Button("Pretty") { }
-                                                .buttonStyle(.plain)
-                                                .foregroundColor(.purple)
-                                            Button("Raw") { }
-                                                .buttonStyle(.plain)
-                                            Button("Preview") { }
-                                                .buttonStyle(.plain)
-                                            Button("Visualize") { }
-                                                .buttonStyle(.plain)
-                                            
-                                            Menu("HTML") {
-                                                // HTML 相关选项
-                                            }
-                                            
-                                            Menu("utf8") {
-                                                // 编码相关选项
-                                            }
-                                        }
-                                        .padding(.bottom, 8)
-                                        
-                                        Text(body)
-                                            .font(.system(.body, design: .monospaced))
-                                            .textSelection(.enabled)
-                                    }
-                                    Spacer()
-                                }
-                                .padding()
-                            }
-                        }
-                    case 1:
-                        Text("Cookies")
-                    case 2:
-                        Text("Headers")
-                    case 3:
-                        Text("Console")
-                    case 4:
-                        Text("Actual Request")
-                    default:
-                        EmptyView()
+                case 0: // Body
+                    ResponseBodyView(response: response)
+                case 1: // Cookies
+                    CookiesView(cookies: response?.cookies ?? [])
+                case 2: // Headers
+                    HeadersView(headers: response?.headers ?? [:])
+                case 3: // Console
+                    ConsoleView(logs: response?.logs ?? [])
+                case 4: // Performance
+                    PerformanceView(response: response)
+                case 5: // Security
+                    SecurityView(tlsInfo: response?.tlsInfo)
+                case 6: // Network
+                    NetworkView(
+                        connectionInfo: response?.connectionInfo,
+                        redirectChain: response?.redirectChain ?? []
+                    )
+                default:
+                    EmptyView()
                 }
             }
+            .padding()
         }
         .background(Color(.controlBackgroundColor))
     }
     
-    private let tabs = ["Body", "Cookies", "Headers", "Console", "Actual Request"]
+    private let tabs = ["Body", "Cookies", "Headers", "Console", "Performance", "Security", "Network"]
+    
+    private func getCountForTab(_ tab: String) -> Int {
+        switch tab {
+        case "Headers": return response?.headers.count ?? 0
+        case "Cookies": return response?.cookies.count ?? 0
+        case "Console": return response?.logs.count ?? 0
+        default: return 0
+        }
+    }
     
     private var statusColor: Color {
         switch response?.statusCode ?? 0 {
@@ -286,6 +274,284 @@ struct ResponseView: View {
         case 400...499: return .orange
         case 500...599: return .red
         default: return .primary
+        }
+    }
+}
+
+// 响应体视图
+private struct ResponseBodyView: View {
+    let response: APIResponse?
+    @State private var viewMode: ViewMode = .pretty
+    
+    enum ViewMode {
+        case pretty, raw, preview, visualize
+    }
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack {
+                Picker("View Mode", selection: $viewMode) {
+                    Text("Pretty").tag(ViewMode.pretty)
+                    Text("Raw").tag(ViewMode.raw)
+                    Text("Preview").tag(ViewMode.preview)
+                    Text("Visualize").tag(ViewMode.visualize)
+                }
+                .pickerStyle(.segmented)
+                
+                Spacer()
+                
+                if let mimeType = response?.mimeType {
+                    Text(mimeType)
+                        .foregroundColor(.secondary)
+                        .font(.caption)
+                }
+            }
+            
+            if let body = response?.body {
+                Text(body)
+                    .font(.system(.body, design: .monospaced))
+                    .textSelection(.enabled)
+            }
+        }
+    }
+}
+
+// Cookies 视图
+private struct CookiesView: View {
+    let cookies: [HTTPCookie]
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            ForEach(cookies, id: \.name) { cookie in
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(cookie.name)
+                        .font(.headline)
+                    Text(cookie.value)
+                        .font(.system(.body, design: .monospaced))
+                        .textSelection(.enabled)
+                    
+                    HStack {
+                        Label(cookie.domain, systemImage: "globe")
+                        Label(cookie.path, systemImage: "folder")
+                        if cookie.isSecure {
+                            Label("Secure", systemImage: "lock")
+                        }
+                    }
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                }
+                Divider()
+            }
+        }
+    }
+}
+
+// Headers 视图
+private struct HeadersView: View {
+    let headers: [String: String]
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            ForEach(headers.sorted(by: { $0.key < $1.key }), id: \.key) { key, value in
+                VStack(alignment: .leading) {
+                    Text(key)
+                        .font(.system(.caption, design: .monospaced))
+                        .foregroundColor(.secondary)
+                    Text(value)
+                        .font(.system(.body, design: .monospaced))
+                        .textSelection(.enabled)
+                }
+                Divider()
+            }
+        }
+    }
+}
+
+// Console 视图
+private struct ConsoleView: View {
+    let logs: [APIResponse.LogEntry]
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            ForEach(logs, id: \.timestamp) { log in
+                HStack(alignment: .top, spacing: 8) {
+                    Circle()
+                        .fill(logLevelColor(log.level))
+                        .frame(width: 8, height: 8)
+                        .padding(.top, 6)
+                    
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(log.message)
+                            .textSelection(.enabled)
+                        Text(log.timestamp, style: .time)
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                }
+                Divider()
+            }
+        }
+    }
+    
+    private func logLevelColor(_ level: APIResponse.LogEntry.LogLevel) -> Color {
+        switch level {
+        case .info: return .blue
+        case .warning: return .yellow
+        case .error: return .red
+        case .debug: return .gray
+        }
+    }
+}
+
+// Performance 视图
+private struct PerformanceView: View {
+    let response: APIResponse?
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            TimelineView(response: response)
+            
+            GroupBox("Timing Breakdown") {
+                VStack(alignment: .leading, spacing: 8) {
+                    TimingRow(label: "DNS Lookup", value: response?.dnsLookupTime)
+                    TimingRow(label: "TCP Connection", value: response?.tcpConnectionTime)
+                    TimingRow(label: "TLS Handshake", value: response?.tlsHandshakeTime)
+                    TimingRow(label: "Time to First Byte", value: response?.timeToFirstByte)
+                    TimingRow(label: "Total Duration", value: response?.duration)
+                }
+                .padding()
+            }
+        }
+    }
+}
+
+private struct TimingRow: View {
+    let label: String
+    let value: TimeInterval?
+    
+    var body: some View {
+        HStack {
+            Text(label)
+            Spacer()
+            if let value = value {
+                Text(String(format: "%.2fms", value * 1000))
+                    .monospacedDigit()
+            } else {
+                Text("N/A")
+                    .foregroundColor(.secondary)
+            }
+        }
+    }
+}
+
+// Security 视图
+private struct SecurityView: View {
+    let tlsInfo: APIResponse.TLSInfo?
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            if let tlsInfo = tlsInfo {
+                GroupBox("TLS/SSL Information") {
+                    VStack(alignment: .leading, spacing: 8) {
+                        InfoRow(label: "Protocol", value: tlsInfo.tlsProtocol)
+                        InfoRow(label: "Cipher Suite", value: tlsInfo.cipherSuite)
+                        InfoRow(label: "Certificate Expiration", value: tlsInfo.certificateExpirationDate.formatted())
+                    }
+                    .padding()
+                }
+                
+                GroupBox("Certificate Chain") {
+                    ScrollView {
+                        VStack(alignment: .leading, spacing: 8) {
+                            ForEach(tlsInfo.certificateChain, id: \.self) { cert in
+                                Text(cert)
+                                    .font(.system(.caption, design: .monospaced))
+                                    .textSelection(.enabled)
+                            }
+                        }
+                    }
+                    .frame(maxHeight: 200)
+                    .padding()
+                }
+            } else {
+                Text("No TLS/SSL information available")
+                    .foregroundColor(.secondary)
+            }
+        }
+    }
+}
+
+// Network 视图
+private struct NetworkView: View {
+    let connectionInfo: APIResponse.ConnectionInfo?
+    let redirectChain: [APIResponse.RedirectInfo]
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            if let info = connectionInfo {
+                GroupBox("Connection Details") {
+                    VStack(alignment: .leading, spacing: 8) {
+                        InfoRow(label: "Local IP", value: info.localIP)
+                        InfoRow(label: "Remote IP", value: info.remoteIP)
+                        InfoRow(label: "Remote Port", value: String(info.remotePort))
+                    }
+                    .padding()
+                }
+            }
+            
+            if !redirectChain.isEmpty {
+                GroupBox("Redirect Chain") {
+                    VStack(alignment: .leading, spacing: 12) {
+                        ForEach(redirectChain, id: \.timestamp) { redirect in
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text("\(redirect.statusCode)")
+                                    .font(.headline)
+                                Text(redirect.sourceURL.absoluteString)
+                                    .strikethrough()
+                                    .foregroundColor(.secondary)
+                                Text(redirect.destinationURL.absoluteString)
+                                    .foregroundColor(.blue)
+                                Text(redirect.timestamp, style: .time)
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
+                            if redirect.timestamp != redirectChain.last?.timestamp {
+                                Divider()
+                            }
+                        }
+                    }
+                    .padding()
+                }
+            }
+        }
+    }
+}
+
+private struct InfoRow: View {
+    let label: String
+    let value: String
+    
+    var body: some View {
+        HStack {
+            Text(label)
+                .foregroundColor(.secondary)
+            Spacer()
+            Text(value)
+                .textSelection(.enabled)
+        }
+    }
+}
+
+private struct TimelineView: View {
+    let response: APIResponse?
+    
+    var body: some View {
+        GroupBox("Request Timeline") {
+            // 这里可以添加一个可视化的时间轴
+            Text("Timeline visualization coming soon")
+                .foregroundColor(.secondary)
+                .frame(maxWidth: .infinity, alignment: .center)
+                .padding()
         }
     }
 }
