@@ -27,4 +27,8 @@ extension SuperPlugin {
     func addToolBarTrailingView() -> AnyView {
         AnyView(EmptyView())
     }
+
+    func addDetailView() -> AnyView {
+        AnyView(EmptyView())
+    }
 }
