@@ -3,38 +3,22 @@ import MagicKit
 import OSLog
 import SwiftUI
 
-class GitShell: SuperEvent, SuperLog {
-    static let emoji = "🔮"
-
+class GitShell {
     static func add(_ path: String, verbose: Bool = false) throws {
-        let message = try run("add -A .", path: path)
-
-        if verbose {
-            os_log("\(emoji)Add -> \(message)")
-        }
+        try run("add -A .", path: path)
     }
 
     @discardableResult
     static func commit(_ path: String, commit: String) throws -> String {
-        let verbose = true
-        if verbose {
-            os_log("\(emoji)Commit -> \(commit)")
-        }
-
-        NotificationCenter.default.post(name: .gitCommitStart, object: nil)
+        emit(.gitCommitStart, object: nil)
         let result = try run("commit -a -m '\(commit)'", path: path, verbose: true)
-        NotificationCenter.default.post(name: .gitCommitSuccess, object: nil)
+        emit(.gitCommitSuccess, object: nil)
 
         return result
     }
 
     static func commitFiles(_ path: String, hash: String) throws -> [File] {
-        let verbose = false
-        if verbose {
-            os_log("\(emoji)CommitFiles -> \(hash)")
-        }
-
-        return try run("show \(hash) --pretty='' --name-only", path: path)
+        try run("show \(hash) --pretty='' --name-only", path: path)
             .components(separatedBy: "\n")
             .map({
                 File.fromLine($0, path: path)
@@ -42,19 +26,12 @@ class GitShell: SuperEvent, SuperLog {
     }
 
     static func changedFile(_ path: String) -> [File] {
-        let verbose = false
-
-        if verbose {
-            os_log("\(emoji)GetChangedFile")
-            os_log("  ➡️ Path -> \(path)")
-        }
-
         if isGitProject(path: path) == false {
             return []
         }
 
         do {
-            return try run("status --porcelain | awk '{print $2}'", path: path, verbose: verbose)
+            return try run("status --porcelain | awk '{print $2}'", path: path, verbose: false)
                 .trimmingCharacters(in: .whitespacesAndNewlines)
                 .components(separatedBy: .newlines)
                 .filter({ $0.count > 0 })
@@ -122,11 +99,6 @@ class GitShell: SuperEvent, SuperLog {
             throw error
         }
 
-        if verbose {
-            os_log("\(emoji)GetBranches")
-            print(branches)
-        }
-
         return branches
     }
 
@@ -140,10 +112,8 @@ class GitShell: SuperEvent, SuperLog {
     }
 
     static func getCurrentBranch(_ path: String, verbose: Bool = false) throws -> Branch {
-        let verbose = false
-
         if verbose {
-            os_log("\(emoji)GetCurrentBranch -> \(path)")
+            os_log("GetCurrentBranch -> \(path)")
         }
 
         return Branch.fromShellLine(try run("branch --show-current", path: path, verbose: verbose), path: path)
@@ -199,11 +169,10 @@ class GitShell: SuperEvent, SuperLog {
         changedFile(path).count > 0
     }
 
-    static func hasUnCommittedChanges(path: String, verbose: Bool = false) -> Bool {
-        if let status = try? run("status", path: path, verbose: verbose) {
-            return status.contains("Changes not staged for commit")
-        }
-        return false
+    static func hasUnCommittedChanges(path: String, verbose: Bool = false) throws -> Bool {
+        let status = try run("status", path: path, verbose: verbose)
+        
+        return status.contains("Changes not staged for commit")
     }
 
     static func isGitProject(path: String, verbose: Bool = false) -> Bool {
@@ -216,11 +185,6 @@ class GitShell: SuperEvent, SuperLog {
     }
 
     static func logs(_ path: String) throws -> [GitCommit] {
-        let verbose = false
-        if verbose {
-            os_log("\(emoji)Logs")
-        }
-
         let result = try run("--no-pager log --pretty=format:%H+%s", path: path, verbose: false)
 
         return result.components(separatedBy: "\n").map {
@@ -244,30 +208,30 @@ class GitShell: SuperEvent, SuperLog {
 
     static func pull(_ path: String) throws {
         do {
-            NotificationCenter.default.post(name: .gitPullStart, object: nil)
+            emit(.gitPullStart, object: nil)
             _ = try Shell.run("git pull", at: path)
-            NotificationCenter.default.post(name: .gitPullSuccess, object: nil)
+            emit(.gitPullSuccess, object: nil)
         } catch let error {
             os_log(.error, "拉取失败: \(error.localizedDescription)")
-            NotificationCenter.default.post(name: .gitPullFailed, object: nil)
+            emit(.gitPullFailed, object: nil)
             throw error
         }
     }
 
     static func push(_ path: String) throws {
         do {
-            NotificationCenter.default.post(name: .gitPushStart, object: nil)
+            emit(.gitPushStart, object: nil)
             _ = try Shell.run("git push", at: path)
-            NotificationCenter.default.post(name: .gitPushSuccess, object: nil)
+            emit(.gitPushSuccess, object: nil)
         } catch let error {
             os_log(.error, "推送失败: \(error.localizedDescription)")
-            NotificationCenter.default.post(name: .gitPushFailed, object: nil)
+            emit(.gitPushFailed, object: nil)
             throw error
         }
     }
 
     static func push(_ path: String, username: String, token: String) throws {
-        NotificationCenter.default.post(name: .gitPushStart, object: nil)
+        emit(.gitPushStart, object: nil)
 
         let process = Process()
         process.executableURL = URL(fileURLWithPath: "/usr/bin/git")
@@ -285,11 +249,11 @@ class GitShell: SuperEvent, SuperLog {
         let output = String(data: data, encoding: .utf8) ?? ""
 
         if process.terminationStatus != 0 {
-            NotificationCenter.default.post(name: .gitPushFailed, object: nil)
+            emit(.gitPushFailed, object: nil)
             throw NSError(domain: "GitError", code: Int(process.terminationStatus), userInfo: [NSLocalizedDescriptionKey: output])
         }
 
-        NotificationCenter.default.post(name: .gitPushSuccess, object: nil)
+        emit(.gitPushSuccess, object: nil)
     }
 
     static func revList(_ path: String) throws -> String {
@@ -317,7 +281,7 @@ class GitShell: SuperEvent, SuperLog {
     static func setBranch(_ b: Branch, _ path: String, verbose: Bool = false) throws -> String {
         let result = try run("checkout \(b.name) -q", path: path, verbose: verbose)
 
-        NotificationCenter.default.post(name: .gitBranchChanged, object: b.name)
+        GitShell.emit(.gitBranchChanged, object: b.name)
 
         return result
     }
@@ -331,11 +295,6 @@ class GitShell: SuperEvent, SuperLog {
     }
 
     static func logsWithPagination(_ path: String, skip: Int = 0, limit: Int = 30) throws -> [GitCommit] {
-        let verbose = false
-        if verbose {
-            os_log("\(emoji)Logs with pagination: skip=\(skip), limit=\(limit)")
-        }
-
         let result = try run("--no-pager log --pretty=format:%H+%s --skip=\(skip) -n \(limit)", path: path, verbose: false)
         
         if result.isEmpty {
@@ -379,6 +338,30 @@ private struct DiffLineView: View {
             .padding(.horizontal, 8)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(line.diffBackground)
+    }
+}
+
+// MARK: Event
+
+extension Notification.Name {
+    static let gitPullStart = Notification.Name("gitPullStart")
+    static let gitPullSuccess = Notification.Name("gitPullSuccess")
+    static let gitPullFailed = Notification.Name("gitPullFailed")
+    static let gitPushStart = Notification.Name("gitPushStart")
+    static let gitPushSuccess = Notification.Name("gitPushSuccess")
+    static let gitPushFailed = Notification.Name("gitPushFailed")
+    static let gitCommitStart = Notification.Name("gitCommitStart")
+    static let gitCommitSuccess = Notification.Name("gitCommitSuccess")
+    static let gitCommitFailed = Notification.Name("gitCommitFailed")
+    static let gitBranchChanged = Notification.Name("gitBranchChanged")
+    static let gitProjectDeleted = Notification.Name("gitProjectDeleted")
+}
+
+extension GitShell {
+    static func emit(_ name: Notification.Name, object: Any?) {
+        DispatchQueue.main.async {
+            NotificationCenter.default.post(name: name, object: object)
+        }
     }
 }
 

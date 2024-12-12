@@ -131,8 +131,8 @@ struct CommitList: View, SuperThread, SuperLog {
                     isRefreshing = false
                     currentPage = 1
 
-                    let hasChanges = project.hasUnCommittedChanges()
-                    showCommitForm = hasChanges
+                    let hasChanges = try? project.hasUnCommittedChanges()
+                    showCommitForm = hasChanges ?? true
                 }
             } catch {
                 main.async {

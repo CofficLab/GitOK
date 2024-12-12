@@ -75,8 +75,8 @@ final class Project {
         return [self.headCommit] + getCommits(reason)
     }
 
-    func hasUnCommittedChanges() -> Bool {
-        GitShell.hasUnCommittedChanges(path: path)
+    func hasUnCommittedChanges() throws -> Bool {
+        try GitShell.hasUnCommittedChanges(path: path)
     }
 
     func getBanners() throws -> [BannerModel] {

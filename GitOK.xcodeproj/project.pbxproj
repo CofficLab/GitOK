@@ -135,7 +135,6 @@
 		F580BF9D2CE4A24500977CFC /* TileMerge.swift in Sources */ = {isa = PBXBuildFile; fileRef = F580BF9C2CE4A24500977CFC /* TileMerge.swift */; };
 		F580BF9E2CE4A24500977CFC /* MergeForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = F580BF9B2CE4A24500977CFC /* MergeForm.swift */; };
 		F580BF9F2CE4A24500977CFC /* BtnMerge.swift in Sources */ = {isa = PBXBuildFile; fileRef = F580BF9A2CE4A24500977CFC /* BtnMerge.swift */; };
-		F588FB702CA15D5200F6AE42 /* GitEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = F588FB6F2CA15D5200F6AE42 /* GitEvent.swift */; };
 		F588FB722CA15DAD00F6AE42 /* SuperEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = F588FB712CA15DAD00F6AE42 /* SuperEvent.swift */; };
 		F588FB752CA16B4F00F6AE42 /* GitError.swift in Sources */ = {isa = PBXBuildFile; fileRef = F588FB742CA16B4F00F6AE42 /* GitError.swift */; };
 		F588FB792CA2494E00F6AE42 /* GitProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = F588FB782CA2494E00F6AE42 /* GitProvider.swift */; };
@@ -291,7 +290,6 @@
 		F580BF9A2CE4A24500977CFC /* BtnMerge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BtnMerge.swift; sourceTree = "<group>"; };
 		F580BF9B2CE4A24500977CFC /* MergeForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MergeForm.swift; sourceTree = "<group>"; };
 		F580BF9C2CE4A24500977CFC /* TileMerge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TileMerge.swift; sourceTree = "<group>"; };
-		F588FB6F2CA15D5200F6AE42 /* GitEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitEvent.swift; sourceTree = "<group>"; };
 		F588FB712CA15DAD00F6AE42 /* SuperEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuperEvent.swift; sourceTree = "<group>"; };
 		F588FB742CA16B4F00F6AE42 /* GitError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitError.swift; sourceTree = "<group>"; };
 		F588FB782CA2494E00F6AE42 /* GitProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitProvider.swift; sourceTree = "<group>"; };
@@ -480,7 +478,6 @@
 				0BCC6D142BD9526F006ADA94 /* GitCommit.swift */,
 				F5FBCC332C3FB96000CED4F1 /* GitDetail.swift */,
 				F588FB742CA16B4F00F6AE42 /* GitError.swift */,
-				F588FB6F2CA15D5200F6AE42 /* GitEvent.swift */,
 				0B4EE4402D05297700D7E963 /* GitPlugin.swift */,
 				0B1C67BB2BD9132500502EB1 /* GitShell.swift */,
 				0B8C7B282BE0C6DB00B4E817 /* IconModel.swift */,
@@ -838,7 +835,6 @@
 				0BB543EC2BE8932300D7A2B2 /* BtnDelIcon.swift in Sources */,
 				F545D16D2C1BF6E9006A6AFA /* BannerTitle.swift in Sources */,
 				0B4EE4492D05A11F00D7E963 /* SmartProjectPlugin.swift in Sources */,
-				F588FB702CA15D5200F6AE42 /* GitEvent.swift in Sources */,
 				0BCC6D0B2BD93E8C006ADA94 /* BtnAdd.swift in Sources */,
 				F580BF982CE499ED00977CFC /* NoProject.swift in Sources */,
 				0B1C68042BD9FAE500502EB1 /* BtnOpenXcode.swift in Sources */,
