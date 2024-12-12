@@ -4,11 +4,11 @@ struct GitDetail: View {
     @EnvironmentObject var app: AppProvider
     @EnvironmentObject var g: GitProvider
     @EnvironmentObject var m: MessageProvider
-    
+
     @State var diffView: AnyView = AnyView(EmptyView())
     @State var file: File?
     @State private var isProjectClean: Bool = true
-    
+
     var body: some View {
         ZStack {
             if let project = g.project {
@@ -29,26 +29,13 @@ struct GitDetail: View {
                             }
                         }
                     }
-                    .onAppear {
-                        isProjectClean = project.isClean
-                    }
                 } else {
                     commitNotSelectedView
                 }
             }
         }
-        .onChange(of: file) {
-            self.g.setFile(file)
-            
-            if let commit = g.commit, let file = file, let project = g.project {
-                do {
-                    let v = try GitShell.diffFileFromCommit(path: project.path, hash: commit.hash, file: file.name)
-                    self.diffView = AnyView(v)
-                } catch {
-                    m.error(error)
-                }
-            }
-        }
+        .onAppear(perform: onAppear)
+        .onChange(of: file, onFileChange)
     }
 
     var noLocalChangesView: some View {
@@ -87,6 +74,27 @@ struct GitDetail: View {
                 .padding(.horizontal)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+}
+
+extension GitDetail {
+    func onAppear() {
+        isProjectClean = g.project?.isClean ?? true
+    }
+
+    func onFileChange() {
+        self.g.setFile(file)
+
+        isProjectClean = g.project?.isClean ?? true
+        
+        if let commit = g.commit, let file = file, let project = g.project {
+            do {
+                let v = try GitShell.diffFileFromCommit(path: project.path, hash: commit.hash, file: file.name)
+                self.diffView = AnyView(v)
+            } catch {
+                m.error(error)
+            }
+        }
     }
 }
 
