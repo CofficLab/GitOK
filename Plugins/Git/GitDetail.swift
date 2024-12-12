@@ -16,7 +16,7 @@ struct GitDetail: View {
                     } else {
                         HSplitView {
                             FileList()
-                                .frame(width: 200)
+                                .frame(idealWidth: 200)
                                 .frame(minWidth: 200, maxWidth: 300)
                                 .layoutPriority(1)
 

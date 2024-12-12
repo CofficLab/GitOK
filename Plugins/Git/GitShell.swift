@@ -332,6 +332,23 @@ class GitShell: SuperEvent, SuperLog {
     func status(_ path: String) throws -> String {
         try run("status", path: path)
     }
+
+    func logsWithPagination(_ path: String, skip: Int = 0, limit: Int = 30) throws -> [GitCommit] {
+        let verbose = false
+        if verbose {
+            os_log("\(self.t)Logs with pagination: skip=\(skip), limit=\(limit)")
+        }
+
+        let result = try run("--no-pager log --pretty=format:%H+%s --skip=\(skip) -n \(limit)", path: path, verbose: false)
+        
+        if result.isEmpty {
+            return []
+        }
+
+        return result.components(separatedBy: "\n").map {
+            GitCommit.fromShellLine($0, path: path, seprator: "+")
+        }
+    }
 }
 
 fileprivate extension String {
