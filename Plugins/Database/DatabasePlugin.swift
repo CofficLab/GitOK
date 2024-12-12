@@ -6,7 +6,7 @@ import MagicKit
 class DatabasePlugin: SuperPlugin, SuperLog {
     // MARK: - SuperPlugin Protocol
     var emoji = "💾"
-    var label: String = "Database"
+    var label: String = "DB"
     var icon: String = "database.fill"
     var isTab: Bool = true
     

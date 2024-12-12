@@ -2,7 +2,7 @@ import SwiftUI
 
 class APIPlugin: SuperPlugin {
     let emoji = "🌐"
-    var label: String = "API Runner"
+    var label: String = "API"
     var icon: String = "network"
     var isTab: Bool = true
     
