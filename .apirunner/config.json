@@ -1,1 +1,1 @@
-{"requests":[{"url":"https:\/\/www.baidu.com","headers":{},"maxRetries":0,"followRedirects":true,"timeout":30,"queryParameters":{},"id":"2CE73CE1-878B-44C1-AE1D-70416C8A7D24","contentType":"application\/json","name":"http:\/\/10.0.49.18:9855","method":"GET"}]}
+{"requests":[{"queryParameters":{},"url":"https:\/\/www.baidu.com","method":"GET","headers":{},"contentType":"application\/json","timeout":30,"id":"2CE73CE1-878B-44C1-AE1D-70416C8A7D24","name":"百度","maxRetries":0,"followRedirects":true}]}
