@@ -116,7 +116,7 @@ struct RequestDetailView: View {
             .layoutPriority(2)
 
             // 响应区域
-            GroupBox {
+            Group {
                 if apiProvider.isLoading {
                     ProgressView()
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -132,7 +132,7 @@ struct RequestDetailView: View {
             .layoutPriority(3)
         }
         .padding()
-        .background(.background)
+        .background(.background.opacity(0.2))
     }
 
     private func sendRequest() {
