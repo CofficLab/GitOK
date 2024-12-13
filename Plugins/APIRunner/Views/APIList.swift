@@ -7,23 +7,27 @@ struct APIList: View {
     var body: some View {
         if let project = g.project {
             VStack {
-                List {
+                List(selection: Binding(
+                    get: { apiProvider.selectedRequestId },
+                    set: { newSelection in
+                        if let requestId = newSelection {
+                            let request = apiProvider.requests.first { $0.id == requestId }
+                            if let request = request {
+                                if apiProvider.isEditing {
+                                    apiProvider.startEditing(request)
+                                } else if apiProvider.selectedRequestId == request.id {
+                                    apiProvider.startEditing(request)
+                                } else {
+                                    apiProvider.selectRequest(request)
+                                }
+                            }
+                        }
+                    }
+                )) {
                     Section {
                         ForEach(apiProvider.requests) { request in
                             RequestListItem(request: request, isSelected: apiProvider.selectedRequestId == request.id)
-                                .tag(request)
-                                .onTapGesture {
-                                    if apiProvider.isEditing {
-                                        // 如果正在编辑，直接切换到新的请求编辑
-                                        apiProvider.startEditing(request)
-                                    } else if apiProvider.selectedRequestId == request.id {
-                                        // 双击已选中的请求进入编辑模式
-                                        apiProvider.startEditing(request)
-                                    } else {
-                                        // 选择新的请求
-                                        apiProvider.selectRequest(request)
-                                    }
-                                }
+                                .tag(request.id)
                         }
                     }
                 }
