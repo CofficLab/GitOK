@@ -12,6 +12,10 @@ class AppProvider: NSObject, ObservableObject, AVAudioPlayerDelegate, SuperLog {
 
     var emoji = "🏠"
     
+    override init() {
+        self.currentTab = AppConfig.currentTab
+    }
+    
     func setTab(_ t: String) {
         let verbose = true
         if verbose {
@@ -19,7 +23,7 @@ class AppProvider: NSObject, ObservableObject, AVAudioPlayerDelegate, SuperLog {
         }
         
         self.currentTab = t
-        AppConfig.setcurrentTab(t)
+        AppConfig.setCurrentTab(t)
     }
     
     func hideSidebar() {

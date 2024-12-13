@@ -12,7 +12,6 @@ struct ContentView: View, SuperThread, SuperEvent {
     @State var branch: Branch? = nil
     @State var gitLog: String? = nil
     @State var message: String = ""
-    @State var tab: String = "Git"
     @State var columnVisibility: NavigationSplitViewVisibility = .detailOnly
     @State var projectExists: Bool = true
 
@@ -27,14 +26,13 @@ struct ContentView: View, SuperThread, SuperEvent {
                     Sidebar()
                 } content: {
                     if projectExists {
-                        Tabs(tab: $tab)
+                        ListView()
                             .frame(idealWidth: 300)
                             .frame(minWidth: 50)
-                            .onChange(of: tab, onChangeOfTab)
                     }
                 } detail: {
                     VStack(spacing: 0) {
-                        tabPlugins.first { $0.label == tab }?.addDetailView()
+                        tabPlugins.first { $0.label == app.currentTab }?.addDetailView()
                         
                         Spacer()
 
@@ -54,7 +52,7 @@ struct ContentView: View, SuperThread, SuperEvent {
             }
 
             ToolbarItem(placement: .principal) {
-                Picker("选择标签", selection: $tab) {
+                Picker("选择标签", selection: Binding(get: { app.currentTab }, set: { app.setTab($0) })) {
                     ForEach(tabPlugins, id: \.label) { plugin in
                         Text(plugin.label).tag(plugin.label)
                     }
@@ -102,8 +100,6 @@ extension ContentView {
         if app.sidebarVisibility == false {
             self.columnVisibility = .doubleColumn
         }
-
-        self.tab = app.currentTab
     }
 
     func onCheckColumnVisibility() {
@@ -114,10 +110,6 @@ extension ContentView {
                 app.showSidebar()
             }
         }
-    }
-
-    func onChangeOfTab() {
-        app.setTab(tab)
     }
 }
 

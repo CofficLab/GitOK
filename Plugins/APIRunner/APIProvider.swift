@@ -120,6 +120,10 @@ class APIProvider: ObservableObject {
     // MARK: - Selection Management
     
     func selectRequest(_ request: APIRequest?) {
+        if !Thread.isMainThread {
+            assert(false, "selectRequest must be called on the main thread")
+        } 
+        
         selectedRequestId = request?.id
         isEditing = false
         editingRequest = nil

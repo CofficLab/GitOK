@@ -1,9 +1,8 @@
 import SwiftUI
 
-struct Tabs: View {
+struct ListView: View {
     @EnvironmentObject var p: PluginProvider
-
-    @Binding var tab: String
+    @EnvironmentObject var a: AppProvider
 
     var tabPlugins: [SuperPlugin] {
         p.plugins.filter { $0.isTab }
@@ -12,7 +11,7 @@ struct Tabs: View {
     var body: some View {
         VStack(spacing: 0) {
             ZStack {
-                tabPlugins.first { $0.label == tab }?.addListView()
+                tabPlugins.first { $0.label == a.currentTab }?.addListView()
             }.frame(maxHeight: .infinity)
         }
     }

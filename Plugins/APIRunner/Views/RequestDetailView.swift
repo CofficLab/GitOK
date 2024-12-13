@@ -108,8 +108,7 @@ struct RequestDetailView: View {
                     .tag(2)
                 }.layoutPriority(1)
             }
-            .frame(maxHeight: .infinity)
-            .layoutPriority(0.5)
+            .layoutPriority(1)
 
             // 响应区域
             Group {
@@ -121,8 +120,9 @@ struct RequestDetailView: View {
                 } else if let response = apiProvider.lastResponse {
                     ResponseView(response: response)
                 }
-            }.frame(maxHeight: .infinity)
-            .layoutPriority(1)
+            }
+            .frame(maxHeight: .infinity)
+            .layoutPriority(3)
         }
         .padding()
         .background(Color(.controlBackgroundColor))
@@ -554,4 +554,10 @@ private struct TimelineView: View {
                 .padding()
         }
     }
+}
+
+#Preview {
+    AppPreview()
+        .frame(width: 800)
+        .frame(height: 800)
 }

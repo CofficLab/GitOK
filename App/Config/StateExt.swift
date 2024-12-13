@@ -22,7 +22,7 @@ extension AppConfig {
     @AppStorage("App.CurrentTab")
     static var currentTab: String = ""
 
-    static func setcurrentTab(_ tab: String) {
+    static func setCurrentTab(_ tab: String) {
         AppConfig.currentTab = tab
     }
     
