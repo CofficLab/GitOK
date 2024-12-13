@@ -1,6 +1,8 @@
+import MagicKit
+import OSLog
 import SwiftUI
 
-struct RequestDetailView: View {
+struct RequestDetailView: View, SuperLog {
     @Binding var request: APIRequest
     @EnvironmentObject var apiProvider: APIProvider
     @State private var isHeadersExpanded = false
@@ -58,18 +60,30 @@ struct RequestDetailView: View {
                     }
                 }
             }
-            .frame(minHeight: 40)
-            .frame(maxHeight: 60)
+            .frame(minHeight: 50)
+            .frame(maxHeight: 70)
+            .layoutPriority(1)
+
+            // 完整链接
+            GroupBox {
+                HStack {
+                    Text(buildFullURL())
+                        .font(.system(.caption, design: .monospaced))
+                        .foregroundColor(.secondary)
+                        .textSelection(.enabled)
+                        .lineLimit(3)
+                    Spacer()
+                }
+            }
+            .frame(minHeight: 50)
+            .frame(maxHeight: 70)
             .layoutPriority(1)
 
             TabView(selection: $selectedTab) {
-                // Params
-                GroupBox {
-                    ParametersView(request: $request)
-                }
-                .tabItem {
-                    Label("Params", systemImage: "list.bullet")
-                }.tag(0)
+                ParametersView(request: $request)
+                    .tabItem {
+                        Label("Params", systemImage: "list.bullet")
+                    }.tag(0)
 
                 // Headers
                 GroupBox {
@@ -148,6 +162,20 @@ struct RequestDetailView: View {
                 print("Request failed: \(error)")
             }
         }
+    }
+
+    private func buildFullURL() -> String {
+        guard var components = URLComponents(string: request.url) else {
+            os_log("\(t) URL解析失败: \(request.url)")
+            return request.url
+        }
+
+        components.queryItems = request.queryParameters.map {
+            URLQueryItem(name: $0.key, value: $0.value)
+        }
+
+        let finalURL = components.string ?? request.url
+        return finalURL
     }
 }
 

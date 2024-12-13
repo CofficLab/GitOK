@@ -1,10 +1,3 @@
-//
-//  ResponseView.swift
-//  GitOK
-//
-//  Created by Angel on 2024/12/13.
-//
-
 import SwiftUI
 
 struct ResponseView: View {
@@ -28,6 +21,11 @@ struct ResponseView: View {
 
                 if let size = response?.responseSize {
                     Text("Size: \(ByteCountFormatter.string(fromByteCount: Int64(size), countStyle: .file))")
+                        .foregroundColor(.secondary)
+                }
+
+                if let mimeType = response?.mimeType {
+                    Text(mimeType)
                         .foregroundColor(.secondary)
                 }
 
@@ -116,4 +114,3 @@ struct ResponseView: View {
         }
     }
 }
-
