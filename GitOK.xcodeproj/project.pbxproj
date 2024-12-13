@@ -154,6 +154,7 @@
 		F5940B662D0A9B5E0009FB37 /* APIPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5940B632D0A9B5E0009FB37 /* APIPlugin.swift */; };
 		F5948CBF2D0AAE550049EF72 /* APIDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5948CBE2D0AAE550049EF72 /* APIDetail.swift */; };
 		F5948CC22D0AAEBF0049EF72 /* APIResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5948CC02D0AAEBF0049EF72 /* APIResponse.swift */; };
+		F5948CD22D0C379A0049EF72 /* RequestEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5948CD12D0C379A0049EF72 /* RequestEditor.swift */; };
 		F5F794E02C5A1D2600DCB824 /* FileList.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5F794DF2C5A1D2600DCB824 /* FileList.swift */; };
 		F5F794E92C5B192600DCB824 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = F5F794E82C5B192600DCB824 /* Sparkle */; };
 		F5F794EB2C5B3E8100DCB824 /* UpdaterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5F794EA2C5B3E8100DCB824 /* UpdaterView.swift */; };
@@ -323,6 +324,7 @@
 		F5940B642D0A9B5E0009FB37 /* APIProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIProvider.swift; sourceTree = "<group>"; };
 		F5948CBE2D0AAE550049EF72 /* APIDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIDetail.swift; sourceTree = "<group>"; };
 		F5948CC02D0AAEBF0049EF72 /* APIResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIResponse.swift; sourceTree = "<group>"; };
+		F5948CD12D0C379A0049EF72 /* RequestEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestEditor.swift; sourceTree = "<group>"; };
 		F5F794DF2C5A1D2600DCB824 /* FileList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileList.swift; sourceTree = "<group>"; };
 		F5F794EA2C5B3E8100DCB824 /* UpdaterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdaterView.swift; sourceTree = "<group>"; };
 		F5FBCC332C3FB96000CED4F1 /* GitDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitDetail.swift; sourceTree = "<group>"; };
@@ -797,6 +799,7 @@
 		F5940B592D0A99CD0009FB37 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				F5948CD12D0C379A0049EF72 /* RequestEditor.swift */,
 				F5940B5C2D0A99CD0009FB37 /* APIList.swift */,
 				F5948CBE2D0AAE550049EF72 /* APIDetail.swift */,
 				F5940B572D0A99CD0009FB37 /* RequestDetailView.swift */,
@@ -1010,6 +1013,7 @@
 				0BD15C5A2BDD275C004024CF /* DiffBlock.swift in Sources */,
 				0BD650F72CA1AC6700BA3CB8 /* AppEvent.swift in Sources */,
 				0B8C7B2F2BE0E5F100B4E817 /* ListView.swift in Sources */,
+				F5948CD22D0C379A0049EF72 /* RequestEditor.swift in Sources */,
 				0B1C68022BD9F7B500502EB1 /* BtnOpen.swift in Sources */,
 				0B0E16812BD89A8F0078942B /* GitOKApp.swift in Sources */,
 				0BD651032CA2F51500BA3CB8 /* BannerDetail.swift in Sources */,

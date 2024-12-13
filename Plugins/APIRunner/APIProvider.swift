@@ -162,117 +162,68 @@ class APIProvider: ObservableObject {
         }
         
         do {
-            guard let url = URL(string: request.url) else {
-                throw APIError.invalidURL
+            let urlRequest = try request.buildURLRequest()
+            var currentRetry = 0
+            
+            while true {
+                do {
+                    let startTime = Date()
+                    let (data, response) = try await URLSession.shared.data(for: urlRequest)
+                    let httpResponse = response as! HTTPURLResponse
+                    
+                    // 如果需要重试
+                    if (400...599).contains(httpResponse.statusCode) && currentRetry < request.maxRetries {
+                        currentRetry += 1
+                        // 指数退避重试
+                        try await Task.sleep(nanoseconds: UInt64(pow(2.0, Double(currentRetry)) * 1_000_000_000))
+                        continue
+                    }
+                    
+                    let responseBody = String(data: data, encoding: .utf8) ?? ""
+                    let duration = Date().timeIntervalSince(startTime)
+                    let headers = httpResponse.allHeaderFields as? [String: String] ?? [:]
+                    
+                    let apiResponse = APIResponse(
+                        statusCode: httpResponse.statusCode,
+                        headers: headers,
+                        body: responseBody,
+                        duration: duration,
+                        requestURL: urlRequest.url!,
+                        requestMethod: request.method.rawValue,
+                        requestHeaders: urlRequest.allHTTPHeaderFields ?? [:],
+                        requestBody: request.body,
+                        requestTimestamp: startTime,
+                        responseSize: data.count,
+                        mimeType: httpResponse.mimeType,
+                        textEncoding: httpResponse.textEncodingName,
+                        suggestedFilename: httpResponse.suggestedFilename,
+                        cookies: HTTPCookie.cookies(withResponseHeaderFields: headers, for: urlRequest.url!),
+                        timeToFirstByte: duration, // 这里应该使用真实的 TTFB
+                        dnsLookupTime: nil, // 需要使用 URLSessionTaskMetrics 来获取
+                        tcpConnectionTime: nil,
+                        tlsHandshakeTime: nil,
+                        error: nil,
+                        logs: [],
+                        redirectChain: [],
+                        tlsInfo: nil,
+                        connectionInfo: nil
+                    )
+                    
+                    await MainActor.run {
+                        lastResponse = apiResponse
+                    }
+                    
+                    return apiResponse
+                } catch {
+                    if currentRetry < request.maxRetries {
+                        currentRetry += 1
+                        // 指数退避重试
+                        try await Task.sleep(nanoseconds: UInt64(pow(2.0, Double(currentRetry)) * 1_000_000_000))
+                        continue
+                    }
+                    throw error
+                }
             }
-            
-            // 创建请求
-            var urlRequest = URLRequest(url: url)
-            urlRequest.httpMethod = request.method.rawValue
-            urlRequest.allHTTPHeaderFields = request.headers
-            
-            if let body = request.body {
-                urlRequest.httpBody = body.data(using: .utf8)
-            }
-            urlRequest.setValue(request.contentType.rawValue, forHTTPHeaderField: "Content-Type")
-            
-            // 记录请求开始时间和信息
-            let requestTimestamp = Date()
-            var logs: [APIResponse.LogEntry] = []
-            logs.append(.init(
-                timestamp: requestTimestamp,
-                level: .info,
-                message: "Starting request to \(url.absoluteString)"
-            ))
-            
-            // 创建URLSession配置
-            let configuration = URLSessionConfiguration.default
-            configuration.httpCookieStorage = HTTPCookieStorage.shared
-            configuration.httpCookieAcceptPolicy = .always
-            
-            // 创建自定义URLSession以获取指标
-            let session = URLSession(configuration: configuration)
-            
-            // 发送请求并收集指标
-            var timeToFirstByte: TimeInterval?
-            var dnsLookupTime: TimeInterval?
-            var tcpConnectionTime: TimeInterval?
-            var tlsHandshakeTime: TimeInterval?
-            
-            let taskMetrics = TaskMetrics()
-            let (data, response) = try await session.data(for: urlRequest, delegate: taskMetrics)
-            let httpResponse = response as! HTTPURLResponse
-            
-            // 处理响应
-            let responseTimestamp = Date()
-            let duration = responseTimestamp.timeIntervalSince(requestTimestamp)
-            
-            // 获取响应体
-            let responseBody = String(data: data, encoding: .utf8) ?? ""
-            
-            // 获取Cookies
-            let cookies = HTTPCookieStorage.shared.cookies(for: url) ?? []
-            
-            // 获取TLS信息
-            var tlsInfo: APIResponse.TLSInfo?
-            if !taskMetrics.certificateChain.isEmpty {
-                tlsInfo = APIResponse.TLSInfo(
-                    tlsProtocol: taskMetrics.tlsProtocolVersion ?? "Unknown",
-                    cipherSuite: taskMetrics.tlsCipherSuite ?? "Unknown",
-                    certificateChain: taskMetrics.certificateChain.map { $0.base64EncodedString() },
-                    certificateExpirationDate: Date()
-                )
-            }
-            
-            // 创建APIResponse
-            let apiResponse = APIResponse(
-                // 基本信息
-                statusCode: httpResponse.statusCode,
-                headers: httpResponse.allHeaderFields as? [String: String] ?? [:],
-                body: responseBody,
-                duration: duration,
-                
-                // 请求信息
-                requestURL: url,
-                requestMethod: request.method.rawValue,
-                requestHeaders: request.headers,
-                requestBody: request.body,
-                requestTimestamp: requestTimestamp,
-                
-                // 响应详情
-                responseSize: data.count,
-                mimeType: httpResponse.mimeType,
-                textEncoding: httpResponse.textEncodingName,
-                suggestedFilename: httpResponse.suggestedFilename,
-                cookies: cookies,
-                
-                // 性能指标
-                timeToFirstByte: timeToFirstByte ?? 0,
-                dnsLookupTime: dnsLookupTime,
-                tcpConnectionTime: tcpConnectionTime,
-                tlsHandshakeTime: tlsHandshakeTime,
-                
-                // 错误信息
-                error: nil,
-                
-                // 日志
-                logs: logs,
-                
-                // 重定向信息
-                redirectChain: taskMetrics.redirects,
-                
-                // TLS信息
-                tlsInfo: tlsInfo,
-                
-                // 连接信息
-                connectionInfo: taskMetrics.connectionInfo
-            )
-            
-            await MainActor.run {
-                lastResponse = apiResponse
-            }
-            
-            return apiResponse
         } catch {
             await MainActor.run {
                 lastError = error

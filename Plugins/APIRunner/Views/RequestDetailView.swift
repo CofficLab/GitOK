@@ -12,8 +12,10 @@ struct RequestDetailView: View {
                 TextField("URL", text: $request.name)
                     .textFieldStyle(.plain)
                     .font(.body)
-            }.padding(.vertical)
-            
+            }
+            .padding(.vertical)
+            .frame(maxWidth: .infinity)
+
             // 顶部请求信息
             GroupBox {
                 HStack {
@@ -112,6 +114,7 @@ struct RequestDetailView: View {
                 }
                 .tag(2)
             }
+            .frame(maxWidth: .infinity)
             .frame(minHeight: 100)
             .layoutPriority(2)
 
@@ -129,8 +132,10 @@ struct RequestDetailView: View {
                 }
             }
             .frame(maxHeight: .infinity)
+            .frame(maxWidth: .infinity)
             .layoutPriority(3)
         }
+        .frame(maxWidth: .infinity)
         .padding()
         .background(.background.opacity(0.2))
     }
