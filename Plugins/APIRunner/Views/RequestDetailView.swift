@@ -8,110 +8,115 @@ struct RequestDetailView: View {
 
     var body: some View {
         VSplitView {
-            VStack {
-                // 顶部请求信息
-                GroupBox {
-                    HStack {
-                        Menu {
-                            ForEach(APIRequest.HTTPMethod.allCases, id: \.self) { method in
-                                Button(action: {
-                                    request.method = method
-                                }) {
-                                    Text(method.rawValue)
-                                }
+            GroupBox {
+                TextField("URL", text: $request.name)
+                    .textFieldStyle(.plain)
+                    .font(.body)
+            }.padding(.vertical)
+            
+            // 顶部请求信息
+            GroupBox {
+                HStack {
+                    Menu {
+                        ForEach(APIRequest.HTTPMethod.allCases, id: \.self) { method in
+                            Button(action: {
+                                request.method = method
+                            }) {
+                                Text(method.rawValue)
                             }
-                        } label: {
-                            Text(request.method.rawValue)
-                                .foregroundColor(.purple)
-                                .fontWeight(.semibold)
-                                .frame(width: 30)
-                                .padding(.vertical, 4)
-                                .background(Color.purple.opacity(0.1))
-                                .cornerRadius(4)
-                        }.frame(width: 80)
-
-                        TextField("URL", text: $request.url)
-                            .textFieldStyle(.plain)
-                            .font(.body)
-
-                        Spacer()
-
-                        HStack(spacing: 8) {
-                            Button(action: sendRequest) {
-                                Text("Send")
-                            }
-                            .buttonStyle(.borderedProminent)
-                            .tint(.purple)
-
-                            Button("Delete") {
-                                // 删除逻辑
-                            }
-                            .buttonStyle(.bordered)
-                            .foregroundColor(.red)
                         }
+                    } label: {
+                        Text(request.method.rawValue)
+                            .foregroundColor(.purple)
+                            .fontWeight(.semibold)
+                            .frame(width: 30)
+                            .padding(.vertical, 4)
+                            .background(Color.purple.opacity(0.1))
+                            .cornerRadius(4)
+                    }.frame(width: 80)
+
+                    TextField("URL", text: $request.url)
+                        .textFieldStyle(.plain)
+                        .font(.body)
+
+                    Spacer()
+
+                    HStack(spacing: 8) {
+                        Button(action: sendRequest) {
+                            Text("Send")
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .tint(.purple)
+
+                        Button("Delete") {
+                            // 删除逻辑
+                        }
+                        .buttonStyle(.bordered)
+                        .foregroundColor(.red)
                     }
                 }
-                .frame(maxHeight: 60)
-
-                // 请求配置区域
-                TabView(selection: $selectedTab) {
-                    // Params
-                    GroupBox {
-                        ParametersView()
-                    }
-                    .tabItem {
-                        Label("Params", systemImage: "list.bullet")
-                    }
-                    .tag(0)
-
-                    // Headers
-                    GroupBox {
-                        DisclosureGroup("Headers (\(request.headers.count))", isExpanded: $isHeadersExpanded) {
-                            VStack(alignment: .leading, spacing: 8) {
-                                ForEach(request.headers.sorted(by: { $0.key < $1.key }), id: \.key) { key, value in
-                                    VStack(alignment: .leading) {
-                                        Text(key)
-                                            .font(.system(.caption, design: .monospaced))
-                                            .foregroundColor(.secondary)
-                                        Text(value)
-                                            .font(.system(.body, design: .monospaced))
-                                            .textSelection(.enabled)
-                                    }
-                                }
-                            }
-                            .padding(.vertical, 8)
-                        }
-                    }
-                    .tabItem {
-                        Label("Headers", systemImage: "list.bullet.indent")
-                    }
-                    .tag(1)
-
-                    // Body
-                    GroupBox {
-                        VStack(alignment: .leading) {
-                            Picker("Content-Type", selection: .constant(request.contentType)) {
-                                ForEach(APIRequest.ContentType.allCases, id: \.self) { type in
-                                    Text(type.rawValue).tag(type)
-                                }
-                            }
-                            .pickerStyle(.segmented)
-
-                            TextEditor(text: .constant(request.body ?? ""))
-                                .font(.system(.body, design: .monospaced))
-                                .frame(maxHeight: 300)
-                        }
-                    }
-                    .tabItem {
-                        Label("Body", systemImage: "doc.text")
-                    }
-                    .tag(2)
-                }.layoutPriority(1)
             }
+            .frame(minHeight: 40)
+            .frame(maxHeight: 60)
             .layoutPriority(1)
 
+            TabView(selection: $selectedTab) {
+                // Params
+                GroupBox {
+                    ParametersView()
+                }
+                .tabItem {
+                    Label("Params", systemImage: "list.bullet")
+                }.tag(0)
+
+                // Headers
+                GroupBox {
+                    DisclosureGroup("Headers (\(request.headers.count))", isExpanded: $isHeadersExpanded) {
+                        VStack(alignment: .leading, spacing: 8) {
+                            ForEach(request.headers.sorted(by: { $0.key < $1.key }), id: \.key) { key, value in
+                                VStack(alignment: .leading) {
+                                    Text(key)
+                                        .font(.system(.caption, design: .monospaced))
+                                        .foregroundColor(.secondary)
+                                    Text(value)
+                                        .font(.system(.body, design: .monospaced))
+                                        .textSelection(.enabled)
+                                }
+                            }
+                        }
+                        .padding(.vertical, 8)
+                    }
+                }
+                .tabItem {
+                    Label("Headers", systemImage: "list.bullet.indent")
+                }
+                .tag(1)
+
+                // Body
+                GroupBox {
+                    VStack(alignment: .leading) {
+                        Picker("Content-Type", selection: .constant(request.contentType)) {
+                            ForEach(APIRequest.ContentType.allCases, id: \.self) { type in
+                                Text(type.rawValue).tag(type)
+                            }
+                        }
+                        .pickerStyle(.segmented)
+
+                        TextEditor(text: .constant(request.body ?? ""))
+                            .font(.system(.body, design: .monospaced))
+                            .frame(maxHeight: 300)
+                    }
+                }
+                .tabItem {
+                    Label("Body", systemImage: "doc.text")
+                }
+                .tag(2)
+            }
+            .frame(minHeight: 100)
+            .layoutPriority(2)
+
             // 响应区域
-            Group {
+            GroupBox {
                 if apiProvider.isLoading {
                     ProgressView()
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -119,13 +124,15 @@ struct RequestDetailView: View {
                     ErrorView(error: error)
                 } else if let response = apiProvider.lastResponse {
                     ResponseView(response: response)
+                } else {
+                    Text("No response").frame(maxWidth: .infinity)
                 }
             }
             .frame(maxHeight: .infinity)
             .layoutPriority(3)
         }
         .padding()
-        .background(Color(.controlBackgroundColor))
+        .background(.background)
     }
 
     private func sendRequest() {
@@ -172,7 +179,7 @@ struct ResponseView: View {
     let response: APIResponse?
     @State private var selectedTab = 0
     @State private var isHeadersExpanded = false
-    
+
     var body: some View {
         VStack(spacing: 0) {
             // 状态栏
@@ -186,16 +193,16 @@ struct ResponseView: View {
 
                 Text("Duration: \(String(format: "%.2f", response?.duration ?? 0))s")
                     .foregroundColor(.secondary)
-                
+
                 if let size = response?.responseSize {
                     Text("Size: \(ByteCountFormatter.string(fromByteCount: Int64(size), countStyle: .file))")
                         .foregroundColor(.secondary)
                 }
-                
+
                 Spacer()
             }
             .padding()
-            
+
             // 选项卡
             HStack(spacing: 0) {
                 ForEach(tabs, id: \.self) { tab in
@@ -226,7 +233,7 @@ struct ResponseView: View {
                     .foregroundColor(.gray.opacity(0.2)),
                 alignment: .bottom
             )
-            
+
             // 内容区域
             ScrollView {
                 switch selectedTab {
@@ -255,9 +262,9 @@ struct ResponseView: View {
         }
         .background(Color(.controlBackgroundColor))
     }
-    
+
     private let tabs = ["Body", "Cookies", "Headers", "Console", "Performance", "Security", "Network"]
-    
+
     private func getCountForTab(_ tab: String) -> Int {
         switch tab {
         case "Headers": return response?.headers.count ?? 0
@@ -266,13 +273,13 @@ struct ResponseView: View {
         default: return 0
         }
     }
-    
+
     private var statusColor: Color {
         switch response?.statusCode ?? 0 {
-        case 200...299: return .green
-        case 300...399: return .blue
-        case 400...499: return .orange
-        case 500...599: return .red
+        case 200 ... 299: return .green
+        case 300 ... 399: return .blue
+        case 400 ... 499: return .orange
+        case 500 ... 599: return .red
         default: return .primary
         }
     }
@@ -282,11 +289,11 @@ struct ResponseView: View {
 private struct ResponseBodyView: View {
     let response: APIResponse?
     @State private var viewMode: ViewMode = .pretty
-    
+
     enum ViewMode {
         case pretty, raw, preview, visualize
     }
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
@@ -297,16 +304,16 @@ private struct ResponseBodyView: View {
                     Text("Visualize").tag(ViewMode.visualize)
                 }
                 .pickerStyle(.segmented)
-                
+
                 Spacer()
-                
+
                 if let mimeType = response?.mimeType {
                     Text(mimeType)
                         .foregroundColor(.secondary)
                         .font(.caption)
                 }
             }
-            
+
             if let body = response?.body {
                 Text(body)
                     .font(.system(.body, design: .monospaced))
@@ -319,7 +326,7 @@ private struct ResponseBodyView: View {
 // Cookies 视图
 private struct CookiesView: View {
     let cookies: [HTTPCookie]
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             ForEach(cookies, id: \.name) { cookie in
@@ -329,7 +336,7 @@ private struct CookiesView: View {
                     Text(cookie.value)
                         .font(.system(.body, design: .monospaced))
                         .textSelection(.enabled)
-                    
+
                     HStack {
                         Label(cookie.domain, systemImage: "globe")
                         Label(cookie.path, systemImage: "folder")
@@ -349,7 +356,7 @@ private struct CookiesView: View {
 // Headers 视图
 private struct HeadersView: View {
     let headers: [String: String]
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             ForEach(headers.sorted(by: { $0.key < $1.key }), id: \.key) { key, value in
@@ -370,7 +377,7 @@ private struct HeadersView: View {
 // Console 视图
 private struct ConsoleView: View {
     let logs: [APIResponse.LogEntry]
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             ForEach(logs, id: \.timestamp) { log in
@@ -379,7 +386,7 @@ private struct ConsoleView: View {
                         .fill(logLevelColor(log.level))
                         .frame(width: 8, height: 8)
                         .padding(.top, 6)
-                    
+
                     VStack(alignment: .leading, spacing: 4) {
                         Text(log.message)
                             .textSelection(.enabled)
@@ -392,7 +399,7 @@ private struct ConsoleView: View {
             }
         }
     }
-    
+
     private func logLevelColor(_ level: APIResponse.LogEntry.LogLevel) -> Color {
         switch level {
         case .info: return .blue
@@ -406,11 +413,11 @@ private struct ConsoleView: View {
 // Performance 视图
 private struct PerformanceView: View {
     let response: APIResponse?
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             TimelineView(response: response)
-            
+
             GroupBox("Timing Breakdown") {
                 VStack(alignment: .leading, spacing: 8) {
                     TimingRow(label: "DNS Lookup", value: response?.dnsLookupTime)
@@ -428,7 +435,7 @@ private struct PerformanceView: View {
 private struct TimingRow: View {
     let label: String
     let value: TimeInterval?
-    
+
     var body: some View {
         HStack {
             Text(label)
@@ -447,7 +454,7 @@ private struct TimingRow: View {
 // Security 视图
 private struct SecurityView: View {
     let tlsInfo: APIResponse.TLSInfo?
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             if let tlsInfo = tlsInfo {
@@ -459,7 +466,7 @@ private struct SecurityView: View {
                     }
                     .padding()
                 }
-                
+
                 GroupBox("Certificate Chain") {
                     ScrollView {
                         VStack(alignment: .leading, spacing: 8) {
@@ -485,7 +492,7 @@ private struct SecurityView: View {
 private struct NetworkView: View {
     let connectionInfo: APIResponse.ConnectionInfo?
     let redirectChain: [APIResponse.RedirectInfo]
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             if let info = connectionInfo {
@@ -498,7 +505,7 @@ private struct NetworkView: View {
                     .padding()
                 }
             }
-            
+
             if !redirectChain.isEmpty {
                 GroupBox("Redirect Chain") {
                     VStack(alignment: .leading, spacing: 12) {
@@ -530,7 +537,7 @@ private struct NetworkView: View {
 private struct InfoRow: View {
     let label: String
     let value: String
-    
+
     var body: some View {
         HStack {
             Text(label)
@@ -544,7 +551,7 @@ private struct InfoRow: View {
 
 private struct TimelineView: View {
     let response: APIResponse?
-    
+
     var body: some View {
         GroupBox("Request Timeline") {
             // 这里可以添加一个可视化的时间轴
@@ -558,6 +565,6 @@ private struct TimelineView: View {
 
 #Preview {
     AppPreview()
-        .frame(width: 800)
+        .frame(width: 1200)
         .frame(height: 800)
 }

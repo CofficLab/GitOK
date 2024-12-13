@@ -37,3 +37,9 @@ struct APIDetail: View {
         }
     }
 }
+
+#Preview {
+    AppPreview()
+        .frame(width: 800)
+        .frame(height: 800)
+}

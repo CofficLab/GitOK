@@ -128,6 +128,14 @@ class APIProvider: ObservableObject {
         isEditing = false
         editingRequest = nil
     }
+
+    func selectRequestById(_ id: UUID?) {
+        if let id = id {
+            selectRequest(requests.first { $0.id == id })
+        } else {
+            selectRequest(nil)
+        }
+    }
     
     func startEditing(_ request: APIRequest) {
         editingRequest = request
