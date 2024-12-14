@@ -7,9 +7,10 @@ struct RequestRoot: View, SuperLog {
     @EnvironmentObject var apiProvider: APIProvider
     @State private var isHeadersExpanded = false
     @State private var selectedTab = 0
+    @State private var tabHeight: CGFloat = 0
 
     var body: some View {
-        VStack {
+        VStack(spacing: 10) {
             GroupBox {
                 TextField("Name", text: $request.name)
                     .textFieldStyle(.plain)
@@ -23,19 +24,37 @@ struct RequestRoot: View, SuperLog {
                 .frame(minHeight: 50)
                 .frame(maxHeight: 70)
                 .layoutPriority(1)
+                .padding(.bottom, 10)
 
             // 中部配置
             TabView(selection: $selectedTab) {
-                ParametersView(request: $request).tag(0)
+                RequestParameters(request: $request)
+                    .tag(0)
                     .tabItem { Label("Params", systemImage: "list.bullet") }
+                    .background(.red.opacity(0.4))
+                    .background(GeometryReader { geo in
+                        Color.clear.preference(key: TabHeightPreferenceKey.self, value: geo.size.height)
+                    })
 
-                RequestHeadersView(request: $request).tag(1)
+                RequestHeaders(request: $request)
+                    .tag(1)
                     .tabItem { Label("Headers", systemImage: "list.bullet.indent") }
+                    .background(GeometryReader { geo in
+                        Color.clear.preference(key: TabHeightPreferenceKey.self, value: geo.size.height)
+                    })
 
-                RequestBodyView(request: $request).tag(2)
+                RequestBodyView(request: $request)
+                    .tag(2)
                     .tabItem { Label("Body", systemImage: "doc.text") }
+                    .background(GeometryReader { geo in
+                        Color.clear.preference(key: TabHeightPreferenceKey.self, value: geo.size.height)
+                    })
             }
-            .frame(maxWidth: .infinity)
+            .frame(height: tabHeight)
+            .background(.blue.opacity(0.4))
+            .onPreferenceChange(TabHeightPreferenceKey.self) { height in
+                tabHeight = height + 30
+            }
 
             // 响应区域
             Group {
@@ -63,4 +82,12 @@ struct RequestRoot: View, SuperLog {
     AppPreview()
         .frame(width: 1200)
         .frame(height: 800)
+}
+
+// 首先定义一个 PreferenceKey 来传递高度信息
+struct TabHeightPreferenceKey: PreferenceKey {
+    static var defaultValue: CGFloat = 0
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+        value = max(value, nextValue())
+    }
 }

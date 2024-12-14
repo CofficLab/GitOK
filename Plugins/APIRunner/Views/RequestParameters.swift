@@ -2,7 +2,7 @@ import MagicKit
 import os
 import SwiftUI
 
-struct ParametersView: View, SuperLog {
+struct RequestParameters: View, SuperLog {
     let emoji = "🦜"
 
     @Binding var request: APIRequest
@@ -17,7 +17,6 @@ struct ParametersView: View, SuperLog {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            // 编辑模式
             VStack(spacing: 8) {
                 ForEach(Array(editingParams.keys.sorted()), id: \.self) { key in
                     HStack {
@@ -60,7 +59,6 @@ struct ParametersView: View, SuperLog {
                 }
             }
         }
-        .padding()
     }
 
     private func addParameter() {
