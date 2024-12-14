@@ -2,14 +2,14 @@ import MagicKit
 import OSLog
 import SwiftUI
 
-struct RequestDetailView: View, SuperLog {
+struct RequestRoot: View, SuperLog {
     @Binding var request: APIRequest
     @EnvironmentObject var apiProvider: APIProvider
     @State private var isHeadersExpanded = false
     @State private var selectedTab = 0
 
     var body: some View {
-        VSplitView {
+        VStack {
             GroupBox {
                 TextField("URL", text: $request.name)
                     .textFieldStyle(.plain)
@@ -64,73 +64,18 @@ struct RequestDetailView: View, SuperLog {
             .frame(maxHeight: 70)
             .layoutPriority(1)
 
-            // 完整链接
-            GroupBox {
-                HStack {
-                    Text(buildFullURL())
-                        .font(.system(.caption, design: .monospaced))
-                        .foregroundColor(.secondary)
-                        .textSelection(.enabled)
-                        .lineLimit(3)
-                    Spacer()
-                }
-            }
-            .frame(minHeight: 50)
-            .frame(maxHeight: 70)
-            .layoutPriority(1)
-
+            // 中部配置
             TabView(selection: $selectedTab) {
-                ParametersView(request: $request)
-                    .tabItem {
-                        Label("Params", systemImage: "list.bullet")
-                    }.tag(0)
+                ParametersView(request: $request).tag(0)
+                    .tabItem { Label("Params", systemImage: "list.bullet") }
 
-                // Headers
-                GroupBox {
-                    DisclosureGroup("Headers (\(request.headers.count))", isExpanded: $isHeadersExpanded) {
-                        VStack(alignment: .leading, spacing: 8) {
-                            ForEach(request.headers.sorted(by: { $0.key < $1.key }), id: \.key) { key, value in
-                                VStack(alignment: .leading) {
-                                    Text(key)
-                                        .font(.system(.caption, design: .monospaced))
-                                        .foregroundColor(.secondary)
-                                    Text(value)
-                                        .font(.system(.body, design: .monospaced))
-                                        .textSelection(.enabled)
-                                }
-                            }
-                        }
-                        .padding(.vertical, 8)
-                    }
-                }
-                .tabItem {
-                    Label("Headers", systemImage: "list.bullet.indent")
-                }
-                .tag(1)
+                RequestHeadersView(request: $request).tag(1)
+                    .tabItem { Label("Headers", systemImage: "list.bullet.indent") }
 
-                // Body
-                GroupBox {
-                    VStack(alignment: .leading) {
-                        Picker("Content-Type", selection: .constant(request.contentType)) {
-                            ForEach(APIRequest.ContentType.allCases, id: \.self) { type in
-                                Text(type.rawValue).tag(type)
-                            }
-                        }
-                        .pickerStyle(.segmented)
-
-                        TextEditor(text: .constant(request.body ?? ""))
-                            .font(.system(.body, design: .monospaced))
-                            .frame(maxHeight: 300)
-                    }
-                }
-                .tabItem {
-                    Label("Body", systemImage: "doc.text")
-                }
-                .tag(2)
+                RequestBodyView(request: $request).tag(2)
+                    .tabItem { Label("Body", systemImage: "doc.text") }
             }
             .frame(maxWidth: .infinity)
-            .frame(minHeight: 100)
-            .layoutPriority(2)
 
             // 响应区域
             Group {
@@ -145,9 +90,7 @@ struct RequestDetailView: View, SuperLog {
                     Text("No response").frame(maxWidth: .infinity)
                 }
             }
-            .frame(maxHeight: .infinity)
             .frame(maxWidth: .infinity)
-            .layoutPriority(3)
         }
         .frame(maxWidth: .infinity)
         .padding()

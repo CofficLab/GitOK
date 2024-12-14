@@ -1,15 +1,7 @@
-//
-//  HeadersView.swift
-//  GitOK
-//
-//  Created by Angel on 2024/12/13.
-//
-
 import SwiftUI
 
-
 // Headers 视图
-struct HeadersView: View {
+struct ResponseHeadersView: View {
     let headers: [String: String]
 
     var body: some View {

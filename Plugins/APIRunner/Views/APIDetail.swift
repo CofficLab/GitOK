@@ -11,7 +11,7 @@ struct APIDetail: View {
             if let selectedRequest = apiProvider.requests.first(where: { $0.id == apiProvider.selectedRequestId }) {
                 // 详情模式
                 VStack {
-                    RequestDetailView(request: Binding(
+                    RequestRoot(request: Binding(
                         get: { selectedRequest },
                         set: { newValue in
                             do {

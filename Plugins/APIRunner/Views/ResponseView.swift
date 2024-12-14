@@ -72,7 +72,7 @@ struct ResponseView: View {
                 case 1: // Cookies
                     CookiesView(cookies: response?.cookies ?? [])
                 case 2: // Headers
-                    HeadersView(headers: response?.headers ?? [:])
+                    ResponseHeadersView(headers: response?.headers ?? [:])
                 case 3: // Console
                     ConsoleView(logs: response?.logs ?? [])
                 case 4: // Performance
