@@ -65,14 +65,12 @@ struct ParametersView: View, SuperLog {
 
     private func addParameter() {
         guard !newParamKey.isEmpty else { return }
-        os_log("\(t) 添加新参数: key=\(newParamKey), value=\(newParamValue)")
         editingParams[newParamKey] = newParamValue
         newParamKey = ""
         newParamValue = ""
     }
 
     private func saveChanges() {
-        os_log("\(t) 保存参数变更: \(editingParams)")
         request.queryParameters = editingParams
     }
 }

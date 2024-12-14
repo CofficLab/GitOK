@@ -11,7 +11,7 @@ struct RequestRoot: View, SuperLog {
     var body: some View {
         VStack {
             GroupBox {
-                TextField("URL", text: $request.name)
+                TextField("Name", text: $request.name)
                     .textFieldStyle(.plain)
                     .font(.body)
             }
@@ -19,50 +19,10 @@ struct RequestRoot: View, SuperLog {
             .frame(maxWidth: .infinity)
 
             // 顶部请求信息
-            GroupBox {
-                HStack {
-                    Menu {
-                        ForEach(APIRequest.HTTPMethod.allCases, id: \.self) { method in
-                            Button(action: {
-                                request.method = method
-                            }) {
-                                Text(method.rawValue)
-                            }
-                        }
-                    } label: {
-                        Text(request.method.rawValue)
-                            .foregroundColor(.purple)
-                            .fontWeight(.semibold)
-                            .frame(width: 30)
-                            .padding(.vertical, 4)
-                            .background(Color.purple.opacity(0.1))
-                            .cornerRadius(4)
-                    }.frame(width: 80)
-
-                    TextField("URL", text: $request.url)
-                        .textFieldStyle(.plain)
-                        .font(.body)
-
-                    Spacer()
-
-                    HStack(spacing: 8) {
-                        Button(action: sendRequest) {
-                            Text("Send")
-                        }
-                        .buttonStyle(.borderedProminent)
-                        .tint(.purple)
-
-                        Button("Delete") {
-                            // 删除逻辑
-                        }
-                        .buttonStyle(.bordered)
-                        .foregroundColor(.red)
-                    }
-                }
-            }
-            .frame(minHeight: 50)
-            .frame(maxHeight: 70)
-            .layoutPriority(1)
+            RequestBar(request: $request)
+                .frame(minHeight: 50)
+                .frame(maxHeight: 70)
+                .layoutPriority(1)
 
             // 中部配置
             TabView(selection: $selectedTab) {
@@ -91,34 +51,11 @@ struct RequestRoot: View, SuperLog {
                 }
             }
             .frame(maxWidth: .infinity)
+            .frame(maxHeight: .infinity)
         }
         .frame(maxWidth: .infinity)
         .padding()
         .background(.background.opacity(0.2))
-    }
-
-    private func sendRequest() {
-        Task {
-            do {
-                _ = try await apiProvider.sendRequest(request)
-            } catch {
-                print("Request failed: \(error)")
-            }
-        }
-    }
-
-    private func buildFullURL() -> String {
-        guard var components = URLComponents(string: request.url) else {
-            os_log("\(t) URL解析失败: \(request.url)")
-            return request.url
-        }
-
-        components.queryItems = request.queryParameters.map {
-            URLQueryItem(name: $0.key, value: $0.value)
-        }
-
-        let finalURL = components.string ?? request.url
-        return finalURL
     }
 }
 
