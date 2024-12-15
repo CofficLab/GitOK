@@ -1,12 +1,13 @@
 import SwiftUI
 import WebKit
+import OSLog
 #if canImport(UIKit)
 import UIKit
 #else
 import AppKit
 #endif
 
-struct ResponseBodyView: View {
+struct ResponseBody: View {
     let response: APIResponse?
     
     @State private var viewMode: ViewMode = .pretty
@@ -127,11 +128,38 @@ struct ResponseWebView: UIViewRepresentable {
     let htmlString: String
     
     func makeUIView(context: Context) -> WKWebView {
-        return WKWebView()
+        let configuration = WKWebViewConfiguration()
+        configuration.defaultWebpagePreferences.allowsContentJavaScript = true
+        
+        let webView = WKWebView(frame: .zero, configuration: configuration)
+        webView.navigationDelegate = context.coordinator
+        webView.allowsBackForwardNavigationGestures = true
+        webView.scrollView.isScrollEnabled = true
+        return webView
     }
     
-    func updateUIView(_ uiView: WKWebView, context: Context) {
-        uiView.loadHTMLString(htmlString, baseURL: nil)
+    func updateUIView(_ webView: WKWebView, context: Context) {
+        webView.loadHTMLString(htmlString, baseURL: nil)
+    }
+    
+    func makeCoordinator() -> Coordinator {
+        Coordinator(self)
+    }
+    
+    class Coordinator: NSObject, WKNavigationDelegate {
+        var parent: WebView
+        
+        init(_ parent: WebView) {
+            self.parent = parent
+        }
+        
+        func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+            // 页面加载完成后的处理
+        }
+        
+        func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
+            print("WebView loading failed: \(error.localizedDescription)")
+        }
     }
 }
 #else
@@ -139,11 +167,36 @@ struct ResponseWebView: NSViewRepresentable {
     let htmlString: String
     
     func makeNSView(context: Context) -> WKWebView {
-        return WKWebView()
+        let configuration = WKWebViewConfiguration()
+        configuration.defaultWebpagePreferences.allowsContentJavaScript = true
+        
+        let webView = WKWebView(frame: .zero, configuration: configuration)
+        webView.navigationDelegate = context.coordinator
+        return webView
     }
     
-    func updateNSView(_ nsView: WKWebView, context: Context) {
-        nsView.loadHTMLString(htmlString, baseURL: nil)
+    func updateNSView(_ webView: WKWebView, context: Context) {
+        webView.loadHTMLString(htmlString, baseURL: nil)
+    }
+    
+    func makeCoordinator() -> Coordinator {
+        Coordinator(self)
+    }
+    
+    class Coordinator: NSObject, WKNavigationDelegate {
+        var parent: ResponseWebView
+        
+        init(_ parent: ResponseWebView) {
+            self.parent = parent
+        }
+        
+        func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+            // 页面加载完成后的处理
+        }
+        
+        func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
+            print("WebView loading failed: \(error.localizedDescription)")
+        }
     }
 }
 #endif

@@ -68,7 +68,7 @@ struct ResponseView: View {
             ScrollView {
                 switch selectedTab {
                 case 0: // Body
-                    ResponseBodyView(response: response)
+                    ResponseBody(response: response)
                 case 1: // Cookies
                     CookiesView(cookies: response?.cookies ?? [])
                 case 2: // Headers

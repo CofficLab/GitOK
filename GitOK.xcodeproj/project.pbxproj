@@ -90,7 +90,7 @@
 		0BCB074F2D0C64CB00578B67 /* PerformanceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCB074E2D0C64CB00578B67 /* PerformanceView.swift */; };
 		0BCB07512D0C64DF00578B67 /* ConsoleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCB07502D0C64DF00578B67 /* ConsoleView.swift */; };
 		0BCB07552D0C650800578B67 /* CookiesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCB07542D0C650800578B67 /* CookiesView.swift */; };
-		0BCB07572D0C651E00578B67 /* ResponseBodyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCB07562D0C651E00578B67 /* ResponseBodyView.swift */; };
+		0BCB07572D0C651E00578B67 /* ResponseBody.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCB07562D0C651E00578B67 /* ResponseBody.swift */; };
 		0BCB07592D0C653200578B67 /* ResponseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCB07582D0C653200578B67 /* ResponseView.swift */; };
 		0BCB075B2D0C654400578B67 /* ErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCB075A2D0C654400578B67 /* ErrorView.swift */; };
 		0BCB075F2D0D842D00578B67 /* ResponseHeadersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCB075E2D0D842D00578B67 /* ResponseHeadersView.swift */; };
@@ -277,7 +277,7 @@
 		0BCB074E2D0C64CB00578B67 /* PerformanceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PerformanceView.swift; sourceTree = "<group>"; };
 		0BCB07502D0C64DF00578B67 /* ConsoleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsoleView.swift; sourceTree = "<group>"; };
 		0BCB07542D0C650800578B67 /* CookiesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CookiesView.swift; sourceTree = "<group>"; };
-		0BCB07562D0C651E00578B67 /* ResponseBodyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResponseBodyView.swift; sourceTree = "<group>"; };
+		0BCB07562D0C651E00578B67 /* ResponseBody.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResponseBody.swift; sourceTree = "<group>"; };
 		0BCB07582D0C653200578B67 /* ResponseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResponseView.swift; sourceTree = "<group>"; };
 		0BCB075A2D0C654400578B67 /* ErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorView.swift; sourceTree = "<group>"; };
 		0BCB075E2D0D842D00578B67 /* ResponseHeadersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResponseHeadersView.swift; sourceTree = "<group>"; };
@@ -845,7 +845,7 @@
 				0BCB07602D0D847600578B67 /* RequestHeaders.swift */,
 				0BCB07422D0C639400578B67 /* RequestParameters.swift */,
 				F5940B572D0A99CD0009FB37 /* RequestRoot.swift */,
-				0BCB07562D0C651E00578B67 /* ResponseBodyView.swift */,
+				0BCB07562D0C651E00578B67 /* ResponseBody.swift */,
 				0BCB075E2D0D842D00578B67 /* ResponseHeadersView.swift */,
 				0BCB07582D0C653200578B67 /* ResponseView.swift */,
 				0BCB074A2D0C648200578B67 /* SecurityView.swift */,
@@ -1075,7 +1075,7 @@
 				0B1C68022BD9F7B500502EB1 /* BtnOpen.swift in Sources */,
 				0B0E16812BD89A8F0078942B /* GitOKApp.swift in Sources */,
 				0BD651032CA2F51500BA3CB8 /* BannerDetail.swift in Sources */,
-				0BCB07572D0C651E00578B67 /* ResponseBodyView.swift in Sources */,
+				0BCB07572D0C651E00578B67 /* ResponseBody.swift in Sources */,
 				0B8C7B1E2BE09B1500B4E817 /* BannerShell.swift in Sources */,
 				0B1C67BC2BD9132500502EB1 /* GitShell.swift in Sources */,
 				F54DFA472CA4034B00F81BE3 /* ProjectPicker.swift in Sources */,
@@ -1269,7 +1269,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = GitOK.entitlements;
 				CODE_SIGN_IDENTITY = "-";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 138;
 				DEAD_CODE_STRIPPING = YES;
@@ -1313,7 +1313,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = GitOK.entitlements;
 				CODE_SIGN_IDENTITY = "-";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 138;
 				DEAD_CODE_STRIPPING = YES;
