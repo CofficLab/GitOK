@@ -1,5 +1,5 @@
 {
-  "originHash" : "048a229d1f2502848b3d828f7568a0498d8d0f293a8b92cd205e1906d516b22a",
+  "originHash" : "4dba50ccafbec0ee18f842006f982e969b8b18cc53b214e8f5fea89b3c9acd72",
   "pins" : [
     {
       "identity" : "alerttoast",
@@ -26,6 +26,15 @@
       "state" : {
         "branch" : "main",
         "revision" : "faec035e89fa5e6623eb9e22ba28e9ca24e9c007"
+      }
+    },
+    {
+      "identity" : "magicweb",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/CofficLab/MagicWeb",
+      "state" : {
+        "branch" : "main",
+        "revision" : "503ff58c3aa03ec0a8aa01ec0abdb5b30dbde3e8"
       }
     },
     {

@@ -936,6 +936,7 @@
 				0BD652222CA4390C00BA3CB8 /* XCRemoteSwiftPackageReference "MagicKit" */,
 				0B6B1B5D2D045AB7007941F0 /* XCRemoteSwiftPackageReference "AlertToast" */,
 				0B8C7B372D0B27CC00480598 /* XCRemoteSwiftPackageReference "mysql-kit" */,
+				0BCB07662D0EF41D00578B67 /* XCRemoteSwiftPackageReference "MagicWeb" */,
 			);
 			productRefGroup = 0B0E167E2BD89A8F0078942B /* Products */;
 			projectDirPath = "";
@@ -1387,6 +1388,14 @@
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 4.9.0;
+			};
+		};
+		0BCB07662D0EF41D00578B67 /* XCRemoteSwiftPackageReference "MagicWeb" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/CofficLab/MagicWeb";
+			requirement = {
+				branch = main;
+				kind = branch;
 			};
 		};
 		0BD652222CA4390C00BA3CB8 /* XCRemoteSwiftPackageReference "MagicKit" */ = {
