@@ -10,20 +10,17 @@ struct RequestRoot: View, SuperLog {
     @State private var tabHeight: CGFloat = 0
 
     var body: some View {
-        VStack(spacing: 10) {
+        VStack(spacing: 0) {
             GroupBox {
                 TextField("Name", text: $request.name)
                     .textFieldStyle(.plain)
                     .font(.body)
             }
-            .padding(.vertical)
+            .padding(.bottom, 10)
             .frame(maxWidth: .infinity)
 
             // 顶部请求信息
             RequestBar(request: $request)
-                .frame(minHeight: 50)
-                .frame(maxHeight: 70)
-                .layoutPriority(1)
                 .padding(.bottom, 10)
 
             // 中部配置
@@ -31,7 +28,6 @@ struct RequestRoot: View, SuperLog {
                 RequestParameters(request: $request)
                     .tag(0)
                     .tabItem { Label("Params", systemImage: "list.bullet") }
-                    .background(.red.opacity(0.4))
                     .background(GeometryReader { geo in
                         Color.clear.preference(key: TabHeightPreferenceKey.self, value: geo.size.height)
                     })
@@ -50,8 +46,8 @@ struct RequestRoot: View, SuperLog {
                         Color.clear.preference(key: TabHeightPreferenceKey.self, value: geo.size.height)
                     })
             }
+            .padding(.bottom, 20)
             .frame(height: tabHeight)
-            .background(.blue.opacity(0.4))
             .onPreferenceChange(TabHeightPreferenceKey.self) { height in
                 tabHeight = height + 30
             }

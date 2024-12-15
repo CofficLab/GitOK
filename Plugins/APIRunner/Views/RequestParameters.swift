@@ -4,6 +4,8 @@ import SwiftUI
 
 struct RequestParameters: View, SuperLog {
     let emoji = "🦜"
+    
+    @EnvironmentObject var messageManager: MessageProvider
 
     @Binding var request: APIRequest
     @State private var newParamKey = ""
@@ -37,7 +39,6 @@ struct RequestParameters: View, SuperLog {
 
                 Divider()
 
-                // 添加新参数
                 HStack {
                     TextField("New Parameter Key", text: $newParamKey)
                         .textFieldStyle(.roundedBorder)
@@ -47,7 +48,6 @@ struct RequestParameters: View, SuperLog {
                         Image(systemName: "plus.circle.fill")
                             .foregroundColor(.green)
                     }
-                    .disabled(newParamKey.isEmpty)
                 }
 
                 HStack {
@@ -62,7 +62,10 @@ struct RequestParameters: View, SuperLog {
     }
 
     private func addParameter() {
-        guard !newParamKey.isEmpty else { return }
+        guard !newParamKey.isEmpty else {
+            messageManager.toast("先补充当前的参数")
+            return
+        }
         editingParams[newParamKey] = newParamValue
         newParamKey = ""
         newParamValue = ""
