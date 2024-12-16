@@ -149,6 +149,11 @@
 		F53FE6062D0FF16D0037BD7A /* DBErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F53FE6052D0FF16D0037BD7A /* DBErrorView.swift */; };
 		F53FE6082D0FF1840037BD7A /* DBEmptyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F53FE6072D0FF1840037BD7A /* DBEmptyView.swift */; };
 		F53FE60A2D0FF1F70037BD7A /* DBConfigRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = F53FE6092D0FF1F70037BD7A /* DBConfigRow.swift */; };
+		F53FE60C2D10036D0037BD7A /* TableToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = F53FE60B2D10036D0037BD7A /* TableToolbar.swift */; };
+		F53FE60E2D1003880037BD7A /* TableColumnHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = F53FE60D2D1003880037BD7A /* TableColumnHeader.swift */; };
+		F53FE6102D10039E0037BD7A /* TableRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = F53FE60F2D10039E0037BD7A /* TableRow.swift */; };
+		F53FE6122D1003B90037BD7A /* TableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F53FE6112D1003B90037BD7A /* TableCell.swift */; };
+		F53FE6142D1003D50037BD7A /* TableData.swift in Sources */ = {isa = PBXBuildFile; fileRef = F53FE6132D1003D50037BD7A /* TableData.swift */; };
 		F545D1602C1AD436006A6AFA /* BannerTile.swift in Sources */ = {isa = PBXBuildFile; fileRef = F545D15F2C1AD436006A6AFA /* BannerTile.swift */; };
 		F545D1622C1AD6F1006A6AFA /* BannerTopBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = F545D1612C1AD6F1006A6AFA /* BannerTopBar.swift */; };
 		F545D1642C1ADBD0006A6AFA /* IconTile.swift in Sources */ = {isa = PBXBuildFile; fileRef = F545D1632C1ADBD0006A6AFA /* IconTile.swift */; };
@@ -345,6 +350,11 @@
 		F53FE6052D0FF16D0037BD7A /* DBErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DBErrorView.swift; sourceTree = "<group>"; };
 		F53FE6072D0FF1840037BD7A /* DBEmptyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DBEmptyView.swift; sourceTree = "<group>"; };
 		F53FE6092D0FF1F70037BD7A /* DBConfigRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DBConfigRow.swift; sourceTree = "<group>"; };
+		F53FE60B2D10036D0037BD7A /* TableToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableToolbar.swift; sourceTree = "<group>"; };
+		F53FE60D2D1003880037BD7A /* TableColumnHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableColumnHeader.swift; sourceTree = "<group>"; };
+		F53FE60F2D10039E0037BD7A /* TableRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableRow.swift; sourceTree = "<group>"; };
+		F53FE6112D1003B90037BD7A /* TableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableCell.swift; sourceTree = "<group>"; };
+		F53FE6132D1003D50037BD7A /* TableData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableData.swift; sourceTree = "<group>"; };
 		F545D15F2C1AD436006A6AFA /* BannerTile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerTile.swift; sourceTree = "<group>"; };
 		F545D1612C1AD6F1006A6AFA /* BannerTopBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerTopBar.swift; sourceTree = "<group>"; };
 		F545D1632C1ADBD0006A6AFA /* IconTile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconTile.swift; sourceTree = "<group>"; };
@@ -592,8 +602,13 @@
 				F53FE6072D0FF1840037BD7A /* DBEmptyView.swift */,
 				F53FE6052D0FF16D0037BD7A /* DBErrorView.swift */,
 				F53FE6012D0FD24A0037BD7A /* DBList.swift */,
+				F53FE6112D1003B90037BD7A /* TableCell.swift */,
+				F53FE60D2D1003880037BD7A /* TableColumnHeader.swift */,
+				F53FE6132D1003D50037BD7A /* TableData.swift */,
 				0B4FE9862D0B25D300F45FE9 /* TableDetail.swift */,
 				0B8C7B3C2D0B2A1D00480598 /* TableList.swift */,
+				F53FE60F2D10039E0037BD7A /* TableRow.swift */,
+				F53FE60B2D10036D0037BD7A /* TableToolbar.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -1012,6 +1027,7 @@
 				0BD650E62CA195EA00BA3CB8 /* PluginProvider.swift in Sources */,
 				0BB543EC2BE8932300D7A2B2 /* BtnDelIcon.swift in Sources */,
 				0B4FE98A2D0B25D300F45FE9 /* DatabaseProvider.swift in Sources */,
+				F53FE6122D1003B90037BD7A /* TableCell.swift in Sources */,
 				0B4FE98B2D0B25D300F45FE9 /* DatabaseConfig.swift in Sources */,
 				0B4FE98C2D0B25D300F45FE9 /* TableDetail.swift in Sources */,
 				0B4FE98D2D0B25D300F45FE9 /* DBDetail.swift in Sources */,
@@ -1031,6 +1047,7 @@
 				0BCC6D132BD94D15006ADA94 /* BtnLogs.swift in Sources */,
 				0B4EE4432D05990E00D7E963 /* SmartMessagePlugin.swift in Sources */,
 				0B76FD222BDE315800501F1F /* ReadyHandler.swift in Sources */,
+				F53FE6102D10039E0037BD7A /* TableRow.swift in Sources */,
 				0BCB07652D0D938700578B67 /* RequestBar.swift in Sources */,
 				0BCC6D152BD9526F006ADA94 /* GitCommit.swift in Sources */,
 				0BDE61A92BDB4746006E23EA /* File.swift in Sources */,
@@ -1074,6 +1091,7 @@
 				0BD15C522BDC8D91004024CF /* SmartError.swift in Sources */,
 				0BD651012CA2EA6800BA3CB8 /* IconHome.swift in Sources */,
 				0BCC6D092BD939FD006ADA94 /* BtnPwd.swift in Sources */,
+				F53FE60C2D10036D0037BD7A /* TableToolbar.swift in Sources */,
 				0B8C7B2B2BE0C8F100B4E817 /* IconList.swift in Sources */,
 				F5940B5F2D0A99CD0009FB37 /* RequestRoot.swift in Sources */,
 				F53FE5FC2D0FBCE20037BD7A /* ResponsePreview.swift in Sources */,
@@ -1136,6 +1154,7 @@
 				0B8C7A6C2BE08CA800B4E817 /* Device.swift in Sources */,
 				0BCB074F2D0C64CB00578B67 /* PerformanceView.swift in Sources */,
 				0B8C7B292BE0C6DB00B4E817 /* IconModel.swift in Sources */,
+				F53FE60E2D1003880037BD7A /* TableColumnHeader.swift in Sources */,
 				F54DFA402CA3ABB800F81BE3 /* BannerEvent.swift in Sources */,
 				0BCB07592D0C653200578B67 /* ResponseView.swift in Sources */,
 				0B4EE44B2D05A14C00D7E963 /* SmartFilePlugin.swift in Sources */,
@@ -1163,6 +1182,7 @@
 				0BB543E02BE8875700D7A2B2 /* BtnDelBanner.swift in Sources */,
 				0B76FD062BDDF79600501F1F /* WebApi.swift in Sources */,
 				F5F794EB2C5B3E8100DCB824 /* UpdaterView.swift in Sources */,
+				F53FE6142D1003D50037BD7A /* TableData.swift in Sources */,
 				0BCB075F2D0D842D00578B67 /* ResponseHeaders.swift in Sources */,
 				0B76FCEF2BDDD12A00501F1F /* WebConfig.swift in Sources */,
 				0BCB07472D0C644D00578B67 /* InfoRow.swift in Sources */,
