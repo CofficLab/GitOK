@@ -2,15 +2,12 @@ import SwiftUI
 
 struct TableData: View {
     let records: [[String: Any]]
+    let columns: [String]
     @State private var columnWidths: [String: CGFloat] = [:]
     @State private var hoveredRow: Int? = nil
     @State private var draggingColumn: String? = nil
     @State private var dragOffset: CGFloat = 0
     @State private var totalWidth: CGFloat = 0
-    
-    private var columns: [String] {
-        Array(Set(records.flatMap { $0.keys })).sorted()
-    }
     
     var body: some View {
         GeometryReader { geometry in
@@ -66,7 +63,7 @@ struct TableData: View {
                 totalWidth = geometry.size.width
             }
             .onChange(of: geometry.size.width) { newWidth in
-                // 如果用户没有手动调整过列宽，则自动调整
+                // 如果用户没有手动调整���列宽，则自动调整
                 if columnWidths.isEmpty {
                     let averageWidth = newWidth / CGFloat(columns.count)
                     columns.forEach { column in

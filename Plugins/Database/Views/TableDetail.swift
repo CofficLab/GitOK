@@ -23,16 +23,16 @@ struct TableDetail: View {
             if dbProvider.isLoading {
                 ProgressView()
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
-            } else if dbProvider.records.isEmpty {
+            } else if dbProvider.columns.isEmpty {
                 EmptyTableView()
             } else {
-                TableData(records: dbProvider.records)
+                TableData(records: dbProvider.records, columns: dbProvider.columns)
                     .frame(maxWidth: .infinity)
             }
         }
         .fileExporter(
             isPresented: $showingExportDialog,
-            document: CSVDocument(records: dbProvider.records),
+            document: CSVDocument(records: dbProvider.records, columns: dbProvider.columns),
             contentType: .commaSeparatedText,
             defaultFilename: "\(tableName).csv"
         ) { result in
@@ -65,20 +65,20 @@ struct CSVDocument: FileDocument {
     static var readableContentTypes: [UTType] { [.commaSeparatedText] }
     
     let records: [[String: Any]]
+    let columns: [String]
     
-    init(records: [[String: Any]]) {
+    init(records: [[String: Any]], columns: [String]) {
         self.records = records
+        self.columns = columns
     }
     
     init(configuration: ReadConfiguration) throws {
         records = []
+        columns = []
     }
     
     func fileWrapper(configuration: WriteConfiguration) throws -> FileWrapper {
-        guard !records.isEmpty else { return FileWrapper(regularFileWithContents: Data()) }
-        
-        // 获取所有列名
-        let columns = Array(Set(records.flatMap { $0.keys })).sorted()
+        guard !columns.isEmpty else { return FileWrapper(regularFileWithContents: Data()) }
         
         // 构建CSV内容
         var csvContent = columns.joined(separator: ",") + "\n"

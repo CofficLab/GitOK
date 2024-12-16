@@ -13,6 +13,7 @@ class DatabaseProvider: ObservableObject, SuperLog, SuperThread {
     @Published private(set) var selectedTable: String?
     @Published private(set) var records: [[String: Any]] = []
     @Published private(set) var tables: [String] = []
+    @Published private(set) var columns: [String] = []
     @Published private(set) var isLoading = false
     @Published private(set) var isTablesLoading = false
     @Published private(set) var error: String?
@@ -174,6 +175,11 @@ class DatabaseProvider: ObservableObject, SuperLog, SuperThread {
                 columnNames.append(columnName)
             }
         }
+        
+        // Update columns on main thread
+        await MainActor.run {
+            self.columns = columnNames
+        }
 
         // Now process the data rows
         for row in results {
@@ -246,6 +252,22 @@ class DatabaseProvider: ObservableObject, SuperLog, SuperThread {
         let query = "SELECT * FROM \(tableName) LIMIT 100"
         var statement: OpaquePointer?
 
+        // Get column names first
+        var columnNames: [String] = []
+        if sqlite3_prepare_v2(db, query, -1, &statement, nil) == SQLITE_OK {
+            let columnCount = sqlite3_column_count(statement)
+            for i in 0 ..< columnCount {
+                if let columnName = sqlite3_column_name(statement, i) {
+                    columnNames.append(String(cString: columnName))
+                }
+            }
+        }
+        sqlite3_finalize(statement)
+        
+        // Update columns
+        self.columns = columnNames
+
+        // Now get the data
         if sqlite3_prepare_v2(db, query, -1, &statement, nil) == SQLITE_OK {
             while sqlite3_step(statement) == SQLITE_ROW {
                 var record: [String: Any] = [:]
@@ -337,6 +359,7 @@ class DatabaseProvider: ObservableObject, SuperLog, SuperThread {
         isLoading = true
         error = nil
         records = []
+        columns = []
 
         switch config.type {
         case .mysql:
