@@ -10,8 +10,8 @@ struct TableList: View {
             Text(table)
                 .tag(table)
         }
-        .onChange(of: selectedTable) {
-            if let tableName = selectedTable {
+        .onChange(of: selectedTable) { newValue in
+            if let tableName = newValue, tableName != dbProvider.selectedTable {
                 dbProvider.queryTable(tableName)
             }
         }

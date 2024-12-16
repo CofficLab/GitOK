@@ -155,6 +155,7 @@
 		F53FE6122D1003B90037BD7A /* TableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F53FE6112D1003B90037BD7A /* TableCell.swift */; };
 		F53FE6142D1003D50037BD7A /* TableData.swift in Sources */ = {isa = PBXBuildFile; fileRef = F53FE6132D1003D50037BD7A /* TableData.swift */; };
 		F53FE6162D1015E70037BD7A /* ResizableColumn.swift in Sources */ = {isa = PBXBuildFile; fileRef = F53FE6152D1015E70037BD7A /* ResizableColumn.swift */; };
+		F53FE61A2D102CA50037BD7A /* DBBtnAdd.swift in Sources */ = {isa = PBXBuildFile; fileRef = F53FE6192D102CA50037BD7A /* DBBtnAdd.swift */; };
 		F545D1602C1AD436006A6AFA /* BannerTile.swift in Sources */ = {isa = PBXBuildFile; fileRef = F545D15F2C1AD436006A6AFA /* BannerTile.swift */; };
 		F545D1622C1AD6F1006A6AFA /* BannerTopBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = F545D1612C1AD6F1006A6AFA /* BannerTopBar.swift */; };
 		F545D1642C1ADBD0006A6AFA /* IconTile.swift in Sources */ = {isa = PBXBuildFile; fileRef = F545D1632C1ADBD0006A6AFA /* IconTile.swift */; };
@@ -357,6 +358,7 @@
 		F53FE6112D1003B90037BD7A /* TableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableCell.swift; sourceTree = "<group>"; };
 		F53FE6132D1003D50037BD7A /* TableData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableData.swift; sourceTree = "<group>"; };
 		F53FE6152D1015E70037BD7A /* ResizableColumn.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResizableColumn.swift; sourceTree = "<group>"; };
+		F53FE6192D102CA50037BD7A /* DBBtnAdd.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DBBtnAdd.swift; sourceTree = "<group>"; };
 		F545D15F2C1AD436006A6AFA /* BannerTile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerTile.swift; sourceTree = "<group>"; };
 		F545D1612C1AD6F1006A6AFA /* BannerTopBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerTopBar.swift; sourceTree = "<group>"; };
 		F545D1632C1ADBD0006A6AFA /* IconTile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconTile.swift; sourceTree = "<group>"; };
@@ -598,6 +600,7 @@
 			isa = PBXGroup;
 			children = (
 				F53FE5FF2D0FC80C0037BD7A /* DBAddView.swift */,
+				F53FE6192D102CA50037BD7A /* DBBtnAdd.swift */,
 				F53FE6092D0FF1F70037BD7A /* DBConfigRow.swift */,
 				F53FE6032D0FEF3A0037BD7A /* DBContent.swift */,
 				0B4FE9852D0B25D300F45FE9 /* DBDetail.swift */,
@@ -1138,6 +1141,7 @@
 				0B8C7B1E2BE09B1500B4E817 /* BannerShell.swift in Sources */,
 				0B1C67BC2BD9132500502EB1 /* GitShell.swift in Sources */,
 				F53FE6162D1015E70037BD7A /* ResizableColumn.swift in Sources */,
+				F53FE61A2D102CA50037BD7A /* DBBtnAdd.swift in Sources */,
 				F54DFA472CA4034B00F81BE3 /* ProjectPicker.swift in Sources */,
 				0B4EE4412D05297700D7E963 /* GitPlugin.swift in Sources */,
 				0BD15C582BDD26DE004024CF /* Diff.swift in Sources */,

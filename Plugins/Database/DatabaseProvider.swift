@@ -10,12 +10,15 @@ class DatabaseProvider: ObservableObject, SuperLog, SuperThread {
 
     @Published private(set) var configs: [DatabaseConfig] = []
     @Published private(set) var selectedConfigId: String?
+    @Published private(set) var databases: [String] = []
+    @Published private(set) var selectedDatabase: String?
     @Published private(set) var selectedTable: String?
     @Published private(set) var records: [[String: Any]] = []
     @Published private(set) var tables: [String] = []
     @Published private(set) var columns: [String] = []
     @Published private(set) var isLoading = false
     @Published private(set) var isTablesLoading = false
+    @Published private(set) var isDatabasesLoading = false
     @Published private(set) var error: String?
 
     private var mysqlConnections: [String: MySQLConnection] = [:]
@@ -84,9 +87,11 @@ class DatabaseProvider: ObservableObject, SuperLog, SuperThread {
         if let db = sqliteConnections.removeValue(forKey: configId) {
             sqlite3_close(db)
         }
+        selectedDatabase = nil
         selectedTable = nil
         records = []
         tables = []
+        databases = []
         isTablesLoading = true
     }
 
@@ -98,37 +103,97 @@ class DatabaseProvider: ObservableObject, SuperLog, SuperThread {
         guard let host = config.host,
               let port = config.port,
               let username = config.username,
-              let password = config.password,
-              let database = config.database else {
+              let password = config.password else {
             error = "Invalid MySQL configuration"
             return
         }
 
         isLoading = true
+        isDatabasesLoading = true
         error = nil
 
         Task {
             do {
                 let eventLoop = eventLoopGroup.next()
 
-                // Create connection
+                // 创建连接
                 let connection = try await MySQLConnection.connect(
                     to: .init(ipAddress: host, port: port),
                     username: username,
-                    database: database,
+                    database: "",
                     password: password,
                     tlsConfiguration: nil,
                     on: eventLoop
                 ).get()
 
+                // 获取所有数据库
+                let results = try await connection.query("SHOW DATABASES").get()
+                var databases: [String] = []
+                for row in results {
+                    if let dbName = row.column("Database")?.string {
+                        // 排除系统数据库
+                        if !["information_schema", "mysql", "performance_schema", "sys"].contains(dbName) {
+                            databases.append(dbName)
+                        }
+                    }
+                }
+
                 DispatchQueue.main.async {
                     self.mysqlConnections[config.id] = connection
-                    self.loadTables(reason: "Connect to MySQL database")
+                    self.databases = databases
+                    
+                    // 如果配置中指定了数据库，自动选择它
+                    if let configDB = config.database, databases.contains(configDB) {
+                        self.selectDatabase(configDB)
+                    }
+                    
                     self.isLoading = false
+                    self.isDatabasesLoading = false
                 }
             } catch {
                 os_log(.error, "\(error)")
 
+                DispatchQueue.main.async {
+                    self.error = error.localizedDescription
+                    self.isLoading = false
+                    self.isDatabasesLoading = false
+                }
+            }
+        }
+    }
+
+    func selectDatabase(_ database: String) {
+        guard let configId = selectedConfigId,
+              let connection = mysqlConnections[configId] else {
+            return
+        }
+
+        isLoading = true
+        error = nil
+        selectedDatabase = database
+        tables = []
+        selectedTable = nil
+        records = []
+        columns = []
+
+        Task {
+            do {
+                // 切换数据库
+                try await connection.query("USE \(database)").get()
+                
+                // 更新配置
+                if let index = self.configs.firstIndex(where: { $0.id == configId }) {
+                    DispatchQueue.main.async {
+                        self.configs[index].database = database
+                        self.saveConfigs()
+                    }
+                }
+                
+                // 加载表格列表
+                DispatchQueue.main.async {
+                    self.loadTables(reason: "Selected database: \(database)")
+                }
+            } catch {
                 DispatchQueue.main.async {
                     self.error = error.localizedDescription
                     self.isLoading = false

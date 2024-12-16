@@ -26,47 +26,71 @@ struct DBList: View {
 
     var content: some View {
         VStack(spacing: 0) {
-            GeometryReader { geometry in
-                List(dbProvider.configs) { config in
-                    DBConfigRow(config: config)
-                        .contextMenu {
-                            Button(role: .destructive) {
-                                configToDelete = config
-                                showingDeleteAlert = true
-                            } label: {
-                                Label("Delete", systemImage: "trash")
-                            }
+            // 配置列表
+            List(dbProvider.configs) { config in
+                DBConfigRow(config: config)
+                    .contextMenu {
+                        Button(role: .destructive) {
+                            configToDelete = config
+                            showingDeleteAlert = true
+                        } label: {
+                            Label("Delete", systemImage: "trash")
                         }
-                }
+                    }
             }
-            .frame(height: dbProvider.selectedConfigId != nil ? 200 : .infinity)
-            
 
-            // 表格列表
+            // 数据库和表格列表
             if dbProvider.selectedConfigId != nil {
-                VStack {
-                    if dbProvider.isTablesLoading {
-                        ProgressView()
-                    } else if let error = dbProvider.error {
+                VStack(spacing: 8) {
+                    if let error = dbProvider.error {
                         DBErrorView(message: error)
                             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
                     } else {
+                        // 数据库选择器
+                        HStack {
+                            Text("Database:")
+                                .foregroundColor(.secondary)
+                            if dbProvider.isDatabasesLoading {
+                                ProgressView()
+                                    .controlSize(.small)
+                            } else {
+                                Picker("", selection: Binding(
+                                    get: { dbProvider.selectedDatabase },
+                                    set: { newValue in
+                                        if let database = newValue {
+                                            dbProvider.selectDatabase(database)
+                                        }
+                                    }
+                                )) {
+                                    Text("Select Database").tag(nil as String?)
+                                    ForEach(dbProvider.databases, id: \.self) { database in
+                                        Text(database).tag(database as String?)
+                                    }
+                                }
+                                .labelsHidden()
+                            }
+                            Spacer()
+                        }
+                        .padding(.horizontal)
+                    }
+
+                    // 表格列表
+                    if dbProvider.selectedDatabase != nil {
                         TableList()
+                    } else {
+                        Text("Select a database")
+                            .foregroundColor(.secondary)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
                     }
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .shadow(radius: 10)
-            } else {
-                Spacer()
             }
-
-            HStack {
-                Button(action: { showingAddConfig = true }) {
-                    Label("Add Database", systemImage: "plus")
-                }
-                .buttonStyle(.borderedProminent)
-                .padding()
+            
+            HStack() {
+                DBBtnAdd(showingAddConfig: $showingAddConfig)
             }
+            .frame(height: 25)
+            .labelStyle(.iconOnly)
         }
         .sheet(isPresented: $showingAddConfig) {
             DBAddView()
