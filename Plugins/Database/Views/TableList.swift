@@ -1,14 +1,19 @@
 import SwiftUI
 
 struct TableList: View {
-    @EnvironmentObject var provider: DatabaseProvider
+    @EnvironmentObject var dbProvider: DatabaseProvider
 
+    @State private var selectedTable: String?
+    
     var body: some View {
-        List(provider.tables, id: \.self) { table in
+        List(dbProvider.tables, id: \.self, selection: $selectedTable) { table in
             Text(table)
-                .onTapGesture {
-                    provider.queryTable(table)
-                }
+                .tag(table)
+        }
+        .onChange(of: selectedTable) {
+            if let tableName = selectedTable {
+                dbProvider.queryTable(tableName)
+            }
         }
     }
 }

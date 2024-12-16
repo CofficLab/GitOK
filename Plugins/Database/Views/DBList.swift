@@ -40,7 +40,7 @@ struct DBList: View {
             
             // 表格列表
             VStack {
-                if dbProvider.isLoading {
+                if dbProvider.isTablesLoading {
                     ProgressView()
                 } else if let error = dbProvider.error {
                     DBErrorView(message: error)
