@@ -25,29 +25,39 @@ struct DBList: View {
     }
 
     var content: some View {
-        VStack {
-            List(dbProvider.configs) { config in
-                DBConfigRow(config: config)
-                    .contextMenu {
-                        Button(role: .destructive) {
-                            configToDelete = config
-                            showingDeleteAlert = true
-                        } label: {
-                            Label("Delete", systemImage: "trash")
+        VStack(spacing: 0) {
+            GeometryReader { geometry in
+                List(dbProvider.configs) { config in
+                    DBConfigRow(config: config)
+                        .contextMenu {
+                            Button(role: .destructive) {
+                                configToDelete = config
+                                showingDeleteAlert = true
+                            } label: {
+                                Label("Delete", systemImage: "trash")
+                            }
                         }
-                    }
-            }
-            
-            // 表格列表
-            VStack {
-                if dbProvider.isTablesLoading {
-                    ProgressView()
-                } else if let error = dbProvider.error {
-                    DBErrorView(message: error)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
-                } else {
-                    TableList()
                 }
+            }
+            .frame(height: dbProvider.selectedConfigId != nil ? 200 : .infinity)
+            
+
+            // 表格列表
+            if dbProvider.selectedConfigId != nil {
+                VStack {
+                    if dbProvider.isTablesLoading {
+                        ProgressView()
+                    } else if let error = dbProvider.error {
+                        DBErrorView(message: error)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+                    } else {
+                        TableList()
+                    }
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .shadow(radius: 10)
+            } else {
+                Spacer()
             }
 
             HStack {
@@ -55,8 +65,7 @@ struct DBList: View {
                     Label("Add Database", systemImage: "plus")
                 }
                 .buttonStyle(.borderedProminent)
-
-                Spacer()
+                .padding()
             }
         }
         .sheet(isPresented: $showingAddConfig) {
