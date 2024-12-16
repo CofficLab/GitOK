@@ -93,7 +93,7 @@ struct DBList: View {
             .labelStyle(.iconOnly)
         }
         .sheet(isPresented: $showingAddConfig) {
-            DBAddView()
+            DBAddView().frame(maxWidth: .infinity)
         }
         .alert("Delete Configuration",
                isPresented: $showingDeleteAlert,
