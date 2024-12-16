@@ -37,6 +37,18 @@ struct DBList: View {
                         }
                     }
             }
+            
+            // 表格列表
+            VStack {
+                if dbProvider.isLoading {
+                    ProgressView()
+                } else if let error = dbProvider.error {
+                    DBErrorView(message: error)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+                } else {
+                    TableList()
+                }
+            }
 
             HStack {
                 Button(action: { showingAddConfig = true }) {
@@ -48,7 +60,7 @@ struct DBList: View {
             }
         }
         .sheet(isPresented: $showingAddConfig) {
-            AddDatabaseView()
+            DBAddView()
         }
         .alert("Delete Configuration",
                isPresented: $showingDeleteAlert,

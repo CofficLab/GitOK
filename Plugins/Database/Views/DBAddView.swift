@@ -1,16 +1,16 @@
 import SwiftUI
 import UniformTypeIdentifiers
 
-struct AddDatabaseView: View {
+struct DBAddView: View {
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject var dbProvider: DatabaseProvider
     @State private var name = ""
     @State private var type: DatabaseConfig.DatabaseType = .mysql
     
     // MySQL fields
-    @State private var host = "localhost"
+    @State private var host = "127.0.0.1"
     @State private var port = "3306"
-    @State private var username = ""
+    @State private var username = "root"
     @State private var password = ""
     @State private var database = ""
     
@@ -63,7 +63,6 @@ struct AddDatabaseView: View {
                     Button("Add") {
                         addDatabase()
                     }
-                    .disabled(!isValid)
                 }
             }
         }
@@ -131,6 +130,6 @@ extension UTType {
 }
 
 #Preview {
-    AddDatabaseView()
+    DBAddView()
         .environmentObject(DatabaseProvider())
 } 

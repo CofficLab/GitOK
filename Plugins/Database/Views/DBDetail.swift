@@ -20,7 +20,7 @@ struct DBDetail: View {
                     }
                 }
                 .sheet(isPresented: $showingAddConfig) {
-                    AddDatabaseView()
+                    DBAddView()
                 }
                 .alert("Delete Configuration",
                        isPresented: $showingDeleteAlert,

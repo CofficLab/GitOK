@@ -143,7 +143,7 @@
 		F53FE5FA2D0FBCAC0037BD7A /* ResponsePretty.swift in Sources */ = {isa = PBXBuildFile; fileRef = F53FE5F92D0FBCAC0037BD7A /* ResponsePretty.swift */; };
 		F53FE5FC2D0FBCE20037BD7A /* ResponsePreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = F53FE5FB2D0FBCE20037BD7A /* ResponsePreview.swift */; };
 		F53FE5FE2D0FBD1B0037BD7A /* ResponseRawView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F53FE5FD2D0FBD1B0037BD7A /* ResponseRawView.swift */; };
-		F53FE6002D0FC80C0037BD7A /* AddDatabaseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F53FE5FF2D0FC80C0037BD7A /* AddDatabaseView.swift */; };
+		F53FE6002D0FC80C0037BD7A /* DBAddView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F53FE5FF2D0FC80C0037BD7A /* DBAddView.swift */; };
 		F53FE6022D0FD24A0037BD7A /* DBList.swift in Sources */ = {isa = PBXBuildFile; fileRef = F53FE6012D0FD24A0037BD7A /* DBList.swift */; };
 		F53FE6042D0FEF3A0037BD7A /* DBContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = F53FE6032D0FEF3A0037BD7A /* DBContent.swift */; };
 		F53FE6062D0FF16D0037BD7A /* DBErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F53FE6052D0FF16D0037BD7A /* DBErrorView.swift */; };
@@ -339,7 +339,7 @@
 		F53FE5F92D0FBCAC0037BD7A /* ResponsePretty.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResponsePretty.swift; sourceTree = "<group>"; };
 		F53FE5FB2D0FBCE20037BD7A /* ResponsePreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResponsePreview.swift; sourceTree = "<group>"; };
 		F53FE5FD2D0FBD1B0037BD7A /* ResponseRawView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResponseRawView.swift; sourceTree = "<group>"; };
-		F53FE5FF2D0FC80C0037BD7A /* AddDatabaseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddDatabaseView.swift; sourceTree = "<group>"; };
+		F53FE5FF2D0FC80C0037BD7A /* DBAddView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DBAddView.swift; sourceTree = "<group>"; };
 		F53FE6012D0FD24A0037BD7A /* DBList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DBList.swift; sourceTree = "<group>"; };
 		F53FE6032D0FEF3A0037BD7A /* DBContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DBContent.swift; sourceTree = "<group>"; };
 		F53FE6052D0FF16D0037BD7A /* DBErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DBErrorView.swift; sourceTree = "<group>"; };
@@ -585,7 +585,7 @@
 		0B4FE9872D0B25D300F45FE9 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				F53FE5FF2D0FC80C0037BD7A /* AddDatabaseView.swift */,
+				F53FE5FF2D0FC80C0037BD7A /* DBAddView.swift */,
 				F53FE6092D0FF1F70037BD7A /* DBConfigRow.swift */,
 				F53FE6032D0FEF3A0037BD7A /* DBContent.swift */,
 				0B4FE9852D0B25D300F45FE9 /* DBDetail.swift */,
@@ -1078,7 +1078,7 @@
 				F5940B5F2D0A99CD0009FB37 /* RequestRoot.swift in Sources */,
 				F53FE5FC2D0FBCE20037BD7A /* ResponsePreview.swift in Sources */,
 				F5940B602D0A99CD0009FB37 /* APIList.swift in Sources */,
-				F53FE6002D0FC80C0037BD7A /* AddDatabaseView.swift in Sources */,
+				F53FE6002D0FC80C0037BD7A /* DBAddView.swift in Sources */,
 				F5940B612D0A99CD0009FB37 /* APIConfig.swift in Sources */,
 				F5940B622D0A99CD0009FB37 /* APIRequest.swift in Sources */,
 				0BCB07512D0C64DF00578B67 /* ConsoleView.swift in Sources */,

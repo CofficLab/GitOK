@@ -60,6 +60,8 @@ class DatabaseProvider: ObservableObject, SuperLog {
     // MARK: - Connection Management
     
     func connect(configId: String) {
+        os_log("Connect to database")
+        
         guard let config = configs.first(where: { $0.id == configId }) else { return }
         selectedConfigId = configId
         
@@ -83,6 +85,8 @@ class DatabaseProvider: ObservableObject, SuperLog {
     // MARK: - MySQL Operations
     
     private func connectMySQL(config: DatabaseConfig) {
+        os_log("Connect to MySQL database")
+        
         guard let host = config.host,
               let port = config.port,
               let username = config.username,
@@ -98,11 +102,14 @@ class DatabaseProvider: ObservableObject, SuperLog {
         Task {
             do {
                 let eventLoop = eventLoopGroup.next()
+                
+                // Create connection
                 let connection = try await MySQLConnection.connect(
                     to: .init(ipAddress: host, port: port),
                     username: username,
                     database: database,
                     password: password,
+                    tlsConfiguration: nil,
                     on: eventLoop
                 ).get()
                 
@@ -112,6 +119,8 @@ class DatabaseProvider: ObservableObject, SuperLog {
                     self.isLoading = false
                 }
             } catch {
+                os_log(.error, "\(error)")
+                
                 DispatchQueue.main.async {
                     self.error = error.localizedDescription
                     self.isLoading = false
@@ -121,11 +130,17 @@ class DatabaseProvider: ObservableObject, SuperLog {
     }
     
     private func loadMySQLTables(connection: MySQLConnection) async throws -> [String] {
+        os_log("Load MySQL tables")
+        
         let results = try await connection.query("SHOW TABLES").get()
         var tables: [String] = []
+        
+        // First get the database name
+        let databaseQuery = try await connection.query("SELECT DATABASE() as db").get()
+        let databaseName = databaseQuery.first?.column("db")?.string ?? ""
+        
+        // Then get the tables
         for row in results {
-            let databaseQuery = try await connection.query("SELECT DATABASE()").get()
-            let databaseName = databaseQuery.first?.column("DATABASE()")?.string ?? ""
             if let tableName = row.column("Tables_in_\(databaseName)")?.string {
                 tables.append(tableName)
             }
@@ -134,6 +149,8 @@ class DatabaseProvider: ObservableObject, SuperLog {
     }
     
     private func queryMySQLTable(_ tableName: String, connection: MySQLConnection) async throws -> [[String: Any]] {
+        os_log("Query MySQL table: \(tableName)")
+        
         let results = try await connection.query("SELECT * FROM \(tableName) LIMIT 100").get()
         var records: [[String: Any]] = []
         
