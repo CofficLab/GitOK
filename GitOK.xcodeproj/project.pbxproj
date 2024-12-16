@@ -38,7 +38,7 @@
 		0B4FE98A2D0B25D300F45FE9 /* DatabaseProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4FE9882D0B25D300F45FE9 /* DatabaseProvider.swift */; };
 		0B4FE98B2D0B25D300F45FE9 /* DatabaseConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4FE9832D0B25D300F45FE9 /* DatabaseConfig.swift */; };
 		0B4FE98C2D0B25D300F45FE9 /* TableDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4FE9862D0B25D300F45FE9 /* TableDetail.swift */; };
-		0B4FE98D2D0B25D300F45FE9 /* DatabaseDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4FE9852D0B25D300F45FE9 /* DatabaseDetail.swift */; };
+		0B4FE98D2D0B25D300F45FE9 /* DBDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4FE9852D0B25D300F45FE9 /* DBDetail.swift */; };
 		0B6B1B3E2D03D7BA007941F0 /* SuperPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B6B1B3D2D03D7BA007941F0 /* SuperPlugin.swift */; };
 		0B6B1B402D03D7E8007941F0 /* BannerPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B6B1B3F2D03D7E4007941F0 /* BannerPlugin.swift */; };
 		0B6B1B422D03D980007941F0 /* BannerBtnAdd.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B6B1B412D03D976007941F0 /* BannerBtnAdd.swift */; };
@@ -143,6 +143,12 @@
 		F53FE5FA2D0FBCAC0037BD7A /* ResponsePretty.swift in Sources */ = {isa = PBXBuildFile; fileRef = F53FE5F92D0FBCAC0037BD7A /* ResponsePretty.swift */; };
 		F53FE5FC2D0FBCE20037BD7A /* ResponsePreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = F53FE5FB2D0FBCE20037BD7A /* ResponsePreview.swift */; };
 		F53FE5FE2D0FBD1B0037BD7A /* ResponseRawView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F53FE5FD2D0FBD1B0037BD7A /* ResponseRawView.swift */; };
+		F53FE6002D0FC80C0037BD7A /* AddDatabaseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F53FE5FF2D0FC80C0037BD7A /* AddDatabaseView.swift */; };
+		F53FE6022D0FD24A0037BD7A /* DBList.swift in Sources */ = {isa = PBXBuildFile; fileRef = F53FE6012D0FD24A0037BD7A /* DBList.swift */; };
+		F53FE6042D0FEF3A0037BD7A /* DBContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = F53FE6032D0FEF3A0037BD7A /* DBContent.swift */; };
+		F53FE6062D0FF16D0037BD7A /* DBErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F53FE6052D0FF16D0037BD7A /* DBErrorView.swift */; };
+		F53FE6082D0FF1840037BD7A /* DBEmptyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F53FE6072D0FF1840037BD7A /* DBEmptyView.swift */; };
+		F53FE60A2D0FF1F70037BD7A /* DBConfigRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = F53FE6092D0FF1F70037BD7A /* DBConfigRow.swift */; };
 		F545D1602C1AD436006A6AFA /* BannerTile.swift in Sources */ = {isa = PBXBuildFile; fileRef = F545D15F2C1AD436006A6AFA /* BannerTile.swift */; };
 		F545D1622C1AD6F1006A6AFA /* BannerTopBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = F545D1612C1AD6F1006A6AFA /* BannerTopBar.swift */; };
 		F545D1642C1ADBD0006A6AFA /* IconTile.swift in Sources */ = {isa = PBXBuildFile; fileRef = F545D1632C1ADBD0006A6AFA /* IconTile.swift */; };
@@ -229,7 +235,7 @@
 		0B4EE49C2D05C48900D7E963 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		0B4EE49F2D05C4DD00D7E963 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		0B4FE9832D0B25D300F45FE9 /* DatabaseConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseConfig.swift; sourceTree = "<group>"; };
-		0B4FE9852D0B25D300F45FE9 /* DatabaseDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseDetail.swift; sourceTree = "<group>"; };
+		0B4FE9852D0B25D300F45FE9 /* DBDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DBDetail.swift; sourceTree = "<group>"; };
 		0B4FE9862D0B25D300F45FE9 /* TableDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableDetail.swift; sourceTree = "<group>"; };
 		0B4FE9882D0B25D300F45FE9 /* DatabaseProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseProvider.swift; sourceTree = "<group>"; };
 		0B6B1B3D2D03D7BA007941F0 /* SuperPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuperPlugin.swift; sourceTree = "<group>"; };
@@ -333,6 +339,12 @@
 		F53FE5F92D0FBCAC0037BD7A /* ResponsePretty.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResponsePretty.swift; sourceTree = "<group>"; };
 		F53FE5FB2D0FBCE20037BD7A /* ResponsePreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResponsePreview.swift; sourceTree = "<group>"; };
 		F53FE5FD2D0FBD1B0037BD7A /* ResponseRawView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResponseRawView.swift; sourceTree = "<group>"; };
+		F53FE5FF2D0FC80C0037BD7A /* AddDatabaseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddDatabaseView.swift; sourceTree = "<group>"; };
+		F53FE6012D0FD24A0037BD7A /* DBList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DBList.swift; sourceTree = "<group>"; };
+		F53FE6032D0FEF3A0037BD7A /* DBContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DBContent.swift; sourceTree = "<group>"; };
+		F53FE6052D0FF16D0037BD7A /* DBErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DBErrorView.swift; sourceTree = "<group>"; };
+		F53FE6072D0FF1840037BD7A /* DBEmptyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DBEmptyView.swift; sourceTree = "<group>"; };
+		F53FE6092D0FF1F70037BD7A /* DBConfigRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DBConfigRow.swift; sourceTree = "<group>"; };
 		F545D15F2C1AD436006A6AFA /* BannerTile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerTile.swift; sourceTree = "<group>"; };
 		F545D1612C1AD6F1006A6AFA /* BannerTopBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerTopBar.swift; sourceTree = "<group>"; };
 		F545D1632C1ADBD0006A6AFA /* IconTile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconTile.swift; sourceTree = "<group>"; };
@@ -573,9 +585,15 @@
 		0B4FE9872D0B25D300F45FE9 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				0B8C7B3C2D0B2A1D00480598 /* TableList.swift */,
-				0B4FE9852D0B25D300F45FE9 /* DatabaseDetail.swift */,
+				F53FE5FF2D0FC80C0037BD7A /* AddDatabaseView.swift */,
+				F53FE6092D0FF1F70037BD7A /* DBConfigRow.swift */,
+				F53FE6032D0FEF3A0037BD7A /* DBContent.swift */,
+				0B4FE9852D0B25D300F45FE9 /* DBDetail.swift */,
+				F53FE6072D0FF1840037BD7A /* DBEmptyView.swift */,
+				F53FE6052D0FF16D0037BD7A /* DBErrorView.swift */,
+				F53FE6012D0FD24A0037BD7A /* DBList.swift */,
 				0B4FE9862D0B25D300F45FE9 /* TableDetail.swift */,
+				0B8C7B3C2D0B2A1D00480598 /* TableList.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -986,6 +1004,7 @@
 				0B1C67B52BD9115F00502EB1 /* Branches.swift in Sources */,
 				0B8C7B232BE0AD1D00B4E817 /* BannerModel.swift in Sources */,
 				0BCB07612D0D847700578B67 /* RequestHeaders.swift in Sources */,
+				F53FE6062D0FF16D0037BD7A /* DBErrorView.swift in Sources */,
 				0B1C67F32BD9E21B00502EB1 /* BtnOpenRemote.swift in Sources */,
 				F545D1662C1ADE8B006A6AFA /* IconTopBar.swift in Sources */,
 				0B8C7AF52BE08E2D00B4E817 /* Backgrounds.swift in Sources */,
@@ -995,7 +1014,7 @@
 				0B4FE98A2D0B25D300F45FE9 /* DatabaseProvider.swift in Sources */,
 				0B4FE98B2D0B25D300F45FE9 /* DatabaseConfig.swift in Sources */,
 				0B4FE98C2D0B25D300F45FE9 /* TableDetail.swift in Sources */,
-				0B4FE98D2D0B25D300F45FE9 /* DatabaseDetail.swift in Sources */,
+				0B4FE98D2D0B25D300F45FE9 /* DBDetail.swift in Sources */,
 				F545D16D2C1BF6E9006A6AFA /* BannerTitle.swift in Sources */,
 				0B4EE4492D05A11F00D7E963 /* SmartProjectPlugin.swift in Sources */,
 				F53FE5FE2D0FBD1B0037BD7A /* ResponseRawView.swift in Sources */,
@@ -1059,6 +1078,7 @@
 				F5940B5F2D0A99CD0009FB37 /* RequestRoot.swift in Sources */,
 				F53FE5FC2D0FBCE20037BD7A /* ResponsePreview.swift in Sources */,
 				F5940B602D0A99CD0009FB37 /* APIList.swift in Sources */,
+				F53FE6002D0FC80C0037BD7A /* AddDatabaseView.swift in Sources */,
 				F5940B612D0A99CD0009FB37 /* APIConfig.swift in Sources */,
 				F5940B622D0A99CD0009FB37 /* APIRequest.swift in Sources */,
 				0BCB07512D0C64DF00578B67 /* ConsoleView.swift in Sources */,
@@ -1074,8 +1094,10 @@
 				0BCFA9762D046FE0006A22F7 /* BannerBackground.swift in Sources */,
 				0B1C67F12BD9DB1F00502EB1 /* CommitCategoryPicker.swift in Sources */,
 				F5940B652D0A9B5E0009FB37 /* APIProvider.swift in Sources */,
+				F53FE60A2D0FF1F70037BD7A /* DBConfigRow.swift in Sources */,
 				F5940B662D0A9B5E0009FB37 /* APIPlugin.swift in Sources */,
 				0B4EE4452D059CD000D7E963 /* SmartMergePlugin.swift in Sources */,
+				F53FE6082D0FF1840037BD7A /* DBEmptyView.swift in Sources */,
 				0B6B1B402D03D7E8007941F0 /* BannerPlugin.swift in Sources */,
 				0B8C7AEC2BE08E2200B4E817 /* IconAsset.swift in Sources */,
 				F54DFA422CA3B5B900F81BE3 /* IconEvent.swift in Sources */,
@@ -1105,6 +1127,7 @@
 				0B8C7B252BE0BB7500B4E817 /* BannerList.swift in Sources */,
 				0B1C68002BD9F68F00502EB1 /* BtnFinder.swift in Sources */,
 				0B8C7AF22BE08E2D00B4E817 /* Operator.swift in Sources */,
+				F53FE6042D0FEF3A0037BD7A /* DBContent.swift in Sources */,
 				0BCB07452D0C642E00578B67 /* TimelineView.swift in Sources */,
 				0B8C7A722BE08CBF00B4E817 /* MacAgent.swift in Sources */,
 				F5F794E02C5A1D2600DCB824 /* FileList.swift in Sources */,
@@ -1130,6 +1153,7 @@
 				0BF75EE22BDE5CE500A553CD /* Stage.swift in Sources */,
 				F580BF9D2CE4A24500977CFC /* TileMerge.swift in Sources */,
 				F580BF9E2CE4A24500977CFC /* MergeForm.swift in Sources */,
+				F53FE6022D0FD24A0037BD7A /* DBList.swift in Sources */,
 				F580BF9F2CE4A24500977CFC /* BtnMerge.swift in Sources */,
 				F5948CBF2D0AAE550049EF72 /* APIDetail.swift in Sources */,
 				0BD650FD2CA2E49F00BA3CB8 /* IconProvider.swift in Sources */,

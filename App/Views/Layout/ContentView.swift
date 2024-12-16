@@ -32,7 +32,8 @@ struct ContentView: View, SuperThread, SuperEvent {
                     }
                 } detail: {
                     VStack(spacing: 0) {
-                        tabPlugins.first { $0.label == app.currentTab }?.addDetailView().frame(maxHeight: .infinity)
+                        tabPlugins.first { $0.label == app.currentTab }?.addDetailView()
+                            .frame(maxHeight: .infinity)
 
                         StatusBar()
                     }
