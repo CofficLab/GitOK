@@ -1,7 +1,6 @@
 import SwiftUI
 
-// Headers 视图
-struct ResponseHeadersView: View {
+struct ResponseHeaders: View {
     let headers: [String: String]
 
     var body: some View {

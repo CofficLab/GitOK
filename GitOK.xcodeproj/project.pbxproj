@@ -93,7 +93,7 @@
 		0BCB07572D0C651E00578B67 /* ResponseBody.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCB07562D0C651E00578B67 /* ResponseBody.swift */; };
 		0BCB07592D0C653200578B67 /* ResponseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCB07582D0C653200578B67 /* ResponseView.swift */; };
 		0BCB075B2D0C654400578B67 /* ErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCB075A2D0C654400578B67 /* ErrorView.swift */; };
-		0BCB075F2D0D842D00578B67 /* ResponseHeadersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCB075E2D0D842D00578B67 /* ResponseHeadersView.swift */; };
+		0BCB075F2D0D842D00578B67 /* ResponseHeaders.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCB075E2D0D842D00578B67 /* ResponseHeaders.swift */; };
 		0BCB07612D0D847700578B67 /* RequestHeaders.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCB07602D0D847600578B67 /* RequestHeaders.swift */; };
 		0BCB07632D0D85FD00578B67 /* RequestBodyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCB07622D0D85FD00578B67 /* RequestBodyView.swift */; };
 		0BCB07652D0D938700578B67 /* RequestBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCB07642D0D938700578B67 /* RequestBar.swift */; };
@@ -139,6 +139,10 @@
 		0BFA2E5F2BE111AA00AD98D7 /* TabBtn.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BFA2E5E2BE111AA00AD98D7 /* TabBtn.swift */; };
 		F511A69A2CE58734008C46DF /* BtnOpenCursor.swift in Sources */ = {isa = PBXBuildFile; fileRef = F511A6992CE58734008C46DF /* BtnOpenCursor.swift */; };
 		F53412912C75955F0006937C /* IconScale.swift in Sources */ = {isa = PBXBuildFile; fileRef = F53412902C75955F0006937C /* IconScale.swift */; };
+		F53FE5F82D0FBBD90037BD7A /* ResponseWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F53FE5F72D0FBBD90037BD7A /* ResponseWebView.swift */; };
+		F53FE5FA2D0FBCAC0037BD7A /* ResponsePretty.swift in Sources */ = {isa = PBXBuildFile; fileRef = F53FE5F92D0FBCAC0037BD7A /* ResponsePretty.swift */; };
+		F53FE5FC2D0FBCE20037BD7A /* ResponsePreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = F53FE5FB2D0FBCE20037BD7A /* ResponsePreview.swift */; };
+		F53FE5FE2D0FBD1B0037BD7A /* ResponseRawView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F53FE5FD2D0FBD1B0037BD7A /* ResponseRawView.swift */; };
 		F545D1602C1AD436006A6AFA /* BannerTile.swift in Sources */ = {isa = PBXBuildFile; fileRef = F545D15F2C1AD436006A6AFA /* BannerTile.swift */; };
 		F545D1622C1AD6F1006A6AFA /* BannerTopBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = F545D1612C1AD6F1006A6AFA /* BannerTopBar.swift */; };
 		F545D1642C1ADBD0006A6AFA /* IconTile.swift in Sources */ = {isa = PBXBuildFile; fileRef = F545D1632C1ADBD0006A6AFA /* IconTile.swift */; };
@@ -280,7 +284,7 @@
 		0BCB07562D0C651E00578B67 /* ResponseBody.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResponseBody.swift; sourceTree = "<group>"; };
 		0BCB07582D0C653200578B67 /* ResponseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResponseView.swift; sourceTree = "<group>"; };
 		0BCB075A2D0C654400578B67 /* ErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorView.swift; sourceTree = "<group>"; };
-		0BCB075E2D0D842D00578B67 /* ResponseHeadersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResponseHeadersView.swift; sourceTree = "<group>"; };
+		0BCB075E2D0D842D00578B67 /* ResponseHeaders.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResponseHeaders.swift; sourceTree = "<group>"; };
 		0BCB07602D0D847600578B67 /* RequestHeaders.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestHeaders.swift; sourceTree = "<group>"; };
 		0BCB07622D0D85FD00578B67 /* RequestBodyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestBodyView.swift; sourceTree = "<group>"; };
 		0BCB07642D0D938700578B67 /* RequestBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestBar.swift; sourceTree = "<group>"; };
@@ -325,6 +329,10 @@
 		0BFA2E5E2BE111AA00AD98D7 /* TabBtn.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBtn.swift; sourceTree = "<group>"; };
 		F511A6992CE58734008C46DF /* BtnOpenCursor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BtnOpenCursor.swift; sourceTree = "<group>"; };
 		F53412902C75955F0006937C /* IconScale.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconScale.swift; sourceTree = "<group>"; };
+		F53FE5F72D0FBBD90037BD7A /* ResponseWebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResponseWebView.swift; sourceTree = "<group>"; };
+		F53FE5F92D0FBCAC0037BD7A /* ResponsePretty.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResponsePretty.swift; sourceTree = "<group>"; };
+		F53FE5FB2D0FBCE20037BD7A /* ResponsePreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResponsePreview.swift; sourceTree = "<group>"; };
+		F53FE5FD2D0FBD1B0037BD7A /* ResponseRawView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResponseRawView.swift; sourceTree = "<group>"; };
 		F545D15F2C1AD436006A6AFA /* BannerTile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerTile.swift; sourceTree = "<group>"; };
 		F545D1612C1AD6F1006A6AFA /* BannerTopBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerTopBar.swift; sourceTree = "<group>"; };
 		F545D1632C1ADBD0006A6AFA /* IconTile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconTile.swift; sourceTree = "<group>"; };
@@ -846,8 +854,12 @@
 				0BCB07422D0C639400578B67 /* RequestParameters.swift */,
 				F5940B572D0A99CD0009FB37 /* RequestRoot.swift */,
 				0BCB07562D0C651E00578B67 /* ResponseBody.swift */,
-				0BCB075E2D0D842D00578B67 /* ResponseHeadersView.swift */,
+				0BCB075E2D0D842D00578B67 /* ResponseHeaders.swift */,
+				F53FE5F92D0FBCAC0037BD7A /* ResponsePretty.swift */,
+				F53FE5FB2D0FBCE20037BD7A /* ResponsePreview.swift */,
+				F53FE5FD2D0FBD1B0037BD7A /* ResponseRawView.swift */,
 				0BCB07582D0C653200578B67 /* ResponseView.swift */,
+				F53FE5F72D0FBBD90037BD7A /* ResponseWebView.swift */,
 				0BCB074A2D0C648200578B67 /* SecurityView.swift */,
 				0BCB07442D0C642E00578B67 /* TimelineView.swift */,
 				0BCB074C2D0C649A00578B67 /* TimingRow.swift */,
@@ -986,6 +998,7 @@
 				0B4FE98D2D0B25D300F45FE9 /* DatabaseDetail.swift in Sources */,
 				F545D16D2C1BF6E9006A6AFA /* BannerTitle.swift in Sources */,
 				0B4EE4492D05A11F00D7E963 /* SmartProjectPlugin.swift in Sources */,
+				F53FE5FE2D0FBD1B0037BD7A /* ResponseRawView.swift in Sources */,
 				0BCC6D0B2BD93E8C006ADA94 /* BtnAdd.swift in Sources */,
 				0BCB074B2D0C648200578B67 /* SecurityView.swift in Sources */,
 				F580BF982CE499ED00977CFC /* NoProject.swift in Sources */,
@@ -1023,6 +1036,7 @@
 				0B0E16832BD89A8F0078942B /* ContentView.swift in Sources */,
 				F5948CC22D0AAEBF0049EF72 /* APIResponse.swift in Sources */,
 				0BCB07552D0C650800578B67 /* CookiesView.swift in Sources */,
+				F53FE5F82D0FBBD90037BD7A /* ResponseWebView.swift in Sources */,
 				0BCC6D0D2BD948AB006ADA94 /* BtnSync.swift in Sources */,
 				0B4EE43E2D0528F600D7E963 /* IconPlugin.swift in Sources */,
 				0B8C7A5D2BE08BF600B4E817 /* IconPng.swift in Sources */,
@@ -1033,6 +1047,7 @@
 				0B1C67C22BD9159900502EB1 /* Project.swift in Sources */,
 				0B1C67BF2BD9157100502EB1 /* DBExt.swift in Sources */,
 				F545D1712C1C155E006A6AFA /* BannerImage.swift in Sources */,
+				F53FE5FA2D0FBCAC0037BD7A /* ResponsePretty.swift in Sources */,
 				F54DFA452CA3E5F200F81BE3 /* TileQuickMerge.swift in Sources */,
 				0BD650FB2CA2E09F00BA3CB8 /* BannerProvider.swift in Sources */,
 				0BB4278E2BE72512004E6F82 /* QueueExt.swift in Sources */,
@@ -1042,6 +1057,7 @@
 				0BCC6D092BD939FD006ADA94 /* BtnPwd.swift in Sources */,
 				0B8C7B2B2BE0C8F100B4E817 /* IconList.swift in Sources */,
 				F5940B5F2D0A99CD0009FB37 /* RequestRoot.swift in Sources */,
+				F53FE5FC2D0FBCE20037BD7A /* ResponsePreview.swift in Sources */,
 				F5940B602D0A99CD0009FB37 /* APIList.swift in Sources */,
 				F5940B612D0A99CD0009FB37 /* APIConfig.swift in Sources */,
 				F5940B622D0A99CD0009FB37 /* APIRequest.swift in Sources */,
@@ -1123,7 +1139,7 @@
 				0BB543E02BE8875700D7A2B2 /* BtnDelBanner.swift in Sources */,
 				0B76FD062BDDF79600501F1F /* WebApi.swift in Sources */,
 				F5F794EB2C5B3E8100DCB824 /* UpdaterView.swift in Sources */,
-				0BCB075F2D0D842D00578B67 /* ResponseHeadersView.swift in Sources */,
+				0BCB075F2D0D842D00578B67 /* ResponseHeaders.swift in Sources */,
 				0B76FCEF2BDDD12A00501F1F /* WebConfig.swift in Sources */,
 				0BCB07472D0C644D00578B67 /* InfoRow.swift in Sources */,
 			);
