@@ -12,6 +12,8 @@ struct DBContent: View {
                 Text("Select a table")
                     .foregroundColor(.secondary)
             }
+            
+            Spacer()
         }
         .frame(maxWidth: .infinity)
     }

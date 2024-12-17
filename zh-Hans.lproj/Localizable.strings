@@ -22,3 +22,9 @@
 "database_error" = "数据库错误";
 "mysql_connection_failed" = "MySQL连接失败";
 "sqlite_connection_failed" = "SQLite连接失败";
+"add_config" = "添加配置";
+"add_database" = "添加数据库";
+"no_database_selected" = "未选择数据库";
+"no_table_selected" = "未选择数据表";
+"delete_config" = "删除配置";
+"delete_database" = "删除数据库";

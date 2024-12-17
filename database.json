@@ -1,1 +1,1 @@
-[{"host":"127.0.0.1","port":53306,"password":"","database":"jhnzt","id":"3EADD707-8966-43F2-B8F0-299A1D6083D0","username":"root","type":"mysql","name":"1"}]
+[{"type":"mysql","password":"","host":"127.0.0.1","database":"jhnzt","id":"3EADD707-8966-43F2-B8F0-299A1D6083D0","port":53306,"name":"1","username":"root"}]

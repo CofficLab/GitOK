@@ -27,7 +27,6 @@ struct TableDetail: View {
                 EmptyTableView()
             } else {
                 TableData(records: dbProvider.records, columns: dbProvider.columns)
-                    .frame(maxWidth: .infinity)
             }
         }
         .fileExporter(

@@ -14,19 +14,24 @@ struct TableData: View {
             ScrollView([.horizontal, .vertical]) {
                 LazyVStack(spacing: 0, pinnedViews: .sectionHeaders) {
                     Section {
-                        // 数据行
-                        ForEach(Array(records.enumerated()), id: \.offset) { index, record in
-                            TableRow(
-                                record: record,
-                                columns: columns,
-                                columnWidths: columnWidths,
-                                isEven: index % 2 == 0,
-                                isHovered: hoveredRow == index
-                            )
-                            .onHover { isHovered in
-                                hoveredRow = isHovered ? index : nil
+                        VStack(alignment: .leading) {
+                            // 数据行
+                            ForEach(Array(records.enumerated()), id: \.offset) { index, record in
+                                TableRow(
+                                    record: record,
+                                    columns: columns,
+                                    columnWidths: columnWidths,
+                                    isEven: index % 2 == 0,
+                                    isHovered: hoveredRow == index
+                                )
+                                .onHover { isHovered in
+                                    hoveredRow = isHovered ? index : nil
+                                }
                             }
+                            
+                            Spacer()
                         }
+                        .frame(minHeight: geometry.size.height, alignment: .top)
                     } header: {
                         // 表头
                         HStack(spacing: 0) {
@@ -48,6 +53,8 @@ struct TableData: View {
                         }
                         .background(Color(.windowBackgroundColor))
                     }
+                    
+                    Spacer()
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
@@ -63,7 +70,7 @@ struct TableData: View {
                 totalWidth = geometry.size.width
             }
             .onChange(of: geometry.size.width) { newWidth in
-                // 如果用户没有手动调整���列宽，则自动调整
+                // 如果用户没有手动调整列宽，则自动调整
                 if columnWidths.isEmpty {
                     let averageWidth = newWidth / CGFloat(columns.count)
                     columns.forEach { column in

@@ -22,3 +22,7 @@
 "database_error" = "Database Error";
 "mysql_connection_failed" = "MySQL Connection Failed";
 "sqlite_connection_failed" = "SQLite Connection Failed";
+"add_config" = "Add Config";
+"add_database" = "Add Database";
+"no_database_selected" = "No Database Selected";
+"no_table_selected" = "No Table Selected";

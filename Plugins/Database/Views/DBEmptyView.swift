@@ -7,10 +7,10 @@ struct DBEmptyView: View {
                 .font(.system(size: 48))
                 .foregroundColor(.secondary)
 
-            Text("No Database Selected")
+            Text("no_database_selected")
                 .font(.title2)
 
-            Text("Select a database configuration from the list or add a new one.")
+            Text("no_database_description")
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal)
