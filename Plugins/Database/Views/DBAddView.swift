@@ -119,7 +119,7 @@ struct DBAddView: View {
                     .padding()
                 }
             }
-            .navigationTitle("Add Database")
+            .navigationTitle("增加数据库")
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") {
@@ -127,7 +127,7 @@ struct DBAddView: View {
                     }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Add") {
+                    Button("增加") {
                         withAnimation {
                             addDatabase()
                         }

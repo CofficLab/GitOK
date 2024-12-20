@@ -34,7 +34,7 @@ struct DBDetail: View {
                 }
                 .frame(maxWidth: .infinity)
             } else {
-                Text(LocalizedStringKey("select_project"))
+                Text("select_project")
                     .foregroundColor(.secondary)
             }
         }

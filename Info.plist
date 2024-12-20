@@ -2,13 +2,13 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>SUPublicEDKey</key>
-	<string>VRFIJExvMCeneBRzxR6mu2zPN9ggOUr0LNlcKYOb27o=</string>
-	<key>SUFeedURL</key>
-	<string>https://raw.githubusercontent.com/CofficLab/GitOK/main/appcast.xml</string>
-	<key>SUEnableInstallerLauncherService</key>
-	<true/>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
+	<key>SUEnableInstallerLauncherService</key>
+	<true/>
+	<key>SUFeedURL</key>
+	<string>https://raw.githubusercontent.com/CofficLab/GitOK/main/appcast.xml</string>
+	<key>SUPublicEDKey</key>
+	<string>VRFIJExvMCeneBRzxR6mu2zPN9ggOUr0LNlcKYOb27o=</string>
 </dict>
 </plist>

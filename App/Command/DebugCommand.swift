@@ -6,21 +6,21 @@ struct DebugCommand: Commands {
         SidebarCommands()
 
         #if os(macOS)
-        CommandMenu("调试") {
-            Button("打开App Support目录") {
+        CommandMenu("Debug") {
+            Button("Open App Support directory") {
                 let dir = AppConfig.getCurrentAppSupportDir()
                 
                 NSWorkspace.shared.open(dir)
             }
             
-            Button("打开容器目录") {
+            Button("Open container directory") {
                 guard let dir = AppConfig.localContainer else {
                     // 显示错误提示
                     let errorAlert = NSAlert()
-                    errorAlert.messageText = "打开容器目录出错"
-                    errorAlert.informativeText = "容器目录不存在"
+                    errorAlert.messageText = "Open container directory error"
+                    errorAlert.informativeText = "Container directory does not exist"
                     errorAlert.alertStyle = .critical
-                    errorAlert.addButton(withTitle: "好的")
+                    errorAlert.addButton(withTitle: "OK")
                     errorAlert.runModal()
                     
                     return
@@ -29,14 +29,14 @@ struct DebugCommand: Commands {
                 NSWorkspace.shared.open(dir)
             }
             
-            Button("打开文档目录") {
+            Button("Open documents directory") {
                 guard let dir = AppConfig.localDocumentsDir else {
                     // 显示错误提示
                     let errorAlert = NSAlert()
-                    errorAlert.messageText = "打开文档目录出错"
-                    errorAlert.informativeText = "文档目录不存在"
+                    errorAlert.messageText = "Open documents directory error"
+                    errorAlert.informativeText = "Documents directory does not exist"
                     errorAlert.alertStyle = .critical
-                    errorAlert.addButton(withTitle: "好的")
+                    errorAlert.addButton(withTitle: "OK")
                     errorAlert.runModal()
                     
                     return
@@ -45,17 +45,17 @@ struct DebugCommand: Commands {
                 NSWorkspace.shared.open(dir)
             }
             
-            Button("打开数据库目录") {
+            Button("Open database directory") {
                 let dir = AppConfig.getDBFolderURL()
                 
                 NSWorkspace.shared.open(dir)
             }
             
-            Button("打开iCloud Documents") {
+            Button("Open iCloud Documents") {
                 NSWorkspace.shared.open(AppConfig.cloudDocumentsDir)
             }
             
-            Button("打开图片目录") {
+            Button("Open images directory") {
                 NSWorkspace.shared.open(AppConfig.imagesDir)
             }
         }
