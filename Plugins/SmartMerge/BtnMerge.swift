@@ -28,6 +28,8 @@ struct BtnMerge: View, SuperEvent, SuperThread {
             do {
                 try GitShell.setBranch(to, path)
                 try GitShell.merge(from, path, message: CommitCategory.CI.text + "Merge \(from.name) by GitOK")
+
+                m.toast("Merge \(from.name) to \(to.name) success")
             } catch let error {
                 os_log(.error, "\(error.localizedDescription)")
 
