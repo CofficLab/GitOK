@@ -22,7 +22,7 @@ struct CommitList: View, SuperThread, SuperLog {
             VStack(spacing: 0) {
                 if loading && commits.isEmpty {
                     Spacer()
-                    Text(LocalizedStringKey("loading"))
+                    Text("loading")
                     Spacer()
                 } else {
                     ScrollView {

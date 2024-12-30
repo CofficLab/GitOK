@@ -81,7 +81,7 @@ struct RequestEditor: View {
                 
                 advancedConfigView
                     .tabItem {
-                        Label("Advanced", systemImage: "gear")
+                        Label("高级", systemImage: "gear")
                     }
                 
                 authenticationView

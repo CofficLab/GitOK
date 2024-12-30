@@ -13,7 +13,7 @@ struct DBList: View {
             if g.project != nil {
                 content
             } else {
-                Text(LocalizedStringKey("select_project"))
+                Text("select_project")
                     .foregroundColor(.secondary)
             }
         }

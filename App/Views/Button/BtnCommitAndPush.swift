@@ -28,7 +28,7 @@ struct BtnCommitAndPush: View, SuperLog, SuperThread {
             } catch let error {
                 self.main.async {
                     os_log(.error, "提交失败: \(error.localizedDescription)")
-                    alertMessage = "提交失败: \(error.localizedDescription)"
+                    alertMessage = "Commit and Push failed: \(error.localizedDescription)"
                     showAlert = true
                     isLoading = false
                 }
@@ -42,15 +42,15 @@ struct BtnCommitAndPush: View, SuperLog, SuperThread {
         }
         .disabled(isLoading)
         .alert(isPresented: $showAlert) {
-            Alert(title: Text("错误"), message: Text(alertMessage), dismissButton: .default(Text("确定")))
+            Alert(title: Text("Error"), message: Text(alertMessage), dismissButton: .default(Text("OK")))
         }
         .sheet(isPresented: $showCredentialsAlert) {
             VStack {
-                Text("输入凭据")
-                TextField("用户名", text: $username)
-                SecureField("个人访问令牌", text: $token)
+                Text("Input credentials")
+                TextField("Username", text: $username)
+                SecureField("Personal access token", text: $token)
                 HStack {
-                    Button("确定") {
+                    Button("OK") {
                         isLoading = true
                         showCredentialsAlert = false
                         DispatchQueue.global(qos: .userInitiated).async {
@@ -58,15 +58,15 @@ struct BtnCommitAndPush: View, SuperLog, SuperThread {
                                 try checkAndPush()
                             } catch let error {
                                 self.main.async {
-                                    os_log(.error, "提交失败: \(error.localizedDescription)")
-                                    alertMessage = "提交失败: \(error.localizedDescription)"
+                                    os_log(.error, "Commit and Push failed: \(error.localizedDescription)")
+                                    alertMessage = "Commit and Push failed: \(error.localizedDescription)"
                                     showAlert = true
                                     isLoading = false
                                 }
                             }
                         }
                     }
-                    Button("取消") {
+                    Button("Cancel") {
                         showCredentialsAlert = false
                     }
                 }
@@ -113,7 +113,7 @@ struct BtnCommitAndPush: View, SuperLog, SuperThread {
         let commit = GitCommit.headFor(repoPath)
         if !commit.checkHttpsCredentials() {
             self.main.async {
-                alertMessage = "HTTPS 凭据未配置，请输入凭据。"
+                alertMessage = "HTTPS credentials not configured, please input credentials."
                 showAlert = true
             }
 
@@ -139,7 +139,7 @@ struct BtnCommitAndPush: View, SuperLog, SuperThread {
     private func quitWithError(_ error: Error) {
         os_log(.error, "提交失败: \(error.localizedDescription)")
         self.main.async {
-            alertMessage = "提交失败: \(error.localizedDescription)"
+            alertMessage = "Commit and Push failed: \(error.localizedDescription)"
             showAlert = true
             isLoading = false
         }
