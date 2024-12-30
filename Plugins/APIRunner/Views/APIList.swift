@@ -15,6 +15,12 @@ struct APIList: View {
                             RequestListItem(request: request, isSelected: apiProvider.selectedRequestId == request.id)
                                 .tag(request.id)
                         }
+                        .onDelete { indexSet in
+                            for index in indexSet {
+                                let request = apiProvider.requests[index]
+                                try? apiProvider.deleteRequest(request)
+                            }
+                        }
                     }
                 }
                 .onChange(of: selection) {
