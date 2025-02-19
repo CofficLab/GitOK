@@ -10,6 +10,7 @@
 import 'dart:io';
 import 'package:path/path.dart' as path;
 import 'package:gitok/exceptions/git_exception.dart';
+import 'package:gitok/models/commit_info.dart';
 
 class GitService {
   static final GitService _instance = GitService._internal();
@@ -157,5 +158,37 @@ class GitService {
     if (result.exitCode != 0) {
       throw Exception('Failed to push: ${result.stderr}');
     }
+  }
+
+  Future<List<CommitInfo>> getCommitHistory(String repoPath) async {
+    final gitPath = await _getGitPath();
+
+    final result = await Process.run(
+      gitPath,
+      ['log', '--pretty=format:%H|%an|%ad|%s', '--date=iso'],
+      workingDirectory: repoPath,
+      runInShell: true,
+    );
+
+    if (result.exitCode != 0) {
+      throw GitException(
+        command: 'log',
+        message: result.stderr as String,
+        exitCode: result.exitCode,
+      );
+    }
+
+    final output = result.stdout as String;
+    if (output.isEmpty) return [];
+
+    return output.split('\n').map((line) {
+      final parts = line.split('|');
+      return CommitInfo(
+        hash: parts[0],
+        author: parts[1],
+        date: DateTime.parse(parts[2]),
+        message: parts[3],
+      );
+    }).toList();
   }
 }

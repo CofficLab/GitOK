@@ -5,6 +5,7 @@ import 'package:gitok/widgets/error_snack_bar.dart';
 import 'package:gitok/widgets/git/branch_switcher.dart';
 import 'package:gitok/widgets/git/git_action_buttons.dart';
 import 'package:gitok/widgets/git/commit_section.dart';
+import 'package:gitok/widgets/git/commit_history.dart';
 
 /// A tab that provides Git management functionality for a project.
 ///
@@ -111,6 +112,13 @@ class _GitManagementTabState extends State<GitManagementTab> {
                 );
               }
             },
+          ),
+          const SizedBox(height: 16),
+          Expanded(
+            child: CommitHistory(
+              projectPath: widget.project.path,
+              onLoadCommits: _gitService.getCommitHistory,
+            ),
           ),
         ],
       ),
