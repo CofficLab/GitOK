@@ -34,6 +34,7 @@ class _CommitSectionState extends State<CommitSection> {
     Widget content = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // 固定在顶部的提交表单
         Text('提交信息', style: Theme.of(context).textTheme.titleMedium),
         const SizedBox(height: 8),
         TextField(
@@ -54,7 +55,10 @@ class _CommitSectionState extends State<CommitSection> {
           ),
         ),
         const SizedBox(height: 16),
-        const Expanded(child: StagedChanges()),
+        // 可滚动的变动列表区域
+        const Expanded(
+          child: StagedChanges(),
+        ),
       ],
     );
 

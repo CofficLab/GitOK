@@ -16,6 +16,7 @@ dependencies:
   http: ^1.1.0
   flutter_json_viewer: ^1.0.1
   provider: ^6.0.0
+  diff_match_patch: ^0.4.1
 
 dev_dependencies:
   flutter_test:

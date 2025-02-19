@@ -34,6 +34,7 @@ class _GitManagementTabState extends State<GitManagementTab> {
   void initState() {
     super.initState();
     _loadGitInfo();
+    _setDefaultCommitMessage();
   }
 
   Future<void> _loadGitInfo() async {
@@ -50,6 +51,29 @@ class _GitManagementTabState extends State<GitManagementTab> {
         ErrorSnackBar(message: e.toString()),
       );
     }
+  }
+
+  Future<void> _setDefaultCommitMessage() async {
+    final gitProvider = context.read<GitProvider>();
+    final project = gitProvider.currentProject;
+    if (project == null) return;
+
+    // 获取当前分支名
+    final branchName = await GitService().getCurrentBranch(project.path);
+
+    // 设置默认提交信息
+    _commitMessageController.text = 'feat($branchName): ';
+
+    // 将光标移动到末尾
+    _commitMessageController.selection = TextSelection.fromPosition(
+      TextPosition(offset: _commitMessageController.text.length),
+    );
+  }
+
+  @override
+  void dispose() {
+    _commitMessageController.dispose();
+    super.dispose();
   }
 
   @override
@@ -71,39 +95,38 @@ class _GitManagementTabState extends State<GitManagementTab> {
           flex: 1,
           child: Consumer<GitProvider>(
             builder: (context, gitProvider, _) {
-              return gitProvider.rightPanelType == RightPanelType.commitForm
-                  ? Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: CommitSection(
-                        controller: _commitMessageController,
-                        onCommit: () async {
-                          if (_commitMessageController.text.isEmpty) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('请输入提交信息')),
-                            );
-                            return;
-                          }
+              return CommitDetail(
+                isCurrentChanges: gitProvider.rightPanelType == RightPanelType.commitForm,
+                commitMessageController:
+                    gitProvider.rightPanelType == RightPanelType.commitForm ? _commitMessageController : null,
+                onCommit: gitProvider.rightPanelType == RightPanelType.commitForm
+                    ? () async {
+                        if (_commitMessageController.text.isEmpty) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('请输入提交信息')),
+                          );
+                          return;
+                        }
 
-                          try {
-                            await _gitService.commit(
-                              widget.project.path,
-                              _commitMessageController.text,
-                            );
-                            _commitMessageController.clear();
-                            if (!mounted) return;
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('提交成功')),
-                            );
-                          } catch (e) {
-                            if (!mounted) return;
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              ErrorSnackBar(message: e.toString()),
-                            );
-                          }
-                        },
-                      ),
-                    )
-                  : const CommitDetail();
+                        try {
+                          await _gitService.commit(
+                            widget.project.path,
+                            _commitMessageController.text,
+                          );
+                          _commitMessageController.clear();
+                          if (!mounted) return;
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('提交成功')),
+                          );
+                        } catch (e) {
+                          if (!mounted) return;
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            ErrorSnackBar(message: e.toString()),
+                          );
+                        }
+                      }
+                    : null,
+              );
             },
           ),
         ),

@@ -3,6 +3,8 @@ import 'package:gitok/models/file_status.dart';
 import 'package:provider/provider.dart';
 import 'package:gitok/providers/git_provider.dart';
 import 'package:gitok/services/git_service.dart';
+import 'package:gitok/widgets/git/diff_viewer.dart';
+import 'package:gitok/widgets/git/commit_form.dart';
 
 /// Git提交详情展示组件
 ///
@@ -11,9 +13,16 @@ import 'package:gitok/services/git_service.dart';
 /// - 提交的文件变更
 /// - 具体的代码差异
 class CommitDetail extends StatefulWidget {
-  static const bool kDebugLayout = false;
+  final bool isCurrentChanges; // 是否显示当前更改
+  final TextEditingController? commitMessageController; // 提交信息控制器
+  final VoidCallback? onCommit; // 提交回调
 
-  const CommitDetail({super.key});
+  const CommitDetail({
+    super.key,
+    this.isCurrentChanges = false,
+    this.commitMessageController,
+    this.onCommit,
+  });
 
   @override
   State<CommitDetail> createState() => _CommitDetailState();
@@ -21,34 +30,51 @@ class CommitDetail extends StatefulWidget {
 
 class _CommitDetailState extends State<CommitDetail> {
   final GitService _gitService = GitService();
-  bool _isLoading = false;
-  Map<String, String> _fileDiffs = {}; // 存储每个文件的差异内容
   List<FileStatus> _changedFiles = [];
-  String? _selectedFilePath; // 当前选中的文件路径
+  Map<String, String> _fileDiffs = {};
+  String? _selectedFilePath;
+  bool _isLoading = false;
 
-  Future<void> _loadCommitDetails() async {
+  @override
+  void initState() {
+    super.initState();
+    _loadDetails();
+  }
+
+  Future<void> _loadDetails() async {
     final gitProvider = context.read<GitProvider>();
     final project = gitProvider.currentProject;
-    final commit = gitProvider.selectedCommit;
-
-    if (project == null || commit == null) return;
+    if (project == null) return;
 
     setState(() => _isLoading = true);
     try {
-      _changedFiles = await _gitService.getCommitFiles(project.path, commit.hash);
-      // 重置选中的文件
-      _selectedFilePath = _changedFiles.isNotEmpty ? _changedFiles[0].path : null;
-      // 加载第一个文件的差异
-      if (_selectedFilePath != null) {
+      if (widget.isCurrentChanges) {
+        // 加载当前未提交的变更
+        _changedFiles = await _gitService.getStatus(project.path);
+      } else {
+        // 加载历史提交的变更
+        final commit = gitProvider.selectedCommit;
+        if (commit != null) {
+          _changedFiles = await _gitService.getCommitFiles(project.path, commit.hash);
+        }
+      }
+
+      // 如果有变更文件，自动选中第一个
+      if (_changedFiles.isNotEmpty) {
+        _selectedFilePath = _changedFiles[0].path;
         await _loadFileDiff(_selectedFilePath!);
       }
-    } catch (e) {
-      setState(() {
-        _changedFiles = [];
-        _selectedFilePath = null;
-      });
     } finally {
       setState(() => _isLoading = false);
+    }
+  }
+
+  @override
+  void didUpdateWidget(CommitDetail oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // 当切换显示模式（当前更改/历史提交）时重新加载
+    if (oldWidget.isCurrentChanges != widget.isCurrentChanges) {
+      _loadDetails();
     }
   }
 
@@ -68,27 +94,22 @@ class _CommitDetailState extends State<CommitDetail> {
   }
 
   @override
-  void didUpdateWidget(CommitDetail oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    _loadCommitDetails();
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _loadCommitDetails();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: _isLoading
           ? const Center(child: CircularProgressIndicator())
-          : SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // 当前更改时显示提交表单
+                if (widget.isCurrentChanges) ...[
+                  CommitForm(
+                    controller: widget.commitMessageController!,
+                    onCommit: widget.onCommit,
+                  ),
+                ] else ...[
+                  // 显示提交信息
                   Consumer<GitProvider>(
                     builder: (context, gitProvider, _) {
                       final commit = gitProvider.selectedCommit;
@@ -115,68 +136,60 @@ class _CommitDetailState extends State<CommitDetail> {
                             'Hash: ${commit.hash}',
                             style: Theme.of(context).textTheme.bodyMedium,
                           ),
-                          const Divider(height: 32),
-                          Text(
-                            '变更文件:',
-                            style: Theme.of(context).textTheme.titleMedium,
-                          ),
-                          const SizedBox(height: 8),
-                          Container(
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              color: Theme.of(context).colorScheme.surfaceVariant,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Column(
-                              children: _changedFiles
-                                  .map((file) => ListTile(
-                                        leading: _getStatusIcon(file.status),
-                                        title: Text(file.path),
-                                        subtitle: Text(_getStatusText(file.status)),
-                                        selected: _selectedFilePath == file.path,
-                                        onTap: () async {
-                                          setState(() => _selectedFilePath = file.path);
-                                          if (!_fileDiffs.containsKey(file.path)) {
-                                            await _loadFileDiff(file.path);
-                                          }
-                                        },
-                                        dense: true,
-                                      ))
-                                  .toList(),
-                            ),
-                          ),
-                          const Divider(height: 32),
-                          Row(
-                            children: [
-                              Text(
-                                '变更内容:',
-                                style: Theme.of(context).textTheme.titleMedium,
-                              ),
-                              const SizedBox(width: 8),
-                              if (_selectedFilePath != null)
-                                Text(
-                                  _selectedFilePath!,
-                                  style: Theme.of(context).textTheme.bodyMedium,
-                                ),
-                            ],
-                          ),
-                          const SizedBox(height: 8),
-                          Container(
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              color: Theme.of(context).colorScheme.surfaceVariant,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: SelectableText(
-                              _selectedFilePath != null ? _fileDiffs[_selectedFilePath] ?? '加载中...' : '请选择一个文件查看变更',
-                            ),
-                          ),
+                          const SizedBox(height: 16),
                         ],
                       );
                     },
                   ),
                 ],
-              ),
+                // 变更文件列表
+                Text('变更文件:', style: Theme.of(context).textTheme.titleMedium),
+                const SizedBox(height: 8),
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  constraints: const BoxConstraints(maxHeight: 200),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.surfaceVariant,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: _changedFiles.length,
+                    itemBuilder: (context, index) {
+                      final file = _changedFiles[index];
+                      return ListTile(
+                        leading: _getStatusIcon(file.status),
+                        title: Text(file.path),
+                        subtitle: Text(_getStatusText(file.status)),
+                        selected: _selectedFilePath == file.path,
+                        onTap: () async {
+                          setState(() => _selectedFilePath = file.path);
+                          if (!_fileDiffs.containsKey(file.path)) {
+                            await _loadFileDiff(file.path);
+                          }
+                        },
+                        dense: true,
+                      );
+                    },
+                  ),
+                ),
+                if (_selectedFilePath != null) ...[
+                  const SizedBox(height: 16),
+                  Row(
+                    children: [
+                      Text('变更内容:', style: Theme.of(context).textTheme.titleMedium),
+                      const SizedBox(width: 8),
+                      Text(_selectedFilePath!, style: Theme.of(context).textTheme.bodyMedium),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Expanded(
+                    child: DiffViewer(
+                      diffText: _fileDiffs[_selectedFilePath] ?? '加载中...',
+                    ),
+                  ),
+                ],
+              ],
             ),
     );
   }

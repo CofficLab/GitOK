@@ -66,17 +66,19 @@ class GitService {
     return branches;
   }
 
-  Future<String> getCurrentBranch(String repoPath) async {
-    final gitPath = await _getGitPath();
+  Future<String> getCurrentBranch(String projectPath) async {
+    if (kDebugService) {
+      print('🌿 获取当前分支: $projectPath');
+    }
+
     final result = await Process.run(
-      gitPath,
+      'git',
       ['branch', '--show-current'],
-      workingDirectory: repoPath,
-      runInShell: true,
+      workingDirectory: projectPath,
     );
 
     if (result.exitCode != 0) {
-      throw Exception('Failed to get current branch: ${result.stderr}');
+      throw Exception('获取当前分支失败: ${result.stderr}');
     }
 
     return (result.stdout as String).trim();
@@ -289,6 +291,25 @@ class GitService {
     final result = await Process.run(
       'git',
       ['show', commitHash, '--', filePath],
+      workingDirectory: projectPath,
+    );
+
+    if (result.exitCode != 0) {
+      throw Exception('获取文件差异失败: ${result.stderr}');
+    }
+
+    return result.stdout as String;
+  }
+
+  /// 获取未提交的文件差异
+  Future<String> getStagedFileDiff(String projectPath, String filePath) async {
+    if (kDebugService) {
+      print('📄 获取未提交文件差异: $projectPath - $filePath');
+    }
+
+    final result = await Process.run(
+      'git',
+      ['diff', 'HEAD', '--', filePath],
       workingDirectory: projectPath,
     );
 
