@@ -99,98 +99,136 @@ class _CommitDetailState extends State<CommitDetail> {
       padding: const EdgeInsets.all(16.0),
       child: _isLoading
           ? const Center(child: CircularProgressIndicator())
-          : Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // 当前更改时显示提交表单
-                if (widget.isCurrentChanges) ...[
-                  CommitForm(
-                    controller: widget.commitMessageController!,
-                    onCommit: widget.onCommit,
-                  ),
-                ] else ...[
-                  // 显示提交信息
-                  Consumer<GitProvider>(
-                    builder: (context, gitProvider, _) {
-                      final commit = gitProvider.selectedCommit;
-                      if (commit == null) {
-                        return const Text('👈 请选择一个提交查看详情');
-                      }
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            commit.message,
-                            style: Theme.of(context).textTheme.titleMedium,
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            '作者: ${commit.author}',
-                            style: Theme.of(context).textTheme.bodyMedium,
-                          ),
-                          Text(
-                            '时间: ${_formatDate(commit.date)}',
-                            style: Theme.of(context).textTheme.bodyMedium,
-                          ),
-                          Text(
-                            'Hash: ${commit.hash}',
-                            style: Theme.of(context).textTheme.bodyMedium,
-                          ),
-                          const SizedBox(height: 16),
-                        ],
-                      );
-                    },
-                  ),
-                ],
-                // 变更文件列表
-                Text('变更文件:', style: Theme.of(context).textTheme.titleMedium),
-                const SizedBox(height: 8),
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  constraints: const BoxConstraints(maxHeight: 200),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.surfaceVariant,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: _changedFiles.length,
-                    itemBuilder: (context, index) {
-                      final file = _changedFiles[index];
-                      return ListTile(
-                        leading: _getStatusIcon(file.status),
-                        title: Text(file.path),
-                        subtitle: Text(_getStatusText(file.status)),
-                        selected: _selectedFilePath == file.path,
-                        onTap: () async {
-                          setState(() => _selectedFilePath = file.path);
-                          if (!_fileDiffs.containsKey(file.path)) {
-                            await _loadFileDiff(file.path);
+          : _changedFiles.isEmpty
+              ? _buildEmptyState(context)
+              : Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // 当前更改时显示提交表单
+                    if (widget.isCurrentChanges) ...[
+                      CommitForm(
+                        controller: widget.commitMessageController!,
+                      ),
+                    ] else ...[
+                      // 显示提交信息
+                      Consumer<GitProvider>(
+                        builder: (context, gitProvider, _) {
+                          final commit = gitProvider.selectedCommit;
+                          if (commit == null) {
+                            return const Text('👈 请选择一个提交查看详情');
                           }
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                commit.message,
+                                style: Theme.of(context).textTheme.titleMedium,
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                '作者: ${commit.author}',
+                                style: Theme.of(context).textTheme.bodyMedium,
+                              ),
+                              Text(
+                                '时间: ${_formatDate(commit.date)}',
+                                style: Theme.of(context).textTheme.bodyMedium,
+                              ),
+                              Text(
+                                'Hash: ${commit.hash}',
+                                style: Theme.of(context).textTheme.bodyMedium,
+                              ),
+                              const SizedBox(height: 16),
+                            ],
+                          );
                         },
-                        dense: true,
-                      );
-                    },
-                  ),
-                ),
-                if (_selectedFilePath != null) ...[
-                  const SizedBox(height: 16),
-                  Row(
-                    children: [
-                      Text('变更内容:', style: Theme.of(context).textTheme.titleMedium),
-                      const SizedBox(width: 8),
-                      Text(_selectedFilePath!, style: Theme.of(context).textTheme.bodyMedium),
+                      ),
                     ],
-                  ),
-                  const SizedBox(height: 8),
-                  Expanded(
-                    child: DiffViewer(
-                      diffText: _fileDiffs[_selectedFilePath] ?? '加载中...',
+                    // 变更文件列表
+                    Text('变更文件:', style: Theme.of(context).textTheme.titleMedium),
+                    const SizedBox(height: 8),
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      constraints: const BoxConstraints(maxHeight: 200),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.surfaceVariant,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: _changedFiles.length,
+                        itemBuilder: (context, index) {
+                          final file = _changedFiles[index];
+                          return ListTile(
+                            leading: _getStatusIcon(file.status),
+                            title: Text(file.path),
+                            subtitle: Text(_getStatusText(file.status)),
+                            selected: _selectedFilePath == file.path,
+                            onTap: () async {
+                              setState(() => _selectedFilePath = file.path);
+                              if (!_fileDiffs.containsKey(file.path)) {
+                                await _loadFileDiff(file.path);
+                              }
+                            },
+                            dense: true,
+                          );
+                        },
+                      ),
                     ),
-                  ),
-                ],
-              ],
+                    if (_selectedFilePath != null) ...[
+                      const SizedBox(height: 16),
+                      Row(
+                        children: [
+                          Text('变更内容:', style: Theme.of(context).textTheme.titleMedium),
+                          const SizedBox(width: 8),
+                          Text(_selectedFilePath!, style: Theme.of(context).textTheme.bodyMedium),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Expanded(
+                        child: DiffViewer(
+                          diffText: _fileDiffs[_selectedFilePath] ?? '加载中...',
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+    );
+  }
+
+  /// 构建空状态界面
+  Widget _buildEmptyState(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(
+            Icons.task_alt,
+            size: 64,
+            color: Colors.green,
+          ),
+          const SizedBox(height: 16),
+          Text(
+            '干净溜溜 ✨',
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
+          const SizedBox(height: 8),
+          Text(
+            widget.isCurrentChanges ? '当前没有任何文件变更\n你可以安心修改代码啦 🎯' : '这个提交没有任何文件变更\n可能是配置类的变更 🤔',
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: Theme.of(context).textTheme.bodySmall?.color,
+                ),
+          ),
+          if (widget.isCurrentChanges) ...[
+            const SizedBox(height: 24),
+            FilledButton.icon(
+              onPressed: _loadDetails,
+              icon: const Icon(Icons.refresh),
+              label: const Text('刷新'),
             ),
+          ],
+        ],
+      ),
     );
   }
 

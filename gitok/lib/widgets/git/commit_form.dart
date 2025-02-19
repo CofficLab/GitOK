@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:gitok/providers/git_provider.dart';
 
 /// Git提交表单组件
 ///
 /// 用于输入提交信息并触发提交操作
 class CommitForm extends StatelessWidget {
   final TextEditingController controller;
-  final VoidCallback? onCommit;
 
   const CommitForm({
     super.key,
     required this.controller,
-    this.onCommit,
   });
 
   /// 预设的提交信息模板
@@ -99,7 +99,23 @@ class CommitForm extends StatelessWidget {
           child: FilledButton.icon(
             icon: const Icon(Icons.check),
             label: const Text('提交'),
-            onPressed: onCommit,
+            onPressed: () async {
+              try {
+                await context.read<GitProvider>().commit(controller.text);
+                controller.clear();
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('提交成功 🎉'), backgroundColor: Colors.green),
+                  );
+                }
+              } catch (e) {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('提交失败: $e'), backgroundColor: Colors.red),
+                  );
+                }
+              }
+            },
           ),
         ),
         const SizedBox(height: 16),

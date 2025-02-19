@@ -12,7 +12,7 @@ enum RightPanelType { commitForm, commitDetail }
 /// - 当前项目
 /// - 当前分支
 /// - 分支列表
-class GitProvider with ChangeNotifier {
+class GitProvider extends ChangeNotifier {
   final GitService _gitService = GitService();
 
   GitProject? _currentProject;
@@ -63,6 +63,18 @@ class GitProvider with ChangeNotifier {
     if (commit != null) {
       _rightPanelType = RightPanelType.commitDetail;
     }
+    notifyListeners();
+  }
+
+  /// 提交更改
+  Future<void> commit(String message) async {
+    final project = currentProject;
+    if (project == null) return;
+
+    await _gitService.commit(project.path, message);
+
+    // 提交后刷新所有状态
+    await loadCommits();
     notifyListeners();
   }
 }
