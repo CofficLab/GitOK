@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:gitok/widgets/project_list.dart' show ProjectList, ProjectListState;
-import 'package:gitok/widgets/project_detail_panel.dart';
+import 'package:gitok/layouts/home_app_bar.dart';
+import 'package:gitok/layouts/home_body_layout.dart';
+import 'package:gitok/widgets/project_list.dart' show ProjectListState;
 import 'package:gitok/models/git_project.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:gitok/services/project_storage_service.dart';
 import 'package:gitok/services/git_service.dart';
 import 'dart:io';
 
+/// GitOK应用程序的主屏幕。
+/// 提供一个分屏界面，左侧是项目列表，右侧是项目详情。
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -14,51 +17,34 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
+/// HomeScreen 组件的状态类。
+///
+/// 该类负责管理：
+/// - 项目选择状态
+/// - 项目存储操作
+/// - 添加新的Git项目到应用程序
 class _HomeScreenState extends State<HomeScreen> {
+  /// 当前在列表中选中的项目
   GitProject? _selectedProject;
+
+  /// 用于持久化和加载项目数据的服务
   final ProjectStorageService _storageService = ProjectStorageService();
+
+  /// 用于访问ProjectList状态以刷新列表的全局键
   final GlobalKey<ProjectListState> _projectListKey = GlobalKey<ProjectListState>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('GitOK'),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: FilledButton.icon(
-              icon: const Icon(Icons.add),
-              label: const Text('添加项目'),
-              onPressed: _addProject,
-            ),
-          ),
-        ],
-      ),
-      body: Row(
-        children: [
-          Container(
-            width: 300,
-            decoration: BoxDecoration(
-              border: Border(
-                right: BorderSide(
-                  color: Theme.of(context).dividerColor,
-                ),
-              ),
-            ),
-            child: ProjectList(
-              key: _projectListKey,
-              onProjectSelected: (project) {
-                setState(() {
-                  _selectedProject = project;
-                });
-              },
-            ),
-          ),
-          Expanded(
-            child: ProjectDetailPanel(project: _selectedProject),
-          ),
-        ],
+      appBar: HomeAppBar(onAddProject: _addProject),
+      body: HomeBodyLayout(
+        selectedProject: _selectedProject,
+        projectListKey: _projectListKey,
+        onProjectSelected: (project) {
+          setState(() {
+            _selectedProject = project;
+          });
+        },
       ),
     );
   }
