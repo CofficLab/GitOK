@@ -250,4 +250,52 @@ class GitService {
 
     return changes;
   }
+
+  /// 获取指定提交的变更文件列表
+  Future<List<FileStatus>> getCommitFiles(String projectPath, String commitHash) async {
+    if (kDebugService) {
+      print('📄 获取提交文件列表: $projectPath - $commitHash');
+    }
+
+    final result = await Process.run(
+      'git',
+      ['show', '--name-status', '--format=', commitHash],
+      workingDirectory: projectPath,
+    );
+
+    if (result.exitCode != 0) {
+      throw Exception('获取文件列表失败: ${result.stderr}');
+    }
+
+    final List<FileStatus> files = [];
+    final lines = (result.stdout as String).split('\n');
+    for (final line in lines) {
+      if (line.isEmpty) continue;
+      final parts = line.split('\t');
+      if (parts.length >= 2) {
+        files.add(FileStatus(parts[1], parts[0]));
+      }
+    }
+
+    return files;
+  }
+
+  /// 获取指定提交中某个文件的差异
+  Future<String> getFileDiff(String projectPath, String commitHash, String filePath) async {
+    if (kDebugService) {
+      print('📄 获取文件差异: $projectPath - $commitHash - $filePath');
+    }
+
+    final result = await Process.run(
+      'git',
+      ['show', commitHash, '--', filePath],
+      workingDirectory: projectPath,
+    );
+
+    if (result.exitCode != 0) {
+      throw Exception('获取文件差异失败: ${result.stderr}');
+    }
+
+    return result.stdout as String;
+  }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gitok/models/file_status.dart';
 import 'package:provider/provider.dart';
 import 'package:gitok/providers/git_provider.dart';
 import 'package:gitok/services/git_service.dart';

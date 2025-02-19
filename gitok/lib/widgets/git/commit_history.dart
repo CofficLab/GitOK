@@ -52,7 +52,7 @@ class _CommitHistoryState extends State<CommitHistory> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     // 当项目变化时重新加载提交历史
-    final currentProject = context.watch<GitProvider>().currentProject;
+    final currentProject = context.read<GitProvider>().currentProject;
     if (currentProject != null) {
       _loadCommits();
     }
@@ -79,28 +79,31 @@ class _CommitHistoryState extends State<CommitHistory> {
         ),
         const SizedBox(height: 8),
         Expanded(
-          child: ListView.builder(
-            itemCount: _commits.length + 1, // +1 为"当前状态"项
-            itemBuilder: (context, index) {
-              if (index == 0) {
-                // 第一项是"当前状态"
-                return CommitListItem(
-                  commit: CommitInfo(
-                    hash: 'current',
-                    message: '当前状态',
-                    author: '未提交的更改',
-                    date: DateTime.now(),
-                  ),
-                  isSelected: context.read<GitProvider>().rightPanelType == RightPanelType.commitForm,
-                  onTap: () => context.read<GitProvider>().showCommitForm(),
-                );
-              }
-              // 其他项是实际的提交历史
-              final commit = _commits[index - 1];
-              return CommitListItem(
-                commit: commit,
-                isSelected: context.read<GitProvider>().selectedCommit?.hash == commit.hash,
-                onTap: () => context.read<GitProvider>().setSelectedCommit(commit),
+          child: Consumer<GitProvider>(
+            builder: (context, gitProvider, _) {
+              return ListView.builder(
+                itemCount: _commits.length + 1,
+                itemBuilder: (context, index) {
+                  if (index == 0) {
+                    return CommitListItem(
+                      commit: CommitInfo(
+                        hash: 'current',
+                        message: '当前状态',
+                        author: '未提交的更改',
+                        date: DateTime.now(),
+                      ),
+                      isSelected: gitProvider.rightPanelType == RightPanelType.commitForm,
+                      onTap: () => gitProvider.showCommitForm(),
+                    );
+                  }
+                  final commit = _commits[index - 1];
+                  return CommitListItem(
+                    commit: commit,
+                    isSelected: gitProvider.rightPanelType == RightPanelType.commitDetail &&
+                        gitProvider.selectedCommit?.hash == commit.hash,
+                    onTap: () => gitProvider.setSelectedCommit(commit),
+                  );
+                },
               );
             },
           ),

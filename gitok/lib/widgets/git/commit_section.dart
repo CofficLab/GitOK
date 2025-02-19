@@ -4,7 +4,7 @@ import 'package:gitok/widgets/git/staged_changes.dart';
 /// Git提交表单组件
 class CommitSection extends StatefulWidget {
   /// 是否启用调试模式以突出显示布局边界
-  static const bool kDebugLayout = true;
+  static const bool kDebugLayout = false;
 
   final TextEditingController controller;
   final VoidCallback onCommit;
