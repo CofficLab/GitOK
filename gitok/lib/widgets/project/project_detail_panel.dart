@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:gitok/models/git_project.dart';
-import 'package:gitok/widgets/git_management_tab.dart';
-import 'package:gitok/widgets/icon_editor_tab.dart';
-import 'package:gitok/widgets/promo_editor_tab.dart';
-import 'package:gitok/widgets/api_editor_tab.dart';
+import 'package:gitok/widgets/git/git_management_tab.dart';
+import 'package:gitok/widgets/icon/icon_editor_tab.dart';
+import 'package:gitok/widgets/promo/promo_editor_tab.dart';
+import 'package:gitok/widgets/api/api_editor_tab.dart';
 
 class ProjectDetailPanel extends StatelessWidget {
   final GitProject? project;

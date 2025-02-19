@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gitok/layouts/project_list_layout.dart';
 import 'package:gitok/layouts/project_detail_layout.dart';
-import 'package:gitok/widgets/project_list.dart';
+import 'package:gitok/widgets/project/project_list.dart';
 import 'package:gitok/models/git_project.dart';
 
 /// GitOK应用程序的主体布局组件。
@@ -13,7 +13,7 @@ import 'package:gitok/models/git_project.dart';
 /// 该组件负责处理主界面的整体布局结构，包括分割线的显示。
 class HomeBodyLayout extends StatelessWidget {
   /// 是否启用调试模式以突出显示布局边界
-  static const bool kDebugLayout = true;
+  static const bool kDebugLayout = false;
 
   /// 当前选中的项目，可能为null（表示未选中任何项目）
   final GitProject? selectedProject;

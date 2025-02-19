@@ -3,7 +3,7 @@ import 'package:gitok/models/git_project.dart';
 import 'package:gitok/models/promo_config.dart';
 import 'package:gitok/services/promo_service.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:gitok/widgets/promo_canvas.dart';
+import 'package:gitok/widgets/promo/promo_canvas.dart';
 import 'package:gitok/widgets/element_properties_panel.dart';
 import 'dart:io';
 import 'package:path/path.dart' as path;

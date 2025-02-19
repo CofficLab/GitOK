@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gitok/layouts/home_app_bar.dart';
 import 'package:gitok/layouts/home_body_layout.dart';
-import 'package:gitok/widgets/project_list.dart' show ProjectListState;
+import 'package:gitok/widgets/project/project_list.dart' show ProjectListState;
 import 'package:gitok/models/git_project.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:gitok/services/project_storage_service.dart';

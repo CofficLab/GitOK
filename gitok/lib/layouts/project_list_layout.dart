@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gitok/widgets/project_list.dart';
+import 'package:gitok/widgets/project/project_list.dart';
 import 'package:gitok/models/git_project.dart';
 
 /// GitOK应用程序的左侧项目列表布局组件。
@@ -9,7 +9,7 @@ import 'package:gitok/models/git_project.dart';
 /// - 右侧分割线
 class ProjectListLayout extends StatelessWidget {
   /// 是否启用调试模式以突出显示布局边界
-  static const bool kDebugLayout = true;
+  static const bool kDebugLayout = false;
 
   /// 项目列表的全局键，用于访问列表状态
   final GlobalKey<ProjectListState> listKey;

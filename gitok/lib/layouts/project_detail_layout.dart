@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gitok/widgets/project_detail_panel.dart';
+import 'package:gitok/widgets/project/project_detail_panel.dart';
 import 'package:gitok/models/git_project.dart';
 
 /// GitOK应用程序的右侧项目详情布局组件。
