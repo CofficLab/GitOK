@@ -80,34 +80,8 @@ class _GitManagementTabState extends State<GitManagementTab> {
           ),
           const SizedBox(height: 16),
           GitActionButtons(
-            onPull: () async {
-              try {
-                await _gitService.pull(widget.project.path);
-                if (!mounted) return;
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('拉取成功')),
-                );
-              } catch (e) {
-                if (!mounted) return;
-                ScaffoldMessenger.of(context).showSnackBar(
-                  ErrorSnackBar(message: e.toString()),
-                );
-              }
-            },
-            onPush: () async {
-              try {
-                await _gitService.push(widget.project.path);
-                if (!mounted) return;
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('推送成功')),
-                );
-              } catch (e) {
-                if (!mounted) return;
-                ScaffoldMessenger.of(context).showSnackBar(
-                  ErrorSnackBar(message: e.toString()),
-                );
-              }
-            },
+            onPull: () => _gitService.pull(widget.project.path),
+            onPush: () => _gitService.push(widget.project.path),
           ),
           const SizedBox(height: 16),
           CommitSection(
