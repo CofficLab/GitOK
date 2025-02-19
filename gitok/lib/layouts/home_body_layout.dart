@@ -15,20 +15,12 @@ class HomeBodyLayout extends StatelessWidget {
   /// 是否启用调试模式以突出显示布局边界
   static const bool kDebugLayout = false;
 
-  /// 当前选中的项目，可能为null（表示未选中任何项目）
-  final GitProject? selectedProject;
-
   /// 项目列表的全局键，用于访问列表状态
   final GlobalKey<ProjectListState> projectListKey;
 
-  /// 当选择项目时的回调函数
-  final Function(GitProject) onProjectSelected;
-
   const HomeBodyLayout({
     super.key,
-    required this.selectedProject,
     required this.projectListKey,
-    required this.onProjectSelected,
   });
 
   @override
@@ -42,11 +34,8 @@ class HomeBodyLayout extends StatelessWidget {
           : null,
       child: Row(
         children: [
-          ProjectListLayout(
-            listKey: projectListKey,
-            onProjectSelected: onProjectSelected,
-          ),
-          ProjectDetailLayout(project: selectedProject),
+          ProjectListLayout(listKey: projectListKey),
+          const Expanded(child: ProjectDetailLayout()),
         ],
       ),
     );

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:gitok/models/git_project.dart';
 import 'package:gitok/services/git_service.dart';
 import 'package:gitok/widgets/error_snack_bar.dart';
-import 'package:gitok/widgets/git/branch_switcher.dart';
 import 'package:gitok/widgets/git/git_action_buttons.dart';
 import 'package:gitok/widgets/git/commit_section.dart';
 import 'package:gitok/widgets/git/commit_history.dart';
@@ -60,26 +59,6 @@ class _GitManagementTabState extends State<GitManagementTab> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('当前分支: $_currentBranch', style: Theme.of(context).textTheme.titleLarge),
-          const SizedBox(height: 16),
-          BranchSwitcher(
-            currentBranch: _currentBranch,
-            branches: _branches,
-            onBranchChanged: (value) async {
-              if (value != null) {
-                try {
-                  await _gitService.checkout(widget.project.path, value);
-                  await _loadGitInfo();
-                } catch (e) {
-                  if (!mounted) return;
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    ErrorSnackBar(message: e.toString()),
-                  );
-                }
-              }
-            },
-          ),
-          const SizedBox(height: 16),
           GitActionButtons(
             onPull: () => _gitService.pull(widget.project.path),
             onPush: () => _gitService.push(widget.project.path),
@@ -114,11 +93,8 @@ class _GitManagementTabState extends State<GitManagementTab> {
             },
           ),
           const SizedBox(height: 16),
-          Expanded(
-            child: CommitHistory(
-              projectPath: widget.project.path,
-              onLoadCommits: _gitService.getCommitHistory,
-            ),
+          const Expanded(
+            child: CommitHistory(),
           ),
         ],
       ),

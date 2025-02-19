@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:gitok/models/commit_info.dart';
-import 'package:gitok/widgets/git/commit_detail.dart';
+import 'package:gitok/providers/git_provider.dart';
+import 'package:gitok/services/git_service.dart';
 import 'package:gitok/widgets/git/commit_list_item.dart';
+import 'package:gitok/widgets/git/commit_detail.dart';
 
 /// Git提交历史展示组件
 ///
@@ -12,25 +15,32 @@ import 'package:gitok/widgets/git/commit_list_item.dart';
 /// - 刷新按钮
 class CommitHistory extends StatefulWidget {
   /// 是否启用调试模式以突出显示布局边界
-  static const bool kDebugLayout = true;
+  static const bool kDebugLayout = false;
 
-  final String projectPath;
-  final Future<List<CommitInfo>> Function(String path) onLoadCommits;
-
-  const CommitHistory({
-    super.key,
-    required this.projectPath,
-    required this.onLoadCommits,
-  });
+  const CommitHistory({super.key});
 
   @override
   State<CommitHistory> createState() => _CommitHistoryState();
 }
 
 class _CommitHistoryState extends State<CommitHistory> {
+  final GitService _gitService = GitService();
   List<CommitInfo> _commits = [];
   bool _isLoading = false;
   CommitInfo? _selectedCommit;
+
+  Future<void> _loadCommits() async {
+    final project = context.read<GitProvider>().currentProject;
+    if (project == null) return;
+
+    setState(() => _isLoading = true);
+    try {
+      final commits = await _gitService.getCommitHistory(project.path);
+      setState(() => _commits = commits);
+    } finally {
+      setState(() => _isLoading = false);
+    }
+  }
 
   @override
   void initState() {
@@ -38,13 +48,13 @@ class _CommitHistoryState extends State<CommitHistory> {
     _loadCommits();
   }
 
-  Future<void> _loadCommits() async {
-    setState(() => _isLoading = true);
-    try {
-      final commits = await widget.onLoadCommits(widget.projectPath);
-      setState(() => _commits = commits);
-    } finally {
-      setState(() => _isLoading = false);
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // 当项目变化时重新加载提交历史
+    final currentProject = context.watch<GitProvider>().currentProject;
+    if (currentProject != null) {
+      _loadCommits();
     }
   }
 
@@ -91,10 +101,7 @@ class _CommitHistoryState extends State<CommitHistory> {
         const VerticalDivider(),
         Expanded(
           flex: 3,
-          child: CommitDetail(
-            projectPath: widget.projectPath,
-            commit: _selectedCommit,
-          ),
+          child: CommitDetail(),
         ),
       ],
     );

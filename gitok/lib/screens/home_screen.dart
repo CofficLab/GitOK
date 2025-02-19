@@ -37,15 +37,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: HomeAppBar(onAddProject: _addProject),
-      body: HomeBodyLayout(
-        selectedProject: _selectedProject,
-        projectListKey: _projectListKey,
-        onProjectSelected: (project) {
-          setState(() {
-            _selectedProject = project;
-          });
-        },
-      ),
+      body: HomeBodyLayout(projectListKey: _projectListKey),
     );
   }
 

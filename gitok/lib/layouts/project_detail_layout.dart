@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:gitok/widgets/project/project_detail_panel.dart';
 import 'package:gitok/models/git_project.dart';
+import 'package:provider/provider.dart';
+import 'package:gitok/providers/git_provider.dart';
+import 'package:gitok/widgets/git/git_management_tab.dart';
 
 /// GitOK应用程序的右侧项目详情布局组件。
 ///
@@ -11,25 +14,21 @@ class ProjectDetailLayout extends StatelessWidget {
   /// 是否启用调试模式以突出显示布局边界
   static const bool kDebugLayout = false;
 
-  /// 当前选中的项目，可能为null（表示未选中任何项目）
-  final GitProject? project;
-
-  const ProjectDetailLayout({
-    super.key,
-    required this.project,
-  });
+  const ProjectDetailLayout({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: Container(
+    return Consumer<GitProvider>(
+      builder: (context, gitProvider, _) => Container(
         decoration: kDebugLayout
             ? BoxDecoration(
                 border: Border.all(color: Colors.green, width: 2),
                 color: Colors.green.withOpacity(0.1),
               )
             : null,
-        child: ProjectDetailPanel(project: project),
+        child: gitProvider.currentProject == null
+            ? const Center(child: Text('请选择一个项目'))
+            : GitManagementTab(project: gitProvider.currentProject!),
       ),
     );
   }

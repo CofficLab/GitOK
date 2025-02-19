@@ -5,6 +5,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:gitok/screens/home_screen.dart';
+import 'package:provider/provider.dart';
+import 'package:gitok/providers/git_provider.dart';
 
 void main() {
   runApp(const MyApp());
@@ -18,9 +20,12 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Scaffold(
-        body: HomeScreen(),
+    return ChangeNotifierProvider(
+      create: (_) => GitProvider(),
+      child: MaterialApp(
+        home: Scaffold(
+          body: HomeScreen(),
+        ),
       ),
     );
   }

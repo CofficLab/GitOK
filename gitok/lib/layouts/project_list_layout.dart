@@ -14,13 +14,9 @@ class ProjectListLayout extends StatelessWidget {
   /// 项目列表的全局键，用于访问列表状态
   final GlobalKey<ProjectListState> listKey;
 
-  /// 当选择项目时的回调函数
-  final Function(GitProject) onProjectSelected;
-
   const ProjectListLayout({
     super.key,
     required this.listKey,
-    required this.onProjectSelected,
   });
 
   @override
@@ -40,15 +36,9 @@ class ProjectListLayout extends StatelessWidget {
               decoration: BoxDecoration(
                 border: Border.all(color: Colors.blue, width: 2),
               ),
-              child: ProjectList(
-                key: listKey,
-                onProjectSelected: onProjectSelected,
-              ),
+              child: ProjectList(key: listKey),
             )
-          : ProjectList(
-              key: listKey,
-              onProjectSelected: onProjectSelected,
-            ),
+          : ProjectList(key: listKey),
     );
   }
 }

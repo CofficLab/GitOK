@@ -7,20 +7,16 @@
 /// - 从列表中移除项目
 /// - 选择项目进行操作
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:gitok/models/git_project.dart';
 import 'package:gitok/services/git_service.dart';
 import 'package:gitok/services/project_storage_service.dart';
+import 'package:gitok/providers/git_provider.dart';
 import 'package:gitok/widgets/project/project_item.dart';
 
-/// 项目列表的有状态组件
+/// 项目列表组件
 class ProjectList extends StatefulWidget {
-  /// 当项目被选中时的回调函数
-  final Function(GitProject)? onProjectSelected;
-
-  const ProjectList({
-    super.key,
-    this.onProjectSelected,
-  });
+  const ProjectList({super.key});
 
   @override
   State<ProjectList> createState() => ProjectListState();
@@ -39,9 +35,6 @@ class ProjectListState extends State<ProjectList> {
 
   /// 搜索查询字符串
   String _searchQuery = '';
-
-  /// 当前选中的项目
-  GitProject? _selectedProject;
 
   @override
   void initState() {
@@ -96,47 +89,44 @@ class ProjectListState extends State<ProjectList> {
   /// - 如果没有项目，显示提示信息
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: SearchBar(
-            hintText: '搜索项目...',
-            leading: const Icon(Icons.search),
-            onChanged: (value) {
-              setState(() {
-                _searchQuery = value;
-              });
-            },
+    return Consumer<GitProvider>(
+      builder: (context, gitProvider, child) => Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: SearchBar(
+              hintText: '搜索项目...',
+              leading: const Icon(Icons.search),
+              onChanged: (value) {
+                setState(() {
+                  _searchQuery = value;
+                });
+              },
+            ),
           ),
-        ),
-        Expanded(
-          child: _filteredProjects.isEmpty
-              ? const Center(
-                  child: Text(
-                    '没有找到项目\n点击右上角的"添加项目"按钮来添加',
-                    textAlign: TextAlign.center,
+          Expanded(
+            child: _filteredProjects.isEmpty
+                ? const Center(
+                    child: Text(
+                      '没有找到项目\n点击右上角的"添加项目"按钮来添加',
+                      textAlign: TextAlign.center,
+                    ),
+                  )
+                : ListView.builder(
+                    itemCount: _filteredProjects.length,
+                    itemBuilder: (context, index) {
+                      final project = _filteredProjects[index];
+                      return ProjectItem(
+                        project: project,
+                        isSelected: gitProvider.currentProject?.path == project.path,
+                        onTap: () => gitProvider.setCurrentProject(project),
+                        onProjectUpdated: _loadProjects,
+                      );
+                    },
                   ),
-                )
-              : ListView.builder(
-                  itemCount: _filteredProjects.length,
-                  itemBuilder: (context, index) {
-                    final project = _filteredProjects[index];
-                    return ProjectItem(
-                      project: project,
-                      isSelected: widget.onProjectSelected != null && _selectedProject?.path == project.path,
-                      onTap: () {
-                        widget.onProjectSelected?.call(project);
-                        setState(() {
-                          _selectedProject = project;
-                        });
-                      },
-                      onProjectUpdated: _loadProjects,
-                    );
-                  },
-                ),
-        ),
-      ],
+          ),
+        ],
+      ),
     );
   }
 }
