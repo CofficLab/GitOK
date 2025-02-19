@@ -45,61 +45,86 @@ class ProjectItem extends StatelessWidget {
               color: Colors.blue.withOpacity(0.05),
             )
           : null,
-      child: ListTile(
-        leading: const Icon(Icons.folder),
-        title: Text(project.name),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            IconButton(
-              icon: Icon(
-                project.isFavorite ? Icons.star : Icons.star_border,
-                color: project.isFavorite ? Colors.amber : null,
-              ),
-              onPressed: () async {
-                final updatedProject = GitProject(
-                  name: project.name,
-                  path: project.path,
-                  description: project.description,
-                  lastOpened: project.lastOpened,
-                  isFavorite: !project.isFavorite,
-                );
-                await _storageService.updateProject(updatedProject);
-                onProjectUpdated?.call();
-              },
+      child: GestureDetector(
+        onSecondaryTapUp: (details) {
+          final RenderBox button = context.findRenderObject() as RenderBox;
+          final Offset offset = button.localToGlobal(Offset.zero);
+
+          showMenu(
+            context: context,
+            position: RelativeRect.fromLTRB(
+              offset.dx,
+              offset.dy,
+              offset.dx + button.size.width,
+              offset.dy + button.size.height,
             ),
-            IconButton(
-              icon: const Icon(Icons.close),
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                    title: const Text('确认移除'),
-                    content: Text('确定要从列表中移除 ${project.name} 吗？\n(不会删除磁盘上的文件)'),
-                    actions: [
-                      TextButton(
-                        onPressed: () => Navigator.pop(context),
-                        child: const Text('取消'),
-                      ),
-                      FilledButton(
-                        onPressed: () async {
-                          await _storageService.removeProject(project.path);
-                          onProjectUpdated?.call();
-                          if (context.mounted) {
-                            Navigator.pop(context);
-                          }
-                        },
-                        child: const Text('移除'),
-                      ),
-                    ],
+            items: [
+              PopupMenuItem(
+                child: ListTile(
+                  leading: Icon(
+                    project.isFavorite ? Icons.star : Icons.star_border,
+                    color: project.isFavorite ? Colors.amber : null,
                   ),
-                );
-              },
-            ),
-          ],
+                  title: Text(project.isFavorite ? '取消收藏' : '收藏'),
+                  dense: true,
+                ),
+                onTap: () async {
+                  final updatedProject = GitProject(
+                    name: project.name,
+                    path: project.path,
+                    description: project.description,
+                    lastOpened: project.lastOpened,
+                    isFavorite: !project.isFavorite,
+                  );
+                  await _storageService.updateProject(updatedProject);
+                  onProjectUpdated?.call();
+                },
+              ),
+              PopupMenuItem(
+                child: const ListTile(
+                  leading: Icon(Icons.close),
+                  title: Text('移除'),
+                  dense: true,
+                ),
+                onTap: () async {
+                  // 使用 Future.delayed 确保菜单先关闭
+                  await Future.delayed(Duration.zero);
+                  if (context.mounted) {
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: const Text('确认移除'),
+                        content: Text('确定要从列表中移除 ${project.name} 吗？\n(不会删除磁盘上的文件)'),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: const Text('取消'),
+                          ),
+                          FilledButton(
+                            onPressed: () async {
+                              await _storageService.removeProject(project.path);
+                              onProjectUpdated?.call();
+                              if (context.mounted) {
+                                Navigator.pop(context);
+                              }
+                            },
+                            child: const Text('移除'),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+                },
+              ),
+            ],
+          );
+        },
+        child: ListTile(
+          leading: const Icon(Icons.folder),
+          title: Text(project.name),
+          selected: isSelected,
+          onTap: onTap,
         ),
-        selected: isSelected,
-        onTap: onTap,
       ),
     );
   }

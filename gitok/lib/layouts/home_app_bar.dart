@@ -14,7 +14,7 @@ import 'package:gitok/services/git_service.dart';
 /// 该组件实现了 [PreferredSizeWidget] 接口以符合 [AppBar] 的要求。
 class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
   /// 是否启用调试模式以突出显示布局边界
-  static const bool kDebugLayout = true;
+  static const bool kDebugLayout = false;
 
   /// 点击添加项目按钮时的回调函数
   final VoidCallback onAddProject;
