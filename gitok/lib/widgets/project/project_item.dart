@@ -11,7 +11,7 @@ import 'package:gitok/services/project_storage_service.dart';
 
 class ProjectItem extends StatelessWidget {
   /// 是否启用调试模式以突出显示布局边界
-  static const bool kDebugLayout = true;
+  static const bool kDebugLayout = false;
 
   /// 项目数据
   final GitProject project;

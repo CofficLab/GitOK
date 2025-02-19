@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gitok/models/git_project.dart';
 import 'package:gitok/services/git_service.dart';
 import 'package:gitok/widgets/error_snack_bar.dart';
-import 'package:gitok/widgets/git/components/branch_switcher.dart';
+import 'package:gitok/widgets/git/branch_switcher.dart';
 import 'package:gitok/widgets/git/git_action_buttons.dart';
 import 'package:gitok/widgets/git/commit_section.dart';
 

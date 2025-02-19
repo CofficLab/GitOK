@@ -9,7 +9,7 @@ import 'package:gitok/models/git_project.dart';
 /// - 当没有选中项目时显示空状态
 class ProjectDetailLayout extends StatelessWidget {
   /// 是否启用调试模式以突出显示布局边界
-  static const bool kDebugLayout = true;
+  static const bool kDebugLayout = false;
 
   /// 当前选中的项目，可能为null（表示未选中任何项目）
   final GitProject? project;

@@ -5,11 +5,16 @@ class CommitSection extends StatelessWidget {
   final TextEditingController controller;
   final VoidCallback onCommit;
 
-  const CommitSection({
+  CommitSection({
     super.key,
     required this.controller,
     required this.onCommit,
-  });
+  }) {
+    // 如果文本控制器为空，设置默认的提交信息
+    if (controller.text.isEmpty) {
+      controller.text = '🎨 Chore: Minor adjustments';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

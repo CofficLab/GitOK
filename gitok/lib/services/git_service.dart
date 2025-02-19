@@ -9,8 +9,6 @@
 
 import 'dart:io';
 import 'package:path/path.dart' as path;
-import 'package:gitok/models/git_project.dart';
-import 'package:gitok/exceptions/service_exception.dart';
 import 'package:gitok/exceptions/git_exception.dart';
 
 class GitService {
@@ -113,15 +111,37 @@ class GitService {
 
   Future<void> commit(String repoPath, String message) async {
     final gitPath = await _getGitPath();
-    final result = await Process.run(
+
+    // First add all changes
+    var addResult = await Process.run(
+      gitPath,
+      ['add', '.'],
+      workingDirectory: repoPath,
+      runInShell: true,
+    );
+
+    if (addResult.exitCode != 0) {
+      throw GitException(
+        command: 'add',
+        message: addResult.stderr as String,
+        exitCode: addResult.exitCode,
+      );
+    }
+
+    // Then commit
+    final commitResult = await Process.run(
       gitPath,
       ['commit', '-m', message],
       workingDirectory: repoPath,
       runInShell: true,
     );
 
-    if (result.exitCode != 0) {
-      throw Exception('Failed to commit: ${result.stderr}');
+    if (commitResult.exitCode != 0) {
+      throw GitException(
+        command: 'commit',
+        message: commitResult.stderr as String,
+        exitCode: commitResult.exitCode,
+      );
     }
   }
 
