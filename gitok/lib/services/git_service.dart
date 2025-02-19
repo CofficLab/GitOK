@@ -11,11 +11,15 @@ import 'dart:io';
 import 'package:path/path.dart' as path;
 import 'package:gitok/exceptions/git_exception.dart';
 import 'package:gitok/models/commit_info.dart';
+import 'package:flutter/foundation.dart';
+import 'package:gitok/models/file_status.dart';
 
 class GitService {
   static final GitService _instance = GitService._internal();
   factory GitService() => _instance;
   GitService._internal();
+
+  static const bool kDebugService = true;
 
   Future<String> _getGitPath() async {
     if (Platform.isMacOS) {
@@ -194,16 +198,56 @@ class GitService {
 
   /// 获取指定提交的代码差异
   Future<String> getDiff(String projectPath, String commitHash) async {
+    if (kDebugService) {
+      print('🔍 获取差异: $projectPath - $commitHash');
+    }
+
     final result = await Process.run(
       'git',
-      ['show', '--patch', commitHash],
+      ['show', commitHash], // 移除 --patch 参数，直接使用 show 命令
       workingDirectory: projectPath,
     );
+
+    if (kDebugService) {
+      print('📊 差异结果: ${result.exitCode == 0 ? '成功' : '失败'}');
+      print('输出内容: ${result.stdout}'); // 添加输出内容的调试信息
+      if (result.exitCode != 0) {
+        print('错误信息: ${result.stderr}'); // 添加错误信息的调试信息
+      }
+    }
 
     if (result.exitCode != 0) {
       throw Exception('获取差异失败: ${result.stderr}');
     }
 
     return result.stdout as String;
+  }
+
+  /// 获取工作区状态
+  Future<List<FileStatus>> getStatus(String projectPath) async {
+    if (kDebugService) {
+      print('📊 获取工作区状态: $projectPath');
+    }
+
+    final result = await Process.run(
+      'git',
+      ['status', '--porcelain'],
+      workingDirectory: projectPath,
+    );
+
+    if (result.exitCode != 0) {
+      throw Exception('获取状态失败: ${result.stderr}');
+    }
+
+    final List<FileStatus> changes = [];
+    final lines = (result.stdout as String).split('\n');
+    for (final line in lines) {
+      if (line.isEmpty) continue;
+      final status = line.substring(0, 2).trim();
+      final path = line.substring(3);
+      changes.add(FileStatus(path, status));
+    }
+
+    return changes;
   }
 }

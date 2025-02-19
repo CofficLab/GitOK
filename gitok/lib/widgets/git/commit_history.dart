@@ -64,48 +64,46 @@ class _CommitHistoryState extends State<CommitHistory> {
       return const Center(child: CircularProgressIndicator());
     }
 
-    Widget content = Row(
+    Widget content = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Expanded(
-          flex: 2,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text('提交历史', style: Theme.of(context).textTheme.titleMedium),
-                  IconButton(
-                    icon: const Icon(Icons.refresh),
-                    onPressed: _loadCommits,
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: _commits.length,
-                  itemBuilder: (context, index) {
-                    final commit = _commits[index];
-                    return CommitListItem(
-                      commit: commit,
-                      isSelected: _selectedCommit?.hash == commit.hash,
-                      onTap: () {
-                        setState(() => _selectedCommit = commit);
-                        // 通知 GitProvider 更新选中的提交
-                        context.read<GitProvider>().setSelectedCommit(commit);
-                      },
-                    );
-                  },
-                ),
-              ),
-            ],
-          ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text('提交历史', style: Theme.of(context).textTheme.titleMedium),
+            IconButton(
+              icon: const Icon(Icons.refresh),
+              onPressed: _loadCommits,
+            ),
+          ],
         ),
-        const VerticalDivider(),
+        const SizedBox(height: 8),
         Expanded(
-          flex: 3,
-          child: CommitDetail(),
+          child: ListView.builder(
+            itemCount: _commits.length + 1, // +1 为"当前状态"项
+            itemBuilder: (context, index) {
+              if (index == 0) {
+                // 第一项是"当前状态"
+                return CommitListItem(
+                  commit: CommitInfo(
+                    hash: 'current',
+                    message: '当前状态',
+                    author: '未提交的更改',
+                    date: DateTime.now(),
+                  ),
+                  isSelected: context.read<GitProvider>().rightPanelType == RightPanelType.commitForm,
+                  onTap: () => context.read<GitProvider>().showCommitForm(),
+                );
+              }
+              // 其他项是实际的提交历史
+              final commit = _commits[index - 1];
+              return CommitListItem(
+                commit: commit,
+                isSelected: context.read<GitProvider>().selectedCommit?.hash == commit.hash,
+                onTap: () => context.read<GitProvider>().setSelectedCommit(commit),
+              );
+            },
+          ),
         ),
       ],
     );

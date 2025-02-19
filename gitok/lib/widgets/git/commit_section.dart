@@ -1,40 +1,76 @@
 import 'package:flutter/material.dart';
+import 'package:gitok/widgets/git/staged_changes.dart';
 
-/// A widget that handles Git commit functionality.
-class CommitSection extends StatelessWidget {
+/// Git提交表单组件
+class CommitSection extends StatefulWidget {
+  /// 是否启用调试模式以突出显示布局边界
+  static const bool kDebugLayout = true;
+
   final TextEditingController controller;
   final VoidCallback onCommit;
 
-  CommitSection({
+  const CommitSection({
     super.key,
     required this.controller,
     required this.onCommit,
-  }) {
+  });
+
+  @override
+  State<CommitSection> createState() => _CommitSectionState();
+}
+
+class _CommitSectionState extends State<CommitSection> {
+  @override
+  void initState() {
+    super.initState();
     // 如果文本控制器为空，设置默认的提交信息
-    if (controller.text.isEmpty) {
-      controller.text = '🎨 Chore: Minor adjustments';
+    if (widget.controller.text.isEmpty) {
+      widget.controller.text = '🎨 Chore: Minor adjustments';
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    Widget content = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        Text('提交信息', style: Theme.of(context).textTheme.titleMedium),
+        const SizedBox(height: 8),
         TextField(
-          controller: controller,
+          controller: widget.controller,
           decoration: const InputDecoration(
-            labelText: '提交信息',
             hintText: '输入提交信息...',
+            border: OutlineInputBorder(),
           ),
+          maxLines: 3,
         ),
         const SizedBox(height: 8),
-        ElevatedButton.icon(
-          icon: const Icon(Icons.save),
-          label: const Text('提交更改'),
-          onPressed: onCommit,
+        Align(
+          alignment: Alignment.centerRight,
+          child: FilledButton.icon(
+            icon: const Icon(Icons.check),
+            label: const Text('提交'),
+            onPressed: widget.onCommit,
+          ),
         ),
+        const SizedBox(height: 16),
+        const Expanded(child: StagedChanges()),
       ],
     );
+
+    if (CommitSection.kDebugLayout) {
+      content = Container(
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.pink, width: 2),
+          color: Colors.pink.withOpacity(0.1),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: content,
+        ),
+      );
+    }
+
+    return content;
   }
 }

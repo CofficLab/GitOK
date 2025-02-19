@@ -3,6 +3,9 @@ import 'package:gitok/services/git_service.dart';
 import 'package:gitok/models/git_project.dart';
 import 'package:gitok/models/commit_info.dart';
 
+/// 右侧面板显示类型
+enum RightPanelType { commitForm, commitDetail }
+
 /// Git状态管理器
 ///
 /// 负责管理Git相关的状态，包括：
@@ -16,6 +19,9 @@ class GitProvider with ChangeNotifier {
   String _currentBranch = '';
   List<String> _branches = [];
   CommitInfo? _selectedCommit;
+
+  RightPanelType _rightPanelType = RightPanelType.commitForm;
+  RightPanelType get rightPanelType => _rightPanelType;
 
   GitProject? get currentProject => _currentProject;
   String get currentBranch => _currentBranch;
@@ -47,8 +53,16 @@ class GitProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  void showCommitForm() {
+    _rightPanelType = RightPanelType.commitForm;
+    notifyListeners();
+  }
+
   void setSelectedCommit(CommitInfo? commit) {
     _selectedCommit = commit;
+    if (commit != null) {
+      _rightPanelType = RightPanelType.commitDetail;
+    }
     notifyListeners();
   }
 }

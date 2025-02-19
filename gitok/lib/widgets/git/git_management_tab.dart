@@ -2,17 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:gitok/models/git_project.dart';
 import 'package:gitok/services/git_service.dart';
 import 'package:gitok/widgets/error_snack_bar.dart';
-import 'package:gitok/widgets/git/git_action_buttons.dart';
 import 'package:gitok/widgets/git/commit_section.dart';
 import 'package:gitok/widgets/git/commit_history.dart';
+import 'package:gitok/widgets/git/commit_detail.dart';
+import 'package:provider/provider.dart';
+import 'package:gitok/providers/git_provider.dart';
 
-/// A tab that provides Git management functionality for a project.
-///
-/// This widget allows users to:
-/// - View and switch between branches
-/// - Pull and push changes
-/// - Commit local changes
+/// Git提交管理标签页组件
 class GitManagementTab extends StatefulWidget {
+  /// 是否启用调试模式以突出显示布局边界
+  static const bool kDebugLayout = false;
+
   final GitProject project;
 
   const GitManagementTab({
@@ -54,46 +54,72 @@ class _GitManagementTabState extends State<GitManagementTab> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(height: 16),
-          CommitSection(
-            controller: _commitMessageController,
-            onCommit: () async {
-              if (_commitMessageController.text.isEmpty) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('请输入提交信息')),
-                );
-                return;
-              }
-
-              try {
-                await _gitService.commit(
-                  widget.project.path,
-                  _commitMessageController.text,
-                );
-                _commitMessageController.clear();
-                if (!mounted) return;
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('提交成功')),
-                );
-              } catch (e) {
-                if (!mounted) return;
-                ScaffoldMessenger.of(context).showSnackBar(
-                  ErrorSnackBar(message: e.toString()),
-                );
-              }
-            },
-          ),
-          const SizedBox(height: 16),
-          const Expanded(
+    Widget content = Row(
+      children: [
+        // 左侧栏：提交历史（包含当前状态）
+        const Expanded(
+          flex: 1,
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
             child: CommitHistory(),
           ),
-        ],
-      ),
+        ),
+        // 中间分割线
+        const VerticalDivider(width: 1),
+        // 右侧栏：根据状态显示提交表单或提交详情
+        Expanded(
+          flex: 1,
+          child: Consumer<GitProvider>(
+            builder: (context, gitProvider, _) {
+              return gitProvider.rightPanelType == RightPanelType.commitForm
+                  ? Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: CommitSection(
+                        controller: _commitMessageController,
+                        onCommit: () async {
+                          if (_commitMessageController.text.isEmpty) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('请输入提交信息')),
+                            );
+                            return;
+                          }
+
+                          try {
+                            await _gitService.commit(
+                              widget.project.path,
+                              _commitMessageController.text,
+                            );
+                            _commitMessageController.clear();
+                            if (!mounted) return;
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('提交成功')),
+                            );
+                          } catch (e) {
+                            if (!mounted) return;
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              ErrorSnackBar(message: e.toString()),
+                            );
+                          }
+                        },
+                      ),
+                    )
+                  : const CommitDetail();
+            },
+          ),
+        ),
+      ],
     );
+
+    if (GitManagementTab.kDebugLayout) {
+      content = Container(
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.orange, width: 2),
+          color: Colors.orange.withOpacity(0.1),
+        ),
+        child: content,
+      );
+    }
+
+    return content;
   }
 }

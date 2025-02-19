@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:gitok/models/commit_info.dart';
 import 'package:gitok/providers/git_provider.dart';
 import 'package:gitok/services/git_service.dart';
 
