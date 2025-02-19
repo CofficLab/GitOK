@@ -59,10 +59,6 @@ class _GitManagementTabState extends State<GitManagementTab> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          GitActionButtons(
-            onPull: () => _gitService.pull(widget.project.path),
-            onPush: () => _gitService.push(widget.project.path),
-          ),
           const SizedBox(height: 16),
           CommitSection(
             controller: _commitMessageController,

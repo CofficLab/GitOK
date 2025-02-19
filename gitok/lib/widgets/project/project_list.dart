@@ -92,18 +92,6 @@ class ProjectListState extends State<ProjectList> {
     return Consumer<GitProvider>(
       builder: (context, gitProvider, child) => Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: SearchBar(
-              hintText: '搜索项目...',
-              leading: const Icon(Icons.search),
-              onChanged: (value) {
-                setState(() {
-                  _searchQuery = value;
-                });
-              },
-            ),
-          ),
           Expanded(
             child: _filteredProjects.isEmpty
                 ? const Center(

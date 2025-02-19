@@ -191,4 +191,19 @@ class GitService {
       );
     }).toList();
   }
+
+  /// 获取指定提交的代码差异
+  Future<String> getDiff(String projectPath, String commitHash) async {
+    final result = await Process.run(
+      'git',
+      ['show', '--patch', commitHash],
+      workingDirectory: projectPath,
+    );
+
+    if (result.exitCode != 0) {
+      throw Exception('获取差异失败: ${result.stderr}');
+    }
+
+    return result.stdout as String;
+  }
 }

@@ -24,14 +24,31 @@ class _CommitDetailState extends State<CommitDetail> {
   bool _isLoading = false;
   String _diffContent = '';
 
-  Future<void> _loadDiff(String projectPath, String commitHash) async {
+  Future<void> _loadDiff() async {
+    final gitProvider = context.read<GitProvider>();
+    final project = gitProvider.currentProject;
+    final commit = gitProvider.selectedCommit;
+
+    if (project == null || commit == null) return;
+
     setState(() => _isLoading = true);
     try {
-      // TODO: 从 GitService 获取差异信息
-      await Future.delayed(const Duration(seconds: 1)); // 模拟加载
-      setState(() => _diffContent = '// TODO: 显示具体的代码差异');
+      final diff = await _gitService.getDiff(project.path, commit.hash);
+      setState(() => _diffContent = diff);
+    } catch (e) {
+      setState(() => _diffContent = '加载差异失败: $e 😢');
     } finally {
       setState(() => _isLoading = false);
+    }
+  }
+
+  @override
+  void didUpdateWidget(CommitDetail oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // 当选中的提交变化时重新加载差异
+    final commit = context.read<GitProvider>().selectedCommit;
+    if (commit != null) {
+      _loadDiff();
     }
   }
 

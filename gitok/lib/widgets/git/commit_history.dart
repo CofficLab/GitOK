@@ -90,7 +90,11 @@ class _CommitHistoryState extends State<CommitHistory> {
                     return CommitListItem(
                       commit: commit,
                       isSelected: _selectedCommit?.hash == commit.hash,
-                      onTap: () => setState(() => _selectedCommit = commit),
+                      onTap: () {
+                        setState(() => _selectedCommit = commit);
+                        // 通知 GitProvider 更新选中的提交
+                        context.read<GitProvider>().setSelectedCommit(commit);
+                      },
                     );
                   },
                 ),
