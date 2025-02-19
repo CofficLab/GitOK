@@ -3,11 +3,14 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as path;
 import 'package:gitok/models/api_config.dart';
+import 'package:gitok/utils/logger.dart';
 
 class ApiService {
   static final ApiService _instance = ApiService._internal();
   factory ApiService() => _instance;
   ApiService._internal();
+
+  final Logger _logger = Logger();
 
   Future<void> saveApiConfig(String projectPath, ApiConfig config) async {
     final configDir = Directory(path.join(projectPath, '.gitok', 'apis'));
@@ -39,6 +42,7 @@ class ApiService {
   }
 
   Future<ApiResponse> sendRequest(ApiEndpoint endpoint) async {
+    _logger.info('发送请求: ${endpoint.url}');
     var urlStr = endpoint.url.trim();
 
     // 确保URL以http或https开头
@@ -85,6 +89,7 @@ class ApiService {
         final httpResponse = http.Response(body, streamedResponse.statusCode);
         stopwatch.stop();
 
+        _logger.info('请求成功: ${httpResponse.statusCode}');
         return ApiResponse(
           timestamp: DateTime.now(),
           statusCode: httpResponse.statusCode,
@@ -93,6 +98,7 @@ class ApiService {
           duration: stopwatch.elapsed,
         );
       } catch (e) {
+        _logger.error('请求失败', e);
         throw Exception('请求失败: ${e.toString()}');
       }
     } catch (e) {

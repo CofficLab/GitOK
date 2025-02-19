@@ -1,6 +1,17 @@
+/// Git操作服务
+///
+/// 提供Git命令行操作的封装，包括：
+/// - 分支管理（checkout、pull、push等）
+/// - 仓库状态查询
+/// - Git命令执行
+///
+/// 使用单例模式确保全局唯一实例
+
 import 'dart:io';
 import 'package:path/path.dart' as path;
 import 'package:gitok/models/git_project.dart';
+import 'package:gitok/exceptions/service_exception.dart';
+import 'package:gitok/exceptions/git_exception.dart';
 
 class GitService {
   static final GitService _instance = GitService._internal();
@@ -92,7 +103,11 @@ class GitService {
     );
 
     if (result.exitCode != 0) {
-      throw Exception('Failed to pull: ${result.stderr}');
+      throw GitException(
+        command: 'pull',
+        message: result.stderr as String,
+        exitCode: result.exitCode,
+      );
     }
   }
 

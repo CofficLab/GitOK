@@ -43,4 +43,14 @@ class ProjectStorageService {
       await saveProjects(projects);
     }
   }
+
+  /// 初始化服务
+  Future<void> init() async {
+    // 初始化 SharedPreferences 等资源
+  }
+
+  /// 释放资源
+  Future<void> dispose() async {
+    // 清理资源
+  }
 }
