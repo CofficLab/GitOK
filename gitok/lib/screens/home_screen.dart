@@ -23,7 +23,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Gitok'),
+        title: const Text('GitOK'),
         actions: [
           Padding(
             padding: const EdgeInsets.all(8.0),
