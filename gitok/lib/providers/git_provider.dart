@@ -19,6 +19,7 @@ class GitProvider extends ChangeNotifier {
   String _currentBranch = '';
   List<String> _branches = [];
   CommitInfo? _selectedCommit;
+  List<CommitInfo> _commits = [];
 
   RightPanelType _rightPanelType = RightPanelType.commitForm;
   RightPanelType get rightPanelType => _rightPanelType;
@@ -27,14 +28,17 @@ class GitProvider extends ChangeNotifier {
   String get currentBranch => _currentBranch;
   List<String> get branches => _branches;
   CommitInfo? get selectedCommit => _selectedCommit;
+  List<CommitInfo> get commits => _commits;
 
   Future<void> setCurrentProject(GitProject? project) async {
     _currentProject = project;
     if (project != null) {
       await _loadBranches(project.path);
+      await loadCommits();
     } else {
       _currentBranch = '';
       _branches = [];
+      _commits = [];
     }
     notifyListeners();
   }
@@ -76,5 +80,18 @@ class GitProvider extends ChangeNotifier {
     // 提交后刷新所有状态
     await loadCommits();
     notifyListeners();
+  }
+
+  Future<void> loadCommits() async {
+    final project = currentProject;
+    if (project == null) return;
+
+    try {
+      _commits = await _gitService.getCommits(project.path);
+      notifyListeners();
+    } catch (e) {
+      print('加载提交历史失败: $e');
+      _commits = [];
+    }
   }
 }

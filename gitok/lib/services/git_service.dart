@@ -319,4 +319,8 @@ class GitService {
 
     return result.stdout as String;
   }
+
+  Future<List<CommitInfo>> getCommits(String path) async {
+    return getCommitHistory(path);
+  }
 }

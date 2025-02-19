@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:gitok/widgets/project/project_detail_panel.dart';
-import 'package:gitok/models/git_project.dart';
 import 'package:provider/provider.dart';
 import 'package:gitok/providers/git_provider.dart';
 import 'package:gitok/widgets/git/git_management_tab.dart';

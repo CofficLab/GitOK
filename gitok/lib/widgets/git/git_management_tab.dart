@@ -4,6 +4,7 @@ import 'package:gitok/services/git_service.dart';
 import 'package:gitok/widgets/git/commit_detail.dart';
 import 'package:provider/provider.dart';
 import 'package:gitok/providers/git_provider.dart';
+import 'package:gitok/widgets/git/commit_history.dart';
 
 /// Git提交管理标签页组件
 class GitManagementTab extends StatefulWidget {
@@ -52,10 +53,22 @@ class _GitManagementTabState extends State<GitManagementTab> {
   Widget build(BuildContext context) {
     return Consumer<GitProvider>(
       builder: (context, gitProvider, _) {
-        return CommitDetail(
-          isCurrentChanges: gitProvider.rightPanelType == RightPanelType.commitForm,
-          commitMessageController:
-              gitProvider.rightPanelType == RightPanelType.commitForm ? _commitMessageController : null,
+        return Row(
+          children: [
+            // 左侧提交历史列表
+            const SizedBox(
+              width: 300,
+              child: CommitHistory(),
+            ),
+            // 右侧提交详情
+            Expanded(
+              child: CommitDetail(
+                isCurrentChanges: gitProvider.rightPanelType == RightPanelType.commitForm,
+                commitMessageController:
+                    gitProvider.rightPanelType == RightPanelType.commitForm ? _commitMessageController : null,
+              ),
+            ),
+          ],
         );
       },
     );

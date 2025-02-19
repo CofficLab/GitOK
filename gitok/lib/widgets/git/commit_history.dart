@@ -4,7 +4,6 @@ import 'package:gitok/models/commit_info.dart';
 import 'package:gitok/providers/git_provider.dart';
 import 'package:gitok/services/git_service.dart';
 import 'package:gitok/widgets/git/commit_list_item.dart';
-import 'package:gitok/widgets/git/commit_detail.dart';
 
 /// Git提交历史展示组件
 ///
@@ -81,8 +80,9 @@ class _CommitHistoryState extends State<CommitHistory> {
         Expanded(
           child: Consumer<GitProvider>(
             builder: (context, gitProvider, _) {
+              final commits = gitProvider.commits;
               return ListView.builder(
-                itemCount: _commits.length + 1,
+                itemCount: commits.length + 1,
                 itemBuilder: (context, index) {
                   if (index == 0) {
                     return CommitListItem(
@@ -96,7 +96,7 @@ class _CommitHistoryState extends State<CommitHistory> {
                       onTap: () => gitProvider.showCommitForm(),
                     );
                   }
-                  final commit = _commits[index - 1];
+                  final commit = commits[index - 1];
                   return CommitListItem(
                     commit: commit,
                     isSelected: gitProvider.rightPanelType == RightPanelType.commitDetail &&
