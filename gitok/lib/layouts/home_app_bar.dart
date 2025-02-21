@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import 'package:gitok/providers/git_provider.dart';
 import 'package:gitok/widgets/git/branch_switcher.dart';
 import 'package:gitok/services/git_service.dart';
+import 'package:process/process.dart';
+import 'dart:io';
 
 /// GitOK应用程序的顶部应用栏组件。
 ///
@@ -53,6 +55,44 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                       }
                     },
                   ),
+                ),
+                const SizedBox(width: 16),
+                IconButton(
+                  icon: const Icon(Icons.code),
+                  tooltip: 'VS Code打开',
+                  onPressed: () async {
+                    final path = gitProvider.currentProject!.path;
+                    await Process.run('code', [path]);
+                  },
+                ),
+                IconButton(
+                  icon: const Icon(Icons.web),
+                  tooltip: '浏览器打开',
+                  onPressed: () async {
+                    final path = gitProvider.currentProject!.path;
+                    final result =
+                        await Process.run('git', ['config', '--get', 'remote.origin.url'], workingDirectory: path);
+                    final url = result.stdout.toString().trim();
+                    if (url.isNotEmpty) {
+                      await Process.run('open', [url]);
+                    }
+                  },
+                ),
+                IconButton(
+                  icon: const Icon(Icons.folder),
+                  tooltip: 'Finder打开',
+                  onPressed: () async {
+                    final path = gitProvider.currentProject!.path;
+                    await Process.run('open', [path]);
+                  },
+                ),
+                IconButton(
+                  icon: const Icon(Icons.terminal),
+                  tooltip: '终端打开',
+                  onPressed: () async {
+                    final path = gitProvider.currentProject!.path;
+                    await Process.run('open', ['-a', 'Terminal', path]);
+                  },
                 ),
                 const SizedBox(width: 16),
                 FilledButton.icon(
