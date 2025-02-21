@@ -22,8 +22,14 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (_) => GitProvider(),
-      child: const MaterialApp(
-        home: Scaffold(
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: Colors.blue,
+          ),
+        ),
+        home: const Scaffold(
           body: HomeScreen(),
         ),
       ),

@@ -94,29 +94,37 @@ class CommitForm extends StatelessWidget {
           maxLines: 3,
         ),
         const SizedBox(height: 8),
-        Align(
-          alignment: Alignment.centerRight,
-          child: FilledButton.icon(
-            icon: const Icon(Icons.check),
-            label: const Text('提交'),
-            onPressed: () async {
-              try {
-                await context.read<GitProvider>().commit(controller.text);
-                controller.clear();
-                if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('提交成功 🎉'), backgroundColor: Colors.green),
-                  );
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            TextButton.icon(
+              icon: const Icon(Icons.refresh),
+              label: const Text('重置'),
+              onPressed: () => controller.clear(),
+            ),
+            const SizedBox(width: 8),
+            FilledButton.icon(
+              icon: const Icon(Icons.check),
+              label: const Text('提交'),
+              onPressed: () async {
+                try {
+                  await context.read<GitProvider>().commit(controller.text);
+                  controller.clear();
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('提交成功 🎉'), backgroundColor: Colors.green),
+                    );
+                  }
+                } catch (e) {
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('提交失败: $e'), backgroundColor: Colors.red),
+                    );
+                  }
                 }
-              } catch (e) {
-                if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('提交失败: $e'), backgroundColor: Colors.red),
-                  );
-                }
-              }
-            },
-          ),
+              },
+            ),
+          ],
         ),
         const SizedBox(height: 16),
       ],

@@ -320,6 +320,21 @@ class GitService {
     return result.stdout as String;
   }
 
+  /// 获取未暂存文件的差异
+  Future<String> getUnstagedFileDiff(String repoPath, String filePath) async {
+    final result = await Process.run(
+      'git',
+      ['diff', filePath],
+      workingDirectory: repoPath,
+    );
+
+    if (result.exitCode != 0) {
+      throw Exception('获取文件差异失败: ${result.stderr}');
+    }
+
+    return result.stdout as String;
+  }
+
   Future<List<CommitInfo>> getCommits(String path) async {
     return getCommitHistory(path);
   }

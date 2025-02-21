@@ -24,13 +24,17 @@ class CommitListItem extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 4),
       color: isSelected ? Theme.of(context).colorScheme.primaryContainer : null,
-      child: ListTile(
-        title: Text(commit.message),
-        subtitle: Text(
-          '${commit.author} • ${_formatDate(commit.date)}\n'
-          '${commit.hash.substring(0, 7)}',
-        ),
+      child: InkWell(
         onTap: onTap,
+        splashColor: Colors.transparent,
+        highlightColor: Colors.transparent,
+        child: ListTile(
+          title: Text(commit.message),
+          subtitle: Text(
+            '${commit.author} • ${_formatDate(commit.date)}\n'
+            '${commit.hash.substring(0, 7)}',
+          ),
+        ),
       ),
     );
   }

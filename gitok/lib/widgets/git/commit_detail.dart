@@ -166,7 +166,20 @@ class _CommitDetailState extends State<CommitDetail> {
                             onTap: () async {
                               setState(() => _selectedFilePath = file.path);
                               if (!_fileDiffs.containsKey(file.path)) {
-                                await _loadFileDiff(file.path);
+                                if (widget.isCurrentChanges) {
+                                  // 如果是当前状态，使用 diff 命令获取未暂存的更改
+                                  final gitProvider = context.read<GitProvider>();
+                                  final project = gitProvider.currentProject;
+                                  if (project == null) return;
+
+                                  final diff = await _gitService.getUnstagedFileDiff(project.path, file.path);
+                                  setState(() {
+                                    _fileDiffs[file.path] = diff;
+                                  });
+                                } else {
+                                  // 如果是历史提交，使用原有的方法获取差异
+                                  await _loadFileDiff(file.path);
+                                }
                               }
                             },
                             dense: true,

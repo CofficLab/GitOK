@@ -3,6 +3,7 @@ import 'package:gitok/layouts/project_list_layout.dart';
 import 'package:gitok/layouts/project_detail_layout.dart';
 import 'package:gitok/widgets/project/project_list.dart';
 import 'package:gitok/models/git_project.dart';
+import 'package:reorderable_grid/reorderable_grid.dart';
 
 /// GitOK应用程序的主体布局组件。
 ///
@@ -11,7 +12,7 @@ import 'package:gitok/models/git_project.dart';
 /// - 右侧自适应宽度的项目详情面板
 ///
 /// 该组件负责处理主界面的整体布局结构，包括分割线的显示。
-class HomeBodyLayout extends StatelessWidget {
+class HomeBodyLayout extends StatefulWidget {
   /// 是否启用调试模式以突出显示布局边界
   static const bool kDebugLayout = false;
 
@@ -24,9 +25,18 @@ class HomeBodyLayout extends StatelessWidget {
   });
 
   @override
+  State<HomeBodyLayout> createState() => _HomeBodyLayoutState();
+}
+
+class _HomeBodyLayoutState extends State<HomeBodyLayout> {
+  double _leftPanelWidth = 300; // 初始宽度
+  static const double _minWidth = 200; // 最小宽度
+  static const double _maxWidth = 500; // 最大宽度
+
+  @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: kDebugLayout
+      decoration: HomeBodyLayout.kDebugLayout
           ? BoxDecoration(
               border: Border.all(color: Colors.red, width: 2),
               color: Colors.yellow.withOpacity(0.1),
@@ -34,7 +44,27 @@ class HomeBodyLayout extends StatelessWidget {
           : null,
       child: Row(
         children: [
-          ProjectListLayout(listKey: projectListKey),
+          SizedBox(
+            width: _leftPanelWidth,
+            child: ProjectListLayout(listKey: widget.projectListKey),
+          ),
+          MouseRegion(
+            cursor: SystemMouseCursors.resizeColumn,
+            child: GestureDetector(
+              onHorizontalDragUpdate: (details) {
+                setState(() {
+                  _leftPanelWidth += details.delta.dx;
+                  // 限制宽度范围
+                  _leftPanelWidth = _leftPanelWidth.clamp(_minWidth, _maxWidth);
+                });
+              },
+              child: Container(
+                width: 2,
+                height: double.infinity,
+                color: Theme.of(context).dividerColor,
+              ),
+            ),
+          ),
           const Expanded(child: ProjectDetailLayout()),
         ],
       ),
