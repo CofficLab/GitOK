@@ -62,7 +62,16 @@ class _CommitDetailState extends State<CommitDetail> {
       // 如果有变更文件，自动选中第一个
       if (_changedFiles.isNotEmpty) {
         _selectedFilePath = _changedFiles[0].path;
-        await _loadFileDiff(_selectedFilePath!);
+        if (widget.isCurrentChanges) {
+          // 对于当前状态，根据文件状态选择合适的差异命令
+          final file = _changedFiles[0];
+          final diff = file.status == 'M'
+              ? await _gitService.getUnstagedFileDiff(project.path, file.path)
+              : await _gitService.getStagedFileDiff(project.path, file.path);
+          setState(() => _fileDiffs[file.path] = diff);
+        } else {
+          await _loadFileDiff(_selectedFilePath!);
+        }
       }
     } finally {
       setState(() => _isLoading = false);
@@ -175,17 +184,17 @@ class _CommitDetailState extends State<CommitDetail> {
                               setState(() => _selectedFilePath = file.path);
                               if (!_fileDiffs.containsKey(file.path)) {
                                 if (widget.isCurrentChanges) {
-                                  // 如果是当前状态，使用 diff 命令获取未暂存的更改
                                   final gitProvider = context.read<GitProvider>();
                                   final project = gitProvider.currentProject;
                                   if (project == null) return;
 
-                                  final diff = await _gitService.getUnstagedFileDiff(project.path, file.path);
+                                  final diff = file.status == 'M'
+                                      ? await _gitService.getUnstagedFileDiff(project.path, file.path)
+                                      : await _gitService.getStagedFileDiff(project.path, file.path);
                                   setState(() {
                                     _fileDiffs[file.path] = diff;
                                   });
                                 } else {
-                                  // 如果是历史提交，使用原有的方法获取差异
                                   await _loadFileDiff(file.path);
                                 }
                               }
