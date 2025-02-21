@@ -104,4 +104,8 @@ class GitProvider extends ChangeNotifier {
     await loadCommits(); // 刷新提交列表
     notifyListeners();
   }
+
+  void notifyProjectsChanged() {
+    notifyListeners();
+  }
 }

@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:gitok/layouts/project_list_layout.dart';
+import 'package:gitok/widgets/buttons/add_project_button.dart';
 
 class AppDrawer extends StatelessWidget {
   /// 是否启用调试模式以突出显示布局边界
   static const bool kDebugLayout = false;
 
-  const AppDrawer({
-    super.key,
-  });
+  const AppDrawer({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -31,15 +30,17 @@ class AppDrawer extends StatelessWidget {
             // decoration: BoxDecoration(
             //   color: Theme.of(context).primaryColor.withOpacity(0.1),
             // ),
-            child: const Row(
+            child: Row(
               children: [
-                Text(
+                const Text(
                   'GitOK 🚀',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
+                const Spacer(),
+                AddProjectButton(),
               ],
             ),
           ),
