@@ -26,6 +26,7 @@ class _CommitHistoryState extends State<CommitHistory> {
   final GitService _gitService = GitService();
   List<CommitInfo> _commits = [];
   bool _isLoading = false;
+  int _unpushedCount = 0;
   CommitInfo? _selectedCommit;
 
   Future<void> _loadCommits() async {
@@ -35,7 +36,11 @@ class _CommitHistoryState extends State<CommitHistory> {
     setState(() => _isLoading = true);
     try {
       final commits = await _gitService.getCommitHistory(project.path);
-      setState(() => _commits = commits);
+      final unpushedCount = await _gitService.getUnpushedCommitCount(project.path);
+      setState(() {
+        _commits = commits;
+        _unpushedCount = unpushedCount;
+      });
     } finally {
       setState(() => _isLoading = false);
     }
@@ -102,6 +107,7 @@ class _CommitHistoryState extends State<CommitHistory> {
                     isSelected: gitProvider.rightPanelType == RightPanelType.commitDetail &&
                         gitProvider.selectedCommit?.hash == commit.hash,
                     onTap: () => gitProvider.setSelectedCommit(commit),
+                    isUnpushed: index < _unpushedCount,
                   );
                 },
               );

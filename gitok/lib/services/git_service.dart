@@ -173,4 +173,11 @@ class GitService {
   Future<List<CommitInfo>> getCommits(String path) async {
     return getCommitHistory(path);
   }
+
+  /// 获取未推送到远程的提交数量
+  Future<int> getUnpushedCommitCount(String repoPath) async {
+    final gitDir = await GitDir.fromExisting(repoPath);
+    final result = await gitDir.runCommand(['rev-list', '@{u}..HEAD', '--count']);
+    return int.parse((result.stdout as String).trim());
+  }
 }

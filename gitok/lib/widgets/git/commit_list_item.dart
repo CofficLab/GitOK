@@ -11,12 +11,14 @@ class CommitListItem extends StatelessWidget {
   final CommitInfo commit;
   final bool isSelected;
   final VoidCallback onTap;
+  final bool isUnpushed;
 
   const CommitListItem({
     super.key,
     required this.commit,
     required this.isSelected,
     required this.onTap,
+    this.isUnpushed = false,
   });
 
   @override
@@ -34,6 +36,16 @@ class CommitListItem extends StatelessWidget {
             '${commit.author} • ${_formatDate(commit.date)}\n'
             '${commit.hash.substring(0, 7)}',
           ),
+          trailing: isUnpushed
+              ? Tooltip(
+                  message: '未推送到远程',
+                  child: Icon(
+                    Icons.upload,
+                    color: Theme.of(context).colorScheme.secondary,
+                    size: 20,
+                  ),
+                )
+              : null,
         ),
       ),
     );
