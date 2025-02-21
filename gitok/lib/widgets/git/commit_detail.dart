@@ -108,6 +108,14 @@ class _CommitDetailState extends State<CommitDetail> {
                     if (widget.isCurrentChanges) ...[
                       CommitForm(
                         controller: widget.commitMessageController!,
+                        onCommitted: () {
+                          // 提交成功后重新加载变更文件列表
+                          _loadDetails();
+                          _fileDiffs.clear(); // 清空已加载的差异缓存
+                          setState(() {
+                            _selectedFilePath = null; // 重置选中的文件
+                          });
+                        },
                       ),
                     ] else ...[
                       // 显示提交信息

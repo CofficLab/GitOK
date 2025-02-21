@@ -7,10 +7,12 @@ import 'package:gitok/providers/git_provider.dart';
 /// 用于输入提交信息并触发提交操作
 class CommitForm extends StatelessWidget {
   final TextEditingController controller;
+  final VoidCallback? onCommitted;
 
   const CommitForm({
     super.key,
     required this.controller,
+    this.onCommitted,
   });
 
   /// 预设的提交信息模板
@@ -110,6 +112,7 @@ class CommitForm extends StatelessWidget {
                 try {
                   await context.read<GitProvider>().commit(controller.text);
                   controller.clear();
+                  onCommitted?.call();
                   if (context.mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text('提交成功 🎉'), backgroundColor: Colors.green),
