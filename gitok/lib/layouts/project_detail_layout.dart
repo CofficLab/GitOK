@@ -18,6 +18,7 @@ class ProjectDetailLayout extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<GitProvider>(
       builder: (context, gitProvider, _) => Container(
+        padding: const EdgeInsets.symmetric(horizontal: 0),
         decoration: kDebugLayout
             ? BoxDecoration(
                 border: Border.all(color: Colors.green, width: 2),

@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:gitok/providers/git_provider.dart';
 import 'package:gitok/widgets/git/branch_switcher.dart';
 import 'package:gitok/services/git_service.dart';
-import 'package:process/process.dart';
 import 'dart:io';
 
 /// GitOK应用程序的顶部应用栏组件。
@@ -40,7 +39,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                 )
               : null,
           child: AppBar(
-            title: const Text('GitOK'),
+            backgroundColor: Theme.of(context).colorScheme.surface,
             actions: [
               if (hasProject) ...[
                 const SizedBox(width: 16),

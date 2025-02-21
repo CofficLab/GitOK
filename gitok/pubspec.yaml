@@ -20,7 +20,8 @@ dependencies:
   reorderable_grid: ^1.0.10
   process: ^5.0.3
   git: ^2.3.1
-  macos_window_utils: ^1.6.1
+  macos_window_utils: ^1.5.0
+  cupertino_icons: ^1.0.8
 
 dev_dependencies:
   flutter_test:

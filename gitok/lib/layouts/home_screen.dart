@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:gitok/layouts/home_app_bar.dart';
-import 'package:gitok/layouts/home_body_layout.dart';
+import 'package:gitok/layouts/project_detail_layout.dart';
 import 'package:gitok/widgets/project/project_list.dart' show ProjectListState;
 import 'package:gitok/models/git_project.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:gitok/services/project_storage_service.dart';
 import 'package:gitok/services/git_service.dart';
 import 'dart:io';
+import 'package:gitok/layouts/sidebar.dart';
 
 /// GitOK应用程序的主屏幕。
 /// 提供一个分屏界面，左侧是项目列表，右侧是项目详情。
@@ -24,9 +25,6 @@ class HomeScreen extends StatefulWidget {
 /// - 项目存储操作
 /// - 添加新的Git项目到应用程序
 class _HomeScreenState extends State<HomeScreen> {
-  /// 当前在列表中选中的项目
-  GitProject? _selectedProject;
-
   /// 用于持久化和加载项目数据的服务
   final ProjectStorageService _storageService = ProjectStorageService();
 
@@ -36,8 +34,30 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: HomeAppBar(onAddProject: _addProject),
-      body: HomeBodyLayout(projectListKey: _projectListKey),
+      body: Row(
+        children: [
+          // 侧边栏
+          Container(
+            width: 250, // 固定宽度
+            decoration: BoxDecoration(
+              border: Border(
+                right: BorderSide(
+                  color: Theme.of(context).dividerColor,
+                  width: 1.0,
+                ),
+              ),
+            ),
+            child: const AppDrawer(),
+          ),
+          // 主内容区
+          Expanded(
+            child: Scaffold(
+              appBar: HomeAppBar(onAddProject: _addProject),
+              body: const ProjectDetailLayout(),
+            ),
+          ),
+        ],
+      ),
     );
   }
 

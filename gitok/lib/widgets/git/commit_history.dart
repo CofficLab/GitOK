@@ -24,10 +24,8 @@ class CommitHistory extends StatefulWidget {
 
 class _CommitHistoryState extends State<CommitHistory> {
   final GitService _gitService = GitService();
-  List<CommitInfo> _commits = [];
   bool _isLoading = false;
   int _unpushedCount = 0;
-  CommitInfo? _selectedCommit;
 
   Future<void> _loadCommits() async {
     final project = context.read<GitProvider>().currentProject;
@@ -35,10 +33,8 @@ class _CommitHistoryState extends State<CommitHistory> {
 
     setState(() => _isLoading = true);
     try {
-      final commits = await _gitService.getCommitHistory(project.path);
       final unpushedCount = await _gitService.getUnpushedCommitCount(project.path);
       setState(() {
-        _commits = commits;
         _unpushedCount = unpushedCount;
       });
     } finally {
@@ -68,53 +64,56 @@ class _CommitHistoryState extends State<CommitHistory> {
       return const Center(child: CircularProgressIndicator());
     }
 
-    Widget content = Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text('提交历史', style: Theme.of(context).textTheme.titleMedium),
-            IconButton(
-              icon: const Icon(Icons.refresh),
-              onPressed: _loadCommits,
-            ),
-          ],
-        ),
-        const SizedBox(height: 8),
-        Expanded(
-          child: Consumer<GitProvider>(
-            builder: (context, gitProvider, _) {
-              final commits = gitProvider.commits;
-              return ListView.builder(
-                itemCount: commits.length + 1,
-                itemBuilder: (context, index) {
-                  if (index == 0) {
-                    return CommitListItem(
-                      commit: CommitInfo(
-                        hash: 'current',
-                        message: '当前状态',
-                        author: '未提交的更改',
-                        date: DateTime.now(),
-                      ),
-                      isSelected: gitProvider.rightPanelType == RightPanelType.commitForm,
-                      onTap: () => gitProvider.showCommitForm(),
-                    );
-                  }
-                  final commit = commits[index - 1];
-                  return CommitListItem(
-                    commit: commit,
-                    isSelected: gitProvider.rightPanelType == RightPanelType.commitDetail &&
-                        gitProvider.selectedCommit?.hash == commit.hash,
-                    onTap: () => gitProvider.setSelectedCommit(commit),
-                    isUnpushed: index < _unpushedCount,
-                  );
-                },
-              );
-            },
+    Widget content = Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text('提交历史', style: Theme.of(context).textTheme.titleMedium),
+              IconButton(
+                icon: const Icon(Icons.refresh),
+                onPressed: _loadCommits,
+              ),
+            ],
           ),
-        ),
-      ],
+          const SizedBox(height: 8),
+          Expanded(
+            child: Consumer<GitProvider>(
+              builder: (context, gitProvider, _) {
+                final commits = gitProvider.commits;
+                return ListView.builder(
+                  itemCount: commits.length + 1,
+                  itemBuilder: (context, index) {
+                    if (index == 0) {
+                      return CommitListItem(
+                        commit: CommitInfo(
+                          hash: 'current',
+                          message: '当前状态',
+                          author: '未提交的更改',
+                          date: DateTime.now(),
+                        ),
+                        isSelected: gitProvider.rightPanelType == RightPanelType.commitForm,
+                        onTap: () => gitProvider.showCommitForm(),
+                      );
+                    }
+                    final commit = commits[index - 1];
+                    return CommitListItem(
+                      commit: commit,
+                      isSelected: gitProvider.rightPanelType == RightPanelType.commitDetail &&
+                          gitProvider.selectedCommit?.hash == commit.hash,
+                      onTap: () => gitProvider.setSelectedCommit(commit),
+                      isUnpushed: index < _unpushedCount,
+                    );
+                  },
+                );
+              },
+            ),
+          ),
+        ],
+      ),
     );
 
     if (CommitHistory.kDebugLayout) {
@@ -128,10 +127,5 @@ class _CommitHistoryState extends State<CommitHistory> {
     }
 
     return content;
-  }
-
-  String _formatDate(DateTime date) {
-    return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')} '
-        '${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
   }
 }

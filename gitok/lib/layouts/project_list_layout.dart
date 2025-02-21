@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:gitok/widgets/project/project_list.dart';
-import 'package:gitok/models/git_project.dart';
 
 /// GitOK应用程序的左侧项目列表布局组件。
 ///
@@ -11,12 +10,8 @@ class ProjectListLayout extends StatelessWidget {
   /// 是否启用调试模式以突出显示布局边界
   static const bool kDebugLayout = false;
 
-  /// 项目列表的全局键，用于访问列表状态
-  final GlobalKey<ProjectListState> listKey;
-
   const ProjectListLayout({
     super.key,
-    required this.listKey,
   });
 
   @override
@@ -24,11 +19,6 @@ class ProjectListLayout extends StatelessWidget {
     return Container(
       width: 300,
       decoration: BoxDecoration(
-        border: Border(
-          right: BorderSide(
-            color: Theme.of(context).dividerColor,
-          ),
-        ),
         color: kDebugLayout ? Colors.blue.withOpacity(0.1) : null,
       ),
       child: kDebugLayout
@@ -36,9 +26,9 @@ class ProjectListLayout extends StatelessWidget {
               decoration: BoxDecoration(
                 border: Border.all(color: Colors.blue, width: 2),
               ),
-              child: ProjectList(key: listKey),
+              child: const ProjectList(),
             )
-          : ProjectList(key: listKey),
+          : const ProjectList(),
     );
   }
 }

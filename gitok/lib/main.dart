@@ -1,47 +1,30 @@
+import 'dart:io' show Platform;
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:macos_window_utils/macos_window_utils.dart';
+import 'package:gitok/layouts/app.dart';
+
 /// GitOK - Git仓库管理工具
 ///
 /// 这是应用程序的入口文件，负责初始化应用并配置基础设置。
-/// 包括主题、路由、依赖注入等全局配置。
-
-import 'package:flutter/material.dart';
-import 'package:flutter/gestures.dart';
-import 'package:gitok/screens/home_screen.dart';
-import 'package:gitok/widgets/window/macos_window.dart';
-import 'package:provider/provider.dart';
-import 'package:gitok/providers/git_provider.dart';
-import 'package:gitok/theme/macos_theme.dart';
-
-void main() {
-  runApp(const GitOKApp());
-}
-
-/// 应用程序的根组件
+/// 包括平台检测、窗口配置等全局设置。
 ///
-/// 配置应用的基础设置，包括主题、路由等
-class GitOKApp extends StatelessWidget {
-  const GitOKApp({super.key});
+/// 就像一个聪明的门卫 🚪，它会根据来访者的平台选择合适的"礼遇"方式：
+/// - 看到 macOS 贵宾可以走专属通道 🍎
+/// - 其他平台的朋友走普通通道 🎉
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
 
-  @override
-  Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => GitProvider(),
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'GitOK',
-        theme: MacOSTheme.lightTheme,
-        darkTheme: MacOSTheme.darkTheme,
-        scrollBehavior: const MaterialScrollBehavior().copyWith(
-          scrollbars: true, // 始终显示滚动条
-          dragDevices: {
-            PointerDeviceKind.mouse,
-            PointerDeviceKind.trackpad,
-            PointerDeviceKind.touch,
-          },
-        ),
-        home: const MacOSWindow(
-          child: HomeScreen(),
-        ),
-      ),
-    );
+  // 如果是 macOS 平台，我们需要特殊照顾一下它的窗口 ✨
+  if (Platform.isMacOS) {
+    await WindowManipulator.initialize();
+    WindowManipulator.makeTitlebarTransparent();
+    WindowManipulator.enableFullSizeContentView();
+    WindowManipulator.hideTitle();
+    // WindowManipulator.makeTitlebarOpaque();
+    // WindowManipulator.makeTitlebarTransparent();
+    runApp(const MyApp());
+  } else {
+    runApp(const MyApp());
   }
 }

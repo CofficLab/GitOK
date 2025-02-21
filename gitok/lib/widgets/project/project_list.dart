@@ -9,7 +9,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:gitok/models/git_project.dart';
-import 'package:gitok/services/git_service.dart';
 import 'package:gitok/services/project_storage_service.dart';
 import 'package:gitok/providers/git_provider.dart';
 import 'package:gitok/widgets/project/project_item.dart';
@@ -26,9 +25,6 @@ class ProjectList extends StatefulWidget {
 class ProjectListState extends State<ProjectList> {
   /// 存储所有项目的列表
   final List<GitProject> _projects = [];
-
-  /// Git服务实例，用于处理Git相关操作
-  final GitService _gitService = GitService();
 
   /// 项目存储服务实例，用于处理项目的持久化存储
   final ProjectStorageService _storageService = ProjectStorageService();
