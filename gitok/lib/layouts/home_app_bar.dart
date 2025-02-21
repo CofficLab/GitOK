@@ -119,11 +119,14 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                   label: const Text('推送'),
                   onPressed: () async {
                     try {
-                      await GitService().push(gitProvider.currentProject!.path);
-                      if (!context.mounted) return;
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('推送成功 🚀')),
-                      );
+                      await gitProvider.push();
+                      // 通知 CommitHistory 刷新
+                      gitProvider.notifyCommitsChanged();
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('推送成功！🚀')),
+                        );
+                      }
                     } catch (e) {
                       if (!context.mounted) return;
                       ScaffoldMessenger.of(context).showSnackBar(

@@ -94,4 +94,15 @@ class GitProvider extends ChangeNotifier {
       _commits = [];
     }
   }
+
+  void notifyCommitsChanged() {
+    notifyListeners();
+  }
+
+  Future<void> push() async {
+    if (_currentProject == null) return;
+    await _gitService.push(_currentProject!.path);
+    await loadCommits(); // 刷新提交列表
+    notifyListeners();
+  }
 }

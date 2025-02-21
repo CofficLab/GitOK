@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:gitok/models/file_status.dart';
 import 'package:provider/provider.dart';
 import 'package:gitok/providers/git_provider.dart';
 import 'package:gitok/services/git_service.dart';
-import 'package:gitok/widgets/git/diff_viewer.dart';
+import 'package:gitok/models/file_status.dart';
+import 'package:gitok/widgets/git/commit_detail/commit_info_panel.dart';
+import 'package:gitok/widgets/git/commit_detail/changed_files_list.dart';
 import 'package:gitok/widgets/git/commit_form.dart';
+import 'package:gitok/widgets/git/diff_viewer.dart';
 
 /// Git提交详情展示组件
 ///
@@ -113,115 +115,55 @@ class _CommitDetailState extends State<CommitDetail> {
               : Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // 当前更改时显示提交表单
-                    if (widget.isCurrentChanges) ...[
+                    if (widget.isCurrentChanges)
                       CommitForm(
                         controller: widget.commitMessageController!,
-                        onCommitted: () {
-                          // 提交成功后重新加载变更文件列表
-                          _loadDetails();
-                          _fileDiffs.clear(); // 清空已加载的差异缓存
-                          setState(() {
-                            _selectedFilePath = null; // 重置选中的文件
-                          });
-                        },
-                      ),
-                    ] else ...[
-                      // 显示提交信息
+                        onCommitted: _handleCommitSuccess,
+                      )
+                    else
                       Consumer<GitProvider>(
                         builder: (context, gitProvider, _) {
                           final commit = gitProvider.selectedCommit;
                           if (commit == null) {
                             return const Text('👈 请选择一个提交查看详情');
                           }
-                          return Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                commit.message,
-                                style: Theme.of(context).textTheme.titleMedium,
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                '作者: ${commit.author}',
-                                style: Theme.of(context).textTheme.bodyMedium,
-                              ),
-                              Text(
-                                '时间: ${_formatDate(commit.date)}',
-                                style: Theme.of(context).textTheme.bodyMedium,
-                              ),
-                              Text(
-                                'Hash: ${commit.hash}',
-                                style: Theme.of(context).textTheme.bodyMedium,
-                              ),
-                              const SizedBox(height: 16),
-                            ],
-                          );
+                          return CommitInfoPanel(commit: commit);
                         },
                       ),
-                    ],
-                    // 变更文件列表
-                    Text('变更文件:', style: Theme.of(context).textTheme.titleMedium),
-                    const SizedBox(height: 8),
-                    Container(
-                      padding: const EdgeInsets.all(8),
-                      constraints: const BoxConstraints(maxHeight: 200),
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.surfaceVariant,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: _changedFiles.length,
-                        itemBuilder: (context, index) {
-                          final file = _changedFiles[index];
-                          return ListTile(
-                            leading: _getStatusIcon(file.status),
-                            title: Text(file.path),
-                            subtitle: Text(_getStatusText(file.status)),
-                            selected: _selectedFilePath == file.path,
-                            onTap: () async {
-                              setState(() => _selectedFilePath = file.path);
-                              if (!_fileDiffs.containsKey(file.path)) {
-                                if (widget.isCurrentChanges) {
-                                  final gitProvider = context.read<GitProvider>();
-                                  final project = gitProvider.currentProject;
-                                  if (project == null) return;
-
-                                  final diff = file.status == 'M'
-                                      ? await _gitService.getUnstagedFileDiff(project.path, file.path)
-                                      : await _gitService.getStagedFileDiff(project.path, file.path);
-                                  setState(() {
-                                    _fileDiffs[file.path] = diff;
-                                  });
-                                } else {
-                                  await _loadFileDiff(file.path);
-                                }
-                              }
-                            },
-                            dense: true,
-                          );
-                        },
-                      ),
+                    ChangedFilesList(
+                      files: _changedFiles,
+                      selectedPath: _selectedFilePath,
+                      onFileSelected: _handleFileSelected,
                     ),
                     if (_selectedFilePath != null) ...[
                       const SizedBox(height: 16),
-                      Row(
-                        children: [
-                          Text('变更内容:', style: Theme.of(context).textTheme.titleMedium),
-                          const SizedBox(width: 8),
-                          Text(_selectedFilePath!, style: Theme.of(context).textTheme.bodyMedium),
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-                      Expanded(
-                        child: DiffViewer(
-                          diffText: _fileDiffs[_selectedFilePath] ?? '加载中...',
-                        ),
-                      ),
+                      _buildDiffViewer(),
                     ],
                   ],
                 ),
+    );
+  }
+
+  Widget _buildDiffViewer() {
+    return Expanded(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Text('变更内容:', style: Theme.of(context).textTheme.titleMedium),
+              const SizedBox(width: 8),
+              Text(_selectedFilePath!, style: Theme.of(context).textTheme.bodyMedium),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Expanded(
+            child: DiffViewer(
+              diffText: _fileDiffs[_selectedFilePath] ?? '加载中...',
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -262,34 +204,32 @@ class _CommitDetailState extends State<CommitDetail> {
     );
   }
 
-  Icon _getStatusIcon(String status) {
-    switch (status) {
-      case 'M':
-        return const Icon(Icons.edit, color: Colors.orange);
-      case 'A':
-        return const Icon(Icons.add_circle, color: Colors.green);
-      case 'D':
-        return const Icon(Icons.remove_circle, color: Colors.red);
-      default:
-        return const Icon(Icons.help);
-    }
+  void _handleCommitSuccess() {
+    // 提交成功后重新加载变更文件列表
+    _loadDetails();
+    _fileDiffs.clear(); // 清空已加载的差异缓存
+    setState(() {
+      _selectedFilePath = null; // 重置选中的文件
+    });
   }
 
-  String _getStatusText(String status) {
-    switch (status) {
-      case 'M':
-        return '已修改';
-      case 'A':
-        return '新增';
-      case 'D':
-        return '已删除';
-      default:
-        return '未知状态';
-    }
-  }
+  void _handleFileSelected(FileStatus file) async {
+    setState(() => _selectedFilePath = file.path);
+    if (!_fileDiffs.containsKey(file.path)) {
+      if (widget.isCurrentChanges) {
+        final gitProvider = context.read<GitProvider>();
+        final project = gitProvider.currentProject;
+        if (project == null) return;
 
-  String _formatDate(DateTime date) {
-    return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')} '
-        '${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
+        final diff = file.status == 'M'
+            ? await _gitService.getUnstagedFileDiff(project.path, file.path)
+            : await _gitService.getStagedFileDiff(project.path, file.path);
+        setState(() {
+          _fileDiffs[file.path] = diff;
+        });
+      } else {
+        await _loadFileDiff(file.path);
+      }
+    }
   }
 }
