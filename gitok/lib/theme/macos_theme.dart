@@ -36,14 +36,14 @@ class MacOSTheme {
           fontWeight: FontWeight.w500,
           color: isDark ? Colors.white : Colors.black,
         ),
-        titleMedium: TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
-        titleSmall: TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
-        bodyLarge: TextStyle(fontSize: 14),
-        bodyMedium: TextStyle(fontSize: 13),
-        bodySmall: TextStyle(fontSize: 11),
-        labelLarge: TextStyle(fontSize: 13),
-        labelMedium: TextStyle(fontSize: 12),
-        labelSmall: TextStyle(fontSize: 11),
+        titleMedium: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
+        titleSmall: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
+        bodyLarge: const TextStyle(fontSize: 14),
+        bodyMedium: const TextStyle(fontSize: 13),
+        bodySmall: const TextStyle(fontSize: 11),
+        labelLarge: const TextStyle(fontSize: 13),
+        labelMedium: const TextStyle(fontSize: 12),
+        labelSmall: const TextStyle(fontSize: 11),
       ),
       visualDensity: VisualDensity.compact,
       cardTheme: CardTheme(
@@ -88,12 +88,12 @@ class MacOSTheme {
         thickness: 1,
       ),
       scrollbarTheme: ScrollbarThemeData(
-        thickness: MaterialStateProperty.all(8.0),
-        thumbColor: MaterialStateProperty.resolveWith((states) {
-          if (states.contains(MaterialState.dragged)) {
+        thickness: WidgetStateProperty.all(8.0),
+        thumbColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.dragged)) {
             return isDark ? Colors.white.withOpacity(0.38) : Colors.black.withOpacity(0.38);
           }
-          if (states.contains(MaterialState.hovered)) {
+          if (states.contains(WidgetState.hovered)) {
             return isDark ? Colors.white.withOpacity(0.24) : Colors.black.withOpacity(0.24);
           }
           return isDark ? Colors.white.withOpacity(0.12) : Colors.black.withOpacity(0.12);

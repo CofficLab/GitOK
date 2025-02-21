@@ -4,11 +4,14 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart' as path;
 import 'package:gitok/models/promo_config.dart';
+import 'package:gitok/utils/logger.dart';
 
 class PromoService {
   static final PromoService _instance = PromoService._internal();
   factory PromoService() => _instance;
   PromoService._internal();
+
+  final Logger _logger = Logger();
 
   Future<void> savePromoConfig(String projectPath, PromoConfig config) async {
     final configDir = Directory(path.join(projectPath, '.gitok', 'promos'));
@@ -32,7 +35,7 @@ class PromoService {
           final json = jsonDecode(content) as Map<String, dynamic>;
           configs.add(PromoConfig.fromJson(json));
         } catch (e) {
-          print('Error loading promo config: $e');
+          _logger.error('加载推广配置失败', e);
         }
       }
     }
@@ -48,7 +51,7 @@ class PromoService {
     canvas.drawImageRect(
       backgroundImage,
       Rect.fromLTWH(0, 0, backgroundImage.width.toDouble(), backgroundImage.height.toDouble()),
-      Rect.fromLTWH(0, 0, 1242, 2208), // iPhone 6.5" 尺寸
+      const Rect.fromLTWH(0, 0, 1242, 2208), // iPhone 6.5" 尺寸
       Paint(),
     );
 

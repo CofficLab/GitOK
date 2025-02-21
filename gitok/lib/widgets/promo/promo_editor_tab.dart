@@ -24,7 +24,6 @@ class _PromoEditorTabState extends State<PromoEditorTab> {
   final PromoService _promoService = PromoService();
   List<PromoConfig> _configs = [];
   PromoConfig? _selectedConfig;
-  final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   String? _backgroundImage;
   final List<PromoElement> _elements = [];

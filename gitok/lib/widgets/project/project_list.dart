@@ -6,6 +6,8 @@
 /// - 收藏/取消收藏项目
 /// - 从列表中移除项目
 /// - 选择项目进行操作
+library;
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:gitok/models/git_project.dart';
@@ -30,7 +32,7 @@ class ProjectListState extends State<ProjectList> {
   final ProjectStorageService _storageService = ProjectStorageService();
 
   /// 搜索查询字符串
-  String _searchQuery = '';
+  final String _searchQuery = '';
 
   @override
   void initState() {

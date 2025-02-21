@@ -26,7 +26,7 @@ class ChangedFilesList extends StatelessWidget {
           padding: const EdgeInsets.all(8),
           constraints: const BoxConstraints(maxHeight: 200),
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surfaceVariant,
+            color: Theme.of(context).colorScheme.surfaceContainerHighest,
             borderRadius: BorderRadius.circular(8),
           ),
           child: ListView.builder(

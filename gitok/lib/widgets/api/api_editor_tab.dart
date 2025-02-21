@@ -378,15 +378,15 @@ class _ApiEditorTabState extends State<ApiEditorTab> {
                         // 响应查看器
                         Expanded(
                           child: _responses.isEmpty
-                              ? Center(
+                              ? const Center(
                                   child: Column(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      const Icon(Icons.history, size: 48, color: Colors.grey),
-                                      const SizedBox(height: 16),
-                                      const Text('还没有请求历史'),
-                                      const SizedBox(height: 8),
-                                      const Text(
+                                      Icon(Icons.history, size: 48, color: Colors.grey),
+                                      SizedBox(height: 16),
+                                      Text('还没有请求历史'),
+                                      SizedBox(height: 8),
+                                      Text(
                                         '点击发送按钮开始测试接口',
                                         style: TextStyle(color: Colors.grey),
                                       ),

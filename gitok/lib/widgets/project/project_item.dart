@@ -5,6 +5,8 @@
 /// - 收藏状态标记
 /// - 移除项目按钮
 /// 支持点击选择和各种交互操作
+library;
+
 import 'package:flutter/material.dart';
 import 'package:gitok/models/git_project.dart';
 import 'package:gitok/services/project_storage_service.dart';

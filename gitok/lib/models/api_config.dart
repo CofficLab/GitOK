@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 class ApiConfig {
   final String name;
   final List<ApiEndpoint> endpoints;

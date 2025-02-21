@@ -15,7 +15,6 @@ class IconService {
     await configDir.create(recursive: true);
 
     final json = config.toJson();
-    print('Saving config: $json');
 
     final file = File(path.join(configDir.path, '${config.name}.json'));
     await file.writeAsString(jsonEncode(json));
@@ -32,18 +31,14 @@ class IconService {
       if (file.path.endsWith('.json')) {
         try {
           final content = await File(file.path).readAsString();
-          print('Loading config from ${file.path}: $content');
           final json = jsonDecode(content) as Map<String, dynamic>;
 
           if (json['name'] == null || json['imagePath'] == null || json['lastModified'] == null) {
-            print('Invalid config in ${file.path}: missing required fields');
             continue;
           }
 
           configs.add(AppIconConfig.fromJson(json));
-        } catch (e, stackTrace) {
-          print('Error loading config from ${file.path}: $e');
-          print('Stack trace: $stackTrace');
+        } catch (e) {
           continue;
         }
       }

@@ -18,7 +18,7 @@ class StagedChanges extends StatefulWidget {
 class _StagedChangesState extends State<StagedChanges> {
   final GitService _gitService = GitService();
   List<FileStatus> _changes = [];
-  Map<String, String> _fileDiffs = {};
+  final Map<String, String> _fileDiffs = {};
   String? _selectedFilePath;
   bool _isLoading = false;
 
@@ -80,7 +80,7 @@ class _StagedChangesState extends State<StagedChanges> {
           padding: const EdgeInsets.all(8),
           constraints: const BoxConstraints(maxHeight: 200),
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surfaceVariant,
+            color: Theme.of(context).colorScheme.surfaceContainerHighest,
             borderRadius: BorderRadius.circular(8),
           ),
           child: ListView(

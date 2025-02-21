@@ -2,6 +2,7 @@
 ///
 /// 这是应用程序的入口文件，负责初始化应用并配置基础设置。
 /// 包括主题、路由、依赖注入等全局配置。
+library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';

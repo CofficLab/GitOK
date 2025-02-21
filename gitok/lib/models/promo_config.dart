@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 class PromoConfig {
   final String name;
   final String backgroundImage;

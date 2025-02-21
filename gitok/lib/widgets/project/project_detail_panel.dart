@@ -47,12 +47,4 @@ class ProjectDetailPanel extends StatelessWidget {
       ),
     );
   }
-
-  Widget _buildPromoTab() {
-    return const Center(child: Text('宣传图'));
-  }
-
-  Widget _buildApiTab() {
-    return const Center(child: Text('API测试'));
-  }
 }

@@ -33,7 +33,7 @@ class CommitDetail extends StatefulWidget {
 class _CommitDetailState extends State<CommitDetail> {
   final GitService _gitService = GitService();
   List<FileStatus> _changedFiles = [];
-  Map<String, String> _fileDiffs = {};
+  final Map<String, String> _fileDiffs = {};
   String? _selectedFilePath;
   bool _isLoading = false;
 

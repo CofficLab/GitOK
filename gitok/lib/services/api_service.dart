@@ -34,7 +34,7 @@ class ApiService {
           final json = jsonDecode(content) as Map<String, dynamic>;
           configs.add(ApiConfig.fromJson(json));
         } catch (e) {
-          print('Error loading API config: $e');
+          _logger.error('加载API配置失败', e);
         }
       }
     }
@@ -54,7 +54,7 @@ class ApiService {
     try {
       var uri = Uri.parse(urlStr);
       if (uri.host.isEmpty) {
-        throw FormatException('URL必须包含有效的主机名');
+        throw const FormatException('URL必须包含有效的主机名');
       }
 
       // 添加查询参数

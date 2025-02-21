@@ -5,7 +5,6 @@ class AppTheme {
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.light,
-      // TODO: 自定义亮色主题
     );
   }
 
@@ -13,7 +12,6 @@ class AppTheme {
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.dark,
-      // TODO: 自定义暗色主题
     );
   }
 }

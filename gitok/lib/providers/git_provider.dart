@@ -90,7 +90,6 @@ class GitProvider extends ChangeNotifier {
       _commits = await _gitService.getCommits(project.path);
       notifyListeners();
     } catch (e) {
-      print('加载提交历史失败: $e');
       _commits = [];
     }
   }

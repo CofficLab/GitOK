@@ -6,12 +6,9 @@
 /// - Git命令执行
 ///
 /// 使用单例模式确保全局唯一实例
+library;
 
-import 'dart:io';
-import 'package:path/path.dart' as path;
-import 'package:gitok/exceptions/git_exception.dart';
 import 'package:gitok/models/commit_info.dart';
-import 'package:flutter/foundation.dart';
 import 'package:gitok/models/file_status.dart';
 import 'package:git/git.dart';
 
@@ -21,24 +18,6 @@ class GitService {
   GitService._internal();
 
   static const bool kDebugService = true;
-
-  Future<String> _getGitPath() async {
-    if (Platform.isMacOS) {
-      final locations = [
-        '/usr/bin/git',
-        '/usr/local/bin/git',
-        '/opt/homebrew/bin/git',
-      ];
-
-      for (final location in locations) {
-        if (await File(location).exists()) {
-          return location;
-        }
-      }
-      throw Exception('找不到 Git 可执行文件');
-    }
-    return 'git';
-  }
 
   Future<bool> isGitRepository(String dirPath) async {
     try {
@@ -56,9 +35,7 @@ class GitService {
   }
 
   Future<String> getCurrentBranch(String projectPath) async {
-    if (kDebugService) {
-      print('🌿 获取当前分支: $projectPath');
-    }
+    if (kDebugService) {}
 
     final gitDir = await GitDir.fromExisting(projectPath);
     final result = await gitDir.runCommand(['branch', '--show-current']);

@@ -5,8 +5,6 @@ import 'package:gitok/services/icon_service.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:gitok/widgets/icon/icon_preview.dart';
-import 'package:flutter/services.dart';
-import 'dart:convert';
 import 'package:gitok/widgets/preset_icons_picker.dart';
 
 class IconEditorTab extends StatefulWidget {
