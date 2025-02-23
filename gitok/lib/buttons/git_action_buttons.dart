@@ -31,9 +31,7 @@ class GitActionButtons extends StatelessWidget {
         BrowserButton(),
         FinderButton(),
         TerminalButton(),
-        SizedBox(width: 16),
         PullButton(),
-        SizedBox(width: 8),
         PushButton(),
       ],
     );
