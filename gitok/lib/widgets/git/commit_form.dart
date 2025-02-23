@@ -5,15 +5,27 @@ import 'package:gitok/providers/git_provider.dart';
 /// Git提交表单组件
 ///
 /// 用于输入提交信息并触发提交操作
-class CommitForm extends StatelessWidget {
-  final TextEditingController controller;
-  final VoidCallback? onCommitted;
+class CommitForm extends StatefulWidget {
+  const CommitForm({super.key});
 
-  const CommitForm({
-    super.key,
-    required this.controller,
-    this.onCommitted,
-  });
+  @override
+  State<CommitForm> createState() => _CommitFormState();
+}
+
+class _CommitFormState extends State<CommitForm> {
+  late final TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   /// 预设的提交信息模板
   static const Map<String, String> _presetMessages = {
@@ -55,29 +67,29 @@ class CommitForm extends StatelessWidget {
                   .toList(),
               onSelected: (value) {
                 // 保存当前光标位置
-                final currentPosition = controller.selection.baseOffset;
-                final currentText = controller.text;
+                final currentPosition = _controller.selection.baseOffset;
+                final currentText = _controller.text;
 
                 // 如果当前文本为空，直接设置预设信息
                 if (currentText.isEmpty) {
-                  controller.text = value;
+                  _controller.text = value;
                   // 将光标移到末尾
-                  controller.selection = TextSelection.fromPosition(
+                  _controller.selection = TextSelection.fromPosition(
                     TextPosition(offset: value.length),
                   );
                 } else {
                   // 如果当前位置在开头，插入预设信息
                   if (currentPosition == 0) {
-                    controller.text = value + currentText;
-                    controller.selection = TextSelection.fromPosition(
+                    _controller.text = value + currentText;
+                    _controller.selection = TextSelection.fromPosition(
                       TextPosition(offset: value.length),
                     );
                   } else {
                     // 在当前位置插入预设信息
                     final newText =
                         currentText.substring(0, currentPosition) + value + currentText.substring(currentPosition);
-                    controller.text = newText;
-                    controller.selection = TextSelection.fromPosition(
+                    _controller.text = newText;
+                    _controller.selection = TextSelection.fromPosition(
                       TextPosition(offset: currentPosition + value.length),
                     );
                   }
@@ -88,7 +100,7 @@ class CommitForm extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         TextField(
-          controller: controller,
+          controller: _controller,
           decoration: const InputDecoration(
             hintText: '输入提交信息...',
             border: OutlineInputBorder(),
@@ -102,7 +114,7 @@ class CommitForm extends StatelessWidget {
             TextButton.icon(
               icon: const Icon(Icons.refresh),
               label: const Text('重置'),
-              onPressed: () => controller.clear(),
+              onPressed: () => _controller.clear(),
             ),
             const SizedBox(width: 8),
             FilledButton.icon(
@@ -110,9 +122,8 @@ class CommitForm extends StatelessWidget {
               label: const Text('提交'),
               onPressed: () async {
                 try {
-                  await context.read<GitProvider>().commit(controller.text);
-                  controller.clear();
-                  onCommitted?.call();
+                  await context.read<GitProvider>().commit(_controller.text);
+                  _controller.clear();
                   if (context.mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text('提交成功 🎉'), backgroundColor: Colors.green),

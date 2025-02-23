@@ -23,31 +23,6 @@ class GitManagementTab extends StatefulWidget {
 }
 
 class _GitManagementTabState extends State<GitManagementTab> {
-  final TextEditingController _commitMessageController = TextEditingController();
-
-  @override
-  void initState() {
-    super.initState();
-    _setDefaultCommitMessage();
-  }
-
-  @override
-  void dispose() {
-    _commitMessageController.dispose();
-    super.dispose();
-  }
-
-  Future<void> _setDefaultCommitMessage() async {
-    final gitProvider = context.read<GitProvider>();
-    final project = gitProvider.currentProject;
-    if (project == null) return;
-
-    final branchName = await GitService().getCurrentBranch(project.path);
-    _commitMessageController.text = 'feat($branchName): ';
-    _commitMessageController.selection = TextSelection.fromPosition(
-      TextPosition(offset: _commitMessageController.text.length),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,8 +39,6 @@ class _GitManagementTabState extends State<GitManagementTab> {
             Expanded(
               child: CommitDetail(
                 isCurrentChanges: gitProvider.rightPanelType == RightPanelType.commitForm,
-                commitMessageController:
-                    gitProvider.rightPanelType == RightPanelType.commitForm ? _commitMessageController : null,
               ),
             ),
           ],

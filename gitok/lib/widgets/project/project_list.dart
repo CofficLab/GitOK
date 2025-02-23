@@ -38,6 +38,10 @@ class ProjectListState extends State<ProjectList> {
   void initState() {
     super.initState();
     _loadProjects();
+    // 监听 GitProvider 的变化
+    Future.microtask(() {
+      context.read<GitProvider>().addListener(_onGitProviderChanged);
+    });
   }
 
   /// 刷新项目列表
@@ -85,6 +89,18 @@ class ProjectListState extends State<ProjectList> {
   ///   * 移除按钮：可以从列表中移除项目
   ///   * 点击项目可以选中并触发回调
   /// - 如果没有项目，显示提示信息
+  @override
+  void dispose() {
+    // 移除监听器
+    context.read<GitProvider>().removeListener(_onGitProviderChanged);
+    super.dispose();
+  }
+
+  /// 当 GitProvider 发生变化时刷新项目列表
+  void _onGitProviderChanged() {
+    _loadProjects();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<GitProvider>(

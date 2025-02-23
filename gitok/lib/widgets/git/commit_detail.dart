@@ -16,14 +16,10 @@ import 'package:gitok/widgets/git/diff_viewer.dart';
 /// - 具体的代码差异
 class CommitDetail extends StatefulWidget {
   final bool isCurrentChanges; // 是否显示当前更改
-  final TextEditingController? commitMessageController; // 提交信息控制器
-  final VoidCallback? onCommit; // 提交回调
 
   const CommitDetail({
     super.key,
     this.isCurrentChanges = false,
-    this.commitMessageController,
-    this.onCommit,
   });
 
   @override
@@ -116,10 +112,7 @@ class _CommitDetailState extends State<CommitDetail> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     if (widget.isCurrentChanges)
-                      CommitForm(
-                        controller: widget.commitMessageController!,
-                        onCommitted: _handleCommitSuccess,
-                      )
+                      const CommitForm()
                     else
                       Consumer<GitProvider>(
                         builder: (context, gitProvider, _) {
@@ -135,7 +128,7 @@ class _CommitDetailState extends State<CommitDetail> {
                       selectedPath: _selectedFilePath,
                       onFileSelected: _handleFileSelected,
                     ),
-                    if (_selectedFilePath != null) ...[
+                    if (_selectedFilePath != null) ...[                      
                       const SizedBox(height: 16),
                       _buildDiffViewer(),
                     ],
@@ -191,7 +184,7 @@ class _CommitDetailState extends State<CommitDetail> {
                   color: Theme.of(context).textTheme.bodySmall?.color,
                 ),
           ),
-          if (widget.isCurrentChanges) ...[
+          if (widget.isCurrentChanges) ...[            
             const SizedBox(height: 24),
             FilledButton.icon(
               onPressed: _loadDetails,
@@ -202,15 +195,6 @@ class _CommitDetailState extends State<CommitDetail> {
         ],
       ),
     );
-  }
-
-  void _handleCommitSuccess() {
-    // 提交成功后重新加载变更文件列表
-    _loadDetails();
-    _fileDiffs.clear(); // 清空已加载的差异缓存
-    setState(() {
-      _selectedFilePath = null; // 重置选中的文件
-    });
   }
 
   void _handleFileSelected(FileStatus file) async {
