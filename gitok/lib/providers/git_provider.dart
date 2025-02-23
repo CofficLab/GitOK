@@ -35,6 +35,25 @@ class GitProvider extends ChangeNotifier {
   RightPanelType _rightPanelType = RightPanelType.commitForm;
   RightPanelType get rightPanelType => _rightPanelType;
 
+  /// 是否正在推送代码
+  bool _isPushing = false;
+  bool get isPushing => _isPushing;
+
+  bool _isPulling = false;
+  bool get isPulling => _isPulling;
+
+  /// 设置推送状态
+  void setPushing(bool value) {
+    _isPushing = value;
+    notifyListeners();
+  }
+
+  /// 设置拉取状态
+  void setPulling(bool value) {
+    _isPulling = value;
+    notifyListeners();
+  }
+
   GitProject? get currentProject => _currentProject;
   String get currentBranch => _currentBranch;
   List<String> get branches => _branches;
