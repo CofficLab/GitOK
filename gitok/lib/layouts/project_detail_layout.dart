@@ -8,8 +8,12 @@ import 'package:gitok/tab_git/git_management_tab.dart';
 /// 提供一个自适应宽度的容器，显示：
 /// - 项目详情面板
 /// - 当没有选中项目时显示空状态
+/// - 当选中项目时显示Git管理标签页
+/// - 自动适应窗口大小，确保良好的显示效果
 class ProjectDetailLayout extends StatelessWidget {
   /// 是否启用调试模式以突出显示布局边界
+  /// true: 显示绿色边框和半透明背景
+  /// false: 正常显示，不显示调试信息
   static const bool kDebugLayout = false;
 
   const ProjectDetailLayout({super.key});
@@ -25,6 +29,9 @@ class ProjectDetailLayout extends StatelessWidget {
                 color: Colors.green.withOpacity(0.1),
               )
             : null,
+        // 根据是否选中项目显示不同的内容
+        // - 未选中项目：显示提示信息
+        // - 已选中项目：显示Git管理标签页
         child: gitProvider.currentProject == null
             ? const Center(child: Text('请选择一个项目'))
             : GitManagementTab(project: gitProvider.currentProject!),

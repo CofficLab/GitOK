@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:gitok/models/commit_info.dart';
 import 'package:gitok/providers/git_provider.dart';
-import 'package:gitok/services/git_service.dart';
 import 'package:gitok/tab_git/commit_list_item.dart';
 
 /// Git提交历史展示组件
@@ -23,9 +22,7 @@ class CommitHistory extends StatefulWidget {
 }
 
 class _CommitHistoryState extends State<CommitHistory> {
-  final GitService _gitService = GitService();
   bool _isLoading = false;
-  int _unpushedCount = 0;
 
   Future<void> _loadCommits() async {
     final project = context.read<GitProvider>().currentProject;
@@ -33,10 +30,7 @@ class _CommitHistoryState extends State<CommitHistory> {
 
     setState(() => _isLoading = true);
     try {
-      final unpushedCount = await _gitService.getUnpushedCommitCount(project.path);
-      setState(() {
-        _unpushedCount = unpushedCount;
-      });
+      await context.read<GitProvider>().loadCommits();
     } finally {
       setState(() => _isLoading = false);
     }
@@ -73,9 +67,12 @@ class _CommitHistoryState extends State<CommitHistory> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text('提交历史', style: Theme.of(context).textTheme.titleMedium),
+              // 刷新按钮：点击时重新加载提交历史
+              // 当仓库有新的提交时，用户可以通过此按钮手动更新列表
               IconButton(
                 icon: const Icon(Icons.refresh),
                 onPressed: _loadCommits,
+                tooltip: '刷新提交历史',
               ),
             ],
           ),
@@ -87,6 +84,8 @@ class _CommitHistoryState extends State<CommitHistory> {
                 return ListView.builder(
                   itemCount: commits.length + 1,
                   itemBuilder: (context, index) {
+                    // 在列表顶部显示当前状态项
+                    // 点击后显示提交表单，用于创建新的提交
                     if (index == 0) {
                       return CommitListItem(
                         commit: CommitInfo(
@@ -99,13 +98,14 @@ class _CommitHistoryState extends State<CommitHistory> {
                         onTap: () => gitProvider.showCommitForm(),
                       );
                     }
+                    // 显示历史提交记录
+                    // 点击后在右侧面板显示该提交的详细信息
                     final commit = commits[index - 1];
                     return CommitListItem(
                       commit: commit,
                       isSelected: gitProvider.rightPanelType == RightPanelType.commitDetail &&
                           gitProvider.selectedCommit?.hash == commit.hash,
                       onTap: () => gitProvider.setSelectedCommit(commit),
-                      isUnpushed: index < _unpushedCount,
                     );
                   },
                 );

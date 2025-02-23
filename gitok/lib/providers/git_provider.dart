@@ -9,18 +9,29 @@ enum RightPanelType { commitForm, commitDetail }
 /// Git状态管理器
 ///
 /// 负责管理Git相关的状态，包括：
-/// - 当前项目
-/// - 当前分支
-/// - 分支列表
+/// - 当前项目：当前选中的Git项目
+/// - 当前分支：项目当前所在的Git分支
+/// - 分支列表：项目的所有Git分支
+/// - 选中的提交：当前查看的历史提交
+/// - 提交列表：项目的所有历史提交
+/// - 右侧面板类型：控制右侧面板显示提交表单或提交详情
 class GitProvider extends ChangeNotifier {
   final GitService _gitService = GitService();
 
+  /// 当前选中的Git项目
   GitProject? _currentProject;
+  /// 当前所在的Git分支
   String _currentBranch = '';
+  /// 项目的所有Git分支
   List<String> _branches = [];
+  /// 当前查看的历史提交
   CommitInfo? _selectedCommit;
+  /// 项目的所有历史提交
   List<CommitInfo> _commits = [];
 
+  /// 右侧面板显示类型
+  /// - commitForm: 显示提交表单，用于创建新的提交
+  /// - commitDetail: 显示提交详情，查看历史提交的信息
   RightPanelType _rightPanelType = RightPanelType.commitForm;
   RightPanelType get rightPanelType => _rightPanelType;
 
@@ -98,10 +109,19 @@ class GitProvider extends ChangeNotifier {
     if (project == null) return;
 
     try {
-      _commits = await _gitService.getCommits(project.path);
-      notifyListeners();
+      final newCommits = await _gitService.getCommits(project.path);
+      // 只在提交列表发生变化时才更新状态
+      if (_commits.length != newCommits.length ||
+          !_commits.asMap().entries.every((entry) =>
+              entry.value.hash == newCommits[entry.key].hash)) {
+        _commits = newCommits;
+        notifyListeners();
+      }
     } catch (e) {
-      _commits = [];
+      if (_commits.isNotEmpty) {
+        _commits = [];
+        notifyListeners();
+      }
     }
   }
 

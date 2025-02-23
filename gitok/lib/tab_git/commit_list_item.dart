@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:gitok/models/commit_info.dart';
+import 'package:gitok/providers/git_provider.dart';
+import 'package:gitok/services/git_service.dart';
+import 'package:provider/provider.dart';
 
 /// Git提交历史列表项组件
 ///
@@ -7,45 +10,71 @@ import 'package:gitok/models/commit_info.dart';
 /// - 提交信息
 /// - 作者和时间
 /// - 提交哈希值简写
-class CommitListItem extends StatelessWidget {
+class CommitListItem extends StatefulWidget {
   final CommitInfo commit;
   final bool isSelected;
   final VoidCallback onTap;
-  final bool isUnpushed;
 
   const CommitListItem({
     super.key,
     required this.commit,
     required this.isSelected,
     required this.onTap,
-    this.isUnpushed = false,
   });
+
+  @override
+  State<CommitListItem> createState() => _CommitListItemState();
+}
+
+class _CommitListItemState extends State<CommitListItem> {
+  final GitService _gitService = GitService();
+  bool _isUnpushed = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkPushStatus();
+  }
+
+  Future<void> _checkPushStatus() async {
+    if (widget.commit.hash == 'current') return;
+    final gitProvider = context.read<GitProvider>();
+    final project = gitProvider.currentProject;
+    if (project == null) return;
+
+    final isPushed = await _gitService.isCommitPushed(project.path, widget.commit.hash);
+    setState(() {
+      _isUnpushed = !isPushed;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 4),
-      color: isSelected ? Theme.of(context).colorScheme.primaryContainer : null,
+      color: widget.isSelected ? Theme.of(context).colorScheme.primaryContainer : null,
       child: InkWell(
-        onTap: onTap,
+        onTap: widget.onTap,
         splashColor: Colors.transparent,
         highlightColor: Colors.transparent,
         child: ListTile(
-          title: Text(commit.message),
+          title: Text(widget.commit.message),
           subtitle: Text(
-            '${commit.author} • ${_formatDate(commit.date)}\n'
-            '${commit.hash.substring(0, 7)}',
+            '${widget.commit.author} • ${_formatDate(widget.commit.date)}\n'
+            '${widget.commit.hash.substring(0, 7)}',
           ),
-          trailing: isUnpushed
-              ? Tooltip(
-                  message: '未推送到远程',
-                  child: Icon(
-                    Icons.upload,
-                    color: Theme.of(context).colorScheme.secondary,
-                    size: 20,
-                  ),
-                )
-              : null,
+          trailing: widget.commit.hash == 'current'
+              ? null
+              : _isUnpushed
+                  ? Tooltip(
+                      message: '未推送到远程',
+                      child: Icon(
+                        Icons.upload,
+                        color: Theme.of(context).colorScheme.secondary,
+                        size: 20,
+                      ),
+                    )
+                  : null,
         ),
       ),
     );

@@ -11,11 +11,16 @@ import 'package:gitok/tab_git/diff_viewer.dart';
 /// Git提交详情展示组件
 ///
 /// 展示单个Git提交的详细信息，包括：
-/// - 完整的提交信息
-/// - 提交的文件变更
-/// - 具体的代码差异
+/// - 完整的提交信息（作者、时间、描述等）
+/// - 提交涉及的文件变更列表
+/// - 每个文件的具体代码差异
+/// - 对于当前更改，显示提交表单
+/// - 对于历史提交，显示提交信息面板
 class CommitDetail extends StatefulWidget {
-  final bool isCurrentChanges; // 是否显示当前更改
+  /// 是否显示当前更改
+  /// true: 显示工作区的未提交更改
+  /// false: 显示历史提交的详细信息
+  final bool isCurrentChanges;
 
   const CommitDetail({
     super.key,
@@ -39,6 +44,9 @@ class _CommitDetailState extends State<CommitDetail> {
     _loadDetails();
   }
 
+  /// 加载提交详情
+  /// - 当前更改：加载工作区和暂存区的文件状态
+  /// - 历史提交：加载该提交涉及的文件变更
   Future<void> _loadDetails() async {
     final gitProvider = context.read<GitProvider>();
     final project = gitProvider.currentProject;

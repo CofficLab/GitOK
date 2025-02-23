@@ -165,6 +165,18 @@ class GitService {
     return getCommitHistory(path);
   }
 
+  /// 判断指定提交是否已推送到远程
+  Future<bool> isCommitPushed(String repoPath, String commitHash) async {
+    final gitDir = await GitDir.fromExisting(repoPath);
+    try {
+      final result = await gitDir.runCommand(['branch', '-r', '--contains', commitHash]);
+      return (result.stdout as String).trim().isNotEmpty;
+    } catch (e) {
+      // 如果命令执行失败，说明可能没有远程分支或其他问题
+      return false;
+    }
+  }
+
   /// 获取未推送到远程的提交数量
   Future<int> getUnpushedCommitCount(String repoPath) async {
     final gitDir = await GitDir.fromExisting(repoPath);

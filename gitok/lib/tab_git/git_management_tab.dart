@@ -25,7 +25,6 @@ class GitManagementTab extends StatefulWidget {
 
 class _GitManagementTabState extends State<GitManagementTab> {
   final GitService _gitService = GitService();
-  bool _isValidGitRepo = false;
   String? _errorMessage;
 
   @override
@@ -38,7 +37,6 @@ class _GitManagementTabState extends State<GitManagementTab> {
     if (!Directory(widget.project.path).existsSync()) {
       setState(() {
         _errorMessage = '项目文件夹不存在';
-        _isValidGitRepo = false;
       });
       return;
     }
@@ -46,13 +44,11 @@ class _GitManagementTabState extends State<GitManagementTab> {
     try {
       final isGitRepo = await _gitService.isGitRepository(widget.project.path);
       setState(() {
-        _isValidGitRepo = isGitRepo;
         _errorMessage = isGitRepo ? null : '该文件夹不是有效的Git仓库';
       });
     } catch (e) {
       setState(() {
         _errorMessage = '验证Git仓库时出错：${e.toString()}';
-        _isValidGitRepo = false;
       });
     }
   }
