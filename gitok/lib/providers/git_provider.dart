@@ -108,4 +108,12 @@ class GitProvider extends ChangeNotifier {
   void notifyProjectsChanged() {
     notifyListeners();
   }
+  /// 取消文件更改
+  Future<void> discardFileChanges(String filePath) async {
+    final project = currentProject;
+    if (project == null) return;
+
+    await _gitService.discardFileChanges(project.path, filePath);
+    notifyListeners();
+  }
 }

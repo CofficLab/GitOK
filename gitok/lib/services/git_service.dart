@@ -147,6 +147,12 @@ class GitService {
     return result.stdout as String;
   }
 
+  /// 取消文件更改
+  Future<void> discardFileChanges(String projectPath, String filePath) async {
+    final gitDir = await GitDir.fromExisting(projectPath);
+    await gitDir.runCommand(['checkout', '--', filePath]);
+  }
+
   Future<List<CommitInfo>> getCommits(String path) async {
     return getCommitHistory(path);
   }
