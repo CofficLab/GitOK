@@ -85,6 +85,15 @@ class _CommitDetailState extends State<CommitDetail> {
     }
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // 监听 GitProvider 状态变化，当状态变化时重新加载
+    if (widget.isCurrentChanges) {
+      _loadDetails();
+    }
+  }
+
   Future<void> _loadFileDiff(String filePath) async {
     final gitProvider = context.read<GitProvider>();
     final project = gitProvider.currentProject;
