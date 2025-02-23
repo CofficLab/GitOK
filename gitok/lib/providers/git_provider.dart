@@ -44,8 +44,19 @@ class GitProvider extends ChangeNotifier {
   }
 
   Future<void> _loadBranches(String path) async {
-    _currentBranch = await _gitService.getCurrentBranch(path);
-    _branches = await _gitService.getBranches(path);
+    try {
+      _currentBranch = await _gitService.getCurrentBranch(path);
+    } catch (e) {
+      // 获取当前分支失败时，设置为空字符串
+      _currentBranch = '';
+    }
+
+    try {
+      _branches = await _gitService.getBranches(path);
+    } catch (e) {
+      // 获取分支列表失败时，设置为空列表
+      _branches = [];
+    }
     notifyListeners();
   }
 

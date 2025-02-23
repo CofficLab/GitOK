@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gitok/widgets/buttons/git_action_buttons.dart';
 import 'package:provider/provider.dart';
 import 'package:gitok/providers/git_provider.dart';
-import 'package:gitok/widgets/git/branch_switcher.dart';
+import 'package:gitok/widgets/buttons/branch_switch_button.dart';
 
 /// GitOK应用程序的顶部应用栏组件。
 ///
@@ -22,43 +22,35 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<GitProvider>(
-      builder: (context, gitProvider, _) {
-        final hasProject = gitProvider.currentProject != null;
+    return Consumer<GitProvider>(builder: (context, gitProvider, _) {
+      final hasProject = gitProvider.currentProject != null;
+      final isValidGitRepo = hasProject && gitProvider.currentProject!.isGitRepository;
 
-        return Container(
-          decoration: kDebugLayout
-              ? BoxDecoration(
-                  border: Border.all(color: Colors.purple, width: 2),
-                  color: Colors.purple.withOpacity(0.1),
-                )
-              : null,
-          child: AppBar(
-            backgroundColor: Theme.of(context).colorScheme.surface,
-            actions: [
-              if (hasProject) ...[
-                const SizedBox(width: 16),
-                SizedBox(
-                  width: 200,
-                  child: BranchSwitcher(
-                    currentBranch: gitProvider.currentBranch,
-                    branches: gitProvider.branches,
-                    onBranchChanged: (branch) {
-                      if (branch != null) {
-                        gitProvider.switchBranch(branch);
-                      }
-                    },
-                  ),
-                ),
-                const SizedBox(width: 16),
-                const GitActionButtons(),
-                const SizedBox(width: 16),
-              ],
+      return Container(
+        decoration: kDebugLayout
+            ? BoxDecoration(
+                border: Border.all(color: Colors.purple, width: 2),
+                color: Colors.purple.withOpacity(0.1),
+              )
+            : null,
+        child: AppBar(
+          backgroundColor: Theme.of(context).colorScheme.surface,
+          actions: [
+            if (hasProject && isValidGitRepo) ...[              
+              const SizedBox(width: 16),
+              const BranchSwitchButton(),
+              const SizedBox(width: 16),
+              const GitActionButtons(),
+              const SizedBox(width: 16),
+            ] else if (hasProject) ...[              
+              const SizedBox(width: 16),
+              const Text('当前项目不是有效的 Git 仓库'),
+              const SizedBox(width: 16),
             ],
-          ),
-        );
-      },
-    );
+          ],
+        ),
+      );
+    });
   }
 
   @override

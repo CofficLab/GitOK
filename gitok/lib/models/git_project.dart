@@ -1,9 +1,12 @@
+import 'dart:io';
+
 class GitProject {
   final String name;
   final String path;
   final String? description;
   final DateTime lastOpened;
   final bool isFavorite;
+  late final bool isGitRepository;
 
   GitProject({
     required this.name,
@@ -11,7 +14,11 @@ class GitProject {
     this.description,
     required this.lastOpened,
     this.isFavorite = false,
-  });
+  }) {
+    // 检查项目目录下是否存在 .git 文件夹
+    final gitDir = Directory('$path/.git');
+    isGitRepository = gitDir.existsSync();
+  }
 
   Map<String, dynamic> toJson() {
     return {

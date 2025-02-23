@@ -35,11 +35,19 @@ class GitService {
   }
 
   Future<String> getCurrentBranch(String projectPath) async {
-    if (kDebugService) {}
+    try {
+      // 首先检查是否为有效的 Git 仓库
+      final isGitRepo = await isGitRepository(projectPath);
+      if (!isGitRepo) {
+        throw Exception('指定路径不是一个有效的 Git 仓库');
+      }
 
-    final gitDir = await GitDir.fromExisting(projectPath);
-    final result = await gitDir.runCommand(['branch', '--show-current']);
-    return (result.stdout as String).trim();
+      final gitDir = await GitDir.fromExisting(projectPath);
+      final result = await gitDir.runCommand(['branch', '--show-current']);
+      return (result.stdout as String).trim();
+    } catch (e) {
+      throw Exception('获取当前分支失败：$e');
+    }
   }
 
   Future<void> checkout(String repoPath, String branch) async {
