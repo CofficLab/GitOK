@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:gitok/models/commit_info.dart';
 import 'package:gitok/providers/git_provider.dart';
 import 'package:gitok/services/git_service.dart';
-import 'package:gitok/widgets/git/commit_list_item.dart';
+import 'package:gitok/tab_git/commit_list_item.dart';
 
 /// Git提交历史展示组件
 ///

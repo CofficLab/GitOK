@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gitok/widgets/project/project_list.dart';
+import 'package:gitok/tab_project/project_list.dart';
 
 /// GitOK应用程序的左侧项目列表布局组件。
 ///

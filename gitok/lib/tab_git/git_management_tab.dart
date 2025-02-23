@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:gitok/models/git_project.dart';
 import 'package:gitok/services/git_service.dart';
-import 'package:gitok/widgets/git/commit_detail.dart';
+import 'package:gitok/tab_git/commit_detail.dart';
 import 'package:provider/provider.dart';
 import 'package:gitok/providers/git_provider.dart';
-import 'package:gitok/widgets/git/commit_history.dart';
+import 'package:gitok/tab_git/commit_history.dart';
 import 'dart:io';
 
 /// Git提交管理标签页组件

@@ -3,10 +3,10 @@ import 'package:provider/provider.dart';
 import 'package:gitok/providers/git_provider.dart';
 import 'package:gitok/services/git_service.dart';
 import 'package:gitok/models/file_status.dart';
-import 'package:gitok/widgets/git/commit_detail/commit_info_panel.dart';
-import 'package:gitok/widgets/git/commit_detail/changed_files_list.dart';
-import 'package:gitok/widgets/git/commit_form.dart';
-import 'package:gitok/widgets/git/diff_viewer.dart';
+import 'package:gitok/tab_git/commit_detail/commit_info_panel.dart';
+import 'package:gitok/tab_git/commit_detail/changed_files_list.dart';
+import 'package:gitok/tab_git/commit_form.dart';
+import 'package:gitok/tab_git/diff_viewer.dart';
 
 /// Git提交详情展示组件
 ///
@@ -137,7 +137,7 @@ class _CommitDetailState extends State<CommitDetail> {
                       selectedPath: _selectedFilePath,
                       onFileSelected: _handleFileSelected,
                     ),
-                    if (_selectedFilePath != null) ...[                      
+                    if (_selectedFilePath != null) ...[
                       const SizedBox(height: 16),
                       _buildDiffViewer(),
                     ],
@@ -193,7 +193,7 @@ class _CommitDetailState extends State<CommitDetail> {
                   color: Theme.of(context).textTheme.bodySmall?.color,
                 ),
           ),
-          if (widget.isCurrentChanges) ...[            
+          if (widget.isCurrentChanges) ...[
             const SizedBox(height: 24),
             FilledButton.icon(
               onPressed: _loadDetails,

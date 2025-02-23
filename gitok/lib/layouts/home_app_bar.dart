@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:gitok/widgets/buttons/git_action_buttons.dart';
+import 'package:gitok/buttons/git_action_buttons.dart';
 import 'package:provider/provider.dart';
 import 'package:gitok/providers/git_provider.dart';
-import 'package:gitok/widgets/buttons/branch_switch_button.dart';
+import 'package:gitok/buttons/branch_switch_button.dart';
 
 /// GitOK应用程序的顶部应用栏组件。
 ///
@@ -38,10 +38,10 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
           actions: [
             if (hasProject && isValidGitRepo) ...[              
               const SizedBox(width: 16),
-              const BranchSwitchButton(),
               const SizedBox(width: 16),
               const GitActionButtons(),
               const SizedBox(width: 16),
+              const BranchSwitchButton(),
             ] else if (hasProject) ...[              
               const SizedBox(width: 16),
               const Text('当前项目不是有效的 Git 仓库'),

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:gitok/widgets/git/branch_switcher.dart';
 import 'package:provider/provider.dart';
 import 'package:gitok/providers/git_provider.dart';
 
@@ -15,17 +14,23 @@ class BranchSwitchButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final gitProvider = Provider.of<GitProvider>(context);
-    return SizedBox(
-      width: 200,
-      child: BranchSwitcher(
-        currentBranch: gitProvider.currentBranch,
-        branches: gitProvider.branches,
-        onBranchChanged: (branch) {
-          if (branch != null) {
-            gitProvider.switchBranch(branch);
-          }
-        },
-      ),
+    return Row(
+      children: [
+        DropdownButton<String>(
+          value: gitProvider.currentBranch,
+          items: gitProvider.branches.map((branch) {
+            return DropdownMenuItem(
+              value: branch,
+              child: Text(branch),
+            );
+          }).toList(),
+          onChanged: (branch) {
+            if (branch != null) {
+              gitProvider.switchBranch(branch);
+            }
+          },
+        ),
+      ],
     );
   }
 }

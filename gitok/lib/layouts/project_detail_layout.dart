@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:gitok/providers/git_provider.dart';
-import 'package:gitok/widgets/git/git_management_tab.dart';
+import 'package:gitok/tab_git/git_management_tab.dart';
 
 /// GitOK应用程序的右侧项目详情布局组件。
 ///
