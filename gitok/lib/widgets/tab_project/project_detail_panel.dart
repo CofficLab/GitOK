@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:gitok/models/git_project.dart';
-import 'package:gitok/tab_git/git_management_tab.dart';
-import 'package:gitok/tab_icon/icon_editor_tab.dart';
-import 'package:gitok/tab_promo/promo_editor_tab.dart';
-import 'package:gitok/tab_api/api_editor_tab.dart';
+import 'package:gitok/pages/git_page.dart';
+import 'package:gitok/pages/icon_page.dart';
+import 'package:gitok/pages/promo_page.dart';
+import 'package:gitok/pages/api_page.dart';
 
 class ProjectDetailPanel extends StatelessWidget {
   final GitProject? project;
@@ -36,10 +36,10 @@ class ProjectDetailPanel extends StatelessWidget {
           Expanded(
             child: TabBarView(
               children: [
-                GitManagementTab(project: project!),
-                IconEditorTab(project: project!),
-                PromoEditorTab(project: project!),
-                ApiEditorTab(project: project!),
+                GitPage(project: project!),
+                IconPage(project: project!),
+                PromoPage(project: project!),
+                ApiPage(project: project!),
               ],
             ),
           ),

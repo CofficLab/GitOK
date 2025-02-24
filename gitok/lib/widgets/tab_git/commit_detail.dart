@@ -3,10 +3,10 @@ import 'package:provider/provider.dart';
 import 'package:gitok/providers/git_provider.dart';
 import 'package:gitok/services/git_service.dart';
 import 'package:gitok/models/file_status.dart';
-import 'package:gitok/tab_git/commit_detail/commit_info_panel.dart';
-import 'package:gitok/tab_git/commit_detail/changed_files_list.dart';
-import 'package:gitok/tab_git/commit_form.dart';
-import 'package:gitok/tab_git/diff_viewer.dart';
+import 'package:gitok/widgets/tab_git/commit_detail/commit_info_panel.dart';
+import 'package:gitok/widgets/tab_git/commit_detail/changed_files_list.dart';
+import 'package:gitok/widgets/tab_git/commit_form.dart';
+import 'package:gitok/widgets/tab_git/diff_viewer.dart';
 
 /// Git提交详情展示组件
 ///

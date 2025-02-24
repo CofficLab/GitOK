@@ -5,19 +5,19 @@ import 'package:gitok/services/api_service.dart';
 import 'package:gitok/widgets/json_viewer.dart';
 import 'dart:convert';
 
-class ApiEditorTab extends StatefulWidget {
+class ApiPage extends StatefulWidget {
   final GitProject project;
 
-  const ApiEditorTab({
+  const ApiPage({
     super.key,
     required this.project,
   });
 
   @override
-  State<ApiEditorTab> createState() => _ApiEditorTabState();
+  State<ApiPage> createState() => _ApiPageState();
 }
 
-class _ApiEditorTabState extends State<ApiEditorTab> {
+class _ApiPageState extends State<ApiPage> {
   final ApiService _apiService = ApiService();
   List<ApiConfig> _configs = [];
   ApiConfig? _selectedConfig;

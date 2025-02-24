@@ -3,24 +3,24 @@ import 'package:gitok/models/git_project.dart';
 import 'package:gitok/models/promo_config.dart';
 import 'package:gitok/services/promo_service.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:gitok/tab_promo/promo_canvas.dart';
+import 'package:gitok/widgets/tab_promo/promo_canvas.dart';
 import 'package:gitok/widgets/element_properties_panel.dart';
 import 'dart:io';
 import 'package:path/path.dart' as path;
 
-class PromoEditorTab extends StatefulWidget {
+class PromoPage extends StatefulWidget {
   final GitProject project;
 
-  const PromoEditorTab({
+  const PromoPage({
     super.key,
     required this.project,
   });
 
   @override
-  State<PromoEditorTab> createState() => _PromoEditorTabState();
+  State<PromoPage> createState() => _PromoPageState();
 }
 
-class _PromoEditorTabState extends State<PromoEditorTab> {
+class _PromoPageState extends State<PromoPage> {
   final PromoService _promoService = PromoService();
   List<PromoConfig> _configs = [];
   PromoConfig? _selectedConfig;

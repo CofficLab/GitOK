@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gitok/layouts/home_app_bar.dart';
+import 'package:gitok/layouts/app_bar.dart';
 import 'package:gitok/layouts/project_detail_layout.dart';
 import 'package:gitok/layouts/sidebar.dart';
 
@@ -10,30 +10,33 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Row(
-        children: [
-          // 侧边栏
-          Container(
-            width: 250,
-            decoration: BoxDecoration(
-              border: Border(
-                right: BorderSide(
-                  color: Theme.of(context).dividerColor,
-                  width: 1.0,
+    return DefaultTabController(
+      length: 4,
+      child: Scaffold(
+        body: Row(
+          children: [
+            // 侧边栏
+            Container(
+              width: 250,
+              decoration: BoxDecoration(
+                border: Border(
+                  right: BorderSide(
+                    color: Theme.of(context).dividerColor,
+                    width: 1.0,
+                  ),
                 ),
               ),
+              child: const AppDrawer(),
             ),
-            child: const AppDrawer(),
-          ),
-          // 主内容区
-          const Expanded(
-            child: Scaffold(
-              appBar: HomeAppBar(),
-              body: ProjectDetailLayout(),
+            // 主内容区
+            const Expanded(
+              child: Scaffold(
+                appBar: HomeAppBar(),
+                body: ProjectDetailLayout(),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

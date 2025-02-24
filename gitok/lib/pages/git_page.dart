@@ -1,29 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:gitok/models/git_project.dart';
 import 'package:gitok/services/git_service.dart';
-import 'package:gitok/tab_git/commit_detail.dart';
+import 'package:gitok/widgets/tab_git/commit_detail.dart';
 import 'package:provider/provider.dart';
 import 'package:gitok/providers/git_provider.dart';
-import 'package:gitok/tab_git/commit_history.dart';
+import 'package:gitok/widgets/tab_git/commit_history.dart';
 import 'dart:io';
 
 /// Git提交管理标签页组件
-class GitManagementTab extends StatefulWidget {
+class GitPage extends StatefulWidget {
   /// 是否启用调试模式以突出显示布局边界
   static const bool kDebugLayout = false;
 
   final GitProject project;
 
-  const GitManagementTab({
+  const GitPage({
     super.key,
     required this.project,
   });
 
   @override
-  State<GitManagementTab> createState() => _GitManagementTabState();
+  State<GitPage> createState() => _GitPageState();
 }
 
-class _GitManagementTabState extends State<GitManagementTab> {
+class _GitPageState extends State<GitPage> {
   final GitService _gitService = GitService();
   String? _errorMessage;
 

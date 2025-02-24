@@ -4,22 +4,22 @@ import 'package:gitok/models/app_icon_config.dart';
 import 'package:gitok/services/icon_service.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
-import 'package:gitok/tab_icon/icon_preview.dart';
+import 'package:gitok/widgets/tab_icon/icon_preview.dart';
 import 'package:gitok/widgets/preset_icons_picker.dart';
 
-class IconEditorTab extends StatefulWidget {
+class IconPage extends StatefulWidget {
   final GitProject project;
 
-  const IconEditorTab({
+  const IconPage({
     super.key,
     required this.project,
   });
 
   @override
-  State<IconEditorTab> createState() => _IconEditorTabState();
+  State<IconPage> createState() => _IconPageState();
 }
 
-class _IconEditorTabState extends State<IconEditorTab> {
+class _IconPageState extends State<IconPage> {
   final IconService _iconService = IconService();
   List<AppIconConfig> _configs = [];
   AppIconConfig? _selectedConfig;

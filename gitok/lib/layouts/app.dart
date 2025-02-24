@@ -7,6 +7,7 @@ library;
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:gitok/layouts/home_screen.dart';
+import 'package:gitok/providers/app_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:gitok/providers/git_provider.dart';
 import 'package:gitok/theme/macos_theme.dart';
@@ -19,8 +20,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => GitProvider(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => GitProvider()),
+        ChangeNotifierProvider(create: (_) => AppProvider()),
+      ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: MacOSTheme.lightTheme,

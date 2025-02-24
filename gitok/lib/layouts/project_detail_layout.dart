@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:gitok/providers/git_provider.dart';
-import 'package:gitok/tab_git/git_management_tab.dart';
+import 'package:gitok/providers/app_provider.dart';
+import 'package:gitok/pages/git_page.dart';
+import 'package:gitok/pages/icon_page.dart';
+import 'package:gitok/pages/promo_page.dart';
+import 'package:gitok/pages/api_page.dart';
 
 /// GitOK应用程序的右侧项目详情布局组件。
 ///
@@ -34,7 +38,18 @@ class ProjectDetailLayout extends StatelessWidget {
         // - 已选中项目：显示Git管理标签页
         child: gitProvider.currentProject == null
             ? const Center(child: Text('请选择一个项目'))
-            : GitManagementTab(project: gitProvider.currentProject!),
+            : Consumer<AppProvider>(
+                builder: (context, appProvider, _) {
+                  final currentTabIndex = appProvider.currentTabIndex;
+                  return switch (currentTabIndex) {
+                    0 => GitPage(project: gitProvider.currentProject!),
+                    1 => IconPage(project: gitProvider.currentProject!),
+                    2 => PromoPage(project: gitProvider.currentProject!),
+                    3 => ApiPage(project: gitProvider.currentProject!),
+                    _ => const Center(child: Text('未知的标签页')),
+                  };
+                },
+              ),
       ),
     );
   }
