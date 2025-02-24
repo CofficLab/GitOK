@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gitok/layouts/project_list_layout.dart';
+import 'package:gitok/widgets/project/project_list.dart';
 import 'package:gitok/buttons/add_project_button.dart';
 
 class AppDrawer extends StatelessWidget {
@@ -45,7 +45,7 @@ class AppDrawer extends StatelessWidget {
             ),
           ),
           const Expanded(
-            child: ProjectListLayout(),
+            child: ProjectList(),
           ),
           const Divider(),
           ListTile(

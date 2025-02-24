@@ -13,7 +13,7 @@ import 'package:provider/provider.dart';
 import 'package:gitok/models/git_project.dart';
 import 'package:gitok/services/project_storage_service.dart';
 import 'package:gitok/providers/git_provider.dart';
-import 'package:gitok/widgets/tab_project/project_item.dart';
+import 'package:gitok/widgets/project/project_item.dart';
 
 /// 项目列表组件
 class ProjectList extends StatefulWidget {

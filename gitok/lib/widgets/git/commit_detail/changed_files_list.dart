@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gitok/models/file_status.dart';
-import 'package:gitok/widgets/tab_git/commit_detail/changed_file_item.dart';
+import 'package:gitok/widgets/git/commit_detail/changed_file_item.dart';
 
 /// 变更文件列表组件
 class ChangedFilesList extends StatelessWidget {
