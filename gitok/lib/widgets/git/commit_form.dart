@@ -138,6 +138,56 @@ class _CommitFormState extends State<CommitForm> {
                 }
               },
             ),
+            const SizedBox(width: 8),
+            FilledButton.icon(
+              icon: const Icon(Icons.cloud_upload),
+              label: const Text('提交并推送'),
+              onPressed: () async {
+                try {
+                  final gitProvider = context.read<GitProvider>();
+                  await gitProvider.commit(_controller.text);
+                  await gitProvider.push();
+                  _controller.clear();
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('提交并推送成功 🚀'), backgroundColor: Colors.green),
+                    );
+                  }
+                } catch (e) {
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('提交并推送失败: $e'), backgroundColor: Colors.red),
+                    );
+                  }
+                }
+              },
+            ),
+            const SizedBox(width: 8),
+            FilledButton.icon(
+              icon: const Icon(Icons.flash_on),
+              label: const Text('快速提交'),
+              onPressed: () async {
+                try {
+                  final gitProvider = context.read<GitProvider>();
+                  // 随机选择一个预设的提交信息
+                  final messages = _presetMessages.values.toList();
+                  final randomMessage = messages[DateTime.now().millisecondsSinceEpoch % messages.length];
+                  await gitProvider.commit(randomMessage);
+                  await gitProvider.push();
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('快速提交并推送成功 ⚡'), backgroundColor: Colors.green),
+                    );
+                  }
+                } catch (e) {
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('快速提交并推送失败: $e'), backgroundColor: Colors.red),
+                    );
+                  }
+                }
+              },
+            ),
           ],
         ),
         const SizedBox(height: 16),

@@ -20,7 +20,13 @@ class ChangedFilesList extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('变更文件:', style: Theme.of(context).textTheme.titleMedium),
+        Row(
+          children: [
+            Text('变更文件:', style: Theme.of(context).textTheme.titleMedium),
+            const SizedBox(width: 8),
+            Text('(${files.length})', style: Theme.of(context).textTheme.titleMedium),
+          ],
+        ),
         const SizedBox(height: 8),
         Container(
           padding: const EdgeInsets.all(8),
