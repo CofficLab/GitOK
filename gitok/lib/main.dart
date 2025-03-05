@@ -26,6 +26,7 @@ void main() async {
     size: Size(800, 600),
     center: true,
     title: "GitOk",
+    alwaysOnTop: false,
   );
 
   await windowManager.waitUntilReadyToShow(windowOptions, () async {
@@ -42,8 +43,6 @@ void main() async {
     WindowManipulator.makeTitlebarTransparent();
     WindowManipulator.enableFullSizeContentView();
     WindowManipulator.hideTitle();
-    // WindowManipulator.makeTitlebarOpaque();
-    // WindowManipulator.makeTitlebarTransparent();
   }
 
   // 初始化托盘管理器
