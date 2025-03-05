@@ -24,9 +24,28 @@ class MainFlutterWindow: NSPanel {
     self.styleMask = [.nonactivatingPanel, .titled, .resizable]
     self.isFloatingPanel = true
     self.level = .modalPanel
+    
+    // 设置窗口视觉效果
+    self.backgroundColor = .clear
+    self.isOpaque = false
+    self.hasShadow = true
+    
+    // 添加毛玻璃效果
+    if let visualEffect = self.contentView as? NSVisualEffectView {
+      visualEffect.material = .hudWindow  // 使用 HUD 风格材质
+      visualEffect.blendingMode = .behindWindow
+      visualEffect.state = .active
+    } else {
+      let visualEffect = NSVisualEffectView(frame: self.contentView?.bounds ?? .zero)
+      visualEffect.material = .hudWindow
+      visualEffect.blendingMode = .behindWindow
+      visualEffect.state = .active
+      self.contentView?.addSubview(visualEffect, positioned: .below, relativeTo: nil)
+      visualEffect.autoresizingMask = [.width, .height]
+    }
+    
     self.collectionBehavior = [.fullScreenAuxiliary, .stationary]
     self.isMovableByWindowBackground = true
-    self.backgroundColor = .clear
 
     RegisterGeneratedPlugins(registry: flutterViewController)
     super.awakeFromNib()

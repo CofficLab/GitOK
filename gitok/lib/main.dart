@@ -23,7 +23,7 @@ void main() async {
 
   // 设置窗口选项
   WindowOptions windowOptions = const WindowOptions(
-    size: Size(800, 600),
+    size: Size(1200, 600),
     center: true,
     title: "GitOk",
     alwaysOnTop: false,

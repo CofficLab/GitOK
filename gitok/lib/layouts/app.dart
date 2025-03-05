@@ -30,8 +30,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> with WindowListener, TrayListener {
-  DateTime? _lastCommandKeyPress;
-
   @override
   void initState() {
     super.initState();
@@ -123,11 +121,23 @@ class _MyAppState extends State<MyApp> with WindowListener, TrayListener {
         ChangeNotifierProvider(create: (_) => AppProvider()),
       ],
       child: MaterialApp(
-        builder: BotToastInit(),
+        builder: (context, child) {
+          child = BotToastInit()(context, child);
+          return Container(
+            color: Colors.transparent, // 设置透明背景
+            child: child,
+          );
+        },
         navigatorObservers: [BotToastNavigatorObserver()],
         debugShowCheckedModeBanner: false,
-        theme: MacOSTheme.lightTheme,
-        darkTheme: MacOSTheme.darkTheme,
+        theme: MacOSTheme.lightTheme.copyWith(
+          scaffoldBackgroundColor: Colors.transparent, // 设置脚手架背景透明
+          canvasColor: Colors.transparent, // 设置画布背景透明
+        ),
+        darkTheme: MacOSTheme.darkTheme.copyWith(
+          scaffoldBackgroundColor: Colors.transparent,
+          canvasColor: Colors.transparent,
+        ),
         initialRoute: '/',
         routes: {
           '/': (context) => const WelcomePage(),
