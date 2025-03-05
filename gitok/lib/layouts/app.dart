@@ -16,6 +16,7 @@ import 'package:gitok/providers/git_provider.dart';
 import 'package:gitok/theme/macos_theme.dart';
 import 'package:hotkey_manager/hotkey_manager.dart';
 import 'package:window_manager/window_manager.dart';
+import 'package:gitok/pages/welcome_page.dart';
 
 /// 应用程序的根组件
 ///
@@ -28,6 +29,8 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> with WindowListener {
+  DateTime? _lastCommandKeyPress;
+
   @override
   void initState() {
     super.initState();
@@ -44,8 +47,8 @@ class _MyAppState extends State<MyApp> with WindowListener {
   /// 设置全局热键，用于将应用从后台唤醒到前台
   Future<void> _setupGlobalHotkey() async {
     final hotKey = HotKey(
-      key: LogicalKeyboardKey.space,
-      modifiers: [HotKeyModifier.alt],
+      key: LogicalKeyboardKey.digit1, // 使用数字键 1
+      modifiers: [HotKeyModifier.alt], // 配合 Alt 键使用
       scope: HotKeyScope.system,
     );
 
@@ -57,7 +60,7 @@ class _MyAppState extends State<MyApp> with WindowListener {
         },
       );
 
-      BotToast.showText(text: '已注册全局热键 Alt+Space 用于将应用带到前台');
+      BotToast.showText(text: '已注册全局热键：Alt + 1 可将应用带到前台');
     } catch (e) {
       BotToast.showText(text: '注册全局热键失败: $e');
     }
@@ -90,6 +93,11 @@ class _MyAppState extends State<MyApp> with WindowListener {
         debugShowCheckedModeBanner: false,
         theme: MacOSTheme.lightTheme,
         darkTheme: MacOSTheme.darkTheme,
+        initialRoute: '/',
+        routes: {
+          '/': (context) => const WelcomePage(),
+          '/home': (context) => const HomeScreen(),
+        },
         scrollBehavior: const MaterialScrollBehavior().copyWith(
           scrollbars: true, // 始终显示滚动条
           dragDevices: {
@@ -98,7 +106,6 @@ class _MyAppState extends State<MyApp> with WindowListener {
             PointerDeviceKind.touch,
           },
         ),
-        home: const HomeScreen(),
       ),
     );
   }
