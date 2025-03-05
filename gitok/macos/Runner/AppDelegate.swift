@@ -16,9 +16,9 @@ class AppDelegate: FlutterAppDelegate {
       window.level = .popUpMenu
       window.styleMask = [.nonactivatingPanel]
       window.collectionBehavior = [.moveToActiveSpace]
-      window.hasShadow = true
-      window.isOpaque = false
-      window.backgroundColor = .clear
+      // window.hasShadow = true
+      // window.isOpaque = false
+      // window.backgroundColor = .clear
       
       // 激活应用但不改变当前焦点窗口
       NSApp.activate(ignoringOtherApps: true)
