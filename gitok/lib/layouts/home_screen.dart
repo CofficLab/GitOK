@@ -41,22 +41,32 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          // 搜索框
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: SearchBox(
-              controller: _searchController,
-              onChanged: _handleSearch,
-              onHome: () => setState(() => _selectedFeature = null),
+      backgroundColor: Colors.transparent,
+      body: Container(
+        margin: const EdgeInsets.all(0),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: Column(
+          children: [
+            const SizedBox(height: 8),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: SearchBox(
+                controller: _searchController,
+                onChanged: _handleSearch,
+                onHome: () => setState(() => _selectedFeature = null),
+              ),
             ),
-          ),
-          // 功能列表或选中的功能界面
-          Expanded(
-            child: _selectedFeature ?? _buildFeatureList(),
-          ),
-        ],
+            Expanded(
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: _selectedFeature ?? _buildFeatureList(),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

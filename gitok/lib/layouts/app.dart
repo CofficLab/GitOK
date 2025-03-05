@@ -121,13 +121,7 @@ class _MyAppState extends State<MyApp> with WindowListener, TrayListener {
         ChangeNotifierProvider(create: (_) => AppProvider()),
       ],
       child: MaterialApp(
-        builder: (context, child) {
-          child = BotToastInit()(context, child);
-          return Container(
-            color: Colors.transparent, // 设置透明背景
-            child: child,
-          );
-        },
+        builder: BotToastInit(),
         navigatorObservers: [BotToastNavigatorObserver()],
         debugShowCheckedModeBanner: false,
         theme: MacOSTheme.lightTheme.copyWith(
