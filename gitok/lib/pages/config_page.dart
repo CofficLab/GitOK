@@ -7,7 +7,6 @@ library;
 
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gitok/widgets/recorder.dart';
@@ -39,6 +38,7 @@ class ConfigPage extends StatefulWidget {
 class _ConfigPageState extends State<ConfigPage> with WindowListener {
   // 修改为单个热键而不是列表
   HotKey? _currentHotKey;
+  DateTime? _lastCommandKeyPress;
 
   @override
   void initState() {
@@ -127,6 +127,39 @@ class _ConfigPageState extends State<ConfigPage> with WindowListener {
             ),
           ],
         ),
+        PreferenceListSection(
+          title: const Text('快捷键预设'),
+          children: [
+            PreferenceListItem(
+              title: const Text('Alt + 1'),
+              onTap: () => _setupHotkey(HotKey(
+                key: LogicalKeyboardKey.digit1,
+                modifiers: [HotKeyModifier.alt],
+                scope: HotKeyScope.system,
+              )),
+            ),
+            PreferenceListItem(
+              title: const Text('Ctrl + Space'),
+              onTap: () => _setupHotkey(HotKey(
+                key: LogicalKeyboardKey.space,
+                modifiers: [HotKeyModifier.control],
+                scope: HotKeyScope.system,
+              )),
+            ),
+            PreferenceListItem(
+              title: const Text('⌘ + G'),
+              onTap: () => _setupHotkey(HotKey(
+                key: LogicalKeyboardKey.keyG,
+                modifiers: [HotKeyModifier.meta],
+                scope: HotKeyScope.system,
+              )),
+            ),
+            PreferenceListItem(
+              title: const Text('双击 ⌘'),
+              onTap: _setupDoubleCommandHotkey,
+            ),
+          ],
+        ),
       ],
     );
   }
@@ -162,6 +195,62 @@ class _ConfigPageState extends State<ConfigPage> with WindowListener {
         );
       },
     );
+  }
+
+  Future<void> _setupHotkey(HotKey hotKey) async {
+    try {
+      if (_currentHotKey != null) {
+        await hotKeyManager.unregister(_currentHotKey!);
+      }
+      await hotKeyManager.register(
+        hotKey,
+        keyDownHandler: (hotKey) async {
+          await windowManager.show();
+          await windowManager.focus();
+        },
+      );
+      setState(() => _currentHotKey = hotKey);
+      BotToast.showText(text: '快捷键设置成功！🎉');
+    } catch (e) {
+      BotToast.showText(text: '设置失败：$e 😅');
+    }
+  }
+
+  Future<void> _setupDoubleCommandHotkey() async {
+    try {
+      if (_currentHotKey != null) {
+        await hotKeyManager.unregister(_currentHotKey!);
+      }
+      final hotKey = HotKey(
+        key: LogicalKeyboardKey.metaLeft,
+        modifiers: [], // 明确设置为空数组
+        scope: HotKeyScope.system,
+      );
+
+      // 先注册热键
+      await hotKeyManager.register(
+        hotKey,
+        keyDownHandler: (hotKey) {
+          final now = DateTime.now();
+          if (_lastCommandKeyPress != null &&
+              now.difference(_lastCommandKeyPress!) <= const Duration(milliseconds: 500)) {
+            // 使用 Future.microtask 来避免在回调中直接调用异步方法
+            Future.microtask(() async {
+              await windowManager.show();
+              await windowManager.focus();
+            });
+            _lastCommandKeyPress = null;
+          } else {
+            _lastCommandKeyPress = now;
+          }
+        },
+      );
+
+      setState(() => _currentHotKey = hotKey);
+      BotToast.showText(text: '双击 Command 快捷键设置成功！✨');
+    } catch (e) {
+      BotToast.showText(text: '设置失败：$e 😅');
+    }
   }
 
   Widget _build(BuildContext context) {

@@ -8,7 +8,6 @@
 /// - 开始使用按钮
 
 import 'package:flutter/material.dart';
-import 'package:gitok/widgets/hotkey_setting.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:gitok/pages/config_page.dart';
 
