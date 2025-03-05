@@ -3,6 +3,7 @@ import 'package:gitok/layouts/search_box.dart';
 import 'package:gitok/features/git_feature.dart';
 import 'package:gitok/features/config_feature.dart';
 import 'package:gitok/features/welcome_feature.dart';
+import 'package:window_manager/window_manager.dart';
 
 /// GitOK应用程序的主屏幕。
 /// 提供一个搜索式界面，用户可以通过搜索快速访问不同功能。
@@ -50,13 +51,20 @@ class _HomeScreenState extends State<HomeScreen> {
         clipBehavior: Clip.antiAlias,
         child: Column(
           children: [
-            const SizedBox(height: 8),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: SearchBox(
-                controller: _searchController,
-                onChanged: _handleSearch,
-                onHome: () => setState(() => _selectedFeature = null),
+            // 将整个顶部区域包装为可拖动区域
+            DragToMoveArea(
+              child: Column(
+                children: [
+                  const SizedBox(height: 8),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: SearchBox(
+                      controller: _searchController,
+                      onChanged: _handleSearch,
+                      onHome: () => setState(() => _selectedFeature = null),
+                    ),
+                  ),
+                ],
               ),
             ),
             Expanded(

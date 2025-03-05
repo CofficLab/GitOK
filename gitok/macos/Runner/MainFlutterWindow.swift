@@ -20,8 +20,8 @@ class MainFlutterWindow: NSPanel {
     self.contentViewController = flutterViewController
     self.setFrame(windowFrame, display: true)
     
-    // 设置面板样式
-    self.styleMask = [.nonactivatingPanel, .titled, .resizable]
+    // 设置面板样式 - 确保包含了正确的标志
+    self.styleMask = [.nonactivatingPanel, .titled, .resizable, .fullSizeContentView]
     self.isFloatingPanel = true
     self.level = .modalPanel
     
@@ -44,7 +44,8 @@ class MainFlutterWindow: NSPanel {
       visualEffect.autoresizingMask = [.width, .height]
     }
     
-    self.collectionBehavior = [.fullScreenAuxiliary, .stationary]
+    // 确保这些设置正确
+    self.collectionBehavior = [.fullScreenAuxiliary, .moveToActiveSpace]
     self.isMovableByWindowBackground = true
 
     RegisterGeneratedPlugins(registry: flutterViewController)
