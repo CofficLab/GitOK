@@ -35,7 +35,7 @@ class SearchBox extends StatelessWidget {
           borderRadius: BorderRadius.circular(10),
         ),
         filled: true,
-        fillColor: Theme.of(context).cardColor,
+        // fillColor: Theme.of(context).cardColor,
       ),
     );
   }
