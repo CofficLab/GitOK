@@ -38,13 +38,33 @@ class _MyAppState extends State<MyApp> with WindowListener, TrayListener {
     windowManager.addListener(this);
     trayManager.addListener(this);
     _setupGlobalHotkey();
+    _setupKeyboardListener();
+  }
+
+  void _setupKeyboardListener() {
+    RawKeyboard.instance.addListener((RawKeyEvent event) {
+      if (event is RawKeyDownEvent) {
+        if (event.logicalKey == LogicalKeyboardKey.escape) {
+          windowManager.hide();
+        }
+      }
+    });
   }
 
   @override
   void dispose() {
+    RawKeyboard.instance.removeListener(_onKey);
     windowManager.removeListener(this);
     trayManager.removeListener(this);
     super.dispose();
+  }
+
+  void _onKey(RawKeyEvent event) {
+    if (event is RawKeyDownEvent) {
+      if (event.logicalKey == LogicalKeyboardKey.escape) {
+        windowManager.hide();
+      }
+    }
   }
 
   /// 设置全局热键，用于将应用从后台唤醒到前台
