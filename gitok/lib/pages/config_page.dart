@@ -30,52 +30,11 @@ class _ConfigPageState extends State<ConfigPage> with WindowListener {
   @override
   void initState() {
     super.initState();
-    windowManager.addListener(this);
-    _setupGlobalHotkey();
   }
 
   @override
   void dispose() {
-    windowManager.removeListener(this);
     super.dispose();
-  }
-
-  Future<void> _setupGlobalHotkey() async {
-    final hotKey = HotKey(
-      key: LogicalKeyboardKey.space,
-      modifiers: [HotKeyModifier.alt],
-      scope: HotKeyScope.system,
-    );
-
-    try {
-      await hotKeyManager.register(
-        hotKey,
-        keyDownHandler: (hotKey) async {
-          await _bringToFront();
-        },
-      );
-
-      setState(() {
-        _registeredHotKeyList = hotKeyManager.registeredHotKeyList;
-      });
-
-      BotToast.showText(text: '已注册全局热键 Alt+Space 用于将应用带到前台');
-    } catch (e) {
-      BotToast.showText(text: '注册全局热键失败: $e');
-    }
-  }
-
-  Future<void> _bringToFront() async {
-    try {
-      await windowManager.show();
-      await windowManager.focus();
-
-      BotToast.showText(text: '应用已成功回到前台');
-    } catch (e) {
-      if (kDebugMode) {
-        print('将窗口带到前台失败: $e');
-      }
-    }
   }
 
   void _keyDownHandler(HotKey hotKey) {
@@ -194,31 +153,6 @@ class _ConfigPageState extends State<ConfigPage> with WindowListener {
                 _registeredHotKeyList = hotKeyManager.registeredHotKeyList;
                 setState(() {});
               },
-            ),
-          ],
-        ),
-        PreferenceListSection(
-          title: const Text('窗口控制'),
-          children: [
-            PreferenceListItem(
-              title: Text(
-                '将应用带到前台',
-                style: TextStyle(
-                  color: Theme.of(context).primaryColor,
-                ),
-              ),
-              accessoryView: Container(),
-              onTap: _bringToFront,
-            ),
-            PreferenceListItem(
-              title: const Text(
-                '全局热键: Alt+Space',
-                style: TextStyle(
-                  color: Colors.grey,
-                  fontSize: 14,
-                ),
-              ),
-              accessoryView: Container(),
             ),
           ],
         ),
