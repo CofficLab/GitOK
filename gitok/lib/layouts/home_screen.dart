@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:gitok/layouts/search_box.dart';
-import 'package:gitok/pages/config_page.dart';
-import 'package:gitok/pages/welcome_page.dart';
+import 'package:gitok/features/git_feature.dart';
+import 'package:gitok/features/config_feature.dart';
+import 'package:gitok/features/welcome_feature.dart';
 
 /// GitOK应用程序的主屏幕。
 /// 提供一个搜索式界面，用户可以通过搜索快速访问不同功能。
@@ -17,8 +18,9 @@ class _HomeScreenState extends State<HomeScreen> {
   final _searchController = TextEditingController();
 
   final _features = {
-    '设置': const ConfigPage(isEmbedded: true),
-    '欢迎': const WelcomePage(),
+    'Git管理': const GitFeature(),
+    '设置': const ConfigFeature(),
+    '欢迎': const WelcomeFeature(),
     // 在这里添加更多功能
   };
 
@@ -65,10 +67,19 @@ class _HomeScreenState extends State<HomeScreen> {
       itemBuilder: (context, index) {
         final entry = _features.entries.elementAt(index);
         return ListTile(
+          leading: Icon(_getFeatureIcon(entry.key)),
           title: Text(entry.key),
           onTap: () => setState(() => _selectedFeature = entry.value),
         );
       },
     );
+  }
+
+  IconData _getFeatureIcon(String feature) {
+    return switch (feature) {
+      'Git管理' => Icons.source_rounded,
+      '设置' => Icons.settings_rounded,
+      _ => Icons.extension_rounded,
+    };
   }
 }

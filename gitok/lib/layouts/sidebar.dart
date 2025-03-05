@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:gitok/pages/config_page.dart';
 import 'package:gitok/widgets/project/project_list.dart';
 import 'package:gitok/buttons/add_project_button.dart';
 
@@ -47,21 +46,6 @@ class AppDrawer extends StatelessWidget {
           ),
           const Expanded(
             child: ProjectList(),
-          ),
-          const Divider(),
-          ListTile(
-            leading: const Icon(Icons.settings),
-            title: const Text('设置'),
-            onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => const ConfigPage()));
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.info),
-            title: const Text('关于'),
-            onTap: () {
-              // 处理关于点击
-            },
           ),
         ],
       ),
