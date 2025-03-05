@@ -27,6 +27,7 @@ dependencies:
   preference_list: ^0.0.2
   flutter_foreground_task: ^8.17.0
   window_manager: ^0.4.3
+  tray_manager: ^0.3.2
 
 dev_dependencies:
   flutter_test:

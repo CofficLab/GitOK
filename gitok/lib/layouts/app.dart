@@ -17,6 +17,7 @@ import 'package:gitok/theme/macos_theme.dart';
 import 'package:hotkey_manager/hotkey_manager.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:gitok/pages/welcome_page.dart';
+import 'package:tray_manager/tray_manager.dart';
 
 /// 应用程序的根组件
 ///
@@ -28,19 +29,21 @@ class MyApp extends StatefulWidget {
   State<MyApp> createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp> with WindowListener {
+class _MyAppState extends State<MyApp> with WindowListener, TrayListener {
   DateTime? _lastCommandKeyPress;
 
   @override
   void initState() {
     super.initState();
     windowManager.addListener(this);
+    trayManager.addListener(this);
     _setupGlobalHotkey();
   }
 
   @override
   void dispose() {
     windowManager.removeListener(this);
+    trayManager.removeListener(this);
     super.dispose();
   }
 
@@ -78,6 +81,18 @@ class _MyAppState extends State<MyApp> with WindowListener {
         print('将窗口带到前台失败: $e');
       }
     }
+  }
+
+  // 处理托盘图标双击事件
+  @override
+  void onTrayDoubleClick() {
+    _bringToFront();
+  }
+
+  // 当窗口关闭时，隐藏而不是退出
+  @override
+  void onWindowClose() {
+    windowManager.hide();
   }
 
   @override

@@ -5,6 +5,7 @@ import 'package:hotkey_manager/hotkey_manager.dart';
 import 'package:macos_window_utils/macos_window_utils.dart';
 import 'package:gitok/layouts/app.dart';
 import 'package:window_manager/window_manager.dart';
+import 'package:tray_manager/tray_manager.dart';
 
 /// GitOK - Git仓库管理工具
 ///
@@ -43,8 +44,36 @@ void main() async {
     WindowManipulator.hideTitle();
     // WindowManipulator.makeTitlebarOpaque();
     // WindowManipulator.makeTitlebarTransparent();
-    runApp(const MyApp());
-  } else {
-    runApp(const MyApp());
   }
+
+  // 初始化托盘管理器
+  await trayManager.setIcon(
+    Platform.isMacOS
+        ? 'assets/app_icon.png' // macOS 图标路径
+        : 'assets/app_icon_win.png', // Windows 图标路径
+  );
+
+  // 配置托盘菜单
+  await trayManager.setContextMenu(
+    Menu(
+      items: [
+        MenuItem(
+          label: '打开 GitOK',
+          onClick: (menuItem) async {
+            await windowManager.show();
+            await windowManager.focus();
+          },
+        ),
+        MenuItem.separator(),
+        MenuItem(
+          label: '退出',
+          onClick: (menuItem) async {
+            await windowManager.close();
+          },
+        ),
+      ],
+    ),
+  );
+
+  runApp(const MyApp());
 }
