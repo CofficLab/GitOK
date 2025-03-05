@@ -1,8 +1,10 @@
 import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:hotkey_manager/hotkey_manager.dart';
 import 'package:macos_window_utils/macos_window_utils.dart';
 import 'package:gitok/layouts/app.dart';
+import 'package:window_manager/window_manager.dart';
 
 /// GitOK - Git仓库管理工具
 ///
@@ -14,6 +16,24 @@ import 'package:gitok/layouts/app.dart';
 /// - 其他平台的朋友走普通通道 🎉
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // 初始化window_manager
+  await windowManager.ensureInitialized();
+
+  // 设置窗口选项
+  WindowOptions windowOptions = const WindowOptions(
+    size: Size(800, 600),
+    center: true,
+    title: "GitOk",
+  );
+
+  await windowManager.waitUntilReadyToShow(windowOptions, () async {
+    await windowManager.show();
+    await windowManager.focus();
+  });
+
+  // 对于热重载，`unregisterAll()` 需要被调用。
+  await hotKeyManager.unregisterAll();
 
   // 如果是 macOS 平台，我们需要特殊照顾一下它的窗口 ✨
   if (Platform.isMacOS) {

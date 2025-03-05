@@ -4,6 +4,7 @@
 /// 包括主题、路由、依赖注入等全局配置。
 library;
 
+import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:gitok/layouts/home_screen.dart';
@@ -26,6 +27,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => AppProvider()),
       ],
       child: MaterialApp(
+        builder: BotToastInit(),
+        navigatorObservers: [BotToastNavigatorObserver()],
         debugShowCheckedModeBanner: false,
         theme: MacOSTheme.lightTheme,
         darkTheme: MacOSTheme.darkTheme,
