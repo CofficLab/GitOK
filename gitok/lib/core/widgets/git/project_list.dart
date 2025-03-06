@@ -13,7 +13,7 @@ import 'package:provider/provider.dart';
 import 'package:gitok/plugins/git/git_project.dart';
 import 'package:gitok/core/services/project_storage_service.dart';
 import 'package:gitok/plugins/git/git_provider.dart';
-import 'package:gitok/core/widgets/project/project_item.dart';
+import 'package:gitok/core/widgets/git/project_item.dart';
 
 /// 项目列表组件
 class ProjectList extends StatefulWidget {
@@ -77,23 +77,6 @@ class ProjectListState extends State<ProjectList> {
       return project.name.toLowerCase().contains(_searchQuery.toLowerCase()) ||
           project.path.toLowerCase().contains(_searchQuery.toLowerCase());
     }).toList();
-  }
-
-  /// 构建项目列表界面
-  ///
-  /// 界面包含以下部分：
-  /// - 顶部搜索栏：用于过滤项目
-  /// - 项目列表：
-  ///   * 显示项目名称和路径
-  ///   * 收藏按钮：可以标记/取消标记收藏
-  ///   * 移除按钮：可以从列表中移除项目
-  ///   * 点击项目可以选中并触发回调
-  /// - 如果没有项目，显示提示信息
-  @override
-  void dispose() {
-    // 移除监听器
-    context.read<GitProvider>().removeListener(_onGitProviderChanged);
-    super.dispose();
   }
 
   /// 当 GitProvider 发生变化时刷新项目列表

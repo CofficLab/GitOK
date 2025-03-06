@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gitok/core/widgets/project/project_list.dart';
+import 'package:gitok/core/widgets/git/project_list.dart';
 import 'package:gitok/plugins/git/buttons/add_project_button.dart';
 
 class AppDrawer extends StatelessWidget {
