@@ -1,0 +1,16 @@
+---
+description: 当你需要了解项目的目录结构时
+globs: *
+---
+- 如果这个规则被应用，则在输出中较靠前的位置说明：🍋 我注意到了项目的文件命名规范
+
+项目的目录结构是：
+
+lib/
+├── exceptions/                # 异常类
+├── models/                   # 数据模型
+├── providers/               # 状态管理
+├── services/               # 服务层
+├── utils/                  # 工具类
+├── widgets/                # UI组件
+└── main.dart
