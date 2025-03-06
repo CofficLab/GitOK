@@ -126,19 +126,25 @@ jobs:
       - name: Build macOS App
         run: |
           flutter config --enable-macos-desktop
-          flutter build macos --release --no-codesign
+          # 首先生成 Xcode 项目文件
+          flutter build macos --debug || true
+          # 使用 xcodebuild 进行构建，明确指定签名设置
+          cd macos
+          xcodebuild -scheme Runner -configuration Release \
+            CODE_SIGN_STYLE=Manual \
+            BUILD_DIR=build
       - name: find identity
         run: |
           i=$(security find-identity -v -p codesigning | grep '^[[:space:]]*1)' | awk -F'[(|)]' '{print $3}')
           echo "Identity=$i" >> $GITHUB_ENV
       - name: Codesign
-        run: codesign --force -s ${{ env.Identity }} --option=runtime build/macos/Build/Products/Release/*.app
+        run: codesign --force -s ${{ env.Identity }} --option=runtime build/Release/*.app
       - name: Codesign Check
-        run: codesign -dv build/macos/Build/Products/Release/*.app
+        run: codesign -dv build/Release/*.app
       - name: Create DMG
         run: |
           npm i -g create-dmg
-          create-dmg "build/macos/Build/Products/Release/*.app"
+          create-dmg "build/Release/*.app"
       - name: Notary
         continue-on-error: true
         run: |
