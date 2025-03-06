@@ -173,8 +173,34 @@ jobs:
 
       - name: Create DMG
         run: |
+          # 安装 create-dmg
           npm i -g create-dmg
-          create-dmg "build/macos/Build/Products/Release/*.app"
+
+          # 检查目录内容
+          echo "Checking build directory contents:"
+          ls -la build/macos/Build/Products/Release/
+
+          # 获取应用程序名称
+          APP_NAME=$(ls build/macos/Build/Products/Release/ | grep '\.app$' | head -n 1)
+          if [ -z "$APP_NAME" ]; then
+            echo "Error: No .app file found in the release directory"
+            exit 1
+          fi
+          echo "Found app: $APP_NAME"
+
+          # 检查文件是否存在
+          if [ ! -d "build/macos/Build/Products/Release/$APP_NAME" ]; then
+            echo "Error: $APP_NAME directory not found"
+            exit 1
+          fi
+
+          # 创建 DMG
+          create-dmg "build/macos/Build/Products/Release/$APP_NAME"
+
+          # 重命名 DMG 文件（移除空格）
+          for file in *.dmg; do
+            mv "$file" "${file// /-}"
+          done
 
       - name: Notary
         continue-on-error: true
