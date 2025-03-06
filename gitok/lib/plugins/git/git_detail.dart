@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:gitok/plugins/git/git_bar.dart';
 import 'package:provider/provider.dart';
 import 'package:gitok/plugins/git/git_provider.dart';
-import 'package:gitok/plugins/git/commit_history.dart';
-import 'package:gitok/plugins/git/commit_detail.dart';
+import 'package:gitok/plugins/git/commit/commit_history.dart';
+import 'package:gitok/plugins/git/commit/commit_detail.dart';
 import 'dart:io';
 import 'package:gitok/plugins/git/git_service.dart';
 

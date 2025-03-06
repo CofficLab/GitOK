@@ -139,7 +139,8 @@ class GitProvider extends ChangeNotifier {
         _commits = newCommits;
         notifyListeners();
       }
-    } catch (e) {
+    } catch (e, stackTrace) {
+      debugPrint('加载Git提交历史失败: $e\n$stackTrace');
       if (_commits.isNotEmpty) {
         _commits = [];
         notifyListeners();

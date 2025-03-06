@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:gitok/plugins/git/models/commit_info.dart';
 import 'package:gitok/plugins/git/git_provider.dart';
-import 'package:gitok/plugins/git/commit_list_item.dart';
+import 'package:gitok/plugins/git/commit/commit_list_item.dart';
 
 /// Git提交历史展示组件
 ///
@@ -20,14 +20,21 @@ class CommitHistory extends StatefulWidget {
 
 class _CommitHistoryState extends State<CommitHistory> {
   bool _isLoading = false;
+  String? _error; // 添加错误状态
 
   Future<void> _loadCommits() async {
     final project = context.read<GitProvider>().currentProject;
     if (project == null) return;
 
-    setState(() => _isLoading = true);
+    setState(() {
+      _isLoading = true;
+      _error = null; // 重置错误状态
+    });
+
     try {
       await context.read<GitProvider>().loadCommits();
+    } catch (e) {
+      setState(() => _error = '加载提交历史失败：$e');
     } finally {
       setState(() => _isLoading = false);
     }
@@ -53,6 +60,23 @@ class _CommitHistoryState extends State<CommitHistory> {
   Widget build(BuildContext context) {
     if (_isLoading) {
       return const Center(child: CircularProgressIndicator());
+    }
+
+    if (_error != null) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(_error!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+            const SizedBox(height: 16),
+            ElevatedButton.icon(
+              onPressed: _loadCommits,
+              icon: const Icon(Icons.refresh),
+              label: const Text('重试'),
+            ),
+          ],
+        ),
+      );
     }
 
     Widget content = Padding(
