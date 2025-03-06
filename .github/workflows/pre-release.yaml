@@ -160,15 +160,19 @@ jobs:
           i=$(security find-identity -v -p codesigning | grep '^[[:space:]]*1)' | awk -F'[(|)]' '{print $3}')
           echo "Identity=$i" >> $GITHUB_ENV
 
-      - name: 获取应用程序路径和名称
+      - name: 获取应用程序信息
         run: |
           APP_PATH=$(find build/macos/Build/Products/Release/ -type d -name "*.app" | head -n 1)
           APP_NAME=$(basename $APP_PATH)
+          VERSION=$(grep "version:" pubspec.yaml | sed 's/version: //' | tr -d "'")
+
+          echo "TAG=$VERSION" >> $GITHUB_ENV
           echo "APP_PATH=$APP_PATH" >> $GITHUB_ENV
           echo "APP_NAME=$APP_NAME" >> $GITHUB_ENV
 
           echo "APP_PATH=$APP_PATH"
           echo "APP_NAME=$APP_NAME"
+          echo "VERSION=$VERSION"
 
       # Codesign sparkle
       - name: Codesign sparkle
@@ -181,11 +185,9 @@ jobs:
 
       # Codesign App
       - name: Codesign
-        run: codesign --force -s ${{ env.Identity }} --option=runtime ${{ env.APP_PATH }}
-
-      # Codesign Check
-      - name: Codesign Check
-        run: codesign -dv ${{ env.APP_PATH }}
+        run: |
+          codesign --force -s ${{ env.Identity }} --option=runtime ${{ env.APP_PATH }}
+          codesign -dv ${{ env.APP_PATH }}
 
       # Create DMG
       - name: Create DMG
@@ -193,24 +195,29 @@ jobs:
           npm i -g create-dmg
           create-dmg ${{ env.APP_PATH }}
 
-      - name: 重命名 DMG 文件（移除空格）
-        run: |
+          # 重命名 DMG 文件（移除空格）
           for file in *.dmg; do
             mv "$file" "${file// /-}"
           done
 
-      - name: 确保脚本可执行
-        run: chmod +x scripts/*.sh
-
       - name: 获取 DMG 文件信息
         run: |
-          # 使用我们的 DMG 信息获取脚本
-          DMG_INFO=$(./scripts/get_dmg_info.sh .)
+          # 查找 DMG 文件
+          DMG_FILE=$(find . -maxdepth 1 -type f -name "*.dmg" | head -n 1)
 
-          # 解析脚本输出并设置环境变量
-          DMG_FILE=$(echo "$DMG_INFO" | grep "DMG_FILE=" | cut -d= -f2)
-          DMG_FILENAME=$(echo "$DMG_INFO" | grep "DMG_FILENAME=" | cut -d= -f2)
-          FILE_SIZE=$(echo "$DMG_INFO" | grep "FILE_SIZE=" | cut -d= -f2)
+          if [ -z "$DMG_FILE" ]; then
+            echo "错误: 未找到 DMG 文件" >&2
+            exit 1
+          fi
+
+          # 获取绝对路径
+          DMG_FILE=$(realpath "$DMG_FILE")
+
+          # 获取文件名
+          DMG_FILENAME=$(basename "$DMG_FILE")
+
+          # 获取文件大小
+          FILE_SIZE=$(stat -f%z "$DMG_FILE")
 
           # 设置 GitHub Actions 环境变量
           echo "DMG_FILE=$DMG_FILE" >> $GITHUB_ENV
