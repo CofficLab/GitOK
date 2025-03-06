@@ -2,13 +2,8 @@ name: Pre Release
 
 on:
   push:
-    tags:
-      - '*p'
-  workflow_run:
-    workflows:
-      - 'Pre Bump'
-    types:
-      - completed
+    branches:
+      - pre
 
 permissions:
   contents: write
@@ -21,9 +16,56 @@ env:
   ArchivePath: './myapp'
   BuildPath: './temp'
   BUILD_CERTIFICATE_BASE64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
+  NEW_VERSION: 'x.x.x'
 
 jobs:
+  bump:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: 更新版本号
+        run: |
+          # 读取当前版本号
+          VERSION=$(grep "version:" pubspec.yaml | sed 's/version: //' | tr -d "'")
+          # 分割版本号
+          MAJOR=$(echo $VERSION | cut -d. -f1)
+          MINOR=$(echo $VERSION | cut -d. -f2)
+          PATCH=$(echo $VERSION | cut -d. -f3)
+          # 增加补丁版本号
+          NEW_PATCH=$((PATCH + 1))
+          NEW_VERSION="$MAJOR.$MINOR.$NEW_PATCH"
+          # 更新 pubspec.yaml 中的版本号
+          sed -i '' "s/version: .*/version: $NEW_VERSION/" pubspec.yaml
+          echo "TAG=p$NEW_VERSION" >> $GITHUB_ENV
+      - name: 打标签并推送到仓库
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: '🎨 Bump version to ${{ env.TAG }}'
+          commit_user_name: GitHub Action
+          tagging_message: ${{ env.TAG }}
+  rebase:
+    needs:
+      - bump
+    runs-on: ubuntu-latest
+    steps:
+      - name: 拉取 dev 分支
+        uses: actions/checkout@v3
+        with:
+          ref: dev
+      - name: 拉取 pre 分支
+        run: git fetch origin pre
+      - name: Rebase dev on pre
+        continue-on-error: true
+        run: git rebase origin/pre
+      - name: Push the rebased dev branch
+        continue-on-error: true
+        run: git push origin dev
+
   build_with_signing:
+    needs:
+      - bump
     runs-on: macos-latest
     steps:
       - name: Checkout repository
