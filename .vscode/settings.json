@@ -1,14 +1,17 @@
 {
     "cSpell.words": [
         "cocoapods",
+        "Codesign",
         "colorpicker",
         "cupertino",
         "gitok",
         "LTWH",
+        "notarytool",
         "pubspec",
         "reorderable",
         "stefanzweifel",
         "Titlebar",
-        "Unpushed"
+        "Unpushed",
+        "xcrun"
     ]
 }
