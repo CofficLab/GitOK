@@ -189,13 +189,11 @@ jobs:
       # Create DMG
       - name: Create DMG
         run: |
-          # 安装 create-dmg
           npm i -g create-dmg
-
-          # 创建 DMG
           create-dmg ${{ env.APP_PATH }}
 
-          # 重命名 DMG 文件（移除空格）
+      - name: 重命名 DMG 文件（移除空格）
+        run: |
           for file in *.dmg; do
             mv "$file" "${file// /-}"
           done
@@ -246,20 +244,41 @@ jobs:
           file=${{ env.DMG_FILE }}
           stapler validate "$file"
 
-      # 自动更新相关步骤
-      - name: 使用脚本生成 Sparkle 签名
+      - name: Check
         run: |
-          # 使用我们的签名脚本
-          SIGNATURE_OUTPUT=$(echo "${{ secrets.SPARKLE_PRIVATE_KEY_GITOK }}" | ./scripts/sign_update.sh "${{ env.DMG_FILE }}")
+          ls -alh
+          mkdir updates
+          cp *.dmg updates/
+          echo "the updates is in ${{ github.workspace }}/updates"
+          ls -alh updates
 
-          # 提取签名值
-          ED_SIGNATURE=$(echo "$SIGNATURE_OUTPUT" | grep -o 'sparkle:edSignature="[^"]*"')
-          echo "ED_SIGNATURE=$ED_SIGNATURE" >> $GITHUB_ENV
-
-      - name: 使用脚本生成 appcast.xml
+      - name: generate appcast
+        continue-on-error: true
         run: |
-          # 使用我们的 appcast 生成脚本
-          ./scripts/generate_appcast.sh "${{ env.DMG_FILE }}" "${{ env.TAG }}" "${{ env.ED_SIGNATURE }}"
+
+          # 在 Xcode DerivedData 目录中查找 generate_appcast 工具
+          GENERATE_APPCAST_PATH=$(find ~/Library/Developer/Xcode/DerivedData -name "generate_appcast" -type f | head -n 1)
+          echo "${{ secrets.SPARKLE_PRIVATE_KEY_GITOK }}" | $GENERATE_APPCAST_PATH --ed-key-file - ${{ github.workspace }}/updates
+
+      - name: make appcast.xml
+        run: |
+          pwd
+          cd updates
+
+          # 获取第一个 dmg 文件的名字
+          dmg_file=$(ls *.dmg 2>/dev/null | head -n 1)
+
+          echo $dmg_file
+
+          # 使用 sed 替换 enclosure 中 url 的内容
+          u="https://github.com/CofficLab/GitOK/releases/latest/download/$dmg_file" 
+
+          echo $u
+
+          # 使用 sed 替换 enclosure 中的 url
+          sed -i '' "s|\(enclosure url=\"\)[^\"]*|\1$u|" "appcast.xml"
+
+          mv appcast.xml ../appcast.xml
 
       - uses: softprops/action-gh-release@v2
         with:
