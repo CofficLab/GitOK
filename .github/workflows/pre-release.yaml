@@ -125,7 +125,8 @@ jobs:
       - run: security find-identity -v
       - name: Build macOS App
         run: |
-          flutter build macos --release
+          flutter config --enable-macos-desktop
+          flutter build macos --release --no-codesign
       - name: find identity
         run: |
           i=$(security find-identity -v -p codesigning | grep '^[[:space:]]*1)' | awk -F'[(|)]' '{print $3}')
