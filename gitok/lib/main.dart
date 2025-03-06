@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:hotkey_manager/hotkey_manager.dart';
 import 'package:macos_window_utils/macos_window_utils.dart';
-import 'package:gitok/layouts/app.dart';
+import 'package:gitok/core/layouts/app.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:tray_manager/tray_manager.dart';
 
