@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:gitok/plugins/git/commit_info.dart';
+import 'package:gitok/plugins/git/models/commit_info.dart';
 import 'package:gitok/plugins/git/git_provider.dart';
-import 'package:gitok/core/widgets/git/commit_list_item.dart';
+import 'package:gitok/plugins/git/commit_list_item.dart';
 
 /// Git提交历史展示组件
 ///
@@ -12,9 +12,6 @@ import 'package:gitok/core/widgets/git/commit_list_item.dart';
 /// - 提交哈希值
 /// - 刷新按钮
 class CommitHistory extends StatefulWidget {
-  /// 是否启用调试模式以突出显示布局边界
-  static const bool kDebugLayout = false;
-
   const CommitHistory({super.key});
 
   @override
@@ -115,16 +112,6 @@ class _CommitHistoryState extends State<CommitHistory> {
         ],
       ),
     );
-
-    if (CommitHistory.kDebugLayout) {
-      content = Container(
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.green, width: 2),
-          color: Colors.green.withOpacity(0.1),
-        ),
-        child: content,
-      );
-    }
 
     return content;
   }

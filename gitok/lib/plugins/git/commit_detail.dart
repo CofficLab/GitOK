@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:gitok/plugins/git/git_provider.dart';
 import 'package:gitok/plugins/git/git_service.dart';
-import 'package:gitok/plugins/git/file_status.dart';
-import 'package:gitok/core/widgets/git/commit_detail/commit_info_panel.dart';
-import 'package:gitok/core/widgets/git/commit_detail/changed_files_list.dart';
-import 'package:gitok/core/widgets/git/commit_form.dart';
-import 'package:gitok/core/widgets/git/diff_viewer.dart';
+import 'package:gitok/plugins/git/models/file_status.dart';
+import 'package:gitok/plugins/git/commit_detail/commit_info_panel.dart';
+import 'package:gitok/plugins/git/commit_detail/changed_files_list.dart';
+import 'package:gitok/plugins/git/commit_form.dart';
+import 'package:gitok/plugins/git/diff_viewer.dart';
 
 /// Git提交详情展示组件
 ///

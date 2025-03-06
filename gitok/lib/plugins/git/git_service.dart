@@ -8,8 +8,8 @@
 /// 使用单例模式确保全局唯一实例
 library;
 
-import 'package:gitok/plugins/git/commit_info.dart';
-import 'package:gitok/plugins/git/file_status.dart';
+import 'package:gitok/plugins/git/models/commit_info.dart';
+import 'package:gitok/plugins/git/models/file_status.dart';
 import 'package:git/git.dart';
 
 class GitService {

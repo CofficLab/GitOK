@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:gitok/plugins/git/file_status.dart';
+import 'package:gitok/plugins/git/models/file_status.dart';
 import 'package:provider/provider.dart';
 import 'package:gitok/plugins/git/git_provider.dart';
 import 'package:gitok/plugins/git/git_service.dart';
-import 'package:gitok/core/widgets/git/diff_viewer.dart';
+import 'package:gitok/plugins/git/diff_viewer.dart';
 
 /// Git暂存区变动列表组件
 class StagedChanges extends StatefulWidget {

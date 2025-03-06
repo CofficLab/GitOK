@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:gitok/plugins/git/git_service.dart';
 import 'package:gitok/plugins/git/git_project.dart';
-import 'package:gitok/plugins/git/commit_info.dart';
+import 'package:gitok/plugins/git/models/commit_info.dart';
 
 /// 右侧面板显示类型
 enum RightPanelType { commitForm, commitDetail }
