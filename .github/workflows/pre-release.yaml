@@ -131,15 +131,29 @@ jobs:
 
       - name: Configure Xcode project
         run: |
-          # 修改 Flutter macOS 项目的配置
-          sed -i '' "s/DEVELOPMENT_TEAM = \".*\";/DEVELOPMENT_TEAM = \"${{ env.TEAM_ID }}\";/" macos/Runner.xcodeproj/project.pbxproj
-          sed -i '' 's/CODE_SIGN_STYLE = Automatic;/CODE_SIGN_STYLE = Manual;/' macos/Runner.xcodeproj/project.pbxproj
-          sed -i '' "s/CODE_SIGN_IDENTITY = \".*\";/CODE_SIGN_IDENTITY = \"${{ env.CERT_ID }}\";/" macos/Runner.xcodeproj/project.pbxproj
+          # 修改所有签名相关的配置
+          PBXPROJ="macos/Runner.xcodeproj/project.pbxproj"
+
+          # 替换所有 Mac Development 为实际的证书 ID
+          sed -i '' "s/\"Mac Development\"/\"${{ env.CERT_ID }}\"/g" $PBXPROJ
+
+          # 替换所有 DEVELOPMENT_TEAM
+          sed -i '' "s/DEVELOPMENT_TEAM = \".*\"/DEVELOPMENT_TEAM = \"${{ env.TEAM_ID }}\"/g" $PBXPROJ
+
+          # 设置手动签名
+          sed -i '' 's/CODE_SIGN_STYLE = Automatic/CODE_SIGN_STYLE = Manual/g' $PBXPROJ
+
+          # 设置 CODE_SIGN_IDENTITY
+          sed -i '' "s/CODE_SIGN_IDENTITY = \".*\"/CODE_SIGN_IDENTITY = \"${{ env.CERT_ID }}\"/g" $PBXPROJ
+
+          # 设置 Debug 和 Release 配置的签名身份
+          sed -i '' "s/\"CODE_SIGN_IDENTITY[^\"]*\" = \".*\"/\"CODE_SIGN_IDENTITY[sdk=macosx*]\" = \"${{ env.CERT_ID }}\"/g" $PBXPROJ
+
+          # 清除可能存在的配置文件指定器
+          sed -i '' 's/PROVISIONING_PROFILE_SPECIFIER = ".*"/PROVISIONING_PROFILE_SPECIFIER = ""/g' $PBXPROJ
 
       - name: Build macOS App
-        run: |
-          flutter config --enable-macos-desktop
-          flutter build macos --release
+        run: flutter build macos --release
       - name: find identity
         run: |
           i=$(security find-identity -v -p codesigning | grep '^[[:space:]]*1)' | awk -F'[(|)]' '{print $3}')

@@ -8,12 +8,14 @@
         "gitok",
         "LTWH",
         "notarytool",
+        "pbxproj",
         "pubspec",
         "reorderable",
         "stefanzweifel",
         "subosito",
         "Titlebar",
         "Unpushed",
+        "xcodeproj",
         "xcrun"
     ]
 }
