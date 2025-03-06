@@ -159,10 +159,15 @@ jobs:
           i=$(security find-identity -v -p codesigning | grep '^[[:space:]]*1)' | awk -F'[(|)]' '{print $3}')
           echo "Identity=$i" >> $GITHUB_ENV
 
-      - name: 获取应用程序路径
+      - name: 获取应用程序路径和名称
         run: |
-          APP_PATH=$(find build/macos/Build/Products/Release/ -type d -name "Runner.app" | head -n 1)
+          APP_PATH=$(find build/macos/Build/Products/Release/ -type d -name "*.app" | head -n 1)
+          APP_NAME=$(basename $APP_PATH)
           echo "APP_PATH=$APP_PATH" >> $GITHUB_ENV
+          echo "APP_NAME=$APP_NAME" >> $GITHUB_ENV
+
+          echo "APP_PATH=$APP_PATH"
+          echo "APP_NAME=$APP_NAME"
 
       # Codesign sparkle
       - name: Codesign sparkle
@@ -173,42 +178,22 @@ jobs:
           codesign -f -s ${{ env.Identity }} -o runtime ${{ env.APP_PATH }}/Contents/Frameworks/Sparkle.framework/Versions/B/Updater.app
           codesign -f -s ${{ env.Identity }} -o runtime ${{ env.APP_PATH }}/Contents/Frameworks/Sparkle.framework
 
+      # Codesign App
       - name: Codesign
-        run: |
-          # 检查构建输出目录
-          ls -la build/macos/Build/Products/Release/
+        run: codesign --force -s ${{ env.Identity }} --option=runtime ${{ env.APP_PATH }}
 
-          # 使用正确的路径进行签名
-          codesign --force -s ${{ env.Identity }} --option=runtime build/macos/Build/Products/Release/*.app
-
+      # Codesign Check
       - name: Codesign Check
-        run: codesign -dv build/macos/Build/Products/Release/*.app
+        run: codesign -dv ${{ env.APP_PATH }}
 
+      # Create DMG
       - name: Create DMG
         run: |
           # 安装 create-dmg
           npm i -g create-dmg
 
-          # 检查目录内容
-          echo "Checking build directory contents:"
-          ls -la build/macos/Build/Products/Release/
-
-          # 获取应用程序名称
-          APP_NAME=$(ls build/macos/Build/Products/Release/ | grep '\.app$' | head -n 1)
-          if [ -z "$APP_NAME" ]; then
-            echo "Error: No .app file found in the release directory"
-            exit 1
-          fi
-          echo "Found app: $APP_NAME"
-
-          # 检查文件是否存在
-          if [ ! -d "build/macos/Build/Products/Release/$APP_NAME" ]; then
-            echo "Error: $APP_NAME directory not found"
-            exit 1
-          fi
-
           # 创建 DMG
-          create-dmg "build/macos/Build/Products/Release/$APP_NAME"
+          create-dmg ${{ env.APP_PATH }}
 
           # 重命名 DMG 文件（移除空格）
           for file in *.dmg; do
