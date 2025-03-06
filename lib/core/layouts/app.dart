@@ -4,6 +4,7 @@
 /// 包括主题、路由、依赖注入等全局配置。
 library;
 
+import 'dart:io' show Platform, exit;
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
@@ -102,6 +103,36 @@ class _MyAppState extends State<MyApp> with WindowListener, TrayListener {
   @override
   void onWindowClose() {
     windowManager.hide();
+  }
+
+  // 处理托盘菜单点击事件
+  @override
+  void onTrayMenuItemClick(MenuItem menuItem) {
+    if (menuItem.key == 'show_window') {
+      _bringToFront();
+    } else if (menuItem.key == 'exit_app') {
+      // 完全退出应用程序
+      exit(0);
+    }
+  }
+
+  // 处理托盘图标点击事件
+  @override
+  void onTrayIconMouseDown() {
+    // 在macOS上，点击托盘图标时显示菜单
+    if (Platform.isMacOS) {
+      trayManager.popUpContextMenu();
+    } else {
+      // 在Windows和Linux上，点击托盘图标时显示窗口
+      _bringToFront();
+    }
+  }
+
+  // 处理托盘图标右键点击事件
+  @override
+  void onTrayIconRightMouseDown() {
+    // 在Windows和Linux上，右键点击托盘图标时显示菜单
+    trayManager.popUpContextMenu();
   }
 
   @override

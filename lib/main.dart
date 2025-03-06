@@ -57,18 +57,13 @@ void main() async {
     Menu(
       items: [
         MenuItem(
+          key: 'show_window',
           label: '打开 GitOK',
-          onClick: (menuItem) async {
-            await windowManager.show();
-            await windowManager.focus();
-          },
         ),
         MenuItem.separator(),
         MenuItem(
+          key: 'exit_app',
           label: '退出',
-          onClick: (menuItem) async {
-            await windowManager.close();
-          },
         ),
       ],
     ),
