@@ -32,11 +32,11 @@ jobs:
           NEW_VERSION="$MAJOR.$MINOR.$NEW_PATCH"
           # 更新 pubspec.yaml 中的版本号
           sed -i '' "s/version: .*/version: $NEW_VERSION/" pubspec.yaml
-          echo "tag=p$tag" >> $GITHUB_ENV
+          echo "tag=p$NEW_VERSION" >> $GITHUB_ENV
       - name: 打标签并推送到仓库
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
-          commit_message: '🎨 Bump version to ${{ env.NEW_VERSION }}'
+          commit_message: '🎨 Bump version to ${{ env.tag }}'
           commit_user_name: GitHub Action
           tagging_message: ${{ env.tag }}
   rebase:
