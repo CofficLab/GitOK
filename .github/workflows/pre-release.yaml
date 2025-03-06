@@ -21,6 +21,7 @@ env:
   VERSION: ''
   DMG_FILE: ''
   APP_PATH: ''
+  UPDATE_WORKSPACE_PATH: ''
 
 jobs:
   bump:
@@ -238,52 +239,42 @@ jobs:
           #   --key ./private_keys/AuthKey_${{ secrets.APP_STORE_CONNECT_KEY_ID }}.p8 \
           #   --key-id ${{ secrets.APP_STORE_CONNECT_KEY_ID }} \
           #   --issuer ${{ secrets.APP_STORE_CONNECT_KEY_ISSER_ID }}
+
       - name: 公证结果
         continue-on-error: true
-        run: |
-          file=${{ env.DMG_FILE }}
-          stapler validate "$file"
-
-      - name: Check
-        run: |
-          ls -alh
-          mkdir updates
-          cp *.dmg updates/
-          echo "the updates is in ${{ github.workspace }}/updates"
-          ls -alh updates
+        run: stapler validate "${{ env.DMG_FILE }}"
 
       - name: generate appcast
-        continue-on-error: true
         run: |
+          UPDATE_WORKSPACE_PATH=${{ github.workspace }}/updates
 
-          # 在 Xcode DerivedData 目录中查找 generate_appcast 工具
-          GENERATE_APPCAST_PATH=$(find ~/Library/Developer/Xcode/DerivedData -name "generate_appcast" -type f | head -n 1)
-          echo "${{ secrets.SPARKLE_PRIVATE_KEY_GITOK }}" | $GENERATE_APPCAST_PATH --ed-key-file - ${{ github.workspace }}/updates
+          mkdir $UPDATE_WORKSPACE_PATH
+          cp *.dmg $UPDATE_WORKSPACE_PATH/
 
-      - name: make appcast.xml
-        run: |
-          pwd
-          cd updates
+          ls -alh $UPDATE_WORKSPACE_PATH
 
-          # 获取第一个 dmg 文件的名字
-          dmg_file=$(ls *.dmg 2>/dev/null | head -n 1)
+          GENERATE_APPCAST_PATH=$(find ${{ github.workspace }} -name "generate_appcast" -type f | head -n 1)
 
-          echo $dmg_file
+          if [ -z "$GENERATE_APPCAST_PATH" ]; then
+            echo "generate_appcast 工具未找到"
+            exit 1
+          fi
 
-          # 使用 sed 替换 enclosure 中 url 的内容
-          u="https://github.com/CofficLab/GitOK/releases/latest/download/$dmg_file" 
+          echo "${{ secrets.SPARKLE_PRIVATE_KEY_GITOK }}" | $GENERATE_APPCAST_PATH --ed-key-file - $UPDATE_WORKSPACE_PATH
 
-          echo $u
+          cat $UPDATE_WORKSPACE_PATH/appcast.xml
 
-          # 使用 sed 替换 enclosure 中的 url
-          sed -i '' "s|\(enclosure url=\"\)[^\"]*|\1$u|" "appcast.xml"
+          u="https://github.com/CofficLab/GitOK/releases/latest/download/${{ env.DMG_FILENAME }}" 
+          sed -i '' "s|\(enclosure url=\"\)[^\"]*|\1$u|" "$UPDATE_WORKSPACE_PATH/appcast.xml"
 
-          mv appcast.xml ../appcast.xml
+          mv $UPDATE_WORKSPACE_PATH/appcast.xml ${{ github.workspace }}/appcast.xml
+
+          echo "UPDATE_WORKSPACE_PATH=$UPDATE_WORKSPACE_PATH" >> $GITHUB_ENV
 
       - uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ env.TAG }}
           prerelease: true
           files: |
-            ./**/*.dmg
-            ./appcast.xml
+            ${{ env.UPDATE_WORKSPACE_PATH }}/*.dmg
+            ${{ github.workspace }}/appcast.xml
