@@ -20,6 +20,7 @@ env:
   DMG_FILENAME: ''
   VERSION: ''
   DMG_FILE: ''
+  APP_PATH: ''
 
 jobs:
   bump:
@@ -157,6 +158,20 @@ jobs:
         run: |
           i=$(security find-identity -v -p codesigning | grep '^[[:space:]]*1)' | awk -F'[(|)]' '{print $3}')
           echo "Identity=$i" >> $GITHUB_ENV
+
+      - name: 获取应用程序路径
+        run: |
+          APP_PATH=$(find build/macos/Build/Products/Release/ -type d -name "Runner.app" | head -n 1)
+          echo "APP_PATH=$APP_PATH" >> $GITHUB_ENV
+
+      # Codesign sparkle
+      - name: Codesign sparkle
+        run: |
+          codesign -f -s ${{ env.Identity }} -o runtime ${{ env.APP_PATH }}/Contents/Frameworks/Sparkle.framework/Versions/B/XPCServices/Installer.xpc
+          codesign -f -s ${{ env.Identity }} -o runtime --preserve-metadata=entitlements ${{ env.APP_PATH }}/Contents/Frameworks/Sparkle.framework/Versions/B/XPCServices/Downloader.xpc
+          codesign -f -s ${{ env.Identity }} -o runtime ${{ env.APP_PATH }}/Contents/Frameworks/Sparkle.framework/Versions/B/Autoupdate
+          codesign -f -s ${{ env.Identity }} -o runtime ${{ env.APP_PATH }}/Contents/Frameworks/Sparkle.framework/Versions/B/Updater.app
+          codesign -f -s ${{ env.Identity }} -o runtime ${{ env.APP_PATH }}/Contents/Frameworks/Sparkle.framework
 
       - name: Codesign
         run: |
