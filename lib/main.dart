@@ -6,6 +6,7 @@ import 'package:macos_window_utils/macos_window_utils.dart';
 import 'package:gitok/core/layouts/app.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:tray_manager/tray_manager.dart';
+import 'package:auto_updater/auto_updater.dart';
 
 /// GitOK - Git仓库管理工具
 ///
@@ -17,6 +18,19 @@ import 'package:tray_manager/tray_manager.dart';
 /// - 其他平台的朋友走普通通道 🎉
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // 初始化自动更新
+  if (Platform.isMacOS || Platform.isWindows) {
+    // 设置更新源地址，指向GitHub Releases中的appcast.xml
+    const String feedURL = 'https://github.com/CofficLab/GitOK/releases/latest/download/appcast.xml';
+    await autoUpdater.setFeedURL(feedURL);
+
+    // 设置检查更新的时间间隔（单位：秒）- 设置为每小时检查一次
+    await autoUpdater.setScheduledCheckInterval(3600);
+
+    // 应用启动时检查一次更新
+    await autoUpdater.checkForUpdates();
+  }
 
   // 初始化window_manager
   await windowManager.ensureInitialized();

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle">
+    <channel>
+        <title>GitOK</title>
+        <description>GitOK 更新</description>
+        <language>zh</language>
+        <item>
+            <title>Version VERSION</title>
+            <sparkle:version>VERSION_NUMBER</sparkle:version>
+            <sparkle:shortVersionString>VERSION</sparkle:shortVersionString>
+            <pubDate>PUB_DATE</pubDate>
+            <enclosure url="https://github.com/CofficLab/GitOK/releases/latest/download/DMG_FILENAME"
+                       sparkle:edSignature="ED_SIGNATURE"
+                       sparkle:os="macos"
+                       length="FILE_SIZE"
+                       type="application/octet-stream" />
+        </item>
+    </channel>
+</rss> 

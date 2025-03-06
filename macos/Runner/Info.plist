@@ -32,5 +32,13 @@
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
+	<key>SUPublicEDKey</key>
+	<string>VRFIJExvMCeneBRzxR6mu2zPN9ggOUr0LNlcKYOb27o=</string>
+	<key>com.apple.security.network.client</key>
+	<true/>
+	<key>com.apple.security.network.server</key>
+	<true/>
+	<key>com.apple.security.app-sandbox</key>
+	<false/>
 </dict>
 </plist>

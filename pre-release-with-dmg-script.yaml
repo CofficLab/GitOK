@@ -18,6 +18,8 @@ env:
   ED_SIGNATURE: ''
   FILE_SIZE: ''
   DMG_FILENAME: ''
+  DMG_FILE: ''
+  VERSION: ''
 
 jobs:
   bump:
@@ -39,14 +41,13 @@ jobs:
           NEW_VERSION="$MAJOR.$MINOR.$NEW_PATCH"
           # 更新 pubspec.yaml 中的版本号
           sed -i '' "s/version: .*/version: $NEW_VERSION/" pubspec.yaml
-          echo "TAG=$NEW_VERSION" >> $GITHUB_ENV
+          echo "TAG=p$NEW_VERSION" >> $GITHUB_ENV
       - name: 打标签并推送到仓库
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: '🎨 Bump version to ${{ env.TAG }}'
           commit_user_name: GitHub Action
           tagging_message: ${{ env.TAG }}
-
   rebase:
     needs:
       - bump
@@ -75,6 +76,14 @@ jobs:
         with:
           ref: pre
           fetch-depth: 0
+
+      - name: 读取版本号
+        run: |
+          # 从 pubspec.yaml 读取版本号
+          VERSION=$(grep "version:" pubspec.yaml | sed 's/version: //' | tr -d "'")
+          echo "版本号->$VERSION"
+          echo "TAG=p$VERSION" >> $GITHUB_ENV
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
@@ -158,7 +167,6 @@ jobs:
 
       - name: Codesign
         run: |
-
           # 检查构建输出目录
           ls -la build/macos/Build/Products/Release/
 
@@ -222,7 +230,7 @@ jobs:
           file=$(find . -maxdepth 1 -type f -name "*.dmg" | head -n 1)
           stapler validate "$file"
 
-      # 自动更新相关步骤
+      # 自动更新相关步骤 - 使用我们创建的脚本
       - name: 确保脚本可执行
         run: chmod +x scripts/*.sh
 
@@ -235,30 +243,20 @@ jobs:
         run: |
           # 使用我们的签名脚本
           SIGNATURE_OUTPUT=$(echo "${{ secrets.SPARKLE_PRIVATE_KEY_GITOK }}" | ./scripts/sign_update.sh "${{ env.DMG_FILE }}")
-
+          
           # 提取签名值
           ED_SIGNATURE=$(echo "$SIGNATURE_OUTPUT" | grep -o 'sparkle:edSignature="[^"]*"')
           echo "ED_SIGNATURE=$ED_SIGNATURE" >> $GITHUB_ENV
 
-          # 获取文件大小
-          FILE_SIZE=$(stat -f%z "${{ env.DMG_FILE }}")
-          echo "FILE_SIZE=$FILE_SIZE" >> $GITHUB_ENV
-
-          # 获取文件名
-          DMG_FILENAME=$(basename "${{ env.DMG_FILE }}")
-          echo "DMG_FILENAME=$DMG_FILENAME" >> $GITHUB_ENV
-
       - name: 使用脚本生成 appcast.xml
         run: |
           # 使用我们的 appcast 生成脚本
-          ./scripts/generate_appcast.sh "${{ env.DMG_FILE }}" "${{ env.TAG }}" "${{ env.ED_SIGNATURE }}"
+          ./scripts/generate_appcast.sh "${{ env.DMG_FILE }}" "${{ env.VERSION }}" "${{ env.ED_SIGNATURE }}"
 
-      # - name: Generate Changelog
-      #   run: echo ""> ${{ github.workspace }}-CHANGELOG.txt
       - uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ env.TAG }}
-          # body_path: ${{ github.workspace }}-CHANGELOG.txt
           prerelease: true
           files: |
             ./**/*.dmg
+            ./appcast.xml 

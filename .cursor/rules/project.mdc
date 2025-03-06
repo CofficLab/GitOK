@@ -1,9 +1,8 @@
 ---
-description: 当你需要了解项目的目录结构时
+description: 当你需要了解项目的基本信息时
 globs: *
 alwaysApply: false
 ---
-- 如果这个规则被应用，则在输出中较靠前的位置说明：🍋 我注意到了项目的文件命名规范
 
 项目的目录结构是：
 
@@ -11,3 +10,9 @@ lib/
 ├── core/                # 内核
 ├── plugins/             # 插件
 └── main.dart
+
+项目的 GitHub 仓库是：https://github.com/CofficLab/GitOK。
+
+项目通过 GitHub Action 构建和发布，对应的workflow文件是：.github/workflows/pre-release.yaml。
+
+如果这个规则被应用，则在输出中较靠前的位置说明：🍋 我注意到了项目的基本信息。
