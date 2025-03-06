@@ -1,6 +1,7 @@
 {
     "cSpell.words": [
         "appcast",
+        "Autoupdate",
         "cocoapods",
         "Codesign",
         "codesigning",
@@ -12,6 +13,7 @@
         "pbxproj",
         "provisionprofile",
         "pubspec",
+        "realpath",
         "reorderable",
         "softprops",
         "stefanzweifel",

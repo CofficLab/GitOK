@@ -16,7 +16,6 @@ env:
   TEAM_ID: ''
   CERT_ID: ''
   ED_SIGNATURE: ''
-  FILE_SIZE: ''
   DMG_FILENAME: ''
   VERSION: ''
   DMG_FILE: ''
@@ -155,14 +154,15 @@ jobs:
 
       - name: Build macOS App
         run: flutter build macos --release
-      - name: find identity
+
+      - name: Find identity
         run: |
           i=$(security find-identity -v -p codesigning | grep '^[[:space:]]*1)' | awk -F'[(|)]' '{print $3}')
           echo "Identity=$i" >> $GITHUB_ENV
 
       - name: 获取应用程序信息
         run: |
-          APP_PATH=$(find build/macos/Build/Products/Release/ -type d -name "*.app" | head -n 1)
+          APP_PATH=$(find build/macos/Build/Products/Release -type d -name "*.app" | head -n 1)
           APP_NAME=$(basename $APP_PATH)
           VERSION=$(grep "version:" pubspec.yaml | sed 's/version: //' | tr -d "'")
 
@@ -184,7 +184,7 @@ jobs:
           codesign -f -s ${{ env.Identity }} -o runtime ${{ env.APP_PATH }}/Contents/Frameworks/Sparkle.framework
 
       # Codesign App
-      - name: Codesign
+      - name: Codesign App
         run: |
           codesign --force -s ${{ env.Identity }} --option=runtime ${{ env.APP_PATH }}
           codesign -dv ${{ env.APP_PATH }}
@@ -216,18 +216,13 @@ jobs:
           # 获取文件名
           DMG_FILENAME=$(basename "$DMG_FILE")
 
-          # 获取文件大小
-          FILE_SIZE=$(stat -f%z "$DMG_FILE")
-
           # 设置 GitHub Actions 环境变量
           echo "DMG_FILE=$DMG_FILE" >> $GITHUB_ENV
           echo "DMG_FILENAME=$DMG_FILENAME" >> $GITHUB_ENV
-          echo "FILE_SIZE=$FILE_SIZE" >> $GITHUB_ENV
 
           echo "DMG 文件信息："
           echo "路径: $DMG_FILE"
           echo "文件名: $DMG_FILENAME"
-          echo "大小: $FILE_SIZE 字节"
 
       - name: Notary
         continue-on-error: true
@@ -247,11 +242,11 @@ jobs:
           #   --key-id ${{ secrets.APP_STORE_CONNECT_KEY_ID }} \
           #   --issuer ${{ secrets.APP_STORE_CONNECT_KEY_ISSER_ID }}
 
-      - name: 公证结果
+      - name: Validate
         continue-on-error: true
         run: stapler validate "${{ env.DMG_FILE }}"
 
-      - name: generate appcast
+      - name: Generate appcast
         run: |
           UPDATE_WORKSPACE_PATH=${{ github.workspace }}/updates
 
@@ -278,7 +273,8 @@ jobs:
 
           echo "UPDATE_WORKSPACE_PATH=$UPDATE_WORKSPACE_PATH" >> $GITHUB_ENV
 
-      - uses: softprops/action-gh-release@v2
+      - name: Release
+        uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ env.TAG }}
           prerelease: true
