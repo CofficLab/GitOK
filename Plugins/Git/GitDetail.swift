@@ -46,11 +46,11 @@ struct GitDetail: View, SuperEvent {
                 .font(.system(size: 48))
                 .foregroundColor(.green)
 
-            Text(LocalizedStringKey("no_local_changes_title"))
+            Text("no_local_changes_title")
                 .font(.headline)
                 .padding()
 
-            Text(LocalizedStringKey("no_local_changes_description"))
+            Text("no_local_changes_description")
                 .font(.subheadline)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
@@ -65,11 +65,11 @@ struct GitDetail: View, SuperEvent {
                 .font(.system(size: 48))
                 .foregroundColor(.secondary)
 
-            Text(LocalizedStringKey("select_commit_title"))
+            Text("select_commit_title")
                 .font(.headline)
                 .padding()
 
-            Text(LocalizedStringKey("select_commit_description"))
+            Text("select_commit_description")
                 .font(.subheadline)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)

@@ -1,7 +1,17 @@
 {
-    "editor.quickSuggestions": {
-        "comments": "off",
-        "strings": "off",
-        "other": "off"
-    }
+    "cSpell.words": [
+        "cocoapods",
+        "Codesign",
+        "colorpicker",
+        "cupertino",
+        "gitok",
+        "LTWH",
+        "notarytool",
+        "pubspec",
+        "reorderable",
+        "stefanzweifel",
+        "Titlebar",
+        "Unpushed",
+        "xcrun"
+    ]
 }
