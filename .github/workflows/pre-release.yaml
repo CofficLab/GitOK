@@ -280,4 +280,11 @@ jobs:
           prerelease: true
           files: |
             ${{ env.UPDATE_WORKSPACE_PATH }}/*.dmg
-            ${{ github.workspace }}/appcast.xml
+
+      - name: 推送到仓库
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          branch: pre
+          commit_message: '🎨 Update appcast.yml'
+          commit_user_name: GitHub Action
+          file_pattern: 'appcast.xml'
