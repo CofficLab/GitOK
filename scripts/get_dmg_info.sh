@@ -1,9 +1,9 @@
 #!/bin/bash
 
 # 脚本：get_dmg_info.sh
-# 功能：查找 DMG 文件并输出相关信息，专为 GitHub Actions 工作流优化
+# 功能：查找 DMG 文件并输出相关信息
 # 用法：./get_dmg_info.sh [搜索目录]
-# 输出：DMG 文件的路径、文件名和大小，格式为 GitHub Actions 环境变量
+# 输出：DMG 文件的路径、文件名和大小
 
 # 确保脚本在错误时退出
 set -e
@@ -46,18 +46,10 @@ else
   FILE_SIZE=$(stat -c%s "$ABSOLUTE_PATH")
 fi
 
-# 输出 GitHub Actions 环境变量
+# 输出信息（键值对格式，方便解析）
 echo "DMG_FILE=$ABSOLUTE_PATH"
 echo "DMG_FILENAME=$FILENAME"
 echo "FILE_SIZE=$FILE_SIZE"
-
-# 如果在 GitHub Actions 中运行，则设置环境变量
-if [ -n "$GITHUB_ENV" ]; then
-  echo "DMG_FILE=$ABSOLUTE_PATH" >> $GITHUB_ENV
-  echo "DMG_FILENAME=$FILENAME" >> $GITHUB_ENV
-  echo "FILE_SIZE=$FILE_SIZE" >> $GITHUB_ENV
-  echo "已设置 GitHub Actions 环境变量"
-fi
 
 # 脚本执行成功
 exit 0 

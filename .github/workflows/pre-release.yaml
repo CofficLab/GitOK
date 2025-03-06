@@ -18,6 +18,8 @@ env:
   ED_SIGNATURE: ''
   FILE_SIZE: ''
   DMG_FILENAME: ''
+  VERSION: ''
+  DMG_FILE: ''
 
 jobs:
   bump:
@@ -158,7 +160,6 @@ jobs:
 
       - name: Codesign
         run: |
-
           # 检查构建输出目录
           ls -la build/macos/Build/Products/Release/
 
@@ -199,10 +200,33 @@ jobs:
             mv "$file" "${file// /-}"
           done
 
+      - name: 确保脚本可执行
+        run: chmod +x scripts/*.sh
+
+      - name: 获取 DMG 文件信息
+        run: |
+          # 使用我们的 DMG 信息获取脚本
+          DMG_INFO=$(./scripts/get_dmg_info.sh .)
+
+          # 解析脚本输出并设置环境变量
+          DMG_FILE=$(echo "$DMG_INFO" | grep "DMG_FILE=" | cut -d= -f2)
+          DMG_FILENAME=$(echo "$DMG_INFO" | grep "DMG_FILENAME=" | cut -d= -f2)
+          FILE_SIZE=$(echo "$DMG_INFO" | grep "FILE_SIZE=" | cut -d= -f2)
+
+          # 设置 GitHub Actions 环境变量
+          echo "DMG_FILE=$DMG_FILE" >> $GITHUB_ENV
+          echo "DMG_FILENAME=$DMG_FILENAME" >> $GITHUB_ENV
+          echo "FILE_SIZE=$FILE_SIZE" >> $GITHUB_ENV
+
+          echo "DMG 文件信息："
+          echo "路径: $DMG_FILE"
+          echo "文件名: $DMG_FILENAME"
+          echo "大小: $FILE_SIZE 字节"
+
       - name: Notary
         continue-on-error: true
         run: |
-          file=$(find . -maxdepth 1 -type f -name "*.dmg" | head -n 1)
+          file=${{ env.DMG_FILE }}
           xcrun notarytool submit "$file" \
             --key ./private_keys/AuthKey_${{ secrets.APP_STORE_CONNECT_KEY_ID }}.p8 \
             --key-id=${{ secrets.APP_STORE_CONNECT_KEY_ID }} \
@@ -219,18 +243,10 @@ jobs:
       - name: 公证结果
         continue-on-error: true
         run: |
-          file=$(find . -maxdepth 1 -type f -name "*.dmg" | head -n 1)
+          file=${{ env.DMG_FILE }}
           stapler validate "$file"
 
       # 自动更新相关步骤
-      - name: 确保脚本可执行
-        run: chmod +x scripts/*.sh
-
-      - name: 获取 DMG 文件信息
-        run: |
-          # 使用我们的 DMG 信息获取脚本
-          ./scripts/get_dmg_info.sh .
-
       - name: 使用脚本生成 Sparkle 签名
         run: |
           # 使用我们的签名脚本
@@ -240,25 +256,15 @@ jobs:
           ED_SIGNATURE=$(echo "$SIGNATURE_OUTPUT" | grep -o 'sparkle:edSignature="[^"]*"')
           echo "ED_SIGNATURE=$ED_SIGNATURE" >> $GITHUB_ENV
 
-          # 获取文件大小
-          FILE_SIZE=$(stat -f%z "${{ env.DMG_FILE }}")
-          echo "FILE_SIZE=$FILE_SIZE" >> $GITHUB_ENV
-
-          # 获取文件名
-          DMG_FILENAME=$(basename "${{ env.DMG_FILE }}")
-          echo "DMG_FILENAME=$DMG_FILENAME" >> $GITHUB_ENV
-
       - name: 使用脚本生成 appcast.xml
         run: |
           # 使用我们的 appcast 生成脚本
           ./scripts/generate_appcast.sh "${{ env.DMG_FILE }}" "${{ env.TAG }}" "${{ env.ED_SIGNATURE }}"
 
-      # - name: Generate Changelog
-      #   run: echo ""> ${{ github.workspace }}-CHANGELOG.txt
       - uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ env.TAG }}
-          # body_path: ${{ github.workspace }}-CHANGELOG.txt
           prerelease: true
           files: |
             ./**/*.dmg
+            ./appcast.xml
