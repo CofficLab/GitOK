@@ -120,9 +120,9 @@ jobs:
         run: |
           mkdir -p ./private_keys
           echo -n "${{ secrets.APP_STORE_CONNECT_KEY_BASE64 }}" | base64 --decode -o ./private_keys/AuthKey_${{ secrets.APP_STORE_CONNECT_KEY_ID }}.p8
+
       - name: Get Certificate Info
         run: |
-          # 获取证书信息并解析
           CERT_INFO=$(security find-identity -v -p codesigning | grep '^[[:space:]]*1)' | head -n 1)
           CERT_ID=$(echo "$CERT_INFO" | awk -F'"' '{print $2}')
           TEAM_ID=$(echo "$CERT_INFO" | grep -o '[A-Z0-9]\{10\}' | tail -n 1)

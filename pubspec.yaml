@@ -6,6 +6,12 @@ version: 1.1.31
 environment:
   sdk: '>=3.3.0 <4.0.0'
 
+# 应用配置
+config:
+  auto_update:
+    feed_url: https://github.com/CofficLab/GitOK/releases/latest/download/appcast.xml
+    check_interval: 3600  # 每小时检查一次
+
 dependencies:
   flutter:
     sdk: flutter
@@ -34,6 +40,7 @@ dependencies:
   path_provider: ^2.1.5
   archive: ^4.0.4
   auto_updater: ^0.2.0
+  yaml: ^3.1.2
 
 dev_dependencies:
   flutter_test:
