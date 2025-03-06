@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gitok/core/models/promo_config.dart';
+import 'package:gitok/plugins/promo/promo_config.dart';
 import 'dart:io';
 
 class PromoCanvas extends StatefulWidget {

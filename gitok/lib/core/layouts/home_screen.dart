@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:gitok/plugins/git/git_bar.dart';
 import 'package:gitok/core/layouts/search_box.dart';
 import 'package:gitok/plugins/git/git_plugin.dart';
-import 'package:gitok/plugins/config/config_feature.dart';
-import 'package:gitok/plugins/welcome/welcome_feature.dart';
+import 'package:gitok/plugins/config/config_plugin.dart';
+import 'package:gitok/plugins/welcome/welcome_plugin.dart';
 import 'package:window_manager/window_manager.dart';
+import 'package:gitok/core/contract/plugin_protocol.dart';
 
 /// GitOK应用程序的主屏幕。
 /// 提供一个搜索式界面，用户可以通过搜索快速访问不同功能。
@@ -19,12 +19,11 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget? _selectedFeature;
   final _searchController = TextEditingController();
 
-  final _features = {
-    'Git管理': const GitFeature(),
-    '设置': const ConfigFeature(),
-    '欢迎': const WelcomeFeature(),
-    // 在这里添加更多功能
-  };
+  final List<PluginProtocol> _plugins = [
+    GitPlugin(),
+    ConfigPlugin(),
+    WelcomePlugin(),
+  ];
 
   void _handleSearch(String query) {
     if (query.isEmpty) {
@@ -33,10 +32,10 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
     // 简单的模糊匹配
-    final matches = _features.entries.where((entry) => entry.key.toLowerCase().contains(query.toLowerCase())).toList();
+    final matches = _plugins.where((plugin) => plugin.name.toLowerCase().contains(query.toLowerCase())).toList();
 
     if (matches.length == 1) {
-      setState(() => _selectedFeature = matches.first.value);
+      setState(() => _selectedFeature = matches.first.build(context));
     }
   }
 
@@ -71,7 +70,7 @@ class _HomeScreenState extends State<HomeScreen> {
             Expanded(
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(8),
-                child: _selectedFeature ?? _buildFeatureList(),
+                child: _selectedFeature ?? _buildPluginList(),
               ),
             ),
           ],
@@ -80,25 +79,19 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildFeatureList() {
+  Widget _buildPluginList() {
     return ListView.builder(
-      itemCount: _features.length,
+      itemCount: _plugins.length,
       itemBuilder: (context, index) {
-        final entry = _features.entries.elementAt(index);
+        final plugin = _plugins[index];
         return ListTile(
-          leading: Icon(_getFeatureIcon(entry.key)),
-          title: Text(entry.key),
-          onTap: () => setState(() => _selectedFeature = entry.value),
+          enabled: plugin.enabled,
+          leading: Icon(plugin.icon),
+          title: Text(plugin.name),
+          subtitle: Text(plugin.description),
+          onTap: () => setState(() => _selectedFeature = plugin.build(context)),
         );
       },
     );
-  }
-
-  IconData _getFeatureIcon(String feature) {
-    return switch (feature) {
-      'Git管理' => Icons.source_rounded,
-      '设置' => Icons.settings_rounded,
-      _ => Icons.extension_rounded,
-    };
   }
 }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'dart:ui' as ui;
-import 'package:gitok/core/models/app_icon_config.dart';
+import 'package:gitok/plugins/icon/app_icon_config.dart';
 import 'package:gitok/core/services/icon_service.dart';
 
 class IconPreview extends StatelessWidget {

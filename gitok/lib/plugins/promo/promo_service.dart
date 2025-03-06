@@ -3,7 +3,7 @@ import 'dart:ui' as ui;
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart' as path;
-import 'package:gitok/core/models/promo_config.dart';
+import 'package:gitok/plugins/promo/promo_config.dart';
 import 'package:gitok/core/utils/logger.dart';
 
 class PromoService {

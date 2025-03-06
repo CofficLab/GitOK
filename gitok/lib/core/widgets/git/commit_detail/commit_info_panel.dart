@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gitok/core/models/commit_info.dart';
+import 'package:gitok/plugins/git/commit_info.dart';
 
 /// 提交信息面板组件
 class CommitInfoPanel extends StatelessWidget {

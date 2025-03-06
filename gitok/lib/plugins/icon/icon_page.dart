@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:gitok/core/models/git_project.dart';
-import 'package:gitok/core/models/app_icon_config.dart';
+import 'package:gitok/plugins/git/git_project.dart';
+import 'package:gitok/plugins/icon/app_icon_config.dart';
 import 'package:gitok/core/services/icon_service.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';

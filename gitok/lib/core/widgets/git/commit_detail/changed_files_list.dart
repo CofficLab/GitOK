@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gitok/core/models/file_status.dart';
+import 'package:gitok/plugins/git/file_status.dart';
 import 'package:gitok/core/widgets/git/commit_detail/changed_file_item.dart';
 
 /// 变更文件列表组件

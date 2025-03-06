@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:gitok/core/models/git_project.dart';
-import 'package:gitok/core/models/promo_config.dart';
+import 'package:gitok/plugins/git/git_project.dart';
+import 'package:gitok/plugins/promo/promo_config.dart';
 import 'package:gitok/plugins/promo/promo_service.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:gitok/core/widgets/promo/promo_canvas.dart';

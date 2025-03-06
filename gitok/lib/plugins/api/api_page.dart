@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:gitok/core/models/git_project.dart';
-import 'package:gitok/core/models/api_config.dart';
+import 'package:gitok/plugins/git/git_project.dart';
+import 'package:gitok/plugins/api/api_config.dart';
 import 'package:gitok/plugins/api/api_service.dart';
 import 'package:gitok/core/widgets/json_viewer.dart';
 import 'dart:convert';

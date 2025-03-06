@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:gitok/plugins/git/git_provider.dart';
 import 'package:gitok/core/services/project_storage_service.dart';
 import 'package:gitok/plugins/git/git_service.dart';
-import 'package:gitok/core/models/git_project.dart';
+import 'package:gitok/plugins/git/git_project.dart';
 import 'dart:io';
 
 /// 添加项目按钮组件

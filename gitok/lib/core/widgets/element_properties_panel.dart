@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gitok/core/models/promo_config.dart';
+import 'package:gitok/plugins/promo/promo_config.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
 class ElementPropertiesPanel extends StatelessWidget {

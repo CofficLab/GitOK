@@ -9,7 +9,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:gitok/core/pages/config_page.dart';
+import 'package:gitok/plugins/config/config_page.dart';
 
 class WelcomePage extends StatefulWidget {
   const WelcomePage({super.key});

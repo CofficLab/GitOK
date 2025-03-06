@@ -2,7 +2,7 @@ import 'dart:io';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as path;
-import 'package:gitok/core/models/api_config.dart';
+import 'package:gitok/plugins/api/api_config.dart';
 import 'package:gitok/core/utils/logger.dart';
 
 class ApiService {

@@ -3,7 +3,7 @@ import 'dart:ui' as ui;
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart' as path;
-import 'package:gitok/core/models/app_icon_config.dart';
+import 'package:gitok/plugins/icon/app_icon_config.dart';
 
 class IconService {
   static final IconService _instance = IconService._internal();

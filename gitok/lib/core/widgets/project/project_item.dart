@@ -8,7 +8,7 @@
 library;
 
 import 'package:flutter/material.dart';
-import 'package:gitok/core/models/git_project.dart';
+import 'package:gitok/plugins/git/git_project.dart';
 import 'package:gitok/core/services/project_storage_service.dart';
 
 class ProjectItem extends StatelessWidget {

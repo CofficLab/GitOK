@@ -1,17 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:gitok/core/contract/plugin_protocol.dart';
 import 'package:gitok/plugins/git/git_provider.dart';
-import 'package:gitok/core/layouts/sidebar.dart';
+import 'package:gitok/plugins/git/sidebar.dart';
 import 'package:gitok/plugins/git/git_detail.dart';
 
-/// Git管理功能组件
+/// Git管理功能插件
 ///
 /// 提供完整的Git项目管理功能：
 /// - 左侧项目列表
 /// - 右侧项目详情和操作面板
 /// - 自包含的状态管理
-class GitFeature extends StatelessWidget {
-  const GitFeature({super.key});
+class GitPlugin implements PluginProtocol {
+  @override
+  String get name => 'Git管理';
+
+  @override
+  IconData get icon => Icons.source_rounded;
+
+  @override
+  String get description => 'Git仓库管理与版本控制';
+
+  @override
+  bool get enabled => true;
 
   @override
   Widget build(BuildContext context) {

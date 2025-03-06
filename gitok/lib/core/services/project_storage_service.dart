@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:gitok/core/models/git_project.dart';
+import 'package:gitok/plugins/git/git_project.dart';
 
 class ProjectStorageService {
   static const String _projectsKey = 'git_projects';
