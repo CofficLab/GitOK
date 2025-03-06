@@ -11,12 +11,10 @@ permissions:
 env:
   TAG: ${{ github.sha }}
   Identity: ''
-  SCHEME: GitOK
-  DESTINATION: 'generic/platform=macOS'
-  ArchivePath: './myapp'
-  BuildPath: './temp'
   BUILD_CERTIFICATE_BASE64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
   NEW_VERSION: 'x.x.x'
+  TEAM_ID: ''
+  CERT_ID: ''
 
 jobs:
   bump:
@@ -122,17 +120,26 @@ jobs:
         run: |
           mkdir -p ./private_keys
           echo -n "${{ secrets.APP_STORE_CONNECT_KEY_BASE64 }}" | base64 --decode -o ./private_keys/AuthKey_${{ secrets.APP_STORE_CONNECT_KEY_ID }}.p8
-      - run: security find-identity -v
+      - name: Get Certificate Info
+        run: |
+          # 获取证书信息并解析
+          CERT_INFO=$(security find-identity -v -p codesigning | grep '^[[:space:]]*1)' | head -n 1)
+          CERT_ID=$(echo "$CERT_INFO" | awk -F'"' '{print $2}')
+          TEAM_ID=$(echo "$CERT_INFO" | grep -o '[A-Z0-9]\{10\}' | tail -n 1)
+          echo "CERT_ID=$CERT_ID" >> $GITHUB_ENV
+          echo "TEAM_ID=$TEAM_ID" >> $GITHUB_ENV
+
+      - name: Configure Xcode project
+        run: |
+          # 修改 Flutter macOS 项目的配置
+          sed -i '' "s/DEVELOPMENT_TEAM = \".*\";/DEVELOPMENT_TEAM = \"${{ env.TEAM_ID }}\";/" macos/Runner.xcodeproj/project.pbxproj
+          sed -i '' 's/CODE_SIGN_STYLE = Automatic;/CODE_SIGN_STYLE = Manual;/' macos/Runner.xcodeproj/project.pbxproj
+          sed -i '' "s/CODE_SIGN_IDENTITY = \".*\";/CODE_SIGN_IDENTITY = \"${{ env.CERT_ID }}\";/" macos/Runner.xcodeproj/project.pbxproj
+
       - name: Build macOS App
         run: |
           flutter config --enable-macos-desktop
-          # 首先生成 Xcode 项目文件
-          flutter build macos --debug || true
-          # 使用 xcodebuild 进行构建，明确指定签名设置
-          cd macos
-          xcodebuild -scheme Runner -configuration Release \
-            CODE_SIGN_STYLE=Manual \
-            BUILD_DIR=build
+          flutter build macos --release
       - name: find identity
         run: |
           i=$(security find-identity -v -p codesigning | grep '^[[:space:]]*1)' | awk -F'[(|)]' '{print $3}')
