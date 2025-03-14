@@ -401,11 +401,18 @@ class _BranchMergeSelectorState extends State<_BranchMergeSelector> {
       width: 400,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.3),
+        color: Theme.of(context).colorScheme.surface.withOpacity(0.9),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
+          color: Theme.of(context).colorScheme.outline,
         ),
+        boxShadow: [
+          BoxShadow(
+            color: Theme.of(context).shadowColor.withOpacity(0.1),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -415,6 +422,7 @@ class _BranchMergeSelectorState extends State<_BranchMergeSelector> {
             '分支合并',
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
           ),
           const SizedBox(height: 16),
@@ -431,7 +439,7 @@ class _BranchMergeSelectorState extends State<_BranchMergeSelector> {
                 ),
               ),
               const SizedBox(width: 16),
-              const Icon(Icons.arrow_forward),
+              Icon(Icons.arrow_forward, color: Theme.of(context).colorScheme.onSurface),
               const SizedBox(width: 16),
               Expanded(
                 child: _buildBranchSelector(
@@ -456,6 +464,9 @@ class _BranchMergeSelectorState extends State<_BranchMergeSelector> {
                   label: const Text('合并后留在当前分支'),
                   style: FilledButton.styleFrom(
                     backgroundColor: Theme.of(context).colorScheme.secondary,
+                    foregroundColor: Theme.of(context).colorScheme.onSecondary,
+                    disabledBackgroundColor: Theme.of(context).colorScheme.secondary.withOpacity(0.4),
+                    disabledForegroundColor: Theme.of(context).colorScheme.onSecondary.withOpacity(0.6),
                   ),
                 ),
               ),
@@ -467,6 +478,9 @@ class _BranchMergeSelectorState extends State<_BranchMergeSelector> {
                   label: const Text('合并并切换到目标分支'),
                   style: FilledButton.styleFrom(
                     backgroundColor: Theme.of(context).colorScheme.primary,
+                    foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                    disabledBackgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.4),
+                    disabledForegroundColor: Theme.of(context).colorScheme.onPrimary.withOpacity(0.6),
                   ),
                 ),
               ),
@@ -497,18 +511,29 @@ class _BranchMergeSelectorState extends State<_BranchMergeSelector> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: Theme.of(context).textTheme.bodySmall),
+        Text(
+          label,
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: Theme.of(context).colorScheme.onSurface,
+                fontWeight: FontWeight.w500,
+              ),
+        ),
         const SizedBox(height: 4),
         DropdownButtonFormField<String>(
           isExpanded: true,
-          decoration: const InputDecoration(
-            border: OutlineInputBorder(),
-            contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+          decoration: InputDecoration(
+            border: const OutlineInputBorder(),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
             isDense: true,
+            filled: true,
+            fillColor: Theme.of(context).colorScheme.surface,
           ),
+          dropdownColor: Theme.of(context).colorScheme.surface,
           value: value,
           items: branches,
           onChanged: onChanged,
+          icon: Icon(Icons.arrow_drop_down, color: Theme.of(context).colorScheme.onSurface),
+          style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
         ),
       ],
     );
