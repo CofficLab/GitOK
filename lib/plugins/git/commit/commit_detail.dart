@@ -203,130 +203,63 @@ class _CommitDetailState extends State<CommitDetail> {
           ),
           if (widget.isCurrentChanges) ...[
             const SizedBox(height: 24),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                FilledButton.icon(
-                  onPressed: _loadDetails,
-                  icon: const Icon(Icons.refresh),
-                  label: const Text('刷新'),
-                ),
-                const SizedBox(width: 16),
-                FilledButton.icon(
-                  onPressed: _showMergeBranchDialog,
-                  icon: const Icon(Icons.merge_type),
-                  label: const Text('合并分支'),
-                  style: FilledButton.styleFrom(
-                    backgroundColor: Theme.of(context).colorScheme.secondary,
-                  ),
-                ),
-              ],
+            FilledButton.icon(
+              onPressed: _loadDetails,
+              icon: const Icon(Icons.refresh),
+              label: const Text('刷新'),
             ),
+            const SizedBox(height: 32),
+            _buildBranchMergePanel(),
           ],
         ],
       ),
     );
   }
 
-  // 显示合并分支对话框
-  void _showMergeBranchDialog() async {
-    final gitProvider = context.read<GitProvider>();
-    final project = gitProvider.currentProject;
-    if (project == null) return;
+  // 分支合并面板
+  Widget _buildBranchMergePanel() {
+    return FutureBuilder<List<String>>(
+      future: _loadBranches(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const CircularProgressIndicator();
+        }
 
-    // 获取所有分支
-    List<String> branches = [];
-    try {
-      setState(() => _isLoading = true);
-      branches = await _gitService.getBranches(project.path);
-      setState(() => _isLoading = false);
-    } catch (e) {
-      setState(() => _isLoading = false);
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('获取分支失败: $e 😅')));
-      }
-      return;
-    }
+        if (snapshot.hasError) {
+          return Text('加载分支失败: ${snapshot.error} 😅');
+        }
 
-    // 获取当前分支
-    String currentBranch = '';
-    try {
-      currentBranch = await _gitService.getCurrentBranch(project.path);
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('获取当前分支失败: $e 😅')));
-      }
-      return;
-    }
+        if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return const Text('没有可用的分支 🤷‍♂️');
+        }
 
-    // 移除当前分支，因为不能自己合并自己
-    branches.remove(currentBranch);
-
-    if (branches.isEmpty) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('没有其他分支可合并 🤷‍♂️')));
-      }
-      return;
-    }
-
-    String? selectedBranch;
-
-    if (!mounted) return;
-
-    // 显示分支选择对话框
-    await showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text('合并到 $currentBranch'),
-        content: SizedBox(
-          width: 300,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text('选择要合并的源分支:'),
-              const SizedBox(height: 16),
-              DropdownButtonFormField<String>(
-                isExpanded: true,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                ),
-                hint: const Text('选择分支'),
-                items: branches
-                    .map((branch) => DropdownMenuItem(
-                          value: branch,
-                          child: Text(branch),
-                        ))
-                    .toList(),
-                onChanged: (value) {
-                  selectedBranch = value;
-                },
-              ),
-            ],
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('取消'),
-          ),
-          FilledButton(
-            onPressed: () {
-              if (selectedBranch != null) {
-                Navigator.pop(context);
-                _mergeBranch(selectedBranch!, currentBranch);
-              }
-            },
-            child: const Text('合并'),
-          ),
-        ],
-      ),
+        return _BranchMergeSelector(
+          branches: snapshot.data!,
+          onMergeAndStay: (source, target) => _mergeBranch(source, target, false),
+          onMergeAndSwitch: (source, target) => _mergeBranch(source, target, true),
+        );
+      },
     );
   }
 
+  // 加载所有分支
+  Future<List<String>> _loadBranches() async {
+    final gitProvider = context.read<GitProvider>();
+    final project = gitProvider.currentProject;
+    if (project == null) return [];
+
+    try {
+      return await _gitService.getBranches(project.path);
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('获取分支失败: $e 😅')));
+      }
+      return [];
+    }
+  }
+
   // 执行分支合并
-  void _mergeBranch(String sourceBranch, String targetBranch) async {
+  void _mergeBranch(String sourceBranch, String targetBranch, bool switchAfterMerge) async {
     final gitProvider = context.read<GitProvider>();
     final project = gitProvider.currentProject;
     if (project == null) return;
@@ -335,8 +268,21 @@ class _CommitDetailState extends State<CommitDetail> {
       // 显示加载状态
       setState(() => _isLoading = true);
 
+      // 获取当前分支
+      final currentBranch = await _gitService.getCurrentBranch(project.path);
+
+      // 如果需要，先切换到目标分支
+      if (currentBranch != targetBranch) {
+        await _gitService.checkout(project.path, targetBranch);
+      }
+
       // 执行合并
       final result = await _gitService.mergeBranch(project.path, sourceBranch);
+
+      // 如果需要切换回原分支且当前不在原分支
+      if (!switchAfterMerge && currentBranch != targetBranch) {
+        await _gitService.checkout(project.path, currentBranch);
+      }
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -380,5 +326,195 @@ class _CommitDetailState extends State<CommitDetail> {
         await _loadFileDiff(file.path);
       }
     }
+  }
+}
+
+// 分支合并选择器组件
+class _BranchMergeSelector extends StatefulWidget {
+  final List<String> branches;
+  final Function(String, String) onMergeAndStay;
+  final Function(String, String) onMergeAndSwitch;
+
+  const _BranchMergeSelector({
+    required this.branches,
+    required this.onMergeAndStay,
+    required this.onMergeAndSwitch,
+  });
+
+  @override
+  State<_BranchMergeSelector> createState() => _BranchMergeSelectorState();
+}
+
+class _BranchMergeSelectorState extends State<_BranchMergeSelector> {
+  String? _sourceBranch;
+  String? _targetBranch;
+  bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _initBranches();
+  }
+
+  Future<void> _initBranches() async {
+    if (widget.branches.length >= 2) {
+      // 获取当前分支
+      final gitProvider = context.read<GitProvider>();
+      final project = gitProvider.currentProject;
+      if (project == null) return;
+
+      try {
+        setState(() => _isLoading = true);
+        final currentBranch = await GitService().getCurrentBranch(project.path);
+
+        // 设置目标分支为当前分支
+        setState(() {
+          _targetBranch = currentBranch;
+
+          // 设置源分支为第一个不是当前分支的分支
+          for (final branch in widget.branches) {
+            if (branch != currentBranch) {
+              _sourceBranch = branch;
+              break;
+            }
+          }
+        });
+      } catch (e) {
+        // 出错时使用默认值
+        setState(() {
+          _sourceBranch = widget.branches[0];
+          _targetBranch = widget.branches[1];
+        });
+      } finally {
+        setState(() => _isLoading = false);
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_isLoading) {
+      return const CircularProgressIndicator();
+    }
+
+    return Container(
+      width: 400,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.3),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
+        ),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            '分支合并',
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(
+                child: _buildBranchSelector(
+                  label: '源分支',
+                  value: _sourceBranch,
+                  onChanged: (value) {
+                    setState(() => _sourceBranch = value);
+                  },
+                  excludeBranch: _targetBranch,
+                ),
+              ),
+              const SizedBox(width: 16),
+              const Icon(Icons.arrow_forward),
+              const SizedBox(width: 16),
+              Expanded(
+                child: _buildBranchSelector(
+                  label: '目标分支',
+                  value: _targetBranch,
+                  onChanged: (value) {
+                    setState(() => _targetBranch = value);
+                  },
+                  excludeBranch: _sourceBranch,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 24),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Expanded(
+                child: FilledButton.icon(
+                  onPressed: _canMerge() ? () => widget.onMergeAndStay(_sourceBranch!, _targetBranch!) : null,
+                  icon: const Icon(Icons.merge_type),
+                  label: const Text('合并后留在当前分支'),
+                  style: FilledButton.styleFrom(
+                    backgroundColor: Theme.of(context).colorScheme.secondary,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: FilledButton.icon(
+                  onPressed: _canMerge() ? () => widget.onMergeAndSwitch(_sourceBranch!, _targetBranch!) : null,
+                  icon: const Icon(Icons.call_merge),
+                  label: const Text('合并并切换到目标分支'),
+                  style: FilledButton.styleFrom(
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBranchSelector({
+    required String label,
+    required String? value,
+    required Function(String?) onChanged,
+    String? excludeBranch,
+  }) {
+    final branches = widget.branches
+        .where((branch) => branch != excludeBranch)
+        .map((branch) => DropdownMenuItem(
+              value: branch,
+              child: Text(
+                branch,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ))
+        .toList();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: Theme.of(context).textTheme.bodySmall),
+        const SizedBox(height: 4),
+        DropdownButtonFormField<String>(
+          isExpanded: true,
+          decoration: const InputDecoration(
+            border: OutlineInputBorder(),
+            contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            isDense: true,
+          ),
+          value: value,
+          items: branches,
+          onChanged: onChanged,
+        ),
+      ],
+    );
+  }
+
+  bool _canMerge() {
+    return _sourceBranch != null && _targetBranch != null && _sourceBranch != _targetBranch;
   }
 }
