@@ -261,6 +261,7 @@ jobs:
           prerelease: false
           files: |
             ${{ env.UPDATE_WORKSPACE_PATH }}/*.dmg
+            ${{ github.workspace }}/appcast.xml
 
       - name: 推送到仓库
         uses: stefanzweifel/git-auto-commit-action@v4
