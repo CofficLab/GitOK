@@ -183,4 +183,15 @@ class GitService {
     final result = await gitDir.runCommand(['rev-list', '@{u}..HEAD', '--count']);
     return int.parse((result.stdout as String).trim());
   }
+
+  /// 合并指定分支到当前分支
+  Future<String> mergeBranch(String repoPath, String sourceBranch) async {
+    try {
+      final gitDir = await GitDir.fromExisting(repoPath);
+      final result = await gitDir.runCommand(['merge', sourceBranch]);
+      return result.stdout as String;
+    } catch (e) {
+      throw Exception('合并分支失败：$e');
+    }
+  }
 }

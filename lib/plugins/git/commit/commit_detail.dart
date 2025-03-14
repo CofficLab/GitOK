@@ -203,15 +203,163 @@ class _CommitDetailState extends State<CommitDetail> {
           ),
           if (widget.isCurrentChanges) ...[
             const SizedBox(height: 24),
-            FilledButton.icon(
-              onPressed: _loadDetails,
-              icon: const Icon(Icons.refresh),
-              label: const Text('刷新'),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                FilledButton.icon(
+                  onPressed: _loadDetails,
+                  icon: const Icon(Icons.refresh),
+                  label: const Text('刷新'),
+                ),
+                const SizedBox(width: 16),
+                FilledButton.icon(
+                  onPressed: _showMergeBranchDialog,
+                  icon: const Icon(Icons.merge_type),
+                  label: const Text('合并分支'),
+                  style: FilledButton.styleFrom(
+                    backgroundColor: Theme.of(context).colorScheme.secondary,
+                  ),
+                ),
+              ],
             ),
           ],
         ],
       ),
     );
+  }
+
+  // 显示合并分支对话框
+  void _showMergeBranchDialog() async {
+    final gitProvider = context.read<GitProvider>();
+    final project = gitProvider.currentProject;
+    if (project == null) return;
+
+    // 获取所有分支
+    List<String> branches = [];
+    try {
+      setState(() => _isLoading = true);
+      branches = await _gitService.getBranches(project.path);
+      setState(() => _isLoading = false);
+    } catch (e) {
+      setState(() => _isLoading = false);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('获取分支失败: $e 😅')));
+      }
+      return;
+    }
+
+    // 获取当前分支
+    String currentBranch = '';
+    try {
+      currentBranch = await _gitService.getCurrentBranch(project.path);
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('获取当前分支失败: $e 😅')));
+      }
+      return;
+    }
+
+    // 移除当前分支，因为不能自己合并自己
+    branches.remove(currentBranch);
+
+    if (branches.isEmpty) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('没有其他分支可合并 🤷‍♂️')));
+      }
+      return;
+    }
+
+    String? selectedBranch;
+
+    if (!mounted) return;
+
+    // 显示分支选择对话框
+    await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('合并到 $currentBranch'),
+        content: SizedBox(
+          width: 300,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('选择要合并的源分支:'),
+              const SizedBox(height: 16),
+              DropdownButtonFormField<String>(
+                isExpanded: true,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                ),
+                hint: const Text('选择分支'),
+                items: branches
+                    .map((branch) => DropdownMenuItem(
+                          value: branch,
+                          child: Text(branch),
+                        ))
+                    .toList(),
+                onChanged: (value) {
+                  selectedBranch = value;
+                },
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('取消'),
+          ),
+          FilledButton(
+            onPressed: () {
+              if (selectedBranch != null) {
+                Navigator.pop(context);
+                _mergeBranch(selectedBranch!, currentBranch);
+              }
+            },
+            child: const Text('合并'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // 执行分支合并
+  void _mergeBranch(String sourceBranch, String targetBranch) async {
+    final gitProvider = context.read<GitProvider>();
+    final project = gitProvider.currentProject;
+    if (project == null) return;
+
+    try {
+      // 显示加载状态
+      setState(() => _isLoading = true);
+
+      // 执行合并
+      final result = await _gitService.mergeBranch(project.path, sourceBranch);
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('成功将 $sourceBranch 合并到 $targetBranch 🎉'),
+          backgroundColor: Colors.green,
+        ));
+      }
+
+      // 刷新状态
+      _loadDetails();
+
+      // 通知 GitProvider 刷新
+      gitProvider.loadCommits();
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('合并失败: $e 😢'),
+          backgroundColor: Colors.red,
+        ));
+      }
+    } finally {
+      setState(() => _isLoading = false);
+    }
   }
 
   void _handleFileSelected(FileStatus file) async {
