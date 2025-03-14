@@ -2,13 +2,8 @@ name: Pre Release
 
 on:
   push:
-    tags:
-      - '*p'
-  workflow_run:
-    workflows:
-      - 'Pre Bump'
-    types:
-      - completed
+    branches:
+      - pre
 
 permissions:
   contents: write
@@ -16,33 +11,83 @@ permissions:
 env:
   TAG: ${{ github.sha }}
   Identity: ''
-  SCHEME: GitOK
-  DESTINATION: 'generic/platform=macOS'
-  ArchivePath: './myapp'
-  BuildPath: './temp'
   BUILD_CERTIFICATE_BASE64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
+  NEW_VERSION: 'x.x.x'
+  TEAM_ID: ''
+  CERT_ID: ''
+  ED_SIGNATURE: ''
+  DMG_FILENAME: ''
+  VERSION: ''
+  DMG_FILE: ''
+  APP_PATH: ''
+  UPDATE_WORKSPACE_PATH: ''
 
 jobs:
+  bump:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: 更新版本号
+        run: |
+          # 读取当前版本号
+          VERSION=$(grep "version:" pubspec.yaml | sed 's/version: //' | tr -d "'")
+          # 分割版本号
+          MAJOR=$(echo $VERSION | cut -d. -f1)
+          MINOR=$(echo $VERSION | cut -d. -f2)
+          PATCH=$(echo $VERSION | cut -d. -f3)
+          # 增加补丁版本号
+          NEW_PATCH=$((PATCH + 1))
+          NEW_VERSION="$MAJOR.$MINOR.$NEW_PATCH"
+          # 更新 pubspec.yaml 中的版本号
+          sed -i '' "s/version: .*/version: $NEW_VERSION/" pubspec.yaml
+          echo "TAG=$NEW_VERSION" >> $GITHUB_ENV
+      - name: 打标签并推送到仓库
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: '🎨 Bump version to ${{ env.TAG }}'
+          commit_user_name: GitHub Action
+          tagging_message: ${{ env.TAG }}
+
+  rebase:
+    needs:
+      - bump
+    runs-on: ubuntu-latest
+    steps:
+      - name: 拉取 dev 分支
+        uses: actions/checkout@v3
+        with:
+          ref: dev
+      - name: 拉取 pre 分支
+        run: git fetch origin pre
+      - name: Rebase dev on pre
+        continue-on-error: true
+        run: git rebase origin/pre
+      - name: Push the rebased dev branch
+        continue-on-error: true
+        run: git push origin dev
+
   build_with_signing:
+    needs:
+      - bump
     runs-on: macos-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           ref: pre
-      - name: 读取版本号
-        run: |
-          # 读取配置文件路径
-          projectFile=$(find $(pwd) ! -path "*Resources*" -type f -name "*.pbxproj" | head -n 1)
+          fetch-depth: 0
 
-          # 读取文件中的版本号
-          version=$(grep -o 'MARKETING_VERSION = [^"]*' $projectFile | head -n 1 | grep -o '[0-9]\+\.[0-9]\+\.[0-9]\+')
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.22.0'
+          channel: 'stable'
 
-          echo "版本号->$version"
+      - name: Install dependencies
+        run: flutter pub get
 
-          build=$(agvtool what-version -terse)
-
-          echo "TAG=p$version($build)" >> $GITHUB_ENV
       # https://docs.github.com/zh/actions/deployment/deploying-xcode-applications/installing-an-apple-certificate-on-macos-runners-for-xcode-development
       - name: Install the Apple certificate and provisioning profile
         env:
@@ -75,25 +120,114 @@ jobs:
         run: |
           mkdir -p ./private_keys
           echo -n "${{ secrets.APP_STORE_CONNECT_KEY_BASE64 }}" | base64 --decode -o ./private_keys/AuthKey_${{ secrets.APP_STORE_CONNECT_KEY_ID }}.p8
-      - run: security find-identity -v
-      - name: Build
-        run: xcodebuild -scheme ${{ env.SCHEME }} -configuration Release -derivedDataPath ${{ env.BuildPath }} clean build
-      - name: find identity
+
+      - name: Get Certificate Info
+        run: |
+          CERT_INFO=$(security find-identity -v -p codesigning | grep '^[[:space:]]*1)' | head -n 1)
+          CERT_ID=$(echo "$CERT_INFO" | awk -F'"' '{print $2}')
+          TEAM_ID=$(echo "$CERT_INFO" | grep -o '[A-Z0-9]\{10\}' | tail -n 1)
+          echo "CERT_ID=$CERT_ID" >> $GITHUB_ENV
+          echo "TEAM_ID=$TEAM_ID" >> $GITHUB_ENV
+
+      - name: Configure Xcode project
+        run: |
+          # 修改所有签名相关的配置
+          PBXPROJ="macos/Runner.xcodeproj/project.pbxproj"
+
+          # 替换所有 Mac Development 为实际的证书 ID
+          sed -i '' "s/\"Mac Development\"/\"${{ env.CERT_ID }}\"/g" $PBXPROJ
+
+          # 替换所有 DEVELOPMENT_TEAM
+          sed -i '' "s/DEVELOPMENT_TEAM = \".*\"/DEVELOPMENT_TEAM = \"${{ env.TEAM_ID }}\"/g" $PBXPROJ
+
+          # 设置手动签名
+          sed -i '' 's/CODE_SIGN_STYLE = Automatic/CODE_SIGN_STYLE = Manual/g' $PBXPROJ
+
+          # 设置 CODE_SIGN_IDENTITY
+          sed -i '' "s/CODE_SIGN_IDENTITY = \".*\"/CODE_SIGN_IDENTITY = \"${{ env.CERT_ID }}\"/g" $PBXPROJ
+
+          # 设置 Debug 和 Release 配置的签名身份
+          sed -i '' "s/\"CODE_SIGN_IDENTITY[^\"]*\" = \".*\"/\"CODE_SIGN_IDENTITY[sdk=macosx*]\" = \"${{ env.CERT_ID }}\"/g" $PBXPROJ
+
+          # 清除可能存在的配置文件指定器
+          sed -i '' 's/PROVISIONING_PROFILE_SPECIFIER = ".*"/PROVISIONING_PROFILE_SPECIFIER = ""/g' $PBXPROJ
+
+      - name: Build macOS App
+        run: flutter build macos --release
+
+      - name: Find identity
         run: |
           i=$(security find-identity -v -p codesigning | grep '^[[:space:]]*1)' | awk -F'[(|)]' '{print $3}')
           echo "Identity=$i" >> $GITHUB_ENV
-      - name: Codesign
-        run: codesign --force -s ${{ env.Identity }} --option=runtime temp/Build/Products/Release/${{ env.SCHEME }}.app
-      - name: Codesign Check
-        run: codesign -dv temp/Build/Products/Release/${{ env.SCHEME }}.app
+
+      - name: 获取应用程序信息
+        run: |
+          APP_PATH=$(find build/macos/Build/Products/Release -type d -name "*.app" | head -n 1)
+          APP_NAME=$(basename $APP_PATH)
+          VERSION=$(grep "version:" pubspec.yaml | sed 's/version: //' | tr -d "'")
+
+          echo "TAG=$VERSION" >> $GITHUB_ENV
+          echo "APP_PATH=$APP_PATH" >> $GITHUB_ENV
+          echo "APP_NAME=$APP_NAME" >> $GITHUB_ENV
+
+          echo "APP_PATH=$APP_PATH"
+          echo "APP_NAME=$APP_NAME"
+          echo "VERSION=$VERSION"
+
+      # Codesign sparkle
+      - name: Codesign sparkle
+        run: |
+          codesign -f -s ${{ env.Identity }} -o runtime ${{ env.APP_PATH }}/Contents/Frameworks/Sparkle.framework/Versions/B/XPCServices/Installer.xpc
+          codesign -f -s ${{ env.Identity }} -o runtime --preserve-metadata=entitlements ${{ env.APP_PATH }}/Contents/Frameworks/Sparkle.framework/Versions/B/XPCServices/Downloader.xpc
+          codesign -f -s ${{ env.Identity }} -o runtime ${{ env.APP_PATH }}/Contents/Frameworks/Sparkle.framework/Versions/B/Autoupdate
+          codesign -f -s ${{ env.Identity }} -o runtime ${{ env.APP_PATH }}/Contents/Frameworks/Sparkle.framework/Versions/B/Updater.app
+          codesign -f -s ${{ env.Identity }} -o runtime ${{ env.APP_PATH }}/Contents/Frameworks/Sparkle.framework
+
+      # Codesign App
+      - name: Codesign App
+        run: |
+          codesign --force -s ${{ env.Identity }} --option=runtime ${{ env.APP_PATH }}
+          codesign -dv ${{ env.APP_PATH }}
+
+      # Create DMG
       - name: Create DMG
         run: |
           npm i -g create-dmg
-          create-dmg "temp/Build/Products/Release/${{ env.SCHEME }}.app"
+          create-dmg ${{ env.APP_PATH }}
+
+          # 重命名 DMG 文件（移除空格）
+          for file in *.dmg; do
+            mv "$file" "${file// /-}"
+          done
+
+      - name: 获取 DMG 文件信息
+        run: |
+          # 查找 DMG 文件
+          DMG_FILE=$(find . -maxdepth 1 -type f -name "*.dmg" | head -n 1)
+
+          if [ -z "$DMG_FILE" ]; then
+            echo "错误: 未找到 DMG 文件" >&2
+            exit 1
+          fi
+
+          # 获取绝对路径
+          DMG_FILE=$(realpath "$DMG_FILE")
+
+          # 获取文件名
+          DMG_FILENAME=$(basename "$DMG_FILE")
+
+          # 设置 GitHub Actions 环境变量
+          echo "DMG_FILE=$DMG_FILE" >> $GITHUB_ENV
+          echo "DMG_FILENAME=$DMG_FILENAME" >> $GITHUB_ENV
+
+          echo "DMG 文件信息："
+          echo "路径: $DMG_FILE"
+          echo "文件名: $DMG_FILENAME"
+
       - name: Notary
         continue-on-error: true
         run: |
-          file=$(find . -maxdepth 1 -type f -name "*.dmg" | head -n 1)
+          file=${{ env.DMG_FILE }}
           xcrun notarytool submit "$file" \
             --key ./private_keys/AuthKey_${{ secrets.APP_STORE_CONNECT_KEY_ID }}.p8 \
             --key-id=${{ secrets.APP_STORE_CONNECT_KEY_ID }} \
@@ -107,17 +241,50 @@ jobs:
           #   --key ./private_keys/AuthKey_${{ secrets.APP_STORE_CONNECT_KEY_ID }}.p8 \
           #   --key-id ${{ secrets.APP_STORE_CONNECT_KEY_ID }} \
           #   --issuer ${{ secrets.APP_STORE_CONNECT_KEY_ISSER_ID }}
-      - name: 公证结果
+
+      - name: Validate
         continue-on-error: true
+        run: stapler validate "${{ env.DMG_FILE }}"
+
+      - name: Generate appcast
         run: |
-          file=$(find . -maxdepth 1 -type f -name "*.dmg" | head -n 1)
-          stapler validate "$file"
-      # - name: Generate Changelog
-      #   run: echo ""> ${{ github.workspace }}-CHANGELOG.txt
-      - uses: softprops/action-gh-release@v2
+          UPDATE_WORKSPACE_PATH=${{ github.workspace }}/updates
+
+          mkdir $UPDATE_WORKSPACE_PATH
+          cp *.dmg $UPDATE_WORKSPACE_PATH/
+
+          ls -alh $UPDATE_WORKSPACE_PATH
+
+          GENERATE_APPCAST_PATH=$(find ${{ github.workspace }} -name "generate_appcast" -type f | head -n 1)
+
+          if [ -z "$GENERATE_APPCAST_PATH" ]; then
+            echo "generate_appcast 工具未找到"
+            exit 1
+          fi
+
+          echo "${{ secrets.SPARKLE_PRIVATE_KEY_GITOK }}" | $GENERATE_APPCAST_PATH --ed-key-file - $UPDATE_WORKSPACE_PATH
+
+          cat $UPDATE_WORKSPACE_PATH/appcast.xml
+
+          u="https://github.com/CofficLab/GitOK/releases/latest/download/${{ env.DMG_FILENAME }}" 
+          sed -i '' "s|\(enclosure url=\"\)[^\"]*|\1$u|" "$UPDATE_WORKSPACE_PATH/appcast.xml"
+
+          mv $UPDATE_WORKSPACE_PATH/appcast.xml ${{ github.workspace }}/appcast.xml
+
+          echo "UPDATE_WORKSPACE_PATH=$UPDATE_WORKSPACE_PATH" >> $GITHUB_ENV
+
+      - name: Release
+        uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ env.TAG }}
-          # body_path: ${{ github.workspace }}-CHANGELOG.txt
           prerelease: true
           files: |
-            ./**/*.dmg
+            ${{ env.UPDATE_WORKSPACE_PATH }}/*.dmg
+
+      - name: 推送到仓库
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          branch: pre
+          commit_message: '🎨 Update appcast.yml'
+          commit_user_name: GitHub Action
+          file_pattern: 'appcast.xml'

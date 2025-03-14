@@ -1,7 +1,26 @@
 {
-    "editor.quickSuggestions": {
-        "comments": "off",
-        "strings": "off",
-        "other": "off"
-    }
+    "cSpell.words": [
+        "appcast",
+        "Autoupdate",
+        "cocoapods",
+        "Codesign",
+        "codesigning",
+        "colorpicker",
+        "cupertino",
+        "gitok",
+        "LTWH",
+        "notarytool",
+        "pbxproj",
+        "provisionprofile",
+        "pubspec",
+        "realpath",
+        "reorderable",
+        "softprops",
+        "stefanzweifel",
+        "subosito",
+        "Titlebar",
+        "Unpushed",
+        "xcodeproj",
+        "xcrun"
+    ]
 }

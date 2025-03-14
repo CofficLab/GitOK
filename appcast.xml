@@ -1,14 +1,14 @@
 <?xml version="1.0" standalone="yes"?>
 <rss xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" version="2.0">
     <channel>
-        <title>GitOK</title>
+        <title>gitok</title>
         <item>
-            <title>1.1.31</title>
-            <pubDate>Thu, 12 Dec 2024 04:09:01 +0000</pubDate>
-            <sparkle:version>139</sparkle:version>
-            <sparkle:shortVersionString>1.1.31</sparkle:shortVersionString>
-            <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <enclosure url="https://github.com/CofficLab/GitOK/releases/latest/download/GitOK-1.1.31.dmg" length="28850421" type="application/octet-stream" sparkle:edSignature="BAKc+yzrfGZIn8ZjAA9k10Td/zENC/LFrmwje4LQnVioG5YMYE/aMvzrx/2S/j6MVE9GfcAIXG11CYc3aVoTBw=="/>
+            <title>1.1.33</title>
+            <pubDate>Thu, 06 Mar 2025 10:16:10 +0000</pubDate>
+            <sparkle:version>1.1.33</sparkle:version>
+            <sparkle:shortVersionString>1.1.33</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>11.5</sparkle:minimumSystemVersion>
+            <enclosure url="https://github.com/CofficLab/GitOK/releases/latest/download/gitok-1.1.33.dmg" length="26680095" type="application/octet-stream" sparkle:edSignature="ZGQ1cJz6OjPYN9ZBS82iuYUmFkAorc9eURNBIb2GMsOvO4V3jH31avjVwZLtpv89A6mzak7DxfdckGAYPtfOCw=="/>
         </item>
     </channel>
 </rss>
