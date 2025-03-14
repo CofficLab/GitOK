@@ -12,11 +12,11 @@ import 'package:flutter/services.dart';
 import 'package:gitok/core/layouts/home_screen.dart';
 import 'package:gitok/core/theme/macos_theme.dart';
 import 'package:hotkey_manager/hotkey_manager.dart';
-import 'package:window_manager/window_manager.dart';
 import 'package:gitok/plugins/welcome/welcome_page.dart';
 import 'package:tray_manager/tray_manager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:gitok/core/managers/tray_manager.dart';
+import 'package:gitok/core/managers/window_manager.dart';
 
 /// 应用程序的根组件
 ///
@@ -28,14 +28,15 @@ class MyApp extends StatefulWidget {
   State<MyApp> createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp> with WindowListener, TrayListener {
+class _MyAppState extends State<MyApp> with TrayListener implements WindowListener {
   String _initialRoute = '/';
   final _trayManager = AppTrayManager();
+  final _windowManager = AppWindowManager();
 
   @override
   void initState() {
     super.initState();
-    windowManager.addListener(this);
+    _windowManager.addListener(this);
     trayManager.addListener(this);
     _setupGlobalHotkey();
     _setupKeyboardListener();
@@ -60,7 +61,7 @@ class _MyAppState extends State<MyApp> with WindowListener, TrayListener {
   void _onKey(RawKeyEvent event) {
     if (event is RawKeyDownEvent) {
       if (event.logicalKey == LogicalKeyboardKey.escape) {
-        windowManager.hide();
+        _windowManager.hide();
       }
     }
   }
@@ -116,8 +117,32 @@ class _MyAppState extends State<MyApp> with WindowListener, TrayListener {
   // 当窗口关闭时，隐藏而不是退出
   @override
   void onWindowClose() {
-    windowManager.hide();
+    _windowManager.hide();
   }
+
+  @override
+  void onWindowFocus() {}
+
+  @override
+  void onWindowBlur() {}
+
+  @override
+  void onWindowMaximize() {}
+
+  @override
+  void onWindowUnmaximize() {}
+
+  @override
+  void onWindowMinimize() {}
+
+  @override
+  void onWindowRestore() {}
+
+  @override
+  void onWindowMove() {}
+
+  @override
+  void onWindowResize() {}
 
   // 处理托盘菜单点击事件
   @override
@@ -173,7 +198,7 @@ class _MyAppState extends State<MyApp> with WindowListener, TrayListener {
     RawKeyboard.instance.removeListener(_onKey);
     // 注销所有热键
     hotKeyManager.unregisterAll();
-    windowManager.removeListener(this);
+    _windowManager.removeListener(this);
     trayManager.removeListener(this);
     super.dispose();
   }
