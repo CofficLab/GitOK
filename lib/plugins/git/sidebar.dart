@@ -32,13 +32,6 @@ class AppDrawer extends StatelessWidget {
             // ),
             child: Row(
               children: [
-                const Text(
-                  'GitOK 🚀',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
                 const Spacer(),
                 AddProjectButton(),
               ],

@@ -6,6 +6,7 @@
 /// - 基本使用教程
 /// - 快捷键设置
 /// - 开始使用按钮
+library;
 
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';

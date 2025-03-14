@@ -166,7 +166,7 @@ jobs:
           APP_NAME=$(basename $APP_PATH)
           VERSION=$(grep "version:" pubspec.yaml | sed 's/version: //' | tr -d "'")
 
-          echo "TAG=$VERSION" >> $GITHUB_ENV
+          echo "TAG=v$VERSION" >> $GITHUB_ENV
           echo "APP_PATH=$APP_PATH" >> $GITHUB_ENV
           echo "APP_NAME=$APP_NAME" >> $GITHUB_ENV
 
