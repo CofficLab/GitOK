@@ -1,7 +1,7 @@
 name: gitok
 description: 'A new Flutter project.'
 publish_to: 'none'
-version: 1.1.35
+version: 1.2.1
 
 environment:
   sdk: '>=3.3.0 <4.0.0'
@@ -11,7 +11,7 @@ config:
   auto_update:
     # main 分支存放稳定版本，pre 分支存放预发布版本，这样用户不会收到预发布版本的更新通知
     feed_url: https://raw.githubusercontent.com/CofficLab/GitOK/main/appcast.xml
-    check_interval: 3600  # 每小时检查一次
+    check_interval: 3600 # 每小时检查一次
 
 dependencies:
   flutter:

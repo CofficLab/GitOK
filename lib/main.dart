@@ -1,87 +1,150 @@
-import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:hotkey_manager/hotkey_manager.dart';
-import 'package:macos_window_utils/macos_window_utils.dart';
-import 'package:gitok/core/layouts/app.dart';
-import 'package:window_manager/window_manager.dart';
-import 'package:tray_manager/tray_manager.dart';
-import 'package:auto_updater/auto_updater.dart';
-import 'package:gitok/core/config/app_config.dart';
+import 'package:flutter/gestures.dart';
+import 'package:bot_toast/bot_toast.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:gitok/core/layouts/home_screen.dart';
+import 'package:gitok/core/theme/macos_theme.dart';
+import 'package:gitok/plugins/welcome/welcome_page.dart';
+import 'package:gitok/core/managers/tray_manager.dart';
+import 'package:gitok/core/managers/window_manager.dart';
+import 'package:gitok/core/managers/hotkey_manager.dart';
+import 'package:gitok/core/managers/update_manager.dart';
+import 'package:tray_manager/tray_manager.dart' as tray;
+import 'package:hotkey_manager/hotkey_manager.dart' as hotkey;
 
-/// GitOK - Git仓库管理工具
+/// 应用程序的根组件
 ///
-/// 这是应用程序的入口文件，负责初始化应用并配置基础设置。
-/// 包括平台检测、窗口配置等全局设置。
-///
-/// 就像一个聪明的门卫 🚪，它会根据来访者的平台选择合适的"礼遇"方式：
-/// - 看到 macOS 贵宾可以走专属通道 🍎
-/// - 其他平台的朋友走普通通道 🎉
+/// 配置应用的基础设置，包括主题、路由等
+class MyApp extends StatefulWidget {
+  const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> with tray.TrayListener implements WindowListener {
+  String _initialRoute = '/';
+  final _trayManager = AppTrayManager();
+  final _windowManager = AppWindowManager();
+  final _hotkeyManager = AppHotkeyManager();
+
+  @override
+  void initState() {
+    super.initState();
+    _windowManager.addListener(this);
+    tray.trayManager.addListener(this);
+    _hotkeyManager.init();
+    _checkWelcomePage();
+    _trayManager.init();
+  }
+
+  Future<void> _checkWelcomePage() async {
+    final prefs = await SharedPreferences.getInstance();
+    final hasSeenWelcome = prefs.getBool('has_seen_welcome') ?? false;
+    if (hasSeenWelcome) {
+      setState(() {
+        _initialRoute = '/home';
+      });
+    }
+  }
+
+  // 当窗口关闭时，隐藏而不是退出
+  @override
+  void onWindowClose() {
+    _windowManager.hide();
+  }
+
+  @override
+  void onWindowFocus() {}
+
+  @override
+  void onWindowBlur() {}
+
+  @override
+  void onWindowMaximize() {}
+
+  @override
+  void onWindowUnmaximize() {}
+
+  @override
+  void onWindowMinimize() {}
+
+  @override
+  void onWindowRestore() {}
+
+  @override
+  void onWindowMove() {}
+
+  @override
+  void onWindowResize() {}
+
+  // 处理托盘菜单点击事件
+  @override
+  void onTrayMenuItemClick(tray.MenuItem menuItem) {
+    _trayManager.onTrayMenuItemClick(menuItem);
+  }
+
+  // 处理托盘图标点击事件
+  @override
+  void onTrayIconMouseDown() {
+    _trayManager.onTrayIconMouseDown();
+  }
+
+  // 处理托盘图标右键点击事件
+  @override
+  void onTrayIconRightMouseDown() {
+    _trayManager.onTrayIconRightMouseDown();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      builder: BotToastInit(),
+      navigatorObservers: [BotToastNavigatorObserver()],
+      debugShowCheckedModeBanner: false,
+      theme: MacOSTheme.lightTheme.copyWith(
+        scaffoldBackgroundColor: Colors.transparent, // 设置脚手架背景透明
+        canvasColor: Colors.transparent, // 设置画布背景透明
+      ),
+      darkTheme: MacOSTheme.darkTheme.copyWith(
+        scaffoldBackgroundColor: Colors.transparent,
+        canvasColor: Colors.transparent,
+      ),
+      initialRoute: _initialRoute,
+      routes: {
+        '/': (context) => const WelcomePage(),
+        '/home': (context) => const HomeScreen(),
+      },
+      scrollBehavior: const MaterialScrollBehavior().copyWith(
+        scrollbars: true, // 始终显示滚动条
+        dragDevices: {
+          PointerDeviceKind.mouse,
+          PointerDeviceKind.trackpad,
+          PointerDeviceKind.touch,
+        },
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _hotkeyManager.dispose();
+    _windowManager.removeListener(this);
+    tray.trayManager.removeListener(this);
+    super.dispose();
+  }
+}
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // 初始化自动更新
-  if (Platform.isMacOS || Platform.isWindows) {
-    // 设置更新源地址
-    await autoUpdater.setFeedURL(await AutoUpdateConfig.feedURL);
+  // 对于热重载，`unregisterAll()` 需要被调用
+  await hotkey.hotKeyManager.unregisterAll();
 
-    // 设置检查更新的时间间隔
-    await autoUpdater.setScheduledCheckInterval(await AutoUpdateConfig.checkInterval);
-
-    // 应用启动时检查一次更新
-    await autoUpdater.checkForUpdates();
-  }
-
-  // 初始化window_manager
-  await windowManager.ensureInitialized();
-
-  // 设置窗口选项
-  WindowOptions windowOptions = const WindowOptions(
-    size: Size(1200, 600),
-    center: true,
-    title: "GitOk",
-    alwaysOnTop: false,
-  );
-
-  await windowManager.waitUntilReadyToShow(windowOptions, () async {
-    await windowManager.show();
-    await windowManager.focus();
-  });
-
-  // 对于热重载，`unregisterAll()` 需要被调用。
-  await hotKeyManager.unregisterAll();
-
-  // 如果是 macOS 平台，我们需要特殊照顾一下它的窗口 ✨
-  if (Platform.isMacOS) {
-    await WindowManipulator.initialize();
-    WindowManipulator.makeTitlebarTransparent();
-    WindowManipulator.enableFullSizeContentView();
-    WindowManipulator.hideTitle();
-  }
-
-  // 初始化托盘管理器
-  await trayManager.setIcon(
-    Platform.isMacOS
-        ? 'assets/app_icon.png' // macOS 图标路径
-        : 'assets/app_icon_win.png', // Windows 图标路径
-  );
-
-  // 配置托盘菜单
-  await trayManager.setContextMenu(
-    Menu(
-      items: [
-        MenuItem(
-          key: 'show_window',
-          label: '打开 GitOK',
-        ),
-        MenuItem.separator(),
-        MenuItem(
-          key: 'exit_app',
-          label: '退出',
-        ),
-      ],
-    ),
-  );
+  // 初始化各个管理器
+  await AppTrayManager().init();
+  await AppWindowManager().init();
+  await AppUpdateManager().init();
 
   runApp(const MyApp());
 }
