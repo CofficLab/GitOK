@@ -16,6 +16,7 @@ import 'package:hotkey_manager/hotkey_manager.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:gitok/plugins/welcome/welcome_page.dart';
 import 'package:tray_manager/tray_manager.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 /// 应用程序的根组件
 ///
@@ -28,6 +29,8 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> with WindowListener, TrayListener {
+  String _initialRoute = '/';
+
   @override
   void initState() {
     super.initState();
@@ -35,6 +38,17 @@ class _MyAppState extends State<MyApp> with WindowListener, TrayListener {
     trayManager.addListener(this);
     _setupGlobalHotkey();
     _setupKeyboardListener();
+    _checkWelcomePage();
+  }
+
+  Future<void> _checkWelcomePage() async {
+    final prefs = await SharedPreferences.getInstance();
+    final hasSeenWelcome = prefs.getBool('has_seen_welcome') ?? false;
+    if (hasSeenWelcome) {
+      setState(() {
+        _initialRoute = '/home';
+      });
+    }
   }
 
   void _setupKeyboardListener() {
@@ -149,7 +163,7 @@ class _MyAppState extends State<MyApp> with WindowListener, TrayListener {
         scaffoldBackgroundColor: Colors.transparent,
         canvasColor: Colors.transparent,
       ),
-      initialRoute: '/',
+      initialRoute: _initialRoute,
       routes: {
         '/': (context) => const WelcomePage(),
         '/home': (context) => const HomeScreen(),
