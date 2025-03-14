@@ -4,7 +4,7 @@
 /// 显示、隐藏等操作。
 library;
 
-import 'dart:io' show Platform;
+import 'dart:io' show Platform, exit;
 import 'package:flutter/material.dart';
 import 'package:macos_window_utils/macos_window_utils.dart';
 import 'package:window_manager/window_manager.dart' as win;
@@ -105,6 +105,12 @@ class AppWindowManager with win.WindowListener {
   /// 移除窗口监听器
   void removeListener(WindowListener listener) {
     _listeners.remove(listener);
+  }
+
+  /// 退出应用
+  Future<void> quit() async {
+    await win.windowManager.close();
+    exit(0);
   }
 
   @override
