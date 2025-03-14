@@ -1,7 +1,5 @@
 # GitOK
 
-![hero](./docs/hero.png)
-
 ## What
 
 GitOK 是一个综合性的项目管理工具。

@@ -4,7 +4,6 @@
 /// 包括主题、路由、依赖注入等全局配置。
 library;
 
-import 'dart:io' show Platform, exit;
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
@@ -17,6 +16,7 @@ import 'package:window_manager/window_manager.dart';
 import 'package:gitok/plugins/welcome/welcome_page.dart';
 import 'package:tray_manager/tray_manager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:gitok/core/managers/tray_manager.dart';
 
 /// 应用程序的根组件
 ///
@@ -30,6 +30,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> with WindowListener, TrayListener {
   String _initialRoute = '/';
+  final _trayManager = AppTrayManager();
 
   @override
   void initState() {
@@ -39,6 +40,7 @@ class _MyAppState extends State<MyApp> with WindowListener, TrayListener {
     _setupGlobalHotkey();
     _setupKeyboardListener();
     _checkWelcomePage();
+    _trayManager.init();
   }
 
   Future<void> _checkWelcomePage() async {
@@ -87,7 +89,7 @@ class _MyAppState extends State<MyApp> with WindowListener, TrayListener {
           if (kDebugMode) {
             print('Alt+1 热键被触发');
           }
-          await _bringToFront();
+          await _trayManager.bringToFront();
         },
       );
 
@@ -98,7 +100,7 @@ class _MyAppState extends State<MyApp> with WindowListener, TrayListener {
           if (kDebugMode) {
             print('Command+D 热键被触发');
           }
-          await _bringToFront();
+          await _trayManager.bringToFront();
         },
       );
 
@@ -107,20 +109,6 @@ class _MyAppState extends State<MyApp> with WindowListener, TrayListener {
       BotToast.showText(text: '注册全局热键失败: $e');
       if (kDebugMode) {
         print('注册全局热键失败: $e');
-      }
-    }
-  }
-
-  /// 将窗口带到前台
-  Future<void> _bringToFront() async {
-    try {
-      await windowManager.show();
-      await windowManager.focus();
-
-      BotToast.showText(text: '应用已成功回到前台');
-    } catch (e) {
-      if (kDebugMode) {
-        print('将窗口带到前台失败: $e');
       }
     }
   }
@@ -134,31 +122,19 @@ class _MyAppState extends State<MyApp> with WindowListener, TrayListener {
   // 处理托盘菜单点击事件
   @override
   void onTrayMenuItemClick(MenuItem menuItem) {
-    if (menuItem.key == 'show_window') {
-      _bringToFront();
-    } else if (menuItem.key == 'exit_app') {
-      // 完全退出应用程序
-      exit(0);
-    }
+    _trayManager.onTrayMenuItemClick(menuItem);
   }
 
   // 处理托盘图标点击事件
   @override
   void onTrayIconMouseDown() {
-    // 在macOS上，点击托盘图标时显示菜单
-    if (Platform.isMacOS) {
-      trayManager.popUpContextMenu();
-    } else {
-      // 在Windows和Linux上，点击托盘图标时显示窗口
-      _bringToFront();
-    }
+    _trayManager.onTrayIconMouseDown();
   }
 
   // 处理托盘图标右键点击事件
   @override
   void onTrayIconRightMouseDown() {
-    // 在Windows和Linux上，右键点击托盘图标时显示菜单
-    trayManager.popUpContextMenu();
+    _trayManager.onTrayIconRightMouseDown();
   }
 
   @override

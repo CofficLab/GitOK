@@ -5,18 +5,14 @@ import 'package:hotkey_manager/hotkey_manager.dart';
 import 'package:macos_window_utils/macos_window_utils.dart';
 import 'package:gitok/core/layouts/app.dart';
 import 'package:window_manager/window_manager.dart';
-import 'package:tray_manager/tray_manager.dart';
 import 'package:auto_updater/auto_updater.dart';
 import 'package:gitok/core/config/app_config.dart';
+import 'package:gitok/core/managers/tray_manager.dart';
 
 /// GitOK - Git仓库管理工具
 ///
 /// 这是应用程序的入口文件，负责初始化应用并配置基础设置。
 /// 包括平台检测、窗口配置等全局设置。
-///
-/// 就像一个聪明的门卫 🚪，它会根据来访者的平台选择合适的"礼遇"方式：
-/// - 看到 macOS 贵宾可以走专属通道 🍎
-/// - 其他平台的朋友走普通通道 🎉
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -60,28 +56,7 @@ void main() async {
   }
 
   // 初始化托盘管理器
-  await trayManager.setIcon(
-    Platform.isMacOS
-        ? 'assets/app_icon.png' // macOS 图标路径
-        : 'assets/app_icon_win.png', // Windows 图标路径
-  );
-
-  // 配置托盘菜单
-  await trayManager.setContextMenu(
-    Menu(
-      items: [
-        MenuItem(
-          key: 'show_window',
-          label: '打开 GitOK',
-        ),
-        MenuItem.separator(),
-        MenuItem(
-          key: 'exit_app',
-          label: '退出',
-        ),
-      ],
-    ),
-  );
+  await AppTrayManager().init();
 
   runApp(const MyApp());
 }
