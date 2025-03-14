@@ -7,8 +7,6 @@ library;
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
 import 'package:gitok/core/layouts/home_screen.dart';
 import 'package:gitok/core/theme/macos_theme.dart';
 import 'package:gitok/plugins/welcome/welcome_page.dart';
