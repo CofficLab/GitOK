@@ -2,6 +2,7 @@
 ///
 /// 用于配置应用的全局快捷键
 /// 支持自定义快捷键组合
+library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

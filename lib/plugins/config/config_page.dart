@@ -9,6 +9,7 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart';
 import 'package:gitok/plugins/config/recorder.dart';
 import 'package:hotkey_manager/hotkey_manager.dart';
 import 'package:preference_list/preference_list.dart';
@@ -38,7 +39,6 @@ class ConfigPage extends StatefulWidget {
 class _ConfigPageState extends State<ConfigPage> with WindowListener {
   // 修改为单个热键而不是列表
   HotKey? _currentHotKey;
-  DateTime? _lastCommandKeyPress;
 
   @override
   void initState() {
@@ -155,8 +155,29 @@ class _ConfigPageState extends State<ConfigPage> with WindowListener {
               )),
             ),
             PreferenceListItem(
-              title: const Text('双击 ⌘'),
-              onTap: _setupDoubleCommandHotkey,
+              title: const Text('⌘ + D'),
+              onTap: () => _setupHotkey(HotKey(
+                key: LogicalKeyboardKey.keyD,
+                modifiers: [HotKeyModifier.meta],
+                scope: HotKeyScope.system,
+              )),
+            ),
+            PreferenceListItem(
+              title: const Row(
+                children: [
+                  Text('双击 ⌘'),
+                  SizedBox(width: 8),
+                  Text('(系统级)', style: TextStyle(fontSize: 12, color: Colors.grey)),
+                ],
+              ),
+              accessoryView: const Icon(
+                Icons.check_circle,
+                color: Colors.green,
+                size: 20,
+              ),
+              onTap: () {
+                BotToast.showText(text: '双击 Command 快捷键由系统处理，无需设置 ✨');
+              },
             ),
           ],
         ),
@@ -216,43 +237,6 @@ class _ConfigPageState extends State<ConfigPage> with WindowListener {
     }
   }
 
-  Future<void> _setupDoubleCommandHotkey() async {
-    try {
-      if (_currentHotKey != null) {
-        await hotKeyManager.unregister(_currentHotKey!);
-      }
-      final hotKey = HotKey(
-        key: LogicalKeyboardKey.metaLeft,
-        modifiers: [], // 明确设置为空数组
-        scope: HotKeyScope.system,
-      );
-
-      // 先注册热键
-      await hotKeyManager.register(
-        hotKey,
-        keyDownHandler: (hotKey) {
-          final now = DateTime.now();
-          if (_lastCommandKeyPress != null &&
-              now.difference(_lastCommandKeyPress!) <= const Duration(milliseconds: 500)) {
-            // 使用 Future.microtask 来避免在回调中直接调用异步方法
-            Future.microtask(() async {
-              await windowManager.show();
-              await windowManager.focus();
-            });
-            _lastCommandKeyPress = null;
-          } else {
-            _lastCommandKeyPress = now;
-          }
-        },
-      );
-
-      setState(() => _currentHotKey = hotKey);
-      BotToast.showText(text: '双击 Command 快捷键设置成功！✨');
-    } catch (e) {
-      BotToast.showText(text: '设置失败：$e 😅');
-    }
-  }
-
   Widget _build(BuildContext context) {
     return widget.isEmbedded
         ? _buildBody(context) // 嵌入模式下只返回内容部分
@@ -283,5 +267,14 @@ class _ConfigPageState extends State<ConfigPage> with WindowListener {
         child: _build(context),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    // 确保在组件销毁时注销热键
+    if (_currentHotKey != null) {
+      hotKeyManager.unregister(_currentHotKey!);
+    }
+    super.dispose();
   }
 }

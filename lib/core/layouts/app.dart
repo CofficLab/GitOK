@@ -52,21 +52,7 @@ class _MyAppState extends State<MyApp> with WindowListener, TrayListener {
   }
 
   void _setupKeyboardListener() {
-    RawKeyboard.instance.addListener((RawKeyEvent event) {
-      if (event is RawKeyDownEvent) {
-        if (event.logicalKey == LogicalKeyboardKey.escape) {
-          windowManager.hide();
-        }
-      }
-    });
-  }
-
-  @override
-  void dispose() {
-    RawKeyboard.instance.removeListener(_onKey);
-    windowManager.removeListener(this);
-    trayManager.removeListener(this);
-    super.dispose();
+    RawKeyboard.instance.addListener(_onKey);
   }
 
   void _onKey(RawKeyEvent event) {
@@ -79,23 +65,49 @@ class _MyAppState extends State<MyApp> with WindowListener, TrayListener {
 
   /// 设置全局热键，用于将应用从后台唤醒到前台
   Future<void> _setupGlobalHotkey() async {
-    final hotKey = HotKey(
-      key: LogicalKeyboardKey.digit1, // 使用数字键 1
-      modifiers: [HotKeyModifier.alt], // 配合 Alt 键使用
+    // 为了兼容性，我们保留Alt+1热键
+    final altHotKey = HotKey(
+      key: LogicalKeyboardKey.digit1,
+      modifiers: [HotKeyModifier.alt],
+      scope: HotKeyScope.system,
+    );
+
+    // 使用Command+D作为备用快捷键
+    final cmdDHotKey = HotKey(
+      key: LogicalKeyboardKey.keyD,
+      modifiers: [HotKeyModifier.meta], // Command键
       scope: HotKeyScope.system,
     );
 
     try {
+      // 注册Alt+1热键
       await hotKeyManager.register(
-        hotKey,
+        altHotKey,
         keyDownHandler: (hotKey) async {
+          if (kDebugMode) {
+            print('Alt+1 热键被触发');
+          }
           await _bringToFront();
         },
       );
 
-      BotToast.showText(text: '已注册全局热键：Alt + 1 可将应用带到前台');
+      // 注册Command+D热键
+      await hotKeyManager.register(
+        cmdDHotKey,
+        keyDownHandler: (hotKey) async {
+          if (kDebugMode) {
+            print('Command+D 热键被触发');
+          }
+          await _bringToFront();
+        },
+      );
+
+      BotToast.showText(text: '已注册全局热键：双击⌘、⌘+D 或 Alt+1 可将应用带到前台');
     } catch (e) {
       BotToast.showText(text: '注册全局热键失败: $e');
+      if (kDebugMode) {
+        print('注册全局热键失败: $e');
+      }
     }
   }
 
@@ -177,5 +189,16 @@ class _MyAppState extends State<MyApp> with WindowListener, TrayListener {
         },
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    // 移除键盘监听器
+    RawKeyboard.instance.removeListener(_onKey);
+    // 注销所有热键
+    hotKeyManager.unregisterAll();
+    windowManager.removeListener(this);
+    trayManager.removeListener(this);
+    super.dispose();
   }
 }
