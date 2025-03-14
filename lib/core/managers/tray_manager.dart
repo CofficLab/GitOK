@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:tray_manager/tray_manager.dart' as tray;
 import 'package:window_manager/window_manager.dart';
 import 'package:bot_toast/bot_toast.dart';
+import 'package:gitok/core/managers/window_manager.dart';
 
 /// 托盘管理器类
 ///
@@ -20,6 +21,8 @@ class AppTrayManager {
   static final AppTrayManager _instance = AppTrayManager._internal();
   factory AppTrayManager() => _instance;
   AppTrayManager._internal();
+
+  final _windowManager = AppWindowManager();
 
   /// 初始化托盘管理器
   Future<void> init() async {
@@ -50,12 +53,17 @@ class AppTrayManager {
   /// 将窗口带到前台
   Future<void> bringToFront() async {
     try {
-      await windowManager.show();
-      await windowManager.focus();
+      await _windowManager.show();
+      await _windowManager.focus();
       BotToast.showText(text: '应用已成功回到前台');
     } catch (e) {
       debugPrint('将窗口带到前台失败: $e');
     }
+  }
+
+  /// 隐藏窗口
+  Future<void> hide() async {
+    await _windowManager.hide();
   }
 
   /// 处理托盘菜单点击事件
@@ -63,7 +71,7 @@ class AppTrayManager {
     if (menuItem.key == 'show_window') {
       bringToFront();
     } else if (menuItem.key == 'exit_app') {
-      exit(0);
+      _windowManager.quit();
     }
   }
 

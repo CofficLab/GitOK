@@ -11,12 +11,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:gitok/core/layouts/home_screen.dart';
 import 'package:gitok/core/theme/macos_theme.dart';
-import 'package:hotkey_manager/hotkey_manager.dart';
 import 'package:gitok/plugins/welcome/welcome_page.dart';
-import 'package:tray_manager/tray_manager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:gitok/core/managers/tray_manager.dart';
 import 'package:gitok/core/managers/window_manager.dart';
+import 'package:gitok/core/managers/hotkey_manager.dart';
+import 'package:tray_manager/tray_manager.dart' as tray;
 
 /// 应用程序的根组件
 ///
@@ -28,18 +28,18 @@ class MyApp extends StatefulWidget {
   State<MyApp> createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp> with TrayListener implements WindowListener {
+class _MyAppState extends State<MyApp> with tray.TrayListener implements WindowListener {
   String _initialRoute = '/';
   final _trayManager = AppTrayManager();
   final _windowManager = AppWindowManager();
+  final _hotkeyManager = AppHotkeyManager();
 
   @override
   void initState() {
     super.initState();
     _windowManager.addListener(this);
-    trayManager.addListener(this);
-    _setupGlobalHotkey();
-    _setupKeyboardListener();
+    tray.trayManager.addListener(this);
+    _hotkeyManager.init();
     _checkWelcomePage();
     _trayManager.init();
   }
@@ -51,66 +51,6 @@ class _MyAppState extends State<MyApp> with TrayListener implements WindowListen
       setState(() {
         _initialRoute = '/home';
       });
-    }
-  }
-
-  void _setupKeyboardListener() {
-    RawKeyboard.instance.addListener(_onKey);
-  }
-
-  void _onKey(RawKeyEvent event) {
-    if (event is RawKeyDownEvent) {
-      if (event.logicalKey == LogicalKeyboardKey.escape) {
-        _windowManager.hide();
-      }
-    }
-  }
-
-  /// 设置全局热键，用于将应用从后台唤醒到前台
-  Future<void> _setupGlobalHotkey() async {
-    // 为了兼容性，我们保留Alt+1热键
-    final altHotKey = HotKey(
-      key: LogicalKeyboardKey.digit1,
-      modifiers: [HotKeyModifier.alt],
-      scope: HotKeyScope.system,
-    );
-
-    // 使用Command+D作为备用快捷键
-    final cmdDHotKey = HotKey(
-      key: LogicalKeyboardKey.keyD,
-      modifiers: [HotKeyModifier.meta], // Command键
-      scope: HotKeyScope.system,
-    );
-
-    try {
-      // 注册Alt+1热键
-      await hotKeyManager.register(
-        altHotKey,
-        keyDownHandler: (hotKey) async {
-          if (kDebugMode) {
-            print('Alt+1 热键被触发');
-          }
-          await _trayManager.bringToFront();
-        },
-      );
-
-      // 注册Command+D热键
-      await hotKeyManager.register(
-        cmdDHotKey,
-        keyDownHandler: (hotKey) async {
-          if (kDebugMode) {
-            print('Command+D 热键被触发');
-          }
-          await _trayManager.bringToFront();
-        },
-      );
-
-      BotToast.showText(text: '已注册全局热键：双击⌘、⌘+D 或 Alt+1 可将应用带到前台');
-    } catch (e) {
-      BotToast.showText(text: '注册全局热键失败: $e');
-      if (kDebugMode) {
-        print('注册全局热键失败: $e');
-      }
     }
   }
 
@@ -146,7 +86,7 @@ class _MyAppState extends State<MyApp> with TrayListener implements WindowListen
 
   // 处理托盘菜单点击事件
   @override
-  void onTrayMenuItemClick(MenuItem menuItem) {
+  void onTrayMenuItemClick(tray.MenuItem menuItem) {
     _trayManager.onTrayMenuItemClick(menuItem);
   }
 
@@ -194,12 +134,9 @@ class _MyAppState extends State<MyApp> with TrayListener implements WindowListen
 
   @override
   void dispose() {
-    // 移除键盘监听器
-    RawKeyboard.instance.removeListener(_onKey);
-    // 注销所有热键
-    hotKeyManager.unregisterAll();
+    _hotkeyManager.dispose();
     _windowManager.removeListener(this);
-    trayManager.removeListener(this);
+    tray.trayManager.removeListener(this);
     super.dispose();
   }
 }
