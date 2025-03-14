@@ -266,6 +266,7 @@ jobs:
       - name: 推送到仓库
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
+          branch: main
           commit_message: '🎨 Update appcast.yml'
           commit_user_name: GitHub Action
           file_pattern: 'appcast.xml'
