@@ -1,5 +1,5 @@
 ---
-description: 当你需要了解项目的基本信息时
+description: 任何时候
 globs: *
 alwaysApply: true
 ---
