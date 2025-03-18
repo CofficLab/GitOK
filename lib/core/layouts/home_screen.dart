@@ -3,6 +3,7 @@ import 'package:gitok/core/layouts/search_box.dart';
 import 'package:gitok/plugins/git/git_plugin.dart';
 import 'package:gitok/plugins/config/config_plugin.dart';
 import 'package:gitok/plugins/welcome/welcome_plugin.dart';
+import 'package:gitok/plugins/launcher/launcher_plugin.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:gitok/core/contract/plugin_protocol.dart';
 
@@ -23,6 +24,7 @@ class _HomeScreenState extends State<HomeScreen> {
     GitPlugin(),
     ConfigPlugin(),
     WelcomePlugin(),
+    LauncherPlugin(),
   ];
 
   void _handleSearch(String query) {
