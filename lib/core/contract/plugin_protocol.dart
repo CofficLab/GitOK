@@ -1,25 +1,13 @@
-import 'package:flutter/material.dart';
-
 /// 插件协议
 ///
-/// 定义了插件需要实现的基本接口：
-/// - 插件名称
-/// - 插件图标
-/// - 插件描述
-/// - 插件Widget
-abstract class PluginProtocol {
-  /// 插件名称
-  String get name;
+/// 定义了内核和插件之间的交互接口。插件需要实现这个协议才能被内核加载和调用。
+/// 主要包含：
+/// 1. 插件基本信息
+/// 2. 动作数据结构
+/// 3. 插件响应方法
+///
+/// 这个文件作为协议的统一入口点，导出所有需要的类型。
 
-  /// 插件图标
-  IconData get icon;
-
-  /// 插件描述
-  String get description;
-
-  /// 插件是否启用
-  bool get enabled => true;
-
-  /// 构建插件界面
-  Widget build(BuildContext context);
-}
+export 'plugin_action.dart';
+export 'plugin.dart';
+export 'plugin_manager.dart';

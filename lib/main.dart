@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:bot_toast/bot_toast.dart';
+import 'package:gitok/plugins/config/config_plugin.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:gitok/core/layouts/home_screen.dart';
+import 'package:gitok/core/views/home_screen.dart';
 import 'package:gitok/core/theme/macos_theme.dart';
-import 'package:gitok/plugins/welcome/welcome_page.dart';
 import 'package:gitok/core/managers/tray_manager.dart';
 import 'package:gitok/core/managers/window_manager.dart';
 import 'package:gitok/core/managers/hotkey_manager.dart';
 import 'package:gitok/core/managers/update_manager.dart';
+import 'package:gitok/core/managers/plugin_manager.dart';
 import 'package:tray_manager/tray_manager.dart' as tray;
 import 'package:hotkey_manager/hotkey_manager.dart' as hotkey;
+import 'plugins/app_launcher/app_launcher_plugin.dart';
 
 /// 应用程序的根组件
 ///
@@ -23,10 +25,11 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> with tray.TrayListener implements WindowListener {
-  String _initialRoute = '/';
+  String _initialRoute = '/home';
   final _trayManager = AppTrayManager();
   final _windowManager = AppWindowManager();
   final _hotkeyManager = AppHotkeyManager();
+  final _pluginManager = AppPluginManager();
 
   @override
   void initState() {
@@ -36,6 +39,12 @@ class _MyAppState extends State<MyApp> with tray.TrayListener implements WindowL
     _hotkeyManager.init();
     _checkWelcomePage();
     _trayManager.init();
+    // 立即初始化插件
+    _initializePlugins().then((_) {
+      print('🎉 插件初始化完成！');
+    }).catchError((error) {
+      print('❌ 插件初始化失败：$error');
+    });
   }
 
   Future<void> _checkWelcomePage() async {
@@ -46,6 +55,12 @@ class _MyAppState extends State<MyApp> with tray.TrayListener implements WindowL
         _initialRoute = '/home';
       });
     }
+  }
+
+  Future<void> _initializePlugins() async {
+    // 注册应用启动器插件
+    await _pluginManager.registerPlugin(AppLauncherPlugin());
+    await _pluginManager.registerPlugin(ConfigPlugin());
   }
 
   // 当窗口关闭时，隐藏而不是退出
@@ -112,8 +127,7 @@ class _MyAppState extends State<MyApp> with tray.TrayListener implements WindowL
       ),
       initialRoute: _initialRoute,
       routes: {
-        '/': (context) => const WelcomePage(),
-        '/home': (context) => const HomeScreen(),
+        '/home': (context) => HomeScreen(pluginManager: _pluginManager),
       },
       scrollBehavior: const MaterialScrollBehavior().copyWith(
         scrollbars: true, // 始终显示滚动条
@@ -131,6 +145,7 @@ class _MyAppState extends State<MyApp> with tray.TrayListener implements WindowL
     _hotkeyManager.dispose();
     _windowManager.removeListener(this);
     tray.trayManager.removeListener(this);
+    _pluginManager.dispose();
     super.dispose();
   }
 }
