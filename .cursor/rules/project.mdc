@@ -1,5 +1,5 @@
 ---
-description: 当你需要了解项目的基本信息时
+description: 任何时候
 globs: *
 alwaysApply: true
 ---
@@ -8,18 +8,61 @@ alwaysApply: true
 
 如果这个规则被应用，则在输出中较靠前的位置说明：🍋 我注意到了项目的基本信息。
 
+这是一个类似 macOS 上 spotlight 的软件，它分成两大部分：
+
+- 内核：负责展示一个界面，上部分为搜索框，下部分为具体视图
+- 插件：负责响应关键词，返回动作列表，以及处理具体的动作
+
+内核和插件之间是不耦合的，内核充当了插件的调度器角色，它响应用户的输入，将关键词传递给各个插件，得到动作列表并展示出来。
+
+内核和插件通过协议来交互： [plugin_protocol.dart](mdc:lib/core/contract/plugin_protocol.dart)
+
+一些典型的使用场景，举例如下：
+
+- 快速打开软件的场景
+    - 用户在搜索框输入：Safari，启动器插件会响应一个或多个动作列表
+    - 用户点击某个动作，比如启动器插件提供的“打开Safari”，则执行具体的动作
+- 打开设置界面的场景
+    - 用户在搜索框输入：config，设置插件会响应一个或多个动作列表
+    - 另外启动器插件也会响应一个或多个动作列表，比如：“Safari搜索”，这个动作会打开Safari并搜索用户的输入
+    - 内核负责将这些动作列表组合在一起显示在搜索框下方
+    - 当用户点击设置插件提供的“显示设置界面”动作时，会在搜索框下方显示动作界面
+
 ## 语言
 
 使用中文和用户交流
 
 ## 目录结构
 
-项目的目录结构是：
-
 lib/
-├── core/                # 内核
-├── plugins/             # 插件
-└── main.dart
+├── core/                   # 核心模块
+│   ├── contract/          # 接口协议定义
+│   │   ├── plugin.dart           # 插件基础接口
+│   │   ├── plugin_action.dart    # 插件动作数据结构
+│   │   ├── plugin_manager.dart   # 插件管理器接口
+│   │   └── plugin_protocol.dart  # 协议统一导出
+│   │
+│   ├── managers/          # 各类管理器
+│   │   ├── plugin_manager.dart   # 插件管理器实现
+│   │   ├── window_manager.dart   # 窗口管理
+│   │   ├── hotkey_manager.dart   # 快捷键管理
+│   │   └── tray_manager.dart     # 系统托盘管理
+│   │
+│   ├── views/                    # 视图
+│   │   └── home_screen.dart      # 主界面
+│   │
+│   ├── theme/            # 主题相关
+│   │   └── macos_theme.dart      # macOS风格主题
+│   │
+│   └── widgets/          # 共享组件
+│       └── search_bar.dart       # 搜索栏组件
+│
+├── plugins/              # 插件模块
+│   └── app_launcher/    # 应用启动器插件
+│       └── app_launcher_plugin.dart
+│
+└── utils/               # 工具类
+    └── logger.dart      # 日志工具
 
 项目的 GitHub 仓库是：https://github.com/CofficLab/GitOK。
 
@@ -36,11 +79,15 @@ lib/
 - 页面级组件放在 screens 目录
 - 如果这个规则被应用，则在输出中较靠前的位置说明：🍋 我注意到了项目的文件命名规范
 
-## 文件规则
+## 插件
+
+- 在 [main.dart](mdc:lib/main.dart) 中注册插件
+
+## 代码风格
 
 - 写清楚每个文件的注释文档，用中文
 - 如果当前文件没有注释文档，则添加
 - 回应用户时，幽默一些，多使用emoji，如果能逗笑用户就更好了
-- 如果这个规则被应用，则在输出中较靠前的位置说明：🍋 我注意到了项目的dart文件的规则
+- 如果这个规则被应用，则在输出中较靠前的位置说明：🍋 我注意到了项目的代码风格
 
 

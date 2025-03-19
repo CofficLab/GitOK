@@ -9,7 +9,6 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/foundation.dart';
 import 'package:gitok/plugins/config/recorder.dart';
 import 'package:hotkey_manager/hotkey_manager.dart';
 import 'package:preference_list/preference_list.dart';

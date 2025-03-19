@@ -40,5 +40,11 @@
 	<true/>
 	<key>com.apple.security.app-sandbox</key>
 	<false/>
+	<key>SUEnableAutomaticChecks</key>
+	<false/>
+	<key>SUShowReleaseNotes</key>
+	<false/>
+	<key>SUEnableSystemProfiling</key>
+	<false/>
 </dict>
 </plist>
