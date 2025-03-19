@@ -87,7 +87,7 @@ class _HomeScreenState extends State<HomeScreen> {
               // 当窗口失去焦点时，显示半透明遮罩
               if (!windowState.hasFocus)
                 Container(
-                  color: Colors.black.withOpacity(0.1),
+                  color: Colors.black.withAlpha(25),
                   width: double.infinity,
                   height: 2,
                 ),

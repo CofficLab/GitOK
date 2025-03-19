@@ -86,7 +86,7 @@ class _PluginStatusBarState extends State<PluginStatusBar> {
         color: Theme.of(context).colorScheme.surface,
         border: Border(
           top: BorderSide(
-            color: Theme.of(context).colorScheme.outline.withOpacity(0.2),
+            color: Theme.of(context).colorScheme.outline.withAlpha(51),
           ),
         ),
       ),
@@ -213,7 +213,7 @@ class _PluginStatusItem extends StatelessWidget {
       return Theme.of(context).colorScheme.error;
     }
     if (!enabled) {
-      return Theme.of(context).colorScheme.onSurface.withOpacity(0.38);
+      return Theme.of(context).colorScheme.onSurface.withAlpha(97);
     }
     if (hasStatus) {
       return Theme.of(context).colorScheme.primary;

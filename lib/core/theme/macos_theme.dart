@@ -102,12 +102,12 @@ class MacOSTheme {
         thickness: WidgetStateProperty.all(8.0),
         thumbColor: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.dragged)) {
-            return isDark ? Colors.white.withOpacity(0.38) : Colors.black.withOpacity(0.38);
+            return isDark ? Colors.white.withAlpha(97) : Colors.black.withAlpha(97);
           }
           if (states.contains(WidgetState.hovered)) {
-            return isDark ? Colors.white.withOpacity(0.24) : Colors.black.withOpacity(0.24);
+            return isDark ? Colors.white.withAlpha(61) : Colors.black.withAlpha(61);
           }
-          return isDark ? Colors.white.withOpacity(0.12) : Colors.black.withOpacity(0.12);
+          return isDark ? Colors.white.withAlpha(31) : Colors.black.withAlpha(31);
         }),
         radius: const Radius.circular(4),
       ),

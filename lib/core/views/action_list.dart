@@ -69,10 +69,10 @@ class _KeyboardHint extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: Theme.of(context).dividerColor.withOpacity(0.1),
+        color: Theme.of(context).dividerColor.withAlpha(25),
         borderRadius: BorderRadius.circular(4),
         border: Border.all(
-          color: Theme.of(context).dividerColor.withOpacity(0.2),
+          color: Theme.of(context).dividerColor.withAlpha(51),
         ),
       ),
       child: Row(
