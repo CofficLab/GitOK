@@ -158,7 +158,6 @@ class _PluginStatusBarState extends State<PluginStatusBar> {
 /// 3. 错误图标（如果有）
 /// 4. 进度指示器（如果有）
 class _PluginStatusItem extends StatelessWidget {
-  static const String _tag = 'PluginStatusItem';
   final Plugin plugin;
 
   const _PluginStatusItem({
@@ -170,12 +169,6 @@ class _PluginStatusItem extends StatelessWidget {
     final status = plugin.status;
     final hasError = status?.isError ?? false;
     final hasProgress = status?.progress != null;
-
-    Logger.debug(_tag, '''构建插件状态项:
-   插件: ${plugin.name}
-   状态: ${status?.message ?? '无'}
-   错误: $hasError
-   进度: ${status?.progress ?? '无'}''');
 
     return Tooltip(
       message: status?.message ?? plugin.description,

@@ -93,6 +93,65 @@ class GitCommitPlugin extends Plugin {
     }
   }
 
+  /// 获取当前分支名
+  Future<String?> _getCurrentBranch(GitDir gitDir) async {
+    try {
+      final result = await gitDir.runCommand(['rev-parse', '--abbrev-ref', 'HEAD']);
+      return result.stdout.toString().trim();
+    } catch (e) {
+      Logger.error(_tag, '获取当前分支名时发生错误', e);
+      return null;
+    }
+  }
+
+  /// 执行 commit 操作
+  Future<bool> _commitChanges(GitDir gitDir) async {
+    try {
+      // 先执行 git add .
+      await gitDir.runCommand(['add', '.']);
+
+      // 生成 commit 信息
+      final commitMessage = await _generateCommitMessage(gitDir);
+
+      // 执行 commit
+      final result = await gitDir.runCommand(['commit', '-m', commitMessage]);
+
+      if (result.exitCode == 0) {
+        Logger.info(_tag, '成功提交更改');
+        return true;
+      } else {
+        Logger.error(_tag, 'git commit 失败: ${result.stderr}');
+        return false;
+      }
+    } catch (e) {
+      Logger.error(_tag, '执行 git commit 时发生错误', e);
+      return false;
+    }
+  }
+
+  /// 执行 push 操作
+  Future<bool> _pushChanges(GitDir gitDir) async {
+    try {
+      final branch = await _getCurrentBranch(gitDir);
+      if (branch == null) {
+        Logger.error(_tag, '无法获取当前分支名');
+        return false;
+      }
+
+      final result = await gitDir.runCommand(['push', 'origin', branch]);
+      if (result.exitCode == 0) {
+        Logger.info(_tag, '成功推送更改到 $branch 分支');
+        return true;
+      } else {
+        Logger.error(_tag, 'git push 失败: ${result.stderr}');
+        return false;
+      }
+    } catch (e) {
+      Logger.error(_tag, '执行 git push 时发生错误', e);
+      return false;
+    }
+  }
+
   @override
   Future<List<PluginAction>> onQuery(String keyword, [PluginContext context = const PluginContext()]) async {
     Logger.info(_tag, '收到查询: $keyword, 工作区: ${context.workspace}');
@@ -119,18 +178,34 @@ class GitCommitPlugin extends Plugin {
 
     final actions = <PluginAction>[];
 
-    // 如果关键词为空，或者包含"git"、"commit"等关键词，添加动作
-    if (keyword.isEmpty || keyword.toLowerCase().contains('git') || keyword.toLowerCase().contains('commit')) {
+    // 如果关键词为空，或者包含"git"、"commit"、"push"等关键词，添加动作
+    if (keyword.isEmpty ||
+        keyword.toLowerCase().contains('git') ||
+        keyword.toLowerCase().contains('commit') ||
+        keyword.toLowerCase().contains('push')) {
+      // 添加仅提交的动作
       actions.add(
         PluginAction(
           id: '$id:auto_commit',
           title: '自动生成 Commit 信息并提交',
           subtitle: '使用 AI 生成 commit 信息',
           icon: const Icon(Icons.commit),
+          score: 90,
+        ),
+      );
+
+      // 添加提交并推送的动作
+      actions.add(
+        PluginAction(
+          id: '$id:commit_and_push',
+          title: '提交并推送更改',
+          subtitle: '自动生成 commit 信息并推送到远程仓库',
+          icon: const Icon(Icons.upload),
           score: 100,
         ),
       );
-      Logger.info(_tag, '已添加自动提交动作');
+
+      Logger.info(_tag, '已添加 Git 动作');
     }
 
     return actions;
@@ -156,23 +231,12 @@ class GitCommitPlugin extends Plugin {
 
     switch (actionId) {
       case 'git_commit:auto_commit':
-        try {
-          // 先执行 git add .
-          await _gitDir!.runCommand(['add', '.']);
+        await _commitChanges(_gitDir!);
+        break;
 
-          // 生成 commit 信息
-          final commitMessage = await _generateCommitMessage(_gitDir!);
-
-          // 执行 commit
-          final result = await _gitDir!.runCommand(['commit', '-m', commitMessage]);
-
-          if (result.exitCode == 0) {
-            Logger.info(_tag, '成功提交更改');
-          } else {
-            Logger.error(_tag, 'git commit 失败: ${result.stderr}');
-          }
-        } catch (e) {
-          Logger.error(_tag, '执行 git commit 时发生错误', e);
+      case 'git_commit:commit_and_push':
+        if (await _commitChanges(_gitDir!)) {
+          await _pushChanges(_gitDir!);
         }
         break;
     }
