@@ -48,13 +48,6 @@ class AppHotkeyManager {
       scope: HotKeyScope.system,
     );
 
-    // 使用Command+D作为备用快捷键
-    final cmdDHotKey = HotKey(
-      key: LogicalKeyboardKey.keyD,
-      modifiers: [HotKeyModifier.meta], // Command键
-      scope: HotKeyScope.system,
-    );
-
     try {
       // 注册Alt+1热键
       await hotKeyManager.register(
@@ -67,18 +60,7 @@ class AppHotkeyManager {
         },
       );
 
-      // 注册Command+D热键
-      await hotKeyManager.register(
-        cmdDHotKey,
-        keyDownHandler: (hotKey) async {
-          if (kDebugMode) {
-            print('Command+D 热键被触发');
-          }
-          onShowWindowRequested?.call();
-        },
-      );
-
-      BotToast.showText(text: '已注册全局热键：双击⌘、⌘+D 或 Alt+1 可将应用带到前台');
+      BotToast.showText(text: '已注册全局热键：双击⌘、或 Alt+1 可将应用带到前台');
     } catch (e) {
       BotToast.showText(text: '注册全局热键失败: $e');
       if (kDebugMode) {

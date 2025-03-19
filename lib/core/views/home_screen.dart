@@ -200,26 +200,10 @@ class _HomeScreenState extends State<HomeScreen> {
             padding: const EdgeInsets.all(16.0),
             child: Column(
               children: [
-                // 搜索框和拖动区域的行
-                Row(
-                  children: [
-                    // 搜索框占据大部分空间
-                    Expanded(
-                      child: SearchBox(
-                        controller: _searchController,
-                        autofocus: true,
-                      ),
-                    ),
-                    // 拖动区域
-                    const SizedBox(width: 8), // 间距
-                    const DragToMoveArea(
-                      child: Icon(
-                        Icons.drag_indicator,
-                        color: Colors.grey,
-                        size: 24,
-                      ),
-                    ),
-                  ],
+                // 搜索框（现在自带拖动功能）
+                SearchBox(
+                  controller: _searchController,
+                  autofocus: true,
                 ),
                 const SizedBox(height: 16),
 

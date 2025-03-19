@@ -74,7 +74,7 @@ class AppWindowManager with win.WindowListener {
 
     // 设置窗口选项
     win.WindowOptions windowOptions = const win.WindowOptions(
-      size: Size(1200, 600),
+      size: Size(600, 600),
       center: true,
       title: "GitOk",
       alwaysOnTop: false,
