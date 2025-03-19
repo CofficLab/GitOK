@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../contract/plugin_protocol.dart';
-import '../managers/plugin_manager.dart';
 import 'search_box.dart';
 import 'error_panel.dart';
 import 'action_list.dart';
@@ -9,6 +8,7 @@ import 'plugin_status_bar.dart';
 import 'package:provider/provider.dart';
 import 'package:gitok/core/providers/window_state_provider.dart';
 import 'package:gitok/utils/logger.dart';
+import 'package:gitok/core/providers/plugin_manager_provider.dart';
 
 /// 主页面
 ///
@@ -22,12 +22,7 @@ import 'package:gitok/utils/logger.dart';
 ///    - 回车键执行选中的动作
 /// 5. 响应窗口状态变化
 class HomeScreen extends StatefulWidget {
-  final AppPluginManager pluginManager;
-
-  const HomeScreen({
-    super.key,
-    required this.pluginManager,
-  });
+  const HomeScreen({super.key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -117,49 +112,45 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _onSearchChanged() async {
-    final keyword = _searchController.text;
+    final keyword = _searchController.text.trim();
+
+    if (keyword.isEmpty) {
+      setState(() {
+        _actions = [];
+        _isLoading = false;
+        _errorMessage = null;
+      });
+      return;
+    }
 
     setState(() {
       _isLoading = true;
       _errorMessage = null;
-      _selectedIndex = -1; // 重置选中项
     });
 
     try {
-      final actions = await widget.pluginManager.queryAll(keyword);
-      if (!mounted) return;
+      final pluginManager = context.read<PluginManagerProvider>();
+      final actions = await pluginManager.search(keyword);
 
       setState(() {
         _actions = actions;
         _isLoading = false;
-        // 如果有结果，默认选中第一项
-        _selectedIndex = actions.isEmpty ? -1 : 0;
       });
     } catch (e) {
-      if (!mounted) return;
-
       setState(() {
-        _actions = [];
+        _errorMessage = '搜索出错：$e';
         _isLoading = false;
-        _errorMessage = e.toString();
-        _selectedIndex = -1;
       });
     }
   }
 
-  Future<void> _onActionSelected(PluginAction action) async {
+  Future<void> _executeAction(PluginAction action) async {
     try {
-      await widget.pluginManager.executeAction(action.id, context);
-
-      // 清除可能存在的错误消息
-      setState(() {
-        _errorMessage = null;
-      });
+      final pluginManager = context.read<PluginManagerProvider>();
+      await pluginManager.executeAction(action, context);
     } catch (e) {
-      if (!mounted) return;
-
       setState(() {
-        _errorMessage = e.toString();
+        _errorMessage = '执行动作失败：$e';
       });
     }
   }
@@ -190,7 +181,7 @@ class _HomeScreenState extends State<HomeScreen> {
       case LogicalKeyboardKey.enter:
         // 如果有选中项，执行选中的动作
         if (_selectedIndex >= 0 && _selectedIndex < _actions.length) {
-          await _onActionSelected(_actions[_selectedIndex]);
+          await _executeAction(_actions[_selectedIndex]);
         }
         break;
     }
@@ -226,7 +217,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     isLoading: _isLoading,
                     actions: _actions,
                     searchKeyword: _searchController.text,
-                    onActionSelected: _onActionSelected,
+                    onActionSelected: _executeAction,
                     selectedIndex: _selectedIndex, // 传递选中项索引
                   ),
                 ),
@@ -236,7 +227,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         // 插件状态栏
         PluginStatusBar(
-          plugins: widget.pluginManager.plugins,
+          plugins: context.watch<PluginManagerProvider>().plugins,
         ),
       ],
     );

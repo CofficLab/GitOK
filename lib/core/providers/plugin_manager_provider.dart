@@ -2,12 +2,11 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import '../../utils/logger.dart';
 import '../contract/plugin.dart';
-import '../contract/plugin_manager.dart';
 import '../contract/plugin_action.dart';
 import '../contract/plugin_context.dart';
 import '../providers/companion_provider.dart';
 
-/// 插件管理器
+/// 插件管理器 Provider
 ///
 /// 负责管理所有插件的生命周期和调度。
 /// 功能：
@@ -15,11 +14,21 @@ import '../providers/companion_provider.dart';
 /// 2. 管理插件列表
 /// 3. 分发查询请求到所有插件
 /// 4. 合并和排序插件返回的动作列表
-class AppPluginManager implements PluginManager {
+/// 5. 提供插件状态更新通知
+class PluginManagerProvider extends ChangeNotifier {
   final _plugins = <String, Plugin>{};
   final _initializationCompleter = Completer<void>();
-  final _companionProvider = CompanionProvider();
+  final CompanionProvider _companionProvider;
   bool _initialized = false;
+
+  /// 构造函数
+  ///
+  /// [companionProvider] 伙伴提供者，用于获取当前工作区和应用信息
+  PluginManagerProvider(this._companionProvider) {
+    Logger.debug('PluginManager', '创建插件管理器，使用伙伴提供者: ${_companionProvider.hashCode}');
+  }
+
+  List<Plugin> get plugins => _plugins.values.toList(growable: false);
 
   /// 获取当前上下文
   PluginContext _getCurrentContext() {
@@ -39,15 +48,16 @@ class AppPluginManager implements PluginManager {
 
       // 等待所有插件初始化完成
       await Future.wait(
-        _plugins.values.map((plugin) async {
+        _plugins.values.map((plugin) {
           Logger.debug('PluginManager', '初始化插件: ${plugin.id}');
-          await plugin.initialize();
+          return plugin.initialize();
         }),
       );
 
       _initialized = true;
       _initializationCompleter.complete();
       Logger.info('PluginManager', '所有插件初始化完成');
+      notifyListeners();
     } catch (e) {
       Logger.error('PluginManager', '插件初始化失败', e);
       _initializationCompleter.completeError(e);
@@ -55,7 +65,6 @@ class AppPluginManager implements PluginManager {
     }
   }
 
-  @override
   Future<void> registerPlugin(Plugin plugin) async {
     Logger.info('PluginManager', '注册插件: ${plugin.id}');
 
@@ -77,9 +86,10 @@ class AppPluginManager implements PluginManager {
         await _initialize();
       }
     }
+
+    notifyListeners();
   }
 
-  @override
   Future<void> unregisterPlugin(String pluginId) async {
     Logger.info('PluginManager', '注销插件: $pluginId');
 
@@ -89,16 +99,18 @@ class AppPluginManager implements PluginManager {
     }
 
     // 调用插件的销毁方法
-    await plugin.dispose();
+    plugin.dispose();
 
     // 移除插件
     _plugins.remove(pluginId);
+    notifyListeners();
   }
 
-  @override
-  List<Plugin> get plugins => _plugins.values.toList(growable: false);
+  /// 搜索动作
+  Future<List<PluginAction>> search(String keyword) async {
+    return queryAll(keyword);
+  }
 
-  @override
   Future<List<PluginAction>> queryAll(String keyword) async {
     // 等待初始化完成
     if (!_initialized) {
@@ -141,30 +153,39 @@ class AppPluginManager implements PluginManager {
     return allActions;
   }
 
-  @override
-  Future<void> executeAction(String actionId, BuildContext context) async {
+  /// 执行动作
+  Future<void> executeAction(PluginAction action, BuildContext buildContext) async {
+    final pluginId = action.id.split(':')[0];
+    final plugin = _plugins[pluginId];
+    if (plugin == null) {
+      throw Exception('找不到处理该动作的插件');
+    }
+
+    final context = _getCurrentContext();
+    await plugin.onAction(action.id, buildContext, context);
+  }
+
+  Future<void> executeActionById(String actionId, BuildContext buildContext) async {
     final pluginId = actionId.split(':')[0];
     final plugin = _plugins[pluginId];
     if (plugin == null) {
       throw Exception('找不到处理该动作的插件');
     }
 
-    final companionProvider = CompanionProvider();
-    final workspace = companionProvider.workspace;
-    final pluginContext = PluginContext(workspace: workspace);
-
-    await plugin.onAction(actionId, context, pluginContext);
+    final pluginContext = _getCurrentContext();
+    await plugin.onAction(actionId, buildContext, pluginContext);
   }
 
-  /// 销毁插件管理器
-  Future<void> dispose() async {
+  @override
+  void dispose() {
     Logger.info('PluginManager', '销毁插件管理器');
 
     // 销毁所有插件
-    await Future.wait(
-      _plugins.values.map((plugin) => plugin.dispose()),
-    );
+    for (final plugin in _plugins.values) {
+      plugin.dispose();
+    }
     _plugins.clear();
     _initialized = false;
+    super.dispose();
   }
 }

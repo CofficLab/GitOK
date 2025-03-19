@@ -12,6 +12,5 @@ library;
 
 export 'plugin_action.dart';
 export 'plugin.dart';
-export 'plugin_manager.dart';
 export 'plugin_context.dart';
 export 'plugin_status.dart';

@@ -32,7 +32,6 @@ import 'package:gitok/core/managers/tray_manager.dart';
 import 'package:gitok/core/managers/window_manager.dart';
 import 'package:gitok/core/managers/hotkey_manager.dart';
 import 'package:gitok/core/managers/update_manager.dart';
-import 'package:gitok/core/managers/plugin_manager.dart';
 import 'package:gitok/core/managers/channel_manager.dart';
 import 'package:tray_manager/tray_manager.dart' as tray;
 import 'package:hotkey_manager/hotkey_manager.dart' as hotkey;
@@ -40,6 +39,7 @@ import 'plugins/app_launcher/app_launcher_plugin.dart';
 import 'package:gitok/core/providers/companion_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:gitok/core/providers/window_state_provider.dart';
+import 'package:gitok/core/providers/plugin_manager_provider.dart';
 
 /// 应用程序的根组件
 ///
@@ -65,10 +65,10 @@ class _MyAppState extends State<MyApp> with tray.TrayListener implements WindowL
   final _trayManager = AppTrayManager();
   final _windowManager = AppWindowManager();
   final _hotkeyManager = AppHotkeyManager();
-  final _pluginManager = AppPluginManager();
   final _windowStateProvider = WindowStateProvider();
   final _channelManager = ChannelManager();
   final _companionProvider = CompanionProvider();
+  late final _pluginManagerProvider = PluginManagerProvider(_companionProvider);
 
   @override
   void initState() {
@@ -112,7 +112,7 @@ class _MyAppState extends State<MyApp> with tray.TrayListener implements WindowL
     _windowManager.onQuitRequested = () {
       // 退出前的清理工作
       _hotkeyManager.dispose();
-      _pluginManager.dispose();
+      _pluginManagerProvider.dispose();
       _trayManager.dispose();
     };
 
@@ -142,7 +142,7 @@ class _MyAppState extends State<MyApp> with tray.TrayListener implements WindowL
       _windowManager.quit();
     };
 
-    // 立即初始化插件
+    // 初始化插件
     _initializePlugins().then((_) {
       debugPrint('🎉 插件初始化完成！');
     }).catchError((error) {
@@ -161,11 +161,11 @@ class _MyAppState extends State<MyApp> with tray.TrayListener implements WindowL
   }
 
   Future<void> _initializePlugins() async {
-    // 注册应用启动器插件
-    await _pluginManager.registerPlugin(AppLauncherPlugin());
-    await _pluginManager.registerPlugin(ConfigPlugin());
-    await _pluginManager.registerPlugin(WorkspaceToolsPlugin());
-    await _pluginManager.registerPlugin(GitCommitPlugin());
+    // 注册插件
+    await _pluginManagerProvider.registerPlugin(AppLauncherPlugin());
+    await _pluginManagerProvider.registerPlugin(ConfigPlugin());
+    await _pluginManagerProvider.registerPlugin(WorkspaceToolsPlugin());
+    await _pluginManagerProvider.registerPlugin(GitCommitPlugin());
   }
 
   // 当窗口关闭时，隐藏而不是退出
@@ -230,6 +230,7 @@ class _MyAppState extends State<MyApp> with tray.TrayListener implements WindowL
       providers: [
         ChangeNotifierProvider.value(value: _windowStateProvider),
         ChangeNotifierProvider.value(value: _companionProvider),
+        ChangeNotifierProvider.value(value: _pluginManagerProvider),
       ],
       child: MaterialApp(
         builder: BotToastInit(),
@@ -245,7 +246,7 @@ class _MyAppState extends State<MyApp> with tray.TrayListener implements WindowL
         ),
         initialRoute: _initialRoute,
         routes: {
-          '/home': (context) => HomeScreen(pluginManager: _pluginManager),
+          '/home': (context) => const HomeScreen(),
         },
         scrollBehavior: const MaterialScrollBehavior().copyWith(
           scrollbars: true,
@@ -265,7 +266,7 @@ class _MyAppState extends State<MyApp> with tray.TrayListener implements WindowL
     _windowManager.dispose();
     _windowManager.removeListener(this);
     tray.trayManager.removeListener(this);
-    _pluginManager.dispose();
+    _pluginManagerProvider.dispose();
     _channelManager.dispose();
     super.dispose();
   }
