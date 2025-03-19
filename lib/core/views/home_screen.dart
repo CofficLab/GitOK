@@ -4,6 +4,7 @@ import '../contract/plugin_protocol.dart';
 import 'search_box.dart';
 import 'error_panel.dart';
 import 'action_list.dart';
+import 'plugin_status_bar.dart';
 
 /// 主页面
 ///
@@ -113,34 +114,44 @@ class _HomeScreenState extends State<HomeScreen> {
       autofocus: true,
       onKey: (event) => _handleKeyEvent(event),
       child: Scaffold(
-        body: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              // 搜索框
-              SearchBox(controller: _searchController),
-              const SizedBox(height: 16),
+        body: Column(
+          children: [
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  children: [
+                    // 搜索框
+                    SearchBox(controller: _searchController),
+                    const SizedBox(height: 16),
 
-              // 错误提示面板
-              if (_errorMessage != null) ...[
-                ErrorPanel(
-                  errorMessage: _errorMessage!,
-                  onClose: () => setState(() => _errorMessage = null),
-                ),
-                const SizedBox(height: 16),
-              ],
+                    // 错误提示面板
+                    if (_errorMessage != null) ...[
+                      ErrorPanel(
+                        errorMessage: _errorMessage!,
+                        onClose: () => setState(() => _errorMessage = null),
+                      ),
+                      const SizedBox(height: 16),
+                    ],
 
-              // 动作列表
-              Expanded(
-                child: ActionList(
-                  isLoading: _isLoading,
-                  actions: _actions,
-                  searchKeyword: _searchController.text,
-                  onActionSelected: _onActionSelected,
+                    // 动作列表
+                    Expanded(
+                      child: ActionList(
+                        isLoading: _isLoading,
+                        actions: _actions,
+                        searchKeyword: _searchController.text,
+                        onActionSelected: _onActionSelected,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ],
-          ),
+            ),
+            // 插件状态栏
+            PluginStatusBar(
+              plugins: widget.pluginManager.plugins,
+            ),
+          ],
         ),
       ),
     );

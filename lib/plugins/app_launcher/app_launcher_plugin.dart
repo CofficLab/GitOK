@@ -1,22 +1,22 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:path/path.dart' as path;
 import '../../core/contract/plugin.dart';
 import '../../core/contract/plugin_action.dart';
+import '../../core/contract/plugin_protocol.dart';
 import '../../utils/logger.dart';
 
 /// 应用启动器插件
 ///
-/// 负责扫描系统中已安装的应用，并提供快速启动功能。
-/// 功能：
-/// 1. 扫描系统应用目录
-/// 2. 扫描用户应用目录
-/// 3. 根据关键词搜索应用
-/// 4. 使用 open 命令启动应用
+/// 提供应用程序快速启动功能：
+/// 1. 扫描系统应用
+/// 2. 快速搜索应用
+/// 3. 一键启动应用
 class AppLauncherPlugin implements Plugin {
-  final _applications = <String, String>{};
-  bool _initialized = false;
+  final Map<String, String> _applications = {};
+  bool _isScanning = false;
+  bool _hasScanned = false;
 
   @override
   String get id => 'app_launcher';
@@ -25,155 +25,142 @@ class AppLauncherPlugin implements Plugin {
   String get name => '应用启动器';
 
   @override
-  String get description => '快速搜索并启动已安装的应用';
+  String get author => 'CofficLab';
 
   @override
   String get version => '1.0.0';
 
   @override
-  String get author => 'CofficLab';
+  IconData get icon => Icons.launch_rounded;
+
+  @override
+  String get description => '快速搜索并启动系统应用';
+
+  @override
+  bool get enabled => true;
 
   @override
   Future<void> initialize() async {
-    if (_initialized) return;
+    Logger.info('AppLauncherPlugin', '正在初始化应用启动器...');
+    // 在后台开始扫描应用
+    _startScanningApplications();
+  }
 
-    Logger.info('AppLauncher', '初始化应用启动器插件');
+  /// 开始在后台扫描应用
+  void _startScanningApplications() {
+    if (_isScanning || _hasScanned) return;
 
-    try {
+    _isScanning = true;
+    // 使用 Future.microtask 确保不阻塞主线程
+    Future.microtask(() async {
       await _scanApplications();
-      _initialized = true;
-      Logger.info('AppLauncher', '应用启动器插件初始化完成');
-    } catch (e) {
-      Logger.error('AppLauncher', '应用启动器插件初始化失败', e);
-      rethrow;
-    }
+      _isScanning = false;
+      _hasScanned = true;
+    });
   }
 
-  /// 扫描系统中已安装的应用
+  /// 扫描系统应用
   Future<void> _scanApplications() async {
-    if (!Platform.isMacOS) {
-      Logger.error('AppLauncher', '当前平台不支持：${Platform.operatingSystem}');
-      return;
-    }
-
-    Logger.debug('AppLauncher', '开始扫描应用...');
+    Logger.info('AppLauncherPlugin', '开始扫描应用...');
 
     try {
-      // 扫描系统应用目录
-      await _scanDirectory('/Applications');
+      if (Platform.isMacOS) {
+        const appDirs = [
+          '/Applications',
+          '/System/Applications',
+        ];
 
-      // 扫描用户应用目录
-      final userHome = Platform.environment['HOME'];
-      if (userHome != null) {
-        await _scanDirectory('$userHome/Applications');
-      }
+        for (final dir in appDirs) {
+          final directory = Directory(dir);
+          if (!directory.existsSync()) continue;
 
-      Logger.debug('AppLauncher', '扫描完成，共发现 ${_applications.length} 个应用');
-    } catch (e) {
-      Logger.error('AppLauncher', '扫描应用失败', e);
-      rethrow;
-    }
-  }
-
-  /// 扫描指定目录下的应用
-  Future<void> _scanDirectory(String directoryPath) async {
-    final directory = Directory(directoryPath);
-    if (!await directory.exists()) {
-      Logger.debug('AppLauncher', '目录不存在：$directoryPath');
-      return;
-    }
-
-    try {
-      await for (final entity in directory.list(recursive: false)) {
-        if (entity is Directory || path.extension(entity.path) == '.app') {
-          final appName = path.basenameWithoutExtension(entity.path);
-          final normalizedName = appName.toLowerCase();
-          _applications[normalizedName] = entity.path;
-          Logger.debug('AppLauncher', '发现应用：$appName -> ${entity.path}');
+          await for (final entry in directory.list(recursive: true)) {
+            if (entry.path.endsWith('.app')) {
+              final name = path.basenameWithoutExtension(entry.path);
+              _applications[name.toLowerCase()] = entry.path;
+              Logger.debug('AppLauncherPlugin', '发现应用: $name');
+              // 每扫描一批应用就让出CPU，避免长时间占用
+              await Future.delayed(const Duration(milliseconds: 1));
+            }
+          }
         }
+
+        Logger.info('AppLauncherPlugin', '应用扫描完成，共发现 ${_applications.length} 个应用');
       }
     } catch (e) {
-      Logger.error('AppLauncher', '扫描目录失败：$directoryPath', e);
+      Logger.error('AppLauncherPlugin', '扫描应用时出错', e);
     }
   }
 
   @override
   Future<List<PluginAction>> onQuery(String keyword) async {
-    if (!_initialized) {
-      Logger.error('AppLauncher', '插件尚未初始化');
-      return [];
+    Logger.debug('AppLauncherPlugin', '搜索应用: $keyword');
+
+    if (keyword.isEmpty) return [];
+
+    // 如果还没开始扫描，启动扫描
+    if (!_hasScanned && !_isScanning) {
+      _startScanningApplications();
     }
 
-    Logger.debug('AppLauncher', '搜索应用，关键词：$keyword');
-
-    if (keyword.isEmpty) {
-      return [];
+    // 如果正在扫描，返回一个提示动作
+    if (_isScanning) {
+      return [
+        PluginAction(
+          id: '$id:scanning',
+          title: '正在扫描应用...',
+          icon: const Icon(Icons.hourglass_empty),
+          subtitle: '请稍候再试',
+        ),
+      ];
     }
 
-    final normalizedKeyword = keyword.toLowerCase();
     final actions = <PluginAction>[];
+    final lowerKeyword = keyword.toLowerCase();
 
-    // 根据关键词过滤应用
     for (final entry in _applications.entries) {
-      if (entry.key.contains(normalizedKeyword)) {
-        final appName = path.basenameWithoutExtension(entry.value);
-        actions.add(PluginAction(
-          id: '${id}:${entry.value}',
-          title: appName,
-          subtitle: '启动 $appName',
-          score: _calculateScore(entry.key, normalizedKeyword),
-        ));
+      if (entry.key.contains(lowerKeyword)) {
+        final name = path.basenameWithoutExtension(entry.value);
+        actions.add(
+          PluginAction(
+            id: '$id:${entry.value}',
+            title: name,
+            icon: const Icon(Icons.laptop_mac),
+            subtitle: '启动 $name',
+          ),
+        );
       }
     }
 
-    // 按分数排序
-    actions.sort((a, b) => b.score.compareTo(a.score));
-
-    Logger.debug('AppLauncher', '找到 ${actions.length} 个匹配的应用');
+    Logger.debug('AppLauncherPlugin', '找到 ${actions.length} 个匹配的应用');
     return actions;
-  }
-
-  /// 计算应用名称与关键词的匹配分数
-  double _calculateScore(String appName, String keyword) {
-    if (appName == keyword) {
-      return 1.0;
-    } else if (appName.startsWith(keyword)) {
-      return 0.8;
-    } else if (appName.contains(keyword)) {
-      return 0.6;
-    } else {
-      return 0.4;
-    }
   }
 
   @override
   Future<void> onAction(String actionId, BuildContext context) async {
-    Logger.info('AppLauncher', '执行动作：$actionId');
-
-    if (!Platform.isMacOS) {
-      throw Exception('当前平台不支持');
-    }
+    // 如果是扫描中的提示动作，直接返回
+    if (actionId == '$id:scanning') return;
 
     try {
-      // 移除插件ID前缀
+      // 从动作ID中提取应用路径
       final appPath = actionId.replaceFirst('$id:', '');
-      final result = await Process.run('open', [appPath]);
-      if (result.exitCode != 0) {
-        final error = result.stderr.toString().trim();
-        Logger.error('AppLauncher', '启动应用失败', error);
-        throw Exception('启动应用失败：$error');
+      Logger.info('AppLauncherPlugin', '正在启动应用: $appPath');
+
+      if (Platform.isMacOS) {
+        await Process.run('open', [appPath]);
+        Logger.info('AppLauncherPlugin', '应用启动成功');
       }
-      Logger.info('AppLauncher', '应用启动成功：$appPath');
     } catch (e) {
-      Logger.error('AppLauncher', '启动应用失败', e);
+      Logger.error('AppLauncherPlugin', '启动应用失败', e);
       rethrow;
     }
   }
 
   @override
   Future<void> dispose() async {
-    Logger.info('AppLauncher', '销毁应用启动器插件');
+    Logger.info('AppLauncherPlugin', '正在清理应用启动器...');
     _applications.clear();
-    _initialized = false;
+    _isScanning = false;
+    _hasScanned = false;
   }
 }
