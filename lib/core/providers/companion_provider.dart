@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:gitok/adapter/vscode.dart';
 import 'package:gitok/utils/logger.dart';
 import 'package:gitok/adapter/cursor.dart';
+import 'package:gitok/utils/path_utils.dart';
 
 /// 伙伴提供者
 ///
@@ -16,18 +17,6 @@ import 'package:gitok/adapter/cursor.dart';
 /// - 不直接处理通道通信，由 main.dart 通过 ChannelManager 转发事件
 class CompanionProvider extends ChangeNotifier {
   static const String _tag = 'CompanionProvider';
-  static CompanionProvider? _instance;
-
-  /// 获取单例实例
-  factory CompanionProvider() {
-    _instance ??= CompanionProvider._();
-    Logger.debug(_tag, '获取单例实例');
-    return _instance!;
-  }
-
-  CompanionProvider._() {
-    Logger.debug(_tag, '创建单例实例');
-  }
 
   /// 被覆盖的应用名称
   String? _overlaidAppName;
@@ -75,7 +64,8 @@ class CompanionProvider extends ChangeNotifier {
       final workspaceProvider = _workspaceProviders[_overlaidAppBundleId];
       if (workspaceProvider != null) {
         try {
-          _workspace = await workspaceProvider();
+          final rawWorkspace = await workspaceProvider();
+          _workspace = PathUtils.normalizeWorkspace(rawWorkspace);
           Logger.info(_tag, '更新工作区: $_workspace (来自: $_overlaidAppName)');
         } catch (e) {
           Logger.error(_tag, '获取工作区失败: $_overlaidAppName', e);

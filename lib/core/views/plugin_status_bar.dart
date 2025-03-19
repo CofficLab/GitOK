@@ -120,6 +120,7 @@ class _PluginStatusBarState extends State<PluginStatusBar> {
                       color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
                   ),
+                  // 工作区信息
                   if (_companionProvider.workspace != null) ...[
                     const SizedBox(width: 8),
                     Icon(
