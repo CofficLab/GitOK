@@ -13,6 +13,9 @@ import 'package:gitok/core/managers/plugin_manager.dart';
 import 'package:tray_manager/tray_manager.dart' as tray;
 import 'package:hotkey_manager/hotkey_manager.dart' as hotkey;
 import 'plugins/app_launcher/app_launcher_plugin.dart';
+import 'package:gitok/core/providers/companion_provider.dart';
+import 'package:gitok/utils/logger.dart';
+import 'package:gitok/core/channels/channels.dart';
 
 /// 应用程序的根组件
 ///
@@ -151,15 +154,25 @@ class _MyAppState extends State<MyApp> with tray.TrayListener implements WindowL
 }
 
 void main() async {
+  // 确保Flutter绑定初始化
   WidgetsFlutterBinding.ensureInitialized();
 
-  // 对于热重载，`unregisterAll()` 需要被调用
+  // 初始化日志通道
+  LoggerChannel.instance;
+
+  // 初始化伙伴提供者
+  await CompanionProvider().initialize();
+
+  // 为了支持热重载，每次启动时都注销所有热键
   await hotkey.hotKeyManager.unregisterAll();
 
-  // 初始化各个管理器
+  // 初始化系统托盘
   await AppTrayManager().init();
-  await AppWindowManager().init();
+
+  // 初始化应用更新管理器
   await AppUpdateManager().init();
+
+  await AppWindowManager().init();
 
   runApp(const MyApp());
 }

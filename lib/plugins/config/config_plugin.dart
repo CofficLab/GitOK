@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../core/contract/plugin_protocol.dart';
+import '../../core/contract/plugin.dart';
+import '../../core/contract/plugin_action.dart';
 import 'config_page.dart';
 
 /// 设置功能插件
@@ -30,6 +31,9 @@ class ConfigPlugin implements Plugin {
 
   @override
   bool get enabled => true;
+
+  @override
+  PluginStatus? get status => null;
 
   @override
   Future<void> initialize() async {

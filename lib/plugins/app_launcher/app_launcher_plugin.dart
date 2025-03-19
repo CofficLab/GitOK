@@ -17,6 +17,8 @@ class AppLauncherPlugin implements Plugin {
   final Map<String, String> _applications = {};
   bool _isScanning = false;
   bool _hasScanned = false;
+  int _scannedCount = 0;
+  String? _errorMessage;
 
   @override
   String get id => 'app_launcher';
@@ -40,6 +42,23 @@ class AppLauncherPlugin implements Plugin {
   bool get enabled => true;
 
   @override
+  PluginStatus? get status {
+    if (_errorMessage != null) {
+      return PluginStatus.error(_errorMessage!);
+    }
+    if (_isScanning) {
+      return PluginStatus.info(
+        '正在扫描应用 (${_scannedCount})',
+        progress: _hasScanned ? null : 0.0, // 首次扫描时显示进度条
+      );
+    }
+    if (_hasScanned) {
+      return PluginStatus.info('已扫描 ${_applications.length} 个应用');
+    }
+    return null;
+  }
+
+  @override
   Future<void> initialize() async {
     Logger.info('AppLauncherPlugin', '正在初始化应用启动器...');
     // 在后台开始扫描应用
@@ -51,11 +70,20 @@ class AppLauncherPlugin implements Plugin {
     if (_isScanning || _hasScanned) return;
 
     _isScanning = true;
+    _scannedCount = 0;
+    _errorMessage = null;
+
     // 使用 Future.microtask 确保不阻塞主线程
     Future.microtask(() async {
-      await _scanApplications();
-      _isScanning = false;
-      _hasScanned = true;
+      try {
+        await _scanApplications();
+        _isScanning = false;
+        _hasScanned = true;
+        _errorMessage = null;
+      } catch (e) {
+        _errorMessage = '扫描应用时出错: $e';
+        Logger.error('AppLauncherPlugin', _errorMessage!);
+      }
     });
   }
 
@@ -78,7 +106,7 @@ class AppLauncherPlugin implements Plugin {
             if (entry.path.endsWith('.app')) {
               final name = path.basenameWithoutExtension(entry.path);
               _applications[name.toLowerCase()] = entry.path;
-              Logger.debug('AppLauncherPlugin', '发现应用: $name');
+              _scannedCount++;
               // 每扫描一批应用就让出CPU，避免长时间占用
               await Future.delayed(const Duration(milliseconds: 1));
             }
@@ -88,7 +116,9 @@ class AppLauncherPlugin implements Plugin {
         Logger.info('AppLauncherPlugin', '应用扫描完成，共发现 ${_applications.length} 个应用');
       }
     } catch (e) {
-      Logger.error('AppLauncherPlugin', '扫描应用时出错', e);
+      _errorMessage = '扫描应用时出错: $e';
+      Logger.error('AppLauncherPlugin', _errorMessage!);
+      rethrow;
     }
   }
 
@@ -110,7 +140,7 @@ class AppLauncherPlugin implements Plugin {
           id: '$id:scanning',
           title: '正在扫描应用...',
           icon: const Icon(Icons.hourglass_empty),
-          subtitle: '请稍候再试',
+          subtitle: '已发现 $_scannedCount 个应用',
         ),
       ];
     }
@@ -151,7 +181,8 @@ class AppLauncherPlugin implements Plugin {
         Logger.info('AppLauncherPlugin', '应用启动成功');
       }
     } catch (e) {
-      Logger.error('AppLauncherPlugin', '启动应用失败', e);
+      _errorMessage = '启动应用失败: $e';
+      Logger.error('AppLauncherPlugin', _errorMessage!);
       rethrow;
     }
   }
@@ -162,5 +193,7 @@ class AppLauncherPlugin implements Plugin {
     _applications.clear();
     _isScanning = false;
     _hasScanned = false;
+    _scannedCount = 0;
+    _errorMessage = null;
   }
 }
