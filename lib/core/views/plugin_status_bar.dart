@@ -39,14 +39,14 @@ class _PluginStatusBarState extends State<PluginStatusBar> {
     Logger.info(_tag, '开始初始化 CompanionProvider');
     try {
       await _companionProvider.initialize();
-      Logger.info(_tag, 'CompanionProvider 初始化成功');
-      Logger.debug(_tag, '当前被覆盖的应用 - ${_companionProvider.overlaidAppName}');
-      Logger.debug(_tag, '准备添加监听器');
+      // Logger.info(_tag, 'CompanionProvider 初始化成功');
+      // Logger.debug(_tag, '当前被覆盖的应用 - ${_companionProvider.overlaidAppName}');
+      // Logger.debug(_tag, '准备添加监听器');
       _companionProvider.addListener(_handleCompanionStateChanged);
       setState(() {
         _isInitialized = true;
       });
-      Logger.info(_tag, '初始化完成');
+      // Logger.info(_tag, '初始化完成');
     } catch (e) {
       Logger.error(_tag, '初始化失败', e);
     }
@@ -56,7 +56,7 @@ class _PluginStatusBarState extends State<PluginStatusBar> {
   void dispose() {
     Logger.info(_tag, '准备清理...');
     if (_isInitialized) {
-      Logger.debug(_tag, '准备移除监听器');
+      // Logger.debug(_tag, '准备移除监听器');
       _companionProvider.removeListener(_handleCompanionStateChanged);
     }
     Logger.info(_tag, '清理完成');
@@ -64,12 +64,12 @@ class _PluginStatusBarState extends State<PluginStatusBar> {
   }
 
   void _handleCompanionStateChanged() {
-    Logger.info(_tag, '收到状态变化通知');
-    Logger.debug(_tag, '当前被覆盖的应用 - ${_companionProvider.overlaidAppName}');
+    // Logger.info(_tag, '收到状态变化通知');
+    // Logger.debug(_tag, '当前被覆盖的应用 - ${_companionProvider.overlaidAppName}');
     if (mounted) {
       Logger.debug(_tag, 'Widget已挂载，准备重新构建');
       setState(() {});
-      Logger.debug(_tag, '重新构建完成');
+      // Logger.debug(_tag, '重新构建完成');
     } else {
       Logger.debug(_tag, 'Widget未挂载，跳过重新构建');
     }
@@ -77,9 +77,9 @@ class _PluginStatusBarState extends State<PluginStatusBar> {
 
   @override
   Widget build(BuildContext context) {
-    Logger.debug(_tag, '开始构建');
-    Logger.debug(_tag, '插件数量 - ${widget.plugins.length}');
-    Logger.debug(_tag, '被覆盖的应用 - ${_companionProvider.overlaidAppName}');
+    // Logger.debug(_tag, '开始构建');
+    // Logger.debug(_tag, '插件数量 - ${widget.plugins.length}');
+    // Logger.debug(_tag, '被覆盖的应用 - ${_companionProvider.overlaidAppName}');
 
     return Container(
       height: 28,

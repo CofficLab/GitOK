@@ -40,6 +40,8 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     _searchController.addListener(_onSearchChanged);
+    // 组件初始化时触发一次搜索
+    _onSearchChanged();
   }
 
   @override
@@ -143,7 +145,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Column(
                   children: [
                     // 搜索框
-                    SearchBox(controller: _searchController),
+                    SearchBox(
+                      controller: _searchController,
+                      autofocus: true,
+                    ),
                     const SizedBox(height: 16),
 
                     // 错误提示面板
