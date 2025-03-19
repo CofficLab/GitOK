@@ -14,7 +14,6 @@ import 'package:tray_manager/tray_manager.dart' as tray;
 import 'package:hotkey_manager/hotkey_manager.dart' as hotkey;
 import 'plugins/app_launcher/app_launcher_plugin.dart';
 import 'package:gitok/core/providers/companion_provider.dart';
-import 'package:gitok/utils/logger.dart';
 import 'package:gitok/core/channels/channels.dart';
 
 /// 应用程序的根组件
@@ -44,9 +43,9 @@ class _MyAppState extends State<MyApp> with tray.TrayListener implements WindowL
     _trayManager.init();
     // 立即初始化插件
     _initializePlugins().then((_) {
-      print('🎉 插件初始化完成！');
+      debugPrint('🎉 插件初始化完成！');
     }).catchError((error) {
-      print('❌ 插件初始化失败：$error');
+      debugPrint('❌ 插件初始化失败：$error');
     });
   }
 

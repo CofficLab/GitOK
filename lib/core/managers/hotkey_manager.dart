@@ -29,7 +29,7 @@ class AppHotkeyManager {
     await hotKeyManager.unregisterAll();
 
     // 设置键盘监听器
-    RawKeyboard.instance.addListener(_onKey);
+    HardwareKeyboard.instance.addHandler(_onKey);
 
     // 注册全局快捷键
     await _setupGlobalHotkey();
@@ -84,18 +84,18 @@ class AppHotkeyManager {
   }
 
   /// 处理键盘事件
-  void _onKey(RawKeyEvent event) {
-    if (event is RawKeyDownEvent) {
-      if (event.logicalKey == LogicalKeyboardKey.escape) {
-        _trayManager.hide();
-      }
+  bool _onKey(KeyEvent event) {
+    if (event is KeyDownEvent && event.logicalKey == LogicalKeyboardKey.escape) {
+      _trayManager.hide();
+      return true;
     }
+    return false;
   }
 
   /// 注销所有快捷键
   Future<void> dispose() async {
     // 移除键盘监听器
-    RawKeyboard.instance.removeListener(_onKey);
+    HardwareKeyboard.instance.removeHandler(_onKey);
     // 注销所有热键
     await hotKeyManager.unregisterAll();
   }

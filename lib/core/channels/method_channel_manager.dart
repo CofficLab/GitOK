@@ -14,9 +14,7 @@ abstract class MethodChannelManager {
   /// 调用方法
   Future<T?> invokeMethod<T>(String method, [dynamic arguments]) async {
     try {
-      Logger.debug(_tag, '调用方法: $method, 参数: $arguments');
       final result = await channel.invokeMethod<T>(method, arguments);
-      Logger.debug(_tag, '方法调用成功: $method, 结果: $result');
       return result;
     } catch (e) {
       Logger.error(_tag, '方法调用失败: $method', e);
@@ -35,9 +33,7 @@ abstract class MethodChannelManager {
   ) {
     return (MethodCall call) async {
       try {
-        Logger.debug(_tag, '收到方法调用: ${call.method}, 参数: ${call.arguments}');
         final result = await handler(call);
-        Logger.debug(_tag, '方法处理成功: ${call.method}, 结果: $result');
         return result;
       } catch (e) {
         Logger.error(_tag, '方法处理失败: ${call.method}', e);

@@ -7,6 +7,7 @@
 /// 3. 插件响应方法
 ///
 /// 这个文件作为协议的统一入口点，导出所有需要的类型。
+library;
 
 export 'plugin_action.dart';
 export 'plugin.dart';

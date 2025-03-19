@@ -2,8 +2,6 @@ import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart' as path;
-import '../../core/contract/plugin.dart';
-import '../../core/contract/plugin_action.dart';
 import '../../core/contract/plugin_protocol.dart';
 import '../../utils/logger.dart';
 
@@ -48,7 +46,7 @@ class AppLauncherPlugin implements Plugin {
     }
     if (_isScanning) {
       return PluginStatus.info(
-        '正在扫描应用 (${_scannedCount})',
+        '正在扫描应用 ($_scannedCount)',
         progress: _hasScanned ? null : 0.0, // 首次扫描时显示进度条
       );
     }

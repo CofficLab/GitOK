@@ -15,11 +15,9 @@ class Logger {
   /// [tag] 日志标签，用于标识日志来源
   /// [message] 日志消息
   static void info(String tag, String message) {
-    final logMessage = '[$tag] $message';
     if (kDebugMode) {
-      print('💡 $logMessage');
+      print('💡 [$tag] $message');
     }
-    developer.log(logMessage, name: 'INFO');
   }
 
   /// 记录调试日志
@@ -29,7 +27,6 @@ class Logger {
   static void debug(String tag, String message) {
     if (kDebugMode) {
       print('🔍 [$tag] $message');
-      developer.log('[$tag] $message', name: 'DEBUG');
     }
   }
 
@@ -39,14 +36,12 @@ class Logger {
   /// [message] 错误消息
   /// [error] 错误对象（可选）
   static void error(String tag, String message, [dynamic error]) {
-    final logMessage = '[$tag] $message';
     if (kDebugMode) {
       if (error != null) {
-        print('❌ $logMessage\n$error');
+        print('❌ [$tag] $message\n$error');
       } else {
-        print('❌ $logMessage');
+        print('❌ [$tag] $message');
       }
     }
-    developer.log('$logMessage${error != null ? '\n$error' : ''}', name: 'ERROR');
   }
 }

@@ -4,10 +4,9 @@
 /// 菜单项的点击处理等。
 library;
 
-import 'dart:io' show Platform, exit;
+import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:tray_manager/tray_manager.dart' as tray;
-import 'package:window_manager/window_manager.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:gitok/core/managers/window_manager.dart';
 

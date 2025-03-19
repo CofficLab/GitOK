@@ -103,9 +103,9 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   /// 处理键盘事件
-  Future<void> _handleKeyEvent(RawKeyEvent event) async {
+  Future<void> _handleKeyEvent(KeyEvent event) async {
     // 只处理按键按下事件
-    if (event is! RawKeyDownEvent) return;
+    if (event is! KeyDownEvent) return;
 
     // 如果没有动作或正在加载，不处理键盘事件
     if (_actions.isEmpty || _isLoading) return;
@@ -136,10 +136,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return RawKeyboardListener(
+    return KeyboardListener(
       focusNode: FocusNode(),
       autofocus: true,
-      onKey: (event) => _handleKeyEvent(event),
+      onKeyEvent: (event) => _handleKeyEvent(event),
       child: Scaffold(
         body: Column(
           children: [

@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:gitok/core/channels/channels.dart';
+import 'package:gitok/core/channels/vscode_channel.dart';
 import 'package:gitok/utils/logger.dart';
 
 /// 伙伴提供者
@@ -28,6 +29,18 @@ class CompanionProvider extends ChangeNotifier {
   String? _overlaidAppName;
   String? get overlaidAppName => _overlaidAppName;
 
+  /// 被覆盖的应用包名
+  String? _overlaidAppBundleId;
+  String? get overlaidAppBundleId => _overlaidAppBundleId;
+
+  /// 被覆盖的应用进程ID
+  int? _overlaidAppProcessId;
+  int? get overlaidAppProcessId => _overlaidAppProcessId;
+
+  /// VSCode 工作区路径
+  String? _vscodeWorkspace;
+  String? get vscodeWorkspace => _vscodeWorkspace;
+
   /// 初始化
   Future<void> initialize() async {
     Logger.info(_tag, '正在初始化...');
@@ -47,12 +60,36 @@ class CompanionProvider extends ChangeNotifier {
 
     switch (call.method) {
       case 'updateOverlaidApp':
-        final Map? appInfo = call.arguments;
-        _overlaidAppName = appInfo?['name'] as String?;
-        Logger.info(_tag, '更新被覆盖的应用: $_overlaidAppName');
-        notifyListeners();
+        final Map<String, dynamic>? appInfo = call.arguments as Map<String, dynamic>?;
+        await updateOverlaidApp(appInfo);
         break;
     }
+  }
+
+  /// 更新被覆盖的应用信息
+  Future<void> updateOverlaidApp(Map<String, dynamic>? appInfo) async {
+    if (appInfo == null) {
+      _overlaidAppName = null;
+      _overlaidAppBundleId = null;
+      _overlaidAppProcessId = null;
+      _vscodeWorkspace = null;
+      notifyListeners();
+      return;
+    }
+
+    _overlaidAppName = appInfo['name'] as String?;
+    _overlaidAppBundleId = appInfo['bundleId'] as String?;
+    _overlaidAppProcessId = appInfo['processId'] as int?;
+
+    // 如果是 VSCode，获取工作区信息
+    if (_overlaidAppBundleId == 'com.microsoft.VSCode') {
+      _vscodeWorkspace = await VSCodeChannel.instance.getActiveWorkspace();
+      Logger.info(_tag, '更新 VSCode 工作区: $_vscodeWorkspace');
+    } else {
+      _vscodeWorkspace = null;
+    }
+
+    notifyListeners();
   }
 
   @override
