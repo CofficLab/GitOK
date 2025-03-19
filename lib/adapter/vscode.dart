@@ -288,16 +288,16 @@ class VSCode {
         final possiblePaths = [
           // 标准 VSCode
           path.join(home!, 'Library/Application Support/Code/storage.json'),
-          path.join(home!, 'Library/Application Support/Code/User/globalStorage/state.vscdb'),
-          path.join(home!, 'Library/Application Support/Code/User/globalStorage/storage.json'),
+          path.join(home, 'Library/Application Support/Code/User/globalStorage/state.vscdb'),
+          path.join(home, 'Library/Application Support/Code/User/globalStorage/storage.json'),
           // VSCode Insiders
-          path.join(home!, 'Library/Application Support/Code - Insiders/storage.json'),
-          path.join(home!, 'Library/Application Support/Code - Insiders/User/globalStorage/state.vscdb'),
-          path.join(home!, 'Library/Application Support/Code - Insiders/User/globalStorage/storage.json'),
+          path.join(home, 'Library/Application Support/Code - Insiders/storage.json'),
+          path.join(home, 'Library/Application Support/Code - Insiders/User/globalStorage/state.vscdb'),
+          path.join(home, 'Library/Application Support/Code - Insiders/User/globalStorage/storage.json'),
           // VSCodium
-          path.join(home!, 'Library/Application Support/VSCodium/storage.json'),
-          path.join(home!, 'Library/Application Support/VSCodium/User/globalStorage/state.vscdb'),
-          path.join(home!, 'Library/Application Support/VSCodium/User/globalStorage/storage.json'),
+          path.join(home, 'Library/Application Support/VSCodium/storage.json'),
+          path.join(home, 'Library/Application Support/VSCodium/User/globalStorage/state.vscdb'),
+          path.join(home, 'Library/Application Support/VSCodium/User/globalStorage/storage.json'),
         ];
 
         // 返回第一个存在的文件路径
@@ -313,16 +313,16 @@ class VSCode {
         final possiblePaths = [
           // 标准 VSCode
           path.join(appData!, 'Code/storage.json'),
-          path.join(appData!, 'Code/User/globalStorage/state.vscdb'),
-          path.join(appData!, 'Code/User/globalStorage/storage.json'),
+          path.join(appData, 'Code/User/globalStorage/state.vscdb'),
+          path.join(appData, 'Code/User/globalStorage/storage.json'),
           // VSCode Insiders
-          path.join(appData!, 'Code - Insiders/storage.json'),
-          path.join(appData!, 'Code - Insiders/User/globalStorage/state.vscdb'),
-          path.join(appData!, 'Code - Insiders/User/globalStorage/storage.json'),
+          path.join(appData, 'Code - Insiders/storage.json'),
+          path.join(appData, 'Code - Insiders/User/globalStorage/state.vscdb'),
+          path.join(appData, 'Code - Insiders/User/globalStorage/storage.json'),
           // VSCodium
-          path.join(appData!, 'VSCodium/storage.json'),
-          path.join(appData!, 'VSCodium/User/globalStorage/state.vscdb'),
-          path.join(appData!, 'VSCodium/User/globalStorage/storage.json'),
+          path.join(appData, 'VSCodium/storage.json'),
+          path.join(appData, 'VSCodium/User/globalStorage/state.vscdb'),
+          path.join(appData, 'VSCodium/User/globalStorage/storage.json'),
         ];
 
         for (final filePath in possiblePaths) {
@@ -336,16 +336,16 @@ class VSCode {
         final possiblePaths = [
           // 标准 VSCode
           path.join(home!, '.config/Code/storage.json'),
-          path.join(home!, '.config/Code/User/globalStorage/state.vscdb'),
-          path.join(home!, '.config/Code/User/globalStorage/storage.json'),
+          path.join(home, '.config/Code/User/globalStorage/state.vscdb'),
+          path.join(home, '.config/Code/User/globalStorage/storage.json'),
           // VSCode Insiders
-          path.join(home!, '.config/Code - Insiders/storage.json'),
-          path.join(home!, '.config/Code - Insiders/User/globalStorage/state.vscdb'),
-          path.join(home!, '.config/Code - Insiders/User/globalStorage/storage.json'),
+          path.join(home, '.config/Code - Insiders/storage.json'),
+          path.join(home, '.config/Code - Insiders/User/globalStorage/state.vscdb'),
+          path.join(home, '.config/Code - Insiders/User/globalStorage/storage.json'),
           // VSCodium
-          path.join(home!, '.config/VSCodium/storage.json'),
-          path.join(home!, '.config/VSCodium/User/globalStorage/state.vscdb'),
-          path.join(home!, '.config/VSCodium/User/globalStorage/storage.json'),
+          path.join(home, '.config/VSCodium/storage.json'),
+          path.join(home, '.config/VSCodium/User/globalStorage/state.vscdb'),
+          path.join(home, '.config/VSCodium/User/globalStorage/storage.json'),
         ];
 
         for (final filePath in possiblePaths) {

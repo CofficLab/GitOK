@@ -114,15 +114,6 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _onSearchChanged() async {
     final keyword = _searchController.text.trim();
 
-    if (keyword.isEmpty) {
-      setState(() {
-        _actions = [];
-        _isLoading = false;
-        _errorMessage = null;
-      });
-      return;
-    }
-
     setState(() {
       _isLoading = true;
       _errorMessage = null;

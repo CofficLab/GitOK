@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../core/contract/plugin.dart';
-import '../../core/contract/plugin_action.dart';
 import '../../core/contract/plugin_protocol.dart';
 import 'config_page.dart';
 

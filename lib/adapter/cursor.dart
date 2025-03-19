@@ -74,7 +74,7 @@ class Cursor {
         // macOS 上的存储位置
         final possiblePaths = [
           path.join(home!, 'Library/Application Support/Cursor/storage.json'),
-          path.join(home!, 'Library/Application Support/Cursor/User/globalStorage/storage.json'),
+          path.join(home, 'Library/Application Support/Cursor/User/globalStorage/storage.json'),
         ];
 
         // 返回第一个存在的文件路径
@@ -89,7 +89,7 @@ class Cursor {
         final appData = Platform.environment['APPDATA'];
         final possiblePaths = [
           path.join(appData!, 'Cursor/storage.json'),
-          path.join(appData!, 'Cursor/User/globalStorage/storage.json'),
+          path.join(appData, 'Cursor/User/globalStorage/storage.json'),
         ];
 
         for (final filePath in possiblePaths) {
@@ -102,7 +102,7 @@ class Cursor {
       } else if (Platform.isLinux) {
         final possiblePaths = [
           path.join(home!, '.config/Cursor/storage.json'),
-          path.join(home!, '.config/Cursor/User/globalStorage/storage.json'),
+          path.join(home, '.config/Cursor/User/globalStorage/storage.json'),
         ];
 
         for (final filePath in possiblePaths) {

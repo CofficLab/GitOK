@@ -1,7 +1,5 @@
 import 'dart:io' show Platform;
-import 'package:flutter/material.dart';
 import 'package:tray_manager/tray_manager.dart' as tray;
-import 'package:bot_toast/bot_toast.dart';
 
 /// 托盘事件回调函数类型
 typedef TrayEventCallback = void Function();
