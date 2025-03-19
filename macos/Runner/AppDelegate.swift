@@ -87,7 +87,7 @@ class AppDelegate: FlutterAppDelegate {
     
     // 创建全局监听器（监听发送到其他应用的事件）
     let globalMonitor = NSEvent.addGlobalMonitorForEvents(matching: .flagsChanged) { [weak self] event in
-      self?.log("收到全局事件 (其他应用)", tag: "EventMonitor")
+      // self?.log("收到全局事件 (其他应用)", tag: "EventMonitor")
       if !NSApp.isActive {  // 只有在我们的应用不活跃时才处理全局事件
         self?.handleCommandKeyEvent(event)
       }
@@ -95,7 +95,7 @@ class AppDelegate: FlutterAppDelegate {
     
     // 创建本地监听器（监听发送到自己应用的事件）
     let localMonitor = NSEvent.addLocalMonitorForEvents(matching: .flagsChanged) { [weak self] event in
-      self?.log("收到本地事件 (自己应用)", tag: "EventMonitor")
+      // self?.log("收到本地事件 (自己应用)", tag: "EventMonitor")
       if NSApp.isActive {  // 只有在我们的应用活跃时才处理本地事件
         self?.handleCommandKeyEvent(event)
       }
@@ -111,7 +111,7 @@ class AppDelegate: FlutterAppDelegate {
   private func handleCommandKeyEvent(_ event: NSEvent) {
     // 检查Command键的状态
     let commandKeyDown = event.modifierFlags.contains(.command)
-    log("Command键状态: \(commandKeyDown ? "按下" : "释放")", tag: "KeyHandler")
+    // log("Command键状态: \(commandKeyDown ? "按下" : "释放")", tag: "KeyHandler")
     
     // 检测Command键的状态变化
     if commandKeyDown && !isCommandKeyDown {
@@ -166,15 +166,20 @@ class AppDelegate: FlutterAppDelegate {
     DispatchQueue.main.async { [weak self] in
       // 先获取当前活跃的应用信息
       if let activeApp = NSWorkspace.shared.frontmostApplication {
-        self?.log("成功获取当前活跃应用:", tag: "AppState")
-        self?.log("我们将覆盖在此应用之上:", tag: "AppState")
+        // 获取应用信息并记录日志
+        let appName = activeApp.localizedName ?? "未知"
+        let bundleId = activeApp.bundleIdentifier ?? "未知"
+        let processId = activeApp.processIdentifier
         
-        // 获取应用信息
-        let overlaidApp = NSDictionary(dictionary: [
-          "name": activeApp.localizedName ?? "未知",
-          "bundleId": activeApp.bundleIdentifier ?? "未知",
-          "processId": NSNumber(value: activeApp.processIdentifier)
-        ]) as? [String: Any]
+        self?.log("成功获取当前活跃应用: \(appName) (Bundle ID: \(bundleId), PID: \(processId))", tag: "AppState")
+        self?.log("我们将覆盖在此应用之上: \(appName)", tag: "AppState")
+        
+        // 创建应用信息字典，确保使用正确的类型
+        let overlaidApp: [String: Any] = [
+          "name": appName,
+          "bundleId": bundleId,
+          "processId": processId
+        ]
         
         // 然后再将我们的应用带到前台
         self?.log("正在激活我们的应用...", tag: "AppState")

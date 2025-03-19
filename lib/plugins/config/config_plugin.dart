@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../core/contract/plugin.dart';
 import '../../core/contract/plugin_action.dart';
+import '../../core/contract/plugin_protocol.dart';
 import 'config_page.dart';
 
 /// 设置功能插件
@@ -41,7 +42,7 @@ class ConfigPlugin implements Plugin {
   }
 
   @override
-  Future<List<PluginAction>> onQuery(String keyword) async {
+  Future<List<PluginAction>> onQuery(String keyword, [PluginContext context = const PluginContext()]) async {
     if (keyword.isEmpty) return [];
 
     // 如果关键词包含"设置"、"config"等相关词，返回打开设置的动作
@@ -61,10 +62,11 @@ class ConfigPlugin implements Plugin {
   }
 
   @override
-  Future<void> onAction(String actionId, BuildContext context) async {
+  Future<void> onAction(String actionId, BuildContext buildContext,
+      [PluginContext pluginContext = const PluginContext()]) async {
     if (actionId == '$id:open_settings') {
       await showDialog(
-        context: context,
+        context: buildContext,
         builder: (context) => Dialog(
           child: Container(
             width: 600,

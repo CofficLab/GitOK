@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../contract/plugin_protocol.dart';
+import '../managers/plugin_manager.dart';
 import 'search_box.dart';
 import 'error_panel.dart';
 import 'action_list.dart';
@@ -17,7 +18,7 @@ import 'plugin_status_bar.dart';
 ///    - 上下键选择动作
 ///    - 回车键执行选中的动作
 class HomeScreen extends StatefulWidget {
-  final PluginManager pluginManager;
+  final AppPluginManager pluginManager;
 
   const HomeScreen({
     super.key,
@@ -80,14 +81,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _onActionSelected(PluginAction action) async {
     try {
-      // 查找对应的插件
-      final plugin = widget.pluginManager.plugins.firstWhere(
-        (p) => action.id.startsWith(p.id),
-        orElse: () => throw Exception('找不到处理该动作的插件'),
-      );
-
-      // 执行动作
-      await plugin.onAction(action.id, context);
+      await widget.pluginManager.executeAction(action.id, context);
 
       // 清除可能存在的错误消息
       setState(() {

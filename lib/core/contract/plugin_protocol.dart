@@ -5,6 +5,7 @@
 /// 1. 插件基本信息
 /// 2. 动作数据结构
 /// 3. 插件响应方法
+/// 4. 插件上下文信息
 ///
 /// 这个文件作为协议的统一入口点，导出所有需要的类型。
 library;
@@ -12,3 +13,4 @@ library;
 export 'plugin_action.dart';
 export 'plugin.dart';
 export 'plugin_manager.dart';
+export 'plugin_context.dart';

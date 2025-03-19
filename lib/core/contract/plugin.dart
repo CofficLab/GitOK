@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'plugin_action.dart';
+import 'plugin_context.dart';
 
 /// 插件状态
 ///
@@ -68,14 +69,17 @@ abstract class Plugin {
   /// 响应用户查询
   ///
   /// [keyword] 用户输入的关键词
+  /// [context] 插件运行时上下文
   /// 返回与关键词相关的动作列表
-  Future<List<PluginAction>> onQuery(String keyword);
+  Future<List<PluginAction>> onQuery(String keyword, [PluginContext context = const PluginContext()]);
 
   /// 处理用户选择的动作
   ///
   /// [actionId] 动作ID
-  /// [context] 构建上下文
-  Future<void> onAction(String actionId, BuildContext context);
+  /// [buildContext] 构建上下文
+  /// [pluginContext] 插件运行时上下文
+  Future<void> onAction(String actionId, BuildContext buildContext,
+      [PluginContext pluginContext = const PluginContext()]);
 
   /// 销毁插件
   Future<void> dispose();

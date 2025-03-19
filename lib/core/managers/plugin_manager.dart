@@ -1,8 +1,11 @@
 import 'dart:async';
+import 'package:flutter/material.dart';
+import '../../utils/logger.dart';
 import '../contract/plugin.dart';
 import '../contract/plugin_manager.dart';
 import '../contract/plugin_action.dart';
-import '../../utils/logger.dart';
+import '../contract/plugin_context.dart';
+import '../providers/companion_provider.dart';
 
 /// 插件管理器
 ///
@@ -15,10 +18,31 @@ import '../../utils/logger.dart';
 class AppPluginManager implements PluginManager {
   final _plugins = <String, Plugin>{};
   final _initializationCompleter = Completer<void>();
+  final _companionProvider = CompanionProvider();
   bool _initialized = false;
 
   AppPluginManager() {
     Logger.info('PluginManager', '插件管理器创建');
+    _initializeCompanionProvider();
+  }
+
+  Future<void> _initializeCompanionProvider() async {
+    try {
+      await _companionProvider.initialize();
+      Logger.info('PluginManager', 'CompanionProvider 初始化完成');
+    } catch (e) {
+      Logger.error('PluginManager', 'CompanionProvider 初始化失败', e);
+    }
+  }
+
+  /// 获取当前上下文
+  PluginContext _getCurrentContext() {
+    return PluginContext(
+      workspace: _companionProvider.workspace,
+      overlaidAppName: _companionProvider.overlaidAppName,
+      overlaidAppBundleId: _companionProvider.overlaidAppBundleId,
+      overlaidAppProcessId: _companionProvider.overlaidAppProcessId,
+    );
   }
 
   Future<void> _initialize() async {
@@ -103,10 +127,14 @@ class AppPluginManager implements PluginManager {
 
     Logger.debug('PluginManager', '查询所有插件，关键词：$keyword');
 
+    // 获取当前上下文
+    final context = _getCurrentContext();
+    Logger.debug('PluginManager', '当前上下文 - 工作区: ${context.workspace}');
+
     // 并行查询所有插件
     final futures = _plugins.values.map((plugin) async {
       try {
-        return await plugin.onQuery(keyword);
+        return await plugin.onQuery(keyword, context);
       } catch (e) {
         Logger.error('PluginManager', '插件 ${plugin.id} 查询失败', e);
         return <PluginAction>[];
@@ -125,6 +153,21 @@ class AppPluginManager implements PluginManager {
     Logger.debug('PluginManager', '共找到 ${allActions.length} 个动作');
 
     return allActions;
+  }
+
+  @override
+  Future<void> executeAction(String actionId, BuildContext context) async {
+    final pluginId = actionId.split(':')[0];
+    final plugin = _plugins[pluginId];
+    if (plugin == null) {
+      throw Exception('找不到处理该动作的插件');
+    }
+
+    final companionProvider = CompanionProvider();
+    final workspace = companionProvider.workspace;
+    final pluginContext = PluginContext(workspace: workspace);
+
+    await plugin.onAction(actionId, context, pluginContext);
   }
 
   /// 销毁插件管理器

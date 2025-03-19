@@ -121,7 +121,7 @@ class AppLauncherPlugin implements Plugin {
   }
 
   @override
-  Future<List<PluginAction>> onQuery(String keyword) async {
+  Future<List<PluginAction>> onQuery(String keyword, [PluginContext context = const PluginContext()]) async {
     Logger.debug('AppLauncherPlugin', '搜索应用: $keyword');
 
     if (keyword.isEmpty) return [];
@@ -165,7 +165,8 @@ class AppLauncherPlugin implements Plugin {
   }
 
   @override
-  Future<void> onAction(String actionId, BuildContext context) async {
+  Future<void> onAction(String actionId, BuildContext buildContext,
+      [PluginContext pluginContext = const PluginContext()]) async {
     // 如果是扫描中的提示动作，直接返回
     if (actionId == '$id:scanning') return;
 

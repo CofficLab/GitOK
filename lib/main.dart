@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:gitok/plugins/config/config_plugin.dart';
+import 'package:gitok/plugins/workspace_tools/workspace_tools_plugin.dart';
+import 'package:gitok/plugins/git_commit/git_commit_plugin.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:gitok/core/views/home_screen.dart';
 import 'package:gitok/core/theme/macos_theme.dart';
@@ -63,6 +65,8 @@ class _MyAppState extends State<MyApp> with tray.TrayListener implements WindowL
     // 注册应用启动器插件
     await _pluginManager.registerPlugin(AppLauncherPlugin());
     await _pluginManager.registerPlugin(ConfigPlugin());
+    await _pluginManager.registerPlugin(WorkspaceToolsPlugin());
+    await _pluginManager.registerPlugin(GitCommitPlugin());
   }
 
   // 当窗口关闭时，隐藏而不是退出

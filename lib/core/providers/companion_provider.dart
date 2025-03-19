@@ -1,8 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
-import 'package:gitok/core/channels/channels.dart';
-import 'package:gitok/core/channels/vscode_channel.dart';
-import 'package:gitok/utils/logger.dart';
+import 'package:gitok/adapter/vscode.dart';
+import '../channels/channels.dart';
+import '../../utils/logger.dart';
+import 'package:gitok/adapter/cursor.dart';
 
 /// 伙伴提供者
 ///
@@ -10,6 +11,7 @@ import 'package:gitok/utils/logger.dart';
 /// 1. 跟踪被覆盖的应用信息
 /// 2. 提供状态变化通知
 /// 3. 管理应用切换状态
+/// 4. 管理不同应用的工作区信息
 class CompanionProvider extends ChangeNotifier {
   static const String _tag = 'CompanionProvider';
   static CompanionProvider? _instance;
@@ -37,9 +39,19 @@ class CompanionProvider extends ChangeNotifier {
   int? _overlaidAppProcessId;
   int? get overlaidAppProcessId => _overlaidAppProcessId;
 
-  /// VSCode 工作区路径
-  String? _vscodeWorkspace;
-  String? get vscodeWorkspace => _vscodeWorkspace;
+  /// 当前工作区路径
+  String? _workspace;
+  String? get workspace => _workspace;
+
+  /// 支持的应用包名到工作区获取函数的映射
+  final Map<String, Future<String?> Function()> _workspaceProviders = {
+    'com.microsoft.VSCode': () => VSCode.getActiveWorkspace(),
+    'com.todesktop.230313mzl4w4u92': () => Cursor.getActiveWorkspace(),
+    // 未来可以在这里添加更多应用的工作区获取函数
+    // 例如:
+    // 'com.jetbrains.intellij': () => IntelliJChannel.instance.getActiveWorkspace(),
+    // 'com.sublimetext.4': () => SublimeTextChannel.instance.getActiveWorkspace(),
+  };
 
   /// 初始化
   Future<void> initialize() async {
@@ -60,7 +72,8 @@ class CompanionProvider extends ChangeNotifier {
 
     switch (call.method) {
       case 'updateOverlaidApp':
-        final Map<String, dynamic>? appInfo = call.arguments as Map<String, dynamic>?;
+        final Map<String, dynamic>? appInfo =
+            call.arguments != null ? Map<String, dynamic>.from(call.arguments as Map) : null;
         await updateOverlaidApp(appInfo);
         break;
     }
@@ -72,7 +85,7 @@ class CompanionProvider extends ChangeNotifier {
       _overlaidAppName = null;
       _overlaidAppBundleId = null;
       _overlaidAppProcessId = null;
-      _vscodeWorkspace = null;
+      _workspace = null;
       notifyListeners();
       return;
     }
@@ -81,15 +94,32 @@ class CompanionProvider extends ChangeNotifier {
     _overlaidAppBundleId = appInfo['bundleId'] as String?;
     _overlaidAppProcessId = appInfo['processId'] as int?;
 
-    // 如果是 VSCode，获取工作区信息
-    if (_overlaidAppBundleId == 'com.microsoft.VSCode') {
-      _vscodeWorkspace = await VSCodeChannel.instance.getActiveWorkspace();
-      Logger.info(_tag, '更新 VSCode 工作区: $_vscodeWorkspace');
+    // 尝试获取工作区信息
+    if (_overlaidAppBundleId != null) {
+      final workspaceProvider = _workspaceProviders[_overlaidAppBundleId];
+      if (workspaceProvider != null) {
+        try {
+          _workspace = await workspaceProvider();
+          Logger.info(_tag, '更新工作区: $_workspace (来自: $_overlaidAppName)');
+        } catch (e) {
+          Logger.error(_tag, '获取工作区失败: $_overlaidAppName', e);
+          _workspace = null;
+        }
+      } else {
+        Logger.debug(_tag, '应用 $_overlaidAppName ($_overlaidAppBundleId) 暂不支持工作区获取');
+        _workspace = null;
+      }
     } else {
-      _vscodeWorkspace = null;
+      _workspace = null;
     }
 
     notifyListeners();
+  }
+
+  /// 注册新的工作区提供者
+  void registerWorkspaceProvider(String bundleId, Future<String?> Function() provider) {
+    _workspaceProviders[bundleId] = provider;
+    Logger.info(_tag, '注册工作区提供者: $bundleId');
   }
 
   @override
