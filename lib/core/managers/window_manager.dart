@@ -8,6 +8,7 @@ import 'dart:io' show Platform, exit;
 import 'package:flutter/material.dart';
 import 'package:macos_window_utils/macos_window_utils.dart';
 import 'package:window_manager/window_manager.dart' as win;
+import 'package:gitok/utils/logger.dart';
 
 /// 窗口事件回调函数类型
 typedef WindowEventCallback = void Function();
@@ -66,6 +67,8 @@ class AppWindowManager with win.WindowListener {
 
   /// 初始化窗口管理器
   Future<void> init() async {
+    Logger.info('WindowManager', '开始初始化窗口管理器');
+
     // 初始化window_manager
     await win.windowManager.ensureInitialized();
 
@@ -76,6 +79,10 @@ class AppWindowManager with win.WindowListener {
       title: "GitOk",
       alwaysOnTop: false,
     );
+
+    // 注册窗口事件监听器
+    win.windowManager.addListener(this);
+    Logger.info('WindowManager', '已注册窗口事件监听器');
 
     await win.windowManager.waitUntilReadyToShow(windowOptions, () async {
       await win.windowManager.show();
@@ -89,23 +96,31 @@ class AppWindowManager with win.WindowListener {
       WindowManipulator.enableFullSizeContentView();
       WindowManipulator.hideTitle();
     }
+
+    Logger.info('WindowManager', '窗口管理器初始化完成');
   }
 
   /// 隐藏窗口
   Future<void> hide() async {
+    Logger.info('WindowManager', '准备隐藏窗口');
     await win.windowManager.hide();
+    Logger.info('WindowManager', '窗口已隐藏，调用回调');
     onWindowHidden?.call();
   }
 
   /// 显示窗口
   Future<void> show() async {
+    Logger.info('WindowManager', '准备显示窗口');
     await win.windowManager.show();
+    Logger.info('WindowManager', '窗口已显示，调用回调');
     onWindowShown?.call();
   }
 
   /// 将窗口带到前台
   Future<void> focus() async {
+    Logger.info('WindowManager', '准备将窗口带到前台');
     await win.windowManager.focus();
+    Logger.info('WindowManager', '窗口已带到前台，调用回调');
     onWindowFocused?.call();
   }
 
@@ -126,8 +141,16 @@ class AppWindowManager with win.WindowListener {
     exit(0);
   }
 
+  /// 清理资源
+  void dispose() {
+    Logger.info('WindowManager', '清理窗口管理器资源');
+    win.windowManager.removeListener(this);
+    _listeners.clear();
+  }
+
   @override
   void onWindowClose() {
+    Logger.info('WindowManager', '收到窗口关闭事件');
     for (final listener in _listeners) {
       listener.onWindowClose();
     }
@@ -135,6 +158,7 @@ class AppWindowManager with win.WindowListener {
 
   @override
   void onWindowFocus() {
+    Logger.info('WindowManager', '收到窗口获得焦点事件');
     for (final listener in _listeners) {
       listener.onWindowFocus();
     }
@@ -142,6 +166,7 @@ class AppWindowManager with win.WindowListener {
 
   @override
   void onWindowBlur() {
+    Logger.info('WindowManager', '收到窗口失去焦点事件');
     for (final listener in _listeners) {
       listener.onWindowBlur();
     }
@@ -149,6 +174,7 @@ class AppWindowManager with win.WindowListener {
 
   @override
   void onWindowMaximize() {
+    Logger.info('WindowManager', '收到窗口最大化事件');
     for (final listener in _listeners) {
       listener.onWindowMaximize();
     }
@@ -156,6 +182,7 @@ class AppWindowManager with win.WindowListener {
 
   @override
   void onWindowUnmaximize() {
+    Logger.info('WindowManager', '收到窗口取消最大化事件');
     for (final listener in _listeners) {
       listener.onWindowUnmaximize();
     }
@@ -163,6 +190,7 @@ class AppWindowManager with win.WindowListener {
 
   @override
   void onWindowMinimize() {
+    Logger.info('WindowManager', '收到窗口最小化事件');
     for (final listener in _listeners) {
       listener.onWindowMinimize();
     }
@@ -170,6 +198,7 @@ class AppWindowManager with win.WindowListener {
 
   @override
   void onWindowRestore() {
+    Logger.info('WindowManager', '收到窗口恢复事件');
     for (final listener in _listeners) {
       listener.onWindowRestore();
     }

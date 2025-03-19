@@ -21,20 +21,6 @@ class AppPluginManager implements PluginManager {
   final _companionProvider = CompanionProvider();
   bool _initialized = false;
 
-  AppPluginManager() {
-    Logger.info('PluginManager', '插件管理器创建');
-    _initializeCompanionProvider();
-  }
-
-  Future<void> _initializeCompanionProvider() async {
-    try {
-      await _companionProvider.initialize();
-      Logger.info('PluginManager', 'CompanionProvider 初始化完成');
-    } catch (e) {
-      Logger.error('PluginManager', 'CompanionProvider 初始化失败', e);
-    }
-  }
-
   /// 获取当前上下文
   PluginContext _getCurrentContext() {
     return PluginContext(

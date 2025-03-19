@@ -8,6 +8,7 @@ import 'action_list.dart';
 import 'plugin_status_bar.dart';
 import 'package:provider/provider.dart';
 import 'package:gitok/core/providers/window_state_provider.dart';
+import 'package:gitok/utils/logger.dart';
 
 /// 主页面
 ///
@@ -38,6 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
   bool _isLoading = false;
   String? _errorMessage;
   int _selectedIndex = -1; // 当前选中的动作索引
+  bool _lastFocusState = false; // 记录上一次的焦点状态
 
   @override
   void initState() {
@@ -45,6 +47,67 @@ class _HomeScreenState extends State<HomeScreen> {
     _searchController.addListener(_onSearchChanged);
     // 组件初始化时触发一次搜索
     _onSearchChanged();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // 获取当前焦点状态
+    final hasFocus = context.read<WindowStateProvider>().hasFocus;
+
+    // 只在焦点状态发生变化，且获得焦点时触发搜索
+    if (hasFocus && !_lastFocusState) {
+      Logger.debug('HomeScreen', '窗口获得焦点，刷新搜索结果');
+      _onSearchChanged();
+    }
+
+    // 更新上一次的焦点状态
+    _lastFocusState = hasFocus;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // 监听窗口状态变化，但只用于UI更新
+    final windowState = context.watch<WindowStateProvider>();
+
+    return KeyboardListener(
+      focusNode: FocusNode(),
+      autofocus: true,
+      onKeyEvent: (event) => _handleKeyEvent(event),
+      child: Scaffold(
+        body: Column(
+          children: [
+            // 当窗口失去焦点时，显示半透明遮罩
+            if (!windowState.hasFocus)
+              Container(
+                color: Colors.black.withOpacity(0.1),
+                width: double.infinity,
+                height: 2,
+              ),
+            Expanded(
+              child: Stack(
+                children: [
+                  // 主要内容
+                  _buildMainContent(),
+
+                  // 当窗口隐藏时，显示动画效果
+                  if (!windowState.isVisible)
+                    const Center(
+                      child: Text(
+                        '窗口已最小化到托盘',
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   @override
@@ -131,51 +194,6 @@ class _HomeScreenState extends State<HomeScreen> {
         }
         break;
     }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    // 监听窗口状态变化
-    final windowState = context.watch<WindowStateProvider>();
-
-    return KeyboardListener(
-      focusNode: FocusNode(),
-      autofocus: true,
-      onKeyEvent: (event) => _handleKeyEvent(event),
-      child: Scaffold(
-        body: Column(
-          children: [
-            // 当窗口失去焦点时，显示半透明遮罩
-            if (!windowState.hasFocus)
-              Container(
-                color: Colors.black.withOpacity(0.1),
-                width: double.infinity,
-                height: 2,
-              ),
-            Expanded(
-              child: Stack(
-                children: [
-                  // 主要内容
-                  _buildMainContent(),
-
-                  // 当窗口隐藏时，显示动画效果
-                  if (!windowState.isVisible)
-                    const Center(
-                      child: Text(
-                        '窗口已最小化到托盘',
-                        style: TextStyle(
-                          color: Colors.grey,
-                          fontSize: 16,
-                        ),
-                      ),
-                    ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 
   Widget _buildMainContent() {

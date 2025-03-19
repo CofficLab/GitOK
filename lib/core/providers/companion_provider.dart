@@ -1,8 +1,6 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
 import 'package:gitok/adapter/vscode.dart';
-import '../channels/channels.dart';
-import '../../utils/logger.dart';
+import 'package:gitok/utils/logger.dart';
 import 'package:gitok/adapter/cursor.dart';
 
 /// 伙伴提供者
@@ -12,6 +10,10 @@ import 'package:gitok/adapter/cursor.dart';
 /// 2. 提供状态变化通知
 /// 3. 管理应用切换状态
 /// 4. 管理不同应用的工作区信息
+///
+/// 设计模式：观察者模式
+/// - 作为被观察者，通知订阅者应用状态的变化
+/// - 不直接处理通道通信，由 main.dart 通过 ChannelManager 转发事件
 class CompanionProvider extends ChangeNotifier {
   static const String _tag = 'CompanionProvider';
   static CompanionProvider? _instance;
@@ -52,32 +54,6 @@ class CompanionProvider extends ChangeNotifier {
     // 'com.jetbrains.intellij': () => IntelliJChannel.instance.getActiveWorkspace(),
     // 'com.sublimetext.4': () => SublimeTextChannel.instance.getActiveWorkspace(),
   };
-
-  /// 初始化
-  Future<void> initialize() async {
-    Logger.info(_tag, '正在初始化...');
-
-    try {
-      // 设置方法调用处理器
-      WindowChannel.instance.setMethodCallHandler(_handleMethodCall);
-      Logger.info(_tag, '初始化完成');
-    } catch (e) {
-      Logger.error(_tag, '初始化失败', e);
-    }
-  }
-
-  /// 处理来自原生端的方法调用
-  Future<dynamic> _handleMethodCall(MethodCall call) async {
-    Logger.info(_tag, '收到方法调用 - ${call.method}');
-
-    switch (call.method) {
-      case 'updateOverlaidApp':
-        final Map<String, dynamic>? appInfo =
-            call.arguments != null ? Map<String, dynamic>.from(call.arguments as Map) : null;
-        await updateOverlaidApp(appInfo);
-        break;
-    }
-  }
 
   /// 更新被覆盖的应用信息
   Future<void> updateOverlaidApp(Map<String, dynamic>? appInfo) async {
@@ -125,7 +101,6 @@ class CompanionProvider extends ChangeNotifier {
   @override
   void dispose() {
     Logger.debug(_tag, '正在释放资源...');
-    WindowChannel.instance.setMethodCallHandler(null);
     super.dispose();
   }
 }

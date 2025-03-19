@@ -33,11 +33,11 @@ import 'package:gitok/core/managers/window_manager.dart';
 import 'package:gitok/core/managers/hotkey_manager.dart';
 import 'package:gitok/core/managers/update_manager.dart';
 import 'package:gitok/core/managers/plugin_manager.dart';
+import 'package:gitok/core/managers/channel_manager.dart';
 import 'package:tray_manager/tray_manager.dart' as tray;
 import 'package:hotkey_manager/hotkey_manager.dart' as hotkey;
 import 'plugins/app_launcher/app_launcher_plugin.dart';
 import 'package:gitok/core/providers/companion_provider.dart';
-import 'package:gitok/core/channels/channels.dart';
 import 'package:provider/provider.dart';
 import 'package:gitok/core/providers/window_state_provider.dart';
 
@@ -67,12 +67,34 @@ class _MyAppState extends State<MyApp> with tray.TrayListener implements WindowL
   final _hotkeyManager = AppHotkeyManager();
   final _pluginManager = AppPluginManager();
   final _windowStateProvider = WindowStateProvider();
+  final _channelManager = ChannelManager();
+  final _companionProvider = CompanionProvider();
 
   @override
   void initState() {
     super.initState();
     _windowManager.addListener(this);
     tray.trayManager.addListener(this);
+
+    // 设置通道管理器的事件回调
+    _channelManager.onNativeError = (error) {
+      // 处理原生平台的错误
+      debugPrint('❌ 原生错误: $error');
+      BotToast.showText(text: '与系统通信时发生错误：$error');
+    };
+
+    // 设置被覆盖应用变化的回调
+    _channelManager.onOverlaidAppChanged = (appInfo) {
+      // 将事件转发给 CompanionProvider
+      _companionProvider.updateOverlaidApp(appInfo as Map<String, dynamic>?);
+    };
+
+    // 初始化通道管理器
+    _channelManager.init().then((_) {
+      debugPrint('🎉 通道管理器初始化完成');
+    }).catchError((error) {
+      debugPrint('❌ 通道管理器初始化失败：$error');
+    });
 
     // 设置窗口管理器的事件回调
     _windowManager.onWindowHidden = () {
@@ -207,6 +229,7 @@ class _MyAppState extends State<MyApp> with tray.TrayListener implements WindowL
     return MultiProvider(
       providers: [
         ChangeNotifierProvider.value(value: _windowStateProvider),
+        ChangeNotifierProvider.value(value: _companionProvider),
       ],
       child: MaterialApp(
         builder: BotToastInit(),
@@ -239,9 +262,11 @@ class _MyAppState extends State<MyApp> with tray.TrayListener implements WindowL
   @override
   void dispose() {
     _hotkeyManager.dispose();
+    _windowManager.dispose();
     _windowManager.removeListener(this);
     tray.trayManager.removeListener(this);
     _pluginManager.dispose();
+    _channelManager.dispose();
     super.dispose();
   }
 }
@@ -250,11 +275,8 @@ void main() async {
   // 确保Flutter绑定初始化
   WidgetsFlutterBinding.ensureInitialized();
 
-  // 初始化日志通道
-  LoggerChannel.instance;
-
-  // 初始化伙伴提供者
-  await CompanionProvider().initialize();
+  // 初始化通道管理器
+  await ChannelManager().init();
 
   // 为了支持热重载，每次启动时都注销所有热键
   await hotkey.hotKeyManager.unregisterAll();

@@ -38,7 +38,6 @@ class _PluginStatusBarState extends State<PluginStatusBar> {
   Future<void> _initializeCompanionProvider() async {
     Logger.info(_tag, '开始初始化 CompanionProvider');
     try {
-      await _companionProvider.initialize();
       // Logger.info(_tag, 'CompanionProvider 初始化成功');
       // Logger.debug(_tag, '当前被覆盖的应用 - ${_companionProvider.overlaidAppName}');
       // Logger.debug(_tag, '准备添加监听器');

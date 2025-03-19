@@ -18,12 +18,17 @@
 library;
 
 import 'package:flutter/foundation.dart';
+import 'package:gitok/utils/logger.dart';
 
 /// 窗口状态提供者
 class WindowStateProvider extends ChangeNotifier {
   static final WindowStateProvider _instance = WindowStateProvider._internal();
   factory WindowStateProvider() => _instance;
-  WindowStateProvider._internal();
+  WindowStateProvider._internal() {
+    Logger.info('WindowStateProvider', '创建窗口状态提供者');
+  }
+
+  static const String _tag = 'WindowStateProvider';
 
   bool _isVisible = true;
   bool _hasFocus = true;
@@ -40,9 +45,13 @@ class WindowStateProvider extends ChangeNotifier {
 
   /// 更新窗口可见状态
   void setVisibility(bool isVisible) {
+    Logger.debug(_tag, '尝试设置窗口可见性: ${isVisible ? '显示' : '隐藏'}, 当前状态: ${_isVisible ? '显示' : '隐藏'}');
     if (_isVisible != isVisible) {
       _isVisible = isVisible;
+      Logger.info(_tag, '窗口可见性变更: ${isVisible ? '显示' : '隐藏'}');
       notifyListeners();
+    } else {
+      Logger.debug(_tag, '窗口可见性未变化，跳过更新');
     }
   }
 
@@ -50,6 +59,7 @@ class WindowStateProvider extends ChangeNotifier {
   void setFocus(bool hasFocus) {
     if (_hasFocus != hasFocus) {
       _hasFocus = hasFocus;
+      Logger.info(_tag, '窗口焦点变更: ${hasFocus ? '获得焦点' : '失去焦点'}');
       notifyListeners();
     }
   }
@@ -58,6 +68,7 @@ class WindowStateProvider extends ChangeNotifier {
   void setMaximized(bool isMaximized) {
     if (_isMaximized != isMaximized) {
       _isMaximized = isMaximized;
+      Logger.info(_tag, '窗口最大化状态变更: ${isMaximized ? '最大化' : '还原'}');
       notifyListeners();
     }
   }
