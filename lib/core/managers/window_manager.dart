@@ -9,6 +9,9 @@ import 'package:flutter/material.dart';
 import 'package:macos_window_utils/macos_window_utils.dart';
 import 'package:window_manager/window_manager.dart' as win;
 
+/// 窗口事件回调函数类型
+typedef WindowEventCallback = void Function();
+
 /// 窗口监听器类
 ///
 /// 用于处理窗口事件的回调
@@ -55,6 +58,12 @@ class AppWindowManager with win.WindowListener {
 
   final List<WindowListener> _listeners = [];
 
+  // 事件回调
+  WindowEventCallback? onWindowHidden;
+  WindowEventCallback? onWindowShown;
+  WindowEventCallback? onWindowFocused;
+  WindowEventCallback? onQuitRequested;
+
   /// 初始化窗口管理器
   Future<void> init() async {
     // 初始化window_manager
@@ -85,16 +94,19 @@ class AppWindowManager with win.WindowListener {
   /// 隐藏窗口
   Future<void> hide() async {
     await win.windowManager.hide();
+    onWindowHidden?.call();
   }
 
   /// 显示窗口
   Future<void> show() async {
     await win.windowManager.show();
+    onWindowShown?.call();
   }
 
   /// 将窗口带到前台
   Future<void> focus() async {
     await win.windowManager.focus();
+    onWindowFocused?.call();
   }
 
   /// 添加窗口监听器
@@ -109,6 +121,7 @@ class AppWindowManager with win.WindowListener {
 
   /// 退出应用
   Future<void> quit() async {
+    onQuitRequested?.call();
     await win.windowManager.close();
     exit(0);
   }

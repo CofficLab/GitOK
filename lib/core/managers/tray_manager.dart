@@ -1,14 +1,10 @@
-/// GitOK - 托盘管理器
-///
-/// 负责管理应用程序的系统托盘功能，包括托盘图标的显示、隐藏、
-/// 菜单项的点击处理等。
-library;
-
 import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:tray_manager/tray_manager.dart' as tray;
 import 'package:bot_toast/bot_toast.dart';
-import 'package:gitok/core/managers/window_manager.dart';
+
+/// 托盘事件回调函数类型
+typedef TrayEventCallback = void Function();
 
 /// 托盘管理器类
 ///
@@ -21,7 +17,9 @@ class AppTrayManager {
   factory AppTrayManager() => _instance;
   AppTrayManager._internal();
 
-  final _windowManager = AppWindowManager();
+  // 事件回调
+  TrayEventCallback? onShowWindowRequested;
+  TrayEventCallback? onQuitRequested;
 
   /// 初始化托盘管理器
   Future<void> init() async {
@@ -49,28 +47,18 @@ class AppTrayManager {
     );
   }
 
-  /// 将窗口带到前台
-  Future<void> bringToFront() async {
-    try {
-      await _windowManager.show();
-      await _windowManager.focus();
-      BotToast.showText(text: '应用已成功回到前台');
-    } catch (e) {
-      debugPrint('将窗口带到前台失败: $e');
-    }
-  }
-
-  /// 隐藏窗口
-  Future<void> hide() async {
-    await _windowManager.hide();
+  /// 更新托盘图标状态
+  void updateTrayIcon({required bool isWindowVisible}) {
+    // 这里可以根据窗口状态更新托盘图标
+    // 例如：可以在窗口隐藏时显示不同的图标
   }
 
   /// 处理托盘菜单点击事件
   void onTrayMenuItemClick(tray.MenuItem menuItem) {
     if (menuItem.key == 'show_window') {
-      bringToFront();
+      onShowWindowRequested?.call();
     } else if (menuItem.key == 'exit_app') {
-      _windowManager.quit();
+      onQuitRequested?.call();
     }
   }
 
@@ -79,12 +67,18 @@ class AppTrayManager {
     if (Platform.isMacOS) {
       tray.trayManager.popUpContextMenu();
     } else {
-      bringToFront();
+      onShowWindowRequested?.call();
     }
   }
 
   /// 处理托盘图标右键点击事件
   void onTrayIconRightMouseDown() {
     tray.trayManager.popUpContextMenu();
+  }
+
+  /// 清理资源
+  void dispose() {
+    // 清理托盘相关资源
+    tray.trayManager.destroy();
   }
 }

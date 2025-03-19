@@ -6,6 +6,8 @@ import 'search_box.dart';
 import 'error_panel.dart';
 import 'action_list.dart';
 import 'plugin_status_bar.dart';
+import 'package:provider/provider.dart';
+import 'package:gitok/core/providers/window_state_provider.dart';
 
 /// 主页面
 ///
@@ -17,6 +19,7 @@ import 'plugin_status_bar.dart';
 /// 4. 支持键盘导航：
 ///    - 上下键选择动作
 ///    - 回车键执行选中的动作
+/// 5. 响应窗口状态变化
 class HomeScreen extends StatefulWidget {
   final AppPluginManager pluginManager;
 
@@ -132,6 +135,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // 监听窗口状态变化
+    final windowState = context.watch<WindowStateProvider>();
+
     return KeyboardListener(
       focusNode: FocusNode(),
       autofocus: true,
@@ -139,48 +145,82 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Scaffold(
         body: Column(
           children: [
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  children: [
-                    // 搜索框
-                    SearchBox(
-                      controller: _searchController,
-                      autofocus: true,
-                    ),
-                    const SizedBox(height: 16),
-
-                    // 错误提示面板
-                    if (_errorMessage != null) ...[
-                      ErrorPanel(
-                        errorMessage: _errorMessage!,
-                        onClose: () => setState(() => _errorMessage = null),
-                      ),
-                      const SizedBox(height: 16),
-                    ],
-
-                    // 动作列表
-                    Expanded(
-                      child: ActionList(
-                        isLoading: _isLoading,
-                        actions: _actions,
-                        searchKeyword: _searchController.text,
-                        onActionSelected: _onActionSelected,
-                        selectedIndex: _selectedIndex, // 传递选中项索引
-                      ),
-                    ),
-                  ],
-                ),
+            // 当窗口失去焦点时，显示半透明遮罩
+            if (!windowState.hasFocus)
+              Container(
+                color: Colors.black.withOpacity(0.1),
+                width: double.infinity,
+                height: 2,
               ),
-            ),
-            // 插件状态栏
-            PluginStatusBar(
-              plugins: widget.pluginManager.plugins,
+            Expanded(
+              child: Stack(
+                children: [
+                  // 主要内容
+                  _buildMainContent(),
+
+                  // 当窗口隐藏时，显示动画效果
+                  if (!windowState.isVisible)
+                    const Center(
+                      child: Text(
+                        '窗口已最小化到托盘',
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
             ),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildMainContent() {
+    return Column(
+      children: [
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                // 搜索框
+                SearchBox(
+                  controller: _searchController,
+                  autofocus: true,
+                ),
+                const SizedBox(height: 16),
+
+                // 错误提示面板
+                if (_errorMessage != null) ...[
+                  ErrorPanel(
+                    errorMessage: _errorMessage!,
+                    onClose: () => setState(() => _errorMessage = null),
+                  ),
+                  const SizedBox(height: 16),
+                ],
+
+                // 动作列表
+                Expanded(
+                  child: ActionList(
+                    isLoading: _isLoading,
+                    actions: _actions,
+                    searchKeyword: _searchController.text,
+                    onActionSelected: _onActionSelected,
+                    selectedIndex: _selectedIndex, // 传递选中项索引
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        // 插件状态栏
+        PluginStatusBar(
+          plugins: widget.pluginManager.plugins,
+        ),
+      ],
     );
   }
 }

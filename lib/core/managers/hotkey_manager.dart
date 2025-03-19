@@ -8,7 +8,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:hotkey_manager/hotkey_manager.dart';
 import 'package:bot_toast/bot_toast.dart';
-import 'package:gitok/core/managers/tray_manager.dart';
+
+/// 快捷键事件回调函数类型
+typedef HotkeyEventCallback = void Function();
 
 /// 快捷键管理器类
 ///
@@ -21,7 +23,9 @@ class AppHotkeyManager {
   factory AppHotkeyManager() => _instance;
   AppHotkeyManager._internal();
 
-  final _trayManager = AppTrayManager();
+  // 事件回调
+  HotkeyEventCallback? onShowWindowRequested;
+  HotkeyEventCallback? onHideWindowRequested;
 
   /// 初始化快捷键管理器
   Future<void> init() async {
@@ -59,7 +63,7 @@ class AppHotkeyManager {
           if (kDebugMode) {
             print('Alt+1 热键被触发');
           }
-          await _trayManager.bringToFront();
+          onShowWindowRequested?.call();
         },
       );
 
@@ -70,7 +74,7 @@ class AppHotkeyManager {
           if (kDebugMode) {
             print('Command+D 热键被触发');
           }
-          await _trayManager.bringToFront();
+          onShowWindowRequested?.call();
         },
       );
 
@@ -86,7 +90,7 @@ class AppHotkeyManager {
   /// 处理键盘事件
   bool _onKey(KeyEvent event) {
     if (event is KeyDownEvent && event.logicalKey == LogicalKeyboardKey.escape) {
-      _trayManager.hide();
+      onHideWindowRequested?.call();
       return true;
     }
     return false;
