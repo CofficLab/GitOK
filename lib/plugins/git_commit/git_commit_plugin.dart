@@ -1,8 +1,11 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:gitok/core/contract/plugin_protocol.dart';
+import 'package:gitok/core/contract/plugin.dart';
+import 'package:gitok/core/contract/plugin_action.dart';
+import 'package:gitok/core/contract/plugin_context.dart';
 import 'package:gitok/utils/logger.dart';
 import 'package:gitok/utils/path_utils.dart';
+import 'package:gitok/utils/toast_utils.dart';
 import 'package:git/git.dart';
 
 /// Git Commit 插件
@@ -118,13 +121,17 @@ class GitCommitPlugin extends Plugin {
 
       if (result.exitCode == 0) {
         Logger.info(_tag, '成功提交更改');
+        ToastUtils.success('成功提交更改 ✨');
         return true;
       } else {
-        Logger.error(_tag, 'git commit 失败: ${result.stderr}');
+        final error = result.stderr.toString();
+        Logger.error(_tag, 'git commit 失败: $error');
+        ToastUtils.error('提交失败: $error');
         return false;
       }
     } catch (e) {
       Logger.error(_tag, '执行 git commit 时发生错误', e);
+      ToastUtils.error('提交时发生错误: $e');
       return false;
     }
   }
@@ -135,19 +142,26 @@ class GitCommitPlugin extends Plugin {
       final branch = await _getCurrentBranch(gitDir);
       if (branch == null) {
         Logger.error(_tag, '无法获取当前分支名');
+        ToastUtils.error('无法获取当前分支名');
         return false;
       }
 
+      ToastUtils.info('正在推送到 $branch 分支...');
       final result = await gitDir.runCommand(['push', 'origin', branch]);
+
       if (result.exitCode == 0) {
         Logger.info(_tag, '成功推送更改到 $branch 分支');
+        ToastUtils.success('成功推送到 $branch 分支 🚀');
         return true;
       } else {
-        Logger.error(_tag, 'git push 失败: ${result.stderr}');
+        final error = result.stderr.toString();
+        Logger.error(_tag, 'git push 失败: $error');
+        ToastUtils.error('推送失败: $error');
         return false;
       }
     } catch (e) {
       Logger.error(_tag, '执行 git push 时发生错误', e);
+      ToastUtils.error('推送时发生错误: $e');
       return false;
     }
   }
@@ -218,6 +232,7 @@ class GitCommitPlugin extends Plugin {
 
     if (!pluginContext.hasWorkspace) {
       Logger.error(_tag, '没有工作区信息，无法执行动作');
+      ToastUtils.error('没有工作区信息');
       return;
     }
 
@@ -226,6 +241,7 @@ class GitCommitPlugin extends Plugin {
 
     if (!await _initGitDir(workspace)) {
       Logger.error(_tag, '不是 Git 仓库，无法执行操作');
+      ToastUtils.error('不是 Git 仓库');
       return;
     }
 
