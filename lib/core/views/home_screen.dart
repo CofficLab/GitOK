@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:window_manager/window_manager.dart';
 import '../contract/plugin_protocol.dart';
 import 'search_box.dart';
 import 'error_panel.dart';
@@ -21,6 +22,14 @@ import 'package:gitok/core/providers/plugin_manager_provider.dart';
 ///    - 上下键选择动作
 ///    - 回车键执行选中的动作
 /// 5. 响应窗口状态变化
+/// 6. 窗口拖动支持：
+///    - 在顶部添加了 20px 高的 DragToMoveArea
+///    - 用户可以通过拖动此区域来移动窗口
+///    - 这是必需的，因为整个界面都被 Flutter 接管
+/// 7. 窗口视觉效果：
+///    - 使用透明背景配合原生的毛玻璃效果
+///    - Scaffold 和容器都需要设置透明背景
+///    - 与 MainFlutterWindow.swift 中的 NSVisualEffectView 配合工作
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -70,36 +79,47 @@ class _HomeScreenState extends State<HomeScreen> {
       autofocus: true,
       onKeyEvent: (event) => _handleKeyEvent(event),
       child: Scaffold(
-        body: Column(
-          children: [
-            // 当窗口失去焦点时，显示半透明遮罩
-            if (!windowState.hasFocus)
-              Container(
-                color: Colors.black.withOpacity(0.1),
-                width: double.infinity,
-                height: 2,
+        backgroundColor: Colors.transparent, // 设置 Scaffold 背景为透明
+        body: Container(
+          color: Colors.transparent, // 确保容器也是透明的
+          child: Column(
+            children: [
+              // 添加一个可拖动区域
+              const DragToMoveArea(
+                child: SizedBox(
+                  height: 20,
+                  width: double.infinity,
+                ),
               ),
-            Expanded(
-              child: Stack(
-                children: [
-                  // 主要内容
-                  _buildMainContent(),
+              // 当窗口失去焦点时，显示半透明遮罩
+              if (!windowState.hasFocus)
+                Container(
+                  color: Colors.black.withOpacity(0.1),
+                  width: double.infinity,
+                  height: 2,
+                ),
+              Expanded(
+                child: Stack(
+                  children: [
+                    // 主要内容
+                    _buildMainContent(),
 
-                  // 当窗口隐藏时，显示动画效果
-                  if (!windowState.isVisible)
-                    const Center(
-                      child: Text(
-                        '窗口已最小化到托盘',
-                        style: TextStyle(
-                          color: Colors.grey,
-                          fontSize: 16,
+                    // 当窗口隐藏时，显示动画效果
+                    if (!windowState.isVisible)
+                      const Center(
+                        child: Text(
+                          '窗口已最小化到托盘',
+                          style: TextStyle(
+                            color: Colors.grey,
+                            fontSize: 16,
+                          ),
                         ),
                       ),
-                    ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -182,7 +202,8 @@ class _HomeScreenState extends State<HomeScreen> {
     return Column(
       children: [
         Expanded(
-          child: Padding(
+          child: Container(
+            color: Colors.transparent,
             padding: const EdgeInsets.all(16.0),
             child: Column(
               children: [
@@ -204,12 +225,15 @@ class _HomeScreenState extends State<HomeScreen> {
 
                 // 动作列表
                 Expanded(
-                  child: ActionList(
-                    isLoading: _isLoading,
-                    actions: _actions,
-                    searchKeyword: _searchController.text,
-                    onActionSelected: _executeAction,
-                    selectedIndex: _selectedIndex, // 传递选中项索引
+                  child: Container(
+                    color: Colors.transparent,
+                    child: ActionList(
+                      isLoading: _isLoading,
+                      actions: _actions,
+                      searchKeyword: _searchController.text,
+                      onActionSelected: _executeAction,
+                      selectedIndex: _selectedIndex,
+                    ),
                   ),
                 ),
               ],

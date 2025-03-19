@@ -1,6 +1,15 @@
 import 'package:flutter/material.dart';
 
 /// macOS 风格的主题配置
+///
+/// 提供了亮色和暗色两种主题，主要特点：
+/// 1. 使用系统默认字体和大小
+/// 2. 紧凑的视觉密度
+/// 3. 圆角边框
+/// 4. 透明背景支持：
+///    - scaffoldBackgroundColor 设置为透明
+///    - canvasColor 设置为透明
+///    - 配合原生 NSVisualEffectView 实现毛玻璃效果
 class MacOSTheme {
   // 圆角大小
   static const double kBorderRadius = 6.0;
@@ -30,6 +39,8 @@ class MacOSTheme {
         brightness: brightness,
       ),
       useMaterial3: true,
+      scaffoldBackgroundColor: Colors.transparent,
+      canvasColor: Colors.transparent,
       textTheme: TextTheme(
         titleLarge: TextStyle(
           fontSize: 20,
