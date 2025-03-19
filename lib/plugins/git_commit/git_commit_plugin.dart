@@ -191,6 +191,17 @@ class GitCommitPlugin extends Plugin {
 
     final actions = <PluginAction>[];
 
+    // 获取变动文件信息
+    final diffStat = await _gitDir!.runCommand(['diff', '--stat']);
+    final changesInfo = diffStat.stdout.toString().trim();
+
+    // 获取具体的文件数量
+    final diffNameOnly = await _gitDir!.runCommand(['diff', '--name-only']);
+    final changedFiles = diffNameOnly.stdout.toString().trim().split('\n');
+    final fileCount = changedFiles.where((f) => f.isNotEmpty).length;
+
+    final changesSummary = '有 $fileCount 个文件发生变动\n$changesInfo';
+
     // 如果关键词为空，或者包含"git"、"commit"、"push"等关键词，添加动作
     if (keyword.isEmpty ||
         keyword.toLowerCase().contains('git') ||
@@ -201,7 +212,7 @@ class GitCommitPlugin extends Plugin {
         PluginAction(
           id: '$id:auto_commit',
           title: '自动生成 Commit 信息并提交',
-          subtitle: '使用 AI 生成 commit 信息',
+          subtitle: changesSummary,
           icon: const Icon(Icons.commit),
           score: 90,
         ),
@@ -212,7 +223,7 @@ class GitCommitPlugin extends Plugin {
         PluginAction(
           id: '$id:commit_and_push',
           title: '提交并推送更改',
-          subtitle: '自动生成 commit 信息并推送到远程仓库',
+          subtitle: changesSummary,
           icon: const Icon(Icons.upload),
           score: 100,
         ),
