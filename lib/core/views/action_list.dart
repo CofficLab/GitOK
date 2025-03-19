@@ -7,12 +7,14 @@ import '../contract/plugin_action.dart';
 /// 1. 加载状态显示
 /// 2. 空状态提示
 /// 3. 动作项点击处理
-/// 4. 第一个动作的回车键提示
+/// 4. 键盘导航支持
+/// 5. 选中状态高亮
 class ActionList extends StatelessWidget {
   final bool isLoading;
   final List<PluginAction> actions;
   final String searchKeyword;
   final Function(PluginAction) onActionSelected;
+  final int selectedIndex;
 
   const ActionList({
     super.key,
@@ -20,6 +22,7 @@ class ActionList extends StatelessWidget {
     required this.actions,
     required this.searchKeyword,
     required this.onActionSelected,
+    required this.selectedIndex,
   });
 
   @override
@@ -41,13 +44,15 @@ class ActionList extends StatelessWidget {
       itemCount: actions.length,
       itemBuilder: (context, index) {
         final action = actions[index];
-        final isFirstAction = index == 0;
+        final isSelected = index == selectedIndex;
 
         return ListTile(
           leading: action.icon,
           title: Text(action.title),
           subtitle: action.subtitle != null ? Text(action.subtitle!) : null,
-          trailing: isFirstAction ? const _EnterKeyHint() : null,
+          trailing: isSelected ? const _KeyboardHint() : null,
+          selected: isSelected,
+          selectedTileColor: Theme.of(context).highlightColor,
           onTap: () => onActionSelected(action),
         );
       },
@@ -55,9 +60,9 @@ class ActionList extends StatelessWidget {
   }
 }
 
-/// 回车键提示组件
-class _EnterKeyHint extends StatelessWidget {
-  const _EnterKeyHint();
+/// 键盘操作提示组件
+class _KeyboardHint extends StatelessWidget {
+  const _KeyboardHint();
 
   @override
   Widget build(BuildContext context) {

@@ -13,7 +13,9 @@ import 'plugin_status_bar.dart';
 /// 1. 响应用户输入，实时显示搜索结果
 /// 2. 展示插件返回的动作列表
 /// 3. 处理动作的点击事件
-/// 4. 支持回车键快速执行第一个动作
+/// 4. 支持键盘导航：
+///    - 上下键选择动作
+///    - 回车键执行选中的动作
 class HomeScreen extends StatefulWidget {
   final PluginManager pluginManager;
 
@@ -31,6 +33,7 @@ class _HomeScreenState extends State<HomeScreen> {
   List<PluginAction> _actions = [];
   bool _isLoading = false;
   String? _errorMessage;
+  int _selectedIndex = -1; // 当前选中的动作索引
 
   @override
   void initState() {
@@ -49,7 +52,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
     setState(() {
       _isLoading = true;
-      _errorMessage = null; // 清除之前的错误
+      _errorMessage = null;
+      _selectedIndex = -1; // 重置选中项
     });
 
     try {
@@ -59,6 +63,8 @@ class _HomeScreenState extends State<HomeScreen> {
       setState(() {
         _actions = actions;
         _isLoading = false;
+        // 如果有结果，默认选中第一项
+        _selectedIndex = actions.isEmpty ? -1 : 0;
       });
     } catch (e) {
       if (!mounted) return;
@@ -67,6 +73,7 @@ class _HomeScreenState extends State<HomeScreen> {
         _actions = [];
         _isLoading = false;
         _errorMessage = e.toString();
+        _selectedIndex = -1;
       });
     }
   }
@@ -100,10 +107,30 @@ class _HomeScreenState extends State<HomeScreen> {
     // 只处理按键按下事件
     if (event is! RawKeyDownEvent) return;
 
-    // 如果按下回车键且有可用的动作
-    if (event.logicalKey == LogicalKeyboardKey.enter && _actions.isNotEmpty && !_isLoading) {
-      // 执行第一个动作
-      await _onActionSelected(_actions.first);
+    // 如果没有动作或正在加载，不处理键盘事件
+    if (_actions.isEmpty || _isLoading) return;
+
+    switch (event.logicalKey) {
+      case LogicalKeyboardKey.arrowUp:
+        setState(() {
+          // 向上选择，如果已经是第一项则循环到最后一项
+          _selectedIndex = (_selectedIndex <= 0) ? _actions.length - 1 : _selectedIndex - 1;
+        });
+        break;
+
+      case LogicalKeyboardKey.arrowDown:
+        setState(() {
+          // 向下选择，如果已经是最后一项则循环到第一项
+          _selectedIndex = (_selectedIndex >= _actions.length - 1) ? 0 : _selectedIndex + 1;
+        });
+        break;
+
+      case LogicalKeyboardKey.enter:
+        // 如果有选中项，执行选中的动作
+        if (_selectedIndex >= 0 && _selectedIndex < _actions.length) {
+          await _onActionSelected(_actions[_selectedIndex]);
+        }
+        break;
     }
   }
 
@@ -141,6 +168,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         actions: _actions,
                         searchKeyword: _searchController.text,
                         onActionSelected: _onActionSelected,
+                        selectedIndex: _selectedIndex, // 传递选中项索引
                       ),
                     ),
                   ],
