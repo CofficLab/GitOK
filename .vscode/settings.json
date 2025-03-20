@@ -1,34 +1,11 @@
 {
-    "cSpell.words": [
-        "appcast",
-        "Autoupdate",
-        "cocoapods",
-        "Codesign",
-        "codesigning",
-        "Coffic",
-        "cofficlab",
-        "colorpicker",
-        "cupertino",
-        "frontmost",
-        "gitok",
-        "LTWH",
-        "notarytool",
-        "pbxproj",
-        "prefs",
-        "provisionprofile",
-        "pubspec",
-        "realpath",
-        "reorderable",
-        "softprops",
-        "stefanzweifel",
-        "sublimetext",
-        "subosito",
-        "Titlebar",
-        "todesktop",
-        "Unmaximize",
-        "Unpushed",
-        "winsparkle",
-        "xcodeproj",
-        "xcrun"
-    ]
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
 }

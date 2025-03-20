@@ -1,18 +1,34 @@
-# Buddy
+# buddy
 
-## What
+An Electron application with Vue and TypeScript
 
-Buddy 是一个为创意工作者提供帮助的辅助工具。它可以：
+## Recommended IDE Setup
 
-- 在任意界面使用快捷键呼出
-- 管理 Git 项目
-- 快速打开软件
-- 管理远程服务器
-- 理解自然语言
-- 支持使用MCP协议扩展能力
+- [VSCode](https://code.visualstudio.com/) + [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) + [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin)
 
-目前，它仍处于早期开发阶段。
+## Project Setup
 
-## 下载
+### Install
 
-<https://github.com/CofficLab/Buddy/releases>
+```bash
+$ pnpm install
+```
+
+### Development
+
+```bash
+$ pnpm dev
+```
+
+### Build
+
+```bash
+# For windows
+$ pnpm build:win
+
+# For macOS
+$ pnpm build:mac
+
+# For Linux
+$ pnpm build:linux
+```
