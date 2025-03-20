@@ -3,12 +3,12 @@
     <channel>
         <title>gitok</title>
         <item>
-            <title>1.2.6</title>
-            <pubDate>Wed, 19 Mar 2025 10:58:40 +0000</pubDate>
-            <sparkle:version>1.2.6</sparkle:version>
-            <sparkle:shortVersionString>1.2.6</sparkle:shortVersionString>
+            <title>1.2.7</title>
+            <pubDate>Thu, 20 Mar 2025 05:41:18 +0000</pubDate>
+            <sparkle:version>1.2.7</sparkle:version>
+            <sparkle:shortVersionString>1.2.7</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>11.5</sparkle:minimumSystemVersion>
-            <enclosure url="https://github.com/CofficLab/GitOK/releases/latest/download/gitok-1.2.6.dmg" length="27412599" type="application/octet-stream" sparkle:edSignature="CBS3vnf2nxEAkr1dGVG1d0Z5wxAWUdig95n3DvqCNNOv5y2Or2op3wIvOhK9o/mqB7bxakVFTBkwuz9eLboyCQ=="/>
+            <enclosure url="https://github.com/CofficLab/GitOK/releases/latest/download/gitok-1.2.7.dmg" length="27411027" type="application/octet-stream" sparkle:edSignature="hU5/k432AHiHgp0sU99h+4QUgQd+NWgPf+UAT+F3lXR/oVK1RUoWnmtmoIxH96pBA8f/QyDQT7WE1nA/eSLZDw=="/>
         </item>
     </channel>
 </rss>
