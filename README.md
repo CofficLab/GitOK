@@ -1,127 +1,47 @@
-# GitOK Monorepo
+# GitOK 单体仓库
 
-This is a monorepo managed with pnpm workspaces.
+这是一个使用 pnpm 工作区管理的单体仓库。
 
-## 📦 Project Structure
+## 📦 项目结构
 
-```
+```bash
 .
-├── packages/          # Shared packages and libraries
-├── components/        # Reusable UI components
+├── packages/          # 共享包和库
+├── components/        # 可复用的 UI 组件
 ├── pnpm-workspace.yaml
 └── package.json
 ```
 
-## 🚀 Getting Started
-
-### Prerequisites
-
-- Node.js >= 18
-- pnpm >= 8
-
-### Installation
-
-```bash
-# Install dependencies
-pnpm install
-```
-
-### Development
-
-```bash
-# Start development servers for all packages
-pnpm dev
-
-# Build all packages
-pnpm build
-
-# Run tests across all packages
-pnpm test
-
-# Run linting across all packages
-pnpm lint
-```
-
-## 📝 Scripts
-
-- `pnpm dev`: Start development servers
-- `pnpm build`: Build all packages
-- `pnpm test`: Run tests
-- `pnpm lint`: Run linting
-- `pnpm clean`: Clean build artifacts
-
-## 📚 Workspace Structure
-
-- `packages/*`: Shared utilities and business logic
-- `components/*`: Reusable UI components 
-
-# Smart Code Buddy
-
-An AI-powered VS Code extension that provides intelligent coding assistance using various AI providers.
-
-## 🚀 How to use
-
-### Install dependencies
-
-```bash
-yarn
-```
-
-For running project in development mode use
-
-```bash
-yarn watch
-```
-
-### Configuration
-
-1. Open VS Code settings
-2. Configure your preferred AI provider (OpenAI, Anthropic, or Deepseek)
-3. Add the corresponding API key for your chosen provider
-
-### Using the Extension
-
-1. Open the command palette (Ctrl/Cmd + Shift + P)
-2. Type and select "Open AI Chat Assistant"
-3. Start interacting with your AI coding assistant!
-
-### Adding more commands
-
-To add more commands to your extension, edit the `package.json` located in the `/packages/extension` directory, and use the keys in your `extension.ts` file using `vscode.commands.registerCommand` method.
-
-## 🔧 How it works
+## 🔧 工作原理
 
 ![flow](./static/flow.jpg)
 
-The project is built with monorepo structure containing two packages. The first one being the client, and the second being the visual studio code extension program.
+当你在 `/packages/client/` vue 应用目录下开发时，你的更改将被 nodemon 监视，然后重新构建并在 VS Code 扩展主机中打开，随时可以通过 VS Code 命令面板使用！
 
-when you start developing on the `/packages/client/` vue application directory, your changes will be watched using nodemon, then rebuilt and be opened inside vscode extension host ready to be used with vscode command pallet!
+在这里你可以看到你的 Vue 项目已经构建完成并通过 VS Code webview API 注入。你可以充分利用 Vue 的功能，比如它出色的响应式特性和可用的扩展（如 `vue-router`）！
 
-Here you can see your vue project already built and injected using vscode webview API. you can utilize the full functionality of vue such as its amazing reactivity and its available additions (like `vue-router`) out of the box!
-
-Inside the vue application code, the `vscode` object is globally accessible and can be used to send messages to the vscode runtime and perform tasks such as read/writing files, etc.
+在 Vue 应用代码中，`vscode` 对象是全局可访问的，可以用来向 VS Code 运行时发送消息并执行诸如读/写文件等任务。
 
 ![helloworld](./static/helloworld.gif)
 
-## 🤖 Supported AI Providers
+## 📄 技术参考
 
-- OpenAI
-- Anthropic
-- Deepseek
+[使用 Vue 3 和 WebView Panels API 开发 VS Code 扩展](https://medium.com/@mhdi_kr/developing-a-vs-code-extension-using-vue-3-and-webview-panels-api-536d87ce653a)
 
-## 📄 Technical Reference
+## VS Code 调试配置说明
 
-[Developing a VS Code Extension using Vue 3 and WebView Panels API](https://medium.com/@mhdi_kr/developing-a-vs-code-extension-using-vue-3-and-webview-panels-api-536d87ce653a)
+本项目包含多个子项目的调试配置，可以通过 VS Code 的调试功能（F5）来启动调试。
 
-## 🔗 Links
+
+## 🔗 链接
 
 - [GitHub](https://github.com/cofficlab/CodeBuddy)
-- [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=coffic.smart-buddy)
+- [VS Code 市场](https://marketplace.visualstudio.com/items?itemName=coffic.smart-buddy)
 
-## 🤝 Contribution
+## 🤝 贡献
 
-If you have any questions or recommendations please create a new issue for it, and if you've hacked together any feature or enhancement, a pull request is more than welcome here! 🙏
+如果你有任何问题或建议，请创建一个新的 issue。如果你开发了任何功能或改进，欢迎提交 pull request！🙏
 
-## 📝 License
+## 📝 许可证
 
-This project is licensed under the MIT License.
+本项目基于 MIT 许可证开源。

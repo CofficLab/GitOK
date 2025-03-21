@@ -1,27 +1,27 @@
 {
-  "name": "buddy_workspace",
-  "version": "1.0.0",
-  "license": "MIT",
-  "devDependencies": {
-    "nodemon": "^2.0.15",
-    "typescript": "^4.4.4"
-  },
-  "private": true,
-  "workspaces": [
-    "packages/*"
-  ],
-  "scripts": {
-    "build": "pnpm -r build",
-    "build:mcp": "pnpm -r build:mcp",
-    "app": "pnpm --filter buddy dev",
-    "ext": "nodemon pipeline.mjs",
-    "mcp": "pnpm --filter mcp-core test",
-    "lint": "pnpm -r lint",
-    "test": "pnpm -r test",
-    "clean": "pnpm -r clean"
-  },
-  "engines": {
-    "node": ">=18.0.0",
-    "pnpm": ">=8.0.0"
-  }
+    "name": "buddy_workspace",
+    "version": "1.0.0",
+    "license": "MIT",
+    "devDependencies": {
+        "nodemon": "^3.1.9",
+        "typescript": "^5.8.2"
+    },
+    "private": true,
+    "workspaces": [
+        "packages/*"
+    ],
+    "scripts": {
+        "build": "pnpm -r build",
+        "build:mcp": "pnpm -r build:mcp",
+        "app": "pnpm --filter buddy dev",
+        "ext": "nodemon pipeline.mjs",
+        "mcp": "pnpm --filter mcp-core test",
+        "lint": "pnpm -r lint",
+        "test": "pnpm -r test",
+        "clean": "pnpm -r clean"
+    },
+    "engines": {
+        "node": ">=18.0.0",
+        "pnpm": ">=8.0.0"
+    }
 }
