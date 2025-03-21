@@ -68,11 +68,33 @@ const api = {
   // 添加插件系统相关API
   plugins: {
     // 获取所有可用的插件动作
-    getPluginActions: () => ipcRenderer.invoke('get-plugin-actions'),
+    getPluginActions: (keyword = '') =>
+      ipcRenderer.invoke('get-plugin-actions', keyword),
 
     // 执行插件动作
     executeAction: (actionId: string) =>
       ipcRenderer.invoke('execute-plugin-action', actionId),
+
+    // 获取动作视图内容
+    getActionView: (actionId: string) =>
+      ipcRenderer.invoke('get-action-view', actionId),
+
+    // 获取所有插件
+    getAllPlugins: () => ipcRenderer.invoke('get-all-plugins'),
+
+    // 获取本地插件
+    getLocalPlugins: () => ipcRenderer.invoke('get-local-plugins'),
+
+    // 获取已安装插件
+    getInstalledPlugins: () => ipcRenderer.invoke('get-installed-plugins'),
+
+    // 安装插件
+    installPlugin: (pluginPath: string) =>
+      ipcRenderer.invoke('install-plugin', pluginPath),
+
+    // 卸载插件
+    uninstallPlugin: (pluginId: string) =>
+      ipcRenderer.invoke('uninstall-plugin', pluginId),
   },
   // MCP 插件相关 API
   mcp: {

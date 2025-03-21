@@ -1,0 +1,14 @@
+{
+  "name": "gitok-example-plugin",
+  "version": "1.0.0",
+  "description": "GitOK示例插件",
+  "main": "index.js",
+  "gitokPlugin": {
+    "id": "example-plugin"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Coffic",
+  "license": "MIT"
+}

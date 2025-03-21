@@ -12,9 +12,42 @@ interface MCPAPI {
   openFileDialog: () => Promise<string | null>;
 }
 
+// 插件动作类型
+interface PluginAction {
+  id: string;
+  title: string;
+  description: string;
+  icon: string;
+  plugin: string;
+  viewPath?: string;
+}
+
+// 插件信息类型
+interface PluginInfo {
+  id: string;
+  name: string;
+  description: string;
+  version: string;
+  author: string;
+  isInstalled: boolean;
+  isLocal: boolean;
+}
+
 interface PluginsAPI {
-  getPluginActions: () => Promise<any[]>;
+  getPluginActions: (keyword?: string) => Promise<PluginAction[]>;
   executeAction: (actionId: string) => Promise<any>;
+  getActionView: (
+    actionId: string
+  ) => Promise<{ success: boolean; html?: string; error?: string }>;
+  getAllPlugins: () => Promise<PluginInfo[]>;
+  getLocalPlugins: () => Promise<PluginInfo[]>;
+  getInstalledPlugins: () => Promise<PluginInfo[]>;
+  installPlugin: (
+    pluginPath: string
+  ) => Promise<{ success: boolean; error?: string }>;
+  uninstallPlugin: (
+    pluginId: string
+  ) => Promise<{ success: boolean; error?: string }>;
 }
 
 interface ElectronAPI {
