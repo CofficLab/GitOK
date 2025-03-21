@@ -7,7 +7,6 @@ import path from 'path';
 import { pluginManager } from './PluginManager';
 import { pluginInstaller } from './PluginInstaller';
 import { BrowserWindow } from 'electron';
-import fs from 'fs';
 
 // 定义IPC通道名称
 const IPC_CHANNELS = {
