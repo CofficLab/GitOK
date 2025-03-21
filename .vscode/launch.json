@@ -27,6 +27,22 @@
       "presentation": {
         "hidden": true
       }
+    },
+    {
+      "name": "Debug Extension",
+      "type": "extensionHost",
+      "request": "launch",
+      "args": [
+        "--extensionDevelopmentPath=${workspaceFolder}/packages/vsc_extension"
+      ],
+      "outFiles": [
+        "${workspaceFolder}/packages/vsc_extension/dist/**/*.js"
+      ],
+      "preLaunchTask": "watch-extension",
+      "presentation": {
+        "group": "extension",
+        "order": 1
+      }
     }
   ],
   "compounds": [
