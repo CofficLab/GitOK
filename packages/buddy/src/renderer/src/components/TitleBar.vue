@@ -12,11 +12,13 @@ const showTrafficLights = ref(true)
 // 监听配置变化
 onMounted(() => {
     // 获取初始配置
+    // @ts-ignore - 类型错误处理
     window.electron.getWindowConfig().then((config) => {
         showTrafficLights.value = config.showTrafficLights
     })
 
     // 监听配置变化
+    // @ts-ignore - 类型错误处理
     const unsubscribe = window.electron.onWindowConfigChanged((_, config) => {
         showTrafficLights.value = config.showTrafficLights
     })

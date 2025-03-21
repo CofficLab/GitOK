@@ -416,4 +416,4 @@ npm run package
 - [Buddy 插件 API 文档](./07-api-reference.md)
 - [示例插件仓库](https://github.com/buddy-app/plugin-examples)
 - [Vue.js 官方文档](https://vuejs.org/)
-- [TypeScript 官方文档](https://www.typescriptlang.org/docs/) 
+- [TypeScript 官方文档](https://www.typescriptlang.org/docs/)
