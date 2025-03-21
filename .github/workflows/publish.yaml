@@ -1,0 +1,69 @@
+on:
+    push:
+        branches:
+            - main
+permissions:
+    contents: write
+
+jobs:
+    bump:
+        runs-on: ubuntu-latest
+        outputs:
+            new_version: ${{ steps.version_bump.outputs.new_version }}
+        steps:
+            - uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 20.x
+            - name: Install Dependencies
+              run: npm install -g yarn
+            - name: Git Config
+              run: |
+                  git config --local user.email "github-actions[bot]@users.noreply.github.com"
+                  git config --local user.name "github-actions[bot]"
+            - name: Bump Version
+              id: version_bump
+              run: |
+                  cd packages/extension
+                  current_version=$(node -p "require('./package.json').version")
+                  IFS='.' read -r major minor patch <<< "$current_version"
+                  new_patch=$((patch + 1))
+                  new_version="$major.$minor.$new_patch"
+                  echo "new_version=$new_version" >> $GITHUB_OUTPUT
+                  sed -i "s/\"version\": \"$current_version\"/\"version\": \"$new_version\"/" package.json
+                  git add package.json
+                  git commit -m "chore: bump version to $new_version"
+                  git push
+
+    build:
+        needs: bump
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+            - name: Install Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 20.x
+            - name: Install Yarn
+              run: npm install -g yarn
+            - name: Build Client
+              run: |
+                  cd packages/client 
+                  yarn 
+                  yarn build
+            - name: Build Extension
+              run: |
+                  cd packages/extension
+                  yarn
+                  yarn build
+                  ls -l dist
+            - name: Publish
+              run: |
+                  cd packages/extension
+                  yarn deploy
+              env:
+                  VSCE_PAT: ${{ secrets.VSCE_PAT }}

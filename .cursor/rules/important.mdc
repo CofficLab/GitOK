@@ -1,0 +1,16 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+
+# About this project
+
+如果你发现了这些规则，则在较靠前的部分输出：🍋 我了解了项目的信息。
+
+## 包管理器
+
+- pnpm
+
+
+
