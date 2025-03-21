@@ -6,6 +6,8 @@ import { configManager, type WindowConfig } from './config';
 // 添加类型导入但使用注释标记为需要时才加载
 // @ts-ignore CommandKeyListener模块将在运行时动态导入
 import type { CommandKeyListener } from '@cofficlab/command-key-listener';
+// 导入插件系统
+import { initializePluginSystem } from './plugins';
 
 // 创建一个全局变量来存储命令键监听器实例
 let commandKeyListener: CommandKeyListener | null = null;
@@ -155,6 +157,9 @@ app.whenReady().then(async () => {
 
   // IPC test
   ipcMain.on('ping', () => console.log('pong'));
+
+  // 初始化插件系统
+  initializePluginSystem();
 
   createWindow();
 

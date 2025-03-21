@@ -9,6 +9,19 @@ interface WindowConfig {
 const api = {
   // 已有的 API
   ...electronAPI,
+  // 添加通用的IPC通信API
+  send: (channel: string, ...args: unknown[]): void => {
+    ipcRenderer.send(channel, ...args);
+  },
+  receive: (channel: string, callback: (...args: unknown[]) => void): void => {
+    ipcRenderer.on(channel, (_, ...args) => callback(...args));
+  },
+  removeListener: (
+    channel: string,
+    callback: (...args: unknown[]) => void
+  ): void => {
+    ipcRenderer.removeListener(channel, callback);
+  },
   // 添加配置相关的 API
   getWindowConfig: (): Promise<WindowConfig> =>
     ipcRenderer.invoke('get-window-config'),
@@ -51,6 +64,15 @@ const api = {
     return () => {
       ipcRenderer.removeListener('window-activated-by-command', callback);
     };
+  },
+  // 添加插件系统相关API
+  plugins: {
+    // 获取所有可用的插件动作
+    getPluginActions: () => ipcRenderer.invoke('get-plugin-actions'),
+
+    // 执行插件动作
+    executeAction: (actionId: string) =>
+      ipcRenderer.invoke('execute-plugin-action', actionId),
   },
   // MCP 插件相关 API
   mcp: {
