@@ -1,12 +1,12 @@
 <template>
-    <div class="plugin-view h-full">
+    <div class="h-full">
         <component v-if="componentLoaded" :is="dynamicComponent"></component>
-        <div v-else-if="error" class="error-container">
+        <div v-else-if="error" class="p-4 h-full flex flex-col justify-center">
             <div class="alert alert-error">
                 <span>插件加载失败: {{ error }}</span>
             </div>
         </div>
-        <div v-else class="loading-container flex justify-center items-center h-full">
+        <div v-else class="flex justify-center items-center h-full">
             <div class="loading loading-spinner loading-lg"></div>
         </div>
     </div>
@@ -61,13 +61,3 @@ onMounted(() => {
     loadComponent();
 });
 </script>
-
-<style scoped>
-.error-container {
-    padding: 1rem;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-}
-</style>

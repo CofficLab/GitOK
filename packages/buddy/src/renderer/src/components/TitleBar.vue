@@ -1,5 +1,8 @@
 <template>
-    <div class="title-bar" :class="{ 'no-traffic-lights': !showTrafficLights }">
+    <div :class="[
+        'fixed top-0 left-0 w-full z-[9999] bg-transparent',
+        showTrafficLights ? 'h-7' : 'h-10 pl-4',
+    ]" style="-webkit-app-region: drag;">
         <slot></slot>
     </div>
 </template>
@@ -29,30 +32,3 @@ onMounted(() => {
     })
 })
 </script>
-
-<style scoped>
-.title-bar {
-    -webkit-app-region: drag;
-    /* 使区域可拖动 */
-    height: 28px;
-    /* 标准标题栏高度 */
-    width: 100%;
-    background: transparent;
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 9999;
-}
-
-/* 当隐藏红绿灯时，增加左侧边距，避免与内容重叠 */
-.title-bar.no-traffic-lights {
-    height: 38px;
-    /* 稍微增加高度 */
-    padding-left: 16px;
-}
-
-/* 确保按钮和输入框等元素在标题栏中仍然可以点击 */
-.title-bar :deep(*) {
-    -webkit-app-region: no-drag;
-}
-</style>

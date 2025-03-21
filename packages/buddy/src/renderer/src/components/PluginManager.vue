@@ -1,5 +1,5 @@
 <template>
-    <div class="plugin-manager">
+    <div class="p-8 max-w-4xl mx-auto">
         <h2 class="text-2xl font-bold mb-6">插件管理</h2>
 
         <!-- 安装插件卡片 -->
@@ -228,11 +228,3 @@ onMounted(async () => {
     await getInstalledPlugins();
 });
 </script>
-
-<style scoped>
-.plugin-manager {
-    padding: 2rem;
-    max-width: 800px;
-    margin: 0 auto;
-}
-</style>
