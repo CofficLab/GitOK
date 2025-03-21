@@ -1,0 +1,6 @@
+# GitOK 应用配置文件
+
+# 窗口设置
+window:
+  # 是否显示窗口标题栏的红绿灯按钮
+  showTrafficLights: false 
