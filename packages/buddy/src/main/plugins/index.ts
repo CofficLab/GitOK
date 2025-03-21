@@ -6,6 +6,8 @@ import { app } from 'electron';
 import path from 'path';
 import { pluginManager } from './PluginManager';
 import { pluginInstaller } from './PluginInstaller';
+import { BrowserWindow } from 'electron';
+import fs from 'fs';
 
 // 定义IPC通道名称
 const IPC_CHANNELS = {
@@ -55,6 +57,11 @@ export function initPluginSystem() {
       await pluginManager.installPlugin(pluginPath);
       console.log(`✅ 插件安装完成: ${pluginId}`);
 
+      // 通知渲染进程插件已安装
+      BrowserWindow.getAllWindows().forEach((window) => {
+        window.webContents.send('plugin:installed');
+      });
+
       return { success: true, pluginId };
     } catch (error: any) {
       console.error('❌ 安装插件失败:', error);
@@ -103,6 +110,11 @@ export function initPluginSystem() {
       await pluginManager.installPlugin(samplePluginPath);
       console.log(`✅ 示例插件安装完成: ${pluginId}`);
 
+      // 通知渲染进程插件已安装
+      BrowserWindow.getAllWindows().forEach((window) => {
+        window.webContents.send('plugin:installed');
+      });
+
       return { success: true, pluginId };
     } catch (error) {
       console.error('❌ 安装示例插件失败:', error);
@@ -120,6 +132,10 @@ export function initPluginSystem() {
       const success = pluginManager.uninstallPlugin(pluginId);
       if (success) {
         console.log(`✅ 插件卸载成功: ${pluginId}`);
+        // 通知渲染进程插件已卸载
+        BrowserWindow.getAllWindows().forEach((window) => {
+          window.webContents.send('plugin:installed');
+        });
       } else {
         console.warn(`⚠️ 插件卸载失败: ${pluginId}`);
       }
@@ -160,17 +176,36 @@ export function initPluginSystem() {
   // 获取插件视图
   ipcMain.handle(IPC_CHANNELS.GET_PLUGIN_VIEWS, () => {
     console.log('🔍 获取插件视图');
-    // 返回一个示例视图用于测试
-    const views = [
-      {
+
+    // 获取已安装的插件列表
+    const installedPlugins = pluginManager.getInstalledPlugins();
+    const views: any[] = [];
+
+    // 为已安装的simple-plugin添加视图
+    if (installedPlugins['simple-plugin']) {
+      console.log('📌 发现simple-plugin，添加其视图');
+      views.push({
+        id: 'simple-plugin-view',
+        name: '示例插件视图',
+        // 修改路径，使用相对路径但不包含components
+        absolutePath: './Versions.vue',
+        icon: 'i-mdi-puzzle-outline',
+        pluginId: 'simple-plugin',
+      });
+    }
+
+    // 如果没有找到任何插件视图，添加一个示例视图用于测试
+    if (views.length === 0) {
+      console.log('📌 未找到已安装插件视图，返回测试视图');
+      views.push({
         id: 'example-view',
         name: '示例视图',
-        // 这里使用内置组件路径，实际应从插件中加载
-        absolutePath: './components/Versions.vue',
+        absolutePath: './Versions.vue',
         icon: 'i-mdi-view-dashboard',
-      },
-    ];
-    console.log(`📋 返回 ${views.length} 个插件视图`);
+      });
+    }
+
+    console.log(`📋 返回 ${views.length} 个插件视图:`, views);
     return views;
   });
 

@@ -38,8 +38,18 @@ export interface PluginRegistryItem {
  */
 export interface BuddyPluginAPI {
   getViews(): Promise<BuddyPluginViewInfo[]>;
-  installPlugin(path: string): Promise<{ success: boolean; error?: string }>;
-  uninstallPlugin(id: string): Promise<{ success: boolean }>;
+  getPlugins(): Promise<Record<string, PluginRegistryItem>>;
+  installPlugin(path: string): Promise<{ success: boolean; message?: string }>;
+  uninstallPlugin(id: string): Promise<{ success: boolean; message?: string }>;
+  activatePlugin(id: string): Promise<boolean>;
+  deactivatePlugin(id: string): Promise<boolean>;
+  openPluginFile(): Promise<{
+    success: boolean;
+    canceled?: boolean;
+    filePath?: string;
+  }>;
+  installSamplePlugin(): Promise<{ success: boolean; message?: string }>;
+  onPluginInstalled(callback: () => void): () => void;
 }
 
 /**

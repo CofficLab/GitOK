@@ -116,6 +116,16 @@ const pluginAPI = {
   openPluginFile: () => ipcRenderer.invoke('plugin:open-file'),
   // 安装示例插件
   installSamplePlugin: () => ipcRenderer.invoke('plugin:install-sample'),
+  // 添加事件监听功能
+  onPluginInstalled: (callback: () => void) => {
+    // 创建一个listener以便之后可以移除
+    const listener = () => callback();
+    ipcRenderer.on('plugin:installed', listener);
+    // 返回一个函数用于移除监听器
+    return () => {
+      ipcRenderer.removeListener('plugin:installed', listener);
+    };
+  },
 };
 
 // Use `contextBridge` APIs to expose Electron APIs to

@@ -1,100 +1,125 @@
 <script setup lang="ts">
-import { ref, onMounted, reactive } from "vue"
-import Versions from "./components/Versions.vue"
-import TitleBar from "./components/TitleBar.vue"
-import PluginView from "./components/plugins/PluginView.vue"
-import PluginManager from "./components/PluginManager.vue"
-import { BuddyPluginViewInfo } from "./types/plugins"
+import { ref, onMounted, reactive } from 'vue'
+import TitleBar from './components/TitleBar.vue'
+import PluginManager from './components/PluginManager.vue'
+import PluginView from './components/PluginView.vue'
 import "./app.css"
 
-// 活动标签页
-const activeTab = ref("home")
-
-// 侧边栏菜单项
-const sidebarItems = [
+const activeTab = ref('home')
+const sidebarItems = ref([
     { id: 'home', name: '首页', icon: 'i-mdi-home' },
-    { id: 'plugins', name: '插件管理', icon: 'i-mdi-puzzle' },
-    // 可以添加更多菜单项
-]
-
-// 是否展开侧边栏
+    { id: 'plugin-manager', name: '插件管理', icon: 'i-mdi-puzzle' }
+])
 const sidebarExpanded = ref(true)
 
+// 存储插件视图信息
+const pluginViews = reactive<any[]>([])
+
 // 切换侧边栏展开/收起状态
-function toggleSidebar() {
+const toggleSidebar = () => {
     sidebarExpanded.value = !sidebarExpanded.value
 }
 
-// 插件视图
-const pluginViews = reactive<BuddyPluginViewInfo[]>([])
+// 检查当前是否有已激活的插件视图
+const hasActivePluginView = () => {
+    return pluginViews.some(view => view.id === activeTab.value)
+}
 
 // 加载插件视图
-onMounted(async () => {
+const loadPluginViews = async () => {
     try {
+        console.log('📥 正在加载插件视图...')
         const views = await window.api.plugins.getViews()
-        pluginViews.push(...views)
+        console.log('📋 获取到插件视图:', views)
+
+        // 清空当前视图列表
+        pluginViews.length = 0
+
+        // 添加新的插件视图
+        if (views && views.length > 0) {
+            views.forEach(view => {
+                pluginViews.push(view)
+
+                // 将视图添加到侧边栏
+                if (!sidebarItems.value.some(item => item.id === view.id)) {
+                    sidebarItems.value.push({
+                        id: view.id,
+                        name: view.name,
+                        icon: view.icon || 'i-mdi-view-dashboard'
+                    })
+                }
+            })
+            console.log('✅ 插件视图加载成功，数量:', pluginViews.length)
+        }
     } catch (error) {
-        console.error("加载插件视图失败:", error)
+        console.error('❌ 加载插件视图失败:', error)
     }
+}
+
+// 监听插件安装事件，重新加载插件视图
+const setupPluginListeners = () => {
+    if (window.api.plugins.onPluginInstalled) {
+        window.api.plugins.onPluginInstalled(() => {
+            console.log('🔄 检测到插件安装，重新加载视图')
+            loadPluginViews()
+        })
+    }
+}
+
+onMounted(() => {
+    loadPluginViews()
+    setupPluginListeners()
 })
 </script>
 
 <template>
-    <TitleBar />
-    <div class="mt-[38px] h-[calc(100vh-38px)] flex overflow-hidden">
-        <!-- 左侧侧边栏 -->
-        <div :class="[
-            'bg-neutral-800 text-neutral-300 flex flex-col overflow-y-auto transition-all duration-200',
-            sidebarExpanded ? 'w-60' : 'w-12'
-        ]">
-            <!-- 侧边栏顶部图标 -->
-            <div class="h-12 flex items-center justify-center border-b border-neutral-700">
-                <a @click="toggleSidebar" class="cursor-pointer p-2 flex items-center justify-center">
-                    <i class="i-mdi-menu text-xl"></i>
-                </a>
-            </div>
+    <div class="app-container h-screen flex flex-col bg-base-100 text-base-content">
+        <TitleBar />
 
-            <!-- 侧边栏菜单 -->
-            <div class="flex flex-col py-2">
-                <a v-for="item in sidebarItems" :key="item.id" :class="[
-                    'flex items-center py-2 px-4 cursor-pointer text-neutral-300 overflow-hidden whitespace-nowrap border-l-2',
-                    activeTab === item.id ? 'text-white bg-neutral-700 border-l-blue-500' : 'border-l-transparent hover:bg-neutral-700/50'
-                ]" @click="activeTab = item.id">
-                    <i :class="[item.icon, 'text-xl min-w-6']"></i>
-                    <span v-if="sidebarExpanded" class="ml-3">{{ item.name }}</span>
-                </a>
-
-                <!-- 插件提供的视图 -->
-                <div v-if="pluginViews.length > 0 && sidebarExpanded" class="px-4 pt-4 pb-2">
-                    <div class="uppercase text-xs tracking-wider text-neutral-500">插件</div>
+        <div class="main-container flex flex-1 overflow-hidden">
+            <!-- 侧边栏 -->
+            <div class="sidebar bg-base-200 h-full transition-all duration-300 border-r border-base-300 flex flex-col"
+                :class="{ 'w-64': sidebarExpanded, 'w-16': !sidebarExpanded }">
+                <div class="sidebar-header flex items-center p-2 border-b border-base-300">
+                    <button class="btn btn-sm btn-circle btn-ghost" @click="toggleSidebar"
+                        :title="sidebarExpanded ? '收起侧边栏' : '展开侧边栏'">
+                        <i :class="sidebarExpanded ? 'i-mdi-chevron-left' : 'i-mdi-chevron-right'" class="text-xl"></i>
+                    </button>
+                    <h2 class="ml-2 font-bold truncate" v-if="sidebarExpanded">GitOK</h2>
                 </div>
-                <a v-for="view in pluginViews" :key="view.id" :class="[
-                    'flex items-center py-2 px-4 cursor-pointer text-neutral-300 overflow-hidden whitespace-nowrap border-l-2',
-                    activeTab === view.id ? 'text-white bg-neutral-700 border-l-blue-500' : 'border-l-transparent hover:bg-neutral-700/50'
-                ]" @click="activeTab = view.id">
-                    <i :class="[view.icon || 'i-mdi-view-dashboard', 'text-xl min-w-6']"></i>
-                    <span v-if="sidebarExpanded" class="ml-3">{{ view.name }}</span>
-                </a>
-            </div>
-        </div>
 
-        <!-- 主内容区域 -->
-        <div class="flex-1 bg-neutral-900 text-neutral-300 overflow-y-auto">
-            <div v-if="activeTab === 'home'" class="p-4 h-full">
-                <img alt="logo" class="block mx-auto max-w-[200px]" src="./assets/electron.svg">
-                <Versions />
-            </div>
-
-            <div v-if="activeTab === 'plugins'" class="p-4 h-full">
-                <PluginManager />
-            </div>
-
-            <!-- 动态加载插件视图 -->
-            <template v-for="view in pluginViews" :key="view.id">
-                <div v-if="activeTab === view.id" class="p-4 h-full">
-                    <PluginView :component-path="view.absolutePath" />
+                <div class="sidebar-content flex-1 overflow-y-auto">
+                    <ul class="menu p-2">
+                        <li v-for="item in sidebarItems" :key="item.id">
+                            <a :class="{ 'active': activeTab === item.id }" @click="activeTab = item.id"
+                                class="flex items-center p-2 rounded-md">
+                                <i :class="item.icon" class="text-xl"></i>
+                                <span v-if="sidebarExpanded" class="ml-2 truncate">{{ item.name }}</span>
+                            </a>
+                        </li>
+                    </ul>
                 </div>
-            </template>
+            </div>
+
+            <!-- 主内容区域 -->
+            <div class="content-area flex-1 overflow-auto p-6">
+                <!-- 首页 -->
+                <div v-if="activeTab === 'home'" class="home-view">
+                    <h1 class="text-2xl font-bold mb-6">欢迎使用 GitOK</h1>
+                </div>
+
+                <!-- 插件管理 -->
+                <PluginManager v-else-if="activeTab === 'plugin-manager'" />
+
+                <!-- 插件视图 -->
+                <template v-else>
+                    <PluginView v-for="view in pluginViews" :key="view.id" v-show="activeTab === view.id" :id="view.id"
+                        :name="view.name" :absolutePath="view.absolutePath" :icon="view.icon" />
+                    <div v-if="!hasActivePluginView()" class="text-center py-10">
+                        <p class="text-xl text-gray-500">未找到相关视图</p>
+                    </div>
+                </template>
+            </div>
         </div>
     </div>
 </template>
