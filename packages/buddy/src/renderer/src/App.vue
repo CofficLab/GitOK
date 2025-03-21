@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import Versions from './components/Versions.vue'
 import TitleBar from './components/TitleBar.vue'
+import './app.css'
 
 const ipcHandle = (): void => window.electron.ipcRenderer.send('ping')
 </script>
@@ -16,6 +17,8 @@ const ipcHandle = (): void => window.electron.ipcRenderer.send('ping')
       and
       <span class="ts">TypeScript</span>
     </div>
+    <h1 class="text-2xl font-bold bg-red-500">Hello World</h1>
+    <button class="btn btn-primary">Click me</button>
     <p class="tip">Please try pressing <code>F12</code> to open the devTool</p>
     <div class="actions">
       <div class="action">
