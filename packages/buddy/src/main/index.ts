@@ -322,10 +322,10 @@ function registerPluginViewHandlers() {
 
       // 设置视图边界
       const viewBounds = bounds || {
-        x: 0,
-        y: 90, // 给顶部留出空间
-        width: window.getBounds().width,
-        height: window.getBounds().height - 160, // 增加底部预留空间，确保状态栏可见
+        x: Math.floor(window.getBounds().width * 0.25), // 水平居中（左侧缩进25%）
+        y: Math.floor(window.getBounds().height * 0.15), // 垂直方向稍微往下一点
+        width: Math.floor(window.getBounds().width * 0.5), // 宽度为窗口的1/2
+        height: Math.floor(window.getBounds().height * 0.6), // 高度为窗口的60%，留出状态栏空间
       };
 
       // 记录视图位置和大小
