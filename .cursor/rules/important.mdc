@@ -10,6 +10,7 @@ alwaysApply: true
 
 - 这是一个工作空间，你在 [pnpm-workspace.yaml](mdc:pnpm-workspace.yaml) 可看到配置
 - 使用中文和用户交流，即使用户使用了英文
+- 当用户和你讨论方案时，不必完全输出代码，因为用户关心的核心点是如何实现
 
 ## 多个项目
 
