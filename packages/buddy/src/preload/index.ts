@@ -52,23 +52,6 @@ const api = {
       ipcRenderer.removeListener('window-activated-by-command', callback);
     };
   },
-  // 插件系统API
-  plugins: {
-    // 获取所有插件视图
-    getViews: (): Promise<unknown> => ipcRenderer.invoke('plugins:getViews'),
-
-    // 获取所有插件
-    getAllPlugins: (): Promise<unknown> =>
-      ipcRenderer.invoke('plugins:getAllPlugins'),
-
-    // 激活插件
-    activatePlugin: (pluginId: string): Promise<boolean> =>
-      ipcRenderer.invoke('plugins:activatePlugin', pluginId),
-
-    // 停用插件
-    deactivatePlugin: (pluginId: string): Promise<boolean> =>
-      ipcRenderer.invoke('plugins:deactivatePlugin', pluginId),
-  },
   // MCP 插件相关 API
   mcp: {
     // 启动MCP服务
@@ -102,32 +85,6 @@ const api = {
   },
 };
 
-// 暴露插件系统API
-const pluginAPI = {
-  // 获取插件列表
-  getPlugins: () => ipcRenderer.invoke('plugin:get-installed'),
-  // 安装插件
-  installPlugin: (pluginPath: string) =>
-    ipcRenderer.invoke('plugin:install', pluginPath),
-  // 卸载插件
-  uninstallPlugin: (pluginId: string) =>
-    ipcRenderer.invoke('plugin:uninstall', pluginId),
-  // 打开插件文件
-  openPluginFile: () => ipcRenderer.invoke('plugin:open-file'),
-  // 安装示例插件
-  installSamplePlugin: () => ipcRenderer.invoke('plugin:install-sample'),
-  // 添加事件监听功能
-  onPluginInstalled: (callback: () => void) => {
-    // 创建一个listener以便之后可以移除
-    const listener = () => callback();
-    ipcRenderer.on('plugin:installed', listener);
-    // 返回一个函数用于移除监听器
-    return () => {
-      ipcRenderer.removeListener('plugin:installed', listener);
-    };
-  },
-};
-
 // Use `contextBridge` APIs to expose Electron APIs to
 // renderer only if context isolation is enabled, otherwise
 // just add to the DOM global.
@@ -135,9 +92,8 @@ if (process.contextIsolated) {
   try {
     // 保持原有electron名称以保证向后兼容
     contextBridge.exposeInMainWorld('electron', api);
-    // 同时暴露为api和electronAPI
+    // 同时暴露为api
     contextBridge.exposeInMainWorld('api', api);
-    contextBridge.exposeInMainWorld('electronAPI', pluginAPI);
   } catch (error) {
     console.error(error);
   }
@@ -146,6 +102,4 @@ if (process.contextIsolated) {
   window.electron = api;
   // @ts-ignore (define in dts)
   window.api = api;
-  // @ts-ignore (define in dts)
-  window.electronAPI = pluginAPI;
 }

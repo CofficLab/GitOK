@@ -26,20 +26,12 @@ alwaysApply: true
 - 文件的顶部写清楚文档，包括这个文件做什么的、要注意什么等
 - 关键步骤要写清楚注释
 - 注释、文档使用中文
-- 写代码时注意根目录中 prettier 相关配置
 
 ## Electron 项目
 
 - tailwind.config.js 在新版中已经不需要了
 - 使用 daisyui 和 tailwindcss 来写样式
 - 使用Vue
-- 它带有类似 vscode 的插件系统
-- 它的界面类似macos上的spotlight，默认显示一个搜索框
-
-### 插件系统
-
-- 相关文档在docs目录
-
 
 
 

@@ -3,15 +3,9 @@ import { join } from 'path';
 import { electronApp, optimizer, is } from '@electron-toolkit/utils';
 import icon from '../../resources/icon.png?asset';
 import { configManager, type WindowConfig } from './config';
-import { initPluginSystem } from './plugins';
-
-// 声明CommandKeyListener类型但不导入模块
-interface CommandKeyListener {
-  start(): Promise<boolean>;
-  stop(): boolean;
-  isListening(): boolean;
-  on(event: 'command-double-press', listener: () => void): CommandKeyListener;
-}
+// 添加类型导入但使用注释标记为需要时才加载
+// @ts-ignore CommandKeyListener模块将在运行时动态导入
+import type { CommandKeyListener } from '@cofficlab/command-key-listener';
 
 // 创建一个全局变量来存储命令键监听器实例
 let commandKeyListener: CommandKeyListener | null = null;
@@ -169,9 +163,6 @@ app.whenReady().then(async () => {
     // dock icon is clicked and there are no other windows open.
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
   });
-
-  // 初始化插件系统
-  initPluginSystem();
 });
 
 // 当所有窗口都关闭时，停止Command键监听器

@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, reactive, computed, watch } from 'vue'
 import TitleBar from './components/TitleBar.vue'
-import "./app.css"
 
 // 模拟所有可用的插件动作
 const allPluginActions = [
