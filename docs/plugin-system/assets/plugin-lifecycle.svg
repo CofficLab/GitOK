@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="700" height="400" xmlns="http://www.w3.org/2000/svg">
+    <style>
+        .box {
+            fill: white;
+            stroke: #2c3e50;
+            stroke-width: 2;
+        }
+
+        .state {
+            fill: #3498db;
+            stroke: #2980b9;
+        }
+
+        .arrow {
+            stroke: #2c3e50;
+            stroke-width: 2;
+            marker-end: url(#arrowhead);
+        }
+
+        .dashed {
+            stroke-dasharray: 5, 5;
+        }
+
+        text {
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            fill: #2c3e50;
+            text-anchor: middle;
+        }
+
+        .state-text {
+            fill: white;
+        }
+
+        .title {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .event {
+            font-size: 12px;
+            fill: #7f8c8d;
+        }
+    </style>
+
+    <defs>
+        <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#2c3e50" />
+        </marker>
+    </defs>
+
+    <text x="350" y="30" class="title">Buddy 插件生命周期</text>
+
+    <!-- States -->
+    <rect x="50" y="100" width="120" height="60" rx="10" class="box state" />
+    <text x="110" y="135" class="state-text">已安装</text>
+
+    <rect x="250" y="100" width="120" height="60" rx="10" class="box state" />
+    <text x="310" y="135" class="state-text">已加载</text>
+
+    <rect x="450" y="100" width="120" height="60" rx="10" class="box state" />
+    <text x="510" y="135" class="state-text">已激活</text>
+
+    <rect x="250" y="250" width="120" height="60" rx="10" class="box state" />
+    <text x="310" y="285" class="state-text">已停用</text>
+
+    <rect x="450" y="250" width="120" height="60" rx="10" class="box state" />
+    <text x="510" y="285" class="state-text">已卸载</text>
+
+    <!-- Arrows -->
+    <line x1="170" y1="130" x2="245" y2="130" class="arrow" />
+    <text x="210" y="120" class="event">插件加载</text>
+
+    <line x1="370" y1="130" x2="445" y2="130" class="arrow" />
+    <text x="410" y="120" class="event">插件初始化</text>
+
+    <line x1="510" y1="160" x2="510" y2="245" class="arrow" />
+    <text x="550" y="200" class="event">用户停用插件</text>
+
+    <line x1="370" y1="280" x2="445" y2="280" class="arrow" />
+    <text x="410" y="300" class="event">卸载插件</text>
+
+    <line x1="310" y1="160" x2="310" y2="245" class="arrow" />
+    <text x="350" y="200" class="event">停用插件</text>
+
+    <path d="M 310 100 C 310 70, 510 70, 510 100" fill="none" class="arrow dashed" />
+    <text x="410" y="65" class="event">应用启动时自动激活</text>
+
+    <path d="M 450 280 C 420 280, 420 350, 110 350 C 110 350, 110 160, 110 160" fill="none" class="arrow dashed" />
+    <text x="250" y="370" class="event">重新安装插件</text>
+
+    <!-- Event boxes -->
+    <rect x="80" y="175" width="160" height="60" rx="5" class="box" />
+    <text x="160" y="195" font-size="12px">插件管理器事件:</text>
+    <text x="160" y="215" font-size="12px">- onPluginInstalled</text>
+    <text x="160" y="230" font-size="12px">- onPluginRemoved</text>
+
+    <rect x="280" y="175" width="160" height="60" rx="5" class="box" />
+    <text x="360" y="195" font-size="12px">插件生命周期方法:</text>
+    <text x="360" y="215" font-size="12px">- activate()</text>
+    <text x="360" y="230" font-size="12px">- deactivate()</text>
+
+    <rect x="480" y="175" width="160" height="60" rx="5" class="box" />
+    <text x="560" y="195" font-size="12px">插件主机事件:</text>
+    <text x="560" y="215" font-size="12px">- onPluginActivated</text>
+    <text x="560" y="230" font-size="12px">- onPluginDeactivated</text>
+</svg>

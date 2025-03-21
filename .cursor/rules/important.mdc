@@ -33,6 +33,11 @@ alwaysApply: true
 - tailwind.config.js 在新版中已经不需要了
 - 使用 daisyui 和 tailwindcss 来写样式
 - 使用Vue
+- 它带有类似 vscode 的插件系统
+
+### 插件系统
+
+- 相关文档在docs目录
 
 
 
