@@ -13,8 +13,8 @@
   "scripts": {
     "build": "pnpm -r build",
     "build:mcp": "pnpm -r build:mcp",
-    "dev:app": "pnpm --filter buddy dev",
-    "dev:ext": "nodemon pipeline.mjs",
+    "app": "pnpm --filter buddy dev",
+    "ext": "nodemon pipeline.mjs",
     "mcp": "pnpm --filter mcp-core test",
     "lint": "pnpm -r lint",
     "test": "pnpm -r test",
