@@ -34,6 +34,7 @@ alwaysApply: true
 - 使用 daisyui 和 tailwindcss 来写样式
 - 使用Vue
 - 它带有类似 vscode 的插件系统
+- 它的界面类似macos上的spotlight，默认显示一个搜索框
 
 ### 插件系统
 
