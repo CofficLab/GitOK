@@ -1,7 +1,7 @@
-import readline from 'readline/promises'
+import readline from 'node:readline/promises'
 import dotenv from 'dotenv'
 import chalk from 'chalk'
-import { CLI, ConfigManager, formatError } from '@coffic/mcp-core'
+import { CLI, ConfigManager, formatError } from './index.js'
 
 // 强制启用颜色输出
 process.env.FORCE_COLOR = '1'
@@ -9,7 +9,7 @@ chalk.level = 3
 
 dotenv.config()
 
-async function main() {
+async function main(): Promise<void> {
   const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout
