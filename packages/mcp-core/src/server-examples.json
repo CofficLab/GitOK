@@ -1,0 +1,17 @@
+{
+    "mcpServers": {
+        "default": {
+            "command": "uv",
+            "args": [
+                "--directory",
+                "${HOME}/Code/Playground/build_mcp_for_cursor/project",
+                "run",
+                "main.py"
+            ]
+        },
+        "filesystem": {
+            "command": "npx",
+            "args": ["-y", "@modelcontextprotocol/server-filesystem", "${HOME}/Desktop"]
+        }
+    }
+}

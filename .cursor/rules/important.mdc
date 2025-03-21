@@ -8,6 +8,15 @@ alwaysApply: true
 
 如果你发现了这些规则，则在较靠前的部分输出：🍋 我了解了项目的信息。
 
+- 这是一个工作空间，你在 [pnpm-workspace.yaml](mdc:pnpm-workspace.yaml) 可看到配置
+- 使用中文和用户交流，即使用户使用了英文
+
+## 多个项目
+
+- 当用户提到 electron 相关内容时，指的是 [package.json](mdc:packages/buddy/package.json) 这个项目
+- 当用户提到 VSCode 扩展相关内容时，指的是 [package.json](mdc:packages/vsc_extension/package.json) 这个项目
+- 当用户提到 mcp 相关内容时，指的是 [package.json](mdc:packages/mcp-core/package.json) 这个项目
+
 ## 包管理器
 
 - pnpm
