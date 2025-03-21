@@ -1,7 +1,6 @@
 {
   "name": "buddy_workspace",
   "version": "1.0.0",
-  "main": "index.js",
   "license": "MIT",
   "devDependencies": {
     "nodemon": "^2.0.15",
@@ -12,11 +11,10 @@
     "packages/*"
   ],
   "scripts": {
-    "watch": "nodemon pipeline.js",
     "build": "pnpm -r build",
     "build:mcp": "pnpm -r build:mcp",
     "dev:app": "pnpm --filter buddy dev",
-    "dev:ext": "nodemon pipeline.js",
+    "dev:ext": "nodemon pipeline.mjs",
     "lint": "pnpm -r lint",
     "test": "pnpm -r test",
     "clean": "pnpm -r clean",

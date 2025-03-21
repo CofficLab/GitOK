@@ -1,6 +1,6 @@
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
-import tailwindcss from '@tailwindcss/vite'
+import tailwindcss from "@tailwindcss/vite";
 import { resolve } from "path";
 
 // https://vite.dev/config/
@@ -13,10 +13,10 @@ export default defineConfig({
     plugins: [
         vue(),
         // @ts-ignore
-        tailwindcss()
+        tailwindcss(),
     ],
     build: {
-        outDir: "../extension/vue-dist",
+        outDir: "../vsc_extension/vue-dist",
         rollupOptions: {
             output: {
                 entryFileNames: `assets/[name].js`,
