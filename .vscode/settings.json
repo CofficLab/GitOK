@@ -9,11 +9,16 @@
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "cSpell.words": [
+    "asar",
     "buddycoder",
     "coffic",
+    "cofficlab",
     "deepseek",
+    "electronjs",
     "modelcontextprotocol",
     "njsproj",
-    "ntvs"
+    "nsis",
+    "ntvs",
+    "vite"
   ]
 }

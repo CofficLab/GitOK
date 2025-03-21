@@ -11,6 +11,11 @@ files:
   - '!{tsconfig.json,tsconfig.node.json,tsconfig.web.json}'
 asarUnpack:
   - resources/**
+  - node_modules/@cofficlab/command-key-listener/build/Release/*.node
+extraFiles:
+  - from: node_modules/@cofficlab/command-key-listener/build/Release
+    to: build/Release
+    filter: "*.node"
 win:
   executableName: buddy
 nsis:

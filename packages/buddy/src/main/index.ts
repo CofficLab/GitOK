@@ -3,9 +3,14 @@ import { join } from "path"
 import { electronApp, optimizer, is } from "@electron-toolkit/utils"
 import icon from "../../resources/icon.png?asset"
 import { configManager, type WindowConfig } from "./config"
-// 使用类型导入
-import { CommandKeyListener } from "../types/command-key-listener"
-import * as path from "path"
+
+// 声明CommandKeyListener类型但不导入模块
+interface CommandKeyListener {
+    start(): Promise<boolean>
+    stop(): boolean
+    isListening(): boolean
+    on(event: "command-double-press", listener: () => void): CommandKeyListener
+}
 
 // 创建一个全局变量来存储命令键监听器实例
 let commandKeyListener: CommandKeyListener | null = null
@@ -61,27 +66,20 @@ function createWindow(): void {
  * @param window 要激活的窗口
  */
 function setupCommandKeyListener(window: BrowserWindow): void {
-    // 尝试加载真实的CommandKeyListener实现
+    // 如果监听器已经存在，先停止它
+    if (commandKeyListener) {
+        commandKeyListener.stop()
+        commandKeyListener = null
+    }
+
     try {
-        // 从本地模块中导入真实的CommandKeyListener，使用.cjs扩展名
-        const nativeModulePath = path.resolve(
-            __dirname,
-            "../../native/command-key-listener/index.cjs"
-        )
-
         // 使用动态导入
-        import(nativeModulePath)
-            .then(async (module) => {
-                const RealCommandKeyListener = module.default
-
-                // 如果监听器已经存在，先停止它
-                if (commandKeyListener) {
-                    commandKeyListener.stop()
-                    commandKeyListener = null
-                }
+        import("@cofficlab/command-key-listener")
+            .then((module) => {
+                const CommandKeyListenerClass = module.CommandKeyListener
 
                 // 创建新的监听器实例
-                commandKeyListener = new RealCommandKeyListener()
+                commandKeyListener = new CommandKeyListenerClass()
 
                 if (!commandKeyListener) {
                     console.error("创建Command键双击监听器实例失败")
@@ -110,22 +108,24 @@ function setupCommandKeyListener(window: BrowserWindow): void {
                 })
 
                 // 异步启动监听器
-                try {
-                    const result = await commandKeyListener.start()
-                    if (result) {
-                        console.log("Command键双击监听器已启动 (真实实现)")
-                    } else {
-                        console.error("Command键双击监听器启动失败")
-                    }
-                } catch (error) {
-                    console.error("启动Command键双击监听器时出错:", error)
-                }
+                commandKeyListener
+                    .start()
+                    .then((result) => {
+                        if (result) {
+                            console.log("Command键双击监听器已启动")
+                        } else {
+                            console.error("Command键双击监听器启动失败")
+                        }
+                    })
+                    .catch((error) => {
+                        console.error("启动Command键双击监听器时出错:", error)
+                    })
             })
             .catch((error) => {
-                console.error("加载真实的Command键双击监听器失败:", error)
+                console.error("加载Command键双击监听器模块失败:", error)
             })
     } catch (error) {
-        console.error("加载真实的Command键双击监听器失败:", error)
+        console.error("初始化Command键双击监听器失败:", error)
     }
 }
 
@@ -185,7 +185,7 @@ ipcMain.handle("set-window-config", (_, config: Partial<WindowConfig>) => {
 })
 
 // 添加 IPC 处理程序来控制Command键双击功能
-ipcMain.handle("toggle-command-double-press", (_, enabled: boolean) => {
+ipcMain.handle("toggle-command-double-press", async (_, enabled: boolean) => {
     if (process.platform !== "darwin") {
         return { success: false, reason: "此功能仅在macOS上可用" }
     }
@@ -198,7 +198,8 @@ ipcMain.handle("toggle-command-double-press", (_, enabled: boolean) => {
         const mainWindow = BrowserWindow.getFocusedWindow() || BrowserWindow.getAllWindows()[0]
         if (mainWindow) {
             setupCommandKeyListener(mainWindow)
-            return { success: commandKeyListener?.isListening() || false }
+            // 由于设置过程是异步的，无法立即获取结果，返回启动中状态
+            return { success: true, starting: true }
         }
 
         return { success: false, reason: "没有可用窗口" }
