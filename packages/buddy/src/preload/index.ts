@@ -20,6 +20,36 @@ const api = {
         return () => {
             ipcRenderer.removeListener("window-config-changed", callback)
         }
+    },
+    // 添加Command键双击功能的API
+    toggleCommandDoublePress: (
+        enabled: boolean
+    ): Promise<{ success: boolean; reason?: string; already?: boolean }> =>
+        ipcRenderer.invoke("toggle-command-double-press", enabled),
+    onCommandDoublePressed: (
+        callback: (event: Electron.IpcRendererEvent) => void
+    ): (() => void) => {
+        ipcRenderer.on("command-double-pressed", callback)
+        return () => {
+            ipcRenderer.removeListener("command-double-pressed", callback)
+        }
+    },
+    // 添加窗口通过Command键隐藏和激活的事件处理函数
+    onWindowHiddenByCommand: (
+        callback: (event: Electron.IpcRendererEvent) => void
+    ): (() => void) => {
+        ipcRenderer.on("window-hidden-by-command", callback)
+        return () => {
+            ipcRenderer.removeListener("window-hidden-by-command", callback)
+        }
+    },
+    onWindowActivatedByCommand: (
+        callback: (event: Electron.IpcRendererEvent) => void
+    ): (() => void) => {
+        ipcRenderer.on("window-activated-by-command", callback)
+        return () => {
+            ipcRenderer.removeListener("window-activated-by-command", callback)
+        }
     }
 }
 

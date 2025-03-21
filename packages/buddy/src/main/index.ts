@@ -3,6 +3,12 @@ import { join } from "path"
 import { electronApp, optimizer, is } from "@electron-toolkit/utils"
 import icon from "../../resources/icon.png?asset"
 import { configManager, type WindowConfig } from "./config"
+// 使用类型导入
+import { CommandKeyListener } from "../types/command-key-listener"
+import * as path from "path"
+
+// 创建一个全局变量来存储命令键监听器实例
+let commandKeyListener: CommandKeyListener | null = null
 
 function createWindow(): void {
     const showTrafficLights = configManager.getWindowConfig().showTrafficLights
@@ -43,6 +49,84 @@ function createWindow(): void {
     } else {
         mainWindow.loadFile(join(__dirname, "../renderer/index.html"))
     }
+
+    // 仅在macOS上设置Command键双击监听器
+    if (process.platform === "darwin") {
+        setupCommandKeyListener(mainWindow)
+    }
+}
+
+/**
+ * 设置Command键双击监听器
+ * @param window 要激活的窗口
+ */
+function setupCommandKeyListener(window: BrowserWindow): void {
+    // 尝试加载真实的CommandKeyListener实现
+    try {
+        // 从本地模块中导入真实的CommandKeyListener，使用.cjs扩展名
+        const nativeModulePath = path.resolve(
+            __dirname,
+            "../../native/command-key-listener/index.cjs"
+        )
+
+        // 使用动态导入
+        import(nativeModulePath)
+            .then(async (module) => {
+                const RealCommandKeyListener = module.default
+
+                // 如果监听器已经存在，先停止它
+                if (commandKeyListener) {
+                    commandKeyListener.stop()
+                    commandKeyListener = null
+                }
+
+                // 创建新的监听器实例
+                commandKeyListener = new RealCommandKeyListener()
+
+                if (!commandKeyListener) {
+                    console.error("创建Command键双击监听器实例失败")
+                    return
+                }
+
+                // 监听双击Command键事件
+                commandKeyListener.on("command-double-press", () => {
+                    if (window && !window.isDestroyed()) {
+                        // 切换窗口状态：如果窗口聚焦则隐藏，否则显示并聚焦
+                        if (window.isFocused()) {
+                            // 窗口当前在前台，隐藏它
+                            window.hide()
+                            // 发送事件到渲染进程通知窗口已隐藏
+                            window.webContents.send("window-hidden-by-command")
+                        } else {
+                            // 窗口当前不在前台，显示并聚焦它
+                            window.show()
+                            window.focus()
+                            // 发送事件到渲染进程通知窗口已激活
+                            window.webContents.send("window-activated-by-command")
+                        }
+                        // 无论如何都发送命令键双击事件
+                        window.webContents.send("command-double-pressed")
+                    }
+                })
+
+                // 异步启动监听器
+                try {
+                    const result = await commandKeyListener.start()
+                    if (result) {
+                        console.log("Command键双击监听器已启动 (真实实现)")
+                    } else {
+                        console.error("Command键双击监听器启动失败")
+                    }
+                } catch (error) {
+                    console.error("启动Command键双击监听器时出错:", error)
+                }
+            })
+            .catch((error) => {
+                console.error("加载真实的Command键双击监听器失败:", error)
+            })
+    } catch (error) {
+        console.error("加载真实的Command键双击监听器失败:", error)
+    }
 }
 
 // This method will be called when Electron has finished
@@ -71,10 +155,14 @@ app.whenReady().then(() => {
     })
 })
 
-// Quit when all windows are closed, except on macOS. There, it's common
-// for applications and their menu bar to stay active until the user quits
-// explicitly with Cmd + Q.
+// 当所有窗口都关闭时，停止Command键监听器
 app.on("window-all-closed", () => {
+    // 停止监听器
+    if (commandKeyListener) {
+        commandKeyListener.stop()
+        commandKeyListener = null
+    }
+
     if (process.platform !== "darwin") {
         app.quit()
     }
@@ -94,4 +182,32 @@ ipcMain.handle("set-window-config", (_, config: Partial<WindowConfig>) => {
     BrowserWindow.getAllWindows().forEach((window) => {
         window.webContents.send("window-config-changed", configManager.getWindowConfig())
     })
+})
+
+// 添加 IPC 处理程序来控制Command键双击功能
+ipcMain.handle("toggle-command-double-press", (_, enabled: boolean) => {
+    if (process.platform !== "darwin") {
+        return { success: false, reason: "此功能仅在macOS上可用" }
+    }
+
+    if (enabled) {
+        if (commandKeyListener && commandKeyListener.isListening()) {
+            return { success: true, already: true }
+        }
+
+        const mainWindow = BrowserWindow.getFocusedWindow() || BrowserWindow.getAllWindows()[0]
+        if (mainWindow) {
+            setupCommandKeyListener(mainWindow)
+            return { success: commandKeyListener?.isListening() || false }
+        }
+
+        return { success: false, reason: "没有可用窗口" }
+    } else {
+        if (commandKeyListener) {
+            const result = commandKeyListener.stop()
+            commandKeyListener = null
+            return { success: result }
+        }
+        return { success: true, already: true }
+    }
 })

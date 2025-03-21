@@ -1,0 +1,19 @@
+{
+    "name": "command-key-listener",
+    "version": "1.0.0",
+    "description": "Native module to listen for double-press of Command key",
+    "main": "index.js",
+    "type": "module",
+    "scripts": {
+        "build": "node-gyp rebuild",
+        "clean": "node-gyp clean"
+    },
+    "keywords": [
+        "electron",
+        "macos",
+        "commandkey"
+    ],
+    "author": "",
+    "license": "MIT",
+    "gypfile": true
+}

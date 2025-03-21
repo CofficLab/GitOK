@@ -18,6 +18,7 @@ const ipcHandle = (): void => window.electron.ipcRenderer.send('ping')
       <span class="ts">TypeScript</span>
     </div>
     <h1 class="text-2xl font-bold bg-red-500">Hello World</h1>
+    <input type="text" />
     <button class="btn btn-primary">Click me</button>
     <p class="tip">Please try pressing <code>F12</code> to open the devTool</p>
     <div class="actions">
