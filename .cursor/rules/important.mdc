@@ -28,13 +28,15 @@ alwaysApply: true
 - 注释、文档使用中文
 - 写代码时注意根目录中 prettier 相关配置
 
-## UI
-
-- 使用 daisyui 和 tailwindcss 来写样式
-
-## TailwindCSS
+## Electron 项目
 
 - tailwind.config.js 在新版中已经不需要了
+- 使用 daisyui 和 tailwindcss 来写样式
+- 使用Vue
+
+
+
+
 
 
 

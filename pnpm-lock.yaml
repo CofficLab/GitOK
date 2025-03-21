@@ -134,14 +134,14 @@ importers:
         specifier: '>=22.0.0'
         version: 35.0.3
       node-addon-api:
-        specifier: ^8.0.0
-        version: 8.3.1
+        specifier: ^7.0.0
+        version: 7.1.1
     devDependencies:
       '@types/node':
-        specifier: ^18.0.0
-        version: 18.19.80
+        specifier: ^22.13.0
+        version: 22.13.10
       typescript:
-        specifier: ^5.0.0
+        specifier: ^5.8.0
         version: 5.8.2
 
   packages/mcp-core:
@@ -173,6 +173,19 @@ importers:
         version: 10.9.2(@types/node@22.13.10)(typescript@5.8.2)
       typescript:
         specifier: ^5.8.2
+        version: 5.8.2
+
+  packages/mcp-plugin:
+    dependencies:
+      electron:
+        specifier: ^28.0.0
+        version: 28.3.3
+      mcp-core:
+        specifier: workspace:*
+        version: link:../mcp-core
+    devDependencies:
+      typescript:
+        specifier: ^5.0.0
         version: 5.8.2
 
   packages/vsc_extension:
@@ -1954,6 +1967,11 @@ packages:
       '@swc/core':
         optional: true
 
+  electron@28.3.3:
+    resolution: {integrity: sha512-ObKMLSPNhomtCOBAxFS8P2DW/4umkh72ouZUlUKzXGtYuPzgr1SYhskhFWgzAsPtUzhL2CzyV2sfbHcEW4CXqw==}
+    engines: {node: '>= 12.20.55'}
+    hasBin: true
+
   electron@35.0.3:
     resolution: {integrity: sha512-kjQAYEWXSr2TyK19IZoF85dzFIBaYuX7Yp/C+34b5Y/jmI2z270CGie+RjmEGMMitsy0G8YJKftukhYMuWlK6g==}
     engines: {node: '>= 12.20.55'}
@@ -3031,10 +3049,6 @@ packages:
 
   node-addon-api@7.1.1:
     resolution: {integrity: sha512-5m3bsyrjFWE1xf7nz7YXdN4udnVtXK6/Yfgn5qnahL6bCkf2yKt4k3nuTKAtT4r3IG8JNR2ncsIMdZuAzJjHQQ==}
-
-  node-addon-api@8.3.1:
-    resolution: {integrity: sha512-lytcDEdxKjGJPTLEfW4mYMigRezMlyJY8W4wxJK8zE533Jlb8L8dRuObJFWg2P+AuOIxoCgKF+2Oq4d4Zd0OUA==}
-    engines: {node: ^18 || ^20 || >= 21}
 
   node-api-version@0.2.0:
     resolution: {integrity: sha512-fthTTsi8CxaBXMaBAD7ST2uylwvsnYxh2PfaScwpMhos6KlSFajXQPcM4ogNE1q2s3Lbz9GCGqeIHC+C6OZnKg==}
@@ -5972,6 +5986,14 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  electron@28.3.3:
+    dependencies:
+      '@electron/get': 2.0.3
+      '@types/node': 18.19.80
+      extract-zip: 2.0.1
+    transitivePeerDependencies:
+      - supports-color
+
   electron@35.0.3:
     dependencies:
       '@electron/get': 2.0.3
@@ -7164,8 +7186,6 @@ snapshots:
     optional: true
 
   node-addon-api@7.1.1: {}
-
-  node-addon-api@8.3.1: {}
 
   node-api-version@0.2.0:
     dependencies:
