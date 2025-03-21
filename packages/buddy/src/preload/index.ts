@@ -95,6 +95,31 @@ const api = {
     // 卸载插件
     uninstallPlugin: (pluginId: string) =>
       ipcRenderer.invoke('uninstall-plugin', pluginId),
+
+    // 添加插件视图相关API
+    views: {
+      // 创建插件视图
+      create: (viewId: string, url: string) =>
+        ipcRenderer.invoke('create-plugin-view', { viewId, url }),
+
+      // 显示插件视图
+      show: (
+        viewId: string,
+        bounds?: { x: number; y: number; width: number; height: number }
+      ) => ipcRenderer.invoke('show-plugin-view', { viewId, bounds }),
+
+      // 隐藏插件视图
+      hide: (viewId: string) =>
+        ipcRenderer.invoke('hide-plugin-view', { viewId }),
+
+      // 销毁插件视图
+      destroy: (viewId: string) =>
+        ipcRenderer.invoke('destroy-plugin-view', { viewId }),
+
+      // 切换插件视图的开发者工具
+      toggleDevTools: (viewId: string) =>
+        ipcRenderer.invoke('toggle-plugin-devtools', { viewId }),
+    },
   },
   // MCP 插件相关 API
   mcp: {

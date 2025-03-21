@@ -32,6 +32,9 @@ importers:
       electron-updater:
         specifier: ^6.3.9
         version: 6.3.9
+      lucide-vue-next:
+        specifier: ^0.483.0
+        version: 0.483.0(vue@3.5.13(typescript@5.8.2))
       unzipper:
         specifier: ^0.12.3
         version: 0.12.3
@@ -3013,6 +3016,11 @@ packages:
   lru-cache@7.18.3:
     resolution: {integrity: sha512-jumlc0BIUrS3qJGgIkWZsyfAM7NCWiBcCDhnd+3NNM5KbBmLTgHVfWBcg6W+rLUsIpzpERPsvwUP7CckAQSOoA==}
     engines: {node: '>=12'}
+
+  lucide-vue-next@0.483.0:
+    resolution: {integrity: sha512-oMX1hfH7hOAdwaJdddYTSN0Z+WomndF3KXryCP/I6iu+4jZL6a4YyYi1J23EzP3/wOWCaj9mDuVhxgK+xqX8vQ==}
+    peerDependencies:
+      vue: '>=3.0.1'
 
   magic-string@0.30.17:
     resolution: {integrity: sha512-sNPKHvyjVf7gyjwS4xGTaW/mCnF8wnjtifKBEhxfZ7E/S8tQ0rssrwGNn6q8JH/ohItJfSQp9mBtQYuTlH5QnA==}
@@ -7273,6 +7281,10 @@ snapshots:
       yallist: 4.0.0
 
   lru-cache@7.18.3: {}
+
+  lucide-vue-next@0.483.0(vue@3.5.13(typescript@5.8.2)):
+    dependencies:
+      vue: 3.5.13(typescript@5.8.2)
 
   magic-string@0.30.17:
     dependencies:

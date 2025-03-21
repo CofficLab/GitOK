@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive, computed } from 'vue'
+import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
 import TitleBar from './components/TitleBar.vue'
 import SearchBar from './components/SearchBar.vue'
 import PluginActionList from './components/PluginActionList.vue'
@@ -14,6 +14,7 @@ const searchKeyword = ref('')
 
 // PluginManager组件引用
 const pluginManager = ref()
+const actionView = ref()
 
 // 状态信息
 const statusInfo = reactive({
@@ -83,6 +84,78 @@ const handleKeyDown = (event: KeyboardEvent) => {
     }
 }
 
+// 处理从插件视图接收的消息
+const handlePluginMessage = (...args: unknown[]) => {
+    const event = args[0] as any;
+    const message = args[1] as { viewId: string, channel: string, data: any };
+
+    console.log(`收到插件消息 - 视图ID: ${message.viewId}, 频道: ${message.channel}`, message.data)
+
+    // 根据消息类型处理不同的操作
+    switch (message.channel) {
+        case 'close':
+            closePluginView()
+            break
+        case 'execute-action':
+            if (message.data?.actionId && pluginManager.value) {
+                pluginManager.value.executePluginAction(message.data.actionId)
+            }
+            break
+        // 可以根据需要添加更多消息类型处理
+    }
+}
+
+// 处理插件视图请求关闭
+const handlePluginCloseRequest = (...args: unknown[]) => {
+    const event = args[0] as any;
+    const message = args[1] as { viewId: string };
+
+    console.log(`插件视图请求关闭: ${message.viewId}`)
+    closePluginView()
+}
+
+// 关闭当前插件视图
+const closePluginView = () => {
+    appState.selectedAction = null
+}
+
+// 向当前打开的插件视图发送消息
+const sendMessageToPlugin = (channel: string, data: any) => {
+    if (!appState.selectedAction) {
+        console.warn('没有选中的动作，无法发送消息')
+        return
+    }
+
+    // 从ActionView组件引用获取当前视图ID
+    const viewId = actionView.value?.currentViewId
+
+    if (!viewId) {
+        console.warn('无法获取当前视图ID')
+        return
+    }
+
+    window.electron.send('host-to-plugin', {
+        viewId,
+        channel,
+        data
+    })
+}
+
+// 在组件加载时注册消息监听
+onMounted(() => {
+    // 注册接收插件消息的处理函数
+    window.electron.receive('plugin-message', handlePluginMessage)
+    // 注册插件视图请求关闭的处理函数
+    window.electron.receive('plugin-close-requested', handlePluginCloseRequest)
+})
+
+// 在组件卸载时清理消息监听
+onUnmounted(() => {
+    // 移除消息监听
+    window.electron.removeListener('plugin-message', handlePluginMessage)
+    window.electron.removeListener('plugin-close-requested', handlePluginCloseRequest)
+})
+
 // 计算属性：是否显示主界面
 const showMainInterface = computed(() => !appState.showPluginStore || !!appState.selectedAction)
 // 计算属性：是否显示插件商店
@@ -98,7 +171,8 @@ const showActionView = computed(() => !!appState.selectedAction)
         <!-- 插件管理器 -->
         <PluginManager ref="pluginManager" />
 
-        <div class="main-container flex-1 flex flex-col overflow-hidden p-4 max-w-3xl mx-auto w-full">
+        <!-- 主容器，但不包含状态栏 -->
+        <div class="main-content flex-1 flex flex-col overflow-hidden p-4 max-w-3xl mx-auto w-full">
             <!-- 主界面 -->
             <div v-if="showMainInterface" class="flex-1 flex flex-col">
                 <!-- 搜索框组件 -->
@@ -107,7 +181,14 @@ const showActionView = computed(() => !!appState.selectedAction)
 
                 <!-- 动作视图（如果有选中的动作） -->
                 <div v-if="showActionView" class="flex-1 mt-4 overflow-hidden">
-                    <ActionView :action="appState.selectedAction" />
+                    <ActionView ref="actionView" :action="appState.selectedAction" />
+                    <!-- 添加返回按钮 -->
+                    <div class="mt-2 flex justify-end">
+                        <button @click="closePluginView" class="btn btn-sm btn-ghost">
+                            <i class="i-mdi-arrow-left mr-1"></i>
+                            返回
+                        </button>
+                    </div>
                 </div>
                 <!-- 否则显示动作列表 -->
                 <div v-else class="flex-1">
@@ -120,10 +201,12 @@ const showActionView = computed(() => !!appState.selectedAction)
             <div v-if="showPluginStore" class="flex-1 overflow-hidden">
                 <PluginStore />
             </div>
+        </div>
 
-            <!-- 状态栏组件 -->
+        <!-- 状态栏组件 - 从主容器中分离出来，使其始终显示 -->
+        <div class="status-bar-container w-full max-w-3xl px-4 mb-4 mt-2 relative z-50">
             <StatusBar :gitRepo="statusInfo.gitRepo" :branch="statusInfo.branch" :commits="statusInfo.commits"
-                :lastUpdated="statusInfo.lastUpdated" class="mt-4">
+                :lastUpdated="statusInfo.lastUpdated">
                 <!-- 状态栏右侧额外内容，添加插件商店按钮 -->
                 <template #right>
                     <button @click="togglePluginStore" class="btn btn-sm btn-ghost"
@@ -138,8 +221,14 @@ const showActionView = computed(() => !!appState.selectedAction)
 </template>
 
 <style scoped>
-.main-container {
-    max-height: calc(100vh - 32px);
-    /* 减去TitleBar的高度 */
+.main-content {
+    max-height: calc(100vh - 80px);
+    /* 减去TitleBar和StatusBar的高度 */
+}
+
+.status-bar-container {
+    /* 确保状态栏始终可见 */
+    position: relative;
+    z-index: 50;
 }
 </style>
