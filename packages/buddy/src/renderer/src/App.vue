@@ -1,19 +1,58 @@
 <script setup lang="ts">
-import { ref, onMounted, reactive } from 'vue'
+import { ref, onMounted, reactive, computed, watch } from 'vue'
 import TitleBar from './components/TitleBar.vue'
 import "./app.css"
 
-// 模拟搜索结果数据
-const searchResults = reactive([
-    { id: 1, title: "GitOK: 快速启动", description: "启动GitOK应用", icon: 'i-mdi-rocket-launch' },
-    { id: 2, title: "Git: 提交更改", description: "提交当前仓库的所有更改", icon: 'i-mdi-source-commit' },
-    { id: 3, title: "Git: 拉取更新", description: "从远程仓库拉取最新代码", icon: 'i-mdi-source-pull' },
-    { id: 4, title: "Git: 创建分支", description: "创建新的功能分支", icon: 'i-mdi-source-branch-plus' },
-    { id: 5, title: "Git: 合并分支", description: "合并指定分支到当前分支", icon: 'i-mdi-source-merge' }
-])
+// 模拟所有可用的插件动作
+const allPluginActions = [
+    { id: 'git-commit', title: "Git: 提交更改", description: "提交当前仓库的所有更改", icon: 'i-mdi-source-commit', plugin: 'git-plugin' },
+    { id: 'git-pull', title: "Git: 拉取更新", description: "从远程仓库拉取最新代码", icon: 'i-mdi-source-pull', plugin: 'git-plugin' },
+    { id: 'git-push', title: "Git: 推送更改", description: "将本地提交推送到远程仓库", icon: 'i-mdi-source-repository-push', plugin: 'git-plugin' },
+    { id: 'git-branch', title: "Git: 创建分支", description: "创建新的功能分支", icon: 'i-mdi-source-branch-plus', plugin: 'git-plugin' },
+    { id: 'git-merge', title: "Git: 合并分支", description: "合并指定分支到当前分支", icon: 'i-mdi-source-merge', plugin: 'git-plugin' },
+    { id: 'git-checkout', title: "Git: 切换分支", description: "切换到指定的分支", icon: 'i-mdi-source-branch', plugin: 'git-plugin' },
+    { id: 'npm-install', title: "NPM: 安装依赖", description: "安装项目依赖", icon: 'i-mdi-npm', plugin: 'npm-plugin' },
+    { id: 'npm-start', title: "NPM: 启动项目", description: "启动开发服务器", icon: 'i-mdi-play', plugin: 'npm-plugin' },
+    { id: 'npm-build', title: "NPM: 构建项目", description: "构建生产版本", icon: 'i-mdi-package', plugin: 'npm-plugin' },
+    { id: 'vscode-open', title: "VSCode: 打开项目", description: "在VS Code中打开当前项目", icon: 'i-mdi-microsoft-visual-studio-code', plugin: 'vscode-plugin' }
+]
 
 // 搜索关键词
 const searchKeyword = ref('')
+
+// 搜索结果
+const searchResults = computed(() => {
+    if (!searchKeyword.value) {
+        // 无输入时显示最常用的几个动作
+        return allPluginActions.slice(0, 5)
+    }
+
+    // 关键字搜索逻辑
+    const keyword = searchKeyword.value.toLowerCase()
+    return allPluginActions
+        .filter(action => {
+            return action.title.toLowerCase().includes(keyword) ||
+                action.description.toLowerCase().includes(keyword) ||
+                action.plugin.toLowerCase().includes(keyword)
+        })
+        .sort((a, b) => {
+            // 标题匹配的优先级最高
+            const aInTitle = a.title.toLowerCase().includes(keyword)
+            const bInTitle = b.title.toLowerCase().includes(keyword)
+
+            if (aInTitle && !bInTitle) return -1
+            if (!aInTitle && bInTitle) return 1
+
+            // 其次是插件名称匹配
+            const aInPlugin = a.plugin.toLowerCase().includes(keyword)
+            const bInPlugin = b.plugin.toLowerCase().includes(keyword)
+
+            if (aInPlugin && !bInPlugin) return -1
+            if (!aInPlugin && bInPlugin) return 1
+
+            return 0
+        })
+})
 
 // 状态信息
 const statusInfo = reactive({
@@ -26,19 +65,35 @@ const statusInfo = reactive({
 // 搜索处理
 const handleSearch = () => {
     console.log(`搜索: ${searchKeyword.value}`)
-    // 这里可以添加实际的搜索逻辑
+    // 点击搜索按钮时可以执行特定逻辑
 }
 
-// 处理结果项点击
-const handleResultClick = (result) => {
-    console.log(`选中: ${result.title}`)
-    // 这里可以添加点击后的操作逻辑
+// 处理实时输入
+const handleInput = () => {
+    console.log(`触发插件管理系统, 关键字: ${searchKeyword.value}`)
+    // 此处可以调用真实的插件管理系统API
 }
+
+// 插件动作执行
+const executePluginAction = (action) => {
+    console.log(`执行插件动作: ${action.title}，来自插件: ${action.plugin}`)
+    // 这里模拟执行插件动作
+}
+
+// 监听搜索关键字变化
+watch(searchKeyword, (newValue) => {
+    handleInput()
+})
 
 // 按下Enter键触发搜索
 const handleKeyDown = (event) => {
-    if (event.key === 'Enter') {
-        handleSearch()
+    if (event.key === 'Enter' && searchResults.value.length > 0) {
+        // 执行第一个结果的动作
+        executePluginAction(searchResults.value[0])
+    } else if (event.key === 'ArrowDown' && searchResults.value.length > 0) {
+        // 焦点移到第一个结果（可以进一步实现完整的键盘导航）
+        const firstResult = document.querySelector('.results-container li a') as HTMLElement
+        firstResult?.focus()
     }
 }
 
@@ -56,9 +111,9 @@ onMounted(() => {
             <!-- 顶部搜索框 -->
             <div class="search-container mb-4">
                 <div class="relative">
-                    <input id="search-input" type="text" v-model="searchKeyword" @keydown="handleKeyDown"
-                        placeholder="搜索Git命令、文件或仓库..." class="input input-bordered w-full pl-10 py-3 text-lg"
-                        autofocus />
+                    <input id="search-input" type="text" v-model="searchKeyword" @input="handleInput"
+                        @keydown="handleKeyDown" placeholder="搜索Git命令、NPM操作或VS Code功能..."
+                        class="input input-bordered w-full pl-10 py-3 text-lg" autofocus />
                     <div class="absolute inset-y-0 left-0 flex items-center pl-3">
                         <i class="i-mdi-magnify text-xl text-primary"></i>
                     </div>
@@ -72,13 +127,14 @@ onMounted(() => {
             <!-- 中间搜索结果列表 -->
             <div class="results-container flex-1 overflow-y-auto mb-4 rounded-lg border border-base-300">
                 <ul class="menu bg-base-200 rounded-lg">
-                    <li v-for="result in searchResults" :key="result.id" @click="handleResultClick(result)">
-                        <a class="flex items-center p-3 hover:bg-base-300">
+                    <li v-for="result in searchResults" :key="result.id" @click="executePluginAction(result)">
+                        <a class="flex items-center p-3 hover:bg-base-300 focus:bg-base-300 outline-none">
                             <i :class="result.icon" class="text-2xl mr-3"></i>
-                            <div>
+                            <div class="flex-1">
                                 <div class="font-medium">{{ result.title }}</div>
                                 <div class="text-sm opacity-70">{{ result.description }}</div>
                             </div>
+                            <span class="badge badge-sm">{{ result.plugin }}</span>
                         </a>
                     </li>
                     <li v-if="searchResults.length === 0" class="p-4 text-center text-base-content/50">
