@@ -9,6 +9,8 @@
     "composite": true,
     "types": [
       "electron-vite/node"
-    ]
+    ],
+    "moduleResolution": "node16",
+    "module": "node16"
   }
 }
