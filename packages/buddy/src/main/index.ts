@@ -3,6 +3,7 @@ import { join } from 'path';
 import { electronApp, optimizer, is } from '@electron-toolkit/utils';
 import icon from '../../resources/icon.png?asset';
 import { configManager, type WindowConfig } from './config';
+import { initPluginSystem } from './plugins';
 
 // 声明CommandKeyListener类型但不导入模块
 interface CommandKeyListener {
@@ -19,12 +20,15 @@ let commandKeyListener: CommandKeyListener | null = null;
 let isQuitting = false;
 
 function createWindow(): void {
-  const showTrafficLights = configManager.getWindowConfig().showTrafficLights;
+  const windowConfig = configManager.getWindowConfig();
+  const showTrafficLights = windowConfig.showTrafficLights;
+  const showDebugToolbar = windowConfig.showDebugToolbar;
+  const debugToolbarPosition = windowConfig.debugToolbarPosition || 'right';
 
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 900,
-    height: 670,
+    width: 1200,
+    height: 1000,
     show: false,
     autoHideMenuBar: true,
     ...(process.platform === 'linux' ? { icon } : {}),
@@ -45,6 +49,13 @@ function createWindow(): void {
 
   mainWindow.on('ready-to-show', () => {
     mainWindow.show();
+
+    // 根据配置决定是否打开开发者工具及其位置
+    if (showDebugToolbar) {
+      mainWindow.webContents.openDevTools({
+        mode: debugToolbarPosition,
+      });
+    }
   });
 
   mainWindow.webContents.setWindowOpenHandler((details) => {
@@ -158,6 +169,9 @@ app.whenReady().then(async () => {
     // dock icon is clicked and there are no other windows open.
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
   });
+
+  // 初始化插件系统
+  initPluginSystem();
 });
 
 // 当所有窗口都关闭时，停止Command键监听器

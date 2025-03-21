@@ -200,6 +200,18 @@ importers:
         specifier: ^3.3.0
         version: 3.5.13(typescript@5.8.2)
 
+  packages/simple-plugin:
+    devDependencies:
+      archiver:
+        specifier: ^5.3.1
+        version: 5.3.2
+      fs-extra:
+        specifier: ^11.1.0
+        version: 11.3.0
+      typescript:
+        specifier: ^5.0.0
+        version: 5.8.2
+
   packages/vsc_extension:
     dependencies:
       chalk:
