@@ -15,10 +15,10 @@
     "build:mcp": "pnpm -r build:mcp",
     "dev:app": "pnpm --filter buddy dev",
     "dev:ext": "nodemon pipeline.mjs",
+    "mcp": "pnpm --filter mcp-core test",
     "lint": "pnpm -r lint",
     "test": "pnpm -r test",
-    "clean": "pnpm -r clean",
-    "run:mcp": "pnpm --filter smart-buddy run:mcp"
+    "clean": "pnpm -r clean"
   },
   "engines": {
     "node": ">=18.0.0",
