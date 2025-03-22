@@ -12,6 +12,7 @@ export interface WindowConfig {
   spotlightHotkey?: string; // 全局快捷键
   spotlightSize?: { width: number; height: number }; // 窗口尺寸
   alwaysOnTop?: boolean; // 是否保持在最上层
+  followDesktop?: boolean; // 是否跟随当前桌面/工作区
 }
 
 interface AppConfig {

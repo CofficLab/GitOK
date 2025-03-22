@@ -124,12 +124,27 @@ function createWindow(): void {
   // Spotlight模式下设置窗口失焦自动隐藏
   if (spotlightMode) {
     mainWindow.on('blur', () => {
+      // 添加一个小延迟，防止窗口刚显示就触发blur事件
       if (
         mainWindow &&
         !mainWindow.isDestroyed() &&
         windowConfig.spotlightMode
       ) {
-        mainWindow.hide();
+        // 使用标志记录最后一次显示的时间
+        // @ts-ignore 忽略类型检查错误
+        const lastShowTime = mainWindow.lastShowTime || 0;
+        const now = Date.now();
+
+        // @ts-ignore 忽略类型检查错误
+        const justTriggered = mainWindow.justTriggered === true;
+
+        // 如果窗口刚刚被触发显示，或者刚刚显示（小于500毫秒），则不要立即隐藏
+        if (justTriggered || now - lastShowTime < 500) {
+          console.log('忽略失焦事件，窗口刚刚显示');
+        } else {
+          console.log('窗口失去焦点，自动隐藏');
+          mainWindow.hide();
+        }
       }
     });
   }
@@ -712,12 +727,116 @@ function toggleMainWindow() {
   if (mainWindow.isVisible()) {
     mainWindow.hide();
   } else {
-    // 在显示窗口前，将其移动到屏幕中央
-    if (windowConfig.spotlightMode) {
-      mainWindow.center();
+    // 获取当前鼠标所在屏幕的信息
+    const { screen } = require('electron');
+    const cursorPoint = screen.getCursorScreenPoint();
+    const currentDisplay = screen.getDisplayNearestPoint(cursorPoint);
+
+    // 计算窗口在当前显示器上的居中位置
+    const windowWidth =
+      windowConfig.spotlightMode && windowConfig.spotlightSize
+        ? windowConfig.spotlightSize.width
+        : mainWindow.getBounds().width;
+    const windowHeight =
+      windowConfig.spotlightMode && windowConfig.spotlightSize
+        ? windowConfig.spotlightSize.height
+        : mainWindow.getBounds().height;
+
+    const x = Math.floor(
+      currentDisplay.workArea.x +
+        (currentDisplay.workArea.width - windowWidth) / 2
+    );
+    const y = Math.floor(
+      currentDisplay.workArea.y +
+        (currentDisplay.workArea.height - windowHeight) / 2
+    );
+
+    // 记录显示时间戳
+    // @ts-ignore 忽略类型检查错误
+    mainWindow.lastShowTime = Date.now();
+    // 设置额外的标志，表示窗口刚刚被通过快捷键打开
+    // @ts-ignore 忽略类型检查错误
+    mainWindow.justTriggered = true;
+
+    // 窗口是否跟随桌面
+    if (windowConfig.followDesktop) {
+      // macOS特定优化
+      if (process.platform === 'darwin') {
+        console.log('跨桌面显示窗口：正在执行macOS特定优化...');
+
+        // 1. 先确保窗口不可见
+        if (mainWindow.isVisible()) {
+          mainWindow.hide();
+        }
+
+        // 2. 设置位置
+        mainWindow.setPosition(x, y);
+
+        // 3. 使窗口在所有工作区可见
+        mainWindow.setVisibleOnAllWorkspaces(true);
+
+        // 4. 确保窗口是顶层窗口
+        const originalAlwaysOnTop = mainWindow.isAlwaysOnTop();
+        mainWindow.setAlwaysOnTop(true);
+
+        // 5. 显示窗口
+        mainWindow.show();
+
+        // 6. 确保窗口聚焦
+        mainWindow.focus();
+
+        // 7. 还原到单桌面可见（重要：延迟执行这一步）
+        setTimeout(() => {
+          if (mainWindow && !mainWindow.isDestroyed()) {
+            mainWindow.setVisibleOnAllWorkspaces(false);
+            // 还原原始的置顶状态
+            mainWindow.setAlwaysOnTop(
+              originalAlwaysOnTop || !!windowConfig.alwaysOnTop
+            );
+            console.log('窗口已设置回当前工作区可见');
+
+            // 延迟500毫秒后重置justTriggered标志
+            setTimeout(() => {
+              if (mainWindow && !mainWindow.isDestroyed()) {
+                // @ts-ignore 忽略类型检查错误
+                mainWindow.justTriggered = false;
+                console.log('窗口触发保护期已结束');
+              }
+            }, 500);
+          }
+        }, 300);
+      } else {
+        // 其他平台的处理
+        mainWindow.setPosition(x, y);
+        mainWindow.setVisibleOnAllWorkspaces(true, {
+          visibleOnFullScreen: true,
+        });
+        mainWindow.show();
+        mainWindow.focus();
+        mainWindow.setVisibleOnAllWorkspaces(false);
+
+        // 延迟500毫秒后重置justTriggered标志
+        setTimeout(() => {
+          if (mainWindow && !mainWindow.isDestroyed()) {
+            // @ts-ignore 忽略类型检查错误
+            mainWindow.justTriggered = false;
+          }
+        }, 500);
+      }
+    } else {
+      // 不跟随桌面的普通显示方式
+      mainWindow.setPosition(x, y);
+      mainWindow.show();
+      mainWindow.focus();
+
+      // 延迟500毫秒后重置justTriggered标志
+      setTimeout(() => {
+        if (mainWindow && !mainWindow.isDestroyed()) {
+          // @ts-ignore 忽略类型检查错误
+          mainWindow.justTriggered = false;
+        }
+      }, 500);
     }
-    mainWindow.show();
-    mainWindow.focus();
   }
 }
 
