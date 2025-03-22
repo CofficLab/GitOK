@@ -5,6 +5,12 @@ window:
   # 是否显示窗口标题栏的红绿灯按钮
   showTrafficLights: false
   # 是否显示调试工具栏
-  showDebugToolbar: true
+  showDebugToolbar: false
   # 调试工具栏位置 (可选值: "right", "bottom", "left", "undocked")
-  debugToolbarPosition: "bottom" 
+  debugToolbarPosition: 'bottom'
+  spotlightMode: true
+  spotlightHotkey: 'CommandOrControl+Space'
+  spotlightSize:
+    width: 700
+    height: 500
+  alwaysOnTop: true

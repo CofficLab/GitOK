@@ -5,6 +5,7 @@ import {
   ipcMain,
   WebContentsView,
   BrowserView,
+  globalShortcut,
 } from 'electron';
 import { join } from 'path';
 import { electronApp, optimizer, is } from '@electron-toolkit/utils';
@@ -25,45 +26,88 @@ let isQuitting = false;
 // 创建一个全局Map来存储插件视图
 const pluginViews = new Map<string, BrowserView>();
 
+// 主窗口引用
+let mainWindow: BrowserWindow | null = null;
+
 function createWindow(): void {
   const windowConfig = configManager.getWindowConfig();
   const showTrafficLights = windowConfig.showTrafficLights;
   const showDebugToolbar = windowConfig.showDebugToolbar;
   const debugToolbarPosition = windowConfig.debugToolbarPosition || 'right';
+  const spotlightMode = windowConfig.spotlightMode;
+  const spotlightSize = windowConfig.spotlightSize || {
+    width: 700,
+    height: 500,
+  };
+  const alwaysOnTop = windowConfig.alwaysOnTop;
 
-  // Create the browser window.
-  const mainWindow = new BrowserWindow({
-    width: 1200,
-    height: 1400,
+  // 如果窗口已经存在，先销毁它
+  if (mainWindow && !mainWindow.isDestroyed()) {
+    mainWindow.destroy();
+  }
+
+  // 基本窗口配置
+  const windowOptions: Electron.BrowserWindowConstructorOptions = {
+    width: spotlightMode ? spotlightSize.width : 1200,
+    height: spotlightMode ? spotlightSize.height : 1400,
     show: false,
     autoHideMenuBar: true,
     ...(process.platform === 'linux' ? { icon } : {}),
-    // macOS 特定配置
-    ...(process.platform === 'darwin'
-      ? {
-          titleBarStyle: showTrafficLights ? 'default' : 'hiddenInset',
-          trafficLightPosition: showTrafficLights
-            ? undefined
-            : { x: -20, y: -20 },
-        }
-      : {}),
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
       sandbox: false,
     },
-  });
+  };
 
+  // Spotlight模式特定配置
+  if (spotlightMode) {
+    Object.assign(windowOptions, {
+      frame: false,
+      transparent: true,
+      resizable: false,
+      movable: true,
+      center: true,
+      alwaysOnTop: alwaysOnTop,
+      skipTaskbar: true,
+      vibrancy: 'under-window', // macOS 特效
+      visualEffectState: 'active',
+      roundedCorners: true,
+    });
+
+    // 如果在macOS上，隐藏dock图标
+    if (process.platform === 'darwin') {
+      app.dock.hide();
+    }
+  } else {
+    // 常规模式下的macOS特定配置
+    if (process.platform === 'darwin') {
+      Object.assign(windowOptions, {
+        titleBarStyle: showTrafficLights ? 'default' : 'hiddenInset',
+        trafficLightPosition: showTrafficLights
+          ? undefined
+          : { x: -20, y: -20 },
+      });
+    }
+  }
+
+  // 创建浏览器窗口
+  mainWindow = new BrowserWindow(windowOptions);
+
+  // 窗口加载完成后显示
   mainWindow.on('ready-to-show', () => {
-    mainWindow.show();
+    if (!spotlightMode) {
+      mainWindow!.show();
+    }
 
     // 根据配置决定是否打开开发者工具及其位置
     if (showDebugToolbar) {
-      mainWindow.webContents.openDevTools({
+      mainWindow!.webContents.openDevTools({
         mode: debugToolbarPosition,
       });
     }
   });
 
+  // 处理外部链接
   mainWindow.webContents.setWindowOpenHandler((details) => {
     shell.openExternal(details.url);
     return { action: 'deny' };
@@ -77,8 +121,21 @@ function createWindow(): void {
     mainWindow.loadFile(join(__dirname, '../renderer/index.html'));
   }
 
+  // Spotlight模式下设置窗口失焦自动隐藏
+  if (spotlightMode) {
+    mainWindow.on('blur', () => {
+      if (
+        mainWindow &&
+        !mainWindow.isDestroyed() &&
+        windowConfig.spotlightMode
+      ) {
+        mainWindow.hide();
+      }
+    });
+  }
+
   // 仅在macOS上设置Command键双击监听器
-  if (process.platform === 'darwin') {
+  if (process.platform === 'darwin' && !spotlightMode) {
     setupCommandKeyListener(mainWindow);
   }
 }
@@ -532,48 +589,68 @@ function findPluginViewIdByWebContents(
   return null;
 }
 
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
-app.whenReady().then(async () => {
-  // Set app user model id for windows
+// Prevent multiple instances
+const isSingleInstance = app.requestSingleInstanceLock();
+if (!isSingleInstance) {
+  app.quit();
+  process.exit(0);
+}
+
+app.on('second-instance', () => {
+  // 重复启动时，显示现有窗口
+  if (mainWindow) {
+    if (mainWindow.isMinimized()) mainWindow.restore();
+    mainWindow.show();
+    mainWindow.focus();
+  }
+});
+
+// 应用准备就绪
+app.whenReady().then(() => {
+  // 设置协议处理
   electronApp.setAppUserModelId('com.electron');
 
-  // Default open or close DevTools by F12 in development
-  // and ignore CommandOrControl + R in production.
-  // see https://github.com/alex8088/electron-toolkit/tree/master/packages/utils
+  // 应用优化
   app.on('browser-window-created', (_, window) => {
     optimizer.watchWindowShortcuts(window);
   });
 
-  // IPC test
-  ipcMain.on('ping', () => console.log('pong'));
+  // 创建窗口
+  createWindow();
+
+  // 设置全局快捷键
+  setupGlobalShortcut();
 
   // 初始化插件系统
   initializePluginSystem();
 
-  // 注册插件视图处理函数
+  // 注册插件视图处理器
   registerPluginViewHandlers();
 
-  createWindow();
+  // 注册IPC Handler
+  // ... (保留现有的IPC处理器注册)
 
   app.on('activate', function () {
-    // On macOS it's common to re-create a window in the app when the
-    // dock icon is clicked and there are no other windows open.
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
   });
 });
 
-// 当所有窗口都关闭时，停止Command键监听器
+// 窗口关闭时处理
 app.on('window-all-closed', () => {
-  // 停止监听器
+  if (process.platform !== 'darwin') {
+    app.quit();
+  }
+});
+
+// 应用退出时
+app.on('will-quit', () => {
+  // 取消注册所有快捷键
+  globalShortcut.unregisterAll();
+
+  // 如果存在Command键监听器，停止它
   if (commandKeyListener) {
     commandKeyListener.stop();
     commandKeyListener = null;
-  }
-
-  if (process.platform !== 'darwin') {
-    app.quit();
   }
 });
 
@@ -626,14 +703,38 @@ ipcMain.handle('toggle-command-double-press', async (_, enabled: boolean) => {
   }
 });
 
-// 监听应用退出事件，停用所有插件
-app.on('before-quit', async () => {
-  // 如果已经在处理退出，则直接返回
-  if (isQuitting) return;
+// 显示或隐藏主窗口
+function toggleMainWindow() {
+  if (!mainWindow) return;
 
-  // 标记正在退出
-  isQuitting = true;
+  const windowConfig = configManager.getWindowConfig();
 
-  // 正常退出应用
-  app.exit(0);
-});
+  if (mainWindow.isVisible()) {
+    mainWindow.hide();
+  } else {
+    // 在显示窗口前，将其移动到屏幕中央
+    if (windowConfig.spotlightMode) {
+      mainWindow.center();
+    }
+    mainWindow.show();
+    mainWindow.focus();
+  }
+}
+
+// 初始化全局快捷键
+function setupGlobalShortcut() {
+  // 清除已有的快捷键
+  globalShortcut.unregisterAll();
+
+  const windowConfig = configManager.getWindowConfig();
+
+  // 如果启用了Spotlight模式，注册全局快捷键
+  if (windowConfig.spotlightMode && windowConfig.spotlightHotkey) {
+    try {
+      globalShortcut.register(windowConfig.spotlightHotkey, toggleMainWindow);
+      console.log(`已注册全局快捷键: ${windowConfig.spotlightHotkey}`);
+    } catch (error) {
+      console.error('注册全局快捷键失败:', error);
+    }
+  }
+}

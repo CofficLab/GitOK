@@ -7,6 +7,11 @@ export interface WindowConfig {
   showTrafficLights: boolean;
   showDebugToolbar: boolean;
   debugToolbarPosition?: 'right' | 'bottom' | 'left' | 'undocked';
+  // Spotlight模式配置
+  spotlightMode: boolean;
+  spotlightHotkey?: string; // 全局快捷键
+  spotlightSize?: { width: number; height: number }; // 窗口尺寸
+  alwaysOnTop?: boolean; // 是否保持在最上层
 }
 
 interface AppConfig {
@@ -18,6 +23,11 @@ const defaultConfig: AppConfig = {
     showTrafficLights: true,
     showDebugToolbar: false,
     debugToolbarPosition: 'right',
+    // Spotlight默认配置
+    spotlightMode: false,
+    spotlightHotkey: 'CommandOrControl+Space',
+    spotlightSize: { width: 700, height: 500 },
+    alwaysOnTop: true,
   },
 };
 

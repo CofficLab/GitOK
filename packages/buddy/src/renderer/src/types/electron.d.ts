@@ -87,8 +87,12 @@ interface MCPAPI {
 // 窗口配置接口
 interface WindowConfig {
   showTrafficLights: boolean;
-  showDebugToolbar?: boolean;
-  debugToolbarPosition?: 'right' | 'bottom' | 'left' | 'top';
+  showDebugToolbar: boolean;
+  debugToolbarPosition?: 'right' | 'bottom' | 'left' | 'undocked';
+  spotlightMode?: boolean;
+  spotlightHotkey?: string;
+  spotlightSize?: { width: number; height: number };
+  alwaysOnTop?: boolean;
 }
 
 // Electron API接口

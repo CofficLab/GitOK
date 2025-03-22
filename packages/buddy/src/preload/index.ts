@@ -111,7 +111,6 @@ const api = {
       // 隐藏插件视图
       hide: (viewId: string) =>
         ipcRenderer.invoke('hide-plugin-view', { viewId }),
-
       // 销毁插件视图
       destroy: (viewId: string) =>
         ipcRenderer.invoke('destroy-plugin-view', { viewId }),

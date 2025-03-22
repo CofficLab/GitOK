@@ -9,6 +9,19 @@ import PluginStore from './components/PluginStore.vue'
 import ActionView from './components/ActionView.vue'
 import type { PluginAction } from './components/PluginManager.vue'
 
+// 检查是否为Spotlight模式
+const isSpotlightMode = ref(false)
+
+// 获取窗口配置
+onMounted(async () => {
+    try {
+        const config = await window.electron.getWindowConfig()
+        isSpotlightMode.value = config.spotlightMode || false
+    } catch (error) {
+        console.error('获取窗口配置失败:', error)
+    }
+})
+
 // 搜索关键词
 const searchKeyword = ref('')
 
@@ -165,13 +178,14 @@ const showActionView = computed(() => !!appState.selectedAction)
 </script>
 
 <template>
-    <div class="app-container h-screen flex flex-col justify-center items-center bg-base-100 text-base-content w-full">
-        <TitleBar />
+    <div class="app-container h-screen flex flex-col justify-center items-center bg-base-100 text-base-content w-full"
+        :class="{ 'spotlight-mode': isSpotlightMode }">
+        <TitleBar v-if="!isSpotlightMode" />
 
         <!-- 插件管理器 -->
         <PluginManager ref="pluginManager" />
 
-        <!-- 主容器，但不包含状态栏 -->
+        <!-- 主容器 -->
         <div class="main-content flex-1 flex flex-col overflow-hidden p-4 max-w-3xl mx-auto w-full">
             <!-- 主界面 -->
             <div v-if="showMainInterface" class="flex-1 flex flex-col">
@@ -203,32 +217,62 @@ const showActionView = computed(() => !!appState.selectedAction)
             </div>
         </div>
 
-        <!-- 状态栏组件 - 从主容器中分离出来，使其始终显示 -->
-        <div class="status-bar-container w-full max-w-3xl px-4 mb-4 mt-2 relative z-50">
-            <StatusBar :gitRepo="statusInfo.gitRepo" :branch="statusInfo.branch" :commits="statusInfo.commits"
-                :lastUpdated="statusInfo.lastUpdated">
-                <!-- 状态栏右侧额外内容，添加插件商店按钮 -->
-                <template #right>
-                    <button @click="togglePluginStore" class="btn btn-sm btn-ghost"
-                        :class="{ 'btn-active': appState.showPluginStore }">
-                        <i class="i-mdi-puzzle-outline mr-1"></i>
-                        插件商店
-                    </button>
-                </template>
-            </StatusBar>
-        </div>
+        <!-- 状态栏 -->
+        <StatusBar v-if="!isSpotlightMode" :gitRepo="statusInfo.gitRepo" :branch="statusInfo.branch"
+            :commits="statusInfo.commits" :lastUpdated="statusInfo.lastUpdated">
+            <template #right>
+                <button @click="togglePluginStore" class="btn btn-xs btn-ghost">
+                    <i class="i-mdi-package-variant mr-1"></i>
+                    插件
+                </button>
+            </template>
+        </StatusBar>
     </div>
 </template>
 
 <style scoped>
-.main-content {
-    max-height: calc(100vh - 80px);
-    /* 减去TitleBar和StatusBar的高度 */
+.app-container {
+    position: relative;
 }
 
-.status-bar-container {
-    /* 确保状态栏始终可见 */
-    position: relative;
-    z-index: 50;
+.main-content {
+    width: 100%;
+    max-width: 900px;
+}
+
+/* Spotlight样式 */
+.spotlight-mode {
+    background-color: transparent !important;
+}
+
+.spotlight-mode .main-content {
+    background-color: rgba(30, 30, 30, 0.8);
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    padding: 12px;
+}
+
+.spotlight-mode :deep(.search-container input) {
+    border-radius: 8px;
+    background-color: rgba(75, 75, 75, 0.5);
+    border: none;
+    color: white;
+}
+
+.spotlight-mode :deep(.plugin-action-list) {
+    color: white;
+}
+
+.spotlight-mode :deep(.plugin-action-item) {
+    background-color: rgba(75, 75, 75, 0.3);
+    margin-bottom: 4px;
+    border-radius: 6px;
+    transition: background-color 0.2s;
+}
+
+.spotlight-mode :deep(.plugin-action-item:hover) {
+    background-color: rgba(100, 100, 100, 0.5);
 }
 </style>

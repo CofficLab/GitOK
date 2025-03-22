@@ -27,6 +27,7 @@ alwaysApply: true
 - 文件的顶部写清楚文档，包括这个文件做什么的、要注意什么等
 - 关键步骤要写清楚注释
 - 注释、文档使用中文
+- Vue组件使用Vue3的语法，且script放在template之上
 
 ## Electron 项目
 
