@@ -56,7 +56,7 @@ const plugin = {
         plugin: PLUGIN_ID,
         viewPath: 'views/time.html',
         viewMode: 'embedded',
-        devTools: true,
+        devTools: false,
       },
       {
         id: `${PLUGIN_ID}:calculate`,
@@ -66,7 +66,7 @@ const plugin = {
         plugin: PLUGIN_ID,
         viewPath: 'views/calculator.html',
         viewMode: 'window',
-        devTools: true,
+        devTools: false,
       },
     ];
 
