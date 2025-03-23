@@ -9,6 +9,7 @@
  * - 提供搜索输入界面
  * - 通过searchStore管理搜索状态
  * - 实时更新搜索关键词
+ * - 自动获取焦点
  * 
  * 技术栈：
  * - Vue 3
@@ -22,11 +23,44 @@
  -->
 
 <script setup lang="ts">
+import { ref, watch, onMounted } from 'vue'
 import { useSearchStore } from '../stores/searchStore'
-import { storeToRefs } from 'pinia'
 
 const searchStore = useSearchStore()
-const { keyword } = storeToRefs(searchStore)
+// 使用本地ref来存储搜索关键词
+const keyword = ref(searchStore.keyword)
+// 搜索输入框引用
+const searchInput = ref<HTMLInputElement | null>(null)
+
+// 监听本地关键词变化并更新 searchStore
+watch(keyword, (newKeyword) => {
+    console.log(`SearchBar: 关键词变化为 "${newKeyword}"`)
+    // 使用updateKeyword触发搜索
+    searchStore.updateKeyword(newKeyword)
+})
+
+// 处理键盘事件
+const handleKeyDown = (event: KeyboardEvent) => {
+    searchStore.handleKeyDown(event)
+}
+
+// 组件挂载后自动聚焦搜索框
+onMounted(() => {
+    // 延迟一下以确保DOM已完全渲染
+    setTimeout(() => {
+        searchInput.value?.focus()
+    }, 100)
+})
+
+// 聚焦搜索框的方法(可以从外部调用)
+const focusSearch = () => {
+    searchInput.value?.focus()
+}
+
+// 暴露方法给父组件
+defineExpose({
+    focus: focusSearch
+})
 </script>
 
 <template>
@@ -38,7 +72,8 @@ const { keyword } = storeToRefs(searchStore)
                         d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
             </span>
-            <input v-model="keyword" type="text" placeholder="Search actions..."
+            <input ref="searchInput" v-model="keyword" type="text" autocomplete="off" placeholder="Search actions..."
+                @keydown="handleKeyDown"
                 class="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500" />
         </div>
     </div>

@@ -144,6 +144,52 @@ class IPCManager extends EventEmitter {
       }
     });
 
+    // 获取插件动作
+    ipcMain.handle('get-plugin-actions', async (_, keyword = '') => {
+      this.logger.debug('处理IPC请求: get-plugin-actions');
+      try {
+        const actions = await pluginManager.getPluginActions(keyword);
+        return { success: true, actions };
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : String(error);
+        this.logger.error('获取插件动作失败', { error: errorMessage });
+        return { success: false, error: errorMessage };
+      }
+    });
+
+    // 执行插件动作
+    ipcMain.handle('execute-plugin-action', async (_, actionId) => {
+      this.logger.debug(`处理IPC请求: execute-plugin-action: ${actionId}`);
+      try {
+        const result = await pluginManager.executePluginAction(actionId);
+        return { success: true, result };
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : String(error);
+        this.logger.error(`执行插件动作失败: ${actionId}`, {
+          error: errorMessage,
+        });
+        return { success: false, error: errorMessage };
+      }
+    });
+
+    // 获取动作视图内容
+    ipcMain.handle('get-action-view', async (_, actionId) => {
+      this.logger.debug(`处理IPC请求: get-action-view: ${actionId}`);
+      try {
+        const content = await pluginManager.getActionView(actionId);
+        return { success: true, content };
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : String(error);
+        this.logger.error(`获取动作视图失败: ${actionId}`, {
+          error: errorMessage,
+        });
+        return { success: false, error: errorMessage };
+      }
+    });
+
     // 打开插件目录
     ipcMain.handle('plugin:openDirectory', async (_, directory: string) => {
       try {

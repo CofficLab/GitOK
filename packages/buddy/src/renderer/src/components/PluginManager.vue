@@ -31,7 +31,7 @@ export interface PluginManagerAPI {
     isLoading: Readonly<boolean>
     selectedAction: Readonly<PluginAction | null>
     actionViewHtml: Readonly<string>
-    loadActions: (keyword?: string) => Promise<void>
+    loadActions: (keyword?: string) => Promise<PluginAction[]>
     executeAction: (actionId: string) => Promise<any>
     loadActionView: (actionId: string) => Promise<void>
 }
@@ -48,7 +48,7 @@ const selectedAction = ref<PluginAction | null>(null)
 const actionViewHtml = ref('')
 
 // 加载插件动作
-const loadPluginActions = async (keyword: string = ''): Promise<void> => {
+const loadPluginActions = async (keyword: string = ''): Promise<PluginAction[]> => {
     logInfo(`加载插件动作，关键词: "${keyword}"`)
     try {
         isLoadingActions.value = true
@@ -59,9 +59,11 @@ const loadPluginActions = async (keyword: string = ''): Promise<void> => {
         const actions = await window.electron.plugins.getPluginActions(keyword)
         logInfo(`获取到 ${actions.length} 个插件动作`)
         pluginActions.value = actions
+        return actions
     } catch (error) {
         logError('获取插件数据失败:', error)
         pluginActions.value = []
+        return []
     } finally {
         isLoadingActions.value = false
     }

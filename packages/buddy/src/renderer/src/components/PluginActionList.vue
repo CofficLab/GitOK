@@ -1,87 +1,68 @@
-<script setup lang="ts">
-import { computed, defineProps, defineEmits } from 'vue'
+<!--
+PluginActionList.vue - 插件动作列表组件
 
-// 插件动作类型定义
-interface PluginAction {
-    id: string
-    title: string
-    description: string
-    icon: string
-    plugin: string
-}
+这个组件负责展示插件提供的动作列表，用于用户选择执行。
+
+主要功能：
+- 显示插件动作列表
+- 处理动作选择事件
+- 支持加载状态显示
+
+props:
+- actions: 要显示的动作列表
+- loading: 是否正在加载动作
+
+事件:
+- select: 当用户选择一个动作时触发
+-->
+
+<script setup lang="ts">
+import { defineProps, defineEmits } from 'vue'
+import type { PluginAction } from './PluginManager.vue'
 
 const props = defineProps<{
     actions: PluginAction[]
-    searchKeyword: string
+    loading: boolean
 }>()
 
-const emit = defineEmits<{
-    (e: 'execute', action: PluginAction): void
+const emits = defineEmits<{
+    select: [action: PluginAction]
 }>()
 
-// 搜索结果
-const searchResults = computed(() => {
-    if (!props.searchKeyword) {
-        // 无输入时显示最常用的几个动作
-        return props.actions.slice(0, 5)
-    }
-
-    // 关键字搜索逻辑
-    const keyword = props.searchKeyword.toLowerCase()
-    return props.actions
-        .filter(action => {
-            return action.title.toLowerCase().includes(keyword) ||
-                action.description.toLowerCase().includes(keyword) ||
-                action.plugin.toLowerCase().includes(keyword)
-        })
-        .sort((a, b) => {
-            // 标题匹配的优先级最高
-            const aInTitle = a.title.toLowerCase().includes(keyword)
-            const bInTitle = b.title.toLowerCase().includes(keyword)
-
-            if (aInTitle && !bInTitle) return -1
-            if (!aInTitle && bInTitle) return 1
-
-            // 其次是插件名称匹配
-            const aInPlugin = a.plugin.toLowerCase().includes(keyword)
-            const bInPlugin = b.plugin.toLowerCase().includes(keyword)
-
-            if (aInPlugin && !bInPlugin) return -1
-            if (!aInPlugin && bInPlugin) return 1
-
-            return 0
-        })
-})
-
-// 执行插件动作
+// 执行动作
 const executeAction = (action: PluginAction) => {
-    emit('execute', action)
+    emits('select', action)
 }
 </script>
 
 <template>
-    <div class="results-container flex-1 overflow-y-auto mb-4 rounded-lg border border-base-300">
-        <ul class="menu bg-base-200 rounded-lg">
-            <li v-for="result in searchResults" :key="result.id" @click="executeAction(result)">
-                <a class="flex items-center p-3 hover:bg-base-300 focus:bg-base-300 outline-none">
-                    <i :class="result.icon" class="text-2xl mr-3"></i>
-                    <div class="flex-1">
-                        <div class="font-medium">{{ result.title }}</div>
-                        <div class="text-sm opacity-70">{{ result.description }}</div>
-                    </div>
-                    <span class="badge badge-sm">{{ result.plugin }}</span>
-                </a>
-            </li>
-            <li v-if="searchResults.length === 0" class="p-4 text-center text-base-content/50">
-                没有找到匹配的结果
+    <div>
+        <!-- 加载状态 -->
+        <div v-if="loading" class="text-center py-4 text-gray-500">
+            <p>加载中...</p>
+        </div>
+
+        <!-- 空状态 -->
+        <div v-else-if="actions.length === 0" class="text-center py-8 text-gray-500">
+            <p>没有找到匹配的动作</p>
+            <p class="text-sm mt-2">尝试其他关键词或安装更多插件</p>
+        </div>
+
+        <!-- 动作列表 -->
+        <ul v-else class="space-y-2">
+            <li v-for="result in actions" :key="result.id" @click="executeAction(result)"
+                class="p-3 border rounded-lg hover:bg-gray-50 cursor-pointer transition-colors flex items-center">
+                <div v-if="result.icon" class="mr-3 text-xl">{{ result.icon }}</div>
+                <div class="flex-1">
+                    <h3 class="font-medium">{{ result.title }}</h3>
+                    <p v-if="result.description" class="text-sm text-gray-600">{{ result.description }}</p>
+                    <p class="text-xs text-gray-400 mt-1">来自: {{ result.plugin }}</p>
+                </div>
             </li>
         </ul>
     </div>
 </template>
 
 <style scoped>
-.results-container {
-    max-height: calc(100vh - 180px);
-    /* 调整以适应搜索框和状态栏 */
-}
+/* 可以在这里添加组件样式 */
 </style>

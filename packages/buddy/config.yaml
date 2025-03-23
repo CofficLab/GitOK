@@ -65,7 +65,7 @@ plugin:
     dev: "dev-plugins"
   # 是否启用插件管理器的日志输出
   # 可选值: true (启用), false (禁用)
-  enableLogging: false
+  enableLogging: true
   # 日志级别
   # 可选值: "debug", "info", "warn", "error"
   logLevel: "info"

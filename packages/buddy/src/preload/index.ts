@@ -68,16 +68,34 @@ const api = {
   // 添加插件系统相关API
   plugins: {
     // 获取所有可用的插件动作
-    getPluginActions: (keyword = '') =>
-      ipcRenderer.invoke('get-plugin-actions', keyword),
+    getPluginActions: async (keyword = '') => {
+      const response = await ipcRenderer.invoke('get-plugin-actions', keyword);
+      return response.success ? response.actions : [];
+    },
 
     // 执行插件动作
-    executeAction: (actionId: string) =>
-      ipcRenderer.invoke('execute-plugin-action', actionId),
+    executeAction: async (actionId: string) => {
+      const response = await ipcRenderer.invoke(
+        'execute-plugin-action',
+        actionId
+      );
+      return response.success ? response.result : null;
+    },
 
     // 获取动作视图内容
-    getActionView: (actionId: string) =>
-      ipcRenderer.invoke('get-action-view', actionId),
+    getActionView: async (actionId: string) => {
+      const response = await ipcRenderer.invoke('get-action-view', actionId);
+      if (response.success) {
+        return {
+          success: true,
+          html: response.content || response.html || '',
+        };
+      }
+      return {
+        success: false,
+        error: response.error || '获取视图失败',
+      };
+    },
 
     // 获取所有插件
     getAllPlugins: () => ipcRenderer.invoke('get-all-plugins'),

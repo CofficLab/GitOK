@@ -3,11 +3,8 @@ ContentView.vue - 内容视图组件
 
 这是应用的内容管理组件，负责：
 1. 管理不同内容视图的切换逻辑
-2. 处理三种主要视图的显示：
-   - 插件动作列表（默认视图）
-   - 动作详情视图
-   - 插件商店视图
-3. 处理视图间的切换动作
+2. 内容区域的显示和导航
+3. 根据当前视图状态显示不同内容
 
 状态管理：
 - 使用appStore管理视图状态
@@ -15,9 +12,8 @@ ContentView.vue - 内容视图组件
 
 视图切换逻辑：
 1. 默认显示插件动作列表
-2. 选中动作后显示动作详情
+2. 选中动作后委托给PluginView组件处理
 3. 打开插件商店时显示商店界面
-4. 返回按钮可以回到动作列表
 
 技术栈：
 - Vue 3 组合式API
@@ -25,35 +21,45 @@ ContentView.vue - 内容视图组件
 - TailwindCSS 样式
 
 注意事项：
-- 所有状态通过store管理，组件只负责渲染
-- 视图切换时注意状态的正确清理
-- 动作执行时需要考虑异步处理
-
-这个组件负责管理内容区域的显示：
-1. 首页视图
-2. 插件管理视图
-
-主要功能：
-- 根据当前视图状态显示不同内容
-- 管理视图之间的切换
-
-技术栈：
-- Vue 3
-- Pinia (appStore)
-- TailwindCSS
-
-注意事项：
-- 通过 appStore 管理视图状态
-- 保持视图切换的流畅性
+- 视图逻辑解耦，各自负责自己的职责
+- 使用store驱动的状态管理降低组件间耦合
 -->
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { ref, computed, inject, onMounted, watch } from 'vue'
 import { useAppStore } from '@renderer/stores/appStore'
-import PluginManager from '@renderer/components/PluginManager.vue'
+import { useSearchStore } from '@renderer/stores/searchStore'
+import PluginActionList from '@renderer/components/PluginActionList.vue'
+import PluginView from '@renderer/views/PluginView.vue'
+import type { PluginManagerAPI, PluginAction } from '@renderer/components/PluginManager.vue'
 
 const appStore = useAppStore()
+const searchStore = useSearchStore()
 const currentView = computed(() => appStore.currentView)
+
+// 插件管理器API
+const pluginManager = inject<PluginManagerAPI>('pluginManager')
+
+// 处理动作选择
+const handleActionSelected = (action: PluginAction) => {
+    searchStore.selectAction(action.id)
+}
+
+// 处理返回到动作列表
+const handleBackToList = () => {
+    searchStore.clearSelectedAction()
+}
+
+// 组件挂载时的初始化
+onMounted(() => {
+    console.log('ContentView 已挂载')
+    console.log(`当前搜索框状态: keyword=${searchStore.keyword}, actions=${searchStore.pluginActions.length}`)
+
+    // 初始化时加载插件动作
+    if (searchStore.pluginActions.length === 0 && !searchStore.isLoading) {
+        searchStore.loadPluginActions()
+    }
+})
 </script>
 
 <template>
@@ -62,9 +68,29 @@ const currentView = computed(() => appStore.currentView)
         <div v-if="currentView === 'home'" class="space-y-4">
             <h1 class="text-2xl font-bold">欢迎使用 GitOK</h1>
             <p class="text-gray-600">这是一个强大的 Git 工具，帮助你更好地管理代码。</p>
+
+            <!-- 插件动作列表 -->
+            <div v-if="!searchStore.selectedActionId" class="mt-8">
+                <h2 class="text-xl font-semibold mb-4">可用动作</h2>
+                <PluginActionList :actions="searchStore.pluginActions" :loading="searchStore.isLoading"
+                    @select="handleActionSelected" />
+            </div>
+
+            <!-- 插件动作视图 -->
+            <PluginView v-else :action-id="searchStore.selectedActionId" @back="handleBackToList" />
         </div>
 
         <!-- 插件管理视图 -->
-        <PluginManager v-else-if="currentView === 'plugins'" />
+        <component :is="currentView === 'plugins' ? 'PluginManager' : 'div'" />
     </div>
 </template>
+
+<style scoped>
+.error {
+    color: red;
+    padding: 1rem;
+    border: 1px solid red;
+    border-radius: 0.5rem;
+    background-color: rgba(255, 0, 0, 0.1);
+}
+</style>

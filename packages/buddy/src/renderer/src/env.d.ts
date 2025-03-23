@@ -45,6 +45,34 @@ interface ElectronAPI {
       node: string;
     };
   };
+  send: (channel: string, ...args: unknown[]) => void;
+  receive: (channel: string, callback: (...args: unknown[]) => void) => void;
+  removeListener: (
+    channel: string,
+    callback: (...args: unknown[]) => void
+  ) => void;
+  plugins: {
+    getPluginActions: (keyword?: string) => Promise<
+      Array<{
+        id: string;
+        title: string;
+        description: string;
+        icon: string;
+        plugin: string;
+        viewPath?: string;
+      }>
+    >;
+    executeAction: (actionId: string) => Promise<any>;
+    getActionView: (actionId: string) => Promise<{
+      success: boolean;
+      content?: string;
+      html?: string; // 兼容旧版响应
+      error?: string;
+    }>;
+    getAllPlugins: () => Promise<any>;
+    getLocalPlugins: () => Promise<any>;
+    getInstalledPlugins: () => Promise<any>;
+  };
 }
 
 interface Window {
