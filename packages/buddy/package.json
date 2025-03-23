@@ -27,6 +27,7 @@
     "daisyui": "^5.0.8",
     "electron-updater": "^6.3.9",
     "lucide-vue-next": "^0.483.0",
+    "pinia": "^3.0.1",
     "unzipper": "^0.12.3",
     "yaml": "^2.7.0"
   },
