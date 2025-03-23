@@ -11,7 +11,7 @@ ContentView.vue - 内容视图组件
 - 使用searchStore管理搜索相关状态
 
 视图切换逻辑：
-1. 默认显示插件动作列表
+1. 默认显示首页或动作列表视图
 2. 选中动作后委托给PluginView组件处理
 3. 打开插件商店时显示商店界面
 
@@ -26,39 +26,64 @@ ContentView.vue - 内容视图组件
 -->
 
 <script setup lang="ts">
-import { ref, computed, inject, onMounted, watch } from 'vue'
+import { computed, onMounted, watch } from 'vue'
 import { useAppStore } from '@renderer/stores/appStore'
 import { useSearchStore } from '@renderer/stores/searchStore'
-import PluginActionList from '@renderer/components/PluginActionList.vue'
-import PluginView from '@renderer/views/PluginView.vue'
-import type { PluginManagerAPI, PluginAction } from '@renderer/components/PluginManager.vue'
+import { HomeView, PluginView, ActionListView, PluginStoreView } from '@renderer/views'
 
 const appStore = useAppStore()
 const searchStore = useSearchStore()
 const currentView = computed(() => appStore.currentView)
-
-// 插件管理器API
-const pluginManager = inject<PluginManagerAPI>('pluginManager')
-
-// 处理动作选择
-const handleActionSelected = (action: PluginAction) => {
-    searchStore.selectAction(action.id)
-}
 
 // 处理返回到动作列表
 const handleBackToList = () => {
     searchStore.clearSelectedAction()
 }
 
-// 组件挂载时的初始化
-onMounted(() => {
-    console.log('ContentView 已挂载')
-    console.log(`当前搜索框状态: keyword=${searchStore.keyword}, actions=${searchStore.pluginActions.length}`)
+// 判断是否应该显示动作列表
+const shouldShowActionList = computed(() => {
+    const hasActions = searchStore.pluginActions.length > 0;
+    const hasKeyword = searchStore.keyword.length > 0;
+    const result = hasActions || hasKeyword;
 
-    // 初始化时加载插件动作
-    if (searchStore.pluginActions.length === 0 && !searchStore.isLoading) {
-        searchStore.loadPluginActions()
-    }
+    console.log(`ContentView: shouldShowActionList = ${result}`, {
+        pluginActionsLength: searchStore.pluginActions.length,
+        keyword: searchStore.keyword,
+        hasActions,
+        hasKeyword,
+        selectedActionId: searchStore.selectedActionId,
+        isLoading: searchStore.isLoading
+    });
+
+    return result;
+})
+
+// 为了调试在搜索时观察 shouldShowActionList 的变化
+watch(() => searchStore.keyword, (newKeyword) => {
+    console.log(`ContentView: 搜索关键词变化为 "${newKeyword}"`);
+
+    // 延迟一下检查 pluginActions
+    setTimeout(() => {
+        console.log(`ContentView: 延迟检查，当前有 ${searchStore.pluginActions.length} 个动作`);
+        console.log(`ContentView: shouldShowActionList = ${shouldShowActionList.value}`);
+    }, 500);
+})
+
+// 为了调试在动作列表变化时观察
+watch(() => searchStore.pluginActions, (newActions) => {
+    console.log(`ContentView: 动作列表更新，现在有 ${newActions.length} 个动作`);
+    console.log(`ContentView: shouldShowActionList = ${shouldShowActionList.value}`);
+}, { deep: true })
+
+// 添加组件挂载时的日志
+onMounted(() => {
+    console.log('ContentView 挂载完成');
+    console.log('初始状态:', {
+        currentView: appStore.currentView,
+        pluginActions: searchStore.pluginActions.length,
+        keyword: searchStore.keyword,
+        isLoading: searchStore.isLoading
+    });
 })
 </script>
 
@@ -66,22 +91,18 @@ onMounted(() => {
     <div class="flex-1 overflow-auto p-4">
         <!-- 首页视图 -->
         <div v-if="currentView === 'home'" class="space-y-4">
-            <h1 class="text-2xl font-bold">欢迎使用 GitOK</h1>
-            <p class="text-gray-600">这是一个强大的 Git 工具，帮助你更好地管理代码。</p>
+            <!-- 显示HomeView内容（当没有搜索关键词且没有插件动作时） -->
+            <HomeView v-if="!shouldShowActionList && !searchStore.selectedActionId" />
 
-            <!-- 插件动作列表 -->
-            <div v-if="!searchStore.selectedActionId" class="mt-8">
-                <h2 class="text-xl font-semibold mb-4">可用动作</h2>
-                <PluginActionList :actions="searchStore.pluginActions" :loading="searchStore.isLoading"
-                    @select="handleActionSelected" />
-            </div>
+            <!-- 插件动作列表（当有搜索关键词或有插件动作时） -->
+            <ActionListView v-else-if="!searchStore.selectedActionId" />
 
             <!-- 插件动作视图 -->
             <PluginView v-else :action-id="searchStore.selectedActionId" @back="handleBackToList" />
         </div>
 
-        <!-- 插件管理视图 -->
-        <component :is="currentView === 'plugins' ? 'PluginManager' : 'div'" />
+        <!-- 插件商店视图 -->
+        <PluginStoreView v-else-if="currentView === 'plugins'" />
     </div>
 </template>
 

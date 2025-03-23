@@ -7,6 +7,7 @@ PluginActionList.vue - 插件动作列表组件
 - 显示插件动作列表
 - 处理动作选择事件
 - 支持加载状态显示
+- 支持键盘导航
 
 props:
 - actions: 要显示的动作列表
@@ -14,6 +15,7 @@ props:
 
 事件:
 - select: 当用户选择一个动作时触发
+- cancel: 当用户取消选择时触发
 -->
 
 <script setup lang="ts">
@@ -27,11 +29,17 @@ const props = defineProps<{
 
 const emits = defineEmits<{
     select: [action: PluginAction]
+    cancel: []
 }>()
 
 // 执行动作
 const executeAction = (action: PluginAction) => {
     emits('select', action)
+}
+
+// 处理取消操作
+const handleCancel = () => {
+    emits('cancel')
 }
 </script>
 
@@ -50,8 +58,12 @@ const executeAction = (action: PluginAction) => {
 
         <!-- 动作列表 -->
         <ul v-else class="space-y-2">
-            <li v-for="result in actions" :key="result.id" @click="executeAction(result)"
-                class="p-3 border rounded-lg hover:bg-gray-50 cursor-pointer transition-colors flex items-center">
+            <li v-for="(result, index) in actions" :key="result.id"
+                class="plugin-action-item p-3 border rounded-lg hover:bg-gray-50 cursor-pointer transition-colors flex items-center"
+                :tabindex="index + 1" @click="executeAction(result)" @keydown.enter="executeAction(result)"
+                @keydown.space.prevent="executeAction(result)" @keydown.esc="handleCancel"
+                @keydown.up="index > 0 ? $el.previousElementSibling?.focus() : null"
+                @keydown.down="index < actions.length - 1 ? $el.nextElementSibling?.focus() : null">
                 <div v-if="result.icon" class="mr-3 text-xl">{{ result.icon }}</div>
                 <div class="flex-1">
                     <h3 class="font-medium">{{ result.title }}</h3>
@@ -64,5 +76,8 @@ const executeAction = (action: PluginAction) => {
 </template>
 
 <style scoped>
-/* 可以在这里添加组件样式 */
+.plugin-action-item:focus {
+    outline: 2px solid #4299e1;
+    background-color: #ebf8ff;
+}
 </style>

@@ -70,7 +70,23 @@ const api = {
     // 获取所有可用的插件动作
     getPluginActions: async (keyword = '') => {
       const response = await ipcRenderer.invoke('get-plugin-actions', keyword);
-      return response.success ? response.actions : [];
+      console.log('preload: get-plugin-actions 响应:', response);
+
+      // 检查响应格式并提取动作数组
+      if (response && typeof response === 'object' && 'success' in response) {
+        if (response.success && Array.isArray(response.actions)) {
+          console.log(
+            `preload: 从响应中提取 ${response.actions.length} 个动作`
+          );
+          return response.actions;
+        } else {
+          console.log('preload: 响应成功但无动作或格式错误:', response);
+          return [];
+        }
+      } else {
+        console.log('preload: 返回原始响应');
+        return response;
+      }
     },
 
     // 执行插件动作

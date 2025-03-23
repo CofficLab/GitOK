@@ -19,7 +19,7 @@ App.vue - 应用程序入口组件
 -->
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, onUnmounted } from 'vue'
+import { ref, reactive, onMounted, onUnmounted, watch } from 'vue'
 import SearchBar from './layouts/SearchBar.vue'
 import PluginManager from './components/PluginManager.vue'
 import { useSearchStore } from './stores/searchStore'
@@ -99,6 +99,31 @@ const focusSearchBar = () => {
     }
 }
 
+// 手动测试API调用 - 直接调用获取插件动作
+const testGetPluginActions = async () => {
+    console.log('APP: 手动测试 getPluginActions API...');
+    try {
+        const response = await window.electron.plugins.getPluginActions('计算器');
+        console.log('APP: API响应:', response);
+
+        // 分析响应格式
+        if (Array.isArray(response)) {
+            console.log('APP: 响应是数组格式，长度:', response.length);
+        } else if (response && typeof response === 'object') {
+            console.log('APP: 响应是对象格式:', Object.keys(response));
+            if ('success' in response) {
+                console.log('APP: success 字段值:', response.success);
+            }
+            if ('actions' in response) {
+                console.log('APP: actions 字段是数组?', Array.isArray(response.actions));
+                console.log('APP: actions 长度:', response.actions?.length || 0);
+            }
+        }
+    } catch (error) {
+        console.error('APP: API调用失败:', error);
+    }
+}
+
 // 在组件加载时注册消息监听和初始化
 onMounted(() => {
     // 注册接收插件消息的处理函数
@@ -114,6 +139,9 @@ onMounted(() => {
 
     // 初始聚焦搜索框
     setTimeout(focusSearchBar, 300)
+
+    // 延迟1秒后执行API测试
+    setTimeout(testGetPluginActions, 1000);
 })
 
 // 在组件卸载时清理消息监听
@@ -125,21 +153,44 @@ onUnmounted(() => {
     // 移除全局键盘事件
     document.removeEventListener('keydown', handleGlobalKeyDown)
 })
+
+// 监听搜索输入变化，加载相应的插件动作
+watch(() => searchStore.keyword, async (newKeyword) => {
+    console.log(`App.vue: 搜索关键词变化为 "${newKeyword}"`);
+
+    // 重新加载插件动作
+    try {
+        console.log('App.vue: 开始加载插件动作...');
+        await searchStore.loadPluginActions();
+        console.log(`App.vue: 插件动作加载完成，共 ${searchStore.pluginActions.length} 个`);
+
+        // 如果有关键词但没有动作，重试一次
+        if (newKeyword && searchStore.pluginActions.length === 0) {
+            console.log('App.vue: 检测到有关键词但没有动作，延迟1秒重试...');
+            setTimeout(async () => {
+                await searchStore.loadPluginActions();
+                console.log(`App.vue: 重试加载完成，共 ${searchStore.pluginActions.length} 个动作`);
+            }, 1000);
+        }
+    } catch (error) {
+        console.error('App.vue: 加载插件动作失败', error);
+    }
+}, { immediate: true })
 </script>
 
 <template>
-    <MainLayout>
-        <!-- 插件管理器 -->
-        <PluginManager ref="pluginManager" />
+    <!-- 插件管理器包装整个应用，提供依赖注入 -->
+    <PluginManager ref="pluginManager">
+        <MainLayout>
+            <!-- 搜索区域 -->
+            <template #search>
+                <SearchBar ref="searchBar" class="search-container" />
+            </template>
 
-        <!-- 搜索区域 -->
-        <template #search>
-            <SearchBar ref="searchBar" class="search-container" />
-        </template>
-
-        <!-- 内容区域 -->
-        <template #content>
-            <ContentView />
-        </template>
-    </MainLayout>
+            <!-- 内容区域 -->
+            <template #content>
+                <ContentView />
+            </template>
+        </MainLayout>
+    </PluginManager>
 </template>
