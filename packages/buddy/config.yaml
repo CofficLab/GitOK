@@ -23,7 +23,7 @@ window:
     # 窗口宽度 (像素)
     width: 700
     # 窗口高度 (像素)
-    height: 500
+    height: 1200
   # 窗口是否始终置顶
   # 可选值: true (置顶), false (普通层级)
   alwaysOnTop: true
