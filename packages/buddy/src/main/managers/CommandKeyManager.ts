@@ -15,15 +15,26 @@ type CommandKeyListener = {
   isListening(): boolean;
 };
 
-export class CommandKeyManager extends EventEmitter {
+class CommandKeyManager extends EventEmitter {
+  private static instance: CommandKeyManager;
   private commandKeyListener: CommandKeyListener | null = null;
   private mainWindow: BrowserWindow | null = null;
   private logger: Logger;
 
-  constructor() {
+  private constructor() {
     super();
     this.logger = new Logger('CommandKeyManager');
     this.logger.info('CommandKeyManager 初始化');
+  }
+
+  /**
+   * 获取 CommandKeyManager 实例
+   */
+  public static getInstance(): CommandKeyManager {
+    if (!CommandKeyManager.instance) {
+      CommandKeyManager.instance = new CommandKeyManager();
+    }
+    return CommandKeyManager.instance;
   }
 
   /**
@@ -198,3 +209,6 @@ export class CommandKeyManager extends EventEmitter {
     }
   }
 }
+
+// 导出单例
+export const commandKeyManager = CommandKeyManager.getInstance();

@@ -4,9 +4,13 @@
  */
 import { app, BrowserWindow } from 'electron';
 import { electronApp, optimizer } from '@electron-toolkit/utils';
-import { createManagers } from './managers';
 import { initLogger } from './utils/initLogger';
 import { Logger } from './utils/Logger';
+import { configManager } from './managers/ConfigManager';
+import { windowManager } from './managers/WindowManager';
+import { pluginManager } from './managers/PluginManager';
+import { commandKeyManager } from './managers/CommandKeyManager';
+import { ipcManager } from './managers/IPCManager';
 
 // 首先初始化日志系统
 const isDevelopment = !app.isPackaged;
@@ -14,14 +18,6 @@ initLogger(isDevelopment);
 
 // 创建主应用日志记录器
 const logger = new Logger('Main');
-
-const {
-  configManager,
-  windowManager,
-  pluginManager,
-  commandKeyManager,
-  ipcManager,
-} = createManagers();
 
 // 主窗口引用 - 通过窗口管理器获取
 let mainWindow: BrowserWindow | null = null;
@@ -88,10 +84,6 @@ app.whenReady().then(async () => {
   // 初始化插件系统
   logger.info('初始化插件系统');
   await pluginManager.initialize();
-
-  // 注册插件视图处理器
-  logger.debug('注册插件视图处理器');
-  pluginManager.registerPluginViewHandlers();
 
   // 注册IPC处理器
   logger.debug('注册IPC处理器');

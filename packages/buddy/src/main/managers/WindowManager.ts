@@ -7,20 +7,30 @@ import { join } from 'path';
 import { is } from '@electron-toolkit/utils';
 import icon from '../../../resources/icon.png?asset';
 import { EventEmitter } from 'events';
-import { ConfigManager } from './ConfigManager';
 import { Logger } from '../utils/Logger';
+import { configManager } from './ConfigManager';
 
-export class WindowManager extends EventEmitter {
+class WindowManager extends EventEmitter {
+  private static instance: WindowManager;
   private mainWindow: BrowserWindow | null = null;
-  private configManager: ConfigManager;
+  private configManager = configManager;
   private logger: Logger;
   private quitting: boolean = false;
 
-  constructor(configManager: ConfigManager) {
+  private constructor() {
     super();
-    this.configManager = configManager;
     this.logger = new Logger('WindowManager');
     this.logger.info('WindowManager 初始化');
+  }
+
+  /**
+   * 获取 WindowManager 实例
+   */
+  public static getInstance(): WindowManager {
+    if (!WindowManager.instance) {
+      WindowManager.instance = new WindowManager();
+    }
+    return WindowManager.instance;
   }
 
   /**
@@ -70,7 +80,7 @@ export class WindowManager extends EventEmitter {
       autoHideMenuBar: true,
       ...(process.platform === 'linux' ? { icon } : {}),
       webPreferences: {
-        preload: join(__dirname, '../../preload/index.js'),
+        preload: join(__dirname, '../preload/index.js'),
         sandbox: false,
       },
     };
@@ -406,3 +416,6 @@ export class WindowManager extends EventEmitter {
     this.logger.info('WindowManager资源清理完成');
   }
 }
+
+// 导出单例
+export const windowManager = WindowManager.getInstance();

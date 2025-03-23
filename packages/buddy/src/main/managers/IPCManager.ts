@@ -4,28 +4,32 @@
  */
 import { ipcMain, BrowserWindow } from 'electron';
 import { EventEmitter } from 'events';
-import { ConfigManager, type WindowConfig } from './ConfigManager';
-import { WindowManager } from './WindowManager';
-import { CommandKeyManager } from './CommandKeyManager';
+import { configManager } from './ConfigManager';
+import { windowManager } from './WindowManager';
+import { commandKeyManager } from './CommandKeyManager';
 import { Logger } from '../utils/Logger';
 
-export class IPCManager extends EventEmitter {
-  private configManager: ConfigManager;
-  private windowManager: WindowManager;
-  private commandKeyManager: CommandKeyManager;
+class IPCManager extends EventEmitter {
+  private static instance: IPCManager;
+  private configManager = configManager;
+  private windowManager = windowManager;
+  private commandKeyManager = commandKeyManager;
   private logger: Logger;
 
-  constructor(
-    configManager: ConfigManager,
-    windowManager: WindowManager,
-    commandKeyManager: CommandKeyManager
-  ) {
+  private constructor() {
     super();
-    this.configManager = configManager;
-    this.windowManager = windowManager;
-    this.commandKeyManager = commandKeyManager;
     this.logger = new Logger('IPCManager');
     this.logger.info('IPCManager 初始化');
+  }
+
+  /**
+   * 获取 IPCManager 实例
+   */
+  public static getInstance(): IPCManager {
+    if (!IPCManager.instance) {
+      IPCManager.instance = new IPCManager();
+    }
+    return IPCManager.instance;
   }
 
   /**
@@ -48,20 +52,6 @@ export class IPCManager extends EventEmitter {
     ipcMain.handle('getWindowConfig', () => {
       this.logger.debug('处理IPC请求: getWindowConfig');
       return this.configManager.getWindowConfig();
-    });
-
-    // 保存窗口配置
-    ipcMain.handle('saveWindowConfig', (_, config) => {
-      this.logger.debug('处理IPC请求: saveWindowConfig', { config });
-      this.configManager.setWindowConfig(config);
-      return true;
-    });
-
-    // 重置窗口配置
-    ipcMain.handle('resetWindowConfig', () => {
-      this.logger.debug('处理IPC请求: resetWindowConfig');
-      const config = this.configManager.resetWindowConfig();
-      return config;
     });
   }
 
@@ -98,3 +88,6 @@ export class IPCManager extends EventEmitter {
     });
   }
 }
+
+// 导出单例
+export const ipcManager = IPCManager.getInstance();
