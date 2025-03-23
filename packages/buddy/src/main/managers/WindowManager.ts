@@ -37,17 +37,6 @@ class WindowManager extends EventEmitter {
   }
 
   /**
-   * 更新日志配置
-   */
-  private updateLoggerConfig(): void {
-    const windowConfig = this.configManager.getWindowConfig();
-    this.logger.setConfig({
-      enabled: windowConfig.enableLogging ?? true,
-      level: windowConfig.logLevel || 'info',
-    });
-  }
-
-  /**
    * 获取主窗口实例
    */
   getMainWindow(): BrowserWindow | null {
@@ -84,10 +73,17 @@ class WindowManager extends EventEmitter {
       height: spotlightMode ? spotlightSize.height : 1400,
       show: false,
       autoHideMenuBar: true,
+      frame: showTrafficLights !== false,
       ...(process.platform === 'linux' ? { icon } : {}),
       webPreferences: {
         preload: join(__dirname, '../preload/index.js'),
         sandbox: false,
+        webSecurity: true,
+        contextIsolation: true,
+        nodeIntegration: false,
+        devTools: is.dev,
+        spellcheck: false,
+        autoplayPolicy: 'document-user-activation-required',
       },
     };
 

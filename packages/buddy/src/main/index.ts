@@ -12,6 +12,35 @@ import { pluginManager } from './managers/PluginManager';
 import { commandKeyManager } from './managers/CommandKeyManager';
 import { ipcManager } from './managers/IPCManager';
 
+// 在应用启动最开始就禁用所有不需要的特性
+if (!app.isPackaged) {
+  // 开发模式下的配置
+  app.commandLine.appendSwitch(
+    'disable-features',
+    [
+      'Autofill',
+      'AutofillServerCommunication',
+      'ChromeWhatsNewUI',
+      'CalculateNativeWinOcclusion',
+      'HardwareMediaKeyHandling',
+      'MediaSessionService',
+      'DesktopCaptureMacV2',
+      'WarnBeforeQuitting',
+    ].join(',')
+  );
+
+  // 禁用各种试验性功能
+  app.commandLine.appendSwitch('disable-site-isolation-trials');
+  app.commandLine.appendSwitch('disable-ipc-flooding-protection');
+
+  // 禁用不必要的日志
+  app.commandLine.appendSwitch('force-renderer-accessibility', 'disabled');
+  app.commandLine.appendSwitch('log-level', '3'); // 只显示错误和严重错误
+} else {
+  // 生产模式下完全禁用日志
+  app.commandLine.appendSwitch('disable-logging');
+}
+
 // 首先初始化日志系统
 const isDevelopment = !app.isPackaged;
 initLogger(isDevelopment);
