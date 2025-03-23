@@ -72,6 +72,24 @@ interface ElectronAPI {
     getAllPlugins: () => Promise<any>;
     getLocalPlugins: () => Promise<any>;
     getInstalledPlugins: () => Promise<any>;
+    views: {
+      create: (
+        viewId: string,
+        url: string
+      ) => Promise<{
+        x: number;
+        y: number;
+        width: number;
+        height: number;
+      } | null>;
+      show: (
+        viewId: string,
+        bounds?: { x: number; y: number; width: number; height: number }
+      ) => Promise<boolean>;
+      hide: (viewId: string) => Promise<boolean>;
+      destroy: (viewId: string) => Promise<boolean>;
+      toggleDevTools: (viewId: string) => Promise<boolean>;
+    };
   };
 }
 
@@ -100,6 +118,12 @@ interface Window {
       openDirectory: (directory: string) => Promise<{
         success: boolean;
         error?: string;
+      }>;
+      createExamplePlugin: () => Promise<{
+        success: boolean;
+        message?: string;
+        error?: string;
+        path?: string;
       }>;
     };
   };

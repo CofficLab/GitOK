@@ -160,6 +160,8 @@ importers:
         specifier: ^5.8.0
         version: 5.8.2
 
+  packages/example-plugin: {}
+
   packages/mcp-core:
     dependencies:
       '@modelcontextprotocol/sdk':

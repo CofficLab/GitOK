@@ -22,6 +22,7 @@ export interface PluginAction {
     icon: string
     plugin: string
     viewPath?: string
+    viewMode?: 'embedded' | 'window' // 添加视图模式：embedded-内嵌, window-独立窗口
 }
 
 // 插件管理器接口
@@ -97,7 +98,7 @@ const executePluginAction = async (actionId: string): Promise<any> => {
 
         // 执行动作
         logDebug(`调用window.electron.plugins.executeAction: ${actionId}`)
-        const result = await window.electron.plugins.executeAction(actionId)
+        const result = await (window.electron.plugins as any).executeAction(actionId)
         logInfo(`动作执行成功: ${actionId}`)
         return result
     } catch (error) {
@@ -110,12 +111,35 @@ const executePluginAction = async (actionId: string): Promise<any> => {
 const loadActionView = async (actionId: string): Promise<void> => {
     logInfo(`加载动作视图: ${actionId}`)
     try {
+        // 清空之前的视图HTML
+        actionViewHtml.value = ''
+
+        // 检查动作是否存在
+        const action = pluginActions.value.find(a => a.id === actionId)
+        if (!action) {
+            throw new Error(`未找到动作: ${actionId}`)
+        }
+
+        // 检查动作是否有视图路径
+        if (!action.viewPath) {
+            throw new Error(`动作 ${actionId} 没有视图路径`)
+        }
+
         logDebug(`调用window.electron.plugins.getActionView: ${actionId}`)
-        const response = await window.electron.plugins.getActionView(actionId)
+        const response = await (window.electron.plugins as any).getActionView(actionId)
 
         if (response.success && response.html) {
             logInfo(`成功获取视图HTML，长度: ${response.html.length} 字节`)
+            // 确保设置HTML内容
             actionViewHtml.value = response.html
+
+            // 再次确认HTML内容已设置
+            if (!actionViewHtml.value) {
+                logError('设置视图HTML失败: 赋值后内容为空')
+                throw new Error('设置视图HTML失败')
+            }
+
+            logDebug(`设置视图HTML成功，当前长度: ${actionViewHtml.value.length}`)
         } else {
             logError(`获取视图HTML失败: ${response.error || '未知错误'}`)
             actionViewHtml.value = ''

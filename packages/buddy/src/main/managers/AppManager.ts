@@ -10,6 +10,7 @@ import { windowManager } from './WindowManager';
 import { pluginManager } from './PluginManager';
 import { commandKeyManager } from './CommandKeyManager';
 import { ipcManager } from './IPCManager';
+import { pluginViewManager } from './PluginViewManager';
 
 export class AppManager {
   private logger: Logger;
@@ -178,6 +179,9 @@ export class AppManager {
 
     this.logger.debug('清理Command键监听器');
     commandKeyManager.cleanup();
+
+    this.logger.debug('关闭所有插件视图窗口');
+    pluginViewManager.closeAllViews();
 
     this.logger.info('应用清理完成，准备退出');
   }

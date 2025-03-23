@@ -15,6 +15,9 @@ const plugins = ref<StorePlugin[]>([])
 const directories = ref<{ builtin: string; user: string; dev: string } | null>(null)
 const errorMessage = ref('')
 const showError = ref(false)
+const isCreatingExamplePlugin = ref(false)
+const successMessage = ref('')
+const showSuccess = ref(false)
 
 // 当前选中的标签
 const activeTab = ref<'builtin' | 'user' | 'dev'>('builtin')
@@ -22,7 +25,7 @@ const activeTab = ref<'builtin' | 'user' | 'dev'>('builtin')
 // 加载插件列表
 const loadPlugins = async () => {
     try {
-        const response = await window.api.plugin.getStorePlugins()
+        const response = await (window.api as any).plugin.getStorePlugins()
         if (response.success) {
             plugins.value = response.plugins
         } else {
@@ -36,7 +39,7 @@ const loadPlugins = async () => {
 // 加载目录信息
 const loadDirectories = async () => {
     try {
-        const response = await window.api.plugin.getDirectories()
+        const response = await (window.api as any).plugin.getDirectories()
         if (response.success) {
             directories.value = response.directories
         } else {
@@ -53,12 +56,33 @@ const loadDirectories = async () => {
 // 打开目录
 const openDirectory = async (directory: string) => {
     try {
-        const response = await window.api.plugin.openDirectory(directory)
+        const response = await (window.api as any).plugin.openDirectory(directory)
         if (!response.success) {
             showErrorMessage('无法打开目录')
         }
     } catch (error) {
         showErrorMessage('打开目录失败')
+    }
+}
+
+// 创建示例插件
+const createExamplePlugin = async () => {
+    try {
+        isCreatingExamplePlugin.value = true
+        const response = await (window.api as any).plugin.createExamplePlugin()
+
+        if (response.success) {
+            showSuccessMessage('示例插件创建成功！')
+            // 刷新插件列表
+            await loadPlugins()
+        } else {
+            showErrorMessage(`创建示例插件失败: ${response.error || '未知错误'}`)
+        }
+    } catch (error) {
+        const errorMsg = error instanceof Error ? error.message : String(error)
+        showErrorMessage(`创建示例插件失败: ${errorMsg}`)
+    } finally {
+        isCreatingExamplePlugin.value = false
     }
 }
 
@@ -69,6 +93,16 @@ const showErrorMessage = (message: string) => {
     setTimeout(() => {
         showError.value = false
         errorMessage.value = ''
+    }, 3000)
+}
+
+// 显示成功信息
+const showSuccessMessage = (message: string) => {
+    successMessage.value = message
+    showSuccess.value = true
+    setTimeout(() => {
+        showSuccess.value = false
+        successMessage.value = ''
     }, 3000)
 }
 
@@ -92,6 +126,11 @@ const currentDirectory = computed(() => {
     return ''
 })
 
+// 是否展示创建示例插件按钮
+const showCreateExampleButton = computed(() => {
+    return activeTab.value === 'dev'
+})
+
 // 标签类型
 const tabs = ['builtin', 'user', 'dev'] as const
 
@@ -108,6 +147,11 @@ onMounted(() => {
             {{ errorMessage }}
         </div>
 
+        <!-- 成功提示 -->
+        <div v-if="showSuccess" class="mb-4 p-4 bg-green-100 text-green-700 rounded-lg">
+            {{ successMessage }}
+        </div>
+
         <!-- 标签页 -->
         <div class="flex space-x-2 mb-4">
             <button v-for="tab in tabs" :key="tab" @click="activeTab = tab" :class="[
@@ -121,14 +165,22 @@ onMounted(() => {
         </div>
 
         <!-- 目录信息 -->
-        <div v-if="currentDirectory" class="mb-4 p-4 bg-gray-50 rounded-lg flex justify-between items-center">
+        <div v-if="currentDirectory"
+            class="mb-4 p-4 bg-gray-50 rounded-lg flex flex-wrap justify-between items-center gap-2">
             <div class="text-sm text-gray-600">
                 插件目录：{{ currentDirectory }}
             </div>
-            <button @click="openDirectory(currentDirectory)"
-                class="px-3 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600">
-                打开目录
-            </button>
+            <div class="flex gap-2">
+                <button v-if="showCreateExampleButton" @click="createExamplePlugin" :disabled="isCreatingExamplePlugin"
+                    class="px-3 py-1 text-sm bg-green-500 text-white rounded hover:bg-green-600 disabled:bg-gray-400 disabled:cursor-not-allowed">
+                    <span v-if="isCreatingExamplePlugin">创建中...</span>
+                    <span v-else>创建示例插件</span>
+                </button>
+                <button @click="openDirectory(currentDirectory)"
+                    class="px-3 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600">
+                    打开目录
+                </button>
+            </div>
         </div>
 
         <!-- 插件列表 -->

@@ -191,6 +191,7 @@ const api = {
     getDirectories: () => ipcRenderer.invoke('plugin:getDirectories'),
     openDirectory: (directory: string) =>
       ipcRenderer.invoke('plugin:openDirectory', directory),
+    createExamplePlugin: () => ipcRenderer.invoke('plugin:createExamplePlugin'),
   },
 };
 

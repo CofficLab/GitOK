@@ -7,7 +7,7 @@ app:
   enableLogging: false
   # 日志级别
   # 可选值: "debug", "info", "warn", "error"
-  logLevel: "info"
+  logLevel: 'info'
 
 # 窗口设置
 window:
@@ -32,7 +32,7 @@ window:
     # 窗口宽度 (像素)
     width: 700
     # 窗口高度 (像素)
-    height: 1200
+    height: 800
   # 窗口是否始终置顶
   # 可选值: true (置顶), false (普通层级)
   alwaysOnTop: true
@@ -45,7 +45,7 @@ window:
   enableLogging: false
   # 日志级别
   # 可选值: "debug", "info", "warn", "error"
-  logLevel: "info"
+  logLevel: 'info'
 
 # 插件管理器设置
 plugin:
@@ -53,31 +53,31 @@ plugin:
   directories:
     # 内置插件目录
     # 相对于应用程序目录
-    builtIn: "resources/plugins"
+    builtIn: 'resources/plugins'
     # 用户插件目录
     # 相对于用户数据目录
     # 在 macOS 上通常是 ~/Library/Application Support/buddy/plugins
     # 在 Windows 上通常是 %APPDATA%/buddy/plugins
     # 在 Linux 上通常是 ~/.config/buddy/plugins
-    user: "plugins"
+    user: 'plugins'
     # 开发插件目录
     # 相对于用户数据目录，用于开发和测试插件
-    dev: "dev-plugins"
+    dev: 'dev-plugins'
   # 是否启用插件管理器的日志输出
   # 可选值: true (启用), false (禁用)
   enableLogging: true
   # 日志级别
   # 可选值: "debug", "info", "warn", "error"
-  logLevel: "info"
+  logLevel: 'info'
 
 # IPC管理器设置
 ipc:
   # 是否启用IPC管理器的日志输出
   # 可选值: true (启用), false (禁用)
-  enableLogging: false
+  enableLogging: true
   # 日志级别
   # 可选值: "debug", "info", "warn", "error"
-  logLevel: "info"
+  logLevel: 'info'
 
 # Command键管理器设置
 command:
@@ -86,4 +86,4 @@ command:
   enableLogging: false
   # 日志级别
   # 可选值: "debug", "info", "warn", "error"
-  logLevel: "info"
+  logLevel: 'info'

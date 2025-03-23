@@ -26,6 +26,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+import { useAppStore } from '@renderer/stores/appStore'
 
 // 当前时间
 const currentTime = ref(new Date().toLocaleTimeString())
@@ -33,10 +34,24 @@ let timer: ReturnType<typeof setInterval>
 
 const router = useRouter()
 const route = useRoute()
+const appStore = useAppStore()
 
 // 更新时间
 const updateTime = () => {
     currentTime.value = new Date().toLocaleTimeString()
+}
+
+// 跳转到首页
+const goToHome = () => {
+    router.push('/')
+    appStore.setView('home')
+}
+
+// 跳转到插件商店
+const goToPluginStore = () => {
+    router.push('/plugins')
+    appStore.setView('plugins')
+    console.log('状态栏：已更新视图状态为plugins')
 }
 
 onMounted(() => {
@@ -54,11 +69,11 @@ onUnmounted(() => {
     <div class="flex items-center justify-between px-4 py-2 bg-gray-100 border-t">
         <!-- 导航按钮 -->
         <div class="flex items-center space-x-2">
-            <button @click="router.push('/')"
+            <button @click="goToHome"
                 :class="['px-3 py-1 rounded text-sm', route.path === '/' ? 'bg-blue-500 text-white' : 'text-gray-600 hover:bg-gray-200']">
                 首页
             </button>
-            <button @click="router.push('/plugins')"
+            <button @click="goToPluginStore"
                 :class="['px-3 py-1 rounded text-sm', route.path === '/plugins' ? 'bg-blue-500 text-white' : 'text-gray-600 hover:bg-gray-200']">
                 插件商店
             </button>

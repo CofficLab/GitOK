@@ -9,6 +9,7 @@
 
 import { createRouter, createWebHashHistory } from 'vue-router';
 import PluginStoreView from '@renderer/views/PluginStoreView.vue';
+import { useAppStore } from '@renderer/stores/appStore';
 
 // 路由配置
 const routes = [
@@ -18,6 +19,7 @@ const routes = [
     component: () => import('@renderer/views/HomeView.vue'),
     meta: {
       title: '首页',
+      viewType: 'home',
     },
   },
   {
@@ -26,6 +28,7 @@ const routes = [
     component: PluginStoreView,
     meta: {
       title: '插件商店',
+      viewType: 'plugins',
     },
   },
 ];
@@ -42,6 +45,17 @@ router.beforeEach((to, from, next) => {
   if (to.meta.title) {
     document.title = `GitOK - ${to.meta.title}`;
   }
+
+  // 同步更新appStore的currentView状态
+  if (to.meta.viewType) {
+    // 注意：这里需要延迟调用，因为在路由钩子中不能立即使用pinia store
+    setTimeout(() => {
+      const appStore = useAppStore();
+      appStore.setView(to.meta.viewType as 'home' | 'plugins');
+      console.log(`路由守卫: 更新currentView为 ${to.meta.viewType}`);
+    }, 0);
+  }
+
   next();
 });
 

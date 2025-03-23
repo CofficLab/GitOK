@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>当前时间</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+            color: #333;
+        }
+
+        .time {
+            font-size: 4rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .date {
+            font-size: 1.5rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="time" id="time"></div>
+    <div class="date" id="date"></div>
+
+    <script>
+        function updateTime() {
+            const now = new Date();
+
+            // 格式化时间
+            const timeElement = document.getElementById('time');
+            timeElement.textContent = now.toLocaleTimeString('zh-CN', {
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+
+            // 格式化日期
+            const dateElement = document.getElementById('date');
+            dateElement.textContent = now.toLocaleDateString('zh-CN', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                weekday: 'long'
+            });
+        }
+
+        // 初始更新
+        updateTime();
+
+        // 每秒更新一次
+        setInterval(updateTime, 1000);
+
+        // 添加调试日志
+        console.log("[示例插件:时间视图] 视图已加载，计时器已启动");
+    </script>
+</body>
+
+</html>

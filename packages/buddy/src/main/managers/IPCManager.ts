@@ -8,9 +8,12 @@ import { configManager } from './ConfigManager';
 import { commandKeyManager } from './CommandKeyManager';
 import { Logger } from '../utils/Logger';
 import { pluginManager } from './PluginManager';
+import { pluginViewManager } from './PluginViewManager';
 import { shell } from 'electron';
 import { join } from 'path';
 import { app } from 'electron';
+import fs from 'fs';
+import path from 'path';
 
 class IPCManager extends EventEmitter {
   private static instance: IPCManager;
@@ -214,6 +217,201 @@ class IPCManager extends EventEmitter {
         };
       }
     });
+
+    // 创建插件视图窗口
+    ipcMain.handle('create-plugin-view', async (_, { viewId, url }) => {
+      this.logger.debug(
+        `处理IPC请求: create-plugin-view: ${viewId}, url: ${url}`
+      );
+      try {
+        const mainWindowBounds = await pluginViewManager.createView({
+          viewId,
+          url,
+        });
+        return mainWindowBounds;
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : String(error);
+        this.logger.error(`创建插件视图窗口失败: ${viewId}`, {
+          error: errorMessage,
+        });
+        return null;
+      }
+    });
+
+    // 显示插件视图窗口
+    ipcMain.handle('show-plugin-view', async (_, { viewId, bounds }) => {
+      this.logger.debug(`处理IPC请求: show-plugin-view: ${viewId}`);
+      try {
+        const result = await pluginViewManager.showView(viewId, bounds);
+        return result;
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : String(error);
+        this.logger.error(`显示插件视图窗口失败: ${viewId}`, {
+          error: errorMessage,
+        });
+        return false;
+      }
+    });
+
+    // 隐藏插件视图窗口
+    ipcMain.handle('hide-plugin-view', async (_, { viewId }) => {
+      this.logger.debug(`处理IPC请求: hide-plugin-view: ${viewId}`);
+      try {
+        const result = pluginViewManager.hideView(viewId);
+        return result;
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : String(error);
+        this.logger.error(`隐藏插件视图窗口失败: ${viewId}`, {
+          error: errorMessage,
+        });
+        return false;
+      }
+    });
+
+    // 销毁插件视图窗口
+    ipcMain.handle('destroy-plugin-view', async (_, { viewId }) => {
+      this.logger.debug(`处理IPC请求: destroy-plugin-view: ${viewId}`);
+      try {
+        const result = await pluginViewManager.destroyView(viewId);
+        return result;
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : String(error);
+        this.logger.error(`销毁插件视图窗口失败: ${viewId}`, {
+          error: errorMessage,
+        });
+        return false;
+      }
+    });
+
+    // 切换插件视图窗口的开发者工具
+    ipcMain.handle('toggle-plugin-devtools', async (_, { viewId }) => {
+      this.logger.debug(`处理IPC请求: toggle-plugin-devtools: ${viewId}`);
+      try {
+        const result = pluginViewManager.toggleDevTools(viewId);
+        return result;
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : String(error);
+        this.logger.error(`切换插件视图开发者工具失败: ${viewId}`, {
+          error: errorMessage,
+        });
+        return false;
+      }
+    });
+
+    // 创建示例插件
+    ipcMain.handle('plugin:createExamplePlugin', async () => {
+      this.logger.debug('处理IPC请求: plugin:createExamplePlugin');
+      try {
+        // 获取插件目录
+        const pluginDirectories = pluginManager.getPluginDirectories();
+        // 直接使用插件管理器提供的开发插件目录路径
+        const devPluginDir = pluginDirectories.dev;
+        const examplePluginTargetDir = path.join(
+          devPluginDir,
+          'example-plugin'
+        );
+
+        // 创建开发插件目录（如果不存在）
+        if (!fs.existsSync(devPluginDir)) {
+          fs.mkdirSync(devPluginDir, { recursive: true });
+        }
+
+        // 如果目标插件已存在，先删除它
+        if (fs.existsSync(examplePluginTargetDir)) {
+          this.logger.info(
+            `目标目录已存在，删除现有示例插件: ${examplePluginTargetDir}`
+          );
+          fs.rmSync(examplePluginTargetDir, { recursive: true, force: true });
+        }
+
+        // 确定示例插件源目录
+        let sourceDir = '';
+
+        if (app.isPackaged) {
+          // 生产环境 - 从资源目录复制
+          sourceDir = path.join(
+            app.getAppPath(),
+            '..',
+            'resources',
+            'plugins',
+            'examples',
+            'example-plugin'
+          );
+          this.logger.debug(`生产环境示例插件源目录: ${sourceDir}`);
+        } else {
+          // 开发环境 - 从项目目录复制
+          sourceDir = path.join(
+            app.getAppPath(),
+            '..',
+            '..',
+            'packages',
+            'example-plugin'
+          );
+          this.logger.debug(`开发环境示例插件源目录: ${sourceDir}`);
+        }
+
+        if (!fs.existsSync(sourceDir)) {
+          throw new Error(`源示例插件目录不存在: ${sourceDir}`);
+        }
+
+        // 复制示例插件到开发插件目录
+        this.logger.info(
+          `复制示例插件: ${sourceDir} -> ${examplePluginTargetDir}`
+        );
+        this.copyFolderSync(sourceDir, examplePluginTargetDir);
+
+        // 刷新插件管理器
+        this.logger.info('重新加载插件');
+
+        // 重新初始化插件管理器
+        await pluginManager.initialize();
+
+        return {
+          success: true,
+          message: '示例插件创建成功',
+          path: examplePluginTargetDir,
+        };
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : String(error);
+        this.logger.error('创建示例插件失败', { error: errorMessage });
+        return { success: false, error: errorMessage };
+      }
+    });
+  }
+
+  /**
+   * 递归复制目录及其内容
+   * @param src 源目录
+   * @param dest 目标目录
+   */
+  private copyFolderSync(src: string, dest: string): void {
+    // 如果目标目录不存在，创建它
+    if (!fs.existsSync(dest)) {
+      fs.mkdirSync(dest, { recursive: true });
+    }
+
+    // 获取源目录中的所有文件和文件夹
+    const entries = fs.readdirSync(src, { withFileTypes: true });
+
+    // 复制每个文件和子目录
+    for (const entry of entries) {
+      const srcPath = path.join(src, entry.name);
+      const destPath = path.join(dest, entry.name);
+
+      if (entry.isDirectory()) {
+        // 递归复制子目录
+        this.copyFolderSync(srcPath, destPath);
+      } else {
+        // 复制文件
+        fs.copyFileSync(srcPath, destPath);
+      }
+    }
   }
 }
 
