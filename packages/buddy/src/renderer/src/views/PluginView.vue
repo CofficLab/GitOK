@@ -7,7 +7,7 @@
 * 3. 提供返回到动作列表的功能
 */
 <script setup lang="ts">
-import { ref, inject, computed, watch } from 'vue'
+import { ref, inject, watch } from 'vue'
 import type { PluginManagerAPI, PluginAction } from '@renderer/components/PluginManager.vue'
 
 // 接收传入的动作ID和返回回调
