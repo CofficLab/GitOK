@@ -15,7 +15,6 @@ class WindowManager extends EventEmitter {
   private mainWindow: BrowserWindow | null = null;
   private configManager = configManager;
   private logger: Logger;
-  private quitting: boolean = false;
 
   private constructor() {
     super();
@@ -38,14 +37,6 @@ class WindowManager extends EventEmitter {
    */
   getMainWindow(): BrowserWindow | null {
     return this.mainWindow;
-  }
-
-  /**
-   * 设置应用即将退出状态
-   */
-  setQuitting(isQuitting: boolean): void {
-    this.quitting = isQuitting;
-    this.logger.debug(`设置应用退出状态: ${isQuitting}`);
   }
 
   /**
