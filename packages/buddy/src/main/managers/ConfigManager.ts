@@ -40,7 +40,6 @@ class ConfigManager {
       this.logger.info('加载配置文件', { path: this.configPath });
       const configContent = fs.readFileSync(this.configPath, 'utf8');
       this.config = yaml.load(configContent);
-      this.logger.debug('配置文件加载成功', { config: this.config });
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : String(error);
