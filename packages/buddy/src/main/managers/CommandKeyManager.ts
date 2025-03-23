@@ -5,6 +5,7 @@
 import { BrowserWindow } from 'electron';
 import { EventEmitter } from 'events';
 import { Logger } from '../utils/Logger';
+import { configManager } from './ConfigManager';
 
 // 声明CommandKeyListener类型但不导入
 // @ts-ignore 忽略CommandKeyListener模块导入错误
@@ -23,7 +24,12 @@ class CommandKeyManager extends EventEmitter {
 
   private constructor() {
     super();
-    this.logger = new Logger('CommandKeyManager');
+    // 从配置文件中读取日志配置
+    const config = configManager.getConfig().command || {};
+    this.logger = new Logger('CommandKeyManager', {
+      enabled: config.enableLogging,
+      level: config.logLevel,
+    });
     this.logger.info('CommandKeyManager 初始化');
   }
 

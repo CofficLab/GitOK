@@ -17,7 +17,11 @@ const isDevelopment = !app.isPackaged;
 initLogger(isDevelopment);
 
 // 创建主应用日志记录器
-const logger = new Logger('Main');
+const config = configManager.getConfig().main || {};
+const logger = new Logger('Main', {
+  enabled: config.enableLogging,
+  level: config.logLevel,
+});
 
 // 主窗口引用 - 通过窗口管理器获取
 let mainWindow: BrowserWindow | null = null;
