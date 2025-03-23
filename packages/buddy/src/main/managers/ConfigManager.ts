@@ -50,6 +50,13 @@ class ConfigManager {
   }
 
   /**
+   * 获取完整配置
+   */
+  getConfig(): any {
+    return this.config || {};
+  }
+
+  /**
    * 获取窗口配置
    */
   getWindowConfig(): WindowConfig {

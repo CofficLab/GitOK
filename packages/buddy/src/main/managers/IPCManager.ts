@@ -19,7 +19,12 @@ class IPCManager extends EventEmitter {
 
   private constructor() {
     super();
-    this.logger = new Logger('IPCManager');
+    // 从配置文件中读取日志配置
+    const config = this.configManager.getConfig().ipc || {};
+    this.logger = new Logger('IPCManager', {
+      enabled: config.enableLogging,
+      level: config.logLevel,
+    });
     this.logger.info('IPCManager 初始化');
   }
 
@@ -97,8 +102,8 @@ class IPCManager extends EventEmitter {
     this.logger.debug('注册插件相关IPC处理函数');
 
     // 获取插件商店列表
-    ipcMain.handle('get-store-plugins', async () => {
-      this.logger.debug('处理IPC请求: get-store-plugins');
+    ipcMain.handle('plugin:getStorePlugins', async () => {
+      this.logger.debug('处理IPC请求: plugin:getStorePlugins');
       try {
         const plugins = await pluginManager.getStorePlugins();
         return { success: true, plugins };
@@ -111,8 +116,8 @@ class IPCManager extends EventEmitter {
     });
 
     // 从商店安装插件
-    ipcMain.handle('install-store-plugin', async (_, pluginId: string) => {
-      this.logger.debug('处理IPC请求: install-store-plugin', { pluginId });
+    ipcMain.handle('plugin:install', async (_, pluginId: string) => {
+      this.logger.debug('处理IPC请求: plugin:install', { pluginId });
       try {
         const success = await pluginManager.installStorePlugin(pluginId);
         return { success };
@@ -125,8 +130,8 @@ class IPCManager extends EventEmitter {
     });
 
     // 卸载插件
-    ipcMain.handle('uninstall-plugin', async (_, pluginId: string) => {
-      this.logger.debug('处理IPC请求: uninstall-plugin', { pluginId });
+    ipcMain.handle('plugin:uninstall', async (_, pluginId: string) => {
+      this.logger.debug('处理IPC请求: plugin:uninstall', { pluginId });
       try {
         const success = await pluginManager.uninstallPlugin(pluginId);
         return { success };
@@ -134,6 +139,20 @@ class IPCManager extends EventEmitter {
         const errorMessage =
           error instanceof Error ? error.message : String(error);
         this.logger.error('卸载插件失败', { error: errorMessage });
+        return { success: false, error: errorMessage };
+      }
+    });
+
+    // 获取已安装的插件列表
+    ipcMain.handle('plugin:getPlugins', async () => {
+      this.logger.debug('处理IPC请求: plugin:getPlugins');
+      try {
+        const plugins = pluginManager.getPlugins();
+        return { success: true, plugins };
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : String(error);
+        this.logger.error('获取插件列表失败', { error: errorMessage });
         return { success: false, error: errorMessage };
       }
     });

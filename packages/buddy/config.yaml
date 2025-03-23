@@ -46,3 +46,12 @@ plugin:
   # 日志级别
   # 可选值: "debug", "info", "warn", "error"
   logLevel: "info"
+
+# IPC管理器设置
+ipc:
+  # 是否启用IPC管理器的日志输出
+  # 可选值: true (启用), false (禁用)
+  enableLogging: false
+  # 日志级别
+  # 可选值: "debug", "info", "warn", "error"
+  logLevel: "info"
