@@ -152,6 +152,55 @@ const api = {
       // 切换插件视图的开发者工具
       toggleDevTools: (viewId: string) =>
         ipcRenderer.invoke('toggle-plugin-devtools', { viewId }),
+
+      // 嵌入式视图事件监听器
+      onEmbeddedViewCreated: (callback: (data: { viewId: string }) => void) => {
+        const listener = (
+          _: Electron.IpcRendererEvent,
+          data: { viewId: string }
+        ) => {
+          callback(data);
+        };
+        ipcRenderer.on('embedded-view-created', listener);
+        return () =>
+          ipcRenderer.removeListener('embedded-view-created', listener);
+      },
+
+      onShowEmbeddedView: (
+        callback: (data: {
+          viewId: string;
+          bounds?: { x: number; y: number; width: number; height: number };
+        }) => void
+      ) => {
+        const listener = (_: Electron.IpcRendererEvent, data: any) => {
+          callback(data);
+        };
+        ipcRenderer.on('show-embedded-view', listener);
+        return () => ipcRenderer.removeListener('show-embedded-view', listener);
+      },
+
+      onHideEmbeddedView: (callback: (data: { viewId: string }) => void) => {
+        const listener = (
+          _: Electron.IpcRendererEvent,
+          data: { viewId: string }
+        ) => {
+          callback(data);
+        };
+        ipcRenderer.on('hide-embedded-view', listener);
+        return () => ipcRenderer.removeListener('hide-embedded-view', listener);
+      },
+
+      onDestroyEmbeddedView: (callback: (data: { viewId: string }) => void) => {
+        const listener = (
+          _: Electron.IpcRendererEvent,
+          data: { viewId: string }
+        ) => {
+          callback(data);
+        };
+        ipcRenderer.on('destroy-embedded-view', listener);
+        return () =>
+          ipcRenderer.removeListener('destroy-embedded-view', listener);
+      },
     },
   },
   // MCP 插件相关 API

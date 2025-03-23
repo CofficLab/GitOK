@@ -23,6 +23,7 @@ export interface PluginAction {
     plugin: string
     viewPath?: string
     viewMode?: 'embedded' | 'window' // 添加视图模式：embedded-内嵌, window-独立窗口
+    devTools?: boolean // 是否启用开发者工具
 }
 
 // 插件管理器接口

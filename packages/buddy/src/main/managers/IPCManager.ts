@@ -181,8 +181,8 @@ class IPCManager extends EventEmitter {
     ipcMain.handle('get-action-view', async (_, actionId) => {
       this.logger.debug(`处理IPC请求: get-action-view: ${actionId}`);
       try {
-        const content = await pluginManager.getActionView(actionId);
-        return { success: true, content };
+        const html = await pluginManager.getActionView(actionId);
+        return { success: true, html, content: html };
       } catch (error) {
         const errorMessage =
           error instanceof Error ? error.message : String(error);

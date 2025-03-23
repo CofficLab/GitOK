@@ -21,6 +21,14 @@ export default defineConfig({
         '@types': resolve('src/types'),
       },
     },
+    build: {
+      rollupOptions: {
+        input: {
+          index: resolve(__dirname, 'src/preload/index.ts'),
+          'plugin-preload': resolve(__dirname, 'src/preload/plugin-preload.ts'),
+        },
+      },
+    },
   },
   renderer: {
     resolve: {

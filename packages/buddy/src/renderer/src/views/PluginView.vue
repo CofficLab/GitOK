@@ -7,11 +7,24 @@
 * 3. 提供返回到动作列表的功能
 */
 <script setup lang="ts">
-import { ref, inject, watch, onUnmounted, reactive } from 'vue'
+import { ref, inject, watch, onMounted, onUnmounted, reactive } from 'vue'
 import type { PluginManagerAPI, PluginAction } from '@renderer/components/PluginManager.vue'
 
 // 定义辅助函数获取插件视图API
-const getPluginViewsAPI = () => (window.electron.plugins as any).views
+const getPluginViewsAPI = () => {
+    try {
+        const api = (window.electron.plugins as any).views;
+        // 检查所需API是否都存在
+        if (!api || !api.create || !api.show || !api.destroy) {
+            console.error('PluginView: 获取插件视图API失败，API不完整');
+            return null;
+        }
+        return api;
+    } catch (error) {
+        console.error('PluginView: 获取插件视图API失败', error);
+        return null;
+    }
+}
 
 // 接收传入的动作ID和返回回调
 const props = defineProps<{
@@ -40,8 +53,15 @@ const pluginViewState = reactive({
     id: '',
     isOpen: false
 })
-// 内嵌视图HTML
-const embeddedViewHtml = ref('')
+// 内嵌视图状态
+const embeddedViewState = reactive({
+    id: '',
+    isAttached: false,
+    isVisible: false,
+    content: ''
+})
+// 嵌入式视图容器引用
+const embeddedViewContainer = ref<HTMLDivElement | null>(null)
 
 // 加载并执行动作
 const loadAndExecuteAction = async () => {
@@ -51,11 +71,11 @@ const loadAndExecuteAction = async () => {
     isLoading.value = true
     hasError.value = false
     errorMessage.value = ''
-    embeddedViewHtml.value = ''
     actionResult.value = null
 
-    // 如果有之前打开的视图窗口，关闭它
+    // 如果有之前打开的视图，关闭它
     await closePluginWindow()
+    await destroyEmbeddedView()
 
     try {
         // 查找动作信息
@@ -82,39 +102,9 @@ const loadAndExecuteAction = async () => {
                 console.log(`PluginView: 使用独立窗口模式显示`)
                 await openPluginWindow(actionId, action)
             } else {
-                // 在应用内嵌入显示 - 直接尝试从pluginManager获取HTML内容
+                // 在应用内嵌入显示
                 console.log(`PluginView: 使用内嵌模式显示`)
-
-                // 使用直接获取的方式获取视图内容
-                if (pluginManager.actionViewHtml) {
-                    console.log(`PluginView: 从pluginManager直接获取到HTML，长度: ${pluginManager.actionViewHtml.length}`)
-                    embeddedViewHtml.value = pluginManager.actionViewHtml
-                } else {
-                    console.log(`PluginView: pluginManager中没有HTML内容，尝试重新加载视图`)
-                    // 如果没有内容，重新调用loadActionView
-                    try {
-                        await pluginManager.loadActionView(actionId)
-                        await new Promise(resolve => setTimeout(resolve, 100)) // 短暂等待
-                        if (pluginManager.actionViewHtml) {
-                            embeddedViewHtml.value = pluginManager.actionViewHtml
-                            console.log(`PluginView: 重新加载后获取到HTML，长度: ${embeddedViewHtml.value.length}`)
-                        } else {
-                            // 如果依然没有，尝试调用renderer的API直接获取
-                            console.log(`PluginView: 依然没有HTML内容，尝试直接调用API`)
-                            const viewResponse = await (window.electron.plugins as any).getActionView(actionId)
-                            if (viewResponse && viewResponse.success && viewResponse.html) {
-                                embeddedViewHtml.value = viewResponse.html
-                                console.log(`PluginView: 通过API直接获取到HTML，长度: ${embeddedViewHtml.value.length}`)
-                            } else {
-                                console.log(`PluginView: 无法通过任何方式获取HTML内容`)
-                                throw new Error('无法获取视图HTML内容')
-                            }
-                        }
-                    } catch (viewError) {
-                        console.error(`PluginView: 加载视图失败:`, viewError)
-                        throw viewError
-                    }
-                }
+                await createEmbeddedView(actionId, action)
             }
         } else {
             console.log(`PluginView: 动作没有视图路径，只显示结果`)
@@ -129,41 +119,148 @@ const loadAndExecuteAction = async () => {
     }
 }
 
-// 在应用内嵌入显示视图
-const loadEmbeddedView = async (actionId: string) => {
+// 创建并显示嵌入式视图
+const createEmbeddedView = async (actionId: string, action: PluginAction) => {
     try {
-        console.log(`PluginView: 开始加载内嵌视图，动作ID: ${actionId}`)
+        // 使用动作ID作为视图ID
+        embeddedViewState.id = `embedded-view-${actionId}`
 
+        // 获取插件视图API
+        const viewsAPI = getPluginViewsAPI()
+        if (!viewsAPI) {
+            throw new Error('插件视图API不可用')
+        }
+
+        // 获取主进程存储的HTML内容
         if (!pluginManager) {
             throw new Error('插件管理器未初始化')
         }
+        embeddedViewState.content = pluginManager.actionViewHtml
+        console.log(`PluginView: 获取到视图HTML内容，长度: ${embeddedViewState.content?.length || 0}`)
 
-        // 先清空旧的视图内容
-        actionResult.value = null
-        embeddedViewHtml.value = ''
+        // 清除可能存在的错误状态，确保条件渲染逻辑正确
+        hasError.value = false
+        errorMessage.value = ''
+        isLoading.value = false
 
-        // 重新调用loadActionView，确保能获取最新的视图内容
-        await pluginManager.loadActionView(actionId)
+        // 首先将视图状态设置为已附加，这样模板会渲染出容器
+        embeddedViewState.isAttached = true
+        console.log('PluginView: 设置视图状态为已附加，准备渲染容器...')
 
-        // 等待一小段时间确保视图内容已加载完成
-        await new Promise(resolve => setTimeout(resolve, 100))
+        // 等待下一个渲染周期完成
+        await nextTick()
 
-        // 从pluginManager获取视图HTML
-        const viewHtml = pluginManager.actionViewHtml
-        console.log(`PluginView: 获取到视图HTML，长度: ${viewHtml?.length || 0}`)
+        // 增加一个小延迟，让DOM有足够时间渲染
+        await new Promise(resolve => setTimeout(resolve, 50));
 
-        if (viewHtml) {
-            embeddedViewHtml.value = viewHtml
-            console.log(`PluginView: 加载内嵌视图HTML完成，长度: ${embeddedViewHtml.value.length}`)
-        } else {
-            console.log(`PluginView: 视图内容为空`)
-            throw new Error('获取到的视图内容为空')
+        // 等待DOM完全渲染
+        // 增加一个循环来确保容器已渲染，最多尝试10次，每次等待100ms
+        let attempts = 0;
+        const maxAttempts = 20; // 增加最大尝试次数
+        while (!embeddedViewContainer.value && attempts < maxAttempts) {
+            await new Promise(resolve => setTimeout(resolve, 50)); // 减少等待时间，增加频率
+            attempts++;
+            console.log(`PluginView: 等待容器渲染，尝试 ${attempts}/${maxAttempts}`);
+            // 强制刷新一下DOM引用
+            await nextTick();
+        }
+
+        // 确保容器已渲染
+        if (!embeddedViewContainer.value) {
+            console.error('PluginView: 视图容器不存在，无法创建视图');
+            throw new Error('嵌入式视图容器不存在');
+        }
+
+        console.log('PluginView: 容器已渲染，准备创建嵌入式视图');
+
+        // 获取容器位置和尺寸
+        const container = embeddedViewContainer.value
+        const rect = container.getBoundingClientRect()
+
+        // 确保所有值都是整数，并且至少有合理的尺寸
+        const bounds = {
+            x: Math.max(0, Math.round(rect.left)),
+            y: Math.max(0, Math.round(rect.top)),
+            width: Math.max(100, Math.round(rect.width)),
+            height: Math.max(100, Math.round(rect.height))
+        }
+
+        console.log(`PluginView: 创建嵌入式视图: ${embeddedViewState.id}，容器边界:`, bounds)
+
+        try {
+            // 首先创建嵌入式视图
+            const mainWindowBounds = await viewsAPI.create(
+                embeddedViewState.id,
+                `plugin-view://${actionId}`,
+                'embedded'
+            )
+
+            console.log('PluginView: 嵌入式视图已创建，主窗口边界:', mainWindowBounds)
+
+            // 现在显示嵌入式视图，传递容器边界
+            const showResult = await viewsAPI.show(embeddedViewState.id, bounds)
+            if (!showResult) {
+                throw new Error('显示嵌入式视图失败')
+            }
+
+            console.log(`PluginView: 嵌入式视图已显示，边界:`, bounds)
+            embeddedViewState.isVisible = true
+
+            // 立即触发一次调整大小操作，确保视图正确显示
+            await handleResize()
+
+            // 添加窗口尺寸变化时的视图调整逻辑
+            setTimeout(async () => {
+                await handleResize()
+            }, 500)
+
+            // 如果动作指定了开启开发者工具，则自动打开
+            if (action.devTools) {
+                setTimeout(async () => {
+                    try {
+                        console.log(`PluginView: 准备打开开发者工具: ${embeddedViewState.id}`)
+                        const result = await viewsAPI.toggleDevTools(embeddedViewState.id)
+                        console.log(`PluginView: 开发者工具打开结果: ${result}`)
+                    } catch (devToolsError) {
+                        console.error(`PluginView: 打开开发者工具失败:`, devToolsError)
+                    }
+                }, 1000)
+            }
+        } catch (viewError) {
+            // 处理视图创建或显示过程中的错误
+            console.error(`PluginView: 视图操作失败:`, viewError);
+            throw viewError;
         }
     } catch (error) {
         const errorMsg = error instanceof Error ? error.message : String(error)
-        console.error(`PluginView: 加载内嵌视图失败: ${errorMsg}`)
+        console.error(`PluginView: 创建嵌入式视图失败: ${errorMsg}`)
+
+        // 重置视图状态
+        embeddedViewState.isAttached = false
+        embeddedViewState.isVisible = false
+
         hasError.value = true
-        errorMessage.value = `加载内嵌视图失败: ${errorMsg}`
+        errorMessage.value = `创建嵌入式视图失败: ${errorMsg}`
+    }
+}
+
+// 销毁嵌入式视图
+const destroyEmbeddedView = async () => {
+    if (embeddedViewState.id) {
+        try {
+            const viewsAPI = getPluginViewsAPI()
+            if (viewsAPI) {
+                await viewsAPI.destroy(embeddedViewState.id)
+                console.log(`PluginView: 嵌入式视图已销毁: ${embeddedViewState.id}`)
+            }
+        } catch (error) {
+            console.error(`PluginView: 销毁嵌入式视图失败:`, error)
+        } finally {
+            embeddedViewState.id = ''
+            embeddedViewState.isAttached = false
+            embeddedViewState.isVisible = false
+            embeddedViewState.content = ''
+        }
     }
 }
 
@@ -175,11 +272,15 @@ const openPluginWindow = async (actionId: string, action: PluginAction) => {
 
         // 获取插件视图API
         const viewsAPI = getPluginViewsAPI()
+        if (!viewsAPI) {
+            throw new Error('插件视图API不可用')
+        }
 
         // 获取主窗口位置和大小以便设置插件窗口的位置
         const mainWindowBounds = await viewsAPI.create(
             pluginViewState.id,
-            `plugin-view://${actionId}` // 确保actionId格式正确
+            `plugin-view://${actionId}`, // 确保actionId格式正确
+            'window' // 视图模式
         )
 
         if (mainWindowBounds) {
@@ -193,6 +294,21 @@ const openPluginWindow = async (actionId: string, action: PluginAction) => {
 
             pluginViewState.isOpen = true
             console.log(`PluginView: 插件视图窗口已打开: ${pluginViewState.id}`)
+
+            // 如果动作指定了开启开发者工具，则自动打开
+            if (action.devTools) {
+                console.log(`PluginView: 动作指定了开启开发者工具，准备打开: ${actionId}`)
+                try {
+                    // 设置一个定时器，延迟500ms打开开发者工具
+                    setTimeout(async () => {
+                        console.log(`PluginView: 准备打开开发者工具: ${pluginViewState.id}`)
+                        const result = await viewsAPI.toggleDevTools(pluginViewState.id)
+                        console.log(`PluginView: 开发者工具打开结果: ${result}`)
+                    }, 500)
+                } catch (devToolsError) {
+                    console.error(`PluginView: 打开开发者工具失败:`, devToolsError)
+                }
+            }
         }
     } catch (error) {
         const errorMsg = error instanceof Error ? error.message : String(error)
@@ -206,8 +322,11 @@ const openPluginWindow = async (actionId: string, action: PluginAction) => {
 const closePluginWindow = async () => {
     if (pluginViewState.isOpen && pluginViewState.id) {
         try {
-            await getPluginViewsAPI().destroy(pluginViewState.id)
-            console.log(`PluginView: 插件视图窗口已关闭: ${pluginViewState.id}`)
+            const viewsAPI = getPluginViewsAPI()
+            if (viewsAPI) {
+                await viewsAPI.destroy(pluginViewState.id)
+                console.log(`PluginView: 插件视图窗口已关闭: ${pluginViewState.id}`)
+            }
         } catch (error) {
             console.error(`PluginView: 关闭插件视图窗口失败:`, error)
         } finally {
@@ -219,15 +338,180 @@ const closePluginWindow = async () => {
 
 // 返回动作列表
 const goBack = async () => {
-    // 关闭插件视图窗口
+    // 关闭所有视图
     await closePluginWindow()
+    await destroyEmbeddedView()
     emit('back')
 }
 
-// 组件卸载时关闭插件视图窗口
+// 设置嵌入式视图事件监听器的清理函数
+const cleanupFunctions: (() => void)[] = [];
+
+// 监听嵌入式视图创建事件
+const setupEmbeddedViewEventListeners = () => {
+    const pluginViewsAPI = getPluginViewsAPI();
+
+    // 如果API不存在或不完整，不设置事件监听器
+    if (!pluginViewsAPI) {
+        console.warn('PluginView: 插件视图API不可用，无法设置事件监听器');
+        return;
+    }
+
+    // 检查事件监听器函数是否存在
+    if (typeof pluginViewsAPI.onEmbeddedViewCreated === 'function') {
+        const removeCreatedListener = pluginViewsAPI.onEmbeddedViewCreated((data) => {
+            console.log(`PluginView: 收到嵌入式视图创建事件: ${data.viewId}`);
+        });
+        cleanupFunctions.push(removeCreatedListener);
+    } else {
+        console.warn('PluginView: onEmbeddedViewCreated 方法不存在');
+    }
+
+    // 检查事件监听器函数是否存在
+    if (typeof pluginViewsAPI.onShowEmbeddedView === 'function') {
+        const removeShowListener = pluginViewsAPI.onShowEmbeddedView((data) => {
+            console.log(`PluginView: 收到显示嵌入式视图事件: ${data.viewId}`);
+            // 标记视图为可见
+            if (embeddedViewState.id === data.viewId) {
+                embeddedViewState.isVisible = true;
+            }
+        });
+        cleanupFunctions.push(removeShowListener);
+    } else {
+        console.warn('PluginView: onShowEmbeddedView 方法不存在');
+    }
+
+    // 检查事件监听器函数是否存在
+    if (typeof pluginViewsAPI.onHideEmbeddedView === 'function') {
+        const removeHideListener = pluginViewsAPI.onHideEmbeddedView((data) => {
+            console.log(`PluginView: 收到隐藏嵌入式视图事件: ${data.viewId}`);
+            // 标记视图为不可见
+            if (embeddedViewState.id === data.viewId) {
+                embeddedViewState.isVisible = false;
+            }
+        });
+        cleanupFunctions.push(removeHideListener);
+    } else {
+        console.warn('PluginView: onHideEmbeddedView 方法不存在');
+    }
+
+    // 检查事件监听器函数是否存在
+    if (typeof pluginViewsAPI.onDestroyEmbeddedView === 'function') {
+        const removeDestroyListener = pluginViewsAPI.onDestroyEmbeddedView((data) => {
+            console.log(`PluginView: 收到销毁嵌入式视图事件: ${data.viewId}`);
+            // 重置视图状态
+            if (embeddedViewState.id === data.viewId) {
+                embeddedViewState.id = '';
+                embeddedViewState.isAttached = false;
+                embeddedViewState.isVisible = false;
+                embeddedViewState.content = '';
+            }
+        });
+        cleanupFunctions.push(removeDestroyListener);
+    } else {
+        console.warn('PluginView: onDestroyEmbeddedView 方法不存在');
+    }
+};
+
+// 在窗口大小变化时调整嵌入式视图大小
+const handleResize = async () => {
+    if (embeddedViewState.isAttached && embeddedViewState.id && embeddedViewContainer.value) {
+        const viewsAPI = getPluginViewsAPI();
+        if (!viewsAPI) {
+            console.warn('PluginView: 获取视图API失败，无法调整视图大小');
+            return;
+        }
+
+        try {
+            const container = embeddedViewContainer.value;
+            const rect = container.getBoundingClientRect();
+
+            // 确保边界值有效且是整数
+            const bounds = {
+                x: Math.max(0, Math.round(rect.left)),
+                y: Math.max(0, Math.round(rect.top)),
+                width: Math.max(100, Math.round(rect.width)),
+                height: Math.max(100, Math.round(rect.height))
+            };
+
+            // 检查边界值是否有效
+            if (bounds.width <= 0 || bounds.height <= 0) {
+                console.warn(`PluginView: 容器边界无效，宽高必须大于0: `, bounds);
+                return;
+            }
+
+            console.log(`PluginView: 调整嵌入式视图大小: ${embeddedViewState.id}`, bounds);
+
+            const result = await viewsAPI.show(embeddedViewState.id, bounds);
+            console.log(`PluginView: 调整视图大小结果: ${result}`);
+        } catch (error) {
+            console.error(`PluginView: 调整视图大小失败:`, error);
+        }
+    } else {
+        if (!embeddedViewState.isAttached) {
+            console.debug('PluginView: 视图未附加，跳过调整大小');
+        } else if (!embeddedViewState.id) {
+            console.debug('PluginView: 视图ID为空，跳过调整大小');
+        } else if (!embeddedViewContainer.value) {
+            console.debug('PluginView: 视图容器不存在，跳过调整大小');
+        }
+    }
+};
+
+// 添加窗口调整大小事件监听器
+const setupResizeListener = () => {
+    // 使用防抖函数来避免频繁调用
+    let resizeTimeout: number | null = null;
+
+    const debouncedResize = () => {
+        if (resizeTimeout !== null) {
+            clearTimeout(resizeTimeout);
+        }
+        resizeTimeout = window.setTimeout(async () => {
+            await handleResize();
+            resizeTimeout = null;
+        }, 100);
+    };
+
+    window.addEventListener('resize', debouncedResize);
+
+    // 返回清理函数
+    return () => {
+        if (resizeTimeout !== null) {
+            clearTimeout(resizeTimeout);
+        }
+        window.removeEventListener('resize', debouncedResize);
+    };
+};
+
+// 设置嵌入式视图事件监听器
+setupEmbeddedViewEventListeners();
+
+// 设置调整大小事件监听器并保存清理函数
+cleanupFunctions.push(setupResizeListener());
+
+// 在组件卸载时清理所有事件监听器
 onUnmounted(() => {
-    closePluginWindow()
-})
+    console.log('PluginView: 组件卸载，清理事件监听器');
+
+    // 销毁嵌入式视图
+    destroyEmbeddedView();
+
+    // 清理所有监听器
+    cleanupFunctions.forEach(cleanup => {
+        try {
+            cleanup();
+        } catch (error) {
+            console.error('PluginView: 清理事件监听器失败:', error);
+        }
+    });
+
+    // 清空数组
+    cleanupFunctions.length = 0;
+});
+
+// 导入nextTick用于等待DOM更新
+import { nextTick } from 'vue'
 
 // 在动作ID变化时重新加载
 watch(() => props.actionId, (newId) => {
@@ -258,13 +542,22 @@ watch(() => props.actionId, (newId) => {
             <p>{{ errorMessage }}</p>
         </div>
 
-        <!-- 内嵌视图 -->
-        <div v-else-if="embeddedViewHtml" class="flex-1 border rounded-lg p-4 bg-white shadow-sm overflow-auto">
-            <div v-html="embeddedViewHtml"></div>
+        <!-- 内嵌视图容器 - 始终存在但仅在需要时显示 -->
+        <div ref="embeddedViewContainer"
+            class="flex-1 border rounded-lg bg-white shadow-sm overflow-hidden embedded-view-container"
+            :class="{ 'hidden': !embeddedViewState.isAttached }"
+            style="min-height: 400px; position: relative; z-index: 1;">
+            <div class="debug-info p-4 text-xs text-gray-500">
+                <div><strong>视图信息:</strong> {{ selectedAction?.title }} ({{ selectedAction?.id }})</div>
+                <div><strong>视图模式:</strong> 内嵌式BrowserView</div>
+                <div><strong>视图ID:</strong> {{ embeddedViewState.id }}</div>
+                <div v-if="embeddedViewState.isVisible"><strong>状态:</strong> 可见</div>
+                <div v-else><strong>状态:</strong> 正在加载...</div>
+            </div>
         </div>
 
         <!-- 插件使用独立窗口显示 -->
-        <div v-else-if="pluginViewState.isOpen"
+        <div v-if="!embeddedViewState.isAttached && pluginViewState.isOpen"
             class="flex-1 flex flex-col items-center justify-center p-6 border rounded-lg border-blue-200 bg-blue-50">
             <p class="text-lg mb-4">插件视图已在独立窗口中打开</p>
             <p class="text-sm text-gray-600 mb-6">该窗口将在您返回动作列表或关闭此页面时自动关闭</p>
@@ -275,13 +568,14 @@ watch(() => props.actionId, (newId) => {
         </div>
 
         <!-- 显示结果（如果没有视图） -->
-        <div v-else-if="actionResult && !pluginViewState.isOpen && !embeddedViewHtml"
+        <div v-if="!embeddedViewState.isAttached && !pluginViewState.isOpen && actionResult"
             class="flex-1 p-4 border rounded-lg bg-gray-50 overflow-auto">
             <pre class="whitespace-pre-wrap">{{ JSON.stringify(actionResult, null, 2) }}</pre>
         </div>
 
         <!-- 空状态 -->
-        <div v-else class="flex-1 flex items-center justify-center text-gray-500">
+        <div v-if="!embeddedViewState.isAttached && !pluginViewState.isOpen && !actionResult && !isLoading && !hasError"
+            class="flex-1 flex items-center justify-center text-gray-500">
             <p>未加载任何动作</p>
         </div>
     </div>
@@ -294,5 +588,26 @@ watch(() => props.actionId, (newId) => {
     border: 1px solid #feb2b2;
     border-radius: 0.5rem;
     background-color: #fff5f5;
+}
+
+.embedded-view-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 400px;
+    position: relative;
+    z-index: 1;
+}
+
+.embedded-view-container.hidden {
+    display: none;
+}
+
+/* 在调试信息下方预留空间，让实际内容区域不被遮挡 */
+.embedded-view-container .debug-info {
+    position: relative;
+    z-index: 10;
+    background-color: rgba(255, 255, 255, 0.8);
+    border-bottom: 1px solid #eee;
+    padding: 12px;
 }
 </style>

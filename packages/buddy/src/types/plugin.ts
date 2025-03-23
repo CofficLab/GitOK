@@ -58,6 +58,16 @@ export interface PluginAction {
    * 视图路径
    */
   viewPath?: string;
+
+  /**
+   * 视图模式
+   */
+  viewMode?: 'embedded' | 'window';
+
+  /**
+   * 是否启用开发者工具
+   */
+  devTools?: boolean;
 }
 
 /**

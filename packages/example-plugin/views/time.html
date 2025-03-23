@@ -4,16 +4,22 @@
 <head>
     <title>当前时间</title>
     <style>
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
         body {
             font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            height: 100vh;
-            margin: 0;
             background-color: #f0f0f0;
             color: #333;
+            padding: 20px;
         }
 
         .time {
@@ -24,44 +30,91 @@
 
         .date {
             font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .debug {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+            font-size: 0.8rem;
         }
     </style>
 </head>
 
 <body>
-    <div class="time" id="time"></div>
-    <div class="date" id="date"></div>
+    <h2>时间信息</h2>
+    <div class="time" id="time">加载中...</div>
+    <div class="date" id="date">加载中...</div>
+    <div class="debug">视图调试信息将显示在这里</div>
 
     <script>
         function updateTime() {
             const now = new Date();
+            const debug = document.querySelector('.debug');
 
-            // 格式化时间
-            const timeElement = document.getElementById('time');
-            timeElement.textContent = now.toLocaleTimeString('zh-CN', {
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit'
-            });
+            try {
+                // 格式化时间
+                const timeElement = document.getElementById('time');
+                const timeString = now.toLocaleTimeString('zh-CN', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                });
+                timeElement.textContent = timeString;
 
-            // 格式化日期
-            const dateElement = document.getElementById('date');
-            dateElement.textContent = now.toLocaleDateString('zh-CN', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-                weekday: 'long'
-            });
+                // 格式化日期
+                const dateElement = document.getElementById('date');
+                const dateString = now.toLocaleDateString('zh-CN', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    weekday: 'long'
+                });
+                dateElement.textContent = dateString;
+
+                // 更新调试信息
+                debug.innerHTML = `
+                    <strong>调试信息</strong><br>
+                    最后更新: ${now.toISOString()}<br>
+                    时间值: ${timeString}<br>
+                    日期值: ${dateString}<br>
+                    DOM已更新
+                `;
+
+                console.log("[示例插件:时间视图] 时间已更新:", timeString, dateString);
+            } catch (error) {
+                console.error("[示例插件:时间视图] 更新时间出错:", error);
+                debug.innerHTML = `
+                    <strong>错误信息</strong><br>
+                    ${error.message}<br>
+                    ${error.stack}
+                `;
+            }
         }
 
-        // 初始更新
-        updateTime();
+        // 初始化函数
+        function initialize() {
+            console.log("[示例插件:时间视图] 初始化时间视图");
+            const debug = document.querySelector('.debug');
+            debug.innerHTML = `<strong>视图已初始化</strong><br>开始时间: ${new Date().toISOString()}`;
 
-        // 每秒更新一次
-        setInterval(updateTime, 1000);
+            // 初始更新
+            updateTime();
 
-        // 添加调试日志
-        console.log("[示例插件:时间视图] 视图已加载，计时器已启动");
+            // 每秒更新一次
+            setInterval(updateTime, 1000);
+
+            console.log("[示例插件:时间视图] 视图已加载，计时器已启动");
+        }
+
+        // 当文档加载完成时初始化
+        if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", initialize);
+        } else {
+            initialize();
+        }
     </script>
 </body>
 
