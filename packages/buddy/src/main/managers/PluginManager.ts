@@ -2,16 +2,68 @@
  * 插件管理器
  * 负责插件的加载、管理和通信
  */
-import { BrowserWindow, BrowserView, ipcMain } from 'electron';
+import { BrowserWindow, BrowserView, ipcMain, app } from 'electron';
 import { join } from 'path';
 import { EventEmitter } from 'events';
+import fs from 'fs';
+import { exec } from 'child_process';
 import { ConfigManager } from './ConfigManager';
 import { Logger } from '../utils/Logger';
 
 const debug = false;
 
+// 插件目录
+const PLUGIN_DIR = join(app.getPath('userData'), 'plugins');
+const LOCAL_PLUGIN_DIR = join(__dirname, '../../../plugins');
+
+// 插件动作接口
+export interface PluginAction {
+  id: string;
+  title: string;
+  description: string;
+  icon: string;
+  plugin: string;
+  viewPath?: string; // 动作的自定义视图路径
+}
+
+// 插件信息接口
+export interface PluginInfo {
+  id: string;
+  name: string;
+  description: string;
+  version: string;
+  author: string;
+  isInstalled: boolean;
+  isLocal: boolean; // 是否为本地插件
+}
+
+// 插件接口
+export interface Plugin {
+  id: string;
+  name: string;
+  description: string;
+  version: string;
+  author: string;
+  getActions(keyword: string): Promise<PluginAction[]>;
+  executeAction(action: PluginAction): Promise<any>;
+  getViewContent?(viewPath: string): Promise<string>; // 获取视图HTML内容
+}
+
+// 插件包信息
+export interface PluginPackage {
+  name: string;
+  version: string;
+  description: string;
+  author: string;
+  main: string;
+  gitokPlugin: {
+    id: string;
+  };
+}
+
 export class PluginManager extends EventEmitter {
   private pluginViews = new Map<string, BrowserView>();
+  private plugins = new Map<string, Plugin>();
   private configManager: ConfigManager;
   private logger: Logger;
 
@@ -32,11 +84,16 @@ export class PluginManager extends EventEmitter {
       if (debug) {
         this.logger.info('开始初始化插件系统');
       }
-      // 这里可以放置一些插件系统初始化代码
-      // 例如加载插件配置、预加载插件等
-      await import('../plugins/index.js').then(({ initializePluginSystem }) => {
-        return initializePluginSystem();
-      });
+
+      // 确保插件目录存在
+      this.ensurePluginDirs();
+
+      // 加载插件
+      await this.loadPlugins();
+
+      // 注册IPC处理函数
+      this.registerPluginHandlers();
+      this.registerPluginViewHandlers();
 
       if (debug) {
         this.logger.info('插件系统初始化完成');
@@ -45,6 +102,507 @@ export class PluginManager extends EventEmitter {
       const errorMessage =
         error instanceof Error ? error.message : String(error);
       this.logger.error('插件系统初始化失败', { error: errorMessage });
+    }
+  }
+
+  /**
+   * 确保插件目录存在
+   */
+  private ensurePluginDirs() {
+    if (debug) {
+      this.logger.debug('检查插件目录是否存在');
+    }
+
+    if (!fs.existsSync(PLUGIN_DIR)) {
+      if (debug) {
+        this.logger.info(`创建插件目录: ${PLUGIN_DIR}`);
+      }
+      fs.mkdirSync(PLUGIN_DIR, { recursive: true });
+    } else if (debug) {
+      this.logger.debug(`插件目录已存在: ${PLUGIN_DIR}`);
+    }
+  }
+
+  /**
+   * 加载所有插件
+   */
+  private async loadPlugins() {
+    if (debug) {
+      this.logger.info('开始加载插件');
+    }
+
+    // 加载本地插件
+    await this.loadLocalPlugins();
+
+    // 加载已安装的插件
+    await this.loadInstalledPlugins();
+  }
+
+  /**
+   * 加载本地插件
+   */
+  private async loadLocalPlugins(): Promise<Plugin[]> {
+    const plugins: Plugin[] = [];
+
+    if (debug) {
+      this.logger.info(`开始加载本地插件，目录: ${LOCAL_PLUGIN_DIR}`);
+    }
+
+    // 检查本地插件目录是否存在
+    if (!fs.existsSync(LOCAL_PLUGIN_DIR)) {
+      if (debug) {
+        this.logger.info('本地插件目录不存在', { path: LOCAL_PLUGIN_DIR });
+      }
+      return plugins;
+    }
+
+    try {
+      // 读取packages目录中所有文件夹
+      const entries = fs.readdirSync(LOCAL_PLUGIN_DIR, { withFileTypes: true });
+      const pluginFolders = entries.filter((entry) => entry.isDirectory());
+
+      if (debug) {
+        this.logger.info(`发现 ${pluginFolders.length} 个可能的插件文件夹`);
+      }
+
+      // 遍历每个文件夹，尝试加载插件
+      for (const folder of pluginFolders) {
+        const pluginPath = join(LOCAL_PLUGIN_DIR, folder.name);
+        try {
+          // 读取插件的package.json
+          const packageJsonPath = join(pluginPath, 'package.json');
+          if (!fs.existsSync(packageJsonPath)) {
+            continue;
+          }
+
+          const packageJson: PluginPackage = JSON.parse(
+            fs.readFileSync(packageJsonPath, 'utf-8')
+          );
+
+          // 检查是否是有效的插件
+          if (!packageJson.gitokPlugin?.id) {
+            continue;
+          }
+
+          // 加载插件主模块
+          const mainPath = join(pluginPath, packageJson.main);
+          if (!fs.existsSync(mainPath)) {
+            continue;
+          }
+
+          // 动态导入插件模块
+          const pluginModule = await import(mainPath);
+          const plugin: Plugin = new pluginModule.default();
+
+          // 注册插件
+          this.registerPlugin(plugin);
+          plugins.push(plugin);
+
+          if (debug) {
+            this.logger.info(`成功加载本地插件: ${plugin.name}`);
+          }
+        } catch (error) {
+          const errorMessage =
+            error instanceof Error ? error.message : String(error);
+          this.logger.error(`加载本地插件失败: ${folder.name}`, {
+            error: errorMessage,
+          });
+        }
+      }
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+      this.logger.error('加载本地插件时发生错误', { error: errorMessage });
+    }
+
+    return plugins;
+  }
+
+  /**
+   * 加载已安装的插件
+   */
+  private async loadInstalledPlugins(): Promise<Plugin[]> {
+    const plugins: Plugin[] = [];
+
+    if (debug) {
+      this.logger.info(`开始加载已安装插件，目录: ${PLUGIN_DIR}`);
+    }
+
+    // 检查插件目录是否存在
+    if (!fs.existsSync(PLUGIN_DIR)) {
+      if (debug) {
+        this.logger.info('插件目录不存在', { path: PLUGIN_DIR });
+      }
+      return plugins;
+    }
+
+    try {
+      // 读取插件目录中所有文件夹
+      const entries = fs.readdirSync(PLUGIN_DIR, { withFileTypes: true });
+      const pluginFolders = entries.filter((entry) => entry.isDirectory());
+
+      if (debug) {
+        this.logger.info(`发现 ${pluginFolders.length} 个可能的插件文件夹`);
+      }
+
+      // 遍历每个文件夹，尝试加载插件
+      for (const folder of pluginFolders) {
+        const pluginPath = join(PLUGIN_DIR, folder.name);
+        try {
+          // 读取插件的package.json
+          const packageJsonPath = join(pluginPath, 'package.json');
+          if (!fs.existsSync(packageJsonPath)) {
+            continue;
+          }
+
+          const packageJson: PluginPackage = JSON.parse(
+            fs.readFileSync(packageJsonPath, 'utf-8')
+          );
+
+          // 检查是否是有效的插件
+          if (!packageJson.gitokPlugin?.id) {
+            continue;
+          }
+
+          // 加载插件主模块
+          const mainPath = join(pluginPath, packageJson.main);
+          if (!fs.existsSync(mainPath)) {
+            continue;
+          }
+
+          // 动态导入插件模块
+          const pluginModule = await import(mainPath);
+          const plugin: Plugin = new pluginModule.default();
+
+          // 注册插件
+          this.registerPlugin(plugin);
+          plugins.push(plugin);
+
+          if (debug) {
+            this.logger.info(`成功加载已安装插件: ${plugin.name}`);
+          }
+        } catch (error) {
+          const errorMessage =
+            error instanceof Error ? error.message : String(error);
+          this.logger.error(`加载已安装插件失败: ${folder.name}`, {
+            error: errorMessage,
+          });
+        }
+      }
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+      this.logger.error('加载已安装插件时发生错误', { error: errorMessage });
+    }
+
+    return plugins;
+  }
+
+  /**
+   * 注册插件
+   */
+  private registerPlugin(plugin: Plugin): void {
+    if (this.plugins.has(plugin.id)) {
+      if (debug) {
+        this.logger.warn(`插件已存在，跳过注册: ${plugin.id}`);
+      }
+      return;
+    }
+
+    this.plugins.set(plugin.id, plugin);
+    if (debug) {
+      this.logger.info(`注册插件: ${plugin.id}`);
+    }
+  }
+
+  /**
+   * 获取插件
+   */
+  getPlugin(pluginId: string): Plugin | undefined {
+    return this.plugins.get(pluginId);
+  }
+
+  /**
+   * 获取所有插件信息
+   */
+  getAllPlugins(): PluginInfo[] {
+    return Array.from(this.plugins.values()).map((plugin) => ({
+      id: plugin.id,
+      name: plugin.name,
+      description: plugin.description,
+      version: plugin.version,
+      author: plugin.author,
+      isInstalled: true,
+      isLocal: true, // TODO: 区分本地和已安装插件
+    }));
+  }
+
+  /**
+   * 获取所有动作
+   */
+  async getAllActions(keyword: string = ''): Promise<PluginAction[]> {
+    const allActions: PluginAction[] = [];
+
+    for (const plugin of this.plugins.values()) {
+      try {
+        const actions = await plugin.getActions(keyword);
+        allActions.push(...actions);
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : String(error);
+        this.logger.error(`获取插件动作失败: ${plugin.id}`, {
+          error: errorMessage,
+        });
+      }
+    }
+
+    return allActions;
+  }
+
+  /**
+   * 执行动作
+   */
+  async executeAction(actionId: string): Promise<any> {
+    // 解析动作ID，格式为: pluginId/actionId
+    const [pluginId, localActionId] = actionId.split('/');
+    if (!pluginId || !localActionId) {
+      throw new Error(`无效的动作ID: ${actionId}`);
+    }
+
+    // 获取插件
+    const plugin = this.getPlugin(pluginId);
+    if (!plugin) {
+      throw new Error(`找不到插件: ${pluginId}`);
+    }
+
+    // 获取动作
+    const actions = await plugin.getActions('');
+    const action = actions.find((a) => a.id === localActionId);
+    if (!action) {
+      throw new Error(`找不到动作: ${actionId}`);
+    }
+
+    // 执行动作
+    return await plugin.executeAction(action);
+  }
+
+  /**
+   * 获取动作视图内容
+   */
+  async getActionViewContent(actionId: string): Promise<string> {
+    // 解析动作ID，格式为: pluginId/actionId
+    const [pluginId, localActionId] = actionId.split('/');
+    if (!pluginId || !localActionId) {
+      throw new Error(`无效的动作ID: ${actionId}`);
+    }
+
+    // 获取插件
+    const plugin = this.getPlugin(pluginId);
+    if (!plugin) {
+      throw new Error(`找不到插件: ${pluginId}`);
+    }
+
+    // 获取动作
+    const actions = await plugin.getActions('');
+    const action = actions.find((a) => a.id === localActionId);
+    if (!action) {
+      throw new Error(`找不到动作: ${actionId}`);
+    }
+
+    // 获取视图内容
+    if (!action.viewPath || !plugin.getViewContent) {
+      throw new Error(`动作没有视图: ${actionId}`);
+    }
+
+    return await plugin.getViewContent(action.viewPath);
+  }
+
+  /**
+   * 安装插件
+   */
+  async installPlugin(pluginPath: string): Promise<boolean> {
+    if (debug) {
+      this.logger.info(`开始安装插件: ${pluginPath}`);
+    }
+
+    try {
+      // 检查插件路径是否存在
+      if (!fs.existsSync(pluginPath)) {
+        throw new Error(`插件路径不存在: ${pluginPath}`);
+      }
+
+      // 读取插件的package.json
+      const packageJsonPath = join(pluginPath, 'package.json');
+      if (!fs.existsSync(packageJsonPath)) {
+        throw new Error('找不到package.json');
+      }
+
+      const packageJson: PluginPackage = JSON.parse(
+        fs.readFileSync(packageJsonPath, 'utf-8')
+      );
+
+      // 检查是否是有效的插件
+      if (!packageJson.gitokPlugin?.id) {
+        throw new Error('无效的插件包');
+      }
+
+      // 创建目标目录
+      const targetDir = join(PLUGIN_DIR, packageJson.gitokPlugin.id);
+      if (fs.existsSync(targetDir)) {
+        throw new Error('插件已安装');
+      }
+
+      // 复制插件文件
+      this.copyDirRecursive(pluginPath, targetDir);
+
+      // 安装依赖
+      await new Promise<void>((resolve, reject) => {
+        exec('npm install', { cwd: targetDir }, (error) => {
+          if (error) {
+            reject(error);
+          } else {
+            resolve();
+          }
+        });
+      });
+
+      if (debug) {
+        this.logger.info(`插件安装成功: ${packageJson.gitokPlugin.id}`);
+      }
+
+      return true;
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+      this.logger.error('安装插件失败', { error: errorMessage });
+      return false;
+    }
+  }
+
+  /**
+   * 卸载插件
+   */
+  async uninstallPlugin(pluginId: string): Promise<boolean> {
+    if (debug) {
+      this.logger.info(`开始卸载插件: ${pluginId}`);
+    }
+
+    try {
+      // 检查插件是否存在
+      const pluginDir = join(PLUGIN_DIR, pluginId);
+      if (!fs.existsSync(pluginDir)) {
+        throw new Error(`插件不存在: ${pluginId}`);
+      }
+
+      // 从插件管理器中移除
+      this.plugins.delete(pluginId);
+
+      // 删除插件目录
+      fs.rmSync(pluginDir, { recursive: true, force: true });
+
+      if (debug) {
+        this.logger.info(`插件卸载成功: ${pluginId}`);
+      }
+
+      return true;
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+      this.logger.error('卸载插件失败', { error: errorMessage });
+      return false;
+    }
+  }
+
+  /**
+   * 注册插件相关的IPC处理函数
+   */
+  private registerPluginHandlers(): void {
+    // 获取插件动作
+    ipcMain.handle('get-plugin-actions', async (_, keyword = '') => {
+      if (debug) {
+        this.logger.debug(`收到请求: get-plugin-actions, 关键词: "${keyword}"`);
+      }
+      try {
+        const actions = await this.getAllActions(keyword);
+        if (debug) {
+          this.logger.debug(`获取到 ${actions.length} 个插件动作`);
+        }
+        return actions;
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : String(error);
+        this.logger.error(`获取插件动作失败`, { error: errorMessage });
+        return [];
+      }
+    });
+
+    // 执行插件动作
+    ipcMain.handle('execute-plugin-action', async (_, actionId: string) => {
+      if (debug) {
+        this.logger.debug(
+          `收到请求: execute-plugin-action, 动作ID: "${actionId}"`
+        );
+      }
+      try {
+        const result = await this.executeAction(actionId);
+        return { success: true, result };
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : String(error);
+        this.logger.error(`执行插件动作失败`, { error: errorMessage });
+        return { success: false, error: errorMessage };
+      }
+    });
+
+    // 安装插件
+    ipcMain.handle('install-plugin', async (_, pluginPath: string) => {
+      if (debug) {
+        this.logger.debug(`收到请求: install-plugin, 路径: "${pluginPath}"`);
+      }
+      try {
+        const success = await this.installPlugin(pluginPath);
+        return { success };
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : String(error);
+        this.logger.error(`安装插件失败`, { error: errorMessage });
+        return { success: false, error: errorMessage };
+      }
+    });
+
+    // 卸载插件
+    ipcMain.handle('uninstall-plugin', async (_, pluginId: string) => {
+      if (debug) {
+        this.logger.debug(`收到请求: uninstall-plugin, ID: "${pluginId}"`);
+      }
+      try {
+        const success = await this.uninstallPlugin(pluginId);
+        return { success };
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : String(error);
+        this.logger.error(`卸载插件失败`, { error: errorMessage });
+        return { success: false, error: errorMessage };
+      }
+    });
+  }
+
+  /**
+   * 复制目录及其内容
+   */
+  private copyDirRecursive(src: string, dest: string) {
+    fs.mkdirSync(dest, { recursive: true });
+    const entries = fs.readdirSync(src, { withFileTypes: true });
+
+    for (const entry of entries) {
+      const srcPath = join(src, entry.name);
+      const destPath = join(dest, entry.name);
+
+      if (entry.isDirectory()) {
+        this.copyDirRecursive(srcPath, destPath);
+      } else {
+        fs.copyFileSync(srcPath, destPath);
+      }
     }
   }
 
