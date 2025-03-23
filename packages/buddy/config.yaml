@@ -49,6 +49,20 @@ window:
 
 # 插件管理器设置
 plugin:
+  # 插件目录设置
+  directories:
+    # 内置插件目录
+    # 相对于应用程序目录
+    builtIn: "resources/plugins"
+    # 用户插件目录
+    # 相对于用户数据目录
+    # 在 macOS 上通常是 ~/Library/Application Support/buddy/plugins
+    # 在 Windows 上通常是 %APPDATA%/buddy/plugins
+    # 在 Linux 上通常是 ~/.config/buddy/plugins
+    user: "plugins"
+    # 开发插件目录
+    # 相对于用户数据目录，用于开发和测试插件
+    dev: "dev-plugins"
   # 是否启用插件管理器的日志输出
   # 可选值: true (启用), false (禁用)
   enableLogging: false

@@ -28,6 +28,7 @@ alwaysApply: true
 - 关键步骤要写清楚注释
 - 注释、文档使用中文
 - Vue组件使用Vue3的语法，且script放在template之上
+- 写Typescript代码时要多思考，不要出现类型错误
 
 ## Electron 项目
 

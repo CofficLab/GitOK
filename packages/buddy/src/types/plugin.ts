@@ -9,7 +9,7 @@ export interface PluginManagerConfig {
   /**
    * 是否启用日志
    */
-  enableLogging?: boolean;
+  enableLogging: boolean;
 
   /**
    * 日志级别
@@ -18,7 +18,16 @@ export interface PluginManagerConfig {
    * - warn: 警告信息
    * - error: 错误信息
    */
-  logLevel?: 'debug' | 'info' | 'warn' | 'error';
+  logLevel: string;
+
+  /**
+   * 插件目录信息
+   */
+  directories?: {
+    builtIn: string;
+    user: string;
+    dev: string;
+  };
 }
 
 /**
@@ -125,12 +134,24 @@ export interface PluginPackage {
    * 插件兼容性要求
    */
   engines?: {
-    /**
-     * GitOK版本要求
-     */
-    gitok?: string;
+    node?: string;
+    electron?: string;
   };
 }
+
+/**
+ * 插件目录信息
+ */
+export interface PluginDirectories {
+  user: string; // 用户插件目录
+  builtin: string; // 内置插件目录
+  dev: string; // 开发插件目录
+}
+
+/**
+ * 插件位置类型
+ */
+export type PluginLocation = 'builtin' | 'user' | 'dev';
 
 /**
  * 插件商店中的插件信息
@@ -176,6 +197,21 @@ export interface StorePlugin {
    * 是否已安装
    */
   isInstalled: boolean;
+
+  /**
+   * 插件目录信息
+   */
+  directories: PluginDirectories;
+
+  /**
+   * 推荐安装位置
+   */
+  recommendedLocation: PluginLocation;
+
+  /**
+   * 当前安装位置（如果已安装）
+   */
+  currentLocation?: PluginLocation;
 }
 
 /**
@@ -217,4 +253,9 @@ export interface Plugin {
    * 是否为内置插件
    */
   isBuiltin: boolean;
+
+  /**
+   * 是否为开发中的插件
+   */
+  isDev?: boolean;
 }

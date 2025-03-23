@@ -4,12 +4,23 @@
  *
  * 插件目录结构：
  * {app.getPath('userData')}/plugins/
- * ├── plugin-1/                 # 插件目录
- * │   ├── package.json         # 插件信息
- * │   ├── main.js             # 插件主文件
- * │   └── ...                 # 其他资源
- * └── plugin-2/
- *     └── ...
+ * ├── user/                    # 用户安装的插件
+ * │   ├── plugin-1/           # 插件目录
+ * │   │   ├── package.json   # 插件信息
+ * │   │   ├── main.js       # 插件主文件
+ * │   │   └── ...           # 其他资源
+ * │   └── plugin-2/
+ * │       └── ...
+ * ├── builtin/               # 内置插件
+ * │   ├── plugin-3/
+ * │   │   └── ...
+ * │   └── plugin-4/
+ * │       └── ...
+ * └── dev/                   # 开发中的插件
+ *     ├── plugin-5/
+ *     │   └── ...
+ *     └── plugin-6/
+ *         └── ...
  */
 import { app } from 'electron';
 import { join } from 'path';
@@ -23,20 +34,37 @@ class PluginManager extends EventEmitter {
   private static instance: PluginManager;
   private plugins: Map<string, Plugin> = new Map();
   private logger: Logger;
+  private config: any;
 
   // 插件目录
-  private readonly PLUGINS_DIR = join(app.getPath('userData'), 'plugins');
-  private readonly BUILTIN_PLUGINS_DIR = join(__dirname, '../../../plugins');
+  private pluginsDir: string;
+  private builtinPluginsDir: string;
+  private devPluginsDir: string;
 
   private constructor() {
     super();
     // 从配置文件中读取配置
-    const config = configManager.getPluginConfig();
+    this.config = configManager.getPluginConfig();
     this.logger = new Logger('PluginManager', {
-      enabled: config.enableLogging,
-      level: config.logLevel,
+      enabled: this.config.enableLogging,
+      level: this.config.logLevel,
     });
-    this.logger.info('PluginManager 初始化');
+
+    // 初始化插件目录
+    const userDataPath = app.getPath('userData');
+    const appPath = app.getAppPath();
+    const pluginsRootDir = join(userDataPath, 'plugins');
+
+    this.pluginsDir = join(pluginsRootDir, 'user');
+    this.builtinPluginsDir = join(pluginsRootDir, 'builtin');
+    this.devPluginsDir = join(pluginsRootDir, 'dev');
+
+    this.logger.info('PluginManager 初始化', {
+      pluginsRootDir,
+      pluginsDir: this.pluginsDir,
+      builtinPluginsDir: this.builtinPluginsDir,
+      devPluginsDir: this.devPluginsDir,
+    });
   }
 
   /**
@@ -71,14 +99,45 @@ class PluginManager extends EventEmitter {
   }
 
   /**
+   * 获取插件目录信息
+   */
+  getPluginDirectories() {
+    return {
+      user: this.pluginsDir,
+      builtin: this.builtinPluginsDir,
+      dev: this.devPluginsDir,
+    };
+  }
+
+  /**
    * 确保插件目录存在
    */
   private async ensurePluginDirs(): Promise<void> {
     try {
-      // 确保用户插件目录存在
-      if (!fs.existsSync(this.PLUGINS_DIR)) {
-        this.logger.info(`创建插件目录: ${this.PLUGINS_DIR}`);
-        await fs.promises.mkdir(this.PLUGINS_DIR, { recursive: true });
+      const dirs = [
+        this.pluginsDir, // 用户插件目录
+        this.builtinPluginsDir, // 内置插件目录
+        this.devPluginsDir, // 开发插件目录
+      ];
+
+      for (const dir of dirs) {
+        if (!fs.existsSync(dir)) {
+          this.logger.info(`创建插件目录: ${dir}`);
+          await fs.promises.mkdir(dir, { recursive: true });
+        }
+      }
+
+      // 如果内置插件目录为空，复制资源目录中的内置插件
+      const entries = await fs.promises.readdir(this.builtinPluginsDir);
+      if (entries.length === 0) {
+        const resourceBuiltinDir = join(app.getAppPath(), 'resources/plugins');
+        if (fs.existsSync(resourceBuiltinDir)) {
+          this.logger.info('复制内置插件到插件目录');
+          await this.copyDirRecursive(
+            resourceBuiltinDir,
+            this.builtinPluginsDir
+          );
+        }
       }
     } catch (error) {
       const errorMessage =
@@ -101,6 +160,9 @@ class PluginManager extends EventEmitter {
       // 加载用户安装的插件
       await this.loadUserPlugins();
 
+      // 加载开发中的插件
+      await this.loadDevPlugins();
+
       this.logger.info(`已加载 ${this.plugins.size} 个插件`);
     } catch (error) {
       const errorMessage =
@@ -114,21 +176,18 @@ class PluginManager extends EventEmitter {
    * 加载内置插件
    */
   private async loadBuiltinPlugins(): Promise<void> {
-    if (!fs.existsSync(this.BUILTIN_PLUGINS_DIR)) {
+    if (!fs.existsSync(this.builtinPluginsDir)) {
       this.logger.info('内置插件目录不存在，跳过加载');
       return;
     }
 
     try {
-      const entries = await fs.promises.readdir(this.BUILTIN_PLUGINS_DIR, {
+      const entries = await fs.promises.readdir(this.builtinPluginsDir, {
         withFileTypes: true,
       });
       for (const entry of entries) {
         if (entry.isDirectory()) {
-          await this.loadPlugin(
-            join(this.BUILTIN_PLUGINS_DIR, entry.name),
-            true
-          );
+          await this.loadPlugin(join(this.builtinPluginsDir, entry.name), true);
         }
       }
     } catch (error) {
@@ -143,12 +202,12 @@ class PluginManager extends EventEmitter {
    */
   private async loadUserPlugins(): Promise<void> {
     try {
-      const entries = await fs.promises.readdir(this.PLUGINS_DIR, {
+      const entries = await fs.promises.readdir(this.pluginsDir, {
         withFileTypes: true,
       });
       for (const entry of entries) {
         if (entry.isDirectory()) {
-          await this.loadPlugin(join(this.PLUGINS_DIR, entry.name), false);
+          await this.loadPlugin(join(this.pluginsDir, entry.name), false);
         }
       }
     } catch (error) {
@@ -159,11 +218,41 @@ class PluginManager extends EventEmitter {
   }
 
   /**
+   * 加载开发中的插件
+   */
+  private async loadDevPlugins(): Promise<void> {
+    if (!fs.existsSync(this.devPluginsDir)) {
+      this.logger.info('开发插件目录不存在，跳过加载');
+      return;
+    }
+
+    try {
+      const entries = await fs.promises.readdir(this.devPluginsDir, {
+        withFileTypes: true,
+      });
+      for (const entry of entries) {
+        if (entry.isDirectory()) {
+          await this.loadPlugin(
+            join(this.devPluginsDir, entry.name),
+            false,
+            true
+          );
+        }
+      }
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+      this.logger.error('加载开发插件失败', { error: errorMessage });
+    }
+  }
+
+  /**
    * 加载单个插件
    */
   private async loadPlugin(
     pluginPath: string,
-    isBuiltin: boolean
+    isBuiltin: boolean,
+    isDev: boolean = false
   ): Promise<void> {
     try {
       const packageJsonPath = join(pluginPath, 'package.json');
@@ -192,6 +281,7 @@ class PluginManager extends EventEmitter {
         author: packageJson.author,
         path: pluginPath,
         isBuiltin,
+        isDev,
       };
 
       this.plugins.set(plugin.id, plugin);
@@ -259,7 +349,7 @@ class PluginManager extends EventEmitter {
       }
 
       // 创建目标目录
-      const targetDir = join(this.PLUGINS_DIR, packageJson.name);
+      const targetDir = join(this.pluginsDir, packageJson.name);
       if (fs.existsSync(targetDir)) {
         throw new Error('插件已安装');
       }
@@ -335,13 +425,16 @@ class PluginManager extends EventEmitter {
 
   /**
    * 获取插件商店列表
-   * 这里先返回模拟数据，后续可以改为从服务器获取
    */
   async getStorePlugins(): Promise<StorePlugin[]> {
     this.logger.info('获取插件商店列表');
 
-    // 获取已安装的插件ID列表
-    const installedPluginIds = Array.from(this.plugins.keys());
+    // 获取已安装的插件列表
+    const installedPlugins = this.getPlugins();
+    const installedPluginMap = new Map(installedPlugins.map((p) => [p.id, p]));
+
+    // 获取插件目录信息
+    const directories = this.getPluginDirectories();
 
     // 模拟的商店插件列表
     const storePlugins: StorePlugin[] = [
@@ -353,7 +446,16 @@ class PluginManager extends EventEmitter {
         author: 'GitOK Team',
         downloads: 1200,
         rating: 4.5,
-        isInstalled: installedPluginIds.includes('git-flow'),
+        isInstalled: installedPluginMap.has('git-flow'),
+        directories,
+        recommendedLocation: 'user',
+        currentLocation: installedPluginMap.get('git-flow')?.isDev
+          ? 'dev'
+          : installedPluginMap.get('git-flow')?.isBuiltin
+            ? 'builtin'
+            : installedPluginMap.has('git-flow')
+              ? 'user'
+              : undefined,
       },
       {
         id: 'commit-lint',
@@ -363,7 +465,16 @@ class PluginManager extends EventEmitter {
         author: 'GitOK Team',
         downloads: 800,
         rating: 4.8,
-        isInstalled: installedPluginIds.includes('commit-lint'),
+        isInstalled: installedPluginMap.has('commit-lint'),
+        directories,
+        recommendedLocation: 'builtin',
+        currentLocation: installedPluginMap.get('commit-lint')?.isDev
+          ? 'dev'
+          : installedPluginMap.get('commit-lint')?.isBuiltin
+            ? 'builtin'
+            : installedPluginMap.has('commit-lint')
+              ? 'user'
+              : undefined,
       },
       {
         id: 'branch-manager',
@@ -373,7 +484,16 @@ class PluginManager extends EventEmitter {
         author: 'GitOK Team',
         downloads: 600,
         rating: 4.2,
-        isInstalled: installedPluginIds.includes('branch-manager'),
+        isInstalled: installedPluginMap.has('branch-manager'),
+        directories,
+        recommendedLocation: 'dev',
+        currentLocation: installedPluginMap.get('branch-manager')?.isDev
+          ? 'dev'
+          : installedPluginMap.get('branch-manager')?.isBuiltin
+            ? 'builtin'
+            : installedPluginMap.has('branch-manager')
+              ? 'user'
+              : undefined,
       },
     ];
 

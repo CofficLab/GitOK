@@ -2,18 +2,19 @@
  * IPC管理器
  * 负责处理主进程与渲染进程之间的IPC通信
  */
-import { ipcMain, BrowserWindow } from 'electron';
+import { ipcMain } from 'electron';
 import { EventEmitter } from 'events';
 import { configManager } from './ConfigManager';
-import { windowManager } from './WindowManager';
 import { commandKeyManager } from './CommandKeyManager';
 import { Logger } from '../utils/Logger';
 import { pluginManager } from './PluginManager';
+import { shell } from 'electron';
+import { join } from 'path';
+import { app } from 'electron';
 
 class IPCManager extends EventEmitter {
   private static instance: IPCManager;
   private configManager = configManager;
-  private windowManager = windowManager;
   private commandKeyManager = commandKeyManager;
   private logger: Logger;
 
@@ -154,6 +155,31 @@ class IPCManager extends EventEmitter {
           error instanceof Error ? error.message : String(error);
         this.logger.error('获取插件列表失败', { error: errorMessage });
         return { success: false, error: errorMessage };
+      }
+    });
+
+    // 打开插件目录
+    ipcMain.handle('plugin:openDirectory', async (_, directory: string) => {
+      try {
+        // 如果是相对路径，则转换为绝对路径
+        const absolutePath = directory.startsWith('/')
+          ? directory
+          : join(app.getPath('userData'), directory);
+
+        // 使用系统默认程序打开目录
+        await shell.openPath(absolutePath);
+
+        return {
+          success: true,
+        };
+      } catch (error) {
+        this.logger.error('Failed to open directory:', {
+          error: error instanceof Error ? error.message : String(error),
+        });
+        return {
+          success: false,
+          error: '无法打开目录',
+        };
       }
     });
   }
