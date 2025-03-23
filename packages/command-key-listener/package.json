@@ -1,47 +1,47 @@
 {
-    "name": "@cofficlab/command-key-listener",
-    "version": "1.0.0",
-    "description": "macOS系统Command键双击事件监听器",
-    "main": "dist/index.js",
-    "types": "dist/index.d.ts",
-    "type": "commonjs",
-    "scripts": {
-        "build": "npm run build:ts && npm run build:native",
-        "build:ts": "tsc",
-        "build:native": "node native/build.js",
-        "prepublishOnly": "npm run build",
-        "test": "echo \"Error: no test specified\" && exit 1"
-    },
-    "files": [
-        "dist",
-        "build/Release/*.node",
-        "native/binding.gyp",
-        "native/command_key_listener.mm"
-    ],
-    "os": [
-        "darwin"
-    ],
-    "engines": {
-        "node": ">=14.0.0"
-    },
-    "keywords": [
-        "macos",
-        "command-key",
-        "hotkeys",
-        "keyboard",
-        "listener",
-        "native"
-    ],
-    "author": "CofficLab",
-    "license": "MIT",
-    "dependencies": {
-        "node-addon-api": "^7.0.0"
-    },
-    "devDependencies": {
-        "@types/node": "^22.13.0",
-        "typescript": "^5.8.0"
-    },
-    "peerDependencies": {
-        "electron": ">=22.0.0"
-    }
+  "name": "@coffic/command-key-listener",
+  "version": "1.0.0",
+  "description": "macOS系统Command键双击事件监听器",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "commonjs",
+  "scripts": {
+    "build": "npm run build:ts && npm run build:native",
+    "build:ts": "tsc",
+    "build:native": "node native/build.js",
+    "prepublishOnly": "npm run build",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "files": [
+    "dist",
+    "build/Release/*.node",
+    "native/binding.gyp",
+    "native/command_key_listener.mm"
+  ],
+  "os": [
+    "darwin"
+  ],
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "keywords": [
+    "macos",
+    "command-key",
+    "hotkeys",
+    "keyboard",
+    "listener",
+    "native"
+  ],
+  "author": "CofficLab",
+  "license": "MIT",
+  "dependencies": {
+    "node-addon-api": "^7.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.0",
+    "typescript": "^5.8.0"
+  },
+  "peerDependencies": {
+    "electron": ">=22.0.0"
+  }
 }

@@ -1,19 +1,10 @@
 /**
  * 插件系统类型定义
  */
+import { Logger } from '../utils/Logger';
 
-// 日志函数
-const logInfo = (message: string, ...args: any[]) => {
-  console.log(`[插件管理器] ${message}`, ...args);
-};
-
-const logError = (message: string, ...args: any[]) => {
-  console.error(`[插件管理器] ${message}`, ...args);
-};
-
-const logDebug = (message: string, ...args: any[]) => {
-  console.log(`[插件管理器:调试] ${message}`, ...args);
-};
+// 创建日志记录器
+const logger = new Logger('PluginManager');
 
 // 插件动作接口
 export interface PluginAction {
@@ -48,7 +39,7 @@ export interface Plugin {
   getViewContent?(viewPath: string): Promise<string>; // 获取视图HTML内容
 }
 
-// 插件包接口
+// 插件包信息
 export interface PluginPackage {
   name: string;
   version: string;
@@ -60,172 +51,195 @@ export interface PluginPackage {
   };
 }
 
-// 插件管理器类
+/**
+ * 插件管理器
+ * 负责注册和管理插件
+ */
 export class PluginManager {
   private plugins: Map<string, Plugin> = new Map();
 
-  // 注册插件
+  /**
+   * 注册插件
+   */
   registerPlugin(plugin: Plugin): void {
     if (this.plugins.has(plugin.id)) {
-      logInfo(`更新插件: ${plugin.name} (${plugin.id})`);
-    } else {
-      logInfo(`注册新插件: ${plugin.name} (${plugin.id})`);
+      logger.warn(`插件ID ${plugin.id} 已存在，将被覆盖`);
     }
 
     this.plugins.set(plugin.id, plugin);
-    logDebug(
-      `插件已注册/更新: ${plugin.name} (${plugin.id}), 目前有 ${this.plugins.size} 个已注册插件`
-    );
+    logger.info(`已注册插件: ${plugin.name} (${plugin.id})`);
   }
 
-  // 获取插件
+  /**
+   * 获取插件
+   */
   getPlugin(pluginId: string): Plugin | undefined {
-    const plugin = this.plugins.get(pluginId);
-
-    if (plugin) {
-      logDebug(`找到插件: ${pluginId}`);
-    } else {
-      logDebug(`未找到插件: ${pluginId}`);
+    if (!this.plugins.has(pluginId)) {
+      logger.warn(`插件 ${pluginId} 不存在`);
+      return undefined;
     }
 
-    return plugin;
+    return this.plugins.get(pluginId);
   }
 
-  // 获取所有插件信息
+  /**
+   * 获取所有插件
+   */
   getAllPlugins(): PluginInfo[] {
-    logDebug(`获取所有插件信息, 共 ${this.plugins.size} 个`);
-
+    logger.debug(`获取所有插件, 共 ${this.plugins.size} 个`);
     return Array.from(this.plugins.values()).map((plugin) => ({
       id: plugin.id,
       name: plugin.name,
       description: plugin.description,
       version: plugin.version,
-      author: plugin.author || '未知',
+      author: plugin.author,
       isInstalled: true,
-      isLocal: true, // 默认为本地插件
+      isLocal: plugin.id.startsWith('local.'),
     }));
   }
 
-  // 获取所有动作
+  /**
+   * 从所有插件获取匹配关键词的动作
+   */
   getAllActions(keyword: string = ''): Promise<PluginAction[]> {
-    logDebug(
-      `获取所有插件动作, 关键词: "${keyword}", 共 ${this.plugins.size} 个插件`
-    );
+    logger.debug(`获取所有动作，关键词: "${keyword}"`);
+    const promises = Array.from(this.plugins.values()).map(async (plugin) => {
+      try {
+        logger.debug(`从插件 ${plugin.name} 获取动作`);
+        const actions = await plugin.getActions(keyword);
+        logger.debug(`插件 ${plugin.name} 返回了 ${actions.length} 个动作`);
+        return actions;
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : String(error);
+        logger.error(`从插件 ${plugin.name} 获取动作失败`, {
+          error: errorMessage,
+        });
+        return [];
+      }
+    });
 
-    const promises = Array.from(this.plugins.values()).map((plugin) =>
-      plugin
-        .getActions(keyword)
-        .then((actions) => {
-          logDebug(`插件 ${plugin.id} 返回了 ${actions.length} 个动作`);
-          return actions.map((action) => ({
-            ...action,
-            plugin: action.plugin || plugin.id,
-          }));
-        })
-        .catch((err) => {
-          logError(`获取插件 ${plugin.id} 的动作失败:`, err);
-          return [];
-        })
-    );
-
-    return Promise.all(promises).then((results) => {
-      const allActions = results.flat();
-      logDebug(`合并获取到 ${allActions.length} 个动作`);
+    return Promise.all(promises).then((actionLists) => {
+      const allActions = actionLists.flat();
+      logger.debug(`所有插件共返回 ${allActions.length} 个动作`);
       return allActions;
     });
   }
 
-  // 执行动作
+  /**
+   * 执行插件动作
+   */
   async executeAction(actionId: string): Promise<any> {
-    logDebug(`准备执行动作: ${actionId}`);
+    logger.debug(`执行动作: ${actionId}`);
 
-    // 获取所有动作
-    const allActions = await this.getAllActions();
-    logDebug(`找到 ${allActions.length} 个动作，搜索匹配的动作ID`);
-
-    // 找到匹配的动作
-    const action = allActions.find((a) => a.id === actionId);
-    if (!action) {
-      const errorMsg = `未找到动作: ${actionId}`;
-      logError(errorMsg);
-      throw new Error(errorMsg);
+    // 解析动作ID格式: pluginId/actionId
+    const parts = actionId.split('/');
+    if (parts.length !== 2) {
+      const error = `无效的动作ID格式: ${actionId}，应为 "pluginId/actionId" 格式`;
+      logger.error(error);
+      throw new Error(error);
     }
 
-    logDebug(
-      `找到要执行的动作: ${action.id} (${action.title}), 来自插件: ${action.plugin}`
-    );
+    const [pluginId, id] = parts;
+    logger.debug(`解析动作ID: 插件=${pluginId}, 动作=${id}`);
 
-    // 获取对应的插件
-    const plugin = this.plugins.get(action.plugin);
+    // 获取插件
+    const plugin = this.getPlugin(pluginId);
     if (!plugin) {
-      const errorMsg = `未找到插件: ${action.plugin}`;
-      logError(errorMsg);
-      throw new Error(errorMsg);
+      const error = `未找到插件: ${pluginId}`;
+      logger.error(error);
+      throw new Error(error);
+    }
+
+    // 获取插件的所有动作
+    logger.debug(`获取插件 ${plugin.name} 的所有动作`);
+    const actions = await plugin.getActions('');
+    logger.debug(`插件 ${plugin.name} 有 ${actions.length} 个动作`);
+
+    // 查找要执行的动作
+    const action = actions.find((a) => a.id === id);
+    if (!action) {
+      const error = `未找到动作: ${id} (在插件 ${plugin.name} 中)`;
+      logger.error(error);
+      throw new Error(error);
     }
 
     // 执行动作
-    logDebug(`开始执行动作: ${action.id}`);
+    logger.info(`执行动作: ${action.title} (${actionId})`);
     try {
       const result = await plugin.executeAction(action);
-      logDebug(`动作执行成功: ${action.id}`);
+      logger.debug(`动作执行成功: ${actionId}`);
       return result;
     } catch (error) {
-      logError(`动作执行失败: ${action.id}`, error);
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+      logger.error(`动作执行失败: ${actionId}`, { error: errorMessage });
       throw error;
     }
   }
 
-  // 获取视图内容
+  /**
+   * 获取动作视图内容
+   */
   async getActionViewContent(actionId: string): Promise<string> {
-    logDebug(`准备获取动作视图内容: ${actionId}`);
+    logger.debug(`获取动作视图内容: ${actionId}`);
 
-    // 获取所有动作
-    const allActions = await this.getAllActions();
-
-    // 找到匹配的动作
-    const action = allActions.find((a) => a.id === actionId);
-    if (!action) {
-      const errorMsg = `未找到动作: ${actionId}`;
-      logError(errorMsg);
-      throw new Error(errorMsg);
+    // 解析动作ID格式: pluginId/actionId
+    const parts = actionId.split('/');
+    if (parts.length !== 2) {
+      const error = `无效的动作ID格式: ${actionId}，应为 "pluginId/actionId" 格式`;
+      logger.error(error);
+      throw new Error(error);
     }
 
-    logDebug(
-      `找到动作: ${action.id} (${action.title}), 来自插件: ${action.plugin}`
-    );
+    const [pluginId, id] = parts;
+    logger.debug(`解析动作ID: 插件=${pluginId}, 动作=${id}`);
+
+    // 获取插件
+    const plugin = this.getPlugin(pluginId);
+    if (!plugin) {
+      const error = `未找到插件: ${pluginId}`;
+      logger.error(error);
+      throw new Error(error);
+    }
+
+    // 获取插件的所有动作
+    logger.debug(`获取插件 ${plugin.name} 的所有动作`);
+    const actions = await plugin.getActions('');
+    logger.debug(`插件 ${plugin.name} 有 ${actions.length} 个动作`);
+
+    // 查找要获取视图的动作
+    const action = actions.find((a) => a.id === id);
+    if (!action) {
+      const error = `未找到动作: ${id} (在插件 ${plugin.name} 中)`;
+      logger.error(error);
+      throw new Error(error);
+    }
 
     // 检查动作是否有视图路径
     if (!action.viewPath) {
-      const errorMsg = `动作没有自定义视图: ${actionId}`;
-      logError(errorMsg);
-      throw new Error(errorMsg);
+      const error = `动作 ${action.title} 没有定义视图路径`;
+      logger.error(error);
+      throw new Error(error);
     }
 
-    logDebug(`动作具有视图路径: ${action.viewPath}`);
-
-    // 获取对应的插件
-    const plugin = this.plugins.get(action.plugin);
-    if (!plugin) {
-      const errorMsg = `未找到插件: ${action.plugin}`;
-      logError(errorMsg);
-      throw new Error(errorMsg);
-    }
-
-    // 检查插件是否支持获取视图内容
+    // 检查插件是否支持视图获取
     if (!plugin.getViewContent) {
-      const errorMsg = `插件不支持自定义视图: ${action.plugin}`;
-      logError(errorMsg);
-      throw new Error(errorMsg);
+      const error = `插件 ${plugin.name} 不支持视图获取功能`;
+      logger.error(error);
+      throw new Error(error);
     }
 
     // 获取视图内容
-    logDebug(`开始获取视图内容: ${action.viewPath}`);
+    logger.debug(`从插件 ${plugin.name} 获取视图: ${action.viewPath}`);
     try {
-      const content = await plugin.getViewContent(action.viewPath);
-      logDebug(`成功获取视图内容，长度: ${content.length} 字节`);
-      return content;
+      const html = await plugin.getViewContent(action.viewPath);
+      logger.debug(`成功获取视图: ${actionId}, HTML长度: ${html.length}字节`);
+      return html;
     } catch (error) {
-      logError(`获取视图内容失败: ${action.viewPath}`, error);
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+      logger.error(`获取视图内容失败: ${actionId}`, { error: errorMessage });
       throw error;
     }
   }

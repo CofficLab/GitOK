@@ -21,7 +21,7 @@
     "build:linux": "npm run build && electron-builder --linux"
   },
   "dependencies": {
-    "@cofficlab/command-key-listener": "workspace:../command-key-listener",
+    "@coffic/command-key-listener": "workspace:../command-key-listener",
     "@electron-toolkit/preload": "^3.0.1",
     "@electron-toolkit/utils": "^4.0.0",
     "daisyui": "^5.0.8",

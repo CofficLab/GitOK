@@ -7,6 +7,10 @@ settings:
 importers:
 
   .:
+    dependencies:
+      electron-log:
+        specifier: ^5.3.2
+        version: 5.3.2
     devDependencies:
       nodemon:
         specifier: ^3.1.9
@@ -17,7 +21,7 @@ importers:
 
   packages/buddy:
     dependencies:
-      '@cofficlab/command-key-listener':
+      '@coffic/command-key-listener':
         specifier: workspace:../command-key-listener
         version: link:../command-key-listener
       '@electron-toolkit/preload':
@@ -1936,6 +1940,10 @@ packages:
     resolution: {integrity: sha512-u7Qgge5ue5oOPDbZEseor7RjxKSYAekVflHkbNIY6te1kbtShQFqESq3FZakMBsQf/3SkEycvWhHHRb8zjqBqg==}
     engines: {node: '>=14.0.0'}
     hasBin: true
+
+  electron-log@5.3.2:
+    resolution: {integrity: sha512-EFI5MFFEzFJU5gyhJNpKQhfGfrRP9IWzSu0sSxrWXasWKvVAOFgBySafX8W1pbPKa/w8/DDPu2bBBtVZJdDsnw==}
+    engines: {node: '>= 14'}
 
   electron-publish@25.1.7:
     resolution: {integrity: sha512-+jbTkR9m39eDBMP4gfbqglDd6UvBC7RLh5Y0MhFSsc6UkGHj9Vj9TWobxevHYMMqmoujL11ZLjfPpMX+Pt6YEg==}
@@ -5929,6 +5937,8 @@ snapshots:
       - bluebird
       - electron-builder-squirrel-windows
       - supports-color
+
+  electron-log@5.3.2: {}
 
   electron-publish@25.1.7:
     dependencies:

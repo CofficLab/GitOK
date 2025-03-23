@@ -1,618 +1,45 @@
-import {
-  app,
-  shell,
-  BrowserWindow,
-  ipcMain,
-  WebContentsView,
-  BrowserView,
-  globalShortcut,
-} from 'electron';
-import { join } from 'path';
-import { electronApp, optimizer, is } from '@electron-toolkit/utils';
-import icon from '../../resources/icon.png?asset';
-import { configManager, type WindowConfig } from './config';
-// 添加类型导入但使用注释标记为需要时才加载
-// @ts-ignore CommandKeyListener模块将在运行时动态导入
-import type { CommandKeyListener } from '@cofficlab/command-key-listener';
-// 导入插件系统
-import { initializePluginSystem } from './plugins';
+/**
+ * Electron 主进程入口文件
+ * 负责应用生命周期管理和各种管理器的初始化与协调
+ */
+import { app, BrowserWindow } from 'electron';
+import { electronApp, optimizer } from '@electron-toolkit/utils';
+import { createManagers } from './managers';
+import { initLogger } from './utils/initLogger';
+import { Logger } from './utils/Logger';
 
-// 创建一个全局变量来存储命令键监听器实例
-let commandKeyListener: CommandKeyListener | null = null;
+// 首先初始化日志系统
+const isDevelopment = !app.isPackaged;
+initLogger(isDevelopment);
 
-// 标记应用是否正在退出
-let isQuitting = false;
+// 创建主应用日志记录器
+const logger = new Logger('Main');
 
-// 创建一个全局Map来存储插件视图
-const pluginViews = new Map<string, BrowserView>();
+const {
+  configManager,
+  windowManager,
+  pluginManager,
+  commandKeyManager,
+  ipcManager,
+} = createManagers();
 
-// 主窗口引用
+// 主窗口引用 - 通过窗口管理器获取
 let mainWindow: BrowserWindow | null = null;
 
-function createWindow(): void {
-  const windowConfig = configManager.getWindowConfig();
-  const showTrafficLights = windowConfig.showTrafficLights;
-  const showDebugToolbar = windowConfig.showDebugToolbar;
-  const debugToolbarPosition = windowConfig.debugToolbarPosition || 'right';
-  const spotlightMode = windowConfig.spotlightMode;
-  const spotlightSize = windowConfig.spotlightSize || {
-    width: 700,
-    height: 500,
-  };
-  const alwaysOnTop = windowConfig.alwaysOnTop;
-
-  // 如果窗口已经存在，先销毁它
-  if (mainWindow && !mainWindow.isDestroyed()) {
-    mainWindow.destroy();
-  }
-
-  // 基本窗口配置
-  const windowOptions: Electron.BrowserWindowConstructorOptions = {
-    width: spotlightMode ? spotlightSize.width : 1200,
-    height: spotlightMode ? spotlightSize.height : 1400,
-    show: false,
-    autoHideMenuBar: true,
-    ...(process.platform === 'linux' ? { icon } : {}),
-    webPreferences: {
-      preload: join(__dirname, '../preload/index.js'),
-      sandbox: false,
-    },
-  };
-
-  // Spotlight模式特定配置
-  if (spotlightMode) {
-    Object.assign(windowOptions, {
-      frame: false,
-      transparent: true,
-      resizable: false,
-      movable: true,
-      center: true,
-      alwaysOnTop: alwaysOnTop,
-      skipTaskbar: true,
-      vibrancy: 'under-window', // macOS 特效
-      visualEffectState: 'active',
-      roundedCorners: true,
-    });
-
-    // 如果在macOS上，隐藏dock图标
-    if (process.platform === 'darwin') {
-      app.dock.hide();
-    }
-  } else {
-    // 常规模式下的macOS特定配置
-    if (process.platform === 'darwin') {
-      Object.assign(windowOptions, {
-        titleBarStyle: showTrafficLights ? 'default' : 'hiddenInset',
-        trafficLightPosition: showTrafficLights
-          ? undefined
-          : { x: -20, y: -20 },
-      });
-    }
-  }
-
-  // 创建浏览器窗口
-  mainWindow = new BrowserWindow(windowOptions);
-
-  // 窗口加载完成后显示
-  mainWindow.on('ready-to-show', () => {
-    if (!spotlightMode) {
-      mainWindow!.show();
-    }
-
-    // 根据配置决定是否打开开发者工具及其位置
-    if (showDebugToolbar) {
-      mainWindow!.webContents.openDevTools({
-        mode: debugToolbarPosition,
-      });
-    }
-  });
-
-  // 处理外部链接
-  mainWindow.webContents.setWindowOpenHandler((details) => {
-    shell.openExternal(details.url);
-    return { action: 'deny' };
-  });
-
-  // HMR for renderer base on electron-vite cli.
-  // Load the remote URL for development or the local html file for production.
-  if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-    mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL']);
-  } else {
-    mainWindow.loadFile(join(__dirname, '../renderer/index.html'));
-  }
-
-  // Spotlight模式下设置窗口失焦自动隐藏
-  if (spotlightMode) {
-    mainWindow.on('blur', () => {
-      // 添加一个小延迟，防止窗口刚显示就触发blur事件
-      if (
-        mainWindow &&
-        !mainWindow.isDestroyed() &&
-        windowConfig.spotlightMode
-      ) {
-        // 使用标志记录最后一次显示的时间
-        // @ts-ignore 忽略类型检查错误
-        const lastShowTime = mainWindow.lastShowTime || 0;
-        const now = Date.now();
-
-        // @ts-ignore 忽略类型检查错误
-        const justTriggered = mainWindow.justTriggered === true;
-
-        // 如果窗口刚刚被触发显示，或者刚刚显示（小于500毫秒），则不要立即隐藏
-        if (justTriggered || now - lastShowTime < 500) {
-          console.log('忽略失焦事件，窗口刚刚显示');
-        } else {
-          console.log('窗口失去焦点，自动隐藏');
-          mainWindow.hide();
-        }
-      }
-    });
-  }
-
-  // 仅在macOS上设置Command键双击监听器
-  if (process.platform === 'darwin' && !spotlightMode) {
-    setupCommandKeyListener(mainWindow);
-  }
-}
-
-/**
- * 设置Command键双击监听器
- * @param window 要激活的窗口
- */
-function setupCommandKeyListener(window: BrowserWindow): void {
-  // 如果监听器已经存在，先停止它
-  if (commandKeyListener) {
-    commandKeyListener.stop();
-    commandKeyListener = null;
-  }
-
-  try {
-    // 使用动态导入
-    import('@cofficlab/command-key-listener')
-      .then((module) => {
-        const CommandKeyListenerClass = module.CommandKeyListener;
-
-        // 创建新的监听器实例
-        commandKeyListener = new CommandKeyListenerClass();
-
-        if (!commandKeyListener) {
-          console.error('创建Command键双击监听器实例失败');
-          return;
-        }
-
-        // 监听双击Command键事件
-        commandKeyListener.on('command-double-press', () => {
-          if (window && !window.isDestroyed()) {
-            // 切换窗口状态：如果窗口聚焦则隐藏，否则显示并聚焦
-            if (window.isFocused()) {
-              // 窗口当前在前台，隐藏它
-              window.hide();
-              // 发送事件到渲染进程通知窗口已隐藏
-              window.webContents.send('window-hidden-by-command');
-            } else {
-              // 窗口当前不在前台，显示并聚焦它
-              window.show();
-              window.focus();
-              // 发送事件到渲染进程通知窗口已激活
-              window.webContents.send('window-activated-by-command');
-            }
-            // 无论如何都发送命令键双击事件
-            window.webContents.send('command-double-pressed');
-          }
-        });
-
-        // 异步启动监听器
-        commandKeyListener
-          .start()
-          .then((result) => {
-            if (result) {
-              console.log('Command键双击监听器已启动');
-            } else {
-              console.error('Command键双击监听器启动失败');
-            }
-          })
-          .catch((error) => {
-            console.error('启动Command键双击监听器时出错:', error);
-          });
-      })
-      .catch((error) => {
-        console.error('加载Command键双击监听器模块失败:', error);
-      });
-  } catch (error) {
-    console.error('初始化Command键双击监听器失败:', error);
-  }
-}
-
-/**
- * 创建插件WebContentsView
- * @param mainWindow 主窗口
- * @param viewId 视图ID
- * @param url 加载的URL或HTML文件路径
- */
-function createPluginView(
-  mainWindow: BrowserWindow,
-  viewId: string,
-  url: string
-): BrowserView | null {
-  try {
-    console.log(`创建插件视图, ID: ${viewId}, URL: ${url}`);
-
-    // 创建BrowserView而不是WebContentsView
-    const view = new BrowserView({
-      webPreferences: {
-        nodeIntegration: false,
-        contextIsolation: true,
-        sandbox: true,
-        preload: join(__dirname, '../preload/plugin-preload.js'),
-        // 允许开发者工具
-        devTools: true,
-      },
-    });
-
-    // 存储视图引用
-    pluginViews.set(viewId, view);
-
-    // 加载URL或HTML内容
-    if (url.startsWith('http://') || url.startsWith('https://')) {
-      // 加载远程URL
-      view.webContents.loadURL(url);
-    } else if (
-      url.startsWith('<html') ||
-      url.startsWith('<!DOCTYPE') ||
-      url.startsWith('data:')
-    ) {
-      // 直接加载HTML内容
-      view.webContents.loadURL(
-        `data:text/html;charset=utf-8,${encodeURIComponent(url)}`
-      );
-    } else {
-      // 加载文件 - 这里假设url是相对于应用根目录的路径
-      try {
-        // 直接从插件获取HTML内容
-        import('./plugins/index.js').then(async ({ pluginManager }) => {
-          try {
-            // 使用ActionView获取的viewPath对应的viewId来请求HTML内容
-            // 假设viewId格式为 view_timestamp_actionId_random
-            const parts = viewId.split('_');
-            const actionId = parts.length >= 3 ? parts[2] : null;
-
-            if (!actionId) {
-              console.log('无法从视图ID中提取动作ID:', viewId);
-              const errorHtml = `<html><body><h1>错误</h1><p>无法加载视图: 无效的视图ID</p></body></html>`;
-              view.webContents.loadURL(
-                `data:text/html;charset=utf-8,${encodeURIComponent(errorHtml)}`
-              );
-              return;
-            }
-
-            console.log(`尝试获取动作 ${actionId} 的视图内容`);
-
-            // 获取所有动作
-            const actions = await pluginManager.getAllActions();
-            const action = actions.find((a) => a.id === actionId);
-
-            if (!action) {
-              console.log(`未找到动作: ${actionId}`);
-              const errorHtml = `<html><body><h1>错误</h1><p>无法加载视图: 未找到动作</p></body></html>`;
-              view.webContents.loadURL(
-                `data:text/html;charset=utf-8,${encodeURIComponent(errorHtml)}`
-              );
-              return;
-            }
-
-            // 使用插件API获取视图内容
-            const html = await pluginManager.getActionViewContent(actionId);
-            console.log(`成功获取HTML内容，长度: ${html.length}`);
-            view.webContents.loadURL(
-              `data:text/html;charset=utf-8,${encodeURIComponent(html)}`
-            );
-          } catch (error: any) {
-            console.error('获取视图内容失败:', error);
-            const errorHtml = `<html><body><h1>错误</h1><p>加载视图失败: ${error?.message || '未知错误'}</p></body></html>`;
-            view.webContents.loadURL(
-              `data:text/html;charset=utf-8,${encodeURIComponent(errorHtml)}`
-            );
-          }
-        });
-      } catch (error: any) {
-        console.error(`加载视图内容失败:`, error);
-        const errorHtml = `<html><body><h1>错误</h1><p>加载视图失败: ${error?.message || '未知错误'}</p></body></html>`;
-        view.webContents.loadURL(
-          `data:text/html;charset=utf-8,${encodeURIComponent(errorHtml)}`
-        );
-      }
-    }
-
-    // 监听视图销毁事件，清理引用
-    view.webContents.on('destroyed', () => {
-      console.log(`插件视图已销毁: ${viewId}`);
-      pluginViews.delete(viewId);
-    });
-
-    // 添加DOM就绪事件监听，在内容加载后自动打开开发者工具
-    view.webContents.on('dom-ready', () => {
-      console.log(`插件视图DOM已就绪: ${viewId}`);
-
-      // 获取窗口配置
-      const windowConfig = configManager.getWindowConfig();
-
-      // 如果配置启用了开发者工具，则打开它
-      if (windowConfig.showDebugToolbar) {
-        view.webContents.openDevTools({
-          mode: windowConfig.debugToolbarPosition || 'right',
-        });
-      }
-    });
-
-    return view;
-  } catch (error) {
-    console.error(`创建插件视图失败:`, error);
-    return null;
-  }
-}
-
-/**
- * 注册插件视图相关的IPC处理函数
- */
-function registerPluginViewHandlers() {
-  // 创建插件视图
-  ipcMain.handle('create-plugin-view', async (event, { viewId, url }) => {
-    const window = BrowserWindow.fromWebContents(event.sender);
-    if (!window) {
-      return { success: false, error: '无法找到主窗口' };
-    }
-
-    try {
-      const view = createPluginView(window, viewId, url);
-      if (!view) {
-        return { success: false, error: '创建视图失败' };
-      }
-      return { success: true, viewId };
-    } catch (error) {
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : String(error),
-      };
-    }
-  });
-
-  // 显示插件视图
-  ipcMain.handle('show-plugin-view', async (event, { viewId, bounds }) => {
-    const window = BrowserWindow.fromWebContents(event.sender);
-    if (!window) {
-      return { success: false, error: '无法找到主窗口' };
-    }
-
-    const view = pluginViews.get(viewId);
-    if (!view) {
-      return { success: false, error: `视图不存在: ${viewId}` };
-    }
-
-    try {
-      // 显示视图
-      window.setBrowserView(view);
-
-      // 设置视图边界
-      const viewBounds = bounds || {
-        x: Math.floor(window.getBounds().width * 0.25), // 水平居中（左侧缩进25%）
-        y: Math.floor(window.getBounds().height * 0.15), // 垂直方向稍微往下一点
-        width: Math.floor(window.getBounds().width * 0.5), // 宽度为窗口的1/2
-        height: Math.floor(window.getBounds().height * 0.6), // 高度为窗口的60%，留出状态栏空间
-      };
-
-      // 记录视图位置和大小
-      console.log(`设置视图边界: ${JSON.stringify(viewBounds)}`);
-      view.setBounds(viewBounds);
-
-      return { success: true };
-    } catch (error) {
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : String(error),
-      };
-    }
-  });
-
-  // 隐藏插件视图
-  ipcMain.handle('hide-plugin-view', async (event, { viewId }) => {
-    const window = BrowserWindow.fromWebContents(event.sender);
-    if (!window) {
-      return { success: false, error: '无法找到主窗口' };
-    }
-
-    try {
-      // 移除当前的BrowserView
-      window.setBrowserView(null);
-      return { success: true };
-    } catch (error) {
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : String(error),
-      };
-    }
-  });
-
-  // 关闭并销毁插件视图
-  ipcMain.handle('destroy-plugin-view', async (event, { viewId }) => {
-    const window = BrowserWindow.fromWebContents(event.sender);
-    if (!window) {
-      return { success: false, error: '无法找到主窗口' };
-    }
-
-    const view = pluginViews.get(viewId);
-    if (!view) {
-      return { success: false, error: `视图不存在: ${viewId}` };
-    }
-
-    try {
-      // 首先隐藏视图
-      window.setBrowserView(null);
-
-      // 从窗口中移除视图并从Map中删除
-      window.removeBrowserView(view);
-      pluginViews.delete(viewId);
-
-      return { success: true };
-    } catch (error) {
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : String(error),
-      };
-    }
-  });
-
-  // 处理插件视图发送给主应用的消息
-  ipcMain.on('plugin-to-host', (event, { channel, data }) => {
-    // 找到发送消息的视图
-    const pluginViewId = findPluginViewIdByWebContents(event.sender);
-    if (!pluginViewId) {
-      console.error('无法找到发送消息的插件视图');
-      return;
-    }
-
-    // 找到主窗口
-    const mainWindow = BrowserWindow.getAllWindows().find((win) =>
-      win
-        .getBrowserViews()
-        .some((view) => view.webContents.id === event.sender.id)
-    );
-
-    if (!mainWindow) {
-      console.error('无法找到主窗口');
-      return;
-    }
-
-    // 转发消息到主应用
-    mainWindow.webContents.send('plugin-message', {
-      viewId: pluginViewId,
-      channel,
-      data,
-    });
-  });
-
-  // 处理从主应用发送到插件视图的消息
-  ipcMain.on('host-to-plugin', (event, { viewId, channel, data }) => {
-    // 找到对应的视图
-    const view = pluginViews.get(viewId);
-    if (!view) {
-      console.error(`找不到插件视图: ${viewId}`);
-      return;
-    }
-
-    // 转发消息到插件视图
-    view.webContents.send('host-to-plugin', {
-      channel,
-      data,
-    });
-  });
-
-  // 处理插件视图准备就绪的消息
-  ipcMain.on('plugin-view-ready', (event) => {
-    const viewId = findPluginViewIdByWebContents(event.sender);
-    if (!viewId) {
-      console.error('无法找到发送ready消息的插件视图');
-      return;
-    }
-
-    console.log(`插件视图准备就绪: ${viewId}`);
-
-    // 可以在这里执行一些初始化操作，比如发送插件信息
-  });
-
-  // 处理插件视图请求关闭的消息
-  ipcMain.on('plugin-close-view', (event) => {
-    const viewId = findPluginViewIdByWebContents(event.sender);
-    if (!viewId) {
-      console.error('无法找到请求关闭的插件视图');
-      return;
-    }
-
-    console.log(`插件视图请求关闭: ${viewId}`);
-
-    // 找到主窗口
-    const mainWindow = BrowserWindow.getAllWindows().find((win) =>
-      win
-        .getBrowserViews()
-        .some((view) => view.webContents.id === event.sender.id)
-    );
-
-    if (!mainWindow) {
-      console.error('无法找到主窗口');
-      return;
-    }
-
-    // 通知主应用插件视图请求关闭
-    mainWindow.webContents.send('plugin-close-requested', {
-      viewId,
-    });
-  });
-
-  // 获取插件信息
-  ipcMain.handle('get-plugin-info', (event) => {
-    const viewId = findPluginViewIdByWebContents(event.sender);
-    if (!viewId) {
-      return { success: false, error: '无法找到插件视图' };
-    }
-
-    return {
-      success: true,
-      viewId,
-      // 可以在这里添加更多插件相关信息
-    };
-  });
-
-  // 切换插件视图的开发者工具
-  ipcMain.handle('toggle-plugin-devtools', async (event, { viewId }) => {
-    const view = pluginViews.get(viewId);
-    if (!view) {
-      return { success: false, error: `视图不存在: ${viewId}` };
-    }
-
-    try {
-      if (view.webContents.isDevToolsOpened()) {
-        view.webContents.closeDevTools();
-        console.log(`已关闭插件视图的开发者工具: ${viewId}`);
-      } else {
-        // 获取窗口配置
-        const windowConfig = configManager.getWindowConfig();
-        view.webContents.openDevTools({
-          mode: windowConfig.debugToolbarPosition || 'right',
-        });
-        console.log(`已打开插件视图的开发者工具: ${viewId}`);
-      }
-      return { success: true };
-    } catch (error) {
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : String(error),
-      };
-    }
-  });
-}
-
-/**
- * 根据WebContents查找对应的插件视图ID
- */
-function findPluginViewIdByWebContents(
-  webContents: Electron.WebContents
-): string | null {
-  for (const [viewId, view] of pluginViews.entries()) {
-    if (view.webContents.id === webContents.id) {
-      return viewId;
-    }
-  }
-  return null;
-}
-
-// Prevent multiple instances
+// 防止多实例运行
+logger.debug('检查应用实例');
 const isSingleInstance = app.requestSingleInstanceLock();
 if (!isSingleInstance) {
+  logger.info('检测到应用的另一个实例已在运行，退出当前实例');
   app.quit();
   process.exit(0);
 }
 
+// 处理第二个实例启动
 app.on('second-instance', () => {
+  logger.info('检测到第二个应用实例启动，激活主窗口');
   // 重复启动时，显示现有窗口
+  mainWindow = windowManager.getMainWindow();
   if (mainWindow) {
     if (mainWindow.isMinimized()) mainWindow.restore();
     mainWindow.show();
@@ -621,239 +48,89 @@ app.on('second-instance', () => {
 });
 
 // 应用准备就绪
-app.whenReady().then(() => {
-  // 设置协议处理
+app.whenReady().then(async () => {
+  logger.info('应用准备就绪');
+
+  // 设置应用ID
   electronApp.setAppUserModelId('com.electron');
+  logger.debug('设置应用用户模型ID');
 
   // 应用优化
   app.on('browser-window-created', (_, window) => {
+    logger.debug('新窗口创建，设置窗口快捷键监听');
     optimizer.watchWindowShortcuts(window);
   });
 
   // 创建窗口
-  createWindow();
+  logger.info('创建主窗口');
+  mainWindow = windowManager.createWindow();
+
+  // 设置Command键双击管理器的主窗口引用
+  logger.debug('设置Command键双击管理器窗口引用');
+  commandKeyManager.setMainWindow(mainWindow);
+
+  // 在macOS上设置Command键双击监听器（非Spotlight模式下）
+  const windowConfig = configManager.getWindowConfig();
+  if (process.platform === 'darwin' && !windowConfig.spotlightMode) {
+    logger.info('在macOS上设置Command键双击监听器');
+    const result = await commandKeyManager.setupCommandKeyListener(mainWindow);
+    if (result.success) {
+      logger.info('Command键双击监听器设置成功');
+    } else {
+      logger.warn('Command键双击监听器设置失败', { error: result.error });
+    }
+  }
 
   // 设置全局快捷键
-  setupGlobalShortcut();
+  logger.info('设置全局快捷键');
+  windowManager.setupGlobalShortcut();
 
   // 初始化插件系统
-  initializePluginSystem();
+  logger.info('初始化插件系统');
+  await pluginManager.initialize();
 
   // 注册插件视图处理器
-  registerPluginViewHandlers();
+  logger.debug('注册插件视图处理器');
+  pluginManager.registerPluginViewHandlers();
 
-  // 注册IPC Handler
-  // ... (保留现有的IPC处理器注册)
+  // 注册IPC处理器
+  logger.debug('注册IPC处理器');
+  ipcManager.registerHandlers();
 
+  // 当应用被激活时（macOS特性）
   app.on('activate', function () {
-    if (BrowserWindow.getAllWindows().length === 0) createWindow();
+    logger.info('应用被激活');
+    // 在macOS上，当点击dock图标且没有其他窗口打开时，通常会重新创建一个窗口
+    if (BrowserWindow.getAllWindows().length === 0) {
+      logger.info('没有活动窗口，创建新窗口');
+      mainWindow = windowManager.createWindow();
+      commandKeyManager.setMainWindow(mainWindow);
+    }
   });
+
+  logger.info('应用初始化完成，等待用户交互');
 });
 
 // 窗口关闭时处理
 app.on('window-all-closed', () => {
+  logger.info('所有窗口已关闭');
   if (process.platform !== 'darwin') {
+    logger.info('非macOS平台，退出应用');
     app.quit();
   }
 });
 
-// 应用退出时
+// 应用退出前的清理工作
 app.on('will-quit', () => {
-  // 取消注册所有快捷键
-  globalShortcut.unregisterAll();
+  logger.info('应用即将退出，执行清理工作');
 
-  // 如果存在Command键监听器，停止它
-  if (commandKeyListener) {
-    commandKeyListener.stop();
-    commandKeyListener = null;
-  }
+  // 清理窗口管理器资源
+  logger.debug('清理窗口管理器资源');
+  windowManager.cleanup();
+
+  // 清理Command键监听器
+  logger.debug('清理Command键监听器');
+  commandKeyManager.cleanup();
+
+  logger.info('应用清理完成，准备退出');
 });
-
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and require them here.
-
-// 添加 IPC 处理程序来处理配置更改
-ipcMain.handle('get-window-config', () => {
-  return configManager.getWindowConfig();
-});
-
-ipcMain.handle('set-window-config', (_, config: Partial<WindowConfig>) => {
-  configManager.setWindowConfig(config);
-  // 通知所有窗口配置已更改
-  BrowserWindow.getAllWindows().forEach((window) => {
-    window.webContents.send(
-      'window-config-changed',
-      configManager.getWindowConfig()
-    );
-  });
-});
-
-// 添加 IPC 处理程序来控制Command键双击功能
-ipcMain.handle('toggle-command-double-press', async (_, enabled: boolean) => {
-  if (process.platform !== 'darwin') {
-    return { success: false, reason: '此功能仅在macOS上可用' };
-  }
-
-  if (enabled) {
-    if (commandKeyListener && commandKeyListener.isListening()) {
-      return { success: true, already: true };
-    }
-
-    const mainWindow =
-      BrowserWindow.getFocusedWindow() || BrowserWindow.getAllWindows()[0];
-    if (mainWindow) {
-      setupCommandKeyListener(mainWindow);
-      // 由于设置过程是异步的，无法立即获取结果，返回启动中状态
-      return { success: true, starting: true };
-    }
-
-    return { success: false, reason: '没有可用窗口' };
-  } else {
-    if (commandKeyListener) {
-      const result = commandKeyListener.stop();
-      commandKeyListener = null;
-      return { success: result };
-    }
-    return { success: true, already: true };
-  }
-});
-
-// 显示或隐藏主窗口
-function toggleMainWindow() {
-  if (!mainWindow) return;
-
-  const windowConfig = configManager.getWindowConfig();
-
-  if (mainWindow.isVisible()) {
-    mainWindow.hide();
-  } else {
-    // 获取当前鼠标所在屏幕的信息
-    const { screen } = require('electron');
-    const cursorPoint = screen.getCursorScreenPoint();
-    const currentDisplay = screen.getDisplayNearestPoint(cursorPoint);
-
-    // 计算窗口在当前显示器上的居中位置
-    const windowWidth =
-      windowConfig.spotlightMode && windowConfig.spotlightSize
-        ? windowConfig.spotlightSize.width
-        : mainWindow.getBounds().width;
-    const windowHeight =
-      windowConfig.spotlightMode && windowConfig.spotlightSize
-        ? windowConfig.spotlightSize.height
-        : mainWindow.getBounds().height;
-
-    const x = Math.floor(
-      currentDisplay.workArea.x +
-        (currentDisplay.workArea.width - windowWidth) / 2
-    );
-    const y = Math.floor(
-      currentDisplay.workArea.y +
-        (currentDisplay.workArea.height - windowHeight) / 2
-    );
-
-    // 记录显示时间戳
-    // @ts-ignore 忽略类型检查错误
-    mainWindow.lastShowTime = Date.now();
-    // 设置额外的标志，表示窗口刚刚被通过快捷键打开
-    // @ts-ignore 忽略类型检查错误
-    mainWindow.justTriggered = true;
-
-    // 窗口是否跟随桌面
-    if (windowConfig.followDesktop) {
-      // macOS特定优化
-      if (process.platform === 'darwin') {
-        console.log('跨桌面显示窗口：正在执行macOS特定优化...');
-
-        // 1. 先确保窗口不可见
-        if (mainWindow.isVisible()) {
-          mainWindow.hide();
-        }
-
-        // 2. 设置位置
-        mainWindow.setPosition(x, y);
-
-        // 3. 使窗口在所有工作区可见
-        mainWindow.setVisibleOnAllWorkspaces(true);
-
-        // 4. 确保窗口是顶层窗口
-        const originalAlwaysOnTop = mainWindow.isAlwaysOnTop();
-        mainWindow.setAlwaysOnTop(true);
-
-        // 5. 显示窗口
-        mainWindow.show();
-
-        // 6. 确保窗口聚焦
-        mainWindow.focus();
-
-        // 7. 还原到单桌面可见（重要：延迟执行这一步）
-        setTimeout(() => {
-          if (mainWindow && !mainWindow.isDestroyed()) {
-            mainWindow.setVisibleOnAllWorkspaces(false);
-            // 还原原始的置顶状态
-            mainWindow.setAlwaysOnTop(
-              originalAlwaysOnTop || !!windowConfig.alwaysOnTop
-            );
-            console.log('窗口已设置回当前工作区可见');
-
-            // 延迟500毫秒后重置justTriggered标志
-            setTimeout(() => {
-              if (mainWindow && !mainWindow.isDestroyed()) {
-                // @ts-ignore 忽略类型检查错误
-                mainWindow.justTriggered = false;
-                console.log('窗口触发保护期已结束');
-              }
-            }, 500);
-          }
-        }, 300);
-      } else {
-        // 其他平台的处理
-        mainWindow.setPosition(x, y);
-        mainWindow.setVisibleOnAllWorkspaces(true, {
-          visibleOnFullScreen: true,
-        });
-        mainWindow.show();
-        mainWindow.focus();
-        mainWindow.setVisibleOnAllWorkspaces(false);
-
-        // 延迟500毫秒后重置justTriggered标志
-        setTimeout(() => {
-          if (mainWindow && !mainWindow.isDestroyed()) {
-            // @ts-ignore 忽略类型检查错误
-            mainWindow.justTriggered = false;
-          }
-        }, 500);
-      }
-    } else {
-      // 不跟随桌面的普通显示方式
-      mainWindow.setPosition(x, y);
-      mainWindow.show();
-      mainWindow.focus();
-
-      // 延迟500毫秒后重置justTriggered标志
-      setTimeout(() => {
-        if (mainWindow && !mainWindow.isDestroyed()) {
-          // @ts-ignore 忽略类型检查错误
-          mainWindow.justTriggered = false;
-        }
-      }, 500);
-    }
-  }
-}
-
-// 初始化全局快捷键
-function setupGlobalShortcut() {
-  // 清除已有的快捷键
-  globalShortcut.unregisterAll();
-
-  const windowConfig = configManager.getWindowConfig();
-
-  // 如果启用了Spotlight模式，注册全局快捷键
-  if (windowConfig.spotlightMode && windowConfig.spotlightHotkey) {
-    try {
-      globalShortcut.register(windowConfig.spotlightHotkey, toggleMainWindow);
-      console.log(`已注册全局快捷键: ${windowConfig.spotlightHotkey}`);
-    } catch (error) {
-      console.error('注册全局快捷键失败:', error);
-    }
-  }
-}
