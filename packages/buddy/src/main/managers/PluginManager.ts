@@ -8,6 +8,8 @@ import { EventEmitter } from 'events';
 import { ConfigManager } from './ConfigManager';
 import { Logger } from '../utils/Logger';
 
+const debug = false;
+
 export class PluginManager extends EventEmitter {
   private pluginViews = new Map<string, BrowserView>();
   private configManager: ConfigManager;
@@ -17,7 +19,9 @@ export class PluginManager extends EventEmitter {
     super();
     this.configManager = configManager;
     this.logger = new Logger('PluginManager');
-    this.logger.info('PluginManager 初始化');
+    if (debug) {
+      this.logger.info('PluginManager 初始化');
+    }
   }
 
   /**
@@ -25,14 +29,18 @@ export class PluginManager extends EventEmitter {
    */
   async initialize(): Promise<void> {
     try {
-      this.logger.info('开始初始化插件系统');
+      if (debug) {
+        this.logger.info('开始初始化插件系统');
+      }
       // 这里可以放置一些插件系统初始化代码
       // 例如加载插件配置、预加载插件等
       await import('../plugins/index.js').then(({ initializePluginSystem }) => {
         return initializePluginSystem();
       });
 
-      this.logger.info('插件系统初始化完成');
+      if (debug) {
+        this.logger.info('插件系统初始化完成');
+      }
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : String(error);
@@ -44,11 +52,15 @@ export class PluginManager extends EventEmitter {
    * 注册插件视图相关的IPC处理函数
    */
   registerPluginViewHandlers(): void {
-    this.logger.info('注册插件视图相关的IPC处理函数');
+    if (debug) {
+      this.logger.info('注册插件视图相关的IPC处理函数');
+    }
 
     // 创建插件视图
     ipcMain.handle('create-plugin-view', async (event, { viewId, url }) => {
-      this.logger.debug('处理IPC请求: create-plugin-view', { viewId, url });
+      if (debug) {
+        this.logger.debug('处理IPC请求: create-plugin-view', { viewId, url });
+      }
       const window = BrowserWindow.fromWebContents(event.sender);
       if (!window) {
         this.logger.error('无法找到主窗口');
@@ -72,7 +84,9 @@ export class PluginManager extends EventEmitter {
 
     // 显示插件视图
     ipcMain.handle('show-plugin-view', async (event, { viewId, bounds }) => {
-      this.logger.debug('处理IPC请求: show-plugin-view', { viewId, bounds });
+      if (debug) {
+        this.logger.debug('处理IPC请求: show-plugin-view', { viewId, bounds });
+      }
       const window = BrowserWindow.fromWebContents(event.sender);
       if (!window) {
         this.logger.error('无法找到主窗口');
@@ -87,7 +101,9 @@ export class PluginManager extends EventEmitter {
 
       try {
         // 显示视图
-        this.logger.debug(`显示视图: ${viewId}`);
+        if (debug) {
+          this.logger.debug(`显示视图: ${viewId}`);
+        }
         window.setBrowserView(view);
 
         // 设置视图边界
@@ -99,7 +115,9 @@ export class PluginManager extends EventEmitter {
         };
 
         // 记录视图位置和大小
-        this.logger.debug(`设置视图边界: ${JSON.stringify(viewBounds)}`);
+        if (debug) {
+          this.logger.debug(`设置视图边界: ${JSON.stringify(viewBounds)}`);
+        }
         view.setBounds(viewBounds);
 
         return { success: true };
@@ -181,7 +199,9 @@ export class PluginManager extends EventEmitter {
       // 找到发送消息的视图
       const pluginViewId = this.findPluginViewIdByWebContents(event.sender);
       if (!pluginViewId) {
-        console.error('无法找到发送消息的插件视图');
+        if (debug) {
+          console.error('无法找到发送消息的插件视图');
+        }
         return;
       }
 
@@ -193,7 +213,9 @@ export class PluginManager extends EventEmitter {
       );
 
       if (!mainWindow) {
-        console.error('无法找到主窗口');
+        if (debug) {
+          console.error('无法找到主窗口');
+        }
         return;
       }
 
@@ -210,7 +232,9 @@ export class PluginManager extends EventEmitter {
       // 找到对应的视图
       const view = this.pluginViews.get(viewId);
       if (!view) {
-        console.error(`找不到插件视图: ${viewId}`);
+        if (debug) {
+          console.error(`找不到插件视图: ${viewId}`);
+        }
         return;
       }
 
@@ -225,11 +249,15 @@ export class PluginManager extends EventEmitter {
     ipcMain.on('plugin-view-ready', (event) => {
       const viewId = this.findPluginViewIdByWebContents(event.sender);
       if (!viewId) {
-        console.error('无法找到发送ready消息的插件视图');
+        if (debug) {
+          console.error('无法找到发送ready消息的插件视图');
+        }
         return;
       }
 
-      console.log(`插件视图准备就绪: ${viewId}`);
+      if (debug) {
+        console.log(`插件视图准备就绪: ${viewId}`);
+      }
 
       // 可以在这里执行一些初始化操作，比如发送插件信息
     });
@@ -238,11 +266,15 @@ export class PluginManager extends EventEmitter {
     ipcMain.on('plugin-close-view', (event) => {
       const viewId = this.findPluginViewIdByWebContents(event.sender);
       if (!viewId) {
-        console.error('无法找到请求关闭的插件视图');
+        if (debug) {
+          console.error('无法找到请求关闭的插件视图');
+        }
         return;
       }
 
-      console.log(`插件视图请求关闭: ${viewId}`);
+      if (debug) {
+        console.log(`插件视图请求关闭: ${viewId}`);
+      }
 
       // 找到主窗口
       const mainWindow = BrowserWindow.getAllWindows().find((win) =>
@@ -252,7 +284,9 @@ export class PluginManager extends EventEmitter {
       );
 
       if (!mainWindow) {
-        console.error('无法找到主窗口');
+        if (debug) {
+          console.error('无法找到主窗口');
+        }
         return;
       }
 
@@ -278,7 +312,9 @@ export class PluginManager extends EventEmitter {
 
     // 切换插件视图的开发者工具
     ipcMain.handle('toggle-plugin-devtools', async (event, { viewId }) => {
-      this.logger.debug('处理IPC请求: toggle-plugin-devtools', { viewId });
+      if (debug) {
+        this.logger.debug('处理IPC请求: toggle-plugin-devtools', { viewId });
+      }
       const view = this.pluginViews.get(viewId);
       if (!view) {
         this.logger.error(`视图不存在: ${viewId}`);
@@ -288,14 +324,18 @@ export class PluginManager extends EventEmitter {
       try {
         if (view.webContents.isDevToolsOpened()) {
           view.webContents.closeDevTools();
-          this.logger.info(`已关闭插件视图的开发者工具: ${viewId}`);
+          if (debug) {
+            this.logger.info(`已关闭插件视图的开发者工具: ${viewId}`);
+          }
         } else {
           // 获取窗口配置
           const windowConfig = this.configManager.getWindowConfig();
           view.webContents.openDevTools({
             mode: windowConfig.debugToolbarPosition || 'right',
           });
-          this.logger.info(`已打开插件视图的开发者工具: ${viewId}`);
+          if (debug) {
+            this.logger.info(`已打开插件视图的开发者工具: ${viewId}`);
+          }
         }
         return { success: true };
       } catch (error) {
@@ -324,7 +364,9 @@ export class PluginManager extends EventEmitter {
     url: string
   ): BrowserView | null {
     try {
-      this.logger.info(`创建插件视图`, { viewId, url });
+      if (debug) {
+        this.logger.info(`创建插件视图`, { viewId, url });
+      }
 
       // 创建BrowserView而不是WebContentsView
       const view = new BrowserView({
@@ -366,7 +408,9 @@ export class PluginManager extends EventEmitter {
               const actionId = parts.length >= 3 ? parts[2] : null;
 
               if (!actionId) {
-                console.log('无法从视图ID中提取动作ID:', viewId);
+                if (debug) {
+                  console.log('无法从视图ID中提取动作ID:', viewId);
+                }
                 const errorHtml = `<html><body><h1>错误</h1><p>无法加载视图: 无效的视图ID</p></body></html>`;
                 view.webContents.loadURL(
                   `data:text/html;charset=utf-8,${encodeURIComponent(errorHtml)}`
@@ -374,14 +418,18 @@ export class PluginManager extends EventEmitter {
                 return;
               }
 
-              console.log(`尝试获取动作 ${actionId} 的视图内容`);
+              if (debug) {
+                console.log(`尝试获取动作 ${actionId} 的视图内容`);
+              }
 
               // 获取所有动作
               const actions = await pluginManager.getAllActions();
               const action = actions.find((a) => a.id === actionId);
 
               if (!action) {
-                console.log(`未找到动作: ${actionId}`);
+                if (debug) {
+                  console.log(`未找到动作: ${actionId}`);
+                }
                 const errorHtml = `<html><body><h1>错误</h1><p>无法加载视图: 未找到动作</p></body></html>`;
                 view.webContents.loadURL(
                   `data:text/html;charset=utf-8,${encodeURIComponent(errorHtml)}`
@@ -391,7 +439,9 @@ export class PluginManager extends EventEmitter {
 
               // 使用插件API获取视图内容
               const html = await pluginManager.getActionViewContent(actionId);
-              console.log(`成功获取HTML内容，长度: ${html.length}`);
+              if (debug) {
+                console.log(`成功获取HTML内容，长度: ${html.length}`);
+              }
               view.webContents.loadURL(
                 `data:text/html;charset=utf-8,${encodeURIComponent(html)}`
               );
@@ -414,13 +464,17 @@ export class PluginManager extends EventEmitter {
 
       // 监听视图销毁事件，清理引用
       view.webContents.on('destroyed', () => {
-        console.log(`插件视图已销毁: ${viewId}`);
+        if (debug) {
+          console.log(`插件视图已销毁: ${viewId}`);
+        }
         this.pluginViews.delete(viewId);
       });
 
       // 添加DOM就绪事件监听，在内容加载后自动打开开发者工具
       view.webContents.on('dom-ready', () => {
-        console.log(`插件视图DOM已就绪: ${viewId}`);
+        if (debug) {
+          console.log(`插件视图DOM已就绪: ${viewId}`);
+        }
 
         // 获取窗口配置
         const windowConfig = this.configManager.getWindowConfig();
