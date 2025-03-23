@@ -46,15 +46,17 @@ const handleKeyDown = (event: KeyboardEvent) => {
 
 // 组件挂载后自动聚焦搜索框
 onMounted(() => {
-    // 延迟一下以确保DOM已完全渲染
-    setTimeout(() => {
-        searchInput.value?.focus()
-    }, 100)
+    focusSearch()
 })
 
 // 聚焦搜索框的方法(可以从外部调用)
 const focusSearch = () => {
-    searchInput.value?.focus()
+    if (searchInput.value) {
+        searchInput.value.focus()
+        console.log('尝试聚焦搜索框')
+    } else {
+        console.warn('搜索框元素未找到')
+    }
 }
 
 // 暴露方法给父组件
@@ -64,9 +66,9 @@ defineExpose({
 </script>
 
 <template>
-    <div class="flex items-center px-4 py-2 bg-gray-100">
-        <div class="relative flex-1">
-            <span class="absolute inset-y-0 left-0 flex items-center pl-2">
+    <div class="flex items-center px-4 py-2 bg-gray-100 z-10">
+        <div class="relative flex-1" @click="focusSearch">
+            <span class="absolute inset-y-0 left-0 flex items-center pl-2 pointer-events-none">
                 <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -74,7 +76,7 @@ defineExpose({
             </span>
             <input ref="searchInput" v-model="keyword" type="text" autocomplete="off" placeholder="Search actions..."
                 @keydown="handleKeyDown"
-                class="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500" />
+                class="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500 bg-white" />
         </div>
     </div>
 </template>
