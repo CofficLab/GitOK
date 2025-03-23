@@ -5,32 +5,23 @@
 * 1. 展示可用的插件动作列表
 * 2. 处理动作选择事件
 * 3. 支持搜索结果展示
+* 4. 支持键盘导航
 */
 <script setup lang="ts">
-import { onMounted, ref, computed, watch } from 'vue'
+import { onMounted, computed } from 'vue'
 import { useSearchStore } from '@renderer/stores/searchStore'
-import PluginActionList from '@renderer/components/PluginActionList.vue'
 import type { PluginAction } from '@renderer/components/PluginManager.vue'
 
 const searchStore = useSearchStore()
-const logMessages = ref<string[]>([])
-const isDev = process.env.NODE_ENV !== 'production'
-
-// 记录调试消息
-const logDebug = (message: string) => {
-    console.log(`ActionListView: ${message}`)
-    logMessages.value.push(message)
-
-    // 限制日志数量
-    if (logMessages.value.length > 10) {
-        logMessages.value.shift()
-    }
-}
 
 // 处理动作选择
 const handleActionSelected = (action: PluginAction) => {
-    logDebug(`选择动作: ${action.title}`)
     searchStore.selectAction(action.id)
+}
+
+// 处理取消操作
+const handleCancel = () => {
+    searchStore.clearSearch()
 }
 
 // 检查动作列表状态
@@ -40,55 +31,16 @@ const isLoading = computed(() => searchStore.isLoading)
 
 // 组件挂载时的初始化
 onMounted(() => {
-    logDebug('ActionListView 已挂载')
-    logDebug(`当前搜索状态: keyword="${searchStore.keyword}", actions=${searchStore.pluginActions.length}`)
-
     // 初始化时加载插件动作（如果尚未加载且不在加载中）
     if (searchStore.pluginActions.length === 0 && !searchStore.isLoading) {
-        logDebug('自动加载插件动作')
         searchStore.loadPluginActions()
     }
-
-    // 立即检查一下搜索状态
-    checkAndDebugState()
 })
-
-// 监听搜索关键词的变化
-watch(() => searchStore.keyword, (newKeyword) => {
-    logDebug(`ActionListView: 搜索关键词变化为 "${newKeyword}"`)
-    checkAndDebugState()
-})
-
-// 监听动作列表的变化
-watch(() => searchStore.pluginActions, (actions) => {
-    logDebug(`ActionListView: 动作列表已更新，当前有 ${actions.length} 个动作`)
-    checkAndDebugState()
-}, { deep: true })
-
-// 用于调试当前状态
-const checkAndDebugState = () => {
-    logDebug(`
-    -----------状态检查------------
-    当前关键词: "${searchStore.keyword}"
-    动作数量: ${searchStore.pluginActions.length}
-    是否加载中: ${searchStore.isLoading}
-    hasActions: ${hasActions.value}
-    hasKeyword: ${hasKeyword.value}
-    --------------------------------
-    `)
-}
 </script>
 
 <template>
     <div class="action-list-view">
         <h2 class="text-xl font-semibold mb-4">可用动作</h2>
-
-        <div v-if="logMessages.length > 0 && isDev"
-            class="debug-log mb-4 p-2 bg-gray-100 text-xs text-gray-600 rounded">
-            <div v-for="(msg, index) in logMessages" :key="index" class="debug-message">
-                {{ msg }}
-            </div>
-        </div>
 
         <!-- 显示当前搜索状态 -->
         <div class="search-info mb-2 text-sm text-gray-500">
@@ -96,13 +48,34 @@ const checkAndDebugState = () => {
             <div v-if="hasActions">找到 {{ searchStore.pluginActions.length }} 个动作</div>
         </div>
 
-        <PluginActionList :actions="searchStore.pluginActions" :loading="searchStore.isLoading"
-            @select="handleActionSelected" @cancel="searchStore.clearSearch()" />
+        <div>
+            <!-- 加载状态 -->
+            <div v-if="isLoading" class="text-center py-4 text-gray-500">
+                <p>加载中...</p>
+            </div>
 
-        <!-- 空状态提示 -->
-        <div v-if="!isLoading && !hasActions && hasKeyword" class="empty-state mt-4 p-4 bg-gray-50 rounded text-center">
-            <p class="text-gray-500">没有找到匹配 "{{ searchStore.keyword }}" 的动作</p>
-            <p class="text-gray-400 text-sm mt-2">尝试其他关键词或安装更多插件</p>
+            <!-- 空状态 -->
+            <div v-else-if="searchStore.pluginActions.length === 0" class="text-center py-8 text-gray-500">
+                <p>没有找到匹配的动作</p>
+                <p class="text-sm mt-2">尝试其他关键词或安装更多插件</p>
+            </div>
+
+            <!-- 动作列表 -->
+            <ul v-else class="space-y-2">
+                <li v-for="(result, index) in searchStore.pluginActions" :key="result.id"
+                    class="plugin-action-item p-3 border rounded-lg hover:bg-gray-50 cursor-pointer transition-colors flex items-center"
+                    :tabindex="index + 1" @click="handleActionSelected(result)"
+                    @keydown.enter="handleActionSelected(result)" @keydown.space.prevent="handleActionSelected(result)"
+                    @keydown.esc="handleCancel" @keydown.up="index > 0 ? $el.previousElementSibling?.focus() : null"
+                    @keydown.down="index < searchStore.pluginActions.length - 1 ? $el.nextElementSibling?.focus() : null">
+                    <div v-if="result.icon" class="mr-3 text-xl">{{ result.icon }}</div>
+                    <div class="flex-1">
+                        <h3 class="font-medium">{{ result.title }}</h3>
+                        <p v-if="result.description" class="text-sm text-gray-600">{{ result.description }}</p>
+                        <p class="text-xs text-gray-400 mt-1">来自: {{ result.plugin }}</p>
+                    </div>
+                </li>
+            </ul>
         </div>
     </div>
 </template>
@@ -112,13 +85,12 @@ const checkAndDebugState = () => {
     padding: 1rem 0;
 }
 
-.debug-log {
-    font-family: monospace;
-    max-height: 150px;
-    overflow-y: auto;
-}
-
 .empty-state {
     border: 1px dashed #ccc;
+}
+
+.plugin-action-item:focus {
+    outline: 2px solid #4299e1;
+    background-color: #ebf8ff;
 }
 </style>
