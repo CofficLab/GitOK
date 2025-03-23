@@ -1,3 +1,24 @@
+/**
+ * searchStore.ts - 搜索状态管理
+ *
+ * 这个store负责管理应用的搜索相关状态：
+ * 1. 搜索关键词
+ * 2. 搜索结果的处理
+ *
+ * 主要功能：
+ * - 管理搜索关键词
+ * - 处理搜索结果的更新
+ * - 提供搜索状态的响应式访问
+ *
+ * 状态说明：
+ * - keyword: 当前的搜索关键词
+ *
+ * 注意事项：
+ * - 搜索关键词的更新会触发相关组件的重新渲染
+ * - 建议使用computed属性来访问搜索状态
+ * - 避免直接修改状态，应该使用提供的action
+ */
+
 import { defineStore } from 'pinia';
 
 export const useSearchStore = defineStore('search', {
@@ -28,6 +49,10 @@ export const useSearchStore = defineStore('search', {
         ) as HTMLElement;
         firstResult?.focus();
       }
+    },
+
+    setKeyword(keyword: string) {
+      this.keyword = keyword;
     },
   },
 });

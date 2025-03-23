@@ -1,3 +1,26 @@
+<!--
+ * TitleBar.vue - 标题栏组件
+ * 
+ * 这个组件负责显示应用的标题栏：
+ * 1. 应用标题
+ * 2. 窗口控制按钮
+ * 
+ * 主要功能：
+ * - 显示应用标题
+ * - 提供窗口最小化、最大化、关闭按钮
+ * - 处理窗口控制事件
+ * 
+ * 技术栈：
+ * - Vue 3
+ * - TailwindCSS
+ * - Electron IPC
+ * 
+ * 注意事项：
+ * - 窗口控制通过Electron IPC实现
+ * - 组件样式遵循系统原生窗口样式
+ * - 确保拖拽区域正确设置
+ -->
+
 <template>
     <div :class="[
         'fixed top-0 left-0 w-full z-[9999] bg-transparent',
@@ -9,6 +32,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from "vue"
+import { ipcRenderer } from 'electron'
 
 const showTrafficLights = ref(true)
 
@@ -31,4 +55,16 @@ onMounted(() => {
         unsubscribe()
     })
 })
+
+const minimize = () => {
+    ipcRenderer.send('window-minimize')
+}
+
+const maximize = () => {
+    ipcRenderer.send('window-maximize')
+}
+
+const close = () => {
+    ipcRenderer.send('window-close')
+}
 </script>

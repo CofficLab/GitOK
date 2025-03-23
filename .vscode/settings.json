@@ -19,6 +19,8 @@
     "njsproj",
     "nsis",
     "ntvs",
+    "Pinia",
+    "undocked",
     "vite"
   ]
 }
