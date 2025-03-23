@@ -12,6 +12,7 @@ import type { StorePlugin } from '@/types/plugin'
 
 // 插件列表
 const plugins = ref<StorePlugin[]>([])
+const directories = ref<{ builtin: string; user: string; dev: string } | null>(null)
 const errorMessage = ref('')
 const showError = ref(false)
 
@@ -29,6 +30,23 @@ const loadPlugins = async () => {
         }
     } catch (error) {
         showErrorMessage('加载插件列表失败')
+    }
+}
+
+// 加载目录信息
+const loadDirectories = async () => {
+    try {
+        const response = await window.api.plugin.getDirectories()
+        if (response.success) {
+            directories.value = response.directories
+        } else {
+            showErrorMessage(`加载目录信息失败: ${response.error || '未知错误'}`)
+            console.error('加载目录信息失败', response)
+        }
+    } catch (error) {
+        const errorMsg = error instanceof Error ? error.message : String(error)
+        showErrorMessage(`加载目录信息失败: ${errorMsg}`)
+        console.error('加载目录信息失败', error)
     }
 }
 
@@ -66,12 +84,11 @@ const filteredPlugins = computed(() => {
 
 // 获取当前目录
 const currentDirectory = computed(() => {
-    const plugin = plugins.value[0]
-    if (!plugin?.directories) return ''
+    if (!directories.value) return ''
 
-    if (activeTab.value === 'builtin') return plugin.directories.builtin
-    if (activeTab.value === 'user') return plugin.directories.user
-    if (activeTab.value === 'dev') return plugin.directories.dev
+    if (activeTab.value === 'builtin') return directories.value.builtin
+    if (activeTab.value === 'user') return directories.value.user
+    if (activeTab.value === 'dev') return directories.value.dev
     return ''
 })
 
@@ -80,6 +97,7 @@ const tabs = ['builtin', 'user', 'dev'] as const
 
 onMounted(() => {
     loadPlugins()
+    loadDirectories()
 })
 </script>
 

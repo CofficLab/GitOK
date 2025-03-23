@@ -154,6 +154,7 @@ const api = {
   // 插件相关
   plugin: {
     getStorePlugins: () => ipcRenderer.invoke('plugin:getStorePlugins'),
+    getDirectories: () => ipcRenderer.invoke('plugin:getDirectories'),
     openDirectory: (directory: string) =>
       ipcRenderer.invoke('plugin:openDirectory', directory),
   },

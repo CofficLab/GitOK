@@ -102,6 +102,20 @@ class IPCManager extends EventEmitter {
   private registerPluginHandlers(): void {
     this.logger.debug('注册插件相关IPC处理函数');
 
+    // 获取插件目录信息
+    ipcMain.handle('plugin:getDirectories', async () => {
+      this.logger.debug('处理IPC请求: plugin:getDirectories');
+      try {
+        const directories = pluginManager.getPluginDirectories();
+        return { success: true, directories };
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : String(error);
+        this.logger.error('获取插件目录失败', { error: errorMessage });
+        return { success: false, error: errorMessage };
+      }
+    });
+
     // 获取插件商店列表
     ipcMain.handle('plugin:getStorePlugins', async () => {
       this.logger.debug('处理IPC请求: plugin:getStorePlugins');

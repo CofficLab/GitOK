@@ -61,6 +61,14 @@ interface Window {
         success: boolean;
         plugins: import('@/types/plugin').StorePlugin[];
       }>;
+      getDirectories: () => Promise<{
+        success: boolean;
+        directories: {
+          builtin: string;
+          user: string;
+          dev: string;
+        };
+      }>;
       openDirectory: (directory: string) => Promise<{
         success: boolean;
         error?: string;
