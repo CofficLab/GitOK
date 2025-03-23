@@ -131,6 +131,21 @@ export interface PluginPackage {
   main: string;
 
   /**
+   * GitOK 插件特定配置
+   */
+  gitokPlugin?: {
+    /**
+     * 插件ID，如果提供，将替代 name 字段作为插件标识
+     */
+    id?: string;
+
+    /**
+     * 其他 GitOK 插件特定配置
+     */
+    [key: string]: any;
+  };
+
+  /**
    * 插件兼容性要求
    */
   engines?: {

@@ -265,8 +265,11 @@ class PluginManager extends EventEmitter {
         return;
       }
 
+      // 优先使用 gitokPlugin.id 作为插件ID，其次使用包名
+      const pluginId = packageJson.gitokPlugin?.id || packageJson.name;
+
       const plugin: Plugin = {
-        id: packageJson.name,
+        id: pluginId,
         name: packageJson.name,
         description: packageJson.description,
         version: packageJson.version,
