@@ -18,7 +18,11 @@ class WindowManager extends EventEmitter {
 
   private constructor() {
     super();
-    this.logger = new Logger('WindowManager');
+    const windowConfig = this.configManager.getWindowConfig();
+    this.logger = new Logger('WindowManager', {
+      enabled: windowConfig.enableLogging ?? true,
+      level: windowConfig.logLevel || 'info',
+    });
     this.logger.info('WindowManager 初始化');
   }
 
@@ -30,6 +34,17 @@ class WindowManager extends EventEmitter {
       WindowManager.instance = new WindowManager();
     }
     return WindowManager.instance;
+  }
+
+  /**
+   * 更新日志配置
+   */
+  private updateLoggerConfig(): void {
+    const windowConfig = this.configManager.getWindowConfig();
+    this.logger.setConfig({
+      enabled: windowConfig.enableLogging ?? true,
+      level: windowConfig.logLevel || 'info',
+    });
   }
 
   /**

@@ -16,24 +16,111 @@ export enum LogLevel {
 }
 
 /**
+ * 日志配置接口
+ */
+export interface LoggerConfig {
+  enabled?: boolean;
+  level?: string;
+}
+
+/**
  * 日志记录器
  * 基于electron-log封装，保持API兼容性
  */
 export class Logger {
   private module: string;
   private static initialized: boolean = false;
+  private enabled: boolean = true;
 
   /**
    * 构造函数
    * @param module 模块名称
+   * @param config 日志配置
    */
-  constructor(module: string) {
+  constructor(module: string, config?: LoggerConfig) {
     this.module = module;
+    this.enabled = config?.enabled ?? true;
 
     // 初始化配置（只在第一次创建Logger实例时执行）
     if (!Logger.initialized) {
       Logger.setupElectronLog();
     }
+
+    // 设置日志级别
+    if (config?.level) {
+      Logger.setLogLevelInternal(config.level);
+    }
+  }
+
+  /**
+   * 设置日志配置
+   */
+  setConfig(config: LoggerConfig): void {
+    this.enabled = config.enabled ?? true;
+    if (config.level) {
+      Logger.setLogLevelInternal(config.level);
+    }
+  }
+
+  /**
+   * 内部方法：设置日志级别
+   */
+  private static setLogLevelInternal(level: string): void {
+    let logLevel: LevelOption;
+    switch (level.toLowerCase()) {
+      case 'debug':
+        logLevel = 'debug';
+        break;
+      case 'info':
+        logLevel = 'info';
+        break;
+      case 'warn':
+        logLevel = 'warn';
+        break;
+      case 'error':
+        logLevel = 'error';
+        break;
+      default:
+        logLevel = 'info';
+    }
+
+    electronLog.transports.file.level = logLevel;
+    electronLog.transports.console.level = logLevel;
+  }
+
+  /**
+   * 设置全局日志级别
+   */
+  static setLogLevel(level: LogLevel | string): void {
+    // 确保已初始化
+    if (!Logger.initialized) {
+      Logger.setupElectronLog();
+    }
+
+    // 如果传入的是 LogLevel 枚举，转换为对应的字符串
+    let levelStr: string;
+    if (typeof level === 'number') {
+      switch (level) {
+        case LogLevel.DEBUG:
+          levelStr = 'debug';
+          break;
+        case LogLevel.INFO:
+          levelStr = 'info';
+          break;
+        case LogLevel.WARN:
+          levelStr = 'warn';
+          break;
+        case LogLevel.ERROR:
+          levelStr = 'error';
+          break;
+        default:
+          levelStr = 'info';
+      }
+    } else {
+      levelStr = level;
+    }
+
+    Logger.setLogLevelInternal(levelStr);
   }
 
   /**
@@ -110,6 +197,7 @@ export class Logger {
    * 记录调试级别日志
    */
   debug(message: string, details?: Record<string, any>): void {
+    if (!this.enabled) return;
     if (details) {
       electronLog.scope(this.module).debug(message, details);
     } else {
@@ -121,6 +209,7 @@ export class Logger {
    * 记录信息级别日志
    */
   info(message: string, details?: Record<string, any>): void {
+    if (!this.enabled) return;
     if (details) {
       electronLog.scope(this.module).info(message, details);
     } else {
@@ -132,6 +221,7 @@ export class Logger {
    * 记录警告级别日志
    */
   warn(message: string, details?: Record<string, any>): void {
+    if (!this.enabled) return;
     if (details) {
       electronLog.scope(this.module).warn(message, details);
     } else {
@@ -143,42 +233,12 @@ export class Logger {
    * 记录错误级别日志
    */
   error(message: string, details?: Record<string, any>): void {
+    if (!this.enabled) return;
     if (details) {
       electronLog.scope(this.module).error(message, details);
     } else {
       electronLog.scope(this.module).error(message);
     }
-  }
-
-  /**
-   * 设置全局日志级别
-   */
-  static setLogLevel(level: LogLevel): void {
-    // 确保已初始化
-    if (!Logger.initialized) {
-      Logger.setupElectronLog();
-    }
-
-    let logLevel: LevelOption;
-    switch (level) {
-      case LogLevel.DEBUG:
-        logLevel = 'debug';
-        break;
-      case LogLevel.INFO:
-        logLevel = 'info';
-        break;
-      case LogLevel.WARN:
-        logLevel = 'warn';
-        break;
-      case LogLevel.ERROR:
-        logLevel = 'error';
-        break;
-      default:
-        logLevel = 'info';
-    }
-
-    electronLog.transports.file.level = logLevel;
-    electronLog.transports.console.level = logLevel;
   }
 
   /**

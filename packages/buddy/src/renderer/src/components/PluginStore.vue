@@ -1,175 +1,146 @@
+/**
+* 插件商店组件
+*/
 <script setup lang="ts">
-import { ref, onMounted, reactive } from 'vue'
+import { ref, onMounted } from 'vue';
+import type { PluginStorePlugin } from '@/types';
 
-// 插件列表
-const localPlugins = ref<PluginInfo[]>([])
-const installedPlugins = ref<PluginInfo[]>([])
+const plugins = ref<PluginStorePlugin[]>([]);
+const loading = ref(false);
+const error = ref<string | null>(null);
 
-// 加载状态
-const loading = reactive({
-    local: false,
-    installed: false
-})
-
-// 错误状态
-const error = reactive({
-    local: null as string | null,
-    installed: null as string | null
-})
-
-// 加载本地插件
-const loadLocalPlugins = async () => {
+/**
+ * 加载插件列表
+ */
+const loadPlugins = async () => {
+    loading.value = true;
+    error.value = null;
     try {
-        loading.local = true
-        error.local = null
-        localPlugins.value = await window.electron.plugins.getLocalPlugins()
-    } catch (err) {
-        error.local = err instanceof Error ? err.message : '加载本地插件失败'
-        console.error('加载本地插件失败:', err)
+        const result = await window.electron.ipcRenderer.invoke('plugin:getStorePlugins');
+        plugins.value = result;
+    } catch (e) {
+        error.value = e instanceof Error ? e.message : '加载插件列表失败';
     } finally {
-        loading.local = false
+        loading.value = false;
     }
-}
+};
 
-// 加载已安装插件
-const loadInstalledPlugins = async () => {
+/**
+ * 安装插件
+ */
+const installPlugin = async (plugin: PluginStorePlugin) => {
     try {
-        loading.installed = true
-        error.installed = null
-        installedPlugins.value = await window.electron.plugins.getInstalledPlugins()
-    } catch (err) {
-        error.installed = err instanceof Error ? err.message : '加载已安装插件失败'
-        console.error('加载已安装插件失败:', err)
-    } finally {
-        loading.installed = false
+        await window.electron.ipcRenderer.invoke('plugin:install', plugin.id);
+        await loadPlugins(); // 重新加载列表以更新状态
+    } catch (e) {
+        error.value = e instanceof Error ? e.message : '安装插件失败';
     }
-}
+};
 
-// 安装插件
-const installPlugin = async (pluginId: string) => {
+/**
+ * 卸载插件
+ */
+const uninstallPlugin = async (plugin: PluginStorePlugin) => {
     try {
-        const result = await window.electron.plugins.installPlugin(pluginId)
-        if (result.success) {
-            // 重新加载插件列表
-            await Promise.all([loadLocalPlugins(), loadInstalledPlugins()])
-        } else if (result.error) {
-            console.error(`安装插件失败: ${result.error}`)
-        }
-    } catch (err) {
-        console.error('安装插件失败:', err)
+        await window.electron.ipcRenderer.invoke('plugin:uninstall', plugin.id);
+        await loadPlugins(); // 重新加载列表以更新状态
+    } catch (e) {
+        error.value = e instanceof Error ? e.message : '卸载插件失败';
     }
-}
+};
 
-// 卸载插件
-const uninstallPlugin = async (pluginId: string) => {
-    try {
-        const result = await window.electron.plugins.uninstallPlugin(pluginId)
-        if (result.success) {
-            // 重新加载插件列表
-            await Promise.all([loadLocalPlugins(), loadInstalledPlugins()])
-        } else if (result.error) {
-            console.error(`卸载插件失败: ${result.error}`)
-        }
-    } catch (err) {
-        console.error('卸载插件失败:', err)
-    }
-}
-
-// 组件挂载时加载插件列表
+// 组件加载时获取插件列表
 onMounted(() => {
-    Promise.all([loadLocalPlugins(), loadInstalledPlugins()])
-})
-
-// 暴露方法给父组件
-defineExpose({
-    loadLocalPlugins,
-    loadInstalledPlugins,
-    installPlugin,
-    uninstallPlugin
-})
+    loadPlugins();
+});
 </script>
 
 <template>
-    <div class="plugin-store h-full p-4 overflow-auto">
-        <h2 class="text-xl font-bold mb-4">插件商店</h2>
-
-        <!-- 本地插件 -->
-        <div class="mb-8">
-            <h3 class="text-lg font-semibold mb-2 flex items-center">
-                <span>本地插件</span>
-                <button @click="loadLocalPlugins" class="btn btn-xs btn-ghost ml-2">
-                    <i class="i-mdi-refresh"></i>
-                </button>
-            </h3>
-
-            <div v-if="loading.local" class="text-center py-4">
-                <span class="loading loading-spinner loading-md"></span>
-                <span class="ml-2">加载中...</span>
-            </div>
-
-            <div v-else-if="error.local" class="text-center py-4 text-error">
-                <div>{{ error.local }}</div>
-                <button @click="loadLocalPlugins" class="btn btn-sm btn-outline btn-error mt-2">重试</button>
-            </div>
-
-            <div v-else-if="localPlugins.length === 0" class="text-center py-4 text-base-content/50">
-                暂无本地插件
-            </div>
-
-            <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                <div v-for="plugin in localPlugins" :key="plugin.id" class="card bg-base-200 shadow-sm">
-                    <div class="card-body p-4">
-                        <h3 class="card-title text-base">{{ plugin.name }}</h3>
-                        <p class="text-sm">{{ plugin.description }}</p>
-                        <div class="text-xs opacity-70 mt-1">
-                            <span>版本: {{ plugin.version }}</span>
-                            <span class="mx-1">|</span>
-                            <span>作者: {{ plugin.author }}</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <div class="plugin-store">
+        <div class="header">
+            <h2 class="text-xl font-bold">插件商店</h2>
+            <button class="btn btn-sm btn-outline" @click="loadPlugins" :disabled="loading">
+                刷新
+            </button>
         </div>
 
-        <!-- 已安装插件 -->
-        <div>
-            <h3 class="text-lg font-semibold mb-2 flex items-center">
-                <span>已安装插件</span>
-                <button @click="loadInstalledPlugins" class="btn btn-xs btn-ghost ml-2">
-                    <i class="i-mdi-refresh"></i>
-                </button>
-            </h3>
+        <div v-if="loading" class="loading">
+            加载中...
+        </div>
 
-            <div v-if="loading.installed" class="text-center py-4">
-                <span class="loading loading-spinner loading-md"></span>
-                <span class="ml-2">加载中...</span>
-            </div>
+        <div v-else-if="error" class="error">
+            {{ error }}
+        </div>
 
-            <div v-else-if="error.installed" class="text-center py-4 text-error">
-                <div>{{ error.installed }}</div>
-                <button @click="loadInstalledPlugins" class="btn btn-sm btn-outline btn-error mt-2">重试</button>
-            </div>
-
-            <div v-else-if="installedPlugins.length === 0" class="text-center py-4 text-base-content/50">
-                暂无已安装插件
-            </div>
-
-            <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                <div v-for="plugin in installedPlugins" :key="plugin.id" class="card bg-base-200 shadow-sm">
-                    <div class="card-body p-4">
-                        <h3 class="card-title text-base">{{ plugin.name }}</h3>
-                        <p class="text-sm">{{ plugin.description }}</p>
-                        <div class="text-xs opacity-70 mt-1">
-                            <span>版本: {{ plugin.version }}</span>
-                            <span class="mx-1">|</span>
-                            <span>作者: {{ plugin.author }}</span>
-                        </div>
-                        <div class="card-actions justify-end mt-2">
-                            <button @click="uninstallPlugin(plugin.id)" class="btn btn-xs btn-error">卸载</button>
-                        </div>
+        <div v-else class="plugin-list">
+            <div v-for="plugin in plugins" :key="plugin.id" class="plugin-card">
+                <div class="plugin-info">
+                    <h3 class="plugin-name">{{ plugin.name }}</h3>
+                    <p class="plugin-description">{{ plugin.description }}</p>
+                    <div class="plugin-meta">
+                        <span>作者: {{ plugin.author }}</span>
+                        <span>版本: {{ plugin.version }}</span>
+                        <span>下载: {{ plugin.downloads }}</span>
+                        <span>评分: {{ plugin.rating }}</span>
                     </div>
+                </div>
+                <div class="plugin-actions">
+                    <button v-if="plugin.isInstalled" class="btn btn-sm btn-error" @click="uninstallPlugin(plugin)">
+                        卸载
+                    </button>
+                    <button v-else class="btn btn-sm btn-primary" @click="installPlugin(plugin)">
+                        安装
+                    </button>
                 </div>
             </div>
         </div>
     </div>
 </template>
+
+<style scoped>
+@reference "../app.css"
+
+.plugin-store {
+    @apply p-4;
+}
+
+.header {
+    @apply flex justify-between items-center mb-4;
+}
+
+.plugin-list {
+    @apply space-y-4;
+}
+
+.plugin-card {
+    @apply flex justify-between items-start p-4 bg-base-200 rounded-lg;
+}
+
+.plugin-info {
+    @apply flex-1;
+}
+
+.plugin-name {
+    @apply text-lg font-semibold mb-2;
+}
+
+.plugin-description {
+    @apply text-sm text-base-content/80 mb-2;
+}
+
+.plugin-meta {
+    @apply text-xs space-x-4 text-base-content/60;
+}
+
+.plugin-actions {
+    @apply ml-4;
+}
+
+.loading {
+    @apply text-center py-8 text-base-content/60;
+}
+
+.error {
+    @apply text-center py-8 text-error;
+}
+</style>

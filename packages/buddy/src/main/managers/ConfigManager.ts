@@ -1,58 +1,25 @@
 import { app } from 'electron';
 import { join } from 'path';
 import fs from 'fs';
-import YAML from 'yaml';
+import yaml from 'js-yaml';
 import { Logger } from '../utils/Logger';
-
-/**
- * 窗口配置接口
- */
-export interface WindowConfig {
-  showTrafficLights: boolean;
-  showDebugToolbar: boolean;
-  debugToolbarPosition?: 'right' | 'bottom' | 'left' | 'undocked';
-  spotlightMode: boolean;
-  spotlightHotkey?: string;
-  spotlightSize?: { width: number; height: number };
-  alwaysOnTop?: boolean;
-  followDesktop?: boolean;
-}
-
-/**
- * 应用配置接口
- */
-interface AppConfig {
-  window: WindowConfig;
-}
-
-/**
- * 默认配置
- */
-const defaultConfig: AppConfig = {
-  window: {
-    showTrafficLights: true,
-    showDebugToolbar: false,
-    debugToolbarPosition: 'right',
-    spotlightMode: false,
-    spotlightHotkey: 'CommandOrControl+Space',
-    spotlightSize: { width: 700, height: 500 },
-    alwaysOnTop: true,
-    followDesktop: true,
-  },
-};
+import type { WindowConfig } from '@/types/window';
+import type { PluginManagerConfig } from '@/types/plugin';
 
 /**
  * 配置管理器
- * 单例模式，只负责读取配置
+ * 负责管理应用的配置信息
  */
 class ConfigManager {
   private static instance: ConfigManager;
-  private config: AppConfig;
+  private configPath: string;
+  private config: any;
   private logger: Logger;
 
   private constructor() {
     this.logger = new Logger('ConfigManager');
-    this.config = this.loadConfig();
+    this.configPath = join(app.getAppPath(), 'config.yaml');
+    this.loadConfig();
   }
 
   /**
@@ -68,32 +35,72 @@ class ConfigManager {
   /**
    * 加载配置文件
    */
-  private loadConfig(): AppConfig {
-    const configPath = join(app.getAppPath(), 'config.yaml');
-    this.logger.debug(`加载配置文件: ${configPath}`);
-
+  private loadConfig(): void {
     try {
-      if (fs.existsSync(configPath)) {
-        const configContent = fs.readFileSync(configPath, 'utf8');
-        const loadedConfig = YAML.parse(configContent) as Partial<AppConfig>;
-        return {
-          window: { ...defaultConfig.window, ...loadedConfig.window },
-        };
-      }
-    } catch (err) {
-      this.logger.error('加载配置文件失败', {
-        error: err instanceof Error ? err.message : String(err),
-      });
+      this.logger.info('加载配置文件', { path: this.configPath });
+      const configContent = fs.readFileSync(this.configPath, 'utf8');
+      this.config = yaml.load(configContent);
+      this.logger.debug('配置文件加载成功', { config: this.config });
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+      this.logger.error('加载配置文件失败', { error: errorMessage });
+      this.config = {};
     }
-
-    return { ...defaultConfig };
   }
 
   /**
    * 获取窗口配置
    */
-  public getWindowConfig(): WindowConfig {
-    return { ...this.config.window };
+  getWindowConfig(): WindowConfig {
+    return this.config.window || {};
+  }
+
+  /**
+   * 获取插件管理器配置
+   */
+  getPluginConfig(): PluginManagerConfig {
+    return this.config.plugin || {};
+  }
+
+  /**
+   * 保存配置到文件
+   */
+  saveConfig(): void {
+    try {
+      this.logger.info('保存配置文件');
+      const configContent = yaml.dump(this.config);
+      fs.writeFileSync(this.configPath, configContent, 'utf8');
+      this.logger.debug('配置文件保存成功');
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+      this.logger.error('保存配置文件失败', { error: errorMessage });
+    }
+  }
+
+  /**
+   * 更新窗口配置
+   */
+  updateWindowConfig(config: Partial<WindowConfig>): void {
+    this.logger.info('更新窗口配置');
+    this.config.window = {
+      ...this.getWindowConfig(),
+      ...config,
+    };
+    this.saveConfig();
+  }
+
+  /**
+   * 更新插件管理器配置
+   */
+  updatePluginConfig(config: Partial<PluginManagerConfig>): void {
+    this.logger.info('更新插件管理器配置');
+    this.config.plugin = {
+      ...this.getPluginConfig(),
+      ...config,
+    };
+    this.saveConfig();
   }
 }
 

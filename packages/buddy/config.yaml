@@ -31,3 +31,18 @@ window:
   # 可选值: true (跟随), false (不跟随)
   # 启用后,在不同工作区按快捷键将在当前工作区显示
   followDesktop: true
+  # 是否启用窗口管理器的日志输出
+  # 可选值: true (启用), false (禁用)
+  enableLogging: false
+  # 日志级别
+  # 可选值: "debug", "info", "warn", "error"
+  logLevel: "info"
+
+# 插件管理器设置
+plugin:
+  # 是否启用插件管理器的日志输出
+  # 可选值: true (启用), false (禁用)
+  enableLogging: false
+  # 日志级别
+  # 可选值: "debug", "info", "warn", "error"
+  logLevel: "info"

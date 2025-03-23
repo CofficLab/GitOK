@@ -4,11 +4,13 @@
  * 这个组件负责显示应用的状态信息：
  * - 显示当前时间
  * - 提供导航按钮
+ * - 提供插件商店入口
  * 
  * 主要功能：
  * - 实时显示当前时间
  * - 提供首页和插件页面切换
  * - 显示当前页面状态
+ * - 打开插件商店
  * 
  * 技术栈：
  * - Vue 3
@@ -25,8 +27,11 @@
 import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { useAppStore } from '../stores/appStore'
 import type { ViewType } from '../stores/appStore'
+import PluginStore from '../components/PluginStore.vue'
+import StoreIcon from '../components/icons/StoreIcon.vue'
 
 const currentTime = ref(new Date().toLocaleTimeString())
+const showPluginStore = ref(false)
 let timer: ReturnType<typeof setInterval>
 
 const appStore = useAppStore()
@@ -38,6 +43,10 @@ const updateTime = () => {
 
 const switchView = (view: ViewType) => {
     appStore.setView(view)
+}
+
+const togglePluginStore = () => {
+    showPluginStore.value = !showPluginStore.value
 }
 
 onMounted(() => {
@@ -65,9 +74,27 @@ onUnmounted(() => {
             </button>
         </div>
 
-        <!-- 时间显示 -->
-        <div class="text-sm text-gray-600">
-            {{ currentTime }}
+        <!-- 右侧工具栏 -->
+        <div class="flex items-center space-x-4">
+            <!-- 插件商店按钮 -->
+            <button @click="togglePluginStore"
+                class="px-3 py-1 rounded text-sm text-gray-600 hover:bg-gray-200 flex items-center">
+                <StoreIcon class="h-4 w-4 mr-1" />
+                插件商店
+            </button>
+
+            <!-- 时间显示 -->
+            <div class="text-sm text-gray-600">
+                {{ currentTime }}
+            </div>
+        </div>
+    </div>
+
+    <!-- 插件商店模态框 -->
+    <div v-if="showPluginStore" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+        @click.self="showPluginStore = false">
+        <div class="bg-base-100 rounded-lg shadow-xl w-3/4 max-w-4xl max-h-[80vh] overflow-y-auto">
+            <PluginStore />
         </div>
     </div>
 </template>

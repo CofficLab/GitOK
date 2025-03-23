@@ -6,21 +6,24 @@ import tailwindcss from '@tailwindcss/vite';
 export default defineConfig({
   main: {
     plugins: [externalizeDepsPlugin()],
+    resolve: {
+      alias: {
+        '@': resolve('src'),
+      },
+    },
   },
   preload: {
     plugins: [externalizeDepsPlugin()],
-    build: {
-      rollupOptions: {
-        input: {
-          index: resolve('src/preload/index.ts'),
-          'plugin-preload': resolve('src/preload/plugin-preload.ts'),
-        },
+    resolve: {
+      alias: {
+        '@': resolve('src'),
       },
     },
   },
   renderer: {
     resolve: {
       alias: {
+        '@': resolve('src'),
         '@renderer': resolve('src/renderer/src'),
       },
     },

@@ -16,37 +16,12 @@ import { join } from 'path';
 import { EventEmitter } from 'events';
 import fs from 'fs';
 import { Logger } from '../utils/Logger';
-
-/**
- * 插件包信息接口
- */
-export interface PluginPackage {
-  name: string;
-  version: string;
-  description: string;
-  author: string;
-  main: string;
-  engines?: {
-    gitok?: string;
-  };
-}
-
-/**
- * 插件接口
- */
-export interface Plugin {
-  id: string;
-  name: string;
-  description: string;
-  version: string;
-  author: string;
-  path: string;
-  isBuiltin: boolean;
-}
+import { configManager } from './ConfigManager';
+import type { Plugin, PluginPackage, StorePlugin } from '../../types';
 
 class PluginManager extends EventEmitter {
   private static instance: PluginManager;
-  private plugins = new Map<string, Plugin>();
+  private plugins: Map<string, Plugin> = new Map();
   private logger: Logger;
 
   // 插件目录
@@ -55,7 +30,12 @@ class PluginManager extends EventEmitter {
 
   private constructor() {
     super();
-    this.logger = new Logger('PluginManager');
+    // 从配置文件中读取配置
+    const config = configManager.getPluginConfig();
+    this.logger = new Logger('PluginManager', {
+      enabled: config.enableLogging,
+      level: config.logLevel,
+    });
     this.logger.info('PluginManager 初始化');
   }
 
@@ -350,6 +330,78 @@ class PluginManager extends EventEmitter {
       } else {
         await fs.promises.copyFile(srcPath, destPath);
       }
+    }
+  }
+
+  /**
+   * 获取插件商店列表
+   * 这里先返回模拟数据，后续可以改为从服务器获取
+   */
+  async getStorePlugins(): Promise<StorePlugin[]> {
+    this.logger.info('获取插件商店列表');
+
+    // 获取已安装的插件ID列表
+    const installedPluginIds = Array.from(this.plugins.keys());
+
+    // 模拟的商店插件列表
+    const storePlugins: StorePlugin[] = [
+      {
+        id: 'git-flow',
+        name: 'Git Flow',
+        description: '提供完整的 Git Flow 工作流支持',
+        version: '1.0.0',
+        author: 'GitOK Team',
+        downloads: 1200,
+        rating: 4.5,
+        isInstalled: installedPluginIds.includes('git-flow'),
+      },
+      {
+        id: 'commit-lint',
+        name: 'Commit Lint',
+        description: '检查提交信息是否符合规范',
+        version: '1.0.0',
+        author: 'GitOK Team',
+        downloads: 800,
+        rating: 4.8,
+        isInstalled: installedPluginIds.includes('commit-lint'),
+      },
+      {
+        id: 'branch-manager',
+        name: 'Branch Manager',
+        description: '分支管理工具，支持批量操作',
+        version: '1.0.0',
+        author: 'GitOK Team',
+        downloads: 600,
+        rating: 4.2,
+        isInstalled: installedPluginIds.includes('branch-manager'),
+      },
+    ];
+
+    return storePlugins;
+  }
+
+  /**
+   * 从商店安装插件
+   */
+  async installStorePlugin(pluginId: string): Promise<boolean> {
+    this.logger.info(`开始从商店安装插件: ${pluginId}`);
+
+    try {
+      // TODO: 这里应该是从服务器下载插件包
+      // 现在先模拟安装过程
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      // 触发插件安装事件
+      this.emit('plugin-installed', pluginId);
+
+      return true;
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+      this.logger.error(`从商店安装插件失败: ${pluginId}`, {
+        error: errorMessage,
+      });
+      return false;
     }
   }
 }

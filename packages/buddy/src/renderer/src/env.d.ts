@@ -1,7 +1,34 @@
 /// <reference types="vite/client" />
 
+/**
+ * 声明 .vue 文件模块
+ */
+declare module '*.vue' {
+  import type { DefineComponent } from 'vue';
+  const component: DefineComponent<{}, {}, any>;
+  export default component;
+}
+
+/**
+ * 导入全局类型定义
+ */
+import type { ElectronAPI } from '@/types';
+
+declare global {
+  interface Window {
+    electron: ElectronAPI;
+  }
+}
+
 interface WindowConfig {
   showTrafficLights: boolean;
+}
+
+interface IpcRenderer {
+  send: (channel: string, ...args: any[]) => void;
+  invoke: (channel: string, ...args: any[]) => Promise<any>;
+  on: (channel: string, listener: (...args: any[]) => void) => void;
+  removeListener: (channel: string, listener: (...args: any[]) => void) => void;
 }
 
 interface ElectronAPI {
@@ -10,9 +37,7 @@ interface ElectronAPI {
   onWindowConfigChanged: (
     callback: (event: Electron.IpcRendererEvent, config: WindowConfig) => void
   ) => () => void;
-  ipcRenderer: {
-    send: (channel: 'ping') => void;
-  };
+  ipcRenderer: IpcRenderer;
   process: {
     versions: {
       electron: string;

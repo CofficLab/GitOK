@@ -4,6 +4,7 @@
     "electron.vite.config.*",
     "src/main/**/*",
     "src/preload/**/*",
+    "src/types/**/*",
     "native/**/*"
   ],
   "compilerOptions": {
@@ -12,6 +13,12 @@
       "electron-vite/node"
     ],
     "moduleResolution": "node16",
-    "module": "node16"
+    "module": "node16",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "src/*"
+      ]
+    }
   }
 }
