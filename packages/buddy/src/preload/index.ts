@@ -151,6 +151,12 @@ const api = {
     openFileDialog: (): Promise<string | null> =>
       ipcRenderer.invoke('mcp:openFileDialog'),
   },
+  // 插件相关
+  plugin: {
+    getStorePlugins: () => ipcRenderer.invoke('plugin:getStorePlugins'),
+    openDirectory: (directory: string) =>
+      ipcRenderer.invoke('plugin:openDirectory', directory),
+  },
 };
 
 // Use `contextBridge` APIs to expose Electron APIs to

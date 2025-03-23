@@ -56,6 +56,16 @@ interface Window {
       channel: string,
       callback: (...args: unknown[]) => void
     ) => void;
+    plugin: {
+      getStorePlugins: () => Promise<{
+        success: boolean;
+        plugins: import('@/types/plugin').StorePlugin[];
+      }>;
+      openDirectory: (directory: string) => Promise<{
+        success: boolean;
+        error?: string;
+      }>;
+    };
   };
 }
 

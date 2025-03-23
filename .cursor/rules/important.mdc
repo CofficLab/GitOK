@@ -35,6 +35,7 @@ alwaysApply: true
 - tailwind.config.js 在新版中已经不需要了
 - 使用 daisyui 和 tailwindcss 来写样式
 - 使用Vue
+- 所有图标都放入icons 目录，像 [StoreIcon.vue](mdc:packages/buddy/src/renderer/src/icons/StoreIcon.vue) 那样
 - 渲染进程的vue组件放在 [ActionView.vue](mdc:packages/buddy/src/renderer/src/components/ActionView.vue) 所在的父目录中
 - [electron.vite.config.mts](mdc:packages/buddy/electron.vite.config.mts) 中定义了别名，比如：@，充分利用这个别名
 

@@ -184,34 +184,23 @@ export interface StorePlugin {
   author: string;
 
   /**
-   * 下载次数
-   */
-  downloads: number;
-
-  /**
-   * 评分（0-5）
-   */
-  rating: number;
-
-  /**
-   * 是否已安装
-   */
-  isInstalled: boolean;
-
-  /**
    * 插件目录信息
    */
-  directories: PluginDirectories;
+  directories: {
+    user: string;
+    builtin: string;
+    dev: string;
+  };
 
   /**
    * 推荐安装位置
    */
-  recommendedLocation: PluginLocation;
+  recommendedLocation: 'user' | 'builtin' | 'dev';
 
   /**
    * 当前安装位置（如果已安装）
    */
-  currentLocation?: PluginLocation;
+  currentLocation?: 'user' | 'builtin' | 'dev';
 }
 
 /**
@@ -257,5 +246,5 @@ export interface Plugin {
   /**
    * 是否为开发中的插件
    */
-  isDev?: boolean;
+  isDev: boolean;
 }

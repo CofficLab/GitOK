@@ -3,7 +3,7 @@
  * 
  * 这个组件负责显示应用的状态信息：
  * - 显示当前时间
- * - 提供导航按钮
+ * - 提供路由导航
  * - 提供插件商店入口
  * 
  * 主要功能：
@@ -24,29 +24,19 @@
  -->
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, computed } from 'vue'
-import { useAppStore } from '../stores/appStore'
-import type { ViewType } from '../stores/appStore'
-import PluginStore from '../components/PluginStore.vue'
-import StoreIcon from '../components/icons/StoreIcon.vue'
+import { ref, onMounted, onUnmounted } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 
+// 当前时间
 const currentTime = ref(new Date().toLocaleTimeString())
-const showPluginStore = ref(false)
 let timer: ReturnType<typeof setInterval>
 
-const appStore = useAppStore()
-const currentView = computed(() => appStore.currentView)
+const router = useRouter()
+const route = useRoute()
 
+// 更新时间
 const updateTime = () => {
     currentTime.value = new Date().toLocaleTimeString()
-}
-
-const switchView = (view: ViewType) => {
-    appStore.setView(view)
-}
-
-const togglePluginStore = () => {
-    showPluginStore.value = !showPluginStore.value
 }
 
 onMounted(() => {
@@ -64,37 +54,22 @@ onUnmounted(() => {
     <div class="flex items-center justify-between px-4 py-2 bg-gray-100 border-t">
         <!-- 导航按钮 -->
         <div class="flex items-center space-x-2">
-            <button @click="switchView('home')"
-                :class="['px-3 py-1 rounded text-sm', currentView === 'home' ? 'bg-blue-500 text-white' : 'text-gray-600 hover:bg-gray-200']">
+            <button @click="router.push('/')"
+                :class="['px-3 py-1 rounded text-sm', route.path === '/' ? 'bg-blue-500 text-white' : 'text-gray-600 hover:bg-gray-200']">
                 首页
             </button>
-            <button @click="switchView('plugins')"
-                :class="['px-3 py-1 rounded text-sm', currentView === 'plugins' ? 'bg-blue-500 text-white' : 'text-gray-600 hover:bg-gray-200']">
-                插件
+            <button @click="router.push('/plugins')"
+                :class="['px-3 py-1 rounded text-sm', route.path === '/plugins' ? 'bg-blue-500 text-white' : 'text-gray-600 hover:bg-gray-200']">
+                插件商店
             </button>
         </div>
 
         <!-- 右侧工具栏 -->
         <div class="flex items-center space-x-4">
-            <!-- 插件商店按钮 -->
-            <button @click="togglePluginStore"
-                class="px-3 py-1 rounded text-sm text-gray-600 hover:bg-gray-200 flex items-center">
-                <StoreIcon class="h-4 w-4 mr-1" />
-                插件商店
-            </button>
-
             <!-- 时间显示 -->
             <div class="text-sm text-gray-600">
                 {{ currentTime }}
             </div>
-        </div>
-    </div>
-
-    <!-- 插件商店模态框 -->
-    <div v-if="showPluginStore" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-        @click.self="showPluginStore = false">
-        <div class="bg-base-100 rounded-lg shadow-xl w-3/4 max-w-4xl max-h-[80vh] overflow-y-auto">
-            <PluginStore />
         </div>
     </div>
 </template>

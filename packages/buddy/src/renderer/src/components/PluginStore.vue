@@ -4,17 +4,17 @@
 */
 <script setup lang="ts">
 import { ref, computed } from 'vue';
-import type { StorePlugin, PluginLocation } from '../../../types/plugin';
+import type { StorePlugin } from '../../../types/plugin';
 
 // 标签页选项
-const tabs: { id: PluginLocation; label: string; directory: string }[] = [
-    { id: 'user', label: '用户插件', directory: '' },
-    { id: 'builtin', label: '内置插件', directory: '' },
-    { id: 'dev', label: '开发插件', directory: '' }
+const tabs: { id: 'user' | 'builtin' | 'dev'; label: string }[] = [
+    { id: 'user', label: '用户插件' },
+    { id: 'builtin', label: '内置插件' },
+    { id: 'dev', label: '开发插件' }
 ];
 
 // 当前选中的标签页
-const activeTab = ref<PluginLocation>('user');
+const activeTab = ref<'user' | 'builtin' | 'dev'>('user');
 
 // 插件列表
 const plugins = ref<StorePlugin[]>([]);
@@ -50,33 +50,19 @@ const openDirectory = async () => {
 const showErrorMessage = (message: string) => {
     errorMessage.value = message;
     showError.value = true;
-    // 3秒后自动隐藏
     setTimeout(() => {
         showError.value = false;
         errorMessage.value = null;
     }, 3000);
 };
 
-// 根据当前标签页过滤插件
-const filteredPlugins = computed(() => {
-    return plugins.value.filter(plugin => {
-        // 如果插件已安装，根据其当前位置过滤
-        if (plugin.currentLocation) {
-            return plugin.currentLocation === activeTab.value;
-        }
-        // 如果插件未安装，根据其推荐位置过滤
-        return plugin.recommendedLocation === activeTab.value;
-    });
-});
-
-// 从主进程获取插件列表
+// 加载插件列表
 const loadPlugins = async () => {
     try {
         const response = await window.electron.ipcRenderer.invoke('plugin:getStorePlugins');
         if (response.success) {
             plugins.value = response.plugins;
         } else {
-            console.error('Failed to load plugins:', response.error);
             showErrorMessage(response.error || '加载插件列表失败');
             plugins.value = [];
         }
@@ -87,39 +73,15 @@ const loadPlugins = async () => {
     }
 };
 
-// 安装插件
-const installPlugin = async (pluginId: string) => {
-    try {
-        const response = await window.electron.ipcRenderer.invoke('plugin:install', pluginId);
-        if (response.success) {
-            await loadPlugins(); // 重新加载插件列表
-        } else {
-            console.error('Failed to install plugin:', response.error);
-            showErrorMessage(response.error || '安装插件失败');
-        }
-    } catch (error) {
-        console.error('Failed to install plugin:', error);
-        showErrorMessage('安装插件失败');
-    }
-};
+// 过滤当前标签页的插件
+const filteredPlugins = computed(() => {
+    return plugins.value.filter(plugin =>
+        plugin.currentLocation === activeTab.value ||
+        (!plugin.currentLocation && plugin.recommendedLocation === activeTab.value)
+    );
+});
 
-// 卸载插件
-const uninstallPlugin = async (pluginId: string) => {
-    try {
-        const response = await window.electron.ipcRenderer.invoke('plugin:uninstall', pluginId);
-        if (response.success) {
-            await loadPlugins(); // 重新加载插件列表
-        } else {
-            console.error('Failed to uninstall plugin:', response.error);
-            showErrorMessage(response.error || '卸载插件失败');
-        }
-    } catch (error) {
-        console.error('Failed to uninstall plugin:', error);
-        showErrorMessage('卸载插件失败');
-    }
-};
-
-// 组件挂载时加载插件列表
+// 初始加载
 loadPlugins();
 </script>
 
@@ -167,29 +129,11 @@ loadPlugins();
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <div v-for="plugin in filteredPlugins" :key="plugin.id" class="card bg-base-100 shadow-xl">
                 <div class="card-body">
-                    <h2 class="card-title">
-                        {{ plugin.name }}
-                        <div class="badge badge-secondary">{{ plugin.version }}</div>
-                    </h2>
-                    <p>{{ plugin.description }}</p>
-                    <div class="flex items-center gap-2 mt-2">
-                        <div class="badge badge-outline">{{ plugin.author }}</div>
-                        <div class="badge badge-outline">⭐ {{ plugin.rating }}</div>
-                        <div class="badge badge-outline">⬇️ {{ plugin.downloads }}</div>
-                    </div>
-                    <div class="card-actions justify-end mt-4">
-                        <!-- 显示插件目录信息 -->
-                        <div class="text-sm opacity-70">
-                            {{ plugin.currentLocation ? '当前位置' : '推荐位置' }}:
-                            {{ plugin.directories[plugin.currentLocation || plugin.recommendedLocation] }}
-                        </div>
-                        <!-- 安装/卸载按钮 -->
-                        <button v-if="!plugin.isInstalled" class="btn btn-primary" @click="installPlugin(plugin.id)">
-                            安装
-                        </button>
-                        <button v-else class="btn btn-error" @click="uninstallPlugin(plugin.id)">
-                            卸载
-                        </button>
+                    <h2 class="card-title">{{ plugin.name }}</h2>
+                    <p class="text-sm">{{ plugin.description }}</p>
+                    <div class="text-sm opacity-70">
+                        <p>版本: {{ plugin.version }}</p>
+                        <p>作者: {{ plugin.author }}</p>
                     </div>
                 </div>
             </div>

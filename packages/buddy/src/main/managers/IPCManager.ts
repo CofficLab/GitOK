@@ -116,34 +116,6 @@ class IPCManager extends EventEmitter {
       }
     });
 
-    // 从商店安装插件
-    ipcMain.handle('plugin:install', async (_, pluginId: string) => {
-      this.logger.debug('处理IPC请求: plugin:install', { pluginId });
-      try {
-        const success = await pluginManager.installStorePlugin(pluginId);
-        return { success };
-      } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : String(error);
-        this.logger.error('安装插件失败', { error: errorMessage });
-        return { success: false, error: errorMessage };
-      }
-    });
-
-    // 卸载插件
-    ipcMain.handle('plugin:uninstall', async (_, pluginId: string) => {
-      this.logger.debug('处理IPC请求: plugin:uninstall', { pluginId });
-      try {
-        const success = await pluginManager.uninstallPlugin(pluginId);
-        return { success };
-      } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : String(error);
-        this.logger.error('卸载插件失败', { error: errorMessage });
-        return { success: false, error: errorMessage };
-      }
-    });
-
     // 获取已安装的插件列表
     ipcMain.handle('plugin:getPlugins', async () => {
       this.logger.debug('处理IPC请求: plugin:getPlugins');
@@ -173,9 +145,9 @@ class IPCManager extends EventEmitter {
           success: true,
         };
       } catch (error) {
-        this.logger.error('Failed to open directory:', {
-          error: error instanceof Error ? error.message : String(error),
-        });
+        const errorMessage =
+          error instanceof Error ? error.message : String(error);
+        this.logger.error('Failed to open directory:', { error: errorMessage });
         return {
           success: false,
           error: '无法打开目录',

@@ -9,6 +9,7 @@ export default defineConfig({
     resolve: {
       alias: {
         '@': resolve('src'),
+        '@types': resolve('src/types'),
       },
     },
   },
@@ -17,6 +18,7 @@ export default defineConfig({
     resolve: {
       alias: {
         '@': resolve('src'),
+        '@types': resolve('src/types'),
       },
     },
   },
@@ -25,6 +27,7 @@ export default defineConfig({
       alias: {
         '@': resolve('src'),
         '@renderer': resolve('src/renderer/src'),
+        '@types': resolve('src/types'),
       },
     },
     plugins: [vue(), tailwindcss()],

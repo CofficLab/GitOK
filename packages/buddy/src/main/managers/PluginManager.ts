@@ -126,19 +126,6 @@ class PluginManager extends EventEmitter {
           await fs.promises.mkdir(dir, { recursive: true });
         }
       }
-
-      // 如果内置插件目录为空，复制资源目录中的内置插件
-      const entries = await fs.promises.readdir(this.builtinPluginsDir);
-      if (entries.length === 0) {
-        const resourceBuiltinDir = join(app.getAppPath(), 'resources/plugins');
-        if (fs.existsSync(resourceBuiltinDir)) {
-          this.logger.info('复制内置插件到插件目录');
-          await this.copyDirRecursive(
-            resourceBuiltinDir,
-            this.builtinPluginsDir
-          );
-        }
-      }
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : String(error);
@@ -321,106 +308,68 @@ class PluginManager extends EventEmitter {
   }
 
   /**
-   * 安装插件
-   * @param sourcePath 插件源路径（可以是目录或压缩包）
+   * 从目录中读取插件信息
    */
-  async installPlugin(sourcePath: string): Promise<boolean> {
-    try {
-      this.logger.info(`开始安装插件: ${sourcePath}`);
-
-      // 检查插件路径是否存在
-      if (!fs.existsSync(sourcePath)) {
-        throw new Error(`插件路径不存在: ${sourcePath}`);
-      }
-
-      // 读取插件的package.json
-      const packageJsonPath = join(sourcePath, 'package.json');
-      if (!fs.existsSync(packageJsonPath)) {
-        throw new Error('找不到package.json');
-      }
-
-      const packageJson = JSON.parse(
-        await fs.promises.readFile(packageJsonPath, 'utf8')
-      ) as PluginPackage;
-
-      // 验证插件包信息
-      if (!this.validatePluginPackage(packageJson)) {
-        throw new Error('无效的插件包');
-      }
-
-      // 创建目标目录
-      const targetDir = join(this.pluginsDir, packageJson.name);
-      if (fs.existsSync(targetDir)) {
-        throw new Error('插件已安装');
-      }
-
-      // 复制插件文件
-      await this.copyDirRecursive(sourcePath, targetDir);
-
-      // 加载插件
-      await this.loadPlugin(targetDir, false);
-
-      this.logger.info(`插件安装成功: ${packageJson.name}`);
-      return true;
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : String(error);
-      this.logger.error('安装插件失败', { error: errorMessage });
-      return false;
+  private async readPluginsFromDir(dir: string): Promise<StorePlugin[]> {
+    if (!fs.existsSync(dir)) {
+      return [];
     }
-  }
 
-  /**
-   * 卸载插件
-   */
-  async uninstallPlugin(pluginId: string): Promise<boolean> {
-    try {
-      this.logger.info(`开始卸载插件: ${pluginId}`);
-
-      const plugin = this.plugins.get(pluginId);
-      if (!plugin) {
-        this.logger.warn(`插件不存在: ${pluginId}`);
-        return false;
-      }
-
-      if (plugin.isBuiltin) {
-        this.logger.warn(`内置插件不能卸载: ${pluginId}`);
-        return false;
-      }
-
-      // 从插件目录删除
-      await fs.promises.rm(plugin.path, { recursive: true, force: true });
-
-      // 从内存中移除
-      this.plugins.delete(pluginId);
-
-      this.logger.info(`插件已卸载: ${pluginId}`);
-      return true;
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : String(error);
-      this.logger.error(`卸载插件失败: ${pluginId}`, { error: errorMessage });
-      return false;
-    }
-  }
-
-  /**
-   * 递归复制目录
-   */
-  private async copyDirRecursive(src: string, dest: string): Promise<void> {
-    await fs.promises.mkdir(dest, { recursive: true });
-    const entries = await fs.promises.readdir(src, { withFileTypes: true });
+    const plugins: StorePlugin[] = [];
+    const entries = await fs.promises.readdir(dir, { withFileTypes: true });
+    const directories = this.getPluginDirectories();
 
     for (const entry of entries) {
-      const srcPath = join(src, entry.name);
-      const destPath = join(dest, entry.name);
+      if (!entry.isDirectory()) continue;
 
-      if (entry.isDirectory()) {
-        await this.copyDirRecursive(srcPath, destPath);
-      } else {
-        await fs.promises.copyFile(srcPath, destPath);
+      const pluginPath = join(dir, entry.name);
+      const packageJsonPath = join(pluginPath, 'package.json');
+
+      try {
+        if (!fs.existsSync(packageJsonPath)) {
+          this.logger.warn(`插件 ${pluginPath} 缺少 package.json，跳过`);
+          continue;
+        }
+
+        const packageJson = JSON.parse(
+          await fs.promises.readFile(packageJsonPath, 'utf8')
+        ) as PluginPackage;
+
+        if (!this.validatePluginPackage(packageJson)) {
+          this.logger.warn(`插件 ${pluginPath} 的 package.json 格式无效，跳过`);
+          continue;
+        }
+
+        // 确定插件的当前位置
+        let currentLocation: 'user' | 'builtin' | 'dev' | undefined;
+        if (dir === this.devPluginsDir) {
+          currentLocation = 'dev';
+        } else if (dir === this.builtinPluginsDir) {
+          currentLocation = 'builtin';
+        } else if (dir === this.pluginsDir) {
+          currentLocation = 'user';
+        }
+
+        plugins.push({
+          id: packageJson.name,
+          name: packageJson.name,
+          description: packageJson.description,
+          version: packageJson.version,
+          author: packageJson.author,
+          directories,
+          recommendedLocation: currentLocation || 'user',
+          currentLocation,
+        });
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : String(error);
+        this.logger.error(`读取插件信息失败: ${pluginPath}`, {
+          error: errorMessage,
+        });
       }
     }
+
+    return plugins;
   }
 
   /**
@@ -429,99 +378,26 @@ class PluginManager extends EventEmitter {
   async getStorePlugins(): Promise<StorePlugin[]> {
     this.logger.info('获取插件商店列表');
 
-    // 获取已安装的插件列表
-    const installedPlugins = this.getPlugins();
-    const installedPluginMap = new Map(installedPlugins.map((p) => [p.id, p]));
-
-    // 获取插件目录信息
-    const directories = this.getPluginDirectories();
-
-    // 模拟的商店插件列表
-    const storePlugins: StorePlugin[] = [
-      {
-        id: 'git-flow',
-        name: 'Git Flow',
-        description: '提供完整的 Git Flow 工作流支持',
-        version: '1.0.0',
-        author: 'GitOK Team',
-        downloads: 1200,
-        rating: 4.5,
-        isInstalled: installedPluginMap.has('git-flow'),
-        directories,
-        recommendedLocation: 'user',
-        currentLocation: installedPluginMap.get('git-flow')?.isDev
-          ? 'dev'
-          : installedPluginMap.get('git-flow')?.isBuiltin
-            ? 'builtin'
-            : installedPluginMap.has('git-flow')
-              ? 'user'
-              : undefined,
-      },
-      {
-        id: 'commit-lint',
-        name: 'Commit Lint',
-        description: '检查提交信息是否符合规范',
-        version: '1.0.0',
-        author: 'GitOK Team',
-        downloads: 800,
-        rating: 4.8,
-        isInstalled: installedPluginMap.has('commit-lint'),
-        directories,
-        recommendedLocation: 'builtin',
-        currentLocation: installedPluginMap.get('commit-lint')?.isDev
-          ? 'dev'
-          : installedPluginMap.get('commit-lint')?.isBuiltin
-            ? 'builtin'
-            : installedPluginMap.has('commit-lint')
-              ? 'user'
-              : undefined,
-      },
-      {
-        id: 'branch-manager',
-        name: 'Branch Manager',
-        description: '分支管理工具，支持批量操作',
-        version: '1.0.0',
-        author: 'GitOK Team',
-        downloads: 600,
-        rating: 4.2,
-        isInstalled: installedPluginMap.has('branch-manager'),
-        directories,
-        recommendedLocation: 'dev',
-        currentLocation: installedPluginMap.get('branch-manager')?.isDev
-          ? 'dev'
-          : installedPluginMap.get('branch-manager')?.isBuiltin
-            ? 'builtin'
-            : installedPluginMap.has('branch-manager')
-              ? 'user'
-              : undefined,
-      },
-    ];
-
-    return storePlugins;
-  }
-
-  /**
-   * 从商店安装插件
-   */
-  async installStorePlugin(pluginId: string): Promise<boolean> {
-    this.logger.info(`开始从商店安装插件: ${pluginId}`);
-
     try {
-      // TODO: 这里应该是从服务器下载插件包
-      // 现在先模拟安装过程
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      // 从各个目录读取插件
+      const [userPlugins, builtinPlugins, devPlugins] = await Promise.all([
+        this.readPluginsFromDir(this.pluginsDir),
+        this.readPluginsFromDir(this.builtinPluginsDir),
+        this.readPluginsFromDir(this.devPluginsDir),
+      ]);
 
-      // 触发插件安装事件
-      this.emit('plugin-installed', pluginId);
+      // 合并所有插件列表
+      const allPlugins = [...userPlugins, ...builtinPlugins, ...devPlugins];
 
-      return true;
+      // 按照插件名称排序
+      allPlugins.sort((a, b) => a.name.localeCompare(b.name));
+
+      return allPlugins;
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : String(error);
-      this.logger.error(`从商店安装插件失败: ${pluginId}`, {
-        error: errorMessage,
-      });
-      return false;
+      this.logger.error('获取插件列表失败', { error: errorMessage });
+      return [];
     }
   }
 }

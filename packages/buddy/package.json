@@ -29,6 +29,7 @@
     "lucide-vue-next": "^0.483.0",
     "pinia": "^3.0.1",
     "unzipper": "^0.12.3",
+    "vue-router": "^4.5.0",
     "yaml": "^2.7.0"
   },
   "devDependencies": {
