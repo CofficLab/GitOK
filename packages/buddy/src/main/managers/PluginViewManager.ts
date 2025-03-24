@@ -12,7 +12,7 @@ import { EventEmitter } from 'events';
 import { Logger } from '../utils/Logger';
 import { configManager } from './ConfigManager';
 import { windowManager } from './WindowManager';
-import { pluginManager } from './PluginManager';
+import { pluginActionManager } from './PluginActionManager';
 
 // 视图模式
 export type ViewMode = 'embedded' | 'window';
@@ -104,7 +104,7 @@ class PluginViewManager extends EventEmitter {
     let htmlContent = '';
     try {
       this.logger.debug(`获取动作视图内容: ${actionId}`);
-      htmlContent = await pluginManager.getActionView(actionId);
+      htmlContent = await pluginActionManager.getActionView(actionId);
       this.logger.debug(`获取到HTML内容，长度: ${htmlContent.length} 字节`);
     } catch (error) {
       const errorMessage =
@@ -115,7 +115,7 @@ class PluginViewManager extends EventEmitter {
 
     try {
       // 获取动作信息，判断是否需要启用开发者工具
-      const actions = await pluginManager.getPluginActions();
+      const actions = await pluginActionManager.getActions();
       const actionInfo = actions.find((a) => a.id === actionId);
       const devToolsEnabled = actionInfo?.devTools === true;
 

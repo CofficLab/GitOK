@@ -11,3 +11,14 @@ export * from './store';
 
 // 导出插件相关类型,解决命名冲突
 export * from './plugin';
+
+export interface PluginAction {
+  id: string;
+  title: string;
+  description?: string;
+  icon?: string;
+  viewPath?: string;
+  plugin: string; // 插件ID
+  devTools?: boolean; // 是否启用开发者工具
+  viewMode?: 'embedded' | 'window'; // 视图模式
+}

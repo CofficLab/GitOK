@@ -46,6 +46,13 @@ class PluginManager extends EventEmitter {
   private builtinPluginsDir: string;
   private devPluginsDir: string;
 
+  // 插件目录类型
+  private static readonly PLUGIN_DIRS = {
+    USER: 'user',
+    BUILTIN: 'builtin',
+    DEV: 'dev',
+  } as const;
+
   /**
    * 统一处理错误
    * @param error 错误对象
@@ -79,9 +86,12 @@ class PluginManager extends EventEmitter {
     const userDataPath = app.getPath('userData');
     const pluginsRootDir = join(userDataPath, 'plugins');
 
-    this.pluginsDir = join(pluginsRootDir, 'user');
-    this.builtinPluginsDir = join(pluginsRootDir, 'builtin');
-    this.devPluginsDir = join(pluginsRootDir, 'dev');
+    this.pluginsDir = join(pluginsRootDir, PluginManager.PLUGIN_DIRS.USER);
+    this.builtinPluginsDir = join(
+      pluginsRootDir,
+      PluginManager.PLUGIN_DIRS.BUILTIN
+    );
+    this.devPluginsDir = join(pluginsRootDir, PluginManager.PLUGIN_DIRS.DEV);
 
     this.logger.info('PluginManager 初始化', {
       pluginsRootDir,
@@ -176,71 +186,92 @@ class PluginManager extends EventEmitter {
   }
 
   /**
-   * 加载内置插件
+   * 清理资源
+   * 在应用退出前调用，用于清理插件系统
    */
-  private async loadBuiltinPlugins(): Promise<void> {
-    if (!fs.existsSync(this.builtinPluginsDir)) {
-      this.logger.info('内置插件目录不存在，跳过加载');
+  public cleanup(): void {
+    this.logger.info('开始清理插件系统');
+
+    try {
+      // 清理所有插件
+      for (const [pluginId, plugin] of this.plugins.entries()) {
+        try {
+          // 清除插件的 require 缓存
+          const mainFilePath = join(plugin.path, 'index.js');
+          if (require.cache[require.resolve(mainFilePath)]) {
+            delete require.cache[require.resolve(mainFilePath)];
+          }
+
+          this.logger.debug(`清理插件: ${pluginId}`);
+        } catch (error) {
+          this.handleError(error, `清理插件失败: ${pluginId}`);
+        }
+      }
+
+      // 清空插件集合
+      this.plugins.clear();
+
+      // 移除所有事件监听器
+      this.removeAllListeners();
+
+      this.logger.info('插件系统清理完成');
+    } catch (error) {
+      this.handleError(error, '插件系统清理失败');
+    }
+  }
+
+  /**
+   * 从指定目录加载插件
+   * @param dir 插件目录
+   * @param type 插件类型
+   */
+  private async loadPluginsFromDir(
+    dir: string,
+    type: 'user' | 'builtin' | 'dev'
+  ): Promise<void> {
+    if (!fs.existsSync(dir)) {
+      this.logger.info(`${type} 插件目录不存在，跳过加载`);
       return;
     }
 
     try {
-      const entries = await fs.promises.readdir(this.builtinPluginsDir, {
+      const entries = await fs.promises.readdir(dir, {
         withFileTypes: true,
       });
+
       for (const entry of entries) {
         if (entry.isDirectory()) {
-          await this.loadPlugin(join(this.builtinPluginsDir, entry.name), true);
+          await this.loadPlugin(
+            join(dir, entry.name),
+            type === 'builtin',
+            type === 'dev'
+          );
         }
       }
     } catch (error) {
-      this.handleError(error, '加载内置插件失败');
+      this.handleError(error, `加载 ${type} 插件失败`);
     }
+  }
+
+  /**
+   * 加载内置插件
+   */
+  private async loadBuiltinPlugins(): Promise<void> {
+    await this.loadPluginsFromDir(this.builtinPluginsDir, 'builtin');
   }
 
   /**
    * 加载用户安装的插件
    */
   private async loadUserPlugins(): Promise<void> {
-    try {
-      const entries = await fs.promises.readdir(this.pluginsDir, {
-        withFileTypes: true,
-      });
-      for (const entry of entries) {
-        if (entry.isDirectory()) {
-          await this.loadPlugin(join(this.pluginsDir, entry.name), false);
-        }
-      }
-    } catch (error) {
-      this.handleError(error, '加载用户插件失败');
-    }
+    await this.loadPluginsFromDir(this.pluginsDir, 'user');
   }
 
   /**
    * 加载开发中的插件
    */
   private async loadDevPlugins(): Promise<void> {
-    if (!fs.existsSync(this.devPluginsDir)) {
-      this.logger.info('开发插件目录不存在，跳过加载');
-      return;
-    }
-
-    try {
-      const entries = await fs.promises.readdir(this.devPluginsDir, {
-        withFileTypes: true,
-      });
-      for (const entry of entries) {
-        if (entry.isDirectory()) {
-          await this.loadPlugin(
-            join(this.devPluginsDir, entry.name),
-            false,
-            true
-          );
-        }
-      }
-    } catch (error) {
-      this.handleError(error, '加载开发插件失败');
-    }
+    await this.loadPluginsFromDir(this.devPluginsDir, 'dev');
   }
 
   /**
@@ -407,134 +438,11 @@ class PluginManager extends EventEmitter {
   }
 
   /**
-   * 获取插件动作
-   * @param keyword 搜索关键词
-   * @returns 匹配的插件动作列表
-   */
-  async getPluginActions(keyword: string = ''): Promise<PluginAction[]> {
-    this.logger.info(`获取插件动作，关键词: "${keyword}"`);
-    let allActions: PluginAction[] = [];
-
-    try {
-      // 从所有加载的插件中获取动作
-      for (const plugin of this.plugins.values()) {
-        try {
-          // 动态加载插件入口文件
-          const pluginModule = await this.loadPluginModule(plugin);
-
-          if (pluginModule && typeof pluginModule.getActions === 'function') {
-            const pluginActions = await pluginModule.getActions(keyword);
-            if (Array.isArray(pluginActions)) {
-              allActions = [...allActions, ...pluginActions];
-            }
-          }
-        } catch (error) {
-          this.handleError(error, `获取插件 ${plugin.id} 的动作失败`);
-        }
-      }
-
-      this.logger.info(`找到 ${allActions.length} 个匹配的动作`);
-      return allActions;
-    } catch (error) {
-      this.handleError(error, '获取插件动作失败');
-      return [];
-    }
-  }
-
-  /**
-   * 执行插件动作
-   * @param actionId 要执行的动作ID
-   * @returns 执行结果
-   */
-  async executePluginAction(actionId: string): Promise<any> {
-    this.logger.info(`执行插件动作: ${actionId}`);
-
-    try {
-      // 解析插件ID和动作ID
-      const [pluginId] = actionId.split(':');
-      if (!pluginId) {
-        throw new Error(`无效的动作ID: ${actionId}`);
-      }
-
-      // 获取插件实例
-      const plugin = this.getPlugin(pluginId);
-      if (!plugin) {
-        throw new Error(`未找到插件: ${pluginId}`);
-      }
-
-      // 加载插件模块
-      const pluginModule = await this.loadPluginModule(plugin);
-      if (!pluginModule || typeof pluginModule.executeAction !== 'function') {
-        throw new Error(`插件 ${pluginId} 不支持执行动作`);
-      }
-
-      // 获取动作信息
-      const actions = await this.getPluginActions();
-      const actionInfo = actions.find((a) => a.id === actionId);
-
-      if (!actionInfo) {
-        throw new Error(`未找到动作: ${actionId}`);
-      }
-
-      // 执行动作
-      return await pluginModule.executeAction(actionInfo);
-    } catch (error) {
-      throw new Error(
-        this.handleError(error, `执行插件动作失败: ${actionId}`, false)
-      );
-    }
-  }
-
-  /**
-   * 获取动作视图内容
-   * @param actionId 动作ID
-   * @returns 视图内容
-   */
-  async getActionView(actionId: string): Promise<string> {
-    this.logger.info(`获取动作视图: ${actionId}`);
-
-    try {
-      // 解析插件ID
-      const [pluginId] = actionId.split(':');
-      if (!pluginId) {
-        throw new Error(`无效的动作ID: ${actionId}`);
-      }
-
-      // 获取插件实例
-      const plugin = this.getPlugin(pluginId);
-      if (!plugin) {
-        throw new Error(`未找到插件: ${pluginId}`);
-      }
-
-      // 获取动作信息
-      const actions = await this.getPluginActions();
-      const actionInfo = actions.find((a) => a.id === actionId);
-
-      if (!actionInfo || !actionInfo.viewPath) {
-        throw new Error(`动作 ${actionId} 没有关联视图`);
-      }
-
-      // 加载插件模块
-      const pluginModule = await this.loadPluginModule(plugin);
-      if (!pluginModule || typeof pluginModule.getViewContent !== 'function') {
-        throw new Error(`插件 ${pluginId} 不支持获取视图内容`);
-      }
-
-      // 获取视图内容
-      return await pluginModule.getViewContent(actionInfo.viewPath);
-    } catch (error) {
-      throw new Error(
-        this.handleError(error, `获取动作视图失败: ${actionId}`, false)
-      );
-    }
-  }
-
-  /**
    * 加载插件模块
    * @param plugin 插件实例
    * @returns 插件模块
    */
-  private async loadPluginModule(plugin: Plugin): Promise<any> {
+  public async loadPluginModule(plugin: Plugin): Promise<any> {
     try {
       const mainFilePath = join(plugin.path, 'index.js');
       if (!fs.existsSync(mainFilePath)) {
