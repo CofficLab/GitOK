@@ -23,6 +23,7 @@ import fs from 'fs';
 import { configManager } from './ConfigManager';
 import { BaseManager } from './BaseManager';
 import { PluginEntity } from '../entities/PluginEntity';
+import { pluginLogger as logger } from './LogManager';
 
 class PluginManager extends BaseManager {
   private static instance: PluginManager;
@@ -66,7 +67,7 @@ class PluginManager extends BaseManager {
     // 开发中的插件目录指向项目根目录的 plugins 目录
     this.devPluginsDir = join(workspaceRoot, 'plugins');
 
-    this.logger.info('插件目录初始化完成', {
+    logger.info('插件目录初始化完成', {
       pluginsRootDir,
       workspaceRoot,
       pluginsDir: this.pluginsDir,
@@ -89,7 +90,7 @@ class PluginManager extends BaseManager {
    */
   async initialize(): Promise<void> {
     try {
-      this.logger.info('开始初始化插件系统');
+      logger.info('开始初始化插件系统');
 
       // 确保插件目录存在
       await this.ensurePluginDirs();
@@ -97,7 +98,7 @@ class PluginManager extends BaseManager {
       // 加载插件
       await this.loadPlugins();
 
-      this.logger.info('插件系统初始化完成');
+      logger.info('插件系统初始化完成');
     } catch (error) {
       this.handleError(error, '插件系统初始化失败', true);
     }
@@ -122,7 +123,7 @@ class PluginManager extends BaseManager {
 
       for (const dir of dirs) {
         if (!fs.existsSync(dir)) {
-          this.logger.info(`创建插件目录: ${dir}`);
+          logger.info(`创建插件目录: ${dir}`);
           await fs.promises.mkdir(dir, { recursive: true });
         }
       }
@@ -135,7 +136,7 @@ class PluginManager extends BaseManager {
    * 加载所有插件
    */
   private async loadPlugins(): Promise<void> {
-    this.logger.info('开始加载插件');
+    logger.info('开始加载插件');
 
     try {
       // 加载用户安装的插件
@@ -144,7 +145,7 @@ class PluginManager extends BaseManager {
       // 加载开发中的插件
       await this.loadDevPlugins();
 
-      this.logger.info(`已加载 ${this.plugins.size} 个插件`);
+      logger.info(`已加载 ${this.plugins.size} 个插件`);
     } catch (error) {
       this.handleError(error, '加载插件失败', true);
     }
@@ -155,13 +156,13 @@ class PluginManager extends BaseManager {
    * 在应用退出前调用，用于清理插件系统
    */
   public cleanup(): void {
-    this.logger.info('开始清理插件系统');
+    logger.info('开始清理插件系统');
 
     try {
       // 清理所有插件
       for (const [pluginId] of this.plugins.entries()) {
         try {
-          this.logger.debug(`清理插件: ${pluginId}`);
+          logger.debug(`清理插件: ${pluginId}`);
           this.plugins.delete(pluginId);
         } catch (error) {
           this.handleError(error, `清理插件失败: ${pluginId}`);
@@ -174,7 +175,7 @@ class PluginManager extends BaseManager {
       // 移除所有事件监听器
       this.removeAllListeners();
 
-      this.logger.info('插件系统清理完成');
+      logger.info('插件系统清理完成');
     } catch (error) {
       this.handleError(error, '插件系统清理失败');
     }
@@ -190,7 +191,7 @@ class PluginManager extends BaseManager {
     type: 'user' | 'dev'
   ): Promise<void> {
     if (!fs.existsSync(dir)) {
-      this.logger.info(`${type} 插件目录不存在，跳过加载`);
+      logger.info(`${type} 插件目录不存在，跳过加载`);
       return;
     }
 
@@ -232,19 +233,18 @@ class PluginManager extends BaseManager {
       const plugin = await PluginEntity.fromDirectory(pluginPath, type);
 
       if (!plugin.validation?.isValid) {
-        this.logger.warn(
-          `插件 ${pluginPath} 的 package.json 格式无效，跳过加载`,
-          { validation: plugin.validation?.errors }
-        );
+        logger.warn(`插件 ${pluginPath} 的 package.json 格式无效，跳过加载`, {
+          validation: plugin.validation?.errors,
+        });
         return;
       }
 
       this.plugins.set(plugin.id, plugin);
-      this.logger.info(`已加载插件: ${plugin.name} v${plugin.version}`);
+      logger.info(`已加载插件: ${plugin.name} v${plugin.version}`);
 
       // 将 Map 转换为对象再进行序列化
       const pluginsObj = Object.fromEntries(this.plugins);
-      this.logger.debug(`插件列表: ${JSON.stringify(pluginsObj)}`);
+      logger.debug(`插件列表: ${JSON.stringify(pluginsObj)}`);
     } catch (error) {
       this.handleError(error, `加载插件失败: ${pluginPath}`);
     }
@@ -296,7 +296,7 @@ class PluginManager extends BaseManager {
    * 获取插件商店列表
    */
   async getStorePlugins(): Promise<PluginEntity[]> {
-    this.logger.info('获取插件商店列表');
+    logger.info('获取插件商店列表');
 
     try {
       // 从各个目录读取插件

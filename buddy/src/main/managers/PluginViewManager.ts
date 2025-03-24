@@ -12,6 +12,7 @@ import { configManager } from './ConfigManager';
 import { windowManager } from './WindowManager';
 import { pluginActionManager } from './PluginActionManager';
 import { BaseManager } from './BaseManager';
+import { pluginViewLogger as logger } from './LogManager';
 import {
   PluginViewOptions,
   ViewBounds,
@@ -354,7 +355,7 @@ class PluginViewManager extends BaseManager {
     viewId: string,
     bounds?: { x: number; y: number; width: number; height: number }
   ): Promise<boolean> {
-    this.logger.debug(
+    logger.debug(
       `尝试显示视图: ${viewId}, 边界: ${JSON.stringify(bounds || {})}`
     );
 
@@ -386,12 +387,12 @@ class PluginViewManager extends BaseManager {
           app.focus({ steal: true });
         }
 
-        this.logger.info(`插件视图窗口已显示: ${viewId}`);
+        logger.info(`插件视图窗口已显示: ${viewId}`);
         return true;
       } catch (error) {
         const errorMessage =
           error instanceof Error ? error.message : String(error);
-        this.logger.error(`显示插件视图窗口失败: ${viewId}`, {
+        logger.error(`显示插件视图窗口失败: ${viewId}`, {
           error: errorMessage,
         });
         return false;
@@ -404,13 +405,13 @@ class PluginViewManager extends BaseManager {
       try {
         const mainWindow = windowManager.getMainWindow();
         if (!mainWindow) {
-          this.logger.error('主窗口不存在，无法显示嵌入式视图');
+          logger.error('主窗口不存在，无法显示嵌入式视图');
           return false;
         }
 
         // 确保边界值存在且合理
         if (!bounds || !this.isValidBounds(bounds)) {
-          this.logger.warn(
+          logger.warn(
             `嵌入式视图边界值不合理，使用默认值: ${JSON.stringify(bounds || {})}`
           );
           // 默认设置为主窗口的中央区域
@@ -422,7 +423,7 @@ class PluginViewManager extends BaseManager {
           bounds = { x, y, width, height };
         }
 
-        this.logger.debug(`实际使用的边界值: ${JSON.stringify(bounds)}`);
+        logger.debug(`实际使用的边界值: ${JSON.stringify(bounds)}`);
 
         // 先移除所有现有的BrowserView
         try {
@@ -431,46 +432,46 @@ class PluginViewManager extends BaseManager {
           const existingViews = mainWindow.getBrowserViews();
           const viewToRemove = existingViews.find((v) => v === view);
           if (viewToRemove) {
-            this.logger.debug(`移除视图准备重新添加: ${viewId}`);
+            logger.debug(`移除视图准备重新添加: ${viewId}`);
             mainWindow.removeBrowserView(viewToRemove);
           }
         } catch (removeError) {
-          this.logger.warn(`移除视图失败: ${removeError}`);
+          logger.warn(`移除视图失败: ${removeError}`);
         }
 
         // 设置视图的边界
         view.setBounds(bounds);
-        this.logger.debug(`已设置视图边界: ${JSON.stringify(bounds)}`);
+        logger.debug(`已设置视图边界: ${JSON.stringify(bounds)}`);
 
         // 将BrowserView添加到主窗口
         mainWindow.addBrowserView(view);
-        this.logger.info(`嵌入式视图已添加到主窗口: ${viewId}`);
+        logger.info(`嵌入式视图已添加到主窗口: ${viewId}`);
 
         // 立即刷新视图
         try {
           view.webContents.invalidate();
         } catch (invalidateError) {
-          this.logger.warn(`刷新视图失败: ${invalidateError}`);
+          logger.warn(`刷新视图失败: ${invalidateError}`);
         }
 
         // 通知渲染进程显示嵌入式视图
         if (!mainWindow.isDestroyed()) {
           mainWindow.webContents.send('show-embedded-view', { viewId, bounds });
-          this.logger.info(`通知渲染进程显示嵌入式视图: ${viewId}`);
+          logger.info(`通知渲染进程显示嵌入式视图: ${viewId}`);
         }
 
         return true;
       } catch (error) {
         const errorMessage =
           error instanceof Error ? error.message : String(error);
-        this.logger.error(`显示嵌入式视图失败: ${viewId}`, {
+        logger.error(`显示嵌入式视图失败: ${viewId}`, {
           error: errorMessage,
         });
         return false;
       }
     }
 
-    this.logger.error(`未找到插件视图: ${viewId}`);
+    logger.error(`未找到插件视图: ${viewId}`);
     return false;
   }
 
@@ -508,12 +509,12 @@ class PluginViewManager extends BaseManager {
     if (viewWindow) {
       try {
         viewWindow.hide();
-        this.logger.info(`插件视图窗口已隐藏: ${viewId}`);
+        logger.info(`插件视图窗口已隐藏: ${viewId}`);
         return true;
       } catch (error) {
         const errorMessage =
           error instanceof Error ? error.message : String(error);
-        this.logger.error(`隐藏插件视图窗口失败:`, { error: errorMessage });
+        logger.error(`隐藏插件视图窗口失败:`, { error: errorMessage });
         return false;
       }
     }
@@ -524,32 +525,32 @@ class PluginViewManager extends BaseManager {
       try {
         const mainWindow = windowManager.getMainWindow();
         if (!mainWindow) {
-          this.logger.error('主窗口不存在，无法隐藏嵌入式视图');
+          logger.error('主窗口不存在，无法隐藏嵌入式视图');
           return false;
         }
 
         // 从主窗口移除BrowserView
         mainWindow.removeBrowserView(view);
-        this.logger.info(`嵌入式视图已从主窗口移除: ${viewId}`);
+        logger.info(`嵌入式视图已从主窗口移除: ${viewId}`);
 
         // 通知渲染进程隐藏嵌入式视图
         if (!mainWindow.isDestroyed()) {
           mainWindow.webContents.send('hide-embedded-view', { viewId });
-          this.logger.info(`通知渲染进程隐藏嵌入式视图: ${viewId}`);
+          logger.info(`通知渲染进程隐藏嵌入式视图: ${viewId}`);
         }
 
         return true;
       } catch (error) {
         const errorMessage =
           error instanceof Error ? error.message : String(error);
-        this.logger.error(`隐藏嵌入式视图失败: ${viewId}`, {
+        logger.error(`隐藏嵌入式视图失败: ${viewId}`, {
           error: errorMessage,
         });
         return false;
       }
     }
 
-    this.logger.error(`未找到插件视图: ${viewId}`);
+    logger.error(`未找到插件视图: ${viewId}`);
     return false;
   }
 
@@ -566,12 +567,12 @@ class PluginViewManager extends BaseManager {
         // 关闭窗口
         viewWindow.destroy();
         this.viewWindows.delete(viewId);
-        this.logger.info(`插件视图窗口已销毁: ${viewId}`);
+        logger.info(`插件视图窗口已销毁: ${viewId}`);
         return true;
       } catch (error) {
         const errorMessage =
           error instanceof Error ? error.message : String(error);
-        this.logger.error(`销毁插件视图窗口失败:`, { error: errorMessage });
+        logger.error(`销毁插件视图窗口失败:`, { error: errorMessage });
         return false;
       }
     }
@@ -589,13 +590,13 @@ class PluginViewManager extends BaseManager {
         }
         // 将其引用置为null
         this.viewBrowserViews.delete(viewId);
-        this.logger.info(`嵌入式视图已销毁: ${viewId}`);
+        logger.info(`嵌入式视图已销毁: ${viewId}`);
 
         return true;
       } catch (error) {
         const errorMessage =
           error instanceof Error ? error.message : String(error);
-        this.logger.error(`销毁嵌入式视图失败: ${viewId}`, {
+        logger.error(`销毁嵌入式视图失败: ${viewId}`, {
           error: errorMessage,
         });
         return false;
@@ -603,7 +604,7 @@ class PluginViewManager extends BaseManager {
     }
 
     // 没有找到视图，也算作成功
-    this.logger.warn(`未找到插件视图，无需销毁: ${viewId}`);
+    logger.warn(`未找到插件视图，无需销毁: ${viewId}`);
     return true;
   }
 
@@ -619,26 +620,24 @@ class PluginViewManager extends BaseManager {
       try {
         // 检查窗口状态
         if (viewWindow.isDestroyed()) {
-          this.logger.error(`插件视图窗口已销毁: ${viewId}`);
+          logger.error(`插件视图窗口已销毁: ${viewId}`);
           return false;
         }
 
         // 确保webContents存在
         if (!viewWindow.webContents) {
-          this.logger.error(`插件视图窗口webContents不存在: ${viewId}`);
+          logger.error(`插件视图窗口webContents不存在: ${viewId}`);
           return false;
         }
 
         const isOpen = viewWindow.webContents.isDevToolsOpened();
-        this.logger.debug(
-          `开发者工具当前状态: ${isOpen ? '已打开' : '未打开'}`
-        );
+        logger.debug(`开发者工具当前状态: ${isOpen ? '已打开' : '未打开'}`);
 
         if (isOpen) {
-          this.logger.info(`关闭开发者工具: ${viewId}`);
+          logger.info(`关闭开发者工具: ${viewId}`);
           viewWindow.webContents.closeDevTools();
         } else {
-          this.logger.info(`打开开发者工具: ${viewId}`);
+          logger.info(`打开开发者工具: ${viewId}`);
           viewWindow.webContents.openDevTools();
         }
 
@@ -646,7 +645,7 @@ class PluginViewManager extends BaseManager {
       } catch (error) {
         const errorMessage =
           error instanceof Error ? error.message : String(error);
-        this.logger.error(`切换开发者工具失败:`, { error: errorMessage });
+        logger.error(`切换开发者工具失败:`, { error: errorMessage });
         return false;
       }
     }
@@ -657,20 +656,20 @@ class PluginViewManager extends BaseManager {
       try {
         // 确保webContents存在
         if (!view.webContents) {
-          this.logger.error(`嵌入式视图webContents不存在: ${viewId}`);
+          logger.error(`嵌入式视图webContents不存在: ${viewId}`);
           return false;
         }
 
         const isOpen = view.webContents.isDevToolsOpened();
-        this.logger.debug(
+        logger.debug(
           `嵌入式视图开发者工具当前状态: ${isOpen ? '已打开' : '未打开'}`
         );
 
         if (isOpen) {
-          this.logger.info(`关闭嵌入式视图开发者工具: ${viewId}`);
+          logger.info(`关闭嵌入式视图开发者工具: ${viewId}`);
           view.webContents.closeDevTools();
         } else {
-          this.logger.info(`打开嵌入式视图开发者工具: ${viewId}`);
+          logger.info(`打开嵌入式视图开发者工具: ${viewId}`);
           view.webContents.openDevTools();
         }
 
@@ -678,14 +677,14 @@ class PluginViewManager extends BaseManager {
       } catch (error) {
         const errorMessage =
           error instanceof Error ? error.message : String(error);
-        this.logger.error(`切换嵌入式视图开发者工具失败: ${viewId}`, {
+        logger.error(`切换嵌入式视图开发者工具失败: ${viewId}`, {
           error: errorMessage,
         });
         return false;
       }
     }
 
-    this.logger.error(`未找到插件视图: ${viewId}`);
+    logger.error(`未找到插件视图: ${viewId}`);
     return false;
   }
 
@@ -693,7 +692,7 @@ class PluginViewManager extends BaseManager {
    * 关闭所有插件视图窗口
    */
   public closeAllViews(): void {
-    this.logger.info(`关闭所有插件视图窗口: ${this.viewWindows.size} 个`);
+    logger.info(`关闭所有插件视图窗口: ${this.viewWindows.size} 个`);
     for (const [viewId, window] of this.viewWindows.entries()) {
       try {
         if (!window.isDestroyed()) {
@@ -702,7 +701,7 @@ class PluginViewManager extends BaseManager {
       } catch (error) {
         const errorMessage =
           error instanceof Error ? error.message : String(error);
-        this.logger.error(`关闭插件视图窗口失败: ${viewId}`, {
+        logger.error(`关闭插件视图窗口失败: ${viewId}`, {
           error: errorMessage,
         });
       }

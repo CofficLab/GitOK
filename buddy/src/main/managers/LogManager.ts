@@ -24,6 +24,7 @@ export function getLogPath(): string {
 
 // 导出预定义主题的日志记录器实例
 
+export const appLogger = createLogger('app');
 export const mainLogger = createLogger('main');
 export const rendererLogger = createLogger('renderer');
 export const ipcLogger = createLogger('ipc');
@@ -34,3 +35,7 @@ export const errorLogger = createLogger('error');
 export const configLogger = createLogger('config');
 export const commandLogger = createLogger('command');
 export const uiLogger = createLogger('ui');
+export const pluginLogger = createLogger('plugin');
+export const actionLogger = createLogger('action');
+export const pluginViewLogger = createLogger('plugin-view');
+export const windowLogger = createLogger('window');

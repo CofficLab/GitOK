@@ -39,13 +39,11 @@ class AppStateManager extends BaseManager {
   private setupAppStateListeners(): void {
     // 监听应用激活事件
     app.on('activate', () => {
-      this.logger.info('应用被激活');
       this.emit('app-activated');
     });
 
     // 监听应用失去焦点事件
     app.on('browser-window-blur', () => {
-      this.logger.info('应用失去焦点');
       this.emit('app-deactivated');
     });
   }
@@ -62,11 +60,6 @@ class AppStateManager extends BaseManager {
    */
   setOverlaidApp(app: ActiveApplication | null): void {
     this.overlaidApp = app;
-    if (app) {
-      this.logger.info(`记录被覆盖的应用: ${app.name} (${app.bundleId})`);
-    } else {
-      this.logger.info('清除被覆盖的应用信息');
-    }
     this.emit('overlaid-app-changed', app);
   }
 

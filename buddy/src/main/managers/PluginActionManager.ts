@@ -7,6 +7,7 @@ import { pluginManager } from './PluginManager';
 import { BaseManager } from './BaseManager';
 import type { SuperAction } from '@/types/super_action';
 import { PluginActionEntity } from '../entities/PluginActionEntity';
+import { actionLogger as logger } from './LogManager';
 
 class PluginActionManager extends BaseManager {
   private static instance: PluginActionManager;
@@ -37,7 +38,7 @@ class PluginActionManager extends BaseManager {
    * @returns 匹配的插件动作列表
    */
   async getActions(keyword: string = ''): Promise<PluginActionEntity[]> {
-    this.logger.info(`获取插件动作，关键词: "${keyword}"`);
+    logger.info(`获取插件动作，关键词: "${keyword}"`);
     let allActions: PluginActionEntity[] = [];
 
     try {
@@ -81,7 +82,7 @@ class PluginActionManager extends BaseManager {
         );
       }
 
-      this.logger.info(`找到 ${allActions.length} 个匹配的动作`);
+      logger.info(`找到 ${allActions.length} 个匹配的动作`);
       return allActions;
     } catch (error) {
       this.handleError(error, '获取插件动作失败');
@@ -103,7 +104,7 @@ class PluginActionManager extends BaseManager {
     // 过滤出验证通过的动作
     const validActions = actionEntities.filter((action) => {
       if (!action.validation?.isValid) {
-        this.logger.warn(`插件 ${plugin.id} 的动作验证失败`, {
+        logger.warn(`插件 ${plugin.id} 的动作验证失败`, {
           action: action.id,
           errors: action.validation?.errors,
         });
@@ -121,7 +122,7 @@ class PluginActionManager extends BaseManager {
    * @returns 执行结果
    */
   async executeAction(actionId: string): Promise<any> {
-    this.logger.info(`执行插件动作: ${actionId}`);
+    logger.info(`执行插件动作: ${actionId}`);
 
     try {
       // 解析插件ID和动作ID
@@ -193,7 +194,7 @@ class PluginActionManager extends BaseManager {
    * @returns 视图内容
    */
   async getActionView(actionId: string): Promise<string> {
-    this.logger.info(`获取动作视图: ${actionId}`);
+    logger.info(`获取动作视图: ${actionId}`);
 
     try {
       // 解析插件ID
@@ -235,13 +236,13 @@ class PluginActionManager extends BaseManager {
    * 清理资源
    */
   public cleanup(): void {
-    this.logger.info('清理动作管理器资源');
+    logger.info('清理动作管理器资源');
     try {
       // 清空动作缓存
       this.actionCache.clear();
       // 移除所有事件监听器
       this.removeAllListeners();
-      this.logger.info('动作管理器资源清理完成');
+      logger.info('动作管理器资源清理完成');
     } catch (error) {
       this.handleError(error, '清理动作管理器资源失败');
     }
