@@ -2,30 +2,27 @@
  * 窗口管理器
  * 负责创建、管理主窗口以及处理窗口相关配置和事件
  */
-import { app, shell, BrowserWindow, screen, globalShortcut } from 'electron';
+import { shell, BrowserWindow, screen, globalShortcut } from 'electron';
 import { join } from 'path';
 import { is } from '@electron-toolkit/utils';
 import icon from '../../../resources/icon.png?asset';
-import { EventEmitter } from 'events';
-import { Logger } from '../utils/Logger';
 import { configManager } from './ConfigManager';
 import { appStateManager } from './AppStateManager';
 import { getFrontmostApplication } from '@coffic/active-app-monitor';
+import { BaseManager } from './BaseManager';
 
-class WindowManager extends EventEmitter {
+class WindowManager extends BaseManager {
   private static instance: WindowManager;
   private mainWindow: BrowserWindow | null = null;
   private configManager = configManager;
-  private logger: Logger;
 
   private constructor() {
-    super();
-    const windowConfig = this.configManager.getWindowConfig();
-    this.logger = new Logger('WindowManager', {
-      enabled: windowConfig.enableLogging ?? true,
-      level: windowConfig.logLevel || 'info',
+    const windowConfig = configManager.getWindowConfig();
+    super({
+      name: 'WindowManager',
+      enableLogging: windowConfig.enableLogging ?? true,
+      logLevel: windowConfig.logLevel || 'info',
     });
-    this.logger.info('WindowManager 初始化');
   }
 
   /**
@@ -51,23 +48,59 @@ class WindowManager extends EventEmitter {
   createWindow(): BrowserWindow {
     this.logger.info('开始创建主窗口');
     const windowConfig = this.configManager.getWindowConfig();
-    const showTrafficLights = windowConfig.showTrafficLights;
-    const showDebugToolbar = windowConfig.showDebugToolbar;
-    const debugToolbarPosition = windowConfig.debugToolbarPosition || 'right';
-    const spotlightMode = windowConfig.spotlightMode;
-    const spotlightSize = windowConfig.spotlightSize || {
-      width: 700,
-      height: 500,
-    };
-    const alwaysOnTop = windowConfig.alwaysOnTop;
+    const {
+      showDebugToolbar,
+      debugToolbarPosition = 'right',
+      spotlightMode,
+    } = windowConfig;
 
     this.logger.debug('窗口配置', { windowConfig });
 
-    // 如果窗口已经存在，先销毁它
-    if (this.mainWindow && !this.mainWindow.isDestroyed()) {
-      this.logger.debug('销毁已存在的窗口');
-      this.mainWindow.destroy();
+    try {
+      // 如果窗口已经存在，先销毁它
+      if (this.mainWindow && !this.mainWindow.isDestroyed()) {
+        this.logger.debug('销毁已存在的窗口');
+        this.mainWindow.destroy();
+      }
+
+      // 创建窗口配置
+      const windowOptions = this.createWindowOptions(windowConfig);
+
+      // 创建浏览器窗口
+      this.logger.debug('创建浏览器窗口', { options: windowOptions });
+      this.mainWindow = new BrowserWindow(windowOptions);
+
+      // 设置窗口事件处理
+      this.setupWindowEvents(
+        spotlightMode,
+        showDebugToolbar,
+        debugToolbarPosition
+      );
+
+      // 加载窗口内容
+      this.loadWindowContent();
+
+      // Spotlight模式下设置窗口失焦自动隐藏
+      if (spotlightMode) {
+        this.logger.debug('Spotlight模式：设置窗口失焦自动隐藏');
+        this.setupBlurHandler();
+      }
+
+      this.logger.info('主窗口创建完成');
+      return this.mainWindow;
+    } catch (error) {
+      throw new Error(this.handleError(error, '创建主窗口失败', true));
     }
+  }
+
+  /**
+   * 创建窗口配置选项
+   */
+  private createWindowOptions(
+    windowConfig: any
+  ): Electron.BrowserWindowConstructorOptions {
+    const { showTrafficLights, spotlightMode, spotlightSize, alwaysOnTop } =
+      windowConfig;
 
     // 基本窗口配置
     const windowOptions: Electron.BrowserWindowConstructorOptions = {
@@ -91,41 +124,56 @@ class WindowManager extends EventEmitter {
 
     // Spotlight模式特定配置
     if (spotlightMode) {
-      this.logger.debug('应用Spotlight模式窗口配置');
-      Object.assign(windowOptions, {
-        frame: false,
-        transparent: true,
-        resizable: false,
-        movable: true,
-        center: true,
-        alwaysOnTop: alwaysOnTop,
-        skipTaskbar: true,
-        vibrancy: 'under-window', // macOS 特效
-        visualEffectState: 'active',
-        roundedCorners: true,
-      });
-
-      // 如果在macOS上，隐藏dock图标
-      if (process.platform === 'darwin' && app.dock) {
-        this.logger.debug('在macOS上隐藏Dock图标');
-        app.dock.hide();
-      }
-    } else {
+      Object.assign(windowOptions, this.getSpotlightModeOptions(alwaysOnTop));
+    } else if (process.platform === 'darwin') {
       // 常规模式下的macOS特定配置
-      if (process.platform === 'darwin') {
-        this.logger.debug('应用常规模式macOS窗口配置');
-        Object.assign(windowOptions, {
-          titleBarStyle: showTrafficLights ? 'default' : 'hiddenInset',
-          trafficLightPosition: showTrafficLights
-            ? undefined
-            : { x: -20, y: -20 },
-        });
-      }
+      Object.assign(windowOptions, this.getMacOSOptions(showTrafficLights));
     }
 
-    // 创建浏览器窗口
-    this.logger.debug('创建浏览器窗口', { options: windowOptions });
-    this.mainWindow = new BrowserWindow(windowOptions);
+    return windowOptions;
+  }
+
+  /**
+   * 获取Spotlight模式的窗口选项
+   */
+  private getSpotlightModeOptions(
+    alwaysOnTop: boolean
+  ): Partial<Electron.BrowserWindowConstructorOptions> {
+    return {
+      frame: false,
+      transparent: true,
+      resizable: false,
+      movable: true,
+      center: true,
+      alwaysOnTop,
+      skipTaskbar: true,
+      vibrancy: 'under-window',
+      visualEffectState: 'active',
+      roundedCorners: true,
+    };
+  }
+
+  /**
+   * 获取macOS特定的窗口选项
+   */
+  private getMacOSOptions(
+    showTrafficLights: boolean
+  ): Partial<Electron.BrowserWindowConstructorOptions> {
+    return {
+      titleBarStyle: showTrafficLights ? 'default' : 'hiddenInset',
+      trafficLightPosition: showTrafficLights ? undefined : { x: -20, y: -20 },
+    };
+  }
+
+  /**
+   * 设置窗口事件
+   */
+  private setupWindowEvents(
+    spotlightMode: boolean,
+    showDebugToolbar: boolean,
+    debugToolbarPosition: 'right' | 'bottom' | 'left' | 'undocked' | 'detach'
+  ): void {
+    if (!this.mainWindow) return;
 
     // 窗口加载完成后显示
     this.mainWindow.on('ready-to-show', () => {
@@ -150,9 +198,14 @@ class WindowManager extends EventEmitter {
       shell.openExternal(details.url);
       return { action: 'deny' };
     });
+  }
 
-    // HMR for renderer base on electron-vite cli.
-    // Load the remote URL for development or the local html file for production.
+  /**
+   * 加载窗口内容
+   */
+  private loadWindowContent(): void {
+    if (!this.mainWindow) return;
+
     if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
       this.logger.debug('开发模式：加载开发服务器URL', {
         url: process.env['ELECTRON_RENDERER_URL'],
@@ -163,15 +216,6 @@ class WindowManager extends EventEmitter {
       this.logger.debug('生产模式：加载本地HTML文件', { path: htmlPath });
       this.mainWindow.loadFile(htmlPath);
     }
-
-    // Spotlight模式下设置窗口失焦自动隐藏
-    if (spotlightMode) {
-      this.logger.debug('Spotlight模式：设置窗口失焦自动隐藏');
-      this.setupBlurHandler();
-    }
-
-    this.logger.info('主窗口创建完成');
-    return this.mainWindow;
   }
 
   /**
@@ -434,14 +478,21 @@ class WindowManager extends EventEmitter {
    */
   toggleMainWindow(): void {
     if (!this.mainWindow) {
-      this.logger.warn('尝试切换窗口状态但没有主窗口实例');
+      this.handleError(
+        new Error('尝试切换窗口状态但没有主窗口实例'),
+        '切换窗口状态失败'
+      );
       return;
     }
 
-    if (this.mainWindow.isVisible()) {
-      this.handleWindowHide(false);
-    } else {
-      this.handleWindowShow();
+    try {
+      if (this.mainWindow.isVisible()) {
+        this.handleWindowHide(false);
+      } else {
+        this.handleWindowShow();
+      }
+    } catch (error) {
+      this.handleError(error, '切换窗口状态失败');
     }
   }
 
@@ -449,56 +500,62 @@ class WindowManager extends EventEmitter {
    * 设置全局快捷键
    */
   setupGlobalShortcut(): void {
-    // 清除已有的快捷键
-    this.logger.info('设置全局快捷键');
-    this.logger.debug('清除已有的全局快捷键');
-    globalShortcut.unregisterAll();
+    try {
+      // 清除已有的快捷键
+      this.logger.info('设置全局快捷键');
+      this.logger.debug('清除已有的全局快捷键');
+      globalShortcut.unregisterAll();
 
-    const windowConfig = this.configManager.getWindowConfig();
+      const windowConfig = this.configManager.getWindowConfig();
 
-    // 如果启用了Spotlight模式，注册全局快捷键
-    if (windowConfig.spotlightMode && windowConfig.spotlightHotkey) {
-      this.logger.debug(
-        `尝试注册Spotlight模式全局快捷键: ${windowConfig.spotlightHotkey}`
-      );
-      try {
-        globalShortcut.register(
-          windowConfig.spotlightHotkey,
-          this.toggleMainWindow.bind(this)
+      // 如果启用了Spotlight模式，注册全局快捷键
+      if (windowConfig.spotlightMode && windowConfig.spotlightHotkey) {
+        this.logger.debug(
+          `尝试注册Spotlight模式全局快捷键: ${windowConfig.spotlightHotkey}`
         );
+        if (
+          !globalShortcut.register(
+            windowConfig.spotlightHotkey,
+            this.toggleMainWindow.bind(this)
+          )
+        ) {
+          throw new Error(`注册快捷键失败: ${windowConfig.spotlightHotkey}`);
+        }
         this.logger.info(
           `已成功注册全局快捷键: ${windowConfig.spotlightHotkey}`
         );
-      } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : String(error);
-        this.logger.error('注册全局快捷键失败', { error: errorMessage });
+      } else {
+        this.logger.debug(
+          '未启用Spotlight模式或未设置快捷键，跳过全局快捷键注册'
+        );
       }
-    } else {
-      this.logger.debug(
-        '未启用Spotlight模式或未设置快捷键，跳过全局快捷键注册'
-      );
+    } catch (error) {
+      this.handleError(error, '设置全局快捷键失败');
     }
   }
 
   /**
    * 清理资源
    */
-  cleanup(): void {
-    this.logger.info('WindowManager清理资源');
+  public cleanup(): void {
+    try {
+      this.logger.info('WindowManager清理资源');
 
-    // 取消注册所有快捷键
-    this.logger.debug('取消注册所有全局快捷键');
-    globalShortcut.unregisterAll();
+      // 取消注册所有快捷键
+      this.logger.debug('取消注册所有全局快捷键');
+      globalShortcut.unregisterAll();
 
-    // 关闭窗口（如果需要的话）
-    if (this.mainWindow && !this.mainWindow.isDestroyed()) {
-      this.logger.debug('关闭主窗口');
-      this.mainWindow.close();
-      this.mainWindow = null;
+      // 关闭窗口（如果需要的话）
+      if (this.mainWindow && !this.mainWindow.isDestroyed()) {
+        this.logger.debug('关闭主窗口');
+        this.mainWindow.close();
+        this.mainWindow = null;
+      }
+
+      this.logger.info('WindowManager资源清理完成');
+    } catch (error) {
+      this.handleError(error, 'WindowManager资源清理失败');
     }
-
-    this.logger.info('WindowManager资源清理完成');
   }
 }
 

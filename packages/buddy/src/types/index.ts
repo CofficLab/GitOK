@@ -12,6 +12,9 @@ export * from './store';
 // 导出插件相关类型,解决命名冲突
 export * from './plugin';
 
+// 导出插件视图相关类型
+export * from './plugin-view';
+
 export interface PluginAction {
   id: string;
   title: string;

@@ -6,22 +6,22 @@ import { EventEmitter } from 'events';
 import { Logger } from '../utils/Logger';
 import { configManager } from './ConfigManager';
 import { pluginManager } from './PluginManager';
+import { BaseManager } from './BaseManager';
 import type { PluginAction } from '../../types';
 
-class PluginActionManager extends EventEmitter {
+class PluginActionManager extends BaseManager {
   private static instance: PluginActionManager;
-  private logger: Logger;
   private config: any;
   private actionCache: Map<string, PluginAction[]> = new Map();
 
   private constructor() {
-    super();
-    this.config = configManager.getPluginConfig();
-    this.logger = new Logger('PluginActionManager', {
-      enabled: this.config.enableLogging,
-      level: this.config.logLevel,
+    const config = configManager.getPluginConfig();
+    super({
+      name: 'PluginActionManager',
+      enableLogging: config.enableLogging,
+      logLevel: config.logLevel,
     });
-    this.logger.info('PluginActionManager 初始化');
+    this.config = config;
   }
 
   /**
@@ -32,22 +32,6 @@ class PluginActionManager extends EventEmitter {
       PluginActionManager.instance = new PluginActionManager();
     }
     return PluginActionManager.instance;
-  }
-
-  /**
-   * 统一处理错误
-   */
-  private handleError(
-    error: unknown,
-    message: string,
-    throwError: boolean = false
-  ): string {
-    const errorMessage = error instanceof Error ? error.message : String(error);
-    this.logger.error(message, { error: errorMessage });
-    if (throwError) {
-      throw new Error(`${message}: ${errorMessage}`);
-    }
-    return errorMessage;
   }
 
   /**

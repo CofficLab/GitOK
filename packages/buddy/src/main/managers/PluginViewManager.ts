@@ -13,42 +13,28 @@ import { Logger } from '../utils/Logger';
 import { configManager } from './ConfigManager';
 import { windowManager } from './WindowManager';
 import { pluginActionManager } from './PluginActionManager';
+import { BaseManager } from './BaseManager';
+import {
+  ViewMode,
+  ViewBounds,
+  PluginViewOptions,
+  WebContentOptions,
+} from '../../types';
 
-// 视图模式
-export type ViewMode = 'embedded' | 'window';
-
-interface PluginViewOptions {
-  viewId: string;
-  url: string;
-  viewMode?: ViewMode;
-  bounds?: {
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-  };
-}
-
-class PluginViewManager extends EventEmitter {
+class PluginViewManager extends BaseManager {
   private static instance: PluginViewManager;
   private viewWindows: Map<string, BrowserWindow> = new Map();
   private viewBrowserViews: Map<string, BrowserView> = new Map();
-  private logger: Logger;
 
   private constructor() {
-    super();
-    // 从配置文件中读取日志配置
     const config = configManager.getConfig().plugins || {};
-    this.logger = new Logger('PluginViewManager', {
-      enabled: config.enableLogging ?? true,
-      level: config.logLevel || 'info',
+    super({
+      name: 'PluginViewManager',
+      enableLogging: config.enableLogging ?? true,
+      logLevel: config.logLevel || 'info',
     });
-    this.logger.info('PluginViewManager 初始化');
   }
 
-  /**
-   * 获取 PluginViewManager 实例
-   */
   public static getInstance(): PluginViewManager {
     if (!PluginViewManager.instance) {
       PluginViewManager.instance = new PluginViewManager();
@@ -57,119 +43,191 @@ class PluginViewManager extends EventEmitter {
   }
 
   /**
-   * 创建插件视图窗口
-   * @param options 视图选项
-   * @returns 主窗口的位置和大小信息，用于定位新窗口
+   * 清理资源
    */
-  public async createView(options: PluginViewOptions): Promise<{
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-  } | null> {
-    const { viewId, url, viewMode = 'embedded' } = options;
+  public cleanup(): void {
+    this.closeAllViews();
+  }
 
-    // 如果已存在同ID的窗口，先销毁它
-    if (this.viewWindows.has(viewId) || this.viewBrowserViews.has(viewId)) {
-      this.logger.debug(`销毁已存在的插件视图: ${viewId}`);
-      await this.destroyView(viewId);
+  /**
+   * 获取Web内容选项
+   */
+  private getWebContentOptions(devToolsEnabled: boolean): WebContentOptions {
+    return {
+      preload: join(__dirname, '../preload/plugin-preload.js'),
+      sandbox: false,
+      contextIsolation: true,
+      nodeIntegration: false,
+      webSecurity: true,
+      devTools: is.dev || devToolsEnabled,
+    };
+  }
+
+  /**
+   * 计算窗口位置
+   */
+  private calculateWindowPosition(width: number, height: number): ViewBounds {
+    const primaryDisplay = screen.getPrimaryDisplay();
+    const { width: displayWidth, height: displayHeight } =
+      primaryDisplay.workArea;
+    return {
+      x: Math.floor((displayWidth - width) / 2),
+      y: Math.floor((displayHeight - height) / 2),
+      width,
+      height,
+    };
+  }
+
+  /**
+   * 验证视图边界
+   */
+  private validateBounds(
+    bounds: ViewBounds,
+    mainWindowBounds?: ViewBounds
+  ): ViewBounds {
+    const minSize = 100; // 最小尺寸
+    const maxSize = 2000; // 最大尺寸
+
+    // 如果提供了主窗口边界，确保视图在主窗口内
+    if (mainWindowBounds) {
+      return {
+        x: Math.max(0, Math.min(bounds.x, mainWindowBounds.width - minSize)),
+        y: Math.max(0, Math.min(bounds.y, mainWindowBounds.height - minSize)),
+        width: Math.max(
+          minSize,
+          Math.min(bounds.width, mainWindowBounds.width)
+        ),
+        height: Math.max(
+          minSize,
+          Math.min(bounds.height, mainWindowBounds.height)
+        ),
+      };
     }
 
-    // 获取主窗口的位置和大小信息
-    const mainWindow = windowManager.getMainWindow();
-    if (!mainWindow) {
-      this.logger.error('主窗口不存在，无法创建插件视图');
-      return null;
+    // 通用边界验证
+    return {
+      x: Math.max(0, bounds.x),
+      y: Math.max(0, bounds.y),
+      width: Math.max(minSize, Math.min(bounds.width, maxSize)),
+      height: Math.max(minSize, Math.min(bounds.height, maxSize)),
+    };
+  }
+
+  /**
+   * 解析动作ID
+   */
+  private parseActionId(url: string): string {
+    if (!url.startsWith('plugin-view://')) {
+      throw new Error(`无效的插件视图URL: ${url}`);
     }
 
-    const mainWindowBounds = mainWindow.getBounds();
-    this.logger.debug(`主窗口位置信息: `, { bounds: mainWindowBounds });
-
-    // 解析动作ID
-    let actionId = '';
-    if (url.startsWith('plugin-view://')) {
-      actionId = url.substring(13);
-
-      // 删除可能存在的前导斜杠
-      if (actionId.startsWith('/')) {
-        actionId = actionId.substring(1);
-      }
+    let actionId = url.substring(13);
+    if (actionId.startsWith('/')) {
+      actionId = actionId.substring(1);
     }
 
     if (!actionId) {
       throw new Error(`无效的插件视图URL: ${url}`);
     }
 
-    // 准备HTML内容
-    let htmlContent = '';
-    try {
-      this.logger.debug(`获取动作视图内容: ${actionId}`);
-      htmlContent = await pluginActionManager.getActionView(actionId);
-      this.logger.debug(`获取到HTML内容，长度: ${htmlContent.length} 字节`);
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : String(error);
-      this.logger.error(`获取动作视图内容失败:`, { error: errorMessage });
-      throw new Error(`获取动作视图内容失败: ${errorMessage}`);
-    }
+    return actionId;
+  }
+
+  /**
+   * 创建插件视图窗口
+   */
+  public async createView(
+    options: PluginViewOptions
+  ): Promise<ViewBounds | null> {
+    const { viewId, url, viewMode = 'embedded' } = options;
 
     try {
-      // 获取动作信息，判断是否需要启用开发者工具
-      const actions = await pluginActionManager.getActions();
-      const actionInfo = actions.find((a) => a.id === actionId);
-      const devToolsEnabled = actionInfo?.devTools === true;
+      // 清理已存在的视图
+      if (this.viewWindows.has(viewId) || this.viewBrowserViews.has(viewId)) {
+        await this.destroyView(viewId);
+      }
 
-      this.logger.debug(`获取动作信息: ${JSON.stringify(actionInfo || {})}`);
+      const mainWindow = windowManager.getMainWindow();
+      if (!mainWindow) {
+        throw new Error('主窗口不存在，无法创建插件视图');
+      }
 
-      // 使用动作配置的视图模式，如果没有配置则使用传入的视图模式
-      const effectiveViewMode = actionInfo?.viewMode || viewMode;
-      this.logger.debug(
-        `使用视图模式: ${effectiveViewMode} (动作配置: ${actionInfo?.viewMode}, 传入: ${viewMode})`
-      );
+      const mainWindowBounds = mainWindow.getBounds();
+      const actionId = this.parseActionId(url);
 
+      // 获取视图内容
+      const htmlContent = await this.getViewContent(actionId);
+
+      // 获取动作配置
+      const actionConfig = await this.getActionConfig(actionId);
+
+      // 确定最终的视图模式
+      const effectiveViewMode = actionConfig.viewMode || viewMode;
+
+      // 创建视图
       if (effectiveViewMode === 'window') {
-        // 创建独立窗口视图
         return this.createWindowView(
           viewId,
           htmlContent,
           mainWindowBounds,
-          devToolsEnabled
+          actionConfig.devTools
         );
       } else {
-        // 创建嵌入式视图
         return this.createEmbeddedView(
           viewId,
           htmlContent,
           mainWindowBounds,
-          devToolsEnabled
+          actionConfig.devTools
         );
       }
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : String(error);
-      this.logger.error(`创建插件视图失败:`, { error: errorMessage });
-      throw new Error(`创建插件视图失败: ${errorMessage}`);
+      this.handleError(error, `创建插件视图失败: ${viewId}`);
+      return null;
+    }
+  }
+
+  /**
+   * 获取视图内容
+   */
+  private async getViewContent(actionId: string): Promise<string> {
+    try {
+      return await pluginActionManager.getActionView(actionId);
+    } catch (error) {
+      throw new Error(
+        this.handleError(error, `获取动作视图内容失败: ${actionId}`)
+      );
+    }
+  }
+
+  /**
+   * 获取动作配置
+   */
+  private async getActionConfig(
+    actionId: string
+  ): Promise<{ devTools: boolean; viewMode?: ViewMode }> {
+    try {
+      const actions = await pluginActionManager.getActions();
+      const actionInfo = actions.find((a) => a.id === actionId);
+      return {
+        devTools: actionInfo?.devTools === true,
+        viewMode: actionInfo?.viewMode,
+      };
+    } catch (error) {
+      throw new Error(this.handleError(error, `获取动作配置失败: ${actionId}`));
     }
   }
 
   /**
    * 创建独立窗口视图
-   * @param viewId 视图ID
-   * @param html HTML内容
-   * @param mainWindowBounds 主窗口位置和大小
-   * @param devToolsEnabled 是否启用开发者工具
-   * @returns 窗口的位置和大小信息
    */
   private createWindowView(
     viewId: string,
     html: string,
-    _mainWindowBounds: Electron.Rectangle,
+    mainWindowBounds: ViewBounds,
     devToolsEnabled: boolean
-  ): Electron.Rectangle {
-    this.logger.debug(`创建独立窗口视图: ${viewId}`);
-
-    const width = 600;
-    const height = 400;
+  ): ViewBounds {
+    // 计算窗口位置和大小
+    const bounds = this.calculateWindowPosition(600, 400);
 
     // 确保在macOS上dock图标可见
     if (process.platform === 'darwin' && app.dock) {
@@ -177,174 +235,152 @@ class PluginViewManager extends EventEmitter {
       app.focus({ steal: true });
     }
 
-    // 计算窗口在屏幕中心的位置
-    const primaryDisplay = screen.getPrimaryDisplay();
-    const { width: displayWidth, height: displayHeight } =
-      primaryDisplay.workArea;
-    const x = Math.floor((displayWidth - width) / 2);
-    const y = Math.floor((displayHeight - height) / 2);
-
-    // 使用简化的窗口配置
-    const windowOptions: Electron.BrowserWindowConstructorOptions = {
-      width,
-      height,
-      x,
-      y,
+    // 创建窗口
+    const viewWindow = new BrowserWindow({
+      ...bounds,
       title: `GitOK 插件 - ${viewId}`,
       show: false,
       frame: true,
-      center: false, // 我们手动设置了位置
+      center: false,
       alwaysOnTop: true,
       skipTaskbar: false,
-      webPreferences: {
-        preload: join(__dirname, '../preload/plugin-preload.js'),
-        sandbox: false,
-        contextIsolation: true,
-        nodeIntegration: false,
-        webSecurity: true,
-        devTools: is.dev || devToolsEnabled,
-      },
-    };
+      webPreferences: this.getWebContentOptions(devToolsEnabled),
+    });
 
-    // 创建窗口
-    const viewWindow = new BrowserWindow(windowOptions);
-
-    // 加载HTML内容
+    // 加载内容
     viewWindow.loadURL(
       `data:text/html;charset=utf-8,${encodeURIComponent(html)}`
     );
 
-    // 窗口准备好后显示
-    viewWindow.once('ready-to-show', () => {
-      this.logger.debug(`插件窗口 ${viewId} 准备就绪，显示窗口`);
+    // 设置窗口事件
+    this.setupWindowEvents(viewWindow, viewId, bounds);
 
-      // 确保窗口在正确的位置
-      viewWindow.setBounds({ x, y, width, height });
+    // 保存窗口引用
+    this.viewWindows.set(viewId, viewWindow);
 
-      // 显示并聚焦窗口
-      viewWindow.show();
-      viewWindow.moveTop();
-      viewWindow.focus();
+    return bounds;
+  }
 
-      // 在 macOS 上，确保应用程序是激活的
+  /**
+   * 设置窗口事件
+   */
+  private setupWindowEvents(
+    window: BrowserWindow,
+    viewId: string,
+    bounds: ViewBounds
+  ): void {
+    window.once('ready-to-show', () => {
+      window.setBounds(bounds);
+      window.show();
+      window.moveTop();
+      window.focus();
+
       if (process.platform === 'darwin') {
         app.focus({ steal: true });
       }
     });
 
-    // 保存窗口引用
-    this.viewWindows.set(viewId, viewWindow);
-
-    // 监听窗口关闭事件
-    viewWindow.on('closed', () => {
-      this.logger.debug(`插件窗口 ${viewId} 已关闭`);
+    window.on('closed', () => {
       this.viewWindows.delete(viewId);
     });
-
-    return { x, y, width, height };
   }
 
   /**
    * 创建嵌入式视图
-   * @param viewId 视图ID
-   * @param htmlContent HTML内容
-   * @param mainWindowBounds 主窗口位置信息
-   * @param devToolsEnabled 是否启用开发者工具
-   * @returns 主窗口位置信息
    */
   private async createEmbeddedView(
     viewId: string,
     htmlContent: string,
-    mainWindowBounds: { x: number; y: number; width: number; height: number },
+    mainWindowBounds: ViewBounds,
     devToolsEnabled: boolean
-  ): Promise<{ x: number; y: number; width: number; height: number }> {
+  ): Promise<ViewBounds> {
     const mainWindow = windowManager.getMainWindow();
     if (!mainWindow) {
       throw new Error('主窗口不存在');
     }
 
-    // 创建BrowserView之前先检查是否已存在，如果存在则先移除
-    try {
-      // 查找并移除可能已经存在的视图
-      this.viewBrowserViews.forEach((existingView, existingViewId) => {
-        if (existingViewId === viewId) {
-          try {
-            mainWindow.removeBrowserView(existingView);
-            this.viewBrowserViews.delete(existingViewId);
-            this.logger.debug(`移除已存在的嵌入式视图: ${existingViewId}`);
-          } catch (e) {
-            this.logger.warn(`移除已存在视图失败: ${e}`);
-          }
-        }
-      });
-    } catch (e) {
-      this.logger.warn(`清理已存在视图时出错: ${e}`);
-    }
+    // 清理已存在的视图
+    await this.cleanupExistingView(viewId, mainWindow);
 
-    // 创建BrowserView
+    // 创建视图
     const view = new BrowserView({
-      webPreferences: {
-        preload: join(__dirname, '../preload/plugin-preload.js'),
-        sandbox: false,
-        contextIsolation: true,
-        nodeIntegration: false,
-        webSecurity: true,
-        devTools: is.dev || devToolsEnabled,
-      },
+      webPreferences: this.getWebContentOptions(devToolsEnabled),
     });
 
-    // 存储视图实例
-    this.viewBrowserViews.set(viewId, view);
-    this.logger.info(`嵌入式视图已创建: ${viewId}`);
+    // 设置视图
+    const bounds = this.setupEmbeddedView(
+      view,
+      viewId,
+      htmlContent,
+      mainWindowBounds
+    );
 
-    // 设置默认边界，确保视图有一个合理的初始大小
-    const defaultBounds = {
+    // 处理开发者工具
+    if (devToolsEnabled) {
+      this.setupDevTools(view, viewId);
+    }
+
+    return bounds;
+  }
+
+  /**
+   * 清理已存在的视图
+   */
+  private async cleanupExistingView(
+    viewId: string,
+    mainWindow: BrowserWindow
+  ): Promise<void> {
+    const existingView = this.viewBrowserViews.get(viewId);
+    if (existingView) {
+      mainWindow.removeBrowserView(existingView);
+      this.viewBrowserViews.delete(viewId);
+    }
+  }
+
+  /**
+   * 设置嵌入式视图
+   */
+  private setupEmbeddedView(
+    view: BrowserView,
+    viewId: string,
+    htmlContent: string,
+    mainWindowBounds: ViewBounds
+  ): ViewBounds {
+    const bounds = {
       x: 0,
       y: 0,
       width: mainWindowBounds.width,
       height: Math.round(mainWindowBounds.height * 0.8),
     };
-    view.setBounds(defaultBounds);
-    this.logger.debug(
-      `设置嵌入式视图初始边界: ${JSON.stringify(defaultBounds)}`
+
+    view.setBounds(bounds);
+    view.webContents.loadURL(
+      `data:text/html;charset=utf-8,${encodeURIComponent(htmlContent)}`
     );
 
-    // 加载HTML内容
-    this.logger.debug(
-      `加载HTML内容到嵌入式视图，长度: ${htmlContent.length} 字节`
-    );
-    try {
-      await view.webContents.loadURL(
-        `data:text/html;charset=utf-8,${encodeURIComponent(htmlContent)}`
-      );
-      this.logger.debug(`HTML内容已加载到嵌入式视图: ${viewId}`);
-    } catch (loadError) {
-      this.logger.error(`加载HTML内容到嵌入式视图失败: ${loadError}`);
-      throw new Error(`加载HTML内容到嵌入式视图失败: ${loadError}`);
-    }
+    this.viewBrowserViews.set(viewId, view);
 
-    // 向主窗口发送事件，通知嵌入式视图已创建
-    if (!mainWindow.isDestroyed()) {
+    const mainWindow = windowManager.getMainWindow();
+    if (mainWindow && !mainWindow.isDestroyed()) {
       mainWindow.webContents.send('embedded-view-created', { viewId });
-      this.logger.info(`通知渲染进程嵌入式视图已创建: ${viewId}`);
     }
 
-    // 如果需要启用开发者工具，延迟打开
-    if (devToolsEnabled) {
-      this.logger.info(`动作指定了启用开发者工具，延迟打开`);
-      setTimeout(() => {
-        try {
-          if (view.webContents && !view.webContents.isDevToolsOpened()) {
-            this.logger.info(`实际打开开发者工具: ${viewId}`);
-            view.webContents.openDevTools();
-          }
-        } catch (e) {
-          this.logger.error(`打开开发者工具失败: ${e}`);
+    return bounds;
+  }
+
+  /**
+   * 设置开发者工具
+   */
+  private setupDevTools(view: BrowserView, viewId: string): void {
+    setTimeout(() => {
+      try {
+        if (view.webContents && !view.webContents.isDevToolsOpened()) {
+          view.webContents.openDevTools();
         }
-      }, 1000);
-    }
-
-    return mainWindowBounds;
+      } catch (error) {
+        this.handleError(error, `打开开发者工具失败: ${viewId}`);
+      }
+    }, 1000);
   }
 
   /**

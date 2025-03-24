@@ -3,34 +3,22 @@
  * 负责处理macOS平台Command键双击的监听和响应
  */
 import { BrowserWindow } from 'electron';
-import { EventEmitter } from 'events';
-import { Logger } from '../utils/Logger';
 import { configManager } from './ConfigManager';
+import { BaseManager } from './BaseManager';
+import { CommandKeyListener } from '@coffic/command-key-listener';
 
-// 声明CommandKeyListener类型但不导入
-// @ts-ignore 忽略CommandKeyListener模块导入错误
-type CommandKeyListener = {
-  on(event: string, callback: Function): void;
-  start(): Promise<boolean>;
-  stop(): boolean;
-  isListening(): boolean;
-};
-
-class CommandKeyManager extends EventEmitter {
+class CommandKeyManager extends BaseManager {
   private static instance: CommandKeyManager;
   private commandKeyListener: CommandKeyListener | null = null;
   private mainWindow: BrowserWindow | null = null;
-  private logger: Logger;
 
   private constructor() {
-    super();
-    // 从配置文件中读取日志配置
     const config = configManager.getConfig().command || {};
-    this.logger = new Logger('CommandKeyManager', {
-      enabled: config.enableLogging,
-      level: config.logLevel,
+    super({
+      name: 'CommandKeyManager',
+      enableLogging: config.enableLogging,
+      logLevel: config.logLevel,
     });
-    this.logger.info('CommandKeyManager 初始化');
   }
 
   /**
@@ -207,11 +195,14 @@ class CommandKeyManager extends EventEmitter {
   /**
    * 清理资源
    */
-  cleanup(): void {
-    this.logger.info('清理Command键双击监听器资源');
-    if (this.commandKeyListener) {
-      this.commandKeyListener.stop();
-      this.commandKeyListener = null;
+  public cleanup(): void {
+    try {
+      if (this.commandKeyListener) {
+        this.commandKeyListener.stop();
+        this.commandKeyListener = null;
+      }
+    } catch (error) {
+      this.handleError(error, '命令键监听器清理失败');
     }
   }
 }

@@ -3,10 +3,8 @@
  * 负责处理主进程与渲染进程之间的IPC通信
  */
 import { ipcMain } from 'electron';
-import { EventEmitter } from 'events';
 import { configManager } from './ConfigManager';
 import { commandKeyManager } from './CommandKeyManager';
-import { Logger } from '../utils/Logger';
 import { pluginManager } from './PluginManager';
 import { pluginViewManager } from './PluginViewManager';
 import { shell } from 'electron';
@@ -16,22 +14,20 @@ import fs from 'fs';
 import path from 'path';
 import { appStateManager } from './AppStateManager';
 import { pluginActionManager } from './PluginActionManager';
+import { BaseManager } from './BaseManager';
 
-class IPCManager extends EventEmitter {
+class IPCManager extends BaseManager {
   private static instance: IPCManager;
   private configManager = configManager;
   private commandKeyManager = commandKeyManager;
-  private logger: Logger;
-  private config: any;
 
   private constructor() {
-    super();
-    this.config = this.configManager.getConfig().ipc || {};
-    this.logger = new Logger('IPCManager', {
-      enabled: this.config.enableLogging,
-      level: this.config.logLevel,
+    const config = configManager.getConfig().ipc || {};
+    super({
+      name: 'IPCManager',
+      enableLogging: config.enableLogging,
+      logLevel: config.logLevel,
     });
-    this.logger.info('IPCManager 初始化');
 
     // 注册被覆盖应用相关的IPC处理函数
     this.registerOverlaidAppHandlers();
@@ -155,7 +151,7 @@ class IPCManager extends EventEmitter {
     // 获取插件动作列表
     ipcMain.handle(
       'get-plugin-actions',
-      async (event, keyword: string = '') => {
+      async (_event, keyword: string = '') => {
         this.logger.debug('处理IPC请求: get-plugin-actions');
         try {
           const actions = await pluginActionManager.getActions(keyword);
@@ -170,23 +166,26 @@ class IPCManager extends EventEmitter {
     );
 
     // 执行插件动作
-    ipcMain.handle('execute-plugin-action', async (event, actionId: string) => {
-      this.logger.debug(`处理IPC请求: execute-plugin-action: ${actionId}`);
-      try {
-        const result = await pluginActionManager.executeAction(actionId);
-        return { success: true, result };
-      } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : String(error);
-        this.logger.error(`执行插件动作失败: ${actionId}`, {
-          error: errorMessage,
-        });
-        return { success: false, error: errorMessage };
+    ipcMain.handle(
+      'execute-plugin-action',
+      async (_event, actionId: string) => {
+        this.logger.debug(`处理IPC请求: execute-plugin-action: ${actionId}`);
+        try {
+          const result = await pluginActionManager.executeAction(actionId);
+          return { success: true, result };
+        } catch (error) {
+          const errorMessage =
+            error instanceof Error ? error.message : String(error);
+          this.logger.error(`执行插件动作失败: ${actionId}`, {
+            error: errorMessage,
+          });
+          return { success: false, error: errorMessage };
+        }
       }
-    });
+    );
 
     // 获取动作视图内容
-    ipcMain.handle('get-action-view', async (event, actionId: string) => {
+    ipcMain.handle('get-action-view', async (_event, actionId: string) => {
       this.logger.debug(`处理IPC请求: get-action-view: ${actionId}`);
       try {
         const html = await pluginActionManager.getActionView(actionId);
@@ -443,40 +442,12 @@ class IPCManager extends EventEmitter {
    * 清理资源
    */
   public cleanup(): void {
-    this.logger.info('清理IPC管理器资源');
     try {
-      // 移除所有IPC事件处理程序
-      ipcMain.removeHandler('plugin:list');
-      ipcMain.removeHandler('plugin:store-list');
-      ipcMain.removeHandler('plugin:actions');
-      ipcMain.removeHandler('plugin:execute-action');
-      ipcMain.removeHandler('plugin:get-action-view');
-      // ... existing code ...
-
-      this.logger.info('IPC管理器资源清理完成');
+      // 移除所有IPC事件监听器
+      ipcMain.removeAllListeners();
     } catch (error) {
       this.handleError(error, 'IPC管理器资源清理失败');
     }
-  }
-
-  /**
-   * 统一处理错误
-   * @param error 错误对象
-   * @param message 错误消息
-   * @param throwError 是否抛出错误
-   * @returns 格式化后的错误消息
-   */
-  private handleError(
-    error: unknown,
-    message: string,
-    throwError: boolean = false
-  ): string {
-    const errorMessage = error instanceof Error ? error.message : String(error);
-    this.logger.error(message, { error: errorMessage });
-    if (throwError) {
-      throw new Error(`${message}: ${errorMessage}`);
-    }
-    return errorMessage;
   }
 }
 

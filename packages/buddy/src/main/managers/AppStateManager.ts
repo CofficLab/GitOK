@@ -3,30 +3,21 @@
  * 负责监控应用的激活状态以及其他应用的状态
  */
 import { app } from 'electron';
-import { EventEmitter } from 'events';
-import { Logger } from '../utils/Logger';
 import { configManager } from './ConfigManager';
-import {
-  getFrontmostApplication,
-  ActiveApplication,
-} from '@coffic/active-app-monitor';
+import { BaseManager } from './BaseManager';
+import { ActiveApplication } from '@coffic/active-app-monitor';
 
-class AppStateManager extends EventEmitter {
+class AppStateManager extends BaseManager {
   private static instance: AppStateManager;
-  private logger: Logger;
   private overlaidApp: ActiveApplication | null = null;
 
   private constructor() {
-    super();
     const { enableLogging, logLevel } = configManager.getWindowConfig();
-    this.logger = new Logger('AppStateManager', {
-      enabled: enableLogging ?? true,
-      level: logLevel || 'info',
+    super({
+      name: 'AppStateManager',
+      enableLogging: enableLogging ?? true,
+      logLevel: logLevel || 'info',
     });
-    this.logger.info('AppStateManager 初始化');
-
-    // 测试原生模块
-    this.testNativeModule();
 
     // 监听应用激活事件
     this.setupAppStateListeners();
@@ -60,22 +51,6 @@ class AppStateManager extends EventEmitter {
   }
 
   /**
-   * 测试原生模块
-   */
-  testNativeModule(): void {
-    try {
-      const frontmostApp = getFrontmostApplication();
-      if (frontmostApp) {
-        this.logger.info('原生模块测试: 获取前台应用信息成功', frontmostApp);
-      } else {
-        this.logger.warn('原生模块测试: 未能获取前台应用信息');
-      }
-    } catch (error) {
-      this.logger.error('原生模块测试失败', { error });
-    }
-  }
-
-  /**
    * 获取当前被覆盖的应用信息
    */
   getOverlaidApp(): ActiveApplication | null {
@@ -98,10 +73,16 @@ class AppStateManager extends EventEmitter {
   /**
    * 清理资源
    */
-  cleanup(): void {
-    this.logger.info('AppStateManager清理资源');
-    this.removeAllListeners();
-    this.overlaidApp = null;
+  public cleanup(): void {
+    try {
+      // 移除所有事件监听器
+      this.removeAllListeners();
+      // 移除应用状态监听器
+      app.removeAllListeners('activate');
+      app.removeAllListeners('window-all-closed');
+    } catch (error) {
+      this.handleError(error, '应用状态管理器清理失败');
+    }
   }
 }
 

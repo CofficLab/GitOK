@@ -28,6 +28,7 @@ import { EventEmitter } from 'events';
 import fs from 'fs';
 import { Logger } from '../utils/Logger';
 import { configManager } from './ConfigManager';
+import { BaseManager } from './BaseManager';
 import type {
   Plugin,
   PluginPackage,
@@ -35,10 +36,9 @@ import type {
   PluginAction,
 } from '../../types';
 
-class PluginManager extends EventEmitter {
+class PluginManager extends BaseManager {
   private static instance: PluginManager;
   private plugins: Map<string, Plugin> = new Map();
-  private logger: Logger;
   private config: any;
 
   // 插件目录
@@ -53,34 +53,14 @@ class PluginManager extends EventEmitter {
     DEV: 'dev',
   } as const;
 
-  /**
-   * 统一处理错误
-   * @param error 错误对象
-   * @param message 错误消息
-   * @param throwError 是否抛出错误
-   * @returns 格式化后的错误消息
-   */
-  private handleError(
-    error: unknown,
-    message: string,
-    throwError: boolean = false
-  ): string {
-    const errorMessage = error instanceof Error ? error.message : String(error);
-    this.logger.error(message, { error: errorMessage });
-    if (throwError) {
-      throw new Error(`${message}: ${errorMessage}`);
-    }
-    return errorMessage;
-  }
-
   private constructor() {
-    super();
-    // 从配置文件中读取配置
-    this.config = configManager.getPluginConfig();
-    this.logger = new Logger('PluginManager', {
-      enabled: this.config.enableLogging,
-      level: this.config.logLevel,
+    const config = configManager.getPluginConfig();
+    super({
+      name: 'PluginManager',
+      enableLogging: config.enableLogging,
+      logLevel: config.logLevel,
     });
+    this.config = config;
 
     // 初始化插件目录
     const userDataPath = app.getPath('userData');
@@ -93,7 +73,7 @@ class PluginManager extends EventEmitter {
     );
     this.devPluginsDir = join(pluginsRootDir, PluginManager.PLUGIN_DIRS.DEV);
 
-    this.logger.info('PluginManager 初始化', {
+    this.logger.info('插件目录初始化完成', {
       pluginsRootDir,
       pluginsDir: this.pluginsDir,
       builtinPluginsDir: this.builtinPluginsDir,
@@ -203,6 +183,7 @@ class PluginManager extends EventEmitter {
           }
 
           this.logger.debug(`清理插件: ${pluginId}`);
+          this.plugins.delete(pluginId);
         } catch (error) {
           this.handleError(error, `清理插件失败: ${pluginId}`);
         }
