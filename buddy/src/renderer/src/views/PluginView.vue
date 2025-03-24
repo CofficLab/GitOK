@@ -8,10 +8,12 @@
 */
 <script setup lang="ts">
 import { PluginAction } from '@/types/plugin-action';
-import { ref, watch, onUnmounted, reactive } from 'vue'
+import { ref, watch, onUnmounted, reactive, onMounted } from 'vue'
 import { usePluginManager } from '@renderer/composables/usePluginManager';
+import { useSearchStore } from '@renderer/stores/searchStore'
 
 const pluginManager = usePluginManager()
+const searchStore = useSearchStore()
 
 // 定义辅助函数获取插件视图API
 const getPluginViewsAPI = () => {
@@ -29,15 +31,9 @@ const getPluginViewsAPI = () => {
     }
 }
 
-// 接收传入的动作ID和返回回调
-const props = defineProps<{
-    actionId: string
-}>()
-
 const emit = defineEmits<{
     back: []
 }>()
-
 
 // 当前选中的动作
 const selectedAction = ref<PluginAction | null>(null)
@@ -66,7 +62,9 @@ const embeddedViewContainer = ref<HTMLDivElement | null>(null)
 
 // 加载并执行动作
 const loadAndExecuteAction = async () => {
-    const actionId = props.actionId
+    const actionId = searchStore.selectedActionId
+    if (!actionId) return
+
     isLoading.value = true
     hasError.value = false
     errorMessage.value = ''
@@ -78,7 +76,7 @@ const loadAndExecuteAction = async () => {
 
     try {
         // 查找动作信息
-        const action = pluginManager.getAction(actionId)
+        const action = pluginManager.getAction(actionId, 'loadAndExecuteAction')
         if (!action) {
             throw new Error(`未找到动作: ${actionId}`)
         }
@@ -513,11 +511,19 @@ onUnmounted(() => {
 import { nextTick } from 'vue'
 
 // 在动作ID变化时重新加载
-watch(() => props.actionId, (newId) => {
+watch(() => searchStore.selectedActionId, (newId) => {
     if (newId) {
         loadAndExecuteAction()
     }
-}, { immediate: true })
+})
+
+// 组件挂载时加载动作
+onMounted(() => {
+    const actionId = searchStore.selectedActionId
+    if (actionId) {
+        loadAndExecuteAction()
+    }
+})
 </script>
 
 <template>

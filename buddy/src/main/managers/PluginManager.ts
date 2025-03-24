@@ -22,12 +22,9 @@ import { join, dirname } from 'path';
 import fs from 'fs';
 import { configManager } from './ConfigManager';
 import { BaseManager } from './BaseManager';
-import type {
-  Plugin,
-  PluginPackage,
-  StorePlugin,
-  PluginValidation,
-} from '../../types';
+import type { Plugin } from '@/types/plugin';
+import { PluginPackage } from '@/types/plugin-package';
+import { PluginValidation } from '@/types/plugin-validation';
 
 class PluginManager extends BaseManager {
   private static instance: PluginManager;
@@ -164,14 +161,8 @@ class PluginManager extends BaseManager {
 
     try {
       // 清理所有插件
-      for (const [pluginId, plugin] of this.plugins.entries()) {
+      for (const [pluginId] of this.plugins.entries()) {
         try {
-          // 清除插件的 require 缓存
-          const mainFilePath = join(plugin.path, 'index.js');
-          if (require.cache[require.resolve(mainFilePath)]) {
-            delete require.cache[require.resolve(mainFilePath)];
-          }
-
           this.logger.debug(`清理插件: ${pluginId}`);
           this.plugins.delete(pluginId);
         } catch (error) {
@@ -212,7 +203,7 @@ class PluginManager extends BaseManager {
 
       for (const entry of entries) {
         if (entry.isDirectory()) {
-          await this.loadPlugin(join(dir, entry.name), type === 'dev');
+          await this.loadPlugin(join(dir, entry.name));
         }
       }
     } catch (error) {
@@ -237,10 +228,7 @@ class PluginManager extends BaseManager {
   /**
    * 加载单个插件
    */
-  private async loadPlugin(
-    pluginPath: string,
-    isDev: boolean = false
-  ): Promise<void> {
+  private async loadPlugin(pluginPath: string): Promise<void> {
     try {
       const packageJsonPath = join(pluginPath, 'package.json');
       if (!fs.existsSync(packageJsonPath)) {
@@ -262,16 +250,7 @@ class PluginManager extends BaseManager {
         return;
       }
 
-      // 优先使用 gitokPlugin.id 作为插件ID，其次使用包名
-      const pluginId = packageJson.gitokPlugin?.id || packageJson.name;
-
-      // 检查是否是 GitOK 插件
-      if (!packageJson.gitokPlugin && isDev) {
-        this.logger.warn(
-          `开发中的项目 ${pluginPath} 不是 GitOK 插件（缺少 gitokPlugin 配置），跳过加载`
-        );
-        return;
-      }
+      const pluginId = packageJson.name;
 
       const plugin: Plugin = {
         id: pluginId,
@@ -279,8 +258,8 @@ class PluginManager extends BaseManager {
         description: packageJson.description,
         version: packageJson.version,
         author: packageJson.author,
+        main: packageJson.main,
         path: pluginPath,
-        isDev,
       };
 
       this.plugins.set(plugin.id, plugin);
@@ -302,11 +281,6 @@ class PluginManager extends BaseManager {
     if (!pkg.description) errors.push('缺少插件描述');
     if (!pkg.author) errors.push('缺少作者信息');
     if (!pkg.main) errors.push('缺少入口文件');
-
-    // 检查 gitokPlugin 配置
-    if (!pkg.gitokPlugin) {
-      errors.push('缺少 gitokPlugin 配置');
-    }
 
     return {
       isValid: errors.length === 0,
@@ -331,14 +305,13 @@ class PluginManager extends BaseManager {
   /**
    * 从目录中读取插件信息
    */
-  private async readPluginsFromDir(dir: string): Promise<StorePlugin[]> {
+  private async readPluginsFromDir(dir: string): Promise<Plugin[]> {
     if (!fs.existsSync(dir)) {
       return [];
     }
 
-    const plugins: StorePlugin[] = [];
+    const plugins: Plugin[] = [];
     const entries = await fs.promises.readdir(dir, { withFileTypes: true });
-    const directories = this.getPluginDirectories();
 
     for (const entry of entries) {
       if (!entry.isDirectory()) continue;
@@ -372,9 +345,8 @@ class PluginManager extends BaseManager {
           description: packageJson.description || '',
           version: packageJson.version || '',
           author: packageJson.author || '',
-          directories,
-          recommendedLocation: currentLocation || 'user',
-          currentLocation,
+          main: packageJson.main,
+          path: pluginPath,
           validation,
         });
       } catch (error) {
@@ -388,7 +360,7 @@ class PluginManager extends BaseManager {
   /**
    * 获取插件商店列表
    */
-  async getStorePlugins(): Promise<StorePlugin[]> {
+  async getStorePlugins(): Promise<Plugin[]> {
     this.logger.info('获取插件商店列表');
 
     try {

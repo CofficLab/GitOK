@@ -98,7 +98,7 @@ onMounted(() => {
             <ActionListView v-else-if="!searchStore.selectedActionId" />
 
             <!-- 插件动作视图 -->
-            <PluginView v-else :action-id="searchStore.selectedActionId" @back="handleBackToList" />
+            <PluginView v-else @back="handleBackToList" />
         </div>
 
         <!-- 插件商店视图 -->

@@ -89,6 +89,7 @@ export const useSearchStore = defineStore('search', {
 
     // 选择一个动作
     selectAction(actionId: string | null) {
+      console.log('selectAction 🍋', actionId);
       this.selectedActionId = actionId;
     },
 

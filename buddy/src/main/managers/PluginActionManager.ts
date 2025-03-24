@@ -74,6 +74,7 @@ class PluginActionManager extends BaseManager {
       }
 
       this.logger.info(`找到 ${allActions.length} 个匹配的动作`);
+      console.log('allActions', allActions);
       return allActions;
     } catch (error) {
       this.handleError(error, '获取插件动作失败');

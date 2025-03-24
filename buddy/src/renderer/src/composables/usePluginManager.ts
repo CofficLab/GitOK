@@ -119,8 +119,8 @@ export function usePluginManager() {
     },
 
     // 获取动作
-    getAction: (actionId: string) => {
-      console.log('getAction', actionId);
+    getAction: (actionId: string, reason: string) => {
+      console.log('getAction', actionId, 'with reason: 🐛', reason);
       return pluginActions.value.find((a) => a.id === actionId);
     },
 

@@ -16,6 +16,7 @@ const searchStore = useSearchStore()
 
 // 处理动作选择
 const handleActionSelected = (action: PluginAction) => {
+    console.log('handleActionSelected 🍋', action.id);
     searchStore.selectAction(action.id)
 }
 

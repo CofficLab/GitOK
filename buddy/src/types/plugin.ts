@@ -12,12 +12,12 @@
  * - 提供插件系统核心类型支持
  */
 
-import { BasePluginInfo } from './base';
+import { PluginValidation } from './plugin-validation';
 
 /**
  * 插件信息接口
  */
-export interface PluginInfo {
+export interface Plugin {
   /**
    * 插件ID
    */
@@ -49,139 +49,12 @@ export interface PluginInfo {
   main: string;
 
   /**
-   * 插件视图目录
-   */
-  viewsDir?: string;
-}
-
-/**
- * 插件包信息接口
- * 定义了插件包（package.json）中的结构
- */
-export interface PluginPackage extends BasePluginInfo {
-  /**
-   * 插件入口文件路径
-   */
-  main: string;
-
-  /**
-   * GitOK 插件特定配置
-   */
-  gitokPlugin?: {
-    /**
-     * 插件ID，如果提供，将替代 name 字段作为插件标识
-     */
-    id?: string;
-
-    /**
-     * 其他 GitOK 插件特定配置
-     */
-    [key: string]: unknown;
-  };
-
-  /**
-   * 插件兼容性要求
-   */
-  engines?: {
-    /**
-     * Node.js 版本要求
-     */
-    node?: string;
-
-    /**
-     * Electron 版本要求
-     */
-    electron?: string;
-  };
-}
-
-/**
- * 插件目录信息
- */
-export interface PluginDirectories {
-  user: string; // 用户插件目录
-  dev: string; // 开发插件目录
-}
-
-/**
- * 插件位置类型
- */
-export type PluginLocation = 'user' | 'dev';
-
-/**
- * 插件验证状态
- */
-export interface PluginValidation {
-  isValid: boolean;
-  errors: string[];
-}
-
-/**
- * 插件商店中的插件信息
- * 包含了插件在商店中的额外信息，如下载量、评分等
- */
-export interface StorePlugin {
-  /**
-   * 插件唯一标识
-   */
-  id: string;
-
-  /**
-   * 插件名称
-   */
-  name: string;
-
-  /**
-   * 插件描述
-   */
-  description: string;
-
-  /**
-   * 插件版本
-   */
-  version: string;
-
-  /**
-   * 插件作者
-   */
-  author: string;
-
-  /**
-   * 插件目录信息
-   */
-  directories: {
-    user: string;
-    dev: string;
-  };
-
-  /**
-   * 推荐安装位置
-   */
-  recommendedLocation: 'user' | 'dev';
-
-  /**
-   * 当前安装位置（如果已安装）
-   */
-  currentLocation?: 'user' | 'dev';
-
-  /**
-   * 插件验证状态
-   */
-  validation?: PluginValidation;
-}
-
-/**
- * 已安装的插件接口
- * 继承基础插件信息，添加运行时相关的属性
- */
-export interface Plugin extends BasePluginInfo {
-  /**
-   * 插件安装路径
+   * 插件路径
    */
   path: string;
 
   /**
-   * 是否为开发中的插件
+   * 插件验证状态
    */
-  isDev: boolean;
+  validation?: PluginValidation | null;
 }
