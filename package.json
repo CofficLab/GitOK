@@ -1,20 +1,15 @@
 {
-  "name": "buddy_workspace",
-  "version": "1.0.0",
-  "license": "MIT",
   "devDependencies": {
     "nodemon": "^3.1.9",
-    "typescript": "^5.8.2"
+    "typescript": "^5.8.2",
+    "inquirer": "^12.5.0"
   },
-  "private": true,
   "workspaces": [
     "packages/*"
   ],
   "scripts": {
-    "build": "pnpm -r build",
-    "build:active-app-monitor": "pnpm --filter active-app-monitor build",
-    "build:mcp": "pnpm -r build:mcp",
-    "app": "pnpm --filter buddy dev",
+    "build": "node scripts/build.mjs",
+    "dev": "node scripts/dev.mjs",
     "ext": "nodemon pipeline.mjs",
     "mcp": "pnpm --filter mcp-core test",
     "lint": "pnpm -r lint",
@@ -24,8 +19,5 @@
   "engines": {
     "node": ">=18.0.0",
     "pnpm": ">=8.0.0"
-  },
-  "dependencies": {
-    "electron-log": "^5.3.2"
   }
 }

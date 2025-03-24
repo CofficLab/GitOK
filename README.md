@@ -7,7 +7,6 @@
 ```bash
 .
 ├── packages/          # 共享包和库
-├── components/        # 可复用的 UI 组件
 ├── pnpm-workspace.yaml
 └── package.json
 ```
