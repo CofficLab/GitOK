@@ -10,6 +10,7 @@
 import { SuperAction } from '@/types/super_action';
 import { ref, watch, onUnmounted, reactive, onMounted } from 'vue'
 import { useActionStore } from '@renderer/stores/actionStore'
+import { logger } from '@renderer/utils/logger'
 
 const actionStore = useActionStore()
 
@@ -19,12 +20,12 @@ const getPluginViewsAPI = () => {
         const api = (window.electron.plugins as any).views;
         // 检查所需API是否都存在
         if (!api || !api.create || !api.show || !api.destroy) {
-            console.error('PluginView: 获取插件视图API失败，API不完整');
+            logger.error('PluginView: 获取插件视图API失败，API不完整');
             return null;
         }
         return api;
     } catch (error) {
-        console.error('PluginView: 获取插件视图API失败', error);
+        logger.error('PluginView: 获取插件视图API失败' + error);
         return null;
     }
 }
@@ -80,33 +81,33 @@ const loadAndExecuteAction = async () => {
         }
 
         selectedAction.value = action
-        console.log(`PluginView: 加载动作 ${action.title}`)
+        logger.info(`PluginView: 加载动作 ${action.title}`)
 
         // 执行动作
         const result = await actionStore.execute(action)
         actionResult.value = result
-        console.log(`PluginView: 动作执行结果:`, result)
+        logger.info(`PluginView: 动作执行结果: ${result}`)
 
         // 如果有视图路径，根据viewMode决定显示方式
         if (action.viewPath) {
-            console.log(`PluginView: 动作有视图路径: ${action.viewPath}, 视图模式: ${action.viewMode || 'embedded'}`)
+            logger.info(`PluginView: 动作有视图路径: ${action.viewPath}, 视图模式: ${action.viewMode || 'embedded'}`)
             const viewMode = action.viewMode || 'embedded' // 默认使用内嵌模式
 
             if (viewMode === 'window') {
                 // 在独立窗口中显示
-                console.log(`PluginView: 使用独立窗口模式显示`)
+                logger.info(`PluginView: 使用独立窗口模式显示`)
                 await openPluginWindow(actionId, action)
             } else {
                 // 在应用内嵌入显示
-                console.log(`PluginView: 使用内嵌模式显示`)
+                logger.info(`PluginView: 使用内嵌模式显示`)
                 await createEmbeddedView(actionId, action)
             }
         } else {
-            console.log(`PluginView: 动作没有视图路径，只显示结果`)
+            logger.info(`PluginView: 动作没有视图路径，只显示结果`)
         }
     } catch (error) {
         const errorMsg = error instanceof Error ? error.message : String(error)
-        console.error(`PluginView: 执行动作失败: ${errorMsg}`)
+        logger.error(`PluginView: 执行动作失败: ${errorMsg}`)
         hasError.value = true
         errorMessage.value = errorMsg
     } finally {
@@ -128,7 +129,7 @@ const createEmbeddedView = async (actionId: string, action: SuperAction) => {
 
         // 获取主进程存储的HTML内容
         embeddedViewState.content = actionStore.viewHtml
-        console.log(`PluginView: 获取到视图HTML内容，长度: ${embeddedViewState.content?.length || 0}`)
+        logger.info(`PluginView: 获取到视图HTML内容，长度: ${embeddedViewState.content?.length || 0}`)
 
         // 清除可能存在的错误状态，确保条件渲染逻辑正确
         hasError.value = false
@@ -137,7 +138,7 @@ const createEmbeddedView = async (actionId: string, action: SuperAction) => {
 
         // 首先将视图状态设置为已附加，这样模板会渲染出容器
         embeddedViewState.isAttached = true
-        console.log('PluginView: 设置视图状态为已附加，准备渲染容器...')
+        logger.info('PluginView: 设置视图状态为已附加，准备渲染容器...')
 
         // 等待下一个渲染周期完成
         await nextTick()
@@ -152,18 +153,18 @@ const createEmbeddedView = async (actionId: string, action: SuperAction) => {
         while (!embeddedViewContainer.value && attempts < maxAttempts) {
             await new Promise(resolve => setTimeout(resolve, 50)); // 减少等待时间，增加频率
             attempts++;
-            console.log(`PluginView: 等待容器渲染，尝试 ${attempts}/${maxAttempts}`);
+            logger.info(`PluginView: 等待容器渲染，尝试 ${attempts}/${maxAttempts}`);
             // 强制刷新一下DOM引用
             await nextTick();
         }
 
         // 确保容器已渲染
         if (!embeddedViewContainer.value) {
-            console.error('PluginView: 视图容器不存在，无法创建视图');
+            logger.error('PluginView: 视图容器不存在，无法创建视图');
             throw new Error('嵌入式视图容器不存在');
         }
 
-        console.log('PluginView: 容器已渲染，准备创建嵌入式视图');
+        logger.info('PluginView: 容器已渲染，准备创建嵌入式视图');
 
         // 获取容器位置和尺寸
         const container = embeddedViewContainer.value
@@ -177,7 +178,7 @@ const createEmbeddedView = async (actionId: string, action: SuperAction) => {
             height: Math.max(100, Math.round(rect.height))
         }
 
-        console.log(`PluginView: 创建嵌入式视图: ${embeddedViewState.id}，容器边界:`, bounds)
+        logger.info(`PluginView: 创建嵌入式视图: ${embeddedViewState.id}，容器边界: ${bounds}`)
 
         try {
             // 首先创建嵌入式视图
@@ -187,7 +188,7 @@ const createEmbeddedView = async (actionId: string, action: SuperAction) => {
                 'embedded'
             )
 
-            console.log('PluginView: 嵌入式视图已创建，主窗口边界:', mainWindowBounds)
+            logger.info(`PluginView: 嵌入式视图已创建，主窗口边界: ${mainWindowBounds}`)
 
             // 现在显示嵌入式视图，传递容器边界
             const showResult = await viewsAPI.show(embeddedViewState.id, bounds)
@@ -195,7 +196,7 @@ const createEmbeddedView = async (actionId: string, action: SuperAction) => {
                 throw new Error('显示嵌入式视图失败')
             }
 
-            console.log(`PluginView: 嵌入式视图已显示，边界:`, bounds)
+            logger.info(`PluginView: 嵌入式视图已显示，边界: ${bounds}`)
             embeddedViewState.isVisible = true
 
             // 立即触发一次调整大小操作，确保视图正确显示
@@ -210,22 +211,22 @@ const createEmbeddedView = async (actionId: string, action: SuperAction) => {
             if (action.devTools) {
                 setTimeout(async () => {
                     try {
-                        console.log(`PluginView: 准备打开开发者工具: ${embeddedViewState.id}`)
+                        logger.info(`PluginView: 准备打开开发者工具: ${embeddedViewState.id}`)
                         const result = await viewsAPI.toggleDevTools(embeddedViewState.id)
-                        console.log(`PluginView: 开发者工具打开结果: ${result}`)
+                        logger.info(`PluginView: 开发者工具打开结果: ${result}`)
                     } catch (devToolsError) {
-                        console.error(`PluginView: 打开开发者工具失败:`, devToolsError)
+                        logger.error(`PluginView: 打开开发者工具失败: ${devToolsError}`)
                     }
                 }, 1000)
             }
         } catch (viewError) {
             // 处理视图创建或显示过程中的错误
-            console.error(`PluginView: 视图操作失败:`, viewError);
+            logger.error(`PluginView: 视图操作失败: ${viewError}`);
             throw viewError;
         }
     } catch (error) {
         const errorMsg = error instanceof Error ? error.message : String(error)
-        console.error(`PluginView: 创建嵌入式视图失败: ${errorMsg}`)
+        logger.error(`PluginView: 创建嵌入式视图失败: ${errorMsg}`)
 
         // 重置视图状态
         embeddedViewState.isAttached = false
@@ -243,10 +244,10 @@ const destroyEmbeddedView = async () => {
             const viewsAPI = getPluginViewsAPI()
             if (viewsAPI) {
                 await viewsAPI.destroy(embeddedViewState.id)
-                console.log(`PluginView: 嵌入式视图已销毁: ${embeddedViewState.id}`)
+                logger.info(`PluginView: 嵌入式视图已销毁: ${embeddedViewState.id}`)
             }
         } catch (error) {
-            console.error(`PluginView: 销毁嵌入式视图失败:`, error)
+            logger.error(`PluginView: 销毁嵌入式视图失败: ${error}`)
         } finally {
             embeddedViewState.id = ''
             embeddedViewState.isAttached = false
@@ -285,11 +286,11 @@ const openPluginWindow = async (actionId: string, action: SuperAction) => {
             })
 
             pluginViewState.isOpen = true
-            console.log(`PluginView: 插件视图窗口已打开: ${pluginViewState.id}`)
+            logger.info(`PluginView: 插件视图窗口已打开: ${pluginViewState.id}`)
 
             // 如果动作指定了开启开发者工具，则自动打开
             if (action.devTools) {
-                console.log(`PluginView: 动作指定了开启开发者工具，准备打开: ${actionId}`)
+                logger.info(`PluginView: 动作指定了开启开发者工具，准备打开: ${actionId}`)
                 try {
                     // 设置一个定时器，延迟500ms打开开发者工具
                     setTimeout(async () => {

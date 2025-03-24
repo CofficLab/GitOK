@@ -8,6 +8,7 @@ import { windowApi } from './window';
 import { commandApi } from './command';
 import { pluginApi } from './plugin';
 import { overlaidApi } from './overlaid';
+import { uiLogApi } from './ui-log';
 
 // 整合所有 API
 const api = {
@@ -16,6 +17,7 @@ const api = {
   command: commandApi,
   plugins: pluginApi,
   overlaid: overlaidApi,
+  ui: uiLogApi,
 };
 
 // 使用 contextBridge 暴露 API 到渲染进程

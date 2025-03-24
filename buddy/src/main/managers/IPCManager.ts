@@ -8,6 +8,7 @@ import { commandKeyIPCManager } from '../ipc/command-key';
 import { pluginIPCManager } from '../ipc/plugin';
 import { overlaidAppIPCManager } from '../ipc/overlaid-app';
 import { ipcLogger as logger } from '../managers/LogManager';
+import { uiLogIPCManager } from '../ipc/ui-log';
 
 class IPCManager {
   private static instance: IPCManager;
@@ -18,7 +19,7 @@ class IPCManager {
     this.addManager(configIPCManager);
     this.addManager(commandKeyIPCManager);
     this.addManager(pluginIPCManager);
-
+    this.addManager(uiLogIPCManager);
     // 被覆盖应用IPC管理器在构造函数中已自行注册处理函数
     // 此处只需添加到管理器列表中，不需要手动调用registerHandlers
     this.managers.push(overlaidAppIPCManager);

@@ -6,6 +6,8 @@ import electronLog from 'electron-log';
 import path from 'path';
 import { app } from 'electron';
 
+const showTimestamp = false;
+
 /**
  * 日志级别类型
  */
@@ -75,10 +77,16 @@ export class LogUtil {
     }
 
     // 设置日志格式
-    const logFormat =
-      '[{y}-{m}-{d} {h}:{i}:{s}.{ms}] [{level}] [' + topic + '] {text}';
-    logger.transports.console.format = logFormat;
-    logger.transports.file.format = logFormat;
+    if (showTimestamp) {
+      const logFormat =
+        '[{y}-{m}-{d} {h}:{i}:{s}.{ms}] [{level}] [' + topic + '] {text}';
+      logger.transports.console.format = logFormat;
+      logger.transports.file.format = logFormat;
+    } else {
+      const logFormat = '[{level}] [' + topic + '] {text}';
+      logger.transports.console.format = logFormat;
+      logger.transports.file.format = logFormat;
+    }
 
     return logger;
   }

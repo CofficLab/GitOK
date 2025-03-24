@@ -9,6 +9,7 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
 import type { SuperPlugin } from '@/types/super_plugin'
+import { logger } from '@renderer/utils/logger'
 
 const electronApi = window.electron
 const pluginApi = electronApi.plugins
@@ -27,9 +28,9 @@ const activeTab = ref<'user' | 'dev'>('user')
 const loadPlugins = async () => {
     try {
         const response = await management.getStorePlugins()
-        console.log('插件列表响应:', response)
+        logger.info(`插件列表响应: `, response)
         if (response.success) {
-            plugins.value = response.plugins
+            plugins.value = response.data || []
         } else {
             showErrorMessage(`加载插件列表失败: ${response.error || '未知错误'}`)
             console.error('加载插件列表失败', response)

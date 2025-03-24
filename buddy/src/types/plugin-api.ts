@@ -4,6 +4,8 @@
  */
 
 import { SuperAction } from './super_action';
+import { SuperPlugin } from './super_plugin';
+import { IpcResponse } from './ipc';
 
 // 视图相关类型
 interface ViewBounds {
@@ -39,7 +41,7 @@ interface PluginViews {
 
 // 插件管理接口
 interface PluginManagement {
-  getStorePlugins: () => Promise<any>;
+  getStorePlugins: () => Promise<IpcResponse<SuperPlugin[]>>;
   getDirectories: () => Promise<any>;
   openDirectory: (directory: string) => Promise<any>;
   createExamplePlugin: () => Promise<any>;
