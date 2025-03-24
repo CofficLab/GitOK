@@ -1,6 +1,18 @@
 /**
- * 插件相关类型定义
+ * 插件核心类型定义
+ *
+ * 设计思路：
+ * 1. 继承基础插件信息接口，扩展插件特定的属性
+ * 2. 区分已安装插件和插件包的类型定义
+ * 3. 使用严格的类型定义，确保类型安全
+ *
+ * 主要用途：
+ * - 定义已安装插件的结构
+ * - 定义插件包的结构
+ * - 提供插件系统核心类型支持
  */
+
+import { BasePluginInfo } from './base';
 
 /**
  * 插件管理器配置
@@ -111,31 +123,11 @@ export interface PluginInfo {
 
 /**
  * 插件包信息接口
- * 定义了插件的基本信息，包括名称、版本、描述等
+ * 定义了插件包（package.json）中的结构
  */
-export interface PluginPackage {
+export interface PluginPackage extends BasePluginInfo {
   /**
-   * 插件名称
-   */
-  name: string;
-
-  /**
-   * 插件版本
-   */
-  version: string;
-
-  /**
-   * 插件描述
-   */
-  description: string;
-
-  /**
-   * 插件作者
-   */
-  author: string;
-
-  /**
-   * 插件入口文件
+   * 插件入口文件路径
    */
   main: string;
 
@@ -151,14 +143,21 @@ export interface PluginPackage {
     /**
      * 其他 GitOK 插件特定配置
      */
-    [key: string]: any;
+    [key: string]: unknown;
   };
 
   /**
    * 插件兼容性要求
    */
   engines?: {
+    /**
+     * Node.js 版本要求
+     */
     node?: string;
+
+    /**
+     * Electron 版本要求
+     */
     electron?: string;
   };
 }
@@ -175,6 +174,14 @@ export interface PluginDirectories {
  * 插件位置类型
  */
 export type PluginLocation = 'user' | 'dev';
+
+/**
+ * 插件验证状态
+ */
+export interface PluginValidation {
+  isValid: boolean;
+  errors: string[];
+}
 
 /**
  * 插件商店中的插件信息
@@ -223,38 +230,18 @@ export interface StorePlugin {
    * 当前安装位置（如果已安装）
    */
   currentLocation?: 'user' | 'dev';
+
+  /**
+   * 插件验证状态
+   */
+  validation?: PluginValidation;
 }
 
 /**
- * 插件接口
- * 定义了已安装插件的信息和状态
+ * 已安装的插件接口
+ * 继承基础插件信息，添加运行时相关的属性
  */
-export interface Plugin {
-  /**
-   * 插件唯一标识
-   */
-  id: string;
-
-  /**
-   * 插件名称
-   */
-  name: string;
-
-  /**
-   * 插件描述
-   */
-  description: string;
-
-  /**
-   * 插件版本
-   */
-  version: string;
-
-  /**
-   * 插件作者
-   */
-  author: string;
-
+export interface Plugin extends BasePluginInfo {
   /**
    * 插件安装路径
    */

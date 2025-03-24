@@ -8,8 +8,6 @@
 import { BrowserWindow, app, BrowserView, screen } from 'electron';
 import { is } from '@electron-toolkit/utils';
 import { join } from 'path';
-import { EventEmitter } from 'events';
-import { Logger } from '../utils/Logger';
 import { configManager } from './ConfigManager';
 import { windowManager } from './WindowManager';
 import { pluginActionManager } from './PluginActionManager';
@@ -79,41 +77,6 @@ class PluginViewManager extends BaseManager {
   }
 
   /**
-   * 验证视图边界
-   */
-  private validateBounds(
-    bounds: ViewBounds,
-    mainWindowBounds?: ViewBounds
-  ): ViewBounds {
-    const minSize = 100; // 最小尺寸
-    const maxSize = 2000; // 最大尺寸
-
-    // 如果提供了主窗口边界，确保视图在主窗口内
-    if (mainWindowBounds) {
-      return {
-        x: Math.max(0, Math.min(bounds.x, mainWindowBounds.width - minSize)),
-        y: Math.max(0, Math.min(bounds.y, mainWindowBounds.height - minSize)),
-        width: Math.max(
-          minSize,
-          Math.min(bounds.width, mainWindowBounds.width)
-        ),
-        height: Math.max(
-          minSize,
-          Math.min(bounds.height, mainWindowBounds.height)
-        ),
-      };
-    }
-
-    // 通用边界验证
-    return {
-      x: Math.max(0, bounds.x),
-      y: Math.max(0, bounds.y),
-      width: Math.max(minSize, Math.min(bounds.width, maxSize)),
-      height: Math.max(minSize, Math.min(bounds.height, maxSize)),
-    };
-  }
-
-  /**
    * 解析动作ID
    */
   private parseActionId(url: string): string {
@@ -169,7 +132,6 @@ class PluginViewManager extends BaseManager {
         return this.createWindowView(
           viewId,
           htmlContent,
-          mainWindowBounds,
           actionConfig.devTools
         );
       } else {
@@ -209,8 +171,8 @@ class PluginViewManager extends BaseManager {
       const actions = await pluginActionManager.getActions();
       const actionInfo = actions.find((a) => a.id === actionId);
       return {
-        devTools: actionInfo?.devTools === true,
-        viewMode: actionInfo?.viewMode,
+        devTools: actionInfo?.view?.devTools === true,
+        viewMode: actionInfo?.view?.mode,
       };
     } catch (error) {
       throw new Error(this.handleError(error, `获取动作配置失败: ${actionId}`));
@@ -223,7 +185,6 @@ class PluginViewManager extends BaseManager {
   private createWindowView(
     viewId: string,
     html: string,
-    mainWindowBounds: ViewBounds,
     devToolsEnabled: boolean
   ): ViewBounds {
     // 计算窗口位置和大小

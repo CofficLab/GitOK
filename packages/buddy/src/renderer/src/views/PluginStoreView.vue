@@ -15,8 +15,6 @@ const plugins = ref<StorePlugin[]>([])
 const directories = ref<{ user: string; dev: string } | null>(null)
 const errorMessage = ref('')
 const showError = ref(false)
-const successMessage = ref('')
-const showSuccess = ref(false)
 
 // 当前选中的标签
 const activeTab = ref<'user' | 'dev'>('user')
@@ -74,16 +72,6 @@ const showErrorMessage = (message: string) => {
     }, 3000)
 }
 
-// 显示成功信息
-const showSuccessMessage = (message: string) => {
-    successMessage.value = message
-    showSuccess.value = true
-    setTimeout(() => {
-        showSuccess.value = false
-        successMessage.value = ''
-    }, 3000)
-}
-
 // 根据标签过滤插件
 const filteredPlugins = computed(() => {
     return plugins.value.filter(plugin => {
@@ -115,11 +103,6 @@ onMounted(async () => {
             {{ errorMessage }}
         </div>
 
-        <!-- 成功提示 -->
-        <div v-if="showSuccess" class="mb-4 p-4 bg-green-100 text-green-700 rounded">
-            {{ successMessage }}
-        </div>
-
         <!-- 标签栏 -->
         <div class="mb-4 border-b">
             <button @click="activeTab = 'user'"
@@ -148,8 +131,28 @@ onMounted(async () => {
 
         <!-- 插件列表 -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 overflow-y-auto">
-            <div v-for="plugin in filteredPlugins" :key="plugin.id"
-                class="bg-white p-4 rounded-lg shadow hover:shadow-md transition-shadow">
+            <div v-for="plugin in filteredPlugins" :key="plugin.id" :class="['p-4 rounded-lg shadow hover:shadow-md transition-shadow', {
+                'bg-white': !plugin.validation,
+                'bg-red-50': plugin.validation && !plugin.validation.isValid,
+                'bg-green-50': plugin.validation && plugin.validation.isValid
+            }]">
+                <!-- 验证错误提示 -->
+                <div v-if="plugin.validation && !plugin.validation.isValid"
+                    class="mb-3 p-2 bg-red-100 text-red-700 text-sm rounded">
+                    <div class="font-semibold mb-1">验证失败：</div>
+                    <ul class="list-disc list-inside">
+                        <li v-for="error in plugin.validation.errors" :key="error">
+                            {{ error }}
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- 验证通过提示 -->
+                <div v-if="plugin.validation && plugin.validation.isValid"
+                    class="mb-3 p-2 bg-green-100 text-green-700 text-sm rounded">
+                    <div class="font-semibold">验证通过</div>
+                </div>
+
                 <h3 class="text-lg font-semibold mb-2">{{ plugin.name }}</h3>
                 <p class="text-gray-600 text-sm mb-4">{{ plugin.description }}</p>
                 <div class="flex justify-between items-center text-sm">

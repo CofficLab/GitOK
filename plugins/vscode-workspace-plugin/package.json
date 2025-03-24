@@ -7,15 +7,16 @@
     "id": "vscode-workspace-plugin"
   },
   "scripts": {
-    "build": "esbuild index.js --bundle --platform=node --target=node16 --outfile=dist/index.js",
+    "build": "esbuild index.js --bundle --platform=node --target=node16 --outfile=dist/index.js --external:sqlite3",
+    "install": "npm rebuild sqlite3",
     "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "dependencies": {
-    "sqlite3": "^5.1.7"
   },
   "devDependencies": {
     "esbuild": "^0.20.1"
   },
   "author": "Coffic",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "sqlite3": "^5.1.7"
+  }
 }

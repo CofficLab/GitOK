@@ -22,7 +22,12 @@ import { join, dirname } from 'path';
 import fs from 'fs';
 import { configManager } from './ConfigManager';
 import { BaseManager } from './BaseManager';
-import type { Plugin, PluginPackage, StorePlugin } from '../../types';
+import type {
+  Plugin,
+  PluginPackage,
+  StorePlugin,
+  PluginValidation,
+} from '../../types';
 
 class PluginManager extends BaseManager {
   private static instance: PluginManager;
@@ -63,8 +68,8 @@ class PluginManager extends BaseManager {
     workspaceRoot = join(workspaceRoot, '../..');
 
     this.pluginsDir = join(pluginsRootDir, PluginManager.PLUGIN_DIRS.USER);
-    // 开发中的插件目录指向工作空间的 packages 目录
-    this.devPluginsDir = join(workspaceRoot, 'packages');
+    // 开发中的插件目录指向项目根目录的 plugins 目录
+    this.devPluginsDir = join(workspaceRoot, 'plugins');
 
     this.logger.info('插件目录初始化完成', {
       pluginsRootDir,
@@ -207,7 +212,7 @@ class PluginManager extends BaseManager {
 
       for (const entry of entries) {
         if (entry.isDirectory()) {
-          await this.loadPlugin(join(dir, entry.name), false, type === 'dev');
+          await this.loadPlugin(join(dir, entry.name), type === 'dev');
         }
       }
     } catch (error) {
@@ -234,7 +239,6 @@ class PluginManager extends BaseManager {
    */
   private async loadPlugin(
     pluginPath: string,
-    isBuiltin: boolean,
     isDev: boolean = false
   ): Promise<void> {
     try {
@@ -249,9 +253,11 @@ class PluginManager extends BaseManager {
       ) as PluginPackage;
 
       // 验证插件包信息
-      if (!this.validatePluginPackage(packageJson)) {
+      const validation = this.validatePluginPackage(packageJson);
+      if (!validation.isValid) {
         this.logger.warn(
-          `插件 ${pluginPath} 的 package.json 格式无效，跳过加载`
+          `插件 ${pluginPath} 的 package.json 格式无效，跳过加载`,
+          { validation: validation.errors }
         );
         return;
       }
@@ -287,18 +293,25 @@ class PluginManager extends BaseManager {
   /**
    * 验证插件包信息
    */
-  private validatePluginPackage(pkg: PluginPackage): boolean {
-    // 对于开发中的插件，需要有 gitokPlugin 配置
-    if (pkg.gitokPlugin) {
-      return !!(
-        pkg.name &&
-        pkg.version &&
-        pkg.description &&
-        pkg.author &&
-        pkg.main
-      );
+  private validatePluginPackage(pkg: PluginPackage): PluginValidation {
+    const errors: string[] = [];
+
+    // 检查基本字段
+    if (!pkg.name) errors.push('缺少插件名称');
+    if (!pkg.version) errors.push('缺少插件版本');
+    if (!pkg.description) errors.push('缺少插件描述');
+    if (!pkg.author) errors.push('缺少作者信息');
+    if (!pkg.main) errors.push('缺少入口文件');
+
+    // 检查 gitokPlugin 配置
+    if (!pkg.gitokPlugin) {
+      errors.push('缺少 gitokPlugin 配置');
     }
-    return false;
+
+    return {
+      isValid: errors.length === 0,
+      errors,
+    };
   }
 
   /**
@@ -343,10 +356,7 @@ class PluginManager extends BaseManager {
           await fs.promises.readFile(packageJsonPath, 'utf8')
         ) as PluginPackage;
 
-        if (!this.validatePluginPackage(packageJson)) {
-          this.logger.warn(`插件 ${pluginPath} 的 package.json 格式无效，跳过`);
-          continue;
-        }
+        const validation = this.validatePluginPackage(packageJson);
 
         // 确定插件的当前位置
         let currentLocation: 'user' | 'dev' | undefined;
@@ -359,12 +369,13 @@ class PluginManager extends BaseManager {
         plugins.push({
           id: packageJson.name,
           name: packageJson.name,
-          description: packageJson.description,
-          version: packageJson.version,
-          author: packageJson.author,
+          description: packageJson.description || '',
+          version: packageJson.version || '',
+          author: packageJson.author || '',
           directories,
           recommendedLocation: currentLocation || 'user',
           currentLocation,
+          validation,
         });
       } catch (error) {
         this.handleError(error, `读取插件信息失败: ${pluginPath}`);

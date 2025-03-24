@@ -51,9 +51,6 @@ window:
 plugin:
   # 插件目录设置
   directories:
-    # 内置插件目录
-    # 相对于应用程序目录
-    builtIn: 'resources/plugins'
     # 用户插件目录
     # 相对于用户数据目录
     # 在 macOS 上通常是 ~/Library/Application Support/buddy/plugins

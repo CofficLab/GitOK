@@ -2,16 +2,11 @@
  * IPC管理器
  * 负责处理主进程与渲染进程之间的IPC通信
  */
-import { ipcMain } from 'electron';
+import { ipcMain, shell, BrowserWindow } from 'electron';
 import { configManager } from './ConfigManager';
 import { commandKeyManager } from './CommandKeyManager';
 import { pluginManager } from './PluginManager';
 import { pluginViewManager } from './PluginViewManager';
-import { shell } from 'electron';
-import { join } from 'path';
-import { app, BrowserWindow } from 'electron';
-import fs from 'fs';
-import path from 'path';
 import { appStateManager } from './AppStateManager';
 import { pluginActionManager } from './PluginActionManager';
 import { BaseManager } from './BaseManager';

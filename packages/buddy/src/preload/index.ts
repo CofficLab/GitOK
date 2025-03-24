@@ -259,16 +259,14 @@ const api = {
 // just add to the DOM global.
 if (process.contextIsolated) {
   try {
-    // 保持原有electron名称以保证向后兼容
-    contextBridge.exposeInMainWorld('electron', api);
-    // 同时暴露为api
+    contextBridge.exposeInMainWorld('electron', electronAPI);
     contextBridge.exposeInMainWorld('api', api);
   } catch (error) {
     console.error(error);
   }
 } else {
   // @ts-ignore (define in dts)
-  window.electron = api;
+  window.electron = electronAPI;
   // @ts-ignore (define in dts)
   window.api = api;
 }

@@ -2,8 +2,6 @@
  * 插件动作管理器
  * 负责管理和执行插件动作
  */
-import { EventEmitter } from 'events';
-import { Logger } from '../utils/Logger';
 import { configManager } from './ConfigManager';
 import { pluginManager } from './PluginManager';
 import { BaseManager } from './BaseManager';
@@ -11,7 +9,6 @@ import type { PluginAction } from '../../types';
 
 class PluginActionManager extends BaseManager {
   private static instance: PluginActionManager;
-  private config: any;
   private actionCache: Map<string, PluginAction[]> = new Map();
 
   private constructor() {
@@ -21,7 +18,6 @@ class PluginActionManager extends BaseManager {
       enableLogging: config.enableLogging,
       logLevel: config.logLevel,
     });
-    this.config = config;
   }
 
   /**
@@ -105,9 +101,10 @@ class PluginActionManager extends BaseManager {
       }
 
       // 添加默认值
-      action.plugin = plugin.id;
+      action.id = `${plugin.id}:${action.id}`;
       action.description = action.description || '';
       action.icon = action.icon || '';
+      action.view = action.view || { path: '', mode: 'embedded' };
 
       return true;
     });
@@ -191,7 +188,7 @@ class PluginActionManager extends BaseManager {
       const actions = await this.getActions();
       const actionInfo = actions.find((a) => a.id === actionId);
 
-      if (!actionInfo || !actionInfo.viewPath) {
+      if (!actionInfo || !actionInfo.view?.path) {
         throw new Error(`动作 ${actionId} 没有关联视图`);
       }
 
@@ -202,7 +199,7 @@ class PluginActionManager extends BaseManager {
       }
 
       // 获取视图内容
-      return await pluginModule.getViewContent(actionInfo.viewPath);
+      return await pluginModule.getViewContent(actionInfo.view.path);
     } catch (error) {
       throw new Error(
         this.handleError(error, `获取动作视图失败: ${actionId}`, false)

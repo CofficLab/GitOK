@@ -63,7 +63,7 @@ onMounted(() => {
     timer = setInterval(updateTime, 1000)
 
     // 监听被覆盖应用变化
-    removeOverlaidAppListener = window.electron.onOverlaidAppChanged((app) => {
+    removeOverlaidAppListener = (window.api as any).onOverlaidAppChanged((app) => {
         overlaidAppName.value = app?.name || null
     })
 })
