@@ -27,11 +27,9 @@ export class PluginStoreIPCManager extends BaseIPCManager {
    * 注册插件商店相关的IPC处理函数
    */
   public registerHandlers(): void {
-    logger.debug('注册插件商店相关IPC处理函数');
-
     // 获取插件商店列表
     ipcMain.handle('plugin:getStorePlugins', async () => {
-      logger.debug('处理IPC请求: plugin:getStorePlugins');
+      logger.info('处理IPC请求: plugin:getStorePlugins');
       try {
         const plugins = await pluginManager.getStorePlugins();
         return { success: true, plugins };
