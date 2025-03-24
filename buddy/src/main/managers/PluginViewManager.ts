@@ -13,11 +13,11 @@ import { windowManager } from './WindowManager';
 import { pluginActionManager } from './PluginActionManager';
 import { BaseManager } from './BaseManager';
 import {
-  ViewMode,
-  ViewBounds,
   PluginViewOptions,
+  ViewBounds,
+  ViewMode,
   WebContentOptions,
-} from '../../types';
+} from '@/types/plugin-view';
 
 class PluginViewManager extends BaseManager {
   private static instance: PluginViewManager;
@@ -171,8 +171,8 @@ class PluginViewManager extends BaseManager {
       const actions = await pluginActionManager.getActions();
       const actionInfo = actions.find((a) => a.id === actionId);
       return {
-        devTools: actionInfo?.view?.devTools === true,
-        viewMode: actionInfo?.view?.mode,
+        devTools: actionInfo?.devTools === true,
+        viewMode: actionInfo?.viewMode,
       };
     } catch (error) {
       throw new Error(this.handleError(error, `获取动作配置失败: ${actionId}`));

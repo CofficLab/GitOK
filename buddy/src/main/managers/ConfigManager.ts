@@ -2,9 +2,9 @@ import { app } from 'electron';
 import { join } from 'path';
 import fs from 'fs';
 import yaml from 'js-yaml';
-import { Logger } from '../utils/Logger';
 import type { WindowConfig } from '@/types/window-config';
-import type { PluginManagerConfig } from '@/types/super_plugin';
+import type { PluginManagerConfig } from '@/types/config';
+import { configLogger } from './LogManager';
 
 /**
  * 配置管理器
@@ -14,10 +14,8 @@ class ConfigManager {
   private static instance: ConfigManager;
   private configPath: string;
   private config: any;
-  private logger: Logger;
 
   private constructor() {
-    this.logger = new Logger('ConfigManager');
     this.configPath = join(app.getAppPath(), 'config.yaml');
     this.loadConfig();
   }
@@ -37,13 +35,13 @@ class ConfigManager {
    */
   private loadConfig(): void {
     try {
-      this.logger.info('加载配置文件', { path: this.configPath });
+      configLogger.info('加载配置文件', { path: this.configPath });
       const configContent = fs.readFileSync(this.configPath, 'utf8');
       this.config = yaml.load(configContent);
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : String(error);
-      this.logger.error('加载配置文件失败', { error: errorMessage });
+      configLogger.error('加载配置文件失败', { error: errorMessage });
       this.config = {};
     }
   }

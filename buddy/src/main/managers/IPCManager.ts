@@ -12,6 +12,7 @@ import { pluginActionManager } from './PluginActionManager';
 import { BaseManager } from './BaseManager';
 import { IpcResponse, IPC_METHODS } from '@/types/ipc';
 import { SuperAction } from '@/types/super_action';
+import { ipcLogger as logger } from './LogManager';
 
 class IPCManager extends BaseManager {
   private static instance: IPCManager;
@@ -44,22 +45,20 @@ class IPCManager extends BaseManager {
    * 注册所有IPC处理函数
    */
   public registerHandlers(): void {
-    this.logger.info('开始注册IPC处理函数');
     this.registerConfigHandlers();
     this.registerCommandKeyHandlers();
     this.registerPluginHandlers();
-    this.logger.info('IPC处理函数注册完成');
   }
 
   /**
    * 注册配置相关的IPC处理函数
    */
   private registerConfigHandlers(): void {
-    this.logger.debug('注册配置相关IPC处理函数');
+    logger.debug('注册配置相关IPC处理函数');
 
     // 获取窗口配置
     ipcMain.handle('getWindowConfig', () => {
-      this.logger.debug('处理IPC请求: getWindowConfig');
+      logger.debug('处理IPC请求: getWindowConfig');
       return this.configManager.getWindowConfig();
     });
   }
@@ -68,30 +67,30 @@ class IPCManager extends BaseManager {
    * 注册Command键相关的IPC处理函数
    */
   private registerCommandKeyHandlers(): void {
-    this.logger.debug('注册Command键相关IPC处理函数');
+    logger.debug('注册Command键相关IPC处理函数');
 
     // 检查Command键功能是否可用
     ipcMain.handle('checkCommandKey', () => {
-      this.logger.debug('处理IPC请求: checkCommandKey');
+      logger.debug('处理IPC请求: checkCommandKey');
       return process.platform === 'darwin';
     });
 
     // 检查Command键监听器状态
     ipcMain.handle('isCommandKeyEnabled', () => {
-      this.logger.debug('处理IPC请求: isCommandKeyEnabled');
+      logger.debug('处理IPC请求: isCommandKeyEnabled');
       return this.commandKeyManager.isListening();
     });
 
     // 启用Command键监听
     ipcMain.handle('enableCommandKey', async () => {
-      this.logger.debug('处理IPC请求: enableCommandKey');
+      logger.debug('处理IPC请求: enableCommandKey');
       const result = await this.commandKeyManager.enableCommandKeyListener();
       return result;
     });
 
     // 禁用Command键监听
     ipcMain.handle('disableCommandKey', () => {
-      this.logger.debug('处理IPC请求: disableCommandKey');
+      logger.debug('处理IPC请求: disableCommandKey');
       const result = this.commandKeyManager.disableCommandKeyListener();
       return result;
     });
@@ -101,46 +100,46 @@ class IPCManager extends BaseManager {
    * 注册插件相关的IPC处理函数
    */
   private registerPluginHandlers(): void {
-    this.logger.debug('注册插件相关IPC处理函数');
+    logger.debug('注册插件相关IPC处理函数');
 
     // 获取插件商店列表
     ipcMain.handle('plugin:getStorePlugins', async () => {
-      this.logger.debug('处理IPC请求: plugin:getStorePlugins');
+      logger.debug('处理IPC请求: plugin:getStorePlugins');
       try {
         const plugins = await pluginManager.getStorePlugins();
         return { success: true, plugins };
       } catch (error) {
         const errorMessage =
           error instanceof Error ? error.message : String(error);
-        this.logger.error('获取插件列表失败', { error: errorMessage });
+        logger.error('获取插件列表失败', { error: errorMessage });
         return { success: false, error: errorMessage };
       }
     });
 
     // 获取插件目录信息
     ipcMain.handle('plugin:getDirectories', () => {
-      this.logger.debug('处理IPC请求: plugin:getDirectories');
+      logger.debug('处理IPC请求: plugin:getDirectories');
       try {
         const directories = pluginManager.getPluginDirectories();
         return { success: true, directories };
       } catch (error) {
         const errorMessage =
           error instanceof Error ? error.message : String(error);
-        this.logger.error('获取插件目录信息失败', { error: errorMessage });
+        logger.error('获取插件目录信息失败', { error: errorMessage });
         return { success: false, error: errorMessage };
       }
     });
 
     // 获取已安装的插件列表
     ipcMain.handle('plugin:getPlugins', async () => {
-      this.logger.debug('处理IPC请求: plugin:getPlugins');
+      logger.debug('处理IPC请求: plugin:getPlugins');
       try {
         const plugins = pluginManager.getPlugins();
         return { success: true, plugins };
       } catch (error) {
         const errorMessage =
           error instanceof Error ? error.message : String(error);
-        this.logger.error('获取插件列表失败', { error: errorMessage });
+        logger.error('获取插件列表失败', { error: errorMessage });
         return { success: false, error: errorMessage };
       }
     });
@@ -152,14 +151,14 @@ class IPCManager extends BaseManager {
         _event,
         keyword: string = ''
       ): Promise<IpcResponse<SuperAction[]>> => {
-        this.logger.debug('处理IPC请求: get-plugin-actions');
+        logger.debug('处理IPC请求: get-plugin-actions');
         try {
           const actions = await pluginActionManager.getActions(keyword);
           return { success: true, data: actions };
         } catch (error) {
           const errorMessage =
             error instanceof Error ? error.message : String(error);
-          this.logger.error('获取插件动作失败', { error: errorMessage });
+          logger.error('获取插件动作失败', { error: errorMessage });
           return { success: false, error: errorMessage };
         }
       }
@@ -169,14 +168,14 @@ class IPCManager extends BaseManager {
     ipcMain.handle(
       IPC_METHODS.EXECUTE_PLUGIN_ACTION,
       async (_event, actionId: string): Promise<IpcResponse<unknown>> => {
-        this.logger.debug(`处理IPC请求: execute-plugin-action: ${actionId}`);
+        logger.debug(`处理IPC请求: execute-plugin-action: ${actionId}`);
         try {
           const result = await pluginActionManager.executeAction(actionId);
           return { success: true, data: result };
         } catch (error) {
           const errorMessage =
             error instanceof Error ? error.message : String(error);
-          this.logger.error(`执行插件动作失败: ${actionId}`, {
+          logger.error(`执行插件动作失败: ${actionId}`, {
             error: errorMessage,
           });
           return { success: false, error: errorMessage };
@@ -188,7 +187,7 @@ class IPCManager extends BaseManager {
     ipcMain.handle(
       IPC_METHODS.GET_ACTION_VIEW,
       async (_event, actionId: string): Promise<IpcResponse<string>> => {
-        this.logger.debug(`处理IPC请求: get-action-view: ${actionId}`);
+        logger.debug(`处理IPC请求: get-action-view: ${actionId}`);
         try {
           const html = await pluginActionManager.getActionView(actionId);
           return { success: true, data: html };
@@ -202,21 +201,21 @@ class IPCManager extends BaseManager {
 
     // 打开插件目录
     ipcMain.handle('plugin:openDirectory', (_, directory: string) => {
-      this.logger.debug('处理IPC请求: plugin:openDirectory', { directory });
+      logger.debug('处理IPC请求: plugin:openDirectory', { directory });
       try {
         shell.openPath(directory);
         return { success: true };
       } catch (error) {
         const errorMessage =
           error instanceof Error ? error.message : String(error);
-        this.logger.error('打开插件目录失败', { error: errorMessage });
+        logger.error('打开插件目录失败', { error: errorMessage });
         return { success: false, error: errorMessage };
       }
     });
 
     // 创建插件视图窗口
     ipcMain.handle('create-plugin-view', async (_, { viewId, url }) => {
-      this.logger.debug(
+      logger.debug(
         `处理IPC请求: create-plugin-view: ${viewId}, url: ${url}`
       );
       try {
@@ -228,7 +227,7 @@ class IPCManager extends BaseManager {
       } catch (error) {
         const errorMessage =
           error instanceof Error ? error.message : String(error);
-        this.logger.error(`创建插件视图窗口失败: ${viewId}`, {
+        logger.error(`创建插件视图窗口失败: ${viewId}`, {
           error: errorMessage,
         });
         return null;
@@ -237,14 +236,14 @@ class IPCManager extends BaseManager {
 
     // 显示插件视图窗口
     ipcMain.handle('show-plugin-view', async (_, { viewId, bounds }) => {
-      this.logger.debug(`处理IPC请求: show-plugin-view: ${viewId}`);
+      logger.debug(`处理IPC请求: show-plugin-view: ${viewId}`);
       try {
         const result = await pluginViewManager.showView(viewId, bounds);
         return result;
       } catch (error) {
         const errorMessage =
           error instanceof Error ? error.message : String(error);
-        this.logger.error(`显示插件视图窗口失败: ${viewId}`, {
+        logger.error(`显示插件视图窗口失败: ${viewId}`, {
           error: errorMessage,
         });
         return false;
@@ -253,14 +252,14 @@ class IPCManager extends BaseManager {
 
     // 隐藏插件视图窗口
     ipcMain.handle('hide-plugin-view', async (_, { viewId }) => {
-      this.logger.debug(`处理IPC请求: hide-plugin-view: ${viewId}`);
+      logger.debug(`处理IPC请求: hide-plugin-view: ${viewId}`);
       try {
         const result = pluginViewManager.hideView(viewId);
         return result;
       } catch (error) {
         const errorMessage =
           error instanceof Error ? error.message : String(error);
-        this.logger.error(`隐藏插件视图窗口失败: ${viewId}`, {
+        logger.error(`隐藏插件视图窗口失败: ${viewId}`, {
           error: errorMessage,
         });
         return false;
@@ -269,14 +268,14 @@ class IPCManager extends BaseManager {
 
     // 销毁插件视图窗口
     ipcMain.handle('destroy-plugin-view', async (_, { viewId }) => {
-      this.logger.debug(`处理IPC请求: destroy-plugin-view: ${viewId}`);
+      logger.debug(`处理IPC请求: destroy-plugin-view: ${viewId}`);
       try {
         const result = await pluginViewManager.destroyView(viewId);
         return result;
       } catch (error) {
         const errorMessage =
           error instanceof Error ? error.message : String(error);
-        this.logger.error(`销毁插件视图窗口失败: ${viewId}`, {
+        logger.error(`销毁插件视图窗口失败: ${viewId}`, {
           error: errorMessage,
         });
         return false;
@@ -285,14 +284,14 @@ class IPCManager extends BaseManager {
 
     // 切换插件视图窗口的开发者工具
     ipcMain.handle('toggle-plugin-devtools', async (_, { viewId }) => {
-      this.logger.debug(`处理IPC请求: toggle-plugin-devtools: ${viewId}`);
+      logger.debug(`处理IPC请求: toggle-plugin-devtools: ${viewId}`);
       try {
         const result = pluginViewManager.toggleDevTools(viewId);
         return result;
       } catch (error) {
         const errorMessage =
           error instanceof Error ? error.message : String(error);
-        this.logger.error(`切换插件视图开发者工具失败: ${viewId}`, {
+        logger.error(`切换插件视图开发者工具失败: ${viewId}`, {
           error: errorMessage,
         });
         return false;
@@ -304,12 +303,12 @@ class IPCManager extends BaseManager {
    * 注册被覆盖应用相关的IPC处理函数
    */
   private registerOverlaidAppHandlers(): void {
-    this.logger.debug('注册被覆盖应用相关IPC处理函数');
+    logger.debug('注册被覆盖应用相关IPC处理函数');
 
     // 监听被覆盖应用变化事件
     appStateManager.on('overlaid-app-changed', (app: any) => {
       // 向所有渲染进程广播被覆盖应用变化事件
-      this.logger.debug('广播被覆盖应用变化事件', app);
+      logger.debug('广播被覆盖应用变化事件', app);
       const windows = BrowserWindow.getAllWindows();
       windows.forEach((window) => {
         window.webContents.send('overlaid-app-changed', app);

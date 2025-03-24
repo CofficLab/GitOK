@@ -9,10 +9,8 @@
 <script setup lang="ts">
 import { SuperAction } from '@/types/super_action';
 import { ref, watch, onUnmounted, reactive, onMounted } from 'vue'
-import { useSearchStore } from '@renderer/stores/searchStore'
 import { useActionStore } from '@renderer/stores/actionStore'
 
-const searchStore = useSearchStore()
 const actionStore = useActionStore()
 
 // 定义辅助函数获取插件视图API

@@ -4,7 +4,7 @@
  */
 import { app, BrowserWindow } from 'electron';
 import { electronApp, optimizer } from '@electron-toolkit/utils';
-import { Logger } from '../utils/Logger';
+import { Logger } from './LogManager';
 import { configManager } from './ConfigManager';
 import { windowManager } from './WindowManager';
 import { pluginManager } from './PluginManager';

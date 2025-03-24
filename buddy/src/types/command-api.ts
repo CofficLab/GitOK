@@ -1,3 +1,5 @@
+import { IpcRendererEvent } from 'electron';
+
 /**
  * Command 键相关模块的类型定义
  * 包含 Command 键双击和窗口激活/隐藏等功能的接口
@@ -25,7 +27,7 @@ export interface CommandApi {
    * @returns 取消监听的函数
    */
   onCommandDoublePressed: (
-    callback: (event: Electron.IpcRendererEvent) => void
+    callback: (event: IpcRendererEvent) => void
   ) => () => void;
 
   /**
@@ -34,7 +36,7 @@ export interface CommandApi {
    * @returns 取消监听的函数
    */
   onWindowHiddenByCommand: (
-    callback: (event: Electron.IpcRendererEvent) => void
+    callback: (event: IpcRendererEvent) => void
   ) => () => void;
 
   /**
@@ -43,6 +45,6 @@ export interface CommandApi {
    * @returns 取消监听的函数
    */
   onWindowActivatedByCommand: (
-    callback: (event: Electron.IpcRendererEvent) => void
+    callback: (event: IpcRendererEvent) => void
   ) => () => void;
 }

@@ -3,7 +3,6 @@
  * 提供通用的错误处理、日志记录等基础功能
  */
 import { EventEmitter } from 'events';
-import { Logger } from '../utils/Logger';
 
 export interface ManagerConfig {
   name: string;
@@ -12,17 +11,11 @@ export interface ManagerConfig {
 }
 
 export abstract class BaseManager extends EventEmitter {
-  protected logger: Logger;
   protected name: string;
 
   constructor(config: ManagerConfig) {
     super();
     this.name = config.name;
-    this.logger = new Logger(config.name, {
-      enabled: config.enableLogging ?? true,
-      level: config.logLevel || 'info',
-    });
-    this.logger.info(`${config.name} 初始化`);
   }
 
   /**
@@ -38,7 +31,6 @@ export abstract class BaseManager extends EventEmitter {
     throwError = false
   ): string {
     const errorMessage = error instanceof Error ? error.message : String(error);
-    this.logger.error(message, { error: errorMessage });
     if (throwError) {
       throw new Error(`${message}: ${errorMessage}`);
     }
@@ -56,18 +48,5 @@ export abstract class BaseManager extends EventEmitter {
    */
   public getName(): string {
     return this.name;
-  }
-
-  /**
-   * 更新日志配置
-   */
-  public updateLoggerConfig(config: {
-    enabled?: boolean;
-    level?: string;
-  }): void {
-    this.logger.setConfig({
-      enabled: config.enabled,
-      level: config.level,
-    });
   }
 }

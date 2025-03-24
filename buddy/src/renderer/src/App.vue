@@ -19,15 +19,13 @@ App.vue - 应用程序入口组件
 -->
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, watch } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import SearchBar from './layouts/SearchBar.vue'
-import { useSearchStore } from './stores/searchStore'
 import MainLayout from './layouts/MainLayout.vue'
 import ContentView from './layouts/ContentView.vue'
 import { useActionStore } from './stores/actionStore'
 
 const searchBar = ref()
-const searchStore = useSearchStore()
 const actionStore = useActionStore()
 
 // 处理全局键盘事件
