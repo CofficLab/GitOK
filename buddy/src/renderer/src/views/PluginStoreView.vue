@@ -23,13 +23,17 @@ const activeTab = ref<'user' | 'dev'>('user')
 const loadPlugins = async () => {
     try {
         const response = await (window.api as any).plugin.getStorePlugins()
+        console.log('插件列表响应:', response)
         if (response.success) {
             plugins.value = response.plugins
         } else {
-            showErrorMessage('加载插件列表失败')
+            showErrorMessage(`加载插件列表失败: ${response.error || '未知错误'}`)
+            console.error('加载插件列表失败', response)
         }
     } catch (error) {
-        showErrorMessage('加载插件列表失败')
+        const errorMsg = error instanceof Error ? error.message : String(error)
+        showErrorMessage(`加载插件列表失败: ${errorMsg}`)
+        console.error('加载插件列表失败', error)
     }
 }
 

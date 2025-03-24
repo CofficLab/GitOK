@@ -64,8 +64,8 @@ class PluginManager extends BaseManager {
       }
       workspaceRoot = parentDir;
     }
-    // 回退到项目根目录（因为 buddy 在 packages 目录下）
-    workspaceRoot = join(workspaceRoot, '../..');
+    // 回退到项目根目录
+    workspaceRoot = join(workspaceRoot, '..');
 
     this.pluginsDir = join(pluginsRootDir, PluginManager.PLUGIN_DIRS.USER);
     // 开发中的插件目录指向项目根目录的 plugins 目录

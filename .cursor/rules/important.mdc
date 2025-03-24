@@ -12,12 +12,6 @@ alwaysApply: true
 - 使用中文和用户交流，即使用户使用了英文
 - 当用户和你讨论方案时，不必完全输出代码，因为用户关心的核心点是如何实现
 
-## 多个项目
-
-- 当用户提到 electron 相关内容时，指的是 [package.json](mdc:packages/buddy/package.json) 这个项目
-- 当用户提到 VSCode 扩展相关内容时，指的是 [package.json](mdc:packages/vsc_extension/package.json) 这个项目
-- 当用户提到 mcp 相关内容时，指的是 [package.json](mdc:packages/mcp-core/package.json) 这个项目
-
 ## 包管理器
 
 - pnpm
@@ -36,9 +30,9 @@ alwaysApply: true
 - tailwind.config.js 在新版中已经不需要了
 - 使用 daisyui 和 tailwindcss 来写样式
 - 使用Vue
-- 所有图标都放入icons 目录，像 [StoreIcon.vue](mdc:packages/buddy/src/renderer/src/icons/StoreIcon.vue) 那样
-- 渲染进程的vue组件放在 [ActionView.vue](mdc:packages/buddy/src/renderer/src/components/ActionView.vue) 所在的父目录中
-- [electron.vite.config.mts](mdc:packages/buddy/electron.vite.config.mts) 中定义了别名，比如：@，充分利用这个别名
+- 所有图标都放入icons 目录，像 [StoreIcon.vue](mdc:buddy/src/renderer/src/icons/StoreIcon.vue) 那样
+- 渲染进程的vue组件放在 [ActionListView.vue](mdc:buddy/src/renderer/src/views/ActionListView.vue) 所在的父目录中
+- [electron.vite.config.mts](mdc:buddy/electron.vite.config.mts) 中定义了别名，比如：@，充分利用这个别名
 
 
 

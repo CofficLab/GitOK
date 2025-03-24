@@ -57,8 +57,8 @@ const loadPluginActions = async (keyword: string = ''): Promise<PluginAction[]> 
         currentKeyword.value = keyword
 
         // 使用API获取插件动作
-        logDebug('调用window.electron.plugins.getPluginActions')
-        const actions = await window.electron.plugins.getPluginActions(keyword)
+        logDebug('调用window.api.plugins.getPluginActions')
+        const actions = await window.api.plugins.getPluginActions(keyword)
         logInfo(`获取到 ${actions.length} 个插件动作`)
         pluginActions.value = actions
         return actions
@@ -98,8 +98,8 @@ const executePluginAction = async (actionId: string): Promise<any> => {
         }
 
         // 执行动作
-        logDebug(`调用window.electron.plugins.executeAction: ${actionId}`)
-        const result = await (window.electron.plugins as any).executeAction(actionId)
+        logDebug(`调用window.api.plugins.executeAction: ${actionId}`)
+        const result = await window.api.plugins.executeAction(actionId)
         logInfo(`动作执行成功: ${actionId}`)
         return result
     } catch (error) {
@@ -126,8 +126,8 @@ const loadActionView = async (actionId: string): Promise<void> => {
             throw new Error(`动作 ${actionId} 没有视图路径`)
         }
 
-        logDebug(`调用window.electron.plugins.getActionView: ${actionId}`)
-        const response = await (window.electron.plugins as any).getActionView(actionId)
+        logDebug(`调用window.api.plugins.getActionView: ${actionId}`)
+        const response = await window.api.plugins.getActionView(actionId)
 
         if (response.success && response.html) {
             logInfo(`成功获取视图HTML，长度: ${response.html.length} 字节`)

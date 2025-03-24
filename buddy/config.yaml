@@ -16,7 +16,7 @@ window:
   showTrafficLights: false
   # 是否显示调试工具栏
   # 可选值: true (显示), false (隐藏)
-  showDebugToolbar: false
+  showDebugToolbar: true
   # 调试工具栏位置
   # 可选值: "right", "bottom", "left", "undocked"
   debugToolbarPosition: 'bottom'

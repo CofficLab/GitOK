@@ -18,27 +18,14 @@ importers:
         specifier: ^5.8.2
         version: 5.8.2
 
-  packages/active-app-monitor:
-    dependencies:
-      node-addon-api:
-        specifier: ^8.3.1
-        version: 8.3.1
-    devDependencies:
-      '@types/node':
-        specifier: ^22.13.11
-        version: 22.13.11
-      typescript:
-        specifier: ^5.8.2
-        version: 5.8.2
-
-  packages/buddy:
+  buddy:
     dependencies:
       '@coffic/active-app-monitor':
         specifier: workspace:*
-        version: link:../active-app-monitor
+        version: link:../packages/active-app-monitor
       '@coffic/command-key-listener':
         specifier: workspace:*
-        version: link:../command-key-listener
+        version: link:../packages/command-key-listener
       '@electron-toolkit/preload':
         specifier: ^3.0.1
         version: 3.0.1(electron@35.0.3)
@@ -124,6 +111,19 @@ importers:
       vue-tsc:
         specifier: ^2.2.8
         version: 2.2.8(typescript@5.8.2)
+
+  packages/active-app-monitor:
+    dependencies:
+      node-addon-api:
+        specifier: ^8.3.1
+        version: 8.3.1
+    devDependencies:
+      '@types/node':
+        specifier: ^22.13.11
+        version: 22.13.11
+      typescript:
+        specifier: ^5.8.2
+        version: 5.8.2
 
   packages/client:
     dependencies:

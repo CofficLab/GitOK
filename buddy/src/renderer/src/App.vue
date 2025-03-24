@@ -98,7 +98,7 @@ const focusSearchBar = () => {
 const testGetPluginActions = async () => {
     console.log('APP: 手动测试 getPluginActions API...');
     try {
-        const response = await window.electron.plugins.getPluginActions('计算器');
+        const response = await window.api.plugins.getPluginActions('计算器');
         console.log('APP: API响应:', response);
 
         // 分析响应格式
@@ -122,9 +122,9 @@ const testGetPluginActions = async () => {
 // 在组件加载时注册消息监听和初始化
 onMounted(() => {
     // 注册接收插件消息的处理函数
-    window.electron.receive('plugin-message', handlePluginMessage)
+    window.api.receive('plugin-message', handlePluginMessage)
     // 注册插件视图请求关闭的处理函数
-    window.electron.receive('plugin-close-requested', handlePluginCloseRequest)
+    window.api.receive('plugin-close-requested', handlePluginCloseRequest)
 
     // 注册全局键盘事件
     document.addEventListener('keydown', handleGlobalKeyDown)
@@ -142,8 +142,8 @@ onMounted(() => {
 // 在组件卸载时清理消息监听
 onUnmounted(() => {
     // 移除消息监听
-    window.electron.removeListener('plugin-message', handlePluginMessage)
-    window.electron.removeListener('plugin-close-requested', handlePluginCloseRequest)
+    window.api.removeListener('plugin-message', handlePluginMessage)
+    window.api.removeListener('plugin-close-requested', handlePluginCloseRequest)
 
     // 移除全局键盘事件
     document.removeEventListener('keydown', handleGlobalKeyDown)
