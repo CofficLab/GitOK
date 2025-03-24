@@ -8,16 +8,18 @@
 * 4. 支持键盘导航
 */
 <script setup lang="ts">
-import { onMounted, computed } from 'vue'
+import { computed, watch } from 'vue'
 import { useSearchStore } from '@renderer/stores/searchStore'
 import type { PluginAction } from '@/types/plugin-action'
+import { useActionStore } from '@renderer/stores/actionStore'
 
 const searchStore = useSearchStore()
+const actionStore = useActionStore()
 
 // 处理动作选择
 const handleActionSelected = (action: PluginAction) => {
     console.log('handleActionSelected 🍋', action.id);
-    searchStore.selectAction(action.id)
+    actionStore.selectAction(action.id)
 }
 
 // 处理取消操作
@@ -26,17 +28,24 @@ const handleCancel = () => {
 }
 
 // 检查动作列表状态
-const hasActions = computed(() => searchStore.pluginActions.length > 0)
+const hasActions = computed(() => actionStore.getActionCount() > 0)
 const hasKeyword = computed(() => searchStore.keyword.length > 0)
-const isLoading = computed(() => searchStore.isLoading)
+const isLoading = computed(() => actionStore.isLoading)
 
-// 组件挂载时的初始化
-onMounted(() => {
-    // 初始化时加载插件动作（如果尚未加载且不在加载中）
-    if (searchStore.pluginActions.length === 0 && !searchStore.isLoading) {
-        searchStore.loadPluginActions()
+
+// 监听搜索输入变化，加载相应的插件动作
+watch(() => searchStore.keyword, async (newKeyword) => {
+    console.log(`ActionListView.vue: 搜索关键词变化为 "${newKeyword}"`);
+
+    // 重新加载插件动作
+    try {
+        console.log('ActionListView.vue: 开始加载插件动作...');
+        await actionStore.loadList();
+        console.log(`ActionListView.vue: 插件动作加载完成，共 ${actionStore.getActionCount()} 个`);
+    } catch (error) {
+        console.error('ActionListView.vue: 加载插件动作失败', error);
     }
-})
+}, { immediate: true })
 </script>
 
 <template>
@@ -46,7 +55,7 @@ onMounted(() => {
         <!-- 显示当前搜索状态 -->
         <div class="search-info mb-2 text-sm text-gray-500">
             <div v-if="hasKeyword">当前搜索: {{ searchStore.keyword }}</div>
-            <div v-if="hasActions">找到 {{ searchStore.pluginActions.length }} 个动作</div>
+            <div v-if="hasActions">找到 {{ actionStore.getActionCount() }} 个动作</div>
         </div>
 
         <div>
@@ -56,19 +65,19 @@ onMounted(() => {
             </div>
 
             <!-- 空状态 -->
-            <div v-else-if="searchStore.pluginActions.length === 0" class="text-center py-8 text-gray-500">
+            <div v-else-if="actionStore.getActionCount() === 0" class="text-center py-8 text-gray-500">
                 <p>没有找到匹配的动作</p>
                 <p class="text-sm mt-2">尝试其他关键词或安装更多插件</p>
             </div>
 
             <!-- 动作列表 -->
             <ul v-else class="space-y-2">
-                <li v-for="(action, index) in searchStore.pluginActions" :key="action.id"
+                <li v-for="(action, index) in actionStore.getActions()" :key="action.id"
                     class="plugin-action-item p-3 border rounded-lg hover:bg-gray-50 cursor-pointer transition-colors flex items-center"
                     :tabindex="index + 1" @click="handleActionSelected(action)"
                     @keydown.enter="handleActionSelected(action)" @keydown.space.prevent="handleActionSelected(action)"
                     @keydown.esc="handleCancel" @keydown.up="index > 0 ? $el.previousElementSibling?.focus() : null"
-                    @keydown.down="index < searchStore.pluginActions.length - 1 ? $el.nextElementSibling?.focus() : null">
+                    @keydown.down="index < actionStore.getActionCount() - 1 ? $el.nextElementSibling?.focus() : null">
                     <div v-if="action.icon" class="mr-3 text-xl">{{ action.icon }}</div>
                     <div class="flex-1">
                         <h3 class="font-medium">{{ action.title }}</h3>

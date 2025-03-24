@@ -265,6 +265,10 @@ class PluginManager extends BaseManager {
 
       this.plugins.set(plugin.id, plugin);
       this.logger.info(`已加载插件: ${plugin.name} v${plugin.version}`);
+
+      // 将 Map 转换为对象再进行序列化
+      const pluginsObj = Object.fromEntries(this.plugins);
+      this.logger.debug(`插件列表: ${JSON.stringify(pluginsObj)}`);
     } catch (error) {
       this.handleError(error, `加载插件失败: ${pluginPath}`);
     }
@@ -300,6 +304,9 @@ class PluginManager extends BaseManager {
    * 获取指定插件
    */
   getPlugin(pluginId: string): Plugin | undefined {
+    this.logger.debug(`获取插件: ${pluginId}`);
+    this.logger.debug(`插件列表: ${JSON.stringify(this.plugins)}`);
+
     return this.plugins.get(pluginId);
   }
 

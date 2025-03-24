@@ -10,6 +10,8 @@ import { pluginViewManager } from './PluginViewManager';
 import { appStateManager } from './AppStateManager';
 import { pluginActionManager } from './PluginActionManager';
 import { BaseManager } from './BaseManager';
+import { IpcResponse, IPC_METHODS } from '@/types/ipc';
+import { PluginAction } from '@/types/plugin-action';
 
 class IPCManager extends BaseManager {
   private static instance: IPCManager;
@@ -145,12 +147,15 @@ class IPCManager extends BaseManager {
 
     // 获取插件动作列表
     ipcMain.handle(
-      'get-plugin-actions',
-      async (_event, keyword: string = '') => {
+      IPC_METHODS.GET_PLUGIN_ACTIONS,
+      async (
+        _event,
+        keyword: string = ''
+      ): Promise<IpcResponse<PluginAction[]>> => {
         this.logger.debug('处理IPC请求: get-plugin-actions');
         try {
           const actions = await pluginActionManager.getActions(keyword);
-          return { success: true, actions };
+          return { success: true, data: actions };
         } catch (error) {
           const errorMessage =
             error instanceof Error ? error.message : String(error);
@@ -162,12 +167,12 @@ class IPCManager extends BaseManager {
 
     // 执行插件动作
     ipcMain.handle(
-      'execute-plugin-action',
-      async (_event, actionId: string) => {
+      IPC_METHODS.EXECUTE_PLUGIN_ACTION,
+      async (_event, actionId: string): Promise<IpcResponse<unknown>> => {
         this.logger.debug(`处理IPC请求: execute-plugin-action: ${actionId}`);
         try {
           const result = await pluginActionManager.executeAction(actionId);
-          return { success: true, result };
+          return { success: true, data: result };
         } catch (error) {
           const errorMessage =
             error instanceof Error ? error.message : String(error);
@@ -180,20 +185,20 @@ class IPCManager extends BaseManager {
     );
 
     // 获取动作视图内容
-    ipcMain.handle('get-action-view', async (_event, actionId: string) => {
-      this.logger.debug(`处理IPC请求: get-action-view: ${actionId}`);
-      try {
-        const html = await pluginActionManager.getActionView(actionId);
-        return { success: true, html };
-      } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : String(error);
-        this.logger.error(`获取动作视图失败: ${actionId}`, {
-          error: errorMessage,
-        });
-        return { success: false, error: errorMessage };
+    ipcMain.handle(
+      IPC_METHODS.GET_ACTION_VIEW,
+      async (_event, actionId: string): Promise<IpcResponse<string>> => {
+        this.logger.debug(`处理IPC请求: get-action-view: ${actionId}`);
+        try {
+          const html = await pluginActionManager.getActionView(actionId);
+          return { success: true, data: html };
+        } catch (error) {
+          const errorMessage =
+            error instanceof Error ? error.message : String(error);
+          return { success: false, error: errorMessage };
+        }
       }
-    });
+    );
 
     // 打开插件目录
     ipcMain.handle('plugin:openDirectory', (_, directory: string) => {

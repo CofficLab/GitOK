@@ -2,9 +2,10 @@
  * 插件系统模块
  * 处理插件的安装、卸载、执行等功能
  */
-import { PluginAction } from '@/types/plugin-action';
 import { PluginAPi } from '@/types/plugin-api';
 import { ipcRenderer } from 'electron';
+import { IPC_METHODS } from '../types/ipc';
+import { PluginAction } from '@/types/plugin-action';
 
 // 插件视图相关接口
 const pluginViews = {
@@ -83,22 +84,43 @@ const pluginManagement = {
 // 插件动作相关接口
 const pluginActions = {
   async getPluginActions(keyword = ''): Promise<PluginAction[]> {
-    const response = await ipcRenderer.invoke('get-plugin-actions', keyword);
+    const response = await ipcRenderer.invoke(
+      IPC_METHODS.GET_PLUGIN_ACTIONS,
+      keyword
+    );
     console.log('preload: get-plugin-actions 响应:', response);
-    return response;
+
+    if (!response.success) {
+      throw new Error(response.error);
+    }
+
+    return response.data ?? [];
   },
 
   executeAction: async (actionId: string) => {
     const response = await ipcRenderer.invoke(
-      'execute-plugin-action',
+      IPC_METHODS.EXECUTE_PLUGIN_ACTION,
       actionId
     );
-    return response;
+
+    if (!response.success) {
+      throw new Error(response.error);
+    }
+
+    return response.data;
   },
 
   getActionView: async (actionId: string) => {
-    const response = await ipcRenderer.invoke('get-action-view', actionId);
-    return response;
+    const response = await ipcRenderer.invoke(
+      IPC_METHODS.GET_ACTION_VIEW,
+      actionId
+    );
+
+    if (!response.success) {
+      throw new Error(response.error);
+    }
+
+    return response.data ?? '';
   },
 };
 

@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia';
-import { ref } from 'vue';
 import type { PluginAction } from '@/types/plugin-action';
 
 const electronApi = window.electron;
@@ -10,106 +9,112 @@ const { actions: actionsApi } = electronApi.plugins;
  *
  * 负责管理动作列表、搜索、执行等功能
  */
-export const useActionStore = defineStore('action', () => {
-  // 状态
-  let list: PluginAction[] = [];
-  const isLoading = ref(false);
-  const selected = ref<PluginAction | null>(null);
-  const viewHtml = ref('');
 
-  // Actions
-  /**
-   * 加载动作列表
-   */
-  async function loadList(searchKeyword: string = '') {
-    console.log('actionStore: loadList with keyword: 🐛', searchKeyword);
+interface ActionState {
+  list: PluginAction[];
+  isLoading: boolean;
+  selected: string | null;
+  viewHtml: string;
+}
 
-    try {
-      isLoading.value = true;
-      list = await actionsApi.getPluginActions(searchKeyword);
+export const useActionStore = defineStore('action', {
+  state: (): ActionState => ({
+    list: [],
+    isLoading: false,
+    selected: null,
+    viewHtml: '',
+  }),
 
-      console.log('actionStore: loadList', list);
-    } catch (error) {
-      console.error('actionStore: loadList error: 🐛', error);
-      list = [];
-      throw error;
-    } finally {
-      isLoading.value = false;
-    }
-  }
+  actions: {
+    /**
+     * 加载动作列表
+     */
+    async loadList(searchKeyword: string = '') {
+      console.log('actionStore: loadList with keyword: 🐛', searchKeyword);
 
-  /**
-   * 执行指定动作
-   */
-  async function execute(action: PluginAction): Promise<any> {
-    selected.value = action;
+      try {
+        this.isLoading = true;
+        this.list = await actionsApi.getPluginActions(searchKeyword);
 
-    if (action.viewPath) {
-      await loadView(action.id);
-    } else {
-      viewHtml.value = '';
-    }
-
-    return actionsApi.executeAction(action.id);
-  }
-
-  /**
-   * 加载动作的自定义视图
-   */
-  async function loadView(actionId: string): Promise<void> {
-    try {
-      viewHtml.value = '';
-      const response = await actionsApi.getActionView(actionId);
-
-      if (response.success && response.html) {
-        viewHtml.value = response.html;
-      } else if (response.error) {
-        throw new Error(response.error);
+        console.log('actionStore: loadList', this.list);
+      } catch (error) {
+        console.error('actionStore: loadList error: 🐛', error);
+        this.list = [];
+        throw error;
+      } finally {
+        this.isLoading = false;
       }
-    } catch (error) {
-      viewHtml.value = '';
-      throw error;
-    }
-  }
+    },
 
-  /**
-   * 根据ID获取动作
-   */
-  function get(actionId: string, reason: string): PluginAction | undefined {
-    console.log('getAction', actionId, 'with reason: 🐛', reason);
-    return list.find((a) => a.id === actionId);
-  }
+    /**
+     * 执行指定动作
+     */
+    async execute(action: PluginAction): Promise<any> {
+      this.selected = action.id;
 
-  function getSelectedActionId(): string | null {
-    return selected.value?.id || null;
-  }
+      if (action.viewPath) {
+        await this.loadView(action.id);
+      } else {
+        this.viewHtml = '';
+      }
 
-  function getActionCount(): number {
-    return list.length;
-  }
+      return actionsApi.executeAction(action.id);
+    },
 
-  /**
-   * 清空当前选中的动作
-   */
-  function clearSelected() {
-    selected.value = null;
-    viewHtml.value = '';
-  }
+    /**
+     * 加载动作的自定义视图
+     */
+    async loadView(actionId: string): Promise<void> {
+      try {
+        this.viewHtml = '';
+        const response = await actionsApi.getActionView(actionId);
 
-  return {
-    // 状态
-    list,
-    isLoading,
-    selected,
-    viewHtml,
+        if (response.success && response.html) {
+          this.viewHtml = response.html;
+        } else if (response.error) {
+          throw new Error(response.error);
+        }
+      } catch (error) {
+        this.viewHtml = '';
+        throw error;
+      }
+    },
 
-    // Actions
-    loadList,
-    execute,
-    loadView,
-    get,
-    getSelectedActionId,
-    clearSelected,
-    getActionCount,
-  };
+    /**
+     * 根据ID获取动作
+     */
+    get(actionId: string, reason: string): PluginAction | undefined {
+      console.log('getAction', actionId, 'with reason: 🐛', reason);
+      return this.list.find((a) => a.id === actionId);
+    },
+
+    getSelectedActionId(): string | null {
+      return this.selected || null;
+    },
+
+    getActionCount(): number {
+      console.log('actionStore: getActionCount', this.list.length);
+      return this.list.length;
+    },
+
+    /**
+     * 清空当前选中的动作
+     */
+    clearSelected() {
+      this.selected = null;
+      this.viewHtml = '';
+    },
+
+    selectAction(actionId: string) {
+      this.selected = actionId;
+    },
+
+    getActions(): PluginAction[] {
+      return this.list;
+    },
+
+    hasSelectedAction(): boolean {
+      return this.selected !== null;
+    },
+  },
 });

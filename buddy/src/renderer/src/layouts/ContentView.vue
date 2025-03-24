@@ -85,13 +85,13 @@ onMounted(() => {
         <!-- 首页视图 -->
         <div v-if="currentView === 'home'" class="space-y-4">
             <!-- 显示HomeView内容（当没有搜索关键词且没有插件动作时） -->
-            <HomeView v-if="!shouldShowActionList && !actionStore.getSelectedActionId()" />
+            <HomeView />
 
             <!-- 插件动作列表（当有搜索关键词或有插件动作时） -->
-            <ActionListView v-else-if="!actionStore.getSelectedActionId()" />
+            <ActionListView v-if="actionStore.hasSelectedAction() == false && actionStore.getActionCount() > 0" />
 
             <!-- 插件动作视图 -->
-            <PluginView v-else @back="handleBackToList" />
+            <PluginView v-if="actionStore.hasSelectedAction()" @back="handleBackToList" />
         </div>
 
         <!-- 插件商店视图 -->

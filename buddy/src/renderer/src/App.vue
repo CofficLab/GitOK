@@ -80,28 +80,6 @@ onUnmounted(() => {
     document.removeEventListener('keydown', handleGlobalKeyDown)
 })
 
-// 监听搜索输入变化，加载相应的插件动作
-watch(() => searchStore.keyword, async (newKeyword) => {
-    console.log(`App.vue: 搜索关键词变化为 "${newKeyword}"`);
-
-    // 重新加载插件动作
-    try {
-        console.log('App.vue: 开始加载插件动作...');
-        await actionStore.loadList();
-        console.log(`App.vue: 插件动作加载完成，共 ${actionStore.list.length} 个`);
-
-        // 如果有关键词但没有动作，重试一次
-        if (newKeyword && actionStore.list.length === 0) {
-            console.log('App.vue: 检测到有关键词但没有动作，延迟1秒重试...');
-            setTimeout(async () => {
-                await actionStore.loadList();
-                console.log(`App.vue: 重试加载完成，共 ${actionStore.list.length} 个动作`);
-            }, 1000);
-        }
-    } catch (error) {
-        console.error('App.vue: 加载插件动作失败', error);
-    }
-}, { immediate: true })
 </script>
 
 <template>
