@@ -29,6 +29,7 @@ alwaysApply: true
 - 注释、文档使用中文
 - Vue组件使用Vue3的语法，且script放在template之上
 - 写Typescript代码时要多思考，不要出现类型错误
+- 在新建文件时，要了解项目的基本目录结构，再决定文件应该放在哪个目录中
 
 ## Electron 项目
 

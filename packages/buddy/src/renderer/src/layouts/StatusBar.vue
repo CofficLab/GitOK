@@ -32,6 +32,10 @@ import { useAppStore } from '@renderer/stores/appStore'
 const currentTime = ref(new Date().toLocaleTimeString())
 let timer: ReturnType<typeof setInterval>
 
+// 被覆盖的应用名称
+const overlaidAppName = ref<string | null>(null)
+let removeOverlaidAppListener: (() => void) | null = null
+
 const router = useRouter()
 const route = useRoute()
 const appStore = useAppStore()
@@ -57,11 +61,20 @@ const goToPluginStore = () => {
 onMounted(() => {
     // 每秒更新一次时间
     timer = setInterval(updateTime, 1000)
+
+    // 监听被覆盖应用变化
+    removeOverlaidAppListener = window.electron.onOverlaidAppChanged((app) => {
+        overlaidAppName.value = app?.name || null
+    })
 })
 
 onUnmounted(() => {
     // 清理定时器
     clearInterval(timer)
+    // 清理监听器
+    if (removeOverlaidAppListener) {
+        removeOverlaidAppListener()
+    }
 })
 </script>
 
@@ -81,6 +94,10 @@ onUnmounted(() => {
 
         <!-- 右侧工具栏 -->
         <div class="flex items-center space-x-4">
+            <!-- 被覆盖的应用名称 -->
+            <div v-if="overlaidAppName" class="text-sm text-gray-600">
+                当前覆盖: {{ overlaidAppName }}
+            </div>
             <!-- 时间显示 -->
             <div class="text-sm text-gray-600">
                 {{ currentTime }}

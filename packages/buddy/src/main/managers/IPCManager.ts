@@ -11,9 +11,10 @@ import { pluginManager } from './PluginManager';
 import { pluginViewManager } from './PluginViewManager';
 import { shell } from 'electron';
 import { join } from 'path';
-import { app } from 'electron';
+import { app, BrowserWindow } from 'electron';
 import fs from 'fs';
 import path from 'path';
+import { appStateManager } from './AppStateManager';
 
 class IPCManager extends EventEmitter {
   private static instance: IPCManager;
@@ -30,6 +31,9 @@ class IPCManager extends EventEmitter {
       level: config.logLevel,
     });
     this.logger.info('IPCManager 初始化');
+
+    // 注册被覆盖应用相关的IPC处理函数
+    this.registerOverlaidAppHandlers();
   }
 
   /**
@@ -412,6 +416,23 @@ class IPCManager extends EventEmitter {
         fs.copyFileSync(srcPath, destPath);
       }
     }
+  }
+
+  /**
+   * 注册被覆盖应用相关的IPC处理函数
+   */
+  private registerOverlaidAppHandlers(): void {
+    this.logger.debug('注册被覆盖应用相关IPC处理函数');
+
+    // 监听被覆盖应用变化事件
+    appStateManager.on('overlaid-app-changed', (app: any) => {
+      // 向所有渲染进程广播被覆盖应用变化事件
+      this.logger.debug('广播被覆盖应用变化事件', app);
+      const windows = BrowserWindow.getAllWindows();
+      windows.forEach((window) => {
+        window.webContents.send('overlaid-app-changed', app);
+      });
+    });
   }
 }
 

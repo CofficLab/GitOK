@@ -242,6 +242,16 @@ const api = {
       ipcRenderer.invoke('plugin:openDirectory', directory),
     createExamplePlugin: () => ipcRenderer.invoke('plugin:createExamplePlugin'),
   },
+  // 添加被覆盖应用相关的API
+  onOverlaidAppChanged: (
+    callback: (app: { name: string; bundleId: string } | null) => void
+  ): (() => void) => {
+    const listener = (_: Electron.IpcRendererEvent, app: any) => callback(app);
+    ipcRenderer.on('overlaid-app-changed', listener);
+    return () => {
+      ipcRenderer.removeListener('overlaid-app-changed', listener);
+    };
+  },
 };
 
 // Use `contextBridge` APIs to expose Electron APIs to
