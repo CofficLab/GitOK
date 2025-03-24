@@ -46,6 +46,26 @@ class PluginManager extends EventEmitter {
   private builtinPluginsDir: string;
   private devPluginsDir: string;
 
+  /**
+   * 统一处理错误
+   * @param error 错误对象
+   * @param message 错误消息
+   * @param throwError 是否抛出错误
+   * @returns 格式化后的错误消息
+   */
+  private handleError(
+    error: unknown,
+    message: string,
+    throwError: boolean = false
+  ): string {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    this.logger.error(message, { error: errorMessage });
+    if (throwError) {
+      throw new Error(`${message}: ${errorMessage}`);
+    }
+    return errorMessage;
+  }
+
   private constructor() {
     super();
     // 从配置文件中读取配置
@@ -96,9 +116,7 @@ class PluginManager extends EventEmitter {
 
       this.logger.info('插件系统初始化完成');
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : String(error);
-      this.logger.error('插件系统初始化失败', { error: errorMessage });
+      this.handleError(error, '插件系统初始化失败', true);
     }
   }
 
@@ -119,9 +137,9 @@ class PluginManager extends EventEmitter {
   private async ensurePluginDirs(): Promise<void> {
     try {
       const dirs = [
-        this.pluginsDir, // 用户插件目录
-        this.builtinPluginsDir, // 内置插件目录
-        this.devPluginsDir, // 开发插件目录
+        this.pluginsDir,
+        this.builtinPluginsDir,
+        this.devPluginsDir,
       ];
 
       for (const dir of dirs) {
@@ -131,10 +149,7 @@ class PluginManager extends EventEmitter {
         }
       }
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : String(error);
-      this.logger.error('创建插件目录失败', { error: errorMessage });
-      throw error;
+      this.handleError(error, '创建插件目录失败', true);
     }
   }
 
@@ -156,10 +171,7 @@ class PluginManager extends EventEmitter {
 
       this.logger.info(`已加载 ${this.plugins.size} 个插件`);
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : String(error);
-      this.logger.error('加载插件失败', { error: errorMessage });
-      throw error;
+      this.handleError(error, '加载插件失败', true);
     }
   }
 
@@ -182,9 +194,7 @@ class PluginManager extends EventEmitter {
         }
       }
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : String(error);
-      this.logger.error('加载内置插件失败', { error: errorMessage });
+      this.handleError(error, '加载内置插件失败');
     }
   }
 
@@ -202,9 +212,7 @@ class PluginManager extends EventEmitter {
         }
       }
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : String(error);
-      this.logger.error('加载用户插件失败', { error: errorMessage });
+      this.handleError(error, '加载用户插件失败');
     }
   }
 
@@ -231,9 +239,7 @@ class PluginManager extends EventEmitter {
         }
       }
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : String(error);
-      this.logger.error('加载开发插件失败', { error: errorMessage });
+      this.handleError(error, '加载开发插件失败');
     }
   }
 
@@ -281,9 +287,7 @@ class PluginManager extends EventEmitter {
       this.plugins.set(plugin.id, plugin);
       this.logger.info(`已加载插件: ${plugin.name} v${plugin.version}`);
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : String(error);
-      this.logger.error(`加载插件失败: ${pluginPath}`, { error: errorMessage });
+      this.handleError(error, `加载插件失败: ${pluginPath}`);
     }
   }
 
@@ -368,11 +372,7 @@ class PluginManager extends EventEmitter {
           currentLocation,
         });
       } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : String(error);
-        this.logger.error(`读取插件信息失败: ${pluginPath}`, {
-          error: errorMessage,
-        });
+        this.handleError(error, `读取插件信息失败: ${pluginPath}`);
       }
     }
 
@@ -401,9 +401,7 @@ class PluginManager extends EventEmitter {
 
       return allPlugins;
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : String(error);
-      this.logger.error('获取插件列表失败', { error: errorMessage });
+      this.handleError(error, '获取插件列表失败');
       return [];
     }
   }
@@ -431,20 +429,14 @@ class PluginManager extends EventEmitter {
             }
           }
         } catch (error) {
-          const errorMessage =
-            error instanceof Error ? error.message : String(error);
-          this.logger.error(`获取插件 ${plugin.id} 的动作失败`, {
-            error: errorMessage,
-          });
+          this.handleError(error, `获取插件 ${plugin.id} 的动作失败`);
         }
       }
 
       this.logger.info(`找到 ${allActions.length} 个匹配的动作`);
       return allActions;
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : String(error);
-      this.logger.error('获取插件动作失败', { error: errorMessage });
+      this.handleError(error, '获取插件动作失败');
       return [];
     }
   }
@@ -487,12 +479,9 @@ class PluginManager extends EventEmitter {
       // 执行动作
       return await pluginModule.executeAction(actionInfo);
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : String(error);
-      this.logger.error(`执行插件动作失败: ${actionId}`, {
-        error: errorMessage,
-      });
-      throw error;
+      throw new Error(
+        this.handleError(error, `执行插件动作失败: ${actionId}`, false)
+      );
     }
   }
 
@@ -534,12 +523,9 @@ class PluginManager extends EventEmitter {
       // 获取视图内容
       return await pluginModule.getViewContent(actionInfo.viewPath);
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : String(error);
-      this.logger.error(`获取动作视图失败: ${actionId}`, {
-        error: errorMessage,
-      });
-      throw error;
+      throw new Error(
+        this.handleError(error, `获取动作视图失败: ${actionId}`, false)
+      );
     }
   }
 
@@ -561,12 +547,13 @@ class PluginManager extends EventEmitter {
       // 动态导入插件模块
       return require(mainFilePath);
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : String(error);
-      this.logger.error(`加载插件模块失败: ${plugin.id}`, {
-        error: errorMessage,
-      });
-      throw error;
+      throw new Error(
+        this.handleError(
+          error,
+          `加载插件模块失败: ${plugin.id} (${plugin.path})`,
+          false
+        )
+      );
     }
   }
 }
