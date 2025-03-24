@@ -31,22 +31,22 @@ export type PluginStatus = 'inactive' | 'active' | 'error' | 'disabled';
  */
 export class PluginEntity implements SuperPlugin {
   // 基本信息
-  private _id: string;
-  private _name: string;
-  private _description: string;
-  private _version: string;
-  private _author: string;
-  private _main: string;
+  id: string;
+  name: string;
+  description: string;
+  version: string;
+  author: string;
+  main: string;
 
   // 路径信息
-  private _path: string;
-  private _type: PluginType;
+  path: string;
+  type: PluginType;
 
   // 状态信息
-  private _status: PluginStatus = 'inactive';
-  private _error?: string;
-  private _isLoaded: boolean = false;
-  private _validation?: PluginValidation;
+  status: PluginStatus = 'inactive';
+  error?: string;
+  isLoaded: boolean = false;
+  validation?: PluginValidation;
 
   /**
    * 从目录创建插件实体
@@ -78,105 +78,65 @@ export class PluginEntity implements SuperPlugin {
    * @param type 插件类型
    */
   constructor(pkg: PluginPackage, path: string, type: PluginType) {
-    this._id = pkg.name;
-    this._name = pkg.name;
-    this._description = pkg.description || '';
-    this._version = pkg.version || '0.0.0';
-    this._author = pkg.author || '';
-    this._main = pkg.main;
-    this._path = path;
-    this._type = type;
-  }
-
-  // Plugin 接口实现
-  get id(): string {
-    return this._id;
-  }
-  get name(): string {
-    return this._name;
-  }
-  get description(): string {
-    return this._description;
-  }
-  get version(): string {
-    return this._version;
-  }
-  get author(): string {
-    return this._author;
-  }
-  get main(): string {
-    return this._main;
-  }
-  get path(): string {
-    return this._path;
-  }
-  get type(): PluginType {
-    return this._type;
-  }
-  get validation(): PluginValidation | undefined {
-    return this._validation;
-  }
-
-  // 额外的状态管理属性
-  get status(): PluginStatus {
-    return this._status;
-  }
-  get error(): string | undefined {
-    return this._error;
-  }
-  get isLoaded(): boolean {
-    return this._isLoaded;
+    this.id = pkg.name;
+    this.name = pkg.name;
+    this.description = pkg.description || '';
+    this.version = pkg.version || '0.0.0';
+    this.author = pkg.author || '';
+    this.main = pkg.main;
+    this.path = path;
+    this.type = type;
   }
 
   /**
    * 获取插件主文件的完整路径
    */
   get mainFilePath(): string {
-    return join(this._path, this._main);
+    return join(this.path, this.main);
   }
 
   /**
    * 获取插件的 package.json 路径
    */
   get packageJsonPath(): string {
-    return join(this._path, 'package.json');
+    return join(this.path, 'package.json');
   }
 
   /**
    * 设置插件状态
    */
   setStatus(status: PluginStatus, error?: string): void {
-    this._status = status;
-    this._error = error;
+    this.status = status;
+    this.error = error;
   }
 
   /**
    * 设置插件验证状态
    */
   setValidation(validation: PluginValidation): void {
-    this._validation = validation;
+    this.validation = validation;
   }
 
   /**
    * 标记插件为已加载
    */
   markAsLoaded(): void {
-    this._isLoaded = true;
+    this.isLoaded = true;
   }
 
   /**
    * 禁用插件
    */
   disable(): void {
-    this._status = 'disabled';
+    this.status = 'disabled';
   }
 
   /**
    * 启用插件
    */
   enable(): void {
-    if (this._status === 'disabled') {
-      this._status = 'inactive';
+    if (this.status === 'disabled') {
+      this.status = 'inactive';
     }
   }
 
@@ -213,18 +173,18 @@ export class PluginEntity implements SuperPlugin {
    */
   toJSON() {
     return {
-      id: this._id,
-      name: this._name,
-      description: this._description,
-      version: this._version,
-      author: this._author,
-      main: this._main,
-      path: this._path,
-      type: this._type,
-      status: this._status,
-      error: this._error,
-      isLoaded: this._isLoaded,
-      validation: this._validation,
+      id: this.id,
+      name: this.name,
+      description: this.description,
+      version: this.version,
+      author: this.author,
+      main: this.main,
+      path: this.path,
+      type: this.type,
+      status: this.status,
+      error: this.error,
+      isLoaded: this.isLoaded,
+      validation: this.validation,
     };
   }
 }
