@@ -260,6 +260,7 @@ class PluginManager extends BaseManager {
         author: packageJson.author,
         main: packageJson.main,
         path: pluginPath,
+        type: pluginPath.startsWith(this.devPluginsDir) ? 'dev' : 'user',
       };
 
       this.plugins.set(plugin.id, plugin);
@@ -331,14 +332,6 @@ class PluginManager extends BaseManager {
 
         const validation = this.validatePluginPackage(packageJson);
 
-        // 确定插件的当前位置
-        let currentLocation: 'user' | 'dev' | undefined;
-        if (dir === this.devPluginsDir) {
-          currentLocation = 'dev';
-        } else if (dir === this.pluginsDir) {
-          currentLocation = 'user';
-        }
-
         plugins.push({
           id: packageJson.name,
           name: packageJson.name,
@@ -348,6 +341,7 @@ class PluginManager extends BaseManager {
           main: packageJson.main,
           path: pluginPath,
           validation,
+          type: dir.startsWith(this.devPluginsDir) ? 'dev' : 'user',
         });
       } catch (error) {
         this.handleError(error, `读取插件信息失败: ${pluginPath}`);

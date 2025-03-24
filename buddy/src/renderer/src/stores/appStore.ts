@@ -23,7 +23,7 @@
  */
 
 import { defineStore } from 'pinia';
-import type { PluginAction } from '../components/PluginManager.vue';
+import type { PluginAction } from '@/types/plugin-action';
 
 export type ViewType = 'home' | 'plugins';
 

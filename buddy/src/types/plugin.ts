@@ -57,4 +57,9 @@ export interface Plugin {
    * 插件验证状态
    */
   validation?: PluginValidation | null;
+
+  /**
+   * 插件类型
+   */
+  type: 'user' | 'dev';
 }

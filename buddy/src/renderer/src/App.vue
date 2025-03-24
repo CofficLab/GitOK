@@ -24,13 +24,11 @@ import SearchBar from './layouts/SearchBar.vue'
 import { useSearchStore } from './stores/searchStore'
 import MainLayout from './layouts/MainLayout.vue'
 import ContentView from './layouts/ContentView.vue'
+import { useActionStore } from './stores/actionStore'
 
-// PluginManager组件引用
-// SearchBar组件引用
 const searchBar = ref()
-
-// 使用搜索store
 const searchStore = useSearchStore()
+const actionStore = useActionStore()
 
 // 处理全局键盘事件
 const handleGlobalKeyDown = (event: KeyboardEvent) => {
@@ -70,7 +68,7 @@ onMounted(() => {
     document.addEventListener('keydown', handleGlobalKeyDown)
 
     // 初始加载插件动作
-    searchStore.loadPluginActions()
+    actionStore.loadList()
 
     // 初始聚焦搜索框
     setTimeout(focusSearchBar, 300)
@@ -89,15 +87,15 @@ watch(() => searchStore.keyword, async (newKeyword) => {
     // 重新加载插件动作
     try {
         console.log('App.vue: 开始加载插件动作...');
-        await searchStore.loadPluginActions();
-        console.log(`App.vue: 插件动作加载完成，共 ${searchStore.pluginActions.length} 个`);
+        await actionStore.loadList();
+        console.log(`App.vue: 插件动作加载完成，共 ${actionStore.list.length} 个`);
 
         // 如果有关键词但没有动作，重试一次
-        if (newKeyword && searchStore.pluginActions.length === 0) {
+        if (newKeyword && actionStore.list.length === 0) {
             console.log('App.vue: 检测到有关键词但没有动作，延迟1秒重试...');
             setTimeout(async () => {
-                await searchStore.loadPluginActions();
-                console.log(`App.vue: 重试加载完成，共 ${searchStore.pluginActions.length} 个动作`);
+                await actionStore.loadList();
+                console.log(`App.vue: 重试加载完成，共 ${actionStore.list.length} 个动作`);
             }, 1000);
         }
     } catch (error) {

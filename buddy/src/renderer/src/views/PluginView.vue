@@ -9,11 +9,11 @@
 <script setup lang="ts">
 import { PluginAction } from '@/types/plugin-action';
 import { ref, watch, onUnmounted, reactive, onMounted } from 'vue'
-import { usePluginManager } from '@renderer/composables/usePluginManager';
 import { useSearchStore } from '@renderer/stores/searchStore'
+import { useActionStore } from '@renderer/stores/actionStore'
 
-const pluginManager = usePluginManager()
 const searchStore = useSearchStore()
+const actionStore = useActionStore()
 
 // 定义辅助函数获取插件视图API
 const getPluginViewsAPI = () => {
@@ -62,7 +62,7 @@ const embeddedViewContainer = ref<HTMLDivElement | null>(null)
 
 // 加载并执行动作
 const loadAndExecuteAction = async () => {
-    const actionId = searchStore.selectedActionId
+    const actionId = actionStore.getSelectedActionId()
     if (!actionId) return
 
     isLoading.value = true
@@ -76,7 +76,7 @@ const loadAndExecuteAction = async () => {
 
     try {
         // 查找动作信息
-        const action = pluginManager.getAction(actionId, 'loadAndExecuteAction')
+        const action = actionStore.get(actionId, 'loadAndExecuteAction')
         if (!action) {
             throw new Error(`未找到动作: ${actionId}`)
         }
@@ -85,7 +85,7 @@ const loadAndExecuteAction = async () => {
         console.log(`PluginView: 加载动作 ${action.title}`)
 
         // 执行动作
-        const result = await pluginManager.executeAction(action)
+        const result = await actionStore.execute(action)
         actionResult.value = result
         console.log(`PluginView: 动作执行结果:`, result)
 
@@ -129,10 +129,7 @@ const createEmbeddedView = async (actionId: string, action: PluginAction) => {
         }
 
         // 获取主进程存储的HTML内容
-        if (!pluginManager) {
-            throw new Error('插件管理器未初始化')
-        }
-        embeddedViewState.content = pluginManager.actionViewHtml
+        embeddedViewState.content = actionStore.viewHtml
         console.log(`PluginView: 获取到视图HTML内容，长度: ${embeddedViewState.content?.length || 0}`)
 
         // 清除可能存在的错误状态，确保条件渲染逻辑正确
@@ -511,7 +508,7 @@ onUnmounted(() => {
 import { nextTick } from 'vue'
 
 // 在动作ID变化时重新加载
-watch(() => searchStore.selectedActionId, (newId) => {
+watch(() => actionStore.getSelectedActionId(), (newId) => {
     if (newId) {
         loadAndExecuteAction()
     }
@@ -519,7 +516,7 @@ watch(() => searchStore.selectedActionId, (newId) => {
 
 // 组件挂载时加载动作
 onMounted(() => {
-    const actionId = searchStore.selectedActionId
+    const actionId = actionStore.getSelectedActionId()
     if (actionId) {
         loadAndExecuteAction()
     }

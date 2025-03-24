@@ -26,18 +26,11 @@
  */
 
 import { defineStore } from 'pinia';
-import type { PluginAction } from '@/types/plugin-action';
-
-const electronApi = window.electron;
-const pluginsApi = electronApi.plugins;
-const actionsApi = pluginsApi.actions;
 
 export const useSearchStore = defineStore('search', {
   state: () => ({
     keyword: '',
-    pluginActions: [] as PluginAction[],
     isLoading: false,
-    selectedActionId: null as string | null,
     lastSearchTime: 0, // 记录最后一次搜索时间
   }),
 
@@ -46,7 +39,6 @@ export const useSearchStore = defineStore('search', {
     async updateKeyword(keyword: string) {
       console.log(`searchStore: 更新关键词 "${keyword}"，触发插件动作加载`);
       this.keyword = keyword;
-      await this.loadPluginActions();
     },
 
     // 仅设置关键词而不触发其他操作
@@ -55,54 +47,9 @@ export const useSearchStore = defineStore('search', {
       this.keyword = keyword;
     },
 
-    // 加载插件动作
-    async loadPluginActions() {
-      // 记录本次搜索时间
-      const currentSearchTime = Date.now();
-      this.lastSearchTime = currentSearchTime;
-
-      console.log(`searchStore: 加载插件动作, 关键词: "${this.keyword}"`);
-      this.isLoading = true;
-
-      try {
-        console.log('searchStore: 调用 window.api.plugins.getPluginActions');
-        const response = await actionsApi.getPluginActions(this.keyword);
-        if (response.success) {
-          console.log('searchStore: 加载插件动作成功:', response.actions);
-          this.pluginActions = response.actions as PluginAction[];
-        } else {
-          console.error('searchStore: 加载插件动作失败:', response.error);
-          this.pluginActions = [];
-        }
-      } catch (error) {
-        console.error('searchStore: 加载插件动作失败', error);
-        this.pluginActions = [];
-      } finally {
-        this.isLoading = false;
-      }
-    },
-
-    // 更新插件动作列表（由外部调用，如App.vue）
-    updatePluginActions(actions: PluginAction[]) {
-      this.pluginActions = actions;
-    },
-
-    // 选择一个动作
-    selectAction(actionId: string | null) {
-      console.log('selectAction 🍋', actionId);
-      this.selectedActionId = actionId;
-    },
-
-    // 清除选中的动作
-    clearSelectedAction() {
-      this.selectedActionId = null;
-    },
-
     // 清除搜索
     clearSearch() {
       this.keyword = '';
-      this.pluginActions = [];
-      this.selectedActionId = null;
     },
 
     // 处理键盘事件

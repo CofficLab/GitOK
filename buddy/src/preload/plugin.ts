@@ -2,6 +2,7 @@
  * 插件系统模块
  * 处理插件的安装、卸载、执行等功能
  */
+import { PluginAction } from '@/types/plugin-action';
 import { PluginAPi } from '@/types/plugin-api';
 import { ipcRenderer } from 'electron';
 
@@ -81,7 +82,7 @@ const pluginManagement = {
 
 // 插件动作相关接口
 const pluginActions = {
-  getPluginActions: async (keyword = '') => {
+  async getPluginActions(keyword = ''): Promise<PluginAction[]> {
     const response = await ipcRenderer.invoke('get-plugin-actions', keyword);
     console.log('preload: get-plugin-actions 响应:', response);
     return response;

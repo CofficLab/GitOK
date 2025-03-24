@@ -3,6 +3,8 @@
  * 包含视图管理、插件管理、动作管理和生命周期管理四个主要模块
  */
 
+import { PluginAction } from './plugin-action';
+
 // 视图相关类型
 interface ViewBounds {
   x: number;
@@ -45,7 +47,7 @@ interface PluginManagement {
 
 // 插件动作接口
 interface PluginActions {
-  getPluginActions: (keyword?: string) => Promise<any>;
+  getPluginActions: (keyword?: string) => Promise<PluginAction[]>;
   executeAction: (actionId: string) => Promise<any>;
   getActionView: (actionId: string) => Promise<any>;
 }

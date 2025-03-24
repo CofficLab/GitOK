@@ -8,10 +8,14 @@
 */
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
-import type { StorePlugin } from '@/types/plugin'
+import type { Plugin } from '@/types/plugin'
+
+const electronApi = window.electron
+const pluginApi = electronApi.plugins
+const { management } = pluginApi
 
 // 插件列表
-const plugins = ref<StorePlugin[]>([])
+const plugins = ref<Plugin[]>([])
 const directories = ref<{ user: string; dev: string } | null>(null)
 const errorMessage = ref('')
 const showError = ref(false)
@@ -22,7 +26,7 @@ const activeTab = ref<'user' | 'dev'>('user')
 // 加载插件列表
 const loadPlugins = async () => {
     try {
-        const response = await (window.api as any).plugin.getStorePlugins()
+        const response = await management.getStorePlugins()
         console.log('插件列表响应:', response)
         if (response.success) {
             plugins.value = response.plugins
@@ -40,7 +44,7 @@ const loadPlugins = async () => {
 // 加载目录信息
 const loadDirectories = async () => {
     try {
-        const response = await (window.api as any).plugin.getDirectories()
+        const response = await management.getDirectories()
         if (response.success) {
             directories.value = response.directories
         } else {
@@ -57,7 +61,7 @@ const loadDirectories = async () => {
 // 打开目录
 const openDirectory = async (directory: string) => {
     try {
-        const response = await (window.api as any).plugin.openDirectory(directory)
+        const response = await management.openDirectory(directory)
         if (!response.success) {
             showErrorMessage('无法打开目录')
         }
@@ -79,8 +83,8 @@ const showErrorMessage = (message: string) => {
 // 根据标签过滤插件
 const filteredPlugins = computed(() => {
     return plugins.value.filter(plugin => {
-        if (activeTab.value === 'user') return plugin.recommendedLocation === 'user'
-        if (activeTab.value === 'dev') return plugin.recommendedLocation === 'dev'
+        if (activeTab.value === 'user') return plugin.path.includes('user')
+        if (activeTab.value === 'dev') return plugin.path.includes('dev')
         return true
     })
 })

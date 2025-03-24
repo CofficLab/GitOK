@@ -29,31 +29,24 @@ ContentView.vue - 内容视图组件
 import { computed, onMounted, watch } from 'vue'
 import { useAppStore } from '@renderer/stores/appStore'
 import { useSearchStore } from '@renderer/stores/searchStore'
+import { useActionStore } from '@renderer/stores/actionStore'
 import { HomeView, PluginView, ActionListView, PluginStoreView } from '@renderer/views'
 
 const appStore = useAppStore()
+const actionStore = useActionStore()
 const searchStore = useSearchStore()
 const currentView = computed(() => appStore.currentView)
 
 // 处理返回到动作列表
 const handleBackToList = () => {
-    searchStore.clearSelectedAction()
+    actionStore.clearSelected()
 }
 
 // 判断是否应该显示动作列表
 const shouldShowActionList = computed(() => {
-    const hasActions = searchStore.pluginActions.length > 0;
+    const hasActions = actionStore.list.length > 0;
     const hasKeyword = searchStore.keyword.length > 0;
     const result = hasActions || hasKeyword;
-
-    console.log(`ContentView: shouldShowActionList = ${result}`, {
-        pluginActionsLength: searchStore.pluginActions.length,
-        keyword: searchStore.keyword,
-        hasActions,
-        hasKeyword,
-        selectedActionId: searchStore.selectedActionId,
-        isLoading: searchStore.isLoading
-    });
 
     return result;
 })
@@ -64,14 +57,14 @@ watch(() => searchStore.keyword, (newKeyword) => {
 
     // 延迟一下检查 pluginActions
     setTimeout(() => {
-        console.log(`ContentView: 延迟检查，当前有 ${searchStore.pluginActions.length} 个动作`);
+        console.log(`ContentView: 延迟检查，当前有 ${actionStore.list.length} 个动作`);
         console.log(`ContentView: shouldShowActionList = ${shouldShowActionList.value}`);
     }, 500);
 })
 
 // 为了调试在动作列表变化时观察
-watch(() => searchStore.pluginActions, (newActions) => {
-    console.log(`ContentView: 动作列表更新，现在有 ${newActions.length} 个动作`);
+watch(() => actionStore.getActionCount(), (newCount) => {
+    console.log(`ContentView: 动作列表更新，现在有 ${newCount} 个动作`);
     console.log(`ContentView: shouldShowActionList = ${shouldShowActionList.value}`);
 }, { deep: true })
 
@@ -80,7 +73,7 @@ onMounted(() => {
     console.log('ContentView 挂载完成');
     console.log('初始状态:', {
         currentView: appStore.currentView,
-        pluginActions: searchStore.pluginActions.length,
+        pluginActions: actionStore.getActionCount(),
         keyword: searchStore.keyword,
         isLoading: searchStore.isLoading
     });
@@ -92,10 +85,10 @@ onMounted(() => {
         <!-- 首页视图 -->
         <div v-if="currentView === 'home'" class="space-y-4">
             <!-- 显示HomeView内容（当没有搜索关键词且没有插件动作时） -->
-            <HomeView v-if="!shouldShowActionList && !searchStore.selectedActionId" />
+            <HomeView v-if="!shouldShowActionList && !actionStore.getSelectedActionId()" />
 
             <!-- 插件动作列表（当有搜索关键词或有插件动作时） -->
-            <ActionListView v-else-if="!searchStore.selectedActionId" />
+            <ActionListView v-else-if="!actionStore.getSelectedActionId()" />
 
             <!-- 插件动作视图 -->
             <PluginView v-else @back="handleBackToList" />

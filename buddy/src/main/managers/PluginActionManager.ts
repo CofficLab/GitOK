@@ -96,17 +96,6 @@ class PluginActionManager extends BaseManager {
         return false;
       }
 
-      // 确保动作ID包含插件ID前缀
-      if (!action.id.startsWith(`${plugin.id}:`)) {
-        action.id = `${plugin.id}:${action.id}`;
-      }
-
-      // 添加默认值
-      action.id = `${plugin.id}:${action.id}`;
-      action.description = action.description || '';
-      action.icon = action.icon || '';
-      action.viewMode = action.viewMode || 'embedded';
-
       return true;
     });
   }
