@@ -7,7 +7,7 @@
 * 3. 提供返回到动作列表的功能
 */
 <script setup lang="ts">
-import { PluginAction } from '@/types/plugin-action';
+import { SuperAction } from '@/types/super_action';
 import { ref, watch, onUnmounted, reactive, onMounted } from 'vue'
 import { useSearchStore } from '@renderer/stores/searchStore'
 import { useActionStore } from '@renderer/stores/actionStore'
@@ -36,7 +36,7 @@ const emit = defineEmits<{
 }>()
 
 // 当前选中的动作
-const selectedAction = ref<PluginAction | null>(null)
+const selectedAction = ref<SuperAction | null>(null)
 // 是否正在加载动作视图
 const isLoading = ref(false)
 // 动作执行的结果
@@ -117,7 +117,7 @@ const loadAndExecuteAction = async () => {
 }
 
 // 创建并显示嵌入式视图
-const createEmbeddedView = async (actionId: string, action: PluginAction) => {
+const createEmbeddedView = async (actionId: string, action: SuperAction) => {
     try {
         // 使用动作ID作为视图ID
         embeddedViewState.id = `embedded-view-${actionId}`
@@ -259,7 +259,7 @@ const destroyEmbeddedView = async () => {
 }
 
 // 在独立窗口中打开插件视图
-const openPluginWindow = async (actionId: string, action: PluginAction) => {
+const openPluginWindow = async (actionId: string, action: SuperAction) => {
     try {
         // 使用动作ID作为视图ID
         pluginViewState.id = `plugin-view-${actionId}`

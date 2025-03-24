@@ -4,7 +4,7 @@ import fs from 'fs';
 import yaml from 'js-yaml';
 import { Logger } from '../utils/Logger';
 import type { WindowConfig } from '@/types/window-config';
-import type { PluginManagerConfig } from '@/types/plugin';
+import type { PluginManagerConfig } from '@/types/super_plugin';
 
 /**
  * 配置管理器

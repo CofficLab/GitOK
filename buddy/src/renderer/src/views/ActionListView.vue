@@ -10,14 +10,14 @@
 <script setup lang="ts">
 import { computed, watch } from 'vue'
 import { useSearchStore } from '@renderer/stores/searchStore'
-import type { PluginAction } from '@/types/plugin-action'
+import type { SuperAction } from '@/types/super_action'
 import { useActionStore } from '@renderer/stores/actionStore'
 
 const searchStore = useSearchStore()
 const actionStore = useActionStore()
 
 // 处理动作选择
-const handleActionSelected = (action: PluginAction) => {
+const handleActionSelected = (action: SuperAction) => {
     console.log('handleActionSelected 🍋', action.id);
     actionStore.selectAction(action.id)
 }

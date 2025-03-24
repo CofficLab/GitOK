@@ -5,7 +5,7 @@
 import { PluginAPi } from '@/types/plugin-api';
 import { ipcRenderer } from 'electron';
 import { IPC_METHODS } from '../types/ipc';
-import { PluginAction } from '@/types/plugin-action';
+import { SuperAction } from '@/types/super_action';
 
 // 插件视图相关接口
 const pluginViews = {
@@ -83,7 +83,7 @@ const pluginManagement = {
 
 // 插件动作相关接口
 const pluginActions = {
-  async getPluginActions(keyword = ''): Promise<PluginAction[]> {
+  async getPluginActions(keyword = ''): Promise<SuperAction[]> {
     const response = await ipcRenderer.invoke(
       IPC_METHODS.GET_PLUGIN_ACTIONS,
       keyword

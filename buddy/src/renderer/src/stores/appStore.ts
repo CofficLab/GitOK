@@ -23,14 +23,14 @@
  */
 
 import { defineStore } from 'pinia';
-import type { PluginAction } from '@/types/plugin-action';
+import type { SuperAction } from '@/types/super_action';
 
 export type ViewType = 'home' | 'plugins';
 
 interface AppState {
   currentView: ViewType;
   showPluginStore: boolean;
-  selectedAction: PluginAction | null;
+  selectedAction: SuperAction | null;
 }
 
 export const useAppStore = defineStore('app', {
@@ -53,7 +53,7 @@ export const useAppStore = defineStore('app', {
       }
     },
 
-    setSelectedAction(action: PluginAction | null) {
+    setSelectedAction(action: SuperAction | null) {
       this.selectedAction = action;
     },
   },

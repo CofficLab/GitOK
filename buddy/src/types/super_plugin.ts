@@ -17,7 +17,7 @@ import { PluginValidation } from './plugin-validation';
 /**
  * 插件信息接口
  */
-export interface Plugin {
+export interface SuperPlugin {
   /**
    * 插件ID
    */

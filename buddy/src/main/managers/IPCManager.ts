@@ -11,7 +11,7 @@ import { appStateManager } from './AppStateManager';
 import { pluginActionManager } from './PluginActionManager';
 import { BaseManager } from './BaseManager';
 import { IpcResponse, IPC_METHODS } from '@/types/ipc';
-import { PluginAction } from '@/types/plugin-action';
+import { SuperAction } from '@/types/super_action';
 
 class IPCManager extends BaseManager {
   private static instance: IPCManager;
@@ -151,7 +151,7 @@ class IPCManager extends BaseManager {
       async (
         _event,
         keyword: string = ''
-      ): Promise<IpcResponse<PluginAction[]>> => {
+      ): Promise<IpcResponse<SuperAction[]>> => {
         this.logger.debug('处理IPC请求: get-plugin-actions');
         try {
           const actions = await pluginActionManager.getActions(keyword);

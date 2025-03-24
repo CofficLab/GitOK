@@ -22,14 +22,11 @@ import { join, dirname } from 'path';
 import fs from 'fs';
 import { configManager } from './ConfigManager';
 import { BaseManager } from './BaseManager';
-import type { Plugin } from '@/types/plugin';
-import { PluginPackage } from '@/types/plugin-package';
-import { PluginValidation } from '@/types/plugin-validation';
-import { readPackageJson, hasPackageJson } from '../utils/PackageUtils';
+import { PluginEntity } from '../entities/PluginEntity';
 
 class PluginManager extends BaseManager {
   private static instance: PluginManager;
-  private plugins: Map<string, Plugin> = new Map();
+  private plugins: Map<string, PluginEntity> = new Map();
 
   // 插件目录
   private pluginsDir: string;
@@ -231,35 +228,16 @@ class PluginManager extends BaseManager {
    */
   private async loadPlugin(pluginPath: string): Promise<void> {
     try {
-      if (!(await hasPackageJson(pluginPath))) {
-        this.logger.warn(`插件 ${pluginPath} 缺少 package.json，跳过加载`);
-        return;
-      }
+      const type = pluginPath.startsWith(this.devPluginsDir) ? 'dev' : 'user';
+      const plugin = await PluginEntity.fromDirectory(pluginPath, type);
 
-      const packageJson = await readPackageJson(pluginPath);
-
-      // 验证插件包信息
-      const validation = this.validatePluginPackage(packageJson);
-      if (!validation.isValid) {
+      if (!plugin.validation?.isValid) {
         this.logger.warn(
           `插件 ${pluginPath} 的 package.json 格式无效，跳过加载`,
-          { validation: validation.errors }
+          { validation: plugin.validation?.errors }
         );
         return;
       }
-
-      const pluginId = packageJson.name;
-
-      const plugin: Plugin = {
-        id: pluginId,
-        name: packageJson.name,
-        description: packageJson.description,
-        version: packageJson.version,
-        author: packageJson.author,
-        main: packageJson.main,
-        path: pluginPath,
-        type: pluginPath.startsWith(this.devPluginsDir) ? 'dev' : 'user',
-      };
 
       this.plugins.set(plugin.id, plugin);
       this.logger.info(`已加载插件: ${plugin.name} v${plugin.version}`);
@@ -273,81 +251,39 @@ class PluginManager extends BaseManager {
   }
 
   /**
-   * 验证插件包信息
-   */
-  private validatePluginPackage(pkg: PluginPackage): PluginValidation {
-    const errors: string[] = [];
-
-    // 检查基本字段
-    if (!pkg.name) errors.push('缺少插件名称');
-    if (!pkg.version) errors.push('缺少插件版本');
-    if (!pkg.description) errors.push('缺少插件描述');
-    if (!pkg.author) errors.push('缺少作者信息');
-    if (!pkg.main) errors.push('缺少入口文件');
-
-    return {
-      isValid: errors.length === 0,
-      errors,
-    };
-  }
-
-  /**
    * 获取所有已安装的插件
    */
-  getPlugins(): Plugin[] {
+  getPlugins(): PluginEntity[] {
     return Array.from(this.plugins.values());
   }
 
   /**
    * 获取指定插件
    */
-  getPlugin(pluginId: string): Plugin | undefined {
-    this.logger.debug(`获取插件: ${pluginId}`);
-    this.logger.debug(`插件列表: ${JSON.stringify(this.plugins)}`);
-
+  getPlugin(pluginId: string): PluginEntity | undefined {
     return this.plugins.get(pluginId);
   }
 
   /**
    * 从目录中读取插件信息
    */
-  private async readPluginsFromDir(dir: string): Promise<Plugin[]> {
+  private async readPluginsFromDir(dir: string): Promise<PluginEntity[]> {
     if (!fs.existsSync(dir)) {
       return [];
     }
 
-    const plugins: Plugin[] = [];
+    const plugins: PluginEntity[] = [];
     const entries = await fs.promises.readdir(dir, { withFileTypes: true });
 
     for (const entry of entries) {
       if (!entry.isDirectory()) continue;
 
       const pluginPath = join(dir, entry.name);
-      const packageJsonPath = join(pluginPath, 'package.json');
 
       try {
-        if (!fs.existsSync(packageJsonPath)) {
-          this.logger.warn(`插件 ${pluginPath} 缺少 package.json，跳过`);
-          continue;
-        }
-
-        const packageJson = JSON.parse(
-          await fs.promises.readFile(packageJsonPath, 'utf8')
-        ) as PluginPackage;
-
-        const validation = this.validatePluginPackage(packageJson);
-
-        plugins.push({
-          id: packageJson.name,
-          name: packageJson.name,
-          description: packageJson.description || '',
-          version: packageJson.version || '',
-          author: packageJson.author || '',
-          main: packageJson.main,
-          path: pluginPath,
-          validation,
-          type: dir.startsWith(this.devPluginsDir) ? 'dev' : 'user',
-        });
+        const type = dir.startsWith(this.devPluginsDir) ? 'dev' : 'user';
+        const plugin = await PluginEntity.fromDirectory(pluginPath, type);
+        plugins.push(plugin);
       } catch (error) {
         this.handleError(error, `读取插件信息失败: ${pluginPath}`);
       }
@@ -359,7 +295,7 @@ class PluginManager extends BaseManager {
   /**
    * 获取插件商店列表
    */
-  async getStorePlugins(): Promise<Plugin[]> {
+  async getStorePlugins(): Promise<PluginEntity[]> {
     this.logger.info('获取插件商店列表');
 
     try {
@@ -387,12 +323,10 @@ class PluginManager extends BaseManager {
    * @param plugin 插件实例
    * @returns 插件模块
    */
-  public async loadPluginModule(plugin: Plugin): Promise<any> {
+  public async loadPluginModule(plugin: PluginEntity): Promise<any> {
     try {
-      const packageJson = await readPackageJson(plugin.path);
-
       // 使用 package.json 中的 main 字段作为入口文件
-      const mainFilePath = join(plugin.path, packageJson.main);
+      const mainFilePath = plugin.mainFilePath;
       if (!fs.existsSync(mainFilePath)) {
         throw new Error(`插件入口文件不存在: ${mainFilePath}`);
       }
@@ -401,8 +335,15 @@ class PluginManager extends BaseManager {
       delete require.cache[require.resolve(mainFilePath)];
 
       // 动态导入插件模块
-      return require(mainFilePath);
-    } catch (error) {
+      const module = require(mainFilePath);
+
+      // 标记插件为已加载
+      plugin.markAsLoaded();
+
+      return module;
+    } catch (error: any) {
+      // 设置错误状态
+      plugin.setStatus('error', error.message);
       throw new Error(
         this.handleError(
           error,

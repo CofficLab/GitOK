@@ -5,11 +5,12 @@
 import { configManager } from './ConfigManager';
 import { pluginManager } from './PluginManager';
 import { BaseManager } from './BaseManager';
-import type { PluginAction } from '@/types/plugin-action';
+import type { SuperAction } from '@/types/super_action';
+import { PluginActionEntity } from '../entities/PluginActionEntity';
 
 class PluginActionManager extends BaseManager {
   private static instance: PluginActionManager;
-  private actionCache: Map<string, PluginAction[]> = new Map();
+  private actionCache: Map<string, PluginActionEntity[]> = new Map();
 
   private constructor() {
     const config = configManager.getPluginConfig();
@@ -35,9 +36,9 @@ class PluginActionManager extends BaseManager {
    * @param keyword 搜索关键词
    * @returns 匹配的插件动作列表
    */
-  async getActions(keyword: string = ''): Promise<PluginAction[]> {
+  async getActions(keyword: string = ''): Promise<PluginActionEntity[]> {
     this.logger.info(`获取插件动作，关键词: "${keyword}"`);
-    let allActions: PluginAction[] = [];
+    let allActions: PluginActionEntity[] = [];
 
     try {
       // 从所有加载的插件中获取动作
@@ -73,8 +74,14 @@ class PluginActionManager extends BaseManager {
         }
       }
 
+      // 过滤关键词匹配的动作
+      if (keyword) {
+        allActions = allActions.filter((action) =>
+          action.matchKeyword(keyword)
+        );
+      }
+
       this.logger.info(`找到 ${allActions.length} 个匹配的动作`);
-      console.log('allActions', allActions);
       return allActions;
     } catch (error) {
       this.handleError(error, '获取插件动作失败');
@@ -86,18 +93,26 @@ class PluginActionManager extends BaseManager {
    * 验证和处理动作
    */
   private validateAndProcessActions(
-    actions: PluginAction[],
+    actions: SuperAction[],
     plugin: any
-  ): PluginAction[] {
-    return actions.filter((action) => {
-      // 验证必要字段
-      if (!action.id || !action.title) {
-        this.logger.warn(`插件 ${plugin.id} 的动作缺少必要字段`, action);
+  ): PluginActionEntity[] {
+    const actionEntities = actions.map((action) =>
+      PluginActionEntity.fromRawAction(action, plugin.id)
+    );
+
+    // 过滤出验证通过的动作
+    const validActions = actionEntities.filter((action) => {
+      if (!action.validation?.isValid) {
+        this.logger.warn(`插件 ${plugin.id} 的动作验证失败`, {
+          action: action.id,
+          errors: action.validation?.errors,
+        });
         return false;
       }
-
       return true;
     });
+
+    return validActions;
   }
 
   /**
@@ -129,23 +144,42 @@ class PluginActionManager extends BaseManager {
 
       // 获取动作信息
       const actions = await this.getActions();
-      const actionInfo = actions.find((a) => a.id === actionId);
+      const actionEntity = actions.find((a) => a.id === actionId);
 
-      if (!actionInfo) {
+      if (!actionEntity) {
         throw new Error(`未找到动作: ${actionId}`);
       }
 
+      // 检查动作是否可执行
+      if (!actionEntity.canExecute()) {
+        throw new Error(
+          `动作 ${actionId} 当前不可执行: ${actionEntity.status}`
+        );
+      }
+
       // 执行前触发事件
-      this.emit('action:before-execute', actionInfo);
+      this.emit('action:before-execute', actionEntity);
 
-      // 执行动作
-      const result = await pluginModule.executeAction(actionInfo);
+      // 标记动作开始执行
+      actionEntity.beginExecute();
 
-      // 执行后触发事件
-      this.emit('action:after-execute', actionInfo, result);
+      try {
+        // 执行动作
+        const result = await pluginModule.executeAction(actionEntity);
 
-      return result;
-    } catch (error) {
+        // 标记动作执行完成
+        actionEntity.completeExecute();
+
+        // 执行后触发事件
+        this.emit('action:after-execute', actionEntity, result);
+
+        return result;
+      } catch (error: any) {
+        // 标记动作执行出错
+        actionEntity.executeError(error.message);
+        throw error;
+      }
+    } catch (error: any) {
       this.emit('action:execute-error', actionId, error);
       throw new Error(
         this.handleError(error, `执行插件动作失败: ${actionId}`, false)
@@ -176,9 +210,9 @@ class PluginActionManager extends BaseManager {
 
       // 获取动作信息
       const actions = await this.getActions();
-      const actionInfo = actions.find((a) => a.id === actionId);
+      const actionEntity = actions.find((a) => a.id === actionId);
 
-      if (!actionInfo || !actionInfo.viewPath) {
+      if (!actionEntity || !actionEntity.viewPath) {
         throw new Error(`动作 ${actionId} 没有关联视图`);
       }
 
@@ -189,7 +223,7 @@ class PluginActionManager extends BaseManager {
       }
 
       // 获取视图内容
-      return await pluginModule.getViewContent(actionInfo.viewPath);
+      return await pluginModule.getViewContent(actionEntity.viewPath);
     } catch (error) {
       throw new Error(
         this.handleError(error, `获取动作视图失败: ${actionId}`, false)

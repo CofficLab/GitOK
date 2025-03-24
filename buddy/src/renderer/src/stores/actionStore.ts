@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import type { PluginAction } from '@/types/plugin-action';
+import type { SuperAction } from '@/types/super_action';
 
 const electronApi = window.electron;
 const { actions: actionsApi } = electronApi.plugins;
@@ -11,7 +11,7 @@ const { actions: actionsApi } = electronApi.plugins;
  */
 
 interface ActionState {
-  list: PluginAction[];
+  list: SuperAction[];
   isLoading: boolean;
   selected: string | null;
   viewHtml: string;
@@ -49,7 +49,7 @@ export const useActionStore = defineStore('action', {
     /**
      * 执行指定动作
      */
-    async execute(action: PluginAction): Promise<any> {
+    async execute(action: SuperAction): Promise<any> {
       this.selected = action.id;
 
       if (action.viewPath) {
@@ -83,7 +83,7 @@ export const useActionStore = defineStore('action', {
     /**
      * 根据ID获取动作
      */
-    get(actionId: string, reason: string): PluginAction | undefined {
+    get(actionId: string, reason: string): SuperAction | undefined {
       console.log('getAction', actionId, 'with reason: 🐛', reason);
       return this.list.find((a) => a.id === actionId);
     },
@@ -109,7 +109,7 @@ export const useActionStore = defineStore('action', {
       this.selected = actionId;
     },
 
-    getActions(): PluginAction[] {
+    getActions(): SuperAction[] {
       return this.list;
     },
 

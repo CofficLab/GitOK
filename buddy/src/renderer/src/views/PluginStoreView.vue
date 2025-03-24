@@ -8,14 +8,14 @@
 */
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
-import type { Plugin } from '@/types/plugin'
+import type { SuperPlugin } from '@/types/super_plugin'
 
 const electronApi = window.electron
 const pluginApi = electronApi.plugins
 const { management } = pluginApi
 
 // 插件列表
-const plugins = ref<Plugin[]>([])
+const plugins = ref<SuperPlugin[]>([])
 const directories = ref<{ user: string; dev: string } | null>(null)
 const errorMessage = ref('')
 const showError = ref(false)

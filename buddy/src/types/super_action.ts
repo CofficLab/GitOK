@@ -1,7 +1,7 @@
 /**
  * 插件动作接口
  */
-export interface PluginAction {
+export interface SuperAction {
   /**
    * 动作ID
    */
