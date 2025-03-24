@@ -25,6 +25,7 @@ import { BaseManager } from './BaseManager';
 import type { Plugin } from '@/types/plugin';
 import { PluginPackage } from '@/types/plugin-package';
 import { PluginValidation } from '@/types/plugin-validation';
+import { readPackageJson, hasPackageJson } from '../utils/PackageUtils';
 
 class PluginManager extends BaseManager {
   private static instance: PluginManager;
@@ -230,15 +231,12 @@ class PluginManager extends BaseManager {
    */
   private async loadPlugin(pluginPath: string): Promise<void> {
     try {
-      const packageJsonPath = join(pluginPath, 'package.json');
-      if (!fs.existsSync(packageJsonPath)) {
+      if (!(await hasPackageJson(pluginPath))) {
         this.logger.warn(`插件 ${pluginPath} 缺少 package.json，跳过加载`);
         return;
       }
 
-      const packageJson = JSON.parse(
-        await fs.promises.readFile(packageJsonPath, 'utf8')
-      ) as PluginPackage;
+      const packageJson = await readPackageJson(pluginPath);
 
       // 验证插件包信息
       const validation = this.validatePluginPackage(packageJson);
@@ -391,11 +389,7 @@ class PluginManager extends BaseManager {
    */
   public async loadPluginModule(plugin: Plugin): Promise<any> {
     try {
-      // 读取 package.json 以获取入口文件路径
-      const packageJsonPath = join(plugin.path, 'package.json');
-      const packageJson = JSON.parse(
-        await fs.promises.readFile(packageJsonPath, 'utf8')
-      ) as PluginPackage;
+      const packageJson = await readPackageJson(plugin.path);
 
       // 使用 package.json 中的 main 字段作为入口文件
       const mainFilePath = join(plugin.path, packageJson.main);
