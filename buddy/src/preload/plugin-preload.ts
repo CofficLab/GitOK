@@ -1,11 +1,13 @@
 /**
  * 插件视图预加载脚本
  * 为插件视图提供与主应用通信的安全API
+ *
+ * 打开插件提供的视图时，会在单独的窗口中打开，然后注入这里提供的API
  */
 import { contextBridge, ipcRenderer } from 'electron';
 
 // 提供给插件视图的API
-const pluginAPI = {
+const pluginViewAPI = {
   // 向主应用发送消息
   sendToHost: (channel: string, data: any): void => {
     ipcRenderer.send('plugin-to-host', { channel, data });
@@ -47,13 +49,13 @@ const pluginAPI = {
 // 暴露API到插件视图全局环境
 if (process.contextIsolated) {
   try {
-    contextBridge.exposeInMainWorld('gitok', pluginAPI);
+    contextBridge.exposeInMainWorld('buddy', pluginViewAPI);
   } catch (error) {
     console.error('暴露插件API到全局环境失败:', error);
   }
 } else {
   // @ts-ignore
-  window.gitok = pluginAPI;
+  window.buddy = pluginViewAPI;
 }
 
 // 通知主进程插件视图已加载

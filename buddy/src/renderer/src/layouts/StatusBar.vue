@@ -28,6 +28,9 @@ import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAppStore } from '@renderer/stores/appStore'
 
+const electronApi = window.electron;
+const overlaidApi = electronApi.overlaid;
+
 // 当前时间
 const currentTime = ref(new Date().toLocaleTimeString())
 let timer: ReturnType<typeof setInterval>
@@ -63,7 +66,7 @@ onMounted(() => {
     timer = setInterval(updateTime, 1000)
 
     // 监听被覆盖应用变化
-    removeOverlaidAppListener = (window.api as any).onOverlaidAppChanged((app) => {
+    removeOverlaidAppListener = overlaidApi.onOverlaidAppChanged((app) => {
         overlaidAppName.value = app?.name || null
     })
 })

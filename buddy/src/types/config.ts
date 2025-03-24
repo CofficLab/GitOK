@@ -13,24 +13,6 @@
  */
 
 /**
- * 插件目录配置
- * 定义了插件系统使用的不同类型目录
- */
-export interface PluginDirectories {
-  /**
-   * 用户插件目录
-   * 用于存放已安装的插件
-   */
-  user: string;
-
-  /**
-   * 开发插件目录
-   * 用于存放开发中的插件
-   */
-  dev: string;
-}
-
-/**
  * 插件管理器配置
  * 定义了插件管理器的运行配置
  */
@@ -48,9 +30,4 @@ export interface PluginManagerConfig {
    * - error: 错误信息
    */
   logLevel: 'debug' | 'info' | 'warn' | 'error';
-
-  /**
-   * 插件目录配置
-   */
-  directories?: PluginDirectories;
 }

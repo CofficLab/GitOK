@@ -45,52 +45,6 @@ export interface ViewBounds {
 }
 
 /**
- * 插件动作
- * 定义了插件可执行的动作
- */
-export interface PluginAction {
-  /**
-   * 动作ID
-   */
-  id: string;
-
-  /**
-   * 动作标题
-   */
-  title: string;
-
-  /**
-   * 动作描述
-   */
-  description?: string;
-
-  /**
-   * 动作图标
-   */
-  icon?: string;
-
-  /**
-   * 视图配置
-   */
-  view?: {
-    /**
-     * 视图路径
-     */
-    path: string;
-
-    /**
-     * 视图模式
-     */
-    mode: ViewMode;
-
-    /**
-     * 是否启用开发者工具
-     */
-    devTools?: boolean;
-  };
-}
-
-/**
  * 插件视图选项
  * 定义了创建插件视图时的配置选项
  */

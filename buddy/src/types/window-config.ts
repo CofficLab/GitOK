@@ -58,4 +58,10 @@ export interface WindowConfig {
    * 日志级别
    */
   logLevel?: 'debug' | 'info' | 'warn' | 'error';
+
+  // TODO: 根据实际使用情况补充具体的窗口配置项
+  width?: number;
+  height?: number;
+  x?: number;
+  y?: number;
 }

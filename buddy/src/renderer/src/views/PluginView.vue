@@ -7,8 +7,11 @@
 * 3. 提供返回到动作列表的功能
 */
 <script setup lang="ts">
-import { ref, inject, watch, onUnmounted, reactive } from 'vue'
-import type { PluginManagerAPI, PluginAction } from '@renderer/components/PluginManager.vue'
+import { PluginAction } from '@/types/plugin-action';
+import { ref, watch, onUnmounted, reactive } from 'vue'
+import { usePluginManager } from '@renderer/composables/usePluginManager';
+
+const pluginManager = usePluginManager()
 
 // 定义辅助函数获取插件视图API
 const getPluginViewsAPI = () => {
@@ -35,8 +38,6 @@ const emit = defineEmits<{
     back: []
 }>()
 
-// 插件管理器API
-const pluginManager = inject<PluginManagerAPI>('pluginManager')
 
 // 当前选中的动作
 const selectedAction = ref<PluginAction | null>(null)
@@ -65,8 +66,6 @@ const embeddedViewContainer = ref<HTMLDivElement | null>(null)
 
 // 加载并执行动作
 const loadAndExecuteAction = async () => {
-    if (!pluginManager) return
-
     const actionId = props.actionId
     isLoading.value = true
     hasError.value = false
@@ -79,7 +78,7 @@ const loadAndExecuteAction = async () => {
 
     try {
         // 查找动作信息
-        const action = pluginManager.actions.find(a => a.id === actionId)
+        const action = pluginManager.getAction(actionId)
         if (!action) {
             throw new Error(`未找到动作: ${actionId}`)
         }
@@ -88,7 +87,7 @@ const loadAndExecuteAction = async () => {
         console.log(`PluginView: 加载动作 ${action.title}`)
 
         // 执行动作
-        const result = await pluginManager.executeAction(actionId)
+        const result = await pluginManager.executeAction(action)
         actionResult.value = result
         console.log(`PluginView: 动作执行结果:`, result)
 

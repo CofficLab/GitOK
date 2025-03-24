@@ -24,7 +24,7 @@ export default defineConfig({
     build: {
       rollupOptions: {
         input: {
-          index: resolve(__dirname, 'src/preload/index.ts'),
+          'app-preload': resolve(__dirname, 'src/preload/app-preload.ts'),
           'plugin-preload': resolve(__dirname, 'src/preload/plugin-preload.ts'),
         },
       },

@@ -111,7 +111,7 @@ class WindowManager extends BaseManager {
       frame: showTrafficLights !== false,
       ...(process.platform === 'linux' ? { icon } : {}),
       webPreferences: {
-        preload: join(__dirname, '../preload/index.js'),
+        preload: join(__dirname, '../preload/app-preload.js'),
         sandbox: false,
         webSecurity: true,
         contextIsolation: true,

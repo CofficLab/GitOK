@@ -26,7 +26,11 @@
  */
 
 import { defineStore } from 'pinia';
-import type { PluginAction } from '../components/PluginManager.vue';
+import type { PluginAction } from '@/types/plugin-action';
+
+const electronApi = window.electron;
+const pluginsApi = electronApi.plugins;
+const actionsApi = pluginsApi.actions;
 
 export const useSearchStore = defineStore('search', {
   state: () => ({
@@ -62,9 +66,7 @@ export const useSearchStore = defineStore('search', {
 
       try {
         console.log('searchStore: 调用 window.api.plugins.getPluginActions');
-        const response = await (window.api as any).plugins.getPluginActions(
-          this.keyword
-        );
+        const response = await actionsApi.getPluginActions(this.keyword);
         if (response.success) {
           console.log('searchStore: 加载插件动作成功:', response.actions);
           this.pluginActions = response.actions as PluginAction[];

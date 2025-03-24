@@ -10,7 +10,7 @@
 <script setup lang="ts">
 import { onMounted, computed } from 'vue'
 import { useSearchStore } from '@renderer/stores/searchStore'
-import type { PluginAction } from '@renderer/components/PluginManager.vue'
+import type { PluginAction } from '@/types/plugin-action'
 
 const searchStore = useSearchStore()
 
@@ -62,17 +62,17 @@ onMounted(() => {
 
             <!-- 动作列表 -->
             <ul v-else class="space-y-2">
-                <li v-for="(result, index) in searchStore.pluginActions" :key="result.id"
+                <li v-for="(action, index) in searchStore.pluginActions" :key="action.id"
                     class="plugin-action-item p-3 border rounded-lg hover:bg-gray-50 cursor-pointer transition-colors flex items-center"
-                    :tabindex="index + 1" @click="handleActionSelected(result)"
-                    @keydown.enter="handleActionSelected(result)" @keydown.space.prevent="handleActionSelected(result)"
+                    :tabindex="index + 1" @click="handleActionSelected(action)"
+                    @keydown.enter="handleActionSelected(action)" @keydown.space.prevent="handleActionSelected(action)"
                     @keydown.esc="handleCancel" @keydown.up="index > 0 ? $el.previousElementSibling?.focus() : null"
                     @keydown.down="index < searchStore.pluginActions.length - 1 ? $el.nextElementSibling?.focus() : null">
-                    <div v-if="result.icon" class="mr-3 text-xl">{{ result.icon }}</div>
+                    <div v-if="action.icon" class="mr-3 text-xl">{{ action.icon }}</div>
                     <div class="flex-1">
-                        <h3 class="font-medium">{{ result.title }}</h3>
-                        <p v-if="result.description" class="text-sm text-gray-600">{{ result.description }}</p>
-                        <p class="text-xs text-gray-400 mt-1">来自: {{ result.plugin }}</p>
+                        <h3 class="font-medium">{{ action.title }}</h3>
+                        <p v-if="action.description" class="text-sm text-gray-600">{{ action.description }}</p>
+                        <p class="text-xs text-gray-400 mt-1">来自: {{ action.id }}</p>
                     </div>
                 </li>
             </ul>
