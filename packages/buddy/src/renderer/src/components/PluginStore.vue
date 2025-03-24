@@ -7,14 +7,13 @@ import { ref, computed } from 'vue';
 import type { StorePlugin } from '../../../types/plugin';
 
 // 标签页选项
-const tabs: { id: 'user' | 'builtin' | 'dev'; label: string }[] = [
+const tabs: { id: 'user' | 'dev'; label: string }[] = [
     { id: 'user', label: '用户插件' },
-    { id: 'builtin', label: '内置插件' },
     { id: 'dev', label: '开发插件' }
 ];
 
 // 当前选中的标签页
-const activeTab = ref<'user' | 'builtin' | 'dev'>('user');
+const activeTab = ref<'user' | 'dev'>('user');
 
 // 插件列表
 const plugins = ref<StorePlugin[]>([]);

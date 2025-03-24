@@ -12,15 +12,14 @@ import type { StorePlugin } from '@/types/plugin'
 
 // 插件列表
 const plugins = ref<StorePlugin[]>([])
-const directories = ref<{ builtin: string; user: string; dev: string } | null>(null)
+const directories = ref<{ user: string; dev: string } | null>(null)
 const errorMessage = ref('')
 const showError = ref(false)
-const isCreatingExamplePlugin = ref(false)
 const successMessage = ref('')
 const showSuccess = ref(false)
 
 // 当前选中的标签
-const activeTab = ref<'builtin' | 'user' | 'dev'>('builtin')
+const activeTab = ref<'user' | 'dev'>('user')
 
 // 加载插件列表
 const loadPlugins = async () => {
@@ -65,27 +64,6 @@ const openDirectory = async (directory: string) => {
     }
 }
 
-// 创建示例插件
-const createExamplePlugin = async () => {
-    try {
-        isCreatingExamplePlugin.value = true
-        const response = await (window.api as any).plugin.createExamplePlugin()
-
-        if (response.success) {
-            showSuccessMessage('示例插件创建成功！')
-            // 刷新插件列表
-            await loadPlugins()
-        } else {
-            showErrorMessage(`创建示例插件失败: ${response.error || '未知错误'}`)
-        }
-    } catch (error) {
-        const errorMsg = error instanceof Error ? error.message : String(error)
-        showErrorMessage(`创建示例插件失败: ${errorMsg}`)
-    } finally {
-        isCreatingExamplePlugin.value = false
-    }
-}
-
 // 显示错误信息
 const showErrorMessage = (message: string) => {
     errorMessage.value = message
@@ -109,7 +87,6 @@ const showSuccessMessage = (message: string) => {
 // 根据标签过滤插件
 const filteredPlugins = computed(() => {
     return plugins.value.filter(plugin => {
-        if (activeTab.value === 'builtin') return plugin.recommendedLocation === 'builtin'
         if (activeTab.value === 'user') return plugin.recommendedLocation === 'user'
         if (activeTab.value === 'dev') return plugin.recommendedLocation === 'dev'
         return true
@@ -118,49 +95,40 @@ const filteredPlugins = computed(() => {
 
 // 获取当前目录
 const currentDirectory = computed(() => {
-    if (!directories.value) return ''
-
-    if (activeTab.value === 'builtin') return directories.value.builtin
+    if (!directories.value) return null
     if (activeTab.value === 'user') return directories.value.user
     if (activeTab.value === 'dev') return directories.value.dev
-    return ''
+    return null
 })
 
-// 是否展示创建示例插件按钮
-const showCreateExampleButton = computed(() => {
-    return activeTab.value === 'dev'
-})
-
-// 标签类型
-const tabs = ['builtin', 'user', 'dev'] as const
-
-onMounted(() => {
-    loadPlugins()
-    loadDirectories()
+// 初始化
+onMounted(async () => {
+    await loadDirectories()
+    await loadPlugins()
 })
 </script>
 
 <template>
-    <div class="flex flex-col h-full p-4">
+    <div class="p-4 h-full flex flex-col">
         <!-- 错误提示 -->
-        <div v-if="showError" class="mb-4 p-4 bg-red-100 text-red-700 rounded-lg">
+        <div v-if="showError" class="mb-4 p-4 bg-red-100 text-red-700 rounded">
             {{ errorMessage }}
         </div>
 
         <!-- 成功提示 -->
-        <div v-if="showSuccess" class="mb-4 p-4 bg-green-100 text-green-700 rounded-lg">
+        <div v-if="showSuccess" class="mb-4 p-4 bg-green-100 text-green-700 rounded">
             {{ successMessage }}
         </div>
 
-        <!-- 标签页 -->
-        <div class="flex space-x-2 mb-4">
-            <button v-for="tab in tabs" :key="tab" @click="activeTab = tab" :class="[
-                'px-4 py-2 rounded-lg text-sm font-medium',
-                activeTab === tab
-                    ? 'bg-blue-500 text-white'
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-            ]">
-                {{ tab === 'builtin' ? '内置插件' : tab === 'user' ? '用户插件' : '开发插件' }}
+        <!-- 标签栏 -->
+        <div class="mb-4 border-b">
+            <button @click="activeTab = 'user'"
+                :class="['px-4 py-2 -mb-px', activeTab === 'user' ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-600']">
+                用户插件
+            </button>
+            <button @click="activeTab = 'dev'"
+                :class="['px-4 py-2 -mb-px', activeTab === 'dev' ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-600']">
+                开发中
             </button>
         </div>
 
@@ -171,11 +139,6 @@ onMounted(() => {
                 插件目录：{{ currentDirectory }}
             </div>
             <div class="flex gap-2">
-                <button v-if="showCreateExampleButton" @click="createExamplePlugin" :disabled="isCreatingExamplePlugin"
-                    class="px-3 py-1 text-sm bg-green-500 text-white rounded hover:bg-green-600 disabled:bg-gray-400 disabled:cursor-not-allowed">
-                    <span v-if="isCreatingExamplePlugin">创建中...</span>
-                    <span v-else>创建示例插件</span>
-                </button>
                 <button @click="openDirectory(currentDirectory)"
                     class="px-3 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600">
                     打开目录

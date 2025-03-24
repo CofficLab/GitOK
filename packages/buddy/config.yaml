@@ -42,7 +42,7 @@ window:
   followDesktop: true
   # 是否启用窗口管理器的日志输出
   # 可选值: true (启用), false (禁用)
-  enableLogging: true
+  enableLogging: false
   # 日志级别
   # 可选值: "debug", "info", "warn", "error"
   logLevel: 'info'

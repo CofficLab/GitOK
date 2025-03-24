@@ -110,7 +110,6 @@ interface Window {
       getDirectories: () => Promise<{
         success: boolean;
         directories: {
-          builtin: string;
           user: string;
           dev: string;
         };
@@ -118,12 +117,6 @@ interface Window {
       openDirectory: (directory: string) => Promise<{
         success: boolean;
         error?: string;
-      }>;
-      createExamplePlugin: () => Promise<{
-        success: boolean;
-        message?: string;
-        error?: string;
-        path?: string;
       }>;
     };
   };

@@ -106,20 +106,6 @@ class IPCManager extends BaseManager {
   private registerPluginHandlers(): void {
     this.logger.debug('注册插件相关IPC处理函数');
 
-    // 获取插件目录信息
-    ipcMain.handle('plugin:getDirectories', async () => {
-      this.logger.debug('处理IPC请求: plugin:getDirectories');
-      try {
-        const directories = pluginManager.getPluginDirectories();
-        return { success: true, directories };
-      } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : String(error);
-        this.logger.error('获取插件目录失败', { error: errorMessage });
-        return { success: false, error: errorMessage };
-      }
-    });
-
     // 获取插件商店列表
     ipcMain.handle('plugin:getStorePlugins', async () => {
       this.logger.debug('处理IPC请求: plugin:getStorePlugins');
@@ -129,7 +115,21 @@ class IPCManager extends BaseManager {
       } catch (error) {
         const errorMessage =
           error instanceof Error ? error.message : String(error);
-        this.logger.error('获取插件商店列表失败', { error: errorMessage });
+        this.logger.error('获取插件列表失败', { error: errorMessage });
+        return { success: false, error: errorMessage };
+      }
+    });
+
+    // 获取插件目录信息
+    ipcMain.handle('plugin:getDirectories', () => {
+      this.logger.debug('处理IPC请求: plugin:getDirectories');
+      try {
+        const directories = pluginManager.getPluginDirectories();
+        return { success: true, directories };
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : String(error);
+        this.logger.error('获取插件目录信息失败', { error: errorMessage });
         return { success: false, error: errorMessage };
       }
     });
@@ -201,27 +201,16 @@ class IPCManager extends BaseManager {
     });
 
     // 打开插件目录
-    ipcMain.handle('plugin:openDirectory', async (_, directory: string) => {
+    ipcMain.handle('plugin:openDirectory', (_, directory: string) => {
+      this.logger.debug('处理IPC请求: plugin:openDirectory', { directory });
       try {
-        // 如果是相对路径，则转换为绝对路径
-        const absolutePath = directory.startsWith('/')
-          ? directory
-          : join(app.getPath('userData'), directory);
-
-        // 使用系统默认程序打开目录
-        await shell.openPath(absolutePath);
-
-        return {
-          success: true,
-        };
+        shell.openPath(directory);
+        return { success: true };
       } catch (error) {
         const errorMessage =
           error instanceof Error ? error.message : String(error);
-        this.logger.error('Failed to open directory:', { error: errorMessage });
-        return {
-          success: false,
-          error: '无法打开目录',
-        };
+        this.logger.error('打开插件目录失败', { error: errorMessage });
+        return { success: false, error: errorMessage };
       }
     });
 
@@ -309,116 +298,6 @@ class IPCManager extends BaseManager {
         return false;
       }
     });
-
-    // 创建示例插件
-    ipcMain.handle('plugin:createExamplePlugin', async () => {
-      this.logger.debug('处理IPC请求: plugin:createExamplePlugin');
-      try {
-        // 获取插件目录
-        const pluginDirectories = pluginManager.getPluginDirectories();
-        // 直接使用插件管理器提供的开发插件目录路径
-        const devPluginDir = pluginDirectories.dev;
-        const examplePluginTargetDir = path.join(
-          devPluginDir,
-          'example-plugin'
-        );
-
-        // 创建开发插件目录（如果不存在）
-        if (!fs.existsSync(devPluginDir)) {
-          fs.mkdirSync(devPluginDir, { recursive: true });
-        }
-
-        // 如果目标插件已存在，先删除它
-        if (fs.existsSync(examplePluginTargetDir)) {
-          this.logger.info(
-            `目标目录已存在，删除现有示例插件: ${examplePluginTargetDir}`
-          );
-          fs.rmSync(examplePluginTargetDir, { recursive: true, force: true });
-        }
-
-        // 确定示例插件源目录
-        let sourceDir = '';
-
-        if (app.isPackaged) {
-          // 生产环境 - 从资源目录复制
-          sourceDir = path.join(
-            app.getAppPath(),
-            '..',
-            'resources',
-            'plugins',
-            'examples',
-            'example-plugin'
-          );
-          this.logger.debug(`生产环境示例插件源目录: ${sourceDir}`);
-        } else {
-          // 开发环境 - 从项目目录复制
-          sourceDir = path.join(
-            app.getAppPath(),
-            '..',
-            '..',
-            'packages',
-            'example-plugin'
-          );
-          this.logger.debug(`开发环境示例插件源目录: ${sourceDir}`);
-        }
-
-        if (!fs.existsSync(sourceDir)) {
-          throw new Error(`源示例插件目录不存在: ${sourceDir}`);
-        }
-
-        // 复制示例插件到开发插件目录
-        this.logger.info(
-          `复制示例插件: ${sourceDir} -> ${examplePluginTargetDir}`
-        );
-        this.copyFolderSync(sourceDir, examplePluginTargetDir);
-
-        // 刷新插件管理器
-        this.logger.info('重新加载插件');
-
-        // 重新初始化插件管理器
-        await pluginManager.initialize();
-
-        return {
-          success: true,
-          message: '示例插件创建成功',
-          path: examplePluginTargetDir,
-        };
-      } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : String(error);
-        this.logger.error('创建示例插件失败', { error: errorMessage });
-        return { success: false, error: errorMessage };
-      }
-    });
-  }
-
-  /**
-   * 递归复制目录及其内容
-   * @param src 源目录
-   * @param dest 目标目录
-   */
-  private copyFolderSync(src: string, dest: string): void {
-    // 如果目标目录不存在，创建它
-    if (!fs.existsSync(dest)) {
-      fs.mkdirSync(dest, { recursive: true });
-    }
-
-    // 获取源目录中的所有文件和文件夹
-    const entries = fs.readdirSync(src, { withFileTypes: true });
-
-    // 复制每个文件和子目录
-    for (const entry of entries) {
-      const srcPath = path.join(src, entry.name);
-      const destPath = path.join(dest, entry.name);
-
-      if (entry.isDirectory()) {
-        // 递归复制子目录
-        this.copyFolderSync(srcPath, destPath);
-      } else {
-        // 复制文件
-        fs.copyFileSync(srcPath, destPath);
-      }
-    }
   }
 
   /**

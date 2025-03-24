@@ -1,0 +1,21 @@
+{
+  "name": "gitok-vscode-workspace-plugin",
+  "version": "1.0.0",
+  "description": "GitOK VSCode 工作区插件",
+  "main": "dist/index.js",
+  "gitokPlugin": {
+    "id": "vscode-workspace-plugin"
+  },
+  "scripts": {
+    "build": "esbuild index.js --bundle --platform=node --target=node16 --outfile=dist/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "sqlite3": "^5.1.7"
+  },
+  "devDependencies": {
+    "esbuild": "^0.20.1"
+  },
+  "author": "Coffic",
+  "license": "MIT"
+}

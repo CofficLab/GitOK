@@ -24,7 +24,6 @@ export interface PluginManagerConfig {
    * 插件目录信息
    */
   directories?: {
-    builtIn: string;
     user: string;
     dev: string;
   };
@@ -169,14 +168,13 @@ export interface PluginPackage {
  */
 export interface PluginDirectories {
   user: string; // 用户插件目录
-  builtin: string; // 内置插件目录
   dev: string; // 开发插件目录
 }
 
 /**
  * 插件位置类型
  */
-export type PluginLocation = 'builtin' | 'user' | 'dev';
+export type PluginLocation = 'user' | 'dev';
 
 /**
  * 插件商店中的插件信息
@@ -213,19 +211,18 @@ export interface StorePlugin {
    */
   directories: {
     user: string;
-    builtin: string;
     dev: string;
   };
 
   /**
    * 推荐安装位置
    */
-  recommendedLocation: 'user' | 'builtin' | 'dev';
+  recommendedLocation: 'user' | 'dev';
 
   /**
    * 当前安装位置（如果已安装）
    */
-  currentLocation?: 'user' | 'builtin' | 'dev';
+  currentLocation?: 'user' | 'dev';
 }
 
 /**
@@ -262,11 +259,6 @@ export interface Plugin {
    * 插件安装路径
    */
   path: string;
-
-  /**
-   * 是否为内置插件
-   */
-  isBuiltin: boolean;
 
   /**
    * 是否为开发中的插件

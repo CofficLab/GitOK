@@ -21,6 +21,7 @@
     "distutils",
     "electronjs",
     "Frontmost",
+    "gitok",
     "iwyu",
     "LDFLAGS",
     "libc",

@@ -11,11 +11,6 @@
  * │   │   └── ...           # 其他资源
  * │   └── plugin-2/
  * │       └── ...
- * ├── builtin/               # 内置插件
- * │   ├── plugin-3/
- * │   │   └── ...
- * │   └── plugin-4/
- * │       └── ...
  * └── dev/                   # 开发中的插件
  *     ├── plugin-5/
  *     │   └── ...
@@ -23,33 +18,23 @@
  *         └── ...
  */
 import { app } from 'electron';
-import { join } from 'path';
-import { EventEmitter } from 'events';
+import { join, dirname } from 'path';
 import fs from 'fs';
-import { Logger } from '../utils/Logger';
 import { configManager } from './ConfigManager';
 import { BaseManager } from './BaseManager';
-import type {
-  Plugin,
-  PluginPackage,
-  StorePlugin,
-  PluginAction,
-} from '../../types';
+import type { Plugin, PluginPackage, StorePlugin } from '../../types';
 
 class PluginManager extends BaseManager {
   private static instance: PluginManager;
   private plugins: Map<string, Plugin> = new Map();
-  private config: any;
 
   // 插件目录
   private pluginsDir: string;
-  private builtinPluginsDir: string;
   private devPluginsDir: string;
 
   // 插件目录类型
   private static readonly PLUGIN_DIRS = {
     USER: 'user',
-    BUILTIN: 'builtin',
     DEV: 'dev',
   } as const;
 
@@ -60,23 +45,31 @@ class PluginManager extends BaseManager {
       enableLogging: config.enableLogging,
       logLevel: config.logLevel,
     });
-    this.config = config;
 
     // 初始化插件目录
     const userDataPath = app.getPath('userData');
     const pluginsRootDir = join(userDataPath, 'plugins');
 
+    // 计算项目根目录：从当前文件位置向上查找，直到找到包含 package.json 的目录
+    let workspaceRoot = __dirname;
+    while (!fs.existsSync(join(workspaceRoot, 'package.json'))) {
+      const parentDir = dirname(workspaceRoot);
+      if (parentDir === workspaceRoot) {
+        throw new Error('找不到项目根目录');
+      }
+      workspaceRoot = parentDir;
+    }
+    // 回退到项目根目录（因为 buddy 在 packages 目录下）
+    workspaceRoot = join(workspaceRoot, '../..');
+
     this.pluginsDir = join(pluginsRootDir, PluginManager.PLUGIN_DIRS.USER);
-    this.builtinPluginsDir = join(
-      pluginsRootDir,
-      PluginManager.PLUGIN_DIRS.BUILTIN
-    );
-    this.devPluginsDir = join(pluginsRootDir, PluginManager.PLUGIN_DIRS.DEV);
+    // 开发中的插件目录指向工作空间的 packages 目录
+    this.devPluginsDir = join(workspaceRoot, 'packages');
 
     this.logger.info('插件目录初始化完成', {
       pluginsRootDir,
+      workspaceRoot,
       pluginsDir: this.pluginsDir,
-      builtinPluginsDir: this.builtinPluginsDir,
       devPluginsDir: this.devPluginsDir,
     });
   }
@@ -116,7 +109,6 @@ class PluginManager extends BaseManager {
   getPluginDirectories() {
     return {
       user: this.pluginsDir,
-      builtin: this.builtinPluginsDir,
       dev: this.devPluginsDir,
     };
   }
@@ -126,11 +118,7 @@ class PluginManager extends BaseManager {
    */
   private async ensurePluginDirs(): Promise<void> {
     try {
-      const dirs = [
-        this.pluginsDir,
-        this.builtinPluginsDir,
-        this.devPluginsDir,
-      ];
+      const dirs = [this.pluginsDir, this.devPluginsDir];
 
       for (const dir of dirs) {
         if (!fs.existsSync(dir)) {
@@ -150,9 +138,6 @@ class PluginManager extends BaseManager {
     this.logger.info('开始加载插件');
 
     try {
-      // 加载内置插件
-      await this.loadBuiltinPlugins();
-
       // 加载用户安装的插件
       await this.loadUserPlugins();
 
@@ -208,7 +193,7 @@ class PluginManager extends BaseManager {
    */
   private async loadPluginsFromDir(
     dir: string,
-    type: 'user' | 'builtin' | 'dev'
+    type: 'user' | 'dev'
   ): Promise<void> {
     if (!fs.existsSync(dir)) {
       this.logger.info(`${type} 插件目录不存在，跳过加载`);
@@ -222,23 +207,12 @@ class PluginManager extends BaseManager {
 
       for (const entry of entries) {
         if (entry.isDirectory()) {
-          await this.loadPlugin(
-            join(dir, entry.name),
-            type === 'builtin',
-            type === 'dev'
-          );
+          await this.loadPlugin(join(dir, entry.name), false, type === 'dev');
         }
       }
     } catch (error) {
       this.handleError(error, `加载 ${type} 插件失败`);
     }
-  }
-
-  /**
-   * 加载内置插件
-   */
-  private async loadBuiltinPlugins(): Promise<void> {
-    await this.loadPluginsFromDir(this.builtinPluginsDir, 'builtin');
   }
 
   /**
@@ -285,6 +259,14 @@ class PluginManager extends BaseManager {
       // 优先使用 gitokPlugin.id 作为插件ID，其次使用包名
       const pluginId = packageJson.gitokPlugin?.id || packageJson.name;
 
+      // 检查是否是 GitOK 插件
+      if (!packageJson.gitokPlugin && isDev) {
+        this.logger.warn(
+          `开发中的项目 ${pluginPath} 不是 GitOK 插件（缺少 gitokPlugin 配置），跳过加载`
+        );
+        return;
+      }
+
       const plugin: Plugin = {
         id: pluginId,
         name: packageJson.name,
@@ -292,7 +274,6 @@ class PluginManager extends BaseManager {
         version: packageJson.version,
         author: packageJson.author,
         path: pluginPath,
-        isBuiltin,
         isDev,
       };
 
@@ -307,13 +288,17 @@ class PluginManager extends BaseManager {
    * 验证插件包信息
    */
   private validatePluginPackage(pkg: PluginPackage): boolean {
-    return !!(
-      pkg.name &&
-      pkg.version &&
-      pkg.description &&
-      pkg.author &&
-      pkg.main
-    );
+    // 对于开发中的插件，需要有 gitokPlugin 配置
+    if (pkg.gitokPlugin) {
+      return !!(
+        pkg.name &&
+        pkg.version &&
+        pkg.description &&
+        pkg.author &&
+        pkg.main
+      );
+    }
+    return false;
   }
 
   /**
@@ -364,11 +349,9 @@ class PluginManager extends BaseManager {
         }
 
         // 确定插件的当前位置
-        let currentLocation: 'user' | 'builtin' | 'dev' | undefined;
+        let currentLocation: 'user' | 'dev' | undefined;
         if (dir === this.devPluginsDir) {
           currentLocation = 'dev';
-        } else if (dir === this.builtinPluginsDir) {
-          currentLocation = 'builtin';
         } else if (dir === this.pluginsDir) {
           currentLocation = 'user';
         }
@@ -399,14 +382,13 @@ class PluginManager extends BaseManager {
 
     try {
       // 从各个目录读取插件
-      const [userPlugins, builtinPlugins, devPlugins] = await Promise.all([
+      const [userPlugins, devPlugins] = await Promise.all([
         this.readPluginsFromDir(this.pluginsDir),
-        this.readPluginsFromDir(this.builtinPluginsDir),
         this.readPluginsFromDir(this.devPluginsDir),
       ]);
 
       // 合并所有插件列表
-      const allPlugins = [...userPlugins, ...builtinPlugins, ...devPlugins];
+      const allPlugins = [...userPlugins, ...devPlugins];
 
       // 按照插件名称排序
       allPlugins.sort((a, b) => a.name.localeCompare(b.name));
@@ -425,9 +407,16 @@ class PluginManager extends BaseManager {
    */
   public async loadPluginModule(plugin: Plugin): Promise<any> {
     try {
-      const mainFilePath = join(plugin.path, 'index.js');
+      // 读取 package.json 以获取入口文件路径
+      const packageJsonPath = join(plugin.path, 'package.json');
+      const packageJson = JSON.parse(
+        await fs.promises.readFile(packageJsonPath, 'utf8')
+      ) as PluginPackage;
+
+      // 使用 package.json 中的 main 字段作为入口文件
+      const mainFilePath = join(plugin.path, packageJson.main);
       if (!fs.existsSync(mainFilePath)) {
-        throw new Error(`插件主入口文件不存在: ${mainFilePath}`);
+        throw new Error(`插件入口文件不存在: ${mainFilePath}`);
       }
 
       // 清除缓存以确保重新加载
