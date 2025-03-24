@@ -57,7 +57,6 @@ class PluginManager extends EventEmitter {
 
     // 初始化插件目录
     const userDataPath = app.getPath('userData');
-    const appPath = app.getAppPath();
     const pluginsRootDir = join(userDataPath, 'plugins');
 
     this.pluginsDir = join(pluginsRootDir, 'user');

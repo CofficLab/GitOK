@@ -23,8 +23,8 @@ try {
   // 删除源目录
   fs.rmSync(path.resolve(__dirname, 'build'), { recursive: true, force: true });
 
-  console.log('构建成功');
+  console.log('🎉🎉🎉 active-app-monitor 构建成功');
 } catch (error) {
-  console.error('构建失败');
+  console.error('💥💥💥 active-app-monitor 构建失败');
   process.exit(1);
 }

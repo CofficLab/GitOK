@@ -163,7 +163,7 @@ class PluginViewManager extends EventEmitter {
   private createWindowView(
     viewId: string,
     html: string,
-    mainWindowBounds: Electron.Rectangle,
+    _mainWindowBounds: Electron.Rectangle,
     devToolsEnabled: boolean
   ): Electron.Rectangle {
     this.logger.debug(`创建独立窗口视图: ${viewId}`);
@@ -711,25 +711,6 @@ class PluginViewManager extends EventEmitter {
       }
     }
     this.viewWindows.clear();
-  }
-
-  /**
-   * 检查窗口是否在屏幕可见区域内
-   * @param windowBounds 窗口边界
-   * @param screenBounds 屏幕边界
-   * @returns 是否在屏幕内
-   */
-  private isWindowVisibleOnScreen(
-    windowBounds: Electron.Rectangle,
-    screenBounds: Electron.Rectangle
-  ): boolean {
-    // 检查窗口是否至少有一部分在屏幕内
-    return !(
-      windowBounds.x + windowBounds.width < screenBounds.x ||
-      windowBounds.x > screenBounds.x + screenBounds.width ||
-      windowBounds.y + windowBounds.height < screenBounds.y ||
-      windowBounds.y > screenBounds.y + screenBounds.height
-    );
   }
 }
 

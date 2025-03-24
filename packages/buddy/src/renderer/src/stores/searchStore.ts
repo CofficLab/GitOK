@@ -26,7 +26,6 @@
  */
 
 import { defineStore } from 'pinia';
-import { ref } from 'vue';
 import type { PluginAction } from '../components/PluginManager.vue';
 
 export const useSearchStore = defineStore('search', {

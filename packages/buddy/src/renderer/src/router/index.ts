@@ -40,7 +40,7 @@ const router = createRouter({
 });
 
 // 路由守卫：处理窗口标题等
-router.beforeEach((to, from, next) => {
+router.beforeEach((to, _from, next) => {
   // 设置窗口标题
   if (to.meta.title) {
     document.title = `GitOK - ${to.meta.title}`;

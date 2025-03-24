@@ -304,7 +304,6 @@ class WindowManager extends EventEmitter {
   ): Promise<void> {
     if (!this.mainWindow) return;
 
-    const windowConfig = this.configManager.getWindowConfig();
     this.logger.info('窗口配置为跟随桌面模式');
 
     if (process.platform === 'darwin') {

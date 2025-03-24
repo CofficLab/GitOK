@@ -19,7 +19,7 @@ App.vue - 应用程序入口组件
 -->
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, onUnmounted, watch } from 'vue'
+import { ref, onMounted, onUnmounted, watch } from 'vue'
 import SearchBar from './layouts/SearchBar.vue'
 import PluginManager from './components/PluginManager.vue'
 import { useSearchStore } from './stores/searchStore'
@@ -33,11 +33,6 @@ const searchBar = ref()
 
 // 使用搜索store
 const searchStore = useSearchStore()
-
-// 应用状态
-const appState = reactive({
-    showPluginStore: false
-})
 
 // 处理从插件视图接收的消息
 const handlePluginMessage = (...args: unknown[]) => {

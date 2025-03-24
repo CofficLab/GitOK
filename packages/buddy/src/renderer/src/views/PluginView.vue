@@ -7,7 +7,7 @@
 * 3. 提供返回到动作列表的功能
 */
 <script setup lang="ts">
-import { ref, inject, watch, onMounted, onUnmounted, reactive } from 'vue'
+import { ref, inject, watch, onUnmounted, reactive } from 'vue'
 import type { PluginManagerAPI, PluginAction } from '@renderer/components/PluginManager.vue'
 
 // 定义辅助函数获取插件视图API

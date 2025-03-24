@@ -11,12 +11,6 @@ import {
   ActiveApplication,
 } from '@coffic/active-app-monitor';
 
-interface OverlaidAppInfo {
-  name: string;
-  bundleId: string;
-  processId: number;
-}
-
 class AppStateManager extends EventEmitter {
   private static instance: AppStateManager;
   private logger: Logger;
@@ -24,10 +18,10 @@ class AppStateManager extends EventEmitter {
 
   private constructor() {
     super();
-    const windowConfig = configManager.getWindowConfig();
+    const { enableLogging, logLevel } = configManager.getWindowConfig();
     this.logger = new Logger('AppStateManager', {
-      enabled: windowConfig.enableLogging ?? true,
-      level: windowConfig.logLevel || 'info',
+      enabled: enableLogging ?? true,
+      level: logLevel || 'info',
     });
     this.logger.info('AppStateManager 初始化');
 

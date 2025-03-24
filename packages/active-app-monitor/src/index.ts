@@ -1,7 +1,7 @@
 /**
  * 获取当前活跃应用信息的接口
  */
-interface ActiveApplication {
+export interface ActiveApplication {
   name: string;
   bundleId: string;
   bundlePath: string;
