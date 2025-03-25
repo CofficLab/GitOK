@@ -28,7 +28,6 @@ const activeTab = ref<'user' | 'dev'>('user')
 const loadPlugins = async () => {
     try {
         const response = await management.getStorePlugins()
-        logger.info(`插件列表响应: `, response)
         if (response.success) {
             plugins.value = response.data || []
         } else {

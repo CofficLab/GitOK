@@ -43,11 +43,13 @@ class StateManager extends BaseManager {
   private setupAppStateListeners(): void {
     // 监听应用激活事件
     app.on('activate', () => {
+      logger.info('应用激活事件');
       this.emit('app-activated');
     });
 
     // 监听应用失去焦点事件
     app.on('browser-window-blur', () => {
+      logger.info('应用失去焦点事件');
       this.emit('app-deactivated');
     });
   }
@@ -71,6 +73,7 @@ class StateManager extends BaseManager {
    * 获取当前活跃的应用信息
    */
   getCurrentActiveApp(): ActiveApplication | null {
+    logger.debug('获取当前活跃应用信息');
     if (process.platform !== 'darwin') {
       return null;
     }
