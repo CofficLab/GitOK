@@ -7,7 +7,7 @@ import { join } from 'path';
 import { is } from '@electron-toolkit/utils';
 import icon from '../../../resources/icon.png?asset';
 import { configManager } from './ConfigManager';
-import { appStateManager } from './AppStateManager';
+import { appStateManager } from './StateManager';
 import { getFrontmostApplication } from '@coffic/active-app-monitor';
 import { BaseManager } from './BaseManager';
 import { windowLogger as logger } from './LogManager';

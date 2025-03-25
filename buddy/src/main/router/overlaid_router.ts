@@ -2,7 +2,7 @@
  * 被覆盖应用相关IPC处理函数
  */
 import { BrowserWindow } from 'electron';
-import { appStateManager } from '../managers/AppStateManager';
+import { appStateManager } from '../managers/StateManager';
 import { ipcLogger as logger } from '../managers/LogManager';
 import { IpcRoute } from '../services/RouterService';
 

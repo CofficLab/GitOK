@@ -9,7 +9,7 @@ import type { SuperAction } from '@/types/super_action';
 import { PluginActionEntity } from '../entities/PluginActionEntity';
 import { actionLogger as logger } from './LogManager';
 import { pluginDB } from '../db/PluginDB';
-import { appStateManager } from './AppStateManager';
+import { appStateManager } from './StateManager';
 import { PluginContext } from '@/types/plugin-context';
 
 class PluginActionManager extends BaseManager {

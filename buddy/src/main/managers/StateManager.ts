@@ -7,14 +7,14 @@ import { configManager } from './ConfigManager';
 import { BaseManager } from './BaseManager';
 import { ActiveApplication } from '@coffic/active-app-monitor';
 
-class AppStateManager extends BaseManager {
-  private static instance: AppStateManager;
+class StateManager extends BaseManager {
+  private static instance: StateManager;
   private overlaidApp: ActiveApplication | null = null;
 
   private constructor() {
     const { enableLogging, logLevel } = configManager.getWindowConfig();
     super({
-      name: 'AppStateManager',
+      name: 'StateManager',
       enableLogging: enableLogging ?? true,
       logLevel: logLevel || 'info',
     });
@@ -24,13 +24,13 @@ class AppStateManager extends BaseManager {
   }
 
   /**
-   * 获取 AppStateManager 实例
+   * 获取 StateManager 实例
    */
-  public static getInstance(): AppStateManager {
-    if (!AppStateManager.instance) {
-      AppStateManager.instance = new AppStateManager();
+  public static getInstance(): StateManager {
+    if (!StateManager.instance) {
+      StateManager.instance = new StateManager();
     }
-    return AppStateManager.instance;
+    return StateManager.instance;
   }
 
   /**
@@ -74,10 +74,10 @@ class AppStateManager extends BaseManager {
       app.removeAllListeners('activate');
       app.removeAllListeners('window-all-closed');
     } catch (error) {
-      this.handleError(error, '应用状态管理器清理失败');
+      this.handleError(error, '状态管理器清理失败');
     }
   }
 }
 
 // 导出单例
-export const appStateManager = AppStateManager.getInstance();
+export const appStateManager = StateManager.getInstance();
