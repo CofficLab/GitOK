@@ -37,14 +37,11 @@ export class RouterService {
    * 初始化所有路由
    */
   public initialize(): void {
-    logger.info('开始初始化IPC路由...');
+    logger.info('初始化IPC路由...');
 
     for (const { channel, handler } of this.routes) {
-      logger.debug(`注册IPC路由: ${channel}`);
       ipcMain.handle(channel, handler);
     }
-
-    logger.info('IPC路由初始化完成');
   }
 }
 

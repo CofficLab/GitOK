@@ -12,59 +12,6 @@ import { pluginViewManager } from './PluginViewManager';
 
 export class AppManager {
   private mainWindow: BrowserWindow | null = null;
-  private isDevelopment: boolean;
-
-  constructor() {
-    this.isDevelopment = !app.isPackaged;
-  }
-
-  /**
-   * 禁用不必要的特性和警告
-   */
-  private disableUnnecessaryFeatures(): void {
-    if (this.isDevelopment) {
-      // 开发模式下的配置
-      app.commandLine.appendSwitch(
-        'disable-features',
-        [
-          'Autofill',
-          'AutofillServerCommunication',
-          'ChromeWhatsNewUI',
-          'CalculateNativeWinOcclusion',
-          'HardwareMediaKeyHandling',
-          'MediaSessionService',
-          'DesktopCaptureMacV2',
-          'WarnBeforeQuitting',
-        ].join(',')
-      );
-
-      // 禁用各种试验性功能
-      app.commandLine.appendSwitch('disable-site-isolation-trials');
-      app.commandLine.appendSwitch('disable-ipc-flooding-protection');
-
-      // 禁用不必要的日志
-      app.commandLine.appendSwitch('force-renderer-accessibility', 'disabled');
-      app.commandLine.appendSwitch('log-level', '3');
-    } else {
-      app.commandLine.appendSwitch('disable-logging');
-    }
-  }
-
-  /**
-   * 检查是否是单实例运行
-   */
-  private checkSingleInstance(): boolean {
-    logger.debug('检查应用实例');
-    const isSingleInstance = app.requestSingleInstanceLock();
-
-    if (!isSingleInstance) {
-      logger.info('检测到应用的另一个实例已在运行，退出当前实例');
-      app.quit();
-      process.exit(0);
-    }
-
-    return true;
-  }
 
   /**
    * 设置应用事件监听器
@@ -121,10 +68,8 @@ export class AppManager {
 
     // 设置应用ID
     electronApp.setAppUserModelId('com.electron');
-    logger.debug('设置应用用户模型ID');
 
     // 创建主窗口
-    logger.info('创建主窗口');
     this.mainWindow = windowManager.createWindow();
 
     // 设置Command键双击管理器
@@ -177,8 +122,6 @@ export class AppManager {
    * 启动应用
    */
   public async start(): Promise<void> {
-    this.disableUnnecessaryFeatures();
-    this.checkSingleInstance();
     this.setupEventListeners();
 
     await app.whenReady();

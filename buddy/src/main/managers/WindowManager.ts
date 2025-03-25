@@ -11,16 +11,15 @@ import { BaseManager } from './BaseManager';
 import { logger } from './LogManager';
 
 const windowConfig = {
-  showTrafficLights: false,
+  showTrafficLights: true,
   showDebugToolbar: true,
   debugToolbarPosition: 'bottom',
-  spotlightHotkey: 'Option+Space',
-  spotlightSize: {
-    width: 1200,
-    height: 1400,
+  hotkey: 'Option+Space',
+  size: {
+    width: 800,
+    height: 800,
   },
   alwaysOnTop: true,
-  followDesktop: true,
 };
 
 class WindowManager extends BaseManager {
@@ -57,34 +56,28 @@ class WindowManager extends BaseManager {
    */
   createWindow(): BrowserWindow {
     logger.info('开始创建主窗口');
-    const { showDebugToolbar, debugToolbarPosition = 'right' } = windowConfig;
-
-    logger.debug('窗口配置', { windowConfig });
 
     try {
-      // 如果窗口已经存在，先销毁它
-      if (this.mainWindow && !this.mainWindow.isDestroyed()) {
-        logger.debug('销毁已存在的窗口');
-        this.mainWindow.destroy();
-      }
-
-      // 创建窗口配置
-      const windowOptions = this.createWindowOptions();
-
       // 创建浏览器窗口
-      logger.debug('创建浏览器窗口', { options: windowOptions });
-      this.mainWindow = new BrowserWindow(windowOptions);
+      this.mainWindow = new BrowserWindow({
+        width: windowConfig.size.width,
+        height: windowConfig.size.height,
+        show: false,
+        autoHideMenuBar: true,
+        frame: windowConfig.showTrafficLights !== false,
+        ...(process.platform === 'linux' ? { icon } : {}),
+        webPreferences: {
+          preload: join(__dirname, '../preload/app-preload.js'),
+          sandbox: false,
+          contextIsolation: true,
+          nodeIntegration: false,
+          devTools: windowConfig.showDebugToolbar,
+          spellcheck: false,
+        },
+      });
 
       // 设置窗口事件处理
-      this.setupWindowEvents(
-        showDebugToolbar,
-        debugToolbarPosition as
-          | 'bottom'
-          | 'right'
-          | 'left'
-          | 'undocked'
-          | 'detach'
-      );
+      this.setupWindowEvents();
 
       // 加载窗口内容
       this.loadWindowContent();
@@ -100,64 +93,9 @@ class WindowManager extends BaseManager {
   }
 
   /**
-   * 创建窗口配置选项
-   */
-  private createWindowOptions(): Electron.BrowserWindowConstructorOptions {
-    // 基本窗口配置
-    const windowOptions: Electron.BrowserWindowConstructorOptions = {
-      width: windowConfig.spotlightSize.width,
-      height: windowConfig.spotlightSize.height,
-      show: false,
-      autoHideMenuBar: true,
-      frame: windowConfig.showTrafficLights !== false,
-      ...(process.platform === 'linux' ? { icon } : {}),
-      webPreferences: {
-        preload: join(__dirname, '../preload/app-preload.js'),
-        sandbox: false,
-        webSecurity: true,
-        contextIsolation: true,
-        nodeIntegration: false,
-        devTools: is.dev,
-        spellcheck: false,
-        autoplayPolicy: 'document-user-activation-required',
-      },
-    };
-
-    Object.assign(
-      windowOptions,
-      this.getSpotlightModeOptions(windowConfig.alwaysOnTop)
-    );
-
-    return windowOptions;
-  }
-
-  /**
-   * 获取Spotlight模式的窗口选项
-   */
-  private getSpotlightModeOptions(
-    alwaysOnTop: boolean
-  ): Partial<Electron.BrowserWindowConstructorOptions> {
-    return {
-      frame: false,
-      transparent: true,
-      resizable: false,
-      movable: true,
-      center: true,
-      alwaysOnTop,
-      skipTaskbar: true,
-      vibrancy: 'under-window',
-      visualEffectState: 'active',
-      roundedCorners: true,
-    };
-  }
-
-  /**
    * 设置窗口事件
    */
-  private setupWindowEvents(
-    showDebugToolbar: boolean,
-    debugToolbarPosition: 'right' | 'bottom' | 'left' | 'undocked' | 'detach'
-  ): void {
+  private setupWindowEvents(): void {
     if (!this.mainWindow) return;
 
     // 窗口加载完成后显示
@@ -165,10 +103,17 @@ class WindowManager extends BaseManager {
       logger.debug('窗口准备就绪');
 
       // 根据配置决定是否打开开发者工具及其位置
-      if (showDebugToolbar && this.mainWindow) {
-        logger.debug(`打开开发者工具，位置: ${debugToolbarPosition}`);
+      if (windowConfig.showDebugToolbar && this.mainWindow) {
+        logger.info(
+          `打开开发者工具，位置: ${windowConfig.debugToolbarPosition}`
+        );
         this.mainWindow.webContents.openDevTools({
-          mode: debugToolbarPosition,
+          mode: windowConfig.debugToolbarPosition as
+            | 'bottom'
+            | 'right'
+            | 'left'
+            | 'undocked'
+            | 'detach',
         });
       }
     });
@@ -185,16 +130,17 @@ class WindowManager extends BaseManager {
    * 加载窗口内容
    */
   private loadWindowContent(): void {
+    logger.info('加载窗口内容');
     if (!this.mainWindow) return;
 
     if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-      logger.debug('开发模式：加载开发服务器URL', {
-        url: process.env['ELECTRON_RENDERER_URL'],
-      });
+      logger.info(
+        '开发模式：加载开发服务器URL -> ' + process.env['ELECTRON_RENDERER_URL']
+      );
       this.mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL']);
     } else {
-      const htmlPath = join(__dirname, '../../renderer/index.html');
-      logger.debug('生产模式：加载本地HTML文件', { path: htmlPath });
+      const htmlPath = join(__dirname, '../renderer/index.html');
+      logger.info('生产模式：加载本地HTML文件 -> ' + htmlPath);
       this.mainWindow.loadFile(htmlPath);
     }
   }
@@ -267,11 +213,11 @@ class WindowManager extends BaseManager {
     });
 
     // 计算窗口在当前显示器上的居中位置
-    const windowWidth = windowConfig.spotlightSize
-      ? windowConfig.spotlightSize.width
+    const windowWidth = windowConfig.size
+      ? windowConfig.size.width
       : this.mainWindow.getBounds().width;
-    const windowHeight = windowConfig.spotlightSize
-      ? windowConfig.spotlightSize.height
+    const windowHeight = windowConfig.size
+      ? windowConfig.size.height
       : this.mainWindow.getBounds().height;
 
     const x = Math.floor(
@@ -293,12 +239,8 @@ class WindowManager extends BaseManager {
     this.mainWindow.justTriggered = true;
     logger.debug('设置窗口保护标志，防止立即失焦隐藏');
 
-    // 窗口是否跟随桌面
-    if (windowConfig.followDesktop) {
-      await this.showWindowWithDesktopFollow(x, y);
-    } else {
-      await this.showWindowNormal(x, y);
-    }
+    // 窗口跟随桌面
+    await this.showWindowWithDesktopFollow(x, y);
   }
 
   /**
@@ -486,19 +428,17 @@ class WindowManager extends BaseManager {
       globalShortcut.unregisterAll();
 
       // 如果启用了Spotlight模式，注册全局快捷键
-      if (windowConfig.spotlightHotkey) {
-        logger.debug(
-          `尝试注册Spotlight模式全局快捷键: ${windowConfig.spotlightHotkey}`
-        );
+      if (windowConfig.hotkey) {
+        logger.debug(`尝试注册Spotlight模式全局快捷键: ${windowConfig.hotkey}`);
         if (
           !globalShortcut.register(
-            windowConfig.spotlightHotkey,
+            windowConfig.hotkey,
             this.toggleMainWindow.bind(this)
           )
         ) {
-          throw new Error(`注册快捷键失败: ${windowConfig.spotlightHotkey}`);
+          throw new Error(`注册快捷键失败: ${windowConfig.hotkey}`);
         }
-        logger.info(`已成功注册全局快捷键: ${windowConfig.spotlightHotkey}`);
+        logger.info(`已成功注册全局快捷键: ${windowConfig.hotkey}`);
       } else {
         logger.debug('未启用Spotlight模式或未设置快捷键，跳过全局快捷键注册');
       }
