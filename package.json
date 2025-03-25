@@ -1,8 +1,8 @@
 {
   "devDependencies": {
+    "inquirer": "^12.5.0",
     "nodemon": "^3.1.9",
-    "typescript": "^5.8.2",
-    "inquirer": "^12.5.0"
+    "typescript": "^5.8.2"
   },
   "workspaces": [
     "packages/*"
@@ -19,5 +19,9 @@
   "engines": {
     "node": ">=18.0.0",
     "pnpm": ">=8.0.0"
+  },
+  "dependencies": {
+    "electron-log": "^5.3.2",
+    "source-map-support": "^0.5.21"
   }
 }

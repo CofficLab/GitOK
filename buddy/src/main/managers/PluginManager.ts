@@ -5,7 +5,7 @@
 import { configManager } from './ConfigManager';
 import { BaseManager } from './BaseManager';
 import { PluginEntity } from '../entities/PluginEntity';
-import { pluginLogger as logger } from './LogManager';
+import { logger } from './LogManager';
 import { pluginDB } from '../db/PluginDB';
 
 class PluginManager extends BaseManager {

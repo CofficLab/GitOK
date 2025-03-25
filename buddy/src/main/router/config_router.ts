@@ -2,7 +2,7 @@
  * 配置相关IPC路由
  */
 import { configManager } from '../managers/ConfigManager';
-import { ipcLogger as logger } from '../managers/LogManager';
+import { logger } from '../managers/LogManager';
 import { IpcRoute } from '../services/RouterService';
 
 /**

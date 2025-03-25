@@ -4,7 +4,7 @@
  */
 import { IpcResponse } from '@/types/ipc';
 import { pluginViewManager } from '../managers/PluginViewManager';
-import { ipcLogger as logger } from '../managers/LogManager';
+import { logger } from '../managers/LogManager';
 
 interface WindowBounds {
   x: number;

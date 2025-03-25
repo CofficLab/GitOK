@@ -9,7 +9,7 @@ import {
   ActiveApplication,
   getFrontmostApplication,
 } from '@coffic/active-app-monitor';
-import { stateLogger as logger } from './LogManager';
+import { logger } from './LogManager';
 
 class StateManager extends BaseManager {
   private static instance: StateManager;

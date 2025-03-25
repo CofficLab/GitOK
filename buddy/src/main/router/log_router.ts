@@ -1,7 +1,7 @@
 /**
  * UI 日志相关 IPC 处理函数
  */
-import { uiLogger as logger } from '../managers/LogManager';
+import { logger } from '../managers/LogManager';
 import { IpcRoute } from '../services/RouterService';
 
 // 定义IPC方法名称常量

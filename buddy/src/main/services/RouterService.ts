@@ -3,7 +3,7 @@
  * 负责自动注册和管理所有的IPC路由
  */
 import { ipcMain } from 'electron';
-import { ipcLogger as logger } from '../managers/LogManager';
+import { logger } from '../managers/LogManager';
 
 export type IpcHandler = (...args: any[]) => Promise<any> | any;
 

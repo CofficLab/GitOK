@@ -24,6 +24,7 @@
     "@coffic/command-key-listener": "workspace:*",
     "@electron-toolkit/preload": "^3.0.1",
     "@electron-toolkit/utils": "^4.0.0",
+    "chalk": "4",
     "daisyui": "^5.0.9",
     "electron-log": "^5.3.2",
     "electron-updater": "^6.3.9",

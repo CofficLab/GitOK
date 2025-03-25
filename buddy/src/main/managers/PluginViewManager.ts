@@ -12,7 +12,7 @@ import { configManager } from './ConfigManager';
 import { windowManager } from './WindowManager';
 import { pluginActionManager } from './PluginActionManager';
 import { BaseManager } from './BaseManager';
-import { pluginViewLogger as logger } from './LogManager';
+import { logger } from './LogManager';
 import {
   PluginViewOptions,
   ViewBounds,

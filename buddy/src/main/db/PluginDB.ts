@@ -6,7 +6,7 @@ import { app } from 'electron';
 import { join, dirname } from 'path';
 import fs from 'fs';
 import { PluginEntity } from '../entities/PluginEntity';
-import { pluginLogger as logger } from '../managers/LogManager';
+import { logger } from '../managers/LogManager';
 
 export class PluginDB {
   private static instance: PluginDB;

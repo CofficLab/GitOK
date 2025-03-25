@@ -6,7 +6,7 @@ import { BrowserWindow } from 'electron';
 import { configManager } from './ConfigManager';
 import { BaseManager } from './BaseManager';
 import { CommandKeyListener } from '@coffic/command-key-listener';
-import { commandLogger as logger } from './LogManager';
+import { logger } from './LogManager';
 
 class CommandKeyManager extends BaseManager {
   private static instance: CommandKeyManager;

@@ -2,7 +2,7 @@
  * Command键相关IPC处理函数
  */
 import { commandKeyManager } from '../managers/CommandKeyManager';
-import { ipcLogger as logger } from '../managers/LogManager';
+import { logger } from '../managers/LogManager';
 import { IpcRoute } from '../services/RouterService';
 
 // 定义IPC方法名称常量

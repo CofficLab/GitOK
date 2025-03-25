@@ -5,7 +5,7 @@
 import { IpcResponse } from '@/types/ipc';
 import { SuperAction } from '@/types/super_action';
 import { pluginActionManager } from '../managers/PluginActionManager';
-import { ipcLogger as logger } from '../managers/LogManager';
+import { logger } from '../managers/LogManager';
 
 export class PluginActionController {
   private static instance: PluginActionController;

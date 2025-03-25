@@ -6,7 +6,7 @@ import { shell } from 'electron';
 import { IpcResponse } from '@/types/ipc';
 import { SuperPlugin } from '@/types/super_plugin';
 import { pluginManager } from '../managers/PluginManager';
-import { pluginStoreLogger as logger } from '../managers/LogManager';
+import { logger } from '../managers/LogManager';
 import { pluginDB } from '../db/PluginDB';
 
 export class PluginStoreController {

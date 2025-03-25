@@ -4,7 +4,7 @@ import fs from 'fs';
 import yaml from 'js-yaml';
 import type { WindowConfig } from '@/types/window-config';
 import type { PluginManagerConfig } from '@/types/config';
-import { configLogger } from './LogManager';
+import { logger } from './LogManager';
 
 /**
  * 配置管理器
@@ -35,13 +35,13 @@ class ConfigManager {
    */
   private loadConfig(): void {
     try {
-      configLogger.info('加载配置文件', { path: this.configPath });
+      logger.info('加载配置文件', { path: this.configPath });
       const configContent = fs.readFileSync(this.configPath, 'utf8');
       this.config = yaml.load(configContent);
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : String(error);
-      configLogger.error('加载配置文件失败', { error: errorMessage });
+      logger.error('加载配置文件失败', { error: errorMessage });
       this.config = {};
     }
   }

@@ -12,6 +12,9 @@ export default defineConfig({
         '@types': resolve('src/types'),
       },
     },
+    build: {
+      sourcemap: true,
+    },
   },
   preload: {
     plugins: [externalizeDepsPlugin()],
@@ -22,6 +25,7 @@ export default defineConfig({
       },
     },
     build: {
+      sourcemap: true,
       rollupOptions: {
         input: {
           'app-preload': resolve(__dirname, 'src/preload/app-preload.ts'),
@@ -39,5 +43,8 @@ export default defineConfig({
       },
     },
     plugins: [vue(), tailwindcss()],
+    build: {
+      sourcemap: true,
+    },
   },
 });

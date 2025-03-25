@@ -9,7 +9,7 @@ import icon from '../../../resources/icon.png?asset';
 import { configManager } from './ConfigManager';
 import { appStateManager } from './StateManager';
 import { BaseManager } from './BaseManager';
-import { windowLogger as logger } from './LogManager';
+import { logger } from './LogManager';
 
 class WindowManager extends BaseManager {
   private static instance: WindowManager;
