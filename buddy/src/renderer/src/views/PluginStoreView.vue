@@ -9,7 +9,6 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
 import type { SuperPlugin } from '@/types/super_plugin'
-import { logger } from '@renderer/utils/logger'
 
 const electronApi = window.electron
 const pluginApi = electronApi.plugins

@@ -1,8 +1,10 @@
 import { defineStore } from 'pinia';
 import type { SuperAction } from '@/types/super_action';
-
+import { WindowEvents } from '@/types/app-events';
+import { logger } from '@renderer/utils/logger';
 const electronApi = window.electron;
 const { actions: actionsApi } = electronApi.plugins;
+const ipc = electronApi.ipc;
 
 /**
  * Action 管理 Store
@@ -15,6 +17,7 @@ interface ActionState {
   isLoading: boolean;
   selected: string | null;
   viewHtml: string;
+  lastKeyword: string; // 存储上次搜索的关键词，用于窗口激活时刷新
 }
 
 export const useActionStore = defineStore('action', {
@@ -23,6 +26,7 @@ export const useActionStore = defineStore('action', {
     isLoading: false,
     selected: null,
     viewHtml: '',
+    lastKeyword: '',
   }),
 
   actions: {
@@ -30,15 +34,16 @@ export const useActionStore = defineStore('action', {
      * 加载动作列表
      */
     async loadList(searchKeyword: string = '') {
-      console.log('actionStore: loadList with keyword: 🐛', searchKeyword);
+      logger.info('actionStore: loadList with keyword: 🐛', searchKeyword);
+      this.lastKeyword = searchKeyword; // 保存当前关键词
 
       try {
         this.isLoading = true;
         this.list = await actionsApi.getPluginActions(searchKeyword);
 
-        console.log('actionStore: loadList', this.list);
+        logger.info('actionStore: loadList', this.list);
       } catch (error) {
-        console.error('actionStore: loadList error: 🐛', error);
+        logger.error('actionStore: loadList error: 🐛', error);
         this.list = [];
         throw error;
       } finally {
@@ -97,7 +102,7 @@ export const useActionStore = defineStore('action', {
     },
 
     getActionCount(): number {
-      console.log('actionStore: getActionCount', this.list.length);
+      logger.info('actionStore: getActionCount', this.list.length);
       return this.list.length;
     },
 
@@ -119,6 +124,25 @@ export const useActionStore = defineStore('action', {
 
     hasSelectedAction(): boolean {
       return this.selected !== null;
+    },
+
+    /**
+     * 设置窗口激活状态监听
+     * 当窗口被激活时，刷新动作列表
+     */
+    setupWindowActivationListener() {
+      ipc.receive(WindowEvents.ACTIVATED, () => {
+        logger.info('actionStore: 窗口激活，刷新动作列表');
+        // 使用上次的搜索关键词刷新列表
+        this.loadList(this.lastKeyword);
+      });
+    },
+
+    /**
+     * 清理窗口激活状态监听
+     */
+    cleanupWindowActivationListener() {
+      ipc.removeListener(WindowEvents.ACTIVATED, () => {});
     },
   },
 });

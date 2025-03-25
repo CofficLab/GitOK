@@ -6,6 +6,7 @@ App.vue - 应用程序入口组件
 2. 管理插件系统的生命周期
 3. 处理插件消息通信
 4. 管理全局快捷键
+5. 管理窗口激活状态监听
 
 技术栈：
 - Vue 3 组合式API
@@ -70,14 +71,19 @@ onMounted(() => {
 
     // 初始聚焦搜索框
     setTimeout(focusSearchBar, 300)
+
+    // 设置窗口激活状态监听，当窗口激活时刷新动作列表
+    actionStore.setupWindowActivationListener()
 })
 
 // 在组件卸载时清理消息监听
 onUnmounted(() => {
-    // 移除全局键盘事件
+    // 移除全局键盘事件监听
     document.removeEventListener('keydown', handleGlobalKeyDown)
-})
 
+    // 清理窗口激活状态监听
+    actionStore.cleanupWindowActivationListener()
+})
 </script>
 
 <template>

@@ -5,12 +5,14 @@
  * - 显示当前时间
  * - 提供路由导航
  * - 提供插件商店入口
+ * - 显示窗口激活状态
  * 
  * 主要功能：
  * - 实时显示当前时间
  * - 提供首页和插件页面切换
  * - 显示当前页面状态
  * - 打开插件商店
+ * - 显示窗口激活状态
  * 
  * 技术栈：
  * - Vue 3
@@ -27,6 +29,7 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAppStore } from '@renderer/stores/appStore'
+import WindowActiveStatus from '@renderer/components/WindowActiveStatus.vue'
 
 const electronApi = window.electron;
 const overlaidApi = electronApi.overlaid;
@@ -69,6 +72,9 @@ onMounted(() => {
     removeOverlaidAppListener = overlaidApi.onOverlaidAppChanged((app) => {
         overlaidAppName.value = app?.name || null
     })
+
+    // 设置窗口激活状态监听
+    appStore.setupWindowActiveListeners()
 })
 
 onUnmounted(() => {
@@ -78,6 +84,8 @@ onUnmounted(() => {
     if (removeOverlaidAppListener) {
         removeOverlaidAppListener()
     }
+    // 清理窗口激活状态监听
+    appStore.cleanupWindowActiveListeners()
 })
 </script>
 
@@ -97,10 +105,14 @@ onUnmounted(() => {
 
         <!-- 右侧工具栏 -->
         <div class="flex items-center space-x-4">
+            <!-- 窗口激活状态 -->
+            <WindowActiveStatus class="hidden md:block" />
+
             <!-- 被覆盖的应用名称 -->
             <div v-if="overlaidAppName" class="text-sm text-gray-600">
                 当前覆盖: {{ overlaidAppName }}
             </div>
+
             <!-- 时间显示 -->
             <div class="text-sm text-gray-600">
                 {{ currentTime }}

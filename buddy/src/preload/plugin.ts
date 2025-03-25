@@ -88,7 +88,6 @@ const pluginActions = {
       IPC_METHODS.GET_PLUGIN_ACTIONS,
       keyword
     );
-    console.log('preload: get-plugin-actions 响应:', response);
 
     if (!response.success) {
       throw new Error(response.error);

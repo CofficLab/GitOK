@@ -31,11 +31,13 @@ const plugin = {
    * 获取插件提供的动作列表
    * @param {Object} context 插件上下文
    * @param {string} context.keyword 搜索关键词
-   * @param {string} context.overlayedApp 被覆盖应用名称
+   * @param {string} context.overlaidApp 被覆盖应用名称
    * @returns {Promise<Array>} 动作列表
    */
-  async getActions({ keyword = '', overlayedApp = '' }) {
-    log.info(`获取动作列表，关键词: "${keyword}"`);
+  async getActions({ keyword = '', overlaidApp = '' }) {
+    log.info(
+      `获取动作列表，关键词: "${keyword}", 被覆盖应用: "${overlaidApp}"`
+    );
 
     // 创建基础动作列表
     const actions = [

@@ -14,7 +14,6 @@ import { PluginContext } from '@/types/plugin-context';
 
 class PluginActionManager extends BaseManager {
   private static instance: PluginActionManager;
-  private actionCache: Map<string, PluginActionEntity[]> = new Map();
 
   private constructor() {
     const config = configManager.getPluginConfig();
@@ -45,21 +44,13 @@ class PluginActionManager extends BaseManager {
     let allActions: PluginActionEntity[] = [];
     let overlaidApp = appStateManager.getOverlaidApp();
 
-    logger.info(`获取插件动作，当前被覆盖应用`, overlaidApp);
+    logger.info(`获取插件动作，当前被覆盖应用`, overlaidApp?.name);
 
     try {
       // 从所有加载的插件中获取动作
       const plugins = pluginManager.getPlugins();
       for (const plugin of plugins) {
         try {
-          // 检查缓存
-          const cacheKey = `${plugin.id}:${keyword}`;
-          const cachedActions = this.actionCache.get(cacheKey);
-          if (cachedActions) {
-            allActions = [...allActions, ...cachedActions];
-            continue;
-          }
-
           // 动态加载插件模块
           const pluginModule = await pluginManager.loadPluginModule(plugin);
 
@@ -76,8 +67,6 @@ class PluginActionManager extends BaseManager {
                 pluginActions,
                 plugin
               );
-              // 更新缓存
-              this.actionCache.set(cacheKey, validActions);
               allActions = [...allActions, ...validActions];
             }
           }
@@ -249,8 +238,6 @@ class PluginActionManager extends BaseManager {
   public cleanup(): void {
     logger.info('清理动作管理器资源');
     try {
-      // 清空动作缓存
-      this.actionCache.clear();
       // 移除所有事件监听器
       this.removeAllListeners();
       logger.info('动作管理器资源清理完成');

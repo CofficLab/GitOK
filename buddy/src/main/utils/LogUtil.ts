@@ -4,7 +4,7 @@
  */
 import { SuperLogger } from '@/types/super-logger';
 import log from 'electron-log';
-import type { LogMessage, Format } from 'electron-log';
+import type { Format } from 'electron-log';
 import 'source-map-support/register';
 
 // 配置日志级别对应的颜色和表情
