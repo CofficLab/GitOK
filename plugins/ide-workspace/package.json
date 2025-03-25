@@ -1,0 +1,33 @@
+{
+  "name": "@gitok/plugin-ide-workspace",
+  "version": "1.0.0",
+  "description": "GitOK插件 - IDE工作空间信息显示",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "clean": "rimraf dist",
+    "prebuild": "npm run clean",
+    "test": "jest"
+  },
+  "keywords": [
+    "gitok",
+    "plugin",
+    "ide",
+    "workspace",
+    "vscode"
+  ],
+  "author": "Coffic",
+  "license": "MIT",
+  "dependencies": {
+    "sqlite3": "^5.1.7"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.24",
+    "@types/sqlite3": "^3.1.11",
+    "jest": "^29.7.0",
+    "@types/jest": "^29.5.12",
+    "rimraf": "^5.0.5",
+    "typescript": "^5.3.3"
+  }
+}

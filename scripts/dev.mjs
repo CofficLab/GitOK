@@ -35,6 +35,11 @@ const projects = [
     value: 'mcp-core',
     command: 'pnpm --filter mcp-core dev',
   },
+  {
+    name: 'IDE工作空间插件 (ide-workspace)',
+    value: 'ide-workspace',
+    command: 'pnpm --filter @gitok/plugin-ide-workspace watch',
+  },
 ];
 
 async function buildDependencies(steps) {

@@ -9,6 +9,8 @@ import type { SuperAction } from '@/types/super_action';
 import { PluginActionEntity } from '../entities/PluginActionEntity';
 import { actionLogger as logger } from './LogManager';
 import { pluginDB } from '../db/PluginDB';
+import { appStateManager } from './AppStateManager';
+import { PluginContext } from '@/types/plugin-context';
 
 class PluginActionManager extends BaseManager {
   private static instance: PluginActionManager;
@@ -41,6 +43,9 @@ class PluginActionManager extends BaseManager {
   async getActions(keyword: string = ''): Promise<PluginActionEntity[]> {
     logger.info(`获取插件动作，关键词: "${keyword}"`);
     let allActions: PluginActionEntity[] = [];
+    let overlaidApp = appStateManager.getOverlaidApp();
+
+    logger.info(`获取插件动作，当前被覆盖应用`, overlaidApp);
 
     try {
       // 从所有加载的插件中获取动作
@@ -59,7 +64,12 @@ class PluginActionManager extends BaseManager {
           const pluginModule = await pluginManager.loadPluginModule(plugin);
 
           if (pluginModule && typeof pluginModule.getActions === 'function') {
-            const pluginActions = await pluginModule.getActions(keyword);
+            const context: PluginContext = {
+              keyword,
+              overlaidApp: overlaidApp?.name || '',
+            };
+            logger.info(`获取插件动作: ${plugin.id}`, context);
+            const pluginActions = await pluginModule.getActions(context);
             if (Array.isArray(pluginActions)) {
               // 验证和处理动作
               const validActions = this.validateAndProcessActions(
