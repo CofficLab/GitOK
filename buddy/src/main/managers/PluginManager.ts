@@ -24,6 +24,7 @@ import { configManager } from './ConfigManager';
 import { BaseManager } from './BaseManager';
 import { PluginEntity } from '../entities/PluginEntity';
 import { pluginLogger as logger } from './LogManager';
+import { pluginDB } from '../db/PluginDB';
 
 class PluginManager extends BaseManager {
   private static instance: PluginManager;
@@ -93,7 +94,7 @@ class PluginManager extends BaseManager {
       logger.info('开始初始化插件系统');
 
       // 确保插件目录存在
-      await this.ensurePluginDirs();
+      await pluginDB.ensurePluginDirs();
 
       // 加载插件
       await this.loadPlugins();
@@ -108,28 +109,7 @@ class PluginManager extends BaseManager {
    * 获取插件目录信息
    */
   getPluginDirectories() {
-    return {
-      user: this.pluginsDir,
-      dev: this.devPluginsDir,
-    };
-  }
-
-  /**
-   * 确保插件目录存在
-   */
-  private async ensurePluginDirs(): Promise<void> {
-    try {
-      const dirs = [this.pluginsDir, this.devPluginsDir];
-
-      for (const dir of dirs) {
-        if (!fs.existsSync(dir)) {
-          logger.info(`创建插件目录: ${dir}`);
-          await fs.promises.mkdir(dir, { recursive: true });
-        }
-      }
-    } catch (error) {
-      this.handleError(error, '创建插件目录失败', true);
-    }
+    return pluginDB.getPluginDirectories();
   }
 
   /**
@@ -139,11 +119,14 @@ class PluginManager extends BaseManager {
     logger.info('开始加载插件');
 
     try {
-      // 加载用户安装的插件
-      await this.loadUserPlugins();
+      // 从 PluginDB 获取所有插件
+      const plugins = await pluginDB.getAllPlugins();
 
-      // 加载开发中的插件
-      await this.loadDevPlugins();
+      // 将插件添加到管理器中
+      for (const plugin of plugins) {
+        this.plugins.set(plugin.id, plugin);
+        logger.info(`已加载插件: ${plugin.name} v${plugin.version}`);
+      }
 
       logger.info(`已加载 ${this.plugins.size} 个插件`);
     } catch (error) {
@@ -182,75 +165,6 @@ class PluginManager extends BaseManager {
   }
 
   /**
-   * 从指定目录加载插件
-   * @param dir 插件目录
-   * @param type 插件类型
-   */
-  private async loadPluginsFromDir(
-    dir: string,
-    type: 'user' | 'dev'
-  ): Promise<void> {
-    if (!fs.existsSync(dir)) {
-      logger.info(`${type} 插件目录不存在，跳过加载`);
-      return;
-    }
-
-    try {
-      const entries = await fs.promises.readdir(dir, {
-        withFileTypes: true,
-      });
-
-      for (const entry of entries) {
-        if (entry.isDirectory()) {
-          await this.loadPlugin(join(dir, entry.name));
-        }
-      }
-    } catch (error) {
-      this.handleError(error, `加载 ${type} 插件失败`);
-    }
-  }
-
-  /**
-   * 加载用户安装的插件
-   */
-  private async loadUserPlugins(): Promise<void> {
-    await this.loadPluginsFromDir(this.pluginsDir, 'user');
-  }
-
-  /**
-   * 加载开发中的插件
-   */
-  private async loadDevPlugins(): Promise<void> {
-    await this.loadPluginsFromDir(this.devPluginsDir, 'dev');
-  }
-
-  /**
-   * 加载单个插件
-   */
-  private async loadPlugin(pluginPath: string): Promise<void> {
-    try {
-      const type = pluginPath.startsWith(this.devPluginsDir) ? 'dev' : 'user';
-      const plugin = await PluginEntity.fromDirectory(pluginPath, type);
-
-      if (!plugin.validation?.isValid) {
-        logger.warn(`插件 ${pluginPath} 的 package.json 格式无效，跳过加载`, {
-          validation: plugin.validation?.errors,
-        });
-        return;
-      }
-
-      this.plugins.set(plugin.id, plugin);
-      logger.info(`已加载插件: ${plugin.name} v${plugin.version}`);
-
-      // 将 Map 转换为对象再进行序列化
-      const pluginsObj = Object.fromEntries(this.plugins);
-      logger.debug(`插件列表: ${JSON.stringify(pluginsObj)}`);
-    } catch (error) {
-      this.handleError(error, `加载插件失败: ${pluginPath}`);
-    }
-  }
-
-  /**
    * 获取所有已安装的插件
    */
   getPlugins(): PluginEntity[] {
@@ -265,57 +179,10 @@ class PluginManager extends BaseManager {
   }
 
   /**
-   * 从目录中读取插件信息
-   */
-  private async readPluginsFromDir(dir: string): Promise<PluginEntity[]> {
-    if (!fs.existsSync(dir)) {
-      return [];
-    }
-
-    const plugins: PluginEntity[] = [];
-    const entries = await fs.promises.readdir(dir, { withFileTypes: true });
-
-    for (const entry of entries) {
-      if (!entry.isDirectory()) continue;
-
-      const pluginPath = join(dir, entry.name);
-
-      try {
-        const type = dir.startsWith(this.devPluginsDir) ? 'dev' : 'user';
-        const plugin = await PluginEntity.fromDirectory(pluginPath, type);
-        plugins.push(plugin);
-      } catch (error) {
-        this.handleError(error, `读取插件信息失败: ${pluginPath}`);
-      }
-    }
-
-    return plugins;
-  }
-
-  /**
    * 获取插件商店列表
    */
   async getStorePlugins(): Promise<PluginEntity[]> {
-    logger.info('获取插件商店列表');
-
-    try {
-      // 从各个目录读取插件
-      const [userPlugins, devPlugins] = await Promise.all([
-        this.readPluginsFromDir(this.pluginsDir),
-        this.readPluginsFromDir(this.devPluginsDir),
-      ]);
-
-      // 合并所有插件列表
-      const allPlugins = [...userPlugins, ...devPlugins];
-
-      // 按照插件名称排序
-      allPlugins.sort((a, b) => a.name.localeCompare(b.name));
-
-      return allPlugins;
-    } catch (error) {
-      this.handleError(error, '获取插件列表失败');
-      return [];
-    }
+    return await pluginDB.getAllPlugins();
   }
 
   /**
@@ -325,25 +192,8 @@ class PluginManager extends BaseManager {
    */
   public async loadPluginModule(plugin: PluginEntity): Promise<any> {
     try {
-      // 使用 package.json 中的 main 字段作为入口文件
-      const mainFilePath = plugin.mainFilePath;
-      if (!fs.existsSync(mainFilePath)) {
-        throw new Error(`插件入口文件不存在: ${mainFilePath}`);
-      }
-
-      // 清除缓存以确保重新加载
-      delete require.cache[require.resolve(mainFilePath)];
-
-      // 动态导入插件模块
-      const module = require(mainFilePath);
-
-      // 标记插件为已加载
-      plugin.markAsLoaded();
-
-      return module;
+      return await pluginDB.loadPluginModule(plugin);
     } catch (error: any) {
-      // 设置错误状态
-      plugin.setStatus('error', error.message);
       throw new Error(
         this.handleError(
           error,

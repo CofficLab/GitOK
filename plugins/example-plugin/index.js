@@ -7,9 +7,6 @@
 const fs = require('fs');
 const path = require('path');
 
-// 插件ID
-const PLUGIN_ID = 'example-plugin';
-
 // 日志函数
 const log = {
   info: function (message, ...args) {
@@ -25,7 +22,6 @@ const log = {
 
 // 插件信息
 const plugin = {
-  id: PLUGIN_ID,
   name: '示例插件',
   description: '这是一个示例插件，演示如何创建GitOK插件',
   version: '1.0.0',
@@ -42,28 +38,25 @@ const plugin = {
     // 创建基础动作列表
     const actions = [
       {
-        id: `${PLUGIN_ID}:hello`,
+        id: `hello`,
         title: '打招呼',
         description: '显示一个问候消息',
         icon: '👋',
-        plugin: PLUGIN_ID,
       },
       {
-        id: `${PLUGIN_ID}:time`,
+        id: `time`,
         title: '当前时间',
         description: '显示当前时间',
         icon: '🕒',
-        plugin: PLUGIN_ID,
         viewPath: 'views/time.html',
         viewMode: 'embedded',
         devTools: false,
       },
       {
-        id: `${PLUGIN_ID}:calculate`,
+        id: `calculate`,
         title: '计算器',
         description: '简单的计算器',
         icon: '🧮',
-        plugin: PLUGIN_ID,
         viewPath: 'views/calculator.html',
         viewMode: 'window',
         devTools: false,
@@ -101,15 +94,15 @@ const plugin = {
 
     try {
       switch (action.id) {
-        case `${PLUGIN_ID}:hello`:
+        case `hello`:
           log.debug(`执行打招呼动作`);
           return { message: '你好，这是来自示例插件的问候！' };
 
-        case `${PLUGIN_ID}:time`:
+        case `time`:
           log.debug(`执行时间动作（有自定义视图）`);
           return { success: true };
 
-        case `${PLUGIN_ID}:calculate`:
+        case `calculate`:
           log.debug(`执行计算器动作（有自定义视图）`);
           return { success: true };
 
