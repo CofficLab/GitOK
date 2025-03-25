@@ -3,7 +3,6 @@
  * 负责处理macOS平台Command键双击的监听和响应
  */
 import { BrowserWindow } from 'electron';
-import { configManager } from './ConfigManager';
 import { BaseManager } from './BaseManager';
 import { CommandKeyListener } from '@coffic/command-key-listener';
 import { logger } from './LogManager';
@@ -14,11 +13,10 @@ class CommandKeyManager extends BaseManager {
   private mainWindow: BrowserWindow | null = null;
 
   private constructor() {
-    const config = configManager.getConfig().command || {};
     super({
       name: 'CommandKeyManager',
-      enableLogging: config.enableLogging,
-      logLevel: config.logLevel,
+      enableLogging: true,
+      logLevel: 'info',
     });
   }
 

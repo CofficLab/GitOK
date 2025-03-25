@@ -3,9 +3,7 @@ node_modules
 .pnpm-store/
 
 # Build outputs
-dist
-vue-dist
-out
+build
 
 # Testing
 coverage

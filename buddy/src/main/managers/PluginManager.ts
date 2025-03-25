@@ -2,7 +2,6 @@
  * 插件管理器
  * 负责插件的加载、管理和通信
  */
-import { configManager } from './ConfigManager';
 import { BaseManager } from './BaseManager';
 import { PluginEntity } from '../entities/PluginEntity';
 import { logger } from './LogManager';
@@ -17,11 +16,10 @@ class PluginManager extends BaseManager {
   private devPluginsDir: string;
 
   private constructor() {
-    const config = configManager.getPluginConfig();
     super({
       name: 'PluginManager',
-      enableLogging: config.enableLogging,
-      logLevel: config.logLevel,
+      enableLogging: true,
+      logLevel: 'info',
     });
 
     // 从 PluginDB 获取插件目录

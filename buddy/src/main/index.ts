@@ -5,7 +5,6 @@
 import { appManager } from './managers/AppManager';
 import { routerService } from './services/RouterService';
 import { routes as pluginRoutes } from './router/plugin_router';
-import { routes as configRoutes } from './router/config_router';
 import {
   routes as overlaidAppRoutes,
   initOverlaidAppEvents,
@@ -15,7 +14,6 @@ import { routes as uiLogRoutes } from './router/log_router';
 
 // 初始化路由
 routerService.registerRoutes(pluginRoutes);
-routerService.registerRoutes(configRoutes);
 routerService.registerRoutes(overlaidAppRoutes);
 routerService.registerRoutes(commandKeyRoutes);
 routerService.registerRoutes(uiLogRoutes);

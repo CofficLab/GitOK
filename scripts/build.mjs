@@ -30,6 +30,51 @@ const projects = [
     ],
   },
   {
+    name: 'Buddy - 构建 Windows 应用',
+    value: 'buddy:win',
+    command: 'pnpm --filter buddy build:win',
+    preBuildSteps: [
+      {
+        name: '@coffic/active-app-monitor',
+        command: 'pnpm --filter active-app-monitor build',
+      },
+      {
+        name: '@coffic/command-key-listener',
+        command: 'pnpm --filter command-key-listener build',
+      },
+    ],
+  },
+  {
+    name: 'Buddy - 构建 macOS 应用',
+    value: 'buddy:mac',
+    command: 'pnpm --filter buddy build:mac',
+    preBuildSteps: [
+      {
+        name: '@coffic/active-app-monitor',
+        command: 'pnpm --filter active-app-monitor build',
+      },
+      {
+        name: '@coffic/command-key-listener',
+        command: 'pnpm --filter command-key-listener build',
+      },
+    ],
+  },
+  {
+    name: 'Buddy - 构建 Linux 应用',
+    value: 'buddy:linux',
+    command: 'pnpm --filter buddy build:linux',
+    preBuildSteps: [
+      {
+        name: '@coffic/active-app-monitor',
+        command: 'pnpm --filter active-app-monitor build',
+      },
+      {
+        name: '@coffic/command-key-listener',
+        command: 'pnpm --filter command-key-listener build',
+      },
+    ],
+  },
+  {
     name: 'VSCode 扩展 (vsc_extension)',
     value: 'vsc_extension',
     command: 'pnpm --filter vsc_extension build',

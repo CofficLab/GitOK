@@ -6,22 +6,32 @@ import { shell, BrowserWindow, screen, globalShortcut } from 'electron';
 import { join } from 'path';
 import { is } from '@electron-toolkit/utils';
 import icon from '../../../resources/icon.png?asset';
-import { configManager } from './ConfigManager';
 import { appStateManager } from './StateManager';
 import { BaseManager } from './BaseManager';
 import { logger } from './LogManager';
 
+const windowConfig = {
+  showTrafficLights: false,
+  showDebugToolbar: true,
+  debugToolbarPosition: 'bottom',
+  spotlightHotkey: 'Option+Space',
+  spotlightSize: {
+    width: 1200,
+    height: 1400,
+  },
+  alwaysOnTop: true,
+  followDesktop: true,
+};
+
 class WindowManager extends BaseManager {
   private static instance: WindowManager;
   private mainWindow: BrowserWindow | null = null;
-  private configManager = configManager;
 
   private constructor() {
-    const windowConfig = configManager.getWindowConfig();
     super({
       name: 'WindowManager',
-      enableLogging: windowConfig.enableLogging ?? true,
-      logLevel: windowConfig.logLevel || 'info',
+      enableLogging: true,
+      logLevel: 'info',
     });
   }
 
@@ -47,12 +57,7 @@ class WindowManager extends BaseManager {
    */
   createWindow(): BrowserWindow {
     logger.info('开始创建主窗口');
-    const windowConfig = this.configManager.getWindowConfig();
-    const {
-      showDebugToolbar,
-      debugToolbarPosition = 'right',
-      spotlightMode,
-    } = windowConfig;
+    const { showDebugToolbar, debugToolbarPosition = 'right' } = windowConfig;
 
     logger.debug('窗口配置', { windowConfig });
 
@@ -64,7 +69,7 @@ class WindowManager extends BaseManager {
       }
 
       // 创建窗口配置
-      const windowOptions = this.createWindowOptions(windowConfig);
+      const windowOptions = this.createWindowOptions();
 
       // 创建浏览器窗口
       logger.debug('创建浏览器窗口', { options: windowOptions });
@@ -72,19 +77,20 @@ class WindowManager extends BaseManager {
 
       // 设置窗口事件处理
       this.setupWindowEvents(
-        spotlightMode,
         showDebugToolbar,
-        debugToolbarPosition
+        debugToolbarPosition as
+          | 'bottom'
+          | 'right'
+          | 'left'
+          | 'undocked'
+          | 'detach'
       );
 
       // 加载窗口内容
       this.loadWindowContent();
 
       // Spotlight模式下设置窗口失焦自动隐藏
-      if (spotlightMode) {
-        logger.debug('Spotlight模式：设置窗口失焦自动隐藏');
-        this.setupBlurHandler();
-      }
+      this.setupBlurHandler();
 
       logger.info('主窗口创建完成');
       return this.mainWindow;
@@ -96,19 +102,14 @@ class WindowManager extends BaseManager {
   /**
    * 创建窗口配置选项
    */
-  private createWindowOptions(
-    windowConfig: any
-  ): Electron.BrowserWindowConstructorOptions {
-    const { showTrafficLights, spotlightMode, spotlightSize, alwaysOnTop } =
-      windowConfig;
-
+  private createWindowOptions(): Electron.BrowserWindowConstructorOptions {
     // 基本窗口配置
     const windowOptions: Electron.BrowserWindowConstructorOptions = {
-      width: spotlightMode ? spotlightSize.width : 1200,
-      height: spotlightMode ? spotlightSize.height : 1400,
+      width: windowConfig.spotlightSize.width,
+      height: windowConfig.spotlightSize.height,
       show: false,
       autoHideMenuBar: true,
-      frame: showTrafficLights !== false,
+      frame: windowConfig.showTrafficLights !== false,
       ...(process.platform === 'linux' ? { icon } : {}),
       webPreferences: {
         preload: join(__dirname, '../preload/app-preload.js'),
@@ -122,13 +123,10 @@ class WindowManager extends BaseManager {
       },
     };
 
-    // Spotlight模式特定配置
-    if (spotlightMode) {
-      Object.assign(windowOptions, this.getSpotlightModeOptions(alwaysOnTop));
-    } else if (process.platform === 'darwin') {
-      // 常规模式下的macOS特定配置
-      Object.assign(windowOptions, this.getMacOSOptions(showTrafficLights));
-    }
+    Object.assign(
+      windowOptions,
+      this.getSpotlightModeOptions(windowConfig.alwaysOnTop)
+    );
 
     return windowOptions;
   }
@@ -154,22 +152,9 @@ class WindowManager extends BaseManager {
   }
 
   /**
-   * 获取macOS特定的窗口选项
-   */
-  private getMacOSOptions(
-    showTrafficLights: boolean
-  ): Partial<Electron.BrowserWindowConstructorOptions> {
-    return {
-      titleBarStyle: showTrafficLights ? 'default' : 'hiddenInset',
-      trafficLightPosition: showTrafficLights ? undefined : { x: -20, y: -20 },
-    };
-  }
-
-  /**
    * 设置窗口事件
    */
   private setupWindowEvents(
-    spotlightMode: boolean,
     showDebugToolbar: boolean,
     debugToolbarPosition: 'right' | 'bottom' | 'left' | 'undocked' | 'detach'
   ): void {
@@ -178,10 +163,6 @@ class WindowManager extends BaseManager {
     // 窗口加载完成后显示
     this.mainWindow.on('ready-to-show', () => {
       logger.debug('窗口准备就绪');
-      if (!spotlightMode && this.mainWindow) {
-        logger.info('显示主窗口');
-        this.mainWindow.show();
-      }
 
       // 根据配置决定是否打开开发者工具及其位置
       if (showDebugToolbar && this.mainWindow) {
@@ -225,12 +206,7 @@ class WindowManager extends BaseManager {
     if (!this.mainWindow) return;
 
     this.mainWindow.on('blur', () => {
-      const windowConfig = this.configManager.getWindowConfig();
-      if (
-        this.mainWindow &&
-        !this.mainWindow.isDestroyed() &&
-        windowConfig.spotlightMode
-      ) {
+      if (this.mainWindow && !this.mainWindow.isDestroyed()) {
         this.handleWindowHide(true);
       }
     });
@@ -278,8 +254,6 @@ class WindowManager extends BaseManager {
       appStateManager.updateActiveApp();
     }
 
-    const windowConfig = this.configManager.getWindowConfig();
-
     // 获取当前鼠标所在屏幕的信息
     const cursorPoint = screen.getCursorScreenPoint();
     const currentDisplay = screen.getDisplayNearestPoint(cursorPoint);
@@ -293,14 +267,12 @@ class WindowManager extends BaseManager {
     });
 
     // 计算窗口在当前显示器上的居中位置
-    const windowWidth =
-      windowConfig.spotlightMode && windowConfig.spotlightSize
-        ? windowConfig.spotlightSize.width
-        : this.mainWindow.getBounds().width;
-    const windowHeight =
-      windowConfig.spotlightMode && windowConfig.spotlightSize
-        ? windowConfig.spotlightSize.height
-        : this.mainWindow.getBounds().height;
+    const windowWidth = windowConfig.spotlightSize
+      ? windowConfig.spotlightSize.width
+      : this.mainWindow.getBounds().width;
+    const windowHeight = windowConfig.spotlightSize
+      ? windowConfig.spotlightSize.height
+      : this.mainWindow.getBounds().height;
 
     const x = Math.floor(
       currentDisplay.workArea.x +
@@ -353,7 +325,6 @@ class WindowManager extends BaseManager {
   private async showWindowMacOS(x: number, y: number): Promise<void> {
     if (!this.mainWindow) return;
 
-    const windowConfig = this.configManager.getWindowConfig();
     logger.debug('跨桌面显示窗口：执行macOS特定优化');
 
     // 1. 先确保窗口不可见
@@ -420,7 +391,6 @@ class WindowManager extends BaseManager {
   private async showWindowOtherPlatforms(x: number, y: number): Promise<void> {
     if (!this.mainWindow) return;
 
-    const windowConfig = this.configManager.getWindowConfig();
     logger.debug('非macOS平台跨桌面显示窗口');
 
     // 设置窗口位置
@@ -515,10 +485,8 @@ class WindowManager extends BaseManager {
       logger.debug('清除已有的全局快捷键');
       globalShortcut.unregisterAll();
 
-      const windowConfig = this.configManager.getWindowConfig();
-
       // 如果启用了Spotlight模式，注册全局快捷键
-      if (windowConfig.spotlightMode && windowConfig.spotlightHotkey) {
+      if (windowConfig.spotlightHotkey) {
         logger.debug(
           `尝试注册Spotlight模式全局快捷键: ${windowConfig.spotlightHotkey}`
         );

@@ -5,7 +5,6 @@
 import { app, BrowserWindow } from 'electron';
 import { electronApp, optimizer } from '@electron-toolkit/utils';
 import { logger } from './LogManager';
-import { configManager } from './ConfigManager';
 import { windowManager } from './WindowManager';
 import { pluginManager } from './PluginManager';
 import { commandKeyManager } from './CommandKeyManager';
@@ -133,8 +132,7 @@ export class AppManager {
     commandKeyManager.setMainWindow(this.mainWindow);
 
     // macOS特定配置
-    const windowConfig = configManager.getWindowConfig();
-    if (process.platform === 'darwin' && !windowConfig.spotlightMode) {
+    if (process.platform === 'darwin') {
       logger.info('在macOS上设置Command键双击监听器');
       const result = await commandKeyManager.setupCommandKeyListener(
         this.mainWindow

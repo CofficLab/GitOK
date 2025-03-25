@@ -2,7 +2,6 @@
  * 插件动作管理器
  * 负责管理和执行插件动作
  */
-import { configManager } from './ConfigManager';
 import { pluginManager } from './PluginManager';
 import { BaseManager } from './BaseManager';
 import type { SuperAction } from '@/types/super_action';
@@ -16,11 +15,10 @@ class PluginActionManager extends BaseManager {
   private static instance: PluginActionManager;
 
   private constructor() {
-    const config = configManager.getPluginConfig();
     super({
       name: 'PluginActionManager',
-      enableLogging: config.enableLogging,
-      logLevel: config.logLevel,
+      enableLogging: true,
+      logLevel: 'info',
     });
   }
 

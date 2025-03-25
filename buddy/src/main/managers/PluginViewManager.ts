@@ -8,7 +8,6 @@
 import { BrowserWindow, app, BrowserView, screen } from 'electron';
 import { is } from '@electron-toolkit/utils';
 import { join } from 'path';
-import { configManager } from './ConfigManager';
 import { windowManager } from './WindowManager';
 import { pluginActionManager } from './PluginActionManager';
 import { BaseManager } from './BaseManager';
@@ -26,11 +25,10 @@ class PluginViewManager extends BaseManager {
   private viewBrowserViews: Map<string, BrowserView> = new Map();
 
   private constructor() {
-    const config = configManager.getConfig().plugins || {};
     super({
       name: 'PluginViewManager',
-      enableLogging: config.enableLogging ?? true,
-      logLevel: config.logLevel || 'info',
+      enableLogging: true,
+      logLevel: 'info',
     });
   }
 

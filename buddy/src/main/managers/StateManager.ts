@@ -3,7 +3,6 @@
  * 负责监控应用的激活状态以及其他应用的状态
  */
 import { app, BrowserWindow } from 'electron';
-import { configManager } from './ConfigManager';
 import { BaseManager } from './BaseManager';
 import {
   ActiveApplication,
@@ -17,11 +16,10 @@ class StateManager extends BaseManager {
   private overlaidApp: ActiveApplication | null = null;
 
   private constructor() {
-    const { enableLogging, logLevel } = configManager.getWindowConfig();
     super({
       name: 'StateManager',
-      enableLogging: enableLogging ?? true,
-      logLevel: logLevel || 'info',
+      enableLogging: true,
+      logLevel: 'info',
     });
 
     // 监听应用激活事件

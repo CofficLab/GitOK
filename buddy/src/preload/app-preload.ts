@@ -4,7 +4,6 @@
  */
 import { contextBridge } from 'electron';
 import { ipcApi } from './ipc';
-import { windowApi } from './window';
 import { commandApi } from './command';
 import { pluginApi } from './plugin';
 import { overlaidApi } from './overlaid';
@@ -13,7 +12,6 @@ import { uiLogApi } from './ui-log';
 // 整合所有 API
 const api = {
   ipc: ipcApi,
-  window: windowApi,
   command: commandApi,
   plugins: pluginApi,
   overlaid: overlaidApi,
