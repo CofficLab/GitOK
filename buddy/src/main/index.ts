@@ -4,10 +4,12 @@
  */
 import { appManager } from './managers/AppManager';
 import { routerService } from './services/RouterService';
-import { routes as pluginRoutes } from './router/plugin';
+import { routes as pluginRoutes } from './router/plugin_router';
+import { routes as configRoutes } from './router/config_router';
 
 // 初始化路由
 routerService.registerRoutes(pluginRoutes);
+routerService.registerRoutes(configRoutes);
 
 // 启动应用
 appManager

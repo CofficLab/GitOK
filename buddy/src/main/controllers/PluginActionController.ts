@@ -61,6 +61,7 @@ export class PluginActionController {
    * @param actionId 动作ID
    */
   public async getActionView(actionId: string): Promise<IpcResponse<string>> {
+    logger.debug(`获取动作视图: ${actionId}`);
     try {
       const html = await pluginActionManager.getActionView(actionId);
       return { success: true, data: html };

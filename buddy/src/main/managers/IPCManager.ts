@@ -3,7 +3,6 @@
  * 负责处理主进程与渲染进程之间的IPC通信
  */
 import { BaseIPCManager } from '../router/base';
-import { configIPCManager } from '../router/config';
 import { commandKeyIPCManager } from '../router/command-key';
 import { overlaidAppIPCManager } from '../router/overlaid-app';
 import { ipcLogger as logger } from '../managers/LogManager';
@@ -15,7 +14,6 @@ class IPCManager {
 
   private constructor() {
     // 初始化时，自动添加所有IPC管理器
-    this.addManager(configIPCManager);
     this.addManager(commandKeyIPCManager);
     this.addManager(uiLogIPCManager);
     // 被覆盖应用IPC管理器在构造函数中已自行注册处理函数
