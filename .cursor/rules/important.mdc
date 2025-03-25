@@ -25,8 +25,9 @@ alwaysApply: true
 - 写Typescript代码时要多思考，不要出现类型错误
 - 在新建文件时，要了解项目的基本目录结构，再决定文件应该放在哪个目录中
 
-## Electron 项目
+## Electron 项目 [package.json](mdc:buddy/package.json)
 
+- 这是一个类似spotlight的应用
 - tailwind.config.js 在新版中已经不需要了
 - 使用 daisyui 和 tailwindcss 来写样式
 - 使用Vue

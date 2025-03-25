@@ -366,14 +366,16 @@ class WindowManager extends BaseManager {
     logger.debug(`设置窗口位置 (${x}, ${y})`);
     this.mainWindow.setPosition(x, y);
 
-    // 3. 使窗口在所有工作区可见
-    logger.debug('设置窗口在所有工作区可见');
-    this.mainWindow.setVisibleOnAllWorkspaces(true);
+    // 3. 使窗口在所有工作区可见，包括全屏应用
+    logger.debug('设置窗口在所有工作区可见，包括全屏应用');
+    this.mainWindow.setVisibleOnAllWorkspaces(true, {
+      visibleOnFullScreen: true,
+    });
 
     // 4. 确保窗口是顶层窗口
     const originalAlwaysOnTop = this.mainWindow.isAlwaysOnTop();
     logger.debug(`临时设置窗口置顶，原始状态: ${originalAlwaysOnTop}`);
-    this.mainWindow.setAlwaysOnTop(true);
+    this.mainWindow.setAlwaysOnTop(true, 'screen-saver');
 
     // 5. 显示窗口
     logger.debug('显示窗口');
@@ -394,7 +396,8 @@ class WindowManager extends BaseManager {
             `还原窗口置顶状态: ${originalAlwaysOnTop || !!windowConfig.alwaysOnTop}`
           );
           this.mainWindow.setAlwaysOnTop(
-            originalAlwaysOnTop || !!windowConfig.alwaysOnTop
+            originalAlwaysOnTop || !!windowConfig.alwaysOnTop,
+            windowConfig.alwaysOnTop ? 'pop-up-menu' : 'normal'
           );
 
           // 延迟500毫秒后重置justTriggered标志
@@ -417,14 +420,30 @@ class WindowManager extends BaseManager {
   private async showWindowOtherPlatforms(x: number, y: number): Promise<void> {
     if (!this.mainWindow) return;
 
+    const windowConfig = this.configManager.getWindowConfig();
     logger.debug('非macOS平台跨桌面显示窗口');
+
+    // 设置窗口位置
     this.mainWindow.setPosition(x, y);
+
+    // 确保在所有工作区可见，包括全屏应用
     this.mainWindow.setVisibleOnAllWorkspaces(true, {
       visibleOnFullScreen: true,
     });
+
+    // 临时设置顶层状态
+    const originalAlwaysOnTop = this.mainWindow.isAlwaysOnTop();
+    this.mainWindow.setAlwaysOnTop(true);
+
+    // 显示并聚焦窗口
     this.mainWindow.show();
     this.mainWindow.focus();
+
+    // 还原设置
     this.mainWindow.setVisibleOnAllWorkspaces(false);
+    this.mainWindow.setAlwaysOnTop(
+      originalAlwaysOnTop || !!windowConfig.alwaysOnTop
+    );
 
     // 延迟500毫秒后重置justTriggered标志
     await new Promise<void>((resolve) => {
