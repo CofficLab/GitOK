@@ -12,14 +12,15 @@ import { computed, watch } from 'vue'
 import { useSearchStore } from '@renderer/stores/searchStore'
 import type { SuperAction } from '@/types/super_action'
 import { useActionStore } from '@renderer/stores/actionStore'
+import { logger } from '@renderer/utils/logger'
 
 const searchStore = useSearchStore()
 const actionStore = useActionStore()
 
 // 处理动作选择
 const handleActionSelected = (action: SuperAction) => {
-    console.log('handleActionSelected 🍋', action.id);
-    actionStore.selectAction(action.id)
+    logger.info('handleActionSelected 🍋', action.globalId);
+    actionStore.selectAction(action.globalId)
 }
 
 // 处理取消操作
@@ -35,15 +36,17 @@ const isLoading = computed(() => actionStore.isLoading)
 
 // 监听搜索输入变化，加载相应的插件动作
 watch(() => searchStore.keyword, async (newKeyword) => {
-    console.log(`ActionListView.vue: 搜索关键词变化为 "${newKeyword}"`);
+    logger.info(`ActionListView.vue: 搜索关键词变化为 "${newKeyword}"`);
 
     // 重新加载插件动作
     try {
-        console.log('ActionListView.vue: 开始加载插件动作...');
+        logger.info('ActionListView.vue: 开始加载插件动作...');
         await actionStore.loadList();
-        console.log(`ActionListView.vue: 插件动作加载完成，共 ${actionStore.getActionCount()} 个`);
+        logger.info(`ActionListView.vue: 插件动作加载完成，共 ${actionStore.getActionCount()} 个`, {
+            actions: actionStore.getActions()
+        });
     } catch (error) {
-        console.error('ActionListView.vue: 加载插件动作失败', error);
+        logger.error('ActionListView.vue: 加载插件动作失败', error);
     }
 }, { immediate: true })
 </script>

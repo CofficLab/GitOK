@@ -38,6 +38,7 @@ export interface ValidationResult {
  */
 export class PluginActionEntity implements SuperAction {
   // 基本信息
+  globalId: string;
   id: string;
   title: string;
   description: string;
@@ -77,6 +78,7 @@ export class PluginActionEntity implements SuperAction {
   }) {
     this.id = action.id;
     this.title = action.title;
+    this.globalId = action.pluginId + ':' + action.id;
     this.description = action.description || '';
     this.icon = action.icon || '';
     this.pluginId = action.pluginId;
@@ -105,11 +107,6 @@ export class PluginActionEntity implements SuperAction {
     }
     if (!this.pluginId) {
       errors.push('插件ID不能为空');
-    }
-
-    // 验证ID格式
-    if (this.id && !this.id.includes(':')) {
-      errors.push('动作ID格式无效，应为 "pluginId:actionName"');
     }
 
     // 验证视图模式

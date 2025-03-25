@@ -172,6 +172,21 @@ export class PluginDB {
       throw error;
     }
   }
+
+  /**
+   * 根据插件ID查找插件
+   * @param id 插件ID
+   * @returns 找到的插件实例，如果未找到则返回 null
+   */
+  public async find(id: string): Promise<PluginEntity | null> {
+    try {
+      const plugins = await this.getAllPlugins();
+      return plugins.find((plugin) => plugin.id === id) || null;
+    } catch (error) {
+      logger.error(`查找插件失败: ${id}`, error);
+      return null;
+    }
+  }
 }
 
 // 导出单例

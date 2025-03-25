@@ -73,18 +73,18 @@ const loadAndExecuteAction = async () => {
     await closePluginWindow()
     await destroyEmbeddedView()
 
-    try {
-        // 查找动作信息
-        const action = actionStore.get(actionId, 'loadAndExecuteAction')
-        if (!action) {
-            throw new Error(`未找到动作: ${actionId}`)
-        }
+    // 查找动作信息
+    const action = actionStore.find(actionId)
+    if (!action) {
+        throw new Error(`未找到动作: ${actionId}`)
+    }
 
+    try {
         selectedAction.value = action
         logger.info(`PluginView: 加载动作 ${action.title}`)
 
         // 执行动作
-        const result = await actionStore.execute(action)
+        const result = await actionStore.execute(action.globalId)
         actionResult.value = result
         logger.info(`PluginView: 动作执行结果: ${result}`)
 

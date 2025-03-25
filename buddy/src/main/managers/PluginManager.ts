@@ -1,25 +1,7 @@
 /**
  * 插件管理器
  * 负责插件的加载、管理和通信
- *
- * 插件目录结构：
- * {app.getPath('userData')}/plugins/
- * ├── user/                    # 用户安装的插件
- * │   ├── plugin-1/           # 插件目录
- * │   │   ├── package.json   # 插件信息
- * │   │   ├── main.js       # 插件主文件
- * │   │   └── ...           # 其他资源
- * │   └── plugin-2/
- * │       └── ...
- * └── dev/                   # 开发中的插件
- *     ├── plugin-5/
- *     │   └── ...
- *     └── plugin-6/
- *         └── ...
  */
-import { app } from 'electron';
-import { join, dirname } from 'path';
-import fs from 'fs';
 import { configManager } from './ConfigManager';
 import { BaseManager } from './BaseManager';
 import { PluginEntity } from '../entities/PluginEntity';
@@ -34,12 +16,6 @@ class PluginManager extends BaseManager {
   private pluginsDir: string;
   private devPluginsDir: string;
 
-  // 插件目录类型
-  private static readonly PLUGIN_DIRS = {
-    USER: 'user',
-    DEV: 'dev',
-  } as const;
-
   private constructor() {
     const config = configManager.getPluginConfig();
     super({
@@ -48,29 +24,12 @@ class PluginManager extends BaseManager {
       logLevel: config.logLevel,
     });
 
-    // 初始化插件目录
-    const userDataPath = app.getPath('userData');
-    const pluginsRootDir = join(userDataPath, 'plugins');
-
-    // 计算项目根目录：从当前文件位置向上查找，直到找到包含 package.json 的目录
-    let workspaceRoot = __dirname;
-    while (!fs.existsSync(join(workspaceRoot, 'package.json'))) {
-      const parentDir = dirname(workspaceRoot);
-      if (parentDir === workspaceRoot) {
-        throw new Error('找不到项目根目录');
-      }
-      workspaceRoot = parentDir;
-    }
-    // 回退到项目根目录
-    workspaceRoot = join(workspaceRoot, '..');
-
-    this.pluginsDir = join(pluginsRootDir, PluginManager.PLUGIN_DIRS.USER);
-    // 开发中的插件目录指向项目根目录的 plugins 目录
-    this.devPluginsDir = join(workspaceRoot, 'plugins');
+    // 从 PluginDB 获取插件目录
+    const dirs = pluginDB.getPluginDirectories();
+    this.pluginsDir = dirs.user;
+    this.devPluginsDir = dirs.dev;
 
     logger.info('插件目录初始化完成', {
-      pluginsRootDir,
-      workspaceRoot,
       pluginsDir: this.pluginsDir,
       devPluginsDir: this.devPluginsDir,
     });
@@ -169,13 +128,6 @@ class PluginManager extends BaseManager {
    */
   getPlugins(): PluginEntity[] {
     return Array.from(this.plugins.values());
-  }
-
-  /**
-   * 获取指定插件
-   */
-  getPlugin(pluginId: string): PluginEntity | undefined {
-    return this.plugins.get(pluginId);
   }
 
   /**

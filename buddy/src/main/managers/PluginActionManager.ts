@@ -8,6 +8,7 @@ import { BaseManager } from './BaseManager';
 import type { SuperAction } from '@/types/super_action';
 import { PluginActionEntity } from '../entities/PluginActionEntity';
 import { actionLogger as logger } from './LogManager';
+import { pluginDB } from '../db/PluginDB';
 
 class PluginActionManager extends BaseManager {
   private static instance: PluginActionManager;
@@ -118,21 +119,21 @@ class PluginActionManager extends BaseManager {
 
   /**
    * 执行插件动作
-   * @param actionId 要执行的动作ID
+   * @param actionGlobalId 要执行的动作的全局ID
    * @returns 执行结果
    */
-  async executeAction(actionId: string): Promise<any> {
-    logger.info(`执行插件动作: ${actionId}`);
+  async executeAction(actionGlobalId: string): Promise<any> {
+    logger.info(`执行插件动作: ${actionGlobalId}`);
 
     try {
       // 解析插件ID和动作ID
-      const [pluginId] = actionId.split(':');
-      if (!pluginId) {
-        throw new Error(`无效的动作ID: ${actionId}`);
+      const [pluginId, actionId] = actionGlobalId.split(':');
+      if (!pluginId || !actionId) {
+        throw new Error(`无效的动作ID: ${actionGlobalId}`);
       }
 
       // 获取插件实例
-      const plugin = pluginManager.getPlugin(pluginId);
+      const plugin = await pluginDB.find(pluginId);
       if (!plugin) {
         throw new Error(`未找到插件: ${pluginId}`);
       }
@@ -148,13 +149,13 @@ class PluginActionManager extends BaseManager {
       const actionEntity = actions.find((a) => a.id === actionId);
 
       if (!actionEntity) {
-        throw new Error(`未找到动作: ${actionId}`);
+        throw new Error(`未找到动作: ${actionGlobalId}`);
       }
 
       // 检查动作是否可执行
       if (!actionEntity.canExecute()) {
         throw new Error(
-          `动作 ${actionId} 当前不可执行: ${actionEntity.status}`
+          `动作 ${actionGlobalId} 当前不可执行: ${actionEntity.status}`
         );
       }
 
@@ -181,9 +182,9 @@ class PluginActionManager extends BaseManager {
         throw error;
       }
     } catch (error: any) {
-      this.emit('action:execute-error', actionId, error);
+      this.emit('action:execute-error', actionGlobalId, error);
       throw new Error(
-        this.handleError(error, `执行插件动作失败: ${actionId}`, false)
+        this.handleError(error, `执行插件动作失败: ${actionGlobalId}`, false)
       );
     }
   }
@@ -204,7 +205,7 @@ class PluginActionManager extends BaseManager {
       }
 
       // 获取插件实例
-      const plugin = pluginManager.getPlugin(pluginId);
+      const plugin = await pluginDB.find(pluginId);
       if (!plugin) {
         throw new Error(`未找到插件: ${pluginId}`);
       }

@@ -49,16 +49,21 @@ export const useActionStore = defineStore('action', {
     /**
      * 执行指定动作
      */
-    async execute(action: SuperAction): Promise<any> {
-      this.selected = action.id;
+    async execute(actionGlobalId: string): Promise<any> {
+      this.selected = actionGlobalId;
+      const action = this.find(actionGlobalId);
+
+      if (!action) {
+        throw new Error(`未找到动作: ${actionGlobalId}`);
+      }
 
       if (action.viewPath) {
-        await this.loadView(action.id);
+        await this.loadView(action.globalId);
       } else {
         this.viewHtml = '';
       }
 
-      return actionsApi.executeAction(action.id);
+      return actionsApi.executeAction(action.globalId);
     },
 
     /**
@@ -83,9 +88,8 @@ export const useActionStore = defineStore('action', {
     /**
      * 根据ID获取动作
      */
-    get(actionId: string, reason: string): SuperAction | undefined {
-      console.log('getAction', actionId, 'with reason: 🐛', reason);
-      return this.list.find((a) => a.id === actionId);
+    find(actionGlobalId: string): SuperAction | undefined {
+      return this.list.find((a) => a.globalId === actionGlobalId);
     },
 
     getSelectedActionId(): string | null {

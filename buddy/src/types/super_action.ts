@@ -3,9 +3,19 @@
  */
 export interface SuperAction {
   /**
-   * 动作ID
+   * 全局ID
+   */
+  globalId: string;
+
+  /**
+   * 在插件的命名空间中的动作ID
    */
   id: string;
+
+  /**
+   * 插件ID
+   */
+  pluginId: string;
 
   /**
    * 动作标题
