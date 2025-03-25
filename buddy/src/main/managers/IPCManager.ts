@@ -5,7 +5,6 @@
 import { BaseIPCManager } from '../router/base';
 import { configIPCManager } from '../router/config';
 import { commandKeyIPCManager } from '../router/command-key';
-import { pluginIPCManager } from '../router/plugin';
 import { overlaidAppIPCManager } from '../router/overlaid-app';
 import { ipcLogger as logger } from '../managers/LogManager';
 import { uiLogIPCManager } from '../router/ui-log';
@@ -18,7 +17,6 @@ class IPCManager {
     // 初始化时，自动添加所有IPC管理器
     this.addManager(configIPCManager);
     this.addManager(commandKeyIPCManager);
-    this.addManager(pluginIPCManager);
     this.addManager(uiLogIPCManager);
     // 被覆盖应用IPC管理器在构造函数中已自行注册处理函数
     // 此处只需添加到管理器列表中，不需要手动调用registerHandlers
