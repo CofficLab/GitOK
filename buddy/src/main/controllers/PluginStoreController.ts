@@ -7,6 +7,7 @@ import { IpcResponse } from '@/types/ipc';
 import { SuperPlugin } from '@/types/super_plugin';
 import { pluginManager } from '../managers/PluginManager';
 import { pluginStoreLogger as logger } from '../managers/LogManager';
+import { pluginDB } from '../db/PluginDB';
 
 export class PluginStoreController {
   private static instance: PluginStoreController;
@@ -25,7 +26,7 @@ export class PluginStoreController {
    */
   public async getStorePlugins(): Promise<IpcResponse<SuperPlugin[]>> {
     try {
-      const plugins = await pluginManager.getStorePlugins();
+      const plugins = await pluginDB.getAllPlugins();
       return { success: true, data: plugins };
     } catch (error) {
       const errorMessage =

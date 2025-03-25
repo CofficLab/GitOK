@@ -98,26 +98,9 @@ class PluginManager extends BaseManager {
    * 在应用退出前调用，用于清理插件系统
    */
   public cleanup(): void {
-    logger.info('开始清理插件系统');
-
     try {
-      // 清理所有插件
-      for (const [pluginId] of this.plugins.entries()) {
-        try {
-          logger.debug(`清理插件: ${pluginId}`);
-          this.plugins.delete(pluginId);
-        } catch (error) {
-          this.handleError(error, `清理插件失败: ${pluginId}`);
-        }
-      }
-
-      // 清空插件集合
-      this.plugins.clear();
-
       // 移除所有事件监听器
       this.removeAllListeners();
-
-      logger.info('插件系统清理完成');
     } catch (error) {
       this.handleError(error, '插件系统清理失败');
     }
@@ -128,13 +111,6 @@ class PluginManager extends BaseManager {
    */
   getPlugins(): PluginEntity[] {
     return Array.from(this.plugins.values());
-  }
-
-  /**
-   * 获取插件商店列表
-   */
-  async getStorePlugins(): Promise<PluginEntity[]> {
-    return await pluginDB.getAllPlugins();
   }
 
   /**
