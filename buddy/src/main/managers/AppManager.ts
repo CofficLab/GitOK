@@ -9,7 +9,6 @@ import { configManager } from './ConfigManager';
 import { windowManager } from './WindowManager';
 import { pluginManager } from './PluginManager';
 import { commandKeyManager } from './CommandKeyManager';
-import { ipcManager } from './IPCManager';
 import { pluginViewManager } from './PluginViewManager';
 
 export class AppManager {
@@ -156,10 +155,6 @@ export class AppManager {
     // 初始化插件系统
     logger.info('初始化插件系统');
     await pluginManager.initialize();
-
-    // 注册IPC处理器
-    logger.debug('注册IPC处理器');
-    ipcManager.registerHandlers();
 
     logger.info('应用初始化完成，等待用户交互');
   }
