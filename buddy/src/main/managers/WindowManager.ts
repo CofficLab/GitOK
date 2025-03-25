@@ -371,30 +371,6 @@ class WindowManager extends BaseManager {
   }
 
   /**
-   * 普通模式显示窗口
-   */
-  private async showWindowNormal(x: number, y: number): Promise<void> {
-    if (!this.mainWindow) return;
-
-    logger.info('窗口配置为不跟随桌面模式');
-    this.mainWindow.setPosition(x, y);
-    this.mainWindow.show();
-    this.mainWindow.focus();
-
-    // 延迟500毫秒后重置justTriggered标志
-    await new Promise<void>((resolve) => {
-      setTimeout(() => {
-        if (this.mainWindow && !this.mainWindow.isDestroyed()) {
-          // @ts-ignore 忽略类型检查错误
-          this.mainWindow.justTriggered = false;
-          logger.debug('窗口触发保护期已结束');
-        }
-        resolve();
-      }, 500);
-    });
-  }
-
-  /**
    * 显示或隐藏主窗口
    */
   toggleMainWindow(): void {
