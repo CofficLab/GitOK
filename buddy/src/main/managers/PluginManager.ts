@@ -65,13 +65,6 @@ class PluginManager extends BaseManager {
   }
 
   /**
-   * 获取插件目录信息
-   */
-  getPluginDirectories() {
-    return pluginDB.getPluginDirectories();
-  }
-
-  /**
    * 加载所有插件
    */
   private async loadPlugins(): Promise<void> {

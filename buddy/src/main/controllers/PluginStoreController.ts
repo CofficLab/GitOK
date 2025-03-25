@@ -41,7 +41,7 @@ export class PluginStoreController {
    */
   public getDirectories(): IpcResponse<unknown> {
     try {
-      const directories = pluginManager.getPluginDirectories();
+      const directories = pluginDB.getPluginDirectories();
       return { success: true, data: directories };
     } catch (error) {
       const errorMessage =
