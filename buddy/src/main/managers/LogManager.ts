@@ -39,4 +39,5 @@ export const pluginLogger = createLogger('plugin');
 export const actionLogger = createLogger('action');
 export const pluginViewLogger = createLogger('plugin-view');
 export const windowLogger = createLogger('window');
+export const stateLogger = createLogger('state');
 export const pluginStoreLogger = createLogger('plugin-store');

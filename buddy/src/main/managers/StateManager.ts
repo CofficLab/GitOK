@@ -5,7 +5,11 @@
 import { app } from 'electron';
 import { configManager } from './ConfigManager';
 import { BaseManager } from './BaseManager';
-import { ActiveApplication } from '@coffic/active-app-monitor';
+import {
+  ActiveApplication,
+  getFrontmostApplication,
+} from '@coffic/active-app-monitor';
+import { stateLogger as logger } from './LogManager';
 
 class StateManager extends BaseManager {
   private static instance: StateManager;
@@ -61,6 +65,47 @@ class StateManager extends BaseManager {
   setOverlaidApp(app: ActiveApplication | null): void {
     this.overlaidApp = app;
     this.emit('overlaid-app-changed', app);
+  }
+
+  /**
+   * 获取当前活跃的应用信息
+   */
+  getCurrentActiveApp(): ActiveApplication | null {
+    if (process.platform !== 'darwin') {
+      return null;
+    }
+
+    try {
+      const frontmostApp = getFrontmostApplication();
+      if (frontmostApp) {
+        logger.info(
+          `当前活跃应用: ${frontmostApp.name} (${frontmostApp.bundleId})`
+        );
+        return frontmostApp;
+      }
+    } catch (error) {
+      logger.error('获取当前活跃应用信息失败', { error });
+    }
+    return null;
+  }
+
+  /**
+   * 更新当前活跃的应用信息
+   * 获取当前活跃的应用并更新状态
+   */
+  updateActiveApp(): void {
+    if (process.platform !== 'darwin') {
+      return;
+    }
+
+    const frontmostApp = this.getCurrentActiveApp();
+    if (frontmostApp) {
+      logger.debug('更新被覆盖的应用信息');
+      this.setOverlaidApp(frontmostApp);
+    } else {
+      logger.debug('无法获取当前活跃的应用信息');
+      this.setOverlaidApp(null);
+    }
   }
 
   /**

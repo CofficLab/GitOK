@@ -8,7 +8,6 @@ import { is } from '@electron-toolkit/utils';
 import icon from '../../../resources/icon.png?asset';
 import { configManager } from './ConfigManager';
 import { appStateManager } from './StateManager';
-import { getFrontmostApplication } from '@coffic/active-app-monitor';
 import { BaseManager } from './BaseManager';
 import { windowLogger as logger } from './LogManager';
 
@@ -274,19 +273,9 @@ class WindowManager extends BaseManager {
 
     logger.info('窗口当前不可见，执行显示操作');
 
-    // 获取当前活跃的应用信息（如果可能的话）
+    // 更新当前活跃的应用信息
     if (process.platform === 'darwin') {
-      try {
-        const frontmostApp = getFrontmostApplication();
-        if (frontmostApp) {
-          logger.info(
-            `当前活跃应用: ${frontmostApp.name} (${frontmostApp.bundleId})`
-          );
-          appStateManager.setOverlaidApp(frontmostApp);
-        }
-      } catch (error) {
-        logger.error('获取当前活跃应用信息失败', { error });
-      }
+      appStateManager.updateActiveApp();
     }
 
     const windowConfig = this.configManager.getWindowConfig();
