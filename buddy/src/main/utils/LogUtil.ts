@@ -4,65 +4,63 @@
  */
 import { SuperLogger } from '@/types/super-logger';
 import log from 'electron-log';
-import type { LogMessage } from 'electron-log';
+import type { LogMessage, Format } from 'electron-log';
 import 'source-map-support/register';
+
+// 配置日志级别对应的颜色和表情
+const logStyles = {
+  error: { emoji: '❌', color: '\x1b[31m' }, // 红色
+  warn: { emoji: '⚠️', color: '\x1b[33m' }, // 黄色
+  info: { emoji: 'ℹ️ ', color: '\x1b[36m' }, // 青色
+  debug: { emoji: '🔍', color: '\x1b[90m' }, // 灰色
+};
+
+const resetColor = '\x1b[0m';
 
 // 配置日志
 if (process.env.NODE_ENV === 'development') {
   // 开发环境：显示源码位置（绝对路径）
-  log.transports.file.format = '[{h}:{i}:{s}] {text}';
-  log.transports.console.format = '{text}';
+  log.transports.file.format = ((message) => {
+    const style = logStyles[message.level] || { emoji: '📝' };
+    const text = message.data.join(' ');
+    return [`[{h}:{i}:{s}] ${style.emoji} ${text}`];
+  }) as Format;
+
+  log.transports.console.format = ((message) => {
+    const style = logStyles[message.level] || {
+      emoji: '📝',
+      color: '\x1b[37m',
+    };
+    const text = message.data.join(' ');
+    return [`${style.color}${style.emoji} ${text}${resetColor}`];
+  }) as Format;
 
   // 配置日志作用域格式
   log.hooks.push((message) => {
     if (message.data[0]?.['__filename']) {
       const file = message.data[0]['__filename'];
       const line = message.data[0]['__line'];
-      message.scope = `[${file}:${line}]`;
-      message.data = message.data.slice(1);
+      const locationInfo = `[${file}:${line}]`;
+      message.data = [locationInfo, ...message.data.slice(1)];
     }
-
-    // 根据日志级别添加表情
-    const emoji =
-      message.level === 'error'
-        ? '❌'
-        : message.level === 'warn'
-          ? '⚠️'
-          : message.level === 'info'
-            ? 'ℹ️ '
-            : message.level === 'debug'
-              ? '🔍'
-              : '📝';
-
-    // 组装最终的消息
-    message.data = [
-      `${emoji} ${message.scope ? `${message.scope} ` : ''}${message.data.join(' ')}`,
-    ];
     return message;
   });
 } else {
   // 生产环境：不显示源码位置
-  log.transports.file.format = '[{h}:{i}:{s}] {text}';
-  log.transports.console.format = '{text}';
+  log.transports.file.format = ((message) => {
+    const style = logStyles[message.level] || { emoji: '📝' };
+    const text = message.data.join(' ');
+    return [`[{h}:{i}:{s}] ${style.emoji} ${text}`];
+  }) as Format;
 
-  // 配置日志作用域格式
-  log.hooks.push((message) => {
-    // 根据日志级别添加表情
-    const emoji =
-      message.level === 'error'
-        ? '❌'
-        : message.level === 'warn'
-          ? '⚠️'
-          : message.level === 'info'
-            ? 'ℹ️'
-            : message.level === 'debug'
-              ? '🔍'
-              : '📝';
-
-    // 组装最终的消息
-    message.data = [`${emoji} ${message.data.join(' ')}`];
-    return message;
-  });
+  log.transports.console.format = ((message) => {
+    const style = logStyles[message.level] || {
+      emoji: '📝',
+      color: '\x1b[37m',
+    };
+    const text = message.data.join(' ');
+    return [`${style.color}${style.emoji} ${text}${resetColor}`];
+  }) as Format;
 }
 
 // 设置日志级别
