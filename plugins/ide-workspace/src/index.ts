@@ -36,12 +36,21 @@ const plugin = {
       return [];
     }
 
+    // 预先获取工作空间信息
+    const workspace = await (isCursor
+      ? cursorService.getWorkspace()
+      : vscodeService.getWorkspace());
+
+    const workspaceInfo = workspace
+      ? `当前工作空间: ${workspace}`
+      : `未能获取到 ${overlaidApp} 的工作空间信息`;
+
     // 创建动作列表
     const actions: Action[] = [
       {
         id: 'show_workspace',
         title: '显示工作空间',
-        description: '显示当前IDE的工作空间路径',
+        description: workspaceInfo,
         icon: '📁',
       },
     ];
@@ -67,34 +76,7 @@ const plugin = {
    */
   async executeAction(action: Action): Promise<ActionResult> {
     logger.info(`执行动作: ${action.id} (${action.title})`);
-
-    try {
-      switch (action.id) {
-        case 'show_workspace': {
-          // 根据当前应用选择服务
-          const app = process.env.OVERLAID_APP?.toLowerCase() || '';
-          const isCursor = app.includes('cursor');
-
-          const workspace = await (isCursor
-            ? cursorService.getWorkspace()
-            : vscodeService.getWorkspace());
-
-          if (workspace) {
-            return { message: `当前工作空间: ${workspace}` };
-          } else {
-            return { message: '未能获取到工作空间信息' };
-          }
-        }
-
-        default:
-          const errorMsg = `未知的动作ID: ${action.id}`;
-          logger.error(errorMsg);
-          throw new Error(errorMsg);
-      }
-    } catch (error) {
-      logger.error(`执行动作 ${action.id} 失败:`, error);
-      throw error;
-    }
+    return { message: `完成` };
   },
 };
 
