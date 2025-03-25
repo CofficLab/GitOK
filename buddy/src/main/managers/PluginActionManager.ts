@@ -212,7 +212,7 @@ class PluginActionManager extends BaseManager {
 
       // 获取动作信息
       const actions = await this.getActions();
-      const actionEntity = actions.find((a) => a.id === actionId);
+      const actionEntity = actions.find((a) => a.globalId === actionId);
 
       if (!actionEntity || !actionEntity.viewPath) {
         throw new Error(`动作 ${actionId} 没有关联视图`);
