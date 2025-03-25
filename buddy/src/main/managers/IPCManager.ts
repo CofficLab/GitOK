@@ -2,13 +2,13 @@
  * IPC管理器
  * 负责处理主进程与渲染进程之间的IPC通信
  */
-import { BaseIPCManager } from '../ipc/base';
-import { configIPCManager } from '../ipc/config';
-import { commandKeyIPCManager } from '../ipc/command-key';
-import { pluginIPCManager } from '../ipc/plugin';
-import { overlaidAppIPCManager } from '../ipc/overlaid-app';
+import { BaseIPCManager } from '../router/base';
+import { configIPCManager } from '../router/config';
+import { commandKeyIPCManager } from '../router/command-key';
+import { pluginIPCManager } from '../router/plugin';
+import { overlaidAppIPCManager } from '../router/overlaid-app';
 import { ipcLogger as logger } from '../managers/LogManager';
-import { uiLogIPCManager } from '../ipc/ui-log';
+import { uiLogIPCManager } from '../router/ui-log';
 
 class IPCManager {
   private static instance: IPCManager;

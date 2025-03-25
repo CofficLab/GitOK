@@ -84,8 +84,8 @@ const showErrorMessage = (message: string) => {
 // 根据标签过滤插件
 const filteredPlugins = computed(() => {
     return plugins.value.filter(plugin => {
-        if (activeTab.value === 'user') return plugin.path.includes('user')
-        if (activeTab.value === 'dev') return plugin.path.includes('dev')
+        if (activeTab.value === 'user') return plugin.type === 'user'
+        if (activeTab.value === 'dev') return plugin.type === 'dev'
         return true
     })
 })

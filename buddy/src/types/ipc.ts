@@ -18,6 +18,16 @@ export const IPC_METHODS = {
   GET_PLUGIN_ACTIONS: 'get-plugin-actions',
   EXECUTE_PLUGIN_ACTION: 'execute-plugin-action',
   GET_ACTION_VIEW: 'get-action-view',
+  CREATE_PLUGIN_VIEW: 'create-plugin-view',
+  SHOW_PLUGIN_VIEW: 'show-plugin-view',
+  HIDE_PLUGIN_VIEW: 'hide-plugin-view',
+  DESTROY_PLUGIN_VIEW: 'destroy-plugin-view',
+  TOGGLE_PLUGIN_DEVTOOLS: 'toggle-plugin-devtools',
+  // 插件商店相关
+  GET_STORE_PLUGINS: 'plugin:getStorePlugins',
+  GET_PLUGIN_DIRECTORIES: 'plugin:getDirectories',
+  GET_PLUGINS: 'plugin:getPlugins',
+  OPEN_PLUGIN_DIRECTORY: 'plugin:openDirectory',
 } as const;
 
 /**
