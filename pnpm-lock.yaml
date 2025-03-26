@@ -28,10 +28,10 @@ importers:
   buddy:
     dependencies:
       '@coffic/active-app-monitor':
-        specifier: workspace:*
-        version: link:../packages/active-app-monitor
+        specifier: ^0.0.2
+        version: 0.0.2
       '@coffic/command-key-listener':
-        specifier: ^1.0.0
+        specifier: ^1.0.1
         version: 1.0.2(electron@35.0.3)
       '@electron-toolkit/preload':
         specifier: ^3.0.1
@@ -121,19 +121,6 @@ importers:
       vue-tsc:
         specifier: ^2.2.8
         version: 2.2.8(typescript@5.8.2)
-
-  packages/active-app-monitor:
-    dependencies:
-      node-addon-api:
-        specifier: ^8.3.1
-        version: 8.3.1
-    devDependencies:
-      '@types/node':
-        specifier: ^22.13.11
-        version: 22.13.11
-      typescript:
-        specifier: ^5.8.2
-        version: 5.8.2
 
   packages/client:
     dependencies:
@@ -436,6 +423,11 @@ packages:
   '@babel/types@7.26.10':
     resolution: {integrity: sha512-emqcG3vHrpxUKTrxcblR36dcrcoRDvKmnL/dCL6ZsHaShW80qxCAcNhzQZrpeM765VzEos+xOi4s+r4IXzTwdQ==}
     engines: {node: '>=6.9.0'}
+
+  '@coffic/active-app-monitor@0.0.2':
+    resolution: {integrity: sha512-0odSQtjX4PVc/XVTMoXRfQd8wi94s1iavaggj7swGHzKVVscCtYQFcKorzRmljkPr62EmPxs1NhSzph1GLokDQ==}
+    engines: {node: '>=14.0.0'}
+    os: [darwin]
 
   '@coffic/command-key-listener@1.0.2':
     resolution: {integrity: sha512-LXmI6v4I6Ui51P/ejieoH3/u+LIgpDlILdF2elWm0i3DGizCfuo6Yv+rH5vcbXf/mjFhpBkvWDhQfeHK1bS89Q==}
@@ -4700,6 +4692,10 @@ snapshots:
     dependencies:
       '@babel/helper-string-parser': 7.25.9
       '@babel/helper-validator-identifier': 7.25.9
+
+  '@coffic/active-app-monitor@0.0.2':
+    dependencies:
+      node-addon-api: 8.3.1
 
   '@coffic/command-key-listener@1.0.2(electron@35.0.3)':
     dependencies:

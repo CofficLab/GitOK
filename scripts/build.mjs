@@ -113,16 +113,6 @@ const projects = [
     name: 'Electron 应用 (buddy)',
     value: 'buddy',
     command: 'pnpm --filter buddy build',
-    preBuildSteps: [
-      {
-        name: '@coffic/active-app-monitor',
-        command: 'pnpm --filter active-app-monitor build',
-      },
-      {
-        name: '@coffic/command-key-listener',
-        command: 'pnpm --filter command-key-listener build',
-      },
-    ],
   },
   {
     name: 'Buddy - 构建 Windows 应用',
@@ -143,16 +133,6 @@ const projects = [
     name: 'Buddy - 构建 macOS 应用',
     value: 'buddy:mac',
     command: 'pnpm --filter buddy build:mac',
-    preBuildSteps: [
-      {
-        name: '@coffic/active-app-monitor',
-        command: 'pnpm --filter active-app-monitor build',
-      },
-      {
-        name: '@coffic/command-key-listener',
-        command: 'pnpm --filter command-key-listener build',
-      },
-    ],
   },
   {
     name: 'Buddy - 构建 Linux 应用',
@@ -178,26 +158,6 @@ const projects = [
     name: 'MCP Core (mcp-core)',
     value: 'mcp-core',
     command: 'pnpm --filter mcp-core build',
-  },
-  {
-    name: 'Active App Monitor',
-    value: 'active-app-monitor',
-    command: 'pnpm --filter active-app-monitor build',
-  },
-  {
-    name: 'Command Key Listener',
-    value: 'command-key-listener',
-    command: 'pnpm --filter command-key-listener build',
-    buildSteps: [
-      {
-        name: 'TypeScript 编译',
-        command: 'pnpm --filter command-key-listener build:ts',
-      },
-      {
-        name: 'Native 模块编译',
-        command: 'pnpm --filter command-key-listener build:native',
-      },
-    ],
   },
   {
     name: 'IDE工作空间插件 (ide-workspace)',

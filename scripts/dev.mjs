@@ -6,20 +6,9 @@ import { execSync } from 'child_process';
 // 定义可用的项目及其对应的开发命令
 const projects = [
   {
-    name: 'Electron 应用 (buddy) - 直接启动',
+    name: 'Electron 应用 (buddy)',
     value: 'buddy',
     command: 'pnpm --filter buddy dev',
-  },
-  {
-    name: 'Electron 应用 (buddy) - 构建依赖后启动',
-    value: 'buddy-with-deps',
-    command: 'pnpm --filter buddy dev',
-    preDevSteps: [
-      {
-        name: '@coffic/active-app-monitor',
-        command: 'pnpm --filter active-app-monitor build',
-      },
-    ],
   },
   {
     name: 'VSCode 扩展 (vsc_extension)',
