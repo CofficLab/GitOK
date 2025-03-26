@@ -97,11 +97,15 @@ setup_certificates() {
 setup_appstore_connect() {
     echo "正在设置 App Store Connect API 密钥..."
     mkdir -p "$HOME/private_keys"
-    echo -n "$APP_STORE_CONNECT_KEY_BASE64" | base64 --decode -o "$HOME/private_keys/AuthKey_${APP_STORE_CONNECT_KEY_ID}.p8"
+    API_KEY_PATH="$HOME/private_keys/AuthKey_${APP_STORE_CONNECT_KEY_ID}.p8"
+    echo -n "$APP_STORE_CONNECT_KEY_BASE64" | base64 --decode -o "$API_KEY_PATH"
     
     # 验证密钥文件是否存在
     echo "验证 API 密钥文件:"
-    ls -la "$HOME/private_keys/AuthKey_${APP_STORE_CONNECT_KEY_ID}.p8"
+    ls -la "$API_KEY_PATH"
+    
+    # 导出环境变量
+    export API_KEY_PATH
 }
 
 # 获取并导出证书信息
@@ -141,13 +145,7 @@ main() {
     echo "SIGNING_IDENTITY: $SIGNING_IDENTITY"
     echo "KEYCHAIN_PATH: $KEYCHAIN_PATH"
     echo "PP_PATH: $PP_PATH"
-    
-    # 设置 GitHub Actions 输出
-    if [ -n "$GITHUB_OUTPUT" ]; then
-        echo "signing_identity=$SIGNING_IDENTITY" >> $GITHUB_OUTPUT
-        echo "team_id=$TEAM_ID" >> $GITHUB_OUTPUT
-        echo "pp_path=$PP_PATH" >> $GITHUB_OUTPUT
-    fi
+    echo "API_KEY_PATH: $API_KEY_PATH"
 }
 
 # 执行主函数

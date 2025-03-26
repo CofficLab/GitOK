@@ -62,6 +62,7 @@ jobs:
           echo "signing_identity=$SIGNING_IDENTITY" >> $GITHUB_OUTPUT
           echo "team_id=$TEAM_ID" >> $GITHUB_OUTPUT
           echo "pp_path=$PP_PATH" >> $GITHUB_OUTPUT
+          echo "api_key_path=$API_KEY_PATH" >> $GITHUB_OUTPUT
 
       - name: Update electron-builder config for CI
         if: matrix.os == 'macos-latest'
@@ -73,17 +74,9 @@ jobs:
         run: |
           brew install yq
           cd buddy
-          # 配置描述文件路径
-          yq -i ".mac.provisioningProfile = \"$PP_PATH\"" electron-builder.yml
-          # 启用公证
+
+          # 只保留 notarize: true
           yq -i '.mac.notarize = true' electron-builder.yml
-          # 删除身份配置，让electron-builder使用CSC_NAME
-          yq -i 'del(.mac.identity)' electron-builder.yml
-          # 添加公证配置
-          yq -i ".mac.teamId = \"$TEAM_ID\"" electron-builder.yml
-          yq -i ".mac.appleApiKey = \"$HOME/private_keys/AuthKey_${APP_STORE_CONNECT_KEY_ID}.p8\"" electron-builder.yml
-          yq -i ".mac.appleApiKeyId = \"${APP_STORE_CONNECT_KEY_ID}\"" electron-builder.yml
-          yq -i ".mac.appleApiIssuer = \"${APP_STORE_CONNECT_KEY_ISSER_ID}\"" electron-builder.yml
 
           echo "electron-builder.yml 配置完成:"
           cat electron-builder.yml
@@ -94,6 +87,9 @@ jobs:
           CSC_IDENTITY_AUTO_DISCOVERY: true
           CSC_NAME: ${{ steps.signing.outputs.signing_identity }}
           APPLE_TEAM_ID: ${{ steps.signing.outputs.team_id }}
+          APPLE_API_KEY: ${{ steps.signing.outputs.api_key_path }}
+          APPLE_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          APPLE_API_ISSUER: ${{ secrets.APP_STORE_CONNECT_KEY_ISSER_ID }}
           PYTHON: python3.11
         run: node scripts/build.mjs buddy:mac
 
