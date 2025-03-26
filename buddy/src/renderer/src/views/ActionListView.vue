@@ -53,14 +53,6 @@ watch(() => searchStore.keyword, async (newKeyword) => {
 
 <template>
     <div class="action-list-view">
-        <h2 class="text-xl font-semibold mb-4">可用动作</h2>
-
-        <!-- 显示当前搜索状态 -->
-        <div class="search-info mb-2 text-sm text-gray-500">
-            <div v-if="hasKeyword">当前搜索: {{ searchStore.keyword }}</div>
-            <div v-if="hasActions">找到 {{ actionStore.getActionCount() }} 个动作</div>
-        </div>
-
         <div>
             <!-- 加载状态 -->
             <div v-if="isLoading" class="text-center py-4 text-gray-500">

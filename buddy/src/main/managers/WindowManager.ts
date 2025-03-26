@@ -13,7 +13,7 @@ import { logger } from './LogManager';
 const isDev = process.env['NODE_ENV'] === 'development';
 const windowConfig = {
   showTrafficLights: true,
-  showDebugToolbar: isDev,
+  showDebugToolbar: isDev && false,
   debugToolbarPosition: 'bottom',
   hotkey: 'Option+Space',
   size: {

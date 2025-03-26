@@ -23,7 +23,7 @@
  -->
 
 <script setup lang="ts">
-import { ref, watch, onMounted } from 'vue'
+import { ref, watch, onMounted, nextTick } from 'vue'
 import { useSearchStore } from '../stores/searchStore'
 
 const searchStore = useSearchStore()
@@ -46,17 +46,23 @@ const handleKeyDown = (event: KeyboardEvent) => {
 
 // 组件挂载后自动聚焦搜索框
 onMounted(() => {
-    focusSearch()
+    // 使用nextTick确保DOM已完全渲染后再尝试聚焦
+    nextTick(() => {
+        focusSearch()
+    })
 })
 
 // 聚焦搜索框的方法(可以从外部调用)
 const focusSearch = () => {
-    if (searchInput.value) {
-        searchInput.value.focus()
-        console.log('尝试聚焦搜索框')
-    } else {
-        console.warn('搜索框元素未找到')
-    }
+    // 添加延迟确保DOM已就绪
+    setTimeout(() => {
+        if (searchInput.value) {
+            searchInput.value.focus()
+            console.log('搜索框已聚焦')
+        } else {
+            console.warn('搜索框元素未找到')
+        }
+    }, 50)
 }
 
 // 暴露方法给父组件
@@ -67,7 +73,7 @@ defineExpose({
 
 <template>
     <div class="flex items-center px-4 py-2 bg-gray-100 z-10">
-        <div class="relative flex-1" @click="focusSearch">
+        <div class="relative flex-1 w-full h-full cursor-text" @click="focusSearch">
             <span class="absolute inset-y-0 left-0 flex items-center pl-2 pointer-events-none">
                 <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

@@ -26,10 +26,11 @@ name: Publish @coffic/active-app-monitor
 
 on:
   push:
-    branches: [main]
+    branches:
+      - electron
+      - main
     paths:
       - 'packages/active-app-monitor/**'
-      - '.github/workflows/publish-active-app-monitor.yml'
 
 jobs:
   build-and-publish:
