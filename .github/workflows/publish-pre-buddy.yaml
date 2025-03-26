@@ -80,10 +80,10 @@ jobs:
           # 删除身份配置，让electron-builder使用CSC_NAME
           yq -i 'del(.mac.identity)' electron-builder.yml
           # 添加公证配置
-          yq -i ".mac.notarization.teamId = \"$TEAM_ID\"" electron-builder.yml
-          yq -i ".mac.notarization.appleApiKey = \"$HOME/private_keys/AuthKey_${APP_STORE_CONNECT_KEY_ID}.p8\"" electron-builder.yml
-          yq -i ".mac.notarization.appleApiKeyId = \"${APP_STORE_CONNECT_KEY_ID}\"" electron-builder.yml
-          yq -i ".mac.notarization.appleApiIssuer = \"${APP_STORE_CONNECT_KEY_ISSER_ID}\"" electron-builder.yml
+          yq -i ".mac.teamId = \"$TEAM_ID\"" electron-builder.yml
+          yq -i ".mac.appleApiKey = \"$HOME/private_keys/AuthKey_${APP_STORE_CONNECT_KEY_ID}.p8\"" electron-builder.yml
+          yq -i ".mac.appleApiKeyId = \"${APP_STORE_CONNECT_KEY_ID}\"" electron-builder.yml
+          yq -i ".mac.appleApiIssuer = \"${APP_STORE_CONNECT_KEY_ISSER_ID}\"" electron-builder.yml
 
           echo "electron-builder.yml 配置完成:"
           cat electron-builder.yml
