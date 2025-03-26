@@ -67,15 +67,26 @@ jobs:
         if: matrix.os == 'macos-latest'
         env:
           PP_PATH: ${{ steps.signing.outputs.pp_path }}
+          TEAM_ID: ${{ steps.signing.outputs.team_id }}
+          APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          APP_STORE_CONNECT_KEY_ISSER_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ISSER_ID }}
         run: |
-          # 使用 yq 工具修改 yaml 文件
           brew install yq
           cd buddy
-          # 使用脚本设置的配置文件路径
+          # 配置描述文件路径
           yq -i ".mac.provisioningProfile = \"$PP_PATH\"" electron-builder.yml
+          # 启用公证
           yq -i '.mac.notarize = true' electron-builder.yml
-          # 删除 identity 配置，让 electron-builder 使用 CSC_NAME
+          # 删除身份配置，让electron-builder使用CSC_NAME
           yq -i 'del(.mac.identity)' electron-builder.yml
+          # 添加公证配置
+          yq -i ".mac.notarization.teamId = \"$TEAM_ID\"" electron-builder.yml
+          yq -i ".mac.notarization.appleApiKey = \"$HOME/private_keys/AuthKey_${APP_STORE_CONNECT_KEY_ID}.p8\"" electron-builder.yml
+          yq -i ".mac.notarization.appleApiKeyId = \"${APP_STORE_CONNECT_KEY_ID}\"" electron-builder.yml
+          yq -i ".mac.notarization.appleApiIssuer = \"${APP_STORE_CONNECT_KEY_ISSER_ID}\"" electron-builder.yml
+
+          echo "electron-builder.yml 配置完成:"
+          cat electron-builder.yml
 
       - name: build-mac
         if: matrix.os == 'macos-latest'
@@ -84,14 +95,7 @@ jobs:
           CSC_NAME: ${{ steps.signing.outputs.signing_identity }}
           APPLE_TEAM_ID: ${{ steps.signing.outputs.team_id }}
           PYTHON: python3.11
-        run: |
-          # 调试信息
-          echo "检查配置文件:"
-          ls -l "${{ steps.signing.outputs.pp_path }}"
-          echo "检查证书:"
-          security find-identity -v -p codesigning
-          # 运行构建
-          node scripts/build.mjs buddy:mac
+        run: node scripts/build.mjs buddy:mac
 
       # - name: build-win
       #   if: matrix.os == 'windows-latest'
