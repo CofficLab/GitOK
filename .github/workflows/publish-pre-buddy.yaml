@@ -84,7 +84,14 @@ jobs:
           CSC_NAME: ${{ steps.signing.outputs.signing_identity }}
           APPLE_TEAM_ID: ${{ steps.signing.outputs.team_id }}
           PYTHON: python3.11
-        run: node scripts/build.mjs buddy:mac
+        run: |
+          # 调试信息
+          echo "检查配置文件:"
+          ls -l "${{ steps.signing.outputs.pp_path }}"
+          echo "检查证书:"
+          security find-identity -v -p codesigning
+          # 运行构建
+          node scripts/build.mjs buddy:mac
 
       # - name: build-win
       #   if: matrix.os == 'windows-latest'
