@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - electron
+      - main
     paths:
       - 'buddy/**'
 
@@ -27,18 +28,45 @@ jobs:
           CURRENT_VERSION=$(node -p "require('./package.json').version")
           echo "当前版本: $CURRENT_VERSION"
 
-          # 分割版本号
-          MAJOR=$(echo $CURRENT_VERSION | cut -d. -f1)
-          MINOR=$(echo $CURRENT_VERSION | cut -d. -f2)
-          PATCH=$(echo $CURRENT_VERSION | cut -d. -f3)
+          # 分割版本号，处理可能存在的预发布后缀
+          BASE_VERSION=$(echo $CURRENT_VERSION | cut -d'-' -f1)
+          PRERELEASE_SUFFIX=$(echo $CURRENT_VERSION | grep -o '\-.*' || echo "")
 
-          # 增加补丁版本号
+          echo "基础版本: $BASE_VERSION"
+
+          # 分割基础版本号
+          MAJOR=$(echo $BASE_VERSION | cut -d. -f1)
+          MINOR=$(echo $BASE_VERSION | cut -d. -f2)
+          PATCH=$(echo $BASE_VERSION | cut -d. -f3)
+
+          # 获取当前分支名
+          BRANCH_NAME="${GITHUB_REF#refs/heads/}"
+          echo "当前分支: $BRANCH_NAME"
+
+          # 增加补丁版本号并判断是否需要添加预发布后缀
           NEW_PATCH=$((PATCH + 1))
-          NEW_VERSION="$MAJOR.$MINOR.$NEW_PATCH"
+
+          if [[ "$BRANCH_NAME" == "main" ]]; then
+            # 在main分支，生成正式版本号
+            NEW_VERSION="$MAJOR.$MINOR.$NEW_PATCH"
+          else
+            # 在其他分支，生成预发布版本号
+            # 检查是否已经有beta后缀
+            if [[ "$PRERELEASE_SUFFIX" == *"beta"* ]]; then
+              # 提取beta版本号
+              BETA_VERSION=$(echo $PRERELEASE_SUFFIX | grep -o '[0-9]*$')
+              NEW_BETA=$((BETA_VERSION + 1))
+              NEW_VERSION="$MAJOR.$MINOR.$NEW_PATCH-beta.$NEW_BETA"
+            else
+              # 添加新的beta后缀
+              NEW_VERSION="$MAJOR.$MINOR.$NEW_PATCH-beta.0"
+            fi
+          fi
+
           echo "新版本: $NEW_VERSION"
 
           # 验证版本号格式
-          if ! [[ $NEW_VERSION =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+          if ! [[ $NEW_VERSION =~ ^[0-9]+\.[0-9]+\.[0-9]+(-beta\.[0-9]+)?$ ]]; then
             echo "错误: 无效的版本号格式: $NEW_VERSION"
             exit 1
           fi

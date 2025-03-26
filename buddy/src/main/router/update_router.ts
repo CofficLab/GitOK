@@ -2,7 +2,7 @@
  * 更新相关路由
  * 处理应用更新相关的IPC通信
  */
-import { BrowserWindow, ipcMain } from 'electron';
+import { BrowserWindow } from 'electron';
 import { updateManager } from '../managers/UpdateManager';
 import { IpcRoute } from '../services/RouterService';
 

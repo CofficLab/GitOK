@@ -3,7 +3,7 @@
  * 负责应用的自动更新功能
  */
 import { autoUpdater } from 'electron-updater';
-import { app, dialog, BrowserWindow } from 'electron';
+import { dialog, BrowserWindow } from 'electron';
 import { logger } from './LogManager';
 
 // 导入后面要创建的事件发送器
