@@ -141,29 +141,6 @@ export class RemotePluginDB {
       // 处理搜索结果
       const result = await this.processSearchResults(packages);
 
-      // 还可以添加其他搜索，例如如果需要继续查找@coffic范围的包
-      if (result.validPlugins < 2) {
-        // 如果找到的有效插件不够，尝试通过作用域搜索
-        const scopePackages = await this.searchPackagesFromScope(
-          this.COFFIC_SCOPE
-        );
-        const scopeResult = await this.processSearchResults(scopePackages);
-
-        // 合并结果，避免重复
-        const allPlugins = [...result.plugins];
-        for (const plugin of scopeResult.plugins) {
-          if (!allPlugins.find((p) => p.id === plugin.id)) {
-            allPlugins.push(plugin);
-          }
-        }
-
-        return {
-          plugins: allPlugins,
-          foundPackages: result.foundPackages + scopeResult.foundPackages,
-          validPlugins: allPlugins.length,
-        };
-      }
-
       return result;
     } catch (error) {
       logger.error(
@@ -238,115 +215,8 @@ export class RemotePluginDB {
    */
   private async searchPackagesByKeyword(keyword: string): Promise<any[]> {
     return new Promise((resolve, reject) => {
-      // 使用 npms.io 的API - 这个API更可靠
-      const searchUrl = `https://api.npms.io/v2/search?q=${encodeURIComponent(keyword)}&size=250`;
-
-      logger.info(`搜索插件关键词(npms.io): ${keyword}`, { url: searchUrl });
-
-      // 尝试通过npms.io API获取包
-      https
-        .get(searchUrl, (res) => {
-          let data = '';
-
-          res.on('data', (chunk) => {
-            data += chunk;
-          });
-
-          res.on('end', () => {
-            if (res.statusCode === 200) {
-              try {
-                const response = JSON.parse(data);
-
-                // 提取搜索结果中的包对象
-                const foundPackages =
-                  response.results?.map((obj: any) => obj.package) || [];
-
-                logger.info(`成功获取关键词包列表(npms.io): ${keyword}`, {
-                  count: foundPackages.length,
-                  total: response.total || 0,
-                  headers: res.headers,
-                  responseData:
-                    foundPackages.length === 0 ? data : data.substring(0, 500),
-                });
-
-                // 如果搜索API返回了结果，使用这些结果
-                if (foundPackages.length > 0) {
-                  resolve(foundPackages);
-                  return;
-                }
-
-                // 如果npms.io没有返回结果，尝试使用npm registry的API
-                logger.warn(
-                  `npms.io未返回关键词 ${keyword} 的相关包，尝试npm registry API`
-                );
-                this.searchPackagesWithNpmRegistryByKeyword(keyword)
-                  .then(resolve)
-                  .catch((err) => {
-                    logger.error(
-                      `npm registry API查询失败: ${err instanceof Error ? err.message : String(err)}`
-                    );
-                    resolve(this.getFallbackPackagesList(this.COFFIC_SCOPE));
-                  });
-              } catch (err) {
-                const errorMsg = `解析npms.io搜索结果失败: ${err instanceof Error ? err.message : String(err)}`;
-                logger.error(errorMsg, {
-                  responseData: data.substring(0, 1000),
-                });
-                // 尝试使用npm registry API
-                this.searchPackagesWithNpmRegistryByKeyword(keyword)
-                  .then(resolve)
-                  .catch((err) => {
-                    logger.error(
-                      `npm registry API查询失败: ${err instanceof Error ? err.message : String(err)}`
-                    );
-                    resolve(this.getFallbackPackagesList(this.COFFIC_SCOPE));
-                  });
-              }
-            } else {
-              const errorMsg = `npms.io搜索失败，状态码: ${res.statusCode}`;
-              logger.error(errorMsg, {
-                keyword,
-                statusCode: res.statusCode,
-                headers: res.headers,
-                responseBody: data,
-              });
-              // 尝试使用npm registry API
-              this.searchPackagesWithNpmRegistryByKeyword(keyword)
-                .then(resolve)
-                .catch((err) => {
-                  logger.error(
-                    `npm registry API查询失败: ${err instanceof Error ? err.message : String(err)}`
-                  );
-                  resolve(this.getFallbackPackagesList(this.COFFIC_SCOPE));
-                });
-            }
-          });
-        })
-        .on('error', (err) => {
-          const errorMsg = `npms.io请求失败: ${err.message}`;
-          logger.error(errorMsg, { keyword, error: err });
-          // 尝试使用npm registry API
-          this.searchPackagesWithNpmRegistryByKeyword(keyword)
-            .then(resolve)
-            .catch((err) => {
-              logger.error(
-                `npm registry API查询失败: ${err instanceof Error ? err.message : String(err)}`
-              );
-              resolve(this.getFallbackPackagesList(this.COFFIC_SCOPE));
-            });
-        });
-    });
-  }
-
-  /**
-   * 使用npm registry的API搜索关键词包（作为备用方法）
-   */
-  private async searchPackagesWithNpmRegistryByKeyword(
-    keyword: string
-  ): Promise<any[]> {
-    return new Promise((resolve, reject) => {
       // npm registry 搜索 API
-      const searchUrl = `${this.NPM_REGISTRY}/-/v1/search?text=${encodeURIComponent(keyword)}&size=250`;
+      const searchUrl = `${this.NPM_REGISTRY}/-/v1/search?text=keywords:${encodeURIComponent(keyword)}&size=250`;
 
       logger.info(`搜索关键词包(npm registry): ${keyword}`, { url: searchUrl });
 
@@ -370,9 +240,6 @@ export class RemotePluginDB {
                 logger.info(`成功获取关键词包列表(npm registry): ${keyword}`, {
                   count: foundPackages.length,
                   total: response.total || 0,
-                  headers: res.headers,
-                  responseData:
-                    foundPackages.length === 0 ? data : data.substring(0, 500),
                 });
 
                 // 如果搜索API返回了结果，使用这些结果
@@ -421,9 +288,8 @@ export class RemotePluginDB {
     try {
       logger.info('开始刷新远程插件列表缓存');
 
-      // 只搜索 coffic 组织
-      logger.info(`搜索组织: ${this.COFFIC_SCOPE}`);
-      const packages = await this.searchPackagesFromScope(this.COFFIC_SCOPE);
+      // 搜索 buddy-plugin 关键词
+      const packages = await this.searchPackagesByKeyword('buddy-plugin');
 
       if (packages && Array.isArray(packages) && packages.length > 0) {
         const result = await this.processSearchResults(packages);
@@ -436,11 +302,6 @@ export class RemotePluginDB {
           });
           return;
         }
-      } else {
-        logger.warn(`${this.COFFIC_SCOPE} 组织下未找到包`, {
-          packages: packages || [],
-          responseDetails: typeof packages,
-        });
       }
 
       // 搜索失败，使用后备数据
@@ -550,186 +411,6 @@ export class RemotePluginDB {
       .split('-')
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
       .join(' ');
-  }
-
-  /**
-   * 从 npm registry 搜索指定作用域下的包
-   * @param scope 包的作用域，例如 @coffic
-   */
-  private async searchPackagesFromScope(scope: string): Promise<any[]> {
-    return new Promise((resolve, reject) => {
-      // 使用 npms.io 的API - 这个API更可靠用于搜索作用域包
-      const scopeName = scope.replace('@', '');
-      const searchUrl = `https://api.npms.io/v2/search?q=scope:${scopeName}&size=250`;
-
-      logger.info(`搜索作用域包(npms.io): ${scope}`, { url: searchUrl });
-
-      // 尝试通过npms.io API获取包
-      https
-        .get(searchUrl, (res) => {
-          let data = '';
-
-          res.on('data', (chunk) => {
-            data += chunk;
-          });
-
-          res.on('end', () => {
-            if (res.statusCode === 200) {
-              try {
-                const response = JSON.parse(data);
-
-                // 提取搜索结果中的包对象
-                const foundPackages =
-                  response.results?.map((obj: any) => obj.package) || [];
-
-                logger.info(`成功获取作用域包列表(npms.io): ${scope}`, {
-                  count: foundPackages.length,
-                  total: response.total || 0,
-                  headers: res.headers,
-                  responseData:
-                    foundPackages.length === 0 ? data : data.substring(0, 500),
-                });
-
-                // 如果搜索API返回了结果，使用这些结果
-                if (foundPackages.length > 0) {
-                  resolve(foundPackages);
-                  return;
-                }
-
-                // 如果npms.io没有返回结果，尝试使用npm registry的API
-                logger.warn(
-                  `npms.io未返回${scope}组织下的包，尝试npm registry API`
-                );
-                this.searchPackagesWithNpmRegistry(scope)
-                  .then(resolve)
-                  .catch((err) => {
-                    logger.error(
-                      `npm registry API查询失败: ${err instanceof Error ? err.message : String(err)}`
-                    );
-                    resolve(this.getFallbackPackagesList(scope));
-                  });
-              } catch (err) {
-                const errorMsg = `解析npms.io搜索结果失败: ${err instanceof Error ? err.message : String(err)}`;
-                logger.error(errorMsg, {
-                  responseData: data.substring(0, 1000),
-                });
-                // 尝试使用npm registry API
-                this.searchPackagesWithNpmRegistry(scope)
-                  .then(resolve)
-                  .catch((err) => {
-                    logger.error(
-                      `npm registry API查询失败: ${err instanceof Error ? err.message : String(err)}`
-                    );
-                    resolve(this.getFallbackPackagesList(scope));
-                  });
-              }
-            } else {
-              const errorMsg = `npms.io搜索失败，状态码: ${res.statusCode}`;
-              logger.error(errorMsg, {
-                scope,
-                statusCode: res.statusCode,
-                headers: res.headers,
-                responseBody: data,
-              });
-              // 尝试使用npm registry API
-              this.searchPackagesWithNpmRegistry(scope)
-                .then(resolve)
-                .catch((err) => {
-                  logger.error(
-                    `npm registry API查询失败: ${err instanceof Error ? err.message : String(err)}`
-                  );
-                  resolve(this.getFallbackPackagesList(scope));
-                });
-            }
-          });
-        })
-        .on('error', (err) => {
-          const errorMsg = `npms.io请求失败: ${err.message}`;
-          logger.error(errorMsg, { scope, error: err });
-          // 尝试使用npm registry API
-          this.searchPackagesWithNpmRegistry(scope)
-            .then(resolve)
-            .catch((err) => {
-              logger.error(
-                `npm registry API查询失败: ${err instanceof Error ? err.message : String(err)}`
-              );
-              resolve(this.getFallbackPackagesList(scope));
-            });
-        });
-    });
-  }
-
-  /**
-   * 使用npm registry的API搜索包（原来的实现作为备用方法）
-   */
-  private async searchPackagesWithNpmRegistry(scope: string): Promise<any[]> {
-    return new Promise((resolve, reject) => {
-      // npm registry 搜索 API - 根据npm文档，正确的格式是scope:coffic (不带@)
-      const searchUrl = `${this.NPM_REGISTRY}/-/v1/search?text=scope:${scope.replace('@', '')}&size=250`;
-
-      logger.info(`搜索作用域包(npm registry): ${scope}`, { url: searchUrl });
-
-      https
-        .get(searchUrl, (res) => {
-          let data = '';
-
-          res.on('data', (chunk) => {
-            data += chunk;
-          });
-
-          res.on('end', () => {
-            if (res.statusCode === 200) {
-              try {
-                const response = JSON.parse(data);
-
-                // 提取搜索结果中的包对象
-                const foundPackages =
-                  response.objects?.map((obj: any) => obj.package) || [];
-
-                logger.info(`成功获取作用域包列表(npm registry): ${scope}`, {
-                  count: foundPackages.length,
-                  total: response.total || 0,
-                  headers: res.headers,
-                  responseData:
-                    foundPackages.length === 0 ? data : data.substring(0, 500),
-                });
-
-                // 如果搜索API返回了结果，使用这些结果
-                if (foundPackages.length > 0) {
-                  resolve(foundPackages);
-                  return;
-                }
-
-                // 如果搜索结果为空，尝试使用npm search命令的方式获取包列表
-                logger.warn(
-                  `npm registry API未返回${scope}组织下的包，尝试回退到内置列表`
-                );
-                resolve(this.getFallbackPackagesList(scope));
-              } catch (err) {
-                const errorMsg = `解析npm registry搜索结果失败: ${err instanceof Error ? err.message : String(err)}`;
-                logger.error(errorMsg, {
-                  responseData: data.substring(0, 1000),
-                });
-                reject(new Error(errorMsg));
-              }
-            } else {
-              const errorMsg = `npm registry搜索失败，状态码: ${res.statusCode}`;
-              logger.error(errorMsg, {
-                scope,
-                statusCode: res.statusCode,
-                headers: res.headers,
-                responseBody: data,
-              });
-              reject(new Error(errorMsg));
-            }
-          });
-        })
-        .on('error', (err) => {
-          const errorMsg = `npm registry请求失败: ${err.message}`;
-          logger.error(errorMsg, { scope, error: err });
-          reject(new Error(errorMsg));
-        });
-    });
   }
 
   /**

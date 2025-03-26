@@ -24,6 +24,7 @@
     "@coffic/command-key-listener": "^1.0.1",
     "@electron-toolkit/preload": "^3.0.1",
     "@electron-toolkit/utils": "^4.0.0",
+    "@remixicon/vue": "^4.6.0",
     "chalk": "4",
     "daisyui": "^5.0.9",
     "electron-log": "^5.3.2",

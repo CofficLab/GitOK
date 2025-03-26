@@ -10,6 +10,15 @@ const ipc = electronApi.ipc;
  * Action 管理 Store
  *
  * 负责管理动作列表、搜索、执行等功能
+ *
+ * 主要功能：
+ * - 管理搜索关键词
+ * - 处理搜索结果的更新
+ * - 提供搜索状态的响应式访问
+ * - 管理动作列表及其状态
+ * - 执行指定动作
+ * - 加载动作自定义视图
+ * - 监听窗口激活状态
  */
 
 interface ActionState {
@@ -18,6 +27,8 @@ interface ActionState {
   selected: string | null;
   viewHtml: string;
   lastKeyword: string; // 存储上次搜索的关键词，用于窗口激活时刷新
+  keyword: string; // 从searchStore合并: 当前搜索关键词
+  lastSearchTime: number; // 从searchStore合并: 记录最后一次搜索时间
 }
 
 export const useActionStore = defineStore('action', {
@@ -27,6 +38,8 @@ export const useActionStore = defineStore('action', {
     selected: null,
     viewHtml: '',
     lastKeyword: '',
+    keyword: '', // 从searchStore合并
+    lastSearchTime: 0, // 从searchStore合并
   }),
 
   actions: {
@@ -34,12 +47,15 @@ export const useActionStore = defineStore('action', {
      * 加载动作列表
      */
     async loadList(searchKeyword: string = '') {
-      logger.info('actionStore: loadList with keyword: 🐛', searchKeyword);
-      this.lastKeyword = searchKeyword; // 保存当前关键词
+      // 如果没有提供搜索关键词，则使用store中的keyword
+      const keywordToUse = searchKeyword || this.keyword;
+
+      logger.info('actionStore: loadList with keyword: 🐛', keywordToUse);
+      this.lastKeyword = keywordToUse; // 保存当前关键词
 
       try {
         this.isLoading = true;
-        this.list = await actionsApi.getPluginActions(searchKeyword);
+        this.list = await actionsApi.getPluginActions(keywordToUse);
 
         // logger.info('actionStore: loadList', this.list);
       } catch (error) {
@@ -141,6 +157,51 @@ export const useActionStore = defineStore('action', {
      */
     cleanupWindowActivationListener() {
       ipc.removeListener(WindowEvents.ACTIVATED, () => {});
+    },
+
+    /**
+     * 更新搜索关键词并触发插件动作加载
+     */
+    async updateKeyword(keyword: string) {
+      logger.info(`actionStore: 更新关键词 "${keyword}"，触发插件动作加载`);
+      this.keyword = keyword;
+      this.lastSearchTime = Date.now();
+      await this.loadList(keyword);
+    },
+
+    /**
+     * 仅设置关键词而不触发其他操作
+     */
+    setKeyword(keyword: string) {
+      logger.info(`actionStore: 设置关键词 "${keyword}" (不触发额外操作)`);
+      this.keyword = keyword;
+    },
+
+    /**
+     * 清除搜索
+     */
+    clearSearch() {
+      this.keyword = '';
+      this.loadList('');
+    },
+
+    /**
+     * 处理键盘事件
+     */
+    handleKeyDown(event: KeyboardEvent) {
+      // 当按下ESC键，清除搜索
+      if (event.key === 'Escape') {
+        this.clearSearch();
+        return;
+      }
+
+      // 当按下向下箭头，聚焦到第一个结果
+      if (event.key === 'ArrowDown') {
+        const firstResult = document.querySelector(
+          '.plugin-action-item'
+        ) as HTMLElement;
+        firstResult?.focus();
+      }
     },
   },
 });

@@ -96,12 +96,8 @@ export class AppManager {
       }
     }
 
-    // 设置全局快捷键
-    logger.info('设置全局快捷键');
     windowManager.setupGlobalShortcut();
 
-    // 初始化插件系统
-    logger.info('初始化插件系统');
     await pluginManager.initialize();
 
     logger.info('应用初始化完成，等待用户交互');

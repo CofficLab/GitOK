@@ -38,11 +38,14 @@ class PluginActionManager extends BaseManager {
    * @returns 匹配的插件动作列表
    */
   async getActions(keyword: string = ''): Promise<PluginActionEntity[]> {
-    logger.info(`获取插件动作，关键词: "${keyword}"`);
     let allActions: PluginActionEntity[] = [];
     let overlaidApp = appStateManager.getOverlaidApp();
 
-    logger.info(`获取插件动作，当前被覆盖应用`, overlaidApp?.name);
+    logger.info(
+      `获取动作，当前应用`,
+      overlaidApp?.name,
+      `关键词: "${keyword}"`
+    );
 
     try {
       // 从所有加载的插件中获取动作
@@ -87,9 +90,9 @@ class PluginActionManager extends BaseManager {
           );
           allActions = [...allActions, ...validActions];
 
-          logger.info(`成功获取插件 ${plugin.id} 的动作`, {
-            actionCount: validActions.length,
-          });
+          // logger.info(`成功获取插件 ${plugin.id} 的动作`, {
+          //   actionCount: validActions.length,
+          // });
         } catch (error) {
           // 获取详细的错误信息
           const errorDetail =
@@ -128,7 +131,7 @@ class PluginActionManager extends BaseManager {
         );
       }
 
-      logger.info(`找到 ${allActions.length} 个匹配的动作`);
+      logger.info(`找到 ${allActions.length} 个动作`);
       return allActions;
     } catch (error) {
       this.handleError(error, '获取插件动作失败');

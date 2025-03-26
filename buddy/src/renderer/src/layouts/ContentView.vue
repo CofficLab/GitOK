@@ -8,7 +8,7 @@ ContentView.vue - 内容视图组件
 
 状态管理：
 - 使用appStore管理视图状态
-- 使用searchStore管理搜索相关状态
+- 使用actionStore管理搜索和动作相关状态
 
 视图切换逻辑：
 1. 默认显示首页或动作列表视图
@@ -28,13 +28,11 @@ ContentView.vue - 内容视图组件
 <script setup lang="ts">
 import { computed, onMounted, watch } from 'vue'
 import { useAppStore } from '@renderer/stores/appStore'
-import { useSearchStore } from '@renderer/stores/searchStore'
 import { useActionStore } from '@renderer/stores/actionStore'
 import { HomeView, PluginView, ActionListView, PluginStoreView } from '@renderer/views'
 
 const appStore = useAppStore()
 const actionStore = useActionStore()
-const searchStore = useSearchStore()
 const currentView = computed(() => appStore.currentView)
 
 // 处理返回到动作列表
@@ -45,14 +43,14 @@ const handleBackToList = () => {
 // 判断是否应该显示动作列表
 const shouldShowActionList = computed(() => {
     const hasActions = actionStore.list.length > 0;
-    const hasKeyword = searchStore.keyword.length > 0;
+    const hasKeyword = actionStore.keyword.length > 0;
     const result = hasActions || hasKeyword;
 
     return result;
 })
 
 // 为了调试在搜索时观察 shouldShowActionList 的变化
-watch(() => searchStore.keyword, (newKeyword) => {
+watch(() => actionStore.keyword, (newKeyword) => {
     console.log(`ContentView: 搜索关键词变化为 "${newKeyword}"`);
 
     // 延迟一下检查 pluginActions
@@ -74,8 +72,8 @@ onMounted(() => {
     console.log('初始状态:', {
         currentView: appStore.currentView,
         pluginActions: actionStore.getActionCount(),
-        keyword: searchStore.keyword,
-        isLoading: searchStore.isLoading
+        keyword: actionStore.keyword,
+        isLoading: actionStore.isLoading
     });
 })
 </script>

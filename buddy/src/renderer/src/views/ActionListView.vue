@@ -9,12 +9,10 @@
 */
 <script setup lang="ts">
 import { computed, watch } from 'vue'
-import { useSearchStore } from '@renderer/stores/searchStore'
 import type { SuperAction } from '@/types/super_action'
 import { useActionStore } from '@renderer/stores/actionStore'
 import { logger } from '@renderer/utils/logger'
 
-const searchStore = useSearchStore()
 const actionStore = useActionStore()
 
 // 处理动作选择
@@ -25,7 +23,7 @@ const handleActionSelected = (action: SuperAction) => {
 
 // 处理取消操作
 const handleCancel = () => {
-    searchStore.clearSearch()
+    actionStore.clearSearch()
 }
 
 // 检查动作列表状态
@@ -33,7 +31,7 @@ const isLoading = computed(() => actionStore.isLoading)
 
 
 // 监听搜索输入变化，加载相应的插件动作
-watch(() => searchStore.keyword, async (newKeyword) => {
+watch(() => actionStore.keyword, async (newKeyword) => {
     logger.info(`ActionListView.vue: 搜索关键词变化为 "${newKeyword}"`);
 
     // 重新加载插件动作

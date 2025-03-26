@@ -10,10 +10,9 @@ import { appStateManager } from './StateManager';
 import { BaseManager } from './BaseManager';
 import { logger } from './LogManager';
 
-const isDev = process.env['NODE_ENV'] === 'development';
 const windowConfig = {
-  showTrafficLights: true,
-  showDebugToolbar: isDev && false,
+  showTrafficLights: false,
+  showDebugToolbar: is.dev && false,
   debugToolbarPosition: 'bottom',
   hotkey: 'Option+Space',
   size: {
@@ -72,7 +71,7 @@ class WindowManager extends BaseManager {
           sandbox: false,
           contextIsolation: true,
           nodeIntegration: false,
-          devTools: windowConfig.showDebugToolbar,
+          devTools: true,
           spellcheck: false,
         },
       });
@@ -135,9 +134,6 @@ class WindowManager extends BaseManager {
     if (!this.mainWindow) return;
 
     if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-      logger.info(
-        '开发模式：加载开发服务器URL -> ' + process.env['ELECTRON_RENDERER_URL']
-      );
       this.mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL']);
     } else {
       const htmlPath = join(__dirname, '../renderer/index.html');
@@ -307,7 +303,7 @@ class WindowManager extends BaseManager {
             if (this.mainWindow && !this.mainWindow.isDestroyed()) {
               // @ts-ignore 忽略类型检查错误
               this.mainWindow.justTriggered = false;
-              logger.debug('窗口触发保护期已结束');
+              // logger.debug('窗口触发保护期已结束');
             }
           }, 500);
         }
@@ -394,7 +390,6 @@ class WindowManager extends BaseManager {
 
       // 如果启用了Spotlight模式，注册全局快捷键
       if (windowConfig.hotkey) {
-        logger.debug(`尝试注册Spotlight模式全局快捷键: ${windowConfig.hotkey}`);
         if (
           !globalShortcut.register(
             windowConfig.hotkey,
