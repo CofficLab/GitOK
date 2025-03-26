@@ -31,6 +31,7 @@ on:
       - electron
     paths:
       - 'packages/command-key-listener/**'
+      - '.github/workflows/command-key-listener-publish.yml'
 
 jobs:
   build-and-publish:
@@ -85,8 +86,8 @@ jobs:
           cd packages/command-key-listener
           # 获取当前版本号
           CURRENT_VERSION=$(node -p "require('./package.json').version")
-          # 升级 patch 版本号
-          npm version patch --no-git-tag-version
+          # 使用pnpm而不是npm升级版本号
+          pnpm version patch --no-git-tag-version
           # 获取新版本号
           NEW_VERSION=$(node -p "require('./package.json').version")
           # 设置输出变量
@@ -100,22 +101,6 @@ jobs:
           git tag "command-key-listener-v${{ steps.version.outputs.new_version }}"
           git push
           git push --tags
-
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v1
-        with:
-          tag_name: 'command-key-listener-v${{ steps.version.outputs.new_version }}'
-          name: '@coffic/command-key-listener v${{ steps.version.outputs.new_version }}'
-          body: |
-            ## 版本变更
-
-            从 v${{ steps.version.outputs.current_version }} 升级到 v${{ steps.version.outputs.new_version }}
-
-            ### 变更内容
-            - 自动发布新版本
-            - 包含最新的代码变更
-          draft: false
-          prerelease: false
 
       - name: Publish to npm
         run: |
