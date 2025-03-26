@@ -17,12 +17,32 @@ const logStyles = {
 
 const resetColor = '\x1b[0m';
 
+/**
+ * 将日志数据格式化为适合显示的字符串
+ * @param data 日志数据
+ * @returns 格式化后的字符串
+ */
+function formatLogData(data: any[]): string {
+  return data
+    .map((item) => {
+      if (typeof item === 'object' && item !== null) {
+        try {
+          return JSON.stringify(item, null, 2);
+        } catch (e) {
+          return String(item);
+        }
+      }
+      return String(item);
+    })
+    .join(' ');
+}
+
 // 配置日志
 if (process.env.NODE_ENV === 'development') {
   // 开发环境：显示源码位置（绝对路径）
   log.transports.file.format = ((message) => {
     const style = logStyles[message.level] || { emoji: '📝' };
-    const text = message.data.join(' ');
+    const text = formatLogData(message.data);
     return [`[{h}:{i}:{s}] ${style.emoji} ${text}`];
   }) as Format;
 
@@ -31,7 +51,7 @@ if (process.env.NODE_ENV === 'development') {
       emoji: '📝',
       color: '\x1b[37m',
     };
-    const text = message.data.join(' ');
+    const text = formatLogData(message.data);
     return [`${style.color}${style.emoji} ${text}${resetColor}`];
   }) as Format;
 
@@ -49,7 +69,7 @@ if (process.env.NODE_ENV === 'development') {
   // 生产环境：不显示源码位置
   log.transports.file.format = ((message) => {
     const style = logStyles[message.level] || { emoji: '📝' };
-    const text = message.data.join(' ');
+    const text = formatLogData(message.data);
     return [`[{h}:{i}:{s}] ${style.emoji} ${text}`];
   }) as Format;
 
@@ -58,7 +78,7 @@ if (process.env.NODE_ENV === 'development') {
       emoji: '📝',
       color: '\x1b[37m',
     };
-    const text = message.data.join(' ');
+    const text = formatLogData(message.data);
     return [`${style.color}${style.emoji} ${text}${resetColor}`];
   }) as Format;
 }
