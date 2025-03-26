@@ -22,6 +22,15 @@ jobs:
         with:
           node-version: 18
 
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install node-gyp
+        run: npm install -g node-gyp
+
       - name: Install pnpm
         uses: pnpm/action-setup@v2
         with:
@@ -57,6 +66,7 @@ jobs:
           CSC_IDENTITY_AUTO_DISCOVERY: false
           CSC_NAME: ${{ steps.signing.outputs.signing_identity }}
           APPLE_TEAM_ID: ${{ steps.signing.outputs.team_id }}
+          PYTHON: python3.11
         run: node scripts/build.mjs buddy:mac
 
       # - name: build-win

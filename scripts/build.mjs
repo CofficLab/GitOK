@@ -28,10 +28,7 @@
 
 import inquirer from 'inquirer';
 import { execSync } from 'child_process';
-import { dirname } from 'path';
 import { fileURLToPath } from 'url';
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
 
 /**
  * @typedef {Object} BuildStep
@@ -47,6 +44,63 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
  * @property {BuildStep[]} [preBuildSteps] - 前置构建步骤（如依赖项构建）
  * @property {BuildStep[]} [buildSteps] - 详细构建步骤（如分步骤构建）
  */
+
+/**
+ * 检查系统环境是否满足构建要求
+ * @throws {Error} 当环境不满足要求时抛出错误
+ */
+async function checkEnvironment() {
+  console.log('🔍 检查构建环境...');
+
+  try {
+    // 检查 Python 版本，优先使用 Python 3.11（已知兼容版本）
+    try {
+      execSync('python3.11 --version', { stdio: 'ignore' });
+      process.env.PYTHON = 'python3.11';
+    } catch {
+      try {
+        execSync('python3.10 --version', { stdio: 'ignore' });
+        process.env.PYTHON = 'python3.10';
+      } catch {
+        try {
+          execSync('python3.9 --version', { stdio: 'ignore' });
+          process.env.PYTHON = 'python3.9';
+        } catch {
+          throw new Error('未找到兼容的 Python 版本（需要 3.9-3.11）');
+        }
+      }
+    }
+
+    // 检查是否安装了 node-gyp
+    try {
+      execSync('node-gyp --version', { stdio: 'ignore' });
+    } catch {
+      throw new Error('未安装 node-gyp，请先运行: npm install -g node-gyp');
+    }
+
+    // 在 macOS 上检查 Xcode Command Line Tools
+    if (process.platform === 'darwin') {
+      try {
+        execSync('xcode-select -p', { stdio: 'ignore' });
+      } catch {
+        throw new Error(
+          '未安装 Xcode Command Line Tools，请先运行: xcode-select --install'
+        );
+      }
+    }
+
+    console.log('✅ 环境检查通过');
+  } catch (error) {
+    console.error('\n❌ 环境检查失败：', error.message);
+    console.log('\n🔧 请按照以下步骤设置构建环境：');
+    console.log('1. 安装 Python 3.9-3.11 版本之一');
+    console.log('2. 安装 node-gyp: npm install -g node-gyp');
+    if (process.platform === 'darwin') {
+      console.log('3. 安装 Xcode Command Line Tools: xcode-select --install');
+    }
+    throw error;
+  }
+}
 
 /** @type {Project[]} */
 const projects = [
@@ -237,6 +291,17 @@ async function buildProject(projectValue) {
   const selectedProject = projects.find((p) => p.value === projectValue);
   if (!selectedProject) {
     throw new Error(`未找到项目: ${projectValue}`);
+  }
+
+  // 如果项目包含原生模块构建，先检查环境
+  const hasNativeBuild = selectedProject.preBuildSteps?.some(
+    (step) =>
+      step.command.includes('active-app-monitor') ||
+      step.command.includes('command-key-listener')
+  );
+
+  if (hasNativeBuild) {
+    await checkEnvironment();
   }
 
   // 如果有预构建步骤，先执行它们
