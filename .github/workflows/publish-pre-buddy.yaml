@@ -69,11 +69,15 @@ jobs:
         env:
           PP_PATH: ${{ steps.signing.outputs.pp_path }}
           TEAM_ID: ${{ steps.signing.outputs.team_id }}
+          SIGNING_IDENTITY: ${{ steps.signing.outputs.signing_identity }}
           APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
           APP_STORE_CONNECT_KEY_ISSER_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ISSER_ID }}
         run: |
           brew install yq
           cd buddy
+
+          # 删除identity: null配置
+          yq -i 'del(.mac.identity)' electron-builder.yml
 
           # 只保留 notarize: true
           yq -i '.mac.notarize = true' electron-builder.yml
