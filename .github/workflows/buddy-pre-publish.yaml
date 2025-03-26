@@ -5,6 +5,9 @@ on:
     workflows: ['Buddy Bump Version']
     types:
       - completed
+  push:
+    branches:
+      - electron
 
 permissions:
   contents: write
