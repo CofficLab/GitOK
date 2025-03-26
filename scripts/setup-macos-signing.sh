@@ -85,10 +85,12 @@ setup_certificates() {
 
     # 配置描述文件
     mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
-    cp "$PP_PATH" ~/Library/MobileDevice/Provisioning\ Profiles
+    cp "$PP_PATH" ~/Library/MobileDevice/Provisioning\ Profiles/build_pp.provisionprofile
+    PP_PATH=~/Library/MobileDevice/Provisioning\ Profiles/build_pp.provisionprofile
 
     # 导出环境变量
     export KEYCHAIN_PATH
+    export PP_PATH
 }
 
 # 设置 App Store Connect API 密钥
@@ -145,6 +147,7 @@ main() {
     echo "TEAM_ID: $TEAM_ID"
     echo "SIGNING_IDENTITY: $SIGNING_IDENTITY"
     echo "KEYCHAIN_PATH: $KEYCHAIN_PATH"
+    echo "PP_PATH: $PP_PATH"
 }
 
 # 执行主函数
