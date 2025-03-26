@@ -6,6 +6,7 @@ import { BrowserWindow } from 'electron';
 import { BaseManager } from './BaseManager';
 import { CommandKeyListener } from '@coffic/command-key-listener';
 import { logger } from './LogManager';
+import { windowManager } from './WindowManager';
 
 class CommandKeyManager extends BaseManager {
   private static instance: CommandKeyManager;
@@ -73,22 +74,11 @@ class CommandKeyManager extends BaseManager {
         logger.debug('注册Command键双击事件处理');
         this.commandKeyListener.on('command-double-press', () => {
           if (window && !window.isDestroyed()) {
-            // 切换窗口状态：如果窗口聚焦则隐藏，否则显示并聚焦
-            if (window.isFocused()) {
-              // 窗口当前在前台，隐藏它
-              logger.info('Command键双击 - 窗口隐藏');
-              window.hide();
-              // 发送事件到渲染进程通知窗口已隐藏
-              window.webContents.send('window-hidden-by-command');
-            } else {
-              // 窗口当前不在前台，显示并聚焦它
-              logger.info('Command键双击 - 窗口显示并聚焦');
-              window.show();
-              window.focus();
-              // 发送事件到渲染进程通知窗口已激活
-              window.webContents.send('window-activated-by-command');
-            }
-            // 无论如何都发送命令键双击事件
+            // 使用 windowManager 的 toggleMainWindow 方法实现统一行为
+            logger.info('Command键双击 - 切换窗口状态');
+            windowManager.toggleMainWindow();
+
+            // 仍然发送命令键双击事件用于渲染进程
             window.webContents.send('command-double-pressed');
           }
         });

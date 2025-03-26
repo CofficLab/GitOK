@@ -26,10 +26,11 @@ name: Publish @coffic/command-key-listener
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
+      - electron
     paths:
       - 'packages/command-key-listener/**'
-      - '.github/workflows/publish-command-key-listener.yml'
 
 jobs:
   build-and-publish:
