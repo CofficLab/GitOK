@@ -27,6 +27,11 @@ const downloadingPlugins = ref<Set<string>>(new Set())
 const downloadSuccess = ref<Set<string>>(new Set())
 const downloadError = ref<Map<string, string>>(new Map())
 
+// 卸载状态
+const uninstallingPlugins = ref<Set<string>>(new Set())
+const uninstallSuccess = ref<Set<string>>(new Set())
+const uninstallError = ref<Map<string, string>>(new Map())
+
 // 当前选中的标签
 const activeTab = ref<'user' | 'dev' | 'remote'>('user')
 
@@ -226,6 +231,62 @@ const clearPluginError = (pluginId: string) => {
     downloadError.value.delete(pluginId)
 }
 
+// 卸载插件
+const uninstallPlugin = async (plugin: SuperPlugin) => {
+    if (uninstallingPlugins.value.has(plugin.id)) {
+        return // 避免重复操作
+    }
+
+    try {
+        // 清除之前的状态
+        uninstallSuccess.value.delete(plugin.id)
+        uninstallError.value.delete(plugin.id)
+
+        // 设置卸载中状态
+        uninstallingPlugins.value.add(plugin.id)
+
+        // 调用主进程卸载插件
+        const response = await management.uninstallPlugin(plugin.id) as {
+            success: boolean;
+            data?: boolean;
+            error?: string;
+        };
+
+        // 更新卸载状态
+        uninstallingPlugins.value.delete(plugin.id)
+
+        if (response.success) {
+            uninstallSuccess.value.add(plugin.id)
+            // 刷新插件列表
+            await loadPlugins()
+
+            // 3秒后清除成功状态
+            setTimeout(() => {
+                uninstallSuccess.value.delete(plugin.id)
+            }, 3000)
+        } else {
+            // 设置错误信息
+            uninstallError.value.set(plugin.id, response.error || '卸载失败')
+            // 显示全局错误信息
+            showErrorMessage(`插件 "${plugin.name}" 卸载失败: ${response.error || '未知错误'}`)
+        }
+    } catch (error) {
+        uninstallingPlugins.value.delete(plugin.id)
+        const errorMsg = error instanceof Error ? error.message : String(error)
+
+        // 设置错误信息
+        uninstallError.value.set(plugin.id, errorMsg)
+
+        // 显示全局错误信息
+        showErrorMessage(`插件 "${plugin.name}" 卸载失败: ${errorMsg}`)
+    }
+}
+
+// 清除单个插件的卸载错误状态
+const clearUninstallError = (pluginId: string) => {
+    uninstallError.value.delete(pluginId)
+}
+
 // 初始化
 onMounted(async () => {
     await loadDirectories()
@@ -328,6 +389,52 @@ onMounted(async () => {
                 <div class="flex justify-between items-center text-sm">
                     <span class="text-gray-500">v{{ plugin.version }}</span>
                     <span class="text-gray-500">{{ plugin.author }}</span>
+                </div>
+
+                <div class="text-xs text-gray-500 mt-2">
+                    <span class="inline-block mr-2">类型: {{ plugin.type === 'user' ? '已安装' : '开发中' }}</span>
+                    <span class="inline-block">版本: {{ plugin.version }}</span>
+                </div>
+
+                <!-- 错误信息 -->
+                <div v-if="plugin.validation && !plugin.validation.isValid" class="mt-2 text-xs text-red-500">
+                    <div class="font-medium">验证失败:</div>
+                    <ul class="list-disc pl-5">
+                        <li v-for="error in plugin.validation.errors" :key="error">
+                            {{ error }}
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- 操作按钮 -->
+                <div class="mt-4 flex flex-wrap gap-2 items-center">
+                    <!-- 卸载按钮 (仅显示在用户安装的插件上) -->
+                    <button v-if="plugin.type === 'user'" @click="uninstallPlugin(plugin)"
+                        :disabled="uninstallingPlugins.has(plugin.id)" :class="[
+                            'px-3 py-1 text-sm rounded focus:outline-none',
+                            uninstallingPlugins.has(plugin.id)
+                                ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                                : 'bg-red-500 text-white hover:bg-red-600'
+                        ]">
+                        <span v-if="uninstallingPlugins.has(plugin.id)">卸载中...</span>
+                        <span v-else>卸载</span>
+                    </button>
+
+                    <!-- 卸载成功提示 -->
+                    <span v-if="uninstallSuccess.has(plugin.id)" class="text-xs text-green-500">
+                        卸载成功
+                    </span>
+
+                    <!-- 卸载错误提示 -->
+                    <div v-if="uninstallError.has(plugin.id)" class="text-xs text-red-500 flex items-center">
+                        <span>卸载失败: {{ uninstallError.get(plugin.id) }}</span>
+                        <button @click="clearUninstallError(plugin.id)" class="ml-1 text-red-500 hover:text-red-700">
+                            <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
                 </div>
             </div>
 

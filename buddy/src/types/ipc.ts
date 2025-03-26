@@ -29,6 +29,7 @@ export const IPC_METHODS = {
   DOWNLOAD_PLUGIN: 'plugin:downloadPlugin',
   GET_PLUGIN_DIRECTORIES: 'plugin:getDirectories',
   GET_PLUGINS: 'plugin:getPlugins',
+  UNINSTALL_PLUGIN: 'plugin:uninstallPlugin',
   OPEN_PLUGIN_DIRECTORY: 'plugin:openDirectory',
 } as const;
 

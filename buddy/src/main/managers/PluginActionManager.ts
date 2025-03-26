@@ -46,7 +46,7 @@ class PluginActionManager extends BaseManager {
 
     try {
       // 从所有加载的插件中获取动作
-      const plugins = pluginManager.getPlugins();
+      const plugins = await pluginManager.getPlugins();
       for (const plugin of plugins) {
         logger.info(`获取插件动作，当前插件: ${plugin.id}`);
         try {

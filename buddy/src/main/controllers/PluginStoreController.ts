@@ -420,9 +420,9 @@ export class PluginStoreController {
   /**
    * 获取已安装的插件列表
    */
-  public getPlugins(): IpcResponse<SuperPlugin[]> {
+  public async getPlugins(): Promise<IpcResponse<SuperPlugin[]>> {
     try {
-      const plugins = pluginManager.getPlugins();
+      const plugins = await pluginManager.getPlugins();
       return { success: true, data: plugins };
     } catch (error) {
       const errorMessage =
@@ -444,6 +444,63 @@ export class PluginStoreController {
         error instanceof Error ? error.message : String(error);
       logger.error('打开插件目录失败', { error: errorMessage });
       return { success: false, error: errorMessage };
+    }
+  }
+
+  /**
+   * 卸载插件
+   * @param pluginId 要卸载的插件ID
+   */
+  public async uninstallPlugin(
+    pluginId: string
+  ): Promise<IpcResponse<boolean>> {
+    try {
+      logger.info(`准备卸载插件: ${pluginId}`);
+
+      // 获取插件实例
+      const plugin = await pluginDB.find(pluginId);
+      if (!plugin) {
+        logger.error(`卸载插件失败: 找不到插件 ${pluginId}`);
+        return {
+          success: false,
+          error: `找不到插件: ${pluginId}`,
+        };
+      }
+
+      // 只允许卸载用户安装的插件，不能卸载开发中的插件
+      if (plugin.type !== 'user') {
+        logger.error(`卸载插件失败: 无法卸载开发中的插件 ${pluginId}`);
+        return {
+          success: false,
+          error: '无法卸载开发中的插件',
+        };
+      }
+
+      // 获取插件目录路径
+      const pluginPath = plugin.path;
+      if (!pluginPath || !fs.existsSync(pluginPath)) {
+        logger.error(`卸载插件失败: 插件目录不存在 ${pluginPath}`);
+        return {
+          success: false,
+          error: '插件目录不存在',
+        };
+      }
+
+      logger.info(`删除插件目录: ${pluginPath}`);
+
+      // 删除插件目录
+      fs.rmdirSync(pluginPath, { recursive: true });
+
+      logger.info(`插件 ${pluginId} 卸载成功`);
+      return { success: true, data: true };
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+      logger.error(`卸载插件失败: ${errorMessage}`, { pluginId });
+      return {
+        success: false,
+        error: `卸载插件失败: ${errorMessage}`,
+      };
     }
   }
 }

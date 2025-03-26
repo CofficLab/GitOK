@@ -67,7 +67,12 @@ export const routes: IpcRoute[] = [
   },
   {
     channel: IPC_METHODS.GET_PLUGINS,
-    handler: () => pluginStoreController.getPlugins(),
+    handler: async () => await pluginStoreController.getPlugins(),
+  },
+  {
+    channel: IPC_METHODS.UNINSTALL_PLUGIN,
+    handler: async (_, pluginId: string) =>
+      await pluginStoreController.uninstallPlugin(pluginId),
   },
   {
     channel: IPC_METHODS.OPEN_PLUGIN_DIRECTORY,

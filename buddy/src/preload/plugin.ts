@@ -78,6 +78,8 @@ const pluginManagement = {
   getRemotePlugins: () => ipcRenderer.invoke('plugin:getRemotePlugins'),
   downloadPlugin: (plugin: any) =>
     ipcRenderer.invoke('plugin:downloadPlugin', plugin),
+  uninstallPlugin: (pluginId: string) =>
+    ipcRenderer.invoke('plugin:uninstallPlugin', pluginId),
   getDirectories: () => ipcRenderer.invoke('plugin:getDirectories'),
   openDirectory: (directory: string) =>
     ipcRenderer.invoke('plugin:openDirectory', directory),
