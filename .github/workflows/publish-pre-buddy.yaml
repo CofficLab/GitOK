@@ -105,7 +105,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         if: matrix.os == 'macos-latest'
         with:
-          draft: true
+          draft: false
           prerelease: true
           files: |
             buddy/dist/*.exe

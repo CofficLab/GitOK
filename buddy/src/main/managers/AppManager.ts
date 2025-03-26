@@ -9,6 +9,7 @@ import { windowManager } from './WindowManager';
 import { pluginManager } from './PluginManager';
 import { commandKeyManager } from './CommandKeyManager';
 import { pluginViewManager } from './PluginViewManager';
+import { updateManager } from './UpdateManager';
 
 export class AppManager {
   private mainWindow: BrowserWindow | null = null;
@@ -75,6 +76,10 @@ export class AppManager {
     // 设置Command键双击管理器
     logger.debug('设置Command键双击管理器窗口引用');
     commandKeyManager.setMainWindow(this.mainWindow);
+
+    // 初始化更新管理器
+    logger.info('初始化更新管理器');
+    updateManager.initialize(this.mainWindow);
 
     // macOS特定配置
     if (process.platform === 'darwin') {

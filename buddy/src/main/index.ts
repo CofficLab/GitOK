@@ -11,12 +11,14 @@ import {
 } from './router/overlaid_router';
 import { routes as commandKeyRoutes } from './router/command_router';
 import { routes as uiLogRoutes } from './router/log_router';
+import { routes as updateRoutes } from './router/update_router';
 
 // 初始化路由
 routerService.registerRoutes(pluginRoutes);
 routerService.registerRoutes(overlaidAppRoutes);
 routerService.registerRoutes(commandKeyRoutes);
 routerService.registerRoutes(uiLogRoutes);
+routerService.registerRoutes(updateRoutes);
 
 // 启动应用
 appManager
