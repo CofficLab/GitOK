@@ -1,6 +1,6 @@
 {
   "name": "@coffic/active-app-monitor",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "一个用于获取 macOS 系统当前活跃应用信息的 Node.js 原生模块",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
