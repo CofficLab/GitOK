@@ -74,12 +74,13 @@ jobs:
           # 使用脚本设置的配置文件路径
           yq -i ".mac.provisioningProfile = \"$PP_PATH\"" electron-builder.yml
           yq -i '.mac.notarize = true' electron-builder.yml
-          yq -i '.mac.identity = null' electron-builder.yml
+          # 删除 identity 配置，让 electron-builder 使用 CSC_NAME
+          yq -i 'del(.mac.identity)' electron-builder.yml
 
       - name: build-mac
         if: matrix.os == 'macos-latest'
         env:
-          CSC_IDENTITY_AUTO_DISCOVERY: false
+          CSC_IDENTITY_AUTO_DISCOVERY: true
           CSC_NAME: ${{ steps.signing.outputs.signing_identity }}
           APPLE_TEAM_ID: ${{ steps.signing.outputs.team_id }}
           PYTHON: python3.11
