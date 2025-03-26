@@ -10,9 +10,10 @@ import { appStateManager } from './StateManager';
 import { BaseManager } from './BaseManager';
 import { logger } from './LogManager';
 
+const isDev = process.env['NODE_ENV'] === 'development';
 const windowConfig = {
   showTrafficLights: true,
-  showDebugToolbar: true,
+  showDebugToolbar: isDev,
   debugToolbarPosition: 'bottom',
   hotkey: 'Option+Space',
   size: {

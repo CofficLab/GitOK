@@ -39,7 +39,7 @@ export class PluginStoreController {
   /**
    * 获取插件目录信息
    */
-  public getDirectories(): IpcResponse<unknown> {
+  public getDirectories(): IpcResponse<{ user: string; dev: string }> {
     try {
       const directories = pluginDB.getPluginDirectories();
       return { success: true, data: directories };

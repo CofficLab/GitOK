@@ -43,9 +43,14 @@ const loadPlugins = async () => {
 // 加载目录信息
 const loadDirectories = async () => {
     try {
-        const response = await management.getDirectories()
-        if (response.success) {
-            directories.value = response.directories
+        const response = await management.getDirectories() as {
+            success: boolean;
+            data?: { user: string; dev: string };
+            error?: string
+        }
+
+        if (response.success && response.data) {
+            directories.value = response.data
         } else {
             showErrorMessage(`加载目录信息失败: ${response.error || '未知错误'}`)
             console.error('加载目录信息失败', response)
