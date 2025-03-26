@@ -18,9 +18,6 @@ export class RemotePluginDB {
   // 缓存刷新时间间隔 (毫秒): 1小时
   private readonly CACHE_REFRESH_INTERVAL = 60 * 60 * 1000;
 
-  // 是否启用调试模式 - 禁用
-  private readonly DEBUG_MODE = false;
-
   // 上次缓存刷新时间
   private lastCacheRefreshTime: number = 0;
 

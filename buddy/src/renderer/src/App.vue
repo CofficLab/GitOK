@@ -20,7 +20,7 @@ App.vue - 应用程序入口组件
 -->
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
+import { onMounted, onUnmounted } from 'vue'
 import SearchBar from './layouts/SearchBar.vue'
 import ContentView from './layouts/ContentView.vue'
 import StatusBar from './layouts/StatusBar.vue'
