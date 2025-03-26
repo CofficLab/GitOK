@@ -1,4 +1,4 @@
-name: Bump Version
+name: Buddy Bump Version
 
 on:
   push:

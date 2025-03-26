@@ -1,15 +1,18 @@
 name: Publish Pre-release Buddy
 
 on:
-  push:
-    branches:
-      - electron
+  workflow_run:
+    workflows: ['Buddy Bump Version']
+    types:
+      - completed
 
 permissions:
   contents: write
 
 jobs:
   release:
+    # 只有当被依赖的工作流成功完成时才运行
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ${{ matrix.os }}
 
     strategy:
@@ -101,12 +104,26 @@ jobs:
       #   if: matrix.os == 'windows-latest'
       #   run: cd buddy && pnpm run build:win
 
+      - name: Get Version
+        id: get_version
+        if: matrix.os == 'macos-latest'
+        run: |
+          cd buddy
+          VERSION=$(node -p "require('./package.json').version")
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          # 检查是否为预发布版本
+          if [[ "$VERSION" == *"-beta"* ]]; then
+            echo "prerelease=true" >> $GITHUB_OUTPUT
+          else
+            echo "prerelease=false" >> $GITHUB_OUTPUT
+          fi
+
       - name: release
         uses: softprops/action-gh-release@v1
         if: matrix.os == 'macos-latest'
         with:
           draft: false
-          prerelease: true
+          prerelease: ${{ steps.get_version.outputs.prerelease }}
           files: |
             buddy/dist/*.exe
             buddy/dist/*.zip
