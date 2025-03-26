@@ -67,6 +67,7 @@ jobs:
 
       - name: release
         uses: softprops/action-gh-release@v1
+        if: matrix.os == 'macos-latest'
         with:
           draft: true
           prerelease: true
