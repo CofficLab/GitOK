@@ -8,12 +8,14 @@
 * 4. 支持键盘导航
 */
 <script setup lang="ts">
-import { computed, watch } from 'vue'
+import { computed, watch, ref } from 'vue'
+import ActionItem from '@renderer/components/ActionItem.vue'
 import type { SuperAction } from '@/types/super_action'
 import { useActionStore } from '@renderer/stores/actionStore'
 import { logger } from '@renderer/utils/logger'
 
 const actionStore = useActionStore()
+const activeItemIndex = ref(-1)
 
 // 处理动作选择
 const handleActionSelected = (action: SuperAction) => {
@@ -29,6 +31,28 @@ const handleCancel = () => {
 // 检查动作列表状态
 const isLoading = computed(() => actionStore.isLoading)
 
+// 处理向上导航
+const handleNavigateUp = (index: number) => {
+    if (index > 0) {
+        activeItemIndex.value = index - 1
+        const elements = document.querySelectorAll('.plugin-action-item')
+        if (elements[index - 1]) {
+            (elements[index - 1] as HTMLElement).focus()
+        }
+    }
+}
+
+// 处理向下导航
+const handleNavigateDown = (index: number) => {
+    const totalItems = actionStore.getActionCount()
+    if (index < totalItems - 1) {
+        activeItemIndex.value = index + 1
+        const elements = document.querySelectorAll('.plugin-action-item')
+        if (elements[index + 1]) {
+            (elements[index + 1] as HTMLElement).focus()
+        }
+    }
+}
 
 // 监听搜索输入变化，加载相应的插件动作
 watch(() => actionStore.keyword, async (newKeyword) => {
@@ -47,31 +71,22 @@ watch(() => actionStore.keyword, async (newKeyword) => {
     <div class="action-list-view">
         <div>
             <!-- 加载状态 -->
-            <div v-if="isLoading" class="text-center py-4 text-gray-500">
+            <div v-if="isLoading" class="text-center py-4 text-base-content/60">
                 <p>加载中...</p>
             </div>
 
             <!-- 空状态 -->
-            <div v-else-if="actionStore.getActionCount() === 0" class="text-center py-8 text-gray-500">
+            <div v-else-if="actionStore.getActionCount() === 0" class="text-center py-8 text-base-content/60">
                 <p>没有找到匹配的动作</p>
                 <p class="text-sm mt-2">尝试其他关键词或安装更多插件</p>
             </div>
 
             <!-- 动作列表 -->
             <ul v-else class="space-y-2">
-                <li v-for="(action, index) in actionStore.getActions()" :key="action.id"
-                    class="plugin-action-item p-3 border rounded-lg hover:bg-gray-50 cursor-pointer transition-colors flex items-center"
-                    :tabindex="index + 1" @click="handleActionSelected(action)"
-                    @keydown.enter="handleActionSelected(action)" @keydown.space.prevent="handleActionSelected(action)"
-                    @keydown.esc="handleCancel" @keydown.up="index > 0 ? $el.previousElementSibling?.focus() : null"
-                    @keydown.down="index < actionStore.getActionCount() - 1 ? $el.nextElementSibling?.focus() : null">
-                    <div v-if="action.icon" class="mr-3 text-xl">{{ action.icon }}</div>
-                    <div class="flex-1">
-                        <h3 class="font-medium">{{ action.title }}</h3>
-                        <p v-if="action.description" class="text-sm text-gray-600">{{ action.description }}</p>
-                        <p class="text-xs text-gray-400 mt-1">来自: {{ action.id }}</p>
-                    </div>
-                </li>
+                <ActionItem v-for="(action, index) in actionStore.getActions()" :key="action.id" :action="action"
+                    :index="index" :total-count="actionStore.getActionCount()" @select="handleActionSelected"
+                    @cancel="handleCancel" @navigate-up="handleNavigateUp(index)"
+                    @navigate-down="handleNavigateDown(index)" />
             </ul>
         </div>
     </div>
@@ -83,11 +98,6 @@ watch(() => actionStore.keyword, async (newKeyword) => {
 }
 
 .empty-state {
-    border: 1px dashed #ccc;
-}
-
-.plugin-action-item:focus {
-    outline: 2px solid #4299e1;
-    background-color: #ebf8ff;
+    border: 1px dashed var(--base-content/30);
 }
 </style>

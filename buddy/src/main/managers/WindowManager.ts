@@ -12,7 +12,7 @@ import { logger } from './LogManager';
 
 const windowConfig = {
   showTrafficLights: false,
-  showDebugToolbar: is.dev && false,
+  showDebugToolbar: is.dev && true,
   debugToolbarPosition: 'bottom',
   hotkey: 'Option+Space',
   size: {
@@ -20,6 +20,7 @@ const windowConfig = {
     height: 800,
   },
   alwaysOnTop: true,
+  opacity: 0.95,
 };
 
 class WindowManager extends BaseManager {
@@ -65,6 +66,9 @@ class WindowManager extends BaseManager {
         show: false,
         autoHideMenuBar: true,
         frame: windowConfig.showTrafficLights !== false,
+        opacity: windowConfig.opacity,
+        transparent: true,
+        backgroundColor: '#00000000',
         ...(process.platform === 'linux' ? { icon } : {}),
         webPreferences: {
           preload: join(__dirname, '../preload/app-preload.js'),

@@ -1,2 +1,6 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 @plugin "daisyui";
+
+body {
+  @apply backdrop-blur-sm bg-base-100/60;
+}

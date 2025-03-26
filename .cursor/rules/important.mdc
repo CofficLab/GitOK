@@ -30,6 +30,7 @@ alwaysApply: true
 - 这是一个类似spotlight的应用
 - tailwind.config.js 在新版中已经不需要了
 - 使用 daisyui 和 tailwindcss 来写样式
+- 不要硬编码颜色，因为要支持daisyui的主题切换
 - 使用Vue
 - 所有图标都放入icons 目录，像 [StoreIcon.vue](mdc:buddy/src/renderer/src/icons/StoreIcon.vue) 那样
 - 渲染进程的vue组件放在 [ActionListView.vue](mdc:buddy/src/renderer/src/views/ActionListView.vue) 所在的父目录中

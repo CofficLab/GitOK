@@ -45,10 +45,10 @@ onUnmounted(() => {
 </script>
 
 <template>
-    <div class="flex flex-col">
+    <div class="flex flex-col h-screen">
         <!-- 搜索区域 -->
-        <div class="h-10 bg-green-400/0 mt-4 px-4">
-            <SearchBar ref="searchBar" />
+        <div class="h-10 mt-4 px-4">
+            <SearchBar />
         </div>
 
         <!-- 内容区域 -->
@@ -57,7 +57,7 @@ onUnmounted(() => {
         </div>
 
         <!-- 状态栏 -->
-        <div class="h-10 bg-blue-400/0" style="-webkit-app-region: drag;">
+        <div class="h-10">
             <StatusBar />
         </div>
     </div>

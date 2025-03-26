@@ -18,18 +18,19 @@
  * - Vue 3
  * - Pinia (appStore)
  * - TailwindCSS
+ * - DaisyUI
  * 
  * 注意事项：
  * - 使用 ref 管理时间状态
  * - 组件销毁时清理定时器
  * - 通过 appStore 管理视图状态
+ * - 使用daisyUI支持主题切换
  -->
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAppStore } from '@renderer/stores/appStore'
-import WindowActiveStatus from '@renderer/components/WindowActiveStatus.vue'
 
 const electronApi = window.electron;
 const overlaidApi = electronApi.overlaid;
@@ -90,31 +91,27 @@ onUnmounted(() => {
 </script>
 
 <template>
-    <div class="flex items-center justify-between px-4 py-2 bg-gray-100 border-t">
+    <div class="flex items-center justify-between px-4 h-full py-2 bg-base-300">
         <!-- 导航按钮 -->
         <div class="flex items-center space-x-2">
-            <button @click="goToHome"
-                :class="['px-3 py-1 rounded text-sm', route.path === '/' ? 'bg-blue-500 text-white' : 'text-gray-600 hover:bg-gray-200']">
+            <button @click="goToHome" :class="['btn btn-sm', route.path === '/' ? 'btn-primary' : 'btn-ghost']">
                 首页
             </button>
             <button @click="goToPluginStore"
-                :class="['px-3 py-1 rounded text-sm', route.path === '/plugins' ? 'bg-blue-500 text-white' : 'text-gray-600 hover:bg-gray-200']">
+                :class="['btn btn-sm', route.path === '/plugins' ? 'btn-primary' : 'btn-ghost']">
                 插件商店
             </button>
         </div>
 
         <!-- 右侧工具栏 -->
         <div class="flex items-center space-x-4">
-            <!-- 窗口激活状态 -->
-            <WindowActiveStatus class="hidden md:block" />
-
             <!-- 被覆盖的应用名称 -->
-            <div v-if="overlaidAppName" class="text-sm text-gray-600">
+            <div v-if="overlaidAppName" class="text-sm text-base-content opacity-70">
                 当前覆盖: {{ overlaidAppName }}
             </div>
 
             <!-- 时间显示 -->
-            <div class="text-sm text-gray-600">
+            <div class="text-sm text-base-content opacity-70">
                 {{ currentTime }}
             </div>
         </div>

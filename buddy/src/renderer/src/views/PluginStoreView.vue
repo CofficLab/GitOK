@@ -11,6 +11,7 @@
 import { ref, onMounted, computed } from 'vue'
 import type { SuperPlugin } from '@/types/super_plugin'
 import PluginCard from '../components/PluginCard.vue'
+import { RiCloseLine, RiClipboardLine, RiRefreshLine } from '@remixicon/vue'
 
 const electronApi = window.electron
 const pluginApi = electronApi.plugins
@@ -320,102 +321,81 @@ onMounted(async () => {
 <template>
     <div class="p-4 h-full flex flex-col">
         <!-- 错误提示 -->
-        <div v-if="showError" class="mb-4 p-4 bg-red-100 text-red-700 rounded flex flex-col gap-2">
-            <div class="flex justify-between items-start">
-                <div class="font-medium">错误信息：</div>
-                <button @click="hideErrorMessage" class="text-red-700 hover:text-red-900">
-                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
-                        </path>
-                    </svg>
-                </button>
-            </div>
-            <div class="whitespace-pre-wrap break-words">{{ errorMessage }}</div>
-            <div class="flex justify-end mt-2">
-                <button @click="copyErrorMessage(errorMessage)"
-                    class="flex items-center px-3 py-1 text-sm bg-red-200 text-red-800 rounded hover:bg-red-300">
-                    <svg class="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3">
-                        </path>
-                    </svg>
-                    复制错误信息
-                </button>
+        <div v-if="showError" class="alert alert-error bg-opacity-20 shadow-sm mb-4">
+            <div class="flex flex-col w-full">
+                <div class="flex justify-between items-start">
+                    <div class="flex items-center">
+                        <RiCloseLine class="h-4 w-4 mr-2" />
+                        <span class="font-medium">错误信息：</span>
+                    </div>
+                    <button @click="hideErrorMessage" class="text-error">
+                        <RiCloseLine class="h-5 w-5" />
+                    </button>
+                </div>
+                <div class="whitespace-pre-wrap break-words mt-2">{{ errorMessage }}</div>
+                <div class="flex justify-end mt-2">
+                    <button @click="copyErrorMessage(errorMessage)" class="btn btn-sm btn-error btn-outline gap-1">
+                        <RiClipboardLine class="h-4 w-4" />
+                        复制错误信息
+                    </button>
+                </div>
             </div>
         </div>
 
         <!-- 标签页 -->
-        <div class="mb-4 border-b border-gray-200">
-            <div class="flex items-center">
-                <ul class="flex flex-grow flex-wrap -mb-px text-sm font-medium text-center text-gray-500">
-                    <li class="mr-2">
-                        <button @click="activeTab = 'user'" :class="[
-                            'inline-flex items-center p-4 border-b-2 rounded-t-lg',
-                            activeTab === 'user'
-                                ? 'text-blue-600 border-blue-600 active'
-                                : 'border-transparent hover:text-gray-600 hover:border-gray-300'
-                        ]">
-                            用户插件
-                        </button>
-                    </li>
-                    <li class="mr-2">
-                        <button @click="activeTab = 'dev'" :class="[
-                            'inline-flex items-center p-4 border-b-2 rounded-t-lg',
-                            activeTab === 'dev'
-                                ? 'text-blue-600 border-blue-600 active'
-                                : 'border-transparent hover:text-gray-600 hover:border-gray-300'
-                        ]">
-                            开发中
-                        </button>
-                    </li>
-                    <li class="mr-2">
-                        <button @click="activeTab = 'remote'" :class="[
-                            'inline-flex items-center p-4 border-b-2 rounded-t-lg',
-                            activeTab === 'remote'
-                                ? 'text-blue-600 border-blue-600 active'
-                                : 'border-transparent hover:text-gray-600 hover:border-gray-300'
-                        ]">
-                            远程仓库
-                        </button>
-                    </li>
-                </ul>
+        <div class="mb-4">
+            <div class="tabs tabs-bordered">
+                <a @click="activeTab = 'user'" :class="['tab', activeTab === 'user' ? 'tab-active' : '']">
+                    用户插件
+                </a>
+                <a @click="activeTab = 'dev'" :class="['tab', activeTab === 'dev' ? 'tab-active' : '']">
+                    开发中
+                </a>
+                <a @click="activeTab = 'remote'" :class="['tab', activeTab === 'remote' ? 'tab-active' : '']">
+                    远程仓库
+                </a>
 
                 <!-- 刷新按钮 -->
-                <button @click="handleRefresh"
-                    :disabled="(activeTab === 'remote' && loadingRemotePlugins) || (activeTab !== 'remote' && loadingPlugins)"
-                    class="p-2 text-gray-500 rounded-lg hover:bg-gray-100 focus:outline-none">
-                    <svg :class="[
-                        'h-5 w-5',
-                        (activeTab === 'remote' && loadingRemotePlugins) || (activeTab !== 'remote' && loadingPlugins)
-                            ? 'animate-spin text-blue-500'
-                            : ''
-                    ]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                    </svg>
-                </button>
+                <div class="flex-grow flex justify-end">
+                    <button @click="handleRefresh"
+                        :disabled="(activeTab === 'remote' && loadingRemotePlugins) || (activeTab !== 'remote' && loadingPlugins)"
+                        class="btn btn-sm btn-ghost">
+                        <RiRefreshLine :class="[
+                            'h-5 w-5',
+                            (activeTab === 'remote' && loadingRemotePlugins) || (activeTab !== 'remote' && loadingPlugins)
+                                ? 'animate-spin text-primary'
+                                : ''
+                        ]" />
+                    </button>
+                </div>
             </div>
         </div>
 
         <!-- 目录信息 -->
         <div v-if="currentDirectory && activeTab !== 'remote'"
-            class="mb-4 p-4 bg-gray-50 rounded-lg flex flex-wrap justify-between items-center gap-2">
-            <div class="text-sm text-gray-600">
-                插件目录：{{ currentDirectory }}
+            class="alert alert-info bg-opacity-20 shadow-sm mb-4 flex justify-between items-center">
+            <div class="flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 stroke-current" fill="none"
+                    viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span>插件目录：{{ currentDirectory }}</span>
             </div>
-            <div class="flex gap-2">
-                <button @click="openDirectory(currentDirectory)"
-                    class="px-3 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600">
+            <div>
+                <button @click="openDirectory(currentDirectory)" class="btn btn-sm btn-info">
                     打开目录
                 </button>
             </div>
         </div>
 
         <!-- 远程仓库提示 -->
-        <div v-if="activeTab === 'remote'" class="mb-4 p-4 bg-blue-50 rounded-lg">
-            <div class="text-sm text-blue-600">
-                从远程仓库下载插件将会安装到用户插件目录中
-            </div>
+        <div v-if="activeTab === 'remote'" class="alert alert-info bg-opacity-20 shadow-sm mb-4">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 stroke-current" fill="none" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span>从远程仓库下载插件将会安装到用户插件目录中</span>
         </div>
 
         <!-- 插件列表 -->
@@ -433,9 +413,15 @@ onMounted(async () => {
                 @download="downloadPlugin" @clear-download-error="clearPluginError" @copy-error="copyErrorMessage" />
 
             <!-- 无插件提示 -->
-            <div v-if="filteredPlugins.length === 0" class="col-span-full p-8 text-center text-gray-500">
-                <p v-if="activeTab === 'remote'">没有可用的远程插件</p>
-                <p v-else>没有找到插件</p>
+            <div v-if="filteredPlugins.length === 0" class="col-span-full p-8 text-center">
+                <div class="alert alert-info bg-opacity-20 shadow-sm mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 stroke-current" fill="none"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span>{{ activeTab === 'remote' ? '没有可用的远程插件' : '没有找到插件' }}</span>
+                </div>
             </div>
         </div>
     </div>
