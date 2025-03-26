@@ -116,7 +116,7 @@ export class PluginStoreController {
                 });
                 resolve(metadata);
               } catch (err) {
-                const errorMsg = `解析元数据失败: ${err.message}`;
+                const errorMsg = `解析元数据失败: ${err instanceof Error ? err.message : String(err)}`;
                 logger.error(errorMsg, {
                   url,
                   packageName,
@@ -258,10 +258,18 @@ export class PluginStoreController {
             resolve();
           })
           .catch((err) => {
-            reject(new Error(`解压文件失败: ${err.message}`));
+            reject(
+              new Error(
+                `解压文件失败: ${err instanceof Error ? err.message : String(err)}`
+              )
+            );
           });
       } catch (err) {
-        reject(new Error(`解压初始化失败: ${err.message}`));
+        reject(
+          new Error(
+            `解压初始化失败: ${err instanceof Error ? err.message : String(err)}`
+          )
+        );
       }
     });
   }

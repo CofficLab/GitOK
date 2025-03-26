@@ -10,6 +10,7 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
 import type { SuperPlugin } from '@/types/super_plugin'
+import PluginCard from '../components/PluginCard.vue'
 
 const electronApi = window.electron
 const pluginApi = electronApi.plugins
@@ -362,155 +363,16 @@ onMounted(async () => {
         <!-- 插件列表 -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 overflow-y-auto">
             <!-- 本地插件卡片 -->
-            <div v-if="activeTab !== 'remote'" v-for="plugin in filteredPlugins" :key="plugin.id" :class="['p-4 rounded-lg shadow hover:shadow-md transition-shadow', {
-                'bg-white': !plugin.validation,
-                'bg-red-50': plugin.validation && !plugin.validation.isValid,
-                'bg-green-50': plugin.validation && plugin.validation.isValid
-            }]">
-                <!-- 验证错误提示 -->
-                <div v-if="plugin.validation && !plugin.validation.isValid"
-                    class="mb-3 p-2 bg-red-100 text-red-700 text-sm rounded">
-                    <div class="font-semibold mb-1">验证失败：</div>
-                    <ul class="list-disc list-inside">
-                        <li v-for="error in plugin.validation.errors" :key="error">
-                            {{ error }}
-                        </li>
-                    </ul>
-                </div>
-
-                <!-- 验证通过提示 -->
-                <div v-if="plugin.validation && plugin.validation.isValid"
-                    class="mb-3 p-2 bg-green-100 text-green-700 text-sm rounded">
-                    <div class="font-semibold">验证通过</div>
-                </div>
-
-                <h3 class="text-lg font-semibold mb-2">{{ plugin.name }}</h3>
-                <p class="text-gray-600 text-sm mb-4">{{ plugin.description }}</p>
-                <div class="flex justify-between items-center text-sm">
-                    <span class="text-gray-500">v{{ plugin.version }}</span>
-                    <span class="text-gray-500">{{ plugin.author }}</span>
-                </div>
-
-                <div class="text-xs text-gray-500 mt-2">
-                    <span class="inline-block mr-2">类型: {{ plugin.type === 'user' ? '已安装' : '开发中' }}</span>
-                    <span class="inline-block">版本: {{ plugin.version }}</span>
-                </div>
-
-                <!-- 错误信息 -->
-                <div v-if="plugin.validation && !plugin.validation.isValid" class="mt-2 text-xs text-red-500">
-                    <div class="font-medium">验证失败:</div>
-                    <ul class="list-disc pl-5">
-                        <li v-for="error in plugin.validation.errors" :key="error">
-                            {{ error }}
-                        </li>
-                    </ul>
-                </div>
-
-                <!-- 操作按钮 -->
-                <div class="mt-4 flex flex-wrap gap-2 items-center">
-                    <!-- 卸载按钮 (仅显示在用户安装的插件上) -->
-                    <button v-if="plugin.type === 'user'" @click="uninstallPlugin(plugin)"
-                        :disabled="uninstallingPlugins.has(plugin.id)" :class="[
-                            'px-3 py-1 text-sm rounded focus:outline-none',
-                            uninstallingPlugins.has(plugin.id)
-                                ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                                : 'bg-red-500 text-white hover:bg-red-600'
-                        ]">
-                        <span v-if="uninstallingPlugins.has(plugin.id)">卸载中...</span>
-                        <span v-else>卸载</span>
-                    </button>
-
-                    <!-- 卸载成功提示 -->
-                    <span v-if="uninstallSuccess.has(plugin.id)" class="text-xs text-green-500">
-                        卸载成功
-                    </span>
-
-                    <!-- 卸载错误提示 -->
-                    <div v-if="uninstallError.has(plugin.id)" class="text-xs text-red-500 flex items-center">
-                        <span>卸载失败: {{ uninstallError.get(plugin.id) }}</span>
-                        <button @click="clearUninstallError(plugin.id)" class="ml-1 text-red-500 hover:text-red-700">
-                            <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M6 18L18 6M6 6l12 12"></path>
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-            </div>
+            <PluginCard v-if="activeTab !== 'remote'" v-for="plugin in filteredPlugins" :key="plugin.id"
+                :plugin="plugin" type="local" :uninstallingPlugins="uninstallingPlugins"
+                :uninstallSuccess="uninstallSuccess" :uninstallError="uninstallError" @uninstall="uninstallPlugin"
+                @clear-uninstall-error="clearUninstallError" @copy-error="copyErrorMessage" />
 
             <!-- 远程插件卡片 -->
-            <div v-if="activeTab === 'remote'" v-for="plugin in filteredPlugins" :key="plugin.id"
-                class="p-4 rounded-lg shadow hover:shadow-md transition-shadow bg-white">
-                <h3 class="text-lg font-semibold mb-2">{{ plugin.name }}</h3>
-                <p class="text-gray-600 text-sm mb-4">{{ plugin.description }}</p>
-
-                <!-- 下载状态 -->
-                <div v-if="downloadingPlugins.has(plugin.id)"
-                    class="mb-3 p-2 bg-blue-100 text-blue-700 text-sm rounded flex items-center">
-                    <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-blue-700" xmlns="http://www.w3.org/2000/svg"
-                        fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
-                        </circle>
-                        <path class="opacity-75" fill="currentColor"
-                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-                        </path>
-                    </svg>
-                    <span>下载中...</span>
-                </div>
-
-                <div v-if="downloadSuccess.has(plugin.id)"
-                    class="mb-3 p-2 bg-green-100 text-green-700 text-sm rounded flex items-center">
-                    <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                    </svg>
-                    <span>下载成功</span>
-                </div>
-
-                <div v-if="downloadError.has(plugin.id)" class="mb-3 p-2 bg-red-100 text-red-700 text-sm rounded">
-                    <div class="font-semibold mb-1 flex justify-between items-center">
-                        <span>下载失败：</span>
-                        <div class="flex gap-1">
-                            <button @click="copyErrorMessage(downloadError.get(plugin.id))"
-                                class="flex items-center px-2 py-0.5 text-xs bg-red-200 text-red-800 rounded hover:bg-red-300">
-                                <svg class="h-3 w-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3">
-                                    </path>
-                                </svg>
-                                复制
-                            </button>
-                            <button @click="clearPluginError(plugin.id)"
-                                class="flex items-center px-2 py-0.5 text-xs bg-red-200 text-red-800 rounded hover:bg-red-300">
-                                <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M6 18L18 6M6 6l12 12"></path>
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="whitespace-pre-wrap break-words">{{ downloadError.get(plugin.id) }}</div>
-                </div>
-
-                <div class="flex justify-between items-center">
-                    <div class="text-sm">
-                        <span class="text-gray-500">v{{ plugin.version }}</span>
-                        <span class="text-gray-500 ml-2">{{ plugin.author }}</span>
-                    </div>
-
-                    <button @click="downloadPlugin(plugin)"
-                        :disabled="downloadingPlugins.has(plugin.id) || isPluginInstalled(plugin.id)" :class="[
-                            'px-3 py-1 text-sm rounded',
-                            isPluginInstalled(plugin.id)
-                                ? 'bg-gray-300 text-gray-600 cursor-not-allowed'
-                                : downloadingPlugins.has(plugin.id)
-                                    ? 'bg-blue-300 text-blue-700 cursor-wait'
-                                    : 'bg-blue-500 text-white hover:bg-blue-600'
-                        ]">
-                        {{ isPluginInstalled(plugin.id) ? '已安装' : '下载' }}
-                    </button>
-                </div>
-            </div>
+            <PluginCard v-if="activeTab === 'remote'" v-for="plugin in filteredPlugins" :key="plugin.id"
+                :plugin="plugin" type="remote" :downloadingPlugins="downloadingPlugins"
+                :downloadSuccess="downloadSuccess" :downloadError="downloadError" :isInstalled="isPluginInstalled"
+                @download="downloadPlugin" @clear-download-error="clearPluginError" @copy-error="copyErrorMessage" />
 
             <!-- 无插件提示 -->
             <div v-if="filteredPlugins.length === 0" class="col-span-full p-8 text-center text-gray-500">
