@@ -58,19 +58,8 @@ jobs:
           CSC_NAME: ${{ steps.signing.outputs.signing_identity }}
           APPLE_TEAM_ID: ${{ steps.signing.outputs.team_id }}
         run: |
-          cd buddy
-          # 配置 electron-builder 的签名设置
-          cat << EOF > electron-builder.signing.yml
-          mac:
-            identity: "$CSC_NAME"
-            provisioningProfile: "$HOME/Library/MobileDevice/Provisioning Profiles/build_pp.provisionprofile"
-            notarize:
-              teamId: "$APPLE_TEAM_ID"
-          EOF
-          # 合并签名配置
-          cat electron-builder.signing.yml >> electron-builder.yml
-          # 构建应用
-          pnpm run build:mac
+          # 使用新的构建脚本
+          node scripts/build.mjs buddy:mac
 
       # - name: build-win
       #   if: matrix.os == 'windows-latest'

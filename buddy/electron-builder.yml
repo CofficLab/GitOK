@@ -4,6 +4,7 @@ appId: com.yueyi.gitok
 productName: buddy
 directories:
   buildResources: build
+  output: dist
 files:
   - '!**/.vscode/*'
   - '!src/*'
@@ -15,6 +16,9 @@ asarUnpack:
   - resources/**
 win:
   executableName: buddy
+  target:
+    - nsis
+    - zip
 nsis:
   artifactName: ${name}-${version}-setup.${ext}
   shortcutName: ${productName}
@@ -27,14 +31,22 @@ mac:
     - NSMicrophoneUsageDescription: Application requests access to the device's microphone.
     - NSDocumentsFolderUsageDescription: Application requests access to the user's Documents folder.
     - NSDownloadsFolderUsageDescription: Application requests access to the user's Downloads folder.
-  notarize: false
+  category: public.app-category.developer-tools
+  target:
+    - dmg
+    - zip
+  identity: null # 将由环境变量 CSC_NAME 指定
+  provisioningProfile: ${HOME}/Library/MobileDevice/Provisioning Profiles/build_pp.provisionprofile
+  hardenedRuntime: true
+  gatekeeperAssess: false
+  notarize: true
 dmg:
   artifactName: ${name}-${version}.${ext}
 linux:
   target:
     - AppImage
-    - snap
     - deb
+    - rpm
   maintainer: electronjs.org
   category: Utility
 appImage:

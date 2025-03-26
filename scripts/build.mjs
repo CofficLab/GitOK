@@ -1,5 +1,31 @@
 #!/usr/bin/env node
 
+/**
+ * @fileoverview 项目构建脚本
+ *
+ * 这个脚本提供了一个灵活的构建系统，支持：
+ * - 交互式选择要构建的项目
+ * - 命令行参数直接指定构建项目
+ * - CI/CD 环境中的自动化构建
+ *
+ * 使用方式：
+ * 1. 交互模式：
+ *    ```bash
+ *    node scripts/build.mjs
+ *    ```
+ *
+ * 2. CI 模式：
+ *    ```bash
+ *    node scripts/build.mjs buddy:mac
+ *    ```
+ *
+ * 3. 作为模块导入：
+ *    ```javascript
+ *    import { buildProject } from './scripts/build.mjs';
+ *    await buildProject('buddy:mac');
+ *    ```
+ */
+
 import inquirer from 'inquirer';
 import { execSync } from 'child_process';
 import { dirname } from 'path';
@@ -7,7 +33,22 @@ import { fileURLToPath } from 'url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-// 定义可构建的项目
+/**
+ * @typedef {Object} BuildStep
+ * @property {string} name - 构建步骤的名称
+ * @property {string} command - 要执行的构建命令
+ */
+
+/**
+ * @typedef {Object} Project
+ * @property {string} name - 项目显示名称
+ * @property {string} value - 项目唯一标识符
+ * @property {string} command - 主构建命令
+ * @property {BuildStep[]} [preBuildSteps] - 前置构建步骤（如依赖项构建）
+ * @property {BuildStep[]} [buildSteps] - 详细构建步骤（如分步骤构建）
+ */
+
+/** @type {Project[]} */
 const projects = [
   {
     name: '所有项目',
@@ -117,6 +158,13 @@ const projects = [
   },
 ];
 
+/**
+ * 构建项目依赖
+ * 在主构建过程开始前，执行所有必要的依赖项构建
+ *
+ * @param {BuildStep[]} steps - 要执行的构建步骤
+ * @throws {Error} 当构建步骤失败时抛出错误
+ */
 async function buildDependencies(steps) {
   if (!steps || steps.length === 0) return;
 
@@ -142,6 +190,13 @@ async function buildDependencies(steps) {
   console.log(''); // 添加一个空行作为分隔
 }
 
+/**
+ * 逐步执行构建步骤
+ * 用于需要多个步骤的复杂构建过程
+ *
+ * @param {BuildStep[]} steps - 要执行的构建步骤
+ * @throws {Error} 当任何构建步骤失败时抛出错误
+ */
 async function buildStepByStep(steps) {
   if (!steps || steps.length === 0) return;
 
@@ -165,39 +220,72 @@ async function buildStepByStep(steps) {
   console.log(''); // 添加一个空行作为分隔
 }
 
+/**
+ * 构建指定的项目
+ *
+ * @param {string} projectValue - 项目的唯一标识符
+ * @throws {Error} 当项目不存在或构建失败时抛出错误
+ */
+async function buildProject(projectValue) {
+  const selectedProject = projects.find((p) => p.value === projectValue);
+  if (!selectedProject) {
+    throw new Error(`未找到项目: ${projectValue}`);
+  }
+
+  // 如果有预构建步骤，先执行它们
+  if (selectedProject.preBuildSteps) {
+    await buildDependencies(selectedProject.preBuildSteps);
+  }
+
+  console.log(`\n🏗️  正在构建 ${selectedProject.name}...\n`);
+
+  // 如果项目有多个构建步骤，逐步执行
+  if (selectedProject.buildSteps) {
+    await buildStepByStep(selectedProject.buildSteps);
+  } else {
+    // 执行单个构建命令
+    execSync(selectedProject.command, { stdio: 'inherit' });
+  }
+
+  console.log(`\n✨ ${selectedProject.name} 构建完成！`);
+}
+
+/**
+ * 主函数
+ * 处理命令行参数并执行相应的构建过程
+ *
+ * @throws {Error} 当构建过程中发生错误时抛出
+ */
 async function main() {
   try {
-    const { project } = await inquirer.prompt([
-      {
-        type: 'list',
-        name: 'project',
-        message: '请选择要构建的项目：',
-        choices: projects,
-      },
-    ]);
+    // 检查是否有命令行参数
+    const projectArg = process.argv[2];
 
-    const selectedProject = projects.find((p) => p.value === project);
-
-    // 如果有预构建步骤，先执行它们
-    if (selectedProject.preBuildSteps) {
-      await buildDependencies(selectedProject.preBuildSteps);
-    }
-
-    console.log(`\n🏗️  正在构建 ${selectedProject.name}...\n`);
-
-    // 如果项目有多个构建步骤，逐步执行
-    if (selectedProject.buildSteps) {
-      await buildStepByStep(selectedProject.buildSteps);
+    if (projectArg) {
+      // CI 模式：直接构建指定项目
+      await buildProject(projectArg);
     } else {
-      // 执行单个构建命令
-      execSync(selectedProject.command, { stdio: 'inherit' });
+      // 交互模式：提示用户选择项目
+      const { project } = await inquirer.prompt([
+        {
+          type: 'list',
+          name: 'project',
+          message: '请选择要构建的项目：',
+          choices: projects,
+        },
+      ]);
+      await buildProject(project);
     }
-
-    console.log(`\n✨ ${selectedProject.name} 构建完成！`);
   } catch (error) {
     console.error('\n❌ 构建失败：', error);
     process.exit(1);
   }
 }
 
-main();
+// 如果是直接运行此脚本（不是被导入）
+if (import.meta.url === `file://${fileURLToPath(import.meta.url)}`) {
+  main();
+}
+
+// 导出供其他模块使用
+export { buildProject, projects };
