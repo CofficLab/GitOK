@@ -1,0 +1,35 @@
+{
+  "name": "@gitok/plugin-git-helper",
+  "version": "1.0.0",
+  "description": "GitOK插件 - Git仓库状态检查与自动提交推送",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "clean": "rimraf dist",
+    "prebuild": "npm run clean",
+    "test": "ts-node src/test.ts"
+  },
+  "keywords": [
+    "gitok",
+    "plugin",
+    "git",
+    "commit",
+    "push",
+    "vscode",
+    "cursor"
+  ],
+  "author": "Coffic",
+  "license": "MIT",
+  "dependencies": {
+    "simple-git": "^3.22.0",
+    "sqlite3": "^5.1.7"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.24",
+    "@types/sqlite3": "^3.1.11",
+    "rimraf": "^5.0.5",
+    "typescript": "^5.3.3",
+    "ts-node": "^10.9.2"
+  }
+}
