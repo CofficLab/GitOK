@@ -1,6 +1,6 @@
 {
   "name": "@coffic/command-key-listener",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "macOS系统Command键双击事件监听器",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
