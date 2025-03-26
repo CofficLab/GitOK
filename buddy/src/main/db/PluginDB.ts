@@ -121,7 +121,7 @@ export class PluginDB {
    * 获取所有插件列表
    */
   async getAllPlugins(): Promise<PluginEntity[]> {
-    logger.info('获取所有插件列表');
+    // logger.info('获取所有插件列表');
 
     try {
       // 从各个目录读取插件

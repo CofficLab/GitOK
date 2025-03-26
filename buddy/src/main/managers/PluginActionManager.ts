@@ -48,7 +48,7 @@ class PluginActionManager extends BaseManager {
       // 从所有加载的插件中获取动作
       const plugins = await pluginManager.getPlugins();
       for (const plugin of plugins) {
-        logger.info(`获取插件动作，当前插件: ${plugin.id}`);
+        // logger.info(`获取插件动作，当前插件: ${plugin.id}`);
         try {
           // 动态加载插件模块
           const pluginModule = await pluginManager.loadPluginModule(plugin);
@@ -68,10 +68,10 @@ class PluginActionManager extends BaseManager {
             overlaidApp: overlaidApp?.name || '',
           };
 
-          logger.info(`调用插件 getActions: ${plugin.id}`, {
-            context,
-            pluginPath: plugin.path,
-          });
+          // logger.info(`调用插件 getActions: ${plugin.id}`, {
+          //   context,
+          //   pluginPath: plugin.path,
+          // });
 
           const pluginActions = await pluginModule.getActions(context);
 
@@ -119,7 +119,7 @@ class PluginActionManager extends BaseManager {
         }
       }
 
-      logger.info(`获取插件动作，所有动作`, allActions);
+      // logger.info(`获取插件动作，所有动作`, allActions);
 
       // 过滤关键词匹配的动作
       if (keyword) {

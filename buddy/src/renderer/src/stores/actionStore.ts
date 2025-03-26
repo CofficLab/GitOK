@@ -41,7 +41,7 @@ export const useActionStore = defineStore('action', {
         this.isLoading = true;
         this.list = await actionsApi.getPluginActions(searchKeyword);
 
-        logger.info('actionStore: loadList', this.list);
+        // logger.info('actionStore: loadList', this.list);
       } catch (error) {
         logger.error('actionStore: loadList error: 🐛', error);
         this.list = [];

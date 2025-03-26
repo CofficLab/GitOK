@@ -28,8 +28,7 @@ export class UpdateManager {
 
     // 在开发环境中强制启用更新配置
     if (process.env.NODE_ENV === 'development') {
-      autoUpdater.forceDevUpdateConfig = true;
-      logger.info('开发环境中，强制启用更新检查');
+      autoUpdater.forceDevUpdateConfig = false;
     }
 
     // 设置更新事件监听

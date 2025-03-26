@@ -8,42 +8,13 @@ import { SuperPlugin } from '@/types/super_plugin';
 import { pluginManager } from '../managers/PluginManager';
 import { logger } from '../managers/LogManager';
 import { pluginDB } from '../db/PluginDB';
+import { remotePluginDB } from '../db/RemotePluginDB';
+import { packageDownloaderDB } from '../db/PackageDownloaderDB';
 import * as fs from 'fs';
 import * as path from 'path';
-import * as https from 'https';
-import * as http from 'http';
-import * as tar from 'tar';
-import { URL } from 'url';
 
 export class PluginStoreController {
   private static instance: PluginStoreController;
-
-  // NPM registry URL
-  private readonly NPM_REGISTRY = 'https://registry.npmjs.org';
-
-  // 模拟远程插件列表
-  private remotePlugins: SuperPlugin[] = [
-    {
-      id: '@coffic/plugin-ide-workspace',
-      name: 'IDE工作空间',
-      version: '1.0.0',
-      description: '显示当前IDE的工作空间信息',
-      author: 'Coffic Lab',
-      type: 'remote',
-      path: '',
-      npmPackage: '@coffic/plugin-ide-workspace',
-    },
-    {
-      id: '@coffic/buddy-example-plugin',
-      name: '示例插件',
-      version: '1.0.0',
-      description: '示例插件',
-      author: 'Coffic Lab',
-      type: 'remote',
-      path: '',
-      npmPackage: '@coffic/buddy-example-plugin',
-    },
-  ];
 
   private constructor() {}
 
@@ -71,12 +42,12 @@ export class PluginStoreController {
 
   /**
    * 获取远程插件列表
-   * 目前返回模拟数据，实际应用中应从远程服务器获取
+   * 使用RemotePluginDB服务获取数据
    */
-  public getRemotePlugins(): IpcResponse<SuperPlugin[]> {
+  public async getRemotePlugins(): Promise<IpcResponse<SuperPlugin[]>> {
     try {
-      // 实际应用中，这里应该是向远程服务器请求数据
-      return { success: true, data: this.remotePlugins };
+      const plugins = await remotePluginDB.getRemotePlugins();
+      return { success: true, data: plugins };
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : String(error);
@@ -86,197 +57,8 @@ export class PluginStoreController {
   }
 
   /**
-   * 从npm registry获取包的元数据
-   * @param packageName NPM包名
-   */
-  private async fetchPackageMetadata(packageName: string): Promise<any> {
-    return new Promise((resolve, reject) => {
-      const url = `${this.NPM_REGISTRY}/${packageName}`;
-      logger.info(`请求NPM包元数据: ${packageName}`, {
-        url,
-        registry: this.NPM_REGISTRY,
-        packageName,
-      });
-
-      https
-        .get(url, (res) => {
-          let data = '';
-
-          res.on('data', (chunk) => {
-            data += chunk;
-          });
-
-          res.on('end', () => {
-            if (res.statusCode === 200) {
-              try {
-                const metadata = JSON.parse(data);
-                logger.info(`成功获取包元数据: ${packageName}`, {
-                  url,
-                  statusCode: res.statusCode,
-                });
-                resolve(metadata);
-              } catch (err) {
-                const errorMsg = `解析元数据失败: ${err instanceof Error ? err.message : String(err)}`;
-                logger.error(errorMsg, {
-                  url,
-                  packageName,
-                  error: err,
-                });
-                reject(new Error(errorMsg));
-              }
-            } else {
-              const errorMsg = `获取元数据失败，状态码: ${res.statusCode}`;
-              logger.error(errorMsg, {
-                url,
-                packageName,
-                statusCode: res.statusCode,
-                responseBody: data.substring(0, 200), // 只记录前200个字符避免日志过大
-              });
-              reject(new Error(errorMsg));
-            }
-          });
-        })
-        .on('error', (err) => {
-          const errorMsg = `请求失败: ${err.message}`;
-          logger.error(errorMsg, {
-            url,
-            packageName,
-            error: err,
-          });
-          reject(new Error(errorMsg));
-        });
-    });
-  }
-
-  /**
-   * 从URL下载文件到指定路径
-   * @param url 下载地址
-   * @param destPath.path 目标路径
-   */
-  private async downloadFile(url: string, destPath: string): Promise<void> {
-    return new Promise((resolve, reject) => {
-      const parsedUrl = new URL(url);
-      const protocol = parsedUrl.protocol === 'https:' ? https : http;
-
-      logger.info(`开始下载文件`, {
-        url,
-        destPath,
-        protocol: parsedUrl.protocol,
-      });
-
-      // 确保目标目录存在
-      const destDir = path.dirname(destPath);
-      if (!fs.existsSync(destDir)) {
-        logger.info(`创建目标目录: ${destDir}`);
-        fs.mkdirSync(destDir, { recursive: true });
-      }
-
-      const file = fs.createWriteStream(destPath);
-
-      protocol
-        .get(url, (response) => {
-          if (response.statusCode === 302 || response.statusCode === 301) {
-            // 处理重定向
-            const redirectUrl = response.headers.location!;
-            logger.info(`请求被重定向`, {
-              originalUrl: url,
-              redirectUrl,
-              statusCode: response.statusCode,
-            });
-
-            this.downloadFile(redirectUrl, destPath)
-              .then(resolve)
-              .catch(reject);
-            return;
-          }
-
-          if (response.statusCode !== 200) {
-            const errorMsg = `下载失败，状态码: ${response.statusCode}`;
-            logger.error(errorMsg, {
-              url,
-              destPath,
-              statusCode: response.statusCode,
-            });
-            reject(new Error(errorMsg));
-            return;
-          }
-
-          response.pipe(file);
-
-          file.on('finish', () => {
-            file.close();
-            logger.info(`文件下载完成`, {
-              url,
-              destPath,
-              size: fs.statSync(destPath).size,
-            });
-            resolve();
-          });
-        })
-        .on('error', (err) => {
-          fs.unlink(destPath, () => {}); // 清理部分下载的文件
-          const errorMsg = `下载请求失败: ${err.message}`;
-          logger.error(errorMsg, {
-            url,
-            destPath,
-            error: err,
-          });
-          reject(err);
-        });
-
-      file.on('error', (err) => {
-        fs.unlink(destPath, () => {}); // 清理部分下载的文件
-        const errorMsg = `文件写入失败: ${err.message}`;
-        logger.error(errorMsg, {
-          url,
-          destPath,
-          error: err,
-        });
-        reject(err);
-      });
-    });
-  }
-
-  /**
-   * 解压 tar.gz 文件
-   * @param tarPath tar文件路径
-   * @param extractPath 解压目标路径
-   */
-  private async extractTarball(
-    tarPath: string,
-    extractPath: string
-  ): Promise<void> {
-    return new Promise((resolve, reject) => {
-      try {
-        tar
-          .extract({
-            file: tarPath,
-            cwd: extractPath,
-            strip: 1, // 去掉顶层的package目录
-          })
-          .then(() => {
-            resolve();
-          })
-          .catch((err) => {
-            reject(
-              new Error(
-                `解压文件失败: ${err instanceof Error ? err.message : String(err)}`
-              )
-            );
-          });
-      } catch (err) {
-        reject(
-          new Error(
-            `解压初始化失败: ${err instanceof Error ? err.message : String(err)}`
-          )
-        );
-      }
-    });
-  }
-
-  /**
    * 下载并安装插件
-   * 直接从NPM Registry下载包，不依赖npm命令
+   * 使用PackageDownloaderDB服务处理下载和解压
    */
   public async downloadPlugin(
     plugin: SuperPlugin
@@ -315,73 +97,16 @@ export class PluginStoreController {
         safePluginId,
         npmPackage: plugin.npmPackage,
         pluginDir,
-        registry: this.NPM_REGISTRY,
       });
 
       try {
-        // 1. 获取包的元数据
-        const encodedPackageName = encodeURIComponent(
-          plugin.npmPackage
-        ).replace(/%40/g, '@');
-        logger.info(`准备获取包元数据`, {
-          packageName: plugin.npmPackage,
-          encodedName: encodedPackageName,
-          url: `${this.NPM_REGISTRY}/${encodedPackageName}`,
-        });
+        // 使用包下载服务下载并解压插件
+        await packageDownloaderDB.downloadAndExtractPackage(
+          plugin.npmPackage,
+          pluginDir
+        );
 
-        const metadata = await this.fetchPackageMetadata(encodedPackageName);
-
-        // 2. 获取最新版本和下载地址
-        const latestVersion = metadata['dist-tags'].latest;
-        const tarballUrl = metadata.versions[latestVersion].dist.tarball;
-
-        logger.info(`获取到包信息`, {
-          packageName: plugin.npmPackage,
-          version: latestVersion,
-          tarballUrl,
-          shasum: metadata.versions[latestVersion].dist.shasum,
-        });
-
-        // 3. 下载tar包
-        const tempTarPath = path.join(pluginDir, `${safePluginId}.tgz`);
-        await this.downloadFile(tarballUrl, tempTarPath);
-
-        // 4. 解压tar包到临时目录
-        const tempDir = path.join(pluginDir, 'temp');
-        if (fs.existsSync(tempDir)) {
-          // 清理旧的临时目录
-          fs.rmdirSync(tempDir, { recursive: true });
-        }
-        fs.mkdirSync(tempDir, { recursive: true });
-
-        logger.info(`开始解压tar包到: ${tempDir}`);
-        await this.extractTarball(tempTarPath, tempDir);
-        logger.info(`解压完成`);
-
-        // 5. 移动文件到插件目录
-        const files = fs.readdirSync(tempDir);
-        for (const file of files) {
-          const srcPath = path.join(tempDir, file);
-          const destPath = path.join(pluginDir, file);
-
-          // 如果目标文件已存在，先删除
-          if (fs.existsSync(destPath)) {
-            if (fs.statSync(destPath).isDirectory()) {
-              fs.rmdirSync(destPath, { recursive: true });
-            } else {
-              fs.unlinkSync(destPath);
-            }
-          }
-
-          // 移动文件或目录
-          fs.renameSync(srcPath, destPath);
-        }
-
-        // 6. 清理临时文件
-        fs.rmdirSync(tempDir, { recursive: true });
-        fs.unlinkSync(tempTarPath);
-
-        // 8. 重新扫描插件目录
+        // 重新扫描插件目录
         await pluginDB.getAllPlugins();
 
         logger.info(`插件 ${plugin.name} 安装成功`);

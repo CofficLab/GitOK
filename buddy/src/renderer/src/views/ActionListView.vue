@@ -38,11 +38,7 @@ watch(() => searchStore.keyword, async (newKeyword) => {
 
     // 重新加载插件动作
     try {
-        logger.info('ActionListView.vue: 开始加载插件动作...');
         await actionStore.loadList();
-        logger.info(`ActionListView.vue: 插件动作加载完成，共 ${actionStore.getActionCount()} 个`, {
-            actions: actionStore.getActions()
-        });
     } catch (error) {
         logger.error('ActionListView.vue: 加载插件动作失败', error);
     }

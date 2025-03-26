@@ -16,8 +16,8 @@ const electronApi = window.electron
 const pluginApi = electronApi.plugins
 const { management } = pluginApi
 
-// 插件列表
-const plugins = ref<SuperPlugin[]>([])
+const userPlugins = ref<SuperPlugin[]>([])
+const devPlugins = ref<SuperPlugin[]>([])
 const remotePlugins = ref<SuperPlugin[]>([])
 const directories = ref<{ user: string; dev: string } | null>(null)
 const errorMessage = ref('')
@@ -33,46 +33,67 @@ const uninstallingPlugins = ref<Set<string>>(new Set())
 const uninstallSuccess = ref<Set<string>>(new Set())
 const uninstallError = ref<Map<string, string>>(new Map())
 
+// 加载状态
+const loadingPlugins = ref<boolean>(false)
+const loadingRemotePlugins = ref<boolean>(false)
+
 // 当前选中的标签
 const activeTab = ref<'user' | 'dev' | 'remote'>('user')
 
+// 刷新按钮点击事件
+const handleRefresh = async () => {
+    if (activeTab.value === 'remote') {
+        await loadRemotePlugins(true)
+    } else {
+        await loadPlugins(true)
+    }
+}
+
 // 加载插件列表
-const loadPlugins = async () => {
+const loadPlugins = async (forceRefresh = false) => {
+    if (loadingPlugins.value && !forceRefresh) return
+
+    loadingPlugins.value = true
     try {
         const response = await management.getStorePlugins()
-        if (response.success) {
-            plugins.value = response.data || []
+        if (response.success && response.data) {
+            const allPlugins = response.data || []
+            userPlugins.value = allPlugins.filter(p => p.type === 'user')
+            devPlugins.value = allPlugins.filter(p => p.type === 'dev')
         } else {
             showErrorMessage(`加载插件列表失败: ${response.error || '未知错误'}`)
             console.error('加载插件列表失败', response)
         }
-    } catch (error) {
-        const errorMsg = error instanceof Error ? error.message : String(error)
+    } catch (err) {
+        const errorMsg = err instanceof Error ? err.message : String(err)
         showErrorMessage(`加载插件列表失败: ${errorMsg}`)
-        console.error('加载插件列表失败', error)
+        console.error('Failed to load plugins:', err)
+    } finally {
+        loadingPlugins.value = false
     }
 }
 
 // 加载远程插件列表
-const loadRemotePlugins = async () => {
+const loadRemotePlugins = async (forceRefresh = false) => {
+    if (loadingRemotePlugins.value && !forceRefresh) return
+
+    loadingRemotePlugins.value = true
     try {
         // 调用主进程方法获取远程插件列表
-        const response = await management.getRemotePlugins() as {
-            success: boolean;
-            data?: SuperPlugin[];
-            error?: string;
-        };
+        const response = await management.getRemotePlugins()
 
         if (response.success) {
-            remotePlugins.value = response.data || [];
+            remotePlugins.value = response.data || []
         } else {
             showErrorMessage(`加载远程插件列表失败: ${response.error || '未知错误'}`)
             console.error('加载远程插件列表失败', response)
         }
-    } catch (error) {
-        const errorMsg = error instanceof Error ? error.message : String(error)
+    } catch (err) {
+        const errorMsg = err instanceof Error ? err.message : String(err)
         showErrorMessage(`加载远程插件列表失败: ${errorMsg}`)
-        console.error('加载远程插件列表失败', error)
+        console.error('Failed to load remote plugins:', err)
+    } finally {
+        loadingRemotePlugins.value = false
     }
 }
 
@@ -206,7 +227,7 @@ const filteredPlugins = computed(() => {
         return remotePlugins.value
     }
 
-    return plugins.value.filter(plugin => {
+    return userPlugins.value.concat(devPlugins.value).filter(plugin => {
         if (activeTab.value === 'user') return plugin.type === 'user'
         if (activeTab.value === 'dev') return plugin.type === 'dev'
         return true
@@ -215,7 +236,7 @@ const filteredPlugins = computed(() => {
 
 // 检查插件是否已安装
 const isPluginInstalled = computed(() => {
-    const installedIds = new Set(plugins.value.map(p => p.id))
+    const installedIds = new Set(userPlugins.value.concat(devPlugins.value).map(p => p.id))
     return (id: string) => installedIds.has(id)
 })
 
@@ -323,20 +344,57 @@ onMounted(async () => {
             </div>
         </div>
 
-        <!-- 标签栏 -->
-        <div class="mb-4 border-b">
-            <button @click="activeTab = 'user'"
-                :class="['px-4 py-2 -mb-px', activeTab === 'user' ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-600']">
-                用户插件
-            </button>
-            <button @click="activeTab = 'dev'"
-                :class="['px-4 py-2 -mb-px', activeTab === 'dev' ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-600']">
-                开发中
-            </button>
-            <button @click="activeTab = 'remote'"
-                :class="['px-4 py-2 -mb-px', activeTab === 'remote' ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-600']">
-                远程仓库
-            </button>
+        <!-- 标签页 -->
+        <div class="mb-4 border-b border-gray-200">
+            <div class="flex items-center">
+                <ul class="flex flex-grow flex-wrap -mb-px text-sm font-medium text-center text-gray-500">
+                    <li class="mr-2">
+                        <button @click="activeTab = 'user'" :class="[
+                            'inline-flex items-center p-4 border-b-2 rounded-t-lg',
+                            activeTab === 'user'
+                                ? 'text-blue-600 border-blue-600 active'
+                                : 'border-transparent hover:text-gray-600 hover:border-gray-300'
+                        ]">
+                            用户插件
+                        </button>
+                    </li>
+                    <li class="mr-2">
+                        <button @click="activeTab = 'dev'" :class="[
+                            'inline-flex items-center p-4 border-b-2 rounded-t-lg',
+                            activeTab === 'dev'
+                                ? 'text-blue-600 border-blue-600 active'
+                                : 'border-transparent hover:text-gray-600 hover:border-gray-300'
+                        ]">
+                            开发中
+                        </button>
+                    </li>
+                    <li class="mr-2">
+                        <button @click="activeTab = 'remote'" :class="[
+                            'inline-flex items-center p-4 border-b-2 rounded-t-lg',
+                            activeTab === 'remote'
+                                ? 'text-blue-600 border-blue-600 active'
+                                : 'border-transparent hover:text-gray-600 hover:border-gray-300'
+                        ]">
+                            远程仓库
+                        </button>
+                    </li>
+                </ul>
+
+                <!-- 刷新按钮 -->
+                <button @click="handleRefresh"
+                    :disabled="(activeTab === 'remote' && loadingRemotePlugins) || (activeTab !== 'remote' && loadingPlugins)"
+                    class="p-2 text-gray-500 rounded-lg hover:bg-gray-100 focus:outline-none">
+                    <svg :class="[
+                        'h-5 w-5',
+                        (activeTab === 'remote' && loadingRemotePlugins) || (activeTab !== 'remote' && loadingPlugins)
+                            ? 'animate-spin text-blue-500'
+                            : ''
+                    ]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                </button>
+            </div>
         </div>
 
         <!-- 目录信息 -->
