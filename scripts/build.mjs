@@ -159,6 +159,21 @@ const projects = [
 ];
 
 /**
+ * 在控制台输出状态信息
+ * 支持 TTY 和非 TTY 环境
+ *
+ * @param {string} text - 要输出的文本
+ * @param {boolean} [clearLine=false] - 是否清除当前行
+ */
+function log(text, clearLine = false) {
+  if (process.stdout.isTTY && clearLine) {
+    process.stdout.clearLine(0);
+    process.stdout.cursorTo(0);
+  }
+  process.stdout.write(clearLine ? `\r${text}` : `${text}\n`);
+}
+
+/**
  * 构建项目依赖
  * 在主构建过程开始前，执行所有必要的依赖项构建
  *
@@ -172,15 +187,11 @@ async function buildDependencies(steps) {
 
   for (const step of steps) {
     try {
-      process.stdout.write(`📦 构建 ${step.name}...`);
+      log(`📦 构建 ${step.name}...`, true);
       execSync(step.command, { stdio: ['ignore', 'ignore', 'pipe'] });
-      process.stdout.clearLine(0);
-      process.stdout.cursorTo(0);
-      console.log(`✅ ${step.name} 构建成功`);
+      log(`✅ ${step.name} 构建成功`);
     } catch (error) {
-      process.stdout.clearLine(0);
-      process.stdout.cursorTo(0);
-      console.error(`❌ ${step.name} 构建失败`);
+      log(`❌ ${step.name} 构建失败`);
       if (error.stderr) {
         console.error(error.stderr.toString());
       }
@@ -202,15 +213,11 @@ async function buildStepByStep(steps) {
 
   for (const step of steps) {
     try {
-      process.stdout.write(`⚙️ ${step.name}...`);
+      log(`⚙️ ${step.name}...`, true);
       execSync(step.command, { stdio: ['ignore', 'ignore', 'pipe'] });
-      process.stdout.clearLine(0);
-      process.stdout.cursorTo(0);
-      console.log(`✅ ${step.name} 完成`);
+      log(`✅ ${step.name} 完成`);
     } catch (error) {
-      process.stdout.clearLine(0);
-      process.stdout.cursorTo(0);
-      console.error(`❌ ${step.name} 失败`);
+      log(`❌ ${step.name} 失败`);
       if (error.stderr) {
         console.error(error.stderr.toString());
       }

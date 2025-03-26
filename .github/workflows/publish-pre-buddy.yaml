@@ -57,9 +57,7 @@ jobs:
           CSC_IDENTITY_AUTO_DISCOVERY: false
           CSC_NAME: ${{ steps.signing.outputs.signing_identity }}
           APPLE_TEAM_ID: ${{ steps.signing.outputs.team_id }}
-        run: |
-          # 使用新的构建脚本
-          node scripts/build.mjs buddy:mac
+        run: node scripts/build.mjs buddy:mac
 
       # - name: build-win
       #   if: matrix.os == 'windows-latest'
