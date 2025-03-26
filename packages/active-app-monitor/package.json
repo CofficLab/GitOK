@@ -4,6 +4,9 @@
   "description": "一个用于获取 macOS 系统当前活跃应用信息的 Node.js 原生模块",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "npm run build:ts && npm run build:native",
     "build:ts": "tsc",
@@ -42,9 +45,6 @@
     "native/build.js",
     "README.md"
   ],
-  "publishConfig": {
-    "access": "public"
-  },
   "dependencies": {
     "node-addon-api": "^8.3.1"
   },

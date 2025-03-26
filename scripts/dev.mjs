@@ -19,10 +19,6 @@ const projects = [
         name: '@coffic/active-app-monitor',
         command: 'pnpm --filter active-app-monitor build',
       },
-      {
-        name: '@coffic/command-key-listener',
-        command: 'pnpm --filter command-key-listener build',
-      },
     ],
   },
   {

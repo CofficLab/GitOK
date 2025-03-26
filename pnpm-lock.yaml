@@ -31,8 +31,8 @@ importers:
         specifier: workspace:*
         version: link:../packages/active-app-monitor
       '@coffic/command-key-listener':
-        specifier: workspace:*
-        version: link:../packages/command-key-listener
+        specifier: ^1.0.0
+        version: 1.0.2(electron@35.0.3)
       '@electron-toolkit/preload':
         specifier: ^3.0.1
         version: 3.0.1(electron@35.0.3)
@@ -166,22 +166,6 @@ importers:
         specifier: ^2.2.8
         version: 2.2.8(typescript@5.8.2)
 
-  packages/command-key-listener:
-    dependencies:
-      electron:
-        specifier: '>=22.0.0'
-        version: 35.0.3
-      node-addon-api:
-        specifier: ^7.0.0
-        version: 7.1.1
-    devDependencies:
-      '@types/node':
-        specifier: ^22.13.0
-        version: 22.13.10
-      typescript:
-        specifier: ^5.8.0
-        version: 5.8.2
-
   packages/mcp-core:
     dependencies:
       '@modelcontextprotocol/sdk':
@@ -279,6 +263,31 @@ importers:
         version: 0.20.2
 
   plugins/example-plugin: {}
+
+  plugins/git-helper:
+    dependencies:
+      simple-git:
+        specifier: ^3.22.0
+        version: 3.27.0
+      sqlite3:
+        specifier: ^5.1.7
+        version: 5.1.7
+    devDependencies:
+      '@types/node':
+        specifier: ^20.11.24
+        version: 20.17.27
+      '@types/sqlite3':
+        specifier: ^3.1.11
+        version: 3.1.11
+      rimraf:
+        specifier: ^5.0.5
+        version: 5.0.10
+      ts-node:
+        specifier: ^10.9.2
+        version: 10.9.2(@types/node@20.17.27)(typescript@5.8.2)
+      typescript:
+        specifier: ^5.3.3
+        version: 5.8.2
 
   plugins/ide-workspace:
     dependencies:
@@ -427,6 +436,13 @@ packages:
   '@babel/types@7.26.10':
     resolution: {integrity: sha512-emqcG3vHrpxUKTrxcblR36dcrcoRDvKmnL/dCL6ZsHaShW80qxCAcNhzQZrpeM765VzEos+xOi4s+r4IXzTwdQ==}
     engines: {node: '>=6.9.0'}
+
+  '@coffic/command-key-listener@1.0.2':
+    resolution: {integrity: sha512-LXmI6v4I6Ui51P/ejieoH3/u+LIgpDlILdF2elWm0i3DGizCfuo6Yv+rH5vcbXf/mjFhpBkvWDhQfeHK1bS89Q==}
+    engines: {node: '>=14.0.0'}
+    os: [darwin]
+    peerDependencies:
+      electron: '>=22.0.0'
 
   '@cspotcode/source-map-support@0.8.1':
     resolution: {integrity: sha512-IchNf6dN4tHoMFIn/7OE8LWZ19Y6q/67Bmf6vnGREv8RSbBVb9LPJxEcnwrcwX6ixSvaiGoomAUvu4YSxXrVgw==}
@@ -1164,6 +1180,12 @@ packages:
 
   '@jridgewell/trace-mapping@0.3.9':
     resolution: {integrity: sha512-3Belt6tdc8bPgAtbcmdtNJlirVoTmEb5e2gC94PnkwEW9jI6CAHUeoG85tjWP5WquqfavoMtMwiG4P926ZKKuQ==}
+
+  '@kwsites/file-exists@1.1.1':
+    resolution: {integrity: sha512-m9/5YGR18lIwxSFDwfE3oA7bWuq9kdau6ugN4H2rJeyhFQZcG9AgSHkQtSD15a8WvTgfz9aikZMrKPHvbpqFiw==}
+
+  '@kwsites/promise-deferred@1.1.1':
+    resolution: {integrity: sha512-GaHYm+c0O9MjZRu0ongGBRbinu8gVAMd2UZjji6jVmqKtZluZnptXGWhz1E8j8D2HJ3f/yMxKAUC0b+57wncIw==}
 
   '@malept/cross-spawn-promise@2.0.0':
     resolution: {integrity: sha512-1DpKU0Z5ThltBwjNySMC14g0CkbyhCaz9FkhxqNsZI6uAPJXFS8cMXlBKo26FJ8ZuW6S9GCMcR9IO5k2X5/9Fg==}
@@ -3971,6 +3993,9 @@ packages:
   simple-get@4.0.1:
     resolution: {integrity: sha512-brv7p5WgH0jmQJr1ZDDfKDOSeWWg+OVypG99A/5vYGPqJ6pxiaHLy8nxtFjBA7oMa01ebA9gfh1uMCFqOuXxvA==}
 
+  simple-git@3.27.0:
+    resolution: {integrity: sha512-ivHoFS9Yi9GY49ogc6/YAi3Fl9ROnF4VyubNylgCkA+RVqLaKWnDSzXOVzya8csELIaWaYNutsEuAhZrtOjozA==}
+
   simple-update-notifier@2.0.0:
     resolution: {integrity: sha512-a2B9Y0KlNXl9u/vsW6sTIu9vGEpfKu2wRV6l1H3XEas/0gUIzGzBoP/IouTcUQbm9JWZLH3COxyn03TYlFax6w==}
     engines: {node: '>=10'}
@@ -4676,6 +4701,11 @@ snapshots:
       '@babel/helper-string-parser': 7.25.9
       '@babel/helper-validator-identifier': 7.25.9
 
+  '@coffic/command-key-listener@1.0.2(electron@35.0.3)':
+    dependencies:
+      electron: 35.0.3
+      node-addon-api: 7.1.1
+
   '@cspotcode/source-map-support@0.8.1':
     dependencies:
       '@jridgewell/trace-mapping': 0.3.9
@@ -5277,6 +5307,14 @@ snapshots:
     dependencies:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.0
+
+  '@kwsites/file-exists@1.1.1':
+    dependencies:
+      debug: 4.4.0
+    transitivePeerDependencies:
+      - supports-color
+
+  '@kwsites/promise-deferred@1.1.1': {}
 
   '@malept/cross-spawn-promise@2.0.0':
     dependencies:
@@ -8654,6 +8692,14 @@ snapshots:
       decompress-response: 6.0.0
       once: 1.4.0
       simple-concat: 1.0.1
+
+  simple-git@3.27.0:
+    dependencies:
+      '@kwsites/file-exists': 1.1.1
+      '@kwsites/promise-deferred': 1.1.1
+      debug: 4.4.0
+    transitivePeerDependencies:
+      - supports-color
 
   simple-update-notifier@2.0.0:
     dependencies:
