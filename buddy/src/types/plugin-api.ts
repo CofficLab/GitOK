@@ -42,6 +42,8 @@ interface PluginViews {
 // 插件管理接口
 interface PluginManagement {
   getStorePlugins: () => Promise<IpcResponse<SuperPlugin[]>>;
+  getRemotePlugins: () => Promise<IpcResponse<SuperPlugin[]>>;
+  downloadPlugin: (plugin: SuperPlugin) => Promise<IpcResponse<boolean>>;
   getDirectories: () => Promise<any>;
   openDirectory: (directory: string) => Promise<any>;
   createExamplePlugin: () => Promise<any>;

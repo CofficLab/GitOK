@@ -176,13 +176,9 @@ class WindowManager extends BaseManager {
 
     // 如果是失焦触发的隐藏，且窗口刚刚显示，则忽略
     if (isBlur && (justTriggered || now - lastShowTime < 500)) {
-      logger.debug('忽略失焦事件，窗口刚刚显示');
       return;
     }
 
-    logger.info(
-      isBlur ? '窗口失去焦点，自动隐藏' : '窗口当前可见，执行隐藏操作'
-    );
     // 清除被覆盖的应用信息
     appStateManager.setOverlaidApp(null);
     this.mainWindow.hide();
@@ -204,14 +200,6 @@ class WindowManager extends BaseManager {
     // 获取当前鼠标所在屏幕的信息
     const cursorPoint = screen.getCursorScreenPoint();
     const currentDisplay = screen.getDisplayNearestPoint(cursorPoint);
-    logger.debug('获取屏幕信息', {
-      cursorPoint,
-      display: {
-        id: currentDisplay.id,
-        bounds: currentDisplay.bounds,
-        workArea: currentDisplay.workArea,
-      },
-    });
 
     // 计算窗口在当前显示器上的居中位置
     const windowWidth = windowConfig.size

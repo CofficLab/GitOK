@@ -50,7 +50,6 @@ class StateManager extends BaseManager {
 
     // 监听应用失去焦点事件
     app.on('browser-window-blur', () => {
-      logger.info('应用失去焦点事件');
       this.emit(WindowEvents.DEACTIVATED);
 
       // 向所有渲染进程发送应用失活事件
@@ -59,7 +58,6 @@ class StateManager extends BaseManager {
 
     // 添加窗口获得焦点事件监听
     app.on('browser-window-focus', () => {
-      logger.info('窗口获得焦点事件');
       this.emit(WindowEvents.ACTIVATED);
 
       // 向所有渲染进程发送应用激活事件

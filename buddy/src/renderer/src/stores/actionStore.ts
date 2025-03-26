@@ -102,7 +102,6 @@ export const useActionStore = defineStore('action', {
     },
 
     getActionCount(): number {
-      logger.info('actionStore: getActionCount', this.list.length);
       return this.list.length;
     },
 
@@ -132,7 +131,6 @@ export const useActionStore = defineStore('action', {
      */
     setupWindowActivationListener() {
       ipc.receive(WindowEvents.ACTIVATED, () => {
-        logger.info('actionStore: 窗口激活，刷新动作列表');
         // 使用上次的搜索关键词刷新列表
         this.loadList(this.lastKeyword);
       });

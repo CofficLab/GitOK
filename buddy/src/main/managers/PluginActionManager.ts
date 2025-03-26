@@ -48,30 +48,78 @@ class PluginActionManager extends BaseManager {
       // 从所有加载的插件中获取动作
       const plugins = pluginManager.getPlugins();
       for (const plugin of plugins) {
+        logger.info(`获取插件动作，当前插件: ${plugin.id}`);
         try {
           // 动态加载插件模块
           const pluginModule = await pluginManager.loadPluginModule(plugin);
 
-          if (pluginModule && typeof pluginModule.getActions === 'function') {
-            const context: PluginContext = {
-              keyword,
-              overlaidApp: overlaidApp?.name || '',
-            };
-            logger.info(`获取插件动作: ${plugin.id}`, context);
-            const pluginActions = await pluginModule.getActions(context);
-            if (Array.isArray(pluginActions)) {
-              // 验证和处理动作
-              const validActions = this.validateAndProcessActions(
-                pluginActions,
-                plugin
-              );
-              allActions = [...allActions, ...validActions];
-            }
+          if (!pluginModule) {
+            logger.warn(`插件模块加载失败: ${plugin.id}，跳过该插件`);
+            continue;
           }
+
+          if (typeof pluginModule.getActions !== 'function') {
+            logger.warn(`插件 ${plugin.id} 未实现 getActions 方法，跳过该插件`);
+            continue;
+          }
+
+          const context: PluginContext = {
+            keyword,
+            overlaidApp: overlaidApp?.name || '',
+          };
+
+          logger.info(`调用插件 getActions: ${plugin.id}`, {
+            context,
+            pluginPath: plugin.path,
+          });
+
+          const pluginActions = await pluginModule.getActions(context);
+
+          if (!Array.isArray(pluginActions)) {
+            logger.warn(`插件 ${plugin.id} 返回的动作不是数组，跳过该插件`);
+            continue;
+          }
+
+          // 验证和处理动作
+          const validActions = this.validateAndProcessActions(
+            pluginActions,
+            plugin
+          );
+          allActions = [...allActions, ...validActions];
+
+          logger.info(`成功获取插件 ${plugin.id} 的动作`, {
+            actionCount: validActions.length,
+          });
         } catch (error) {
-          this.handleError(error, `获取插件 ${plugin.id} 的动作失败`);
+          // 获取详细的错误信息
+          const errorDetail =
+            error instanceof Error
+              ? {
+                  message: error.message,
+                  stack: error.stack,
+                  name: error.name,
+                }
+              : String(error);
+
+          logger.error(`插件 ${plugin.id} 执行失败`, {
+            error: errorDetail,
+            pluginInfo: {
+              id: plugin.id,
+              name: plugin.name,
+              version: plugin.version,
+              path: plugin.path,
+            },
+          });
+
+          // 记录错误但继续处理其他插件
+          this.handleError(
+            error,
+            `获取插件 ${plugin.id} 的动作失败，但不影响其他插件`
+          );
         }
       }
+
+      logger.info(`获取插件动作，所有动作`, allActions);
 
       // 过滤关键词匹配的动作
       if (keyword) {

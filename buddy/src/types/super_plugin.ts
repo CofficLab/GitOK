@@ -46,7 +46,7 @@ export interface SuperPlugin {
   /**
    * 插件主入口
    */
-  main: string;
+  main?: string;
 
   /**
    * 插件路径
@@ -61,5 +61,10 @@ export interface SuperPlugin {
   /**
    * 插件类型
    */
-  type: 'user' | 'dev';
+  type: 'user' | 'dev' | 'remote';
+
+  /**
+   * NPM包名称，用于远程插件
+   */
+  npmPackage?: string;
 }

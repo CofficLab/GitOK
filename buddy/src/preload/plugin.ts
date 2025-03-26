@@ -75,6 +75,9 @@ const pluginViews = {
 // 插件管理相关接口
 const pluginManagement = {
   getStorePlugins: () => ipcRenderer.invoke('plugin:getStorePlugins'),
+  getRemotePlugins: () => ipcRenderer.invoke('plugin:getRemotePlugins'),
+  downloadPlugin: (plugin: any) =>
+    ipcRenderer.invoke('plugin:downloadPlugin', plugin),
   getDirectories: () => ipcRenderer.invoke('plugin:getDirectories'),
   openDirectory: (directory: string) =>
     ipcRenderer.invoke('plugin:openDirectory', directory),

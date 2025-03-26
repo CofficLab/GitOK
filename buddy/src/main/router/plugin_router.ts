@@ -54,6 +54,14 @@ export const routes: IpcRoute[] = [
     handler: () => pluginStoreController.getStorePlugins(),
   },
   {
+    channel: IPC_METHODS.GET_REMOTE_PLUGINS,
+    handler: () => pluginStoreController.getRemotePlugins(),
+  },
+  {
+    channel: IPC_METHODS.DOWNLOAD_PLUGIN,
+    handler: (_, plugin) => pluginStoreController.downloadPlugin(plugin),
+  },
+  {
     channel: IPC_METHODS.GET_PLUGIN_DIRECTORIES,
     handler: () => pluginStoreController.getDirectories(),
   },

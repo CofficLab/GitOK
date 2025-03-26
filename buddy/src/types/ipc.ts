@@ -25,6 +25,8 @@ export const IPC_METHODS = {
   TOGGLE_PLUGIN_DEVTOOLS: 'toggle-plugin-devtools',
   // 插件商店相关
   GET_STORE_PLUGINS: 'plugin:getStorePlugins',
+  GET_REMOTE_PLUGINS: 'plugin:getRemotePlugins',
+  DOWNLOAD_PLUGIN: 'plugin:downloadPlugin',
   GET_PLUGIN_DIRECTORIES: 'plugin:getDirectories',
   GET_PLUGINS: 'plugin:getPlugins',
   OPEN_PLUGIN_DIRECTORY: 'plugin:openDirectory',
