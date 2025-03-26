@@ -120,6 +120,10 @@ listener.on('command-double-press', () => {
 - 确保已安装Xcode命令行工具：`xcode-select --install`
 - 确保Node.js版本兼容
 - 尝试使用`npm rebuild`重建原生模块
+- 如果遇到 Python 相关错误（如 `ModuleNotFoundError: No module named 'distutils'`）：
+  - 确保使用 Python 3.11 或更低版本（Python 3.12+ 移除了 distutils）
+  - 或安装缺失的依赖：`pip install setuptools distutils`
+  - 对于项目维护者：在CI/CD环境中，请使用 `actions/setup-python@v4` 并指定 `python-version: '3.11'`
 
 ## 许可证
 
