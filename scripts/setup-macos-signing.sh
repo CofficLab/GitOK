@@ -83,19 +83,14 @@ setup_certificates() {
     security import "$CERTIFICATE_PATH" -P "$BUILD_CERTIFICATE_P12_PASSWORD" -A -t cert -f pkcs12 -k "$KEYCHAIN_PATH"
     security list-keychain -d user -s "$KEYCHAIN_PATH"
 
-    # 配置描述文件
-    PROVISIONING_PROFILES_DIR="$HOME/Library/MobileDevice/Provisioning Profiles"
-    mkdir -p "$PROVISIONING_PROFILES_DIR"
-    PROVISIONING_PROFILE_PATH="$PROVISIONING_PROFILES_DIR/build_pp.provisionprofile"
-    cp "$PP_PATH" "$PROVISIONING_PROFILE_PATH"
-    
-    # 确保文件存在且有正确的权限
-    chmod 644 "$PROVISIONING_PROFILE_PATH"
-    ls -l "$PROVISIONING_PROFILE_PATH"
+    # 设置描述文件权限
+    chmod 644 "$PP_PATH"
+    echo "验证描述文件:"
+    ls -l "$PP_PATH"
 
     # 导出环境变量
     export KEYCHAIN_PATH
-    export PP_PATH="$PROVISIONING_PROFILE_PATH"
+    export PP_PATH
 }
 
 # 设置 App Store Connect API 密钥
