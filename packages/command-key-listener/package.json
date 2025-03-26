@@ -5,6 +5,9 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "type": "commonjs",
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "npm run build:ts && npm run build:native",
     "build:ts": "tsc",
