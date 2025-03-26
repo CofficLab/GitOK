@@ -117,21 +117,10 @@ get_certificate_info() {
     echo "SIGNING_IDENTITY: $SIGNING_IDENTITY"
 }
 
-# 清理函数
-cleanup() {
-    if [ -f "$CERTIFICATE_PATH" ]; then
-        rm "$CERTIFICATE_PATH"
-    fi
-    if [ -f "$PP_PATH" ]; then
-        rm "$PP_PATH"
-    fi
-}
-
 # 主函数
 main() {
     # 设置错误处理
     set -e
-    trap cleanup EXIT
 
     if ! check_required_env; then
         return 1
