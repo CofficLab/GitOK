@@ -29,8 +29,6 @@ const handleCancel = () => {
 }
 
 // 检查动作列表状态
-const hasActions = computed(() => actionStore.getActionCount() > 0)
-const hasKeyword = computed(() => searchStore.keyword.length > 0)
 const isLoading = computed(() => actionStore.isLoading)
 
 

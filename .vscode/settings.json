@@ -37,6 +37,7 @@
     "modelcontextprotocol",
     "Napi",
     "njsproj",
+    "nodemon",
     "notarytool",
     "nsis",
     "ntvs",
