@@ -86,10 +86,15 @@ jobs:
           cd packages/command-key-listener
           # 获取当前版本号
           CURRENT_VERSION=$(node -p "require('./package.json').version")
-          # 使用pnpm而不是npm升级版本号
-          pnpm version patch --no-git-tag-version
-          # 获取新版本号
-          NEW_VERSION=$(node -p "require('./package.json').version")
+          # 直接用Node.js脚本修改版本号
+          NEW_VERSION=$(node -e "
+            const fs = require('fs');
+            const pkg = require('./package.json');
+            const [major, minor, patch] = pkg.version.split('.').map(Number);
+            pkg.version = \`\${major}.\${minor}.\${patch + 1}\`;
+            fs.writeFileSync('./package.json', JSON.stringify(pkg, null, 2) + '\\n');
+            console.log(pkg.version);
+          ")
           # 设置输出变量
           echo "new_version=${NEW_VERSION}" >> $GITHUB_OUTPUT
           echo "current_version=${CURRENT_VERSION}" >> $GITHUB_OUTPUT
