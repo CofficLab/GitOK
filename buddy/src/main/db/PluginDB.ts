@@ -3,7 +3,7 @@
  * 负责从磁盘读取插件信息
  */
 import { app } from 'electron';
-import { join, dirname } from 'path';
+import { join } from 'path';
 import fs from 'fs';
 import { PluginEntity } from '../entities/PluginEntity';
 import { logger } from '../managers/LogManager';
@@ -13,40 +13,14 @@ export class PluginDB {
 
   // 插件目录
   private pluginsDir: string;
-  private devPluginsDir: string;
-
-  // 插件目录类型
-  private static readonly PLUGIN_DIRS = {
-    USER: 'user',
-    DEV: 'dev',
-  } as const;
 
   private constructor() {
     // 初始化插件目录
     const userDataPath = app.getPath('userData');
-    const pluginsRootDir = join(userDataPath, 'plugins');
-
-    // 计算项目根目录：从当前文件位置向上查找，直到找到包含 package.json 的目录
-    let workspaceRoot = __dirname;
-    while (!fs.existsSync(join(workspaceRoot, 'package.json'))) {
-      const parentDir = dirname(workspaceRoot);
-      if (parentDir === workspaceRoot) {
-        throw new Error('找不到项目根目录');
-      }
-      workspaceRoot = parentDir;
-    }
-    // 回退到项目根目录
-    workspaceRoot = join(workspaceRoot, '..');
-
-    this.pluginsDir = join(pluginsRootDir, PluginDB.PLUGIN_DIRS.USER);
-    // 开发中的插件目录指向项目根目录的 plugins 目录
-    this.devPluginsDir = join(workspaceRoot, 'plugins');
+    this.pluginsDir = join(userDataPath, 'plugins');
 
     logger.info('插件目录初始化完成', {
-      pluginsRootDir,
-      workspaceRoot,
       pluginsDir: this.pluginsDir,
-      devPluginsDir: this.devPluginsDir,
     });
   }
 
@@ -66,7 +40,6 @@ export class PluginDB {
   getPluginDirectories() {
     return {
       user: this.pluginsDir,
-      dev: this.devPluginsDir,
     };
   }
 
@@ -75,13 +48,9 @@ export class PluginDB {
    */
   async ensurePluginDirs(): Promise<void> {
     try {
-      const dirs = [this.pluginsDir, this.devPluginsDir];
-
-      for (const dir of dirs) {
-        if (!fs.existsSync(dir)) {
-          logger.info(`创建插件目录: ${dir}`);
-          await fs.promises.mkdir(dir, { recursive: true });
-        }
+      if (!fs.existsSync(this.pluginsDir)) {
+        logger.info(`创建插件目录: ${this.pluginsDir}`);
+        await fs.promises.mkdir(this.pluginsDir, { recursive: true });
       }
     } catch (error) {
       logger.error('创建插件目录失败', error);
@@ -106,8 +75,7 @@ export class PluginDB {
       const pluginPath = join(dir, entry.name);
 
       try {
-        const type = dir === this.devPluginsDir ? 'dev' : 'user';
-        const plugin = await PluginEntity.fromDirectory(pluginPath, type);
+        const plugin = await PluginEntity.fromDirectory(pluginPath, 'user');
         plugins.push(plugin);
       } catch (error) {
         logger.error(`读取插件信息失败: ${pluginPath}`, error);
@@ -121,22 +89,14 @@ export class PluginDB {
    * 获取所有插件列表
    */
   async getAllPlugins(): Promise<PluginEntity[]> {
-    // logger.info('获取所有插件列表');
-
     try {
-      // 从各个目录读取插件
-      const [userPlugins, devPlugins] = await Promise.all([
-        this.readPluginsFromDir(this.pluginsDir),
-        this.readPluginsFromDir(this.devPluginsDir),
-      ]);
-
-      // 合并所有插件列表
-      const allPlugins = [...userPlugins, ...devPlugins];
+      // 读取插件
+      const plugins = await this.readPluginsFromDir(this.pluginsDir);
 
       // 按照插件名称排序
-      allPlugins.sort((a, b) => a.name.localeCompare(b.name));
+      plugins.sort((a, b) => a.name.localeCompare(b.name));
 
-      return allPlugins;
+      return plugins;
     } catch (error) {
       logger.error('获取插件列表失败', error);
       return [];

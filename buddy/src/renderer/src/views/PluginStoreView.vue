@@ -18,9 +18,8 @@ const pluginApi = electronApi.plugins
 const { management } = pluginApi
 
 const userPlugins = ref<SuperPlugin[]>([])
-const devPlugins = ref<SuperPlugin[]>([])
 const remotePlugins = ref<SuperPlugin[]>([])
-const directories = ref<{ user: string; dev: string } | null>(null)
+const directory = ref<string | null>(null)
 const errorMessage = ref('')
 const showError = ref(false)
 
@@ -39,7 +38,7 @@ const loadingPlugins = ref<boolean>(false)
 const loadingRemotePlugins = ref<boolean>(false)
 
 // 当前选中的标签
-const activeTab = ref<'user' | 'dev' | 'remote'>('user')
+const activeTab = ref<'user' | 'remote'>('user')
 
 // 刷新按钮点击事件
 const handleRefresh = async () => {
@@ -60,7 +59,6 @@ const loadPlugins = async (forceRefresh = false) => {
         if (response.success && response.data) {
             const allPlugins = response.data || []
             userPlugins.value = allPlugins.filter(p => p.type === 'user')
-            devPlugins.value = allPlugins.filter(p => p.type === 'dev')
         } else {
             showErrorMessage(`加载插件列表失败: ${response.error || '未知错误'}`)
             console.error('加载插件列表失败', response)
@@ -166,12 +164,12 @@ const loadDirectories = async () => {
     try {
         const response = await management.getDirectories() as {
             success: boolean;
-            data?: { user: string; dev: string };
+            data?: { user: string };
             error?: string
         }
 
         if (response.success && response.data) {
-            directories.value = response.data
+            directory.value = response.data.user
         } else {
             showErrorMessage(`加载目录信息失败: ${response.error || '未知错误'}`)
             console.error('加载目录信息失败', response)
@@ -184,9 +182,9 @@ const loadDirectories = async () => {
 }
 
 // 打开目录
-const openDirectory = async (directory: string) => {
+const openDirectory = async (dir: string) => {
     try {
-        const response = await management.openDirectory(directory)
+        const response = await management.openDirectory(dir)
         if (!response.success) {
             showErrorMessage('无法打开目录')
         }
@@ -227,26 +225,13 @@ const filteredPlugins = computed(() => {
     if (activeTab.value === 'remote') {
         return remotePlugins.value
     }
-
-    return userPlugins.value.concat(devPlugins.value).filter(plugin => {
-        if (activeTab.value === 'user') return plugin.type === 'user'
-        if (activeTab.value === 'dev') return plugin.type === 'dev'
-        return true
-    })
+    return userPlugins.value
 })
 
 // 检查插件是否已安装
 const isPluginInstalled = computed(() => {
-    const installedIds = new Set(userPlugins.value.concat(devPlugins.value).map(p => p.id))
+    const installedIds = new Set(userPlugins.value.map(p => p.id))
     return (id: string) => installedIds.has(id)
-})
-
-// 获取当前目录
-const currentDirectory = computed(() => {
-    if (!directories.value) return null
-    if (activeTab.value === 'user') return directories.value.user
-    if (activeTab.value === 'dev') return directories.value.dev
-    return null
 })
 
 // 清除单个插件的错误状态
@@ -348,9 +333,6 @@ onMounted(async () => {
                 <a @click="activeTab = 'user'" :class="['tab', activeTab === 'user' ? 'tab-active' : '']">
                     用户插件
                 </a>
-                <a @click="activeTab = 'dev'" :class="['tab', activeTab === 'dev' ? 'tab-active' : '']">
-                    开发中
-                </a>
                 <a @click="activeTab = 'remote'" :class="['tab', activeTab === 'remote' ? 'tab-active' : '']">
                     远程仓库
                 </a>
@@ -372,7 +354,7 @@ onMounted(async () => {
         </div>
 
         <!-- 目录信息 -->
-        <div v-if="currentDirectory && activeTab !== 'remote'"
+        <div v-if="directory && activeTab !== 'remote'"
             class="alert alert-info bg-opacity-20 shadow-sm mb-4 flex justify-between items-center">
             <div class="flex items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 stroke-current" fill="none"
@@ -380,10 +362,10 @@ onMounted(async () => {
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                <span>插件目录：{{ currentDirectory }}</span>
+                <span>插件目录：{{ directory }}</span>
             </div>
             <div>
-                <button @click="openDirectory(currentDirectory)" class="btn btn-sm btn-info">
+                <button @click="openDirectory(directory)" class="btn btn-sm btn-info">
                     打开目录
                 </button>
             </div>
