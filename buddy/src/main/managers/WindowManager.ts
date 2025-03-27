@@ -17,7 +17,7 @@ const windowConfig = {
   hotkey: 'Option+Space',
   size: {
     width: 800,
-    height: 400,
+    height: 600,
   },
   alwaysOnTop: true,
   opacity: 0.95,
