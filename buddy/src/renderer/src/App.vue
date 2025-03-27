@@ -45,19 +45,19 @@ onUnmounted(() => {
 </script>
 
 <template>
-    <div class="flex flex-col h-screen">
-        <!-- 搜索区域 -->
+    <div class="flex flex-col h-screen frosted-glass">
+        <!-- 搜索区域 - 这里是可拖动区域 -->
         <div class="h-10 mt-4 px-4">
             <SearchBar />
         </div>
 
         <!-- 内容区域 -->
-        <div class="flex flex-grow overflow-hidden">
+        <div class="flex flex-grow overflow-hidden no-drag-region">
             <ContentView />
         </div>
 
         <!-- 状态栏 -->
-        <div class="h-10">
+        <div class="h-10 border-t border-base-200 dark:border-base-300 no-drag-region">
             <StatusBar />
         </div>
     </div>

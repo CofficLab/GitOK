@@ -24,18 +24,24 @@
  -->
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, watch, computed, onMounted, nextTick } from 'vue'
 import { useActionStore } from '@renderer/stores/actionStore'
 import { RiSearchLine } from '@remixicon/vue'
 
 const actionStore = useActionStore()
 const keyword = ref(actionStore.keyword)
+const measureText = ref<HTMLElement | null>(null)
+const inputWidth = ref(200)
 
 // 监听本地关键词变化并更新 actionStore
-watch(keyword, (newKeyword) => {
+watch(keyword, async (newKeyword) => {
     console.log(`SearchBar: 关键词变化为 "${newKeyword}"`)
     // 使用updateKeyword触发搜索
     actionStore.updateKeyword(newKeyword)
+
+    // 等待DOM更新后计算宽度
+    await nextTick()
+    updateInputWidth()
 })
 
 // 处理键盘事件
@@ -43,11 +49,31 @@ const handleKeyDown = (event: KeyboardEvent) => {
     actionStore.handleKeyDown(event)
 }
 
+// 计算并更新输入框宽度
+const updateInputWidth = () => {
+    if (measureText.value) {
+        // 获取隐藏文本的宽度，并添加一些额外空间
+        const width = measureText.value.offsetWidth + 80
+        // 设置最小宽度
+        inputWidth.value = Math.max(200, width)
+    }
+}
+
+// 组件挂载后初始化宽度
+onMounted(() => {
+    updateInputWidth()
+})
 </script>
 
 <template>
-    <label class="input w-full">
-        <RiSearchLine class="w-4 h-4" />
-        <input type="search" v-model="keyword" @keydown="handleKeyDown" required placeholder="Search" />
-    </label>
+    <div
+        class="relative w-full h-full flex items-center drag-region ring-2 bg-amber-100/10 ring-blue-500/40 rounded-lg">
+        <RiSearchLine class="w-10 h-8" />
+        <div class="relative flex-grow h-full">
+            <span class="invisible whitespace-pre" ref="measureText">{{ keyword || 'Search' }}</span>
+            <input v-model="keyword" @keydown="handleKeyDown"
+                class="absolute  text-2xl h-full top-0 left-0 w-full focus:outline-none focus:ring-0 focus:border-0 outline-0 border-0 ring-0 no-drag-region"
+                :style="{ width: inputWidth + 'px' }" />
+        </div>
+    </div>
 </template>

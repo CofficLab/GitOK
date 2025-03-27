@@ -12,12 +12,12 @@ import { logger } from './LogManager';
 
 const windowConfig = {
   showTrafficLights: false,
-  showDebugToolbar: is.dev && true,
+  showDebugToolbar: is.dev && false,
   debugToolbarPosition: 'bottom',
   hotkey: 'Option+Space',
   size: {
     width: 800,
-    height: 800,
+    height: 400,
   },
   alwaysOnTop: true,
   opacity: 0.95,
