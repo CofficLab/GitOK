@@ -3,13 +3,27 @@ name: Buddy Version Bump and Pre-release
 on:
   push:
     branches:
-      - electron2
+      - dev
       - main
     paths:
       - 'buddy/**'
 
 permissions:
   contents: write
+
+# 工作流配置
+env:
+  # ============================
+  # 发布配置
+  # ============================
+  # 可以发布正式版本的分支列表，用逗号分隔
+  # 示例: main,release,stable
+  RELEASE_BRANCHES: main,release
+
+  # 是否执行发布步骤
+  # true: 执行版本号更新和发布
+  # false: 只执行版本号更新，不发布
+  ENABLE_RELEASE: true
 
 jobs:
   bump-version:
@@ -43,11 +57,9 @@ jobs:
           BRANCH_NAME="${GITHUB_REF#refs/heads/}"
           echo "当前分支: $BRANCH_NAME"
 
-          # 增加补丁版本号并判断是否需要添加预发布后缀
-          NEW_PATCH=$((PATCH + 1))
-
-          if [[ "$BRANCH_NAME" == "main" ]]; then
-            # 在main分支，生成正式版本号
+          # 检查是否在发布分支列表中
+          if [[ ",$RELEASE_BRANCHES," == *",$BRANCH_NAME,"* ]]; then
+            # 在发布分支中，生成正式版本号
             NEW_VERSION="$MAJOR.$MINOR.$NEW_PATCH"
           else
             # 在其他分支，生成预发布版本号
@@ -97,6 +109,8 @@ jobs:
           echo "✅ 版本号已更新到: v${{ steps.bump.outputs.version }}"
 
   release:
+    # 根据 GitHub Variables 中的配置决定是否执行
+    if: ${{ github.event_name == 'push' && (vars.ENABLE_RELEASE != 'false') }}
     needs: bump-version
     runs-on: ${{ matrix.os }}
 
