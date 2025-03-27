@@ -24,7 +24,7 @@
  -->
 
 <script setup lang="ts">
-import { ref, watch, computed, onMounted, nextTick } from 'vue'
+import { ref, watch, onMounted, nextTick } from 'vue'
 import { useActionStore } from '@renderer/stores/actionStore'
 import { RiSearchLine } from '@remixicon/vue'
 
