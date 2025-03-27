@@ -20,11 +20,6 @@ env:
   # 示例: main,release,stable
   RELEASE_BRANCHES: main,release
 
-  # 是否执行发布步骤
-  # true: 执行版本号更新和发布
-  # false: 只执行版本号更新，不发布
-  ENABLE_RELEASE: true
-
 jobs:
   bump-version:
     runs-on: ubuntu-latest
@@ -60,18 +55,20 @@ jobs:
           # 检查是否在发布分支列表中
           if [[ ",$RELEASE_BRANCHES," == *",$BRANCH_NAME,"* ]]; then
             # 在发布分支中，生成正式版本号
+            NEW_PATCH=$((PATCH + 1))
             NEW_VERSION="$MAJOR.$MINOR.$NEW_PATCH"
           else
             # 在其他分支，生成预发布版本号
             # 检查是否已经有beta后缀
             if [[ "$PRERELEASE_SUFFIX" == *"beta"* ]]; then
-              # 提取beta版本号
+              # 提取beta版本号并增加
               BETA_VERSION=$(echo $PRERELEASE_SUFFIX | grep -o '[0-9]*$')
               NEW_BETA=$((BETA_VERSION + 1))
-              NEW_VERSION="$MAJOR.$MINOR.$NEW_PATCH-beta.$NEW_BETA"
+              # 使用原来的补丁版本号，只增加 beta 号
+              NEW_VERSION="$MAJOR.$MINOR.$PATCH-beta.$NEW_BETA"
             else
               # 添加新的beta后缀
-              NEW_VERSION="$MAJOR.$MINOR.$NEW_PATCH-beta.0"
+              NEW_VERSION="$MAJOR.$MINOR.$PATCH-beta.0"
             fi
           fi
 
@@ -109,8 +106,6 @@ jobs:
           echo "✅ 版本号已更新到: v${{ steps.bump.outputs.version }}"
 
   release:
-    # 根据 GitHub Variables 中的配置决定是否执行
-    if: ${{ github.event_name == 'push' && (vars.ENABLE_RELEASE != 'false') }}
     needs: bump-version
     runs-on: ${{ matrix.os }}
 
