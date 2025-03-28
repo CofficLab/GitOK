@@ -10,8 +10,10 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
 import type { SuperPlugin } from '@/types/super_plugin'
-import PluginCard from '../components/PluginCard.vue'
-import { RiCloseLine, RiClipboardLine, RiRefreshLine } from '@remixicon/vue'
+import PluginCard from '@renderer/modules/PluginCard.vue'
+import { RiRefreshLine } from '@remixicon/vue'
+import Alert from '@renderer/components/Alert.vue'  // 导入 Alert 组件
+import Button from '@renderer/components/Button.vue'  // 导入 Button 组件
 
 const electronApi = window.electron
 const pluginApi = electronApi.plugins
@@ -182,7 +184,8 @@ const loadDirectories = async () => {
 }
 
 // 打开目录
-const openDirectory = async (dir: string) => {
+const openDirectory = async (dir: string | null) => {
+    if (!dir) return
     try {
         const response = await management.openDirectory(dir)
         if (!response.success) {
@@ -306,26 +309,8 @@ onMounted(async () => {
 <template>
     <div class="p-4 h-full flex flex-col">
         <!-- 错误提示 -->
-        <div v-if="showError" class="alert alert-error bg-opacity-20 shadow-sm mb-4">
-            <div class="flex flex-col w-full">
-                <div class="flex justify-between items-start">
-                    <div class="flex items-center">
-                        <RiCloseLine class="h-4 w-4 mr-2" />
-                        <span class="font-medium">错误信息：</span>
-                    </div>
-                    <button @click="hideErrorMessage" class="text-error">
-                        <RiCloseLine class="h-5 w-5" />
-                    </button>
-                </div>
-                <div class="whitespace-pre-wrap break-words mt-2">{{ errorMessage }}</div>
-                <div class="flex justify-end mt-2">
-                    <button @click="copyErrorMessage(errorMessage)" class="btn btn-sm btn-error btn-outline gap-1">
-                        <RiClipboardLine class="h-4 w-4" />
-                        复制错误信息
-                    </button>
-                </div>
-            </div>
-        </div>
+        <Alert v-if="showError" :message="errorMessage" type="error" :title="'错误信息'" closable @close="hideErrorMessage">
+        </Alert>
 
         <!-- 标签页 -->
         <div class="mb-4">
@@ -354,31 +339,16 @@ onMounted(async () => {
         </div>
 
         <!-- 目录信息 -->
-        <div v-if="directory && activeTab !== 'remote'"
-            class="alert alert-info bg-opacity-20 shadow-sm mb-4 flex justify-between items-center">
-            <div class="flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 stroke-current" fill="none"
-                    viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <span>插件目录：{{ directory }}</span>
-            </div>
-            <div>
-                <button @click="openDirectory(directory)" class="btn btn-sm btn-info">
-                    打开目录
-                </button>
-            </div>
-        </div>
-
-        <!-- 远程仓库提示 -->
-        <div v-if="activeTab === 'remote'" class="alert alert-info bg-opacity-20 shadow-sm mb-4">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 stroke-current" fill="none" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <span>从远程仓库下载插件将会安装到用户插件目录中</span>
-        </div>
+        <Alert 
+            v-if="directory && activeTab !== 'remote'"
+            type="info"
+            :copyable="false"
+            :message="`插件目录：${directory}`"
+            class="mb-4 bg-opacity-20"
+            action-text="打开目录"
+            :action="() => openDirectory(directory)"
+        >
+        </Alert>
 
         <!-- 插件列表 -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 overflow-y-auto">

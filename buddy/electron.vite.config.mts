@@ -39,7 +39,12 @@ export default defineConfig({
       alias: {
         '@': resolve('src'),
         '@renderer': resolve('src/renderer/src'),
-        '@types': resolve('src/types'),
+        '@modules': resolve('src/renderer/src/modules'),
+        '@components': resolve('src/renderer/src/components'),
+        '@stores': resolve('src/renderer/src/stores'),
+        '@utils': resolve('src/renderer/src/utils'),
+        '@views': resolve('src/renderer/src/views'),
+        '@plugins': resolve('src/renderer/src/plugins'),
       },
     },
     plugins: [vue(), tailwindcss()],
