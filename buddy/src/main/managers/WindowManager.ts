@@ -12,15 +12,15 @@ import { logger } from './LogManager';
 
 const windowConfig = {
   showTrafficLights: false,
-  showDebugToolbar: is.dev && false,
-  debugToolbarPosition: 'bottom',
+  showDebugToolbar: is.dev && true,
+  debugToolbarPosition: 'right',
   hotkey: 'Option+Space',
   size: {
-    width: 800,
+    width: 1200,
     height: 600,
   },
   alwaysOnTop: true,
-  opacity: 0.95,
+  opacity: 1,
 };
 
 class WindowManager extends BaseManager {

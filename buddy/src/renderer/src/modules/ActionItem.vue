@@ -8,6 +8,7 @@
 */
 <script setup lang="ts">
 import type { SuperAction } from '@/types/super_action'
+import ListItem from '@renderer/components/ListItem.vue'
 import { defineEmits } from 'vue'
 
 const props = defineProps<{
@@ -55,75 +56,13 @@ const handleKeyDown = (event: KeyboardEvent) => {
 </script>
 
 <template>
-    <li class="raycast-item" :tabindex="index + 1" @click="handleSelect" @keydown="handleKeyDown">
-        <div v-if="action.icon" class="raycast-icon">{{ action.icon }}</div>
-        <div class="raycast-content">
-            <h3 class="raycast-title">{{ action.title }}</h3>
-            <p v-if="action.description" class="raycast-description">{{ action.description }}</p>
-            <p class="raycast-source">{{ action.id }}</p>
-        </div>
-    </li>
+  <ListItem
+  bg-color="success"
+    :title="action.title"
+    :description="action.description"
+    :icon="action.icon"
+    :tabindex="index + 1"
+    @click="handleSelect"
+    @keydown="handleKeyDown"
+  />
 </template>
-
-<style scoped>
-.raycast-item {
-    padding: 12px 14px;
-    border-radius: 8px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    transition: all 0.2s ease;
-    margin-bottom: 4px;
-    background-color: var(--base-100);
-}
-
-.raycast-item:hover {
-    background-color: var(--base-200);
-    transform: translateY(-1px);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-}
-
-.raycast-item:focus {
-    outline: none;
-    background-color: var(--primary-focus);
-    box-shadow: 0 0 0 2px var(--primary);
-}
-
-.raycast-icon {
-    margin-right: 12px;
-    font-size: 18px;
-    width: 28px;
-    height: 28px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 6px;
-    background-color: var(--primary);
-    color: var(--primary-content);
-}
-
-.raycast-content {
-    flex: 1;
-}
-
-.raycast-title {
-    font-size: 14px;
-    font-weight: 500;
-    margin: 0;
-    color: var(--base-content);
-    line-height: 1.4;
-}
-
-.raycast-description {
-    font-size: 12px;
-    color: var(--base-content/70);
-    margin: 2px 0 0 0;
-    line-height: 1.4;
-}
-
-.raycast-source {
-    font-size: 10px;
-    color: var(--base-content/50);
-    margin: 4px 0 0 0;
-}
-</style>
