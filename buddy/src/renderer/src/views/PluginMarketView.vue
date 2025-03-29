@@ -11,12 +11,11 @@
 import { ref, onMounted, computed } from 'vue'
 import type { SuperPlugin } from '@/types/super_plugin'
 import PluginCard from '@renderer/modules/PluginCard.vue'
-import { RiFolder2Line } from '@remixicon/vue'
+import ButtonFolder from '@renderer/cosy/ButtonFolder.vue'
 import ButtonRefresh from '@renderer/cosy/ButtonRefresh.vue'
 import Alert from '@renderer/cosy/Alert.vue'  // 导入 Alert 组件
-import ToolBar from '@renderer/cosy/ToolBar.vue'
-import ToolBarItem from '@renderer/cosy/ToolBarItem.vue'
 import Empty from '@renderer/cosy/Empty.vue'
+import ToolBar from '@renderer/cosy/ToolBar.vue'
 import { globalToast } from '../composables/useToast'
 
 const electronApi = window.electron
@@ -314,23 +313,37 @@ onMounted(async () => {
 
 <template>
     <div class="p-4 h-full flex flex-col">
-        <!-- 标签页 -->
+        <!-- 操作栏 -->
         <div class="mb-4">
             <ToolBar variant="compact" :bordered="false">
                 <template #left>
-                    <ToolBarItem clickable @click="activeTab = 'user'" :active="activeTab === 'user'">
-                        用户插件
-                    </ToolBarItem>
-                    <ToolBarItem clickable @click="activeTab = 'remote'" :active="activeTab === 'remote'">
-                        远程仓库
-                    </ToolBarItem>
+                    <!-- 使用 DaisyUI tabs 组件 -->
+                    <div role="tablist" class="tabs tabs-box bg-base-200">
+                        <a role="tab" 
+                           class="tab" 
+                           :class="{ 'tab-active': activeTab === 'user' }" 
+                           @click="activeTab = 'user'">
+                            用户插件
+                        </a>
+                        <a role="tab" 
+                           class="tab" 
+                           :class="{ 'tab-active': activeTab === 'remote' }" 
+                           @click="activeTab = 'remote'">
+                            远程仓库
+                        </a>
+                    </div>
                 </template>
+                
                 <template #right>
-                    <ToolBarItem clickable @click="() => openDirectory(directory)">
-                        <RiFolder2Line class="h-5 w-5" />
-                    </ToolBarItem>
+                    <ButtonFolder 
+                        @click="() => openDirectory(directory)" 
+                        shape="circle" 
+                        size="sm" 
+                        tooltip="打开插件目录" 
+                    />
                     <ButtonRefresh 
                         @click="handleRefresh" 
+                        shape="circle"
                         :loading="loadingPlugins || loadingRemotePlugins" 
                         :disabled="loadingPlugins || loadingRemotePlugins" 
                         tooltip="刷新插件列表" 

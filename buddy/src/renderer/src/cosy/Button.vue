@@ -60,14 +60,38 @@ const classes = computed(() => {
   return [
     'btn',
     'no-drag-region',
-    // 颜色类
-    props.color ? `btn-${props.color}` : '',
-    // 样式类
-    props.style ? `btn-${props.style}` : '',
-    // 大小类
-    props.size !== 'md' ? `btn-${props.size}` : '',
-    // 形状类
-    props.shape ? `btn-${props.shape}` : '',
+    // 颜色类 - 显式列出所有可能的类名
+    {
+      'btn-neutral': props.color === 'neutral',
+      'btn-primary': props.color === 'primary',
+      'btn-secondary': props.color === 'secondary',
+      'btn-accent': props.color === 'accent',
+      'btn-info': props.color === 'info',
+      'btn-success': props.color === 'success',
+      'btn-warning': props.color === 'warning',
+      'btn-error': props.color === 'error'
+    },
+    // 样式类 - 显式列出所有可能的类名
+    {
+      'btn-outline': props.style === 'outline',
+      'btn-dash': props.style === 'dash',
+      'btn-soft': props.style === 'soft',
+      'btn-ghost': props.style === 'ghost',
+      'btn-link': props.style === 'link'
+    },
+    // 大小类 - 显式列出所有可能的类名
+    {
+      'btn-xs': props.size === 'xs',
+      'btn-sm': props.size === 'sm',
+      'btn-md': props.size === 'md',
+      'btn-lg': props.size === 'lg',
+      'btn-xl': props.size === 'xl'
+    },
+    // 形状类 - 显式列出所有可能的类名
+    {
+      'btn-square': props.shape === 'square',
+      'btn-circle': props.shape === 'circle'
+    },
     // 状态类
     {
       'btn-active': props.active,

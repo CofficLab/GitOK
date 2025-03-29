@@ -50,35 +50,46 @@ const props = withDefaults(defineProps<Props>(), {
   loading: false,
   disabled: false,
   active: false,
-  minAnimationTime: 3000 // 默认最小动画时间为 3000 毫秒
+  minAnimationTime: 800 // 默认最小动画时间为 800 毫秒
 })
 
 const emit = defineEmits<{
   (e: 'click', event: MouseEvent): void
 }>()
 
-const handleClick = (event: MouseEvent) => {
+// 处理点击事件
+const handleClick = async (event: MouseEvent) => {
+  // 如果按钮已经处于加载或禁用状态，不触发事件
+  if (props.disabled || internalLoading.value) return
+  
+  // 触发点击事件
   emit('click', event)
 }
 
 // 内部加载状态
 const internalLoading = ref(false)
 
+// 记录动画开始时间
+const animationStartTime = ref(0)
+
 // 监听外部加载状态
 watch(() => props.loading, (newVal, oldVal) => {
   if (newVal === true) {
-    // 开始加载
+    // 开始加载，记录当前时间
+    animationStartTime.value = Date.now()
     internalLoading.value = true
   } else if (oldVal === true && newVal === false) {
-    // 加载结束，但要确保最小动画时间
-    const animationStartTime = Date.now() - props.minAnimationTime
-    const remainingTime = Math.max(0, props.minAnimationTime - (Date.now() - animationStartTime))
+    // 加载结束，计算已经经过的时间
+    const elapsedTime = Date.now() - animationStartTime.value
+    const remainingTime = Math.max(0, props.minAnimationTime - elapsedTime)
     
     if (remainingTime > 0) {
+      // 如果还没有达到最小动画时间，延迟关闭加载状态
       setTimeout(() => {
         internalLoading.value = false
       }, remainingTime)
     } else {
+      // 已经超过最小动画时间，直接关闭
       internalLoading.value = false
     }
   }
@@ -91,6 +102,13 @@ const contentClass = computed(() => {
   }
 })
 
+// 计算图标大小类名
+const iconSizeClass = computed(() => {
+  if (props.size === 'xs' || props.size === 'sm') return 'w-4 h-4'
+  if (props.size === 'lg' || props.size === 'xl') return 'w-6 h-6'
+  return 'w-5 h-5' // 默认中等大小
+})
+
 // 计算加载器类名
 const loadingClass = computed(() => {
   return [
@@ -98,6 +116,7 @@ const loadingClass = computed(() => {
     'loading-spinner',
     props.size === 'xs' || props.size === 'sm' ? 'loading-xs' : 
     props.size === 'lg' || props.size === 'xl' ? 'loading-lg' : 'loading-md',
+    iconSizeClass.value, // 使用相同的大小类
     { 'hidden': !internalLoading.value }
   ]
 })
@@ -116,7 +135,7 @@ const loadingClass = computed(() => {
     >
       <span :class="loadingClass"></span>
       <span :class="contentClass">
-        <RiRefreshLine class="transition-all duration-300" />
+        <RiRefreshLine :class="[iconSizeClass, 'transition-all duration-300']" />
         <slot></slot>
       </span>
     </Button>

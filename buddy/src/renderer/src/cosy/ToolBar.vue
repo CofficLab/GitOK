@@ -2,15 +2,15 @@
 ToolBar 组件
 
 一个基于 DaisyUI navbar 的顶部工具栏组件，采用现代化设计。
-支持左中右三段式布局，可以放置按钮、URL输入框、图标和文字等元素。
+支持左中右三段式布局，可以放置按钮、输入框、图标和文字等元素。
 
 使用示例：
 ```vue
 <ToolBar>
   <template #left>
-    <ToolBar.Item>
+    <button class="btn btn-ghost btn-sm">
       <i class="i-carbon-menu"></i>
-    </ToolBar.Item>
+    </button>
   </template>
   <template #center>
     <div class="w-full max-w-2xl">
@@ -18,9 +18,9 @@ ToolBar 组件
     </div>
   </template>
   <template #right>
-    <ToolBar.Item clickable @click="handleRefresh">
+    <button class="btn btn-ghost btn-sm" @click="handleRefresh">
       <i class="i-carbon-refresh"></i>
-    </ToolBar.Item>
+    </button>
   </template>
 </ToolBar>
 ```
