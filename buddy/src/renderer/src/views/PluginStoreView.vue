@@ -15,6 +15,7 @@ import { RiRefreshLine, RiFolder2Line } from '@remixicon/vue'
 import Alert from '@renderer/components/Alert.vue'  // 导入 Alert 组件
 import ToolBar from '@renderer/components/ToolBar.vue'
 import ToolBarItem from '@renderer/components/ToolBarItem.vue'
+import Empty from '@renderer/components/Empty.vue'
 
 const electronApi = window.electron
 const pluginApi = electronApi.plugins
@@ -355,16 +356,7 @@ onMounted(async () => {
                 @download="downloadPlugin" @clear-download-error="clearPluginError" @copy-error="copyErrorMessage" />
 
             <!-- 无插件提示 -->
-            <div v-if="filteredPlugins.length === 0" class="col-span-full p-8 text-center">
-                <div class="alert alert-info bg-opacity-20 shadow-sm mb-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 stroke-current" fill="none"
-                        viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <span>{{ activeTab === 'remote' ? '没有可用的远程插件' : '没有找到插件' }}</span>
-                </div>
-            </div>
+            <Empty v-if="filteredPlugins.length === 0" :message="activeTab === 'remote' ? '没有可用的远程插件' : '没有找到插件'" />
         </div>
     </div>
 </template>

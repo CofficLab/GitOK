@@ -24,7 +24,9 @@ import { onMounted, onUnmounted } from 'vue'
 import SearchBar from './layouts/SearchBar.vue'
 import ContentView from './layouts/ContentView.vue'
 import StatusBar from './layouts/StatusBar.vue'
+import Confirm from './components/Confirm.vue'
 import { useActionStore } from './stores/actionStore'
+import { globalConfirm } from './composables/useConfirm'
 
 const actionStore = useActionStore()
 
@@ -61,4 +63,18 @@ onUnmounted(() => {
             <StatusBar />
         </div>
     </div>
+
+    <!-- 全局确认对话框 -->
+    <Confirm
+        v-model="globalConfirm.state.value.show"
+        :title="globalConfirm.state.value.title"
+        :message="globalConfirm.state.value.message"
+        :confirm-text="globalConfirm.state.value.confirmText"
+        :cancel-text="globalConfirm.state.value.cancelText"
+        :confirm-variant="globalConfirm.state.value.confirmVariant"
+        :cancel-variant="globalConfirm.state.value.cancelVariant"
+        :loading="globalConfirm.state.value.loading"
+        @confirm="globalConfirm.handleConfirm"
+        @cancel="globalConfirm.handleCancel"
+    />
 </template>
