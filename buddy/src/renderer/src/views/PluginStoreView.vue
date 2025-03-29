@@ -11,9 +11,10 @@
 import { ref, onMounted, computed } from 'vue'
 import type { SuperPlugin } from '@/types/super_plugin'
 import PluginCard from '@renderer/modules/PluginCard.vue'
-import { RiRefreshLine } from '@remixicon/vue'
+import { RiRefreshLine, RiFolder2Line } from '@remixicon/vue'
 import Alert from '@renderer/components/Alert.vue'  // 导入 Alert 组件
-import Button from '@renderer/components/Button.vue'  // 导入 Button 组件
+import ToolBar from '@renderer/components/ToolBar.vue'
+import ToolBarItem from '@renderer/components/ToolBarItem.vue'
 
 const electronApi = window.electron
 const pluginApi = electronApi.plugins
@@ -308,47 +309,36 @@ onMounted(async () => {
 
 <template>
     <div class="p-4 h-full flex flex-col">
-        <!-- 错误提示 -->
-        <Alert v-if="showError" :message="errorMessage" type="error" :title="'错误信息'" closable @close="hideErrorMessage">
-        </Alert>
-
         <!-- 标签页 -->
         <div class="mb-4">
-            <div class="tabs tabs-bordered">
-                <a @click="activeTab = 'user'" :class="['tab', activeTab === 'user' ? 'tab-active' : '']">
-                    用户插件
-                </a>
-                <a @click="activeTab = 'remote'" :class="['tab', activeTab === 'remote' ? 'tab-active' : '']">
-                    远程仓库
-                </a>
-
-                <!-- 刷新按钮 -->
-                <div class="flex-grow flex justify-end">
-                    <button @click="handleRefresh"
-                        :disabled="(activeTab === 'remote' && loadingRemotePlugins) || (activeTab !== 'remote' && loadingPlugins)"
-                        class="btn btn-sm btn-ghost">
+            <ToolBar variant="compact" :bordered="false">
+                <template #left>
+                    <ToolBarItem clickable @click="activeTab = 'user'" :active="activeTab === 'user'">
+                        用户插件
+                    </ToolBarItem>
+                    <ToolBarItem clickable @click="activeTab = 'remote'" :active="activeTab === 'remote'">
+                        远程仓库
+                    </ToolBarItem>
+                </template>
+                <template #right>
+                    <ToolBarItem clickable @click="() => openDirectory(directory)">
+                        <RiFolder2Line class="h-5 w-5" />
+                    </ToolBarItem>
+                    <ToolBarItem clickable @click="handleRefresh"
+                        :disabled="(activeTab === 'remote' && loadingRemotePlugins) || (activeTab !== 'remote' && loadingPlugins)">
                         <RiRefreshLine :class="[
                             'h-5 w-5',
                             (activeTab === 'remote' && loadingRemotePlugins) || (activeTab !== 'remote' && loadingPlugins)
                                 ? 'animate-spin text-primary'
                                 : ''
                         ]" />
-                    </button>
-                </div>
-            </div>
+                    </ToolBarItem>
+                </template>
+            </ToolBar>
         </div>
 
-        <!-- 目录信息 -->
-        <Alert 
-            v-if="directory && activeTab !== 'remote'"
-            type="info"
-            :copyable="false"
-            :message="`插件目录：${directory}`"
-            class="mb-4 bg-opacity-20"
-            action-text="打开目录"
-            :action="() => openDirectory(directory)"
-        >
-        </Alert>
+        <!-- 错误提示 -->
+        <Alert v-if="showError" :message="errorMessage" type="error" title="错误信息" closable @close="hideErrorMessage" />
 
         <!-- 插件列表 -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 overflow-y-auto">

@@ -66,8 +66,7 @@ const props = withDefaults(defineProps<Props>(), {
 // 计算状态栏类名
 const statusBarClass = computed(() => {
   return [
-    'status-bar',
-    'w-full',
+    'w-full h-full',
     'flex',
     'justify-between',
     'items-center',
@@ -92,16 +91,10 @@ const statusBarClass = computed(() => {
     <div class="flex items-center h-full overflow-hidden">
       <slot name="left"></slot>
     </div>
-    
+
     <!-- 右侧内容区域 -->
     <div class="flex items-center h-full overflow-hidden">
       <slot name="right"></slot>
     </div>
   </div>
 </template>
-
-<style scoped>
-.status-bar {
-  -webkit-app-region: no-drag;
-}
-</style>
