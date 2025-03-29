@@ -8,7 +8,7 @@
 */
 <script setup lang="ts">
 import type { SuperAction } from '@/types/super_action'
-import ListItem from '@renderer/components/ListItem.vue'
+import ListItem from '@renderer/cosy/ListItem.vue'
 import { defineEmits } from 'vue'
 
 const props = defineProps<{

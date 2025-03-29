@@ -7,12 +7,10 @@ import { computed, ref } from 'vue'
 import type { SuperPlugin } from '@/types/super_plugin'
 import {
     RiCheckLine,
-    RiClipboardLine,
     RiCloseLine,
-    RiDeleteBinLine,
-    RiRefreshLine
+    RiDeleteBinLine
 } from '@remixicon/vue'
-import Button from '@renderer/components/Button.vue'
+import Button from '@renderer/cosy/Button.vue'
 import { globalConfirm } from '@renderer/composables/useConfirm'
 
 const props = defineProps<{

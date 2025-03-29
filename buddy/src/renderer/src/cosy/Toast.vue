@@ -1,13 +1,13 @@
 <!--
 Toast 组件
 
-一个基于DaisyUI的轻量级消息提示组件，采用Raycast风格设计。支持多种状态和自动消失功能。
+基于DaisyUI的轻量级消息提示组件，支持多种状态、位置和自动消失功能。
 
 使用示例：
 ```vue
 <Toast>默认提示消息</Toast>
 <Toast type="success" duration="3000">操作成功</Toast>
-<Toast type="error" position="bottom">发生错误</Toast>
+<Toast type="error" position="bottom-center">发生错误</Toast>
 <Toast type="warning" :duration="0">永久显示的警告</Toast>
 ```
 
@@ -19,8 +19,8 @@ Toast 组件
   - 类型: number
   - 默认值: 2000
 - position: 显示位置
-  - 可选值: 'top' | 'bottom'
-  - 默认值: 'top'
+  - 可选值: 'top-start' | 'top-center' | 'top-end' | 'bottom-start' | 'bottom-center' | 'bottom-end'
+  - 默认值: 'top-center'
 
 事件：
 - close: Toast关闭时触发
@@ -32,13 +32,13 @@ import { ref, onMounted, onBeforeUnmount, computed } from 'vue'
 interface Props {
   type?: 'default' | 'success' | 'error' | 'warning' | 'info'
   duration?: number
-  position?: 'top' | 'bottom'
+  position?: 'top-start' | 'top-center' | 'top-end' | 'bottom-start' | 'bottom-center' | 'bottom-end'
 }
 
 const props = withDefaults(defineProps<Props>(), {
   type: 'default',
   duration: 2000,
-  position: 'top'
+  position: 'top-center'
 })
 
 const emit = defineEmits<{
@@ -71,15 +71,13 @@ const toastClass = computed(() => {
   return [
     'toast',
     'no-drag-region',
-    'transition-all',
-    'duration-200',
+    'z-50',
     {
-      'toast-top': props.position === 'top',
-      'toast-bottom': props.position === 'bottom',
-      'toast-success': props.type === 'success',
-      'toast-error': props.type === 'error',
-      'toast-warning': props.type === 'warning',
-      'toast-info': props.type === 'info'
+      'toast-top': props.position.startsWith('top'),
+      'toast-bottom': props.position.startsWith('bottom'),
+      'toast-start': props.position.endsWith('start'),
+      'toast-center': props.position.endsWith('center'),
+      'toast-end': props.position.endsWith('end')
     }
   ]
 })
@@ -90,6 +88,7 @@ const alertClass = computed(() => {
     'shadow-lg',
     'min-w-[200px]',
     'max-w-[400px]',
+    'animate-fade-in-down',
     {
       'alert-success': props.type === 'success',
       'alert-error': props.type === 'error',
@@ -127,3 +126,20 @@ const iconClass = computed(() => {
     </div>
   </div>
 </template>
+
+<style scoped>
+.animate-fade-in-down {
+  animation: fade-in-down 0.3s ease-out;
+}
+
+@keyframes fade-in-down {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+</style>

@@ -24,9 +24,11 @@ import { onMounted, onUnmounted } from 'vue'
 import SearchBar from './layouts/SearchBar.vue'
 import ContentView from './layouts/ContentView.vue'
 import StatusBar from './layouts/StatusBar.vue'
-import Confirm from './components/Confirm.vue'
+import Confirm from './cosy/Confirm.vue'
+import Toast from './cosy/Toast.vue'
 import { useActionStore } from './stores/actionStore'
 import { globalConfirm } from './composables/useConfirm'
+import { globalToast } from './composables/useToast'
 
 const actionStore = useActionStore()
 
@@ -77,4 +79,15 @@ onUnmounted(() => {
         @confirm="globalConfirm.handleConfirm"
         @cancel="globalConfirm.handleCancel"
     />
+    
+    <!-- 全局消息提示 -->
+    <Toast
+        v-if="globalToast.state.value.show"
+        :type="globalToast.state.value.type"
+        :duration="globalToast.state.value.duration"
+        :position="globalToast.state.value.position"
+        @close="globalToast.close"
+    >
+        {{ globalToast.state.value.message }}
+    </Toast>
 </template>

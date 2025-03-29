@@ -11,11 +11,13 @@
 import { ref, onMounted, computed } from 'vue'
 import type { SuperPlugin } from '@/types/super_plugin'
 import PluginCard from '@renderer/modules/PluginCard.vue'
-import { RiRefreshLine, RiFolder2Line } from '@remixicon/vue'
-import Alert from '@renderer/components/Alert.vue'  // 导入 Alert 组件
-import ToolBar from '@renderer/components/ToolBar.vue'
-import ToolBarItem from '@renderer/components/ToolBarItem.vue'
-import Empty from '@renderer/components/Empty.vue'
+import { RiFolder2Line } from '@remixicon/vue'
+import ButtonRefresh from '@renderer/cosy/ButtonRefresh.vue'
+import Alert from '@renderer/cosy/Alert.vue'  // 导入 Alert 组件
+import ToolBar from '@renderer/cosy/ToolBar.vue'
+import ToolBarItem from '@renderer/cosy/ToolBarItem.vue'
+import Empty from '@renderer/cosy/Empty.vue'
+import { globalToast } from '../composables/useToast'
 
 const electronApi = window.electron
 const pluginApi = electronApi.plugins
@@ -51,6 +53,8 @@ const handleRefresh = async () => {
     } else {
         await loadPlugins(true)
     }
+
+    globalToast.success('刷新成功', { duration: 2000, position: 'bottom-center' })
 }
 
 // 加载插件列表
@@ -325,15 +329,13 @@ onMounted(async () => {
                     <ToolBarItem clickable @click="() => openDirectory(directory)">
                         <RiFolder2Line class="h-5 w-5" />
                     </ToolBarItem>
-                    <ToolBarItem clickable @click="handleRefresh"
-                        :disabled="(activeTab === 'remote' && loadingRemotePlugins) || (activeTab !== 'remote' && loadingPlugins)">
-                        <RiRefreshLine :class="[
-                            'h-5 w-5',
-                            (activeTab === 'remote' && loadingRemotePlugins) || (activeTab !== 'remote' && loadingPlugins)
-                                ? 'animate-spin text-primary'
-                                : ''
-                        ]" />
-                    </ToolBarItem>
+                    <ButtonRefresh 
+                        @click="handleRefresh" 
+                        :loading="loadingPlugins || loadingRemotePlugins" 
+                        :disabled="loadingPlugins || loadingRemotePlugins" 
+                        tooltip="刷新插件列表" 
+                        size="sm" 
+                    />
                 </template>
             </ToolBar>
         </div>

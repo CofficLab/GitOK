@@ -1,7 +1,7 @@
 <!--
 ToolBar 组件
 
-一个基于DaisyUI的顶部工具栏组件，采用Raycast风格设计。
+一个基于 DaisyUI navbar 的顶部工具栏组件，采用现代化设计。
 支持左中右三段式布局，可以放置按钮、URL输入框、图标和文字等元素。
 
 使用示例：
@@ -57,19 +57,17 @@ const props = withDefaults(defineProps<Props>(), {
 // 计算工具栏类名
 const toolBarClass = computed(() => {
     return [
-        'w-full h-full',
-        'flex',
-        'justify-between',
-        'items-center',
+        'navbar',
         'bg-base-200',
         'text-base-content/70',
         'text-sm',
         'no-drag-region',
         'transition-all',
         'duration-200',
+        'rounded-box',
         {
-            'h-12': props.variant === 'default',
-            'h-10': props.variant === 'compact',
+            'min-h-12': props.variant === 'default',
+            'min-h-10': props.variant === 'compact',
             'border-b border-base-300': props.bordered
         }
     ]
@@ -79,17 +77,17 @@ const toolBarClass = computed(() => {
 <template>
     <div :class="toolBarClass">
         <!-- 左侧内容区域 -->
-        <div class="flex items-center h-full overflow-hidden">
+        <div class="navbar-start">
             <slot name="left"></slot>
         </div>
 
         <!-- 中间内容区域 -->
-        <div class="flex-1 flex items-center justify-center h-full px-4 overflow-hidden">
+        <div class="navbar-center">
             <slot name="center"></slot>
         </div>
 
         <!-- 右侧内容区域 -->
-        <div class="flex items-center h-full overflow-hidden">
+        <div class="navbar-end">
             <slot name="right"></slot>
         </div>
     </div>

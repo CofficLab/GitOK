@@ -8,7 +8,7 @@
  */
 
 import { createRouter, createWebHashHistory } from 'vue-router';
-import PluginStoreView from '@renderer/views/PluginStoreView.vue';
+import PluginStoreView from '@/renderer/src/views/PluginMarketView.vue';
 import { useAppStore } from '@renderer/stores/appStore';
 
 // 路由配置

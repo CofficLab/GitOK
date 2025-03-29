@@ -12,8 +12,8 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAppStore } from '@renderer/stores/appStore'
-import StatusBar from '@renderer/components/StatusBar.vue'
-import StatusBarItem from '@renderer/components/StatusBarItem.vue'
+import StatusBar from '@renderer/cosy/StatusBar.vue'
+import StatusBarItem from '@renderer/cosy/StatusBarItem.vue'
 
 const electronApi = window.electron;
 const overlaidApi = electronApi.overlaid;
