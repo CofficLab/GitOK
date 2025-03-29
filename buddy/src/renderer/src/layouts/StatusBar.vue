@@ -6,32 +6,14 @@
  * - 提供路由导航
  * - 提供插件商店入口
  * - 显示窗口激活状态
- * 
- * 主要功能：
- * - 实时显示当前时间
- * - 提供首页和插件页面切换
- * - 显示当前页面状态
- * - 打开插件商店
- * - 显示窗口激活状态
- * 
- * 技术栈：
- * - Vue 3
- * - Pinia (appStore)
- * - TailwindCSS
- * - DaisyUI
- * 
- * 注意事项：
- * - 使用 ref 管理时间状态
- * - 组件销毁时清理定时器
- * - 通过 appStore 管理视图状态
- * - 使用daisyUI支持主题切换
  -->
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAppStore } from '@renderer/stores/appStore'
-import Button from '@renderer/components/Button.vue'
+import StatusBar from '@renderer/components/StatusBar.vue'
+import StatusBarItem from '@renderer/components/StatusBarItem.vue'
 
 const electronApi = window.electron;
 const overlaidApi = electronApi.overlaid;
@@ -92,28 +74,38 @@ onUnmounted(() => {
 </script>
 
 <template>
-    <div class="flex items-center justify-between px-4 h-full py-2 bg-base-300">
-        <!-- 导航按钮 -->
-        <div class="flex items-center space-x-2">
-            <Button @click="goToHome" size="sm" :variant="route.path === '/' ? 'primary' : 'ghost'">
+    <StatusBar>
+        <!-- 左侧导航按钮 -->
+        <template #left>
+            <StatusBarItem 
+                clickable 
+                @click="goToHome" 
+                :active="route.path === '/'"
+                :variant="route.path === '/' ? 'primary' : 'default'"
+            >
                 首页
-            </Button>
-            <Button @click="goToPluginStore" size="sm" :variant="route.path === '/plugins' ? 'primary' : 'ghost'">
-                插件商店
-            </Button>
-        </div>
+            </StatusBarItem>
+            <StatusBarItem 
+                clickable 
+                @click="goToPluginStore" 
+                :active="route.path === '/plugins'"
+                :variant="route.path === '/plugins' ? 'primary' : 'default'"
+            >
+                插件
+            </StatusBarItem>
+        </template>
 
-        <!-- 右侧工具栏 -->
-        <div class="flex items-center space-x-4">
+        <!-- 右侧状态栏 -->
+        <template #right>
             <!-- 被覆盖的应用名称 -->
-            <div v-if="overlaidAppName" class="text-sm text-base-content opacity-70">
+            <StatusBarItem v-if="overlaidAppName">
                 {{ overlaidAppName }}
-            </div>
+            </StatusBarItem>
 
             <!-- 时间显示 -->
-            <div class="text-sm text-base-content opacity-70">
+            <StatusBarItem>
                 {{ currentTime }}
-            </div>
-        </div>
-    </div>
+            </StatusBarItem>
+        </template>
+    </StatusBar>
 </template>
