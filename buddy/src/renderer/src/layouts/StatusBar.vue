@@ -31,6 +31,7 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAppStore } from '@renderer/stores/appStore'
+import Button from '@renderer/components/Button.vue'
 
 const electronApi = window.electron;
 const overlaidApi = electronApi.overlaid;
@@ -94,20 +95,19 @@ onUnmounted(() => {
     <div class="flex items-center justify-between px-4 h-full py-2 bg-base-300">
         <!-- 导航按钮 -->
         <div class="flex items-center space-x-2">
-            <button @click="goToHome" :class="['btn btn-sm', route.path === '/' ? 'btn-primary' : 'btn-ghost']">
+            <Button @click="goToHome" size="sm" :variant="route.path === '/' ? 'primary' : 'ghost'">
                 首页
-            </button>
-            <button @click="goToPluginStore"
-                :class="['btn btn-sm', route.path === '/plugins' ? 'btn-primary' : 'btn-ghost']">
+            </Button>
+            <Button @click="goToPluginStore" size="sm" :variant="route.path === '/plugins' ? 'primary' : 'ghost'">
                 插件商店
-            </button>
+            </Button>
         </div>
 
         <!-- 右侧工具栏 -->
         <div class="flex items-center space-x-4">
             <!-- 被覆盖的应用名称 -->
             <div v-if="overlaidAppName" class="text-sm text-base-content opacity-70">
-                当前覆盖: {{ overlaidAppName }}
+                {{ overlaidAppName }}
             </div>
 
             <!-- 时间显示 -->

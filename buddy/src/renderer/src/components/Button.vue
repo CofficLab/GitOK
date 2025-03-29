@@ -12,23 +12,6 @@ Button 组件
 <Button disabled>禁用按钮</Button>
 ```
 
-属性说明：
-- variant: 按钮变体
-  - 可选值: 'default' | 'primary' | 'secondary' | 'accent' | 'ghost'
-  - 默认值: 'default'
-- size: 按钮大小
-  - 可选值: 'sm' | 'md' | 'lg'
-  - 默认值: 'md'
-- loading: 是否显示加载状态
-  - 类型: boolean
-  - 默认值: false
-- disabled: 是否禁用
-  - 类型: boolean
-  - 默认值: false
-- block: 是否为块级按钮（宽度100%）
-  - 类型: boolean
-  - 默认值: false
-
 事件：
 - click: 点击按钮时触发（disabled或loading状态下不触发）
 -->
@@ -39,8 +22,10 @@ import { computed } from 'vue';
 interface Props {
   variant?: 'default' | 'primary' | 'secondary' | 'accent' | 'ghost'
   size?: 'sm' | 'md' | 'lg'
+  // 是否显示加载状态
   loading?: boolean
   disabled?: boolean
+  // 是否为块级按钮（宽度100%）
   block?: boolean
 }
 
