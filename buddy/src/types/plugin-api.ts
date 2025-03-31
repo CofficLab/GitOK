@@ -21,7 +21,7 @@ interface ViewData {
 }
 
 // 插件视图管理接口
-interface PluginViews {
+export interface PluginViewsAPI {
   create: (viewId: string, url: string) => Promise<any>;
   show: (viewId: string, bounds?: ViewBounds) => Promise<any>;
   hide: (viewId: string) => Promise<any>;
@@ -40,7 +40,7 @@ interface PluginViews {
 }
 
 // 插件管理接口
-interface PluginManagement {
+export interface SuperPluginManagementAPI {
   getStorePlugins: () => Promise<IpcResponse<SuperPlugin[]>>;
   getRemotePlugins: () => Promise<IpcResponse<SuperPlugin[]>>;
   downloadPlugin: (plugin: SuperPlugin) => Promise<IpcResponse<boolean>>;
@@ -51,14 +51,14 @@ interface PluginManagement {
 }
 
 // 插件动作接口
-interface PluginActions {
+export interface SuperPluginActionsAPI {
   getPluginActions: (keyword?: string) => Promise<SuperAction[]>;
   executeAction: (actionId: string) => Promise<any>;
   getActionView: (actionId: string) => Promise<any>;
 }
 
 // 插件生命周期管理接口
-interface PluginLifecycle {
+export interface SuperPluginLifecycleAPI {
   getAllPlugins: () => Promise<any>;
   getLocalPlugins: () => Promise<any>;
   getInstalledPlugins: () => Promise<any>;
@@ -67,8 +67,8 @@ interface PluginLifecycle {
 }
 
 export interface PluginAPi {
-  views: PluginViews;
-  management: PluginManagement;
-  actions: PluginActions;
-  lifecycle: PluginLifecycle;
+  views: PluginViewsAPI;
+  management: SuperPluginManagementAPI;
+  actions: SuperPluginActionsAPI;
+  lifecycle: SuperPluginLifecycleAPI;
 }

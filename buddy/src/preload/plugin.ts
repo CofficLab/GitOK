@@ -2,13 +2,19 @@
  * 插件系统模块
  * 处理插件的安装、卸载、执行等功能
  */
-import { PluginAPi } from '@/types/plugin-api';
+import {
+  PluginAPi,
+  PluginViewsAPI,
+  SuperPluginActionsAPI,
+  SuperPluginLifecycleAPI,
+  SuperPluginManagementAPI,
+} from '@/types/plugin-api';
 import { ipcRenderer } from 'electron';
 import { IPC_METHODS } from '../types/ipc';
 import { SuperAction } from '@/types/super_action';
 
 // 插件视图相关接口
-const pluginViews = {
+const pluginViews: PluginViewsAPI = {
   create: (viewId: string, url: string) =>
     ipcRenderer.invoke('create-plugin-view', { viewId, url }),
 
@@ -73,7 +79,7 @@ const pluginViews = {
 };
 
 // 插件管理相关接口
-const pluginManagement = {
+const pluginManagement: SuperPluginManagementAPI = {
   getStorePlugins: () => ipcRenderer.invoke('plugin:getStorePlugins'),
   getRemotePlugins: () => ipcRenderer.invoke('plugin:getRemotePlugins'),
   downloadPlugin: (plugin: any) =>
@@ -88,7 +94,7 @@ const pluginManagement = {
 };
 
 // 插件动作相关接口
-const pluginActions = {
+const pluginActions: SuperPluginActionsAPI = {
   async getPluginActions(keyword = ''): Promise<SuperAction[]> {
     const response = await ipcRenderer.invoke(
       IPC_METHODS.GET_PLUGIN_ACTIONS,
@@ -130,7 +136,7 @@ const pluginActions = {
 };
 
 // 插件生命周期管理接口
-const pluginLifecycle = {
+const pluginLifecycle: SuperPluginLifecycleAPI = {
   getAllPlugins: () => ipcRenderer.invoke('get-all-plugins'),
   getLocalPlugins: () => ipcRenderer.invoke('get-local-plugins'),
   getInstalledPlugins: () => ipcRenderer.invoke('get-installed-plugins'),
