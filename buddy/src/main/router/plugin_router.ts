@@ -1,4 +1,4 @@
-import { IPC_METHODS } from '@/types/ipc';
+import { IPC_METHODS } from '@/types/ipc-methods';
 import { pluginActionController } from '../controllers/PluginActionController';
 import { pluginViewController } from '../controllers/PluginViewController';
 import { pluginStoreController } from '../controllers/PluginMarketController';
@@ -50,8 +50,8 @@ export const routes: IpcRoute[] = [
 
   // 插件商店相关
   {
-    channel: IPC_METHODS.GET_STORE_PLUGINS,
-    handler: () => pluginStoreController.getStorePlugins(),
+    channel: IPC_METHODS.GET_USER_PLUGINS,
+    handler: () => pluginStoreController.getUserPlugins(),
   },
   {
     channel: IPC_METHODS.GET_REMOTE_PLUGINS,

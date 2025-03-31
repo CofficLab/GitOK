@@ -1,17 +1,4 @@
 /**
- * IPC 通信相关的类型定义
- */
-
-/**
- * IPC 响应的基础接口
- */
-export interface IpcResponse<T> {
-  success: boolean;
-  error?: string;
-  data?: T;
-}
-
-/**
  * IPC 通信中的方法名称常量
  */
 export const IPC_METHODS = {
@@ -23,8 +10,10 @@ export const IPC_METHODS = {
   HIDE_PLUGIN_VIEW: 'hide-plugin-view',
   DESTROY_PLUGIN_VIEW: 'destroy-plugin-view',
   TOGGLE_PLUGIN_DEVTOOLS: 'toggle-plugin-devtools',
+
   // 插件商店相关
-  GET_STORE_PLUGINS: 'plugin:getStorePlugins',
+  GET_USER_PLUGINS: 'plugin:getStorePlugins',
+  GET_DEV_PLUGINS: 'plugin:getDevPlugins',
   GET_REMOTE_PLUGINS: 'plugin:getRemotePlugins',
   DOWNLOAD_PLUGIN: 'plugin:downloadPlugin',
   GET_PLUGIN_DIRECTORIES: 'plugin:getUserPluginDirectory',

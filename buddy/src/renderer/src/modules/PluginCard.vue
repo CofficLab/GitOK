@@ -53,18 +53,6 @@ const cardClass = computed(() => {
 // 判断是否是用户安装的插件（可卸载）
 const isUserPlugin = computed(() => props.plugin.type === 'user')
 
-// 复制错误信息
-const copyErrorMessage = (message: string | undefined) => {
-    if (message) {
-        emit('copy-error', message)
-    }
-}
-
-// 清除下载错误
-const clearDownloadError = (pluginId: string) => {
-    emit('clear-download-error', pluginId)
-}
-
 // 清除卸载错误
 const clearUninstallError = (pluginId: string) => {
     emit('clear-uninstall-error', pluginId)

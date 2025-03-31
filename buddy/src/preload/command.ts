@@ -3,7 +3,7 @@
  * 处理 Command 键双击和窗口激活/隐藏等功能
  */
 import { ipcRenderer } from 'electron';
-import { CommandApi } from '@/types/command-api';
+import { CommandApi } from '@/types/api-command';
 
 export const commandApi: CommandApi = {
   toggleCommandDoublePress: (

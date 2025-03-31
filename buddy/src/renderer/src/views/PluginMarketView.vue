@@ -24,6 +24,7 @@ const pluginApi = electronApi.plugins
 const { management } = pluginApi
 
 const userPlugins = computed(() => marketStore.userPlugins)
+const devPlugins = computed(() => marketStore.devPlugins)
 const remotePlugins = computed(() => marketStore.remotePlugins)
 const errorMessage = ref('')
 const showError = ref(false)
@@ -45,7 +46,7 @@ const loadingPlugins = ref<boolean>(false)
 const loadingRemotePlugins = ref<boolean>(false)
 
 // 当前选中的标签
-const activeTab = ref<'user' | 'remote'>('user')
+const activeTab = ref<'user' | 'remote' | 'dev'>('user')
 
 // 刷新按钮点击事件
 const handleRefresh = async () => {
@@ -54,7 +55,7 @@ const handleRefresh = async () => {
         console.log('handleRefresh remote')
         await marketStore.loadRemotePlugins()
     } else {
-        await marketStore.loadPlugins()
+        await marketStore.loadUserPlugins()
     }
 
     globalToast.success('刷新成功', { duration: 2000, position: 'bottom-center' })
@@ -137,6 +138,10 @@ const clearUninstallError = (pluginId: string) => {
                             @click="activeTab = 'remote'">
                             远程仓库
                         </a>
+                        <a role="tab" class="tab" :class="{ 'tab-active': activeTab ==='dev' }"
+                            @click="activeTab ='dev'">
+                            开发插件
+                        </a>
                     </div>
                 </template>
 
@@ -155,14 +160,22 @@ const clearUninstallError = (pluginId: string) => {
         <!-- 插件列表 -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 overflow-y-auto">
             <!-- 本地插件卡片 -->
-            <PluginCard v-if="activeTab !== 'remote'" v-for="plugin in filteredPlugins" :key="plugin.id"
+            <PluginCard v-if="activeTab !== 'remote'" v-for="plugin in userPlugins" :key="plugin.id"
                 :plugin="plugin" type="local" :uninstallingPlugins="uninstallingPlugins"
                 :uninstallSuccess="uninstallSuccess" :uninstallError="uninstallError"
                 @uninstall="marketStore.uninstallPlugin" @clear-uninstall-error="clearUninstallError"
                 @copy-error="copyErrorMessage" />
 
             <!-- 远程插件卡片 -->
-            <PluginCard v-if="activeTab === 'remote'" v-for="plugin in filteredPlugins" :key="plugin.id"
+            <PluginCard v-if="activeTab === 'remote'" v-for="plugin in remotePlugins" :key="plugin.id"
+                :plugin="plugin" type="remote" :downloadingPlugins="downloadingPlugins"
+                :downloadSuccess="downloadSuccess" :downloadError="downloadError" :isInstalled="isPluginInstalled"
+                @download="marketStore.downloadPlugin" @clear-download-error="clearPluginError"
+                @copy-error="copyErrorMessage" />
+
+            <!-- 开发插件卡片 -->
+            <!-- 远程插件卡片 -->
+            <PluginCard v-if="activeTab === 'dev'" v-for="plugin in devPlugins" :key="plugin.id"
                 :plugin="plugin" type="remote" :downloadingPlugins="downloadingPlugins"
                 :downloadSuccess="downloadSuccess" :downloadError="downloadError" :isInstalled="isPluginInstalled"
                 @download="marketStore.downloadPlugin" @clear-download-error="clearPluginError"

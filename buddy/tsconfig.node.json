@@ -6,7 +6,7 @@
     "src/preload/**/*",
     "src/types/**/*",
     "native/**/*"
-  ],
+, "src/preload-plugin/preload-plugin.ts"  ],
   "compilerOptions": {
     "composite": true,
     "types": [

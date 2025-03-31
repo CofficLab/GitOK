@@ -3,7 +3,7 @@
  * 处理应用被其他窗口覆盖的状态变化
  */
 import { ipcRenderer } from 'electron';
-import { OverlaidApi } from '@/types/overlaid-api';
+import { OverlaidApi } from '@/types/api-overlaid';
 
 export const overlaidApi: OverlaidApi = {
   onOverlaidAppChanged: (

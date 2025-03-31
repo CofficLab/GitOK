@@ -1,14 +1,13 @@
 import { SuperPlugin } from '@/types/super_plugin';
 import { defineStore } from 'pinia';
 import { logger } from '../utils/logger';
-const electronApi = window.electron;
-const pluginApi = electronApi.plugins;
-const { management } = pluginApi;
+import { pluginsAPI } from '../api/plugins-api';
 
 interface MarketState {
   userPluginDirectory: string;
   error: string;
   userPlugins: any[];
+  devPlugins: any[];
   remotePlugins: any[];
   loadingPlugins: boolean;
   loadingRemotePlugins: boolean;
@@ -21,6 +20,7 @@ export const useMarketStore = defineStore('market', {
     userPluginDirectory: '',
     error: '',
     userPlugins: [],
+    devPlugins: [],
     remotePlugins: [],
     loadingPlugins: false,
     loadingRemotePlugins: false,
@@ -29,15 +29,35 @@ export const useMarketStore = defineStore('market', {
   }),
 
   actions: {
-    // 加载插件列表
-    async loadPlugins() {
+    // 加载开发插件列表
+    async loadDevPlugins() {
       this.loadingPlugins = true;
 
       try {
-        const response = await management.getStorePlugins();
+        const response = await pluginsAPI.getDevPlugins();
         if (response.success && response.data) {
-          const allPlugins = response.data || [];
-          this.userPlugins = allPlugins.filter((p) => p.type === 'user');
+          this.devPlugins = response.data || [];
+        } else {
+          this.error = `加载插件列表失败: ${response.error || '未知错误'}`;
+          console.error('加载插件列表失败', response);
+        }
+      } catch (err) {
+        const errorMsg = err instanceof Error ? err.message : String(err);
+        this.error = `加载插件列表失败: ${errorMsg}`;
+        console.error('Failed to load plugins:', err);
+      } finally {
+        this.loadingPlugins = false;
+      }
+    },
+
+    // 加载用户插件列表
+    async loadUserPlugins() {
+      this.loadingPlugins = true;
+
+      try {
+        const response = await pluginsAPI.getUserPlugins();
+        if (response.success && response.data) {
+          this.userPlugins = response.data || [];
         } else {
           this.error = `加载插件列表失败: ${response.error || '未知错误'}`;
           console.error('加载插件列表失败', response);
@@ -55,7 +75,7 @@ export const useMarketStore = defineStore('market', {
     async updateUserPluginDirectory() {
       logger.info('🍋 updateUserPluginDirectory');
       try {
-        const response = (await management.getUserPluginDirectory()) as {
+        const response = (await pluginsAPI.getUserPluginDirectory()) as {
           success: boolean;
           data?: string;
           error?: string;
@@ -98,7 +118,7 @@ export const useMarketStore = defineStore('market', {
         };
 
         // 调用主进程下载插件
-        const response = (await management.downloadPlugin(pluginData)) as {
+        const response = (await pluginsAPI.downloadPlugin(pluginData)) as {
           success: boolean;
           data?: boolean;
           error?: string;
@@ -109,7 +129,7 @@ export const useMarketStore = defineStore('market', {
 
         if (response.success) {
           // 刷新插件列表
-          await this.loadPlugins();
+          await this.loadUserPlugins();
         } else {
           console.error(
             `插件 "${plugin.name}" 下载失败: ${response.error || '未知错误'}`
@@ -135,7 +155,7 @@ export const useMarketStore = defineStore('market', {
         this.uninstallingPlugins.add(plugin.id);
 
         // 调用主进程卸载插件
-        const response = (await management.uninstallPlugin(plugin.id)) as {
+        const response = (await pluginsAPI.uninstallPlugin(plugin.id)) as {
           success: boolean;
           data?: boolean;
           error?: string;
@@ -146,7 +166,7 @@ export const useMarketStore = defineStore('market', {
 
         if (response.success) {
           // 刷新插件列表
-          await this.loadPlugins();
+          await this.loadUserPlugins();
         } else {
           // 显示全局错误信息
           console.error(
@@ -170,7 +190,7 @@ export const useMarketStore = defineStore('market', {
       this.loadingRemotePlugins = true;
       try {
         // 调用主进程方法获取远程插件列表
-        const response = await management.getRemotePlugins();
+        const response = await pluginsAPI.getRemotePlugins();
 
         console.log('🍋 get remote plugins response', response);
 

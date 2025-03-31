@@ -5,7 +5,7 @@
 
 import { SuperAction } from './super_action';
 import { SuperPlugin } from './super_plugin';
-import { IpcResponse } from './ipc';
+import { IpcResponse } from './ipc-response';
 
 // 视图相关类型
 interface ViewBounds {
@@ -41,13 +41,13 @@ export interface PluginViewsAPI {
 
 // 插件管理接口
 export interface SuperPluginManagementAPI {
-  getStorePlugins: () => Promise<IpcResponse<SuperPlugin[]>>;
+  getUserPlugins: () => Promise<IpcResponse<SuperPlugin[]>>;
+  getDevPlugins: () => Promise<IpcResponse<SuperPlugin[]>>;
   getRemotePlugins: () => Promise<IpcResponse<SuperPlugin[]>>;
   downloadPlugin: (plugin: SuperPlugin) => Promise<IpcResponse<boolean>>;
   uninstallPlugin: (pluginId: string) => Promise<IpcResponse<boolean>>;
   getUserPluginDirectory: () => Promise<IpcResponse<string>>;
   openDirectory: (directory: string) => Promise<any>;
-  createExamplePlugin: () => Promise<any>;
 }
 
 // 插件动作接口

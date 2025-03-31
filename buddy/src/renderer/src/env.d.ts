@@ -1,10 +1,10 @@
 /// <reference types="vite/client" />
 
-import { PluginAPi } from '@/types/plugin-api';
-import { CommandApi } from '@/types/command-api';
-import { IpcApi } from '@/types/ipc-api';
-import { OverlaidApi } from '@/types/overlaid-api';
-import { UILogApi } from '@/types/ui-log-api';
+import { PluginAPi } from '@/types/api-plugin';
+import { CommandApi } from '@/types/api-command';
+import { IpcApi } from '@/types/api-message';
+import { OverlaidApi } from '@/types/api-overlaid';
+import { UILogApi } from '@/types/api-log';
 
 interface ElectronApi {
   ipc: IpcApi;

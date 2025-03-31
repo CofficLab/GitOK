@@ -3,7 +3,7 @@
  * 提供基本的进程间通信功能
  */
 import { ipcRenderer } from 'electron';
-import { IpcApi } from '@/types/ipc-api';
+import { IpcApi } from '@/types/api-message';
 
 export const ipcApi: IpcApi = {
   send: (channel: string, ...args: unknown[]): void => {

@@ -3,7 +3,7 @@
  * 处理前端日志的预加载脚本
  */
 import { ipcRenderer } from 'electron';
-import { UILogApi } from '@/types/ui-log-api';
+import { UILogApi } from '@/types/api-log';
 
 export const uiLogApi: UILogApi = {
   info: (message: string): Promise<void> =>

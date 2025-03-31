@@ -3,7 +3,7 @@
  * 负责处理与插件商店相关的业务逻辑
  */
 import { shell } from 'electron';
-import { IpcResponse } from '@/types/ipc';
+import { IpcResponse } from '@/types/ipc-response';
 import { SuperPlugin } from '@/types/super_plugin';
 import { pluginManager } from '../managers/PluginManager';
 import { logger } from '../managers/LogManager';
@@ -12,6 +12,7 @@ import { remotePluginDB } from '../db/RemotePluginDB';
 import { packageDownloaderDB } from '../db/PackageDownloaderDB';
 import * as fs from 'fs';
 import * as path from 'path';
+import { devPluginDB } from '../db/DevPluginDB';
 
 export class PluginMarketController {
   private static instance: PluginMarketController;
@@ -26,9 +27,9 @@ export class PluginMarketController {
   }
 
   /**
-   * 获取插件商店列表
+   * 获取用户插件列表
    */
-  public async getStorePlugins(): Promise<IpcResponse<SuperPlugin[]>> {
+  public async getUserPlugins(): Promise<IpcResponse<SuperPlugin[]>> {
     try {
       const plugins = await userPluginDB.getAllPlugins();
       return { success: true, data: plugins };
@@ -36,6 +37,18 @@ export class PluginMarketController {
       const errorMessage =
         error instanceof Error ? error.message : String(error);
       logger.error('获取插件列表失败', { error: errorMessage });
+      return { success: false, error: errorMessage };
+    }
+  }
+
+  public async getDevPlugins(): Promise<IpcResponse<SuperPlugin[]>> {
+    try {
+      const plugins = await devPluginDB.getAllPlugins();
+      return { success: true, data: plugins };
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error? error.message : String(error);
+      logger.error('获取开发插件列表失败', { error: errorMessage });
       return { success: false, error: errorMessage };
     }
   }

@@ -43,7 +43,8 @@ onMounted(() => {
     actionStore.setupWindowActivationListener()
 
     marketStore.updateUserPluginDirectory()
-    marketStore.loadPlugins()
+    marketStore.loadUserPlugins()
+    marketStore.loadDevPlugins()
     marketStore.loadRemotePlugins()
 })
 
