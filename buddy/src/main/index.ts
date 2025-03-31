@@ -12,8 +12,10 @@ import {
 import { routes as commandKeyRoutes } from './handlers/command_router';
 import { routes as uiLogRoutes } from './handlers/log_router';
 import { routes as updateRoutes } from './handlers/update_router';
+import { baseRoutes } from './handlers/base_handler';
 
 // 初始化路由
+routerService.registerRoutes(baseRoutes);
 routerService.registerRoutes(pluginRoutes);
 routerService.registerRoutes(overlaidAppRoutes);
 routerService.registerRoutes(commandKeyRoutes);

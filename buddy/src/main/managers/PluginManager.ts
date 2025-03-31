@@ -40,14 +40,6 @@ class PluginManager extends BaseManager {
   }
 
   /**
-   * 获取所有已安装的插件
-   * 直接从磁盘读取，不做缓存
-   */
-  async getPlugins(): Promise<PluginEntity[]> {
-    return await userPluginDB.getAllPlugins();
-  }
-
-  /**
    * 加载插件模块
    * @param plugin 插件实例
    * @returns 插件模块

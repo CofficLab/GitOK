@@ -27,4 +27,6 @@ export interface IpcApi {
     channel: string,
     callback: (...args: unknown[]) => void
   ) => void;
+
+  openFolder: (directory: string) => Promise<void>; 
 }
