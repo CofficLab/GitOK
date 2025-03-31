@@ -10,8 +10,22 @@ import {
   SuperPluginManagementAPI,
 } from '@/types/plugin-api';
 import { ipcRenderer } from 'electron';
-import { IPC_METHODS } from '../types/ipc';
+import { IPC_METHODS, IpcResponse } from '../types/ipc';
 import { SuperAction } from '@/types/super_action';
+import { SuperPlugin } from '@/types/super_plugin';
+
+function isValidSuperPluginArray(data: any): data is SuperPlugin[] {
+  return (
+    Array.isArray(data) &&
+    data.every(
+      (item) =>
+        typeof item === 'object' &&
+        item !== null &&
+        'id' in item &&
+        typeof item.id === 'string'
+    )
+  ); // 根据SuperPlugin的实际接口添加更多校验
+}
 
 // 插件视图相关接口
 const pluginViews: PluginViewsAPI = {
@@ -80,7 +94,13 @@ const pluginViews: PluginViewsAPI = {
 
 // 插件管理相关接口
 const pluginManagement: SuperPluginManagementAPI = {
-  getStorePlugins: () => ipcRenderer.invoke('plugin:getStorePlugins'),
+  getStorePlugins: async (): Promise<IpcResponse<SuperPlugin[]>> => {
+    const response = await ipcRenderer.invoke('plugin:getStorePlugins');
+    if (!isValidSuperPluginArray(response.data)) {
+      throw new Error('Invalid SuperPlugin array structure');
+    }
+    return response;
+  },
   getRemotePlugins: () => ipcRenderer.invoke('plugin:getRemotePlugins'),
   downloadPlugin: (plugin: any) =>
     ipcRenderer.invoke('plugin:downloadPlugin', plugin),
