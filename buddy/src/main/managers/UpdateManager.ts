@@ -7,7 +7,7 @@ import { dialog, BrowserWindow } from 'electron';
 import { logger } from './LogManager';
 
 // 导入后面要创建的事件发送器
-import { sendUpdateEvent } from '../router/update_router';
+import { sendUpdateEvent } from '../handlers/update_router';
 
 export class UpdateManager {
   private mainWindow: BrowserWindow | null = null;

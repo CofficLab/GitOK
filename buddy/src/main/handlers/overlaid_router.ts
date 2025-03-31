@@ -5,12 +5,7 @@ import { BrowserWindow } from 'electron';
 import { appStateManager } from '../managers/StateManager';
 import { logger } from '../managers/LogManager';
 import { IpcRoute } from '../services/RouterService';
-
-// 定义IPC方法名称常量
-const OVERLAID_APP_METHODS = {
-  GET_CURRENT_APP: 'overlaid-app:getCurrent',
-  SET_CURRENT_APP: 'overlaid-app:setCurrent',
-};
+import { IPC_METHODS } from '@/types/ipc-methods';
 
 /**
  * 被覆盖应用相关的IPC路由配置
@@ -18,7 +13,7 @@ const OVERLAID_APP_METHODS = {
 export const routes: IpcRoute[] = [
   // 获取当前被覆盖应用信息
   {
-    channel: OVERLAID_APP_METHODS.GET_CURRENT_APP,
+    channel: IPC_METHODS.GET_CURRENT_APP,
     handler: () => {
       logger.debug('处理IPC请求: 获取当前被覆盖应用');
       return appStateManager.getOverlaidApp();
@@ -26,7 +21,7 @@ export const routes: IpcRoute[] = [
   },
   // 手动设置被覆盖应用
   {
-    channel: OVERLAID_APP_METHODS.SET_CURRENT_APP,
+    channel: IPC_METHODS.SET_CURRENT_APP,
     handler: (_, appInfo: any) => {
       logger.debug('处理IPC请求: 设置当前被覆盖应用', appInfo);
       appStateManager.setOverlaidApp(appInfo);

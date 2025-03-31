@@ -4,14 +4,14 @@
  */
 import { appManager } from './managers/AppManager';
 import { routerService } from './services/RouterService';
-import { routes as pluginRoutes } from './router/plugin_router';
+import { routes as pluginRoutes } from './handlers/plugin_router';
 import {
   routes as overlaidAppRoutes,
   initOverlaidAppEvents,
-} from './router/overlaid_router';
-import { routes as commandKeyRoutes } from './router/command_router';
-import { routes as uiLogRoutes } from './router/log_router';
-import { routes as updateRoutes } from './router/update_router';
+} from './handlers/overlaid_router';
+import { routes as commandKeyRoutes } from './handlers/command_router';
+import { routes as uiLogRoutes } from './handlers/log_router';
+import { routes as updateRoutes } from './handlers/update_router';
 
 // 初始化路由
 routerService.registerRoutes(pluginRoutes);

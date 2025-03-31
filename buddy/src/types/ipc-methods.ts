@@ -20,6 +20,10 @@ export const IPC_METHODS = {
   GET_PLUGINS: 'plugin:getPlugins',
   UNINSTALL_PLUGIN: 'plugin:uninstallPlugin',
   OPEN_PLUGIN_DIRECTORY: 'plugin:openDirectory',
+
+  // 被覆盖的应用
+  GET_CURRENT_APP: 'overlaid-app:getCurrent',
+  SET_CURRENT_APP: 'overlaid-app:setCurrent',
 } as const;
 
 /**

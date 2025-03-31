@@ -2,7 +2,7 @@
  * 插件视图控制器
  * 负责处理与插件视图窗口相关的业务逻辑
  */
-import { IpcResponse } from '@/types/ipc-methods';
+import { IpcResponse } from '@/types/ipc-response';
 import { pluginViewManager } from '../managers/PluginViewManager';
 import { logger } from '../managers/LogManager';
 

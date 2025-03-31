@@ -2,7 +2,7 @@
  * 插件动作控制器
  * 负责处理与插件动作相关的业务逻辑
  */
-import { IpcResponse } from '@/types/ipc-methods';
+import { IpcResponse } from '@/types/ipc-response';
 import { SuperAction } from '@/types/super_action';
 import { pluginActionManager } from '../managers/PluginActionManager';
 import { logger } from '../managers/LogManager';
