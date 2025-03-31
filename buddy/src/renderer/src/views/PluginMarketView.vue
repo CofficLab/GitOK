@@ -8,25 +8,27 @@
 * 4. 下载远程仓库插件
 */
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
-import type { SuperPlugin } from '@/types/super_plugin'
+import { ref, computed } from 'vue'
 import PluginCard from '@renderer/modules/PluginCard.vue'
 import ButtonFolder from '@renderer/cosy/ButtonFolder.vue'
 import ButtonRefresh from '@renderer/cosy/ButtonRefresh.vue'
-import Alert from '@renderer/cosy/Alert.vue'  // 导入 Alert 组件
+import Alert from '@renderer/cosy/Alert.vue'
 import Empty from '@renderer/cosy/Empty.vue'
 import ToolBar from '@renderer/cosy/ToolBar.vue'
 import { globalToast } from '../composables/useToast'
+import { useMarketStore } from '../stores/marketStore'
+import { useClipboard } from '../composables/useClipboard'
 
 const electronApi = window.electron
 const pluginApi = electronApi.plugins
 const { management } = pluginApi
 
-const userPlugins = ref<SuperPlugin[]>([])
-const remotePlugins = ref<SuperPlugin[]>([])
-const directory = ref<string | null>(null)
+const userPlugins = computed(() => marketStore.userPlugins)
+const remotePlugins = computed(() => marketStore.remotePlugins)
 const errorMessage = ref('')
 const showError = ref(false)
+const marketStore = useMarketStore()
+const directory = computed(() => marketStore.userPluginDirectory)
 
 // 下载状态
 const downloadingPlugins = ref<Set<string>>(new Set())
@@ -47,145 +49,15 @@ const activeTab = ref<'user' | 'remote'>('user')
 
 // 刷新按钮点击事件
 const handleRefresh = async () => {
+    console.log('handleRefresh')
     if (activeTab.value === 'remote') {
-        await loadRemotePlugins(true)
+        console.log('handleRefresh remote')
+        await marketStore.loadRemotePlugins()
     } else {
-        await loadPlugins(true)
+        await marketStore.loadPlugins()
     }
 
     globalToast.success('刷新成功', { duration: 2000, position: 'bottom-center' })
-}
-
-// 加载插件列表
-const loadPlugins = async (forceRefresh = false) => {
-    if (loadingPlugins.value && !forceRefresh) return
-
-    loadingPlugins.value = true
-    try {
-        const response = await management.getStorePlugins()
-        if (response.success && response.data) {
-            const allPlugins = response.data || []
-            userPlugins.value = allPlugins.filter(p => p.type === 'user')
-        } else {
-            showErrorMessage(`加载插件列表失败: ${response.error || '未知错误'}`)
-            console.error('加载插件列表失败', response)
-        }
-    } catch (err) {
-        const errorMsg = err instanceof Error ? err.message : String(err)
-        showErrorMessage(`加载插件列表失败: ${errorMsg}`)
-        console.error('Failed to load plugins:', err)
-    } finally {
-        loadingPlugins.value = false
-    }
-}
-
-// 加载远程插件列表
-const loadRemotePlugins = async (forceRefresh = false) => {
-    if (loadingRemotePlugins.value && !forceRefresh) return
-
-    loadingRemotePlugins.value = true
-    try {
-        // 调用主进程方法获取远程插件列表
-        const response = await management.getRemotePlugins()
-
-        if (response.success) {
-            remotePlugins.value = response.data || []
-        } else {
-            showErrorMessage(`加载远程插件列表失败: ${response.error || '未知错误'}`)
-            console.error('加载远程插件列表失败', response)
-        }
-    } catch (err) {
-        const errorMsg = err instanceof Error ? err.message : String(err)
-        showErrorMessage(`加载远程插件列表失败: ${errorMsg}`)
-        console.error('Failed to load remote plugins:', err)
-    } finally {
-        loadingRemotePlugins.value = false
-    }
-}
-
-// 下载插件
-const downloadPlugin = async (plugin: SuperPlugin) => {
-    if (downloadingPlugins.value.has(plugin.id)) {
-        return // 避免重复下载
-    }
-
-    try {
-        // 清除之前的下载状态
-        downloadSuccess.value.delete(plugin.id)
-        downloadError.value.delete(plugin.id)
-
-        // 设置下载中状态
-        downloadingPlugins.value.add(plugin.id)
-
-        // 只传递必要的属性，避免克隆问题
-        const pluginData = {
-            id: plugin.id,
-            name: plugin.name,
-            version: plugin.version,
-            description: plugin.description,
-            author: plugin.author,
-            type: plugin.type,
-            path: plugin.path,
-            npmPackage: plugin.npmPackage
-        }
-
-        // 调用主进程下载插件
-        const response = await management.downloadPlugin(pluginData) as {
-            success: boolean;
-            data?: boolean;
-            error?: string;
-        };
-
-        // 更新下载状态
-        downloadingPlugins.value.delete(plugin.id)
-
-        if (response.success) {
-            downloadSuccess.value.add(plugin.id)
-            // 刷新插件列表
-            await loadPlugins()
-
-            // 3秒后清除成功状态
-            setTimeout(() => {
-                downloadSuccess.value.delete(plugin.id)
-            }, 3000)
-        } else {
-            // 设置错误信息，并不再自动清除
-            downloadError.value.set(plugin.id, response.error || '下载失败')
-            // 同时在全局显示错误信息，方便用户复制
-            showErrorMessage(`插件 "${plugin.name}" 下载失败: ${response.error || '未知错误'}`)
-        }
-    } catch (error) {
-        downloadingPlugins.value.delete(plugin.id)
-        const errorMsg = error instanceof Error ? error.message : String(error)
-
-        // 设置错误信息，并不再自动清除
-        downloadError.value.set(plugin.id, errorMsg)
-
-        // 同时在全局显示错误信息，方便用户复制
-        showErrorMessage(`插件 "${plugin.name}" 下载失败: ${errorMsg}`)
-    }
-}
-
-// 加载目录信息
-const loadDirectories = async () => {
-    try {
-        const response = await management.getDirectories() as {
-            success: boolean;
-            data?: { user: string };
-            error?: string
-        }
-
-        if (response.success && response.data) {
-            directory.value = response.data.user
-        } else {
-            showErrorMessage(`加载目录信息失败: ${response.error || '未知错误'}`)
-            console.error('加载目录信息失败', response)
-        }
-    } catch (error) {
-        const errorMsg = error instanceof Error ? error.message : String(error)
-        showErrorMessage(`加载目录信息失败: ${errorMsg}`)
-        console.error('加载目录信息失败', error)
-    }
 }
 
 // 打开目录
@@ -214,17 +86,12 @@ const hideErrorMessage = () => {
     errorMessage.value = ''
 }
 
+const { copyToClipboard } = useClipboard()
+
 // 复制错误信息到剪贴板
 const copyErrorMessage = (message: string) => {
     if (message) {
-        navigator.clipboard.writeText(message)
-            .then(() => {
-                // 可以在这里添加复制成功的提示，但为了简洁，先不添加
-                console.log('错误信息已复制到剪贴板')
-            })
-            .catch(err => {
-                console.error('复制错误信息失败:', err)
-            })
+        copyToClipboard(message)
     }
 }
 
@@ -247,68 +114,11 @@ const clearPluginError = (pluginId: string) => {
     downloadError.value.delete(pluginId)
 }
 
-// 卸载插件
-const uninstallPlugin = async (plugin: SuperPlugin) => {
-    if (uninstallingPlugins.value.has(plugin.id)) {
-        return // 避免重复操作
-    }
-
-    try {
-        // 清除之前的状态
-        uninstallSuccess.value.delete(plugin.id)
-        uninstallError.value.delete(plugin.id)
-
-        // 设置卸载中状态
-        uninstallingPlugins.value.add(plugin.id)
-
-        // 调用主进程卸载插件
-        const response = await management.uninstallPlugin(plugin.id) as {
-            success: boolean;
-            data?: boolean;
-            error?: string;
-        };
-
-        // 更新卸载状态
-        uninstallingPlugins.value.delete(plugin.id)
-
-        if (response.success) {
-            uninstallSuccess.value.add(plugin.id)
-            // 刷新插件列表
-            await loadPlugins()
-
-            // 3秒后清除成功状态
-            setTimeout(() => {
-                uninstallSuccess.value.delete(plugin.id)
-            }, 3000)
-        } else {
-            // 设置错误信息
-            uninstallError.value.set(plugin.id, response.error || '卸载失败')
-            // 显示全局错误信息
-            showErrorMessage(`插件 "${plugin.name}" 卸载失败: ${response.error || '未知错误'}`)
-        }
-    } catch (error) {
-        uninstallingPlugins.value.delete(plugin.id)
-        const errorMsg = error instanceof Error ? error.message : String(error)
-
-        // 设置错误信息
-        uninstallError.value.set(plugin.id, errorMsg)
-
-        // 显示全局错误信息
-        showErrorMessage(`插件 "${plugin.name}" 卸载失败: ${errorMsg}`)
-    }
-}
 
 // 清除单个插件的卸载错误状态
 const clearUninstallError = (pluginId: string) => {
     uninstallError.value.delete(pluginId)
 }
-
-// 初始化
-onMounted(async () => {
-    await loadDirectories()
-    await loadPlugins()
-    await loadRemotePlugins()
-})
 </script>
 
 <template>
@@ -319,36 +129,22 @@ onMounted(async () => {
                 <template #left>
                     <!-- 使用 DaisyUI tabs 组件 -->
                     <div role="tablist" class="tabs tabs-box bg-base-200">
-                        <a role="tab" 
-                           class="tab" 
-                           :class="{ 'tab-active': activeTab === 'user' }" 
-                           @click="activeTab = 'user'">
+                        <a role="tab" class="tab" :class="{ 'tab-active': activeTab === 'user' }"
+                            @click="activeTab = 'user'">
                             用户插件
                         </a>
-                        <a role="tab" 
-                           class="tab" 
-                           :class="{ 'tab-active': activeTab === 'remote' }" 
-                           @click="activeTab = 'remote'">
+                        <a role="tab" class="tab" :class="{ 'tab-active': activeTab === 'remote' }"
+                            @click="activeTab = 'remote'">
                             远程仓库
                         </a>
                     </div>
                 </template>
-                
+
                 <template #right>
-                    <ButtonFolder 
-                        @click="() => openDirectory(directory)" 
-                        shape="circle" 
-                        size="sm" 
-                        tooltip="打开插件目录" 
-                    />
-                    <ButtonRefresh 
-                        @click="handleRefresh" 
-                        shape="circle"
-                        :loading="loadingPlugins || loadingRemotePlugins" 
-                        :disabled="loadingPlugins || loadingRemotePlugins" 
-                        tooltip="刷新插件列表" 
-                        size="sm" 
-                    />
+                    <ButtonFolder @click="() => openDirectory(directory)" shape="circle" size="sm" tooltip="打开插件目录" />
+                    <ButtonRefresh @click="handleRefresh" shape="circle"
+                        :loading="loadingPlugins || loadingRemotePlugins"
+                        :disabled="loadingPlugins || loadingRemotePlugins" tooltip="刷新插件列表" size="sm" />
                 </template>
             </ToolBar>
         </div>
@@ -361,14 +157,16 @@ onMounted(async () => {
             <!-- 本地插件卡片 -->
             <PluginCard v-if="activeTab !== 'remote'" v-for="plugin in filteredPlugins" :key="plugin.id"
                 :plugin="plugin" type="local" :uninstallingPlugins="uninstallingPlugins"
-                :uninstallSuccess="uninstallSuccess" :uninstallError="uninstallError" @uninstall="uninstallPlugin"
-                @clear-uninstall-error="clearUninstallError" @copy-error="copyErrorMessage" />
+                :uninstallSuccess="uninstallSuccess" :uninstallError="uninstallError"
+                @uninstall="marketStore.uninstallPlugin" @clear-uninstall-error="clearUninstallError"
+                @copy-error="copyErrorMessage" />
 
             <!-- 远程插件卡片 -->
             <PluginCard v-if="activeTab === 'remote'" v-for="plugin in filteredPlugins" :key="plugin.id"
                 :plugin="plugin" type="remote" :downloadingPlugins="downloadingPlugins"
                 :downloadSuccess="downloadSuccess" :downloadError="downloadError" :isInstalled="isPluginInstalled"
-                @download="downloadPlugin" @clear-download-error="clearPluginError" @copy-error="copyErrorMessage" />
+                @download="marketStore.downloadPlugin" @clear-download-error="clearPluginError"
+                @copy-error="copyErrorMessage" />
 
             <!-- 无插件提示 -->
             <Empty v-if="filteredPlugins.length === 0" :message="activeTab === 'remote' ? '没有可用的远程插件' : '没有找到插件'" />

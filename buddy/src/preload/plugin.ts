@@ -80,7 +80,8 @@ const pluginManagement = {
     ipcRenderer.invoke('plugin:downloadPlugin', plugin),
   uninstallPlugin: (pluginId: string) =>
     ipcRenderer.invoke('plugin:uninstallPlugin', pluginId),
-  getDirectories: () => ipcRenderer.invoke('plugin:getDirectories'),
+  getUserPluginDirectory: () =>
+    ipcRenderer.invoke('plugin:getUserPluginDirectory'),
   openDirectory: (directory: string) =>
     ipcRenderer.invoke('plugin:openDirectory', directory),
   createExamplePlugin: () => ipcRenderer.invoke('plugin:createExamplePlugin'),

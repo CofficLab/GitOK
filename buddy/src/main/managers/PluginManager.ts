@@ -5,7 +5,7 @@
 import { BaseManager } from './BaseManager';
 import { PluginEntity } from '../entities/PluginEntity';
 import { logger } from './LogManager';
-import { pluginDB } from '../db/PluginDB';
+import { userPluginDB } from '../db/UserPluginDB';
 
 class PluginManager extends BaseManager {
   private static instance: PluginManager;
@@ -32,7 +32,7 @@ class PluginManager extends BaseManager {
     try {
       logger.info('开始初始化插件系统');
       // 只需确保插件目录存在
-      await pluginDB.ensurePluginDirs();
+      await userPluginDB.ensurePluginDirs();
       logger.info('插件系统初始化完成');
     } catch (error) {
       this.handleError(error, '插件系统初始化失败', true);
@@ -44,7 +44,7 @@ class PluginManager extends BaseManager {
    * 直接从磁盘读取，不做缓存
    */
   async getPlugins(): Promise<PluginEntity[]> {
-    return await pluginDB.getAllPlugins();
+    return await userPluginDB.getAllPlugins();
   }
 
   /**
@@ -54,7 +54,7 @@ class PluginManager extends BaseManager {
    */
   public async loadPluginModule(plugin: PluginEntity): Promise<any> {
     try {
-      return await pluginDB.loadPluginModule(plugin);
+      return await userPluginDB.loadPluginModule(plugin);
     } catch (error: any) {
       throw new Error(
         this.handleError(

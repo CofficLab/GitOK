@@ -27,7 +27,7 @@ export const IPC_METHODS = {
   GET_STORE_PLUGINS: 'plugin:getStorePlugins',
   GET_REMOTE_PLUGINS: 'plugin:getRemotePlugins',
   DOWNLOAD_PLUGIN: 'plugin:downloadPlugin',
-  GET_PLUGIN_DIRECTORIES: 'plugin:getDirectories',
+  GET_PLUGIN_DIRECTORIES: 'plugin:getUserPluginDirectory',
   GET_PLUGINS: 'plugin:getPlugins',
   UNINSTALL_PLUGIN: 'plugin:uninstallPlugin',
   OPEN_PLUGIN_DIRECTORY: 'plugin:openDirectory',

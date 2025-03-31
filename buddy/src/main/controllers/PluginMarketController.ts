@@ -7,22 +7,22 @@ import { IpcResponse } from '@/types/ipc';
 import { SuperPlugin } from '@/types/super_plugin';
 import { pluginManager } from '../managers/PluginManager';
 import { logger } from '../managers/LogManager';
-import { pluginDB } from '../db/PluginDB';
+import { userPluginDB } from '../db/UserPluginDB';
 import { remotePluginDB } from '../db/RemotePluginDB';
 import { packageDownloaderDB } from '../db/PackageDownloaderDB';
 import * as fs from 'fs';
 import * as path from 'path';
 
-export class PluginStoreController {
-  private static instance: PluginStoreController;
+export class PluginMarketController {
+  private static instance: PluginMarketController;
 
   private constructor() {}
 
-  public static getInstance(): PluginStoreController {
-    if (!PluginStoreController.instance) {
-      PluginStoreController.instance = new PluginStoreController();
+  public static getInstance(): PluginMarketController {
+    if (!PluginMarketController.instance) {
+      PluginMarketController.instance = new PluginMarketController();
     }
-    return PluginStoreController.instance;
+    return PluginMarketController.instance;
   }
 
   /**
@@ -30,7 +30,7 @@ export class PluginStoreController {
    */
   public async getStorePlugins(): Promise<IpcResponse<SuperPlugin[]>> {
     try {
-      const plugins = await pluginDB.getAllPlugins();
+      const plugins = await userPluginDB.getAllPlugins();
       return { success: true, data: plugins };
     } catch (error) {
       const errorMessage =
@@ -56,6 +56,14 @@ export class PluginStoreController {
     }
   }
 
+  public getUserPluginDirectory(): IpcResponse<string> {
+    logger.info('获取用户插件目录');
+    return {
+      success: true,
+      data: userPluginDB.getPluginDirectory(),
+    };
+  }
+
   /**
    * 下载并安装插件
    * 使用PackageDownloaderDB服务处理下载和解压
@@ -73,8 +81,7 @@ export class PluginStoreController {
       }
 
       // 获取用户插件目录
-      const directories = pluginDB.getPluginDirectories();
-      const userPluginDir = directories.user;
+      const userPluginDir = userPluginDB.getPluginDirectory();
 
       // 确保目录存在
       if (!fs.existsSync(userPluginDir)) {
@@ -107,7 +114,7 @@ export class PluginStoreController {
         );
 
         // 重新扫描插件目录
-        await pluginDB.getAllPlugins();
+        await userPluginDB.getAllPlugins();
 
         logger.info(`插件 ${plugin.name} 安装成功`);
         return { success: true, data: true };
@@ -131,21 +138,6 @@ export class PluginStoreController {
         pluginId: plugin.id,
         npmPackage: plugin.npmPackage,
       });
-      return { success: false, error: errorMessage };
-    }
-  }
-
-  /**
-   * 获取插件目录信息
-   */
-  public getDirectories(): IpcResponse<{ user: string }> {
-    try {
-      const directories = pluginDB.getPluginDirectories();
-      return { success: true, data: directories };
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : String(error);
-      logger.error('获取插件目录信息失败', { error: errorMessage });
       return { success: false, error: errorMessage };
     }
   }
@@ -191,7 +183,7 @@ export class PluginStoreController {
       logger.info(`准备卸载插件: ${pluginId}`);
 
       // 获取插件实例
-      const plugin = await pluginDB.find(pluginId);
+      const plugin = await userPluginDB.find(pluginId);
       if (!plugin) {
         logger.error(`卸载插件失败: 找不到插件 ${pluginId}`);
         return {
@@ -238,4 +230,4 @@ export class PluginStoreController {
   }
 }
 
-export const pluginStoreController = PluginStoreController.getInstance();
+export const pluginStoreController = PluginMarketController.getInstance();

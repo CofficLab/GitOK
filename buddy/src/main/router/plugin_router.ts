@@ -1,7 +1,7 @@
 import { IPC_METHODS } from '@/types/ipc';
 import { pluginActionController } from '../controllers/PluginActionController';
 import { pluginViewController } from '../controllers/PluginViewController';
-import { pluginStoreController } from '../controllers/PluginStoreController';
+import { pluginStoreController } from '../controllers/PluginMarketController';
 import { IpcRoute } from '../services/RouterService';
 
 /**
@@ -63,7 +63,7 @@ export const routes: IpcRoute[] = [
   },
   {
     channel: IPC_METHODS.GET_PLUGIN_DIRECTORIES,
-    handler: () => pluginStoreController.getDirectories(),
+    handler: () => pluginStoreController.getUserPluginDirectory(),
   },
   {
     channel: IPC_METHODS.GET_PLUGINS,

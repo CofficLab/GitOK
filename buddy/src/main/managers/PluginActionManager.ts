@@ -7,7 +7,7 @@ import { BaseManager } from './BaseManager';
 import type { SuperAction } from '@/types/super_action';
 import { PluginActionEntity } from '../entities/PluginActionEntity';
 import { logger } from './LogManager';
-import { pluginDB } from '../db/PluginDB';
+import { userPluginDB } from '../db/UserPluginDB';
 import { appStateManager } from './StateManager';
 import { PluginContext } from '@/types/plugin-context';
 
@@ -181,7 +181,7 @@ class PluginActionManager extends BaseManager {
       }
 
       // 获取插件实例
-      const plugin = await pluginDB.find(pluginId);
+      const plugin = await userPluginDB.find(pluginId);
       if (!plugin) {
         throw new Error(`未找到插件: ${pluginId}`);
       }
@@ -253,7 +253,7 @@ class PluginActionManager extends BaseManager {
       }
 
       // 获取插件实例
-      const plugin = await pluginDB.find(pluginId);
+      const plugin = await userPluginDB.find(pluginId);
       if (!plugin) {
         throw new Error(`未找到插件: ${pluginId}`);
       }

@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>简单计算器</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+
+        .calculator {
+            width: 240px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .display {
+            background-color: #333;
+            color: white;
+            text-align: right;
+            padding: 10px;
+            font-size: 24px;
+            height: 40px;
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1px;
+            background-color: #ccc;
+        }
+
+        button {
+            border: none;
+            outline: none;
+            background-color: white;
+            font-size: 20px;
+            height: 50px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #f0f0f0;
+        }
+
+        button.operator {
+            background-color: #f8f8f8;
+        }
+
+        button.equals {
+            background-color: #ff9800;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="calculator">
+        <div class="display" id="display">0</div>
+        <div class="buttons">
+            <button onclick="clearDisplay()">C</button>
+            <button onclick="backspace()">⌫</button>
+            <button onclick="appendOperator('%')">%</button>
+            <button class="operator" onclick="appendOperator('/')">÷</button>
+
+            <button onclick="appendNumber(7)">7</button>
+            <button onclick="appendNumber(8)">8</button>
+            <button onclick="appendNumber(9)">9</button>
+            <button class="operator" onclick="appendOperator('*')">×</button>
+
+            <button onclick="appendNumber(4)">4</button>
+            <button onclick="appendNumber(5)">5</button>
+            <button onclick="appendNumber(6)">6</button>
+            <button class="operator" onclick="appendOperator('-')">-</button>
+
+            <button onclick="appendNumber(1)">1</button>
+            <button onclick="appendNumber(2)">2</button>
+            <button onclick="appendNumber(3)">3</button>
+            <button class="operator" onclick="appendOperator('+')">+</button>
+
+            <button onclick="appendNumber(0)" style="grid-column: span 2;">0</button>
+            <button onclick="appendDecimal()">.</button>
+            <button class="equals" onclick="calculate()">=</button>
+        </div>
+    </div>
+
+    <script>
+        // 添加调试日志
+        console.log("[示例插件:计算器视图] 视图已加载");
+
+        let displayValue = '0';
+        let waitingForOperand = false;
+        const display = document.getElementById('display');
+
+        function updateDisplay() {
+            display.textContent = displayValue;
+        }
+
+        function appendNumber(number) {
+            console.log("[示例插件:计算器视图] 输入数字:", number);
+            if (waitingForOperand) {
+                displayValue = String(number);
+                waitingForOperand = false;
+            } else {
+                displayValue = displayValue === '0' ? String(number) : displayValue + number;
+            }
+            updateDisplay();
+        }
+
+        function appendDecimal() {
+            console.log("[示例插件:计算器视图] 输入小数点");
+            if (waitingForOperand) {
+                displayValue = '0.';
+                waitingForOperand = false;
+            } else if (!displayValue.includes('.')) {
+                displayValue += '.';
+            }
+            updateDisplay();
+        }
+
+        function appendOperator(operator) {
+            console.log("[示例插件:计算器视图] 输入运算符:", operator);
+            displayValue += operator;
+            waitingForOperand = false;
+            updateDisplay();
+        }
+
+        function clearDisplay() {
+            console.log("[示例插件:计算器视图] 清空显示");
+            displayValue = '0';
+            waitingForOperand = false;
+            updateDisplay();
+        }
+
+        function backspace() {
+            console.log("[示例插件:计算器视图] 退格");
+            if (displayValue.length > 1) {
+                displayValue = displayValue.slice(0, -1);
+            } else {
+                displayValue = '0';
+            }
+            updateDisplay();
+        }
+
+        function calculate() {
+            console.log("[示例插件:计算器视图] 计算结果");
+            try {
+                // eslint-disable-next-line no-eval
+                displayValue = String(eval(displayValue));
+                console.log("[示例插件:计算器视图] 计算结果:", displayValue);
+                waitingForOperand = true;
+            } catch (e) {
+                console.error("[示例插件:计算器视图] 计算错误:", e);
+                displayValue = 'Error';
+            }
+            updateDisplay();
+        }
+    </script>
+</body>
+
+</html>

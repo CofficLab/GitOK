@@ -1,0 +1,17 @@
+{
+  "name": "@coffic/buddy-plugin-mcp",
+  "version": "1.0.2",
+  "description": "A buddy plugin for the MCP",
+  "main": "index.js",
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "buddy",
+    "plugin",
+    "example",
+    "buddy-plugin"
+  ],
+  "author": "Coffic",
+  "license": "MIT"
+}

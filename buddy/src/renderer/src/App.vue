@@ -27,10 +27,12 @@ import StatusBar from './layouts/StatusBar.vue'
 import Confirm from './cosy/Confirm.vue'
 import Toast from './cosy/Toast.vue'
 import { useActionStore } from './stores/actionStore'
+import { useMarketStore } from './stores/marketStore'
 import { globalConfirm } from './composables/useConfirm'
 import { globalToast } from './composables/useToast'
 
 const actionStore = useActionStore()
+const marketStore = useMarketStore()
 
 // 在组件加载时注册消息监听和初始化
 onMounted(() => {
@@ -39,6 +41,10 @@ onMounted(() => {
 
     // 设置窗口激活状态监听，当窗口激活时刷新动作列表
     actionStore.setupWindowActivationListener()
+
+    marketStore.updateUserPluginDirectory()
+    marketStore.loadPlugins()
+    marketStore.loadRemotePlugins()
 })
 
 // 在组件卸载时清理消息监听
@@ -67,27 +73,16 @@ onUnmounted(() => {
     </div>
 
     <!-- 全局确认对话框 -->
-    <Confirm
-        v-model="globalConfirm.state.value.show"
-        :title="globalConfirm.state.value.title"
-        :message="globalConfirm.state.value.message"
-        :confirm-text="globalConfirm.state.value.confirmText"
-        :cancel-text="globalConfirm.state.value.cancelText"
-        :confirm-variant="globalConfirm.state.value.confirmVariant"
-        :cancel-variant="globalConfirm.state.value.cancelVariant"
-        :loading="globalConfirm.state.value.loading"
-        @confirm="globalConfirm.handleConfirm"
-        @cancel="globalConfirm.handleCancel"
-    />
-    
+    <Confirm v-model="globalConfirm.state.value.show" :title="globalConfirm.state.value.title"
+        :message="globalConfirm.state.value.message" :confirm-text="globalConfirm.state.value.confirmText"
+        :cancel-text="globalConfirm.state.value.cancelText" :confirm-variant="globalConfirm.state.value.confirmVariant"
+        :cancel-variant="globalConfirm.state.value.cancelVariant" :loading="globalConfirm.state.value.loading"
+        @confirm="globalConfirm.handleConfirm" @cancel="globalConfirm.handleCancel" />
+
     <!-- 全局消息提示 -->
-    <Toast
-        v-if="globalToast.state.value.show"
-        :type="globalToast.state.value.type"
-        :duration="globalToast.state.value.duration"
-        :position="globalToast.state.value.position"
-        @close="globalToast.close"
-    >
+    <Toast v-if="globalToast.state.value.show" :type="globalToast.state.value.type"
+        :duration="globalToast.state.value.duration" :position="globalToast.state.value.position"
+        @close="globalToast.close">
         {{ globalToast.state.value.message }}
     </Toast>
 </template>

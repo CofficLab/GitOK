@@ -45,7 +45,7 @@ interface PluginManagement {
   getRemotePlugins: () => Promise<IpcResponse<SuperPlugin[]>>;
   downloadPlugin: (plugin: SuperPlugin) => Promise<IpcResponse<boolean>>;
   uninstallPlugin: (pluginId: string) => Promise<IpcResponse<boolean>>;
-  getDirectories: () => Promise<any>;
+  getUserPluginDirectory: () => Promise<IpcResponse<string>>;
   openDirectory: (directory: string) => Promise<any>;
   createExamplePlugin: () => Promise<any>;
 }
