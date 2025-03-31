@@ -8,7 +8,6 @@ import { remotePluginDB } from '../db/RemotePluginDB';
 import { packageDownloaderDB } from '../db/PackageDownloaderDB';
 import * as fs from 'fs';
 import * as path from 'path';
-import { shell } from 'electron';
 
 /**
  * 插件商店相关的IPC路由配置

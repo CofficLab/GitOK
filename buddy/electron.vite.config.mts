@@ -28,8 +28,8 @@ export default defineConfig({
       sourcemap: true,
       rollupOptions: {
         input: {
-          'app-preload': resolve(__dirname, 'src/preload/app-preload.ts'),
-          'plugin-preload': resolve(__dirname, 'src/preload/plugin-preload.ts'),
+          'app-preload': resolve(__dirname, 'src/preload/preload-app.ts'),
+          'plugin-preload': resolve(__dirname, 'src/preload-plugin/preload-plugin.ts'),
         },
       },
     },
