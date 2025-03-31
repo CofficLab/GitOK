@@ -47,7 +47,6 @@ export interface SuperPluginManagementAPI {
   downloadPlugin: (plugin: SuperPlugin) => Promise<IpcResponse<boolean>>;
   uninstallPlugin: (pluginId: string) => Promise<IpcResponse<boolean>>;
   getUserPluginDirectory: () => Promise<IpcResponse<string>>;
-  openDirectory: (directory: string) => Promise<any>;
 }
 
 // 插件动作接口

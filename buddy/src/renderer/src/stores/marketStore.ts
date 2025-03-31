@@ -75,11 +75,9 @@ export const useMarketStore = defineStore('market', {
     async updateUserPluginDirectory() {
       logger.info('🍋 updateUserPluginDirectory');
       try {
-        const response = (await pluginsAPI.getUserPluginDirectory()) as {
-          success: boolean;
-          data?: string;
-          error?: string;
-        };
+        const response = (await pluginsAPI.getUserPluginDirectory())
+
+        logger.info('🍋 getUserPluginDirectory response', response);
 
         if (response.success && response.data) {
           this.userPluginDirectory = response.data;

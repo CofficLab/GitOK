@@ -28,5 +28,5 @@ export interface IpcApi {
     callback: (...args: unknown[]) => void
   ) => void;
 
-  openFolder: (directory: string) => Promise<void>; 
+  openFolder: (directory: string) => Promise<string>; 
 }

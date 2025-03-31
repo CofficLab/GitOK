@@ -8,6 +8,7 @@ import { remotePluginDB } from '../db/RemotePluginDB';
 import { packageDownloaderDB } from '../db/PackageDownloaderDB';
 import * as fs from 'fs';
 import * as path from 'path';
+import { devPluginDB } from '../db/DevPluginDB';
 
 /**
  * 插件商店相关的IPC路由配置
@@ -26,6 +27,20 @@ export const pluginStoreRoutes: IpcRoute[] = [
         return { success: false, error: errorMessage };
       }
     },
+  },
+  {
+    channel: IPC_METHODS.GET_DEV_PLUGINS,
+    handler: async (): Promise<IpcResponse<SuperPlugin[]>> => {
+      try {
+        const plugins = await devPluginDB.getAllPlugins();
+        return { success: true, data: plugins };
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error? error.message : String(error);
+        logger.error('获取开发插件列表失败', { error: errorMessage });
+        return { success: false, error: errorMessage };
+      }
+    }
   },
   {
     channel: IPC_METHODS.GET_REMOTE_PLUGINS,

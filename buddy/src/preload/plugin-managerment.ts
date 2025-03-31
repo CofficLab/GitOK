@@ -27,7 +27,7 @@ function isValidSuperPluginArray(data: any): data is SuperPlugin[] {
 export const pluginManagement: SuperPluginManagementAPI = {
     // 获取本地已安装的插件列表
     getUserPlugins: async (): Promise<IpcResponse<SuperPlugin[]>> => {
-        const response = await ipcRenderer.invoke(IPC_METHODS.GET_USER_PLUGINS);
+        const response = await ipcRenderer.invoke(IPC_METHODS.GET_PLUGIN_DIRECTORIES);
         if (!isValidSuperPluginArray(response.data)) {
             throw new Error('Invalid SuperPlugin array structure');
         }
@@ -59,7 +59,5 @@ export const pluginManagement: SuperPluginManagementAPI = {
     uninstallPlugin: (pluginId: string) =>
         ipcRenderer.invoke(IPC_METHODS.UNINSTALL_PLUGIN, pluginId),
     getUserPluginDirectory: () =>
-        ipcRenderer.invoke(IPC_METHODS.GET_USER_PLUGINS),
-    openDirectory: (directory: string) =>
-        ipcRenderer.invoke(IPC_METHODS.OPEN_PLUGIN_DIRECTORY, directory),
+        ipcRenderer.invoke(IPC_METHODS.GET_PLUGIN_DIRECTORIES)
 };

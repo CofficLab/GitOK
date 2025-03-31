@@ -20,8 +20,8 @@ export const ipcApi: IpcApi = {
     ipcRenderer.removeListener(channel, callback);
   },
 
-  openFolder: async (directory: string): Promise<void> => {
-    let response = ipcApi.send(IPC_METHODS.OPEN_FOLDER, directory);
+  openFolder: async (directory: string): Promise<string> => {
+    let response = ipcRenderer.invoke(IPC_METHODS.OPEN_FOLDER, directory);
 
     return response;
   },

@@ -18,10 +18,7 @@ import ToolBar from '@renderer/cosy/ToolBar.vue'
 import { globalToast } from '../composables/useToast'
 import { useMarketStore } from '../stores/marketStore'
 import { useClipboard } from '../composables/useClipboard'
-
-const electronApi = window.electron
-const pluginApi = electronApi.plugins
-const { management } = pluginApi
+import { ipcAPI } from '@renderer/api/ipc-api'
 
 const userPlugins = computed(() => marketStore.userPlugins)
 const devPlugins = computed(() => marketStore.devPlugins)
@@ -65,12 +62,10 @@ const handleRefresh = async () => {
 const openDirectory = async (dir: string | null) => {
     if (!dir) return
     try {
-        const response = await management.openDirectory(dir)
-        if (!response.success) {
-            showErrorMessage('无法打开目录')
-        }
+        await ipcAPI.openFolder(dir)
+            showErrorMessage('已打开目录')
     } catch (error) {
-        showErrorMessage('打开目录失败')
+        showErrorMessage('打开目录失败: ' + error)
     }
 }
 
