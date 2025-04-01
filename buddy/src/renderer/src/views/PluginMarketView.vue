@@ -12,19 +12,19 @@ import { ref, computed } from 'vue'
 import PluginCard from '@renderer/modules/PluginCard.vue'
 import ButtonFolder from '@renderer/cosy/ButtonFolder.vue'
 import ButtonRefresh from '@renderer/cosy/ButtonRefresh.vue'
-import Alert from '@renderer/cosy/Alert.vue'
 import Empty from '@renderer/cosy/Empty.vue'
 import ToolBar from '@renderer/cosy/ToolBar.vue'
 import { globalToast } from '../composables/useToast'
 import { useMarketStore } from '../stores/marketStore'
 import { useClipboard } from '../composables/useClipboard'
-import { ipcAPI } from '@renderer/api/ipc-api'
+import { useDirectory } from '../composables/useDirectory'
+
+const { copyToClipboard } = useClipboard()
+const { openDirectory } = useDirectory()
 
 const userPlugins = computed(() => marketStore.userPlugins)
 const devPlugins = computed(() => marketStore.devPlugins)
 const remotePlugins = computed(() => marketStore.remotePlugins)
-const errorMessage = ref('')
-const showError = ref(false)
 const marketStore = useMarketStore()
 const directory = computed(() => marketStore.userPluginDirectory)
 
@@ -58,39 +58,6 @@ const handleRefresh = async () => {
     globalToast.success('刷新成功', { duration: 2000, position: 'bottom-center' })
 }
 
-// 打开目录
-const openDirectory = async (dir: string | null) => {
-    if (!dir) return
-    try {
-        await ipcAPI.openFolder(dir)
-            showErrorMessage('已打开目录')
-    } catch (error) {
-        showErrorMessage('打开目录失败: ' + error)
-    }
-}
-
-// 显示错误信息
-const showErrorMessage = (message: string) => {
-    errorMessage.value = message
-    showError.value = true
-    // 不再自动隐藏错误信息
-}
-
-// 隐藏错误信息
-const hideErrorMessage = () => {
-    showError.value = false
-    errorMessage.value = ''
-}
-
-const { copyToClipboard } = useClipboard()
-
-// 复制错误信息到剪贴板
-const copyErrorMessage = (message: string) => {
-    if (message) {
-        copyToClipboard(message)
-    }
-}
-
 // 根据标签过滤插件
 const filteredPlugins = computed(() => {
     if (activeTab.value === 'remote') {
@@ -109,7 +76,6 @@ const isPluginInstalled = computed(() => {
 const clearPluginError = (pluginId: string) => {
     downloadError.value.delete(pluginId)
 }
-
 
 // 清除单个插件的卸载错误状态
 const clearUninstallError = (pluginId: string) => {
@@ -133,8 +99,8 @@ const clearUninstallError = (pluginId: string) => {
                             @click="activeTab = 'remote'">
                             远程仓库
                         </a>
-                        <a role="tab" class="tab" :class="{ 'tab-active': activeTab ==='dev' }"
-                            @click="activeTab ='dev'">
+                        <a role="tab" class="tab" :class="{ 'tab-active': activeTab === 'dev' }"
+                            @click="activeTab = 'dev'">
                             开发插件
                         </a>
                     </div>
@@ -149,32 +115,26 @@ const clearUninstallError = (pluginId: string) => {
             </ToolBar>
         </div>
 
-        <!-- 错误提示 -->
-        <Alert v-if="showError" :message="errorMessage" type="error" title="错误信息" closable @close="hideErrorMessage" />
-
         <!-- 插件列表 -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 overflow-y-auto">
             <!-- 本地插件卡片 -->
-            <PluginCard v-if="activeTab !== 'remote'" v-for="plugin in userPlugins" :key="plugin.id"
-                :plugin="plugin" type="local" :uninstallingPlugins="uninstallingPlugins"
-                :uninstallSuccess="uninstallSuccess" :uninstallError="uninstallError"
-                @uninstall="marketStore.uninstallPlugin" @clear-uninstall-error="clearUninstallError"
-                @copy-error="copyErrorMessage" />
+            <PluginCard v-if="activeTab !== 'remote'" v-for="plugin in userPlugins" :key="plugin.id" :plugin="plugin"
+                type="local" :uninstallingPlugins="uninstallingPlugins" :uninstallSuccess="uninstallSuccess"
+                :uninstallError="uninstallError" @uninstall="marketStore.uninstallPlugin"
+                @clear-uninstall-error="clearUninstallError" @copy-error="copyToClipboard" />
 
             <!-- 远程插件卡片 -->
-            <PluginCard v-if="activeTab === 'remote'" v-for="plugin in remotePlugins" :key="plugin.id"
-                :plugin="plugin" type="remote" :downloadingPlugins="downloadingPlugins"
-                :downloadSuccess="downloadSuccess" :downloadError="downloadError" :isInstalled="isPluginInstalled"
-                @download="marketStore.downloadPlugin" @clear-download-error="clearPluginError"
-                @copy-error="copyErrorMessage" />
+            <PluginCard v-if="activeTab === 'remote'" v-for="plugin in remotePlugins" :key="plugin.id" :plugin="plugin"
+                type="remote" :downloadingPlugins="downloadingPlugins" :downloadSuccess="downloadSuccess"
+                :downloadError="downloadError" :isInstalled="isPluginInstalled" @download="marketStore.downloadPlugin"
+                @clear-download-error="clearPluginError" @copy-error="copyToClipboard" />
 
             <!-- 开发插件卡片 -->
             <!-- 远程插件卡片 -->
-            <PluginCard v-if="activeTab === 'dev'" v-for="plugin in devPlugins" :key="plugin.id"
-                :plugin="plugin" type="remote" :downloadingPlugins="downloadingPlugins"
-                :downloadSuccess="downloadSuccess" :downloadError="downloadError" :isInstalled="isPluginInstalled"
-                @download="marketStore.downloadPlugin" @clear-download-error="clearPluginError"
-                @copy-error="copyErrorMessage" />
+            <PluginCard v-if="activeTab === 'dev'" v-for="plugin in devPlugins" :key="plugin.id" :plugin="plugin"
+                type="remote" :downloadingPlugins="downloadingPlugins" :downloadSuccess="downloadSuccess"
+                :downloadError="downloadError" :isInstalled="isPluginInstalled" @download="marketStore.downloadPlugin"
+                @clear-download-error="clearPluginError" @copy-error="copyToClipboard" />
 
             <!-- 无插件提示 -->
             <Empty v-if="filteredPlugins.length === 0" :message="activeTab === 'remote' ? '没有可用的远程插件' : '没有找到插件'" />

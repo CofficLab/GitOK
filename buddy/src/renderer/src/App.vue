@@ -26,10 +26,12 @@ import ContentView from './layouts/ContentView.vue'
 import StatusBar from './layouts/StatusBar.vue'
 import Confirm from './cosy/Confirm.vue'
 import Toast from './cosy/Toast.vue'
+import Alert from './cosy/Alert.vue'
 import { useActionStore } from './stores/actionStore'
 import { useMarketStore } from './stores/marketStore'
 import { globalConfirm } from './composables/useConfirm'
 import { globalToast } from './composables/useToast'
+import { globalAlert } from './composables/useAlert'
 
 const actionStore = useActionStore()
 const marketStore = useMarketStore()
@@ -61,6 +63,11 @@ onUnmounted(() => {
         <div class="h-10 mt-4 px-4">
             <SearchBar />
         </div>
+
+        <!-- 全局警告提示 -->
+        <Alert v-if="globalAlert.state.value.show" :type="globalAlert.state.value.type"
+            :message="globalAlert.state.value.message" :closable="globalAlert.state.value.closable"
+            @close="globalAlert.close" />
 
         <!-- 内容区域 -->
         <div class="flex flex-grow overflow-hidden no-drag-region">
