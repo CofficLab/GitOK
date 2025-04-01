@@ -7,11 +7,12 @@ import { computed, ref } from 'vue'
 import type { SuperPlugin } from '@/types/super_plugin'
 import {
     RiCheckLine,
-    RiCloseLine,
     RiDeleteBinLine
 } from '@remixicon/vue'
 import Button from '@renderer/cosy/Button.vue'
 import { globalConfirm } from '@renderer/composables/useConfirm'
+import { useMarketStore } from '@renderer/stores/marketStore'
+import { globalToast } from '@renderer/composables/useToast'
 
 const props = defineProps<{
     plugin: SuperPlugin
@@ -26,17 +27,17 @@ const props = defineProps<{
     isInstalled?: (id: string) => boolean
 }>()
 
-// 动画控制状态
+// 状态管理
+const marketStore = useMarketStore()
 const isUninstalling = ref(false)
 const uninstallComplete = ref(false)
+const isDownloading = ref(false)
+const downloadComplete = ref(false)
 
 const emit = defineEmits<{
-    // 操作事件
-    (e: 'download', plugin: SuperPlugin): void
     (e: 'uninstall', plugin: SuperPlugin): void
     (e: 'clear-download-error', pluginId: string): void
     (e: 'clear-uninstall-error', pluginId: string): void
-    (e: 'copy-error', message: string): void
 }>()
 
 // 计算卡片样式
@@ -53,14 +54,12 @@ const cardClass = computed(() => {
 // 判断是否是用户安装的插件（可卸载）
 const isUserPlugin = computed(() => props.plugin.type === 'user')
 
-// 清除卸载错误
-const clearUninstallError = (pluginId: string) => {
-    emit('clear-uninstall-error', pluginId)
-}
-
 // 下载插件
-const handleDownload = () => {
-    emit('download', props.plugin)
+const handleDownload = async () => {
+    isDownloading.value = true
+    await marketStore.downloadPlugin(props.plugin)
+    isDownloading.value = false
+    downloadComplete.value = true
 }
 
 // 显示卸载确认
@@ -90,6 +89,8 @@ const handleUninstall = async () => {
             uninstallComplete.value = true
         }
         isUninstalling.value = false
+
+        globalToast.success('插件已卸载')
     }, 500)
 }
 </script>
@@ -120,32 +121,21 @@ const handleUninstall = async () => {
                             {{ (uninstallingPlugins?.has(plugin.id) || isUninstalling) ? '卸载中...' : '卸载' }}
                         </Button>
                     </div>
-
-                    <!-- 卸载成功提示 -->
-                    <transition name="fade">
-                        <span v-if="uninstallSuccess?.has(plugin.id)" class="text-xs text-success flex items-center">
-                            <RiCheckLine class="h-3 w-3 mr-1" />
-                            卸载成功
-                        </span>
-                    </transition>
-
-                    <!-- 卸载错误提示 -->
-                    <transition name="fade">
-                        <div v-if="uninstallError?.has(plugin.id)" class="text-xs text-error flex items-center">
-                            <span>卸载失败: {{ uninstallError.get(plugin.id) }}</span>
-                            <Button size="sm" variant="ghost" @click="clearUninstallError(plugin.id)">
-                                <RiCloseLine class="h-3 w-3" />
-                            </Button>
-                        </div>
-                    </transition>
                 </template>
 
                 <!-- 远程插件操作 -->
                 <template v-else>
-                    <Button @click="handleDownload" variant="primary" :loading="downloadingPlugins?.has(plugin.id)"
-                        :disabled="downloadingPlugins?.has(plugin.id) || isInstalled?.(plugin.id)">
-                        {{ isInstalled?.(plugin.id) ? '已安装' : '下载' }}
+                    <Button @click="handleDownload" variant="primary" :loading="isDownloading"
+                        :disabled="isDownloading || isInstalled?.(plugin.id)">
+                        {{ isInstalled?.(plugin.id) ? '已安装' : (isDownloading ? '下载中...' : '下载') }}
                     </Button>
+                    <!-- 下载成功提示 -->
+                    <transition name="fade">
+                        <span v-if="downloadComplete" class="text-xs text-success flex items-center">
+                            <RiCheckLine class="h-3 w-3 mr-1" />
+                            下载成功
+                        </span>
+                    </transition>
                 </template>
             </div>
         </div>

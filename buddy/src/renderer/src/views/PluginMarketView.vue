@@ -16,12 +16,10 @@ import Empty from '@renderer/cosy/Empty.vue'
 import ToolBar from '@renderer/cosy/ToolBar.vue'
 import { globalToast } from '../composables/useToast'
 import { useMarketStore } from '../stores/marketStore'
-import { useClipboard } from '../composables/useClipboard'
 import { useDirectory } from '../composables/useDirectory'
 import { useAlert } from '../composables/useAlert'
 import { logger } from '@renderer/utils/logger'
 
-const { copyToClipboard } = useClipboard()
 const { openDirectory } = useDirectory()
 const { error } = useAlert()
 
@@ -31,19 +29,14 @@ const devPlugins = computed(() => marketStore.devPlugins)
 const remotePlugins = computed(() => marketStore.remotePlugins)
 const directory = computed(() => marketStore.userPluginDirectory)
 
-// 下载状态
-const downloadingPlugins = ref<Set<string>>(new Set())
-const downloadSuccess = ref<Set<string>>(new Set())
-const downloadError = ref<Map<string, string>>(new Map())
+// 加载状态
+const loadingPlugins = ref<boolean>(false)
+const loadingRemotePlugins = ref<boolean>(false)
 
 // 卸载状态
 const uninstallingPlugins = ref<Set<string>>(new Set())
 const uninstallSuccess = ref<Set<string>>(new Set())
 const uninstallError = ref<Map<string, string>>(new Map())
-
-// 加载状态
-const loadingPlugins = ref<boolean>(false)
-const loadingRemotePlugins = ref<boolean>(false)
 
 // 当前选中的标签
 const activeTab = ref<'user' | 'remote' | 'dev'>('user')
@@ -82,11 +75,6 @@ const isPluginInstalled = computed(() => {
     const installedIds = new Set(userPlugins.value.map(p => p.id))
     return (id: string) => installedIds.has(id)
 })
-
-// 清除单个插件的错误状态
-const clearPluginError = (pluginId: string) => {
-    downloadError.value.delete(pluginId)
-}
 
 // 清除单个插件的卸载错误状态
 const clearUninstallError = (pluginId: string) => {
@@ -131,19 +119,15 @@ const clearUninstallError = (pluginId: string) => {
             <PluginCard v-if="activeTab === 'user'" v-for="plugin in userPlugins" :key="plugin.id" :plugin="plugin"
                 type="local" :uninstallingPlugins="uninstallingPlugins" :uninstallSuccess="uninstallSuccess"
                 :uninstallError="uninstallError" @uninstall="marketStore.uninstallPlugin"
-                @clear-uninstall-error="clearUninstallError" @copy-error="copyToClipboard" />
+                @clear-uninstall-error="clearUninstallError" />
 
             <!-- 远程插件卡片 -->
             <PluginCard v-if="activeTab === 'remote'" v-for="plugin in remotePlugins" :key="plugin.id" :plugin="plugin"
-                type="remote" :downloadingPlugins="downloadingPlugins" :downloadSuccess="downloadSuccess"
-                :downloadError="downloadError" :isInstalled="isPluginInstalled" @download="marketStore.downloadPlugin"
-                @clear-download-error="clearPluginError" @copy-error="copyToClipboard" />
+                type="remote" :isInstalled="isPluginInstalled" />
 
             <!-- 开发插件卡片 -->
             <PluginCard v-if="activeTab === 'dev'" v-for="plugin in devPlugins" :key="plugin.id" :plugin="plugin"
-                type="remote" :downloadingPlugins="downloadingPlugins" :downloadSuccess="downloadSuccess"
-                :downloadError="downloadError" :isInstalled="isPluginInstalled" @download="marketStore.downloadPlugin"
-                @clear-download-error="clearPluginError" @copy-error="copyToClipboard" />
+                type="remote" :isInstalled="isPluginInstalled" />
 
             <!-- 无插件提示 -->
             <Empty v-if="shouldShowEmpty" :message="activeTab === 'remote' ? '没有可用的远程插件' : '没有找到插件'" />
