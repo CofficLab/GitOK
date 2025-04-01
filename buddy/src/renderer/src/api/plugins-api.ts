@@ -22,8 +22,8 @@ export const pluginsAPI = {
   },
 
   // 下载插件
-  async downloadPlugin(plugin): Promise<IpcResponse<boolean>> {
-    return await management.downloadPlugin(plugin);
+  async downloadPlugin(pluginId: string): Promise<IpcResponse<boolean>> {
+    return await management.downloadPlugin(pluginId);
   },
 
   // 卸载插件

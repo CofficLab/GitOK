@@ -106,20 +106,8 @@ export const useMarketStore = defineStore('market', {
         // 设置下载中状态
         this.downloadingPlugins.add(plugin.id);
 
-        // 只传递必要的属性，避免克隆问题
-        const pluginData = {
-          id: plugin.id,
-          name: plugin.name,
-          version: plugin.version,
-          description: plugin.description,
-          author: plugin.author,
-          type: plugin.type,
-          path: plugin.path,
-          npmPackage: plugin.npmPackage,
-        };
-
         // 调用主进程下载插件
-        const response = (await pluginsAPI.downloadPlugin(pluginData)) as {
+        const response = (await pluginsAPI.downloadPlugin(plugin.id)) as {
           success: boolean;
           data?: boolean;
           error?: string;

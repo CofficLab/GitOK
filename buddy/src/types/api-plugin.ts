@@ -44,7 +44,7 @@ export interface SuperPluginManagementAPI {
   getUserPlugins: () => Promise<IpcResponse<SuperPlugin[]>>;
   getDevPlugins: () => Promise<IpcResponse<SuperPlugin[]>>;
   getRemotePlugins: () => Promise<IpcResponse<SuperPlugin[]>>;
-  downloadPlugin: (plugin: SuperPlugin) => Promise<IpcResponse<boolean>>;
+  downloadPlugin: (pluginId: string) => Promise<IpcResponse<boolean>>;
   uninstallPlugin: (pluginId: string) => Promise<IpcResponse<boolean>>;
   getUserPluginDirectory: () => Promise<IpcResponse<string>>;
 }

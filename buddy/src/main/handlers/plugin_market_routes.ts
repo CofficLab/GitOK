@@ -58,51 +58,37 @@ export const pluginStoreRoutes: IpcRoute[] = [
   },
   {
     channel: IPC_METHODS.DOWNLOAD_PLUGIN,
-    handler: async (_, plugin: SuperPlugin): Promise<IpcResponse<boolean>> => {
+    handler: async (_, pluginId: string): Promise<IpcResponse<boolean>> => {
       try {
-        if (!plugin.npmPackage) {
-          logger.error('下载失败：缺少NPM包名称', { plugin });
-          return {
-            success: false,
-            error: '缺少NPM包名称',
-          };
-        }
-
         const userPluginDir = userPluginDB.getPluginDirectory();
         if (!fs.existsSync(userPluginDir)) {
           fs.mkdirSync(userPluginDir, { recursive: true });
         }
 
-        const safePluginId = plugin.id.replace(/[@/]/g, '-');
+        const safePluginId = pluginId.replace(/[@/]/g, '-');
         const pluginDir = path.join(userPluginDir, safePluginId);
         if (!fs.existsSync(pluginDir)) {
           fs.mkdirSync(pluginDir, { recursive: true });
         }
 
-        logger.info(`开始下载插件`, {
-          pluginName: plugin.name,
-          pluginId: plugin.id,
-          safePluginId,
-          npmPackage: plugin.npmPackage,
-          pluginDir,
-        });
+        logger.info(`开始下载插件`,  pluginId);
 
         try {
           await packageDownloaderDB.downloadAndExtractPackage(
-            plugin.npmPackage,
+            pluginId,
             pluginDir
           );
           await userPluginDB.getAllPlugins();
-          logger.info(`插件 ${plugin.name} 安装成功`);
+          logger.info(`插件 ${pluginId} 安装成功`);
           return { success: true, data: true };
         } catch (error) {
           const errorMessage =
             error instanceof Error ? error.message : String(error);
           logger.error('下载插件过程中出错', {
             error: errorMessage,
-            pluginName: plugin.name,
-            pluginId: plugin.id,
-            npmPackage: plugin.npmPackage,
+            pluginName: pluginId,
+            pluginId: pluginId,
+            npmPackage: pluginId,
           });
           return { success: false, error: errorMessage };
         }
@@ -111,9 +97,9 @@ export const pluginStoreRoutes: IpcRoute[] = [
           error instanceof Error ? error.message : String(error);
         logger.error('下载插件初始化失败', {
           error: errorMessage,
-          pluginName: plugin.name,
-          pluginId: plugin.id,
-          npmPackage: plugin.npmPackage,
+          pluginName: pluginId,
+          pluginId: pluginId,
+          npmPackage: pluginId,
         });
         return { success: false, error: errorMessage };
       }
