@@ -211,14 +211,14 @@ class WindowManager extends BaseManager {
 
     const x = Math.floor(
       currentDisplay.workArea.x +
-        (currentDisplay.workArea.width - windowWidth) / 2
+      (currentDisplay.workArea.width - windowWidth) / 2
     );
     const y = Math.floor(
       currentDisplay.workArea.y +
-        (currentDisplay.workArea.height - windowHeight) / 2
+      (currentDisplay.workArea.height - windowHeight) / 2
     );
 
-    logger.debug('计算窗口位置', { windowWidth, windowHeight, x, y });
+    // logger.debug('计算窗口位置', { windowWidth, windowHeight, x, y });
 
     // 记录显示时间戳
     // @ts-ignore 忽略类型检查错误

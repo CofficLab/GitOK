@@ -6,6 +6,7 @@ import { BaseManager } from './BaseManager';
 import { PluginEntity } from '../entities/PluginEntity';
 import { logger } from './LogManager';
 import { userPluginDB } from '../db/UserPluginDB';
+import { devPluginDB } from '../db/DevPluginDB';
 
 class PluginManager extends BaseManager {
   private static instance: PluginManager;
@@ -56,6 +57,10 @@ class PluginManager extends BaseManager {
         )
       );
     }
+  }
+
+  async getPlugins(): Promise<PluginEntity[]> {
+    return [...await userPluginDB.getAllPlugins(), ...await devPluginDB.getAllPlugins()];
   }
 
   /**
