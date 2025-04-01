@@ -46,9 +46,9 @@ export class CLI {
     return args
   }
 
-  async start(command: string): Promise<void> {
+  async start(command: string, args: string[]): Promise<void> {
     try {
-      await this.client.connectToServer(command)
+      await this.client.connectToServer(command, args)
       await this.chatLoop()
     } finally {
       await this.client.cleanup()
@@ -84,6 +84,7 @@ export class CLI {
       const selectedTool = tools[toolIndex]
       try {
         const args = await this.promptForToolArguments(selectedTool)
+        console.log(chalk.blue('\n🔄 正在执行工具...，args', args))
         await this.client.executeTool(selectedTool.name, args)
       } catch (error) {
         console.error(chalk.red('\n❌ 工具执行失败:'), error)

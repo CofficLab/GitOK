@@ -1,17 +1,35 @@
 {
-    "mcpServers": {
-        "default": {
-            "command": "uv",
-            "args": [
-                "--directory",
-                "${HOME}/Code/Playground/build_mcp_for_cursor/project",
-                "run",
-                "main.py"
-            ]
-        },
-        "filesystem": {
-            "command": "npx",
-            "args": ["-y", "@modelcontextprotocol/server-filesystem", "${HOME}/Desktop"]
-        }
+  "mcpServers": {
+    "default": {
+      "command": "uv",
+      "args": [
+        "--directory",
+        "${HOME}/Code/Playground/build_mcp_for_cursor/project",
+        "run",
+        "main.py"
+      ]
+    },
+    "filesystem": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "/Users/colorfy/Desktop"
+      ]
+    },
+    "juhe-mcp-server": {
+      "command": "uv",
+      "args": [
+        "run",
+        "juhe-mcp-proxy",
+        "https://mcp.juhe.cn/sse?token=zwXQRpARDZHF3pWQJd9WJ0HkYwfODCt8LPquPEX5CZbwxX"
+      ],
+      "env": {
+        "LOG_LEVEL": "CRITICAL"
+      }
+    },
+    "juhe-mcp-server-sse": {
+      "sse": "https://mcp.juhe.cn/sse?token=zwXQRpARDZHF3pWQJd9WJ0HkYwfODCt8LPquPEX5CZbwxX"
     }
+  }
 }

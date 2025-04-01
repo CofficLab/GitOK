@@ -1,7 +1,31 @@
 import { Client } from "@modelcontextprotocol/sdk/client/index.js"
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js"
 import chalk from "chalk"
-import { formatError, delay } from "./utils.js"
+
+// 延迟函数
+export const delay = (ms: number) => {
+    const startTime = Date.now();
+    const interval = setInterval(() => {
+        const elapsed = Date.now() - startTime;
+        const remaining = ms - elapsed;
+        const progress = Math.min(100, (elapsed / ms) * 100).toFixed(1);
+        console.log(chalk.gray(`⏳ 延迟进度: ${progress}% (剩余: ${remaining}ms)`));
+    }, 1000);
+
+    return new Promise(resolve => {
+        setTimeout(() => {
+            clearInterval(interval);
+            resolve(null);
+        }, ms);
+    });
+};
+
+// 格式化错误信息的辅助函数
+export function formatError(error: any): string {
+    const errorMessage = error.message || String(error);
+    const errorStack = error.stack ? `\n调用栈：${error.stack}` : '';
+    return chalk.red(errorMessage) + chalk.gray(errorStack);
+}
 
 export interface Tool {
     name: string
@@ -22,80 +46,59 @@ export class MCPClient {
         this.mcp = new Client({ name: "mcp-client-cli", version: "1.0.0" })
     }
 
-    async connectToServer(command: string, retries = 3): Promise<void> {
-        for (let attempt = 1; attempt <= retries; attempt++) {
-            try {
-                console.log(
-                    chalk.cyan(`\n🚀 正在启动服务器 (第 ${attempt}/${retries} 次尝试):`),
-                    chalk.yellow(command)
-                )
+    async connectToServer(command: string, args: string[]): Promise<void> {
+        chalk.cyan("\n🚀 正在启动，command 是：", command, "args 是：", args)
 
-                const [cmd, ...args] = command.split(" ").filter(Boolean)
-                if (!cmd || args.length === 0) {
-                    throw new Error("命令格式无效。请同时提供命令和脚本路径")
+        try {
+            console.log(
+                chalk.cyan(`\n[Client] 🚀 正在启动服务器`),
+                chalk.yellow(command, args.join(" "))
+            )
+
+            console.log(chalk.gray("\n命令详情:"))
+            console.log(chalk.gray("  命令:"), chalk.blue(command))
+            console.log(chalk.gray("  参数:"), chalk.blue(args.join(" ")))
+
+            if (this.transport) {
+                try {
+                    await this.mcp.close()
+                } catch (error) {
+                    console.log(chalk.yellow("\n⚠️ 清理旧连接时出错:"), error)
                 }
-
-                console.log(chalk.gray("\n命令详情:"))
-                console.log(chalk.gray("  命令:"), chalk.blue(cmd))
-                console.log(chalk.gray("  参数:"), chalk.blue(args.join(" ")))
-
-                if (this.transport) {
-                    try {
-                        await this.mcp.close()
-                    } catch (error) {
-                        console.log(chalk.yellow("\n⚠️ 清理旧连接时出错:"), error)
-                    }
-                    this.transport = null
-                }
-
-                this.transport = new StdioClientTransport({
-                    command: cmd,
-                    args: args
-                })
-
-                console.log(chalk.gray("\n⏳ 等待服务器初始化..."))
-                await delay(1000)
-
-                console.log(chalk.gray("🔌 正在连接服务器..."))
-                this.mcp.connect(this.transport)
-
-                console.log(chalk.gray("⏳ 等待连接稳定..."))
-                await delay(1000)
-
-                console.log(chalk.gray("📋 获取可用工具列表..."))
-                const toolsResult = await this.mcp.listTools()
-                this.tools = toolsResult.tools as Tool[]
-
-                console.log(chalk.green("\n✅ 已连接到服务器，可用工具如下:"))
-                this.tools.forEach((tool, index) => {
-                    console.log(chalk.blue(`  ${index + 1}. ${tool.name}`))
-                    console.log(chalk.gray(`     ${tool.description}`))
-                })
-                return
-            } catch (e) {
-                const errorMsg = formatError(e)
-                console.log(
-                    chalk.yellow(`\n⚠️ 第 ${attempt}/${retries} 次尝试失败:`),
-                    "\n" + errorMsg
-                )
-
-                if (attempt === retries) {
-                    console.log(chalk.red("\n❌ 多次尝试后仍无法连接到服务器"))
-                    throw e
-                }
-
-                if (this.transport) {
-                    try {
-                        await this.mcp.close()
-                    } catch (closeError) {
-                        console.log(chalk.yellow("\n⚠️ 清理连接时出错:"), closeError)
-                    }
-                    this.transport = null
-                }
-
-                console.log(chalk.blue(`\n🔄 等待 2 秒后重试...`))
-                await delay(2000)
+                this.transport = null
             }
+
+            this.transport = new StdioClientTransport({
+                command: command,
+                args: args
+            })
+
+            console.log(chalk.gray("\n⏳ 等待服务器初始化..."))
+            await delay(3000)
+
+            console.log(chalk.gray("🔌 正在连接服务器..."))
+            this.mcp.connect(this.transport)
+
+            console.log(chalk.gray("⏳ 等待连接稳定..."))
+            await delay(1000)
+
+            console.log(chalk.gray("📋 获取可用工具列表..."))
+            const toolsResult = await this.mcp.listTools()
+            this.tools = toolsResult.tools as Tool[]
+
+            console.log(chalk.green("\n✅ 已连接到服务器，可用工具如下:"))
+            this.tools.forEach((tool, index) => {
+                console.log(chalk.blue(`  ${index + 1}. ${tool.name}`))
+                console.log(chalk.gray(`     ${tool.description}`))
+            })
+            return
+        } catch (e) {
+            const errorMsg = formatError(e)
+            console.log(
+                chalk.yellow(`\n⚠️ 尝试失败:`),
+                "\n" + errorMsg
+            )
+
         }
     }
 

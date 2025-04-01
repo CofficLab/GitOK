@@ -1,7 +1,7 @@
 import readline from "node:readline/promises"
 import dotenv from "dotenv"
 import chalk from "chalk"
-import { CLI, ConfigManager, formatError } from "./index.js"
+import { CLI, ConfigManager } from "./index.js"
 
 // 强制启用颜色输出
 process.env.FORCE_COLOR = "1"
@@ -19,21 +19,16 @@ async function main(): Promise<void> {
     const configManager = new ConfigManager(rl)
 
     try {
-        let config
-        if (process.argv.length < 3) {
-            config = await configManager.promptConfig()
-        } else {
-            config = configManager.parseCommandLineArgs(process.argv)
-        }
+        let config = await configManager.promptConfig()
 
-        console.log(chalk.cyan("\n🚀 正在启动 MCP 服务..."))
-        console.log(chalk.blue(`📂 脚本路径：`) + chalk.yellow(config.scriptPath))
-        console.log(chalk.blue(`🐶 启动命令：`) + chalk.yellow(config.command) + "\n")
+        console.log(chalk.cyan("\n[Test] 🚀 选择的配置的 command 是", config.command))
+        console.log(chalk.cyan("[Test] 📂 选择的配置的 args 是", config.args))
+        console.log(chalk.cyan("[Test] 📂 选择的配置的 env 是", config.env))
+        console.log(chalk.cyan("[Test] 🚀 正在启动 MCP 服务..."))
 
-        await cli.start(`${config.command} ${config.scriptPath}`)
+        await cli.start(config.command, config.args)
     } catch (error) {
-        const errorMsg = formatError(error)
-        console.error(chalk.red("\n❌ MCP 服务启动失败：\n") + errorMsg)
+        console.error(chalk.red("\n❌ MCP 服务启动失败：\n") + error)
         process.exit(1)
     } finally {
         rl.close()
