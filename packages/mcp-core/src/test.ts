@@ -26,7 +26,7 @@ async function main(): Promise<void> {
         console.log(chalk.cyan("[Test] 📂 选择的配置的 env 是", config.env))
         console.log(chalk.cyan("[Test] 🚀 正在启动 MCP 服务..."))
 
-        await cli.start(config.command, config.args)
+        await cli.start(config)
     } catch (error) {
         console.error(chalk.red("\n❌ MCP 服务启动失败：\n") + error)
         process.exit(1)

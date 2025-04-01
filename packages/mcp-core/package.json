@@ -1,35 +1,36 @@
 {
-    "name": "mcp-core",
-    "version": "0.1.0",
-    "description": "Core functionality for MCP (Message Control Protocol)",
-    "type": "module",
-    "main": "dist/index.js",
-    "types": "dist/index.d.ts",
-    "scripts": {
-        "build": "tsc && cp src/server-examples.json dist/",
-        "clean": "rimraf dist",
-        "dev": "tsc -w",
-        "lint": "eslint src --ext .ts",
-        "test": "pnpm run build && node dist/test.js",
-        "prepublishOnly": "pnpm run build"
-    },
-    "files": [
-        "dist"
-    ],
-    "dependencies": {
-        "@modelcontextprotocol/sdk": "^1.7.0",
-        "chalk": "^5.4.1",
-        "dotenv": "^16.4.7",
-        "zod": "^3.24.2"
-    },
-    "devDependencies": {
-        "@types/node": "^22.13.10",
-        "eslint": "^9.22.0",
-        "rimraf": "^6.0.1",
-        "ts-node": "^10.9.2",
-        "typescript": "^5.8.2"
-    },
-    "publishConfig": {
-        "access": "public"
-    }
+  "name": "mcp-core",
+  "version": "0.1.0",
+  "description": "Core functionality for MCP (Message Control Protocol)",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc && cp src/server-examples.json dist/",
+    "clean": "rimraf dist",
+    "dev": "tsc -w",
+    "t": "ts-node run.ts",
+    "lint": "eslint src --ext .ts",
+    "test": "pnpm run build && node dist/test.js",
+    "prepublishOnly": "pnpm run build"
+  },
+  "files": [
+    "dist"
+  ],
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.7.0",
+    "chalk": "^5.4.1",
+    "dotenv": "^16.4.7",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.10",
+    "eslint": "^9.22.0",
+    "rimraf": "^6.0.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.2"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
 }

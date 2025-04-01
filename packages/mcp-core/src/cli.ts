@@ -1,6 +1,7 @@
 import readline from 'node:readline/promises'
 import chalk from 'chalk'
 import { MCPClient, Tool } from './client.js'
+import { ServerConfig } from './config.js'
 
 export class CLI {
   private client: MCPClient
@@ -46,9 +47,9 @@ export class CLI {
     return args
   }
 
-  async start(command: string, args: string[]): Promise<void> {
+  async start(config: ServerConfig): Promise<void> {
     try {
-      await this.client.connectToServer(command, args)
+      await this.client.connectToServer(config)
       await this.chatLoop()
     } finally {
       await this.client.cleanup()

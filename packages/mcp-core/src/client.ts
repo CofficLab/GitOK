@@ -1,6 +1,9 @@
 import { Client } from "@modelcontextprotocol/sdk/client/index.js"
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js"
+import type { ServerConfig } from "./config.js"
 import chalk from "chalk"
+import { SSEClientTransport } from "@modelcontextprotocol/sdk/client/sse.js";
+import { Transport } from "@modelcontextprotocol/sdk/shared/transport.js";
 
 // 延迟函数
 export const delay = (ms: number) => {
@@ -39,39 +42,54 @@ export interface Tool {
 
 export class MCPClient {
     private mcp: Client
-    private transport: StdioClientTransport | null = null
+    private transport: Transport | null = null
     private tools: Tool[] = []
 
     constructor() {
         this.mcp = new Client({ name: "mcp-client-cli", version: "1.0.0" })
     }
 
-    async connectToServer(command: string, args: string[]): Promise<void> {
-        chalk.cyan("\n🚀 正在启动，command 是：", command, "args 是：", args)
+    async connectToServer(config: ServerConfig): Promise<void> {
+        chalk.cyan("\n🚀 正在启动，command 是：", config.command, "args 是：", config.args)
 
         try {
-            console.log(
-                chalk.cyan(`\n[Client] 🚀 正在启动服务器`),
-                chalk.yellow(command, args.join(" "))
-            )
+            console.log(chalk.cyan(`\n[Client] 🚀 正在启动服务器`))
 
-            console.log(chalk.gray("\n命令详情:"))
-            console.log(chalk.gray("  命令:"), chalk.blue(command))
-            console.log(chalk.gray("  参数:"), chalk.blue(args.join(" ")))
+            if (config.sse) {
+                console.log(chalk.gray("\nSSE 模式"))
+                console.log(chalk.gray("  SSE:"), chalk.blue(config.sse))
 
-            if (this.transport) {
-                try {
-                    await this.mcp.close()
-                } catch (error) {
-                    console.log(chalk.yellow("\n⚠️ 清理旧连接时出错:"), error)
+                if (this.transport) {
+                    try {
+                        await this.mcp.close()
+                    } catch (error) {
+                        console.log(chalk.yellow("\n⚠️ 清理旧连接时出错:"), error)
+                    }
+                    this.transport = null
                 }
-                this.transport = null
-            }
 
-            this.transport = new StdioClientTransport({
-                command: command,
-                args: args
-            })
+                this.transport = new SSEClientTransport(new URL(config.sse))
+            } else {
+                console.log(chalk.gray("\nSTDIO 模式"))
+
+                console.log(chalk.gray("\n命令详情:"))
+                console.log(chalk.gray("  命令:"), chalk.blue(config.command))
+                console.log(chalk.gray("  参数:"), chalk.blue(config.args.join(" ")))
+
+                if (this.transport) {
+                    try {
+                        await this.mcp.close()
+                    } catch (error) {
+                        console.log(chalk.yellow("\n⚠️ 清理旧连接时出错:"), error)
+                    }
+                    this.transport = null
+                }
+
+                this.transport = new StdioClientTransport({
+                    command: config.command,
+                    args: config.args
+                })
+            }
 
             console.log(chalk.gray("\n⏳ 等待服务器初始化..."))
             await delay(3000)
