@@ -4,7 +4,7 @@
 import { BrowserWindow } from 'electron';
 import { appStateManager } from '../managers/StateManager';
 import { logger } from '../managers/LogManager';
-import { IpcRoute } from '../services/RouterService';
+import { IpcRoute } from '../provider/RouterService';
 import { IPC_METHODS } from '@/types/ipc-methods';
 
 /**

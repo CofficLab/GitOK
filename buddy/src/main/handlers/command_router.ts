@@ -3,7 +3,7 @@
  */
 import { commandKeyManager } from '../managers/CommandKeyManager';
 import { logger } from '../managers/LogManager';
-import { IpcRoute } from '../services/RouterService';
+import { IpcRoute } from '../provider/RouterService';
 
 // 定义IPC方法名称常量
 const COMMAND_KEY_METHODS = {

@@ -36,7 +36,7 @@ export const useMarketStore = defineStore('market', {
       try {
         const response = await pluginsAPI.getDevPlugins();
 
-        logger.info('🍋 get dev plugins response', response);
+        logger.info('get dev plugins response', response);
         if (response.success && response.data) {
           this.devPlugins = response.data || [];
         } else {
@@ -76,11 +76,11 @@ export const useMarketStore = defineStore('market', {
 
     // 更新用户插件目录
     async updateUserPluginDirectory() {
-      logger.info('🍋 updateUserPluginDirectory');
+      logger.info('updateUserPluginDirectory');
       try {
         const response = (await pluginsAPI.getUserPluginDirectory())
 
-        logger.info('🍋 getUserPluginDirectory response', response);
+        logger.info('getUserPluginDirectory response', response);
 
         if (response.success && response.data) {
           this.userPluginDirectory = response.data;
@@ -185,7 +185,7 @@ export const useMarketStore = defineStore('market', {
 
     // 加载远程插件列表
     async loadRemotePlugins() {
-      logger.info('🐶 loadRemotePlugins');
+      logger.info('loadRemotePlugins');
       if (this.loadingRemotePlugins) return;
 
       this.loadingRemotePlugins = true;
@@ -193,7 +193,7 @@ export const useMarketStore = defineStore('market', {
         // 调用主进程方法获取远程插件列表
         const response = await pluginsAPI.getRemotePlugins();
 
-        console.log('🍋 get remote plugins response', response);
+        logger.info('get remote plugins response', response);
 
         if (response.success) {
           this.remotePlugins = response.data || [];

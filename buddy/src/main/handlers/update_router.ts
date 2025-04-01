@@ -4,7 +4,7 @@
  */
 import { BrowserWindow } from 'electron';
 import { updateManager } from '../managers/UpdateManager';
-import { IpcRoute } from '../services/RouterService';
+import { IpcRoute } from '../provider/RouterService';
 
 // 检查更新处理函数
 const checkForUpdates = async (): Promise<void> => {

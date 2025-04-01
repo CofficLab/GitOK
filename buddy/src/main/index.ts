@@ -3,7 +3,7 @@
  * 负责应用生命周期管理和各种管理器的初始化与协调
  */
 import { appManager } from './managers/AppManager';
-import { routerService } from './services/RouterService';
+import { routerService } from './provider/RouterService';
 import { routes as pluginRoutes } from './handlers/plugin_router';
 import {
   routes as overlaidAppRoutes,

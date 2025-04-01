@@ -8,6 +8,7 @@ import type { PluginPackage } from '@/types/plugin-package';
 import type { SuperPlugin } from '@/types/super_plugin';
 import type { PluginValidation } from '@/types/plugin-validation';
 import { readPackageJson, hasPackageJson } from '../utils/PackageUtils';
+import { NpmPackage } from '../service/NpmRegistryService';
 
 /**
  * 插件类型
@@ -69,6 +70,65 @@ export class PluginEntity implements SuperPlugin {
     plugin.setValidation(validation);
 
     return plugin;
+  }
+
+  /**
+   * 从NPM包信息创建插件实体
+   * @param npmPackage NPM包信息
+   * @returns 插件实体
+   */
+  public static fromNpmPackage(npmPackage: NpmPackage): PluginEntity {
+    // 创建一个基本的PluginPackage对象
+    const pkg: PluginPackage = {
+      name: npmPackage.name,
+      version: npmPackage.version,
+      description: npmPackage.description || '',
+      author: npmPackage.publisher?.username || 
+              npmPackage.maintainers?.[0]?.name || 
+              'unknown',
+      main: 'index.js', // 默认主文件
+      license: 'MIT', // 默认许可证
+      dependencies: {}, // 空依赖
+      devDependencies: {}, // 空开发依赖
+      scripts: {}, // 空脚本
+      keywords: npmPackage.keywords || [], // 关键词
+      repository: npmPackage.links?.repository || '', // 仓库链接，确保是字符串类型
+    };
+    
+    // 创建插件实体
+    const plugin = new PluginEntity(pkg, '', 'user');
+    
+    // 使用NPM包中的名称作为显示名称（如果有的话）
+    if (npmPackage.name) {
+      // 格式化名称，移除作用域前缀和常见插件前缀
+      plugin.name = PluginEntity.formatPluginName(npmPackage.name);
+    }
+    
+    return plugin;
+  }
+  
+  /**
+   * 格式化插件名称为更友好的显示名称
+   * @param packageName 包名
+   */
+  private static formatPluginName(packageName: string): string {
+    // 移除作用域前缀 (如 @coffic/)
+    let name = packageName.replace(/@[^/]+\//, '');
+
+    // 移除常见插件前缀
+    const prefixes = ['plugin-', 'buddy-', 'gitok-'];
+    for (const prefix of prefixes) {
+      if (name.startsWith(prefix)) {
+        name = name.substring(prefix.length);
+        break;
+      }
+    }
+
+    // 转换为标题格式 (每个单词首字母大写)
+    return name
+      .split('-')
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
   }
 
   /**

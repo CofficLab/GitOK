@@ -82,7 +82,7 @@ export class EmojiUtil {
         };
 
         // 遍历所有emoji类别进行匹配度评分
-        for (const [category, emojis] of Object.entries(emojiMappings)) {
+        for (const [category] of Object.entries(emojiMappings)) {
             let score = 0;
 
             // 完全匹配

@@ -2,7 +2,7 @@
  * UI 日志相关 IPC 处理函数
  */
 import { logger } from '../managers/LogManager';
-import { IpcRoute } from '../services/RouterService';
+import { IpcRoute } from '../provider/RouterService';
 
 // 定义IPC方法名称常量
 const UI_LOG_METHODS = {
@@ -20,7 +20,7 @@ export const routes: IpcRoute[] = [
   {
     channel: UI_LOG_METHODS.INFO,
     handler: (_, message: string) => {
-      logger.info(`${message}`);
+      logger.info(`🖥️  ${message}`);
     },
   },
 
@@ -28,7 +28,7 @@ export const routes: IpcRoute[] = [
   {
     channel: UI_LOG_METHODS.ERROR,
     handler: (_, message: string) => {
-      logger.error(`${message}`);
+      logger.error(`🖥️  ${message}`);
     },
   },
 
@@ -36,7 +36,7 @@ export const routes: IpcRoute[] = [
   {
     channel: UI_LOG_METHODS.WARN,
     handler: (_, message: string) => {
-      logger.warn(`${message}`);
+      logger.warn(`🖥️  ${message}`);
     },
   },
 
@@ -44,7 +44,7 @@ export const routes: IpcRoute[] = [
   {
     channel: UI_LOG_METHODS.DEBUG,
     handler: (_, message: string) => {
-      logger.debug(`${message}`);
+      logger.debug(`🖥️  ${message}`);
     },
   },
 ];

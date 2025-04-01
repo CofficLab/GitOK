@@ -10,8 +10,8 @@ import 'source-map-support/register';
 // 配置日志级别对应的颜色和表情
 const logStyles = {
   error: { emoji: '❌', color: '\x1b[31m' }, // 红色
-  warn: { emoji: '⚠️', color: '\x1b[33m' }, // 黄色
-  info: { emoji: 'ℹ️ ', color: '\x1b[36m' }, // 青色
+  warn: { emoji: '🔮', color: '\x1b[33m' }, // 黄色
+  info: { emoji: '🍋', color: '\x1b[36m' }, // 青色
   debug: { emoji: '🔍', color: '\x1b[90m' }, // 灰色
 };
 

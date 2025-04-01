@@ -43,10 +43,6 @@ const props = withDefaults(defineProps<Props>(), {
   copyable: true
 })
 
-const emit = defineEmits<{
-  (e: 'close'): void
-}>()
-
 // 复制到剪贴板
 const copyToClipboard = () => {
   if (props.message) {

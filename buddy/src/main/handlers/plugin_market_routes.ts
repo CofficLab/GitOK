@@ -1,5 +1,5 @@
 import { IPC_METHODS } from '@/types/ipc-methods';
-import { IpcRoute } from '../services/RouterService';
+import { IpcRoute } from '../provider/RouterService';
 import { IpcResponse } from '@/types/ipc-response';
 import { SuperPlugin } from '@/types/super_plugin';
 import { logger } from '../managers/LogManager';
