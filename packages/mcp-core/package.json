@@ -9,7 +9,6 @@
     "build": "tsc && cp src/server-examples.json dist/",
     "clean": "rimraf dist",
     "dev": "tsc -w",
-    "t": "ts-node run.ts",
     "lint": "eslint src --ext .ts",
     "test": "pnpm run build && node dist/test.js",
     "prepublishOnly": "pnpm run build"
