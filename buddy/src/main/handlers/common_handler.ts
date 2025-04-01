@@ -11,7 +11,7 @@ export const baseRoutes: IpcRoute[] = [
     {
         channel: IPC_METHODS.OPEN_FOLDER,
         handler: (_, directory: string): IpcResponse<string> => {
-            logger.debug(`打开文件夹: ${directory}`);
+            logger.debug(`打开: ${directory}`);
             try {
                 shell.openPath(directory);
                 return { success: true, data: "打开成功" };

@@ -8,7 +8,7 @@
 */
 <script setup lang="ts">
 import { SuperAction } from '@/types/super_action';
-import { ref, watch, onUnmounted, reactive, onMounted } from 'vue'
+import { ref, watch, onUnmounted, reactive, onMounted, nextTick, computed } from 'vue'
 import { useActionStore } from '@renderer/stores/actionStore'
 import { logger } from '@renderer/utils/logger'
 
@@ -35,9 +35,9 @@ const emit = defineEmits<{
 }>()
 
 // 当前选中的动作
-const selectedAction = ref<SuperAction | null>(null)
+const selectedAction = computed(() => actionStore.getSelectedAction())
 // 是否正在加载动作视图
-const isLoading = ref(false)
+const isLoading = computed(() => actionStore.isLoading)
 // 动作执行的结果
 const actionResult = ref<any>(null)
 // 是否发生错误
@@ -64,7 +64,6 @@ const loadAndExecuteAction = async () => {
     const actionId = actionStore.getSelectedActionId()
     if (!actionId) return
 
-    isLoading.value = true
     hasError.value = false
     errorMessage.value = ''
     actionResult.value = null
@@ -80,10 +79,6 @@ const loadAndExecuteAction = async () => {
     }
 
     try {
-        selectedAction.value = action
-        logger.info(`PluginView: 加载动作 ${action.title}`)
-
-        // 执行动作
         const result = await actionStore.execute(action.globalId)
         actionResult.value = result
         logger.info(`PluginView: 动作执行结果: ${result}`)
@@ -110,8 +105,6 @@ const loadAndExecuteAction = async () => {
         logger.error(`PluginView: 执行动作失败: ${errorMsg}`)
         hasError.value = true
         errorMessage.value = errorMsg
-    } finally {
-        isLoading.value = false
     }
 }
 
@@ -134,7 +127,6 @@ const createEmbeddedView = async (actionId: string, action: SuperAction) => {
         // 清除可能存在的错误状态，确保条件渲染逻辑正确
         hasError.value = false
         errorMessage.value = ''
-        isLoading.value = false
 
         // 首先将视图状态设置为已附加，这样模板会渲染出容器
         embeddedViewState.isAttached = true
@@ -331,7 +323,6 @@ const closePluginWindow = async () => {
 
 // 返回动作列表
 const goBack = async () => {
-    // 关闭所有视图
     await closePluginWindow()
     await destroyEmbeddedView()
     emit('back')
@@ -502,9 +493,6 @@ onUnmounted(() => {
     // 清空数组
     cleanupFunctions.length = 0;
 });
-
-// 导入nextTick用于等待DOM更新
-import { nextTick } from 'vue'
 
 // 在动作ID变化时重新加载
 watch(() => actionStore.getSelectedActionId(), (newId) => {

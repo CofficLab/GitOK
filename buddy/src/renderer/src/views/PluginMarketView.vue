@@ -18,14 +18,17 @@ import { globalToast } from '../composables/useToast'
 import { useMarketStore } from '../stores/marketStore'
 import { useClipboard } from '../composables/useClipboard'
 import { useDirectory } from '../composables/useDirectory'
+import { useAlert } from '../composables/useAlert'
+import { logger } from '@renderer/utils/logger'
 
 const { copyToClipboard } = useClipboard()
 const { openDirectory } = useDirectory()
+const { error } = useAlert()
 
+const marketStore = useMarketStore()
 const userPlugins = computed(() => marketStore.userPlugins)
 const devPlugins = computed(() => marketStore.devPlugins)
 const remotePlugins = computed(() => marketStore.remotePlugins)
-const marketStore = useMarketStore()
 const directory = computed(() => marketStore.userPluginDirectory)
 
 // 下载状态
@@ -45,26 +48,34 @@ const loadingRemotePlugins = ref<boolean>(false)
 // 当前选中的标签
 const activeTab = ref<'user' | 'remote' | 'dev'>('user')
 
+const shouldShowEmpty = computed(() => {
+    return (activeTab.value === 'remote' && remotePlugins.value.length === 0) ||
+        (activeTab.value === 'user' && userPlugins.value.length === 0) ||
+        (activeTab.value === 'dev' && devPlugins.value.length === 0)
+})
+
 // 刷新按钮点击事件
 const handleRefresh = async () => {
-    console.log('handleRefresh')
-    if (activeTab.value === 'remote') {
-        console.log('handleRefresh remote')
-        await marketStore.loadRemotePlugins()
-    } else {
-        await marketStore.loadUserPlugins()
+    logger.info('handleRefresh')
+
+    switch (activeTab.value) {
+        case "remote":
+            await marketStore.loadRemotePlugins()
+            break;
+        case "user":
+            await marketStore.loadUserPlugins()
+            break;
+        case "dev":
+            await marketStore.loadDevPlugins()
+            break;
+
+        default:
+            error('未知标签')
+            return;
     }
 
     globalToast.success('刷新成功', { duration: 2000, position: 'bottom-center' })
 }
-
-// 根据标签过滤插件
-const filteredPlugins = computed(() => {
-    if (activeTab.value === 'remote') {
-        return remotePlugins.value
-    }
-    return userPlugins.value
-})
 
 // 检查插件是否已安装
 const isPluginInstalled = computed(() => {
@@ -89,8 +100,7 @@ const clearUninstallError = (pluginId: string) => {
         <div class="mb-4">
             <ToolBar variant="compact" :bordered="false">
                 <template #left>
-                    <!-- 使用 DaisyUI tabs 组件 -->
-                    <div role="tablist" class="tabs tabs-box bg-base-200">
+                    <div role="tablist" class="tabs tabs-box bg-primary/50 shadow-inner">
                         <a role="tab" class="tab" :class="{ 'tab-active': activeTab === 'user' }"
                             @click="activeTab = 'user'">
                             用户插件
@@ -118,7 +128,7 @@ const clearUninstallError = (pluginId: string) => {
         <!-- 插件列表 -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 overflow-y-auto">
             <!-- 本地插件卡片 -->
-            <PluginCard v-if="activeTab !== 'remote'" v-for="plugin in userPlugins" :key="plugin.id" :plugin="plugin"
+            <PluginCard v-if="activeTab === 'user'" v-for="plugin in userPlugins" :key="plugin.id" :plugin="plugin"
                 type="local" :uninstallingPlugins="uninstallingPlugins" :uninstallSuccess="uninstallSuccess"
                 :uninstallError="uninstallError" @uninstall="marketStore.uninstallPlugin"
                 @clear-uninstall-error="clearUninstallError" @copy-error="copyToClipboard" />
@@ -130,14 +140,13 @@ const clearUninstallError = (pluginId: string) => {
                 @clear-download-error="clearPluginError" @copy-error="copyToClipboard" />
 
             <!-- 开发插件卡片 -->
-            <!-- 远程插件卡片 -->
             <PluginCard v-if="activeTab === 'dev'" v-for="plugin in devPlugins" :key="plugin.id" :plugin="plugin"
                 type="remote" :downloadingPlugins="downloadingPlugins" :downloadSuccess="downloadSuccess"
                 :downloadError="downloadError" :isInstalled="isPluginInstalled" @download="marketStore.downloadPlugin"
                 @clear-download-error="clearPluginError" @copy-error="copyToClipboard" />
 
             <!-- 无插件提示 -->
-            <Empty v-if="filteredPlugins.length === 0" :message="activeTab === 'remote' ? '没有可用的远程插件' : '没有找到插件'" />
+            <Empty v-if="shouldShowEmpty" :message="activeTab === 'remote' ? '没有可用的远程插件' : '没有找到插件'" />
         </div>
     </div>
 </template>

@@ -87,9 +87,7 @@ export class RemotePluginDB {
         this.cachedRemotePlugins = result.plugins;
         this.lastCacheRefreshTime = Date.now();
         this.isRefreshingCache = false;
-        logger.info(`远程插件列表缓存已更新`, {
-          count: this.cachedRemotePlugins.length,
-        });
+        logger.info(`远程插件列表缓存已更新，数量`, this.cachedRemotePlugins.length);
         return this.cachedRemotePlugins;
       }
 

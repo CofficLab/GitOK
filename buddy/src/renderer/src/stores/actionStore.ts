@@ -137,6 +137,14 @@ export const useActionStore = defineStore('action', {
       return this.list;
     },
 
+    getSelectedAction(): SuperAction | null {
+      if (!this.selected) {
+        return null;
+      }
+      const action = this.find(this.selected);
+      return action || null;
+    },
+
     hasSelectedAction(): boolean {
       return this.selected !== null;
     },
@@ -156,7 +164,7 @@ export const useActionStore = defineStore('action', {
      * 清理窗口激活状态监听
      */
     cleanupWindowActivationListener() {
-      ipc.removeListener(WindowEvents.ACTIVATED, () => {});
+      ipc.removeListener(WindowEvents.ACTIVATED, () => { });
     },
 
     /**

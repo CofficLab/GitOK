@@ -70,7 +70,7 @@ const confirmUninstall = async () => {
         message: '确定要卸载此插件吗？',
         confirmText: '确认卸载'
     })
-    
+
     if (confirmed) {
         handleUninstall()
     }
@@ -97,15 +97,15 @@ const handleUninstall = async () => {
 <template>
     <transition name="card-fade" appear>
         <div class="p-4 rounded-lg shadow-md hover:shadow-lg transition-all duration-300" :class="cardClass">
-            <!-- 插件基本信息 -->
-            <h3 class="text-lg font-semibold mb-2">{{ plugin.name }}</h3>
-            <p class="text-base-content/70 text-sm mb-4">{{ plugin.description }}</p>
-
             <!-- 插件详细信息 -->
-            <div class="flex justify-between items-center text-sm">
+            <div class="flex justify-between items-center text-sm border-b border-secondary/20 mb-2">
+                <h3 class="text-lg font-semibold mb-2">{{ plugin.name }}</h3>
                 <span class="text-base-content/60">v{{ plugin.version }}</span>
                 <span class="text-base-content/60">{{ plugin.author }}</span>
             </div>
+
+            <!-- 插件基本信息 -->
+            <p class="text-base-content/70 text-sm mb-4">{{ plugin.description }}</p>
 
             <!-- 操作区域 -->
             <div class="mt-4 flex flex-wrap gap-2 items-center">
@@ -142,8 +142,7 @@ const handleUninstall = async () => {
 
                 <!-- 远程插件操作 -->
                 <template v-else>
-                    <Button @click="handleDownload" variant="primary"
-                        :loading="downloadingPlugins?.has(plugin.id)"
+                    <Button @click="handleDownload" variant="primary" :loading="downloadingPlugins?.has(plugin.id)"
                         :disabled="downloadingPlugins?.has(plugin.id) || isInstalled?.(plugin.id)">
                         {{ isInstalled?.(plugin.id) ? '已安装' : '下载' }}
                     </Button>

@@ -11,7 +11,9 @@ export class DevPluginDB extends DiskPluginDB {
   private static instance: DevPluginDB;
 
   private constructor() {
-    super(join(process.cwd(), 'packages'));
+    const dir = join(process.cwd(), 'packages');
+    logger.info(`初始化 DevPluginDB: ${dir}`);
+    super(dir);
   }
 
   /**

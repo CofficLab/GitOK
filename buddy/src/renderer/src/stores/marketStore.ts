@@ -6,9 +6,9 @@ import { pluginsAPI } from '../api/plugins-api';
 interface MarketState {
   userPluginDirectory: string;
   error: string;
-  userPlugins: any[];
-  devPlugins: any[];
-  remotePlugins: any[];
+  userPlugins: SuperPlugin[];
+  devPlugins: SuperPlugin[];
+  remotePlugins: SuperPlugin[];
   loadingPlugins: boolean;
   loadingRemotePlugins: boolean;
   downloadingPlugins: Set<string>;
@@ -35,11 +35,14 @@ export const useMarketStore = defineStore('market', {
 
       try {
         const response = await pluginsAPI.getDevPlugins();
+
+        logger.info('🍋 get dev plugins response', response);
         if (response.success && response.data) {
           this.devPlugins = response.data || [];
         } else {
+          this.devPlugins = [];
           this.error = `加载插件列表失败: ${response.error || '未知错误'}`;
-          console.error('加载插件列表失败', response);
+          logger.error('加载插件列表失败', response);
         }
       } catch (err) {
         const errorMsg = err instanceof Error ? err.message : String(err);
