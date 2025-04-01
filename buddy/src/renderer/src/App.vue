@@ -27,11 +27,13 @@ import StatusBar from './layouts/StatusBar.vue'
 import Confirm from './cosy/Confirm.vue'
 import Toast from './cosy/Toast.vue'
 import Alert from './cosy/Alert.vue'
+import Progress from './cosy/Progress.vue'
 import { useActionStore } from './stores/actionStore'
 import { useMarketStore } from './stores/marketStore'
 import { globalConfirm } from './composables/useConfirm'
 import { globalToast } from './composables/useToast'
 import { globalAlert } from './composables/useAlert'
+import { globalProgress } from './composables/useProgress'
 
 const actionStore = useActionStore()
 const marketStore = useMarketStore()
@@ -62,6 +64,12 @@ onUnmounted(() => {
         <!-- 搜索区域 - 这里是可拖动区域 -->
         <div class="h-10 mt-4 px-4">
             <SearchBar />
+        </div>
+
+        <!-- 全局进度条 -->
+        <div class="absolute top-14 left-1/2 transform -translate-x-1/2">
+            <Progress v-if="globalProgress.state.value.show" :value="globalProgress.state.value.value"
+                :max="globalProgress.state.value.max" :color="globalProgress.state.value.color" />
         </div>
 
         <!-- 全局警告提示 -->

@@ -14,7 +14,7 @@ import { remotePluginDB } from './RemotePluginDB';
 export class PackageDownloaderDB {
   private static instance: PackageDownloaderDB;
 
-  private constructor() {}
+  private constructor() { }
 
   public static getInstance(): PackageDownloaderDB {
     if (!PackageDownloaderDB.instance) {
@@ -89,7 +89,7 @@ export class PackageDownloaderDB {
           });
         })
         .on('error', (err) => {
-          fs.unlink(destPath, () => {}); // 清理部分下载的文件
+          fs.unlink(destPath, () => { }); // 清理部分下载的文件
           const errorMsg = `下载请求失败: ${err.message}`;
           logger.error(errorMsg, {
             url,
@@ -100,7 +100,7 @@ export class PackageDownloaderDB {
         });
 
       file.on('error', (err) => {
-        fs.unlink(destPath, () => {}); // 清理部分下载的文件
+        fs.unlink(destPath, () => { }); // 清理部分下载的文件
         const errorMsg = `文件写入失败: ${err.message}`;
         logger.error(errorMsg, {
           url,
@@ -228,7 +228,7 @@ export class PackageDownloaderDB {
     fs.rmdirSync(tempDir, { recursive: true });
     fs.unlinkSync(tempTarPath);
 
-    logger.info(`包 ${packageName} (${latestVersion}) 下载并解压完成`);
+    logger.info(`${packageName} (${latestVersion}) 解压完成`);
   }
 }
 
