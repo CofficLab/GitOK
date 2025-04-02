@@ -135,9 +135,9 @@ export class UpdateManager {
    * 手动检查更新
    */
   public checkForUpdates(): void {
-    logger.info('手动检查更新');
+    logger.info('检查更新');
     autoUpdater.checkForUpdates().catch((error) => {
-      logger.error('手动检查更新失败', { error: error.message });
+      logger.error('检查更新失败', { error: error.message });
     });
   }
 }

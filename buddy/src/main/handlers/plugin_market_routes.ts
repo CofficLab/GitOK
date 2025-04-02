@@ -5,7 +5,7 @@ import { SuperPlugin } from '@/types/super_plugin';
 import { logger } from '../managers/LogManager';
 import { userPluginDB } from '../db/UserPluginDB';
 import { remotePluginDB } from '../db/RemotePluginDB';
-import { packageDownloaderDB } from '../db/PackageDownloaderDB';
+import { packageDownloaderDB as Downloader } from '../service/Downloader';
 import * as fs from 'fs';
 import * as path from 'path';
 import { devPluginDB } from '../db/DevPluginDB';
@@ -36,7 +36,7 @@ export const pluginStoreRoutes: IpcRoute[] = [
         return { success: true, data: plugins };
       } catch (error) {
         const errorMessage =
-          error instanceof Error? error.message : String(error);
+          error instanceof Error ? error.message : String(error);
         logger.error('获取开发插件列表失败', { error: errorMessage });
         return { success: false, error: errorMessage };
       }
@@ -71,10 +71,10 @@ export const pluginStoreRoutes: IpcRoute[] = [
           fs.mkdirSync(pluginDir, { recursive: true });
         }
 
-        logger.info(`开始下载插件`,  pluginId);
+        logger.info(`开始下载插件`, pluginId);
 
         try {
-          await packageDownloaderDB.downloadAndExtractPackage(
+          await Downloader.downloadAndExtractPackage(
             pluginId,
             pluginDir
           );

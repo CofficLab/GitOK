@@ -4,23 +4,21 @@
  */
 import * as fs from 'fs';
 import * as path from 'path';
-import * as https from 'https';
-import * as http from 'http';
 import * as tar from 'tar';
-import { URL } from 'url';
 import { logger } from '../managers/LogManager';
-import { remotePluginDB } from './RemotePluginDB';
+import axios from 'axios';
+import { npmRegistryService } from './NpmRegistryService';
 
-export class PackageDownloaderDB {
-  private static instance: PackageDownloaderDB;
+export class Downloader {
+  private static instance: Downloader;
 
   private constructor() { }
 
-  public static getInstance(): PackageDownloaderDB {
-    if (!PackageDownloaderDB.instance) {
-      PackageDownloaderDB.instance = new PackageDownloaderDB();
+  public static getInstance(): Downloader {
+    if (!Downloader.instance) {
+      Downloader.instance = new Downloader();
     }
-    return PackageDownloaderDB.instance;
+    return Downloader.instance;
   }
 
   /**
@@ -29,14 +27,10 @@ export class PackageDownloaderDB {
    * @param destPath 目标路径
    */
   public async downloadFile(url: string, destPath: string): Promise<void> {
-    return new Promise((resolve, reject) => {
-      const parsedUrl = new URL(url);
-      const protocol = parsedUrl.protocol === 'https:' ? https : http;
-
+    return new Promise(async (resolve, reject) => {
       logger.info(`开始下载文件`, {
         url,
         destPath,
-        protocol: parsedUrl.protocol,
       });
 
       // 确保目标目录存在
@@ -48,56 +42,46 @@ export class PackageDownloaderDB {
 
       const file = fs.createWriteStream(destPath);
 
-      protocol
-        .get(url, (response) => {
-          if (response.statusCode === 302 || response.statusCode === 301) {
-            // 处理重定向
-            const redirectUrl = response.headers.location!;
-            logger.info(`请求被重定向`, {
-              originalUrl: url,
-              redirectUrl,
-              statusCode: response.statusCode,
-            });
+      try {
+        const response = await axios({
+          method: 'get',
+          url: url,
+          responseType: 'stream',
+          maxRedirects: 5,
+        });
 
-            this.downloadFile(redirectUrl, destPath)
-              .then(resolve)
-              .catch(reject);
-            return;
-          }
-
-          if (response.statusCode !== 200) {
-            const errorMsg = `下载失败，状态码: ${response.statusCode}`;
-            logger.error(errorMsg, {
-              url,
-              destPath,
-              statusCode: response.statusCode,
-            });
-            reject(new Error(errorMsg));
-            return;
-          }
-
-          response.pipe(file);
-
-          file.on('finish', () => {
-            file.close();
-            logger.info(`文件下载完成`, {
-              url,
-              destPath,
-              size: fs.statSync(destPath).size,
-            });
-            resolve();
-          });
-        })
-        .on('error', (err) => {
-          fs.unlink(destPath, () => { }); // 清理部分下载的文件
-          const errorMsg = `下载请求失败: ${err.message}`;
+        if (response.status !== 200) {
+          const errorMsg = `下载失败，状态码: ${response.status}`;
           logger.error(errorMsg, {
             url,
             destPath,
-            error: err,
+            statusCode: response.status,
           });
           reject(new Error(errorMsg));
+          return;
+        }
+
+        response.data.pipe(file);
+
+        file.on('finish', () => {
+          file.close();
+          logger.info(`文件下载完成`, {
+            url,
+            destPath,
+            size: fs.statSync(destPath).size,
+          });
+          resolve();
         });
+      } catch (err) {
+        fs.unlink(destPath, () => { }); // 清理部分下载的文件
+        const errorMsg = `下载请求失败: ${err instanceof Error ? err.message : String(err)}`;
+        logger.error(errorMsg, {
+          url,
+          destPath,
+          error: err,
+        });
+        reject(new Error(errorMsg));
+      }
 
       file.on('error', (err) => {
         fs.unlink(destPath, () => { }); // 清理部分下载的文件
@@ -169,18 +153,19 @@ export class PackageDownloaderDB {
       destinationDir,
     });
 
-    const metadata =
-      await remotePluginDB.fetchPackageMetadata(encodedPackageName);
+    const metadata = await npmRegistryService.fetchPackageMetadata(encodedPackageName);
 
     // 2. 获取最新版本和下载地址
     const latestVersion = metadata['dist-tags'].latest;
-    const tarballUrl = metadata.versions[latestVersion].dist.tarball;
+    const tarballUrl = metadata.versions?.[latestVersion]?.dist?.tarball;
+    if (!tarballUrl) {
+      throw new Error(`无法获取包 ${packageName} 版本 ${latestVersion} 的下载地址`);
+    }
 
     logger.info(`获取到包信息`, {
       packageName,
       version: latestVersion,
       tarballUrl,
-      shasum: metadata.versions[latestVersion].dist.shasum,
     });
 
     // 确保目标目录存在
@@ -233,4 +218,4 @@ export class PackageDownloaderDB {
 }
 
 // 导出单例
-export const packageDownloaderDB = PackageDownloaderDB.getInstance();
+export const packageDownloaderDB = Downloader.getInstance();

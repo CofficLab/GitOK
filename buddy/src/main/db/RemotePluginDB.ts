@@ -114,7 +114,7 @@ export class RemotePluginDB {
   /**
    * 处理搜索结果，筛选出符合条件的插件
    */
-  private async processSearchResults(packages: any[]): Promise<{
+  private async processSearchResults(packages: NpmPackage[]): Promise<{
     plugins: PluginEntity[];
     foundPackages: number;
     validPlugins: number;
