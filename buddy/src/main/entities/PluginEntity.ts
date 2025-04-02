@@ -48,6 +48,7 @@ export class PluginEntity implements SuperPlugin {
   error?: string;
   isLoaded: boolean = false;
   validation?: PluginValidation;
+  isBuddyPlugin: boolean = true; // 是否是Buddy插件
 
   /**
    * 从目录创建插件实体
@@ -83,9 +84,9 @@ export class PluginEntity implements SuperPlugin {
       name: npmPackage.name,
       version: npmPackage.version,
       description: npmPackage.description || '',
-      author: npmPackage.publisher?.username || 
-              npmPackage.maintainers?.[0]?.name || 
-              'unknown',
+      author: npmPackage.publisher?.username ||
+        npmPackage.maintainers?.[0]?.name ||
+        'unknown',
       main: 'index.js', // 默认主文件
       license: 'MIT', // 默认许可证
       dependencies: {}, // 空依赖
@@ -94,19 +95,33 @@ export class PluginEntity implements SuperPlugin {
       keywords: npmPackage.keywords || [], // 关键词
       repository: npmPackage.links?.repository || '', // 仓库链接，确保是字符串类型
     };
-    
+
     // 创建插件实体
     const plugin = new PluginEntity(pkg, '', 'user');
-    
+
     // 使用NPM包中的名称作为显示名称（如果有的话）
     if (npmPackage.name) {
       // 格式化名称，移除作用域前缀和常见插件前缀
       plugin.name = PluginEntity.formatPluginName(npmPackage.name);
     }
-    
+
+    // 检查是否包含buddy-plugin关键词或是@coffic作用域下的包
+    plugin.isBuddyPlugin = (
+      (pkg.name.includes('buddy-plugin') ||
+        pkg.name.includes('plugin-') ||
+        pkg.name.startsWith('@coffic/')) &&
+      // 检查关键词
+      pkg.keywords &&
+      Array.isArray(pkg.keywords) &&
+      (pkg.keywords.includes('buddy-plugin') ||
+        pkg.keywords.includes('buddy') ||
+        pkg.keywords.includes('gitok') ||
+        pkg.keywords.includes('plugin'))
+    );
+
     return plugin;
   }
-  
+
   /**
    * 格式化插件名称为更友好的显示名称
    * @param packageName 包名

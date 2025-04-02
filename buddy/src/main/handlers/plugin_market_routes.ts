@@ -79,7 +79,7 @@ export const pluginStoreRoutes: IpcRoute[] = [
             pluginDir
           );
           await userPluginDB.getAllPlugins();
-          logger.info(`插件 ${pluginId} 安装成功`);
+          logger.info(`${pluginId} installed`);
           return { success: true, data: true };
         } catch (error) {
           const errorMessage =

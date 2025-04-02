@@ -186,9 +186,8 @@ export class Downloader {
     }
     fs.mkdirSync(tempDir, { recursive: true });
 
-    logger.info(`开始解压tar包到: ${tempDir}`);
+    logger.info(`解压tar包到: ${tempDir}`);
     await this.extractTarball(tempTarPath, tempDir);
-    logger.info(`解压完成`);
 
     // 5. 移动文件到插件目录
     const files = fs.readdirSync(tempDir);
@@ -212,8 +211,6 @@ export class Downloader {
     // 6. 清理临时文件
     fs.rmdirSync(tempDir, { recursive: true });
     fs.unlinkSync(tempTarPath);
-
-    logger.info(`${packageName} (${latestVersion}) 解压完成`);
   }
 }
 
