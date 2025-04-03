@@ -10,7 +10,7 @@ import { logger } from './LogManager'
 import { LanguageModelV1, streamText, type CoreMessage } from 'ai'
 import { openai } from '@ai-sdk/openai'
 import { anthropic } from '@ai-sdk/anthropic'
-import { deepseek } from '@ai-sdk/deepseek'
+import { createDeepSeek } from '@ai-sdk/deepseek'
 
 // AI模型类型
 export type AIModelType = 'openai' | 'anthropic' | 'deepseek'
@@ -105,20 +105,33 @@ class AIManager {
             // 使用内存中的密钥
             config.apiKey = apiKey
             logger.info(`向 ${config.type}/${config.modelName} 发送聊天请求，消息条数: ${messages.length}`)
-            console.log(messages)
 
             // 转换消息格式为 CoreMessage
             const coreMessages: CoreMessage[] = this.preprocessMessages(messages, config.system)
 
-            console.log(coreMessages)
-
             // 根据不同的模型类型调用不同的API，传入abort信号
+            logger.info(`调用 ${config.type}/${config.modelName} API，参数:`, {
+                temperature: config.temperature,
+                maxTokens: config.maxTokens
+            })
+            
             const result = streamText({
                 model: this.getModelProvider(config),
                 messages: coreMessages,
                 temperature: config.temperature,
                 maxTokens: config.maxTokens,
-                abortSignal: abortController.signal
+                abortSignal: abortController.signal,
+                
+                onError({ error }) {
+                    logger.error('AI请求错误')
+                    console.error(error); // your error logging logic here
+                  },
+                  onChunk({ chunk }) {
+                    // implement your own logic here, e.g.:
+                    if (chunk.type === 'text-delta') {
+                      logger.info("收到chunk",chunk);
+                    }
+                  },
             })
 
             // 创建响应流
@@ -129,21 +142,36 @@ class AIManager {
                     try {
                         logger.info(`开始接收 ${config.type}/${config.modelName} 的响应流`)
                         let fullResponse = ''
+                        let chunkCount = 0
 
+                        // 添加更详细的日志
+                        logger.debug(`等待第一个响应chunk...`)
+                        
                         for await (const chunk of result.textStream) {
+                            chunkCount++
                             if (abortController.signal.aborted) {
                                 logger.warn('AI请求被取消')
                                 controller.close()
                                 return
                             }
-                            // 记录每个chunk
-                            logger.debug(`收到响应chunk: ${chunk}`)
+                            
+                            // 更详细的chunk日志
+                            if (chunk === '') {
+                                logger.warn(`收到空chunk #${chunkCount}`)
+                            } else {
+                                logger.debug(`收到响应chunk #${chunkCount}: "${chunk}"`)
+                            }
+                            
                             fullResponse += chunk
                             controller.enqueue(encoder.encode(chunk))
                         }
 
                         // 记录完整的响应
-                        logger.info(`完整的AI响应: ${fullResponse}`)
+                        if (fullResponse === '') {
+                            logger.warn(`完整的AI响应为空，请检查模型配置和请求参数`)
+                        } else {
+                            logger.info(`完整的AI响应 (${chunkCount} chunks): "${fullResponse.substring(0, 100)}${fullResponse.length > 100 ? '...' : ''}"`)
+                        }
                         controller.close()
                     } catch (error) {
                         if ((error as Error)?.name === 'AbortError') {
@@ -368,6 +396,10 @@ class AIManager {
             case 'anthropic':
                 return anthropic(config.modelName)
             case 'deepseek':
+                const apiKey = this.apiKeys.get(config.type)
+                const deepseek = createDeepSeek({
+                    apiKey: apiKey,
+                  });
                 return deepseek(config.modelName)
             default:
                 throw new Error(`不支持的模型类型: ${config.type}`)
