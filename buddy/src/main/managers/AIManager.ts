@@ -7,7 +7,7 @@
  */
 
 import { logger } from './LogManager'
-import { streamText, type CoreMessage } from 'ai'
+import { LanguageModelV1, streamText, type CoreMessage } from 'ai'
 import { openai } from '@ai-sdk/openai'
 import { anthropic } from '@ai-sdk/anthropic'
 import { deepseek } from '@ai-sdk/deepseek'
@@ -104,16 +104,16 @@ class AIManager {
 
             // 使用内存中的密钥
             config.apiKey = apiKey
-            logger.info(`向 ${config.type}/${config.modelName} 发送聊天请求`)
-
-            // 设置环境变量
-            this.setEnvApiKey(config)
+            logger.info(`向 ${config.type}/${config.modelName} 发送聊天请求，消息条数: ${messages.length}`)
+            console.log(messages)
 
             // 转换消息格式为 CoreMessage
             const coreMessages: CoreMessage[] = this.preprocessMessages(messages, config.system)
 
+            console.log(coreMessages)
+
             // 根据不同的模型类型调用不同的API，传入abort信号
-            const result = await streamText({
+            const result = streamText({
                 model: this.getModelProvider(config),
                 messages: coreMessages,
                 temperature: config.temperature,
@@ -132,6 +132,7 @@ class AIManager {
 
                         for await (const chunk of result.textStream) {
                             if (abortController.signal.aborted) {
+                                logger.warn('AI请求被取消')
                                 controller.close()
                                 return
                             }
@@ -330,6 +331,8 @@ class AIManager {
      * 处理错误并返回友好的错误信息
      */
     private handleError(error: unknown): Error {
+        logger.error('AI请求错误:', error)
+        console.error(error)
         const errorMessage = error instanceof Error ? error.message : String(error)
 
         // 提供更友好的错误信息
@@ -356,26 +359,9 @@ class AIManager {
     }
 
     /**
-     * 设置环境变量中的API密钥
-     */
-    private setEnvApiKey(config: AIModelConfig) {
-        switch (config.type) {
-            case 'openai':
-                process.env.OPENAI_API_KEY = config.apiKey
-                break
-            case 'anthropic':
-                process.env.ANTHROPIC_API_KEY = config.apiKey
-                break
-            case 'deepseek':
-                process.env.DEEPSEEK_API_KEY = config.apiKey
-                break
-        }
-    }
-
-    /**
      * 获取模型提供者
      */
-    private getModelProvider(config: AIModelConfig) {
+    private getModelProvider(config: AIModelConfig): LanguageModelV1 {
         switch (config.type) {
             case 'openai':
                 return openai(config.modelName)

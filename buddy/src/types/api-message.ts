@@ -95,9 +95,10 @@ export interface IpcApi {
   /**
    * 取消AI聊天请求
    * @param requestId 要取消的请求ID
+   * @param reason 取消原因
    * @returns 返回是否成功取消
    */
-  aiChatCancel: (requestId: string) => Promise<boolean>;
+  aiChatCancel: (requestId: string, reason: string) => Promise<boolean>;
 
   /**
    * 获取AI配置

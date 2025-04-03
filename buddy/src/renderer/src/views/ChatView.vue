@@ -37,7 +37,7 @@ const customFetch = async (_url: RequestInfo | URL, init?: RequestInit): Promise
     const body = JSON.parse(options.body as string || '{}')
     const apiMessages = body.messages || []
 
-    logger.info('useChat发送的消息:', apiMessages)
+    // logger.info('useChat发送的消息:', apiMessages)
 
     // 转换为AIManager所需的格式
     const chatMessages: IChatMessage[] = apiMessages.map((msg: any) => ({
@@ -46,12 +46,6 @@ const customFetch = async (_url: RequestInfo | URL, init?: RequestInit): Promise
     }))
 
     try {
-        // 取消之前的请求（如果有）
-        if (activeRequestId.value) {
-            await ipcApi.aiChatCancel(activeRequestId.value)
-            activeRequestId.value = null
-        }
-
         // 清空缓冲区
         streamBuffer.value = ''
 
@@ -148,7 +142,7 @@ const customFetch = async (_url: RequestInfo | URL, init?: RequestInit): Promise
             cancel() {
                 // 取消请求
                 if (activeRequestId.value) {
-                    ipcApi.aiChatCancel(activeRequestId.value)
+                    ipcApi.aiChatCancel(activeRequestId.value, "CustomFetch")
                     activeRequestId.value = null
                 }
 
@@ -188,19 +182,6 @@ const customFetch = async (_url: RequestInfo | URL, init?: RequestInit): Promise
         throw error
     }
 }
-
-// 注册组件卸载时的清理函数
-onUnmounted(() => {
-    // 取消活跃的请求
-    if (activeRequestId.value) {
-        ipcApi.aiChatCancel(activeRequestId.value)
-        activeRequestId.value = null
-    }
-
-    // 清理处理器
-    if (chunkHandler) chunkHandler()
-    if (doneHandler) doneHandler()
-})
 
 // 使用useChat钩子管理聊天状态
 const {
@@ -257,10 +238,6 @@ const scrollToBottom = () => {
     }
 }
 
-onMounted(() => {
-    scrollToBottom()
-})
-
 // 处理预设消息提示的点击
 const handleTemplateClick = (text: string) => {
     input.value = text
@@ -284,7 +261,7 @@ const clearChat = () => {
 const stopGeneration = () => {
     // 取消活跃的请求
     if (activeRequestId.value) {
-        ipcApi.aiChatCancel(activeRequestId.value)
+        ipcApi.aiChatCancel(activeRequestId.value, "ChatView 手动停止")
         activeRequestId.value = null
     }
 
@@ -379,13 +356,13 @@ onMounted(() => {
 onUnmounted(() => {
     // 取消活跃的请求
     if (activeRequestId.value) {
-        ipcApi.aiChatCancel(activeRequestId.value);
-        activeRequestId.value = null;
+        ipcApi.aiChatCancel(activeRequestId.value, "ChatView 组件卸载")
+        activeRequestId.value = null
     }
 
     // 清理处理器
-    if (chunkHandler) chunkHandler();
-    if (doneHandler) doneHandler();
+    if (chunkHandler) chunkHandler()
+    if (doneHandler) doneHandler()
 
     // 取消复制代码块监听
     if (copyCodeUnsubscribe) copyCodeUnsubscribe();

@@ -147,7 +147,7 @@ export const baseRoutes: IpcRoute[] = [
 
                                     try {
                                         // 打印原始数据以便调试
-                                        logger.debug(`解析SSE数据: ${data.substring(0, 100)}${data.length > 100 ? '...' : ''}`);
+                                        logger.debug(`解析SSE数据: ${data}`);
 
                                         const json = JSON.parse(data);
 
@@ -273,8 +273,8 @@ export const baseRoutes: IpcRoute[] = [
     // 取消AI聊天请求
     {
         channel: IPC_METHODS.AI_CHAT_CANCEL,
-        handler: (_, requestId: string): IpcResponse<boolean> => {
-            logger.debug(`取消AI聊天请求: ${requestId}`);
+        handler: (_, requestId: string, reason: string): IpcResponse<boolean> => {
+            logger.debug(`取消AI聊天请求: ${requestId}，原因是：${reason}`);
             try {
                 const cancelled = aiManager.cancelRequest(requestId);
                 return { success: true, data: cancelled };

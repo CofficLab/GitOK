@@ -59,8 +59,8 @@ export const ipcApi: IpcApi = {
   },
 
   // 取消AI聊天请求
-  aiChatCancel: async (requestId: string): Promise<boolean> => {
-    return ipcRenderer.invoke(IPC_METHODS.AI_CHAT_CANCEL, requestId);
+  aiChatCancel: async (requestId: string, reason: string): Promise<boolean> => {
+    return ipcRenderer.invoke(IPC_METHODS.AI_CHAT_CANCEL, requestId, reason);
   },
 
   // 获取AI配置

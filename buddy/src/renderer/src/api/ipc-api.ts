@@ -26,8 +26,8 @@ export const ipcApi = {
     return ipc.onAiChatStreamDone(callback);
   },
 
-  async aiChatCancel(requestId: string): Promise<boolean> {
-    return await ipc.aiChatCancel(requestId);
+  async aiChatCancel(requestId: string, reason: string): Promise<boolean> {
+    return await ipc.aiChatCancel(requestId, reason);
   },
 
   // 配置相关功能
