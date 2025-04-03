@@ -10,6 +10,7 @@ import { logger } from './LogManager'
 import { streamText, type CoreMessage } from 'ai'
 import { openai } from '@ai-sdk/openai'
 import { anthropic } from '@ai-sdk/anthropic'
+import { deepseek } from '@ai-sdk/deepseek'
 
 // AI模型类型
 export type AIModelType = 'openai' | 'anthropic' | 'deepseek'
@@ -112,7 +113,7 @@ class AIManager {
             const coreMessages: CoreMessage[] = this.preprocessMessages(messages, config.system)
 
             // 根据不同的模型类型调用不同的API，传入abort信号
-            const result = await streamText({
+            const result = streamText({
                 model: this.getModelProvider(config),
                 messages: coreMessages,
                 temperature: config.temperature,
@@ -339,14 +340,13 @@ class AIManager {
     private setEnvApiKey(config: AIModelConfig) {
         switch (config.type) {
             case 'openai':
-            case 'deepseek':
                 process.env.OPENAI_API_KEY = config.apiKey
-                if (config.type === 'deepseek') {
-                    process.env.OPENAI_API_BASE_URL = 'https://api.deepseek.com/v1'
-                }
                 break
             case 'anthropic':
                 process.env.ANTHROPIC_API_KEY = config.apiKey
+                break
+            case 'deepseek':
+                process.env.DEEPSEEK_API_KEY = config.apiKey
                 break
         }
     }
@@ -361,7 +361,7 @@ class AIManager {
             case 'anthropic':
                 return anthropic(config.modelName)
             case 'deepseek':
-                return openai(config.modelName)
+                return deepseek(config.modelName)
             default:
                 throw new Error(`不支持的模型类型: ${config.type}`)
         }
