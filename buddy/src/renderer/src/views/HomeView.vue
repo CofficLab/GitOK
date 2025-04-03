@@ -19,7 +19,7 @@ const handleBackToList = () => {
 </script>
 
 <template>
-    <div class="w-full h-full flex flex-col overflow-hidden">
+    <div class="w-full h-full flex flex-col overflow-hidden px-4">
         <!-- 显示HomeView内容（当没有搜索关键词且没有插件动作时） -->
         <div v-if="!actionStore.hasSelectedAction() && actionStore.getActionCount() === 0" class="p-4">
             <h2 class="text-2xl font-bold mb-4">欢迎使用</h2>
