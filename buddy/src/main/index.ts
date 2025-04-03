@@ -14,7 +14,7 @@ import { routes as uiLogRoutes } from './handlers/log_router';
 import { routes as updateRoutes } from './handlers/update_router';
 import { baseRoutes } from './handlers/common_handler';
 
-// 初始化路由
+// 初始化IPC处理器
 routerService.registerRoutes(baseRoutes);
 routerService.registerRoutes(pluginRoutes);
 routerService.registerRoutes(overlaidAppRoutes);
