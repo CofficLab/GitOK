@@ -30,7 +30,7 @@ import type { SuperAction } from '@/types/super_action';
 import { onMounted, onUnmounted } from 'vue';
 import { WindowEvents } from '@/types/app-events';
 
-export type ViewType = 'home' | 'plugins' | 'chat';
+export type ViewType = 'home' | 'plugins' | 'chat' | 'dev';
 
 interface AppState {
   currentView: ViewType;

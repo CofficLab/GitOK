@@ -55,6 +55,13 @@ const goToChat = () => {
     console.log('状态栏：已更新视图状态为chat')
 }
 
+// 跳转到开发测试界面
+const goToDev = () => {
+    router.push('/dev')
+    appStore.setView('dev')
+    console.log('状态栏：已更新视图状态为dev')
+}
+
 onMounted(() => {
     // 每秒更新一次时间
     timer = setInterval(updateTime, 1000)
@@ -95,6 +102,11 @@ onUnmounted(() => {
             <StatusBarItem clickable @click="goToChat" :active="route.path === '/chat'"
                 :variant="route.path === '/chat' ? 'primary' : 'default'">
                 聊天
+            </StatusBarItem>
+            <!-- 开发测试导航 -->
+            <StatusBarItem clickable @click="goToDev" :active="route.path === '/dev'"
+                :variant="route.path === '/dev' ? 'primary' : 'default'">
+                开发
             </StatusBarItem>
         </template>
 

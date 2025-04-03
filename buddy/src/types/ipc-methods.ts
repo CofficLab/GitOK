@@ -38,6 +38,11 @@ export const IPC_METHODS = {
   AI_CHAT_STREAM_CHUNK: 'ai:chatStreamChunk',
   AI_CHAT_STREAM_DONE: 'ai:chatStreamDone',
   AI_CHAT_CANCEL: 'ai:chatCancel',
+
+  // 开发测试相关方法
+  DEV_TEST_ECHO: 'dev:test:echo',           // 回显测试
+  DEV_TEST_ERROR: 'dev:test:error',         // 错误处理测试
+  DEV_TEST_STREAM: 'dev:test:stream',       // 流处理测试
 } as const;
 
 /**

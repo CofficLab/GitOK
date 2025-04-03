@@ -10,13 +10,17 @@
 import { createRouter, createWebHashHistory } from 'vue-router';
 import PluginStoreView from '@/renderer/src/views/PluginMarketView.vue';
 import { useAppStore } from '@renderer/stores/appStore';
+import HomeView from '../views/HomeView.vue';
+import PluginView from '../views/PluginView.vue';
+import ChatView from '../views/ChatView.vue';
+import DevView from '../views/DevView.vue';
 
 // 路由配置
 const routes = [
   {
     path: '/',
     name: 'home',
-    component: () => import('@renderer/views/HomeView.vue'),
+    component: HomeView,
     meta: {
       title: '首页',
       viewType: 'home',
@@ -25,7 +29,7 @@ const routes = [
   {
     path: '/plugins',
     name: 'plugins',
-    component: PluginStoreView,
+    component: PluginView,
     meta: {
       title: '插件商店',
       viewType: 'plugins',
@@ -34,10 +38,19 @@ const routes = [
   {
     path: '/chat',
     name: 'chat',
-    component: () => import('@renderer/views/ChatView.vue'),
+    component: ChatView,
     meta: {
       title: '聊天',
       viewType: 'chat',
+    },
+  },
+  {
+    path: '/dev',
+    name: 'dev',
+    component: DevView,
+    meta: {
+      title: '开发测试',
+      viewType: 'dev',
     },
   },
 ];
@@ -60,7 +73,7 @@ router.beforeEach((to, _from, next) => {
     // 注意：这里需要延迟调用，因为在路由钩子中不能立即使用pinia store
     setTimeout(() => {
       const appStore = useAppStore();
-      appStore.setView(to.meta.viewType as 'home' | 'plugins' | 'chat');
+      appStore.setView(to.meta.viewType as 'home' | 'plugins' | 'chat' | 'dev');
       console.log(`路由守卫: 更新currentView为 ${to.meta.viewType}`);
     }, 0);
   }

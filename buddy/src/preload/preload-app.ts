@@ -10,9 +10,11 @@ import { overlaidApi } from './overlaid';
 import { uiLogApi } from './ui-log';
 import { updateApi } from './update';
 import { contextMenuApi } from './contextMenu';
+import { devApi } from './dev';
+import { ElectronApi } from '@/types/api-all';
 
 // 整合所有 API
-const api = {
+const api: ElectronApi = {
   ipc: ipcApi,
   command: commandApi,
   plugins: pluginApi,
@@ -20,6 +22,7 @@ const api = {
   ui: uiLogApi,
   update: updateApi,
   contextMenu: contextMenuApi,
+  dev: devApi
 };
 
 // 使用 contextBridge 暴露 API 到渲染进程
