@@ -48,6 +48,13 @@ const goToPluginStore = () => {
     console.log('状态栏：已更新视图状态为plugins')
 }
 
+// 跳转到聊天界面
+const goToChat = () => {
+    router.push('/chat')
+    appStore.setView('chat')
+    console.log('状态栏：已更新视图状态为chat')
+}
+
 onMounted(() => {
     // 每秒更新一次时间
     timer = setInterval(updateTime, 1000)
@@ -77,21 +84,17 @@ onUnmounted(() => {
     <StatusBar>
         <!-- 左侧导航按钮 -->
         <template #left>
-            <StatusBarItem 
-                clickable 
-                @click="goToHome" 
-                :active="route.path === '/'"
-                :variant="route.path === '/' ? 'primary' : 'default'"
-            >
+            <StatusBarItem clickable @click="goToHome" :active="route.path === '/'"
+                :variant="route.path === '/' ? 'primary' : 'default'">
                 首页
             </StatusBarItem>
-            <StatusBarItem 
-                clickable 
-                @click="goToPluginStore" 
-                :active="route.path === '/plugins'"
-                :variant="route.path === '/plugins' ? 'primary' : 'default'"
-            >
+            <StatusBarItem clickable @click="goToPluginStore" :active="route.path === '/plugins'"
+                :variant="route.path === '/plugins' ? 'primary' : 'default'">
                 插件
+            </StatusBarItem>
+            <StatusBarItem clickable @click="goToChat" :active="route.path === '/chat'"
+                :variant="route.path === '/chat' ? 'primary' : 'default'">
+                聊天
             </StatusBarItem>
         </template>
 

@@ -31,6 +31,15 @@ const routes = [
       viewType: 'plugins',
     },
   },
+  {
+    path: '/chat',
+    name: 'chat',
+    component: () => import('@renderer/views/ChatView.vue'),
+    meta: {
+      title: '聊天',
+      viewType: 'chat',
+    },
+  },
 ];
 
 // 创建路由实例
@@ -51,7 +60,7 @@ router.beforeEach((to, _from, next) => {
     // 注意：这里需要延迟调用，因为在路由钩子中不能立即使用pinia store
     setTimeout(() => {
       const appStore = useAppStore();
-      appStore.setView(to.meta.viewType as 'home' | 'plugins');
+      appStore.setView(to.meta.viewType as 'home' | 'plugins' | 'chat');
       console.log(`路由守卫: 更新currentView为 ${to.meta.viewType}`);
     }, 0);
   }

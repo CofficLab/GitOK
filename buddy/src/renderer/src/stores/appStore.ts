@@ -30,7 +30,7 @@ import type { SuperAction } from '@/types/super_action';
 import { onMounted, onUnmounted } from 'vue';
 import { WindowEvents } from '@/types/app-events';
 
-export type ViewType = 'home' | 'plugins';
+export type ViewType = 'home' | 'plugins' | 'chat';
 
 interface AppState {
   currentView: ViewType;
@@ -93,8 +93,8 @@ export const useAppStore = defineStore('app', {
       const ipc = window.electron.ipc;
 
       // 移除监听器
-      ipc.removeListener(WindowEvents.ACTIVATED, () => {});
-      ipc.removeListener(WindowEvents.DEACTIVATED, () => {});
+      ipc.removeListener(WindowEvents.ACTIVATED, () => { });
+      ipc.removeListener(WindowEvents.DEACTIVATED, () => { });
     },
   },
 });

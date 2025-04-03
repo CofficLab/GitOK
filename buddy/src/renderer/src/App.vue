@@ -22,7 +22,6 @@ App.vue - 应用程序入口组件
 <script setup lang="ts">
 import { onMounted, onUnmounted } from 'vue'
 import SearchBar from './layouts/SearchBar.vue'
-import ContentView from './layouts/ContentView.vue'
 import StatusBar from './layouts/StatusBar.vue'
 import Confirm from './cosy/Confirm.vue'
 import Toast from './cosy/Toast.vue'
@@ -78,8 +77,12 @@ onUnmounted(() => {
             @close="globalAlert.close" />
 
         <!-- 内容区域 -->
-        <div class="flex flex-grow overflow-hidden no-drag-region">
-            <ContentView />
+        <div class="flex-1 overflow-hidden no-drag-region">
+            <router-view v-slot="{ Component }">
+                <transition name="fade" mode="out-in">
+                    <component :is="Component" class="h-full w-full" />
+                </transition>
+            </router-view>
         </div>
 
         <!-- 状态栏 -->
@@ -102,3 +105,15 @@ onUnmounted(() => {
         {{ globalToast.state.value.message }}
     </Toast>
 </template>
+
+<style>
+.fade-enter-active,
+.fade-leave-active {
+    transition: opacity 0.15s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+    opacity: 0;
+}
+</style>
