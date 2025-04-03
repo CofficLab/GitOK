@@ -113,7 +113,7 @@ class AIManager {
             const coreMessages: CoreMessage[] = this.preprocessMessages(messages, config.system)
 
             // 根据不同的模型类型调用不同的API，传入abort信号
-            const result = streamText({
+            const result = await streamText({
                 model: this.getModelProvider(config),
                 messages: coreMessages,
                 temperature: config.temperature,
@@ -127,16 +127,37 @@ class AIManager {
             const stream = new ReadableStream({
                 async start(controller) {
                     try {
+                        logger.info(`开始接收 ${config.type}/${config.modelName} 的响应流`)
+                        let fullResponse = ''
+
                         for await (const chunk of result.textStream) {
+                            if (abortController.signal.aborted) {
+                                controller.close()
+                                return
+                            }
+                            // 记录每个chunk
+                            logger.debug(`收到响应chunk: ${chunk}`)
+                            fullResponse += chunk
                             controller.enqueue(encoder.encode(chunk))
                         }
+
+                        // 记录完整的响应
+                        logger.info(`完整的AI响应: ${fullResponse}`)
                         controller.close()
                     } catch (error) {
                         if ((error as Error)?.name === 'AbortError') {
+                            logger.warn('AI请求被取消')
                             controller.error(new Error('请求已取消'))
                         } else {
+                            logger.error('AI响应流处理错误:', error)
                             controller.error(handleError(error))
                         }
+                    }
+                },
+                cancel() {
+                    // 当流被取消时，确保清理资源
+                    if (!abortController.signal.aborted) {
+                        abortController.abort()
                     }
                 }
             })
