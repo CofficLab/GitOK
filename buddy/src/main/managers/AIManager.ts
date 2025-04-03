@@ -114,91 +114,25 @@ class AIManager {
                 temperature: config.temperature,
                 maxTokens: config.maxTokens
             })
-            
+
             const result = streamText({
                 model: this.getModelProvider(config),
                 messages: coreMessages,
                 temperature: config.temperature,
                 maxTokens: config.maxTokens,
                 abortSignal: abortController.signal,
-                
                 onError({ error }) {
                     logger.error('AI请求错误')
                     console.error(error); // your error logging logic here
-                  },
-                  onChunk({ chunk }) {
-                    // implement your own logic here, e.g.:
-                    if (chunk.type === 'text-delta') {
-                      logger.info("收到chunk",chunk);
-                    }
-                  },
-            })
-
-            // 创建响应流
-            const encoder = new TextEncoder()
-            const handleError = this.handleError.bind(this)
-            const stream = new ReadableStream({
-                async start(controller) {
-                    try {
-                        logger.info(`开始接收 ${config.type}/${config.modelName} 的响应流`)
-                        let fullResponse = ''
-                        let chunkCount = 0
-
-                        // 添加更详细的日志
-                        logger.debug(`等待第一个响应chunk...`)
-                        
-                        for await (const chunk of result.textStream) {
-                            chunkCount++
-                            if (abortController.signal.aborted) {
-                                logger.warn('AI请求被取消')
-                                controller.close()
-                                return
-                            }
-                            
-                            // 更详细的chunk日志
-                            if (chunk === '') {
-                                logger.warn(`收到空chunk #${chunkCount}`)
-                            } else {
-                                logger.debug(`收到响应chunk #${chunkCount}: "${chunk}"`)
-                            }
-                            
-                            fullResponse += chunk
-                            controller.enqueue(encoder.encode(chunk))
-                        }
-
-                        // 记录完整的响应
-                        if (fullResponse === '') {
-                            logger.warn(`完整的AI响应为空，请检查模型配置和请求参数`)
-                        } else {
-                            logger.info(`完整的AI响应 (${chunkCount} chunks): "${fullResponse.substring(0, 100)}${fullResponse.length > 100 ? '...' : ''}"`)
-                        }
-                        controller.close()
-                    } catch (error) {
-                        if ((error as Error)?.name === 'AbortError') {
-                            logger.warn('AI请求被取消')
-                            controller.error(new Error('请求已取消'))
-                        } else {
-                            logger.error('AI响应流处理错误:', error)
-                            controller.error(handleError(error))
-                        }
-                    }
                 },
-                cancel() {
-                    // 当流被取消时，确保清理资源
-                    if (!abortController.signal.aborted) {
-                        abortController.abort()
-                    }
-                }
             })
+
+            for await (const chunk of result.textStream) {
+                logger.info('收到chunk:', chunk)
+            }
 
             // 返回流式响应
-            return new Response(stream, {
-                headers: {
-                    'Content-Type': 'text/event-stream; charset=utf-8',
-                    'Cache-Control': 'no-cache',
-                    'Connection': 'keep-alive'
-                }
-            })
+            return new Response()
         } catch (error) {
             logger.error('AI请求失败:', error)
             throw this.handleError(error)
@@ -399,7 +333,7 @@ class AIManager {
                 const apiKey = this.apiKeys.get(config.type)
                 const deepseek = createDeepSeek({
                     apiKey: apiKey,
-                  });
+                });
                 return deepseek(config.modelName)
             default:
                 throw new Error(`不支持的模型类型: ${config.type}`)
