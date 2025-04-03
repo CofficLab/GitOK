@@ -27,6 +27,17 @@ export const IPC_METHODS = {
   // 被覆盖的应用
   GET_CURRENT_APP: 'overlaid-app:getCurrent',
   SET_CURRENT_APP: 'overlaid-app:setCurrent',
+
+  // AI功能相关
+  AI_CHAT: 'ai:chat',
+  AI_GET_CONFIG: 'ai:getConfig',
+  AI_SET_CONFIG: 'ai:setConfig',
+
+  // 流式AI聊天相关
+  AI_CHAT_STREAM_START: 'ai:chatStreamStart',
+  AI_CHAT_STREAM_CHUNK: 'ai:chatStreamChunk',
+  AI_CHAT_STREAM_DONE: 'ai:chatStreamDone',
+  AI_CHAT_CANCEL: 'ai:chatCancel',
 } as const;
 
 /**

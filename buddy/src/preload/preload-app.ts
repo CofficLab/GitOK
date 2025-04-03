@@ -9,6 +9,7 @@ import { pluginApi } from './plugin';
 import { overlaidApi } from './overlaid';
 import { uiLogApi } from './ui-log';
 import { updateApi } from './update';
+import { contextMenuApi } from './contextMenu';
 
 // 整合所有 API
 const api = {
@@ -18,6 +19,7 @@ const api = {
   overlaid: overlaidApi,
   ui: uiLogApi,
   update: updateApi,
+  contextMenu: contextMenuApi,
 };
 
 // 使用 contextBridge 暴露 API 到渲染进程

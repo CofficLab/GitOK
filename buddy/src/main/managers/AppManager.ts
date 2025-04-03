@@ -7,7 +7,7 @@ import { electronApp, optimizer } from '@electron-toolkit/utils';
 import { logger } from './LogManager';
 import { windowManager } from './WindowManager';
 import { pluginManager } from './PluginManager';
-import { commandKeyManager } from './CommandKeyManager';
+import { commandKeyManager } from './KeyManager';
 import { pluginViewManager } from './PluginViewManager';
 import { updateManager } from './UpdateManager';
 
@@ -41,7 +41,6 @@ export class AppManager {
       if (BrowserWindow.getAllWindows().length === 0) {
         logger.info('没有活动窗口，创建新窗口');
         this.mainWindow = windowManager.createWindow();
-        commandKeyManager.setMainWindow(this.mainWindow);
       }
     });
 
@@ -73,10 +72,6 @@ export class AppManager {
     // 创建主窗口
     this.mainWindow = windowManager.createWindow();
 
-    // 设置Command键双击管理器
-    logger.debug('设置Command键双击管理器窗口引用');
-    commandKeyManager.setMainWindow(this.mainWindow);
-
     // 初始化更新管理器
     logger.info('初始化更新管理器');
     updateManager.initialize(this.mainWindow);
@@ -84,9 +79,7 @@ export class AppManager {
     // macOS特定配置
     if (process.platform === 'darwin') {
       logger.info('在macOS上设置Command键双击监听器');
-      const result = await commandKeyManager.setupCommandKeyListener(
-        this.mainWindow
-      );
+      const result = await commandKeyManager.setupCommandKeyListener();
       if (result.success) {
         logger.info('Command键双击监听器设置成功');
       } else {
@@ -100,6 +93,8 @@ export class AppManager {
 
     await pluginManager.initialize();
 
+    this.setupContextMenu();
+
     logger.info('应用初始化完成，等待用户交互');
   }
 
@@ -111,7 +106,7 @@ export class AppManager {
     windowManager.cleanup();
 
     logger.debug('清理Command键监听器');
-    commandKeyManager.cleanup();
+    // commandKeyManager.cleanup();
 
     logger.debug('关闭所有插件视图窗口');
     pluginViewManager.closeAllViews();
@@ -127,6 +122,52 @@ export class AppManager {
 
     await app.whenReady();
     await this.initialize();
+  }
+
+  /**
+   * 设置应用的右键菜单
+   */
+  private setupContextMenu(): void {
+    const { Menu, ipcMain } = require('electron');
+
+    // 通用上下文菜单
+    const textContextMenu = Menu.buildFromTemplate([
+      { label: '复制', role: 'copy' },
+      { label: '粘贴', role: 'paste' },
+      { label: '剪切', role: 'cut' },
+      { type: 'separator' },
+      { label: '全选', role: 'selectAll' }
+    ]);
+
+    // 聊天消息的上下文菜单
+    const chatContextMenu = Menu.buildFromTemplate([
+      { label: '复制消息', role: 'copy' },
+      {
+        label: '复制代码块',
+        click: (_menuItem, browserWindow) => {
+          if (browserWindow) {
+            browserWindow.webContents.send('context-menu-copy-code');
+          }
+        }
+      },
+      { type: 'separator' },
+      { label: '全选', role: 'selectAll' }
+    ]);
+
+    // 监听上下文菜单请求
+    ipcMain.on('show-context-menu', (event, params) => {
+      const { type } = params;
+      const window = BrowserWindow.fromWebContents(event.sender);
+
+      if (!window) return;
+
+      if (type === 'chat-message') {
+        chatContextMenu.popup({ window });
+      } else {
+        // 通用输入框上下文菜单
+        textContextMenu.popup({ window });
+      }
+    });
   }
 }
 

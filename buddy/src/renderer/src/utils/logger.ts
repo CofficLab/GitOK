@@ -5,6 +5,7 @@
 
 // 日志级别枚举
 export enum LogLevel {
+  DEBUG = 'DEBUG',
   INFO = 'INFO',
   WARN = 'WARN',
   ERROR = 'ERROR',
@@ -12,6 +13,7 @@ export enum LogLevel {
 
 // 日志颜色配置
 const LOG_COLORS = {
+  [LogLevel.DEBUG]: '\x1b[36m', // 青色
   [LogLevel.INFO]: '\x1b[32m', // 绿色
   [LogLevel.WARN]: '\x1b[33m', // 黄色
   [LogLevel.ERROR]: '\x1b[31m', // 红色
@@ -24,8 +26,9 @@ const showTimestamp = false;
 export class Logger {
   private static instance: Logger;
   private enabled: boolean = true;
+  private debugEnabled: boolean = true; // 默认开启debug日志
 
-  private constructor() {}
+  private constructor() { }
 
   /**
    * 获取Logger单例
@@ -42,6 +45,13 @@ export class Logger {
    */
   public setEnabled(enabled: boolean): void {
     this.enabled = enabled;
+  }
+
+  /**
+   * 启用或禁用debug日志
+   */
+  public setDebugEnabled(enabled: boolean): void {
+    this.debugEnabled = enabled;
   }
 
   /**
@@ -77,6 +87,16 @@ export class Logger {
         typeof arg === 'object' ? JSON.stringify(arg) : String(arg)
       )
       .join(' ');
+  }
+
+  /**
+   * 输出调试级别日志
+   */
+  public debug(...args: unknown[]): void {
+    if (this.enabled && this.debugEnabled) {
+      console.log(this.formatMessage(LogLevel.DEBUG, ...args));
+      // 只在控制台显示，不发送到主进程
+    }
   }
 
   /**

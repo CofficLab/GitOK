@@ -9,16 +9,14 @@ import {
   routes as overlaidAppRoutes,
   initOverlaidAppEvents,
 } from './handlers/overlaid_router';
-import { routes as commandKeyRoutes } from './handlers/command_router';
 import { routes as uiLogRoutes } from './handlers/log_router';
 import { routes as updateRoutes } from './handlers/update_router';
-import { baseRoutes } from './handlers/common_handler';
+import { baseRoutes, setupStreamListeners } from './handlers/common_handler';
 
 // 初始化IPC处理器
 routerService.registerRoutes(baseRoutes);
 routerService.registerRoutes(pluginRoutes);
 routerService.registerRoutes(overlaidAppRoutes);
-routerService.registerRoutes(commandKeyRoutes);
 routerService.registerRoutes(uiLogRoutes);
 routerService.registerRoutes(updateRoutes);
 
@@ -30,6 +28,8 @@ appManager
     routerService.initialize();
     // 初始化被覆盖应用相关事件
     initOverlaidAppEvents();
+    // 初始化流式聊天监听器
+    setupStreamListeners();
   })
   .catch((error) => {
     console.error('应用启动失败:', error);
