@@ -66,6 +66,7 @@ export abstract class DiskPluginDB {
    * 获取所有插件列表
    */
   async getAllPlugins(): Promise<PluginEntity[]> {
+    logger.info('获取开发插件列表，根目录是', this.pluginsDir);
     try {
       const plugins = await this.readPluginsFromDir(
         this.pluginsDir,

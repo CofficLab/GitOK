@@ -57,24 +57,7 @@ export class RemotePluginDB {
             }
 
             // 返回缓存数据
-            if (this.cachedRemotePlugins.length > 0) {
-                return this.cachedRemotePlugins;
-            }
-
-            // 首次加载或缓存为空
-            if (!this.isRefreshingCache) {
-                this.isRefreshingCache = true;
-                const result = await this.searchPlugins();
-                this.cachedRemotePlugins = result;
-                this.lastCacheRefreshTime = Date.now();
-                this.isRefreshingCache = false;
-                logger.info(`远程插件列表缓存已更新`, {
-                    count: this.cachedRemotePlugins.length,
-                });
-                return this.cachedRemotePlugins;
-            }
-
-            return [];
+            return this.cachedRemotePlugins;
         } catch (error) {
             logger.error(
                 `获取远程插件列表失败: ${error instanceof Error ? error.message : String(error)}`
@@ -88,13 +71,8 @@ export class RemotePluginDB {
      */
     private async searchPlugins(): Promise<PluginEntity[]> {
         try {
-            // 主要搜索: buddy-plugin关键词
             const packages = await npmRegistryService.searchPackagesByKeyword('buddy-plugin');
-
-            // 处理搜索结果
-            const result = await this.processSearchResults(packages);
-
-            return result;
+            return await this.processSearchResults(packages);
         } catch (error) {
             logger.error(
                 `搜索插件失败: ${error instanceof Error ? error.message : String(error)}`
@@ -114,7 +92,7 @@ export class RemotePluginDB {
      * 刷新远程插件列表缓存
      * 从 npm registry 获取 coffic 组织下的所有包
      */
-    public async refreshRemotePlugins(): Promise<void> {
+    private async refreshRemotePlugins(): Promise<void> {
         try {
             logger.info('开始刷新远程插件列表缓存');
 
@@ -152,14 +130,6 @@ export class RemotePluginDB {
     private shouldRefreshCache(): boolean {
         const now = Date.now();
         return now - this.lastCacheRefreshTime > this.CACHE_REFRESH_INTERVAL;
-    }
-
-    /**
-     * 从npm registry获取包的元数据
-     * @param packageName NPM包名
-     */
-    public async fetchPackageMetadata(packageName: string): Promise<any> {
-        return npmRegistryService.fetchPackageMetadata(packageName);
     }
 }
 
