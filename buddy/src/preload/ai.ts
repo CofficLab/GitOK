@@ -43,14 +43,4 @@ export const aiApi: AiApi = {
   aiChatCancel: async (requestId: string, reason: string): Promise<boolean> => {
     return ipcRenderer.invoke(IPC_METHODS.AI_CHAT_CANCEL, requestId, reason);
   },
-
-  // 获取AI配置
-  aiGetConfig: async () => {
-    return ipcRenderer.invoke(IPC_METHODS.AI_GET_CONFIG);
-  },
-
-  // 设置AI配置
-  aiSetConfig: async (config: any) => {
-    return ipcRenderer.invoke(IPC_METHODS.AI_SET_CONFIG, config);
-  },
 };

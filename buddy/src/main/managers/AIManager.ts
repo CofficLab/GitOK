@@ -16,7 +16,7 @@ import { createDeepSeek } from '@ai-sdk/deepseek'
 export type AIModelType = 'openai' | 'anthropic' | 'deepseek'
 
 // AI模型配置
-export interface AIModelConfig {
+interface AIModelConfig {
     type: AIModelType
     modelName: string
     apiKey: string

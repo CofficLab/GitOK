@@ -1,4 +1,4 @@
-import type { ChatMessage, AIModelConfig, StreamChunkResponse, StreamDoneResponse } from '@/types/api-ai';
+import type { ChatMessage, StreamChunkResponse, StreamDoneResponse } from '@/types/api-ai';
 
 const ai = window.electron.ai;
 
@@ -24,13 +24,4 @@ export const aiApi = {
   async aiChatCancel(requestId: string, reason: string): Promise<boolean> {
     return await ai.aiChatCancel(requestId, reason);
   },
-
-  // 配置相关功能
-  async aiGetConfig(): Promise<AIModelConfig> {
-    return await ai.aiGetConfig();
-  },
-
-  async aiSetConfig(config: Partial<AIModelConfig>): Promise<AIModelConfig> {
-    return await ai.aiSetConfig(config);
-  }
 };

@@ -2,7 +2,7 @@ import { IPC_METHODS } from '@/types/ipc-methods';
 import { IpcRoute } from '../provider/RouterService';
 import { IpcResponse } from '@/types/ipc-response';
 import { logger } from '../managers/LogManager';
-import { aiManager, type ChatMessage, type AIModelConfig } from '../managers/AIManager';
+import { aiManager, type ChatMessage } from '../managers/AIManager';
 import { v4 as uuidv4 } from 'uuid';
 
 /**
@@ -55,37 +55,6 @@ export const aiRoutes: IpcRoute[] = [
                     success: false,
                     error: error instanceof Error ? error.message : String(error)
                 };
-            }
-        },
-    },
-
-    // 获取AI配置
-    {
-        channel: IPC_METHODS.AI_GET_CONFIG,
-        handler: (): IpcResponse<AIModelConfig> => {
-            try {
-                const config = aiManager.getDefaultModelConfig();
-                return { success: true, data: config };
-            } catch (error) {
-                const errorMessage =
-                    error instanceof Error ? error.message : String(error);
-                return { success: false, error: errorMessage };
-            }
-        },
-    },
-
-    // 设置AI配置
-    {
-        channel: IPC_METHODS.AI_SET_CONFIG,
-        handler: (_, config: Partial<AIModelConfig>): IpcResponse<AIModelConfig> => {
-            try {
-                aiManager.setDefaultModel(config);
-                const updatedConfig = aiManager.getDefaultModelConfig();
-                return { success: true, data: updatedConfig };
-            } catch (error) {
-                const errorMessage =
-                    error instanceof Error ? error.message : String(error);
-                return { success: false, error: errorMessage };
             }
         },
     },

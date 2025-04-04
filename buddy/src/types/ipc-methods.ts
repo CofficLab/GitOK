@@ -30,8 +30,6 @@ export const IPC_METHODS = {
 
   // AI功能相关
   AI_CHAT: 'ai:chat',
-  AI_GET_CONFIG: 'ai:getConfig',
-  AI_SET_CONFIG: 'ai:setConfig',
 
   // 流式AI聊天相关
   AI_CHAT_STREAM_START: 'ai:chatStreamStart',
