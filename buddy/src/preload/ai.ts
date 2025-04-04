@@ -1,7 +1,3 @@
-/**
- * 基础 IPC 通信模块
- * 提供基本的进程间通信功能
- */
 import { ipcRenderer } from 'electron';
 import { AiApi, ChatMessage, StreamChunkResponse, StreamDoneResponse } from '@/types/api-ai';
 import { IPC_METHODS } from '@/types/ipc-methods';

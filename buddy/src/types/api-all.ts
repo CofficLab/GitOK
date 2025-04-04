@@ -1,5 +1,6 @@
 import { AiApi } from "./api-ai";
 import { CommandApi } from "./api-command";
+import { DevApi } from "./api-dev";
 import { UILogApi } from "./api-log";
 import { IpcApi } from "./api-message";
 import { OverlaidApi } from "./api-overlaid";
@@ -13,6 +14,7 @@ interface ContextMenuApi {
 
 export interface ElectronApi {
     ai: AiApi,
+    dev: DevApi,
     ipc: IpcApi;
     command: CommandApi;
     plugins: PluginAPi;
