@@ -11,7 +11,6 @@ import { createRouter, createWebHashHistory } from 'vue-router';
 import PluginStoreView from '@/renderer/src/views/PluginMarketView.vue';
 import { useAppStore } from '@renderer/stores/appStore';
 import HomeView from '../views/HomeView.vue';
-import PluginView from '../views/PluginView.vue';
 import ChatView from '../views/ChatView.vue';
 import DevView from '../views/DevView.vue';
 
@@ -29,7 +28,7 @@ const routes = [
   {
     path: '/plugins',
     name: 'plugins',
-    component: PluginView,
+    component: PluginStoreView,
     meta: {
       title: '插件商店',
       viewType: 'plugins',

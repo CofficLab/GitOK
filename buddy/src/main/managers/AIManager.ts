@@ -62,9 +62,9 @@ class AIManager {
 
     /**
      * 发送聊天消息
-     * 返回 Vercel AI SDK 的流式响应
+     * 返回流式响应
      */
-    async sendChatMessage(messages: ChatMessage[], modelConfig?: Partial<AIModelConfig>, requestId?: string): Promise<Response> {
+    async sendChatMessage(messages: ChatMessage[], onChunk: (chunk: string) => void, modelConfig?: Partial<AIModelConfig>, requestId?: string): Promise<void> {
         // 创建AbortController用于取消请求
         const abortController = new AbortController()
         if (requestId) {
@@ -79,27 +79,31 @@ class AIManager {
 
             // 如果未配置，开始配置流程
             if (this.configState === 'unconfigured') {
-                return this.handleUnconfigured()
+                onChunk(this.handleUnconfigured())
+                return
             }
 
             // 如果正在选择供应商
             if (this.configState === 'selecting_provider') {
-                return this.handleProviderSelection(messages[messages.length - 1])
+                onChunk(this.handleProviderSelection(messages[messages.length - 1]))
+                return
             }
 
             // 如果正在输入密钥
             if (this.configState === 'entering_key') {
-                return this.handleKeyInput(messages[messages.length - 1])
+                onChunk(this.handleKeyInput(messages[messages.length - 1]))
+                return
             }
 
             // 检查API密钥
             const apiKey = this.apiKeys.get(config.type)
             if (!apiKey) {
                 this.configState = 'entering_key'
-                return this.createTextResponse(
+                onChunk(
                     `请输入您的 ${config.type.toUpperCase()} API密钥：\n` +
                     `(直接在聊天框中输入密钥即可，密钥将安全地保存在内存中)`
                 )
+                return
             }
 
             // 使用内存中的密钥
@@ -129,10 +133,8 @@ class AIManager {
 
             for await (const chunk of result.textStream) {
                 logger.info('收到chunk:', chunk)
+                onChunk(chunk)
             }
-
-            // 返回流式响应
-            return new Response()
         } catch (error) {
             logger.error('AI请求失败:', error)
             throw this.handleError(error)
@@ -163,7 +165,7 @@ class AIManager {
     /**
      * 处理未配置状态
      */
-    private handleUnconfigured(): Response {
+    private handleUnconfigured(): string {
         this.configState = 'selecting_provider'
         const providers = this.getAvailableModels()
         const message =
@@ -174,21 +176,19 @@ class AIManager {
                 .join('\n') +
             '\n\n(请输入数字 1-3 选择供应商)'
 
-        return this.createTextResponse(message)
+        return message
     }
 
     /**
      * 处理供应商选择
      */
-    private handleProviderSelection(message: ChatMessage): Response {
+    private handleProviderSelection(message: ChatMessage): string {
         const providers = Object.keys(this.getAvailableModels())
         const choice = parseInt(message.content)
 
         if (isNaN(choice) || choice < 1 || choice > providers.length) {
-            return this.createTextResponse(
-                '请输入有效的数字选择供应商 (1-3):\n\n' +
+            return '请输入有效的数字选择供应商 (1-3):\n\n' +
                 providers.map((type, index) => `${index + 1}. ${type.toUpperCase()}`).join('\n')
-            )
         }
 
         const selectedType = providers[choice - 1] as AIModelType
@@ -200,93 +200,28 @@ class AIManager {
 
         // 进入输入密钥状态
         this.configState = 'entering_key'
-        return this.createTextResponse(
-            `您选择了 ${selectedType.toUpperCase()}，使用默认模型 ${models[0]}。\n` +
+        return `您选择了 ${selectedType.toUpperCase()}，使用默认模型 ${models[0]}。\n` +
             `请输入您的 ${selectedType.toUpperCase()} API密钥：\n` +
             `(直接在聊天框中输入密钥即可，密钥将安全地保存在内存中)`
-        )
     }
 
     /**
      * 处理密钥输入
      */
-    private handleKeyInput(message: ChatMessage): Response {
+    private handleKeyInput(message: ChatMessage): string {
         const apiKey = message.content.trim()
 
         if (apiKey.length < 20) {  // 简单的密钥长度检查
-            return this.createTextResponse('请输入有效的API密钥（至少20个字符）')
+            return '请输入有效的API密钥（至少20个字符）'
         }
 
         // 保存密钥
         this.apiKeys.set(this.defaultModel.type, apiKey)
         this.configState = 'configured'
 
-        return this.createTextResponse(
-            `${this.defaultModel.type.toUpperCase()} API密钥已保存！\n` +
+        return `${this.defaultModel.type.toUpperCase()} API密钥已保存！\n` +
             '现在您可以开始聊天了。\n' +
             '提示：您可以随时输入新的API密钥来更新配置。'
-        )
-    }
-
-    /**
-     * 创建文本响应
-     * 返回符合 Vercel AI SDK 格式的流式响应
-     */
-    private createTextResponse(text: string): Response {
-        // 构建符合 Vercel AI SDK 格式要求的响应
-        const chunks: string[] = []
-
-        // 第一部分是数据对象
-        chunks.push(
-            `data: ${JSON.stringify({
-                id: crypto.randomUUID(),
-                object: 'chat.completion.chunk',
-                created: Math.floor(Date.now() / 1000),
-                model: 'electron-ai-model',
-                choices: [
-                    {
-                        index: 0,
-                        delta: {
-                            role: 'assistant',
-                            content: text
-                        },
-                        finish_reason: null
-                    }
-                ]
-            })}\n\n`
-        )
-
-        // 最后是结束标记
-        chunks.push(
-            `data: ${JSON.stringify({
-                id: crypto.randomUUID(),
-                object: 'chat.completion.chunk',
-                created: Math.floor(Date.now() / 1000),
-                model: 'electron-ai-model',
-                choices: [
-                    {
-                        index: 0,
-                        delta: {},
-                        finish_reason: 'stop'
-                    }
-                ]
-            })}\n\n`
-        )
-
-        // 添加[DONE]标记
-        chunks.push('data: [DONE]\n\n')
-
-        // 合并所有块
-        const fullResponse = chunks.join('')
-
-        // 返回流式响应
-        return new Response(fullResponse, {
-            headers: {
-                'Content-Type': 'text/event-stream; charset=utf-8',
-                'Cache-Control': 'no-cache',
-                'Connection': 'keep-alive'
-            }
-        })
     }
 
     /**

@@ -1,3 +1,4 @@
+import { AiApi } from "./api-ai";
 import { CommandApi } from "./api-command";
 import { UILogApi } from "./api-log";
 import { IpcApi } from "./api-message";
@@ -11,6 +12,7 @@ interface ContextMenuApi {
 }
 
 export interface ElectronApi {
+    ai: AiApi,
     ipc: IpcApi;
     command: CommandApi;
     plugins: PluginAPi;
