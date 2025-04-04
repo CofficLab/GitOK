@@ -34,7 +34,7 @@ export interface AiApi {
      * @param messages 聊天消息数组
      * @returns 返回请求ID，用于后续操作和取消请求
      */
-    aiChatStreamStart: (messages: ChatMessage[]) => Promise<string>;
+    send: (messages: ChatMessage[]) => Promise<string>;
 
     /**
      * 注册流式聊天数据块监听器

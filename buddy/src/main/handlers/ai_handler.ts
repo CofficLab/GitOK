@@ -11,7 +11,7 @@ import { v4 as uuidv4 } from 'uuid';
 export const aiRoutes: IpcRoute[] = [
     // 启动流式AI聊天会话
     {
-        channel: IPC_METHODS.AI_CHAT_STREAM_START,
+        channel: IPC_METHODS.AI_CHAT_SEND,
         handler: async (event, messages: ChatMessage[]): Promise<IpcResponse<string>> => {
             logger.debug(`启动流式AI聊天: ${messages.length}条消息`);
             try {

@@ -4,8 +4,8 @@ import { IPC_METHODS } from '@/types/ipc-methods';
 
 export const aiApi: AiApi = {
   // 启动流式AI聊天会话
-  aiChatStreamStart: async (messages: ChatMessage[]): Promise<string> => {
-    return ipcRenderer.invoke(IPC_METHODS.AI_CHAT_STREAM_START, messages);
+  send: async (messages: ChatMessage[]): Promise<string> => {
+    return ipcRenderer.invoke(IPC_METHODS.AI_CHAT_SEND, messages);
   },
 
   // 注册流式聊天数据块监听器

@@ -80,7 +80,9 @@ onUnmounted(() => {
         <div class="flex-1 overflow-hidden no-drag-region">
             <router-view v-slot="{ Component }">
                 <transition name="fade" mode="out-in">
-                    <component :is="Component" class="h-full w-full" />
+                    <div  class="h-full w-full" >
+                    <component :is="Component"/>
+                    </div>
                 </transition>
             </router-view>
         </div>

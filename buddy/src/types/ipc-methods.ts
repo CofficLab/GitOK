@@ -32,7 +32,7 @@ export const IPC_METHODS = {
   AI_CHAT: 'ai:chat',
 
   // 流式AI聊天相关
-  AI_CHAT_STREAM_START: 'ai:chatStreamStart',
+  AI_CHAT_SEND: 'ai:chatSend',
   AI_CHAT_STREAM_CHUNK: 'ai:chatStreamChunk',
   AI_CHAT_STREAM_DONE: 'ai:chatStreamDone',
   AI_CHAT_CANCEL: 'ai:chatCancel',
