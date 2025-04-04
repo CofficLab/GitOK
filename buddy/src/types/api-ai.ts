@@ -30,13 +30,6 @@ export interface StreamDoneResponse {
 // AI API类型
 export interface AiApi {
     /**
-     * 发送AI聊天请求
-     * @param messages 聊天消息数组
-     * @returns 返回AI助手的响应文本
-     */
-    aiChat: (messages: ChatMessage[]) => Promise<string>;
-
-    /**
      * 启动流式AI聊天会话
      * @param messages 聊天消息数组
      * @returns 返回请求ID，用于后续操作和取消请求

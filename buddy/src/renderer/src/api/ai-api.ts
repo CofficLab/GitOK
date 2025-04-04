@@ -3,11 +3,6 @@ import type { ChatMessage, StreamChunkResponse, StreamDoneResponse } from '@/typ
 const ai = window.electron.ai;
 
 export const aiApi = {
-  // AI 相关功能
-  async aiChat(messages: ChatMessage[]): Promise<string> {
-    return await ai.aiChat(messages);
-  },
-
   // 流式传输相关功能
   async aiChatStreamStart(messages: ChatMessage[]): Promise<string> {
     return await ai.aiChatStreamStart(messages);

@@ -12,10 +12,12 @@ import { updateApi } from './update';
 import { contextMenuApi } from './contextMenu';
 import { devApi } from './dev';
 import { ElectronApi } from '@/types/api-all';
+import { aiApi } from './ai';
 
 // 整合所有 API
 const api: ElectronApi = {
   ipc: ipcApi,
+  ai: aiApi,
   command: commandApi,
   plugins: pluginApi,
   overlaid: overlaidApi,

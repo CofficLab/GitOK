@@ -4,6 +4,9 @@
  * 充分利用SDK提供的功能
 -->
 <script setup lang="ts">
+import { aiApi } from '@renderer/api/ai-api'
+
+
 </script>
 
 <template>

@@ -3,11 +3,6 @@ import { AiApi, ChatMessage, StreamChunkResponse, StreamDoneResponse } from '@/t
 import { IPC_METHODS } from '@/types/ipc-methods';
 
 export const aiApi: AiApi = {
-  // AI聊天功能
-  aiChat: async (messages: ChatMessage[]): Promise<string> => {
-    return ipcRenderer.invoke(IPC_METHODS.AI_CHAT, messages);
-  },
-
   // 启动流式AI聊天会话
   aiChatStreamStart: async (messages: ChatMessage[]): Promise<string> => {
     return ipcRenderer.invoke(IPC_METHODS.AI_CHAT_STREAM_START, messages);
