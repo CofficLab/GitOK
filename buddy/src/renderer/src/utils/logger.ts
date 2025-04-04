@@ -3,6 +3,10 @@
  * 支持不同级别的日志输出，包含时间戳和彩色显示
  */
 
+import log from 'electron-log/renderer';
+
+log.info('Log from the renderer process');
+
 // 日志级别枚举
 export enum LogLevel {
   DEBUG = 'DEBUG',
