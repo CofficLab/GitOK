@@ -11,9 +11,10 @@ import { LanguageModelV1, streamText, type CoreMessage } from 'ai'
 import { openai } from '@ai-sdk/openai'
 import { anthropic } from '@ai-sdk/anthropic'
 import { createDeepSeek } from '@ai-sdk/deepseek'
+import { ChatMessage } from '@/types/api-ai'
 
 // AI模型类型
-export type AIModelType = 'openai' | 'anthropic' | 'deepseek'
+type AIModelType = 'openai' | 'anthropic' | 'deepseek'
 
 // AI模型配置
 interface AIModelConfig {
@@ -23,12 +24,6 @@ interface AIModelConfig {
     system?: string
     temperature?: number
     maxTokens?: number
-}
-
-// 聊天消息类型
-export interface ChatMessage {
-    role: 'user' | 'assistant' | 'system'
-    content: string
 }
 
 // 默认的系统提示词
