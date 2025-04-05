@@ -5,8 +5,6 @@
 
 import log from 'electron-log/renderer';
 
-log.info('Log from the renderer process');
-
 // 日志级别枚举
 export enum LogLevel {
   DEBUG = 'DEBUG',
@@ -24,7 +22,6 @@ const LOG_COLORS = {
   RESET: '\x1b[0m',
 };
 
-const electronLogger = window.electron.ui;
 const showTimestamp = false;
 
 export class Logger {
@@ -109,7 +106,7 @@ export class Logger {
   public info(...args: unknown[]): void {
     if (this.enabled) {
       console.log(this.formatMessage(LogLevel.INFO, ...args));
-      electronLogger.info(this.argsToString(...args));
+      log.info(this.argsToString(...args));
     }
   }
 
@@ -119,7 +116,7 @@ export class Logger {
   public warn(...args: unknown[]): void {
     if (this.enabled) {
       console.warn(this.formatMessage(LogLevel.WARN, ...args));
-      electronLogger.warn(this.argsToString(...args));
+      log.warn(this.argsToString(...args));
     }
   }
 
@@ -129,7 +126,7 @@ export class Logger {
   public error(...args: unknown[]): void {
     if (this.enabled) {
       console.error(this.formatMessage(LogLevel.ERROR, ...args));
-      electronLogger.error(this.argsToString(...args));
+      log.error(this.argsToString(...args));
     }
   }
 }

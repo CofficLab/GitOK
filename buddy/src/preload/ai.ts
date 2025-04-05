@@ -1,11 +1,18 @@
 import { ipcRenderer } from 'electron';
 import { AiApi, ChatMessage, StreamChunkResponse, StreamDoneResponse } from '@/types/api-ai';
 import { IPC_METHODS } from '@/types/ipc-methods';
+import { IpcResponse } from '@/types/ipc-response';
 
 export const aiApi: AiApi = {
   // 启动流式AI聊天会话
   send: async (messages: ChatMessage[]): Promise<string> => {
-    return ipcRenderer.invoke(IPC_METHODS.AI_CHAT_SEND, messages);
+    const ipcResponse: IpcResponse<string> = await ipcRenderer.invoke(IPC_METHODS.AI_CHAT_SEND, messages);
+
+    if (ipcResponse.success) {
+      return ipcResponse.data ?? '';
+    } else {
+      throw new Error(ipcResponse.error);
+    }
   },
 
   // 注册流式聊天数据块监听器

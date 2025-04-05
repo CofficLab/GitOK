@@ -86,18 +86,21 @@ class AIManager {
             // 如果未配置，开始配置流程
             if (this.configState === 'unconfigured') {
                 onChunk(this.handleUnconfigured())
+                onFinish()
                 return
             }
 
             // 如果正在选择供应商
             if (this.configState === 'selecting_provider') {
                 onChunk(this.handleProviderSelection(messages[messages.length - 1]))
+                onFinish()
                 return
             }
 
             // 如果正在输入密钥
             if (this.configState === 'entering_key') {
                 onChunk(this.handleKeyInput(messages[messages.length - 1]))
+                onFinish()
                 return
             }
 
@@ -109,6 +112,7 @@ class AIManager {
                     `请输入您的 ${config.type.toUpperCase()} API密钥：\n` +
                     `(直接在聊天框中输入密钥即可，密钥将安全地保存在内存中)`
                 )
+                onFinish()
                 return
             }
 

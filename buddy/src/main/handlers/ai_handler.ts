@@ -18,7 +18,7 @@ export const aiRoutes: IpcRoute[] = [
                 const requestId = uuidv4();
                 logger.debug(`生成请求ID: ${requestId}`);
 
-                await aiManager.sendChatMessage(messages,
+                aiManager.sendChatMessage(messages,
                     (chunk: string) => {
                         logger.debug(`聊天数据块: ${chunk}`);
                         event.sender.send(IPC_METHODS.AI_CHAT_STREAM_CHUNK, {
