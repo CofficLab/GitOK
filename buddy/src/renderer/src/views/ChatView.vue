@@ -14,6 +14,9 @@ const messages: ChatMessage[] = [];
 aiApi.onAiChatStreamChunk((response: StreamChunkResponse) => {
     console.log(response);
 })
+aiApi.onAiChatStreamDone(() => {
+    console.log('end');
+});
 aiApi.send(messages);
 
 function sendMessage() {

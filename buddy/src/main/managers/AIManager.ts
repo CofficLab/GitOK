@@ -64,7 +64,13 @@ class AIManager {
      * 发送聊天消息
      * 返回流式响应
      */
-    async sendChatMessage(messages: ChatMessage[], onChunk: (chunk: string) => void, modelConfig?: Partial<AIModelConfig>, requestId?: string): Promise<void> {
+    async sendChatMessage(
+        messages: ChatMessage[], 
+        onChunk: (chunk: string) => void, 
+        onFinish: () => void,
+        modelConfig?: Partial<AIModelConfig>, 
+        requestId?: string
+    ): Promise<void> {
         // 创建AbortController用于取消请求
         const abortController = new AbortController()
         if (requestId) {
@@ -129,6 +135,10 @@ class AIManager {
                     logger.error('AI请求错误')
                     console.error(error); // your error logging logic here
                 },
+                onFinish() {
+                    logger.info('AI请求完成')
+                    onFinish()
+                }
             })
 
             for await (const chunk of result.textStream) {

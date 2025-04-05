@@ -18,18 +18,25 @@ export const aiRoutes: IpcRoute[] = [
                 const requestId = uuidv4();
                 logger.debug(`生成请求ID: ${requestId}`);
 
-                await aiManager.sendChatMessage(messages,(chunk:string)=>{
-                    logger.debug(`聊天数据块: ${chunk}`);
-                    event.sender.send(IPC_METHODS.AI_CHAT_STREAM_CHUNK, {
-                        success: true,
-                        data: chunk,
-                        requestId
-                    });
-                }, undefined, requestId);
-                
-                return { 
-                    success: true, 
-                    data: requestId 
+                await aiManager.sendChatMessage(messages,
+                    (chunk: string) => {
+                        logger.debug(`聊天数据块: ${chunk}`);
+                        event.sender.send(IPC_METHODS.AI_CHAT_STREAM_CHUNK, {
+                            success: true,
+                            data: chunk,
+                            requestId
+                        });
+                    }, () => {
+                        logger.debug(`聊天完成`);
+                        event.sender.send(IPC_METHODS.AI_CHAT_STREAM_DONE, {
+                            success: true,
+                            requestId
+                        });
+                    }, undefined, requestId);
+
+                return {
+                    success: true,
+                    data: requestId
                 };
             } catch (error) {
                 logger.error(`启动流式AI聊天失败:`, error);
