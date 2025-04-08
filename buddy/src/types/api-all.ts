@@ -1,3 +1,4 @@
+import { ConfigAPI } from "@/preload/config";
 import { AiApi } from "./api-ai";
 import { CommandApi } from "./api-command";
 import { DevApi } from "./api-dev";
@@ -21,5 +22,6 @@ export interface ElectronApi {
     overlaid: OverlaidApi;
     ui: UILogApi;
     contextMenu: ContextMenuApi;
-    update: any; // 如果有更新API的类型定义，应该引入
+    update: any;
+    config: ConfigAPI;
 }

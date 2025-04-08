@@ -14,6 +14,7 @@ import { routes as updateRoutes } from './handlers/update_router';
 import { baseRoutes, setupStreamListeners } from './handlers/common_handler';
 import { aiRoutes } from './handlers/ai_handler';
 import { devRoutes } from './handlers/dev_handler';
+import { routes as configRoutes } from './handlers/config_router';
 
 // 初始化IPC处理器
 routerService.registerRoutes(baseRoutes);
@@ -23,6 +24,7 @@ routerService.registerRoutes(overlaidAppRoutes);
 routerService.registerRoutes(uiLogRoutes);
 routerService.registerRoutes(updateRoutes);
 routerService.registerRoutes(devRoutes);
+routerService.registerRoutes(configRoutes);
 
 // 启动应用
 appManager

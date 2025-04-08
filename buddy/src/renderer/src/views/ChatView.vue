@@ -51,6 +51,7 @@ onMounted(() => {
       // 重置状态
       aiMessage.value = '';
       loading.value = false;
+      currentRequestId.value = '';
     }
   });
 });
@@ -58,18 +59,18 @@ onMounted(() => {
 // 发送消息
 async function sendMessage() {
   if (!message.value.trim() || loading.value) return;
-  
+
   // 添加用户消息到列表
   messages.push({
     role: 'user',
     content: message.value
   });
-  
+
   // 清空输入框并设置加载状态
   const userMessage = message.value;
   message.value = '';
   loading.value = true;
-  
+
   try {
     // 发送消息并获取请求ID
     // 创建一个新的消息数组，确保只包含可序列化的数据
@@ -104,11 +105,11 @@ function handleKeydown(event: KeyboardEvent) {
           <p>在下方输入框中输入您的问题，按发送按钮或Ctrl+Enter发送</p>
         </div>
       </div>
-      
+
       <div v-else class="space-y-4">
         <!-- 历史消息 -->
-        <div v-for="(msg, index) in messages" :key="index" 
-             :class="['chat', msg.role === 'user' ? 'chat-end' : 'chat-start']">
+        <div v-for="(msg, index) in messages" :key="index"
+          :class="['chat', msg.role === 'user' ? 'chat-end' : 'chat-start']">
           <div class="chat-header opacity-75">
             {{ msg.role === 'user' ? '你' : 'AI助手' }}
           </div>
@@ -116,7 +117,7 @@ function handleKeydown(event: KeyboardEvent) {
             <div class="whitespace-pre-wrap">{{ msg.content }}</div>
           </div>
         </div>
-        
+
         <!-- AI正在回复 -->
         <div v-if="loading && aiMessage" class="chat chat-start">
           <div class="chat-header opacity-75">AI助手</div>
@@ -124,7 +125,7 @@ function handleKeydown(event: KeyboardEvent) {
             <div class="whitespace-pre-wrap">{{ aiMessage }}</div>
           </div>
         </div>
-        
+
         <!-- 加载指示器 -->
         <div v-if="loading && !aiMessage" class="chat chat-start">
           <div class="chat-bubble">
@@ -133,23 +134,13 @@ function handleKeydown(event: KeyboardEvent) {
         </div>
       </div>
     </div>
-    
+
     <!-- 输入区域 -->
     <div class="input-container">
       <div class="flex gap-2">
-        <textarea 
-          class="textarea textarea-bordered flex-1" 
-          placeholder="输入消息..." 
-          v-model="message" 
-          @keydown="handleKeydown"
-          :disabled="loading"
-          rows="3"
-        ></textarea>
-        <button 
-          class="btn btn-primary self-end" 
-          @click="sendMessage" 
-          :disabled="loading || !message.trim()"
-        >
+        <textarea class="textarea textarea-bordered flex-1" placeholder="输入消息..." v-model="message"
+          @keydown="handleKeydown" :disabled="loading" rows="3"></textarea>
+        <button class="btn btn-primary self-end" @click="sendMessage" :disabled="loading || !message.trim()">
           <span v-if="!loading">发送</span>
           <span v-else class="loading loading-spinner loading-sm"></span>
         </button>

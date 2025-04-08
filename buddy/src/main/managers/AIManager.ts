@@ -12,9 +12,17 @@ import { openai } from '@ai-sdk/openai'
 import { anthropic } from '@ai-sdk/anthropic'
 import { createDeepSeek } from '@ai-sdk/deepseek'
 import { ChatMessage } from '@/types/api-ai'
+import { configManager } from './ConfigManager'
 
 // AI模型类型
 type AIModelType = 'openai' | 'anthropic' | 'deepseek'
+
+// API密钥记录类型
+interface ApiKeys {
+    openai?: string
+    anthropic?: string
+    deepseek?: string
+}
 
 // AI模型配置
 interface AIModelConfig {
@@ -32,6 +40,11 @@ const DEFAULT_SYSTEM_PROMPT = '你是一个有用的AI助手。'
 // 配置状态
 type ConfigState = 'unconfigured' | 'selecting_provider' | 'entering_key' | 'configured'
 
+// 为 AI 密钥配置定义配置键
+const AI_CONFIG_KEY = 'ai.keys'
+const AI_PROVIDER_KEY = 'ai.provider'
+const AI_MODEL_KEY = 'ai.model'
+
 class AIManager {
     private defaultModel: AIModelConfig = {
         type: 'openai',
@@ -45,14 +58,43 @@ class AIManager {
     // 配置状态
     private configState: ConfigState = 'unconfigured'
 
-    // 内存中的API密钥存储
-    private apiKeys: Map<AIModelType, string> = new Map()
-
     // 活跃请求的AbortController集合
     private activeRequests = new Map<string, AbortController>()
 
     constructor() {
         logger.info('AIManager 初始化')
+        this.initFromConfig()
+    }
+
+    /**
+     * 从配置中初始化 AI 设置
+     */
+    private initFromConfig(): void {
+        try {
+            // 从配置中获取当前供应商和模型
+            const savedProvider = configManager.get<AIModelType>(AI_PROVIDER_KEY, this.defaultModel.type)
+            const savedModel = configManager.get<string>(`${AI_PROVIDER_KEY}.${savedProvider}.model`, this.defaultModel.modelName)
+
+            // 获取保存的密钥信息
+            const savedKeys = configManager.get<ApiKeys>(AI_CONFIG_KEY, {} as ApiKeys)
+
+            // 如果有保存的密钥，则设置为已配置状态
+            if (savedKeys && Object.values(savedKeys).some(key => !!key)) {
+                this.configState = 'configured'
+
+                // 更新默认模型配置
+                this.defaultModel.type = savedProvider
+                this.defaultModel.modelName = savedModel
+
+                logger.info(`从配置中恢复AI设置: ${savedProvider}/${savedModel}`)
+            } else {
+                this.configState = 'unconfigured'
+                logger.info('未找到保存的AI配置，需要重新配置')
+            }
+        } catch (error) {
+            logger.error('初始化AI配置失败:', error)
+            this.configState = 'unconfigured'
+        }
     }
 
     /**
@@ -60,10 +102,10 @@ class AIManager {
      * 返回流式响应
      */
     async sendChatMessage(
-        messages: ChatMessage[], 
-        onChunk: (chunk: string) => void, 
+        messages: ChatMessage[],
+        onChunk: (chunk: string) => void,
         onFinish: () => void,
-        modelConfig?: Partial<AIModelConfig>, 
+        modelConfig?: Partial<AIModelConfig>,
         requestId?: string
     ): Promise<void> {
         // 创建AbortController用于取消请求
@@ -100,18 +142,18 @@ class AIManager {
             }
 
             // 检查API密钥
-            const apiKey = this.apiKeys.get(config.type)
+            const apiKey = this.getApiKey(config.type)
             if (!apiKey) {
                 this.configState = 'entering_key'
                 onChunk(
                     `请输入您的 ${config.type.toUpperCase()} API密钥：\n` +
-                    `(直接在聊天框中输入密钥即可，密钥将安全地保存在内存中)`
+                    `(直接在聊天框中输入密钥即可，密钥将安全地保存在配置文件中)`
                 )
                 onFinish()
                 return
             }
 
-            // 使用内存中的密钥
+            // 使用保存的密钥
             config.apiKey = apiKey
             logger.info(`向 ${config.type}/${config.modelName} 发送聊天请求，消息条数: ${messages.length}`)
 
@@ -152,6 +194,43 @@ class AIManager {
             if (requestId && !abortController.signal.aborted) {
                 this.activeRequests.delete(requestId)
             }
+        }
+    }
+
+    /**
+     * 从配置中获取指定类型的API密钥
+     */
+    private getApiKey(type: AIModelType): string | undefined {
+        try {
+            const keys = configManager.get<ApiKeys>(AI_CONFIG_KEY, {} as ApiKeys)
+            return keys[type]
+        } catch (error) {
+            logger.error(`获取${type}的API密钥失败:`, error)
+            return undefined
+        }
+    }
+
+    /**
+     * 保存API密钥到配置
+     */
+    private saveApiKey(type: AIModelType, key: string): void {
+        try {
+            // 获取现有的密钥
+            const keys = configManager.get<ApiKeys>(AI_CONFIG_KEY, {} as ApiKeys)
+
+            // 更新密钥
+            keys[type] = key
+
+            // 保存回配置
+            configManager.set(AI_CONFIG_KEY, keys)
+
+            // 保存当前供应商和模型信息
+            configManager.set(AI_PROVIDER_KEY, type)
+            configManager.set(`${AI_PROVIDER_KEY}.${type}.model`, this.defaultModel.modelName)
+
+            logger.info(`保存${type}的API密钥成功`)
+        } catch (error) {
+            logger.error(`保存${type}的API密钥失败:`, error)
         }
     }
 
@@ -207,11 +286,19 @@ class AIManager {
         this.defaultModel.type = selectedType
         this.defaultModel.modelName = models[0]  // 使用第一个模型作为默认值
 
+        // 先检查是否已经有保存的密钥
+        const savedKey = this.getApiKey(selectedType)
+        if (savedKey) {
+            this.configState = 'configured'
+            return `您选择了 ${selectedType.toUpperCase()}，使用默认模型 ${models[0]}。\n` +
+                `已找到保存的API密钥，可以开始聊天了。`
+        }
+
         // 进入输入密钥状态
         this.configState = 'entering_key'
         return `您选择了 ${selectedType.toUpperCase()}，使用默认模型 ${models[0]}。\n` +
             `请输入您的 ${selectedType.toUpperCase()} API密钥：\n` +
-            `(直接在聊天框中输入密钥即可，密钥将安全地保存在内存中)`
+            `(直接在聊天框中输入密钥即可，密钥将安全地保存在配置文件中)`
     }
 
     /**
@@ -224,13 +311,13 @@ class AIManager {
             return '请输入有效的API密钥（至少20个字符）'
         }
 
-        // 保存密钥
-        this.apiKeys.set(this.defaultModel.type, apiKey)
+        // 保存密钥到配置文件
+        this.saveApiKey(this.defaultModel.type, apiKey)
         this.configState = 'configured'
 
         return `${this.defaultModel.type.toUpperCase()} API密钥已保存！\n` +
             '现在您可以开始聊天了。\n' +
-            '提示：您可以随时输入新的API密钥来更新配置。'
+            '提示：您的API密钥已安全地保存，下次启动应用时将自动加载。'
     }
 
     /**
@@ -274,11 +361,10 @@ class AIManager {
             case 'anthropic':
                 return anthropic(config.modelName)
             case 'deepseek':
-                const apiKey = this.apiKeys.get(config.type)
                 const deepseek = createDeepSeek({
-                    apiKey: apiKey,
+                    apiKey: config.apiKey,
                 });
-                return deepseek(config.modelName)
+                return deepseek(config.modelName) as unknown as LanguageModelV1
             default:
                 throw new Error(`不支持的模型类型: ${config.type}`)
         }
@@ -318,9 +404,9 @@ class AIManager {
         this.defaultModel = { ...this.defaultModel, ...config }
         logger.info(`更新默认AI模型: ${this.defaultModel.type}/${this.defaultModel.modelName}`)
 
-        // 如果提供了新的API密钥，更新内存中的存储
+        // 如果提供了新的API密钥，更新配置文件中的存储
         if (config.apiKey) {
-            this.apiKeys.set(this.defaultModel.type, config.apiKey)
+            this.saveApiKey(this.defaultModel.type, config.apiKey)
             this.configState = 'configured'
         }
     }
@@ -329,8 +415,8 @@ class AIManager {
      * 获取默认模型配置
      */
     getDefaultModelConfig(): AIModelConfig {
-        // 从内存中获取API密钥
-        const apiKey = this.apiKeys.get(this.defaultModel.type) || ''
+        // 从配置中获取API密钥
+        const apiKey = this.getApiKey(this.defaultModel.type) || ''
         return { ...this.defaultModel, apiKey }
     }
 
@@ -364,7 +450,8 @@ class AIManager {
      */
     resetConfig() {
         this.configState = 'unconfigured'
-        this.apiKeys.clear()
+        // 从配置中清除保存的密钥
+        configManager.delete(AI_CONFIG_KEY)
         this.defaultModel.apiKey = ''
     }
 }

@@ -6,6 +6,7 @@
  * - 提供路由导航
  * - 提供插件商店入口
  * - 显示窗口激活状态
+ * - 提供打开配置文件夹功能
  -->
 
 <script setup lang="ts">
@@ -14,6 +15,7 @@ import { useRouter, useRoute } from 'vue-router'
 import { useAppStore } from '@renderer/stores/appStore'
 import StatusBar from '@renderer/cosy/StatusBar.vue'
 import StatusBarItem from '@renderer/cosy/StatusBarItem.vue'
+import { ipcApi } from '@renderer/api/ipc-api'
 
 const electronApi = window.electron;
 const overlaidApi = electronApi.overlaid;
@@ -60,6 +62,16 @@ const goToDev = () => {
     router.push('/dev')
     appStore.setView('dev')
     console.log('状态栏：已更新视图状态为dev')
+}
+
+// 打开配置文件夹
+const openConfigFolder = async () => {
+    try {
+        await ipcApi.openConfigFolder()
+        console.log('已打开配置文件夹')
+    } catch (error) {
+        console.error('打开配置文件夹失败:', error)
+    }
 }
 
 onMounted(() => {
@@ -112,6 +124,11 @@ onUnmounted(() => {
 
         <!-- 右侧状态栏 -->
         <template #right>
+            <!-- 配置文件夹按钮 -->
+            <StatusBarItem clickable @click="openConfigFolder" title="打开配置文件夹">
+                配置
+            </StatusBarItem>
+
             <!-- 被覆盖的应用名称 -->
             <StatusBarItem v-if="overlaidAppName">
                 {{ overlaidAppName }}

@@ -37,6 +37,14 @@ export const IPC_METHODS = {
   AI_CHAT_STREAM_DONE: 'ai:chatStreamDone',
   AI_CHAT_CANCEL: 'ai:chatCancel',
 
+  // 配置管理相关
+  CONFIG_GET_ALL: 'config:getAll',
+  CONFIG_GET: 'config:get',
+  CONFIG_SET: 'config:set',
+  CONFIG_DELETE: 'config:delete',
+  CONFIG_RESET: 'config:reset',
+  CONFIG_GET_PATH: 'config:getPath',
+
   // 开发测试相关方法
   DEV_TEST_ECHO: 'dev:test:echo',           // 回显测试
   DEV_TEST_ERROR: 'dev:test:error',         // 错误处理测试

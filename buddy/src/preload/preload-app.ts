@@ -13,6 +13,7 @@ import { contextMenuApi } from './contextMenu';
 import { devApi } from './dev';
 import { ElectronApi } from '@/types/api-all';
 import { aiApi } from './ai';
+import { configAPI } from './config';
 
 // 整合所有 API
 const api: ElectronApi = {
@@ -24,7 +25,8 @@ const api: ElectronApi = {
   ui: uiLogApi,
   update: updateApi,
   contextMenu: contextMenuApi,
-  dev: devApi
+  dev: devApi,
+  config: configAPI
 };
 
 // 使用 contextBridge 暴露 API 到渲染进程
