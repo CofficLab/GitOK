@@ -46,4 +46,10 @@ export interface SuperAction {
    * 是否启用开发者工具
    */
   devTools?: boolean;
+
+  /**
+   * 可执行函数
+   * @returns 任意返回值
+   */
+  execute?: () => any;
 }
