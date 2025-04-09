@@ -1,7 +1,3 @@
-/**
-* 插件卡片组件
-* 用于展示插件信息，支持卸载和下载操作
-*/
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import type { SuperPlugin } from '@/types/super_plugin'
@@ -16,7 +12,6 @@ import { globalToast } from '@renderer/composables/useToast'
 
 const props = defineProps<{
     plugin: SuperPlugin
-    type: 'local' | 'remote'
     // 状态控制
     downloadingPlugins?: Set<string>
     downloadSuccess?: Set<string>
@@ -42,7 +37,7 @@ const emit = defineEmits<{
 
 // 计算卡片样式
 const cardClass = computed(() => {
-    if (props.type === 'remote') return 'bg-base-100'
+    if (props.plugin.type === 'remote') return 'bg-base-100'
 
     return {
         'bg-base-100': !props.plugin.validation,
@@ -109,9 +104,9 @@ const handleUninstall = async () => {
             <p class="text-base-content/70 text-sm mb-4">{{ plugin.description }}</p>
 
             <!-- 操作区域 -->
-            <div class="mt-4 flex flex-wrap gap-2 items-center">
+            <div class="mt-4 flex flex-wrap gap-2 items-center" v-if="plugin.type != 'dev'">
                 <!-- 本地插件操作 -->
-                <template v-if="type === 'local'">
+                <template v-if="plugin.type === 'user'">
                     <!-- 卸载按钮 (仅用户插件) -->
                     <div v-if="isUserPlugin">
                         <!-- 卸载按钮 -->

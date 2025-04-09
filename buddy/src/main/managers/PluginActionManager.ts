@@ -10,6 +10,7 @@ import { logger } from './LogManager';
 import { userPluginDB } from '../db/UserPluginDB';
 import { appStateManager } from './StateManager';
 import { PluginContext } from '@/types/plugin-context';
+import { devPluginDB } from '../db/DevPluginDB';
 
 class PluginActionManager extends BaseManager {
   private static instance: PluginActionManager;
@@ -51,7 +52,7 @@ class PluginActionManager extends BaseManager {
       // 从所有加载的插件中获取动作
       const plugins = await pluginManager.getPlugins();
       for (const plugin of plugins) {
-        // logger.info(`获取插件动作，当前插件: ${plugin.id}`);
+        logger.info(`获取插件动作，当前插件: ${plugin.id}`);
         try {
           // 动态加载插件模块
           const pluginModule = await pluginManager.loadPluginModule(plugin);
@@ -71,10 +72,10 @@ class PluginActionManager extends BaseManager {
             overlaidApp: overlaidApp?.name || '',
           };
 
-          // logger.info(`调用插件 getActions: ${plugin.id}`, {
-          //   context,
-          //   pluginPath: plugin.path,
-          // });
+          logger.info(`调用插件 getActions: ${plugin.id}`, {
+            context,
+            pluginPath: plugin.path,
+          });
 
           const pluginActions = await pluginModule.getActions(context);
 
@@ -98,10 +99,10 @@ class PluginActionManager extends BaseManager {
           const errorDetail =
             error instanceof Error
               ? {
-                  message: error.message,
-                  stack: error.stack,
-                  name: error.name,
-                }
+                message: error.message,
+                stack: error.stack,
+                name: error.name,
+              }
               : String(error);
 
           logger.error(`插件 ${plugin.id} 执行失败`, {
@@ -123,13 +124,6 @@ class PluginActionManager extends BaseManager {
       }
 
       // logger.info(`获取插件动作，所有动作`, allActions);
-
-      // 过滤关键词匹配的动作
-      if (keyword) {
-        allActions = allActions.filter((action) =>
-          action.matchKeyword(keyword)
-        );
-      }
 
       logger.info(`找到 ${allActions.length} 个动作`);
       return allActions;
@@ -170,7 +164,7 @@ class PluginActionManager extends BaseManager {
    * @param actionGlobalId 要执行的动作的全局ID
    * @returns 执行结果
    */
-  async executeAction(actionGlobalId: string): Promise<any> {
+  async executeAction(actionGlobalId: string, keyword: string): Promise<any> {
     logger.info(`执行插件动作: ${actionGlobalId}`);
 
     try {
@@ -180,10 +174,18 @@ class PluginActionManager extends BaseManager {
         throw new Error(`无效的动作ID: ${actionGlobalId}`);
       }
 
-      // 获取插件实例
-      const plugin = await userPluginDB.find(pluginId);
+      // 首先从用户插件目录获取插件实例
+      let plugin = await userPluginDB.find(pluginId);
+
+      // 如果未找到，则尝试从开发插件目录获取
+      if (!plugin) {
+        plugin = await devPluginDB.find(pluginId);
+      }
+
       if (!plugin) {
         throw new Error(`未找到插件: ${pluginId}`);
+      } else {
+        logger.debug(`找到插件: ${pluginId}`);
       }
 
       // 加载插件模块
@@ -193,7 +195,7 @@ class PluginActionManager extends BaseManager {
       }
 
       // 获取动作信息
-      const actions = await this.getActions();
+      const actions = await this.getActions(keyword);
       const actionEntity = actions.find((a) => a.id === actionId);
 
       if (!actionEntity) {

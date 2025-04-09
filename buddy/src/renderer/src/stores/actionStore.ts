@@ -27,8 +27,8 @@ interface ActionState {
   selected: string | null;
   viewHtml: string;
   lastKeyword: string; // 存储上次搜索的关键词，用于窗口激活时刷新
-  keyword: string; // 从searchStore合并: 当前搜索关键词
-  lastSearchTime: number; // 从searchStore合并: 记录最后一次搜索时间
+  keyword: string; // 当前搜索关键词
+  lastSearchTime: number; // 记录最后一次搜索时间
 }
 
 export const useActionStore = defineStore('action', {
@@ -38,8 +38,8 @@ export const useActionStore = defineStore('action', {
     selected: null,
     viewHtml: '',
     lastKeyword: '',
-    keyword: '', // 从searchStore合并
-    lastSearchTime: 0, // 从searchStore合并
+    keyword: '',
+    lastSearchTime: 0,
   }),
 
   actions: {
@@ -84,7 +84,7 @@ export const useActionStore = defineStore('action', {
         this.viewHtml = '';
       }
 
-      return actionsApi.executeAction(action.globalId);
+      return actionsApi.executeAction(action.globalId, this.keyword);
     },
 
     /**

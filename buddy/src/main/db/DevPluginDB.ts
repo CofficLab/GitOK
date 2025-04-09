@@ -2,7 +2,7 @@
  * 开发插件数据库
  * 负责从项目packages目录读取开发中的插件信息
  */
-import { join } from 'path';
+import { dirname, join } from 'path';
 import { DiskPluginDB } from './DiskPluginDB';
 import { PluginEntity } from '../entities/PluginEntity';
 import { logger } from '../managers/LogManager';
@@ -11,7 +11,7 @@ export class DevPluginDB extends DiskPluginDB {
   private static instance: DevPluginDB;
 
   private constructor() {
-    const dir = join(process.cwd(), 'packages');
+    const dir = join(dirname(process.cwd()), 'packages');
     logger.info(`初始化 DevPluginDB: ${dir}`);
     super(dir);
   }

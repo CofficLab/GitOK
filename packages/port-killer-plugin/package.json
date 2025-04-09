@@ -1,0 +1,25 @@
+{
+  "name": "@coffic/buddy-port-killer-plugin",
+  "version": "1.0.0",
+  "description": "Buddy端口进程管理插件",
+  "main": "index.js",
+  "publishConfig": {
+    "access": "public"
+  },
+  "buddyPlugin": {
+    "id": "port-killer-plugin"
+  },
+  "keywords": [
+    "buddy",
+    "plugin",
+    "port",
+    "process",
+    "killer",
+    "buddy-plugin"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Coffic",
+  "license": "MIT"
+}

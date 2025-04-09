@@ -9,6 +9,7 @@ import type { SuperPlugin } from '@/types/super_plugin';
 import type { PluginValidation } from '@/types/plugin-validation';
 import { readPackageJson, hasPackageJson } from '../utils/PackageUtils';
 import { NpmPackage } from '../service/NpmRegistryService';
+import { logger } from '../managers/LogManager';
 
 /**
  * 插件类型
@@ -62,6 +63,8 @@ export class PluginEntity implements SuperPlugin {
     if (!(await hasPackageJson(pluginPath))) {
       throw new Error(`插件目录 ${pluginPath} 缺少 package.json`);
     }
+
+    logger.info('读取插件目录', { pluginPath, type });
 
     const packageJson = await readPackageJson(pluginPath);
     const plugin = new PluginEntity(packageJson, pluginPath, type);

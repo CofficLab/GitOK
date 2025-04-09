@@ -25,9 +25,9 @@ export const pluginActionRoutes: IpcRoute[] = [
   },
   {
     channel: IPC_METHODS.EXECUTE_PLUGIN_ACTION,
-    handler: async (_, actionId: string): Promise<IpcResponse<unknown>> => {
+    handler: async (_, actionId: string, keyword: string): Promise<IpcResponse<unknown>> => {
       try {
-        const result = await pluginActionManager.executeAction(actionId);
+        const result = await pluginActionManager.executeAction(actionId, keyword);
         return { success: true, data: result };
       } catch (error) {
         const errorMessage =

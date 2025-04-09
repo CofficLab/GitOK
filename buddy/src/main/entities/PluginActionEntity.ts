@@ -211,21 +211,6 @@ export class PluginActionEntity implements SuperAction {
   }
 
   /**
-   * 匹配关键词
-   * @param keyword 搜索关键词
-   */
-  matchKeyword(keyword: string): boolean {
-    if (!keyword) return true;
-
-    const searchText = keyword.toLowerCase();
-    return (
-      this.title.toLowerCase().includes(searchText) ||
-      this.description.toLowerCase().includes(searchText) ||
-      this.keywords.some((k) => k.toLowerCase().includes(searchText))
-    );
-  }
-
-  /**
    * 转换为普通对象
    */
   toJSON() {

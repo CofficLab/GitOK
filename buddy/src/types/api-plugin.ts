@@ -52,7 +52,7 @@ export interface SuperPluginManagementAPI {
 // 插件动作接口
 export interface SuperPluginActionsAPI {
   getPluginActions: (keyword?: string) => Promise<SuperAction[]>;
-  executeAction: (actionId: string) => Promise<any>;
+  executeAction: (actionId: string, keyword: string) => Promise<any>;
   getActionView: (actionId: string) => Promise<any>;
 }
 
