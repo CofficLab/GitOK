@@ -1,7 +1,7 @@
 /**
  * Browser 视图管理器
  */
-import { BrowserView } from 'electron';
+import { WebContentsView } from 'electron';
 import { is } from '@electron-toolkit/utils';
 import { windowManager } from './WindowManager';
 import { ViewBounds } from '@/types/plugin-view';
@@ -12,7 +12,7 @@ import { createViewArgs } from '@/types/args';
 const verbose = true;
 
 export class BrowserManager {
-    private views: Map<string, BrowserView> = new Map();
+    private views: Map<string, WebContentsView> = new Map();
 
     /**
      * 创建视图
@@ -37,7 +37,7 @@ export class BrowserManager {
         }
 
         // 创建视图
-        const view = new BrowserView({
+        const view = new WebContentsView({
             webPreferences: {
                 preload: join(__dirname, '../preload/plugin-preload.js'),
                 sandbox: false,
@@ -59,11 +59,8 @@ export class BrowserManager {
         view.setBounds(viewBounds);
 
         // 设置视图自动调整大小
-        view.setAutoResize({
-            width: true,
-            height: true,
-            horizontal: true,
-            vertical: true
+        mainWindow.on("resize", () => {
+            logger.info('主窗口调整大小，调整视图大小');
         });
 
         // 加载HTML内容，如果提供了content参数，则使用content，否则读取pagePath对应的文件内容
@@ -73,7 +70,7 @@ export class BrowserManager {
         );
 
         // 将视图添加到主窗口并保存到Map中
-        mainWindow.setBrowserView(view);
+        mainWindow.contentView.addChildView(view);
         this.views.set(args.pagePath ?? "wild", view);
 
         logger.info('视图创建成功，当前视图个数', this.views.size);
@@ -96,7 +93,7 @@ export class BrowserManager {
         const mainWindow = windowManager.getMainWindow();
         if (!mainWindow) return;
 
-        mainWindow.removeBrowserView(view);
+        mainWindow.contentView.removeChildView(view);
         this.views.delete(pagePath);
         view.webContents.close();
     }
