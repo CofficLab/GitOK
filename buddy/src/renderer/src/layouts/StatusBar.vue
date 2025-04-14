@@ -88,10 +88,6 @@ onUnmounted(() => {
                 :variant="route.path === '/plugins' ? 'primary' : 'default'">
                 插件商店
             </StatusBarItem>
-            <StatusBarItem clickable @click="goToPluginGrid" :active="route.path === '/chat'"
-                :variant="route.path === '/plugin-grid' ? 'primary' : 'default'">
-                插件页面
-            </StatusBarItem>
             <StatusBarItem clickable @click="goToChat" :active="route.path === '/chat'"
                 :variant="route.path === '/chat' ? 'primary' : 'default'">
                 聊天

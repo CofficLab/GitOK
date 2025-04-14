@@ -6,7 +6,6 @@ import { contextBridge } from 'electron';
 import { ipcApi } from './ipc';
 import { commandApi } from './command';
 import { pluginApi } from './plugin';
-import { overlaidApi } from './overlaid';
 import { updateApi } from './update';
 import { contextMenuApi } from './contextMenu';
 import { devApi } from './dev';
@@ -20,7 +19,6 @@ const api: ElectronApi = {
   ai: aiApi,
   command: commandApi,
   plugins: pluginApi,
-  overlaid: overlaidApi,
   update: updateApi,
   contextMenu: contextMenuApi,
   dev: devApi,

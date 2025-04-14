@@ -9,7 +9,7 @@ import { join } from 'path';
 import { logger } from './LogManager';
 import { createViewArgs } from '@/types/args';
 
-const verbose = false;
+const verbose = true;
 
 export class ViewManager {
     private views: Map<string, BrowserView> = new Map();
@@ -71,8 +71,13 @@ export class ViewManager {
      * 销毁视图
      */
     public destroyView(pagePath: string): void {
+        logger.info('销毁视图:', pagePath);
+
         const view = this.views.get(pagePath);
-        if (!view) return;
+        if (!view) {
+            logger.warn('试图销毁不存在的视图:', pagePath);
+            return;
+        }
 
         const mainWindow = windowManager.getMainWindow();
         if (!mainWindow) return;

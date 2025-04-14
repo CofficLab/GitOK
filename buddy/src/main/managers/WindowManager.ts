@@ -242,7 +242,9 @@ class WindowManager extends BaseManager {
     ): Promise<void> {
         if (!this.mainWindow) return;
 
-        logger.info('窗口配置为跟随桌面模式');
+        if (verbose) {
+            logger.info('窗口配置为跟随桌面模式');
+        }
 
         if (process.platform === 'darwin') {
             await this.showWindowMacOS(x, y);

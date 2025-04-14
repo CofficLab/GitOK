@@ -3,7 +3,6 @@ import { AiApi } from "./api-ai";
 import { CommandApi } from "./api-command";
 import { DevApi } from "./api-dev";
 import { IpcApi } from "./api-message";
-import { OverlaidApi } from "./api-overlaid";
 import { PluginAPi } from "./api-plugin";
 
 // 上下文菜单API类型
@@ -18,7 +17,6 @@ export interface ElectronApi {
     ipc: IpcApi;
     command: CommandApi;
     plugins: PluginAPi;
-    overlaid: OverlaidApi;
     contextMenu: ContextMenuApi;
     update: any;
     config: ConfigAPI;

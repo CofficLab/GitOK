@@ -2,15 +2,15 @@ import { SuperPlugin } from '@/types/super_plugin';
 import { defineStore } from 'pinia';
 import { logger } from '../utils/logger';
 import { pluginsAPI } from '../api/plugins-api';
-import { onMounted, onUnmounted } from 'vue';
 
-const verbose = false;
+const verbose = true;
 
 interface MarketState {
     userPluginDirectory: string;
     error: string;
     userPlugins: SuperPlugin[];
     devPlugins: SuperPlugin[];
+    pluginsWithPage: SuperPlugin[];
     remotePlugins: SuperPlugin[];
     loadingPlugins: boolean;
     loadingRemotePlugins: boolean;
@@ -24,6 +24,7 @@ export const useMarketStore = defineStore('market', {
         error: '',
         userPlugins: [],
         devPlugins: [],
+        pluginsWithPage: [],
         remotePlugins: [],
         loadingPlugins: false,
         loadingRemotePlugins: false,
@@ -66,6 +67,7 @@ export const useMarketStore = defineStore('market', {
                 console.error('Failed to load plugins:', err);
             } finally {
                 this.loadingPlugins = false;
+                this.pluginsWithPage = this.devPlugins.filter(plugin => plugin.hasPage);
             }
         },
 

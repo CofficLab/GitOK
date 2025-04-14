@@ -87,7 +87,6 @@ export const useAppStore = defineStore('app', {
       logger.info('setupOverlaidAppListeners');
 
       ipc.receive(AppEvents.OVERLAID_APP_CHANGED, (args: any) => {
-        logger.info('onOverlaidAppChanged', args);
         this.overlaidApp = args as SuperApp | null;
       });
     },
@@ -99,13 +98,11 @@ export const useAppStore = defineStore('app', {
       // 监听窗口激活事件
       ipc.receive(AppEvents.ActIVATED, () => {
         this.setActiveState(true);
-        console.log('应用窗口被激活');
       });
 
       // 监听窗口失活事件
       ipc.receive(AppEvents.DEACTIVATED, () => {
         this.setActiveState(false);
-        console.log('应用窗口失去焦点');
       });
     },
 

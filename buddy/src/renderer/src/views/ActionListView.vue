@@ -55,9 +55,7 @@ const handleNavigateDown = (index: number) => {
 }
 
 // 监听搜索输入变化，加载相应的插件动作
-watch(() => actionStore.keyword, async (newKeyword) => {
-    logger.info(`ActionListView.vue: 搜索关键词变化为 "${newKeyword}"`);
-
+watch(() => actionStore.keyword, async () => {
     // 重新加载插件动作
     try {
         await actionStore.loadList();

@@ -6,6 +6,7 @@ export const IPC_METHODS = {
   Open_Folder: 'open-folder',
   Create_View: 'create-view',
   Destroy_View: 'destroy-view',
+  Destroy_Plugin_Views: 'destroy-plugin-views',
 
   GET_PLUGIN_ACTIONS: 'get-plugin-actions',
   GET_PLUGIN_PAGE_SOURCE_CODE: 'get-plugin-page-source-code',

@@ -12,6 +12,8 @@ import { logger } from './LogManager';
 import { AppEvents } from '@/types/app-events';
 import { SuperApp } from '@/types/super_app';
 
+const verbose = false;
+
 class StateManager extends BaseManager {
   private static instance: StateManager;
   private overlaidApp: SuperApp | null = null;
@@ -116,9 +118,11 @@ class StateManager extends BaseManager {
     try {
       const frontmostApp = getFrontmostApplication();
       if (frontmostApp) {
-        logger.info(
-          `当前活跃应用: ${frontmostApp.name} (${frontmostApp.bundleId})`
-        );
+
+        if (verbose) {
+          logger.debug('当前活跃应用信息:', frontmostApp);
+        }
+
         return frontmostApp;
       }
     } catch (error) {

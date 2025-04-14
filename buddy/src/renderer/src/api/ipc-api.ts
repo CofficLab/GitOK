@@ -30,6 +30,15 @@ export const ipcApi = {
     }
   },
 
+  async destroyPluginViews(): Promise<unknown> {
+    const response: IpcResponse<any> = await ipc.invoke(IPC_METHODS.Destroy_Plugin_Views);
+    if (response.success) {
+      return response.data;
+    } else {
+      throw new Error(response.error);
+    }
+  },
+
   /**
    * 打开配置文件夹
    * 先获取配置文件夹路径，然后打开它

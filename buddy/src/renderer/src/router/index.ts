@@ -12,8 +12,6 @@ import PluginStoreView from '@/renderer/src/views/PluginMarketView.vue';
 import { useAppStore } from '@renderer/stores/appStore';
 import HomeView from '../views/HomeView.vue';
 import ChatView from '../views/ChatView.vue';
-import DevView from '../views/DevView.vue';
-import PluginPageGrid from '../views/PluginPageGrid.vue';
 
 // 路由配置
 const routes = [
@@ -42,15 +40,6 @@ const routes = [
     meta: {
       title: '聊天',
       viewType: 'chat',
-    },
-  },
-  {
-    path: '/plugin-grid',
-    name: 'plugin-grid',
-    component: PluginPageGrid,
-    meta: {
-      title: '插件页面',
-      viewType: 'dev',
     },
   },
 ];

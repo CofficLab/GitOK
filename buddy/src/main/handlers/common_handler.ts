@@ -36,6 +36,13 @@ export const baseRoutes: IpcRoute[] = [
         handler: (_, id): void => {
             return viewManager.destroyView(id);
         }
+    },
+
+    {
+        channel: IPC_METHODS.Destroy_Plugin_Views,
+        handler: (_): void => {
+            return viewManager.destroyAllViews();
+        }
     }
 ];
 

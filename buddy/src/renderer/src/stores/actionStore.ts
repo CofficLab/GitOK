@@ -2,8 +2,6 @@ import { defineStore } from 'pinia';
 import type { SuperAction } from '@/types/super_action';
 import { logger } from '@renderer/utils/logger';
 import { AppEvents } from '@/types/app-events';
-import { onMounted } from 'vue';
-import { on } from 'events';
 const electronApi = window.electron;
 const { actions: actionsApi } = electronApi.plugins;
 const ipc = electronApi.ipc;

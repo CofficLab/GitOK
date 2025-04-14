@@ -84,7 +84,7 @@ onUnmounted(() => {
         </div>
 
         <!-- 状态栏 -->
-        <div class="h-10 border-t border-base-200 dark:border-base-300 no-drag-region">
+        <div class="h-10 z-50 border-t border-base-200 dark:border-base-300 no-drag-region">
             <StatusBar />
         </div>
     </div>
