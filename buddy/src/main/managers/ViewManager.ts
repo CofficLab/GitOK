@@ -31,6 +31,11 @@ export class ViewManager {
             throw new Error('主窗口不存在');
         }
 
+        // 销毁已经存在的视图
+        if (this.views.has(args.pagePath ?? "wild")) {
+            this.destroyView(args.pagePath ?? "wild");
+        }
+
         // 创建视图
         const view = new BrowserView({
             webPreferences: {
@@ -44,15 +49,22 @@ export class ViewManager {
         });
 
         // 设置视图边界
-        const mainWindowBounds = args || mainWindow.getBounds();
         const viewBounds = {
-            x: mainWindowBounds.x || 0,
-            y: mainWindowBounds.y || 0,
-            width: mainWindowBounds.width,
-            height: mainWindowBounds.height || Math.round(mainWindowBounds.height * 0.8),
+            x: args.x,
+            y: args.y,
+            width: args.width,
+            height: args.height,
         };
 
         view.setBounds(viewBounds);
+
+        // 设置视图自动调整大小
+        view.setAutoResize({
+            width: true,
+            height: true,
+            horizontal: true,
+            vertical: true
+        });
 
         // 加载HTML内容，如果提供了content参数，则使用content，否则读取pagePath对应的文件内容
         const htmlContent = args.content ?? (args.pagePath ? require('fs').readFileSync(args.pagePath, 'utf-8') : '');
@@ -63,6 +75,8 @@ export class ViewManager {
         // 将视图添加到主窗口并保存到Map中
         mainWindow.addBrowserView(view);
         this.views.set(args.pagePath ?? "wild", view);
+
+        logger.info('视图创建成功，当前视图个数', this.views.size);
 
         return viewBounds;
     }
@@ -85,6 +99,23 @@ export class ViewManager {
         mainWindow.removeBrowserView(view);
         this.views.delete(pagePath);
         view.webContents.close();
+    }
+
+    /**
+     * 更新视图位置
+     * @param pagePath 视图标识
+     * @param bounds 新的视图边界
+     */
+    public updateViewPosition(pagePath: string, bounds: ViewBounds): void {
+        logger.info('更新视图位置:', pagePath, bounds);
+
+        const view = this.views.get(pagePath);
+        if (!view) {
+            logger.warn('试图更新不存在的视图:', pagePath);
+            return;
+        }
+
+        view.setBounds(bounds);
     }
 
     /**

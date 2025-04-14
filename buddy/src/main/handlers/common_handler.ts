@@ -43,6 +43,13 @@ export const baseRoutes: IpcRoute[] = [
         handler: (_): void => {
             return viewManager.destroyAllViews();
         }
+    },
+
+    {
+        channel: IPC_METHODS.Update_View_Bounds,
+        handler: (_, id, bounds): void => {
+            return viewManager.updateViewPosition(id, bounds);
+        }
     }
 ];
 

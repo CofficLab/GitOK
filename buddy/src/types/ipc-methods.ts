@@ -7,6 +7,7 @@ export const IPC_METHODS = {
   Create_View: 'create-view',
   Destroy_View: 'destroy-view',
   Destroy_Plugin_Views: 'destroy-plugin-views',
+  Update_View_Bounds: 'update-view-bounds',
 
   GET_PLUGIN_ACTIONS: 'get-plugin-actions',
   GET_PLUGIN_PAGE_SOURCE_CODE: 'get-plugin-page-source-code',

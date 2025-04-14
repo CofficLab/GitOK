@@ -20,6 +20,15 @@ export const ipcApi = {
     return await ipc.invoke(IPC_METHODS.Create_View, options);
   },
 
+  async updateViewBounds(pagePath: string, bounds: Electron.Rectangle): Promise<unknown> {
+    const response: IpcResponse<any> = await ipc.invoke(IPC_METHODS.Update_View_Bounds, pagePath, bounds);
+    if (response.success) {
+      return response.data;
+    } else {
+      throw new Error(response.error);
+    }
+  },
+
   async destroyView(pagePath: string): Promise<unknown> {
     const response: IpcResponse<any> = await ipc.invoke(IPC_METHODS.Destroy_View, pagePath);
 
