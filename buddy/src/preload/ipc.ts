@@ -7,12 +7,18 @@ import { IpcApi } from '@/types/api-message';
 import { IpcResponse } from '@/types/ipc-response';
 import { logger } from '@/main/managers/LogManager';
 
+const verbose = true;
+
 export const ipcApi: IpcApi = {
   send: (channel: string, ...args: unknown[]): void => {
     ipcRenderer.send(channel, ...args);
   },
 
   receive: (channel: string, callback: (...args: unknown[]) => void): void => {
+    if (verbose) {
+      logger.info('====== 注册IPC监听器:', channel);
+    }
+
     ipcRenderer.on(channel, (_, ...args) => callback(...args));
   },
 

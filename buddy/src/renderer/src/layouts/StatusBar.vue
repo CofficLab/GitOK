@@ -17,16 +17,9 @@ import StatusBar from '@renderer/cosy/StatusBar.vue'
 import StatusBarItem from '@renderer/cosy/StatusBarItem.vue'
 import { ipcApi } from '@renderer/api/ipc-api'
 
-const electronApi = window.electron;
-const overlaidApi = electronApi.overlaid;
-
 // 当前时间
 const currentTime = ref(new Date().toLocaleTimeString())
 let timer: ReturnType<typeof setInterval>
-
-// 被覆盖的应用名称
-const overlaidAppName = ref<string | null>(null)
-let removeOverlaidAppListener: (() => void) | null = null
 
 const router = useRouter()
 const route = useRoute()
@@ -75,25 +68,11 @@ const openConfigFolder = async () => {
 onMounted(() => {
     // 每秒更新一次时间
     timer = setInterval(updateTime, 1000)
-
-    // 监听被覆盖应用变化
-    removeOverlaidAppListener = overlaidApi.onOverlaidAppChanged((app) => {
-        overlaidAppName.value = app?.name || null
-    })
-
-    // 设置窗口激活状态监听
-    appStore.setupWindowActiveListeners()
 })
 
 onUnmounted(() => {
     // 清理定时器
     clearInterval(timer)
-    // 清理监听器
-    if (removeOverlaidAppListener) {
-        removeOverlaidAppListener()
-    }
-    // 清理窗口激活状态监听
-    appStore.cleanupWindowActiveListeners()
 })
 </script>
 
@@ -127,8 +106,8 @@ onUnmounted(() => {
             </StatusBarItem>
 
             <!-- 被覆盖的应用名称 -->
-            <StatusBarItem v-if="overlaidAppName">
-                {{ overlaidAppName }}
+            <StatusBarItem v-if="appStore.overlaidApp">
+                {{ appStore.overlaidApp.name }}
             </StatusBarItem>
 
             <!-- 时间显示 -->

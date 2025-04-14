@@ -27,8 +27,11 @@
 
 import { defineStore } from 'pinia';
 import type { SuperAction } from '@/types/super_action';
-import { onMounted, onUnmounted } from 'vue';
-import { WindowEvents } from '@/types/app-events';
+import { logger } from '../utils/logger';
+import { AppEvents } from '@/types/app-events';
+import { type SuperApp } from '@/types/super_app';
+
+const ipc = window.electron.ipc;
 
 export type ViewType = 'home' | 'plugins' | 'chat' | 'plugin-grid';
 
@@ -37,6 +40,7 @@ interface AppState {
   showPluginStore: boolean;
   selectedAction: SuperAction | null;
   isActive: boolean; // 添加窗口激活状态
+  overlaidApp: SuperApp | null; // 用于记录当前被覆盖的应用
 }
 
 export const useAppStore = defineStore('app', {
@@ -45,9 +49,19 @@ export const useAppStore = defineStore('app', {
     showPluginStore: false,
     selectedAction: null,
     isActive: true, // 默认为激活状态
+    overlaidApp: null, // 初始化为null
   }),
 
   actions: {
+    onMounted() {
+      this.setupWindowActiveListeners();
+      this.setupOverlaidAppListeners();
+    },
+
+    onUnmounted() {
+      this.cleanupWindowActiveListeners();
+    },
+
     setView(view: ViewType) {
       this.currentView = view;
     },
@@ -69,19 +83,27 @@ export const useAppStore = defineStore('app', {
       this.isActive = isActive;
     },
 
+    setupOverlaidAppListeners() {
+      logger.info('setupOverlaidAppListeners');
+
+      ipc.receive(AppEvents.OVERLAID_APP_CHANGED, (args: any) => {
+        logger.info('onOverlaidAppChanged', args);
+        this.overlaidApp = args as SuperApp | null;
+      });
+    },
+
     // 初始化窗口激活状态监听器
     setupWindowActiveListeners() {
-      // 使用window.electron.ipc替代直接导入的ipcRenderer
-      const ipc = window.electron.ipc;
+      logger.info('setupWindowActiveListeners');
 
       // 监听窗口激活事件
-      ipc.receive(WindowEvents.ACTIVATED, () => {
+      ipc.receive(AppEvents.ActIVATED, () => {
         this.setActiveState(true);
         console.log('应用窗口被激活');
       });
 
       // 监听窗口失活事件
-      ipc.receive(WindowEvents.DEACTIVATED, () => {
+      ipc.receive(AppEvents.DEACTIVATED, () => {
         this.setActiveState(false);
         console.log('应用窗口失去焦点');
       });
@@ -89,29 +111,10 @@ export const useAppStore = defineStore('app', {
 
     // 清理窗口激活状态监听器
     cleanupWindowActiveListeners() {
-      // 使用window.electron.ipc替代直接导入的ipcRenderer
-      const ipc = window.electron.ipc;
-
       // 移除监听器
-      ipc.removeListener(WindowEvents.ACTIVATED, () => { });
-      ipc.removeListener(WindowEvents.DEACTIVATED, () => { });
+      ipc.removeListener(AppEvents.OVERLAID_APP_CHANGED, () => { });
+      ipc.removeListener(AppEvents.ActIVATED, () => { });
+      ipc.removeListener(AppEvents.DEACTIVATED, () => { });
     },
   },
 });
-
-// 提供一个组合式API风格的方法，方便在组件中使用
-export function useAppWindowActive() {
-  const appStore = useAppStore();
-
-  onMounted(() => {
-    appStore.setupWindowActiveListeners();
-  });
-
-  onUnmounted(() => {
-    appStore.cleanupWindowActiveListeners();
-  });
-
-  return {
-    isActive: () => appStore.isActive,
-  };
-}

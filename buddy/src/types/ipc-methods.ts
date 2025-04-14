@@ -28,8 +28,7 @@ export const IPC_METHODS = {
   OPEN_PLUGIN_DIRECTORY: 'plugin:openDirectory',
 
   // 被覆盖的应用
-  GET_CURRENT_APP: 'overlaid-app:getCurrent',
-  SET_CURRENT_APP: 'overlaid-app:setCurrent',
+  Get_Current_App: 'overlaid-app:getCurrent',
 
   // AI功能相关
   AI_CHAT: 'ai:chat',

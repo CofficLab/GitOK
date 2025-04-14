@@ -1,7 +1,9 @@
 import { defineStore } from 'pinia';
 import type { SuperAction } from '@/types/super_action';
-import { WindowEvents } from '@/types/app-events';
 import { logger } from '@renderer/utils/logger';
+import { AppEvents } from '@/types/app-events';
+import { onMounted } from 'vue';
+import { on } from 'events';
 const electronApi = window.electron;
 const { actions: actionsApi } = electronApi.plugins;
 const ipc = electronApi.ipc;
@@ -44,6 +46,15 @@ export const useActionStore = defineStore('action', {
   }),
 
   actions: {
+    onMounted() {
+      this.loadList();
+      this.setupWindowActivationListener();
+    },
+
+    onUnmounted() {
+      this.cleanupWindowActivationListener()
+    },
+
     /**
      * 加载动作列表
      */
@@ -158,7 +169,7 @@ export const useActionStore = defineStore('action', {
      * 当窗口被激活时，刷新动作列表
      */
     setupWindowActivationListener() {
-      ipc.receive(WindowEvents.ACTIVATED, () => {
+      ipc.receive(AppEvents.ActIVATED, () => {
         // 使用上次的搜索关键词刷新列表
         this.loadList(this.lastKeyword);
       });
@@ -168,7 +179,7 @@ export const useActionStore = defineStore('action', {
      * 清理窗口激活状态监听
      */
     cleanupWindowActivationListener() {
-      ipc.removeListener(WindowEvents.ACTIVATED, () => { });
+      ipc.removeListener(AppEvents.ActIVATED, () => { });
     },
 
     /**

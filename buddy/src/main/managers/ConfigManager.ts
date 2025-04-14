@@ -10,6 +10,8 @@ import { app } from 'electron'
 import path from 'path'
 import { logger } from './LogManager'
 
+const verbose = false
+
 // 动态导入electron-store，解决CommonJS和ESM模块不兼容问题
 let ElectronStore: any
 
@@ -96,7 +98,9 @@ class ConfigManager extends BaseManager {
                 defaults: DEFAULT_CONFIG
             })
 
-            logger.info('配置管理器初始化成功，配置文件位置:', storePath)
+            if (verbose) {
+                logger.info('配置管理器初始化成功，配置文件位置:', storePath)
+            }
         } catch (error) {
             logger.error('配置管理器初始化失败:', error)
             throw this.handleError(error, '配置管理器初始化失败', true)

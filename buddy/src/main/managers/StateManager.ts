@@ -9,11 +9,12 @@ import {
   getFrontmostApplication,
 } from '@coffic/active-app-monitor';
 import { logger } from './LogManager';
-import { WindowEvents, AppStateEvents } from '@/types/app-events';
+import { AppEvents } from '@/types/app-events';
+import { SuperApp } from '@/types/super_app';
 
 class StateManager extends BaseManager {
   private static instance: StateManager;
-  private overlaidApp: ActiveApplication | null = null;
+  private overlaidApp: SuperApp | null = null;
 
   private constructor() {
     super({
@@ -37,31 +38,36 @@ class StateManager extends BaseManager {
   }
 
   /**
+   * 统一发送事件到主进程和所有渲染进程
+   * @param channel 事件名称
+   * @param args 事件参数
+   */
+  private emitAndBroadcast(channel: string, ...args: any[]): void {
+    // 用于主进程内部的模块间通信
+    this.emit(channel, ...args);
+
+    // 用于向所有渲染进程广播事件
+    this.broadcastToAllWindows(channel, ...args);
+  }
+
+  /**
    * 设置应用状态监听器
    */
   private setupAppStateListeners(): void {
     // 监听应用激活事件
     app.on('activate', () => {
       logger.info('应用激活事件');
-
-      // 向所有渲染进程发送应用激活事件
-      this.broadcastToAllWindows(WindowEvents.ACTIVATED);
+      this.emitAndBroadcast(AppEvents.ActIVATED);
     });
 
     // 监听应用失去焦点事件
     app.on('browser-window-blur', () => {
-      this.emit(WindowEvents.DEACTIVATED);
-
-      // 向所有渲染进程发送应用失活事件
-      this.broadcastToAllWindows(WindowEvents.DEACTIVATED);
+      this.emitAndBroadcast(AppEvents.DEACTIVATED);
     });
 
     // 添加窗口获得焦点事件监听
     app.on('browser-window-focus', () => {
-      this.emit(WindowEvents.ACTIVATED);
-
-      // 向所有渲染进程发送应用激活事件
-      this.broadcastToAllWindows(WindowEvents.ACTIVATED);
+      this.emitAndBroadcast(AppEvents.ActIVATED);
     });
   }
 
@@ -95,10 +101,7 @@ class StateManager extends BaseManager {
    */
   setOverlaidApp(app: ActiveApplication | null): void {
     this.overlaidApp = app;
-    this.emit(AppStateEvents.OVERLAID_APP_CHANGED, app);
-
-    // 向所有渲染进程广播覆盖应用变化事件
-    this.broadcastToAllWindows(AppStateEvents.OVERLAID_APP_CHANGED, app);
+    this.emitAndBroadcast(AppEvents.OVERLAID_APP_CHANGED, app);
   }
 
   /**

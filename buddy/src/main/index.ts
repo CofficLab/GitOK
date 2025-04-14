@@ -5,10 +5,7 @@
 import { appManager } from './managers/AppManager';
 import { routerService } from './provider/RouterService';
 import { routes as pluginRoutes } from './handlers/plugin_router';
-import {
-  routes as overlaidAppRoutes,
-  initOverlaidAppEvents,
-} from './handlers/overlaid_router';
+import { routes as overlaidAppRoutes } from './handlers/overlaid_router';
 import { routes as uiLogRoutes } from './handlers/log_router';
 import { routes as updateRoutes } from './handlers/update_router';
 import { baseRoutes, setupStreamListeners } from './handlers/common_handler';
@@ -32,8 +29,6 @@ appManager
   .then(() => {
     // 初始化IPC路由
     routerService.initialize();
-    // 初始化被覆盖应用相关事件
-    initOverlaidAppEvents();
     // 初始化流式聊天监听器
     setupStreamListeners();
   })

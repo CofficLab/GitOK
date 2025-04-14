@@ -2,6 +2,7 @@ import { SuperPlugin } from '@/types/super_plugin';
 import { defineStore } from 'pinia';
 import { logger } from '../utils/logger';
 import { pluginsAPI } from '../api/plugins-api';
+import { onMounted, onUnmounted } from 'vue';
 
 const verbose = false;
 
@@ -31,6 +32,17 @@ export const useMarketStore = defineStore('market', {
     }),
 
     actions: {
+        onMounted() {
+            this.updateUserPluginDirectory()
+            this.loadUserPlugins()
+            this.loadDevPlugins()
+            this.loadRemotePlugins()
+        },
+
+        onUnmounted() {
+
+        },
+
         // 加载开发插件列表
         async loadDevPlugins() {
             this.loadingPlugins = true;

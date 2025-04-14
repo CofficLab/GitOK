@@ -100,7 +100,9 @@ export class RemotePluginDB {
      */
     private async refreshRemotePlugins(): Promise<void> {
         try {
-            logger.info('开始刷新远程插件列表缓存');
+            if (verbose) {
+                logger.info('开始刷新远程插件列表缓存');
+            }
 
             // 搜索 buddy-plugin 关键词
             const packages = await this.searchPlugins();

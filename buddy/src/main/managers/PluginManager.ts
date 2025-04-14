@@ -31,10 +31,8 @@ class PluginManager extends BaseManager {
    */
   async initialize(): Promise<void> {
     try {
-      logger.info('开始初始化插件系统');
       // 只需确保插件目录存在
       await userPluginDB.ensurePluginDirs();
-      logger.info('插件系统初始化完成');
     } catch (error) {
       this.handleError(error, '插件系统初始化失败', true);
     }

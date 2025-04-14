@@ -139,10 +139,12 @@ export class NpmRegistryService {
   public async searchPackagesByKeyword(keyword: string): Promise<NpmPackage[]> {
     const searchUrl = `${this.NPM_REGISTRY}/-/v1/search?text=keywords:${encodeURIComponent(keyword)}&size=250`;
 
-    logger.info(`搜索关键词包(npm registry)`, {
-      url: searchUrl,
-      keyword
-    });
+    if (verbose) {
+      logger.info(`搜索关键词包(npm registry)`, {
+        url: searchUrl,
+        keyword
+      });
+    }
 
     try {
       const response = await axios.get(searchUrl);

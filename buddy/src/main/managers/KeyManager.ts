@@ -27,7 +27,7 @@ class KeyManager {
 
     if (isDevelopment) {
       // 开发环境: 监听 Option 键 (左58, 右61)
-      logger.info('开发环境: 监听 Option 键 (58, 61)');
+      logger.debug('开发环境: 监听 Option 键 (58, 61)');
       return [58, 61];
     } else {
       // 生产环境: 监听 Command 键 (左54, 右55)

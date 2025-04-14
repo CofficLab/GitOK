@@ -11,6 +11,8 @@ import { commandKeyManager } from './KeyManager';
 import { pluginViewManager } from './PluginViewManager';
 import { updateManager } from './UpdateManager';
 
+const verbose = false;
+
 export class AppManager {
   private mainWindow: BrowserWindow | null = null;
 
@@ -94,8 +96,6 @@ export class AppManager {
     await pluginManager.initialize();
 
     this.setupContextMenu();
-
-    logger.info('应用初始化完成，等待用户交互');
   }
 
   /**

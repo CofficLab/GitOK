@@ -33,28 +33,24 @@ import { globalConfirm } from './composables/useConfirm'
 import { globalToast } from './composables/useToast'
 import { globalAlert } from './composables/useAlert'
 import { globalProgress } from './composables/useProgress'
+import { useAppStore } from './stores/appStore'
 
 const actionStore = useActionStore()
 const marketStore = useMarketStore()
+const appStore = useAppStore()
 
 // 在组件加载时注册消息监听和初始化
 onMounted(() => {
-    // 初始加载插件动作
-    actionStore.loadList()
-
-    // 设置窗口激活状态监听，当窗口激活时刷新动作列表
-    actionStore.setupWindowActivationListener()
-
-    marketStore.updateUserPluginDirectory()
-    marketStore.loadUserPlugins()
-    marketStore.loadDevPlugins()
-    marketStore.loadRemotePlugins()
+    actionStore.onMounted()
+    appStore.onMounted()
+    marketStore.onMounted()
 })
 
 // 在组件卸载时清理消息监听
 onUnmounted(() => {
-    // 清理窗口激活状态监听
-    actionStore.cleanupWindowActivationListener()
+    appStore.onUnmounted()
+    actionStore.onUnmounted()
+    marketStore.onUnmounted()
 })
 </script>
 

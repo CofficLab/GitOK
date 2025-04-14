@@ -1,6 +1,7 @@
 import { createViewArgs } from "@/types/args";
 import { IPC_METHODS } from "@/types/ipc-methods";
 import { IpcResponse } from "@/types/ipc-response";
+import { logger } from "../utils/logger";
 
 const electronApi = window.electron;
 const ipc = electronApi.ipc;
@@ -8,6 +9,11 @@ const ipc = electronApi.ipc;
 export const ipcApi = {
   async openFolder(folder: string): Promise<unknown> {
     return await ipc.invoke(IPC_METHODS.Open_Folder, folder);
+  },
+
+  receive: (channel: string, callback: (...args: unknown[]) => void): void => {
+    logger.info('+++++ 注册IPC监听器:', channel);
+    ipc.receive(channel, (_, ...args) => callback(...args));
   },
 
   async createView(options: createViewArgs): Promise<unknown> {

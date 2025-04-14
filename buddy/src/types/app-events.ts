@@ -5,15 +5,12 @@
  * 确保主进程和渲染进程使用统一的事件名称。
  */
 
-/**
- * 窗口相关事件
- */
-export const WindowEvents = {
+export const AppEvents = {
   /**
    * 窗口激活事件
    * 当应用窗口获得焦点或被激活时触发
    */
-  ACTIVATED: 'app-activated',
+  ActIVATED: 'app-activated',
 
   /**
    * 窗口失活事件
@@ -35,12 +32,7 @@ export const WindowEvents = {
    * 窗口关闭事件
    */
   CLOSED: 'app-closed',
-};
 
-/**
- * 应用状态相关事件
- */
-export const AppStateEvents = {
   /**
    * 覆盖应用变化事件
    * 当被覆盖的应用发生变化时触发
@@ -61,12 +53,7 @@ export const AppStateEvents = {
    * 应用配置变更事件
    */
   CONFIG_CHANGED: 'app-config-changed',
-};
 
-/**
- * 插件相关事件
- */
-export const PluginEvents = {
   /**
    * 插件列表更新事件
    */

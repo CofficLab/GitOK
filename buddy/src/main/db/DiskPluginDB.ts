@@ -10,7 +10,6 @@ export abstract class DiskPluginDB {
 
   protected constructor(pluginsDir: string) {
     this.pluginsDir = pluginsDir;
-    logger.info('插件目录初始化完成', { pluginsDir: this.pluginsDir });
   }
 
   /**
