@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, nextTick, ref, onUnmounted, watch } from 'vue'
 import { logger } from '../utils/logger'
-import { ipcApi } from '../api/ipc-api'
+import { viewApi } from '../api/view-api'
 import { SuperPlugin } from '@/types/super_plugin';
 import { createViewArgs } from '@/types/args';
 
@@ -59,7 +59,7 @@ onUnmounted(() => {
 watch(options, () => {
     if (options.value == null) return
     console.log(options.value)
-    ipcApi.upsertView(props.plugin.pagePath!, {
+    viewApi.upsertView(props.plugin.pagePath!, {
         x: options.value.x,
         y: options.value.y,
         width: options.value.width,

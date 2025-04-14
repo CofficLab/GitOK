@@ -13,7 +13,7 @@ import { SuperAction } from '@/types/super_action';
 export const pluginActions: SuperPluginActionsAPI = {
   async getPluginActions(keyword = ''): Promise<SuperAction[]> {
     const response = await ipcRenderer.invoke(
-      IPC_METHODS.GET_PLUGIN_ACTIONS,
+      IPC_METHODS.Get_PLUGIN_ACTIONS,
       keyword
     );
 

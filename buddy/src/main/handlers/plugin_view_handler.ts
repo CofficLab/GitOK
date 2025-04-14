@@ -8,7 +8,7 @@ import { logger } from '../managers/LogManager';
  */
 export const pluginViewRoutes: IpcRoute[] = [
   {
-    channel: IPC_METHODS.GET_PLUGIN_PAGE_SOURCE_CODE,
+    channel: IPC_METHODS.Get_PLUGIN_PAGE_SOURCE_CODE,
     handler: async (pluginId: string) => {
       return { success: true, data: "xxxxxxxxx" };
     }

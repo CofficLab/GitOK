@@ -9,7 +9,7 @@ import { ipcRenderer } from 'electron';
 // 插件生命周期管理接口
 export const pluginLifecycle: SuperPluginLifecycleAPI = {
   getPluginPageSourceCode: (pluginId: string) =>
-    ipcRenderer.invoke(IPC_METHODS.GET_PLUGIN_PAGE_SOURCE_CODE, pluginId),
+    ipcRenderer.invoke(IPC_METHODS.Get_PLUGIN_PAGE_SOURCE_CODE, pluginId),
   getAllPlugins: () => ipcRenderer.invoke('get-all-plugins'),
   getLocalPlugins: () => ipcRenderer.invoke('get-local-plugins'),
   getInstalledPlugins: () => ipcRenderer.invoke('get-installed-plugins'),
