@@ -73,7 +73,7 @@ export class BrowserManager {
         );
 
         // 将视图添加到主窗口并保存到Map中
-        mainWindow.addBrowserView(view);
+        mainWindow.setBrowserView(view);
         this.views.set(args.pagePath ?? "wild", view);
 
         logger.info('视图创建成功，当前视图个数', this.views.size);
