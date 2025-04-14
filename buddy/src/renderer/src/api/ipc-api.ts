@@ -29,6 +29,15 @@ export const ipcApi = {
     }
   },
 
+  async upsertView(pagePath: string, bounds: Electron.Rectangle): Promise<unknown> {
+    const response: IpcResponse<any> = await ipc.invoke(IPC_METHODS.Upsert_View, pagePath, bounds);
+    if (response.success) {
+      return response.data;
+    } else {
+      throw new Error(response.error);
+    }
+  },
+
   async destroyView(pagePath: string): Promise<unknown> {
     const response: IpcResponse<any> = await ipc.invoke(IPC_METHODS.Destroy_View, pagePath);
 

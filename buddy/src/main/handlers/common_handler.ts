@@ -50,5 +50,12 @@ export const baseRoutes: IpcRoute[] = [
         handler: (_, id, bounds): void => {
             return viewManager.updateViewPosition(id, bounds);
         }
-    }
+    },
+
+    {
+        channel: IPC_METHODS.Upsert_View,
+        handler: async (_, id, bounds): Promise<void> => {
+            return (await viewManager.upsertView(id, bounds));
+        }
+    },
 ];

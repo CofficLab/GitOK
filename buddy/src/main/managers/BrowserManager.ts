@@ -17,7 +17,7 @@ export class BrowserManager {
     /**
      * 创建视图
      */
-    public async createView(args: createViewArgs): Promise<ViewBounds> {
+    public async createView(args: createViewArgs): Promise<WebContentsView> {
         if (!args) {
             throw new Error('创建视图的参数不能为空');
         }
@@ -113,7 +113,7 @@ export class BrowserManager {
 
         logger.info('视图创建成功，当前视图个数', this.views.size);
 
-        return viewBounds;
+        return view;
     }
 
     /**
@@ -151,6 +151,20 @@ export class BrowserManager {
         }
 
         view.setBounds(bounds);
+    }
+
+    public async upsertView(pagePath: string, bounds: ViewBounds): Promise<void> {
+        logger.info("新建或更新视图: ", pagePath, bounds)
+
+        const view = this.views.get(pagePath) ?? await this.createView({
+            pagePath: pagePath,
+            x: bounds.x,
+            y: bounds.y,
+            height: bounds.height,
+            width: bounds.width
+        })
+
+        view.setBounds(bounds)
     }
 
     /**
