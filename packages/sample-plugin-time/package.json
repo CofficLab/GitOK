@@ -1,0 +1,15 @@
+{
+  "name": "@coffic/buddy-plugin-time",
+  "version": "1.0.0",
+  "description": "A sample plugin with a page view",
+  "main": "index.js",
+  "page": "page.html",
+  "keywords": [
+    "buddy",
+    "plugin",
+    "example",
+    "buddy-plugin"
+  ],
+  "author": "Coffic",
+  "license": "MIT"
+}

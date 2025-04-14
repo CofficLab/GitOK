@@ -21,7 +21,7 @@ const handleBackToList = () => {
 </script>
 
 <template>
-    <div class="w-full h-full flex flex-col px-4 pb-24">
+    <div class="w-full flex flex-col">
         <!-- 显示HomeView内容（当没有搜索关键词且没有插件动作时） -->
         <div v-if="!actionStore.hasSelectedAction() && actionStore.getActionCount() === 0" class="p-4">
             <h2 class="text-2xl font-bold mb-4">欢迎使用</h2>
@@ -35,7 +35,7 @@ const handleBackToList = () => {
             <ActionListView class="w-full" />
 
             <!-- 插件视图网格 -->
-            <div class="h-96 w-full z-30">
+            <div class="min-h-96 w-full z-30">
                 <PluginPageGrid />
             </div>
         </div>

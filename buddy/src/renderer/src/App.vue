@@ -49,7 +49,7 @@ onMounted(() => {
 
     // 监听内容区域的滚动事件
     if (content.value) {
-        content.value.addEventListener('scroll', (event) => {
+        content.value.addEventListener('scroll', () => {
             // 获取滚动的位置
             const scrollTop = content.value!.scrollTop;
             const scrollLeft = content.value!.scrollLeft;
@@ -93,12 +93,10 @@ onUnmounted(() => {
             @close="globalAlert.close" />
 
         <!-- 内容区域 -->
-        <div class="flex-1 overflow-auto no-drag-region" ref="content">
+        <div class="flex-1 overflow-auto no-drag-region bg-green-500/20 py-16 px-8" ref="content">
             <router-view v-slot="{ Component }">
                 <transition name="fade" mode="out-in">
-                    <div class="h-full w-full">
-                        <component :is="Component" />
-                    </div>
+                    <component :is="Component" />
                 </transition>
             </router-view>
         </div>

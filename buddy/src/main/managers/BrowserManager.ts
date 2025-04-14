@@ -142,7 +142,7 @@ export class BrowserManager {
      * @param bounds 新的视图边界
      */
     public updateViewPosition(pagePath: string, bounds: ViewBounds): void {
-        logger.info('更新视图位置:', pagePath, bounds);
+        logger.info('update view position:', pagePath, bounds);
 
         const view = this.views.get(pagePath);
         if (!view) {
@@ -154,7 +154,7 @@ export class BrowserManager {
     }
 
     public async upsertView(pagePath: string, bounds: ViewBounds): Promise<void> {
-        logger.info("新建或更新视图: ", pagePath, bounds)
+        logger.info("upsert view: ", pagePath, bounds)
 
         const view = this.views.get(pagePath) ?? await this.createView({
             pagePath: pagePath,

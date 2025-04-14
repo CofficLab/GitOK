@@ -15,10 +15,10 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="w-full h-96 flex flex-col overflow-hidden px-4 bg-amber-100">
+  <div class="w-full h-full flex flex-col overflow-hidden bg-amber-100/0">
     <div class="flex-1">
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
-        <div v-for="(plugin, index) in plugins" :key="index" class="bg-white rounded-lg shadow-md p-4">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div v-for="(plugin, index) in plugins" :key="index">
           <PluginPage :plugin="plugin" />
         </div>
       </div>

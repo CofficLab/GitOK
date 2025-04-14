@@ -12,10 +12,6 @@ interface Props {
 const props = defineProps<Props>()
 const options = ref<createViewArgs | null>(null)
 
-function getPluginViewHeight(originalHeight: number): number {
-    return Math.max(originalHeight - 30, 0)
-}
-
 const container = ref<HTMLElement | null>(null)
 
 // 定义一个函数用于处理位置变化
@@ -30,7 +26,7 @@ const handlePositionChange = () => {
             x: Math.round(rect.x),
             y: Math.round(rect.y),
             width: Math.round(rect.width),
-            height: getPluginViewHeight(Math.round(rect.height)),
+            height: Math.round(rect.height),
             pagePath: props.plugin.pagePath,
         }
     }
@@ -49,7 +45,7 @@ onMounted(async () => {
         x: Math.round(rect.x),
         y: Math.round(rect.y),
         width: Math.round(rect.width),
-        height: getPluginViewHeight(Math.round(rect.height)),
+        height: Math.round(rect.height),
         pagePath: props.plugin.pagePath,
     }
 
@@ -73,5 +69,5 @@ watch(options, () => {
 </script>
 
 <template>
-    <div class="h-48 w-full bg-gray-100 rounded-lg" ref="container"></div>
+    <div class="h-56 w-full" ref="container"></div>
 </template>

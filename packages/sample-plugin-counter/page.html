@@ -36,20 +36,6 @@
       border-radius: 4px;
     }
 
-    .info {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-
-    .info-item {
-      background-color: #e5e7eb;
-      padding: 8px 12px;
-      border-radius: 4px;
-      font-size: 14px;
-    }
-
     .counter {
       display: flex;
       align-items: center;
@@ -78,33 +64,15 @@
       min-width: 40px;
       text-align: center;
     }
-
-    .status {
-      margin-top: 20px;
-      padding: 10px;
-      background-color: #f3f4f6;
-      border-radius: 4px;
-      font-family: monospace;
-    }
   </style>
 </head>
 
 <body>
-  <div class="info">
-    <div class="info-item">插件ID: sample-plugin-with-page</div>
-    <div class="info-item">版本: 1.0.0</div>
-    <div class="info-item">作者: Coffic</div>
-  </div>
-
   <h2>计数器示例</h2>
   <div class="counter">
     <button id="decrement">-</button>
     <div id="count">0</div>
     <button id="increment">+</button>
-  </div>
-
-  <h2>当前时间</h2>
-  <div id="current-time" class="status">加载中...</div>
   </div>
 
   <script>
@@ -120,23 +88,6 @@
     document.getElementById('decrement').addEventListener('click', () => {
       count--;
       countElement.textContent = count;
-    });
-
-    // 显示当前时间
-    function updateTime() {
-      const now = new Date();
-      document.getElementById('current-time').textContent = now.toLocaleString();
-    }
-
-    // 每秒更新一次时间
-    updateTime();
-    setInterval(updateTime, 1000);
-
-    // 通知主应用页面已加载完成
-    window.addEventListener('load', () => {
-      if (window.parent && window.parent !== window) {
-        window.parent.postMessage({ type: 'plugin-view-loaded', pluginId: 'sample-plugin-with-page' }, '*');
-      }
     });
   </script>
 </body>

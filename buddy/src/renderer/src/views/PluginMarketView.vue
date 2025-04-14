@@ -114,7 +114,7 @@ const clearUninstallError = (pluginId: string) => {
         </div>
 
         <!-- 插件列表 -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 overflow-y-auto">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <!-- 本地插件卡片 -->
             <PluginCard v-if="activeTab === 'user'" v-for="plugin in userPlugins" :key="plugin.id" :plugin="plugin"
                 type="local" :uninstallingPlugins="uninstallingPlugins" :uninstallSuccess="uninstallSuccess"

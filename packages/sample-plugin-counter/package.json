@@ -1,5 +1,5 @@
 {
-  "name": "@coffic/buddy-plugin-with-page",
+  "name": "@coffic/buddy-plugin-counter",
   "version": "1.0.0",
   "description": "A sample plugin with a page view",
   "main": "index.js",
