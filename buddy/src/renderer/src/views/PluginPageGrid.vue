@@ -85,7 +85,7 @@ onUnmounted(() => {
 
 <template>
   <div class="w-full h-full flex flex-col overflow-hidden px-4 bg-amber-100">
-    <div class="flex-1 overflow-auto">
+    <div class="flex-1">
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
         <div v-for="(plugin, index) in plugins" :key="index" class="bg-white rounded-lg shadow-md p-4">
           <div class="h-96 w-full bg-gray-100 rounded-lg" :id="`plugin-view-${plugin.id}`"></div>

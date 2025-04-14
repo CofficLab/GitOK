@@ -458,3 +458,5 @@ class AIManager {
 
 // 导出单例
 export const aiManager = new AIManager()
+export type { ChatMessage }
+

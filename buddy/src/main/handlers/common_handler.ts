@@ -3,7 +3,7 @@ import { IpcRoute } from '../provider/RouterService';
 import { IpcResponse } from '@/types/ipc-response';
 import { shell } from 'electron';
 import { logger } from '../managers/LogManager';
-import { viewManager } from '../managers/ViewManager';
+import { viewManager } from '../managers/BrowserManager';
 
 /**
  * 基础的IPC路由配置
@@ -52,9 +52,3 @@ export const baseRoutes: IpcRoute[] = [
         }
     }
 ];
-
-// 导出初始化函数，用于设置监听器
-export function setupStreamListeners(): void {
-    // 注意：此处不需要unregister，因为这个函数只会被调用一次
-    // 如果需要在应用的生命周期内多次调用，需要实现相应的清理函数
-}

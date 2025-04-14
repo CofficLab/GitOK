@@ -1,5 +1,5 @@
 /**
- * 视图管理器
+ * Browser 视图管理器
  */
 import { BrowserView } from 'electron';
 import { is } from '@electron-toolkit/utils';
@@ -11,7 +11,7 @@ import { createViewArgs } from '@/types/args';
 
 const verbose = true;
 
-export class ViewManager {
+export class BrowserManager {
     private views: Map<string, BrowserView> = new Map();
 
     /**
@@ -129,4 +129,4 @@ export class ViewManager {
 }
 
 // 导出单例实例
-export const viewManager = new ViewManager();
+export const viewManager = new BrowserManager();
