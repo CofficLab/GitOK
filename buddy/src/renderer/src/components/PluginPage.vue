@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, nextTick, ref } from 'vue'
+import { onMounted, nextTick, ref, onUnmounted } from 'vue'
 import { logger } from '../utils/logger'
 import { ipcApi } from '../api/ipc-api'
 import { SuperPlugin } from '@/types/super_plugin';
@@ -14,8 +14,27 @@ function getPluginViewHeight(originalHeight: number): number {
     return Math.max(originalHeight - 30, 0)
 }
 
-const observer = ref<IntersectionObserver | null>(null)
 const container = ref<HTMLElement | null>(null)
+
+// 定义一个函数用于处理位置变化
+const handlePositionChange = () => {
+    if (container.value) {
+        const rect = container.value.getBoundingClientRect()
+        const x = Math.round(rect.x)
+        const y = Math.round(rect.y)
+        logger.info(`PluginView: container 的 x 坐标: ${x}, y 坐标: ${y}`)
+
+        const options = {
+            x: Math.round(rect.x),
+            y: Math.round(rect.y),
+            width: Math.round(rect.width),
+            height: getPluginViewHeight(Math.round(rect.height)),
+            pagePath: props.plugin.pagePath,
+        }
+
+        ipcApi.updateViewBounds(props.plugin.pagePath!, options)
+    }
+}
 
 onMounted(async () => {
     await nextTick()
@@ -26,38 +45,38 @@ onMounted(async () => {
     }
 
     const rect = container.value.getBoundingClientRect()
-    await ipcApi.createView({
+    const options = {
         x: Math.round(rect.x),
         y: Math.round(rect.y),
         width: Math.round(rect.width),
         height: getPluginViewHeight(Math.round(rect.height)),
         pagePath: props.plugin.pagePath,
-    })
-
-    observer.value = new IntersectionObserver((entries) => {
-        entries.forEach(async (entry) => {
-            const rect = entry.boundingClientRect
-            const intersectionRect = entry.intersectionRect
-
-            await ipcApi.updateViewBounds(props.plugin.pagePath ?? "wild", {
-                x: Math.round(rect.x),
-                y: Math.round(rect.y),
-                width: Math.round(intersectionRect.width),
-                height: getPluginViewHeight(Math.round(intersectionRect.height)),
-            })
-        })
-    }, {
-        threshold: [0, 0.25, 0.5, 0.75, 1]
-    })
-
-    observer.value.observe(container.value)
-})
-
-onUnmounted(() => {
-    if (observer.value) {
-        observer.value.disconnect()
-        observer.value = null
     }
+
+    logger.info('PluginView: 创建插件视图', options)
+    await ipcApi.createView(options)
+
+    // 创建 ResizeObserver 监听元素大小变化
+    const resizeObserver = new ResizeObserver(handlePositionChange)
+    resizeObserver.observe(container.value)
+
+    // 创建 IntersectionObserver 监听元素进入或离开视口
+    const intersectionObserver = new IntersectionObserver(handlePositionChange)
+    intersectionObserver.observe(container.value)
+
+    // 监听窗口滚动事件
+    const handleScroll = (event) => {
+        logger.info('PluginView: 窗口滚动', event.detail)
+        handlePositionChange()
+    }
+    document.addEventListener('content-scroll', handleScroll)
+
+    // 在组件卸载时移除监听
+    onUnmounted(() => {
+        resizeObserver.disconnect()
+        intersectionObserver.disconnect()
+        window.removeEventListener('scroll', handleScroll)
+    })
 })
 </script>
 

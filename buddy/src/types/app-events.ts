@@ -12,6 +12,8 @@ export const AppEvents = {
    */
   ActIVATED: 'app-activated',
 
+  MainWindowScroll: 'main-window-scroll',
+
   /**
    * 窗口失活事件
    * 当应用窗口失去焦点时触发

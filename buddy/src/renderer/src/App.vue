@@ -20,7 +20,7 @@ App.vue - 应用程序入口组件
 -->
 
 <script setup lang="ts">
-import { onMounted, onUnmounted } from 'vue'
+import { onMounted, onUnmounted, ref } from 'vue'
 import SearchBar from './layouts/SearchBar.vue'
 import StatusBar from './layouts/StatusBar.vue'
 import Confirm from './cosy/Confirm.vue'
@@ -34,16 +34,36 @@ import { globalToast } from './composables/useToast'
 import { globalAlert } from './composables/useAlert'
 import { globalProgress } from './composables/useProgress'
 import { useAppStore } from './stores/appStore'
+import { logger } from './utils/logger'
 
 const actionStore = useActionStore()
 const marketStore = useMarketStore()
 const appStore = useAppStore()
+const content = ref<HTMLElement | null>(null)
 
 // 在组件加载时注册消息监听和初始化
 onMounted(() => {
     actionStore.onMounted()
     appStore.onMounted()
     marketStore.onMounted()
+
+    // 监听内容区域的滚动事件
+    if (content.value) {
+        content.value.addEventListener('scroll', (event) => {
+            // 获取滚动的位置
+            const scrollTop = content.value!.scrollTop;
+            const scrollLeft = content.value!.scrollLeft;
+            // 打印滚动位置
+            logger.info('content 滚动事件', { scrollTop, scrollLeft })
+
+            // 发出自定义事件
+            const contentScrollEvent = new CustomEvent('content-scroll', {
+                detail: { scrollTop, scrollLeft }
+
+            });
+            document.dispatchEvent(contentScrollEvent);
+        })
+    }
 })
 
 // 在组件卸载时清理消息监听
@@ -73,11 +93,11 @@ onUnmounted(() => {
             @close="globalAlert.close" />
 
         <!-- 内容区域 -->
-        <div class="flex-1 overflow-hidden no-drag-region">
+        <div class="flex-1 overflow-auto no-drag-region" ref="content">
             <router-view v-slot="{ Component }">
                 <transition name="fade" mode="out-in">
-                    <div  class="h-full w-full" >
-                    <component :is="Component"/>
+                    <div class="h-full w-full">
+                        <component :is="Component" />
                     </div>
                 </transition>
             </router-view>
