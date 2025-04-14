@@ -3,6 +3,8 @@ import { defineStore } from 'pinia';
 import { logger } from '../utils/logger';
 import { pluginsAPI } from '../api/plugins-api';
 
+const verbose = false;
+
 interface MarketState {
     userPluginDirectory: string;
     error: string;
@@ -36,7 +38,9 @@ export const useMarketStore = defineStore('market', {
             try {
                 const response = await pluginsAPI.getDevPlugins();
 
-                logger.info('get dev plugins response', response);
+                if (verbose) {
+                    logger.info('get dev plugins response', response);
+                }
                 if (response.success && response.data) {
                     this.devPlugins = response.data || [];
                 } else {

@@ -5,6 +5,8 @@
 import axios from 'axios';
 import { logger } from '../managers/LogManager';
 
+const verbose = false;
+
 /**
  * NPM包维护者信息
  */
@@ -45,6 +47,7 @@ export interface NpmPackage {
   publisher?: NpmPublisher;
   maintainers?: NpmMaintainer[];
   scope?: string;
+  page?: string;
 }
 
 /**
@@ -147,7 +150,9 @@ export class NpmRegistryService {
       // 提取搜索结果中的包对象
       const foundPackages = response.data.objects?.map((obj: any) => obj.package) || [];
 
-      logger.info(`成功获取关键词包列表，count`, foundPackages.length);
+      if (verbose) {
+        logger.info(`成功获取关键词包列表，count`, foundPackages.length);
+      }
 
       return foundPackages;
     } catch (error) {

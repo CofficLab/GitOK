@@ -100,50 +100,45 @@ class PluginViewManager extends BaseManager {
    */
   public async createView(
     options: PluginViewOptions
-  ): Promise<ViewBounds | null> {
+  ): Promise<ViewBounds> {
     const { viewId, url, viewMode = 'embedded' } = options;
 
-    try {
-      // 清理已存在的视图
-      if (this.viewWindows.has(viewId) || this.viewBrowserViews.has(viewId)) {
-        await this.destroyView(viewId);
-      }
+    // 清理已存在的视图
+    if (this.viewWindows.has(viewId) || this.viewBrowserViews.has(viewId)) {
+      await this.destroyView(viewId);
+    }
 
-      const mainWindow = windowManager.getMainWindow();
-      if (!mainWindow) {
-        throw new Error('主窗口不存在，无法创建插件视图');
-      }
+    const mainWindow = windowManager.getMainWindow();
+    if (!mainWindow) {
+      throw new Error('主窗口不存在，无法创建插件视图');
+    }
 
-      const mainWindowBounds = mainWindow.getBounds();
-      const actionId = this.parseActionId(url);
+    const mainWindowBounds = mainWindow.getBounds();
+    const actionId = this.parseActionId(url);
 
-      // 获取视图内容
-      const htmlContent = await this.getViewContent(actionId);
+    // 获取视图内容
+    const htmlContent = await this.getViewContent(actionId);
 
-      // 获取动作配置
-      const actionConfig = await this.getActionConfig(actionId);
+    // 获取动作配置
+    const actionConfig = await this.getActionConfig(actionId);
 
-      // 确定最终的视图模式
-      const effectiveViewMode = actionConfig.viewMode || viewMode;
+    // 确定最终的视图模式
+    const effectiveViewMode = actionConfig.viewMode || viewMode;
 
-      // 创建视图
-      if (effectiveViewMode === 'window') {
-        return this.createWindowView(
-          viewId,
-          htmlContent,
-          actionConfig.devTools
-        );
-      } else {
-        return this.createEmbeddedView(
-          viewId,
-          htmlContent,
-          mainWindowBounds,
-          actionConfig.devTools
-        );
-      }
-    } catch (error) {
-      this.handleError(error, `创建插件视图失败: ${viewId}`);
-      return null;
+    // 创建视图
+    if (effectiveViewMode === 'window') {
+      return this.createWindowView(
+        viewId,
+        htmlContent,
+        actionConfig.devTools
+      );
+    } else {
+      return this.createEmbeddedView(
+        viewId,
+        htmlContent,
+        mainWindowBounds,
+        actionConfig.devTools
+      );
     }
   }
 

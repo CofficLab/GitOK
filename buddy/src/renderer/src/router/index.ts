@@ -13,6 +13,7 @@ import { useAppStore } from '@renderer/stores/appStore';
 import HomeView from '../views/HomeView.vue';
 import ChatView from '../views/ChatView.vue';
 import DevView from '../views/DevView.vue';
+import PluginPageGrid from '../views/PluginPageGrid.vue';
 
 // 路由配置
 const routes = [
@@ -44,11 +45,11 @@ const routes = [
     },
   },
   {
-    path: '/dev',
-    name: 'dev',
-    component: DevView,
+    path: '/plugin-grid',
+    name: 'plugin-grid',
+    component: PluginPageGrid,
     meta: {
-      title: '开发测试',
+      title: '插件页面',
       viewType: 'dev',
     },
   },
@@ -72,8 +73,7 @@ router.beforeEach((to, _from, next) => {
     // 注意：这里需要延迟调用，因为在路由钩子中不能立即使用pinia store
     setTimeout(() => {
       const appStore = useAppStore();
-      appStore.setView(to.meta.viewType as 'home' | 'plugins' | 'chat' | 'dev');
-      console.log(`路由守卫: 更新currentView为 ${to.meta.viewType}`);
+      appStore.setView(to.meta.viewType as 'home' | 'plugins' | 'chat' | 'plugin-grid');
     }, 0);
   }
 

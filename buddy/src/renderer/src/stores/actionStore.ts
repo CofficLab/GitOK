@@ -5,6 +5,7 @@ import { logger } from '@renderer/utils/logger';
 const electronApi = window.electron;
 const { actions: actionsApi } = electronApi.plugins;
 const ipc = electronApi.ipc;
+const verbose = false;
 
 /**
  * Action 管理 Store
@@ -50,7 +51,10 @@ export const useActionStore = defineStore('action', {
       // 如果没有提供搜索关键词，则使用store中的keyword
       const keywordToUse = searchKeyword || this.keyword;
 
-      logger.info('actionStore: loadList with keyword: 🐛', keywordToUse);
+      if (verbose) {
+        logger.info('actionStore: loadList', keywordToUse);
+      }
+
       this.lastKeyword = keywordToUse; // 保存当前关键词
 
       try {

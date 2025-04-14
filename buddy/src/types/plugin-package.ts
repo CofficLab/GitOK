@@ -10,4 +10,5 @@ export interface PluginPackage {
   scripts: Record<string, string>;
   keywords: string[];
   repository: string;
+  page?: string;
 }

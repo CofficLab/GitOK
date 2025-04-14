@@ -12,6 +12,8 @@ import { appStateManager } from './StateManager';
 import { PluginContext } from '@/types/plugin-context';
 import { devPluginDB } from '../db/DevPluginDB';
 
+const verbose = false;
+
 class PluginActionManager extends BaseManager {
   private static instance: PluginActionManager;
 
@@ -42,17 +44,17 @@ class PluginActionManager extends BaseManager {
     let allActions: PluginActionEntity[] = [];
     let overlaidApp = appStateManager.getOverlaidApp();
 
-    logger.info(
-      `获取动作，当前应用`,
-      overlaidApp?.name,
-      `关键词: "${keyword}"`
-    );
+    if (verbose) {
+      logger.info(`获取动作，当前应用`, overlaidApp?.name, `关键词: "${keyword}"`);
+    }
 
     try {
       // 从所有加载的插件中获取动作
       const plugins = await pluginManager.getPlugins();
       for (const plugin of plugins) {
-        logger.info(`获取插件动作，当前插件: ${plugin.id}`);
+        if (verbose) {
+          logger.info(`获取插件动作，当前插件: ${plugin.id}`);
+        }
         try {
           // 动态加载插件模块
           const pluginModule = await pluginManager.loadPluginModule(plugin);
@@ -72,10 +74,12 @@ class PluginActionManager extends BaseManager {
             overlaidApp: overlaidApp?.name || '',
           };
 
-          logger.info(`调用插件 getActions: ${plugin.id}`, {
-            context,
-            pluginPath: plugin.path,
-          });
+          if (verbose) {
+            logger.info(`调用插件 getActions: ${plugin.id}`, {
+              context,
+              pluginPath: plugin.path,
+            });
+          }
 
           const pluginActions = await pluginModule.getActions(context);
 
@@ -125,7 +129,9 @@ class PluginActionManager extends BaseManager {
 
       // logger.info(`获取插件动作，所有动作`, allActions);
 
-      logger.info(`找到 ${allActions.length} 个动作`);
+      if (verbose) {
+        logger.info(`找到 ${allActions.length} 个动作`);
+      }
       return allActions;
     } catch (error) {
       this.handleError(error, '获取插件动作失败');

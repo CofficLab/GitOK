@@ -4,15 +4,18 @@
  */
 import { ipcRenderer } from 'electron';
 import { IpcApi } from '@/types/api-message';
-import { IPC_METHODS } from '@/types/ipc-methods';
+import { IpcResponse } from '@/types/ipc-response';
+import { logger } from '@/main/managers/LogManager';
 
 export const ipcApi: IpcApi = {
   send: (channel: string, ...args: unknown[]): void => {
     ipcRenderer.send(channel, ...args);
   },
+
   receive: (channel: string, callback: (...args: unknown[]) => void): void => {
     ipcRenderer.on(channel, (_, ...args) => callback(...args));
   },
+
   removeListener: (
     channel: string,
     callback: (...args: unknown[]) => void
@@ -20,9 +23,21 @@ export const ipcApi: IpcApi = {
     ipcRenderer.removeListener(channel, callback);
   },
 
-  openFolder: async (directory: string): Promise<string> => {
-    let response = ipcRenderer.invoke(IPC_METHODS.OPEN_FOLDER, directory);
+  invoke: async (channel: string, ...args: unknown[]): Promise<IpcResponse<any>> => {
+    logger.info('调用IPC方法:', channel, '参数是: ', args);
 
-    return response;
+    try {
+      const result = await ipcRenderer.invoke(channel, ...args);
+      return {
+        success: true,
+        data: result
+      };
+    } catch (error) {
+      logger.error('IPC调用失败:', channel, error);
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : String(error)
+      };
+    }
   },
 };

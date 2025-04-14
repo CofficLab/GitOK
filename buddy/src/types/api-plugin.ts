@@ -58,6 +58,7 @@ export interface SuperPluginActionsAPI {
 
 // 插件生命周期管理接口
 export interface SuperPluginLifecycleAPI {
+  getPluginPageSourceCode: (pluginId: string) => Promise<IpcResponse<string>>;
   getAllPlugins: () => Promise<any>;
   getLocalPlugins: () => Promise<any>;
   getInstalledPlugins: () => Promise<any>;

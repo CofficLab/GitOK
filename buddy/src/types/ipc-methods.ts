@@ -3,9 +3,12 @@
  */
 export const IPC_METHODS = {
   // 基础功能
-  OPEN_FOLDER: 'open-folder',
+  Open_Folder: 'open-folder',
+  Create_View: 'create-view',
+  Destroy_View: 'destroy-view',
 
   GET_PLUGIN_ACTIONS: 'get-plugin-actions',
+  GET_PLUGIN_PAGE_SOURCE_CODE: 'get-plugin-page-source-code',
   EXECUTE_PLUGIN_ACTION: 'execute-plugin-action',
   GET_ACTION_VIEW: 'get-action-view',
   CREATE_PLUGIN_VIEW: 'create-plugin-view',

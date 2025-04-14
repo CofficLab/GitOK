@@ -7,7 +7,6 @@ import { ipcApi } from './ipc';
 import { commandApi } from './command';
 import { pluginApi } from './plugin';
 import { overlaidApi } from './overlaid';
-import { uiLogApi } from './ui-log';
 import { updateApi } from './update';
 import { contextMenuApi } from './contextMenu';
 import { devApi } from './dev';
@@ -22,7 +21,6 @@ const api: ElectronApi = {
   command: commandApi,
   plugins: pluginApi,
   overlaid: overlaidApi,
-  ui: uiLogApi,
   update: updateApi,
   contextMenu: contextMenuApi,
   dev: devApi,

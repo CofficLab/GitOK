@@ -1,6 +1,8 @@
+import { IPC_METHODS } from "@/types/ipc-methods";
 import { IpcResponse } from "@/types/ipc-response";
 import { SuperPlugin } from "@/types/super_plugin";
 
+const ipc = window.electron.ipc;
 const electronApi = window.electron;
 const pluginApi = electronApi.plugins;
 const { management } = pluginApi;
@@ -15,7 +17,7 @@ export const pluginsAPI = {
   async getDevPlugins(): Promise<IpcResponse<SuperPlugin[]>> {
     return await management.getDevPlugins();
   },
-  
+
   // 获取用户插件目录
   async getUserPluginDirectory(): Promise<IpcResponse<string>> {
     return await management.getUserPluginDirectory();
@@ -34,5 +36,10 @@ export const pluginsAPI = {
   // 获取远程插件列表
   async getRemotePlugins(): Promise<IpcResponse<SuperPlugin[]>> {
     return await management.getRemotePlugins();
+  },
+
+  // 创建插件视图
+  async createPluginView(pluginId: string): Promise<unknown> {
+    return await ipc.invoke(IPC_METHODS.CREATE_PLUGIN_VIEW, pluginId);
   },
 };

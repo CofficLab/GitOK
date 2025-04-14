@@ -3,14 +3,14 @@ import { IpcRoute } from '../provider/RouterService';
 import { IpcResponse } from '@/types/ipc-response';
 import { shell } from 'electron';
 import { logger } from '../managers/LogManager';
-import { v4 as uuidv4 } from 'uuid';
+import { viewManager } from '../managers/ViewManager';
 
 /**
  * 基础的IPC路由配置
  */
 export const baseRoutes: IpcRoute[] = [
     {
-        channel: IPC_METHODS.OPEN_FOLDER,
+        channel: IPC_METHODS.Open_Folder,
         handler: (_, directory: string): IpcResponse<string> => {
             logger.debug(`打开: ${directory}`);
             try {
@@ -22,6 +22,20 @@ export const baseRoutes: IpcRoute[] = [
                 return { success: false, error: errorMessage };
             }
         },
+    },
+
+    {
+        channel: IPC_METHODS.Create_View,
+        handler: (_, bounds): Promise<unknown> => {
+            return viewManager.createView(bounds);
+        }
+    },
+
+    {
+        channel: IPC_METHODS.Destroy_View,
+        handler: (_, id): void => {
+            return viewManager.destroyView(id);
+        }
     }
 ];
 

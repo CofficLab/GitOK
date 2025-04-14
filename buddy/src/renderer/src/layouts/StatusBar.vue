@@ -57,11 +57,9 @@ const goToChat = () => {
     console.log('状态栏：已更新视图状态为chat')
 }
 
-// 跳转到开发测试界面
-const goToDev = () => {
-    router.push('/dev')
-    appStore.setView('dev')
-    console.log('状态栏：已更新视图状态为dev')
+const goToPluginGrid = () => {
+    router.push('/plugin-grid')
+    appStore.setView('plugin-grid')
 }
 
 // 打开配置文件夹
@@ -109,16 +107,15 @@ onUnmounted(() => {
             </StatusBarItem>
             <StatusBarItem clickable @click="goToPluginStore" :active="route.path === '/plugins'"
                 :variant="route.path === '/plugins' ? 'primary' : 'default'">
-                插件
+                插件商店
+            </StatusBarItem>
+            <StatusBarItem clickable @click="goToPluginGrid" :active="route.path === '/chat'"
+                :variant="route.path === '/plugin-grid' ? 'primary' : 'default'">
+                插件页面
             </StatusBarItem>
             <StatusBarItem clickable @click="goToChat" :active="route.path === '/chat'"
                 :variant="route.path === '/chat' ? 'primary' : 'default'">
                 聊天
-            </StatusBarItem>
-            <!-- 开发测试导航 -->
-            <StatusBarItem clickable @click="goToDev" :active="route.path === '/dev'"
-                :variant="route.path === '/dev' ? 'primary' : 'default'">
-                开发
             </StatusBarItem>
         </template>
 

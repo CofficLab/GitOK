@@ -3,6 +3,8 @@
  * 提供基本的进程间通信功能的接口
  */
 
+import { IpcResponse } from "./ipc-response";
+
 export interface IpcApi {
   /**
    * 向主进程发送消息
@@ -19,6 +21,14 @@ export interface IpcApi {
   receive: (channel: string, callback: (...args: unknown[]) => void) => void;
 
   /**
+   * 向主进程发送消息并等待响应
+   * @param channel 通信频道名称
+   * @param args 要发送的参数
+   * @returns 主进程返回的响应
+   */
+  invoke: (channel: string, ...args: unknown[]) => Promise<IpcResponse<unknown>>;
+
+  /**
    * 移除消息监听器
    * @param channel 通信频道名称
    * @param callback 要移除的回调函数
@@ -27,10 +37,4 @@ export interface IpcApi {
     channel: string,
     callback: (...args: unknown[]) => void
   ) => void;
-
-  /**
-   * 打开文件夹
-   * @param directory 要打开的目录路径
-   */
-  openFolder: (directory: string) => Promise<string>;
 }

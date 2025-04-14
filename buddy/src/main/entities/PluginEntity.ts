@@ -11,6 +11,8 @@ import { readPackageJson, hasPackageJson } from '../utils/PackageUtils';
 import { NpmPackage } from '../service/NpmRegistryService';
 import { logger } from '../managers/LogManager';
 
+const verbose = false;
+
 /**
  * 插件类型
  * - user: 用户安装的插件
@@ -39,6 +41,8 @@ export class PluginEntity implements SuperPlugin {
   version: string;
   author: string;
   main: string;
+  pagePath?: string;
+  hasPage: boolean = false;
 
   // 路径信息
   path: string;
@@ -64,7 +68,9 @@ export class PluginEntity implements SuperPlugin {
       throw new Error(`插件目录 ${pluginPath} 缺少 package.json`);
     }
 
-    logger.info('读取插件目录', { pluginPath, type });
+    if (verbose) {
+      logger.info('读取插件目录', { pluginPath, type });
+    }
 
     const packageJson = await readPackageJson(pluginPath);
     const plugin = new PluginEntity(packageJson, pluginPath, type);
@@ -97,6 +103,7 @@ export class PluginEntity implements SuperPlugin {
       scripts: {}, // 空脚本
       keywords: npmPackage.keywords || [], // 关键词
       repository: npmPackage.links?.repository || '', // 仓库链接，确保是字符串类型
+      page: npmPackage.page, // 插件页面视图路径
     };
 
     // 创建插件实体
@@ -164,6 +171,8 @@ export class PluginEntity implements SuperPlugin {
     this.main = pkg.main;
     this.path = path;
     this.type = type;
+    this.pagePath = path + '/' + pkg.page;
+    this.hasPage = !!pkg.page;
   }
 
   /**
@@ -200,6 +209,14 @@ export class PluginEntity implements SuperPlugin {
    */
   markAsLoaded(): void {
     this.isLoaded = true;
+  }
+
+  /**
+   * 获取page属性对应的文件的源代码
+   * @returns 插件页面视图路径
+   */
+  getPageSourceCode(): string {
+    return "source code";
   }
 
   /**
@@ -240,7 +257,7 @@ export class PluginEntity implements SuperPlugin {
 
     // 如果验证失败，设置错误状态
     if (!validation.isValid) {
-      this.setStatus('error', `插件验证失败: ${errors.join(', ')}`);
+      this.setStatus('error', `插件验证失败: ${errors.join(', ')} `);
     }
 
     return validation;
@@ -257,6 +274,8 @@ export class PluginEntity implements SuperPlugin {
       version: this.version,
       author: this.author,
       main: this.main,
+      pagePath: this.pagePath,
+      hasPage: this.hasPage,
       path: this.path,
       type: this.type,
       status: this.status,

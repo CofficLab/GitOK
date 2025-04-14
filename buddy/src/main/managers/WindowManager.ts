@@ -104,13 +104,13 @@ class WindowManager extends BaseManager {
 
     // 窗口加载完成后显示
     this.mainWindow.on('ready-to-show', () => {
-      logger.debug('窗口准备就绪');
+      //logger.debug('窗口准备就绪');
 
       // 根据配置决定是否打开开发者工具及其位置
       if (windowConfig.showDebugToolbar && this.mainWindow) {
-        logger.info(
-          `打开开发者工具，位置: ${windowConfig.debugToolbarPosition}`
-        );
+        // logger.info(
+        //   `打开开发者工具，位置: ${windowConfig.debugToolbarPosition}`
+        // );
         this.mainWindow.webContents.openDevTools({
           mode: windowConfig.debugToolbarPosition as
             | 'bottom'

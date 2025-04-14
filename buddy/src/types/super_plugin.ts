@@ -67,4 +67,12 @@ export interface SuperPlugin {
    * NPM包名称，用于远程插件
    */
   npmPackage?: string;
+
+  /**
+   * 插件页面视图路径
+   * 如果存在，表示插件带有一个可以在主界面显示的视图
+   */
+  pagePath?: string;
+
+  hasPage: boolean;
 }

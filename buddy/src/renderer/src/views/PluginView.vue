@@ -16,18 +16,7 @@ const actionStore = useActionStore()
 
 // 定义辅助函数获取插件视图API
 const getPluginViewsAPI = () => {
-    try {
-        const api = (window.electron.plugins as any).views;
-        // 检查所需API是否都存在
-        if (!api || !api.create || !api.show || !api.destroy) {
-            logger.error('PluginView: 获取插件视图API失败，API不完整');
-            return null;
-        }
-        return api;
-    } catch (error) {
-        logger.error('PluginView: 获取插件视图API失败' + error);
-        return null;
-    }
+    return window.electron.plugins.views;
 }
 
 const emit = defineEmits<{
@@ -176,8 +165,7 @@ const createEmbeddedView = async (actionId: string, action: SuperAction) => {
             // 首先创建嵌入式视图
             const mainWindowBounds = await viewsAPI.create(
                 embeddedViewState.id,
-                `plugin-view://${actionId}`,
-                'embedded'
+                `plugin-view://${actionId}`
             )
 
             logger.info(`PluginView: 嵌入式视图已创建，主窗口边界: ${mainWindowBounds}`)
@@ -265,7 +253,6 @@ const openPluginWindow = async (actionId: string, action: SuperAction) => {
         const mainWindowBounds = await viewsAPI.create(
             pluginViewState.id,
             `plugin-view://${actionId}`, // 确保actionId格式正确
-            'window' // 视图模式
         )
 
         if (mainWindowBounds) {

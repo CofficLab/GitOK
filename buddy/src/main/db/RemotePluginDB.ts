@@ -6,6 +6,8 @@ import { logger } from '../managers/LogManager';
 import { NpmPackage, npmRegistryService } from '../service/NpmRegistryService';
 import { PluginEntity } from '../entities/PluginEntity';
 
+const verbose = false;
+
 export class RemotePluginDB {
     private static instance: RemotePluginDB;
 
@@ -52,7 +54,11 @@ export class RemotePluginDB {
                 this.cachedRemotePlugins = result;
                 this.lastCacheRefreshTime = Date.now();
                 this.isRefreshingCache = false;
-                logger.info(`远程插件列表缓存已更新，数量`, this.cachedRemotePlugins.length);
+
+                if (verbose) {
+                    logger.info(`远程插件列表缓存已更新，数量`, this.cachedRemotePlugins.length);
+                }
+
                 return this.cachedRemotePlugins;
             }
 
@@ -110,7 +116,6 @@ export class RemotePluginDB {
                 }
             }
 
-            // 搜索失败，使用后备数据
             logger.warn('未能获取远程包列表');
         } catch (error) {
             logger.error('刷新远程插件列表失败', {

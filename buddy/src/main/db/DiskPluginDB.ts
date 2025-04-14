@@ -3,6 +3,8 @@ import fs from 'fs';
 import { PluginEntity } from '../entities/PluginEntity';
 import { logger } from '../managers/LogManager';
 
+const verbose = false;
+
 export abstract class DiskPluginDB {
   protected pluginsDir: string;
 
@@ -43,7 +45,9 @@ export abstract class DiskPluginDB {
       return [];
     }
 
-    logger.info('读取插件目录', { dir, type });
+    if (verbose) {
+      logger.info('读取插件目录', { dir, type });
+    }
 
     const plugins: PluginEntity[] = [];
     const entries = await fs.promises.readdir(dir, { withFileTypes: true });
@@ -68,7 +72,9 @@ export abstract class DiskPluginDB {
    * 获取所有插件列表
    */
   async getAllPlugins(): Promise<PluginEntity[]> {
-    logger.info('获取插件列表，根目录是', this.pluginsDir);
+    if (verbose) {
+      logger.info('获取插件列表，根目录是', this.pluginsDir);
+    }
     try {
       const plugins = await this.readPluginsFromDir(
         this.pluginsDir,
@@ -81,7 +87,9 @@ export abstract class DiskPluginDB {
         logger.warn('没有有效的插件');
         return [];
       } else {
-        logger.info('有效的插件数量', validPlugins.length);
+        if (verbose) {
+          logger.info('有效的插件数量', validPlugins.length);
+        }
       }
 
       // 排序插件列表

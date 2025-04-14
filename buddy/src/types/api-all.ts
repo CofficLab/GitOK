@@ -2,7 +2,6 @@ import { ConfigAPI } from "@/preload/config";
 import { AiApi } from "./api-ai";
 import { CommandApi } from "./api-command";
 import { DevApi } from "./api-dev";
-import { UILogApi } from "./api-log";
 import { IpcApi } from "./api-message";
 import { OverlaidApi } from "./api-overlaid";
 import { PluginAPi } from "./api-plugin";
@@ -20,7 +19,6 @@ export interface ElectronApi {
     command: CommandApi;
     plugins: PluginAPi;
     overlaid: OverlaidApi;
-    ui: UILogApi;
     contextMenu: ContextMenuApi;
     update: any;
     config: ConfigAPI;

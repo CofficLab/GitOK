@@ -5,9 +5,9 @@
 import { autoUpdater } from 'electron-updater';
 import { dialog, BrowserWindow } from 'electron';
 import { logger } from './LogManager';
-
-// 导入后面要创建的事件发送器
 import { sendUpdateEvent } from '../handlers/update_router';
+
+const verbose = false;
 
 export class UpdateManager {
   private mainWindow: BrowserWindow | null = null;
@@ -52,7 +52,9 @@ export class UpdateManager {
 
     // 检查更新
     autoUpdater.on('checking-for-update', () => {
-      logger.info('正在检查更新...');
+      if (verbose) {
+        logger.info('正在检查更新...');
+      }
       sendUpdateEvent('checking-for-update', {});
     });
 
@@ -135,7 +137,9 @@ export class UpdateManager {
    * 手动检查更新
    */
   public checkForUpdates(): void {
-    logger.info('检查更新');
+    if (verbose) {
+      logger.info('手动检查更新');
+    }
     autoUpdater.checkForUpdates().catch((error) => {
       logger.error('检查更新失败', { error: error.message });
     });

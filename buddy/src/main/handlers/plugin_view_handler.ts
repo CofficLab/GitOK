@@ -8,12 +8,21 @@ import { logger } from '../managers/LogManager';
  */
 export const pluginViewRoutes: IpcRoute[] = [
   {
+    channel: IPC_METHODS.GET_PLUGIN_PAGE_SOURCE_CODE,
+    handler: async (pluginId: string) => {
+      return { success: true, data: "xxxxxxxxx" };
+    }
+  },
+  {
     channel: IPC_METHODS.CREATE_PLUGIN_VIEW,
     handler: async (_, { viewId, url }) => {
       try {
         const mainWindowBounds = await pluginViewManager.createView({
           viewId,
           url,
+        });
+        logger.info(`创建插件视图窗口成功: ${viewId}`, {
+          mainWindowBounds,
         });
         return { success: true, data: mainWindowBounds };
       } catch (error) {
