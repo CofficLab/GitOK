@@ -4,7 +4,6 @@ import { logger } from '@renderer/utils/logger';
 import { AppEvents } from '@/types/app-events';
 import { actionIpc } from '../api/action-ipc';
 const electronApi = window.electron;
-const { actions: actionsApi } = electronApi.plugins;
 const ipc = electronApi.ipc;
 const verbose = false;
 
@@ -96,7 +95,7 @@ export const useActionStore = defineStore('action', {
         this.viewHtml = '';
       }
 
-      return actionsApi.executeAction(action.globalId, this.keyword);
+      return actionIpc.executeAction(action.globalId, this.keyword);
     },
 
     /**
@@ -105,13 +104,8 @@ export const useActionStore = defineStore('action', {
     async loadView(actionId: string): Promise<void> {
       try {
         this.viewHtml = '';
-        const response = await actionsApi.getActionView(actionId);
-
-        if (response.success && response.html) {
-          this.viewHtml = response.html;
-        } else if (response.error) {
-          throw new Error(response.error);
-        }
+        const response = await actionIpc.getActionView(actionId);
+        this.viewHtml = response;
       } catch (error) {
         this.viewHtml = '';
         throw error;

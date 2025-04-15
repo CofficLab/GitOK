@@ -7,12 +7,10 @@ import {
 } from '@/types/api-plugin';
 import { pluginLifecycle } from './plugin-life';
 import { pluginManagement } from './plugin-managerment';
-import { pluginActions } from './plugin-actions';
 import { pluginViews } from './plugin-views';
 
 export const pluginApi: PluginAPi = {
   views: pluginViews,
   management: pluginManagement,
-  actions: pluginActions,
   lifecycle: pluginLifecycle,
 };

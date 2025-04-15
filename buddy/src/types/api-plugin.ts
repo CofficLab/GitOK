@@ -3,7 +3,6 @@
  * 包含视图管理、插件管理、动作管理和生命周期管理四个主要模块
  */
 
-import { SuperAction } from './super_action';
 import { SuperPlugin } from './super_plugin';
 import { IpcResponse } from './ipc-response';
 
@@ -49,12 +48,6 @@ export interface SuperPluginManagementAPI {
   getUserPluginDirectory: () => Promise<IpcResponse<string>>;
 }
 
-// 插件动作接口
-export interface SuperPluginActionsAPI {
-  executeAction: (actionId: string, keyword: string) => Promise<any>;
-  getActionView: (actionId: string) => Promise<any>;
-}
-
 // 插件生命周期管理接口
 export interface SuperPluginLifecycleAPI {
   getPluginPageSourceCode: (pluginId: string) => Promise<IpcResponse<string>>;
@@ -68,6 +61,5 @@ export interface SuperPluginLifecycleAPI {
 export interface PluginAPi {
   views: PluginViewsAPI;
   management: SuperPluginManagementAPI;
-  actions: SuperPluginActionsAPI;
   lifecycle: SuperPluginLifecycleAPI;
 }
