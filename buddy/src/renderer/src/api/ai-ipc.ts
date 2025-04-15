@@ -13,8 +13,13 @@ export const aiIpc = {
     },
 
     onAiChatStreamChunk(callback: (response: StreamChunkResponse) => void): () => void {
-        const handler = (_: any, response: StreamChunkResponse) => callback(response);
-        ipc.receive(IPC_METHODS.AI_CHAT_STREAM_CHUNK, handler);
+        const handler = (response: any) => {
+            console.log('onAiChatStreamChunk', response)
+
+            callback((response as StreamChunkResponse))
+        };
+        ipc.receive(IPC_METHODS.AI_CHAT_STREAM_CHUNK, handler)
+
         return () => {
             ipc.removeListener(IPC_METHODS.AI_CHAT_STREAM_CHUNK, handler);
         };
@@ -22,7 +27,10 @@ export const aiIpc = {
 
     onAiChatStreamDone(callback: (response: StreamDoneResponse) => void): () => void {
         const handler = (_: any, response: StreamDoneResponse) => callback(response);
-        ipc.on(IPC_METHODS.AI_CHAT_STREAM_DONE, handler);
+        ipc.receive(IPC_METHODS.AI_CHAT_STREAM_DONE, (args) => {
+            console.log('onAiChatStreamChunk', args)
+        });
+
         return () => {
             ipc.removeListener(IPC_METHODS.AI_CHAT_STREAM_DONE, handler);
         };

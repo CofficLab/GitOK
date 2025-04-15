@@ -9,18 +9,18 @@ import { ElectronApi } from '@coffic/buddy-types';
 
 // 整合所有 API
 const api: ElectronApi = {
-  ipc: ipcApi,
-  plugins: pluginApi
+    ipc: ipcApi,
+    plugins: pluginApi
 };
 
 // 使用 contextBridge 暴露 API 到渲染进程
 if (process.contextIsolated) {
-  try {
-    contextBridge.exposeInMainWorld('electron', api);
-  } catch (error) {
-    console.error(error);
-  }
+    try {
+        contextBridge.exposeInMainWorld('electron', api);
+    } catch (error) {
+        console.error(error);
+    }
 } else {
-  // @ts-ignore (define in dts)
-  window.electron = api;
+    // @ts-ignore (define in dts)
+    window.electron = api;
 }

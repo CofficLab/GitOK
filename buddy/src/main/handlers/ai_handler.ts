@@ -3,7 +3,7 @@ import { IpcRoute } from '../provider/RouterService.js';
 import { logger } from '../managers/LogManager.js';
 import { aiManager, type ChatMessage } from '../managers/AIManager.js';
 import { v4 as uuidv4 } from 'uuid';
-import { IPC_METHODS, IpcResponse } from '@coffic/buddy-types';
+import { IPC_METHODS, IpcResponse, StreamChunkResponse } from '@coffic/buddy-types';
 
 /**
  * AI路由配置
@@ -25,7 +25,7 @@ export const aiRoutes: IpcRoute[] = [
                             success: true,
                             data: chunk,
                             requestId
-                        });
+                        } as StreamChunkResponse);
                     }, () => {
                         logger.debug(`聊天完成`);
                         event.sender.send(IPC_METHODS.AI_CHAT_STREAM_DONE, {
