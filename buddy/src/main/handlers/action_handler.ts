@@ -10,7 +10,7 @@ import { logger } from '../managers/LogManager';
  */
 export const pluginActionRoutes: IpcRoute[] = [
   {
-    channel: IPC_METHODS.GET_PLUGIN_ACTIONS,
+    channel: IPC_METHODS.Get_PLUGIN_ACTIONS,
     handler: async (_, keyword = ''): Promise<IpcResponse<SuperAction[]>> => {
       try {
         const actions = await pluginActionManager.getActions(keyword);

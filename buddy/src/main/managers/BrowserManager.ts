@@ -9,7 +9,7 @@ import { join } from 'path';
 import { logger } from './LogManager';
 import { createViewArgs } from '@/types/args';
 
-const verbose = true;
+const verbose = false;
 
 export class BrowserManager {
     private views: Map<string, WebContentsView> = new Map();
@@ -88,19 +88,6 @@ export class BrowserManager {
             this.destroyAllViews();
         })
 
-        // 监听渲染进程发送的滚动事件
-        mainWindow.webContents.ipc.on('main-window-scroll', (event, scrollDelta) => {
-            logger.info(`主窗口滚动，调整子视图(${this.views.size})位置`, scrollDelta);
-            // 获取所有视图并更新它们的位置
-            // for (const [pagePath, view] of this.views) {
-            //     const bounds = view.getBounds();
-            //     view.setBounds({
-            //         ...bounds,
-            //         y: bounds.y - scrollDelta
-            //     });
-            // }
-        });
-
         // 加载HTML内容，如果提供了content参数，则使用content，否则读取pagePath对应的文件内容
         const htmlContent = args.content ?? (args.pagePath ? require('fs').readFileSync(args.pagePath, 'utf-8') : '');
         view.webContents.loadURL(
@@ -142,7 +129,9 @@ export class BrowserManager {
      * @param bounds 新的视图边界
      */
     public updateViewPosition(pagePath: string, bounds: ViewBounds): void {
-        logger.info('update view position:', pagePath, bounds);
+        if (verbose) {
+            logger.info('update view position:', pagePath, bounds);
+        }
 
         const view = this.views.get(pagePath);
         if (!view) {
@@ -154,7 +143,9 @@ export class BrowserManager {
     }
 
     public async upsertView(pagePath: string, bounds: ViewBounds): Promise<void> {
-        logger.info("upsert view: ", pagePath, bounds)
+        if (verbose) {
+            logger.info('upsert view:', pagePath, bounds);
+        }
 
         const view = this.views.get(pagePath) ?? await this.createView({
             pagePath: pagePath,

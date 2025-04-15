@@ -30,20 +30,8 @@ export const ipcApi: IpcApi = {
   },
 
   invoke: async (channel: string, ...args: unknown[]): Promise<IpcResponse<any>> => {
-    logger.info('调用IPC方法:', channel, '参数是: ', args);
+    //logger.info('调用IPC方法:', channel, '参数是: ', args);
 
-    try {
-      const result = await ipcRenderer.invoke(channel, ...args);
-      return {
-        success: true,
-        data: result
-      };
-    } catch (error) {
-      logger.error('IPC调用失败:', channel, error);
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : String(error)
-      };
-    }
+    return await ipcRenderer.invoke(channel, ...args);
   },
 };

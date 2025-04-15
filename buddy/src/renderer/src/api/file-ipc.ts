@@ -4,7 +4,7 @@ import { logger } from "../utils/logger";
 const electronApi = window.electron;
 const ipc = electronApi.ipc;
 
-export const ipcApi = {
+export const fileIpc = {
   async openFolder(folder: string): Promise<unknown> {
     return await ipc.invoke(IPC_METHODS.Open_Folder, folder);
   },

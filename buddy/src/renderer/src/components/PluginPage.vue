@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, nextTick, ref, onUnmounted, watch } from 'vue'
 import { logger } from '../utils/logger'
-import { viewApi } from '../api/view-api'
+import { viewIpc } from '../api/view-ipc'
 import { SuperPlugin } from '@/types/super_plugin';
 import { createViewArgs } from '@/types/args';
 
@@ -18,9 +18,6 @@ const container = ref<HTMLElement | null>(null)
 const handlePositionChange = () => {
     if (container.value) {
         const rect = container.value.getBoundingClientRect()
-        const x = Math.round(rect.x)
-        const y = Math.round(rect.y)
-        logger.info(`PluginView: container 的 x 坐标: ${x}, y 坐标: ${y}`)
 
         options.value = {
             x: Math.round(rect.x),
@@ -58,8 +55,7 @@ onUnmounted(() => {
 
 watch(options, () => {
     if (options.value == null) return
-    console.log(options.value)
-    viewApi.upsertView(props.plugin.pagePath!, {
+    viewIpc.upsertView(props.plugin.pagePath!, {
         x: options.value.x,
         y: options.value.y,
         width: options.value.width,

@@ -8,7 +8,6 @@ import { commandApi } from './command';
 import { pluginApi } from './plugin';
 import { updateApi } from './update';
 import { contextMenuApi } from './contextMenu';
-import { devApi } from './dev';
 import { ElectronApi } from '@/types/api-all';
 import { aiApi } from './ai';
 import { configAPI } from './config';
@@ -21,7 +20,6 @@ const api: ElectronApi = {
   plugins: pluginApi,
   update: updateApi,
   contextMenu: contextMenuApi,
-  dev: devApi,
   config: configAPI
 };
 

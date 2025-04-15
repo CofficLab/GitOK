@@ -2,7 +2,7 @@
 import { useMarketStore } from '../stores/marketStore'
 import { onUnmounted, computed } from 'vue'
 import { logger } from '../utils/logger'
-import { ipcApi } from '../api/ipc-api'
+import { viewIpc } from '../api/view-ipc'
 import PluginPage from '../components/PluginPage.vue'
 
 const marketStore = useMarketStore()
@@ -10,7 +10,7 @@ const plugins = computed(() => marketStore.pluginsWithPage)
 
 onUnmounted(() => {
   logger.info('PluginView: 卸载插件视图')
-  ipcApi.destroyPluginViews()
+  viewIpc.destroyViews()
 })
 </script>
 

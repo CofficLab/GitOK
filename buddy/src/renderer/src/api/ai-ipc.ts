@@ -2,7 +2,7 @@ import type { AiApi, ChatMessage, StreamChunkResponse, StreamDoneResponse } from
 
 const ai = window.electron.ai;
 
-export const aiApi: AiApi = {
+export const aiIpc: AiApi = {
   async send(messages: ChatMessage[]): Promise<string> {
     return await ai.send(messages);
   },

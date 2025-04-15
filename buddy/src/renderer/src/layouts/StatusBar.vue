@@ -15,7 +15,7 @@ import { useRouter, useRoute } from 'vue-router'
 import { useAppStore } from '@renderer/stores/appStore'
 import StatusBar from '@renderer/cosy/StatusBar.vue'
 import StatusBarItem from '@renderer/cosy/StatusBarItem.vue'
-import { ipcApi } from '@renderer/api/ipc-api'
+import { fileIpc } from '@/renderer/src/api/file-ipc'
 
 // 当前时间
 const currentTime = ref(new Date().toLocaleTimeString())
@@ -58,7 +58,7 @@ const goToPluginGrid = () => {
 // 打开配置文件夹
 const openConfigFolder = async () => {
     try {
-        await ipcApi.openConfigFolder()
+        await fileIpc.openConfigFolder()
         console.log('已打开配置文件夹')
     } catch (error) {
         console.error('打开配置文件夹失败:', error)

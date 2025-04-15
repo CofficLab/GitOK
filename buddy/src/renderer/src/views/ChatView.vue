@@ -4,7 +4,7 @@
 -->
 <script setup lang="ts">
 import { ChatMessage, StreamChunkResponse, StreamDoneResponse } from '@/types/api-ai';
-import { aiApi } from '@renderer/api/ai-api';
+import { aiIpc } from '@/renderer/src/api/ai-ipc';
 import { ref, reactive, onMounted } from 'vue';
 import { logger } from '../utils/logger';
 
@@ -22,7 +22,7 @@ const aiMessage = ref('');
 // 注册流式响应处理
 onMounted(() => {
   // 注册流式聊天数据块监听器
-  aiApi.onAiChatStreamChunk((response: StreamChunkResponse) => {
+  aiIpc.onAiChatStreamChunk((response: StreamChunkResponse) => {
     logger.info('AI响应:', response);
     if (response.success && response.data) {
       // 如果是当前请求的响应，则追加内容
@@ -39,7 +39,7 @@ onMounted(() => {
   });
 
   // 注册流式聊天完成监听器
-  aiApi.onAiChatStreamDone((response: StreamDoneResponse) => {
+  aiIpc.onAiChatStreamDone((response: StreamDoneResponse) => {
     if (response.requestId === currentRequestId.value) {
       // 将AI回复添加到消息列表
       if (aiMessage.value) {
@@ -78,7 +78,7 @@ async function sendMessage() {
       role: msg.role,
       content: msg.content
     }));
-    currentRequestId.value = await aiApi.send(serializableMessages);
+    currentRequestId.value = await aiIpc.send(serializableMessages);
     logger.info('发送消息后得到的请求ID:', currentRequestId.value);
   } catch (error) {
     console.error('发送消息失败:', error);

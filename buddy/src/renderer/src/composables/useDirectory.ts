@@ -1,10 +1,10 @@
-import { ipcApi } from '@renderer/api/ipc-api'
+import { fileIpc } from '@/renderer/src/api/file-ipc'
 
 export function useDirectory() {
     const openDirectory = async (dir: string | null) => {
         if (!dir) return
         try {
-            await ipcApi.openFolder(dir)
+            await fileIpc.openFolder(dir)
         } catch (error) {
             console.error(`打开目录失败: ${error}`)
         }

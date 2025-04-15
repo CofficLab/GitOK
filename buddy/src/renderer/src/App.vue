@@ -54,7 +54,7 @@ onMounted(() => {
             const scrollTop = content.value!.scrollTop;
             const scrollLeft = content.value!.scrollLeft;
             // 打印滚动位置
-            logger.info('content 滚动事件', { scrollTop, scrollLeft })
+            // logger.info('content 滚动事件', { scrollTop, scrollLeft })
 
             // 发出自定义事件
             const contentScrollEvent = new CustomEvent('content-scroll', {

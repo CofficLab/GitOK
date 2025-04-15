@@ -4,7 +4,7 @@
   "description": "An Electron application with Vue and TypeScript",
   "main": "./out/main/index.js",
   "author": "example.com",
-  "homepage": "https://electron-vite.org",
+  "homepage": "https://coffic.zone.id",
   "scripts": {
     "format": "prettier --write .",
     "lint": "eslint --cache .",

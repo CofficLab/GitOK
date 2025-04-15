@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 import type { SuperAction } from '@/types/super_action';
 import { logger } from '@renderer/utils/logger';
 import { AppEvents } from '@/types/app-events';
+import { actionIpc } from '../api/action-ipc';
 const electronApi = window.electron;
 const { actions: actionsApi } = electronApi.plugins;
 const ipc = electronApi.ipc;
@@ -68,9 +69,7 @@ export const useActionStore = defineStore('action', {
 
       try {
         this.isLoading = true;
-        this.list = await actionsApi.getPluginActions(keywordToUse);
-
-        // logger.info('actionStore: loadList', this.list);
+        this.list = await actionIpc.getActions(keywordToUse);
       } catch (error) {
         logger.error('actionStore: loadList error: 🐛', error);
         this.list = [];

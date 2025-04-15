@@ -13,7 +13,6 @@ interface ContextMenuApi {
 
 export interface ElectronApi {
     ai: AiApi,
-    dev: DevApi,
     ipc: IpcApi;
     command: CommandApi;
     plugins: PluginAPi;
