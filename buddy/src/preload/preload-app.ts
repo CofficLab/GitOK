@@ -4,7 +4,6 @@
  */
 import { contextBridge } from 'electron';
 import { ipcApi } from './ipc.js';
-import { commandApi } from './command.js';
 import { pluginApi } from './plugin.js';
 import { updateApi } from './update.js';
 import { aiApi } from './ai.js';
@@ -14,7 +13,6 @@ import { ElectronApi } from '@coffic/buddy-types';
 const api: ElectronApi = {
   ipc: ipcApi,
   ai: aiApi,
-  command: commandApi,
   plugins: pluginApi,
   update: updateApi
 };
