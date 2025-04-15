@@ -29,7 +29,7 @@ export const ipcApi: IpcApi = {
   },
 
   invoke: async (channel: string, ...args: unknown[]): Promise<IpcResponse<any>> => {
-    //logger.info('调用IPC方法:', channel, '参数是: ', args);
+    logger.info('调用IPC方法:', channel, '参数是: ', args);
 
     return await ipcRenderer.invoke(channel, ...args);
   },

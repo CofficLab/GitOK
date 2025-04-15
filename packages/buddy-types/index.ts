@@ -1,7 +1,6 @@
-export * from './contact/api-ai.js';
+
+export * from './contact/api-ai.js'
 export * from './contact/api-all.js';
-export * from './contact/api-dev.js';
-export * from './contact/api-log.js';
 export * from './contact/api-message.js';
 export * from './contact/api-plugin.js';
 export * from './contact/app-events.js';

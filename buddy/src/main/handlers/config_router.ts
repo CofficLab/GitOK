@@ -7,7 +7,7 @@
 import { IpcRoute } from '../provider/RouterService.js'
 import { configManager } from '../managers/ConfigManager.js'
 import { logger } from '../managers/LogManager.js'
-import { IPC_METHODS } from '@coffic/buddy-types'
+import { IPC_METHODS, IpcResponse } from '@coffic/buddy-types'
 
 export const routes: IpcRoute[] = [
     {
@@ -70,12 +70,20 @@ export const routes: IpcRoute[] = [
     },
     {
         channel: IPC_METHODS.CONFIG_GET_PATH,
-        handler: async () => {
+        handler: async (): Promise<IpcResponse<string>> => {
             try {
-                return configManager.getConfigPath()
+                const path = configManager.getConfigPath()
+
+                return {
+                    success: true,
+                    data: path
+                }
             } catch (error) {
                 logger.error('IPC获取配置路径失败:', error)
-                throw error
+                return {
+                    success: false,
+                    error: (error as Error).message
+                }
             }
         }
     }

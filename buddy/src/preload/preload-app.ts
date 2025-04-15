@@ -5,13 +5,11 @@
 import { contextBridge } from 'electron';
 import { ipcApi } from './ipc.js';
 import { pluginApi } from './plugin.js';
-import { aiApi } from './ai.js';
 import { ElectronApi } from '@coffic/buddy-types';
 
 // 整合所有 API
 const api: ElectronApi = {
   ipc: ipcApi,
-  ai: aiApi,
   plugins: pluginApi
 };
 
