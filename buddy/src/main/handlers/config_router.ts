@@ -5,9 +5,9 @@
  */
 
 import { IpcRoute } from '../provider/RouterService'
-import { IPC_METHODS } from '@/types/ipc-methods'
 import { configManager } from '../managers/ConfigManager'
 import { logger } from '../managers/LogManager'
+import { IPC_METHODS } from '@coffic/buddy-types'
 
 export const routes: IpcRoute[] = [
     {

@@ -1,7 +1,5 @@
-import { IPC_METHODS } from '@/types/ipc-methods';
+
 import { IpcRoute } from '../provider/RouterService';
-import { IpcResponse } from '@/types/ipc-response';
-import { SuperPlugin } from '@/types/super_plugin';
 import { logger } from '../managers/LogManager';
 import { userPluginDB } from '../db/UserPluginDB';
 import { remotePluginDB } from '../db/RemotePluginDB';
@@ -9,6 +7,7 @@ import { packageDownloaderDB as Downloader } from '../service/Downloader';
 import * as fs from 'fs';
 import * as path from 'path';
 import { devPluginDB } from '../db/DevPluginDB';
+import { IPC_METHODS, IpcResponse, SuperPlugin } from '@coffic/buddy-types';
 
 /**
  * 插件商店相关的IPC路由配置

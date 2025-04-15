@@ -1,4 +1,4 @@
-import type { AiApi, ChatMessage, StreamChunkResponse, StreamDoneResponse } from '@/types/api-ai';
+import type { AiApi, ChatMessage, StreamChunkResponse, StreamDoneResponse } from '@coffic/buddy-types';
 
 const ai = window.electron.ai;
 

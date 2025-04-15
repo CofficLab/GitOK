@@ -4,8 +4,8 @@
  * 提供配置管理的IPC接口，供渲染进程调用
  */
 
-import { contextBridge, ipcRenderer } from 'electron'
-import { IPC_METHODS } from '@/types/ipc-methods'
+import { IPC_METHODS } from '@coffic/buddy-types'
+import { ipcRenderer } from 'electron'
 
 export interface ConfigAPI {
     /**

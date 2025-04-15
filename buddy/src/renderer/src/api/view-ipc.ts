@@ -1,4 +1,5 @@
-import { IPC_METHODS } from "@/types/ipc-methods";
+import { IPC_METHODS } from "@coffic/buddy-types";
+
 
 const electronApi = window.electron;
 const ipc = electronApi.ipc;

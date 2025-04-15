@@ -70,12 +70,6 @@ const handleRefresh = async () => {
     globalToast.success('刷新成功', { duration: 2000, position: 'bottom-center' })
 }
 
-// 检查插件是否已安装
-const isPluginInstalled = computed(() => {
-    const installedIds = new Set(userPlugins.value.map(p => p.id))
-    return (id: string) => installedIds.has(id)
-})
-
 // 清除单个插件的卸载错误状态
 const clearUninstallError = (pluginId: string) => {
     uninstallError.value.delete(pluginId)

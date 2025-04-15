@@ -1,8 +1,7 @@
 import { defineStore } from 'pinia';
-import type { SuperAction } from '@/types/super_action';
 import { logger } from '@renderer/utils/logger';
-import { AppEvents } from '@/types/app-events';
 import { actionIpc } from '../api/action-ipc';
+import { AppEvents, SuperAction } from '@coffic/buddy-types';
 const electronApi = window.electron;
 const ipc = electronApi.ipc;
 const verbose = false;

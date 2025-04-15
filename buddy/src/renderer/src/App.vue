@@ -34,7 +34,6 @@ import { globalToast } from './composables/useToast'
 import { globalAlert } from './composables/useAlert'
 import { globalProgress } from './composables/useProgress'
 import { useAppStore } from './stores/appStore'
-import { logger } from './utils/logger'
 
 const actionStore = useActionStore()
 const marketStore = useMarketStore()

@@ -1,7 +1,5 @@
-import { IPC_METHODS } from '@/types/ipc-methods';
 import { IpcRoute } from '../provider/RouterService';
-import { IpcResponse } from '@/types/ipc-response';
-import { SuperAction } from '@/types/super_action';
+import { IPC_METHODS, IpcResponse, SuperAction } from '@coffic/buddy-types';
 import { pluginActionManager } from '../managers/PluginActionManager';
 import { logger } from '../managers/LogManager';
 

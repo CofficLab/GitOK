@@ -3,8 +3,8 @@
  * 负责创建和导出各个主题的日志记录工具实例
  * 直接导出各个主题的日志记录器实例，便于使用
  */
+import { SuperLogger } from '@coffic/buddy-types';
 import { LogUtil } from '../utils/LogUtil';
-import { SuperLogger } from '@/types/super-logger';
 
 /**
  * 创建一个日志记录器实例

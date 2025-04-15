@@ -8,9 +8,8 @@ import { commandApi } from './command';
 import { pluginApi } from './plugin';
 import { updateApi } from './update';
 import { contextMenuApi } from './contextMenu';
-import { ElectronApi } from '@/types/api-all';
 import { aiApi } from './ai';
-import { configAPI } from './config';
+import { ElectronApi } from '@coffic/buddy-types';
 
 // 整合所有 API
 const api: ElectronApi = {
@@ -20,7 +19,6 @@ const api: ElectronApi = {
   plugins: pluginApi,
   update: updateApi,
   contextMenu: contextMenuApi,
-  config: configAPI
 };
 
 // 使用 contextBridge 暴露 API 到渲染进程

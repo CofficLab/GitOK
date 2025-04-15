@@ -6,9 +6,9 @@
  */
 
 import { ipcMain } from 'electron'
-import { IPC_METHODS } from '@/types/ipc-methods'
 import { configManager } from '../managers/ConfigManager'
 import { logger } from '../managers/LogManager'
+import { IPC_METHODS } from '@coffic/buddy-types'
 
 /**
  * 注册配置相关的IPC处理器

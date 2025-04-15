@@ -2,8 +2,8 @@
  * Command 键相关模块
  * 处理 Command 键双击和窗口激活/隐藏等功能
  */
+import { CommandApi } from '@coffic/buddy-types';
 import { ipcRenderer } from 'electron';
-import { CommandApi } from '@/types/api-command';
 
 export const commandApi: CommandApi = {
   toggleCommandDoublePress: (

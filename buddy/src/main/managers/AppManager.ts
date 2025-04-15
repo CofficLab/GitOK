@@ -11,8 +11,6 @@ import { commandKeyManager } from './KeyManager';
 import { pluginViewManager } from './PluginViewManager';
 import { updateManager } from './UpdateManager';
 
-const verbose = false;
-
 export class AppManager {
   private mainWindow: BrowserWindow | null = null;
 

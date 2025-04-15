@@ -4,13 +4,12 @@
  */
 import { pluginManager } from './PluginManager';
 import { BaseManager } from './BaseManager';
-import type { SuperAction } from '@/types/super_action';
 import { PluginActionEntity } from '../entities/PluginActionEntity';
 import { logger } from './LogManager';
 import { userPluginDB } from '../db/UserPluginDB';
 import { appStateManager } from './StateManager';
-import { PluginContext } from '@/types/plugin-context';
 import { devPluginDB } from '../db/DevPluginDB';
+import { PluginContext, SuperAction } from '@coffic/buddy-types';
 
 const verbose = false;
 

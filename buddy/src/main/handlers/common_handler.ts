@@ -1,9 +1,9 @@
-import { IPC_METHODS } from '@/types/ipc-methods';
+
 import { IpcRoute } from '../provider/RouterService';
-import { IpcResponse } from '@/types/ipc-response';
 import { shell } from 'electron';
 import { logger } from '../managers/LogManager';
 import { viewManager } from '../managers/BrowserManager';
+import { IPC_METHODS, IpcResponse } from '@coffic/buddy-types';
 
 /**
  * 基础的IPC路由配置

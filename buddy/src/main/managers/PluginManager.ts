@@ -4,7 +4,6 @@
  */
 import { BaseManager } from './BaseManager';
 import { PluginEntity } from '../entities/PluginEntity';
-import { logger } from './LogManager';
 import { userPluginDB } from '../db/UserPluginDB';
 import { devPluginDB } from '../db/DevPluginDB';
 

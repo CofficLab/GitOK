@@ -2,13 +2,8 @@
  * 插件系统模块
  * 处理插件的安装、卸载、执行等功能
  */
-import {
-    SuperPluginManagementAPI,
-} from '@/types/api-plugin';
+import { IPC_METHODS, IpcResponse, SuperPlugin, SuperPluginManagementAPI } from '@coffic/buddy-types';
 import { ipcRenderer } from 'electron';
-import { IpcResponse } from '@/types/ipc-response';
-import { SuperPlugin } from '@/types/super_plugin';
-import { IPC_METHODS } from '@/types/ipc-methods';
 
 function isValidSuperPluginArray(data: any): data is SuperPlugin[] {
     return (

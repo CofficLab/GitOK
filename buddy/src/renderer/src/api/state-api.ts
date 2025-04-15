@@ -1,5 +1,5 @@
-import { IPC_METHODS } from '@/types/ipc-methods';
-import { IpcResponse } from '@/types/ipc-response';
+import { IPC_METHODS, IpcResponse } from "@coffic/buddy-types";
+
 
 const ipc = window.electron.ipc;
 

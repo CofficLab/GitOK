@@ -1,7 +1,5 @@
+import { AiApi, ChatMessage, IPC_METHODS, IpcResponse, StreamChunkResponse, StreamDoneResponse } from '@coffic/buddy-types';
 import { ipcRenderer } from 'electron';
-import { AiApi, ChatMessage, StreamChunkResponse, StreamDoneResponse } from '@/types/api-ai';
-import { IPC_METHODS } from '@/types/ipc-methods';
-import { IpcResponse } from '@/types/ipc-response';
 
 export const aiApi: AiApi = {
   // 启动流式AI聊天会话

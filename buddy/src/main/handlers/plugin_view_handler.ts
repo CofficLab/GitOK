@@ -1,18 +1,13 @@
-import { IPC_METHODS } from '@/types/ipc-methods';
+
 import { IpcRoute } from '../provider/RouterService';
 import { pluginViewManager } from '../managers/PluginViewManager';
 import { logger } from '../managers/LogManager';
+import { IPC_METHODS } from '@coffic/buddy-types';
 
 /**
  * 插件视图相关的IPC路由配置
  */
 export const pluginViewRoutes: IpcRoute[] = [
-  {
-    channel: IPC_METHODS.Get_PLUGIN_PAGE_SOURCE_CODE,
-    handler: async (pluginId: string) => {
-      return { success: true, data: "xxxxxxxxx" };
-    }
-  },
   {
     channel: IPC_METHODS.CREATE_PLUGIN_VIEW,
     handler: async (_, { viewId, url }) => {

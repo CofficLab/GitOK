@@ -40,19 +40,12 @@ const goToHome = () => {
 const goToPluginStore = () => {
     router.push('/plugins')
     appStore.setView('plugins')
-    console.log('状态栏：已更新视图状态为plugins')
 }
 
 // 跳转到聊天界面
 const goToChat = () => {
     router.push('/chat')
     appStore.setView('chat')
-    console.log('状态栏：已更新视图状态为chat')
-}
-
-const goToPluginGrid = () => {
-    router.push('/plugin-grid')
-    appStore.setView('plugin-grid')
 }
 
 // 打开配置文件夹

@@ -3,15 +3,8 @@
  * 支持不同级别的日志输出，包含时间戳和彩色显示
  */
 
+import { LogLevel } from '@coffic/buddy-types';
 import log from 'electron-log/renderer';
-
-// 日志级别枚举
-export enum LogLevel {
-  DEBUG = 'DEBUG',
-  INFO = 'INFO',
-  WARN = 'WARN',
-  ERROR = 'ERROR',
-}
 
 // 日志颜色配置
 const LOG_COLORS = {

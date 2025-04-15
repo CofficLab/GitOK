@@ -47,7 +47,8 @@
     "unzipper": "^0.12.3",
     "uuid": "^11.1.0",
     "vue-router": "^4.5.0",
-    "yaml": "^2.7.1"
+    "yaml": "^2.7.1",
+    "@coffic/buddy-types": "workspace:*"
   },
   "devDependencies": {
     "@electron-toolkit/eslint-config-prettier": "3.0.0",

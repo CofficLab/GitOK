@@ -2,10 +2,7 @@
  * 插件系统模块
  * 处理插件的安装、卸载、执行等功能
  */
-import {
-  PluginViewsAPI,
-} from '@/types/api-plugin';
-import { IPC_METHODS } from '@/types/ipc-methods';
+import { IPC_METHODS, PluginViewsAPI } from '@coffic/buddy-types';
 import { ipcRenderer } from 'electron';
 
 // 插件视图相关接口

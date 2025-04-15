@@ -1,9 +1,4 @@
-/**
- * 插件动作实体类
- * 用于管理插件动作的状态和行为
- */
-
-import type { SuperAction } from '@/types/super_action';
+import { SuperAction } from "@coffic/buddy-types";
 
 /**
  * 动作状态

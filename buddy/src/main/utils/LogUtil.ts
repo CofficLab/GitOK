@@ -2,10 +2,10 @@
  * 日志工具类
  * 提供日志相关的通用工具函数和日志记录功能
  */
-import { SuperLogger } from '@/types/super-logger';
 import log from 'electron-log/main';
 import type { Format } from 'electron-log';
 import 'source-map-support/register';
+import { SuperLogger } from '@coffic/buddy-types';
 log.initialize();
 // 配置日志级别对应的颜色和表情
 const logStyles = {

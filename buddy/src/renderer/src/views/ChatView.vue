@@ -3,10 +3,10 @@
  * AI聊天界面，使用DaisyUI组件库
 -->
 <script setup lang="ts">
-import { ChatMessage, StreamChunkResponse, StreamDoneResponse } from '@/types/api-ai';
 import { aiIpc } from '@/renderer/src/api/ai-ipc';
 import { ref, reactive, onMounted } from 'vue';
 import { logger } from '../utils/logger';
+import { ChatMessage, StreamChunkResponse, StreamDoneResponse } from '@coffic/buddy-types';
 
 // 输入消息
 const message = ref('');
@@ -67,7 +67,6 @@ async function sendMessage() {
   });
 
   // 清空输入框并设置加载状态
-  const userMessage = message.value;
   message.value = '';
   loading.value = true;
 

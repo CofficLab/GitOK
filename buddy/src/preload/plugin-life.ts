@@ -2,8 +2,7 @@
  * 插件系统模块
  * 处理插件的安装、卸载、执行等功能
  */
-import { SuperPluginLifecycleAPI } from '@/types/api-plugin';
-import { IPC_METHODS } from '@/types/ipc-methods';
+import { IPC_METHODS, SuperPluginLifecycleAPI } from '@coffic/buddy-types';
 import { ipcRenderer } from 'electron';
 
 // 插件生命周期管理接口

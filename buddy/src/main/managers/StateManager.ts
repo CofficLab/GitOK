@@ -9,8 +9,7 @@ import {
   getFrontmostApplication,
 } from '@coffic/active-app-monitor';
 import { logger } from './LogManager';
-import { AppEvents } from '@/types/app-events';
-import { SuperApp } from '@/types/super_app';
+import { AppEvents, SuperApp } from '@coffic/buddy-types';
 
 const verbose = false;
 

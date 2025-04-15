@@ -1,7 +1,5 @@
-import { ConfigAPI } from "@/preload/config";
 import { AiApi } from "./api-ai";
 import { CommandApi } from "./api-command";
-import { DevApi } from "./api-dev";
 import { IpcApi } from "./api-message";
 import { PluginAPi } from "./api-plugin";
 
@@ -18,5 +16,4 @@ export interface ElectronApi {
     plugins: PluginAPi;
     contextMenu: ContextMenuApi;
     update: any;
-    config: ConfigAPI;
 }

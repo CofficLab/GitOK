@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
-import type { SuperPlugin } from '@/types/super_plugin'
 import {
     RiCheckLine,
     RiDeleteBinLine
@@ -10,6 +9,7 @@ import { globalConfirm } from '@renderer/composables/useConfirm'
 import { useMarketStore } from '@renderer/stores/marketStore'
 import { globalToast } from '@renderer/composables/useToast'
 import { pluginsAPI } from '../api/plugins-api'
+import { SuperPlugin } from '@coffic/buddy-types'
 
 const props = defineProps<{
     plugin: SuperPlugin

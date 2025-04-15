@@ -26,10 +26,8 @@
  */
 
 import { defineStore } from 'pinia';
-import type { SuperAction } from '@/types/super_action';
 import { logger } from '../utils/logger';
-import { AppEvents } from '@/types/app-events';
-import { type SuperApp } from '@/types/super_app';
+import { AppEvents, SuperAction, SuperApp } from '@coffic/buddy-types';
 
 const ipc = window.electron.ipc;
 

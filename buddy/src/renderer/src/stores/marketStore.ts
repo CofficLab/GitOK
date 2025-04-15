@@ -1,7 +1,8 @@
-import { SuperPlugin } from '@/types/super_plugin';
+
 import { defineStore } from 'pinia';
 import { logger } from '../utils/logger';
 import { pluginsAPI } from '../api/plugins-api';
+import { SuperPlugin } from '@coffic/buddy-types';
 
 const verbose = false;
 

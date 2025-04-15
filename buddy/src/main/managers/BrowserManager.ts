@@ -4,10 +4,9 @@
 import { WebContentsView } from 'electron';
 import { is } from '@electron-toolkit/utils';
 import { windowManager } from './WindowManager';
-import { ViewBounds } from '@/types/plugin-view';
 import { join } from 'path';
 import { logger } from './LogManager';
-import { createViewArgs } from '@/types/args';
+import { createViewArgs, ViewBounds } from '@coffic/buddy-types';
 
 const verbose = false;
 

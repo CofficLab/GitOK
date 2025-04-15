@@ -3,9 +3,9 @@
  * 提供了读取和解析 package.json 文件的功能
  */
 
+import { PluginPackage } from '@coffic/buddy-types';
 import { promises as fs } from 'fs';
 import { join } from 'path';
-import type { PluginPackage } from '@/types/plugin-package';
 
 /**
  * 读取指定路径下的 package.json 文件

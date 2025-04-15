@@ -1,9 +1,9 @@
-import { IPC_METHODS } from '@/types/ipc-methods';
+
 import { IpcRoute } from '../provider/RouterService';
-import { IpcResponse } from '@/types/ipc-response';
 import { logger } from '../managers/LogManager';
 import { aiManager, type ChatMessage } from '../managers/AIManager';
 import { v4 as uuidv4 } from 'uuid';
+import { IPC_METHODS, IpcResponse } from '@coffic/buddy-types';
 
 /**
  * AI路由配置

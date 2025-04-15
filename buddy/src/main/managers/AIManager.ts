@@ -11,8 +11,8 @@ import { LanguageModelV1, streamText, type CoreMessage } from 'ai'
 import { openai } from '@ai-sdk/openai'
 import { anthropic } from '@ai-sdk/anthropic'
 import { createDeepSeek } from '@ai-sdk/deepseek'
-import { ChatMessage } from '@/types/api-ai'
 import { configManager } from './ConfigManager'
+import { ChatMessage } from '@coffic/buddy-types'
 
 // AI模型类型
 type AIModelType = 'openai' | 'anthropic' | 'deepseek'
@@ -43,7 +43,6 @@ type ConfigState = 'unconfigured' | 'selecting_provider' | 'entering_key' | 'con
 // 为 AI 密钥配置定义配置键
 const AI_CONFIG_KEY = 'ai.keys'
 const AI_PROVIDER_KEY = 'ai.provider'
-const AI_MODEL_KEY = 'ai.model'
 
 class AIManager {
     private defaultModel: AIModelConfig = {

@@ -10,9 +10,9 @@
 <script setup lang="ts">
 import { computed, watch, ref } from 'vue'
 import ActionItem from '@renderer/modules/ActionItem.vue'
-import type { SuperAction } from '@/types/super_action'
 import { useActionStore } from '@renderer/stores/actionStore'
 import { logger } from '@renderer/utils/logger'
+import { SuperAction } from '@coffic/buddy-types'
 
 const actionStore = useActionStore()
 const activeItemIndex = ref(-1)

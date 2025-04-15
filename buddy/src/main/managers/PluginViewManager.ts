@@ -17,7 +17,7 @@ import {
   ViewBounds,
   ViewMode,
   WebContentOptions,
-} from '@/types/plugin-view';
+} from '@coffic/buddy-types';
 
 class PluginViewManager extends BaseManager {
   private static instance: PluginViewManager;

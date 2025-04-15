@@ -4,12 +4,10 @@
  */
 
 import { join } from 'path';
-import type { PluginPackage } from '@/types/plugin-package';
-import type { PluginType, SuperPlugin } from '@/types/super_plugin';
-import type { PluginValidation } from '@/types/plugin-validation';
 import { readPackageJson, hasPackageJson } from '../utils/PackageUtils';
 import { NpmPackage } from '../service/NpmRegistryService';
 import { logger } from '../managers/LogManager';
+import { PluginPackage, PluginType, PluginValidation, SuperPlugin } from '@coffic/buddy-types';
 
 const verbose = false;
 

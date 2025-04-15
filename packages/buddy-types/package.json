@@ -1,0 +1,12 @@
+{
+  "name": "@coffic/buddy-types",
+  "version": "1.0.0",
+  "main": "index.ts",
+  "type": "module",
+  "files": [
+    "index.ts",
+    "types"
+  ],
+  "author": "Coffic",
+  "license": "MIT"
+}

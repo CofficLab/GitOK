@@ -7,7 +7,7 @@
 * 3. 支持键盘导航
 */
 <script setup lang="ts">
-import type { SuperAction } from '@/types/super_action'
+import { SuperAction } from '@coffic/buddy-types';
 import ListItem from '@renderer/cosy/ListItem.vue'
 
 const props = defineProps<{
@@ -55,13 +55,6 @@ const handleKeyDown = (event: KeyboardEvent) => {
 </script>
 
 <template>
-  <ListItem
-  bg-color="success"
-    :title="action.title"
-    :description="action.description"
-    :icon="action.icon"
-    :tabindex="index + 1"
-    @click="handleSelect"
-    @keydown="handleKeyDown"
-  />
+    <ListItem bg-color="success" :title="action.title" :description="action.description" :icon="action.icon"
+        :tabindex="index + 1" @click="handleSelect" @keydown="handleKeyDown" />
 </template>

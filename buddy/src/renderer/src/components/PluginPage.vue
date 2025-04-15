@@ -2,8 +2,7 @@
 import { onMounted, nextTick, ref, onUnmounted, watch } from 'vue'
 import { logger } from '../utils/logger'
 import { viewIpc } from '../api/view-ipc'
-import { SuperPlugin } from '@/types/super_plugin';
-import { createViewArgs } from '@/types/args';
+import { createViewArgs, SuperPlugin } from '@coffic/buddy-types';
 
 interface Props {
     plugin: SuperPlugin

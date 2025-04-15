@@ -7,10 +7,10 @@
 * 3. 提供返回到动作列表的功能
 */
 <script setup lang="ts">
-import { SuperAction } from '@/types/super_action';
 import { ref, watch, onUnmounted, reactive, onMounted, nextTick, computed } from 'vue'
 import { useActionStore } from '@renderer/stores/actionStore'
 import { logger } from '@renderer/utils/logger'
+import { SuperAction } from '@coffic/buddy-types'
 
 const actionStore = useActionStore()
 

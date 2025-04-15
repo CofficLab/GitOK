@@ -1,6 +1,4 @@
-import { IPC_METHODS } from "@/types/ipc-methods";
-import { IpcResponse } from "@/types/ipc-response";
-import { SuperAction } from "@/types/super_action";
+import { IPC_METHODS, IpcResponse, SuperAction } from '@coffic/buddy-types';
 
 const ipc = window.electron.ipc;
 

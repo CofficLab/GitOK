@@ -3,9 +3,8 @@
  * 提供基本的进程间通信功能
  */
 import { ipcRenderer } from 'electron';
-import { IpcApi } from '@/types/api-message';
-import { IpcResponse } from '@/types/ipc-response';
 import { logger } from '@/main/managers/LogManager';
+import { IpcApi, IpcResponse } from '@coffic/buddy-types';
 
 const verbose = true;
 
