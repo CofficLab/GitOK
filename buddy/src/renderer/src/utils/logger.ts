@@ -105,7 +105,6 @@ export class Logger {
    */
   public info(...args: unknown[]): void {
     if (this.enabled) {
-      console.log(this.formatMessage(LogLevel.INFO, ...args));
       log.info(this.argsToString(...args));
     }
   }
@@ -115,7 +114,6 @@ export class Logger {
    */
   public warn(...args: unknown[]): void {
     if (this.enabled) {
-      console.warn(this.formatMessage(LogLevel.WARN, ...args));
       log.warn(this.argsToString(...args));
     }
   }

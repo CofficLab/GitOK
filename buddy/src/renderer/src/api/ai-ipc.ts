@@ -14,10 +14,9 @@ export const aiIpc = {
 
     onAiChatStreamChunk(callback: (response: StreamChunkResponse) => void): () => void {
         const handler = (response: any) => {
-            console.log('onAiChatStreamChunk', response)
-
             callback((response as StreamChunkResponse))
         };
+
         ipc.receive(IPC_METHODS.AI_CHAT_STREAM_CHUNK, handler)
 
         return () => {
@@ -26,10 +25,11 @@ export const aiIpc = {
     },
 
     onAiChatStreamDone(callback: (response: StreamDoneResponse) => void): () => void {
-        const handler = (_: any, response: StreamDoneResponse) => callback(response);
-        ipc.receive(IPC_METHODS.AI_CHAT_STREAM_DONE, (args) => {
-            console.log('onAiChatStreamChunk', args)
-        });
+        const handler = (response: any) => {
+            callback((response as StreamDoneResponse))
+        };
+
+        ipc.receive(IPC_METHODS.AI_CHAT_STREAM_DONE, handler)
 
         return () => {
             ipc.removeListener(IPC_METHODS.AI_CHAT_STREAM_DONE, handler);
@@ -37,6 +37,12 @@ export const aiIpc = {
     },
 
     async aiChatCancel(requestId: string, reason: string): Promise<boolean> {
-        return await ipc.invoke(IPC_METHODS.AI_CHAT_CANCEL, requestId, reason);
+        const response: IpcResponse<any> = await ipc.invoke(IPC_METHODS.AI_CHAT_CANCEL, requestId, reason);
+
+        if (response.success) {
+            return true
+        } else {
+            return false
+        }
     },
 };

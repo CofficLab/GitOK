@@ -91,8 +91,6 @@ export const useAppStore = defineStore('app', {
 
     // 初始化窗口激活状态监听器
     setupWindowActiveListeners() {
-      logger.info('setupWindowActiveListeners');
-
       // 监听窗口激活事件
       ipc.receive(AppEvents.ActIVATED, () => {
         this.setActiveState(true);

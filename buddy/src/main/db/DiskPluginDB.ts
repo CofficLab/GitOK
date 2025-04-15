@@ -58,7 +58,7 @@ export abstract class DiskPluginDB {
                 const plugin = await PluginEntity.fromDirectory(pluginPath, type);
                 plugins.push(plugin);
             } catch (error) {
-                logger.warn(`读取插件信息失败: ${pluginPath}`, error);
+                // logger.warn(`读取插件信息失败: ${pluginPath}`, error);
             }
         }
 
