@@ -1,7 +1,7 @@
-import { IpcRoute } from '../provider/RouterService';
+import { IpcRoute } from '../provider/RouterService.js';
 import { IPC_METHODS, IpcResponse, SuperAction } from '@coffic/buddy-types';
-import { pluginActionManager } from '../managers/PluginActionManager';
-import { logger } from '../managers/LogManager';
+import { pluginActionManager } from '../managers/PluginActionManager.js';
+import { logger } from '../managers/LogManager.js';
 
 /**
  * 插件动作相关的IPC路由配置

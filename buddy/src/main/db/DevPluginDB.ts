@@ -3,9 +3,9 @@
  * 负责从项目packages目录读取开发中的插件信息
  */
 import { dirname, join } from 'path';
-import { DiskPluginDB } from './DiskPluginDB';
-import { PluginEntity } from '../entities/PluginEntity';
-import { logger } from '../managers/LogManager';
+import { DiskPluginDB } from './DiskPluginDB.js';
+import { PluginEntity } from '../entities/PluginEntity.js';
+import { logger } from '../managers/LogManager.js';
 
 export class DevPluginDB extends DiskPluginDB {
   private static instance: DevPluginDB;

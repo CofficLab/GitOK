@@ -2,13 +2,13 @@
  * 插件动作管理器
  * 负责管理和执行插件动作
  */
-import { pluginManager } from './PluginManager';
-import { BaseManager } from './BaseManager';
-import { PluginActionEntity } from '../entities/PluginActionEntity';
-import { logger } from './LogManager';
-import { userPluginDB } from '../db/UserPluginDB';
-import { appStateManager } from './StateManager';
-import { devPluginDB } from '../db/DevPluginDB';
+import { pluginManager } from './PluginManager.js';
+import { BaseManager } from './BaseManager.js';
+import { PluginActionEntity } from '../entities/PluginActionEntity.js';
+import { logger } from './LogManager.js';
+import { userPluginDB } from '../db/UserPluginDB.js';
+import { appStateManager } from './StateManager.js';
+import { devPluginDB } from '../db/DevPluginDB.js';
 import { PluginContext, SuperAction } from '@coffic/buddy-types';
 
 const verbose = false;

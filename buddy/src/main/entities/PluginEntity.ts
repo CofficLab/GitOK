@@ -4,9 +4,9 @@
  */
 
 import { join } from 'path';
-import { readPackageJson, hasPackageJson } from '../utils/PackageUtils';
-import { NpmPackage } from '../service/NpmRegistryService';
-import { logger } from '../managers/LogManager';
+import { readPackageJson, hasPackageJson } from '../utils/PackageUtils.js';
+import { NpmPackage } from '../service/NpmRegistryService.js';
+import { logger } from '../managers/LogManager.js';
 import { PluginPackage, PluginType, PluginValidation, SuperPlugin } from '@coffic/buddy-types';
 
 const verbose = false;

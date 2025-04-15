@@ -1,12 +1,12 @@
 
-import { IpcRoute } from '../provider/RouterService';
-import { logger } from '../managers/LogManager';
-import { userPluginDB } from '../db/UserPluginDB';
-import { remotePluginDB } from '../db/RemotePluginDB';
-import { packageDownloaderDB as Downloader } from '../service/Downloader';
+import { IpcRoute } from '../provider/RouterService.js';
+import { logger } from '../managers/LogManager.js';
+import { userPluginDB } from '../db/UserPluginDB.js';
+import { remotePluginDB } from '../db/RemotePluginDB.js';
+import { packageDownloaderDB as Downloader } from '../service/Downloader.js';
 import * as fs from 'fs';
 import * as path from 'path';
-import { devPluginDB } from '../db/DevPluginDB';
+import { devPluginDB } from '../db/DevPluginDB.js';
 import { IPC_METHODS, IpcResponse, SuperPlugin } from '@coffic/buddy-types';
 
 /**

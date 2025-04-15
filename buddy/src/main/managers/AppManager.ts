@@ -4,12 +4,12 @@
  */
 import { app, BrowserWindow } from 'electron';
 import { electronApp, optimizer } from '@electron-toolkit/utils';
-import { logger } from './LogManager';
-import { windowManager } from './WindowManager';
-import { pluginManager } from './PluginManager';
-import { commandKeyManager } from './KeyManager';
-import { pluginViewManager } from './PluginViewManager';
-import { updateManager } from './UpdateManager';
+import { logger } from './LogManager.js';
+import { windowManager } from './WindowManager.js';
+import { pluginManager } from './PluginManager.js';
+import { commandKeyManager } from './KeyManager.js';
+import { pluginViewManager } from './PluginViewManager.js';
+import { updateManager } from './UpdateManager.js';
 
 export class AppManager {
   private mainWindow: BrowserWindow | null = null;

@@ -1,7 +1,7 @@
 
-import { IpcRoute } from '../provider/RouterService';
-import { pluginViewManager } from '../managers/PluginViewManager';
-import { logger } from '../managers/LogManager';
+import { IpcRoute } from '../provider/RouterService.js';
+import { pluginViewManager } from '../managers/PluginViewManager.js';
+import { logger } from '../managers/LogManager.js';
 import { IPC_METHODS } from '@coffic/buddy-types';
 
 /**

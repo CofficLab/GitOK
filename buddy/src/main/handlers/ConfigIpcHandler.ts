@@ -6,8 +6,8 @@
  */
 
 import { ipcMain } from 'electron'
-import { configManager } from '../managers/ConfigManager'
-import { logger } from '../managers/LogManager'
+import { configManager } from '../managers/ConfigManager.js'
+import { logger } from '../managers/LogManager.js'
 import { IPC_METHODS } from '@coffic/buddy-types'
 
 /**

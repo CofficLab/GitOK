@@ -1,7 +1,7 @@
 
-import { IpcRoute } from '../provider/RouterService';
-import { logger } from '../managers/LogManager';
-import { aiManager, type ChatMessage } from '../managers/AIManager';
+import { IpcRoute } from '../provider/RouterService.js';
+import { logger } from '../managers/LogManager.js';
+import { aiManager, type ChatMessage } from '../managers/AIManager.js';
 import { v4 as uuidv4 } from 'uuid';
 import { IPC_METHODS, IpcResponse } from '@coffic/buddy-types';
 

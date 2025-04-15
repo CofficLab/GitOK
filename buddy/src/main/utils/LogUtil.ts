@@ -2,7 +2,7 @@
  * 日志工具类
  * 提供日志相关的通用工具函数和日志记录功能
  */
-import log from 'electron-log/main';
+import log from 'electron-log/main.js';
 import type { Format } from 'electron-log';
 import 'source-map-support/register';
 import { SuperLogger } from '@coffic/buddy-types';

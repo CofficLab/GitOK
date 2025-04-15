@@ -4,7 +4,7 @@
  * 直接导出各个主题的日志记录器实例，便于使用
  */
 import { SuperLogger } from '@coffic/buddy-types';
-import { LogUtil } from '../utils/LogUtil';
+import { LogUtil } from '../utils/LogUtil.js';
 
 /**
  * 创建一个日志记录器实例

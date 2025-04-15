@@ -71,7 +71,7 @@ class WindowManager extends BaseManager {
                 backgroundColor: '#00000000',
                 ...(process.platform === 'linux' ? { icon } : {}),
                 webPreferences: {
-                    preload: join(__dirname, '../preload/app-preload.js'),
+                    preload: join(__dirname, '../preload/app-preload.mjs'),
                     sandbox: false,
                     contextIsolation: true,
                     nodeIntegration: false,

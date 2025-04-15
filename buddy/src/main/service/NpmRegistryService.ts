@@ -3,7 +3,7 @@
  * 负责与npm registry交互，包括搜索包、获取元数据等功能
  */
 import axios from 'axios';
-import { logger } from '../managers/LogManager';
+import { logger } from '../managers/LogManager.js';
 
 const verbose = false;
 

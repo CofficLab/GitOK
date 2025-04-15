@@ -2,12 +2,13 @@
  * 更新管理器
  * 负责应用的自动更新功能
  */
-import { autoUpdater } from 'electron-updater';
+import pkg from 'electron-updater';
 import { dialog, BrowserWindow } from 'electron';
 import { logger } from './LogManager.js';
 import { sendUpdateEvent } from '../handlers/update_router.js';
 
 const verbose = false;
+const autoUpdater = pkg.autoUpdater
 
 export class UpdateManager {
   private mainWindow: BrowserWindow | null = null;

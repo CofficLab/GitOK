@@ -4,9 +4,9 @@
  */
 import { app } from 'electron';
 import { join } from 'path';
-import { PluginEntity } from '../entities/PluginEntity';
-import { logger } from '../managers/LogManager';
-import { DiskPluginDB } from './DiskPluginDB';
+import { PluginEntity } from '../entities/PluginEntity.js';
+import { logger } from '../managers/LogManager.js';
+import { DiskPluginDB } from './DiskPluginDB.js';
 
 export class UserPluginDB extends DiskPluginDB {
   private static instance: UserPluginDB;

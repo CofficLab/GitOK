@@ -5,10 +5,10 @@
  * 支持读取、保存配置，以及监听配置变化
  */
 
-import { BaseManager } from './BaseManager'
+import { BaseManager } from './BaseManager.js'
 import { app } from 'electron'
 import path from 'path'
-import { logger } from './LogManager'
+import { logger } from './LogManager.js'
 
 const verbose = false
 

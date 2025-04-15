@@ -2,14 +2,14 @@
  * Electron 主进程入口文件
  * 负责应用生命周期管理和各种管理器的初始化与协调
  */
-import { appManager } from './managers/AppManager';
-import { routerService } from './provider/RouterService';
-import { routes as pluginRoutes } from './handlers/plugin_router';
-import { routes as overlaidAppRoutes } from './handlers/overlaid_router';
-import { routes as updateRoutes } from './handlers/update_router';
-import { baseRoutes } from './handlers/common_handler';
-import { aiRoutes } from './handlers/ai_handler';
-import { routes as configRoutes } from './handlers/config_router';
+import { appManager } from './managers/AppManager.js';
+import { routerService } from './provider/RouterService.js';
+import { routes as pluginRoutes } from './handlers/plugin_router.js';
+import { routes as overlaidAppRoutes } from './handlers/overlaid_router.js';
+import { routes as updateRoutes } from './handlers/update_router.js';
+import { baseRoutes } from './handlers/common_handler.js';
+import { aiRoutes } from './handlers/ai_handler.js';
+import { routes as configRoutes } from './handlers/config_router.js';
 
 // 初始化IPC处理器
 routerService.registerRoutes(baseRoutes);

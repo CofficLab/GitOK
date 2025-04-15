@@ -2,10 +2,10 @@
  * 插件管理器
  * 负责插件的加载、管理和通信
  */
-import { BaseManager } from './BaseManager';
-import { PluginEntity } from '../entities/PluginEntity';
-import { userPluginDB } from '../db/UserPluginDB';
-import { devPluginDB } from '../db/DevPluginDB';
+import { BaseManager } from './BaseManager.js';
+import { PluginEntity } from '../entities/PluginEntity.js';
+import { userPluginDB } from '../db/UserPluginDB.js';
+import { devPluginDB } from '../db/DevPluginDB.js';
 
 class PluginManager extends BaseManager {
   private static instance: PluginManager;

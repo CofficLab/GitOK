@@ -3,8 +3,8 @@
  * 负责处理macOS平台按键的监听和响应
  */
 import { KeyListener } from '@coffic/key-listener';
-import { logger } from './LogManager';
-import { windowManager } from './WindowManager';
+import { logger } from './LogManager.js';
+import { windowManager } from './WindowManager.js';
 import { is } from '@electron-toolkit/utils';
 import { app } from 'electron';
 

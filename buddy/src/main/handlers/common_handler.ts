@@ -1,8 +1,8 @@
 
-import { IpcRoute } from '../provider/RouterService';
+import { IpcRoute } from '../provider/RouterService.js';
 import { shell } from 'electron';
-import { logger } from '../managers/LogManager';
-import { viewManager } from '../managers/BrowserManager';
+import { logger } from '../managers/LogManager.js';
+import { viewManager } from '../managers/BrowserManager.js';
 import { IPC_METHODS, IpcResponse } from '@coffic/buddy-types';
 
 /**

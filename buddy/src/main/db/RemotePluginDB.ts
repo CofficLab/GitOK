@@ -2,9 +2,9 @@
  * 远程插件数据库
  * 负责从远程 npm registry 获取插件并缓存
  */
-import { logger } from '../managers/LogManager';
-import { NpmPackage, npmRegistryService } from '../service/NpmRegistryService';
-import { PluginEntity } from '../entities/PluginEntity';
+import { logger } from '../managers/LogManager.js';
+import { NpmPackage, npmRegistryService } from '../service/NpmRegistryService.js';
+import { PluginEntity } from '../entities/PluginEntity.js';
 
 const verbose = false;
 

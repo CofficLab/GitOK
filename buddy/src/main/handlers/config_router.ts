@@ -4,9 +4,9 @@
  * 负责处理配置相关的IPC请求
  */
 
-import { IpcRoute } from '../provider/RouterService'
-import { configManager } from '../managers/ConfigManager'
-import { logger } from '../managers/LogManager'
+import { IpcRoute } from '../provider/RouterService.js'
+import { configManager } from '../managers/ConfigManager.js'
+import { logger } from '../managers/LogManager.js'
 import { IPC_METHODS } from '@coffic/buddy-types'
 
 export const routes: IpcRoute[] = [
