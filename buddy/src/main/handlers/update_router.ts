@@ -6,16 +6,13 @@ import { BrowserWindow } from 'electron';
 import { updateManager } from '../managers/UpdateManager.js';
 import { IpcRoute } from '../provider/RouterService.js';
 
-// 检查更新处理函数
-const checkForUpdates = async (): Promise<void> => {
-  updateManager.checkForUpdates();
-};
-
 // 导出路由配置
 export const routes: IpcRoute[] = [
   {
     channel: 'update:check',
-    handler: checkForUpdates,
+    handler: async (): Promise<void> => {
+      updateManager.checkForUpdates()
+    },
   },
 ];
 

@@ -6,5 +6,4 @@ export interface ElectronApi {
     ai: AiApi,
     ipc: IpcApi;
     plugins: PluginAPi;
-    update: any;
 }
