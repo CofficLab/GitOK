@@ -7,18 +7,9 @@ import { join } from 'path';
 import { readPackageJson, hasPackageJson } from '../utils/PackageUtils.js';
 import { NpmPackage } from '../service/NpmRegistryService.js';
 import { logger } from '../managers/LogManager.js';
-import { PluginPackage, PluginType, PluginValidation, SuperPlugin } from '@coffic/buddy-types';
+import { PluginPackage, PluginStatus, PluginType, SuperPlugin, ValidationResult } from '@coffic/buddy-types';
 
 const verbose = false;
-
-/**
- * 插件状态
- * - inactive: 未激活（默认状态）
- * - active: 已激活
- * - error: 出错
- * - disabled: 已禁用
- */
-export type PluginStatus = 'inactive' | 'active' | 'error' | 'disabled';
 
 /**
  * 插件实体类
@@ -43,7 +34,7 @@ export class PluginEntity implements SuperPlugin {
   status: PluginStatus = 'inactive';
   error?: string;
   isLoaded: boolean = false;
-  validation?: PluginValidation;
+  validation?: ValidationResult;
   isBuddyPlugin: boolean = true; // 是否是Buddy插件
 
   /**
@@ -191,7 +182,7 @@ export class PluginEntity implements SuperPlugin {
   /**
    * 设置插件验证状态
    */
-  setValidation(validation: PluginValidation): void {
+  setValidation(validation: ValidationResult): void {
     this.validation = validation;
   }
 
@@ -231,7 +222,7 @@ export class PluginEntity implements SuperPlugin {
    * @param pkg package.json 内容
    * @returns 验证结果
    */
-  private validatePackage(pkg: PluginPackage): PluginValidation {
+  private validatePackage(pkg: PluginPackage): ValidationResult {
     const errors: string[] = [];
 
     // 检查基本字段

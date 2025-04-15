@@ -1,32 +1,4 @@
-import { SuperAction } from "@coffic/buddy-types";
-
-/**
- * 动作状态
- * - ready: 就绪，可以执行
- * - executing: 执行中
- * - completed: 执行完成
- * - error: 执行出错
- * - disabled: 已禁用
- */
-export type ActionStatus =
-  | 'ready'
-  | 'executing'
-  | 'completed'
-  | 'error'
-  | 'disabled';
-
-/**
- * 动作视图模式
- */
-export type ViewMode = 'embedded' | 'window';
-
-/**
- * 验证结果
- */
-export interface ValidationResult {
-  isValid: boolean;
-  errors: string[];
-}
+import { ActionStatus, SuperAction, ValidationResult, ViewMode } from "@coffic/buddy-types";
 
 /**
  * 插件动作实体类

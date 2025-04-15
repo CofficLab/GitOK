@@ -2,6 +2,8 @@
  * 插件视图相关的类型定义
  */
 
+import { ViewMode } from "./super_action.js";
+
 // 视图边界
 export interface ViewBounds {
   x: number;
@@ -27,12 +29,6 @@ export interface WebContentOptions {
   webSecurity: boolean;
   devTools: boolean;
 }
-
-/**
- * 视图模式
- * 定义了插件视图的显示方式
- */
-export type ViewMode = 'embedded' | 'window';
 
 /**
  * 视图边界

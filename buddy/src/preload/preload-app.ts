@@ -7,7 +7,6 @@ import { ipcApi } from './ipc.js';
 import { commandApi } from './command.js';
 import { pluginApi } from './plugin.js';
 import { updateApi } from './update.js';
-import { contextMenuApi } from './contextMenu.js';
 import { aiApi } from './ai.js';
 import { ElectronApi } from '@coffic/buddy-types';
 
@@ -17,8 +16,7 @@ const api: ElectronApi = {
   ai: aiApi,
   command: commandApi,
   plugins: pluginApi,
-  update: updateApi,
-  contextMenu: contextMenuApi,
+  update: updateApi
 };
 
 // 使用 contextBridge 暴露 API 到渲染进程

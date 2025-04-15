@@ -1,18 +1,19 @@
 /**
- * 插件核心类型定义
- *
- * 设计思路：
- * 1. 继承基础插件信息接口，扩展插件特定的属性
- * 2. 区分已安装插件和插件包的类型定义
- * 3. 使用严格的类型定义，确保类型安全
- *
- * 主要用途：
- * - 定义已安装插件的结构
- * - 定义插件包的结构
- * - 提供插件系统核心类型支持
+ * 验证结果
  */
+export interface ValidationResult {
+  isValid: boolean;
+  errors: string[];
+}
 
-import { PluginValidation } from './plugin-validation.js';
+/**
+ * 插件状态
+ * - inactive: 未激活（默认状态）
+ * - active: 已激活
+ * - error: 出错
+ * - disabled: 已禁用
+ */
+export type PluginStatus = 'inactive' | 'active' | 'error' | 'disabled';
 
 /**
  * 插件类型
@@ -63,7 +64,7 @@ export interface SuperPlugin {
   /**
    * 插件验证状态
    */
-  validation?: PluginValidation | null;
+  validation?: ValidationResult | null;
 
   /**
    * 插件类型

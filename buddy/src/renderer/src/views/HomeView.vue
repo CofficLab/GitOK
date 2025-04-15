@@ -10,7 +10,7 @@
 import { useActionStore } from '@renderer/stores/actionStore';
 import ActionListView from './ActionListView.vue';
 import PluginView from './PluginView.vue';
-import PluginPageGrid from './PluginPageGrid.vue';
+// import PluginPageGrid from './PluginPageGrid.vue';
 
 const actionStore = useActionStore();
 
