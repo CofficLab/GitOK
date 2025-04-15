@@ -1,7 +1,7 @@
-import { AiApi } from "./api-ai";
-import { CommandApi } from "./api-command";
-import { IpcApi } from "./api-message";
-import { PluginAPi } from "./api-plugin";
+import { AiApi } from "./api-ai.js";
+import { CommandApi } from "./api-command.js";
+import { IpcApi } from "./api-message.js";
+import { PluginAPi } from "./api-plugin.js";
 
 // 上下文菜单API类型
 interface ContextMenuApi {

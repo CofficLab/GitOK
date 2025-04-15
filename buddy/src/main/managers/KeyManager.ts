@@ -60,8 +60,6 @@ class KeyManager {
     const keyCodes = this.keycodesToMonitor;
     const keyNames = !app.isPackaged ? 'Option' : 'Command';
 
-    logger.info(`开始设置${keyNames}键双击监听器`);
-
     // 创建监听器实例
     const listener = new KeyListener();
 
@@ -83,9 +81,7 @@ class KeyManager {
 
     // 启动监听器（返回Promise）
     listener.start().then(success => {
-      if (success) {
-        logger.info(`${keyNames}键监听器已启动`);
-      } else {
+      if (success == false) {
         logger.error(`${keyNames}键监听器启动失败`);
       }
     });

@@ -3,7 +3,7 @@
  * 提供基本的进程间通信功能的接口
  */
 
-import { IpcResponse } from "./ipc-response";
+import { IpcResponse } from "./ipc-response.js";
 
 export interface IpcApi {
   /**

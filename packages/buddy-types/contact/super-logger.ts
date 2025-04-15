@@ -1,10 +1,3 @@
-// 日志级别枚举
-export enum LogLevel {
-  DEBUG = 'DEBUG',
-  INFO = 'INFO',
-  WARN = 'WARN',
-  ERROR = 'ERROR',
-}
 
 /**
  * 通用日志接口

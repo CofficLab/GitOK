@@ -3,7 +3,6 @@
  * 负责自动注册和管理所有的IPC路由
  */
 import { ipcMain } from 'electron';
-import { logger } from '../managers/LogManager';
 
 export type IpcHandler = (...args: any[]) => Promise<any> | any;
 
@@ -16,7 +15,7 @@ export class RouterService {
   private static instance: RouterService;
   private routes: IpcRoute[] = [];
 
-  private constructor() {}
+  private constructor() { }
 
   public static getInstance(): RouterService {
     if (!RouterService.instance) {
@@ -37,8 +36,6 @@ export class RouterService {
    * 初始化所有路由
    */
   public initialize(): void {
-    logger.info('初始化IPC路由...');
-
     for (const { channel, handler } of this.routes) {
       ipcMain.handle(channel, handler);
     }

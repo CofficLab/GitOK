@@ -6,20 +6,20 @@
     "src/preload/**/*",
     "src/types/**/*",
     "native/**/*",
-    "src/preload-plugin/preload-plugin.ts"
+    "src/preload-plugin/preload-plugin.ts",
   ],
   "compilerOptions": {
+    "module": "Node16",
+    "moduleResolution": "Node16",
     "composite": true,
     "types": [
       "electron-vite/node"
     ],
-    "moduleResolution": "bundler",
-    "module": "esnext",
     "baseUrl": ".",
     "paths": {
       "@/*": [
-        "src/*"
-      ]
+        "./src/*"
+      ],
     }
   }
 }

@@ -64,25 +64,18 @@ export class AppManager {
    * 初始化应用
    */
   private async initialize(): Promise<void> {
-    logger.info('应用准备就绪');
-
     // 设置应用ID
     electronApp.setAppUserModelId('com.electron');
 
     // 创建主窗口
     this.mainWindow = windowManager.createWindow();
 
-    // 初始化更新管理器
-    logger.info('初始化更新管理器');
     updateManager.initialize(this.mainWindow);
 
     // macOS特定配置
     if (process.platform === 'darwin') {
-      logger.info('在macOS上设置Command键双击监听器');
       const result = await commandKeyManager.setupCommandKeyListener();
-      if (result.success) {
-        logger.info('Command键双击监听器设置成功');
-      } else {
+      if (result.success == false) {
         logger.warn('Command键双击监听器设置失败', {
           error: result.error,
         });

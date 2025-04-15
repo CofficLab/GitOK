@@ -1,12 +1,17 @@
 {
   "name": "@coffic/buddy-types",
   "version": "1.0.0",
-  "main": "index.ts",
-  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "files": [
-    "index.ts",
-    "types"
+    "dist"
   ],
+  "scripts": {
+    "build": "tsc --project tsconfig.json",
+    "clean": "rm -rf dist",
+    "lint": "eslint --ext .ts src",
+    "prepublishOnly": "npm run clean && npm run build"
+  },
   "author": "Coffic",
   "license": "MIT"
 }

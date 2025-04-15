@@ -12,7 +12,7 @@
  * - 提供插件系统核心类型支持
  */
 
-import { PluginValidation } from './plugin-validation';
+import { PluginValidation } from './plugin-validation.js';
 
 /**
  * 插件类型

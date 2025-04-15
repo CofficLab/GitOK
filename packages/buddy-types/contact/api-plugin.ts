@@ -3,8 +3,8 @@
  * 包含视图管理、插件管理、动作管理和生命周期管理四个主要模块
  */
 
-import { SuperPlugin } from './super_plugin';
-import { IpcResponse } from './ipc-response';
+import { SuperPlugin } from './super_plugin.js';
+import { IpcResponse } from './ipc-response.js';
 
 // 视图相关类型
 interface ViewBounds {

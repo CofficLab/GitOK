@@ -7,22 +7,5 @@
     {
       "path": "./tsconfig.web.json"
     }
-  ],
-  "compilerOptions": {
-    "moduleResolution": "node16",
-    "module": "node16",
-    "composite": true,
-    "baseUrl": ".",
-    "paths": {
-      "@/*": [
-        "src/*"
-      ],
-      "@renderer/*": [
-        "src/renderer/src/*"
-      ],
-      "@types/*": [
-        "src/types/*"
-      ]
-    }
-  }
+  ]
 }

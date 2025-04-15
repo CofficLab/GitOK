@@ -58,8 +58,6 @@ class WindowManager extends BaseManager {
      * 创建主窗口
      */
     createWindow(): BrowserWindow {
-        logger.info('开始创建主窗口');
-
         try {
             // 创建浏览器窗口
             this.mainWindow = new BrowserWindow({
@@ -91,7 +89,6 @@ class WindowManager extends BaseManager {
             // Spotlight模式下设置窗口失焦自动隐藏
             this.setupBlurHandler();
 
-            logger.info('主窗口创建完成');
             return this.mainWindow;
         } catch (error) {
             throw new Error(this.handleError(error, '创建主窗口失败', true));
@@ -390,9 +387,6 @@ class WindowManager extends BaseManager {
      */
     setupGlobalShortcut(): void {
         try {
-            // 清除已有的快捷键
-            logger.info('设置全局快捷键');
-            logger.debug('清除已有的全局快捷键');
             globalShortcut.unregisterAll();
 
             // 如果启用了Spotlight模式，注册全局快捷键

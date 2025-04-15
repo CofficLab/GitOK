@@ -1,0 +1,20 @@
+{
+    "compilerOptions": {
+        "moduleResolution": "node16",
+        "module": "node16",
+        "target": "es2020",
+        "composite": true,
+        "declaration": true,
+        "declarationMap": true,
+        "sourceMap": true,
+        "baseUrl": ".",
+        "outDir": "./dist",
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "forceConsistentCasingInFileNames": true
+    },
+    "exclude": [
+        "node_modules",
+        "dist"
+    ]
+}

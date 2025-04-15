@@ -30,7 +30,7 @@ Progress 组件
 -->
 
 <script setup lang="ts">
-import { defineProps, computed } from 'vue'
+import { computed } from 'vue'
 
 interface Props {
     // 当前进度值
