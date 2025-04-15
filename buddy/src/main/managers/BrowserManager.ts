@@ -63,10 +63,6 @@ export class BrowserManager {
             logger.info('主窗口调整大小，调整视图大小');
         });
 
-        mainWindow.on("move", () => {
-            logger.info('主窗口移动，调整视图位置');
-        });
-
         mainWindow.on("maximize", () => {
             logger.info('主窗口最大化，调整视图大小');
         });
