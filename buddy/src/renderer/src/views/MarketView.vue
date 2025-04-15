@@ -9,7 +9,7 @@
 */
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import PluginCard from '@renderer/modules/PluginCard.vue'
+import PluginCard from '@/renderer/src/components/PluginCard.vue'
 import ButtonFolder from '@renderer/cosy/ButtonFolder.vue'
 import ButtonRefresh from '@renderer/cosy/ButtonRefresh.vue'
 import Empty from '@renderer/cosy/Empty.vue'
@@ -123,11 +123,11 @@ const clearUninstallError = (pluginId: string) => {
 
             <!-- 远程插件卡片 -->
             <PluginCard v-if="activeTab === 'remote'" v-for="plugin in remotePlugins" :key="plugin.id" :plugin="plugin"
-                type="remote" :isInstalled="isPluginInstalled" />
+                type="remote" />
 
             <!-- 开发插件卡片 -->
             <PluginCard v-if="activeTab === 'dev'" v-for="plugin in devPlugins" :key="plugin.id" :plugin="plugin"
-                type="remote" :isInstalled="isPluginInstalled" />
+                type="remote" />
 
             <!-- 无插件提示 -->
             <Empty v-if="shouldShowEmpty" :message="activeTab === 'remote' ? '没有可用的远程插件' : '没有找到插件'" />

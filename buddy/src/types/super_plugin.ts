@@ -15,6 +15,13 @@
 import { PluginValidation } from './plugin-validation';
 
 /**
+ * 插件类型
+ * - user: 用户安装的插件
+ * - dev: 开发中的插件
+ */
+export type PluginType = 'user' | 'dev' | 'remote';
+
+/**
  * 插件信息接口
  */
 export interface SuperPlugin {
@@ -61,7 +68,7 @@ export interface SuperPlugin {
   /**
    * 插件类型
    */
-  type: 'user' | 'dev' | 'remote';
+  type: PluginType;
 
   /**
    * NPM包名称，用于远程插件

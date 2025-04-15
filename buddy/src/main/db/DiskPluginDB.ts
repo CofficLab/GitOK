@@ -83,7 +83,6 @@ export abstract class DiskPluginDB {
       // 过滤出有效的
       const validPlugins = plugins.filter((plugin) => plugin.validation?.isValid);
       if (validPlugins.length === 0) {
-        logger.warn('没有有效的插件');
         return [];
       } else {
         if (verbose) {

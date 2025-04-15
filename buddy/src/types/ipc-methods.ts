@@ -10,6 +10,8 @@ export const IPC_METHODS = {
   Update_View_Bounds: 'update-view-bounds',
   Upsert_View: 'upsert-view',
 
+  // 插件相关
+  Plugin_Is_Installed: 'plugin-is-installed',
   Get_PLUGIN_ACTIONS: 'get-plugin-actions',
   Get_PLUGIN_PAGE_SOURCE_CODE: 'get-plugin-page-source-code',
   EXECUTE_PLUGIN_ACTION: 'execute-plugin-action',

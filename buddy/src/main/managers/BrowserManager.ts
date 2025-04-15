@@ -107,7 +107,9 @@ export class BrowserManager {
      * 销毁视图
      */
     public destroyView(pagePath: string): void {
-        logger.info('销毁视图:', pagePath);
+        if (verbose) {
+            logger.info('destroy view:', pagePath);
+        }
 
         const view = this.views.get(pagePath);
         if (!view) {

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import type { SuperPlugin } from '@/types/super_plugin'
 import {
     RiCheckLine,
@@ -9,6 +9,7 @@ import Button from '@renderer/cosy/Button.vue'
 import { globalConfirm } from '@renderer/composables/useConfirm'
 import { useMarketStore } from '@renderer/stores/marketStore'
 import { globalToast } from '@renderer/composables/useToast'
+import { pluginsAPI } from '../api/plugins-api'
 
 const props = defineProps<{
     plugin: SuperPlugin
@@ -19,7 +20,6 @@ const props = defineProps<{
     uninstallingPlugins?: Set<string>
     uninstallSuccess?: Set<string>
     uninstallError?: Map<string, string>
-    isInstalled?: (id: string) => boolean
 }>()
 
 // 状态管理
@@ -28,6 +28,13 @@ const isUninstalling = ref(false)
 const uninstallComplete = ref(false)
 const isDownloading = ref(false)
 const downloadComplete = ref(false)
+const isInstalled = ref(false)
+
+onMounted(() => {
+    pluginsAPI.has(props.plugin.id).then((res) => {
+        isInstalled.value = res
+    })
+})
 
 const emit = defineEmits<{
     (e: 'uninstall', plugin: SuperPlugin): void
@@ -119,10 +126,10 @@ const handleUninstall = async () => {
                 </template>
 
                 <!-- 远程插件操作 -->
-                <template v-else>
+                <template v-if="plugin.type == 'remote'">
                     <Button @click="handleDownload" variant="primary" :loading="isDownloading"
-                        :disabled="isDownloading || isInstalled?.(plugin.id)">
-                        {{ isInstalled?.(plugin.id) ? '已安装' : (isDownloading ? '下载中...' : '下载') }}
+                        :disabled="isDownloading || isInstalled">
+                        {{ isInstalled ? '已安装' : (isDownloading ? '下载中...' : '下载') }}
                     </Button>
                     <!-- 下载成功提示 -->
                     <transition name="fade">

@@ -44,6 +44,21 @@ export class UserPluginDB extends DiskPluginDB {
       return null;
     }
   }
+
+  /**
+   * 根据插件ID判断插件是否存在
+   * @param id 插件ID
+   * @returns 插件是否存在
+   */
+  public async has(id: string): Promise<boolean> {
+    try {
+      const plugins = await this.getAllPlugins();
+      return plugins.some((plugin) => plugin.id === id);
+    } catch (error) {
+      logger.error(`查找插件失败: ${id}`, error);
+      return false;
+    }
+  }
 }
 
 // 导出单例

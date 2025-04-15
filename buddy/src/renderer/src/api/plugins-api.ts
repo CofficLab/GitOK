@@ -42,4 +42,11 @@ export const pluginsAPI = {
   async createPluginView(pluginId: string): Promise<unknown> {
     return await ipc.invoke(IPC_METHODS.CREATE_PLUGIN_VIEW, pluginId);
   },
+
+  // 判断某个插件是否已经安装
+  async has(pluginId: string): Promise<boolean> {
+    const response = await ipc.invoke(IPC_METHODS.Plugin_Is_Installed, pluginId);
+
+    return response.data as boolean;
+  },
 };

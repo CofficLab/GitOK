@@ -5,20 +5,13 @@
 
 import { join } from 'path';
 import type { PluginPackage } from '@/types/plugin-package';
-import type { SuperPlugin } from '@/types/super_plugin';
+import type { PluginType, SuperPlugin } from '@/types/super_plugin';
 import type { PluginValidation } from '@/types/plugin-validation';
 import { readPackageJson, hasPackageJson } from '../utils/PackageUtils';
 import { NpmPackage } from '../service/NpmRegistryService';
 import { logger } from '../managers/LogManager';
 
 const verbose = false;
-
-/**
- * 插件类型
- * - user: 用户安装的插件
- * - dev: 开发中的插件
- */
-export type PluginType = 'user' | 'dev';
 
 /**
  * 插件状态
@@ -87,7 +80,7 @@ export class PluginEntity implements SuperPlugin {
    * @param npmPackage NPM包信息
    * @returns 插件实体
    */
-  public static fromNpmPackage(npmPackage: NpmPackage): PluginEntity {
+  public static fromNpmPackage(npmPackage: NpmPackage, type: PluginType): PluginEntity {
     // 创建一个基本的PluginPackage对象
     const pkg: PluginPackage = {
       name: npmPackage.name,
@@ -107,7 +100,7 @@ export class PluginEntity implements SuperPlugin {
     };
 
     // 创建插件实体
-    const plugin = new PluginEntity(pkg, '', 'user');
+    const plugin = new PluginEntity(pkg, '', type);
 
     // 使用NPM包中的名称作为显示名称（如果有的话）
     if (npmPackage.name) {

@@ -91,7 +91,7 @@ export class RemotePluginDB {
      * 处理搜索结果，筛选出符合条件的插件
      */
     private async processSearchResults(packages: NpmPackage[]): Promise<PluginEntity[]> {
-        return packages.map((pkg: NpmPackage) => PluginEntity.fromNpmPackage(pkg)).filter((plugin) => plugin.isBuddyPlugin);
+        return packages.map((pkg: NpmPackage) => PluginEntity.fromNpmPackage(pkg, "remote")).filter((plugin) => plugin.isBuddyPlugin);
     }
 
     /**
