@@ -7,7 +7,7 @@ export * from './contact/api-message.js';
 export * from './contact/api-plugin.js';
 export * from './contact/app-events.js';
 export * from './contact/args.js';
-export * from './contact/ipc-methods.js';
+export { IPC_METHODS } from './contact/ipc-methods.js';
 export * from './contact/ipc-response.js';
 export * from './contact/plugin-context.js';
 export * from './contact/plugin-package.js';

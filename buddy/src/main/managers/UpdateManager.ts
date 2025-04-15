@@ -4,8 +4,8 @@
  */
 import { autoUpdater } from 'electron-updater';
 import { dialog, BrowserWindow } from 'electron';
-import { logger } from './LogManager';
-import { sendUpdateEvent } from '../handlers/update_router';
+import { logger } from './LogManager.js';
+import { sendUpdateEvent } from '../handlers/update_router.js';
 
 const verbose = false;
 

@@ -3,7 +3,7 @@
  * 负责监控应用的激活状态以及其他应用的状态
  */
 import { app, BrowserWindow } from 'electron';
-import { BaseManager } from './BaseManager';
+import { BaseManager } from './BaseManager.js';
 import {
   ActiveApplication,
   getFrontmostApplication,

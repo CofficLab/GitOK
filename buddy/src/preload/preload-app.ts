@@ -3,12 +3,12 @@
  * 整合所有模块并暴露给渲染进程
  */
 import { contextBridge } from 'electron';
-import { ipcApi } from './ipc';
-import { commandApi } from './command';
-import { pluginApi } from './plugin';
-import { updateApi } from './update';
-import { contextMenuApi } from './contextMenu';
-import { aiApi } from './ai';
+import { ipcApi } from './ipc.js';
+import { commandApi } from './command.js';
+import { pluginApi } from './plugin.js';
+import { updateApi } from './update.js';
+import { contextMenuApi } from './contextMenu.js';
+import { aiApi } from './ai.js';
 import { ElectronApi } from '@coffic/buddy-types';
 
 // 整合所有 API

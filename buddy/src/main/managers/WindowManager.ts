@@ -6,9 +6,9 @@ import { shell, BrowserWindow, screen, globalShortcut } from 'electron';
 import { join } from 'path';
 import { is } from '@electron-toolkit/utils';
 import icon from '../../../resources/icon.png?asset';
-import { appStateManager } from './StateManager';
-import { BaseManager } from './BaseManager';
-import { logger } from './LogManager';
+import { appStateManager } from './StateManager.js';
+import { BaseManager } from './BaseManager.js';
+import { logger } from './LogManager.js';
 
 const verbose = false;
 
