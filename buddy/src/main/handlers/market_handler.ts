@@ -1,13 +1,13 @@
 
 import { IpcRoute } from '../provider/RouterService.js';
 import { logger } from '../managers/LogManager.js';
-import { userPluginDB } from '../db/UserPluginDB.js';
+import { userPluginDB } from '../db/UserPackageDB.js';
 import { remotePluginDB } from '../db/RemotePluginDB.js';
 import { packageDownloaderDB as Downloader } from '../service/Downloader.js';
 import * as fs from 'fs';
 import * as path from 'path';
 import { devPluginDB } from '../db/DevPluginDB.js';
-import { IPC_METHODS, IpcResponse, SuperPlugin } from '@coffic/buddy-types';
+import { IPC_METHODS, IpcResponse, SuperPackage, SuperPlugin } from '@coffic/buddy-types';
 
 /**
  * 插件商店相关的IPC路由配置
@@ -22,9 +22,9 @@ export const marketRoutes: IpcRoute[] = [
     },
     {
         channel: IPC_METHODS.GET_USER_PLUGINS,
-        handler: async (): Promise<IpcResponse<SuperPlugin[]>> => {
+        handler: async (): Promise<IpcResponse<SuperPackage[]>> => {
             try {
-                const plugins = await userPluginDB.getAllPlugins();
+                const plugins = await userPluginDB.getAllPackages();
                 return { success: true, data: plugins };
             } catch (error) {
                 const errorMessage =
@@ -36,9 +36,9 @@ export const marketRoutes: IpcRoute[] = [
     },
     {
         channel: IPC_METHODS.GET_DEV_PLUGINS,
-        handler: async (): Promise<IpcResponse<SuperPlugin[]>> => {
+        handler: async (): Promise<IpcResponse<SuperPackage[]>> => {
             try {
-                const plugins = await devPluginDB.getAllPlugins();
+                const plugins = await devPluginDB.getAllPackages();
                 return { success: true, data: plugins };
             } catch (error) {
                 const errorMessage =

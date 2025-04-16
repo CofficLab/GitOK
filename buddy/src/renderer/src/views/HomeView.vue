@@ -10,7 +10,7 @@
 import { useActionStore } from '@renderer/stores/actionStore';
 import ActionListView from './ActionListView.vue';
 import PluginView from './PluginView.vue';
-import PluginPageGrid from './PluginPageGrid.vue';
+// import PluginPageGrid from './PluginPageGrid.vue';
 
 const actionStore = useActionStore();
 
@@ -31,13 +31,13 @@ const handleBackToList = () => {
         </div>
 
         <!-- 插件动作列表（当有搜索关键词或有插件动作时） -->
-        <div v-if="!actionStore.hasSelectedAction() && actionStore.getActionCount() > 0" class="flex-1">
-            <ActionListView class="w-full" />
+        <div v-if="!actionStore.hasSelectedAction() && actionStore.getActionCount() > 0" class="flex-1 w-full px-1">
+            <ActionListView />
 
             <!-- 插件视图网格 -->
-            <div class="min-h-96 w-full z-30">
+            <!-- <div class="min-h-96 w-full z-30">
                 <PluginPageGrid />
-            </div>
+            </div> -->
         </div>
 
         <!-- 插件动作视图 -->

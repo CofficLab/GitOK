@@ -92,7 +92,7 @@ onUnmounted(() => {
             @close="globalAlert.close" />
 
         <!-- 内容区域 -->
-        <div class="flex-1 overflow-auto no-drag-region py-16 px-8" ref="content">
+        <div class="flex-1 overflow-auto no-drag-region" ref="content">
             <router-view v-slot="{ Component }">
                 <transition name="fade" mode="out-in">
                     <component :is="Component" />

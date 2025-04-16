@@ -10,6 +10,8 @@
   ],
   "scripts": {
     "build": "node scripts/build.mjs",
+    "build:buddy": "pnpm build:buddy-types && pnpm --filter buddy build",
+    "build:buddy-types": "pnpm --filter buddy-types build",
     "dev": "node scripts/dev.mjs",
     "ext": "nodemon pipeline.mjs",
     "mcp": "pnpm --filter mcp-core test",

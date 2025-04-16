@@ -38,11 +38,6 @@ export interface SuperAction {
   pluginId: string;
 
   /**
-   * 动作标题
-   */
-  title: string;
-
-  /**
    * 动作描述
    */
   description?: string;

@@ -3,7 +3,7 @@
  * 提供了读取和解析 package.json 文件的功能
  */
 
-import { PluginPackage } from '@coffic/buddy-types';
+import { SuperPackage } from '@coffic/buddy-types';
 import { promises as fs } from 'fs';
 import { join } from 'path';
 
@@ -14,18 +14,18 @@ import { join } from 'path';
  * @throws 如果文件不存在或解析失败会抛出错误
  */
 export async function readPackageJson(
-  directoryPath: string
-): Promise<PluginPackage> {
-  try {
-    const packagePath = join(directoryPath, 'package.json');
-    const content = await fs.readFile(packagePath, 'utf8');
-    return JSON.parse(content) as PluginPackage;
-  } catch (error) {
-    if (error instanceof Error) {
-      throw new Error(`读取 package.json 失败: ${error.message}`);
+    directoryPath: string
+): Promise<SuperPackage> {
+    try {
+        const packagePath = join(directoryPath, 'package.json');
+        const content = await fs.readFile(packagePath, 'utf8');
+        return JSON.parse(content) as SuperPackage;
+    } catch (error) {
+        if (error instanceof Error) {
+            throw new Error(`读取 package.json 失败: ${error.message}`);
+        }
+        throw error;
     }
-    throw error;
-  }
 }
 
 /**
@@ -34,11 +34,11 @@ export async function readPackageJson(
  * @returns Promise<boolean> 是否存在 package.json 文件
  */
 export async function hasPackageJson(directoryPath: string): Promise<boolean> {
-  try {
-    const packagePath = join(directoryPath, 'package.json');
-    await fs.access(packagePath);
-    return true;
-  } catch {
-    return false;
-  }
+    try {
+        const packagePath = join(directoryPath, 'package.json');
+        await fs.access(packagePath);
+        return true;
+    } catch {
+        return false;
+    }
 }

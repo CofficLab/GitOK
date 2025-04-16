@@ -3,34 +3,24 @@ import fs from 'fs';
 import { PluginEntity } from '../entities/PluginEntity.js';
 import { logger } from '../managers/LogManager.js';
 import { PluginType } from '@coffic/buddy-types';
+import { PackageFileInfo } from 'electron-updater';
+import { PackageEntity } from '../entities/PackageEntity.js';
 
 const verbose = false;
 
-export abstract class DiskPluginDB {
-    protected pluginsDir: string;
+export abstract class PackageDB {
+    protected rootDir: string;
 
     protected constructor(pluginsDir: string) {
-        this.pluginsDir = pluginsDir;
-    }
-
-    /**
-     * 获取插件目录信息
-     */
-    getPluginDirectory(): string {
-        return this.pluginsDir;
+        this.rootDir = pluginsDir;
     }
 
     /**
      * 确保插件目录存在
      */
     async ensurePluginDirs(): Promise<void> {
-        try {
-            if (!fs.existsSync(this.pluginsDir)) {
-                throw new Error(`插件目录不存在: ${this.pluginsDir}`);
-            }
-        } catch (error) {
-            logger.error('检查插件目录失败', error);
-            throw error;
+        if (!fs.existsSync(this.rootDir)) {
+            throw new Error(`插件目录不存在: ${this.rootDir}`);
         }
     }
 
@@ -65,16 +55,40 @@ export abstract class DiskPluginDB {
         return plugins;
     }
 
+    async getAllPackages(): Promise<PackageEntity[]> {
+        if (verbose) {
+            logger.info('获取Package列表，根目录是', this.rootDir);
+        }
+
+        const packages: PackageEntity[] = [];
+        const entries = await fs.promises.readdir(this.rootDir, { withFileTypes: true });
+
+        for (const entry of entries) {
+            if (!entry.isDirectory()) continue;
+
+            const pluginPath = join(this.rootDir, entry.name);
+
+            try {
+                const packageEntity = await PackageEntity.fromDirectory(pluginPath, this.getPluginType());
+                packages.push(packageEntity);
+            } catch (error) {
+                // logger.warn(`读取插件信息失败: ${pluginPath}`, error);
+            }
+        }
+
+        return packages;
+    }
+
     /**
      * 获取所有插件列表
      */
     async getAllPlugins(): Promise<PluginEntity[]> {
         if (verbose) {
-            logger.info('获取插件列表，根目录是', this.pluginsDir);
+            logger.info('获取插件列表，根目录是', this.rootDir);
         }
         try {
             const plugins = await this.readPluginsFromDir(
-                this.pluginsDir,
+                this.rootDir,
                 this.getPluginType()
             );
 
@@ -130,5 +144,5 @@ export abstract class DiskPluginDB {
         }
     }
 
-    protected abstract getPluginType(): 'dev' | 'user';
+    protected abstract getPluginType(): PluginType;
 }

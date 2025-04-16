@@ -260,7 +260,11 @@ importers:
 
   packages/port-killer-plugin: {}
 
-  packages/sample-plugin: {}
+  packages/sample-plugin:
+    devDependencies:
+      '@coffic/buddy-types':
+        specifier: workspace:*
+        version: link:../buddy-types
 
   packages/sample-plugin-counter: {}
 

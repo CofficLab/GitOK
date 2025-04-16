@@ -9,6 +9,9 @@
   "buddyPlugin": {
     "id": "example-plugin"
   },
+  "devDependencies": {
+    "@coffic/buddy-types": "workspace:*"
+  },
   "keywords": [
     "buddy",
     "plugin",

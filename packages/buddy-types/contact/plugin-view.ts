@@ -2,7 +2,7 @@
  * 插件视图相关的类型定义
  */
 
-import { ViewMode } from "./super_action.js";
+import { ViewMode } from "./super-action.js";
 
 // 视图边界
 export interface ViewBounds {

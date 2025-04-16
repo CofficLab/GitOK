@@ -6,7 +6,7 @@ import { pluginManager } from './PluginManager.js';
 import { BaseManager } from './BaseManager.js';
 import { PluginActionEntity } from '../entities/PluginActionEntity.js';
 import { logger } from './LogManager.js';
-import { userPluginDB } from '../db/UserPluginDB.js';
+import { userPluginDB } from '../db/UserPackageDB.js';
 import { appStateManager } from './StateManager.js';
 import { devPluginDB } from '../db/DevPluginDB.js';
 import { PluginContext, SuperAction } from '@coffic/buddy-types';
