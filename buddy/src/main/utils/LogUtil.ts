@@ -104,8 +104,10 @@ export class LogUtil {
 
       if (process.env.NODE_ENV === 'development' && match) {
         const [, file, line] = match;
+        // 移除文件路径中的 file:// 前缀
+        const cleanFile = file.replace(/^file:\/\//, '');
         // 将位置信息作为第一个参数传递
-        log[level]({ __filename: file, __line: line }, ...params);
+        log[level]({ __filename: cleanFile, __line: line }, ...params);
       } else {
         log[level](...params);
       }

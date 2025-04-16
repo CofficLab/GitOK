@@ -2,7 +2,7 @@
 import { IpcRoute } from '../provider/RouterService.js';
 import { shell } from 'electron';
 import { logger } from '../managers/LogManager.js';
-import { viewManager } from '../managers/BrowserManager.js';
+import { viewManager } from '../managers/ViewManager.js';
 import { IPC_METHODS, IpcResponse } from '@coffic/buddy-types';
 
 /**

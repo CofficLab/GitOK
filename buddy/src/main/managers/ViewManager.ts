@@ -1,5 +1,5 @@
 /**
- * Browser 视图管理器
+ * 视图管理器
  */
 import { WebContentsView } from 'electron';
 import { is } from '@electron-toolkit/utils';
@@ -10,7 +10,7 @@ import { createViewArgs, ViewBounds } from '@coffic/buddy-types';
 
 const verbose = false;
 
-export class BrowserManager {
+export class ViewManager {
     private views: Map<string, WebContentsView> = new Map();
 
     /**
@@ -166,4 +166,4 @@ export class BrowserManager {
 }
 
 // 导出单例实例
-export const viewManager = new BrowserManager();
+export const viewManager = new ViewManager();
