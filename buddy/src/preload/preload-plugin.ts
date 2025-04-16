@@ -4,46 +4,22 @@
  *
  * 打开插件提供的视图时，会在单独的窗口中打开，然后注入这里提供的API
  */
+import { PluginIpc } from '@coffic/buddy-types';
 import { contextBridge, ipcRenderer } from 'electron';
 
 // 提供给插件视图的API
-const pluginViewAPI = {
-  // 向主应用发送消息
-  sendToHost: (channel: string, data: any): void => {
-    ipcRenderer.send('plugin-to-host', { channel, data });
-  },
-
-  // 从主应用接收消息
-  receiveFromHost: (
-    channel: string,
-    callback: (data: any) => void
-  ): (() => void) => {
-    const listener = (
-      _: Electron.IpcRendererEvent,
-      message: { channel: string; data: any }
-    ) => {
-      if (message.channel === channel) {
-        callback(message.data);
-      }
-    };
-
-    ipcRenderer.on('host-to-plugin', listener);
-
-    // 返回清理函数
-    return () => {
-      ipcRenderer.removeListener('host-to-plugin', listener);
-    };
-  },
-
-  // 获取插件元数据
-  getPluginInfo: (): Promise<any> => {
-    return ipcRenderer.invoke('get-plugin-info');
-  },
-
-  // 退出视图
-  close: (): void => {
-    ipcRenderer.send('plugin-close-view');
-  },
+const pluginViewAPI: PluginIpc = {
+  logger: {
+    info: (...args: any[]) => {
+      ipcRenderer.send('plugin-log-info', ...args);
+    },
+    warn: (...args: any[]) => {
+      ipcRenderer.send('plugin-log-warn', ...args);
+    },
+    error: (...args: any[]) => {
+      ipcRenderer.send('plugin-log-error', ...args);
+    },
+  }
 };
 
 // 暴露API到插件视图全局环境

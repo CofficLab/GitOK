@@ -95,7 +95,6 @@ export const useMarketStore = defineStore('market', {
 
         // 更新用户插件目录
         async updateUserPluginDirectory() {
-            logger.info('updateUserPluginDirectory');
             try {
                 const response = (await pluginsAPI.getUserPluginDirectory())
 
@@ -182,7 +181,6 @@ export const useMarketStore = defineStore('market', {
 
         // 加载远程插件列表
         async loadRemotePlugins(): Promise<void> {
-            logger.info('loadRemotePlugins');
             if (this.loadingRemotePlugins) return;
 
             this.loadingRemotePlugins = true;

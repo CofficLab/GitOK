@@ -82,8 +82,6 @@ export const useAppStore = defineStore('app', {
     },
 
     setupOverlaidAppListeners() {
-      logger.info('setupOverlaidAppListeners');
-
       ipc.receive(AppEvents.OVERLAID_APP_CHANGED, (args: any) => {
         this.overlaidApp = args as SuperApp | null;
       });

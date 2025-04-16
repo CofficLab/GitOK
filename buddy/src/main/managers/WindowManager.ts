@@ -188,7 +188,9 @@ class WindowManager extends BaseManager {
     private async handleWindowShow(): Promise<void> {
         if (!this.mainWindow || this.mainWindow.isDestroyed()) return;
 
-        logger.info('窗口当前不可见，执行显示操作');
+        if (verbose) {
+            logger.info('窗口当前不可见，执行显示操作');
+        }
 
         // 更新当前活跃的应用信息
         if (process.platform === 'darwin') {

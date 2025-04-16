@@ -12,3 +12,4 @@ export * from './contact/super-logger.js';
 export * from './contact/super_action.js';
 export * from './contact/super_app.js';
 export * from './contact/super_plugin.js';
+export * from './contact/plugin-ipc.js';
