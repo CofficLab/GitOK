@@ -1,9 +1,3 @@
-/**
- * GitOK示例插件
- * 演示如何创建一个基本的插件，提供动作和自定义视图
- */
-
-// 引入文件系统模块
 const fs = require('fs');
 const path = require('path');
 
