@@ -3,7 +3,6 @@ import fs from 'fs';
 import { PluginEntity } from '../entities/PluginEntity.js';
 import { logger } from '../managers/LogManager.js';
 import { PluginType } from '@coffic/buddy-types';
-import { PackageFileInfo } from 'electron-updater';
 import { PackageEntity } from '../entities/PackageEntity.js';
 
 const verbose = false;
