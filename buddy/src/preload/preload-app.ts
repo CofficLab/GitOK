@@ -7,7 +7,7 @@ import { ipcRenderer } from 'electron';
 import { IpcApi, IpcResponse } from '@coffic/buddy-types';
 import { logger } from '@/main/managers/LogManager.js';
 
-const verbose = true;
+const verbose = false;
 
 export const ipcApi: IpcApi = {
     send: (channel: string, ...args: unknown[]): void => {
@@ -30,7 +30,9 @@ export const ipcApi: IpcApi = {
     },
 
     invoke: async (channel: string, ...args: unknown[]): Promise<IpcResponse<any>> => {
-        logger.info('调用IPC方法:', channel, '参数是: ', args);
+        if (verbose) {
+            logger.info('====== 调用IPC方法:', channel);
+        }
 
         const response = await ipcRenderer.invoke(channel, ...args);
 

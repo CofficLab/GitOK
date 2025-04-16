@@ -66,24 +66,16 @@ const loadAndExecuteAction = async () => {
     try {
         const result = await actionStore.execute(action.globalId)
         actionResult.value = result
-        logger.info(`PluginView: 动作执行结果: ${result}`)
 
         // 如果有视图路径，根据viewMode决定显示方式
         if (action.viewPath) {
-            logger.info(`PluginView: 动作有视图路径: ${action.viewPath}, 视图模式: ${action.viewMode || 'embedded'}`)
             const viewMode = action.viewMode || 'embedded' // 默认使用内嵌模式
 
             if (viewMode === 'window') {
-                // 在独立窗口中显示
-                logger.info(`PluginView: 使用独立窗口模式显示`)
                 await openPluginWindow(actionId, action)
             } else {
-                // 在应用内嵌入显示
-                logger.info(`PluginView: 使用内嵌模式显示`)
                 await createEmbeddedView(actionId, action)
             }
-        } else {
-            logger.info(`PluginView: 动作没有视图路径，只显示结果`)
         }
     } catch (error) {
         const errorMsg = error instanceof Error ? error.message : String(error)
