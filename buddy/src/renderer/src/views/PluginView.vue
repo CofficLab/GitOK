@@ -10,14 +10,10 @@
 import { ref, watch, onUnmounted, reactive, onMounted, nextTick, computed } from 'vue'
 import { useActionStore } from '@renderer/stores/actionStore'
 import { logger } from '@renderer/utils/logger'
-import { SuperAction } from '@coffic/buddy-types'
+import { SuperAction, ViewBounds } from '@coffic/buddy-types'
+import { pluginIpc } from '../api/plugin-ipc'
 
 const actionStore = useActionStore()
-
-// 定义辅助函数获取插件视图API
-const getPluginViewsAPI = () => {
-    return window.electron.plugins.views;
-}
 
 const emit = defineEmits<{
     back: []
@@ -103,12 +99,6 @@ const createEmbeddedView = async (actionId: string, action: SuperAction) => {
         // 使用动作ID作为视图ID
         embeddedViewState.id = `embedded-view-${actionId}`
 
-        // 获取插件视图API
-        const viewsAPI = getPluginViewsAPI()
-        if (!viewsAPI) {
-            throw new Error('插件视图API不可用')
-        }
-
         // 获取主进程存储的HTML内容
         embeddedViewState.content = actionStore.viewHtml
         logger.info(`PluginView: 获取到视图HTML内容，长度: ${embeddedViewState.content?.length || 0}`)
@@ -152,7 +142,7 @@ const createEmbeddedView = async (actionId: string, action: SuperAction) => {
         const rect = container.getBoundingClientRect()
 
         // 确保所有值都是整数，并且至少有合理的尺寸
-        const bounds = {
+        const bounds: ViewBounds = {
             x: Math.max(0, Math.round(rect.left)),
             y: Math.max(0, Math.round(rect.top)),
             width: Math.max(100, Math.round(rect.width)),
@@ -163,7 +153,7 @@ const createEmbeddedView = async (actionId: string, action: SuperAction) => {
 
         try {
             // 首先创建嵌入式视图
-            const mainWindowBounds = await viewsAPI.create(
+            const mainWindowBounds = await pluginIpc.createView(
                 embeddedViewState.id,
                 `plugin-view://${actionId}`
             )
@@ -171,7 +161,7 @@ const createEmbeddedView = async (actionId: string, action: SuperAction) => {
             logger.info(`PluginView: 嵌入式视图已创建，主窗口边界: ${mainWindowBounds}`)
 
             // 现在显示嵌入式视图，传递容器边界
-            const showResult = await viewsAPI.show(embeddedViewState.id, bounds)
+            const showResult = await pluginIpc.showView(embeddedViewState.id, bounds)
             if (!showResult) {
                 throw new Error('显示嵌入式视图失败')
             }
@@ -179,20 +169,12 @@ const createEmbeddedView = async (actionId: string, action: SuperAction) => {
             logger.info(`PluginView: 嵌入式视图已显示，边界: ${bounds}`)
             embeddedViewState.isVisible = true
 
-            // 立即触发一次调整大小操作，确保视图正确显示
-            await handleResize()
-
-            // 添加窗口尺寸变化时的视图调整逻辑
-            setTimeout(async () => {
-                await handleResize()
-            }, 500)
-
             // 如果动作指定了开启开发者工具，则自动打开
             if (action.devTools) {
                 setTimeout(async () => {
                     try {
                         logger.info(`PluginView: 准备打开开发者工具: ${embeddedViewState.id}`)
-                        const result = await viewsAPI.toggleDevTools(embeddedViewState.id)
+                        const result = await pluginIpc.toggleDevTools(embeddedViewState.id)
                         logger.info(`PluginView: 开发者工具打开结果: ${result}`)
                     } catch (devToolsError) {
                         logger.error(`PluginView: 打开开发者工具失败: ${devToolsError}`)
@@ -221,11 +203,8 @@ const createEmbeddedView = async (actionId: string, action: SuperAction) => {
 const destroyEmbeddedView = async () => {
     if (embeddedViewState.id) {
         try {
-            const viewsAPI = getPluginViewsAPI()
-            if (viewsAPI) {
-                await viewsAPI.destroy(embeddedViewState.id)
-                logger.info(`PluginView: 嵌入式视图已销毁: ${embeddedViewState.id}`)
-            }
+            await pluginIpc.destroyView(embeddedViewState.id)
+            logger.info(`PluginView: 嵌入式视图已销毁: ${embeddedViewState.id}`)
         } catch (error) {
             logger.error(`PluginView: 销毁嵌入式视图失败: ${error}`)
         } finally {
@@ -238,50 +217,16 @@ const destroyEmbeddedView = async () => {
 }
 
 // 在独立窗口中打开插件视图
-const openPluginWindow = async (actionId: string, action: SuperAction) => {
+const openPluginWindow = async (actionId: string, _action: SuperAction) => {
     try {
         // 使用动作ID作为视图ID
         pluginViewState.id = `plugin-view-${actionId}`
 
-        // 获取插件视图API
-        const viewsAPI = getPluginViewsAPI()
-        if (!viewsAPI) {
-            throw new Error('插件视图API不可用')
-        }
-
         // 获取主窗口位置和大小以便设置插件窗口的位置
-        const mainWindowBounds = await viewsAPI.create(
+        await pluginIpc.createView(
             pluginViewState.id,
             `plugin-view://${actionId}`, // 确保actionId格式正确
         )
-
-        if (mainWindowBounds) {
-            // 在主窗口旁边显示插件窗口
-            await viewsAPI.show(pluginViewState.id, {
-                x: mainWindowBounds.x + mainWindowBounds.width,
-                y: mainWindowBounds.y,
-                width: 600,
-                height: mainWindowBounds.height
-            })
-
-            pluginViewState.isOpen = true
-            logger.info(`PluginView: 插件视图窗口已打开: ${pluginViewState.id}`)
-
-            // 如果动作指定了开启开发者工具，则自动打开
-            if (action.devTools) {
-                logger.info(`PluginView: 动作指定了开启开发者工具，准备打开: ${actionId}`)
-                try {
-                    // 设置一个定时器，延迟500ms打开开发者工具
-                    setTimeout(async () => {
-                        console.log(`PluginView: 准备打开开发者工具: ${pluginViewState.id}`)
-                        const result = await viewsAPI.toggleDevTools(pluginViewState.id)
-                        console.log(`PluginView: 开发者工具打开结果: ${result}`)
-                    }, 500)
-                } catch (devToolsError) {
-                    console.error(`PluginView: 打开开发者工具失败:`, devToolsError)
-                }
-            }
-        }
     } catch (error) {
         const errorMsg = error instanceof Error ? error.message : String(error)
         console.error(`PluginView: 打开插件视图窗口失败: ${errorMsg}`)
@@ -294,11 +239,8 @@ const openPluginWindow = async (actionId: string, action: SuperAction) => {
 const closePluginWindow = async () => {
     if (pluginViewState.isOpen && pluginViewState.id) {
         try {
-            const viewsAPI = getPluginViewsAPI()
-            if (viewsAPI) {
-                await viewsAPI.destroy(pluginViewState.id)
-                console.log(`PluginView: 插件视图窗口已关闭: ${pluginViewState.id}`)
-            }
+            await pluginIpc.destroyView(pluginViewState.id)
+            console.log(`PluginView: 插件视图窗口已关闭: ${pluginViewState.id}`)
         } catch (error) {
             console.error(`PluginView: 关闭插件视图窗口失败:`, error)
         } finally {
@@ -317,149 +259,6 @@ const goBack = async () => {
 
 // 设置嵌入式视图事件监听器的清理函数
 const cleanupFunctions: (() => void)[] = [];
-
-// 监听嵌入式视图创建事件
-const setupEmbeddedViewEventListeners = () => {
-    const pluginViewsAPI = getPluginViewsAPI();
-
-    // 如果API不存在或不完整，不设置事件监听器
-    if (!pluginViewsAPI) {
-        console.warn('PluginView: 插件视图API不可用，无法设置事件监听器');
-        return;
-    }
-
-    // 检查事件监听器函数是否存在
-    if (typeof pluginViewsAPI.onEmbeddedViewCreated === 'function') {
-        const removeCreatedListener = pluginViewsAPI.onEmbeddedViewCreated((data) => {
-            console.log(`PluginView: 收到嵌入式视图创建事件: ${data.viewId}`);
-        });
-        cleanupFunctions.push(removeCreatedListener);
-    } else {
-        console.warn('PluginView: onEmbeddedViewCreated 方法不存在');
-    }
-
-    // 检查事件监听器函数是否存在
-    if (typeof pluginViewsAPI.onShowEmbeddedView === 'function') {
-        const removeShowListener = pluginViewsAPI.onShowEmbeddedView((data) => {
-            console.log(`PluginView: 收到显示嵌入式视图事件: ${data.viewId}`);
-            // 标记视图为可见
-            if (embeddedViewState.id === data.viewId) {
-                embeddedViewState.isVisible = true;
-            }
-        });
-        cleanupFunctions.push(removeShowListener);
-    } else {
-        console.warn('PluginView: onShowEmbeddedView 方法不存在');
-    }
-
-    // 检查事件监听器函数是否存在
-    if (typeof pluginViewsAPI.onHideEmbeddedView === 'function') {
-        const removeHideListener = pluginViewsAPI.onHideEmbeddedView((data) => {
-            console.log(`PluginView: 收到隐藏嵌入式视图事件: ${data.viewId}`);
-            // 标记视图为不可见
-            if (embeddedViewState.id === data.viewId) {
-                embeddedViewState.isVisible = false;
-            }
-        });
-        cleanupFunctions.push(removeHideListener);
-    } else {
-        console.warn('PluginView: onHideEmbeddedView 方法不存在');
-    }
-
-    // 检查事件监听器函数是否存在
-    if (typeof pluginViewsAPI.onDestroyEmbeddedView === 'function') {
-        const removeDestroyListener = pluginViewsAPI.onDestroyEmbeddedView((data) => {
-            console.log(`PluginView: 收到销毁嵌入式视图事件: ${data.viewId}`);
-            // 重置视图状态
-            if (embeddedViewState.id === data.viewId) {
-                embeddedViewState.id = '';
-                embeddedViewState.isAttached = false;
-                embeddedViewState.isVisible = false;
-                embeddedViewState.content = '';
-            }
-        });
-        cleanupFunctions.push(removeDestroyListener);
-    } else {
-        console.warn('PluginView: onDestroyEmbeddedView 方法不存在');
-    }
-};
-
-// 在窗口大小变化时调整嵌入式视图大小
-const handleResize = async () => {
-    if (embeddedViewState.isAttached && embeddedViewState.id && embeddedViewContainer.value) {
-        const viewsAPI = getPluginViewsAPI();
-        if (!viewsAPI) {
-            console.warn('PluginView: 获取视图API失败，无法调整视图大小');
-            return;
-        }
-
-        try {
-            const container = embeddedViewContainer.value;
-            const rect = container.getBoundingClientRect();
-
-            // 确保边界值有效且是整数
-            const bounds = {
-                x: Math.max(0, Math.round(rect.left)),
-                y: Math.max(0, Math.round(rect.top)),
-                width: Math.max(100, Math.round(rect.width)),
-                height: Math.max(100, Math.round(rect.height))
-            };
-
-            // 检查边界值是否有效
-            if (bounds.width <= 0 || bounds.height <= 0) {
-                console.warn(`PluginView: 容器边界无效，宽高必须大于0: `, bounds);
-                return;
-            }
-
-            console.log(`PluginView: 调整嵌入式视图大小: ${embeddedViewState.id}`, bounds);
-
-            const result = await viewsAPI.show(embeddedViewState.id, bounds);
-            console.log(`PluginView: 调整视图大小结果: ${result}`);
-        } catch (error) {
-            console.error(`PluginView: 调整视图大小失败:`, error);
-        }
-    } else {
-        if (!embeddedViewState.isAttached) {
-            console.debug('PluginView: 视图未附加，跳过调整大小');
-        } else if (!embeddedViewState.id) {
-            console.debug('PluginView: 视图ID为空，跳过调整大小');
-        } else if (!embeddedViewContainer.value) {
-            console.debug('PluginView: 视图容器不存在，跳过调整大小');
-        }
-    }
-};
-
-// 添加窗口调整大小事件监听器
-const setupResizeListener = () => {
-    // 使用防抖函数来避免频繁调用
-    let resizeTimeout: number | null = null;
-
-    const debouncedResize = () => {
-        if (resizeTimeout !== null) {
-            clearTimeout(resizeTimeout);
-        }
-        resizeTimeout = window.setTimeout(async () => {
-            await handleResize();
-            resizeTimeout = null;
-        }, 100);
-    };
-
-    window.addEventListener('resize', debouncedResize);
-
-    // 返回清理函数
-    return () => {
-        if (resizeTimeout !== null) {
-            clearTimeout(resizeTimeout);
-        }
-        window.removeEventListener('resize', debouncedResize);
-    };
-};
-
-// 设置嵌入式视图事件监听器
-setupEmbeddedViewEventListeners();
-
-// 设置调整大小事件监听器并保存清理函数
-cleanupFunctions.push(setupResizeListener());
 
 // 在组件卸载时清理所有事件监听器
 onUnmounted(() => {

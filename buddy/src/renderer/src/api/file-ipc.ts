@@ -1,6 +1,6 @@
 import { IPC_METHODS, IpcResponse } from "@coffic/buddy-types";
 
-const ipc = window.electron.ipc;
+const ipc = window.ipc;
 
 export const fileIpc = {
     async openFolder(folder: string): Promise<unknown> {

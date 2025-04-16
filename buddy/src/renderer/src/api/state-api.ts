@@ -1,7 +1,6 @@
 import { IPC_METHODS, IpcResponse } from "@coffic/buddy-types";
 
-
-const ipc = window.electron.ipc;
+const ipc = window.ipc;
 
 export const stateApi = {
     async getCurrentApp(): Promise<unknown> {

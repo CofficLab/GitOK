@@ -1,14 +1,64 @@
 /**
- * 插件系统模块
- * 处理插件的安装、卸载、执行等功能
+ * 插件视图预加载脚本
+ * 为插件视图提供与主应用通信的安全API
+ *
+ * 打开插件提供的视图时，会在单独的窗口中打开，然后注入这里提供的API
  */
-import { PluginAPi } from '@coffic/buddy-types';
-import { pluginLifecycle } from './plugin-life.js';
-import { pluginManagement } from './plugin-managerment.js';
-import { pluginViews } from './plugin-views.js';
+import { contextBridge, ipcRenderer } from 'electron';
 
-export const pluginApi: PluginAPi = {
-  views: pluginViews,
-  management: pluginManagement,
-  lifecycle: pluginLifecycle,
+// 提供给插件视图的API
+const pluginViewAPI = {
+  // 向主应用发送消息
+  sendToHost: (channel: string, data: any): void => {
+    ipcRenderer.send('plugin-to-host', { channel, data });
+  },
+
+  // 从主应用接收消息
+  receiveFromHost: (
+    channel: string,
+    callback: (data: any) => void
+  ): (() => void) => {
+    const listener = (
+      _: Electron.IpcRendererEvent,
+      message: { channel: string; data: any }
+    ) => {
+      if (message.channel === channel) {
+        callback(message.data);
+      }
+    };
+
+    ipcRenderer.on('host-to-plugin', listener);
+
+    // 返回清理函数
+    return () => {
+      ipcRenderer.removeListener('host-to-plugin', listener);
+    };
+  },
+
+  // 获取插件元数据
+  getPluginInfo: (): Promise<any> => {
+    return ipcRenderer.invoke('get-plugin-info');
+  },
+
+  // 退出视图
+  close: (): void => {
+    ipcRenderer.send('plugin-close-view');
+  },
 };
+
+// 暴露API到插件视图全局环境
+if (process.contextIsolated) {
+  try {
+    contextBridge.exposeInMainWorld('buddy', pluginViewAPI);
+  } catch (error) {
+    console.error('暴露插件API到全局环境失败:', error);
+  }
+} else {
+  // @ts-ignore
+  window.buddy = pluginViewAPI;
+}
+
+// 通知主进程插件视图已加载
+window.addEventListener('DOMContentLoaded', () => {
+  ipcRenderer.send('plugin-view-ready');
+});

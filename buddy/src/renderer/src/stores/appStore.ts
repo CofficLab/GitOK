@@ -29,7 +29,7 @@ import { defineStore } from 'pinia';
 import { logger } from '../utils/logger';
 import { AppEvents, SuperAction, SuperApp } from '@coffic/buddy-types';
 
-const ipc = window.electron.ipc;
+const ipc = window.ipc;
 
 export type ViewType = 'home' | 'plugins' | 'chat' | 'plugin-grid';
 

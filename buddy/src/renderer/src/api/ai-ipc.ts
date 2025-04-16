@@ -1,6 +1,6 @@
 import { ChatMessage, IPC_METHODS, IpcResponse, StreamChunkResponse, StreamDoneResponse } from "@coffic/buddy-types";
 
-const ipc = window.electron.ipc;
+const ipc = window.ipc;
 
 export const aiIpc = {
     async send(messages: ChatMessage[]): Promise<string> {

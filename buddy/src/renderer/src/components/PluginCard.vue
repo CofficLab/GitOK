@@ -8,7 +8,7 @@ import Button from '@renderer/cosy/Button.vue'
 import { globalConfirm } from '@renderer/composables/useConfirm'
 import { useMarketStore } from '@renderer/stores/marketStore'
 import { globalToast } from '@renderer/composables/useToast'
-import { pluginsAPI } from '../api/plugins-api'
+import { pluginsAPI } from '../api/market-ipc'
 import { SuperPlugin } from '@coffic/buddy-types'
 
 const props = defineProps<{

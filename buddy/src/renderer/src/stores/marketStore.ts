@@ -1,7 +1,7 @@
 
 import { defineStore } from 'pinia';
 import { logger } from '../utils/logger';
-import { pluginsAPI } from '../api/plugins-api';
+import { pluginsAPI } from '../api/market-ipc';
 import { SuperPlugin } from '@coffic/buddy-types';
 
 const verbose = false;

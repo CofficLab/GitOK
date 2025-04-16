@@ -2,8 +2,8 @@ import { defineStore } from 'pinia';
 import { logger } from '@renderer/utils/logger';
 import { actionIpc } from '../api/action-ipc';
 import { AppEvents, SuperAction } from '@coffic/buddy-types';
-const electronApi = window.electron;
-const ipc = electronApi.ipc;
+
+const ipc = window.ipc;
 const verbose = false;
 
 /**

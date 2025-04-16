@@ -1,6 +1,6 @@
 import { IPC_METHODS, IpcResponse, SuperAction } from '@coffic/buddy-types';
 
-const ipc = window.electron.ipc;
+const ipc = window.ipc;
 
 export const actionIpc = {
     async getActions(keyword = ''): Promise<SuperAction[]> {

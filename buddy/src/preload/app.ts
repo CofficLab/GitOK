@@ -1,10 +1,11 @@
 /**
- * 基础 IPC 通信模块
- * 提供基本的进程间通信功能
+ * 预加载脚本入口文件
+ * 整合所有模块并暴露给渲染进程
  */
+import { contextBridge } from 'electron';
 import { ipcRenderer } from 'electron';
-import { logger } from '@/main/managers/LogManager.js';
 import { IpcApi, IpcResponse } from '@coffic/buddy-types';
+import { logger } from '@/main/managers/LogManager.js';
 
 const verbose = true;
 
@@ -40,3 +41,15 @@ export const ipcApi: IpcApi = {
         }
     },
 };
+
+// 使用 contextBridge 暴露 API 到渲染进程
+if (process.contextIsolated) {
+    try {
+        contextBridge.exposeInMainWorld('ipc', ipcApi);
+    } catch (error) {
+        console.error(error);
+    }
+} else {
+    // @ts-ignore (define in dts)
+    window.ipc = ipcApi;
+}

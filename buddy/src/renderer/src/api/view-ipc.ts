@@ -1,8 +1,6 @@
 import { IPC_METHODS, ViewBounds } from "@coffic/buddy-types";
 
-
-const electronApi = window.electron;
-const ipc = electronApi.ipc;
+const ipc = window.ipc
 
 export const viewIpc = {
     async upsertView(pagePath: string, bounds: ViewBounds): Promise<void> {
