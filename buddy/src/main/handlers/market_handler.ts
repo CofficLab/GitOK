@@ -9,7 +9,7 @@ import { marketManager } from '@/main/managers/MarketManager.js';
 export const marketHandler: IpcRoute[] = [
     {
         channel: IPC_METHODS.Plugin_Is_Installed,
-        handler: async (pluginId: string): Promise<boolean> => {
+        handler: async (_: unknown, pluginId: string): Promise<boolean> => {
             return await userPluginDB.has(pluginId);
         },
     },

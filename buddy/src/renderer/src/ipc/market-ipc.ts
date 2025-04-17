@@ -1,6 +1,7 @@
 
 import { SendablePlugin } from "@/types/sendable-plugin";
 import { IPC_METHODS } from "@coffic/buddy-types";
+import { logger } from "../utils/logger";
 
 const ipc = window.ipc;
 
@@ -41,7 +42,9 @@ export const marketIpc = {
 	},
 
 	// 判断某个插件是否已经安装
-	async has(pluginId: string): Promise<boolean> {
+	async isInstalled(pluginId: string): Promise<boolean> {
+		logger.debug('判断插件是否已经安装', pluginId)
+
 		return await ipc.invoke(IPC_METHODS.Plugin_Is_Installed, pluginId);
 	},
 };
