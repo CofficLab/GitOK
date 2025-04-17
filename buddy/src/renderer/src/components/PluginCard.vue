@@ -8,12 +8,12 @@ import Button from '@renderer/cosy/Button.vue'
 import { globalConfirm } from '@renderer/composables/useConfirm'
 import { useMarketStore } from '@renderer/stores/marketStore'
 import { globalToast } from '@renderer/composables/useToast'
-import { pluginsAPI } from '../api/market-ipc'
+import { marketIpc } from '../ipc/market-ipc'
 import { SuperPlugin } from '@coffic/buddy-types'
+import { SendablePlugin } from '@/types/sendable-plugin'
 
 const props = defineProps<{
-    plugin: SuperPlugin
-    // 状态控制
+    plugin: SendablePlugin
     downloadingPlugins?: Set<string>
     downloadSuccess?: Set<string>
     downloadError?: Map<string, string>
@@ -31,25 +31,19 @@ const downloadComplete = ref(false)
 const isInstalled = ref(false)
 
 onMounted(() => {
-    pluginsAPI.has(props.plugin.id).then((res) => {
+    marketIpc.has(props.plugin.id).then((res) => {
         isInstalled.value = res
     })
 })
-
-const emit = defineEmits<{
-    (e: 'uninstall', plugin: SuperPlugin): void
-    (e: 'clear-download-error', pluginId: string): void
-    (e: 'clear-uninstall-error', pluginId: string): void
-}>()
 
 // 计算卡片样式
 const cardClass = computed(() => {
     if (props.plugin.type === 'remote') return 'bg-base-100'
 
     return {
-        'bg-base-100': !props.plugin.validation,
-        'bg-error bg-opacity-10': props.plugin.validation && !props.plugin.validation.isValid,
-        'bg-success bg-opacity-10': props.plugin.validation && props.plugin.validation.isValid
+        'bg-base-100': props.plugin.status === 'inactive',
+        'bg-error bg-opacity-10': props.plugin.status === 'error',
+        'bg-success bg-opacity-10': props.plugin.status === 'active'
     }
 })
 
@@ -80,9 +74,6 @@ const confirmUninstall = async () => {
 // 卸载插件
 const handleUninstall = async () => {
     isUninstalling.value = true
-
-    // 发送卸载事件
-    emit('uninstall', props.plugin)
 
     // 卸载完成后触发动画
     setTimeout(() => {

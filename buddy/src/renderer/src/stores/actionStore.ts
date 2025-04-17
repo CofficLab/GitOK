@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import { logger } from '@renderer/utils/logger';
-import { actionIpc } from '../api/action-ipc';
+import { actionIpc } from '../ipc/action-ipc';
 import { AppEvents, SuperAction } from '@coffic/buddy-types';
 
 const ipc = window.ipc;

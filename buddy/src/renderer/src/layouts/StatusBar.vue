@@ -15,7 +15,7 @@ import { useRouter, useRoute } from 'vue-router'
 import { useAppStore } from '@renderer/stores/appStore'
 import StatusBar from '@renderer/cosy/StatusBar.vue'
 import StatusBarItem from '@renderer/cosy/StatusBarItem.vue'
-import { fileIpc } from '@/renderer/src/api/file-ipc'
+import { fileIpc } from '@/renderer/src/ipc/file-ipc'
 
 // 当前时间
 const currentTime = ref(new Date().toLocaleTimeString())

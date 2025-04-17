@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, nextTick, ref, onUnmounted, watch } from 'vue'
 import { logger } from '../utils/logger'
-import { viewIpc } from '../api/view-ipc'
+import { viewIpc } from '../ipc/view-ipc'
 import { createViewArgs, SuperPlugin } from '@coffic/buddy-types';
 
 interface Props {

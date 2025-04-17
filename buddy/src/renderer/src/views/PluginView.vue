@@ -11,7 +11,7 @@ import { ref, watch, onUnmounted, reactive, onMounted, nextTick, computed } from
 import { useActionStore } from '@renderer/stores/actionStore'
 import { logger } from '@renderer/utils/logger'
 import { SuperAction, ViewBounds } from '@coffic/buddy-types'
-import { pluginIpc } from '../api/plugin-ipc'
+import { pluginIpc } from '../ipc/plugin-ipc'
 
 const actionStore = useActionStore()
 

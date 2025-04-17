@@ -1,4 +1,4 @@
-import { fileIpc } from '@/renderer/src/api/file-ipc'
+import { fileIpc } from '@/renderer/src/ipc/file-ipc'
 
 export function useDirectory() {
     const openDirectory = async (dir: string | null) => {

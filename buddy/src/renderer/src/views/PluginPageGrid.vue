@@ -2,7 +2,7 @@
 import { useMarketStore } from '../stores/marketStore'
 import { onUnmounted, computed } from 'vue'
 import { logger } from '../utils/logger'
-import { viewIpc } from '../api/view-ipc'
+import { viewIpc } from '../ipc/view-ipc'
 import PluginPage from '../components/PluginPage.vue'
 
 const marketStore = useMarketStore()

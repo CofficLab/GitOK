@@ -15,6 +15,13 @@ export abstract class PackageDB {
     }
 
     /**
+     * 获取插件目录
+     */
+    public getRootDir(): string {
+        return this.rootDir;
+    }
+
+    /**
      * 确保插件目录存在
      */
     async ensurePluginDirs(): Promise<void> {

@@ -5,11 +5,12 @@
 
 import { readPackageJson, hasPackageJson } from '../utils/PackageUtils.js';
 import { logger } from '../managers/LogManager.js';
-import { SuperPackage, PluginType, ValidationResult } from '@coffic/buddy-types';
-
+import { PluginType, ValidationResult } from '@coffic/buddy-types';
+import { PluginEntity } from './PluginEntity.js';
+import { PackageJson } from '@/types/package-json.js';
 const verbose = false;
 
-export class PackageEntity implements SuperPackage {
+export class PackageEntity {
     path: string;
     name: string;
     description: string;
@@ -18,16 +19,10 @@ export class PackageEntity implements SuperPackage {
     main: string;
     validation?: ValidationResult | null;
     type: PluginType;
-    packageJson?: SuperPackage;
+    packageJson?: PackageJson;
     id: string;
-    license: string;
-    keywords: string[];
-    repository: string;
-    dependencies: Record<string, string>;
-    devDependencies: Record<string, string>;
-    scripts: Record<string, string>;
 
-    constructor(path: string, packageJson?: SuperPackage) {
+    constructor(path: string, packageJson?: PackageJson) {
         this.path = path;
         this.packageJson = packageJson;
         this.name = packageJson?.name || '';
@@ -37,15 +32,7 @@ export class PackageEntity implements SuperPackage {
         this.main = packageJson?.main || '';
         this.type = 'user';
         this.validation = null;
-        this.validation = null;
-        this.validation = null;
         this.id = packageJson?.name || '';
-        this.license = packageJson?.license || '';
-        this.keywords = packageJson?.keywords || [];
-        this.repository = packageJson?.repository || '';
-        this.dependencies = packageJson?.dependencies || {};
-        this.devDependencies = packageJson?.devDependencies || {};
-        this.scripts = packageJson?.scripts || {};
     }
 
     /**
@@ -69,5 +56,27 @@ export class PackageEntity implements SuperPackage {
         const packageEntity = new PackageEntity(path, packageJson);
 
         return packageEntity;
+    }
+
+    /**
+     * 从NPM包信息创建实体
+     * @param npmPackage NPM包信息
+     * @returns 实体
+     */
+    public static fromNpmPackage(npmPackage: PackageJson): PackageEntity {
+        const packageEntity = new PackageEntity(npmPackage.name, npmPackage);
+        return packageEntity;
+    }
+
+    /**
+     * 获取插件实体
+     * @returns 插件实体
+     */
+    public getPlugin(): PluginEntity | null {
+        if (!this.packageJson) {
+            return null;
+        }
+
+        return PluginEntity.fromPackage(this.packageJson, this.type);
     }
 }

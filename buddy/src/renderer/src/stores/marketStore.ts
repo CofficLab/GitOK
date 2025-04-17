@@ -1,18 +1,19 @@
 
 import { defineStore } from 'pinia';
 import { logger } from '../utils/logger';
-import { pluginsAPI } from '../api/market-ipc';
+import { marketIpc } from '../ipc/market-ipc';
 import { SuperPlugin } from '@coffic/buddy-types';
+import { SendablePlugin } from '@/types/sendable-plugin';
 
 const verbose = false;
 
 interface MarketState {
     userPluginDirectory: string;
     error: string;
-    userPlugins: SuperPlugin[];
-    devPlugins: SuperPlugin[];
-    pluginsWithPage: SuperPlugin[];
-    remotePlugins: SuperPlugin[];
+    userPlugins: SendablePlugin[];
+    devPlugins: SendablePlugin[];
+    pluginsWithPage: SendablePlugin[];
+    remotePlugins: SendablePlugin[];
     loadingPlugins: boolean;
     loadingRemotePlugins: boolean;
     downloadingPlugins: Set<string>;
@@ -50,7 +51,7 @@ export const useMarketStore = defineStore('market', {
             this.loadingPlugins = true;
 
             try {
-                const response = await pluginsAPI.getDevPlugins();
+                const response = await marketIpc.getDevPlugins();
 
                 if (verbose) {
                     logger.info('get dev plugins, with count', response.data?.length);
@@ -77,7 +78,7 @@ export const useMarketStore = defineStore('market', {
             this.loadingPlugins = true;
 
             try {
-                const response = await pluginsAPI.getUserPlugins();
+                const response = await marketIpc.getUserPlugins();
                 if (response.success && response.data) {
                     this.userPlugins = response.data || [];
                 } else {
@@ -96,7 +97,7 @@ export const useMarketStore = defineStore('market', {
         // 更新用户插件目录
         async updateUserPluginDirectory() {
             try {
-                const response = (await pluginsAPI.getUserPluginDirectory())
+                const response = (await marketIpc.getUserPluginDirectory())
 
                 if (response.success && response.data) {
                     this.userPluginDirectory = response.data;
@@ -113,7 +114,7 @@ export const useMarketStore = defineStore('market', {
         },
 
         // 下载插件
-        async downloadPlugin(plugin: SuperPlugin) {
+        async downloadPlugin(plugin: SendablePlugin) {
             if (this.downloadingPlugins.has(plugin.id)) {
                 return; // 避免重复下载
             }
@@ -123,7 +124,7 @@ export const useMarketStore = defineStore('market', {
                 this.downloadingPlugins.add(plugin.id);
 
                 // 调用主进程下载插件
-                const response = (await pluginsAPI.downloadPlugin(plugin.id));
+                const response = (await marketIpc.downloadPlugin(plugin.id));
 
                 // 更新下载状态
                 this.downloadingPlugins.delete(plugin.id);
@@ -156,7 +157,7 @@ export const useMarketStore = defineStore('market', {
                 this.uninstallingPlugins.add(plugin.id);
 
                 // 调用主进程卸载插件
-                const response = (await pluginsAPI.uninstallPlugin(plugin.id));
+                const response = (await marketIpc.uninstallPlugin(plugin.id));
 
                 // 更新卸载状态
                 this.uninstallingPlugins.delete(plugin.id);
@@ -184,9 +185,10 @@ export const useMarketStore = defineStore('market', {
             if (this.loadingRemotePlugins) return;
 
             this.loadingRemotePlugins = true;
+
             try {
                 // 调用主进程方法获取远程插件列表
-                const response = await pluginsAPI.getRemotePlugins();
+                const response = await marketIpc.getRemotePlugins();
 
                 if (response.success) {
                     this.remotePlugins = response.data || [];

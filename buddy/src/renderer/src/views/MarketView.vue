@@ -18,7 +18,6 @@ import { globalToast } from '../composables/useToast'
 import { useMarketStore } from '../stores/marketStore'
 import { useDirectory } from '../composables/useDirectory'
 import { useAlert } from '../composables/useAlert'
-import { logger } from '@renderer/utils/logger'
 
 const { openDirectory } = useDirectory()
 const { error } = useAlert()
@@ -49,8 +48,6 @@ const shouldShowEmpty = computed(() => {
 
 // 刷新按钮点击事件
 const handleRefresh = async () => {
-    logger.info('handleRefresh')
-
     switch (activeTab.value) {
         case "remote":
             await marketStore.loadRemotePlugins()
@@ -67,7 +64,7 @@ const handleRefresh = async () => {
             return;
     }
 
-    globalToast.success('刷新成功', { duration: 2000, position: 'bottom-center' })
+    globalToast.success(`刷新成功(${activeTab.value})`, { duration: 2000, position: 'bottom-center' })
 }
 
 // 清除单个插件的卸载错误状态

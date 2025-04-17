@@ -2,12 +2,13 @@
 import { IpcRoute } from '../provider/RouterService.js';
 import { logger } from '../managers/LogManager.js';
 import { userPluginDB } from '../db/UserPackageDB.js';
-import { remotePluginDB } from '../db/RemotePluginDB.js';
+import { remotePluginDB } from '../db/RemoteDB.js';
 import { packageDownloaderDB as Downloader } from '../service/Downloader.js';
 import * as fs from 'fs';
 import * as path from 'path';
 import { devPluginDB } from '../db/DevPluginDB.js';
-import { IPC_METHODS, IpcResponse, SuperPackage, SuperPlugin } from '@coffic/buddy-types';
+import { IPC_METHODS, IpcResponse } from '@coffic/buddy-types';
+import { SendablePlugin } from '@/types/sendable-plugin.js';
 
 /**
  * 插件商店相关的IPC路由配置
@@ -22,9 +23,9 @@ export const marketRoutes: IpcRoute[] = [
     },
     {
         channel: IPC_METHODS.GET_USER_PLUGINS,
-        handler: async (): Promise<IpcResponse<SuperPackage[]>> => {
+        handler: async (): Promise<IpcResponse<SendablePlugin[]>> => {
             try {
-                const plugins = await userPluginDB.getAllPackages();
+                const plugins = await userPluginDB.getAllPlugins();
                 return { success: true, data: plugins };
             } catch (error) {
                 const errorMessage =
@@ -36,9 +37,9 @@ export const marketRoutes: IpcRoute[] = [
     },
     {
         channel: IPC_METHODS.GET_DEV_PLUGINS,
-        handler: async (): Promise<IpcResponse<SuperPackage[]>> => {
+        handler: async (): Promise<IpcResponse<SendablePlugin[]>> => {
             try {
-                const plugins = await devPluginDB.getAllPackages();
+                const plugins = await devPluginDB.getAllPlugins();
                 return { success: true, data: plugins };
             } catch (error) {
                 const errorMessage =
@@ -50,9 +51,9 @@ export const marketRoutes: IpcRoute[] = [
     },
     {
         channel: IPC_METHODS.GET_REMOTE_PLUGINS,
-        handler: async (): Promise<IpcResponse<SuperPlugin[]>> => {
+        handler: async (): Promise<IpcResponse<SendablePlugin[]>> => {
             try {
-                const plugins = await remotePluginDB.getRemotePlugins();
+                const plugins = await remotePluginDB.getPlugins();
                 return { success: true, data: plugins };
             } catch (error) {
                 const errorMessage =
@@ -66,7 +67,7 @@ export const marketRoutes: IpcRoute[] = [
         channel: IPC_METHODS.DOWNLOAD_PLUGIN,
         handler: async (_, pluginId: string): Promise<IpcResponse<boolean>> => {
             try {
-                const userPluginDir = userPluginDB.getPluginDirectory();
+                const userPluginDir = userPluginDB.getRootDir();
                 if (!fs.existsSync(userPluginDir)) {
                     fs.mkdirSync(userPluginDir, { recursive: true });
                 }
@@ -116,7 +117,7 @@ export const marketRoutes: IpcRoute[] = [
         handler: (): IpcResponse<string> => {
             return {
                 success: true,
-                data: userPluginDB.getPluginDirectory(),
+                data: userPluginDB.getRootDir(),
             };
         },
     },

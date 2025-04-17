@@ -5,17 +5,17 @@
 
 import { join } from 'path';
 import { readPackageJson, hasPackageJson } from '../utils/PackageUtils.js';
-import { NpmPackage } from '../service/NpmRegistryService.js';
 import { logger } from '../managers/LogManager.js';
-import { SuperPackage, PluginStatus, PluginType, SuperPlugin, ValidationResult } from '@coffic/buddy-types';
-
+import { PluginStatus, PluginType, ValidationResult } from '@coffic/buddy-types';
+import { SendablePlugin } from '@/types/sendable-plugin.js';
+import { PackageJson } from '@/types/package-json.js';
 const verbose = false;
 
 /**
  * 插件实体类
  * 实现了 Plugin 接口，提供了额外的状态管理功能
  */
-export class PluginEntity implements SuperPlugin {
+export class PluginEntity implements SendablePlugin {
     // 基本信息
     id: string;
     name: string;
@@ -25,8 +25,7 @@ export class PluginEntity implements SuperPlugin {
     main: string;
     pagePath?: string;
     hasPage: boolean = false;
-
-    // 路径信息
+    validationError: string | null = null;
     path: string;
     type: PluginType;
 
@@ -69,47 +68,15 @@ export class PluginEntity implements SuperPlugin {
      * @param npmPackage NPM包信息
      * @returns 插件实体
      */
-    public static fromNpmPackage(npmPackage: NpmPackage, type: PluginType): PluginEntity {
-        // 创建一个基本的PluginPackage对象
-        const pkg: SuperPackage = {
-            name: npmPackage.name,
-            version: npmPackage.version,
-            description: npmPackage.description || '',
-            author: npmPackage.publisher?.username ||
-                npmPackage.maintainers?.[0]?.name ||
-                'unknown',
-            main: 'index.js', // 默认主文件
-            license: 'MIT', // 默认许可证
-            dependencies: {}, // 空依赖
-            devDependencies: {}, // 空开发依赖
-            scripts: {}, // 空脚本
-            keywords: npmPackage.keywords || [], // 关键词
-            repository: npmPackage.links?.repository || '', // 仓库链接，确保是字符串类型
-            page: npmPackage.page, // 插件页面视图路径
-        };
-
+    public static fromPackage(npmPackage: PackageJson, type: PluginType): PluginEntity {
         // 创建插件实体
-        const plugin = new PluginEntity(pkg, '', type);
+        const plugin = new PluginEntity(npmPackage, '', type);
 
         // 使用NPM包中的名称作为显示名称（如果有的话）
         if (npmPackage.name) {
             // 格式化名称，移除作用域前缀和常见插件前缀
             plugin.name = PluginEntity.formatPluginName(npmPackage.name);
         }
-
-        // 检查是否包含buddy-plugin关键词或是@coffic作用域下的包
-        plugin.isBuddyPlugin = (
-            (pkg.name.includes('buddy-plugin') ||
-                pkg.name.includes('plugin-') ||
-                pkg.name.startsWith('@coffic/')) &&
-            // 检查关键词
-            pkg.keywords &&
-            Array.isArray(pkg.keywords) &&
-            (pkg.keywords.includes('buddy-plugin') ||
-                pkg.keywords.includes('buddy') ||
-                pkg.keywords.includes('gitok') ||
-                pkg.keywords.includes('plugin'))
-        );
 
         return plugin;
     }
@@ -144,17 +111,15 @@ export class PluginEntity implements SuperPlugin {
      * @param path 插件路径
      * @param type 插件类型
      */
-    constructor(pkg: SuperPackage, path: string, type: PluginType) {
+    constructor(pkg: PackageJson, path: string, type: PluginType) {
         this.id = pkg.name;
         this.name = pkg.name;
         this.description = pkg.description || '';
         this.version = pkg.version || '0.0.0';
         this.author = pkg.author || '';
-        this.main = pkg.main;
+        this.main = pkg.main || '';
         this.path = path;
         this.type = type;
-        this.pagePath = path + '/' + pkg.page;
-        this.hasPage = !!pkg.page;
     }
 
     /**
@@ -222,7 +187,7 @@ export class PluginEntity implements SuperPlugin {
      * @param pkg package.json 内容
      * @returns 验证结果
      */
-    private validatePackage(pkg: SuperPackage): ValidationResult {
+    private validatePackage(pkg: PackageJson): ValidationResult {
         const errors: string[] = [];
 
         // 检查基本字段
