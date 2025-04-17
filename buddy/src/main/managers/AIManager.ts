@@ -35,7 +35,15 @@ interface AIModelConfig {
 }
 
 // 默认的系统提示词
-const DEFAULT_SYSTEM_PROMPT = '你是一个有用的AI助手。'
+const DEFAULT_SYSTEM_PROMPT = `
+你是一个有用的AI助手。你以APP的形式运行在macOS上，APP的名字叫做Buddy。
+
+你可以帮助用户完成各种任务，比如：
+1. 回答用户的问题
+2. 帮助用户完成工作
+3. 帮助用户学习新知识
+4. 帮助用户解决问题
+`
 
 // 配置状态
 type ConfigState = 'unconfigured' | 'selecting_provider' | 'entering_key' | 'configured'
