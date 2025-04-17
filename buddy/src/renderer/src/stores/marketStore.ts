@@ -1,11 +1,8 @@
 
 import { defineStore } from 'pinia';
-import { logger } from '../utils/logger';
 import { marketIpc } from '../ipc/market-ipc';
-import { SuperPlugin } from '@coffic/buddy-types';
 import { SendablePlugin } from '@/types/sendable-plugin';
-
-const verbose = false;
+import { logger } from '../utils/logger';
 
 interface MarketState {
     userPluginDirectory: string;
@@ -65,6 +62,8 @@ export const useMarketStore = defineStore('market', {
 
         // 加载用户插件列表
         async loadUserPlugins(): Promise<void> {
+            logger.debug('加载用户插件列表')
+
             this.loadingPlugins = true;
 
             try {
@@ -96,65 +95,24 @@ export const useMarketStore = defineStore('market', {
                 return; // 避免重复下载
             }
 
-            try {
-                // 设置下载中状态
-                this.downloadingPlugins.add(plugin.id);
-
-                // 调用主进程下载插件
-                const response = (await marketIpc.downloadPlugin(plugin.id));
-
-                // 更新下载状态
-                this.downloadingPlugins.delete(plugin.id);
-
-                if (response) {
-                    // 刷新插件列表
-                    await this.loadUserPlugins();
-                } else {
-                    console.error(
-                        `插件 "${plugin.name}" 下载失败: ${response || '未知错误'}`
-                    );
-                }
-            } catch (error) {
-                this.downloadingPlugins.delete(plugin.id);
-                const errorMsg = error instanceof Error ? error.message : String(error);
-
-                // 同时在全局显示错误信息，方便用户复制
-                console.error(`插件 "${plugin.name}" 下载失败: ${errorMsg}`);
-            }
+            this.downloadingPlugins.add(plugin.id);
+            await marketIpc.downloadPlugin(plugin.id);
+            this.downloadingPlugins.delete(plugin.id);
+            await this.loadUserPlugins();
         },
 
         // 卸载插件
-        async uninstallPlugin(plugin: SuperPlugin) {
-            if (this.uninstallingPlugins.has(plugin.id)) {
+        async uninstallPlugin(pluginId: string) {
+            if (this.uninstallingPlugins.has(pluginId)) {
                 return; // 避免重复操作
             }
 
-            try {
-                // 设置卸载中状态
-                this.uninstallingPlugins.add(plugin.id);
+            this.uninstallingPlugins.add(pluginId);
+            await marketIpc.uninstallPlugin(pluginId);
+            this.uninstallingPlugins.delete(pluginId);
 
-                // 调用主进程卸载插件
-                const response = (await marketIpc.uninstallPlugin(plugin.id));
-
-                // 更新卸载状态
-                this.uninstallingPlugins.delete(plugin.id);
-
-                if (response) {
-                    // 刷新插件列表
-                    await this.loadUserPlugins();
-                } else {
-                    // 显示全局错误信息
-                    console.error(
-                        `插件 "${plugin.name}" 卸载失败: ${response || '未知错误'}`
-                    );
-                }
-            } catch (error) {
-                this.uninstallingPlugins.delete(plugin.id);
-                const errorMsg = error instanceof Error ? error.message : String(error);
-
-                // 显示全局错误信息
-                console.error(`插件 "${plugin.name}" 卸载失败: ${errorMsg}`);
-            }
+            logger.debug('卸载插件后刷新插件列表', pluginId)
+            await this.loadUserPlugins();
         },
 
         // 加载远程插件列表

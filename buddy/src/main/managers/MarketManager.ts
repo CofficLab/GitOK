@@ -14,7 +14,7 @@ export class MarketManager {
      * @param pluginId 插件ID
      * @returns 安装是否成功
      */
-    public async downloadAndInstallPlugin(pluginId: string): Promise<boolean> {
+    public async downloadAndInstallPlugin(pluginId: string): Promise<void> {
         try {
             const userPluginDir = userPluginDB.getRootDir();
             if (!fs.existsSync(userPluginDir)) {
@@ -32,15 +32,11 @@ export class MarketManager {
 
             await packageDownloaderDB.downloadAndExtractPackage(pluginId, pluginDir);
             await userPluginDB.getAllPlugins();
-            logger.info(`${pluginId} installed`);
-            return true;
         } catch (error) {
             const errorMessage = error instanceof Error ? error.message : String(error);
             logger.error('下载插件失败', {
                 error: errorMessage,
-                pluginName: pluginId,
                 pluginId: pluginId,
-                npmPackage: pluginId,
             });
             throw error;
         }
@@ -51,28 +47,21 @@ export class MarketManager {
      * @param pluginId 插件ID
      * @returns 卸载是否成功
      */
-    public async uninstallPlugin(pluginId: string): Promise<boolean> {
+    public async uninstallPlugin(pluginId: string): Promise<void> {
         try {
             logger.info(`准备卸载插件: ${pluginId}`);
+
+            if (!pluginId) {
+                throw new Error('插件ID不能为空');
+            }
+
             const plugin = await userPluginDB.find(pluginId);
 
             if (!plugin) {
                 throw new Error(`找不到插件: ${pluginId}`);
             }
 
-            if (plugin.type !== 'user') {
-                throw new Error('无法卸载开发中的插件');
-            }
-
-            const pluginPath = plugin.path;
-            if (!pluginPath || !fs.existsSync(pluginPath)) {
-                throw new Error('插件目录不存在');
-            }
-
-            logger.info(`删除插件目录: ${pluginPath}`);
-            fs.rmdirSync(pluginPath, { recursive: true });
-            logger.info(`插件 ${pluginId} 卸载成功`);
-            return true;
+            plugin.uninstall();
         } catch (error) {
             const errorMessage = error instanceof Error ? error.message : String(error);
             logger.error(`卸载插件失败: ${errorMessage}`, { pluginId });

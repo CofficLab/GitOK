@@ -33,8 +33,8 @@ export const marketHandler: IpcRoute[] = [
     },
     {
         channel: IPC_METHODS.DOWNLOAD_PLUGIN,
-        handler: async (_, pluginId: string): Promise<boolean> => {
-            return await marketManager.downloadAndInstallPlugin(pluginId);
+        handler: async (_, pluginId: string): Promise<void> => {
+            await marketManager.downloadAndInstallPlugin(pluginId);
         },
     },
     {
@@ -45,8 +45,8 @@ export const marketHandler: IpcRoute[] = [
     },
     {
         channel: IPC_METHODS.UNINSTALL_PLUGIN,
-        handler: async (_, pluginId: string): Promise<boolean> => {
-            return await marketManager.uninstallPlugin(pluginId);
+        handler: async (_, pluginId: string): Promise<void> => {
+            await marketManager.uninstallPlugin(pluginId);
         },
     },
 ];

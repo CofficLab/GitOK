@@ -74,16 +74,20 @@ const confirmUninstall = async () => {
 const handleUninstall = async () => {
     isUninstalling.value = true
 
-    // 卸载完成后触发动画
-    setTimeout(() => {
-        // 判断是否成功卸载
-        if (props.uninstallSuccess?.has(props.plugin.id)) {
-            uninstallComplete.value = true
-        }
-        isUninstalling.value = false
+    try {
+        await marketStore.uninstallPlugin(props.plugin.id)
 
-        globalToast.success('插件已卸载')
-    }, 500)
+        // 卸载完成后触发动画
+        setTimeout(() => {
+            globalToast.success('插件已卸载')
+        }, 500)
+    } catch (err) {
+        globalToast.error('卸载失败' + err)
+        return
+    } finally {
+        isUninstalling.value = false
+        uninstallComplete.value = false
+    }
 }
 </script>
 

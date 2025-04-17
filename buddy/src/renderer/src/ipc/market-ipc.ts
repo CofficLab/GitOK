@@ -21,13 +21,13 @@ export const marketIpc = {
 	},
 
 	// 下载插件
-	async downloadPlugin(pluginId: string): Promise<boolean> {
-		return await ipc.invoke(IPC_METHODS.DOWNLOAD_PLUGIN, pluginId);
+	async downloadPlugin(pluginId: string): Promise<void> {
+		await ipc.invoke(IPC_METHODS.DOWNLOAD_PLUGIN, pluginId);
 	},
 
 	// 卸载插件
-	async uninstallPlugin(pluginId: string): Promise<boolean> {
-		return await ipc.invoke(IPC_METHODS.UNINSTALL_PLUGIN, pluginId);
+	async uninstallPlugin(pluginId: string): Promise<void> {
+		await ipc.invoke(IPC_METHODS.UNINSTALL_PLUGIN, pluginId);
 	},
 
 	// 获取远程插件列表

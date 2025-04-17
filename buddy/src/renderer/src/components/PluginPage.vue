@@ -2,10 +2,11 @@
 import { onMounted, nextTick, ref, onUnmounted, watch } from 'vue'
 import { logger } from '../utils/logger'
 import { viewIpc } from '../ipc/view-ipc'
-import { createViewArgs, SuperPlugin } from '@coffic/buddy-types';
+import { createViewArgs } from '@coffic/buddy-types';
+import { SendablePlugin } from '@/types/sendable-plugin';
 
 interface Props {
-    plugin: SuperPlugin
+    plugin: SendablePlugin
 }
 
 const props = defineProps<Props>()
