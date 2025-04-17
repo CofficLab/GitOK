@@ -94,7 +94,7 @@ export class RemoteDB {
     private async searchPackages(): Promise<PackageEntity[]> {
         try {
             const packages = await npmRegistryService.searchPackagesByKeyword('buddy-plugin');
-            return packages.map((pkg: PackageJson) => PackageEntity.fromNpmPackage(pkg));
+            return packages.map((pkg: PackageJson) => PackageEntity.fromNpmPackage(pkg, 'remote'));
         } catch (error) {
             logger.error(
                 `搜索包失败: ${error instanceof Error ? error.message : String(error)}`

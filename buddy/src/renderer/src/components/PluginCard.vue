@@ -9,7 +9,6 @@ import { globalConfirm } from '@renderer/composables/useConfirm'
 import { useMarketStore } from '@renderer/stores/marketStore'
 import { globalToast } from '@renderer/composables/useToast'
 import { marketIpc } from '../ipc/market-ipc'
-import { SuperPlugin } from '@coffic/buddy-types'
 import { SendablePlugin } from '@/types/sendable-plugin'
 
 const props = defineProps<{

@@ -22,7 +22,7 @@ export class PackageEntity {
     packageJson?: PackageJson;
     id: string;
 
-    constructor(path: string, packageJson?: PackageJson) {
+    constructor(path: string, pluginType: PluginType, packageJson?: PackageJson) {
         this.path = path;
         this.packageJson = packageJson;
         this.name = packageJson?.name || '';
@@ -30,7 +30,7 @@ export class PackageEntity {
         this.version = packageJson?.version || '';
         this.author = packageJson?.author || '';
         this.main = packageJson?.main || '';
-        this.type = 'user';
+        this.type = pluginType;
         this.validation = null;
         this.id = packageJson?.name || '';
     }
@@ -63,8 +63,8 @@ export class PackageEntity {
      * @param npmPackage NPM包信息
      * @returns 实体
      */
-    public static fromNpmPackage(npmPackage: PackageJson): PackageEntity {
-        const packageEntity = new PackageEntity(npmPackage.name, npmPackage);
+    public static fromNpmPackage(npmPackage: PackageJson, pluginType: PluginType): PackageEntity {
+        const packageEntity = new PackageEntity(npmPackage.name, pluginType, npmPackage);
         return packageEntity;
     }
 

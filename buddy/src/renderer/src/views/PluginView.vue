@@ -295,7 +295,6 @@ onMounted(() => {
             <button @click="goBack" class="flex items-center text-blue-500 hover:text-blue-700">
                 <span class="mr-1">←</span> 返回
             </button>
-            <h2 v-if="selectedAction" class="text-xl font-semibold ml-4">{{ selectedAction.title }}</h2>
         </div>
 
         <!-- 加载中状态 -->
@@ -315,7 +314,7 @@ onMounted(() => {
             :class="{ 'hidden': !embeddedViewState.isAttached }"
             style="min-height: 400px; position: relative; z-index: 1;">
             <div class="debug-info p-4 text-xs text-gray-500">
-                <div><strong>视图信息:</strong> {{ selectedAction?.title }} ({{ selectedAction?.id }})</div>
+                <div><strong>视图信息:</strong> ({{ selectedAction?.id }})</div>
                 <div><strong>视图模式:</strong> 内嵌式BrowserView</div>
                 <div><strong>视图ID:</strong> {{ embeddedViewState.id }}</div>
                 <div v-if="embeddedViewState.isVisible"><strong>状态:</strong> 可见</div>
