@@ -1,9 +1,5 @@
 const fs = require('fs');
 const path = require('path');
-import {
-  SuperPlugin,
-  SuperAction,
-} from '@coffic/buddy-types';
 
 // 日志函数
 const log = {
@@ -19,7 +15,7 @@ const log = {
 };
 
 // 插件信息
-const plugin: SuperPlugin = {
+const plugin = {
   name: '示例插件',
   description: '这是一个示例插件，演示如何创建GitOK插件',
   version: '1.0.0',

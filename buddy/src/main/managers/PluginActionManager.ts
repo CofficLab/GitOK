@@ -108,14 +108,8 @@ class PluginActionManager extends BaseManager {
               }
               : String(error);
 
-          logger.error(`插件 ${plugin.id} 执行失败`, {
+          logger.error(`插件 ${plugin.id} 获取动作失败`, {
             error: errorDetail,
-            pluginInfo: {
-              id: plugin.id,
-              name: plugin.name,
-              version: plugin.version,
-              path: plugin.path,
-            },
           });
 
           // 记录错误但继续处理其他插件

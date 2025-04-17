@@ -48,23 +48,27 @@ const shouldShowEmpty = computed(() => {
 
 // 刷新按钮点击事件
 const handleRefresh = async () => {
-    switch (activeTab.value) {
-        case "remote":
-            await marketStore.loadRemotePlugins()
-            break;
-        case "user":
-            await marketStore.loadUserPlugins()
-            break;
-        case "dev":
-            await marketStore.loadDevPlugins()
-            break;
+    try {
+        switch (activeTab.value) {
+            case "remote":
+                await marketStore.loadRemotePlugins()
+                break;
+            case "user":
+                await marketStore.loadUserPlugins()
+                break;
+            case "dev":
+                await marketStore.loadDevPlugins()
+                break;
 
-        default:
-            error('未知标签')
-            return;
+            default:
+                error('未知标签')
+                return;
+        }
+
+        globalToast.success(`刷新成功(${activeTab.value})`, { duration: 2000, position: 'bottom-center' })
+    } catch (err) {
+        error('刷新失败' + err)
     }
-
-    globalToast.success(`刷新成功(${activeTab.value})`, { duration: 2000, position: 'bottom-center' })
 }
 
 // 清除单个插件的卸载错误状态

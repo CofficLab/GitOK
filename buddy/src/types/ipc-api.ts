@@ -3,8 +3,6 @@
  * 提供基本的进程间通信功能的接口
  */
 
-import { IpcResponse } from "./ipc-response.js";
-
 export interface IpcApi {
   /**
    * 向主进程发送消息
@@ -26,7 +24,7 @@ export interface IpcApi {
    * @param args 要发送的参数
    * @returns 主进程返回的响应
    */
-  invoke: (channel: string, ...args: unknown[]) => Promise<IpcResponse<unknown>>;
+  invoke: (channel: string, ...args: unknown[]) => Promise<unknown>;
 
   /**
    * 移除消息监听器

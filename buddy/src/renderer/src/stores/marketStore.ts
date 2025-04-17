@@ -47,26 +47,16 @@ export const useMarketStore = defineStore('market', {
         },
 
         // 加载开发插件列表
-        async loadDevPlugins() {
+        async loadDevPlugins(): Promise<void> {
             this.loadingPlugins = true;
 
             try {
-                const response = await marketIpc.getDevPlugins();
-
-                if (verbose) {
-                    logger.info('get dev plugins, with count', response.data?.length);
-                }
-                if (response.success && response.data) {
-                    this.devPlugins = response.data || [];
-                } else {
-                    this.devPlugins = [];
-                    this.error = `加载插件列表失败: ${response.error || '未知错误'}`;
-                    logger.error('加载插件列表失败', response);
-                }
+                this.devPlugins = await marketIpc.getDevPlugins();
             } catch (err) {
                 const errorMsg = err instanceof Error ? err.message : String(err);
                 this.error = `加载插件列表失败: ${errorMsg}`;
                 console.error('Failed to load plugins:', err);
+                throw err;
             } finally {
                 this.loadingPlugins = false;
                 this.pluginsWithPage = this.devPlugins.filter(plugin => plugin.hasPage);
@@ -74,21 +64,16 @@ export const useMarketStore = defineStore('market', {
         },
 
         // 加载用户插件列表
-        async loadUserPlugins() {
+        async loadUserPlugins(): Promise<void> {
             this.loadingPlugins = true;
 
             try {
-                const response = await marketIpc.getUserPlugins();
-                if (response.success && response.data) {
-                    this.userPlugins = response.data || [];
-                } else {
-                    this.error = `加载插件列表失败: ${response.error || '未知错误'}`;
-                    console.error('加载插件列表失败', response);
-                }
+                this.userPlugins = await marketIpc.getUserPlugins();
             } catch (err) {
                 const errorMsg = err instanceof Error ? err.message : String(err);
                 this.error = `加载插件列表失败: ${errorMsg}`;
                 console.error('Failed to load plugins:', err);
+                throw err;
             } finally {
                 this.loadingPlugins = false;
             }
@@ -97,15 +82,7 @@ export const useMarketStore = defineStore('market', {
         // 更新用户插件目录
         async updateUserPluginDirectory() {
             try {
-                const response = (await marketIpc.getUserPluginDirectory())
-
-                if (response.success && response.data) {
-                    this.userPluginDirectory = response.data;
-                } else {
-                    this.error = `加载目录信息失败: ${response.error || '未知错误'}`;
-                    console.error('加载目录信息失败', response);
-                    console.error(response);
-                }
+                this.userPluginDirectory = await marketIpc.getUserPluginDirectory()
             } catch (error) {
                 const errorMsg = error instanceof Error ? error.message : String(error);
                 this.error = `加载目录信息失败: ${errorMsg}`;
@@ -129,12 +106,12 @@ export const useMarketStore = defineStore('market', {
                 // 更新下载状态
                 this.downloadingPlugins.delete(plugin.id);
 
-                if (response.success) {
+                if (response) {
                     // 刷新插件列表
                     await this.loadUserPlugins();
                 } else {
                     console.error(
-                        `插件 "${plugin.name}" 下载失败: ${response.error || '未知错误'}`
+                        `插件 "${plugin.name}" 下载失败: ${response || '未知错误'}`
                     );
                 }
             } catch (error) {
@@ -162,13 +139,13 @@ export const useMarketStore = defineStore('market', {
                 // 更新卸载状态
                 this.uninstallingPlugins.delete(plugin.id);
 
-                if (response.success) {
+                if (response) {
                     // 刷新插件列表
                     await this.loadUserPlugins();
                 } else {
                     // 显示全局错误信息
                     console.error(
-                        `插件 "${plugin.name}" 卸载失败: ${response.error || '未知错误'}`
+                        `插件 "${plugin.name}" 卸载失败: ${response || '未知错误'}`
                     );
                 }
             } catch (error) {
@@ -190,11 +167,7 @@ export const useMarketStore = defineStore('market', {
                 // 调用主进程方法获取远程插件列表
                 const response = await marketIpc.getRemotePlugins();
 
-                if (response.success) {
-                    this.remotePlugins = response.data || [];
-                } else {
-                    throw new Error(response.error);
-                }
+                this.remotePlugins = response;
             } catch (err) {
                 throw err;
             } finally {

@@ -1,6 +1,5 @@
 
 export * from './contact/api-ai.js'
-export * from './contact/api-message.js';
 export * from './contact/app-events.js';
 export * from './contact/args.js';
 export * from './contact/ipc-methods.js';
