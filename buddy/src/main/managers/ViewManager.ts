@@ -8,7 +8,7 @@ import { join } from 'path';
 import { logger } from './LogManager.js';
 import { createViewArgs, ViewBounds } from '@coffic/buddy-types';
 
-const verbose = false;
+const verbose = true;
 
 export class ViewManager {
     private views: Map<string, WebContentsView> = new Map();

@@ -3,7 +3,6 @@ import { ref, watch, onUnmounted, reactive, onMounted, nextTick, computed } from
 import { useActionStore } from '@renderer/stores/actionStore'
 import { logger } from '@renderer/utils/logger'
 import { ViewBounds } from '@coffic/buddy-types'
-import { pluginIpc } from '../ipc/plugin-ipc'
 import { SendableAction } from '@/types/sendable-action'
 import { viewIpc } from '../ipc/view-ipc'
 
@@ -48,8 +47,7 @@ const loadAndExecuteAction = async () => {
     actionResult.value = null
 
     // 如果有之前打开的视图，关闭它
-    await closePluginWindow()
-    await destroyEmbeddedView()
+    await destroyViews()
 
     // 查找动作信息
     const action = actionStore.find(actionId)
@@ -66,7 +64,7 @@ const loadAndExecuteAction = async () => {
             const viewMode = action.viewMode || 'embedded' // 默认使用内嵌模式
 
             if (viewMode === 'window') {
-                await openPluginWindow(actionId, action)
+                await openPluginWindow(action)
             } else {
                 await createEmbeddedView(actionId, action)
             }
@@ -138,34 +136,9 @@ const createEmbeddedView = async (actionId: string, action: SendableAction) => {
         logger.info(`PluginView: 创建嵌入式视图: ${embeddedViewState.id}，容器边界: ${bounds}`)
 
         try {
-            // 首先创建嵌入式视图
-            const mainWindowBounds = await viewIpc.upsertView(action.viewPath!, bounds)
-
-            logger.info(`PluginView: 嵌入式视图已创建，主窗口边界`, mainWindowBounds)
-
-            // 现在显示嵌入式视图，传递容器边界
-            const showResult = await pluginIpc.showView(embeddedViewState.id, bounds)
-            if (!showResult) {
-                throw new Error('显示嵌入式视图失败')
-            }
-
-            logger.info(`PluginView: 嵌入式视图已显示，边界`, bounds)
+            await viewIpc.upsertView(action.viewPath!, bounds)
             embeddedViewState.isVisible = true
-
-            // 如果动作指定了开启开发者工具，则自动打开
-            if (action.devTools) {
-                setTimeout(async () => {
-                    try {
-                        logger.info(`PluginView: 准备打开开发者工具`, embeddedViewState.id)
-                        const result = await pluginIpc.toggleDevTools(embeddedViewState.id)
-                        logger.info(`PluginView: 开发者工具打开结果`, result)
-                    } catch (devToolsError) {
-                        logger.error(`PluginView: 打开开发者工具失败`, devToolsError)
-                    }
-                }, 1000)
-            }
         } catch (viewError) {
-            // 处理视图创建或显示过程中的错误
             logger.error(`PluginView: 视图操作失败: ${viewError}`);
             throw viewError;
         }
@@ -182,35 +155,30 @@ const createEmbeddedView = async (actionId: string, action: SendableAction) => {
     }
 }
 
-// 销毁嵌入式视图
-const destroyEmbeddedView = async () => {
-    if (embeddedViewState.id) {
-        try {
-            await pluginIpc.destroyView(embeddedViewState.id)
-            logger.info(`PluginView: 嵌入式视图已销毁: ${embeddedViewState.id}`)
-        } catch (error) {
-            logger.error(`PluginView: 销毁嵌入式视图失败: ${error}`)
-        } finally {
-            embeddedViewState.id = ''
-            embeddedViewState.isAttached = false
-            embeddedViewState.isVisible = false
-            embeddedViewState.content = ''
-        }
+// 销毁视图
+const destroyViews = async () => {
+    try {
+        await viewIpc.destroyViews()
+        logger.info(`PluginView: 视图已销毁: ${embeddedViewState.id}`)
+    } catch (error) {
+        logger.error(`PluginView: 销毁视图失败: ${error}`)
+    } finally {
+        embeddedViewState.id = ''
+        embeddedViewState.isAttached = false
+        embeddedViewState.isVisible = false
+        embeddedViewState.content = ''
     }
 }
 
 // 在独立窗口中打开插件视图
-const openPluginWindow = async (actionId: string, _action: SendableAction) => {
+const openPluginWindow = async (action: SendableAction) => {
     try {
-        // 使用动作ID作为视图ID
-        pluginViewState.id = `plugin-view-${actionId}`
-
         // 获取主窗口位置和大小以便设置插件窗口的位置
-        await viewIpc.upsertView(pluginViewState.id, {
-            x: 0,
-            y: 0,
-            width: 0,
-            height: 0,
+        await viewIpc.upsertView(action.viewPath!, {
+            x: 100,
+            y: 100,
+            width: 200,
+            height: 200,
         })
     } catch (error) {
         const errorMsg = error instanceof Error ? error.message : String(error)
@@ -220,25 +188,9 @@ const openPluginWindow = async (actionId: string, _action: SendableAction) => {
     }
 }
 
-// 关闭插件视图窗口
-const closePluginWindow = async () => {
-    if (pluginViewState.isOpen && pluginViewState.id) {
-        try {
-            await pluginIpc.destroyView(pluginViewState.id)
-            console.log(`PluginView: 插件视图窗口已关闭: ${pluginViewState.id}`)
-        } catch (error) {
-            console.error(`PluginView: 关闭插件视图窗口失败:`, error)
-        } finally {
-            pluginViewState.isOpen = false
-            pluginViewState.id = ''
-        }
-    }
-}
-
 // 返回动作列表
 const goBack = async () => {
-    await closePluginWindow()
-    await destroyEmbeddedView()
+    await destroyViews()
     emit('back')
 }
 
@@ -250,7 +202,7 @@ onUnmounted(() => {
     console.log('PluginView: 组件卸载，清理事件监听器');
 
     // 销毁嵌入式视图
-    destroyEmbeddedView();
+    destroyViews();
 
     // 清理所有监听器
     cleanupFunctions.forEach(cleanup => {
@@ -320,7 +272,7 @@ onMounted(() => {
             class="flex-1 flex flex-col items-center justify-center p-6 border rounded-lg border-blue-200 bg-blue-50">
             <p class="text-lg mb-4">插件视图已在独立窗口中打开</p>
             <p class="text-sm text-gray-600 mb-6">该窗口将在您返回动作列表或关闭此页面时自动关闭</p>
-            <button @click="closePluginWindow"
+            <button @click="destroyViews"
                 class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition">
                 关闭插件窗口
             </button>

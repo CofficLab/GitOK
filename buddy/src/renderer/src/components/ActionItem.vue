@@ -8,7 +8,6 @@ const actionStore = useActionStore()
 const props = defineProps<{
     action: SendableAction
     index: number
-    totalCount: number
 }>()
 
 const emit = defineEmits<{

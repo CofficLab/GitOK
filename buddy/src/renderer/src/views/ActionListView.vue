@@ -75,7 +75,7 @@ watch(() => actionStore.keyword, async () => {
             <!-- 动作列表 -->
             <ul v-else class="space-y-2">
                 <ActionItem v-for="(action, index) in actionStore.getActions()" :key="action.id" :action="action"
-                    :index="index" :total-count="actionStore.getActionCount()" @cancel="handleCancel"
+                    :index="index"  @cancel="handleCancel"
                     @navigate-up="handleNavigateUp(index)" @navigate-down="handleNavigateDown(index)" />
             </ul>
         </div>

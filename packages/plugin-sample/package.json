@@ -19,7 +19,7 @@
     "buddy-plugin"
   ],
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && cp -r src/views dist/",
     "dev": "tsc --watch",
     "prepublishOnly": "npm run build",
     "test": "echo \"Error: no test specified\" && exit 1"
