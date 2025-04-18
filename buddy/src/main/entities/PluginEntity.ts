@@ -9,6 +9,8 @@ import { logger } from '../managers/LogManager.js';
 import { PluginStatus, PluginType, ValidationResult } from '@coffic/buddy-types';
 import { SendablePlugin } from '@/types/sendable-plugin.js';
 import { PackageJson } from '@/types/package-json.js';
+import fs from 'fs';
+
 const verbose = false;
 
 /**
@@ -208,6 +210,20 @@ export class PluginEntity implements SendablePlugin {
         }
 
         return validation;
+    }
+
+    /**
+     * 卸载插件
+     */
+    uninstall(): void {
+        const pluginPath = this.path;
+        if (!pluginPath || !fs.existsSync(pluginPath)) {
+            throw new Error('插件目录不存在');
+        }
+
+        logger.debug(`删除插件目录: ${pluginPath}`);
+        fs.rmdirSync(pluginPath, { recursive: true });
+        logger.info(`插件 ${this.id} 卸载成功`);
     }
 
     /**

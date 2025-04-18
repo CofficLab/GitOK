@@ -7,6 +7,7 @@ import { join } from 'path';
 import { PluginEntity } from '../entities/PluginEntity.js';
 import { PackageDB } from './PackageDB.js';
 import { PluginType } from '@coffic/buddy-types';
+import { logger } from '../managers/LogManager.js';
 
 export class UserPackageDB extends PackageDB {
     private static instance: UserPackageDB;
@@ -45,6 +46,13 @@ export class UserPackageDB extends PackageDB {
      * @returns 插件是否存在
      */
     public async has(id: string): Promise<boolean> {
+        if (typeof id !== 'string') {
+            logger.error('插件ID必须是字符串, 但是传入的是', id);
+            throw new Error('插件ID必须是字符串');
+        }
+
+        logger.debug('检查插件是否存在', id)
+
         return (await this.getAllPlugins()).some((plugin) => plugin.id === id);
     }
 }

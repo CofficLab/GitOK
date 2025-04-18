@@ -30,14 +30,15 @@ const downloadComplete = ref(false)
 const isInstalled = ref(false)
 
 onMounted(() => {
-    marketIpc.has(props.plugin.id).then((res) => {
+    marketIpc.isInstalled(props.plugin.id).then((res) => {
         isInstalled.value = res
     })
 })
 
 // 计算卡片样式
 const cardClass = computed(() => {
-    if (props.plugin.type === 'remote') return 'bg-base-100'
+    if (props.plugin.type === 'remote') return 'bg-primary/10'
+    if (props.plugin.type === 'dev') return 'bg-secondary/40'
 
     return {
         'bg-base-100': props.plugin.status === 'inactive',
@@ -55,6 +56,7 @@ const handleDownload = async () => {
     await marketStore.downloadPlugin(props.plugin)
     isDownloading.value = false
     downloadComplete.value = true
+    isInstalled.value = true
 }
 
 // 显示卸载确认
@@ -74,16 +76,19 @@ const confirmUninstall = async () => {
 const handleUninstall = async () => {
     isUninstalling.value = true
 
-    // 卸载完成后触发动画
-    setTimeout(() => {
-        // 判断是否成功卸载
-        if (props.uninstallSuccess?.has(props.plugin.id)) {
-            uninstallComplete.value = true
-        }
-        isUninstalling.value = false
+    try {
+        await marketStore.uninstallPlugin(props.plugin.id)
 
-        globalToast.success('插件已卸载')
-    }, 500)
+        // 卸载完成后触发动画
+        setTimeout(() => {
+            globalToast.success('插件已卸载')
+        }, 500)
+    } catch (err) {
+        globalToast.error('卸载失败' + err)
+    } finally {
+        isUninstalling.value = false
+        uninstallComplete.value = false
+    }
 }
 </script>
 

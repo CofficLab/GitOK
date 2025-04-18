@@ -36,7 +36,6 @@ export interface DefaultConfig {
         apiHost?: string
         temperature: number
         maxTokens: number
-        systemPrompt: string
     }
     // 扩展的自定义配置，可以添加任意键值对
     [key: string]: any
@@ -59,7 +58,6 @@ const DEFAULT_CONFIG: DefaultConfig = {
         model: 'gpt-3.5-turbo',
         temperature: 0.7,
         maxTokens: 2000,
-        systemPrompt: '你是一个有用的AI助手。'
     }
 }
 
