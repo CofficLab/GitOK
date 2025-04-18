@@ -9,7 +9,7 @@ import { BrowserWindow, app, BrowserView, screen } from 'electron';
 import { is } from '@electron-toolkit/utils';
 import { join } from 'path';
 import { windowManager } from './WindowManager.js';
-import { pluginActionManager } from './PluginActionManager.js';
+import { pluginActionManager } from './ActionManager.js';
 import { BaseManager } from './BaseManager.js';
 import { logger } from './LogManager.js';
 import {

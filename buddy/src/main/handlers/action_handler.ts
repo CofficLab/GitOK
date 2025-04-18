@@ -1,6 +1,6 @@
 import { IpcRoute } from '../provider/RouterService.js';
 import { IPC_METHODS, IpcResponse, SuperAction } from '@coffic/buddy-types';
-import { pluginActionManager } from '../managers/PluginActionManager.js';
+import { pluginActionManager } from '../managers/ActionManager.js';
 import { logger } from '../managers/LogManager.js';
 
 /**
