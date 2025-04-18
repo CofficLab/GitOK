@@ -9,19 +9,12 @@
 */
 <script setup lang="ts">
 import { computed, watch, ref } from 'vue'
-import ActionItem from '@renderer/modules/ActionItem.vue'
+import ActionItem from '@/renderer/src/components/ActionItem.vue'
 import { useActionStore } from '@renderer/stores/actionStore'
 import { logger } from '@renderer/utils/logger'
-import { SuperAction } from '@coffic/buddy-types'
 
 const actionStore = useActionStore()
 const activeItemIndex = ref(-1)
-
-// 处理动作选择
-const handleActionSelected = (action: SuperAction) => {
-    logger.info('handleActionSelected 🍋', action.globalId);
-    actionStore.selectAction(action.globalId)
-}
 
 // 处理取消操作
 const handleCancel = () => {
@@ -82,9 +75,8 @@ watch(() => actionStore.keyword, async () => {
             <!-- 动作列表 -->
             <ul v-else class="space-y-2">
                 <ActionItem v-for="(action, index) in actionStore.getActions()" :key="action.id" :action="action"
-                    :index="index" :total-count="actionStore.getActionCount()" @select="handleActionSelected"
-                    @cancel="handleCancel" @navigate-up="handleNavigateUp(index)"
-                    @navigate-down="handleNavigateDown(index)" />
+                    :index="index" :total-count="actionStore.getActionCount()" @cancel="handleCancel"
+                    @navigate-up="handleNavigateUp(index)" @navigate-down="handleNavigateDown(index)" />
             </ul>
         </div>
     </div>

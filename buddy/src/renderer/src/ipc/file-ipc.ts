@@ -1,4 +1,5 @@
-import { IPC_METHODS, IpcResponse } from "@coffic/buddy-types";
+import { IpcResponse } from "@coffic/buddy-types";
+import { IPC_METHODS } from "@/types/ipc-methods.js";
 
 const ipc = window.ipc;
 

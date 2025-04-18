@@ -2,9 +2,9 @@ import { IpcRoute } from '@/main/provider/RouterService.js';
 import { userPluginDB } from '@/main/db/UserPackageDB.js';
 import { remotePluginDB } from '@/main/db/RemoteDB.js';
 import { devPluginDB } from '@/main/db/DevPluginDB.js';
-import { IPC_METHODS } from '@coffic/buddy-types';
 import { SendablePlugin } from '@/types/sendable-plugin.js';
 import { marketManager } from '@/main/managers/MarketManager.js';
+import { IPC_METHODS } from '@/types/ipc-methods.js';
 
 export const marketHandler: IpcRoute[] = [
     {

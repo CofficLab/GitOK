@@ -30,6 +30,14 @@ export interface GetActionsArgs {
 }
 
 /**
+ * 执行结果
+ */
+export interface ExecuteResult {
+    success: boolean;
+    message: string;
+}
+
+/**
  * 插件信息接口
  */
 export interface SuperPlugin {
@@ -89,7 +97,14 @@ export interface SuperPlugin {
      */
     pagePath?: string;
 
-    hasPage: boolean;
-
     getActions(args: GetActionsArgs): Promise<SuperAction[]>;
+
+    executeAction(actionId: string, keyword: string): Promise<ExecuteResult>;
+
+    /**
+     * 获取视图内容
+     * @param viewPath 视图路径
+     * @returns 视图内容
+     */
+    getViewContent(viewPath: string): Promise<string>;
 }

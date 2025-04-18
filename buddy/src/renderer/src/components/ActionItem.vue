@@ -1,24 +1,22 @@
 <script setup lang="ts">
-import { SuperAction } from '@coffic/buddy-types';
+import { SendableAction } from '@/types/sendable-action.js';
 import ListItem from '@renderer/cosy/ListItem.vue'
+import { logger } from '../utils/logger';
+import { useActionStore } from '@renderer/stores/actionStore';
 
+const actionStore = useActionStore()
 const props = defineProps<{
-    action: SuperAction
+    action: SendableAction
     index: number
     totalCount: number
 }>()
 
 const emit = defineEmits<{
-    (e: 'select', action: SuperAction): void
+    (e: 'select', action: SendableAction): void
     (e: 'cancel'): void
     (e: 'navigateUp'): void
     (e: 'navigateDown'): void
 }>()
-
-// 处理动作选择
-const handleSelect = () => {
-    emit('select', props.action)
-}
 
 // 处理取消操作
 const handleCancel = () => {
@@ -43,6 +41,12 @@ const handleKeyDown = (event: KeyboardEvent) => {
             emit('navigateDown')
             break
     }
+}
+
+// 处理动作选择
+const handleSelect = () => {
+    logger.info('handleActionSelected 🍋', props.action.globalId);
+    actionStore.selectAction(props.action.globalId)
 }
 </script>
 

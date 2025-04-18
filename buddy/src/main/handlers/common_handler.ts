@@ -3,7 +3,8 @@ import { IpcRoute } from '../provider/RouterService.js';
 import { shell } from 'electron';
 import { logger } from '../managers/LogManager.js';
 import { viewManager } from '../managers/ViewManager.js';
-import { IPC_METHODS, IpcResponse } from '@coffic/buddy-types';
+import { IpcResponse } from '@coffic/buddy-types';
+import { IPC_METHODS } from '@/types/ipc-methods.js';
 
 /**
  * 基础的IPC路由配置

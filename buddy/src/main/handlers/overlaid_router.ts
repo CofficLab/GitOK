@@ -1,7 +1,7 @@
 /**
  * 被覆盖应用相关IPC处理函数
  */
-import { IPC_METHODS } from '@coffic/buddy-types';
+import { IPC_METHODS } from '@/types/ipc-methods.js';
 import { appStateManager } from '../managers/StateManager.js';
 import { IpcRoute } from '../provider/RouterService.js';
 

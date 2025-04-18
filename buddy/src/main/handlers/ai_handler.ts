@@ -3,8 +3,8 @@ import { IpcRoute } from '../provider/RouterService.js';
 import { logger } from '../managers/LogManager.js';
 import { aiManager, type ChatMessage } from '../managers/AIManager.js';
 import { v4 as uuidv4 } from 'uuid';
-import { IPC_METHODS, IpcResponse, StreamChunkResponse } from '@coffic/buddy-types';
-
+import { IpcResponse, StreamChunkResponse } from '@coffic/buddy-types';
+import { IPC_METHODS } from '@/types/ipc-methods.js';
 /**
  * AI路由配置
  */

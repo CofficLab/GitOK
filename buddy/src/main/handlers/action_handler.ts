@@ -1,17 +1,18 @@
 import { IpcRoute } from '../provider/RouterService.js';
-import { IPC_METHODS, IpcResponse, SuperAction } from '@coffic/buddy-types';
-import { pluginActionManager } from '../managers/ActionManager.js';
+import { IpcResponse, SuperAction } from '@coffic/buddy-types';
+import { actionManager } from '../managers/ActionManager.js';
 import { logger } from '../managers/LogManager.js';
-
+import { pluginManager } from '../managers/PluginManager.js';
+import { IPC_METHODS } from '@/types/ipc-methods.js';
 /**
  * 插件动作相关的IPC路由配置
  */
 export const pluginActionRoutes: IpcRoute[] = [
 	{
-		channel: IPC_METHODS.Get_PLUGIN_ACTIONS,
+		channel: IPC_METHODS.GET_ACTIONS,
 		handler: async (_, keyword = ''): Promise<IpcResponse<SuperAction[]>> => {
 			try {
-				const actions = await pluginActionManager.getActions(keyword);
+				const actions = await actionManager.getActions(keyword);
 				return { success: true, data: actions };
 			} catch (error) {
 				const errorMessage =
@@ -24,15 +25,7 @@ export const pluginActionRoutes: IpcRoute[] = [
 	{
 		channel: IPC_METHODS.EXECUTE_PLUGIN_ACTION,
 		handler: async (_, actionId: string, keyword: string): Promise<IpcResponse<unknown>> => {
-			try {
-				const result = await pluginActionManager.executeAction(actionId, keyword);
-				return { success: true, data: result };
-			} catch (error) {
-				const errorMessage =
-					error instanceof Error ? error.message : String(error);
-				logger.error(`执行插件动作失败: ${actionId}`, { error: errorMessage });
-				return { success: false, error: errorMessage };
-			}
+			return await pluginManager.executeAction(actionId, keyword);
 		},
 	},
 	{
@@ -40,7 +33,7 @@ export const pluginActionRoutes: IpcRoute[] = [
 		handler: async (_, actionId: string): Promise<IpcResponse<string>> => {
 			logger.debug(`获取动作视图: ${actionId}`);
 			try {
-				const html = await pluginActionManager.getActionView(actionId);
+				const html = await actionManager.getActionView(actionId);
 				return { success: true, data: html };
 			} catch (error) {
 				const errorMessage =

@@ -2,7 +2,7 @@
 import { IpcRoute } from '../provider/RouterService.js';
 import { pluginViewManager } from '../managers/PluginViewManager.js';
 import { logger } from '../managers/LogManager.js';
-import { IPC_METHODS } from '@coffic/buddy-types';
+import { IPC_METHODS } from '@/types/ipc-methods.js';
 
 /**
  * 插件视图相关的IPC路由配置

@@ -2,12 +2,18 @@
   "name": "@coffic/buddy-port-killer-plugin",
   "version": "1.0.0",
   "description": "Buddy端口进程管理插件",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "publishConfig": {
     "access": "public"
   },
   "buddyPlugin": {
     "id": "port-killer-plugin"
+  },
+  "devDependencies": {
+    "@coffic/buddy-types": "workspace:*",
+    "@types/node": "^22.14.1",
+    "typescript": "^5.8.3"
   },
   "keywords": [
     "buddy",
@@ -18,8 +24,15 @@
     "buddy-plugin"
   ],
   "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "prepublishOnly": "npm run build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Coffic",
-  "license": "MIT"
+  "license": "MIT",
+  "files": [
+    "dist",
+    "views"
+  ]
 }

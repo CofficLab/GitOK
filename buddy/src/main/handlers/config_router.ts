@@ -7,7 +7,8 @@
 import { IpcRoute } from '../provider/RouterService.js'
 import { configManager } from '../managers/ConfigManager.js'
 import { logger } from '../managers/LogManager.js'
-import { IPC_METHODS, IpcResponse } from '@coffic/buddy-types'
+import { IpcResponse } from '@coffic/buddy-types'
+import { IPC_METHODS } from '@/types/ipc-methods.js'
 
 export const routes: IpcRoute[] = [
     {

@@ -91,17 +91,6 @@ class ActionManager extends BaseManager {
     }
 
     /**
-     * 执行插件动作
-     * @param actionGlobalId 要执行的动作的全局ID
-     * @returns 执行结果
-     */
-    async executeAction(actionGlobalId: string, keyword: string): Promise<any> {
-        logger.info(`执行插件动作: ${actionGlobalId}`);
-
-
-    }
-
-    /**
      * 获取动作视图内容
      * @param actionId 动作ID
      * @returns 视图内容
@@ -128,4 +117,4 @@ class ActionManager extends BaseManager {
 }
 
 // 导出单例
-export const pluginActionManager = ActionManager.getInstance();
+export const actionManager = ActionManager.getInstance();

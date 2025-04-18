@@ -1,6 +1,6 @@
 
 import { SendablePlugin } from "@/types/sendable-plugin";
-import { IPC_METHODS } from "@coffic/buddy-types";
+import { IPC_METHODS } from "@/types/ipc-methods.js";
 import { logger } from "../utils/logger";
 
 const ipc = window.ipc;

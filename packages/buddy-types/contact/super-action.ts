@@ -40,7 +40,7 @@ export interface SuperAction {
   /**
    * 动作描述
    */
-  description?: string;
+  description: string;
 
   /**
    * 动作图标

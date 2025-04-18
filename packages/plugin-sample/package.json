@@ -2,15 +2,15 @@
   "name": "@coffic/buddy-example-plugin",
   "version": "1.0.2",
   "description": "Buddy示例插件",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "publishConfig": {
     "access": "public"
   },
-  "buddyPlugin": {
-    "id": "example-plugin"
-  },
   "devDependencies": {
-    "@coffic/buddy-types": "workspace:*"
+    "@coffic/buddy-types": "workspace:*",
+    "@types/node": "^22.14.1",
+    "typescript": "^5.8.3"
   },
   "keywords": [
     "buddy",
@@ -19,8 +19,15 @@
     "buddy-plugin"
   ],
   "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "prepublishOnly": "npm run build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Coffic",
-  "license": "MIT"
+  "license": "MIT",
+  "files": [
+    "dist",
+    "views"
+  ]
 }

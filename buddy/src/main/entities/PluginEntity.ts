@@ -13,7 +13,7 @@ import fs from 'fs';
 import { appStateManager } from '../managers/StateManager.js';
 import { ActionEntity } from './ActionEntity.js';
 
-const verbose = false;
+const verbose = true;
 
 /**
  * 插件实体类
@@ -258,8 +258,46 @@ export class PluginEntity implements SendablePlugin {
             });
         }
 
-        const actions = await pluginModule.getActions(context);
+        const actions = (await pluginModule.getActions(context)).map((action) => {
+            action.pluginId = this.id;
+            return action;
+        });
+
+        if (verbose) {
+            logger.debug(`${this.id} 返回动作列表`, {
+                actions,
+            });
+        }
+
         return actions.map(ActionEntity.fromSendableAction);
+    }
+
+
+
+    /**
+     * 执行插件动作
+     * @returns 执行结果
+     */
+    async executeAction(actionId: string, keyword: string): Promise<any> {
+        logger.info(`插件 ${this.id} 执行动作: ${actionId}`);
+
+        const pluginModule = await this.load();
+        if (!pluginModule) {
+            logger.warn(`插件模块加载失败: ${this.id}, 无法执行动作: ${actionId}`);
+            return;
+        }
+
+        if (typeof pluginModule.executeAction !== 'function') {
+            logger.warn(`插件 ${this.id} 未实现 executeAction 方法, 无法执行动作: ${actionId}`);
+            return;
+        }
+
+        return pluginModule.executeAction(actionId, keyword);
+    }
+
+    async getAction(actionId: string): Promise<ActionEntity | null> {
+        const actions = await this.getActions();
+        return actions.find(action => action.id === actionId) || null;
     }
 
     /**
@@ -296,26 +334,5 @@ export class PluginEntity implements SendablePlugin {
             this.setStatus('error', error.message);
             throw error;
         }
-    }
-
-    /**
-     * 转换为普通对象
-     */
-    toJSON() {
-        return {
-            id: this.id,
-            name: this.name,
-            description: this.description,
-            version: this.version,
-            author: this.author,
-            main: this.main,
-            pagePath: this.pagePath,
-            hasPage: this.hasPage,
-            path: this.path,
-            type: this.type,
-            status: this.status,
-            error: this.error,
-            validation: this.validation,
-        };
     }
 }

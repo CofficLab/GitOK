@@ -9,7 +9,7 @@ import { BrowserWindow, app, BrowserView, screen } from 'electron';
 import { is } from '@electron-toolkit/utils';
 import { join } from 'path';
 import { windowManager } from './WindowManager.js';
-import { pluginActionManager } from './ActionManager.js';
+import { actionManager } from './ActionManager.js';
 import { BaseManager } from './BaseManager.js';
 import { logger } from './LogManager.js';
 import {
@@ -147,7 +147,7 @@ class PluginViewManager extends BaseManager {
    */
   private async getViewContent(actionId: string): Promise<string> {
     try {
-      return await pluginActionManager.getActionView(actionId);
+      return await actionManager.getActionView(actionId);
     } catch (error) {
       throw new Error(
         this.handleError(error, `获取动作视图内容失败: ${actionId}`)
@@ -162,7 +162,7 @@ class PluginViewManager extends BaseManager {
     actionId: string
   ): Promise<{ devTools: boolean; viewMode?: ViewMode }> {
     try {
-      const actions = await pluginActionManager.getActions();
+      const actions = await actionManager.getActions();
       const actionInfo = actions.find((a) => a.id === actionId);
       return {
         devTools: actionInfo?.devTools === true,

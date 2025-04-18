@@ -1,4 +1,5 @@
-import { ChatMessage, IPC_METHODS, IpcResponse, StreamChunkResponse, StreamDoneResponse } from "@coffic/buddy-types";
+import { ChatMessage, IpcResponse, StreamChunkResponse, StreamDoneResponse } from "@coffic/buddy-types";
+import { IPC_METHODS } from "@/types/ipc-methods.js";
 
 const ipc = window.ipc;
 

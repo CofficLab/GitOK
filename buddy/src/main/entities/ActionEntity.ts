@@ -184,30 +184,6 @@ export class ActionEntity implements SendableAction {
     }
 
     /**
-     * 执行插件动作
-     * @returns 执行结果
-     */
-    async exec(keyword: string): Promise<any> {
-        logger.info(`执行插件动作: ${this.globalId}`);
-
-        // 标记动作开始执行
-        this.beginExecute();
-
-        try {
-            // TODO: 执行动作
-
-            // 标记动作执行完成
-            this.completeExecute();
-
-            return 'action result';
-        } catch (error: any) {
-            // 标记动作执行出错
-            this.executeError(error.message);
-            throw error;
-        }
-    }
-
-    /**
      * 获取动作视图内容
      * @param actionId 动作ID
      * @returns 视图内容
@@ -237,26 +213,5 @@ export class ActionEntity implements SendableAction {
 
     async getPlugin(): Promise<PluginEntity | null> {
         return await pluginManager.getPlugin(this.pluginId);
-    }
-
-    /**
-     * 转换为普通对象
-     */
-    toJSON() {
-        return {
-            id: this.id,
-            description: this.description,
-            icon: this.icon,
-            pluginId: this.pluginId,
-            keywords: this.keywords,
-            category: this.category,
-            viewPath: this.viewPath,
-            viewMode: this.viewMode,
-            devTools: this.devTools,
-            status: this.status,
-            error: this.error,
-            lastExecuteTime: this.lastExecuteTime,
-            disabled: this.disabled,
-        };
     }
 }

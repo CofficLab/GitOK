@@ -6,6 +6,7 @@ import { BaseManager } from './BaseManager.js';
 import { PluginEntity } from '../entities/PluginEntity.js';
 import { userPluginDB } from '../db/UserPackageDB.js';
 import { devPluginDB } from '../db/DevPluginDB.js';
+import { logger } from './LogManager.js';
 
 class PluginManager extends BaseManager {
     private static instance: PluginManager;
@@ -42,6 +43,23 @@ class PluginManager extends BaseManager {
 
     async getPlugin(pluginId: string): Promise<PluginEntity | null> {
         return await userPluginDB.find(pluginId) || await devPluginDB.find(pluginId);
+    }
+
+    /**
+     * 执行插件动作
+     * @param actionGlobalId 要执行的动作的全局ID
+     * @returns 执行结果
+     */
+    async executeAction(actionGlobalId: string, keyword: string): Promise<any> {
+        logger.info(`执行插件动作: ${actionGlobalId}`);
+
+        const [pluginId, actionId] = actionGlobalId.split(':');
+        const plugin = await this.getPlugin(pluginId);
+        if (!plugin) {
+            throw new Error(`插件不存在: ${pluginId}`);
+        }
+
+        return plugin.executeAction(actionId, keyword);
     }
 
     /**

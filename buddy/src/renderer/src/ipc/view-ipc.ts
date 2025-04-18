@@ -1,4 +1,5 @@
-import { IPC_METHODS, ViewBounds } from "@coffic/buddy-types";
+import { ViewBounds } from "@coffic/buddy-types";
+import { IPC_METHODS } from "@/types/ipc-methods.js";
 
 const ipc = window.ipc
 
