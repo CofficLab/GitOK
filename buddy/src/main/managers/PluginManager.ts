@@ -51,8 +51,6 @@ class PluginManager extends BaseManager {
      * @returns 执行结果
      */
     async executeAction(actionGlobalId: string, keyword: string): Promise<any> {
-        logger.info(`执行插件动作: ${actionGlobalId}`);
-
         const [pluginId, actionId] = actionGlobalId.split(':');
         const plugin = await this.getPlugin(pluginId);
         if (!plugin) {

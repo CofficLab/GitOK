@@ -13,7 +13,7 @@ import fs from 'fs';
 import { appStateManager } from '../managers/StateManager.js';
 import { ActionEntity } from './ActionEntity.js';
 
-const verbose = true;
+const verbose = false;
 
 /**
  * 插件实体类
@@ -271,8 +271,6 @@ export class PluginEntity implements SendablePlugin {
 
         return actions.map(ActionEntity.fromSendableAction);
     }
-
-
 
     /**
      * 执行插件动作

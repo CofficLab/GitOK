@@ -115,16 +115,6 @@ const plugin: SuperPlugin = {
             message: `未知的动作: ${actionId}`
         };
     },
-
-    /**
-     * 获取视图内容
-     * @param {string} viewPath 视图路径
-     * @returns {Promise<string>} HTML内容
-     */
-    async getViewContent(viewPath: string): Promise<string> {
-        // 这个插件没有视图，但需要实现接口
-        return '';
-    },
 };
 
 // 导出插件

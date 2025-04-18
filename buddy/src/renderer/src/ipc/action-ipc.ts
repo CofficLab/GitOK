@@ -21,11 +21,6 @@ export const actionIpc = {
     },
 
     async getActionView(actionId: string): Promise<string> {
-        const response: IpcResponse<unknown> = await ipc.invoke(IPC_METHODS.GET_ACTION_VIEW, actionId);
-        if (response.success) {
-            return response.data as string;
-        } else {
-            throw new Error(response.error);
-        }
+        return await ipc.invoke(IPC_METHODS.GET_ACTION_VIEW, actionId);
     },
 };

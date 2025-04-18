@@ -91,20 +91,7 @@ export interface SuperPlugin {
      */
     npmPackage?: string;
 
-    /**
-     * 插件页面视图路径
-     * 如果存在，表示插件带有一个可以在主界面显示的视图
-     */
-    pagePath?: string;
-
     getActions(args: GetActionsArgs): Promise<SuperAction[]>;
 
     executeAction(actionId: string, keyword: string): Promise<ExecuteResult>;
-
-    /**
-     * 获取视图内容
-     * @param viewPath 视图路径
-     * @returns 视图内容
-     */
-    getViewContent(viewPath: string): Promise<string>;
 }

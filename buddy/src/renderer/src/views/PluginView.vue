@@ -1,17 +1,11 @@
-/**
-* 插件动作视图
-*
-* 功能：
-* 1. 展示选中的插件动作详情
-* 2. 显示动作执行结果或在独立的BrowserWindow中显示自定义视图
-* 3. 提供返回到动作列表的功能
-*/
 <script setup lang="ts">
 import { ref, watch, onUnmounted, reactive, onMounted, nextTick, computed } from 'vue'
 import { useActionStore } from '@renderer/stores/actionStore'
 import { logger } from '@renderer/utils/logger'
 import { SuperAction, ViewBounds } from '@coffic/buddy-types'
 import { pluginIpc } from '../ipc/plugin-ipc'
+import { SendableAction } from '@/types/sendable-action'
+import { viewIpc } from '../ipc/view-ipc'
 
 const actionStore = useActionStore()
 
@@ -86,7 +80,7 @@ const loadAndExecuteAction = async () => {
 }
 
 // 创建并显示嵌入式视图
-const createEmbeddedView = async (actionId: string, action: SuperAction) => {
+const createEmbeddedView = async (actionId: string, action: SendableAction) => {
     try {
         // 使用动作ID作为视图ID
         embeddedViewState.id = `embedded-view-${actionId}`
@@ -145,12 +139,9 @@ const createEmbeddedView = async (actionId: string, action: SuperAction) => {
 
         try {
             // 首先创建嵌入式视图
-            const mainWindowBounds = await pluginIpc.createView(
-                embeddedViewState.id,
-                `plugin-view://${actionId}`
-            )
+            const mainWindowBounds = await viewIpc.upsertView(action.viewPath!, bounds)
 
-            logger.info(`PluginView: 嵌入式视图已创建，主窗口边界: ${mainWindowBounds}`)
+            logger.info(`PluginView: 嵌入式视图已创建，主窗口边界`, mainWindowBounds)
 
             // 现在显示嵌入式视图，传递容器边界
             const showResult = await pluginIpc.showView(embeddedViewState.id, bounds)
@@ -158,18 +149,18 @@ const createEmbeddedView = async (actionId: string, action: SuperAction) => {
                 throw new Error('显示嵌入式视图失败')
             }
 
-            logger.info(`PluginView: 嵌入式视图已显示，边界: ${bounds}`)
+            logger.info(`PluginView: 嵌入式视图已显示，边界`, bounds)
             embeddedViewState.isVisible = true
 
             // 如果动作指定了开启开发者工具，则自动打开
             if (action.devTools) {
                 setTimeout(async () => {
                     try {
-                        logger.info(`PluginView: 准备打开开发者工具: ${embeddedViewState.id}`)
+                        logger.info(`PluginView: 准备打开开发者工具`, embeddedViewState.id)
                         const result = await pluginIpc.toggleDevTools(embeddedViewState.id)
-                        logger.info(`PluginView: 开发者工具打开结果: ${result}`)
+                        logger.info(`PluginView: 开发者工具打开结果`, result)
                     } catch (devToolsError) {
-                        logger.error(`PluginView: 打开开发者工具失败: ${devToolsError}`)
+                        logger.error(`PluginView: 打开开发者工具失败`, devToolsError)
                     }
                 }, 1000)
             }
@@ -209,7 +200,7 @@ const destroyEmbeddedView = async () => {
 }
 
 // 在独立窗口中打开插件视图
-const openPluginWindow = async (actionId: string, _action: SuperAction) => {
+const openPluginWindow = async (actionId: string, _action: SendableAction) => {
     try {
         // 使用动作ID作为视图ID
         pluginViewState.id = `plugin-view-${actionId}`

@@ -1,4 +1,3 @@
-import fs from 'fs';
 import path from 'path';
 import { GetActionsArgs, SuperAction, SuperPlugin, ExecuteResult } from '@coffic/buddy-types';
 
@@ -48,7 +47,7 @@ const plugin: SuperPlugin = {
                 id: `time`,
                 description: '显示当前时间',
                 icon: '🕒',
-                viewPath: 'views/time.html',
+                viewPath: path.join(__dirname, 'views/time.html'),
                 viewMode: 'embedded',
                 devTools: false,
                 globalId: '',
@@ -58,7 +57,7 @@ const plugin: SuperPlugin = {
                 id: `calculate`,
                 description: '简单的计算器',
                 icon: '🧮',
-                viewPath: 'views/calculator.html',
+                viewPath: path.join(__dirname, 'views/calculator.html'),
                 viewMode: 'window',
                 devTools: false,
                 globalId: '',
@@ -118,41 +117,7 @@ const plugin: SuperPlugin = {
             throw error;
         }
     },
-
-    /**
-     * 获取视图内容
-     * @param {string} viewPath 视图路径
-     * @returns {Promise<string>} HTML内容
-     */
-    async getViewContent(viewPath: string): Promise<string> {
-        log.info(`获取视图内容: ${viewPath}`);
-
-        try {
-            // 从文件系统读取HTML文件
-            const htmlFilePath = path.join(__dirname, '..', viewPath);
-            log.debug(`尝试读取文件: ${htmlFilePath}`);
-
-            if (!fs.existsSync(htmlFilePath)) {
-                throw new Error(`视图文件不存在: ${htmlFilePath}`);
-            }
-
-            // 读取HTML文件内容
-            const html = fs.readFileSync(htmlFilePath, 'utf-8');
-
-            log.info(
-                `成功读取视图HTML，文件: ${htmlFilePath}，长度: ${html.length} 字节`
-            );
-            return html;
-        } catch (error) {
-            const err = error as Error;
-            log.error(`获取视图内容失败:`, err);
-            throw err;
-        }
-    },
 };
-
-// 插件初始化输出
-log.info(`示例插件已加载: ${plugin.name} v${plugin.version}`);
 
 // 导出插件
 export = plugin;

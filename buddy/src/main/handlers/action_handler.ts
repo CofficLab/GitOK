@@ -30,17 +30,8 @@ export const pluginActionRoutes: IpcRoute[] = [
 	},
 	{
 		channel: IPC_METHODS.GET_ACTION_VIEW,
-		handler: async (_, actionId: string): Promise<IpcResponse<string>> => {
-			logger.debug(`获取动作视图: ${actionId}`);
-			try {
-				const html = await actionManager.getActionView(actionId);
-				return { success: true, data: html };
-			} catch (error) {
-				const errorMessage =
-					error instanceof Error ? error.message : String(error);
-				logger.error(`获取动作视图失败: ${actionId}`, { error: errorMessage });
-				return { success: false, error: errorMessage };
-			}
+		handler: async (_, actionId: string): Promise<string> => {
+			return await actionManager.getActionView(actionId);
 		},
 	},
 ];
