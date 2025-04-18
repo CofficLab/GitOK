@@ -26,7 +26,7 @@ export type PluginType = 'user' | 'dev' | 'remote';
 
 export interface GetActionsArgs {
     keyword?: string;
-    overlaidApp?: boolean;
+    overlaidApp?: string;
 }
 
 /**

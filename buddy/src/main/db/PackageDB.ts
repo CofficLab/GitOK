@@ -118,26 +118,6 @@ export abstract class PackageDB {
     }
 
     /**
-     * 加载插件模块
-     */
-    public async loadPluginModule(plugin: PluginEntity): Promise<any> {
-        try {
-            const mainFilePath = plugin.mainFilePath;
-            if (!fs.existsSync(mainFilePath)) {
-                throw new Error(`插件入口文件不存在: ${mainFilePath}`);
-            }
-
-            delete require.cache[require.resolve(mainFilePath)];
-            const module = require(mainFilePath);
-            plugin.markAsLoaded();
-            return module;
-        } catch (error: any) {
-            plugin.setStatus('error', error.message);
-            throw error;
-        }
-    }
-
-    /**
      * 根据插件ID查找插件
      */
     public async find(id: string): Promise<PluginEntity | null> {

@@ -6,10 +6,12 @@
 import { join } from 'path';
 import { readPackageJson, hasPackageJson } from '../utils/PackageUtils.js';
 import { logger } from '../managers/LogManager.js';
-import { PluginStatus, PluginType, ValidationResult } from '@coffic/buddy-types';
+import { GetActionsArgs, PluginStatus, PluginType, SuperPlugin, ValidationResult } from '@coffic/buddy-types';
 import { SendablePlugin } from '@/types/sendable-plugin.js';
 import { PackageJson } from '@/types/package-json.js';
 import fs from 'fs';
+import { appStateManager } from '../managers/StateManager.js';
+import { ActionEntity } from './ActionEntity.js';
 
 const verbose = false;
 
@@ -32,11 +34,11 @@ export class PluginEntity implements SendablePlugin {
     type: PluginType;
 
     // 状态信息
-    status: PluginStatus = 'inactive';
+    status: PluginStatus = 'active';
     error?: string;
-    isLoaded: boolean = false;
     validation?: ValidationResult;
     isBuddyPlugin: boolean = true; // 是否是Buddy插件
+    instance?: any; // 插件实例
 
     /**
      * 从目录创建插件实体
@@ -154,13 +156,6 @@ export class PluginEntity implements SendablePlugin {
     }
 
     /**
-     * 标记插件为已加载
-     */
-    markAsLoaded(): void {
-        this.isLoaded = true;
-    }
-
-    /**
      * 获取page属性对应的文件的源代码
      * @returns 插件页面视图路径
      */
@@ -227,6 +222,83 @@ export class PluginEntity implements SendablePlugin {
     }
 
     /**
+     * 获取插件的动作列表
+     * @param keyword 搜索关键词（可选）
+     * @returns 插件动作列表
+     */
+    async getActions(keyword: string = ''): Promise<ActionEntity[]> {
+        // 如果插件未加载或状态不正常，返回空数组
+        if (this.status !== 'active') {
+            logger.warn(`插件 ${this.id} 未加载或状态不正常(${this.status})，返回空动作列表`);
+            return [];
+        }
+
+        // 动态加载插件模块
+        const pluginModule = await this.load();
+
+        if (!pluginModule) {
+            logger.warn(`插件模块加载失败: ${this.id}，返回空动作列表`);
+            return [];
+        }
+
+        if (typeof pluginModule.getActions !== 'function') {
+            logger.warn(`插件 ${this.id} 未实现 getActions 方法，返回空动作列表`);
+            return [];
+        }
+
+        const context: GetActionsArgs = {
+            keyword,
+            overlaidApp: appStateManager.getOverlaidApp()?.name || '',
+        };
+
+        if (verbose) {
+            logger.info(`调用插件 getActions: ${this.id}`, {
+                context,
+                pluginPath: this.path,
+            });
+        }
+
+        const actions = await pluginModule.getActions(context);
+        return actions.map(ActionEntity.fromSendableAction);
+    }
+
+    /**
+     * 加载插件模块
+     * @param plugin 插件实例
+     * @returns 插件模块
+     * 
+     * 原理: 使用Node.js的require系统动态加载JavaScript模块。
+     * 这种方式允许在运行时按需加载插件代码，不需要在应用启动时就加载所有插件。
+     * 通过删除require.cache并重新require，还可以实现插件的热更新。
+     * 
+     * 安全风险: 
+     * 1. 插件代码在Node.js环境中运行，可以访问所有Node.js API
+     * 2. 插件可以执行任意Node.js代码，包括文件操作、网络请求、系统命令等
+     * 3. 没有内置的权限隔离机制
+     * 
+     * TODO: 增强插件安全性
+     * - [ ] 实现插件签名验证机制，只加载可信来源的插件
+     * - [ ] 考虑使用沙箱环境(如vm模块)限制插件权限
+     * - [ ] 实现插件进程隔离，在单独的进程中运行插件代码
+     * - [ ] 定义严格的API接口，限制插件能力范围
+     */
+    public async load(): Promise<SuperPlugin> {
+        try {
+            const mainFilePath = this.mainFilePath;
+            if (!fs.existsSync(mainFilePath)) {
+                throw new Error(`插件入口文件不存在: ${mainFilePath}`);
+            }
+
+            delete require.cache[require.resolve(mainFilePath)];
+            const module = require(mainFilePath);
+            return module;
+        } catch (error: any) {
+            this.setStatus('error', error.message);
+            throw error;
+        }
+    }
+
+    /**
      * 转换为普通对象
      */
     toJSON() {
@@ -243,7 +315,6 @@ export class PluginEntity implements SendablePlugin {
             type: this.type,
             status: this.status,
             error: this.error,
-            isLoaded: this.isLoaded,
             validation: this.validation,
         };
     }

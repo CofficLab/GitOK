@@ -36,27 +36,12 @@ class PluginManager extends BaseManager {
         }
     }
 
-    /**
-     * 加载插件模块
-     * @param plugin 插件实例
-     * @returns 插件模块
-     */
-    public async loadPluginModule(plugin: PluginEntity): Promise<any> {
-        try {
-            return await userPluginDB.loadPluginModule(plugin);
-        } catch (error: any) {
-            throw new Error(
-                this.handleError(
-                    error,
-                    `加载插件模块失败: ${plugin.id} (${plugin.path})`,
-                    false
-                )
-            );
-        }
-    }
-
     async getPlugins(): Promise<PluginEntity[]> {
         return [...await userPluginDB.getAllPlugins(), ...await devPluginDB.getAllPlugins()];
+    }
+
+    async getPlugin(pluginId: string): Promise<PluginEntity | null> {
+        return await userPluginDB.find(pluginId) || await devPluginDB.find(pluginId);
     }
 
     /**

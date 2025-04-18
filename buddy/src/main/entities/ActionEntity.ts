@@ -1,9 +1,13 @@
 import { ActionStatus, SuperAction, ValidationResult, ViewMode } from "@coffic/buddy-types";
+import { logger } from "../managers/LogManager.js";
+import { pluginManager } from "../managers/PluginManager.js";
+import { PluginEntity } from "./PluginEntity.js";
+import { SendableAction } from "@/types/sendable-action.js";
 
 /**
  * 插件动作实体类
  */
-export class PluginActionEntity implements SuperAction {
+export class ActionEntity implements SendableAction {
     // 基本信息
     globalId: string;
     id: string;
@@ -93,10 +97,18 @@ export class PluginActionEntity implements SuperAction {
     static fromRawAction(
         action: SuperAction,
         pluginId: string
-    ): PluginActionEntity {
-        return new PluginActionEntity({
+    ): ActionEntity {
+        return new ActionEntity({
             ...action,
             pluginId,
+            keywords: [],
+        });
+    }
+
+    static fromSendableAction(action: SendableAction): ActionEntity {
+        return new ActionEntity({
+            ...action,
+            pluginId: action.pluginId,
             keywords: [],
         });
     }
@@ -169,6 +181,62 @@ export class PluginActionEntity implements SuperAction {
      */
     canExecute(): boolean {
         return !this.disabled && this.status !== 'executing';
+    }
+
+    /**
+     * 执行插件动作
+     * @returns 执行结果
+     */
+    async exec(keyword: string): Promise<any> {
+        logger.info(`执行插件动作: ${this.globalId}`);
+
+        // 标记动作开始执行
+        this.beginExecute();
+
+        try {
+            // TODO: 执行动作
+
+            // 标记动作执行完成
+            this.completeExecute();
+
+            return 'action result';
+        } catch (error: any) {
+            // 标记动作执行出错
+            this.executeError(error.message);
+            throw error;
+        }
+    }
+
+    /**
+     * 获取动作视图内容
+     * @param actionId 动作ID
+     * @returns 视图内容
+     */
+    async getViewContent(): Promise<string> {
+        logger.info(`获取动作视图: ${this.globalId}`);
+
+        // 解析插件ID
+        const [pluginId] = this.globalId.split(':');
+        if (!pluginId) {
+            throw new Error(`无效的动作ID: ${this.globalId}`);
+        }
+
+        // 获取插件实例
+        const plugin = await this.getPlugin();
+        if (!plugin) {
+            throw new Error(`未找到插件: ${pluginId}`);
+        }
+
+        if (!this.viewPath) {
+            throw new Error(`动作 ${this.globalId} 没有关联视图`);
+        }
+
+        // 获取视图内容
+        return this.viewPath;
+    }
+
+    async getPlugin(): Promise<PluginEntity | null> {
+        return await pluginManager.getPlugin(this.pluginId);
     }
 
     /**
