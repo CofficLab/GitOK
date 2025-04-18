@@ -2,7 +2,7 @@
 import { ref, watch, onUnmounted, reactive, onMounted, nextTick, computed } from 'vue'
 import { useActionStore } from '@renderer/stores/actionStore'
 import { logger } from '@renderer/utils/logger'
-import { SuperAction, ViewBounds } from '@coffic/buddy-types'
+import { ViewBounds } from '@coffic/buddy-types'
 import { pluginIpc } from '../ipc/plugin-ipc'
 import { SendableAction } from '@/types/sendable-action'
 import { viewIpc } from '../ipc/view-ipc'
@@ -206,10 +206,12 @@ const openPluginWindow = async (actionId: string, _action: SendableAction) => {
         pluginViewState.id = `plugin-view-${actionId}`
 
         // 获取主窗口位置和大小以便设置插件窗口的位置
-        await pluginIpc.createView(
-            pluginViewState.id,
-            `plugin-view://${actionId}`, // 确保actionId格式正确
-        )
+        await viewIpc.upsertView(pluginViewState.id, {
+            x: 0,
+            y: 0,
+            width: 0,
+            height: 0,
+        })
     } catch (error) {
         const errorMsg = error instanceof Error ? error.message : String(error)
         console.error(`PluginView: 打开插件视图窗口失败: ${errorMsg}`)

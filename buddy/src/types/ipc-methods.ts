@@ -8,7 +8,7 @@ export const IPC_METHODS = {
   Destroy_View: 'destroy-view',
   Destroy_Plugin_Views: 'destroy-plugin-views',
   Update_View_Bounds: 'update-view-bounds',
-  Upsert_View: 'upsert-view',
+  UPSERT_VIEW: 'upsert-view',
 
   // 插件相关
   Plugin_Is_Installed: 'plugin-is-installed',

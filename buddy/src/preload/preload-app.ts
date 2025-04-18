@@ -4,8 +4,9 @@
  */
 import { contextBridge } from 'electron';
 import { ipcRenderer } from 'electron';
-import { IpcApi, IpcResponse } from '@coffic/buddy-types';
+import { IpcResponse } from '@coffic/buddy-types';
 import { logger } from '@/main/managers/LogManager.js';
+import { IpcApi } from '@/types/ipc-api.js';
 
 const verbose = false;
 

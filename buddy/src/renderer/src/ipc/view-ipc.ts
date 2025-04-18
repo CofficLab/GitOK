@@ -5,7 +5,7 @@ const ipc = window.ipc
 
 export const viewIpc = {
     async upsertView(pagePath: string, bounds: ViewBounds): Promise<void> {
-        await ipc.invoke(IPC_METHODS.Upsert_View, pagePath, bounds);
+        await ipc.invoke(IPC_METHODS.UPSERT_VIEW, pagePath, bounds);
     },
 
     async destroyViews(): Promise<void> {

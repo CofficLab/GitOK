@@ -6,7 +6,6 @@ import { BaseManager } from './BaseManager.js';
 import { PluginEntity } from '../entities/PluginEntity.js';
 import { userPluginDB } from '../db/UserPackageDB.js';
 import { devPluginDB } from '../db/DevPluginDB.js';
-import { logger } from './LogManager.js';
 
 class PluginManager extends BaseManager {
     private static instance: PluginManager;

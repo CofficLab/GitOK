@@ -1,32 +1,4 @@
-/**
- * appStore.ts - 应用核心状态管理
- *
- * 这个store负责管理应用的核心状态：
- * 1. 当前视图
- * 2. 插件商店的显示状态
- * 3. 当前选中的动作
- * 4. 应用窗口的激活状态
- *
- * 主要功能：
- * - 控制视图切换
- * - 控制插件商店的显示/隐藏
- * - 管理当前选中的动作
- * - 监听和记录窗口激活状态
- *
- * 状态说明：
- * - currentView: 当前显示的视图（home/plugins）
- * - showPluginStore: 控制插件商店的显示状态
- * - selectedAction: 当前选中的插件动作
- * - isActive: 窗口是否处于激活状态
- *
- * 注意事项：
- * - 切换插件商店时会自动清理选中的动作
- * - 所有视图组件都应该通过这个store来管理状态
- * - 避免直接修改状态，应该使用提供的action
- */
-
 import { defineStore } from 'pinia';
-import { logger } from '../utils/logger';
 import { AppEvents, SuperAction, SuperApp } from '@coffic/buddy-types';
 
 const ipc = window.ipc;

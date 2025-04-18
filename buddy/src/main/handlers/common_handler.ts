@@ -54,7 +54,7 @@ export const baseRoutes: IpcRoute[] = [
     },
 
     {
-        channel: IPC_METHODS.Upsert_View,
+        channel: IPC_METHODS.UPSERT_VIEW,
         handler: (_, id, bounds): Promise<void> => {
             return viewManager.upsertView(id, bounds);
         }

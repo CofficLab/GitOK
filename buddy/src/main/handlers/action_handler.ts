@@ -7,7 +7,7 @@ import { IPC_METHODS } from '@/types/ipc-methods.js';
 /**
  * 插件动作相关的IPC路由配置
  */
-export const pluginActionRoutes: IpcRoute[] = [
+export const actionRoutes: IpcRoute[] = [
 	{
 		channel: IPC_METHODS.GET_ACTIONS,
 		handler: async (_, keyword = ''): Promise<IpcResponse<SuperAction[]>> => {

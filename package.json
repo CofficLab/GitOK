@@ -9,10 +9,10 @@
     "packages/*"
   ],
   "scripts": {
-    "build": "node scripts/build.mjs",
+    "build": "pnpm -r build",
     "build:buddy": "pnpm build:buddy-types && pnpm --filter buddy build",
     "build:buddy-types": "pnpm --filter buddy-types build",
-    "dev": "node scripts/dev.mjs",
+    "dev": "pnpm -r dev",
     "dev:buddy": "pnpm --filter buddy dev",
     "ext": "nodemon pipeline.mjs",
     "mcp": "pnpm --filter mcp-core test",

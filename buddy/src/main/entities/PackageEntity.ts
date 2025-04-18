@@ -8,6 +8,7 @@ import { logger } from '../managers/LogManager.js';
 import { PluginType, ValidationResult } from '@coffic/buddy-types';
 import { PluginEntity } from './PluginEntity.js';
 import { PackageJson } from '@/types/package-json.js';
+
 const verbose = false;
 
 export class PackageEntity {
@@ -53,7 +54,7 @@ export class PackageEntity {
         }
 
         const packageJson = await readPackageJson(path);
-        const packageEntity = new PackageEntity(path, packageJson);
+        const packageEntity = new PackageEntity(path,type, packageJson);
 
         return packageEntity;
     }
