@@ -218,7 +218,7 @@ onUnmounted(() => {
 });
 
 // 在动作ID变化时重新加载
-watch(() => actionStore.getSelectedActionId(), (newId) => {
+watch(() => actionStore.willRun, (newId) => {
     if (newId) {
         loadAndExecuteAction()
     }
@@ -226,7 +226,7 @@ watch(() => actionStore.getSelectedActionId(), (newId) => {
 
 // 组件挂载时加载动作
 onMounted(() => {
-    const actionId = actionStore.getSelectedActionId()
+    const actionId = actionStore.willRun
     if (actionId) {
         loadAndExecuteAction()
     }

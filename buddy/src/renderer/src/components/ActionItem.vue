@@ -3,6 +3,7 @@ import { SendableAction } from '@/types/sendable-action.js';
 import ListItem from '@renderer/cosy/ListItem.vue'
 import { logger } from '../utils/logger';
 import { useActionStore } from '@renderer/stores/actionStore';
+import { computed } from 'vue';
 
 const actionStore = useActionStore()
 const props = defineProps<{
@@ -22,13 +23,18 @@ const handleCancel = () => {
     emit('cancel')
 }
 
+const selected = computed(() => {
+    return actionStore.selected === props.action.globalId
+})
+
+
 // 处理键盘导航
 const handleKeyDown = (event: KeyboardEvent) => {
     switch (event.key) {
         case 'Enter':
         case ' ': // 空格键
             event.preventDefault()
-            handleSelect()
+            handleClick()
             break
         case 'Escape':
             handleCancel()
@@ -43,13 +49,13 @@ const handleKeyDown = (event: KeyboardEvent) => {
 }
 
 // 处理动作选择
-const handleSelect = () => {
-    logger.info('handleActionSelected 🍋', props.action.globalId);
+const handleClick = () => {
+    logger.info('handleActionClicked 🍋', props.action.globalId);
     actionStore.selectAction(props.action.globalId)
 }
 </script>
 
 <template>
-    <ListItem bg-color="success" :description="action.description" :icon="action.icon" :tabindex="index + 1"
-        @click="handleSelect" @keydown="handleKeyDown" />
+    <ListItem bg-color="success" :selected="selected" :description="action.description + actionStore.selected!" :icon="action.icon" :tabindex="index + 1"
+        @click="handleClick" @keydown="handleKeyDown" />
 </template>

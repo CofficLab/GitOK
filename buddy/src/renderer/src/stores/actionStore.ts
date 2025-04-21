@@ -11,21 +11,13 @@ const verbose = false;
  * Action 管理 Store
  *
  * 负责管理动作列表、搜索、执行等功能
- *
- * 主要功能：
- * - 管理搜索关键词
- * - 处理搜索结果的更新
- * - 提供搜索状态的响应式访问
- * - 管理动作列表及其状态
- * - 执行指定动作
- * - 加载动作自定义视图
- * - 监听窗口激活状态
  */
 
 interface ActionState {
     list: SendableAction[];
     isLoading: boolean;
     selected: string | null;
+    willRun: string | null;
     viewHtml: string;
     lastKeyword: string; // 存储上次搜索的关键词，用于窗口激活时刷新
     keyword: string; // 当前搜索关键词
@@ -37,6 +29,7 @@ export const useActionStore = defineStore('action', {
         list: [],
         isLoading: false,
         selected: null,
+        willRun: null,
         viewHtml: '',
         lastKeyword: '',
         keyword: '',
@@ -44,9 +37,12 @@ export const useActionStore = defineStore('action', {
     }),
 
     actions: {
-        onMounted() {
-            this.loadList();
+        async onMounted() {
+            await this.loadList();
+            this.selected = this.list[0]?.globalId || null;
             this.setupWindowActivationListener();
+
+            logger.info('actionStore: onMounted, current selected: ', this.selected);
         },
 
         onUnmounted() {
