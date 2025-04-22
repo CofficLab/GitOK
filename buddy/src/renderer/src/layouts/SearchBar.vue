@@ -32,6 +32,7 @@ const actionStore = useActionStore()
 const keyword = ref(actionStore.keyword)
 const measureText = ref<HTMLElement | null>(null)
 const inputWidth = ref(200)
+const searchInput = ref<HTMLInputElement | null>(null)
 
 // 监听本地关键词变化并更新 actionStore
 watch(keyword, async (newKeyword) => {
@@ -59,9 +60,12 @@ const updateInputWidth = () => {
     }
 }
 
-// 组件挂载后初始化宽度
+// 组件挂载后初始化宽度和焦点
 onMounted(() => {
     updateInputWidth()
+    nextTick(() => {
+        searchInput.value?.focus()
+    })
 })
 </script>
 
@@ -71,7 +75,7 @@ onMounted(() => {
         <RiSearchLine class="w-10 h-8" />
         <div class="relative flex-grow h-full">
             <span class="invisible whitespace-pre" ref="measureText">{{ keyword || 'Search' }}</span>
-            <input v-model="keyword" @keydown="handleKeyDown"
+            <input ref="searchInput" v-model="keyword" @keydown="handleKeyDown"
                 class="absolute  text-2xl h-full top-0 left-0 w-full focus:outline-none focus:ring-0 focus:border-0 outline-0 border-0 ring-0 no-drag-region"
                 :style="{ width: inputWidth + 'px' }" />
         </div>

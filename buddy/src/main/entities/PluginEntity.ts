@@ -277,7 +277,7 @@ export class PluginEntity implements SendablePlugin {
      * @returns 执行结果
      */
     async executeAction(actionId: string, keyword: string): Promise<any> {
-        logger.info(`插件 ${this.id} 执行动作: ${actionId}`);
+        logger.info(`${this.id} 执行动作: ${actionId}`);
 
         const pluginModule = await this.load();
         if (!pluginModule) {
