@@ -12,7 +12,7 @@
     "build": "pnpm -r build",
     "build:buddy": "pnpm build:buddy-types && pnpm --filter buddy build",
     "build:buddy-types": "pnpm --filter buddy-types build",
-    "dev": "pnpm -r dev",
+    "dev": "pnpm dev:buddy",
     "dev:buddy": "pnpm --filter buddy dev",
     "ext": "nodemon pipeline.mjs",
     "mcp": "pnpm --filter mcp-core test",
