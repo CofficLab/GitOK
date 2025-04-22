@@ -123,16 +123,22 @@ export const useActionStore = defineStore('action', {
             return this.list.length;
         },
 
-        /**
-         * 清空当前选中的动作
-         */
         clearSelected() {
             this.selected = null;
             this.viewHtml = '';
         },
 
+        clearWillRun() {
+            this.willRun = null;
+        },
+
         selectAction(actionId: string) {
             this.selected = actionId;
+        },
+
+        setWillRun(actionId: string) {
+            this.selected = actionId;
+            this.willRun = actionId;
         },
 
         getActions(): SendableAction[] {
@@ -147,8 +153,8 @@ export const useActionStore = defineStore('action', {
             return action || null;
         },
 
-        hasSelectedAction(): boolean {
-            return this.selected !== null;
+        hasWillRun(): boolean {
+            return this.willRun !== null;
         },
 
         /**

@@ -35,8 +35,6 @@ interface Props {
   actionText?: string
   // 是否显示边框
   border?: boolean
-  // 背景色类名
-  bgColor?: 'base' | 'primary' | 'secondary' | 'accent' | 'info' | 'success' | 'warning' | 'error'
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -66,40 +64,32 @@ const handleAction = () => {
 </script>
 
 <template>
-  <div 
-    class="flex items-center p-3 cursor-pointer transition-colors duration-200 rounded-md"
-    :class="{
-      'bg-primary-focus': selected,
-      'border-b border-base-200': border,
-      'hover:bg-base-200': !selected && props.bgColor === 'base',
-      'bg-base-100': !selected && props.bgColor === 'base',
-      'hover:bg-primary': !selected && props.bgColor === 'primary',
-      'bg-primary': !selected && props.bgColor === 'primary',
-      'hover:bg-secondary': !selected && props.bgColor === 'secondary',
-      'bg-secondary': !selected && props.bgColor === 'secondary',
-      'hover:bg-accent': !selected && props.bgColor === 'accent',
-      'bg-accent': !selected && props.bgColor === 'accent',
-      'hover:bg-info': !selected && props.bgColor === 'info',
-      'bg-info': !selected && props.bgColor === 'info',
-      'hover:bg-success': !selected && props.bgColor === 'success',
-      'bg-success': !selected && props.bgColor === 'success',
-      'hover:bg-warning': !selected && props.bgColor === 'warning',
-      'bg-warning': !selected && props.bgColor === 'warning',
-      'hover:bg-error': !selected && props.bgColor === 'error',
-      'bg-error': !selected && props.bgColor === 'error'
-    }"
-    @click="handleClick"
-  >
+  <div class="flex items-center p-3 cursor-pointer transition-colors duration-200 rounded-md" :class="{
+    'bg-primary/60': selected,
+    'border-b border-base-200': border,
+    'hover:bg-base-200': !selected,
+    'bg-base-100': !selected,
+    'hover:bg-primary': !selected,
+    'bg-secondary': !selected,
+    'hover:bg-secondary': !selected,
+    'bg-accent': !selected,
+    'hover:bg-accent': !selected,
+    'bg-info': !selected,
+    'hover:bg-info': !selected,
+    'hover:bg-success': !selected,
+    'bg-success': !selected,
+    'hover:bg-warning': !selected,
+    'bg-warning': !selected,
+    'hover:bg-error': !selected,
+    'bg-error': !selected
+  }" @click="handleClick">
     <RiCheckLine v-if="selected" class="mr-3 text-primary" />
     <div class="flex-1">
       <h3 v-if="title" class="font-medium mb-1 text-base-content">{{ title }}</h3>
       <p v-if="description" class="text-base-content/70 text-sm">{{ description }}</p>
     </div>
-    <button 
-      v-if="actionable" 
-      class="px-2 py-1 rounded bg-primary text-primary-content border-none cursor-pointer" 
-      @click.stop="handleAction"
-    >
+    <button v-if="actionable" class="px-2 py-1 rounded bg-primary text-primary-content border-none cursor-pointer"
+      @click.stop="handleAction">
       {{ actionText || '操作' }}
     </button>
   </div>

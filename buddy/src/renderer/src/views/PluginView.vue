@@ -8,12 +8,8 @@ import { viewIpc } from '../ipc/view-ipc'
 
 const actionStore = useActionStore()
 
-const emit = defineEmits<{
-    back: []
-}>()
-
-// 当前选中的动作
-const selectedAction = computed(() => actionStore.getSelectedAction())
+// 当前要执行的动作
+const willRun = computed(() => actionStore.willRun)
 // 是否正在加载动作视图
 const isLoading = computed(() => actionStore.isLoading)
 // 动作执行的结果
@@ -191,7 +187,7 @@ const openPluginWindow = async (action: SendableAction) => {
 // 返回动作列表
 const goBack = async () => {
     await destroyViews()
-    emit('back')
+    actionStore.clearWillRun()
 }
 
 // 设置嵌入式视图事件监听器的清理函数
@@ -259,7 +255,7 @@ onMounted(() => {
             :class="{ 'hidden': !embeddedViewState.isAttached }"
             style="min-height: 400px; position: relative; z-index: 1;">
             <div class="debug-info p-4 text-xs text-gray-500">
-                <div><strong>视图信息:</strong> ({{ selectedAction?.id }})</div>
+                <div><strong>视图信息:</strong> ({{ willRun }})</div>
                 <div><strong>视图模式:</strong> 内嵌式BrowserView</div>
                 <div><strong>视图ID:</strong> {{ embeddedViewState.id }}</div>
                 <div v-if="embeddedViewState.isVisible"><strong>状态:</strong> 可见</div>

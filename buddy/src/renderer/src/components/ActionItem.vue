@@ -27,7 +27,6 @@ const selected = computed(() => {
     return actionStore.selected === props.action.globalId
 })
 
-
 // 处理键盘导航
 const handleKeyDown = (event: KeyboardEvent) => {
     switch (event.key) {
@@ -51,11 +50,11 @@ const handleKeyDown = (event: KeyboardEvent) => {
 // 处理动作选择
 const handleClick = () => {
     logger.info('handleActionClicked 🍋', props.action.globalId);
-    actionStore.selectAction(props.action.globalId)
+    actionStore.setWillRun(props.action.globalId)
 }
 </script>
 
 <template>
-    <ListItem bg-color="success" :selected="selected" :description="action.description + actionStore.selected!" :icon="action.icon" :tabindex="index + 1"
+    <ListItem :selected="selected" :description="action.description" :icon="action.icon" :tabindex="index + 1"
         @click="handleClick" @keydown="handleKeyDown" />
 </template>

@@ -23,7 +23,7 @@ const handleBackToList = () => {
 <template>
     <div class="w-full flex flex-col">
         <!-- 显示HomeView内容（当没有搜索关键词且没有插件动作时） -->
-        <div v-if="!actionStore.hasSelectedAction() && actionStore.getActionCount() === 0" class="p-4">
+        <div v-if="!actionStore.hasWillRun() && actionStore.getActionCount() === 0" class="p-4">
             <h2 class="text-2xl font-bold mb-4">欢迎使用</h2>
             <p class="text-base-content/70">
                 开始输入以搜索可用的动作...
@@ -31,7 +31,7 @@ const handleBackToList = () => {
         </div>
 
         <!-- 插件动作列表（当有搜索关键词或有插件动作时） -->
-        <div v-if="!actionStore.hasSelectedAction() && actionStore.getActionCount() > 0" class="flex-1 w-full px-1">
+        <div v-if="!actionStore.hasWillRun() && actionStore.getActionCount() > 0" class="flex-1 w-full px-1">
             <ActionListView />
 
             <!-- 插件视图网格 -->
@@ -41,7 +41,7 @@ const handleBackToList = () => {
         </div>
 
         <!-- 插件动作视图 -->
-        <div v-if="actionStore.hasSelectedAction()" class="flex-1 overflow-auto">
+        <div v-if="actionStore.hasWillRun()" class="flex-1 overflow-auto">
             <PluginView @back="handleBackToList" class="w-full" />
         </div>
     </div>
