@@ -1,4 +1,4 @@
-import { GetActionsArgs, SuperAction, SuperPlugin } from '@coffic/buddy-types';
+import { ExecuteActionArgs, GetActionsArgs, SuperAction, SuperPlugin } from '@coffic/buddy-types';
 
 // 插件ID
 const PLUGIN_ID = 'sample-plugin-with-page';
@@ -37,7 +37,7 @@ export const plugin: SuperPlugin = {
      * @param {any} params 动作参数
      * @returns {Promise<any>} 动作执行结果
      */
-    async executeAction(actionId: string, params: any): Promise<any> {
+    async executeAction(args: ExecuteActionArgs): Promise<any> {
         return { success: true, message: '不支持执行动作' };
     },
 };

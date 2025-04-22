@@ -1,9 +1,3 @@
-/**
- * 插件视图预加载脚本
- * 为插件视图提供与主应用通信的安全API
- *
- * 打开插件提供的视图时，会在单独的窗口中打开，然后注入这里提供的API
- */
 import { PluginIpc } from '@coffic/buddy-types';
 import { contextBridge, ipcRenderer } from 'electron';
 

@@ -6,7 +6,7 @@
 import { join } from 'path';
 import { readPackageJson, hasPackageJson } from '../utils/PackageUtils.js';
 import { logger } from '../managers/LogManager.js';
-import { GetActionsArgs, PluginStatus, PluginType, SuperPlugin, ValidationResult } from '@coffic/buddy-types';
+import { ExecuteActionArgs, GetActionsArgs, PluginStatus, PluginType, SuperPlugin, ValidationResult } from '@coffic/buddy-types';
 import { SendablePlugin } from '@/types/sendable-plugin.js';
 import { PackageJson } from '@/types/package-json.js';
 import fs from 'fs';
@@ -290,7 +290,12 @@ export class PluginEntity implements SendablePlugin {
             return;
         }
 
-        return pluginModule.executeAction(actionId, keyword);
+        const context: ExecuteActionArgs = {
+            actionId,
+            keyword,
+        };
+
+        return pluginModule.executeAction(context);
     }
 
     async getAction(actionId: string): Promise<ActionEntity | null> {

@@ -1,5 +1,5 @@
 import path from 'path';
-import { GetActionsArgs, SuperAction, SuperPlugin, ExecuteResult } from '@coffic/buddy-types';
+import { GetActionsArgs, SuperAction, SuperPlugin, ExecuteResult, ExecuteActionArgs } from '@coffic/buddy-types';
 
 // 日志函数
 const log = {
@@ -90,7 +90,8 @@ const plugin: SuperPlugin = {
      * @param {string} keyword 搜索关键词
      * @returns {Promise<ExecuteResult>} 动作执行结果
      */
-    async executeAction(actionId: string, keyword: string): Promise<ExecuteResult> {
+    async executeAction(args: ExecuteActionArgs): Promise<ExecuteResult> {
+        const { actionId, keyword } = args;
         log.info(`执行动作: ${actionId}`);
 
         try {

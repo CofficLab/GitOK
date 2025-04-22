@@ -29,6 +29,11 @@ export interface GetActionsArgs {
     overlaidApp?: string;
 }
 
+export interface ExecuteActionArgs {
+    actionId: string;
+    keyword?: string;
+}
+
 /**
  * 执行结果
  */
@@ -93,5 +98,5 @@ export interface SuperPlugin {
 
     getActions(args: GetActionsArgs): Promise<SuperAction[]>;
 
-    executeAction(actionId: string, keyword: string): Promise<ExecuteResult>;
+    executeAction(args: ExecuteActionArgs): Promise<ExecuteResult>;
 }

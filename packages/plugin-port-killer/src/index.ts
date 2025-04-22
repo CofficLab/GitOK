@@ -1,5 +1,5 @@
 import { exec } from 'child_process';
-import { GetActionsArgs, SuperAction, SuperPlugin, ExecuteResult } from '@coffic/buddy-types';
+import { GetActionsArgs, SuperAction, SuperPlugin, ExecuteResult, ExecuteActionArgs } from '@coffic/buddy-types';
 
 // 插件信息
 const plugin: SuperPlugin = {
@@ -43,21 +43,22 @@ const plugin: SuperPlugin = {
      * @param {string} port 端口号
      * @returns {Promise<ExecuteResult>} 动作执行结果
      */
-    async executeAction(actionId: string, port: string): Promise<ExecuteResult> {
+    async executeAction(args: ExecuteActionArgs): Promise<ExecuteResult> {
+        const { actionId, keyword } = args;
         if (actionId === 'killPort') {
             // 验证端口号是否有效
             const portRegex = /^[0-9]{1,5}$/;
-            if (!portRegex.test(port)) {
+            if (!portRegex.test(keyword!)) {
                 return {
                     success: false,
-                    message: `无效的端口号: ${port}`
+                    message: `无效的端口号: ${keyword}`
                 };
             }
 
             const cmd =
                 process.platform === 'win32'
-                    ? `netstat -ano | findstr :${port}`
-                    : `lsof -i :${port}`;
+                    ? `netstat -ano | findstr :${keyword}`
+                    : `lsof -i :${keyword}`;
 
             return new Promise<ExecuteResult>((resolve, reject) => {
                 exec(cmd, (error, stdout) => {
@@ -66,7 +67,7 @@ const plugin: SuperPlugin = {
                         if (error.code === 1) {
                             resolve({
                                 success: false,
-                                message: `未找到占用端口 ${port} 的进程`
+                                message: `未找到占用端口 ${keyword} 的进程`
                             });
                             return;
                         }
@@ -89,20 +90,20 @@ const plugin: SuperPlugin = {
                                 } else {
                                     resolve({
                                         success: true,
-                                        message: `成功终止端口 ${port} 的进程`,
+                                        message: `成功终止端口 ${keyword} 的进程`,
                                     });
                                 }
                             });
                         } else {
                             resolve({
                                 success: false,
-                                message: `未找到占用端口 ${port} 的进程`,
+                                message: `未找到占用端口 ${keyword} 的进程`,
                             });
                         }
                     } else {
                         resolve({
                             success: false,
-                            message: `未找到占用端口 ${port} 的进程`,
+                            message: `未找到占用端口 ${keyword} 的进程`,
                         });
                     }
                 });
