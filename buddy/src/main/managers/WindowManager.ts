@@ -22,7 +22,7 @@ const windowConfig = {
         height: 600,
     },
     alwaysOnTop: true,
-    opacity: 0.95,
+    opacity: 0.99,
 };
 
 class WindowManager extends BaseManager {

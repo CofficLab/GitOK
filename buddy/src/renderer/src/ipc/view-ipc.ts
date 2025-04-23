@@ -1,11 +1,11 @@
-import { ViewBounds } from "@coffic/buddy-types";
+import { createViewArgs } from "@/types/args.js";
 import { IPC_METHODS } from "@/types/ipc-methods.js";
 
 const ipc = window.ipc
 
 export const viewIpc = {
-    async upsertView(pagePath: string, bounds: ViewBounds): Promise<void> {
-        await ipc.invoke(IPC_METHODS.UPSERT_VIEW, pagePath, bounds);
+    async upsertView(args: createViewArgs): Promise<void> {
+        await ipc.invoke(IPC_METHODS.UPSERT_VIEW, args);
     },
 
     async destroyViews(): Promise<void> {

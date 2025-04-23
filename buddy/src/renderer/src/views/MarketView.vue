@@ -80,7 +80,7 @@ const clearUninstallError = (pluginId: string) => {
 <template>
     <div class="p-4 h-full flex flex-col">
         <!-- 操作栏 -->
-        <div class="mb-4">
+        <div class="mb-4 sticky top-0">
             <ToolBar variant="compact" :bordered="false">
                 <template #left>
                     <div role="tablist" class="tabs tabs-box bg-primary/50 shadow-inner">

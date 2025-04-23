@@ -96,7 +96,7 @@ export class Logger {
   public debug(...args: unknown[]): void {
     if (this.enabled && this.debugEnabled) {
       console.log(this.formatMessage(LogLevel.DEBUG, ...args));
-      // 只在控制台显示，不发送到主进程
+      log.debug(this.argsToString(...args));
     }
   }
 

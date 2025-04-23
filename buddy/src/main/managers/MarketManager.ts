@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { logger } from './LogManager.js';
-import { userPluginDB } from '../db/UserPackageDB.js';
+import { userPluginDB } from '../repo/PluginRepoUser.js';
 import { packageDownloaderDB } from '../service/Downloader.js';
 
 /**
@@ -61,7 +61,7 @@ export class MarketManager {
                 throw new Error(`找不到插件: ${pluginId}`);
             }
 
-            plugin.uninstall();
+            plugin.delete();
         } catch (error) {
             const errorMessage = error instanceof Error ? error.message : String(error);
             logger.error(`卸载插件失败: ${errorMessage}`, { pluginId });

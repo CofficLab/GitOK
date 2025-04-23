@@ -7,11 +7,16 @@ import { npmRegistryService } from '../service/NpmRegistryService.js';
 import { PackageEntity } from '../entities/PackageEntity.js';
 import { PackageJson } from '@/types/package-json.js';
 import { SendablePlugin } from '@/types/sendable-plugin.js';
+import { PluginEntity } from '../entities/PluginEntity.js';
 
 const verbose = false;
 
-export class RemoteDB {
-    private static instance: RemoteDB;
+/**
+ * 远程插件仓库
+ * 负责从远程 npm registry 获取插件并缓存
+ */
+export class PluginRepoRemote {
+    private static instance: PluginRepoRemote;
 
     // 缓存刷新时间间隔 (毫秒): 1小时
     private readonly CACHE_REFRESH_INTERVAL = 60 * 60 * 1000;
@@ -32,11 +37,11 @@ export class RemoteDB {
         this.refreshRemotePackages();
     }
 
-    public static getInstance(): RemoteDB {
-        if (!RemoteDB.instance) {
-            RemoteDB.instance = new RemoteDB();
+    public static getInstance(): PluginRepoRemote {
+        if (!PluginRepoRemote.instance) {
+            PluginRepoRemote.instance = new PluginRepoRemote();
         }
-        return RemoteDB.instance;
+        return PluginRepoRemote.instance;
     }
 
     /**
@@ -76,9 +81,9 @@ export class RemoteDB {
     /**
      * 获取远程插件列表
      */
-    public async getPlugins(): Promise<SendablePlugin[]> {
+    public async getPlugins(): Promise<PluginEntity[]> {
         const packages = await this.getPackages();
-        const plugins: SendablePlugin[] = [];
+        const plugins: PluginEntity[] = [];
         for (const pkg of packages) {
             const plugin = pkg.getPlugin();
             if (plugin) {
@@ -86,6 +91,11 @@ export class RemoteDB {
             }
         }
         return plugins;
+    }
+
+    public async getSendablePlugins(): Promise<SendablePlugin[]> {
+        const plugins = await this.getPlugins();
+        return await Promise.all(plugins.map((plugin) => plugin.getSendablePlugin()));
     }
 
     /**
@@ -145,4 +155,4 @@ export class RemoteDB {
 }
 
 // 导出单例
-export const remotePluginDB = RemoteDB.getInstance();
+export const remotePluginDB = PluginRepoRemote.getInstance();

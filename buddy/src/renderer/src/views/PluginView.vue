@@ -8,8 +8,6 @@ import { viewIpc } from '../ipc/view-ipc'
 
 const actionStore = useActionStore()
 
-// 当前要执行的动作
-const willRun = computed(() => actionStore.willRun)
 // 是否正在加载动作视图
 const isLoading = computed(() => actionStore.isLoading)
 // 动作执行的结果
@@ -132,7 +130,13 @@ const createEmbeddedView = async (actionId: string, action: SendableAction) => {
         logger.info(`PluginView: 创建嵌入式视图: ${embeddedViewState.id}，容器边界: ${bounds}`)
 
         try {
-            await viewIpc.upsertView(action.viewPath!, bounds)
+            await viewIpc.upsertView({
+                pagePath: action.viewPath!,
+                x: bounds.x,
+                y: bounds.y,
+                width: bounds.width,
+                height: bounds.height
+            })
             embeddedViewState.isVisible = true
         } catch (viewError) {
             logger.error(`PluginView: 视图操作失败: ${viewError}`);
@@ -170,7 +174,8 @@ const destroyViews = async () => {
 const openPluginWindow = async (action: SendableAction) => {
     try {
         // 获取主窗口位置和大小以便设置插件窗口的位置
-        await viewIpc.upsertView(action.viewPath!, {
+        await viewIpc.upsertView({
+            pagePath: action.viewPath!,
             x: 100,
             y: 100,
             width: 200,
@@ -254,13 +259,6 @@ onMounted(() => {
             class="flex-1 border rounded-lg bg-white shadow-sm overflow-hidden embedded-view-container"
             :class="{ 'hidden': !embeddedViewState.isAttached }"
             style="min-height: 400px; position: relative; z-index: 1;">
-            <div class="debug-info p-4 text-xs text-gray-500">
-                <div><strong>视图信息:</strong> ({{ willRun }})</div>
-                <div><strong>视图模式:</strong> 内嵌式BrowserView</div>
-                <div><strong>视图ID:</strong> {{ embeddedViewState.id }}</div>
-                <div v-if="embeddedViewState.isVisible"><strong>状态:</strong> 可见</div>
-                <div v-else><strong>状态:</strong> 正在加载...</div>
-            </div>
         </div>
 
         <!-- 插件使用独立窗口显示 -->
@@ -268,8 +266,7 @@ onMounted(() => {
             class="flex-1 flex flex-col items-center justify-center p-6 border rounded-lg border-blue-200 bg-blue-50">
             <p class="text-lg mb-4">插件视图已在独立窗口中打开</p>
             <p class="text-sm text-gray-600 mb-6">该窗口将在您返回动作列表或关闭此页面时自动关闭</p>
-            <button @click="destroyViews"
-                class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition">
+            <button @click="destroyViews" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition">
                 关闭插件窗口
             </button>
         </div>
@@ -307,14 +304,5 @@ onMounted(() => {
 
 .embedded-view-container.hidden {
     display: none;
-}
-
-/* 在调试信息下方预留空间，让实际内容区域不被遮挡 */
-.embedded-view-container .debug-info {
-    position: relative;
-    z-index: 10;
-    background-color: rgba(255, 255, 255, 0.8);
-    border-bottom: 1px solid #eee;
-    padding: 12px;
 }
 </style>

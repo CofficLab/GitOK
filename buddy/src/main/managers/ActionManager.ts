@@ -7,7 +7,7 @@ import { BaseManager } from './BaseManager.js';
 import { ActionEntity } from '../entities/ActionEntity.js';
 import { logger } from './LogManager.js';
 
-const verbose = true;
+const verbose = false;
 
 class ActionManager extends BaseManager {
     private static instance: ActionManager;

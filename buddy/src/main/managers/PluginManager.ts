@@ -4,8 +4,8 @@
  */
 import { BaseManager } from './BaseManager.js';
 import { PluginEntity } from '../entities/PluginEntity.js';
-import { userPluginDB } from '../db/UserPackageDB.js';
-import { devPluginDB } from '../db/DevPluginDB.js';
+import { userPluginDB } from '../repo/PluginRepoUser.js';
+import { devPluginDB } from '../repo/PluginRepoDev.js';
 
 class PluginManager extends BaseManager {
     private static instance: PluginManager;
@@ -30,7 +30,7 @@ class PluginManager extends BaseManager {
      */
     async initialize(): Promise<void> {
         try {
-            await userPluginDB.ensurePluginDirs();
+            await userPluginDB.ensureRepoDirs();
         } catch (error) {
             this.handleError(error, '插件系统初始化失败', true);
         }

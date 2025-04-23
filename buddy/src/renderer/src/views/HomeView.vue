@@ -10,7 +10,7 @@
 import { useActionStore } from '@renderer/stores/actionStore';
 import ActionListView from './ActionListView.vue';
 import PluginView from './PluginView.vue';
-// import PluginPageGrid from './PluginPageGrid.vue';
+import PluginPageGrid from './PluginPageGrid.vue';
 
 const actionStore = useActionStore();
 
@@ -35,9 +35,9 @@ const handleBackToList = () => {
             <ActionListView />
 
             <!-- 插件视图网格 -->
-            <!-- <div class="min-h-96 w-full z-30">
+            <div class="min-h-96 w-full z-30">
                 <PluginPageGrid />
-            </div> -->
+            </div>
         </div>
 
         <!-- 插件动作视图 -->

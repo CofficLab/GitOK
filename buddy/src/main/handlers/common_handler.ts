@@ -5,6 +5,7 @@ import { logger } from '../managers/LogManager.js';
 import { viewManager } from '../managers/ViewManager.js';
 import { IpcResponse } from '@coffic/buddy-types';
 import { IPC_METHODS } from '@/types/ipc-methods.js';
+import { createViewArgs } from '@/types/args.js';
 
 /**
  * 基础的IPC路由配置
@@ -55,8 +56,8 @@ export const baseRoutes: IpcRoute[] = [
 
     {
         channel: IPC_METHODS.UPSERT_VIEW,
-        handler: (_, id, bounds): Promise<void> => {
-            return viewManager.upsertView(id, bounds);
+        handler: (_, args: createViewArgs): Promise<void> => {
+            return viewManager.upsertView(args);
         }
     },
 ];

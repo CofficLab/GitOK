@@ -96,6 +96,11 @@ export interface SuperPlugin {
      */
     npmPackage?: string;
 
+    /**
+     * 插件主页面路径
+     */
+    pagePath?: string;
+
     getActions(args: GetActionsArgs): Promise<SuperAction[]>;
 
     executeAction(args: ExecuteActionArgs): Promise<ExecuteResult>;

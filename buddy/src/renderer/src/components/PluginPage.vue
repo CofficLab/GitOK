@@ -2,8 +2,8 @@
 import { onMounted, nextTick, ref, onUnmounted, watch } from 'vue'
 import { logger } from '../utils/logger'
 import { viewIpc } from '../ipc/view-ipc'
-import { createViewArgs } from '@coffic/buddy-types';
 import { SendablePlugin } from '@/types/sendable-plugin';
+import { createViewArgs } from '@/types/args';
 
 interface Props {
     plugin: SendablePlugin
@@ -15,6 +15,11 @@ const container = ref<HTMLElement | null>(null)
 
 // 定义一个函数用于处理位置变化
 const handlePositionChange = () => {
+    const pagePath = props.plugin.pagePath
+    if (!pagePath) {
+        return
+    }
+
     if (container.value) {
         const rect = container.value.getBoundingClientRect()
 
@@ -23,7 +28,7 @@ const handlePositionChange = () => {
             y: Math.round(rect.y),
             width: Math.round(rect.width),
             height: Math.round(rect.height),
-            pagePath: props.plugin.pagePath,
+            pagePath: pagePath,
         }
     }
 }
@@ -37,12 +42,16 @@ onMounted(async () => {
     }
 
     const rect = container.value.getBoundingClientRect()
-    options.value = {
-        x: Math.round(rect.x),
-        y: Math.round(rect.y),
-        width: Math.round(rect.width),
-        height: Math.round(rect.height),
-        pagePath: props.plugin.pagePath,
+
+    const pagePath = props.plugin.pagePath
+    if (pagePath) {
+        options.value = {
+            x: Math.round(rect.x),
+            y: Math.round(rect.y),
+            width: Math.round(rect.width),
+            height: Math.round(rect.height),
+            pagePath: pagePath,
+        }
     }
 
     document.addEventListener('content-scroll', handlePositionChange)
@@ -54,7 +63,8 @@ onUnmounted(() => {
 
 watch(options, () => {
     if (options.value == null) return
-    viewIpc.upsertView(props.plugin.pagePath!, {
+    viewIpc.upsertView({
+        pagePath: props.plugin.pagePath!,
         x: options.value.x,
         y: options.value.y,
         width: options.value.width,

@@ -4,6 +4,9 @@ import { marketIpc } from '../ipc/market-ipc';
 import { SendablePlugin } from '@/types/sendable-plugin';
 import { logger } from '../utils/logger';
 
+const verbose = true;
+const title = "🛍️ 插件市场"
+
 interface MarketState {
     userPluginDirectory: string;
     error: string;
@@ -45,6 +48,10 @@ export const useMarketStore = defineStore('market', {
 
         // 加载开发插件列表
         async loadDevPlugins(): Promise<void> {
+            if (verbose) {
+                logger.debug(`${title} 加载开发插件列表`)
+            }
+
             this.loadingPlugins = true;
 
             try {
@@ -52,11 +59,16 @@ export const useMarketStore = defineStore('market', {
             } catch (err) {
                 const errorMsg = err instanceof Error ? err.message : String(err);
                 this.error = `加载插件列表失败: ${errorMsg}`;
-                console.error('Failed to load plugins:', err);
+                logger.error('Failed to load plugins:', err);
                 throw err;
             } finally {
                 this.loadingPlugins = false;
-                this.pluginsWithPage = this.devPlugins.filter(plugin => plugin.hasPage);
+                this.pluginsWithPage = this.devPlugins.filter(plugin => plugin.pagePath);
+
+                if (verbose) {
+                    logger.debug(`${title} 加载开发插件列表完成，插件数量：${this.devPlugins.length}`)
+                    logger.debug(`${title} 加载开发插件列表完成，有视图插件数量：${this.pluginsWithPage.length}`)
+                }
             }
         },
 

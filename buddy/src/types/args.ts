@@ -4,7 +4,6 @@
  * @param y 视图的y坐标
  * @param width 视图的宽度
  * @param height 视图的高度
- * @param content 视图的内容，HTML字符串
  * @param pagePath 视图的内容，HTML文件路径
  * @returns createViewArgs
  */
@@ -13,6 +12,5 @@ export interface createViewArgs {
     y: number,
     width: number,
     height: number,
-    content?: string,
-    pagePath?: string,
+    pagePath: string,
 }

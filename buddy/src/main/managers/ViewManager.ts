@@ -6,8 +6,9 @@ import { is } from '@electron-toolkit/utils';
 import { windowManager } from './WindowManager.js';
 import { join } from 'path';
 import { logger } from './LogManager.js';
-import { createViewArgs, ViewBounds } from '@coffic/buddy-types';
-
+import { ViewBounds } from '@coffic/buddy-types';
+import { createViewArgs } from '@/types/args.js';
+import { readFileSync } from 'fs';
 const verbose = true;
 
 export class ViewManager {
@@ -83,8 +84,15 @@ export class ViewManager {
             this.destroyAllViews();
         })
 
-        // 加载HTML内容，如果提供了content参数，则使用content，否则读取pagePath对应的文件内容
-        const htmlContent = args.content ?? (args.pagePath ? require('fs').readFileSync(args.pagePath, 'utf-8') : '');
+        // 加载HTML内容，读取pagePath对应的文件内容, 如果文件不存在，则加载默认的HTML内容
+        let htmlContent = '';
+        try {
+            htmlContent = readFileSync(args.pagePath, 'utf-8');
+        } catch (error) {
+            logger.warn('加载HTML内容失败:', error);
+            htmlContent = "加载HTML内容失败: " + error;
+        }
+
         view.webContents.loadURL(
             `data:text/html;charset=utf-8,${encodeURIComponent(htmlContent)}`
         );
@@ -139,20 +147,19 @@ export class ViewManager {
         view.setBounds(bounds);
     }
 
-    public async upsertView(pagePath: string, bounds: ViewBounds): Promise<void> {
+    public async upsertView(args: createViewArgs): Promise<void> {
         if (verbose) {
-            logger.info('upsert view:', pagePath, bounds);
+            logger.info('upsert view:', args);
         }
 
-        const view = this.views.get(pagePath) ?? await this.createView({
-            pagePath: pagePath,
-            x: bounds.x,
-            y: bounds.y,
-            height: bounds.height,
-            width: bounds.width
-        })
+        const view = this.views.get(args.pagePath) ?? await this.createView(args)
 
-        view.setBounds(bounds)
+        view.setBounds({
+            x: args.x,
+            y: args.y,
+            width: args.width,
+            height: args.height
+        })
     }
 
     /**

@@ -6,20 +6,20 @@
 import { join } from 'path';
 import { readPackageJson, hasPackageJson } from '../utils/PackageUtils.js';
 import { logger } from '../managers/LogManager.js';
-import { ExecuteActionArgs, GetActionsArgs, PluginStatus, PluginType, SuperPlugin, ValidationResult } from '@coffic/buddy-types';
+import { ExecuteActionArgs, ExecuteResult, GetActionsArgs, PluginStatus, PluginType, SuperPlugin, ValidationResult } from '@coffic/buddy-types';
 import { SendablePlugin } from '@/types/sendable-plugin.js';
 import { PackageJson } from '@/types/package-json.js';
 import fs from 'fs';
 import { appStateManager } from '../managers/StateManager.js';
 import { ActionEntity } from './ActionEntity.js';
 
-const verbose = false;
+const verbose = true;
+const title = '🧩 PluginEntity';
 
 /**
  * 插件实体类
- * 实现了 Plugin 接口，提供了额外的状态管理功能
  */
-export class PluginEntity implements SendablePlugin {
+export class PluginEntity {
     // 基本信息
     id: string;
     name: string;
@@ -27,8 +27,6 @@ export class PluginEntity implements SendablePlugin {
     version: string;
     author: string;
     main: string;
-    pagePath?: string;
-    hasPage: boolean = false;
     validationError: string | null = null;
     path: string;
     type: PluginType;
@@ -42,13 +40,11 @@ export class PluginEntity implements SendablePlugin {
 
     /**
      * 从目录创建插件实体
+     * 
      * @param pluginPath 插件目录路径
      * @param type 插件类型
      */
-    public static async fromDirectory(
-        pluginPath: string,
-        type: PluginType
-    ): Promise<PluginEntity> {
+    public static async fromDir(pluginPath: string, type: PluginType): Promise<PluginEntity> {
         if (!(await hasPackageJson(pluginPath))) {
             throw new Error(`插件目录 ${pluginPath} 缺少 package.json`);
         }
@@ -208,17 +204,16 @@ export class PluginEntity implements SendablePlugin {
     }
 
     /**
-     * 卸载插件
+     * 删除插件
      */
-    uninstall(): void {
+    delete(): void {
         const pluginPath = this.path;
         if (!pluginPath || !fs.existsSync(pluginPath)) {
             throw new Error('插件目录不存在');
         }
 
-        logger.debug(`删除插件目录: ${pluginPath}`);
         fs.rmdirSync(pluginPath, { recursive: true });
-        logger.info(`插件 ${this.id} 卸载成功`);
+        logger.info(`插件 ${this.id} 删除成功`);
     }
 
     /**
@@ -276,18 +271,24 @@ export class PluginEntity implements SendablePlugin {
      * 执行插件动作
      * @returns 执行结果
      */
-    async executeAction(actionId: string, keyword: string): Promise<any> {
+    async executeAction(actionId: string, keyword: string): Promise<ExecuteResult> {
         logger.info(`${this.id} 执行动作: ${actionId}`);
 
         const pluginModule = await this.load();
         if (!pluginModule) {
             logger.warn(`插件模块加载失败: ${this.id}, 无法执行动作: ${actionId}`);
-            return;
+            return {
+                success: false,
+                message: `插件模块加载失败: ${this.id}, 无法执行动作: ${actionId}`,
+            };
         }
 
         if (typeof pluginModule.executeAction !== 'function') {
             logger.warn(`插件 ${this.id} 未实现 executeAction 方法, 无法执行动作: ${actionId}`);
-            return;
+            return {
+                success: false,
+                message: `插件 ${this.id} 未实现 executeAction 方法, 无法执行动作: ${actionId}`,
+            };
         }
 
         const context: ExecuteActionArgs = {
@@ -342,5 +343,50 @@ export class PluginEntity implements SendablePlugin {
             this.setStatus('error', error.message);
             throw error;
         }
+    }
+
+    /**
+     * 获取插件的主页面路径
+     * @returns 插件主页面路径
+     */
+    async getPagePath(): Promise<string> {
+        if (verbose) {
+            logger.info(`${title} 获取插件 ${this.id} 的主页面路径`);
+        }
+
+        const module = await this.load();
+        if (!module) {
+            logger.warn(`${title} 插件 ${this.id} 加载失败，无法获取主页面路径`);
+            return '';
+        }
+
+        const pagePath = module.pagePath || '';
+        const absolutePagePath = join(this.path, pagePath);
+
+        if (verbose) {
+            logger.info(`${title} 插件 ${this.id} 的主页面路径: ${absolutePagePath}`);
+        }
+
+        return pagePath ? absolutePagePath : '';
+    }
+
+    /**
+     * 获取插件的SendablePlugin对象，用于发送给渲染进程
+     * 
+     * @returns 插件的SendablePlugin对象
+     */
+    public async getSendablePlugin(): Promise<SendablePlugin> {
+        return {
+            id: this.id,
+            name: this.name,
+            description: this.description,
+            version: this.version,
+            author: this.author,
+            path: this.path,
+            validationError: this.validationError,
+            status: this.status,
+            type: this.type,
+            pagePath: await this.getPagePath(),
+        };
     }
 }

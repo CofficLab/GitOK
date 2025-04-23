@@ -1,10 +1,10 @@
 import { IpcRoute } from '@/main/provider/RouterService.js';
-import { userPluginDB } from '@/main/db/UserPackageDB.js';
-import { remotePluginDB } from '@/main/db/RemoteDB.js';
-import { devPluginDB } from '@/main/db/DevPluginDB.js';
+import { userPluginDB } from '@/main/repo/PluginRepoUser.js';
+import { remotePluginDB } from '@/main/repo/PluginRepoRemote.js';
 import { SendablePlugin } from '@/types/sendable-plugin.js';
 import { marketManager } from '@/main/managers/MarketManager.js';
 import { IPC_METHODS } from '@/types/ipc-methods.js';
+import { devPluginDB } from '../repo/PluginRepoDev.js';
 
 export const marketHandler: IpcRoute[] = [
     {
@@ -16,19 +16,19 @@ export const marketHandler: IpcRoute[] = [
     {
         channel: IPC_METHODS.GET_USER_PLUGINS,
         handler: async (): Promise<SendablePlugin[]> => {
-            return await userPluginDB.getAllPlugins();
+            return await userPluginDB.getSendablePlugins();
         },
     },
     {
         channel: IPC_METHODS.GET_DEV_PLUGINS,
         handler: async (): Promise<SendablePlugin[]> => {
-            return await devPluginDB.getAllPlugins();
+            return await devPluginDB.getSendablePlugins();
         }
     },
     {
         channel: IPC_METHODS.GET_REMOTE_PLUGINS,
         handler: async (): Promise<SendablePlugin[]> => {
-            return await remotePluginDB.getPlugins();
+            return await remotePluginDB.getSendablePlugins();
         },
     },
     {
