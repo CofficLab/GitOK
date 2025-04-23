@@ -10,7 +10,7 @@
     "typescript": "^5.3.3"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && cp -r src/views dist/",
     "dev": "tsc --watch",
     "prepublishOnly": "npm run build"
   },

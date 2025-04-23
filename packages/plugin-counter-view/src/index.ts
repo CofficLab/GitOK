@@ -12,30 +12,12 @@ export const plugin: SuperPlugin = {
     author: 'Coffic',
     path: '',
     type: 'user',
+    pagePath: 'dist/views/counter.html',
 
-    /**
-     * 获取插件提供的动作列表
-     * @param {GetActionsArgs} args 上下文信息
-     * @returns {Promise<SuperAction[]>} 动作列表
-     */
     async getActions(args: GetActionsArgs): Promise<SuperAction[]> {
-        const counterAction: SuperAction = {
-            id: 'counter',
-            description: '计数器',
-            icon: 'counter',
-            pluginId: PLUGIN_ID,
-            globalId: `${PLUGIN_ID}-counter`,
-            viewPath: 'page.html',
-        };
-
-        return [counterAction];
+        return [];
     },
 
-    /**
-     * 执行插件动作
-     * @param {ExecuteActionArgs} args 上下文信息
-     * @returns {Promise<ExecuteResult>} 动作执行结果
-     */
     async executeAction(args: ExecuteActionArgs): Promise<ExecuteResult> {
         return { success: true, message: '不支持执行动作' };
     },
