@@ -4,7 +4,6 @@
   "description": "A sample plugin with a page view",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "page": "page.html",
   "devDependencies": {
     "@coffic/buddy-types": "workspace:*",
     "@types/node": "^20.10.4",
