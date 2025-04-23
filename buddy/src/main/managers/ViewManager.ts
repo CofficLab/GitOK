@@ -9,7 +9,8 @@ import { logger } from './LogManager.js';
 import { ViewBounds } from '@coffic/buddy-types';
 import { createViewArgs } from '@/types/args.js';
 import { readFileSync } from 'fs';
-const verbose = true;
+
+const verbose = false;
 
 export class ViewManager {
     private views: Map<string, WebContentsView> = new Map();

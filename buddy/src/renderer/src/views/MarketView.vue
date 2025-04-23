@@ -8,7 +8,7 @@
 * 4. 下载远程仓库插件
 */
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { computed } from 'vue'
 import PluginCard from '@/renderer/src/components/PluginCard.vue'
 import ButtonFolder from '@renderer/cosy/ButtonFolder.vue'
 import ButtonRefresh from '@renderer/cosy/ButtonRefresh.vue'
@@ -18,6 +18,7 @@ import { globalToast } from '../composables/useToast'
 import { useMarketStore } from '../stores/marketStore'
 import { useDirectory } from '../composables/useDirectory'
 import { useAlert } from '../composables/useAlert'
+import { useAsyncState, useStorage } from '@vueuse/core'
 
 const { openDirectory } = useDirectory()
 const { error } = useAlert()
@@ -28,52 +29,70 @@ const devPlugins = computed(() => marketStore.devPlugins)
 const remotePlugins = computed(() => marketStore.remotePlugins)
 const directory = computed(() => marketStore.userPluginDirectory)
 
-// 加载状态
-const loadingPlugins = ref<boolean>(false)
-const loadingRemotePlugins = ref<boolean>(false)
+// 使用localStorage保存最后选择的标签
+const activeTab = useStorage<'user' | 'remote' | 'dev'>(
+    'market-active-tab',
+    'user'
+)
 
-// 卸载状态
-const uninstallingPlugins = ref<Set<string>>(new Set())
-const uninstallSuccess = ref<Set<string>>(new Set())
-const uninstallError = ref<Map<string, string>>(new Map())
+// 加载插件状态管理（合并原有的两个加载状态变量）
+const { state: isLoading, execute: loadPlugins } = useAsyncState(
+    async () => {
+        try {
+            switch (activeTab.value) {
+                case "remote":
+                    await marketStore.loadRemotePlugins()
+                    break
+                case "user":
+                    await marketStore.loadUserPlugins()
+                    break
+                case "dev":
+                    await marketStore.loadDevPlugins()
+                    break
+                default:
+                    error('未知标签')
+                    return false
+            }
 
-// 当前选中的标签
-const activeTab = ref<'user' | 'remote' | 'dev'>('user')
+            globalToast.success(`刷新成功(${activeTab.value})`, { duration: 2000, position: 'bottom-center' })
+            return true
+        } catch (err) {
+            error('刷新失败' + err)
+            return false
+        }
+    },
+    false,
+    { immediate: false, resetOnExecute: true }
+)
 
+// 简单使用Vue自带的computed
 const shouldShowEmpty = computed(() => {
     return (activeTab.value === 'remote' && remotePlugins.value.length === 0) ||
         (activeTab.value === 'user' && userPlugins.value.length === 0) ||
         (activeTab.value === 'dev' && devPlugins.value.length === 0)
 })
 
+// 卸载状态 (使用Map合并处理)
+const uninstallStates = useStorage('uninstall-states', {
+    uninstallingPlugins: new Set<string>(),
+    uninstallSuccess: new Set<string>(),
+    uninstallError: new Map<string, string>()
+})
+
 // 刷新按钮点击事件
-const handleRefresh = async () => {
-    try {
-        switch (activeTab.value) {
-            case "remote":
-                await marketStore.loadRemotePlugins()
-                break;
-            case "user":
-                await marketStore.loadUserPlugins()
-                break;
-            case "dev":
-                await marketStore.loadDevPlugins()
-                break;
+const handleRefresh = () => {
+    loadPlugins()
+}
 
-            default:
-                error('未知标签')
-                return;
-        }
-
-        globalToast.success(`刷新成功(${activeTab.value})`, { duration: 2000, position: 'bottom-center' })
-    } catch (err) {
-        error('刷新失败' + err)
-    }
+// 切换标签并加载对应插件
+const switchTab = (tab: 'user' | 'remote' | 'dev') => {
+    activeTab.value = tab
+    loadPlugins()
 }
 
 // 清除单个插件的卸载错误状态
 const clearUninstallError = (pluginId: string) => {
-    uninstallError.value.delete(pluginId)
+    uninstallStates.value.uninstallError.delete(pluginId)
 }
 </script>
 
@@ -85,15 +104,15 @@ const clearUninstallError = (pluginId: string) => {
                 <template #left>
                     <div role="tablist" class="tabs tabs-box bg-primary/50 shadow-inner">
                         <a role="tab" class="tab" :class="{ 'tab-active': activeTab === 'user' }"
-                            @click="activeTab = 'user'">
+                            @click="switchTab('user')">
                             用户插件
                         </a>
                         <a role="tab" class="tab" :class="{ 'tab-active': activeTab === 'remote' }"
-                            @click="activeTab = 'remote'">
+                            @click="switchTab('remote')">
                             远程仓库
                         </a>
                         <a role="tab" class="tab" :class="{ 'tab-active': activeTab === 'dev' }"
-                            @click="activeTab = 'dev'">
+                            @click="switchTab('dev')">
                             开发插件
                         </a>
                     </div>
@@ -101,9 +120,8 @@ const clearUninstallError = (pluginId: string) => {
 
                 <template #right>
                     <ButtonFolder @click="() => openDirectory(directory)" shape="circle" size="sm" tooltip="打开插件目录" />
-                    <ButtonRefresh @click="handleRefresh" shape="circle"
-                        :loading="loadingPlugins || loadingRemotePlugins"
-                        :disabled="loadingPlugins || loadingRemotePlugins" tooltip="刷新插件列表" size="sm" />
+                    <ButtonRefresh @click="handleRefresh" shape="circle" :loading="isLoading" :disabled="isLoading"
+                        tooltip="刷新插件列表" size="sm" />
                 </template>
             </ToolBar>
         </div>
@@ -112,9 +130,9 @@ const clearUninstallError = (pluginId: string) => {
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <!-- 本地插件卡片 -->
             <PluginCard v-if="activeTab === 'user'" v-for="plugin in userPlugins" :key="plugin.id" :plugin="plugin"
-                type="local" :uninstallingPlugins="uninstallingPlugins" :uninstallSuccess="uninstallSuccess"
-                :uninstallError="uninstallError" @uninstall="marketStore.uninstallPlugin"
-                @clear-uninstall-error="clearUninstallError" />
+                type="local" :uninstallingPlugins="uninstallStates.uninstallingPlugins"
+                :uninstallSuccess="uninstallStates.uninstallSuccess" :uninstallError="uninstallStates.uninstallError"
+                @uninstall="marketStore.uninstallPlugin" @clear-uninstall-error="clearUninstallError" />
 
             <!-- 远程插件卡片 -->
             <PluginCard v-if="activeTab === 'remote'" v-for="plugin in remotePlugins" :key="plugin.id" :plugin="plugin"

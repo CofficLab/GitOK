@@ -3,7 +3,8 @@ import { SendableAction } from '@/types/sendable-action.js';
 import ListItem from '@renderer/cosy/ListItem.vue'
 import { logger } from '../utils/logger';
 import { useActionStore } from '@renderer/stores/actionStore';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
+import { onKeyStroke, useFocus } from '@vueuse/core';
 
 const actionStore = useActionStore()
 const props = defineProps<{
@@ -18,6 +19,10 @@ const emit = defineEmits<{
     (e: 'navigateDown'): void
 }>()
 
+// 创建引用来使用useFocus
+const itemRef = ref<HTMLElement | null>(null)
+const { focused } = useFocus(itemRef, { initialValue: false })
+
 // 处理取消操作
 const handleCancel = () => {
     emit('cancel')
@@ -27,25 +32,31 @@ const selected = computed(() => {
     return actionStore.selected === props.action.globalId
 })
 
-// 处理键盘导航
-const handleKeyDown = (event: KeyboardEvent) => {
-    switch (event.key) {
-        case 'Enter':
-        case ' ': // 空格键
-            event.preventDefault()
-            handleClick()
-            break
-        case 'Escape':
-            handleCancel()
-            break
-        case 'ArrowUp':
-            emit('navigateUp')
-            break
-        case 'ArrowDown':
-            emit('navigateDown')
-            break
+// 使用VueUse的onKeyStroke处理键盘事件
+onKeyStroke(['Enter', ' '], (e) => {
+    if (focused.value) {
+        e.preventDefault()
+        handleClick()
     }
-}
+}, { target: itemRef })
+
+onKeyStroke('Escape', () => {
+    if (focused.value) {
+        handleCancel()
+    }
+})
+
+onKeyStroke('ArrowUp', () => {
+    if (focused.value) {
+        emit('navigateUp')
+    }
+})
+
+onKeyStroke('ArrowDown', () => {
+    if (focused.value) {
+        emit('navigateDown')
+    }
+})
 
 // 处理动作选择
 const handleClick = () => {
@@ -55,6 +66,6 @@ const handleClick = () => {
 </script>
 
 <template>
-    <ListItem :selected="selected" :description="action.description" :icon="action.icon" :tabindex="index + 1"
-        @click="handleClick" @keydown="handleKeyDown" />
+    <ListItem ref="itemRef" :selected="selected" :description="action.description" :icon="action.icon"
+        :tabindex="index + 1" @click="handleClick" />
 </template>

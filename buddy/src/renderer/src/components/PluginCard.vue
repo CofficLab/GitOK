@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed } from 'vue'
 import {
     RiCheckLine,
     RiDeleteBinLine
@@ -10,6 +10,7 @@ import { useMarketStore } from '@renderer/stores/marketStore'
 import { globalToast } from '@renderer/composables/useToast'
 import { marketIpc } from '../ipc/market-ipc'
 import { SendablePlugin } from '@/types/sendable-plugin'
+import { useAsyncState, useTimeoutFn } from '@vueuse/core'
 
 const props = defineProps<{
     plugin: SendablePlugin
@@ -23,17 +24,50 @@ const props = defineProps<{
 
 // 状态管理
 const marketStore = useMarketStore()
-const isUninstalling = ref(false)
-const uninstallComplete = ref(false)
-const isDownloading = ref(false)
-const downloadComplete = ref(false)
-const isInstalled = ref(false)
 
-onMounted(() => {
-    marketIpc.isInstalled(props.plugin.id).then((res) => {
-        isInstalled.value = res
-    })
-})
+// 检查插件安装状态
+const { state: isInstalled, execute: checkInstalled } = useAsyncState(
+    () => marketIpc.isInstalled(props.plugin.id),
+    false,
+    { immediate: true }
+)
+
+// 下载状态管理
+const { state: isDownloading, execute: executeDownload } = useAsyncState(
+    async () => {
+        await marketStore.downloadPlugin(props.plugin)
+        isInstalled.value = true
+        showDownloadSuccess()
+        return true
+    },
+    false,
+    { immediate: false }
+)
+
+// 下载成功状态与超时清除
+const { isPending: downloadComplete, start: showDownloadSuccess } = useTimeoutFn(
+    () => { },
+    3000,
+    { immediate: false }
+)
+
+// 卸载状态管理
+const { state: isUninstalling, execute: executeUninstall } = useAsyncState(
+    async () => {
+        try {
+            await marketStore.uninstallPlugin(props.plugin.id)
+            setTimeout(() => {
+                globalToast.success('插件已卸载')
+            }, 500)
+            return true
+        } catch (err) {
+            globalToast.error('卸载失败' + err)
+            return false
+        }
+    },
+    false,
+    { immediate: false }
+)
 
 // 计算卡片样式
 const cardClass = computed(() => {
@@ -51,12 +85,8 @@ const cardClass = computed(() => {
 const isUserPlugin = computed(() => props.plugin.type === 'user')
 
 // 下载插件
-const handleDownload = async () => {
-    isDownloading.value = true
-    await marketStore.downloadPlugin(props.plugin)
-    isDownloading.value = false
-    downloadComplete.value = true
-    isInstalled.value = true
+const handleDownload = () => {
+    executeDownload()
 }
 
 // 显示卸载确认
@@ -68,26 +98,7 @@ const confirmUninstall = async () => {
     })
 
     if (confirmed) {
-        handleUninstall()
-    }
-}
-
-// 卸载插件
-const handleUninstall = async () => {
-    isUninstalling.value = true
-
-    try {
-        await marketStore.uninstallPlugin(props.plugin.id)
-
-        // 卸载完成后触发动画
-        setTimeout(() => {
-            globalToast.success('插件已卸载')
-        }, 500)
-    } catch (err) {
-        globalToast.error('卸载失败' + err)
-    } finally {
-        isUninstalling.value = false
-        uninstallComplete.value = false
+        executeUninstall()
     }
 }
 </script>
