@@ -332,7 +332,12 @@ export class PluginEntity implements SendablePlugin {
 
             delete require.cache[require.resolve(mainFilePath)];
             const module = require(mainFilePath);
-            return module;
+            // 如果模块导出了plugin对象，使用它
+            if (module.plugin) {
+                return module.plugin;
+            }
+            // 否则尝试使用默认导出或整个模块
+            return module.default || module;
         } catch (error: any) {
             this.setStatus('error', error.message);
             throw error;
