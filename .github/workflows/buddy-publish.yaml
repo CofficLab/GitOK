@@ -1,4 +1,4 @@
-name: Buddy Version Bump and Pre-release
+name: Buddy Version Bump and Release
 
 on:
   push:
