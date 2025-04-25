@@ -9,7 +9,7 @@
 
 ## 目录结构
 
-```
+```bash
 plugin-time/
 ├── index.ts       # 插件主入口文件
 ├── types.ts       # 类型定义文件
