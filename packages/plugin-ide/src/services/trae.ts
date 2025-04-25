@@ -3,6 +3,7 @@ import path from 'path';
 import os from 'os';
 import { Logger } from '../utils/logger';
 import { BaseIDEService } from './base';
+import { IDEServiceFactory } from './ide_factory';
 
 const logger = new Logger('TraeService');
 
@@ -22,12 +23,18 @@ export class TraeService extends BaseIDEService {
             }
 
             // 根据文件类型选择解析方法
+            let workspacePath: string | null = null;
             if (storagePath.endsWith('.json')) {
-                return this.parseJsonStorage(storagePath);
+                workspacePath = await this.parseJsonStorage(storagePath);
             } else if (storagePath.endsWith('.vscdb')) {
                 logger.debug(`检测到SQLite数据库文件，但当前环境不支持读取。尝试使用备用方法...`);
                 // 在 trae 目录下查找文件信息
-                return await this.findWorkspaceInTraeFolder();
+                workspacePath = await this.findWorkspaceInTraeFolder();
+            }
+
+            // 使用IDEServiceFactory清理路径
+            if (workspacePath) {
+                return IDEServiceFactory.cleanWorkspacePath(workspacePath);
             }
 
             return null;

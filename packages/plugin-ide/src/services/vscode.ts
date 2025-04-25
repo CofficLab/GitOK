@@ -3,6 +3,7 @@ import path from 'path';
 import os from 'os';
 import { BaseIDEService } from './base';
 import { Logger } from '../utils/logger';
+import { IDEServiceFactory } from './ide_factory';
 
 const logger = new Logger('CursorService');
 
@@ -22,12 +23,18 @@ export class VSCodeService extends BaseIDEService {
       }
 
       // 根据文件类型选择解析方法
+      let workspacePath: string | null = null;
       if (storagePath.endsWith('.json')) {
-        return this.parseJsonStorage(storagePath);
+        workspacePath = await this.parseJsonStorage(storagePath);
       } else if (storagePath.endsWith('.vscdb')) {
         logger.debug(`检测到SQLite数据库文件，但当前环境不支持读取。尝试使用备用方法...`);
         // 在 vscode 目录下查找文件信息
-        return await this.findWorkspaceInVSCodeFolder();
+        workspacePath = await this.findWorkspaceInVSCodeFolder();
+      }
+
+      // 如果找到了工作区路径，使用IDEServiceFactory清理它
+      if (workspacePath) {
+        return IDEServiceFactory.cleanWorkspacePath(workspacePath);
       }
 
       return null;

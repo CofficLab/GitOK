@@ -36,7 +36,7 @@ export class IDEServiceFactory {
      * 清理工作区路径
      * 处理各种特殊格式的路径，使其变为本地文件系统路径
      */
-    private static cleanWorkspacePath(workspace: string | null): string | null {
+    public static cleanWorkspacePath(workspace: string | null): string | null {
         if (!workspace) return null;
 
         // 处理vscode-remote开发容器路径
@@ -164,9 +164,6 @@ export class IDEServiceFactory {
                 fs.mkdirSync(this.CACHE_DIR, { recursive: true });
             }
 
-            // 清理工作区路径
-            const cleanWorkspace = this.cleanWorkspacePath(workspace);
-
             // 读取现有缓存
             let cacheData: Record<string, any> = {};
             if (fs.existsSync(this.CACHE_FILE)) {
@@ -179,7 +176,7 @@ export class IDEServiceFactory {
             }
 
             // 更新缓存
-            cacheData[appId] = cleanWorkspace;
+            cacheData[appId] = workspace;
 
             // 写入缓存文件
             fs.writeFileSync(
@@ -326,18 +323,12 @@ export class IDEServiceFactory {
                 const workspace = await ideService.getWorkspace();
 
                 if (workspace) {
-                    // 清理工作区路径，移除vscode-remote前缀等
-                    const cleanPath = this.cleanWorkspacePath(workspace);
-
-                    // 确定要显示的路径
-                    const displayPath = cleanPath || workspace;
-
                     workspaces.push({
                         name: ideName,
-                        path: cleanPath || workspace // 保存清理后的路径，如果清理失败则使用原始路径
+                        path: workspace // IDE服务已经返回清理过的路径
                     });
 
-                    logger.info(`✅ ${ideName}工作空间: ${displayPath}`);
+                    logger.info(`✅ ${ideName}工作空间: ${workspace}`);
                 }
             } catch (err: any) {
                 logger.info(`❌ ${ideName}服务出错: ${err.message}`);

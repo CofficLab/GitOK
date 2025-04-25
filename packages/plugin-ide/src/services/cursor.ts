@@ -3,6 +3,7 @@ import path from 'path';
 import os from 'os';
 import { BaseIDEService } from './base';
 import { Logger } from '../utils/logger';
+import { IDEServiceFactory } from './ide_factory';
 
 const logger = new Logger('CursorService');
 
@@ -23,7 +24,14 @@ export class CursorService extends BaseIDEService {
 
       // 读取并解析存储文件
       const content = fs.readFileSync(storagePath, 'utf8');
-      return this.parseCursorJson(content);
+      const workspacePath = this.parseCursorJson(content);
+
+      // 使用IDEServiceFactory清理路径
+      if (workspacePath) {
+        return IDEServiceFactory.cleanWorkspacePath(workspacePath);
+      }
+
+      return null;
     } catch (error) {
       logger.error('获取Cursor工作空间失败:', error);
       return null;
