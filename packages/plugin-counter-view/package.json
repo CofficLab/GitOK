@@ -1,0 +1,29 @@
+{
+  "name": "@coffic/buddy-plugin-counter",
+  "version": "1.0.0",
+  "description": "A sample plugin with a page view",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "devDependencies": {
+    "@coffic/buddy-types": "workspace:*",
+    "@types/node": "^20.10.4",
+    "typescript": "^5.3.3"
+  },
+  "scripts": {
+    "build": "tsc && cp -r src/views dist/",
+    "dev": "tsc --watch",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "buddy",
+    "plugin",
+    "example",
+    "buddy-plugin"
+  ],
+  "author": "Coffic",
+  "license": "MIT",
+  "files": [
+    "dist",
+    "page.html"
+  ]
+}

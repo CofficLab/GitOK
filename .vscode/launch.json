@@ -1,0 +1,60 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug Main Process",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceRoot}/packages/buddy",
+      "runtimeExecutable": "${workspaceRoot}/packages/buddy/node_modules/.bin/electron-vite",
+      "windows": {
+        "runtimeExecutable": "${workspaceRoot}/packages/buddy/node_modules/.bin/electron-vite.cmd"
+      },
+      "runtimeArgs": [
+        "--sourcemap"
+      ],
+      "env": {
+        "REMOTE_DEBUGGING_PORT": "9222"
+      }
+    },
+    {
+      "name": "Debug Renderer Process",
+      "port": 9222,
+      "request": "attach",
+      "type": "chrome",
+      "webRoot": "${workspaceFolder}/packages/buddy/src/renderer",
+      "timeout": 60000,
+      "presentation": {
+        "hidden": true
+      }
+    },
+    {
+      "name": "Debug Extension",
+      "type": "extensionHost",
+      "request": "launch",
+      "args": [
+        "--extensionDevelopmentPath=${workspaceFolder}/packages/vsc_extension"
+      ],
+      "outFiles": [
+        "${workspaceFolder}/packages/vsc_extension/dist/**/*.js"
+      ],
+      "preLaunchTask": "watch-extension",
+      "presentation": {
+        "group": "extension",
+        "order": 1
+      }
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Debug Buddy App",
+      "configurations": [
+        "Debug Main Process",
+        "Debug Renderer Process"
+      ],
+      "presentation": {
+        "order": 1
+      }
+    }
+  ]
+}

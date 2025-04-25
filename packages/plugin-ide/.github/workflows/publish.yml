@@ -1,0 +1,111 @@
+# 发布 @coffic/git-helper 包的 GitHub Actions 工作流
+#
+# 功能：
+# - 监听项目的代码变更
+# - 自动构建并测试
+# - 构建成功后自动升级 patch 版本号
+# - 创建新的 Git 标签和 GitHub Release
+# - 发布新版本到 npm 仓库
+#
+# 使用方法：
+# 只需要将代码推送到 main 分支，工作流会自动：
+# 1. 检测是否有相关代码变更
+# 2. 执行构建和测试
+# 3. 升级版本号并创建标签
+# 4. 发布 Release 和 npm 包
+#
+# 注意事项：
+# - 使用 Node.js 20.x 版本构建
+# - 使用 pnpm 作为包管理器
+# - 需要设置以下 secrets:
+#   * NPM_TOKEN: npm 发布令牌
+#   * GH_TOKEN: GitHub 个人访问令牌，用于创建 Release
+
+name: Publish
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Configure Git
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+
+      - name: Build and Test
+        run: |
+          pnpm run build
+          pnpm test
+
+      - name: Bump version
+        id: version
+        run: |
+          # 获取当前版本号
+          CURRENT_VERSION=$(node -p "require('./package.json').version")
+          # 直接用Node.js脚本修改版本号
+          NEW_VERSION=$(node -e "
+            const fs = require('fs');
+            const pkg = require('./package.json');
+            const [major, minor, patch] = pkg.version.split('.').map(Number);
+            pkg.version = \`\${major}.\${minor}.\${patch + 1}\`;
+            fs.writeFileSync('./package.json', JSON.stringify(pkg, null, 2) + '\\n');
+            console.log(pkg.version);
+          ")
+          # 设置输出变量
+          echo "new_version=${NEW_VERSION}" >> $GITHUB_OUTPUT
+          echo "current_version=${CURRENT_VERSION}" >> $GITHUB_OUTPUT
+
+      - name: Commit changes
+        run: |
+          git add package.json
+          git commit -m "chore(git-helper): bump version to ${{ steps.version.outputs.new_version }}"
+          git tag "v${{ steps.version.outputs.new_version }}"
+          git push
+          git push --tags
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: 'v${{ steps.version.outputs.new_version }}'
+          name: 'v${{ steps.version.outputs.new_version }}'
+          body: |
+            ## 版本变更
+
+            从 v${{ steps.version.outputs.current_version }} 升级到 v${{ steps.version.outputs.new_version }}
+
+            ### 变更内容
+            - 自动发布新版本
+            - 包含最新的代码变更
+          draft: false
+          prerelease: false
+
+      - name: Publish to npm
+        run: |
+          pnpm publish --no-git-checks --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

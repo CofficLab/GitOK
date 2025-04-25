@@ -1,0 +1,7 @@
+provider: github
+owner: CofficLab
+repo: Buddy
+releaseType: prerelease
+updaterCacheDirName: buddy-updater
+
+

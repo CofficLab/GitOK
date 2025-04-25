@@ -1,0 +1,26 @@
+{
+  "name": "@coffic/buddy-types",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc --project tsconfig.json",
+    "clean": "rm -rf dist",
+    "lint": "eslint --ext .ts src",
+    "prepublishOnly": "npm run clean && npm run build"
+  },
+  "author": "Coffic",
+  "license": "MIT"
+}

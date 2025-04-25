@@ -1,0 +1,30 @@
+@import 'tailwindcss';
+@plugin "daisyui";
+
+/* 基础样式 */
+body {
+  @apply backdrop-blur-3xl glass bg-gradient-to-b from-primary/10 to-accent/5;
+}
+
+/* 拖拽区域实用类 */
+.no-drag-region {
+  -webkit-app-region: no-drag;
+}
+
+.drag-region {
+  -webkit-app-region: drag;
+}
+
+/* 毛玻璃效果 */
+.frosted-glass {
+  @apply backdrop-blur-md bg-base-100/50 dark:bg-base-300/40;
+}
+
+.frosted-glass-light {
+  @apply backdrop-blur-sm bg-base-200/30 dark:bg-base-300/20;
+}
+
+/* 搜索框样式 */
+.search-input {
+  @apply focus:outline-none bg-transparent border-none focus:ring-0 placeholder-base-content/50;
+}
