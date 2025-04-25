@@ -26,7 +26,7 @@ const props = defineProps<{
 const marketStore = useMarketStore()
 
 // 检查插件安装状态
-const { state: isInstalled, execute: checkInstalled } = useAsyncState(
+const { state: isInstalled } = useAsyncState(
     () => marketIpc.isInstalled(props.plugin.id),
     false,
     { immediate: true }

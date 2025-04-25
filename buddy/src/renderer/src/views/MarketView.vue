@@ -22,6 +22,7 @@ import { useAsyncState, useStorage } from '@vueuse/core'
 
 const { openDirectory } = useDirectory()
 const { error } = useAlert()
+const isDev = import.meta.env.DEV
 
 const marketStore = useMarketStore()
 const userPlugins = computed(() => marketStore.userPlugins)
@@ -35,7 +36,7 @@ const activeTab = useStorage<'user' | 'remote' | 'dev'>(
     'user'
 )
 
-// 加载插件状态管理（合并原有的两个加载状态变量）
+// 加载插件状态管理
 const { state: isLoading, execute: loadPlugins } = useAsyncState(
     async () => {
         try {
@@ -55,14 +56,23 @@ const { state: isLoading, execute: loadPlugins } = useAsyncState(
             }
 
             globalToast.success(`刷新成功(${activeTab.value})`, { duration: 2000, position: 'bottom-center' })
+
             return true
         } catch (err) {
             error('刷新失败' + err)
             return false
+        } finally {
+            // 确保在任何情况下都重置loading状态
+            return false
         }
     },
     false,
-    { immediate: false, resetOnExecute: true }
+    {
+        immediate: false,
+        resetOnExecute: true,
+        // 添加延迟以确保状态正确更新
+        delay: 100
+    }
 )
 
 // 简单使用Vue自带的computed
@@ -111,7 +121,7 @@ const clearUninstallError = (pluginId: string) => {
                             @click="switchTab('remote')">
                             远程仓库
                         </a>
-                        <a role="tab" class="tab" :class="{ 'tab-active': activeTab === 'dev' }"
+                        <a role="tab" class="tab" :class="{ 'tab-active': activeTab === 'dev' }" v-if="isDev"
                             @click="switchTab('dev')">
                             开发插件
                         </a>

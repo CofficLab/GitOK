@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch, onUnmounted, onMounted, nextTick, computed } from 'vue'
+import { ref, watch, onUnmounted, onMounted, nextTick } from 'vue'
 import { useActionStore } from '@renderer/stores/actionStore'
 import { logger } from '@renderer/utils/logger'
 import { ViewBounds } from '@coffic/buddy-types'
@@ -41,7 +41,7 @@ function handleError(error: unknown): string {
 }
 
 // 创建增强的执行动作函数
-const { isLoading, state: actionResult, error: actionError, execute: executeAction } = useAsyncState(
+const { isLoading, state: actionResult, error: actionError } = useAsyncState(
     async (actionId: string) => {
         // 重置状态
         await destroyViews()
@@ -252,7 +252,7 @@ const loadAndExecuteAction = () => {
             // 手动实现原来executeAction的逻辑
             viewState.value.currentAction = action
 
-            actionStore.execute(action.globalId).then(result => {
+            actionStore.execute(action.globalId).then(() => {
                 if (action.viewPath) {
                     const viewMode = action.viewMode || 'embedded'
 
