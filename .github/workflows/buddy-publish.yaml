@@ -3,7 +3,7 @@ name: Buddy Version Bump and Pre-release
 on:
   push:
     branches:
-      - dev2
+      - pre
       - main
     paths:
       - 'buddy/**'
