@@ -1,0 +1,234 @@
+name: Buddy Version Bump and Pre-release
+
+on:
+  push:
+    branches:
+      - dev2
+      - main
+    paths:
+      - 'buddy/**'
+
+permissions:
+  contents: write
+
+# 工作流配置
+env:
+  # ============================
+  # 发布配置
+  # ============================
+  # 可以发布正式版本的分支列表，用逗号分隔
+  # 示例: main,release,stable
+  RELEASE_BRANCHES: main,release
+
+jobs:
+  bump-version:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 升级版本号
+        id: bump
+        run: |
+          cd buddy
+          # 读取当前版本号
+          CURRENT_VERSION=$(node -p "require('./package.json').version")
+          echo "当前版本: $CURRENT_VERSION"
+
+          # 分割版本号，处理可能存在的预发布后缀
+          BASE_VERSION=$(echo $CURRENT_VERSION | cut -d'-' -f1)
+          PRERELEASE_SUFFIX=$(echo $CURRENT_VERSION | grep -o '\-.*' || echo "")
+
+          echo "基础版本: $BASE_VERSION"
+
+          # 分割基础版本号
+          MAJOR=$(echo $BASE_VERSION | cut -d. -f1)
+          MINOR=$(echo $BASE_VERSION | cut -d. -f2)
+          PATCH=$(echo $BASE_VERSION | cut -d. -f3)
+
+          # 获取当前分支名
+          BRANCH_NAME="${GITHUB_REF#refs/heads/}"
+          echo "当前分支: $BRANCH_NAME"
+
+          # 检查是否在发布分支列表中
+          if [[ ",$RELEASE_BRANCHES," == *",$BRANCH_NAME,"* ]]; then
+            # 在发布分支中，生成正式版本号
+            NEW_PATCH=$((PATCH + 1))
+            NEW_VERSION="$MAJOR.$MINOR.$NEW_PATCH"
+          else
+            # 在其他分支，生成预发布版本号
+            # 检查是否已经有beta后缀
+            if [[ "$PRERELEASE_SUFFIX" == *"beta"* ]]; then
+              # 提取beta版本号并增加
+              BETA_VERSION=$(echo $PRERELEASE_SUFFIX | grep -o '[0-9]*$')
+              NEW_BETA=$((BETA_VERSION + 1))
+              # 使用原来的补丁版本号，只增加 beta 号
+              NEW_VERSION="$MAJOR.$MINOR.$PATCH-beta.$NEW_BETA"
+            else
+              # 添加新的beta后缀
+              NEW_VERSION="$MAJOR.$MINOR.$PATCH-beta.0"
+            fi
+          fi
+
+          echo "新版本: $NEW_VERSION"
+
+          # 验证版本号格式
+          if ! [[ $NEW_VERSION =~ ^[0-9]+\.[0-9]+\.[0-9]+(-beta\.[0-9]+)?$ ]]; then
+            echo "错误: 无效的版本号格式: $NEW_VERSION"
+            exit 1
+          fi
+
+          # 更新 package.json
+          sed -i "s/\"version\": \"$CURRENT_VERSION\"/\"version\": \"$NEW_VERSION\"/" package.json
+
+          # 配置 Git
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+
+          # 提交更改
+          git add package.json
+          git commit -m "🔖 Bump version to $NEW_VERSION [skip-bump]"
+          git tag -a "v$NEW_VERSION" -m "Release v$NEW_VERSION"
+          git push --follow-tags
+
+          echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
+          # 检查是否为预发布版本并输出
+          if [[ "$NEW_VERSION" == *"-beta"* ]]; then
+            echo "prerelease=true" >> $GITHUB_OUTPUT
+          else
+            echo "prerelease=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: 输出结果
+        run: |
+          echo "✅ 版本号已更新到: v${{ steps.bump.outputs.version }}"
+
+  release:
+    needs: bump-version
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.ref }} # 确保checkout最新的提交，包括bump-version中推送的
+
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install node-gyp
+        run: npm install -g node-gyp
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 9
+
+      - name: Install Dependencies
+        run: pnpm install
+
+      # - name: build-linux
+      #   if: matrix.os == 'ubuntu-latest'
+      #   run: cd buddy && pnpm run build:linux
+
+      # macOS 构建和签名
+      - name: Setup macOS signing
+        id: signing
+        if: matrix.os == 'macos-latest'
+        env:
+          BUILD_CERTIFICATE_BASE64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
+          BUILD_CERTIFICATE_P12_PASSWORD: ${{ secrets.BUILD_CERTIFICATE_P12_PASSWORD }}
+          BUILD_PROVISION_PROFILE_BASE64: ${{ secrets.BUILD_PROVISION_PROFILE_BASE64_GITOK_MACOS }}
+          APP_STORE_CONNECT_KEY_BASE64: ${{ secrets.APP_STORE_CONNECT_KEY_BASE64 }}
+          APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          APP_STORE_CONNECT_KEY_ISSER_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ISSER_ID }}
+        run: |
+          chmod +x ./scripts/setup-macos-signing.sh
+          source ./scripts/setup-macos-signing.sh
+          echo "signing_identity=$SIGNING_IDENTITY" >> $GITHUB_OUTPUT
+          echo "team_id=$TEAM_ID" >> $GITHUB_OUTPUT
+          echo "pp_path=$PP_PATH" >> $GITHUB_OUTPUT
+          echo "api_key_path=$API_KEY_PATH" >> $GITHUB_OUTPUT
+
+      - name: Update electron-builder config for CI
+        if: matrix.os == 'macos-latest'
+        env:
+          PP_PATH: ${{ steps.signing.outputs.pp_path }}
+          TEAM_ID: ${{ steps.signing.outputs.team_id }}
+          SIGNING_IDENTITY: ${{ steps.signing.outputs.signing_identity }}
+          APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          APP_STORE_CONNECT_KEY_ISSER_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ISSER_ID }}
+        run: |
+          brew install yq
+          cd buddy
+
+          # 删除identity: null配置
+          yq -i 'del(.mac.identity)' electron-builder.yml
+
+          # 只保留 notarize: true
+          yq -i '.mac.notarize = true' electron-builder.yml
+
+          echo "electron-builder.yml 配置完成:"
+          cat electron-builder.yml
+
+      - name: build-mac
+        if: matrix.os == 'macos-latest'
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: true
+          CSC_NAME: ${{ steps.signing.outputs.signing_identity }}
+          APPLE_TEAM_ID: ${{ steps.signing.outputs.team_id }}
+          APPLE_API_KEY: ${{ steps.signing.outputs.api_key_path }}
+          APPLE_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          APPLE_API_ISSUER: ${{ secrets.APP_STORE_CONNECT_KEY_ISSER_ID }}
+          PYTHON: python3.11
+        run: node scripts/build.mjs buddy:mac
+
+      # - name: build-win
+      #   if: matrix.os == 'windows-latest'
+      #   run: cd buddy && pnpm run build:win
+
+      - name: Get Version
+        id: get_version
+        if: matrix.os == 'macos-latest'
+        run: |
+          cd buddy
+          VERSION=$(node -p "require('./package.json').version")
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          # 检查是否为预发布版本
+          if [[ "$VERSION" == *"-beta"* ]]; then
+            echo "prerelease=true" >> $GITHUB_OUTPUT
+          else
+            echo "prerelease=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: release
+        uses: softprops/action-gh-release@v1
+        if: matrix.os == 'macos-latest'
+        with:
+          tag_name: v${{ steps.get_version.outputs.version }}
+          draft: false
+          prerelease: ${{ steps.get_version.outputs.prerelease }}
+          files: |
+            buddy/dist/*.exe
+            buddy/dist/*.zip
+            buddy/dist/*.dmg
+            buddy/dist/*.AppImage
+            buddy/dist/*.snap
+            buddy/dist/*.deb
+            buddy/dist/*.rpm
+            buddy/dist/*.tar.gz
+            buddy/dist/*.yml
+            buddy/dist/*.blockmap

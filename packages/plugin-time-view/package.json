@@ -1,0 +1,22 @@
+{
+  "name": "@coffic/buddy-plugin-time",
+  "version": "1.0.0",
+  "description": "A sample plugin with a page view",
+  "main": "dist/index.js",
+  "keywords": [
+    "buddy",
+    "plugin",
+    "example",
+    "buddy-plugin"
+  ],
+  "scripts": {
+    "build": "tsc && cp -r src/views dist/",
+    "dev": "tsc --watch",
+    "prepublishOnly": "npm run build"
+  },
+  "devDependencies": {
+    "@coffic/buddy-types": "workspace:*"
+  },
+  "author": "Coffic",
+  "license": "MIT"
+}

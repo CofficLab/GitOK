@@ -1,0 +1,16 @@
+{
+    "restartable": "rs",
+    "ignore": [
+        ".git",
+        "**/node_modules/**",
+        "packages/vsc_extension/dist/**",
+        "packages/vsc_extension/vue-dist/**"
+    ],
+    "verbose": true,
+    "delay": 2500,
+    "watch": ["packages/client/*", "packages/vsc_extension/*"],
+    "env": {
+        "NODE_ENV": "development"
+    },
+    "ext": "js,json,ts,vue"
+}

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>当前时间</title>
+    <style>
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: #f0f0f0;
+            color: #333;
+            padding: 20px;
+        }
+
+        .time {
+            font-size: 4rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .date {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>时间信息</h2>
+    <div class="time" id="time">加载中...</div>
+    <div class="date" id="date">加载中...</div>
+
+    <script>
+        function updateTime() {
+            const now = new Date();
+
+            try {
+                // 格式化时间
+                const timeElement = document.getElementById('time');
+                const timeString = now.toLocaleTimeString('zh-CN', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                });
+                timeElement.textContent = timeString;
+
+                // 格式化日期
+                const dateElement = document.getElementById('date');
+                const dateString = now.toLocaleDateString('zh-CN', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    weekday: 'long'
+                });
+                dateElement.textContent = dateString;
+            } catch (error) {
+                // 错误处理
+            }
+        }
+
+        // 初始化函数
+        function initialize() {
+            // 初始更新
+            updateTime();
+
+            // 每秒更新一次
+            setInterval(updateTime, 1000);
+        }
+
+        // 当文档加载完成时初始化
+        if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", initialize);
+        } else {
+            initialize();
+        }
+    </script>
+</body>
+
+</html>

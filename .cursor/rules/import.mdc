@@ -1,0 +1,31 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+
+# 导入规则
+所有导入语句必须使用`@`符号开头，以确保使用项目中定义的别名路径。这有助于保持代码的一致性和可维护性。
+
+## 示例
+```typescript
+// 正确
+import { SomeComponent } from '@/components/SomeComponent';
+import { SomeService } from '@/services/SomeService';
+
+// 错误
+import { SomeComponent } from '../components/SomeComponent';
+import { SomeService } from '../../services/SomeService';
+```
+
+## 规则细节
+1. **别名路径**：`@`符号应指向项目根目录，通常通过`tsconfig.json`或`vite.config.ts`中的`alias`配置定义。
+2. **相对路径**：避免使用相对路径（如`../`或`./`），除非在极少数情况下无法使用别名路径。
+3. **第三方库**：第三方库的导入不受此规则限制，应保持原样。
+
+## 例外情况
+- 在配置文件中（如`vite.config.ts`或`tsconfig.json`）可以使用相对路径。
+- 在测试文件中，如果测试文件与被测试文件在同一目录下，可以使用相对路径。
+
+## 自动修复
+Cursor 应提供自动修复功能，将相对路径转换为别名路径。

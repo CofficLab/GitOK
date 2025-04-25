@@ -1,0 +1,18 @@
+<!doctype html>
+<html data-theme="light">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Electron</title>
+  <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+  <meta http-equiv="Content-Security-Policy"
+    content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:" />
+</head>
+
+<body class="w-full drag-region">
+  <!-- 使整个应用背景可拖动，具体组件会单独设置no-drag -->
+  <div id="app" class="w-full"></div>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+
+</html>
