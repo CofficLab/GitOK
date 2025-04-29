@@ -184,7 +184,7 @@ importers:
 
   packages/buddy-types: {}
 
-  packages/plugin-counter:
+  packages/plugin-counter-view:
     devDependencies:
       '@coffic/buddy-types':
         specifier: workspace:*
@@ -196,7 +196,7 @@ importers:
         specifier: ^5.3.3
         version: 5.8.3
 
-  packages/plugin-ide-workspace:
+  packages/plugin-ide:
     devDependencies:
       '@types/inquirer':
         specifier: ^9.0.7
@@ -243,12 +243,6 @@ importers:
       typescript:
         specifier: ^5.8.3
         version: 5.8.3
-
-  packages/plugin-time:
-    devDependencies:
-      '@coffic/buddy-types':
-        specifier: workspace:*
-        version: link:../buddy-types
 
   packages/plugin-time-view:
     devDependencies:

@@ -1,4 +1,4 @@
-name: Buddy Version Bump and Pre-release
+name: Buddy Version Bump and Release
 
 on:
   push:
@@ -7,6 +7,7 @@ on:
       - main
     paths:
       - 'buddy/**'
+      - '.github/**'
 
 permissions:
   contents: write
@@ -194,7 +195,7 @@ jobs:
           APPLE_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
           APPLE_API_ISSUER: ${{ secrets.APP_STORE_CONNECT_KEY_ISSER_ID }}
           PYTHON: python3.11
-        run: node scripts/build.mjs buddy:mac
+        run: pnpm build:buddy:mac
 
       # - name: build-win
       #   if: matrix.os == 'windows-latest'
