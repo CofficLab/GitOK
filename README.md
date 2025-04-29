@@ -34,6 +34,7 @@
 
 ## 🔗 链接
 
+- [NPM](https://www.npmjs.com/org/coffic)
 - [GitHub](https://github.com/cofficlab/CodeBuddy)
 - [VS Code 市场](https://marketplace.visualstudio.com/items?itemName=coffic.smart-buddy)
 
