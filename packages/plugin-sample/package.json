@@ -1,6 +1,6 @@
 {
   "name": "@coffic/buddy-example-plugin",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "Buddy示例插件",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
