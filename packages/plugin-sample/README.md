@@ -1,71 +1,78 @@
-# GitOK示例插件 (TypeScript版)
+# GitOK Sample Plugin (TypeScript Version)
 
-这是一个使用TypeScript开发的GitOK插件示例。通过这个示例，你可以了解如何使用TypeScript创建GitOK插件。
+[![English](https://img.shields.io/badge/English-Click-yellow)](README.md)
+[![简体中文](https://img.shields.io/badge/中文文档-点击查看-orange)](README-zh.md)
 
-## 功能特点
+This is a sample GitOK plugin developed using TypeScript. Through this example, you can learn how to create GitOK plugins using TypeScript.
 
-- 完整的TypeScript类型支持
-- 示例动作实现
-- 自定义视图示例
+## Features
 
-## 目录结构
+- Complete TypeScript type support
+- Sample action implementations
+- Custom view examples
+
+## Directory Structure
 
 ```
 .
-├── dist/             # 编译后的JavaScript文件
-├── src/              # TypeScript源代码
-│   ├── index.ts      # 插件主入口
-│   └── types.ts      # TypeScript类型定义
-├── views/            # HTML视图文件
+├── dist/             # Compiled JavaScript files
+├── src/              # TypeScript source code
+│   ├── index.ts      # Plugin main entry
+│   └── types.ts      # TypeScript type definitions
+├── views/            # HTML view files
 │   ├── calculator.html
 │   └── time.html
-├── package.json      # 项目配置
-└── tsconfig.json     # TypeScript配置
+├── package.json      # Project configuration
+└── tsconfig.json     # TypeScript configuration
 ```
 
-## 开发指南
+## Development Guide
 
-### 安装依赖
+### Install Dependencies
 
 ```bash
 pnpm install
 ```
 
-### 开发模式
+### Development Mode
 
 ```bash
 pnpm dev
 ```
 
-### 构建
+### Build
 
 ```bash
 pnpm build
 ```
 
-## 插件功能
+## Plugin Features
 
-这个示例插件提供了三个基本功能：
+This sample plugin provides three basic features:
 
-1. **打招呼** - 显示一个问候消息
-2. **当前时间** - 显示当前时间（嵌入式视图）
-3. **计算器** - 提供一个简单的计算器（窗口视图）
+1. **Greeting** - Display a welcome message
+2. **Current Time** - Show current time (embedded view)
+3. **Calculator** - Provide a simple calculator (window view)
 
-## 类型定义
+## Type Definitions
 
-插件使用TypeScript接口定义了清晰的类型结构：
+The plugin uses TypeScript interfaces to define clear type structures:
 
-- `Plugin` - 插件主接口
-- `Action` - 动作定义接口
-- `PluginContext` - 插件上下文接口
+- `Plugin` - Main plugin interface
+- `Action` - Action definition interface
+- `PluginContext` - Plugin context interface
 
-## 如何使用
+## How to Use
 
-1. 克隆仓库
-2. 安装依赖：`pnpm install`
-3. 构建项目：`pnpm build`
-4. 在GitOK应用中加载此插件
+1. Clone the repository
+2. Install dependencies: `pnpm install`
+3. Build the project: `pnpm build`
+4. Load this plugin in GitOK application
 
-## 许可证
+## Links
+
+- [NPM](https://www.npmjs.com/package/@coffic/buddy-example-plugin)
+
+## License
 
 MIT
