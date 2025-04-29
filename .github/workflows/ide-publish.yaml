@@ -60,11 +60,13 @@ jobs:
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
 
+      - name: Build Buddy Types
+        run: |
+          cd packages/buddy-types
+          pnpm run build
+
       - name: Build and Test
         run: |
-          # 先构建工作区依赖
-          pnpm run build --filter "@coffic/buddy-types"
-          # 再构建插件
           cd packages/plugin-ide
           pnpm run build
 
