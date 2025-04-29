@@ -28,7 +28,8 @@ on:
     branches:
       - main
     paths:
-      - 'plugin-ide/**'
+      - '.github/**'
+      - 'packages/plugin-ide/**'
 
 jobs:
   build-and-publish:
