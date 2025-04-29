@@ -28,7 +28,7 @@ on:
     branches:
       - main
     paths:
-      - '.github/**'
+      - '.github/workflows/ide-publish.yaml'
       - 'packages/plugin-ide/**'
 
 jobs:
@@ -62,7 +62,9 @@ jobs:
 
       - name: Build and Test
         run: |
-          cd packages/plugin-ide && pnpm run build
+          cd packages/plugin-ide
+          pnpm install
+          pnpm run build
 
       - name: Bump version
         id: version
