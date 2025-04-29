@@ -1,4 +1,4 @@
-# 发布 plugin-ide 工作流
+# 发布 buddy-types 工作流
 #
 # 功能：
 # - 监听项目的代码变更
@@ -21,15 +21,15 @@
 #   * NPM_TOKEN: npm 发布令牌
 #   * GH_TOKEN: GitHub 个人访问令牌，用于创建 Release
 
-name: Publish Plugin IDE
+name: Publish Buddy Types
 
 on:
   push:
     branches:
       - main
     paths:
-      - '.github/workflows/ide-publish.yaml'
-      - 'packages/plugin-ide/**'
+      - '.github/workflows/types-publish.yaml'
+      - 'packages/buddy-types/**'
 
 jobs:
   build-and-publish:
@@ -62,16 +62,13 @@ jobs:
 
       - name: Build and Test
         run: |
-          # 先构建工作区依赖
-          pnpm run build --filter "@coffic/buddy-types"
-          # 再构建插件
-          cd packages/plugin-ide
+          cd packages/buddy-types
           pnpm run build
 
       - name: Bump version
         id: version
         run: |
-          cd packages/plugin-ide
+          cd packages/buddy-types
           # 获取当前版本号
           CURRENT_VERSION=$(node -p "require('./package.json').version")
           # 直接用Node.js脚本修改版本号
@@ -89,20 +86,20 @@ jobs:
 
       - name: Commit changes
         run: |
-          cd packages/plugin-ide
+          cd packages/buddy-types
           git add package.json
-          git commit -m "chore(plugin-ide): bump version to ${{ steps.version.outputs.new_version }}"
-          git tag "plugin-ide/v${{ steps.version.outputs.new_version }}"
+          git commit -m "chore(buddy-types): bump version to ${{ steps.version.outputs.new_version }}"
+          git tag "buddy-types/v${{ steps.version.outputs.new_version }}"
           git push
           git push --tags
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: 'plugin-ide/v${{ steps.version.outputs.new_version }}'
-          name: 'plugin-ide v${{ steps.version.outputs.new_version }}'
+          tag_name: 'buddy-types/v${{ steps.version.outputs.new_version }}'
+          name: 'buddy-types v${{ steps.version.outputs.new_version }}'
           body: |
-            ## @coffic/plugin-ide-workspace v${{ steps.version.outputs.new_version }}
+            ## @coffic/buddy-types v${{ steps.version.outputs.new_version }}
 
             从 v${{ steps.version.outputs.current_version }} 升级到 v${{ steps.version.outputs.new_version }}
 
@@ -114,6 +111,7 @@ jobs:
 
       - name: Publish to npm
         run: |
+          cd packages/buddy-types
           pnpm publish --no-git-checks --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

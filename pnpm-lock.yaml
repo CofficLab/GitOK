@@ -197,6 +197,10 @@ importers:
         version: 5.8.3
 
   packages/plugin-ide:
+    dependencies:
+      '@coffic/buddy-types':
+        specifier: workspace:*
+        version: link:../buddy-types
     devDependencies:
       '@types/inquirer':
         specifier: ^9.0.7

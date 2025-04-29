@@ -16,6 +16,9 @@
   ],
   "author": "Coffic",
   "license": "MIT",
+  "dependencies": {
+    "@coffic/buddy-types": "workspace:*"
+  },
   "devDependencies": {
     "@types/inquirer": "^9.0.7",
     "@types/node": "^22.14.1",
