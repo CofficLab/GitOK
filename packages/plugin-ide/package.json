@@ -1,6 +1,6 @@
 {
   "name": "@coffic/plugin-ide-workspace",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Buddy 插件 - IDE工作空间信息显示，支持Git自动提交",
   "main": "dist/index.js",
   "scripts": {
