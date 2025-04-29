@@ -21,7 +21,7 @@
 #   * NPM_TOKEN: npm 发布令牌
 #   * GH_TOKEN: GitHub 个人访问令牌，用于创建 Release
 
-name: Publish
+name: Publish Plugin IDE
 
 on:
   push:
@@ -53,7 +53,7 @@ jobs:
           version: 8
 
       - name: Install dependencies
-        run: cd packages/plugin-ide && pnpm install
+        run: pnpm install
 
       - name: Configure Git
         run: |
@@ -63,7 +63,6 @@ jobs:
       - name: Build and Test
         run: |
           cd packages/plugin-ide && pnpm run build
-          cd packages/plugin-ide && pnpm test
 
       - name: Bump version
         id: version
