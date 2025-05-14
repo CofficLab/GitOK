@@ -71,20 +71,3 @@ jobs:
           commit_message: '🎨 Bump a new version'
           commit_user_name: GitHub Action
           tagging_message: ${{ env.tag }}
-  rebase:
-    needs:
-      - bump
-    runs-on: ubuntu-latest
-    steps:
-      - name: 拉取 dev 分支
-        uses: actions/checkout@v3
-        with:
-          ref: dev
-      - name: 拉取 pre 分支
-        run: git fetch origin pre
-      - name: Rebase dev on pre
-        continue-on-error: true
-        run: git rebase origin/pre
-      - name: Push the rebased dev branch
-        continue-on-error: true
-        run: git push origin dev
