@@ -1,6 +1,6 @@
 import OSLog
 import SwiftUI
-import MagicKit
+import MagicCore
 
 struct DetailIcon: View, SuperLog {
     @EnvironmentObject var app: AppProvider

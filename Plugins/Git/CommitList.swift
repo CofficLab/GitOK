@@ -1,4 +1,4 @@
-import MagicKit
+import MagicCore
 import SwiftUI
 
 struct CommitList: View, SuperThread, SuperLog {

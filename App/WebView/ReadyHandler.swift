@@ -1,7 +1,8 @@
 import SwiftUI
 import WebKit
 import OSLog
-import MagicKit
+import MagicCore
+import MagicWeb
 
 class ReadyHandler: NSObject, WebHandler, SuperEvent {
     var functionName: String = "ready"

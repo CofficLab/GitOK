@@ -1,5 +1,5 @@
 import SwiftUI
-import MagicKit
+import MagicCore
 
 struct GitDetail: View, SuperEvent {
     @EnvironmentObject var app: AppProvider

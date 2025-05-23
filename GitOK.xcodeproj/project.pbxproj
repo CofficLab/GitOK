@@ -25,6 +25,16 @@
 		0B1C68002BD9F68F00502EB1 /* BtnFinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1C67FF2BD9F68F00502EB1 /* BtnFinder.swift */; };
 		0B1C68022BD9F7B500502EB1 /* BtnOpen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1C68012BD9F7B500502EB1 /* BtnOpen.swift */; };
 		0B1C68042BD9FAE500502EB1 /* BtnOpenXcode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1C68032BD9FAE500502EB1 /* BtnOpenXcode.swift */; };
+		0B25549A2DE0D186006EDB55 /* CosyAsset in Frameworks */ = {isa = PBXBuildFile; productRef = 0B2554992DE0D186006EDB55 /* CosyAsset */; };
+		0B25549C2DE0D186006EDB55 /* MagicAll in Frameworks */ = {isa = PBXBuildFile; productRef = 0B25549B2DE0D186006EDB55 /* MagicAll */; };
+		0B25549E2DE0D186006EDB55 /* MagicCore in Frameworks */ = {isa = PBXBuildFile; productRef = 0B25549D2DE0D186006EDB55 /* MagicCore */; };
+		0B2554A02DE0D186006EDB55 /* MagicPlayMan in Frameworks */ = {isa = PBXBuildFile; productRef = 0B25549F2DE0D186006EDB55 /* MagicPlayMan */; };
+		0B2554A22DE0D186006EDB55 /* MagicSync in Frameworks */ = {isa = PBXBuildFile; productRef = 0B2554A12DE0D186006EDB55 /* MagicSync */; };
+		0B2554A72DE0D532006EDB55 /* CosyAsset in Frameworks */ = {isa = PBXBuildFile; productRef = 0B2554A62DE0D532006EDB55 /* CosyAsset */; };
+		0B2554A92DE0D532006EDB55 /* MagicAll in Frameworks */ = {isa = PBXBuildFile; productRef = 0B2554A82DE0D532006EDB55 /* MagicAll */; };
+		0B2554AB2DE0D532006EDB55 /* MagicCore in Frameworks */ = {isa = PBXBuildFile; productRef = 0B2554AA2DE0D532006EDB55 /* MagicCore */; };
+		0B2554AD2DE0D532006EDB55 /* MagicKit in Frameworks */ = {isa = PBXBuildFile; productRef = 0B2554AC2DE0D532006EDB55 /* MagicKit */; };
+		0B2554AF2DE0D532006EDB55 /* MagicPlayMan in Frameworks */ = {isa = PBXBuildFile; productRef = 0B2554AE2DE0D532006EDB55 /* MagicPlayMan */; };
 		0B44BCC62BDA947B00FBCF2F /* Branch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B44BCC52BDA947B00FBCF2F /* Branch.swift */; };
 		0B4EE43E2D0528F600D7E963 /* IconPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4EE43D2D0528F600D7E963 /* IconPlugin.swift */; };
 		0B4EE4412D05297700D7E963 /* GitPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4EE4402D05297700D7E963 /* GitPlugin.swift */; };
@@ -106,10 +116,14 @@
 		0BD651012CA2EA6800BA3CB8 /* IconHome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD651002CA2EA6800BA3CB8 /* IconHome.swift */; };
 		0BD651032CA2F51500BA3CB8 /* BannerDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD651022CA2F51500BA3CB8 /* BannerDetail.swift */; };
 		0BD651052CA2F52400BA3CB8 /* DetailIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD651042CA2F52400BA3CB8 /* DetailIcon.swift */; };
-		0BD652242CA4390C00BA3CB8 /* MagicKit in Frameworks */ = {isa = PBXBuildFile; productRef = 0BD652232CA4390C00BA3CB8 /* MagicKit */; };
 		0BDE61A32BDB3C9B006E23EA /* Projects.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BDE61A22BDB3C9B006E23EA /* Projects.swift */; };
 		0BDE61A92BDB4746006E23EA /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BDE61A82BDB4746006E23EA /* File.swift */; };
 		0BDE61AD2BDB4E87006E23EA /* FileTile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BDE61AC2BDB4E86006E23EA /* FileTile.swift */; };
+		0BF2EDA82DE0D00100D60D99 /* CosyAsset in Frameworks */ = {isa = PBXBuildFile; productRef = 0BF2EDA72DE0D00100D60D99 /* CosyAsset */; };
+		0BF2EDAA2DE0D00100D60D99 /* MagicAll in Frameworks */ = {isa = PBXBuildFile; productRef = 0BF2EDA92DE0D00100D60D99 /* MagicAll */; };
+		0BF2EDAC2DE0D00100D60D99 /* MagicCore in Frameworks */ = {isa = PBXBuildFile; productRef = 0BF2EDAB2DE0D00100D60D99 /* MagicCore */; };
+		0BF2EDAE2DE0D00100D60D99 /* MagicPlayMan in Frameworks */ = {isa = PBXBuildFile; productRef = 0BF2EDAD2DE0D00100D60D99 /* MagicPlayMan */; };
+		0BF2EDB02DE0D00100D60D99 /* MagicSync in Frameworks */ = {isa = PBXBuildFile; productRef = 0BF2EDAF2DE0D00100D60D99 /* MagicSync */; };
 		0BF75EE22BDE5CE500A553CD /* Stage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BF75EE12BDE5CE500A553CD /* Stage.swift */; };
 		0BF75EE42BDF2CCD00A553CD /* CommitList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BF75EE32BDF2CCD00A553CD /* CommitList.swift */; };
 		0BF75EEA2BDFA2FB00A553CD /* BtnOpenTerminal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BF75EE92BDFA2FB00A553CD /* BtnOpenTerminal.swift */; };
@@ -308,9 +322,23 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0B25549C2DE0D186006EDB55 /* MagicAll in Frameworks */,
+				0B2554AD2DE0D532006EDB55 /* MagicKit in Frameworks */,
 				0BB1C7122D045C0600C4EA70 /* AlertToast in Frameworks */,
+				0B2554A02DE0D186006EDB55 /* MagicPlayMan in Frameworks */,
+				0BF2EDA82DE0D00100D60D99 /* CosyAsset in Frameworks */,
+				0B25549E2DE0D186006EDB55 /* MagicCore in Frameworks */,
+				0BF2EDAA2DE0D00100D60D99 /* MagicAll in Frameworks */,
+				0BF2EDB02DE0D00100D60D99 /* MagicSync in Frameworks */,
+				0B2554A72DE0D532006EDB55 /* CosyAsset in Frameworks */,
+				0B2554A22DE0D186006EDB55 /* MagicSync in Frameworks */,
+				0BF2EDAC2DE0D00100D60D99 /* MagicCore in Frameworks */,
+				0B2554A92DE0D532006EDB55 /* MagicAll in Frameworks */,
 				F5F794E92C5B192600DCB824 /* Sparkle in Frameworks */,
-				0BD652242CA4390C00BA3CB8 /* MagicKit in Frameworks */,
+				0B2554AF2DE0D532006EDB55 /* MagicPlayMan in Frameworks */,
+				0BF2EDAE2DE0D00100D60D99 /* MagicPlayMan in Frameworks */,
+				0B2554AB2DE0D532006EDB55 /* MagicCore in Frameworks */,
+				0B25549A2DE0D186006EDB55 /* CosyAsset in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -329,6 +357,7 @@
 				0B0E167E2BD89A8F0078942B /* Products */,
 				0B332F052BDA01E600DFA5BB /* README.md */,
 				0B76FCF72BDDD4C600501F1F /* Resources */,
+				0B62FCFA2DE0CF1200230C70 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -488,6 +517,13 @@
 				0BF75EE12BDE5CE500A553CD /* Stage.swift */,
 			);
 			path = Git;
+			sourceTree = "<group>";
+		};
+		0B62FCFA2DE0CF1200230C70 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		0B6B1B3C2D03D719007941F0 /* Banner */ = {
@@ -755,8 +791,22 @@
 			name = GitOK;
 			packageProductDependencies = (
 				F5F794E82C5B192600DCB824 /* Sparkle */,
-				0BD652232CA4390C00BA3CB8 /* MagicKit */,
 				0BB1C7112D045C0600C4EA70 /* AlertToast */,
+				0BF2EDA72DE0D00100D60D99 /* CosyAsset */,
+				0BF2EDA92DE0D00100D60D99 /* MagicAll */,
+				0BF2EDAB2DE0D00100D60D99 /* MagicCore */,
+				0BF2EDAD2DE0D00100D60D99 /* MagicPlayMan */,
+				0BF2EDAF2DE0D00100D60D99 /* MagicSync */,
+				0B2554992DE0D186006EDB55 /* CosyAsset */,
+				0B25549B2DE0D186006EDB55 /* MagicAll */,
+				0B25549D2DE0D186006EDB55 /* MagicCore */,
+				0B25549F2DE0D186006EDB55 /* MagicPlayMan */,
+				0B2554A12DE0D186006EDB55 /* MagicSync */,
+				0B2554A62DE0D532006EDB55 /* CosyAsset */,
+				0B2554A82DE0D532006EDB55 /* MagicAll */,
+				0B2554AA2DE0D532006EDB55 /* MagicCore */,
+				0B2554AC2DE0D532006EDB55 /* MagicKit */,
+				0B2554AE2DE0D532006EDB55 /* MagicPlayMan */,
 			);
 			productName = GitOK;
 			productReference = 0B0E167D2BD89A8F0078942B /* GitOK.app */;
@@ -770,7 +820,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1530;
-				LastUpgradeCheck = 1600;
+				LastUpgradeCheck = 1630;
 				TargetAttributes = {
 					0B0E167C2BD89A8F0078942B = {
 						CreatedOnToolsVersion = 15.3;
@@ -789,8 +839,8 @@
 			mainGroup = 0B0E16742BD89A8F0078942B;
 			packageReferences = (
 				F5F794E72C5B192600DCB824 /* XCRemoteSwiftPackageReference "Sparkle" */,
-				0BD652222CA4390C00BA3CB8 /* XCRemoteSwiftPackageReference "MagicKit" */,
 				0B6B1B5D2D045AB7007941F0 /* XCRemoteSwiftPackageReference "AlertToast" */,
+				0B2554A52DE0D532006EDB55 /* XCLocalSwiftPackageReference "../MagicKit" */,
 			);
 			productRefGroup = 0B0E167E2BD89A8F0078942B /* Products */;
 			projectDirPath = "";
@@ -1004,6 +1054,7 @@
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = Y6HZ9JJYV6;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -1067,6 +1118,7 @@
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = Y6HZ9JJYV6;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -1097,7 +1149,6 @@
 				CURRENT_PROJECT_VERSION = 142;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"Preview Content\"";
-				DEVELOPMENT_TEAM = Y6HZ9JJYV6;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -1141,7 +1192,6 @@
 				CURRENT_PROJECT_VERSION = 142;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"Preview Content\"";
-				DEVELOPMENT_TEAM = Y6HZ9JJYV6;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -1196,6 +1246,13 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCLocalSwiftPackageReference section */
+		0B2554A52DE0D532006EDB55 /* XCLocalSwiftPackageReference "../MagicKit" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../MagicKit;
+		};
+/* End XCLocalSwiftPackageReference section */
+
 /* Begin XCRemoteSwiftPackageReference section */
 		0B6B1B5D2D045AB7007941F0 /* XCRemoteSwiftPackageReference "AlertToast" */ = {
 			isa = XCRemoteSwiftPackageReference;
@@ -1203,14 +1260,6 @@
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 1.3.9;
-			};
-		};
-		0BD652222CA4390C00BA3CB8 /* XCRemoteSwiftPackageReference "MagicKit" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/CofficLab/MagicKit";
-			requirement = {
-				branch = main;
-				kind = branch;
 			};
 		};
 		F5F794E72C5B192600DCB824 /* XCRemoteSwiftPackageReference "Sparkle" */ = {
@@ -1224,15 +1273,70 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		0B2554992DE0D186006EDB55 /* CosyAsset */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = CosyAsset;
+		};
+		0B25549B2DE0D186006EDB55 /* MagicAll */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MagicAll;
+		};
+		0B25549D2DE0D186006EDB55 /* MagicCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MagicCore;
+		};
+		0B25549F2DE0D186006EDB55 /* MagicPlayMan */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MagicPlayMan;
+		};
+		0B2554A12DE0D186006EDB55 /* MagicSync */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MagicSync;
+		};
+		0B2554A62DE0D532006EDB55 /* CosyAsset */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = CosyAsset;
+		};
+		0B2554A82DE0D532006EDB55 /* MagicAll */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MagicAll;
+		};
+		0B2554AA2DE0D532006EDB55 /* MagicCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MagicCore;
+		};
+		0B2554AC2DE0D532006EDB55 /* MagicKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MagicKit;
+		};
+		0B2554AE2DE0D532006EDB55 /* MagicPlayMan */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MagicPlayMan;
+		};
 		0BB1C7112D045C0600C4EA70 /* AlertToast */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 0B6B1B5D2D045AB7007941F0 /* XCRemoteSwiftPackageReference "AlertToast" */;
 			productName = AlertToast;
 		};
-		0BD652232CA4390C00BA3CB8 /* MagicKit */ = {
+		0BF2EDA72DE0D00100D60D99 /* CosyAsset */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 0BD652222CA4390C00BA3CB8 /* XCRemoteSwiftPackageReference "MagicKit" */;
-			productName = MagicKit;
+			productName = CosyAsset;
+		};
+		0BF2EDA92DE0D00100D60D99 /* MagicAll */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MagicAll;
+		};
+		0BF2EDAB2DE0D00100D60D99 /* MagicCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MagicCore;
+		};
+		0BF2EDAD2DE0D00100D60D99 /* MagicPlayMan */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MagicPlayMan;
+		};
+		0BF2EDAF2DE0D00100D60D99 /* MagicSync */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MagicSync;
 		};
 		F5F794E82C5B192600DCB824 /* Sparkle */ = {
 			isa = XCSwiftPackageProductDependency;

@@ -1,6 +1,6 @@
 import OSLog
 import SwiftUI
-import MagicKit
+import MagicCore
 
 struct BtnCommitAndPush: View, SuperLog, SuperThread {
     static let defaultTitle = "Commit and Push"

@@ -1,5 +1,5 @@
 import SwiftUI
-import MagicKit
+import MagicCore
 
 struct BannerBackground: View {
     @Binding var banner: BannerModel

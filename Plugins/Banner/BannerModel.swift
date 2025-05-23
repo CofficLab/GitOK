@@ -2,7 +2,7 @@ import Foundation
 import OSLog
 import SwiftData
 import SwiftUI
-import MagicKit
+import MagicCore
 
 struct BannerModel: SuperJsonModel, SuperLog, SuperEvent {
     static var root: String = ".gitok/banners"

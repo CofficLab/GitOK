@@ -3,7 +3,7 @@ import SwiftData
 import SwiftUI
 import CloudKit
 import OSLog
-import MagicKit
+import MagicCore
 
 class MacAgent: NSObject, NSApplicationDelegate, ObservableObject, SuperLog, SuperEvent {
     var label: String {"🍎 MacAgent::"}

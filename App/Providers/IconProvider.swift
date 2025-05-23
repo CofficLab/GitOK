@@ -4,7 +4,7 @@ import Foundation
 import MediaPlayer
 import OSLog
 import SwiftUI
-import MagicKit
+import MagicCore
 
 class IconProvider: NSObject, ObservableObject, SuperLog {
     @Published var iconURL: URL?

@@ -1,6 +1,6 @@
 import SwiftUI
 import UniformTypeIdentifiers
-import MagicKit
+import MagicCore
 
 struct ScreeniMac<Content>: View where Content: View {
     private let content: Content
