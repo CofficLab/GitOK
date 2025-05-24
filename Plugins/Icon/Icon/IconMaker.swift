@@ -9,7 +9,7 @@ struct IconMaker: View {
     @Binding var snapshotTapped: Bool
     @Binding var icon: IconModel
 
-    private let tag = TimeHelper.getTimeString()
+    private let tag = Date.nowCompact
     private var folderName: String { "AppIcon-\(tag).appiconset" }
 
 
