@@ -14,7 +14,7 @@ struct BannerEditor: View {
     @State private var lastScale: CGFloat = 1.0
 
     @MainActor private var imageSize: String {
-        "\(ImageHelper.getViewWidth(content)) X \(ImageHelper.getViewHeigth(content))"
+        "\(MagicImage.getViewWidth(content)) X \(MagicImage.getViewHeigth(content))"
     }
 
     var body: some View {
@@ -49,7 +49,7 @@ struct BannerEditor: View {
         }
         .onChange(of: snapshotTapped, {
             if snapshotTapped {
-                m.toast(ImageHelper.snapshot(content, title: "\(banner.device)-\(self.getTimeString())"))
+                m.toast(MagicImage.snapshot(content, title: "\(banner.device)-\(self.getTimeString())"))
                 self.snapshotTapped = false
             }
         })
@@ -81,7 +81,7 @@ struct BannerEditor: View {
             Spacer()
             VStack {
                 Spacer()
-                ImageHelper.makeImage(content)
+                MagicImage.makeImage(content)
                     .resizable()
                     .scaledToFit()
                     .padding(.all, 20)
