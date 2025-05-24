@@ -36,7 +36,7 @@ class SmartImage: SuperLog {
         let imagesFolder = projectURL.appendingPathComponent(Self.dir)
         let imageURL = imagesFolder.appendingPathComponent(id)
 
-        try imageURL.removeItem()
+        try imageURL.delete()
     }
     
     static func saveImage(_ url: URL, projectURL: URL) throws -> String {
