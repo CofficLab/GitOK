@@ -8,8 +8,8 @@ struct Backgrounds: View {
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 10) {
-                ForEach(0 ..< BackgroundGroup.all.count, id: \.self) { index in
-                    let gradient = BackgroundGroup.all[index]
+                ForEach(0 ..< MagicBackgroundGroup.all.count, id: \.self) { index in
+                    let gradient = MagicBackgroundGroup.all[index]
                     makeItem(gradient)
                         .frame(width: 50, height: 50)
                 }
@@ -19,12 +19,12 @@ struct Backgrounds: View {
         .frame(height: 70)
     }
 
-    func makeItem(_ gradient: BackgroundGroup.GradientName) -> some View {
+    func makeItem(_ gradient: MagicBackgroundGroup.GradientName) -> some View {
         Button(action: {
             current = gradient.rawValue
         }) {
             ZStack {
-                BackgroundGroup(for: gradient)
+                MagicBackgroundGroup(for: gradient)
                     .clipShape(RoundedRectangle(cornerRadius: 8))
 
                 if current == gradient.rawValue {
