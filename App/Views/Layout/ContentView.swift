@@ -12,14 +12,7 @@ import SwiftUI
 /// - 内容栏：显示当前选中的标签页
 /// - 详情栏：显示当前选中标签页的详细内容
 struct ContentView: View, SuperThread, SuperEvent {
-    /// 初始化ContentView
-    /// - Parameters:
-    ///   - statusBarVisiblity: 状态栏是否可见，默认为true
-    ///   - initialColumnVisibility: 初始导航分栏视图的可见性状态，默认为.detailOnly
-    init(statusBarVisiblity: Bool = true, initialColumnVisibility: NavigationSplitViewVisibility = .detailOnly) {
-        self.statusBarVisiblity = statusBarVisiblity
-        self._columnVisibility = State(initialValue: initialColumnVisibility)
-    }
+    // MARK: - Public Properties
     
     /// 应用程序状态管理器，提供全局应用状态和配置信息
     @EnvironmentObject var app: AppProvider
@@ -27,9 +20,7 @@ struct ContentView: View, SuperThread, SuperEvent {
     @EnvironmentObject var g: GitProvider
     /// 插件提供者，管理应用中的各种插件
     @EnvironmentObject var p: PluginProvider
-    /// SwiftData 模型上下文，用于数据持久化
-    @Environment(\.modelContext) private var modelContext
-
+    
     /// 当前选中的分支
     @State var branch: Branch? = nil
     /// Git 日志信息
@@ -42,15 +33,39 @@ struct ContentView: View, SuperThread, SuperEvent {
     @State var columnVisibility: NavigationSplitViewVisibility = .detailOnly
     /// 当前项目是否存在的标志
     @State var projectExists: Bool = true
+    
+    // MARK: - Private Properties
+    
+    /// SwiftData 模型上下文，用于数据持久化
+    @Environment(\.modelContext) private var modelContext
     /// 控制状态栏是否显示
     private var statusBarVisiblity: Bool = true
+    /// 控制工具栏是否显示
+    private var toolbarVisibility: Bool = true
+    
+    // MARK: - Initializers
+    
+    /// 初始化ContentView
+    /// - Parameters:
+    ///   - statusBarVisiblity: 状态栏是否可见，默认为true
+    ///   - initialColumnVisibility: 初始导航分栏视图的可见性状态，默认为.detailOnly
+    ///   - toolbarVisibility: 工具栏是否可见，默认为true
+    init(statusBarVisiblity: Bool = true, initialColumnVisibility: NavigationSplitViewVisibility = .detailOnly, toolbarVisibility: Bool = true) {
+        self.statusBarVisiblity = statusBarVisiblity
+        self.toolbarVisibility = toolbarVisibility
+        self._columnVisibility = State(initialValue: initialColumnVisibility)
+    }
 
+    // MARK: - Computed Properties
+    
     /// 获取所有标记为标签页的插件
     /// - Returns: 可作为标签页显示的插件数组
     var tabPlugins: [SuperPlugin] {
         p.plugins.filter { $0.isTab }
     }
-
+    
+    // MARK: - View Body
+    
     /// 构建视图层次结构
     /// - Returns: 组合后的视图
     var body: some View {
@@ -81,6 +96,7 @@ struct ContentView: View, SuperThread, SuperEvent {
         .onAppear(perform: onAppear)
         .onChange(of: g.project, onProjectChange)
         .onChange(of: columnVisibility, onCheckColumnVisibility)
+        .toolbarVisibility(toolbarVisibility ? .visible : .hidden)
         .toolbar(content: {
             ToolbarItem(placement: .navigation) {
                 ProjectPicker()
@@ -121,31 +137,51 @@ extension ContentView {
     /// 隐藏侧边栏
     /// - Returns: 一个新的ContentView实例，侧边栏被隐藏
     func hideSidebar() -> ContentView {
-        return ContentView(statusBarVisiblity: statusBarVisiblity, initialColumnVisibility: .doubleColumn)
+        return ContentView(
+            statusBarVisiblity: self.statusBarVisiblity,
+            initialColumnVisibility: .doubleColumn,
+            toolbarVisibility: self.toolbarVisibility
+        )
     }
-    
+
     /// 显示侧边栏
     /// - Returns: 一个新的ContentView实例，侧边栏被显示
     func showSidebar() -> ContentView {
-        return ContentView(statusBarVisiblity: statusBarVisiblity, initialColumnVisibility: .all)
+        return ContentView(statusBarVisiblity: statusBarVisiblity, initialColumnVisibility: .all, toolbarVisibility: toolbarVisibility)
     }
     
     /// 隐藏状态栏
     /// - Returns: 一个新的ContentView实例，状态栏被隐藏
     func hideStatusBar() -> ContentView {
-        return ContentView(statusBarVisiblity: false, initialColumnVisibility: columnVisibility)
+        return ContentView(
+            statusBarVisiblity: false,
+            initialColumnVisibility: self.columnVisibility,
+            toolbarVisibility: self.toolbarVisibility
+        )
     }
     
     /// 显示状态栏
     /// - Returns: 一个新的ContentView实例，状态栏被显示
     func showStatusBar() -> ContentView {
-        return ContentView(statusBarVisiblity: true, initialColumnVisibility: columnVisibility)
+        return ContentView(statusBarVisiblity: true, initialColumnVisibility: columnVisibility, toolbarVisibility: toolbarVisibility)
+    }
+
+    /// 隐藏工具栏
+    /// - Returns: 一个新的ContentView实例，工具栏被隐藏
+    func hideToolbar() -> ContentView {
+        return ContentView(statusBarVisiblity: statusBarVisiblity, initialColumnVisibility: columnVisibility, toolbarVisibility: false)
+    }
+    
+    /// 显示工具栏
+    /// - Returns: 一个新的ContentView实例，工具栏被显示
+    func showToolbar() -> ContentView {
+        return ContentView(statusBarVisiblity: statusBarVisiblity, initialColumnVisibility: columnVisibility, toolbarVisibility: true)
     }
 }
 
-// MARK: - Event Handlers
+// MARK: - Private Methods
 
-/// 包含 ContentView 的事件处理方法的扩展
+/// 包含 ContentView 的私有事件处理方法的扩展
 extension ContentView {
     /// 处理项目变更事件
     /// 当 GitProvider 中的项目发生变化时调用，检查项目是否存在并更新 UI
@@ -218,6 +254,22 @@ extension ContentView {
 #Preview("隐藏侧边栏和状态栏") {
     RootView {
         ContentView().hideSidebar().hideStatusBar()
+    }
+        .frame(width: 800)
+        .frame(height: 600)
+}
+
+#Preview("隐藏工具栏") {
+    RootView {
+        ContentView().hideToolbar()
+    }
+        .frame(width: 800)
+        .frame(height: 600)
+}
+
+#Preview("全部隐藏") {
+    RootView {
+        ContentView().hideSidebar().hideStatusBar().hideToolbar()
     }
         .frame(width: 800)
         .frame(height: 600)
