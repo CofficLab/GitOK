@@ -247,7 +247,7 @@ extension ContentView {
 
 #Preview("Default") {
     AppPreview()
-        .frame(width: 800)
+        .frame(width: 600)
         .frame(height: 600)
 }
 
@@ -255,7 +255,7 @@ extension ContentView {
     RootView {
         ContentView().hideSidebar()
     }
-        .frame(width: 800)
+        .frame(width: 600)
         .frame(height: 600)
 }
 
@@ -263,7 +263,7 @@ extension ContentView {
     RootView {
         ContentView().hideStatusBar()
     }
-        .frame(width: 800)
+        .frame(width: 600)
         .frame(height: 600)
 }
 
@@ -273,7 +273,7 @@ extension ContentView {
             .hideSidebar()
             .hideStatusBar()
     }
-        .frame(width: 800)
+        .frame(width: 600)
         .frame(height: 600)
 }
 
@@ -281,7 +281,7 @@ extension ContentView {
     RootView {
         ContentView().hideToolbar()
     }
-        .frame(width: 800)
+        .frame(width: 600)
         .frame(height: 600)
 }
 
@@ -292,6 +292,6 @@ extension ContentView {
             .hideStatusBar()
             .hideToolbar()
     }
-        .frame(width: 800)
+        .frame(width: 600)
         .frame(height: 600)
 }
