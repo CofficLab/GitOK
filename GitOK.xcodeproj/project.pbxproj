@@ -54,6 +54,8 @@
 		0B76FCFD2BDDE0E700501F1F /* webview in Resources */ = {isa = PBXBuildFile; fileRef = 0B76FCFC2BDDE0E700501F1F /* webview */; };
 		0B76FD062BDDF79600501F1F /* WebApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B76FD052BDDF79600501F1F /* WebApi.swift */; };
 		0B76FD222BDE315800501F1F /* ReadyHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B76FD212BDE315800501F1F /* ReadyHandler.swift */; };
+		0B80CFE12DE347E50027158F /* NoCommit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B80CFE02DE347E20027158F /* NoCommit.swift */; };
+		0B80CFE32DE348350027158F /* NoLocalChanges.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B80CFE22DE348350027158F /* NoLocalChanges.swift */; };
 		0B8C7A5D2BE08BF600B4E817 /* IconPng.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7A582BE08BF600B4E817 /* IconPng.swift */; };
 		0B8C7A6C2BE08CA800B4E817 /* Device.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7A682BE08CA800B4E817 /* Device.swift */; };
 		0B8C7A6D2BE08CA800B4E817 /* DeviceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7A692BE08CA800B4E817 /* DeviceType.swift */; };
@@ -215,6 +217,8 @@
 		0B76FCFC2BDDE0E700501F1F /* webview */ = {isa = PBXFileReference; lastKnownFileType = folder; path = webview; sourceTree = "<group>"; };
 		0B76FD052BDDF79600501F1F /* WebApi.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebApi.swift; sourceTree = "<group>"; };
 		0B76FD212BDE315800501F1F /* ReadyHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadyHandler.swift; sourceTree = "<group>"; };
+		0B80CFE02DE347E20027158F /* NoCommit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoCommit.swift; sourceTree = "<group>"; };
+		0B80CFE22DE348350027158F /* NoLocalChanges.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoLocalChanges.swift; sourceTree = "<group>"; };
 		0B8C7A582BE08BF600B4E817 /* IconPng.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IconPng.swift; sourceTree = "<group>"; };
 		0B8C7A682BE08CA800B4E817 /* Device.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Device.swift; sourceTree = "<group>"; };
 		0B8C7A692BE08CA800B4E817 /* DeviceType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeviceType.swift; sourceTree = "<group>"; };
@@ -494,6 +498,7 @@
 		0B4EE43F2D05297200D7E963 /* Git */ = {
 			isa = PBXGroup;
 			children = (
+				0B80CFDF2DE347D20027158F /* ErrorViews */,
 				0B80CFDB2DE345790027158F /* File */,
 				0B80CFDA2DE345650027158F /* Diff */,
 				0B44BCC52BDA947B00FBCF2F /* Branch.swift */,
@@ -599,8 +604,18 @@
 				F5F794DF2C5A1D2600DCB824 /* FileList.swift */,
 				0BDE61AC2BDB4E86006E23EA /* FileTile.swift */,
 				0BDE61A82BDB4746006E23EA /* File.swift */,
+				F545D1672C1AEBF1006A6AFA /* FileDetail.swift */,
 			);
 			path = File;
+			sourceTree = "<group>";
+		};
+		0B80CFDF2DE347D20027158F /* ErrorViews */ = {
+			isa = PBXGroup;
+			children = (
+				0B80CFE22DE348350027158F /* NoLocalChanges.swift */,
+				0B80CFE02DE347E20027158F /* NoCommit.swift */,
+			);
+			path = ErrorViews;
 			sourceTree = "<group>";
 		};
 		0B8C7AE72BE08E2200B4E817 /* Icon */ = {
@@ -741,7 +756,6 @@
 				0BD650F82CA1B98A00BA3CB8 /* CommitForm.swift */,
 				0B1C67EC2BD9D9CB00502EB1 /* CommitCategory.swift */,
 				0B1C67F02BD9DB1F00502EB1 /* CommitCategoryPicker.swift */,
-				F545D1672C1AEBF1006A6AFA /* FileDetail.swift */,
 				0BCC6D142BD9526F006ADA94 /* GitCommit.swift */,
 			);
 			path = Commit;
@@ -927,6 +941,7 @@
 				0BD650FF2CA2E9B100BA3CB8 /* BannerEditor.swift in Sources */,
 				0BD650F52CA1AA5D00BA3CB8 /* JSEvent.swift in Sources */,
 				0BD651052CA2F52400BA3CB8 /* DetailIcon.swift in Sources */,
+				0B80CFE12DE347E50027158F /* NoCommit.swift in Sources */,
 				0B4EE4612D05A42900D7E963 /* MessageTable.swift in Sources */,
 				F54DFA3E2CA395D800F81BE3 /* SmartImage.swift in Sources */,
 				0B1C67C42BD915F200502EB1 /* AppConfig.swift in Sources */,
@@ -962,6 +977,7 @@
 				0B1C67F12BD9DB1F00502EB1 /* CommitCategoryPicker.swift in Sources */,
 				0B4EE4452D059CD000D7E963 /* SmartMergePlugin.swift in Sources */,
 				0B6B1B402D03D7E8007941F0 /* BannerPlugin.swift in Sources */,
+				0B80CFE32DE348350027158F /* NoLocalChanges.swift in Sources */,
 				0B8C7AEC2BE08E2200B4E817 /* IconAsset.swift in Sources */,
 				F54DFA422CA3B5B900F81BE3 /* IconEvent.swift in Sources */,
 				0B6B1B422D03D980007941F0 /* BannerBtnAdd.swift in Sources */,

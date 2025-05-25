@@ -16,7 +16,7 @@ struct GitDetail: View, SuperEvent {
                 if let commit = g.commit {
                     Group {
                         if commit.isHead && isProjectClean {
-                            noLocalChangesView
+                            NoLocalChanges()
                         } else {
                             HSplitView {
                                 FileList(file: $file, commit: commit)
@@ -24,14 +24,17 @@ struct GitDetail: View, SuperEvent {
                                     .frame(minWidth: 200, maxWidth: 300)
                                     .layoutPriority(1)
 
-                                diffView
-                                    .frame(minWidth: 400, maxWidth: .infinity)
-                                    .layoutPriority(2)
+//                                diffView
+//                                    .frame(minWidth: 400, maxWidth: .infinity)
+//                                    .layoutPriority(2)
+                                if let file = g.file {
+                                    FileDetail(file: file, commit: commit)
+                                }
                             }
                         }
                     }
                 } else {
-                    commitNotSelectedView
+                    NoCommit()
                 }
             } else {
                     VStack(spacing: 16) {
@@ -55,44 +58,6 @@ struct GitDetail: View, SuperEvent {
         .onAppear(perform: onAppear)
         .onChange(of: file, onFileChange)
         .onReceive(nc.publisher(for: .gitCommitSuccess), perform: onGitCommitSuccess)
-    }
-
-    var noLocalChangesView: some View {
-        VStack(spacing: 16) {
-            Image(systemName: "checkmark.circle")
-                .font(.system(size: 48))
-                .foregroundColor(.green)
-
-            Text(LocalizedStringKey("no_local_changes_title"))
-                .font(.headline)
-                .padding()
-
-            Text(LocalizedStringKey("no_local_changes_description"))
-                .font(.subheadline)
-                .foregroundColor(.secondary)
-                .multilineTextAlignment(.center)
-                .padding(.horizontal)
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-    }
-
-    var commitNotSelectedView: some View {
-        VStack(spacing: 16) {
-            Image(systemName: "doc.text.magnifyingglass")
-                .font(.system(size: 48))
-                .foregroundColor(.secondary)
-
-            Text(LocalizedStringKey("select_commit_title"))
-                .font(.headline)
-                .padding()
-
-            Text(LocalizedStringKey("select_commit_description"))
-                .font(.subheadline)
-                .foregroundColor(.secondary)
-                .multilineTextAlignment(.center)
-                .padding(.horizontal)
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
 
