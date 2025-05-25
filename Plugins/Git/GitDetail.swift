@@ -33,6 +33,23 @@ struct GitDetail: View, SuperEvent {
                 } else {
                     commitNotSelectedView
                 }
+            } else {
+                    VStack(spacing: 16) {
+                        Image(systemName: "folder.open")
+                            .font(.system(size: 48))
+                            .foregroundColor(.secondary)
+                
+                        Text("请选择项目")
+                            .font(.headline)
+                            .padding()
+                
+                        Text("请选择项目")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal)
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }
         .onAppear(perform: onAppear)
@@ -105,8 +122,20 @@ extension GitDetail {
     }
 }
 
-#Preview {
-    AppPreview()
-        .frame(height: 800)
-        .frame(width: 800)
+#Preview("默认") {
+    RootView {
+        ContentView()
+    }
+        .frame(height: 600)
+        .frame(width: 600)
+}
+
+
+#Preview("隐藏左侧栏") {
+    RootView {
+        ContentView()
+            .hideSidebar()
+    }
+        .frame(height: 600)
+        .frame(width: 600)
 }
