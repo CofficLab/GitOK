@@ -2,23 +2,24 @@ import CloudKit
 import OSLog
 import SwiftData
 import SwiftUI
-import MagicKit
+import MagicCore
 import WebKit
+import MagicWeb
 
 class WebConfig: ObservableObject {    
-    var view: MagicKit.WebView
+    var view: MagicWeb.WebView
     
     init() {
         self.view = Self.makeView()
     }
 
-    static func makeView() -> MagicKit.WebView {
+    static func makeView() -> MagicWeb.WebView {
         #if DEBUG && false
         let view = WebView(
                 .url(URL(string: "http://127.0.0.1:5173")!)
             )
         #else
-        let view = MagicKit.WebView(htmlFile: WebConfig.htmlFile, config: Self.getViewConfig())
+        let view = MagicWeb.WebView(htmlFile: WebConfig.htmlFile, config: Self.getViewConfig())
         #endif
         
         return view

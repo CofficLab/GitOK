@@ -1,5 +1,5 @@
 import Foundation
-import MagicKit
+import MagicCore
 import OSLog
 import StoreKit
 import SwiftData
@@ -21,7 +21,7 @@ class PluginProvider: ObservableObject, SuperLog, SuperThread {
     init() {
         let verbose = false
         if verbose {
-            os_log("\(Logger.initLog) PluginProvider")
+            os_log("\(Self.onInit) PluginProvider")
         }
 
         var labelCounts: [String: Int] = [:]

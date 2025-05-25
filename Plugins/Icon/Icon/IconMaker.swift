@@ -1,6 +1,6 @@
 import SwiftUI
 import UniformTypeIdentifiers
-import MagicKit
+import MagicCore
 
 struct IconMaker: View {
     @EnvironmentObject var app: AppProvider
@@ -9,7 +9,7 @@ struct IconMaker: View {
     @Binding var snapshotTapped: Bool
     @Binding var icon: IconModel
 
-    private let tag = TimeHelper.getTimeString()
+    private let tag = Date.nowCompact
     private var folderName: String { "AppIcon-\(tag).appiconset" }
 
 
@@ -21,26 +21,26 @@ struct IconMaker: View {
 
     var body: some View {
         TabView(content: {
-            ImageHelper.makeImage(macOSView)
+            MagicImage.makeImage(macOSView)
                 .resizable()
                 .scaledToFit()
                 .overlay {
                     ZStack {
                         if withBorder {
-                            ViewHelper.dashedBorder
+//                            AnyView(View.dashedBorder())
                         }
                     }
                 }
                 .tag("macOS")
                 .tabItem { Label("macOS", systemImage: "plus") }
 
-            ImageHelper.makeImage(iOSView)
+            MagicImage.makeImage(iOSView)
                 .resizable()
                 .scaledToFit()
                 .overlay {
                     ZStack {
                         if withBorder {
-                            ViewHelper.dashedBorder
+//                            View.dashedBorder()
                         }
                     }
                 }
@@ -141,8 +141,8 @@ struct IconMaker: View {
             let fileName = "\(tag)-macOS-\(size)x\(size).png"
             let saveTo = folder.appendingPathComponent(fileName)
 
-            _ = ImageHelper.snapshot(
-                ImageHelper.makeImage(macOSView)
+            _ = MagicImage.snapshot(
+                MagicImage.makeImage(macOSView)
                     .resizable()
                     .scaledToFit()
                     .frame(width: CGFloat(size), height: CGFloat(size)),
@@ -174,8 +174,8 @@ struct IconMaker: View {
         let fileName = "\(tag)-iOS-\(size)x\(size).png"
         let saveTo = folder.appendingPathComponent(fileName)
 
-        _ = ImageHelper.snapshot(
-            ImageHelper.makeImage(iOSView)
+        _ = MagicImage.snapshot(
+            MagicImage.makeImage(iOSView)
                 .resizable()
                 .scaledToFit()
                 .frame(width: CGFloat(size), height: CGFloat(size)),

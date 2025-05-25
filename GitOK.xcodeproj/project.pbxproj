@@ -25,6 +25,16 @@
 		0B1C68002BD9F68F00502EB1 /* BtnFinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1C67FF2BD9F68F00502EB1 /* BtnFinder.swift */; };
 		0B1C68022BD9F7B500502EB1 /* BtnOpen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1C68012BD9F7B500502EB1 /* BtnOpen.swift */; };
 		0B1C68042BD9FAE500502EB1 /* BtnOpenXcode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1C68032BD9FAE500502EB1 /* BtnOpenXcode.swift */; };
+		0B25549A2DE0D186006EDB55 /* CosyAsset in Frameworks */ = {isa = PBXBuildFile; productRef = 0B2554992DE0D186006EDB55 /* CosyAsset */; };
+		0B25549C2DE0D186006EDB55 /* MagicAll in Frameworks */ = {isa = PBXBuildFile; productRef = 0B25549B2DE0D186006EDB55 /* MagicAll */; };
+		0B25549E2DE0D186006EDB55 /* MagicCore in Frameworks */ = {isa = PBXBuildFile; productRef = 0B25549D2DE0D186006EDB55 /* MagicCore */; };
+		0B2554A02DE0D186006EDB55 /* MagicPlayMan in Frameworks */ = {isa = PBXBuildFile; productRef = 0B25549F2DE0D186006EDB55 /* MagicPlayMan */; };
+		0B2554A22DE0D186006EDB55 /* MagicSync in Frameworks */ = {isa = PBXBuildFile; productRef = 0B2554A12DE0D186006EDB55 /* MagicSync */; };
+		0B2554A72DE0D532006EDB55 /* CosyAsset in Frameworks */ = {isa = PBXBuildFile; productRef = 0B2554A62DE0D532006EDB55 /* CosyAsset */; };
+		0B2554A92DE0D532006EDB55 /* MagicAll in Frameworks */ = {isa = PBXBuildFile; productRef = 0B2554A82DE0D532006EDB55 /* MagicAll */; };
+		0B2554AB2DE0D532006EDB55 /* MagicCore in Frameworks */ = {isa = PBXBuildFile; productRef = 0B2554AA2DE0D532006EDB55 /* MagicCore */; };
+		0B2554AD2DE0D532006EDB55 /* MagicKit in Frameworks */ = {isa = PBXBuildFile; productRef = 0B2554AC2DE0D532006EDB55 /* MagicKit */; };
+		0B2554AF2DE0D532006EDB55 /* MagicPlayMan in Frameworks */ = {isa = PBXBuildFile; productRef = 0B2554AE2DE0D532006EDB55 /* MagicPlayMan */; };
 		0B44BCC62BDA947B00FBCF2F /* Branch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B44BCC52BDA947B00FBCF2F /* Branch.swift */; };
 		0B4EE43E2D0528F600D7E963 /* IconPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4EE43D2D0528F600D7E963 /* IconPlugin.swift */; };
 		0B4EE4412D05297700D7E963 /* GitPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4EE4402D05297700D7E963 /* GitPlugin.swift */; };
@@ -44,6 +54,9 @@
 		0B76FCFD2BDDE0E700501F1F /* webview in Resources */ = {isa = PBXBuildFile; fileRef = 0B76FCFC2BDDE0E700501F1F /* webview */; };
 		0B76FD062BDDF79600501F1F /* WebApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B76FD052BDDF79600501F1F /* WebApi.swift */; };
 		0B76FD222BDE315800501F1F /* ReadyHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B76FD212BDE315800501F1F /* ReadyHandler.swift */; };
+		0B80CFE12DE347E50027158F /* NoCommit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B80CFE02DE347E20027158F /* NoCommit.swift */; };
+		0B80CFE32DE348350027158F /* NoLocalChanges.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B80CFE22DE348350027158F /* NoLocalChanges.swift */; };
+		0B80CFE52DE349660027158F /* NoProjectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B80CFE42DE349660027158F /* NoProjectView.swift */; };
 		0B8C7A5D2BE08BF600B4E817 /* IconPng.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7A582BE08BF600B4E817 /* IconPng.swift */; };
 		0B8C7A6C2BE08CA800B4E817 /* Device.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7A682BE08CA800B4E817 /* Device.swift */; };
 		0B8C7A6D2BE08CA800B4E817 /* DeviceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7A692BE08CA800B4E817 /* DeviceType.swift */; };
@@ -106,10 +119,14 @@
 		0BD651012CA2EA6800BA3CB8 /* IconHome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD651002CA2EA6800BA3CB8 /* IconHome.swift */; };
 		0BD651032CA2F51500BA3CB8 /* BannerDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD651022CA2F51500BA3CB8 /* BannerDetail.swift */; };
 		0BD651052CA2F52400BA3CB8 /* DetailIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD651042CA2F52400BA3CB8 /* DetailIcon.swift */; };
-		0BD652242CA4390C00BA3CB8 /* MagicKit in Frameworks */ = {isa = PBXBuildFile; productRef = 0BD652232CA4390C00BA3CB8 /* MagicKit */; };
 		0BDE61A32BDB3C9B006E23EA /* Projects.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BDE61A22BDB3C9B006E23EA /* Projects.swift */; };
 		0BDE61A92BDB4746006E23EA /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BDE61A82BDB4746006E23EA /* File.swift */; };
 		0BDE61AD2BDB4E87006E23EA /* FileTile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BDE61AC2BDB4E86006E23EA /* FileTile.swift */; };
+		0BF2EDA82DE0D00100D60D99 /* CosyAsset in Frameworks */ = {isa = PBXBuildFile; productRef = 0BF2EDA72DE0D00100D60D99 /* CosyAsset */; };
+		0BF2EDAA2DE0D00100D60D99 /* MagicAll in Frameworks */ = {isa = PBXBuildFile; productRef = 0BF2EDA92DE0D00100D60D99 /* MagicAll */; };
+		0BF2EDAC2DE0D00100D60D99 /* MagicCore in Frameworks */ = {isa = PBXBuildFile; productRef = 0BF2EDAB2DE0D00100D60D99 /* MagicCore */; };
+		0BF2EDAE2DE0D00100D60D99 /* MagicPlayMan in Frameworks */ = {isa = PBXBuildFile; productRef = 0BF2EDAD2DE0D00100D60D99 /* MagicPlayMan */; };
+		0BF2EDB02DE0D00100D60D99 /* MagicSync in Frameworks */ = {isa = PBXBuildFile; productRef = 0BF2EDAF2DE0D00100D60D99 /* MagicSync */; };
 		0BF75EE22BDE5CE500A553CD /* Stage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BF75EE12BDE5CE500A553CD /* Stage.swift */; };
 		0BF75EE42BDF2CCD00A553CD /* CommitList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BF75EE32BDF2CCD00A553CD /* CommitList.swift */; };
 		0BF75EEA2BDFA2FB00A553CD /* BtnOpenTerminal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BF75EE92BDFA2FB00A553CD /* BtnOpenTerminal.swift */; };
@@ -201,6 +218,9 @@
 		0B76FCFC2BDDE0E700501F1F /* webview */ = {isa = PBXFileReference; lastKnownFileType = folder; path = webview; sourceTree = "<group>"; };
 		0B76FD052BDDF79600501F1F /* WebApi.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebApi.swift; sourceTree = "<group>"; };
 		0B76FD212BDE315800501F1F /* ReadyHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadyHandler.swift; sourceTree = "<group>"; };
+		0B80CFE02DE347E20027158F /* NoCommit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoCommit.swift; sourceTree = "<group>"; };
+		0B80CFE22DE348350027158F /* NoLocalChanges.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoLocalChanges.swift; sourceTree = "<group>"; };
+		0B80CFE42DE349660027158F /* NoProjectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoProjectView.swift; sourceTree = "<group>"; };
 		0B8C7A582BE08BF600B4E817 /* IconPng.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IconPng.swift; sourceTree = "<group>"; };
 		0B8C7A682BE08CA800B4E817 /* Device.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Device.swift; sourceTree = "<group>"; };
 		0B8C7A692BE08CA800B4E817 /* DeviceType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeviceType.swift; sourceTree = "<group>"; };
@@ -308,9 +328,23 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0B25549C2DE0D186006EDB55 /* MagicAll in Frameworks */,
+				0B2554AD2DE0D532006EDB55 /* MagicKit in Frameworks */,
 				0BB1C7122D045C0600C4EA70 /* AlertToast in Frameworks */,
+				0B2554A02DE0D186006EDB55 /* MagicPlayMan in Frameworks */,
+				0BF2EDA82DE0D00100D60D99 /* CosyAsset in Frameworks */,
+				0B25549E2DE0D186006EDB55 /* MagicCore in Frameworks */,
+				0BF2EDAA2DE0D00100D60D99 /* MagicAll in Frameworks */,
+				0BF2EDB02DE0D00100D60D99 /* MagicSync in Frameworks */,
+				0B2554A72DE0D532006EDB55 /* CosyAsset in Frameworks */,
+				0B2554A22DE0D186006EDB55 /* MagicSync in Frameworks */,
+				0BF2EDAC2DE0D00100D60D99 /* MagicCore in Frameworks */,
+				0B2554A92DE0D532006EDB55 /* MagicAll in Frameworks */,
 				F5F794E92C5B192600DCB824 /* Sparkle in Frameworks */,
-				0BD652242CA4390C00BA3CB8 /* MagicKit in Frameworks */,
+				0B2554AF2DE0D532006EDB55 /* MagicPlayMan in Frameworks */,
+				0BF2EDAE2DE0D00100D60D99 /* MagicPlayMan in Frameworks */,
+				0B2554AB2DE0D532006EDB55 /* MagicCore in Frameworks */,
+				0B25549A2DE0D186006EDB55 /* CosyAsset in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -329,6 +363,7 @@
 				0B0E167E2BD89A8F0078942B /* Products */,
 				0B332F052BDA01E600DFA5BB /* README.md */,
 				0B76FCF72BDDD4C600501F1F /* Resources */,
+				0B62FCFA2DE0CF1200230C70 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -465,17 +500,11 @@
 		0B4EE43F2D05297200D7E963 /* Git */ = {
 			isa = PBXGroup;
 			children = (
+				0B80CFDF2DE347D20027158F /* ErrorViews */,
+				0B80CFDB2DE345790027158F /* File */,
+				0B80CFDA2DE345650027158F /* Diff */,
 				0B44BCC52BDA947B00FBCF2F /* Branch.swift */,
 				F545D16B2C1AF525006A6AFA /* Commit */,
-				0B1C67EC2BD9D9CB00502EB1 /* CommitCategory.swift */,
-				0BD650F82CA1B98A00BA3CB8 /* CommitForm.swift */,
-				0BF75EE32BDF2CCD00A553CD /* CommitList.swift */,
-				0BD15C572BDD26DE004024CF /* Diff.swift */,
-				0BD15C592BDD275C004024CF /* DiffBlock.swift */,
-				0BDE61A82BDB4746006E23EA /* File.swift */,
-				F5F794DF2C5A1D2600DCB824 /* FileList.swift */,
-				0BDE61AC2BDB4E86006E23EA /* FileTile.swift */,
-				0BCC6D142BD9526F006ADA94 /* GitCommit.swift */,
 				F5FBCC332C3FB96000CED4F1 /* GitDetail.swift */,
 				F588FB742CA16B4F00F6AE42 /* GitError.swift */,
 				0B4EE4402D05297700D7E963 /* GitPlugin.swift */,
@@ -488,6 +517,13 @@
 				0BF75EE12BDE5CE500A553CD /* Stage.swift */,
 			);
 			path = Git;
+			sourceTree = "<group>";
+		};
+		0B62FCFA2DE0CF1200230C70 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		0B6B1B3C2D03D719007941F0 /* Banner */ = {
@@ -553,6 +589,36 @@
 				0B76FD212BDE315800501F1F /* ReadyHandler.swift */,
 			);
 			path = WebView;
+			sourceTree = "<group>";
+		};
+		0B80CFDA2DE345650027158F /* Diff */ = {
+			isa = PBXGroup;
+			children = (
+				0BD15C592BDD275C004024CF /* DiffBlock.swift */,
+				0BD15C572BDD26DE004024CF /* Diff.swift */,
+			);
+			path = Diff;
+			sourceTree = "<group>";
+		};
+		0B80CFDB2DE345790027158F /* File */ = {
+			isa = PBXGroup;
+			children = (
+				F5F794DF2C5A1D2600DCB824 /* FileList.swift */,
+				0BDE61AC2BDB4E86006E23EA /* FileTile.swift */,
+				0BDE61A82BDB4746006E23EA /* File.swift */,
+				F545D1672C1AEBF1006A6AFA /* FileDetail.swift */,
+			);
+			path = File;
+			sourceTree = "<group>";
+		};
+		0B80CFDF2DE347D20027158F /* ErrorViews */ = {
+			isa = PBXGroup;
+			children = (
+				0B80CFE42DE349660027158F /* NoProjectView.swift */,
+				0B80CFE22DE348350027158F /* NoLocalChanges.swift */,
+				0B80CFE02DE347E20027158F /* NoCommit.swift */,
+			);
+			path = ErrorViews;
 			sourceTree = "<group>";
 		};
 		0B8C7AE72BE08E2200B4E817 /* Icon */ = {
@@ -689,8 +755,11 @@
 		F545D16B2C1AF525006A6AFA /* Commit */ = {
 			isa = PBXGroup;
 			children = (
+				0BF75EE32BDF2CCD00A553CD /* CommitList.swift */,
+				0BD650F82CA1B98A00BA3CB8 /* CommitForm.swift */,
+				0B1C67EC2BD9D9CB00502EB1 /* CommitCategory.swift */,
 				0B1C67F02BD9DB1F00502EB1 /* CommitCategoryPicker.swift */,
-				F545D1672C1AEBF1006A6AFA /* FileDetail.swift */,
+				0BCC6D142BD9526F006ADA94 /* GitCommit.swift */,
 			);
 			path = Commit;
 			sourceTree = "<group>";
@@ -755,8 +824,22 @@
 			name = GitOK;
 			packageProductDependencies = (
 				F5F794E82C5B192600DCB824 /* Sparkle */,
-				0BD652232CA4390C00BA3CB8 /* MagicKit */,
 				0BB1C7112D045C0600C4EA70 /* AlertToast */,
+				0BF2EDA72DE0D00100D60D99 /* CosyAsset */,
+				0BF2EDA92DE0D00100D60D99 /* MagicAll */,
+				0BF2EDAB2DE0D00100D60D99 /* MagicCore */,
+				0BF2EDAD2DE0D00100D60D99 /* MagicPlayMan */,
+				0BF2EDAF2DE0D00100D60D99 /* MagicSync */,
+				0B2554992DE0D186006EDB55 /* CosyAsset */,
+				0B25549B2DE0D186006EDB55 /* MagicAll */,
+				0B25549D2DE0D186006EDB55 /* MagicCore */,
+				0B25549F2DE0D186006EDB55 /* MagicPlayMan */,
+				0B2554A12DE0D186006EDB55 /* MagicSync */,
+				0B2554A62DE0D532006EDB55 /* CosyAsset */,
+				0B2554A82DE0D532006EDB55 /* MagicAll */,
+				0B2554AA2DE0D532006EDB55 /* MagicCore */,
+				0B2554AC2DE0D532006EDB55 /* MagicKit */,
+				0B2554AE2DE0D532006EDB55 /* MagicPlayMan */,
 			);
 			productName = GitOK;
 			productReference = 0B0E167D2BD89A8F0078942B /* GitOK.app */;
@@ -770,7 +853,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1530;
-				LastUpgradeCheck = 1600;
+				LastUpgradeCheck = 1630;
 				TargetAttributes = {
 					0B0E167C2BD89A8F0078942B = {
 						CreatedOnToolsVersion = 15.3;
@@ -789,8 +872,8 @@
 			mainGroup = 0B0E16742BD89A8F0078942B;
 			packageReferences = (
 				F5F794E72C5B192600DCB824 /* XCRemoteSwiftPackageReference "Sparkle" */,
-				0BD652222CA4390C00BA3CB8 /* XCRemoteSwiftPackageReference "MagicKit" */,
 				0B6B1B5D2D045AB7007941F0 /* XCRemoteSwiftPackageReference "AlertToast" */,
+				0B2554A52DE0D532006EDB55 /* XCLocalSwiftPackageReference "../MagicKit" */,
 			);
 			productRefGroup = 0B0E167E2BD89A8F0078942B /* Products */;
 			projectDirPath = "";
@@ -861,6 +944,7 @@
 				0BD650FF2CA2E9B100BA3CB8 /* BannerEditor.swift in Sources */,
 				0BD650F52CA1AA5D00BA3CB8 /* JSEvent.swift in Sources */,
 				0BD651052CA2F52400BA3CB8 /* DetailIcon.swift in Sources */,
+				0B80CFE12DE347E50027158F /* NoCommit.swift in Sources */,
 				0B4EE4612D05A42900D7E963 /* MessageTable.swift in Sources */,
 				F54DFA3E2CA395D800F81BE3 /* SmartImage.swift in Sources */,
 				0B1C67C42BD915F200502EB1 /* AppConfig.swift in Sources */,
@@ -896,6 +980,7 @@
 				0B1C67F12BD9DB1F00502EB1 /* CommitCategoryPicker.swift in Sources */,
 				0B4EE4452D059CD000D7E963 /* SmartMergePlugin.swift in Sources */,
 				0B6B1B402D03D7E8007941F0 /* BannerPlugin.swift in Sources */,
+				0B80CFE32DE348350027158F /* NoLocalChanges.swift in Sources */,
 				0B8C7AEC2BE08E2200B4E817 /* IconAsset.swift in Sources */,
 				F54DFA422CA3B5B900F81BE3 /* IconEvent.swift in Sources */,
 				0B6B1B422D03D980007941F0 /* BannerBtnAdd.swift in Sources */,
@@ -903,6 +988,7 @@
 				F511A69A2CE58734008C46DF /* BtnOpenCursor.swift in Sources */,
 				0BD15C5A2BDD275C004024CF /* DiffBlock.swift in Sources */,
 				0BD650F72CA1AC6700BA3CB8 /* AppEvent.swift in Sources */,
+				0B80CFE52DE349660027158F /* NoProjectView.swift in Sources */,
 				0B8C7B2F2BE0E5F100B4E817 /* Tabs.swift in Sources */,
 				0B1C68022BD9F7B500502EB1 /* BtnOpen.swift in Sources */,
 				0B0E16812BD89A8F0078942B /* GitOKApp.swift in Sources */,
@@ -1004,6 +1090,7 @@
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = Y6HZ9JJYV6;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -1067,6 +1154,7 @@
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = Y6HZ9JJYV6;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -1097,7 +1185,6 @@
 				CURRENT_PROJECT_VERSION = 142;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"Preview Content\"";
-				DEVELOPMENT_TEAM = Y6HZ9JJYV6;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -1117,7 +1204,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 17.4;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
 				MARKETING_VERSION = 1.1.34;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yueyi.GitOK;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1141,7 +1228,6 @@
 				CURRENT_PROJECT_VERSION = 142;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"Preview Content\"";
-				DEVELOPMENT_TEAM = Y6HZ9JJYV6;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -1161,7 +1247,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 17.4;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
 				MARKETING_VERSION = 1.1.34;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yueyi.GitOK;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1196,6 +1282,13 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCLocalSwiftPackageReference section */
+		0B2554A52DE0D532006EDB55 /* XCLocalSwiftPackageReference "../MagicKit" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../MagicKit;
+		};
+/* End XCLocalSwiftPackageReference section */
+
 /* Begin XCRemoteSwiftPackageReference section */
 		0B6B1B5D2D045AB7007941F0 /* XCRemoteSwiftPackageReference "AlertToast" */ = {
 			isa = XCRemoteSwiftPackageReference;
@@ -1203,14 +1296,6 @@
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 1.3.9;
-			};
-		};
-		0BD652222CA4390C00BA3CB8 /* XCRemoteSwiftPackageReference "MagicKit" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/CofficLab/MagicKit";
-			requirement = {
-				branch = main;
-				kind = branch;
 			};
 		};
 		F5F794E72C5B192600DCB824 /* XCRemoteSwiftPackageReference "Sparkle" */ = {
@@ -1224,15 +1309,70 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		0B2554992DE0D186006EDB55 /* CosyAsset */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = CosyAsset;
+		};
+		0B25549B2DE0D186006EDB55 /* MagicAll */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MagicAll;
+		};
+		0B25549D2DE0D186006EDB55 /* MagicCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MagicCore;
+		};
+		0B25549F2DE0D186006EDB55 /* MagicPlayMan */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MagicPlayMan;
+		};
+		0B2554A12DE0D186006EDB55 /* MagicSync */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MagicSync;
+		};
+		0B2554A62DE0D532006EDB55 /* CosyAsset */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = CosyAsset;
+		};
+		0B2554A82DE0D532006EDB55 /* MagicAll */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MagicAll;
+		};
+		0B2554AA2DE0D532006EDB55 /* MagicCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MagicCore;
+		};
+		0B2554AC2DE0D532006EDB55 /* MagicKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MagicKit;
+		};
+		0B2554AE2DE0D532006EDB55 /* MagicPlayMan */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MagicPlayMan;
+		};
 		0BB1C7112D045C0600C4EA70 /* AlertToast */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 0B6B1B5D2D045AB7007941F0 /* XCRemoteSwiftPackageReference "AlertToast" */;
 			productName = AlertToast;
 		};
-		0BD652232CA4390C00BA3CB8 /* MagicKit */ = {
+		0BF2EDA72DE0D00100D60D99 /* CosyAsset */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 0BD652222CA4390C00BA3CB8 /* XCRemoteSwiftPackageReference "MagicKit" */;
-			productName = MagicKit;
+			productName = CosyAsset;
+		};
+		0BF2EDA92DE0D00100D60D99 /* MagicAll */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MagicAll;
+		};
+		0BF2EDAB2DE0D00100D60D99 /* MagicCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MagicCore;
+		};
+		0BF2EDAD2DE0D00100D60D99 /* MagicPlayMan */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MagicPlayMan;
+		};
+		0BF2EDAF2DE0D00100D60D99 /* MagicSync */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MagicSync;
 		};
 		F5F794E82C5B192600DCB824 /* Sparkle */ = {
 			isa = XCSwiftPackageProductDependency;

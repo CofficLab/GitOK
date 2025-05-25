@@ -1,7 +1,7 @@
 import Foundation
 import SwiftUI
 import OSLog
-import MagicKit
+import MagicCore
 
 struct GitCommit: SuperLog {
     static var headId = "HEAD"

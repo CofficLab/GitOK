@@ -5,7 +5,7 @@ import Foundation
 import MediaPlayer
 import OSLog
 import SwiftUI
-import MagicKit
+import MagicCore
 
 @MainActor
 class BannerProvider: NSObject, ObservableObject, SuperLog {

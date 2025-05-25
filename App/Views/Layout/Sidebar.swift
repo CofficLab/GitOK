@@ -1,7 +1,7 @@
 import OSLog
 import SwiftData
 import SwiftUI
-import MagicKit
+import MagicCore
 
 struct Sidebar: View, SuperThread, SuperEvent {
     @EnvironmentObject var app: AppProvider

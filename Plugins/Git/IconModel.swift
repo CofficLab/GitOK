@@ -2,7 +2,7 @@ import Foundation
 import OSLog
 import SwiftData
 import SwiftUI
-import MagicKit
+import MagicCore
 
 struct IconModel: SuperJsonModel, SuperEvent, SuperLog {
     static var root: String = ".gitok/icons"
@@ -26,7 +26,8 @@ struct IconModel: SuperJsonModel, SuperEvent, SuperLog {
     }
 
     var background: some View {
-        BackgroundGroup(for: self.backgroundId).opacity(self.opacity)
+        Color.blue
+//        BackgroundGroup(for: self.backgroundId).opacity(self.opacity)
     }
 
     var label: String { IconModel.label }

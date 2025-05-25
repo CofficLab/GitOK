@@ -1,11 +1,11 @@
 import SwiftUI
-import MagicKit
+import MagicCore
 
 struct BannerBackground: View {
     @Binding var banner: BannerModel
 
     var body: some View {
-        BackgroundGroup(for:banner.backgroundId)
+        MagicBackgroundGroup(for:banner.backgroundId)
             .opacity(banner.opacity)
             .frame(maxHeight: .infinity)
             .frame(maxWidth: .infinity)

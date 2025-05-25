@@ -2,7 +2,7 @@ import Foundation
 import SwiftData
 import SwiftUI
 import OSLog
-import MagicKit
+import MagicCore
 
 struct Branch: SuperLog {
     var emoji = "🌿"

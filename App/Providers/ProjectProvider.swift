@@ -4,7 +4,7 @@ import Foundation
 import MediaPlayer
 import OSLog
 import SwiftUI
-import MagicKit
+import MagicCore
 
 class ProjectProvider: NSObject, ObservableObject, SuperLog {
     @Published var project: Project?

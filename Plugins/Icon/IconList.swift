@@ -1,7 +1,7 @@
 import SwiftData
 import SwiftUI
 import OSLog
-import MagicKit
+import MagicCore
 
 struct IconList: View, SuperLog {
     @EnvironmentObject var app: AppProvider

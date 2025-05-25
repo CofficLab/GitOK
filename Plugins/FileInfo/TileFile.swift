@@ -1,6 +1,6 @@
 import SwiftUI
 import OSLog
-import MagicKit
+import MagicCore
 
 struct TileFile: View, SuperLog, SuperThread {
     @EnvironmentObject var a: AppProvider

@@ -1,5 +1,5 @@
 import SwiftUI
-import MagicKit
+import MagicCore
 
 struct GitDetail: View, SuperEvent {
     @EnvironmentObject var app: AppProvider
@@ -12,11 +12,11 @@ struct GitDetail: View, SuperEvent {
 
     var body: some View {
         ZStack {
-            if let project = g.project {
+            if g.project != nil {
                 if let commit = g.commit {
                     Group {
                         if commit.isHead && isProjectClean {
-                            noLocalChangesView
+                            NoLocalChanges()
                         } else {
                             HSplitView {
                                 FileList(file: $file, commit: commit)
@@ -24,60 +24,29 @@ struct GitDetail: View, SuperEvent {
                                     .frame(minWidth: 200, maxWidth: 300)
                                     .layoutPriority(1)
 
-                                diffView
-                                    .frame(minWidth: 400, maxWidth: .infinity)
-                                    .layoutPriority(2)
+//                                diffView
+//                                    .frame(minWidth: 400, maxWidth: .infinity)
+//                                    .layoutPriority(2)
+                                if let file = g.file {
+                                    FileDetail(file: file, commit: commit)
+                                }
                             }
                         }
                     }
                 } else {
-                    commitNotSelectedView
+                    NoCommit()
                 }
+            } else {
+                NoProjectView()
             }
         }
         .onAppear(perform: onAppear)
         .onChange(of: file, onFileChange)
         .onReceive(nc.publisher(for: .gitCommitSuccess), perform: onGitCommitSuccess)
     }
-
-    var noLocalChangesView: some View {
-        VStack(spacing: 16) {
-            Image(systemName: "checkmark.circle")
-                .font(.system(size: 48))
-                .foregroundColor(.green)
-
-            Text(LocalizedStringKey("no_local_changes_title"))
-                .font(.headline)
-                .padding()
-
-            Text(LocalizedStringKey("no_local_changes_description"))
-                .font(.subheadline)
-                .foregroundColor(.secondary)
-                .multilineTextAlignment(.center)
-                .padding(.horizontal)
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-    }
-
-    var commitNotSelectedView: some View {
-        VStack(spacing: 16) {
-            Image(systemName: "doc.text.magnifyingglass")
-                .font(.system(size: 48))
-                .foregroundColor(.secondary)
-
-            Text(LocalizedStringKey("select_commit_title"))
-                .font(.headline)
-                .padding()
-
-            Text(LocalizedStringKey("select_commit_description"))
-                .font(.subheadline)
-                .foregroundColor(.secondary)
-                .multilineTextAlignment(.center)
-                .padding(.horizontal)
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-    }
 }
+
+// MARK: Event
 
 extension GitDetail {
     func onAppear() {
@@ -105,8 +74,20 @@ extension GitDetail {
     }
 }
 
-#Preview {
-    AppPreview()
-        .frame(height: 800)
-        .frame(width: 800)
+#Preview("默认") {
+    RootView {
+        ContentView()
+    }
+        .frame(height: 600)
+        .frame(width: 600)
+}
+
+
+#Preview("隐藏左侧栏") {
+    RootView {
+        ContentView()
+            .hideSidebar()
+    }
+        .frame(height: 600)
+        .frame(width: 600)
 }

@@ -1,6 +1,6 @@
 import SwiftUI
 import UniformTypeIdentifiers
-import MagicKit
+import MagicCore
 
 struct ScreeniPhone<Content>: View where Content: View {
     private let content: Content
@@ -79,20 +79,20 @@ struct ScreeniPhone<Content>: View where Content: View {
     // MARK: 设备图片的高度
 
     @MainActor private func getDeviceHeight() -> CGFloat {
-        CGFloat(ImageHelper.getViewHeigth(getDeviceImage()))
+        CGFloat(MagicImage.getViewHeigth(getDeviceImage()))
     }
 
     // MARK: 设备图片的宽度
 
     @MainActor private func getDeviceWidth() -> CGFloat {
-        CGFloat(ImageHelper.getViewWidth(getDeviceImage()))
+        CGFloat(MagicImage.getViewWidth(getDeviceImage()))
     }
 
     // MARK: 设备图片的尺寸
 
     @MainActor private func getDeviceSize() -> String {
         let deviceImage = getDeviceImage()
-        return "\(ImageHelper.getViewWidth(deviceImage)) X \(ImageHelper.getViewHeigth(deviceImage))"
+        return "\(MagicImage.getViewWidth(deviceImage)) X \(MagicImage.getViewHeigth(deviceImage))"
     }
 
     // MARK: 设备图片的屏幕尺寸

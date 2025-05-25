@@ -4,7 +4,7 @@ import Foundation
 import MediaPlayer
 import OSLog
 import SwiftUI
-import MagicKit
+import MagicCore
 
 class AppProvider: NSObject, ObservableObject, AVAudioPlayerDelegate, SuperLog {
     @Published var currentTab: String = "Git"

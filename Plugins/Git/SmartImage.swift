@@ -3,7 +3,7 @@ import OSLog
 import SwiftData
 import SwiftUI
 import AppKit
-import MagicKit
+import MagicCore
 
 class SmartImage: SuperLog {
     static var dir: String = ".gitok/images"
@@ -36,14 +36,14 @@ class SmartImage: SuperLog {
         let imagesFolder = projectURL.appendingPathComponent(Self.dir)
         let imageURL = imagesFolder.appendingPathComponent(id)
 
-        try imageURL.removeItem()
+        try imageURL.delete()
     }
     
     static func saveImage(_ url: URL, projectURL: URL) throws -> String {
         os_log("SaveImage to project -> \(projectURL.relativeString)")
 
         let ext = url.pathExtension
-        let fileName = "\(TimeHelper.getTimeString()).\(ext)"
+        let fileName = "\(Date.nowCompact).\(ext)"
         let imagesFolder = projectURL.appendingPathComponent(Self.dir)
         let storeURL = imagesFolder.appendingPathComponent(fileName)
 

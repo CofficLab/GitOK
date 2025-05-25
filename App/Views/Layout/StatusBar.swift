@@ -1,5 +1,5 @@
 import SwiftUI
-import MagicKit
+import MagicCore
 
 struct StatusBar: View {
     @EnvironmentObject var app: AppProvider
@@ -18,7 +18,7 @@ struct StatusBar: View {
         .padding(.trailing, 10)
         .labelStyle(.iconOnly)
         .frame(maxWidth: .infinity)
-        .background(BackgroundView.type2.opacity(0.2))
+//        .background(BackgroundView.type2.opacity(0.2))
     }
 }
 
