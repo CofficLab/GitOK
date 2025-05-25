@@ -45,6 +45,8 @@
 		0B4EE44B2D05A14C00D7E963 /* SmartFilePlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4EE44A2D05A14C00D7E963 /* SmartFilePlugin.swift */; };
 		0B4EE4612D05A42900D7E963 /* MessageTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4EE4602D05A42900D7E963 /* MessageTable.swift */; };
 		0B4EE49E2D05C4CC00D7E963 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 0B4EE49D2D05C48900D7E963 /* Localizable.strings */; };
+		0B5604742DE34C7C00DDFAD3 /* MagicCore in Frameworks */ = {isa = PBXBuildFile; productRef = 0B5604732DE34C7C00DDFAD3 /* MagicCore */; };
+		0B5604762DE34C7C00DDFAD3 /* MagicWeb in Frameworks */ = {isa = PBXBuildFile; productRef = 0B5604752DE34C7C00DDFAD3 /* MagicWeb */; };
 		0B6B1B3E2D03D7BA007941F0 /* SuperPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B6B1B3D2D03D7BA007941F0 /* SuperPlugin.swift */; };
 		0B6B1B402D03D7E8007941F0 /* BannerPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B6B1B3F2D03D7E4007941F0 /* BannerPlugin.swift */; };
 		0B6B1B422D03D980007941F0 /* BannerBtnAdd.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B6B1B412D03D976007941F0 /* BannerBtnAdd.swift */; };
@@ -335,7 +337,9 @@
 				0BF2EDA82DE0D00100D60D99 /* CosyAsset in Frameworks */,
 				0B25549E2DE0D186006EDB55 /* MagicCore in Frameworks */,
 				0BF2EDAA2DE0D00100D60D99 /* MagicAll in Frameworks */,
+				0B5604742DE34C7C00DDFAD3 /* MagicCore in Frameworks */,
 				0BF2EDB02DE0D00100D60D99 /* MagicSync in Frameworks */,
+				0B5604762DE34C7C00DDFAD3 /* MagicWeb in Frameworks */,
 				0B2554A72DE0D532006EDB55 /* CosyAsset in Frameworks */,
 				0B2554A22DE0D186006EDB55 /* MagicSync in Frameworks */,
 				0BF2EDAC2DE0D00100D60D99 /* MagicCore in Frameworks */,
@@ -840,6 +844,8 @@
 				0B2554AA2DE0D532006EDB55 /* MagicCore */,
 				0B2554AC2DE0D532006EDB55 /* MagicKit */,
 				0B2554AE2DE0D532006EDB55 /* MagicPlayMan */,
+				0B5604732DE34C7C00DDFAD3 /* MagicCore */,
+				0B5604752DE34C7C00DDFAD3 /* MagicWeb */,
 			);
 			productName = GitOK;
 			productReference = 0B0E167D2BD89A8F0078942B /* GitOK.app */;
@@ -873,7 +879,7 @@
 			packageReferences = (
 				F5F794E72C5B192600DCB824 /* XCRemoteSwiftPackageReference "Sparkle" */,
 				0B6B1B5D2D045AB7007941F0 /* XCRemoteSwiftPackageReference "AlertToast" */,
-				0B2554A52DE0D532006EDB55 /* XCLocalSwiftPackageReference "../MagicKit" */,
+				0B5604722DE34C7C00DDFAD3 /* XCRemoteSwiftPackageReference "MagicKit" */,
 			);
 			productRefGroup = 0B0E167E2BD89A8F0078942B /* Products */;
 			projectDirPath = "";
@@ -1182,7 +1188,7 @@
 				CODE_SIGN_IDENTITY = "-";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 143;
+				CURRENT_PROJECT_VERSION = 145;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"Preview Content\"";
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -1205,7 +1211,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 15.0;
-				MARKETING_VERSION = 1.1.35;
+				MARKETING_VERSION = 1.1.37;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yueyi.GitOK;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
@@ -1225,7 +1231,7 @@
 				CODE_SIGN_IDENTITY = "-";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 143;
+				CURRENT_PROJECT_VERSION = 145;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"Preview Content\"";
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -1248,7 +1254,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 15.0;
-				MARKETING_VERSION = 1.1.35;
+				MARKETING_VERSION = 1.1.37;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yueyi.GitOK;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
@@ -1282,14 +1288,15 @@
 		};
 /* End XCConfigurationList section */
 
-/* Begin XCLocalSwiftPackageReference section */
-		0B2554A52DE0D532006EDB55 /* XCLocalSwiftPackageReference "../MagicKit" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = ../MagicKit;
-		};
-/* End XCLocalSwiftPackageReference section */
-
 /* Begin XCRemoteSwiftPackageReference section */
+		0B5604722DE34C7C00DDFAD3 /* XCRemoteSwiftPackageReference "MagicKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/CofficLab/MagicKit";
+			requirement = {
+				branch = dev;
+				kind = branch;
+			};
+		};
 		0B6B1B5D2D045AB7007941F0 /* XCRemoteSwiftPackageReference "AlertToast" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/elai950/AlertToast";
@@ -1348,6 +1355,16 @@
 		0B2554AE2DE0D532006EDB55 /* MagicPlayMan */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = MagicPlayMan;
+		};
+		0B5604732DE34C7C00DDFAD3 /* MagicCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0B5604722DE34C7C00DDFAD3 /* XCRemoteSwiftPackageReference "MagicKit" */;
+			productName = MagicCore;
+		};
+		0B5604752DE34C7C00DDFAD3 /* MagicWeb */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0B5604722DE34C7C00DDFAD3 /* XCRemoteSwiftPackageReference "MagicKit" */;
+			productName = MagicWeb;
 		};
 		0BB1C7112D045C0600C4EA70 /* AlertToast */ = {
 			isa = XCSwiftPackageProductDependency;
