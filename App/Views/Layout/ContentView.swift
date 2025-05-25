@@ -147,7 +147,11 @@ extension ContentView {
     /// 显示侧边栏
     /// - Returns: 一个新的ContentView实例，侧边栏被显示
     func showSidebar() -> ContentView {
-        return ContentView(statusBarVisiblity: statusBarVisiblity, initialColumnVisibility: .all, toolbarVisibility: toolbarVisibility)
+        return ContentView(
+            statusBarVisiblity: self.statusBarVisiblity, 
+            initialColumnVisibility: .all, 
+            toolbarVisibility: self.toolbarVisibility
+        )
     }
     
     /// 隐藏状态栏
@@ -163,19 +167,31 @@ extension ContentView {
     /// 显示状态栏
     /// - Returns: 一个新的ContentView实例，状态栏被显示
     func showStatusBar() -> ContentView {
-        return ContentView(statusBarVisiblity: true, initialColumnVisibility: columnVisibility, toolbarVisibility: toolbarVisibility)
+        return ContentView(
+            statusBarVisiblity: true, 
+            initialColumnVisibility: self.columnVisibility, 
+            toolbarVisibility: self.toolbarVisibility
+        )
     }
 
     /// 隐藏工具栏
     /// - Returns: 一个新的ContentView实例，工具栏被隐藏
     func hideToolbar() -> ContentView {
-        return ContentView(statusBarVisiblity: statusBarVisiblity, initialColumnVisibility: columnVisibility, toolbarVisibility: false)
+        return ContentView(
+            statusBarVisiblity: self.statusBarVisiblity, 
+            initialColumnVisibility: self.columnVisibility, 
+            toolbarVisibility: false
+        )
     }
     
     /// 显示工具栏
     /// - Returns: 一个新的ContentView实例，工具栏被显示
     func showToolbar() -> ContentView {
-        return ContentView(statusBarVisiblity: statusBarVisiblity, initialColumnVisibility: columnVisibility, toolbarVisibility: true)
+        return ContentView(
+            statusBarVisiblity: self.statusBarVisiblity, 
+            initialColumnVisibility: self.columnVisibility, 
+            toolbarVisibility: true
+        )
     }
 }
 
@@ -253,7 +269,9 @@ extension ContentView {
 
 #Preview("隐藏侧边栏和状态栏") {
     RootView {
-        ContentView().hideSidebar().hideStatusBar()
+        ContentView()
+            .hideSidebar()
+            .hideStatusBar()
     }
         .frame(width: 800)
         .frame(height: 600)
@@ -269,7 +287,10 @@ extension ContentView {
 
 #Preview("全部隐藏") {
     RootView {
-        ContentView().hideSidebar().hideStatusBar().hideToolbar()
+        ContentView()
+            .hideSidebar()
+            .hideStatusBar()
+            .hideToolbar()
     }
         .frame(width: 800)
         .frame(height: 600)
