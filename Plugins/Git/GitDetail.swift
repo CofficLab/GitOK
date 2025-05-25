@@ -96,6 +96,8 @@ struct GitDetail: View, SuperEvent {
     }
 }
 
+// MARK: Event
+
 extension GitDetail {
     func onAppear() {
         isProjectClean = g.project?.isClean ?? true

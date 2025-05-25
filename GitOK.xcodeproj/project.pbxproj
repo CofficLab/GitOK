@@ -494,17 +494,10 @@
 		0B4EE43F2D05297200D7E963 /* Git */ = {
 			isa = PBXGroup;
 			children = (
+				0B80CFDB2DE345790027158F /* File */,
+				0B80CFDA2DE345650027158F /* Diff */,
 				0B44BCC52BDA947B00FBCF2F /* Branch.swift */,
 				F545D16B2C1AF525006A6AFA /* Commit */,
-				0B1C67EC2BD9D9CB00502EB1 /* CommitCategory.swift */,
-				0BD650F82CA1B98A00BA3CB8 /* CommitForm.swift */,
-				0BF75EE32BDF2CCD00A553CD /* CommitList.swift */,
-				0BD15C572BDD26DE004024CF /* Diff.swift */,
-				0BD15C592BDD275C004024CF /* DiffBlock.swift */,
-				0BDE61A82BDB4746006E23EA /* File.swift */,
-				F5F794DF2C5A1D2600DCB824 /* FileList.swift */,
-				0BDE61AC2BDB4E86006E23EA /* FileTile.swift */,
-				0BCC6D142BD9526F006ADA94 /* GitCommit.swift */,
 				F5FBCC332C3FB96000CED4F1 /* GitDetail.swift */,
 				F588FB742CA16B4F00F6AE42 /* GitError.swift */,
 				0B4EE4402D05297700D7E963 /* GitPlugin.swift */,
@@ -589,6 +582,25 @@
 				0B76FD212BDE315800501F1F /* ReadyHandler.swift */,
 			);
 			path = WebView;
+			sourceTree = "<group>";
+		};
+		0B80CFDA2DE345650027158F /* Diff */ = {
+			isa = PBXGroup;
+			children = (
+				0BD15C592BDD275C004024CF /* DiffBlock.swift */,
+				0BD15C572BDD26DE004024CF /* Diff.swift */,
+			);
+			path = Diff;
+			sourceTree = "<group>";
+		};
+		0B80CFDB2DE345790027158F /* File */ = {
+			isa = PBXGroup;
+			children = (
+				F5F794DF2C5A1D2600DCB824 /* FileList.swift */,
+				0BDE61AC2BDB4E86006E23EA /* FileTile.swift */,
+				0BDE61A82BDB4746006E23EA /* File.swift */,
+			);
+			path = File;
 			sourceTree = "<group>";
 		};
 		0B8C7AE72BE08E2200B4E817 /* Icon */ = {
@@ -725,8 +737,12 @@
 		F545D16B2C1AF525006A6AFA /* Commit */ = {
 			isa = PBXGroup;
 			children = (
+				0BF75EE32BDF2CCD00A553CD /* CommitList.swift */,
+				0BD650F82CA1B98A00BA3CB8 /* CommitForm.swift */,
+				0B1C67EC2BD9D9CB00502EB1 /* CommitCategory.swift */,
 				0B1C67F02BD9DB1F00502EB1 /* CommitCategoryPicker.swift */,
 				F545D1672C1AEBF1006A6AFA /* FileDetail.swift */,
+				0BCC6D142BD9526F006ADA94 /* GitCommit.swift */,
 			);
 			path = Commit;
 			sourceTree = "<group>";
