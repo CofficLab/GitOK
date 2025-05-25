@@ -12,7 +12,7 @@ struct GitDetail: View, SuperEvent {
 
     var body: some View {
         ZStack {
-            if let project = g.project {
+            if g.project != nil {
                 if let commit = g.commit {
                     Group {
                         if commit.isHead && isProjectClean {
