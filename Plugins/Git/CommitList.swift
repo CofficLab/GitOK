@@ -60,7 +60,7 @@ struct CommitList: View, SuperThread, SuperLog {
                     CommitForm()
                         .padding(.horizontal, 4)
                         .padding(.vertical, 6)
-                        .background(BackgroundView.type2.opacity(0.1))
+                        .background(MagicBackground.blueberry)
                 }
             }
             .onAppear {

@@ -24,10 +24,10 @@ struct Snapshot<Content>: View where Content: View {
 
                 HStack {
                     Spacer()
-                    ImageHelper.makeImage(content)
+                    MagicImage.makeImage(content)
                         .resizable()
                         .scaledToFit()
-                        .overlay { ViewHelper.dashedBorder }
+//                        .overlay { MagicImage.dashedBorder }
                     Spacer()
                 }
 
@@ -51,17 +51,17 @@ struct Snapshot<Content>: View where Content: View {
         HStack {
             Spacer()
             if !mark.isEmpty {
-                ViewHelper.makeCard(mark)
+//                MagicImage.makeCard(mark)
             }
 
-            Operator("\(ImageHelper.getViewWidth(content)) X \(ImageHelper.getViewHeigth(content))")
+            Operator("\(MagicImage.getViewWidth(content)) X \(MagicImage.getViewHeigth(content))")
             
             Spacer()
 
             Button {
-                onMessage(ImageHelper.snapshot(content))
+                onMessage(MagicImage.snapshot(content))
             } label: {
-                ViewHelper.makeCard("截图")
+//                ViewHelper.makeCard("截图")
             }
             .buttonStyle(.plain)
 

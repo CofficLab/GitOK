@@ -27,7 +27,7 @@ struct IconMaker: View {
                 .overlay {
                     ZStack {
                         if withBorder {
-                            View.dashedBorder()
+//                            AnyView(View.dashedBorder())
                         }
                     }
                 }
@@ -40,7 +40,7 @@ struct IconMaker: View {
                 .overlay {
                     ZStack {
                         if withBorder {
-                            View.dashedBorder()
+//                            View.dashedBorder()
                         }
                     }
                 }
