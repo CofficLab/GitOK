@@ -35,13 +35,10 @@
 		0B5604762DE34C7C00DDFAD3 /* MagicWeb in Frameworks */ = {isa = PBXBuildFile; productRef = 0B5604752DE34C7C00DDFAD3 /* MagicWeb */; };
 		0B6B1B402D03D7E8007941F0 /* BannerPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B6B1B3F2D03D7E4007941F0 /* BannerPlugin.swift */; };
 		0B6B1B422D03D980007941F0 /* BannerBtnAdd.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B6B1B412D03D976007941F0 /* BannerBtnAdd.swift */; };
-		0B76FCFB2BDDD4D300501F1F /* sample_macOS in Resources */ = {isa = PBXBuildFile; fileRef = 0B76FCF92BDDD4D300501F1F /* sample_macOS */; };
-		0B76FCFD2BDDE0E700501F1F /* webview in Resources */ = {isa = PBXBuildFile; fileRef = 0B76FCFC2BDDE0E700501F1F /* webview */; };
 		0B80CFE12DE347E50027158F /* NoCommit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B80CFE02DE347E20027158F /* NoCommit.swift */; };
 		0B80CFE32DE348350027158F /* NoLocalChanges.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B80CFE22DE348350027158F /* NoLocalChanges.swift */; };
 		0B80CFE52DE349660027158F /* NoProjectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B80CFE42DE349660027158F /* NoProjectView.swift */; };
 		0B8C7A5D2BE08BF600B4E817 /* IconPng.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7A582BE08BF600B4E817 /* IconPng.swift */; };
-		0B8C7AAF2BE08D1800B4E817 /* Icons in Resources */ = {isa = PBXBuildFile; fileRef = 0B8C7AAE2BE08D1800B4E817 /* Icons */; };
 		0B8C7AD52BE08E1900B4E817 /* Feature.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7AC82BE08E1900B4E817 /* Feature.swift */; };
 		0B8C7AD62BE08E1900B4E817 /* Features.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7AC92BE08E1900B4E817 /* Features.swift */; };
 		0B8C7AD72BE08E1900B4E817 /* BannerLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C7ACA2BE08E1900B4E817 /* BannerLayout.swift */; };
@@ -141,13 +138,10 @@
 		0B4EE49F2D05C4DD00D7E963 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		0B6B1B3F2D03D7E4007941F0 /* BannerPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerPlugin.swift; sourceTree = "<group>"; };
 		0B6B1B412D03D976007941F0 /* BannerBtnAdd.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerBtnAdd.swift; sourceTree = "<group>"; };
-		0B76FCF92BDDD4D300501F1F /* sample_macOS */ = {isa = PBXFileReference; lastKnownFileType = folder; path = sample_macOS; sourceTree = "<group>"; };
-		0B76FCFC2BDDE0E700501F1F /* webview */ = {isa = PBXFileReference; lastKnownFileType = folder; path = webview; sourceTree = "<group>"; };
 		0B80CFE02DE347E20027158F /* NoCommit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoCommit.swift; sourceTree = "<group>"; };
 		0B80CFE22DE348350027158F /* NoLocalChanges.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoLocalChanges.swift; sourceTree = "<group>"; };
 		0B80CFE42DE349660027158F /* NoProjectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoProjectView.swift; sourceTree = "<group>"; };
 		0B8C7A582BE08BF600B4E817 /* IconPng.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IconPng.swift; sourceTree = "<group>"; };
-		0B8C7AAE2BE08D1800B4E817 /* Icons */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Icons; sourceTree = "<group>"; };
 		0B8C7AC82BE08E1900B4E817 /* Feature.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Feature.swift; sourceTree = "<group>"; };
 		0B8C7AC92BE08E1900B4E817 /* Features.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Features.swift; sourceTree = "<group>"; };
 		0B8C7ACA2BE08E1900B4E817 /* BannerLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BannerLayout.swift; sourceTree = "<group>"; };
@@ -208,6 +202,7 @@
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		0B4EE4272D04A67D00D7E963 /* Screens */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Screens; sourceTree = "<group>"; };
 		0B6771D52DE601FE00FCA795 /* App */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = App; sourceTree = "<group>"; };
+		0B6772132DE6024200FCA795 /* Resources */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (Icons, sample_macOS, webview, ); path = Resources; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -251,7 +246,7 @@
 				0B0E16892BD89A910078942B /* Preview Content */,
 				0B0E167E2BD89A8F0078942B /* Products */,
 				0B332F052BDA01E600DFA5BB /* README.md */,
-				0B76FCF72BDDD4C600501F1F /* Resources */,
+				0B6772132DE6024200FCA795 /* Resources */,
 				0B62FCFA2DE0CF1200230C70 /* Frameworks */,
 			);
 			sourceTree = "<group>";
@@ -358,16 +353,6 @@
 				0BB543DF2BE8875700D7A2B2 /* BtnDelBanner.swift */,
 			);
 			path = Buttons;
-			sourceTree = "<group>";
-		};
-		0B76FCF72BDDD4C600501F1F /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				0B8C7AAE2BE08D1800B4E817 /* Icons */,
-				0B76FCFC2BDDE0E700501F1F /* webview */,
-				0B76FCF92BDDD4D300501F1F /* sample_macOS */,
-			);
-			path = Resources;
 			sourceTree = "<group>";
 		};
 		0B80CFDA2DE345650027158F /* Diff */ = {
@@ -517,6 +502,7 @@
 			fileSystemSynchronizedGroups = (
 				0B4EE4272D04A67D00D7E963 /* Screens */,
 				0B6771D52DE601FE00FCA795 /* App */,
+				0B6772132DE6024200FCA795 /* Resources */,
 			);
 			name = GitOK;
 			packageProductDependencies = (
@@ -588,11 +574,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0B76FCFD2BDDE0E700501F1F /* webview in Resources */,
 				0B4EE49E2D05C4CC00D7E963 /* Localizable.strings in Resources */,
 				0B0E168B2BD89A910078942B /* Preview Assets.xcassets in Resources */,
-				0B8C7AAF2BE08D1800B4E817 /* Icons in Resources */,
-				0B76FCFB2BDDD4D300501F1F /* sample_macOS in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
