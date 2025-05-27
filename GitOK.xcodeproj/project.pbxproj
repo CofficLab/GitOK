@@ -247,7 +247,6 @@
 				0B0E167E2BD89A8F0078942B /* Products */,
 				0B332F052BDA01E600DFA5BB /* README.md */,
 				0B6772132DE6024200FCA795 /* Resources */,
-				0B62FCFA2DE0CF1200230C70 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -300,13 +299,6 @@
 				0BF75EE12BDE5CE500A553CD /* Stage.swift */,
 			);
 			path = Git;
-			sourceTree = "<group>";
-		};
-		0B62FCFA2DE0CF1200230C70 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		0B6B1B3C2D03D719007941F0 /* Banner */ = {
