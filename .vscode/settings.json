@@ -3,5 +3,22 @@
         "comments": "off",
         "strings": "off",
         "other": "off"
-    }
+    },
+    "cSpell.words": [
+        "agvtool",
+        "appcast",
+        "Autoupdate",
+        "Codesign",
+        "codesigning",
+        "GITOK",
+        "ISSER",
+        "notarytool",
+        "pbxproj",
+        "pkcs",
+        "provisionprofile",
+        "softprops",
+        "stefanzweifel",
+        "xcrun",
+        "yanamura"
+    ]
 }
