@@ -21,6 +21,7 @@ env:
 
 jobs:
   build_with_signing:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: macos-15
     steps:
       - name: Checkout repository

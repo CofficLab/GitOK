@@ -26,32 +26,16 @@ jobs:
       - name: 生成标签（pre 分支）
         if: github.ref == 'refs/heads/pre'
         run: |
-
-          # 读取配置文件路径
-          projectFile=$(find $(pwd) ! -path "*Resources*" -type f -name "*.pbxproj" | head -n 1)
-
-          # 读取文件中的版本号
-          version=$(grep -o 'MARKETING_VERSION = [^"']*' $projectFile | head -n 1 | grep -o '[0-9]\+\.[0-9]\+\.[0-9]\+')
-
+          version=$(bash scripts/get-version.sh)
           echo "版本号->$version"
-
           build=$(agvtool what-version -terse)
-
           echo "tag=p$version($build)" >> $GITHUB_ENV
       - name: 生成标签（main 分支）
         if: github.ref == 'refs/heads/main'
         run: |
-
-          # 读取配置文件路径
-          projectFile=$(find $(pwd) ! -path "*Resources*" -type f -name "*.pbxproj" | head -n 1)
-
-          # 读取文件中的版本号
-          version=$(grep -o 'MARKETING_VERSION = [^"']*' $projectFile | head -n 1 | grep -o '[0-9]\+\.[0-9]\+\.[0-9]\+')
-
+          version=$(bash scripts/get-version.sh)
           echo "版本号->$version"
-
           # build=$(agvtool what-version -terse)
-
           echo "tag=v$version" >> $GITHUB_ENV
       - name: 打标签并推送到仓库
         uses: stefanzweifel/git-auto-commit-action@v4
