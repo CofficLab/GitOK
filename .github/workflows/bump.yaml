@@ -43,7 +43,7 @@ jobs:
           commit_message: '🎨 Bump a new version'
           commit_user_name: GitHub Action
           tagging_message: ${{ env.tag }}
-          push_options: '--follow-tags'
+          push_options: '--tags'
 
   rebase:
     if: github.ref == 'refs/heads/main'
