@@ -1,5 +1,9 @@
 # GitOK
 
+[![Coffic](https://img.shields.io/badge/Coffic-green)](https://coffic.cn)
+[![Maintainer](https://img.shields.io/badge/Maintainer-blue)](https://github.com/nookery)
+![GitHub License](https://img.shields.io/github/license/cofficlab/gitok)
+
 ## What
 
 GitOK 是一个综合性的项目管理工具。
@@ -26,19 +30,6 @@ GitOK 是一个综合性的项目管理工具。
   - 准备好 CI/CD 脚本
 - 辅助人类提交良好格式的 `commit message`
 - 快速生成 APP 的多个平台的图标
-
-## About the Author
-
-Work for Joy & Live for Love ➡️ <https://github.com/nookery>
-
-## License
-
-JuiceEditor is released under a dual license:
-
-1. For non-commercial use: [MIT License](LICENSE)
-2. For commercial use or modifications: Please [contact the author](https://github.com/nookery) for a commercial license.
-
-Any use of this software for commercial purposes or any modifications to the source code require explicit permission from the author.
 
 ## References
 
