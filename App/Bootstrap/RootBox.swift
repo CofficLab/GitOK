@@ -1,6 +1,6 @@
+import MagicCore
 import OSLog
 import SwiftData
-import MagicCore
 import SwiftUI
 
 /**
@@ -12,26 +12,34 @@ import SwiftUI
 final class RootBox: SuperLog {
     static let shared = RootBox(reason: "Shared")
     nonisolated static let emoji = "🚉"
-    
+
     let app: AppProvider
     let banner: BannerProvider
     let icon: IconProvider
     let git: GitProvider
     let c: ModelContainer
     let repoManager: RepoManager
-    
+
     private init(reason: String) {
         os_log("\(Self.onInit)(\(reason))")
-        
+
         self.c = AppConfig.getContainer()
-        
+
         // Providers
         self.app = AppProvider()
-        self.git = GitProvider()
         self.banner = BannerProvider()
         self.icon = IconProvider()
-        
+
         self.repoManager = RepoManager(modelContext: ModelContext(self.c))
+
+        do {
+            let projects = try self.repoManager.projectRepo.findAll(sortedBy: .ascending)
+            
+            self.git = GitProvider(projects: projects)
+        } catch let e {
+            os_log(.error, "\(e.localizedDescription)")
+            self.git = GitProvider(projects: [])
+        }
     }
 }
 
@@ -51,4 +59,3 @@ final class RootBox: SuperLog {
     .frame(width: 1200)
     .frame(height: 1200)
 }
-

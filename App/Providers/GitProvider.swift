@@ -8,11 +8,41 @@ import MagicCore
 
 class GitProvider: NSObject, ObservableObject, SuperLog {
     @Published private(set) var branches: [String] = []
-    @Published private(set) var project: Project?
+    @Published var project: Project?
     @Published private(set) var commit: GitCommit?
     @Published private(set) var file: File?
+    @Published var projects: [Project] = []
     
     var emoji = "🏠"
+    
+    init(projects: [Project]) {
+        self.projects = projects
+        
+        self.project = projects.first(where: {
+            $0.path == AppConfig.projectPath
+        })
+    }
+    
+    func setProject(_ p: Project?, reason: String) {
+        let verbose = false
+
+        if verbose {
+            os_log("\(self.t)Set Project(\(reason))")
+            os_log("  ➡️ \(p?.path ?? "")")
+        }
+        
+        self.project = p
+        AppConfig.setProjectPath(p?.path ?? "")
+    }
+    
+//        .onReceive(NotificationCenter.default.publisher(for: .gitProjectDeleted)) { notification in
+//            if let path = notification.userInfo?["path"] as? String {
+//                if self.project?.path == path {
+//                    self.project = projects.first
+//                }
+//            }
+//        }
+    
     
     var currentBranch: Branch? {
         guard let project = project else {
@@ -33,18 +63,6 @@ class GitProvider: NSObject, ObservableObject, SuperLog {
     func setCommit(_ c: GitCommit?) {
         guard commit?.id != c?.id else { return }
         commit = c
-    }
-    
-    func setProject(_ p: Project?, reason: String) {
-        let verbose = false
-
-        if verbose {
-            os_log("\(self.t)Set Project(\(reason))")
-            os_log("  ➡️ \(p?.path ?? "")")
-        }
-        
-        self.project = p
-        AppConfig.setProjectPath(p?.path ?? "")
     }
     
     func setBranch(_ branch: Branch?) throws {

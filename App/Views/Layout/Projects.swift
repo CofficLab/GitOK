@@ -4,20 +4,18 @@ import SwiftUI
 import MagicCore
 
 struct Projects: View, SuperLog {
-    @Environment(\.modelContext) private var modelContext
+    @EnvironmentObject var repoManager: RepoManager
     @EnvironmentObject var app: AppProvider
     @EnvironmentObject var g: GitProvider
 
-    @Query(sort: Project.order) var projects: [Project]
-
-    @State var project: Project? = nil
-
     var emoji = "🖥️"
+    
+    private var repo: any ProjectRepoProtocol { repoManager.projectRepo }
 
     var body: some View {
         ZStack {
-            List(selection: $project) {
-                ForEach(projects, id: \.self) { item in
+            List(selection: $g.project) {
+                ForEach(g.projects, id: \.self) { item in
                     Text(item.title).tag(item as Project?)
                         .contextMenu(ContextMenu(menuItems: {
                             Button("删除") {
@@ -41,54 +39,32 @@ struct Projects: View, SuperLog {
                 .onMove(perform: moveItems)
             }
         }
-        .onAppear {
-            let verbose = false
-
-            self.project = projects.first(where: {
-                $0.path == AppConfig.projectPath
-            })
-
-            if verbose {
-                os_log("\(self.t)Set Project ➡️ \(project?.title ?? "nil")")
-            }
-
-            g.setProject(project, reason: "Projects.OnAppear")
-        }
-        .onChange(of: project) {
-            g.setProject(project, reason: "Projects.OnChangeOfProject")
-        }
+        .onAppear(perform: onAppear)
         .navigationSplitViewColumnWidth(min: 175, ideal: 175, max: 200)
-        .onReceive(NotificationCenter.default.publisher(for: .gitProjectDeleted)) { notification in 
-            if let path = notification.userInfo?["path"] as? String {
-                if self.project?.path == path {
-                    self.project = projects.first
-                }
-            }
-        }
     }
 
     private func deleteItem(_ project: Project) {
         withAnimation {
-            modelContext.delete(project)
+            try? self.repo.delete(project)
         }
     }
 
     private func deleteItems(offsets: IndexSet) {
         withAnimation {
             for index in offsets {
-                modelContext.delete(projects[index])
+                try? self.repo.delete(g.projects[index])
             }
         }
     }
 
     private func moveItems(from source: IndexSet, to destination: Int) {
-        let itemsToMove = source.map { projects[$0] }
+        let itemsToMove = source.map { g.projects[$0] }
         
         os_log("Moving items: \(itemsToMove.map { $0.title }) from \(source) to \(destination)")
 
         do {
             // 创建一个临时数组来重新排序
-            var tempProjects = projects
+            var tempProjects = g.projects
             
             // 从原位置移除项目
             for index in source.sorted(by: >) {
@@ -108,17 +84,26 @@ struct Projects: View, SuperLog {
                 project.order = Int16(index)
             }
             
-            try modelContext.save()
+//            try modelContext.save()
             os_log("Successfully moved items and saved context.")
             
             // 输出所有项目的新顺序
             os_log("New project orders:")
-            for (index, project) in projects.enumerated() {
+            for (index, project) in g.projects.enumerated() {
                 os_log("Project[\(index)]: \(project.title) - order: \(project.order)")
             }
         } catch {
             os_log("Failed to move items: \(error.localizedDescription)")
         }
+    }
+}
+
+// MARK: - Event
+
+extension Projects {
+    func onAppear() {
+        os_log("\(self.t) onAppear, projects.count = \(g.projects.count)")
+        os_log("\(self.t)Current Project: \(g.project?.path ?? "")")
     }
 }
 

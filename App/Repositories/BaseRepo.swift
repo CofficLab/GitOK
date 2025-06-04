@@ -1,6 +1,7 @@
 import Foundation
 import SwiftData
 import OSLog
+import MagicCore
 
 // MARK: - Repository基础协议
 
@@ -19,7 +20,8 @@ protocol BaseRepo {
 
 // MARK: - Repository基础实现
 
-class BaseRepositoryImpl<T: PersistentModel>: BaseRepo {
+class BaseRepositoryImpl<T: PersistentModel>: BaseRepo, SuperLog {
+    nonisolated static var emoji: String { "🏠" }
     typealias Entity = T
     
     let modelContext: ModelContext
@@ -36,7 +38,7 @@ class BaseRepositoryImpl<T: PersistentModel>: BaseRepo {
     
     func fetch(_ descriptor: FetchDescriptor<T>) throws -> [T] {
         let results = try modelContext.fetch(descriptor)
-        logger.debug("📖 Fetched \(results.count) \(String(describing: T.self))")
+        logger.debug("\(self.t)📖 Fetched \(results.count) \(String(describing: T.self))")
         return results
     }
     
