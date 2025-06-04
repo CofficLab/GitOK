@@ -48,3 +48,12 @@ class GitPlugin: SuperPlugin, SuperLog {
         os_log("\(self.t) onPlayAssetUpdate")
     }
 }
+
+#Preview {
+    RootView {
+        ContentView()
+            .hideSidebar()
+    }
+    .frame(width: 800)
+    .frame(height: 800)
+}
