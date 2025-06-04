@@ -81,8 +81,8 @@ struct FileDetail: View, SuperLog, SuperEvent, SuperThread {
                     }
                 }
             )
-            .showLogView(true)
-            .verboseMode(true)
+            .showLogView(false)
+            .verboseMode(false)
         #endif
 
         return view
