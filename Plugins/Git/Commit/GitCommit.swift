@@ -128,6 +128,9 @@ extension GitCommit {
 }
 
 #Preview {
-    AppPreview()
-        .frame(width: 800)
+    RootView {
+        ContentView()
+    }
+    .frame(width: 800)
+    .frame(height: 800)
 }

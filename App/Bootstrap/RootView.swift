@@ -4,18 +4,27 @@ import SwiftUI
 
 struct RootView<Content>: View, SuperEvent where Content: View {
     var content: Content
-    var a = AppProvider()
-    var g = GitProvider()
-    var b = BannerProvider()
-    var i = IconProvider()
-    var c = AppConfig.getContainer()
-    var w = WebConfig()
+    var a: AppProvider
+    var g: GitProvider
+    var b: BannerProvider
+    var i: IconProvider
+    var c: ModelContainer
+    var w: WebConfig
     
     @StateObject var p = PluginProvider()
     @StateObject var m = MessageProvider()
 
     init(@ViewBuilder content: () -> Content) {
         self.content = content()
+        
+        let box = RootBox.shared
+        
+        self.a = box.app
+        self.g = box.git
+        self.b = box.banner
+        self.i = box.icon
+        self.w = box.w
+        self.c = box.c
     }
 
     var body: some View {
@@ -104,10 +113,6 @@ struct AppPreview: View {
             ContentView()
         }
     }
-}
-
-#Preview {
-    AppPreview()
 }
 
 #Preview("APP") {
