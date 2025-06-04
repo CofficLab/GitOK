@@ -17,12 +17,8 @@ struct File {
         }
     }
     
-    var content: String {
-        do {
-            return try GitShell.getFileContent(projectPath, file: name)
-        } catch _ {
-            return ""
-        }
+    func getContent() throws -> String {
+        try Shell().getFileContent(projectPath.appending("/").appending(name))
     }
     
     func originalContentOfCommit(_ commit: GitCommit) -> String {

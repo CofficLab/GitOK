@@ -35,7 +35,11 @@ struct FileDetail: View, SuperLog, SuperEvent, SuperThread {
         self.m.append("UpdateDiffView(\(reason))", channel: self.className)
 
         if commit.isHead {
-            self.setTexts(file.lastContent, file.content)
+            do {
+                self.setTexts(file.lastContent, try file.getContent())
+            } catch let error {
+                self.m.error(error)
+            }
         } else {
             self.setTexts(file.originalContentOfCommit(commit), file.contentOfCommit(commit))
         }

@@ -43,9 +43,9 @@ struct MessageTable: View, SuperLog, SuperThread {
                         .foregroundColor(message.isError ? .red : .primary)
                 }
 
-//                TableColumn("时间") { message in
-//                    Text(message.createdAt.string)
-//                }
+                TableColumn("时间") { message in
+                    Text(message.createdAt.logTime)
+                }
                 .width(180)
             })
         }

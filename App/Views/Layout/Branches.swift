@@ -30,7 +30,7 @@ struct Branches: View, SuperThread, SuperLog, SuperEvent {
 
 extension Branches {
     func refresh(reason: String) {
-        self.m.append("刷新分支\(reason)")
+        self.m.append("刷新分支\(reason)", channel: self.className)
         let verbose = false
 
         guard let project = g.project else {
