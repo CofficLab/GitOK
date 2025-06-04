@@ -1,0 +1,118 @@
+{
+  "" : {
+    "diagnostics" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/MagicWeb-master.dia",
+    "emit-module-dependencies" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/MagicWeb-master-emit-module.d",
+    "emit-module-diagnostics" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/MagicWeb-master-emit-module.dia",
+    "swift-dependencies" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/MagicWeb-master.swiftdeps"
+  },
+  "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/Sources/Web/DefaultDownloadHandler.swift" : {
+    "const-values" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/DefaultDownloadHandler.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/DefaultDownloadHandler.d",
+    "diagnostics" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/DefaultDownloadHandler.dia",
+    "index-unit-output-path" : "/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/DefaultDownloadHandler.o",
+    "llvm-bc" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/DefaultDownloadHandler.bc",
+    "object" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/DefaultDownloadHandler.o",
+    "swift-dependencies" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/DefaultDownloadHandler.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/DefaultDownloadHandler~partial.swiftmodule"
+  },
+  "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/Sources/Web/DefaultMessageHandler.swift" : {
+    "const-values" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/DefaultMessageHandler.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/DefaultMessageHandler.d",
+    "diagnostics" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/DefaultMessageHandler.dia",
+    "index-unit-output-path" : "/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/DefaultMessageHandler.o",
+    "llvm-bc" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/DefaultMessageHandler.bc",
+    "object" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/DefaultMessageHandler.o",
+    "swift-dependencies" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/DefaultMessageHandler.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/DefaultMessageHandler~partial.swiftmodule"
+  },
+  "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/Sources/Web/DefaultReadyHandler.swift" : {
+    "const-values" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/DefaultReadyHandler.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/DefaultReadyHandler.d",
+    "diagnostics" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/DefaultReadyHandler.dia",
+    "index-unit-output-path" : "/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/DefaultReadyHandler.o",
+    "llvm-bc" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/DefaultReadyHandler.bc",
+    "object" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/DefaultReadyHandler.o",
+    "swift-dependencies" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/DefaultReadyHandler.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/DefaultReadyHandler~partial.swiftmodule"
+  },
+  "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/Sources/Web/Loading.swift" : {
+    "const-values" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/Loading.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/Loading.d",
+    "diagnostics" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/Loading.dia",
+    "index-unit-output-path" : "/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/Loading.o",
+    "llvm-bc" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/Loading.bc",
+    "object" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/Loading.o",
+    "swift-dependencies" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/Loading.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/Loading~partial.swiftmodule"
+  },
+  "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/Sources/Web/WKDelegate.swift" : {
+    "const-values" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/WKDelegate.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/WKDelegate.d",
+    "diagnostics" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/WKDelegate.dia",
+    "index-unit-output-path" : "/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/WKDelegate.o",
+    "llvm-bc" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/WKDelegate.bc",
+    "object" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/WKDelegate.o",
+    "swift-dependencies" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/WKDelegate.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/WKDelegate~partial.swiftmodule"
+  },
+  "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/Sources/Web/WebApiSample.swift" : {
+    "const-values" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/WebApiSample.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/WebApiSample.d",
+    "diagnostics" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/WebApiSample.dia",
+    "index-unit-output-path" : "/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/WebApiSample.o",
+    "llvm-bc" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/WebApiSample.bc",
+    "object" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/WebApiSample.o",
+    "swift-dependencies" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/WebApiSample.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/WebApiSample~partial.swiftmodule"
+  },
+  "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/Sources/Web/WebContent.swift" : {
+    "const-values" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/WebContent.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/WebContent.d",
+    "diagnostics" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/WebContent.dia",
+    "index-unit-output-path" : "/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/WebContent.o",
+    "llvm-bc" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/WebContent.bc",
+    "object" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/WebContent.o",
+    "swift-dependencies" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/WebContent.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/WebContent~partial.swiftmodule"
+  },
+  "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/Sources/Web/WebHandler.swift" : {
+    "const-values" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/WebHandler.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/WebHandler.d",
+    "diagnostics" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/WebHandler.dia",
+    "index-unit-output-path" : "/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/WebHandler.o",
+    "llvm-bc" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/WebHandler.bc",
+    "object" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/WebHandler.o",
+    "swift-dependencies" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/WebHandler.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/WebHandler~partial.swiftmodule"
+  },
+  "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/Sources/Web/WebOption.swift" : {
+    "const-values" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/WebOption.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/WebOption.d",
+    "diagnostics" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/WebOption.dia",
+    "index-unit-output-path" : "/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/WebOption.o",
+    "llvm-bc" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/WebOption.bc",
+    "object" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/WebOption.o",
+    "swift-dependencies" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/WebOption.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/WebOption~partial.swiftmodule"
+  },
+  "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/Sources/Web/WebView.swift" : {
+    "const-values" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/WebView.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/WebView.d",
+    "diagnostics" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/WebView.dia",
+    "index-unit-output-path" : "/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/WebView.o",
+    "llvm-bc" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/WebView.bc",
+    "object" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/WebView.o",
+    "swift-dependencies" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/WebView.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/WebView~partial.swiftmodule"
+  },
+  "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/Sources/Web/WebViewDelegate.swift" : {
+    "const-values" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/WebViewDelegate.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/WebViewDelegate.d",
+    "diagnostics" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/WebViewDelegate.dia",
+    "index-unit-output-path" : "/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/WebViewDelegate.o",
+    "llvm-bc" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/WebViewDelegate.bc",
+    "object" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/WebViewDelegate.o",
+    "swift-dependencies" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/WebViewDelegate.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/MagicWeb.build/Objects-normal/arm64/WebViewDelegate~partial.swiftmodule"
+  }
+}

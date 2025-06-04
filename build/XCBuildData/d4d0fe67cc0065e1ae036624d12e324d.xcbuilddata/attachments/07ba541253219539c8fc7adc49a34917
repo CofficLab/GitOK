@@ -1,0 +1,4 @@
+module ID3TagEditor {
+header "ID3TagEditor-Swift.h"
+export *
+}
