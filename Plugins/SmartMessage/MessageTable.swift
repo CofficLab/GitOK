@@ -50,12 +50,15 @@ struct MessageTable: View, SuperLog, SuperThread {
             })
         }
         .padding(10)
-        .background(MagicBackground.aurora)
+        .background(MagicBackground.aurora.opacity(0.1))
     }
 }
 
 #Preview("APP") {
     RootView {
         ContentView()
-    }.frame(width: 700)
+            .hideSidebar()
+    }
+    .frame(width: 700)
+    .frame(height: 700)
 }
