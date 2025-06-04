@@ -44,6 +44,7 @@ jobs:
           commit_user_name: GitHub Action
           tagging_message: ${{ env.tag }}
           push_options: '--tags'
+          branch: ${{ github.ref_name }}
 
   rebase:
     if: github.ref == 'refs/heads/main'
