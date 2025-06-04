@@ -39,7 +39,7 @@ struct FileList: View, SuperThread, SuperLog {
         self.isLoading = true
 
         self.bg.async {
-            let verbose = false
+            let verbose = true
             if verbose {
                 os_log("\(self.t)Refresh")
             }

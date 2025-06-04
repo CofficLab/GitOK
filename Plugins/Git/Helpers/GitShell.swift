@@ -18,11 +18,15 @@ class GitShell {
     }
 
     static func commitFiles(_ path: String, hash: String) throws -> [File] {
-        try run("show \(hash) --pretty='' --name-only", path: path)
+        let items = try run("show \(hash) --pretty='' --name-only", path: path, verbose: true)
             .components(separatedBy: "\n")
-            .map({
-                File.fromLine($0, path: path)
+            .filter({
+                $0.isNotEmpty
             })
+
+        return items.map({
+            File.fromLine($0, path: path)
+        })
     }
 
     static func changedFile(_ path: String) -> [File] {
@@ -55,12 +59,12 @@ class GitShell {
         let diffCommand = try run("show \(hash) -- \(file)", path: path)
         let diffBlock = DiffBlock(block: diffCommand)
         let lines = diffBlock.block.components(separatedBy: "\n")
-        
+
         return VStack(alignment: .leading) {
             Text("Diff for \(file)")
                 .font(.headline)
                 .padding(.bottom, 4)
-            
+
             ScrollView {
                 LazyVStack(alignment: .leading, spacing: 2) {
                     ForEach(Array(lines.enumerated()), id: \.offset) { index, line in
@@ -171,7 +175,7 @@ class GitShell {
 
     static func hasUnCommittedChanges(path: String, verbose: Bool = false) throws -> Bool {
         let status = try run("status", path: path, verbose: verbose)
-        
+
         return status.contains("Changes not staged for commit")
     }
 
@@ -296,7 +300,7 @@ class GitShell {
 
     static func logsWithPagination(_ path: String, skip: Int = 0, limit: Int = 30) throws -> [GitCommit] {
         let result = try run("--no-pager log --pretty=format:%H+%s --skip=\(skip) -n \(limit)", path: path, verbose: false)
-        
+
         if result.isEmpty {
             return []
         }
@@ -316,7 +320,7 @@ fileprivate extension String {
         }
         return .primary
     }
-    
+
     var diffBackground: Color {
         if self.hasPrefix("+") {
             return Color.green.opacity(0.1)
@@ -330,7 +334,7 @@ fileprivate extension String {
 // 添加一个新的视图组件来处理每一行
 private struct DiffLineView: View {
     let line: String
-    
+
     var body: some View {
         Text(verbatim: line)
             .font(.system(.body, design: .monospaced))

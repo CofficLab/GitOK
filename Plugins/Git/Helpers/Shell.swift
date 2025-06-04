@@ -49,7 +49,8 @@ class Shell {
         let output = String(data: outputData, encoding: .utf8) ?? ""
         
         if verbose {
-            os_log("\(self.label) \(command) -> \(output)")
+            os_log("\(self.label) \(command)")
+            os_log("\(output)")
         }
         
         if process.terminationStatus != 0 {

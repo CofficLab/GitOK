@@ -55,7 +55,6 @@ struct FileDetail: View, SuperLog, SuperEvent, SuperThread {
                     MagicLogger.shared.debug("收到消息: \(String(describing: message))")
                     // 根据类型进行不同处理
                     if let stringMessage = message as? String, stringMessage == "ready" {
-                        MagicLogger.shared.debug("收到eee消息: \(String(describing: message))")
                         self.ready = true
                         self.onJSReady()
                     }
@@ -75,7 +74,6 @@ struct FileDetail: View, SuperLog, SuperEvent, SuperThread {
                     MagicLogger.shared.debug("收到消息: \(String(describing: message))")
                     // 根据类型进行不同处理
                     if let stringMessage = message as? String, stringMessage == "ready" {
-                        MagicLogger.shared.debug("收到eee消息: \(String(describing: message))")
                         self.ready = true
                         self.onJSReady()
                     }
