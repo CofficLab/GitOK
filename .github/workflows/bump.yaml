@@ -44,21 +44,21 @@ jobs:
           commit_user_name: GitHub Action
           tagging_message: ${{ env.tag }}
 
-  # rebase:
-  #   if: github.ref == 'refs/heads/main'
-  #   needs:
-  #     - bump
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: 拉取 pre 分支
-  #       uses: actions/checkout@v3
-  #       with:
-  #         ref: pre
-  #     - name: 拉取 main 分支
-  #       run: git fetch origin main
-  #     - name: Rebase pre on main
-  #       continue-on-error: true
-  #       run: git rebase origin/main
-  #     - name: Push the rebased pre branch
-  #       continue-on-error: true
-  #       run: git push origin pre
+  rebase:
+    if: github.ref == 'refs/heads/main'
+    needs:
+      - bump
+    runs-on: ubuntu-latest
+    steps:
+      - name: 拉取 pre 分支
+        uses: actions/checkout@v3
+        with:
+          ref: pre
+      - name: 拉取 main 分支
+        run: git fetch origin main
+      - name: Rebase pre on main
+        continue-on-error: true
+        run: git rebase origin/main
+      - name: Push the rebased pre branch
+        continue-on-error: true
+        run: git push origin pre
