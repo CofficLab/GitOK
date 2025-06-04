@@ -141,3 +141,13 @@ class MessageProvider: ObservableObject, SuperLog, SuperThread, SuperEvent {
         self.showToast = true
     }
 }
+
+#Preview("Big Screen") {
+    RootView {
+        ContentView()
+            .hideSidebar()
+            .hideProjectActions()
+    }
+    .frame(width: 1200)
+    .frame(height: 1200)
+}

@@ -7,7 +7,6 @@ const appStore = useAppStore();
 
 onMounted(() => {
   window.api = appStore;
-  appStore.setReady();
 })
 </script>
 

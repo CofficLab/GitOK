@@ -1,21 +1,29 @@
 import AlertToast
 import SwiftData
 import SwiftUI
+import MagicCore
 
 struct RootView<Content>: View, SuperEvent where Content: View {
     var content: Content
-    var a = AppProvider()
-    var g = GitProvider()
-    var b = BannerProvider()
-    var i = IconProvider()
-    var c = AppConfig.getContainer()
-    var w = WebConfig()
+    var a: AppProvider
+    var g: GitProvider
+    var b: BannerProvider
+    var i: IconProvider
+    var c: ModelContainer
     
     @StateObject var p = PluginProvider()
     @StateObject var m = MessageProvider()
 
     init(@ViewBuilder content: () -> Content) {
         self.content = content()
+        
+        let box = RootBox.shared
+        
+        self.a = box.app
+        self.g = box.git
+        self.b = box.banner
+        self.i = box.icon
+        self.c = box.c
     }
 
     var body: some View {
@@ -45,7 +53,6 @@ struct RootView<Content>: View, SuperEvent where Content: View {
             .environmentObject(g)
             .environmentObject(b)
             .environmentObject(i)
-            .environmentObject(w)
             .environmentObject(p)
             .environmentObject(m)
             .onAppear(perform: onAppear)
@@ -106,13 +113,20 @@ struct AppPreview: View {
     }
 }
 
-#Preview {
-    AppPreview()
-}
-
 #Preview("APP") {
     RootView(content: {
         ContentView()
     })
     .frame(width: 800, height: 800)
 }
+
+#Preview("Big Screen") {
+    RootView {
+        ContentView()
+            .hideSidebar()
+            .hideProjectActions()
+    }
+    .frame(width: 1200)
+    .frame(height: 1200)
+}
+

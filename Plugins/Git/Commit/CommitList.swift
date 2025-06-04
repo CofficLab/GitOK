@@ -108,6 +108,15 @@ struct CommitList: View, SuperThread, SuperLog {
         }
     }
 
+    private func selectCommit(_ commit: GitCommit) {
+        selection = commit
+        g.setCommit(commit)
+    }
+}
+
+// MARK: - Action
+
+extension CommitList {
     func refresh(_ reason: String = "") {
         guard let project = g.project, !isRefreshing else { return }
 
@@ -142,14 +151,9 @@ struct CommitList: View, SuperThread, SuperLog {
             }
         }
     }
-
-    private func selectCommit(_ commit: GitCommit) {
-        selection = commit
-        g.setCommit(commit)
-    }
 }
 
-// MARK: Event Handlers
+// MARK: - Event Handlers
 
 extension CommitList {
     func onProjectChange() {
@@ -181,37 +185,11 @@ extension CommitList {
     }
 }
 
-// MARK: CommitRow
-
-private struct CommitRow: View {
-    let commit: GitCommit
-    let isSelected: Bool
-    let onSelect: () -> Void
-
-    var body: some View {
-        VStack(spacing: 0) {
-            Button(action: onSelect) {
-                HStack {
-                    Text(commit.message)
-                        .lineLimit(1)
-                        .font(.system(size: 13))
-                    Spacer()
-                }
-                .padding(.vertical, 6)
-                .padding(.horizontal, 8)
-                .frame(height: 25)
-                .contentShape(Rectangle())
-            }
-            .buttonStyle(PlainButtonStyle())
-            .background(isSelected ? Color.accentColor.opacity(0.1) : Color.clear)
-
-            Divider()
-        }
-    }
-}
-
 #Preview {
-    AppPreview()
-        .frame(width: 800)
-        .frame(height: 800)
+    RootView {
+        ContentView()
+            .hideSidebar()
+    }
+    .frame(width: 800)
+    .frame(height: 800)
 }

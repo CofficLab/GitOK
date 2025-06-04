@@ -10,6 +10,7 @@ enum CommitCategory: String, CaseIterable, Equatable {
     case PackageUpdate
     case CI
     case Config
+    case I18n
     case Test
     case Trash
     case UI
@@ -39,6 +40,8 @@ enum CommitCategory: String, CaseIterable, Equatable {
             "🆕"
         case .FirstCommit:
             "🎉"
+        case.I18n:
+            "🌍"
         case .Improve:
             "🐎"
         case .Release:
@@ -76,6 +79,8 @@ enum CommitCategory: String, CaseIterable, Equatable {
             "First Commit"
         case .Improve:
             "Improve"
+        case.I18n:
+            "I18n"
         case .Release:
             "Release"
         case .Trash:
@@ -115,6 +120,8 @@ enum CommitCategory: String, CaseIterable, Equatable {
             return "Initial commit"
         case .Improve:
             return "Enhance existing functionality"
+        case.I18n:
+            return "Translate or localize content"
         case .Release:
             return "Prepare for release"
         case .Trash:
