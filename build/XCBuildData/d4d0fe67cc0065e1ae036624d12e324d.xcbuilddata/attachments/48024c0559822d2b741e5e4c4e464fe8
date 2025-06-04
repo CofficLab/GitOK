@@ -1,0 +1,4 @@
+module AsyncAlgorithms {
+header "AsyncAlgorithms-Swift.h"
+export *
+}

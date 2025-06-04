@@ -1,0 +1,4 @@
+module PlayMan {
+header "PlayMan-Swift.h"
+export *
+}

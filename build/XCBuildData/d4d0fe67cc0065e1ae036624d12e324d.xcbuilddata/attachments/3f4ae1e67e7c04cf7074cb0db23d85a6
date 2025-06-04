@@ -1,0 +1,59 @@
+/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/swift-collections/Sources/BitCollections/BitArray/BitArray+BitwiseOperations.swift
+/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/swift-collections/Sources/BitCollections/BitArray/BitArray+ChunkedBitsIterators.swift
+/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/swift-collections/Sources/BitCollections/BitArray/BitArray+Codable.swift
+/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/swift-collections/Sources/BitCollections/BitArray/BitArray+Collection.swift
+/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/swift-collections/Sources/BitCollections/BitArray/BitArray+Copy.swift
+/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/swift-collections/Sources/BitCollections/BitArray/BitArray+CustomReflectable.swift
+/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/swift-collections/Sources/BitCollections/BitArray/BitArray+Descriptions.swift
+/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/swift-collections/Sources/BitCollections/BitArray/BitArray+Equatable.swift
+/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/swift-collections/Sources/BitCollections/BitArray/BitArray+ExpressibleByArrayLiteral.swift
+/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/swift-collections/Sources/BitCollections/BitArray/BitArray+ExpressibleByStringLiteral.swift
+/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/swift-collections/Sources/BitCollections/BitArray/BitArray+Extras.swift
+/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/swift-collections/Sources/BitCollections/BitArray/BitArray+Fill.swift
+/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/swift-collections/Sources/BitCollections/BitArray/BitArray+Hashable.swift
+/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/swift-collections/Sources/BitCollections/BitArray/BitArray+Initializers.swift
+/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/swift-collections/Sources/BitCollections/BitArray/BitArray+Invariants.swift
+/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/swift-collections/Sources/BitCollections/BitArray/BitArray+LosslessStringConvertible.swift
+/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/swift-collections/Sources/BitCollections/BitArray/BitArray+RandomBits.swift
+/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/swift-collections/Sources/BitCollections/BitArray/BitArray+RangeReplaceableCollection.swift
+/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/swift-collections/Sources/BitCollections/BitArray/BitArray+Shifts.swift
+/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/swift-collections/Sources/BitCollections/BitArray/BitArray+Testing.swift
+/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/swift-collections/Sources/BitCollections/BitArray/BitArray._UnsafeHandle.swift
+/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/swift-collections/Sources/BitCollections/BitArray/BitArray.swift
+/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/swift-collections/Sources/BitCollections/BitSet/BitSet+BidirectionalCollection.swift
+/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/swift-collections/Sources/BitCollections/BitSet/BitSet+Codable.swift
+/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/swift-collections/Sources/BitCollections/BitSet/BitSet+CustomDebugStringConvertible.swift
+/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/swift-collections/Sources/BitCollections/BitSet/BitSet+CustomReflectable.swift
+/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/swift-collections/Sources/BitCollections/BitSet/BitSet+CustomStringConvertible.swift
+/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/swift-collections/Sources/BitCollections/BitSet/BitSet+Equatable.swift
+/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/swift-collections/Sources/BitCollections/BitSet/BitSet+ExpressibleByArrayLiteral.swift
+/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/swift-collections/Sources/BitCollections/BitSet/BitSet+Extras.swift
+/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/swift-collections/Sources/BitCollections/BitSet/BitSet+Hashable.swift
+/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/swift-collections/Sources/BitCollections/BitSet/BitSet+Initializers.swift
+/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/swift-collections/Sources/BitCollections/BitSet/BitSet+Invariants.swift
+/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/swift-collections/Sources/BitCollections/BitSet/BitSet+Random.swift
+/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/swift-collections/Sources/BitCollections/BitSet/BitSet+SetAlgebra\ basics.swift
+/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/swift-collections/Sources/BitCollections/BitSet/BitSet+SetAlgebra\ conformance.swift
+/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/swift-collections/Sources/BitCollections/BitSet/BitSet+SetAlgebra\ formIntersection.swift
+/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/swift-collections/Sources/BitCollections/BitSet/BitSet+SetAlgebra\ formSymmetricDifference.swift
+/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/swift-collections/Sources/BitCollections/BitSet/BitSet+SetAlgebra\ formUnion.swift
+/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/swift-collections/Sources/BitCollections/BitSet/BitSet+SetAlgebra\ intersection.swift
+/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/swift-collections/Sources/BitCollections/BitSet/BitSet+SetAlgebra\ isDisjoint.swift
+/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/swift-collections/Sources/BitCollections/BitSet/BitSet+SetAlgebra\ isEqualSet.swift
+/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/swift-collections/Sources/BitCollections/BitSet/BitSet+SetAlgebra\ isStrictSubset.swift
+/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/swift-collections/Sources/BitCollections/BitSet/BitSet+SetAlgebra\ isStrictSuperset.swift
+/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/swift-collections/Sources/BitCollections/BitSet/BitSet+SetAlgebra\ isSubset.swift
+/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/swift-collections/Sources/BitCollections/BitSet/BitSet+SetAlgebra\ isSuperset.swift
+/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/swift-collections/Sources/BitCollections/BitSet/BitSet+SetAlgebra\ subtract.swift
+/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/swift-collections/Sources/BitCollections/BitSet/BitSet+SetAlgebra\ subtracting.swift
+/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/swift-collections/Sources/BitCollections/BitSet/BitSet+SetAlgebra\ symmetricDifference.swift
+/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/swift-collections/Sources/BitCollections/BitSet/BitSet+SetAlgebra\ union.swift
+/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/swift-collections/Sources/BitCollections/BitSet/BitSet+Sorted\ Collection\ APIs.swift
+/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/swift-collections/Sources/BitCollections/BitSet/BitSet.Counted.swift
+/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/swift-collections/Sources/BitCollections/BitSet/BitSet.Index.swift
+/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/swift-collections/Sources/BitCollections/BitSet/BitSet._UnsafeHandle.swift
+/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/swift-collections/Sources/BitCollections/BitSet/BitSet.swift
+/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/swift-collections/Sources/BitCollections/Shared/Range+Utilities.swift
+/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/swift-collections/Sources/BitCollections/Shared/Slice+Utilities.swift
+/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/swift-collections/Sources/BitCollections/Shared/UInt+Tricks.swift
+/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/swift-collections/Sources/BitCollections/Shared/_Word.swift

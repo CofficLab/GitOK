@@ -1,0 +1,128 @@
+{
+  "" : {
+    "diagnostics" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/Asset-master.dia",
+    "emit-module-dependencies" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/Asset-master-emit-module.d",
+    "emit-module-diagnostics" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/Asset-master-emit-module.dia",
+    "swift-dependencies" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/Asset-master.swiftdeps"
+  },
+  "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/Sources/Asset/ExtImage+BookIcon.swift" : {
+    "const-values" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/ExtImage+BookIcon.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/ExtImage+BookIcon.d",
+    "diagnostics" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/ExtImage+BookIcon.dia",
+    "index-unit-output-path" : "/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/ExtImage+BookIcon.o",
+    "llvm-bc" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/ExtImage+BookIcon.bc",
+    "object" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/ExtImage+BookIcon.o",
+    "swift-dependencies" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/ExtImage+BookIcon.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/ExtImage+BookIcon~partial.swiftmodule"
+  },
+  "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/Sources/Asset/ExtImage+CameraIcon.swift" : {
+    "const-values" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/ExtImage+CameraIcon.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/ExtImage+CameraIcon.d",
+    "diagnostics" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/ExtImage+CameraIcon.dia",
+    "index-unit-output-path" : "/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/ExtImage+CameraIcon.o",
+    "llvm-bc" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/ExtImage+CameraIcon.bc",
+    "object" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/ExtImage+CameraIcon.o",
+    "swift-dependencies" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/ExtImage+CameraIcon.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/ExtImage+CameraIcon~partial.swiftmodule"
+  },
+  "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/Sources/Asset/ExtImage+CoffeeReelIcon.swift" : {
+    "const-values" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/ExtImage+CoffeeReelIcon.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/ExtImage+CoffeeReelIcon.d",
+    "diagnostics" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/ExtImage+CoffeeReelIcon.dia",
+    "index-unit-output-path" : "/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/ExtImage+CoffeeReelIcon.o",
+    "llvm-bc" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/ExtImage+CoffeeReelIcon.bc",
+    "object" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/ExtImage+CoffeeReelIcon.o",
+    "swift-dependencies" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/ExtImage+CoffeeReelIcon.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/ExtImage+CoffeeReelIcon~partial.swiftmodule"
+  },
+  "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/Sources/Asset/ExtImage+GlobeIcon.swift" : {
+    "const-values" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/ExtImage+GlobeIcon.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/ExtImage+GlobeIcon.d",
+    "diagnostics" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/ExtImage+GlobeIcon.dia",
+    "index-unit-output-path" : "/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/ExtImage+GlobeIcon.o",
+    "llvm-bc" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/ExtImage+GlobeIcon.bc",
+    "object" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/ExtImage+GlobeIcon.o",
+    "swift-dependencies" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/ExtImage+GlobeIcon.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/ExtImage+GlobeIcon~partial.swiftmodule"
+  },
+  "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/Sources/Asset/ExtImage+KidsEduIcon.swift" : {
+    "const-values" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/ExtImage+KidsEduIcon.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/ExtImage+KidsEduIcon.d",
+    "diagnostics" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/ExtImage+KidsEduIcon.dia",
+    "index-unit-output-path" : "/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/ExtImage+KidsEduIcon.o",
+    "llvm-bc" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/ExtImage+KidsEduIcon.bc",
+    "object" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/ExtImage+KidsEduIcon.o",
+    "swift-dependencies" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/ExtImage+KidsEduIcon.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/ExtImage+KidsEduIcon~partial.swiftmodule"
+  },
+  "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/Sources/Asset/ExtImage+MusicIcon.swift" : {
+    "const-values" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/ExtImage+MusicIcon.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/ExtImage+MusicIcon.d",
+    "diagnostics" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/ExtImage+MusicIcon.dia",
+    "index-unit-output-path" : "/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/ExtImage+MusicIcon.o",
+    "llvm-bc" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/ExtImage+MusicIcon.bc",
+    "object" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/ExtImage+MusicIcon.o",
+    "swift-dependencies" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/ExtImage+MusicIcon.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/ExtImage+MusicIcon~partial.swiftmodule"
+  },
+  "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/Sources/Asset/ExtImage+NoteIcon.swift" : {
+    "const-values" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/ExtImage+NoteIcon.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/ExtImage+NoteIcon.d",
+    "diagnostics" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/ExtImage+NoteIcon.dia",
+    "index-unit-output-path" : "/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/ExtImage+NoteIcon.o",
+    "llvm-bc" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/ExtImage+NoteIcon.bc",
+    "object" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/ExtImage+NoteIcon.o",
+    "swift-dependencies" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/ExtImage+NoteIcon.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/ExtImage+NoteIcon~partial.swiftmodule"
+  },
+  "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/Sources/Asset/ExtImage+PencilIcon.swift" : {
+    "const-values" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/ExtImage+PencilIcon.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/ExtImage+PencilIcon.d",
+    "diagnostics" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/ExtImage+PencilIcon.dia",
+    "index-unit-output-path" : "/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/ExtImage+PencilIcon.o",
+    "llvm-bc" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/ExtImage+PencilIcon.bc",
+    "object" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/ExtImage+PencilIcon.o",
+    "swift-dependencies" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/ExtImage+PencilIcon.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/ExtImage+PencilIcon~partial.swiftmodule"
+  },
+  "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/Sources/Asset/ExtImage+VideoPlayerIcon.swift" : {
+    "const-values" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/ExtImage+VideoPlayerIcon.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/ExtImage+VideoPlayerIcon.d",
+    "diagnostics" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/ExtImage+VideoPlayerIcon.dia",
+    "index-unit-output-path" : "/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/ExtImage+VideoPlayerIcon.o",
+    "llvm-bc" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/ExtImage+VideoPlayerIcon.bc",
+    "object" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/ExtImage+VideoPlayerIcon.o",
+    "swift-dependencies" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/ExtImage+VideoPlayerIcon.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/ExtImage+VideoPlayerIcon~partial.swiftmodule"
+  },
+  "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/Sources/Asset/IconContainer.swift" : {
+    "const-values" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/IconContainer.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/IconContainer.d",
+    "diagnostics" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/IconContainer.dia",
+    "index-unit-output-path" : "/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/IconContainer.o",
+    "llvm-bc" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/IconContainer.bc",
+    "object" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/IconContainer.o",
+    "swift-dependencies" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/IconContainer.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/IconContainer~partial.swiftmodule"
+  },
+  "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/Sources/Asset/IconPreviewHelper.swift" : {
+    "const-values" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/IconPreviewHelper.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/IconPreviewHelper.d",
+    "diagnostics" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/IconPreviewHelper.dia",
+    "index-unit-output-path" : "/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/IconPreviewHelper.o",
+    "llvm-bc" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/IconPreviewHelper.bc",
+    "object" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/IconPreviewHelper.o",
+    "swift-dependencies" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/IconPreviewHelper.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/IconPreviewHelper~partial.swiftmodule"
+  },
+  "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/Sources/Asset/IconShape.swift" : {
+    "const-values" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/IconShape.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/IconShape.d",
+    "diagnostics" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/IconShape.dia",
+    "index-unit-output-path" : "/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/IconShape.o",
+    "llvm-bc" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/IconShape.bc",
+    "object" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/IconShape.o",
+    "swift-dependencies" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/IconShape.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Library/Developer/Xcode/DerivedData/GitOK-cggpwmvtldjjwgdbffqxpmljjals/SourcePackages/checkouts/MagicKit/build/MagicKit.build/Debug/Asset.build/Objects-normal/arm64/IconShape~partial.swiftmodule"
+  }
+}

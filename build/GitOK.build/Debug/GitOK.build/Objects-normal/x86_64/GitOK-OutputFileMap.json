@@ -1,0 +1,1358 @@
+{
+  "" : {
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/GitOK-master.dia",
+    "emit-module-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/GitOK-master-emit-module.d",
+    "emit-module-diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/GitOK-master-emit-module.dia",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/GitOK-master.swiftdeps"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/App/Bootstrap/GitOKApp.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/GitOKApp.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/GitOKApp.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/GitOKApp.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/GitOKApp.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/GitOKApp.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/GitOKApp.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/GitOKApp.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/GitOKApp~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/App/Bootstrap/MacAgent.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/MacAgent.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/MacAgent.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/MacAgent.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/MacAgent.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/MacAgent.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/MacAgent.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/MacAgent.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/MacAgent~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/App/Bootstrap/RootBox.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/RootBox.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/RootBox.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/RootBox.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/RootBox.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/RootBox.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/RootBox.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/RootBox.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/RootBox~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/App/Bootstrap/RootView.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/RootView.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/RootView.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/RootView.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/RootView.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/RootView.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/RootView.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/RootView.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/RootView~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/App/Bootstrap/UpdaterView.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/UpdaterView.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/UpdaterView.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/UpdaterView.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/UpdaterView.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/UpdaterView.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/UpdaterView.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/UpdaterView.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/UpdaterView~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/App/Command/DebugCommand.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/DebugCommand.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/DebugCommand.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/DebugCommand.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/DebugCommand.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/DebugCommand.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/DebugCommand.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/DebugCommand.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/DebugCommand~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/App/Config/AppConfig.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/AppConfig.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/AppConfig.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/AppConfig.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/AppConfig.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/AppConfig.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/AppConfig.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/AppConfig.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/AppConfig~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/App/Config/DBExt.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/DBExt.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/DBExt.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/DBExt.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/DBExt.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/DBExt.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/DBExt.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/DBExt.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/DBExt~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/App/Config/Device.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Device.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Device.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Device.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Device.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Device.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Device.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Device.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Device~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/App/Config/DeviceType.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/DeviceType.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/DeviceType.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/DeviceType.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/DeviceType.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/DeviceType.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/DeviceType.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/DeviceType.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/DeviceType~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/App/Config/EventExt.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/EventExt.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/EventExt.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/EventExt.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/EventExt.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/EventExt.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/EventExt.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/EventExt.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/EventExt~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/App/Config/PathExt.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/PathExt.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/PathExt.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/PathExt.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/PathExt.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/PathExt.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/PathExt.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/PathExt.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/PathExt~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/App/Config/QueueExt.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/QueueExt.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/QueueExt.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/QueueExt.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/QueueExt.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/QueueExt.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/QueueExt.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/QueueExt.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/QueueExt~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/App/Config/SmartError.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/SmartError.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/SmartError.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/SmartError.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/SmartError.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/SmartError.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/SmartError.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/SmartError.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/SmartError~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/App/Config/StateExt.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/StateExt.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/StateExt.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/StateExt.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/StateExt.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/StateExt.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/StateExt.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/StateExt.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/StateExt~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/App/Config/ToolName.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/ToolName.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/ToolName.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/ToolName.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/ToolName.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/ToolName.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/ToolName.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/ToolName.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/ToolName~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/App/Contact/SuperJsonModel.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/SuperJsonModel.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/SuperJsonModel.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/SuperJsonModel.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/SuperJsonModel.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/SuperJsonModel.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/SuperJsonModel.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/SuperJsonModel.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/SuperJsonModel~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/App/Contact/SuperPlugin.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/SuperPlugin.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/SuperPlugin.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/SuperPlugin.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/SuperPlugin.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/SuperPlugin.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/SuperPlugin.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/SuperPlugin.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/SuperPlugin~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/App/Event/AppEvent.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/AppEvent.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/AppEvent.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/AppEvent.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/AppEvent.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/AppEvent.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/AppEvent.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/AppEvent.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/AppEvent~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/App/Event/JSEvent.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/JSEvent.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/JSEvent.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/JSEvent.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/JSEvent.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/JSEvent.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/JSEvent.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/JSEvent.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/JSEvent~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/App/Models/Project.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Project.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Project.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Project.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Project.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Project.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Project.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Project.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Project~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/App/Providers/AppProvider.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/AppProvider.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/AppProvider.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/AppProvider.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/AppProvider.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/AppProvider.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/AppProvider.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/AppProvider.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/AppProvider~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/App/Providers/GitProvider.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/GitProvider.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/GitProvider.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/GitProvider.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/GitProvider.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/GitProvider.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/GitProvider.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/GitProvider.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/GitProvider~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/App/Providers/IconProvider.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconProvider.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconProvider.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconProvider.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconProvider.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconProvider.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconProvider.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconProvider.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconProvider~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/App/Providers/MessageProvider.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/MessageProvider.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/MessageProvider.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/MessageProvider.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/MessageProvider.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/MessageProvider.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/MessageProvider.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/MessageProvider.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/MessageProvider~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/App/Providers/PluginProvider.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/PluginProvider.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/PluginProvider.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/PluginProvider.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/PluginProvider.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/PluginProvider.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/PluginProvider.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/PluginProvider.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/PluginProvider~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/App/Providers/ProjectProvider.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/ProjectProvider.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/ProjectProvider.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/ProjectProvider.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/ProjectProvider.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/ProjectProvider.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/ProjectProvider.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/ProjectProvider.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/ProjectProvider~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/App/Terminal/Banner/BannerShell.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerShell.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerShell.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerShell.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerShell.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerShell.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerShell.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerShell.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerShell~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/App/Views/Button/BtnAdd.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnAdd.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnAdd.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnAdd.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnAdd.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnAdd.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnAdd.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnAdd.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnAdd~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/App/Views/Button/BtnCommitAndPush.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnCommitAndPush.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnCommitAndPush.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnCommitAndPush.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnCommitAndPush.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnCommitAndPush.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnCommitAndPush.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnCommitAndPush.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnCommitAndPush~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/App/Views/Button/BtnFinder.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnFinder.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnFinder.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnFinder.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnFinder.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnFinder.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnFinder.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnFinder.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnFinder~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/App/Views/Button/BtnLog.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnLog.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnLog.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnLog.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnLog.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnLog.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnLog.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnLog.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnLog~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/App/Views/Button/BtnLogs.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnLogs.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnLogs.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnLogs.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnLogs.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnLogs.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnLogs.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnLogs.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnLogs~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/App/Views/Button/BtnPush.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnPush.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnPush.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnPush.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnPush.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnPush.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnPush.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnPush.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnPush~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/App/Views/Button/BtnPwd.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnPwd.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnPwd.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnPwd.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnPwd.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnPwd.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnPwd.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnPwd.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnPwd~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/App/Views/Button/BtnSync.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnSync.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnSync.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnSync.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnSync.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnSync.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnSync.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnSync.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnSync~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/App/Views/Button/BtnWhoami.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnWhoami.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnWhoami.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnWhoami.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnWhoami.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnWhoami.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnWhoami.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnWhoami.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnWhoami~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/App/Views/Button/Icon/BtnDelIcon.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnDelIcon.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnDelIcon.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnDelIcon.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnDelIcon.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnDelIcon.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnDelIcon.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnDelIcon.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnDelIcon~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/App/Views/Button/SmartButton.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/SmartButton.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/SmartButton.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/SmartButton.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/SmartButton.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/SmartButton.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/SmartButton.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/SmartButton.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/SmartButton~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/App/Views/Content/TabBtn.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/TabBtn.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/TabBtn.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/TabBtn.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/TabBtn.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/TabBtn.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/TabBtn.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/TabBtn.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/TabBtn~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/App/Views/Content/Tabs.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Tabs.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Tabs.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Tabs.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Tabs.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Tabs.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Tabs.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Tabs.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Tabs~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/App/Views/Layout/Branches.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Branches.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Branches.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Branches.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Branches.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Branches.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Branches.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Branches.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Branches~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/App/Views/Layout/ContentView.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/ContentView.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/ContentView.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/ContentView.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/ContentView.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/ContentView.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/ContentView.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/ContentView.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/ContentView~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/App/Views/Layout/NoProject.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/NoProject.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/NoProject.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/NoProject.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/NoProject.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/NoProject.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/NoProject.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/NoProject.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/NoProject~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/App/Views/Layout/NotGit.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/NotGit.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/NotGit.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/NotGit.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/NotGit.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/NotGit.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/NotGit.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/NotGit.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/NotGit~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/App/Views/Layout/ProjectPicker.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/ProjectPicker.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/ProjectPicker.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/ProjectPicker.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/ProjectPicker.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/ProjectPicker.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/ProjectPicker.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/ProjectPicker.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/ProjectPicker~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/App/Views/Layout/Projects.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Projects.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Projects.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Projects.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Projects.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Projects.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Projects.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Projects.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Projects~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/App/Views/Layout/Sidebar.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Sidebar.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Sidebar.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Sidebar.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Sidebar.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Sidebar.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Sidebar.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Sidebar.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Sidebar~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/App/Views/Layout/StatusBar.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/StatusBar.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/StatusBar.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/StatusBar.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/StatusBar.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/StatusBar.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/StatusBar.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/StatusBar.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/StatusBar~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/App/Views/ToolBar/BtnOpen.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnOpen.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnOpen.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnOpen.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnOpen.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnOpen.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnOpen.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnOpen.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnOpen~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/App/Views/ToolBar/BtnOpenCursor.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnOpenCursor.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnOpenCursor.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnOpenCursor.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnOpenCursor.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnOpenCursor.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnOpenCursor.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnOpenCursor.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnOpenCursor~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/App/Views/ToolBar/BtnOpenRemote.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnOpenRemote.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnOpenRemote.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnOpenRemote.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnOpenRemote.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnOpenRemote.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnOpenRemote.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnOpenRemote.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnOpenRemote~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/App/Views/ToolBar/BtnOpenTerminal.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnOpenTerminal.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnOpenTerminal.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnOpenTerminal.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnOpenTerminal.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnOpenTerminal.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnOpenTerminal.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnOpenTerminal.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnOpenTerminal~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/App/Views/ToolBar/BtnOpenTrae.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnOpenTrae.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnOpenTrae.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnOpenTrae.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnOpenTrae.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnOpenTrae.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnOpenTrae.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnOpenTrae.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnOpenTrae~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/App/Views/ToolBar/BtnOpenXcode.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnOpenXcode.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnOpenXcode.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnOpenXcode.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnOpenXcode.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnOpenXcode.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnOpenXcode.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnOpenXcode.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnOpenXcode~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/Plugins/Banner/BannerDetail.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerDetail.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerDetail.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerDetail.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerDetail.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerDetail.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerDetail.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerDetail.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerDetail~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/Plugins/Banner/BannerEvent.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerEvent.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerEvent.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerEvent.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerEvent.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerEvent.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerEvent.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerEvent.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerEvent~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/Plugins/Banner/BannerList.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerList.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerList.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerList.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerList.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerList.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerList.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerList.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerList~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/Plugins/Banner/BannerModel.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerModel.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerModel.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerModel.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerModel.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerModel.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerModel.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerModel.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerModel~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/Plugins/Banner/BannerPlugin.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerPlugin.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerPlugin.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerPlugin.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerPlugin.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerPlugin.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerPlugin.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerPlugin.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerPlugin~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/Plugins/Banner/BannerProvider.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerProvider.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerProvider.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerProvider.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerProvider.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerProvider.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerProvider.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerProvider.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerProvider~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/Plugins/Banner/BannerTile.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerTile.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerTile.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerTile.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerTile.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerTile.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerTile.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerTile.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerTile~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/Plugins/Banner/Buttons/BannerBtnAdd.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerBtnAdd.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerBtnAdd.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerBtnAdd.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerBtnAdd.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerBtnAdd.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerBtnAdd.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerBtnAdd.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerBtnAdd~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/Plugins/Banner/Buttons/BtnDelBanner.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnDelBanner.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnDelBanner.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnDelBanner.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnDelBanner.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnDelBanner.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnDelBanner.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnDelBanner.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnDelBanner~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/Plugins/Banner/Editor/Backgrounds.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Backgrounds.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Backgrounds.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Backgrounds.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Backgrounds.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Backgrounds.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Backgrounds.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Backgrounds.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Backgrounds~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/Plugins/Banner/Editor/BannerBackground.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerBackground.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerBackground.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerBackground.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerBackground.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerBackground.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerBackground.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerBackground.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerBackground~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/Plugins/Banner/Editor/BannerEditor.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerEditor.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerEditor.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerEditor.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerEditor.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerEditor.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerEditor.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerEditor.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerEditor~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/Plugins/Banner/Editor/BannerImage.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerImage.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerImage.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerImage.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerImage.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerImage.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerImage.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerImage.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerImage~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/Plugins/Banner/Editor/BannerLayout.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerLayout.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerLayout.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerLayout.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerLayout.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerLayout.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerLayout.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerLayout.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerLayout~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/Plugins/Banner/Editor/BannerSubTitle.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerSubTitle.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerSubTitle.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerSubTitle.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerSubTitle.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerSubTitle.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerSubTitle.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerSubTitle.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerSubTitle~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/Plugins/Banner/Editor/BannerTextEditor.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerTextEditor.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerTextEditor.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerTextEditor.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerTextEditor.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerTextEditor.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerTextEditor.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerTextEditor.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerTextEditor~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/Plugins/Banner/Editor/BannerTitle.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerTitle.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerTitle.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerTitle.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerTitle.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerTitle.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerTitle.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerTitle.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerTitle~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/Plugins/Banner/Editor/BannerTopBar.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerTopBar.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerTopBar.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerTopBar.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerTopBar.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerTopBar.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerTopBar.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerTopBar.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BannerTopBar~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/Plugins/Banner/Editor/Feature.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Feature.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Feature.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Feature.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Feature.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Feature.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Feature.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Feature.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Feature~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/Plugins/Banner/Editor/Features.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Features.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Features.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Features.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Features.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Features.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Features.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Features.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Features~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/Plugins/Banner/Editor/Operator.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Operator.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Operator.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Operator.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Operator.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Operator.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Operator.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Operator.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Operator~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/Plugins/Banner/Editor/Snapshot.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Snapshot.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Snapshot.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Snapshot.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Snapshot.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Snapshot.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Snapshot.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Snapshot.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Snapshot~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/Plugins/Banner/Screens/ScreenMacBook.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/ScreenMacBook.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/ScreenMacBook.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/ScreenMacBook.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/ScreenMacBook.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/ScreenMacBook.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/ScreenMacBook.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/ScreenMacBook.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/ScreenMacBook~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/Plugins/Banner/Screens/ScreeniMac.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/ScreeniMac.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/ScreeniMac.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/ScreeniMac.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/ScreeniMac.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/ScreeniMac.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/ScreeniMac.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/ScreeniMac.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/ScreeniMac~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/Plugins/Banner/Screens/ScreeniPad.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/ScreeniPad.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/ScreeniPad.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/ScreeniPad.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/ScreeniPad.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/ScreeniPad.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/ScreeniPad.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/ScreeniPad.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/ScreeniPad~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/Plugins/Banner/Screens/ScreeniPhone.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/ScreeniPhone.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/ScreeniPhone.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/ScreeniPhone.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/ScreeniPhone.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/ScreeniPhone.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/ScreeniPhone.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/ScreeniPhone.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/ScreeniPhone~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/Plugins/FileInfo/SmartFilePlugin.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/SmartFilePlugin.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/SmartFilePlugin.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/SmartFilePlugin.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/SmartFilePlugin.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/SmartFilePlugin.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/SmartFilePlugin.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/SmartFilePlugin.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/SmartFilePlugin~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/Plugins/FileInfo/TileFile.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/TileFile.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/TileFile.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/TileFile.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/TileFile.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/TileFile.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/TileFile.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/TileFile.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/TileFile~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/Plugins/Git/Commit/CommitCategory.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/CommitCategory.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/CommitCategory.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/CommitCategory.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/CommitCategory.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/CommitCategory.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/CommitCategory.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/CommitCategory.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/CommitCategory~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/Plugins/Git/Commit/CommitCategoryPicker.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/CommitCategoryPicker.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/CommitCategoryPicker.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/CommitCategoryPicker.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/CommitCategoryPicker.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/CommitCategoryPicker.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/CommitCategoryPicker.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/CommitCategoryPicker.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/CommitCategoryPicker~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/Plugins/Git/Commit/CommitForm.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/CommitForm.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/CommitForm.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/CommitForm.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/CommitForm.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/CommitForm.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/CommitForm.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/CommitForm.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/CommitForm~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/Plugins/Git/Commit/CommitList.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/CommitList.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/CommitList.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/CommitList.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/CommitList.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/CommitList.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/CommitList.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/CommitList.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/CommitList~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/Plugins/Git/Commit/CommitRow.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/CommitRow.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/CommitRow.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/CommitRow.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/CommitRow.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/CommitRow.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/CommitRow.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/CommitRow.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/CommitRow~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/Plugins/Git/Commit/GitCommit.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/GitCommit.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/GitCommit.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/GitCommit.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/GitCommit.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/GitCommit.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/GitCommit.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/GitCommit.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/GitCommit~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/Plugins/Git/Diff/Diff.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Diff.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Diff.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Diff.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Diff.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Diff.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Diff.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Diff.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Diff~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/Plugins/Git/Diff/DiffBlock.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/DiffBlock.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/DiffBlock.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/DiffBlock.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/DiffBlock.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/DiffBlock.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/DiffBlock.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/DiffBlock.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/DiffBlock~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/Plugins/Git/Diff/FileDetail.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/FileDetail.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/FileDetail.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/FileDetail.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/FileDetail.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/FileDetail.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/FileDetail.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/FileDetail.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/FileDetail~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/Plugins/Git/Entity/Branch.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Branch.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Branch.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Branch.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Branch.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Branch.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Branch.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Branch.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Branch~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/Plugins/Git/Entity/GitError.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/GitError.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/GitError.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/GitError.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/GitError.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/GitError.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/GitError.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/GitError.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/GitError~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/Plugins/Git/Entity/IconModel.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconModel.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconModel.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconModel.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconModel.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconModel.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconModel.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconModel.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconModel~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/Plugins/Git/Entity/IconPng.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconPng.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconPng.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconPng.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconPng.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconPng.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconPng.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconPng.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconPng~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/Plugins/Git/Entity/SmartImage.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/SmartImage.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/SmartImage.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/SmartImage.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/SmartImage.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/SmartImage.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/SmartImage.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/SmartImage.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/SmartImage~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/Plugins/Git/Entity/SmartMessage.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/SmartMessage.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/SmartMessage.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/SmartMessage.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/SmartMessage.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/SmartMessage.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/SmartMessage.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/SmartMessage.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/SmartMessage~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/Plugins/Git/Entity/Stage.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Stage.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Stage.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Stage.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Stage.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Stage.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Stage.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Stage.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Stage~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/Plugins/Git/ErrorViews/NoCommit.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/NoCommit.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/NoCommit.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/NoCommit.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/NoCommit.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/NoCommit.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/NoCommit.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/NoCommit.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/NoCommit~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/Plugins/Git/ErrorViews/NoLocalChanges.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/NoLocalChanges.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/NoLocalChanges.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/NoLocalChanges.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/NoLocalChanges.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/NoLocalChanges.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/NoLocalChanges.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/NoLocalChanges.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/NoLocalChanges~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/Plugins/Git/ErrorViews/NoProjectView.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/NoProjectView.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/NoProjectView.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/NoProjectView.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/NoProjectView.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/NoProjectView.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/NoProjectView.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/NoProjectView.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/NoProjectView~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/Plugins/Git/File/File.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/File.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/File.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/File.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/File.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/File.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/File.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/File.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/File~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/Plugins/Git/File/FileList.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/FileList.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/FileList.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/FileList.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/FileList.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/FileList.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/FileList.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/FileList.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/FileList~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/Plugins/Git/File/FileTile.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/FileTile.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/FileTile.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/FileTile.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/FileTile.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/FileTile.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/FileTile.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/FileTile.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/FileTile~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/Plugins/Git/GitDetail.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/GitDetail.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/GitDetail.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/GitDetail.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/GitDetail.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/GitDetail.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/GitDetail.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/GitDetail.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/GitDetail~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/Plugins/Git/GitPlugin.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/GitPlugin.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/GitPlugin.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/GitPlugin.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/GitPlugin.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/GitPlugin.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/GitPlugin.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/GitPlugin.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/GitPlugin~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/Plugins/Git/Helpers/GitShell.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/GitShell.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/GitShell.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/GitShell.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/GitShell.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/GitShell.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/GitShell.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/GitShell.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/GitShell~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/Plugins/Git/Helpers/Shell.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Shell.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Shell.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Shell.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Shell.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Shell.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Shell.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Shell.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/Shell~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/Plugins/Git/WebConfig.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/WebConfig.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/WebConfig.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/WebConfig.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/WebConfig.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/WebConfig.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/WebConfig.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/WebConfig.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/WebConfig~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/Plugins/Icon/DetailIcon.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/DetailIcon.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/DetailIcon.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/DetailIcon.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/DetailIcon.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/DetailIcon.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/DetailIcon.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/DetailIcon.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/DetailIcon~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/Plugins/Icon/IconAsset.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconAsset.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconAsset.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconAsset.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconAsset.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconAsset.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconAsset.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconAsset.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconAsset~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/Plugins/Icon/IconEvent.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconEvent.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconEvent.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconEvent.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconEvent.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconEvent.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconEvent.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconEvent.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconEvent~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/Plugins/Icon/IconHome.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconHome.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconHome.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconHome.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconHome.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconHome.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconHome.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconHome.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconHome~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/Plugins/Icon/IconItem.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconItem.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconItem.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconItem.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconItem.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconItem.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconItem.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconItem.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconItem~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/Plugins/Icon/IconList.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconList.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconList.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconList.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconList.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconList.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconList.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconList.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconList~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/Plugins/Icon/IconMaker.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconMaker.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconMaker.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconMaker.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconMaker.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconMaker.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconMaker.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconMaker.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconMaker~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/Plugins/Icon/IconOpacity.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconOpacity.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconOpacity.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconOpacity.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconOpacity.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconOpacity.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconOpacity.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconOpacity.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconOpacity~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/Plugins/Icon/IconPlugin.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconPlugin.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconPlugin.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconPlugin.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconPlugin.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconPlugin.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconPlugin.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconPlugin.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconPlugin~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/Plugins/Icon/IconScale.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconScale.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconScale.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconScale.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconScale.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconScale.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconScale.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconScale.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconScale~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/Plugins/Icon/IconTile.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconTile.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconTile.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconTile.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconTile.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconTile.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconTile.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconTile.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconTile~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/Plugins/Icon/IconTopBar.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconTopBar.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconTopBar.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconTopBar.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconTopBar.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconTopBar.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconTopBar.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconTopBar.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/IconTopBar~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/Plugins/ProjectInfo/SmartProjectPlugin.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/SmartProjectPlugin.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/SmartProjectPlugin.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/SmartProjectPlugin.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/SmartProjectPlugin.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/SmartProjectPlugin.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/SmartProjectPlugin.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/SmartProjectPlugin.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/SmartProjectPlugin~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/Plugins/ProjectInfo/TileProject.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/TileProject.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/TileProject.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/TileProject.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/TileProject.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/TileProject.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/TileProject.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/TileProject.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/TileProject~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/Plugins/QuickMerge/QuickMergePlugin.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/QuickMergePlugin.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/QuickMergePlugin.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/QuickMergePlugin.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/QuickMergePlugin.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/QuickMergePlugin.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/QuickMergePlugin.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/QuickMergePlugin.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/QuickMergePlugin~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/Plugins/QuickMerge/TileQuickMerge.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/TileQuickMerge.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/TileQuickMerge.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/TileQuickMerge.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/TileQuickMerge.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/TileQuickMerge.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/TileQuickMerge.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/TileQuickMerge.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/TileQuickMerge~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/Plugins/SmartLog/SmartLog.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/SmartLog.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/SmartLog.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/SmartLog.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/SmartLog.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/SmartLog.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/SmartLog.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/SmartLog.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/SmartLog~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/Plugins/SmartMerge/BtnMerge.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnMerge.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnMerge.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnMerge.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnMerge.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnMerge.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnMerge.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnMerge.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/BtnMerge~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/Plugins/SmartMerge/MergeForm.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/MergeForm.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/MergeForm.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/MergeForm.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/MergeForm.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/MergeForm.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/MergeForm.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/MergeForm.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/MergeForm~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/Plugins/SmartMerge/SmartMergePlugin.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/SmartMergePlugin.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/SmartMergePlugin.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/SmartMergePlugin.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/SmartMergePlugin.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/SmartMergePlugin.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/SmartMergePlugin.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/SmartMergePlugin.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/SmartMergePlugin~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/Plugins/SmartMerge/TileMerge.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/TileMerge.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/TileMerge.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/TileMerge.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/TileMerge.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/TileMerge.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/TileMerge.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/TileMerge.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/TileMerge~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/Plugins/SmartMessage/MessageTable.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/MessageTable.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/MessageTable.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/MessageTable.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/MessageTable.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/MessageTable.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/MessageTable.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/MessageTable.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/MessageTable~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/Plugins/SmartMessage/SmartMessagePlugin.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/SmartMessagePlugin.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/SmartMessagePlugin.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/SmartMessagePlugin.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/SmartMessagePlugin.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/SmartMessagePlugin.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/SmartMessagePlugin.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/SmartMessagePlugin.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/SmartMessagePlugin~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/Plugins/SmartMessage/TileMessage.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/TileMessage.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/TileMessage.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/TileMessage.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/TileMessage.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/TileMessage.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/TileMessage.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/TileMessage.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/TileMessage~partial.swiftmodule"
+  },
+  "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/DerivedSources/GeneratedAssetSymbols.swift" : {
+    "const-values" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/GeneratedAssetSymbols.swiftconstvalues",
+    "dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/GeneratedAssetSymbols.d",
+    "diagnostics" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/GeneratedAssetSymbols.dia",
+    "index-unit-output-path" : "/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/GeneratedAssetSymbols.o",
+    "llvm-bc" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/GeneratedAssetSymbols.bc",
+    "object" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/GeneratedAssetSymbols.o",
+    "swift-dependencies" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/GeneratedAssetSymbols.swiftdeps",
+    "swiftmodule" : "/Users/colorfy/Code/CofficLab/GitOK/build/GitOK.build/Debug/GitOK.build/Objects-normal/x86_64/GeneratedAssetSymbols~partial.swiftmodule"
+  }
+}
