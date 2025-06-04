@@ -1,5 +1,5 @@
 {
-  "originHash" : "50506a1b662aaee6b2e5621f986968a8c0a2dd3f0e98e6c75e66de26fc8265c7",
+  "originHash" : "2a51a40e2ceb31d3066b2c0fe43dbe1ebaa767246a632e9831b4cef92639bd1a",
   "pins" : [
     {
       "identity" : "alerttoast",
@@ -25,7 +25,7 @@
       "location" : "https://github.com/CofficLab/MagicKit",
       "state" : {
         "branch" : "dev",
-        "revision" : "b84bf53262166ef8b9187f6261763514b0ff3c14"
+        "revision" : "fe51d3ffc70f8fa8775bf8e7793f5525eadb238b"
       }
     },
     {

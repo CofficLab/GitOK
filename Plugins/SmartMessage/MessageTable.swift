@@ -43,19 +43,31 @@ struct MessageTable: View, SuperLog, SuperThread {
                         .foregroundColor(message.isError ? .red : .primary)
                 }
 
-//                TableColumn("时间") { message in
-//                    Text(message.createdAt.string)
-//                }
+                TableColumn("时间") { message in
+                    Text(message.createdAt.logTime)
+                }
                 .width(180)
             })
         }
         .padding(10)
-        .background(MagicBackground.aurora)
+        .background(MagicBackground.aurora.opacity(0.1))
     }
 }
 
 #Preview("APP") {
     RootView {
         ContentView()
-    }.frame(width: 700)
+            .hideSidebar()
+    }
+    .frame(width: 700)
+    .frame(height: 700)
+}
+
+#Preview("APP-Big Screen") {
+    RootView {
+        ContentView()
+            .hideSidebar()
+    }
+    .frame(width: 1200)
+    .frame(height: 1200)
 }

@@ -39,7 +39,9 @@ struct NoProject: View, SuperThread, SuperEvent {
         let path = project.path
         withAnimation {
             modelContext.delete(project)
-            self.emitGitProjectDeleted(path: path)
+            DispatchQueue.main.async {
+                NotificationCenter.default.post(name: .gitProjectDeleted, object: self, userInfo: ["path": path])
+            }
         }
     }
 }

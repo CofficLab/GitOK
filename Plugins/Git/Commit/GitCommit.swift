@@ -14,6 +14,8 @@ struct GitCommit: SuperLog {
     var isHead = false
     var hash: String
     var message: String
+    var author: String = ""
+    var date: String = ""
     
     var emoji = "🌊"
     
@@ -23,21 +25,27 @@ struct GitCommit: SuperLog {
         isHead: Bool = false,
         path: String = "/",
         hash: String = "",
-        message: String = ""
+        message: String = "",
+        author: String = "",
+        date: String = ""
     ) {
         self.isHead = isHead
         self.path = path
         self.hash = hash
         self.message = message
+        self.author = author
+        self.date = date
     }
 
     static func fromShellLine(_ l: String, path: String, seprator: String = "+") -> GitCommit {
         let components = l.components(separatedBy: seprator)
         let count = components.count
         let hash = count > 0 ? components[0] : ""
-        let message = count > 1 ? components[1] : ""
+        let author = count > 1 ? components[1] : ""
+        let date = count > 2 ? components[2] : ""
+        let message = count > 3 ? components[3] : ""
 
-        return GitCommit(path: path, hash: hash, message: message)
+        return GitCommit(path: path, hash: hash, message: message, author: author, date: date)
     }
     
     func checkIfSynced(_ branch: String) throws -> Bool {
@@ -128,6 +136,9 @@ extension GitCommit {
 }
 
 #Preview {
-    AppPreview()
-        .frame(width: 800)
+    RootView {
+        ContentView()
+    }
+    .frame(width: 800)
+    .frame(height: 800)
 }
