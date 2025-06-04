@@ -18,6 +18,7 @@ final class RootBox: SuperLog {
     let icon: IconProvider
     let git: GitProvider
     let c: ModelContainer
+    let repoManager: RepoManager
     
     private init(reason: String) {
         os_log("\(Self.onInit)(\(reason))")
@@ -29,6 +30,8 @@ final class RootBox: SuperLog {
         self.git = GitProvider()
         self.banner = BannerProvider()
         self.icon = IconProvider()
+        
+        self.repoManager = RepoManager(modelContext: ModelContext(self.c))
     }
 }
 
