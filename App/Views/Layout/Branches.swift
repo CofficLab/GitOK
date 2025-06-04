@@ -2,7 +2,7 @@ import MagicCore
 import OSLog
 import SwiftUI
 
-struct Branches: View, SuperThread, SuperLog {
+struct Branches: View, SuperThread, SuperLog, SuperEvent {
     @EnvironmentObject var app: AppProvider
     @EnvironmentObject var g: GitProvider
     @EnvironmentObject var m: MessageProvider
@@ -14,28 +14,23 @@ struct Branches: View, SuperThread, SuperLog {
 
     var body: some View {
         Picker("branch", selection: $selection, content: {
-            Text("None").tag(nil as Branch?) // Add a default tag for nil
             ForEach(branches, id: \.self, content: {
                 Text($0.name)
                     .tag($0 as Branch?)
             })
         })
-        .onAppear(perform: refresh)
-        .onChange(of: g.project, refresh)
+        .onAppear(perform: onAppear)
+        .onChange(of: g.project, onProjectChange)
         .onChange(of: selection, setBranch)
+        .onReceive(nc.publisher(for: .appWillBecomeActive), perform: onWillBecomeActive)
     }
+}
 
-    func setBranch() {
-        do {
-            try g.setBranch(selection)
-            self.m.toast("已切换到 \(g.currentBranch?.name ?? "None")")
-        } catch let error {
-            m.alert("切换分支发生错误", info: error.localizedDescription)
-            self.refresh()
-        }
-    }
+// MARK: Action
 
-    func refresh() {
+extension Branches {
+    func refresh(reason: String) {
+        self.m.append("刷新分支\(reason)")
         let verbose = false
 
         guard let project = g.project else {
@@ -57,10 +52,49 @@ struct Branches: View, SuperThread, SuperLog {
             $0.name == g.currentBranch?.name
         })
     }
+    
+    func setBranch() {
+        do {
+            try g.setBranch(selection)
+            self.m.toast("已切换到 \(g.currentBranch?.name ?? "None")")
+        } catch let error {
+            m.alert("切换分支发生错误", info: error.localizedDescription)
+            self.refresh(reason: "SetBranch")
+        }
+    }
+
 }
 
-#Preview {
-    AppPreview()
-        .frame(width: 800)
-        .frame(height: 1000)
+// MARK: - Event {
+
+extension Branches {
+    func onProjectChange() {
+        self.refresh(reason: "onProjectChange")
+    }
+
+    func onAppear() {
+        self.refresh(reason: "OnAppear")
+    }
+
+    func onWillBecomeActive(_ notification: Notification) {
+        self.refresh(reason: "onWillBecomeActive")
+    }
+}
+
+#Preview("App-Small Screen") {
+    RootView {
+        ContentView()
+            .hideTabPicker()
+            .hideSidebar()
+    }
+    .frame(width: 600)
+    .frame(height: 600)
+}
+
+#Preview("Default-Big Screen") {
+    RootView {
+        ContentView()
+    }
+    .frame(width: 1200)
+    .frame(height: 1200)
 }
