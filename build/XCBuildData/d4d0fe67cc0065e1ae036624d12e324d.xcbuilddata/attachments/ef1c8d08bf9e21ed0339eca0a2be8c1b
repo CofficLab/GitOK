@@ -1,4 +1,0 @@
-module MagicWeb {
-header "MagicWeb-Swift.h"
-export *
-}

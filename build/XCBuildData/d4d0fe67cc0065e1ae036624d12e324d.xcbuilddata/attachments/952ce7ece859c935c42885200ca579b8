@@ -1,4 +1,0 @@
-module Sync {
-header "Sync-Swift.h"
-export *
-}

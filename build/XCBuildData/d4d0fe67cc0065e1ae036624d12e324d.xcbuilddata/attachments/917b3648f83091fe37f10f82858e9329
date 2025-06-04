@@ -1,4 +1,0 @@
-module Asset {
-header "Asset-Swift.h"
-export *
-}

@@ -1,4 +1,0 @@
-module MagicCore {
-header "MagicCore-Swift.h"
-export *
-}
