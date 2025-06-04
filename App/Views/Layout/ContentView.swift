@@ -44,6 +44,8 @@ struct ContentView: View, SuperThread, SuperEvent {
     private var toolbarVisibility: Bool = true
     /// 控制项目操作按钮组是否显示
     private var projectActionsVisibility: Bool = true
+    /// 控制标签选择器是否显示
+    private var tabPickerVisibility: Bool = true
     
     // MARK: - Initializers
     
@@ -53,10 +55,12 @@ struct ContentView: View, SuperThread, SuperEvent {
     ///   - initialColumnVisibility: 初始导航分栏视图的可见性状态，默认为.detailOnly
     ///   - toolbarVisibility: 工具栏是否可见，默认为true
     ///   - projectActionsVisibility: 项目操作按钮组是否可见，默认为true
-    init(statusBarVisiblity: Bool = true, initialColumnVisibility: NavigationSplitViewVisibility = .detailOnly, toolbarVisibility: Bool = true, projectActionsVisibility: Bool = true) {
+    ///   - tabPickerVisibility: 标签选择器是否可见，默认为true
+    init(statusBarVisiblity: Bool = true, initialColumnVisibility: NavigationSplitViewVisibility = .detailOnly, toolbarVisibility: Bool = true, projectActionsVisibility: Bool = true, tabPickerVisibility: Bool = true) {
         self.statusBarVisiblity = statusBarVisiblity
         self.toolbarVisibility = toolbarVisibility
         self.projectActionsVisibility = projectActionsVisibility
+        self.tabPickerVisibility = tabPickerVisibility
         self._columnVisibility = State(initialValue: initialColumnVisibility)
     }
 
@@ -106,14 +110,16 @@ struct ContentView: View, SuperThread, SuperEvent {
                 ProjectPicker()
             }
 
-            ToolbarItem(placement: .principal) {
-                Picker("选择标签", selection: $tab) {
-                    ForEach(tabPlugins, id: \.label) { plugin in
-                        Text(plugin.label).tag(plugin.label)
+            if tabPickerVisibility {
+                ToolbarItem(placement: .principal) {
+                    Picker("选择标签", selection: $tab) {
+                        ForEach(tabPlugins, id: \.label) { plugin in
+                            Text(plugin.label).tag(plugin.label)
+                        }
                     }
+                    .pickerStyle(SegmentedPickerStyle())
+                    .frame(width: 200)
                 }
-                .pickerStyle(SegmentedPickerStyle())
-                .frame(width: 200)
             }
 
             if let project = g.project, project.isExist() {
@@ -147,7 +153,9 @@ extension ContentView {
         return ContentView(
             statusBarVisiblity: self.statusBarVisiblity,
             initialColumnVisibility: .doubleColumn,
-            toolbarVisibility: self.toolbarVisibility
+            toolbarVisibility: self.toolbarVisibility,
+            projectActionsVisibility: self.projectActionsVisibility,
+            tabPickerVisibility: self.tabPickerVisibility
         )
     }
 
@@ -157,7 +165,9 @@ extension ContentView {
         return ContentView(
             statusBarVisiblity: self.statusBarVisiblity,
             initialColumnVisibility: .all,
-            toolbarVisibility: self.toolbarVisibility
+            toolbarVisibility: self.toolbarVisibility,
+            projectActionsVisibility: self.projectActionsVisibility,
+            tabPickerVisibility: self.tabPickerVisibility
         )
     }
 
@@ -167,7 +177,9 @@ extension ContentView {
         return ContentView(
             statusBarVisiblity: false,
             initialColumnVisibility: self.columnVisibility,
-            toolbarVisibility: self.toolbarVisibility
+            toolbarVisibility: self.toolbarVisibility,
+            projectActionsVisibility: self.projectActionsVisibility,
+            tabPickerVisibility: self.tabPickerVisibility
         )
     }
 
@@ -177,7 +189,9 @@ extension ContentView {
         return ContentView(
             statusBarVisiblity: true,
             initialColumnVisibility: self.columnVisibility,
-            toolbarVisibility: self.toolbarVisibility
+            toolbarVisibility: self.toolbarVisibility,
+            projectActionsVisibility: self.projectActionsVisibility,
+            tabPickerVisibility: self.tabPickerVisibility
         )
     }
 
@@ -187,7 +201,9 @@ extension ContentView {
         return ContentView(
             statusBarVisiblity: self.statusBarVisiblity,
             initialColumnVisibility: self.columnVisibility,
-            toolbarVisibility: false
+            toolbarVisibility: false,
+            projectActionsVisibility: self.projectActionsVisibility,
+            tabPickerVisibility: self.tabPickerVisibility
         )
     }
 
@@ -197,7 +213,9 @@ extension ContentView {
         return ContentView(
             statusBarVisiblity: self.statusBarVisiblity, 
             initialColumnVisibility: self.columnVisibility, 
-            toolbarVisibility: true
+            toolbarVisibility: true,
+            projectActionsVisibility: self.projectActionsVisibility,
+            tabPickerVisibility: self.tabPickerVisibility
         )
     }
     
@@ -208,7 +226,8 @@ extension ContentView {
             statusBarVisiblity: self.statusBarVisiblity,
             initialColumnVisibility: self.columnVisibility,
             toolbarVisibility: self.toolbarVisibility,
-            projectActionsVisibility: false
+            projectActionsVisibility: false,
+            tabPickerVisibility: self.tabPickerVisibility
         )
     }
     
@@ -219,7 +238,32 @@ extension ContentView {
             statusBarVisiblity: self.statusBarVisiblity,
             initialColumnVisibility: self.columnVisibility,
             toolbarVisibility: self.toolbarVisibility,
-            projectActionsVisibility: true
+            projectActionsVisibility: true,
+            tabPickerVisibility: self.tabPickerVisibility
+        )
+    }
+    
+    /// 隐藏标签选择器
+    /// - Returns: 一个新的ContentView实例，标签选择器被隐藏
+    func hideTabPicker() -> ContentView {
+        return ContentView(
+            statusBarVisiblity: self.statusBarVisiblity,
+            initialColumnVisibility: self.columnVisibility,
+            toolbarVisibility: self.toolbarVisibility,
+            projectActionsVisibility: self.projectActionsVisibility,
+            tabPickerVisibility: false
+        )
+    }
+    
+    /// 显示标签选择器
+    /// - Returns: 一个新的ContentView实例，标签选择器被显示
+    func showTabPicker() -> ContentView {
+        return ContentView(
+            statusBarVisiblity: self.statusBarVisiblity,
+            initialColumnVisibility: self.columnVisibility,
+            toolbarVisibility: self.toolbarVisibility,
+            projectActionsVisibility: self.projectActionsVisibility,
+            tabPickerVisibility: true
         )
     }
 }
