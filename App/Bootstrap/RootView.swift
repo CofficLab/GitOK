@@ -1,6 +1,7 @@
 import AlertToast
 import SwiftData
 import SwiftUI
+import MagicCore
 
 struct RootView<Content>: View, SuperEvent where Content: View {
     var content: Content
@@ -9,7 +10,6 @@ struct RootView<Content>: View, SuperEvent where Content: View {
     var b: BannerProvider
     var i: IconProvider
     var c: ModelContainer
-    var w: WebConfig
     
     @StateObject var p = PluginProvider()
     @StateObject var m = MessageProvider()
@@ -23,7 +23,6 @@ struct RootView<Content>: View, SuperEvent where Content: View {
         self.g = box.git
         self.b = box.banner
         self.i = box.icon
-        self.w = box.w
         self.c = box.c
     }
 
@@ -54,7 +53,6 @@ struct RootView<Content>: View, SuperEvent where Content: View {
             .environmentObject(g)
             .environmentObject(b)
             .environmentObject(i)
-            .environmentObject(w)
             .environmentObject(p)
             .environmentObject(m)
             .onAppear(perform: onAppear)
@@ -121,3 +119,14 @@ struct AppPreview: View {
     })
     .frame(width: 800, height: 800)
 }
+
+#Preview("Big Screen") {
+    RootView {
+        ContentView()
+            .hideSidebar()
+            .hideProjectActions()
+    }
+    .frame(width: 1200)
+    .frame(height: 1200)
+}
+

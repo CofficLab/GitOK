@@ -62,3 +62,12 @@ struct MessageTable: View, SuperLog, SuperThread {
     .frame(width: 700)
     .frame(height: 700)
 }
+
+#Preview("APP-Big Screen") {
+    RootView {
+        ContentView()
+            .hideSidebar()
+    }
+    .frame(width: 1200)
+    .frame(height: 1200)
+}

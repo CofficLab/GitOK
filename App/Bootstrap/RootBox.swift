@@ -17,14 +17,10 @@ final class RootBox: SuperLog {
     let banner: BannerProvider
     let icon: IconProvider
     let git: GitProvider
-    let w: WebConfig
     let c: ModelContainer
     
     private init(reason: String) {
         os_log("\(Self.onInit)(\(reason))")
-        
-        // Config
-        self.w = WebConfig()
         
         self.c = AppConfig.getContainer()
         
@@ -42,3 +38,14 @@ final class RootBox: SuperLog {
     })
     .frame(width: 800, height: 800)
 }
+
+#Preview("Big Screen") {
+    RootView {
+        ContentView()
+            .hideSidebar()
+            .hideProjectActions()
+    }
+    .frame(width: 1200)
+    .frame(height: 1200)
+}
+

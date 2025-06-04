@@ -4,6 +4,7 @@ import SwiftUI
 
 struct FileList: View, SuperThread, SuperLog {
     @EnvironmentObject var app: AppProvider
+    @EnvironmentObject var m: MessageProvider
 
     @State var files: [File] = []
     @State var isLoading = false
@@ -54,6 +55,12 @@ struct FileList: View, SuperThread, SuperLog {
     }
 }
 
-#Preview {
-    AppPreview()
+#Preview("Big Screen") {
+    RootView {
+        ContentView()
+            .hideSidebar()
+            .hideProjectActions()
+    }
+    .frame(width: 1200)
+    .frame(height: 1200)
 }

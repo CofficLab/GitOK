@@ -1,8 +1,8 @@
 import Foundation
+import MagicCore
 import OSLog
 import SwiftData
 import SwiftUI
-import MagicCore
 
 struct BannerModel: SuperJsonModel, SuperLog, SuperEvent {
     static var root: String = ".gitok/banners"
@@ -62,7 +62,7 @@ struct BannerModel: SuperJsonModel, SuperLog, SuperEvent {
         guard let imageId = self.imageId else {
             return nil
         }
-        
+
         return SmartImage.fromImageId(imageId)
     }
 
@@ -77,7 +77,7 @@ struct BannerModel: SuperJsonModel, SuperLog, SuperEvent {
     }
 }
 
-// MARK: Set 
+// MARK: Set
 
 extension BannerModel {
     func setProject(_ project: Project) -> BannerModel {
@@ -92,7 +92,7 @@ extension BannerModel {
 extension BannerModel {
     static func fromFile(_ jsonFile: URL) throws -> BannerModel {
         let jsonData = try Data(contentsOf: jsonFile)
-        
+
         do {
             var banner = try JSONDecoder().decode(BannerModel.self, from: jsonData)
             banner.path = jsonFile.path
@@ -101,7 +101,7 @@ extension BannerModel {
             return banner
         } catch {
             os_log(.error, "Error decoding JSON: \(error)")
-            
+
             throw error
         }
     }
@@ -137,8 +137,12 @@ extension BannerModel {
 
     func saveToDisk() throws {
         try self.save()
-        self.emitBannerTitleChanged(title: self.title, id: self.id)
-        self.emitBannerChanged()
+        DispatchQueue.main.async {
+            NotificationCenter.default.post(name: .bannerTitleChanged, object: self, userInfo: ["title": title, "id": id])
+        }
+        DispatchQueue.main.async {
+            NotificationCenter.default.post(name: .bannerChanged, object: self)
+        }
     }
 }
 
@@ -161,7 +165,7 @@ extension BannerModel: Codable {
         case title
         case opacity
     }
-    
+
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         backgroundId = try container.decode(String.self, forKey: .backgroundId)
@@ -172,11 +176,11 @@ extension BannerModel: Codable {
         subTitle = try container.decode(String.self, forKey: .subTitle)
         title = try container.decode(String.self, forKey: .title)
         opacity = try container.decode(Double.self, forKey: .opacity)
-        
+
         // 由于 project 不参与解码，我们需要设置一个默认值或者在其他地方设置
         project = .null
     }
-    
+
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(backgroundId, forKey: .backgroundId)
@@ -200,7 +204,7 @@ extension BannerModel {
 
     static func all(_ project: Project) throws -> [BannerModel] {
         let verbose = false
-            
+
         var models: [BannerModel] = []
 
         // 目录路径
@@ -233,20 +237,20 @@ extension BannerModel {
     static func getProjectURL(_ bannerPath: String, reason: String = "") -> URL {
         let verbose = false
         var projectURL = URL.null
-        
+
         let pathURL = URL(fileURLWithPath: bannerPath)
         let pathString = pathURL.path
         if let range = pathString.range(of: "/\(Self.root)/") {
             let projectPath = String(pathString[..<range.lowerBound])
-            
+
             projectURL = URL(fileURLWithPath: projectPath)
         }
-        
+
         if verbose {
             os_log("banner url -> \(bannerPath)")
             os_log("banner project url -> \(projectURL.relativeString)")
         }
-        
+
         return projectURL
     }
 }
@@ -303,9 +307,18 @@ enum BannerModelError: Error {
     case JSONError
 }
 
-
 #Preview {
     AppPreview()
         .frame(width: 800)
         .frame(height: 600)
+}
+
+#Preview("Big Screen") {
+    RootView {
+        ContentView()
+            .hideSidebar()
+            .hideProjectActions()
+    }
+    .frame(width: 1200)
+    .frame(height: 1200)
 }

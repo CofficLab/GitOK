@@ -178,7 +178,7 @@ extension IconModel {
 
     func saveToDisk() throws {
         try self.save()
-        self.emitIconDidSave()
+        self.emit(.iconDidSave)
     }
 
     static func fromJSONFile(_ jsonFile: URL) throws -> Self {
