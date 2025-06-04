@@ -123,10 +123,6 @@ class GitShell {
         return Branch.fromShellLine(try run("branch --show-current", path: path, verbose: verbose), path: path)
     }
 
-    static func getFileContent(_ path: String, file: String) throws -> String {
-        try run("cat \(file)", path: path)
-    }
-
     static func getFileLastContent(_ path: String, file: String) throws -> String {
         try run("show --textconv HEAD:\(file)", path: path, verbose: false)
     }

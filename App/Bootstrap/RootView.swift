@@ -44,7 +44,7 @@ struct RootView<Content>: View, SuperEvent where Content: View {
                 m.clearDoneMessage()
             })
             .toast(isPresenting: $m.showError, duration: 0, tapToDismiss: true, alert: {
-                AlertToast(displayMode: .alert, type: .error(.indigo), title: m.error?.localizedDescription)
+                AlertToast(displayMode: .hud, type: .error(.indigo), title: m.error?.localizedDescription)
             }, completion: {
                 m.clearError()
             })
