@@ -189,7 +189,7 @@ class GitShell {
     }
 
     static func logs(_ path: String) throws -> [GitCommit] {
-        let result = try run("--no-pager log --pretty=format:%H+%s", path: path, verbose: false)
+        let result = try run("--no-pager log --pretty=format:%H+%an+%ad+%s", path: path, verbose: false)
 
         return result.components(separatedBy: "\n").map {
             GitCommit.fromShellLine($0, path: path, seprator: "+")
@@ -299,7 +299,7 @@ class GitShell {
     }
 
     static func logsWithPagination(_ path: String, skip: Int = 0, limit: Int = 30) throws -> [GitCommit] {
-        let result = try run("--no-pager log --pretty=format:%H+%s --skip=\(skip) -n \(limit)", path: path, verbose: false)
+        let result = try run("--no-pager log --pretty=format:%H+%an+%ad+%s --date=format:'%Y-%m-%d %H:%M:%S' --skip=\(skip) -n \(limit)", path: path, verbose: false)
 
         if result.isEmpty {
             return []
