@@ -22,9 +22,6 @@ struct GitDetail: View, SuperEvent {
                             VStack(spacing: 0) {
                                 // 当前 Commit 详细信息
                                 CommitDetailView(commit: commit)
-                                    .padding(.horizontal, 12)
-                                    .padding(.top, 8)
-                                    .padding(.bottom, 8)
                                 
                                 HSplitView {
                                     FileList(file: $file, commit: commit)

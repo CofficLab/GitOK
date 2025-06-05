@@ -1,10 +1,12 @@
 import SwiftUI
+import MagicCore
 
 /**
  * 展示 Commit 详细信息的视图组件
  */
 struct CommitDetailView: View {
     let commit: GitCommit
+    @State private var isCopied: Bool = false
     
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -76,15 +78,25 @@ struct CommitDetailView: View {
                         
                         // 复制按钮
                         Button(action: {
-                            NSPasteboard.general.clearContents()
-                            NSPasteboard.general.setString(commit.hash, forType: .string)
+                            commit.hash.copy()
+                            withAnimation(.spring()) {
+                                isCopied = true
+                            }
+                            
+                            // 1.5秒后重置状态
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                                withAnimation(.spring()) {
+                                    isCopied = false
+                                }
+                            }
                         }) {
-                            Image(systemName: "doc.on.doc")
+                            Image(systemName: isCopied ? "checkmark.circle" : "doc.on.doc")
                                 .font(.system(size: 10))
-                                .foregroundColor(.secondary)
+                                .foregroundColor(isCopied ? .green : .secondary)
+                                .scaleEffect(isCopied ? 1.2 : 1.0)
                         }
                         .buttonStyle(.plain)
-                        .help("复制完整 Hash")
+                        .help(isCopied ? "已复制" : "复制完整 Hash")
                         
                         Spacer()
                     }
@@ -93,8 +105,7 @@ struct CommitDetailView: View {
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 8)
-        .background(Color(NSColor.controlBackgroundColor))
-        .cornerRadius(8)
+        .background(MagicBackground.orange.opacity(0.15))
     }
 }
 

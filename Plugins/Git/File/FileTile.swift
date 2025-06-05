@@ -1,4 +1,5 @@
 import SwiftUI
+import MagicCore
 
 struct FileTile: View {
     var file: File
@@ -8,9 +9,9 @@ struct FileTile: View {
     
     var body: some View {
         HStack {
+            image
             Text(file.name).font(.footnote)
             Spacer()
-            image
         }
     }
     
@@ -18,13 +19,10 @@ struct FileTile: View {
         switch file.type {
         case .modified:
             Image(systemName: "square.and.pencil")
-                .foregroundStyle(.yellow)
         case .add:
             Image(systemName: "plus.square")
-                .foregroundStyle(.green)
         case .delete:
             Image(systemName: "trash.square")
-                .foregroundStyle(.red)
         }
     }
 }

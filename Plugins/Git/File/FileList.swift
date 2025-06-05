@@ -1,7 +1,7 @@
+import AppKit
 import MagicCore
 import OSLog
 import SwiftUI
-import AppKit
 
 struct FileList: View, SuperThread, SuperLog {
     @EnvironmentObject var app: AppProvider
@@ -11,7 +11,7 @@ struct FileList: View, SuperThread, SuperLog {
     @State var isLoading = false
 
     @Binding var file: File?
-    
+
     var commit: GitCommit
 
     var body: some View {
@@ -22,14 +22,14 @@ struct FileList: View, SuperThread, SuperLog {
                     Image(systemName: "doc.text")
                         .foregroundColor(.secondary)
                         .font(.system(size: 12))
-                    
+
                     Text("\(files.count) 个文件")
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
-                
+
                 Spacer()
-                
+
                 if isLoading {
                     HStack(spacing: 4) {
                         ProgressView()
@@ -49,12 +49,13 @@ struct FileList: View, SuperThread, SuperLog {
                     .foregroundColor(Color(NSColor.separatorColor)),
                 alignment: .bottom
             )
-            
+
             // 文件列表
             ScrollViewReader { scrollProxy in
                 List(files, id: \.self, selection: self.$file) {
                     FileTile(file: $0, commit: commit)
                         .tag($0 as File?)
+                        .listRowBackground(getBackground(file: $0))
                 }
                 .task {
                     self.refresh(scrollProxy)
@@ -88,6 +89,19 @@ struct FileList: View, SuperThread, SuperLog {
                 self.files = files
                 self.isLoading = false
                 self.file = self.files.first
+            }
+        }
+    }
+
+    func getBackground(file: File) -> some View {
+        Group {
+            switch file.type {
+            case .modified:
+                MagicBackground.orange.opacity(0.1)
+            case .add:
+                MagicBackground.forest.opacity(0.1)
+            case .delete:
+                MagicBackground.cherry.opacity(0.1)
             }
         }
     }
