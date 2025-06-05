@@ -20,7 +20,7 @@ class SmartFilePlugin: SuperPlugin, SuperLog {
         AnyView(GitDetail())
     }
     
-    func addToolBarLeadingView() -> AnyView {
+    func addStatusBarLeadingView() -> AnyView {
         AnyView(TileFile())
     }
 

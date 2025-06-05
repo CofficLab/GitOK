@@ -18,10 +18,16 @@ struct ToolbarItems: View {
     /// 是否显示工具栏项目
     var isVisible: Bool
     
+    /// 插件提供者
+    @EnvironmentObject var p: PluginProvider
+    
     // MARK: - Body
     
     var body: some View {
         if isVisible {
+            ForEach(p.plugins, id: \.label) { plugin in
+                plugin.addToolBarLeadingView()
+            }
             BtnOpenXcode(url: project.url)
             BtnOpen(url: project.url)
             BtnOpenCursor(url: project.url)

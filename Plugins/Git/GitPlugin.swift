@@ -22,7 +22,7 @@ class GitPlugin: SuperPlugin, SuperLog {
         )
     }
 
-    func addToolBarTrailingView() -> AnyView {
+    func addStatusBarTrailingView() -> AnyView {
         AnyView(EmptyView())
     }
 

@@ -20,7 +20,7 @@ class IconPlugin: SuperPlugin, SuperLog {
         AnyView(DetailIcon())
     }
     
-    func addToolBarTrailingView() -> AnyView {
+    func addStatusBarTrailingView() -> AnyView {
         AnyView(EmptyView())
     }
 

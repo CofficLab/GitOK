@@ -20,7 +20,7 @@ class SmartProjectPlugin: SuperPlugin, SuperLog {
         AnyView(GitDetail())
     }
     
-    func addToolBarLeadingView() -> AnyView {
+    func addStatusBarLeadingView() -> AnyView {
         AnyView(TileProject())
     }
 

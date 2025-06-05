@@ -20,7 +20,7 @@ class SmartMessagePlugin: SuperPlugin, SuperLog {
         AnyView(GitDetail())
     }
     
-    func addToolBarTrailingView() -> AnyView {
+    func addStatusBarTrailingView() -> AnyView {
         AnyView(TileMessage())
     }
 

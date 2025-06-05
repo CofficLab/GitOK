@@ -20,7 +20,7 @@ class SmartMergePlugin: SuperPlugin, SuperLog {
         AnyView(GitDetail())
     }
     
-    func addToolBarTrailingView() -> AnyView {
+    func addStatusBarTrailingView() -> AnyView {
         AnyView(TileMerge())
     }
 

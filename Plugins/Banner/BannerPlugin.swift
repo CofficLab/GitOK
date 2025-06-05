@@ -20,7 +20,7 @@ class BannerPlugin: SuperPlugin, SuperLog {
         AnyView(BannerDetail())
     }
     
-    func addToolBarTrailingView() -> AnyView {
+    func addStatusBarTrailingView() -> AnyView {
         AnyView(EmptyView())
     }
 
