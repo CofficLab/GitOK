@@ -13,13 +13,15 @@ class GitPlugin: SuperPlugin, SuperLog {
     }
 
     func addListView() -> AnyView {
-        AnyView(CommitList())
+        AnyView(CommitList().environmentObject(GitProvider.shared))
     }
 
     func addDetailView() -> AnyView {
-        AnyView(GitDetail())
+        AnyView(GitDetail()
+            .environmentObject(GitProvider.shared)
+        )
     }
-    
+
     func addToolBarTrailingView() -> AnyView {
         AnyView(EmptyView())
     }
