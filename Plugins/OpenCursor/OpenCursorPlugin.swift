@@ -48,24 +48,3 @@ class OpenCursorPlugin: SuperPlugin, SuperLog {
         os_log("\(self.t) onPlayAssetUpdate")
     }
 }
-
-struct BtnOpenCursorView: View {
-    @EnvironmentObject var g: DataProvider
-
-    var body: some View {
-        if let project = g.project {
-            Button(action: {
-                if let cursorURL = NSWorkspace.shared.urlForApplication(toOpen: URL(fileURLWithPath: "/Applications/Cursor.app")) {
-                    NSWorkspace.shared.open([project.url], withApplicationAt: cursorURL, configuration: NSWorkspace.OpenConfiguration(), completionHandler: nil)
-                }
-            }, label: {
-                Label(
-                    title: { Text("用 Cursor 打开") },
-                    icon: {
-                        Image("Cursor").resizable().scaledToFit().scaleEffect(0.9)
-                    }
-                )
-            })
-        }
-    }
-}

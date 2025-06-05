@@ -48,17 +48,3 @@ class OpenFinderPlugin: SuperPlugin, SuperLog {
         os_log("\(self.t) onPlayAssetUpdate")
     }
 }
-
-struct BtnOpenFinderView: View {
-    @EnvironmentObject var g: DataProvider
-
-    var body: some View {
-        if let project = g.project {
-            Button(action: {
-                NSWorkspace.shared.open(project.url)
-            }, label: {
-                Label("在Finder中显示", systemImage: "doc.viewfinder.fill")
-            })
-        }
-    }
-}
