@@ -10,7 +10,7 @@
 		0B0E168B2BD89A910078942B /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0B0E168A2BD89A910078942B /* Preview Assets.xcassets */; };
 		0B4EE49E2D05C4CC00D7E963 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 0B4EE49D2D05C48900D7E963 /* Localizable.strings */; };
 		0BB1C7122D045C0600C4EA70 /* AlertToast in Frameworks */ = {isa = PBXBuildFile; productRef = 0BB1C7112D045C0600C4EA70 /* AlertToast */; };
-		F54482592DF1AF0800FA4553 /* MagicCore in Frameworks */ = {isa = PBXBuildFile; productRef = F54482582DF1AF0800FA4553 /* MagicCore */; };
+		F5779C2D2DF1AFF200283978 /* MagicCore in Frameworks */ = {isa = PBXBuildFile; productRef = F5779C2C2DF1AFF200283978 /* MagicCore */; };
 		F5F794E92C5B192600DCB824 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = F5F794E82C5B192600DCB824 /* Sparkle */; };
 /* End PBXBuildFile section */
 
@@ -49,7 +49,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0BB1C7122D045C0600C4EA70 /* AlertToast in Frameworks */,
-				F54482592DF1AF0800FA4553 /* MagicCore in Frameworks */,
+				F5779C2D2DF1AFF200283978 /* MagicCore in Frameworks */,
 				F5F794E92C5B192600DCB824 /* Sparkle in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -132,10 +132,9 @@
 				0B25549F2DE0D186006EDB55 /* MagicPlayMan */,
 				0B2554A12DE0D186006EDB55 /* MagicSync */,
 				0B2554A62DE0D532006EDB55 /* CosyAsset */,
-				0B2554AA2DE0D532006EDB55 /* MagicCore */,
 				0B2554AC2DE0D532006EDB55 /* MagicKit */,
 				0B2554AE2DE0D532006EDB55 /* MagicPlayMan */,
-				F54482582DF1AF0800FA4553 /* MagicCore */,
+				F5779C2C2DF1AFF200283978 /* MagicCore */,
 			);
 			productName = GitOK;
 			productReference = 0B0E167D2BD89A8F0078942B /* GitOK.app */;
@@ -169,7 +168,7 @@
 			packageReferences = (
 				F5F794E72C5B192600DCB824 /* XCRemoteSwiftPackageReference "Sparkle" */,
 				0B6B1B5D2D045AB7007941F0 /* XCRemoteSwiftPackageReference "AlertToast" */,
-				F54482572DF1AF0800FA4553 /* XCRemoteSwiftPackageReference "MagicKit" */,
+				F5779C2B2DF1AFF200283978 /* XCRemoteSwiftPackageReference "MagicKit" */,
 			);
 			productRefGroup = 0B0E167E2BD89A8F0078942B /* Products */;
 			projectDirPath = "";
@@ -453,7 +452,7 @@
 				minimumVersion = 1.3.9;
 			};
 		};
-		F54482572DF1AF0800FA4553 /* XCRemoteSwiftPackageReference "MagicKit" */ = {
+		F5779C2B2DF1AFF200283978 /* XCRemoteSwiftPackageReference "MagicKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/CofficLab/MagicKit";
 			requirement = {
@@ -496,10 +495,6 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = CosyAsset;
 		};
-		0B2554AA2DE0D532006EDB55 /* MagicCore */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = MagicCore;
-		};
 		0B2554AC2DE0D532006EDB55 /* MagicKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = MagicKit;
@@ -533,9 +528,9 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = MagicSync;
 		};
-		F54482582DF1AF0800FA4553 /* MagicCore */ = {
+		F5779C2C2DF1AFF200283978 /* MagicCore */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = F54482572DF1AF0800FA4553 /* XCRemoteSwiftPackageReference "MagicKit" */;
+			package = F5779C2B2DF1AFF200283978 /* XCRemoteSwiftPackageReference "MagicKit" */;
 			productName = MagicCore;
 		};
 		F5F794E82C5B192600DCB824 /* Sparkle */ = {
