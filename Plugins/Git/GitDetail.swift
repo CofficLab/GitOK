@@ -1,5 +1,6 @@
 import SwiftUI
 import MagicCore
+import AppKit
 
 struct GitDetail: View, SuperEvent {
     @EnvironmentObject var app: AppProvider
@@ -18,14 +19,22 @@ struct GitDetail: View, SuperEvent {
                         if commit.isHead && isProjectClean {
                             NoLocalChanges()
                         } else {
-                            HSplitView {
-                                FileList(file: $file, commit: commit)
-                                    .frame(idealWidth: 200)
-                                    .frame(minWidth: 200, maxWidth: 300)
-                                    .layoutPriority(1)
-
-                                if let file = g.file {
-                                    FileDetail(file: file, commit: commit)
+                            VStack(spacing: 0) {
+                                // 当前 Commit 详细信息
+                                CommitDetailView(commit: commit)
+                                    .padding(.horizontal, 12)
+                                    .padding(.top, 8)
+                                    .padding(.bottom, 8)
+                                
+                                HSplitView {
+                                    FileList(file: $file, commit: commit)
+                                        .frame(idealWidth: 200)
+                                        .frame(minWidth: 200, maxWidth: 300)
+                                        .layoutPriority(1)
+                                    
+                                    if let file = g.file {
+                                        FileDetail(file: file, commit: commit)
+                                    }
                                 }
                             }
                         }

@@ -17,20 +17,19 @@ final class RootBox: SuperLog {
     let banner: BannerProvider
     let icon: IconProvider
     let git: GitProvider
-    let c: ModelContainer
     let repoManager: RepoManager
 
     private init(reason: String) {
         os_log("\(Self.onInit)(\(reason))")
 
-        self.c = AppConfig.getContainer()
+        let c = AppConfig.getContainer()
 
         // Providers
         self.app = AppProvider()
         self.banner = BannerProvider()
         self.icon = IconProvider()
 
-        self.repoManager = RepoManager(modelContext: ModelContext(self.c))
+        self.repoManager = RepoManager(modelContext: ModelContext(c))
 
         do {
             let projects = try self.repoManager.projectRepo.findAll(sortedBy: .ascending)

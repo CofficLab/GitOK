@@ -14,7 +14,7 @@ class GitProvider: NSObject, ObservableObject, SuperLog {
     @Published private(set) var file: File? = nil
     @Published var projects: [Project] = []
 
-    var emoji = "🏠"
+    static let emoji = "🏠"
     private var cancellables = Set<AnyCancellable>()
 
     init(projects: [Project]) {
