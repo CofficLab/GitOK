@@ -56,11 +56,6 @@ struct CommitList: View, SuperThread, SuperLog {
                         }
                     }
                     .background(Color(.controlBackgroundColor))
-
-                    CommitForm()
-                        .padding(.horizontal, 4)
-                        .padding(.vertical, 6)
-                        .background(MagicBackground.blueberry)
                 }
             }
             .onAppear {
@@ -185,7 +180,7 @@ extension CommitList {
     }
 }
 
-#Preview {
+#Preview("App-Small Screen") {
     RootView {
         ContentView()
             .hideSidebar()
@@ -197,6 +192,7 @@ extension CommitList {
 #Preview("App-Big Screen") {
     RootView {
         ContentView()
+            .hideSidebar()
     }
     .frame(width: 1200)
     .frame(height: 1200)

@@ -1,5 +1,5 @@
-import SwiftUI
 import MagicCore
+import SwiftUI
 
 /**
  * 展示 Commit 详细信息的视图组件
@@ -7,36 +7,24 @@ import MagicCore
 struct CommitDetailView: View {
     let commit: GitCommit
     @State private var isCopied: Bool = false
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            HStack {
-                // Commit 图标
-                Image(systemName: commit.isHead ? "circle.fill" : "smallcircle.filled.circle")
-                    .foregroundColor(commit.isHead ? .green : .blue)
-                    .font(.system(size: 12))
-                
-                // Commit 消息
-                Text(commit.message)
-                    .font(.headline)
-                    .lineLimit(2)
-                
-                Spacer()
-                
-                // HEAD 标签
-                if commit.isHead {
-                    Text("HEAD")
-                        .font(.caption)
-                        .padding(.horizontal, 6)
-                        .padding(.vertical, 2)
-                        .background(Color.green.opacity(0.2))
-                        .foregroundColor(.green)
-                        .cornerRadius(4)
-                }
-            }
-            
-            // 详细信息行
             if !commit.isHead {
+                HStack {
+                    // Commit 图标
+                    Image(systemName: commit.isHead ? "circle.fill" : "smallcircle.filled.circle")
+                        .foregroundColor(commit.isHead ? .green : .blue)
+                        .font(.system(size: 12))
+
+                    // Commit 消息
+                    Text(commit.message)
+                        .font(.headline)
+                        .lineLimit(2)
+
+                    Spacer()
+                }
+
                 HStack(spacing: 16) {
                     // 作者信息
                     if !commit.author.isEmpty {
@@ -49,7 +37,7 @@ struct CommitDetailView: View {
                                 .foregroundColor(.secondary)
                         }
                     }
-                    
+
                     // 提交时间
                     if !commit.date.isEmpty {
                         HStack(spacing: 4) {
@@ -61,10 +49,10 @@ struct CommitDetailView: View {
                                 .foregroundColor(.secondary)
                         }
                     }
-                    
+
                     Spacer()
                 }
-                
+
                 // Hash 信息
                 if !commit.hash.isEmpty {
                     HStack(spacing: 4) {
@@ -75,14 +63,14 @@ struct CommitDetailView: View {
                             .font(.system(.caption, design: .monospaced))
                             .foregroundColor(.secondary)
                             .textSelection(.enabled)
-                        
+
                         // 复制按钮
                         Button(action: {
                             commit.hash.copy()
                             withAnimation(.spring()) {
                                 isCopied = true
                             }
-                            
+
                             // 1.5秒后重置状态
                             DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
                                 withAnimation(.spring()) {
@@ -97,15 +85,27 @@ struct CommitDetailView: View {
                         }
                         .buttonStyle(.plain)
                         .help(isCopied ? "已复制" : "复制完整 Hash")
-                        
+
                         Spacer()
                     }
                 }
+            } else {
+                CommitForm()
             }
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 8)
-        .background(MagicBackground.orange.opacity(0.15))
+        .background(background)
+    }
+
+    private var background: some View {
+        ZStack {
+            if commit.isHead {
+                MagicBackground.blueberry
+            } else {
+                MagicBackground.orange.opacity(0.15)
+            }
+        }
     }
 }
 
@@ -118,7 +118,7 @@ struct CommitDetailView: View {
             hash: "HEAD",
             message: "当前工作区"
         ))
-        
+
         // 普通 commit 预览
         CommitDetailView(commit: GitCommit(
             isHead: false,
