@@ -28,9 +28,6 @@ struct ToolbarItems: View {
             ForEach(p.plugins, id: \.label) { plugin in
                 plugin.addToolBarLeadingView()
             }
-            if project.isGit {
-                Branches()
-            }
         }
     }
 }

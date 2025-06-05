@@ -24,6 +24,7 @@ class PluginProvider: ObservableObject, SuperLog, SuperThread {
         OpenTerminalPlugin(),
         OpenRemotePlugin(),
         SyncPlugin(),
+        BranchPlugin(),
     ]
 
     init() {
