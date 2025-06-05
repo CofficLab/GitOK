@@ -27,3 +27,11 @@ struct SmartMessage: Hashable, Identifiable {
         self.isError = isError
     }
 }
+
+#Preview("App-Big Screen") {
+    RootView {
+        ContentView()
+    }
+    .frame(width: 1200)
+    .frame(height: 1200)
+}

@@ -80,3 +80,11 @@ struct BtnSync: View, SuperLog, SuperEvent, SuperThread {
     AppPreview()
         .frame(width: 800)
 }
+
+#Preview("App-Big Screen") {
+    RootView {
+        ContentView()
+    }
+    .frame(width: 1200)
+    .frame(height: 1200)
+}

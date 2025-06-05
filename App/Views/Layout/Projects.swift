@@ -83,7 +83,7 @@ extension Projects {
         .frame(height: 800)
 }
 
-#Preview("Default-Big Screen") {
+#Preview("App-Big Screen") {
     RootView {
         ContentView()
     }

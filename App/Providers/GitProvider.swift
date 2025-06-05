@@ -229,6 +229,37 @@ class GitProvider: NSObject, ObservableObject, SuperLog {
     }
 
     /**
+     * 添加项目
+     * @param url 项目路径URL
+     * @param repo 项目仓库实例
+     */
+    func addProject(url: URL, using repo: any ProjectRepoProtocol) {
+        do {
+            // 检查项目是否已存在
+            if repo.exists(path: url.path) {
+                os_log("Project already exists: \(url.path)")
+                return
+            }
+            
+            // 通过仓库创建项目
+            let newProject = try repo.create(url: url)
+            
+            // 添加到本地数组
+            self.projects.append(newProject)
+            
+            // 如果当前没有选中项目，设置为新添加的项目
+            if self.project == nil {
+                self.setProject(newProject, reason: "Added first project")
+            }
+            
+            os_log("Project added successfully: \(url.path)")
+            
+        } catch {
+            os_log(.error, "Failed to add project: \(error.localizedDescription)")
+        }
+    }
+    
+    /**
      * 删除项目
      * @param project 要删除的项目
      * @param repo 项目仓库实例

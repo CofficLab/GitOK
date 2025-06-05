@@ -44,7 +44,7 @@ struct StatusBar: View {
     .frame(width: 800, height: 800)
 }
 
-#Preview("Default-Big Screen") {
+#Preview("App-Big Screen") {
     RootView {
         ContentView()
     }

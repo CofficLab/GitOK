@@ -24,9 +24,6 @@ struct GitDetail: View, SuperEvent {
                                     .frame(minWidth: 200, maxWidth: 300)
                                     .layoutPriority(1)
 
-//                                diffView
-//                                    .frame(minWidth: 400, maxWidth: .infinity)
-//                                    .layoutPriority(2)
                                 if let file = g.file {
                                     FileDetail(file: file, commit: commit)
                                 }
@@ -90,4 +87,12 @@ extension GitDetail {
     }
         .frame(height: 600)
         .frame(width: 600)
+}
+
+#Preview("App-Big Screen") {
+    RootView {
+        ContentView()
+    }
+    .frame(width: 1200)
+    .frame(height: 1200)
 }

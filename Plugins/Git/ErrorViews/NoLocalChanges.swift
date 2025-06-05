@@ -19,3 +19,11 @@ struct NoLocalChanges: View {
     .frame(height: 600)
     .frame(width: 600)
 }
+
+#Preview("App-Big Screen") {
+    RootView {
+        ContentView()
+    }
+    .frame(width: 1200)
+    .frame(height: 1200)
+}

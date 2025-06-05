@@ -1,6 +1,7 @@
 import Foundation
 import SwiftData
 import OSLog
+import SwiftUI
 
 // MARK: - Repository管理器
 
@@ -37,4 +38,12 @@ extension RepoManager {
         let context = ModelContext(container)
         return RepoManager(modelContext: context)
     }
+}
+
+#Preview("App-Big Screen") {
+    RootView {
+        ContentView()
+    }
+    .frame(width: 1200)
+    .frame(height: 1200)
 }

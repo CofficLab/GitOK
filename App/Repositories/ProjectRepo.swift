@@ -1,8 +1,7 @@
 import Foundation
 import SwiftData
 import OSLog
-
-// MARK: - Project Repository实现
+import SwiftUI
 
 class ProjectRepo: BaseRepositoryImpl<Project>, ProjectRepoProtocol {
     
@@ -113,4 +112,12 @@ class ProjectRepo: BaseRepositoryImpl<Project>, ProjectRepoProtocol {
         )
         return try fetch(descriptor)
     }
+}
+
+#Preview("App-Big Screen") {
+    RootView {
+        ContentView()
+    }
+    .frame(width: 1200)
+    .frame(height: 1200)
 }

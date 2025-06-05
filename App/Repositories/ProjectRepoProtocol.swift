@@ -1,7 +1,6 @@
 import Foundation
 import SwiftData
-
-// MARK: - Project Repository协议
+import SwiftUI
 
 protocol ProjectRepoProtocol: BaseRepo where Entity == Project {
     // 基础CRUD操作
@@ -26,4 +25,12 @@ protocol ProjectRepoProtocol: BaseRepo where Entity == Project {
 enum SortOrder {
     case ascending
     case descending
+}
+
+#Preview("App-Big Screen") {
+    RootView {
+        ContentView()
+    }
+    .frame(width: 1200)
+    .frame(height: 1200)
 }
