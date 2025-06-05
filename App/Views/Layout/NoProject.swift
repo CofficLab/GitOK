@@ -5,6 +5,7 @@ import SwiftUI
 
 struct NoProject: View, SuperThread, SuperEvent {
     @EnvironmentObject var g: GitProvider
+    @EnvironmentObject var repoManager: RepoManager
     @Environment(\.modelContext) private var modelContext
 
     @State var columnVisibility: NavigationSplitViewVisibility = .doubleColumn
@@ -35,13 +36,13 @@ struct NoProject: View, SuperThread, SuperEvent {
         }
     }
 
+    /**
+     * 删除项目
+     * @param project 要删除的项目
+     */
     private func deleteItem(_ project: Project) {
-        let path = project.path
         withAnimation {
-            modelContext.delete(project)
-            DispatchQueue.main.async {
-                NotificationCenter.default.post(name: .gitProjectDeleted, object: self, userInfo: ["path": path])
-            }
+            g.deleteProject(project, using: repoManager.projectRepo)
         }
     }
 }
