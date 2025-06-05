@@ -5,10 +5,9 @@ import MagicCore
 
 struct Projects: View, SuperLog {
     @EnvironmentObject var repoManager: RepoManager
-    @EnvironmentObject var app: AppProvider
     @EnvironmentObject var g: GitProvider
 
-    var emoji = "🖥️"
+    static let emoji = "🖥️"
     
     private var repo: any ProjectRepoProtocol { repoManager.projectRepo }
 
@@ -42,7 +41,11 @@ struct Projects: View, SuperLog {
         .onAppear(perform: onAppear)
         .navigationSplitViewColumnWidth(min: 175, ideal: 175, max: 200)
     }
+}
 
+// MARK: - Action
+
+extension Projects {
     private func deleteItem(_ project: Project) {
         withAnimation {
             try? self.repo.delete(project)
@@ -67,10 +70,12 @@ struct Projects: View, SuperLog {
 
 extension Projects {
     func onAppear() {
-        os_log("\(self.t) onAppear, projects.count = \(g.projects.count)")
+        os_log("\(self.t)onAppear, projects.count = \(g.projects.count)")
         os_log("\(self.t)Current Project: \(g.project?.path ?? "")")
     }
 }
+
+// MARK: - Preview
 
 #Preview {
     AppPreview()

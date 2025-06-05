@@ -4,10 +4,6 @@ import SwiftUI
 import MagicCore
 
 struct Sidebar: View, SuperThread, SuperEvent {
-    @EnvironmentObject var app: AppProvider
-    @EnvironmentObject var g: GitProvider
-    @Environment(\.modelContext) private var modelContext
-    
     var body: some View {
         Projects()
             .toolbar(content: {
@@ -17,3 +13,12 @@ struct Sidebar: View, SuperThread, SuperEvent {
             })
     }
 }
+
+#Preview("Default-Big Screen") {
+    RootView {
+        ContentView()
+    }
+    .frame(width: 1200)
+    .frame(height: 1200)
+}
+

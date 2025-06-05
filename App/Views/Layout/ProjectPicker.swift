@@ -2,7 +2,6 @@ import SwiftUI
 import SwiftData
 
 struct ProjectPicker: View {
-    @EnvironmentObject var app: AppProvider
     @EnvironmentObject var git: GitProvider
 
     var body: some View {
@@ -14,7 +13,7 @@ struct ProjectPicker: View {
                 Text(project.title).tag(project as Project?)
             }
         }
-        .frame(width: 200)
+//        .frame(width: 200)
     }
 }
 
@@ -25,3 +24,12 @@ struct ProjectPicker: View {
     .frame(width: 800)
     .frame(height: 1000)
 }
+
+#Preview("Default-Big Screen") {
+    RootView {
+        ContentView()
+    }
+    .frame(width: 1200)
+    .frame(height: 1200)
+}
+

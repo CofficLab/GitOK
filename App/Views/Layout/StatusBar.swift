@@ -2,7 +2,6 @@ import MagicCore
 import SwiftUI
 
 struct StatusBar: View {
-    @EnvironmentObject var app: AppProvider
     @EnvironmentObject var p: PluginProvider
 
     var body: some View {
@@ -44,3 +43,12 @@ struct StatusBar: View {
     })
     .frame(width: 800, height: 800)
 }
+
+#Preview("Default-Big Screen") {
+    RootView {
+        ContentView()
+    }
+    .frame(width: 1200)
+    .frame(height: 1200)
+}
+
