@@ -1,10 +1,9 @@
-import SwiftUI
 import MagicCore
+import SwiftUI
 
 struct StatusBar: View {
-    @EnvironmentObject var app: AppProvider
     @EnvironmentObject var p: PluginProvider
-    
+
     var body: some View {
         HStack(spacing: 0) {
             ForEach(p.plugins, id: \.label) { plugin in
@@ -18,7 +17,17 @@ struct StatusBar: View {
         .padding(.trailing, 10)
         .labelStyle(.iconOnly)
         .frame(maxWidth: .infinity)
-        .background(MagicBackground.deepOceanCurrent.opacity(0.2))
+        .background(background)
+    }
+    
+    private var background: some View {
+        ZStack {
+            if MagicApp.isDebug {
+                MagicBackground.aurora.opacity(0.6)
+            } else {
+                MagicBackground.deepOceanCurrent.opacity(0.2)
+            }
+        }
     }
 }
 
@@ -33,5 +42,13 @@ struct StatusBar: View {
         ContentView()
     })
     .frame(width: 800, height: 800)
+}
+
+#Preview("App-Big Screen") {
+    RootView {
+        ContentView()
+    }
+    .frame(width: 1200)
+    .frame(height: 1200)
 }
 

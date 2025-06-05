@@ -1,31 +1,29 @@
-//
-//  NoCommit 2.swift
-//  GitOK
-//
-//  Created by Angel on 2025/5/25.
-//
-
-
 import SwiftUI
 
+/// 无本地更改提示视图
+/// 当 Git 仓库没有本地更改时显示此视图
 struct NoLocalChanges: View {
     var body: some View {
-        VStack(spacing: 16) {
-            Image(systemName: "checkmark.circle")
-                .font(.system(size: 48))
-                .foregroundColor(.green)
-
-            Text(LocalizedStringKey("no_local_changes_title"))
-                .font(.headline)
-                .padding()
-
-            Text(LocalizedStringKey("no_local_changes_description"))
-                .font(.subheadline)
-                .foregroundColor(.secondary)
-                .multilineTextAlignment(.center)
-                .padding(.horizontal)
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-
+        GuideView(
+            systemImage: "checkmark.circle",
+            title: String(localized: "no_local_changes_title"),
+            subtitle: String(localized: "no_local_changes_description")
+        )
     }
+}
+
+#Preview("NoCommit") {
+    RootView {
+        NoLocalChanges()
+    }
+    .frame(height: 600)
+    .frame(width: 600)
+}
+
+#Preview("App-Big Screen") {
+    RootView {
+        ContentView()
+    }
+    .frame(width: 1200)
+    .frame(height: 1200)
 }

@@ -149,3 +149,11 @@ struct BtnCommitAndPush: View, SuperLog, SuperThread {
 #Preview {
     BtnCommitAndPush(repoPath: "/path/to/your/repo") // 初始化时传入路径
 }
+
+#Preview("App-Big Screen") {
+    RootView {
+        ContentView()
+    }
+    .frame(width: 1200)
+    .frame(height: 1200)
+}

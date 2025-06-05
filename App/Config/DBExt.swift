@@ -26,6 +26,12 @@ extension AppConfig {
             fatalError("Could not create ModelContainer: \(error)")
         }
     }
+    
+    // 新增：创建Repository管理器
+    static func createRepositoryManager() -> RepoManager {
+        let container = getContainer()
+        return RepoManager.create(with: container)
+    }
 }
 
 #Preview {

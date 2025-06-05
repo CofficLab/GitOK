@@ -6,10 +6,11 @@ import MagicCore
 struct RootView<Content>: View, SuperEvent where Content: View {
     var content: Content
     var a: AppProvider
-    var g: GitProvider
     var b: BannerProvider
     var i: IconProvider
-    var c: ModelContainer
+    var repoManager: RepoManager
+    
+    private var box: RootBox
     
     @StateObject var p = PluginProvider()
     @StateObject var m = MessageProvider()
@@ -17,13 +18,11 @@ struct RootView<Content>: View, SuperEvent where Content: View {
     init(@ViewBuilder content: () -> Content) {
         self.content = content()
         
-        let box = RootBox.shared
-        
+        self.box = RootBox.shared
         self.a = box.app
-        self.g = box.git
         self.b = box.banner
         self.i = box.icon
-        self.c = box.c
+        self.repoManager = box.repoManager
     }
 
     var body: some View {
@@ -48,13 +47,13 @@ struct RootView<Content>: View, SuperEvent where Content: View {
             }, completion: {
                 m.clearError()
             })
-            .modelContainer(c)
             .environmentObject(a)
-            .environmentObject(g)
             .environmentObject(b)
             .environmentObject(i)
             .environmentObject(p)
             .environmentObject(m)
+            .environmentObject(self.box.git)
+            .environmentObject(repoManager)
             .onAppear(perform: onAppear)
             .onReceive(nc.publisher(for: .gitCommitStart), perform: onGitCommitStart)
             .onReceive(nc.publisher(for: .gitCommitSuccess), perform: onGitCommitSuccess)

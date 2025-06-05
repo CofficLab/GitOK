@@ -2,7 +2,8 @@ import SwiftUI
 import OSLog
 
 struct BtnAdd: View {
-    @Environment(\.modelContext) private var modelContext
+    @EnvironmentObject var g: GitProvider
+    @EnvironmentObject var repoManager: RepoManager
     
     var body: some View {
         Button(action: open) {
@@ -24,12 +25,19 @@ struct BtnAdd: View {
     
     private func addURL(_ url: URL) {
         withAnimation {
-            let newProject = Project(url)
-            modelContext.insert(newProject)
+            g.addProject(url: url, using: repoManager.projectRepo)
         }
     }
 }
 
 #Preview {
     AppPreview()
+}
+
+#Preview("App-Big Screen") {
+    RootView {
+        ContentView()
+    }
+    .frame(width: 1200)
+    .frame(height: 1200)
 }

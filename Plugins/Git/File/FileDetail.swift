@@ -1,6 +1,7 @@
 import MagicCore
 import MagicWeb
 import SwiftUI
+import AppKit
 
 struct FileDetail: View, SuperLog, SuperEvent, SuperThread {
     @EnvironmentObject var m: MessageProvider
@@ -14,6 +15,24 @@ struct FileDetail: View, SuperLog, SuperEvent, SuperThread {
     var body: some View {
         if let view = self.view {
             VStack(spacing: 0) {
+                // 文件路径显示组件
+                HStack(spacing: 6) {
+                    Image(systemName: "doc.text")
+                        .foregroundColor(.secondary)
+                        .font(.system(size: 12))
+                    
+                    Text(file.projectPath + "/" + file.name)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                        .lineLimit(1)
+                        .truncationMode(.middle)
+                    
+                    Spacer()
+                }
+                .padding(.horizontal, 12)
+                .padding(.vertical, 8)
+                .background(Color(NSColor.textBackgroundColor))
+                
                 view
                     .frame(maxWidth: .infinity)
                     .frame(maxHeight: .infinity)
@@ -181,4 +200,12 @@ extension View {
             self
         }
     }
+}
+
+#Preview("App-Big Screen") {
+    RootView {
+        ContentView()
+    }
+    .frame(width: 1200)
+    .frame(height: 1200)
 }

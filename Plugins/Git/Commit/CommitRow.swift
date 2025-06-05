@@ -36,6 +36,15 @@ struct CommitRow: View, SuperThread {
                                         .font(.system(size: 11))
                                         .foregroundColor(.secondary)
 
+                                    // 相对时间标签
+                                    Text(relativeTime(from: commit.date))
+                                        .font(.system(size: 10))
+                                        .padding(.horizontal, 4)
+                                        .padding(.vertical, 1)
+                                        .background(Color.gray.opacity(0.2))
+                                        .cornerRadius(4)
+                                        .foregroundColor(.secondary)
+
                                     Spacer()
                                 }
                             }
@@ -83,6 +92,59 @@ struct CommitRow: View, SuperThread {
             }
         }
     }
+    
+    /// 计算相对时间
+    /// @param dateString 日期字符串
+    /// @return 相对时间描述（如：2分钟前、3小时前、1天前等）
+    private func relativeTime(from dateString: String) -> String {
+        // Git 日期格式通常是 "YYYY-MM-DD HH:mm:ss" 或 ISO 8601 格式
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        
+        // 尝试多种日期格式
+        var date: Date?
+        
+        // 尝试标准格式
+        date = formatter.date(from: dateString)
+        
+        // 如果失败，尝试 ISO 8601 格式
+        if date == nil {
+            formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
+            date = formatter.date(from: dateString)
+        }
+        
+        // 如果还是失败，尝试其他常见格式
+        if date == nil {
+            formatter.dateFormat = "EEE MMM d HH:mm:ss yyyy Z"
+            date = formatter.date(from: dateString)
+        }
+        
+        guard let commitDate = date else {
+            return "未知"
+        }
+        
+        let now = Date()
+        let timeInterval = now.timeIntervalSince(commitDate)
+        
+        if timeInterval < 60 {
+            return "刚刚"
+        } else if timeInterval < 3600 {
+            let minutes = Int(timeInterval / 60)
+            return "\(minutes)分钟前"
+        } else if timeInterval < 86400 {
+            let hours = Int(timeInterval / 3600)
+            return "\(hours)小时前"
+        } else if timeInterval < 2592000 {
+            let days = Int(timeInterval / 86400)
+            return "\(days)天前"
+        } else if timeInterval < 31536000 {
+            let months = Int(timeInterval / 2592000)
+            return "\(months)个月前"
+        } else {
+            let years = Int(timeInterval / 31536000)
+            return "\(years)年前"
+        }
+    }
 }
 
 #Preview {
@@ -92,4 +154,12 @@ struct CommitRow: View, SuperThread {
     }
     .frame(width: 800)
     .frame(height: 800)
+}
+
+#Preview("App-Big Screen") {
+    RootView {
+        ContentView()
+    }
+    .frame(width: 1200)
+    .frame(height: 1200)
 }

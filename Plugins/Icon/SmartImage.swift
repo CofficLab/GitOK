@@ -65,3 +65,11 @@ class SmartImage: SuperLog {
         }
     }
 }
+
+#Preview("App-Big Screen") {
+    RootView {
+        ContentView()
+    }
+    .frame(width: 1200)
+    .frame(height: 1200)
+}

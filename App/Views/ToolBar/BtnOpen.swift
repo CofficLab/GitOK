@@ -23,3 +23,11 @@ struct BtnOpen: View {
     AppPreview()
         .frame(width: 800)
 }
+
+#Preview("App-Big Screen") {
+    RootView {
+        ContentView()
+    }
+    .frame(width: 1200)
+    .frame(height: 1200)
+}
