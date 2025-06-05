@@ -7,10 +7,11 @@ import SwiftUI
 import MagicCore
 
 class GitProvider: NSObject, ObservableObject, SuperLog {
-    @Published private(set) var branches: [String] = []
-    @Published var project: Project?
-    @Published private(set) var commit: GitCommit?
-    @Published private(set) var file: File?
+    @Published private(set) var branches: [Branch] = []
+    @Published var branch: Branch? = nil
+    @Published var project: Project? = nil
+    @Published private(set) var commit: GitCommit? = nil
+    @Published private(set) var file: File? = nil
     @Published var projects: [Project] = []
     
     var emoji = "🏠"
@@ -21,6 +22,12 @@ class GitProvider: NSObject, ObservableObject, SuperLog {
         self.project = projects.first(where: {
             $0.path == AppConfig.projectPath
         })
+        
+        super.init()
+        
+        Task {
+            self.refreshBranches(reason: "GitProvider.Init")
+        }
     }
     
     func setProject(_ p: Project?, reason: String) {
@@ -160,6 +167,23 @@ class GitProvider: NSObject, ObservableObject, SuperLog {
         } catch {
             os_log(.error, "Failed to refresh projects: \(error.localizedDescription)")
         }
+    }
+    
+    func refreshBranches(reason: String) {
+        let verbose = false
+
+        guard let project = project else {
+            return
+        }
+
+        if verbose {
+            os_log("\(self.t)Refresh")
+        }
+
+        branches = (try? GitShell.getBranches(project.path)) ?? []
+        branch = branches.first(where: {
+            $0.name == self.currentBranch?.name
+        })
     }
 }
 
