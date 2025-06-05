@@ -8,7 +8,6 @@ struct RootView<Content>: View, SuperEvent where Content: View {
     var a: AppProvider
     var b: BannerProvider
     var i: IconProvider
-    var c: ModelContainer
     var repoManager: RepoManager
     
     private var box: RootBox
@@ -23,7 +22,6 @@ struct RootView<Content>: View, SuperEvent where Content: View {
         self.a = box.app
         self.b = box.banner
         self.i = box.icon
-        self.c = box.c
         self.repoManager = box.repoManager
     }
 
@@ -49,7 +47,6 @@ struct RootView<Content>: View, SuperEvent where Content: View {
             }, completion: {
                 m.clearError()
             })
-            .modelContainer(c)
             .environmentObject(a)
             .environmentObject(b)
             .environmentObject(i)
