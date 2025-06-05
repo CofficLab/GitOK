@@ -16,6 +16,14 @@ class PluginProvider: ObservableObject, SuperLog, SuperThread {
         QuickMergePlugin(),
         SmartMergePlugin(),
         SmartMessagePlugin(),
+        OpenXcodePlugin(),
+        OpenVSCodePlugin(),
+        OpenCursorPlugin(),
+        OpenTraePlugin(),
+        OpenFinderPlugin(),
+        OpenTerminalPlugin(),
+        OpenRemotePlugin(),
+        SyncPlugin(),
     ]
 
     init() {

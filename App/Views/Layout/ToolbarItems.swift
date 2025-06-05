@@ -28,14 +28,6 @@ struct ToolbarItems: View {
             ForEach(p.plugins, id: \.label) { plugin in
                 plugin.addToolBarLeadingView()
             }
-            BtnOpenXcode(url: project.url)
-            BtnOpen(url: project.url)
-            BtnOpenCursor(url: project.url)
-            BtnOpenTrae(url: project.url)
-            BtnFinder(url: project.url)
-            BtnOpenTerminal(url: project.url)
-            BtnOpenRemote(message: $message, path: project.path)
-            BtnSync(message: $message, path: project.path)
             if project.isGit {
                 Branches()
             }

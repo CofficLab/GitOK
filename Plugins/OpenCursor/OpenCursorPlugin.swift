@@ -1,0 +1,71 @@
+import SwiftUI
+import MagicCore
+import OSLog
+
+class OpenCursorPlugin: SuperPlugin, SuperLog {
+    let emoji = "🖱️"
+    var label: String = "OpenCursor"
+    var icon: String = "cursorarrow.click.2"
+    var isTab: Bool = false
+
+    func addDBView() -> AnyView {
+        AnyView(EmptyView())
+    }
+
+    func addListView() -> AnyView {
+        AnyView(EmptyView())
+    }
+
+    func addDetailView() -> AnyView {
+        AnyView(EmptyView())
+    }
+
+    func addToolBarLeadingView() -> AnyView {
+        AnyView(BtnOpenCursorView())
+    }
+
+    func onInit() {
+        os_log("\(self.t) onInit")
+    }
+
+    func onAppear() {
+        os_log("\(self.t) onAppear")
+    }
+
+    func onDisappear() {
+        os_log("\(self.t) onDisappear")
+    }
+
+    func onPlay() {
+        os_log("\(self.t) onPlay")
+    }
+
+    func onPlayStateUpdate() {
+        os_log("\(self.t) onPlayStateUpdate")
+    }
+
+    func onPlayAssetUpdate() {
+        os_log("\(self.t) onPlayAssetUpdate")
+    }
+}
+
+struct BtnOpenCursorView: View {
+    @EnvironmentObject var g: DataProvider
+
+    var body: some View {
+        if let project = g.project {
+            Button(action: {
+                if let cursorURL = NSWorkspace.shared.urlForApplication(toOpen: URL(fileURLWithPath: "/Applications/Cursor.app")) {
+                    NSWorkspace.shared.open([project.url], withApplicationAt: cursorURL, configuration: NSWorkspace.OpenConfiguration(), completionHandler: nil)
+                }
+            }, label: {
+                Label(
+                    title: { Text("用 Cursor 打开") },
+                    icon: {
+                        Image("Cursor").resizable().scaledToFit().scaleEffect(0.9)
+                    }
+                )
+            })
+        }
+    }
+}
