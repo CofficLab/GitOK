@@ -124,19 +124,11 @@ struct ContentView: View, SuperThread, SuperEvent {
 
             if let project = g.project, project.isExist() {
                 ToolbarItemGroup(placement: .cancellationAction, content: {
-                    if projectActionsVisibility {
-                        BtnOpenXcode(url: project.url)
-                        BtnOpen(url: project.url)
-                        BtnOpenCursor(url: project.url)
-                        BtnOpenTrae(url: project.url)
-                        BtnFinder(url: project.url)
-                        BtnOpenTerminal(url: project.url)
-                        BtnOpenRemote(message: $message, path: project.path)
-                        BtnSync(message: $message, path: project.path)
-                        if project.isGit {
-                            Branches()
-                        }
-                    }
+                    ToolbarItems(
+                        message: $message,
+                        project: project,
+                        isVisible: projectActionsVisibility
+                    )
                 })
             }
         })
