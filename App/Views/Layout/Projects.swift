@@ -1,14 +1,14 @@
+import MagicCore
 import OSLog
 import SwiftData
 import SwiftUI
-import MagicCore
 
 struct Projects: View, SuperLog {
     @EnvironmentObject var repoManager: RepoManager
-    @EnvironmentObject var g: GitProvider
+    @EnvironmentObject var g: DataProvider
 
     static let emoji = "🖥️"
-    
+
     private var repo: any ProjectRepoProtocol { repoManager.projectRepo }
 
     var body: some View {
@@ -20,7 +20,7 @@ struct Projects: View, SuperLog {
                             Button("删除") {
                                 deleteItem(item)
                             }
-                            
+
                             if FileManager.default.fileExists(atPath: item.path) {
                                 Button("在Finder中显示") {
                                     let url = URL(fileURLWithPath: item.path)

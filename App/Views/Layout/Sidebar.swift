@@ -1,7 +1,7 @@
+import MagicCore
 import OSLog
 import SwiftData
 import SwiftUI
-import MagicCore
 
 struct Sidebar: View, SuperThread, SuperEvent {
     var body: some View {

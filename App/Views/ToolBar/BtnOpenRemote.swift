@@ -2,7 +2,7 @@ import SwiftUI
 import OSLog
 
 struct BtnOpenRemote: View {
-    @EnvironmentObject var g: GitProvider
+    @EnvironmentObject var g: DataProvider
     
     @Binding var message: String
 

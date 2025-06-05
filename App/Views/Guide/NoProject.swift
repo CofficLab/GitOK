@@ -4,7 +4,7 @@ import SwiftData
 import SwiftUI
 
 struct NoProject: View, SuperThread, SuperEvent {
-    @EnvironmentObject var g: GitProvider
+    @EnvironmentObject var g: DataProvider
 
     @State var columnVisibility: NavigationSplitViewVisibility = .doubleColumn
 

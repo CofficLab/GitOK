@@ -2,7 +2,7 @@ import SwiftUI
 
 struct CommitForm: View {
     @EnvironmentObject var app: AppProvider
-    @EnvironmentObject var g: GitProvider
+    @EnvironmentObject var g: DataProvider
 
     @State var text: String = ""
     @State var category: CommitCategory = .Chore

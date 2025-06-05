@@ -3,7 +3,7 @@ import SwiftUI
 
 struct MergeForm: View {
     @EnvironmentObject var app: AppProvider
-    @EnvironmentObject var g: GitProvider
+    @EnvironmentObject var g: DataProvider
 
     @State var branches: [Branch] = []
     @State var text: String = ""

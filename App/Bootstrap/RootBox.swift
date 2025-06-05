@@ -16,7 +16,7 @@ final class RootBox: SuperLog {
     let app: AppProvider
     let banner: BannerProvider
     let icon: IconProvider
-    let git: GitProvider
+    let git: DataProvider
     let repoManager: RepoManager
 
     private init(reason: String) {
@@ -34,10 +34,10 @@ final class RootBox: SuperLog {
         do {
             let projects = try self.repoManager.projectRepo.findAll(sortedBy: .ascending)
             
-            self.git = GitProvider(projects: projects)
+            self.git = DataProvider(projects: projects)
         } catch let e {
             os_log(.error, "\(e.localizedDescription)")
-            self.git = GitProvider(projects: [])
+            self.git = DataProvider(projects: [])
         }
     }
 }

@@ -3,12 +3,14 @@ import SwiftUI
 /// 通用的引导提示视图组件
 /// 用于显示带有图标和文本的提示界面
 struct GuideView: View {
+    @EnvironmentObject var g: DataProvider
+
     let systemImage: String
     let title: String
     let subtitle: String?
     let action: (() -> Void)?
     let actionLabel: String?
-    
+
     /// 初始化引导视图
     /// - Parameters:
     ///   - systemImage: SF Symbol 图标名称
@@ -29,24 +31,31 @@ struct GuideView: View {
         self.action = action
         self.actionLabel = actionLabel
     }
-    
+
     var body: some View {
         VStack(spacing: 20) {
             Image(systemName: systemImage)
                 .font(.system(size: 60))
                 .foregroundColor(.gray)
-            
+
             Text(title)
                 .font(.title2)
                 .foregroundColor(.secondary)
-            
+
             if let subtitle = subtitle {
                 Text(subtitle)
                     .font(.body)
-//                    .foregroundColor(.tertiary)
                     .multilineTextAlignment(.center)
             }
-            
+
+            if let projectPath = g.project?.path {
+                Text("当前项目：\(projectPath)")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal)
+            }
+
             if let action = action, let actionLabel = actionLabel {
                 Button(action: action) {
                     Text(actionLabel)
@@ -60,21 +69,25 @@ struct GuideView: View {
 }
 
 #Preview {
-    GuideView(
-        systemImage: "folder.badge.questionmark",
-        title: "No Project",
-        subtitle: "Please select or create a project",
-        action: { print("Action tapped") },
-        actionLabel: "Create Project"
-    )
+    RootView {
+        GuideView(
+            systemImage: "folder.badge.questionmark",
+            title: "No Project",
+            subtitle: "Please select or create a project",
+            action: { print("Action tapped") },
+            actionLabel: "Create Project"
+        )
+    }
     .frame(width: 400, height: 300)
 }
 
 #Preview("Simple") {
-    GuideView(
-        systemImage: "exclamationmark.triangle",
-        title: "Not a Git Repository"
-    )
+    RootView {
+        GuideView(
+            systemImage: "exclamationmark.triangle",
+            title: "Not a Git Repository"
+        )
+    }
     .frame(width: 400, height: 300)
 }
 

@@ -17,7 +17,7 @@ struct ContentView: View, SuperThread, SuperEvent {
     /// 应用程序状态管理器，提供全局应用状态和配置信息
     @EnvironmentObject var app: AppProvider
     /// Git 操作提供者，管理 Git 相关的状态和操作
-    @EnvironmentObject var g: GitProvider
+    @EnvironmentObject var g: DataProvider
     /// 插件提供者，管理应用中的各种插件
     @EnvironmentObject var p: PluginProvider
 

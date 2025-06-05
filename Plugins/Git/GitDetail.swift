@@ -4,7 +4,7 @@ import AppKit
 
 struct GitDetail: View, SuperEvent {
     @EnvironmentObject var app: AppProvider
-    @EnvironmentObject var g: GitProvider
+    @EnvironmentObject var g: DataProvider
     @EnvironmentObject var m: MessageProvider
 
     @State var diffView: AnyView = AnyView(EmptyView())

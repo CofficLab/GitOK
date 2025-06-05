@@ -4,7 +4,7 @@ import SwiftUI
 
 struct Branches: View, SuperThread, SuperLog, SuperEvent {
     @EnvironmentObject var app: AppProvider
-    @EnvironmentObject var g: GitProvider
+    @EnvironmentObject var g: DataProvider
     @EnvironmentObject var m: MessageProvider
 
     @State var selection: Branch?

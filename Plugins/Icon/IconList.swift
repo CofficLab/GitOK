@@ -6,7 +6,7 @@ import MagicCore
 struct IconList: View, SuperLog {
     @EnvironmentObject var app: AppProvider
     @EnvironmentObject var m: MessageProvider
-    @EnvironmentObject var g: GitProvider
+    @EnvironmentObject var g: DataProvider
     @EnvironmentObject var i: IconProvider
 
     @State var selection: IconModel?

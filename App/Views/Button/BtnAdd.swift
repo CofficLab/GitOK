@@ -2,7 +2,7 @@ import SwiftUI
 import OSLog
 
 struct BtnAdd: View {
-    @EnvironmentObject var g: GitProvider
+    @EnvironmentObject var g: DataProvider
     @EnvironmentObject var repoManager: RepoManager
     
     var body: some View {

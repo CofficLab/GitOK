@@ -3,7 +3,7 @@ import SwiftUI
 
 struct CommitList: View, SuperThread, SuperLog {
     @EnvironmentObject var app: AppProvider
-    @EnvironmentObject var g: GitProvider
+    @EnvironmentObject var g: DataProvider
 
     @State private var commits: [GitCommit] = []
     @State private var loading = false

@@ -5,7 +5,7 @@ import MagicCore
 struct TileFile: View, SuperLog, SuperThread {
     @EnvironmentObject var a: AppProvider
     @EnvironmentObject var m: MessageProvider
-    @EnvironmentObject var g: GitProvider
+    @EnvironmentObject var g: DataProvider
     
     @State var hovered = false
     @State var isPresented = false

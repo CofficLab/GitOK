@@ -6,12 +6,15 @@ import MediaPlayer
 import OSLog
 import SwiftUI
 
-class GitProvider: NSObject, ObservableObject, SuperLog {
+class DataProvider: NSObject, ObservableObject, SuperLog {
+    // MARK: - Properties
+    
     @Published private(set) var branches: [Branch] = []
     @Published var branch: Branch? = nil
     @Published var project: Project? = nil {
         didSet {
             AppConfig.setProjectPath(project?.path ?? "")
+            self.handleProjectChanged()
         }
     }
     @Published private(set) var commit: GitCommit? = nil
@@ -21,6 +24,8 @@ class GitProvider: NSObject, ObservableObject, SuperLog {
     static let emoji = "🏠"
     private var cancellables = Set<AnyCancellable>()
 
+    // MARK: - Initialization
+    
     init(projects: [Project]) {
         self.projects = projects
 
@@ -35,7 +40,11 @@ class GitProvider: NSObject, ObservableObject, SuperLog {
 
         self.refreshBranches(reason: "GitProvider.Init")
     }
+}
 
+// MARK: - Event Handling
+
+extension DataProvider {
     /**
      * 设置事件监听器
      */
@@ -102,6 +111,22 @@ class GitProvider: NSObject, ObservableObject, SuperLog {
         refreshBranches(reason: "Git Operation Success")
     }
 
+    /**
+     * 处理Project变更事件
+     */
+    private func handleProjectChanged() {
+        refreshBranches(reason: "Project Changed")
+    }
+}
+
+// MARK: - Project Management
+
+extension DataProvider {
+    /**
+     * 设置当前项目
+     * @param p 要设置的项目
+     * @param reason 设置原因
+     */
     private func setProject(_ p: Project?, reason: String) {
         let verbose = false
 
@@ -112,66 +137,7 @@ class GitProvider: NSObject, ObservableObject, SuperLog {
 
         self.project = p
     }
-
-    var currentBranch: Branch? {
-        guard let project = project else {
-            return nil
-        }
-
-        do {
-            return try GitShell.getCurrentBranch(project.path)
-        } catch _ {
-            return nil
-        }
-    }
-
-    func setFile(_ f: File?) {
-        file = f
-    }
-
-    func setCommit(_ c: GitCommit?) {
-        guard commit?.id != c?.id else { return }
-        commit = c
-    }
-
-    func setBranch(_ branch: Branch?) throws {
-        let verbose = false
-
-        if verbose {
-            os_log("\(self.t)Set Branch to \(branch?.name ?? "-")")
-        }
-
-        guard let project = project, let branch = branch else {
-            return
-        }
-
-        if branch.name == currentBranch?.name {
-            return
-        }
-
-        try GitShell.setBranch(branch, project.path, verbose: true)
-    }
-
-    func commit(_ message: String) {
-        guard let project = self.project else { return }
-
-        do {
-            try GitShell.commit(project.path, commit: message)
-        } catch {
-            // 错误处理...
-        }
-    }
-
-    func pull() {
-        guard let project = self.project else { return }
-
-        do {
-            try GitShell.pull(project.path)
-        } catch {
-            // 错误处理...
-        }
-    }
-
+    
     /**
      * 移动项目并更新排序
      * @param source 源索引集合
@@ -299,16 +265,63 @@ class GitProvider: NSObject, ObservableObject, SuperLog {
             os_log(.error, "Failed to delete project: \(error.localizedDescription)")
         }
     }
+}
 
-    func refreshBranches(reason: String) {
+// MARK: - Branch Management
+
+extension DataProvider {
+    /**
+     * 获取当前分支
+     * @return 当前分支，如果获取失败则返回nil
+     */
+    var currentBranch: Branch? {
+        guard let project = project else {
+            return nil
+        }
+
+        do {
+            return try GitShell.getCurrentBranch(project.path)
+        } catch _ {
+            return nil
+        }
+    }
+    
+    /**
+     * 切换到指定分支
+     * @param branch 要切换到的分支
+     * @throws Git操作异常
+     */
+    func setBranch(_ branch: Branch?) throws {
         let verbose = false
+
+        if verbose {
+            os_log("\(self.t)Set Branch to \(branch?.name ?? "-")")
+        }
+
+        guard let project = project, let branch = branch else {
+            return
+        }
+
+        if branch.name == currentBranch?.name {
+            return
+        }
+
+        try GitShell.setBranch(branch, project.path, verbose: true)
+    }
+    
+    /**
+     * 刷新分支列表
+     * @param reason 刷新原因
+     */
+    func refreshBranches(reason: String) {
+        let verbose = true
 
         guard let project = project else {
             return
         }
 
         if verbose {
-            os_log("\(self.t)Refresh")
+            os_log("\(self.t)Refresh(\(reason))")
         }
 
         branches = (try? GitShell.getBranches(project.path)) ?? []
@@ -317,6 +330,56 @@ class GitProvider: NSObject, ObservableObject, SuperLog {
         })
     }
 }
+
+// MARK: - Git Operations
+
+extension DataProvider {
+    /**
+     * 设置当前选中的文件
+     * @param f 要设置的文件
+     */
+    func setFile(_ f: File?) {
+        file = f
+    }
+
+    /**
+     * 设置当前选中的提交
+     * @param c 要设置的提交
+     */
+    func setCommit(_ c: GitCommit?) {
+        guard commit?.id != c?.id else { return }
+        commit = c
+    }
+    
+    /**
+     * 提交代码
+     * @param message 提交信息
+     */
+    func commit(_ message: String) {
+        guard let project = self.project else { return }
+
+        do {
+            try GitShell.commit(project.path, commit: message)
+        } catch {
+            // 错误处理...
+        }
+    }
+
+    /**
+     * 拉取远程代码
+     */
+    func pull() {
+        guard let project = self.project else { return }
+
+        do {
+            try GitShell.pull(project.path)
+        } catch {
+            // 错误处理...
+        }
+    }
+}
+
+// MARK: - Previews
 
 #Preview {
     AppPreview()

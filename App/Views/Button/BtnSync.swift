@@ -4,7 +4,7 @@ import MagicCore
 
 struct BtnSync: View, SuperLog, SuperEvent, SuperThread {
     @EnvironmentObject var m: MessageProvider
-    @EnvironmentObject var g: GitProvider
+    @EnvironmentObject var g: DataProvider
 
     @Binding var message: String
 
