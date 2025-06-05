@@ -1,5 +1,4 @@
 import MagicCore
-import MagicWeb
 import SwiftUI
 import AppKit
 

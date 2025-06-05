@@ -13,6 +13,9 @@ struct CommitList: View, SuperThread, SuperLog {
     @State private var hasMoreCommits = true
     @State private var currentPage = 0
     @State private var pageSize: Int = 50
+    
+    // 使用GitCommitRepo来存储和恢复commit选择
+    private let commitRepo = GitCommitRepo.shared
 
     var emoji = "🖥️"
     var verbose = true
@@ -106,6 +109,11 @@ struct CommitList: View, SuperThread, SuperLog {
     private func selectCommit(_ commit: GitCommit) {
         selection = commit
         g.setCommit(commit)
+        
+        // 保存选择的commit
+        if let projectPath = g.project?.path {
+            commitRepo.saveLastSelectedCommit(projectPath: projectPath, commit: commit)
+        }
     }
 }
 
@@ -137,11 +145,73 @@ extension CommitList {
 
                     let hasChanges = try? project.hasUnCommittedChanges()
                     showCommitForm = hasChanges ?? true
+                    
+                    // 恢复上次选择的commit
+                    restoreLastSelectedCommit()
                 }
             } catch {
                 main.async {
                     loading = false
                     isRefreshing = false
+                }
+            }
+        }
+    }
+    
+    // 恢复上次选择的commit
+    private func restoreLastSelectedCommit() {
+        guard let project = g.project else { return }
+        
+        // 获取上次选择的commit
+        if let lastCommit = commitRepo.getLastSelectedCommit(projectPath: project.path) {
+            // 在当前commit列表中查找匹配的commit
+            if let matchedCommit = commits.first(where: { $0.hash == lastCommit.hash }) {
+                // 选择找到的commit
+                selection = matchedCommit
+                g.setCommit(matchedCommit)
+            } else if hasMoreCommits {
+                // 如果在当前页面没有找到，并且还有更多commit，尝试加载更多
+                loadMoreCommitsUntilFound(targetHash: lastCommit.hash)
+            }
+        }
+    }
+    
+    // 加载更多commit直到找到目标commit
+    private func loadMoreCommitsUntilFound(targetHash: String, maxAttempts: Int = 3) {
+        guard let project = g.project, !loading, hasMoreCommits, maxAttempts > 0 else { return }
+        
+        loading = true
+        
+        bg.async {
+            do {
+                let newCommits = try GitShell.logsWithPagination(
+                    project.path,
+                    skip: currentPage * pageSize,
+                    limit: pageSize
+                )
+                
+                main.async {
+                    if !newCommits.isEmpty {
+                        commits.append(contentsOf: newCommits)
+                        currentPage += 1
+                        
+                        // 检查是否找到目标commit
+                        if let matchedCommit = newCommits.first(where: { $0.hash == targetHash }) {
+                            // 选择找到的commit
+                            selection = matchedCommit
+                            g.setCommit(matchedCommit)
+                        } else if hasMoreCommits {
+                            // 如果还没找到，继续加载更多
+                            loadMoreCommitsUntilFound(targetHash: targetHash, maxAttempts: maxAttempts - 1)
+                        }
+                    } else {
+                        hasMoreCommits = false
+                    }
+                    loading = false
+                }
+            } catch {
+                main.async {
+                    loading = false
                 }
             }
         }
