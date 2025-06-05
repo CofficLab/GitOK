@@ -9,7 +9,11 @@ import SwiftUI
 class GitProvider: NSObject, ObservableObject, SuperLog {
     @Published private(set) var branches: [Branch] = []
     @Published var branch: Branch? = nil
-    @Published var project: Project? = nil
+    @Published var project: Project? = nil {
+        didSet {
+            AppConfig.setProjectPath(project?.path ?? "")
+        }
+    }
     @Published private(set) var commit: GitCommit? = nil
     @Published private(set) var file: File? = nil
     @Published var projects: [Project] = []
@@ -98,7 +102,7 @@ class GitProvider: NSObject, ObservableObject, SuperLog {
         refreshBranches(reason: "Git Operation Success")
     }
 
-    func setProject(_ p: Project?, reason: String) {
+    private func setProject(_ p: Project?, reason: String) {
         let verbose = false
 
         if verbose {
@@ -107,7 +111,6 @@ class GitProvider: NSObject, ObservableObject, SuperLog {
         }
 
         self.project = p
-        AppConfig.setProjectPath(p?.path ?? "")
     }
 
     var currentBranch: Branch? {
