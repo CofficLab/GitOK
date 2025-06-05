@@ -102,10 +102,77 @@ class GitProvider: NSObject, ObservableObject, SuperLog {
             // 错误处理...
         }
     }
+    
+    /**
+     * 移动项目并更新排序
+     * @param source 源索引集合
+     * @param destination 目标索引
+     * @param repo 项目仓库实例
+     */
+    func moveProjects(from source: IndexSet, to destination: Int, using repo: any ProjectRepoProtocol) {
+        let itemsToMove = source.map { self.projects[$0] }
+        
+        os_log("Moving items: \(itemsToMove.map { $0.title }) from \(source) to \(destination)")
+    
+        do {
+            // 创建一个临时数组来重新排序
+            var tempProjects = projects
+            
+            // 从原位置移除项目
+            for index in source.sorted(by: >) {
+                tempProjects.remove(at: index)
+            }
+            
+            // 确保目标索引不会超出数组范围
+            let safeDestination = min(destination, tempProjects.count)
+            
+            // 在目标位置插入项目
+            for item in itemsToMove.reversed() {
+                tempProjects.insert(item, at: safeDestination)
+            }
+            
+            // 批量更新所有项目的order值
+            for (index, project) in tempProjects.enumerated() {
+                project.order = Int16(index)
+            }
+            
+            // 通过repo保存更改
+            try repo.save()
+            
+            // 更新本地projects数组
+            self.projects = tempProjects
+            
+            os_log("Successfully moved items and updated projects array.")
+            
+        } catch {
+            os_log("Failed to move items: \(error.localizedDescription)")
+        }
+    }
+    
+    /**
+     * 刷新项目列表
+     * @param repo 项目仓库实例
+     */
+    func refreshProjects(using repo: any ProjectRepoProtocol) {
+        do {
+            self.projects = try repo.findAll(sortedBy: .ascending)
+            os_log("Projects refreshed successfully, count: \(self.projects.count)")
+        } catch {
+            os_log(.error, "Failed to refresh projects: \(error.localizedDescription)")
+        }
+    }
 }
 
 #Preview {
     AppPreview()
         .frame(width: 800)
         .frame(height: 800)
+}
+
+#Preview("App-Big Screen") {
+    RootView {
+        ContentView()
+    }
+    .frame(width: 1200)
+    .frame(height: 1200)
 }
