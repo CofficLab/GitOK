@@ -33,7 +33,7 @@ struct FileList: View, SuperThread, SuperLog {
                 if isLoading {
                     HStack(spacing: 4) {
                         ProgressView()
-                            .scaleEffect(0.6)
+                            .controlSize(.small)
                         Text("加载中...")
                             .font(.caption)
                             .foregroundColor(.secondary)
