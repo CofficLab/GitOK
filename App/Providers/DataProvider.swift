@@ -11,8 +11,6 @@ class DataProvider: NSObject, ObservableObject, SuperLog {
 
     @Published private(set) var project: Project? = nil
     @Published var projects: [Project] = []
-    @Published var branches: [Branch] = []
-    @Published var branch: Branch? = nil
     @Published var commit: GitCommit? = nil
     @Published var file: File? = nil
 
@@ -273,27 +271,6 @@ extension DataProvider {
 
         try GitShell.setBranch(branch, project.path, verbose: true)
     }
-
-    /**
-     * 刷新分支列表
-     * @param reason 刷新原因
-     */
-    func refreshBranches(reason: String) {
-        let verbose = true
-
-        guard let project = project else {
-            return
-        }
-
-        if verbose {
-            os_log("\(self.t)Refresh(\(reason))")
-        }
-
-        branches = (try? GitShell.getBranches(project.path)) ?? []
-        branch = branches.first(where: {
-            $0.name == self.currentBranch?.name
-        })
-    }
 }
 
 // MARK: - Event Handling
@@ -353,15 +330,14 @@ extension DataProvider {
      * 处理Git操作成功事件
      */
     private func handleGitOperationSuccess(_ notification: Notification) {
-        refreshBranches(reason: "Git Operation Success")
+
     }
 
     /**
      * 处理Project变更事件
      */
-//    private func handleProjectChanged() {
-//        refreshBranches(reason: "Project Changed")
-//    }
+    private func handleProjectChanged() {
+    }
 
     /**
      * 处理项目删除事件
