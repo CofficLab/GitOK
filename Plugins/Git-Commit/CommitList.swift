@@ -1,6 +1,6 @@
 import MagicCore
-import SwiftUI
 import OSLog
+import SwiftUI
 
 struct CommitList: View, SuperThread, SuperLog {
     @EnvironmentObject var app: AppProvider
@@ -14,7 +14,7 @@ struct CommitList: View, SuperThread, SuperLog {
     @State private var hasMoreCommits = true
     @State private var currentPage = 0
     @State private var pageSize: Int = 50
-    
+
     // 使用GitCommitRepo来存储和恢复commit选择
     private let commitRepo = GitCommitRepo.shared
 
@@ -34,21 +34,21 @@ struct CommitList: View, SuperThread, SuperLog {
                             ScrollView {
                                 LazyVStack(spacing: 0, pinnedViews: []) {
                                     Divider()
-                                    
+
                                     ForEach(commits) { commit in
                                         CommitRow(commit: commit,
                                                   isSelected: selection == commit,
                                                   onSelect: { selectCommit(commit) })
-                                        .id(commit.id)
-                                        .onAppear {
-                                            let index = commits.firstIndex(of: commit) ?? 0
-                                            let threshold = Int(Double(commits.count) * 0.8)
-                                            if index >= threshold && hasMoreCommits && !loading {
-                                                loadMoreCommits()
+                                            .id(commit.id)
+                                            .onAppear {
+                                                let index = commits.firstIndex(of: commit) ?? 0
+                                                let threshold = Int(Double(commits.count) * 0.8)
+                                                if index >= threshold && hasMoreCommits && !loading {
+                                                    loadMoreCommits()
+                                                }
                                             }
-                                        }
                                     }
-                                    
+
                                     if loading && !commits.isEmpty {
                                         HStack {
                                             Spacer()
@@ -56,7 +56,7 @@ struct CommitList: View, SuperThread, SuperLog {
                                             Spacer()
                                         }
                                         .frame(height: 44)
-                                        
+
                                         Divider()
                                     }
                                 }
@@ -114,7 +114,7 @@ struct CommitList: View, SuperThread, SuperLog {
     private func selectCommit(_ commit: GitCommit) {
         selection = commit
         data.setCommit(commit)
-        
+
         // 保存选择的commit
         if let projectPath = data.project?.path {
             commitRepo.saveLastSelectedCommit(projectPath: projectPath, commit: commit)
@@ -135,39 +135,33 @@ extension CommitList {
         currentPage = 0
         hasMoreCommits = true
 
-        bg.async {
-            do {
-                let initialCommits = try GitShell.logsWithPagination(
-                    project.path,
-                    skip: 0,
-                    limit: pageSize
-                )
+        do {
+            let initialCommits = try GitShell.logsWithPagination(
+                project.path,
+                skip: 0,
+                limit: pageSize
+            )
 
-                main.async {
-                    commits = [project.headCommit] + initialCommits
-                    loading = false
-                    isRefreshing = false
-                    currentPage = 1
+            commits = [project.headCommit] + initialCommits
+            loading = false
+            isRefreshing = false
+            currentPage = 1
 
-                    let hasChanges = try? project.hasUnCommittedChanges()
-                    showCommitForm = hasChanges ?? true
-                    
-                    // 恢复上次选择的commit
-                    restoreLastSelectedCommit()
-                }
-            } catch {
-                main.async {
-                    loading = false
-                    isRefreshing = false
-                }
-            }
+            let hasChanges = try? project.hasUnCommittedChanges()
+            showCommitForm = hasChanges ?? true
+
+            // 恢复上次选择的commit
+            restoreLastSelectedCommit()
+        } catch {
+            loading = false
+            isRefreshing = false
         }
     }
-    
+
     // 恢复上次选择的commit
     private func restoreLastSelectedCommit() {
         guard let project = data.project else { return }
-        
+
         // 获取上次选择的commit
         if let lastCommit = commitRepo.getLastSelectedCommit(projectPath: project.path) {
             // 在当前commit列表中查找匹配的commit
@@ -181,13 +175,13 @@ extension CommitList {
             }
         }
     }
-    
+
     // 加载更多commit直到找到目标commit
     private func loadMoreCommitsUntilFound(targetHash: String, maxAttempts: Int = 3) {
         guard let project = data.project, !loading, hasMoreCommits, maxAttempts > 0 else { return }
-        
+
         loading = true
-        
+
         bg.async {
             do {
                 let newCommits = try GitShell.logsWithPagination(
@@ -195,12 +189,12 @@ extension CommitList {
                     skip: currentPage * pageSize,
                     limit: pageSize
                 )
-                
+
                 main.async {
                     if !newCommits.isEmpty {
                         commits.append(contentsOf: newCommits)
                         currentPage += 1
-                        
+
                         // 检查是否找到目标commit
                         if let matchedCommit = newCommits.first(where: { $0.hash == targetHash }) {
                             // 选择找到的commit
