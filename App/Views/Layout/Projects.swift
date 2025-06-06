@@ -8,6 +8,8 @@ struct Projects: View, SuperLog {
 
     static let emoji = "🖥️"
     
+    private let verbose = false
+    
     @State private var selection: Project? = nil
 
     var body: some View {
@@ -48,21 +50,20 @@ struct Projects: View, SuperLog {
 extension Projects {
     private func deleteItem(_ project: Project) {
         withAnimation {
-//            try? self.repo.delete(project)
+            self.data.deleteProject(project, using: data.repoManager.projectRepo)
         }
     }
 
     private func deleteItems(offsets: IndexSet) {
         withAnimation {
             for index in offsets {
-//                try? self.repo.delete(data.projects[index])
+                try? self.data.repoManager.projectRepo.delete(data.projects[index])
             }
         }
     }
 
     private func moveItems(from source: IndexSet, to destination: Int) {
-        // 直接调用 GitProvider 的排序方法
-//        data.moveProjects(from: source, to: destination, using: repo)
+        data.moveProjects(from: source, to: destination, using: data.repoManager.projectRepo)
     }
 }
 
@@ -70,8 +71,10 @@ extension Projects {
 
 extension Projects {
     func onAppear() {
-        os_log("\(self.t)onAppear, projects.count = \(data.projects.count)")
-        os_log("\(self.t)Current Project: \(data.project?.path ?? "")")
+        if verbose {
+            os_log("\(self.t)onAppear, projects.count = \(data.projects.count)")
+            os_log("\(self.t)Current Project: \(data.project?.path ?? "")")
+        }
         self.selection = data.project
     }
 }

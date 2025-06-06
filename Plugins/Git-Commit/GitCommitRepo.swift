@@ -13,6 +13,7 @@ class GitCommitRepo: GitCommitRepoProtocol, SuperLog {
 
     private let userDefaults = UserDefaults.standard
     private let lastCommitKeyPrefix = "Git.lastSelectedCommit_"
+    private let verbose = false
 
     var emoji = "💾"
 
@@ -35,7 +36,10 @@ class GitCommitRepo: GitCommitRepoProtocol, SuperLog {
         ]
 
         userDefaults.set(commitData, forKey: key)
-        os_log("\(self.t)已保存项目 \(projectPath) 的最后选择的commit: \(commit.hash)")
+        
+        if verbose {
+            os_log("\(self.t)已保存项目 \(projectPath) 的最后选择的commit: \(commit.hash)")
+        }
     }
 
     /// 获取项目的最后选择的commit

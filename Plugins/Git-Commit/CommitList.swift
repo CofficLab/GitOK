@@ -19,9 +19,9 @@ struct CommitList: View, SuperThread, SuperLog {
 
     // 使用GitCommitRepo来存储和恢复commit选择
     private let commitRepo = GitCommitRepo.shared
+    private let verbose = false
 
     var emoji = "🖥️"
-    var verbose = true
 
     var body: some View {
         ZStack {
@@ -123,7 +123,9 @@ struct CommitList: View, SuperThread, SuperLog {
 
 extension CommitList {
     func refresh(_ reason: String = "") {
-        os_log("\(self.t)Refresh(\(reason))")
+        if verbose {
+            os_log("\(self.t)Refresh(\(reason))")
+        }
         guard let project = data.project, !isRefreshing else { return }
 
         isRefreshing = true

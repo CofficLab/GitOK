@@ -16,7 +16,7 @@ class DataProvider: NSObject, ObservableObject, SuperLog {
 
     static let emoji = "🏠"
     var cancellables = Set<AnyCancellable>()
-    private let repoManager: RepoManager
+    let repoManager: RepoManager
 
     // MARK: - Initialization
 

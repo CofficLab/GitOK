@@ -10,6 +10,7 @@ class CommitPlugin: SuperPlugin, SuperLog {
     static let emoji = "🍒"
     static let label: String = "Commit"
     var isTab: Bool = true
+    var verbose = false
     
     private init() {}
 
@@ -18,10 +19,14 @@ class CommitPlugin: SuperPlugin, SuperLog {
      */
     func addListView(tab: String, project: Project?) -> AnyView? {
         if tab == GitPlugin.label, let project = project, project.isGit {
-            os_log("\(self.t)CommitPlugin addListView")
+            if verbose {
+                os_log("\(self.t)CommitPlugin addListView")
+            }
             return AnyView(CommitList.shared)
         } else {
-            os_log("\(self.t)CommitPlugin addListView nil")
+            if verbose {
+                os_log("\(self.t)CommitPlugin addListView nil")
+            }
             return nil
         }
     }

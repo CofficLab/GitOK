@@ -11,6 +11,6 @@ class BranchPlugin: SuperPlugin, SuperLog {
     private init() {}
 
     func addToolBarLeadingView() -> AnyView {
-        AnyView(BranchesView())
+        AnyView(BranchesView.shared)
     }
 }

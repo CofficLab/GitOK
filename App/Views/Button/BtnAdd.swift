@@ -3,7 +3,6 @@ import OSLog
 
 struct BtnAdd: View {
     @EnvironmentObject var g: DataProvider
-//    @EnvironmentObject var repoManager: RepoManager
     
     var body: some View {
         Button(action: open) {
@@ -24,9 +23,9 @@ struct BtnAdd: View {
     }
     
     private func addURL(_ url: URL) {
-//        withAnimation {
-//            g.addProject(url: url, using: repoManager.projectRepo)
-//        }
+        withAnimation {
+            g.addProject(url: url, using: g.repoManager.projectRepo)
+        }
     }
 }
 
