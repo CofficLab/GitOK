@@ -5,7 +5,7 @@ import SwiftUI
 struct NoProjectView: View {
     var body: some View {
         GuideView(
-            systemImage: "folder.open",
+            systemImage: "folder",
             title: "请选择项目",
             subtitle: "请从左侧选择一个项目开始使用"
         )

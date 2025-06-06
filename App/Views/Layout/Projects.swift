@@ -1,26 +1,26 @@
+import MagicCore
 import OSLog
 import SwiftData
 import SwiftUI
-import MagicCore
 
 struct Projects: View, SuperLog {
     @EnvironmentObject var repoManager: RepoManager
-    @EnvironmentObject var g: GitProvider
+    @EnvironmentObject var data: DataProvider
 
     static let emoji = "🖥️"
-    
+
     private var repo: any ProjectRepoProtocol { repoManager.projectRepo }
 
     var body: some View {
         ZStack {
-            List(selection: $g.project) {
-                ForEach(g.projects, id: \.self) { item in
+            List(selection: $data.project) {
+                ForEach(data.projects, id: \.self) { item in
                     Text(item.title).tag(item as Project?)
                         .contextMenu(ContextMenu(menuItems: {
                             Button("删除") {
                                 deleteItem(item)
                             }
-                            
+
                             if FileManager.default.fileExists(atPath: item.path) {
                                 Button("在Finder中显示") {
                                     let url = URL(fileURLWithPath: item.path)
@@ -55,14 +55,14 @@ extension Projects {
     private func deleteItems(offsets: IndexSet) {
         withAnimation {
             for index in offsets {
-                try? self.repo.delete(g.projects[index])
+                try? self.repo.delete(data.projects[index])
             }
         }
     }
 
     private func moveItems(from source: IndexSet, to destination: Int) {
         // 直接调用 GitProvider 的排序方法
-        g.moveProjects(from: source, to: destination, using: repo)
+        data.moveProjects(from: source, to: destination, using: repo)
     }
 }
 
@@ -70,8 +70,8 @@ extension Projects {
 
 extension Projects {
     func onAppear() {
-        os_log("\(self.t)onAppear, projects.count = \(g.projects.count)")
-        os_log("\(self.t)Current Project: \(g.project?.path ?? "")")
+        os_log("\(self.t)onAppear, projects.count = \(data.projects.count)")
+        os_log("\(self.t)Current Project: \(data.project?.path ?? "")")
     }
 }
 

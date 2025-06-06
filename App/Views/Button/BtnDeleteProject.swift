@@ -5,7 +5,7 @@ import OSLog
  * 删除项目按钮组件
  */
 struct BtnDeleteProject: View {
-    @EnvironmentObject var g: GitProvider
+    @EnvironmentObject var g: DataProvider
     @EnvironmentObject var repoManager: RepoManager
     
     var project: Project

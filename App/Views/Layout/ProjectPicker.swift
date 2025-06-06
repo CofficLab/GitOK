@@ -2,7 +2,7 @@ import SwiftUI
 import SwiftData
 
 struct ProjectPicker: View {
-    @EnvironmentObject var git: GitProvider
+    @EnvironmentObject var git: DataProvider
 
     var body: some View {
         Picker("select_project", selection: $git.project) {

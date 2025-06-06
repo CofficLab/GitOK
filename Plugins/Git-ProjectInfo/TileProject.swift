@@ -5,17 +5,17 @@ import MagicCore
 struct TileProject: View, SuperLog, SuperThread {
     @EnvironmentObject var a: AppProvider
     @EnvironmentObject var m: MessageProvider
-    @EnvironmentObject var g: GitProvider
+    @EnvironmentObject var data: DataProvider
     
     @State var hovered = false
     @State var isPresented = false
     @State var live = false
     
-    var project: Project? { g.project }
+    var project: Project? { data.project }
     var message: SmartMessage? { m.messages.first }
 
     var body: some View {
-        if let project = project, g.file == nil {
+        if let project = project, data.file == nil {
             HStack {
                 Image(systemName: "folder").padding(.leading)
                 Text(project.path).font(.footnote)

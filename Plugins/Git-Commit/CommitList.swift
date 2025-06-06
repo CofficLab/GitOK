@@ -1,9 +1,10 @@
 import MagicCore
 import SwiftUI
+import OSLog
 
 struct CommitList: View, SuperThread, SuperLog {
     @EnvironmentObject var app: AppProvider
-    @EnvironmentObject var g: GitProvider
+    @EnvironmentObject var data: DataProvider
 
     @State private var commits: [GitCommit] = []
     @State private var loading = false
@@ -21,63 +22,67 @@ struct CommitList: View, SuperThread, SuperLog {
     var verbose = true
 
     var body: some View {
-        GeometryReader { geometry in
-            VStack(spacing: 0) {
-                if loading && commits.isEmpty {
-                    Spacer()
-                    Text(LocalizedStringKey("loading"))
-                    Spacer()
-                } else {
-                    ScrollView {
-                        LazyVStack(spacing: 0, pinnedViews: []) {
-                            Divider()
-
-                            ForEach(commits) { commit in
-                                CommitRow(commit: commit,
-                                          isSelected: selection == commit,
-                                          onSelect: { selectCommit(commit) })
-                                    .id(commit.id)
-                                    .onAppear {
-                                        let index = commits.firstIndex(of: commit) ?? 0
-                                        let threshold = Int(Double(commits.count) * 0.8)
-                                        if index >= threshold && hasMoreCommits && !loading {
-                                            loadMoreCommits()
+        ZStack {
+            if let project = data.project, project.isGit {
+                GeometryReader { geometry in
+                    VStack(spacing: 0) {
+                        if loading && commits.isEmpty {
+                            Spacer()
+                            Text(LocalizedStringKey("loading"))
+                            Spacer()
+                        } else {
+                            ScrollView {
+                                LazyVStack(spacing: 0, pinnedViews: []) {
+                                    Divider()
+                                    
+                                    ForEach(commits) { commit in
+                                        CommitRow(commit: commit,
+                                                  isSelected: selection == commit,
+                                                  onSelect: { selectCommit(commit) })
+                                        .id(commit.id)
+                                        .onAppear {
+                                            let index = commits.firstIndex(of: commit) ?? 0
+                                            let threshold = Int(Double(commits.count) * 0.8)
+                                            if index >= threshold && hasMoreCommits && !loading {
+                                                loadMoreCommits()
+                                            }
                                         }
                                     }
-                            }
-
-                            if loading && !commits.isEmpty {
-                                HStack {
-                                    Spacer()
-                                    ProgressView()
-                                    Spacer()
+                                    
+                                    if loading && !commits.isEmpty {
+                                        HStack {
+                                            Spacer()
+                                            ProgressView()
+                                            Spacer()
+                                        }
+                                        .frame(height: 44)
+                                        
+                                        Divider()
+                                    }
                                 }
-                                .frame(height: 44)
-
-                                Divider()
                             }
+                            .background(Color(.controlBackgroundColor))
                         }
                     }
-                    .background(Color(.controlBackgroundColor))
+                    .onAppear {
+                        let rowHeight: CGFloat = 31
+                        let visibleRows = Int(ceil(geometry.size.height / rowHeight))
+                        pageSize = max(self.pageSize, visibleRows + 5)
+                        onAppear()
+                    }
                 }
-            }
-            .onAppear {
-                let rowHeight: CGFloat = 31
-                let visibleRows = Int(ceil(geometry.size.height / rowHeight))
-                pageSize = max(self.pageSize, visibleRows + 5)
-                onAppear()
             }
         }
         .onAppear(perform: onAppear)
         .onChange(of: selection, onChangeOfSelection)
-        .onChange(of: g.project, onProjectChange)
+        .onChange(of: data.project, onProjectChange)
         .onReceive(NotificationCenter.default.publisher(for: .gitCommitSuccess), perform: onCommitSuccess)
         .onReceive(NotificationCenter.default.publisher(for: .gitPullSuccess), perform: onPullSuccess)
         .onReceive(NotificationCenter.default.publisher(for: .gitPushSuccess), perform: onPushSuccess)
     }
 
     private func loadMoreCommits() {
-        guard let project = g.project, !loading, hasMoreCommits else { return }
+        guard let project = data.project, !loading, hasMoreCommits else { return }
 
         loading = true
 
@@ -108,10 +113,10 @@ struct CommitList: View, SuperThread, SuperLog {
 
     private func selectCommit(_ commit: GitCommit) {
         selection = commit
-        g.setCommit(commit)
+        data.setCommit(commit)
         
         // 保存选择的commit
-        if let projectPath = g.project?.path {
+        if let projectPath = data.project?.path {
             commitRepo.saveLastSelectedCommit(projectPath: projectPath, commit: commit)
         }
     }
@@ -121,7 +126,8 @@ struct CommitList: View, SuperThread, SuperLog {
 
 extension CommitList {
     func refresh(_ reason: String = "") {
-        guard let project = g.project, !isRefreshing else { return }
+        os_log("\(self.t)Refresh(\(reason))")
+        guard let project = data.project, !isRefreshing else { return }
 
         isRefreshing = true
         loading = true
@@ -160,7 +166,7 @@ extension CommitList {
     
     // 恢复上次选择的commit
     private func restoreLastSelectedCommit() {
-        guard let project = g.project else { return }
+        guard let project = data.project else { return }
         
         // 获取上次选择的commit
         if let lastCommit = commitRepo.getLastSelectedCommit(projectPath: project.path) {
@@ -168,7 +174,7 @@ extension CommitList {
             if let matchedCommit = commits.first(where: { $0.hash == lastCommit.hash }) {
                 // 选择找到的commit
                 selection = matchedCommit
-                g.setCommit(matchedCommit)
+                data.setCommit(matchedCommit)
             } else if hasMoreCommits {
                 // 如果在当前页面没有找到，并且还有更多commit，尝试加载更多
                 loadMoreCommitsUntilFound(targetHash: lastCommit.hash)
@@ -178,7 +184,7 @@ extension CommitList {
     
     // 加载更多commit直到找到目标commit
     private func loadMoreCommitsUntilFound(targetHash: String, maxAttempts: Int = 3) {
-        guard let project = g.project, !loading, hasMoreCommits, maxAttempts > 0 else { return }
+        guard let project = data.project, !loading, hasMoreCommits, maxAttempts > 0 else { return }
         
         loading = true
         
@@ -199,7 +205,7 @@ extension CommitList {
                         if let matchedCommit = newCommits.first(where: { $0.hash == targetHash }) {
                             // 选择找到的commit
                             selection = matchedCommit
-                            g.setCommit(matchedCommit)
+                            data.setCommit(matchedCommit)
                         } else if hasMoreCommits {
                             // 如果还没找到，继续加载更多
                             loadMoreCommitsUntilFound(targetHash: targetHash, maxAttempts: maxAttempts - 1)
@@ -234,7 +240,7 @@ extension CommitList {
     }
 
     func onChangeOfSelection() {
-        g.setCommit(selection)
+        data.setCommit(selection)
     }
 
     func onPullSuccess(_ notification: Notification) {

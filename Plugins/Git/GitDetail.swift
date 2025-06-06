@@ -1,10 +1,10 @@
-import SwiftUI
-import MagicCore
 import AppKit
+import MagicCore
+import SwiftUI
 
 struct GitDetail: View, SuperEvent {
     @EnvironmentObject var app: AppProvider
-    @EnvironmentObject var g: GitProvider
+    @EnvironmentObject var data: DataProvider
     @EnvironmentObject var m: MessageProvider
 
     @State var diffView: AnyView = AnyView(EmptyView())
@@ -13,31 +13,35 @@ struct GitDetail: View, SuperEvent {
 
     var body: some View {
         ZStack {
-            if g.project != nil {
-                if let commit = g.commit {
-                    Group {
-                        if commit.isHead && isProjectClean {
-                            NoLocalChanges()
-                        } else {
-                            VStack(spacing: 0) {
-                                // 当前 Commit 详细信息
-                                CommitDetailView(commit: commit)
-                                
-                                HSplitView {
-                                    FileList(file: $file, commit: commit)
-                                        .frame(idealWidth: 200)
-                                        .frame(minWidth: 200, maxWidth: 300)
-                                        .layoutPriority(1)
-                                    
-                                    if let file = g.file {
-                                        FileDetail(file: file, commit: commit)
+            if let project = data.project {
+                if project.isGit {
+                    if let commit = data.commit {
+                        Group {
+                            if commit.isHead && isProjectClean {
+                                NoLocalChanges()
+                            } else {
+                                VStack(spacing: 0) {
+                                    // 当前 Commit 详细信息
+                                    CommitDetailView(commit: commit)
+
+                                    HSplitView {
+                                        FileList(file: $file, commit: commit)
+                                            .frame(idealWidth: 200)
+                                            .frame(minWidth: 200, maxWidth: 300)
+                                            .layoutPriority(1)
+
+                                        if let file = data.file {
+                                            FileDetail(file: file, commit: commit)
+                                        }
                                     }
                                 }
                             }
                         }
+                    } else {
+                        NoCommit()
                     }
                 } else {
-                    NoCommit()
+                    NoGitProjectView()
                 }
             } else {
                 NoProjectView()
@@ -45,6 +49,7 @@ struct GitDetail: View, SuperEvent {
         }
         .onAppear(perform: onAppear)
         .onChange(of: file, onFileChange)
+        .onChange(of: data.project, onProjectChange)
         .onReceive(nc.publisher(for: .gitCommitSuccess), perform: onGitCommitSuccess)
     }
 }
@@ -53,15 +58,19 @@ struct GitDetail: View, SuperEvent {
 
 extension GitDetail {
     func onAppear() {
-        isProjectClean = g.project?.isClean ?? true
+        isProjectClean = data.project?.isClean ?? true
+    }
+    
+    func onProjectChange() {
+        isProjectClean = data.project?.isClean ?? true
     }
 
     func onFileChange() {
-        self.g.setFile(file)
+        self.data.setFile(file)
 
-        isProjectClean = g.project?.isClean ?? true
-        
-        if let commit = g.commit, let file = file, let project = g.project {
+        isProjectClean = data.project?.isClean ?? true
+
+        if let commit = data.commit, let file = file, let project = data.project {
             do {
                 let v = try GitShell.diffFileFromCommit(path: project.path, hash: commit.hash, file: file.name)
                 self.diffView = AnyView(v)
@@ -72,7 +81,7 @@ extension GitDetail {
     }
 
     func onGitCommitSuccess(_ notification: Notification) {
-        isProjectClean = g.project?.isClean ?? true
+        isProjectClean = data.project?.isClean ?? true
         self.m.toast("已提交")
     }
 }
@@ -81,18 +90,8 @@ extension GitDetail {
     RootView {
         ContentView()
     }
-        .frame(height: 600)
-        .frame(width: 600)
-}
-
-
-#Preview("隐藏左侧栏") {
-    RootView {
-        ContentView()
-            .hideSidebar()
-    }
-        .frame(height: 600)
-        .frame(width: 600)
+    .frame(height: 600)
+    .frame(width: 600)
 }
 
 #Preview("App-Big Screen") {

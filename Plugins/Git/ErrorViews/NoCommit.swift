@@ -3,25 +3,12 @@ import SwiftUI
 /// 无提交记录提示视图
 /// 当 Git 仓库没有提交记录时显示此视图
 struct NoCommit: View {
-    @EnvironmentObject var g: GitProvider
-
     var body: some View {
-        VStack(spacing: 20) {
-            GuideView(
-                systemImage: "doc.text.magnifyingglass",
-                title: String(localized: "select_commit_title"),
-                subtitle: String(localized: "select_commit_description")
-            )
-
-            if let projectPath = g.project?.path {
-                Text("当前项目：\(projectPath)")
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal)
-            }
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        GuideView(
+            systemImage: "doc.text.magnifyingglass",
+            title: String(localized: "select_commit_title"),
+            subtitle: String(localized: "select_commit_description")
+        )
     }
 }
 

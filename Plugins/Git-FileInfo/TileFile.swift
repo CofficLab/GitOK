@@ -5,13 +5,13 @@ import MagicCore
 struct TileFile: View, SuperLog, SuperThread {
     @EnvironmentObject var a: AppProvider
     @EnvironmentObject var m: MessageProvider
-    @EnvironmentObject var g: GitProvider
+    @EnvironmentObject var data: DataProvider
     
     @State var hovered = false
     @State var isPresented = false
     @State var live = false
     
-    var file: File? { g.file }
+    var file: File? { data.file }
     var message: SmartMessage? { m.messages.first }
 
     var body: some View {
@@ -29,4 +29,20 @@ struct TileFile: View, SuperLog, SuperThread {
             .background(hovered ? Color(.controlAccentColor).opacity(0.2) : .clear)
         }
     }
+}
+
+#Preview("默认") {
+    RootView {
+        ContentView()
+    }
+    .frame(height: 600)
+    .frame(width: 600)
+}
+
+#Preview("App-Big Screen") {
+    RootView {
+        ContentView()
+    }
+    .frame(width: 1200)
+    .frame(height: 1200)
 }

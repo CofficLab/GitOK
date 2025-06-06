@@ -4,7 +4,7 @@ import SwiftData
 import SwiftUI
 
 struct NoProject: View, SuperThread, SuperEvent {
-    @EnvironmentObject var g: GitProvider
+    @EnvironmentObject var g: DataProvider
 
     @State var columnVisibility: NavigationSplitViewVisibility = .doubleColumn
 
@@ -15,7 +15,7 @@ struct NoProject: View, SuperThread, SuperEvent {
             ZStack {
                 GuideView(
                     systemImage: "folder.badge.questionmark",
-                    title: NSLocalizedString("project_not_exist", bundle: .main, comment: "")
+                    title: "项目不存在"
                 )
 
                 if let project = g.project {

@@ -5,7 +5,7 @@ import MagicCore
 struct BtnCommitAndPush: View, SuperLog, SuperThread {
     static let defaultTitle = "Commit and Push"
 
-    @EnvironmentObject var g: GitProvider
+    @EnvironmentObject var g: DataProvider
 
     @State private var showAlert = false
     @State private var alertMessage = ""

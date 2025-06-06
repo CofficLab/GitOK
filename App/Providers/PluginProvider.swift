@@ -16,7 +16,39 @@ class PluginProvider: ObservableObject, SuperLog, SuperThread {
         QuickMergePlugin(),
         SmartMergePlugin(),
         SmartMessagePlugin(),
+        OpenXcodePlugin(),
+        OpenVSCodePlugin(),
+        OpenCursorPlugin(),
+        OpenTraePlugin(),
+        OpenFinderPlugin(),
+        OpenTerminalPlugin(),
+        OpenRemotePlugin(),
+        SyncPlugin(),
+        BranchPlugin(),
+        CommitPlugin()
     ]
+    
+    /// 获取所有标记为标签页的插件
+    /// - Returns: 可作为标签页显示的插件数组
+    var tabPlugins: [SuperPlugin] {
+        plugins.filter { $0.isTab }
+    }
+    
+    /// 检查是否所有插件的列表视图都为空
+    /// - Parameter 
+    ///      - tab: 当前选中的标签页
+    ///     - project: 当前选中的项目
+    /// - Returns: 如果所有插件的addListView都返回nil则返回true，否则返回false
+    func allListViewsEmpty(tab: String, project: Project?) -> Bool {
+        var allEmpty = true
+        for plugin in plugins {
+            let listView = plugin.addListView(tab: tab, project: project)
+            if listView != nil {
+                allEmpty = false
+            }
+        }
+        return allEmpty
+    }
 
     init() {
         let verbose = false
@@ -35,3 +67,19 @@ class PluginProvider: ObservableObject, SuperLog, SuperThread {
         }
     }
 }
+
+#Preview("APP") {
+    RootView(content: {
+        ContentView()
+    })
+    .frame(width: 800, height: 800)
+}
+
+#Preview("App-Big Screen") {
+    RootView {
+        ContentView()
+    }
+    .frame(width: 1200)
+    .frame(height: 1200)
+}
+
