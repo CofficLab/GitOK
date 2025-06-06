@@ -129,7 +129,21 @@ extension GitCommit: Identifiable {
     }
 }
 
-extension GitCommit: Hashable {}
+// Explicitly conform to Equatable and implement == to compare only by hash
+extension GitCommit: Equatable {
+    static func == (lhs: GitCommit, rhs: GitCommit) -> Bool {
+        return lhs.hash == rhs.hash
+    }
+}
+
+extension GitCommit: Hashable {
+    // Since we provide a custom ==, we should also provide a custom hash(into:) 
+    // to ensure consistency: if a == b, then a.hashValue == b.hashValue.
+    // Here, we base the hash value only on the 'hash' property, same as our custom ==.
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(hash)
+    }
+}
 
 #Preview {
     RootView {
