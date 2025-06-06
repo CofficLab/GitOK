@@ -29,8 +29,7 @@ struct ContentView: View, SuperThread, SuperEvent, SuperLog {
     @State var tab: String = "Git"
     /// 导航分栏视图的可见性状态，默认只显示详情栏
     @State private(set) var columnVisibility: NavigationSplitViewVisibility = .all
-    /// 当前项目是否存在的标志
-    @State var projectExists: Bool = true
+
     /// 当前布局模式：true为三栏模式，false为两栏模式
     @State var isThreeColumnMode: Bool = false
 
@@ -69,67 +68,22 @@ struct ContentView: View, SuperThread, SuperEvent, SuperLog {
     /// 构建视图层次结构
     /// - Returns: 组合后的视图
     var body: some View {
-        Group {
-            if projectExists {
-                if isThreeColumnMode {
-                    // 三栏布局：当有插件提供列表视图时使用
-                    NavigationSplitView(columnVisibility: $columnVisibility) {
-                        Sidebar()
-                    } content: {
-                        VStack(spacing: 0) {
-                            VStack {
-                                ForEach(p.plugins.filter { plugin in
-                                    plugin.addListView(tab: tab, project: g.project) != nil
-                                }, id: \.instanceLabel) { plugin in
-                                    plugin.addListView(tab: tab, project: g.project)
-                                }
-                            }.frame(maxHeight: .infinity)
-                        }
-                        .frame(idealWidth: 300)
-                        .frame(minWidth: 50)
-                        .onChange(of: tab, onChangeOfTab)
-                    } detail: {
-                        VStack(spacing: 0) {
-                            p.tabPlugins.first { $0.instanceLabel == tab }?.addDetailView()
-
-                            if statusBarVisibility {
-                                StatusBar()
-                            }
-                        }
-                        .onAppear {
-                            os_log("\(self.t)📺 三栏布局 Detail OnAppear \n ➡️ \(String(describing: self.columnVisibility))")
-                        }
-                    }
-                } else {
-                    // 两栏布局：当所有插件的列表视图都为空时使用
-                    NavigationSplitView(columnVisibility: $columnVisibility) {
-                        Sidebar()
-                    } detail: {
-                        VStack(spacing: 0) {
-                            p.tabPlugins.first { $0.instanceLabel == tab }?.addDetailView()
-
-                            if statusBarVisibility {
-                                StatusBar()
-                            }
-                        }
-                    }
-                }
-            } else {
-                NoProject()
-            }
-        }
+        ContentLayout(
+            tab: $tab,
+            statusBarVisibility: statusBarVisibility
+        )
         .onAppear(perform: onAppear)
-        .onChange(of: g.project, onProjectChange)
+        .onChange(of: tab, onChangeOfTab)
         .onChange(of: columnVisibility, onChangeColumnVisibility)
         .onChange(of: tab, updateLayoutMode)
         .onChange(of: g.project, updateLayoutMode)
         .toolbarVisibility(toolbarVisibility ? .visible : .hidden)
         .toolbar(content: {
-//            ToolbarItem(placement: .navigation) {
-//                ForEach(p.plugins, id: \.instanceLabel) { plugin in
-//                    plugin.addToolBarLeadingView()
-//                }
-//            }
+            ToolbarItem(placement: .navigation) {
+                ForEach(p.plugins, id: \.instanceLabel) { plugin in
+                    plugin.addToolBarLeadingView()
+                }
+            }
 
             if tabPickerVisibility {
                 ToolbarItem(placement: .principal) {
@@ -143,7 +97,7 @@ struct ContentView: View, SuperThread, SuperEvent, SuperLog {
                 }
             }
 
-            if let project = g.project, project.isExist(), projectActionsVisibility {
+            if g.project != nil, projectActionsVisibility {
                 ToolbarItemGroup(placement: .cancellationAction, content: {
                     ForEach(p.plugins, id: \.instanceLabel) { plugin in
                         plugin.addToolBarTrailingView()
@@ -283,18 +237,6 @@ extension ContentView {
 
 /// 包含 ContentView 的私有事件处理方法的扩展
 extension ContentView {
-    /// 处理项目变更事件
-    /// 当 GitProvider 中的项目发生变化时调用，检查项目是否存在并更新 UI
-    func onProjectChange() {
-        withAnimation(.easeInOut(duration: 0.3)) {
-            if let newProject = g.project {
-                self.projectExists = FileManager.default.fileExists(atPath: newProject.path)
-            } else {
-                self.projectExists = false
-            }
-        }
-    }
-
     /// 视图出现时的处理逻辑
     /// 只有在未明确设置导航分栏视图状态时，才根据应用程序的侧边栏可见性设置来初始化，并设置当前标签页
     func onAppear() {

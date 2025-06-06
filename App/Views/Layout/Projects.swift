@@ -7,41 +7,38 @@ struct Projects: View, SuperLog {
     @EnvironmentObject var data: DataProvider
 
     static let emoji = "🖥️"
-    
+
     private let verbose = false
-    
+
     @State private var selection: Project? = nil
 
     var body: some View {
-        ZStack {
-            List(selection: $selection) {
-                ForEach(data.projects, id: \.self) { item in
-                    Text(item.title).tag(item as Project?)
-                        .contextMenu(ContextMenu(menuItems: {
-                            Button("删除") {
-                                deleteItem(item)
-                            }
+        List(selection: $selection) {
+            ForEach(data.projects, id: \.self) { item in
+                Text(item.title).tag(item as Project?)
+                    .contextMenu(ContextMenu(menuItems: {
+                        Button("删除") {
+                            deleteItem(item)
+                        }
 
-                            if FileManager.default.fileExists(atPath: item.path) {
-                                Button("在Finder中显示") {
-                                    let url = URL(fileURLWithPath: item.path)
-                                    NSWorkspace.shared.activateFileViewerSelecting([url])
-                                }
-                            } else {
-                                Button("项目已不存在") {
-                                    // 禁止点击
-                                }
-                                .disabled(true)
+                        if FileManager.default.fileExists(atPath: item.path) {
+                            Button("在Finder中显示") {
+                                let url = URL(fileURLWithPath: item.path)
+                                NSWorkspace.shared.activateFileViewerSelecting([url])
                             }
-                        }))
-                }
-                .onDelete(perform: deleteItems)
-                .onMove(perform: moveItems)
+                        } else {
+                            Button("项目已不存在") {
+                                // 禁止点击
+                            }
+                            .disabled(true)
+                        }
+                    }))
             }
+            .onDelete(perform: deleteItems)
+            .onMove(perform: moveItems)
         }
-        .onChange(of: selection, { self.data.setProject(selection, reason: self.className)})
+        .onChange(of: selection, { self.data.setProject(selection, reason: self.className) })
         .onAppear(perform: onAppear)
-        .navigationSplitViewColumnWidth(min: 175, ideal: 175, max: 200)
     }
 }
 

@@ -26,7 +26,10 @@ struct BranchesView: View, SuperThread, SuperLog, SuperEvent {
                     })
                 })
             } else {
-                EmptyView()
+                Picker("branch", selection: .constant(nil as Branch?), content: {
+                    Text("项目不存在")
+                        .tag(nil as Branch?)
+                }).disabled(true)
             }
         }
         .onChange(of: data.project) { self.onProjectChanged() }

@@ -43,8 +43,6 @@ struct GitDetail: View, SuperEvent {
                 } else {
                     NoGitProjectView()
                 }
-            } else {
-                NoProjectView()
             }
         }
         .onAppear(perform: onAppear)
@@ -60,7 +58,7 @@ extension GitDetail {
     func onAppear() {
         isProjectClean = data.project?.isClean ?? true
     }
-    
+
     func onProjectChange() {
         isProjectClean = data.project?.isClean ?? true
     }

@@ -43,7 +43,7 @@ class AppProvider: NSObject, ObservableObject, AVAudioPlayerDelegate, SuperLog {
     func showSidebar(reason: String) {
         let verbose = true
         if verbose {
-            os_log("\(self.t) 🍋 Show Sidebar(\(reason))")
+            os_log("\(self.t)🍋 Show Sidebar(\(reason))")
         }
         self.sidebarVisibility = true
         repoManager.stateRepo.setSidebarVisibility(true)
