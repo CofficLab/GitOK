@@ -17,8 +17,8 @@ class GitShell {
         return result
     }
 
-    static func commitFiles(_ path: String, hash: String) throws -> [File] {
-        let items = try run("show \(hash) --pretty='' --name-only", path: path, verbose: true)
+    static func commitFiles(_ path: String, hash: String, verbose: Bool = false) throws -> [File] {
+        let items = try run("show \(hash) --pretty='' --name-only", path: path, verbose: verbose)
             .components(separatedBy: "\n")
             .filter({
                 $0.isNotEmpty

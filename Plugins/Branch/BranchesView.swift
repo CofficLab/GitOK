@@ -14,7 +14,7 @@ struct BranchesView: View, SuperThread, SuperLog, SuperEvent {
 
     var body: some View {
         Group {
-            if data.project?.isGit == true {
+            if data.project?.isGit == true && selection != nil {
                 Picker("branch", selection: $selection, content: {
                     ForEach(branches, id: \.self, content: {
                         Text($0.name)
