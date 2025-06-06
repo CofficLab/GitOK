@@ -1,10 +1,10 @@
-import SwiftUI
-import SwiftData
 import MagicCore
+import SwiftData
+import SwiftUI
 
 struct ProjectPickerView: View, SuperLog {
     @EnvironmentObject var data: DataProvider
-    
+
     @State private var selection: Project?
 
     var body: some View {
@@ -16,15 +16,19 @@ struct ProjectPickerView: View, SuperLog {
                 Text(project.title).tag(project as Project?)
             }
         }
-        .frame(width: 200)
         .onAppear {
             self.selection = data.project
         }
         .onChange(of: selection) { _, newValue in
-            if let newProject = newValue {
+            if let newProject = newValue, newValue != data.project {
                 data.setProject(newProject, reason: self.className)
             }
         }
+        .onChange(of: data.project, {
+            if let project = data.project, project != selection {
+                self.selection = project
+            }
+        })
     }
 }
 

@@ -87,13 +87,9 @@ struct ContentView: View, SuperThread, SuperEvent {
                         Sidebar()
                     } content: {
                         VStack(spacing: 0) {
-                            VStack {
-                                ForEach(p.plugins.filter { plugin in
-                                    plugin.addListView(tab: tab, project: g.project) != nil
-                                }, id: \.instanceLabel) { plugin in
-                                    plugin.addListView(tab: tab, project: g.project)
-                                }
-                            }.frame(maxHeight: .infinity)
+                            ForEach(p.plugins, id: \.instanceLabel) { plugin in
+                                plugin.addListView(tab: tab, project: g.project)
+                            }
                         }
                         .frame(idealWidth: 300)
                         .frame(minWidth: 50)
