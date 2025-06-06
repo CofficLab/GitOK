@@ -15,7 +15,7 @@ struct TileFile: View, SuperLog, SuperThread {
     var message: SmartMessage? { m.messages.first }
 
     var body: some View {
-        if let file = file, a.currentTab == "Git" {
+        if let file = file {
             HStack {
                 Image(systemName: "doc.text").padding(.leading)
                 Text(file.name).font(.footnote)
