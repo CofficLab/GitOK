@@ -125,8 +125,6 @@ struct ContentView: View, SuperThread, SuperEvent {
             if let project = g.project, project.isExist() {
                 ToolbarItemGroup(placement: .cancellationAction, content: {
                     ToolbarItems(
-                        message: $message,
-                        project: project,
                         isVisible: projectActionsVisibility
                     )
                 })

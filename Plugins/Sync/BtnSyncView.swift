@@ -3,7 +3,7 @@ import MagicCore
 
 struct BtnSyncView: View, SuperLog, SuperEvent, SuperThread {
     @EnvironmentObject var m: MessageProvider
-    @EnvironmentObject var g: DataProvider
+    @EnvironmentObject var data: DataProvider
 
     @State var working = false
     @State var rotationAngle = 0.0
@@ -11,7 +11,7 @@ struct BtnSyncView: View, SuperLog, SuperEvent, SuperThread {
     var commitMessage = CommitCategory.auto
 
     var body: some View {
-        if let project = g.project {
+        if let project = data.project, project.isGit {
             Button(action: {
                 sync(path: project.path)
             }, label: {
@@ -75,3 +75,17 @@ struct BtnSyncView: View, SuperLog, SuperEvent, SuperThread {
         }
     }
 }
+
+#Preview("App") {
+    AppPreview()
+        .frame(width: 800)
+}
+
+#Preview("Default-Big Screen") {
+    RootView {
+        ContentView()
+    }
+    .frame(width: 1200)
+    .frame(height: 1200)
+}
+
