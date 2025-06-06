@@ -59,18 +59,6 @@ protocol SuperPlugin {
     /// 插件视图消失时调用
     /// - 当插件的视图从视图层次结构中移除时执行清理操作
     func onDisappear() -> Void
-
-    /// 插件播放功能启动时调用
-    /// - 用于处理插件的播放或动画相关功能
-    func onPlay() -> Void
-
-    /// 插件播放状态更新时调用
-    /// - 用于响应播放状态的变化
-    func onPlayStateUpdate() -> Void
-
-    /// 插件播放资源更新时调用
-    /// - 用于响应播放资源的变化
-    func onPlayAssetUpdate() -> Void
 }
 
 /// SuperPlugin 协议的默认实现
@@ -113,4 +101,8 @@ extension SuperPlugin {
 
     /// 插件初始化时的空实现
     func onInit() {}
+
+    func onAppear() {}
+
+    func onDisappear() {}
 }
