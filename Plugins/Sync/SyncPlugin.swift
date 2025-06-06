@@ -7,7 +7,7 @@ class SyncPlugin: SuperPlugin, SuperLog {
     static var label: String = "Sync"
     var isTab: Bool = false
 
-    func addToolBarLeadingView() -> AnyView {
+    func addToolBarTrailingView() -> AnyView {
         AnyView(BtnSyncView())
     }
 }

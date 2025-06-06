@@ -7,7 +7,7 @@ class OpenRemotePlugin: SuperPlugin, SuperLog {
     static var label: String = "OpenRemote"
     var isTab: Bool = false
 
-    func addToolBarLeadingView() -> AnyView {
+    func addToolBarTrailingView() -> AnyView {
         AnyView(BtnOpenRemoteView())
     }
 }

@@ -7,7 +7,7 @@ class OpenXcodePlugin: SuperPlugin, SuperLog {
     static var label: String = "OpenXcode"
     var isTab: Bool = false
 
-    func addToolBarLeadingView() -> AnyView {
+    func addToolBarTrailingView() -> AnyView {
         AnyView(BtnOpenXcodeView())
     }
 }

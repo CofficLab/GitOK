@@ -7,7 +7,7 @@ class OpenVSCodePlugin: SuperPlugin, SuperLog {
     static var label: String = "OpenVSCode"
     var isTab: Bool = false
 
-    func addToolBarLeadingView() -> AnyView {
+    func addToolBarTrailingView() -> AnyView {
         AnyView(BtnOpenVSCodeView())
     }
 }

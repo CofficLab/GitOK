@@ -260,9 +260,6 @@
         }
       }
     },
-    "Open Item" : {
-
-    },
     "project_not_exist" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -432,6 +429,9 @@
 
     },
     "消息" : {
+
+    },
+    "添加项目" : {
 
     },
     "清空" : {

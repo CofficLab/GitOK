@@ -7,7 +7,7 @@ class OpenFinderPlugin: SuperPlugin, SuperLog {
     static var label: String = "OpenFinder"
     var isTab: Bool = false
 
-    func addToolBarLeadingView() -> AnyView {
+    func addToolBarTrailingView() -> AnyView {
         AnyView(BtnOpenFinderView())
     }
 }

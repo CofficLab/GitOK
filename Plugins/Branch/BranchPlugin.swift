@@ -10,7 +10,7 @@ class BranchPlugin: SuperPlugin, SuperLog {
     
     private init() {}
 
-    func addToolBarLeadingView() -> AnyView {
+    func addToolBarTrailingView() -> AnyView {
         AnyView(BranchesView.shared)
     }
 }

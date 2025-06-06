@@ -7,7 +7,7 @@ class OpenTraePlugin: SuperPlugin, SuperLog {
     static var label: String = "OpenTrae"
     var isTab: Bool = false
 
-    func addToolBarLeadingView() -> AnyView {
+    func addToolBarTrailingView() -> AnyView {
         AnyView(BtnOpenTraeView())
     }
 }

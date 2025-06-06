@@ -6,12 +6,11 @@ struct BtnAdd: View {
     
     var body: some View {
         Button(action: open) {
-            Label("Open Item", systemImage: "plus")
+            Label("添加项目", systemImage: "plus")
         }
     }
     
     private func open() {
-        os_log("open")
         let panel = NSOpenPanel()
         panel.allowsMultipleSelection = false
         panel.canChooseDirectories = true

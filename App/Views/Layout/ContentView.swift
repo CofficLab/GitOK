@@ -118,7 +118,9 @@ struct ContentView: View, SuperThread, SuperEvent {
         .toolbarVisibility(toolbarVisibility ? .visible : .hidden)
         .toolbar(content: {
             ToolbarItem(placement: .navigation) {
-                ProjectPicker()
+                ForEach(p.plugins, id: \.instanceLabel) { plugin in
+                    plugin.addToolBarLeadingView()
+                }
             }
 
             if tabPickerVisibility {
@@ -133,11 +135,11 @@ struct ContentView: View, SuperThread, SuperEvent {
                 }
             }
 
-            if let project = g.project, project.isExist() {
+            if let project = g.project, project.isExist(), projectActionsVisibility {
                 ToolbarItemGroup(placement: .cancellationAction, content: {
-                    ToolbarItems(
-                        isVisible: projectActionsVisibility
-                    )
+                    ForEach(p.plugins, id: \.instanceLabel) { plugin in
+                        plugin.addToolBarTrailingView()
+                    }
                 })
             }
         })
