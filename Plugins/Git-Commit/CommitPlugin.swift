@@ -15,12 +15,11 @@ class CommitPlugin: SuperPlugin, SuperLog {
      */
     func addListView(tab: String, project: Project?) -> AnyView? {
         if tab == GitPlugin().label, let project = project, project.isGit {
-            AnyView(CommitList().environmentObject(GitProvider.shared))
+            AnyView(CommitList())
         } else {
             nil
         }
     }
-
 }
 
 #Preview("APP") {

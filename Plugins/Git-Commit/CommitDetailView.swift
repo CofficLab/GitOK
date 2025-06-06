@@ -4,9 +4,11 @@ import SwiftUI
 /**
  * 展示 Commit 详细信息的视图组件
  */
-struct CommitDetailView: View {
-    let commit: GitCommit
+struct CommitDetailView: View, SuperEvent {
+    @EnvironmentObject var data: DataProvider
     @State private var isCopied: Bool = false
+    
+    let commit: GitCommit
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -96,6 +98,8 @@ struct CommitDetailView: View {
         .padding(.horizontal, 12)
         .padding(.vertical, 8)
         .background(background)
+        .onChange(of: data.project) { self.onProjectChanged() }
+        .onReceive(nc.publisher(for: .appWillBecomeActive), perform: onAppWillBecomeActive)
     }
 
     private var background: some View {
@@ -106,6 +110,18 @@ struct CommitDetailView: View {
                 MagicBackground.orange.opacity(0.15)
             }
         }
+    }
+}
+
+// MARK: - Event
+
+extension CommitDetailView {
+    func onAppWillBecomeActive(_ notification: Notification) {
+        
+    }
+
+    func onProjectChanged() {
+        
     }
 }
 

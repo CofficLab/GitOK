@@ -47,6 +47,15 @@ struct CommitRow: View, SuperThread {
 
                                     Spacer()
                                 }
+                            } else {
+                                HStack {
+                                    Text("未提交的文件数量: \(GitShell.changedFile(commit.path).count)")
+                                        .lineLimit(1)
+                                        .font(.system(size: 11))
+                                        .foregroundColor(.secondary)
+                                    
+                                    Spacer()
+                                }
                             }
                         }
                         .padding(.vertical, 6)
@@ -159,6 +168,7 @@ struct CommitRow: View, SuperThread {
 #Preview("App-Big Screen") {
     RootView {
         ContentView()
+            .hideSidebar()
     }
     .frame(width: 1200)
     .frame(height: 1200)

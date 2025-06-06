@@ -6,10 +6,6 @@ class SmartProjectPlugin: SuperPlugin, SuperLog {
     let emoji = "📣"
     var label: String = "SmartProject"
     var isTab: Bool = false
-
-    func addDetailView() -> AnyView {
-        AnyView(GitDetail())
-    }
     
     func addStatusBarLeadingView() -> AnyView {
         AnyView(TileProject())

@@ -56,6 +56,10 @@ protocol SuperPlugin {
     /// 插件视图消失时调用
     /// - 当插件的视图从视图层次结构中移除时执行清理操作
     func onDisappear() -> Void
+
+    /// 当项目发生变化时调用
+    /// - 当当前项目发生变化时执行相应的操作
+    func onProjectChange(project: Project?) -> Void
 }
 
 /// SuperPlugin 协议的默认实现
@@ -102,4 +106,6 @@ extension SuperPlugin {
     func onAppear() {}
 
     func onDisappear() {}
+
+    func onProjectChange(project: Project?) {}
 }

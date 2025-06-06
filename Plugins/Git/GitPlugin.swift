@@ -8,9 +8,7 @@ class GitPlugin: SuperPlugin, SuperLog {
     var isTab: Bool = true
 
     func addDetailView() -> AnyView {
-        AnyView(GitDetail()
-            .environmentObject(GitProvider.shared)
-        )
+        AnyView(GitDetail())
     }
 }
 

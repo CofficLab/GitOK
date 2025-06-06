@@ -44,7 +44,6 @@ class PluginProvider: ObservableObject, SuperLog, SuperThread {
         for plugin in plugins {
             let listView = plugin.addListView(tab: tab, project: project)
             if listView != nil {
-                os_log("插件 %@ 返回了非nil的列表视图", plugin.label)
                 allEmpty = false
             }
         }

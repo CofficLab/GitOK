@@ -4,7 +4,7 @@ import SwiftUI
 
 struct GitDetail: View, SuperEvent {
     @EnvironmentObject var app: AppProvider
-    @EnvironmentObject var g: DataProvider
+    @EnvironmentObject var data: DataProvider
     @EnvironmentObject var m: MessageProvider
 
     @State var diffView: AnyView = AnyView(EmptyView())
@@ -13,9 +13,9 @@ struct GitDetail: View, SuperEvent {
 
     var body: some View {
         ZStack {
-            if let project = g.project {
+            if let project = data.project {
                 if project.isGit {
-                    if let commit = g.commit {
+                    if let commit = data.commit {
                         Group {
                             if commit.isHead && isProjectClean {
                                 NoLocalChanges()
@@ -30,7 +30,7 @@ struct GitDetail: View, SuperEvent {
                                             .frame(minWidth: 200, maxWidth: 300)
                                             .layoutPriority(1)
 
-                                        if let file = g.file {
+                                        if let file = data.file {
                                             FileDetail(file: file, commit: commit)
                                         }
                                     }
@@ -49,6 +49,7 @@ struct GitDetail: View, SuperEvent {
         }
         .onAppear(perform: onAppear)
         .onChange(of: file, onFileChange)
+        .onChange(of: data.project, onProjectChange)
         .onReceive(nc.publisher(for: .gitCommitSuccess), perform: onGitCommitSuccess)
     }
 }
@@ -57,15 +58,19 @@ struct GitDetail: View, SuperEvent {
 
 extension GitDetail {
     func onAppear() {
-        isProjectClean = g.project?.isClean ?? true
+        isProjectClean = data.project?.isClean ?? true
+    }
+    
+    func onProjectChange() {
+        isProjectClean = data.project?.isClean ?? true
     }
 
     func onFileChange() {
-        self.g.setFile(file)
+        self.data.setFile(file)
 
-        isProjectClean = g.project?.isClean ?? true
+        isProjectClean = data.project?.isClean ?? true
 
-        if let commit = g.commit, let file = file, let project = g.project {
+        if let commit = data.commit, let file = file, let project = data.project {
             do {
                 let v = try GitShell.diffFileFromCommit(path: project.path, hash: commit.hash, file: file.name)
                 self.diffView = AnyView(v)
@@ -76,7 +81,7 @@ extension GitDetail {
     }
 
     func onGitCommitSuccess(_ notification: Notification) {
-        isProjectClean = g.project?.isClean ?? true
+        isProjectClean = data.project?.isClean ?? true
         self.m.toast("已提交")
     }
 }

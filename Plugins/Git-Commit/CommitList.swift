@@ -4,7 +4,7 @@ import OSLog
 
 struct CommitList: View, SuperThread, SuperLog {
     @EnvironmentObject var app: AppProvider
-    @EnvironmentObject var g: DataProvider
+    @EnvironmentObject var data: DataProvider
 
     @State private var commits: [GitCommit] = []
     @State private var loading = false
@@ -23,7 +23,7 @@ struct CommitList: View, SuperThread, SuperLog {
 
     var body: some View {
         ZStack {
-            if let project = g.project, project.isGit {
+            if let project = data.project, project.isGit {
                 GeometryReader { geometry in
                     VStack(spacing: 0) {
                         if loading && commits.isEmpty {
@@ -75,14 +75,14 @@ struct CommitList: View, SuperThread, SuperLog {
         }
         .onAppear(perform: onAppear)
         .onChange(of: selection, onChangeOfSelection)
-        .onChange(of: g.project, onProjectChange)
+        .onChange(of: data.project, onProjectChange)
         .onReceive(NotificationCenter.default.publisher(for: .gitCommitSuccess), perform: onCommitSuccess)
         .onReceive(NotificationCenter.default.publisher(for: .gitPullSuccess), perform: onPullSuccess)
         .onReceive(NotificationCenter.default.publisher(for: .gitPushSuccess), perform: onPushSuccess)
     }
 
     private func loadMoreCommits() {
-        guard let project = g.project, !loading, hasMoreCommits else { return }
+        guard let project = data.project, !loading, hasMoreCommits else { return }
 
         loading = true
 
@@ -113,10 +113,10 @@ struct CommitList: View, SuperThread, SuperLog {
 
     private func selectCommit(_ commit: GitCommit) {
         selection = commit
-        g.setCommit(commit)
+        data.setCommit(commit)
         
         // 保存选择的commit
-        if let projectPath = g.project?.path {
+        if let projectPath = data.project?.path {
             commitRepo.saveLastSelectedCommit(projectPath: projectPath, commit: commit)
         }
     }
@@ -127,7 +127,7 @@ struct CommitList: View, SuperThread, SuperLog {
 extension CommitList {
     func refresh(_ reason: String = "") {
         os_log("\(self.t)Refresh(\(reason))")
-        guard let project = g.project, !isRefreshing else { return }
+        guard let project = data.project, !isRefreshing else { return }
 
         isRefreshing = true
         loading = true
@@ -166,7 +166,7 @@ extension CommitList {
     
     // 恢复上次选择的commit
     private func restoreLastSelectedCommit() {
-        guard let project = g.project else { return }
+        guard let project = data.project else { return }
         
         // 获取上次选择的commit
         if let lastCommit = commitRepo.getLastSelectedCommit(projectPath: project.path) {
@@ -174,7 +174,7 @@ extension CommitList {
             if let matchedCommit = commits.first(where: { $0.hash == lastCommit.hash }) {
                 // 选择找到的commit
                 selection = matchedCommit
-                g.setCommit(matchedCommit)
+                data.setCommit(matchedCommit)
             } else if hasMoreCommits {
                 // 如果在当前页面没有找到，并且还有更多commit，尝试加载更多
                 loadMoreCommitsUntilFound(targetHash: lastCommit.hash)
@@ -184,7 +184,7 @@ extension CommitList {
     
     // 加载更多commit直到找到目标commit
     private func loadMoreCommitsUntilFound(targetHash: String, maxAttempts: Int = 3) {
-        guard let project = g.project, !loading, hasMoreCommits, maxAttempts > 0 else { return }
+        guard let project = data.project, !loading, hasMoreCommits, maxAttempts > 0 else { return }
         
         loading = true
         
@@ -205,7 +205,7 @@ extension CommitList {
                         if let matchedCommit = newCommits.first(where: { $0.hash == targetHash }) {
                             // 选择找到的commit
                             selection = matchedCommit
-                            g.setCommit(matchedCommit)
+                            data.setCommit(matchedCommit)
                         } else if hasMoreCommits {
                             // 如果还没找到，继续加载更多
                             loadMoreCommitsUntilFound(targetHash: targetHash, maxAttempts: maxAttempts - 1)
@@ -240,7 +240,7 @@ extension CommitList {
     }
 
     func onChangeOfSelection() {
-        g.setCommit(selection)
+        data.setCommit(selection)
     }
 
     func onPullSuccess(_ notification: Notification) {

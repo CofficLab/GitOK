@@ -131,10 +131,6 @@ extension GitCommit: Identifiable {
 
 extension GitCommit: Hashable {}
 
-extension GitCommit {
-    static var autoCommitMessage = "\(CommitCategory.Chore.text) Auto Commit"
-}
-
 #Preview {
     RootView {
         ContentView()
