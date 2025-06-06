@@ -8,6 +8,7 @@ struct FileDetail: View, SuperLog, SuperEvent, SuperThread {
     var file: File
     var commit: GitCommit
     @State var view: MagicWebView?
+    var verbose = false
     var debug: Bool = false
     @State var ready: Bool = false
 
@@ -93,7 +94,9 @@ struct FileDetail: View, SuperLog, SuperEvent, SuperThread {
                     MagicLogger.shared.error("- 来源: \(source)")
                 },
                 onCustomMessage: { message in
-                    MagicLogger.shared.debug("收到消息: \(String(describing: message))")
+                    if verbose {
+                        MagicLogger.shared.debug("收到消息: \(String(describing: message))")
+                    }
                     // 根据类型进行不同处理
                     if let stringMessage = message as? String, stringMessage == "ready" {
                         self.ready = true

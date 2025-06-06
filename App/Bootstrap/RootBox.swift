@@ -19,9 +19,12 @@ final class RootBox: SuperLog {
     let git: DataProvider
     let repoManager: RepoManager
     let pluginProvider: PluginProvider
+    private var verbose = false
 
     private init(reason: String) {
-        os_log("\(Self.onInit)(\(reason))")
+        if verbose {
+            os_log("\(Self.onInit)(\(reason))")
+        }
 
         let c = AppConfig.getContainer()
 

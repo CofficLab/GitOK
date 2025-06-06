@@ -15,7 +15,7 @@ class DataProvider: NSObject, ObservableObject, SuperLog {
     @Published var file: File? = nil
 
     static let emoji = "🏠"
-    private let verbose = true
+    private let verbose = false
     var cancellables = Set<AnyCancellable>()
     let repoManager: RepoManager
 
@@ -46,8 +46,7 @@ extension DataProvider {
      */
     func setProject(_ p: Project?, reason: String) {
         if verbose {
-            os_log("\(self.t)Set Project(\(reason))")
-            os_log("  ➡️ \(p?.path ?? "")")
+            os_log("\(self.t)Set Project(\(reason)) \n ➡️ \(p?.path ?? "")")
         }
 
         self.project = p

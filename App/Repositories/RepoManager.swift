@@ -7,10 +7,9 @@ import MagicCore
 // MARK: - Repository管理器
 
 class RepoManager: ObservableObject, SuperLog {
-
-
     static let emoji = "🏗️"
     private let modelContext: ModelContext
+    private let verbose = false
     
     // Repository实例
     lazy var projectRepo: any ProjectRepoProtocol = {
@@ -23,7 +22,9 @@ class RepoManager: ObservableObject, SuperLog {
     
     init(modelContext: ModelContext) {
         self.modelContext = modelContext
-        os_log("\(Self.onInit)")
+        if verbose {
+            os_log("\(Self.onInit)")
+        }
     }
     
     // 便利方法

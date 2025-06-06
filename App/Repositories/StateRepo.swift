@@ -40,7 +40,9 @@ class StateRepo: StateRepoProtocol, SuperLog, ObservableObject {
     // MARK: - 初始化
     
     init() {
-        os_log("\(Self.onInit)")
+        if verbose {
+            os_log("\(Self.onInit)")
+        }
     }
     
     // MARK: - 状态设置方法
@@ -51,7 +53,10 @@ class StateRepo: StateRepoProtocol, SuperLog, ObservableObject {
      */
     func setProjectPath(_ path: String) {
         self.projectPath = path
-        os_log("\(self.t)Project path set to \(path)")
+        
+        if verbose {
+            os_log("\(self.t)Project path set to \(path)")
+        }
     }
     
     /**

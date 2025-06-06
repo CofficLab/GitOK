@@ -10,14 +10,17 @@ struct ProjectPickerView: View, SuperLog {
     @State private var selection: Project?
     
     static let emoji = "💺"
+    private let verbose = true
     
     init() {
-        os_log("\(Self.onInit)")
+        if verbose {
+            os_log("\(Self.onInit)")
+        }
     }
 
     var body: some View {
         Group {
-//            if app.sidebarVisibility == false {
+            if app.sidebarVisibility == false {
                 Picker("select_project", selection: $selection) {
                     if selection == nil {
                         Text("select_a_project").tag(nil as Project?)
@@ -28,7 +31,10 @@ struct ProjectPickerView: View, SuperLog {
                 }
                 .onAppear {
                     self.selection = data.project
-                    os_log("\(self.t)OnAppear, app.sidebarVisibility=\(app.sidebarVisibility)")
+                    
+                    if verbose {
+                        os_log("\(self.t)OnAppear, app.sidebarVisibility=\(app.sidebarVisibility)")
+                    }
                 }
                 .onChange(of: selection) { _, newValue in
                     if let newProject = newValue, newValue != data.project {
@@ -40,14 +46,16 @@ struct ProjectPickerView: View, SuperLog {
                         self.selection = project
                     }
                 })
-//            } else {
+            } else {
 //                EmptyView().onAppear {
 //                    os_log("\(self.t)OnAppear, app.sidebarVisibility=\(app.sidebarVisibility)")
 //                }
-//            }
+            }
         }
         .onAppear {
-            os_log("\(self.t)OnAppear, app.sidebarVisibility=\(app.sidebarVisibility)")
+            if verbose {
+                os_log("\(self.t)OnAppear, app.sidebarVisibility=\(app.sidebarVisibility)")
+            }
         }
     }
 }

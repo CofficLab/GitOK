@@ -9,6 +9,7 @@ struct FileList: View, SuperThread, SuperLog {
 
     @State var files: [File] = []
     @State var isLoading = false
+    var verbose = false
 
     @Binding var file: File?
 
@@ -77,7 +78,6 @@ struct FileList: View, SuperThread, SuperLog {
     func refresh(_ scrollProxy: ScrollViewProxy) {
         self.isLoading = true
 
-        let verbose = true
         if verbose {
             os_log("\(self.t)Refresh")
         }

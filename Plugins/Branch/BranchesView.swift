@@ -14,7 +14,7 @@ struct BranchesView: View, SuperThread, SuperLog, SuperEvent {
     @State private var isRefreshing = false
 
     static var emoji = "🌿"
-    private let verbose = true
+    private let verbose = false
 
     var body: some View {
         ZStack {

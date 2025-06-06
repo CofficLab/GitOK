@@ -97,7 +97,7 @@ struct ContentView: View, SuperThread, SuperEvent, SuperLog {
                             }
                         }
                         .onAppear {
-                            os_log("\(self.t)📺 三栏布局Detail Appear 📺 \(String(describing: self.columnVisibility))")
+                            os_log("\(self.t)📺 三栏布局 Detail OnAppear \n ➡️ \(String(describing: self.columnVisibility))")
                         }
                     }
                 } else {
@@ -125,11 +125,11 @@ struct ContentView: View, SuperThread, SuperEvent, SuperLog {
         .onChange(of: g.project, updateLayoutMode)
         .toolbarVisibility(toolbarVisibility ? .visible : .hidden)
         .toolbar(content: {
-            ToolbarItem(placement: .cancellationAction) {
-                ForEach(p.plugins, id: \.instanceLabel) { plugin in
-                    plugin.addToolBarLeadingView()
-                }
-            }
+//            ToolbarItem(placement: .navigation) {
+//                ForEach(p.plugins, id: \.instanceLabel) { plugin in
+//                    plugin.addToolBarLeadingView()
+//                }
+//            }
 
             if tabPickerVisibility {
                 ToolbarItem(placement: .principal) {
@@ -300,7 +300,7 @@ extension ContentView {
     func onAppear() {
         updateLayoutMode()
 
-        os_log("\(self.t)📺 OnAppear, threeMode: \(self.isThreeColumnMode) 📺 app.sidebarVisibility \(self.app.sidebarVisibility)")
+        os_log("\(self.t)📺 OnAppear \n ➡️ threeMode: \(self.isThreeColumnMode) \n ➡️ app.sidebarVisibility \(self.app.sidebarVisibility)")
         if app.sidebarVisibility == true {
             self.columnVisibility = .all
         } else {
@@ -317,10 +317,7 @@ extension ContentView {
         if isThreeColumnMode {
             if columnVisibility == .doubleColumn {
                 app.hideSidebar()
-            } else {
-                print("ContentView.onCheckColumnVisibility.ThreeColumnMode")
-                print(self.columnVisibility)
-                app.showSidebar(reason: "ContentView.onCheckColumnVisibility.ThreeColumnMode")
+            } else { app.showSidebar(reason: "ContentView.onCheckColumnVisibility.ThreeColumnMode")
             }
         } else {
             if columnVisibility == .detailOnly {
@@ -336,7 +333,7 @@ extension ContentView {
     func onChangeOfTab() {
         app.setTab(tab)
     }
-    
+
     func onChangeColumnVisibility() {
         self.checkColumnVisibility(reason: "onChangeColumnVisibility")
     }
