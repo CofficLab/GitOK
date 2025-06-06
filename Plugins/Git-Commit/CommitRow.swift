@@ -7,11 +7,12 @@ struct CommitRow: View, SuperThread {
     let onSelect: () -> Void
 
     @State private var tag: String = ""
+    @State private var changedFileCount: Int = 0
 
     var body: some View {
         VStack(spacing: 0) {
             Button(action: onSelect) {
-                ZStack(alignment: .topTrailing) {
+                ZStack(alignment: .bottomTrailing) {
                     // 主要内容
                     HStack {
                         VStack(alignment: .leading, spacing: 2) {
@@ -27,29 +28,22 @@ struct CommitRow: View, SuperThread {
                             if !commit.isHead {
                                 HStack {
                                     Text(commit.author)
+                                        .padding(.vertical, 1)
                                         .lineLimit(1)
-                                        .font(.system(size: 11))
-                                        .foregroundColor(.secondary)
-
-                                    Text(commit.date)
-                                        .lineLimit(1)
-                                        .font(.system(size: 11))
-                                        .foregroundColor(.secondary)
 
                                     // 相对时间标签
                                     Text(relativeTime(from: commit.date))
-                                        .font(.system(size: 10))
-                                        .padding(.horizontal, 4)
                                         .padding(.vertical, 1)
-                                        .background(Color.gray.opacity(0.2))
-                                        .cornerRadius(4)
-                                        .foregroundColor(.secondary)
+                                        .padding(.horizontal, 1)
 
                                     Spacer()
                                 }
+                                .padding(.vertical, 1)
+                                .font(.system(size: 11))
+                                .foregroundColor(.secondary)
                             } else {
                                 HStack {
-                                    Text("未提交的文件数量: \(GitShell.changedFile(commit.path).count)")
+                                    Text("未提交的文件数量: \(changedFileCount)")
                                         .lineLimit(1)
                                         .font(.system(size: 11))
                                         .foregroundColor(.secondary)
@@ -64,7 +58,7 @@ struct CommitRow: View, SuperThread {
                         .contentShape(Rectangle())
                     }
 
-                    // 标签作为右上角背景
+                    // 标签作为右下角背景
                     if !tag.isEmpty {
                         Text(tag)
                             .font(.system(size: 12))
@@ -77,7 +71,7 @@ struct CommitRow: View, SuperThread {
             }
             .buttonStyle(PlainButtonStyle())
             .background(isSelected ? Color.accentColor.opacity(0.1) : Color.clear)
-            .onAppear(perform: loadTag)
+            .onAppear(perform: onAppear)
 
             Divider()
         }
@@ -96,6 +90,24 @@ struct CommitRow: View, SuperThread {
             self.tag = tagResult.trimmingCharacters(in: .whitespacesAndNewlines)
         } catch {
             // 获取tag失败时不显示tag
+        }
+    }
+
+    /// 异步加载未提交文件数量
+    private func loadChangedFileCount() {
+        // 只有HEAD commit才需要显示未提交文件数量
+        guard commit.isHead else {
+            return
+        }
+
+        // 使用异步任务避免阻塞UI
+        Task {
+            let count = GitShell.changedFile(commit.path).count
+
+            // 在主线程更新UI
+            await MainActor.run {
+                self.changedFileCount = count
+            }
         }
     }
 
@@ -150,6 +162,15 @@ struct CommitRow: View, SuperThread {
             let years = Int(timeInterval / 31536000)
             return "\(years)年前"
         }
+    }
+}
+
+// MARK: - Event
+
+extension CommitRow {
+    func onAppear() {
+        loadTag()
+        loadChangedFileCount()
     }
 }
 
