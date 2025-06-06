@@ -21,11 +21,11 @@ class CommitPlugin: SuperPlugin, SuperLog {
     /**
      * 添加列表视图 - 显示提交列表
      */
-    func addListView(tab: String) -> AnyView {
+    func addListView(tab: String) -> AnyView? {
         if tab == GitPlugin().label {
             AnyView(CommitList().environmentObject(GitProvider.shared))
         } else {
-            AnyView(EmptyView())
+            nil
         }
     }
 

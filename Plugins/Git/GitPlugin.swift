@@ -12,10 +12,6 @@ class GitPlugin: SuperPlugin, SuperLog {
         AnyView(EmptyView())
     }
 
-    func addListView() -> AnyView {
-        AnyView(EmptyView())
-    }
-
     func addDetailView() -> AnyView {
         AnyView(GitDetail()
             .environmentObject(GitProvider.shared)

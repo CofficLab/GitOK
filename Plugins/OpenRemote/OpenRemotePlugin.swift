@@ -12,10 +12,6 @@ class OpenRemotePlugin: SuperPlugin, SuperLog {
         AnyView(EmptyView())
     }
 
-    func addListView() -> AnyView {
-        AnyView(EmptyView())
-    }
-
     func addDetailView() -> AnyView {
         AnyView(EmptyView())
     }

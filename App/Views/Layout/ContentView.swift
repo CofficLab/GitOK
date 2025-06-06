@@ -35,7 +35,7 @@ struct ContentView: View, SuperThread, SuperEvent {
     @State var projectExists: Bool = true
 
     // MARK: - Private Properties
-    
+
     /// SwiftData 模型上下文，用于数据持久化
     @Environment(\.modelContext) private var modelContext
     /// 控制状态栏是否显示
@@ -46,9 +46,9 @@ struct ContentView: View, SuperThread, SuperEvent {
     private var projectActionsVisibility: Bool = true
     /// 控制标签选择器是否显示
     private var tabPickerVisibility: Bool = true
-    
+
     // MARK: - Initializers
-    
+
     /// 初始化ContentView
     /// - Parameters:
     ///   - statusBarVisiblity: 状态栏是否可见，默认为true
@@ -83,10 +83,16 @@ struct ContentView: View, SuperThread, SuperEvent {
                     Sidebar()
                 } content: {
                     if projectExists {
-                        Tabs(tab: $tab)
-                            .frame(idealWidth: 300)
-                            .frame(minWidth: 50)
-                            .onChange(of: tab, onChangeOfTab)
+                        VStack(spacing: 0) {
+                            ZStack {
+                                ForEach(p.plugins, id: \.label) { plugin in
+                                    plugin.addListView(tab: tab)
+                                }
+                            }.frame(maxHeight: .infinity)
+                        }
+                        .frame(idealWidth: 300)
+                        .frame(minWidth: 50)
+                        .onChange(of: tab, onChangeOfTab)
                     }
                 } detail: {
                     VStack(spacing: 0) {
@@ -201,14 +207,14 @@ extension ContentView {
     /// - Returns: 一个新的ContentView实例，工具栏被显示
     func showToolbar() -> ContentView {
         return ContentView(
-            statusBarVisiblity: self.statusBarVisiblity, 
-            initialColumnVisibility: self.columnVisibility, 
+            statusBarVisiblity: self.statusBarVisiblity,
+            initialColumnVisibility: self.columnVisibility,
             toolbarVisibility: true,
             projectActionsVisibility: self.projectActionsVisibility,
             tabPickerVisibility: self.tabPickerVisibility
         )
     }
-    
+
     /// 隐藏项目操作按钮组
     /// - Returns: 一个新的ContentView实例，项目操作按钮组被隐藏
     func hideProjectActions() -> ContentView {
@@ -220,7 +226,7 @@ extension ContentView {
             tabPickerVisibility: self.tabPickerVisibility
         )
     }
-    
+
     /// 显示项目操作按钮组
     /// - Returns: 一个新的ContentView实例，项目操作按钮组被显示
     func showProjectActions() -> ContentView {
@@ -232,7 +238,7 @@ extension ContentView {
             tabPickerVisibility: self.tabPickerVisibility
         )
     }
-    
+
     /// 隐藏标签选择器
     /// - Returns: 一个新的ContentView实例，标签选择器被隐藏
     func hideTabPicker() -> ContentView {
@@ -244,7 +250,7 @@ extension ContentView {
             tabPickerVisibility: false
         )
     }
-    
+
     /// 显示标签选择器
     /// - Returns: 一个新的ContentView实例，标签选择器被显示
     func showTabPicker() -> ContentView {
