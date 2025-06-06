@@ -3,8 +3,8 @@ import MagicCore
 import OSLog
 
 class OpenRemotePlugin: SuperPlugin, SuperLog {
-    let emoji = "🌐"
-    var label: String = "OpenRemote"
+    static let emoji = "🌐"
+    static var label: String = "OpenRemote"
     var isTab: Bool = false
 
     func addToolBarLeadingView() -> AnyView {

@@ -11,11 +11,7 @@ class PluginProvider: ObservableObject, SuperLog, SuperThread {
         GitPlugin(),
         BannerPlugin(),
         IconPlugin(),
-        SmartFilePlugin(),
-        SmartProjectPlugin(),
-        QuickMergePlugin(),
-        SmartMergePlugin(),
-        SmartMessagePlugin(),
+ 
         OpenXcodePlugin(),
         OpenVSCodePlugin(),
         OpenCursorPlugin(),
@@ -24,8 +20,8 @@ class PluginProvider: ObservableObject, SuperLog, SuperThread {
         OpenTerminalPlugin(),
         OpenRemotePlugin(),
         SyncPlugin(),
-        BranchPlugin(),
-        CommitPlugin()
+//        BranchPlugin(),
+        CommitPlugin.shared
     ]
     
     /// 获取所有标记为标签页的插件
@@ -58,7 +54,7 @@ class PluginProvider: ObservableObject, SuperLog, SuperThread {
 
         var labelCounts: [String: Int] = [:]
         for plugin in plugins {
-            labelCounts[plugin.label, default: 0] += 1
+            labelCounts[plugin.instanceLabel, default: 0] += 1
         }
 
         let duplicateLabels = labelCounts.filter { $0.value > 1 }.map { $0.key }

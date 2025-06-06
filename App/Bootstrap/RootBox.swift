@@ -24,20 +24,20 @@ final class RootBox: SuperLog {
 
         let c = AppConfig.getContainer()
 
+        self.repoManager = RepoManager(modelContext: ModelContext(c))
+        
         // Providers
-        self.app = AppProvider()
+        self.app = AppProvider(repoManager: self.repoManager)
         self.banner = BannerProvider()
         self.icon = IconProvider()
-
-        self.repoManager = RepoManager(modelContext: ModelContext(c))
 
         do {
             let projects = try self.repoManager.projectRepo.findAll(sortedBy: .ascending)
             
-            self.git = DataProvider(projects: projects)
+            self.git = DataProvider(projects: projects, repoManager: self.repoManager)
         } catch let e {
             os_log(.error, "\(e.localizedDescription)")
-            self.git = DataProvider(projects: [])
+            self.git = DataProvider(projects: [], repoManager: self.repoManager)
         }
     }
 }

@@ -7,12 +7,18 @@ import MagicCore
 // MARK: - Repository管理器
 
 class RepoManager: ObservableObject, SuperLog {
+
+
     static let emoji = "🏗️"
     private let modelContext: ModelContext
     
     // Repository实例
     lazy var projectRepo: any ProjectRepoProtocol = {
         ProjectRepo(modelContext: modelContext)
+    }()
+    
+    lazy var stateRepo: any StateRepoProtocol = {
+        StateRepo()
     }()
     
     init(modelContext: ModelContext) {

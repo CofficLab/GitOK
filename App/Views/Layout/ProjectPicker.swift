@@ -2,18 +2,23 @@ import SwiftUI
 import SwiftData
 
 struct ProjectPicker: View {
-    @EnvironmentObject var git: DataProvider
+    @EnvironmentObject var data: DataProvider
+    
+    @State private var selection: Project?
 
     var body: some View {
-        Picker("select_project", selection: $git.project) {
-            if git.project == nil {
+        Picker("select_project", selection: $selection) {
+            if selection == nil {
                 Text("select_a_project").tag(nil as Project?)
             }
-            ForEach(git.projects, id: \.self) { project in
+            ForEach(data.projects, id: \.url) { project in
                 Text(project.title).tag(project as Project?)
             }
         }
-//        .frame(width: 200)
+        .frame(width: 200)
+        .onAppear {
+            self.selection = data.project
+        }
     }
 }
 

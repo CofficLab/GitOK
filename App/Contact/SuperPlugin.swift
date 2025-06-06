@@ -9,7 +9,11 @@ import SwiftUI
 /// - 插件的生命周期管理方法
 protocol SuperPlugin {
     /// 插件的唯一标签，用于标识和区分不同的插件
-    var label: String { get }
+    static var label: String { get }
+    
+    /// 插件的实例标签，用于在 ForEach 等需要实例属性的地方作为标识符
+    /// 默认实现返回静态 label 属性的值
+    var instanceLabel: String { get }
 
     /// 指示插件是否作为主界面的标签页显示
     var isTab: Bool { get }
@@ -65,6 +69,10 @@ protocol SuperPlugin {
 /// SuperPlugin 协议的默认实现
 /// 提供了一些方法的空实现，使插件开发者只需实现他们关心的方法
 extension SuperPlugin {
+    /// 默认的实例标签实现，返回静态 label 属性的值
+    var instanceLabel: String {
+        return type(of: self).label
+    }
     /// 默认的工具栏前部视图实现，返回空视图
     func addToolBarLeadingView() -> AnyView {
         AnyView(EmptyView())

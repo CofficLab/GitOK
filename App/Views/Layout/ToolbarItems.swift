@@ -17,7 +17,7 @@ struct ToolbarItems: View {
     
     var body: some View {
         if isVisible {
-            ForEach(p.plugins, id: \.label) { plugin in
+            ForEach(p.plugins, id: \.instanceLabel) { plugin in
                 plugin.addToolBarLeadingView()
             }
         }

@@ -3,6 +3,8 @@ import OSLog
 import SwiftUI
 
 struct CommitList: View, SuperThread, SuperLog {
+    static var shared = CommitList()
+    
     @EnvironmentObject var app: AppProvider
     @EnvironmentObject var data: DataProvider
 
@@ -222,11 +224,11 @@ extension CommitList {
 
 extension CommitList {
     func onProjectChange() {
-        self.refresh("\(self.t)Project Changed")
+        self.refresh("Project Changed")
     }
 
     func onCommitSuccess(_ notification: Notification) {
-        self.refresh("\(self.t)GitCommitSuccess")
+        self.refresh("GitCommitSuccess")
     }
 
     func onAppear() {

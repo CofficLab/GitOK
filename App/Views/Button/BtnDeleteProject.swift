@@ -6,7 +6,7 @@ import OSLog
  */
 struct BtnDeleteProject: View {
     @EnvironmentObject var g: DataProvider
-    @EnvironmentObject var repoManager: RepoManager
+//    @EnvironmentObject var repoManager: RepoManager
     
     var project: Project
     
@@ -24,7 +24,7 @@ struct BtnDeleteProject: View {
      */
     private func deleteItem(_ project: Project) {
         withAnimation {
-            g.deleteProject(project, using: repoManager.projectRepo)
+//            g.deleteProject(project, using: repoManager.projectRepo)
         }
     }
 }

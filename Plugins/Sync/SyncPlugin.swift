@@ -4,7 +4,7 @@ import OSLog
 
 class SyncPlugin: SuperPlugin, SuperLog {
     let emoji = "🔄"
-    var label: String = "Sync"
+    static var label: String = "Sync"
     var isTab: Bool = false
 
     func addToolBarLeadingView() -> AnyView {

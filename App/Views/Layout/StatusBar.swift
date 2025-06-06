@@ -6,11 +6,11 @@ struct StatusBar: View {
 
     var body: some View {
         HStack(spacing: 0) {
-            ForEach(p.plugins, id: \.label) { plugin in
+            ForEach(p.plugins, id: \.instanceLabel) { plugin in
                 plugin.addStatusBarLeadingView()
             }
             Spacer()
-            ForEach(p.plugins, id: \.label) { plugin in
+            ForEach(p.plugins, id: \.instanceLabel) { plugin in
                 plugin.addStatusBarTrailingView()
             }
         }

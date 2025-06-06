@@ -4,7 +4,7 @@ import OSLog
 
 class OpenCursorPlugin: SuperPlugin, SuperLog {
     let emoji = "🖱️"
-    var label: String = "OpenCursor"
+    static var label: String = "OpenCursor"
     var isTab: Bool = false
 
     func addToolBarLeadingView() -> AnyView {

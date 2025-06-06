@@ -54,7 +54,8 @@ extension AppConfig {
     static var currentTaskUUID: String = ""
     
     static func setcurrentTaskUUID(_ id: String) {
-        AppConfig.currentTaskUUID = id
+        // TODO: 需要通过依赖注入获取StateRepo实例
+        // RepoManager.currentTaskUUID = id
     }
 }
 

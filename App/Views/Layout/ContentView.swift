@@ -74,7 +74,7 @@ struct ContentView: View, SuperThread, SuperEvent {
                         Sidebar()
                     } detail: {
                         VStack(spacing: 0) {
-                            p.tabPlugins.first { $0.label == tab }?.addDetailView()
+                            p.tabPlugins.first { $0.instanceLabel == tab }?.addDetailView()
 
                             if statusBarVisibility {
                                 StatusBar()
@@ -90,7 +90,7 @@ struct ContentView: View, SuperThread, SuperEvent {
                             VStack {
                                 ForEach(p.plugins.filter { plugin in
                                     plugin.addListView(tab: tab, project: g.project) != nil
-                                }, id: \.label) { plugin in
+                                }, id: \.instanceLabel) { plugin in
                                     plugin.addListView(tab: tab, project: g.project)
                                 }
                             }.frame(maxHeight: .infinity)
@@ -100,7 +100,7 @@ struct ContentView: View, SuperThread, SuperEvent {
                         .onChange(of: tab, onChangeOfTab)
                     } detail: {
                         VStack(spacing: 0) {
-                            p.tabPlugins.first { $0.label == tab }?.addDetailView()
+                            p.tabPlugins.first { $0.instanceLabel == tab }?.addDetailView()
 
                             if statusBarVisibility {
                                 StatusBar()
@@ -124,8 +124,8 @@ struct ContentView: View, SuperThread, SuperEvent {
             if tabPickerVisibility {
                 ToolbarItem(placement: .principal) {
                     Picker("选择标签", selection: $tab) {
-                        ForEach(p.tabPlugins, id: \.label) { plugin in
-                            Text(plugin.label).tag(plugin.label)
+                        ForEach(p.tabPlugins, id: \.instanceLabel) { plugin in
+                            Text(plugin.instanceLabel).tag(plugin.instanceLabel)
                         }
                     }
                     .pickerStyle(SegmentedPickerStyle())

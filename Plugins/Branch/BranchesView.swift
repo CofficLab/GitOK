@@ -14,13 +14,19 @@ struct BranchesView: View, SuperThread, SuperLog, SuperEvent {
 
     var body: some View {
         Group {
-            if data.project?.isGit == true && selection != nil {
+            if data.project?.isGit == true && !branches.isEmpty {
                 Picker("branch", selection: $selection, content: {
                     ForEach(branches, id: \.self, content: {
                         Text($0.name)
                             .tag($0 as Branch?)
                     })
                 })
+                // 确保 selection 始终有值，避免 "selection is invalid" 错误
+                .onAppear {
+                    if selection == nil && !branches.isEmpty {
+                        selection = branches.first
+                    }
+                }
             } else {
                 EmptyView()
             }
@@ -43,6 +49,12 @@ extension BranchesView {
         guard let project = data.project else {
             return
         }
+        
+        guard project.isGit else {
+            self.branches = []
+            self.selection = nil
+            return
+        }
 
         if verbose {
             os_log("\(self.t)🍋 Refresh(\(reason))")
@@ -52,10 +64,20 @@ extension BranchesView {
             branches = try GitShell.getBranches(project.path)
             if branches.isEmpty {
                 os_log("\(self.t)🍋 Refresh, but no branches")
+                selection = nil
+            } else {
+                // 尝试选择当前分支
+                let currentBranch = self.getCurrentBranch()
+                selection = branches.first(where: {
+                    $0.name == currentBranch?.name
+                })
+                
+                // 如果没有找到匹配的分支，则选择第一个分支
+                if selection == nil {
+                    selection = branches.first
+                    os_log("\(self.t)🍋 No matching branch found, selecting first branch: \(selection?.name ?? "unknown")")
+                }
             }
-            selection = branches.first(where: {
-                $0.name == self.getCurrentBranch()?.name
-            })
         } catch let e {
             self.m.setError(e)
         }

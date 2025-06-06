@@ -4,7 +4,7 @@ import SwiftUI
 
 class SmartMergePlugin: SuperPlugin, SuperLog {
     let emoji = "📣"
-    var label: String = "SmartMerge"
+    static var label: String = "SmartMerge"
     var isTab: Bool = false
 
     func addDetailView() -> AnyView {

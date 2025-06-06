@@ -9,11 +9,7 @@ import SwiftUI
 class DataProvider: NSObject, ObservableObject, SuperLog {
     // MARK: - Properties
 
-    @Published var project: Project? = nil {
-        didSet {
-            AppConfig.setProjectPath(project?.path ?? "")
-        }
-    }
+    @Published private(set) var project: Project? = nil
     @Published var projects: [Project] = []
     @Published var branches: [Branch] = []
     @Published var branch: Branch? = nil
@@ -22,14 +18,16 @@ class DataProvider: NSObject, ObservableObject, SuperLog {
 
     static let emoji = "🏠"
     var cancellables = Set<AnyCancellable>()
+    private let repoManager: RepoManager
 
     // MARK: - Initialization
-    
-    init(projects: [Project]) {
+
+    init(projects: [Project], repoManager: RepoManager) {
         self.projects = projects
+        self.repoManager = repoManager
 
         self.project = projects.first(where: {
-            $0.path == AppConfig.projectPath
+            $0.path == repoManager.stateRepo.projectPath
         })
 
         super.init()
@@ -47,7 +45,7 @@ extension DataProvider {
      * @param p 要设置的项目
      * @param reason 设置原因
      */
-    private func setProject(_ p: Project?, reason: String) {
+    func setProject(_ p: Project?, reason: String) {
         let verbose = true
 
         if verbose {
@@ -56,8 +54,9 @@ extension DataProvider {
         }
 
         self.project = p
+        self.repoManager.stateRepo.setProjectPath(self.project?.path ?? "")
     }
-    
+
     /**
      * 移动项目并更新排序
      * @param source 源索引集合
@@ -129,25 +128,25 @@ extension DataProvider {
                 os_log("Project already exists: \(url.path)")
                 return
             }
-            
+
             // 通过仓库创建项目
             let newProject = try repo.create(url: url)
-            
+
             // 添加到本地数组
             self.projects.append(newProject)
-            
+
             // 如果当前没有选中项目，设置为新添加的项目
             if self.project == nil {
                 self.setProject(newProject, reason: "Added first project")
             }
-            
+
             os_log("Project added successfully: \(url.path)")
-            
+
         } catch {
             os_log(.error, "Failed to add project: \(error.localizedDescription)")
         }
     }
-    
+
     /**
      * 删除项目
      * @param project 要删除的项目
@@ -310,7 +309,7 @@ extension DataProvider {
                 self?.handleProjectDeleted(notification)
             }
             .store(in: &cancellables)
-    
+
         // 监听分支变更事件
         NotificationCenter.default.publisher(for: .gitBranchChanged)
             .sink { [weak self] notification in
@@ -348,7 +347,6 @@ extension DataProvider {
      * 处理分支变更事件
      */
     private func handleBranchChanged(_ notification: Notification) {
-        refreshBranches(reason: "Branch Changed Event")
     }
 
     /**
@@ -361,9 +359,9 @@ extension DataProvider {
     /**
      * 处理Project变更事件
      */
-    private func handleProjectChanged() {
-        refreshBranches(reason: "Project Changed")
-    }
+//    private func handleProjectChanged() {
+//        refreshBranches(reason: "Project Changed")
+//    }
 
     /**
      * 处理项目删除事件

@@ -8,7 +8,6 @@ struct RootView<Content>: View, SuperEvent where Content: View {
     var a: AppProvider
     var b: BannerProvider
     var i: IconProvider
-    var repoManager: RepoManager
     
     private var box: RootBox
     
@@ -22,7 +21,6 @@ struct RootView<Content>: View, SuperEvent where Content: View {
         self.a = box.app
         self.b = box.banner
         self.i = box.icon
-        self.repoManager = box.repoManager
     }
 
     var body: some View {
@@ -53,16 +51,15 @@ struct RootView<Content>: View, SuperEvent where Content: View {
             .environmentObject(p)
             .environmentObject(m)
             .environmentObject(self.box.git)
-            .environmentObject(repoManager)
             .onAppear(perform: onAppear)
-            .onReceive(nc.publisher(for: .gitCommitStart), perform: onGitCommitStart)
-            .onReceive(nc.publisher(for: .gitCommitSuccess), perform: onGitCommitSuccess)
-            .onReceive(nc.publisher(for: .gitCommitFailed), perform: onGitCommitFailed)
-            .onReceive(nc.publisher(for: .gitPushStart), perform: onGitPushStart)
-            .onReceive(nc.publisher(for: .gitPushSuccess), perform: onGitPushSuccess)
-            .onReceive(nc.publisher(for: .gitPushFailed), perform: onGitPushFailed)
-            .onReceive(nc.publisher(for: .gitPullStart), perform: onGitPullStart)
-            .onReceive(nc.publisher(for: .gitBranchChanged), perform: onGitBranchChanged)
+//            .onReceive(nc.publisher(for: .gitCommitStart), perform: onGitCommitStart)
+//            .onReceive(nc.publisher(for: .gitCommitSuccess), perform: onGitCommitSuccess)
+//            .onReceive(nc.publisher(for: .gitCommitFailed), perform: onGitCommitFailed)
+//            .onReceive(nc.publisher(for: .gitPushStart), perform: onGitPushStart)
+//            .onReceive(nc.publisher(for: .gitPushSuccess), perform: onGitPushSuccess)
+//            .onReceive(nc.publisher(for: .gitPushFailed), perform: onGitPushFailed)
+//            .onReceive(nc.publisher(for: .gitPullStart), perform: onGitPullStart)
+//            .onReceive(nc.publisher(for: .gitBranchChanged), perform: onGitBranchChanged)
     }
 }
 
@@ -100,7 +97,7 @@ extension RootView {
     }
 
     func onAppear() {
-        p.plugins.forEach { $0.onAppear() }
+//        p.plugins.forEach { $0.onAppear() }
     }
 }
 
