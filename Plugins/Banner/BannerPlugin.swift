@@ -12,8 +12,12 @@ class BannerPlugin: SuperPlugin, SuperLog {
         AnyView(EmptyView())
     }
 
-    func addListView() -> AnyView {
-        AnyView(BannerList())
+    func addListView(tab: String) -> AnyView {
+        if tab == self.label {
+            AnyView(BannerList())
+        } else {
+            AnyView(EmptyView())
+        }
     }
 
     func addDetailView() -> AnyView {

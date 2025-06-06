@@ -6,7 +6,7 @@ import OSLog
  * Commit插件 - 负责显示和管理Git提交列表
  */
 class CommitPlugin: SuperPlugin, SuperLog {
-    let emoji = "📝"
+    let emoji = "🍒"
     var label: String = "Commit"
     var icon: String = "doc.text"
     var isTab: Bool = true
@@ -21,8 +21,12 @@ class CommitPlugin: SuperPlugin, SuperLog {
     /**
      * 添加列表视图 - 显示提交列表
      */
-    func addListView() -> AnyView {
-        AnyView(CommitList().environmentObject(GitProvider.shared))
+    func addListView(tab: String) -> AnyView {
+        if tab == GitPlugin().label {
+            AnyView(CommitList().environmentObject(GitProvider.shared))
+        } else {
+            AnyView(EmptyView())
+        }
     }
 
     /**
@@ -73,4 +77,19 @@ class CommitPlugin: SuperPlugin, SuperLog {
     func onPlayAssetUpdate() {
         os_log("\(self.t) onPlayAssetUpdate")
     }
+}
+
+#Preview("APP") {
+    RootView(content: {
+        ContentView()
+    })
+    .frame(width: 800, height: 800)
+}
+
+#Preview("App-Big Screen") {
+    RootView {
+        ContentView()
+    }
+    .frame(width: 1200)
+    .frame(height: 1200)
 }

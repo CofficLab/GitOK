@@ -13,7 +13,7 @@ class SmartMergePlugin: SuperPlugin, SuperLog {
     }
 
     func addListView() -> AnyView {
-        AnyView(CommitList())
+        AnyView(EmptyView())
     }
 
     func addDetailView() -> AnyView {

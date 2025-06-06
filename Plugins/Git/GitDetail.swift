@@ -1,6 +1,6 @@
-import SwiftUI
-import MagicCore
 import AppKit
+import MagicCore
+import SwiftUI
 
 struct GitDetail: View, SuperEvent {
     @EnvironmentObject var app: AppProvider
@@ -13,31 +13,35 @@ struct GitDetail: View, SuperEvent {
 
     var body: some View {
         ZStack {
-            if g.project != nil {
-                if let commit = g.commit {
-                    Group {
-                        if commit.isHead && isProjectClean {
-                            NoLocalChanges()
-                        } else {
-                            VStack(spacing: 0) {
-                                // 当前 Commit 详细信息
-                                CommitDetailView(commit: commit)
-                                
-                                HSplitView {
-                                    FileList(file: $file, commit: commit)
-                                        .frame(idealWidth: 200)
-                                        .frame(minWidth: 200, maxWidth: 300)
-                                        .layoutPriority(1)
-                                    
-                                    if let file = g.file {
-                                        FileDetail(file: file, commit: commit)
+            if let project = g.project {
+                if project.isGit {
+                    if let commit = g.commit {
+                        Group {
+                            if commit.isHead && isProjectClean {
+                                NoLocalChanges()
+                            } else {
+                                VStack(spacing: 0) {
+                                    // 当前 Commit 详细信息
+                                    CommitDetailView(commit: commit)
+
+                                    HSplitView {
+                                        FileList(file: $file, commit: commit)
+                                            .frame(idealWidth: 200)
+                                            .frame(minWidth: 200, maxWidth: 300)
+                                            .layoutPriority(1)
+
+                                        if let file = g.file {
+                                            FileDetail(file: file, commit: commit)
+                                        }
                                     }
                                 }
                             }
                         }
+                    } else {
+                        NoCommit()
                     }
                 } else {
-                    NoCommit()
+                    NoGitProjectView()
                 }
             } else {
                 NoProjectView()
@@ -60,7 +64,7 @@ extension GitDetail {
         self.g.setFile(file)
 
         isProjectClean = g.project?.isClean ?? true
-        
+
         if let commit = g.commit, let file = file, let project = g.project {
             do {
                 let v = try GitShell.diffFileFromCommit(path: project.path, hash: commit.hash, file: file.name)
@@ -81,18 +85,8 @@ extension GitDetail {
     RootView {
         ContentView()
     }
-        .frame(height: 600)
-        .frame(width: 600)
-}
-
-
-#Preview("隐藏左侧栏") {
-    RootView {
-        ContentView()
-            .hideSidebar()
-    }
-        .frame(height: 600)
-        .frame(width: 600)
+    .frame(height: 600)
+    .frame(width: 600)
 }
 
 #Preview("App-Big Screen") {

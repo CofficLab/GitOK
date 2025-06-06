@@ -5,14 +5,12 @@ struct Tabs: View {
 
     @Binding var tab: String
 
-    var tabPlugins: [SuperPlugin] {
-        p.plugins.filter { $0.isTab }
-    }
-
     var body: some View {
         VStack(spacing: 0) {
             ZStack {
-                tabPlugins.first { $0.label == tab }?.addListView()
+                ForEach(p.plugins, id: \.label) { plugin in
+                    plugin.addListView(tab: tab)
+                }
             }.frame(maxHeight: .infinity)
         }
     }

@@ -12,10 +12,6 @@ class SmartFilePlugin: SuperPlugin, SuperLog {
         AnyView(EmptyView())
     }
 
-    func addListView() -> AnyView {
-        AnyView(CommitList())
-    }
-
     func addDetailView() -> AnyView {
         AnyView(GitDetail())
     }

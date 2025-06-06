@@ -13,7 +13,7 @@ class GitPlugin: SuperPlugin, SuperLog {
     }
 
     func addListView() -> AnyView {
-        AnyView(CommitList().environmentObject(GitProvider.shared))
+        AnyView(EmptyView())
     }
 
     func addDetailView() -> AnyView {

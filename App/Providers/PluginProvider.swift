@@ -25,6 +25,7 @@ class PluginProvider: ObservableObject, SuperLog, SuperThread {
         OpenRemotePlugin(),
         SyncPlugin(),
         BranchPlugin(),
+        CommitPlugin()
     ]
 
     init() {
@@ -44,3 +45,19 @@ class PluginProvider: ObservableObject, SuperLog, SuperThread {
         }
     }
 }
+
+#Preview("APP") {
+    RootView(content: {
+        ContentView()
+    })
+    .frame(width: 800, height: 800)
+}
+
+#Preview("App-Big Screen") {
+    RootView {
+        ContentView()
+    }
+    .frame(width: 1200)
+    .frame(height: 1200)
+}
+

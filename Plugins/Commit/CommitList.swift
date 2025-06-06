@@ -1,5 +1,6 @@
 import MagicCore
 import SwiftUI
+import OSLog
 
 struct CommitList: View, SuperThread, SuperLog {
     @EnvironmentObject var app: AppProvider
@@ -21,51 +22,55 @@ struct CommitList: View, SuperThread, SuperLog {
     var verbose = true
 
     var body: some View {
-        GeometryReader { geometry in
-            VStack(spacing: 0) {
-                if loading && commits.isEmpty {
-                    Spacer()
-                    Text(LocalizedStringKey("loading"))
-                    Spacer()
-                } else {
-                    ScrollView {
-                        LazyVStack(spacing: 0, pinnedViews: []) {
-                            Divider()
-
-                            ForEach(commits) { commit in
-                                CommitRow(commit: commit,
-                                          isSelected: selection == commit,
-                                          onSelect: { selectCommit(commit) })
-                                    .id(commit.id)
-                                    .onAppear {
-                                        let index = commits.firstIndex(of: commit) ?? 0
-                                        let threshold = Int(Double(commits.count) * 0.8)
-                                        if index >= threshold && hasMoreCommits && !loading {
-                                            loadMoreCommits()
+        ZStack {
+            if let project = g.project, project.isGit {
+                GeometryReader { geometry in
+                    VStack(spacing: 0) {
+                        if loading && commits.isEmpty {
+                            Spacer()
+                            Text(LocalizedStringKey("loading"))
+                            Spacer()
+                        } else {
+                            ScrollView {
+                                LazyVStack(spacing: 0, pinnedViews: []) {
+                                    Divider()
+                                    
+                                    ForEach(commits) { commit in
+                                        CommitRow(commit: commit,
+                                                  isSelected: selection == commit,
+                                                  onSelect: { selectCommit(commit) })
+                                        .id(commit.id)
+                                        .onAppear {
+                                            let index = commits.firstIndex(of: commit) ?? 0
+                                            let threshold = Int(Double(commits.count) * 0.8)
+                                            if index >= threshold && hasMoreCommits && !loading {
+                                                loadMoreCommits()
+                                            }
                                         }
                                     }
-                            }
-
-                            if loading && !commits.isEmpty {
-                                HStack {
-                                    Spacer()
-                                    ProgressView()
-                                    Spacer()
+                                    
+                                    if loading && !commits.isEmpty {
+                                        HStack {
+                                            Spacer()
+                                            ProgressView()
+                                            Spacer()
+                                        }
+                                        .frame(height: 44)
+                                        
+                                        Divider()
+                                    }
                                 }
-                                .frame(height: 44)
-
-                                Divider()
                             }
+                            .background(Color(.controlBackgroundColor))
                         }
                     }
-                    .background(Color(.controlBackgroundColor))
+                    .onAppear {
+                        let rowHeight: CGFloat = 31
+                        let visibleRows = Int(ceil(geometry.size.height / rowHeight))
+                        pageSize = max(self.pageSize, visibleRows + 5)
+                        onAppear()
+                    }
                 }
-            }
-            .onAppear {
-                let rowHeight: CGFloat = 31
-                let visibleRows = Int(ceil(geometry.size.height / rowHeight))
-                pageSize = max(self.pageSize, visibleRows + 5)
-                onAppear()
             }
         }
         .onAppear(perform: onAppear)
@@ -121,6 +126,7 @@ struct CommitList: View, SuperThread, SuperLog {
 
 extension CommitList {
     func refresh(_ reason: String = "") {
+        os_log("\(self.t)Refresh(\(reason))")
         guard let project = g.project, !isRefreshing else { return }
 
         isRefreshing = true
