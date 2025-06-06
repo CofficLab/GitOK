@@ -16,7 +16,9 @@ class AppProvider: NSObject, ObservableObject, AVAudioPlayerDelegate, SuperLog {
     init(repoManager: RepoManager) {
         self.repoManager = repoManager
         self.sidebarVisibility = repoManager.stateRepo.sidebarVisibility
+        
         super.init()
+        print(self.sidebarVisibility)
     }
     
     func setTab(_ t: String) {
@@ -40,13 +42,14 @@ class AppProvider: NSObject, ObservableObject, AVAudioPlayerDelegate, SuperLog {
     }
     
     func showSidebar(reason: String) {
-//        let verbose = true
-//        if verbose {
-//            os_log("\(self.t)Show Sidebar(\(reason))")
-//        }
+        let verbose = true
+        if verbose {
+            os_log("\(self.t)Show Sidebar(\(reason))")
+        }
     
-//        self.sidebarVisibility = true
-//        RepoManager.setSidebarVisibility(true)
+        print("provider shwo sidebar")
+        self.sidebarVisibility = true
+        repoManager.stateRepo.setSidebarVisibility(true)
     }
 }
 

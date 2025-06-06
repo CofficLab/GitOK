@@ -1,7 +1,3 @@
-//
-//  StateRepo.swift
-//  GitOK
-//
 import SwiftUI
 import OSLog
 import MagicCore
@@ -24,6 +20,8 @@ protocol StateRepoProtocol {
 
 class StateRepo: StateRepoProtocol, SuperLog, ObservableObject {
     static let emoji = "📱"
+    
+    private let verbose: Bool = false
     
     // MARK: - App State Properties
     
@@ -80,6 +78,12 @@ class StateRepo: StateRepoProtocol, SuperLog, ObservableObject {
      */
     func setSidebarVisibility(_ visible: Bool) {
         self.sidebarVisibility = visible
-        os_log("\(self.t)Sidebar visibility set to \(visible)")
+        if verbose {
+            os_log("\(self.t)Sidebar visibility set to \(visible)")
+        }
     }
+}
+
+#Preview {
+    MagicUserDefaultsView(defaultSearchText: "App.")
 }

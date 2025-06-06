@@ -1,34 +1,54 @@
 import MagicCore
 import SwiftData
 import SwiftUI
+import OSLog
 
 struct ProjectPickerView: View, SuperLog {
     @EnvironmentObject var data: DataProvider
+    @EnvironmentObject var app: AppProvider
 
     @State private var selection: Project?
+    
+    static let emoji = "💺"
+    
+    init() {
+        os_log("\(Self.onInit)")
+    }
 
     var body: some View {
-        Picker("select_project", selection: $selection) {
-            if selection == nil {
-                Text("select_a_project").tag(nil as Project?)
-            }
-            ForEach(data.projects, id: \.url) { project in
-                Text(project.title).tag(project as Project?)
-            }
+        Group {
+//            if app.sidebarVisibility == false {
+                Picker("select_project", selection: $selection) {
+                    if selection == nil {
+                        Text("select_a_project").tag(nil as Project?)
+                    }
+                    ForEach(data.projects, id: \.url) { project in
+                        Text(project.title).tag(project as Project?)
+                    }
+                }
+                .onAppear {
+                    self.selection = data.project
+                    os_log("\(self.t)OnAppear, app.sidebarVisibility=\(app.sidebarVisibility)")
+                }
+                .onChange(of: selection) { _, newValue in
+                    if let newProject = newValue, newValue != data.project {
+                        data.setProject(newProject, reason: self.className)
+                    }
+                }
+                .onChange(of: data.project, {
+                    if let project = data.project, project != selection {
+                        self.selection = project
+                    }
+                })
+//            } else {
+//                EmptyView().onAppear {
+//                    os_log("\(self.t)OnAppear, app.sidebarVisibility=\(app.sidebarVisibility)")
+//                }
+//            }
         }
         .onAppear {
-            self.selection = data.project
+            os_log("\(self.t)OnAppear, app.sidebarVisibility=\(app.sidebarVisibility)")
         }
-        .onChange(of: selection) { _, newValue in
-            if let newProject = newValue, newValue != data.project {
-                data.setProject(newProject, reason: self.className)
-            }
-        }
-        .onChange(of: data.project, {
-            if let project = data.project, project != selection {
-                self.selection = project
-            }
-        })
     }
 }
 
@@ -38,4 +58,19 @@ struct ProjectPickerView: View, SuperLog {
     }
     .frame(width: 300)
     .frame(height: 100)
+}
+
+#Preview("APP") {
+    RootView(content: {
+        ContentView()
+    })
+    .frame(width: 800, height: 800)
+}
+
+#Preview("App-Big Screen") {
+    RootView {
+        ContentView()
+    }
+    .frame(width: 1200)
+    .frame(height: 1200)
 }

@@ -11,9 +11,10 @@ import SwiftUI
 /// - 侧边栏：显示项目列表
 /// - 内容栏：显示当前选中的标签页
 /// - 详情栏：显示当前选中标签页的详细内容
-struct ContentView: View, SuperThread, SuperEvent {
+struct ContentView: View, SuperThread, SuperEvent, SuperLog {
     // MARK: - Public Properties
 
+    static let emoji = "🍺"
     @EnvironmentObject var app: AppProvider
     @EnvironmentObject var g: DataProvider
     @EnvironmentObject var p: PluginProvider
@@ -27,9 +28,11 @@ struct ContentView: View, SuperThread, SuperEvent {
     /// 当前选中的标签页，默认为 "Git"
     @State var tab: String = "Git"
     /// 导航分栏视图的可见性状态，默认只显示详情栏
-    @State var columnVisibility: NavigationSplitViewVisibility = .detailOnly
+    @State private(set) var columnVisibility: NavigationSplitViewVisibility = .all
     /// 当前项目是否存在的标志
     @State var projectExists: Bool = true
+    /// 当前布局模式：true为三栏模式，false为两栏模式
+    @State var isThreeColumnMode: Bool = false
 
     // MARK: - Private Properties
 
@@ -68,10 +71,23 @@ struct ContentView: View, SuperThread, SuperEvent {
     var body: some View {
         Group {
             if projectExists {
-                if p.allListViewsEmpty(tab: tab, project: g.project) {
-                    // 当所有插件的列表视图都为空时，使用两栏布局
+                if isThreeColumnMode {
+                    // 三栏布局：当有插件提供列表视图时使用
                     NavigationSplitView(columnVisibility: $columnVisibility) {
                         Sidebar()
+                    } content: {
+                        VStack(spacing: 0) {
+                            VStack {
+                                ForEach(p.plugins.filter { plugin in
+                                    plugin.addListView(tab: tab, project: g.project) != nil
+                                }, id: \.instanceLabel) { plugin in
+                                    plugin.addListView(tab: tab, project: g.project)
+                                }
+                            }.frame(maxHeight: .infinity)
+                        }
+                        .frame(idealWidth: 300)
+                        .frame(minWidth: 50)
+                        .onChange(of: tab, onChangeOfTab)
                     } detail: {
                         VStack(spacing: 0) {
                             p.tabPlugins.first { $0.instanceLabel == tab }?.addDetailView()
@@ -80,20 +96,14 @@ struct ContentView: View, SuperThread, SuperEvent {
                                 StatusBar()
                             }
                         }
+                        .onAppear {
+                            os_log("\(self.t)📺 三栏布局Detail Appear 📺 \(String(describing: self.columnVisibility))")
+                        }
                     }
                 } else {
-                    // 当有插件提供列表视图时，使用三栏布局
+                    // 两栏布局：当所有插件的列表视图都为空时使用
                     NavigationSplitView(columnVisibility: $columnVisibility) {
                         Sidebar()
-                    } content: {
-                        VStack(spacing: 0) {
-                            ForEach(p.plugins, id: \.instanceLabel) { plugin in
-                                plugin.addListView(tab: tab, project: g.project)
-                            }
-                        }
-                        .frame(idealWidth: 300)
-                        .frame(minWidth: 50)
-                        .onChange(of: tab, onChangeOfTab)
                     } detail: {
                         VStack(spacing: 0) {
                             p.tabPlugins.first { $0.instanceLabel == tab }?.addDetailView()
@@ -110,10 +120,12 @@ struct ContentView: View, SuperThread, SuperEvent {
         }
         .onAppear(perform: onAppear)
         .onChange(of: g.project, onProjectChange)
-        .onChange(of: columnVisibility, onCheckColumnVisibility)
+        .onChange(of: columnVisibility, onChangeColumnVisibility)
+        .onChange(of: tab, updateLayoutMode)
+        .onChange(of: g.project, updateLayoutMode)
         .toolbarVisibility(toolbarVisibility ? .visible : .hidden)
         .toolbar(content: {
-            ToolbarItem(placement: .navigation) {
+            ToolbarItem(placement: .cancellationAction) {
                 ForEach(p.plugins, id: \.instanceLabel) { plugin in
                     plugin.addToolBarLeadingView()
                 }
@@ -286,13 +298,13 @@ extension ContentView {
     /// 视图出现时的处理逻辑
     /// 只有在未明确设置导航分栏视图状态时，才根据应用程序的侧边栏可见性设置来初始化，并设置当前标签页
     func onAppear() {
-        // 只有当columnVisibility是默认值.detailOnly时，才根据app.sidebarVisibility设置
-        if columnVisibility == .detailOnly {
-            if app.sidebarVisibility == true {
-                self.columnVisibility = .all
-            } else if app.sidebarVisibility == false {
-                self.columnVisibility = .doubleColumn
-            }
+        updateLayoutMode()
+
+        os_log("\(self.t)📺 OnAppear, threeMode: \(self.isThreeColumnMode) 📺 app.sidebarVisibility \(self.app.sidebarVisibility)")
+        if app.sidebarVisibility == true {
+            self.columnVisibility = .all
+        } else {
+            self.columnVisibility = isThreeColumnMode ? .doubleColumn : .detailOnly
         }
 
         self.tab = app.currentTab
@@ -300,11 +312,22 @@ extension ContentView {
 
     /// 检查并处理导航分栏视图可见性变化
     /// 当导航分栏视图的可见性状态发生变化时，在主线程上更新应用程序的侧边栏可见性状态
-    func onCheckColumnVisibility() {
-        if columnVisibility == .doubleColumn {
-            app.hideSidebar()
-        } else if columnVisibility == .automatic || columnVisibility == .all {
-            app.showSidebar(reason: "ContentView.onCheckColumnVisibility")
+    func checkColumnVisibility(reason: String) {
+        os_log("\(self.t)📺 onCheckColumnVisibility(\(reason))")
+        if isThreeColumnMode {
+            if columnVisibility == .doubleColumn {
+                app.hideSidebar()
+            } else {
+                print("ContentView.onCheckColumnVisibility.ThreeColumnMode")
+                print(self.columnVisibility)
+                app.showSidebar(reason: "ContentView.onCheckColumnVisibility.ThreeColumnMode")
+            }
+        } else {
+            if columnVisibility == .detailOnly {
+                app.hideSidebar()
+            } else {
+                app.showSidebar(reason: "ContentView.onCheckColumnVisibility.TwoColumnMode")
+            }
         }
     }
 
@@ -312,6 +335,18 @@ extension ContentView {
     /// 当用户切换标签页时，更新应用程序的当前标签页状态
     func onChangeOfTab() {
         app.setTab(tab)
+    }
+    
+    func onChangeColumnVisibility() {
+        self.checkColumnVisibility(reason: "onChangeColumnVisibility")
+    }
+
+    /// 更新布局模式
+    /// 根据当前标签页和项目状态决定使用两栏还是三栏布局
+    func updateLayoutMode() {
+        withAnimation(.easeInOut(duration: 0.2)) {
+            self.isThreeColumnMode = !p.allListViewsEmpty(tab: tab, project: g.project)
+        }
     }
 }
 

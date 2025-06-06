@@ -27,6 +27,7 @@ class BaseRepositoryImpl<T: PersistentModel>: BaseRepo, SuperLog {
     
     let modelContext: ModelContext
     let logger = Logger(subsystem: "com.yueyi.gitok", category: "Repository")
+    private var verbose = false
     
     init(modelContext: ModelContext) {
         self.modelContext = modelContext
@@ -39,7 +40,9 @@ class BaseRepositoryImpl<T: PersistentModel>: BaseRepo, SuperLog {
     
     func fetch(_ descriptor: FetchDescriptor<T>) throws -> [T] {
         let results = try modelContext.fetch(descriptor)
-        logger.debug("\(self.t)📖 Fetched \(results.count) \(String(describing: T.self))")
+        if verbose {
+            logger.debug("\(self.t)📖 Fetched \(results.count) \(String(describing: T.self))")
+        }
         return results
     }
     
