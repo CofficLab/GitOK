@@ -24,8 +24,9 @@ protocol SuperPlugin {
     /// 返回插件的列表视图
     /// - Parameters:
     ///   - tab: 标签页的名称
+    ///   - project: 当前的项目
     /// - Returns: 包装在 AnyView 中的列表视图
-    func addListView(tab: String) -> AnyView?
+    func addListView(tab: String, project: Project?) -> AnyView?
 
     /// 返回插件的详情视图
     /// - Returns: 包装在 AnyView 中的详情视图
@@ -101,7 +102,7 @@ extension SuperPlugin {
     }
 
     /// 默认的列表视图实现，返回空
-    func addListView(tab: String) -> AnyView? {
+    func addListView(tab: String, project: Project?) -> AnyView? {
         return nil
     }
 

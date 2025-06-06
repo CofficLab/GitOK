@@ -14,11 +14,8 @@ import SwiftUI
 struct ContentView: View, SuperThread, SuperEvent {
     // MARK: - Public Properties
 
-    /// 应用程序状态管理器，提供全局应用状态和配置信息
     @EnvironmentObject var app: AppProvider
-    /// Git 操作提供者，管理 Git 相关的状态和操作
     @EnvironmentObject var g: DataProvider
-    /// 插件提供者，管理应用中的各种插件
     @EnvironmentObject var p: PluginProvider
 
     /// 当前选中的分支
@@ -71,7 +68,7 @@ struct ContentView: View, SuperThread, SuperEvent {
     var body: some View {
         Group {
             if projectExists {
-                if p.allListViewsEmpty(tab: tab) {
+                if p.allListViewsEmpty(tab: tab, project: g.project) {
                     // 当所有插件的列表视图都为空时，使用两栏布局
                     NavigationSplitView(columnVisibility: $columnVisibility) {
                         Sidebar()
@@ -92,10 +89,9 @@ struct ContentView: View, SuperThread, SuperEvent {
                         VStack(spacing: 0) {
                             VStack {
                                 ForEach(p.plugins.filter { plugin in
-                                    plugin.addListView(tab: tab) != nil
+                                    plugin.addListView(tab: tab, project: g.project) != nil
                                 }, id: \.label) { plugin in
-                                    plugin.addListView(tab: tab)
-                                    Text(plugin.label)
+                                    plugin.addListView(tab: tab, project: g.project)
                                 }
                             }.frame(maxHeight: .infinity)
                         }

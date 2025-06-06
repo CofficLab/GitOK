@@ -35,12 +35,14 @@ class PluginProvider: ObservableObject, SuperLog, SuperThread {
     }
     
     /// 检查是否所有插件的列表视图都为空
-    /// - Parameter tab: 当前选中的标签页
+    /// - Parameter 
+    ///      - tab: 当前选中的标签页
+    ///     - project: 当前选中的项目
     /// - Returns: 如果所有插件的addListView都返回nil则返回true，否则返回false
-    func allListViewsEmpty(tab: String) -> Bool {
+    func allListViewsEmpty(tab: String, project: Project?) -> Bool {
         var allEmpty = true
         for plugin in plugins {
-            let listView = plugin.addListView(tab: tab)
+            let listView = plugin.addListView(tab: tab, project: project)
             if listView != nil {
                 os_log("插件 %@ 返回了非nil的列表视图", plugin.label)
                 allEmpty = false
