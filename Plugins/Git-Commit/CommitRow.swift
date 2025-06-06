@@ -53,7 +53,7 @@ struct CommitRow: View, SuperThread {
                                         .lineLimit(1)
                                         .font(.system(size: 11))
                                         .foregroundColor(.secondary)
-                                    
+
                                     Spacer()
                                 }
                             }
@@ -63,7 +63,7 @@ struct CommitRow: View, SuperThread {
                         .frame(minHeight: 25)
                         .contentShape(Rectangle())
                     }
-                    
+
                     // 标签作为右上角背景
                     if !tag.isEmpty {
                         Text(tag)
@@ -90,18 +90,15 @@ struct CommitRow: View, SuperThread {
             return
         }
 
-        bg.async {
-            do {
-                let tagResult = try commit.getTag()
-                main.async {
-                    self.tag = tagResult.trimmingCharacters(in: .whitespacesAndNewlines)
-                }
-            } catch {
-                // 获取tag失败时不显示tag
-            }
+        do {
+            let tagResult = try commit.getTag()
+
+            self.tag = tagResult.trimmingCharacters(in: .whitespacesAndNewlines)
+        } catch {
+            // 获取tag失败时不显示tag
         }
     }
-    
+
     /// 计算相对时间
     /// @param dateString 日期字符串
     /// @return 相对时间描述（如：2分钟前、3小时前、1天前等）
@@ -109,32 +106,32 @@ struct CommitRow: View, SuperThread {
         // Git 日期格式通常是 "YYYY-MM-DD HH:mm:ss" 或 ISO 8601 格式
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-        
+
         // 尝试多种日期格式
         var date: Date?
-        
+
         // 尝试标准格式
         date = formatter.date(from: dateString)
-        
+
         // 如果失败，尝试 ISO 8601 格式
         if date == nil {
             formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
             date = formatter.date(from: dateString)
         }
-        
+
         // 如果还是失败，尝试其他常见格式
         if date == nil {
             formatter.dateFormat = "EEE MMM d HH:mm:ss yyyy Z"
             date = formatter.date(from: dateString)
         }
-        
+
         guard let commitDate = date else {
             return "未知"
         }
-        
+
         let now = Date()
         let timeInterval = now.timeIntervalSince(commitDate)
-        
+
         if timeInterval < 60 {
             return "刚刚"
         } else if timeInterval < 3600 {

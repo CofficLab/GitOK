@@ -77,7 +77,7 @@ struct FileList: View, SuperThread, SuperLog {
     func refresh(_ scrollProxy: ScrollViewProxy) {
         self.isLoading = true
 
-        self.bg.async {
+        
             let verbose = true
             if verbose {
                 os_log("\(self.t)Refresh")
@@ -85,12 +85,12 @@ struct FileList: View, SuperThread, SuperLog {
 
             let files = commit.getFiles(reason: "FileList.Refresh")
 
-            self.main.async {
+            
                 self.files = files
                 self.isLoading = false
                 self.file = self.files.first
-            }
-        }
+            
+        
     }
 
     func getBackground(file: File) -> some View {

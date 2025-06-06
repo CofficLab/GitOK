@@ -6,7 +6,7 @@ import SwiftUI
  * Commit插件 - 负责显示和管理Git提交列表
  */
 class CommitPlugin: SuperPlugin, SuperLog {
-    let emoji = "🍒"
+    static let emoji = "🍒"
     var label: String = "Commit"
     var isTab: Bool = true
 
@@ -15,9 +15,11 @@ class CommitPlugin: SuperPlugin, SuperLog {
      */
     func addListView(tab: String, project: Project?) -> AnyView? {
         if tab == GitPlugin().label, let project = project, project.isGit {
-            AnyView(CommitList())
+            os_log("\(self.t)CommitPlugin addListView")
+            return AnyView(CommitList())
         } else {
-            nil
+            os_log("\(self.t)CommitPlugin addListView nil")
+            return nil
         }
     }
 }

@@ -2,12 +2,13 @@ import Foundation
 import SwiftData
 import OSLog
 import SwiftUI
+import MagicCore
 
 // MARK: - Repository管理器
 
-class RepoManager: ObservableObject {
+class RepoManager: ObservableObject, SuperLog {
+    static let emoji = "🏗️"
     private let modelContext: ModelContext
-    private let logger = Logger(subsystem: "com.yueyi.gitok", category: "RepositoryManager")
     
     // Repository实例
     lazy var projectRepo: any ProjectRepoProtocol = {
@@ -16,18 +17,18 @@ class RepoManager: ObservableObject {
     
     init(modelContext: ModelContext) {
         self.modelContext = modelContext
-        logger.info("🏗️ RepositoryManager initialized")
+        os_log("\(Self.onInit)")
     }
     
     // 便利方法
     func saveContext() throws {
         try modelContext.save()
-        logger.info("💾 Context saved")
+        os_log("\(self.t)Context saved")
     }
     
     func rollback() {
         modelContext.rollback()
-        logger.warning("↩️ Context rolled back")
+        os_log("\(self.t)Context rolled back")
     }
 }
 

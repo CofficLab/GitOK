@@ -120,7 +120,7 @@ struct BtnCommitAndPush: View, SuperLog, SuperThread {
             throw GitError.credentialsNotConfigured
         }
 
-        self.bg.async {
+        
             os_log("\(self.t)Commit")
             do {
                 try GitShell.add(repoPath)
@@ -133,7 +133,7 @@ struct BtnCommitAndPush: View, SuperLog, SuperThread {
             } catch {
                 self.quitWithError(error)
             }
-        }
+        
     }
 
     private func quitWithError(_ error: Error) {

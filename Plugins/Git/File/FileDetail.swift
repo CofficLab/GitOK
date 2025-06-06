@@ -145,7 +145,7 @@ extension FileDetail {
             return
         }
 
-        view.evaluateJavaScript("window.api.setTextsWithObject(\(jsonString))")
+        self.view = view.evaluateJavaScript("window.api.setTextsWithObject(\(jsonString))")
     }
 
     func setOriginal(_ s: String) {
@@ -153,7 +153,7 @@ extension FileDetail {
             self.m.append("View is nil", channel: self.className)
             return
         }
-        view.evaluateJavaScript("window.api.setOriginal(`\(s)`)")
+        self.view = view.evaluateJavaScript("window.api.setOriginal(`\(s)`)")
     }
 
     func setModified(_ s: String) {
@@ -161,7 +161,7 @@ extension FileDetail {
             self.m.append("View is nil", channel: self.className)
             return
         }
-        view.evaluateJavaScript("window.api.setModified(`\(s)`)")
+        self.view = view.evaluateJavaScript("window.api.setModified(`\(s)`)")
     }
 
     func getOriginal() {
@@ -169,7 +169,7 @@ extension FileDetail {
             self.m.append("View is nil", channel: self.className)
             return
         }
-        view.evaluateJavaScript("window.api.original")
+        self.view = view.evaluateJavaScript("window.api.original")
     }
 }
 

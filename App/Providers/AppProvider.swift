@@ -32,10 +32,10 @@ class AppProvider: NSObject, ObservableObject, AVAudioPlayerDelegate, SuperLog {
         AppConfig.setSidebarVisibility(false)
     }
     
-    func showSidebar() {
-        let verbose = false
+    func showSidebar(reason: String) {
+        let verbose = true
         if verbose {
-            os_log("\(self.t)Show Sidebar")
+            os_log("\(self.t)Show Sidebar(\(reason))")
         }
     
         self.sidebarVisibility = true

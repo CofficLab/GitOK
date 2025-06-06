@@ -303,12 +303,10 @@ extension ContentView {
     /// 检查并处理导航分栏视图可见性变化
     /// 当导航分栏视图的可见性状态发生变化时，在主线程上更新应用程序的侧边栏可见性状态
     func onCheckColumnVisibility() {
-        self.main.async {
-            if columnVisibility == .doubleColumn {
-                app.hideSidebar()
-            } else if columnVisibility == .automatic || columnVisibility == .all {
-                app.showSidebar()
-            }
+        if columnVisibility == .doubleColumn {
+            app.hideSidebar()
+        } else if columnVisibility == .automatic || columnVisibility == .all {
+            app.showSidebar(reason: "ContentView.onCheckColumnVisibility")
         }
     }
 
