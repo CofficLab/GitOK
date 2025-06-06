@@ -18,6 +18,7 @@ final class RootBox: SuperLog {
     let icon: IconProvider
     let git: DataProvider
     let repoManager: RepoManager
+    let pluginProvider: PluginProvider
 
     private init(reason: String) {
         os_log("\(Self.onInit)(\(reason))")
@@ -26,10 +27,29 @@ final class RootBox: SuperLog {
 
         self.repoManager = RepoManager(modelContext: ModelContext(c))
         
+        // Plugins
+        let plugins: [SuperPlugin] = [
+            GitPlugin(),
+            BannerPlugin(),
+            IconPlugin(),
+     
+            OpenXcodePlugin(),
+            OpenVSCodePlugin(),
+            OpenCursorPlugin(),
+            OpenTraePlugin(),
+            OpenFinderPlugin(),
+            OpenTerminalPlugin(),
+            OpenRemotePlugin(),
+            SyncPlugin(),
+//            BranchPlugin.shared,
+            CommitPlugin.shared
+        ]
+        
         // Providers
         self.app = AppProvider(repoManager: self.repoManager)
         self.banner = BannerProvider()
         self.icon = IconProvider()
+        self.pluginProvider = PluginProvider(plugins: plugins)
 
         do {
             let projects = try self.repoManager.projectRepo.findAll(sortedBy: .ascending)

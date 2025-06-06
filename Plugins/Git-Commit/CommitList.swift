@@ -4,7 +4,7 @@ import SwiftUI
 
 struct CommitList: View, SuperThread, SuperLog {
     static var shared = CommitList()
-    
+
     @EnvironmentObject var app: AppProvider
     @EnvironmentObject var data: DataProvider
 
@@ -88,28 +88,23 @@ struct CommitList: View, SuperThread, SuperLog {
 
         loading = true
 
-        bg.async {
-            do {
-                let newCommits = try GitShell.logsWithPagination(
-                    project.path,
-                    skip: currentPage * pageSize,
-                    limit: pageSize
-                )
+        do {
+            let newCommits = try GitShell.logsWithPagination(
+                project.path,
+                skip: currentPage * pageSize,
+                limit: pageSize
+            )
 
-                main.async {
-                    if !newCommits.isEmpty {
-                        commits.append(contentsOf: newCommits)
-                        currentPage += 1
-                    } else {
-                        hasMoreCommits = false
-                    }
-                    loading = false
-                }
-            } catch {
-                main.async {
-                    loading = false
-                }
+            if !newCommits.isEmpty {
+                commits.append(contentsOf: newCommits)
+                currentPage += 1
+            } else {
+                hasMoreCommits = false
             }
+            loading = false
+
+        } catch {
+            loading = false
         }
     }
 

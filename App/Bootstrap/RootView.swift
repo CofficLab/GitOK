@@ -8,10 +8,10 @@ struct RootView<Content>: View, SuperEvent where Content: View {
     var a: AppProvider
     var b: BannerProvider
     var i: IconProvider
+    var p: PluginProvider
     
     private var box: RootBox
     
-    @StateObject var p = PluginProvider()
     @StateObject var m = MessageProvider()
 
     init(@ViewBuilder content: () -> Content) {
@@ -21,6 +21,7 @@ struct RootView<Content>: View, SuperEvent where Content: View {
         self.a = box.app
         self.b = box.banner
         self.i = box.icon
+        self.p = box.pluginProvider
     }
 
     var body: some View {
