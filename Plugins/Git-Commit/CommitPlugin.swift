@@ -8,7 +8,6 @@ import SwiftUI
 class CommitPlugin: SuperPlugin, SuperLog {
     let emoji = "🍒"
     var label: String = "Commit"
-    var icon: String = "doc.text"
     var isTab: Bool = true
 
     /**

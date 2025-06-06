@@ -5,7 +5,6 @@ import SwiftUI
 class QuickMergePlugin: SuperPlugin, SuperLog {
     let emoji = "📣"
     var label: String = "QuickMerge"
-    var icon: String = "folder.fill"
     var isTab: Bool = false
 
     func addDetailView() -> AnyView {

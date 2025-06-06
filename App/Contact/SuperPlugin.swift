@@ -11,9 +11,6 @@ protocol SuperPlugin {
     /// 插件的唯一标签，用于标识和区分不同的插件
     var label: String { get }
 
-    /// 插件的图标名称，用于在界面上显示
-    var icon: String { get }
-
     /// 指示插件是否作为主界面的标签页显示
     var isTab: Bool { get }
 

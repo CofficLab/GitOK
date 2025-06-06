@@ -5,7 +5,6 @@ import SwiftUI
 class BannerPlugin: SuperPlugin, SuperLog {
     let emoji = "📣"
     var label: String = "Banner"
-    var icon: String = "camera"
     var isTab: Bool = true
 
     func addListView(tab: String, project: Project?) -> AnyView? {
