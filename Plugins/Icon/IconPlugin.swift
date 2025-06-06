@@ -12,8 +12,12 @@ class IconPlugin: SuperPlugin, SuperLog {
         AnyView(EmptyView())
     }
 
-    func addListView() -> AnyView {
+    func addListView() -> AnyView? {
+        if self.label == "Icon" {
         AnyView(IconList())
+        } else {
+            nil
+            }
     }
 
     func addDetailView() -> AnyView {

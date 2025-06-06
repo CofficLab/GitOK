@@ -112,8 +112,4 @@ extension SuperPlugin {
 
     /// 插件初始化时的空实现
     func onInit() {}
-    
-    func addListView(tab: String) -> AnyView {
-        AnyView(EmptyView())
-    }
 }

@@ -27,6 +27,27 @@ class PluginProvider: ObservableObject, SuperLog, SuperThread {
         BranchPlugin(),
         CommitPlugin()
     ]
+    
+    /// 获取所有标记为标签页的插件
+    /// - Returns: 可作为标签页显示的插件数组
+    var tabPlugins: [SuperPlugin] {
+        plugins.filter { $0.isTab }
+    }
+    
+    /// 检查是否所有插件的列表视图都为空
+    /// - Parameter tab: 当前选中的标签页
+    /// - Returns: 如果所有插件的addListView都返回nil则返回true，否则返回false
+    func allListViewsEmpty(tab: String) -> Bool {
+        var allEmpty = true
+        for plugin in plugins {
+            let listView = plugin.addListView(tab: tab)
+            if listView != nil {
+                os_log("插件 %@ 返回了非nil的列表视图", plugin.label)
+                allEmpty = false
+            }
+        }
+        return allEmpty
+    }
 
     init() {
         let verbose = false

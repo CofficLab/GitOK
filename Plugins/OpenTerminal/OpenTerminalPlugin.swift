@@ -1,6 +1,6 @@
-import SwiftUI
 import MagicCore
 import OSLog
+import SwiftUI
 
 class OpenTerminalPlugin: SuperPlugin, SuperLog {
     let emoji = "⌨️"
@@ -9,10 +9,6 @@ class OpenTerminalPlugin: SuperPlugin, SuperLog {
     var isTab: Bool = false
 
     func addDBView() -> AnyView {
-        AnyView(EmptyView())
-    }
-
-    func addListView() -> AnyView {
         AnyView(EmptyView())
     }
 

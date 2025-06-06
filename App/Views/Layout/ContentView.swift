@@ -39,7 +39,7 @@ struct ContentView: View, SuperThread, SuperEvent {
     /// SwiftData 模型上下文，用于数据持久化
     @Environment(\.modelContext) private var modelContext
     /// 控制状态栏是否显示
-    private var statusBarVisiblity: Bool = true
+    private var statusBarVisibility: Bool = true
     /// 控制工具栏是否显示
     private var toolbarVisibility: Bool = true
     /// 控制项目操作按钮组是否显示
@@ -51,25 +51,17 @@ struct ContentView: View, SuperThread, SuperEvent {
 
     /// 初始化ContentView
     /// - Parameters:
-    ///   - statusBarVisiblity: 状态栏是否可见，默认为true
+    ///   - statusBarVisibility: 状态栏是否可见，默认为true
     ///   - initialColumnVisibility: 初始导航分栏视图的可见性状态，默认为.detailOnly
     ///   - toolbarVisibility: 工具栏是否可见，默认为true
     ///   - projectActionsVisibility: 项目操作按钮组是否可见，默认为true
     ///   - tabPickerVisibility: 标签选择器是否可见，默认为true
-    init(statusBarVisiblity: Bool = true, initialColumnVisibility: NavigationSplitViewVisibility = .detailOnly, toolbarVisibility: Bool = true, projectActionsVisibility: Bool = true, tabPickerVisibility: Bool = true) {
-        self.statusBarVisiblity = statusBarVisiblity
+    init(statusBarVisibility: Bool = true, initialColumnVisibility: NavigationSplitViewVisibility = .detailOnly, toolbarVisibility: Bool = true, projectActionsVisibility: Bool = true, tabPickerVisibility: Bool = true) {
+        self.statusBarVisibility = statusBarVisibility
         self.toolbarVisibility = toolbarVisibility
         self.projectActionsVisibility = projectActionsVisibility
         self.tabPickerVisibility = tabPickerVisibility
         self._columnVisibility = State(initialValue: initialColumnVisibility)
-    }
-
-    // MARK: - Computed Properties
-
-    /// 获取所有标记为标签页的插件
-    /// - Returns: 可作为标签页显示的插件数组
-    var tabPlugins: [SuperPlugin] {
-        p.plugins.filter { $0.isTab }
     }
 
     // MARK: - View Body
@@ -79,27 +71,44 @@ struct ContentView: View, SuperThread, SuperEvent {
     var body: some View {
         Group {
             if projectExists {
-                NavigationSplitView(columnVisibility: $columnVisibility) {
-                    Sidebar()
-                } content: {
-                    if projectExists {
+                if p.allListViewsEmpty(tab: tab) {
+                    // 当所有插件的列表视图都为空时，使用两栏布局
+                    NavigationSplitView(columnVisibility: $columnVisibility) {
+                        Sidebar()
+                    } detail: {
                         VStack(spacing: 0) {
-                            ZStack {
-                                ForEach(p.plugins, id: \.label) { plugin in
+                            p.tabPlugins.first { $0.label == tab }?.addDetailView()
+
+                            if statusBarVisibility {
+                                StatusBar()
+                            }
+                        }
+                    }
+                } else {
+                    // 当有插件提供列表视图时，使用三栏布局
+                    NavigationSplitView(columnVisibility: $columnVisibility) {
+                        Sidebar()
+                    } content: {
+                        VStack(spacing: 0) {
+                            VStack {
+                                ForEach(p.plugins.filter { plugin in
+                                    plugin.addListView(tab: tab) != nil
+                                }, id: \.label) { plugin in
                                     plugin.addListView(tab: tab)
+                                    Text(plugin.label)
                                 }
                             }.frame(maxHeight: .infinity)
                         }
                         .frame(idealWidth: 300)
                         .frame(minWidth: 50)
                         .onChange(of: tab, onChangeOfTab)
-                    }
-                } detail: {
-                    VStack(spacing: 0) {
-                        tabPlugins.first { $0.label == tab }?.addDetailView()
+                    } detail: {
+                        VStack(spacing: 0) {
+                            p.tabPlugins.first { $0.label == tab }?.addDetailView()
 
-                        if statusBarVisiblity {
-                            StatusBar()
+                            if statusBarVisibility {
+                                StatusBar()
+                            }
                         }
                     }
                 }
@@ -119,7 +128,7 @@ struct ContentView: View, SuperThread, SuperEvent {
             if tabPickerVisibility {
                 ToolbarItem(placement: .principal) {
                     Picker("选择标签", selection: $tab) {
-                        ForEach(tabPlugins, id: \.label) { plugin in
+                        ForEach(p.tabPlugins, id: \.label) { plugin in
                             Text(plugin.label).tag(plugin.label)
                         }
                     }
@@ -147,7 +156,7 @@ extension ContentView {
     /// - Returns: 一个新的ContentView实例，侧边栏被隐藏
     func hideSidebar() -> ContentView {
         return ContentView(
-            statusBarVisiblity: self.statusBarVisiblity,
+            statusBarVisibility: self.statusBarVisibility,
             initialColumnVisibility: .doubleColumn,
             toolbarVisibility: self.toolbarVisibility,
             projectActionsVisibility: self.projectActionsVisibility,
@@ -159,7 +168,7 @@ extension ContentView {
     /// - Returns: 一个新的ContentView实例，侧边栏被显示
     func showSidebar() -> ContentView {
         return ContentView(
-            statusBarVisiblity: self.statusBarVisiblity,
+            statusBarVisibility: self.statusBarVisibility,
             initialColumnVisibility: .all,
             toolbarVisibility: self.toolbarVisibility,
             projectActionsVisibility: self.projectActionsVisibility,
@@ -171,7 +180,7 @@ extension ContentView {
     /// - Returns: 一个新的ContentView实例，状态栏被隐藏
     func hideStatusBar() -> ContentView {
         return ContentView(
-            statusBarVisiblity: false,
+            statusBarVisibility: false,
             initialColumnVisibility: self.columnVisibility,
             toolbarVisibility: self.toolbarVisibility,
             projectActionsVisibility: self.projectActionsVisibility,
@@ -183,7 +192,7 @@ extension ContentView {
     /// - Returns: 一个新的ContentView实例，状态栏被显示
     func showStatusBar() -> ContentView {
         return ContentView(
-            statusBarVisiblity: true,
+            statusBarVisibility: true,
             initialColumnVisibility: self.columnVisibility,
             toolbarVisibility: self.toolbarVisibility,
             projectActionsVisibility: self.projectActionsVisibility,
@@ -195,7 +204,7 @@ extension ContentView {
     /// - Returns: 一个新的ContentView实例，工具栏被隐藏
     func hideToolbar() -> ContentView {
         return ContentView(
-            statusBarVisiblity: self.statusBarVisiblity,
+            statusBarVisibility: self.statusBarVisibility,
             initialColumnVisibility: self.columnVisibility,
             toolbarVisibility: false,
             projectActionsVisibility: self.projectActionsVisibility,
@@ -207,7 +216,7 @@ extension ContentView {
     /// - Returns: 一个新的ContentView实例，工具栏被显示
     func showToolbar() -> ContentView {
         return ContentView(
-            statusBarVisiblity: self.statusBarVisiblity,
+            statusBarVisibility: self.statusBarVisibility,
             initialColumnVisibility: self.columnVisibility,
             toolbarVisibility: true,
             projectActionsVisibility: self.projectActionsVisibility,
@@ -219,7 +228,7 @@ extension ContentView {
     /// - Returns: 一个新的ContentView实例，项目操作按钮组被隐藏
     func hideProjectActions() -> ContentView {
         return ContentView(
-            statusBarVisiblity: self.statusBarVisiblity,
+            statusBarVisibility: self.statusBarVisibility,
             initialColumnVisibility: self.columnVisibility,
             toolbarVisibility: self.toolbarVisibility,
             projectActionsVisibility: false,
@@ -231,7 +240,7 @@ extension ContentView {
     /// - Returns: 一个新的ContentView实例，项目操作按钮组被显示
     func showProjectActions() -> ContentView {
         return ContentView(
-            statusBarVisiblity: self.statusBarVisiblity,
+            statusBarVisibility: self.statusBarVisibility,
             initialColumnVisibility: self.columnVisibility,
             toolbarVisibility: self.toolbarVisibility,
             projectActionsVisibility: true,
@@ -243,7 +252,7 @@ extension ContentView {
     /// - Returns: 一个新的ContentView实例，标签选择器被隐藏
     func hideTabPicker() -> ContentView {
         return ContentView(
-            statusBarVisiblity: self.statusBarVisiblity,
+            statusBarVisibility: self.statusBarVisibility,
             initialColumnVisibility: self.columnVisibility,
             toolbarVisibility: self.toolbarVisibility,
             projectActionsVisibility: self.projectActionsVisibility,
@@ -255,7 +264,7 @@ extension ContentView {
     /// - Returns: 一个新的ContentView实例，标签选择器被显示
     func showTabPicker() -> ContentView {
         return ContentView(
-            statusBarVisiblity: self.statusBarVisiblity,
+            statusBarVisibility: self.statusBarVisibility,
             initialColumnVisibility: self.columnVisibility,
             toolbarVisibility: self.toolbarVisibility,
             projectActionsVisibility: self.projectActionsVisibility,
