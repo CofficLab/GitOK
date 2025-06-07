@@ -57,18 +57,19 @@ jobs:
         env:
           SCHEME: ${{ env.SCHEME }}
           BuildPath: ${{ env.BuildPath }}
+          ARCH: 'all'
         run: ./scripts/build-app.sh
       - name: Codesign App
         run: ./scripts/codesign-app.sh
         env:
           SCHEME: ${{ env.SCHEME }}
           SIGNING_IDENTITY: ${{ steps.signing.outputs.signing_identity }}
-          BuildPath: ${{ env.BuildPath }}
+          BuildPath: ./temp/arm64/Build/Products/Release/GitOK.app
       - name: Create DMG
         run: ./scripts/create-dmg.sh
         env:
           SCHEME: ${{ env.SCHEME }}
-          BuildPath: temp/Build/Products/Release
+          BuildPath: ./temp/arm64/Build/Products/Release
           VERBOSE: true
       - name: Notary
         continue-on-error: true

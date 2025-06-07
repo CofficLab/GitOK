@@ -31,15 +31,17 @@
 # - 如果找到多个 .pbxproj 文件，使用第一个匹配的文件
 # ====================================
 
-# 用法: bash scripts/get-version.sh [pbxproj路径]
+# 引入公共输出库
+source "$(dirname "$0")/common-output.sh"
+
 projectFile=${1:-$(find $(pwd) -maxdepth 2 ! -path "*Resources*" ! -path "*temp*" -type f -name "*.pbxproj" | head -n 1)}
 if [ -z "$projectFile" ]; then
-  echo "❌ 未找到 .pbxproj 配置文件！" >&2
+  print_error "未找到 .pbxproj 配置文件！"
   exit 1
 fi
 version=$(grep "MARKETING_VERSION" "$projectFile" | head -n 1 | grep -o '[0-9]\+\.[0-9]\+\.[0-9]\+')
 if [ -z "$version" ]; then
-  echo "❌ 未找到 MARKETING_VERSION！" >&2
+  print_error "未找到 MARKETING_VERSION！"
   exit 2
 fi
 echo "$version"
