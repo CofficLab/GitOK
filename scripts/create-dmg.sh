@@ -375,11 +375,51 @@ create_dmg_with_hdiutil() {
     execute_command "hdiutil create -srcfolder \"$APP_PATH\" -volname \"$SCHEME\" -fs HFS+ -fsargs \"-c c=64,a=16,e=16\" -format UDRW -size 200m \"$temp_dmg\"" "创建临时 DMG"
     
     # 挂载 DMG
+    local mount_output
     local mount_point
-    mount_point=$(hdiutil attach "$temp_dmg" -readwrite -noverify -noautoopen | grep -E '^/dev/' | sed 1q | awk '{print $3}')
+    
+    if [[ "$VERBOSE" == "true" ]]; then
+        print_info "挂载命令" "hdiutil attach \"$temp_dmg\" -readwrite -noverify -noautoopen"
+    fi
+    
+    mount_output=$(hdiutil attach "$temp_dmg" -readwrite -noverify -noautoopen 2>&1)
+    local attach_exit_code=$?
+    
+    if [[ "$VERBOSE" == "true" ]]; then
+        print_info "挂载输出" "$mount_output"
+        print_info "退出码" "$attach_exit_code"
+    fi
+    
+    if [ $attach_exit_code -ne 0 ]; then
+        print_error "hdiutil attach 命令失败，退出码: $attach_exit_code"
+        print_error "错误输出: $mount_output"
+        exit 1
+    fi
+    
+    # 尝试多种方式解析挂载点
+    mount_point=$(echo "$mount_output" | grep -E '^/dev/' | tail -1 | awk '{print $3}')
+    
+    # 如果第一种方式失败，尝试其他解析方式
+    if [ -z "$mount_point" ]; then
+        mount_point=$(echo "$mount_output" | grep -E '/Volumes/' | tail -1 | awk '{print $NF}')
+    fi
+    
+    # 如果仍然失败，尝试直接查找 /Volumes 下的目录
+    if [ -z "$mount_point" ]; then
+        mount_point="/Volumes/$SCHEME"
+        if [ ! -d "$mount_point" ]; then
+            mount_point=""
+        fi
+    fi
     
     if [ -z "$mount_point" ]; then
-        print_error "无法挂载 DMG"
+        print_error "无法解析 DMG 挂载点"
+        print_error "hdiutil attach 输出: $mount_output"
+        exit 1
+    fi
+    
+    if [ ! -d "$mount_point" ]; then
+        print_error "挂载点目录不存在: $mount_point"
         exit 1
     fi
     

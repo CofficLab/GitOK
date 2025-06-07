@@ -25,9 +25,10 @@ class ProjectRepo: BaseRepositoryImpl<Project>, ProjectRepoProtocol {
     }
     
     func findByPath(_ path: String) throws -> Project? {
+        let url = URL(fileURLWithPath: path)
         let descriptor = FetchDescriptor<Project>(
             predicate: #Predicate<Project> { project in
-                project.url.path == path
+                project.url == url
             }
         )
         return try fetch(descriptor).first
