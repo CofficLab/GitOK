@@ -1,85 +1,35 @@
 #!/bin/bash
 
-# 颜色定义
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-PURPLE='\033[0;35m'
-CYAN='\033[0;36m'
-NC='\033[0m' # No Color
-
-# 显示开发路线图
-show_development_roadmap() {
-    local current_step="$1"
-    
-    echo
-    printf "${PURPLE}===========================================${NC}\n"
-    printf "${PURPLE}         🗺️  开发分发路线图                ${NC}\n"
-    printf "${PURPLE}===========================================${NC}\n"
-    echo
-    
-    # 定义路线图步骤（包含版本管理）
-    local steps=(
-        "version:📝 版本管理:查看或更新应用版本号"
-        "build:🔨 构建应用:编译源代码，生成可执行文件"
-        "codesign:🔐 代码签名:为应用添加数字签名，确保安全性"
-        "package:📦 打包分发:创建 DMG 安装包"
-        "notarize:✅ 公证验证:Apple 官方验证（可选）"
-        "distribute:🚀 发布分发:上传到分发平台或直接分发"
-    )
-    
-    printf "${CYAN}📍 当前位置: "
-    case "$current_step" in
-        "version") printf "${GREEN}版本管理${NC}\n" ;;
-        "build") printf "${GREEN}构建应用${NC}\n" ;;
-        "codesign") printf "${GREEN}代码签名${NC}\n" ;;
-        "package") printf "${GREEN}打包分发${NC}\n" ;;
-        "notarize") printf "${GREEN}公证验证${NC}\n" ;;
-        "distribute") printf "${GREEN}发布分发${NC}\n" ;;
-        *) printf "${YELLOW}未知步骤${NC}\n" ;;
-    esac
-    echo
-    
-    # 显示路线图
-    for step in "${steps[@]}"; do
-        local step_id=$(echo "$step" | cut -d':' -f1)
-        local step_icon=$(echo "$step" | cut -d':' -f2)
-        local step_desc=$(echo "$step" | cut -d':' -f3)
-        
-        if [ "$step_id" = "$current_step" ]; then
-            printf "${GREEN}▶ %s %s${NC}\n" "$step_icon" "$step_desc"
-        else
-            printf "  %s %s\n" "$step_icon" "$step_desc"
-        fi
-    done
-    
-    echo
-    printf "${YELLOW}💡 下一步建议:${NC}\n"
-    case "$current_step" in
-        "version")
-            printf "   构建应用: ${CYAN}./scripts/build-app.sh${NC}\n"
-            ;;
-        "build")
-            printf "   运行代码签名: ${CYAN}./scripts/codesign-app.sh${NC}\n"
-            ;;
-        "codesign")
-            printf "   创建安装包: ${CYAN}./scripts/create-dmg.sh${NC}\n"
-            ;;
-        "package")
-            printf "   进行公证验证或直接分发应用\n"
-            ;;
-        "notarize")
-            printf "   发布到分发平台或提供下载链接\n"
-            ;;
-        "distribute")
-            printf "   🎉 开发分发流程已完成！\n"
-            ;;
-    esac
-    
-    echo
-    printf "${PURPLE}===========================================${NC}\n"
-}
+# ====================================
+# macOS 应用版本号获取脚本
+# ====================================
+#
+# 这个脚本用于从 Xcode 项目配置文件中获取应用程序的营销版本号（MARKETING_VERSION）。
+# 它会自动查找项目中的 .pbxproj 文件，并从中提取版本号信息。
+#
+# 功能：
+# 1. 自动查找项目中的 .pbxproj 文件
+# 2. 从配置文件中提取 MARKETING_VERSION
+# 3. 输出格式化的版本号（x.y.z）
+#
+# 使用方法：
+# 1. 直接运行（自动查找 .pbxproj）：
+#    ./scripts/get-version.sh
+#
+# 2. 指定 .pbxproj 文件路径：
+#    ./scripts/get-version.sh path/to/project.pbxproj
+#
+# 返回值：
+# - 成功：输出版本号（例如：1.0.0）并返回 0
+# - 失败：输出错误信息到标准错误并返回非零值
+#   * 1: 未找到 .pbxproj 文件
+#   * 2: 未找到版本号
+#
+# 注意事项：
+# - 需要在项目根目录或其父目录下运行
+# - 会自动过滤掉 Resources 和 temp 目录
+# - 如果找到多个 .pbxproj 文件，使用第一个匹配的文件
+# ====================================
 
 # 用法: bash scripts/get-version.sh [pbxproj路径]
 projectFile=${1:-$(find $(pwd) -maxdepth 2 ! -path "*Resources*" ! -path "*temp*" -type f -name "*.pbxproj" | head -n 1)}
@@ -92,7 +42,4 @@ if [ -z "$version" ]; then
   echo "❌ 未找到 MARKETING_VERSION！" >&2
   exit 2
 fi
-echo "当前版本号: $version"
-
-# 显示开发路线图
-show_development_roadmap "version"
+echo "$version"

@@ -46,6 +46,65 @@
 # 设置错误处理
 set -e
 
+# 颜色定义
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+PURPLE='\033[0;35m'
+CYAN='\033[0;36m'
+NC='\033[0m' # No Color
+
+# 打印成功信息
+print_success() {
+    echo -e "${GREEN}✅ $1${NC}"
+}
+
+# 打印错误信息
+print_error() {
+    echo -e "${RED}❌ $1${NC}"
+}
+
+# 打印警告信息
+print_warning() {
+    echo -e "${YELLOW}⚠️  $1${NC}"
+}
+
+# 打印信息
+print_info() {
+    echo -e "${BLUE}ℹ️  $1: $2${NC}"
+}
+
+# 打印分隔线
+print_separator() {
+    echo -e "${BLUE}===========================================${NC}"
+}
+
+# 打印标题
+print_title() {
+    echo -e "${PURPLE}$1${NC}"
+}
+
+# 执行命令并显示结果
+execute_command() {
+    local cmd="$1"
+    local description="$2"
+    
+    echo -e "${PURPLE}🔧 $description${NC}"
+    
+    if [ "$VERBOSE" = "true" ]; then
+        echo -e "${BLUE}执行命令: $cmd${NC}"
+    fi
+    
+    if eval "$cmd"; then
+        print_success "$description 完成"
+    else
+        print_error "$description 失败"
+        exit 1
+    fi
+    echo
+}
+
 # 检查环境变量并提供建议的函数
 check_and_suggest() {
     local missing_vars=""
@@ -124,16 +183,25 @@ check_and_suggest() {
         
         # 生成所有可能的组合建议
         if [ -n "$AVAILABLE_SCHEMES" ] && [ -n "$AVAILABLE_IDENTITIES" ]; then
-            echo "$AVAILABLE_SCHEMES" | while read -r scheme; do
-                if [ -n "$scheme" ]; then
-                    echo "$AVAILABLE_IDENTITIES" | while IFS= read -r line; do
-                        CERT_NAME=$(echo "$line" | sed 's/.*"\(.*\)"/\1/')
-                        if [ -n "$CERT_NAME" ]; then
-                            echo " SCHEME='$scheme' SIGNING_IDENTITY='$CERT_NAME' ./scripts/codesign-app.sh"
-                        fi
-                    done
-                    echo
-                fi
+            # 将schemes转换为数组避免重复处理
+            SCHEMES_ARRAY=()
+            while IFS= read -r scheme; do
+                [ -n "$scheme" ] && SCHEMES_ARRAY+=("$scheme")
+            done <<< "$AVAILABLE_SCHEMES"
+            
+            # 将identities转换为数组避免重复处理
+            IDENTITIES_ARRAY=()
+            while IFS= read -r line; do
+                CERT_NAME=$(echo "$line" | sed 's/.*"\(.*\)"/\1/')
+                [ -n "$CERT_NAME" ] && IDENTITIES_ARRAY+=("$CERT_NAME")
+            done <<< "$AVAILABLE_IDENTITIES"
+            
+            # 生成所有组合
+            for scheme in "${SCHEMES_ARRAY[@]}"; do
+                for identity in "${IDENTITIES_ARRAY[@]}"; do
+                    echo " SCHEME='$scheme' SIGNING_IDENTITY='$identity' ./scripts/codesign-app.sh"
+                done
+                echo
             done
         elif [ -n "$AVAILABLE_SCHEMES" ]; then
             echo "$AVAILABLE_SCHEMES" | while read -r scheme; do
@@ -161,14 +229,7 @@ check_and_suggest
 BuildPath=${BuildPath:-"./temp"}
 VERBOSE=${VERBOSE:-"false"}
 
-# 颜色定义
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-PURPLE='\033[0;35m'
-CYAN='\033[0;36m'
-NC='\033[0m' # No Color
+
 
 # 显示关键环境信息
 printf "${BLUE}===========================================${NC}\n"
@@ -198,7 +259,7 @@ if [ ! -d "$APP_PATH" ]; then
     printf "${GREEN}🔍 搜索可能的应用程序位置...${NC}\n"
     
     # 搜索可能的路径
-    local possible_paths=(
+    possible_paths=(
         "./temp/Build/Products/Debug/$SCHEME.app"
         "./temp/Build/Products/Release/$SCHEME.app"
         "./temp/arm64/Build/Products/Release/$SCHEME.app"
@@ -215,7 +276,7 @@ if [ ! -d "$APP_PATH" ]; then
         "./DerivedData/Build/Products/Debug/$SCHEME.app"
     )
     
-    local found_apps=()
+    found_apps=()
     
     # 检查预定义路径
     for path in "${possible_paths[@]}"; do
@@ -227,7 +288,7 @@ if [ ! -d "$APP_PATH" ]; then
     # 使用 find 命令搜索更多可能的位置
     while IFS= read -r -d '' app_path; do
         # 避免重复添加
-        local already_found=false
+        already_found=false
         for existing in "${found_apps[@]}"; do
             if [ "$existing" = "$app_path" ]; then
                 already_found=true
@@ -243,8 +304,8 @@ if [ ! -d "$APP_PATH" ]; then
         echo
         printf "${GREEN}📍 发现 ${#found_apps[@]} 个可能的应用程序:${NC}\n"
         for i in "${!found_apps[@]}"; do
-            local app_path="${found_apps[$i]}"
-            local app_size="未知"
+            app_path="${found_apps[$i]}"
+        app_size="未知"
             if [ -d "$app_path" ]; then
                 app_size=$(du -sh "$app_path" 2>/dev/null | cut -f1 || echo "未知")
             fi
@@ -254,8 +315,8 @@ if [ ! -d "$APP_PATH" ]; then
         printf "${YELLOW}💡 建议使用以下命令进行代码签名:${NC}\n"
         echo
         for i in "${!found_apps[@]}"; do
-            local app_path="${found_apps[$i]}"
-            local build_path=$(dirname "$app_path")
+            app_path="${found_apps[$i]}"
+        build_path=$(dirname "$app_path")
             echo " SCHEME='$SCHEME' SIGNING_IDENTITY='$SIGNING_IDENTITY' BuildPath='$build_path' ./scripts/codesign-app.sh"
         done
         echo
@@ -350,55 +411,9 @@ show_development_roadmap() {
     printf "${PURPLE}===========================================${NC}\n"
 }
 
-# 打印分隔线
-print_separator() {
-    echo -e "${BLUE}================================================${NC}"
-}
 
-# 打印标题
-print_title() {
-    echo -e "${CYAN}$1${NC}"
-}
 
-# 打印信息
-print_info() {
-    printf "%-25s %s\n" "$1:" "$2"
-}
 
-# 打印成功信息
-print_success() {
-    echo -e "${GREEN}✅ $1${NC}"
-}
-
-# 打印警告信息
-print_warning() {
-    echo -e "${YELLOW}⚠️  $1${NC}"
-}
-
-# 打印错误信息
-print_error() {
-    echo -e "${RED}❌ $1${NC}"
-}
-
-# 执行命令并显示结果
-execute_command() {
-    local cmd="$1"
-    local description="$2"
-    
-    echo -e "${PURPLE}🔧 $description${NC}"
-    
-    if [ "$VERBOSE" = "true" ]; then
-        echo -e "${BLUE}执行命令: $cmd${NC}"
-    fi
-    
-    if eval "$cmd"; then
-        print_success "$description 完成"
-    else
-        print_error "$description 失败"
-        exit 1
-    fi
-    echo
-}
 
 # 开始代码签名
 print_separator
