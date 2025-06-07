@@ -46,7 +46,7 @@ struct CommitDetailView: View, SuperEvent {
                             Image(systemName: "clock")
                                 .foregroundColor(.secondary)
                                 .font(.system(size: 12))
-                            Text(commit.date, style: .relative)
+                            Text(commit.date.fullDateTime)
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                         }
@@ -105,7 +105,7 @@ struct CommitDetailView: View, SuperEvent {
     private var background: some View {
         ZStack {
             if commit.isHead {
-                MagicBackground.blueberry
+                MagicBackground.blueberry.opacity(0.12)
             } else {
                 MagicBackground.orange.opacity(0.15)
             }

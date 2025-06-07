@@ -1,6 +1,6 @@
+import MagicCore
 import OSLog
 import SwiftUI
-import MagicCore
 
 struct BtnCommitAndPush: View, SuperLog, SuperThread {
     static let defaultTitle = "Commit and Push"
@@ -21,7 +21,7 @@ struct BtnCommitAndPush: View, SuperLog, SuperThread {
     var commitMessage: String = ""
 
     var body: some View {
-        Button(title) {
+        MagicButton(action: {
             isLoading = true
             do {
                 try checkAndPush()
@@ -33,8 +33,12 @@ struct BtnCommitAndPush: View, SuperLog, SuperThread {
                     isLoading = false
                 }
             }
-        }
-        .cornerRadius(8)
+        })
+        .magicIcon(.iconUpload)
+        .magicSize(.auto)
+        .magicTitle("提交并推送")
+        .frame(height: 40)
+        .frame(width: 130)
         .scaleEffect(isHovered ? 1.05 : 1.0)
         .animation(.easeInOut(duration: 0.2), value: isHovered)
         .onHover { hovering in
@@ -120,20 +124,18 @@ struct BtnCommitAndPush: View, SuperLog, SuperThread {
             throw GitError.credentialsNotConfigured
         }
 
-        
-            os_log("\(self.t)Commit")
-            do {
-                try GitShell.add(repoPath)
-                try GitShell.commit(repoPath, commit: commitMessage)
-                try GitShell.push(repoPath, username: username, token: token)
+        os_log("\(self.t)Commit")
+        do {
+            try GitShell.add(repoPath)
+            try GitShell.commit(repoPath, commit: commitMessage)
+            try GitShell.push(repoPath, username: username, token: token)
 
-                self.main.async {
-                    isLoading = false
-                }
-            } catch {
-                self.quitWithError(error)
+            self.main.async {
+                isLoading = false
             }
-        
+        } catch {
+            self.quitWithError(error)
+        }
     }
 
     private func quitWithError(_ error: Error) {
@@ -150,9 +152,21 @@ struct BtnCommitAndPush: View, SuperLog, SuperThread {
     BtnCommitAndPush(repoPath: "/path/to/your/repo") // 初始化时传入路径
 }
 
-#Preview("App-Big Screen") {
+#Preview("App - Small Screen") {
     RootView {
         ContentLayout()
+            .hideSidebar()
+            .hideTabPicker()
+            .hideProjectActions()
+    }
+    .frame(width: 600)
+    .frame(height: 600)
+}
+
+#Preview("App - Big Screen") {
+    RootView {
+        ContentLayout()
+            .hideSidebar()
     }
     .frame(width: 1200)
     .frame(height: 1200)

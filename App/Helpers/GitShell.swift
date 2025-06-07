@@ -305,6 +305,14 @@ class GitShell {
             GitCommit.fromShellLine($0, path: path, seprator: "+")
         }
     }
+    
+    static func getUserName(_ path: String) throws -> String {
+        try run("config user.name", path: path, verbose: false).trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+    
+    static func getUserEmail(_ path: String) throws -> String {
+        try run("config user.email", path: path, verbose: false).trimmingCharacters(in: .whitespacesAndNewlines)
+    }
 }
 
 fileprivate extension String {
