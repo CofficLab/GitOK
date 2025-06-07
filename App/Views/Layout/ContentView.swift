@@ -62,6 +62,7 @@ struct ContentView: View, SuperLog {
         .onAppear(perform: onAppear)
         .onChange(of: g.project, onProjectChange)
         .onChange(of: self.tab, onChangeOfTab)
+        .onChange(of: self.columnVisibility, onChangeColumnVisibility)
         .toolbarVisibility(toolbarVisibility ? .visible : .hidden)
         .toolbar(content: {
             ToolbarItem(placement: .navigation) {
@@ -102,6 +103,9 @@ extension ContentView {
 
         if let d = defaultColumnVisibility {
             self.columnVisibility = d
+            
+            let sidebarVisibility = d == .detailOnly ? false : true
+            app.setSidebarVisibility(sidebarVisibility, reason: "defaultColumnVisibility")
         } else {
             if app.sidebarVisibility == true {
                 self.columnVisibility = .all
@@ -134,7 +138,7 @@ extension ContentView {
     /// 处理项目变更事件
     func onProjectChange() {
     }
-    
+
     /// 处理标签页变更事件
     /// 当用户切换标签页时，更新应用程序的当前标签页状态
     func onChangeOfTab() {

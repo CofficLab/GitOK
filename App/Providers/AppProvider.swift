@@ -48,6 +48,10 @@ class AppProvider: NSObject, ObservableObject, AVAudioPlayerDelegate, SuperLog {
         self.sidebarVisibility = true
         repoManager.stateRepo.setSidebarVisibility(true)
     }
+    
+    func setSidebarVisibility(_ v: Bool, reason: String) {
+        v ? showSidebar(reason: reason) : hideSidebar()
+    }
 }
 
 #Preview {
