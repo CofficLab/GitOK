@@ -161,7 +161,7 @@ extension GitCommit: Hashable {
     .frame(height: 600)
 }
 
-#Preview("App-Big Screen") {
+#Preview("App - Big Screen") {
     RootView {
         ContentLayout()
     }

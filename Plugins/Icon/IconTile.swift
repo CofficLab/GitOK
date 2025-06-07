@@ -8,8 +8,22 @@ struct IconTile: View {
     }
 }
 
-#Preview {
-    AppPreview()
-        .frame(width: 800)
-        .frame(height: 500)
+#Preview("App - Small Screen") {
+    RootView {
+        ContentLayout()
+            .hideSidebar()
+            .hideTabPicker()
+//            .hideProjectActions()
+    }
+    .frame(width: 800)
+    .frame(height: 600)
+}
+
+#Preview("App - Big Screen") {
+    RootView {
+        ContentLayout()
+            .hideSidebar()
+    }
+    .frame(width: 1200)
+    .frame(height: 1200)
 }

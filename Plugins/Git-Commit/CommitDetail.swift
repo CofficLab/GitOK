@@ -6,30 +6,29 @@ import SwiftUI
  */
 struct CommitDetail: View, SuperEvent {
     @EnvironmentObject var data: DataProvider
-    
-    let commit: GitCommit
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Group {
-                if !commit.isHead {
-                    CommitInfoView(commit: commit)
-                } else {
-                    CommitForm()
+                if let commit = data.commit {
+                    if !commit.isHead {
+                        CommitInfoView(commit: commit)
+                    } else {
+                        CommitForm()
+                    }
                 }
-                
             }
             .padding(.horizontal, 16)
+            .padding(.vertical, 12)
 
-            
             HSplitView {
-                FileList(file: $data.file, commit: commit)
+                FileList()
                     .frame(idealWidth: 200)
                     .frame(minWidth: 200, maxWidth: 300)
                     .layoutPriority(1)
 
                 if let file = data.file {
-                    FileDetail(file: file, commit: commit)
+                    FileDetail(file: file)
                 }
             }
         }
@@ -42,7 +41,7 @@ struct CommitDetail: View, SuperEvent {
 
     private var background: some View {
         ZStack {
-            if commit.isHead {
+            if let commit = data.commit, commit.isHead {
                 MagicBackground.blueberry.opacity(0.12)
             } else {
                 MagicBackground.orange.opacity(0.15)
@@ -55,11 +54,9 @@ struct CommitDetail: View, SuperEvent {
 
 extension CommitDetail {
     func onAppWillBecomeActive(_ notification: Notification) {
-        
     }
 
     func onProjectChanged() {
-        
     }
 }
 
@@ -68,7 +65,7 @@ extension CommitDetail {
         ContentLayout()
             .hideSidebar()
             .hideTabPicker()
-//            .hideProjectActions()
+            .hideProjectActions()
     }
     .frame(width: 800)
     .frame(height: 600)

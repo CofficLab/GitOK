@@ -6,14 +6,11 @@ import SwiftUI
 struct FileList: View, SuperThread, SuperLog {
     @EnvironmentObject var app: AppProvider
     @EnvironmentObject var m: MessageProvider
+    @EnvironmentObject var data: DataProvider
 
     @State var files: [File] = []
     @State var isLoading = false
     var verbose = false
-
-    @Binding var file: File?
-
-    var commit: GitCommit
 
     var body: some View {
         VStack(spacing: 0) {
@@ -53,21 +50,21 @@ struct FileList: View, SuperThread, SuperLog {
 
             // 文件列表
             ScrollViewReader { scrollProxy in
-                List(files, id: \.self, selection: self.$file) {
-                    FileTile(file: $0, commit: commit)
+                List(files, id: \.self, selection: $data.file) {
+                    FileTile(file: $0)
                         .tag($0 as File?)
                         .listRowBackground(getBackground(file: $0))
                 }
                 .task {
                     self.refresh(scrollProxy)
                 }
-                .onChange(of: commit, {
+                .onChange(of: data.commit, {
                     refresh(scrollProxy)
                 })
                 .onChange(of: files, {
                     withAnimation {
                         // 在主线程中调用 scrollTo 方法
-                        scrollProxy.scrollTo(self.file, anchor: .top)
+                        scrollProxy.scrollTo(data.file, anchor: .top)
                     }
                 })
                 .background(.blue)
@@ -81,12 +78,16 @@ struct FileList: View, SuperThread, SuperLog {
         if verbose {
             os_log("\(self.t)Refresh")
         }
+        
+        guard let commit = data.commit else {
+            return
+        }
 
         let files = commit.getFiles(reason: "FileList.Refresh")
 
         self.files = files
         self.isLoading = false
-        self.file = self.files.first
+        data.file = self.files.first
     }
 
     func getBackground(file: File) -> some View {
@@ -103,12 +104,22 @@ struct FileList: View, SuperThread, SuperLog {
     }
 }
 
-#Preview("Big Screen") {
+#Preview("App - Small Screen") {
     RootView {
         ContentLayout()
             .hideSidebar()
+            .hideTabPicker()
             .hideProjectActions()
+    }
+    .frame(width: 600)
+    .frame(height: 600)
+}
+
+#Preview("App - Big Screen") {
+    RootView {
+        ContentLayout()
     }
     .frame(width: 1200)
     .frame(height: 1200)
 }
+

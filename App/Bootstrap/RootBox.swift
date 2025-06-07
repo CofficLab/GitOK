@@ -75,7 +75,7 @@ final class RootBox: SuperLog {
         ContentLayout()
             .hideSidebar()
             .hideTabPicker()
-            .hideProjectActions()
+//            .hideProjectActions()
     }
     .frame(width: 700)
     .frame(height: 700)

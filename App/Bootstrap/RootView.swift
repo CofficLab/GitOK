@@ -52,80 +52,25 @@ struct RootView<Content>: View, SuperEvent where Content: View {
             .environmentObject(p)
             .environmentObject(m)
             .environmentObject(self.box.git)
-            .onAppear(perform: onAppear)
-
             .navigationTitle("")
-//            .onReceive(nc.publisher(for: .gitCommitStart), perform: onGitCommitStart)
-//            .onReceive(nc.publisher(for: .gitCommitSuccess), perform: onGitCommitSuccess)
-//            .onReceive(nc.publisher(for: .gitCommitFailed), perform: onGitCommitFailed)
-//            .onReceive(nc.publisher(for: .gitPushStart), perform: onGitPushStart)
-//            .onReceive(nc.publisher(for: .gitPushSuccess), perform: onGitPushSuccess)
-//            .onReceive(nc.publisher(for: .gitPushFailed), perform: onGitPushFailed)
-//            .onReceive(nc.publisher(for: .gitPullStart), perform: onGitPullStart)
-//            .onReceive(nc.publisher(for: .gitBranchChanged), perform: onGitBranchChanged)
     }
 }
 
-extension RootView {
-    func onGitCommitStart(_ notification: Notification) {
-        m.append("gitCommitStart", channel: "🌳 git")
-    }
-
-    func onGitPullStart(_ notification: Notification) {
-        m.append("gitPullStart", channel: "🌳 git")
-    }
-
-    func onGitBranchChanged(_ notification: Notification) {
-        m.append("gitBranchChanged to \(notification.userInfo?["branch"] ?? "")", channel: "🌳 git")
-    }
-
-    func onGitCommitSuccess(_ notification: Notification) {
-        m.append("gitCommitSuccess", channel: "🌳 git")
-    }
-
-    func onGitCommitFailed(_ notification: Notification) {
-        m.append("gitCommitFailed", channel: "🌳 git")
-    }
-
-    func onGitPushStart(_ notification: Notification) {
-        m.append("gitPushStart", channel: "🌳 git")
-    }
-
-    func onGitPushSuccess(_ notification: Notification) {
-        m.append("gitPushSuccess", channel: "🌳 git")
-    }
-
-    func onGitPushFailed(_ notification: Notification) {
-        m.append("gitPushFailed", channel: "🌳 git")
-    }
-
-    func onAppear() {
-//        p.plugins.forEach { $0.onAppear() }
-    }
-}
-
-struct AppPreview: View {
-    var body: some View {
-        RootView {
-            ContentLayout()
-        }
-    }
-}
-
-#Preview("APP") {
-    RootView(content: {
-        ContentLayout()
-            .hideProjectActions()
-            .hideTabPicker()
-    })
-    .frame(width: 700, height: 800)
-}
-
-#Preview("Big Screen") {
+#Preview("App - Small Screen") {
     RootView {
         ContentLayout()
             .hideSidebar()
-            .hideProjectActions()
+            .hideTabPicker()
+//            .hideProjectActions()
+    }
+    .frame(width: 800)
+    .frame(height: 600)
+}
+
+#Preview("App - Big Screen") {
+    RootView {
+        ContentLayout()
+            .hideSidebar()
     }
     .frame(width: 1200)
     .frame(height: 1200)

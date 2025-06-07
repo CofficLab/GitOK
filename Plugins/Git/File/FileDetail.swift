@@ -4,9 +4,9 @@ import AppKit
 
 struct FileDetail: View, SuperLog, SuperEvent, SuperThread {
     @EnvironmentObject var m: MessageProvider
+    @EnvironmentObject var data: DataProvider
 
     var file: File
-    var commit: GitCommit
     @State var view: MagicWebView?
     var verbose = false
     var debug: Bool = false
@@ -37,7 +37,7 @@ struct FileDetail: View, SuperLog, SuperEvent, SuperThread {
                     .frame(maxWidth: .infinity)
                     .frame(maxHeight: .infinity)
                     .onChange(of: file, onFileChange)
-                    .onChange(of: commit, onCommitChange)
+                    .onChange(of: data.commit, onCommitChange)
             }
             .if(debug) { view in
                 view.border(Color.red, width: 1)
@@ -52,6 +52,10 @@ struct FileDetail: View, SuperLog, SuperEvent, SuperThread {
 
     func updateDiffView(reason: String) {
         self.m.append("UpdateDiffView(\(reason))", channel: self.className)
+        
+        guard let commit = data.commit else {
+            return
+        }
 
         if commit.isHead {
             do {

@@ -20,7 +20,7 @@ struct GitDetail: View, SuperEvent {
                             if commit.isHead && isProjectClean {
                                 NoLocalChanges()
                             } else {
-                                CommitDetail(commit: commit)
+                                CommitDetail()
                             }
                         }
                     } else {
