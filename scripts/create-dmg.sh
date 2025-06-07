@@ -46,11 +46,97 @@
 
 set -e  # 遇到错误立即退出
 
-# 引入公共库
-source "$(/usr/bin/dirname "$0")/common-roadmap.sh"
-source "$(/usr/bin/dirname "$0")/common-scheme.sh"
-source "$(/usr/bin/dirname "$0")/common-output.sh"
-source "$(/usr/bin/dirname "$0")/common-app-detection.sh"
+# 颜色定义
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+PURPLE='\033[0;35m'
+CYAN='\033[0;36m'
+NC='\033[0m' # No Color
+
+# 打印函数
+print_title() {
+    echo -e "\n${PURPLE}=== $1 ===${NC}"
+}
+
+print_success() {
+    echo -e "${GREEN}✅ $1${NC}"
+}
+
+print_error() {
+    echo -e "${RED}❌ $1${NC}"
+}
+
+print_warning() {
+    echo -e "${YELLOW}⚠️  $1${NC}"
+}
+
+print_info() {
+    local label="$1"
+    local value="$2"
+    printf "%-20s %s\n" "${label}:" "${value}"
+}
+
+print_separator() {
+    echo -e "${CYAN}================================================${NC}"
+}
+
+# 显示开发路线图
+show_development_roadmap() {
+    local current_step="$1"
+    
+    echo
+    printf "${PURPLE}===========================================${NC}\n"
+    printf "${PURPLE}         🗺️  开发分发路线图                ${NC}\n"
+    printf "${PURPLE}===========================================${NC}\n"
+    echo
+    
+    # 定义路线图步骤
+    local steps=(
+        "build:🔨 构建应用:编译源代码，生成可执行文件"
+        "codesign:🔐 代码签名:为应用添加数字签名，确保安全性"
+        "package:📦 打包分发:创建 DMG 安装包"
+        "notarize:✅ 公证验证:Apple 官方验证（可选）"
+        "distribute:🚀 发布分发:上传到分发平台或直接分发"
+    )
+    
+    # 显示路线图
+    for step in "${steps[@]}"; do
+        local step_id=$(echo "$step" | cut -d':' -f1)
+        local step_icon=$(echo "$step" | cut -d':' -f2)
+        local step_desc=$(echo "$step" | cut -d':' -f3)
+        
+        if [ "$step_id" = "$current_step" ]; then
+            printf "${GREEN}▶ %s %s${NC}\n" "$step_icon" "$step_desc"
+        else
+            printf "  %s %s\n" "$step_icon" "$step_desc"
+        fi
+    done
+    
+    echo
+    printf "${YELLOW}💡 下一步建议:${NC}\n"
+    case "$current_step" in
+        "build")
+            printf "   运行代码签名: ${CYAN}./scripts/codesign-app.sh${NC}\n"
+            ;;
+        "codesign")
+            printf "   创建安装包: ${CYAN}./scripts/create-dmg.sh${NC}\n"
+            ;;
+        "package")
+            printf "   进行公证验证或直接分发应用\n"
+            ;;
+        "notarize")
+            printf "   发布到分发平台或提供下载链接\n"
+            ;;
+        "distribute")
+            printf "   🎉 开发分发流程已完成！\n"
+            ;;
+    esac
+    
+    echo
+    printf "${PURPLE}===========================================${NC}\n"
+}
 
 # 执行命令函数
 execute_command() {
@@ -75,17 +161,16 @@ execute_command() {
 # 自动检测 SCHEME
 detect_scheme() {
     if [ -z "$SCHEME" ]; then
-        # 使用公共库检测项目文件和可用schemes
-        detect_project_file
-        detect_available_schemes
+        if [ -f "GitOK.xcodeproj/project.pbxproj" ]; then
+            # 从 Xcode 项目文件中提取 scheme
+            SCHEME=$(grep -o '"[^"]*\.app"' GitOK.xcodeproj/project.pbxproj | head -1 | sed 's/\.app"//g' | sed 's/"//g')
+            if [ -n "$SCHEME" ]; then
+                print_info "自动检测到方案" "$SCHEME"
+            fi
+        fi
         
-        # 尝试获取第一个可用的scheme
-        local first_scheme=$(get_first_scheme)
-        if [ -n "$first_scheme" ]; then
-            SCHEME="$first_scheme"
-            print_info "自动检测到方案" "$SCHEME"
-        else
-            # 如果仍然没有找到，使用默认值
+        # 如果仍然没有找到，使用默认值
+        if [ -z "$SCHEME" ]; then
             SCHEME="GitOK"
             print_warning "未找到项目方案，使用默认值: $SCHEME"
         fi
@@ -165,12 +250,64 @@ check_application() {
         # 自动搜索可能的应用程序目录
         print_info "🔍 搜索" "正在查找可能的应用程序位置..."
         
-        # 使用公共函数检测应用程序路径
-        detect_available_app_paths "$SCHEME"
-        show_detected_apps
+        # 搜索可能的路径
+        local possible_paths=(
+            "./temp/Build/Products/Debug/$SCHEME.app"
+            "./Build/Products/Release/$SCHEME.app"
+            "./Build/Products/Debug/$SCHEME.app"
+            "./build/Release/$SCHEME.app"
+            "./build/Debug/$SCHEME.app"
+            "./DerivedData/Build/Products/Release/$SCHEME.app"
+            "./DerivedData/Build/Products/Debug/$SCHEME.app"
+        )
         
-        # 生成构建路径建议
-        generate_build_path_suggestions "./scripts/create-dmg.sh"
+        local found_apps=()
+        
+        # 检查预定义路径
+        for path in "${possible_paths[@]}"; do
+            if [ -d "$path" ]; then
+                found_apps+=("$path")
+            fi
+        done
+        
+        # 使用 find 命令搜索更多可能的位置
+        while IFS= read -r -d '' app_path; do
+            # 避免重复添加
+            local already_found=false
+            for existing in "${found_apps[@]}"; do
+                if [ "$existing" = "$app_path" ]; then
+                    already_found=true
+                    break
+                fi
+            done
+            if [ "$already_found" = false ]; then
+                found_apps+=("$app_path")
+            fi
+        done < <(find . -name "$SCHEME.app" -type d -not -path "*/.*" -print0 2>/dev/null | head -20)
+        
+        if [ ${#found_apps[@]} -gt 0 ]; then
+            echo
+            print_info "📍 发现" "找到 ${#found_apps[@]} 个可能的应用程序:"
+            for i in "${!found_apps[@]}"; do
+                local app_path="${found_apps[$i]}"
+                local app_size="未知"
+                if [ -d "$app_path" ]; then
+                    app_size=$(du -sh "$app_path" 2>/dev/null | cut -f1 || echo "未知")
+                fi
+                printf "   %d. %s (%s)\n" $((i+1)) "$app_path" "$app_size"
+            done
+            echo
+            print_info "💡 建议" "请设置 BuildPath 环境变量指向正确的构建目录，例如："
+            echo
+            for i in "${!found_apps[@]}"; do
+                local app_path="${found_apps[$i]}"
+                local build_path=$(dirname "$app_path")
+                echo " BuildPath='$build_path' ./scripts/create-dmg.sh"
+            done
+            echo
+        else
+            print_info "💡 建议" "请先运行构建脚本: ./scripts/build-app.sh"
+        fi
         
         exit 1
     fi

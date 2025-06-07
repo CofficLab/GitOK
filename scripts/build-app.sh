@@ -21,7 +21,7 @@
 # 1. 设置必要的环境变量：
 #    export SCHEME="YourAppScheme"             # 构建方案名称
 #    export BuildPath="/path/to/build"        # 构建输出路径（可选，默认为 ./temp）
-#    export ARCH="all"                       # 目标架构（可选，支持 all、universal、x86_64、arm64，默认为所有架构）
+#    export ARCH="universal"                  # 目标架构（可选，支持 universal、x86_64、arm64，默认为 universal）
 #    export VERBOSE="true"                    # 可选：显示详细构建日志
 #
 # 2. 在项目根目录运行脚本：
@@ -47,123 +47,52 @@
 # 设置错误处理
 set -e
 
-# 引入公共库
-source "$(/usr/bin/dirname "$0")/common-scheme.sh"
-source "$(/usr/bin/dirname "$0")/common-output.sh"
-source "$(/usr/bin/dirname "$0")/common-roadmap.sh"
-
-# ====================================
-# 建议生成函数
-# ====================================
-
-# 显示构建建议（当 SCHEME 环境变量未设置时使用）
-show_build_suggestions() {
-    printf "${RED}错误: 未设置 SCHEME 环境变量${NC}\n"
-    printf "${YELLOW}正在检查项目中可用的 scheme...${NC}\n"
+# 检查必需的环境变量
+if [ -z "$SCHEME" ]; then
+    printf "\033[31m错误: 未设置 SCHEME 环境变量\033[0m\n"
     
-    # 检测项目文件和 Schemes
-    if detect_project_file_silent && detect_available_schemes_silent; then
-        if [ -n "$AVAILABLE_SCHEMES" ]; then
-            printf "${GREEN}在项目 ${PROJECT_FILE} 中找到以下可用的 scheme:${NC}\n"
-            
-            echo "$AVAILABLE_SCHEMES" | while read -r scheme; do
+    # 尝试列出项目中可用的 scheme
+    printf "\033[33m正在检查项目中可用的 scheme...\033[0m\n"
+    
+    # 查找项目文件
+    PROJECT_FILE=""
+    if [ -n "$(find . -maxdepth 1 -name '*.xcworkspace' -type d)" ]; then
+        PROJECT_FILE=$(find . -maxdepth 1 -name '*.xcworkspace' -type d | head -n 1)
+        PROJECT_TYPE="workspace"
+    elif [ -n "$(find . -maxdepth 1 -name '*.xcodeproj' -type d)" ]; then
+        PROJECT_FILE=$(find . -maxdepth 1 -name '*.xcodeproj' -type d | head -n 1)
+        PROJECT_TYPE="project"
+    fi
+    
+    if [ -n "$PROJECT_FILE" ]; then
+        printf "\033[32m在项目 ${PROJECT_FILE} 中找到以下可用的 scheme:\033[0m\n"
+        
+        if [ "$PROJECT_TYPE" = "workspace" ]; then
+            SCHEMES=$(xcodebuild -workspace "$PROJECT_FILE" -list 2>/dev/null | grep -A 100 "Schemes:" | grep -v "Schemes:" | grep -v "^$" | sed 's/^[[:space:]]*//' | head -20)
+        else
+            SCHEMES=$(xcodebuild -project "$PROJECT_FILE" -list 2>/dev/null | grep -A 100 "Schemes:" | grep -v "Schemes:" | grep -v "^$" | sed 's/^[[:space:]]*//' | head -20)
+        fi
+        
+        if [ -n "$SCHEMES" ]; then
+            echo "$SCHEMES" | while read -r scheme; do
                 if [ -n "$scheme" ]; then
                     printf "   - %s\n" "$scheme"
                 fi
             done
-            
-            echo
-            generate_build_suggestions
+            printf "\n\033[36m请选择一个 scheme 并设置环境变量，例如:\033[0m\n"
+            FIRST_SCHEME=$(echo "$SCHEMES" | head -n 1 | sed 's/^[[:space:]]*//')
+            if [ -n "$FIRST_SCHEME" ]; then
+                printf "export SCHEME=\"%s\"\n" "$FIRST_SCHEME"
+            fi
         else
-            echo "   未找到可用的 scheme"
-            echo "请设置 SCHEME 环境变量，例如: export SCHEME=\"YourAppScheme\""
+            printf "   \033[31m未找到可用的 scheme\033[0m\n"
+            printf "请设置 SCHEME 环境变量，例如: export SCHEME=\"YourAppScheme\"\n"
         fi
     else
-        echo "   未找到 .xcodeproj 或 .xcworkspace 文件"
-        echo "请设置 SCHEME 环境变量，例如: export SCHEME=\"YourAppScheme\""
+        printf "   \033[31m未找到 .xcodeproj 或 .xcworkspace 文件\033[0m\n"
+        printf "请设置 SCHEME 环境变量，例如: export SCHEME=\"YourAppScheme\"\n"
     fi
-}
-
-# 生成构建建议命令
-generate_build_suggestions() {
-    printf "${GREEN}💡 建议使用以下命令进行构建:${NC}\n"
-    echo
     
-    # 将schemes转换为数组
-    local schemes_array=()
-    while IFS= read -r scheme; do
-        [ -n "$scheme" ] && schemes_array+=("$scheme")
-    done <<< "$AVAILABLE_SCHEMES"
-    
-    # 定义可用的架构选项
-    local arch_options=("all" "universal" "x86_64" "arm64")
-    local arch_descriptions=(
-        "构建所有架构 (x86_64, arm64, universal)"
-        "构建通用二进制文件 (x86_64 + arm64)"
-        "仅构建 Intel 架构 (x86_64)"
-        "仅构建 Apple Silicon 架构 (arm64)"
-    )
-    
-    # 定义可用的构建路径选项
-    local build_paths=("./temp" "./build" "./Build")
-    
-    local command_count=0
-    
-    # 为每个 scheme 生成建议
-    for scheme in "${schemes_array[@]}"; do
-        printf "${CYAN}📦 Scheme: ${scheme}${NC}\n"
-        
-        # 生成基本构建命令（使用默认设置）
-        echo " SCHEME='$scheme' ./scripts/build-app.sh"
-        command_count=$((command_count + 1))
-        
-        # 生成不同架构的构建命令
-        for i in "${!arch_options[@]}"; do
-            local arch="${arch_options[$i]}"
-            echo " SCHEME='$scheme' ARCH='$arch' ./scripts/build-app.sh"
-            command_count=$((command_count + 1))
-        done
-        
-        # 生成自定义构建路径的命令
-        for build_path in "${build_paths[@]}"; do
-            if [ "$build_path" != "./temp" ]; then  # 跳过默认路径
-                echo " SCHEME='$scheme' BuildPath='$build_path' ./scripts/build-app.sh"
-                command_count=$((command_count + 1))
-            fi
-        done
-        
-        # 生成详细日志命令
-        echo " SCHEME='$scheme' VERBOSE='true' ./scripts/build-app.sh"
-        command_count=$((command_count + 1))
-        
-        # 生成完整配置命令示例
-        echo " SCHEME='$scheme' ARCH='universal' BuildPath='./build' VERBOSE='true' ./scripts/build-app.sh"
-        command_count=$((command_count + 1))
-        
-        echo
-    done
-    
-    printf "${GREEN}📊 总共生成了 ${command_count} 个命令建议 (${#schemes_array[@]} 个 Scheme)${NC}\n"
-    echo
-    
-    printf "${GREEN}📋 参数说明:${NC}\n"
-    echo "   🎯 SCHEME: 构建方案名称（必需）"
-    echo "   🏗️  ARCH: 目标架构 (all|universal|x86_64|arm64，默认: all)"
-    echo "   📁 BuildPath: 构建输出路径（默认: ./temp）"
-    echo "   📝 VERBOSE: 显示详细日志 (true|false，默认: false)"
-    echo
-    
-    printf "${GREEN}🏗️  架构说明:${NC}\n"
-    echo "   🔄 all: 分别构建所有架构 (x86_64, arm64, universal)"
-    echo "   🔗 universal: 构建通用二进制文件，兼容 Intel 和 Apple Silicon"
-    echo "   💻 x86_64: 仅构建 Intel Mac 架构"
-    echo "   🍎 arm64: 仅构建 Apple Silicon 架构"
-    echo
-}
-
-# 检查必需的环境变量
-if [ -z "$SCHEME" ]; then
-    show_build_suggestions
     exit 1
 fi
 
@@ -172,56 +101,10 @@ if [ -z "$BuildPath" ]; then
     BuildPath="./temp"
 fi
 
-# 设置默认架构（默认构建所有可能的架构）
+# 设置默认架构
 if [ -z "$ARCH" ]; then
-    ARCH="all"
+    ARCH="universal"
 fi
-
-# 定义构建架构函数
-build_for_arch() {
-    local arch="$1"
-    local build_path="$2"
-    local destination="$3"
-    local archs="$4"
-    
-    printf "${YELLOW}正在构建架构: ${arch}...${NC}\n"
-    
-    # 构建通用的 xcodebuild 参数
-    BASE_ARGS="-scheme \"${SCHEME}\" -configuration Release -derivedDataPath \"${build_path}\""
-    if [ "${PROJECT_TYPE}" = "workspace" ]; then
-        BASE_ARGS="-workspace \"${PROJECT_FILE}\" ${BASE_ARGS}"
-    else
-        BASE_ARGS="-project \"${PROJECT_FILE}\" ${BASE_ARGS}"
-    fi
-    
-    # 添加目标和架构参数
-    BUILD_ARGS="${BASE_ARGS} -destination \"${destination}\""
-    if [ -n "$archs" ]; then
-        BUILD_ARGS="${BUILD_ARGS} ARCHS=\"${archs}\" ONLY_ACTIVE_ARCH=NO"
-    fi
-    
-    # 添加静默参数
-    if [ "${VERBOSE}" != "true" ]; then
-        BUILD_ARGS="${BUILD_ARGS} -quiet"
-    fi
-    
-    # 执行构建命令
-    printf "${YELLOW}正在清理之前的构建...${NC}\n"
-    eval "xcodebuild ${BUILD_ARGS} clean"
-    
-    printf "${YELLOW}开始构建应用...${NC}\n"
-    eval "xcodebuild ${BUILD_ARGS} build"
-    
-    # 检查构建结果
-    if [ $? -eq 0 ]; then
-        print_success "${arch} 架构构建成功！"
-        printf "${GREEN}📦 构建产物位置: ${build_path}/Build/Products/Release/${NC}\n"
-        echo
-    else
-        print_error "${arch} 架构构建失败！"
-        return 1
-    fi
-}
 
 # 根据架构设置构建目标和路径
 case "$ARCH" in
@@ -238,18 +121,135 @@ case "$ARCH" in
         ARCHS="x86_64 arm64"
         BuildPath="${BuildPath}/universal"
         ;;
-    "all")
-        # 构建所有架构
-        BUILD_ALL=true
-        ;;
     *)
-        printf "${RED}错误: 不支持的架构 '$ARCH'。支持的架构: all, universal, x86_64, arm64${NC}\n"
+        printf "${RED}错误: 不支持的架构 '$ARCH'。支持的架构: universal, x86_64, arm64${NC}\n"
         exit 1
         ;;
 esac
 
-# 显示开发环境信息
-print_development_environment
+# 输出颜色定义
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+PURPLE='\033[0;35m'
+CYAN='\033[0;36m'
+NC='\033[0m' # 无颜色
+
+# 显示开发路线图
+show_development_roadmap() {
+    local current_step="$1"
+    
+    echo
+    printf "${PURPLE}===========================================${NC}\n"
+    printf "${PURPLE}         🗺️  开发分发路线图                ${NC}\n"
+    printf "${PURPLE}===========================================${NC}\n"
+    echo
+    
+    # 定义路线图步骤
+    local steps=(
+        "build:🔨 构建应用:编译源代码，生成可执行文件"
+        "codesign:🔐 代码签名:为应用添加数字签名，确保安全性"
+        "package:📦 打包分发:创建 DMG 安装包"
+        "notarize:✅ 公证验证:Apple 官方验证（可选）"
+        "distribute:🚀 发布分发:上传到分发平台或直接分发"
+    )
+    
+    printf "${CYAN}📍 当前位置: "
+    case "$current_step" in
+        "build") printf "${GREEN}构建应用${NC}\n" ;;
+        "codesign") printf "${GREEN}代码签名${NC}\n" ;;
+        "package") printf "${GREEN}打包分发${NC}\n" ;;
+        "notarize") printf "${GREEN}公证验证${NC}\n" ;;
+        "distribute") printf "${GREEN}发布分发${NC}\n" ;;
+        *) printf "${YELLOW}未知步骤${NC}\n" ;;
+    esac
+    echo
+    
+    # 显示路线图
+    for step in "${steps[@]}"; do
+        local step_id=$(echo "$step" | cut -d':' -f1)
+        local step_icon=$(echo "$step" | cut -d':' -f2)
+        local step_desc=$(echo "$step" | cut -d':' -f3)
+        
+        if [ "$step_id" = "$current_step" ]; then
+            printf "${GREEN}▶ %s %s${NC}\n" "$step_icon" "$step_desc"
+        else
+            printf "  %s %s\n" "$step_icon" "$step_desc"
+        fi
+    done
+    
+    echo
+    printf "${YELLOW}💡 下一步建议:${NC}\n"
+    case "$current_step" in
+        "build")
+            printf "   运行代码签名: ${CYAN}./scripts/codesign-app.sh${NC}\n"
+            ;;
+        "codesign")
+            printf "   创建安装包: ${CYAN}./scripts/create-dmg.sh${NC}\n"
+            ;;
+        "package")
+            printf "   进行公证验证或直接分发应用\n"
+            ;;
+        "notarize")
+            printf "   发布到分发平台或提供下载链接\n"
+            ;;
+        "distribute")
+            printf "   🎉 开发分发流程已完成！\n"
+            ;;
+    esac
+    
+    echo
+    printf "${PURPLE}===========================================${NC}\n"
+}
+
+printf "${BLUE}===========================================${NC}\n"
+printf "${BLUE}         应用构建环境信息                ${NC}\n"
+printf "${BLUE}===========================================${NC}\n"
+echo
+
+# 系统信息
+printf "${GREEN}📱 系统信息:${NC}\n"
+echo "   操作系统: $(uname -s) $(uname -r)"
+echo "   系统架构: $(uname -m)"
+echo "   主机名称: $(hostname)"
+echo
+
+# Xcode 信息
+printf "${GREEN}🔨 Xcode 开发环境:${NC}\n"
+if command -v xcodebuild &> /dev/null; then
+    echo "   Xcode 版本: $(xcodebuild -version | head -n 1)"
+    echo "   构建版本: $(xcodebuild -version | tail -n 1)"
+    echo "   SDK 路径: $(xcrun --show-sdk-path)"
+    echo "   开发者目录: $(xcode-select -p)"
+else
+    printf "   ${RED}❌ 未找到 Xcode${NC}\n"
+    exit 1
+fi
+echo
+
+# Swift 信息
+printf "${GREEN}🚀 Swift 编译器:${NC}\n"
+if command -v swift &> /dev/null; then
+    SWIFT_VERSION=$(swift --version 2>/dev/null | grep -o 'Swift version [0-9]\+\.[0-9]\+\.[0-9]\+' | cut -d' ' -f3)
+    echo "   Swift 版本: ${SWIFT_VERSION}"
+else
+    printf "   ${RED}❌ 未找到 Swift${NC}\n"
+fi
+echo
+
+# Git 信息
+printf "${GREEN}📝 Git 版本控制:${NC}\n"
+if command -v git &> /dev/null; then
+    echo "   Git 版本: $(git --version)"
+    if git rev-parse --git-dir > /dev/null 2>&1; then
+        echo "   当前分支: $(git branch --show-current)"
+        echo "   最新提交: $(git log -1 --pretty=format:'%h - %s (%an, %ar)')"
+    fi
+else
+    printf "   ${RED}❌ 未找到 Git${NC}\n"
+fi
+echo
 
 # 环境变量
 printf "${GREEN}🌍 构建环境变量:${NC}\n"
@@ -281,7 +281,7 @@ elif [ -n "$(find . -maxdepth 1 -name '*.xcodeproj' -type d)" ]; then
     echo "   项目文件: ${PROJECT_FILE}"
     echo "   项目类型: Xcode Project"
 else
-    print_error "   未找到 .xcodeproj 或 .xcworkspace 文件"
+    printf "   ${RED}❌ 未找到 .xcodeproj 或 .xcworkspace 文件${NC}\n"
     exit 1
 fi
 
@@ -301,47 +301,66 @@ else
 fi
 echo
 
-print_title_box "🚀 开始构建过程..." "$YELLOW"
+printf "${BLUE}===========================================${NC}\n"
+printf "${YELLOW}🚀 开始构建过程...${NC}\n"
+printf "${BLUE}===========================================${NC}\n"
+echo
 
 # 开始构建
 printf "${GREEN}正在构建应用(VERBOSE=${VERBOSE:-false})...${NC}\n"
+
+# 构建命令
+if [ "${VERBOSE}" = "true" ]; then
+    QUIET_FLAG=""
+else
+    QUIET_FLAG="-quiet"
+fi
+
+# 构建通用的 xcodebuild 参数
+BASE_ARGS="-scheme \"${SCHEME}\" -configuration Release -derivedDataPath \"${BuildPath}\""
+if [ "${PROJECT_TYPE}" = "workspace" ]; then
+    BASE_ARGS="-workspace \"${PROJECT_FILE}\" ${BASE_ARGS}"
+else
+    BASE_ARGS="-project \"${PROJECT_FILE}\" ${BASE_ARGS}"
+fi
+
+# 添加目标和架构参数
+BUILD_ARGS="${BASE_ARGS} -destination \"${DESTINATION}\""
+if [ -n "$ARCHS" ]; then
+    BUILD_ARGS="${BUILD_ARGS} ARCHS=\"${ARCHS}\" ONLY_ACTIVE_ARCH=NO"
+fi
+
+# 添加静默参数
+if [ "${VERBOSE}" != "true" ]; then
+    BUILD_ARGS="${BUILD_ARGS} -quiet"
+fi
+
+# 显示完整的执行命令（包含架构参数）
+echo "xcodebuild ${BUILD_ARGS}"
 echo
 
-# 根据架构类型执行构建
-if [ "$BUILD_ALL" = "true" ]; then
-    # 构建所有架构
-    printf "${CYAN}🏗️  构建所有架构: x86_64, arm64, universal${NC}\n"
-    echo
-    
-    # 构建 x86_64
-    build_for_arch "x86_64" "${BuildPath}/x86_64" "platform=macOS,arch=x86_64" ""
-    if [ $? -ne 0 ]; then
-        exit 1
-    fi
-    
-    # 构建 arm64
-    build_for_arch "arm64" "${BuildPath}/arm64" "platform=macOS,arch=arm64" ""
-    if [ $? -ne 0 ]; then
-        exit 1
-    fi
-    
-    # 构建 universal
-    build_for_arch "universal" "${BuildPath}/universal" "platform=macOS" "x86_64 arm64"
-    if [ $? -ne 0 ]; then
-        exit 1
-    fi
-    
-    print_success "所有架构构建完成！"
-    printf "${GREEN}📦 构建产物位置:${NC}\n"
-    printf "   x86_64: ${BuildPath}/x86_64/Build/Products/Release/\n"
-    printf "   arm64: ${BuildPath}/arm64/Build/Products/Release/\n"
-    printf "   universal: ${BuildPath}/universal/Build/Products/Release/\n"
+# 执行构建命令
+printf "${YELLOW}正在清理之前的构建...${NC}\n"
+eval "xcodebuild ${BUILD_ARGS} clean"
+
+if [ "$ARCH" = "universal" ] && [ -n "$ARCHS" ]; then
+    printf "${YELLOW}开始构建应用 (通用二进制: ${ARCHS})...${NC}\n"
+elif [ "$ARCH" != "universal" ]; then
+    printf "${YELLOW}开始构建应用 (架构: ${ARCH})...${NC}\n"
 else
-    # 构建单一架构
-    build_for_arch "$ARCH" "$BuildPath" "$DESTINATION" "$ARCHS"
-    if [ $? -ne 0 ]; then
-        exit 1
-    fi
+    printf "${YELLOW}开始构建应用 (架构: ${ARCH})...${NC}\n"
+fi
+eval "xcodebuild ${BUILD_ARGS} build"
+
+# 检查构建结果
+if [ $? -eq 0 ]; then
+    echo
+    printf "${GREEN}✅ 构建成功完成！${NC}\n"
+    printf "${GREEN}📦 构建产物位置: ${BuildPath}/Build/Products/Release/${NC}\n"
+else
+    echo
+    printf "${RED}❌ 构建失败！${NC}\n"
+    exit 1
 fi
 
 # 显示开发路线图

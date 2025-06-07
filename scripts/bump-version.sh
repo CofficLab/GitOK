@@ -35,19 +35,70 @@
 #   - 仅递增修订版本号，如需更新主版本或次版本请手动修改
 # ====================================
 
-# 引入公共输出库
-source "$(/usr/bin/dirname "$0")/common-output.sh"
+# 颜色定义
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+PURPLE='\033[0;35m'
+CYAN='\033[0;36m'
+NC='\033[0m' # No Color
 
-# 显示开发环境信息
-print_development_environment
+printf "${BLUE}===========================================${NC}\n"
+printf "${BLUE}         版本管理环境信息                ${NC}\n"
+printf "${BLUE}===========================================${NC}\n"
+echo
 
-print_title_box "开始版本号更新流程"
+# 系统信息
+printf "${GREEN}📱 系统信息:${NC}\n"
+echo "   操作系统: $(uname -s) $(uname -r)"
+echo "   系统架构: $(uname -m)"
+echo "   主机名称: $(hostname)"
+echo
+
+# Xcode 信息
+printf "${GREEN}🔨 Xcode 开发环境:${NC}\n"
+if command -v xcodebuild &> /dev/null; then
+    echo "   Xcode 版本: $(xcodebuild -version | head -n 1)"
+    echo "   构建版本: $(xcodebuild -version | tail -n 1)"
+else
+    printf "   ${RED}❌ 未找到 Xcode${NC}\n"
+fi
+echo
+
+# Swift 信息
+printf "${GREEN}🚀 Swift 编译器:${NC}\n"
+if command -v swift &> /dev/null; then
+    SWIFT_VERSION=$(swift --version 2>/dev/null | grep -o 'Swift version [0-9]\+\.[0-9]\+\.[0-9]\+' | cut -d' ' -f3)
+    echo "   Swift 版本: ${SWIFT_VERSION}"
+else
+    printf "   ${RED}❌ 未找到 Swift${NC}\n"
+fi
+echo
+
+# Git 信息
+printf "${GREEN}📝 Git 版本控制:${NC}\n"
+if command -v git &> /dev/null; then
+    echo "   Git 版本: $(git --version)"
+    if git rev-parse --git-dir > /dev/null 2>&1; then
+        echo "   当前分支: $(git branch --show-current)"
+        echo "   最新提交: $(git log -1 --pretty=format:'%h - %s (%an, %ar)')"
+    fi
+else
+    printf "   ${RED}❌ 未找到 Git${NC}\n"
+fi
+echo
+
+printf "${BLUE}===========================================${NC}\n"
+printf "${BLUE}         开始版本号更新流程                ${NC}\n"
+printf "${BLUE}===========================================${NC}\n"
+echo
 
 # 读取配置文件路径
 projectFile=$(find $(pwd) -maxdepth 2 ! -path "*Resources*" ! -path "*temp*" -type f -name "*.pbxproj" | head -n 1)
 
 if [ -z "$projectFile" ]; then
-  print_error "未找到 .pbxproj 配置文件！"
+  echo "❌ 未找到 .pbxproj 配置文件！"
   exit 1
 fi
 
@@ -57,7 +108,7 @@ echo "🔍 配置文件路径: $projectFile"
 version=$(grep -o "MARKETING_VERSION = [^\"']*" "$projectFile" | head -n 1 | grep -o '[0-9]\+\.[0-9]\+\.[0-9]\+')
 
 if [ -z "$version" ]; then
-  print_error "未找到 MARKETING_VERSION！"
+  echo "❌ 未找到 MARKETING_VERSION！"
   exit 1
 fi
 
@@ -81,4 +132,4 @@ sed -i '' "s/MARKETING_VERSION = $version/MARKETING_VERSION = $newVersion/" "$pr
 
 updatedVersion=$(grep -o "MARKETING_VERSION = [^\"']*" "$projectFile" | head -n 1 | grep -o '[0-9]\+\.[0-9]\+\.[0-9]\+')
 
-print_success "更新后的版本号: $updatedVersion"
+echo "✅ 更新后的版本号: $updatedVersion"
