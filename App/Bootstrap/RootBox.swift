@@ -32,24 +32,25 @@ final class RootBox: SuperLog {
         
         // Plugins
         let plugins: [SuperPlugin] = [
-            GitPlugin(),
-            BannerPlugin(),
-            IconPlugin(),
+            GitPlugin.shared,
+            BannerPlugin.shared,
+            IconPlugin.shared,
      
-            OpenXcodePlugin(),
-            OpenVSCodePlugin(),
-            OpenCursorPlugin(),
-            OpenTraePlugin(),
-            OpenFinderPlugin(),
-            OpenTerminalPlugin(),
-            OpenRemotePlugin(),
-            SyncPlugin(),
+            OpenXcodePlugin.shared,
+            OpenVSCodePlugin.shared,
+            OpenCursorPlugin.shared,
+            OpenTraePlugin.shared,
+            OpenFinderPlugin.shared,
+            OpenTerminalPlugin.shared,
+            OpenRemotePlugin.shared,
+            SyncPlugin.shared,
             BranchPlugin.shared,
             CommitPlugin.shared,
             ProjectPickerPlugin.shared,
-            SmartMergePlugin(),
-            SmartMessagePlugin(),
-            QuickMergePlugin.shared
+            SmartMergePlugin.shared,
+            SmartMessagePlugin.shared,
+            QuickMergePlugin.shared,
+            SmartFilePlugin.shared
         ]
         
         // Providers
@@ -69,19 +70,21 @@ final class RootBox: SuperLog {
     }
 }
 
-#Preview("APP") {
-    RootView(content: {
-        ContentLayout()
-            .hideSidebar()
-    })
-    .frame(width: 800, height: 600)
-}
-
-#Preview("Big Screen") {
+#Preview("App - Small Screen") {
     RootView {
         ContentLayout()
             .hideSidebar()
+            .hideTabPicker()
             .hideProjectActions()
+    }
+    .frame(width: 700)
+    .frame(height: 700)
+}
+
+#Preview("App - Big Screen") {
+    RootView {
+        ContentLayout()
+            .hideSidebar()
     }
     .frame(width: 1200)
     .frame(height: 1200)

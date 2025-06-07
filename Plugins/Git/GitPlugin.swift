@@ -3,9 +3,12 @@ import OSLog
 import SwiftUI
 
 class GitPlugin: SuperPlugin, SuperLog {
+    static let shared = GitPlugin()
     let emoji = "📣"
     static var label: String = "Git"
     var isTab: Bool = true
+    
+    private init() {}
 
     func addDetailView() -> AnyView {
         AnyView(GitDetail())
