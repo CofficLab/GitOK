@@ -7,11 +7,11 @@ struct FileList: View, SuperThread, SuperLog {
     @EnvironmentObject var app: AppProvider
     @EnvironmentObject var m: MessageProvider
     @EnvironmentObject var data: DataProvider
-
+    
     @State var files: [File] = []
     @State var isLoading = false
     var verbose = false
-
+    
     var body: some View {
         VStack(spacing: 0) {
             // 文件信息栏
@@ -20,14 +20,14 @@ struct FileList: View, SuperThread, SuperLog {
                     Image(systemName: "doc.text")
                         .foregroundColor(.secondary)
                         .font(.system(size: 12))
-
+                    
                     Text("\(files.count) 个文件")
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
-
+                
                 Spacer()
-
+                
                 if isLoading {
                     HStack(spacing: 4) {
                         ProgressView()
@@ -47,13 +47,12 @@ struct FileList: View, SuperThread, SuperLog {
                     .foregroundColor(Color(NSColor.separatorColor)),
                 alignment: .bottom
             )
-
+            
             // 文件列表
             ScrollViewReader { scrollProxy in
                 List(files, id: \.self, selection: $data.file) {
                     FileTile(file: $0)
                         .tag($0 as File?)
-                        .listRowBackground(getBackground(file: $0))
                 }
                 .task {
                     self.refresh(scrollProxy)
@@ -71,10 +70,10 @@ struct FileList: View, SuperThread, SuperLog {
             }
         }
     }
-
+    
     func refresh(_ scrollProxy: ScrollViewProxy) {
         self.isLoading = true
-
+        
         if verbose {
             os_log("\(self.t)Refresh")
         }
@@ -82,25 +81,12 @@ struct FileList: View, SuperThread, SuperLog {
         guard let commit = data.commit else {
             return
         }
-
+        
         let files = commit.getFiles(reason: "FileList.Refresh")
-
+        
         self.files = files
         self.isLoading = false
         data.file = self.files.first
-    }
-
-    func getBackground(file: File) -> some View {
-        Group {
-            switch file.type {
-            case .modified:
-                MagicBackground.orange.opacity(0.1)
-            case .add:
-                MagicBackground.forest.opacity(0.1)
-            case .delete:
-                MagicBackground.cherry.opacity(0.1)
-            }
-        }
     }
 }
 

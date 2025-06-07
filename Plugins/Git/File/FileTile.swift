@@ -1,19 +1,21 @@
-import SwiftUI
 import MagicCore
+import SwiftUI
 
 struct FileTile: View {
     var file: File
-    
+
     @State var isPresented: Bool = false
-    
+
     var body: some View {
         HStack {
-            image
-            Text(file.name).font(.footnote)
+//            image
+            Text(file.name)
+                .font(.footnote)
+                .foregroundStyle(getColor())
             Spacer()
         }
     }
-    
+
     var image: some View {
         switch file.type {
         case .modified:
@@ -22,6 +24,17 @@ struct FileTile: View {
             Image(systemName: "plus.square")
         case .delete:
             Image(systemName: "trash.square")
+        }
+    }
+
+    func getColor() -> Color {
+        switch file.type {
+        case .modified:
+            Color.orange
+        case .add:
+            Color.green
+        case .delete:
+            Color.red
         }
     }
 }
