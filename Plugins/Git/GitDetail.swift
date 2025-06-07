@@ -35,6 +35,15 @@ struct GitDetail: View, SuperEvent {
         .onChange(of: file, onFileChange)
         .onChange(of: data.project, onProjectChange)
         .onReceive(nc.publisher(for: .gitCommitSuccess), perform: onGitCommitSuccess)
+        .onNotification(.appWillBecomeActive, perform: onAppWillBecomeActive)
+    }
+}
+
+// MARK: - Action
+
+extension GitDetail {
+    func updateIsProjectClean() {
+        self.isProjectClean = data.project?.isClean ?? true
     }
 }
 
@@ -42,17 +51,17 @@ struct GitDetail: View, SuperEvent {
 
 extension GitDetail {
     func onAppear() {
-        isProjectClean = data.project?.isClean ?? true
+        self.updateIsProjectClean()
     }
 
     func onProjectChange() {
-        isProjectClean = data.project?.isClean ?? true
+        self.updateIsProjectClean()
     }
 
     func onFileChange() {
         self.data.setFile(file)
 
-        isProjectClean = data.project?.isClean ?? true
+        self.updateIsProjectClean()
 
         if let commit = data.commit, let file = file, let project = data.project {
             do {
@@ -65,8 +74,12 @@ extension GitDetail {
     }
 
     func onGitCommitSuccess(_ notification: Notification) {
-        isProjectClean = data.project?.isClean ?? true
+        self.updateIsProjectClean()
         self.m.toast("已提交")
+    }
+    
+    func onAppWillBecomeActive(_ n: Notification) {
+        self.updateIsProjectClean()
     }
 }
 
