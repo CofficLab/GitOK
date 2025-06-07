@@ -62,7 +62,7 @@ jobs:
         env:
           SCHEME: ${{ env.SCHEME }}
           SIGNING_IDENTITY: ${{ steps.signing.outputs.signing_identity }}
-          BuildPath: ./temp/universal/Build/Products/Release/GitOK.app
+          BuildPath: ./temp/universal/Build/Products/Release
       - name: Create DMG
         run: ./scripts/create-dmg.sh
         env:
