@@ -56,25 +56,23 @@ jobs:
       - name: Build
         env:
           SCHEME: ${{ env.SCHEME }}
-          BuildPath: ${{ env.BuildPath }}
-          ARCH: 'all'
         run: ./scripts/build-app.sh
       - name: Codesign App
         run: ./scripts/codesign-app.sh
         env:
           SCHEME: ${{ env.SCHEME }}
           SIGNING_IDENTITY: ${{ steps.signing.outputs.signing_identity }}
-          BuildPath: ./temp/arm64/Build/Products/Release/GitOK.app
+          BuildPath: ./temp/universal/Build/Products/Release/GitOK.app
       - name: Create DMG
         run: ./scripts/create-dmg.sh
         env:
           SCHEME: ${{ env.SCHEME }}
-          BuildPath: ./temp/arm64/Build/Products/Release
+          BuildPath: ./temp/universal/Build/Products/Release
           VERBOSE: true
       - name: Notary
         continue-on-error: true
         run: |
-          file=$(find . -maxdepth 1 -type f -name "*.dmg" | head -n 1)
+          file=$(find . -maxdepth 2 -type f -name "*.dmg" | head -n 1)
           xcrun notarytool submit "$file" \
             --key ${{ steps.signing.outputs.api_key_path }} \
             --key-id=${{ secrets.APP_STORE_CONNECT_KEY_ID }} \
