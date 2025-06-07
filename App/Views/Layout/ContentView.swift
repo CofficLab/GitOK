@@ -34,7 +34,7 @@ struct ContentView: View, SuperLog {
             if g.projectExists == false {
                 GuideView(
                     systemImage: "folder.badge.questionmark",
-                    title: "项目不存在",
+                    title: "项目不存在"
                 ).setIconColor(.red.opacity(0.5))
             } else {
                 HSplitView {
