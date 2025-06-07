@@ -19,7 +19,7 @@ struct IconScale: View {
 
 #Preview {
     RootView {
-        ContentView()
+        ContentLayout()
     }
     .frame(height: 800)
     .frame(width: 800)

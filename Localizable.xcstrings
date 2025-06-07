@@ -1,0 +1,491 @@
+{
+  "sourceLanguage" : "zh-Hans",
+  "strings" : {
+    "" : {
+
+    },
+    "%@ %@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ %2$@"
+          }
+        }
+      }
+    },
+    "%lld 个文件" : {
+
+    },
+    "18" : {
+
+    },
+    "B" : {
+
+    },
+    "branch" : {
+
+    },
+    "Check for Updates…" : {
+
+    },
+    "commit" : {
+
+    },
+    "current_head" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "当前"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Current"
+          }
+        }
+      }
+    },
+    "delete_project" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "删除项目"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete project"
+          }
+        }
+      }
+    },
+    "Diff for %@" : {
+
+    },
+    "iMac" : {
+
+    },
+    "iOS" : {
+
+    },
+    "iPad" : {
+
+    },
+    "iPhoneBig" : {
+
+    },
+    "iPhoneSmall" : {
+
+    },
+    "loading" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "加载中..."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Loading..."
+          }
+        }
+      }
+    },
+    "Log" : {
+
+    },
+    "MacBook" : {
+
+    },
+    "macOS" : {
+
+    },
+    "Merge" : {
+
+    },
+    "no_branches" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "没有分支"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No branches"
+          }
+        }
+      }
+    },
+    "no_branches_description" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "当前没有分支"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No branches yet"
+          }
+        }
+      }
+    },
+    "no_commits" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "没有提交记录"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No commits"
+          }
+        }
+      }
+    },
+    "no_commits_description" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "当前没有提交记录"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No commits yet"
+          }
+        }
+      }
+    },
+    "no_local_changes_description" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "所有更改都已提交到本地仓库"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All changes have been committed to local repository"
+          }
+        }
+      }
+    },
+    "no_local_changes_title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "没有本地更改"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No local changes"
+          }
+        }
+      }
+    },
+    "no_tags" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "没有标签"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No tags"
+          }
+        }
+      }
+    },
+    "no_tags_description" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "当前没有标签"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No tags yet"
+          }
+        }
+      }
+    },
+    "not_git_project" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不是Git项目"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not a Git Project"
+          }
+        }
+      }
+    },
+    "project_not_exist" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "项目不存在"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Project not exist"
+          }
+        }
+      }
+    },
+    "PWD" : {
+
+    },
+    "select_a_project" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "选择一个项目"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Select a project"
+          }
+        }
+      }
+    },
+    "select_commit_description" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在左侧列表中选择一个提交记录来查看详情"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Select a commit from the list on the left to view details"
+          }
+        }
+      }
+    },
+    "select_commit_title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "选择一个 Commit"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Select a Commit"
+          }
+        }
+      }
+    },
+    "select_project" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "选择项目"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Select Project"
+          }
+        }
+      }
+    },
+    "to" : {
+
+    },
+    "whoami" : {
+
+    },
+    "个人访问令牌" : {
+
+    },
+    "全部" : {
+
+    },
+    "删除" : {
+
+    },
+    "删除「%@」" : {
+
+    },
+    "副标题" : {
+
+    },
+    "加载中..." : {
+
+    },
+    "取消" : {
+
+    },
+    "同步" : {
+
+    },
+    "在Finder中显示" : {
+
+    },
+    "增加新特性" : {
+
+    },
+    "复制完整 Hash" : {
+
+    },
+    "已复制" : {
+
+    },
+    "当前项目：%@" : {
+
+    },
+    "打开App Support目录" : {
+
+    },
+    "打开iCloud Documents" : {
+
+    },
+    "打开图片目录" : {
+
+    },
+    "打开容器目录" : {
+
+    },
+    "打开数据库目录" : {
+
+    },
+    "打开文档目录" : {
+
+    },
+    "打开远程仓库" : {
+
+    },
+    "换图" : {
+
+    },
+    "推送" : {
+
+    },
+    "时间" : {
+
+    },
+    "显示/隐藏边框" : {
+
+    },
+    "未提交的文件数量: %lld" : {
+
+    },
+    "没有可用的图标" : {
+
+    },
+    "消息" : {
+
+    },
+    "添加项目" : {
+
+    },
+    "清空" : {
+
+    },
+    "用 Cursor 打开" : {
+
+    },
+    "用 Trae 打开" : {
+
+    },
+    "用Cursor打开" : {
+
+    },
+    "用Finder打开" : {
+
+    },
+    "用VSCode打开" : {
+
+    },
+    "用Xcode打开" : {
+
+    },
+    "用户名" : {
+
+    },
+    "用终端打开" : {
+
+    },
+    "确定" : {
+
+    },
+    "类型" : {
+
+    },
+    "调试" : {
+
+    },
+    "输入凭据" : {
+
+    },
+    "选择标签" : {
+
+    },
+    "错误" : {
+
+    },
+    "项目不存在" : {
+
+    },
+    "项目已不存在" : {
+
+    }
+  },
+  "version" : "1.0"
+}

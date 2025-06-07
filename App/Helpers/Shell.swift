@@ -1,9 +1,10 @@
 import Foundation
 import OSLog
 import SwiftUI
+import MagicCore
 
-class Shell {
-    static let label = "🐚 Shell::"
+class Shell: SuperLog {
+    static let emoji = "🐚"
 
     static func pwd() -> String {
         do {
@@ -49,7 +50,7 @@ class Shell {
         let output = String(data: outputData, encoding: .utf8) ?? ""
 
         if verbose {
-            os_log("\(self.label) \(command)")
+            os_log("\(self.t)\(command)")
             os_log("\(output)")
         }
 
@@ -84,7 +85,7 @@ extension Shell {
 
     func makeDir(_ dir: String, verbose: Bool = true) {
         if verbose {
-            os_log("\(Shell.label)MakeDir -> \(dir)")
+            os_log("\(self.t)MakeDir -> \(dir)")
         }
 
         _ = try! Shell.run("""
@@ -125,7 +126,7 @@ enum ShellError: Error, LocalizedError {
 
 #Preview("App-Big Screen") {
     RootView {
-        ContentView()
+        ContentLayout()
     }
     .frame(width: 1200)
     .frame(height: 1200)

@@ -13,6 +13,7 @@ class GitCommitRepo: GitCommitRepoProtocol, SuperLog {
 
     private let userDefaults = UserDefaults.standard
     private let lastCommitKeyPrefix = "Git.lastSelectedCommit_"
+    private let verbose = false
 
     var emoji = "💾"
 
@@ -24,18 +25,21 @@ class GitCommitRepo: GitCommitRepoProtocol, SuperLog {
     ///   - commit: 选择的commit
     func saveLastSelectedCommit(projectPath: String, commit: GitCommit) {
         let key = getKey(for: projectPath)
-
-        let commitData: [String: String] = [
+    
+        let commitData: [String: Any] = [
             "hash": commit.hash,
             "message": commit.message,
             "author": commit.author,
-            "date": commit.date,
+            "date": commit.date.timeIntervalSince1970, // 保存为时间戳
             "path": commit.path,
-            "isHead": String(commit.isHead), // 添加isHead属性
+            "isHead": commit.isHead,
         ]
-
+    
         userDefaults.set(commitData, forKey: key)
-        os_log("\(self.t)已保存项目 \(projectPath) 的最后选择的commit: \(commit.hash)")
+        
+        if verbose {
+            os_log("\(self.t)已保存项目 \(projectPath) 的最后选择的commit: \(commit.hash)")
+        }
     }
 
     /// 获取项目的最后选择的commit
@@ -43,19 +47,20 @@ class GitCommitRepo: GitCommitRepoProtocol, SuperLog {
     /// - Returns: 最后选择的commit，如果没有则返回nil
     func getLastSelectedCommit(projectPath: String) -> GitCommit? {
         let key = getKey(for: projectPath)
-
-        guard let commitData = userDefaults.dictionary(forKey: key) as? [String: String],
-              let hash = commitData["hash"],
-              let message = commitData["message"],
-              let author = commitData["author"],
-              let date = commitData["date"],
-              let path = commitData["path"] else {
+    
+        guard let commitData = userDefaults.dictionary(forKey: key),
+              let hash = commitData["hash"] as? String,
+              let message = commitData["message"] as? String,
+              let author = commitData["author"] as? String,
+              let dateTimestamp = commitData["date"] as? TimeInterval,
+              let path = commitData["path"] as? String else {
             return nil
         }
-
+    
         // 获取isHead属性，如果不存在则默认为false
-        let isHead = (commitData["isHead"] == "true")
-
+        let isHead = (commitData["isHead"] as? Bool) ?? false
+        let date = Date(timeIntervalSince1970: dateTimestamp)
+    
         return GitCommit(
             isHead: isHead,
             path: path,
@@ -88,7 +93,7 @@ class GitCommitRepo: GitCommitRepoProtocol, SuperLog {
 
 #Preview("App-Big Screen") {
     RootView {
-        ContentView()
+        ContentLayout()
     }
     .frame(width: 1200)
     .frame(height: 1200)

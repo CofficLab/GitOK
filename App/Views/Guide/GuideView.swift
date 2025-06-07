@@ -10,6 +10,7 @@ struct GuideView: View {
     let subtitle: String?
     let action: (() -> Void)?
     let actionLabel: String?
+    let iconColor: Color?
 
     /// 初始化引导视图
     /// - Parameters:
@@ -18,28 +19,31 @@ struct GuideView: View {
     ///   - subtitle: 副标题（可选）
     ///   - action: 操作按钮的回调（可选）
     ///   - actionLabel: 操作按钮的标签（可选）
+    ///   - iconColor: 图标颜色（可选，默认为灰色）
     init(
         systemImage: String,
         title: String,
         subtitle: String? = nil,
         action: (() -> Void)? = nil,
-        actionLabel: String? = nil
+        actionLabel: String? = nil,
+        iconColor: Color? = nil
     ) {
         self.systemImage = systemImage
         self.title = title
         self.subtitle = subtitle
         self.action = action
         self.actionLabel = actionLabel
+        self.iconColor = iconColor
     }
 
     var body: some View {
         VStack(spacing: 20) {
             Image(systemName: systemImage)
-                .font(.system(size: 60))
-                .foregroundColor(.gray)
+                .font(.system(size: 80))
+                .foregroundColor(iconColor ?? .gray)
 
             Text(title)
-                .font(.title2)
+                .font(.largeTitle)
                 .foregroundColor(.secondary)
 
             if let subtitle = subtitle {
@@ -50,7 +54,6 @@ struct GuideView: View {
 
             if let projectPath = g.project?.path {
                 Text("当前项目：\(projectPath)")
-                    .font(.subheadline)
                     .foregroundColor(.secondary)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal)
@@ -62,38 +65,50 @@ struct GuideView: View {
                 }
                 .buttonStyle(.borderedProminent)
             }
+
+            if g.projectExists == false, let p = g.project {
+                BtnDeleteProject(project: p)
+                    .frame(width: 200)
+                    .frame(height: 40)
+                    .padding(.top, 50)
+            }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color(.windowBackgroundColor))
     }
 }
 
-#Preview {
-    RootView {
-        GuideView(
-            systemImage: "folder.badge.questionmark",
-            title: "No Project",
-            subtitle: "Please select or create a project",
-            action: { print("Action tapped") },
-            actionLabel: "Create Project"
+// MARK: Modifiers
+
+extension GuideView {
+    /// 设置图标颜色的链式调用方法
+    /// - Parameter color: 图标颜色
+    /// - Returns: 新的 GuideView 实例
+    func setIconColor(_ color: Color) -> GuideView {
+        return GuideView(
+            systemImage: self.systemImage,
+            title: self.title,
+            subtitle: self.subtitle,
+            action: self.action,
+            actionLabel: self.actionLabel,
+            iconColor: color
         )
     }
-    .frame(width: 400, height: 300)
 }
 
-#Preview("Simple") {
+#Preview("App-Small Screen") {
     RootView {
-        GuideView(
-            systemImage: "exclamationmark.triangle",
-            title: "Not a Git Repository"
-        )
+        ContentLayout()
+            .hideProjectActions()
+            .hideTabPicker()
     }
-    .frame(width: 400, height: 300)
+    .frame(width: 800)
+    .frame(height: 600)
 }
 
 #Preview("Default-Big Screen") {
     RootView {
-        ContentView()
+        ContentLayout()
     }
     .frame(width: 1200)
     .frame(height: 1200)

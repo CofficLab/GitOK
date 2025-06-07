@@ -4,10 +4,10 @@ import SwiftUI
 
 class OpenTerminalPlugin: SuperPlugin, SuperLog {
     let emoji = "⌨️"
-    var label: String = "OpenTerminal"
+    static var label: String = "OpenTerminal"
     var isTab: Bool = false
 
-    func addToolBarLeadingView() -> AnyView {
+    func addToolBarTrailingView() -> AnyView {
         AnyView(BtnOpenTerminalView())
     }
 }

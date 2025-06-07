@@ -1,5 +1,5 @@
-import SwiftUI
 import MagicCore
+import SwiftUI
 
 struct BtnSyncView: View, SuperLog, SuperEvent, SuperThread {
     @EnvironmentObject var m: MessageProvider
@@ -19,9 +19,9 @@ struct BtnSyncView: View, SuperLog, SuperEvent, SuperThread {
                     .rotationEffect(Angle(degrees: self.rotationAngle))
             })
             .disabled(working)
-            .onChange(of: working) { newValue in
+            .onChange(of: working) {
                 let duration = 0.02
-                if newValue {
+                if working {
                     Timer.scheduledTimer(withTimeInterval: duration, repeats: true) { timer in
                         if !working {
                             timer.invalidate()
@@ -48,18 +48,14 @@ struct BtnSyncView: View, SuperLog, SuperEvent, SuperThread {
             working = true
         }
 
-        self.bg.async {
-            do {
-                try GitShell.pull(path)
-                try GitShell.push(path)
+        do {
+            try GitShell.pull(path)
+            try GitShell.push(path)
 
-                self.reset()
-            } catch let error {
-                self.reset()
-                self.main.async {
-                    m.alert("同步出错", info: error.localizedDescription)
-                }
-            }
+            self.reset()
+        } catch let error {
+            self.reset()
+            m.alert("同步出错", info: error.localizedDescription)
         }
     }
 
@@ -83,9 +79,8 @@ struct BtnSyncView: View, SuperLog, SuperEvent, SuperThread {
 
 #Preview("Default-Big Screen") {
     RootView {
-        ContentView()
+        ContentLayout()
     }
     .frame(width: 1200)
     .frame(height: 1200)
 }
-

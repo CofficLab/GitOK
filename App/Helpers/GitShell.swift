@@ -17,8 +17,8 @@ class GitShell {
         return result
     }
 
-    static func commitFiles(_ path: String, hash: String) throws -> [File] {
-        let items = try run("show \(hash) --pretty='' --name-only", path: path, verbose: true)
+    static func commitFiles(_ path: String, hash: String, verbose: Bool = false) throws -> [File] {
+        let items = try run("show \(hash) --pretty='' --name-only", path: path, verbose: verbose)
             .components(separatedBy: "\n")
             .filter({
                 $0.isNotEmpty
@@ -305,6 +305,14 @@ class GitShell {
             GitCommit.fromShellLine($0, path: path, seprator: "+")
         }
     }
+    
+    static func getUserName(_ path: String) throws -> String {
+        try run("config user.name", path: path, verbose: false).trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+    
+    static func getUserEmail(_ path: String) throws -> String {
+        try run("config user.email", path: path, verbose: false).trimmingCharacters(in: .whitespacesAndNewlines)
+    }
 }
 
 fileprivate extension String {
@@ -371,7 +379,7 @@ extension GitShell {
 
 #Preview("App-Big Screen") {
     RootView {
-        ContentView()
+        ContentLayout()
     }
     .frame(width: 1200)
     .frame(height: 1200)

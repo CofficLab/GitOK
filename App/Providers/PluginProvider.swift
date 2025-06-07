@@ -7,26 +7,7 @@ import SwiftUI
 
 class PluginProvider: ObservableObject, SuperLog, SuperThread {
     let emoji = "🧩"
-    let plugins: [SuperPlugin] = [
-        GitPlugin(),
-        BannerPlugin(),
-        IconPlugin(),
-        SmartFilePlugin(),
-        SmartProjectPlugin(),
-        QuickMergePlugin(),
-        SmartMergePlugin(),
-        SmartMessagePlugin(),
-        OpenXcodePlugin(),
-        OpenVSCodePlugin(),
-        OpenCursorPlugin(),
-        OpenTraePlugin(),
-        OpenFinderPlugin(),
-        OpenTerminalPlugin(),
-        OpenRemotePlugin(),
-        SyncPlugin(),
-        BranchPlugin(),
-        CommitPlugin()
-    ]
+    let plugins: [SuperPlugin]
     
     /// 获取所有标记为标签页的插件
     /// - Returns: 可作为标签页显示的插件数组
@@ -50,15 +31,17 @@ class PluginProvider: ObservableObject, SuperLog, SuperThread {
         return allEmpty
     }
 
-    init() {
+    init(plugins: [SuperPlugin]) {
         let verbose = false
         if verbose {
             os_log("\(Self.onInit) PluginProvider")
         }
+        
+        self.plugins = plugins
 
         var labelCounts: [String: Int] = [:]
         for plugin in plugins {
-            labelCounts[plugin.label, default: 0] += 1
+            labelCounts[plugin.instanceLabel, default: 0] += 1
         }
 
         let duplicateLabels = labelCounts.filter { $0.value > 1 }.map { $0.key }
@@ -70,14 +53,14 @@ class PluginProvider: ObservableObject, SuperLog, SuperThread {
 
 #Preview("APP") {
     RootView(content: {
-        ContentView()
+        ContentLayout()
     })
     .frame(width: 800, height: 800)
 }
 
 #Preview("App-Big Screen") {
     RootView {
-        ContentView()
+        ContentLayout()
     }
     .frame(width: 1200)
     .frame(height: 1200)

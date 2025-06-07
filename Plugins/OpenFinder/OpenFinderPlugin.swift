@@ -4,10 +4,10 @@ import OSLog
 
 class OpenFinderPlugin: SuperPlugin, SuperLog {
     let emoji = "📂"
-    var label: String = "OpenFinder"
+    static var label: String = "OpenFinder"
     var isTab: Bool = false
 
-    func addToolBarLeadingView() -> AnyView {
+    func addToolBarTrailingView() -> AnyView {
         AnyView(BtnOpenFinderView())
     }
 }

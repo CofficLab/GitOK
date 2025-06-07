@@ -8,6 +8,7 @@ struct FileDetail: View, SuperLog, SuperEvent, SuperThread {
     var file: File
     var commit: GitCommit
     @State var view: MagicWebView?
+    var verbose = false
     var debug: Bool = false
     @State var ready: Bool = false
 
@@ -93,7 +94,9 @@ struct FileDetail: View, SuperLog, SuperEvent, SuperThread {
                     MagicLogger.shared.error("- 来源: \(source)")
                 },
                 onCustomMessage: { message in
-                    MagicLogger.shared.debug("收到消息: \(String(describing: message))")
+                    if verbose {
+                        MagicLogger.shared.debug("收到消息: \(String(describing: message))")
+                    }
                     // 根据类型进行不同处理
                     if let stringMessage = message as? String, stringMessage == "ready" {
                         self.ready = true
@@ -145,7 +148,7 @@ extension FileDetail {
             return
         }
 
-        view.evaluateJavaScript("window.api.setTextsWithObject(\(jsonString))")
+        self.view = view.evaluateJavaScript("window.api.setTextsWithObject(\(jsonString))")
     }
 
     func setOriginal(_ s: String) {
@@ -153,7 +156,7 @@ extension FileDetail {
             self.m.append("View is nil", channel: self.className)
             return
         }
-        view.evaluateJavaScript("window.api.setOriginal(`\(s)`)")
+        self.view = view.evaluateJavaScript("window.api.setOriginal(`\(s)`)")
     }
 
     func setModified(_ s: String) {
@@ -161,7 +164,7 @@ extension FileDetail {
             self.m.append("View is nil", channel: self.className)
             return
         }
-        view.evaluateJavaScript("window.api.setModified(`\(s)`)")
+        self.view = view.evaluateJavaScript("window.api.setModified(`\(s)`)")
     }
 
     func getOriginal() {
@@ -169,13 +172,13 @@ extension FileDetail {
             self.m.append("View is nil", channel: self.className)
             return
         }
-        view.evaluateJavaScript("window.api.original")
+        self.view = view.evaluateJavaScript("window.api.original")
     }
 }
 
 #Preview("Big Screen") {
     RootView {
-        ContentView()
+        ContentLayout()
             .hideSidebar()
             .hideProjectActions()
     }
@@ -203,7 +206,7 @@ extension View {
 
 #Preview("App-Big Screen") {
     RootView {
-        ContentView()
+        ContentLayout()
     }
     .frame(width: 1200)
     .frame(height: 1200)

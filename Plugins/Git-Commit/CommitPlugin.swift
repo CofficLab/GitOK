@@ -6,32 +6,42 @@ import SwiftUI
  * Commit插件 - 负责显示和管理Git提交列表
  */
 class CommitPlugin: SuperPlugin, SuperLog {
-    let emoji = "🍒"
-    var label: String = "Commit"
+    static let shared = CommitPlugin()
+    static let emoji = "🍒"
+    static let label: String = "Commit"
     var isTab: Bool = true
+    var verbose = false
+    
+    private init() {}
 
     /**
      * 添加列表视图 - 显示提交列表
      */
     func addListView(tab: String, project: Project?) -> AnyView? {
-        if tab == GitPlugin().label, let project = project, project.isGit {
-            AnyView(CommitList())
+        if tab == GitPlugin.label, let project = project, project.isGit {
+            if verbose {
+                os_log("\(self.t)CommitPlugin addListView")
+            }
+            return AnyView(CommitList.shared)
         } else {
-            nil
+            if verbose {
+                os_log("\(self.t)CommitPlugin addListView nil")
+            }
+            return nil
         }
     }
 }
 
 #Preview("APP") {
     RootView(content: {
-        ContentView()
+        ContentLayout()
     })
     .frame(width: 800, height: 800)
 }
 
 #Preview("App-Big Screen") {
     RootView {
-        ContentView()
+        ContentLayout()
     }
     .frame(width: 1200)
     .frame(height: 1200)

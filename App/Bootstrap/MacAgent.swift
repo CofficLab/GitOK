@@ -75,13 +75,13 @@ class MacAgent: NSObject, NSApplicationDelegate, ObservableObject, SuperLog, Sup
 
 #Preview("APP") {
     RootView(content: {
-        ContentView()
+        ContentLayout()
     }).frame(width: 700, height: 600)
 }
 
 #Preview("Big Screen") {
     RootView {
-        ContentView()
+        ContentLayout()
             .hideSidebar()
             .hideProjectActions()
     }

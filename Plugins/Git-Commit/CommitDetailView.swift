@@ -41,12 +41,12 @@ struct CommitDetailView: View, SuperEvent {
                     }
 
                     // 提交时间
-                    if !commit.date.isEmpty {
+                    if commit.date != Date(timeIntervalSince1970: 0) {
                         HStack(spacing: 4) {
                             Image(systemName: "clock")
                                 .foregroundColor(.secondary)
                                 .font(.system(size: 12))
-                            Text(commit.date)
+                            Text(commit.date.fullDateTime)
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                         }
@@ -105,7 +105,7 @@ struct CommitDetailView: View, SuperEvent {
     private var background: some View {
         ZStack {
             if commit.isHead {
-                MagicBackground.blueberry
+                MagicBackground.blueberry.opacity(0.12)
             } else {
                 MagicBackground.orange.opacity(0.15)
             }
@@ -125,33 +125,20 @@ extension CommitDetailView {
     }
 }
 
-#Preview {
-    VStack(spacing: 16) {
-        // HEAD commit 预览
-        CommitDetailView(commit: GitCommit(
-            isHead: true,
-            path: "/test",
-            hash: "HEAD",
-            message: "当前工作区"
-        ))
-
-        // 普通 commit 预览
-        CommitDetailView(commit: GitCommit(
-            isHead: false,
-            path: "/test",
-            hash: "a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0",
-            message: "feat: 添加新功能，支持用户登录和注册",
-            author: "张三",
-            date: "2024-01-15 14:30:25"
-        ))
+#Preview("App - Small Screen") {
+    RootView {
+        ContentLayout()
+            .hideSidebar()
+            .hideTabPicker()
+            .hideProjectActions()
     }
-    .padding()
-    .frame(width: 400)
+    .frame(width: 600)
+    .frame(height: 600)
 }
 
-#Preview("App-Big Screen") {
+#Preview("App - Big Screen") {
     RootView {
-        ContentView()
+        ContentLayout()
             .hideSidebar()
     }
     .frame(width: 1200)

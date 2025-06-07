@@ -4,10 +4,10 @@ import OSLog
 
 class OpenVSCodePlugin: SuperPlugin, SuperLog {
     let emoji = "💻"
-    var label: String = "OpenVSCode"
+    static var label: String = "OpenVSCode"
     var isTab: Bool = false
 
-    func addToolBarLeadingView() -> AnyView {
+    func addToolBarTrailingView() -> AnyView {
         AnyView(BtnOpenVSCodeView())
     }
 }

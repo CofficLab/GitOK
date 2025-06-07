@@ -15,7 +15,7 @@ struct TileFile: View, SuperLog, SuperThread {
     var message: SmartMessage? { m.messages.first }
 
     var body: some View {
-        if let file = file, a.currentTab == "Git" {
+        if let file = file {
             HStack {
                 Image(systemName: "doc.text").padding(.leading)
                 Text(file.name).font(.footnote)
@@ -33,7 +33,7 @@ struct TileFile: View, SuperLog, SuperThread {
 
 #Preview("默认") {
     RootView {
-        ContentView()
+        ContentLayout()
     }
     .frame(height: 600)
     .frame(width: 600)
@@ -41,7 +41,7 @@ struct TileFile: View, SuperLog, SuperThread {
 
 #Preview("App-Big Screen") {
     RootView {
-        ContentView()
+        ContentLayout()
     }
     .frame(width: 1200)
     .frame(height: 1200)

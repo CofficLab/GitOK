@@ -1,28 +1,27 @@
 import AlertToast
+import MagicCore
 import SwiftData
 import SwiftUI
-import MagicCore
 
 struct RootView<Content>: View, SuperEvent where Content: View {
     var content: Content
     var a: AppProvider
     var b: BannerProvider
     var i: IconProvider
-    var repoManager: RepoManager
-    
+    var p: PluginProvider
+
     private var box: RootBox
-    
-    @StateObject var p = PluginProvider()
+
     @StateObject var m = MessageProvider()
 
     init(@ViewBuilder content: () -> Content) {
         self.content = content()
-        
+
         self.box = RootBox.shared
         self.a = box.app
         self.b = box.banner
         self.i = box.icon
-        self.repoManager = box.repoManager
+        self.p = box.pluginProvider
     }
 
     var body: some View {
@@ -53,16 +52,17 @@ struct RootView<Content>: View, SuperEvent where Content: View {
             .environmentObject(p)
             .environmentObject(m)
             .environmentObject(self.box.git)
-            .environmentObject(repoManager)
             .onAppear(perform: onAppear)
-            .onReceive(nc.publisher(for: .gitCommitStart), perform: onGitCommitStart)
-            .onReceive(nc.publisher(for: .gitCommitSuccess), perform: onGitCommitSuccess)
-            .onReceive(nc.publisher(for: .gitCommitFailed), perform: onGitCommitFailed)
-            .onReceive(nc.publisher(for: .gitPushStart), perform: onGitPushStart)
-            .onReceive(nc.publisher(for: .gitPushSuccess), perform: onGitPushSuccess)
-            .onReceive(nc.publisher(for: .gitPushFailed), perform: onGitPushFailed)
-            .onReceive(nc.publisher(for: .gitPullStart), perform: onGitPullStart)
-            .onReceive(nc.publisher(for: .gitBranchChanged), perform: onGitBranchChanged)
+
+            .navigationTitle("")
+//            .onReceive(nc.publisher(for: .gitCommitStart), perform: onGitCommitStart)
+//            .onReceive(nc.publisher(for: .gitCommitSuccess), perform: onGitCommitSuccess)
+//            .onReceive(nc.publisher(for: .gitCommitFailed), perform: onGitCommitFailed)
+//            .onReceive(nc.publisher(for: .gitPushStart), perform: onGitPushStart)
+//            .onReceive(nc.publisher(for: .gitPushSuccess), perform: onGitPushSuccess)
+//            .onReceive(nc.publisher(for: .gitPushFailed), perform: onGitPushFailed)
+//            .onReceive(nc.publisher(for: .gitPullStart), perform: onGitPullStart)
+//            .onReceive(nc.publisher(for: .gitBranchChanged), perform: onGitBranchChanged)
     }
 }
 
@@ -100,32 +100,33 @@ extension RootView {
     }
 
     func onAppear() {
-        p.plugins.forEach { $0.onAppear() }
+//        p.plugins.forEach { $0.onAppear() }
     }
 }
 
 struct AppPreview: View {
     var body: some View {
         RootView {
-            ContentView()
+            ContentLayout()
         }
     }
 }
 
 #Preview("APP") {
     RootView(content: {
-        ContentView()
+        ContentLayout()
+            .hideProjectActions()
+            .hideTabPicker()
     })
-    .frame(width: 800, height: 800)
+    .frame(width: 700, height: 800)
 }
 
 #Preview("Big Screen") {
     RootView {
-        ContentView()
+        ContentLayout()
             .hideSidebar()
             .hideProjectActions()
     }
     .frame(width: 1200)
     .frame(height: 1200)
 }
-

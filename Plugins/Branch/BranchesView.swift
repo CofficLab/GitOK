@@ -3,30 +3,38 @@ import OSLog
 import SwiftUI
 
 struct BranchesView: View, SuperThread, SuperLog, SuperEvent {
+    static let shared = BranchesView()
+
     @EnvironmentObject var app: AppProvider
     @EnvironmentObject var data: DataProvider
     @EnvironmentObject var m: MessageProvider
 
     @State var branches: [Branch] = []
     @State var selection: Branch?
+    @State private var isRefreshing = false
 
-    var emoji = "🌿"
+    static var emoji = "🌿"
+    private let verbose = false
 
     var body: some View {
-        Group {
-            if data.project?.isGit == true {
+        ZStack {
+            if data.project?.isGit == true && branches.isNotEmpty && selection != nil {
                 Picker("branch", selection: $selection, content: {
                     ForEach(branches, id: \.self, content: {
                         Text($0.name)
-                            .tag($0 as Branch?)
+                            .tag($0 as Branch)
                     })
                 })
             } else {
-                EmptyView()
+                Picker("branch", selection: .constant(nil as Branch?), content: {
+                    Text("项目不存在")
+                        .tag(nil as Branch?)
+                }).disabled(true)
             }
         }
         .onChange(of: data.project) { self.onProjectChanged() }
         .onReceive(nc.publisher(for: .appWillBecomeActive), perform: onAppWillBecomeActive)
+        .onAppear(perform: onAppear)
     }
 }
 
@@ -38,11 +46,27 @@ extension BranchesView {
      * @param reason 刷新原因
      */
     func refreshBranches(reason: String) {
-        let verbose = true
-
-        guard let project = data.project else {
+        // 防止并发执行
+        guard !isRefreshing else {
+            os_log("\(self.t)⚠️ Refresh(\(reason)) skipped - already refreshing")
             return
         }
+
+        guard let project = data.project else {
+            if verbose {
+                os_log("\(self.t)⚠️ Refresh(\(reason)) but project is nil")
+            }
+            return
+        }
+
+        guard project.isGit else {
+            self.branches = []
+            self.selection = nil
+            return
+        }
+
+        // 设置刷新状态
+        isRefreshing = true
 
         if verbose {
             os_log("\(self.t)🍋 Refresh(\(reason))")
@@ -52,15 +76,28 @@ extension BranchesView {
             branches = try GitShell.getBranches(project.path)
             if branches.isEmpty {
                 os_log("\(self.t)🍋 Refresh, but no branches")
+                selection = nil
+            } else {
+                // 尝试选择当前分支
+                let currentBranch = self.getCurrentBranch()
+                selection = branches.first(where: {
+                    $0.name == currentBranch?.name
+                })
+
+                // 如果没有找到匹配的分支，则选择第一个分支
+                if selection == nil {
+                    selection = branches.first
+                    os_log("\(self.t)🍋 No matching branch found, selecting first branch: \(selection?.name ?? "unknown")")
+                }
             }
-            selection = branches.first(where: {
-                $0.name == self.getCurrentBranch()?.name
-            })
         } catch let e {
             self.m.setError(e)
         }
+
+        // 重置刷新状态
+        isRefreshing = false
     }
-    
+
     func getCurrentBranch() -> Branch? {
         guard let project = data.project else {
             return nil
@@ -80,9 +117,13 @@ extension BranchesView {
     func onAppWillBecomeActive(_ notification: Notification) {
         self.refreshBranches(reason: "AppWillBecomeActive(\(data.project?.title ?? ""))")
     }
-    
+
     func onProjectChanged() {
         self.refreshBranches(reason: "Project Changed to \(data.project?.title ?? "")")
+    }
+
+    func onAppear() {
+        self.refreshBranches(reason: "onAppear while project is \(data.project?.title ?? "")")
     }
 }
 
@@ -93,7 +134,7 @@ extension BranchesView {
 
 #Preview("Default-Big Screen") {
     RootView {
-        ContentView()
+        ContentLayout()
     }
     .frame(width: 1200)
     .frame(height: 1200)

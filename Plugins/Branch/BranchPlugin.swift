@@ -4,10 +4,13 @@ import OSLog
 
 class BranchPlugin: SuperPlugin, SuperLog {
     let emoji = "🌿"
-    var label: String = "Branch"
+    static let shared = BranchPlugin()
+    static var label: String = "Branch"
     var isTab: Bool = false
+    
+    private init() {}
 
-    func addToolBarLeadingView() -> AnyView {
-        AnyView(BranchesView())
+    func addToolBarTrailingView() -> AnyView {
+        AnyView(BranchesView.shared)
     }
 }

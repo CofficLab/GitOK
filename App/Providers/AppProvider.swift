@@ -1,45 +1,56 @@
 import AVKit
 import Combine
 import Foundation
+import MagicCore
 import MediaPlayer
 import OSLog
 import SwiftUI
-import MagicCore
 
 class AppProvider: NSObject, ObservableObject, AVAudioPlayerDelegate, SuperLog {
     @Published var currentTab: String = "Git"
-    @Published var sidebarVisibility = AppConfig.sidebarVisibility
+    @Published var sidebarVisibility: Bool
 
     var emoji = "🏠"
-    
+    private let repoManager: RepoManager
+
+    init(repoManager: RepoManager) {
+        self.repoManager = repoManager
+        self.sidebarVisibility = repoManager.stateRepo.sidebarVisibility
+
+        super.init()
+    }
+
     func setTab(_ t: String) {
         let verbose = true
         if verbose {
             os_log("\(self.t)Set Tab to \(t)")
         }
-        
+
         self.currentTab = t
-        AppConfig.setcurrentTab(t)
+        repoManager.stateRepo.setCurrentTab(t)
     }
-    
+
     func hideSidebar() {
         let verbose = true
         if verbose {
-            os_log("\(self.t)Hide Siedebar")
+            os_log("\(self.t)🍋 Hide Siedebar")
         }
-        
+
         self.sidebarVisibility = false
-        AppConfig.setSidebarVisibility(false)
+        repoManager.stateRepo.setSidebarVisibility(false)
+    }
+
+    func showSidebar(reason: String) {
+        let verbose = true
+        if verbose {
+            os_log("\(self.t)🍋 Show Sidebar(\(reason))")
+        }
+        self.sidebarVisibility = true
+        repoManager.stateRepo.setSidebarVisibility(true)
     }
     
-    func showSidebar() {
-        let verbose = false
-        if verbose {
-            os_log("\(self.t)Show Sidebar")
-        }
-    
-        self.sidebarVisibility = true
-        AppConfig.setSidebarVisibility(true)
+    func setSidebarVisibility(_ v: Bool, reason: String) {
+        v ? showSidebar(reason: reason) : hideSidebar()
     }
 }
 

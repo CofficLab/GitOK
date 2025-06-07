@@ -9,6 +9,7 @@ struct FileList: View, SuperThread, SuperLog {
 
     @State var files: [File] = []
     @State var isLoading = false
+    var verbose = false
 
     @Binding var file: File?
 
@@ -33,7 +34,7 @@ struct FileList: View, SuperThread, SuperLog {
                 if isLoading {
                     HStack(spacing: 4) {
                         ProgressView()
-                            .scaleEffect(0.6)
+                            .controlSize(.small)
                         Text("加载中...")
                             .font(.caption)
                             .foregroundColor(.secondary)
@@ -77,20 +78,15 @@ struct FileList: View, SuperThread, SuperLog {
     func refresh(_ scrollProxy: ScrollViewProxy) {
         self.isLoading = true
 
-        self.bg.async {
-            let verbose = true
-            if verbose {
-                os_log("\(self.t)Refresh")
-            }
-
-            let files = commit.getFiles(reason: "FileList.Refresh")
-
-            self.main.async {
-                self.files = files
-                self.isLoading = false
-                self.file = self.files.first
-            }
+        if verbose {
+            os_log("\(self.t)Refresh")
         }
+
+        let files = commit.getFiles(reason: "FileList.Refresh")
+
+        self.files = files
+        self.isLoading = false
+        self.file = self.files.first
     }
 
     func getBackground(file: File) -> some View {
@@ -109,7 +105,7 @@ struct FileList: View, SuperThread, SuperLog {
 
 #Preview("Big Screen") {
     RootView {
-        ContentView()
+        ContentLayout()
             .hideSidebar()
             .hideProjectActions()
     }

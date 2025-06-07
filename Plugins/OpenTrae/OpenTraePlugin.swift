@@ -4,10 +4,10 @@ import OSLog
 
 class OpenTraePlugin: SuperPlugin, SuperLog {
     let emoji = "🤖"
-    var label: String = "OpenTrae"
+    static var label: String = "OpenTrae"
     var isTab: Bool = false
 
-    func addToolBarLeadingView() -> AnyView {
+    func addToolBarTrailingView() -> AnyView {
         AnyView(BtnOpenTraeView())
     }
 }

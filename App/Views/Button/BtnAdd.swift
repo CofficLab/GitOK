@@ -3,16 +3,14 @@ import OSLog
 
 struct BtnAdd: View {
     @EnvironmentObject var g: DataProvider
-    @EnvironmentObject var repoManager: RepoManager
     
     var body: some View {
         Button(action: open) {
-            Label("Open Item", systemImage: "plus")
+            Label("添加项目", systemImage: "plus")
         }
     }
     
     private func open() {
-        os_log("open")
         let panel = NSOpenPanel()
         panel.allowsMultipleSelection = false
         panel.canChooseDirectories = true
@@ -25,7 +23,7 @@ struct BtnAdd: View {
     
     private func addURL(_ url: URL) {
         withAnimation {
-            g.addProject(url: url, using: repoManager.projectRepo)
+            g.addProject(url: url, using: g.repoManager.projectRepo)
         }
     }
 }
@@ -36,7 +34,7 @@ struct BtnAdd: View {
 
 #Preview("App-Big Screen") {
     RootView {
-        ContentView()
+        ContentLayout()
     }
     .frame(width: 1200)
     .frame(height: 1200)

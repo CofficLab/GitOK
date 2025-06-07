@@ -5,7 +5,7 @@ struct BtnOpenRemoteView: View {
     @State var remote: String = ""
 
     var body: some View {
-        if let project = g.project {
+        if let project = g.project, project.isGit {
             Button(action: {
                 remote = GitShell.getRemote(project.path).trimmingCharacters(in: .whitespacesAndNewlines)
 

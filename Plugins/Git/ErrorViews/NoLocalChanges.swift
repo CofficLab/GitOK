@@ -6,9 +6,9 @@ struct NoLocalChanges: View {
     var body: some View {
         GuideView(
             systemImage: "checkmark.circle",
-            title: String(localized: "no_local_changes_title"),
-            subtitle: String(localized: "no_local_changes_description")
-        )
+            title: "没有本地更改",
+            subtitle: "全部更改已提交到本地仓库"
+        ).setIconColor(.green)
     }
 }
 
@@ -20,9 +20,20 @@ struct NoLocalChanges: View {
     .frame(width: 600)
 }
 
-#Preview("App-Big Screen") {
+#Preview("App - Small Screen") {
     RootView {
-        ContentView()
+        ContentLayout()
+            .hideSidebar()
+            .hideTabPicker()
+            .hideProjectActions()
+    }
+    .frame(width: 700)
+    .frame(height: 700)
+}
+
+#Preview("App - Big Screen") {
+    RootView {
+        ContentLayout()
     }
     .frame(width: 1200)
     .frame(height: 1200)

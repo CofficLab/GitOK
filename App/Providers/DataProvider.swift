@@ -9,33 +9,33 @@ import SwiftUI
 class DataProvider: NSObject, ObservableObject, SuperLog {
     // MARK: - Properties
 
-    @Published var project: Project? = nil {
-        didSet {
-            AppConfig.setProjectPath(project?.path ?? "")
-        }
-    }
+    @Published private(set) var project: Project? = nil
     @Published var projects: [Project] = []
-    @Published var branches: [Branch] = []
-    @Published var branch: Branch? = nil
     @Published var commit: GitCommit? = nil
     @Published var file: File? = nil
+    @Published private(set) var projectExists = true
 
     static let emoji = "🏠"
+    private let verbose = false
     var cancellables = Set<AnyCancellable>()
+    let repoManager: RepoManager
 
     // MARK: - Initialization
-    
-    init(projects: [Project]) {
+
+    init(projects: [Project], repoManager: RepoManager) {
         self.projects = projects
+        self.repoManager = repoManager
 
         self.project = projects.first(where: {
-            $0.path == AppConfig.projectPath
+            $0.path == repoManager.stateRepo.projectPath
         })
 
         super.init()
 
         // 设置事件监听
         setupEventListeners()
+        
+        self.checkIfProjectExists()
     }
 }
 
@@ -47,17 +47,16 @@ extension DataProvider {
      * @param p 要设置的项目
      * @param reason 设置原因
      */
-    private func setProject(_ p: Project?, reason: String) {
-        let verbose = true
-
+    func setProject(_ p: Project?, reason: String) {
         if verbose {
-            os_log("\(self.t)Set Project(\(reason))")
-            os_log("  ➡️ \(p?.path ?? "")")
+            os_log("\(self.t)Set Project(\(reason)) \n ➡️ \(p?.path ?? "")")
         }
 
         self.project = p
+        self.repoManager.stateRepo.setProjectPath(self.project?.path ?? "")
+        self.checkIfProjectExists()
     }
-    
+
     /**
      * 移动项目并更新排序
      * @param source 源索引集合
@@ -129,25 +128,25 @@ extension DataProvider {
                 os_log("Project already exists: \(url.path)")
                 return
             }
-            
+
             // 通过仓库创建项目
             let newProject = try repo.create(url: url)
-            
+
             // 添加到本地数组
             self.projects.append(newProject)
-            
+
             // 如果当前没有选中项目，设置为新添加的项目
             if self.project == nil {
                 self.setProject(newProject, reason: "Added first project")
             }
-            
+
             os_log("Project added successfully: \(url.path)")
-            
+
         } catch {
             os_log(.error, "Failed to add project: \(error.localizedDescription)")
         }
     }
-    
+
     /**
      * 删除项目
      * @param project 要删除的项目
@@ -208,6 +207,14 @@ extension DataProvider {
 // MARK: - Action
 
 extension DataProvider {
+    func checkIfProjectExists() {
+        if let newProject = self.project {
+            self.projectExists = FileManager.default.fileExists(atPath: newProject.path)
+        } else {
+            self.projectExists = false
+        }
+    }
+    
     /**
      * 设置当前选中的文件
      * @param f 要设置的文件
@@ -274,27 +281,6 @@ extension DataProvider {
 
         try GitShell.setBranch(branch, project.path, verbose: true)
     }
-
-    /**
-     * 刷新分支列表
-     * @param reason 刷新原因
-     */
-    func refreshBranches(reason: String) {
-        let verbose = true
-
-        guard let project = project else {
-            return
-        }
-
-        if verbose {
-            os_log("\(self.t)Refresh(\(reason))")
-        }
-
-        branches = (try? GitShell.getBranches(project.path)) ?? []
-        branch = branches.first(where: {
-            $0.name == self.currentBranch?.name
-        })
-    }
 }
 
 // MARK: - Event Handling
@@ -310,7 +296,7 @@ extension DataProvider {
                 self?.handleProjectDeleted(notification)
             }
             .store(in: &cancellables)
-    
+
         // 监听分支变更事件
         NotificationCenter.default.publisher(for: .gitBranchChanged)
             .sink { [weak self] notification in
@@ -348,21 +334,19 @@ extension DataProvider {
      * 处理分支变更事件
      */
     private func handleBranchChanged(_ notification: Notification) {
-        refreshBranches(reason: "Branch Changed Event")
     }
 
     /**
      * 处理Git操作成功事件
      */
     private func handleGitOperationSuccess(_ notification: Notification) {
-        refreshBranches(reason: "Git Operation Success")
+
     }
 
     /**
      * 处理Project变更事件
      */
     private func handleProjectChanged() {
-        refreshBranches(reason: "Project Changed")
     }
 
     /**
@@ -388,7 +372,7 @@ extension DataProvider {
 
 #Preview("App-Big Screen") {
     RootView {
-        ContentView()
+        ContentLayout()
     }
     .frame(width: 1200)
     .frame(height: 1200)

@@ -144,7 +144,7 @@ class MessageProvider: ObservableObject, SuperLog, SuperThread, SuperEvent {
 
 #Preview("Big Screen") {
     RootView {
-        ContentView()
+        ContentLayout()
             .hideSidebar()
             .hideProjectActions()
     }

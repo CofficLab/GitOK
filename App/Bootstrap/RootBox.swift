@@ -18,40 +18,68 @@ final class RootBox: SuperLog {
     let icon: IconProvider
     let git: DataProvider
     let repoManager: RepoManager
+    let pluginProvider: PluginProvider
+    private var verbose = false
 
     private init(reason: String) {
-        os_log("\(Self.onInit)(\(reason))")
+        if verbose {
+            os_log("\(Self.onInit)(\(reason))")
+        }
 
         let c = AppConfig.getContainer()
 
+        self.repoManager = RepoManager(modelContext: ModelContext(c))
+        
+        // Plugins
+        let plugins: [SuperPlugin] = [
+            GitPlugin(),
+            BannerPlugin(),
+            IconPlugin(),
+     
+            OpenXcodePlugin(),
+            OpenVSCodePlugin(),
+            OpenCursorPlugin(),
+            OpenTraePlugin(),
+            OpenFinderPlugin(),
+            OpenTerminalPlugin(),
+            OpenRemotePlugin(),
+            SyncPlugin(),
+            BranchPlugin.shared,
+            CommitPlugin.shared,
+            ProjectPickerPlugin.shared,
+            SmartMergePlugin(),
+            SmartMessagePlugin(),
+            QuickMergePlugin.shared
+        ]
+        
         // Providers
-        self.app = AppProvider()
+        self.app = AppProvider(repoManager: self.repoManager)
         self.banner = BannerProvider()
         self.icon = IconProvider()
-
-        self.repoManager = RepoManager(modelContext: ModelContext(c))
+        self.pluginProvider = PluginProvider(plugins: plugins)
 
         do {
             let projects = try self.repoManager.projectRepo.findAll(sortedBy: .ascending)
             
-            self.git = DataProvider(projects: projects)
+            self.git = DataProvider(projects: projects, repoManager: self.repoManager)
         } catch let e {
             os_log(.error, "\(e.localizedDescription)")
-            self.git = DataProvider(projects: [])
+            self.git = DataProvider(projects: [], repoManager: self.repoManager)
         }
     }
 }
 
 #Preview("APP") {
     RootView(content: {
-        ContentView()
+        ContentLayout()
+            .hideSidebar()
     })
-    .frame(width: 800, height: 800)
+    .frame(width: 800, height: 600)
 }
 
 #Preview("Big Screen") {
     RootView {
-        ContentView()
+        ContentLayout()
             .hideSidebar()
             .hideProjectActions()
     }

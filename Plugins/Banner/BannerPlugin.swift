@@ -4,11 +4,11 @@ import SwiftUI
 
 class BannerPlugin: SuperPlugin, SuperLog {
     let emoji = "📣"
-    var label: String = "Banner"
+    static var label: String = "Banner"
     var isTab: Bool = true
 
     func addListView(tab: String, project: Project?) -> AnyView? {
-        if tab == self.label {
+        if tab == Self.label {
             AnyView(BannerList())
         } else {
             nil
