@@ -20,7 +20,18 @@ struct NoLocalChanges: View {
     .frame(width: 600)
 }
 
-#Preview("App-Big Screen") {
+#Preview("App - Small Screen") {
+    RootView {
+        ContentLayout()
+            .hideSidebar()
+            .hideTabPicker()
+            .hideProjectActions()
+    }
+    .frame(width: 700)
+    .frame(height: 700)
+}
+
+#Preview("App - Big Screen") {
     RootView {
         ContentLayout()
     }
