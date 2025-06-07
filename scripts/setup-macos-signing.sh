@@ -41,8 +41,8 @@
 # ====================================
 
 # 引入公共库
-source "$(dirname "$0")/common-output.sh"
-source "$(dirname "$0")/common-roadmap.sh"
+source "$(/usr/bin/dirname "$0")/common-output.sh"
+source "$(/usr/bin/dirname "$0")/common-roadmap.sh"
 
 # 检查必要的环境变量
 check_required_env() {

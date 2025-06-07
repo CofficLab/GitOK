@@ -36,7 +36,7 @@
 # ====================================
 
 # 引入公共输出库
-source "$(dirname "$0")/common-output.sh"
+source "$(/usr/bin/dirname "$0")/common-output.sh"
 
 # 显示开发环境信息
 print_development_environment

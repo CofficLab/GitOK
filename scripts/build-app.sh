@@ -48,9 +48,9 @@
 set -e
 
 # 引入公共库
-source "$(dirname "$0")/common-scheme.sh"
-source "$(dirname "$0")/common-output.sh"
-source "$(dirname "$0")/common-roadmap.sh"
+source "$(/usr/bin/dirname "$0")/common-scheme.sh"
+source "$(/usr/bin/dirname "$0")/common-output.sh"
+source "$(/usr/bin/dirname "$0")/common-roadmap.sh"
 
 # ====================================
 # 建议生成函数

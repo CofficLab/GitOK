@@ -32,7 +32,7 @@
 # ====================================
 
 # 引入公共输出库
-source "$(dirname "$0")/common-output.sh"
+source "$(/usr/bin/dirname "$0")/common-output.sh"
 
 projectFile=${1:-$(find $(pwd) -maxdepth 2 ! -path "*Resources*" ! -path "*temp*" -type f -name "*.pbxproj" | head -n 1)}
 if [ -z "$projectFile" ]; then

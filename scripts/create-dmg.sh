@@ -47,10 +47,10 @@
 set -e  # 遇到错误立即退出
 
 # 引入公共库
-source "$(dirname "$0")/common-roadmap.sh"
-source "$(dirname "$0")/common-scheme.sh"
-source "$(dirname "$0")/common-output.sh"
-source "$(dirname "$0")/common-app-detection.sh"
+source "$(/usr/bin/dirname "$0")/common-roadmap.sh"
+source "$(/usr/bin/dirname "$0")/common-scheme.sh"
+source "$(/usr/bin/dirname "$0")/common-output.sh"
+source "$(/usr/bin/dirname "$0")/common-app-detection.sh"
 
 # 执行命令函数
 execute_command() {

@@ -33,10 +33,10 @@
 set -e
 
 # 引入公共库
-source "$(dirname "$0")/common-roadmap.sh"
-source "$(dirname "$0")/common-scheme.sh"
-source "$(dirname "$0")/common-output.sh"
-source "$(dirname "$0")/common-app-detection.sh"
+source "$(/usr/bin/dirname "$0")/common-roadmap.sh"
+source "$(/usr/bin/dirname "$0")/common-scheme.sh"
+source "$(/usr/bin/dirname "$0")/common-output.sh"
+source "$(/usr/bin/dirname "$0")/common-app-detection.sh"
 
 # 全局变量存储检测结果
 AVAILABLE_SCHEMES=""
