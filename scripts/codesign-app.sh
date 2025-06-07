@@ -312,13 +312,109 @@ if [ ! -d "$APP_PATH" ]; then
             printf "   %d. %s (%s)\n" $((i+1)) "$app_path" "$app_size"
         done
         echo
+        
+        # 重新检测可用的schemes和签名证书以生成完整的组合建议
+        echo "正在重新检测可用配置以生成完整建议..."
+        echo
+        
+        # 查找项目文件
+        if ls *.xcworkspace 1> /dev/null 2>&1; then
+            PROJECT_FILE=$(ls -d *.xcworkspace | head -1)
+            PROJECT_TYPE="-workspace"
+        elif ls *.xcodeproj 1> /dev/null 2>&1; then
+            PROJECT_FILE=$(ls -d *.xcodeproj | head -1)
+            PROJECT_TYPE="-project"
+        else
+            echo "❌ 未找到 Xcode 项目文件"
+            exit 1
+        fi
+        
+        # 获取可用的 schemes
+        echo "📋 检测到的可用 Scheme:"
+        AVAILABLE_SCHEMES=$(xcodebuild $PROJECT_TYPE "$PROJECT_FILE" -list 2>/dev/null | sed -n '/Schemes:/,/^$/p' | grep -v 'Schemes:' | grep -v '^$' | sed 's/^[[:space:]]*//' | sort -u)
+        
+        if [ -n "$AVAILABLE_SCHEMES" ]; then
+            echo "$AVAILABLE_SCHEMES" | while read -r scheme; do
+                [ -n "$scheme" ] && echo "  - $scheme"
+            done
+        else
+            echo "   未检测到可用的 Scheme"
+            exit 1
+        fi
+        
+        echo
+        
+        # 获取可用的代码签名证书
+        echo "📋 检测到的可用代码签名证书:"
+        AVAILABLE_IDENTITIES=$(security find-identity -v -p codesigning | grep -E "(Developer ID Application|Apple Development|iPhone Developer|Mac Developer)" | head -5)
+        
+        if [ -n "$AVAILABLE_IDENTITIES" ]; then
+            echo "$AVAILABLE_IDENTITIES" | while IFS= read -r line; do
+                # 提取证书名称
+                CERT_NAME=$(echo "$line" | sed 's/.*"\(.*\)"/\1/')
+                # 根据证书类型添加说明
+                if [[ "$CERT_NAME" == *"Developer ID Application"* ]]; then
+                    echo "  - $CERT_NAME [分发证书 - 可公开分发]"
+                elif [[ "$CERT_NAME" == *"Apple Development"* ]]; then
+                    echo "  - $CERT_NAME [开发证书 - 仅限开发测试]"
+                elif [[ "$CERT_NAME" == *"Mac Developer"* ]]; then
+                    echo "  - $CERT_NAME [开发证书 - 仅限开发测试]"
+                elif [[ "$CERT_NAME" == *"iPhone Developer"* ]]; then
+                    echo "  - $CERT_NAME [开发证书 - 仅限开发测试]"
+                else
+                    echo "  - $CERT_NAME"
+                fi
+            done
+        else
+            echo "   未检测到可用的代码签名证书"
+        fi
+        
+        echo
         printf "${YELLOW}💡 建议使用以下命令进行代码签名:${NC}\n"
         echo
-        for i in "${!found_apps[@]}"; do
-            app_path="${found_apps[$i]}"
-        build_path=$(dirname "$app_path")
-            echo " SCHEME='$SCHEME' SIGNING_IDENTITY='$SIGNING_IDENTITY' BuildPath='$build_path' ./scripts/codesign-app.sh"
-        done
+        
+        # 生成所有可能的组合建议（scheme x 签名证书 x 应用程序位置）
+        if [ -n "$AVAILABLE_SCHEMES" ] && [ -n "$AVAILABLE_IDENTITIES" ]; then
+            # 将schemes转换为数组
+            SCHEMES_ARRAY=()
+            while IFS= read -r scheme; do
+                [ -n "$scheme" ] && SCHEMES_ARRAY+=("$scheme")
+            done <<< "$AVAILABLE_SCHEMES"
+            
+            # 将identities转换为数组
+            IDENTITIES_ARRAY=()
+            while IFS= read -r line; do
+                CERT_NAME=$(echo "$line" | sed 's/.*"\(.*\)"/\1/')
+                [ -n "$CERT_NAME" ] && IDENTITIES_ARRAY+=("$CERT_NAME")
+            done <<< "$AVAILABLE_IDENTITIES"
+            
+            # 生成所有组合（scheme x 签名证书 x 应用程序位置）
+            command_count=0
+            for scheme in "${SCHEMES_ARRAY[@]}"; do
+                for identity in "${IDENTITIES_ARRAY[@]}"; do
+                    for app_path in "${found_apps[@]}"; do
+                        build_path=$(dirname "$app_path")
+                        echo " SCHEME='$scheme' SIGNING_IDENTITY='$identity' BuildPath='$build_path' ./scripts/codesign-app.sh"
+                        command_count=$((command_count + 1))
+                    done
+                done
+            done
+            echo
+            printf "${GREEN}📊 总共生成了 ${command_count} 个命令建议 (${#SCHEMES_ARRAY[@]} 个 Scheme × ${#IDENTITIES_ARRAY[@]} 个签名证书 × ${#found_apps[@]} 个应用程序位置)${NC}\n"
+        else
+            # 如果没有检测到完整信息，使用简化建议
+            for i in "${!found_apps[@]}"; do
+                app_path="${found_apps[$i]}"
+            build_path=$(dirname "$app_path")
+                echo " SCHEME='$SCHEME' SIGNING_IDENTITY='$SIGNING_IDENTITY' BuildPath='$build_path' ./scripts/codesign-app.sh"
+            done
+        fi
+        
+        echo
+        echo "📋 证书类型说明:"
+        echo "   🟢 Developer ID Application: 用于 Mac App Store 外分发，可被所有用户安装"
+        echo "   🟡 Apple Development: 用于开发测试，仅限开发团队内部使用"
+        echo "   🔴 Mac App Store: 用于 App Store 上架（需单独申请）"
         echo
     else
         printf "${YELLOW}💡 建议先运行构建脚本: ./scripts/build-app.sh${NC}\n"
