@@ -180,6 +180,7 @@
       }
     },
     "no_local_changes_description" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -196,6 +197,7 @@
       }
     },
     "no_local_changes_title" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {

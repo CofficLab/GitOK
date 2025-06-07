@@ -12,12 +12,10 @@ permissions:
 
 env:
   TAG: ${{ github.sha }}
-  Identity: ''
   SCHEME: GitOK
   DESTINATION: 'generic/platform=macOS'
   ArchivePath: './my-app'
   BuildPath: './temp'
-  BUILD_CERTIFICATE_BASE64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
   IS_PRERELEASE: true
 
 jobs:
@@ -39,63 +37,43 @@ jobs:
           else
             echo "IS_PRERELEASE=false" >> $GITHUB_ENV
           fi
-      - name: Install the Apple certificate and provisioning profile
+      - name: Setup macOS signing
+        id: signing
         env:
-          P12_PASSWORD: ${{ secrets.BUILD_CERTIFICATE_P12_PASSWORD }}
+          BUILD_CERTIFICATE_BASE64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
+          BUILD_CERTIFICATE_P12_PASSWORD: ${{ secrets.BUILD_CERTIFICATE_P12_PASSWORD }}
           BUILD_PROVISION_PROFILE_BASE64: ${{ secrets.BUILD_PROVISION_PROFILE_BASE64_GITOK_MACOS }}
-          KEYCHAIN_PASSWORD: 'xxx'
+          APP_STORE_CONNECT_KEY_BASE64: ${{ secrets.APP_STORE_CONNECT_KEY_BASE64 }}
+          APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          APP_STORE_CONNECT_KEY_ISSER_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ISSER_ID }}
         run: |
-          CERTIFICATE_PATH=$RUNNER_TEMP/build_certificate.p12
-          PP_PATH=$RUNNER_TEMP/build_pp.provisionprofile
-          KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
-          echo -n "${{ env.BUILD_CERTIFICATE_BASE64 }}" | base64 --decode -o $CERTIFICATE_PATH
-          echo -n "$BUILD_PROVISION_PROFILE_BASE64" | base64 --decode -o $PP_PATH
-          security create-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
-          security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
-          security unlock-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
-          security import $CERTIFICATE_PATH -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
-          security list-keychain -d user -s $KEYCHAIN_PATH
-          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
-          cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
-      - name: 生成 App Store Connect API 的 AuthKey
-        run: |
-          mkdir -p ./private_keys
-          echo -n "${{ secrets.APP_STORE_CONNECT_KEY_BASE64 }}" | base64 --decode -o ./private_keys/AuthKey_${{ secrets.APP_STORE_CONNECT_KEY_ID }}.p8
-      - run: security find-identity -v
+          chmod +x ./scripts/setup-macos-signing.sh
+          source ./scripts/setup-macos-signing.sh
+          echo "signing_identity=$SIGNING_IDENTITY" >> $GITHUB_OUTPUT
+          echo "team_id=$TEAM_ID" >> $GITHUB_OUTPUT
+          echo "pp_path=$PP_PATH" >> $GITHUB_OUTPUT
+          echo "api_key_path=$API_KEY_PATH" >> $GITHUB_OUTPUT
       - name: Build
-        run: xcodebuild -scheme ${{ env.SCHEME }} -configuration Release -derivedDataPath ${{ env.BuildPath }} clean build
-      - name: find identity
-        run: |
-          i=$(security find-identity -v -p codesigning | grep '^[[:space:]]*1)' | awk -F'[(|)]' '{print $3}')
-          echo "Identity=$i" >> $GITHUB_ENV
-      - name: Codesign sparkle
-        run: |
-          codesign -f -s ${{ env.Identity }} -o runtime temp/Build/Products/Release/${{ env.SCHEME }}.app/Contents/Frameworks/Sparkle.framework/Versions/B/XPCServices/Installer.xpc
-          codesign -f -s ${{ env.Identity }} -o runtime --preserve-metadata=entitlements temp/Build/Products/Release/${{ env.SCHEME }}.app/Contents/Frameworks/Sparkle.framework/Versions/B/XPCServices/Downloader.xpc
-          codesign -f -s ${{ env.Identity }} -o runtime temp/Build/Products/Release/${{ env.SCHEME }}.app/Contents/Frameworks/Sparkle.framework/Versions/B/Autoupdate
-          codesign -f -s ${{ env.Identity }} -o runtime temp/Build/Products/Release/${{ env.SCHEME }}.app/Contents/Frameworks/Sparkle.framework/Versions/B/Updater.app
-          codesign -f -s ${{ env.Identity }} -o runtime temp/Build/Products/Release/${{ env.SCHEME }}.app/Contents/Frameworks/Sparkle.framework
-      - name: Codesign
-        run: codesign --force -s ${{ env.Identity }} --option=runtime temp/Build/Products/Release/${{ env.SCHEME }}.app
-      - name: Codesign Check
-        run: codesign -dv temp/Build/Products/Release/${{ env.SCHEME }}.app
-      - name: Codesign Check 2
-        continue-on-error: true
-        run: codesign -vvv --deep --strict temp/Build/Products/Release/${{ env.SCHEME }}.app
+        env:
+          SCHEME: ${{ env.SCHEME }}
+          BuildPath: ${{ env.BuildPath }}
+        run: ./scripts/build-app.sh
+      - name: Codesign App
+        run: ./scripts/codesign-app.sh
+        env:
+          SIGNING_IDENTITY: ${{ steps.signing.outputs.signing_identity }}
       - name: Create DMG
-        run: |
-          npm i -g create-dmg
-          create-dmg "temp/Build/Products/Release/${{ env.SCHEME }}.app"
-          for file in *.dmg; do
-              mv "$file" "${file// /-}"
-          done
-          ls -alh
+        run: ./scripts/create-dmg.sh
+        env:
+          SCHEME: ${{ env.SCHEME }}
+          BuildPath: temp/Build/Products/Release
+          VERBOSE: true
       - name: Notary
         continue-on-error: true
         run: |
           file=$(find . -maxdepth 1 -type f -name "*.dmg" | head -n 1)
           xcrun notarytool submit "$file" \
-            --key ./private_keys/AuthKey_${{ secrets.APP_STORE_CONNECT_KEY_ID }}.p8 \
+            --key ${{ steps.signing.outputs.api_key_path }} \
             --key-id=${{ secrets.APP_STORE_CONNECT_KEY_ID }} \
             --issuer ${{ secrets.APP_STORE_CONNECT_KEY_ISSER_ID }} \
             --wait \
