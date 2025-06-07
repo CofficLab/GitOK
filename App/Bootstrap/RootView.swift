@@ -1,7 +1,7 @@
 import AlertToast
+import MagicCore
 import SwiftData
 import SwiftUI
-import MagicCore
 
 struct RootView<Content>: View, SuperEvent where Content: View {
     var content: Content
@@ -9,14 +9,14 @@ struct RootView<Content>: View, SuperEvent where Content: View {
     var b: BannerProvider
     var i: IconProvider
     var p: PluginProvider
-    
+
     private var box: RootBox
-    
+
     @StateObject var m = MessageProvider()
 
     init(@ViewBuilder content: () -> Content) {
         self.content = content()
-        
+
         self.box = RootBox.shared
         self.a = box.app
         self.b = box.banner
@@ -53,6 +53,8 @@ struct RootView<Content>: View, SuperEvent where Content: View {
             .environmentObject(m)
             .environmentObject(self.box.git)
             .onAppear(perform: onAppear)
+
+            .navigationTitle("")
 //            .onReceive(nc.publisher(for: .gitCommitStart), perform: onGitCommitStart)
 //            .onReceive(nc.publisher(for: .gitCommitSuccess), perform: onGitCommitSuccess)
 //            .onReceive(nc.publisher(for: .gitCommitFailed), perform: onGitCommitFailed)
@@ -113,8 +115,10 @@ struct AppPreview: View {
 #Preview("APP") {
     RootView(content: {
         ContentLayout()
+            .hideProjectActions()
+            .hideTabPicker()
     })
-    .frame(width: 800, height: 800)
+    .frame(width: 700, height: 800)
 }
 
 #Preview("Big Screen") {
@@ -126,4 +130,3 @@ struct AppPreview: View {
     .frame(width: 1200)
     .frame(height: 1200)
 }
-

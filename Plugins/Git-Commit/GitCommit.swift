@@ -15,7 +15,7 @@ struct GitCommit: SuperLog {
     var hash: String
     var message: String
     var author: String = ""
-    var date: String = ""
+    var date: Date = Date()
     
     var emoji = "🌊"
     
@@ -27,7 +27,7 @@ struct GitCommit: SuperLog {
         hash: String = "",
         message: String = "",
         author: String = "",
-        date: String = ""
+        date: Date = Date()
     ) {
         self.isHead = isHead
         self.path = path
@@ -42,8 +42,13 @@ struct GitCommit: SuperLog {
         let count = components.count
         let hash = count > 0 ? components[0] : ""
         let author = count > 1 ? components[1] : ""
-        let date = count > 2 ? components[2] : ""
+        let dateString = count > 2 ? components[2] : ""
         let message = count > 3 ? components[3] : ""
+        
+        // 解析日期字符串为Date对象
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        let date = dateFormatter.date(from: dateString) ?? Date()
 
         return GitCommit(path: path, hash: hash, message: message, author: author, date: date)
     }
@@ -145,12 +150,15 @@ extension GitCommit: Hashable {
     }
 }
 
-#Preview {
+#Preview("App - Small Screen") {
     RootView {
         ContentLayout()
+            .hideSidebar()
+            .hideTabPicker()
+            .hideProjectActions()
     }
-    .frame(width: 800)
-    .frame(height: 800)
+    .frame(width: 600)
+    .frame(height: 600)
 }
 
 #Preview("App-Big Screen") {
