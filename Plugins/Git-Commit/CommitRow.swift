@@ -2,16 +2,18 @@ import MagicCore
 import SwiftUI
 
 struct CommitRow: View, SuperThread {
+    @EnvironmentObject var data: DataProvider
+    
     let commit: GitCommit
-    let isSelected: Bool
-    let onSelect: () -> Void
 
     @State private var tag: String = ""
     @State private var changedFileCount: Int = 0
 
     var body: some View {
         VStack(spacing: 0) {
-            Button(action: onSelect) {
+            Button(action: {
+                data.setCommit(commit)
+            }) {
                 ZStack(alignment: .bottomTrailing) {
                     // 主要内容
                     HStack {
@@ -70,7 +72,7 @@ struct CommitRow: View, SuperThread {
                 }
             }
             .buttonStyle(PlainButtonStyle())
-            .background(isSelected ? Color.accentColor.opacity(0.1) : Color.clear)
+            .background(data.commit == self.commit ? Color.accentColor.opacity(0.1) : Color.clear)
             .onAppear(perform: onAppear)
             .onNotification(.appWillBecomeActive, onAppWillBecomeActive)
             .onNotification(.gitCommitSuccess, onGitCommitSuccess)

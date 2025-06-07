@@ -10,7 +10,6 @@ struct CommitList: View, SuperThread, SuperLog {
 
     @State private var commits: [GitCommit] = []
     @State private var loading = false
-    @State private var selection: GitCommit?
     @State private var showCommitForm = false
     @State private var isRefreshing = false
     @State private var hasMoreCommits = true
@@ -38,9 +37,7 @@ struct CommitList: View, SuperThread, SuperLog {
                                     Divider()
 
                                     ForEach(commits) { commit in
-                                        CommitRow(commit: commit,
-                                                  isSelected: selection == commit,
-                                                  onSelect: { selectCommit(commit) })
+                                        CommitRow(commit: commit)
                                             .id(commit.id)
                                             .onAppear {
                                                 let index = commits.firstIndex(of: commit) ?? 0
@@ -76,7 +73,6 @@ struct CommitList: View, SuperThread, SuperLog {
             }
         }
         .onAppear(perform: onAppear)
-        .onChange(of: selection, onChangeOfSelection)
         .onChange(of: data.project, onProjectChange)
         .onReceive(NotificationCenter.default.publisher(for: .gitCommitSuccess), perform: onCommitSuccess)
         .onReceive(NotificationCenter.default.publisher(for: .gitPullSuccess), perform: onPullSuccess)
@@ -109,7 +105,6 @@ struct CommitList: View, SuperThread, SuperLog {
     }
 
     private func selectCommit(_ commit: GitCommit) {
-        selection = commit
         data.setCommit(commit)
 
         // 保存选择的commit
@@ -165,13 +160,13 @@ extension CommitList {
         if let lastCommit = commitRepo.getLastSelectedCommit(projectPath: project.path) {
             // 在当前commit列表中查找匹配的commit
             if let matchedCommit = commits.first(where: { $0.hash == lastCommit.hash }) {
-                // 选择找到的commit
-                selection = matchedCommit
                 data.setCommit(matchedCommit)
             } else if hasMoreCommits {
                 // 如果在当前页面没有找到，并且还有更多commit，尝试加载更多
                 loadMoreCommitsUntilFound(targetHash: lastCommit.hash)
             }
+        } else {
+            data.setCommit(self.commits.first)
         }
     }
 
@@ -197,7 +192,6 @@ extension CommitList {
                         // 检查是否找到目标commit
                         if let matchedCommit = newCommits.first(where: { $0.hash == targetHash }) {
                             // 选择找到的commit
-                            selection = matchedCommit
                             data.setCommit(matchedCommit)
                         } else if hasMoreCommits {
                             // 如果还没找到，继续加载更多
@@ -233,7 +227,6 @@ extension CommitList {
     }
 
     func onChangeOfSelection() {
-        data.setCommit(selection)
     }
 
     func onPullSuccess(_ notification: Notification) {
