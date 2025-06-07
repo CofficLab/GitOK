@@ -248,7 +248,14 @@ echo "   当前时间: $(date '+%Y-%m-%d %H:%M:%S')"
 echo
 
 # 设置应用路径
-APP_PATH="$BuildPath/Build/Products/Release/$SCHEME.app"
+# 检查 BuildPath 是否已经包含 Build/Products 路径
+if [[ "$BuildPath" == *"/Build/Products/"* ]]; then
+    # 如果已经包含，直接使用
+    APP_PATH="$BuildPath/$SCHEME.app"
+else
+    # 如果不包含，添加标准路径
+    APP_PATH="$BuildPath/Build/Products/Release/$SCHEME.app"
+fi
 
 # 检查应用是否存在
 if [ ! -d "$APP_PATH" ]; then
@@ -281,7 +288,11 @@ if [ ! -d "$APP_PATH" ]; then
     # 检查预定义路径
     for path in "${possible_paths[@]}"; do
         if [ -d "$path" ]; then
-            found_apps+=("$path")
+            # 检查应用程序大小，过滤掉大小为0的应用程序
+            app_size_bytes=$(du -s "$path" 2>/dev/null | cut -f1 || echo "0")
+            if [ "$app_size_bytes" -gt 0 ]; then
+                found_apps+=("$path")
+            fi
         fi
     done
     
@@ -296,7 +307,11 @@ if [ ! -d "$APP_PATH" ]; then
             fi
         done
         if [ "$already_found" = false ]; then
-            found_apps+=("$app_path")
+            # 检查应用程序大小，过滤掉大小为0的应用程序
+            app_size_bytes=$(du -s "$app_path" 2>/dev/null | cut -f1 || echo "0")
+            if [ "$app_size_bytes" -gt 0 ]; then
+                found_apps+=("$app_path")
+            fi
         fi
     done < <(find . -name "$SCHEME.app" -type d -not -path "*/.*" -print0 2>/dev/null | head -20)
     
@@ -394,7 +409,11 @@ if [ ! -d "$APP_PATH" ]; then
                 for identity in "${IDENTITIES_ARRAY[@]}"; do
                     for app_path in "${found_apps[@]}"; do
                         build_path=$(dirname "$app_path")
-                        echo " SCHEME='$scheme' SIGNING_IDENTITY='$identity' BuildPath='$build_path' ./scripts/codesign-app.sh"
+                        # 转换为绝对路径
+                        abs_build_path=$(cd "$build_path" 2>/dev/null && pwd || echo "$build_path")
+                        abs_script_path=$(cd "$(dirname "$0")" && pwd)/$(basename "$0")
+                        echo " SCHEME='$scheme' SIGNING_IDENTITY='$identity' BuildPath='$abs_build_path' '$abs_script_path'"
+                        echo
                         command_count=$((command_count + 1))
                     done
                 done
@@ -406,7 +425,11 @@ if [ ! -d "$APP_PATH" ]; then
             for i in "${!found_apps[@]}"; do
                 app_path="${found_apps[$i]}"
             build_path=$(dirname "$app_path")
-                echo " SCHEME='$SCHEME' SIGNING_IDENTITY='$SIGNING_IDENTITY' BuildPath='$build_path' ./scripts/codesign-app.sh"
+                # 转换为绝对路径
+                abs_build_path=$(cd "$build_path" 2>/dev/null && pwd || echo "$build_path")
+                abs_script_path=$(cd "$(dirname "$0")" && pwd)/$(basename "$0")
+                echo " SCHEME='$SCHEME' SIGNING_IDENTITY='$SIGNING_IDENTITY' BuildPath='$abs_build_path' '$abs_script_path'"
+                echo
             done
         fi
         

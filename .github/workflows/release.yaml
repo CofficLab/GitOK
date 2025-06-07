@@ -61,7 +61,9 @@ jobs:
       - name: Codesign App
         run: ./scripts/codesign-app.sh
         env:
+          SCHEME: ${{ env.SCHEME }}
           SIGNING_IDENTITY: ${{ steps.signing.outputs.signing_identity }}
+          BuildPath: ${{ env.BuildPath }}
       - name: Create DMG
         run: ./scripts/create-dmg.sh
         env:
