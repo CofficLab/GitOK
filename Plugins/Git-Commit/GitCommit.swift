@@ -1,7 +1,7 @@
 import Foundation
-import SwiftUI
-import OSLog
 import MagicCore
+import OSLog
+import SwiftUI
 
 struct GitCommit: SuperLog {
     static var headId = "HEAD"
@@ -16,10 +16,10 @@ struct GitCommit: SuperLog {
     var message: String
     var author: String = ""
     var date: Date = Date()
-    
+
     var emoji = "🌊"
-    
-    var isEmpty: Bool { self.path == "/" } 
+
+    var isEmpty: Bool { self.path == "/" }
 
     init(
         isHead: Bool = false,
@@ -44,7 +44,7 @@ struct GitCommit: SuperLog {
         let author = count > 1 ? components[1] : ""
         let dateString = count > 2 ? components[2] : ""
         let message = count > 3 ? components[3] : ""
-        
+
         // 解析日期字符串为Date对象
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
@@ -52,32 +52,32 @@ struct GitCommit: SuperLog {
 
         return GitCommit(path: path, hash: hash, message: message, author: author, date: date)
     }
-    
+
     func checkIfSynced(_ branch: String) throws -> Bool {
         if isHead {
             return true
         }
-        
+
         let command = "git rev-list --left-right --count \(hash)...origin/\(branch)"
         do {
             let result = try Shell.run(command, at: path)
             let components = result.trimmingCharacters(in: .whitespacesAndNewlines).components(separatedBy: "\t")
-            
+
             if components.count == 2 {
                 return components[0] == "" || components[0] == "0"
             }
-            
+
             if components.count == 1 {
                 return true
             }
-            
+
             return false
         } catch {
             os_log(.error, "检查同步状态时出错: \(error.localizedDescription)")
             return false
         }
     }
-    
+
     func getFiles(reason: String) -> [File] {
         let verbose = false
 
@@ -87,20 +87,20 @@ struct GitCommit: SuperLog {
             os_log("  🫧 Path: \(path)")
             os_log("  🫧 Hash: \(hash)")
         }
-        
+
         if isHead {
             return GitShell.changedFile(path)
         } else {
             do {
                 return try GitShell.commitFiles(path, hash: hash)
-            } catch (let e) {
+            } catch let e {
                 os_log(.error, "\(e.localizedDescription)")
-                
+
                 return []
             }
         }
     }
-    
+
     func getTitle(reason: String) -> String {
         if isHead == false {
             return message
@@ -109,7 +109,7 @@ struct GitCommit: SuperLog {
             return "\(count) 个变动"
         }
     }
-    
+
     // 检查HTTPS凭据
     func checkHttpsCredentials() -> Bool {
         let command = "git config --get credential.helper"
@@ -130,21 +130,17 @@ struct GitCommit: SuperLog {
 
 extension GitCommit: Identifiable {
     var id: String {
-        path+hash
+        path + hash
     }
 }
 
-// Explicitly conform to Equatable and implement == to compare only by hash
 extension GitCommit: Equatable {
     static func == (lhs: GitCommit, rhs: GitCommit) -> Bool {
-        return lhs.hash == rhs.hash
+        return lhs.hash == rhs.hash && lhs.path == rhs.path
     }
 }
 
 extension GitCommit: Hashable {
-    // Since we provide a custom ==, we should also provide a custom hash(into:) 
-    // to ensure consistency: if a == b, then a.hashValue == b.hashValue.
-    // Here, we base the hash value only on the 'hash' property, same as our custom ==.
     func hash(into hasher: inout Hasher) {
         hasher.combine(hash)
     }
