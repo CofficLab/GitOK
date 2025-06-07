@@ -46,85 +46,116 @@
 # 设置错误处理
 set -e
 
-# 自动检测和检查必需的环境变量
-if [ -z "$SCHEME" ]; then
-    echo "❌ 错误: SCHEME 环境变量未设置"
-    echo "正在自动检测可用的 Scheme..."
+# 检查环境变量并提供建议的函数
+check_and_suggest() {
+    local missing_vars=""
     
-    # 查找项目文件
-    if ls *.xcworkspace 1> /dev/null 2>&1; then
-        PROJECT_FILE=$(ls -d *.xcworkspace | head -1)
-        PROJECT_TYPE="-workspace"
-    elif ls *.xcodeproj 1> /dev/null 2>&1; then
-        PROJECT_FILE=$(ls -d *.xcodeproj | head -1)
-        PROJECT_TYPE="-project"
-    else
-        echo "❌ 未找到 Xcode 项目文件"
-        exit 1
+    # 检查 SCHEME
+    if [ -z "$SCHEME" ]; then
+        missing_vars="${missing_vars}SCHEME "
     fi
     
-    # 获取可用的 schemes
-    echo "📋 检测到的可用 Scheme:"
-    AVAILABLE_SCHEMES=$(xcodebuild $PROJECT_TYPE "$PROJECT_FILE" -list 2>/dev/null | sed -n '/Schemes:/,/^$/p' | grep -v 'Schemes:' | grep -v '^$' | sed 's/^[[:space:]]*//' | sort -u)
-    
-    if [ -n "$AVAILABLE_SCHEMES" ]; then
-        echo "$AVAILABLE_SCHEMES" | while read -r scheme; do
-            [ -n "$scheme" ] && echo "  - $scheme"
-        done
-        echo
-        echo "💡 建议使用以下命令设置 SCHEME:"
-        FIRST_SCHEME=$(echo "$AVAILABLE_SCHEMES" | head -1)
-        echo "   export SCHEME=\"$FIRST_SCHEME\""
-    else
-        echo "   未检测到可用的 Scheme"
-        echo "   调试信息: PROJECT_FILE=$PROJECT_FILE, PROJECT_TYPE=$PROJECT_TYPE"
+    # 检查 SIGNING_IDENTITY
+    if [ -z "$SIGNING_IDENTITY" ]; then
+        missing_vars="${missing_vars}SIGNING_IDENTITY "
     fi
-    echo
-    exit 1
-fi
-
-if [ -z "$SIGNING_IDENTITY" ]; then
-    echo "❌ 错误: SIGNING_IDENTITY 环境变量未设置"
-    echo "正在自动检测可用的代码签名证书..."
     
-    # 获取可用的代码签名证书
-    echo "📋 检测到的可用代码签名证书:"
-    AVAILABLE_IDENTITIES=$(security find-identity -v -p codesigning | grep -E "(Developer ID Application|Apple Development|iPhone Developer|Mac Developer)" | head -5)
-    
-    if [ -n "$AVAILABLE_IDENTITIES" ]; then
-        echo "$AVAILABLE_IDENTITIES" | while IFS= read -r line; do
-            # 提取证书名称
-            CERT_NAME=$(echo "$line" | sed 's/.*"\(.*\)"/\1/')
-            # 根据证书类型添加说明
-            if [[ "$CERT_NAME" == *"Developer ID Application"* ]]; then
-                echo "  - $CERT_NAME [分发证书 - 可公开分发]"
-            elif [[ "$CERT_NAME" == *"Apple Development"* ]]; then
-                echo "  - $CERT_NAME [开发证书 - 仅限开发测试]"
-            elif [[ "$CERT_NAME" == *"Mac Developer"* ]]; then
-                echo "  - $CERT_NAME [开发证书 - 仅限开发测试]"
-            elif [[ "$CERT_NAME" == *"iPhone Developer"* ]]; then
-                echo "  - $CERT_NAME [开发证书 - 仅限开发测试]"
-            else
-                echo "  - $CERT_NAME"
-            fi
-        done
+    # 如果有缺失的环境变量，提供完整建议
+    if [ -n "$missing_vars" ]; then
+        echo "❌ 错误: 以下环境变量未设置: $missing_vars"
+        echo "正在自动检测可用的配置..."
         echo
-        echo "💡 建议使用以下命令设置 SIGNING_IDENTITY:"
-        FIRST_IDENTITY=$(echo "$AVAILABLE_IDENTITIES" | head -1 | sed 's/.*"\(.*\)"/\1/')
-        echo "   export SIGNING_IDENTITY=\"$FIRST_IDENTITY\""
+        
+        # 查找项目文件
+        if ls *.xcworkspace 1> /dev/null 2>&1; then
+            PROJECT_FILE=$(ls -d *.xcworkspace | head -1)
+            PROJECT_TYPE="-workspace"
+        elif ls *.xcodeproj 1> /dev/null 2>&1; then
+            PROJECT_FILE=$(ls -d *.xcodeproj | head -1)
+            PROJECT_TYPE="-project"
+        else
+            echo "❌ 未找到 Xcode 项目文件"
+            exit 1
+        fi
+        
+        # 获取可用的 schemes
+        echo "📋 检测到的可用 Scheme:"
+        AVAILABLE_SCHEMES=$(xcodebuild $PROJECT_TYPE "$PROJECT_FILE" -list 2>/dev/null | sed -n '/Schemes:/,/^$/p' | grep -v 'Schemes:' | grep -v '^$' | sed 's/^[[:space:]]*//' | sort -u)
+        
+        if [ -n "$AVAILABLE_SCHEMES" ]; then
+            echo "$AVAILABLE_SCHEMES" | while read -r scheme; do
+                [ -n "$scheme" ] && echo "  - $scheme"
+            done
+        else
+            echo "   未检测到可用的 Scheme"
+            exit 1
+        fi
+        
         echo
+        
+        # 获取可用的代码签名证书
+        echo "📋 检测到的可用代码签名证书:"
+        AVAILABLE_IDENTITIES=$(security find-identity -v -p codesigning | grep -E "(Developer ID Application|Apple Development|iPhone Developer|Mac Developer)" | head -5)
+        
+        if [ -n "$AVAILABLE_IDENTITIES" ]; then
+            echo "$AVAILABLE_IDENTITIES" | while IFS= read -r line; do
+                # 提取证书名称
+                CERT_NAME=$(echo "$line" | sed 's/.*"\(.*\)"/\1/')
+                # 根据证书类型添加说明
+                if [[ "$CERT_NAME" == *"Developer ID Application"* ]]; then
+                    echo "  - $CERT_NAME [分发证书 - 可公开分发]"
+                elif [[ "$CERT_NAME" == *"Apple Development"* ]]; then
+                    echo "  - $CERT_NAME [开发证书 - 仅限开发测试]"
+                elif [[ "$CERT_NAME" == *"Mac Developer"* ]]; then
+                    echo "  - $CERT_NAME [开发证书 - 仅限开发测试]"
+                elif [[ "$CERT_NAME" == *"iPhone Developer"* ]]; then
+                    echo "  - $CERT_NAME [开发证书 - 仅限开发测试]"
+                else
+                    echo "  - $CERT_NAME"
+                fi
+            done
+        else
+            echo "   未检测到可用的代码签名证书"
+        fi
+        
+        echo
+        echo "💡 建议使用以下命令进行代码签名:"
+        echo
+        
+        # 生成所有可能的组合建议
+        if [ -n "$AVAILABLE_SCHEMES" ] && [ -n "$AVAILABLE_IDENTITIES" ]; then
+            echo "$AVAILABLE_SCHEMES" | while read -r scheme; do
+                if [ -n "$scheme" ]; then
+                    echo "$AVAILABLE_IDENTITIES" | while IFS= read -r line; do
+                        CERT_NAME=$(echo "$line" | sed 's/.*"\(.*\)"/\1/')
+                        if [ -n "$CERT_NAME" ]; then
+                            echo " SCHEME='$scheme' SIGNING_IDENTITY='$CERT_NAME' ./scripts/codesign-app.sh"
+                        fi
+                    done
+                    echo
+                fi
+            done
+        elif [ -n "$AVAILABLE_SCHEMES" ]; then
+            echo "$AVAILABLE_SCHEMES" | while read -r scheme; do
+                if [ -n "$scheme" ]; then
+                    echo " SCHEME='$scheme' SIGNING_IDENTITY='YOUR_SIGNING_IDENTITY' ./scripts/codesign-app.sh"
+                fi
+            done
+            echo
+            echo "注意: 请将 YOUR_SIGNING_IDENTITY 替换为您的实际代码签名身份"
+        fi
+        
         echo "📋 证书类型说明:"
         echo "   🟢 Developer ID Application: 用于 Mac App Store 外分发，可被所有用户安装"
         echo "   🟡 Apple Development: 用于开发测试，仅限开发团队内部使用"
         echo "   🔴 Mac App Store: 用于 App Store 上架（需单独申请）"
-    else
-        echo "   未检测到可用的代码签名证书"
-        echo "   请检查是否已安装有效的开发者证书"
-        echo "   支持的证书类型: Developer ID Application, Apple Development, iPhone Developer, Mac Developer"
+        echo
+        exit 1
     fi
-    echo
-    exit 1
-fi
+}
+
+# 自动检测和检查必需的环境变量
+check_and_suggest
 
 # 设置默认值
 BuildPath=${BuildPath:-"./temp"}
@@ -160,8 +191,78 @@ APP_PATH="$BuildPath/Build/Products/Release/$SCHEME.app"
 
 # 检查应用是否存在
 if [ ! -d "$APP_PATH" ]; then
-    echo "❌ 错误: 应用程序不存在: $APP_PATH"
-    echo "请先构建应用程序"
+    print_error "应用程序不存在: $APP_PATH"
+    echo
+    
+    # 自动搜索可能的应用程序目录
+    printf "${GREEN}🔍 搜索可能的应用程序位置...${NC}\n"
+    
+    # 搜索可能的路径
+    local possible_paths=(
+        "./temp/Build/Products/Debug/$SCHEME.app"
+        "./temp/Build/Products/Release/$SCHEME.app"
+        "./temp/arm64/Build/Products/Release/$SCHEME.app"
+        "./temp/arm64/Build/Products/Debug/$SCHEME.app"
+        "./temp/x86_64/Build/Products/Release/$SCHEME.app"
+        "./temp/x86_64/Build/Products/Debug/$SCHEME.app"
+        "./temp/universal/Build/Products/Release/$SCHEME.app"
+        "./temp/universal/Build/Products/Debug/$SCHEME.app"
+        "./Build/Products/Release/$SCHEME.app"
+        "./Build/Products/Debug/$SCHEME.app"
+        "./build/Release/$SCHEME.app"
+        "./build/Debug/$SCHEME.app"
+        "./DerivedData/Build/Products/Release/$SCHEME.app"
+        "./DerivedData/Build/Products/Debug/$SCHEME.app"
+    )
+    
+    local found_apps=()
+    
+    # 检查预定义路径
+    for path in "${possible_paths[@]}"; do
+        if [ -d "$path" ]; then
+            found_apps+=("$path")
+        fi
+    done
+    
+    # 使用 find 命令搜索更多可能的位置
+    while IFS= read -r -d '' app_path; do
+        # 避免重复添加
+        local already_found=false
+        for existing in "${found_apps[@]}"; do
+            if [ "$existing" = "$app_path" ]; then
+                already_found=true
+                break
+            fi
+        done
+        if [ "$already_found" = false ]; then
+            found_apps+=("$app_path")
+        fi
+    done < <(find . -name "$SCHEME.app" -type d -not -path "*/.*" -print0 2>/dev/null | head -20)
+    
+    if [ ${#found_apps[@]} -gt 0 ]; then
+        echo
+        printf "${GREEN}📍 发现 ${#found_apps[@]} 个可能的应用程序:${NC}\n"
+        for i in "${!found_apps[@]}"; do
+            local app_path="${found_apps[$i]}"
+            local app_size="未知"
+            if [ -d "$app_path" ]; then
+                app_size=$(du -sh "$app_path" 2>/dev/null | cut -f1 || echo "未知")
+            fi
+            printf "   %d. %s (%s)\n" $((i+1)) "$app_path" "$app_size"
+        done
+        echo
+        printf "${YELLOW}💡 建议使用以下命令进行代码签名:${NC}\n"
+        echo
+        for i in "${!found_apps[@]}"; do
+            local app_path="${found_apps[$i]}"
+            local build_path=$(dirname "$app_path")
+            echo " SCHEME='$SCHEME' SIGNING_IDENTITY='$SIGNING_IDENTITY' BuildPath='$build_path' ./scripts/codesign-app.sh"
+        done
+        echo
+    else
+        printf "${YELLOW}💡 建议先运行构建脚本: ./scripts/build-app.sh${NC}\n"
+    fi
+    
     exit 1
 fi
 
