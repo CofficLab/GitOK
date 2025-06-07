@@ -83,13 +83,13 @@ jobs:
       - name: 公证结果
         continue-on-error: true
         run: |
-          file=$(find . -maxdepth 1 -type f -name "*.dmg" | head -n 1)
+          file=$(find . -maxdepth 2 -type f -name "*.dmg" | head -n 1)
           stapler validate "$file"
       - name: Check
         run: |
           ls -alh
           mkdir updates
-          cp *.dmg updates/
+          cp ./temp/*.dmg updates/
           echo "the updates is in ${{ github.workspace }}/updates"
           ls -alh updates
       - name: generate appcast (production only)
