@@ -72,6 +72,8 @@ struct CommitRow: View, SuperThread {
             .buttonStyle(PlainButtonStyle())
             .background(isSelected ? Color.accentColor.opacity(0.1) : Color.clear)
             .onAppear(perform: onAppear)
+            .onNotification(.appWillBecomeActive, onAppWillBecomeActive)
+            .onNotification(.gitCommitSuccess, onGitCommitSuccess)
 
             Divider()
         }
@@ -119,6 +121,16 @@ extension CommitRow {
         loadTag()
         loadChangedFileCount()
     }
+    
+    func onAppWillBecomeActive(_ n: Notification) {
+        loadTag()
+        loadChangedFileCount()
+    }
+
+    func onGitCommitSuccess(_ n: Notification) {
+        loadTag()
+        loadChangedFileCount()
+    }
 }
 
 #Preview("App - Small Screen") {
@@ -132,7 +144,7 @@ extension CommitRow {
     .frame(height: 700)
 }
 
-#Preview("App-Big Screen") {
+#Preview("App - Big Screen") {
     RootView {
         ContentLayout()
             .hideSidebar()
