@@ -72,12 +72,18 @@ extension File {
     }
 }
 
-#Preview {
-    AppPreview()
-        .frame(width: 800)
+#Preview("App - Small Screen") {
+    RootView {
+        ContentLayout()
+            .hideSidebar()
+            .hideTabPicker()
+            .hideProjectActions()
+    }
+    .frame(width: 600)
+    .frame(height: 600)
 }
 
-#Preview("App-Big Screen") {
+#Preview("App - Big Screen") {
     RootView {
         ContentLayout()
     }

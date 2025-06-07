@@ -6,15 +6,12 @@ import SwiftUI
 struct FileList: View, SuperThread, SuperLog {
     @EnvironmentObject var app: AppProvider
     @EnvironmentObject var m: MessageProvider
-
+    @EnvironmentObject var data: DataProvider
+    
     @State var files: [File] = []
     @State var isLoading = false
     var verbose = false
-
-    @Binding var file: File?
-
-    var commit: GitCommit
-
+    
     var body: some View {
         VStack(spacing: 0) {
             // 文件信息栏
@@ -23,14 +20,14 @@ struct FileList: View, SuperThread, SuperLog {
                     Image(systemName: "doc.text")
                         .foregroundColor(.secondary)
                         .font(.system(size: 12))
-
+                    
                     Text("\(files.count) 个文件")
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
-
+                
                 Spacer()
-
+                
                 if isLoading {
                     HStack(spacing: 4) {
                         ProgressView()
@@ -50,65 +47,76 @@ struct FileList: View, SuperThread, SuperLog {
                     .foregroundColor(Color(NSColor.separatorColor)),
                 alignment: .bottom
             )
-
+            
             // 文件列表
             ScrollViewReader { scrollProxy in
-                List(files, id: \.self, selection: self.$file) {
-                    FileTile(file: $0, commit: commit)
+                List(files, id: \.self, selection: $data.file) {
+                    FileTile(file: $0)
                         .tag($0 as File?)
-                        .listRowBackground(getBackground(file: $0))
                 }
-                .task {
-                    self.refresh(scrollProxy)
-                }
-                .onChange(of: commit, {
-                    refresh(scrollProxy)
-                })
+                .background(.blue)
                 .onChange(of: files, {
                     withAnimation {
                         // 在主线程中调用 scrollTo 方法
-                        scrollProxy.scrollTo(self.file, anchor: .top)
+                        scrollProxy.scrollTo(data.file, anchor: .top)
                     }
                 })
-                .background(.blue)
             }
         }
-    }
-
-    func refresh(_ scrollProxy: ScrollViewProxy) {
-        self.isLoading = true
-
-        if verbose {
-            os_log("\(self.t)Refresh")
+        .task {
+            self.refresh(reason: "Task")
         }
-
-        let files = commit.getFiles(reason: "FileList.Refresh")
-
-        self.files = files
-        self.isLoading = false
-        self.file = self.files.first
-    }
-
-    func getBackground(file: File) -> some View {
-        Group {
-            switch file.type {
-            case .modified:
-                MagicBackground.orange.opacity(0.1)
-            case .add:
-                MagicBackground.forest.opacity(0.1)
-            case .delete:
-                MagicBackground.cherry.opacity(0.1)
-            }
-        }
+        .onChange(of: data.commit, onCommitChange)
     }
 }
 
-#Preview("Big Screen") {
+// MARK: - Action
+
+extension FileList {
+    func refresh(reason: String) {
+        self.isLoading = true
+        
+        if verbose {
+            os_log("\(self.t)Refresh\(reason)")
+            self.m.append("Refresh(\(reason))")
+        }
+        
+        guard let commit = data.commit else {
+            return
+        }
+        
+        let files = commit.getFiles(reason: "FileList.Refresh")
+        
+        self.files = files
+        self.isLoading = false
+        data.file = self.files.first
+    }
+}
+
+// MARK: - Event
+
+extension FileList {
+    func onCommitChange() {
+        self.refresh(reason: "OnDataChanged")
+    }
+}
+
+#Preview("App - Small Screen") {
     RootView {
         ContentLayout()
             .hideSidebar()
+            .hideTabPicker()
             .hideProjectActions()
+    }
+    .frame(width: 600)
+    .frame(height: 600)
+}
+
+#Preview("App - Big Screen") {
+    RootView {
+        ContentLayout()
     }
     .frame(width: 1200)
     .frame(height: 1200)
 }
+

@@ -3,9 +3,12 @@ import MagicCore
 import OSLog
 
 class OpenCursorPlugin: SuperPlugin, SuperLog {
+    static let shared = OpenCursorPlugin()
     let emoji = "🖱️"
     static var label: String = "OpenCursor"
     var isTab: Bool = false
+    
+    private init() {}
 
     func addToolBarTrailingView() -> AnyView {
         AnyView(BtnOpenCursorView())

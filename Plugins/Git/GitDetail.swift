@@ -20,21 +20,7 @@ struct GitDetail: View, SuperEvent {
                             if commit.isHead && isProjectClean {
                                 NoLocalChanges()
                             } else {
-                                VStack(spacing: 0) {
-                                    // 当前 Commit 详细信息
-                                    CommitDetailView(commit: commit)
-
-                                    HSplitView {
-                                        FileList(file: $file, commit: commit)
-                                            .frame(idealWidth: 200)
-                                            .frame(minWidth: 200, maxWidth: 300)
-                                            .layoutPriority(1)
-
-                                        if let file = data.file {
-                                            FileDetail(file: file, commit: commit)
-                                        }
-                                    }
-                                }
+                                CommitDetail()
                             }
                         }
                     } else {
@@ -84,15 +70,18 @@ extension GitDetail {
     }
 }
 
-#Preview("默认") {
+#Preview("App - Small Screen") {
     RootView {
         ContentLayout()
+            .hideSidebar()
+            .hideTabPicker()
+            .hideProjectActions()
     }
-    .frame(height: 600)
     .frame(width: 600)
+    .frame(height: 600)
 }
 
-#Preview("App-Big Screen") {
+#Preview("App - Big Screen") {
     RootView {
         ContentLayout()
     }

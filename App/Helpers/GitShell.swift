@@ -19,12 +19,12 @@ class GitShell {
 
     static func commitFiles(_ path: String, hash: String, verbose: Bool = false) throws -> [File] {
         let items = try run("show \(hash) --pretty='' --name-only", path: path, verbose: verbose)
-            .components(separatedBy: "\n")
+        let components = items.components(separatedBy: "\n")
             .filter({
                 $0.isNotEmpty
             })
 
-        return items.map({
+        return components.map({
             File.fromLine($0, path: path)
         })
     }
@@ -35,13 +35,55 @@ class GitShell {
         }
 
         do {
-            return try run("status --porcelain | awk '{print $2}'", path: path, verbose: false)
+            let items =  try run("status --porcelain | awk '{print $2}'", path: path, verbose: false)
                 .trimmingCharacters(in: .whitespacesAndNewlines)
-                .components(separatedBy: .newlines)
+            print(items)
+            let components = items.components(separatedBy: .newlines)
                 .filter({ $0.count > 0 })
-                .map {
-                    File.fromLine($0.trimmingCharacters(in: .whitespacesAndNewlines), path: path)
+            
+            var files: [File] = []
+            
+            for component in components {
+                let trimmedComponent = component.trimmingCharacters(in: .whitespacesAndNewlines)
+                let fullPath = path + "/" + trimmedComponent
+                
+                // 检查是否为目录
+                var isDirectory: ObjCBool = false
+                if FileManager.default.fileExists(atPath: fullPath, isDirectory: &isDirectory) && isDirectory.boolValue {
+                    // 如果是目录，获取目录下的所有文件
+                    do {
+                        // 使用git ls-files获取目录下的所有跟踪文件
+                        let directoryFiles = try run("ls-files \"\(trimmedComponent)/\"*", path: path, verbose: false)
+                            .trimmingCharacters(in: .whitespacesAndNewlines)
+                        if !directoryFiles.isEmpty {
+                            let fileComponents = directoryFiles.components(separatedBy: .newlines)
+                                .filter({ $0.count > 0 })
+                            for fileComponent in fileComponents {
+                                files.append(File.fromLine(fileComponent.trimmingCharacters(in: .whitespacesAndNewlines), path: path))
+                            }
+                        } else {
+                            // 如果目录下没有跟踪的文件，尝试获取未跟踪的文件
+                            let untrackedFiles = try run("ls-files --others --exclude-standard \"\(trimmedComponent)/\"*", path: path, verbose: false)
+                                .trimmingCharacters(in: .whitespacesAndNewlines)
+                            if !untrackedFiles.isEmpty {
+                                let fileComponents = untrackedFiles.components(separatedBy: .newlines)
+                                    .filter({ $0.count > 0 })
+                                for fileComponent in fileComponents {
+                                    files.append(File.fromLine(fileComponent.trimmingCharacters(in: .whitespacesAndNewlines), path: path))
+                                }
+                            }
+                        }
+                    } catch {
+                        // 如果获取目录文件失败，仍然添加目录本身
+                        files.append(File.fromLine(trimmedComponent, path: path))
+                    }
+                } else {
+                    // 如果是文件，直接添加
+                    files.append(File.fromLine(trimmedComponent, path: path))
                 }
+            }
+            
+            return files
         } catch _ {
             return []
         }
@@ -373,11 +415,18 @@ extension GitShell {
     }
 }
 
-#Preview {
-    AppPreview()
+#Preview("App - Small Screen") {
+    RootView {
+        ContentLayout()
+            .hideSidebar()
+            .hideTabPicker()
+//            .hideProjectActions()
+    }
+    .frame(width: 700)
+    .frame(height: 600)
 }
 
-#Preview("App-Big Screen") {
+#Preview("App - Big Screen") {
     RootView {
         ContentLayout()
     }

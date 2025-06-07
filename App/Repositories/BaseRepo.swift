@@ -67,6 +67,18 @@ class BaseRepositoryImpl<T: PersistentModel>: BaseRepo, SuperLog {
     }
 }
 
+#Preview("App - Small Screen") {
+    RootView {
+        ContentLayout()
+            .hideProjectActions()
+            .hideSidebar()
+            .hideTabPicker()
+    }
+    .frame(width: 600)
+    .frame(height: 600)
+}
+
+
 #Preview("App-Big Screen") {
     RootView {
         ContentLayout()
