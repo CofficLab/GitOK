@@ -86,7 +86,7 @@ extension GitDetail {
 
 #Preview("默认") {
     RootView {
-        ContentView()
+        ContentLayout()
     }
     .frame(height: 600)
     .frame(width: 600)
@@ -94,7 +94,7 @@ extension GitDetail {
 
 #Preview("App-Big Screen") {
     RootView {
-        ContentView()
+        ContentLayout()
     }
     .frame(width: 1200)
     .frame(height: 1200)

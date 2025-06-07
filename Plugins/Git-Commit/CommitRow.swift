@@ -176,7 +176,7 @@ extension CommitRow {
 
 #Preview {
     RootView {
-        ContentView()
+        ContentLayout()
             .hideSidebar()
     }
     .frame(width: 800)
@@ -185,7 +185,7 @@ extension CommitRow {
 
 #Preview("App-Big Screen") {
     RootView {
-        ContentView()
+        ContentLayout()
             .hideSidebar()
     }
     .frame(width: 1200)

@@ -251,7 +251,7 @@ extension CommitList {
 
 #Preview("App-Small Screen") {
     RootView {
-        ContentView()
+        ContentLayout()
             .hideSidebar()
     }
     .frame(width: 800)
@@ -260,7 +260,7 @@ extension CommitList {
 
 #Preview("App-Big Screen") {
     RootView {
-        ContentView()
+        ContentLayout()
             .hideSidebar()
     }
     .frame(width: 1200)

@@ -34,14 +34,14 @@ class CommitPlugin: SuperPlugin, SuperLog {
 
 #Preview("APP") {
     RootView(content: {
-        ContentView()
+        ContentLayout()
     })
     .frame(width: 800, height: 800)
 }
 
 #Preview("App-Big Screen") {
     RootView {
-        ContentView()
+        ContentLayout()
     }
     .frame(width: 1200)
     .frame(height: 1200)

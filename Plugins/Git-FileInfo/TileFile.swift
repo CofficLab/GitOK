@@ -33,7 +33,7 @@ struct TileFile: View, SuperLog, SuperThread {
 
 #Preview("默认") {
     RootView {
-        ContentView()
+        ContentLayout()
     }
     .frame(height: 600)
     .frame(width: 600)
@@ -41,7 +41,7 @@ struct TileFile: View, SuperLog, SuperThread {
 
 #Preview("App-Big Screen") {
     RootView {
-        ContentView()
+        ContentLayout()
     }
     .frame(width: 1200)
     .frame(height: 1200)

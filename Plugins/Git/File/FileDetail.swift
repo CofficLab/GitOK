@@ -178,7 +178,7 @@ extension FileDetail {
 
 #Preview("Big Screen") {
     RootView {
-        ContentView()
+        ContentLayout()
             .hideSidebar()
             .hideProjectActions()
     }
@@ -206,7 +206,7 @@ extension View {
 
 #Preview("App-Big Screen") {
     RootView {
-        ContentView()
+        ContentLayout()
     }
     .frame(width: 1200)
     .frame(height: 1200)

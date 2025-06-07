@@ -105,7 +105,7 @@ struct FileList: View, SuperThread, SuperLog {
 
 #Preview("Big Screen") {
     RootView {
-        ContentView()
+        ContentLayout()
             .hideSidebar()
             .hideProjectActions()
     }

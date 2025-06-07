@@ -21,7 +21,7 @@ class WebConfig: ObservableObject {
 
 #Preview("Big Screen") {
     RootView {
-        ContentView()
+        ContentLayout()
             .hideSidebar()
             .hideProjectActions()
     }

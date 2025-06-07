@@ -105,21 +105,21 @@ extension RootView {
 struct AppPreview: View {
     var body: some View {
         RootView {
-            ContentView()
+            ContentLayout()
         }
     }
 }
 
 #Preview("APP") {
     RootView(content: {
-        ContentView()
+        ContentLayout()
     })
     .frame(width: 800, height: 800)
 }
 
 #Preview("Big Screen") {
     RootView {
-        ContentView()
+        ContentLayout()
             .hideSidebar()
             .hideProjectActions()
     }

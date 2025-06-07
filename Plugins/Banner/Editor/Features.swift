@@ -71,7 +71,7 @@ struct Features: View {
 
 #Preview("App") {
     RootView {
-        ContentView()
+        ContentLayout()
     }
     .frame(width: 1200)
     .frame(height: 800)

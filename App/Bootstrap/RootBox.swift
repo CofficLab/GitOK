@@ -47,7 +47,9 @@ final class RootBox: SuperLog {
             BranchPlugin.shared,
             CommitPlugin.shared,
             ProjectPickerPlugin.shared,
-            SmartMergePlugin()
+            SmartMergePlugin(),
+            SmartMessagePlugin(),
+            QuickMergePlugin.shared
         ]
         
         // Providers
@@ -69,14 +71,15 @@ final class RootBox: SuperLog {
 
 #Preview("APP") {
     RootView(content: {
-        ContentView()
+        ContentLayout()
+            .hideSidebar()
     })
-    .frame(width: 800, height: 800)
+    .frame(width: 800, height: 600)
 }
 
 #Preview("Big Screen") {
     RootView {
-        ContentView()
+        ContentLayout()
             .hideSidebar()
             .hideProjectActions()
     }

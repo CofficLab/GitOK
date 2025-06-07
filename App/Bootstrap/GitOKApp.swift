@@ -15,7 +15,7 @@ struct GitOKApp: App {
     var body: some Scene {
         WindowGroup {
             RootView {
-                ContentView()
+                ContentLayout()
             }
         }
         .windowToolbarStyle(.unified(showsTitle: false))

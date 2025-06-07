@@ -28,7 +28,7 @@ struct BtnOpenTerminal: View {
 
 #Preview("App-Big Screen") {
     RootView {
-        ContentView()
+        ContentLayout()
     }
     .frame(width: 1200)
     .frame(height: 1200)

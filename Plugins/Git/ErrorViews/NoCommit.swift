@@ -22,7 +22,7 @@ struct NoCommit: View {
 
 #Preview("App") {
     RootView {
-        ContentView()
+        ContentLayout()
             .hideSidebar()
     }
     .frame(height: 600)
@@ -31,7 +31,7 @@ struct NoCommit: View {
 
 #Preview("Default-Big Screen") {
     RootView {
-        ContentView()
+        ContentLayout()
     }
     .frame(width: 1200)
     .frame(height: 1200)

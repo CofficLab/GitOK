@@ -14,7 +14,7 @@ class GitPlugin: SuperPlugin, SuperLog {
 
 #Preview {
     RootView {
-        ContentView()
+        ContentLayout()
             .hideSidebar()
     }
     .frame(width: 800)
@@ -23,7 +23,7 @@ class GitPlugin: SuperPlugin, SuperLog {
 
 #Preview("App-Big Screen") {
     RootView {
-        ContentView()
+        ContentLayout()
     }
     .frame(width: 1200)
     .frame(height: 1200)

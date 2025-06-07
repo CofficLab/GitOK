@@ -40,7 +40,7 @@ struct BannerBackground: View {
 
 #Preview("App") {
     RootView {
-        ContentView()
+        ContentLayout()
     }
     .frame(height: 800)
     .frame(width: 800)
@@ -48,7 +48,7 @@ struct BannerBackground: View {
 
 #Preview("App-2") {
     RootView {
-        ContentView()
+        ContentLayout()
     }
     .frame(height: 1200)
     .frame(width: 800)

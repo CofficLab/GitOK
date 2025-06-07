@@ -13,6 +13,7 @@ class DataProvider: NSObject, ObservableObject, SuperLog {
     @Published var projects: [Project] = []
     @Published var commit: GitCommit? = nil
     @Published var file: File? = nil
+    @Published private(set) var projectExists = true
 
     static let emoji = "🏠"
     private let verbose = false
@@ -33,6 +34,8 @@ class DataProvider: NSObject, ObservableObject, SuperLog {
 
         // 设置事件监听
         setupEventListeners()
+        
+        self.checkIfProjectExists()
     }
 }
 
@@ -51,6 +54,7 @@ extension DataProvider {
 
         self.project = p
         self.repoManager.stateRepo.setProjectPath(self.project?.path ?? "")
+        self.checkIfProjectExists()
     }
 
     /**
@@ -203,6 +207,14 @@ extension DataProvider {
 // MARK: - Action
 
 extension DataProvider {
+    func checkIfProjectExists() {
+        if let newProject = self.project {
+            self.projectExists = FileManager.default.fileExists(atPath: newProject.path)
+        } else {
+            self.projectExists = false
+        }
+    }
+    
     /**
      * 设置当前选中的文件
      * @param f 要设置的文件
@@ -360,7 +372,7 @@ extension DataProvider {
 
 #Preview("App-Big Screen") {
     RootView {
-        ContentView()
+        ContentLayout()
     }
     .frame(width: 1200)
     .frame(height: 1200)

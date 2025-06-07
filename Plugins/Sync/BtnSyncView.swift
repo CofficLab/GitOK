@@ -79,7 +79,7 @@ struct BtnSyncView: View, SuperLog, SuperEvent, SuperThread {
 
 #Preview("Default-Big Screen") {
     RootView {
-        ContentView()
+        ContentLayout()
     }
     .frame(width: 1200)
     .frame(height: 1200)

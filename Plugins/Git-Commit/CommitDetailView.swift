@@ -151,7 +151,7 @@ extension CommitDetailView {
 
 #Preview("App-Big Screen") {
     RootView {
-        ContentView()
+        ContentLayout()
             .hideSidebar()
     }
     .frame(width: 1200)
