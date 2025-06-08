@@ -27,6 +27,9 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      - name: 安装依赖
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/nookery/servon/main/install.sh | bash
       - name: 获取最新 tag
         id: get_tag
         run: |
@@ -53,10 +56,8 @@ jobs:
           echo "team_id=$TEAM_ID" >> $GITHUB_OUTPUT
           echo "pp_path=$PP_PATH" >> $GITHUB_OUTPUT
           echo "api_key_path=$API_KEY_PATH" >> $GITHUB_OUTPUT
-      - name: Build
-        env:
-          SCHEME: ${{ env.SCHEME }}
-        run: ./scripts/build-app.sh
+      - name: Build App
+        run: servon xcode build --scheme ${{ env.SCHEME }} 
       - name: Codesign App
         run: ./scripts/codesign-app.sh
         env:
