@@ -12,7 +12,7 @@ class DataProvider: NSObject, ObservableObject, SuperLog {
     @Published private(set) var project: Project? = nil
     @Published var projects: [Project] = []
     @Published var commit: GitCommit? = nil
-    @Published var file: File? = nil
+    @Published private(set) var file: File? = nil
     @Published private(set) var projectExists = true
 
     static let emoji = "🏠"
@@ -34,7 +34,7 @@ class DataProvider: NSObject, ObservableObject, SuperLog {
 
         // 设置事件监听
         setupEventListeners()
-        
+
         self.checkIfProjectExists()
     }
 }
@@ -214,12 +214,13 @@ extension DataProvider {
             self.projectExists = false
         }
     }
-    
+
     /**
      * 设置当前选中的文件
      * @param f 要设置的文件
      */
     func setFile(_ f: File?) {
+        if f == self.file { return }
         file = f
     }
 
@@ -338,7 +339,6 @@ extension DataProvider {
      * 处理Git操作成功事件
      */
     private func handleGitOperationSuccess(_ notification: Notification) {
-
     }
 
     /**

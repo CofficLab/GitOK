@@ -10,6 +10,7 @@ struct FileList: View, SuperThread, SuperLog {
 
     @State var files: [File] = []
     @State var isLoading = false
+    @State var selection: File?
     var verbose = false
 
     var body: some View {
@@ -50,7 +51,7 @@ struct FileList: View, SuperThread, SuperLog {
 
             // 文件列表
             ScrollViewReader { scrollProxy in
-                List(files, id: \.self, selection: $data.file) {
+                List(files, id: \.self, selection: $selection) {
                     FileTile(file: $0)
                         .tag($0 as File?)
                 }
@@ -65,6 +66,7 @@ struct FileList: View, SuperThread, SuperLog {
         }
         .onAppear(perform: onAppear)
         .onChange(of: data.commit, onCommitChange)
+        .onChange(of: selection, onSelectionChange)
     }
 }
 
@@ -88,7 +90,7 @@ extension FileList {
 
         self.files = files
         self.isLoading = false
-        self.data.file = self.files.first
+        self.data.setFile(self.files.first)
     }
 }
 
@@ -101,6 +103,10 @@ extension FileList {
 
     func onCommitChange() {
         self.refresh(reason: "OnDataChanged")
+    }
+    
+    func onSelectionChange() {
+        self.data.setFile(self.selection)
     }
 }
 

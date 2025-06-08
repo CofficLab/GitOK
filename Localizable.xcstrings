@@ -48,23 +48,6 @@
         }
       }
     },
-    "delete_project" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "删除项目"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Delete project"
-          }
-        }
-      }
-    },
     "Diff for %@" : {
 
     },
@@ -175,40 +158,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "No commits yet"
-          }
-        }
-      }
-    },
-    "no_local_changes_description" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "所有更改都已提交到本地仓库"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "All changes have been committed to local repository"
-          }
-        }
-      }
-    },
-    "no_local_changes_title" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "没有本地更改"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No local changes"
           }
         }
       }
