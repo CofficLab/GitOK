@@ -9,7 +9,7 @@ class CommitPlugin: SuperPlugin, SuperLog {
     static let shared = CommitPlugin()
     static let emoji = "🍒"
     static let label: String = "Commit"
-    var isTab: Bool = true
+    var isTab: Bool = false
     var verbose = false
     
     private init() {}
@@ -35,6 +35,7 @@ class CommitPlugin: SuperPlugin, SuperLog {
 #Preview("APP") {
     RootView(content: {
         ContentLayout()
+            .hideTabPicker()
     })
     .frame(width: 800, height: 800)
 }
