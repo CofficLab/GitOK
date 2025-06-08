@@ -2,6 +2,10 @@ import SwiftUI
 
 struct BtnOpenCursorView: View {
     @EnvironmentObject var g: DataProvider
+    
+    static let shared = BtnOpenCursorView()
+    
+    private init() {}
 
     var body: some View {
         if let project = g.project {

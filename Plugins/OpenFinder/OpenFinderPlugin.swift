@@ -11,6 +11,6 @@ class OpenFinderPlugin: SuperPlugin, SuperLog {
     private init() {}
 
     func addToolBarTrailingView() -> AnyView {
-        AnyView(BtnOpenFinderView())
+        AnyView(BtnOpenFinderView.shared)
     }
 }

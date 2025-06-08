@@ -11,7 +11,7 @@ class GitPlugin: SuperPlugin, SuperLog {
     private init() {}
 
     func addDetailView() -> AnyView {
-        AnyView(GitDetail())
+        AnyView(GitDetail.shared)
     }
 }
 

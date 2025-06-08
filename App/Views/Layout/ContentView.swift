@@ -47,7 +47,8 @@ struct ContentView: View, SuperLog {
                     }
                     .frame(idealWidth: 200)
                     .frame(minWidth: 120)
-                    .frame(maxWidth: 200)
+                    .frame(maxWidth: 300)
+                    .frame(maxHeight: .infinity)
 
                     VStack(spacing: 0) {
                         p.tabPlugins.first { $0.instanceLabel == tab }?.addDetailView()

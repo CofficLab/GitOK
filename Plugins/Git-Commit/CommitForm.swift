@@ -22,6 +22,21 @@ struct CommitForm: View {
         if let project = g.project {
             VStack(spacing: 0) {
                 HStack(spacing: 0) {
+                    // 当前分支信息显示区域
+                    if let currentBranch = g.currentBranch {
+                        HStack {
+                            Image(systemName: "arrow.branch")
+                                .foregroundColor(.secondary)
+                                .font(.system(size: 14))
+
+                            Text(currentBranch.name)
+                                .font(.caption)
+                                .fontWeight(.medium)
+                                .foregroundColor(.primary)
+                        }
+                        .padding(.trailing, 12)
+                    }
+                    
                     CommitCategoryPicker(selection: $category, project: project)
                         .onChange(of: category, {
                             self.text = category.defaultMessage
@@ -75,22 +90,16 @@ struct CommitForm: View {
     }
 
     private func loadUserInfo(for projectPath: String) {
-        Task {
-            do {
-                let userName = try GitShell.getUserName(projectPath)
-                let userEmail = try GitShell.getUserEmail(projectPath)
+        do {
+            let userName = try GitShell.getUserName(projectPath)
+            let userEmail = try GitShell.getUserEmail(projectPath)
 
-                await MainActor.run {
-                    self.currentUser = userName
-                    self.currentEmail = userEmail
-                }
-            } catch {
-                // 如果获取用户信息失败，保持空字符串
-                await MainActor.run {
-                    self.currentUser = ""
-                    self.currentEmail = ""
-                }
-            }
+            self.currentUser = userName
+            self.currentEmail = userEmail
+        } catch {
+            // 如果获取用户信息失败，保持空字符串
+            self.currentUser = ""
+            self.currentEmail = ""
         }
     }
 }

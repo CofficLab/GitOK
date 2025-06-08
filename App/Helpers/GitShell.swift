@@ -9,9 +9,9 @@ class GitShell {
     }
 
     @discardableResult
-    static func commit(_ path: String, commit: String) throws -> String {
+    static func commit(_ path: String, commit: String, verbose: Bool = false) throws -> String {
         emit(.gitCommitStart, object: nil)
-        let result = try run("commit -a -m '\(commit)'", path: path, verbose: true)
+        let result = try run("commit -a -m '\(commit)'", path: path, verbose: verbose)
         emit(.gitCommitSuccess, object: nil)
 
         return result
@@ -37,7 +37,6 @@ class GitShell {
         do {
             let items =  try run("status --porcelain | awk '{print $2}'", path: path, verbose: false)
                 .trimmingCharacters(in: .whitespacesAndNewlines)
-            print(items)
             let components = items.components(separatedBy: .newlines)
                 .filter({ $0.count > 0 })
             
@@ -238,7 +237,7 @@ class GitShell {
         try run("merge \(from.name) -m '\(message)'", path: path, verbose: verbose)
     }
 
-    static func mergeToMain(_ path: String, verbose: Bool = true) throws {
+    static func mergeToMain(_ path: String, verbose: Bool = false) throws {
         try run("merge main && git branch -f main HEAD", path: path, verbose: verbose)
     }
 

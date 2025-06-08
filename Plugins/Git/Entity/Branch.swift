@@ -10,6 +10,9 @@ struct Branch: SuperLog {
     var path: String
     var name: String
     var isCurrent = false
+    var id: String {
+        self.path + self.name
+    }
 
     static func fromShellLine(_ l: String, path: String) -> Branch {
         let verbose = false
@@ -25,7 +28,7 @@ struct Branch: SuperLog {
 
 extension Branch: Hashable {
     static func == (lhs: Branch, rhs: Branch) -> Bool {
-        lhs.name == rhs.name && lhs.path == rhs.path
+        lhs.id == rhs.id
     }
 }
 

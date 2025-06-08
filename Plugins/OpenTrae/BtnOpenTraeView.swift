@@ -2,6 +2,10 @@ import SwiftUI
 
 struct BtnOpenTraeView: View {
     @EnvironmentObject var g: DataProvider
+    
+    static let shared = BtnOpenTraeView()
+    
+    private init() {}
 
     var body: some View {
         if let project = g.project {

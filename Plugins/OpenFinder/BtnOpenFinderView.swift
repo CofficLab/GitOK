@@ -2,6 +2,10 @@ import SwiftUI
 
 struct BtnOpenFinderView: View {
     @EnvironmentObject var g: DataProvider
+    
+    static let shared = BtnOpenFinderView()
+    
+    private init() {}
 
     var body: some View {
         if let project = g.project {

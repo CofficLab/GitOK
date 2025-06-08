@@ -11,7 +11,7 @@ class QuickMergePlugin: SuperPlugin, SuperLog {
     private init() {}
     
     func addStatusBarTrailingView() -> AnyView {
-        AnyView(TileQuickMerge())
+        AnyView(TileQuickMerge.shared)
     }
 }
 

@@ -3,6 +3,10 @@ import SwiftUI
 struct BtnOpenRemoteView: View {
     @EnvironmentObject var g: DataProvider
     @State var remote: String = ""
+    
+    static let shared = BtnOpenRemoteView()
+    
+    private init() {}
 
     var body: some View {
         if let project = g.project, project.isGit {

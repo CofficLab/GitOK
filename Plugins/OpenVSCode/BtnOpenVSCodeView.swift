@@ -2,6 +2,10 @@ import SwiftUI
 
 struct BtnOpenVSCodeView: View {
     @EnvironmentObject var g: DataProvider
+    
+    static let shared = BtnOpenVSCodeView()
+    
+    private init() {}
 
     var body: some View {
         if let project = g.project {

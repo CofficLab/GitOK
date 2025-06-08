@@ -7,6 +7,10 @@ struct TileQuickMerge: View, SuperLog, SuperThread {
     @EnvironmentObject var g: DataProvider
 
     @State var hovered = false
+    
+    static let shared = TileQuickMerge()
+    
+    private init() {}
 
     var git = GitShell()
     var project: Project? { g.project }

@@ -11,6 +11,10 @@ struct TileFile: View, SuperLog, SuperThread {
     @State var isPresented = false
     @State var live = false
     
+    static let shared = TileFile()
+    
+    private init() {}
+    
     var file: File? { data.file }
     var message: SmartMessage? { m.messages.first }
 

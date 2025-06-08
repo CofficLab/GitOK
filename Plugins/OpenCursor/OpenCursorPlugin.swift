@@ -11,6 +11,6 @@ class OpenCursorPlugin: SuperPlugin, SuperLog {
     private init() {}
 
     func addToolBarTrailingView() -> AnyView {
-        AnyView(BtnOpenCursorView())
+        AnyView(BtnOpenCursorView.shared)
     }
 }

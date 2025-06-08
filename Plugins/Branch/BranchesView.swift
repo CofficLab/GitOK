@@ -10,19 +10,21 @@ struct BranchesView: View, SuperThread, SuperLog, SuperEvent {
     @EnvironmentObject var m: MessageProvider
 
     @State var branches: [Branch] = []
-    @State var selection: Branch?
+    @State private var selection: String?
     @State private var isRefreshing = false
 
     static var emoji = "🌿"
     private let verbose = false
+    
+    private init() {}
 
     var body: some View {
         ZStack {
             if data.project?.isGit == true && branches.isNotEmpty && selection != nil {
                 Picker("branch", selection: $selection, content: {
-                    ForEach(branches, id: \.self, content: {
+                    ForEach(branches, id: \.id, content: {
                         Text($0.name)
-                            .tag($0 as Branch)
+                            .tag($0.id as String?)
                     })
                 })
             } else {
@@ -61,7 +63,7 @@ extension BranchesView {
 
         guard project.isGit else {
             self.branches = []
-            self.selection = nil
+            self.updateSelection(nil, reason: "branches is empty")
             return
         }
 
@@ -76,18 +78,18 @@ extension BranchesView {
             branches = try GitShell.getBranches(project.path)
             if branches.isEmpty {
                 os_log("\(self.t)🍋 Refresh, but no branches")
-                selection = nil
+                self.updateSelection(nil, reason: "Refresh, but no branches")
             } else {
                 // 尝试选择当前分支
                 let currentBranch = self.getCurrentBranch()
-                selection = branches.first(where: {
-                    $0.name == currentBranch?.name
-                })
+                self.updateSelection(branches.first(where: {
+                    $0.id == currentBranch?.id
+                }), reason: "Refresh, branches is not empty")
 
                 // 如果没有找到匹配的分支，则选择第一个分支
                 if selection == nil {
-                    selection = branches.first
-                    os_log("\(self.t)🍋 No matching branch found, selecting first branch: \(selection?.name ?? "unknown")")
+                    self.updateSelection(branches.first, reason: "Refresh, set first branch")
+                    os_log("\(self.t)🍋 No matching branch found, selecting first branch: \(selection ?? "unknown")")
                 }
             }
         } catch let e {
@@ -108,6 +110,14 @@ extension BranchesView {
         } catch _ {
             return nil
         }
+    }
+    
+    func updateSelection(_ s: Branch?, reason: String) {
+        if verbose {
+            os_log("\(self.t)Update Selection to \(s?.id ?? "nil") (\(reason))")
+        }
+        
+        self.selection = s?.id
     }
 }
 

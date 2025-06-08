@@ -1,8 +1,9 @@
 import AppKit
 import MagicCore
 import SwiftUI
+import OSLog
 
-struct GitDetail: View, SuperEvent {
+struct GitDetail: View, SuperEvent, SuperLog {
     @EnvironmentObject var app: AppProvider
     @EnvironmentObject var data: DataProvider
     @EnvironmentObject var m: MessageProvider
@@ -10,6 +11,16 @@ struct GitDetail: View, SuperEvent {
     @State var diffView: AnyView = AnyView(EmptyView())
     @State var file: File?
     @State private var isProjectClean: Bool = true
+    
+    static let shared = GitDetail()
+    
+    private var verbose = false
+    
+    private init() {
+        if verbose {
+            os_log("\(Self.onInit)")
+        }
+    }
 
     var body: some View {
         ZStack {

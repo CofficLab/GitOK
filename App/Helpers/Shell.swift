@@ -83,7 +83,7 @@ extension Shell {
         """) == "true"
     }
 
-    func makeDir(_ dir: String, verbose: Bool = true) {
+    func makeDir(_ dir: String, verbose: Bool = false) {
         if verbose {
             os_log("\(self.t)MakeDir -> \(dir)")
         }
