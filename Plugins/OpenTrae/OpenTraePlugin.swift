@@ -11,6 +11,6 @@ class OpenTraePlugin: SuperPlugin, SuperLog {
     private init() {}
 
     func addToolBarTrailingView() -> AnyView {
-        AnyView(BtnOpenTraeView())
+        AnyView(BtnOpenTraeView.shared)
     }
 }

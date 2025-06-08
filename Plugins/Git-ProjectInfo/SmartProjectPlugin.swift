@@ -8,6 +8,6 @@ class SmartProjectPlugin: SuperPlugin, SuperLog {
     var isTab: Bool = false
     
     func addStatusBarLeadingView() -> AnyView {
-        AnyView(TileProject())
+        AnyView(TileProject.shared)
     }
 }

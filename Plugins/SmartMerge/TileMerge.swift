@@ -7,6 +7,10 @@ struct TileMerge: View, SuperLog, SuperThread {
 
     @State var hovered = false
     @State var isPresented = false
+    
+    static let shared = TileMerge()
+    
+    private init() {}
 
     var body: some View {
         HStack {

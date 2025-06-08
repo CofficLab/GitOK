@@ -11,6 +11,6 @@ class OpenVSCodePlugin: SuperPlugin, SuperLog {
     private init() {}
 
     func addToolBarTrailingView() -> AnyView {
-        AnyView(BtnOpenVSCodeView())
+        AnyView(BtnOpenVSCodeView.shared)
     }
 }

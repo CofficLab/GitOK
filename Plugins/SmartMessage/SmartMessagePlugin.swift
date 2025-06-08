@@ -11,7 +11,7 @@ class SmartMessagePlugin: SuperPlugin, SuperLog {
     private init() {}
     
     func addStatusBarTrailingView() -> AnyView {
-        AnyView(TileMessage())
+        AnyView(TileMessage.shared)
     }
 }
 

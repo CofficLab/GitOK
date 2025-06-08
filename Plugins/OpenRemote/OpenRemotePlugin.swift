@@ -11,6 +11,6 @@ class OpenRemotePlugin: SuperPlugin, SuperLog {
     private init() {}
 
     func addToolBarTrailingView() -> AnyView {
-        AnyView(BtnOpenRemoteView())
+        AnyView(BtnOpenRemoteView.shared)
     }
 }

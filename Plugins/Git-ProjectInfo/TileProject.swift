@@ -11,6 +11,10 @@ struct TileProject: View, SuperLog, SuperThread {
     @State var isPresented = false
     @State var live = false
     
+    static let shared = TileProject()
+    
+    private init() {}
+    
     var project: Project? { data.project }
     var message: SmartMessage? { m.messages.first }
 

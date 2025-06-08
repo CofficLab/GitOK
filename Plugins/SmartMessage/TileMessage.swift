@@ -10,6 +10,10 @@ struct TileMessage: View, SuperLog, SuperThread {
     @State var selection: Set<SmartMessage.ID> = []
     @State var selectedChannel: String = "all"
     @State var messages: [SmartMessage] = []
+    
+    static var shared = TileMessage()
+    
+    private init() {}
 
     var firstFlashMessage: SmartMessage? { m.messages.first(where: { $0.shouldFlash }) }
 

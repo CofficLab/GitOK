@@ -11,6 +11,6 @@ class SyncPlugin: SuperPlugin, SuperLog {
     private init() {}
 
     func addToolBarTrailingView() -> AnyView {
-        AnyView(BtnSyncView())
+        AnyView(BtnSyncView.shared)
     }
 }

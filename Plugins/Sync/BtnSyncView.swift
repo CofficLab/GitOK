@@ -9,6 +9,10 @@ struct BtnSyncView: View, SuperLog, SuperEvent, SuperThread {
     @State var rotationAngle = 0.0
 
     var commitMessage = CommitCategory.auto
+    
+    static let shared = BtnSyncView()
+    
+    private init() {}
 
     var body: some View {
         if let project = data.project, project.isGit {

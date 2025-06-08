@@ -11,6 +11,6 @@ class OpenXcodePlugin: SuperPlugin, SuperLog {
     private init() {}
 
     func addToolBarTrailingView() -> AnyView {
-        AnyView(BtnOpenXcodeView())
+        AnyView(BtnOpenXcodeView.shared)
     }
 }

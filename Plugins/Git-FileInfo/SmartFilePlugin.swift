@@ -11,7 +11,7 @@ class SmartFilePlugin: SuperPlugin, SuperLog {
     private init() {}
     
     func addStatusBarLeadingView() -> AnyView {
-        AnyView(TileFile())
+        AnyView(TileFile.shared)
     }
 }
 
