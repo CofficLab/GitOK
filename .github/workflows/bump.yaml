@@ -20,6 +20,8 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
       - name: 安装依赖
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           curl -fsSL \
             --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' \

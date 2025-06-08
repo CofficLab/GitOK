@@ -28,6 +28,8 @@ jobs:
         with:
           fetch-depth: 0
       - name: 安装依赖
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           curl -fsSL \
             --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' \
@@ -60,18 +62,18 @@ jobs:
           echo "pp_path=$PP_PATH" >> $GITHUB_OUTPUT
           echo "api_key_path=$API_KEY_PATH" >> $GITHUB_OUTPUT
       - name: Build App
-        run: servon xcode build --scheme ${{ env.SCHEME }} 
+        run: servon xcode build --scheme ${{ env.SCHEME }} --arch arm64
       - name: Codesign App
         run: |
           servon xcode codesign --path ./temp/arm64/Build/Products/Release/${{ env.SCHEME }}.app \
             --identity ${{ steps.signing.outputs.signing_identity }} 
 
-          servon xcode codesign --path ./temp/x86_64/Build/Products/Release/${{ env.SCHEME }}.app \
-            --identity ${{ steps.signing.outputs.signing_identity }} 
+          # servon xcode codesign --path ./temp/x86_64/Build/Products/Release/${{ env.SCHEME }}.app \
+          #   --identity ${{ steps.signing.outputs.signing_identity }} 
       - name: Create DMG
         run: |
           servon xcode package --path ./temp/arm64/Build/Products/Release/${{ env.SCHEME }}.app
-          servon xcode package --path ./temp/x86_64/Build/Products/Release/${{ env.SCHEME }}.app
+          # servon xcode package --path ./temp/x86_64/Build/Products/Release/${{ env.SCHEME }}.app
       - name: Notary
         continue-on-error: true
         run: |
