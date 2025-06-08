@@ -59,17 +59,16 @@ jobs:
       - name: Build App
         run: servon xcode build --scheme ${{ env.SCHEME }} 
       - name: Codesign App
-        run: ./scripts/codesign-app.sh
-        env:
-          SCHEME: ${{ env.SCHEME }}
-          SIGNING_IDENTITY: ${{ steps.signing.outputs.signing_identity }}
-          BuildPath: ./temp/universal/Build/Products/Release
+        run: |
+          servon xcode codesign --path ./temp/arm64/Release/${{ env.SCHEME }}.app \
+            --identity ${{ steps.signing.outputs.signing_identity }} 
+
+          servon xcode codesign --path ./temp/x86_64/Release/${{ env.SCHEME }}.app \
+            --identity ${{ steps.signing.outputs.signing_identity }} 
       - name: Create DMG
-        run: ./scripts/create-dmg.sh
-        env:
-          SCHEME: ${{ env.SCHEME }}
-          BuildPath: ./temp/universal/Build/Products/Release
-          VERBOSE: true
+        run: |
+          servon xcode package --path ./temp/arm64/Release/${{ env.SCHEME }}.app
+          servon xcode package --path ./temp/x86_64/Release/${{ env.SCHEME }}.app
       - name: Notary
         continue-on-error: true
         run: |
