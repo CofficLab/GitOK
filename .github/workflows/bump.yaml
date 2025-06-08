@@ -20,6 +20,8 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
       - name: 安装依赖
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           curl -fsSL https://raw.githubusercontent.com/nookery/servon/main/install.sh | bash
       - name: 更新版本号
