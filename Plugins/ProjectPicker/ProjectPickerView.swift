@@ -1,18 +1,19 @@
 import MagicCore
+import OSLog
 import SwiftData
 import SwiftUI
-import OSLog
 
 struct ProjectPickerView: View, SuperLog {
     @EnvironmentObject var data: DataProvider
     @EnvironmentObject var app: AppProvider
 
     @State private var selection: Project?
-    
+
     static let emoji = "💺"
-    private let verbose = true
-    
-    init() {
+    static let shared = ProjectPickerView()
+    private let verbose = false
+
+    private init() {
         if verbose {
             os_log("\(Self.onInit)")
         }
@@ -29,13 +30,6 @@ struct ProjectPickerView: View, SuperLog {
                         Text(project.title).tag(project as Project?)
                     }
                 }
-                .onAppear {
-                    self.selection = data.project
-                    
-                    if verbose {
-                        os_log("\(self.t)OnAppear, app.sidebarVisibility=\(app.sidebarVisibility)")
-                    }
-                }
                 .onChange(of: selection) { _, newValue in
                     if let newProject = newValue, newValue != data.project {
                         data.setProject(newProject, reason: self.className)
@@ -46,26 +40,12 @@ struct ProjectPickerView: View, SuperLog {
                         self.selection = project
                     }
                 })
-            } else {
-//                EmptyView().onAppear {
-//                    os_log("\(self.t)OnAppear, app.sidebarVisibility=\(app.sidebarVisibility)")
-//                }
             }
         }
         .onAppear {
-            if verbose {
-                os_log("\(self.t)OnAppear, app.sidebarVisibility=\(app.sidebarVisibility)")
-            }
+            self.selection = data.project
         }
     }
-}
-
-#Preview {
-    RootView {
-        ProjectPickerView()
-    }
-    .frame(width: 300)
-    .frame(height: 100)
 }
 
 #Preview("APP") {

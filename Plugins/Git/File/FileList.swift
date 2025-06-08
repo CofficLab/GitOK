@@ -7,11 +7,11 @@ struct FileList: View, SuperThread, SuperLog {
     @EnvironmentObject var app: AppProvider
     @EnvironmentObject var m: MessageProvider
     @EnvironmentObject var data: DataProvider
-    
+
     @State var files: [File] = []
     @State var isLoading = false
     var verbose = false
-    
+
     var body: some View {
         VStack(spacing: 0) {
             // 文件信息栏
@@ -20,14 +20,14 @@ struct FileList: View, SuperThread, SuperLog {
                     Image(systemName: "doc.text")
                         .foregroundColor(.secondary)
                         .font(.system(size: 12))
-                    
+
                     Text("\(files.count) 个文件")
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
-                
+
                 Spacer()
-                
+
                 if isLoading {
                     HStack(spacing: 4) {
                         ProgressView()
@@ -47,7 +47,7 @@ struct FileList: View, SuperThread, SuperLog {
                     .foregroundColor(Color(NSColor.separatorColor)),
                 alignment: .bottom
             )
-            
+
             // 文件列表
             ScrollViewReader { scrollProxy in
                 List(files, id: \.self, selection: $data.file) {
@@ -63,9 +63,7 @@ struct FileList: View, SuperThread, SuperLog {
                 })
             }
         }
-        .task {
-            self.refresh(reason: "Task")
-        }
+        .onAppear(perform: onAppear)
         .onChange(of: data.commit, onCommitChange)
     }
 }
@@ -75,27 +73,32 @@ struct FileList: View, SuperThread, SuperLog {
 extension FileList {
     func refresh(reason: String) {
         self.isLoading = true
-        
+
         if verbose {
             os_log("\(self.t)Refresh\(reason)")
             self.m.append("Refresh(\(reason))")
         }
-        
+
         guard let commit = data.commit else {
+            self.isLoading = false
             return
         }
-        
+
         let files = commit.getFiles(reason: "FileList.Refresh")
-        
+
         self.files = files
         self.isLoading = false
-        data.file = self.files.first
+        self.data.file = self.files.first
     }
 }
 
 // MARK: - Event
 
 extension FileList {
+    func onAppear() {
+        self.refresh(reason: "Task")
+    }
+
     func onCommitChange() {
         self.refresh(reason: "OnDataChanged")
     }
@@ -119,4 +122,3 @@ extension FileList {
     .frame(width: 1200)
     .frame(height: 1200)
 }
-

@@ -265,8 +265,6 @@ extension DataProvider {
      * @throws Git操作异常
      */
     func setBranch(_ branch: Branch?) throws {
-        let verbose = false
-
         if verbose {
             os_log("\(self.t)Set Branch to \(branch?.name ?? "-")")
         }
@@ -279,7 +277,7 @@ extension DataProvider {
             return
         }
 
-        try GitShell.setBranch(branch, project.path, verbose: true)
+        try GitShell.setBranch(branch, project.path, verbose: verbose)
     }
 }
 
