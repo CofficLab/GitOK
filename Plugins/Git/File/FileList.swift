@@ -96,7 +96,7 @@ extension FileList {
 
 extension FileList {
     func onAppear() {
-        self.refresh(reason: "Task")
+        self.refresh(reason: "OnAppear")
     }
 
     func onCommitChange() {

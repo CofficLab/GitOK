@@ -176,37 +176,32 @@ extension CommitList {
 
         loading = true
 
-        bg.async {
-            do {
-                let newCommits = try GitShell.logsWithPagination(
-                    project.path,
-                    skip: currentPage * pageSize,
-                    limit: pageSize
-                )
+        do {
+            let newCommits = try GitShell.logsWithPagination(
+                project.path,
+                skip: currentPage * pageSize,
+                limit: pageSize
+            )
 
-                main.async {
-                    if !newCommits.isEmpty {
-                        commits.append(contentsOf: newCommits)
-                        currentPage += 1
+            if !newCommits.isEmpty {
+                commits.append(contentsOf: newCommits)
+                currentPage += 1
 
-                        // 检查是否找到目标commit
-                        if let matchedCommit = newCommits.first(where: { $0.hash == targetHash }) {
-                            // 选择找到的commit
-                            data.setCommit(matchedCommit)
-                        } else if hasMoreCommits {
-                            // 如果还没找到，继续加载更多
-                            loadMoreCommitsUntilFound(targetHash: targetHash, maxAttempts: maxAttempts - 1)
-                        }
-                    } else {
-                        hasMoreCommits = false
-                    }
-                    loading = false
+                // 检查是否找到目标commit
+                if let matchedCommit = newCommits.first(where: { $0.hash == targetHash }) {
+                    // 选择找到的commit
+                    data.setCommit(matchedCommit)
+                } else if hasMoreCommits {
+                    // 如果还没找到，继续加载更多
+                    loadMoreCommitsUntilFound(targetHash: targetHash, maxAttempts: maxAttempts - 1)
                 }
-            } catch {
-                main.async {
-                    loading = false
-                }
+            } else {
+                hasMoreCommits = false
             }
+            loading = false
+
+        } catch {
+            loading = false
         }
     }
 }
