@@ -35,6 +35,7 @@ class CommitPlugin: SuperPlugin, SuperLog {
 #Preview("APP") {
     RootView(content: {
         ContentLayout()
+            .hideTabPicker()
     })
     .frame(width: 800, height: 800)
 }

@@ -18,7 +18,14 @@ struct File {
     }
     
     func getContent() throws -> String {
-        try Shell().getFileContent(projectPath.appending("/").appending(name))
+        let fullPath = projectPath.appending("/").appending(name)
+        
+        // 先判断文件路径是否存在
+        if !FileManager.default.fileExists(atPath: fullPath) {
+            return ""
+        }
+        
+        return try Shell().getFileContent(fullPath)
     }
     
     func originalContentOfCommit(_ commit: GitCommit) -> String {
