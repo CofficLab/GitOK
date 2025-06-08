@@ -28,10 +28,11 @@ jobs:
         with:
           fetch-depth: 0
       - name: 安装依赖
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          curl -fsSL https://raw.githubusercontent.com/nookery/servon/main/install.sh | bash
+          curl -fsSL \
+            --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' \
+            --header 'user-agent: GitOK-Release-Workflow' \
+            https://raw.githubusercontent.com/nookery/servon/main/install.sh | bash
       - name: 获取最新 tag
         id: get_tag
         run: |
