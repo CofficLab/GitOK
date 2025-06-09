@@ -140,6 +140,7 @@ extension BranchesView {
     func onSelectionChange() {
         do {
             try data.setBranch(self.selection)
+            self.m.toast("已切换到分支 \(self.selection?.name ?? "")")
         } catch let e {
             self.m.setError(e)
         }
