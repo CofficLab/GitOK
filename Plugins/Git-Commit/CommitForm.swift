@@ -1,6 +1,8 @@
 import SwiftUI
+import OSLog
+import MagicCore
 
-struct CommitForm: View {
+struct CommitForm: View, SuperLog {
     @EnvironmentObject var app: AppProvider
     @EnvironmentObject var g: DataProvider
 
@@ -23,7 +25,7 @@ struct CommitForm: View {
             VStack(spacing: 0) {
                 HStack(spacing: 0) {
                     // 当前分支信息显示区域
-                    if let currentBranch = g.currentBranch {
+                    if let currentBranch = g.branch {
                         HStack {
                             Image(systemName: "arrow.branch")
                                 .foregroundColor(.secondary)
@@ -36,19 +38,18 @@ struct CommitForm: View {
                         }
                         .padding(.trailing, 12)
                     }
-                    
-                    CommitCategoryPicker(selection: $category, project: project)
-                        .onChange(of: category, {
-                            self.text = category.defaultMessage
+
+                    Picker("", selection: $category, content: {
+                        ForEach(CommitCategory.allCases, id: \.self, content: {
+                            Text($0.label).tag($0 as CommitCategory?)
                         })
+                    })
+                    .frame(width: 135)
+                    .pickerStyle(.automatic)
 
                     Spacer()
                     TextField("commit", text: $text)
                         .textFieldStyle(.roundedBorder)
-                        .onAppear {
-                            self.text = self.category.defaultMessage
-                            loadUserInfo(for: project.path)
-                        }
                         .padding(.vertical)
                 }
 
@@ -85,6 +86,14 @@ struct CommitForm: View {
             }
             .onReceive(NotificationCenter.default.publisher(for: .gitCommitSuccess)) { _ in
                 self.text = self.category.defaultMessage
+            }
+            .onChange(of: category, {
+                os_log("\(self.t)Cateogry changed to -> \(category.title)")
+                self.text = category.defaultMessage
+            })
+            .onAppear {
+                self.text = self.category.defaultMessage
+                loadUserInfo(for: project.path)
             }
         }
     }

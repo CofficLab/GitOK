@@ -14,6 +14,7 @@ class DataProvider: NSObject, ObservableObject, SuperLog {
     @Published var commit: GitCommit? = nil
     @Published private(set) var file: File? = nil
     @Published private(set) var projectExists = true
+    @Published private(set) var branch: Branch? = nil
 
     static let emoji = "🏠"
     private let verbose = false
@@ -186,28 +187,27 @@ extension DataProvider {
     }
 }
 
+// MARK: - Action
+
 extension DataProvider {
     /**
      * 获取当前分支
      * @return 当前分支，如果获取失败则返回nil
      */
-    var currentBranch: Branch? {
+    private func updateUurrentBranch() {
         guard let project = project else {
-            return nil
+            self.branch = nil
+            return
         }
 
         do {
-            return try GitShell.getCurrentBranch(project.path)
+            self.branch = try GitShell.getCurrentBranch(project.path)
         } catch _ {
-            return nil
+            self.branch = nil
         }
     }
-}
-
-// MARK: - Action
-
-extension DataProvider {
-    func checkIfProjectExists() {
+    
+    private func checkIfProjectExists() {
         if let newProject = self.project {
             self.projectExists = FileManager.default.fileExists(atPath: newProject.path)
         } else {
@@ -274,7 +274,7 @@ extension DataProvider {
             return
         }
 
-        if branch.name == currentBranch?.name {
+        if branch == self.branch {
             return
         }
 
@@ -293,13 +293,6 @@ extension DataProvider {
         NotificationCenter.default.publisher(for: .gitProjectDeleted)
             .sink { [weak self] notification in
                 self?.handleProjectDeleted(notification)
-            }
-            .store(in: &cancellables)
-
-        // 监听分支变更事件
-        NotificationCenter.default.publisher(for: .gitBranchChanged)
-            .sink { [weak self] notification in
-                self?.handleBranchChanged(notification)
             }
             .store(in: &cancellables)
 
@@ -323,16 +316,6 @@ extension DataProvider {
                 self?.handleGitOperationSuccess(notification)
             }
             .store(in: &cancellables)
-    }
-}
-
-// MARK: - Event Handler
-
-extension DataProvider {
-    /**
-     * 处理分支变更事件
-     */
-    private func handleBranchChanged(_ notification: Notification) {
     }
 
     /**

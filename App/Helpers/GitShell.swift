@@ -322,8 +322,6 @@ class GitShell {
     static func setBranch(_ b: Branch, _ path: String, verbose: Bool = false) throws -> String {
         let result = try run("checkout \(b.name) -q", path: path, verbose: verbose)
 
-        GitShell.emit(.gitBranchChanged, object: b.name)
-
         return result
     }
 
@@ -402,7 +400,6 @@ extension Notification.Name {
     static let gitCommitStart = Notification.Name("gitCommitStart")
     static let gitCommitSuccess = Notification.Name("gitCommitSuccess")
     static let gitCommitFailed = Notification.Name("gitCommitFailed")
-    static let gitBranchChanged = Notification.Name("gitBranchChanged")
     static let gitProjectDeleted = Notification.Name("gitProjectDeleted")
 }
 

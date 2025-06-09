@@ -21,6 +21,10 @@ enum CommitCategory: String, CaseIterable, Equatable {
     case FirstCommit
     case Release
     case Typo
+    
+    var label: String {
+        "\(emoji) \(title)"
+    }
 
     var emoji: String {
         switch self {
