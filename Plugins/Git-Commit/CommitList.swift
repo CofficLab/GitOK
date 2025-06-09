@@ -19,6 +19,8 @@ struct CommitList: View, SuperThread, SuperLog {
     // 使用GitCommitRepo来存储和恢复commit选择
     private let commitRepo = GitCommitRepo.shared
     private let verbose = false
+    
+    private init() {}
 
     var emoji = "🖥️"
 
