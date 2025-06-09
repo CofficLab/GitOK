@@ -18,7 +18,7 @@ class IconPlugin: SuperPlugin, SuperLog {
         }
     }
 
-    func addDetailView() -> AnyView {
+    func addDetailView() -> AnyView? {
         AnyView(DetailIcon())
     }
 }

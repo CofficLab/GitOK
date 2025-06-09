@@ -18,9 +18,9 @@ struct BtnPush: View {
             }
         })
         .disabled(isPushing)
-        .onReceive(NotificationCenter.default.publisher(for: .gitPushStart)) { _ in
+        .onNotification(.gitPushStart, perform: { _ in
             isPushing = true
-        }
+        })
         .onReceive(NotificationCenter.default.publisher(for: .gitPushSuccess)) { _ in
             isPushing = false
         }

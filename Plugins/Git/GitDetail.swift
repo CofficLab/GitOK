@@ -1,7 +1,7 @@
 import AppKit
 import MagicCore
-import SwiftUI
 import OSLog
+import SwiftUI
 
 struct GitDetail: View, SuperEvent, SuperLog {
     @EnvironmentObject var app: AppProvider
@@ -11,11 +11,11 @@ struct GitDetail: View, SuperEvent, SuperLog {
     @State var diffView: AnyView = AnyView(EmptyView())
     @State var file: File?
     @State private var isProjectClean: Bool = true
-    
+
     static let shared = GitDetail()
-    
+
     private var verbose = false
-    
+
     private init() {
         if verbose {
             os_log("\(Self.onInit)")
@@ -45,7 +45,7 @@ struct GitDetail: View, SuperEvent, SuperLog {
         .onAppear(perform: onAppear)
         .onChange(of: file, onFileChange)
         .onChange(of: data.project, onProjectChange)
-        .onReceive(nc.publisher(for: .gitCommitSuccess), perform: onGitCommitSuccess)
+        .onNotification(.gitCommitSuccess, perform: onGitCommitSuccess)
         .onNotification(.appWillBecomeActive, perform: onAppWillBecomeActive)
     }
 }
@@ -88,7 +88,7 @@ extension GitDetail {
         self.updateIsProjectClean()
         self.m.toast("已提交")
     }
-    
+
     func onAppWillBecomeActive(_ n: Notification) {
         self.updateIsProjectClean()
     }

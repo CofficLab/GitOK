@@ -28,7 +28,7 @@ struct CommitDetail: View, SuperEvent {
                     .layoutPriority(1)
 
                 if let file = data.file {
-                    FileDetail(file: file)
+                    FileDetail()
                 }
             }
         }
@@ -36,7 +36,7 @@ struct CommitDetail: View, SuperEvent {
         .padding(.vertical, 0)
         .background(background)
         .onChange(of: data.project) { self.onProjectChanged() }
-        .onReceive(nc.publisher(for: .appWillBecomeActive), perform: onAppWillBecomeActive)
+        .onNotification(.appWillBecomeActive, perform: onAppWillBecomeActive)
     }
 
     private var background: some View {

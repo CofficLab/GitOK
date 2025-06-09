@@ -6,11 +6,10 @@ class OpenTerminalPlugin: SuperPlugin, SuperLog {
     static let shared = OpenTerminalPlugin()
     let emoji = "⌨️"
     static var label: String = "OpenTerminal"
-    var isTab: Bool = false
-    
+
     private init() {}
 
-    func addToolBarTrailingView() -> AnyView {
+    func addToolBarTrailingView() -> AnyView? {
         AnyView(BtnOpenTerminalView())
     }
 }

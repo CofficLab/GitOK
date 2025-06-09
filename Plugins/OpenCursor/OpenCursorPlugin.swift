@@ -6,11 +6,11 @@ class OpenCursorPlugin: SuperPlugin, SuperLog {
     static let shared = OpenCursorPlugin()
     let emoji = "🖱️"
     static var label: String = "OpenCursor"
-    var isTab: Bool = false
+
     
     private init() {}
 
-    func addToolBarTrailingView() -> AnyView {
+    func addToolBarTrailingView() -> AnyView? {
         AnyView(BtnOpenCursorView.shared)
     }
 }

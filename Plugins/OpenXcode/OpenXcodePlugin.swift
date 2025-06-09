@@ -1,16 +1,15 @@
-import SwiftUI
 import MagicCore
 import OSLog
+import SwiftUI
 
 class OpenXcodePlugin: SuperPlugin, SuperLog {
     static let shared = OpenXcodePlugin()
     let emoji = "🛠️"
     static var label: String = "OpenXcode"
-    var isTab: Bool = false
-    
+
     private init() {}
 
-    func addToolBarTrailingView() -> AnyView {
+    func addToolBarTrailingView() -> AnyView? {
         AnyView(BtnOpenXcodeView.shared)
     }
 }

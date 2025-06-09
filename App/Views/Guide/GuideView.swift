@@ -57,6 +57,13 @@ struct GuideView: View {
                     .foregroundColor(.secondary)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal)
+                
+                if let branch = g.branch {
+                    Text("当前分支：\(branch.name)")
+                        .foregroundColor(.secondary)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal)
+                }
             }
 
             if let action = action, let actionLabel = actionLabel {

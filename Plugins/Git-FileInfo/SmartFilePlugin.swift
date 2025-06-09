@@ -5,12 +5,12 @@ import SwiftUI
 class SmartFilePlugin: SuperPlugin, SuperLog {
     let emoji = "📣"
     static var label: String = "SmartFile"
-    var isTab: Bool = false
+
     static let shared = SmartFilePlugin()
     
     private init() {}
     
-    func addStatusBarLeadingView() -> AnyView {
+    func addStatusBarLeadingView() -> AnyView? {
         AnyView(TileFile.shared)
     }
 }
