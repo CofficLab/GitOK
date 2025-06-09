@@ -7,7 +7,6 @@ struct BtnCommitAndPush: View, SuperLog, SuperThread {
 
     @State private var showAlert = false
     @State private var alertMessage = ""
-    @State private var isLoading = false
     @State private var showCredentialsAlert = false
     @State private var username = ""
     @State private var token = ""
@@ -24,9 +23,6 @@ struct BtnCommitAndPush: View, SuperLog, SuperThread {
             preventDoubleClick: true,
             loadingStyle: .spinner,
             asyncAction: {
-                os_log("\(self.t)CommitAndPush")
-                isLoading = true
-                try? await Task.sleep(nanoseconds: 1500000000)
                 do {
                     try checkAndPush()
                 } catch let error {
@@ -34,7 +30,6 @@ struct BtnCommitAndPush: View, SuperLog, SuperThread {
                         os_log(.error, "提交失败: \(error.localizedDescription)")
                         alertMessage = "提交失败: \(error.localizedDescription)"
                         showAlert = true
-                        isLoading = false
                     }
                 }
             })
@@ -50,7 +45,6 @@ struct BtnCommitAndPush: View, SuperLog, SuperThread {
                     SecureField("个人访问令牌", text: $token)
                     HStack {
                         Button("确定") {
-                            isLoading = true
                             showCredentialsAlert = false
                             DispatchQueue.global(qos: .userInitiated).async {
                                 do {
@@ -60,7 +54,6 @@ struct BtnCommitAndPush: View, SuperLog, SuperThread {
                                         os_log(.error, "提交失败: \(error.localizedDescription)")
                                         alertMessage = "提交失败: \(error.localizedDescription)"
                                         showAlert = true
-                                        isLoading = false
                                     }
                                 }
                             }
@@ -71,21 +64,6 @@ struct BtnCommitAndPush: View, SuperLog, SuperThread {
                     }
                 }
                 .padding()
-            }
-            .onReceive(NotificationCenter.default.publisher(for: .gitCommitStart)) { _ in
-                isLoading = true
-            }
-            .onReceive(NotificationCenter.default.publisher(for: .gitCommitSuccess)) { _ in
-                isLoading = true
-            }
-            .onReceive(NotificationCenter.default.publisher(for: .gitPushStart)) { _ in
-                isLoading = true
-            }
-            .onReceive(NotificationCenter.default.publisher(for: .gitPushSuccess)) { _ in
-                isLoading = false
-            }
-            .onReceive(NotificationCenter.default.publisher(for: .gitCommitFailed)) { _ in
-                isLoading = false
             }
     }
 
@@ -119,10 +97,6 @@ struct BtnCommitAndPush: View, SuperLog, SuperThread {
             try GitShell.add(repoPath)
             try GitShell.commit(repoPath, commit: commitMessage)
             try GitShell.push(repoPath, username: username, token: token)
-
-            self.main.async {
-                isLoading = false
-            }
         } catch {
             self.quitWithError(error)
         }
@@ -133,7 +107,6 @@ struct BtnCommitAndPush: View, SuperLog, SuperThread {
         self.main.async {
             alertMessage = "提交失败: \(error.localizedDescription)"
             showAlert = true
-            isLoading = false
         }
     }
 }
