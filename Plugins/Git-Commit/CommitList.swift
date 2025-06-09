@@ -120,7 +120,7 @@ struct CommitList: View, SuperThread, SuperLog {
 extension CommitList {
     func refresh(_ reason: String = "") {
         if verbose {
-            os_log("\(self.t)Refresh(\(reason))")
+            os_log("\(self.t)🍋 Refresh(\(reason))")
         }
         guard let project = data.project, !isRefreshing else { return }
 
@@ -226,15 +226,15 @@ extension CommitList {
     }
 
     func onPullSuccess(_ notification: Notification) {
-        self.refresh("\(self.t)GitPullSuccess")
+        self.refresh("GitPullSuccess")
     }
 
     func onPushSuccess(_ notification: Notification) {
-        self.refresh("\(self.t)GitPushSuccess")
+        self.refresh("GitPushSuccess")
     }
 
     func onAppWillBecomeActive(_ notification: Notification) {
-        self.refresh("\(self.t)AppWillBecomeActive")
+        self.refresh("AppWillBecomeActive")
     }
 }
 

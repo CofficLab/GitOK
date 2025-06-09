@@ -28,7 +28,7 @@ struct CommitDetail: View, SuperEvent {
                     .layoutPriority(1)
 
                 if let file = data.file {
-                    FileDetail(file: file)
+                    FileDetail()
                 }
             }
         }

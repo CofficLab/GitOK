@@ -1,69 +1,80 @@
-import MagicCore
-import SwiftUI
 import AppKit
+import MagicCore
 import OSLog
+import SwiftUI
 
 struct FileDetail: View, SuperLog, SuperEvent, SuperThread {
     @EnvironmentObject var m: MessageProvider
     @EnvironmentObject var data: DataProvider
-    
-    @State var view: MagicWebView?
-    @State var ready: Bool = false
-    
+
+    @State private var view: MagicWebView?
+    @State private var jsReady = false
+    @State private var viewReady = false
+
     static let emoji = "🌍"
 
-    var file: File
-    var debug: Bool = false
-    
     private var verbose = true
-    
-    init(file: File, debug: Bool = false) {
-        self.file = file
-        self.debug = debug
-    }
 
     var body: some View {
-        if let view = self.view {
-            VStack(spacing: 0) {
+        VStack(spacing: 0) {
+            if let file = data.file {
                 // 文件路径显示组件
                 HStack(spacing: 6) {
                     Image(systemName: "doc.text")
                         .foregroundColor(.secondary)
                         .font(.system(size: 12))
-                    
+
                     Text(file.projectPath + "/" + file.name)
                         .font(.caption)
                         .foregroundColor(.secondary)
                         .lineLimit(1)
                         .truncationMode(.middle)
-                    
+
                     Spacer()
                 }
                 .padding(.horizontal, 12)
                 .padding(.vertical, 8)
                 .background(Color(NSColor.textBackgroundColor))
-                
-                view
-                    .frame(maxWidth: .infinity)
-                    .frame(maxHeight: .infinity)
-                    .onChange(of: file, onFileChange)
-                    .onChange(of: data.commit, onCommitChange)
             }
-            .if(debug) { view in
-                view.border(Color.red, width: 1)
-            }
-        } else {
-            MagicLoading()
-                .onAppear {
-                    self.view = self.makeView()
+
+            if let view = self.view {
+                ZStack {
+                    // 必须加载，其内部JS才能加载
+                    view
+                        .frame(maxWidth: .infinity)
+                        .frame(maxHeight: .infinity)
+                        .opacity(self.jsReady && self.viewReady ? 1 : 0)
+
+                    if !self.jsReady || !self.viewReady {
+                        MagicLoading()
+                    }
                 }
+            } else {
+                MagicLoading()
+            }
         }
+        .onChange(of: data.file, onFileChange)
+        .onChange(of: data.commit, onCommitChange)
+        .onAppear {
+            withAnimation {
+                self.view = self.makeView()
+            }
+        }
+        .frame(maxHeight: .infinity)
+    }
+
+    func showFirstPage() {
+        os_log("\(self.t)Show First Page")
+        self.updateDiffView(reason: "ShowFirstPage")
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5, execute: {
+            self.viewReady = true
+        })
     }
 
     func updateDiffView(reason: String) {
         self.m.append("UpdateDiffView(\(reason))", channel: self.className)
-        
-        guard let commit = data.commit else {
+
+        guard let commit = data.commit, let file = data.file else {
             return
         }
 
@@ -82,7 +93,7 @@ struct FileDetail: View, SuperLog, SuperEvent, SuperThread {
         if verbose {
             os_log("\(self.t)🔨 MakeView")
         }
-        
+
         #if DEBUG && false
             let view = URL(string: "http://localhost:4173")!.makeWebView(
                 onJavaScriptError: { message, line, source in
@@ -103,7 +114,7 @@ struct FileDetail: View, SuperLog, SuperEvent, SuperThread {
                 .showLogView(true)
                 .verboseMode(true)
         #else
-        let view = WebConfig.htmlFile.makeWebView(
+            let view = WebConfig.htmlFile.makeWebView(
                 onJavaScriptError: { message, line, source in
                     print("检测到 JS 错误！") // 添加调试输出
                     MagicLogger.shared.error("JavaScript错误检测到：")
@@ -117,7 +128,6 @@ struct FileDetail: View, SuperLog, SuperEvent, SuperThread {
                     }
                     // 根据类型进行不同处理
                     if let stringMessage = message as? String, stringMessage == "ready" {
-                        self.ready = true
                         self.onJSReady()
                     }
                 }
@@ -142,8 +152,9 @@ extension FileDetail {
     }
 
     func onJSReady() {
-        self.m.append("JS Ready", channel: self.className)
-        updateDiffView(reason: "JS Ready")
+        os_log("\(self.t)JS Ready")
+        self.showFirstPage()
+        self.jsReady = true
     }
 }
 
@@ -168,30 +179,6 @@ extension FileDetail {
 
         self.view = view.evaluateJavaScript("window.api.setTextsWithObject(\(jsonString))")
     }
-
-    func setOriginal(_ s: String) {
-        guard let view = self.view else {
-            self.m.append("View is nil", channel: self.className)
-            return
-        }
-        self.view = view.evaluateJavaScript("window.api.setOriginal(`\(s)`)")
-    }
-
-    func setModified(_ s: String) {
-        guard let view = self.view else {
-            self.m.append("View is nil", channel: self.className)
-            return
-        }
-        self.view = view.evaluateJavaScript("window.api.setModified(`\(s)`)")
-    }
-
-    func getOriginal() {
-        guard let view = self.view else {
-            self.m.append("View is nil", channel: self.className)
-            return
-        }
-        self.view = view.evaluateJavaScript("window.api.original")
-    }
 }
 
 #Preview("Big Screen") {
@@ -202,24 +189,6 @@ extension FileDetail {
     }
     .frame(width: 1200)
     .frame(height: 1200)
-}
-
-// MARK: - View Extension
-
-/// 为View添加条件修饰符的扩展
-extension View {
-    /// 根据条件应用修饰符
-    /// - Parameters:
-    ///   - condition: 条件
-    ///   - transform: 当条件为true时应用的转换
-    /// - Returns: 转换后的视图
-    @ViewBuilder func `if`<Content: View>(_ condition: Bool, transform: (Self) -> Content) -> some View {
-        if condition {
-            transform(self)
-        } else {
-            self
-        }
-    }
 }
 
 #Preview("App-Big Screen") {
