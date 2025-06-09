@@ -18,7 +18,7 @@ class BannerPlugin: SuperPlugin, SuperLog {
         }
     }
 
-    func addDetailView() -> AnyView {
+    func addDetailView() -> AnyView? {
         AnyView(BannerDetail())
     }
 }

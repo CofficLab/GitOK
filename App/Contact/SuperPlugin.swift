@@ -18,10 +18,6 @@ protocol SuperPlugin {
     /// 指示插件是否作为主界面的标签页显示
     var isTab: Bool { get }
 
-    /// 返回插件的数据库视图
-    /// - Returns: 包装在 AnyView 中的数据库相关视图
-    func addDBView() -> AnyView
-
     /// 返回插件的列表视图
     /// - Parameters:
     ///   - tab: 标签页的名称
@@ -31,89 +27,61 @@ protocol SuperPlugin {
 
     /// 返回插件的详情视图
     /// - Returns: 包装在 AnyView 中的详情视图
-    func addDetailView() -> AnyView
+    func addDetailView() -> AnyView?
 
     /// 返回插件在工具栏前部区域的视图
     /// - Returns: 包装在 AnyView 中的工具栏前部视图
-    func addToolBarLeadingView() -> AnyView
+    func addToolBarLeadingView() -> AnyView?
 
     /// 返回插件在工具栏后部区域的视图
     /// - Returns: 包装在 AnyView 中的工具栏后部视图
-    func addToolBarTrailingView() -> AnyView
+    func addToolBarTrailingView() -> AnyView?
 
     /// 返回插件在状态栏前部区域的视图
     /// - Returns: 包装在 AnyView 中的状态栏前部视图
-    func addStatusBarLeadingView() -> AnyView
+    func addStatusBarLeadingView() -> AnyView?
 
     /// 返回插件在状态栏后部区域的视图
     /// - Returns: 包装在 AnyView 中的状态栏后部视图
-    func addStatusBarTrailingView() -> AnyView
-
-    /// 插件初始化时调用
-    /// - 在插件首次加载时执行必要的设置和初始化操作
-    func onInit() -> Void
-
-    /// 插件视图出现时调用
-    /// - 当插件的视图被添加到视图层次结构中时执行操作
-    func onAppear() -> Void
-
-    /// 插件视图消失时调用
-    /// - 当插件的视图从视图层次结构中移除时执行清理操作
-    func onDisappear() -> Void
-
-    /// 当项目发生变化时调用
-    /// - 当当前项目发生变化时执行相应的操作
-    func onProjectChange(project: Project?) -> Void
+    func addStatusBarTrailingView() -> AnyView?
 }
 
 /// SuperPlugin 协议的默认实现
 /// 提供了一些方法的空实现，使插件开发者只需实现他们关心的方法
 extension SuperPlugin {
+    var isTab: Bool { false }
+    
     /// 默认的实例标签实现，返回静态 label 属性的值
     var instanceLabel: String {
         return type(of: self).label
     }
     /// 默认的工具栏前部视图实现，返回空视图
-    func addToolBarLeadingView() -> AnyView {
-        AnyView(EmptyView())
+    func addToolBarLeadingView() -> AnyView? {
+        nil
     }
 
     /// 默认的工具栏后部视图实现，返回空视图
-    func addToolBarTrailingView() -> AnyView {
-        AnyView(EmptyView())
+    func addToolBarTrailingView() -> AnyView? {
+        nil
     }
 
     /// 默认的状态栏前部视图实现，返回空视图
-    func addStatusBarLeadingView() -> AnyView {
-        AnyView(EmptyView())
+    func addStatusBarLeadingView() -> AnyView? {
+        nil
     }
 
     /// 默认的状态栏后部视图实现，返回空视图
-    func addStatusBarTrailingView() -> AnyView {
-        AnyView(EmptyView())
+    func addStatusBarTrailingView() -> AnyView? {
+        nil
     }
 
     /// 默认的详情视图实现，返回空视图
-    func addDetailView() -> AnyView {
-        AnyView(EmptyView())
+    func addDetailView() -> AnyView? {
+        nil
     }
 
     /// 默认的列表视图实现，返回空
     func addListView(tab: String, project: Project?) -> AnyView? {
-        return nil
+        nil
     }
-
-    /// 默认的数据库视图实现，返回空视图
-    func addDBView() -> AnyView {
-        AnyView(EmptyView())
-    }
-
-    /// 插件初始化时的空实现
-    func onInit() {}
-
-    func onAppear() {}
-
-    func onDisappear() {}
-
-    func onProjectChange(project: Project?) {}
 }

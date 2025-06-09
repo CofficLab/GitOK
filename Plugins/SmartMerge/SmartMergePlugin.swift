@@ -6,11 +6,10 @@ class SmartMergePlugin: SuperPlugin, SuperLog {
     static let shared = SmartMergePlugin()
     let emoji = "📣"
     static var label: String = "SmartMerge"
-    var isTab: Bool = false
-    
+
     private init() {}
-    
-    func addStatusBarTrailingView() -> AnyView {
+
+    func addStatusBarTrailingView() -> AnyView? {
         AnyView(TileMerge.shared)
     }
 }

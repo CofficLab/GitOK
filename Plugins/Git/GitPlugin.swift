@@ -7,10 +7,10 @@ class GitPlugin: SuperPlugin, SuperLog {
     let emoji = "📣"
     static var label: String = "Git"
     var isTab: Bool = true
-    
+
     private init() {}
 
-    func addDetailView() -> AnyView {
+    func addDetailView() -> AnyView? {
         AnyView(GitDetail.shared)
     }
 }

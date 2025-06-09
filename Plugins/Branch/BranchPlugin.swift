@@ -1,16 +1,15 @@
-import SwiftUI
 import MagicCore
 import OSLog
+import SwiftUI
 
 class BranchPlugin: SuperPlugin, SuperLog {
     let emoji = "🌿"
     static let shared = BranchPlugin()
     static var label: String = "Branch"
-    var isTab: Bool = false
-    
+
     private init() {}
 
-    func addToolBarTrailingView() -> AnyView {
+    func addToolBarTrailingView() -> AnyView? {
         AnyView(BranchesView.shared)
     }
 }

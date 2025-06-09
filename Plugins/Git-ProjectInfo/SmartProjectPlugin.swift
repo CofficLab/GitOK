@@ -5,9 +5,9 @@ import SwiftUI
 class SmartProjectPlugin: SuperPlugin, SuperLog {
     let emoji = "📣"
     static var label: String = "SmartProject"
-    var isTab: Bool = false
+
     
-    func addStatusBarLeadingView() -> AnyView {
+    func addStatusBarLeadingView() -> AnyView? {
         AnyView(TileProject.shared)
     }
 }

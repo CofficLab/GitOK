@@ -9,7 +9,7 @@ class CommitPlugin: SuperPlugin, SuperLog {
     static let shared = CommitPlugin()
     static let emoji = "🍒"
     static let label: String = "Commit"
-    var isTab: Bool = false
+
     var verbose = false
     
     private init() {}

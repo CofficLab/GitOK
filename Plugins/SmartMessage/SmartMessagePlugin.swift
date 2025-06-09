@@ -5,12 +5,12 @@ import SwiftUI
 class SmartMessagePlugin: SuperPlugin, SuperLog {
     let emoji = "📣"
     static var label: String = "SmartMessage"
-    var isTab: Bool = false
+
     static let shared = SmartMessagePlugin()
-    
+
     private init() {}
-    
-    func addStatusBarTrailingView() -> AnyView {
+
+    func addStatusBarTrailingView() -> AnyView? {
         AnyView(TileMessage.shared)
     }
 }
@@ -34,4 +34,3 @@ class SmartMessagePlugin: SuperPlugin, SuperLog {
     .frame(width: 1200)
     .frame(height: 1200)
 }
-

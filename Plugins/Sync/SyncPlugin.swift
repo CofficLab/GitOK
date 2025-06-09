@@ -1,16 +1,15 @@
-import SwiftUI
 import MagicCore
 import OSLog
+import SwiftUI
 
 class SyncPlugin: SuperPlugin, SuperLog {
     static let shared = SyncPlugin()
     let emoji = "🔄"
     static var label: String = "Sync"
-    var isTab: Bool = false
-    
+
     private init() {}
 
-    func addToolBarTrailingView() -> AnyView {
+    func addToolBarTrailingView() -> AnyView? {
         AnyView(BtnSyncView.shared)
     }
 }

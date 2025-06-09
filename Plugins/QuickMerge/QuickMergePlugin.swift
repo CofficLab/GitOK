@@ -5,12 +5,12 @@ import SwiftUI
 class QuickMergePlugin: SuperPlugin, SuperLog {
     let emoji = "📣"
     static var label: String = "QuickMerge"
-    var isTab: Bool = false
+
     static let shared = QuickMergePlugin()
-    
+
     private init() {}
-    
-    func addStatusBarTrailingView() -> AnyView {
+
+    func addStatusBarTrailingView() -> AnyView? {
         AnyView(TileQuickMerge.shared)
     }
 }
