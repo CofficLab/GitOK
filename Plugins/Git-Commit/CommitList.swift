@@ -18,11 +18,11 @@ struct CommitList: View, SuperThread, SuperLog {
 
     // 使用GitCommitRepo来存储和恢复commit选择
     private let commitRepo = GitCommitRepo.shared
-    private let verbose = false
-    
+    private let verbose = true
+
     private init() {}
 
-    var emoji = "🖥️"
+    static var emoji = "🖥️"
 
     var body: some View {
         ZStack {
@@ -69,16 +69,15 @@ struct CommitList: View, SuperThread, SuperLog {
                         let rowHeight: CGFloat = 31
                         let visibleRows = Int(ceil(geometry.size.height / rowHeight))
                         pageSize = max(self.pageSize, visibleRows + 5)
-                        onAppear()
                     }
                 }
             }
         }
         .onAppear(perform: onAppear)
         .onChange(of: data.project, onProjectChange)
-        .onReceive(NotificationCenter.default.publisher(for: .gitCommitSuccess), perform: onCommitSuccess)
-        .onReceive(NotificationCenter.default.publisher(for: .gitPullSuccess), perform: onPullSuccess)
-        .onReceive(NotificationCenter.default.publisher(for: .gitPushSuccess), perform: onPushSuccess)
+        .onNotification(.gitCommitSuccess, perform: onCommitSuccess)
+        .onNotification(.gitPullSuccess, perform: onPullSuccess)
+        .onNotification(.gitPushSuccess, perform: onPushSuccess)
     }
 
     private func loadMoreCommits() {

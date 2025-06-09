@@ -14,13 +14,13 @@ struct BannerTile: View {
             .onAppear(perform: {
                 self.title = banner.title
             })
-            .onReceive(NotificationCenter.default.publisher(for: .bannerTitleChanged)) { notification in
+            .onNotification(.bannerTitleChanged, { notification in
                 if let title = notification.userInfo?["title"] as? String, let id = notification.userInfo?["id"] as? String {
                     if id == banner.id {
                         self.title = title
                     }
                 }
-            }
+            })
     }
 }
 

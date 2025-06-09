@@ -36,7 +36,7 @@ struct BranchesView: View, SuperThread, SuperLog, SuperEvent {
         }
         .onChange(of: data.project) { self.onProjectChanged() }
         .onChange(of: self.selection, onSelectionChange)
-        .onReceive(nc.publisher(for: .appWillBecomeActive), perform: onAppWillBecomeActive)
+        .onNotification(.appWillBecomeActive, perform: onAppWillBecomeActive)
         .onAppear(perform: onAppear)
     }
 }

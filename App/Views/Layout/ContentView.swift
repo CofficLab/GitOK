@@ -86,6 +86,7 @@ struct ContentView: View, SuperLog {
                             StatusBar()
                         }
                     }
+                    .frame(maxHeight: .infinity)
                 }
             }
         }
