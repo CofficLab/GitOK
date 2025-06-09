@@ -37,20 +37,18 @@ struct FileDetail: View, SuperLog, SuperEvent, SuperThread {
                 .background(Color(NSColor.textBackgroundColor))
             }
 
-            if let view = self.view {
-                ZStack {
+            ZStack {
+                if let view = self.view {
                     // 必须加载，其内部JS才能加载
                     view
                         .frame(maxWidth: .infinity)
                         .frame(maxHeight: .infinity)
                         .opacity(self.jsReady && self.viewReady ? 1 : 0)
-
-                    if !self.jsReady || !self.viewReady {
-                        MagicLoading()
-                    }
                 }
-            } else {
-                MagicLoading()
+
+                if !self.jsReady || !self.viewReady {
+                    MagicLoading()
+                }
             }
         }
         .onChange(of: data.file, onFileChange)
