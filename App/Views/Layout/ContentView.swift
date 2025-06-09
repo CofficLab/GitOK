@@ -21,6 +21,37 @@ struct ContentView: View, SuperLog {
     var defaultProjectActionsVisibility: Bool? = nil
     var defaultTabVisibility: Bool? = nil
 
+    // MARK: - Computed Properties for Performance Optimization
+
+    /// 缓存工具栏前导视图的插件和视图对
+    private var toolbarLeadingViews: [(plugin: SuperPlugin, view: AnyView)] {
+        p.plugins.compactMap { plugin in
+            if let view = plugin.addToolBarLeadingView() {
+                return (plugin, view)
+            }
+            return nil
+        }
+    }
+
+    /// 缓存工具栏后置视图的插件和视图对
+    private var toolbarTrailingViews: [(plugin: SuperPlugin, view: AnyView)] {
+        p.plugins.compactMap { plugin in
+            if let view = plugin.addToolBarTrailingView() {
+                return (plugin, view)
+            }
+            return nil
+        }
+    }
+
+    private var pluginListViews: [(plugin: SuperPlugin, view: AnyView)] {
+        p.plugins.compactMap { plugin in
+            if let view = plugin.addListView(tab: tab, project: g.project) {
+                return (plugin, view)
+            }
+            return nil
+        }
+    }
+
     var body: some View {
         NavigationSplitView(columnVisibility: $columnVisibility) {
             Projects()
@@ -39,10 +70,8 @@ struct ContentView: View, SuperLog {
             } else {
                 HSplitView {
                     VStack(spacing: 0) {
-                        ForEach(p.plugins.filter { plugin in
-                            plugin.addListView(tab: tab, project: g.project) != nil
-                        }, id: \.instanceLabel) { plugin in
-                            plugin.addListView(tab: tab, project: g.project)
+                        ForEach(pluginListViews, id: \.plugin.instanceLabel) { item in
+                            item.view
                         }
                     }
                     .frame(idealWidth: 200)
@@ -67,8 +96,8 @@ struct ContentView: View, SuperLog {
         .toolbarVisibility(toolbarVisibility ? .visible : .hidden)
         .toolbar(content: {
             ToolbarItem(placement: .navigation) {
-                ForEach(p.plugins, id: \.instanceLabel) { plugin in
-                    plugin.addToolBarLeadingView()
+                ForEach(toolbarLeadingViews, id: \.plugin.instanceLabel) { item in
+                    item.view
                 }
             }
 
@@ -86,8 +115,8 @@ struct ContentView: View, SuperLog {
 
             if g.project != nil, projectActionsVisibility {
                 ToolbarItemGroup(placement: .cancellationAction, content: {
-                    ForEach(p.plugins, id: \.instanceLabel) { plugin in
-                        plugin.addToolBarTrailingView()
+                    ForEach(toolbarTrailingViews, id: \.plugin.instanceLabel) { item in
+                        item.view
                     }
                 })
             }
@@ -104,7 +133,7 @@ extension ContentView {
 
         if let d = defaultColumnVisibility {
             self.columnVisibility = d
-            
+
             let sidebarVisibility = d == .detailOnly ? false : true
             app.setSidebarVisibility(sidebarVisibility, reason: "defaultColumnVisibility")
         } else {
