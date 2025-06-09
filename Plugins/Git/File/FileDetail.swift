@@ -1,16 +1,26 @@
 import MagicCore
 import SwiftUI
 import AppKit
+import OSLog
 
 struct FileDetail: View, SuperLog, SuperEvent, SuperThread {
     @EnvironmentObject var m: MessageProvider
     @EnvironmentObject var data: DataProvider
+    
+    @State var view: MagicWebView?
+    @State var ready: Bool = false
+    
+    static let emoji = "🌍"
 
     var file: File
-    @State var view: MagicWebView?
-    var verbose = false
     var debug: Bool = false
-    @State var ready: Bool = false
+    
+    private var verbose = true
+    
+    init(file: File, debug: Bool = false) {
+        self.file = file
+        self.debug = debug
+    }
 
     var body: some View {
         if let view = self.view {
@@ -69,6 +79,10 @@ struct FileDetail: View, SuperLog, SuperEvent, SuperThread {
     }
 
     func makeView() -> MagicWebView {
+        if verbose {
+            os_log("\(self.t)🔨 MakeView")
+        }
+        
         #if DEBUG && false
             let view = URL(string: "http://localhost:4173")!.makeWebView(
                 onJavaScriptError: { message, line, source in
@@ -99,7 +113,7 @@ struct FileDetail: View, SuperLog, SuperEvent, SuperThread {
                 },
                 onCustomMessage: { message in
                     if verbose {
-                        MagicLogger.shared.debug("收到消息: \(String(describing: message))")
+                        os_log("\(self.t)🍋 收到消息: \(String(describing: message))")
                     }
                     // 根据类型进行不同处理
                     if let stringMessage = message as? String, stringMessage == "ready" {
