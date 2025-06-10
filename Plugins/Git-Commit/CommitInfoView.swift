@@ -49,44 +49,44 @@ struct CommitInfoView: View {
                     }
                 }
 
-                Spacer()
-            }
+                // Hash 信息
+                if !commit.hash.isEmpty {
+                    HStack(spacing: 4) {
+                        Image(systemName: "number")
+                            .foregroundColor(.secondary)
+                            .font(.system(size: 12))
+                        Text(commit.hash.prefix(8))
+                            .font(.system(.caption, design: .monospaced))
+                            .foregroundColor(.secondary)
+                            .textSelection(.enabled)
 
-            // Hash 信息
-            if !commit.hash.isEmpty {
-                HStack(spacing: 4) {
-                    Image(systemName: "number")
-                        .foregroundColor(.secondary)
-                        .font(.system(size: 12))
-                    Text(commit.hash.prefix(8))
-                        .font(.system(.caption, design: .monospaced))
-                        .foregroundColor(.secondary)
-                        .textSelection(.enabled)
-
-                    // 复制按钮
-                    Button(action: {
-                        commit.hash.copy()
-                        withAnimation(.spring()) {
-                            isCopied = true
-                        }
-
-                        // 1.5秒后重置状态
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                        // 复制按钮
+                        Button(action: {
+                            commit.hash.copy()
                             withAnimation(.spring()) {
-                                isCopied = false
+                                isCopied = true
                             }
-                        }
-                    }) {
-                        Image(systemName: isCopied ? "checkmark.circle" : "doc.on.doc")
-                            .font(.system(size: 10))
-                            .foregroundColor(isCopied ? .green : .secondary)
-                            .scaleEffect(isCopied ? 1.2 : 1.0)
-                    }
-                    .buttonStyle(.plain)
-                    .help(isCopied ? "已复制" : "复制完整 Hash")
 
-                    Spacer()
+                            // 1.5秒后重置状态
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                                withAnimation(.spring()) {
+                                    isCopied = false
+                                }
+                            }
+                        }) {
+                            Image(systemName: isCopied ? "checkmark.circle" : "doc.on.doc")
+                                .font(.system(size: 10))
+                                .foregroundColor(isCopied ? .green : .secondary)
+                                .scaleEffect(isCopied ? 1.2 : 1.0)
+                        }
+                        .buttonStyle(.plain)
+                        .help(isCopied ? "已复制" : "复制完整 Hash")
+
+                        Spacer()
+                    }
                 }
+
+                Spacer()
             }
         }
     }

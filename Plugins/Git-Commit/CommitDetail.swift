@@ -19,7 +19,7 @@ struct CommitDetail: View, SuperEvent {
                 }
             }
             .padding(.horizontal, 16)
-            .padding(.vertical, 12)
+            .padding(.vertical, 8)
 
             HSplitView {
                 FileList()
@@ -27,9 +27,7 @@ struct CommitDetail: View, SuperEvent {
                     .frame(minWidth: 200, maxWidth: 300)
                     .layoutPriority(1)
 
-                if let file = data.file {
-                    FileDetail()
-                }
+                FileDetail()
             }
         }
         .padding(.horizontal, 0)

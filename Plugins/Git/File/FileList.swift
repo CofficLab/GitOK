@@ -91,6 +91,7 @@ extension FileList {
         self.files = files
         self.isLoading = false
         self.data.setFile(self.files.first)
+        self.selection = self.data.file
     }
 }
 
