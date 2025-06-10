@@ -1,4 +1,5 @@
 import SwiftUI
+import MagicCore
 
 struct BtnOpenXcodeView: View {
     @EnvironmentObject var g: DataProvider
@@ -9,18 +10,25 @@ struct BtnOpenXcodeView: View {
 
     var body: some View {
         if let project = g.project {
-            Button(action: {
-                if let xcodeURL = NSWorkspace.shared.urlForApplication(toOpen: URL(fileURLWithPath: "/Applications/Xcode.app")) {
-                    NSWorkspace.shared.open([project.url], withApplicationAt: xcodeURL, configuration: NSWorkspace.OpenConfiguration(), completionHandler: nil)
-                }
-            }, label: {
-                Label(
-                    title: { Text("用Xcode打开") },
-                    icon: {
-                        Image("Xcode").resizable().scaledToFit().scaleEffect(0.85)
-                    }
-                )
-            })
+            project.url.makeOpenInButton(.xcode).magicShapeVisibility(.onHover)
         }
     }
+}
+
+#Preview("App - Small Screen") {
+    RootView {
+        ContentLayout()
+            .hideSidebar()
+            .hideProjectActions()
+    }
+    .frame(width: 600)
+    .frame(height: 600)
+}
+
+#Preview("App-Big Screen") {
+    RootView {
+        ContentLayout()
+    }
+    .frame(width: 1200)
+    .frame(height: 1200)
 }

@@ -2,30 +2,59 @@ import SwiftUI
 
 struct BtnOpenRemoteView: View {
     @EnvironmentObject var g: DataProvider
+    @State private var remoteURL: URL?
+    @State private var isLoading = false
     
-    static let shared = BtnOpenRemoteView()
+     static let shared = BtnOpenRemoteView()
+     
+     private init() {}
     
-    private init() {}
-
     var body: some View {
-        if let url = getURL() {
-            url.makeOpenButton().magicShapeVisibility(.onHover).magicShape(.roundedSquare)
+        ZStack {
+            if let url = remoteURL {
+                url.makeOpenButton().magicShapeVisibility(.onHover)
+            } else if isLoading {
+                // 添加加载指示器或占位符
+                Color.clear.frame(width: 24, height: 24)
+            } else {
+                // 空状态占位符，确保视图始终有内容
+                Color.clear.frame(width: 24, height: 24)
+            }
+        }
+        .onAppear {
+            updateRemoteURL()
+        }
+        .onChange(of: g.project) {
+            updateRemoteURL()
         }
     }
     
-    private func getURL() -> URL? {
+    func updateRemoteURL() {
         guard let project = g.project, project.isGit else {
-            return nil
+            remoteURL = nil
+            return
         }
         
-        var remote = GitShell.getRemote(project.path).trimmingCharacters(in: .whitespacesAndNewlines)
-
-        if remote.hasPrefix("git@") {
-            remote = remote.replacingOccurrences(of: ":", with: "/")
-            remote = remote.replacingOccurrences(of: "git@", with: "https://")
+        isLoading = true
+        
+        DispatchQueue.global(qos: .userInitiated).async {
+            let remote = GitShell.getRemote(project.path).trimmingCharacters(in: .whitespacesAndNewlines)
+            
+            var formattedRemote = remote
+            if formattedRemote.hasPrefix("git@") {
+                formattedRemote = formattedRemote.replacingOccurrences(of: ":", with: "/")
+                formattedRemote = formattedRemote.replacingOccurrences(of: "git@", with: "https://")
+            }
+            
+            DispatchQueue.main.async {
+                if !formattedRemote.isEmpty {
+                    remoteURL = URL(string: formattedRemote)
+                } else {
+                    remoteURL = nil
+                }
+                isLoading = false
+            }
         }
-
-        return URL(string: remote)
     }
 }
 
@@ -46,4 +75,3 @@ struct BtnOpenRemoteView: View {
     .frame(width: 1200)
     .frame(height: 1200)
 }
-
