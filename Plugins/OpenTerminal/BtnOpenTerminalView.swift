@@ -5,20 +5,25 @@ struct BtnOpenTerminalView: View {
 
     var body: some View {
         if let project = g.project {
-            Button(action: {
-                guard
-                    let appUrl = NSWorkspace.shared.urlForApplication(withBundleIdentifier: "com.apple.Terminal")
-                else { return }
-
-                NSWorkspace.shared.open([project.url], withApplicationAt: appUrl, configuration: NSWorkspace.OpenConfiguration())
-            }, label: {
-                Label(
-                    title: { Text("用终端打开") },
-                    icon: {
-                        Image(systemName: "apple.terminal")
-                    }
-                )
-            })
+            project.url.makeOpenInButton(.terminal).magicShapeVisibility(.onHover)
         }
     }
+}
+
+#Preview("App - Small Screen") {
+    RootView {
+        ContentLayout()
+            .hideSidebar()
+            .hideProjectActions()
+    }
+    .frame(width: 600)
+    .frame(height: 600)
+}
+
+#Preview("App-Big Screen") {
+    RootView {
+        ContentLayout()
+    }
+    .frame(width: 1200)
+    .frame(height: 1200)
 }

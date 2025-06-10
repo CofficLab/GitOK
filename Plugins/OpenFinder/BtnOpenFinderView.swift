@@ -9,7 +9,7 @@ struct BtnOpenFinderView: View {
 
     var body: some View {
         if let project = g.project {
-            project.url.makeOpenButton().magicShape(.roundedRectangle).magicShapeVisibility(.onHover)
+            project.url.makeOpenButton().magicShapeVisibility(.onHover)
         }
     }
 }

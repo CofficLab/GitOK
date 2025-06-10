@@ -35,14 +35,15 @@ final class RootBox: SuperLog {
             GitPlugin.shared,
             BannerPlugin.shared,
             IconPlugin.shared,
-     
-            OpenXcodePlugin.shared,
-            OpenVSCodePlugin.shared,
+    
             OpenCursorPlugin.shared,
             OpenTraePlugin.shared,
+            OpenXcodePlugin.shared,
+            OpenVSCodePlugin.shared,
             OpenFinderPlugin.shared,
             OpenTerminalPlugin.shared,
             OpenRemotePlugin.shared,
+            
             SyncPlugin.shared,
             BranchPlugin.shared,
             CommitPlugin.shared,
