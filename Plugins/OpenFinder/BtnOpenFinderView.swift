@@ -9,14 +9,25 @@ struct BtnOpenFinderView: View {
 
     var body: some View {
         if let project = g.project {
-            Button(action: {
-                NSWorkspace.shared.open(project.url)
-            }, label: {
-                Label(
-                    title: { Text("用Finder打开") },
-                    icon: { Image(systemName: "folder") }
-                )
-            })
+            project.url.makeOpenButton().magicShape(.roundedRectangle).magicShapeVisibility(.onHover)
         }
     }
+}
+
+#Preview("App - Small Screen") {
+    RootView {
+        ContentLayout()
+            .hideSidebar()
+            .hideProjectActions()
+    }
+    .frame(width: 600)
+    .frame(height: 600)
+}
+
+#Preview("App-Big Screen") {
+    RootView {
+        ContentLayout()
+    }
+    .frame(width: 1200)
+    .frame(height: 1200)
 }
