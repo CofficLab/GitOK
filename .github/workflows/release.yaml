@@ -118,7 +118,7 @@ jobs:
           sed -i '' "s|\(enclosure url=\"\)[^\"]*|\1$u|" "appcast.xml"
           mv appcast.xml ../appcast.xml
       - name: 发布 Release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ env.TAG }}
           prerelease: ${{ env.IS_PRERELEASE }}
