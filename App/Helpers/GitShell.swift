@@ -345,12 +345,12 @@ class GitShell {
         }
     }
     
-    static func getUserName(_ path: String) throws -> String {
-        try run("config user.name", path: path, verbose: false).trimmingCharacters(in: .whitespacesAndNewlines)
+    static func getUserName(_ path: String, verbose: Bool = false) throws -> String {
+        try run("config user.name", path: path, verbose: verbose).trimmingCharacters(in: .whitespacesAndNewlines)
     }
     
-    static func getUserEmail(_ path: String) throws -> String {
-        try run("config user.email", path: path, verbose: false).trimmingCharacters(in: .whitespacesAndNewlines)
+    static func getUserEmail(_ path: String, verbose: Bool = false) throws -> String {
+        try run("config user.email", path: path, verbose: verbose).trimmingCharacters(in: .whitespacesAndNewlines)
     }
 }
 
