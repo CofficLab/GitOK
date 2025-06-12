@@ -2,14 +2,14 @@ import MagicCore
 import SwiftUI
 
 struct FileTile: View {
-    var file: File
+    var file: GitDiffFile
 
     @State var isPresented: Bool = false
 
     var body: some View {
         HStack {
 //            image
-            Text(file.name)
+            Text(file.file)
                 .font(.footnote)
                 .foregroundStyle(getColor())
             Spacer()
@@ -17,24 +17,28 @@ struct FileTile: View {
     }
 
     var image: some View {
-        switch file.type {
-        case .modified:
+        switch file.changeType {
+        case "M":
             Image(systemName: "square.and.pencil")
-        case .add:
+        case "A":
             Image(systemName: "plus.square")
-        case .delete:
+        case "D":
+            Image(systemName: "trash.square")
+        default:
             Image(systemName: "trash.square")
         }
     }
 
     func getColor() -> Color {
-        switch file.type {
-        case .modified:
+        switch file.changeType {
+        case "M":
             Color.orange
-        case .add:
+        case "A":
             Color.green
-        case .delete:
+        case "D":
             Color.red
+        default:
+            Color.gray
         }
     }
 }

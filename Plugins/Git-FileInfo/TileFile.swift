@@ -15,14 +15,14 @@ struct TileFile: View, SuperLog, SuperThread {
     
     private init() {}
     
-    var file: File? { data.file }
+    var file: GitDiffFile? { data.file }
     var message: SmartMessage? { m.messages.first }
 
     var body: some View {
         if let file = file {
             HStack {
                 Image(systemName: "doc.text").padding(.leading)
-                Text(file.name).font(.footnote)
+                Text(file.file).font(.footnote)
             }
             .onHover(perform: { hovering in
                 hovered = hovering

@@ -8,9 +8,9 @@ struct FileList: View, SuperThread, SuperLog {
     @EnvironmentObject var m: MessageProvider
     @EnvironmentObject var data: DataProvider
 
-    @State var files: [File] = []
+    @State var files: [GitDiffFile] = []
     @State var isLoading = false
-    @State var selection: File?
+    @State var selection: GitDiffFile?
     var verbose = false
 
     var body: some View {

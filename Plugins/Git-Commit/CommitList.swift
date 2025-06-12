@@ -134,7 +134,7 @@ extension CommitList {
                 0, limit: self.pageSize
             )
 
-            commits = [project.headCommit] + initialCommits
+            commits = initialCommits
             loading = false
             isRefreshing = false
             currentPage = 1

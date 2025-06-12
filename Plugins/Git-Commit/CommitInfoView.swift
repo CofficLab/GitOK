@@ -1,4 +1,5 @@
 import SwiftUI
+import MagicCore
 
 /**
  * 展示 Commit 信息的视图组件
@@ -12,8 +13,8 @@ struct CommitInfoView: View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
                 // Commit 图标
-                Image(systemName: commit.isHead ? "circle.fill" : "smallcircle.filled.circle")
-                    .foregroundColor(commit.isHead ? .green : .blue)
+                Image(systemName: "smallcircle.filled.circle")
+                    .foregroundColor(.blue)
                     .font(.system(size: 12))
 
                 // Commit 消息

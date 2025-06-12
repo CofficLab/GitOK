@@ -28,9 +28,9 @@ final class Project {
         url.path
     }
 
-    var headCommit: GitCommit {
-        GitCommit.headFor(path)
-    }
+//    var headCommit: GitCommit {
+//        GitCommit()
+//    }
 
     var isGit: Bool {
         ShellGit.isGitRepository(at: path)
@@ -59,23 +59,13 @@ final class Project {
         }
 
         do {
-            return (try ShellGit.logArray(limit: 10, oneline: false, at: self.path)).map({
-                GitCommit.fromShellLine($0, path: self.path)
-            })
+            return (try ShellGit.commitList(limit: 10, at: self.path))
         } catch let error {
             os_log(.error, "\(self.label)GetCommits has error")
             os_log(.error, "\(error)")
 
             return []
         }
-    }
-
-    func getCommitsWithHead(_ reason: String) -> [GitCommit] {
-        if Self.verbose {
-            os_log("\(self.label)GetCommitWithHead with reason->\(reason)")
-        }
-
-        return [self.headCommit] + getCommits(reason)
     }
 
     func hasUnCommittedChanges() throws -> Bool {
@@ -143,9 +133,7 @@ extension Project {
 
 extension Project {
     func getUnPushedCommits() throws -> [GitCommit] {
-        (try ShellGit.unpushedCommits(remote: "origin", branch: nil, at: self.path)).map({
-            GitCommit.fromShellLine($0, path: self.path)
-        })
+        try ShellGit.unpushedCommitList(remote: "origin", branch: nil, at: self.path)
     }
 
     func submit(_ message: String) throws {
@@ -153,9 +141,7 @@ extension Project {
     }
 
     func getCommitsWithPagination(_ page: Int, limit: Int) throws -> [GitCommit] {
-        (try ShellGit.logsWithPagination(page: page, size: limit, oneline: false, at: self.path)).map({
-            GitCommit.fromShellLine($0, path: self.path)
-        })
+        try ShellGit.commitListWithPagination(page: page, size: limit, at: self.path)
     }
 }
 

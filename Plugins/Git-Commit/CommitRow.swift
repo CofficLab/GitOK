@@ -83,11 +83,6 @@ struct CommitRow: View, SuperThread {
 
     /// 异步加载commit的tag信息
     private func loadTag() {
-        // 如果是HEAD，不需要加载tag
-        if commit.isHead {
-            return
-        }
-
         do {
             let tagResult = try commit.getTag()
 

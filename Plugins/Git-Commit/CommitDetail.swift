@@ -11,11 +11,7 @@ struct CommitDetail: View, SuperEvent {
         VStack(alignment: .leading, spacing: 8) {
             Group {
                 if let commit = data.commit {
-                    if !commit.isHead {
-                        CommitInfoView(commit: commit)
-                    } else {
-                        CommitForm()
-                    }
+                    CommitInfoView(commit: commit)
                 }
             }
             .padding(.horizontal, 16)
@@ -38,13 +34,7 @@ struct CommitDetail: View, SuperEvent {
     }
 
     private var background: some View {
-        ZStack {
-            if let commit = data.commit, commit.isHead {
-                MagicBackground.blueberry.opacity(0.12)
-            } else {
-                MagicBackground.orange.opacity(0.15)
-            }
-        }
+        MagicBackground.orange.opacity(0.15)
     }
 }
 

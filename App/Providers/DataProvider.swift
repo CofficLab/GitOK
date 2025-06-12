@@ -12,7 +12,7 @@ class DataProvider: NSObject, ObservableObject, SuperLog {
     @Published private(set) var project: Project? = nil
     @Published var projects: [Project] = []
     @Published var commit: GitCommit? = nil
-    @Published private(set) var file: File? = nil
+    @Published private(set) var file: GitDiffFile? = nil
     @Published private(set) var projectExists = true
     @Published private(set) var branch: Branch? = nil
 
@@ -219,7 +219,7 @@ extension DataProvider {
      * 设置当前选中的文件
      * @param f 要设置的文件
      */
-    func setFile(_ f: File?) {
+    func setFile(_ f: GitDiffFile?) {
         if f == self.file { return }
         file = f
     }

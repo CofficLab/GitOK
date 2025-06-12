@@ -9,7 +9,7 @@ struct GitDetail: View, SuperEvent, SuperLog {
     @EnvironmentObject var m: MessageProvider
 
     @State var diffView: AnyView = AnyView(EmptyView())
-    @State var file: File?
+    @State var file: GitDiffFile?
     @State private var isProjectClean: Bool = true
 
     static let shared = GitDetail()
@@ -28,11 +28,11 @@ struct GitDetail: View, SuperEvent, SuperLog {
                 if project.isGit {
                     if let commit = data.commit {
                         Group {
-                            if commit.isHead && isProjectClean {
-                                NoLocalChanges()
-                            } else {
+//                            if commit.isHead && isProjectClean {
+//                                NoLocalChanges()
+//                            } else {
                                 CommitDetail()
-                            }
+//                            }
                         }
                     } else {
                         NoCommit()

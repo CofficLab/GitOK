@@ -31,8 +31,6 @@ class GitCommitRepo: GitCommitRepoProtocol, SuperLog {
             "message": commit.message,
             "author": commit.author,
             "date": commit.date.timeIntervalSince1970, // 保存为时间戳
-            "path": commit.path,
-            "isHead": commit.isHead,
         ]
     
         userDefaults.set(commitData, forKey: key)
@@ -61,14 +59,7 @@ class GitCommitRepo: GitCommitRepoProtocol, SuperLog {
         let isHead = (commitData["isHead"] as? Bool) ?? false
         let date = Date(timeIntervalSince1970: dateTimestamp)
     
-        return GitCommit(
-            isHead: isHead,
-            path: path,
-            hash: hash,
-            message: message,
-            author: author,
-            date: date
-        )
+        return nil
     }
 
     /// 清除项目的最后选择的commit
