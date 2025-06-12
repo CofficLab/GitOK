@@ -68,38 +68,19 @@ struct BtnCommitAndPush: View, SuperLog, SuperThread {
     }
 
     private func checkAndPush() throws {
-        let verbose = true
+        guard let project = g.project else {
+            return
+        }
 
-//        do {
-//            let helper = try GitShell.getCredentialHelper(repoPath)
-//            if verbose {
-//                os_log("\(self.t)Get credential helper: \(helper)")
-//            }
-//        } catch {
-//            os_log(.error, "\(error.localizedDescription)")
-//
-//            throw error
-//        }
-//
-//        // 检查HTTPS凭据
-//        let commit = GitCommit.headFor(repoPath)
-//        if !commit.checkHttpsCredentials() {
-//            self.main.async {
-//                alertMessage = "HTTPS 凭据未配置，请输入凭据。"
-//                showAlert = true
-//            }
-//
-//            throw GitError.credentialsNotConfigured
-//        }
-//
-//        os_log("\(self.t)Commit")
-//        do {
-//            try GitShell.add(repoPath)
-//            try GitShell.commit(repoPath, commit: commitMessage)
-//            try GitShell.push(repoPath, username: username, token: token)
-//        } catch {
-//            self.quitWithError(error)
-//        }
+
+        os_log("\(self.t)Commit")
+        do {
+            try project.addAll()
+            try project.submit(commitMessage)
+            try project.push()
+        } catch {
+            self.quitWithError(error)
+        }
     }
 
     private func quitWithError(_ error: Error) {

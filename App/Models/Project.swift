@@ -107,7 +107,7 @@ extension Project: Identifiable {
 
 extension Project {
     func getCurrentBranch() throws -> GitBranch? {
-        try ShellGit.currentBranchInfo()
+        try ShellGit.currentBranchInfo(at: self.path)
     }
 
     func setCurrentBranch(_ branch: GitBranch) throws {
@@ -116,6 +116,14 @@ extension Project {
 
     func getBranches() throws -> [GitBranch] {
         try ShellGit.branchList(at: self.path)
+    }
+}
+
+// MARK: - Add
+
+extension Project {
+    func addAll() throws {
+        try ShellGit.add([], at: self.path)
     }
 }
 
@@ -139,7 +147,7 @@ extension Project {
     }
 
     func submit(_ message: String) throws {
-        try ShellGit.commit(message, at: self.path)
+        try ShellGit.commit(message: message, at: self.path)
     }
 
     func getCommitsWithPagination(_ page: Int, limit: Int) throws -> [GitCommit] {
