@@ -128,9 +128,9 @@ extension BranchesView {
     func onSelectionChange() {
         do {
             try data.setBranch(self.selection)
-            self.m.toast("已切换到分支 \(self.selection?.name ?? "")")
+            // 成功消息会通过Project的事件系统自动显示，这里不需要重复显示
         } catch let e {
-            self.m.setError(e)
+            m.errorWithLog(e, channel: "🌿 branch")
         }
     }
 }

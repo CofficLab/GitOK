@@ -27,13 +27,21 @@ struct BtnCommitAndPush: View, SuperLog, SuperThread {
         }
 
         os_log("\(self.t)Commit")
+        
+        // 显示加载状态
+        m.showLoading("正在提交并推送...")
+        
         do {
             try project.addAll()
             try project.submit(commitMessage)
             try project.push()
-            self.m.toast("已提交并推送")
+            
+            // 隐藏加载状态 - 成功消息会通过Project的事件系统自动显示
+            m.hideLoading()
         } catch {
-            self.m.error(error)
+            // 隐藏加载状态并显示错误
+            m.hideLoading()
+            m.errorWithLog(error, channel: "🌳 git")
         }
     }
 }

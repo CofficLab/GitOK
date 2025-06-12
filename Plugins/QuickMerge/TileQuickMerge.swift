@@ -23,8 +23,7 @@ struct TileQuickMerge: View, SuperLog, SuperThread {
         })
         .onTapGesture {
             merge()
-            self.m.toast("已合并到主分支")
-            self.m.append("已合并到主分支", channel: "🌳 git")
+            self.m.successWithLog("已合并到主分支", channel: "🌳 git")
         }
         .padding(.vertical, 6)
         .padding(.horizontal, 8)

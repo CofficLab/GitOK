@@ -52,19 +52,26 @@ struct BtnSyncView: View, SuperLog, SuperEvent, SuperThread {
             working = true
         }
 
+        // 显示加载状态
+        m.showLoading("正在同步...")
+
         do {
             try self.data.project?.sync()
-
+            
+            // 隐藏加载状态 - 成功消息会通过Project的事件系统自动显示
+            m.hideLoading()
             self.reset()
         } catch let error {
+            // 隐藏加载状态并显示错误
+            m.hideLoading()
             self.reset()
-            m.alert("同步出错", info: error.localizedDescription)
+            m.errorWithLog(error, channel: "🔄 sync")
         }
     }
 
     func alert(error: Error) {
         self.main.async {
-            m.alert("同步出错", info: error.localizedDescription)
+            m.errorWithLog(error, channel: "🔄 sync")
         }
     }
 

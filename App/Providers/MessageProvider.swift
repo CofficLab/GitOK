@@ -20,6 +20,9 @@ class MessageProvider: ObservableObject, SuperLog, SuperThread, SuperEvent {
     @Published var showToast = false
     @Published var showAlert = false
 
+    // 新的Toast管理器
+    private let toastManager = ToastManager.shared
+
     init() {
         let verbose = false
         if verbose {
@@ -52,6 +55,7 @@ class MessageProvider: ObservableObject, SuperLog, SuperThread, SuperEvent {
         }
     }
 
+    // MARK: - 旧版本兼容方法（保持不变以维持兼容性）
     func alert(_ message: String, verbose: Bool = false) {
         if !Thread.isMainThread {
             assertionFailure("alert called from background thread")
@@ -139,6 +143,84 @@ class MessageProvider: ObservableObject, SuperLog, SuperThread, SuperEvent {
 
         self.toast = toast
         self.showToast = true
+    }
+
+    // MARK: - 新版本Toast方法
+    
+    /// 显示信息提示
+    func showInfo(_ title: String, subtitle: String? = nil, duration: TimeInterval = 3.0) {
+        toastManager.info(title, subtitle: subtitle, duration: duration)
+    }
+    
+    /// 显示成功提示
+    func showSuccess(_ title: String, subtitle: String? = nil, duration: TimeInterval = 3.0) {
+        toastManager.success(title, subtitle: subtitle, duration: duration)
+    }
+    
+    /// 显示警告提示
+    func showWarning(_ title: String, subtitle: String? = nil, duration: TimeInterval = 4.0) {
+        toastManager.warning(title, subtitle: subtitle, duration: duration)
+    }
+    
+    /// 显示错误提示
+    func showError(_ title: String, subtitle: String? = nil, autoDismiss: Bool = false) {
+        toastManager.error(title, subtitle: subtitle, autoDismiss: autoDismiss)
+    }
+    
+    /// 显示加载中提示
+    func showLoading(_ title: String, subtitle: String? = nil) {
+        toastManager.loading(title, subtitle: subtitle)
+    }
+    
+    /// 隐藏加载中提示
+    func hideLoading() {
+        toastManager.dismissLoading()
+    }
+    
+    /// 显示自定义提示
+    func showCustom(
+        systemImage: String,
+        color: Color,
+        title: String,
+        subtitle: String? = nil,
+        displayMode: ToastDisplayMode = .overlay,
+        duration: TimeInterval = 3.0
+    ) {
+        toastManager.custom(
+            systemImage: systemImage,
+            color: color,
+            title: title,
+            subtitle: subtitle,
+            displayMode: displayMode,
+            duration: duration
+        )
+    }
+    
+    /// 隐藏所有Toast
+    func dismissAllToasts() {
+        toastManager.dismissAll()
+    }
+    
+    // MARK: - 便捷方法，自动记录到消息列表
+    
+    /// 显示成功并记录消息
+    func successWithLog(_ title: String, channel: String = "default") {
+        showSuccess(title)
+        append(title, channel: channel)
+    }
+    
+    /// 显示错误并记录消息
+    func errorWithLog(_ error: Error, channel: String = "default") {
+        let title = "操作失败"
+        let subtitle = error.localizedDescription
+        showError(title, subtitle: subtitle)
+        append("\(title): \(subtitle)", channel: channel, isError: true)
+    }
+    
+    /// 显示信息并记录消息
+    func infoWithLog(_ title: String, channel: String = "default") {
+        showInfo(title)
+        append(title, channel: channel)
     }
 }
 
