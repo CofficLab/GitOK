@@ -17,7 +17,7 @@ struct GitCommit: SuperLog {
     var author: String = ""
     var date: Date = Date()
 
-    var emoji = "🌊"
+    static let emoji = "🌊"
 
     var isEmpty: Bool { self.path == "/" }
 
@@ -38,6 +38,7 @@ struct GitCommit: SuperLog {
     }
 
     static func fromShellLine(_ l: String, path: String, seprator: String = "+") -> GitCommit {
+        os_log("\(self.t)-> \(l)")
         let components = l.components(separatedBy: seprator)
         let count = components.count
         let hash = count > 0 ? components[0] : ""
@@ -57,25 +58,27 @@ struct GitCommit: SuperLog {
         if isHead {
             return true
         }
+        
+        return false
 
-        let command = "git rev-list --left-right --count \(hash)...origin/\(branch)"
-        do {
-            let result = try Shell.run(command, at: path)
-            let components = result.trimmingCharacters(in: .whitespacesAndNewlines).components(separatedBy: "\t")
-
-            if components.count == 2 {
-                return components[0] == "" || components[0] == "0"
-            }
-
-            if components.count == 1 {
-                return true
-            }
-
-            return false
-        } catch {
-            os_log(.error, "检查同步状态时出错: \(error.localizedDescription)")
-            return false
-        }
+//        let command = "git rev-list --left-right --count \(hash)...origin/\(branch)"
+//        do {
+//            let result = try Shell.run(command, at: path)
+//            let components = result.trimmingCharacters(in: .whitespacesAndNewlines).components(separatedBy: "\t")
+//
+//            if components.count == 2 {
+//                return components[0] == "" || components[0] == "0"
+//            }
+//
+//            if components.count == 1 {
+//                return true
+//            }
+//
+//            return false
+//        } catch {
+//            os_log(.error, "检查同步状态时出错: \(error.localizedDescription)")
+//            return false
+//        }
     }
 
     func getFiles(reason: String) -> [File] {
@@ -87,18 +90,20 @@ struct GitCommit: SuperLog {
             os_log("  🫧 Path: \(path)")
             os_log("  🫧 Hash: \(hash)")
         }
+        
+        return []
 
-        if isHead {
-            return GitShell.changedFile(path)
-        } else {
-            do {
-                return try GitShell.commitFiles(path, hash: hash)
-            } catch let e {
-                os_log(.error, "\(e.localizedDescription)")
-
-                return []
-            }
-        }
+//        if isHead {
+//            return GitShell.changedFile(path)
+//        } else {
+//            do {
+//                return try GitShell.commitFiles(path, hash: hash)
+//            } catch let e {
+//                os_log(.error, "\(e.localizedDescription)")
+//
+//                return []
+//            }
+//        }
     }
 
     func getTitle(reason: String) -> String {
@@ -112,19 +117,21 @@ struct GitCommit: SuperLog {
 
     // 检查HTTPS凭据
     func checkHttpsCredentials() -> Bool {
-        let command = "git config --get credential.helper"
-        do {
-            let result = try Shell.run(command)
-            os_log("\(self.t)checkHttpsCredentials -> \(result)")
-            return !result.isEmpty
-        } catch {
-            os_log(.error, "检查HTTPS凭据时出错: \(error.localizedDescription)")
-            return false
-        }
+        true
+//        let command = "git config --get credential.helper"
+//        do {
+//            let result = try Shell.run(command)
+//            os_log("\(self.t)checkHttpsCredentials -> \(result)")
+//            return !result.isEmpty
+//        } catch {
+//            os_log(.error, "检查HTTPS凭据时出错: \(error.localizedDescription)")
+//            return false
+//        }
     }
 
     func getTag() throws -> String {
-        try GitShell.getTag(path, hash)
+        ""
+//        try GitShell.getTag(path, hash)
     }
 }
 

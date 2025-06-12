@@ -75,7 +75,7 @@ struct CommitRow: View, SuperThread {
             .background(data.commit == self.commit ? Color.accentColor.opacity(0.1) : Color.clear)
             .onAppear(perform: onAppear)
             .onNotification(.appWillBecomeActive, onAppWillBecomeActive)
-            .onNotification(.gitCommitSuccess, onGitCommitSuccess)
+//            .onNotification(.gitCommitSuccess, onGitCommitSuccess)
 
             Divider()
         }
@@ -99,20 +99,20 @@ struct CommitRow: View, SuperThread {
 
     /// 异步加载未提交文件数量
     private func loadChangedFileCount() {
-        // 只有HEAD commit才需要显示未提交文件数量
-        guard commit.isHead else {
-            return
-        }
-
-        // 使用异步任务避免阻塞UI
-        Task {
-            let count = GitShell.changedFile(commit.path).count
-
-            // 在主线程更新UI
-            await MainActor.run {
-                self.changedFileCount = count
-            }
-        }
+//        // 只有HEAD commit才需要显示未提交文件数量
+//        guard commit.isHead else {
+//            return
+//        }
+//
+//        // 使用异步任务避免阻塞UI
+//        Task {
+//            let count = GitShell.changedFile(commit.path).count
+//
+//            // 在主线程更新UI
+//            await MainActor.run {
+//                self.changedFileCount = count
+//            }
+//        }
     }
 }
 

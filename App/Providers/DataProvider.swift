@@ -171,13 +171,13 @@ extension DataProvider {
             }
 
             // 发送删除通知
-            DispatchQueue.main.async {
-                NotificationCenter.default.post(
-                    name: .gitProjectDeleted,
-                    object: self,
-                    userInfo: ["path": path]
-                )
-            }
+//            DispatchQueue.main.async {
+//                NotificationCenter.default.post(
+//                    name: .gitProjectDeleted,
+//                    object: self,
+//                    userInfo: ["path": path]
+//                )
+//            }
 
             os_log("Project deleted successfully: \(path)")
 
@@ -194,14 +194,14 @@ extension DataProvider {
      * 获取当前分支
      * @return 当前分支，如果获取失败则返回nil
      */
-    private func updateUurrentBranch() {
+    private func updateCurrentBranch() {
         guard let project = project else {
             self.branch = nil
             return
         }
 
         do {
-            self.branch = try GitShell.getCurrentBranch(project.path)
+            self.branch = try project.getCurrentBranch()
         } catch _ {
             self.branch = nil
         }
@@ -231,7 +231,7 @@ extension DataProvider {
         guard let project = self.project else { return }
 
         do {
-            try GitShell.pull(project.path)
+            try project.pull()
         } catch {
             // 错误处理...
         }
@@ -245,7 +245,7 @@ extension DataProvider {
         guard let project = self.project else { return }
 
         do {
-            try GitShell.commit(project.path, commit: message)
+            try project.submit(message)
         } catch {
             // 错误处理...
         }
@@ -278,7 +278,7 @@ extension DataProvider {
             return
         }
 
-        try GitShell.setBranch(branch, project.path, verbose: verbose)
+        try project.setCurrentBranch(branch)
     }
 }
 
@@ -290,32 +290,32 @@ extension DataProvider {
      */
     private func setupEventListeners() {
         // 监听项目删除事件
-        NotificationCenter.default.publisher(for: .gitProjectDeleted)
-            .sink { [weak self] notification in
-                self?.handleProjectDeleted(notification)
-            }
-            .store(in: &cancellables)
-
-        // 监听提交成功事件
-        NotificationCenter.default.publisher(for: .gitCommitSuccess)
-            .sink { [weak self] notification in
-                self?.handleGitOperationSuccess(notification)
-            }
-            .store(in: &cancellables)
-
-        // 监听推送成功事件
-        NotificationCenter.default.publisher(for: .gitPushSuccess)
-            .sink { [weak self] notification in
-                self?.handleGitOperationSuccess(notification)
-            }
-            .store(in: &cancellables)
-
-        // 监听拉取成功事件
-        NotificationCenter.default.publisher(for: .gitPullSuccess)
-            .sink { [weak self] notification in
-                self?.handleGitOperationSuccess(notification)
-            }
-            .store(in: &cancellables)
+//        NotificationCenter.default.publisher(for: .gitProjectDeleted)
+//            .sink { [weak self] notification in
+//                self?.handleProjectDeleted(notification)
+//            }
+//            .store(in: &cancellables)
+//
+//        // 监听提交成功事件
+//        NotificationCenter.default.publisher(for: .gitCommitSuccess)
+//            .sink { [weak self] notification in
+//                self?.handleGitOperationSuccess(notification)
+//            }
+//            .store(in: &cancellables)
+//
+//        // 监听推送成功事件
+//        NotificationCenter.default.publisher(for: .gitPushSuccess)
+//            .sink { [weak self] notification in
+//                self?.handleGitOperationSuccess(notification)
+//            }
+//            .store(in: &cancellables)
+//
+//        // 监听拉取成功事件
+//        NotificationCenter.default.publisher(for: .gitPullSuccess)
+//            .sink { [weak self] notification in
+//                self?.handleGitOperationSuccess(notification)
+//            }
+//            .store(in: &cancellables)
     }
 
     /**

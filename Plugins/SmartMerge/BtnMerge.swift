@@ -8,7 +8,6 @@ struct BtnMerge: View, SuperEvent, SuperThread {
     var path: String
     var from: Branch
     var to: Branch
-    var git = GitShell()
 
     @State private var isHovering = false
 
@@ -25,8 +24,8 @@ struct BtnMerge: View, SuperEvent, SuperThread {
 
     func merge() {
         do {
-            try GitShell.setBranch(to, path)
-            try GitShell.merge(from, path, message: CommitCategory.CI.text + "Merge \(from.name) by GitOK")
+            try ShellGit.checkout(to.name, at: path)
+            try ShellGit.merge(from.name, at: path)
         } catch let error {
             os_log(.error, "\(error.localizedDescription)")
 

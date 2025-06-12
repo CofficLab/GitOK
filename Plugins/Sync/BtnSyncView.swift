@@ -53,8 +53,7 @@ struct BtnSyncView: View, SuperLog, SuperEvent, SuperThread {
         }
 
         do {
-            try GitShell.pull(path)
-            try GitShell.push(path)
+            try self.data.project?.sync()
 
             self.reset()
         } catch let error {

@@ -45,7 +45,7 @@ struct GitDetail: View, SuperEvent, SuperLog {
         .onAppear(perform: onAppear)
         .onChange(of: file, onFileChange)
         .onChange(of: data.project, onProjectChange)
-        .onNotification(.gitCommitSuccess, perform: onGitCommitSuccess)
+//        .onNotification(.gitCommitSuccess, perform: onGitCommitSuccess)
         .onNotification(.appWillBecomeActive, perform: onAppWillBecomeActive)
     }
 }
@@ -74,14 +74,14 @@ extension GitDetail {
 
         self.updateIsProjectClean()
 
-        if let commit = data.commit, let file = file, let project = data.project {
-            do {
-                let v = try GitShell.diffFileFromCommit(path: project.path, hash: commit.hash, file: file.name)
-                self.diffView = AnyView(v)
-            } catch {
-                m.error(error)
-            }
-        }
+//        if let commit = data.commit, let file = file, let project = data.project {
+//            do {
+//                let v = try GitShell.diffFileFromCommit(path: project.path, hash: commit.hash, file: file.name)
+//                self.diffView = AnyView(v)
+//            } catch {
+//                m.error(error)
+//            }
+//        }
     }
 
     func onGitCommitSuccess(_ notification: Notification) {

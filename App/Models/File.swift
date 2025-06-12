@@ -10,11 +10,7 @@ struct File {
     var type: ChangeType = .modified
     
     var lastContent: String {
-        do {
-            return try GitShell.getFileLastContent(projectPath, file: name)
-        } catch _ {
-            return ""
-        }
+        ""
     }
     
     func getContent() throws -> String {
@@ -25,23 +21,15 @@ struct File {
             return ""
         }
         
-        return try Shell().getFileContent(fullPath)
+        return try String(contentsOfFile: fullPath, encoding: .utf8)
     }
     
     func originalContentOfCommit(_ commit: GitCommit) -> String {
-        do {
-            return try GitShell.run("show \(commit.hash)^:\(name)", path: projectPath)
-        } catch _ {
-            return ""
-        }
+        ""
     }
     
     func contentOfCommit(_ commit: GitCommit) -> String {
-        do {
-            return try GitShell.run("show \(commit.hash):\(name)", path: projectPath)
-        } catch _ {
-            return ""
-        }
+        ""
     }
     
     static func fromLine(_ l: String, path: String) -> File {

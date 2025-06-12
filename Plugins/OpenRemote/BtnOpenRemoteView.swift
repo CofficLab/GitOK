@@ -37,24 +37,24 @@ struct BtnOpenRemoteView: View {
         
         isLoading = true
         
-        DispatchQueue.global(qos: .userInitiated).async {
-            let remote = GitShell.getRemote(project.path).trimmingCharacters(in: .whitespacesAndNewlines)
-            
-            var formattedRemote = remote
-            if formattedRemote.hasPrefix("git@") {
-                formattedRemote = formattedRemote.replacingOccurrences(of: ":", with: "/")
-                formattedRemote = formattedRemote.replacingOccurrences(of: "git@", with: "https://")
-            }
-            
-            DispatchQueue.main.async {
-                if !formattedRemote.isEmpty {
-                    remoteURL = URL(string: formattedRemote)
-                } else {
-                    remoteURL = nil
-                }
-                isLoading = false
-            }
-        }
+//        DispatchQueue.global(qos: .userInitiated).async {
+//            let remote = try g.project?.getFirstRemote() ?? ""
+//            
+//            var formattedRemote = remote
+//            if formattedRemote.hasPrefix("git@") {
+//                formattedRemote = formattedRemote.replacingOccurrences(of: ":", with: "/")
+//                formattedRemote = formattedRemote.replacingOccurrences(of: "git@", with: "https://")
+//            }
+//            
+//            DispatchQueue.main.async {
+//                if !formattedRemote.isEmpty {
+//                    remoteURL = URL(string: formattedRemote)
+//                } else {
+//                    remoteURL = nil
+//                }
+//                isLoading = false
+//            }
+//        }
     }
 }
 

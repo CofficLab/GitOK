@@ -84,9 +84,9 @@ struct CommitForm: View, SuperLog {
                 }
                 .frame(height: 40)
             }
-            .onReceive(NotificationCenter.default.publisher(for: .gitCommitSuccess)) { _ in
-                self.text = self.category.defaultMessage
-            }
+//            .onNotification(.gitCommitSuccess) { _ in
+//                self.text = self.category.defaultMessage
+//            }
             .onChange(of: category, {
                 os_log("\(self.t)Cateogry changed to -> \(category.title)")
                 self.text = category.defaultMessage
@@ -100,11 +100,11 @@ struct CommitForm: View, SuperLog {
 
     private func loadUserInfo(for projectPath: String) {
         do {
-            let userName = try GitShell.getUserName(projectPath)
-            let userEmail = try GitShell.getUserEmail(projectPath)
+            let userName = try g.project?.getUserName()
+            let userEmail = try g.project?.getUserEmail()
 
-            self.currentUser = userName
-            self.currentEmail = userEmail
+            self.currentUser = userName ?? ""
+            self.currentEmail = userEmail ?? ""
         } catch {
             // 如果获取用户信息失败，保持空字符串
             self.currentUser = ""

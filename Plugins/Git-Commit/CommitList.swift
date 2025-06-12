@@ -75,9 +75,9 @@ struct CommitList: View, SuperThread, SuperLog {
         }
         .onAppear(perform: onAppear)
         .onChange(of: data.project, onProjectChange)
-        .onNotification(.gitCommitSuccess, perform: onCommitSuccess)
-        .onNotification(.gitPullSuccess, perform: onPullSuccess)
-        .onNotification(.gitPushSuccess, perform: onPushSuccess)
+//        .onNotification(.gitCommitSuccess, perform: onCommitSuccess)
+//        .onNotification(.gitPullSuccess, perform: onPullSuccess)
+//        .onNotification(.gitPushSuccess, perform: onPushSuccess)
     }
 
     private func loadMoreCommits() {
@@ -86,10 +86,9 @@ struct CommitList: View, SuperThread, SuperLog {
         loading = true
 
         do {
-            let newCommits = try GitShell.logsWithPagination(
-                project.path,
-                skip: currentPage * pageSize,
-                limit: pageSize
+            let newCommits = try project.getCommitsWithPagination(
+                self.currentPage,
+                limit: self.pageSize
             )
 
             if !newCommits.isEmpty {
@@ -131,10 +130,8 @@ extension CommitList {
         hasMoreCommits = true
 
         do {
-            let initialCommits = try GitShell.logsWithPagination(
-                project.path,
-                skip: 0,
-                limit: pageSize
+            let initialCommits = try project.getCommitsWithPagination(
+                0, limit: self.pageSize
             )
 
             commits = [project.headCommit] + initialCommits
@@ -178,9 +175,8 @@ extension CommitList {
         loading = true
 
         do {
-            let newCommits = try GitShell.logsWithPagination(
-                project.path,
-                skip: currentPage * pageSize,
+            let newCommits = try project.getCommitsWithPagination(
+                pageSize,
                 limit: pageSize
             )
 

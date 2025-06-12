@@ -12,7 +12,6 @@ struct TileQuickMerge: View, SuperLog, SuperThread {
     
     private init() {}
 
-    var git = GitShell()
     var project: Project? { g.project }
 
     var body: some View {
@@ -34,21 +33,21 @@ struct TileQuickMerge: View, SuperLog, SuperThread {
     }
 
     func merge() {
-        self.bg.async {
-            guard let project = project else {
-                os_log(.error, "\(self.t)No project")
-                self.m.error(QuickMergeError.noProject)
-                return
-            }
-
-            do {
-                try GitShell.mergeToMain(project.path)
-            } catch let error {
-                os_log(.error, "\(error.localizedDescription)")
-
-                m.setError(error)
-            }
-        }
+//        self.bg.async {
+//            guard let project = project else {
+//                os_log(.error, "\(self.t)No project")
+//                self.m.error(QuickMergeError.noProject)
+//                return
+//            }
+//
+//            do {
+//                try ShellGit.merge(project.path)
+//            } catch let error {
+//                os_log(.error, "\(error.localizedDescription)")
+//
+//                m.setError(error)
+//            }
+//        }
     }
 }
 

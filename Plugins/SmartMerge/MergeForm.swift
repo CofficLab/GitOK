@@ -1,5 +1,6 @@
 import OSLog
 import SwiftUI
+import MagicCore
 
 struct MergeForm: View {
     @EnvironmentObject var app: AppProvider
@@ -12,7 +13,6 @@ struct MergeForm: View {
     @State var branch2: Branch? = nil
 
     var project: Project? { g.project }
-    var git = GitShell()
 
     var body: some View {
         if let project = project {
@@ -38,14 +38,16 @@ struct MergeForm: View {
 
                     if let branch1 = branch1, let branch2 = branch2 {
                         BtnMerge(path: project.path, from: branch1, to: branch2)
-                            .padding(.top, 20)
-                            .controlSize(.extraLarge)
+//                            .padding(.top, 20)
+//                            .controlSize(.extraLarge)
                     }
                 }
             }
             .onAppear(perform: {
                 do {
-                    self.branches = try GitShell.getBranches(project.path)
+                    self.branches = try ShellGit.branchesArray(at: project.path).map({
+                        return Branch(path: project.path, name: $0)
+                    })
                     self.branch1 = branches.first
                     self.branch2 = branches.count >= 2 ? branches[1] : branches.first
                 } catch let error {
