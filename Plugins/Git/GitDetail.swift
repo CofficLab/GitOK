@@ -106,7 +106,6 @@ extension GitDetail {
 
     func onGitCommitSuccess(_ notification: Notification) {
         self.updateIsProjectClean()
-        self.m.toast("已提交")
     }
 }
 

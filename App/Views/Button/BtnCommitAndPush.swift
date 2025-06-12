@@ -4,6 +4,7 @@ import SwiftUI
 
 struct BtnCommitAndPush: View, SuperLog, SuperThread {
     @EnvironmentObject var g: DataProvider
+    @EnvironmentObject var m: MessageProvider
 
     @State private var showAlert = false
     @State private var alertMessage = ""
@@ -45,12 +46,12 @@ struct BtnCommitAndPush: View, SuperLog, SuperThread {
             return
         }
 
-
         os_log("\(self.t)Commit")
         do {
             try project.addAll()
             try project.submit(commitMessage)
             try project.push()
+            self.m.toast("已提交并推送")
         } catch {
             self.quitWithError(error)
         }
