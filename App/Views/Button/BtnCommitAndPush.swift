@@ -38,33 +38,6 @@ struct BtnCommitAndPush: View, SuperLog, SuperThread {
             .alert(isPresented: $showAlert) {
                 Alert(title: Text("错误"), message: Text(alertMessage), dismissButton: .default(Text("确定")))
             }
-            .sheet(isPresented: $showCredentialsAlert) {
-                VStack {
-                    Text("输入凭据")
-                    TextField("用户名", text: $username)
-                    SecureField("个人访问令牌", text: $token)
-                    HStack {
-                        Button("确定") {
-                            showCredentialsAlert = false
-                            DispatchQueue.global(qos: .userInitiated).async {
-                                do {
-                                    try checkAndPush()
-                                } catch let error {
-                                    self.main.async {
-                                        os_log(.error, "提交失败: \(error.localizedDescription)")
-                                        alertMessage = "提交失败: \(error.localizedDescription)"
-                                        showAlert = true
-                                    }
-                                }
-                            }
-                        }
-                        Button("取消") {
-                            showCredentialsAlert = false
-                        }
-                    }
-                }
-                .padding()
-            }
     }
 
     private func checkAndPush() throws {
@@ -84,7 +57,7 @@ struct BtnCommitAndPush: View, SuperLog, SuperThread {
     }
 
     private func quitWithError(_ error: Error) {
-        os_log(.error, "提交失败: \(error.localizedDescription)")
+        os_log(.error, "\(t)❌ 提交失败: \(error.localizedDescription)")
         self.main.async {
             alertMessage = "提交失败: \(error.localizedDescription)"
             showAlert = true
