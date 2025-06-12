@@ -26,17 +26,29 @@ struct GitDetail: View, SuperEvent, SuperLog {
         ZStack {
             if let project = data.project {
                 if project.isGit {
-                    if let commit = data.commit {
+                    VStack(alignment: .leading, spacing: 8) {
                         Group {
-//                            if commit.isHead && isProjectClean {
-//                                NoLocalChanges()
-//                            } else {
-                                CommitDetail()
-//                            }
+                            if let commit = data.commit {
+                                CommitInfoView(commit: commit)
+                            } else {
+                                CommitForm()
+                            }
                         }
-                    } else {
-                        NoCommit()
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 8)
+
+                        HSplitView {
+                            FileList()
+                                .frame(idealWidth: 200)
+                                .frame(minWidth: 200, maxWidth: 300)
+                                .layoutPriority(1)
+
+                            FileDetail()
+                        }
                     }
+                    .padding(.horizontal, 0)
+                    .padding(.vertical, 0)
+                    .background(background)
                 } else {
                     NoGitProjectView()
                 }
@@ -47,6 +59,17 @@ struct GitDetail: View, SuperEvent, SuperLog {
         .onChange(of: data.project, onProjectChange)
 //        .onNotification(.gitCommitSuccess, perform: onGitCommitSuccess)
         .onNotification(.appWillBecomeActive, perform: onAppWillBecomeActive)
+        .onChange(of: data.project) { self.onProjectChanged() }
+    }
+
+    private var background: some View {
+        ZStack {
+            if data.commit == nil {
+                MagicBackground.orange.opacity(0.15)
+            } else {
+                MagicBackground.colorGreen.opacity(0.15)
+            }
+        }
     }
 }
 
@@ -61,6 +84,12 @@ extension GitDetail {
 // MARK: Event
 
 extension GitDetail {
+    func onAppWillBecomeActive(_ notification: Notification) {
+    }
+
+    func onProjectChanged() {
+    }
+
     func onAppear() {
         self.updateIsProjectClean()
     }
@@ -87,10 +116,6 @@ extension GitDetail {
     func onGitCommitSuccess(_ notification: Notification) {
         self.updateIsProjectClean()
         self.m.toast("已提交")
-    }
-
-    func onAppWillBecomeActive(_ n: Notification) {
-        self.updateIsProjectClean()
     }
 }
 

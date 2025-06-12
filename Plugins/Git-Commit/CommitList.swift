@@ -37,6 +37,16 @@ struct CommitList: View, SuperThread, SuperLog {
                             ScrollView {
                                 LazyVStack(spacing: 0, pinnedViews: []) {
                                     Divider()
+                                    
+                                    HStack {
+                                        Text("当前")
+                                    }
+                                    .frame(maxWidth: .infinity)
+                                    .frame(height: 50)
+                                    .background(MagicBackground.deepOceanCurrent)
+                                    .onTapGesture {
+                                        data.commit = nil
+                                    }
 
                                     ForEach(commits) { commit in
                                         CommitRow(commit: commit)

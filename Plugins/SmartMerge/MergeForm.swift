@@ -6,11 +6,11 @@ struct MergeForm: View {
     @EnvironmentObject var app: AppProvider
     @EnvironmentObject var g: DataProvider
 
-    @State var branches: [Branch] = []
+    @State var branches: [GitBranch] = []
     @State var text: String = ""
     @State var category: CommitCategory = .Chore
-    @State var branch1: Branch? = nil
-    @State var branch2: Branch? = nil
+    @State var branch1: GitBranch? = nil
+    @State var branch2: GitBranch? = nil
 
     var project: Project? { g.project }
 
@@ -22,7 +22,7 @@ struct MergeForm: View {
                         Picker("", selection: $branch1, content: {
                             ForEach(branches, id: \.self, content: {
                                 Text($0.name)
-                                    .tag($0 as Branch?)
+                                    .tag($0 as GitBranch?)
                             })
                         })
 
@@ -31,7 +31,7 @@ struct MergeForm: View {
                         Picker("", selection: $branch2, content: {
                             ForEach(branches, id: \.self, content: {
                                 Text($0.name)
-                                    .tag($0 as Branch?)
+                                    .tag($0 as GitBranch?)
                             })
                         })
                     }
@@ -45,9 +45,7 @@ struct MergeForm: View {
             }
             .onAppear(perform: {
                 do {
-                    self.branches = try ShellGit.branchesArray(at: project.path).map({
-                        return Branch(path: project.path, name: $0)
-                    })
+                    self.branches = try project.getBranches()
                     self.branch1 = branches.first
                     self.branch2 = branches.count >= 2 ? branches[1] : branches.first
                 } catch let error {

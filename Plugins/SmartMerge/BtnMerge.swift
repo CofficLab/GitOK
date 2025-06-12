@@ -6,8 +6,8 @@ struct BtnMerge: View, SuperEvent, SuperThread {
     @EnvironmentObject var m: MessageProvider
 
     var path: String
-    var from: Branch
-    var to: Branch
+    var from: GitBranch
+    var to: GitBranch
 
     @State private var isHovering = false
 

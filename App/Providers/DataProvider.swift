@@ -14,7 +14,7 @@ class DataProvider: NSObject, ObservableObject, SuperLog {
     @Published var commit: GitCommit? = nil
     @Published private(set) var file: GitDiffFile? = nil
     @Published private(set) var projectExists = true
-    @Published private(set) var branch: Branch? = nil
+    @Published private(set) var branch: GitBranch? = nil
 
     static let emoji = "🏠"
     private let verbose = false
@@ -265,7 +265,7 @@ extension DataProvider {
      * @param branch 要切换到的分支
      * @throws Git操作异常
      */
-    func setBranch(_ branch: Branch?) throws {
+    func setBranch(_ branch: GitBranch?) throws {
         if verbose {
             os_log("\(self.t)Set Branch to \(branch?.name ?? "-")")
         }

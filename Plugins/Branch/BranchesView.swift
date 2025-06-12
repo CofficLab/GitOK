@@ -9,8 +9,8 @@ struct BranchesView: View, SuperThread, SuperLog, SuperEvent {
     @EnvironmentObject var data: DataProvider
     @EnvironmentObject var m: MessageProvider
 
-    @State var branches: [Branch] = []
-    @State private var selection: Branch?
+    @State var branches: [GitBranch] = []
+    @State private var selection: GitBranch?
     @State private var isRefreshing = false
 
     static var emoji = "🌿"
@@ -24,13 +24,13 @@ struct BranchesView: View, SuperThread, SuperLog, SuperEvent {
                 Picker("branch", selection: $selection, content: {
                     ForEach(branches, id: \.id, content: {
                         Text($0.name)
-                            .tag($0 as Branch?)
+                            .tag($0 as GitBranch?)
                     })
                 })
             } else {
-                Picker("branch", selection: .constant(nil as Branch?), content: {
+                Picker("branch", selection: .constant(nil as GitBranch?), content: {
                     Text("项目不存在")
-                        .tag(nil as Branch?)
+                        .tag(nil as GitBranch?)
                 }).disabled(true)
             }
         }
@@ -75,45 +75,33 @@ extension BranchesView {
             os_log("\(self.t)🍋 Refresh(\(reason))")
         }
 
-//        do {
-//            branches = try GitShell.getBranches(project.path)
-//            if branches.isEmpty {
-//                os_log("\(self.t)🍋 Refresh, but no branches")
-//                self.updateSelection(nil, reason: "Refresh, but no branches")
-//            } else {
-//                // 尝试选择当前分支
-//                let currentBranch = self.getCurrentBranch()
-//                self.updateSelection(branches.first(where: {
-//                    $0.id == currentBranch?.id
-//                }), reason: "Refresh, branches is not empty")
-//
-//                // 如果没有找到匹配的分支，则选择第一个分支
-//                if selection == nil {
-//                    self.updateSelection(branches.first, reason: "Refresh, set first branch")
-//                    os_log("\(self.t)🍋 No matching branch found, selecting first branch: \(selection?.id ?? "unknown")")
-//                }
-//            }
-//        } catch let e {
-//            self.m.setError(e)
-//        }
+        do {
+            branches = try project.getBranches()
+            if branches.isEmpty {
+                os_log("\(self.t)🍋 Refresh, but no branches")
+                self.updateSelection(nil, reason: "Refresh, but no branches")
+            } else {
+                // 尝试选择当前分支
+                let currentBranch = try self.data.project?.getCurrentBranch()
+                self.updateSelection(branches.first(where: {
+                    $0.id == currentBranch?.id
+                }), reason: "Refresh, branches is not empty")
+
+                // 如果没有找到匹配的分支，则选择第一个分支
+                if selection == nil {
+                    self.updateSelection(branches.first, reason: "Refresh, set first branch")
+                    os_log("\(self.t)🍋 No matching branch found, selecting first branch: \(selection?.id ?? "unknown")")
+                }
+            }
+        } catch let e {
+            self.m.setError(e)
+        }
 
         // 重置刷新状态
         isRefreshing = false
     }
-
-    func getCurrentBranch() -> Branch? {
-        guard let project = data.project else {
-            return nil
-        }
-
-        do {
-            return try project.getCurrentBranch()
-        } catch _ {
-            return nil
-        }
-    }
     
-    func updateSelection(_ s: Branch?, reason: String) {
+    func updateSelection(_ s: GitBranch?, reason: String) {
         if verbose {
             os_log("\(self.t)Update Selection to \(s?.id ?? "nil") (\(reason))")
         }

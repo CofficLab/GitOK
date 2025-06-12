@@ -28,21 +28,21 @@ struct CommitRow: View, SuperThread {
 
                             // 第二行：提交人和提交时间
 //                            if !commit.isHead {
-//                                HStack {
-//                                    Text(commit.author)
-//                                        .padding(.vertical, 1)
-//                                        .lineLimit(1)
-//
-//                                    // 相对时间标签
-//                                    Text(commit.date.smartRelativeTime)
-//                                        .padding(.vertical, 1)
-//                                        .padding(.horizontal, 1)
-//
-//                                    Spacer()
-//                                }
-//                                .padding(.vertical, 1)
-//                                .font(.system(size: 11))
-//                                .foregroundColor(.secondary)
+                                HStack {
+                                    Text(commit.author)
+                                        .padding(.vertical, 1)
+                                        .lineLimit(1)
+
+                                    // 相对时间标签
+                                    Text(commit.date.smartRelativeTime)
+                                        .padding(.vertical, 1)
+                                        .padding(.horizontal, 1)
+
+                                    Spacer()
+                                }
+                                .padding(.vertical, 1)
+                                .font(.system(size: 11))
+                                .foregroundColor(.secondary)
 //                            } else {
 //                                HStack {
 //                                    Text("未提交的文件数量: \(changedFileCount)")

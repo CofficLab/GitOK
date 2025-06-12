@@ -106,14 +106,16 @@ extension Project: Identifiable {
 // MARK: - Branch
 
 extension Project {
-    func getCurrentBranch() throws -> Branch {
-        let name = try ShellGit.currentBranch()
-
-        return Branch(path: path, name: name)
+    func getCurrentBranch() throws -> GitBranch? {
+        try ShellGit.currentBranchInfo()
     }
 
-    func setCurrentBranch(_ branch: Branch) throws {
+    func setCurrentBranch(_ branch: GitBranch) throws {
         try ShellGit.checkout(branch.name, at: self.path)
+    }
+
+    func getBranches() throws -> [GitBranch] {
+        try ShellGit.branchList(at: self.path)
     }
 }
 
