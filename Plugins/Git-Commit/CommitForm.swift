@@ -80,7 +80,7 @@ struct CommitForm: View, SuperLog {
                         .cornerRadius(6)
                     }
 
-                    BtnCommitAndPush(repoPath: project.path, commitMessage: commitMessage)
+                    BtnCommitAndPush(commitMessage: commitMessage)
                 }
                 .frame(height: 40)
             }
