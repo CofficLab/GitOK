@@ -4,6 +4,33 @@ import OSLog
 import SwiftData
 import SwiftUI
 
+// MARK: - Project Events
+extension Notification.Name {
+    static let projectDidAddFiles = Notification.Name("projectDidAddFiles")
+    static let projectDidCommit = Notification.Name("projectDidCommit")
+    static let projectDidPush = Notification.Name("projectDidPush")
+    static let projectDidPull = Notification.Name("projectDidPull")
+    static let projectDidSync = Notification.Name("projectDidSync")
+    static let projectDidChangeBranch = Notification.Name("projectDidChangeBranch")
+    static let projectOperationDidFail = Notification.Name("projectOperationDidFail")
+}
+
+struct ProjectEventInfo {
+    let project: Project
+    let operation: String
+    let success: Bool
+    let error: Error?
+    let additionalInfo: [String: Any]?
+    
+    init(project: Project, operation: String, success: Bool = true, error: Error? = nil, additionalInfo: [String: Any]? = nil) {
+        self.project = project
+        self.operation = operation
+        self.success = success
+        self.error = error
+        self.additionalInfo = additionalInfo
+    }
+}
+
 @Model
 final class Project {
     static var verbose = true
@@ -28,10 +55,6 @@ final class Project {
         url.path
     }
 
-//    var headCommit: GitCommit {
-//        GitCommit()
-//    }
-
     var isGit: Bool {
         ShellGit.isGitRepository(at: path)
     }
@@ -49,6 +72,27 @@ final class Project {
     init(_ url: URL) {
         self.timestamp = .now
         self.url = url
+    }
+    
+    // MARK: - Event Notification Helper
+    private func postEvent(name: Notification.Name, operation: String, success: Bool = true, error: Error? = nil, additionalInfo: [String: Any]? = nil) {
+        let eventInfo = ProjectEventInfo(
+            project: self,
+            operation: operation,
+            success: success,
+            error: error,
+            additionalInfo: additionalInfo
+        )
+        
+        NotificationCenter.default.post(
+            name: name,
+            object: self,
+            userInfo: ["eventInfo": eventInfo]
+        )
+        
+        if Self.verbose {
+            os_log("\(self.label)Event posted: \(operation) - Success: \(success)")
+        }
     }
 
     func getCommits(_ reason: String) -> [GitCommit] {
@@ -111,7 +155,23 @@ extension Project {
     }
 
     func setCurrentBranch(_ branch: GitBranch) throws {
-        try ShellGit.checkout(branch.name, at: self.path)
+        do {
+            try ShellGit.checkout(branch.name, at: self.path)
+            postEvent(
+                name: .projectDidChangeBranch,
+                operation: "changeBranch",
+                additionalInfo: ["branchName": branch.name]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "changeBranch",
+                success: false,
+                error: error,
+                additionalInfo: ["branchName": branch.name]
+            )
+            throw error
+        }
     }
 
     func getBranches() throws -> [GitBranch] {
@@ -123,7 +183,21 @@ extension Project {
 
 extension Project {
     func addAll() throws {
-        try ShellGit.add([], at: self.path)
+        do {
+            try ShellGit.add([], at: self.path)
+            postEvent(
+                name: .projectDidAddFiles,
+                operation: "addAll"
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "addAll",
+                success: false,
+                error: error
+            )
+            throw error
+        }
     }
 }
 
@@ -147,7 +221,23 @@ extension Project {
     }
 
     func submit(_ message: String) throws {
-        try ShellGit.commit(message: message, at: self.path)
+        do {
+            try ShellGit.commit(message: message, at: self.path)
+            postEvent(
+                name: .projectDidCommit,
+                operation: "commit",
+                additionalInfo: ["message": message]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "commit",
+                success: false,
+                error: error,
+                additionalInfo: ["message": message]
+            )
+            throw error
+        }
     }
 
     func getCommitsWithPagination(_ page: Int, limit: Int) throws -> [GitCommit] {
@@ -187,16 +277,58 @@ extension Project {
 
 extension Project {
     func push() throws {
-        try ShellGit.push(at: self.path)
+        do {
+            try ShellGit.push(at: self.path)
+            postEvent(
+                name: .projectDidPush,
+                operation: "push"
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "push",
+                success: false,
+                error: error
+            )
+            throw error
+        }
     }
 
     func pull() throws {
-        try ShellGit.pull(at: self.path)
+        do {
+            try ShellGit.pull(at: self.path)
+            postEvent(
+                name: .projectDidPull,
+                operation: "pull"
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "pull",
+                success: false,
+                error: error
+            )
+            throw error
+        }
     }
 
     func sync() throws {
-        try self.push()
-        try self.pull()
+        do {
+            try self.push()
+            try self.pull()
+            postEvent(
+                name: .projectDidSync,
+                operation: "sync"
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "sync",
+                success: false,
+                error: error
+            )
+            throw error
+        }
     }
 
     func getRemotes() throws -> [String] {
