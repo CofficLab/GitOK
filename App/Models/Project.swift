@@ -151,6 +151,14 @@ extension Project {
     func fileContent(at: String, file: String) throws -> String {
         try ShellGit.fileContent(atCommit: at, file: file, at: self.path)
     }
+
+    func fileContentChange(at commit: String, file: String) throws -> (before: String?, after: String?) {
+        try ShellGit.fileContentChange(at: commit, file: file, repoPath: self.path)
+    }
+
+    func fileList(atCommit: String) throws -> [GitDiffFile] {
+        try ShellGit.changedFilesDetail(in: atCommit, at: self.path)
+    }
 }
 
 // MARK: - Remote

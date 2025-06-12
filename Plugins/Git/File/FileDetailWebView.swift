@@ -25,7 +25,7 @@ struct FileDetailWebView: View, SuperLog, SuperEvent, SuperThread {
                         .foregroundColor(.secondary)
                         .font(.system(size: 12))
 
-                    Text(file.projectPath + "/" + file.name)
+                    Text(file.file)
                         .font(.caption)
                         .foregroundColor(.secondary)
                         .lineLimit(1)
@@ -73,19 +73,24 @@ struct FileDetailWebView: View, SuperLog, SuperEvent, SuperThread {
     func updateDiffView(reason: String) {
         self.m.append("UpdateDiffView(\(reason))", channel: self.className)
 
-        guard let commit = data.commit, let file = data.file else {
+        guard let commit = data.commit, let file = data.file, let project = data.project else {
             return
         }
-
-//        if commit.isHead {
-//            do {
-//                self.setTexts(file.lastContent, try file.getContent())
-//            } catch let error {
-//                self.m.error(error)
-//            }
-//        } else {
-            self.setTexts(file.originalContentOfCommit(commit), file.contentOfCommit(commit))
-//        }
+        do {
+            let (beforeContent, afterContent) = try project.fileContentChange(at: commit.hash, file: file.file)
+            
+            //        if commit.isHead {
+            //            do {
+            //                self.setTexts(file.lastContent, try file.getContent())
+            //            } catch let error {
+            //                self.m.error(error)
+            //            }
+            //        } else {
+            self.setTexts(beforeContent ?? "", afterContent ?? "")
+            //        }
+        } catch {
+            
+        }
     }
 
     func makeView() -> MagicWebView {

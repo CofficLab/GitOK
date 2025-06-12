@@ -23,6 +23,7 @@
 
     },
     "current_head" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -350,9 +351,6 @@
 
     },
     "显示/隐藏边框" : {
-
-    },
-    "未提交的文件数量: %lld" : {
 
     },
     "没有可用的图标" : {

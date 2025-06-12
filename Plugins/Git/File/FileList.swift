@@ -53,7 +53,7 @@ struct FileList: View, SuperThread, SuperLog {
             ScrollViewReader { scrollProxy in
                 List(files, id: \.self, selection: $selection) {
                     FileTile(file: $0)
-                        .tag($0 as File?)
+                        .tag($0 as GitDiffFile?)
                 }
                 .background(.blue)
                 .onChange(of: files, {
@@ -81,12 +81,16 @@ extension FileList {
             self.m.append("Refresh(\(reason))")
         }
 
-        guard let commit = data.commit else {
+        guard let commit = data.commit, let project = data.project else {
             self.isLoading = false
             return
         }
 
-        let files = commit.getFiles(reason: "FileList.Refresh")
+        do {
+            let files = try project.fileList(atCommit: commit.hash)
+        } catch {
+            
+        }
 
         self.files = files
         self.isLoading = false
