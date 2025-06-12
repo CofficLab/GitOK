@@ -87,15 +87,13 @@ extension FileList {
         }
 
         do {
-            let files = try project.fileList(atCommit: commit.hash)
+            self.files = try project.fileList(atCommit: commit.hash)
+            self.isLoading = false
+            self.data.setFile(self.files.first)
+            self.selection = self.data.file
         } catch {
-            
+            self.m.setError(error)
         }
-
-        self.files = files
-        self.isLoading = false
-        self.data.setFile(self.files.first)
-        self.selection = self.data.file
     }
 }
 
@@ -109,7 +107,7 @@ extension FileList {
     func onCommitChange() {
         self.refresh(reason: "OnDataChanged")
     }
-    
+
     func onSelectionChange() {
         self.data.setFile(self.selection)
     }
