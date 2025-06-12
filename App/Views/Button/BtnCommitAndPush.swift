@@ -14,9 +14,8 @@ struct BtnCommitAndPush: View, SuperLog, SuperThread {
             icon: .iconUpload,
             title: "Commit and Push",
             size: .auto,
-            preventDoubleClick: true,
-            loadingStyle: .spinner,
-            asyncAction: checkAndPush
+            action: checkAndPush, preventDoubleClick: true,
+            loadingStyle: .spinner
         )
         .frame(height: 40)
         .frame(width: 150)
