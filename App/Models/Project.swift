@@ -158,8 +158,20 @@ extension Project {
         try ShellGit.fileContentChange(at: commit, file: file, repoPath: self.path)
     }
 
+    func uncommittedFileContentChange(file: String) throws -> (before: String?, after: String?) {
+        try ShellGit.uncommittedFileContentChange(file: file, repoPath: self.path)
+    }
+
     func fileList(atCommit: String) throws -> [GitDiffFile] {
         try ShellGit.changedFilesDetail(in: atCommit, at: self.path)
+    }
+
+    func untrackedFiles() throws -> [GitDiffFile] {
+        try ShellGit.diffFileList(staged: false, at: self.path)
+    }
+
+    func stagedFiles() throws -> [GitDiffFile] {
+        try ShellGit.diffFileList(staged: true, at: self.path)
     }
 }
 

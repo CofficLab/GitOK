@@ -8,7 +8,7 @@ import SwiftUI
 
 class DataProvider: NSObject, ObservableObject, SuperLog {
     // MARK: - Properties
-
+ 
     @Published private(set) var project: Project? = nil
     @Published var projects: [Project] = []
     @Published var commit: GitCommit? = nil

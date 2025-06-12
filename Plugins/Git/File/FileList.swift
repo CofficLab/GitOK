@@ -11,7 +11,7 @@ struct FileList: View, SuperThread, SuperLog {
     @State var files: [GitDiffFile] = []
     @State var isLoading = false
     @State var selection: GitDiffFile?
-    var verbose = false
+    var verbose = true
 
     var body: some View {
         VStack(spacing: 0) {
@@ -81,16 +81,21 @@ extension FileList {
             self.m.append("Refresh(\(reason))")
         }
 
-        guard let commit = data.commit, let project = data.project else {
+        guard let project = data.project else {
             self.isLoading = false
             return
         }
 
         do {
-            self.files = try project.fileList(atCommit: commit.hash)
-            self.isLoading = false
+            if let commit = data.commit {
+                self.files = try project.fileList(atCommit: commit.hash)
+            } else {
+                self.files = try project.untrackedFiles()
+            }
+
             self.data.setFile(self.files.first)
             self.selection = self.data.file
+            self.isLoading = false
         } catch {
             self.m.setError(error)
         }
@@ -105,7 +110,7 @@ extension FileList {
     }
 
     func onCommitChange() {
-        self.refresh(reason: "OnDataChanged")
+        self.refresh(reason: "OnCommitChanged(to -> \(self.data.commit?.hash ?? "nil"))")
     }
 
     func onSelectionChange() {

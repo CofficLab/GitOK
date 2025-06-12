@@ -47,27 +47,22 @@ struct FileDetail: View, SuperLog, SuperEvent, SuperThread {
     func updateDiffView(reason: String) {
         self.m.append("UpdateDiffView(\(reason))", channel: self.className)
 
-        guard let commit = data.commit, let file = data.file, let project = data.project else {
+        guard let file = data.file, let project = data.project else {
             return
         }
         
         do {
-            
-            let (beforeContent, afterContent) = try project.fileContentChange(at: commit.hash, file: file.file)
-            
-            //        if commit.isHead {
-            //            do {
-            //                self.oldText = file.lastContent
-            //                self.newText = try file.getContent()
-            //            } catch let error {
-            //                self.m.error(error)
-            //            }
-            //        } else {
-            self.oldText = beforeContent ?? ""
-            self.newText = afterContent ?? ""
-            //        }
+            if let commit = data.commit {
+                let (beforeContent, afterContent) = try project.fileContentChange(at: commit.hash, file: file.file)
+                self.oldText = beforeContent ?? ""
+                self.newText = afterContent ?? ""
+            } else {
+                let (beforeContent, afterContent) = try project.uncommittedFileContentChange(file: file.file)
+                self.oldText = beforeContent ?? ""
+                self.newText = afterContent ?? ""
+            }
         } catch {
-            
+            self.m.setError(error)
         }
     }
 }
