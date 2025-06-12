@@ -77,15 +77,15 @@ struct FileDetailWebView: View, SuperLog, SuperEvent, SuperThread {
             return
         }
 
-        if commit.isHead {
-            do {
-                self.setTexts(file.lastContent, try file.getContent())
-            } catch let error {
-                self.m.error(error)
-            }
-        } else {
+//        if commit.isHead {
+//            do {
+//                self.setTexts(file.lastContent, try file.getContent())
+//            } catch let error {
+//                self.m.error(error)
+//            }
+//        } else {
             self.setTexts(file.originalContentOfCommit(commit), file.contentOfCommit(commit))
-        }
+//        }
     }
 
     func makeView() -> MagicWebView {

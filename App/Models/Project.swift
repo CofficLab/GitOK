@@ -178,6 +178,14 @@ extension Project {
     }
 }
 
+// MARK: - Tag
+
+extension Project {
+    func getTags(commit: String) throws -> [String] {
+        try ShellGit.tags(for: commit, at: self.path)
+    }
+}
+
 // MARK: - Preview
 
 #Preview("App - Small Screen") {
