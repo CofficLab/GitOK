@@ -29,16 +29,14 @@ struct GitDetail: View, SuperEvent, SuperLog {
                         Group {
                             if let commit = data.commit {
                                 CommitInfoView(commit: commit)
-                            }
-                            
-                            if !self.isProjectClean {
+                            } else if self.isProjectClean == false {
                                 CommitForm()
                             }
                         }
                         .padding(.horizontal, 16)
                         .padding(.vertical, 8)
 
-                        if self.isProjectClean == false {
+                        if !self.isProjectClean || self.data.commit != nil {
                             HSplitView {
                                 FileList()
                                     .frame(idealWidth: 200)
