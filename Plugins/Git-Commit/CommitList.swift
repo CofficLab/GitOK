@@ -35,7 +35,7 @@ struct CommitList: View, SuperThread, SuperLog {
                             Spacer()
                         } else {
                             CurrentWorkingStateView()
-                            
+
                             ScrollView {
                                 LazyVStack(spacing: 0, pinnedViews: []) {
                                     Divider()
@@ -153,6 +153,12 @@ struct CommitList: View, SuperThread, SuperLog {
 // MARK: - Action
 
 extension CommitList {
+    func setCommit(_ commit: GitCommit?) {
+        DispatchQueue.main.async {
+            data.setCommit(commit)
+        }
+    }
+
     func refresh(_ reason: String = "") {
         if verbose {
             os_log("\(self.t)🍋 Refresh(\(reason))")
@@ -194,13 +200,13 @@ extension CommitList {
         if let lastCommit = commitRepo.getLastSelectedCommit(projectPath: project.path) {
             // 在当前commit列表中查找匹配的commit
             if let matchedCommit = commits.first(where: { $0.hash == lastCommit.hash }) {
-                data.setCommit(matchedCommit)
+                self.setCommit(matchedCommit)
             } else if hasMoreCommits {
                 // 如果在当前页面没有找到，并且还有更多commit，尝试加载更多
                 loadMoreCommitsUntilFound(targetHash: lastCommit.hash)
             }
         } else {
-            data.setCommit(self.commits.first)
+            self.setCommit(self.commits.first)
         }
     }
 
@@ -229,7 +235,7 @@ extension CommitList {
                 // 检查是否找到目标commit
                 if let matchedCommit = newCommits.first(where: { $0.hash == targetHash }) {
                     // 选择找到的commit
-                    data.setCommit(matchedCommit)
+                    self.setCommit(matchedCommit)
                 } else if hasMoreCommits {
                     // 如果还没找到，继续加载更多
                     loadMoreCommitsUntilFound(targetHash: targetHash, maxAttempts: maxAttempts - 1)
@@ -249,30 +255,42 @@ extension CommitList {
 
 extension CommitList {
     func onProjectChange() {
-        self.refresh("Project Changed")
+        self.bg.async {
+            self.refresh("Project Changed")
+        }
     }
 
     func onCommitSuccess(_ notification: Notification) {
-        self.refresh("GitCommitSuccess")
+        self.bg.async {
+            self.refresh("GitCommitSuccess")
+        }
     }
 
     func onAppear() {
-        self.refresh("OnAppear")
+        self.bg.async {
+            self.refresh("OnAppear")
+        }
     }
 
     func onChangeOfSelection() {
     }
 
     func onPullSuccess(_ notification: Notification) {
-        self.refresh("GitPullSuccess")
+        self.bg.async {
+            self.refresh("GitPullSuccess")
+        }
     }
 
     func onPushSuccess(_ notification: Notification) {
-        self.refresh("GitPushSuccess")
+        self.bg.async {
+            self.refresh("GitPushSuccess")
+        }
     }
 
     func onAppWillBecomeActive(_ notification: Notification) {
-        self.refresh("AppWillBecomeActive")
+        self.bg.async {
+            self.refresh("AppWillBecomeActive")
+        }
     }
 }
 
