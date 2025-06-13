@@ -11,10 +11,6 @@ protocol ProjectRepoProtocol: BaseRepo where Entity == Project {
     
     // 查询操作
     func findAll(sortedBy order: SortOrder) throws -> [Project]
-    func findGitProjects() throws -> [Project]
-    func findNonGitProjects() throws -> [Project]
-    func findCleanProjects() throws -> [Project]
-    func findProjectsWithChanges() throws -> [Project]
     
     // 业务操作
     func exists(path: String) -> Bool

@@ -32,7 +32,7 @@ struct ProjectEventInfo {
 }
 
 @Model
-final class Project {
+final class Project: SuperLog {
     static var verbose = true
     static var null = Project(URL(fileURLWithPath: ""))
     static var order = [
@@ -42,7 +42,7 @@ final class Project {
         SortDescriptor<Project>(\.order, order: .reverse),
     ]
 
-    var label: String { "🌳 Project::" }
+    static let emoji = "🌳"
     var timestamp: Date
     var url: URL
     var order: Int16 = 0
@@ -53,20 +53,6 @@ final class Project {
 
     var path: String {
         url.path
-    }
-
-    var isGit: Bool {
-        ShellGit.isGitRepository(at: path)
-    }
-
-    var isNotGit: Bool { !isGit }
-
-    var isClean: Bool {
-        isGit && noUncommittedChanges
-    }
-
-    var noUncommittedChanges: Bool {
-        try! self.hasUnCommittedChanges() == false
     }
 
     init(_ url: URL) {
@@ -91,7 +77,7 @@ final class Project {
         )
         
         if Self.verbose {
-            os_log("\(self.label)Event posted: \(operation) - Success: \(success)")
+            os_log("\(self.t)🍋 Event posted: \(operation) - Success: \(success)")
         }
     }
 
@@ -99,28 +85,23 @@ final class Project {
         let verbose = false
 
         if verbose {
-            os_log("\(self.label)GetCommit(\(reason))")
+            os_log("\(self.t)GetCommit(\(reason))")
         }
 
         do {
             return (try ShellGit.commitList(limit: 10, at: self.path))
         } catch let error {
-            os_log(.error, "\(self.label)GetCommits has error")
+            os_log(.error, "\(self.t)GetCommits has error")
             os_log(.error, "\(error)")
 
             return []
         }
     }
-
-    func hasUnCommittedChanges() throws -> Bool {
-        try ShellGit.hasUncommittedChanges(at: self.path) == false
-    }
-
     func getBanners() throws -> [BannerModel] {
         let verbose = false
 
         if verbose {
-            os_log("\(self.label)GetBanners for project -> \(self.path)")
+            os_log("\(self.t)GetBanners for project -> \(self.path)")
         }
 
         return try BannerModel.all(self)
@@ -130,7 +111,7 @@ final class Project {
         let verbose = false
 
         if verbose {
-            os_log("\(self.label)GetIcons for project -> \(self.path)")
+            os_log("\(self.t)GetIcons for project -> \(self.path)")
         }
 
         return try IconModel.all(self.path)
@@ -147,6 +128,28 @@ extension Project: Identifiable {
     }
 }
 
+// MARK: - Git
+
+extension Project {
+    func isGit() -> Bool {
+        ShellGit.isGitRepository(at: path)
+    }
+
+    func isNotGit() -> Bool { !isGit() }
+
+    func isClean() -> Bool {
+        isGit() && noUncommittedChanges()
+    }
+    
+    func hasUnCommittedChanges() throws -> Bool {
+        try ShellGit.hasUncommittedChanges(at: self.path) == false
+    }
+    
+    func noUncommittedChanges() -> Bool {
+        try! self.hasUnCommittedChanges() == false
+    }
+}
+
 // MARK: - Branch
 
 extension Project {
@@ -156,7 +159,7 @@ extension Project {
 
     func setCurrentBranch(_ branch: GitBranch) throws {
         do {
-            try ShellGit.checkout(branch.name, at: self.path)
+            _ = try ShellGit.checkout(branch.name, at: self.path)
             postEvent(
                 name: .projectDidChangeBranch,
                 operation: "changeBranch",
@@ -332,7 +335,7 @@ extension Project {
     }
 
     func getRemotes() throws -> [String] {
-        try ShellGit.remotesArray()
+        try ShellGit.remotesArray(at: self.path)
     }
 
     func getFirstRemote() throws -> String? {

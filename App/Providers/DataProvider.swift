@@ -6,6 +6,7 @@ import MediaPlayer
 import OSLog
 import SwiftUI
 
+@MainActor
 class DataProvider: NSObject, ObservableObject, SuperLog {
     // MARK: - Properties
  
@@ -16,7 +17,7 @@ class DataProvider: NSObject, ObservableObject, SuperLog {
     @Published private(set) var projectExists = true
     @Published private(set) var branch: GitBranch? = nil
 
-    static let emoji = "🏠"
+    nonisolated static let emoji = "🏠"
     private let verbose = false
     var cancellables = Set<AnyCancellable>()
     let repoManager: RepoManager
@@ -220,6 +221,7 @@ extension DataProvider {
      * @param f 要设置的文件
      */
     func setFile(_ f: GitDiffFile?) {
+        assert(Thread.isMainThread, "setFile(_:) 必须在主线程调用，否则会导致线程安全问题！")
         if f == self.file { return }
         file = f
     }
@@ -256,6 +258,7 @@ extension DataProvider {
      * @param c 要设置的提交
      */
     func setCommit(_ c: GitCommit?) {
+        assert(Thread.isMainThread, "setCommit(_:) 必须在主线程调用，否则会导致线程安全问题！")
         guard commit?.id != c?.id else { return }
         commit = c
     }
@@ -266,6 +269,7 @@ extension DataProvider {
      * @throws Git操作异常
      */
     func setBranch(_ branch: GitBranch?) throws {
+        assert(Thread.isMainThread, "setBranch(_:) 必须在主线程调用，否则会导致线程安全问题！")
         if verbose {
             os_log("\(self.t)Set Branch to \(branch?.name ?? "-")")
         }

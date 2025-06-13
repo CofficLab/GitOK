@@ -1,14 +1,19 @@
 import SwiftUI
+import OSLog
+import MagicCore
 
-struct BtnOpenRemoteView: View {
+struct BtnOpenRemoteView: View, SuperLog {
     @EnvironmentObject var g: DataProvider
+
     @State private var remoteURL: URL?
     @State private var isLoading = false
-    
-     static let shared = BtnOpenRemoteView()
-     
-     private init() {}
-    
+    @State private var isGitProject: Bool = true
+
+    static let shared = BtnOpenRemoteView()
+    static let emoji = "💊"
+
+    private init() {}
+
     var body: some View {
         ZStack {
             if let url = remoteURL {
@@ -21,42 +26,61 @@ struct BtnOpenRemoteView: View {
                 Color.clear.frame(width: 24, height: 24)
             }
         }
-        .onAppear {
-            updateRemoteURL()
-        }
+        .onAppear(perform: onAppear)
         .onChange(of: g.project) {
             updateRemoteURL()
         }
     }
-    
+
     func updateRemoteURL() {
-        guard let project = g.project, project.isGit else {
+        guard let project = g.project, self.isGitProject else {
             remoteURL = nil
             return
         }
-        
+
         isLoading = true
-        
-//        DispatchQueue.global(qos: .userInitiated).async {
-//            let remote = try g.project?.getFirstRemote() ?? ""
-//            
-//            var formattedRemote = remote
-//            if formattedRemote.hasPrefix("git@") {
-//                formattedRemote = formattedRemote.replacingOccurrences(of: ":", with: "/")
-//                formattedRemote = formattedRemote.replacingOccurrences(of: "git@", with: "https://")
-//            }
-//            
-//            DispatchQueue.main.async {
-//                if !formattedRemote.isEmpty {
-//                    remoteURL = URL(string: formattedRemote)
-//                } else {
-//                    remoteURL = nil
-//                }
-//                isLoading = false
-//            }
-//        }
+
+        do {
+            let remote = try project.getFirstRemote() ?? ""
+            
+            var formattedRemote = remote
+            if formattedRemote.hasPrefix("git@") {
+                formattedRemote = formattedRemote.replacingOccurrences(of: ":", with: "/")
+                formattedRemote = formattedRemote.replacingOccurrences(of: "git@", with: "https://")
+            }
+            
+            DispatchQueue.main.async {
+                if !formattedRemote.isEmpty {
+                    remoteURL = URL(string: formattedRemote)
+                } else {
+                    remoteURL = nil
+                }
+                isLoading = false
+            }
+        } catch {
+            os_log(.error, "\(self.t)\(error.localizedDescription)")
+        }
     }
 }
+
+// MARK: - Action
+
+extension BtnOpenRemoteView {
+    func updateIsGitProject() {
+        self.isGitProject = g.project?.isGit() ?? false
+    }
+}
+
+// MARK: - Event
+
+extension BtnOpenRemoteView {
+    func onAppear() {
+        self.updateIsGitProject()
+        self.updateRemoteURL()
+    }
+}
+
+// MARK: - Preview
 
 #Preview("App - Small Screen") {
     RootView {

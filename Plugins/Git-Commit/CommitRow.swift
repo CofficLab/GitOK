@@ -120,8 +120,10 @@ struct CommitRow: View, SuperThread {
 
 extension CommitRow {
     func onAppear() {
-        loadTag()
-        loadChangedFileCount()
+        self.bg.async {
+            loadTag()
+            loadChangedFileCount()
+        }
     }
     
     func onAppWillBecomeActive(_ n: Notification) {

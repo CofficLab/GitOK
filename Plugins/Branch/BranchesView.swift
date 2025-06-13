@@ -12,6 +12,7 @@ struct BranchesView: View, SuperThread, SuperLog, SuperEvent {
     @State var branches: [GitBranch] = []
     @State private var selection: GitBranch?
     @State private var isRefreshing = false
+    @State private var isGitProject = false
 
     static var emoji = "🌿"
     private let verbose = false
@@ -20,7 +21,7 @@ struct BranchesView: View, SuperThread, SuperLog, SuperEvent {
 
     var body: some View {
         ZStack {
-            if data.project?.isGit == true && branches.isNotEmpty && selection != nil {
+            if self.isGitProject && branches.isNotEmpty && selection != nil {
                 Picker("branch", selection: $selection, content: {
                     ForEach(branches, id: \.id, content: {
                         Text($0.name)
@@ -62,7 +63,7 @@ extension BranchesView {
             return
         }
 
-        guard project.isGit else {
+        guard self.isGitProject else {
             self.branches = []
             self.updateSelection(nil, reason: "branches is empty")
             return
@@ -108,6 +109,10 @@ extension BranchesView {
         
         self.selection = s
     }
+
+    func updateIsGitProject() {
+        self.isGitProject = data.project?.isGit() ?? false
+    }
 }
 
 // MARK: - Event
@@ -122,6 +127,7 @@ extension BranchesView {
     }
 
     func onAppear() {
+        self.updateIsGitProject()
         self.refreshBranches(reason: "onAppear while project is \(data.project?.title ?? "")")
     }
     

@@ -7,6 +7,7 @@ struct BtnSyncView: View, SuperLog, SuperEvent, SuperThread {
 
     @State var working = false
     @State var rotationAngle = 0.0
+    @State var isGitProject = false
 
     var commitMessage = CommitCategory.auto
     
@@ -15,7 +16,7 @@ struct BtnSyncView: View, SuperLog, SuperEvent, SuperThread {
     private init() {}
 
     var body: some View {
-        if let project = data.project, project.isGit {
+        if let project = data.project, self.isGitProject {
             Button(action: {
                 sync(path: project.path)
             }, label: {
@@ -23,6 +24,7 @@ struct BtnSyncView: View, SuperLog, SuperEvent, SuperThread {
                     .rotationEffect(Angle(degrees: self.rotationAngle))
             })
             .disabled(working)
+            .onAppear(perform: onAppear)
             .onChange(of: working) {
                 let duration = 0.02
                 if working {
@@ -79,6 +81,22 @@ struct BtnSyncView: View, SuperLog, SuperEvent, SuperThread {
         withAnimation {
             self.working = false
         }
+    }
+}
+
+// MARK: - Action
+
+extension BtnSyncView {
+    func updateIsGitProject() {
+        self.isGitProject = data.project?.isGit() ?? false
+    }
+}
+
+// MARK: - Event
+
+extension BtnSyncView {
+    func onAppear() {
+        self.updateIsGitProject()
     }
 }
 

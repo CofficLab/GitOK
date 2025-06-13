@@ -8,9 +8,8 @@ struct GitDetail: View, SuperEvent, SuperLog {
     @EnvironmentObject var data: DataProvider
     @EnvironmentObject var m: MagicMessageProvider
 
-    @State var diffView: AnyView = AnyView(EmptyView())
-    @State var file: GitDiffFile?
     @State private var isProjectClean: Bool = true
+    @State private var isGitProject: Bool = false
 
     static let shared = GitDetail()
 
@@ -24,8 +23,8 @@ struct GitDetail: View, SuperEvent, SuperLog {
 
     var body: some View {
         ZStack {
-            if let project = data.project {
-                if project.isGit {
+            if data.project != nil {
+                if self.isGitProject {
                     VStack(alignment: .leading, spacing: 8) {
                         Group {
                             if let commit = data.commit {
@@ -55,7 +54,6 @@ struct GitDetail: View, SuperEvent, SuperLog {
             }
         }
         .onAppear(perform: onAppear)
-        .onChange(of: file, onFileChange)
         .onChange(of: data.project, onProjectChange)
         .onNotification(.projectDidCommit, perform: onGitCommitSuccess)
         .onNotification(.appWillBecomeActive, perform: onAppWillBecomeActive)
@@ -77,7 +75,11 @@ struct GitDetail: View, SuperEvent, SuperLog {
 
 extension GitDetail {
     func updateIsProjectClean() {
-        self.isProjectClean = data.project?.isClean ?? true
+        self.isProjectClean = data.project?.isClean() ?? true
+    }
+    
+    func updateIsGitProject() {
+        self.isGitProject = data.project?.isGit() ?? false
     }
 }
 
@@ -92,15 +94,10 @@ extension GitDetail {
 
     func onAppear() {
         self.updateIsProjectClean()
+        self.updateIsGitProject()
     }
 
     func onProjectChange() {
-        self.updateIsProjectClean()
-    }
-
-    func onFileChange() {
-        self.data.setFile(file)
-
         self.updateIsProjectClean()
     }
 

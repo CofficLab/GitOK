@@ -78,8 +78,7 @@ extension FileList {
         self.isLoading = true
 
         if verbose {
-            os_log("\(self.t)Refresh\(reason)")
-            self.m.info("Refresh(\(reason))")
+            os_log("\(self.t)🍋 Refresh\(reason)")
         }
 
         guard let project = data.project else {

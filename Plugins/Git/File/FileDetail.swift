@@ -71,7 +71,9 @@ struct FileDetail: View, SuperLog, SuperEvent, SuperThread {
 
 extension FileDetail {
     func onFileChange() {
-        updateDiffView(reason: "File Change")
+        self.bg.async {
+            updateDiffView(reason: "File Change")
+        }
     }
 
     func onCommitChange() {

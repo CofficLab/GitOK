@@ -26,7 +26,7 @@ struct CommitList: View, SuperThread, SuperLog {
 
     var body: some View {
         ZStack {
-            if let project = data.project, project.isGit {
+            if data.project != nil {
                 GeometryReader { geometry in
                     VStack(spacing: 0) {
                         if loading && commits.isEmpty {

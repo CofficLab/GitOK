@@ -24,8 +24,8 @@ struct BtnMerge: View, SuperEvent, SuperThread {
 
     func merge() {
         do {
-            try ShellGit.checkout(to.name, at: path)
-            try ShellGit.merge(from.name, at: path)
+            _ = try ShellGit.checkout(to.name, at: path)
+            _ = try ShellGit.merge(from.name, at: path)
         } catch let error {
             os_log(.error, "\(error.localizedDescription)")
 
