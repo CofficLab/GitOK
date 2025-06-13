@@ -376,12 +376,8 @@ extension Project {
         }
     }
 
-    func getRemotes() throws -> [String] {
-        try ShellGit.remotesArray(at: self.path)
-    }
-
-    func getFirstRemote() throws -> String? {
-        try self.getRemotes().first
+    func getRemotes() throws -> [GitRemote] {
+        try ShellGit.remoteList(at: self.path)
     }
 }
 

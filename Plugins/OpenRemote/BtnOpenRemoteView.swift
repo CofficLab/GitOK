@@ -5,18 +5,20 @@ import MagicCore
 struct BtnOpenRemoteView: View, SuperLog {
     @EnvironmentObject var g: DataProvider
 
-    @State private var remoteURL: URL?
+    @State private var webURL: URL?
     @State private var isLoading = false
     @State private var isGitProject: Bool = true
 
     static let shared = BtnOpenRemoteView()
     static let emoji = "💊"
 
+    private var verbose = false
+
     private init() {}
 
     var body: some View {
         ZStack {
-            if let url = remoteURL {
+            if let url = webURL {
                 url.makeOpenButton().magicShapeVisibility(.onHover)
             } else if isLoading {
                 // 添加加载指示器或占位符
@@ -36,18 +38,28 @@ struct BtnOpenRemoteView: View, SuperLog {
 extension BtnOpenRemoteView {
     func updateRemoteURL() {
         guard let project = g.project, self.isGitProject else {
-            remoteURL = nil
+            webURL = nil
             return
         }
 
         isLoading = true
 
         do {
-            let remote = try project.getFirstRemote() ?? ""
+            let remotes = try project.getRemotes()
+            var remoteURL: String? = nil
 
-            os_log(.info, "\(self.t)🔄 Update remoteURL: \(remote)")
+            for remote in remotes {
+                if remote.name == "origin" {
+                    remoteURL = remote.url
+                    break
+                }
+            }
+
+            if verbose {
+                os_log(.info, "\(self.t)🔄 Update remoteURL: \(remoteURL ?? "")")
+            }
             
-            var formattedRemote = remote
+            var formattedRemote = remoteURL ?? ""
             if formattedRemote.hasPrefix("git@") {
                 formattedRemote = formattedRemote.replacingOccurrences(of: ":", with: "/")
                 formattedRemote = formattedRemote.replacingOccurrences(of: "git@", with: "https://")
@@ -55,9 +67,9 @@ extension BtnOpenRemoteView {
             
             DispatchQueue.main.async {
                 if !formattedRemote.isEmpty {
-                    remoteURL = URL(string: formattedRemote)
+                    self.webURL = URL(string: formattedRemote)
                 } else {
-                    remoteURL = nil
+                    self.webURL = nil
                 }
                 isLoading = false
             }
@@ -71,7 +83,6 @@ extension BtnOpenRemoteView {
             return
         }
 
-        os_log(.info, "\(self.t)🔄 Update isGitProject: \(project.isGit())")
         self.isGitProject = project.isGit()
     }
 }
