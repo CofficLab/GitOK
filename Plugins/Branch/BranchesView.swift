@@ -7,7 +7,7 @@ struct BranchesView: View, SuperThread, SuperLog, SuperEvent {
 
     @EnvironmentObject var app: AppProvider
     @EnvironmentObject var data: DataProvider
-    @EnvironmentObject var m: MessageProvider
+    @EnvironmentObject var m: MagicMessageProvider
 
     @State var branches: [GitBranch] = []
     @State private var selection: GitBranch?
@@ -94,7 +94,7 @@ extension BranchesView {
                 }
             }
         } catch let e {
-            self.m.setError(e)
+            self.m.error(e.localizedDescription)
         }
 
         // 重置刷新状态
@@ -130,7 +130,7 @@ extension BranchesView {
             try data.setBranch(self.selection)
             // 成功消息会通过Project的事件系统自动显示，这里不需要重复显示
         } catch let e {
-            m.errorWithLog(e, channel: "🌿 branch")
+            m.error(e.localizedDescription)
         }
     }
 }

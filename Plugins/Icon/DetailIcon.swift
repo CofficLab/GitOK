@@ -4,7 +4,7 @@ import MagicCore
 
 struct DetailIcon: View, SuperLog {
     @EnvironmentObject var app: AppProvider
-    @EnvironmentObject var m: MessageProvider
+    @EnvironmentObject var m: MagicMessageProvider
     @EnvironmentObject var g: DataProvider
     @EnvironmentObject var i: IconProvider
 
@@ -27,7 +27,7 @@ struct DetailIcon: View, SuperLog {
             } catch {
                 os_log(.error, "\(self.t)Error getting icon: \(error.localizedDescription)")
                 os_log(.error, "  ⚠️ \(error)")
-                m.setError(error)
+                m.error(error.localizedDescription)
             }
         }
         .onChange(of: i.iconURL, {
@@ -35,7 +35,7 @@ struct DetailIcon: View, SuperLog {
                 self.icon = try i.getIcon()
             } catch {
                 os_log(.error, "\(self.t)Error getting icon: \(error)")
-                m.setError(error)
+                m.error(error.localizedDescription)
             }
         })
         .onChange(of: self.icon, {
@@ -46,7 +46,7 @@ struct DetailIcon: View, SuperLog {
             do {
                 try icon.saveToDisk()
             } catch {
-                m.setError(error)
+                m.error(error.localizedDescription)
             }
 
             if let path = icon.path {

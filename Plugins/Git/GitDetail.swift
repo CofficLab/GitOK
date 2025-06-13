@@ -6,7 +6,7 @@ import SwiftUI
 struct GitDetail: View, SuperEvent, SuperLog {
     @EnvironmentObject var app: AppProvider
     @EnvironmentObject var data: DataProvider
-    @EnvironmentObject var m: MessageProvider
+    @EnvironmentObject var m: MagicMessageProvider
 
     @State var diffView: AnyView = AnyView(EmptyView())
     @State var file: GitDiffFile?

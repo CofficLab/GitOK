@@ -11,7 +11,7 @@ struct RootView<Content>: View, SuperEvent where Content: View {
 
     private var box: RootBox
 
-    @StateObject var m = MessageProvider()
+    @StateObject var m = MagicMessageProvider.shared
 
     init(@ViewBuilder content: () -> Content) {
         self.content = content()
@@ -25,7 +25,7 @@ struct RootView<Content>: View, SuperEvent where Content: View {
 
     var body: some View {
         content
-            .withToast()
+            .withMagicToast()
             .environmentObject(a)
             .environmentObject(b)
             .environmentObject(i)

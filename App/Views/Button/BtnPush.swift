@@ -1,7 +1,8 @@
 import SwiftUI
+import MagicCore
 
 struct BtnPush: View {
-    @EnvironmentObject var m: MessageProvider
+    @EnvironmentObject var m: MagicMessageProvider
     @EnvironmentObject var data: DataProvider
     
     @Binding var message: String
@@ -15,7 +16,8 @@ struct BtnPush: View {
             do {
                 try data.project?.push()
             } catch let error {
-                m.alert("Push出错", info: error.localizedDescription)
+                
+                m.warning("Push出错", subtitle: error.localizedDescription)
             }
         })
         .disabled(isPushing)

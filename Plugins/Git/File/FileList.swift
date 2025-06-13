@@ -5,7 +5,7 @@ import SwiftUI
 
 struct FileList: View, SuperThread, SuperLog {
     @EnvironmentObject var app: AppProvider
-    @EnvironmentObject var m: MessageProvider
+    @EnvironmentObject var m: MagicMessageProvider
     @EnvironmentObject var data: DataProvider
 
     @State var files: [GitDiffFile] = []
@@ -79,7 +79,7 @@ extension FileList {
 
         if verbose {
             os_log("\(self.t)Refresh\(reason)")
-            self.m.append("Refresh(\(reason))")
+            self.m.info("Refresh(\(reason))")
         }
 
         guard let project = data.project else {
@@ -98,7 +98,7 @@ extension FileList {
             self.selection = self.data.file
             self.isLoading = false
         } catch {
-            self.m.setError(error)
+            self.m.error(error.localizedDescription)
         }
     }
 }

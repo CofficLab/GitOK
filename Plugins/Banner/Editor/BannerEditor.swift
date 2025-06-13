@@ -3,7 +3,7 @@ import SwiftUI
 
 struct BannerEditor: View {
     @EnvironmentObject var app: AppProvider
-    @EnvironmentObject var m: MessageProvider
+    @EnvironmentObject var m: MagicMessageProvider
 
     @Binding var banner: BannerModel
     
@@ -49,7 +49,7 @@ struct BannerEditor: View {
         }
         .onChange(of: snapshotTapped, {
             if snapshotTapped {
-                m.toast(MagicImage.snapshot(content, title: "\(banner.device)-\(self.getTimeString())"))
+                m.info(MagicImage.snapshot(content, title: "\(banner.device)-\(self.getTimeString())"))
                 self.snapshotTapped = false
             }
         })

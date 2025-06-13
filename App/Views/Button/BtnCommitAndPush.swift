@@ -4,7 +4,7 @@ import SwiftUI
 
 struct BtnCommitAndPush: View, SuperLog, SuperThread {
     @EnvironmentObject var g: DataProvider
-    @EnvironmentObject var m: MessageProvider
+    @EnvironmentObject var m: MagicMessageProvider
 
     static let emoji = "🐔"
     var commitMessage: String = ""
@@ -29,7 +29,7 @@ struct BtnCommitAndPush: View, SuperLog, SuperThread {
         os_log("\(self.t)Commit")
         
         // 显示加载状态
-        m.showLoading("正在提交并推送...")
+        m.loading("正在提交并推送...")
         
         do {
             try project.addAll()
@@ -41,7 +41,7 @@ struct BtnCommitAndPush: View, SuperLog, SuperThread {
         } catch {
             // 隐藏加载状态并显示错误
             m.hideLoading()
-            m.errorWithLog(error, channel: "🌳 git")
+            m.error(error.localizedDescription)
         }
     }
 }

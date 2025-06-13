@@ -4,7 +4,7 @@ import OSLog
 import SwiftUI
 
 struct FileDetail: View, SuperLog, SuperEvent, SuperThread {
-    @EnvironmentObject var m: MessageProvider
+    @EnvironmentObject var m: MagicMessageProvider
     @EnvironmentObject var data: DataProvider
 
     @State private var oldText = ""
@@ -45,7 +45,7 @@ struct FileDetail: View, SuperLog, SuperEvent, SuperThread {
     }
 
     func updateDiffView(reason: String) {
-        self.m.append("UpdateDiffView(\(reason))", channel: self.className)
+        self.m.info("UpdateDiffView(\(reason))")
 
         guard let file = data.file, let project = data.project else {
             return
@@ -62,7 +62,7 @@ struct FileDetail: View, SuperLog, SuperEvent, SuperThread {
                 self.newText = afterContent ?? ""
             }
         } catch {
-            self.m.setError(error)
+            self.m.error(error.localizedDescription)
         }
     }
 }

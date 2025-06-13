@@ -2,7 +2,7 @@ import MagicCore
 import SwiftUI
 
 struct BtnSyncView: View, SuperLog, SuperEvent, SuperThread {
-    @EnvironmentObject var m: MessageProvider
+    @EnvironmentObject var m: MagicMessageProvider
     @EnvironmentObject var data: DataProvider
 
     @State var working = false
@@ -53,7 +53,7 @@ struct BtnSyncView: View, SuperLog, SuperEvent, SuperThread {
         }
 
         // 显示加载状态
-        m.showLoading("正在同步...")
+        m.loading("正在同步...")
 
         do {
             try self.data.project?.sync()
@@ -65,13 +65,13 @@ struct BtnSyncView: View, SuperLog, SuperEvent, SuperThread {
             // 隐藏加载状态并显示错误
             m.hideLoading()
             self.reset()
-            m.errorWithLog(error, channel: "🔄 sync")
+            m.error(error.localizedDescription)
         }
     }
 
     func alert(error: Error) {
         self.main.async {
-            m.errorWithLog(error, channel: "🔄 sync")
+            m.error(error.localizedDescription)
         }
     }
 

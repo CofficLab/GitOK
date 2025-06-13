@@ -90,41 +90,6 @@ final class Project {
             userInfo: ["eventInfo": eventInfo]
         )
         
-        // 使用新的Toast系统显示操作结果
-        let toastManager = ToastManager.shared
-        
-        if success {
-            // 成功操作的提示
-            switch operation {
-            case "addAll":
-                toastManager.success("文件已添加")
-            case "commit":
-                if let message = additionalInfo?["message"] as? String {
-                    toastManager.success("已提交", subtitle: message)
-                } else {
-                    toastManager.success("已提交")
-                }
-            case "push":
-                toastManager.success("已推送到远程")
-            case "pull":
-                toastManager.success("已从远程拉取")
-            case "sync":
-                toastManager.success("同步完成")
-            case "changeBranch":
-                if let branchName = additionalInfo?["branchName"] as? String {
-                    toastManager.success("已切换分支", subtitle: branchName)
-                } else {
-                    toastManager.success("已切换分支")
-                }
-            default:
-                toastManager.success("操作完成")
-            }
-        } else {
-            // 失败操作的错误提示
-            let errorMessage = error?.localizedDescription ?? "未知错误"
-            toastManager.error("操作失败", subtitle: errorMessage, autoDismiss: false)
-        }
-        
         if Self.verbose {
             os_log("\(self.label)Event posted: \(operation) - Success: \(success)")
         }

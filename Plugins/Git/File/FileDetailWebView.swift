@@ -5,7 +5,7 @@ import SwiftUI
 
 /// 使用WebView来渲染差异
 struct FileDetailWebView: View, SuperLog, SuperEvent, SuperThread {
-    @EnvironmentObject var m: MessageProvider
+    @EnvironmentObject var m: MagicMessageProvider
     @EnvironmentObject var data: DataProvider
 
     @State private var view: MagicWebView?
@@ -71,7 +71,7 @@ struct FileDetailWebView: View, SuperLog, SuperEvent, SuperThread {
     }
 
     func updateDiffView(reason: String) {
-        self.m.append("UpdateDiffView(\(reason))", channel: self.className)
+        self.m.info("UpdateDiffView(\(reason))")
 
         guard let commit = data.commit, let file = data.file, let project = data.project else {
             return
@@ -166,7 +166,7 @@ extension FileDetailWebView {
 
 extension FileDetailWebView {
     func setTexts(_ o: String, _ c: String) {
-        self.m.append("setTexts", channel: self.className)
+        self.m.info("setTexts")
 
         let encoder = JSONEncoder()
         encoder.outputFormatting = .prettyPrinted
@@ -177,7 +177,7 @@ extension FileDetailWebView {
         let jsonString = String(data: jsonData, encoding: .utf8)!
 
         guard let view = self.view else {
-            self.m.append("View is nil", channel: self.className)
+            self.m.info("View is nil")
             return
         }
 

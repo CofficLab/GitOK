@@ -3,7 +3,7 @@ import OSLog
 import SwiftUI
 
 struct TileQuickMerge: View, SuperLog, SuperThread {
-    @EnvironmentObject var m: MessageProvider
+    @EnvironmentObject var m: MagicMessageProvider
     @EnvironmentObject var g: DataProvider
 
     @State var hovered = false
@@ -23,7 +23,7 @@ struct TileQuickMerge: View, SuperLog, SuperThread {
         })
         .onTapGesture {
             merge()
-            self.m.successWithLog("已合并到主分支", channel: "🌳 git")
+            self.m.info("已合并到主分支")
         }
         .padding(.vertical, 6)
         .padding(.horizontal, 8)

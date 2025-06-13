@@ -4,7 +4,7 @@ import MagicCore
 
 struct TileFile: View, SuperLog, SuperThread {
     @EnvironmentObject var a: AppProvider
-    @EnvironmentObject var m: MessageProvider
+    @EnvironmentObject var m: MagicMessageProvider
     @EnvironmentObject var data: DataProvider
     
     @State var hovered = false
@@ -16,7 +16,6 @@ struct TileFile: View, SuperLog, SuperThread {
     private init() {}
     
     var file: GitDiffFile? { data.file }
-    var message: SmartMessage? { m.messages.first }
 
     var body: some View {
         if let file = file {

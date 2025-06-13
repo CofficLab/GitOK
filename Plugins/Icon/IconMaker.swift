@@ -4,7 +4,7 @@ import MagicCore
 
 struct IconMaker: View {
     @EnvironmentObject var app: AppProvider
-    @EnvironmentObject var m: MessageProvider
+    @EnvironmentObject var m: MagicMessageProvider
 
     @Binding var snapshotTapped: Bool
     @Binding var icon: IconModel
@@ -106,7 +106,7 @@ struct IconMaker: View {
 
         (message, folderPath) = getFolderPath()
         if folderPath == nil {
-            m.toast(message)
+            m.info(message)
             return
         }
 
@@ -114,7 +114,7 @@ struct IconMaker: View {
         makemacOSIcon(tag, folder: folderPath!)
         makeContentJson(folder: folderPath!)
 
-        m.toast("已存储到下载目录")
+        m.info("已存储到下载目录")
     }
 
     @MainActor private func makeContentJson(folder: URL) {
