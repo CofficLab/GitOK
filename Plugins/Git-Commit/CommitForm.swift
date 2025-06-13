@@ -55,54 +55,7 @@ struct CommitForm: View, SuperLog {
                 }
 
                 HStack {
-                    // 用户信息显示区域
-                    HStack {
-                        MagicButton(icon: .iconSettings) {completion in
-                            showUserConfig = true
-                            completion()
-                        }
-                        
-                        if !currentUser.isEmpty {
-                            HStack {
-                                Image(systemName: "person.circle")
-                                    .foregroundColor(.secondary)
-                                    .font(.system(size: 14))
-
-                                VStack(alignment: .leading, spacing: 2) {
-                                    Text(currentUser)
-                                        .font(.caption)
-                                        .fontWeight(.medium)
-                                    if !currentEmail.isEmpty {
-                                        Text(currentEmail)
-                                            .font(.caption2)
-                                            .foregroundColor(.secondary)
-                                    }
-                                }
-
-                                Spacer()
-                            }
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 4)
-                            .background(Color.secondary.opacity(0.1))
-                            .cornerRadius(6)
-                        } else {
-                            HStack {
-                                Image(systemName: "person.circle.fill")
-                                    .foregroundColor(.orange)
-                                    .font(.system(size: 14))
-                                
-                                Text("未配置用户信息")
-                                    .font(.caption)
-                                    .foregroundColor(.orange)
-                                
-                                Spacer()
-                            }
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 4)
-                            .background(Color.orange.opacity(0.1))
-                            .cornerRadius(6)
-                        }
-                    }
+                    UserView()
 
                     BtnCommitAndPush(commitMessage: commitMessage)
                 }

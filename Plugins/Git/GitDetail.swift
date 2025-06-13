@@ -13,7 +13,7 @@ struct GitDetail: View, SuperEvent, SuperLog {
 
     static let shared = GitDetail()
 
-    private var verbose = true
+    private var verbose = false
 
     private init() {
         if verbose {

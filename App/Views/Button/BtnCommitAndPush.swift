@@ -16,8 +16,9 @@ struct BtnCommitAndPush: View, SuperLog, SuperThread {
             size: .auto,
             preventDoubleClick: true,
             loadingStyle: .spinner,
-            action: {_ in 
+            action: {completion in
                 checkAndPush()
+                completion()
             }
         )
         .frame(height: 40)
