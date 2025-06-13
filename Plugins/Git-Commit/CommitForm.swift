@@ -57,8 +57,9 @@ struct CommitForm: View, SuperLog {
                 HStack {
                     // 用户信息显示区域
                     HStack {
-                        MagicButton(icon: .iconSettings) {_ in 
+                        MagicButton(icon: .iconSettings) {completion in
                             showUserConfig = true
+                            completion()
                         }
                         
                         if !currentUser.isEmpty {
