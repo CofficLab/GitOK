@@ -40,10 +40,9 @@ struct CurrentWorkingStateView: View, SuperLog {
                 ? Color.green.opacity(0.12)
                 : Color(.controlBackgroundColor)
         )
-        .onTapGesture {
-            data.commit = nil
-        }
+        .onTapGesture(perform: onTap)
         .onAppear(perform: onAppear)
+        .onNotification(.projectDidCommit, onProjectDidCommit)
     }
 }
 
@@ -68,6 +67,14 @@ extension CurrentWorkingStateView {
 
 extension CurrentWorkingStateView {
     func onAppear() {
+        self.loadChangedFileCount()
+    }
+
+    func onTap() {
+        data.commit = nil
+    }
+
+    func onProjectDidCommit(_ notification: Notification) {
         self.loadChangedFileCount()
     }
 }
