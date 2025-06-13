@@ -34,19 +34,11 @@ struct CommitList: View, SuperThread, SuperLog {
                             Text(LocalizedStringKey("loading"))
                             Spacer()
                         } else {
+                            CurrentWorkingStateView()
+                            
                             ScrollView {
                                 LazyVStack(spacing: 0, pinnedViews: []) {
                                     Divider()
-                                    
-                                    HStack {
-                                        Text("当前")
-                                    }
-                                    .frame(maxWidth: .infinity)
-                                    .frame(height: 50)
-                                    .background(MagicBackground.deepOceanCurrent)
-                                    .onTapGesture {
-                                        data.commit = nil
-                                    }
 
                                     ForEach(commits) { commit in
                                         CommitRow(commit: commit)
@@ -54,7 +46,7 @@ struct CommitList: View, SuperThread, SuperLog {
                                                 // 只在最后几个commit出现时触发加载更多
                                                 let index = commits.firstIndex(of: commit) ?? 0
                                                 let threshold = max(commits.count - 10, Int(Double(commits.count) * 0.8))
-                                                
+
                                                 if index >= threshold && hasMoreCommits && !loading {
                                                     if verbose {
                                                         os_log("\(self.t)👁️ Commit \(index) appeared, triggering loadMore")
@@ -95,11 +87,11 @@ struct CommitList: View, SuperThread, SuperLog {
     }
 
     private func loadMoreCommits() {
-        guard let project = data.project, !loading, hasMoreCommits else { 
+        guard let project = data.project, !loading, hasMoreCommits else {
             if verbose {
                 os_log("\(self.t)🔄 LoadMoreCommits skipped - loading: \(loading), hasMore: \(hasMoreCommits)")
             }
-            return 
+            return
         }
 
         if verbose {
@@ -121,11 +113,11 @@ struct CommitList: View, SuperThread, SuperLog {
                         existingCommit.hash == newCommit.hash
                     }
                 }
-                
+
                 if verbose {
                     os_log("\(self.t)🔄 LoadMoreCommits - fetched: \(newCommits.count), unique: \(uniqueNewCommits.count)")
                 }
-                
+
                 if !uniqueNewCommits.isEmpty {
                     commits.append(contentsOf: uniqueNewCommits)
                 } else if verbose {

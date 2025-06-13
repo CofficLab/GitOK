@@ -20,6 +20,10 @@ class RepoManager: ObservableObject, SuperLog {
         StateRepo()
     }()
     
+    lazy var gitUserConfigRepo: any GitUserConfigRepoProtocol = {
+        GitUserConfigRepo(modelContext: modelContext)
+    }()
+    
     init(modelContext: ModelContext) {
         self.modelContext = modelContext
         if verbose {

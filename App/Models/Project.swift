@@ -12,6 +12,7 @@ extension Notification.Name {
     static let projectDidPull = Notification.Name("projectDidPull")
     static let projectDidSync = Notification.Name("projectDidSync")
     static let projectDidChangeBranch = Notification.Name("projectDidChangeBranch")
+    static let projectDidUpdateUserInfo = Notification.Name("projectDidUpdateUserInfo")
     static let projectOperationDidFail = Notification.Name("projectOperationDidFail")
 }
 
@@ -208,11 +209,52 @@ extension Project {
 
 extension Project {
     func getUserName() throws -> String {
-        try ShellGit.userName()
+        try ShellGit.userName(at: self.path)
     }
 
     func getUserEmail() throws -> String {
-        try ShellGit.userEmail()
+        try ShellGit.userEmail(at: self.path)
+    }
+    
+    /// 设置项目的Git用户信息（仅针对当前项目）
+    /// - Parameters:
+    ///   - userName: 用户名
+    ///   - userEmail: 用户邮箱
+    /// - Throws: Git操作异常
+    func setUserConfig(name userName: String, email userEmail: String) throws {
+        do {
+            _ = try ShellGit.configUser(name: userName, email: userEmail, global: false, at: self.path)
+            postEvent(
+                name: .projectDidUpdateUserInfo,
+                operation: "setUserConfig",
+                additionalInfo: ["userName": userName, "userEmail": userEmail]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "setUserConfig",
+                success: false,
+                error: error,
+                additionalInfo: ["userName": userName, "userEmail": userEmail]
+            )
+            throw error
+        }
+    }
+    
+    /// 获取项目的Git用户配置
+    /// - Returns: 用户配置信息（用户名，邮箱）
+    /// - Throws: Git操作异常
+    func getUserConfig() throws -> (name: String, email: String) {
+        try ShellGit.getUserConfig(global: false, at: self.path)
+    }
+    
+    /// 批量设置用户信息
+    /// - Parameters:
+    ///   - userName: 用户名
+    ///   - userEmail: 用户邮箱
+    /// - Throws: Git操作异常
+    func setUserInfo(userName: String, userEmail: String) throws {
+        try setUserConfig(name: userName, email: userEmail)
     }
 }
 

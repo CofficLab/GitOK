@@ -10,6 +10,7 @@ struct CommitForm: View, SuperLog {
     @State var category: CommitCategory = .Chore
     @State var currentUser: String = ""
     @State var currentEmail: String = ""
+    @State var showUserConfig = false
 
     var commitMessage: String {
         var c = text
@@ -55,29 +56,51 @@ struct CommitForm: View, SuperLog {
 
                 HStack {
                     // 用户信息显示区域
-                    if !currentUser.isEmpty {
-                        HStack {
-                            Image(systemName: "person.circle")
-                                .foregroundColor(.secondary)
-                                .font(.system(size: 14))
-
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text(currentUser)
-                                    .font(.caption)
-                                    .fontWeight(.medium)
-                                if !currentEmail.isEmpty {
-                                    Text(currentEmail)
-                                        .font(.caption2)
-                                        .foregroundColor(.secondary)
-                                }
-                            }
-
-                            Spacer()
+                    HStack {
+                        MagicButton(icon: .iconSettings) {
+                            showUserConfig = true
                         }
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
-                        .background(Color.secondary.opacity(0.1))
-                        .cornerRadius(6)
+                        
+                        if !currentUser.isEmpty {
+                            HStack {
+                                Image(systemName: "person.circle")
+                                    .foregroundColor(.secondary)
+                                    .font(.system(size: 14))
+
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(currentUser)
+                                        .font(.caption)
+                                        .fontWeight(.medium)
+                                    if !currentEmail.isEmpty {
+                                        Text(currentEmail)
+                                            .font(.caption2)
+                                            .foregroundColor(.secondary)
+                                    }
+                                }
+
+                                Spacer()
+                            }
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(Color.secondary.opacity(0.1))
+                            .cornerRadius(6)
+                        } else {
+                            HStack {
+                                Image(systemName: "person.circle.fill")
+                                    .foregroundColor(.orange)
+                                    .font(.system(size: 14))
+                                
+                                Text("未配置用户信息")
+                                    .font(.caption)
+                                    .foregroundColor(.orange)
+                                
+                                Spacer()
+                            }
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(Color.orange.opacity(0.1))
+                            .cornerRadius(6)
+                        }
                     }
 
                     BtnCommitAndPush(commitMessage: commitMessage)
@@ -93,6 +116,13 @@ struct CommitForm: View, SuperLog {
             .onAppear {
                 self.text = self.category.defaultMessage
                 loadUserInfo(for: project.path)
+            }
+            .sheet(isPresented: $showUserConfig) {
+                UserConfigSheet()
+                    .environmentObject(g)
+                    .onDisappear {
+                        loadUserInfo(for: project.path)
+                    }
             }
         }
     }

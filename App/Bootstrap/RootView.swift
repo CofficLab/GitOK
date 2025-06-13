@@ -36,6 +36,16 @@ struct RootView<Content>: View, SuperEvent where Content: View {
     }
 }
 
+extension View {
+    /// 将当前视图包裹在RootView中
+    /// - Returns: 被RootView包裹的视图
+    func inRootView() -> some View {
+        RootView {
+            self
+        }
+    }
+} 
+
 #Preview("App - Small Screen") {
     RootView {
         ContentLayout()

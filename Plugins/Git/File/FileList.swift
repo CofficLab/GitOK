@@ -93,14 +93,15 @@ extension FileList {
                 self.files = try project.untrackedFiles()
             }
             
-            self.selection = self.data.file
-            self.isLoading = false
+            self.selection = self.files.first
             DispatchQueue.main.async {
-                self.data.setFile(self.files.first)
+                self.data.setFile(self.selection)
             }
         } catch {
             self.m.error(error.localizedDescription)
         }
+        
+        self.isLoading = false
     }
 }
 
