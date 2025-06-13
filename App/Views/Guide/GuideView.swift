@@ -72,6 +72,10 @@ struct GuideView: View {
                 }
                 .buttonStyle(.borderedProminent)
             }
+            
+            UserView()
+                .padding()
+                .frame(width: 500)
 
             if g.projectExists == false, let p = g.project {
                 BtnDeleteProject(project: p)

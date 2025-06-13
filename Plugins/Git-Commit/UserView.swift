@@ -3,7 +3,7 @@ import SwiftUI
 
 struct UserView: View {
     @EnvironmentObject var data: DataProvider
-    
+
     @State var text: String = ""
     @State var category: CommitCategory = .Chore
     @State var currentUser: String = ""
@@ -58,6 +58,13 @@ struct UserView: View {
                 .cornerRadius(6)
             }
         }
+        .sheet(isPresented: $showUserConfig) {
+            UserConfigSheet()
+                .environmentObject(data)
+                .onDisappear {
+                    loadUserInfo()
+                }
+        }
         .onAppear(perform: onAppear)
     }
 }
@@ -80,7 +87,7 @@ extension UserView {
     }
 }
 
-// MARK: - Event 
+// MARK: - Event
 
 extension UserView {
     private func onAppear() {

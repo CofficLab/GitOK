@@ -8,9 +8,6 @@ struct CommitForm: View, SuperLog {
 
     @State var text: String = ""
     @State var category: CommitCategory = .Chore
-    @State var currentUser: String = ""
-    @State var currentEmail: String = ""
-    @State var showUserConfig = false
 
     var commitMessage: String {
         var c = text
@@ -69,29 +66,7 @@ struct CommitForm: View, SuperLog {
             })
             .onAppear {
                 self.text = self.category.defaultMessage
-                loadUserInfo(for: project.path)
             }
-            .sheet(isPresented: $showUserConfig) {
-                UserConfigSheet()
-                    .environmentObject(g)
-                    .onDisappear {
-                        loadUserInfo(for: project.path)
-                    }
-            }
-        }
-    }
-
-    private func loadUserInfo(for projectPath: String) {
-        do {
-            let userName = try g.project?.getUserName()
-            let userEmail = try g.project?.getUserEmail()
-
-            self.currentUser = userName ?? ""
-            self.currentEmail = userEmail ?? ""
-        } catch {
-            // 如果获取用户信息失败，保持空字符串
-            self.currentUser = ""
-            self.currentEmail = ""
         }
     }
 }
