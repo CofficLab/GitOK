@@ -269,6 +269,7 @@ extension Project {
     }
 
     func submit(_ message: String) throws {
+        assert(Thread.isMainThread, "setCommit(_:) 必须在主线程调用，否则会导致线程安全问题！")
         do {
             try ShellGit.commit(message: message, at: self.path)
             postEvent(

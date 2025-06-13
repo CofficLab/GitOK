@@ -35,17 +35,20 @@ struct BtnCommitAndPush: View, SuperLog, SuperThread {
         // 显示加载状态
         m.loading("正在提交并推送...")
 
-        do {
-            try project.addAll()
-            try project.submit(commitMessage)
-            try project.push()
+        // 确保在主线程执行 Git 操作
+        DispatchQueue.main.async {
+            do {
+                try project.addAll()
+                try project.submit(commitMessage)
+                try project.push()
 
-            // 隐藏加载状态 - 成功消息会通过Project的事件系统自动显示
-            m.hideLoading()
-        } catch {
-            // 隐藏加载状态并显示错误
-            m.hideLoading()
-            m.error(error.localizedDescription)
+                // 隐藏加载状态 - 成功消息会通过Project的事件系统自动显示
+                m.hideLoading()
+            } catch {
+                // 隐藏加载状态并显示错误
+                m.hideLoading()
+                m.error(error.localizedDescription)
+            }
         }
     }
 }
