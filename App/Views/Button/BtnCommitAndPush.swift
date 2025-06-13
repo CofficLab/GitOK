@@ -16,34 +16,31 @@ struct BtnCommitAndPush: View, SuperLog, SuperThread {
             size: .auto,
             preventDoubleClick: true,
             loadingStyle: .spinner,
-            action: {completion in
-                checkAndPush()
-                completion()
+            action: { completion in
+                guard let project = g.project else {
+                    completion()
+                    return
+                }
+
+                os_log("\(self.t)💼 Commit")
+
+                DispatchQueue.main.async {
+                    do {
+                        try project.addAll()
+                        try project.submit(commitMessage)
+                        try project.push()
+
+                        m.info("Commit and push success")
+                    } catch {
+                        m.error(error.localizedDescription)
+                    }
+
+                    completion()
+                }
             }
         )
         .frame(height: 40)
         .frame(width: 150)
-    }
-
-    private func checkAndPush() {
-        guard let project = g.project else {
-            return
-        }
-
-        os_log("\(self.t)💼 Commit")
-
-        // 确保在主线程执行 Git 操作
-        DispatchQueue.main.async {
-            do {
-                try project.addAll()
-                try project.submit(commitMessage)
-                try project.push()
-
-                m.info("Commit and push success")
-            } catch {
-                m.error(error.localizedDescription)
-            }
-        }
     }
 }
 
