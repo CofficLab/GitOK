@@ -26,7 +26,7 @@ struct BtnCommitAndPush: View, SuperLog, SuperThread {
             return
         }
 
-        os_log("\(self.t)Commit")
+        os_log("\(self.t)💼 Commit")
         
         // 显示加载状态
         m.loading("正在提交并推送...")

@@ -88,7 +88,6 @@ struct CommitForm: View, SuperLog {
                 self.text = self.category.defaultMessage
             })
             .onChange(of: category, {
-                os_log("\(self.t)Cateogry changed to -> \(category.title)")
                 self.text = category.defaultMessage
             })
             .onAppear {

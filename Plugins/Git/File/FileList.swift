@@ -124,7 +124,9 @@ extension FileList {
     }
 
     func onProjectDidCommit(_ notification: Notification) {
-        self.refresh(reason: "OnProjectDidCommit")
+        self.bg.async {
+            self.refresh(reason: "OnProjectDidCommit")
+        }
     }
 }
 

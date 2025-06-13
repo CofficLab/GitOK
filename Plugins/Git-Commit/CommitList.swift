@@ -50,11 +50,15 @@ struct CommitList: View, SuperThread, SuperLog {
 
                                     ForEach(commits) { commit in
                                         CommitRow(commit: commit)
-                                            .id(commit.id)
                                             .onAppear {
+                                                // 只在最后几个commit出现时触发加载更多
                                                 let index = commits.firstIndex(of: commit) ?? 0
-                                                let threshold = Int(Double(commits.count) * 0.8)
+                                                let threshold = max(commits.count - 10, Int(Double(commits.count) * 0.8))
+                                                
                                                 if index >= threshold && hasMoreCommits && !loading {
+                                                    if verbose {
+                                                        os_log("\(self.t)👁️ Commit \(index) appeared, triggering loadMore")
+                                                    }
                                                     loadMoreCommits()
                                                 }
                                             }
@@ -85,13 +89,22 @@ struct CommitList: View, SuperThread, SuperLog {
         }
         .onAppear(perform: onAppear)
         .onChange(of: data.project, onProjectChange)
-//        .onNotification(.gitCommitSuccess, perform: onCommitSuccess)
-//        .onNotification(.gitPullSuccess, perform: onPullSuccess)
-//        .onNotification(.gitPushSuccess, perform: onPushSuccess)
+        .onNotification(.projectDidCommit, perform: onCommitSuccess)
+        .onNotification(.projectDidPull, perform: onPullSuccess)
+        .onNotification(.projectDidPush, perform: onPushSuccess)
     }
 
     private func loadMoreCommits() {
-        guard let project = data.project, !loading, hasMoreCommits else { return }
+        guard let project = data.project, !loading, hasMoreCommits else { 
+            if verbose {
+                os_log("\(self.t)🔄 LoadMoreCommits skipped - loading: \(loading), hasMore: \(hasMoreCommits)")
+            }
+            return 
+        }
+
+        if verbose {
+            os_log("\(self.t)🔄 LoadMoreCommits started - page: \(currentPage), total: \(commits.count)")
+        }
 
         loading = true
 
@@ -102,15 +115,36 @@ struct CommitList: View, SuperThread, SuperLog {
             )
 
             if !newCommits.isEmpty {
-                commits.append(contentsOf: newCommits)
+                // 添加去重逻辑，防止重复添加相同的commit
+                let uniqueNewCommits = newCommits.filter { newCommit in
+                    !commits.contains { existingCommit in
+                        existingCommit.hash == newCommit.hash
+                    }
+                }
+                
+                if verbose {
+                    os_log("\(self.t)🔄 LoadMoreCommits - fetched: \(newCommits.count), unique: \(uniqueNewCommits.count)")
+                }
+                
+                if !uniqueNewCommits.isEmpty {
+                    commits.append(contentsOf: uniqueNewCommits)
+                } else if verbose {
+                    os_log("\(self.t)⚠️ LoadMoreCommits - all commits were duplicates!")
+                }
                 currentPage += 1
             } else {
                 hasMoreCommits = false
+                if verbose {
+                    os_log("\(self.t)🔄 LoadMoreCommits - no more commits available")
+                }
             }
             loading = false
 
         } catch {
             loading = false
+            if verbose {
+                os_log(.error, "\(self.t)❌ LoadMoreCommits error: \(error)")
+            }
         }
     }
 
@@ -186,12 +220,18 @@ extension CommitList {
 
         do {
             let newCommits = try project.getCommitsWithPagination(
-                pageSize,
+                currentPage,
                 limit: pageSize
             )
 
             if !newCommits.isEmpty {
-                commits.append(contentsOf: newCommits)
+                // 添加去重逻辑
+                let uniqueNewCommits = newCommits.filter { newCommit in
+                    !commits.contains { existingCommit in
+                        existingCommit.hash == newCommit.hash
+                    }
+                }
+                commits.append(contentsOf: uniqueNewCommits)
                 currentPage += 1
 
                 // 检查是否找到目标commit
@@ -225,7 +265,7 @@ extension CommitList {
     }
 
     func onAppear() {
-        refresh("OnAppear")
+        self.refresh("OnAppear")
     }
 
     func onChangeOfSelection() {
