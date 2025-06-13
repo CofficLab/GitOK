@@ -32,9 +32,6 @@ struct BtnCommitAndPush: View, SuperLog, SuperThread {
 
         os_log("\(self.t)💼 Commit")
 
-        // 显示加载状态
-        m.loading("正在提交并推送...")
-
         // 确保在主线程执行 Git 操作
         DispatchQueue.main.async {
             do {
@@ -42,11 +39,8 @@ struct BtnCommitAndPush: View, SuperLog, SuperThread {
                 try project.submit(commitMessage)
                 try project.push()
 
-                // 隐藏加载状态 - 成功消息会通过Project的事件系统自动显示
-                m.hideLoading()
+                m.info("Commit and push success")
             } catch {
-                // 隐藏加载状态并显示错误
-                m.hideLoading()
                 m.error(error.localizedDescription)
             }
         }
