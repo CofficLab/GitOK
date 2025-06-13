@@ -92,10 +92,12 @@ extension FileList {
             } else {
                 self.files = try project.untrackedFiles()
             }
-
-            self.data.setFile(self.files.first)
+            
             self.selection = self.data.file
             self.isLoading = false
+            DispatchQueue.main.async {
+                self.data.setFile(self.files.first)
+            }
         } catch {
             self.m.error(error.localizedDescription)
         }
@@ -106,11 +108,15 @@ extension FileList {
 
 extension FileList {
     func onAppear() {
-        self.refresh(reason: "OnAppear")
+        self.bg.async {
+            self.refresh(reason: "OnAppear")
+        }
     }
 
     func onCommitChange() {
-        self.refresh(reason: "OnCommitChanged(to -> \(self.data.commit?.hash ?? "nil"))")
+        self.bg.async {
+            self.refresh(reason: "OnCommitChanged")
+        }
     }
 
     func onSelectionChange() {

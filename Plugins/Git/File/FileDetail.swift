@@ -45,7 +45,7 @@ struct FileDetail: View, SuperLog, SuperEvent, SuperThread {
     }
 
     func updateDiffView(reason: String) {
-        self.m.info("UpdateDiffView(\(reason))")
+        os_log("\(self.t)🍋 UpdateDiffView(\(reason))")
 
         guard let file = data.file, let project = data.project else {
             return
@@ -77,11 +77,15 @@ extension FileDetail {
     }
 
     func onCommitChange() {
-        updateDiffView(reason: "Commit Change")
+        self.bg.async {
+            updateDiffView(reason: "Commit Change")
+        }
     }
 
     func onAppear() {
-        updateDiffView(reason: "Appear")
+        self.bg.async {
+            updateDiffView(reason: "Appear")
+        }
     }
 }
 
