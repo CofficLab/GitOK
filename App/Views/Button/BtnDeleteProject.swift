@@ -11,9 +11,9 @@ struct BtnDeleteProject: View {
     var project: Project
 
     var body: some View {
-        MagicButton(action: {
+        MagicButton {_ in 
             deleteItem(project)
-        })
+        }
         .magicTitle("删除项目")
         .magicSize(.auto)
         .magicBackground(MagicBackground.cherry)

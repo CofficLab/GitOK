@@ -14,8 +14,11 @@ struct BtnCommitAndPush: View, SuperLog, SuperThread {
             icon: .iconUpload,
             title: "Commit and Push",
             size: .auto,
-            action: checkAndPush, preventDoubleClick: true,
-            loadingStyle: .spinner
+            preventDoubleClick: true,
+            loadingStyle: .spinner,
+            action: {_ in 
+                checkAndPush()
+            }
         )
         .frame(height: 40)
         .frame(width: 150)
@@ -27,15 +30,15 @@ struct BtnCommitAndPush: View, SuperLog, SuperThread {
         }
 
         os_log("\(self.t)💼 Commit")
-        
+
         // 显示加载状态
         m.loading("正在提交并推送...")
-        
+
         do {
             try project.addAll()
             try project.submit(commitMessage)
             try project.push()
-            
+
             // 隐藏加载状态 - 成功消息会通过Project的事件系统自动显示
             m.hideLoading()
         } catch {
