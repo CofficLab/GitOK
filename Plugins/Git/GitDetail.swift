@@ -13,7 +13,7 @@ struct GitDetail: View, SuperEvent, SuperLog {
 
     static let shared = GitDetail()
 
-    private var verbose = false
+    private var verbose = true
 
     private init() {
         if verbose {
@@ -36,18 +36,22 @@ struct GitDetail: View, SuperEvent, SuperLog {
                         .padding(.horizontal, 16)
                         .padding(.vertical, 8)
 
-                        HSplitView {
-                            FileList()
-                                .frame(idealWidth: 200)
-                                .frame(minWidth: 200, maxWidth: 300)
-                                .layoutPriority(1)
+                        if self.isProjectClean == false {
+                            HSplitView {
+                                FileList()
+                                    .frame(idealWidth: 200)
+                                    .frame(minWidth: 200, maxWidth: 300)
+                                    .layoutPriority(1)
 
-                            FileDetail()
+                                FileDetail()
+                            }
+                            .padding(.horizontal, 0)
+                            .padding(.vertical, 0)
+                            .background(background)
+                        } else {
+                            NoLocalChanges()
                         }
                     }
-                    .padding(.horizontal, 0)
-                    .padding(.vertical, 0)
-                    .background(background)
                 } else {
                     NoGitProjectView()
                 }
@@ -57,7 +61,6 @@ struct GitDetail: View, SuperEvent, SuperLog {
         .onChange(of: data.project, onProjectChange)
         .onNotification(.projectDidCommit, perform: onGitCommitSuccess)
         .onNotification(.appWillBecomeActive, perform: onAppWillBecomeActive)
-        .onChange(of: data.project) { self.onProjectChanged() }
     }
 
     private var background: some View {
@@ -75,11 +78,27 @@ struct GitDetail: View, SuperEvent, SuperLog {
 
 extension GitDetail {
     func updateIsProjectClean() {
-        self.isProjectClean = data.project?.isClean() ?? true
+        guard let project = data.project else {
+            return
+        }
+
+        do {
+            self.isProjectClean = try project.isClean()
+        } catch {
+            os_log(.error, "\(self.t)❌ Failed to update isProjectClean: \(error)")
+        }
+
+        if verbose {
+            os_log(.info, "\(self.t)🔄 Update isProjectClean: \(self.isProjectClean)")
+        }
     }
-    
+
     func updateIsGitProject() {
-        self.isGitProject = data.project?.isGit() ?? false
+        guard let project = data.project else {
+            return
+        }
+
+        self.isGitProject = project.isGit()
     }
 }
 
@@ -87,9 +106,7 @@ extension GitDetail {
 
 extension GitDetail {
     func onAppWillBecomeActive(_ notification: Notification) {
-    }
-
-    func onProjectChanged() {
+        self.updateIsProjectClean()
     }
 
     func onAppear() {

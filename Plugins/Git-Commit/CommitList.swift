@@ -10,7 +10,6 @@ struct CommitList: View, SuperThread, SuperLog {
 
     @State private var commits: [GitCommit] = []
     @State private var loading = false
-    @State private var showCommitForm = false
     @State private var isRefreshing = false
     @State private var hasMoreCommits = true
     @State private var currentPage = 0
@@ -180,9 +179,6 @@ extension CommitList {
             loading = false
             isRefreshing = false
             currentPage = 1
-
-            let hasChanges = try? project.hasUnCommittedChanges()
-            showCommitForm = hasChanges ?? true
 
             // 恢复上次选择的commit
             restoreLastSelectedCommit()

@@ -5,6 +5,7 @@ import SwiftData
 import SwiftUI
 
 // MARK: - Project Events
+
 extension Notification.Name {
     static let projectDidAddFiles = Notification.Name("projectDidAddFiles")
     static let projectDidCommit = Notification.Name("projectDidCommit")
@@ -22,7 +23,7 @@ struct ProjectEventInfo {
     let success: Bool
     let error: Error?
     let additionalInfo: [String: Any]?
-    
+
     init(project: Project, operation: String, success: Bool = true, error: Error? = nil, additionalInfo: [String: Any]? = nil) {
         self.project = project
         self.operation = operation
@@ -60,8 +61,9 @@ final class Project: SuperLog {
         self.timestamp = .now
         self.url = url
     }
-    
+
     // MARK: - Event Notification Helper
+
     private func postEvent(name: Notification.Name, operation: String, success: Bool = true, error: Error? = nil, additionalInfo: [String: Any]? = nil) {
         let eventInfo = ProjectEventInfo(
             project: self,
@@ -70,13 +72,13 @@ final class Project: SuperLog {
             error: error,
             additionalInfo: additionalInfo
         )
-        
+
         NotificationCenter.default.post(
             name: name,
             object: self,
             userInfo: ["eventInfo": eventInfo]
         )
-        
+
         if Self.verbose {
             os_log("\(self.t)🍋 Event posted: \(operation) - Success: \(success)")
         }
@@ -98,6 +100,7 @@ final class Project: SuperLog {
             return []
         }
     }
+
     func getBanners() throws -> [BannerModel] {
         let verbose = false
 
@@ -138,16 +141,16 @@ extension Project {
 
     func isNotGit() -> Bool { !isGit() }
 
-    func isClean() -> Bool {
-        isGit() && noUncommittedChanges()
-    }
-    
-    func hasUnCommittedChanges() throws -> Bool {
-        try ShellGit.hasUncommittedChanges(at: self.path) == false
-    }
-    
-    func noUncommittedChanges() -> Bool {
-        try! self.hasUnCommittedChanges() == false
+    func isClean(verbose: Bool = true) throws -> Bool {
+        guard isGit() else {
+            if verbose {
+                os_log(.info, "\(self.t)🔄 Project is not a git repository")
+            }
+
+            return true
+        }
+        
+        return try ShellGit.hasUncommittedChanges(at: self.path) == false
     }
 }
 
@@ -215,7 +218,7 @@ extension Project {
     func getUserEmail() throws -> String {
         try ShellGit.userEmail(at: self.path)
     }
-    
+
     /// 设置项目的Git用户信息（仅针对当前项目）
     /// - Parameters:
     ///   - userName: 用户名
@@ -240,14 +243,14 @@ extension Project {
             throw error
         }
     }
-    
+
     /// 获取项目的Git用户配置
     /// - Returns: 用户配置信息（用户名，邮箱）
     /// - Throws: Git操作异常
     func getUserConfig() throws -> (name: String, email: String) {
         try ShellGit.getUserConfig(global: false, at: self.path)
     }
-    
+
     /// 批量设置用户信息
     /// - Parameters:
     ///   - userName: 用户名
