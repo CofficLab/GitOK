@@ -162,7 +162,10 @@ extension CommitList {
         if verbose {
             os_log("\(self.t)🍋 Refresh(\(reason))")
         }
-        guard let project = data.project, !isRefreshing else { return }
+
+        guard let project = data.project, !isRefreshing else {
+            return
+        }
 
         isRefreshing = true
         loading = true
@@ -179,9 +182,6 @@ extension CommitList {
             loading = false
             isRefreshing = false
             currentPage = 1
-
-            // 恢复上次选择的commit
-            restoreLastSelectedCommit()
         } catch {
             loading = false
             isRefreshing = false
@@ -265,6 +265,7 @@ extension CommitList {
     func onAppear() {
         self.bg.async {
             self.refresh("OnAppear")
+            self.restoreLastSelectedCommit()
         }
     }
 
