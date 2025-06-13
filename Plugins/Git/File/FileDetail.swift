@@ -12,7 +12,7 @@ struct FileDetail: View, SuperLog, SuperEvent, SuperThread {
 
     static let emoji = "🌍"
 
-    private var verbose = true
+    private var verbose = false
 
     var body: some View {
         VStack(spacing: 0) {
@@ -45,7 +45,9 @@ struct FileDetail: View, SuperLog, SuperEvent, SuperThread {
     }
 
     func updateDiffView(reason: String) {
-        os_log("\(self.t)🍋 UpdateDiffView(\(reason))")
+        if verbose {
+            os_log("\(self.t)🍋 UpdateDiffView(\(reason))")
+        }
 
         guard let file = data.file, let project = data.project else {
             return

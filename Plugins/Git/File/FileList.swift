@@ -11,7 +11,7 @@ struct FileList: View, SuperThread, SuperLog {
     @State var files: [GitDiffFile] = []
     @State var isLoading = false
     @State var selection: GitDiffFile?
-    var verbose = true
+    var verbose = false
 
     var body: some View {
         VStack(spacing: 0) {

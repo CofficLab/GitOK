@@ -27,11 +27,13 @@ struct BtnOpenRemoteView: View, SuperLog {
             }
         }
         .onAppear(perform: onAppear)
-        .onChange(of: g.project) {
-            updateRemoteURL()
-        }
+        .onChange(of: g.project?.url, onProjectChange)
     }
+}
 
+// MARK: - Action
+
+extension BtnOpenRemoteView {
     func updateRemoteURL() {
         guard let project = g.project, self.isGitProject else {
             remoteURL = nil
@@ -42,6 +44,8 @@ struct BtnOpenRemoteView: View, SuperLog {
 
         do {
             let remote = try project.getFirstRemote() ?? ""
+
+            os_log(.info, "\(self.t)🔄 Update remoteURL: \(remote)")
             
             var formattedRemote = remote
             if formattedRemote.hasPrefix("git@") {
@@ -61,13 +65,14 @@ struct BtnOpenRemoteView: View, SuperLog {
             os_log(.error, "\(self.t)\(error.localizedDescription)")
         }
     }
-}
 
-// MARK: - Action
-
-extension BtnOpenRemoteView {
     func updateIsGitProject() {
-        self.isGitProject = g.project?.isGit() ?? false
+        guard let project = g.project else {
+            return
+        }
+
+        os_log(.info, "\(self.t)🔄 Update isGitProject: \(project.isGit())")
+        self.isGitProject = project.isGit()
     }
 }
 
@@ -75,6 +80,11 @@ extension BtnOpenRemoteView {
 
 extension BtnOpenRemoteView {
     func onAppear() {
+        self.updateIsGitProject()
+        self.updateRemoteURL()
+    }
+
+    func onProjectChange() {
         self.updateIsGitProject()
         self.updateRemoteURL()
     }
