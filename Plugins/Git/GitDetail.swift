@@ -29,7 +29,9 @@ struct GitDetail: View, SuperEvent, SuperLog {
                         Group {
                             if let commit = data.commit {
                                 CommitInfoView(commit: commit)
-                            } else {
+                            }
+                            
+                            if !self.isProjectClean {
                                 CommitForm()
                             }
                         }
