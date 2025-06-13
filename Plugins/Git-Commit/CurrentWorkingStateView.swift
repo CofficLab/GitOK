@@ -1,54 +1,78 @@
-import SwiftUI
 import MagicCore
+import OSLog
+import SwiftUI
 
-struct CurrentWorkingStateView: View {
+struct CurrentWorkingStateView: View, SuperLog {
     @EnvironmentObject var data: DataProvider
-    
+
+    @State private var changedFileCount = 0
+
     private var isSelected: Bool {
         data.commit == nil
     }
-    
+
+    static let emoji = "🌳"
+
     var body: some View {
         VStack(spacing: 0) {
             HStack(spacing: 12) {
                 Image(systemName: "clock.arrow.circlepath")
-                    .foregroundColor(isSelected ? .white : .secondary)
                     .font(.system(size: 16, weight: .medium))
-                
+
                 VStack(alignment: .leading, spacing: 2) {
                     Text("当前工作状态")
                         .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(isSelected ? .white : .primary)
-                    
-                    Text("Working Directory")
+
+                    Text("(\(changedFileCount) 个未提交文件)")
                         .font(.system(size: 11))
-                        .foregroundColor(isSelected ? .white.opacity(0.8) : .secondary)
                 }
-                
+
                 Spacer()
-                
-                if isSelected {
-                    Image(systemName: "checkmark.circle.fill")
-                        .foregroundColor(.white)
-                        .font(.system(size: 14, weight: .medium))
-                }
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 12)
-            
+
             Divider()
                 .background(Color.white.opacity(0.2))
         }
         .background(
-            isSelected 
-                ? Color.green.opacity(0.2)
+            isSelected
+                ? Color.green.opacity(0.12)
                 : Color(.controlBackgroundColor)
         )
         .onTapGesture {
             data.commit = nil
         }
+        .onAppear(perform: onAppear)
     }
 }
+
+// MARK: - Action
+
+extension CurrentWorkingStateView {
+    private func loadChangedFileCount() {
+        guard let project = data.project else {
+            return
+        }
+
+        do {
+            let count = try project.untrackedFiles().count
+            self.changedFileCount = count
+        } catch {
+            os_log(.error, "\(self.t)❌ Failed to load changed file count: \(error)")
+        }
+    }
+}
+
+// MARK: - Event
+
+extension CurrentWorkingStateView {
+    func onAppear() {
+        self.loadChangedFileCount()
+    }
+}
+
+// MARK: - Preview
 
 #Preview {
     CurrentWorkingStateView()
@@ -57,22 +81,19 @@ struct CurrentWorkingStateView: View {
 }
 
 #Preview("App - Small Screen") {
-    RootView {
-        ContentLayout()
-            .hideSidebar()
-            .hideTabPicker()
-            .hideProjectActions()
-    }
-    .frame(width: 700)
-    .frame(height: 700)
+    ContentLayout()
+        .hideSidebar()
+        .hideTabPicker()
+        .hideProjectActions()
+        .inRootView()
+        .frame(width: 700)
+        .frame(height: 700)
 }
 
 #Preview("App - Big Screen") {
-    RootView {
-        ContentLayout()
-            .hideSidebar()
-    }
-    .frame(width: 1200)
-    .frame(height: 1200)
+    ContentLayout()
+        .hideSidebar()
+        .inRootView()
+        .frame(width: 1200)
+        .frame(height: 1200)
 }
-
