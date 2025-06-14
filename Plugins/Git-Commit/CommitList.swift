@@ -14,6 +14,7 @@ struct CommitList: View, SuperThread, SuperLog {
     @State private var hasMoreCommits = true
     @State private var currentPage = 0
     @State private var pageSize: Int = 50
+    @State private var isHovered = false
 
     // 使用GitCommitRepo来存储和恢复commit选择
     private let commitRepo = GitCommitRepo.shared
@@ -301,10 +302,39 @@ extension CommitList {
 }
 
 #Preview("App-Big Screen") {
-    RootView {
-        ContentLayout()
-            .hideSidebar()
+    HoverButtonPreview()
+}
+
+struct HoverButtonPreview: View {
+    @State private var isHovered = false
+    
+    var body: some View {
+        Button("iiiiii"){
+            print("EEEEEEEE")
+        }
+        .overlay(alignment: .top) {
+            // 悬停时显示的覆盖视图
+            VStack {
+                Text("Hover Info")
+                    .font(.caption)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(Color.black.opacity(0.8))
+                    .foregroundColor(.white)
+                    .cornerRadius(6)
+                    .offset(y: -20) // 向上偏移，不挡住按钮
+                
+                Spacer()
+            }
+            .frame(width: 200)
+            .opacity(isHovered ? 1 : 0)
+            .animation(.easeInOut(duration: 0.2), value: isHovered)
+        }
+        .onHover { hovering in
+            isHovered = hovering
+        }
+        
+        .frame(width: 200)
+        .frame(height: 200)
     }
-    .frame(width: 1200)
-    .frame(height: 1200)
 }

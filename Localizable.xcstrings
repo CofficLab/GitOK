@@ -45,6 +45,12 @@
     "Git用户配置" : {
 
     },
+    "Hover Info" : {
+
+    },
+    "iiiiii" : {
+
+    },
     "iMac" : {
 
     },
@@ -202,6 +208,9 @@
           }
         }
       }
+    },
+    "Open remote" : {
+
     },
     "project_not_exist" : {
       "extractionState" : "manual",
