@@ -42,6 +42,7 @@ struct CurrentWorkingStateView: View, SuperLog {
         )
         .onTapGesture(perform: onTap)
         .onAppear(perform: onAppear)
+        .onChange(of: data.project, onProjectDidChange)
         .onNotification(.projectDidCommit, onProjectDidCommit)
     }
 }
@@ -75,6 +76,10 @@ extension CurrentWorkingStateView {
     }
 
     func onProjectDidCommit(_ notification: Notification) {
+        self.loadChangedFileCount()
+    }
+
+    func onProjectDidChange() {
         self.loadChangedFileCount()
     }
 }

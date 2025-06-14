@@ -1,6 +1,6 @@
-import SwiftUI
-import OSLog
 import MagicCore
+import OSLog
+import SwiftUI
 
 struct BtnOpenRemoteView: View, SuperLog {
     @EnvironmentObject var g: DataProvider
@@ -19,7 +19,8 @@ struct BtnOpenRemoteView: View, SuperLog {
     var body: some View {
         ZStack {
             if let url = webURL {
-                url.makeOpenButton().magicShapeVisibility(.onHover)
+                url.makeOpenButton(.safari, useRealIcon: true)
+                    .magicShapeVisibility(.onHover)
             } else if isLoading {
                 // 添加加载指示器或占位符
                 Color.clear.frame(width: 24, height: 24)
@@ -47,7 +48,7 @@ extension BtnOpenRemoteView {
 
         do {
             let remotes = try project.getRemotes()
-            var remoteURL: String? = nil
+            var remoteURL: String?
 
             for remote in remotes {
                 if remote.name == "origin" {
@@ -59,13 +60,13 @@ extension BtnOpenRemoteView {
             if verbose {
                 os_log(.info, "\(self.t)🔄 Update remoteURL: \(remoteURL ?? "")")
             }
-            
+
             var formattedRemote = remoteURL ?? ""
             if formattedRemote.hasPrefix("git@") {
                 formattedRemote = formattedRemote.replacingOccurrences(of: ":", with: "/")
                 formattedRemote = formattedRemote.replacingOccurrences(of: "git@", with: "https://")
             }
-            
+
             DispatchQueue.main.async {
                 if !formattedRemote.isEmpty {
                     self.webURL = URL(string: formattedRemote)

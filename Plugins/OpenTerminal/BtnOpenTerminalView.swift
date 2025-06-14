@@ -5,7 +5,8 @@ struct BtnOpenTerminalView: View {
 
     var body: some View {
         if let project = g.project {
-            project.url.makeOpenButton(.terminal)
+            project.url
+                .makeOpenButton(.terminal, useRealIcon: true)
                 .magicShapeVisibility(.onHover)
                 .help("在终端打开")
         }
