@@ -9,7 +9,9 @@ struct BtnOpenFinderView: View {
 
     var body: some View {
         if let project = g.project {
-            project.url.makeOpenButton().magicShapeVisibility(.onHover)
+            project.url.makeOpenButton()
+                .magicShapeVisibility(.onHover)
+                .help("在Finder中打开")
         }
     }
 }

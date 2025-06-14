@@ -13,6 +13,7 @@ struct BtnMerge: View, SuperEvent, SuperThread {
 
     var body: some View {
         Button("Merge", action: merge)
+            .help("合并分支")
             .padding()
             .cornerRadius(8)
             .scaleEffect(isHovering ? 1.05 : 1.0)

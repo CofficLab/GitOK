@@ -23,6 +23,7 @@ struct BtnSyncView: View, SuperLog, SuperEvent, SuperThread {
                 Label("同步", systemImage: "arrow.triangle.2.circlepath")
                     .rotationEffect(Angle(degrees: self.rotationAngle))
             })
+            .help("和远程仓库同步")
             .disabled(working)
             .onAppear(perform: onAppear)
             .onChange(of: working) {

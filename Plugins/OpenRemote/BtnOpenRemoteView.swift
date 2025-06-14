@@ -30,7 +30,7 @@ struct BtnOpenRemoteView: View, SuperLog {
         }
         .onAppear(perform: onAppear)
         .onChange(of: g.project?.url, onProjectChange)
-        .help("Open remote")
+        .help("在浏览器打开")
     }
 }
 

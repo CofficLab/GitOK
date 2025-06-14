@@ -21,6 +21,7 @@ struct BtnOpenTraeView: View {
                     }
                 )
             })
+            .help("用 Trae 打开")
         }
     }
 }

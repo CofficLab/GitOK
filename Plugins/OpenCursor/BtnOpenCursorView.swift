@@ -21,6 +21,7 @@ struct BtnOpenCursorView: View {
                     }
                 )
             })
+            .help("用 Cursor 打开")
         }
     }
 }

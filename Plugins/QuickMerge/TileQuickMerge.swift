@@ -18,6 +18,7 @@ struct TileQuickMerge: View, SuperLog, SuperThread {
         HStack {            
             Image(systemName: "arrowshape.zigzag.forward")
         }
+        .help("快速合并")
         .onHover(perform: { hovering in
             hovered = hovering
         })

@@ -10,7 +10,9 @@ struct BtnOpenXcodeView: View {
 
     var body: some View {
         if let project = g.project {
-            project.url.makeOpenInButton(.xcode).magicShapeVisibility(.onHover)
+            project.url.makeOpenInButton(.xcode)
+                .magicShapeVisibility(.onHover)
+                .help("用 Xcode 打开")
         }
     }
 }
