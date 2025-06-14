@@ -9,7 +9,7 @@ struct BtnOpenVSCodeView: View {
 
     var body: some View {
         if let project = g.project {
-            project.url.makeOpenInButton(.vscode)
+            project.url.makeOpenButton(.vscode)
                 .magicShapeVisibility(.onHover)
                 .help("用 VSCode 打开")
         }
