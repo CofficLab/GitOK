@@ -51,7 +51,9 @@ struct CommitForm: View, SuperLog {
             }
 
             HStack {
-                UserView()
+                UserView().frame(maxWidth: 300)
+                
+                Spacer()
 
                 BtnCommitAndPush(commitMessage: commitMessage)
             }
