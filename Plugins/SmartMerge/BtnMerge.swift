@@ -27,6 +27,7 @@ struct BtnMerge: View, SuperEvent, SuperThread {
         do {
             _ = try ShellGit.checkout(to.name, at: path)
             _ = try ShellGit.merge(from.name, at: path)
+            self.m.info("已将 \(from.name) 合并到 \(to.name), 并切换到 \(to.name)")
         } catch let error {
             os_log(.error, "\(error.localizedDescription)")
 
