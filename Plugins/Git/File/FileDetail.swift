@@ -36,7 +36,7 @@ struct FileDetail: View, SuperLog, SuperEvent, SuperThread {
                 .background(Color(NSColor.textBackgroundColor))
             }
             
-            MagicDiffView(oldText: oldText, newText: newText)
+            MagicDiffView(oldText: oldText, newText: newText, verbose: true)
         }
         .onChange(of: data.file, onFileChange)
         .onChange(of: data.commit, onCommitChange)
