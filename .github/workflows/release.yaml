@@ -62,14 +62,14 @@ jobs:
           echo "pp_path=$PP_PATH" >> $GITHUB_OUTPUT
           echo "api_key_path=$API_KEY_PATH" >> $GITHUB_OUTPUT
       - name: Build App
-        run: servon xcode build --scheme ${{ env.SCHEME }} --arch arm64
+        run: servon xcode build --scheme ${{ env.SCHEME }} --arch arm64 -v
       - name: Codesign App
         run: |
           servon xcode codesign --path ./temp/arm64/Build/Products/Release/${{ env.SCHEME }}.app \
             --identity ${{ steps.signing.outputs.signing_identity }} 
 
           # servon xcode codesign --path ./temp/x86_64/Build/Products/Release/${{ env.SCHEME }}.app \
-          #   --identity ${{ steps.signing.outputs.signing_identity }} 
+          #   --identity ${{ steps.signing.outputs.signing_identity }}
       - name: Create DMG
         run: |
           servon xcode package --path ./temp/arm64/Build/Products/Release/${{ env.SCHEME }}.app
