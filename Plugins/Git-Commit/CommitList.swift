@@ -14,7 +14,6 @@ struct CommitList: View, SuperThread, SuperLog {
     @State private var hasMoreCommits = true
     @State private var currentPage = 0
     @State private var pageSize: Int = 50
-    @State private var isHovered = false
 
     // 使用GitCommitRepo来存储和恢复commit选择
     private let commitRepo = GitCommitRepo.shared
