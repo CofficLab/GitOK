@@ -47,7 +47,6 @@ struct GitDetail: View, SuperEvent, SuperLog {
                             }
                             .padding(.horizontal, 0)
                             .padding(.vertical, 0)
-                            .background(background)
                         } else {
                             NoLocalChanges()
                         }
