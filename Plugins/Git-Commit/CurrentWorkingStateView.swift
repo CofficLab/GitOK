@@ -50,13 +50,13 @@ struct CurrentWorkingStateView: View, SuperLog {
 // MARK: - Action
 
 extension CurrentWorkingStateView {
-    private func loadChangedFileCount() {
+    private func loadChangedFileCount() async {
         guard let project = data.project else {
             return
         }
 
         do {
-            let count = try project.untrackedFiles().count
+            let count = try await project.untrackedFiles().count
             self.changedFileCount = count
         } catch {
             os_log(.error, "\(self.t)❌ Failed to load changed file count: \(error)")
@@ -68,7 +68,9 @@ extension CurrentWorkingStateView {
 
 extension CurrentWorkingStateView {
     func onAppear() {
-        self.loadChangedFileCount()
+        Task {
+            await self.loadChangedFileCount()
+        }
     }
 
     func onTap() {
@@ -76,11 +78,15 @@ extension CurrentWorkingStateView {
     }
 
     func onProjectDidCommit(_ notification: Notification) {
-        self.loadChangedFileCount()
+        Task {
+            await self.loadChangedFileCount()
+        }
     }
 
     func onProjectDidChange() {
-        self.loadChangedFileCount()
+        Task {
+            await self.loadChangedFileCount()
+        }
     }
 }
 

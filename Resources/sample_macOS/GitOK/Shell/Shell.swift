@@ -6,11 +6,11 @@ class Shell {
     static var label: String = "🐚 Shell::"
     
     static func pwd() -> String {
-        Shell.run("pwd")
+        Shell.runSync("pwd")
     }
     
     static func whoami() -> String {
-        Shell.run("whoami")
+        Shell.runSync("whoami")
     }
     
     static func run(_ command: String, debugPrint: Bool = false) -> String {

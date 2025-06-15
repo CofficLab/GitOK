@@ -11,6 +11,7 @@ struct FileList: View, SuperThread, SuperLog {
     @State var files: [GitDiffFile] = []
     @State var isLoading = false
     @State var selection: GitDiffFile?
+    @State private var refreshTask: Task<Void, Never>?
     var verbose = true
 
     var body: some View {
@@ -74,7 +75,20 @@ struct FileList: View, SuperThread, SuperLog {
 // MARK: - Action
 
 extension FileList {
-    func refresh(reason: String) {
+    func refresh(reason: String) async {
+        // 取消之前的任务
+        refreshTask?.cancel()
+        
+        // 创建新的任务
+        refreshTask = Task {
+            await performRefresh(reason: reason)
+        }
+        
+        // 等待任务完成
+        await refreshTask?.value
+    }
+    
+    private func performRefresh(reason: String) async {
         self.isLoading = true
 
         if verbose {
@@ -87,18 +101,27 @@ extension FileList {
         }
 
         do {
+            // 检查任务是否被取消
+            try Task.checkCancellation()
+            
             if let commit = data.commit {
-                self.files = try project.fileList(atCommit: commit.hash)
+                self.files = try await project.fileList(atCommit: commit.hash)
                 os_log("\(self.t)🍋 Refreshed \(reason) with commit: \(commit.hash) \(self.files.count) files")
             } else {
-                self.files = try project.untrackedFiles()
+                self.files = try await project.untrackedFiles()
                 os_log("\(self.t)🍋 Refreshed \(reason) with untracked files \(self.files.count) files")
             }
+            
+            // 再次检查任务是否被取消
+            try Task.checkCancellation()
             
             self.selection = self.files.first
             DispatchQueue.main.async {
                 self.data.setFile(self.selection)
             }
+        } catch is CancellationError {
+            // 任务被取消，不做任何处理
+            os_log("\(self.t)🍋 Refresh cancelled: \(reason)")
         } catch {
             self.m.error(error.localizedDescription)
         }
@@ -111,14 +134,14 @@ extension FileList {
 
 extension FileList {
     func onAppear() {
-        self.bg.async {
-            self.refresh(reason: "OnAppear")
+        Task {
+            await self.refresh(reason: "OnAppear")
         }
     }
 
     func onCommitChange() {
-        self.bg.async {
-            self.refresh(reason: "OnCommitChanged")
+        Task {
+            await self.refresh(reason: "OnCommitChanged")
         }
     }
 
@@ -127,8 +150,8 @@ extension FileList {
     }
 
     func onProjectDidCommit(_ notification: Notification) {
-        self.bg.async {
-            self.refresh(reason: "OnProjectDidCommit")
+        Task {
+            await self.refresh(reason: "OnProjectDidCommit")
         }
     }
 }

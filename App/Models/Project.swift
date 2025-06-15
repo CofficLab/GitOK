@@ -309,16 +309,16 @@ extension Project {
         try ShellGit.uncommittedFileContentChange(file: file, repoPath: self.path)
     }
 
-    func fileList(atCommit: String) throws -> [GitDiffFile] {
-        try ShellGit.changedFilesDetail(in: atCommit, at: self.path)
+    func fileList(atCommit: String) async throws -> [GitDiffFile] {
+        try await ShellGit.changedFilesDetail(in: atCommit, at: self.path, verbose: true)
     }
 
-    func untrackedFiles() throws -> [GitDiffFile] {
-        try ShellGit.diffFileList(staged: false, at: self.path)
+    func untrackedFiles() async throws -> [GitDiffFile] {
+        try await ShellGit.diffFileList(staged: false, at: self.path)
     }
 
-    func stagedFiles() throws -> [GitDiffFile] {
-        try ShellGit.diffFileList(staged: true, at: self.path)
+    func stagedFiles() async throws -> [GitDiffFile] {
+        try await ShellGit.diffFileList(staged: true, at: self.path)
     }
 }
 

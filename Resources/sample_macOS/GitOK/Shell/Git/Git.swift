@@ -14,7 +14,7 @@ class Git {
     }
 
     static func run(_ arguments: String, path: String) -> String {
-        Shell.run("cd \(path) && git \(arguments)")
+        Shell.runSync("cd \(path) && git \(arguments)")
     }
 }
 
