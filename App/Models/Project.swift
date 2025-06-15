@@ -310,7 +310,7 @@ extension Project {
     }
 
     func fileList(atCommit: String) async throws -> [GitDiffFile] {
-        try await ShellGit.changedFilesDetail(in: atCommit, at: self.path, verbose: true)
+        try await ShellGit.changedFilesDetail(in: atCommit, at: self.path, verbose: false)
     }
 
     func untrackedFiles() async throws -> [GitDiffFile] {

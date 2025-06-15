@@ -9,10 +9,10 @@ struct FileList: View, SuperThread, SuperLog {
     @EnvironmentObject var data: DataProvider
 
     @State var files: [GitDiffFile] = []
-    @State var isLoading = false
+    @State var isLoading = true
     @State var selection: GitDiffFile?
     @State private var refreshTask: Task<Void, Never>?
-    var verbose = true
+    var verbose = false
 
     var body: some View {
         VStack(spacing: 0) {
@@ -106,10 +106,8 @@ extension FileList {
             
             if let commit = data.commit {
                 self.files = try await project.fileList(atCommit: commit.hash)
-                os_log("\(self.t)🍋 Refreshed \(reason) with commit: \(commit.hash) \(self.files.count) files")
             } else {
                 self.files = try await project.untrackedFiles()
-                os_log("\(self.t)🍋 Refreshed \(reason) with untracked files \(self.files.count) files")
             }
             
             // 再次检查任务是否被取消
@@ -121,7 +119,9 @@ extension FileList {
             }
         } catch is CancellationError {
             // 任务被取消，不做任何处理
-            os_log("\(self.t)🍋 Refresh cancelled: \(reason)")
+            if verbose {
+                os_log("\(self.t)🐜 Refresh cancelled: \(reason)")
+            }
         } catch {
             self.m.error(error.localizedDescription)
         }
