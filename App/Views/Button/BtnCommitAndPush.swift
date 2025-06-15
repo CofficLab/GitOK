@@ -27,7 +27,10 @@ struct BtnCommitAndPush: View, SuperLog, SuperThread {
                 DispatchQueue.main.async {
                     do {
                         try project.addAll()
-                        try project.submit(commitMessage)
+                        
+                        // 如果 commitMessage 为空，使用默认消息
+                        let message = commitMessage.isEmpty ? "Auto commit" : commitMessage
+                        try project.submit(message)
                         try project.push()
 
                         m.info("Commit and push success")
