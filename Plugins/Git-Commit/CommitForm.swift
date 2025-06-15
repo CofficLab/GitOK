@@ -1,6 +1,6 @@
-import SwiftUI
-import OSLog
 import MagicCore
+import OSLog
+import SwiftUI
 
 struct CommitForm: View, SuperLog {
     @EnvironmentObject var app: AppProvider
@@ -8,8 +8,6 @@ struct CommitForm: View, SuperLog {
 
     @State var text: String = ""
     @State var category: CommitCategory = .Chore
-    @State var currentUser: String = ""
-    @State var currentEmail: String = ""
 
     var commitMessage: String {
         var c = text
@@ -21,97 +19,67 @@ struct CommitForm: View, SuperLog {
     }
 
     var body: some View {
-        if let project = g.project {
-            VStack(spacing: 0) {
-                HStack(spacing: 0) {
-                    // 当前分支信息显示区域
-                    if let currentBranch = g.branch {
-                        HStack {
-                            Image(systemName: "arrow.branch")
-                                .foregroundColor(.secondary)
-                                .font(.system(size: 14))
+        VStack(spacing: 0) {
+            HStack(spacing: 0) {
+                // 当前分支信息显示区域
+                if let currentBranch = g.branch {
+                    HStack {
+                        Image(systemName: "arrow.branch")
+                            .foregroundColor(.secondary)
+                            .font(.system(size: 14))
 
-                            Text(currentBranch.name)
-                                .font(.caption)
-                                .fontWeight(.medium)
-                                .foregroundColor(.primary)
-                        }
-                        .padding(.trailing, 12)
+                        Text(currentBranch.name)
+                            .font(.caption)
+                            .fontWeight(.medium)
+                            .foregroundColor(.primary)
                     }
+                    .padding(.trailing, 12)
+                }
 
-                    Picker("", selection: $category, content: {
-                        ForEach(CommitCategory.allCases, id: \.self, content: {
-                            Text($0.label).tag($0 as CommitCategory?)
-                        })
+                Picker("", selection: $category, content: {
+                    ForEach(CommitCategory.allCases, id: \.self, content: {
+                        Text($0.label).tag($0 as CommitCategory?)
                     })
-                    .frame(width: 135)
-                    .pickerStyle(.automatic)
+                })
+                .frame(width: 135)
+                .pickerStyle(.automatic)
 
-                    Spacer()
-                    TextField("commit", text: $text)
-                        .textFieldStyle(.roundedBorder)
-                        .padding(.vertical)
-                }
-
-                HStack {
-                    // 用户信息显示区域
-                    if !currentUser.isEmpty {
-                        HStack {
-                            Image(systemName: "person.circle")
-                                .foregroundColor(.secondary)
-                                .font(.system(size: 14))
-
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text(currentUser)
-                                    .font(.caption)
-                                    .fontWeight(.medium)
-                                if !currentEmail.isEmpty {
-                                    Text(currentEmail)
-                                        .font(.caption2)
-                                        .foregroundColor(.secondary)
-                                }
-                            }
-
-                            Spacer()
-                        }
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
-                        .background(Color.secondary.opacity(0.1))
-                        .cornerRadius(6)
-                    }
-
-                    BtnCommitAndPush(repoPath: project.path, commitMessage: commitMessage)
-                }
-                .frame(height: 40)
+                Spacer()
+                TextField("commit", text: $text)
+                    .textFieldStyle(.roundedBorder)
+                    .padding(.vertical)
             }
-            .onReceive(NotificationCenter.default.publisher(for: .gitCommitSuccess)) { _ in
-                self.text = self.category.defaultMessage
+
+            HStack {
+                UserView()
+
+                BtnCommitAndPush(commitMessage: commitMessage)
             }
-            .onChange(of: category, {
-                os_log("\(self.t)Cateogry changed to -> \(category.title)")
-                self.text = category.defaultMessage
-            })
-            .onAppear {
-                self.text = self.category.defaultMessage
-                loadUserInfo(for: project.path)
-            }
+            .frame(height: 40)
         }
-    }
-
-    private func loadUserInfo(for projectPath: String) {
-        do {
-            let userName = try GitShell.getUserName(projectPath)
-            let userEmail = try GitShell.getUserEmail(projectPath)
-
-            self.currentUser = userName
-            self.currentEmail = userEmail
-        } catch {
-            // 如果获取用户信息失败，保持空字符串
-            self.currentUser = ""
-            self.currentEmail = ""
-        }
+        .onNotification(.projectDidCommit, perform: onProjectDidCommit)
+        .onChange(of: category, onCategoryDidChange)
+        .onAppear(perform: onAppear)
     }
 }
+
+// MARK: - Action
+
+extension CommitForm {
+    func onProjectDidCommit(_ notification: Notification) {
+        self.text = self.category.defaultMessage
+    }
+
+    func onCategoryDidChange() {
+        self.text = self.category.defaultMessage
+    }
+
+    func onAppear() {
+        self.text = self.category.defaultMessage
+    }
+}
+
+// MARK: - Preview
 
 #Preview("App - Small Screen") {
     RootView {

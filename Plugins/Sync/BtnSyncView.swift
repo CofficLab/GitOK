@@ -2,11 +2,12 @@ import MagicCore
 import SwiftUI
 
 struct BtnSyncView: View, SuperLog, SuperEvent, SuperThread {
-    @EnvironmentObject var m: MessageProvider
+    @EnvironmentObject var m: MagicMessageProvider
     @EnvironmentObject var data: DataProvider
 
     @State var working = false
     @State var rotationAngle = 0.0
+    @State var isGitProject = false
 
     var commitMessage = CommitCategory.auto
     
@@ -15,14 +16,16 @@ struct BtnSyncView: View, SuperLog, SuperEvent, SuperThread {
     private init() {}
 
     var body: some View {
-        if let project = data.project, project.isGit {
+        if let project = data.project, self.isGitProject {
             Button(action: {
                 sync(path: project.path)
             }, label: {
                 Label("同步", systemImage: "arrow.triangle.2.circlepath")
                     .rotationEffect(Angle(degrees: self.rotationAngle))
             })
+            .help("和远程仓库同步")
             .disabled(working)
+            .onAppear(perform: onAppear)
             .onChange(of: working) {
                 let duration = 0.02
                 if working {
@@ -52,20 +55,26 @@ struct BtnSyncView: View, SuperLog, SuperEvent, SuperThread {
             working = true
         }
 
-        do {
-            try GitShell.pull(path)
-            try GitShell.push(path)
+        // 显示加载状态
+        m.loading("正在同步...")
 
+        do {
+            try self.data.project?.sync()
+            
+            // 隐藏加载状态 - 成功消息会通过Project的事件系统自动显示
+            m.hideLoading()
             self.reset()
         } catch let error {
+            // 隐藏加载状态并显示错误
+            m.hideLoading()
             self.reset()
-            m.alert("同步出错", info: error.localizedDescription)
+            m.error(error.localizedDescription)
         }
     }
 
     func alert(error: Error) {
         self.main.async {
-            m.alert("同步出错", info: error.localizedDescription)
+            m.error(error.localizedDescription)
         }
     }
 
@@ -73,6 +82,22 @@ struct BtnSyncView: View, SuperLog, SuperEvent, SuperThread {
         withAnimation {
             self.working = false
         }
+    }
+}
+
+// MARK: - Action
+
+extension BtnSyncView {
+    func updateIsGitProject() {
+        self.isGitProject = data.project?.isGit() ?? false
+    }
+}
+
+// MARK: - Event
+
+extension BtnSyncView {
+    func onAppear() {
+        self.updateIsGitProject()
     }
 }
 

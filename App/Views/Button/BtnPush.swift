@@ -1,7 +1,9 @@
 import SwiftUI
+import MagicCore
 
 struct BtnPush: View {
-    @EnvironmentObject var m: MessageProvider
+    @EnvironmentObject var m: MagicMessageProvider
+    @EnvironmentObject var data: DataProvider
     
     @Binding var message: String
 
@@ -12,21 +14,22 @@ struct BtnPush: View {
     var body: some View {
         Button("推送", action: {
             do {
-                try GitShell.push(path)
+                try data.project?.push()
             } catch let error {
-                m.alert("Push出错", info: error.localizedDescription)
+                
+                m.warning("Push出错", subtitle: error.localizedDescription)
             }
         })
         .disabled(isPushing)
-        .onNotification(.gitPushStart, perform: { _ in
-            isPushing = true
-        })
-        .onReceive(NotificationCenter.default.publisher(for: .gitPushSuccess)) { _ in
-            isPushing = false
-        }
-        .onReceive(NotificationCenter.default.publisher(for: .gitPushFailed)) { _ in
-            isPushing = false
-        }
+//        .onNotification(.gitPushStart, perform: { _ in
+//            isPushing = true
+//        })
+//        .onReceive(NotificationCenter.default.publisher(for: .gitPushSuccess)) { _ in
+//            isPushing = false
+//        }
+//        .onReceive(NotificationCenter.default.publisher(for: .gitPushFailed)) { _ in
+//            isPushing = false
+//        }
     }
 }
 

@@ -1,18 +1,18 @@
 import OSLog
 import SwiftUI
+import MagicCore
 
 struct MergeForm: View {
     @EnvironmentObject var app: AppProvider
     @EnvironmentObject var g: DataProvider
 
-    @State var branches: [Branch] = []
+    @State var branches: [GitBranch] = []
     @State var text: String = ""
     @State var category: CommitCategory = .Chore
-    @State var branch1: Branch? = nil
-    @State var branch2: Branch? = nil
+    @State var branch1: GitBranch? = nil
+    @State var branch2: GitBranch? = nil
 
     var project: Project? { g.project }
-    var git = GitShell()
 
     var body: some View {
         if let project = project {
@@ -22,7 +22,7 @@ struct MergeForm: View {
                         Picker("", selection: $branch1, content: {
                             ForEach(branches, id: \.self, content: {
                                 Text($0.name)
-                                    .tag($0 as Branch?)
+                                    .tag($0 as GitBranch?)
                             })
                         })
 
@@ -31,21 +31,21 @@ struct MergeForm: View {
                         Picker("", selection: $branch2, content: {
                             ForEach(branches, id: \.self, content: {
                                 Text($0.name)
-                                    .tag($0 as Branch?)
+                                    .tag($0 as GitBranch?)
                             })
                         })
                     }
 
                     if let branch1 = branch1, let branch2 = branch2 {
                         BtnMerge(path: project.path, from: branch1, to: branch2)
-                            .padding(.top, 20)
-                            .controlSize(.extraLarge)
+//                            .padding(.top, 20)
+//                            .controlSize(.extraLarge)
                     }
                 }
             }
             .onAppear(perform: {
                 do {
-                    self.branches = try GitShell.getBranches(project.path)
+                    self.branches = try project.getBranches()
                     self.branch1 = branches.first
                     self.branch2 = branches.count >= 2 ? branches[1] : branches.first
                 } catch let error {

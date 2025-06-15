@@ -1,18 +1,26 @@
+import MagicCore
+import OSLog
 import SwiftUI
 
-struct BtnOpenRemoteView: View {
+struct BtnOpenRemoteView: View, SuperLog {
     @EnvironmentObject var g: DataProvider
-    @State private var remoteURL: URL?
+
+    @State private var webURL: URL?
     @State private var isLoading = false
-    
-     static let shared = BtnOpenRemoteView()
-     
-     private init() {}
-    
+    @State private var isGitProject: Bool = true
+
+    static let shared = BtnOpenRemoteView()
+    static let emoji = "💊"
+
+    private var verbose = false
+
+    private init() {}
+
     var body: some View {
         ZStack {
-            if let url = remoteURL {
-                url.makeOpenButton().magicShapeVisibility(.onHover)
+            if let url = webURL {
+                url.makeOpenButton(.safari, useRealIcon: true)
+                    .magicShapeVisibility(.onHover)
             } else if isLoading {
                 // 添加加载指示器或占位符
                 Color.clear.frame(width: 24, height: 24)
@@ -21,42 +29,81 @@ struct BtnOpenRemoteView: View {
                 Color.clear.frame(width: 24, height: 24)
             }
         }
-        .onAppear {
-            updateRemoteURL()
-        }
-        .onChange(of: g.project) {
-            updateRemoteURL()
-        }
+        .onAppear(perform: onAppear)
+        .onChange(of: g.project?.url, onProjectChange)
+        .help("在浏览器打开")
     }
-    
+}
+
+// MARK: - Action
+
+extension BtnOpenRemoteView {
     func updateRemoteURL() {
-        guard let project = g.project, project.isGit else {
-            remoteURL = nil
+        guard let project = g.project, self.isGitProject else {
+            webURL = nil
             return
         }
-        
+
         isLoading = true
-        
-        DispatchQueue.global(qos: .userInitiated).async {
-            let remote = GitShell.getRemote(project.path).trimmingCharacters(in: .whitespacesAndNewlines)
-            
-            var formattedRemote = remote
+
+        do {
+            let remotes = try project.getRemotes()
+            var remoteURL: String?
+
+            for remote in remotes {
+                if remote.name == "origin" {
+                    remoteURL = remote.url
+                    break
+                }
+            }
+
+            if verbose {
+                os_log(.info, "\(self.t)🔄 Update remoteURL: \(remoteURL ?? "")")
+            }
+
+            var formattedRemote = remoteURL ?? ""
             if formattedRemote.hasPrefix("git@") {
                 formattedRemote = formattedRemote.replacingOccurrences(of: ":", with: "/")
                 formattedRemote = formattedRemote.replacingOccurrences(of: "git@", with: "https://")
             }
-            
+
             DispatchQueue.main.async {
                 if !formattedRemote.isEmpty {
-                    remoteURL = URL(string: formattedRemote)
+                    self.webURL = URL(string: formattedRemote)
                 } else {
-                    remoteURL = nil
+                    self.webURL = nil
                 }
                 isLoading = false
             }
+        } catch {
+            os_log(.error, "\(self.t)\(error.localizedDescription)")
         }
     }
+
+    func updateIsGitProject() {
+        guard let project = g.project else {
+            return
+        }
+
+        self.isGitProject = project.isGit()
+    }
 }
+
+// MARK: - Event
+
+extension BtnOpenRemoteView {
+    func onAppear() {
+        self.updateIsGitProject()
+        self.updateRemoteURL()
+    }
+
+    func onProjectChange() {
+        self.updateIsGitProject()
+        self.updateRemoteURL()
+    }
+}
+
+// MARK: - Preview
 
 #Preview("App - Small Screen") {
     RootView {

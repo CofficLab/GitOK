@@ -6,11 +6,10 @@ import SwiftUI
 struct GitDetail: View, SuperEvent, SuperLog {
     @EnvironmentObject var app: AppProvider
     @EnvironmentObject var data: DataProvider
-    @EnvironmentObject var m: MessageProvider
+    @EnvironmentObject var m: MagicMessageProvider
 
-    @State var diffView: AnyView = AnyView(EmptyView())
-    @State var file: File?
     @State private var isProjectClean: Bool = true
+    @State private var isGitProject: Bool = false
 
     static let shared = GitDetail()
 
@@ -24,18 +23,33 @@ struct GitDetail: View, SuperEvent, SuperLog {
 
     var body: some View {
         ZStack {
-            if let project = data.project {
-                if project.isGit {
-                    if let commit = data.commit {
+            if data.project != nil {
+                if self.isGitProject {
+                    VStack(alignment: .leading, spacing: 8) {
                         Group {
-                            if commit.isHead && isProjectClean {
-                                NoLocalChanges()
-                            } else {
-                                CommitDetail()
+                            if let commit = data.commit {
+                                CommitInfoView(commit: commit)
+                            } else if self.isProjectClean == false {
+                                CommitForm()
                             }
                         }
-                    } else {
-                        NoCommit()
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 8)
+
+                        if !self.isProjectClean || self.data.commit != nil {
+                            HSplitView {
+                                FileList()
+                                    .frame(idealWidth: 200)
+                                    .frame(minWidth: 200, maxWidth: 300)
+                                    .layoutPriority(1)
+
+                                FileDetail()
+                            }
+                            .padding(.horizontal, 0)
+                            .padding(.vertical, 0)
+                        } else {
+                            NoLocalChanges()
+                        }
                     }
                 } else {
                     NoGitProjectView()
@@ -43,10 +57,19 @@ struct GitDetail: View, SuperEvent, SuperLog {
             }
         }
         .onAppear(perform: onAppear)
-        .onChange(of: file, onFileChange)
         .onChange(of: data.project, onProjectChange)
-        .onNotification(.gitCommitSuccess, perform: onGitCommitSuccess)
+        .onNotification(.projectDidCommit, perform: onGitCommitSuccess)
         .onNotification(.appWillBecomeActive, perform: onAppWillBecomeActive)
+    }
+
+    private var background: some View {
+        ZStack {
+            if data.commit == nil {
+                MagicBackground.orange.opacity(0.15)
+            } else {
+                MagicBackground.colorGreen.opacity(0.15)
+            }
+        }
     }
 }
 
@@ -54,42 +77,47 @@ struct GitDetail: View, SuperEvent, SuperLog {
 
 extension GitDetail {
     func updateIsProjectClean() {
-        self.isProjectClean = data.project?.isClean ?? true
+        guard let project = data.project else {
+            return
+        }
+
+        do {
+            self.isProjectClean = try project.isClean()
+        } catch {
+            os_log(.error, "\(self.t)❌ Failed to update isProjectClean: \(error)")
+        }
+
+        if verbose {
+            os_log(.info, "\(self.t)🔄 Update isProjectClean: \(self.isProjectClean)")
+        }
+    }
+
+    func updateIsGitProject() {
+        guard let project = data.project else {
+            return
+        }
+
+        self.isGitProject = project.isGit()
     }
 }
 
 // MARK: Event
 
 extension GitDetail {
+    func onAppWillBecomeActive(_ notification: Notification) {
+        self.updateIsProjectClean()
+    }
+
     func onAppear() {
         self.updateIsProjectClean()
+        self.updateIsGitProject()
     }
 
     func onProjectChange() {
         self.updateIsProjectClean()
     }
 
-    func onFileChange() {
-        self.data.setFile(file)
-
-        self.updateIsProjectClean()
-
-        if let commit = data.commit, let file = file, let project = data.project {
-            do {
-                let v = try GitShell.diffFileFromCommit(path: project.path, hash: commit.hash, file: file.name)
-                self.diffView = AnyView(v)
-            } catch {
-                m.error(error)
-            }
-        }
-    }
-
     func onGitCommitSuccess(_ notification: Notification) {
-        self.updateIsProjectClean()
-        self.m.toast("已提交")
-    }
-
-    func onAppWillBecomeActive(_ n: Notification) {
         self.updateIsProjectClean()
     }
 }

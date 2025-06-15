@@ -1,4 +1,3 @@
-import AlertToast
 import MagicCore
 import SwiftData
 import SwiftUI
@@ -12,7 +11,7 @@ struct RootView<Content>: View, SuperEvent where Content: View {
 
     private var box: RootBox
 
-    @StateObject var m = MessageProvider()
+    @StateObject var m = MagicMessageProvider.shared
 
     init(@ViewBuilder content: () -> Content) {
         self.content = content()
@@ -26,26 +25,7 @@ struct RootView<Content>: View, SuperEvent where Content: View {
 
     var body: some View {
         content
-            .toast(isPresenting: $m.showToast, alert: {
-                AlertToast(type: .systemImage("info.circle", .blue), title: m.toast)
-            }, completion: {
-                m.clearToast()
-            })
-            .toast(isPresenting: $m.showAlert, alert: {
-                AlertToast(displayMode: .alert, type: .error(.red), title: m.alert)
-            }, completion: {
-                m.clearAlert()
-            })
-            .toast(isPresenting: $m.showDone, alert: {
-                AlertToast(type: .complete(.green), title: m.doneMessage)
-            }, completion: {
-                m.clearDoneMessage()
-            })
-            .toast(isPresenting: $m.showError, duration: 0, tapToDismiss: true, alert: {
-                AlertToast(displayMode: .hud, type: .error(.indigo), title: m.error?.localizedDescription)
-            }, completion: {
-                m.clearError()
-            })
+            .withMagicToast()
             .environmentObject(a)
             .environmentObject(b)
             .environmentObject(i)
@@ -55,6 +35,16 @@ struct RootView<Content>: View, SuperEvent where Content: View {
             .navigationTitle("")
     }
 }
+
+extension View {
+    /// 将当前视图包裹在RootView中
+    /// - Returns: 被RootView包裹的视图
+    func inRootView() -> some View {
+        RootView {
+            self
+        }
+    }
+} 
 
 #Preview("App - Small Screen") {
     RootView {

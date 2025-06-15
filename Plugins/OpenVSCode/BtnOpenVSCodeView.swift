@@ -2,14 +2,17 @@ import SwiftUI
 
 struct BtnOpenVSCodeView: View {
     @EnvironmentObject var g: DataProvider
-    
+
     static let shared = BtnOpenVSCodeView()
-    
+
     private init() {}
 
     var body: some View {
         if let project = g.project {
-            project.url.makeOpenInButton(.vscode).magicShapeVisibility(.onHover)
+            project.url
+                .makeOpenButton(.vscode, useRealIcon: true)
+                .magicShapeVisibility(.onHover)
+                .help("用 VSCode 打开")
         }
     }
 }

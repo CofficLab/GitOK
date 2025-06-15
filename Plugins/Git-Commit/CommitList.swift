@@ -10,15 +10,15 @@ struct CommitList: View, SuperThread, SuperLog {
 
     @State private var commits: [GitCommit] = []
     @State private var loading = false
-    @State private var showCommitForm = false
     @State private var isRefreshing = false
     @State private var hasMoreCommits = true
     @State private var currentPage = 0
     @State private var pageSize: Int = 50
+    @State private var isHovered = false
 
     // 使用GitCommitRepo来存储和恢复commit选择
     private let commitRepo = GitCommitRepo.shared
-    private let verbose = true
+    private let verbose = false
 
     private init() {}
 
@@ -26,7 +26,7 @@ struct CommitList: View, SuperThread, SuperLog {
 
     var body: some View {
         ZStack {
-            if let project = data.project, project.isGit {
+            if data.project != nil {
                 GeometryReader { geometry in
                     VStack(spacing: 0) {
                         if loading && commits.isEmpty {
@@ -34,17 +34,23 @@ struct CommitList: View, SuperThread, SuperLog {
                             Text(LocalizedStringKey("loading"))
                             Spacer()
                         } else {
+                            CurrentWorkingStateView()
+
                             ScrollView {
                                 LazyVStack(spacing: 0, pinnedViews: []) {
                                     Divider()
 
                                     ForEach(commits) { commit in
                                         CommitRow(commit: commit)
-                                            .id(commit.id)
                                             .onAppear {
+                                                // 只在最后几个commit出现时触发加载更多
                                                 let index = commits.firstIndex(of: commit) ?? 0
-                                                let threshold = Int(Double(commits.count) * 0.8)
+                                                let threshold = max(commits.count - 10, Int(Double(commits.count) * 0.8))
+
                                                 if index >= threshold && hasMoreCommits && !loading {
+                                                    if verbose {
+                                                        os_log("\(self.t)👁️ Commit \(index) appeared, triggering loadMore")
+                                                    }
                                                     loadMoreCommits()
                                                 }
                                             }
@@ -75,33 +81,62 @@ struct CommitList: View, SuperThread, SuperLog {
         }
         .onAppear(perform: onAppear)
         .onChange(of: data.project, onProjectChange)
-        .onNotification(.gitCommitSuccess, perform: onCommitSuccess)
-        .onNotification(.gitPullSuccess, perform: onPullSuccess)
-        .onNotification(.gitPushSuccess, perform: onPushSuccess)
+        .onNotification(.projectDidCommit, perform: onCommitSuccess)
+        .onNotification(.projectDidPull, perform: onPullSuccess)
+        .onNotification(.projectDidPush, perform: onPushSuccess)
     }
 
     private func loadMoreCommits() {
-        guard let project = data.project, !loading, hasMoreCommits else { return }
+        guard let project = data.project, !loading, hasMoreCommits else {
+            if verbose {
+                os_log("\(self.t)🔄 LoadMoreCommits skipped - loading: \(loading), hasMore: \(hasMoreCommits)")
+            }
+            return
+        }
+
+        if verbose {
+            os_log("\(self.t)🔄 LoadMoreCommits started - page: \(currentPage), total: \(commits.count)")
+        }
 
         loading = true
 
         do {
-            let newCommits = try GitShell.logsWithPagination(
-                project.path,
-                skip: currentPage * pageSize,
-                limit: pageSize
+            let newCommits = try project.getCommitsWithPagination(
+                self.currentPage,
+                limit: self.pageSize
             )
 
             if !newCommits.isEmpty {
-                commits.append(contentsOf: newCommits)
+                // 添加去重逻辑，防止重复添加相同的commit
+                let uniqueNewCommits = newCommits.filter { newCommit in
+                    !commits.contains { existingCommit in
+                        existingCommit.hash == newCommit.hash
+                    }
+                }
+
+                if verbose {
+                    os_log("\(self.t)🔄 LoadMoreCommits - fetched: \(newCommits.count), unique: \(uniqueNewCommits.count)")
+                }
+
+                if !uniqueNewCommits.isEmpty {
+                    commits.append(contentsOf: uniqueNewCommits)
+                } else if verbose {
+                    os_log("\(self.t)⚠️ LoadMoreCommits - all commits were duplicates!")
+                }
                 currentPage += 1
             } else {
                 hasMoreCommits = false
+                if verbose {
+                    os_log("\(self.t)🔄 LoadMoreCommits - no more commits available")
+                }
             }
             loading = false
 
         } catch {
             loading = false
+            if verbose {
+                os_log(.error, "\(self.t)❌ LoadMoreCommits error: \(error)")
+            }
         }
     }
 
@@ -118,11 +153,20 @@ struct CommitList: View, SuperThread, SuperLog {
 // MARK: - Action
 
 extension CommitList {
+    func setCommit(_ commit: GitCommit?) {
+        DispatchQueue.main.async {
+            data.setCommit(commit)
+        }
+    }
+
     func refresh(_ reason: String = "") {
         if verbose {
             os_log("\(self.t)🍋 Refresh(\(reason))")
         }
-        guard let project = data.project, !isRefreshing else { return }
+
+        guard let project = data.project, !isRefreshing else {
+            return
+        }
 
         isRefreshing = true
         loading = true
@@ -131,22 +175,14 @@ extension CommitList {
         hasMoreCommits = true
 
         do {
-            let initialCommits = try GitShell.logsWithPagination(
-                project.path,
-                skip: 0,
-                limit: pageSize
+            let initialCommits = try project.getCommitsWithPagination(
+                0, limit: self.pageSize
             )
 
-            commits = [project.headCommit] + initialCommits
+            commits = initialCommits
             loading = false
             isRefreshing = false
             currentPage = 1
-
-            let hasChanges = try? project.hasUnCommittedChanges()
-            showCommitForm = hasChanges ?? true
-
-            // 恢复上次选择的commit
-            restoreLastSelectedCommit()
         } catch {
             loading = false
             isRefreshing = false
@@ -161,13 +197,13 @@ extension CommitList {
         if let lastCommit = commitRepo.getLastSelectedCommit(projectPath: project.path) {
             // 在当前commit列表中查找匹配的commit
             if let matchedCommit = commits.first(where: { $0.hash == lastCommit.hash }) {
-                data.setCommit(matchedCommit)
+                self.setCommit(matchedCommit)
             } else if hasMoreCommits {
                 // 如果在当前页面没有找到，并且还有更多commit，尝试加载更多
                 loadMoreCommitsUntilFound(targetHash: lastCommit.hash)
             }
         } else {
-            data.setCommit(self.commits.first)
+            self.setCommit(self.commits.first)
         }
     }
 
@@ -178,20 +214,25 @@ extension CommitList {
         loading = true
 
         do {
-            let newCommits = try GitShell.logsWithPagination(
-                project.path,
-                skip: currentPage * pageSize,
+            let newCommits = try project.getCommitsWithPagination(
+                currentPage,
                 limit: pageSize
             )
 
             if !newCommits.isEmpty {
-                commits.append(contentsOf: newCommits)
+                // 添加去重逻辑
+                let uniqueNewCommits = newCommits.filter { newCommit in
+                    !commits.contains { existingCommit in
+                        existingCommit.hash == newCommit.hash
+                    }
+                }
+                commits.append(contentsOf: uniqueNewCommits)
                 currentPage += 1
 
                 // 检查是否找到目标commit
                 if let matchedCommit = newCommits.first(where: { $0.hash == targetHash }) {
                     // 选择找到的commit
-                    data.setCommit(matchedCommit)
+                    self.setCommit(matchedCommit)
                 } else if hasMoreCommits {
                     // 如果还没找到，继续加载更多
                     loadMoreCommitsUntilFound(targetHash: targetHash, maxAttempts: maxAttempts - 1)
@@ -211,30 +252,43 @@ extension CommitList {
 
 extension CommitList {
     func onProjectChange() {
-        self.refresh("Project Changed")
+        self.bg.async {
+            self.refresh("Project Changed")
+        }
     }
 
     func onCommitSuccess(_ notification: Notification) {
-        self.refresh("GitCommitSuccess")
+        self.bg.async {
+            self.refresh("GitCommitSuccess")
+        }
     }
 
     func onAppear() {
-        refresh("OnAppear")
+        self.bg.async {
+            self.refresh("OnAppear")
+            self.restoreLastSelectedCommit()
+        }
     }
 
     func onChangeOfSelection() {
     }
 
     func onPullSuccess(_ notification: Notification) {
-        self.refresh("GitPullSuccess")
+        self.bg.async {
+            self.refresh("GitPullSuccess")
+        }
     }
 
     func onPushSuccess(_ notification: Notification) {
-        self.refresh("GitPushSuccess")
+        self.bg.async {
+            self.refresh("GitPushSuccess")
+        }
     }
 
     func onAppWillBecomeActive(_ notification: Notification) {
-        self.refresh("AppWillBecomeActive")
+        self.bg.async {
+            self.refresh("AppWillBecomeActive")
+        }
     }
 }
 
@@ -248,10 +302,39 @@ extension CommitList {
 }
 
 #Preview("App-Big Screen") {
-    RootView {
-        ContentLayout()
-            .hideSidebar()
+    HoverButtonPreview()
+}
+
+struct HoverButtonPreview: View {
+    @State private var isHovered = false
+    
+    var body: some View {
+        Button("iiiiii"){
+            print("EEEEEEEE")
+        }
+        .overlay(alignment: .top) {
+            // 悬停时显示的覆盖视图
+            VStack {
+                Text("Hover Info")
+                    .font(.caption)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(Color.black.opacity(0.8))
+                    .foregroundColor(.white)
+                    .cornerRadius(6)
+                    .offset(y: -20) // 向上偏移，不挡住按钮
+                
+                Spacer()
+            }
+            .frame(width: 200)
+            .opacity(isHovered ? 1 : 0)
+            .animation(.easeInOut(duration: 0.2), value: isHovered)
+        }
+        .onHover { hovering in
+            isHovered = hovering
+        }
+        
+        .frame(width: 200)
+        .frame(height: 200)
     }
-    .frame(width: 1200)
-    .frame(height: 1200)
 }

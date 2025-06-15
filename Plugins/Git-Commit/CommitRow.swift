@@ -3,11 +3,10 @@ import SwiftUI
 
 struct CommitRow: View, SuperThread {
     @EnvironmentObject var data: DataProvider
-    
+
     let commit: GitCommit
 
     @State private var tag: String = ""
-    @State private var changedFileCount: Int = 0
 
     var body: some View {
         VStack(spacing: 0) {
@@ -27,32 +26,21 @@ struct CommitRow: View, SuperThread {
                             }
 
                             // 第二行：提交人和提交时间
-                            if !commit.isHead {
-                                HStack {
-                                    Text(commit.author)
-                                        .padding(.vertical, 1)
-                                        .lineLimit(1)
+                            HStack {
+                                Text(commit.author)
+                                    .padding(.vertical, 1)
+                                    .lineLimit(1)
 
-                                    // 相对时间标签
-                                    Text(commit.date.smartRelativeTime)
-                                        .padding(.vertical, 1)
-                                        .padding(.horizontal, 1)
+                                // 相对时间标签
+                                Text(commit.date.smartRelativeTime)
+                                    .padding(.vertical, 1)
+                                    .padding(.horizontal, 1)
 
-                                    Spacer()
-                                }
-                                .padding(.vertical, 1)
-                                .font(.system(size: 11))
-                                .foregroundColor(.secondary)
-                            } else {
-                                HStack {
-                                    Text("未提交的文件数量: \(changedFileCount)")
-                                        .lineLimit(1)
-                                        .font(.system(size: 11))
-                                        .foregroundColor(.secondary)
-
-                                    Spacer()
-                                }
+                                Spacer()
                             }
+                            .padding(.vertical, 1)
+                            .font(.system(size: 11))
+                            .foregroundColor(.secondary)
                         }
                         .padding(.vertical, 6)
                         .padding(.horizontal, 8)
@@ -75,7 +63,7 @@ struct CommitRow: View, SuperThread {
             .background(data.commit == self.commit ? Color.accentColor.opacity(0.1) : Color.clear)
             .onAppear(perform: onAppear)
             .onNotification(.appWillBecomeActive, onAppWillBecomeActive)
-            .onNotification(.gitCommitSuccess, onGitCommitSuccess)
+            .onNotification(.projectDidCommit, onGitCommitSuccess)
 
             Divider()
         }
@@ -83,35 +71,17 @@ struct CommitRow: View, SuperThread {
 
     /// 异步加载commit的tag信息
     private func loadTag() {
-        // 如果是HEAD，不需要加载tag
-        if commit.isHead {
+        guard let project = data.project else {
+            self.tag = ""
             return
         }
 
         do {
-            let tagResult = try commit.getTag()
+            let tags = try project.getTags(commit: self.commit.hash)
 
-            self.tag = tagResult.trimmingCharacters(in: .whitespacesAndNewlines)
+            self.tag = tags.first ?? ""
         } catch {
             // 获取tag失败时不显示tag
-        }
-    }
-
-    /// 异步加载未提交文件数量
-    private func loadChangedFileCount() {
-        // 只有HEAD commit才需要显示未提交文件数量
-        guard commit.isHead else {
-            return
-        }
-
-        // 使用异步任务避免阻塞UI
-        Task {
-            let count = GitShell.changedFile(commit.path).count
-
-            // 在主线程更新UI
-            await MainActor.run {
-                self.changedFileCount = count
-            }
         }
     }
 }
@@ -120,18 +90,17 @@ struct CommitRow: View, SuperThread {
 
 extension CommitRow {
     func onAppear() {
-        loadTag()
-        loadChangedFileCount()
+        self.bg.async {
+            loadTag()
+        }
     }
-    
+
     func onAppWillBecomeActive(_ n: Notification) {
         loadTag()
-        loadChangedFileCount()
     }
 
     func onGitCommitSuccess(_ n: Notification) {
         loadTag()
-        loadChangedFileCount()
     }
 }
 

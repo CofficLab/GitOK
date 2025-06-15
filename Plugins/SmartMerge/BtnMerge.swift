@@ -3,17 +3,17 @@ import OSLog
 import SwiftUI
 
 struct BtnMerge: View, SuperEvent, SuperThread {
-    @EnvironmentObject var m: MessageProvider
+    @EnvironmentObject var m: MagicMessageProvider
 
     var path: String
-    var from: Branch
-    var to: Branch
-    var git = GitShell()
+    var from: GitBranch
+    var to: GitBranch
 
     @State private var isHovering = false
 
     var body: some View {
         Button("Merge", action: merge)
+            .help("合并分支")
             .padding()
             .cornerRadius(8)
             .scaleEffect(isHovering ? 1.05 : 1.0)
@@ -25,12 +25,12 @@ struct BtnMerge: View, SuperEvent, SuperThread {
 
     func merge() {
         do {
-            try GitShell.setBranch(to, path)
-            try GitShell.merge(from, path, message: CommitCategory.CI.text + "Merge \(from.name) by GitOK")
+            _ = try ShellGit.checkout(to.name, at: path)
+            _ = try ShellGit.merge(from.name, at: path)
         } catch let error {
             os_log(.error, "\(error.localizedDescription)")
 
-            m.setError(error)
+            m.error(error.localizedDescription)
         }
     }
 }

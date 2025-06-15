@@ -11,7 +11,8 @@ extension AppConfig {
         let url = AppConfig.getDBFolderURL().appendingPathComponent(dbFileName)
 
         let schema = Schema([
-            Project.self
+            Project.self,
+            GitUserConfig.self
         ])
         let modelConfiguration = ModelConfiguration(
             schema: schema,

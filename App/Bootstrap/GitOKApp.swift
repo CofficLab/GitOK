@@ -1,11 +1,11 @@
+import Sparkle
 import SwiftData
 import SwiftUI
-import Sparkle
 
 @main
 struct GitOKApp: App {
     @NSApplicationDelegateAdaptor private var appDelegate: MacAgent
-    
+
     private let updaterController: SPUStandardUpdaterController
 
     init() {
@@ -14,20 +14,17 @@ struct GitOKApp: App {
 
     var body: some Scene {
         WindowGroup {
-            RootView {
-                ContentLayout()
-            }
+            ContentLayout().inRootView()
         }
         .windowToolbarStyle(.unified(showsTitle: false))
         .modelContainer(AppConfig.getContainer())
         .commands(content: {
-            DebugCommand() 
-            
+            DebugCommand()
+
             CommandGroup(after: .appInfo) {
                 UpdaterView(updater: updaterController.updater)
             }
         })
-        
     }
 }
 
@@ -50,4 +47,3 @@ struct GitOKApp: App {
     .frame(width: 1200)
     .frame(height: 1200)
 }
-

@@ -49,7 +49,6 @@ final class RootBox: SuperLog {
             CommitPlugin.shared,
             ProjectPickerPlugin.shared,
             SmartMergePlugin.shared,
-            SmartMessagePlugin.shared,
             QuickMergePlugin.shared,
             SmartFilePlugin.shared
         ]

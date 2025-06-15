@@ -1,8 +1,9 @@
 import SwiftData
 import SwiftUI
+import MagicCore
 
 struct IconHome: View {
-    @EnvironmentObject var m: MessageProvider
+    @EnvironmentObject var m: MagicMessageProvider
     @Environment(\.modelContext) var context: ModelContext
 
     @Binding var icon: IconModel
@@ -43,14 +44,14 @@ struct IconHome: View {
                 do {
                     try icon.updateIconId(iconId)
                 } catch {
-                    m.setError(error)
+                    m.error(error.localizedDescription)
                 }
             }
             .onChange(of: backgroundId) {
                 do {
                     try icon.updateBackgroundId(backgroundId)
                 } catch {
-                    m.setError(error)
+                    m.error(error.localizedDescription)
                 }
             }
         }

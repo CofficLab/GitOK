@@ -52,26 +52,6 @@ class ProjectRepo: BaseRepositoryImpl<Project>, ProjectRepoProtocol {
         return try fetch(descriptor)
     }
     
-    func findGitProjects() throws -> [Project] {
-        let allProjects = try findAll()
-        return allProjects.filter { $0.isGit }
-    }
-    
-    func findNonGitProjects() throws -> [Project] {
-        let allProjects = try findAll()
-        return allProjects.filter { $0.isNotGit }
-    }
-    
-    func findCleanProjects() throws -> [Project] {
-        let allProjects = try findAll()
-        return allProjects.filter { $0.isClean }
-    }
-    
-    func findProjectsWithChanges() throws -> [Project] {
-        let allProjects = try findAll()
-        return allProjects.filter { !$0.noUncommittedChanges }
-    }
-    
     // MARK: - 业务操作
     
     func exists(path: String) -> Bool {

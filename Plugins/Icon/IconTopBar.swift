@@ -1,7 +1,8 @@
 import SwiftUI
+import MagicCore
 
 struct IconTopBar: View {
-    @EnvironmentObject var m: MessageProvider
+    @EnvironmentObject var m: MagicMessageProvider
 
     @State var inScreen: Bool = false
     @State var device: Device = .MacBook
@@ -23,7 +24,7 @@ struct IconTopBar: View {
                         do {
                             try self.icon.updateImageURL(url)
                         } catch {
-                            m.setError(error)
+                            m.error(error.localizedDescription)
                         }
                     }
                 }

@@ -1,21 +1,20 @@
+import MagicCore
 import OSLog
 import SwiftUI
 
 struct BannerDetail: View {
     @EnvironmentObject var b: BannerProvider
-    @EnvironmentObject var m: MessageProvider
+    @EnvironmentObject var m: MagicMessageProvider
 
     var body: some View {
         BannerEditor(banner: $b.banner)
-        .frame(maxWidth: .infinity)
-        .frame(maxHeight: .infinity)
-        .onChange(of: b.banner, {
-            do {
-                try b.banner.saveToDisk()
-            } catch {
-                m.setError(error)
-            }
-        })
+            .onChange(of: b.banner, {
+                do {
+                    try b.banner.saveToDisk()
+                } catch {
+                    m.error(error.localizedDescription)
+                }
+            })
     }
 }
 

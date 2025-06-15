@@ -4,7 +4,7 @@ import OSLog
 import SwiftUI
 
 struct FileDetail: View, SuperLog, SuperEvent, SuperThread {
-    @EnvironmentObject var m: MessageProvider
+    @EnvironmentObject var m: MagicMessageProvider
     @EnvironmentObject var data: DataProvider
 
     @State private var oldText = ""
@@ -12,7 +12,7 @@ struct FileDetail: View, SuperLog, SuperEvent, SuperThread {
 
     static let emoji = "🌍"
 
-    private var verbose = true
+    private var verbose = false
 
     var body: some View {
         VStack(spacing: 0) {
@@ -23,7 +23,7 @@ struct FileDetail: View, SuperLog, SuperEvent, SuperThread {
                         .foregroundColor(.secondary)
                         .font(.system(size: 12))
 
-                    Text(file.projectPath + "/" + file.name)
+                    Text(file.file)
                         .font(.caption)
                         .foregroundColor(.secondary)
                         .lineLimit(1)
@@ -36,7 +36,7 @@ struct FileDetail: View, SuperLog, SuperEvent, SuperThread {
                 .background(Color(NSColor.textBackgroundColor))
             }
             
-            MagicDiffView(oldText: oldText, newText: newText)
+            MagicDiffView(oldText: oldText, newText: newText, verbose: false)
         }
         .onChange(of: data.file, onFileChange)
         .onChange(of: data.commit, onCommitChange)
@@ -45,22 +45,26 @@ struct FileDetail: View, SuperLog, SuperEvent, SuperThread {
     }
 
     func updateDiffView(reason: String) {
-        self.m.append("UpdateDiffView(\(reason))", channel: self.className)
+        if verbose {
+            os_log("\(self.t)🍋 UpdateDiffView(\(reason))")
+        }
 
-        guard let commit = data.commit, let file = data.file else {
+        guard let file = data.file, let project = data.project else {
             return
         }
         
-        if commit.isHead {
-            do {
-                self.oldText = file.lastContent
-                self.newText = try file.getContent()
-            } catch let error {
-                self.m.error(error)
+        do {
+            if let commit = data.commit {
+                let (beforeContent, afterContent) = try project.fileContentChange(at: commit.hash, file: file.file)
+                self.oldText = beforeContent ?? ""
+                self.newText = afterContent ?? ""
+            } else {
+                let (beforeContent, afterContent) = try project.uncommittedFileContentChange(file: file.file)
+                self.oldText = beforeContent ?? ""
+                self.newText = afterContent ?? ""
             }
-        } else {
-            self.oldText = file.originalContentOfCommit(commit)
-            self.newText = file.contentOfCommit(commit)
+        } catch {
+            self.m.error(error.localizedDescription)
         }
     }
 }
@@ -69,15 +73,21 @@ struct FileDetail: View, SuperLog, SuperEvent, SuperThread {
 
 extension FileDetail {
     func onFileChange() {
-        updateDiffView(reason: "File Change")
+        self.bg.async {
+            updateDiffView(reason: "File Change")
+        }
     }
 
     func onCommitChange() {
-        updateDiffView(reason: "Commit Change")
+        self.bg.async {
+            updateDiffView(reason: "Commit Change")
+        }
     }
 
     func onAppear() {
-        updateDiffView(reason: "Appear")
+        self.bg.async {
+            updateDiffView(reason: "Appear")
+        }
     }
 }
 

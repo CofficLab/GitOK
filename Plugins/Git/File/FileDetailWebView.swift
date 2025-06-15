@@ -5,7 +5,7 @@ import SwiftUI
 
 /// 使用WebView来渲染差异
 struct FileDetailWebView: View, SuperLog, SuperEvent, SuperThread {
-    @EnvironmentObject var m: MessageProvider
+    @EnvironmentObject var m: MagicMessageProvider
     @EnvironmentObject var data: DataProvider
 
     @State private var view: MagicWebView?
@@ -25,7 +25,7 @@ struct FileDetailWebView: View, SuperLog, SuperEvent, SuperThread {
                         .foregroundColor(.secondary)
                         .font(.system(size: 12))
 
-                    Text(file.projectPath + "/" + file.name)
+                    Text(file.file)
                         .font(.caption)
                         .foregroundColor(.secondary)
                         .lineLimit(1)
@@ -71,20 +71,25 @@ struct FileDetailWebView: View, SuperLog, SuperEvent, SuperThread {
     }
 
     func updateDiffView(reason: String) {
-        self.m.append("UpdateDiffView(\(reason))", channel: self.className)
+        self.m.info("UpdateDiffView(\(reason))")
 
-        guard let commit = data.commit, let file = data.file else {
+        guard let commit = data.commit, let file = data.file, let project = data.project else {
             return
         }
-
-        if commit.isHead {
-            do {
-                self.setTexts(file.lastContent, try file.getContent())
-            } catch let error {
-                self.m.error(error)
-            }
-        } else {
-            self.setTexts(file.originalContentOfCommit(commit), file.contentOfCommit(commit))
+        do {
+            let (beforeContent, afterContent) = try project.fileContentChange(at: commit.hash, file: file.file)
+            
+            //        if commit.isHead {
+            //            do {
+            //                self.setTexts(file.lastContent, try file.getContent())
+            //            } catch let error {
+            //                self.m.error(error)
+            //            }
+            //        } else {
+            self.setTexts(beforeContent ?? "", afterContent ?? "")
+            //        }
+        } catch {
+            
         }
     }
 
@@ -161,7 +166,7 @@ extension FileDetailWebView {
 
 extension FileDetailWebView {
     func setTexts(_ o: String, _ c: String) {
-        self.m.append("setTexts", channel: self.className)
+        self.m.info("setTexts")
 
         let encoder = JSONEncoder()
         encoder.outputFormatting = .prettyPrinted
@@ -172,7 +177,7 @@ extension FileDetailWebView {
         let jsonString = String(data: jsonData, encoding: .utf8)!
 
         guard let view = self.view else {
-            self.m.append("View is nil", channel: self.className)
+            self.m.info("View is nil")
             return
         }
 

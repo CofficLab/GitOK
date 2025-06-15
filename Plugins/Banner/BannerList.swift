@@ -7,7 +7,7 @@ struct BannerList: View, SuperThread {
     @EnvironmentObject var app: AppProvider
     @EnvironmentObject var g: DataProvider
     @EnvironmentObject var b: BannerProvider
-    @EnvironmentObject var m: MessageProvider
+    @EnvironmentObject var m: MagicMessageProvider
 
     @State var selection: BannerModel.ID?
 

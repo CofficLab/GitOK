@@ -5,7 +5,7 @@ import MagicCore
 
 struct IconList: View, SuperLog {
     @EnvironmentObject var app: AppProvider
-    @EnvironmentObject var m: MessageProvider
+    @EnvironmentObject var m: MagicMessageProvider
     @EnvironmentObject var g: DataProvider
     @EnvironmentObject var i: IconProvider
 
@@ -54,7 +54,7 @@ struct IconList: View, SuperLog {
                 self.selection = icons.first ?? .empty
             } catch {
                 os_log("Error while enumerating files: \(error.localizedDescription)")
-                m.setError(error)
+                m.error(error.localizedDescription)
             }
         }
     }

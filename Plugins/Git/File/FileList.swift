@@ -5,12 +5,13 @@ import SwiftUI
 
 struct FileList: View, SuperThread, SuperLog {
     @EnvironmentObject var app: AppProvider
-    @EnvironmentObject var m: MessageProvider
+    @EnvironmentObject var m: MagicMessageProvider
     @EnvironmentObject var data: DataProvider
 
-    @State var files: [File] = []
-    @State var isLoading = false
-    @State var selection: File?
+    @State var files: [GitDiffFile] = []
+    @State var isLoading = true
+    @State var selection: GitDiffFile?
+    @State private var refreshTask: Task<Void, Never>?
     var verbose = false
 
     var body: some View {
@@ -53,7 +54,7 @@ struct FileList: View, SuperThread, SuperLog {
             ScrollViewReader { scrollProxy in
                 List(files, id: \.self, selection: $selection) {
                     FileTile(file: $0)
-                        .tag($0 as File?)
+                        .tag($0 as GitDiffFile?)
                 }
                 .background(.blue)
                 .onChange(of: files, {
@@ -67,31 +68,65 @@ struct FileList: View, SuperThread, SuperLog {
         .onAppear(perform: onAppear)
         .onChange(of: data.commit, onCommitChange)
         .onChange(of: selection, onSelectionChange)
+        .onNotification(.projectDidCommit, perform: onProjectDidCommit)
     }
 }
 
 // MARK: - Action
 
 extension FileList {
-    func refresh(reason: String) {
+    func refresh(reason: String) async {
+        // 取消之前的任务
+        refreshTask?.cancel()
+        
+        // 创建新的任务
+        refreshTask = Task {
+            await performRefresh(reason: reason)
+        }
+        
+        // 等待任务完成
+        await refreshTask?.value
+    }
+    
+    private func performRefresh(reason: String) async {
         self.isLoading = true
 
         if verbose {
-            os_log("\(self.t)Refresh\(reason)")
-            self.m.append("Refresh(\(reason))")
+            os_log("\(self.t)🍋 Refreshing \(reason)")
         }
 
-        guard let commit = data.commit else {
+        guard let project = data.project else {
             self.isLoading = false
             return
         }
 
-        let files = commit.getFiles(reason: "FileList.Refresh")
-
-        self.files = files
+        do {
+            // 检查任务是否被取消
+            try Task.checkCancellation()
+            
+            if let commit = data.commit {
+                self.files = try await project.fileList(atCommit: commit.hash)
+            } else {
+                self.files = try await project.untrackedFiles()
+            }
+            
+            // 再次检查任务是否被取消
+            try Task.checkCancellation()
+            
+            self.selection = self.files.first
+            DispatchQueue.main.async {
+                self.data.setFile(self.selection)
+            }
+        } catch is CancellationError {
+            // 任务被取消，不做任何处理
+            if verbose {
+                os_log("\(self.t)🐜 Refresh cancelled: \(reason)")
+            }
+        } catch {
+            self.m.error(error.localizedDescription)
+        }
+        
         self.isLoading = false
-        self.data.setFile(self.files.first)
-        self.selection = self.data.file
     }
 }
 
@@ -99,15 +134,25 @@ extension FileList {
 
 extension FileList {
     func onAppear() {
-        self.refresh(reason: "OnAppear")
+        Task {
+            await self.refresh(reason: "OnAppear")
+        }
     }
 
     func onCommitChange() {
-        self.refresh(reason: "OnDataChanged")
+        Task {
+            await self.refresh(reason: "OnCommitChanged")
+        }
     }
-    
+
     func onSelectionChange() {
         self.data.setFile(self.selection)
+    }
+
+    func onProjectDidCommit(_ notification: Notification) {
+        Task {
+            await self.refresh(reason: "OnProjectDidCommit")
+        }
     }
 }
 

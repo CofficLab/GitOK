@@ -3,7 +3,7 @@ import OSLog
 import SwiftUI
 
 struct TileQuickMerge: View, SuperLog, SuperThread {
-    @EnvironmentObject var m: MessageProvider
+    @EnvironmentObject var m: MagicMessageProvider
     @EnvironmentObject var g: DataProvider
 
     @State var hovered = false
@@ -12,20 +12,19 @@ struct TileQuickMerge: View, SuperLog, SuperThread {
     
     private init() {}
 
-    var git = GitShell()
     var project: Project? { g.project }
 
     var body: some View {
         HStack {            
             Image(systemName: "arrowshape.zigzag.forward")
         }
+        .help("快速合并")
         .onHover(perform: { hovering in
             hovered = hovering
         })
         .onTapGesture {
             merge()
-            self.m.toast("已合并到主分支")
-            self.m.append("已合并到主分支", channel: "🌳 git")
+            self.m.info("已合并到主分支")
         }
         .padding(.vertical, 6)
         .padding(.horizontal, 8)
@@ -34,21 +33,21 @@ struct TileQuickMerge: View, SuperLog, SuperThread {
     }
 
     func merge() {
-        self.bg.async {
-            guard let project = project else {
-                os_log(.error, "\(self.t)No project")
-                self.m.error(QuickMergeError.noProject)
-                return
-            }
-
-            do {
-                try GitShell.mergeToMain(project.path)
-            } catch let error {
-                os_log(.error, "\(error.localizedDescription)")
-
-                m.setError(error)
-            }
-        }
+//        self.bg.async {
+//            guard let project = project else {
+//                os_log(.error, "\(self.t)No project")
+//                self.m.error(QuickMergeError.noProject)
+//                return
+//            }
+//
+//            do {
+//                try ShellGit.merge(project.path)
+//            } catch let error {
+//                os_log(.error, "\(error.localizedDescription)")
+//
+//                m.setError(error)
+//            }
+//        }
     }
 }
 
