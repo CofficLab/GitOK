@@ -55,6 +55,7 @@ struct CommitForm: View, SuperLog {
                 
                 Spacer()
 
+                BtnCommitAndPush(commitMessage: commitMessage, commitOnly: true)
                 BtnCommitAndPush(commitMessage: commitMessage)
             }
             .frame(height: 40)

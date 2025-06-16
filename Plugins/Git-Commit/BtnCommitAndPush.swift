@@ -8,11 +8,12 @@ struct BtnCommitAndPush: View, SuperLog, SuperThread {
 
     static let emoji = "🐔"
     var commitMessage: String = ""
+    var commitOnly: Bool = false
 
     var body: some View {
         MagicButton(
             icon: .iconUpload,
-            title: "Commit and Push",
+            title: commitOnly ? "Commit" : "Commit and Push",
             size: .auto,
             preventDoubleClick: true,
             loadingStyle: .spinner,
@@ -31,9 +32,15 @@ struct BtnCommitAndPush: View, SuperLog, SuperThread {
                         // 如果 commitMessage 为空，使用默认消息
                         let message = commitMessage.isEmpty ? "Auto commit" : commitMessage
                         try project.submit(message)
-                        try project.push()
+                        if commitOnly == false {
+                            try project.push()
+                        }
 
-                        m.info("Commit and push success")
+                        if commitOnly == false {
+                            m.info("Commit and push success")
+                        } else {
+                            m.info("Commit success")
+                        }
                     } catch {
                         m.error(error.localizedDescription)
                     }
