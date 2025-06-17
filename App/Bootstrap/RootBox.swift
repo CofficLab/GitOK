@@ -51,7 +51,8 @@ final class RootBox: SuperLog {
             SmartMergePlugin.shared,
             QuickMergePlugin.shared,
             SmartFilePlugin.shared,
-            RemoteRepositoryPlugin.shared
+            RemoteRepositoryPlugin.shared,
+            ReadmePlugin.shared
         ]
         
         // Providers

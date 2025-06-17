@@ -320,6 +320,27 @@ extension Project {
     func stagedFiles() async throws -> [GitDiffFile] {
         try await ShellGit.diffFileList(staged: true, at: self.path)
     }
+    
+    /// 获取项目的README.md文件内容
+    /// - Returns: README.md文件的内容，如果文件不存在则抛出异常
+    /// - Throws: 文件不存在或读取错误
+    func getReadmeContent() async throws -> String {
+        let readmeFiles = ["README.md", "readme.md", "Readme.md", "README.MD"]
+        let fileManager = FileManager.default
+        
+        for readmeFile in readmeFiles {
+            let readmeURL = URL(fileURLWithPath: self.path).appendingPathComponent(readmeFile)
+            if fileManager.fileExists(atPath: readmeURL.path) {
+                return try String(contentsOf: readmeURL, encoding: .utf8)
+            }
+        }
+        
+        throw NSError(
+            domain: "ProjectError", 
+            code: 404, 
+            userInfo: [NSLocalizedDescriptionKey: "README.md file not found"]
+        )
+    }
 }
 
 // MARK: - Remote
