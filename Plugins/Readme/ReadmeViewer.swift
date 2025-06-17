@@ -2,6 +2,7 @@ import AppKit
 import MagicCore
 import OSLog
 import SwiftUI
+import MarkdownUI
 
 struct ReadmeViewer: View, SuperLog {
     @EnvironmentObject var data: DataProvider
@@ -85,21 +86,14 @@ struct ReadmeViewer: View, SuperLog {
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .frame(minHeight: 300)
                 } else {
-                    VStack(alignment: .leading, spacing: 0) {
-                        if let attributedString = try? AttributedString(markdown: readmeContent) {
-                            Text(attributedString)
-                                .textSelection(.enabled)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .font(.system(.body, design: .default))
-                        } else {
-                            Text(readmeContent)
-                                .textSelection(.enabled)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .font(.system(.body, design: .monospaced))
-                        }
+                    ScrollView {
+                        Markdown(readmeContent)
+                            .markdownTheme(.gitHub)
+                            .textSelection(.enabled)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.horizontal, 20)
+                            .padding(.vertical, 16)
                     }
-                    .padding(.horizontal, 20)
-                    .padding(.vertical, 16)
                     .frame(maxWidth: .infinity, alignment: .leading)
                 }
             }
