@@ -45,6 +45,7 @@ final class RootBox: SuperLog {
             OpenRemotePlugin.shared,
             
             SyncPlugin.shared,
+            GitPullPlugin.shared,
             BranchPlugin.shared,
             CommitPlugin.shared,
             ProjectPickerPlugin.shared,
