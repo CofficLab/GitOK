@@ -5,7 +5,6 @@ import OSLog
 struct IconBgs: View {
     @EnvironmentObject var i: IconProvider
     @EnvironmentObject var m: MagicMessageProvider
-    @State private var icon: IconModel?
 
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
@@ -19,27 +18,25 @@ struct IconBgs: View {
             .padding(.horizontal, 10)
         }
         .frame(height: 70)
-        .onAppear {
-            self.icon = i.currentModel
-        }
     }
 
     func makeItem(_ gradient: MagicBackgroundGroup.GradientName) -> some View {
         Button(action: {
-            if var icon = self.icon {
+            if var icon = self.i.currentModel {
                 do {
                     try icon.updateBackgroundId(gradient.rawValue)
-                    self.icon = icon
                 } catch {
                     m.error(error.localizedDescription)
                 }
+            } else {
+                m.error("先选择一个图标文件")
             }
         }) {
             ZStack {
                 MagicBackgroundGroup(for: gradient)
                     .clipShape(RoundedRectangle(cornerRadius: 8))
 
-                if self.icon?.backgroundId == gradient.rawValue {
+                if self.i.currentModel?.backgroundId == gradient.rawValue {
                     RoundedRectangle(cornerRadius: 8)
                         .stroke(Color.red, lineWidth: 2)
                 }
