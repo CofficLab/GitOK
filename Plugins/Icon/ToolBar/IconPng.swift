@@ -30,7 +30,7 @@ class IconPng {
         }
     }
     
-    static func getThumbnial(_ iconId: Int) -> Image {
+    static func getThumbnail(_ iconId: Int) -> Image {
         let url = iconFolderURL!.appendingPathComponent("\(iconId).png")
         if let image = NSImage(contentsOf: url) {
             if let thumbnail = generateThumbnail(for: image, size: NSSize(width: 80, height: 80)) {
@@ -62,8 +62,7 @@ class IconPng {
     RootView {
         ContentLayout()
             .hideSidebar()
-            .hideTabPicker()
-//            .hideProjectActions()
+            .hideProjectActions()
     }
     .frame(width: 800)
     .frame(height: 600)

@@ -2,14 +2,13 @@ import OSLog
 import SwiftUI
 
 protocol SuperJsonModel: Encodable, Identifiable, Equatable, Hashable {
-    var path: String? { get }
-    var label: String { get }
+    var path: String { get }
     var title: String { get }
 }
 
 extension SuperJsonModel {
     var id: String {
-        path ?? "" + title
+        path
     }
 }
 
@@ -17,10 +16,6 @@ extension SuperJsonModel {
 
 extension SuperJsonModel {
     func delete() {
-        guard let path = self.path else {
-            return
-        }
-
         do {
             try FileManager.default.removeItem(atPath: path)
         } catch let e {
@@ -33,19 +28,7 @@ extension SuperJsonModel {
 
 extension SuperJsonModel {
     func save() throws {
-        let verbose = false
-
-        guard let p = path else {
-            os_log(.error, "\(label)Can't Save, no path")
-
-            throw NSError(domain: "\(label)SaveError", code: 1, userInfo: [NSLocalizedDescriptionKey: "\(label)Can't Save, no path"])
-        }
-        
-        if verbose {
-            os_log("\(self.label)Save to \(p)")
-        }
-
-        self.saveToFile(atPath: p)
+        self.saveToFile(atPath: path)
     }
 
     // 将对象转换为 JSON 字符串
@@ -64,7 +47,7 @@ extension SuperJsonModel {
     }
 
     // 保存 JSON 字符串到文件
-    func saveToFile(atPath path: String) {
+    private func saveToFile(atPath path: String) {
         if let jsonString = self.toJSONString() {
             // 创建 FileManager 实例
             let fileManager = FileManager.default
@@ -90,8 +73,7 @@ extension SuperJsonModel {
     RootView {
         ContentLayout()
             .hideSidebar()
-            .hideTabPicker()
-//            .hideProjectActions()
+            .hideProjectActions()
     }
     .frame(width: 800)
     .frame(height: 600)

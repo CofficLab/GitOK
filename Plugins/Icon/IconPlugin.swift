@@ -19,6 +19,25 @@ class IconPlugin: SuperPlugin, SuperLog {
     }
 
     func addDetailView() -> AnyView? {
-        AnyView(DetailIcon())
+        AnyView(DetailIcon.shared)
     }
+}
+
+#Preview("App - Small Screen") {
+    RootView {
+        ContentLayout()
+            .hideSidebar()
+            .hideProjectActions()
+    }
+    .frame(width: 800)
+    .frame(height: 600)
+}
+
+#Preview("App - Big Screen") {
+    RootView {
+        ContentLayout()
+            .hideSidebar()
+    }
+    .frame(width: 1200)
+    .frame(height: 1200)
 }

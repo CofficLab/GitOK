@@ -1,19 +1,22 @@
-import SwiftUI
+import MagicCore
 import OSLog
+import SwiftUI
 
 struct BtnDelIcon: View {
+    @EnvironmentObject var m: MagicMessageProvider
+
     var icon: IconModel
-    var callback: () -> Void
-    
+
     var body: some View {
-        Button(action: delete) {
+        Button(action: {
+            do {
+                try self.icon.deleteFromDisk()
+            } catch {
+                m.error(error.localizedDescription)
+            }
+        }) {
             Label("删除「\(icon.title)」", systemImage: "trash")
         }
-    }
-    
-    private func delete() {
-        self.icon.delete()
-        self.callback()
     }
 }
 
@@ -21,8 +24,7 @@ struct BtnDelIcon: View {
     RootView {
         ContentLayout()
             .hideSidebar()
-            .hideTabPicker()
-//            .hideProjectActions()
+            .hideProjectActions()
     }
     .frame(width: 800)
     .frame(height: 600)

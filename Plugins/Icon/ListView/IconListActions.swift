@@ -1,10 +1,13 @@
 import SwiftUI
+import MagicCore
 
-struct IconTile: View {
-    var icon: IconModel
-
+struct IconListActions: View {
     var body: some View {
-        Text(icon.title)
+        HStack(spacing: 0) {
+            BtnNewIcon()
+        }
+        .frame(height: 25)
+        .labelStyle(.iconOnly)
     }
 }
 
@@ -12,8 +15,7 @@ struct IconTile: View {
     RootView {
         ContentLayout()
             .hideSidebar()
-            .hideTabPicker()
-//            .hideProjectActions()
+            .hideProjectActions()
     }
     .frame(width: 800)
     .frame(height: 600)

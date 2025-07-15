@@ -1,8 +1,11 @@
+import MagicCore
 import os
 import SwiftUI
 
-struct IconAsset: View {
-    @Binding var iconId: Int
+struct IconAssetList: View {
+    @EnvironmentObject var i: IconProvider
+    @EnvironmentObject var m: MagicMessageProvider
+    @EnvironmentObject var app: AppProvider
 
     @State var gridItems: [GridItem] = Array(repeating: .init(.flexible()), count: 10)
 
@@ -10,23 +13,18 @@ struct IconAsset: View {
 
     var body: some View {
         GeometryReader { geo in
-            GroupBox {
-                ScrollView {
-                    VStack {
-                        LazyVGrid(columns: gridItems, spacing: 10) {
-                            ForEach(0 ..< iconsCount, id: \.self) { i in
-                                IconItem(selected: i == iconId, iconId: i)
-                                    .onTapGesture {
-                                        iconId = i
-                                    }
-                            }
+            ScrollView {
+                VStack {
+                    LazyVGrid(columns: gridItems, spacing: 10) {
+                        ForEach(0 ..< iconsCount, id: \.self) { i in
+                            IconItem(iconId: i)
                         }
-                        .onAppear {
-                            gridItems = getGridItems(geo)
-                        }
-                        .onChange(of: geo.size.width) {
-                            gridItems = getGridItems(geo)
-                        }
+                    }
+                    .onAppear {
+                        gridItems = getGridItems(geo)
+                    }
+                    .onChange(of: geo.size.width) {
+                        gridItems = getGridItems(geo)
                     }
                 }
             }
@@ -47,8 +45,7 @@ struct IconAsset: View {
     RootView {
         ContentLayout()
             .hideSidebar()
-            .hideTabPicker()
-//            .hideProjectActions()
+            .hideProjectActions()
     }
     .frame(width: 800)
     .frame(height: 600)

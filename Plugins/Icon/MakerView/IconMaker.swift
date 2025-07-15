@@ -1,95 +1,69 @@
+import MagicCore
 import SwiftUI
 import UniformTypeIdentifiers
-import MagicCore
 
 struct IconMaker: View {
     @EnvironmentObject var app: AppProvider
     @EnvironmentObject var m: MagicMessageProvider
+    @EnvironmentObject var i: IconProvider
 
-    @Binding var snapshotTapped: Bool
-    @Binding var icon: IconModel
+    @State private var icon: IconModel?
 
     private let tag = Date.nowCompact
     private var folderName: String { "AppIcon-\(tag).appiconset" }
-
 
     @State private var imageSet: [Any] = []
     @State private var folderPath: URL? = nil
     @State private var imageURL: URL? = nil
 
-    var withBorder = false
-
     var body: some View {
-        TabView(content: {
-            MagicImage.makeImage(macOSView)
-                .resizable()
-                .scaledToFit()
-                .overlay {
-                    ZStack {
-                        if withBorder {
-//                            AnyView(View.dashedBorder())
-                        }
+        Group {
+            if self.icon != nil {
+                HStack {
+                    Spacer()
+                    VStack {
+                        Text("macOS")
+                        MagicImage.makeImage(macOSView)
+                            .resizable()
+                            .scaledToFit()
                     }
-                }
-                .tag("macOS")
-                .tabItem { Label("macOS", systemImage: "plus") }
 
-            MagicImage.makeImage(iOSView)
-                .resizable()
-                .scaledToFit()
-                .overlay {
-                    ZStack {
-                        if withBorder {
-//                            View.dashedBorder()
-                        }
+                    VStack {
+                        Text("iOS")
+                        MagicImage.makeImage(iOSView)
+                            .resizable()
+                            .scaledToFit()
                     }
+                    
+                    Spacer()
                 }
-                .tag("iOS")
-                .tabItem { Label("iOS", systemImage: "plus") }
-        })
-        .onChange(of: snapshotTapped) {
-            if snapshotTapped {
-                snapshotMany()
-                self.snapshotTapped = false
+            } else {
+                Text("请选择或新建一个图标")
             }
         }
+        .onAppear {
+            self.icon = i.currentModel
+        }
+        .onNotification(.iconDidSave, perform: { _ in
+            self.icon = i.currentModel
+        })
+        .onChange(of: i.snapshotTapped) {
+            if i.snapshotTapped {
+                snapshotMany()
+                i.snapshotTapped = false
+            }
+        }
+        .onChange(of: i.currentModel, {
+            self.icon = i.currentModel
+        })
     }
 
     var macOSView: some View {
-        ZStack {
-            // MARK: 背景色
-
-            icon.background
-
-            HStack {
-                if let scale = icon.scale {
-                    icon.image.scaleEffect(scale)
-                } else {
-                    icon.image.resizable().scaledToFit()
-                }
-            }.scaleEffect(1.8)
-        }
-        .frame(width: 1024, height: 1024)
-        .clipShape(RoundedRectangle(cornerSize: CGSize(
-            width: 200,
-            height: 200
-        ))).padding(100)
+        IconPreview(icon: icon!, platform: "macOS")
     }
 
     var iOSView: some View {
-        ZStack {
-            // MARK: 背景色
-
-            icon.background
-
-            HStack {
-                if let scale = icon.scale {
-                    icon.image.scaleEffect(scale)
-                } else {
-                    icon.image.resizable().scaledToFit()
-                }
-            }.scaleEffect(1.8)
-        }
+        IconPreview(icon: icon!, platform: "iOS")
     }
 
     private func getContainerWidth(_ geo: GeometryProxy) -> CGFloat {
@@ -216,8 +190,7 @@ struct IconMaker: View {
     RootView {
         ContentLayout()
             .hideSidebar()
-            .hideTabPicker()
-//            .hideProjectActions()
+            .hideProjectActions()
     }
     .frame(width: 800)
     .frame(height: 600)

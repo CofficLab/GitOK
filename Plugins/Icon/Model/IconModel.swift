@@ -6,16 +6,16 @@ import MagicCore
 
 struct IconModel: SuperJsonModel, SuperEvent, SuperLog {
     static var root: String = ".gitok/icons"
-    static var label = "💿 IconModel::"
+    static var emoji = "💿"
     static var empty = IconModel(path: "")
 
     var title: String = "1"
     var iconId: Int = 1
     var backgroundId: String = "2"
     var imageURL: URL?
-    var path: String?
+    var path: String
     var opacity: Double = 1
-    var scale: Double?
+    var scale: Double? = 1
 
     var image: Image {
         if let url = self.imageURL {
@@ -26,11 +26,8 @@ struct IconModel: SuperJsonModel, SuperEvent, SuperLog {
     }
 
     var background: some View {
-        Color.blue
-//        BackgroundGroup(for: self.backgroundId).opacity(self.opacity)
+        MagicBackgroundGroup(for: self.backgroundId).opacity(self.opacity)
     }
-
-    var label: String { IconModel.label }
 
     init(title: String = "1", iconId: Int = 1, backgroundId: String = "3", imageURL: URL? = nil, path: String) {
         self.title = title
@@ -52,7 +49,7 @@ extension IconModel {
         let directoryPath = "\(projectPath)/\(Self.root)"
 
         if verbose {
-            os_log("\(IconModel.label)GetIcons from ->\(directoryPath)")
+            os_log("\(t)GetIcons from ->\(directoryPath)")
         }
 
         // 创建 FileManager 实例
@@ -87,95 +84,68 @@ extension IconModel: Codable {
         case iconId
         case backgroundId
         case imageURL
+        case opacity
+        case scale
     }
-}
 
-// MARK: Hashable
-
-extension IconModel: Hashable {
-}
-
-// MARK: Equatable
-
-extension IconModel: Equatable {
-}
-
-// MARK: Identifiable
-
-extension IconModel: Identifiable {
-    var id: String {
-        path ?? "" + title
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.title = try container.decode(String.self, forKey: .title)
+        self.iconId = try container.decode(Int.self, forKey: .iconId)
+        self.backgroundId = try container.decode(String.self, forKey: .backgroundId)
+        self.imageURL = try container.decodeIfPresent(URL.self, forKey: .imageURL)
+        self.opacity = try container.decodeIfPresent(Double.self, forKey: .opacity) ?? 1.0
+        self.scale = try container.decodeIfPresent(Double.self, forKey: .scale)
+        self.path = ""
     }
 }
 
 // MARK: 新建
 
 extension IconModel {
-    static func new(_ project: Project) -> Self {
-        IconModel(title: "\(Int.random(in: 1 ... 100))", path: project.path + "/" + IconModel.root + "/" + UUID().uuidString + ".json")
+    @discardableResult
+    static func new(_ project: Project) throws -> Self {
+        let title = "新图标-\(Int.random(in: 1 ... 100))"
+        let path = project.path + "/" + IconModel.root + "/" + UUID().uuidString + ".json"
+        let iconId = Int.random(in: 1 ... 100)
+        let model = IconModel(title: title, iconId: iconId, path: path)
+        try model.saveToDisk()
+        return model
     }
 }
 
 // MARK: 更新
 
 extension IconModel {
+    mutating func updateOpacity(_ o: Double) throws {
+        self.opacity = o
+        try self.saveToDisk()
+    }
+    
+    mutating func updateScale(_ s: Double) throws {
+        self.scale = s
+        try self.saveToDisk()
+    }
+
     mutating func updateBackgroundId(_ id: String) throws {
         self.backgroundId = id
-        try self.save()
+        try self.saveToDisk()
     }
 
     mutating func updateIconId(_ id: Int) throws {
         self.iconId = id
-        try self.save()
+        try self.saveToDisk()
     }
 
     mutating func updateImageURL(_ url: URL) throws {
         self.imageURL = url
-        try self.save()
+        try self.saveToDisk()
     }
 }
 
 // MARK: 保存
 
 extension IconModel {
-    // 将对象转换为 JSON 字符串
-    func toJSONString() -> String? {
-        do {
-            let encoder = JSONEncoder()
-            encoder.outputFormatting = .sortedKeys
-            let jsonData = try encoder.encode(self)
-            if let jsonString = String(data: jsonData, encoding: .utf8) {
-                return jsonString
-            }
-        } catch {
-            os_log(.error, "Error encoding BannerModel to JSON: \(error)")
-        }
-        return nil
-    }
-
-    // 保存 JSON 字符串到文件
-    func saveToFile(atPath path: String) {
-        if let jsonString = self.toJSONString() {
-            // 创建 FileManager 实例
-            let fileManager = FileManager.default
-
-            // 确保父文件夹存在，如果不存在则创建
-            let directoryURL = URL(fileURLWithPath: path).deletingLastPathComponent()
-            do {
-                try fileManager.createDirectory(at: directoryURL, withIntermediateDirectories: true, attributes: nil)
-            } catch {
-                os_log(.error, "Error creating directory: \(error)")
-            }
-
-            do {
-                try jsonString.write(toFile: path, atomically: true, encoding: .utf8)
-                os_log(.info, "JSON saved to file: \(path)")
-            } catch {
-                os_log(.error, "Error saving JSON to file: \(error)")
-            }
-        }
-    }
-
     func saveToDisk() throws {
         try self.save()
         self.emit(.iconDidSave)
@@ -188,7 +158,7 @@ extension IconModel {
             model.path = jsonFile.path
             return model
         } catch {
-            os_log(.error, "Error decoding JSON: \(error)")
+            os_log(.error, "\(self.t)Error decoding JSON: \(error)")
             os_log(.error, "  ➡️ JSONFile: \(jsonFile)")
 
             throw error
@@ -196,12 +166,31 @@ extension IconModel {
     }
 }
 
+// MARK: 删除
+
+extension IconModel {
+    func deleteFromDisk() throws {
+        self.delete()
+        self.emit(.iconDidDelete, object: nil, userInfo: ["path": self.path])
+    }
+}
+
+// MARK: 通知
+
+extension Notification.Name {
+    static let iconDidChange = Notification.Name("iconDidChange")
+    static let iconDidSave = Notification.Name("iconDidSave")
+    static let iconDidFail = Notification.Name("iconDidFail")
+    static let iconDidGet = Notification.Name("iconDidGet")
+    static let iconTitleDidChange = Notification.Name("iconTitleDidChange")
+    static let iconDidDelete = Notification.Name("iconDidDelete")
+}
+
 #Preview("App - Small Screen") {
     RootView {
         ContentLayout()
             .hideSidebar()
-            .hideTabPicker()
-//            .hideProjectActions()
+            .hideProjectActions()
     }
     .frame(width: 800)
     .frame(height: 600)

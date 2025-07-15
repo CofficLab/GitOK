@@ -17,7 +17,7 @@ struct BannerModel: SuperJsonModel, SuperLog, SuperEvent {
     var inScreen = false
     var device: String = Device.iMac.rawValue
     var opacity: Double = 1.0
-    var path: String?
+    var path: String
     var label: String = BannerModel.label
     var project: Project
     var titleColor: Color?
@@ -107,10 +107,6 @@ extension BannerModel {
     }
 
     func saveImage(_ url: URL) throws -> String {
-        guard let path = self.path else {
-            return url.relativePath.replacingOccurrences(of: self.project.path, with: "")
-        }
-
         let ext = url.pathExtension
         let rootURL = URL(fileURLWithPath: path).deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent().appendingPathComponent(Self.root).deletingLastPathComponent()
         let imagesFolder = rootURL.appendingPathComponent("images")
@@ -176,6 +172,7 @@ extension BannerModel: Codable {
         subTitle = try container.decode(String.self, forKey: .subTitle)
         title = try container.decode(String.self, forKey: .title)
         opacity = try container.decode(Double.self, forKey: .opacity)
+        path = ""
 
         // 由于 project 不参与解码，我们需要设置一个默认值或者在其他地方设置
         project = .null

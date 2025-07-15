@@ -112,13 +112,7 @@ final class Project: SuperLog {
     }
 
     func getIcons() throws -> [IconModel] {
-        let verbose = false
-
-        if verbose {
-            os_log("\(self.t)GetIcons for project -> \(self.path)")
-        }
-
-        return try IconModel.all(self.path)
+        try IconModel.all(self.path)
     }
 
     func isExist() -> Bool {
@@ -420,8 +414,7 @@ extension Project {
     RootView {
         ContentLayout()
             .hideSidebar()
-            .hideTabPicker()
-//            .hideProjectActions()
+            .hideProjectActions()
     }
     .frame(width: 800)
     .frame(height: 600)

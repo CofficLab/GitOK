@@ -1,58 +1,54 @@
 import OSLog
 import SwiftUI
-import MagicCore
 
-struct DetailIcon: View, SuperLog {
-    @EnvironmentObject var app: AppProvider
-    @EnvironmentObject var m: MagicMessageProvider
-    @EnvironmentObject var g: DataProvider
+struct DetailIcon: View {
     @EnvironmentObject var i: IconProvider
+    @EnvironmentObject var g: DataProvider
+    @State private var showWelcome = false
 
-    let emoji = "🦁"
-
-    @State var icon: IconModel?
+    static let shared = DetailIcon()
 
     var body: some View {
-        VStack {
-            if let iconBinding = Binding($icon) {
-                IconHome(icon: iconBinding)
+        ZStack {
+            if showWelcome {
+                WelcomeView()
             } else {
-                Text("没有可用的图标")
-            }
-        }
-        .frame(maxWidth: .infinity)
-        .onAppear {
-            do {
-                self.icon = try i.getIcon()
-            } catch {
-                os_log(.error, "\(self.t)Error getting icon: \(error.localizedDescription)")
-                os_log(.error, "  ⚠️ \(error)")
-                m.error(error.localizedDescription)
-            }
-        }
-        .onChange(of: i.iconURL, {
-            do {
-                self.icon = try i.getIcon()
-            } catch {
-                os_log(.error, "\(self.t)Error getting icon: \(error)")
-                m.error(error.localizedDescription)
-            }
-        })
-        .onChange(of: self.icon, {
-            guard let icon = self.icon else {
-                return
-            }
-            
-            do {
-                try icon.saveToDisk()
-            } catch {
-                m.error(error.localizedDescription)
-            }
+                VStack {
+                    IconTopBar()
 
-            if let path = icon.path {
-                i.setIconURL(URL(filePath: path), reason: "DetailIcon")
+                    GroupBox {
+                        IconMaker()
+                    }
+                    .padding(.horizontal)
+                    .padding(.bottom)
+                }
             }
+        }
+        .onAppear {
+            checkWelcome()
+        }
+        .onNotification(.iconDidSave, perform: { _ in
+            self.showWelcome = false
         })
+        .onNotification(.iconDidDelete, perform: { _ in
+            checkWelcome()
+        })
+        .onChange(of: g.project) {
+            checkWelcome()
+        }
+    }
+
+    private func checkWelcome() {
+        guard let project = g.project else {
+            return
+        }
+
+        let icons = try? project.getIcons()
+        if icons == nil || icons?.isEmpty == true {
+            self.showWelcome = true
+        } else {
+            self.showWelcome = false
+        }
     }
 }
 
@@ -60,8 +56,7 @@ struct DetailIcon: View, SuperLog {
     RootView {
         ContentLayout()
             .hideSidebar()
-            .hideTabPicker()
-//            .hideProjectActions()
+            .hideProjectActions()
     }
     .frame(width: 800)
     .frame(height: 600)
