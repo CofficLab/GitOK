@@ -17,26 +17,8 @@ struct IconTopBar: View {
                 IconOpacity()
                 IconScale()
                 Spacer()
-                Button("换图") {
-                    let panel = NSOpenPanel()
-                    panel.allowsMultipleSelection = false
-                    panel.canChooseDirectories = false
-                    if panel.runModal() == .OK, let url = panel.url {
-                        do {
-                            try self.icon.updateImageURL(url)
-                        } catch {
-                            m.error(error.localizedDescription)
-                        }
-                    }
-                }
-                TabBtn(
-                    title: "截图",
-                    imageName: "camera.aperture",
-                    selected: false,
-                    onTap: {
-                        self.snapshotTapped = true
-                    }
-                )
+                BtnChangeImage(icon: $icon)
+                BtnSnapshot(snapshotTapped: $snapshotTapped)
             }
             .frame(height: 25)
             .frame(maxWidth: .infinity)
