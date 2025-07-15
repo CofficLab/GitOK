@@ -5,11 +5,6 @@ struct IconTopBar: View {
     @EnvironmentObject var m: MagicMessageProvider
     @EnvironmentObject var i: IconProvider
 
-    @State var inScreen: Bool = false
-    @State var device: Device = .MacBook
-
-    @State var icon: IconModel?
-
     var body: some View {
         VStack(spacing: 0) {
             HStack {
@@ -30,10 +25,9 @@ struct IconTopBar: View {
 
             GroupBox {
                 IconAssetList()
-            }.padding()
-        }
-        .onAppear {
-            self.icon = try? i.getIcon()
+            }
+            .padding(.horizontal)
+            .padding(.bottom)
         }
     }
 }
