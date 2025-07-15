@@ -8,6 +8,7 @@ import MagicCore
 
 class IconProvider: NSObject, ObservableObject, SuperLog {
     @Published var iconURL: URL?
+    @Published var snapshotTapped: Bool = false
 
     let emoji = "🍒"
         

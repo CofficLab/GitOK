@@ -2,7 +2,7 @@ import SwiftUI
 import MagicCore
 
 struct BtnSnapshot: View {
-    @Binding var snapshotTapped: Bool
+    @EnvironmentObject var i: IconProvider
 
     var body: some View {
         TabBtn(
@@ -10,7 +10,7 @@ struct BtnSnapshot: View {
             imageName: "camera.aperture",
             selected: false,
             onTap: {
-                self.snapshotTapped = true
+                i.snapshotTapped = true
             }
         )
     }

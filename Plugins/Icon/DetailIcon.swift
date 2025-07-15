@@ -22,7 +22,7 @@ struct DetailIcon: View, SuperLog {
                 VStack {
                     // MARK: IconTopBar
 
-                    IconTopBar(snapshotTapped: $snapshotTapped, icon: iconBinding)
+                    IconTopBar()
                     GeometryReader { geo in
                         HStack {
                             // MARK: Icon List

@@ -8,8 +8,7 @@ struct IconTopBar: View {
     @State var inScreen: Bool = false
     @State var device: Device = .MacBook
 
-    @Binding var snapshotTapped: Bool
-    @Binding var icon: IconModel
+    @State var icon: IconModel?
 
     var body: some View {
         VStack(spacing: 0) {
@@ -18,7 +17,7 @@ struct IconTopBar: View {
                 IconScale()
                 Spacer()
                 BtnChangeImage()
-                BtnSnapshot(snapshotTapped: $snapshotTapped)
+                BtnSnapshot()
             }
             .frame(height: 25)
             .frame(maxWidth: .infinity)
@@ -26,8 +25,17 @@ struct IconTopBar: View {
             .background(.secondary.opacity(0.5))
             
             GroupBox {
-                Backgrounds(current: $icon.backgroundId)
+                Backgrounds(current: Binding(
+                    get: { self.icon?.backgroundId ?? "1" },
+                    set: { newId in
+                        self.icon?.backgroundId = newId
+                        try? self.icon?.updateBackgroundId(newId)
+                    }
+                ))
             }.padding()
+        }
+        .onAppear {
+            self.icon = try? i.getIcon()
         }
     }
 }
