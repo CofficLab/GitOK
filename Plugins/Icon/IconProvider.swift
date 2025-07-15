@@ -21,6 +21,11 @@ class IconProvider: NSObject, ObservableObject, SuperLog {
             self, selector: #selector(handleIconDidSave),
             name: .iconDidSave,
             object: nil)
+
+        NotificationCenter.default.addObserver(
+            self, selector: #selector(handleIconDidDelete),
+            name: .iconDidDelete,
+            object: nil)
     }
 
     deinit {
@@ -32,6 +37,13 @@ class IconProvider: NSObject, ObservableObject, SuperLog {
         if let iconPath = iconPath {
             let newModel = try? IconModel.fromJSONFile(URL(fileURLWithPath: iconPath))
             self.updateCurrentModel(newModel: newModel, reason: "iconDidSave event")
+        }
+    }
+
+    @objc private func handleIconDidDelete(_ notification: Notification) {
+        let path = notification.userInfo?["path"] as? String
+        if let path = path, path == self.currentModel?.path {
+            self.currentModel = nil
         }
     }
 

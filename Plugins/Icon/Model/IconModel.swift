@@ -166,6 +166,15 @@ extension IconModel {
     }
 }
 
+// MARK: 删除
+
+extension IconModel {
+    func deleteFromDisk() throws {
+        self.delete()
+        self.emit(.iconDidDelete, object: nil, userInfo: ["path": self.path])
+    }
+}
+
 // MARK: 通知
 
 extension Notification.Name {
@@ -174,6 +183,7 @@ extension Notification.Name {
     static let iconDidFail = Notification.Name("iconDidFail")
     static let iconDidGet = Notification.Name("iconDidGet")
     static let iconTitleDidChange = Notification.Name("iconTitleDidChange")
+    static let iconDidDelete = Notification.Name("iconDidDelete")
 }
 
 #Preview("App - Small Screen") {

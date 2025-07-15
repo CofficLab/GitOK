@@ -12,14 +12,14 @@ struct IconList: View, SuperLog {
     @State var icons: [IconModel] = []
     @State var selection: IconModel?
 
+    static let emoji = "🐈"
+
     var body: some View {
         VStack(spacing: 0) {
             List(icons, selection: $selection) { icon in
                 IconTile(icon: icon)
                     .contextMenu(ContextMenu(menuItems: {
-                        BtnDelIcon(icon: icon, callback: {
-                            self.refreshIcons()
-                        })
+                        BtnDelIcon(icon: icon)
                     }))
                     .tag(icon)
             }
@@ -37,10 +37,27 @@ struct IconList: View, SuperLog {
             i.updateCurrentModel(newModel: selection, reason: "IconList.selection")
         })
         .onNotification(.iconDidSave, perform: { _ in
+            os_log("\(self.t)iconDidSave while current selection is \(self.selection?.title ?? "nil")")
             let selectedPath = selection?.path
             refreshIcons()
-            if let selectedPath = selectedPath {
-                selection = icons.first(where: { $0.path == selectedPath })
+
+            if self.selection == nil {
+                os_log("\(self.t)iconDidSave: no selection, select the first icon")
+                self.selection = icons.first
+            } else {
+                if let selectedPath = selectedPath {
+                    selection = icons.first(where: { $0.path == selectedPath })
+                }
+            }
+        })
+        .onNotification(.iconDidDelete, perform: { notification in
+            self.refreshIcons()
+
+            if let path = notification.userInfo?["path"] as? String {
+                if path == self.selection?.path {
+                    os_log("\(self.t)iconDidDelete: delete the current selection")
+                    self.selection = nil
+                }
             }
         })
     }

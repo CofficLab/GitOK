@@ -38,7 +38,7 @@ struct IconMaker: View {
                     Spacer()
                 }
             } else {
-                ProgressView()
+                Text("请选择或新建一个图标")
             }
         }
         .onAppear {
