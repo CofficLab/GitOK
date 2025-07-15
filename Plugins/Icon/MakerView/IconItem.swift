@@ -1,11 +1,15 @@
 import SwiftUI
+import OSLog
+import MagicCore
 
 /**
     候选图标列表中的单个图标项
  */
-struct IconItem: View {
+struct IconItem: View, SuperLog {
     @EnvironmentObject var app: AppProvider
     @EnvironmentObject var i: IconProvider
+    
+    static var emoji = "🐒"
 
     @State var image = Image("icon")
 
@@ -23,6 +27,13 @@ struct IconItem: View {
             .background(selected ? Color.brown.opacity(0.1) : Color.clear)
             .onTapGesture {
                 i.iconId = iconId
+
+                do {
+                    var model = try i.getIcon()
+                    try model?.updateIconId(iconId)
+                } catch {
+                    os_log(.error, "\(self.t)Error updating iconId: \(error)")
+                }
             }
             .onAppear {
                 DispatchQueue.global().async {
