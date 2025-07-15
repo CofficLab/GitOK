@@ -107,7 +107,8 @@ extension IconModel {
     static func new(_ project: Project) throws -> Self {
         let title = "新图标-\(Int.random(in: 1 ... 100))"
         let path = project.path + "/" + IconModel.root + "/" + UUID().uuidString + ".json"
-        let model = IconModel(title: title, path: path)
+        let iconId = Int.random(in: 1 ... 100)
+        let model = IconModel(title: title, iconId: iconId, path: path)
         try model.saveToDisk()
         return model
     }

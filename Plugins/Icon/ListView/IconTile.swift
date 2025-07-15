@@ -4,7 +4,30 @@ struct IconTile: View {
     var icon: IconModel
 
     var body: some View {
-        Text(icon.title)
+        VStack {
+            HStack {
+                Image(systemName: "photo")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 16, height: 16)
+                    .padding(4)
+                    .background(Color.gray.opacity(0.2))
+                    .cornerRadius(4)
+
+                Text(icon.title).font(.title3)
+                Spacer()
+            }
+
+            HStack {
+                Text("图标ID: \(icon.iconId)").font(.caption).opacity(0.5)
+                Spacer()
+            }
+
+            HStack {
+                Text("背景ID: \(icon.backgroundId)").font(.caption).opacity(0.5)
+                Spacer()
+            }
+        }
     }
 }
 

@@ -48,7 +48,9 @@ struct IconList: View, SuperLog {
     func refreshIcons() {
         if let project = g.project {
             do {
-                self.icons = try project.getIcons()
+                let icons = try project.getIcons()
+                // 按照path排序
+                self.icons = icons.sorted(by: { $0.path < $1.path })
             } catch {
                 os_log(.error, "Error while enumerating files: \(error.localizedDescription)")
                 m.error(error.localizedDescription)
