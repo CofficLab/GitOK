@@ -26,7 +26,7 @@ struct IconItem: View {
             }
             .onAppear {
                 DispatchQueue.global().async {
-                    let i = IconPng.getThumbnial(iconId)
+                    let i = IconPng.getThumbnail(iconId)
                     DispatchQueue.main.async {
                         self.image = i
                     }
