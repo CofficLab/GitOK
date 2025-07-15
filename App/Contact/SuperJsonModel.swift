@@ -64,7 +64,7 @@ extension SuperJsonModel {
     }
 
     // 保存 JSON 字符串到文件
-    func saveToFile(atPath path: String) {
+    private func saveToFile(atPath path: String) {
         if let jsonString = self.toJSONString() {
             // 创建 FileManager 实例
             let fileManager = FileManager.default
@@ -90,8 +90,7 @@ extension SuperJsonModel {
     RootView {
         ContentLayout()
             .hideSidebar()
-            .hideTabPicker()
-//            .hideProjectActions()
+            .hideProjectActions()
     }
     .frame(width: 800)
     .frame(height: 600)

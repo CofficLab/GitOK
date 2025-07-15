@@ -12,12 +12,9 @@ struct IconMaker: View {
     private let tag = Date.nowCompact
     private var folderName: String { "AppIcon-\(tag).appiconset" }
 
-
     @State private var imageSet: [Any] = []
     @State private var folderPath: URL? = nil
     @State private var imageURL: URL? = nil
-
-    var withBorder = false
 
     var body: some View {
         Group {
@@ -26,26 +23,12 @@ struct IconMaker: View {
                     MagicImage.makeImage(macOSView)
                         .resizable()
                         .scaledToFit()
-                        .overlay {
-                            ZStack {
-                                if withBorder {
-//                            AnyView(View.dashedBorder())
-                                }
-                            }
-                        }
                         .tag("macOS")
                         .tabItem { Label("macOS", systemImage: "plus") }
 
                     MagicImage.makeImage(iOSView)
                         .resizable()
                         .scaledToFit()
-                        .overlay {
-                            ZStack {
-                                if withBorder {
-//                            View.dashedBorder()
-                                }
-                            }
-                        }
                         .tag("iOS")
                         .tabItem { Label("iOS", systemImage: "plus") }
                 })
@@ -56,9 +39,9 @@ struct IconMaker: View {
         .onAppear {
             self.icon = try? i.getIcon()
         }
-//        .onReceive(app.events.did(.iconDidSave)) { _ in
-//            self.icon = try? i.getIcon()
-//        }
+        .onNotification(.iconDidSave, perform: { _ in
+            self.icon = try? i.getIcon()
+        })
         .onChange(of: i.snapshotTapped) {
             if i.snapshotTapped {
                 snapshotMany()

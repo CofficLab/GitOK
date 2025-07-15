@@ -26,8 +26,7 @@ struct IconModel: SuperJsonModel, SuperEvent, SuperLog {
     }
 
     var background: some View {
-        Color.blue
-//        BackgroundGroup(for: self.backgroundId).opacity(self.opacity)
+        MagicBackgroundGroup(for: self.backgroundId).opacity(self.opacity)
     }
 
     var label: String { IconModel.label }
@@ -121,17 +120,17 @@ extension IconModel {
 extension IconModel {
     mutating func updateBackgroundId(_ id: String) throws {
         self.backgroundId = id
-        try self.save()
+        try self.saveToDisk()
     }
 
     mutating func updateIconId(_ id: Int) throws {
         self.iconId = id
-        try self.save()
+        try self.saveToDisk()
     }
 
     mutating func updateImageURL(_ url: URL) throws {
         self.imageURL = url
-        try self.save()
+        try self.saveToDisk()
     }
 }
 
@@ -153,29 +152,6 @@ extension IconModel {
         return nil
     }
 
-    // 保存 JSON 字符串到文件
-    func saveToFile(atPath path: String) {
-        if let jsonString = self.toJSONString() {
-            // 创建 FileManager 实例
-            let fileManager = FileManager.default
-
-            // 确保父文件夹存在，如果不存在则创建
-            let directoryURL = URL(fileURLWithPath: path).deletingLastPathComponent()
-            do {
-                try fileManager.createDirectory(at: directoryURL, withIntermediateDirectories: true, attributes: nil)
-            } catch {
-                os_log(.error, "Error creating directory: \(error)")
-            }
-
-            do {
-                try jsonString.write(toFile: path, atomically: true, encoding: .utf8)
-                os_log(.info, "JSON saved to file: \(path)")
-            } catch {
-                os_log(.error, "Error saving JSON to file: \(error)")
-            }
-        }
-    }
-
     func saveToDisk() throws {
         try self.save()
         self.emit(.iconDidSave)
@@ -194,6 +170,16 @@ extension IconModel {
             throw error
         }
     }
+}
+
+// MARK: 通知
+
+extension Notification.Name {
+    static let iconDidChange = Notification.Name("iconDidChange")
+    static let iconDidSave = Notification.Name("iconDidSave")
+    static let iconDidFail = Notification.Name("iconDidFail")
+    static let iconDidGet = Notification.Name("iconDidGet")
+    static let iconTitleDidChange = Notification.Name("iconTitleDidChange")
 }
 
 #Preview("App - Small Screen") {
