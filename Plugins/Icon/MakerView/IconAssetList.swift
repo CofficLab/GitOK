@@ -1,8 +1,11 @@
 import os
 import SwiftUI
+import MagicCore
 
-struct IconAsset: View {
-    @Binding var iconId: Int
+struct IconAssetList: View {
+    @EnvironmentObject var i: IconProvider
+    @EnvironmentObject var m: MagicMessageProvider
+    @EnvironmentObject var app: AppProvider
 
     @State var gridItems: [GridItem] = Array(repeating: .init(.flexible()), count: 10)
 
@@ -15,10 +18,7 @@ struct IconAsset: View {
                     VStack {
                         LazyVGrid(columns: gridItems, spacing: 10) {
                             ForEach(0 ..< iconsCount, id: \.self) { i in
-                                IconItem(selected: i == iconId, iconId: i)
-                                    .onTapGesture {
-                                        iconId = i
-                                    }
+                                IconItem(iconId: i)
                             }
                         }
                         .onAppear {

@@ -11,7 +11,6 @@ struct DetailIcon: View, SuperLog {
     let emoji = "🦁"
 
     @State var icon: IconModel?
-    @State var iconId = 1
     @State var backgroundId: String = "4"
 
     var body: some View {
@@ -26,7 +25,7 @@ struct DetailIcon: View, SuperLog {
                         HStack {
                             // MARK: Icon List
 
-                            IconAsset(iconId: $iconId)
+                            IconAssetList()
                                 .frame(width: geo.size.width * 0.2)
 
                             // MARK: Preview
@@ -34,22 +33,9 @@ struct DetailIcon: View, SuperLog {
                             IconMaker()
                                 .tag(Optional(icon))
                                 .tabItem { Text(icon.title) }
-                                .onAppear {
-                                    self.iconId = icon.iconId
-                                }
                         }
                     }
                     .padding()
-                    .onAppear {
-                        self.iconId = icon.iconId
-                    }
-                    .onChange(of: iconId) {
-                        do {
-                            try self.icon?.updateIconId(iconId)
-                        } catch {
-                            m.error(error.localizedDescription)
-                        }
-                    }
                     .onChange(of: backgroundId) {
                         do {
                             try self.icon?.updateBackgroundId(backgroundId)
@@ -72,6 +58,14 @@ struct DetailIcon: View, SuperLog {
                 m.error(error.localizedDescription)
             }
         }
+//        .onReceive(app.events.did(.iconDidSave)) { _ in
+//            do {
+//                self.icon = try i.getIcon()
+//            } catch {
+//                os_log(.error, "\(self.t)Error getting icon: \(error.localizedDescription)")
+//                m.error(error.localizedDescription)
+//            }
+//        }
         .onChange(of: i.iconURL, {
             do {
                 self.icon = try i.getIcon()

@@ -9,6 +9,8 @@ import MagicCore
 class IconProvider: NSObject, ObservableObject, SuperLog {
     @Published var iconURL: URL?
     @Published var snapshotTapped: Bool = false
+    // 当前从候选列表中选中的图标ID
+    @Published var iconId: Int = 0
 
     let emoji = "🍒"
         
