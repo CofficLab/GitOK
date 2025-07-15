@@ -11,11 +11,57 @@ struct DetailIcon: View, SuperLog {
     let emoji = "🦁"
 
     @State var icon: IconModel?
+    @State var iconId = 1
+    @State var snapshotTapped: Bool = false
+    @State var backgroundId: String = "4"
 
     var body: some View {
         VStack {
             if let iconBinding = Binding($icon) {
-                IconHome(icon: iconBinding)
+                let icon = iconBinding.wrappedValue
+                VStack {
+                    // MARK: IconTopBar
+
+                    IconTopBar(snapshotTapped: $snapshotTapped, icon: iconBinding)
+                    GeometryReader { geo in
+                        HStack {
+                            // MARK: Icon List
+
+                            IconAsset(iconId: $iconId)
+                                .frame(width: geo.size.width * 0.2)
+
+                            // MARK: Preview
+
+                            IconMaker(
+                                snapshotTapped: $snapshotTapped,
+                                icon: iconBinding
+                            )
+                            .tag(Optional(icon))
+                            .tabItem { Text(icon.title) }
+                            .onAppear {
+                                self.iconId = icon.iconId
+                            }
+                        }
+                    }
+                    .padding()
+                    .onAppear {
+                        self.iconId = icon.iconId
+                    }
+                    .onChange(of: iconId) {
+                        do {
+                            try self.icon?.updateIconId(iconId)
+                        } catch {
+                            m.error(error.localizedDescription)
+                        }
+                    }
+                    .onChange(of: backgroundId) {
+                        do {
+                            try self.icon?.updateBackgroundId(backgroundId)
+                        } catch {
+                            m.error(error.localizedDescription)
+                        }
+                    }
+                }
             } else {
                 Text("没有可用的图标")
             }
@@ -60,8 +106,7 @@ struct DetailIcon: View, SuperLog {
     RootView {
         ContentLayout()
             .hideSidebar()
-            .hideTabPicker()
-//            .hideProjectActions()
+            .hideProjectActions()
     }
     .frame(width: 800)
     .frame(height: 600)

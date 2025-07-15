@@ -3,6 +3,7 @@ import MagicCore
 
 struct IconTopBar: View {
     @EnvironmentObject var m: MagicMessageProvider
+    @EnvironmentObject var i: IconProvider
 
     @State var inScreen: Bool = false
     @State var device: Device = .MacBook
@@ -13,8 +14,8 @@ struct IconTopBar: View {
     var body: some View {
         VStack(spacing: 0) {
             HStack {
-                IconOpacity(icon: $icon)
-                IconScale(icon: $icon)
+                IconOpacity()
+                IconScale()
                 Spacer()
                 Button("换图") {
                     let panel = NSOpenPanel()
@@ -49,30 +50,11 @@ struct IconTopBar: View {
     }
 }
 
-#Preview("BannerHome") {
-    RootView {
-        BannerEditor(banner: Binding.constant(BannerModel(
-            title: "精彩标题",
-            subTitle: "精彩小标题",
-            features: [
-                "无广告",
-                "好软件",
-                "无弹窗",
-                "无会员",
-            ],
-            path: ""
-        )))
-    }
-    .frame(width: 500)
-    .frame(height: 400)
-}
-
 #Preview("App - Small Screen") {
     RootView {
         ContentLayout()
             .hideSidebar()
-            .hideTabPicker()
-//            .hideProjectActions()
+            .hideProjectActions()
     }
     .frame(width: 800)
     .frame(height: 600)
