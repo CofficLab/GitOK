@@ -1,5 +1,5 @@
-import SwiftUI
 import MagicCore
+import SwiftUI
 
 struct IconTopBar: View {
     @EnvironmentObject var m: MagicMessageProvider
@@ -23,10 +23,12 @@ struct IconTopBar: View {
             .frame(maxWidth: .infinity)
             .labelStyle(.iconOnly)
             .background(.secondary.opacity(0.5))
-            
+
             GroupBox {
                 IconBgs()
             }.padding()
+
+            IconAssetList()
         }
         .onAppear {
             self.icon = try? i.getIcon()

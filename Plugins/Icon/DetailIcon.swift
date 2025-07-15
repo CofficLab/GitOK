@@ -18,18 +18,9 @@ struct DetailIcon: View, SuperLog {
             if let iconBinding = Binding($icon) {
                 let icon = iconBinding.wrappedValue
                 VStack {
-                    // MARK: IconTopBar
-
                     IconTopBar()
                     GeometryReader { geo in
                         HStack {
-                            // MARK: Icon List
-
-                            IconAssetList()
-                                .frame(width: geo.size.width * 0.2)
-
-                            // MARK: Preview
-
                             IconMaker()
                                 .tag(Optional(icon))
                                 .tabItem { Text(icon.title) }
