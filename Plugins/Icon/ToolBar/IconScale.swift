@@ -1,7 +1,10 @@
 import SwiftUI
+import MagicCore
 
 struct IconScale: View {
     @EnvironmentObject var i: IconProvider
+    @EnvironmentObject var m: MagicMessageProvider
+    @EnvironmentObject var app: AppProvider
     
     @State var icon: IconModel?
     
@@ -10,7 +13,15 @@ struct IconScale: View {
             if icon != nil {
                 Slider(value: Binding(
                     get: { self.icon?.scale ?? 1.0 },
-                    set: { self.icon?.scale = $0 }
+                    set: { newScale in
+                        if self.icon != nil {
+                            do {
+                                try self.icon!.updateScale(newScale)
+                            } catch {
+                                m.error(error.localizedDescription)
+                            }
+                        }
+                    }
                 ), in: 0.1 ... 2)
                     .padding()
             } else {

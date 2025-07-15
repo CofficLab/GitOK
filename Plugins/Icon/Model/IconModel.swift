@@ -128,6 +128,16 @@ extension IconModel {
 // MARK: 更新
 
 extension IconModel {
+    mutating func updateOpacity(_ o: Double) throws {
+        self.opacity = o
+        try self.saveToDisk()
+    }
+    
+    mutating func updateScale(_ s: Double) throws {
+        self.scale = s
+        try self.saveToDisk()
+    }
+
     mutating func updateBackgroundId(_ id: String) throws {
         self.backgroundId = id
         try self.saveToDisk()
@@ -140,12 +150,6 @@ extension IconModel {
 
     mutating func updateImageURL(_ url: URL) throws {
         self.imageURL = url
-        try self.saveToDisk()
-    }
-
-    mutating func updateOpacity(_ opacity: Double) throws {
-        print("updateOpacity: \(opacity)")
-        self.opacity = opacity
         try self.saveToDisk()
     }
 }
