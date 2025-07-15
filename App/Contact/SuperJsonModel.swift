@@ -3,7 +3,6 @@ import SwiftUI
 
 protocol SuperJsonModel: Encodable, Identifiable, Equatable, Hashable {
     var path: String? { get }
-    var label: String { get }
     var title: String { get }
 }
 
@@ -33,16 +32,10 @@ extension SuperJsonModel {
 
 extension SuperJsonModel {
     func save() throws {
-        let verbose = false
-
         guard let p = path else {
-            os_log(.error, "\(label)Can't Save, no path")
+            os_log(.error, "Can't Save, no path")
 
-            throw NSError(domain: "\(label)SaveError", code: 1, userInfo: [NSLocalizedDescriptionKey: "\(label)Can't Save, no path"])
-        }
-        
-        if verbose {
-            os_log("\(self.label)Save to \(p)")
+            throw NSError(domain: "SaveError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Can't Save, no path"])
         }
 
         self.saveToFile(atPath: p)

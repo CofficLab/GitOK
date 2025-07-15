@@ -6,7 +6,7 @@ import MagicCore
 
 struct IconModel: SuperJsonModel, SuperEvent, SuperLog {
     static var root: String = ".gitok/icons"
-    static var label = "💿 IconModel::"
+    static var emoji = "💿"
     static var empty = IconModel(path: "")
 
     var title: String = "1"
@@ -15,7 +15,7 @@ struct IconModel: SuperJsonModel, SuperEvent, SuperLog {
     var imageURL: URL?
     var path: String?
     var opacity: Double = 1
-    var scale: Double?
+    var scale: Double? = 1
 
     var image: Image {
         if let url = self.imageURL {
@@ -28,8 +28,6 @@ struct IconModel: SuperJsonModel, SuperEvent, SuperLog {
     var background: some View {
         MagicBackgroundGroup(for: self.backgroundId).opacity(self.opacity)
     }
-
-    var label: String { IconModel.label }
 
     init(title: String = "1", iconId: Int = 1, backgroundId: String = "3", imageURL: URL? = nil, path: String) {
         self.title = title
@@ -51,7 +49,7 @@ extension IconModel {
         let directoryPath = "\(projectPath)/\(Self.root)"
 
         if verbose {
-            os_log("\(IconModel.label)GetIcons from ->\(directoryPath)")
+            os_log("\(t)GetIcons from ->\(directoryPath)")
         }
 
         // 创建 FileManager 实例
@@ -86,6 +84,18 @@ extension IconModel: Codable {
         case iconId
         case backgroundId
         case imageURL
+        case opacity
+        case scale
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.title = try container.decode(String.self, forKey: .title)
+        self.iconId = try container.decode(Int.self, forKey: .iconId)
+        self.backgroundId = try container.decode(String.self, forKey: .backgroundId)
+        self.imageURL = try container.decodeIfPresent(URL.self, forKey: .imageURL)
+        self.opacity = try container.decodeIfPresent(Double.self, forKey: .opacity) ?? 1.0
+        self.scale = try container.decodeIfPresent(Double.self, forKey: .scale)
     }
 }
 
@@ -132,26 +142,17 @@ extension IconModel {
         self.imageURL = url
         try self.saveToDisk()
     }
+
+    mutating func updateOpacity(_ opacity: Double) throws {
+        print("updateOpacity: \(opacity)")
+        self.opacity = opacity
+        try self.saveToDisk()
+    }
 }
 
 // MARK: 保存
 
 extension IconModel {
-    // 将对象转换为 JSON 字符串
-    func toJSONString() -> String? {
-        do {
-            let encoder = JSONEncoder()
-            encoder.outputFormatting = .sortedKeys
-            let jsonData = try encoder.encode(self)
-            if let jsonString = String(data: jsonData, encoding: .utf8) {
-                return jsonString
-            }
-        } catch {
-            os_log(.error, "Error encoding BannerModel to JSON: \(error)")
-        }
-        return nil
-    }
-
     func saveToDisk() throws {
         try self.save()
         self.emit(.iconDidSave)
@@ -164,7 +165,7 @@ extension IconModel {
             model.path = jsonFile.path
             return model
         } catch {
-            os_log(.error, "Error decoding JSON: \(error)")
+            os_log(.error, "\(self.t)Error decoding JSON: \(error)")
             os_log(.error, "  ➡️ JSONFile: \(jsonFile)")
 
             throw error
