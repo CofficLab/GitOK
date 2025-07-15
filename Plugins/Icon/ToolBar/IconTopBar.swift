@@ -25,13 +25,7 @@ struct IconTopBar: View {
             .background(.secondary.opacity(0.5))
             
             GroupBox {
-                Backgrounds(current: Binding(
-                    get: { self.icon?.backgroundId ?? "1" },
-                    set: { newId in
-                        self.icon?.backgroundId = newId
-                        try? self.icon?.updateBackgroundId(newId)
-                    }
-                ))
+                IconBgs()
             }.padding()
         }
         .onAppear {
