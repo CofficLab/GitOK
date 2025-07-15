@@ -20,7 +20,7 @@ struct IconBgs: View {
         }
         .frame(height: 70)
         .onAppear {
-            self.icon = try? i.getIcon()
+            self.icon = i.currentModel
         }
     }
 

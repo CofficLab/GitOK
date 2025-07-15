@@ -42,10 +42,10 @@ struct IconMaker: View {
             }
         }
         .onAppear {
-            self.icon = try? i.getIcon()
+            self.icon = i.currentModel
         }
         .onNotification(.iconDidSave, perform: { _ in
-            self.icon = try? i.getIcon()
+            self.icon = i.currentModel
         })
         .onChange(of: i.snapshotTapped) {
             if i.snapshotTapped {
@@ -53,6 +53,9 @@ struct IconMaker: View {
                 i.snapshotTapped = false
             }
         }
+        .onChange(of: i.currentModel, {
+            self.icon = i.currentModel
+        })
     }
 
     var macOSView: some View {

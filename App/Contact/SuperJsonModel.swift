@@ -2,13 +2,13 @@ import OSLog
 import SwiftUI
 
 protocol SuperJsonModel: Encodable, Identifiable, Equatable, Hashable {
-    var path: String? { get }
+    var path: String { get }
     var title: String { get }
 }
 
 extension SuperJsonModel {
     var id: String {
-        path ?? "" + title
+        path
     }
 }
 
@@ -16,10 +16,6 @@ extension SuperJsonModel {
 
 extension SuperJsonModel {
     func delete() {
-        guard let path = self.path else {
-            return
-        }
-
         do {
             try FileManager.default.removeItem(atPath: path)
         } catch let e {
@@ -32,13 +28,7 @@ extension SuperJsonModel {
 
 extension SuperJsonModel {
     func save() throws {
-        guard let p = path else {
-            os_log(.error, "Can't Save, no path")
-
-            throw NSError(domain: "SaveError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Can't Save, no path"])
-        }
-
-        self.saveToFile(atPath: p)
+        self.saveToFile(atPath: path)
     }
 
     // 将对象转换为 JSON 字符串

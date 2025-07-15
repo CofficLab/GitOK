@@ -19,16 +19,16 @@ struct IconOpacity: View {
         .padding()
         .onAppear(perform: reloadData)
         .onChange(of: opacity, updateOpacity)
-        .onChange(of: self.i.iconURL, reloadData)
+        .onChange(of: self.i.currentModel, reloadData)
     }
 
     private func reloadData() {
-        self.icon = try? i.getIcon()
+        self.icon = i.currentModel
         self.opacity = self.icon?.opacity ?? 1.0
     }
 
     private func updateOpacity() {
-        if var icon = try? self.i.getIcon() {
+        if var icon = i.currentModel {
             try? icon.updateOpacity(opacity)
         }
     }

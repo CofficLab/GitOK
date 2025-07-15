@@ -13,7 +13,7 @@ struct IconModel: SuperJsonModel, SuperEvent, SuperLog {
     var iconId: Int = 1
     var backgroundId: String = "2"
     var imageURL: URL?
-    var path: String?
+    var path: String
     var opacity: Double = 1
     var scale: Double? = 1
 
@@ -96,32 +96,20 @@ extension IconModel: Codable {
         self.imageURL = try container.decodeIfPresent(URL.self, forKey: .imageURL)
         self.opacity = try container.decodeIfPresent(Double.self, forKey: .opacity) ?? 1.0
         self.scale = try container.decodeIfPresent(Double.self, forKey: .scale)
-    }
-}
-
-// MARK: Hashable
-
-extension IconModel: Hashable {
-}
-
-// MARK: Equatable
-
-extension IconModel: Equatable {
-}
-
-// MARK: Identifiable
-
-extension IconModel: Identifiable {
-    var id: String {
-        path ?? "" + title
+        self.path = ""
     }
 }
 
 // MARK: 新建
 
 extension IconModel {
-    static func new(_ project: Project) -> Self {
-        IconModel(title: "\(Int.random(in: 1 ... 100))", path: project.path + "/" + IconModel.root + "/" + UUID().uuidString + ".json")
+    @discardableResult
+    static func new(_ project: Project) throws -> Self {
+        let title = "新图标-\(Int.random(in: 1 ... 100))"
+        let path = project.path + "/" + IconModel.root + "/" + UUID().uuidString + ".json"
+        let model = IconModel(title: title, path: path)
+        try model.saveToDisk()
+        return model
     }
 }
 

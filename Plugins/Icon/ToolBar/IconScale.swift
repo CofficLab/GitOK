@@ -19,16 +19,16 @@ struct IconScale: View {
         .padding()
         .onAppear(perform: reloadData)
         .onChange(of: scale, updateScale)
-        .onChange(of: self.i.iconURL, reloadData)
+        .onChange(of: self.i.currentModel, reloadData)
     }
 
     private func reloadData() {
-        self.icon = try? i.getIcon()
+        self.icon = i.currentModel
         self.scale = self.icon?.scale ?? 1.0
     }
 
     private func updateScale() {
-        if var icon = try? self.i.getIcon() {
+        if var icon = self.i.currentModel {
             try? icon.updateScale(scale)
         }
     }

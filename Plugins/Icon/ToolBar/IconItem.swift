@@ -8,6 +8,7 @@ import MagicCore
 struct IconItem: View, SuperLog {
     @EnvironmentObject var app: AppProvider
     @EnvironmentObject var i: IconProvider
+    @EnvironmentObject var m: MagicMessageProvider
     
     static var emoji = "🐒"
 
@@ -29,8 +30,12 @@ struct IconItem: View, SuperLog {
                 i.iconId = iconId
 
                 do {
-                    var model = try i.getIcon()
-                    try model?.updateIconId(iconId)
+                    guard var model = i.currentModel else {
+                        m.error("先从列表选择一个文件")
+                        return
+                    }
+                    
+                    try model.updateIconId(iconId)
                 } catch {
                     os_log(.error, "\(self.t)Error updating iconId: \(error)")
                 }

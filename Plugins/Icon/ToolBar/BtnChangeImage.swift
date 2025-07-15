@@ -12,7 +12,7 @@ struct BtnChangeImage: View {
             panel.canChooseDirectories = false
             if panel.runModal() == .OK, let url = panel.url {
                 do {
-                    if var icon = try i.getIcon() {
+                    if var icon = i.currentModel {
                         try icon.updateImageURL(url)
                     } else {
                         m.error("没有找到可以更新的图标")

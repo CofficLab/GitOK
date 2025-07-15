@@ -1,7 +1,7 @@
+import MagicCore
+import OSLog
 import SwiftData
 import SwiftUI
-import OSLog
-import MagicCore
 
 struct IconList: View, SuperLog {
     @EnvironmentObject var app: AppProvider
@@ -9,51 +9,48 @@ struct IconList: View, SuperLog {
     @EnvironmentObject var g: DataProvider
     @EnvironmentObject var i: IconProvider
 
-    @State var selection: IconModel?
     @State var icons: [IconModel] = []
+    @State var selection: IconModel?
 
     var body: some View {
         VStack(spacing: 0) {
             List(icons, selection: $selection) { icon in
                 IconTile(icon: icon)
                     .contextMenu(ContextMenu(menuItems: {
-                        BtnDelIcon(icon: icon, callback: refresh)
+                        BtnDelIcon(icon: icon, callback: {
+                            self.refreshIcons()
+                        })
                     }))
                     .tag(icon)
             }
-            .onChange(of: self.selection, {
-                if let path = self.selection?.path, path.isNotEmpty {
-                    i.setIconURL(URL(fileURLWithPath: path), reason: "IconList")
-                }
-            })
-            
-            // 操作
-            if let project = g.project {
-                HStack(spacing: 0) {
-                    TabBtn(title: "新建 Icon", imageName: "plus.circle", onTap: {
-                        self.icons.append(IconModel.new(project))
-                    })
-                }
-                .frame(height: 25)
-                .labelStyle(.iconOnly)
-            }
+
+            IconListActions()
         }
-        .onChange(of: g.project, refresh)
-        .onAppear(perform: refresh)
+        .onChange(of: g.project) {
+            self.refreshIcons()
+        }
+        .onAppear {
+            self.refreshIcons()
+            self.selection = icons.first
+        }
+        .onChange(of: selection, {
+            i.updateCurrentModel(newModel: selection, reason: "IconList.selection")
+        })
+        .onNotification(.iconDidSave, perform: { _ in
+            let selectedPath = selection?.path
+            refreshIcons()
+            if let selectedPath = selectedPath {
+                selection = icons.first(where: { $0.path == selectedPath })
+            }
+        })
     }
-    
-    func refresh() {
+
+    func refreshIcons() {
         if let project = g.project {
             do {
                 self.icons = try project.getIcons()
-            
-                if let selection = self.selection, icons.contains(selection) {
-                    return
-                }
-                
-                self.selection = icons.first ?? .empty
             } catch {
-                os_log("Error while enumerating files: \(error.localizedDescription)")
+                os_log(.error, "Error while enumerating files: \(error.localizedDescription)")
                 m.error(error.localizedDescription)
             }
         }

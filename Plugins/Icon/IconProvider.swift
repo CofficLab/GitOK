@@ -1,37 +1,44 @@
 import AVKit
 import Combine
 import Foundation
+import MagicCore
 import MediaPlayer
 import OSLog
 import SwiftUI
-import MagicCore
 
 class IconProvider: NSObject, ObservableObject, SuperLog {
-    @Published var iconURL: URL?
     @Published var snapshotTapped: Bool = false
-    
+    @Published private(set) var currentModel: IconModel? = nil
+
+    static var emoji = "🍒"
+
     // 当前从候选列表中选中的图标ID
     @Published var iconId: Int = 0
 
-    let emoji = "🍒"
-        
-    func setIconURL(_ i: URL, reason: String) {
-        let verbose = true
-
-        if verbose {
-            os_log(.debug, "\(self.t)Set Icon URL(\(reason)) ➡️ \(i)")
-        }
-
-        self.iconURL = i
+    override init() {
+        super.init()
+        NotificationCenter.default.addObserver(
+            self, selector: #selector(handleIconDidSave),
+            name: .iconDidSave,
+            object: nil)
     }
 
-    func getIcon() throws -> IconModel? {
-        guard let iconURL = iconURL else {
-            print("getIcon: iconURL is nil")
-            return nil
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+
+    @objc private func handleIconDidSave(_ notification: Notification) {
+        let iconPath = self.currentModel?.path
+        if let iconPath = iconPath {
+            let newModel = try? IconModel.fromJSONFile(URL(fileURLWithPath: iconPath))
+            self.updateCurrentModel(newModel: newModel, reason: "iconDidSave event")
         }
-        
-        return try IconModel.fromJSONFile(iconURL)
+    }
+
+    func updateCurrentModel(newModel: IconModel?, reason: String) {
+        os_log("\(self.t)Update Current Model(\(reason)) ➡️ \(newModel?.title ?? "nil")")
+
+        self.currentModel = newModel
     }
 }
 
