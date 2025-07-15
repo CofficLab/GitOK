@@ -17,7 +17,7 @@ struct IconTopBar: View {
                 IconOpacity()
                 IconScale()
                 Spacer()
-                BtnChangeImage(icon: $icon)
+                BtnChangeImage()
                 BtnSnapshot(snapshotTapped: $snapshotTapped)
             }
             .frame(height: 25)

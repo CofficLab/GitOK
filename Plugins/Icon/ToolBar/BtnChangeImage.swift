@@ -3,7 +3,7 @@ import MagicCore
 
 struct BtnChangeImage: View {
     @EnvironmentObject var m: MagicMessageProvider
-    @Binding var icon: IconModel
+    @EnvironmentObject var i: IconProvider
 
     var body: some View {
         Button("换图") {
@@ -12,7 +12,11 @@ struct BtnChangeImage: View {
             panel.canChooseDirectories = false
             if panel.runModal() == .OK, let url = panel.url {
                 do {
-                    try self.icon.updateImageURL(url)
+                    if var icon = try i.getIcon() {
+                        try icon.updateImageURL(url)
+                    } else {
+                        m.error("没有找到可以更新的图标")
+                    }
                 } catch {
                     m.error(error.localizedDescription)
                 }
