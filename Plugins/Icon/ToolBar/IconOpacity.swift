@@ -1,5 +1,5 @@
-import SwiftUI
 import MagicCore
+import SwiftUI
 
 struct IconOpacity: View {
     @EnvironmentObject var i: IconProvider
@@ -7,30 +7,29 @@ struct IconOpacity: View {
     @EnvironmentObject var m: MagicMessageProvider
 
     @State var icon: IconModel?
-    
+    @State var opacity: Double = 1
+
     var body: some View {
         VStack {
             if icon != nil {
-                Slider(value: Binding(
-                    get: { self.icon?.opacity ?? 1.0 },
-                    set: { newOpacity in
-                        if self.icon != nil {
-                            do {
-                                try self.icon!.updateOpacity(newOpacity)
-                            } catch {
-                                m.error(error.localizedDescription)
-                            }
-                        }
-                    }
-                ), in: 0...1)
+                Slider(value: $opacity, in: 0 ... 1)
                     .padding()
-            } else {
-                Text("没有可用的图标")
             }
         }
         .padding()
-        .onAppear {
-            self.icon = try? i.getIcon()
+        .onAppear(perform: reloadData)
+        .onChange(of: opacity, updateOpacity)
+        .onChange(of: self.i.iconURL, reloadData)
+    }
+
+    private func reloadData() {
+        self.icon = try? i.getIcon()
+        self.opacity = self.icon?.opacity ?? 1.0
+    }
+
+    private func updateOpacity() {
+        if var icon = try? self.i.getIcon() {
+            try? icon.updateOpacity(opacity)
         }
     }
 }

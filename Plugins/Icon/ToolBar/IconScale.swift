@@ -16,24 +16,21 @@ struct IconScale: View {
                     .padding()
             }
         }
-        .onAppear {
-            self.icon = try? i.getIcon()
-            self.scale = self.icon?.scale ?? 1.0
-        }
-        .onChange(of: scale) {
-            if var icon = try? self.i.getIcon() {
-                do {
-                    try icon.updateScale(scale)
-                } catch {
-                    m.error(error.localizedDescription)
-                }
-            }
-        }
-        .onChange(of: self.i.iconURL) {
-            self.icon = try? i.getIcon()
-            self.scale = self.icon?.scale ?? 1.0
-        }
         .padding()
+        .onAppear(perform: reloadData)
+        .onChange(of: scale, updateScale)
+        .onChange(of: self.i.iconURL, reloadData)
+    }
+
+    private func reloadData() {
+        self.icon = try? i.getIcon()
+        self.scale = self.icon?.scale ?? 1.0
+    }
+
+    private func updateScale() {
+        if var icon = try? self.i.getIcon() {
+            try? icon.updateScale(scale)
+        }
     }
 }
 

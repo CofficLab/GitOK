@@ -1,6 +1,6 @@
+import MagicCore
 import os
 import SwiftUI
-import MagicCore
 
 struct IconAssetList: View {
     @EnvironmentObject var i: IconProvider
@@ -13,20 +13,18 @@ struct IconAssetList: View {
 
     var body: some View {
         GeometryReader { geo in
-            GroupBox {
-                ScrollView {
-                    VStack {
-                        LazyVGrid(columns: gridItems, spacing: 10) {
-                            ForEach(0 ..< iconsCount, id: \.self) { i in
-                                IconItem(iconId: i)
-                            }
+            ScrollView {
+                VStack {
+                    LazyVGrid(columns: gridItems, spacing: 10) {
+                        ForEach(0 ..< iconsCount, id: \.self) { i in
+                            IconItem(iconId: i)
                         }
-                        .onAppear {
-                            gridItems = getGridItems(geo)
-                        }
-                        .onChange(of: geo.size.width) {
-                            gridItems = getGridItems(geo)
-                        }
+                    }
+                    .onAppear {
+                        gridItems = getGridItems(geo)
+                    }
+                    .onChange(of: geo.size.width) {
+                        gridItems = getGridItems(geo)
                     }
                 }
             }

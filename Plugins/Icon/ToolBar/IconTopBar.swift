@@ -28,7 +28,9 @@ struct IconTopBar: View {
                 IconBgs()
             }.padding()
 
-            IconAssetList()
+            GroupBox {
+                IconAssetList()
+            }.padding()
         }
         .onAppear {
             self.icon = try? i.getIcon()

@@ -1,6 +1,6 @@
+import MagicCore
 import SwiftUI
 import UniformTypeIdentifiers
-import MagicCore
 
 struct IconMaker: View {
     @EnvironmentObject var app: AppProvider
@@ -19,19 +19,24 @@ struct IconMaker: View {
     var body: some View {
         Group {
             if self.icon != nil {
-                TabView(content: {
-                    MagicImage.makeImage(macOSView)
-                        .resizable()
-                        .scaledToFit()
-                        .tag("macOS")
-                        .tabItem { Label("macOS", systemImage: "plus") }
+                HStack {
+                    Spacer()
+                    VStack {
+                        Text("macOS")
+                        MagicImage.makeImage(macOSView)
+                            .resizable()
+                            .scaledToFit()
+                    }
 
-                    MagicImage.makeImage(iOSView)
-                        .resizable()
-                        .scaledToFit()
-                        .tag("iOS")
-                        .tabItem { Label("iOS", systemImage: "plus") }
-                })
+                    VStack {
+                        Text("iOS")
+                        MagicImage.makeImage(iOSView)
+                            .resizable()
+                            .scaledToFit()
+                    }
+                    
+                    Spacer()
+                }
             } else {
                 ProgressView()
             }
@@ -51,40 +56,11 @@ struct IconMaker: View {
     }
 
     var macOSView: some View {
-        ZStack {
-            // MARK: 背景色
-
-            icon!.background
-
-            HStack {
-                if let scale = icon!.scale {
-                    icon!.image.scaleEffect(scale)
-                } else {
-                    icon!.image.resizable().scaledToFit()
-                }
-            }.scaleEffect(1.8)
-        }
-        .frame(width: 1024, height: 1024)
-        .clipShape(RoundedRectangle(cornerSize: CGSize(
-            width: 200,
-            height: 200
-        ))).padding(100)
+        IconPreview(icon: icon!, platform: "macOS")
     }
 
     var iOSView: some View {
-        ZStack {
-            // MARK: 背景色
-
-            icon!.background
-
-            HStack {
-                if let scale = icon!.scale {
-                    icon!.image.scaleEffect(scale)
-                } else {
-                    icon!.image.resizable().scaledToFit()
-                }
-            }.scaleEffect(1.8)
-        }
+        IconPreview(icon: icon!, platform: "iOS")
     }
 
     private func getContainerWidth(_ geo: GeometryProxy) -> CGFloat {
