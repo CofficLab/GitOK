@@ -5,9 +5,9 @@ import MagicCore
 struct IconMaker: View {
     @EnvironmentObject var app: AppProvider
     @EnvironmentObject var m: MagicMessageProvider
+    @EnvironmentObject var i: IconProvider
 
-    @Binding var snapshotTapped: Bool
-    @Binding var icon: IconModel
+    @State private var icon: IconModel?
 
     private let tag = Date.nowCompact
     private var folderName: String { "AppIcon-\(tag).appiconset" }
@@ -20,37 +20,49 @@ struct IconMaker: View {
     var withBorder = false
 
     var body: some View {
-        TabView(content: {
-            MagicImage.makeImage(macOSView)
-                .resizable()
-                .scaledToFit()
-                .overlay {
-                    ZStack {
-                        if withBorder {
+        Group {
+            if self.icon != nil {
+                TabView(content: {
+                    MagicImage.makeImage(macOSView)
+                        .resizable()
+                        .scaledToFit()
+                        .overlay {
+                            ZStack {
+                                if withBorder {
 //                            AnyView(View.dashedBorder())
+                                }
+                            }
                         }
-                    }
-                }
-                .tag("macOS")
-                .tabItem { Label("macOS", systemImage: "plus") }
+                        .tag("macOS")
+                        .tabItem { Label("macOS", systemImage: "plus") }
 
-            MagicImage.makeImage(iOSView)
-                .resizable()
-                .scaledToFit()
-                .overlay {
-                    ZStack {
-                        if withBorder {
+                    MagicImage.makeImage(iOSView)
+                        .resizable()
+                        .scaledToFit()
+                        .overlay {
+                            ZStack {
+                                if withBorder {
 //                            View.dashedBorder()
+                                }
+                            }
                         }
-                    }
-                }
-                .tag("iOS")
-                .tabItem { Label("iOS", systemImage: "plus") }
-        })
-        .onChange(of: snapshotTapped) {
-            if snapshotTapped {
+                        .tag("iOS")
+                        .tabItem { Label("iOS", systemImage: "plus") }
+                })
+            } else {
+                ProgressView()
+            }
+        }
+        .onAppear {
+            self.icon = try? i.getIcon()
+        }
+//        .onReceive(app.events.did(.iconDidSave)) { _ in
+//            self.icon = try? i.getIcon()
+//        }
+        .onChange(of: i.snapshotTapped) {
+            if i.snapshotTapped {
                 snapshotMany()
-                self.snapshotTapped = false
+                i.snapshotTapped = false
             }
         }
     }
@@ -59,13 +71,13 @@ struct IconMaker: View {
         ZStack {
             // MARK: 背景色
 
-            icon.background
+            icon!.background
 
             HStack {
-                if let scale = icon.scale {
-                    icon.image.scaleEffect(scale)
+                if let scale = icon!.scale {
+                    icon!.image.scaleEffect(scale)
                 } else {
-                    icon.image.resizable().scaledToFit()
+                    icon!.image.resizable().scaledToFit()
                 }
             }.scaleEffect(1.8)
         }
@@ -80,13 +92,13 @@ struct IconMaker: View {
         ZStack {
             // MARK: 背景色
 
-            icon.background
+            icon!.background
 
             HStack {
-                if let scale = icon.scale {
-                    icon.image.scaleEffect(scale)
+                if let scale = icon!.scale {
+                    icon!.image.scaleEffect(scale)
                 } else {
-                    icon.image.resizable().scaledToFit()
+                    icon!.image.resizable().scaledToFit()
                 }
             }.scaleEffect(1.8)
         }
@@ -216,8 +228,7 @@ struct IconMaker: View {
     RootView {
         ContentLayout()
             .hideSidebar()
-            .hideTabPicker()
-//            .hideProjectActions()
+            .hideProjectActions()
     }
     .frame(width: 800)
     .frame(height: 600)

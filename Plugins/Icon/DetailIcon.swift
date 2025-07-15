@@ -1,6 +1,6 @@
+import MagicCore
 import OSLog
 import SwiftUI
-import MagicCore
 
 struct DetailIcon: View, SuperLog {
     @EnvironmentObject var app: AppProvider
@@ -12,7 +12,6 @@ struct DetailIcon: View, SuperLog {
 
     @State var icon: IconModel?
     @State var iconId = 1
-    @State var snapshotTapped: Bool = false
     @State var backgroundId: String = "4"
 
     var body: some View {
@@ -32,15 +31,12 @@ struct DetailIcon: View, SuperLog {
 
                             // MARK: Preview
 
-                            IconMaker(
-                                snapshotTapped: $snapshotTapped,
-                                icon: iconBinding
-                            )
-                            .tag(Optional(icon))
-                            .tabItem { Text(icon.title) }
-                            .onAppear {
-                                self.iconId = icon.iconId
-                            }
+                            IconMaker()
+                                .tag(Optional(icon))
+                                .tabItem { Text(icon.title) }
+                                .onAppear {
+                                    self.iconId = icon.iconId
+                                }
                         }
                     }
                     .padding()
@@ -88,7 +84,7 @@ struct DetailIcon: View, SuperLog {
             guard let icon = self.icon else {
                 return
             }
-            
+
             do {
                 try icon.saveToDisk()
             } catch {
