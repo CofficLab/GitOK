@@ -6,31 +6,31 @@
 
 ## What
 
-GitOK 是一个综合性的项目管理工具。
+GitOK is a comprehensive project management tool.
 
-## 下载
+## Download
 
 <https://github.com/CofficLab/GitOK/releases>
 
 ## Why
 
-有很多方式来保证工作流程简洁、高效、规范，比如：
+There are many ways to ensure a clean, efficient, and standardized workflow, such as:
 
-- 约束性的文档
-- 规范代码格式的脚本
+- Enforcing documentation
+- Scripts to format code
 
-为什么不用一个人性化的 APP 来做这些事呢？
+Why not use a user-friendly app to do these things?
 
-我们需要一个工具来提高工作效率，希望它有这样的功能：
+We need a tool to improve our work efficiency, and we'd like it to have the following features:
 
-- 管理多个项目
-- 创建一个项目，背后的工作包括但不限于：
-  - 用脚手架创建项目文件夹
-  - 初始化 Git 仓库及远程仓库
-  - 准备好 CI/CD 脚本
-- 辅助人类提交良好格式的 `commit message`
-- 快速生成 APP 的多个平台的图标
+- Manage multiple projects
+- When creating a project, the behind-the-scenes work includes but is not limited to:
+  - Scaffolding project folders
+  - Initializing Git repositories and remote repositories
+  - Preparing CI/CD scripts
+- Assisting users in writing well-formatted `commit messages`
+- Quickly generating app icons for multiple platforms
 
 ## References
 
-- [git commit emoji 使用指南](https://github.com/liuchengxu/git-commit-emoji-cn)
+- [git commit emoji usage guide (in Chinese)](https://github.com/liuchengxu/git-commit-emoji-cn)
