@@ -25,28 +25,6 @@ class IconAsset {
         return IconCategoryRepo.getCategoryNames()
     }
     
-    // 获取指定分类下的图标数量
-    static func getIconCount(in category: String) -> Int {
-        if let folderPath = iconFolderURL?.path {
-            let categoryPath = (folderPath as NSString).appendingPathComponent(category)
-            do {
-                let files = try FileManager.default.contentsOfDirectory(atPath: categoryPath)
-                // 计算所有支持的图标文件格式
-                let iconFiles = files.filter { filename in
-                    let fileExtension = filename.lowercased()
-                    return supportedFormats.contains { format in
-                        fileExtension.hasSuffix(".\(format)")
-                    }
-                }
-                return iconFiles.count
-            } catch {
-                print("无法获取分类 \(category) 中的文件数量：\(error.localizedDescription)")
-                return 0
-            }
-        }
-        return 0
-    }
-    
     // 获取指定分类下的所有图标ID（委托给IconCategory）
     static func getIconIds(in category: String) -> [String] {
         return IconCategory.getIconIds(in: category)
@@ -258,24 +236,6 @@ class IconAsset {
         } catch {
             print("无法获取文件信息：\(error.localizedDescription)")
             return nil
-        }
-    }
-    
-    /// 检查图标文件是否存在
-    /// - Parameters:
-    ///   - category: 分类名称
-    ///   - iconId: 图标ID（支持数字ID和哈希文件名）
-    ///   - format: 指定格式（可选）
-    /// - Returns: 是否存在
-    static func iconExists(category: String, iconId: String, format: String? = nil) -> Bool {
-        if let format = format {
-            // 检查指定格式
-            guard let iconFolderURL = iconFolderURL else { return false }
-            let url = iconFolderURL.appendingPathComponent(category).appendingPathComponent("\(iconId).\(format)")
-            return FileManager.default.fileExists(atPath: url.path)
-        } else {
-            // 检查任意支持的格式
-            return findIconFile(category: category, iconId: iconId) != nil
         }
     }
 }

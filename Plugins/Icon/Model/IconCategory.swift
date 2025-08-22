@@ -295,3 +295,22 @@ extension IconCategory {
         IconCategory(name: "Objects", iconCount: 15, iconIds: Array(1...15).map { String($0) })
     ]
 }
+
+#Preview("App - Small Screen") {
+    RootView {
+        ContentLayout().setInitialTab("Icon")
+            .hideSidebar()
+            .hideProjectActions()
+    }
+    .frame(width: 800)
+    .frame(height: 600)
+}
+
+#Preview("App - Big Screen") {
+    RootView {
+        ContentLayout().setInitialTab("Icon")
+            .hideSidebar()
+    }
+    .frame(width: 1200)
+    .frame(height: 1200)
+}
