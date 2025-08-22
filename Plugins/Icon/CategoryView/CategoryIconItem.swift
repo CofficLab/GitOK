@@ -51,7 +51,7 @@ struct CategoryIconItem: View {
             }
             .onAppear {
                 DispatchQueue.global().async {
-                    let thumbnail = IconPng.getThumbnail(category: category, iconId: iconId)
+                    let thumbnail = IconItem.getThumbnail(category: category, iconId: iconId)
                     DispatchQueue.main.async {
                         self.image = thumbnail
                     }
@@ -67,7 +67,7 @@ struct CategoryIconItem: View {
             .hideProjectActions()
     }
     .frame(width: 800)
-    .frame(height: 600)
+    .frame(height: 800)
 }
 
 #Preview("App - Big Screen") {

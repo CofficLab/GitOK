@@ -2,7 +2,12 @@ import Foundation
 import SwiftUI
 import Cocoa
 
-class IconPng {
+/**
+ * 图标项工具类
+ * 负责处理IconRepo -> IconCategory下的具体图标操作
+ * 包括图标获取、缩略图生成、文件扫描等功能
+ */
+class IconItem {
     static var iconFolderURL = Bundle.main.url(forResource: "Icons", withExtension: nil)
     
     // 获取所有分类目录

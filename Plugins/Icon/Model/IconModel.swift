@@ -22,7 +22,7 @@ struct IconModel: SuperJsonModel, SuperEvent, SuperLog {
             return Image(nsImage: NSImage(data: try! Data(contentsOf: url))!)
         }
 
-        return IconPng.getImage(self.iconId)
+        return IconItem.getImage(self.iconId)
     }
 
     var background: some View {

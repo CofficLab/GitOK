@@ -72,7 +72,7 @@ struct IconCategory: Identifiable, Hashable {
             return Image(systemName: "photo")
         }
         
-        let url = IconPng.iconFolderURL!.appendingPathComponent(name).appendingPathComponent("\(iconId).png")
+        let url = IconItem.iconFolderURL!.appendingPathComponent(name).appendingPathComponent("\(iconId).png")
         if let nsImage = NSImage(contentsOf: url) {
             return Image(nsImage: nsImage)
         } else {
@@ -88,9 +88,9 @@ struct IconCategory: Identifiable, Hashable {
             return Image(systemName: "photo")
         }
         
-        let url = IconPng.iconFolderURL!.appendingPathComponent(name).appendingPathComponent("\(iconId).png")
+        let url = IconItem.iconFolderURL!.appendingPathComponent(name).appendingPathComponent("\(iconId).png")
         if let image = NSImage(contentsOf: url) {
-            if let thumbnail = IconPng.generateThumbnail(for: image, size: NSSize(width: 80, height: 80)) {
+            if let thumbnail = IconItem.generateThumbnail(for: image, size: NSSize(width: 80, height: 80)) {
                 return Image(nsImage: thumbnail)
             } else {
                 return Image(systemName: "photo")
@@ -192,7 +192,7 @@ class IconCategoryManager: ObservableObject {
     /// 加载分类列表
     /// - Returns: 分类数组
     private func loadCategories() -> [IconCategory] {
-        guard let iconFolderURL = IconPng.iconFolderURL else {
+        guard let iconFolderURL = IconItem.iconFolderURL else {
             print("未找到图标文件夹")
             return []
         }
