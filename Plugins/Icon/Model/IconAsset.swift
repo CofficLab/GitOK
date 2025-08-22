@@ -20,30 +20,9 @@ class IconAsset {
     /// 默认图标文件格式（优先查找）
     private static let defaultFormat = "png"
     
-    // 获取所有分类目录
+    // 获取所有分类目录（委托给IconCategoryRepo）
     static func getCategories() -> [String] {
-        if let folderPath = iconFolderURL?.path {
-            print("IconAsset.getCategories: 使用图标文件夹路径: \(folderPath)")
-            do {
-                let items = try FileManager.default.contentsOfDirectory(atPath: folderPath)
-                print("IconAsset.getCategories: 找到项目: \(items)")
-                // 过滤出目录，排除文件
-                let categories = items.filter { item in
-                    let itemPath = (folderPath as NSString).appendingPathComponent(item)
-                    var isDir: ObjCBool = false
-                    FileManager.default.fileExists(atPath: itemPath, isDirectory: &isDir)
-                    return isDir.boolValue
-                }
-                print("IconAsset.getCategories: 过滤后的分类: \(categories)")
-                return categories.sorted()
-            } catch {
-                print("无法获取分类目录：\(error.localizedDescription)")
-                return []
-            }
-        } else {
-            print("未找到指定的引用文件夹")
-            return []
-        }
+        return IconCategoryRepo.getCategoryNames()
     }
     
     // 获取指定分类下的图标数量
