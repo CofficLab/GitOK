@@ -10,7 +10,7 @@ struct IconModel: SuperJsonModel, SuperEvent, SuperLog {
     static var empty = IconModel(path: "")
 
     var title: String = "1"
-    var iconId: Int = 1
+    var iconId: String = "1"
     var backgroundId: String = "2"
     var imageURL: URL?
     var path: String
@@ -22,14 +22,14 @@ struct IconModel: SuperJsonModel, SuperEvent, SuperLog {
             return Image(nsImage: NSImage(data: try! Data(contentsOf: url))!)
         }
 
-        return IconItem.getImage(self.iconId)
+        return IconAsset.getImage(self.iconId)
     }
 
     var background: some View {
         MagicBackgroundGroup(for: self.backgroundId).opacity(self.opacity)
     }
 
-    init(title: String = "1", iconId: Int = 1, backgroundId: String = "3", imageURL: URL? = nil, path: String) {
+    init(title: String = "1", iconId: String = "1", backgroundId: String = "3", imageURL: URL? = nil, path: String) {
         self.title = title
         self.iconId = iconId
         self.backgroundId = backgroundId
@@ -91,7 +91,12 @@ extension IconModel: Codable {
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.title = try container.decode(String.self, forKey: .title)
-        self.iconId = try container.decode(Int.self, forKey: .iconId)
+        // 兼容性处理：如果 iconId 是 Int，转换为 String
+        if let intIconId = try? container.decode(Int.self, forKey: .iconId) {
+            self.iconId = String(intIconId)
+        } else {
+            self.iconId = try container.decode(String.self, forKey: .iconId)
+        }
         self.backgroundId = try container.decode(String.self, forKey: .backgroundId)
         self.imageURL = try container.decodeIfPresent(URL.self, forKey: .imageURL)
         self.opacity = try container.decodeIfPresent(Double.self, forKey: .opacity) ?? 1.0
@@ -107,7 +112,7 @@ extension IconModel {
     static func new(_ project: Project) throws -> Self {
         let title = "新图标-\(Int.random(in: 1 ... 100))"
         let path = project.path + "/" + IconModel.root + "/" + UUID().uuidString + ".json"
-        let iconId = Int.random(in: 1 ... 100)
+        let iconId = String(Int.random(in: 1 ... 100))
         let model = IconModel(title: title, iconId: iconId, path: path)
         try model.saveToDisk()
         return model
@@ -132,7 +137,7 @@ extension IconModel {
         try self.saveToDisk()
     }
 
-    mutating func updateIconId(_ id: Int) throws {
+    mutating func updateIconId(_ id: String) throws {
         self.iconId = id
         try self.saveToDisk()
     }

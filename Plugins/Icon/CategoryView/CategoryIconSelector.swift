@@ -51,7 +51,7 @@ struct CategoryIconSelector: View {
         gridItems = Array(repeating: .init(.flexible()), count: 8)
     }
     
-    private func handleIconSelection(_ iconId: Int) {
+    private func handleIconSelection(_ iconId: String) {
         guard i.currentModel != nil else {
             m.error("请先选择一个图标文件")
             return

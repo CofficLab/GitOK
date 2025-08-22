@@ -7,7 +7,7 @@ import MagicCore
  */
 struct CategoryIconItem: View {
     let category: String
-    let iconId: Int
+    let iconId: String
     let onTap: () -> Void
     
     @EnvironmentObject var iconProvider: IconProvider
@@ -50,8 +50,10 @@ struct CategoryIconItem: View {
                 isHovered = hovering
             }
             .onAppear {
+                print("🖼️ CategoryIconItem: 开始加载图标 - 分类: \(category), ID: \(iconId)")
                 DispatchQueue.global().async {
-                    let thumbnail = IconItem.getThumbnail(category: category, iconId: iconId)
+                    let thumbnail = IconAsset.getThumbnail(category: category, iconId: iconId)
+                    print("🖼️ CategoryIconItem: 图标加载完成 - 分类: \(category), ID: \(iconId)")
                     DispatchQueue.main.async {
                         self.image = thumbnail
                     }

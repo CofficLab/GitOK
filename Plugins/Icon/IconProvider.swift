@@ -17,7 +17,7 @@ class IconProvider: NSObject, ObservableObject, SuperLog {
 
     /// 当前从候选列表中选中的图标ID
     /// 用于在图标选择器中高亮显示选中的图标
-    @Published var selectedIconId: Int = 0
+    @Published var selectedIconId: String = ""
     
     /// 图标分类仓库
     @Published var iconCategoryRepo = IconCategoryRepo.shared
@@ -80,7 +80,7 @@ class IconProvider: NSObject, ObservableObject, SuperLog {
     /**
         选择图标
      */
-    func selectIcon(_ iconId: Int) {
+    func selectIcon(_ iconId: String) {
         self.selectedIconId = iconId
         
         // 如果当前有图标模型，同时更新模型

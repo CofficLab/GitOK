@@ -60,7 +60,7 @@ struct IconAssetList: View {
         return max(columns, 1)
     }
     
-    private func handleIconSelection(_ iconId: Int) {
+    private func handleIconSelection(_ iconId: String) {
         // 使用IconProvider的统一方法选择图标
         i.selectIcon(iconId)
         

@@ -25,8 +25,38 @@ class IconCategoryRepo: ObservableObject, SuperLog {
     
     /// 私有初始化方法，确保单例模式
     private init() {
-        self.iconFolderURL = Bundle.main.url(forResource: "Icons", withExtension: nil)
+        // 直接初始化 iconFolderURL，避免在初始化过程中调用实例方法
+        self.iconFolderURL = Self.findIconFolder()
         loadCategories()
+    }
+    
+    /// 查找图标文件夹（静态方法，可以在初始化过程中调用）
+    /// - Returns: 图标文件夹URL，如果找不到则返回nil
+    private static func findIconFolder() -> URL? {
+        // 首先尝试 Bundle 中的资源
+        if let bundleURL = Bundle.main.url(forResource: "Icons", withExtension: nil) {
+            return bundleURL
+        }
+        
+        // 如果 Bundle 中没有，尝试项目根目录下的 Resources/Icons
+        let projectRoot = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
+        let resourcesIconsURL = projectRoot.appendingPathComponent("Resources").appendingPathComponent("Icons")
+        if FileManager.default.fileExists(atPath: resourcesIconsURL.path) {
+            return resourcesIconsURL
+        }
+        
+        // 如果还是找不到，尝试从当前工作目录向上查找
+        var currentURL = projectRoot
+        while currentURL.path != "/" {
+            let testURL = currentURL.appendingPathComponent("Resources").appendingPathComponent("Icons")
+            if FileManager.default.fileExists(atPath: testURL.path) {
+                return testURL
+            }
+            currentURL = currentURL.deletingLastPathComponent()
+        }
+        
+        print("IconCategoryRepo: 无法找到图标文件夹")
+        return nil
     }
     
     /// 加载所有分类
@@ -82,15 +112,32 @@ class IconCategoryRepo: ObservableObject, SuperLog {
     private func createCategory(from folderPath: String, name: String) -> IconCategory? {
         do {
             let files = try FileManager.default.contentsOfDirectory(atPath: folderPath)
-            let pngFiles = files.filter { $0.hasSuffix(".png") }
-            let iconIds = pngFiles.compactMap { filename -> Int? in
+            
+            // 支持多种图标文件格式
+            let supportedFormats = ["png", "svg", "jpg", "jpeg", "gif", "webp"]
+            let iconFiles = files.filter { filename in
+                let fileExtension = filename.lowercased()
+                return supportedFormats.contains { format in
+                    fileExtension.hasSuffix(".\(format)")
+                }
+            }
+            
+            // 对于哈希文件名，我们使用文件名本身作为ID
+            // 对于数字文件名，我们使用数字作为ID
+            let iconIds = iconFiles.compactMap { filename -> String? in
                 let nameWithoutExt = (filename as NSString).deletingPathExtension
-                return Int(nameWithoutExt)
+                // 尝试转换为数字，如果失败则使用原始文件名
+                if let numericId = Int(nameWithoutExt) {
+                    return String(numericId)
+                } else {
+                    // 哈希文件名，直接使用
+                    return nameWithoutExt
+                }
             }.sorted()
             
             return IconCategory(
                 name: name,
-                iconCount: pngFiles.count,
+                iconCount: iconFiles.count,
                 iconIds: iconIds
             )
         } catch {
@@ -115,49 +162,29 @@ class IconCategoryRepo: ObservableObject, SuperLog {
     
     /// 获取指定分类下的所有图标ID
     /// - Parameter category: 分类名称
-    /// - Returns: 图标ID数组
-    func getIconIds(in category: String) -> [Int] {
+    /// - Returns: 图标ID数组（支持数字ID和哈希文件名）
+    func getIconIds(in category: String) -> [String] {
         getCategory(byName: category)?.iconIds ?? []
     }
     
     /// 获取指定分类和ID的图标
     /// - Parameters:
     ///   - category: 分类名称
-    ///   - iconId: 图标ID
+    ///   - iconId: 图标ID（支持数字ID和哈希文件名）
     /// - Returns: 图标Image
-    func getImage(category: String, iconId: Int) -> Image {
-        guard let iconFolderURL = iconFolderURL else {
-            return Image(systemName: "photo")
-        }
-        
-        let url = iconFolderURL.appendingPathComponent(category).appendingPathComponent("\(iconId).png")
-        if let nsImage = NSImage(contentsOf: url) {
-            return Image(nsImage: nsImage)
-        } else {
-            return Image(systemName: "photo")
-        }
+    func getImage(category: String, iconId: String) -> Image {
+        // 使用 IconAsset 来智能查找图标文件
+        return IconAsset.getImage(category: category, iconId: iconId)
     }
     
     /// 获取指定分类和ID的缩略图
     /// - Parameters:
     ///   - category: 分类名称
-    ///   - iconId: 图标ID
+    ///   - iconId: 图标ID（支持数字ID和哈希文件名）
     /// - Returns: 缩略图Image
-    func getThumbnail(category: String, iconId: Int) -> Image {
-        guard let iconFolderURL = iconFolderURL else {
-            return Image(systemName: "photo")
-        }
-        
-        let url = iconFolderURL.appendingPathComponent(category).appendingPathComponent("\(iconId).png")
-        if let image = NSImage(contentsOf: url) {
-            if let thumbnail = generateThumbnail(for: image, size: NSSize(width: 80, height: 80)) {
-                return Image(nsImage: thumbnail)
-            } else {
-                return Image(systemName: "photo")
-            }
-        } else {
-            return Image(systemName: "photo")
-        }
+    func getThumbnail(category: String, iconId: String) -> Image {
+        // 使用 IconAsset 来智能查找图标文件
+        return IconAsset.getThumbnail(category: category, iconId: iconId)
     }
     
     /// 生成缩略图
@@ -211,7 +238,7 @@ class IconCategoryRepo: ObservableObject, SuperLog {
             .setInitialTab(IconPlugin.label)
     }
     .frame(width: 600)
-    .frame(height: 600)
+    .frame(height: 800)
 }
 
 #Preview("App-Big Screen") {

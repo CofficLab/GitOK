@@ -168,24 +168,6 @@ class ProjectIconRepo: ObservableObject, SuperLog {
         }
     }
     
-    /// 获取图标模型统计信息
-    /// - Returns: 统计信息字典
-    func getStatistics() -> [String: Any] {
-        let totalIconIds = iconModels.reduce(into: 0) { result, model in
-            result += model.iconId
-        }
-        let avgIconId = totalCount > 0 ? totalIconIds / totalCount : 0
-        
-        return [
-            "totalCount": totalCount,
-            "totalIconIds": totalIconIds,
-            "averageIconId": avgIconId,
-            "lastScanTime": Date(),
-            "projectRootDirectory": projectRootURL?.path ?? "未设置",
-            "iconStoragePath": iconStoragePath
-        ]
-    }
-    
     /// 清除所有图标模型
     func clearIconModels() {
         iconModels.removeAll()
@@ -218,8 +200,8 @@ class ProjectIconRepo: ObservableObject, SuperLog {
             .hideTabPicker()
             .setInitialTab(IconPlugin.label)
     }
-    .frame(width: 600)
-    .frame(height: 600)
+    .frame(width: 800)
+    .frame(height: 800)
 }
 
 #Preview("App-Big Screen") {

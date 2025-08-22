@@ -8,7 +8,7 @@ import MagicCore
 struct CategoryIconGrid: View {
     let category: String
     let gridItems: [GridItem]
-    let onIconSelected: (Int) -> Void
+    let onIconSelected: (String) -> Void
     
     @EnvironmentObject var iconProvider: IconProvider
     
