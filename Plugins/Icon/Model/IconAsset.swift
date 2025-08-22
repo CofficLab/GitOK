@@ -47,30 +47,9 @@ class IconAsset {
         return 0
     }
     
-    // 获取指定分类下的所有图标ID
+    // 获取指定分类下的所有图标ID（委托给IconCategory）
     static func getIconIds(in category: String) -> [String] {
-        if let folderPath = iconFolderURL?.path {
-            let categoryPath = (folderPath as NSString).appendingPathComponent(category)
-            do {
-                let files = try FileManager.default.contentsOfDirectory(atPath: categoryPath)
-                // 过滤所有支持的图标文件格式并提取ID
-                let iconIds = files.compactMap { filename -> String? in
-                    let fileExtension = filename.lowercased()
-                    guard supportedFormats.contains(where: { format in
-                        fileExtension.hasSuffix(".\(format)")
-                    }) else { return nil }
-                    let nameWithoutExt = (filename as NSString).deletingPathExtension
-                    // 对于哈希文件名，直接使用原始文件名
-                    // 对于数字文件名，转换为字符串
-                    return nameWithoutExt
-                }.sorted()
-                return iconIds
-            } catch {
-                print("无法获取分类 \(category) 中的图标ID：\(error.localizedDescription)")
-                return []
-            }
-        }
-        return []
+        return IconCategory.getIconIds(in: category)
     }
     
     // 获取指定分类和ID的图标
@@ -215,14 +194,6 @@ class IconAsset {
         } else {
             print("无法加载图片")
             return Image(systemName: "plus")
-        }
-    }
-    
-    // 兼容旧版本的方法
-    static func getTotalCount() -> Int {
-        let categories = getCategories()
-        return categories.reduce(0) { total, category in
-            total + getIconCount(in: category)
         }
     }
     

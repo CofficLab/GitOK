@@ -123,6 +123,42 @@ struct IconCategory: Identifiable, Hashable {
             "lastIconId": iconIds.last ?? ""
         ]
     }
+    
+    /// 获取指定分类下的所有图标ID（静态方法）
+    /// - Parameter category: 分类名称
+    /// - Returns: 图标ID数组（支持数字ID和哈希文件名）
+    static func getIconIds(in category: String) -> [String] {
+        guard let iconFolderURL = IconCategoryRepo.getIconFolderURL() else {
+            print("IconCategory.getIconIds: 未找到图标文件夹")
+            return []
+        }
+        
+        let categoryPath = iconFolderURL.appendingPathComponent(category)
+        do {
+            let files = try FileManager.default.contentsOfDirectory(atPath: categoryPath.path)
+            
+            // 支持多种图标文件格式
+            let supportedFormats = ["png", "svg", "jpg", "jpeg", "gif", "webp"]
+            
+            // 过滤所有支持的图标文件格式并提取ID
+            let iconIds = files.compactMap { filename -> String? in
+                let fileExtension = filename.lowercased()
+                guard supportedFormats.contains(where: { format in
+                    fileExtension.hasSuffix(".\(format)")
+                }) else { return nil }
+                
+                let nameWithoutExt = (filename as NSString).deletingPathExtension
+                // 对于哈希文件名，直接使用原始文件名
+                // 对于数字文件名，转换为字符串
+                return nameWithoutExt
+            }.sorted()
+            
+            return iconIds
+        } catch {
+            print("IconCategory.getIconIds: 无法获取分类 \(category) 中的图标ID：\(error.localizedDescription)")
+            return []
+        }
+    }
 }
 
 // MARK: - 图标分类管理器
