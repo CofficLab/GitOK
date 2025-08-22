@@ -14,7 +14,7 @@ struct CategoryIconGrid: View {
     
     var body: some View {
         LazyVGrid(columns: gridItems, spacing: 12) {
-            if let categoryModel = iconProvider.iconRepo.getCategory(byName: category) {
+            if let categoryModel = iconProvider.iconCategoryRepo.getCategory(byName: category) {
                 ForEach(categoryModel.iconIds, id: \.self) { iconId in
                     CategoryIconItem(
                         category: category,

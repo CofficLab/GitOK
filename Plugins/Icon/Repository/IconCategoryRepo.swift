@@ -4,15 +4,15 @@ import OSLog
 import MagicCore
 
 /**
- * 图标仓库
+ * 图标分类仓库
  * 负责读取和管理项目支持的所有候选图标分类
  * 使用单例模式确保全局唯一实例
  */
-class IconRepo: ObservableObject, SuperLog {
+class IconCategoryRepo: ObservableObject, SuperLog {
     nonisolated static var emoji: String { "🎨" }
     
     /// 单例实例
-    static let shared = IconRepo()
+    static let shared = IconCategoryRepo()
     
     /// 图标文件夹URL
     private let iconFolderURL: URL?

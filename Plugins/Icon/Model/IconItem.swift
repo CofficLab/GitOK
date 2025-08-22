@@ -4,7 +4,7 @@ import Cocoa
 
 /**
  * 图标项工具类
- * 负责处理IconRepo -> IconCategory下的具体图标操作
+ * 负责处理IconCategory下的具体图标操作
  * 包括图标获取、缩略图生成、文件扫描等功能
  */
 class IconItem {

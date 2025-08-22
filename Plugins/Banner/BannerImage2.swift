@@ -5,11 +5,7 @@ import SwiftUI
 import AppKit
 import MagicCore
 
-/**
- * 生成的图标数据类
- * 负责管理根据候选图标和图标生成器生成的图标数据
- * 包括图标的保存、加载、删除等操作
- */
+
 class GeneratedIcon: SuperLog {
     static var dir: String = ".gitok/images"
     

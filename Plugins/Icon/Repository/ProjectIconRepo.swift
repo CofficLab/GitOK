@@ -4,18 +4,21 @@ import OSLog
 import MagicCore
 
 /**
- * 图标模型仓库
- * 负责根据根目录扫描和获取所有的IconModel
- * 支持动态扫描、缓存管理和批量操作
+ * 项目图标仓库
+ * 负责从项目目录扫描和获取所有的IconModel
+ * 管理IconModel的存储目录，支持动态扫描和缓存管理
  */
-class IconModelRepo: ObservableObject, SuperLog {
+class ProjectIconRepo: ObservableObject, SuperLog {
     nonisolated static var emoji: String { "📱" }
     
     /// 单例实例
-    static let shared = IconModelRepo()
+    static let shared = ProjectIconRepo()
     
-    /// 根目录URL
-    private var rootURL: URL?
+    /// 项目根目录URL
+    private var projectRootURL: URL?
+    
+    /// 图标存储目录路径（相对于项目根目录）
+    private let iconStoragePath = IconModel.root
     
     /// 所有扫描到的图标模型
     @Published private(set) var iconModels: [IconModel] = []
@@ -29,15 +32,15 @@ class IconModelRepo: ObservableObject, SuperLog {
     /// 私有初始化方法，确保单例模式
     private init() {}
     
-    /// 设置根目录并扫描图标模型
-    /// - Parameter rootURL: 要扫描的根目录URL
-    func scanIconModels(from rootURL: URL) {
-        self.rootURL = rootURL
+    /// 设置项目根目录并扫描图标模型
+    /// - Parameter projectRootURL: 项目根目录URL
+    func scanIconModels(fromProject projectRootURL: URL) {
+        self.projectRootURL = projectRootURL
         self.isScanning = true
         self.scanError = nil
         
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
-            let models = self?.scanDirectory(rootURL) ?? []
+            let models = self?.scanProjectDirectory(projectRootURL) ?? []
             
             DispatchQueue.main.async {
                 self?.iconModels = models
@@ -47,31 +50,38 @@ class IconModelRepo: ObservableObject, SuperLog {
         }
     }
     
-    /// 扫描目录获取图标模型
-    /// - Parameter directoryURL: 要扫描的目录URL
+    /// 扫描项目目录获取图标模型
+    /// - Parameter projectRootURL: 项目根目录URL
     /// - Returns: 图标模型数组
-    private func scanDirectory(_ directoryURL: URL) -> [IconModel] {
+    private func scanProjectDirectory(_ projectRootURL: URL) -> [IconModel] {
         var models: [IconModel] = []
         
+        // 构建图标存储目录的完整路径
+        let iconDirectoryURL = projectRootURL.appendingPathComponent(iconStoragePath)
+        
         do {
-            let enumerator = FileManager.default.enumerator(
-                at: directoryURL,
-                includingPropertiesForKeys: [.isDirectoryKey, .isRegularFileKey],
-                options: [.skipsHiddenFiles]
-            )
+            // 检查图标目录是否存在
+            var isDirectory: ObjCBool = false
+            guard FileManager.default.fileExists(atPath: iconDirectoryURL.path, isDirectory: &isDirectory),
+                  isDirectory.boolValue else {
+                os_log("\(self.t)图标目录不存在：\(iconDirectoryURL.path)")
+                return []
+            }
             
-            while let fileURL = enumerator?.nextObject() as? URL {
-                // 检查是否是图标配置文件
-                if fileURL.pathExtension == "json" {
+            // 扫描图标目录中的所有JSON文件
+            let files = try FileManager.default.contentsOfDirectory(atPath: iconDirectoryURL.path)
+            for file in files {
+                if file.hasSuffix(".json") {
+                    let fileURL = iconDirectoryURL.appendingPathComponent(file)
                     if let model = tryLoadIconModel(from: fileURL) {
                         models.append(model)
                     }
                 }
             }
         } catch {
-            os_log(.error, "\(self.t)扫描目录失败：\(error.localizedDescription)")
+            os_log(.error, "\(self.t)扫描项目目录失败：\(error.localizedDescription)")
             DispatchQueue.main.async {
-                self.scanError = "扫描目录失败：\(error.localizedDescription)"
+                self.scanError = "扫描项目目录失败：\(error.localizedDescription)"
             }
         }
         
@@ -96,11 +106,11 @@ class IconModelRepo: ObservableObject, SuperLog {
     
     /// 刷新图标模型列表
     func refreshIconModels() {
-        guard let rootURL = rootURL else {
-            os_log(.error, "\(self.t)未设置根目录，无法刷新")
+        guard let projectRootURL = projectRootURL else {
+            os_log(.error, "\(self.t)未设置项目根目录，无法刷新")
             return
         }
-        scanIconModels(from: rootURL)
+        scanIconModels(fromProject: projectRootURL)
     }
     
     /// 根据路径查找图标模型
@@ -171,25 +181,32 @@ class IconModelRepo: ObservableObject, SuperLog {
             "totalIconIds": totalIconIds,
             "averageIconId": avgIconId,
             "lastScanTime": Date(),
-            "rootDirectory": rootURL?.path ?? "未设置"
+            "projectRootDirectory": projectRootURL?.path ?? "未设置",
+            "iconStoragePath": iconStoragePath
         ]
     }
     
     /// 清除所有图标模型
     func clearIconModels() {
         iconModels.removeAll()
-        rootURL = nil
+        projectRootURL = nil
         scanError = nil
     }
     
-    /// 检查是否已设置根目录
-    var hasRootDirectory: Bool {
-        rootURL != nil
+    /// 检查是否已设置项目根目录
+    var hasProjectRootDirectory: Bool {
+        projectRootURL != nil
     }
     
-    /// 获取当前根目录
-    var currentRootDirectory: URL? {
-        rootURL
+    /// 获取当前项目根目录
+    var currentProjectRootDirectory: URL? {
+        projectRootURL
+    }
+    
+    /// 获取图标存储目录的完整路径
+    var iconStorageDirectory: URL? {
+        guard let projectRootURL = projectRootURL else { return nil }
+        return projectRootURL.appendingPathComponent(iconStoragePath)
     }
 }
 

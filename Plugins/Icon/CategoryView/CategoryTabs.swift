@@ -11,7 +11,7 @@ struct CategoryTabs: View {
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 8) {
-                ForEach(iconProvider.iconRepo.categories, id: \.name) { category in
+                ForEach(iconProvider.iconCategoryRepo.categories, id: \.name) { category in
                     CategoryTab(
                         title: category.name,
                         isSelected: iconProvider.selectedCategory?.name == category.name,
