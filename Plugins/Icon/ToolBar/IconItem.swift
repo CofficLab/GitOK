@@ -15,10 +15,11 @@ struct IconItem: View, SuperLog {
     @State var image = Image("icon")
 
     var selected: Bool {
-        i.iconId == iconId
+        i.selectedIconId == iconId
     }
 
     var iconId: Int
+    var category: String = "" // 新增分类参数，默认为空以兼容旧版本
 
     var body: some View {
         image
@@ -27,24 +28,22 @@ struct IconItem: View, SuperLog {
             .frame(width: 80)
             .background(selected ? Color.brown.opacity(0.1) : Color.clear)
             .onTapGesture {
-                i.iconId = iconId
-
-                do {
-                    guard var model = i.currentModel else {
-                        m.error("先从列表选择一个文件")
-                        return
-                    }
-                    
-                    try model.updateIconId(iconId)
-                } catch {
-                    os_log(.error, "\(self.t)Error updating iconId: \(error)")
-                }
+                // 使用IconProvider的统一方法选择图标
+                i.selectIcon(iconId)
             }
             .onAppear {
                 DispatchQueue.global().async {
-                    let i = IconPng.getThumbnail(iconId)
+                    let thumbnail: Image
+                    if !category.isEmpty {
+                        // 使用新的分类方法
+                        thumbnail = IconPng.getThumbnail(category: category, iconId: iconId)
+                    } else {
+                        // 兼容旧版本
+                        thumbnail = IconPng.getThumbnail(iconId)
+                    }
+                    
                     DispatchQueue.main.async {
-                        self.image = i
+                        self.image = thumbnail
                     }
                 }
             }
@@ -58,7 +57,7 @@ struct IconItem: View, SuperLog {
             .hideProjectActions()
     }
     .frame(width: 800)
-    .frame(height: 600)
+    .frame(height: 800)
 }
 
 #Preview("App - Big Screen") {
