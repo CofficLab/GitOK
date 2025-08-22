@@ -1,7 +1,7 @@
 import MagicCore
 import SwiftUI
 
-struct WelcomeView: View {
+struct IconWelcomeView: View {
     var body: some View {
         VStack(spacing: 24) {
             Image(systemName: "sparkles")

@@ -1,17 +1,17 @@
 import OSLog
 import SwiftUI
 
-struct DetailIcon: View {
+struct IconDetailLayout: View {
     @EnvironmentObject var i: IconProvider
     @EnvironmentObject var g: DataProvider
     @State private var showWelcome = false
 
-    static let shared = DetailIcon()
+    static let shared = IconDetailLayout()
 
     var body: some View {
         ZStack {
             if showWelcome {
-                WelcomeView()
+                IconWelcomeView()
             } else {
                 VStack {
                     IconTopBar()

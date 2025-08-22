@@ -19,7 +19,7 @@ class IconPlugin: SuperPlugin, SuperLog {
     }
 
     func addDetailView() -> AnyView? {
-        AnyView(DetailIcon.shared)
+        AnyView(IconDetailLayout.shared)
     }
 }
 

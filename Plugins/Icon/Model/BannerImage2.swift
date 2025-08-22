@@ -5,10 +5,15 @@ import SwiftUI
 import AppKit
 import MagicCore
 
-class SmartImage: SuperLog {
+/**
+ * 生成的图标数据类
+ * 负责管理根据候选图标和图标生成器生成的图标数据
+ * 包括图标的保存、加载、删除等操作
+ */
+class GeneratedIcon: SuperLog {
     static var dir: String = ".gitok/images"
     
-    let emoji = "🀄️"
+    let emoji = "🎨"
     
     var id: String
     
@@ -28,8 +33,8 @@ class SmartImage: SuperLog {
         }
     }
     
-    static func fromImageId(_ imageId: String) -> SmartImage {
-        return SmartImage(id: imageId)
+    static func fromImageId(_ imageId: String) -> GeneratedIcon {
+        return GeneratedIcon(id: imageId)
     }
 
     static func removeImage(_ id: String, projectURL: URL) throws {
