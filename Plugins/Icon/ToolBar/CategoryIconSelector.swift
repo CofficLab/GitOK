@@ -20,9 +20,17 @@ struct CategoryIconSelector: View {
             CategoryTabs()
             
             // 图标网格
-            if let category = i.selectedCategory.isEmpty ? i.availableCategories.first : i.selectedCategory {
+            if let selectedCategory = i.selectedCategory {
                 CategoryIconGrid(
-                    category: category,
+                    category: selectedCategory.name,
+                    gridItems: gridItems,
+                    onIconSelected: { selectedIconId in
+                        handleIconSelection(selectedIconId)
+                    }
+                )
+            } else if let firstCategory = i.availableCategories.first {
+                CategoryIconGrid(
+                    category: firstCategory,
                     gridItems: gridItems,
                     onIconSelected: { selectedIconId in
                         handleIconSelection(selectedIconId)

@@ -8,13 +8,13 @@ struct CategoryTabs: View {
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 8) {
-                ForEach(iconProvider.availableCategories, id: \.self) { category in
+                ForEach(iconProvider.categories, id: \.name) { category in
                     CategoryTab(
-                        title: category,
-                        isSelected: iconProvider.selectedCategory == category,
-                        iconCount: IconPng.getIconCount(in: category)
+                        title: category.name,
+                        isSelected: iconProvider.selectedCategory?.name == category.name,
+                        iconCount: category.iconCount
                     ) {
-                        iconProvider.selectCategory(category)
+                        iconProvider.selectCategory(category.name)
                     }
                 }
             }
@@ -60,16 +60,20 @@ struct CategoryIconGrid: View {
     let gridItems: [GridItem]
     let onIconSelected: (Int) -> Void
     
+    @EnvironmentObject var iconProvider: IconProvider
+    
     var body: some View {
         LazyVGrid(columns: gridItems, spacing: 12) {
-            ForEach(IconPng.getIconIds(in: category), id: \.self) { iconId in
-                CategoryIconItem(
-                    category: category,
-                    iconId: iconId,
-                    onTap: {
-                        onIconSelected(iconId)
-                    }
-                )
+            if let categoryModel = iconProvider.getCategory(byName: category) {
+                ForEach(categoryModel.iconIds, id: \.self) { iconId in
+                    CategoryIconItem(
+                        category: category,
+                        iconId: iconId,
+                        onTap: {
+                            onIconSelected(iconId)
+                        }
+                    )
+                }
             }
         }
         .padding(.horizontal)
