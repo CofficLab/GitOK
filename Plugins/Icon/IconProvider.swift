@@ -7,7 +7,7 @@ import OSLog
 import SwiftUI
 
 /**
-    图标提供者，统一管理所有图标相关的状态和数据
+    图标提供者，统一管理所有图标插件相关的状态
  */
 class IconProvider: NSObject, ObservableObject, SuperLog {
     @Published var snapshotTapped: Bool = false
@@ -19,14 +19,11 @@ class IconProvider: NSObject, ObservableObject, SuperLog {
     /// 用于在图标选择器中高亮显示选中的图标
     @Published var selectedIconId: Int = 0
     
-    /// 所有可用的图标分类
-    @Published private(set) var categories: [IconCategory] = []
+    /// 图标仓库
+    @Published var iconRepo = IconRepo.shared
     
     /// 当前选中的图标分类
     @Published var selectedCategory: IconCategory?
-    
-    /// 分类是否正在加载
-    @Published private(set) var isLoadingCategories = false
     
     /// 当前选中的图标分类名称（兼容性属性）
     var selectedCategoryName: String {
@@ -35,7 +32,7 @@ class IconProvider: NSObject, ObservableObject, SuperLog {
     
     /// 所有可用的图标分类名称（兼容性属性）
     var availableCategories: [String] {
-        categories.map { $0.name }
+        iconRepo.categories.map { $0.name }
     }
 
     override init() {
@@ -101,7 +98,7 @@ class IconProvider: NSObject, ObservableObject, SuperLog {
      */
     func selectCategory(_ category: String) {
         print("🎯 IconProvider: 选择分类 '\(category)'")
-        if let categoryModel = categories.first(where: { $0.name == category }) {
+        if let categoryModel = iconRepo.getCategory(byName: category) {
             print("🎯 找到分类，设置为选中: \(categoryModel.name)")
             selectedCategory = categoryModel
         } else {
@@ -113,55 +110,17 @@ class IconProvider: NSObject, ObservableObject, SuperLog {
         刷新可用分类列表
      */
     func refreshCategories() {
-        isLoadingCategories = true
+        iconRepo.refreshCategories()
         
-        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
-            let newCategories = self?.loadCategories() ?? []
-            
-            DispatchQueue.main.async {
-                self?.categories = newCategories
-                self?.isLoadingCategories = false
-                
-                // 如果当前选中的分类不存在，选择第一个
-                if let selected = self?.selectedCategory,
-                   !newCategories.contains(where: { $0.name == selected.name }) {
-                    self?.selectedCategory = newCategories.first
-                }
-                
-                // 如果没有选中的分类，选择第一个
-                if self?.selectedCategory == nil && !newCategories.isEmpty {
-                    self?.selectedCategory = newCategories.first
-                }
-            }
-        }
-    }
-    
-    /// 加载分类列表
-    /// - Returns: 分类数组
-    private func loadCategories() -> [IconCategory] {
-        guard let iconFolderURL = IconPng.iconFolderURL else {
-            print("未找到图标文件夹")
-            return []
+        // 如果当前选中的分类不存在，选择第一个
+        if let selected = selectedCategory,
+           !iconRepo.categories.contains(where: { $0.name == selected.name }) {
+            selectedCategory = iconRepo.categories.first
         }
         
-        do {
-            let items = try FileManager.default.contentsOfDirectory(atPath: iconFolderURL.path)
-            let categories = items.compactMap { item -> IconCategory? in
-                let itemPath = (iconFolderURL.path as NSString).appendingPathComponent(item)
-                var isDir: ObjCBool = false
-                
-                guard FileManager.default.fileExists(atPath: itemPath, isDirectory: &isDir),
-                      isDir.boolValue else {
-                    return nil
-                }
-                
-                return IconCategory.fromFolder(itemPath)
-            }.sorted { $0.name < $1.name }
-            
-            return categories
-        } catch {
-            print("无法获取分类目录：\(error.localizedDescription)")
-            return []
+        // 如果没有选中的分类，选择第一个
+        if selectedCategory == nil && !iconRepo.categories.isEmpty {
+            selectedCategory = iconRepo.categories.first
         }
     }
     
@@ -169,7 +128,7 @@ class IconProvider: NSObject, ObservableObject, SuperLog {
     /// - Parameter name: 分类名称
     /// - Returns: 分类实例，如果不存在则返回nil
     func getCategory(byName name: String) -> IconCategory? {
-        categories.first { $0.name == name }
+        iconRepo.getCategory(byName: name)
     }
 }
 
