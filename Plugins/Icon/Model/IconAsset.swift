@@ -8,36 +8,11 @@ import Cocoa
  * 支持多种文件格式（PNG、SVG等），自动检测和智能查找
  */
 class IconAsset {
-    static var iconFolderURL: URL? = {
-        // 尝试多种路径来找到图标文件夹
-        // 首先尝试 Bundle 中的资源
-        if let bundleURL = Bundle.main.url(forResource: "Icons", withExtension: nil) {
-            print("IconAsset: 使用 Bundle 中的图标文件夹: \(bundleURL.path)")
-            return bundleURL
-        }
-        
-        // 如果 Bundle 中没有，尝试项目根目录下的 Resources/Icons
-        let projectRoot = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
-        let resourcesIconsURL = projectRoot.appendingPathComponent("Resources").appendingPathComponent("Icons")
-        if FileManager.default.fileExists(atPath: resourcesIconsURL.path) {
-            print("IconAsset: 使用项目根目录下的图标文件夹: \(resourcesIconsURL.path)")
-            return resourcesIconsURL
-        }
-        
-        // 如果还是找不到，尝试从当前工作目录向上查找
-        var currentURL = projectRoot
-        while currentURL.path != "/" {
-            let testURL = currentURL.appendingPathComponent("Resources").appendingPathComponent("Icons")
-            if FileManager.default.fileExists(atPath: testURL.path) {
-                print("IconAsset: 使用向上查找的图标文件夹: \(testURL.path)")
-                return testURL
-            }
-            currentURL = currentURL.deletingLastPathComponent()
-        }
-        
-        print("IconAsset: 无法找到图标文件夹")
-        return nil
-    }()
+    /// 获取图标文件夹URL（委托给IconCategoryRepo）
+    /// - Returns: 图标文件夹URL，如果找不到则返回nil
+    private static var iconFolderURL: URL? {
+        return IconCategoryRepo.getIconFolderURL()
+    }
     
     /// 支持的图标文件格式
     private static let supportedFormats = ["png", "svg", "jpg", "jpeg", "gif", "webp"]

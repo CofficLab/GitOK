@@ -35,6 +35,7 @@ class IconCategoryRepo: ObservableObject, SuperLog {
     private static func findIconFolder() -> URL? {
         // 首先尝试 Bundle 中的资源
         if let bundleURL = Bundle.main.url(forResource: "Icons", withExtension: nil) {
+            print("IconCategoryRepo: 使用 Bundle 中的图标文件夹: \(bundleURL.path)")
             return bundleURL
         }
         
@@ -42,6 +43,7 @@ class IconCategoryRepo: ObservableObject, SuperLog {
         let projectRoot = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
         let resourcesIconsURL = projectRoot.appendingPathComponent("Resources").appendingPathComponent("Icons")
         if FileManager.default.fileExists(atPath: resourcesIconsURL.path) {
+            print("IconCategoryRepo: 使用项目根目录下的图标文件夹: \(resourcesIconsURL.path)")
             return resourcesIconsURL
         }
         
@@ -50,6 +52,7 @@ class IconCategoryRepo: ObservableObject, SuperLog {
         while currentURL.path != "/" {
             let testURL = currentURL.appendingPathComponent("Resources").appendingPathComponent("Icons")
             if FileManager.default.fileExists(atPath: testURL.path) {
+                print("IconCategoryRepo: 使用向上查找的图标文件夹: \(testURL.path)")
                 return testURL
             }
             currentURL = currentURL.deletingLastPathComponent()
@@ -57,6 +60,12 @@ class IconCategoryRepo: ObservableObject, SuperLog {
         
         print("IconCategoryRepo: 无法找到图标文件夹")
         return nil
+    }
+    
+    /// 获取图标文件夹URL（公共方法，供其他类使用）
+    /// - Returns: 图标文件夹URL，如果找不到则返回nil
+    static func getIconFolderURL() -> URL? {
+        return findIconFolder()
     }
     
     /// 加载所有分类

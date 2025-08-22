@@ -196,7 +196,7 @@ class IconCategoryManager: ObservableObject {
     /// 加载分类列表
     /// - Returns: 分类数组
     private func loadCategories() -> [IconCategory] {
-        guard let iconFolderURL = IconAsset.iconFolderURL else {
+        guard let iconFolderURL = IconCategoryRepo.getIconFolderURL() else {
             print("未找到图标文件夹")
             return []
         }
