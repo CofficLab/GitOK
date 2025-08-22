@@ -25,9 +25,10 @@ class IconPlugin: SuperPlugin, SuperLog {
 
 #Preview("App - Small Screen") {
     RootView {
-        ContentLayout()
+        ContentLayout().setInitialTab("Icon")
             .hideSidebar()
             .hideProjectActions()
+            .setInitialTab("Icon")
     }
     .frame(width: 800)
     .frame(height: 600)
@@ -35,8 +36,9 @@ class IconPlugin: SuperPlugin, SuperLog {
 
 #Preview("App - Big Screen") {
     RootView {
-        ContentLayout()
+        ContentLayout().setInitialTab("Icon")
             .hideSidebar()
+            .setInitialTab("Icon")
     }
     .frame(width: 1200)
     .frame(height: 1200)

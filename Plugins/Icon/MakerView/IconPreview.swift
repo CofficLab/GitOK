@@ -40,7 +40,7 @@ extension View {
 
 #Preview("App - Small Screen") {
     RootView {
-        ContentLayout()
+        ContentLayout().setInitialTab("Icon")
             .hideSidebar()
             .hideProjectActions()
     }
@@ -50,7 +50,7 @@ extension View {
 
 #Preview("App - Big Screen") {
     RootView {
-        ContentLayout()
+        ContentLayout().setInitialTab("Icon")
             .hideSidebar()
     }
     .frame(width: 1200)

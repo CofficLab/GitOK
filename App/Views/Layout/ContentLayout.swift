@@ -16,25 +16,28 @@ struct ContentLayout: View, SuperThread, SuperEvent, SuperLog {
     private(set) var toolbarVisibility: Bool?
     private(set) var projectActionsVisibility: Bool?
     private(set) var tabPickerVisibility: Bool?
+    private(set) var initialTab: String?
 
     init(
         statusBarVisibility: Bool? = nil,
         initialColumnVisibility: NavigationSplitViewVisibility? = nil,
         toolbarVisibility: Bool? = nil,
         projectActionsVisibility: Bool? = nil,
-        tabPickerVisibility: Bool? = nil
+        tabPickerVisibility: Bool? = nil,
+        initialTab: String? = nil
     ) {
         self.statusBarVisibility = statusBarVisibility
         self.toolbarVisibility = toolbarVisibility
         self.projectActionsVisibility = projectActionsVisibility
         self.tabPickerVisibility = tabPickerVisibility
         self.columnVisibility = initialColumnVisibility
+        self.initialTab = initialTab
     }
 
     var body: some View {
         ContentView(
             defaultStatusBarVisibility: statusBarVisibility,
-            defaultTab: tab,
+            defaultTab: initialTab,
             defaultColumnVisibility: columnVisibility,
             defaultProjectActionsVisibility: projectActionsVisibility,
             defaultTabVisibility: tabPickerVisibility
@@ -162,6 +165,20 @@ extension ContentLayout {
             toolbarVisibility: self.toolbarVisibility,
             projectActionsVisibility: self.projectActionsVisibility,
             tabPickerVisibility: true
+        )
+    }
+
+    /// 设置初始标签页
+    /// - Parameter tab: 要设置的初始标签页名称
+    /// - Returns: 一个新的ContentView实例，初始标签页被设置
+    func setInitialTab(_ tab: String) -> ContentLayout {
+        return ContentLayout(
+            statusBarVisibility: self.statusBarVisibility,
+            initialColumnVisibility: self.columnVisibility,
+            toolbarVisibility: self.toolbarVisibility,
+            projectActionsVisibility: self.projectActionsVisibility,
+            tabPickerVisibility: self.tabPickerVisibility,
+            initialTab: tab
         )
     }
 }

@@ -52,7 +52,7 @@ struct IconItem: View, SuperLog {
 
 #Preview("App - Small Screen") {
     RootView {
-        ContentLayout()
+        ContentLayout().setInitialTab("Icon")
             .hideSidebar()
             .hideProjectActions()
     }
@@ -62,7 +62,7 @@ struct IconItem: View, SuperLog {
 
 #Preview("App - Big Screen") {
     RootView {
-        ContentLayout()
+        ContentLayout().setInitialTab("Icon")
             .hideSidebar()
     }
     .frame(width: 1200)
