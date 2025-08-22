@@ -1,0 +1,44 @@
+---
+globs: *.swift
+alwaysApply: false
+---
+
+# Swift文件预览代码规则
+
+每个Swift文件都必须在文件结尾包含以下预览代码：
+
+```swift
+#Preview("App - Small Screen") {
+    RootView {
+        ContentLayout()
+            .hideSidebar()
+            .hideProjectActions()
+    }
+    .frame(width: 800)
+    .frame(height: 600)
+}
+
+#Preview("App - Big Screen") {
+    RootView {
+        ContentLayout()
+            .hideSidebar()
+    }
+    .frame(width: 1200)
+    .frame(height: 1200)
+}
+```
+
+## 规则说明
+
+- 这些预览代码必须添加到每个Swift文件的末尾
+- 第一个预览用于小屏幕（800x600）
+- 第二个预览用于大屏幕（1200x1200）
+- 小屏幕预览隐藏侧边栏和项目操作
+- 大屏幕预览只隐藏侧边栏
+
+## 注意事项
+
+- 确保在添加预览代码前检查文件是否已经包含类似的预览代码
+- 如果文件已有预览代码，请替换为上述标准格式
+- 这些预览代码有助于在不同屏幕尺寸下测试UI布局
+- **重要：不要忘记在文件开头导入SwiftUI** - 每个包含预览代码的Swift文件都必须有 `import SwiftUI` 语句
