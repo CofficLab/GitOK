@@ -10,7 +10,6 @@ import SwiftUI
     图标提供者，统一管理所有图标插件相关的状态
  */
 class IconProvider: NSObject, ObservableObject, SuperLog {
-    @Published var snapshotTapped: Bool = false
     @Published private(set) var currentModel: IconModel? = nil
 
     static var emoji = "🍒"

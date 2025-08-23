@@ -139,29 +139,29 @@ struct FaviconMaker: View {
         let fileName = "favicon-html.html"
         let saveTo = folderPath.appendingPathComponent(fileName)
         
-                    let htmlCode = """
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <title>Favicon 引用代码</title>
-                </head>
-                <body>
-                    <h1>Favicon 引用代码</h1>
-                    <p>将以下代码添加到你的HTML文件的 &lt;head&gt; 部分：</p>
-                    
-                    <h2>PNG格式（推荐）</h2>
-                    <pre><code>&lt;link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"&gt;
-                &lt;link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png"&gt;
-                &lt;link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png"&gt;</code></pre>
-                    
-                    <h2>SVG格式（现代浏览器）</h2>
-                    <pre><code>&lt;link rel="icon" type="image/svg+xml" href="/favicon.svg"&gt;</code></pre>
-                    
-                    <h2>Apple Touch Icon</h2>
-                    <pre><code>&lt;link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"&gt;</code></pre>
-                </body>
-                </html>
-                """
+        let htmlCode = """
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Favicon 引用代码</title>
+        </head>
+        <body>
+            <h1>Favicon 引用代码</h1>
+            <p>将以下代码添加到你的HTML文件的 &lt;head&gt; 部分：</p>
+            
+            <h2>PNG格式（推荐）</h2>
+            <pre><code>&lt;link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"&gt;
+        &lt;link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png"&gt;
+        &lt;link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png"&gt;</code></pre>
+            
+            <h2>SVG格式（现代浏览器）</h2>
+            <pre><code>&lt;link rel="icon" type="image/svg+xml" href="/favicon.svg"&gt;</code></pre>
+            
+            <h2>Apple Touch Icon</h2>
+            <pre><code>&lt;link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"&gt;</code></pre>
+        </body>
+        </html>
+        """
         
         try? htmlCode.write(to: saveTo, atomically: true, encoding: .utf8)
         

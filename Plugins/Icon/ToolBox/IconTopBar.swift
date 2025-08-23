@@ -12,7 +12,6 @@ struct IconTopBar: View {
                 IconScale()
                 Spacer()
                 BtnChangeImage()
-                BtnSnapshot()
             }
             .frame(height: 25)
             .frame(maxWidth: .infinity)
@@ -39,7 +38,7 @@ struct IconTopBar: View {
             .hideProjectActions()
     }
     .frame(width: 800)
-    .frame(height: 600)
+    .frame(height: 800)
 }
 
 #Preview("App - Big Screen") {
