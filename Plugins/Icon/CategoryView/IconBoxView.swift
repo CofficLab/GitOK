@@ -2,11 +2,11 @@ import MagicCore
 import SwiftUI
 
 /**
- * 图标资源列表主容器
+ * 图标盒子视图
  * 负责管理分类选择和图标展示的整体布局
  * 数据流：IconCategoryRepo -> IconCategory -> IconAsset List
  */
-struct IconAssetList: View {
+struct IconBoxView: View {
     @EnvironmentObject var iconProvider: IconProvider
     @State private var gridItems: [GridItem] = Array(repeating: .init(.flexible()), count: 10)
     

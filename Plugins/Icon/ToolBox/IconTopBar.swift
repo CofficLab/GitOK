@@ -24,7 +24,7 @@ struct IconTopBar: View {
             }.padding()
 
             GroupBox {
-                IconAssetList()
+                IconBoxView()
             }
             .padding(.horizontal)
             .padding(.bottom)
