@@ -14,13 +14,16 @@ struct IconDetailLayout: View {
                 IconWelcomeView()
             } else {
                 VStack {
-                    IconTopBar()
+                    IconBgs()
+                        .padding(1)
+                        .background(.blue.opacity(0.05))
 
-                    GroupBox {
-                        IconMaker()
-                    }
-                    .padding(.horizontal)
-                    .padding(.bottom)
+                    IconBoxView()
+                        .padding(.horizontal)
+                        .padding(.bottom)
+                        .background(.green.opacity(0.05))
+
+                    IconMaker()
                 }
             }
         }

@@ -15,6 +15,7 @@ struct FaviconMaker: View {
     
     var body: some View {
         VStack(spacing: 20) {
+            
             // 预览区域
             VStack(spacing: 16) {
                 HStack(spacing: 20) {
@@ -47,6 +48,10 @@ struct FaviconMaker: View {
                             .background(Color.gray.opacity(0.2))
                             .cornerRadius(6)
                     }
+                    
+                    Button("下载") {
+                        generateFavicon()
+                    }
                 }
             }
             .padding()
@@ -55,10 +60,6 @@ struct FaviconMaker: View {
             
             // 图标调整控制
             VStack(spacing: 16) {
-                Text("图标调整")
-                    .font(.headline)
-                    .fontWeight(.medium)
-                
                 HStack(spacing: 20) {
                     // 透明度控制
                     VStack(spacing: 8) {
@@ -66,7 +67,7 @@ struct FaviconMaker: View {
                             .font(.caption)
                             .foregroundColor(.secondary)
                         Slider(value: Binding(
-                            get: { icon.opacity ?? 1.0 },
+                            get: { icon.opacity },
                             set: { newValue in
                                 var mutableIcon = icon
                                 try? mutableIcon.updateOpacity(newValue)
@@ -94,13 +95,6 @@ struct FaviconMaker: View {
             .padding()
             .background(Color.gray.opacity(0.05))
             .cornerRadius(12)
-            
-            // 生成按钮
-            Button("生成 Favicon") {
-                generateFavicon()
-            }
-            .buttonStyle(.borderedProminent)
-            .controlSize(.large)
         }
         .padding()
     }

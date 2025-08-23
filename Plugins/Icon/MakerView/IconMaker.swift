@@ -30,6 +30,7 @@ struct IconMaker: View {
                             Text("Favicon")
                         }
                 }
+                .tabViewStyle(.tabBarOnly)
             } else {
                 Text("请选择或新建一个图标")
             }

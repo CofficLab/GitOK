@@ -1,5 +1,5 @@
-import SwiftUI
 import MagicCore
+import SwiftUI
 
 /**
  * Xcode图标生成器组件
@@ -10,10 +10,10 @@ struct XcodeMaker: View {
     let icon: IconModel
     @State private var imageSet: [Any] = []
     @State private var folderPath: URL? = nil
-    
+
     private let tag = Date.nowCompact
     private var folderName: String { "XcodeIcons-\(tag).appiconset" }
-    
+
     var body: some View {
         VStack(spacing: 20) {
             // 预览区域
@@ -29,7 +29,7 @@ struct XcodeMaker: View {
                             .background(Color.gray.opacity(0.2))
                             .cornerRadius(12)
                     }
-                    
+
                     // iOS 预览
                     VStack {
                         Text("iOS")
@@ -40,18 +40,19 @@ struct XcodeMaker: View {
                             .background(Color.gray.opacity(0.2))
                             .cornerRadius(12)
                     }
+
+                    HStack {
+                        Button("下载") {
+                            generateXcodeIcons()
+                        }
+                    }
                 }
             }
             .padding()
             .background(Color.gray.opacity(0.1))
-            .cornerRadius(12)
-            
+
             // 图标调整控制
             VStack(spacing: 16) {
-                Text("图标调整")
-                    .font(.headline)
-                    .fontWeight(.medium)
-                
                 HStack(spacing: 20) {
                     // 透明度控制
                     VStack(spacing: 8) {
@@ -59,15 +60,15 @@ struct XcodeMaker: View {
                             .font(.caption)
                             .foregroundColor(.secondary)
                         Slider(value: Binding(
-                            get: { icon.opacity ?? 1.0 },
+                            get: { icon.opacity },
                             set: { newValue in
                                 var mutableIcon = icon
                                 try? mutableIcon.updateOpacity(newValue)
                             }
-                        ), in: 0...1)
-                        .frame(width: 120)
+                        ), in: 0 ... 1)
+                            .frame(width: 120)
                     }
-                    
+
                     // 缩放控制
                     VStack(spacing: 8) {
                         Text("缩放")
@@ -79,51 +80,40 @@ struct XcodeMaker: View {
                                 var mutableIcon = icon
                                 try? mutableIcon.updateScale(newValue)
                             }
-                        ), in: 0.1...2)
-                        .frame(width: 120)
+                        ), in: 0.1 ... 2)
+                            .frame(width: 120)
                     }
                 }
             }
-            .padding()
-            .background(Color.gray.opacity(0.05))
-            .cornerRadius(12)
-            
-            // 生成按钮
-            Button("生成 Xcode 图标") {
-                generateXcodeIcons()
-            }
-            .buttonStyle(.borderedProminent)
-            .controlSize(.large)
         }
-        .padding()
     }
-    
+
     @MainActor private func generateXcodeIcons() {
         imageSet = []
-        
+
         let (message, path) = getFolderPath()
         if path == nil {
             MagicMessageProvider.shared.error("错误：\(message)")
             return
         }
-        
+
         folderPath = path
-        
+
         // 生成macOS图标
         generateMacOSIcons()
-        
+
         // 生成iOS图标
         generateIOSIcons()
-        
+
         // 生成Contents.json文件
         generateContentJson()
-        
+
         MagicMessageProvider.shared.success("Xcode图标已生成到：\(folderPath?.path ?? "")")
     }
-    
+
     @MainActor private func generateMacOSIcons() {
         guard let folderPath = folderPath else { return }
-        
+
         for size in [16, 32, 64, 128, 256, 512, 1024] {
             let fileName = "\(tag)-macOS-\(size)x\(size).png"
             let saveTo = folderPath.appendingPathComponent(fileName)
@@ -155,10 +145,10 @@ struct XcodeMaker: View {
             }
         }
     }
-    
+
     @MainActor private func generateIOSIcons() {
         guard let folderPath = folderPath else { return }
-        
+
         let size = 1024
         let fileName = "\(tag)-iOS-\(size)x\(size).png"
         let saveTo = folderPath.appendingPathComponent(fileName)
@@ -178,10 +168,10 @@ struct XcodeMaker: View {
             "size": "1024x1024",
         ])
     }
-    
+
     @MainActor private func generateContentJson() {
         guard let folderPath = folderPath else { return }
-        
+
         let jsonData = try! JSONSerialization.data(
             withJSONObject: [
                 "images": imageSet,
@@ -199,7 +189,7 @@ struct XcodeMaker: View {
             encoding: .utf8
         )
     }
-    
+
     private func getFolderPath() -> (message: String, path: URL?) {
         guard let downloadsURL = FileManager.default.urls(for: .downloadsDirectory, in: .userDomainMask).first else {
             return ("无权访问下载文件夹", nil)
