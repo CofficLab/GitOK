@@ -47,6 +47,12 @@ struct IconMaker: View {
                         Image(systemName: "iphone")
                         Text("iOS")
                     }
+                    
+                    FaviconMaker(icon: icon!)
+                        .tabItem {
+                            Image(systemName: "globe")
+                            Text("Favicon")
+                        }
                 }
             } else {
                 Text("请选择或新建一个图标")
@@ -205,7 +211,7 @@ struct IconMaker: View {
             .setInitialTab("Icon")
     }
     .frame(width: 800)
-    .frame(height: 600)
+    .frame(height: 800)
 }
 
 #Preview("App - Big Screen") {
