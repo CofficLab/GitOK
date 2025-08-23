@@ -22,11 +22,6 @@ class IconAsset: Identifiable {
             return filename
     }
     
-    /// 图标文件信息（延迟计算）
-    lazy var fileInfo: [String: Any]? = {
-        getIconFileInfo()
-    }()
-    
     /// 初始化方法
     /// - Parameter fileURL: 图标文件URL
     init(fileURL: URL) {
@@ -140,59 +135,6 @@ class IconAsset: Identifiable {
         
         return thumbnail
     }
-    
-    /// 获取图标文件信息
-    /// - Returns: 图标文件信息字典
-    private func getIconFileInfo() -> [String: Any]? {
-        do {
-            let attributes = try FileManager.default.attributesOfItem(atPath: fileURL.path)
-            let fileSize = attributes[.size] as? Int64 ?? 0
-            let creationDate = attributes[.creationDate] as? Date
-            let modificationDate = attributes[.modificationDate] as? Date
-            
-            return [
-                "url": fileURL,
-                "path": fileURL.path,
-                "filename": fileURL.lastPathComponent,
-                "extension": fileURL.pathExtension.lowercased(),
-                "fileSize": fileSize,
-                "creationDate": creationDate as Any,
-                "modificationDate": modificationDate as Any
-            ]
-        } catch {
-            return nil
-        }
-    }
-    
-    // MARK: - 静态方法（用于兼容性）
-    
-    /// 获取指定分类和ID的图标（兼容性方法）
-    /// - Parameters:
-    ///   - categoryName: 分类名称
-    ///   - iconId: 图标ID
-    /// - Returns: SwiftUI Image
-    static func getImage(categoryName: String, iconId: String) -> Image {
-        if let imageURL = IconRepo.findIconFile(categoryName: categoryName, iconId: iconId) {
-            let iconAsset = IconAsset(fileURL: imageURL)
-            return iconAsset.getImage()
-        } else {
-            return Image(systemName: "plus")
-        }
-    }
-    
-    /// 获取指定分类和ID的缩略图（兼容性方法）
-    /// - Parameters:
-    ///   - categoryName: 分类名称
-    ///   - iconId: 图标ID
-    /// - Returns: SwiftUI Image
-    static func getThumbnail(categoryName: String, iconId: String) -> Image {
-        if let imageURL = IconRepo.findIconFile(categoryName: categoryName, iconId: iconId) {
-            let iconAsset = IconAsset(fileURL: imageURL)
-            return iconAsset.getThumbnail()
-        } else {
-            return Image(systemName: "plus")
-        }
-    }
 }
 
 #Preview("App - Small Screen") {
@@ -202,7 +144,7 @@ class IconAsset: Identifiable {
             .hideProjectActions()
     }
     .frame(width: 800)
-    .frame(height: 600)
+    .frame(height: 800)
 }
 
 #Preview("App - Big Screen") {

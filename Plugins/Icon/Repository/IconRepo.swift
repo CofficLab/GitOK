@@ -26,7 +26,6 @@ class IconRepo: SuperLog {
     /// - Returns: 图标文件夹URL，如果找不到则返回nil
     private static func findIconFolder() -> URL? {
         if let bundleURL = Bundle.main.url(forResource: "Icons", withExtension: nil) {
-            print("IconCategoryRepo: 使用 Bundle 中的图标文件夹: \(bundleURL.path)")
             return bundleURL
         }
         
