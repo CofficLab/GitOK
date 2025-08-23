@@ -14,7 +14,7 @@ struct CategoryIconGrid: View {
     var body: some View {
         LazyVGrid(columns: gridItems, spacing: 12) {
             ForEach(category.iconIds, id: \.self) { iconId in
-                CategoryIconItem(
+                IconView(
                     category: category,
                     iconId: iconId,
                     onTap: {

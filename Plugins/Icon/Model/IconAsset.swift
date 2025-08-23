@@ -68,11 +68,6 @@ class IconAsset: Identifiable {
     /// 默认图标文件格式（优先查找）
     private static let defaultFormat = "png"
     
-    // 获取所有分类目录（委托给IconCategoryRepo）
-    static func getCategories() -> [String] {
-        return IconCategoryRepo.getCategoryNames()
-    }
-    
     // 获取指定分类下的所有图标ID（委托给IconCategory）
     static func getIconIds(in category: String) -> [String] {
         return IconCategory.getIconIds(in: category)
@@ -208,7 +203,7 @@ class IconAsset: Identifiable {
     
     static func getImage(_ iconId: String) -> Image {
         // 在所有分类中查找图标
-        let categories = getCategories()
+        let categories = IconCategoryRepo.getCategoryNames()
         for category in categories {
             let iconIds = getIconIds(in: category)
             if iconIds.contains(iconId) {
@@ -220,7 +215,7 @@ class IconAsset: Identifiable {
     
     static func getThumbnail(_ iconId: String) -> Image {
         // 在所有分类中查找图标
-        let categories = getCategories()
+        let categories = IconCategoryRepo.getCategoryNames()
         for category in categories {
             let iconIds = getIconIds(in: category)
             if iconIds.contains(iconId) {

@@ -6,7 +6,7 @@ import MagicCore
  * 负责显示单个图标，支持选中状态、悬停效果和点击事件
  * 数据流：IconAsset -> UI展示
  */
-struct CategoryIconItem: View {
+struct IconView: View {
     let category: IconCategory
     let iconId: String
     let onTap: () -> Void
