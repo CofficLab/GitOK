@@ -71,25 +71,6 @@ struct IconCategory: Identifiable, Hashable {
         return IconCategory(categoryURL: url)
     }
     
-    /// 获取指定ID的图标
-    /// - Parameter iconId: 图标ID（支持数字ID和哈希文件名）
-    /// - Returns: 图标Image，如果不存在则返回默认图标
-    func getIcon(_ iconId: String) -> Image {
-        guard iconIds.contains(iconId) else {
-            return Image(systemName: "photo")
-        }
-        
-        // 使用 IconAsset 来智能查找图标文件
-        return IconAsset.getImage(categoryName: name, iconId: iconId)
-    }
-    
-    /// 检查是否包含指定ID的图标
-    /// - Parameter iconId: 图标ID（支持数字ID和哈希文件名）
-    /// - Returns: 是否包含该图标
-    func containsIcon(_ iconId: String) -> Bool {
-        iconIds.contains(iconId)
-    }
-    
     /// 查找指定图标ID的文件URL
     /// - Parameter iconId: 图标ID
     /// - Returns: 图标文件URL，如果找不到则返回nil
@@ -153,40 +134,6 @@ struct IconCategory: Identifiable, Hashable {
                 }
             }
             return assets.sorted { $0.iconId < $1.iconId }
-        }
-    }
-    
-    /// 获取指定分类下的所有图标ID（静态方法）
-    /// - Parameter category: 分类名称
-    /// - Returns: 图标ID数组（支持数字ID和哈希文件名）
-    static func getIconIds(in category: String) -> [String] {
-        guard let iconFolderURL = IconRepo.getIconFolderURL() else {
-            return []
-        }
-        
-        let categoryURL = iconFolderURL.appendingPathComponent(category)
-        do {
-            let files = try FileManager.default.contentsOfDirectory(atPath: categoryURL.path)
-            
-            // 支持多种图标文件格式
-            let supportedFormats = ["png", "svg", "jpg", "jpeg", "gif", "webp"]
-            
-            // 过滤所有支持的图标文件格式并提取ID
-            let iconIds = files.compactMap { filename -> String? in
-                let fileExtension = filename.lowercased()
-                guard supportedFormats.contains(where: { format in
-                    fileExtension.hasSuffix(".\(format)")
-                }) else { return nil }
-                
-                let nameWithoutExt = (filename as NSString).deletingPathExtension
-                // 对于哈希文件名，直接使用原始文件名
-                // 对于数字文件名，转换为字符串
-                return nameWithoutExt
-            }.sorted()
-            
-            return iconIds
-        } catch {
-            return []
         }
     }
 }

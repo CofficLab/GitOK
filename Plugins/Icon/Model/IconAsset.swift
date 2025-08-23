@@ -19,13 +19,7 @@ class IconAsset: Identifiable {
     /// 图标ID（从URL计算）
     var iconId: String {
         let filename = fileURL.deletingPathExtension().lastPathComponent
-        // 尝试转换为数字，如果失败则使用原始文件名
-        if let numericId = Int(filename) {
-            return String(numericId)
-        } else {
-            // 哈希文件名，直接使用
             return filename
-        }
     }
     
     /// 图标文件信息（延迟计算）

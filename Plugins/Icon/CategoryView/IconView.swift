@@ -7,8 +7,7 @@ import MagicCore
  * 数据流：IconAsset -> UI展示
  */
 struct IconView: View {
-    let category: IconCategory
-    let iconId: String
+    let iconAsset: IconAsset
     let onTap: () -> Void
     
     @EnvironmentObject var iconProvider: IconProvider
@@ -17,7 +16,7 @@ struct IconView: View {
     
     /// 判断当前图标是否被选中
     private var isSelected: Bool {
-        iconProvider.selectedIconId == iconId
+        iconProvider.selectedIconId == iconAsset.iconId
     }
     
     var body: some View {
@@ -57,7 +56,7 @@ struct IconView: View {
     
     private func loadIconImage() {
         DispatchQueue.global().async {
-            let thumbnail = IconAsset.getThumbnail(categoryName: category.name, iconId: iconId)
+            let thumbnail = iconAsset.getThumbnail()
             DispatchQueue.main.async {
                 self.image = thumbnail
             }
