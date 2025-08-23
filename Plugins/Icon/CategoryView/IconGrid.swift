@@ -11,9 +11,12 @@ struct IconGrid: View {
     let gridItems: [GridItem]
     let onIconSelected: (String) -> Void
     
+    /// 缓存图标资源，避免重复创建
+    @State private var iconAssets: [IconAsset] = []
+    
     var body: some View {
         LazyVGrid(columns: gridItems, spacing: 12) {
-            ForEach(category.getAllIconAssets(), id: \.id) { iconAsset in
+            ForEach(iconAssets, id: \.id) { iconAsset in
                 IconView(
                     iconAsset: iconAsset,
                     onTap: {
@@ -23,6 +26,17 @@ struct IconGrid: View {
             }
         }
         .padding(.horizontal)
+        .onAppear {
+            loadIconAssets()
+        }
+        .onChange(of: category.id) {
+            loadIconAssets()
+        }
+    }
+    
+    private func loadIconAssets() {
+        // 只在分类变化时重新加载图标资源
+        iconAssets = category.getAllIconAssets()
     }
 }
 

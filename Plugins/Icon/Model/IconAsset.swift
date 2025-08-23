@@ -11,6 +11,9 @@ class IconAsset: Identifiable {
     /// 图标文件URL
     let fileURL: URL
     
+    /// 稳定的ID（使用文件路径作为唯一标识）
+    var id: String { fileURL.path }
+    
     /// 图标所属分类名称（从URL计算）
     var categoryName: String {
         fileURL.deletingLastPathComponent().lastPathComponent

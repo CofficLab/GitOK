@@ -55,10 +55,14 @@ class IconProvider: NSObject, ObservableObject, SuperLog {
     }
 
     @objc private func handleIconDidSave(_ notification: Notification) {
+        // 只有在图标真正保存时才更新模型，避免参数调整时的频繁更新
         let iconPath = self.currentModel?.path
         if let iconPath = iconPath {
             let newModel = try? IconModel.fromJSONFile(URL(fileURLWithPath: iconPath))
-            self.updateCurrentModel(newModel: newModel, reason: "iconDidSave event")
+            // 只在模型真正发生变化时才更新
+            if let newModel = newModel, newModel.path != self.currentModel?.path {
+                self.updateCurrentModel(newModel: newModel, reason: "iconDidSave event")
+            }
         }
     }
 
