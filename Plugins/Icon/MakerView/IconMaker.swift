@@ -19,23 +19,34 @@ struct IconMaker: View {
     var body: some View {
         Group {
             if self.icon != nil {
-                HStack {
-                    Spacer()
+                TabView {
                     VStack {
                         Text("macOS")
+                            .font(.headline)
+                            .padding(.bottom, 8)
                         MagicImage.makeImage(macOSView)
                             .resizable()
                             .scaledToFit()
+                            .padding()
+                    }
+                    .tabItem {
+                        Image(systemName: "desktopcomputer")
+                        Text("macOS")
                     }
 
                     VStack {
                         Text("iOS")
+                            .font(.headline)
+                            .padding(.bottom, 8)
                         MagicImage.makeImage(iOSView)
                             .resizable()
                             .scaledToFit()
+                            .padding()
                     }
-                    
-                    Spacer()
+                    .tabItem {
+                        Image(systemName: "iphone")
+                        Text("iOS")
+                    }
                 }
             } else {
                 Text("请选择或新建一个图标")
