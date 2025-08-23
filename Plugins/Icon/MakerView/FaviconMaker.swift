@@ -57,44 +57,6 @@ struct FaviconMaker: View {
             .padding()
             .background(Color.gray.opacity(0.1))
             .cornerRadius(12)
-            
-            // 图标调整控制
-            VStack(spacing: 16) {
-                HStack(spacing: 20) {
-                    // 透明度控制
-                    VStack(spacing: 8) {
-                        Text("透明度")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                        Slider(value: Binding(
-                            get: { icon.opacity },
-                            set: { newValue in
-                                var mutableIcon = icon
-                                try? mutableIcon.updateOpacity(newValue)
-                            }
-                        ), in: 0...1)
-                        .frame(width: 120)
-                    }
-                    
-                    // 缩放控制
-                    VStack(spacing: 8) {
-                        Text("缩放")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                        Slider(value: Binding(
-                            get: { icon.scale ?? 1.0 },
-                            set: { newValue in
-                                var mutableIcon = icon
-                                try? mutableIcon.updateScale(newValue)
-                            }
-                        ), in: 0.1...2)
-                        .frame(width: 120)
-                    }
-                }
-            }
-            .padding()
-            .background(Color.gray.opacity(0.05))
-            .cornerRadius(12)
         }
         .padding()
     }
