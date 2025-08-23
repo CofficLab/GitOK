@@ -13,7 +13,7 @@ struct IconAdjustments: View {
             HStack(spacing: 20) {
                 // 透明度控制
                 VStack(spacing: 8) {
-                    Text("透明度")
+                    Text("透明度 \(String(format: "%.1f", i.currentModel?.opacity ?? 1.0))")
                         .font(.caption)
                         .foregroundColor(.secondary)
                     Slider(value: Binding(
@@ -24,12 +24,11 @@ struct IconAdjustments: View {
                             }
                         }
                     ), in: 0...1)
-                    .frame(width: 120)
                 }
                 
                 // 缩放控制
                 VStack(spacing: 8) {
-                    Text("缩放")
+                    Text("缩放 \(String(format: "%.1f", i.currentModel?.scale ?? 1.0))")
                         .font(.caption)
                         .foregroundColor(.secondary)
                     Slider(value: Binding(
@@ -40,7 +39,6 @@ struct IconAdjustments: View {
                             }
                         }
                     ), in: 0.1...2)
-                    .frame(width: 120)
                 }
             }
         }
