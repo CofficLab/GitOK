@@ -21,11 +21,26 @@ struct CategoryTabs: View {
                 }
             }
 
-            // 右侧：换图按钮（固定位置）
-            Button(action: changeImage) {
-                Image.add
+            // 右侧：功能按钮组
+            HStack(spacing: 8) {
+                // 换图按钮
+                Button(action: changeImage) {
+                    Image.add
+                        .font(.title3)
+                        .foregroundColor(.blue)
+                }
+                .buttonStyle(.plain)
+                .help("更换图片")
+                
+                // 打开图标仓库按钮
+                Button(action: openIconRepository) {
+                    Image(systemName: "folder")
+                        .font(.title3)
+                        .foregroundColor(.green)
+                }
+                .buttonStyle(.plain)
+                .help("打开图标仓库")
             }
-            .buttonStyle(.plain)
         }
         .onAppear {
             // 确保有选中的分类
@@ -55,6 +70,17 @@ struct CategoryTabs: View {
                 m.error("更新图片失败：\(error.localizedDescription)")
             }
         }
+    }
+    
+    private func openIconRepository() {
+        guard let iconFolderURL = IconRepo.getIconFolderURL() else {
+            m.error("无法找到图标文件夹")
+            return
+        }
+        
+        // 打开图标文件夹
+        NSWorkspace.shared.open(iconFolderURL)
+        m.success("已打开图标文件夹：\(iconFolderURL.path)")
     }
 }
 
