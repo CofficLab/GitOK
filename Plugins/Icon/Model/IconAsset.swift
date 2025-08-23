@@ -18,8 +18,7 @@ class IconAsset: Identifiable {
     
     /// 图标ID（从URL计算）
     var iconId: String {
-        let filename = fileURL.deletingPathExtension().lastPathComponent
-            return filename
+        fileURL.deletingPathExtension().lastPathComponent
     }
     
     /// 初始化方法
@@ -47,12 +46,6 @@ class IconAsset: Identifiable {
     }
     
     // MARK: - 私有实例方法
-    
-    /// 支持的图标文件格式
-    private let supportedFormats = ["png", "svg", "jpg", "jpeg", "gif", "webp"]
-    
-    /// 默认图标文件格式（优先查找）
-    private let defaultFormat = "png"
     
     /// 加载图片（支持多种格式）
     /// - Returns: SwiftUI Image
@@ -110,7 +103,7 @@ class IconAsset: Identifiable {
     /// - Returns: SwiftUI Image
     private func loadRasterThumbnail() -> Image {
         if let image = NSImage(contentsOf: fileURL) {
-            if let thumbnail = generateThumbnail(for: image, size: NSSize(width: 80, height: 80)) {
+            if let thumbnail = generateThumbnail(for: image) {
                 return Image(nsImage: thumbnail)
             } else {
                 return Image(systemName: "plus")
@@ -121,11 +114,9 @@ class IconAsset: Identifiable {
     }
     
     /// 生成缩略图
-    /// - Parameters:
-    ///   - image: 原始图片
-    ///   - size: 目标尺寸
+    /// - Parameter image: 原始图片
     /// - Returns: 缩略图
-    private func generateThumbnail(for image: NSImage, size: NSSize) -> NSImage? {
+    private func generateThumbnail(for image: NSImage) -> NSImage? {
         let thumbnailSize = NSSize(width: 50, height: 50)
         
         let thumbnail = NSImage(size: thumbnailSize)
