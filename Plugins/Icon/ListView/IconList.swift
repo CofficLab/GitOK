@@ -69,8 +69,7 @@ struct IconList: View, SuperLog {
                 // 按照path排序
                 self.icons = icons.sorted(by: { $0.path < $1.path })
             } catch {
-                os_log(.error, "Error while enumerating files: \(error.localizedDescription)")
-                m.error(error.localizedDescription)
+                m.error(error)
             }
         }
     }
@@ -84,7 +83,7 @@ struct IconList: View, SuperLog {
             .setInitialTab("Icon")
     }
     .frame(width: 800)
-    .frame(height: 600)
+    .frame(height: 800)
 }
 
 #Preview("App - Big Screen") {
