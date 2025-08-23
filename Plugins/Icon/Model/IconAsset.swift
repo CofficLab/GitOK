@@ -45,31 +45,23 @@ class IconAsset {
     ///   - iconId: 图标ID（支持数字ID和哈希文件名）
     /// - Returns: 图标文件URL，如果找不到则返回nil
     private static func findIconFile(category: String, iconId: String) -> URL? {
-        print("🔍 IconAsset.findIconFile: 开始查找 - 分类: \(category), ID: \(iconId)")
-        
         guard let iconFolderURL = iconFolderURL else { 
-            print("🔍 IconAsset.findIconFile: iconFolderURL 为 nil")
             return nil 
         }
         
-        print("🔍 IconAsset.findIconFile: 图标文件夹路径: \(iconFolderURL.path)")
         let categoryPath = iconFolderURL.appendingPathComponent(category)
-        print("🔍 IconAsset.findIconFile: 分类路径: \(categoryPath.path)")
         
         // 对于哈希文件名，直接查找文件（不需要添加扩展名）
         // 首先检查是否已经是完整的文件名（包含扩展名）
         let directURL = categoryPath.appendingPathComponent(iconId)
         if FileManager.default.fileExists(atPath: directURL.path) {
-            print("🔍 IconAsset.findIconFile: 找到直接文件: \(directURL.path)")
             return directURL
         }
         
         // 如果直接查找失败，尝试添加扩展名查找
         // 优先查找默认格式
         let defaultURL = categoryPath.appendingPathComponent("\(iconId).\(defaultFormat)")
-        print("🔍 IconAsset.findIconFile: 检查默认格式: \(defaultURL.path)")
         if FileManager.default.fileExists(atPath: defaultURL.path) {
-            print("🔍 IconAsset.findIconFile: 找到默认格式文件")
             return defaultURL
         }
         
@@ -78,14 +70,11 @@ class IconAsset {
             if format == defaultFormat { continue } // 已经检查过了
             
             let url = categoryPath.appendingPathComponent("\(iconId).\(format)")
-            print("🔍 IconAsset.findIconFile: 检查格式 \(format): \(url.path)")
             if FileManager.default.fileExists(atPath: url.path) {
-                print("🔍 IconAsset.findIconFile: 找到格式 \(format) 文件")
                 return url
             }
         }
         
-        print("🔍 IconAsset.findIconFile: 未找到任何格式的文件")
         return nil
     }
     
@@ -113,7 +102,6 @@ class IconAsset {
         if let nsImage = NSImage(contentsOf: url) {
             return Image(nsImage: nsImage)
         } else {
-            print("无法加载SVG文件：\(url.path)")
             return Image(systemName: "doc.text.image")
         }
     }
@@ -131,12 +119,9 @@ class IconAsset {
     
     // 获取指定分类和ID的缩略图
     static func getThumbnail(category: String, iconId: String) -> Image {
-        print("🖼️ IconAsset.getThumbnail: 开始查找图标 - 分类: \(category), ID: \(iconId)")
         if let imageURL = findIconFile(category: category, iconId: iconId) {
-            print("🖼️ IconAsset.getThumbnail: 找到图标文件: \(imageURL.path)")
             return loadThumbnail(from: imageURL)
         } else {
-            print("🖼️ IconAsset.getThumbnail: 未找到图标文件 - 分类: \(category), ID: \(iconId)")
             return Image(systemName: "plus")
         }
     }
@@ -166,11 +151,9 @@ class IconAsset {
             if let thumbnail = generateThumbnail(for: image, size: NSSize(width: 80, height: 80)) {
                 return Image(nsImage: thumbnail)
             } else {
-                print("无法生成缩略图")
                 return Image(systemName: "plus")
             }
         } else {
-            print("无法加载图片")
             return Image(systemName: "plus")
         }
     }
@@ -234,7 +217,6 @@ class IconAsset {
                 "modificationDate": modificationDate as Any
             ]
         } catch {
-            print("无法获取文件信息：\(error.localizedDescription)")
             return nil
         }
     }
@@ -253,8 +235,7 @@ class IconAsset {
 #Preview("App - Big Screen") {
     RootView {
         ContentLayout().setInitialTab("Icon")
-            .hideSidebar()
+            .frame(width: 1200)
+            .frame(height: 1200)
     }
-    .frame(width: 1200)
-    .frame(height: 1200)
 }
