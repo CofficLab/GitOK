@@ -4,8 +4,8 @@ import UniformTypeIdentifiers
 
 /**
  * 图标制作器主视图
- * 负责显示图标预览和Favicon生成功能
- * App图标生成功能已移动到工具栏中
+ * 负责显示图标预览和多种格式的下载功能
+ * 采用水平布局：左侧显示图标预览，右侧提供下载选项
  */
 struct IconMaker: View {
     @EnvironmentObject var app: AppProvider
@@ -16,17 +16,32 @@ struct IconMaker: View {
 
     var body: some View {
         Group {
-            if self.icon != nil {
-                HStack(spacing: 2) {
-                    XcodeMaker(icon: icon!)
+            if let icon = self.icon {
+                HStack(spacing: 24) {
+                    // 左侧：图标预览区域
+                    IconPreview(icon: icon)
                         .frame(maxWidth: .infinity)
-
-                    FaviconMaker(icon: icon!)
+                    
+                    // 右侧：下载按钮区域
+                    DownloadButtons(icon: icon)
                         .frame(maxWidth: .infinity)
                 }
                 .padding()
             } else {
-                Text("请选择或新建一个图标")
+                VStack(spacing: 16) {
+                    Image(systemName: "photo")
+                        .font(.system(size: 48))
+                        .foregroundColor(.secondary)
+                    
+                    Text("请选择或新建一个图标")
+                        .font(.headline)
+                        .foregroundColor(.secondary)
+                    
+                    Text("选择一个图标后，您可以预览不同尺寸的效果并下载多种格式")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                        .multilineTextAlignment(.center)
+                }
             }
         }
         .onAppear {
@@ -35,7 +50,6 @@ struct IconMaker: View {
         .onNotification(.iconDidSave, perform: { _ in
             self.icon = i.currentModel
         })
-        // 截图功能已移动到工具栏中，不再需要监听snapshotTapped状态
         .onChange(of: i.currentModel, {
             self.icon = i.currentModel
         })
