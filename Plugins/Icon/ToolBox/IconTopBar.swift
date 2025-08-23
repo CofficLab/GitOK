@@ -7,15 +7,6 @@ struct IconTopBar: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            HStack {
-                Spacer()
-                BtnChangeImage()
-            }
-            .frame(height: 25)
-            .frame(maxWidth: .infinity)
-            .labelStyle(.iconOnly)
-            .background(.secondary.opacity(0.5))
-
             GroupBox {
                 IconBgs()
             }.padding()

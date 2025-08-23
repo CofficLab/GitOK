@@ -8,6 +8,7 @@ import MagicCore
  */
 struct CategoryTabs: View {
     @EnvironmentObject var iconProvider: IconProvider
+    @EnvironmentObject var m: MagicMessageProvider
     
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
@@ -20,8 +21,47 @@ struct CategoryTabs: View {
                         iconProvider.selectCategory(category.name)
                     }
                 }
+                
+                // 换图按钮 - 作为分类标签页的最后一个选项
+                Button(action: changeImage) {
+                    HStack(spacing: 4) {
+                        Image(systemName: "photo.badge.plus")
+                            .font(.caption)
+                        Text("换图")
+                            .font(.caption)
+                    }
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 6)
+                    .background(Color.blue.opacity(0.1))
+                    .foregroundColor(.blue)
+                    .cornerRadius(6)
+                }
+                .buttonStyle(.plain)
+                .help("更换当前图标的图片")
             }
             .padding(.horizontal)
+        }
+    }
+    
+    private func changeImage() {
+        let panel = NSOpenPanel()
+        panel.allowsMultipleSelection = false
+        panel.canChooseDirectories = false
+        panel.allowedContentTypes = [.image]
+        panel.message = "选择新的图片文件"
+        panel.prompt = "选择图片"
+        
+        if panel.runModal() == .OK, let url = panel.url {
+            do {
+                if var icon = iconProvider.currentModel {
+                    try icon.updateImageURL(url)
+                    m.success("图片已更新")
+                } else {
+                    m.error("没有找到可以更新的图标")
+                }
+            } catch {
+                m.error("更新图片失败：\(error.localizedDescription)")
+            }
         }
     }
 }
