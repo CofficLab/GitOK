@@ -3,10 +3,11 @@ import MagicCore
 
 /**
  * 分类图标项组件
- * 用于显示单个图标，支持选中状态、悬停效果和点击事件
+ * 负责显示单个图标，支持选中状态、悬停效果和点击事件
+ * 数据流：IconAsset -> UI展示
  */
 struct CategoryIconItem: View {
-    let category: String
+    let category: IconCategory
     let iconId: String
     let onTap: () -> Void
     
@@ -50,15 +51,17 @@ struct CategoryIconItem: View {
                 isHovered = hovering
             }
             .onAppear {
-                print("🖼️ CategoryIconItem: 开始加载图标 - 分类: \(category), ID: \(iconId)")
-                DispatchQueue.global().async {
-                    let thumbnail = IconAsset.getThumbnail(category: category, iconId: iconId)
-                    print("🖼️ CategoryIconItem: 图标加载完成 - 分类: \(category), ID: \(iconId)")
-                    DispatchQueue.main.async {
-                        self.image = thumbnail
-                    }
-                }
+                loadIconImage()
             }
+    }
+    
+    private func loadIconImage() {
+        DispatchQueue.global().async {
+            let thumbnail = IconAsset.getThumbnail(category: category.name, iconId: iconId)
+            DispatchQueue.main.async {
+                self.image = thumbnail
+            }
+        }
     }
 }
 

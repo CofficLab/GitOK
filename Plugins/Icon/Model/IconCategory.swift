@@ -49,7 +49,6 @@ struct IconCategory: Identifiable, Hashable {
                 }
             }.sorted()
         } catch {
-            print("无法读取分类文件夹 \(folderPath): \(error.localizedDescription)")
             return []
         }
     }
@@ -97,12 +96,37 @@ struct IconCategory: Identifiable, Hashable {
         iconIds.contains(iconId)
     }
     
+    /// 获取分类下的所有图标资源
+    /// - Returns: IconAsset数组
+    func getAllIconAssets() -> [IconAsset] {
+        return iconIds.map { iconId in
+            IconAsset(category: name, iconId: iconId)
+        }
+    }
+    
+    /// 获取分类下的所有图标资源（异步版本，适用于大量图标）
+    /// - Returns: IconAsset数组的异步结果
+    func getAllIconAssetsAsync() async -> [IconAsset] {
+        return await withTaskGroup(of: IconAsset.self) { group in
+            for iconId in iconIds {
+                group.addTask {
+                    IconAsset(category: self.name, iconId: iconId)
+                }
+            }
+            
+            var assets: [IconAsset] = []
+            for await asset in group {
+                assets.append(asset)
+            }
+            return assets.sorted { $0.iconId < $1.iconId }
+        }
+    }
+    
     /// 获取指定分类下的所有图标ID（静态方法）
     /// - Parameter category: 分类名称
     /// - Returns: 图标ID数组（支持数字ID和哈希文件名）
     static func getIconIds(in category: String) -> [String] {
         guard let iconFolderURL = IconCategoryRepo.getIconFolderURL() else {
-            print("IconCategory.getIconIds: 未找到图标文件夹")
             return []
         }
         
@@ -128,7 +152,6 @@ struct IconCategory: Identifiable, Hashable {
             
             return iconIds
         } catch {
-            print("IconCategory.getIconIds: 无法获取分类 \(category) 中的图标ID：\(error.localizedDescription)")
             return []
         }
     }

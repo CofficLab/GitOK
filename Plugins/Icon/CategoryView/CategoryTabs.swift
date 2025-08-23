@@ -3,7 +3,8 @@ import MagicCore
 
 /**
  * 分类标签页组件
- * 用于显示所有可用的图标分类，支持横向滚动和分类选择
+ * 负责显示所有可用的图标分类，支持横向滚动和分类选择
+ * 数据流：IconCategoryRepo -> CategoryTabs
  */
 struct CategoryTabs: View {
     @EnvironmentObject var iconProvider: IconProvider
@@ -11,21 +12,16 @@ struct CategoryTabs: View {
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 8) {
-                ForEach(iconProvider.iconCategoryRepo.categories, id: \.name) { category in
+                ForEach(IconCategoryRepo.shared.categories, id: \.id) { category in
                     CategoryTab(
-                        title: category.name,
-                        isSelected: iconProvider.selectedCategory?.name == category.name,
-                        iconCount: category.iconCount
+                        category: category,
+                        isSelected: iconProvider.selectedCategory?.id == category.id
                     ) {
                         iconProvider.selectCategory(category.name)
                     }
                 }
             }
             .padding(.horizontal)
-        }
-        .onAppear {
-            // 确保分类列表是最新的
-            iconProvider.refreshCategories()
         }
     }
 }

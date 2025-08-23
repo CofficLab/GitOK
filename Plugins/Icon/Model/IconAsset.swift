@@ -7,7 +7,55 @@ import Cocoa
  * 负责处理IconCategory下的具体图标操作
  * 支持多种文件格式（PNG、SVG等），自动检测和智能查找
  */
-class IconAsset {
+class IconAsset: Identifiable {
+    /// 唯一标识符
+    let id = UUID()
+    
+    /// 图标所属分类
+    let category: String
+    
+    /// 图标ID
+    let iconId: String
+    
+    /// 图标文件URL（延迟计算）
+    lazy var fileURL: URL? = {
+        Self.findIconFile(category: category, iconId: iconId)
+    }()
+    
+    /// 图标文件信息（延迟计算）
+    lazy var fileInfo: [String: Any]? = {
+        Self.getIconFileInfo(category: category, iconId: iconId)
+    }()
+    
+    /// 初始化方法
+    /// - Parameters:
+    ///   - category: 图标分类
+    ///   - iconId: 图标ID
+    init(category: String, iconId: String) {
+        self.category = category
+        self.iconId = iconId
+    }
+    
+    /// 获取图标图片
+    /// - Returns: SwiftUI Image
+    func getImage() -> Image {
+        return Self.getImage(category: category, iconId: iconId)
+    }
+    
+    /// 获取图标缩略图
+    /// - Returns: SwiftUI Image
+    func getThumbnail() -> Image {
+        return Self.getThumbnail(category: category, iconId: iconId)
+    }
+    
+    /// 检查图标文件是否存在
+    /// - Returns: 是否存在
+    func exists() -> Bool {
+        return fileURL != nil
+    }
+    
+    // MARK: - 静态方法
+    
     /// 获取图标文件夹URL（委托给IconCategoryRepo）
     /// - Returns: 图标文件夹URL，如果找不到则返回nil
     private static var iconFolderURL: URL? {

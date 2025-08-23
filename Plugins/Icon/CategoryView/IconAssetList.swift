@@ -1,14 +1,15 @@
 import MagicCore
-import os
 import SwiftUI
 
+/**
+ * 图标资源列表主容器
+ * 负责管理分类选择和图标展示的整体布局
+ * 数据流：IconCategoryRepo -> IconCategory -> IconAsset List
+ */
 struct IconAssetList: View {
-    @EnvironmentObject var i: IconProvider
-    @EnvironmentObject var m: MagicMessageProvider
-    @EnvironmentObject var app: AppProvider
-
-    @State var gridItems: [GridItem] = Array(repeating: .init(.flexible()), count: 10)
-
+    @EnvironmentObject var iconProvider: IconProvider
+    @State private var gridItems: [GridItem] = Array(repeating: .init(.flexible()), count: 10)
+    
     var body: some View {
         VStack(spacing: 0) {
             // 分类标签页
@@ -18,15 +19,15 @@ struct IconAssetList: View {
             GeometryReader { geo in
                 ScrollView {
                     VStack {
-                        if let selectedCategory = i.selectedCategory {
+                        if let selectedCategory = iconProvider.selectedCategory {
                             CategoryIconGrid(
-                                category: selectedCategory.name,
+                                category: selectedCategory,
                                 gridItems: gridItems,
                                 onIconSelected: { selectedIconId in
                                     handleIconSelection(selectedIconId)
                                 }
                             )
-                        } else if let firstCategory = i.availableCategories.first {
+                        } else if let firstCategory = IconCategoryRepo.shared.categories.first {
                             CategoryIconGrid(
                                 category: firstCategory,
                                 gridItems: gridItems,
@@ -41,30 +42,28 @@ struct IconAssetList: View {
                         }
                     }
                     .onAppear {
-                        gridItems = getGridItems(geo)
+                        updateGridItems(geo)
                     }
                     .onChange(of: geo.size.width) {
-                        gridItems = getGridItems(geo)
+                        updateGridItems(geo)
                     }
                 }
             }
         }
+        .onAppear {
+            iconProvider.refreshCategories()
+        }
     }
-
-    func getGridItems(_ geo: GeometryProxy) -> [GridItem] {
-        Array(repeating: .init(.flexible()), count: calculateColumns(geo.size.width))
-    }
-
-    func calculateColumns(_ width: CGFloat) -> Int {
-        let columns = Int(width / 80)
-        return max(columns, 1)
+    
+    private func updateGridItems(_ geo: GeometryProxy) {
+        let columns = max(Int(geo.size.width / 80), 1)
+        gridItems = Array(repeating: .init(.flexible()), count: columns)
     }
     
     private func handleIconSelection(_ iconId: String) {
-        // 使用IconProvider的统一方法选择图标
-        i.selectIcon(iconId)
+        iconProvider.selectIcon(iconId)
         
-        // 处理图标选择通知
+        // 发送图标选择通知
         NotificationCenter.default.post(
             name: Notification.Name("IconSelected"),
             object: nil,

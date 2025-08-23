@@ -19,9 +19,6 @@ class IconProvider: NSObject, ObservableObject, SuperLog {
     /// 用于在图标选择器中高亮显示选中的图标
     @Published var selectedIconId: String = ""
     
-    /// 图标分类仓库
-    @Published var iconCategoryRepo = IconCategoryRepo.shared
-    
     /// 当前选中的图标分类
     @Published var selectedCategory: IconCategory?
     
@@ -32,7 +29,7 @@ class IconProvider: NSObject, ObservableObject, SuperLog {
     
     /// 所有可用的图标分类名称（兼容性属性）
     var availableCategories: [String] {
-        iconCategoryRepo.categories.map { $0.name }
+        IconCategoryRepo.shared.categories.map { $0.name }
     }
 
     override init() {
@@ -97,12 +94,8 @@ class IconProvider: NSObject, ObservableObject, SuperLog {
         选择图标分类
      */
     func selectCategory(_ category: String) {
-        print("🎯 IconProvider: 选择分类 '\(category)'")
-        if let categoryModel = iconCategoryRepo.getCategory(byName: category) {
-            print("🎯 找到分类，设置为选中: \(categoryModel.name)")
+        if let categoryModel = IconCategoryRepo.shared.getCategory(byName: category) {
             selectedCategory = categoryModel
-        } else {
-            print("🎯 未找到分类 '\(category)'")
         }
     }
     
@@ -110,17 +103,17 @@ class IconProvider: NSObject, ObservableObject, SuperLog {
         刷新可用分类列表
      */
     func refreshCategories() {
-        iconCategoryRepo.refreshCategories()
+        IconCategoryRepo.shared.refreshCategories()
         
         // 如果当前选中的分类不存在，选择第一个
         if let selected = selectedCategory,
-           !iconCategoryRepo.categories.contains(where: { $0.name == selected.name }) {
-            selectedCategory = iconCategoryRepo.categories.first
+           !IconCategoryRepo.shared.categories.contains(where: { $0.name == selected.name }) {
+            selectedCategory = IconCategoryRepo.shared.categories.first
         }
         
         // 如果没有选中的分类，选择第一个
-        if selectedCategory == nil && !iconCategoryRepo.categories.isEmpty {
-            selectedCategory = iconCategoryRepo.categories.first
+        if selectedCategory == nil && !IconCategoryRepo.shared.categories.isEmpty {
+            selectedCategory = IconCategoryRepo.shared.categories.first
         }
     }
     
@@ -128,7 +121,7 @@ class IconProvider: NSObject, ObservableObject, SuperLog {
     /// - Parameter name: 分类名称
     /// - Returns: 分类实例，如果不存在则返回nil
     func getCategory(byName name: String) -> IconCategory? {
-        iconCategoryRepo.getCategory(byName: name)
+        IconCategoryRepo.shared.getCategory(byName: name)
     }
 }
 

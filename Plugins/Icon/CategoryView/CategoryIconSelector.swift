@@ -1,9 +1,14 @@
 import SwiftUI
 import MagicCore
 
+/**
+ * 分类图标选择器组件
+ * 专门用于图标选择场景，提供简化的选择界面
+ * 数据流：IconCategoryRepo -> IconCategory -> IconAsset Selection
+ */
 struct CategoryIconSelector: View {
-    @EnvironmentObject var i: IconProvider
-    @EnvironmentObject var m: MagicMessageProvider
+    @EnvironmentObject var iconProvider: IconProvider
+    @EnvironmentObject var messageProvider: MagicMessageProvider
     
     @State private var gridItems: [GridItem] = Array(repeating: .init(.flexible()), count: 8)
     
@@ -20,15 +25,15 @@ struct CategoryIconSelector: View {
             CategoryTabs()
             
             // 图标网格
-            if let selectedCategory = i.selectedCategory {
+            if let selectedCategory = iconProvider.selectedCategory {
                 CategoryIconGrid(
-                    category: selectedCategory.name,
+                    category: selectedCategory,
                     gridItems: gridItems,
                     onIconSelected: { selectedIconId in
                         handleIconSelection(selectedIconId)
                     }
                 )
-            } else if let firstCategory = i.availableCategories.first {
+            } else if let firstCategory = IconCategoryRepo.shared.categories.first {
                 CategoryIconGrid(
                     category: firstCategory,
                     gridItems: gridItems,
@@ -52,14 +57,13 @@ struct CategoryIconSelector: View {
     }
     
     private func handleIconSelection(_ iconId: String) {
-        guard i.currentModel != nil else {
-            m.error("请先选择一个图标文件")
+        guard iconProvider.currentModel != nil else {
+            messageProvider.error("请先选择一个图标文件")
             return
         }
         
-        // 使用IconProvider的统一方法选择图标
-        i.selectIcon(iconId)
-        m.info("图标已更新")
+        iconProvider.selectIcon(iconId)
+        messageProvider.info("图标已更新")
     }
 }
 

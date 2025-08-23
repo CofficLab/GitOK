@@ -2,21 +2,21 @@ import SwiftUI
 
 /**
  * 单个分类标签组件
- * 用于显示分类名称和图标数量，支持选中状态和点击事件
+ * 负责显示分类名称和图标数量，支持选中状态和点击事件
+ * 数据流：IconCategory -> CategoryTab
  */
 struct CategoryTab: View {
-    let title: String
+    let category: IconCategory
     let isSelected: Bool
-    let iconCount: Int
     let action: () -> Void
     
     var body: some View {
         Button(action: action) {
             VStack(spacing: 4) {
-                Text(title.uppercased())
+                Text(category.displayName)
                     .font(.caption)
                     .fontWeight(.medium)
-                Text("\(iconCount)")
+                Text("\(category.iconCount)")
                     .font(.caption2)
                     .foregroundColor(.secondary)
             }
