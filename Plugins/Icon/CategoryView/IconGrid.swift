@@ -6,7 +6,7 @@ import MagicCore
  * 负责展示指定分类下的所有图标
  * 数据流：IconCategory -> IconAsset List
  */
-struct CategoryIconGrid: View {
+struct IconGrid: View {
     let category: IconCategory
     let gridItems: [GridItem]
     let onIconSelected: (String) -> Void
@@ -33,7 +33,7 @@ struct CategoryIconGrid: View {
             .hideProjectActions()
     }
     .frame(width: 800)
-    .frame(height: 600)
+    .frame(height: 800)
 }
 
 #Preview("App - Big Screen") {

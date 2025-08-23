@@ -26,7 +26,7 @@ struct CategoryIconSelector: View {
             
             // 图标网格
             if let selectedCategory = iconProvider.selectedCategory {
-                CategoryIconGrid(
+                IconGrid(
                     category: selectedCategory,
                     gridItems: gridItems,
                     onIconSelected: { selectedIconId in
@@ -34,7 +34,7 @@ struct CategoryIconSelector: View {
                     }
                 )
             } else if let firstCategory = IconRepo.shared.getAllCategories().first {
-                CategoryIconGrid(
+                IconGrid(
                     category: firstCategory,
                     gridItems: gridItems,
                     onIconSelected: { selectedIconId in

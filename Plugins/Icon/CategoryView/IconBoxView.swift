@@ -15,14 +15,16 @@ struct IconBoxView: View {
             // 分类标签页
             CategoryTabs()
             
-            Divider().padding(.bottom)
+            Divider()
+                .padding(.bottom,2)
+                .padding(.top, 2)
             
             // 图标网格
             GeometryReader { geo in
                 ScrollView {
                     VStack {
                         if let selectedCategory = iconProvider.selectedCategory {
-                            CategoryIconGrid(
+                            IconGrid(
                                 category: selectedCategory,
                                 gridItems: gridItems,
                                 onIconSelected: { selectedIconId in
@@ -30,7 +32,7 @@ struct IconBoxView: View {
                                 }
                             )
                         } else if let firstCategory = IconRepo.shared.getAllCategories().first {
-                            CategoryIconGrid(
+                            IconGrid(
                                 category: firstCategory,
                                 gridItems: gridItems,
                                 onIconSelected: { selectedIconId in
