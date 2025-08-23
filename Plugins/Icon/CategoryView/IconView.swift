@@ -22,7 +22,7 @@ struct IconView: View {
     var body: some View {
         image
             .resizable()
-            .frame(width: 60, height: 60)
+            .frame(width: 40, height: 40)
             .background(
                 Group {
                     if isSelected {
