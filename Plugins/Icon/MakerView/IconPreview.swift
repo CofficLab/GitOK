@@ -1,56 +1,62 @@
 import MagicCore
 import SwiftUI
 
+/**
+ * 图标预览组件
+ * 显示单个图标预览，自动适应当前可用空间
+ */
 struct IconPreview: View {
     let icon: IconModel
-    let platform: String
-
+    
     var body: some View {
-        ZStack {
-            icon.background
-
-            HStack {
-                if let scale = icon.scale {
-                    icon.image.scaleEffect(scale)
-                } else {
-                    icon.image.resizable().scaledToFit()
+        VStack(spacing: 16) {
+            Text("图标预览")
+                .font(.title2)
+                .fontWeight(.semibold)
+            
+            // 自适应图标预览
+            GeometryReader { geometry in
+                let availableSize = min(geometry.size.width, geometry.size.height) * 0.8
+                
+                ZStack {
+                    // 背景
+                    icon.background
+                        .frame(width: availableSize, height: availableSize)
+                        .cornerRadius(icon.cornerRadius > 0 ? CGFloat(icon.cornerRadius) : 0)
+                    
+                    // 图标
+                    icon.image
+                        .resizable()
+                        .scaledToFit()
+                        .scaleEffect(icon.scale ?? 1.0)
+                        .frame(width: availableSize * 0.8, height: availableSize * 0.8)
+                        .clipped()
                 }
+                .shadow(color: .black.opacity(0.1), radius: 4, x: 0, y: 2)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }
-        .frame(width: 1024, height: 1024)
-        .if(platform == "macOS") {
-            $0.clipShape(RoundedRectangle(cornerSize: CGSize(
-                width: 200,
-                height: 200
-            ))).padding(100)
-        }
+        .padding()
+        .background(Color.gray.opacity(0.05))
+        .cornerRadius(12)
     }
 }
 
-extension View {
-    @ViewBuilder
-    func `if`<Content: View>(_ condition: Bool, transform: (Self) -> Content) -> some View {
-        if condition {
-            transform(self)
-        } else {
-            self
-        }
-    }
-}
+
 
 #Preview("App - Small Screen") {
     RootView {
-        ContentLayout()
+        ContentLayout().setInitialTab("Icon")
             .hideSidebar()
             .hideProjectActions()
     }
     .frame(width: 800)
-    .frame(height: 600)
+    .frame(height: 800)
 }
 
 #Preview("App - Big Screen") {
     RootView {
-        ContentLayout()
+        ContentLayout().setInitialTab("Icon")
             .hideSidebar()
     }
     .frame(width: 1200)

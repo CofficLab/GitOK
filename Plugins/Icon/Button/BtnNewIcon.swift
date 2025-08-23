@@ -21,7 +21,7 @@ struct BtnNewIcon: View {
 
 #Preview("App - Small Screen") {
     RootView {
-        ContentLayout()
+        ContentLayout().setInitialTab("Icon")
             .hideSidebar()
             .hideProjectActions()
     }
@@ -31,7 +31,7 @@ struct BtnNewIcon: View {
 
 #Preview("App - Big Screen") {
     RootView {
-        ContentLayout()
+        ContentLayout().setInitialTab("Icon")
             .hideSidebar()
     }
     .frame(width: 1200)

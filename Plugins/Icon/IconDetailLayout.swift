@@ -1,26 +1,29 @@
 import OSLog
 import SwiftUI
 
-struct DetailIcon: View {
+struct IconDetailLayout: View {
     @EnvironmentObject var i: IconProvider
     @EnvironmentObject var g: DataProvider
     @State private var showWelcome = false
 
-    static let shared = DetailIcon()
+    static let shared = IconDetailLayout()
 
     var body: some View {
         ZStack {
             if showWelcome {
-                WelcomeView()
+                IconWelcomeView()
             } else {
                 VStack {
-                    IconTopBar()
+                    IconBgs()
+                        .padding(1)
+                        .background(.blue.opacity(0.05))
 
-                    GroupBox {
-                        IconMaker()
-                    }
-                    .padding(.horizontal)
-                    .padding(.bottom)
+                    IconBoxView()
+                        .padding(.horizontal)
+                        .padding(.bottom)
+                        .background(.green.opacity(0.05))
+
+                    IconMaker()
                 }
             }
         }
@@ -54,18 +57,20 @@ struct DetailIcon: View {
 
 #Preview("App - Small Screen") {
     RootView {
-        ContentLayout()
+        ContentLayout().setInitialTab("Icon")
             .hideSidebar()
             .hideProjectActions()
+            .setInitialTab("Icon")
     }
-    .frame(width: 800)
-    .frame(height: 600)
+    .frame(width: 900)
+    .frame(height: 800)
 }
 
 #Preview("App - Big Screen") {
     RootView {
-        ContentLayout()
+        ContentLayout().setInitialTab("Icon")
             .hideSidebar()
+            .setInitialTab("Icon")
     }
     .frame(width: 1200)
     .frame(height: 1200)

@@ -7,17 +7,22 @@ struct IconBgs: View {
     @EnvironmentObject var m: MagicMessageProvider
 
     var body: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 10) {
-                ForEach(0 ..< MagicBackgroundGroup.all.count, id: \.self) { index in
-                    let gradient = MagicBackgroundGroup.all[index]
-                    makeItem(gradient)
-                        .frame(width: 50, height: 50)
+        VStack(spacing: 16) {
+            // 背景选择
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 6) {
+                    ForEach(0 ..< MagicBackgroundGroup.all.count, id: \.self) { index in
+                        let gradient = MagicBackgroundGroup.all[index]
+                        makeItem(gradient)
+                            .frame(width: 22, height: 22)
+                    }
                 }
             }
-            .padding(.horizontal, 10)
+            .frame(height: 30)
+            
+            // 图标调整工具
+            IconAdjustments()
         }
-        .frame(height: 70)
     }
 
     func makeItem(_ gradient: MagicBackgroundGroup.GradientName) -> some View {
@@ -48,17 +53,17 @@ struct IconBgs: View {
 
 #Preview("App - Small Screen") {
     RootView {
-        ContentLayout()
+        ContentLayout().setInitialTab("Icon")
             .hideSidebar()
             .hideProjectActions()
     }
     .frame(width: 800)
-    .frame(height: 600)
+    .frame(height: 800)
 }
 
 #Preview("App - Big Screen") {
     RootView {
-        ContentLayout()
+        ContentLayout().setInitialTab("Icon")
             .hideSidebar()
     }
     .frame(width: 1200)

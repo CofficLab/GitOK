@@ -51,27 +51,27 @@ struct BannerModel: SuperJsonModel, SuperLog, SuperEvent {
             image = Image("Snapshot-iPad")
         }
 
-        if let smartImage = getSmartImage() {
-            image = smartImage.getImage(self.project.url)
+        if let generatedIcon = getGeneratedIcon() {
+            image = generatedIcon.getImage(self.project.url)
         }
 
         return image
     }
 
-    func getSmartImage() -> SmartImage? {
+    func getGeneratedIcon() -> GeneratedIcon? {
         guard let imageId = self.imageId else {
             return nil
         }
 
-        return SmartImage.fromImageId(imageId)
+        return GeneratedIcon.fromImageId(imageId)
     }
 
     mutating func changeImage(_ url: URL) throws {
         if let imageId = self.imageId {
-            try SmartImage.removeImage(imageId, projectURL: self.project.url)
+            try GeneratedIcon.removeImage(imageId, projectURL: self.project.url)
         }
 
-        let newImageId = try SmartImage.saveImage(url, projectURL: self.project.url)
+        let newImageId = try GeneratedIcon.saveImage(url, projectURL: self.project.url)
         self.imageId = newImageId
         try self.saveToDisk()
     }

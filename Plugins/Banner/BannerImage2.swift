@@ -5,10 +5,11 @@ import SwiftUI
 import AppKit
 import MagicCore
 
-class SmartImage: SuperLog {
+
+class GeneratedIcon: SuperLog {
     static var dir: String = ".gitok/images"
     
-    let emoji = "🀄️"
+    let emoji = "🎨"
     
     var id: String
     
@@ -28,8 +29,8 @@ class SmartImage: SuperLog {
         }
     }
     
-    static func fromImageId(_ imageId: String) -> SmartImage {
-        return SmartImage(id: imageId)
+    static func fromImageId(_ imageId: String) -> GeneratedIcon {
+        return GeneratedIcon(id: imageId)
     }
 
     static func removeImage(_ id: String, projectURL: URL) throws {
@@ -68,7 +69,7 @@ class SmartImage: SuperLog {
 
 #Preview("App - Small Screen") {
     RootView {
-        ContentLayout()
+        ContentLayout().setInitialTab("Icon")
             .hideSidebar()
             .hideProjectActions()
     }
@@ -78,7 +79,7 @@ class SmartImage: SuperLog {
 
 #Preview("App - Big Screen") {
     RootView {
-        ContentLayout()
+        ContentLayout().setInitialTab("Icon")
             .hideSidebar()
     }
     .frame(width: 1200)

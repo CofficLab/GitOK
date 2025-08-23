@@ -3,7 +3,7 @@ import OSLog
 import SwiftData
 import SwiftUI
 
-/// `应用程序的主视图组件。
+/// 应用程序的主视图组件。
 struct ContentLayout: View, SuperThread, SuperEvent, SuperLog {
     static let emoji = "🍺"
     @EnvironmentObject var app: AppProvider
@@ -16,25 +16,28 @@ struct ContentLayout: View, SuperThread, SuperEvent, SuperLog {
     private(set) var toolbarVisibility: Bool?
     private(set) var projectActionsVisibility: Bool?
     private(set) var tabPickerVisibility: Bool?
+    private(set) var initialTab: String?
 
     init(
         statusBarVisibility: Bool? = nil,
         initialColumnVisibility: NavigationSplitViewVisibility? = nil,
         toolbarVisibility: Bool? = nil,
         projectActionsVisibility: Bool? = nil,
-        tabPickerVisibility: Bool? = nil
+        tabPickerVisibility: Bool? = nil,
+        initialTab: String? = nil
     ) {
         self.statusBarVisibility = statusBarVisibility
         self.toolbarVisibility = toolbarVisibility
         self.projectActionsVisibility = projectActionsVisibility
         self.tabPickerVisibility = tabPickerVisibility
         self.columnVisibility = initialColumnVisibility
+        self.initialTab = initialTab
     }
 
     var body: some View {
         ContentView(
             defaultStatusBarVisibility: statusBarVisibility,
-            defaultTab: tab,
+            defaultTab: initialTab,
             defaultColumnVisibility: columnVisibility,
             defaultProjectActionsVisibility: projectActionsVisibility,
             defaultTabVisibility: tabPickerVisibility
@@ -53,7 +56,8 @@ extension ContentLayout {
             initialColumnVisibility: .detailOnly,
             toolbarVisibility: self.toolbarVisibility,
             projectActionsVisibility: self.projectActionsVisibility,
-            tabPickerVisibility: self.tabPickerVisibility
+            tabPickerVisibility: self.tabPickerVisibility,
+            initialTab: self.initialTab
         )
     }
 
@@ -65,7 +69,8 @@ extension ContentLayout {
             initialColumnVisibility: .all,
             toolbarVisibility: self.toolbarVisibility,
             projectActionsVisibility: self.projectActionsVisibility,
-            tabPickerVisibility: self.tabPickerVisibility
+            tabPickerVisibility: self.tabPickerVisibility,
+            initialTab: self.initialTab
         )
     }
 
@@ -77,7 +82,8 @@ extension ContentLayout {
             initialColumnVisibility: self.columnVisibility,
             toolbarVisibility: self.toolbarVisibility,
             projectActionsVisibility: self.projectActionsVisibility,
-            tabPickerVisibility: self.tabPickerVisibility
+            tabPickerVisibility: self.tabPickerVisibility,
+            initialTab: self.initialTab
         )
     }
 
@@ -89,7 +95,8 @@ extension ContentLayout {
             initialColumnVisibility: self.columnVisibility,
             toolbarVisibility: self.toolbarVisibility,
             projectActionsVisibility: self.projectActionsVisibility,
-            tabPickerVisibility: self.tabPickerVisibility
+            tabPickerVisibility: self.tabPickerVisibility,
+            initialTab: self.initialTab
         )
     }
 
@@ -101,7 +108,8 @@ extension ContentLayout {
             initialColumnVisibility: self.columnVisibility,
             toolbarVisibility: false,
             projectActionsVisibility: self.projectActionsVisibility,
-            tabPickerVisibility: self.tabPickerVisibility
+            tabPickerVisibility: self.tabPickerVisibility,
+            initialTab: self.initialTab
         )
     }
 
@@ -113,7 +121,8 @@ extension ContentLayout {
             initialColumnVisibility: self.columnVisibility,
             toolbarVisibility: true,
             projectActionsVisibility: self.projectActionsVisibility,
-            tabPickerVisibility: self.tabPickerVisibility
+            tabPickerVisibility: self.tabPickerVisibility,
+            initialTab: self.initialTab
         )
     }
 
@@ -125,7 +134,8 @@ extension ContentLayout {
             initialColumnVisibility: self.columnVisibility,
             toolbarVisibility: self.toolbarVisibility,
             projectActionsVisibility: false,
-            tabPickerVisibility: self.tabPickerVisibility
+            tabPickerVisibility: self.tabPickerVisibility,
+            initialTab: self.initialTab
         )
     }
 
@@ -137,7 +147,8 @@ extension ContentLayout {
             initialColumnVisibility: self.columnVisibility,
             toolbarVisibility: self.toolbarVisibility,
             projectActionsVisibility: true,
-            tabPickerVisibility: self.tabPickerVisibility
+            tabPickerVisibility: self.tabPickerVisibility,
+            initialTab: self.initialTab
         )
     }
 
@@ -149,7 +160,8 @@ extension ContentLayout {
             initialColumnVisibility: self.columnVisibility,
             toolbarVisibility: self.toolbarVisibility,
             projectActionsVisibility: self.projectActionsVisibility,
-            tabPickerVisibility: false
+            tabPickerVisibility: false,
+            initialTab: self.initialTab
         )
     }
 
@@ -161,7 +173,22 @@ extension ContentLayout {
             initialColumnVisibility: self.columnVisibility,
             toolbarVisibility: self.toolbarVisibility,
             projectActionsVisibility: self.projectActionsVisibility,
-            tabPickerVisibility: true
+            tabPickerVisibility: true,
+            initialTab: self.initialTab
+        )
+    }
+
+    /// 设置初始标签页
+    /// - Parameter tab: 要设置的初始标签页名称
+    /// - Returns: 一个新的ContentView实例，初始标签页被设置
+    func setInitialTab(_ tab: String) -> ContentLayout {
+        return ContentLayout(
+            statusBarVisibility: self.statusBarVisibility,
+            initialColumnVisibility: self.columnVisibility,
+            toolbarVisibility: self.toolbarVisibility,
+            projectActionsVisibility: self.projectActionsVisibility,
+            tabPickerVisibility: self.tabPickerVisibility,
+            initialTab: tab
         )
     }
 }

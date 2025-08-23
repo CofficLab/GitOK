@@ -146,7 +146,12 @@ extension ContentView {
         }
 
         if let d = defaultTab {
+            os_log("\(self.t)🎯 Setting default tab to: \(d)")
             self.tab = d
+        } else {
+            // 如果没有提供默认标签页，使用Git标签页作为默认值
+            os_log("\(self.t)🎯 No default tab provided, using GitPlugin.label: \(GitPlugin.label)")
+            self.tab = GitPlugin.label
         }
 
         if let d = defaultStatusBarVisibility {

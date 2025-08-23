@@ -6,17 +6,39 @@ import MediaPlayer
 import OSLog
 import SwiftUI
 
+/**
+    图标提供者，统一管理所有图标插件相关的状态
+ */
 class IconProvider: NSObject, ObservableObject, SuperLog {
-    @Published var snapshotTapped: Bool = false
     @Published private(set) var currentModel: IconModel? = nil
 
     static var emoji = "🍒"
 
-    // 当前从候选列表中选中的图标ID
-    @Published var iconId: Int = 0
+    /// 当前从候选列表中选中的图标ID
+    /// 用于在图标选择器中高亮显示选中的图标
+    @Published var selectedIconId: String = ""
+    
+    /// 当前选中的图标分类
+    @Published var selectedCategory: IconCategory?
+    
+    /// 当前选中的图标分类名称（兼容性属性）
+    var selectedCategoryName: String {
+        selectedCategory?.name ?? ""
+    }
+    
+    /// 所有可用的图标分类名称（兼容性属性）
+    var availableCategories: [String] {
+        IconRepo.shared.getAllCategories().map { $0.name }
+    }
 
     override init() {
         super.init()
+        
+        os_log("\(self.t)Initializing IconProvider")
+        
+        // 初始化时加载分类
+        refreshCategories()
+        
         NotificationCenter.default.addObserver(
             self, selector: #selector(handleIconDidSave),
             name: .iconDidSave,
@@ -33,10 +55,14 @@ class IconProvider: NSObject, ObservableObject, SuperLog {
     }
 
     @objc private func handleIconDidSave(_ notification: Notification) {
+        // 只有在图标真正保存时才更新模型，避免参数调整时的频繁更新
         let iconPath = self.currentModel?.path
         if let iconPath = iconPath {
             let newModel = try? IconModel.fromJSONFile(URL(fileURLWithPath: iconPath))
-            self.updateCurrentModel(newModel: newModel, reason: "iconDidSave event")
+            // 只在模型真正发生变化时才更新
+            if let newModel = newModel, newModel.path != self.currentModel?.path {
+                self.updateCurrentModel(newModel: newModel, reason: "iconDidSave event")
+            }
         }
     }
 
@@ -52,13 +78,62 @@ class IconProvider: NSObject, ObservableObject, SuperLog {
 
         self.currentModel = newModel
     }
+    
+    /**
+        选择图标
+     */
+    func selectIcon(_ iconId: String) {
+        self.selectedIconId = iconId
+        
+        // 如果当前有图标模型，同时更新模型
+        if var model = self.currentModel {
+            do {
+                try model.updateIconId(iconId)
+            } catch {
+                os_log(.error, "\(self.t)Failed to update model iconId: \(error)")
+            }
+        }
+    }
+    
+    /**
+        选择图标分类
+     */
+    func selectCategory(_ category: IconCategory) {
+        self.selectedCategory = category
+    }
+    
+    /**
+        刷新可用分类列表
+     */
+    func refreshCategories() {
+        let allCategories = IconRepo.shared.getAllCategories()
+
+        // 如果当前选中的分类不存在，选择第一个
+        if let selected = selectedCategory,
+           !allCategories.contains(where: { $0.id == selected.id }) {
+            selectedCategory = allCategories.first
+        }
+        
+        // 如果没有选中的分类，选择第一个
+        if selectedCategory == nil && !allCategories.isEmpty {
+            selectedCategory = allCategories.first
+        }
+    }
+    
+    /// 获取指定名称的分类
+    /// - Parameter name: 分类名称
+    /// - Returns: 分类实例，如果不存在则返回nil
+    func getCategory(byName name: String) -> IconCategory? {
+        IconRepo.shared.getCategory(byName: name)
+    }
 }
 
 #Preview("App - Small Screen") {
     RootView {
-        ContentLayout()
+        ContentLayout().setInitialTab("Icon")
             .hideSidebar()
             .hideProjectActions()
+            .setInitialTab("Icon")
     }
     .frame(width: 800)
     .frame(height: 600)
@@ -66,8 +141,9 @@ class IconProvider: NSObject, ObservableObject, SuperLog {
 
 #Preview("App - Big Screen") {
     RootView {
-        ContentLayout()
+        ContentLayout().setInitialTab("Icon")
             .hideSidebar()
+            .setInitialTab("Icon")
     }
     .frame(width: 1200)
     .frame(height: 1200)
