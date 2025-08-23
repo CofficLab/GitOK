@@ -31,9 +31,6 @@ struct XcodeMaker: View {
                         .font(.caption)
                         .fontWeight(.medium)
                     IconPreview(icon: icon, platform: "macOS")
-                        .frame(width: 64, height: 64)
-                        .background(Color.gray.opacity(0.2))
-                        .cornerRadius(12)
                 }
 
                 // iOS 预览
@@ -42,9 +39,6 @@ struct XcodeMaker: View {
                         .font(.caption)
                         .fontWeight(.medium)
                     IconPreview(icon: icon, platform: "iOS")
-                        .frame(width: 64, height: 64)
-                        .background(Color.gray.opacity(0.2))
-                        .cornerRadius(12)
                 }
             }
         }

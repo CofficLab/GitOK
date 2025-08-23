@@ -17,7 +17,7 @@ struct IconMaker: View {
     var body: some View {
         Group {
             if self.icon != nil {
-                HStack(spacing: 20) {
+                HStack(spacing: 2) {
                     XcodeMaker(icon: icon!)
                         .frame(maxWidth: .infinity)
 
@@ -49,7 +49,7 @@ struct IconMaker: View {
             .hideProjectActions()
     }
     .frame(width: 800)
-    .frame(height: 600)
+    .frame(height: 800)
 }
 
 #Preview("App - Big Screen") {
