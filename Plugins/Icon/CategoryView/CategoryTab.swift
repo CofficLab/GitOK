@@ -23,12 +23,10 @@ struct CategoryTab: View {
                 Text(category.displayName)
                     .font(.caption)
                     .fontWeight(.medium)
-                Text("\(category.iconCount)")
-                    .font(.caption2)
-                    .foregroundColor(.secondary)
             }
             .padding(.horizontal, 12)
             .padding(.vertical, 8)
+            .frame(maxWidth: .infinity)
             .background(isSelected ? Color.accentColor.opacity(0.2) : Color.clear)
             .foregroundColor(isSelected ? .accentColor : .primary)
             .cornerRadius(8)
