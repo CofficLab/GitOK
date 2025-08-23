@@ -90,27 +90,67 @@ struct IconCategory: Identifiable, Hashable {
         iconIds.contains(iconId)
     }
     
+    /// 查找指定图标ID的文件URL
+    /// - Parameter iconId: 图标ID
+    /// - Returns: 图标文件URL，如果找不到则返回nil
+    private func findIconFileURL(for iconId: String) -> URL? {
+        let supportedFormats = ["png", "svg", "jpg", "jpeg", "gif", "webp"]
+        
+        // 对于哈希文件名，直接查找文件（不需要添加扩展名）
+        let directURL = categoryURL.appendingPathComponent(iconId)
+        if FileManager.default.fileExists(atPath: directURL.path) {
+            return directURL
+        }
+        
+        // 如果直接查找失败，尝试添加扩展名查找
+        // 优先查找PNG格式
+        let pngURL = categoryURL.appendingPathComponent("\(iconId).png")
+        if FileManager.default.fileExists(atPath: pngURL.path) {
+            return pngURL
+        }
+        
+        // 查找其他支持的格式
+        for format in supportedFormats {
+            if format == "png" { continue } // 已经检查过了
+            
+            let url = categoryURL.appendingPathComponent("\(iconId).\(format)")
+            if FileManager.default.fileExists(atPath: url.path) {
+                return url
+            }
+        }
+        
+        return nil
+    }
+    
     /// 获取分类下的所有图标资源
     /// - Returns: IconAsset数组
     func getAllIconAssets() -> [IconAsset] {
-        return iconIds.map { iconId in
-            IconAsset(categoryName: name, iconId: iconId)
+        return iconIds.compactMap { iconId in
+            if let fileURL = findIconFileURL(for: iconId) {
+                return IconAsset(fileURL: fileURL)
+            }
+            return nil
         }
     }
     
     /// 获取分类下的所有图标资源（异步版本，适用于大量图标）
     /// - Returns: IconAsset数组的异步结果
     func getAllIconAssetsAsync() async -> [IconAsset] {
-        return await withTaskGroup(of: IconAsset.self) { group in
+        return await withTaskGroup(of: IconAsset?.self) { group in
             for iconId in iconIds {
                 group.addTask {
-                    IconAsset(categoryName: self.name, iconId: iconId)
+                    if let fileURL = self.findIconFileURL(for: iconId) {
+                        return IconAsset(fileURL: fileURL)
+                    }
+                    return nil
                 }
             }
             
             var assets: [IconAsset] = []
             for await asset in group {
-                assets.append(asset)
+                if let asset = asset {
+                    assets.append(asset)
+                }
             }
             return assets.sorted { $0.iconId < $1.iconId }
         }

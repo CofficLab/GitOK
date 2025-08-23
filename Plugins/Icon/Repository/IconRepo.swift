@@ -82,6 +82,44 @@ class IconRepo: SuperLog {
     func getCategory(byName name: String) -> IconCategory? {
         return getAllCategories().first { $0.name == name }
     }
+    
+    /// 智能查找图标文件
+    /// - Parameters:
+    ///   - categoryName: 分类名称
+    ///   - iconId: 图标ID（支持数字ID和哈希文件名）
+    /// - Returns: 图标文件URL，如果找不到则返回nil
+    static func findIconFile(categoryName: String, iconId: String) -> URL? {
+        guard let iconFolderURL = getIconFolderURL() else { 
+            return nil 
+        }
+        
+        let categoryURL = iconFolderURL.appendingPathComponent(categoryName)
+        
+        // 对于哈希文件名，直接查找文件（不需要添加扩展名）
+        // 首先检查是否已经是完整的文件名（包含扩展名）
+        let directURL = categoryURL.appendingPathComponent(iconId)
+        if FileManager.default.fileExists(atPath: directURL.path) {
+            return directURL
+        }
+        
+        // 如果直接查找失败，尝试添加扩展名查找
+        // 优先查找PNG格式
+        let pngURL = categoryURL.appendingPathComponent("\(iconId).png")
+        if FileManager.default.fileExists(atPath: pngURL.path) {
+            return pngURL
+        }
+        
+        // 查找其他支持的格式
+        let supportedFormats = ["svg", "jpg", "jpeg", "gif", "webp"]
+        for format in supportedFormats {
+            let url = categoryURL.appendingPathComponent("\(iconId).\(format)")
+            if FileManager.default.fileExists(atPath: url.path) {
+                return url
+            }
+        }
+        
+        return nil
+    }
 }
 
 #Preview("App - Small Screen") {
