@@ -8,16 +8,15 @@ struct IconBgs: View {
 
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 10) {
+            HStack(spacing: 6) {
                 ForEach(0 ..< MagicBackgroundGroup.all.count, id: \.self) { index in
                     let gradient = MagicBackgroundGroup.all[index]
                     makeItem(gradient)
-                        .frame(width: 50, height: 50)
+                        .frame(width: 22, height: 22)
                 }
             }
-            .padding(.horizontal, 10)
         }
-        .frame(height: 70)
+        .frame(height: 30)
     }
 
     func makeItem(_ gradient: MagicBackgroundGroup.GradientName) -> some View {
@@ -53,7 +52,7 @@ struct IconBgs: View {
             .hideProjectActions()
     }
     .frame(width: 800)
-    .frame(height: 600)
+    .frame(height: 800)
 }
 
 #Preview("App - Big Screen") {
