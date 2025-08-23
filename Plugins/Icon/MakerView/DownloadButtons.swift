@@ -148,13 +148,13 @@ struct DownloadButtons: View {
         await generateIOSIcons(folderPath: folderPath, tag: tag)
         
         // 生成Contents.json文件
-        await generateContentJson(folderPath: folderPath)
+        await generateContentJson(folderPath: folderPath, tag: tag)
         
         MagicMessageProvider.shared.success("Xcode图标已生成到：\(folderPath.path)")
     }
     
     @MainActor private func generateMacOSIcons(folderPath: URL, tag: String) async {
-        let sizes = [16, 32, 64, 128, 256, 512, 1024]
+        let sizes = [16, 32, 128, 256, 512]
         
         for size in sizes {
             let fileName = "\(tag)-macOS-\(size)x\(size).png"
@@ -208,16 +208,14 @@ struct DownloadButtons: View {
         )
     }
     
-    @MainActor private func generateContentJson(folderPath: URL) async {
+    @MainActor private func generateContentJson(folderPath: URL, tag: String) async {
         let imageSet: [[String: Any]] = [
-            ["filename": "icon-16x16.png", "idiom": "mac", "scale": "1x", "size": "16x16"],
-            ["filename": "icon-32x32.png", "idiom": "mac", "scale": "1x", "size": "32x32"],
-            ["filename": "icon-64x64.png", "idiom": "mac", "scale": "1x", "size": "64x64"],
-            ["filename": "icon-128x128.png", "idiom": "mac", "scale": "1x", "size": "128x128"],
-            ["filename": "icon-256x256.png", "idiom": "mac", "scale": "1x", "size": "256x256"],
-            ["filename": "icon-512x512.png", "idiom": "mac", "scale": "1x", "size": "512x512"],
-            ["filename": "icon-1024x1024.png", "idiom": "mac", "scale": "1x", "size": "1024x1024"],
-            ["filename": "icon-1024x1024.png", "idiom": "universal", "platform": "ios", "size": "1024x1024"]
+            ["filename": "\(tag)-macOS-16x16.png", "idiom": "mac", "scale": "1x", "size": "16x16"],
+            ["filename": "\(tag)-macOS-32x32.png", "idiom": "mac", "scale": "1x", "size": "32x32"],
+            ["filename": "\(tag)-macOS-128x128.png", "idiom": "mac", "scale": "1x", "size": "128x128"],
+            ["filename": "\(tag)-macOS-256x256.png", "idiom": "mac", "scale": "1x", "size": "256x256"],
+            ["filename": "\(tag)-macOS-512x512.png", "idiom": "mac", "scale": "1x", "size": "512x512"],
+            ["filename": "\(tag)-iOS-1024x1024.png", "idiom": "universal", "platform": "ios", "size": "1024x1024"]
         ]
         
         let jsonData = try! JSONSerialization.data(
