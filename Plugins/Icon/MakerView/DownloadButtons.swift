@@ -9,6 +9,8 @@ import SwiftUI
 struct DownloadButtons: View {
     let icon: IconModel
     @State private var isGenerating = false
+    @State private var pngAddCornerRadius = false
+    @State private var pngCornerRadius: Double = 8
     
     var body: some View {
         VStack(spacing: 20) {
@@ -20,9 +22,9 @@ struct DownloadButtons: View {
                 // Xcode 格式下载
                 DownloadButton(
                     title: "下载 Xcode 格式",
-                    subtitle: "iOS & macOS 应用图标",
                     icon: "app.badge",
-                    color: .blue
+                    color: .blue,
+                    infoText: "生成适用于 iOS 和 macOS 应用的图标集，包含 Contents.json 文件，可直接导入到 Xcode 项目中。支持多种尺寸：16×16、32×32、64×64、128×128、256×256、512×512、1024×1024。"
                 ) {
                     downloadXcodeFormat()
                 }
@@ -30,9 +32,9 @@ struct DownloadButtons: View {
                 // Favicon 格式下载
                 DownloadButton(
                     title: "下载 Favicon 格式",
-                    subtitle: "网站图标 (16×16, 32×32, 48×48)",
                     icon: "globe",
-                    color: .green
+                    color: .green,
+                    infoText: "生成网站图标文件，包含三种常用尺寸：16×16、32×32、48×48。还会生成 HTML 引用代码文件，方便集成到网站中。适用于网页标签栏、书签等场景。"
                 ) {
                     downloadFaviconFormat()
                 }
@@ -40,12 +42,47 @@ struct DownloadButtons: View {
                 // 通用 PNG 格式下载
                 DownloadButton(
                     title: "下载 PNG 格式",
-                    subtitle: "高分辨率图标文件",
                     icon: "photo",
-                    color: .orange
+                    color: .orange,
+                    infoText: "生成高分辨率 PNG 图标文件，包含多种尺寸：16×16、32×32、64×64、128×128、256×256、512×512、1024×1024。支持自定义圆角设置，适用于各种设计场景。"
                 ) {
                     downloadPNGFormat()
                 }
+                
+                // PNG 圆角选项
+                VStack(alignment: .leading, spacing: 12) {
+                    HStack {
+                        Toggle("添加圆角", isOn: $pngAddCornerRadius)
+                            .toggleStyle(SwitchToggleStyle())
+                        
+                        Spacer()
+                        
+                        if pngAddCornerRadius {
+                            Text("圆角: \(Int(pngCornerRadius))px")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                    
+                    if pngAddCornerRadius {
+                        HStack {
+                            Text("圆角大小")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                            
+                            Slider(value: $pngCornerRadius, in: 0...50, step: 1)
+                            
+                            Text("\(Int(pngCornerRadius))")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                                .frame(width: 30, alignment: .trailing)
+                        }
+                    }
+                }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 12)
+                .background(Color.orange.opacity(0.05))
+                .cornerRadius(8)
             }
         }
         .padding()
@@ -128,7 +165,7 @@ struct DownloadButtons: View {
                     ZStack {
                         icon.background
                             .frame(width: CGFloat(size), height: CGFloat(size))
-                            .cornerRadius(CGFloat(size) * 0.2)
+                            .cornerRadius(pngAddCornerRadius ? CGFloat(pngCornerRadius) : 0)
                         
                         icon.image
                             .resizable()
@@ -155,7 +192,7 @@ struct DownloadButtons: View {
                 ZStack {
                     icon.background
                         .frame(width: CGFloat(size), height: CGFloat(size))
-                        .cornerRadius(CGFloat(size) * 0.2)
+                        .cornerRadius(pngAddCornerRadius ? CGFloat(pngCornerRadius) : 0)
                     
                     icon.image
                         .resizable()
@@ -229,7 +266,7 @@ struct DownloadButtons: View {
                 ZStack {
                     icon.background
                         .frame(width: CGFloat(size), height: CGFloat(size))
-                        .cornerRadius(CGFloat(size) * 0.2)
+                        .cornerRadius(pngAddCornerRadius ? CGFloat(pngCornerRadius) : 0)
                     
                     icon.image
                         .resizable()
@@ -304,7 +341,7 @@ struct DownloadButtons: View {
                 ZStack {
                     icon.background
                         .frame(width: CGFloat(size), height: CGFloat(size))
-                        .cornerRadius(CGFloat(size) * 0.2)
+                        .cornerRadius(pngAddCornerRadius ? CGFloat(pngCornerRadius) : 0)
                     
                     icon.image
                         .resizable()
@@ -318,52 +355,6 @@ struct DownloadButtons: View {
         }
         
         MagicMessageProvider.shared.success("PNG图标已生成到：\(folderPath.path)")
-    }
-}
-
-/**
- * 单个下载按钮组件
- */
-struct DownloadButton: View {
-    let title: String
-    let subtitle: String
-    let icon: String
-    let color: Color
-    let action: () -> Void
-    
-    var body: some View {
-        Button(action: action) {
-            HStack(spacing: 16) {
-                Image(systemName: icon)
-                    .font(.title2)
-                    .foregroundColor(color)
-                    .frame(width: 24)
-                
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(title)
-                        .font(.headline)
-                        .foregroundColor(.primary)
-                    
-                    Text(subtitle)
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                }
-                
-                Spacer()
-                
-                Image(systemName: "arrow.down.circle")
-                    .font(.title3)
-                    .foregroundColor(color)
-            }
-            .padding()
-            .background(Color.gray.opacity(0.05))
-            .cornerRadius(8)
-            .overlay(
-                RoundedRectangle(cornerRadius: 8)
-                    .stroke(color.opacity(0.3), lineWidth: 1)
-            )
-        }
-        .buttonStyle(PlainButtonStyle())
     }
 }
 
