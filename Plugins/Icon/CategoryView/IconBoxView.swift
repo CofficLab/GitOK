@@ -15,6 +15,8 @@ struct IconBoxView: View {
             // 分类标签页
             CategoryTabs()
             
+            Divider().padding(.bottom)
+            
             // 图标网格
             GeometryReader { geo in
                 ScrollView {
@@ -56,7 +58,7 @@ struct IconBoxView: View {
     }
     
     private func updateGridItems(_ geo: GeometryProxy) {
-        let columns = max(Int(geo.size.width / 80), 1)
+        let columns = max(Int(geo.size.width / 60), 1)
         gridItems = Array(repeating: .init(.flexible()), count: columns)
     }
     
@@ -79,7 +81,7 @@ struct IconBoxView: View {
             .hideProjectActions()
     }
     .frame(width: 800)
-    .frame(height: 600)
+    .frame(height: 800)
 }
 
 #Preview("App - Big Screen") {

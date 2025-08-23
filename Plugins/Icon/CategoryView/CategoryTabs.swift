@@ -1,5 +1,5 @@
-import SwiftUI
 import MagicCore
+import SwiftUI
 
 /**
  * 分类标签页组件
@@ -9,40 +9,31 @@ import MagicCore
 struct CategoryTabs: View {
     @EnvironmentObject var iconProvider: IconProvider
     @EnvironmentObject var m: MagicMessageProvider
-    
+
     var body: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 8) {
-                ForEach(IconRepo.shared.getAllCategories(), id: \.id) { category in
-                    CategoryTab(
-                        category: category,
-                        isSelected: iconProvider.selectedCategory?.id == category.id
-                    ) {
-                        iconProvider.selectCategory(category.name)
+        HStack(spacing: 8) {
+            // 左侧：分类标签页（可滚动）
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 8) {
+                    ForEach(IconRepo.shared.getAllCategories(), id: \.id) { category in
+                        CategoryTab(
+                            category: category,
+                            isSelected: iconProvider.selectedCategory?.id == category.id
+                        ) {
+                            iconProvider.selectCategory(category.name)
+                        }
                     }
                 }
-                
-                // 换图按钮 - 作为分类标签页的最后一个选项
-                Button(action: changeImage) {
-                    HStack(spacing: 4) {
-                        Image(systemName: "photo.badge.plus")
-                            .font(.caption)
-                        Text("换图")
-                            .font(.caption)
-                    }
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 6)
-                    .background(Color.blue.opacity(0.1))
-                    .foregroundColor(.blue)
-                    .cornerRadius(6)
-                }
-                .buttonStyle(.plain)
-                .help("更换当前图标的图片")
             }
-            .padding(.horizontal)
+
+            // 右侧：换图按钮（固定位置）
+            Button(action: changeImage) {
+                Image.add
+            }
+            .buttonStyle(.plain)
         }
     }
-    
+
     private func changeImage() {
         let panel = NSOpenPanel()
         panel.allowsMultipleSelection = false
@@ -50,7 +41,7 @@ struct CategoryTabs: View {
         panel.allowedContentTypes = [.image]
         panel.message = "选择新的图片文件"
         panel.prompt = "选择图片"
-        
+
         if panel.runModal() == .OK, let url = panel.url {
             do {
                 if var icon = iconProvider.currentModel {
@@ -73,7 +64,7 @@ struct CategoryTabs: View {
             .hideProjectActions()
     }
     .frame(width: 800)
-    .frame(height: 600)
+    .frame(height: 800)
 }
 
 #Preview("App - Big Screen") {
