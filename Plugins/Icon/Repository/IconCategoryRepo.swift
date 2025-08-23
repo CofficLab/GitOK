@@ -131,55 +131,13 @@ class IconCategoryRepo: ObservableObject, SuperLog {
                     return nil
                 }
                 
-                return createCategory(from: itemPath, name: item)
+                return IconCategory(folderPath: itemPath)
             }.sorted { $0.name < $1.name }
             
             return categories
         } catch {
             os_log(.error, "\(self.t)无法扫描分类目录：\(error.localizedDescription)")
             return []
-        }
-    }
-    
-    /// 创建分类对象
-    /// - Parameters:
-    ///   - folderPath: 分类文件夹路径
-    ///   - name: 分类名称
-    /// - Returns: 分类实例
-    private func createCategory(from folderPath: String, name: String) -> IconCategory? {
-        do {
-            let files = try FileManager.default.contentsOfDirectory(atPath: folderPath)
-            
-            // 支持多种图标文件格式
-            let supportedFormats = ["png", "svg", "jpg", "jpeg", "gif", "webp"]
-            let iconFiles = files.filter { filename in
-                let fileExtension = filename.lowercased()
-                return supportedFormats.contains { format in
-                    fileExtension.hasSuffix(".\(format)")
-                }
-            }
-            
-            // 对于哈希文件名，我们使用文件名本身作为ID
-            // 对于数字文件名，我们使用数字作为ID
-            let iconIds = iconFiles.compactMap { filename -> String? in
-                let nameWithoutExt = (filename as NSString).deletingPathExtension
-                // 尝试转换为数字，如果失败则使用原始文件名
-                if let numericId = Int(nameWithoutExt) {
-                    return String(numericId)
-                } else {
-                    // 哈希文件名，直接使用
-                    return nameWithoutExt
-                }
-            }.sorted()
-            
-            return IconCategory(
-                name: name,
-                iconCount: iconFiles.count,
-                iconIds: iconIds
-            )
-        } catch {
-            os_log(.error, "\(self.t)无法读取分类 \(name) 的文件：\(error.localizedDescription)")
-            return nil
         }
     }
     

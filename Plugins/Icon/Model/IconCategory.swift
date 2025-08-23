@@ -9,14 +9,50 @@ struct IconCategory: Identifiable, Hashable {
     /// 分类的唯一标识符
     let id = UUID()
     
-    /// 分类名称
-    let name: String
+    /// 分类文件夹路径
+    let folderPath: String
     
-    /// 分类下的图标数量
-    let iconCount: Int
+    /// 分类名称（从路径动态计算）
+    var name: String {
+        (folderPath as NSString).lastPathComponent
+    }
     
-    /// 分类下的所有图标ID（支持数字ID和哈希文件名）
-    let iconIds: [String]
+    /// 分类下的图标数量（动态计算）
+    var iconCount: Int {
+        iconIds.count
+    }
+    
+    /// 分类下的所有图标ID（动态计算）
+    var iconIds: [String] {
+        do {
+            let files = try FileManager.default.contentsOfDirectory(atPath: folderPath)
+            
+            // 支持多种图标文件格式
+            let supportedFormats = ["png", "svg", "jpg", "jpeg", "gif", "webp"]
+            let iconFiles = files.filter { filename in
+                let fileExtension = filename.lowercased()
+                return supportedFormats.contains { format in
+                    fileExtension.hasSuffix(".\(format)")
+                }
+            }
+            
+            // 对于哈希文件名，我们使用文件名本身作为ID
+            // 对于数字文件名，我们使用数字作为ID
+            return iconFiles.compactMap { filename -> String? in
+                let nameWithoutExt = (filename as NSString).deletingPathExtension
+                // 尝试转换为数字，如果失败则使用原始文件名
+                if let numericId = Int(nameWithoutExt) {
+                    return String(numericId)
+                } else {
+                    // 哈希文件名，直接使用
+                    return nameWithoutExt
+                }
+            }.sorted()
+        } catch {
+            print("无法读取分类文件夹 \(folderPath): \(error.localizedDescription)")
+            return []
+        }
+    }
     
     /// 分类的显示名称（用于UI显示）
     var displayName: String {
@@ -29,55 +65,22 @@ struct IconCategory: Identifiable, Hashable {
     }
     
     /// 初始化方法
-    /// - Parameters:
-    ///   - name: 分类名称
-    ///   - iconCount: 图标数量
-    ///   - iconIds: 图标ID数组（支持数字ID和哈希文件名）
-    init(name: String, iconCount: Int = 0, iconIds: [String] = []) {
-        self.name = name
-        self.iconCount = iconCount
-        self.iconIds = iconIds
+    /// - Parameter folderPath: 分类文件夹路径
+    init(folderPath: String) {
+        self.folderPath = folderPath
     }
     
     /// 从文件夹路径创建分类
     /// - Parameter folderPath: 分类文件夹路径
     /// - Returns: 分类实例，如果路径无效则返回nil
     static func fromFolder(_ folderPath: String) -> IconCategory? {
-        let folderName = (folderPath as NSString).lastPathComponent
-        
-        do {
-            let files = try FileManager.default.contentsOfDirectory(atPath: folderPath)
-            // 支持多种图标文件格式
-            let supportedFormats = ["png", "svg", "jpg", "jpeg", "gif", "webp"]
-            let iconFiles = files.filter { filename in
-                let fileExtension = filename.lowercased()
-                return supportedFormats.contains { format in
-                    fileExtension.hasSuffix(".\(format)")
-                }
-            }
-            
-            // 对于哈希文件名，我们使用文件名本身作为ID
-            // 对于数字文件名，我们使用数字作为ID
-            let iconIds = iconFiles.compactMap { filename -> String? in
-                let nameWithoutExt = (filename as NSString).deletingPathExtension
-                // 尝试转换为数字，如果失败则使用原始文件名
-                if let numericId = Int(nameWithoutExt) {
-                    return String(numericId)
-                } else {
-                    // 哈希文件名，直接使用
-                    return nameWithoutExt
-                }
-            }.sorted()
-            
-            return IconCategory(
-                name: folderName,
-                iconCount: iconFiles.count,
-                iconIds: iconIds
-            )
-        } catch {
-            print("无法读取分类文件夹 \(folderPath): \(error.localizedDescription)")
+        var isDir: ObjCBool = false
+        guard FileManager.default.fileExists(atPath: folderPath, isDirectory: &isDir),
+              isDir.boolValue else {
             return nil
         }
+        
+        return IconCategory(folderPath: folderPath)
     }
     
     /// 获取指定ID的图标
@@ -282,17 +285,13 @@ class IconCategoryManager: ObservableObject {
 // MARK: - 预览扩展
 extension IconCategory {
     /// 预览用的示例分类
-    static let preview = IconCategory(
-        name: "Sample",
-        iconCount: 5,
-        iconIds: ["1", "2", "3", "4", "5"]
-    )
+    static let preview = IconCategory(folderPath: "/Sample")
     
     /// 预览用的示例分类列表
     static let previewList = [
-        IconCategory(name: "Animals", iconCount: 10, iconIds: Array(1...10).map { String($0) }),
-        IconCategory(name: "Food", iconCount: 8, iconIds: Array(1...8).map { String($0) }),
-        IconCategory(name: "Objects", iconCount: 15, iconIds: Array(1...15).map { String($0) })
+        IconCategory(folderPath: "/Animals"),
+        IconCategory(folderPath: "/Food"),
+        IconCategory(folderPath: "/Objects")
     ]
 }
 
