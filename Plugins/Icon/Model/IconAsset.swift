@@ -62,37 +62,7 @@ class IconAsset: Identifiable {
     /// 默认图标文件格式（优先查找）
     private static let defaultFormat = "png"
     
-    // 获取指定分类下的所有图标ID（委托给IconCategory）
-    static func getIconIds(in category: String) -> [String] {
-        guard let iconFolderURL = IconRepo.getIconFolderURL() else {
-            return []
-        }
-        
-        let categoryURL = iconFolderURL.appendingPathComponent(category)
-        do {
-            let files = try FileManager.default.contentsOfDirectory(atPath: categoryURL.path)
-            
-            // 支持多种图标文件格式
-            let supportedFormats = ["png", "svg", "jpg", "jpeg", "gif", "webp"]
-            
-            // 过滤所有支持的图标文件格式并提取ID
-            let iconIds = files.compactMap { filename -> String? in
-                let fileExtension = filename.lowercased()
-                guard supportedFormats.contains(where: { format in
-                    fileExtension.hasSuffix(".\(format)")
-                }) else { return nil }
-                
-                let nameWithoutExt = (filename as NSString).deletingPathExtension
-                // 对于哈希文件名，直接使用原始文件名
-                // 对于数字文件名，转换为字符串
-                return nameWithoutExt
-            }.sorted()
-            
-            return iconIds
-        } catch {
-            return []
-        }
-    }
+
     
     // 获取指定分类和ID的图标
     static func getImage(categoryURL: URL, iconId: String) -> Image {
@@ -218,25 +188,12 @@ class IconAsset: Identifiable {
     
     static func getImage(_ iconId: String) -> Image {
         // 在所有分类中查找图标
-        guard let iconFolderURL = IconRepo.getIconFolderURL() else {
-            return Image(systemName: "plus")
-        }
+        let allCategories = IconRepo.shared.getAllCategories()
         
-        do {
-            let categories = try FileManager.default.contentsOfDirectory(atPath: iconFolderURL.path)
-            for category in categories {
-                let categoryURL = iconFolderURL.appendingPathComponent(category)
-                var isDir: ObjCBool = false
-                guard FileManager.default.fileExists(atPath: categoryURL.path, isDirectory: &isDir),
-                      isDir.boolValue else { continue }
-                
-                let iconIds = getIconIds(in: category)
-                if iconIds.contains(iconId) {
-                    return getImage(categoryURL: categoryURL, iconId: iconId)
-                }
+        for category in allCategories {
+            if category.iconIds.contains(iconId) {
+                return getImage(categoryURL: category.categoryURL, iconId: iconId)
             }
-        } catch {
-            // 处理错误
         }
         
         return Image(systemName: "plus")
@@ -244,25 +201,12 @@ class IconAsset: Identifiable {
     
     static func getThumbnail(_ iconId: String) -> Image {
         // 在所有分类中查找图标
-        guard let iconFolderURL = IconRepo.getIconFolderURL() else {
-            return Image(systemName: "plus")
-        }
+        let allCategories = IconRepo.shared.getAllCategories()
         
-        do {
-            let categories = try FileManager.default.contentsOfDirectory(atPath: iconFolderURL.path)
-            for category in categories {
-                let categoryURL = iconFolderURL.appendingPathComponent(category)
-                var isDir: ObjCBool = false
-                guard FileManager.default.fileExists(atPath: categoryURL.path, isDirectory: &isDir),
-                      isDir.boolValue else { continue }
-                
-                let iconIds = getIconIds(in: category)
-                if iconIds.contains(iconId) {
-                    return getThumbnail(categoryURL: categoryURL, iconId: iconId)
-                }
+        for category in allCategories {
+            if category.iconIds.contains(iconId) {
+                return getThumbnail(categoryURL: category.categoryURL, iconId: iconId)
             }
-        } catch {
-            // 处理错误
         }
         
         return Image(systemName: "plus")
