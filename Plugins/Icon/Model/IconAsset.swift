@@ -8,9 +8,6 @@ import Cocoa
  * 支持多种文件格式（PNG、SVG等），自动检测和智能查找
  */
 class IconAsset: Identifiable {
-    /// 唯一标识符
-    let id = UUID()
-    
     /// 图标文件URL
     let fileURL: URL
     
@@ -201,50 +198,6 @@ class IconAsset: Identifiable {
         } else {
             return Image(systemName: "plus")
         }
-    }
-    
-    /// 获取指定图标ID的图片（兼容性方法）
-    /// - Parameter iconId: 图标ID
-    /// - Returns: SwiftUI Image
-    static func getImage(_ iconId: String) -> Image {
-        // 在所有分类中查找图标
-        let allCategories = IconRepo.shared.getAllCategories()
-        
-        for category in allCategories {
-            if category.iconIds.contains(iconId) {
-                return getImage(categoryName: category.name, iconId: iconId)
-            }
-        }
-        
-        return Image(systemName: "plus")
-    }
-    
-    /// 获取指定图标ID的缩略图（兼容性方法）
-    /// - Parameter iconId: 图标ID
-    /// - Returns: SwiftUI Image
-    static func getThumbnail(_ iconId: String) -> Image {
-        // 在所有分类中查找图标
-        let allCategories = IconRepo.shared.getAllCategories()
-        
-        for category in allCategories {
-            if category.iconIds.contains(iconId) {
-                return getThumbnail(categoryName: category.name, iconId: iconId)
-            }
-        }
-        
-        return Image(systemName: "plus")
-    }
-    
-    /// 获取图标文件信息（兼容性方法）
-    /// - Parameters:
-    ///   - categoryName: 分类名称
-    ///   - iconId: 图标ID
-    /// - Returns: 图标文件信息字典
-    static func getIconFileInfo(categoryName: String, iconId: String) -> [String: Any]? {
-        guard let fileURL = IconRepo.findIconFile(categoryName: categoryName, iconId: iconId) else { return nil }
-        
-        let iconAsset = IconAsset(fileURL: fileURL)
-        return iconAsset.getIconFileInfo()
     }
 }
 
