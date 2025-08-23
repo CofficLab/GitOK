@@ -8,8 +8,6 @@ struct IconTopBar: View {
     var body: some View {
         VStack(spacing: 0) {
             HStack {
-                IconOpacity()
-                IconScale()
                 Spacer()
                 BtnChangeImage()
             }
