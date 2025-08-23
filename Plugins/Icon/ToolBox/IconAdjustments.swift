@@ -11,6 +11,7 @@ struct IconAdjustments: View {
     /// 本地状态，避免频繁更新IconModel
     @State private var localOpacity: Double = 1.0
     @State private var localScale: Double = 1.0
+    @State private var localCornerRadius: Double = 0.0
     
     var body: some View {
         VStack(spacing: 16) {
@@ -36,6 +37,17 @@ struct IconAdjustments: View {
                             updateScale(newValue)
                         }
                 }
+                
+                // 圆角控制
+                VStack(spacing: 8) {
+                    Text("圆角 \(Int(localCornerRadius))px")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                    Slider(value: $localCornerRadius, in: 0...50, step: 1)
+                        .onChange(of: localCornerRadius) { newValue in
+                            updateCornerRadius(newValue)
+                        }
+                }
             }
         }
         .padding()
@@ -53,6 +65,7 @@ struct IconAdjustments: View {
         if let icon = i.currentModel {
             localOpacity = icon.opacity
             localScale = icon.scale ?? 1.0
+            localCornerRadius = icon.cornerRadius
         }
     }
     
@@ -65,6 +78,12 @@ struct IconAdjustments: View {
     private func updateScale(_ newValue: Double) {
         if var icon = i.currentModel {
             try? icon.updateScale(newValue)
+        }
+    }
+    
+    private func updateCornerRadius(_ newValue: Double) {
+        if var icon = i.currentModel {
+            try? icon.updateCornerRadius(newValue)
         }
     }
 }

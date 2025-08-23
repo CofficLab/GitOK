@@ -22,7 +22,7 @@ struct IconPreview: View {
                     // 背景
                     icon.background
                         .frame(width: availableSize, height: availableSize)
-                        .cornerRadius(availableSize * 0.2)
+                        .cornerRadius(icon.cornerRadius > 0 ? CGFloat(icon.cornerRadius) : 0)
                     
                     // 图标
                     icon.image

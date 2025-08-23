@@ -15,6 +15,7 @@ struct IconModel: SuperJsonModel, SuperEvent, SuperLog {
     var path: String
     var opacity: Double = 1
     var scale: Double? = 1
+    var cornerRadius: Double = 0
 
     var image: Image {
         if let url = self.imageURL {
@@ -39,6 +40,7 @@ struct IconModel: SuperJsonModel, SuperEvent, SuperLog {
         self.backgroundId = backgroundId
         self.imageURL = imageURL
         self.path = path
+        self.cornerRadius = 0
     }
 }
 
@@ -90,6 +92,7 @@ extension IconModel: Codable {
         case imageURL
         case opacity
         case scale
+        case cornerRadius
     }
 
     init(from decoder: Decoder) throws {
@@ -105,6 +108,7 @@ extension IconModel: Codable {
         self.imageURL = try container.decodeIfPresent(URL.self, forKey: .imageURL)
         self.opacity = try container.decodeIfPresent(Double.self, forKey: .opacity) ?? 1.0
         self.scale = try container.decodeIfPresent(Double.self, forKey: .scale)
+        self.cornerRadius = try container.decodeIfPresent(Double.self, forKey: .cornerRadius) ?? 0.0
         self.path = ""
     }
 }
@@ -133,6 +137,11 @@ extension IconModel {
     
     mutating func updateScale(_ s: Double) throws {
         self.scale = s
+        try self.saveToDisk()
+    }
+    
+    mutating func updateCornerRadius(_ radius: Double) throws {
+        self.cornerRadius = radius
         try self.saveToDisk()
     }
 

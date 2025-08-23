@@ -9,8 +9,6 @@ import SwiftUI
 struct DownloadButtons: View {
     let icon: IconModel
     @State private var isGenerating = false
-    @State private var pngAddCornerRadius = false
-    @State private var pngCornerRadius: Double = 8
     
     var body: some View {
         VStack(spacing: 20) {
@@ -49,40 +47,7 @@ struct DownloadButtons: View {
                     downloadPNGFormat()
                 }
                 
-                // PNG 圆角选项
-                VStack(alignment: .leading, spacing: 12) {
-                    HStack {
-                        Toggle("添加圆角", isOn: $pngAddCornerRadius)
-                            .toggleStyle(SwitchToggleStyle())
-                        
-                        Spacer()
-                        
-                        if pngAddCornerRadius {
-                            Text("圆角: \(Int(pngCornerRadius))px")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                        }
-                    }
-                    
-                    if pngAddCornerRadius {
-                        HStack {
-                            Text("圆角大小")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                            
-                            Slider(value: $pngCornerRadius, in: 0...50, step: 1)
-                            
-                            Text("\(Int(pngCornerRadius))")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                                .frame(width: 30, alignment: .trailing)
-                        }
-                    }
-                }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 12)
-                .background(Color.orange.opacity(0.05))
-                .cornerRadius(8)
+
             }
         }
         .padding()
@@ -165,7 +130,7 @@ struct DownloadButtons: View {
                     ZStack {
                         icon.background
                             .frame(width: CGFloat(size), height: CGFloat(size))
-                            .cornerRadius(pngAddCornerRadius ? CGFloat(pngCornerRadius) : 0)
+                            .cornerRadius(icon.cornerRadius > 0 ? CGFloat(icon.cornerRadius) : 0)
                         
                         icon.image
                             .resizable()
@@ -187,25 +152,25 @@ struct DownloadButtons: View {
         let fileName = "\(tag)-iOS-\(size)x\(size).png"
         let saveTo = folderPath.appendingPathComponent(fileName)
         
-        _ = MagicImage.snapshot(
-            MagicImage.makeImage(
-                ZStack {
-                    icon.background
-                        .frame(width: CGFloat(size), height: CGFloat(size))
-                        .cornerRadius(pngAddCornerRadius ? CGFloat(pngCornerRadius) : 0)
-                    
-                    icon.image
-                        .resizable()
-                        .scaledToFit()
-                        .scaleEffect(icon.scale ?? 1.0)
-                        .frame(width: CGFloat(size) * 0.8, height: CGFloat(size) * 0.8)
-                }
+                    _ = MagicImage.snapshot(
+                MagicImage.makeImage(
+                    ZStack {
+                        icon.background
+                            .frame(width: CGFloat(size), height: CGFloat(size))
+                            .cornerRadius(icon.cornerRadius > 0 ? CGFloat(icon.cornerRadius) : 0)
+                        
+                        icon.image
+                            .resizable()
+                            .scaledToFit()
+                            .scaleEffect(icon.scale ?? 1.0)
+                            .frame(width: CGFloat(size) * 0.8, height: CGFloat(size) * 0.8)
+                    }
+                )
+                .resizable()
+                .scaledToFit()
+                .frame(width: CGFloat(size), height: CGFloat(size)),
+                path: saveTo
             )
-            .resizable()
-            .scaledToFit()
-            .frame(width: CGFloat(size), height: CGFloat(size)),
-            path: saveTo
-        )
     }
     
     @MainActor private func generateContentJson(folderPath: URL, tag: String) async {
@@ -264,7 +229,7 @@ struct DownloadButtons: View {
                 ZStack {
                     icon.background
                         .frame(width: CGFloat(size), height: CGFloat(size))
-                        .cornerRadius(pngAddCornerRadius ? CGFloat(pngCornerRadius) : 0)
+                        .cornerRadius(icon.cornerRadius > 0 ? CGFloat(icon.cornerRadius) : 0)
                     
                     icon.image
                         .resizable()
@@ -339,7 +304,7 @@ struct DownloadButtons: View {
                 ZStack {
                     icon.background
                         .frame(width: CGFloat(size), height: CGFloat(size))
-                        .cornerRadius(pngAddCornerRadius ? CGFloat(pngCornerRadius) : 0)
+                        .cornerRadius(icon.cornerRadius > 0 ? CGFloat(icon.cornerRadius) : 0)
                     
                     icon.image
                         .resizable()
