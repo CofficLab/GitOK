@@ -15,8 +15,14 @@ struct CategoryTabs: View {
             // 左侧：分类标签页（可滚动）
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 8) {
-                    ForEach(IconRepo.shared.getAllCategories(), id: \.id) { category in
-                        CategoryTab(category: category)
+                    if iconProvider.isUsingRemoteRepo {
+                        // 显示远程分类
+                        RemoteCategoryTabs()
+                    } else {
+                        // 显示本地分类
+                        ForEach(IconRepo.shared.getAllCategories(), id: \.id) { category in
+                            CategoryTab(category: category)
+                        }
                     }
                 }
             }
@@ -32,14 +38,14 @@ struct CategoryTabs: View {
                 .buttonStyle(.plain)
                 .help("更换图片")
                 
-                // 打开图标仓库按钮
-                Button(action: openIconRepository) {
-                    Image(systemName: "folder")
+                // 仓库切换按钮
+                Button(action: toggleRepository) {
+                    Image(systemName: iconProvider.isUsingRemoteRepo ? "network" : "folder")
                         .font(.title3)
-                        .foregroundColor(.green)
+                        .foregroundColor(iconProvider.isUsingRemoteRepo ? .orange : .green)
                 }
                 .buttonStyle(.plain)
-                .help("打开图标仓库")
+                .help(iconProvider.isUsingRemoteRepo ? "切换到本地仓库" : "切换到远程仓库")
             }
         }
         .onAppear {
@@ -72,15 +78,9 @@ struct CategoryTabs: View {
         }
     }
     
-    private func openIconRepository() {
-        guard let iconFolderURL = IconRepo.getIconFolderURL() else {
-            m.error("无法找到图标文件夹")
-            return
-        }
-        
-        // 打开图标文件夹
-        NSWorkspace.shared.open(iconFolderURL)
-        m.success("已打开图标文件夹：\(iconFolderURL.path)")
+    private func toggleRepository() {
+        iconProvider.toggleRepository()
+        m.success(iconProvider.isUsingRemoteRepo ? "已切换到远程仓库" : "已切换到本地仓库")
     }
 }
 

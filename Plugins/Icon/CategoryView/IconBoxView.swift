@@ -23,7 +23,16 @@ struct IconBoxView: View {
             GeometryReader { geo in
                 ScrollView {
                     VStack {
-                        if let selectedCategory = iconProvider.selectedCategory {
+                        if iconProvider.isUsingRemoteRepo {
+                            // 显示远程图标网格
+                            RemoteIconGrid(
+                                gridItems: gridItems,
+                                onIconSelected: { selectedIconId in
+                                    handleIconSelection(selectedIconId)
+                                }
+                            )
+                        } else if let selectedCategory = iconProvider.selectedCategory {
+                            // 显示本地图标网格
                             IconGrid(
                                 category: selectedCategory,
                                 gridItems: gridItems,
