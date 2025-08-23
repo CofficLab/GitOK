@@ -15,16 +15,8 @@ struct FaviconMaker: View {
     
     var body: some View {
         VStack(spacing: 20) {
-            // 标题
-            Text("Favicon 生成器")
-                .font(.title2)
-                .fontWeight(.bold)
-            
             // 预览区域
             VStack(spacing: 16) {
-                Text("预览")
-                    .font(.headline)
-                
                 HStack(spacing: 20) {
                     // 16x16 预览
                     VStack {
@@ -67,20 +59,6 @@ struct FaviconMaker: View {
             }
             .buttonStyle(.borderedProminent)
             .controlSize(.large)
-            
-            // 说明文字
-            VStack(alignment: .leading, spacing: 8) {
-                Text("支持的格式：")
-                    .font(.caption)
-                    .fontWeight(.medium)
-                Text("• PNG 文件（16×16, 32×32, 48×48）")
-                Text("• SVG 文件（矢量格式）")
-            }
-            .font(.caption)
-            .foregroundColor(.secondary)
-            .padding()
-            .background(Color.gray.opacity(0.05))
-            .cornerRadius(8)
         }
         .padding()
     }
@@ -89,9 +67,7 @@ struct FaviconMaker: View {
         imageSet = []
         
         let (message, path) = getFolderPath()
-        if path == nil {
-            // 这里需要显示错误消息，可以通过环境对象或其他方式
-            print("错误：\(message)")
+        if path == nil {MagicMessageProvider.shared.error("错误：\(message)")
             return
         }
         
@@ -106,7 +82,7 @@ struct FaviconMaker: View {
         // 生成HTML引用代码
         generateHTMLCode()
         
-        print("Favicon 已生成到：\(folderPath?.path ?? "")")
+        MagicMessageProvider.shared.success("Favicon 已生成到：\(folderPath?.path ?? "")")
     }
     
     @MainActor private func generatePNGFiles() {
@@ -225,7 +201,7 @@ struct FaviconMaker: View {
             .hideProjectActions()
     }
     .frame(width: 800)
-    .frame(height: 600)
+    .frame(height: 800)
 }
 
 #Preview("App - Big Screen") {
