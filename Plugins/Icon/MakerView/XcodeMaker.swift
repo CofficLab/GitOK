@@ -15,43 +15,41 @@ struct XcodeMaker: View {
     private var folderName: String { "XcodeIcons-\(tag).appiconset" }
 
     var body: some View {
-        VStack(spacing: 20) {
-            // 预览区域
-            VStack(spacing: 16) {
-                HStack(spacing: 20) {
-                    // macOS 预览
-                    VStack {
-                        Text("macOS")
-                            .font(.caption)
-                            .fontWeight(.medium)
-                        IconPreview(icon: icon, platform: "macOS")
-                            .frame(width: 64, height: 64)
-                            .background(Color.gray.opacity(0.2))
-                            .cornerRadius(12)
-                    }
+        VStack(spacing: 16) {
+            HStack {
+                Text("Xcode 图标")
+                    .font(.headline)
 
-                    // iOS 预览
-                    VStack {
-                        Text("iOS")
-                            .font(.caption)
-                            .fontWeight(.medium)
-                        IconPreview(icon: icon, platform: "iOS")
-                            .frame(width: 64, height: 64)
-                            .background(Color.gray.opacity(0.2))
-                            .cornerRadius(12)
-                    }
-
-                    HStack {
-                        Button("下载") {
-                            generateXcodeIcons()
-                        }
-                    }
+                Button("下载") {
+                    generateXcodeIcons()
                 }
             }
-            .padding()
-            .background(Color.gray.opacity(0.1))
+            HStack(spacing: 20) {
+                // macOS 预览
+                VStack {
+                    Text("macOS")
+                        .font(.caption)
+                        .fontWeight(.medium)
+                    IconPreview(icon: icon, platform: "macOS")
+                        .frame(width: 64, height: 64)
+                        .background(Color.gray.opacity(0.2))
+                        .cornerRadius(12)
+                }
+
+                // iOS 预览
+                VStack {
+                    Text("iOS")
+                        .font(.caption)
+                        .fontWeight(.medium)
+                    IconPreview(icon: icon, platform: "iOS")
+                        .frame(width: 64, height: 64)
+                        .background(Color.gray.opacity(0.2))
+                        .cornerRadius(12)
+                }
+            }
         }
         .padding()
+        .background(Color.gray.opacity(0.1))
     }
 
     @MainActor private func generateXcodeIcons() {

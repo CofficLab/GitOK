@@ -17,20 +17,14 @@ struct IconMaker: View {
     var body: some View {
         Group {
             if self.icon != nil {
-                TabView {
+                HStack(spacing: 20) {
                     XcodeMaker(icon: icon!)
-                        .tabItem {
-                            Image(systemName: "app.badge")
-                            Text("Xcode")
-                        }
-                    
+                        .frame(maxWidth: .infinity)
+
                     FaviconMaker(icon: icon!)
-                        .tabItem {
-                            Image(systemName: "globe")
-                            Text("Favicon")
-                        }
+                        .frame(maxWidth: .infinity)
                 }
-                .tabViewStyle(.tabBarOnly)
+                .padding()
             } else {
                 Text("请选择或新建一个图标")
             }
