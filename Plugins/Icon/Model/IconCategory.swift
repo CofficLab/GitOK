@@ -36,17 +36,10 @@ struct IconCategory: Identifiable, Hashable {
                 }
             }
             
-            // 对于哈希文件名，我们使用文件名本身作为ID
-            // 对于数字文件名，我们使用数字作为ID
+            // 使用文件名本身作为ID
             return iconFiles.compactMap { filename -> String? in
                 let nameWithoutExt = (filename as NSString).deletingPathExtension
-                // 尝试转换为数字，如果失败则使用原始文件名
-                if let numericId = Int(nameWithoutExt) {
-                    return String(numericId)
-                } else {
-                    // 哈希文件名，直接使用
-                    return nameWithoutExt
-                }
+                return nameWithoutExt
             }.sorted()
         } catch {
             return []
@@ -87,7 +80,7 @@ struct IconCategory: Identifiable, Hashable {
         }
         
         // 使用 IconAsset 来智能查找图标文件
-        return IconAsset.getImage(categoryURL: categoryURL, iconId: iconId)
+        return IconAsset.getImage(categoryName: name, iconId: iconId)
     }
     
     /// 检查是否包含指定ID的图标
@@ -101,7 +94,7 @@ struct IconCategory: Identifiable, Hashable {
     /// - Returns: IconAsset数组
     func getAllIconAssets() -> [IconAsset] {
         return iconIds.map { iconId in
-            IconAsset(categoryURL: categoryURL, iconId: iconId)
+            IconAsset(categoryName: name, iconId: iconId)
         }
     }
     
@@ -111,7 +104,7 @@ struct IconCategory: Identifiable, Hashable {
         return await withTaskGroup(of: IconAsset.self) { group in
             for iconId in iconIds {
                 group.addTask {
-                    IconAsset(categoryURL: self.categoryURL, iconId: iconId)
+                    IconAsset(categoryName: self.name, iconId: iconId)
                 }
             }
             

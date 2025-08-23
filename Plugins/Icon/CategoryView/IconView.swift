@@ -57,7 +57,7 @@ struct IconView: View {
     
     private func loadIconImage() {
         DispatchQueue.global().async {
-            let thumbnail = IconAsset.getThumbnail(categoryURL: category.categoryURL, iconId: iconId)
+            let thumbnail = IconAsset.getThumbnail(categoryName: category.name, iconId: iconId)
             DispatchQueue.main.async {
                 self.image = thumbnail
             }
