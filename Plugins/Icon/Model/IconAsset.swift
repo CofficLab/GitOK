@@ -33,7 +33,7 @@ class IconAsset: Identifiable {
     
     /// 图标文件信息（延迟计算）
     lazy var fileInfo: [String: Any]? = {
-        Self.getIconFileInfo(categoryName: categoryName, iconId: iconId)
+        getIconFileInfo()
     }()
     
     /// 初始化方法
@@ -45,13 +45,13 @@ class IconAsset: Identifiable {
     /// 获取图标图片
     /// - Returns: SwiftUI Image
     func getImage() -> Image {
-        return Self.loadImage(from: fileURL)
+        return loadImage()
     }
     
     /// 获取图标缩略图
     /// - Returns: SwiftUI Image
     func getThumbnail() -> Image {
-        return Self.loadThumbnail(from: fileURL)
+        return loadThumbnail()
     }
     
     /// 检查图标文件是否存在
@@ -60,45 +60,34 @@ class IconAsset: Identifiable {
         return FileManager.default.fileExists(atPath: fileURL.path)
     }
     
-    // MARK: - 静态方法
+    // MARK: - 私有实例方法
     
     /// 支持的图标文件格式
-    private static let supportedFormats = ["png", "svg", "jpg", "jpeg", "gif", "webp"]
+    private let supportedFormats = ["png", "svg", "jpg", "jpeg", "gif", "webp"]
     
     /// 默认图标文件格式（优先查找）
-    private static let defaultFormat = "png"
-    
-    // 获取指定分类和ID的图标
-    static func getImage(categoryName: String, iconId: String) -> Image {
-        if let imageURL = IconRepo.findIconFile(categoryName: categoryName, iconId: iconId) {
-            return loadImage(from: imageURL)
-        } else {
-            return Image(systemName: "plus")
-        }
-    }
+    private let defaultFormat = "png"
     
     /// 加载图片（支持多种格式）
-    /// - Parameter url: 图片文件URL
     /// - Returns: SwiftUI Image
-    private static func loadImage(from url: URL) -> Image {
-        let fileExtension = url.pathExtension.lowercased()
+    private func loadImage() -> Image {
+        let fileExtension = fileURL.pathExtension.lowercased()
         
         switch fileExtension {
         case "svg":
-            return loadSVGImage(from: url)
+            return loadSVGImage()
         case "png", "jpg", "jpeg", "gif", "webp":
-            return loadRasterImage(from: url)
+            return loadRasterImage()
         default:
             return Image(systemName: "plus")
         }
     }
     
     /// 加载SVG图片
-    /// - Parameter url: SVG文件URL
     /// - Returns: SwiftUI Image
-    private static func loadSVGImage(from url: URL) -> Image {
+    private func loadSVGImage() -> Image {
         // macOS原生支持SVG格式，可以直接使用NSImage加载
-        if let nsImage = NSImage(contentsOf: url) {
+        if let nsImage = NSImage(contentsOf: fileURL) {
             return Image(nsImage: nsImage)
         } else {
             return Image(systemName: "doc.text.image")
@@ -106,47 +95,35 @@ class IconAsset: Identifiable {
     }
     
     /// 加载光栅图片（PNG、JPG等）
-    /// - Parameter url: 图片文件URL
     /// - Returns: SwiftUI Image
-    private static func loadRasterImage(from url: URL) -> Image {
-        if let nsImage = NSImage(contentsOf: url) {
+    private func loadRasterImage() -> Image {
+        if let nsImage = NSImage(contentsOf: fileURL) {
             return Image(nsImage: nsImage)
         } else {
             return Image(systemName: "plus")
         }
     }
     
-    // 获取指定分类和ID的缩略图
-    static func getThumbnail(categoryName: String, iconId: String) -> Image {
-        if let imageURL = IconRepo.findIconFile(categoryName: categoryName, iconId: iconId) {
-            return loadThumbnail(from: imageURL)
-        } else {
-            return Image(systemName: "plus")
-        }
-    }
-    
     /// 加载缩略图（支持多种格式）
-    /// - Parameter url: 图片文件URL
     /// - Returns: SwiftUI Image
-    private static func loadThumbnail(from url: URL) -> Image {
-        let fileExtension = url.pathExtension.lowercased()
+    private func loadThumbnail() -> Image {
+        let fileExtension = fileURL.pathExtension.lowercased()
         
         switch fileExtension {
         case "svg":
             // SVG缩略图可以直接使用原图，因为它是矢量图形
-            return loadSVGImage(from: url)
+            return loadSVGImage()
         case "png", "jpg", "jpeg", "gif", "webp":
-            return loadRasterThumbnail(from: url)
+            return loadRasterThumbnail()
         default:
             return Image(systemName: "plus")
         }
     }
     
     /// 加载光栅图片缩略图
-    /// - Parameter url: 图片文件URL
     /// - Returns: SwiftUI Image
-    private static func loadRasterThumbnail(from url: URL) -> Image {
-        if let image = NSImage(contentsOf: url) {
+    private func loadRasterThumbnail() -> Image {
+        if let image = NSImage(contentsOf: fileURL) {
             if let thumbnail = generateThumbnail(for: image, size: NSSize(width: 80, height: 80)) {
                 return Image(nsImage: thumbnail)
             } else {
@@ -156,21 +133,13 @@ class IconAsset: Identifiable {
             return Image(systemName: "plus")
         }
     }
-        
-    static func getThumbnail(_ iconId: String) -> Image {
-        // 在所有分类中查找图标
-        let allCategories = IconRepo.shared.getAllCategories()
-        
-        for category in allCategories {
-            if category.iconIds.contains(iconId) {
-                return getThumbnail(categoryName: category.name, iconId: iconId)
-            }
-        }
-        
-        return Image(systemName: "plus")
-    }
-
-    static func generateThumbnail(for image: NSImage, size: NSSize) -> NSImage? {
+    
+    /// 生成缩略图
+    /// - Parameters:
+    ///   - image: 原始图片
+    ///   - size: 目标尺寸
+    /// - Returns: 缩略图
+    private func generateThumbnail(for image: NSImage, size: NSSize) -> NSImage? {
         let thumbnailSize = NSSize(width: 50, height: 50)
         
         let thumbnail = NSImage(size: thumbnailSize)
@@ -182,13 +151,8 @@ class IconAsset: Identifiable {
     }
     
     /// 获取图标文件信息
-    /// - Parameters:
-    ///   - categoryName: 分类名称
-    ///   - iconId: 图标ID
     /// - Returns: 图标文件信息字典
-    static func getIconFileInfo(categoryName: String, iconId: String) -> [String: Any]? {
-        guard let fileURL = IconRepo.findIconFile(categoryName: categoryName, iconId: iconId) else { return nil }
-        
+    private func getIconFileInfo() -> [String: Any]? {
         do {
             let attributes = try FileManager.default.attributesOfItem(atPath: fileURL.path)
             let fileSize = attributes[.size] as? Int64 ?? 0
@@ -207,6 +171,80 @@ class IconAsset: Identifiable {
         } catch {
             return nil
         }
+    }
+    
+    // MARK: - 静态方法（用于兼容性）
+    
+    /// 获取指定分类和ID的图标（兼容性方法）
+    /// - Parameters:
+    ///   - categoryName: 分类名称
+    ///   - iconId: 图标ID
+    /// - Returns: SwiftUI Image
+    static func getImage(categoryName: String, iconId: String) -> Image {
+        if let imageURL = IconRepo.findIconFile(categoryName: categoryName, iconId: iconId) {
+            let iconAsset = IconAsset(fileURL: imageURL)
+            return iconAsset.getImage()
+        } else {
+            return Image(systemName: "plus")
+        }
+    }
+    
+    /// 获取指定分类和ID的缩略图（兼容性方法）
+    /// - Parameters:
+    ///   - categoryName: 分类名称
+    ///   - iconId: 图标ID
+    /// - Returns: SwiftUI Image
+    static func getThumbnail(categoryName: String, iconId: String) -> Image {
+        if let imageURL = IconRepo.findIconFile(categoryName: categoryName, iconId: iconId) {
+            let iconAsset = IconAsset(fileURL: imageURL)
+            return iconAsset.getThumbnail()
+        } else {
+            return Image(systemName: "plus")
+        }
+    }
+    
+    /// 获取指定图标ID的图片（兼容性方法）
+    /// - Parameter iconId: 图标ID
+    /// - Returns: SwiftUI Image
+    static func getImage(_ iconId: String) -> Image {
+        // 在所有分类中查找图标
+        let allCategories = IconRepo.shared.getAllCategories()
+        
+        for category in allCategories {
+            if category.iconIds.contains(iconId) {
+                return getImage(categoryName: category.name, iconId: iconId)
+            }
+        }
+        
+        return Image(systemName: "plus")
+    }
+    
+    /// 获取指定图标ID的缩略图（兼容性方法）
+    /// - Parameter iconId: 图标ID
+    /// - Returns: SwiftUI Image
+    static func getThumbnail(_ iconId: String) -> Image {
+        // 在所有分类中查找图标
+        let allCategories = IconRepo.shared.getAllCategories()
+        
+        for category in allCategories {
+            if category.iconIds.contains(iconId) {
+                return getThumbnail(categoryName: category.name, iconId: iconId)
+            }
+        }
+        
+        return Image(systemName: "plus")
+    }
+    
+    /// 获取图标文件信息（兼容性方法）
+    /// - Parameters:
+    ///   - categoryName: 分类名称
+    ///   - iconId: 图标ID
+    /// - Returns: 图标文件信息字典
+    static func getIconFileInfo(categoryName: String, iconId: String) -> [String: Any]? {
+        guard let fileURL = IconRepo.findIconFile(categoryName: categoryName, iconId: iconId) else { return nil }
+        
+        let iconAsset = IconAsset(fileURL: fileURL)
+        return iconAsset.getIconFileInfo()
     }
 }
 
