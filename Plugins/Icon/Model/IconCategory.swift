@@ -127,7 +127,7 @@ struct IconCategory: Identifiable, Hashable {
     /// - Parameter category: 分类名称
     /// - Returns: 图标ID数组（支持数字ID和哈希文件名）
     static func getIconIds(in category: String) -> [String] {
-        guard let iconFolderURL = IconCategoryRepo.getIconFolderURL() else {
+        guard let iconFolderURL = IconRepo.getIconFolderURL() else {
             return []
         }
         

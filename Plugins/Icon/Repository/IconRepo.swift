@@ -4,29 +4,22 @@ import OSLog
 import MagicCore
 
 /**
- * 图标分类仓库
+ * 图标仓库
  * 负责读取和管理项目支持的所有候选图标分类
  * 使用单例模式确保全局唯一实例
  */
-class IconCategoryRepo: ObservableObject, SuperLog {
+class IconRepo: SuperLog {
     nonisolated static var emoji: String { "🎨" }
     
     /// 单例实例
-    static let shared = IconCategoryRepo()
+    static let shared = IconRepo()
     
     /// 图标文件夹URL
     private let iconFolderURL: URL?
     
-    /// 所有可用的图标分类
-    @Published private(set) var categories: [IconCategory] = []
-    
-    /// 分类是否正在加载
-    @Published private(set) var isLoading = false
-    
     /// 私有初始化方法，确保单例模式
     private init() {
         self.iconFolderURL = Self.findIconFolder()
-        loadCategories()
     }
     
     /// 查找图标文件夹（静态方法，可以在初始化过程中调用）
@@ -47,24 +40,15 @@ class IconCategoryRepo: ObservableObject, SuperLog {
         return findIconFolder()
     }
     
-    /// 加载所有分类
-    func loadCategories() {
+    /// 获取所有分类（通过函数调用获取）
+    /// - Returns: 分类数组
+    func getAllCategories() -> [IconCategory] {
         guard let iconFolderURL = iconFolderURL else {
             os_log(.error, "\(self.t)未找到图标文件夹")
-            return
+            return []
         }
         
-        isLoading = true
-        
-        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
-            let newCategories = self?.scanCategories(from: iconFolderURL) ?? []
-            
-            DispatchQueue.main.async {
-                self?.categories = newCategories
-                self?.isLoading = false
-                os_log("\(self?.t ?? "")✅ 加载了 \(newCategories.count) 个图标分类")
-            }
-        }
+        return scanCategories(from: iconFolderURL)
     }
     
     /// 扫描图标分类
@@ -96,12 +80,7 @@ class IconCategoryRepo: ObservableObject, SuperLog {
     /// - Parameter name: 分类名称
     /// - Returns: 分类实例，如果不存在则返回nil
     func getCategory(byName name: String) -> IconCategory? {
-        categories.first { $0.name == name }
-    }
-    
-    /// 刷新分类列表
-    func refreshCategories() {
-        loadCategories()
+        return getAllCategories().first { $0.name == name }
     }
 }
 

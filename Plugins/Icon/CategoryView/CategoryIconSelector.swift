@@ -33,7 +33,7 @@ struct CategoryIconSelector: View {
                         handleIconSelection(selectedIconId)
                     }
                 )
-            } else if let firstCategory = IconCategoryRepo.shared.categories.first {
+            } else if let firstCategory = IconRepo.shared.getAllCategories().first {
                 CategoryIconGrid(
                     category: firstCategory,
                     gridItems: gridItems,

@@ -64,7 +64,7 @@ class IconAsset: Identifiable {
     
     // 获取指定分类下的所有图标ID（委托给IconCategory）
     static func getIconIds(in category: String) -> [String] {
-        guard let iconFolderURL = IconCategoryRepo.getIconFolderURL() else {
+        guard let iconFolderURL = IconRepo.getIconFolderURL() else {
             return []
         }
         
@@ -218,7 +218,7 @@ class IconAsset: Identifiable {
     
     static func getImage(_ iconId: String) -> Image {
         // 在所有分类中查找图标
-        guard let iconFolderURL = IconCategoryRepo.getIconFolderURL() else {
+        guard let iconFolderURL = IconRepo.getIconFolderURL() else {
             return Image(systemName: "plus")
         }
         
@@ -244,7 +244,7 @@ class IconAsset: Identifiable {
     
     static func getThumbnail(_ iconId: String) -> Image {
         // 在所有分类中查找图标
-        guard let iconFolderURL = IconCategoryRepo.getIconFolderURL() else {
+        guard let iconFolderURL = IconRepo.getIconFolderURL() else {
             return Image(systemName: "plus")
         }
         

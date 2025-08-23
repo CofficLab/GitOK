@@ -29,7 +29,7 @@ class IconProvider: NSObject, ObservableObject, SuperLog {
     
     /// 所有可用的图标分类名称（兼容性属性）
     var availableCategories: [String] {
-        IconCategoryRepo.shared.categories.map { $0.name }
+        IconRepo.shared.getAllCategories().map { $0.name }
     }
 
     override init() {
@@ -94,7 +94,7 @@ class IconProvider: NSObject, ObservableObject, SuperLog {
         选择图标分类
      */
     func selectCategory(_ category: String) {
-        if let categoryModel = IconCategoryRepo.shared.getCategory(byName: category) {
+        if let categoryModel = IconRepo.shared.getCategory(byName: category) {
             selectedCategory = categoryModel
         }
     }
@@ -103,17 +103,17 @@ class IconProvider: NSObject, ObservableObject, SuperLog {
         刷新可用分类列表
      */
     func refreshCategories() {
-        IconCategoryRepo.shared.refreshCategories()
+        let allCategories = IconRepo.shared.getAllCategories()
         
         // 如果当前选中的分类不存在，选择第一个
         if let selected = selectedCategory,
-           !IconCategoryRepo.shared.categories.contains(where: { $0.name == selected.name }) {
-            selectedCategory = IconCategoryRepo.shared.categories.first
+           !allCategories.contains(where: { $0.name == selected.name }) {
+            selectedCategory = allCategories.first
         }
         
         // 如果没有选中的分类，选择第一个
-        if selectedCategory == nil && !IconCategoryRepo.shared.categories.isEmpty {
-            selectedCategory = IconCategoryRepo.shared.categories.first
+        if selectedCategory == nil && !allCategories.isEmpty {
+            selectedCategory = allCategories.first
         }
     }
     
@@ -121,7 +121,7 @@ class IconProvider: NSObject, ObservableObject, SuperLog {
     /// - Parameter name: 分类名称
     /// - Returns: 分类实例，如果不存在则返回nil
     func getCategory(byName name: String) -> IconCategory? {
-        IconCategoryRepo.shared.getCategory(byName: name)
+        IconRepo.shared.getCategory(byName: name)
     }
 }
 
