@@ -83,6 +83,21 @@ class IconRepo: SuperLog {
         return getAllCategories().first { $0.name == name }
     }
     
+    /// 根据图标ID获取图标
+    /// - Parameter iconId: 图标ID
+    /// - Returns: IconAsset实例，如果找不到则返回nil
+    func getIconAsset(byId iconId: String) -> IconAsset? {
+        let allCategories = getAllCategories()
+        for category in allCategories {
+            if category.iconIds.contains(iconId) {
+                if let fileURL = Self.findIconFile(categoryName: category.name, iconId: iconId) {
+                    return IconAsset(fileURL: fileURL)
+                }
+            }
+        }
+        return nil
+    }
+    
     /// 智能查找图标文件
     /// - Parameters:
     ///   - categoryName: 分类名称

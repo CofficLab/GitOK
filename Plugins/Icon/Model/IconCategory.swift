@@ -19,7 +19,13 @@ struct IconCategory: Identifiable, Hashable {
     
     /// 分类下的图标数量（动态计算）
     var iconCount: Int {
-        iconIds.count
+        do {
+            let files = try FileManager.default.contentsOfDirectory(atPath: categoryURL.path)
+            
+            return files.count
+        } catch {
+            return 0
+        }
     }
     
     /// 分类下的所有图标ID（动态计算）
@@ -106,34 +112,25 @@ struct IconCategory: Identifiable, Hashable {
     /// 获取分类下的所有图标资源
     /// - Returns: IconAsset数组
     func getAllIconAssets() -> [IconAsset] {
-        return iconIds.compactMap { iconId in
-            if let fileURL = findIconFileURL(for: iconId) {
-                return IconAsset(fileURL: fileURL)
-            }
-            return nil
-        }
-    }
-    
-    /// 获取分类下的所有图标资源（异步版本，适用于大量图标）
-    /// - Returns: IconAsset数组的异步结果
-    func getAllIconAssetsAsync() async -> [IconAsset] {
-        return await withTaskGroup(of: IconAsset?.self) { group in
-            for iconId in iconIds {
-                group.addTask {
-                    if let fileURL = self.findIconFileURL(for: iconId) {
-                        return IconAsset(fileURL: fileURL)
-                    }
-                    return nil
+        do {
+            let files = try FileManager.default.contentsOfDirectory(atPath: categoryURL.path)
+            
+            // 支持多种图标文件格式
+            let supportedFormats = ["png", "svg", "jpg", "jpeg", "gif", "webp"]
+            let iconFiles = files.filter { filename in
+                let fileExtension = filename.lowercased()
+                return supportedFormats.contains { format in
+                    fileExtension.hasSuffix(".\(format)")
                 }
             }
             
-            var assets: [IconAsset] = []
-            for await asset in group {
-                if let asset = asset {
-                    assets.append(asset)
-                }
+            // 直接创建IconAsset实例
+            return iconFiles.map { filename in
+                let fileURL = categoryURL.appendingPathComponent(filename)
+                return IconAsset(fileURL: fileURL)
             }
-            return assets.sorted { $0.iconId < $1.iconId }
+        } catch {
+            return []
         }
     }
 }
