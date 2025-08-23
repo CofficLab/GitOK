@@ -47,34 +47,6 @@ class IconCategoryRepo: ObservableObject, SuperLog {
         return findIconFolder()
     }
     
-    /// 获取所有分类名称（静态方法，供其他类使用）
-    /// - Returns: 分类名称数组
-    static func getCategoryNames() -> [String] {
-        guard let iconFolderURL = getIconFolderURL() else {
-            print("IconCategoryRepo.getCategoryNames: 未找到图标文件夹")
-            return []
-        }
-        
-        do {
-            let items = try FileManager.default.contentsOfDirectory(atPath: iconFolderURL.path)
-            print("IconCategoryRepo.getCategoryNames: 找到项目: \(items)")
-            
-            // 过滤出目录，排除文件
-            let categories = items.filter { item in
-                let itemPath = (iconFolderURL.path as NSString).appendingPathComponent(item)
-                var isDir: ObjCBool = false
-                FileManager.default.fileExists(atPath: itemPath, isDirectory: &isDir)
-                return isDir.boolValue
-            }
-            
-            print("IconCategoryRepo.getCategoryNames: 过滤后的分类: \(categories)")
-            return categories.sorted()
-        } catch {
-            print("IconCategoryRepo.getCategoryNames: 无法获取分类目录：\(error.localizedDescription)")
-            return []
-        }
-    }
-    
     /// 加载所有分类
     func loadCategories() {
         guard let iconFolderURL = iconFolderURL else {
@@ -102,15 +74,15 @@ class IconCategoryRepo: ObservableObject, SuperLog {
         do {
             let items = try FileManager.default.contentsOfDirectory(atPath: folderURL.path)
             let categories = items.compactMap { item -> IconCategory? in
-                let itemPath = (folderURL.path as NSString).appendingPathComponent(item)
+                let categoryURL = folderURL.appendingPathComponent(item)
                 var isDir: ObjCBool = false
                 
-                guard FileManager.default.fileExists(atPath: itemPath, isDirectory: &isDir),
+                guard FileManager.default.fileExists(atPath: categoryURL.path, isDirectory: &isDir),
                       isDir.boolValue else {
                     return nil
                 }
                 
-                return IconCategory(folderPath: itemPath)
+                return IconCategory(categoryURL: categoryURL)
             }.sorted { $0.name < $1.name }
             
             return categories

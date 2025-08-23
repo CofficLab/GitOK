@@ -9,12 +9,12 @@ struct IconCategory: Identifiable, Hashable {
     /// 分类的唯一标识符
     let id = UUID()
     
-    /// 分类文件夹路径
-    let folderPath: String
+    /// 分类文件夹URL
+    let categoryURL: URL
     
-    /// 分类名称（从路径动态计算）
+    /// 分类名称（从URL动态计算）
     var name: String {
-        (folderPath as NSString).lastPathComponent
+        categoryURL.lastPathComponent
     }
     
     /// 分类下的图标数量（动态计算）
@@ -25,7 +25,7 @@ struct IconCategory: Identifiable, Hashable {
     /// 分类下的所有图标ID（动态计算）
     var iconIds: [String] {
         do {
-            let files = try FileManager.default.contentsOfDirectory(atPath: folderPath)
+            let files = try FileManager.default.contentsOfDirectory(atPath: categoryURL.path)
             
             // 支持多种图标文件格式
             let supportedFormats = ["png", "svg", "jpg", "jpeg", "gif", "webp"]
@@ -59,22 +59,23 @@ struct IconCategory: Identifiable, Hashable {
     }
     
     /// 初始化方法
-    /// - Parameter folderPath: 分类文件夹路径
-    init(folderPath: String) {
-        self.folderPath = folderPath
+    /// - Parameter categoryURL: 分类文件夹URL
+    init(categoryURL: URL) {
+        self.categoryURL = categoryURL
     }
     
     /// 从文件夹路径创建分类
     /// - Parameter folderPath: 分类文件夹路径
     /// - Returns: 分类实例，如果路径无效则返回nil
     static func fromFolder(_ folderPath: String) -> IconCategory? {
+        let url = URL(fileURLWithPath: folderPath)
         var isDir: ObjCBool = false
-        guard FileManager.default.fileExists(atPath: folderPath, isDirectory: &isDir),
+        guard FileManager.default.fileExists(atPath: url.path, isDirectory: &isDir),
               isDir.boolValue else {
             return nil
         }
         
-        return IconCategory(folderPath: folderPath)
+        return IconCategory(categoryURL: url)
     }
     
     /// 获取指定ID的图标
@@ -86,7 +87,7 @@ struct IconCategory: Identifiable, Hashable {
         }
         
         // 使用 IconAsset 来智能查找图标文件
-        return IconAsset.getImage(category: name, iconId: iconId)
+        return IconAsset.getImage(categoryURL: categoryURL, iconId: iconId)
     }
     
     /// 检查是否包含指定ID的图标
@@ -100,7 +101,7 @@ struct IconCategory: Identifiable, Hashable {
     /// - Returns: IconAsset数组
     func getAllIconAssets() -> [IconAsset] {
         return iconIds.map { iconId in
-            IconAsset(category: name, iconId: iconId)
+            IconAsset(categoryURL: categoryURL, iconId: iconId)
         }
     }
     
@@ -110,7 +111,7 @@ struct IconCategory: Identifiable, Hashable {
         return await withTaskGroup(of: IconAsset.self) { group in
             for iconId in iconIds {
                 group.addTask {
-                    IconAsset(category: self.name, iconId: iconId)
+                    IconAsset(categoryURL: self.categoryURL, iconId: iconId)
                 }
             }
             
@@ -130,9 +131,9 @@ struct IconCategory: Identifiable, Hashable {
             return []
         }
         
-        let categoryPath = iconFolderURL.appendingPathComponent(category)
+        let categoryURL = iconFolderURL.appendingPathComponent(category)
         do {
-            let files = try FileManager.default.contentsOfDirectory(atPath: categoryPath.path)
+            let files = try FileManager.default.contentsOfDirectory(atPath: categoryURL.path)
             
             // 支持多种图标文件格式
             let supportedFormats = ["png", "svg", "jpg", "jpeg", "gif", "webp"]
