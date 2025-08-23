@@ -34,6 +34,8 @@ class IconProvider: NSObject, ObservableObject, SuperLog {
     override init() {
         super.init()
         
+        os_log("\(self.t)Initializing IconProvider")
+        
         // 初始化时加载分类
         refreshCategories()
         
@@ -92,10 +94,8 @@ class IconProvider: NSObject, ObservableObject, SuperLog {
     /**
         选择图标分类
      */
-    func selectCategory(_ category: String) {
-        if let categoryModel = IconRepo.shared.getCategory(byName: category) {
-            selectedCategory = categoryModel
-        }
+    func selectCategory(_ category: IconCategory) {
+        self.selectedCategory = category
     }
     
     /**
@@ -103,10 +103,10 @@ class IconProvider: NSObject, ObservableObject, SuperLog {
      */
     func refreshCategories() {
         let allCategories = IconRepo.shared.getAllCategories()
-        
+
         // 如果当前选中的分类不存在，选择第一个
         if let selected = selectedCategory,
-           !allCategories.contains(where: { $0.name == selected.name }) {
+           !allCategories.contains(where: { $0.id == selected.id }) {
             selectedCategory = allCategories.first
         }
         

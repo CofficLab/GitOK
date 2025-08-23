@@ -7,7 +7,7 @@ import SwiftUI
  */
 struct IconCategory: Identifiable, Hashable {
     /// 分类的唯一标识符
-    let id = UUID()
+    var id: URL { categoryURL }
     
     /// 分类文件夹URL
     let categoryURL: URL

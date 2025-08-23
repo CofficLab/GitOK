@@ -16,12 +16,7 @@ struct CategoryTabs: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 8) {
                     ForEach(IconRepo.shared.getAllCategories(), id: \.id) { category in
-                        CategoryTab(
-                            category: category,
-                            isSelected: iconProvider.selectedCategory?.id == category.id
-                        ) {
-                            iconProvider.selectCategory(category.name)
-                        }
+                        CategoryTab(category: category)
                     }
                 }
             }
@@ -31,6 +26,12 @@ struct CategoryTabs: View {
                 Image.add
             }
             .buttonStyle(.plain)
+        }
+        .onAppear {
+            // 确保有选中的分类
+            if iconProvider.selectedCategory == nil {
+                iconProvider.refreshCategories()
+            }
         }
     }
 

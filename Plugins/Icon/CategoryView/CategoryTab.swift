@@ -7,11 +7,18 @@ import SwiftUI
  */
 struct CategoryTab: View {
     let category: IconCategory
-    let isSelected: Bool
-    let action: () -> Void
+    
+    @EnvironmentObject var iconProvider: IconProvider
+    
+    /// 判断当前分类是否被选中
+    private var isSelected: Bool {
+        iconProvider.selectedCategory?.id == category.id
+    }
     
     var body: some View {
-        Button(action: action) {
+        Button(action: {
+            iconProvider.selectCategory(category)
+        }) {
             VStack(spacing: 4) {
                 Text(category.displayName)
                     .font(.caption)
