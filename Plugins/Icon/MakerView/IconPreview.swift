@@ -7,15 +7,13 @@ struct IconPreview: View {
 
     var body: some View {
         ZStack {
+            // 背景
             icon.background
-
-            HStack {
-                if let scale = icon.scale {
-                    icon.image.scaleEffect(scale)
-                } else {
-                    icon.image.resizable().scaledToFit()
-                }
-            }
+            
+            // 图标
+            icon.image
+                .resizable()
+                .scaledToFit()
         }
         .frame(width: 1024, height: 1024)
         .if(platform == "macOS") {
@@ -23,6 +21,10 @@ struct IconPreview: View {
                 width: 200,
                 height: 200
             ))).padding(100)
+        }
+        // 将缩放应用到整个组合上，而不是单独的图标
+        .if(icon.scale != nil) { view in
+            view.scaleEffect(icon.scale ?? 1.0)
         }
     }
 }

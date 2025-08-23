@@ -31,7 +31,7 @@ struct IconAdjustments: View {
                     Text("缩放 \(String(format: "%.1f", localScale))")
                         .font(.caption)
                         .foregroundColor(.secondary)
-                    Slider(value: $localScale, in: 0.1...2)
+                    Slider(value: $localScale, in: 0.2...3.0)
                         .onChange(of: localScale) { newValue in
                             updateScale(newValue)
                         }
