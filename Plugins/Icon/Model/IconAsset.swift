@@ -156,20 +156,7 @@ class IconAsset: Identifiable {
             return Image(systemName: "plus")
         }
     }
-    
-    static func getImage(_ iconId: String) -> Image {
-        // 在所有分类中查找图标
-        let allCategories = IconRepo.shared.getAllCategories()
         
-        for category in allCategories {
-            if category.iconIds.contains(iconId) {
-                return getImage(categoryName: category.name, iconId: iconId)
-            }
-        }
-        
-        return Image(systemName: "plus")
-    }
-    
     static func getThumbnail(_ iconId: String) -> Image {
         // 在所有分类中查找图标
         let allCategories = IconRepo.shared.getAllCategories()

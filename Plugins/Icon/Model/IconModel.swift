@@ -21,7 +21,18 @@ struct IconModel: SuperJsonModel, SuperEvent, SuperLog {
             return Image(nsImage: NSImage(data: try! Data(contentsOf: url))!)
         }
 
-        return IconAsset.getImage(self.iconId)
+        // 通过IconRepo获取IconAsset，然后获取Image
+        let allCategories = IconRepo.shared.getAllCategories()
+        for category in allCategories {
+            if category.iconIds.contains(self.iconId) {
+                if let fileURL = IconRepo.findIconFile(categoryName: category.name, iconId: self.iconId) {
+                    let iconAsset = IconAsset(fileURL: fileURL)
+                    return iconAsset.getImage()
+                }
+            }
+        }
+        
+        return Image(systemName: "plus")
     }
 
     var background: some View {
