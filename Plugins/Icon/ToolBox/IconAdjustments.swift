@@ -17,7 +17,7 @@ struct IconAdjustments: View {
             HStack(spacing: 20) {
                 // 透明度控制
                 VStack(spacing: 8) {
-                    Text("透明度 \(String(format: "%.1f", localOpacity))")
+                    Text("背景透明度 \(String(format: "%.1f", localOpacity))")
                         .font(.caption)
                         .foregroundColor(.secondary)
                     Slider(value: $localOpacity, in: 0...1)

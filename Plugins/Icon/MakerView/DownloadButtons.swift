@@ -133,6 +133,7 @@ struct DownloadButtons: View {
                         icon.image
                             .resizable()
                             .scaledToFit()
+                            .scaleEffect(icon.scale ?? 1.0)
                             .frame(width: CGFloat(size) * 0.8, height: CGFloat(size) * 0.8)
                     }
                 )
@@ -159,6 +160,7 @@ struct DownloadButtons: View {
                     icon.image
                         .resizable()
                         .scaledToFit()
+                        .scaleEffect(icon.scale ?? 1.0)
                         .frame(width: CGFloat(size) * 0.8, height: CGFloat(size) * 0.8)
                 }
             )
@@ -232,6 +234,7 @@ struct DownloadButtons: View {
                     icon.image
                         .resizable()
                         .scaledToFit()
+                        .scaleEffect(icon.scale ?? 1.0)
                         .frame(width: CGFloat(size) * 0.8, height: CGFloat(size) * 0.8)
                 }
                 .frame(width: CGFloat(size), height: CGFloat(size)),
@@ -306,6 +309,7 @@ struct DownloadButtons: View {
                     icon.image
                         .resizable()
                         .scaledToFit()
+                        .scaleEffect(icon.scale ?? 1.0)
                         .frame(width: CGFloat(size) * 0.8, height: CGFloat(size) * 0.8)
                 }
                 .frame(width: CGFloat(size), height: CGFloat(size)),

@@ -28,7 +28,9 @@ struct IconPreview: View {
                     icon.image
                         .resizable()
                         .scaledToFit()
+                        .scaleEffect(icon.scale ?? 1.0)
                         .frame(width: availableSize * 0.8, height: availableSize * 0.8)
+                        .clipped()
                 }
                 .shadow(color: .black.opacity(0.1), radius: 4, x: 0, y: 2)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
