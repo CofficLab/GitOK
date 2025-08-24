@@ -56,7 +56,7 @@ struct IconBox: View {
             // 确保有选中的分类，如果没有则选择第一个
             if iconProvider.selectedCategory == nil {
                 Task {
-                    let categories = await IconRepo.shared.getAllCategories()
+                    let categories = await IconRepo.shared.getAllCategories(enableRemote: iconProvider.enableRemoteRepository)
                     if let firstCategory = categories.first {
                         await MainActor.run {
                             iconProvider.selectCategory(firstCategory)

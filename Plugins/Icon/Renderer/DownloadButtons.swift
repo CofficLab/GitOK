@@ -21,7 +21,6 @@ struct DownloadButtons: View {
                 .fontWeight(.semibold)
             
             VStack(spacing: 12) {
-                // Xcode格式下载
                 Button("下载 Xcode 格式") {
                     Task {
                         await downloadXcode()
@@ -29,8 +28,7 @@ struct DownloadButtons: View {
                 }
                 .buttonStyle(.borderedProminent)
                 .disabled(isGenerating || currentIconAsset == nil)
-                
-                // PNG格式下载
+
                 Button("下载 PNG 格式") {
                     Task {
                         await downloadPNG()
@@ -38,8 +36,7 @@ struct DownloadButtons: View {
                 }
                 .buttonStyle(.bordered)
                 .disabled(isGenerating || currentIconAsset == nil)
-                
-                // Favicon下载
+
                 Button("下载 Favicon") {
                     Task {
                         await downloadFavicon()
@@ -132,7 +129,7 @@ struct DownloadButtons: View {
         // 生成README文件
         await generateReadmeFile(folderPath: folderPath, tag: tag)
         
-        MagicMessageProvider.shared.success("Xcode图标集生成完成！\n保存位置：\(folderPath.path)\n\n使用方法：\n1. 将整个 .appiconset 文件夹复制到你的 Xcode 项目中\n2. 在 Assets.xcassets 中右键选择 'New App Icon Set'\n3. 将生成的图标文件拖拽到对应的尺寸位置")
+        MagicMessageProvider.shared.success("Xcode图标集已存储到下载目录")
     }
     
     @MainActor private func downloadPNG() async {
@@ -161,22 +158,18 @@ struct DownloadButtons: View {
             return
         }
         
-        MagicMessageProvider.shared.info("开始生成PNG格式图标...")
-        
         // 生成不同尺寸的PNG文件
         let sizes = [16, 32, 48, 64, 128, 256, 512, 1024]
         var successCount = 0
         
         for (index, size) in sizes.enumerated() {
-            MagicMessageProvider.shared.info("生成 \(size)x\(size) 图标... (\(index + 1)/\(sizes.count))")
-            
             if await generatePNG(size: size, folderPath: folderPath, tag: tag, iconAsset: iconAsset) {
                 successCount += 1
             }
         }
         
         if successCount == sizes.count {
-            MagicMessageProvider.shared.success("PNG格式下载完成！\n保存位置：\(folderPath.path)\n成功生成 \(successCount) 个图标文件")
+            MagicMessageProvider.shared.success("PNG格式已保存到下载目录")
         } else {
             MagicMessageProvider.shared.warning("PNG格式生成完成，但有部分失败\n保存位置：\(folderPath.path)\n成功：\(successCount)/\(sizes.count)")
         }
@@ -208,15 +201,11 @@ struct DownloadButtons: View {
             return
         }
         
-        MagicMessageProvider.shared.info("开始生成Favicon图标...")
-        
         // 生成不同尺寸的PNG文件
         let sizes = [16, 32, 48]
         var successCount = 0
         
         for (index, size) in sizes.enumerated() {
-            MagicMessageProvider.shared.info("生成 favicon \(size)x\(size) 图标... (\(index + 1)/\(sizes.count))")
-            
             if await generatePNG(size: size, folderPath: folderPath, tag: tag, iconAsset: iconAsset) {
                 successCount += 1
             }
@@ -226,7 +215,7 @@ struct DownloadButtons: View {
         await generateFaviconHTML(folderPath: folderPath)
         
         if successCount == sizes.count {
-            MagicMessageProvider.shared.success("Favicon下载完成！\n保存位置：\(folderPath.path)\n成功生成 \(successCount) 个图标文件 + HTML引用代码")
+            MagicMessageProvider.shared.success("Favicon图标集已保存到下载目录")
         } else {
             MagicMessageProvider.shared.warning("Favicon生成完成，但有部分失败\n保存位置：\(folderPath.path)\n成功：\(successCount)/\(sizes.count)")
         }
@@ -241,15 +230,10 @@ struct DownloadButtons: View {
             let fileName = "\(tag)-macOS-\(size)x\(size).png"
             let saveTo = folderPath.appendingPathComponent(fileName)
             
-            // 显示生成进度
-            MagicMessageProvider.shared.info("生成 macOS \(size)x\(size) 图标...")
-            
             let success = await IconRenderer.snapshotIcon(iconData: icon, iconAsset: iconAsset, size: size, savePath: saveTo)
             
             // 检查文件是否生成成功
-            if success {
-                MagicMessageProvider.shared.info("✅ 成功生成 \(fileName)")
-            } else {
+            if success == false {
                 MagicMessageProvider.shared.error("❌ 生成 \(fileName) 失败")
             }
         }
@@ -260,14 +244,9 @@ struct DownloadButtons: View {
         let fileName = "\(tag)-iOS-\(size)x\(size).png"
         let saveTo = folderPath.appendingPathComponent(fileName)
         
-        MagicMessageProvider.shared.info("生成 iOS \(size)x\(size) 图标...")
-        
         let success = await IconRenderer.snapshotIcon(iconData: icon, iconAsset: iconAsset, size: size, savePath: saveTo)
         
-        // 检查文件是否生成成功
-        if success {
-            MagicMessageProvider.shared.info("✅ 成功生成 \(fileName)")
-        } else {
+        if success == false {
             MagicMessageProvider.shared.error("❌ 生成 \(fileName) 失败")
         }
     }
@@ -300,7 +279,6 @@ struct DownloadButtons: View {
                     atomically: true,
                     encoding: .utf8
                 )
-                MagicMessageProvider.shared.info("生成 Contents.json 配置文件")
             }
         } catch {
             MagicMessageProvider.shared.error("生成 Contents.json 失败：\(error)")
@@ -362,7 +340,6 @@ struct DownloadButtons: View {
         
         do {
             try readmeContent.write(to: saveTo, atomically: true, encoding: .utf8)
-            MagicMessageProvider.shared.info("生成 README.md 说明文件")
         } catch {
             MagicMessageProvider.shared.error("生成 README.md 失败：\(error)")
         }

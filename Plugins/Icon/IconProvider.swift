@@ -24,6 +24,9 @@ class IconProvider: NSObject, ObservableObject, SuperLog {
     /// 所有可用的分类
     @Published var availableCategories: [IconCategory] = []
     
+    /// 是否启用网络仓库，默认启用
+    @Published var enableRemoteRepository: Bool = true
+    
     /// 当前选中的图标分类名称（兼容性属性）
     var selectedCategoryName: String {
         return selectedCategory?.name ?? ""
@@ -100,11 +103,20 @@ class IconProvider: NSObject, ObservableObject, SuperLog {
     }
     
     /**
+        切换网络仓库启用状态
+     */
+    func toggleRemoteRepository() {
+        self.enableRemoteRepository.toggle()
+        // 切换状态后刷新分类
+        refreshCategories()
+    }
+    
+    /**
         刷新可用分类列表
      */
     func refreshCategories() {
         Task {
-            let categories = await IconRepo.shared.getAllCategories()
+            let categories = await IconRepo.shared.getAllCategories(enableRemote: enableRemoteRepository)
             await MainActor.run {
                 self.availableCategories = categories
                 

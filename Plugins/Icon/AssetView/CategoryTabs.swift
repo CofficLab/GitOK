@@ -29,6 +29,17 @@ struct CategoryTabs: View {
 
             // 右侧：功能按钮组
             HStack(spacing: 8) {
+                // 网络仓库启用/禁用按钮
+                Button(action: {
+                    iconProvider.toggleRemoteRepository()
+                }) {
+                    Image(systemName: iconProvider.enableRemoteRepository ? "network" : "network.slash")
+                        .font(.title3)
+                        .foregroundColor(iconProvider.enableRemoteRepository ? .green : .red)
+                }
+                .buttonStyle(.plain)
+                .help(iconProvider.enableRemoteRepository ? "禁用网络仓库" : "启用网络仓库")
+                
                 // 换图按钮
                 Button(action: changeImage) {
                     Image.add
