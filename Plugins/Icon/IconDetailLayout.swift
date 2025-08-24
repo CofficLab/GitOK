@@ -19,14 +19,22 @@ struct IconDetailLayout: View {
                         .background(.blue.opacity(0.05))
 
                     // 图标调整工具
-                    IconAdjustments()
+                    HStack(spacing: 20) {
+                        OpacityControl()
+                        ScaleControl()
+                        CornerRadiusControl()
+                    }
+                    .padding(8)
+                    .background(Color.yellow.opacity(0.05))
 
                     IconBox()
                         .padding(.horizontal)
-                        .padding(.bottom)
+                        .padding(.vertical, 8)
                         .background(.green.opacity(0.05))
 
-                    IconMaker()
+                    HStack {
+                        IconMaker()
+                    }
                 }
             }
         }
