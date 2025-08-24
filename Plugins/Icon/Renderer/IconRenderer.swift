@@ -4,6 +4,7 @@ import SwiftUI
 /**
  * 图标渲染器
  * 根据IconData和IconAsset来渲染最终的图标样式
+ * 充分利用所有定制属性：透明度、缩放比例、圆角半径等
  * 不关心图标是本地还是远程，只负责组合背景和图标
  */
 class IconRenderer {
@@ -21,9 +22,9 @@ class IconRenderer {
             renderIconImage(iconData: iconData, iconAsset: iconAsset)
         }
         .cornerRadius(iconData.cornerRadius > 0 ? CGFloat(iconData.cornerRadius) : 0)
-        .opacity(iconData.opacity)
+        .clipped() // 确保圆角效果正确显示
     }
-    
+
     /// 异步渲染静态图标（支持远程图标预加载）
     /// - Parameters:
     ///   - iconData: 图标数据
@@ -34,13 +35,13 @@ class IconRenderer {
     static func renderStaticIconAsync(iconData: IconData, iconAsset: IconAsset, size: CGFloat) async -> some View {
         // 先异步获取图标图片
         let iconImage = await iconAsset.getImageAsync()
-        
+
         // 然后构建静态视图
         return ZStack {
             // 背景
             renderBackground(iconData: iconData)
                 .frame(width: size, height: size)
-            
+
             // 图标内容 - 使用已获取的图片
             iconImage
                 .resizable()
@@ -53,7 +54,7 @@ class IconRenderer {
         .opacity(iconData.opacity)
         .clipped()
     }
-    
+
     /// 生成图标截图
     /// - Parameters:
     ///   - iconData: 图标数据
@@ -71,11 +72,11 @@ class IconRenderer {
             .frame(width: CGFloat(size), height: CGFloat(size)),
             path: savePath
         )
-        
+
         // 返回文件是否成功生成
         return FileManager.default.fileExists(atPath: savePath.path)
     }
-    
+
     /// 异步生成图标截图（支持远程图标预加载）
     /// - Parameters:
     ///   - iconData: 图标数据
@@ -86,7 +87,7 @@ class IconRenderer {
     @MainActor static func snapshotIconAsync(iconData: IconData, iconAsset: IconAsset, size: Int, savePath: URL) async -> Bool {
         // 先异步渲染图标视图
         let iconView = await renderStaticIconAsync(iconData: iconData, iconAsset: iconAsset, size: CGFloat(size))
-        
+
         let _ = MagicImage.snapshot(
             MagicImage.makeImage(iconView)
                 .resizable()
@@ -94,16 +95,19 @@ class IconRenderer {
                 .frame(width: CGFloat(size), height: CGFloat(size)),
             path: savePath
         )
-        
+
         // 返回文件是否成功生成
         return FileManager.default.fileExists(atPath: savePath.path)
     }
+
+    // MARK: - 私有渲染方法
 
     /// 渲染背景
     /// - Parameter iconData: 图标数据
     /// - Returns: 背景视图
     private static func renderBackground(iconData: IconData) -> some View {
         MagicBackgroundGroup(for: iconData.backgroundId)
+            .opacity(iconData.opacity)
     }
 
     /// 渲染图标图片
@@ -124,37 +128,41 @@ class IconRenderer {
                         image
                             .resizable()
                             .scaledToFit()
+                            .scaleEffect(iconData.scale ?? 1.0) // 应用缩放效果
                     case .failure:
                         Image(systemName: "photo")
                             .resizable()
                             .scaledToFit()
                             .foregroundColor(.secondary)
+                            .scaleEffect(iconData.scale ?? 1.0) // 应用缩放效果
                     @unknown default:
                         Image(systemName: "photo")
                             .resizable()
                             .scaledToFit()
                             .foregroundColor(.secondary)
+                            .scaleEffect(iconData.scale ?? 1.0) // 应用缩放效果
                     }
                 }
             } else {
-                // 使用异步方法获取图标图片
-                AsyncIconImage(iconAsset: iconAsset)
+                AsyncIconImage(iconData: iconData, iconAsset: iconAsset)
             }
         }
     }
-    
+
     /// 异步图标图片组件
     private struct AsyncIconImage: View {
+        let iconData: IconData
         let iconAsset: IconAsset
         @State private var loadedImage: Image?
         @State private var isLoading = false
-        
+
         var body: some View {
             Group {
                 if let loadedImage = loadedImage {
                     loadedImage
                         .resizable()
                         .scaledToFit()
+                        .scaleEffect(iconData.scale ?? 1.0) // 应用缩放效果
                 } else if isLoading {
                     ProgressView()
                         .frame(width: 50, height: 50)
@@ -163,13 +171,14 @@ class IconRenderer {
                         .resizable()
                         .scaledToFit()
                         .foregroundColor(.secondary)
+                        .scaleEffect(iconData.scale ?? 1.0) // 应用缩放效果
                 }
             }
             .onAppear {
                 loadIconImage()
             }
         }
-        
+
         @MainActor
         private func loadIconImage() {
             isLoading = true
@@ -184,7 +193,8 @@ class IconRenderer {
 
 #Preview("App - Small Screen") {
     RootView {
-        ContentLayout().setInitialTab(IconPlugin.label)
+        ContentLayout()
+            .setInitialTab(IconPlugin.label)
             .hideSidebar()
             .hideProjectActions()
     }
@@ -194,7 +204,8 @@ class IconRenderer {
 
 #Preview("App - Big Screen") {
     RootView {
-        ContentLayout().setInitialTab(IconPlugin.label)
+        ContentLayout()
+            .setInitialTab(IconPlugin.label)
             .hideSidebar()
     }
     .frame(width: 1200)
