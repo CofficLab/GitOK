@@ -23,19 +23,16 @@ class IconRenderer {
         return ZStack {
             // 背景
             renderBackground(iconData: iconData)
-                .frame(width: size, height: size)
 
             // 图标内容 - 使用已获取的图片
             iconImage
                 .resizable()
                 .scaledToFit()
                 .scaleEffect(iconData.scale ?? 1.0)
-                .frame(width: size * 0.6, height: size * 0.6)
         }
         .frame(width: size, height: size)
         .cornerRadius(iconData.cornerRadius > 0 ? CGFloat(iconData.cornerRadius) : 0)
         .opacity(iconData.opacity)
-        .clipped()
     }
     
     /// 生成图标截图

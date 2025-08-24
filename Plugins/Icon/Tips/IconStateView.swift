@@ -63,7 +63,6 @@ struct IconStateView: View {
             }
         }
         .frame(width: size, height: size)
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
 
