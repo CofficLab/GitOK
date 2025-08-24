@@ -37,11 +37,7 @@ struct IconDetailLayout: View {
                         
                         // 下载区域
                         DownloadButtons()
-                            .frame(height: .infinity)
-                            .frame(maxHeight: .infinity)
                     }
-                    .padding(.horizontal)
-                    .padding(.vertical, 8)
                     .background(.cyan.opacity(0.05))
                 }
             }

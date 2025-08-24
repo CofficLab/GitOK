@@ -16,7 +16,7 @@ struct DownloadButtons: View {
         VStack(spacing: 16) {
             DownloadButton(
                 title: "下载 Xcode 格式",
-                icon: "xcode",
+                icon: "applelogo",
                 color: .blue,
                 action: {
                     Task {
@@ -57,10 +57,8 @@ struct DownloadButtons: View {
             }
         }
         .padding()
-        
-        .frame(height: .infinity)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color.cyan.opacity(0.05))
-        .cornerRadius(12)
         .onAppear {
             loadCurrentIconAsset()
         }
