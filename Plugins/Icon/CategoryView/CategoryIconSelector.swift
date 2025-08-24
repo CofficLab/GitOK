@@ -4,13 +4,15 @@ import MagicCore
 /**
  * 分类图标选择器组件
  * 专门用于图标选择场景，提供简化的选择界面
- * 数据流：IconCategoryRepo -> IconCategory -> IconAsset Selection
+ * 数据流：IconRepo -> UnifiedIconCategory -> IconAsset Selection
  */
 struct CategoryIconSelector: View {
     @EnvironmentObject var iconProvider: IconProvider
     @EnvironmentObject var messageProvider: MagicMessageProvider
     
     @State private var gridItems: [GridItem] = Array(repeating: .init(.flexible()), count: 8)
+    @State private var iconAssets: [IconAsset] = []
+    @State private var isLoading: Bool = false
     
     var body: some View {
         VStack(spacing: 16) {
@@ -25,24 +27,29 @@ struct CategoryIconSelector: View {
             CategoryTabs()
             
             // 图标网格
-            if let selectedCategory = iconProvider.selectedCategory {
-                IconGrid(
-                    category: selectedCategory,
-                    gridItems: gridItems
-                )
-            } else if let firstCategory = AppIconRepo.shared.getAllCategories().first {
-                IconGrid(
-                    category: firstCategory,
-                    gridItems: gridItems
-                )
-            } else {
-                Text("没有可用的图标分类")
+            if isLoading {
+                ProgressView("加载图标中...")
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .padding()
+            } else if iconAssets.isEmpty {
+                Text("没有可用的图标")
                     .foregroundColor(.secondary)
                     .padding()
+            } else {
+                LazyVGrid(columns: gridItems, spacing: 12) {
+                    ForEach(iconAssets, id: \.id) { iconAsset in
+                        IconView(iconAsset: iconAsset)
+                    }
+                }
+                .padding(.horizontal)
             }
         }
         .onAppear {
             setupGrid()
+            iconProvider.refreshCategories()
+        }
+        .onChange(of: iconProvider.selectedCategory) {
+            loadIconAssets()
         }
     }
     
@@ -50,14 +57,21 @@ struct CategoryIconSelector: View {
         gridItems = Array(repeating: .init(.flexible()), count: 8)
     }
     
-    private func handleIconSelection(_ iconId: String) {
-        guard iconProvider.currentModel != nil else {
-            messageProvider.error("请先选择一个图标文件")
+    private func loadIconAssets() {
+        guard let selectedCategory = iconProvider.selectedCategory else {
+            iconAssets = []
             return
         }
         
-        iconProvider.selectIcon(iconId)
-        messageProvider.info("图标已更新")
+        isLoading = true
+        
+        Task {
+            let assets = await IconRepo.shared.getIcons(for: selectedCategory)
+            await MainActor.run {
+                self.iconAssets = assets
+                self.isLoading = false
+            }
+        }
     }
 }
 

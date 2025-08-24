@@ -4,11 +4,13 @@ import SwiftUI
 /**
  * 图标盒子视图
  * 负责管理分类选择和图标展示的整体布局
- * 数据流：IconCategoryRepo -> IconCategory -> IconAsset List
+ * 数据流：IconRepo -> UnifiedIconCategory -> IconAsset List
  */
 struct IconBox: View {
     @EnvironmentObject var iconProvider: IconProvider
     @State private var gridItems: [GridItem] = Array(repeating: .init(.flexible()), count: 10)
+    @State private var iconAssets: [IconAsset] = []
+    @State private var isLoading: Bool = false
     
     var body: some View {
         VStack(spacing: 0) {
@@ -23,26 +25,21 @@ struct IconBox: View {
             GeometryReader { geo in
                 ScrollView {
                     VStack {
-                        if iconProvider.isUsingRemoteRepo {
-                            // 显示远程图标网格
-                            RemoteIconGrid(
-                                gridItems: gridItems
-                            )
-                        } else if let selectedCategory = iconProvider.selectedCategory {
-                            // 显示本地图标网格
-                            IconGrid(
-                                category: selectedCategory,
-                                gridItems: gridItems
-                            )
-                        } else if let firstCategory = AppIconRepo.shared.getAllCategories().first {
-                            IconGrid(
-                                category: firstCategory,
-                                gridItems: gridItems
-                            )
-                        } else {
-                            Text("没有可用的图标分类")
+                        if isLoading {
+                            ProgressView("加载图标中...")
+                                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                .padding()
+                        } else if iconAssets.isEmpty {
+                            Text("没有可用的图标")
                                 .foregroundColor(.secondary)
                                 .padding()
+                        } else {
+                            LazyVGrid(columns: gridItems, spacing: 12) {
+                                ForEach(iconAssets, id: \.id) { iconAsset in
+                                    IconView(iconAsset: iconAsset)
+                                }
+                            }
+                            .padding(.horizontal)
                         }
                     }
                     .onAppear {
@@ -57,11 +54,31 @@ struct IconBox: View {
         .onAppear {
             iconProvider.refreshCategories()
         }
+        .onChange(of: iconProvider.selectedCategory) {
+            loadIconAssets()
+        }
     }
     
     private func updateGridItems(_ geo: GeometryProxy) {
         let columns = max(Int(geo.size.width / 60), 1)
         gridItems = Array(repeating: .init(.flexible()), count: columns)
+    }
+    
+    private func loadIconAssets() {
+        guard let selectedCategory = iconProvider.selectedCategory else {
+            iconAssets = []
+            return
+        }
+        
+        isLoading = true
+        
+        Task {
+            let assets = await IconRepo.shared.getIcons(for: selectedCategory)
+            await MainActor.run {
+                self.iconAssets = assets
+                self.isLoading = false
+            }
+        }
     }
 }
 

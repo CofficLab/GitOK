@@ -4,7 +4,7 @@ import SwiftUI
 /**
  * 分类标签页组件
  * 负责显示所有可用的图标分类，支持横向滚动和分类选择
- * 数据流：IconCategoryRepo -> CategoryTabs
+ * 数据流：IconRepo -> UnifiedIconCategory -> CategoryTabs
  */
 struct CategoryTabs: View {
     @EnvironmentObject var iconProvider: IconProvider
@@ -15,14 +15,8 @@ struct CategoryTabs: View {
             // 左侧：分类标签页（可滚动）
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 8) {
-                    if iconProvider.isUsingRemoteRepo {
-                        // 显示远程分类
-                        RemoteCategoryTabs()
-                    } else {
-                        // 显示本地分类
-                        ForEach(AppIconRepo.shared.getAllCategories(), id: \.id) { category in
-                            CategoryTab(category: category)
-                        }
+                    ForEach(iconProvider.availableCategories, id: \.id) { category in
+                        UnifiedCategoryTab(category: category)
                     }
                 }
             }
@@ -37,15 +31,6 @@ struct CategoryTabs: View {
                 }
                 .buttonStyle(.plain)
                 .help("更换图片")
-                
-                // 仓库切换按钮
-                Button(action: toggleRepository) {
-                    Image(systemName: iconProvider.isUsingRemoteRepo ? "network" : "folder")
-                        .font(.title3)
-                        .foregroundColor(iconProvider.isUsingRemoteRepo ? .orange : .green)
-                }
-                .buttonStyle(.plain)
-                .help(iconProvider.isUsingRemoteRepo ? "切换到本地仓库" : "切换到远程仓库")
             }
         }
         .onAppear {
@@ -78,10 +63,7 @@ struct CategoryTabs: View {
         }
     }
     
-    private func toggleRepository() {
-        iconProvider.toggleRepository()
-        m.success(iconProvider.isUsingRemoteRepo ? "已切换到远程仓库" : "已切换到本地仓库")
-    }
+
 }
 
 #Preview("App - Small Screen") {

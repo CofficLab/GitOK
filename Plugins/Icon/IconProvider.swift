@@ -18,33 +18,15 @@ class IconProvider: NSObject, ObservableObject, SuperLog {
     /// 用于在图标选择器中高亮显示选中的图标
     @Published var selectedIconId: String = ""
     
-    /// 当前选中的图标分类
-    @Published var selectedCategory: IconCategory?
+    /// 当前选中的分类
+    @Published var selectedCategory: UnifiedIconCategory?
     
-    /// 当前是否使用远程仓库
-    @Published var isUsingRemoteRepo: Bool = false
-    
-    /// 当前选中的远程分类ID（用于远程分类的高亮显示）
-    @Published var selectedRemoteCategoryId: String = ""
+    /// 所有可用的分类
+    @Published var availableCategories: [UnifiedIconCategory] = []
     
     /// 当前选中的图标分类名称（兼容性属性）
     var selectedCategoryName: String {
-        if isUsingRemoteRepo {
-            return selectedRemoteCategoryId
-        } else {
-            return selectedCategory?.name ?? ""
-        }
-    }
-    
-    /// 所有可用的图标分类名称（兼容性属性）
-    var availableCategories: [String] {
-        // 根据当前仓库类型返回相应的分类
-        if isUsingRemoteRepo {
-            // 这里暂时返回空数组，因为需要异步获取
-            return []
-        } else {
-            return AppIconRepo.shared.getAllCategories().map { $0.name }
-        }
+        return selectedCategory?.name ?? ""
     }
 
     override init() {
@@ -114,46 +96,29 @@ class IconProvider: NSObject, ObservableObject, SuperLog {
     /**
         选择图标分类
      */
-    func selectCategory(_ category: IconCategory) {
+    func selectCategory(_ category: UnifiedIconCategory) {
         self.selectedCategory = category
-    }
-    
-    /**
-        选择远程图标分类
-     */
-    func selectRemoteCategory(_ categoryId: String) {
-        self.selectedRemoteCategoryId = categoryId
     }
     
     /**
         刷新可用分类列表
      */
     func refreshCategories() {
-        if isUsingRemoteRepo {
-            // 使用远程仓库
-            Task {
-                let allCategories = await IconRepo.shared.getAllCategories()
-                let remoteCategories = allCategories.filter { $0.source == .remote }
-                await MainActor.run {
-                    // 选择第一个远程分类作为默认选中
-                    if let firstRemoteCategory = remoteCategories.first {
-                        selectedRemoteCategoryId = firstRemoteCategory.id.absoluteString
-                    }
+        Task {
+            let categories = await IconRepo.shared.getAllCategories()
+            await MainActor.run {
+                self.availableCategories = categories
+                
+                // 如果当前选中的分类不存在，选择第一个
+                if let selected = selectedCategory,
+                   !categories.contains(where: { $0.id == selected.id }) {
+                    selectedCategory = categories.first
                 }
-            }
-        } else {
-            // 使用本地仓库
-            let allCategories = AppIconRepo.shared.getAllCategories()
-
-            // 如果当前选中的分类不存在，选择第一个
-            if let selected = selectedCategory,
-               !allCategories.contains(where: { $0.id == selected.id }) {
-                selectedCategory = allCategories.first
-            }
-            
-            // 如果没有选中的分类，选择第一个
-            if selectedCategory == nil && !allCategories.isEmpty {
-                selectedCategory = allCategories.first
+                
+                // 如果没有选中的分类，选择第一个
+                if selectedCategory == nil && !categories.isEmpty {
+                    selectedCategory = categories.first
+                }
             }
         }
     }
@@ -161,15 +126,8 @@ class IconProvider: NSObject, ObservableObject, SuperLog {
     /// 获取指定名称的分类
     /// - Parameter name: 分类名称
     /// - Returns: 分类实例，如果不存在则返回nil
-    func getCategory(byName name: String) -> IconCategory? {
-        AppIconRepo.shared.getCategory(byName: name)
-    }
-    
-    /// 切换仓库类型
-    func toggleRepository() {
-        isUsingRemoteRepo.toggle()
-        // 刷新分类列表
-        refreshCategories()
+    func getCategory(byName name: String) -> UnifiedIconCategory? {
+        return availableCategories.first { $0.name == name }
     }
 }
 
