@@ -12,15 +12,13 @@ struct IconMaker: View {
     @EnvironmentObject var m: MagicMessageProvider
     @EnvironmentObject var i: IconProvider
 
-    @State private var icon: IconData?
-
     var body: some View {
         Group {
-            if let icon = self.icon {
+            if let icon = i.currentData {
                 GeometryReader { geometry in
                     HStack {
                         // 左侧：图标预览区域
-                        IconPreview(iconData: icon)
+                        IconPreview()
                             .padding()
                             .frame(width: geometry.size.width * 0.7)
 
@@ -46,15 +44,6 @@ struct IconMaker: View {
                         .multilineTextAlignment(.center)
                 }
             }
-        }
-        .onAppear {
-            self.icon = i.currentData
-        }
-        .onNotification(.iconDidSave, perform: { _ in
-            self.icon = i.currentData
-        })
-        .onChange(of: i.currentData) { _, newValue in
-            self.icon = newValue
         }
     }
 }

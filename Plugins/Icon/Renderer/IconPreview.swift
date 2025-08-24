@@ -8,8 +8,6 @@ import SwiftUI
  * 自动从IconProvider环境变量中获取图标数据
  */
 struct IconPreview: View {
-    let iconData: IconData
-
     @EnvironmentObject var iconProvider: IconProvider
     @State private var iconAsset: IconAsset?
     @State private var isLoading: Bool = false
@@ -20,9 +18,22 @@ struct IconPreview: View {
             let availableSize = min(geometry.size.width, geometry.size.height)
 
             if let iconAsset = iconAsset, !isLoading && errorMessage == nil {
-                IconRenderer.renderIcon(iconData: iconData, iconAsset: iconAsset)
-                    .frame(width: availableSize, height: availableSize)
-                    .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
+                // 从IconProvider获取当前图标数据
+                if let iconData = iconProvider.currentData {
+                    IconRenderer.renderIcon(iconData: iconData, iconAsset: iconAsset)
+                        .frame(width: availableSize, height: availableSize)
+                        .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
+                } else {
+                    // 没有图标数据时显示提示
+                    VStack(spacing: 12) {
+                        Image(systemName: "photo")
+                            .font(.system(size: 50))
+                            .foregroundColor(.secondary)
+                        Text("请选择一个图标")
+                            .font(.headline)
+                            .foregroundColor(.secondary)
+                    }
+                }
             } else if isLoading {
                 // 显示加载状态
                 VStack(spacing: 12) {
@@ -32,8 +43,6 @@ struct IconPreview: View {
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
-                .frame(width: availableSize, height: availableSize)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else if let errorMessage = errorMessage {
                 // 显示错误状态
                 VStack(spacing: 12) {
@@ -52,8 +61,6 @@ struct IconPreview: View {
                     }
                     .buttonStyle(.bordered)
                 }
-                .frame(width: availableSize, height: availableSize)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
                 // 显示空状态
                 VStack(spacing: 12) {
@@ -64,11 +71,8 @@ struct IconPreview: View {
                         .font(.headline)
                         .foregroundColor(.secondary)
                 }
-                .frame(width: availableSize, height: availableSize)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }
-
         .onAppear {
             loadIconAsset()
         }
@@ -84,6 +88,12 @@ struct IconPreview: View {
                 self.iconAsset = nil
                 self.errorMessage = nil
                 self.isLoading = false
+            }
+        }
+        .onChange(of: iconProvider.currentData) { _, newValue in
+            // 当currentData变化时，重新加载图标资源
+            if newValue != nil {
+                loadIconAsset()
             }
         }
     }
