@@ -19,7 +19,8 @@ struct IconView: View {
     
     var body: some View {
         // 使用IconAsset的可调整大小视图（自动处理本地和远程）
-        iconAsset.getResizableIconView(size: 40)
+        iconAsset.getImage()
+            .resizable()
             .frame(width: 40, height: 40) // 确保固定尺寸
             .background(
                 Group {

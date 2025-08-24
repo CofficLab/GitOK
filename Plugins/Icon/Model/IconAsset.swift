@@ -78,29 +78,7 @@ class IconAsset: Identifiable {
         case .local:
             return loadImage()
         case .remote:
-            // 对于远程图标，返回一个占位符图片
-            // 实际的图片加载将在UI层面异步处理
             return Image(systemName: "photo")
-        }
-    }
-    
-    /// 获取可调整大小的图标视图
-    /// - Parameter size: 图标大小
-    /// - Returns: 图标视图，已设置大小
-    func getResizableIconView(size: CGFloat) -> some View {
-        switch source {
-        case .local:
-            return AnyView(
-                loadImage()
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: size, height: size)
-            )
-        case .remote:
-            return AnyView(
-                RemoteIconView(iconAsset: self)
-                    .frame(width: size, height: size)
-            )
         }
     }
     
@@ -165,87 +143,12 @@ class IconAsset: Identifiable {
         }
     }
     
-    /// 加载本地缩略图（支持多种格式）
-    /// - Returns: SwiftUI Image
-    private func loadLocalThumbnail() -> Image {
-        guard let fileURL = fileURL else {
-            return Image(systemName: "plus")
-        }
-        
-        let fileExtension = fileURL.pathExtension.lowercased()
-        
-        switch fileExtension {
-        case "svg":
-            // SVG缩略图可以直接使用原图，因为它是矢量图形
-            return loadSVGImage()
-        case "png", "jpg", "jpeg", "gif", "webp":
-            return loadRasterThumbnail()
-        default:
-            return Image(systemName: "plus")
-        }
-    }
-    
-    /// 加载光栅图片缩略图
-    /// - Returns: SwiftUI Image
-    private func loadRasterThumbnail() -> Image {
-        guard let fileURL = fileURL else {
-            return Image(systemName: "plus")
-        }
-        
-        if let image = NSImage(contentsOf: fileURL) {
-            if let thumbnail = generateThumbnail(for: image) {
-                return Image(nsImage: thumbnail)
-            } else {
-                return Image(systemName: "plus")
-            }
-        } else {
-            return Image(systemName: "plus")
-        }
-    }
-    
-    /// 生成缩略图
-    /// - Parameter image: 原始图片
-    /// - Returns: 缩略图
-    private func generateThumbnail(for image: NSImage) -> NSImage? {
-        let thumbnailSize = NSSize(width: 50, height: 50)
-        
-        let thumbnail = NSImage(size: thumbnailSize)
-        thumbnail.lockFocus()
-        image.draw(in: NSRect(origin: .zero, size: thumbnailSize), from: NSRect(origin: .zero, size: image.size), operation: .copy, fraction: 1.0)
-        thumbnail.unlockFocus()
-        
-        return thumbnail
-    }
-    
     /// 加载远程缩略图
     /// - Returns: SwiftUI Image
     private func loadRemoteThumbnail() -> Image {
         // 对于远程图标，返回一个占位符图片
         // 实际的远程图片加载将在UI层面异步处理
         return Image(systemName: "photo")
-    }
-}
-
-
-// MARK: - 统一图标结构体
-
-/**
- * 统一图标
- * 整合本地和远程图标数据
- */
-struct UnifiedIcon: Identifiable, Hashable {
-    let id: String
-    let name: String
-    let source: IconSource
-    let localIcon: IconAsset?
-    let remoteIcon: RemoteIcon?
-    
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
-    }
-    
-    static func == (lhs: UnifiedIcon, rhs: UnifiedIcon) -> Bool {
-        lhs.id == rhs.id
     }
 }
 
