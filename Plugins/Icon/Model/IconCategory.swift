@@ -99,7 +99,6 @@ struct UnifiedIconCategory: Identifiable, Hashable {
     let id: URL
     let name: String
     let displayName: String
-    let iconCount: Int
     let source: IconSource
     let localCategory: IconCategory?
     let remoteCategory: RemoteIconCategory?

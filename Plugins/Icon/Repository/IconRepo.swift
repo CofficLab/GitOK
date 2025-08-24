@@ -41,7 +41,6 @@ class IconRepo: SuperLog {
                 id: localCategory.id,
                 name: localCategory.name,
                 displayName: localCategory.displayName,
-                iconCount: localCategory.iconCount,
                 source: .local,
                 localCategory: localCategory,
                 remoteCategory: nil
@@ -56,7 +55,6 @@ class IconRepo: SuperLog {
                     id: URL(string: "remote://\(remoteCategory.id)") ?? URL(string: "https://gitok.coffic.cn/\(remoteCategory.id)")!,
                     name: remoteCategory.name,
                     displayName: remoteCategory.displayName,
-                    iconCount: remoteCategory.iconCount,
                     source: .remote,
                     localCategory: nil,
                     remoteCategory: remoteCategory
