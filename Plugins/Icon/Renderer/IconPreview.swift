@@ -16,63 +16,59 @@ struct IconPreview: View {
     @State private var errorMessage: String?
 
     var body: some View {
-        VStack(spacing: 0) {
-            GeometryReader { geometry in
-                let availableSize = min(geometry.size.width, geometry.size.height) * 0.9
+        GeometryReader { geometry in
+            let availableSize = min(geometry.size.width, geometry.size.height)
 
-                if let iconAsset = iconAsset, !isLoading && errorMessage == nil {
-                    IconRenderer.renderIcon(iconData: iconData, iconAsset: iconAsset)
-                        .frame(width: availableSize, height: availableSize)
-                        .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                } else if isLoading {
-                    // 显示加载状态
-                    VStack(spacing: 12) {
-                        ProgressView()
-                            .frame(width: 50, height: 50)
-                        Text("加载图标中...")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    }
+            if let iconAsset = iconAsset, !isLoading && errorMessage == nil {
+                IconRenderer.renderIcon(iconData: iconData, iconAsset: iconAsset)
                     .frame(width: availableSize, height: availableSize)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                } else if let errorMessage = errorMessage {
-                    // 显示错误状态
-                    VStack(spacing: 12) {
-                        Image(systemName: "exclamationmark.triangle")
-                            .font(.system(size: 50))
-                            .foregroundColor(.orange)
-                        Text("加载失败")
-                            .font(.headline)
-                            .foregroundColor(.orange)
-                        Text(errorMessage)
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                            .multilineTextAlignment(.center)
-                        Button("重试") {
-                            loadIconAsset()
-                        }
-                        .buttonStyle(.bordered)
-                    }
-                    .frame(width: availableSize, height: availableSize)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                } else {
-                    // 显示空状态
-                    VStack(spacing: 12) {
-                        Image(systemName: "photo")
-                            .font(.system(size: 50))
-                            .foregroundColor(.secondary)
-                        Text("请选择一个图标")
-                            .font(.headline)
-                            .foregroundColor(.secondary)
-                    }
-                    .frame(width: availableSize, height: availableSize)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
+            } else if isLoading {
+                // 显示加载状态
+                VStack(spacing: 12) {
+                    ProgressView()
+                        .frame(width: 50, height: 50)
+                    Text("加载图标中...")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
                 }
+                .frame(width: availableSize, height: availableSize)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            } else if let errorMessage = errorMessage {
+                // 显示错误状态
+                VStack(spacing: 12) {
+                    Image(systemName: "exclamationmark.triangle")
+                        .font(.system(size: 50))
+                        .foregroundColor(.orange)
+                    Text("加载失败")
+                        .font(.headline)
+                        .foregroundColor(.orange)
+                    Text(errorMessage)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                        .multilineTextAlignment(.center)
+                    Button("重试") {
+                        loadIconAsset()
+                    }
+                    .buttonStyle(.bordered)
+                }
+                .frame(width: availableSize, height: availableSize)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            } else {
+                // 显示空状态
+                VStack(spacing: 12) {
+                    Image(systemName: "photo")
+                        .font(.system(size: 50))
+                        .foregroundColor(.secondary)
+                    Text("请选择一个图标")
+                        .font(.headline)
+                        .foregroundColor(.secondary)
+                }
+                .frame(width: availableSize, height: availableSize)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }
-        .background(Color.gray.opacity(0.1))
-        .cornerRadius(12)
+
         .onAppear {
             loadIconAsset()
         }
