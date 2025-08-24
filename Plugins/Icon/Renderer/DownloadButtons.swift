@@ -57,7 +57,7 @@ struct DownloadButtons: View {
             }
         }
         .padding()
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .frame(maxHeight: .infinity)
         .background(Color.cyan.opacity(0.05))
         .onAppear {
             loadCurrentIconAsset()
