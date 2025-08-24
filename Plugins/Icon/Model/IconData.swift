@@ -45,7 +45,7 @@ struct IconData: SuperJsonModel {
     }
 }
 
-// MARK: Codable
+// MARK: - Codable
 
 extension IconData: Codable {
     enum CodingKeys: String, CodingKey {
@@ -76,7 +76,7 @@ extension IconData: Codable {
     }
 }
 
-// MARK: 新建
+// MARK: - 新建
 
 extension IconData {
     @discardableResult
@@ -90,7 +90,7 @@ extension IconData {
     }
 }
 
-// MARK: 更新
+// MARK: - 更新
 
 extension IconData {
     mutating func updateOpacity(_ o: Double) throws {
@@ -124,7 +124,7 @@ extension IconData {
     }
 }
 
-// MARK: 保存
+// MARK: - 保存
 
 extension IconData {
     func saveToDisk() throws {
@@ -147,7 +147,7 @@ extension IconData {
     }
 }
 
-// MARK: 删除
+// MARK: - 删除
 
 extension IconData {
     func deleteFromDisk() throws {
@@ -156,7 +156,7 @@ extension IconData {
     }
 }
 
-// MARK: 通知
+// MARK: - 通知
 
 extension IconData {
     func emit(_ name: Notification.Name, object: Any? = nil, userInfo: [AnyHashable: Any]? = nil) {
@@ -165,17 +165,14 @@ extension IconData {
 }
 
 extension Notification.Name {
-    static let iconDidChange = Notification.Name("iconDidChange")
     static let iconDidSave = Notification.Name("iconDidSave")
-    static let iconDidFail = Notification.Name("iconDidFail")
-    static let iconDidGet = Notification.Name("iconDidGet")
-    static let iconTitleDidChange = Notification.Name("iconTitleDidChange")
     static let iconDidDelete = Notification.Name("iconDidDelete")
 }
 
 #Preview("App - Small Screen") {
     RootView {
-        ContentLayout().setInitialTab("Icon")
+        ContentLayout()
+            .setInitialTab("Icon")
             .hideSidebar()
             .hideProjectActions()
     }
@@ -185,7 +182,8 @@ extension Notification.Name {
 
 #Preview("App - Big Screen") {
     RootView {
-        ContentLayout().setInitialTab("Icon")
+        ContentLayout()
+            .setInitialTab("Icon")
             .hideSidebar()
     }
     .frame(width: 1200)

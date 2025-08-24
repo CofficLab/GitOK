@@ -63,52 +63,6 @@ struct IconCategory: Identifiable, Hashable {
         self.categoryURL = categoryURL
     }
     
-    /// 从文件夹路径创建分类
-    /// - Parameter folderPath: 分类文件夹路径
-    /// - Returns: 分类实例，如果路径无效则返回nil
-    static func fromFolder(_ folderPath: String) -> IconCategory? {
-        let url = URL(fileURLWithPath: folderPath)
-        var isDir: ObjCBool = false
-        guard FileManager.default.fileExists(atPath: url.path, isDirectory: &isDir),
-              isDir.boolValue else {
-            return nil
-        }
-        
-        return IconCategory(categoryURL: url)
-    }
-    
-    /// 查找指定图标ID的文件URL
-    /// - Parameter iconId: 图标ID
-    /// - Returns: 图标文件URL，如果找不到则返回nil
-    private func findIconFileURL(for iconId: String) -> URL? {
-        let supportedFormats = ["png", "svg", "jpg", "jpeg", "gif", "webp"]
-        
-        // 对于哈希文件名，直接查找文件（不需要添加扩展名）
-        let directURL = categoryURL.appendingPathComponent(iconId)
-        if FileManager.default.fileExists(atPath: directURL.path) {
-            return directURL
-        }
-        
-        // 如果直接查找失败，尝试添加扩展名查找
-        // 优先查找PNG格式
-        let pngURL = categoryURL.appendingPathComponent("\(iconId).png")
-        if FileManager.default.fileExists(atPath: pngURL.path) {
-            return pngURL
-        }
-        
-        // 查找其他支持的格式
-        for format in supportedFormats {
-            if format == "png" { continue } // 已经检查过了
-            
-            let url = categoryURL.appendingPathComponent("\(iconId).\(format)")
-            if FileManager.default.fileExists(atPath: url.path) {
-                return url
-            }
-        }
-        
-        return nil
-    }
-    
     /// 获取分类下的所有图标资源
     /// - Returns: IconAsset数组
     func getAllIconAssets() -> [IconAsset] {
