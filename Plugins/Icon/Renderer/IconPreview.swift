@@ -24,23 +24,10 @@ struct IconPreview: View {
             let centerY = containerHeight / 2
 
             Group {
-                if iconAsset != nil, !isLoading && errorMessage == nil {
-                    if iconProvider.currentData != nil {
-                        if let renderedView = renderedView, !isRendering {
-                            renderedView
-                                .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
-                        } else {
-                            renderLoadingView(size: constrainedSize)
-                        }
-                    } else {
-                        IconStateView(
-                            icon: "photo",
-                            title: "请选择一个图标",
-                            subtitle: nil,
-                            color: .secondary,
-                            size: constrainedSize
-                        )
-                    }
+                if let renderedView = renderedView {
+                    renderedView
+                } else if isRendering {
+                    renderLoadingView(size: constrainedSize)
                 } else if isLoading {
                     IconStateView(
                         icon: nil,
