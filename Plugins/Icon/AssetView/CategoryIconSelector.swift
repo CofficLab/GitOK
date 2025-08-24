@@ -4,7 +4,7 @@ import MagicCore
 /**
  * 分类图标选择器组件
  * 专门用于图标选择场景，提供简化的选择界面
- * 数据流：IconRepo -> UnifiedIconCategory -> IconAsset Selection
+ * 数据流：IconRepo -> IconCategory -> IconAsset Selection
  */
 struct CategoryIconSelector: View {
     @EnvironmentObject var iconProvider: IconProvider
@@ -77,7 +77,7 @@ struct CategoryIconSelector: View {
 
 #Preview("App - Small Screen") {
     RootView {
-        ContentLayout().setInitialTab("Icon")
+        ContentLayout().setInitialTab(IconPlugin.label)
             .hideSidebar()
             .hideProjectActions()
     }
@@ -87,7 +87,7 @@ struct CategoryIconSelector: View {
 
 #Preview("App - Big Screen") {
     RootView {
-        ContentLayout().setInitialTab("Icon")
+        ContentLayout().setInitialTab(IconPlugin.label)
             .hideSidebar()
     }
     .frame(width: 1200)

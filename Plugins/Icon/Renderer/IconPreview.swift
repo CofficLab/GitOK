@@ -8,77 +8,58 @@ import SwiftUI
  * 自动从IconProvider环境变量中获取图标数据
  */
 struct IconPreview: View {
-    let iconData: IconData
-    
     @EnvironmentObject var iconProvider: IconProvider
     @State private var iconAsset: IconAsset?
     @State private var isLoading: Bool = false
     @State private var errorMessage: String?
-    
+    @State private var renderedView: AnyView?
+    @State private var isRendering: Bool = false
+
     var body: some View {
-        VStack(spacing: 16) {
-            Text("图标预览")
-                .font(.title2)
-                .fontWeight(.semibold)
-            
-            // 自适应图标预览
-            GeometryReader { geometry in
-                let availableSize = min(geometry.size.width, geometry.size.height) * 0.8
-                
-                if let iconAsset = iconAsset, !isLoading && errorMessage == nil {
-                    IconRenderer.renderIcon(iconData: iconData, iconAsset: iconAsset)
-                        .frame(width: availableSize, height: availableSize)
-                        .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        GeometryReader { geometry in
+            let containerHeight = geometry.size.height
+            let containerWidth = geometry.size.width
+            let constrainedSize = min(containerHeight, containerWidth)
+            let centerX = containerWidth / 2
+            let centerY = containerHeight / 2
+
+            Group {
+                if let renderedView = renderedView {
+                    renderedView
+                } else if isRendering {
+                    renderLoadingView(size: constrainedSize)
                 } else if isLoading {
-                    // 显示加载状态
-                    VStack(spacing: 12) {
-                        ProgressView()
-                            .frame(width: 50, height: 50)
-                        Text("加载图标中...")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    }
-                    .frame(width: availableSize, height: availableSize)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    IconStateView(
+                        icon: nil,
+                        title: "加载图标中...",
+                        subtitle: nil,
+                        color: .secondary,
+                        size: constrainedSize,
+                        showProgress: true
+                    )
                 } else if let errorMessage = errorMessage {
-                    // 显示错误状态
-                    VStack(spacing: 12) {
-                        Image(systemName: "exclamationmark.triangle")
-                            .font(.system(size: 50))
-                            .foregroundColor(.orange)
-                        Text("加载失败")
-                            .font(.headline)
-                            .foregroundColor(.orange)
-                        Text(errorMessage)
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                            .multilineTextAlignment(.center)
-                        Button("重试") {
-                            loadIconAsset()
-                        }
-                        .buttonStyle(.bordered)
-                    }
-                    .frame(width: availableSize, height: availableSize)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    IconStateView(
+                        icon: "exclamationmark.triangle",
+                        title: "加载失败",
+                        subtitle: errorMessage,
+                        color: .orange,
+                        size: constrainedSize,
+                        showRetryButton: true,
+                        onRetry: loadIconAsset
+                    )
                 } else {
-                    // 显示空状态
-                    VStack(spacing: 12) {
-                        Image(systemName: "photo")
-                            .font(.system(size: 50))
-                            .foregroundColor(.secondary)
-                        Text("请选择一个图标")
-                            .font(.headline)
-                            .foregroundColor(.secondary)
-                    }
-                    .frame(width: availableSize, height: availableSize)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    IconStateView(
+                        icon: "photo",
+                        title: "请选择一个图标",
+                        subtitle: nil,
+                        color: .secondary,
+                        size: constrainedSize
+                    )
                 }
             }
+            .position(x: centerX, y: centerY)
+            .frame(width: constrainedSize, height: constrainedSize)
         }
-        .padding()
-        .background(Color.gray.opacity(0.05))
-        .cornerRadius(12)
         .onAppear {
             loadIconAsset()
         }
@@ -88,82 +69,111 @@ struct IconPreview: View {
                 self.iconAsset = nil
                 self.errorMessage = nil
                 self.isLoading = true
+                self.renderedView = nil
                 loadIconAsset()
             } else {
                 // 如果没有选中的图标，清空所有状态
                 self.iconAsset = nil
                 self.errorMessage = nil
                 self.isLoading = false
+                self.renderedView = nil
+            }
+        }
+        .onChange(of: iconProvider.currentData) { _, newValue in
+            // 当currentData变化时，重新加载图标资源
+            if newValue != nil {
+                loadIconAsset()
+            }
+        }
+        .onChange(of: iconProvider.currentData?.opacity) { _, _ in
+            // 当透明度变化时重新渲染
+            if let iconData = iconProvider.currentData, let iconAsset = iconAsset {
+                renderIcon(iconData: iconData, iconAsset: iconAsset, size: 300) // 使用约束后的尺寸
+            }
+        }
+        .onChange(of: iconProvider.currentData?.scale) { _, _ in
+            // 当缩放比例变化时重新渲染
+            if let iconData = iconProvider.currentData, let iconAsset = iconAsset {
+                renderIcon(iconData: iconData, iconAsset: iconAsset, size: 300) // 使用约束后的尺寸
+            }
+        }
+        .onChange(of: iconProvider.currentData?.cornerRadius) { _, _ in
+            // 当圆角半径变化时重新渲染
+            if let iconData = iconProvider.currentData, let iconAsset = iconAsset {
+                renderIcon(iconData: iconData, iconAsset: iconAsset, size: 300) // 使用约束后的尺寸
+            }
+        }
+        .onChange(of: iconProvider.currentData?.backgroundId) { _, _ in
+            // 当背景样式变化时重新渲染
+            if let iconData = iconProvider.currentData, let iconAsset = iconAsset {
+                renderIcon(iconData: iconData, iconAsset: iconAsset, size: 300) // 使用约束后的尺寸
+            }
+        }
+        .onChange(of: iconProvider.currentData?.imageURL) { _, _ in
+            // 当自定义图片URL变化时重新渲染
+            if let iconData = iconProvider.currentData, let iconAsset = iconAsset {
+                renderIcon(iconData: iconData, iconAsset: iconAsset, size: 300) // 使用约束后的尺寸
             }
         }
     }
-    
+
     private func loadIconAsset() {
         guard !iconProvider.selectedIconId.isEmpty else {
             self.iconAsset = nil
             self.errorMessage = nil
             self.isLoading = false
+            self.renderedView = nil
             return
         }
-        
-        // 设置超时，避免无限loading
+
         Task {
-            do {
-                // 添加超时处理
-                let iconAsset = try await withTimeout(seconds: 10) {
-                    await IconRepo.shared.getIconAsset(byId: iconProvider.selectedIconId)
-                }
-                
-                await MainActor.run {
-                    if let iconAsset = iconAsset {
-                        self.iconAsset = iconAsset
-                        self.errorMessage = nil
-                        self.isLoading = false
-                    } else {
-                        self.iconAsset = nil
-                        self.errorMessage = "未找到图标：\(iconProvider.selectedIconId)"
-                        self.isLoading = false
-                    }
-                }
-            } catch {
-                await MainActor.run {
-                    self.iconAsset = nil
-                    self.errorMessage = "加载失败：\(error.localizedDescription)"
+            let iconAsset = await IconRepo.shared.getIconAsset(byId: iconProvider.selectedIconId)
+
+            await MainActor.run {
+                if let iconAsset = iconAsset {
+                    self.iconAsset = iconAsset
+                    self.errorMessage = nil
                     self.isLoading = false
+                    // 加载完图标资源后，开始渲染
+                    renderIcon(iconData: iconProvider.currentData, iconAsset: iconAsset, size: 300) // 使用约束后的尺寸
+                } else {
+                    self.iconAsset = nil
+                    self.errorMessage = "未找到图标：\(iconProvider.selectedIconId)"
+                    self.isLoading = false
+                    self.renderedView = nil
                 }
             }
         }
     }
-}
 
-// MARK: - 超时扩展
+    @MainActor
+    private func renderIcon(iconData: IconData?, iconAsset: IconAsset, size: CGFloat) {
+        guard let iconData = iconData else { return }
 
-extension Task where Success == Never, Failure == Never {
-    static func sleep(seconds: TimeInterval) async {
-        try? await Task.sleep(nanoseconds: UInt64(seconds * 1_000_000_000))
-    }
-}
+        isRendering = true
 
-func withTimeout<T>(seconds: TimeInterval, operation: @escaping () async throws -> T) async throws -> T {
-    try await withThrowingTaskGroup(of: T.self) { group in
-        group.addTask {
-            try await operation()
+        Task {
+            let view = await IconRenderer.renderStaticIconAsync(
+                iconData: iconData,
+                iconAsset: iconAsset,
+                size: size
+            )
+
+            self.renderedView = AnyView(view)
+            self.isRendering = false
         }
-        
-        group.addTask {
-            try await Task.sleep(seconds: seconds)
-            throw TimeoutError()
-        }
-        
-        let result = try await group.next()!
-        group.cancelAll()
-        return result
     }
-}
 
-struct TimeoutError: Error, LocalizedError {
-    var errorDescription: String? {
-        return "操作超时"
+    // 提取渲染加载视图为单独的方法
+    private func renderLoadingView(size: CGFloat) -> some View {
+        VStack(spacing: 12) {
+            ProgressView()
+                .frame(width: 50, height: 50)
+            Text("渲染图标中...")
+                .font(.caption)
+                .foregroundColor(.secondary)
+        }
+        .frame(width: size, height: size)
     }
 }
 

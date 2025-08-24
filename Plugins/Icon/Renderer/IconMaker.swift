@@ -12,48 +12,38 @@ struct IconMaker: View {
     @EnvironmentObject var m: MagicMessageProvider
     @EnvironmentObject var i: IconProvider
 
-    @State private var icon: IconData?
-
     var body: some View {
         Group {
-            if let icon = self.icon {
+            if let icon = i.currentData {
                 GeometryReader { geometry in
-                    HStack(spacing: 24) {
-                        // 左侧：图标预览区域 (70%)
-                        IconPreview(iconData: icon)
+                    HStack {
+                        // 左侧：图标预览区域
+                        IconPreview()
+                            .padding()
                             .frame(width: geometry.size.width * 0.7)
-                        
-                        // 右侧：下载按钮区域 (30%)
+
+                        // 右侧：下载按钮区域
                         DownloadButtons(icon: icon)
+                            .padding()
                             .frame(width: geometry.size.width * 0.3)
                     }
                 }
-                .padding()
             } else {
                 VStack(spacing: 16) {
                     Image(systemName: "photo")
                         .font(.system(size: 48))
                         .foregroundColor(.secondary)
-                    
+
                     Text("请选择或新建一个图标")
                         .font(.headline)
                         .foregroundColor(.secondary)
-                    
+
                     Text("选择一个图标后，您可以预览不同尺寸的效果并下载多种格式")
                         .font(.caption)
                         .foregroundColor(.secondary)
                         .multilineTextAlignment(.center)
                 }
             }
-        }
-        .onAppear {
-            self.icon = i.currentData
-        }
-        .onNotification(.iconDidSave, perform: { _ in
-            self.icon = i.currentData
-        })
-        .onChange(of: i.currentData) { _, newValue in
-            self.icon = newValue
         }
     }
 }

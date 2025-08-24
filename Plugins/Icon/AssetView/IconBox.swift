@@ -4,7 +4,7 @@ import SwiftUI
 /**
  * 图标盒子视图
  * 负责管理分类选择和图标展示的整体布局
- * 数据流：IconRepo -> UnifiedIconCategory -> IconAsset List
+ * 数据流：IconRepo -> IconCategory -> IconAsset List
  */
 struct IconBox: View {
     @EnvironmentObject var iconProvider: IconProvider
@@ -53,6 +53,20 @@ struct IconBox: View {
         }
         .onAppear {
             iconProvider.refreshCategories()
+            // 确保有选中的分类，如果没有则选择第一个
+            if iconProvider.selectedCategory == nil {
+                Task {
+                    let categories = await IconRepo.shared.getAllCategories()
+                    if let firstCategory = categories.first {
+                        await MainActor.run {
+                            iconProvider.selectCategory(firstCategory)
+                        }
+                    }
+                }
+            } else {
+                // 如果已有选中的分类，直接加载图标
+                loadIconAssets()
+            }
         }
         .onChange(of: iconProvider.selectedCategory) {
             loadIconAssets()
@@ -84,7 +98,7 @@ struct IconBox: View {
 
 #Preview("App - Small Screen") {
     RootView {
-        ContentLayout().setInitialTab("Icon")
+        ContentLayout().setInitialTab(IconPlugin.label)
             .hideSidebar()
             .hideProjectActions()
     }
@@ -94,7 +108,7 @@ struct IconBox: View {
 
 #Preview("App - Big Screen") {
     RootView {
-        ContentLayout().setInitialTab("Icon")
+        ContentLayout().setInitialTab(IconPlugin.label)
             .hideSidebar()
     }
     .frame(width: 1200)

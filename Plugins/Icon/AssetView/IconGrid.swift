@@ -39,10 +39,10 @@ struct IconGrid: View {
 /**
  * 统一分类图标网格组件
  * 负责展示指定统一分类下的所有图标
- * 数据流：UnifiedIconCategory -> IconAsset List
+ * 数据流：IconCategory -> IconAsset List
  */
 struct UnifiedIconGrid: View {
-    let category: UnifiedIconCategory
+    let category: IconCategory
     let gridItems: [GridItem]
     
     /// 缓存图标资源，避免重复创建
@@ -79,7 +79,7 @@ struct UnifiedIconGrid: View {
 
 #Preview("App - Small Screen") {
     RootView {
-        ContentLayout().setInitialTab("Icon")
+        ContentLayout().setInitialTab(IconPlugin.label)
             .hideSidebar()
             .hideProjectActions()
     }
@@ -89,7 +89,7 @@ struct UnifiedIconGrid: View {
 
 #Preview("App - Big Screen") {
     RootView {
-        ContentLayout().setInitialTab("Icon")
+        ContentLayout().setInitialTab(IconPlugin.label)
             .hideSidebar()
     }
     .frame(width: 1200)

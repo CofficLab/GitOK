@@ -25,7 +25,7 @@ class IconRepo: SuperLog {
 
     /// 获取所有可用的图标分类（本地 + 远程）
     /// - Returns: 统一图标分类数组
-    func getAllCategories() async -> [UnifiedIconCategory] {
+    func getAllCategories() async -> [IconCategory] {
         // 获取本地分类
         let localCategories = localRepo.getAllCategories()
 
@@ -33,34 +33,17 @@ class IconRepo: SuperLog {
         let remoteCategories = await remoteRepo.getAllCategories()
 
         // 合并分类，本地优先
-        var unifiedCategories: [UnifiedIconCategory] = []
+        var unifiedCategories: [IconCategory] = []
 
         // 添加本地分类
         for localCategory in localCategories {
-            let unifiedCategory = UnifiedIconCategory(
-                id: localCategory.id,
-                name: localCategory.name,
-                displayName: localCategory.displayName,
-                iconCount: localCategory.iconCount,
-                source: .local,
-                localCategory: localCategory,
-                remoteCategory: nil
-            )
-            unifiedCategories.append(unifiedCategory)
+            unifiedCategories.append(localCategory)
         }
 
         // 添加远程分类（避免重复）
         for remoteCategory in remoteCategories {
             if !unifiedCategories.contains(where: { $0.name == remoteCategory.name }) {
-                let unifiedCategory = UnifiedIconCategory(
-                    id: URL(string: "remote://\(remoteCategory.id)") ?? URL(string: "https://gitok.coffic.cn/\(remoteCategory.id)")!,
-                    name: remoteCategory.name,
-                    displayName: remoteCategory.displayName,
-                    iconCount: remoteCategory.iconCount,
-                    source: .remote,
-                    localCategory: nil,
-                    remoteCategory: remoteCategory
-                )
+                let unifiedCategory = IconCategory(remoteCategory: remoteCategory)
                 unifiedCategories.append(unifiedCategory)
             }
         }
@@ -72,18 +55,14 @@ class IconRepo: SuperLog {
     /// 获取指定分类的图标列表
     /// - Parameter category: 统一图标分类
     /// - Returns: IconAsset数组
-    func getIcons(for category: UnifiedIconCategory) async -> [IconAsset] {
+    func getIcons(for category: IconCategory) async -> [IconAsset] {
         switch category.source {
         case .local:
-            guard let localCategory = category.localCategory else { return [] }
-            return localCategory.getAllIconAssets()
+            return category.getAllIconAssets()
 
         case .remote:
             guard let remoteCategory = category.remoteCategory else { return [] }
-            let remoteIcons = await remoteRepo.getIcons(for: remoteCategory.id)
-            return remoteIcons.map { remoteIcon in
-                IconAsset(remotePath: remoteIcon.path)
-            }
+            return await remoteRepo.getIcons(for: remoteCategory.id)
         }
     }
 
@@ -97,7 +76,7 @@ class IconRepo: SuperLog {
     /// 获取指定名称的分类
     /// - Parameter name: 分类名称
     /// - Returns: 统一图标分类实例，如果不存在则返回nil
-    func getCategory(byName name: String) async -> UnifiedIconCategory? {
+    func getCategory(byName name: String) async -> IconCategory? {
         let allCategories = await getAllCategories()
         return allCategories.first { $0.name == name }
     }
@@ -149,7 +128,7 @@ class IconRepo: SuperLog {
 #Preview("App - Small Screen") {
     RootView {
         ContentLayout()
-            .setInitialTab("Icon")
+            .setInitialTab(IconPlugin.label)
             .hideSidebar()
             .hideProjectActions()
     }
@@ -160,7 +139,7 @@ class IconRepo: SuperLog {
 #Preview("App - Big Screen") {
     RootView {
         ContentLayout()
-            .setInitialTab("Icon")
+            .setInitialTab(IconPlugin.label)
             .hideSidebar()
     }
     .frame(width: 1200)
