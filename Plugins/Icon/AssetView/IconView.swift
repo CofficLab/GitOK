@@ -20,6 +20,7 @@ struct IconView: View {
     var body: some View {
         // 使用IconAsset的可调整大小视图（自动处理本地和远程）
         iconAsset.getResizableIconView(size: 40)
+            .frame(width: 40, height: 40) // 确保固定尺寸
             .background(
                 Group {
                     if isSelected {
@@ -40,6 +41,7 @@ struct IconView: View {
                     .stroke(isSelected ? Color.accentColor : Color.clear, lineWidth: 2)
             )
             .cornerRadius(8)
+            .contentShape(Rectangle()) // 确保整个矩形区域都能响应点击
             .onTapGesture {
                 self.iconProvider.selectIcon(iconAsset.iconId)
             }
