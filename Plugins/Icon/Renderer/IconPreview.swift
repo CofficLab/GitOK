@@ -12,6 +12,7 @@ struct IconPreview: View {
     
     @EnvironmentObject var iconProvider: IconProvider
     @State private var iconAsset: IconAsset?
+    @State private var isLoading: Bool = false
     
     var body: some View {
         VStack(spacing: 16) {
@@ -23,7 +24,7 @@ struct IconPreview: View {
             GeometryReader { geometry in
                 let availableSize = min(geometry.size.width, geometry.size.height) * 0.8
                 
-                if let iconAsset = iconAsset {
+                if let iconAsset = iconAsset, !isLoading {
                     IconRenderer.renderIcon(iconData: iconData, iconAsset: iconAsset)
                         .frame(width: availableSize, height: availableSize)
                         .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
@@ -42,16 +43,40 @@ struct IconPreview: View {
         .onAppear {
             loadIconAsset()
         }
-        .onChange(of: iconProvider.selectedIconId) {
-            loadIconAsset()
+        .onChange(of: iconProvider.selectedIconId) { _, newValue in
+            // 当selectedIconId变化时，立即清空当前图标并重新加载
+            if !newValue.isEmpty {
+                self.iconAsset = nil
+                self.isLoading = true
+                loadIconAsset()
+            }
         }
     }
     
     private func loadIconAsset() {
+        guard !iconProvider.selectedIconId.isEmpty else {
+            self.iconAsset = nil
+            self.isLoading = false
+            return
+        }
+        
         Task {
-            if let iconAsset = await IconRepo.shared.getIconAsset(byId: iconProvider.selectedIconId) {
+            do {
+                if let iconAsset = await IconRepo.shared.getIconAsset(byId: iconProvider.selectedIconId) {
+                    await MainActor.run {
+                        self.iconAsset = iconAsset
+                        self.isLoading = false
+                    }
+                } else {
+                    await MainActor.run {
+                        self.iconAsset = nil
+                        self.isLoading = false
+                    }
+                }
+            } catch {
                 await MainActor.run {
-                    self.iconAsset = iconAsset
+                    self.iconAsset = nil
+                    self.isLoading = false
                 }
             }
         }

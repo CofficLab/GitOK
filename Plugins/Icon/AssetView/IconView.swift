@@ -42,7 +42,6 @@ struct IconView: View {
             .cornerRadius(8)
             .onTapGesture {
                 self.iconProvider.selectIcon(iconAsset.iconId)
-                MagicMessageProvider.shared.info("已选择")
             }
             .onHover { hovering in
                 isHovered = hovering
