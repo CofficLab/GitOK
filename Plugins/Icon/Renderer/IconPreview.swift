@@ -42,15 +42,14 @@ struct IconPreview: View {
         .onAppear {
             loadIconAsset()
         }
-        .onChange(of: iconData.iconId) { _, _ in
+        .onChange(of: iconProvider.selectedIconId) {
             loadIconAsset()
         }
     }
     
-    /// 根据iconData.iconId加载对应的IconAsset
     private func loadIconAsset() {
         Task {
-            if let iconAsset = await IconRepo.shared.getIconAsset(byId: iconData.iconId) {
+            if let iconAsset = await IconRepo.shared.getIconAsset(byId: iconProvider.selectedIconId) {
                 await MainActor.run {
                     self.iconAsset = iconAsset
                 }
