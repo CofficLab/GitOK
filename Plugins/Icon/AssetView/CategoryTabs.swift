@@ -3,8 +3,8 @@ import SwiftUI
 
 /**
  * 分类标签页组件
- * 负责显示所有可用的图标分类，支持横向滚动和分类选择
- * 数据流：IconRepo -> UnifiedIconCategory -> CategoryTabs
+ * 负责显示所有可用的图标分类标签页
+ * 数据流：IconRepo -> IconCategory -> CategoryTabs
  */
 struct CategoryTabs: View {
     @EnvironmentObject var iconProvider: IconProvider
@@ -16,7 +16,13 @@ struct CategoryTabs: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 8) {
                     ForEach(iconProvider.availableCategories, id: \.id) { category in
-                        UnifiedCategoryTab(category: category)
+                        CategoryTab(
+                            category: category,
+                            isSelected: iconProvider.selectedCategory?.id == category.id,
+                            onTap: {
+                                iconProvider.selectCategory(category)
+                            }
+                        )
                     }
                 }
             }

@@ -4,7 +4,7 @@ import SwiftUI
 /**
  * 图标盒子视图
  * 负责管理分类选择和图标展示的整体布局
- * 数据流：IconRepo -> UnifiedIconCategory -> IconAsset List
+ * 数据流：IconRepo -> IconCategory -> IconAsset List
  */
 struct IconBox: View {
     @EnvironmentObject var iconProvider: IconProvider

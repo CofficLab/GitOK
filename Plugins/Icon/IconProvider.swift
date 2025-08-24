@@ -19,10 +19,10 @@ class IconProvider: NSObject, ObservableObject, SuperLog {
     @Published var selectedIconId: String = ""
     
     /// 当前选中的分类
-    @Published var selectedCategory: UnifiedIconCategory?
+    @Published var selectedCategory: IconCategory?
     
     /// 所有可用的分类
-    @Published var availableCategories: [UnifiedIconCategory] = []
+    @Published var availableCategories: [IconCategory] = []
     
     /// 当前选中的图标分类名称（兼容性属性）
     var selectedCategoryName: String {
@@ -95,7 +95,7 @@ class IconProvider: NSObject, ObservableObject, SuperLog {
     /**
         选择图标分类
      */
-    func selectCategory(_ category: UnifiedIconCategory) {
+    func selectCategory(_ category: IconCategory) {
         self.selectedCategory = category
     }
     
@@ -125,7 +125,7 @@ class IconProvider: NSObject, ObservableObject, SuperLog {
     /// 获取指定名称的分类
     /// - Parameter name: 分类名称
     /// - Returns: 分类实例，如果不存在则返回nil
-    func getCategory(byName name: String) -> UnifiedIconCategory? {
+    func getCategory(byName name: String) -> IconCategory? {
         return availableCategories.first { $0.name == name }
     }
 }
