@@ -32,7 +32,6 @@ class IconRenderer {
         }
         .frame(width: size, height: size)
         .cornerRadius(iconData.cornerRadius > 0 ? CGFloat(iconData.cornerRadius) : 0)
-        .opacity(iconData.opacity)
     }
     
     /// 生成图标截图
