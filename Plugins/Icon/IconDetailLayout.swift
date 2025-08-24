@@ -18,6 +18,9 @@ struct IconDetailLayout: View {
                         .padding(8)
                         .background(.blue.opacity(0.05))
 
+                    // 图标调整工具
+                    IconAdjustments()
+
                     IconBox()
                         .padding(.horizontal)
                         .padding(.bottom)
