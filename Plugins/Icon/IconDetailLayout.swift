@@ -32,9 +32,17 @@ struct IconDetailLayout: View {
                         .padding(.vertical, 8)
                         .background(.green.opacity(0.05))
 
-                    HStack {
+                    HStack(spacing: 20) {
                         IconMaker()
+                        
+                        // 下载区域
+                        DownloadButtons()
+                            .frame(height: .infinity)
+                            .frame(maxHeight: .infinity)
                     }
+                    .padding(.horizontal)
+                    .padding(.vertical, 8)
+                    .background(.cyan.opacity(0.05))
                 }
             }
         }

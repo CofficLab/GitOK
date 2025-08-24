@@ -8,57 +8,58 @@ import UniformTypeIdentifiers
  * 支持PNG、Favicon、Xcode等格式
  */
 struct DownloadButtons: View {
-    let icon: IconData
-    
     @EnvironmentObject var iconProvider: IconProvider
     @State private var isGenerating = false
     @State private var currentIconAsset: IconAsset?
-    
+
     var body: some View {
         VStack(spacing: 16) {
-            Text("下载选项")
-                .font(.title2)
-                .fontWeight(.semibold)
-            
-            VStack(spacing: 12) {
-                Button("下载 Xcode 格式") {
+            DownloadButton(
+                title: "下载 Xcode 格式",
+                icon: "xcode",
+                color: .blue,
+                action: {
                     Task {
                         await downloadXcode()
                     }
-                }
-                .buttonStyle(.borderedProminent)
-                .disabled(isGenerating || currentIconAsset == nil)
+                },
+                isDisabled: isGenerating || currentIconAsset == nil || iconProvider.currentData == nil
+            )
 
-                Button("下载 PNG 格式") {
+            DownloadButton(
+                title: "下载 PNG 格式",
+                icon: "photo",
+                color: .green,
+                action: {
                     Task {
                         await downloadPNG()
                     }
-                }
-                .buttonStyle(.bordered)
-                .disabled(isGenerating || currentIconAsset == nil)
+                },
+                isDisabled: isGenerating || currentIconAsset == nil || iconProvider.currentData == nil
+            )
 
-                Button("下载 Favicon") {
+            DownloadButton(
+                title: "下载 Favicon",
+                icon: "globe",
+                color: .orange,
+                action: {
                     Task {
                         await downloadFavicon()
                     }
-                }
-                .buttonStyle(.bordered)
-                .disabled(isGenerating || currentIconAsset == nil)
-            }
-            
-            if isGenerating {
-                ProgressView("正在生成...")
-                    .progressViewStyle(.circular)
-            }
-            
-            if currentIconAsset == nil {
+                },
+                isDisabled: isGenerating || currentIconAsset == nil || iconProvider.currentData == nil
+            )
+
+            if currentIconAsset == nil || iconProvider.currentData == nil {
                 Text("请先选择一个图标")
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
         }
         .padding()
-        .background(Color.gray.opacity(0.05))
+        
+        .frame(height: .infinity)
+        .background(Color.cyan.opacity(0.05))
         .cornerRadius(12)
         .onAppear {
             loadCurrentIconAsset()
@@ -66,16 +67,19 @@ struct DownloadButtons: View {
         .onChange(of: iconProvider.selectedIconId) { _, _ in
             loadCurrentIconAsset()
         }
+        .onChange(of: iconProvider.currentData) { _, _ in
+            loadCurrentIconAsset()
+        }
     }
-    
+
     // MARK: - 私有方法
-    
+
     private func loadCurrentIconAsset() {
         guard !iconProvider.selectedIconId.isEmpty else {
             currentIconAsset = nil
             return
         }
-        
+
         Task {
             if let iconAsset = await IconRepo.shared.getIconAsset(byId: iconProvider.selectedIconId) {
                 await MainActor.run {
@@ -88,169 +92,179 @@ struct DownloadButtons: View {
             }
         }
     }
-    
+
     // MARK: - 下载方法
-    
+
     @MainActor private func downloadXcode() async {
         guard let iconAsset = currentIconAsset else {
             MagicMessageProvider.shared.error("没有可用的图标资源")
             return
         }
-        
+
         isGenerating = true
         defer { isGenerating = false }
-        
+
         let tag = Date.nowCompact
         let folderName = "XcodeIcons-\(tag).appiconset"
-        
+
         guard let downloadsURL = FileManager.default.urls(for: .downloadsDirectory, in: .userDomainMask).first else {
             MagicMessageProvider.shared.error("无权访问下载文件夹")
             return
         }
-        
+
         let folderPath = downloadsURL.appendingPathComponent(folderName, isDirectory: true)
-        
+
         do {
             try FileManager.default.createDirectory(at: folderPath, withIntermediateDirectories: true)
         } catch {
             MagicMessageProvider.shared.error("创建目标目录失败：\(error)")
             return
         }
-        
+
         // 生成macOS图标
         await generateMacOSIcons(folderPath: folderPath, tag: tag, iconAsset: iconAsset)
-        
+
         // 生成iOS图标
         await generateIOSIcons(folderPath: folderPath, tag: tag, iconAsset: iconAsset)
-        
+
         // 生成Contents.json文件
         await generateContentJson(folderPath: folderPath, tag: tag)
-        
+
         // 生成README文件
         await generateReadmeFile(folderPath: folderPath, tag: tag)
-        
+
         MagicMessageProvider.shared.success("Xcode图标集已存储到下载目录")
     }
-    
+
     @MainActor private func downloadPNG() async {
         guard let iconAsset = currentIconAsset else {
             MagicMessageProvider.shared.error("没有可用的图标资源")
             return
         }
-        
+
         isGenerating = true
         defer { isGenerating = false }
-        
+
         let tag = Date.nowCompact
         let folderName = "PNG-\(tag)"
-        
+
         guard let downloadsURL = FileManager.default.urls(for: .downloadsDirectory, in: .userDomainMask).first else {
             MagicMessageProvider.shared.error("无权访问下载文件夹")
             return
         }
-        
+
         let folderPath = downloadsURL.appendingPathComponent(folderName, isDirectory: true)
-        
+
         do {
             try FileManager.default.createDirectory(at: folderPath, withIntermediateDirectories: true)
         } catch {
             MagicMessageProvider.shared.error("创建目标目录失败：\(error)")
             return
         }
-        
+
         // 生成不同尺寸的PNG文件
         let sizes = [16, 32, 48, 64, 128, 256, 512, 1024]
         var successCount = 0
-        
-        for (index, size) in sizes.enumerated() {
+
+        for (_, size) in sizes.enumerated() {
             if await generatePNG(size: size, folderPath: folderPath, tag: tag, iconAsset: iconAsset) {
                 successCount += 1
             }
         }
-        
+
         if successCount == sizes.count {
             MagicMessageProvider.shared.success("PNG格式已保存到下载目录")
         } else {
             MagicMessageProvider.shared.warning("PNG格式生成完成，但有部分失败\n保存位置：\(folderPath.path)\n成功：\(successCount)/\(sizes.count)")
         }
     }
-    
+
     @MainActor private func downloadFavicon() async {
         guard let iconAsset = currentIconAsset else {
             MagicMessageProvider.shared.error("没有可用的图标资源")
             return
         }
-        
+
         isGenerating = true
         defer { isGenerating = false }
-        
+
         let tag = Date.nowCompact
         let folderName = "Favicon-\(tag)"
-        
+
         guard let downloadsURL = FileManager.default.urls(for: .downloadsDirectory, in: .userDomainMask).first else {
             MagicMessageProvider.shared.error("无权访问下载文件夹")
             return
         }
-        
+
         let folderPath = downloadsURL.appendingPathComponent(folderName, isDirectory: true)
-        
+
         do {
             try FileManager.default.createDirectory(at: folderPath, withIntermediateDirectories: true)
         } catch {
             MagicMessageProvider.shared.error("创建目标目录失败：\(error)")
             return
         }
-        
+
         // 生成不同尺寸的PNG文件
         let sizes = [16, 32, 48]
         var successCount = 0
-        
-        for (index, size) in sizes.enumerated() {
+
+        for (_, size) in sizes.enumerated() {
             if await generatePNG(size: size, folderPath: folderPath, tag: tag, iconAsset: iconAsset) {
                 successCount += 1
             }
         }
-        
+
         // 生成HTML引用代码
         await generateFaviconHTML(folderPath: folderPath)
-        
+
         if successCount == sizes.count {
             MagicMessageProvider.shared.success("Favicon图标集已保存到下载目录")
         } else {
             MagicMessageProvider.shared.warning("Favicon生成完成，但有部分失败\n保存位置：\(folderPath.path)\n成功：\(successCount)/\(sizes.count)")
         }
     }
-    
+
     // MARK: - 生成方法
-    
+
     @MainActor private func generateMacOSIcons(folderPath: URL, tag: String, iconAsset: IconAsset) async {
+        guard let iconData = iconProvider.currentData else {
+            MagicMessageProvider.shared.error("没有可用的图标数据")
+            return
+        }
+
         let sizes = [16, 32, 128, 256, 512]
-        
+
         for (_, size) in sizes.enumerated() {
             let fileName = "\(tag)-macOS-\(size)x\(size).png"
             let saveTo = folderPath.appendingPathComponent(fileName)
-            
-            let success = await IconRenderer.snapshotIcon(iconData: icon, iconAsset: iconAsset, size: size, savePath: saveTo)
-            
+
+            let success = await IconRenderer.snapshotIcon(iconData: iconData, iconAsset: iconAsset, size: size, savePath: saveTo)
+
             // 检查文件是否生成成功
             if success == false {
                 MagicMessageProvider.shared.error("❌ 生成 \(fileName) 失败")
             }
         }
     }
-    
+
     @MainActor private func generateIOSIcons(folderPath: URL, tag: String, iconAsset: IconAsset) async {
+        guard let iconData = iconProvider.currentData else {
+            MagicMessageProvider.shared.error("没有可用的图标数据")
+            return
+        }
+
         let size = 1024
         let fileName = "\(tag)-iOS-\(size)x\(size).png"
         let saveTo = folderPath.appendingPathComponent(fileName)
-        
-        let success = await IconRenderer.snapshotIcon(iconData: icon, iconAsset: iconAsset, size: size, savePath: saveTo)
-        
+
+        let success = await IconRenderer.snapshotIcon(iconData: iconData, iconAsset: iconAsset, size: size, savePath: saveTo)
+
         if success == false {
             MagicMessageProvider.shared.error("❌ 生成 \(fileName) 失败")
         }
     }
-    
+
     @MainActor private func generateContentJson(folderPath: URL, tag: String) async {
         let imageSet: [[String: Any]] = [
             ["filename": "\(tag)-macOS-16x16.png", "idiom": "mac", "scale": "1x", "size": "16x16"],
@@ -258,9 +272,9 @@ struct DownloadButtons: View {
             ["filename": "\(tag)-macOS-128x128.png", "idiom": "mac", "scale": "1x", "size": "128x128"],
             ["filename": "\(tag)-macOS-256x256.png", "idiom": "mac", "scale": "1x", "size": "256x256"],
             ["filename": "\(tag)-macOS-512x512.png", "idiom": "mac", "scale": "1x", "size": "512x512"],
-            ["filename": "\(tag)-iOS-1024x1024.png", "idiom": "universal", "platform": "ios", "size": "1024x1024"]
+            ["filename": "\(tag)-iOS-1024x1024.png", "idiom": "universal", "platform": "ios", "size": "1024x1024"],
         ]
-        
+
         let jsonData = try! JSONSerialization.data(
             withJSONObject: [
                 "images": imageSet,
@@ -271,7 +285,7 @@ struct DownloadButtons: View {
             ],
             options: [.prettyPrinted]
         )
-        
+
         do {
             if let jsonString = String(data: jsonData, encoding: .utf8) {
                 try jsonString.write(
@@ -284,81 +298,86 @@ struct DownloadButtons: View {
             MagicMessageProvider.shared.error("生成 Contents.json 失败：\(error)")
         }
     }
-    
+
     @MainActor private func generateReadmeFile(folderPath: URL, tag: String) async {
         let fileName = "README.md"
         let saveTo = folderPath.appendingPathComponent(fileName)
-        
+
         let readmeContent = """
         # Xcode 图标集使用说明
-        
+
         ## 文件说明
-        
+
         这个 `.appiconset` 文件夹包含了适用于 iOS 和 macOS 应用的所有图标文件。
-        
+
         ## 使用方法
-        
+
         ### 方法1：直接导入（推荐）
         1. 将整个图标集文件夹复制到你的 Xcode 项目中
         2. 在 `Assets.xcassets` 中右键选择 "New App Icon Set"
         3. 将生成的图标文件拖拽到对应的尺寸位置
-        
+
         ### 方法2：手动配置
         1. 在 Xcode 中创建新的 App Icon Set
         2. 将对应的图标文件拖拽到正确的尺寸位置
-        
+
         ## 图标尺寸说明
-        
+
         ### macOS 图标
         - 16×16: 菜单栏、Dock 小图标
         - 32×32: 菜单栏、Dock 图标
         - 128×128: Finder 图标
         - 256×256: Finder 大图标
         - 512×512: 高分辨率显示器
-        
+
         ### iOS 图标
         - 1024×1024: App Store 图标
-        
+
         ## 注意事项
-        
+
         - 所有图标都使用 PNG 格式，支持透明背景
         - 图标已根据设计规范优化，确保在不同尺寸下都清晰显示
         - 如果需要在 Xcode 中调整图标，建议使用矢量工具重新生成
-        
+
         ## 生成信息
-        
+
         - 生成时间：\(Date().formatted())
-        - 图标标题：\(icon.title)
-        - 背景样式：\(icon.backgroundId)
-        - 圆角设置：\(icon.cornerRadius)
-        - 缩放比例：\(icon.scale ?? 1.0)
-        - 透明度：\(icon.opacity)
-        
+        - 图标标题：\(iconProvider.currentData?.title ?? "N/A")
+        - 背景样式：\(iconProvider.currentData?.backgroundId ?? "N/A")
+        - 圆角设置：\(iconProvider.currentData?.cornerRadius ?? 0)
+        - 缩放比例：\(iconProvider.currentData?.scale ?? 1.0)
+        - 透明度：\(iconProvider.currentData?.opacity ?? 1.0)
+
         ---
         由 GitOK 图标生成器创建
         """
-        
+
         do {
             try readmeContent.write(to: saveTo, atomically: true, encoding: .utf8)
         } catch {
             MagicMessageProvider.shared.error("生成 README.md 失败：\(error)")
         }
     }
-    
+
     @MainActor private func generatePNG(size: Int, folderPath: URL, tag: String, iconAsset: IconAsset) async -> Bool {
+        guard let iconData = iconProvider.currentData else {
+            MagicMessageProvider.shared.error("没有可用的图标数据")
+            return false
+        }
+
         let fileName = "\(tag)-\(size)x\(size).png"
         let saveTo = folderPath.appendingPathComponent(fileName)
-        
-        let success = await IconRenderer.snapshotIcon(iconData: icon, iconAsset: iconAsset, size: size, savePath: saveTo)
-        
+
+        let success = await IconRenderer.snapshotIcon(iconData: iconData, iconAsset: iconAsset, size: size, savePath: saveTo)
+
         // 返回文件是否成功生成
         return success
     }
-    
+
     @MainActor private func generateFaviconHTML(folderPath: URL) async {
         let fileName = "favicon-html.html"
         let saveTo = folderPath.appendingPathComponent(fileName)
-        
+
         let htmlCode = """
         <!DOCTYPE html>
         <html>
@@ -377,17 +396,17 @@ struct DownloadButtons: View {
 
             <h2>Apple Touch Icon</h2>
             <pre><code>&lt;link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"&gt;</code></pre>
-            
+
             <h2>Windows 磁贴</h2>
             <pre><code>&lt;meta name="msapplication-TileColor" content="#ffffff"&gt;
         &lt;meta name="msapplication-TileImage" content="/mstile-144x144.png"&gt;</code></pre>
-            
+
             <hr>
             <p><small>由 GitOK 图标生成器创建 - \(Date().formatted())</small></p>
         </body>
         </html>
         """
-        
+
         do {
             try htmlCode.write(to: saveTo, atomically: true, encoding: .utf8)
             MagicMessageProvider.shared.info("生成 HTML 引用代码文件")
