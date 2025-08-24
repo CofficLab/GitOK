@@ -9,22 +9,17 @@ import SwiftUI
  */
 struct IconPreview: View {
     let iconData: IconData
-    
+
     @EnvironmentObject var iconProvider: IconProvider
     @State private var iconAsset: IconAsset?
     @State private var isLoading: Bool = false
     @State private var errorMessage: String?
-    
+
     var body: some View {
-        VStack(spacing: 16) {
-            Text("图标预览")
-                .font(.title2)
-                .fontWeight(.semibold)
-            
-            // 自适应图标预览
+        VStack(spacing: 0) {
             GeometryReader { geometry in
-                let availableSize = min(geometry.size.width, geometry.size.height) * 0.8
-                
+                let availableSize = min(geometry.size.width, geometry.size.height) * 0.9
+
                 if let iconAsset = iconAsset, !isLoading && errorMessage == nil {
                     IconRenderer.renderIcon(iconData: iconData, iconAsset: iconAsset)
                         .frame(width: availableSize, height: availableSize)
@@ -76,8 +71,7 @@ struct IconPreview: View {
                 }
             }
         }
-        .padding()
-        .background(Color.gray.opacity(0.05))
+        .background(Color.gray.opacity(0.1))
         .cornerRadius(12)
         .onAppear {
             loadIconAsset()
@@ -97,7 +91,7 @@ struct IconPreview: View {
             }
         }
     }
-    
+
     private func loadIconAsset() {
         guard !iconProvider.selectedIconId.isEmpty else {
             self.iconAsset = nil
@@ -105,30 +99,18 @@ struct IconPreview: View {
             self.isLoading = false
             return
         }
-        
-        // 设置超时，避免无限loading
+
         Task {
-            do {
-                // 添加超时处理
-                let iconAsset = try await withTimeout(seconds: 10) {
-                    await IconRepo.shared.getIconAsset(byId: iconProvider.selectedIconId)
-                }
-                
-                await MainActor.run {
-                    if let iconAsset = iconAsset {
-                        self.iconAsset = iconAsset
-                        self.errorMessage = nil
-                        self.isLoading = false
-                    } else {
-                        self.iconAsset = nil
-                        self.errorMessage = "未找到图标：\(iconProvider.selectedIconId)"
-                        self.isLoading = false
-                    }
-                }
-            } catch {
-                await MainActor.run {
+            let iconAsset = await IconRepo.shared.getIconAsset(byId: iconProvider.selectedIconId)
+
+            await MainActor.run {
+                if let iconAsset = iconAsset {
+                    self.iconAsset = iconAsset
+                    self.errorMessage = nil
+                    self.isLoading = false
+                } else {
                     self.iconAsset = nil
-                    self.errorMessage = "加载失败：\(error.localizedDescription)"
+                    self.errorMessage = "未找到图标：\(iconProvider.selectedIconId)"
                     self.isLoading = false
                 }
             }
@@ -140,7 +122,7 @@ struct IconPreview: View {
 
 extension Task where Success == Never, Failure == Never {
     static func sleep(seconds: TimeInterval) async {
-        try? await Task.sleep(nanoseconds: UInt64(seconds * 1_000_000_000))
+        try? await Task.sleep(nanoseconds: UInt64(seconds * 1000000000))
     }
 }
 
@@ -149,12 +131,12 @@ func withTimeout<T>(seconds: TimeInterval, operation: @escaping () async throws 
         group.addTask {
             try await operation()
         }
-        
+
         group.addTask {
             try await Task.sleep(seconds: seconds)
             throw TimeoutError()
         }
-        
+
         let result = try await group.next()!
         group.cancelAll()
         return result
