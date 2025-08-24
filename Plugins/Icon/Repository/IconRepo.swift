@@ -4,153 +4,208 @@ import OSLog
 import MagicCore
 
 /**
- * 图标仓库
- * 负责读取和管理项目支持的所有候选图标分类
- * 使用单例模式确保全局唯一实例
+ * 统一图标仓库管理器
+ * 整合本地和远程图标仓库，提供统一的接口
+ * 支持本地优先、远程补充的数据获取策略
  */
 class IconRepo: SuperLog {
-    nonisolated static var emoji: String { "🎨" }
+    nonisolated static var emoji: String { "🔗" }
     
     /// 单例实例
     static let shared = IconRepo()
     
-    /// 图标文件夹URL
-    private let iconFolderURL: URL?
+    /// 本地图标仓库
+    private let localRepo = AppIconRepo.shared
+    
+    /// 远程图标仓库
+    private let remoteRepo = RemoteIconRepo()
     
     /// 私有初始化方法，确保单例模式
-    private init() {
-        self.iconFolderURL = Self.findIconFolder()
-    }
+    private init() {}
     
-    /// 查找图标文件夹（静态方法，可以在初始化过程中调用）
-    /// - Returns: 图标文件夹URL，如果找不到则返回nil
-    private static func findIconFolder() -> URL? {
-        if let bundleURL = Bundle.main.url(forResource: "Icons", withExtension: nil) {
-            return bundleURL
+    /// 获取所有可用的图标分类（本地 + 远程）
+    /// - Returns: 统一图标分类数组
+    func getAllCategories() async -> [UnifiedIconCategory] {
+        // 获取本地分类
+        let localCategories = localRepo.getAllCategories()
+        
+        // 获取远程分类
+        let remoteCategories = await remoteRepo.getAllCategories()
+        
+        // 合并分类，本地优先
+        var unifiedCategories: [UnifiedIconCategory] = []
+        
+        // 添加本地分类
+        for localCategory in localCategories {
+            let unifiedCategory = UnifiedIconCategory(
+                id: localCategory.id,
+                name: localCategory.name,
+                displayName: localCategory.displayName,
+                iconCount: localCategory.iconCount,
+                source: .local,
+                localCategory: localCategory,
+                remoteCategory: nil
+            )
+            unifiedCategories.append(unifiedCategory)
         }
         
-        print("IconCategoryRepo: 无法找到图标文件夹")
-        return nil
-    }
-    
-    /// 获取图标文件夹URL（公共方法，供其他类使用）
-    /// - Returns: 图标文件夹URL，如果找不到则返回nil
-    static func getIconFolderURL() -> URL? {
-        return findIconFolder()
-    }
-    
-    /// 获取所有分类（通过函数调用获取）
-    /// - Returns: 分类数组
-    func getAllCategories() -> [IconCategory] {
-        guard let iconFolderURL = iconFolderURL else {
-            os_log(.error, "\(self.t)未找到图标文件夹")
-            return []
+        // 添加远程分类（避免重复）
+        for remoteCategory in remoteCategories {
+            if !unifiedCategories.contains(where: { $0.name == remoteCategory.name }) {
+                let unifiedCategory = UnifiedIconCategory(
+                    id: URL(string: "remote://\(remoteCategory.id)") ?? URL(string: "https://gitok.coffic.cn/\(remoteCategory.id)")!,
+                    name: remoteCategory.name,
+                    displayName: remoteCategory.displayName,
+                    iconCount: remoteCategory.iconCount,
+                    source: .remote,
+                    localCategory: nil,
+                    remoteCategory: remoteCategory
+                )
+                unifiedCategories.append(unifiedCategory)
+            }
         }
         
-        return scanCategories(from: iconFolderURL)
+        // 按名称排序
+        return unifiedCategories.sorted { $0.name < $1.name }
     }
     
-    /// 扫描图标分类
-    /// - Parameter folderURL: 图标文件夹URL
-    /// - Returns: 分类数组
-    private func scanCategories(from folderURL: URL) -> [IconCategory] {
-        do {
-            let items = try FileManager.default.contentsOfDirectory(atPath: folderURL.path)
-            let categories = items.compactMap { item -> IconCategory? in
-                let categoryURL = folderURL.appendingPathComponent(item)
-                var isDir: ObjCBool = false
-                
-                guard FileManager.default.fileExists(atPath: categoryURL.path, isDirectory: &isDir),
-                      isDir.boolValue else {
-                    return nil
-                }
-                
-                return IconCategory(categoryURL: categoryURL)
-            }.sorted { $0.name < $1.name }
+    /// 获取指定分类的图标列表
+    /// - Parameter category: 统一图标分类
+    /// - Returns: 统一图标数组
+    func getIcons(for category: UnifiedIconCategory) async -> [UnifiedIcon] {
+        switch category.source {
+        case .local:
+            guard let localCategory = category.localCategory else { return [] }
+            let localIcons = localCategory.getAllIconAssets()
+            return localIcons.map { iconAsset in
+                UnifiedIcon(
+                    id: iconAsset.id,
+                    name: iconAsset.iconId,
+                    source: .local,
+                    localIcon: iconAsset,
+                    remoteIcon: nil
+                )
+            }
             
-            return categories
-        } catch {
-            os_log(.error, "\(self.t)无法扫描分类目录：\(error.localizedDescription)")
-            return []
+        case .remote:
+            guard let remoteCategory = category.remoteCategory else { return [] }
+            let remoteIcons = await remoteRepo.getIcons(for: remoteCategory.id)
+            return remoteIcons.map { remoteIcon in
+                UnifiedIcon(
+                    id: remoteIcon.id,
+                    name: remoteIcon.name,
+                    source: .remote,
+                    localIcon: nil,
+                    remoteIcon: remoteIcon
+                )
+            }
         }
     }
     
     /// 获取指定名称的分类
     /// - Parameter name: 分类名称
-    /// - Returns: 分类实例，如果不存在则返回nil
-    func getCategory(byName name: String) -> IconCategory? {
-        return getAllCategories().first { $0.name == name }
+    /// - Returns: 统一图标分类实例，如果不存在则返回nil
+    func getCategory(byName name: String) async -> UnifiedIconCategory? {
+        let allCategories = await getAllCategories()
+        return allCategories.first { $0.name == name }
     }
     
     /// 根据图标ID获取图标
     /// - Parameter iconId: 图标ID
-    /// - Returns: IconAsset实例，如果找不到则返回nil
-    func getIconAsset(byId iconId: String) -> IconAsset? {
-        let allCategories = getAllCategories()
-        for category in allCategories {
-            if category.iconIds.contains(iconId) {
-                if let fileURL = Self.findIconFile(categoryName: category.name, iconId: iconId) {
-                    return IconAsset(fileURL: fileURL)
-                }
+    /// - Returns: 统一图标实例，如果找不到则返回nil
+    func getIconAsset(byId iconId: String) async -> UnifiedIcon? {
+        // 首先在本地查找
+        if let localIcon = localRepo.getIconAsset(byId: iconId) {
+            return UnifiedIcon(
+                id: localIcon.id,
+                name: localIcon.iconId,
+                source: .local,
+                localIcon: localIcon,
+                remoteIcon: nil
+            )
+        }
+        
+        // 在远程查找
+        let allCategories = await getAllCategories()
+        for category in allCategories where category.source == .remote {
+            let icons = await getIcons(for: category)
+            if let remoteIcon = icons.first(where: { $0.name == iconId }) {
+                return remoteIcon
             }
         }
+        
         return nil
+    }
+}
+
+// MARK: - 统一数据模型
+
+/**
+ * 统一图标分类
+ * 整合本地和远程分类数据
+ */
+struct UnifiedIconCategory: Identifiable, Hashable {
+    let id: URL
+    let name: String
+    let displayName: String
+    let iconCount: Int
+    let source: IconSource
+    let localCategory: IconCategory?
+    let remoteCategory: RemoteIconCategory?
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
     }
     
-    /// 智能查找图标文件
-    /// - Parameters:
-    ///   - categoryName: 分类名称
-    ///   - iconId: 图标ID（支持数字ID和哈希文件名）
-    /// - Returns: 图标文件URL，如果找不到则返回nil
-    static func findIconFile(categoryName: String, iconId: String) -> URL? {
-        guard let iconFolderURL = getIconFolderURL() else { 
-            return nil 
-        }
-        
-        let categoryURL = iconFolderURL.appendingPathComponent(categoryName)
-        
-        // 对于哈希文件名，直接查找文件（不需要添加扩展名）
-        // 首先检查是否已经是完整的文件名（包含扩展名）
-        let directURL = categoryURL.appendingPathComponent(iconId)
-        if FileManager.default.fileExists(atPath: directURL.path) {
-            return directURL
-        }
-        
-        // 如果直接查找失败，尝试添加扩展名查找
-        // 优先查找PNG格式
-        let pngURL = categoryURL.appendingPathComponent("\(iconId).png")
-        if FileManager.default.fileExists(atPath: pngURL.path) {
-            return pngURL
-        }
-        
-        // 查找其他支持的格式
-        let supportedFormats = ["svg", "jpg", "jpeg", "gif", "webp"]
-        for format in supportedFormats {
-            let url = categoryURL.appendingPathComponent("\(iconId).\(format)")
-            if FileManager.default.fileExists(atPath: url.path) {
-                return url
-            }
-        }
-        
-        return nil
+    static func == (lhs: UnifiedIconCategory, rhs: UnifiedIconCategory) -> Bool {
+        lhs.id == rhs.id
     }
+}
+
+/**
+ * 统一图标
+ * 整合本地和远程图标数据
+ */
+struct UnifiedIcon: Identifiable, Hashable {
+    let id: String
+    let name: String
+    let source: IconSource
+    let localIcon: IconAsset?
+    let remoteIcon: RemoteIcon?
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
+    
+    static func == (lhs: UnifiedIcon, rhs: UnifiedIcon) -> Bool {
+        lhs.id == rhs.id
+    }
+}
+
+/**
+ * 图标来源类型
+ */
+enum IconSource {
+    case local
+    case remote
 }
 
 #Preview("App - Small Screen") {
     RootView {
         ContentLayout()
-            .hideProjectActions()
+            .setInitialTab("Icon")
             .hideSidebar()
-            .hideTabPicker()
-            .setInitialTab(IconPlugin.label)
+            .hideProjectActions()
     }
-    .frame(width: 600)
-    .frame(height: 800)
+    .frame(width: 800)
+    .frame(height: 600)
 }
 
-#Preview("App-Big Screen") {
+#Preview("App - Big Screen") {
     RootView {
         ContentLayout()
+            .setInitialTab("Icon")
+            .hideSidebar()
     }
     .frame(width: 1200)
     .frame(height: 1200)

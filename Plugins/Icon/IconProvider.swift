@@ -43,7 +43,7 @@ class IconProvider: NSObject, ObservableObject, SuperLog {
             // 这里暂时返回空数组，因为需要异步获取
             return []
         } else {
-            return IconRepo.shared.getAllCategories().map { $0.name }
+            return AppIconRepo.shared.getAllCategories().map { $0.name }
         }
     }
 
@@ -142,7 +142,7 @@ class IconProvider: NSObject, ObservableObject, SuperLog {
             }
         } else {
             // 使用本地仓库
-            let allCategories = IconRepo.shared.getAllCategories()
+            let allCategories = AppIconRepo.shared.getAllCategories()
 
             // 如果当前选中的分类不存在，选择第一个
             if let selected = selectedCategory,
@@ -161,7 +161,7 @@ class IconProvider: NSObject, ObservableObject, SuperLog {
     /// - Parameter name: 分类名称
     /// - Returns: 分类实例，如果不存在则返回nil
     func getCategory(byName name: String) -> IconCategory? {
-        IconRepo.shared.getCategory(byName: name)
+        AppIconRepo.shared.getCategory(byName: name)
     }
     
     /// 切换仓库类型

@@ -20,7 +20,7 @@ struct CategoryTabs: View {
                         RemoteCategoryTabs()
                     } else {
                         // 显示本地分类
-                        ForEach(IconRepo.shared.getAllCategories(), id: \.id) { category in
+                        ForEach(AppIconRepo.shared.getAllCategories(), id: \.id) { category in
                             CategoryTab(category: category)
                         }
                     }

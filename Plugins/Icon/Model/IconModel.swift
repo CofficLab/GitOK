@@ -22,7 +22,7 @@ struct IconModel: SuperJsonModel, SuperEvent, SuperLog {
         }
 
         // 通过IconRepo获取IconAsset，然后获取Image
-        if let iconAsset = IconRepo.shared.getIconAsset(byId: self.iconId) {
+        if let iconAsset = AppIconRepo.shared.getIconAsset(byId: self.iconId) {
             return iconAsset.getImage()
         }
         

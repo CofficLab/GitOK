@@ -30,7 +30,7 @@ struct CategoryIconSelector: View {
                     category: selectedCategory,
                     gridItems: gridItems
                 )
-            } else if let firstCategory = IconRepo.shared.getAllCategories().first {
+            } else if let firstCategory = AppIconRepo.shared.getAllCategories().first {
                 IconGrid(
                     category: firstCategory,
                     gridItems: gridItems
