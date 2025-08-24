@@ -15,7 +15,7 @@ struct IconDetailLayout: View {
             } else {
                 VStack {
                     IconBgs()
-                        .padding(1)
+                        .padding(8)
                         .background(.blue.opacity(0.05))
 
                     IconBox()
