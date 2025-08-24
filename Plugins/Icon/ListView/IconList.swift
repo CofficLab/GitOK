@@ -64,13 +64,7 @@ struct IconList: View, SuperLog {
 
     func refreshIcons() {
         if let project = g.project {
-            do {
-                let icons = try project.getIcons()
-                // 按照path排序
-                self.icons = icons.sorted(by: { $0.path < $1.path })
-            } catch {
-                m.error(error)
-            }
+            icons = ProjectIconRepo.getIconModels(from: project)
         }
     }
 }

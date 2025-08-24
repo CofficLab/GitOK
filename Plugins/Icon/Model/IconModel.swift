@@ -4,7 +4,6 @@ import SwiftUI
 import MagicCore
 
 struct IconModel: SuperJsonModel, SuperEvent, SuperLog {
-    static var root: String = ".gitok/icons"
     static var emoji = "💿"
     static var empty = IconModel(path: "")
 
@@ -41,44 +40,6 @@ struct IconModel: SuperJsonModel, SuperEvent, SuperLog {
         self.imageURL = imageURL
         self.path = path
         self.cornerRadius = 0
-    }
-}
-
-// MARK: 查
-
-extension IconModel {
-    static func all(_ projectPath: String) throws -> [IconModel] {
-        let verbose = false
-        var models: [IconModel] = []
-
-        // 目录路径
-        let directoryPath = "\(projectPath)/\(Self.root)"
-
-        if verbose {
-            os_log("\(t)GetIcons from ->\(directoryPath)")
-        }
-
-        // 创建 FileManager 实例
-        let fileManager = FileManager.default
-
-        var isDir: ObjCBool = true
-        if !fileManager.fileExists(atPath: directoryPath, isDirectory: &isDir) {
-            return []
-        }
-
-        do {
-            for file in try fileManager.contentsOfDirectory(atPath: directoryPath) {
-                let fileURL = URL(fileURLWithPath: directoryPath).appendingPathComponent(file)
-
-                models.append(try IconModel.fromJSONFile(fileURL))
-            }
-
-            return models
-        } catch {
-            os_log(.error, "Error while enumerating files: \(error.localizedDescription)")
-
-            throw error
-        }
     }
 }
 
@@ -119,7 +80,7 @@ extension IconModel {
     @discardableResult
     static func new(_ project: Project) throws -> Self {
         let title = "新图标-\(Int.random(in: 1 ... 100))"
-        let path = project.path + "/" + IconModel.root + "/" + UUID().uuidString + ".json"
+        let path = project.path + "/" + ProjectIconRepo.iconStoragePath + "/" + UUID().uuidString + ".json"
         let iconId = String(Int.random(in: 1 ... 100))
         let model = IconModel(title: title, iconId: iconId, path: path)
         try model.saveToDisk()

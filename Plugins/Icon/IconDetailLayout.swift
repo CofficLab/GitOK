@@ -46,12 +46,8 @@ struct IconDetailLayout: View {
             return
         }
 
-        let icons = try? project.getIcons()
-        if icons == nil || icons?.isEmpty == true {
-            self.showWelcome = true
-        } else {
-            self.showWelcome = false
-        }
+        let icons = ProjectIconRepo.getIconModels(from: project)
+        self.showWelcome = icons.isEmpty
     }
 }
 
