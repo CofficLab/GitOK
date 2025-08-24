@@ -84,21 +84,6 @@ class IconAsset: Identifiable {
         }
     }
     
-    /// 获取图标视图（推荐使用）
-    /// - Returns: 图标视图，支持本地和远程图标
-    func getIconView() -> some View {
-        switch source {
-        case .local:
-            return AnyView(
-                loadImage()
-                    .resizable()
-                    .scaledToFit()
-            )
-        case .remote:
-            return AnyView(RemoteIconView(iconAsset: self))
-        }
-    }
-    
     /// 获取可调整大小的图标视图
     /// - Parameter size: 图标大小
     /// - Returns: 图标视图，已设置大小
