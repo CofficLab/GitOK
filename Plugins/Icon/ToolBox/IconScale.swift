@@ -6,7 +6,7 @@ struct IconScale: View {
     @EnvironmentObject var m: MagicMessageProvider
     @EnvironmentObject var app: AppProvider
     
-    @State var icon: IconModel?
+    @State var icon: IconData?
     @State var scale: Double = 1
     
     var body: some View {
@@ -19,7 +19,9 @@ struct IconScale: View {
         .padding()
         .onAppear(perform: reloadData)
         .onChange(of: scale, updateScale)
-        .onChange(of: self.i.currentModel, reloadData)
+        .onChange(of: self.i.currentModel) { _, newValue in
+            reloadData()
+        }
     }
 
     private func reloadData() {
@@ -33,7 +35,6 @@ struct IconScale: View {
         }
     }
 }
-
 
 #Preview("App - Small Screen") {
     RootView {

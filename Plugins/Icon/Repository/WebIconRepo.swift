@@ -8,11 +8,11 @@ import MagicCore
  * 负责从网络API获取图标分类和图标数据
  * 支持缓存机制，避免重复网络请求
  */
-class RemoteIconRepo: SuperLog {
+class WebIconRepo: SuperLog {
     nonisolated static var emoji: String { "🌐" }
     
     /// 单例实例
-    static let shared = RemoteIconRepo()
+    static let shared = WebIconRepo()
     
     /// 远程API的基础URL
     private let baseURL = "https://gitok.coffic.cn"

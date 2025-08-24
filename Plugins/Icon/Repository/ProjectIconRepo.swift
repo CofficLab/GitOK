@@ -4,7 +4,7 @@ import SwiftUI
 
 /**
  * 项目图标仓库
- * 负责从项目目录扫描和获取所有的IconModel
+ * 负责从项目目录扫描和获取所有的IconData
  */
 class ProjectIconRepo {
     /// 图标存储目录路径（相对于项目根目录）
@@ -12,12 +12,12 @@ class ProjectIconRepo {
 
     /// 从Project对象获取所有图标模型
     /// - Parameter project: Project对象
-    /// - Returns: 该project下的所有IconModel数组
-    static func getIconModels(from project: Project) -> [IconModel] {
+    /// - Returns: 该project下的所有IconData数组
+    static func getIconData(from project: Project) -> [IconData] {
         let projectRootURL = URL(fileURLWithPath: project.path)
         let iconDirectoryURL = projectRootURL.appendingPathComponent(ProjectIconRepo.iconStoragePath)
         
-        var models: [IconModel] = []
+        var models: [IconData] = []
         
         do {
             // 检查图标目录是否存在
@@ -32,7 +32,7 @@ class ProjectIconRepo {
             for file in files {
                 if file.hasSuffix(".json") {
                     let fileURL = iconDirectoryURL.appendingPathComponent(file)
-                    if let model = tryLoadIconModel(from: fileURL) {
+                    if let model = tryLoadIconData(from: fileURL) {
                         models.append(model)
                     }
                 }
@@ -48,9 +48,9 @@ class ProjectIconRepo {
     /// 尝试加载图标模型
     /// - Parameter fileURL: 图标配置文件URL
     /// - Returns: 图标模型，如果加载失败则返回nil
-    private static func tryLoadIconModel(from fileURL: URL) -> IconModel? {
+    private static func tryLoadIconData(from fileURL: URL) -> IconData? {
         do {
-            let model = try IconModel.fromJSONFile(fileURL)
+            let model = try IconData.fromJSONFile(fileURL)
             return model
         } catch {
             // 不是有效的图标配置文件，忽略

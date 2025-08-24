@@ -4,9 +4,11 @@ import SwiftUI
 /**
  * 图标预览组件
  * 显示单个图标预览，自动适应当前可用空间
+ * 使用IconRenderer来渲染图标样式
  */
 struct IconPreview: View {
-    let icon: IconModel
+    let iconData: IconData
+    let iconAsset: IconAsset
     
     var body: some View {
         VStack(spacing: 16) {
@@ -18,22 +20,10 @@ struct IconPreview: View {
             GeometryReader { geometry in
                 let availableSize = min(geometry.size.width, geometry.size.height) * 0.8
                 
-                ZStack {
-                    // 背景
-                    icon.background
-                        .frame(width: availableSize, height: availableSize)
-                        .cornerRadius(icon.cornerRadius > 0 ? CGFloat(icon.cornerRadius) : 0)
-                    
-                    // 图标
-                    icon.image
-                        .resizable()
-                        .scaledToFit()
-                        .scaleEffect(icon.scale ?? 1.0)
-                        .frame(width: availableSize * 0.8, height: availableSize * 0.8)
-                        .clipped()
-                }
-                .shadow(color: .black.opacity(0.1), radius: 4, x: 0, y: 2)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                IconRenderer.renderIcon(iconData: iconData, iconAsset: iconAsset)
+                    .frame(width: availableSize, height: availableSize)
+                    .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }
         .padding()
@@ -41,8 +31,6 @@ struct IconPreview: View {
         .cornerRadius(12)
     }
 }
-
-
 
 #Preview("App - Small Screen") {
     RootView {

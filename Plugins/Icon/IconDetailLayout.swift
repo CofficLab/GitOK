@@ -46,7 +46,7 @@ struct IconDetailLayout: View {
             return
         }
 
-        let icons = ProjectIconRepo.getIconModels(from: project)
+        let icons = ProjectIconRepo.getIconData(from: project)
         self.showWelcome = icons.isEmpty
     }
 }

@@ -18,7 +18,7 @@ class IconRepo: SuperLog {
     private let localRepo = AppIconRepo.shared
     
     /// 远程图标仓库
-    private let remoteRepo = RemoteIconRepo.shared
+    private let remoteRepo = WebIconRepo.shared
     
     /// 私有初始化方法，确保单例模式
     private init() {}

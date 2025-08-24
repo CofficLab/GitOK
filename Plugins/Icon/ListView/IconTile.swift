@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct IconTile: View {
-    var icon: IconModel
+    var icon: IconData
 
     var body: some View {
         VStack {

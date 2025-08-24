@@ -3,12 +3,13 @@ import MagicCore
 
 /**
  * 图标调整工具组件
- * 整合透明度和缩放调整功能，提供统一的图标参数调整界面
+ * 提供透明度、缩放、圆角等调整功能
+ * 使用本地状态避免频繁更新IconData
  */
 struct IconAdjustments: View {
     @EnvironmentObject var i: IconProvider
     
-    /// 本地状态，避免频繁更新IconModel
+    /// 本地状态，避免频繁更新IconData
     @State private var localOpacity: Double = 1.0
     @State private var localScale: Double = 1.0
     @State private var localCornerRadius: Double = 0.0
@@ -56,7 +57,7 @@ struct IconAdjustments: View {
         .onAppear {
             syncLocalState()
         }
-        .onChange(of: i.currentModel) {
+        .onChange(of: i.currentModel) { _, newValue in
             syncLocalState()
         }
     }

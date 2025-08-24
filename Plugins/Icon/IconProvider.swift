@@ -10,7 +10,7 @@ import SwiftUI
     图标提供者，统一管理所有图标插件相关的状态
  */
 class IconProvider: NSObject, ObservableObject, SuperLog {
-    @Published private(set) var currentModel: IconModel? = nil
+    @Published private(set) var currentModel: IconData? = nil
 
     static var emoji = "🍒"
 
@@ -56,7 +56,7 @@ class IconProvider: NSObject, ObservableObject, SuperLog {
         // 只有在图标真正保存时才更新模型，避免参数调整时的频繁更新
         let iconPath = self.currentModel?.path
         if let iconPath = iconPath {
-            let newModel = try? IconModel.fromJSONFile(URL(fileURLWithPath: iconPath))
+            let newModel = try? IconData.fromJSONFile(URL(fileURLWithPath: iconPath))
             // 只在模型真正发生变化时才更新
             if let newModel = newModel, newModel.path != self.currentModel?.path {
                 self.updateCurrentModel(newModel: newModel, reason: "iconDidSave event")
@@ -71,7 +71,7 @@ class IconProvider: NSObject, ObservableObject, SuperLog {
         }
     }
 
-    func updateCurrentModel(newModel: IconModel?, reason: String) {
+    func updateCurrentModel(newModel: IconData?, reason: String) {
         os_log("\(self.t)Update Current Model(\(reason)) ➡️ \(newModel?.title ?? "nil")")
 
         self.currentModel = newModel

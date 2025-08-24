@@ -44,7 +44,7 @@ class GeneratedIcon: SuperLog {
         os_log("SaveImage to project -> \(projectURL.relativeString)")
 
         let ext = url.pathExtension
-        let fileName = "\(Date.nowCompact).\(ext)"
+        let fileName = "\(Date().nowCompact).\(ext)"
         let imagesFolder = projectURL.appendingPathComponent(Self.dir)
         let storeURL = imagesFolder.appendingPathComponent(fileName)
 

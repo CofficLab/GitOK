@@ -12,14 +12,14 @@ struct IconMaker: View {
     @EnvironmentObject var m: MagicMessageProvider
     @EnvironmentObject var i: IconProvider
 
-    @State private var icon: IconModel?
+    @State private var icon: IconData?
 
     var body: some View {
         Group {
             if let icon = self.icon {
                 HStack(spacing: 24) {
                     // 左侧：图标预览区域
-                    IconPreview(icon: icon)
+                    IconPreview(iconData: icon, iconAsset: getIconAsset(for: icon))
                         .frame(maxWidth: .infinity)
                     
                     // 右侧：下载按钮区域
@@ -50,9 +50,15 @@ struct IconMaker: View {
         .onNotification(.iconDidSave, perform: { _ in
             self.icon = i.currentModel
         })
-        .onChange(of: i.currentModel, {
-            self.icon = i.currentModel
-        })
+        .onChange(of: i.currentModel) { _, newValue in
+            self.icon = newValue
+        }
+    }
+    
+    private func getIconAsset(for iconData: IconData) -> IconAsset {
+        // 这里需要根据iconData.iconId获取对应的IconAsset
+        // 暂时返回一个默认的IconAsset
+        return IconAsset(fileURL: URL(fileURLWithPath: "/tmp/default.png"))
     }
 }
 

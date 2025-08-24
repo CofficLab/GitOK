@@ -3,14 +3,14 @@ import OSLog
 import SwiftData
 import SwiftUI
 
-struct IconList: View, SuperLog {
+struct IconList: View {
     @EnvironmentObject var app: AppProvider
     @EnvironmentObject var m: MagicMessageProvider
     @EnvironmentObject var g: DataProvider
     @EnvironmentObject var i: IconProvider
 
-    @State var icons: [IconModel] = []
-    @State var selection: IconModel?
+    @State var icons: [IconData] = []
+    @State var selection: IconData?
 
     static let emoji = "🐈"
 
@@ -33,16 +33,16 @@ struct IconList: View, SuperLog {
             self.refreshIcons()
             self.selection = icons.first
         }
-        .onChange(of: selection, {
-            i.updateCurrentModel(newModel: selection, reason: "IconList.selection")
-        })
+        .onChange(of: selection) { _, newValue in
+            i.updateCurrentModel(newModel: newValue, reason: "IconList.selection")
+        }
         .onNotification(.iconDidSave, perform: { _ in
-            os_log("\(self.t)iconDidSave while current selection is \(self.selection?.title ?? "nil")")
+            os_log("iconDidSave while current selection is \(self.selection?.title ?? "nil")")
             let selectedPath = selection?.path
             refreshIcons()
 
             if self.selection == nil {
-                os_log("\(self.t)iconDidSave: no selection, select the first icon")
+                os_log("iconDidSave: no selection, select the first icon")
                 self.selection = icons.first
             } else {
                 if let selectedPath = selectedPath {
@@ -55,7 +55,7 @@ struct IconList: View, SuperLog {
 
             if let path = notification.userInfo?["path"] as? String {
                 if path == self.selection?.path {
-                    os_log("\(self.t)iconDidDelete: delete the current selection")
+                    os_log("iconDidDelete: delete the current selection")
                     self.selection = nil
                 }
             }
@@ -64,7 +64,7 @@ struct IconList: View, SuperLog {
 
     func refreshIcons() {
         if let project = g.project {
-            icons = ProjectIconRepo.getIconModels(from: project)
+            icons = ProjectIconRepo.getIconData(from: project)
         }
     }
 }

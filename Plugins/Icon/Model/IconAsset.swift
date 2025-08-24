@@ -1,6 +1,7 @@
 import Foundation
 import SwiftUI
 import Cocoa
+import MagicCore
 
 /**
  * 图标来源类型
@@ -209,6 +210,7 @@ class IconAsset: Identifiable {
     }
 }
 
+
 // MARK: - 统一图标结构体
 
 /**
@@ -264,7 +266,7 @@ struct RemoteIconCategory: Identifiable, Hashable {
     let name: String
     let displayName: String
     let iconCount: Int
-    let remoteIconIds: [IconData]
+    let remoteIconIds: [RemoteIconData]
     
     func hash(into hasher: inout Hasher) {
         hasher.combine(id)
@@ -284,7 +286,7 @@ struct IconManifest: Codable {
     let totalIcons: Int
     let totalCategories: Int
     let categories: [CategoryData]
-    let iconsByCategory: [String: [IconData]]
+    let iconsByCategory: [String: [RemoteIconData]]
     
     enum CodingKeys: String, CodingKey {
         case generatedAt
@@ -306,10 +308,10 @@ struct CategoryData: Codable {
 }
 
 /**
- * 图标数据结构
+ * 远程图标数据结构
  * 对应API返回的图标数据
  */
-struct IconData: Codable {
+struct RemoteIconData: Codable {
     let name: String
     let path: String
     let category: String

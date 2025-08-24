@@ -9,7 +9,7 @@ struct BtnNewIcon: View {
         if let project = g.project {
             TabBtn(title: "新建 Icon", imageName: "plus.circle") {
                 do {
-                    let model = try IconModel.new(project)
+                    let model = try IconData.new(project)
                     m.info("新建 Icon(\(model.title)) 成功")
                 } catch {
                     m.error(error.localizedDescription)
