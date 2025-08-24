@@ -110,7 +110,7 @@ extension BannerModel {
         let ext = url.pathExtension
         let rootURL = URL(fileURLWithPath: path).deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent().appendingPathComponent(Self.root).deletingLastPathComponent()
         let imagesFolder = rootURL.appendingPathComponent("images")
-        let storeURL = imagesFolder.appendingPathComponent("\(Date().nowCompact).\(ext)")
+        let storeURL = imagesFolder.appendingPathComponent("\(Date.nowCompact).\(ext)")
 
         os_log("\(self.t)SaveImage")
         os_log("  ➡️ \(url.relativeString)")
