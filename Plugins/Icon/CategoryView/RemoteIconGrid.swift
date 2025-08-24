@@ -50,7 +50,7 @@ struct RemoteIconGrid: View {
                 // 正常显示图标网格
                 LazyVGrid(columns: gridItems, spacing: 12) {
                     ForEach(remoteIcons, id: \.id) { remoteIcon in
-                        RemoteIconView(remoteIcon)
+                        IconView(iconAsset: IconAsset(remotePath: remoteIcon.path))
                     }
                 }
                 .padding(.horizontal)
@@ -73,8 +73,22 @@ struct RemoteIconGrid: View {
             do {
                 let allCategories = await IconRepo.shared.getAllCategories()
                 if let remoteCategory = allCategories.first(where: { $0.source == .remote && $0.remoteCategory?.id == selectedCategoryId }) {
-                    let icons = await IconRepo.shared.getIcons(for: remoteCategory)
-                    let remoteIcons = icons.compactMap { $0.remoteIcon }
+                    let iconAssets = await IconRepo.shared.getIcons(for: remoteCategory)
+                    // 将 IconAsset 转换为 RemoteIcon 以保持兼容性
+                    let remoteIcons = iconAssets.compactMap { iconAsset -> RemoteIcon? in
+                        guard iconAsset.source == .remote,
+                              let remotePath = iconAsset.remotePath else { return nil }
+                        
+                        return RemoteIcon(
+                            id: iconAsset.id,
+                            name: iconAsset.iconId,
+                            path: remotePath,
+                            category: iconAsset.categoryName,
+                            fullPath: remotePath,
+                            size: 0,
+                            modified: ""
+                        )
+                    }
                     await MainActor.run {
                         self.remoteIcons = remoteIcons
                         isLoading = false

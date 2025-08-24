@@ -17,26 +17,57 @@ enum IconSource {
  * 同时支持本地和远程图标的统一管理
  */
 class IconAsset: Identifiable {
-    /// 图标文件URL
-    let fileURL: URL
+    /// 图标来源类型
+    let source: IconSource
     
-    /// 稳定的ID（使用文件路径作为唯一标识）
-    var id: String { fileURL.path }
+    /// 图标文件URL（本地图标）或远程路径（远程图标）
+    let fileURL: URL?
+    let remotePath: String?
     
-    /// 图标所属分类名称（从URL计算）
+    /// 稳定的ID
+    var id: String { 
+        switch source {
+        case .local:
+            return fileURL?.path ?? ""
+        case .remote:
+            return remotePath ?? ""
+        }
+    }
+    
+    /// 图标所属分类名称
     var categoryName: String {
-        fileURL.deletingLastPathComponent().lastPathComponent
+        switch source {
+        case .local:
+            return fileURL?.deletingLastPathComponent().lastPathComponent ?? ""
+        case .remote:
+            return remotePath?.components(separatedBy: "/").first ?? ""
+        }
     }
     
-    /// 图标ID（从URL计算）
+    /// 图标ID
     var iconId: String {
-        fileURL.deletingPathExtension().lastPathComponent
+        switch source {
+        case .local:
+            return fileURL?.deletingPathExtension().lastPathComponent ?? ""
+        case .remote:
+            return remotePath?.components(separatedBy: "/").last?.replacingOccurrences(of: ".svg", with: "") ?? ""
+        }
     }
     
-    /// 初始化方法
+    /// 本地图标初始化方法
     /// - Parameter fileURL: 图标文件URL
     init(fileURL: URL) {
+        self.source = .local
         self.fileURL = fileURL
+        self.remotePath = nil
+    }
+    
+    /// 远程图标初始化方法
+    /// - Parameter remotePath: 远程图标路径
+    init(remotePath: String) {
+        self.source = .remote
+        self.fileURL = nil
+        self.remotePath = remotePath
     }
     
     /// 获取图标图片
@@ -48,13 +79,23 @@ class IconAsset: Identifiable {
     /// 获取图标缩略图
     /// - Returns: SwiftUI Image
     func getThumbnail() -> Image {
-        return loadThumbnail()
+        switch source {
+        case .local:
+            return loadLocalThumbnail()
+        case .remote:
+            return loadRemoteThumbnail()
+        }
     }
     
     /// 检查图标文件是否存在
     /// - Returns: 是否存在
     func exists() -> Bool {
-        return FileManager.default.fileExists(atPath: fileURL.path)
+        switch source {
+        case .local:
+            return fileURL != nil && FileManager.default.fileExists(atPath: fileURL!.path)
+        case .remote:
+            return remotePath != nil
+        }
     }
     
     // MARK: - 私有实例方法
@@ -62,6 +103,10 @@ class IconAsset: Identifiable {
     /// 加载图片（支持多种格式）
     /// - Returns: SwiftUI Image
     private func loadImage() -> Image {
+        guard let fileURL = fileURL else {
+            return Image(systemName: "plus")
+        }
+        
         let fileExtension = fileURL.pathExtension.lowercased()
         
         switch fileExtension {
@@ -77,6 +122,10 @@ class IconAsset: Identifiable {
     /// 加载SVG图片
     /// - Returns: SwiftUI Image
     private func loadSVGImage() -> Image {
+        guard let fileURL = fileURL else {
+            return Image(systemName: "doc.text.image")
+        }
+        
         // macOS原生支持SVG格式，可以直接使用NSImage加载
         if let nsImage = NSImage(contentsOf: fileURL) {
             return Image(nsImage: nsImage)
@@ -88,6 +137,10 @@ class IconAsset: Identifiable {
     /// 加载光栅图片（PNG、JPG等）
     /// - Returns: SwiftUI Image
     private func loadRasterImage() -> Image {
+        guard let fileURL = fileURL else {
+            return Image(systemName: "plus")
+        }
+        
         if let nsImage = NSImage(contentsOf: fileURL) {
             return Image(nsImage: nsImage)
         } else {
@@ -95,9 +148,13 @@ class IconAsset: Identifiable {
         }
     }
     
-    /// 加载缩略图（支持多种格式）
+    /// 加载本地缩略图（支持多种格式）
     /// - Returns: SwiftUI Image
-    private func loadThumbnail() -> Image {
+    private func loadLocalThumbnail() -> Image {
+        guard let fileURL = fileURL else {
+            return Image(systemName: "plus")
+        }
+        
         let fileExtension = fileURL.pathExtension.lowercased()
         
         switch fileExtension {
@@ -114,6 +171,10 @@ class IconAsset: Identifiable {
     /// 加载光栅图片缩略图
     /// - Returns: SwiftUI Image
     private func loadRasterThumbnail() -> Image {
+        guard let fileURL = fileURL else {
+            return Image(systemName: "plus")
+        }
+        
         if let image = NSImage(contentsOf: fileURL) {
             if let thumbnail = generateThumbnail(for: image) {
                 return Image(nsImage: thumbnail)
@@ -137,6 +198,14 @@ class IconAsset: Identifiable {
         thumbnail.unlockFocus()
         
         return thumbnail
+    }
+    
+    /// 加载远程缩略图
+    /// - Returns: SwiftUI Image
+    private func loadRemoteThumbnail() -> Image {
+        // 对于远程图标，返回一个占位符图片
+        // 实际的远程图片加载将在UI层面异步处理
+        return Image(systemName: "photo")
     }
 }
 

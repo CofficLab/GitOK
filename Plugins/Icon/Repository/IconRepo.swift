@@ -71,33 +71,18 @@ class IconRepo: SuperLog {
     
     /// 获取指定分类的图标列表
     /// - Parameter category: 统一图标分类
-    /// - Returns: 统一图标数组
-    func getIcons(for category: UnifiedIconCategory) async -> [UnifiedIcon] {
+    /// - Returns: IconAsset数组
+    func getIcons(for category: UnifiedIconCategory) async -> [IconAsset] {
         switch category.source {
         case .local:
             guard let localCategory = category.localCategory else { return [] }
-            let localIcons = localCategory.getAllIconAssets()
-            return localIcons.map { iconAsset in
-                UnifiedIcon(
-                    id: iconAsset.id,
-                    name: iconAsset.iconId,
-                    source: .local,
-                    localIcon: iconAsset,
-                    remoteIcon: nil
-                )
-            }
+            return localCategory.getAllIconAssets()
             
         case .remote:
             guard let remoteCategory = category.remoteCategory else { return [] }
             let remoteIcons = await remoteRepo.getIcons(for: remoteCategory.id)
             return remoteIcons.map { remoteIcon in
-                UnifiedIcon(
-                    id: remoteIcon.id,
-                    name: remoteIcon.name,
-                    source: .remote,
-                    localIcon: nil,
-                    remoteIcon: remoteIcon
-                )
+                IconAsset(remotePath: remoteIcon.path)
             }
         }
     }
@@ -121,24 +106,18 @@ class IconRepo: SuperLog {
     
     /// 根据图标ID获取图标
     /// - Parameter iconId: 图标ID
-    /// - Returns: 统一图标实例，如果找不到则返回nil
-    func getIconAsset(byId iconId: String) async -> UnifiedIcon? {
+    /// - Returns: IconAsset实例，如果找不到则返回nil
+    func getIconAsset(byId iconId: String) async -> IconAsset? {
         // 首先在本地查找
         if let localIcon = localRepo.getIconAsset(byId: iconId) {
-            return UnifiedIcon(
-                id: localIcon.id,
-                name: localIcon.iconId,
-                source: .local,
-                localIcon: localIcon,
-                remoteIcon: nil
-            )
+            return localIcon
         }
         
         // 在远程查找
         let allCategories = await getAllCategories()
         for category in allCategories where category.source == .remote {
             let icons = await getIcons(for: category)
-            if let remoteIcon = icons.first(where: { $0.name == iconId }) {
+            if let remoteIcon = icons.first(where: { $0.iconId == iconId }) {
                 return remoteIcon
             }
         }
