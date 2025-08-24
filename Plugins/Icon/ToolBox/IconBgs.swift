@@ -27,7 +27,7 @@ struct IconBgs: View {
 
     func makeItem(_ gradient: MagicBackgroundGroup.GradientName) -> some View {
         Button(action: {
-            if var icon = self.i.currentModel {
+            if var icon = self.i.currentData {
                 do {
                     try icon.updateBackgroundId(gradient.rawValue)
                 } catch {
@@ -41,7 +41,7 @@ struct IconBgs: View {
                 MagicBackgroundGroup(for: gradient)
                     .clipShape(RoundedRectangle(cornerRadius: 8))
 
-                if self.i.currentModel?.backgroundId == gradient.rawValue {
+                if self.i.currentData?.backgroundId == gradient.rawValue {
                     RoundedRectangle(cornerRadius: 8)
                         .stroke(Color.red, lineWidth: 2)
                 }

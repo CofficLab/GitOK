@@ -8,10 +8,8 @@ import MagicCore
  */
 struct IconView: View {
     let iconAsset: IconAsset
-    let onTap: () -> Void
     
     @EnvironmentObject var iconProvider: IconProvider
-    @State private var image = Image(systemName: "photo")
     @State private var isHovered = false
     
     /// 判断当前图标是否被选中
@@ -20,9 +18,9 @@ struct IconView: View {
     }
     
     var body: some View {
-        image
-            .resizable()
-            .frame(width: 40, height: 40)
+        // 使用IconAsset的可调整大小视图（自动处理本地和远程）
+        iconAsset.getResizableIconView(size: 40)
+            .frame(width: 40, height: 40) // 确保固定尺寸
             .background(
                 Group {
                     if isSelected {
@@ -43,24 +41,13 @@ struct IconView: View {
                     .stroke(isSelected ? Color.accentColor : Color.clear, lineWidth: 2)
             )
             .cornerRadius(8)
+            .contentShape(Rectangle()) // 确保整个矩形区域都能响应点击
             .onTapGesture {
-                onTap()
+                self.iconProvider.selectIcon(iconAsset.iconId)
             }
             .onHover { hovering in
                 isHovered = hovering
             }
-            .onAppear {
-                loadIconImage()
-            }
-    }
-    
-    private func loadIconImage() {
-        DispatchQueue.global().async {
-            let thumbnail = iconAsset.getThumbnail()
-            DispatchQueue.main.async {
-                self.image = thumbnail
-            }
-        }
     }
 }
 

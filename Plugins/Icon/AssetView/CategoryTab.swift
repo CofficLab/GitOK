@@ -17,6 +17,42 @@ struct CategoryTab: View {
     
     var body: some View {
         Button(action: {
+            // 这个方法需要重构，暂时保留兼容性
+            // iconProvider.selectCategory(category)
+        }) {
+            VStack(spacing: 4) {
+                Text(category.displayName)
+                    .font(.caption)
+                    .fontWeight(.medium)
+            }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 8)
+            .frame(maxWidth: .infinity)
+            .background(isSelected ? Color.accentColor.opacity(0.2) : Color.clear)
+            .foregroundColor(isSelected ? .accentColor : .primary)
+            .cornerRadius(8)
+        }
+        .buttonStyle(PlainButtonStyle())
+    }
+}
+
+/**
+ * 统一分类标签组件
+ * 负责显示统一分类名称，支持选中状态和点击事件
+ * 数据流：UnifiedIconCategory -> UnifiedCategoryTab
+ */
+struct UnifiedCategoryTab: View {
+    let category: UnifiedIconCategory
+    
+    @EnvironmentObject var iconProvider: IconProvider
+    
+    /// 判断当前分类是否被选中
+    private var isSelected: Bool {
+        iconProvider.selectedCategory?.id == category.id
+    }
+    
+    var body: some View {
+        Button(action: {
             iconProvider.selectCategory(category)
         }) {
             VStack(spacing: 4) {

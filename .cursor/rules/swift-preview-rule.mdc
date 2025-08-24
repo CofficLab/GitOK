@@ -99,7 +99,7 @@ static var label: String = "TabName"
 #Preview("App - Small Screen") {
     RootView {
         ContentLayout()
-            .setInitialTab("Icon")  // 使用找到的label值
+            .setInitialTab(IconPlugin.label)  // 使用找到的label值
             .hideSidebar()
             .hideProjectActions()
     }
@@ -120,7 +120,7 @@ static var label: String = "TabName"
 #Preview("App - Big Screen") {
     RootView {
         ContentLayout()
-            .setInitialTab("Git")  // 使用找到的label值
+            .setInitialTab(GitPlugin.label)  // 使用找到的label值
             .hideSidebar()
     }
     .frame(width: 1200)
@@ -140,7 +140,7 @@ static var label: String = "TabName"
 #Preview("App - Small Screen") {
     RootView {
         ContentLayout()
-            .setInitialTab("Banner")  // 使用找到的label值
+            .setInitialTab(BannerPlugin.label)  // 使用找到的label值
             .hideSidebar()
             .hideProjectActions()
     }

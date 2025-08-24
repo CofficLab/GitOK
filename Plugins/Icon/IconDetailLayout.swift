@@ -18,7 +18,7 @@ struct IconDetailLayout: View {
                         .padding(1)
                         .background(.blue.opacity(0.05))
 
-                    IconBoxView()
+                    IconBox()
                         .padding(.horizontal)
                         .padding(.bottom)
                         .background(.green.opacity(0.05))
@@ -46,12 +46,8 @@ struct IconDetailLayout: View {
             return
         }
 
-        let icons = try? project.getIcons()
-        if icons == nil || icons?.isEmpty == true {
-            self.showWelcome = true
-        } else {
-            self.showWelcome = false
-        }
+        let icons = ProjectIconRepo.getIconData(from: project)
+        self.showWelcome = icons.isEmpty
     }
 }
 

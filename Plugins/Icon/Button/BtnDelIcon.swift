@@ -5,7 +5,7 @@ import SwiftUI
 struct BtnDelIcon: View {
     @EnvironmentObject var m: MagicMessageProvider
 
-    var icon: IconModel
+    var icon: IconData
 
     var body: some View {
         Button(action: {

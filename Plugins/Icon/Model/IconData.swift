@@ -1,38 +1,39 @@
 import Foundation
 import OSLog
 import SwiftUI
-import MagicCore
 
-struct IconModel: SuperJsonModel, SuperEvent, SuperLog {
-    static var root: String = ".gitok/icons"
+/**
+ * 图标数据模型
+ * 纯数据存储结构，负责存储图标的配置信息
+ * 不包含任何UI渲染逻辑，只负责数据的序列化和反序列化
+ */
+struct IconData: SuperJsonModel {
     static var emoji = "💿"
-    static var empty = IconModel(path: "")
+    static var empty = IconData(path: "")
 
+    /// 图标标题
     var title: String = "1"
+    
+    /// 图标资源ID（对应IconAsset的id）
     var iconId: String = "1"
+    
+    /// 背景样式ID
     var backgroundId: String = "2"
+    
+    /// 自定义图片URL（可选）
     var imageURL: URL?
+    
+    /// 配置文件路径
     var path: String
+    
+    /// 透明度（0.0 - 1.0）
     var opacity: Double = 1
+    
+    /// 缩放比例（可选）
     var scale: Double? = 1
+    
+    /// 圆角半径
     var cornerRadius: Double = 0
-
-    var image: Image {
-        if let url = self.imageURL {
-            return Image(nsImage: NSImage(data: try! Data(contentsOf: url))!)
-        }
-
-        // 通过IconRepo获取IconAsset，然后获取Image
-        if let iconAsset = IconRepo.shared.getIconAsset(byId: self.iconId) {
-            return iconAsset.getImage()
-        }
-        
-        return Image(systemName: "plus")
-    }
-
-    var background: some View {
-        MagicBackgroundGroup(for: self.backgroundId).opacity(self.opacity)
-    }
 
     init(title: String = "1", iconId: String = "1", backgroundId: String = "3", imageURL: URL? = nil, path: String) {
         self.title = title
@@ -44,47 +45,9 @@ struct IconModel: SuperJsonModel, SuperEvent, SuperLog {
     }
 }
 
-// MARK: 查
-
-extension IconModel {
-    static func all(_ projectPath: String) throws -> [IconModel] {
-        let verbose = false
-        var models: [IconModel] = []
-
-        // 目录路径
-        let directoryPath = "\(projectPath)/\(Self.root)"
-
-        if verbose {
-            os_log("\(t)GetIcons from ->\(directoryPath)")
-        }
-
-        // 创建 FileManager 实例
-        let fileManager = FileManager.default
-
-        var isDir: ObjCBool = true
-        if !fileManager.fileExists(atPath: directoryPath, isDirectory: &isDir) {
-            return []
-        }
-
-        do {
-            for file in try fileManager.contentsOfDirectory(atPath: directoryPath) {
-                let fileURL = URL(fileURLWithPath: directoryPath).appendingPathComponent(file)
-
-                models.append(try IconModel.fromJSONFile(fileURL))
-            }
-
-            return models
-        } catch {
-            os_log(.error, "Error while enumerating files: \(error.localizedDescription)")
-
-            throw error
-        }
-    }
-}
-
 // MARK: Codable
 
-extension IconModel: Codable {
+extension IconData: Codable {
     enum CodingKeys: String, CodingKey {
         case title
         case iconId
@@ -115,13 +78,13 @@ extension IconModel: Codable {
 
 // MARK: 新建
 
-extension IconModel {
+extension IconData {
     @discardableResult
     static func new(_ project: Project) throws -> Self {
         let title = "新图标-\(Int.random(in: 1 ... 100))"
-        let path = project.path + "/" + IconModel.root + "/" + UUID().uuidString + ".json"
+        let path = project.path + "/" + ProjectIconRepo.iconStoragePath + "/" + UUID().uuidString + ".json"
         let iconId = String(Int.random(in: 1 ... 100))
-        let model = IconModel(title: title, iconId: iconId, path: path)
+        let model = IconData(title: title, iconId: iconId, path: path)
         try model.saveToDisk()
         return model
     }
@@ -129,7 +92,7 @@ extension IconModel {
 
 // MARK: 更新
 
-extension IconModel {
+extension IconData {
     mutating func updateOpacity(_ o: Double) throws {
         self.opacity = o
         try self.saveToDisk()
@@ -163,7 +126,7 @@ extension IconModel {
 
 // MARK: 保存
 
-extension IconModel {
+extension IconData {
     func saveToDisk() throws {
         try self.save()
         self.emit(.iconDidSave)
@@ -172,11 +135,11 @@ extension IconModel {
     static func fromJSONFile(_ jsonFile: URL) throws -> Self {
         let jsonData = try Data(contentsOf: jsonFile)
         do {
-            var model = try JSONDecoder().decode(IconModel.self, from: jsonData)
+            var model = try JSONDecoder().decode(IconData.self, from: jsonData)
             model.path = jsonFile.path
             return model
         } catch {
-            os_log(.error, "\(self.t)Error decoding JSON: \(error)")
+            os_log(.error, "Error decoding JSON: \(error)")
             os_log(.error, "  ➡️ JSONFile: \(jsonFile)")
 
             throw error
@@ -186,7 +149,7 @@ extension IconModel {
 
 // MARK: 删除
 
-extension IconModel {
+extension IconData {
     func deleteFromDisk() throws {
         self.delete()
         self.emit(.iconDidDelete, object: nil, userInfo: ["path": self.path])
@@ -194,6 +157,12 @@ extension IconModel {
 }
 
 // MARK: 通知
+
+extension IconData {
+    func emit(_ name: Notification.Name, object: Any? = nil, userInfo: [AnyHashable: Any]? = nil) {
+        NotificationCenter.default.post(name: name, object: object, userInfo: userInfo)
+    }
+}
 
 extension Notification.Name {
     static let iconDidChange = Notification.Name("iconDidChange")

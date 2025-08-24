@@ -4,7 +4,7 @@ import SwiftUI
 /**
  * 分类标签页组件
  * 负责显示所有可用的图标分类，支持横向滚动和分类选择
- * 数据流：IconCategoryRepo -> CategoryTabs
+ * 数据流：IconRepo -> UnifiedIconCategory -> CategoryTabs
  */
 struct CategoryTabs: View {
     @EnvironmentObject var iconProvider: IconProvider
@@ -15,8 +15,8 @@ struct CategoryTabs: View {
             // 左侧：分类标签页（可滚动）
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 8) {
-                    ForEach(IconRepo.shared.getAllCategories(), id: \.id) { category in
-                        CategoryTab(category: category)
+                    ForEach(iconProvider.availableCategories, id: \.id) { category in
+                        UnifiedCategoryTab(category: category)
                     }
                 }
             }
@@ -31,15 +31,6 @@ struct CategoryTabs: View {
                 }
                 .buttonStyle(.plain)
                 .help("更换图片")
-                
-                // 打开图标仓库按钮
-                Button(action: openIconRepository) {
-                    Image(systemName: "folder")
-                        .font(.title3)
-                        .foregroundColor(.green)
-                }
-                .buttonStyle(.plain)
-                .help("打开图标仓库")
             }
         }
         .onAppear {
@@ -60,7 +51,7 @@ struct CategoryTabs: View {
 
         if panel.runModal() == .OK, let url = panel.url {
             do {
-                if var icon = iconProvider.currentModel {
+                if var icon = iconProvider.currentData {
                     try icon.updateImageURL(url)
                     m.success("图片已更新")
                 } else {
@@ -72,16 +63,7 @@ struct CategoryTabs: View {
         }
     }
     
-    private func openIconRepository() {
-        guard let iconFolderURL = IconRepo.getIconFolderURL() else {
-            m.error("无法找到图标文件夹")
-            return
-        }
-        
-        // 打开图标文件夹
-        NSWorkspace.shared.open(iconFolderURL)
-        m.success("已打开图标文件夹：\(iconFolderURL.path)")
-    }
+
 }
 
 #Preview("App - Small Screen") {

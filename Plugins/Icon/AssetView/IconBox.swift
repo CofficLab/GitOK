@@ -4,11 +4,13 @@ import SwiftUI
 /**
  * 图标盒子视图
  * 负责管理分类选择和图标展示的整体布局
- * 数据流：IconCategoryRepo -> IconCategory -> IconAsset List
+ * 数据流：IconRepo -> UnifiedIconCategory -> IconAsset List
  */
-struct IconBoxView: View {
+struct IconBox: View {
     @EnvironmentObject var iconProvider: IconProvider
     @State private var gridItems: [GridItem] = Array(repeating: .init(.flexible()), count: 10)
+    @State private var iconAssets: [IconAsset] = []
+    @State private var isLoading: Bool = false
     
     var body: some View {
         VStack(spacing: 0) {
@@ -23,26 +25,21 @@ struct IconBoxView: View {
             GeometryReader { geo in
                 ScrollView {
                     VStack {
-                        if let selectedCategory = iconProvider.selectedCategory {
-                            IconGrid(
-                                category: selectedCategory,
-                                gridItems: gridItems,
-                                onIconSelected: { selectedIconId in
-                                    handleIconSelection(selectedIconId)
-                                }
-                            )
-                        } else if let firstCategory = IconRepo.shared.getAllCategories().first {
-                            IconGrid(
-                                category: firstCategory,
-                                gridItems: gridItems,
-                                onIconSelected: { selectedIconId in
-                                    handleIconSelection(selectedIconId)
-                                }
-                            )
-                        } else {
-                            Text("没有可用的图标分类")
+                        if isLoading {
+                            ProgressView("加载图标中...")
+                                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                .padding()
+                        } else if iconAssets.isEmpty {
+                            Text("没有可用的图标")
                                 .foregroundColor(.secondary)
                                 .padding()
+                        } else {
+                            LazyVGrid(columns: gridItems, spacing: 12) {
+                                ForEach(iconAssets, id: \.id) { iconAsset in
+                                    IconView(iconAsset: iconAsset)
+                                }
+                            }
+                            .padding(.horizontal)
                         }
                     }
                     .onAppear {
@@ -57,6 +54,9 @@ struct IconBoxView: View {
         .onAppear {
             iconProvider.refreshCategories()
         }
+        .onChange(of: iconProvider.selectedCategory) {
+            loadIconAssets()
+        }
     }
     
     private func updateGridItems(_ geo: GeometryProxy) {
@@ -64,15 +64,21 @@ struct IconBoxView: View {
         gridItems = Array(repeating: .init(.flexible()), count: columns)
     }
     
-    private func handleIconSelection(_ iconId: String) {
-        iconProvider.selectIcon(iconId)
+    private func loadIconAssets() {
+        guard let selectedCategory = iconProvider.selectedCategory else {
+            iconAssets = []
+            return
+        }
         
-        // 发送图标选择通知
-        NotificationCenter.default.post(
-            name: Notification.Name("IconSelected"),
-            object: nil,
-            userInfo: ["iconId": iconId]
-        )
+        isLoading = true
+        
+        Task {
+            let assets = await IconRepo.shared.getIcons(for: selectedCategory)
+            await MainActor.run {
+                self.iconAssets = assets
+                self.isLoading = false
+            }
+        }
     }
 }
 

@@ -111,10 +111,6 @@ final class Project: SuperLog {
         return try BannerModel.all(self)
     }
 
-    func getIcons() throws -> [IconModel] {
-        try IconModel.all(self.path)
-    }
-
     func isExist() -> Bool {
         return FileManager.default.fileExists(atPath: self.path)
     }

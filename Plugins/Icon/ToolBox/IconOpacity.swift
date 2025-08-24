@@ -1,34 +1,36 @@
-import MagicCore
 import SwiftUI
+import MagicCore
 
 struct IconOpacity: View {
     @EnvironmentObject var i: IconProvider
-    @EnvironmentObject var app: AppProvider
     @EnvironmentObject var m: MagicMessageProvider
-
-    @State var icon: IconModel?
+    @EnvironmentObject var app: AppProvider
+    
+    @State var icon: IconData?
     @State var opacity: Double = 1
-
+    
     var body: some View {
         VStack {
             if icon != nil {
-                Slider(value: $opacity, in: 0 ... 1)
+                Slider(value: $opacity, in: 0.1 ... 1)
                     .padding()
             }
         }
         .padding()
         .onAppear(perform: reloadData)
         .onChange(of: opacity, updateOpacity)
-        .onChange(of: self.i.currentModel, reloadData)
+        .onChange(of: self.i.currentData) { _, newValue in
+            reloadData()
+        }
     }
 
     private func reloadData() {
-        self.icon = i.currentModel
+        self.icon = i.currentData
         self.opacity = self.icon?.opacity ?? 1.0
     }
 
     private func updateOpacity() {
-        if var icon = i.currentModel {
+        if var icon = self.i.currentData {
             try? icon.updateOpacity(opacity)
         }
     }
