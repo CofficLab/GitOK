@@ -57,13 +57,13 @@ struct IconAdjustments: View {
         .onAppear {
             syncLocalState()
         }
-        .onChange(of: i.currentModel) { _, newValue in
+        .onChange(of: i.currentData) { _, newValue in
             syncLocalState()
         }
     }
     
     private func syncLocalState() {
-        if let icon = i.currentModel {
+        if let icon = i.currentData {
             localOpacity = icon.opacity
             localScale = icon.scale ?? 1.0
             localCornerRadius = icon.cornerRadius
@@ -71,19 +71,19 @@ struct IconAdjustments: View {
     }
     
     private func updateOpacity(_ newValue: Double) {
-        if var icon = i.currentModel {
+        if var icon = i.currentData {
             try? icon.updateOpacity(newValue)
         }
     }
     
     private func updateScale(_ newValue: Double) {
-        if var icon = i.currentModel {
+        if var icon = i.currentData {
             try? icon.updateScale(newValue)
         }
     }
     
     private func updateCornerRadius(_ newValue: Double) {
-        if var icon = i.currentModel {
+        if var icon = i.currentData {
             try? icon.updateCornerRadius(newValue)
         }
     }

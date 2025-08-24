@@ -47,12 +47,12 @@ struct IconMaker: View {
             }
         }
         .onAppear {
-            self.icon = i.currentModel
+            self.icon = i.currentData
         }
         .onNotification(.iconDidSave, perform: { _ in
-            self.icon = i.currentModel
+            self.icon = i.currentData
         })
-        .onChange(of: i.currentModel) { _, newValue in
+        .onChange(of: i.currentData) { _, newValue in
             self.icon = newValue
         }
     }

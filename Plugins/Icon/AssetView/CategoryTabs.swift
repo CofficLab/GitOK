@@ -51,7 +51,7 @@ struct CategoryTabs: View {
 
         if panel.runModal() == .OK, let url = panel.url {
             do {
-                if var icon = iconProvider.currentModel {
+                if var icon = iconProvider.currentData {
                     try icon.updateImageURL(url)
                     m.success("图片已更新")
                 } else {

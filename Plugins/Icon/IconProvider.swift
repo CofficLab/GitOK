@@ -10,9 +10,9 @@ import SwiftUI
     图标提供者，统一管理所有图标插件相关的状态
  */
 class IconProvider: NSObject, ObservableObject, SuperLog {
-    @Published private(set) var currentModel: IconData? = nil
-
     static var emoji = "🍒"
+    
+    @Published private(set) var currentData: IconData? = nil
 
     /// 当前从候选列表中选中的图标ID
     /// 用于在图标选择器中高亮显示选中的图标
@@ -54,27 +54,26 @@ class IconProvider: NSObject, ObservableObject, SuperLog {
 
     @objc private func handleIconDidSave(_ notification: Notification) {
         // 只有在图标真正保存时才更新模型，避免参数调整时的频繁更新
-        let iconPath = self.currentModel?.path
+        let iconPath = self.currentData?.path
         if let iconPath = iconPath {
             let newModel = try? IconData.fromJSONFile(URL(fileURLWithPath: iconPath))
             // 只在模型真正发生变化时才更新
-            if let newModel = newModel, newModel.path != self.currentModel?.path {
-                self.updateCurrentModel(newModel: newModel, reason: "iconDidSave event")
+            if let newModel = newModel, newModel.path != self.currentData?.path {
+                self.updateCurrentModel(newModel: newModel)
             }
         }
     }
 
     @objc private func handleIconDidDelete(_ notification: Notification) {
         let path = notification.userInfo?["path"] as? String
-        if let path = path, path == self.currentModel?.path {
-            self.currentModel = nil
+        if let path = path, path == self.currentData?.path {
+            self.currentData = nil
         }
     }
 
-    func updateCurrentModel(newModel: IconData?, reason: String) {
-        os_log("\(self.t)Update Current Model(\(reason)) ➡️ \(newModel?.title ?? "nil")")
-
-        self.currentModel = newModel
+    func updateCurrentModel(newModel: IconData?) {
+        self.currentData = newModel
+        self.selectedIconId = newModel?.iconId ?? ""
     }
     
     /**
@@ -84,7 +83,7 @@ class IconProvider: NSObject, ObservableObject, SuperLog {
         self.selectedIconId = iconId
         
         // 如果当前有图标模型，同时更新模型
-        if var model = self.currentModel {
+        if var model = self.currentData {
             do {
                 try model.updateIconId(iconId)
             } catch {

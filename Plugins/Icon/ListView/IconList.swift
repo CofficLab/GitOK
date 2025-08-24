@@ -34,7 +34,7 @@ struct IconList: View {
             self.selection = icons.first
         }
         .onChange(of: selection) { _, newValue in
-            i.updateCurrentModel(newModel: newValue, reason: "IconList.selection")
+            i.updateCurrentModel(newModel: newValue)
         }
         .onNotification(.iconDidSave, perform: { _ in
             os_log("iconDidSave while current selection is \(self.selection?.title ?? "nil")")
