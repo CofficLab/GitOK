@@ -20,57 +20,50 @@ struct IconPreview: View {
             if let iconAsset = iconAsset, !isLoading && errorMessage == nil {
                 // 从IconProvider获取当前图标数据
                 if let iconData = iconProvider.currentData {
-                    IconRenderer.renderIcon(iconData: iconData, iconAsset: iconAsset)
+                    // 使用异步渲染方法，传递合适的尺寸
+                    AsyncIconRenderer(iconData: iconData, iconAsset: iconAsset, size: availableSize)
                         .frame(width: availableSize, height: availableSize)
                         .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
                 } else {
                     // 没有图标数据时显示提示
-                    VStack(spacing: 12) {
-                        Image(systemName: "photo")
-                            .font(.system(size: 50))
-                            .foregroundColor(.secondary)
-                        Text("请选择一个图标")
-                            .font(.headline)
-                            .foregroundColor(.secondary)
-                    }
+                    IconStateView(
+                        icon: "photo",
+                        title: "请选择一个图标",
+                        subtitle: nil,
+                        color: .secondary,
+                        size: availableSize
+                    )
                 }
             } else if isLoading {
                 // 显示加载状态
-                VStack(spacing: 12) {
-                    ProgressView()
-                        .frame(width: 50, height: 50)
-                    Text("加载图标中...")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                }
+                IconStateView(
+                    icon: nil,
+                    title: "加载图标中...",
+                    subtitle: nil,
+                    color: .secondary,
+                    size: availableSize,
+                    showProgress: true
+                )
             } else if let errorMessage = errorMessage {
                 // 显示错误状态
-                VStack(spacing: 12) {
-                    Image(systemName: "exclamationmark.triangle")
-                        .font(.system(size: 50))
-                        .foregroundColor(.orange)
-                    Text("加载失败")
-                        .font(.headline)
-                        .foregroundColor(.orange)
-                    Text(errorMessage)
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                        .multilineTextAlignment(.center)
-                    Button("重试") {
-                        loadIconAsset()
-                    }
-                    .buttonStyle(.bordered)
-                }
+                IconStateView(
+                    icon: "exclamationmark.triangle",
+                    title: "加载失败",
+                    subtitle: errorMessage,
+                    color: .orange,
+                    size: availableSize,
+                    showRetryButton: true,
+                    onRetry: loadIconAsset
+                )
             } else {
                 // 显示空状态
-                VStack(spacing: 12) {
-                    Image(systemName: "photo")
-                        .font(.system(size: 50))
-                        .foregroundColor(.secondary)
-                    Text("请选择一个图标")
-                        .font(.headline)
-                        .foregroundColor(.secondary)
-                }
+                IconStateView(
+                    icon: "photo",
+                    title: "请选择一个图标",
+                    subtitle: nil,
+                    color: .secondary,
+                    size: availableSize
+                )
             }
         }
         .onAppear {
@@ -124,34 +117,72 @@ struct IconPreview: View {
     }
 }
 
-// MARK: - 超时扩展
+// MARK: - 异步图标渲染器组件
 
-extension Task where Success == Never, Failure == Never {
-    static func sleep(seconds: TimeInterval) async {
-        try? await Task.sleep(nanoseconds: UInt64(seconds * 1000000000))
-    }
-}
-
-func withTimeout<T>(seconds: TimeInterval, operation: @escaping () async throws -> T) async throws -> T {
-    try await withThrowingTaskGroup(of: T.self) { group in
-        group.addTask {
-            try await operation()
+/**
+ * 异步图标渲染器组件
+ * 使用IconRenderer.renderStaticIconAsync方法渲染图标
+ */
+struct AsyncIconRenderer: View {
+    let iconData: IconData
+    let iconAsset: IconAsset
+    let size: CGFloat
+    
+    @State private var renderedView: AnyView?
+    @State private var isLoading = true
+    
+    var body: some View {
+        Group {
+            if let renderedView = renderedView {
+                renderedView
+            } else if isLoading {
+                ProgressView()
+                    .frame(width: 50, height: 50)
+            } else {
+                Image(systemName: "photo")
+                    .font(.system(size: 50))
+                    .foregroundColor(.secondary)
+            }
         }
-
-        group.addTask {
-            try await Task.sleep(seconds: seconds)
-            throw TimeoutError()
+        .onAppear {
+            renderIcon()
         }
-
-        let result = try await group.next()!
-        group.cancelAll()
-        return result
+        .onChange(of: iconData.opacity) { _, _ in
+            // 当透明度变化时重新渲染
+            renderIcon()
+        }
+        .onChange(of: iconData.scale) { _, _ in
+            // 当缩放比例变化时重新渲染
+            renderIcon()
+        }
+        .onChange(of: iconData.cornerRadius) { _, _ in
+            // 当圆角半径变化时重新渲染
+            renderIcon()
+        }
+        .onChange(of: iconData.backgroundId) { _, _ in
+            // 当背景样式变化时重新渲染
+            renderIcon()
+        }
+        .onChange(of: iconData.imageURL) { _, _ in
+            // 当自定义图片URL变化时重新渲染
+            renderIcon()
+        }
     }
-}
-
-struct TimeoutError: Error, LocalizedError {
-    var errorDescription: String? {
-        return "操作超时"
+    
+    @MainActor
+    private func renderIcon() {
+        isLoading = true
+        
+        Task {
+            let view = await IconRenderer.renderStaticIconAsync(
+                iconData: iconData,
+                iconAsset: iconAsset,
+                size: size
+            )
+            
+            self.renderedView = AnyView(view)
+            self.isLoading = false
+        }
     }
 }
 

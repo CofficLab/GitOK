@@ -8,24 +8,7 @@ import SwiftUI
  * 不关心图标是本地还是远程，只负责组合背景和图标
  */
 class IconRenderer {
-    /// 渲染图标
-    /// - Parameters:
-    ///   - iconData: 图标数据
-    ///   - iconAsset: 图标资源
-    /// - Returns: 渲染后的图标视图
-    static func renderIcon(iconData: IconData, iconAsset: IconAsset) -> some View {
-        ZStack {
-            // 背景
-            renderBackground(iconData: iconData)
-
-            // 图标
-            renderIconImage(iconData: iconData, iconAsset: iconAsset)
-        }
-        .cornerRadius(iconData.cornerRadius > 0 ? CGFloat(iconData.cornerRadius) : 0)
-        .clipped() // 确保圆角效果正确显示
-    }
-
-    /// 异步渲染静态图标（支持远程图标预加载）
+    /// 异步渲染静态图标
     /// - Parameters:
     ///   - iconData: 图标数据
     ///   - iconAsset: 图标资源
@@ -54,7 +37,7 @@ class IconRenderer {
         .opacity(iconData.opacity)
         .clipped()
     }
-
+    
     /// 生成图标截图
     /// - Parameters:
     ///   - iconData: 图标数据
@@ -76,7 +59,7 @@ class IconRenderer {
         // 返回文件是否成功生成
         return FileManager.default.fileExists(atPath: savePath.path)
     }
-
+    
     /// 异步生成图标截图（支持远程图标预加载）
     /// - Parameters:
     ///   - iconData: 图标数据
