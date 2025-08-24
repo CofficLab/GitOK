@@ -24,13 +24,14 @@ class IconRepo: SuperLog {
     private init() {}
 
     /// 获取所有可用的图标分类（本地 + 远程）
+    /// - Parameter enableRemote: 是否启用远程分类，默认启用
     /// - Returns: 统一图标分类数组
-    func getAllCategories() async -> [IconCategory] {
+    func getAllCategories(enableRemote: Bool = true) async -> [IconCategory] {
         // 获取本地分类
         let localCategories = localRepo.getAllCategories()
 
         // 获取远程分类
-        let remoteCategories = await remoteRepo.getAllCategories()
+        let remoteCategories = enableRemote ? await remoteRepo.getAllCategories() : []
 
         // 合并分类，本地优先
         var unifiedCategories: [IconCategory] = []

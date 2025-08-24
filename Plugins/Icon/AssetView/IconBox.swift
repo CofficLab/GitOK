@@ -11,16 +11,13 @@ struct IconBox: View {
     @State private var gridItems: [GridItem] = Array(repeating: .init(.flexible()), count: 10)
     @State private var iconAssets: [IconAsset] = []
     @State private var isLoading: Bool = false
-    
+
     var body: some View {
         VStack(spacing: 0) {
             // 分类标签页
             CategoryTabs()
-            
-            Divider()
-                .padding(.bottom,2)
-                .padding(.top, 2)
-            
+                .frame(height: 32)
+
             // 图标网格
             GeometryReader { geo in
                 ScrollView {
@@ -39,7 +36,6 @@ struct IconBox: View {
                                     IconView(iconAsset: iconAsset)
                                 }
                             }
-                            .padding(.horizontal)
                         }
                     }
                     .onAppear {
@@ -56,7 +52,7 @@ struct IconBox: View {
             // 确保有选中的分类，如果没有则选择第一个
             if iconProvider.selectedCategory == nil {
                 Task {
-                    let categories = await IconRepo.shared.getAllCategories()
+                    let categories = await IconRepo.shared.getAllCategories(enableRemote: iconProvider.enableRemoteRepository)
                     if let firstCategory = categories.first {
                         await MainActor.run {
                             iconProvider.selectCategory(firstCategory)
@@ -72,20 +68,20 @@ struct IconBox: View {
             loadIconAssets()
         }
     }
-    
+
     private func updateGridItems(_ geo: GeometryProxy) {
         let columns = max(Int(geo.size.width / 60), 1)
         gridItems = Array(repeating: .init(.flexible()), count: columns)
     }
-    
+
     private func loadIconAssets() {
         guard let selectedCategory = iconProvider.selectedCategory else {
             iconAssets = []
             return
         }
-        
+
         isLoading = true
-        
+
         Task {
             let assets = await IconRepo.shared.getIcons(for: selectedCategory)
             await MainActor.run {

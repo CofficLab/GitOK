@@ -1,28 +1,22 @@
 import MagicCore
-import SwiftUI
 import OSLog
+import SwiftUI
 
 struct IconBgs: View {
     @EnvironmentObject var i: IconProvider
     @EnvironmentObject var m: MagicMessageProvider
 
     var body: some View {
-        VStack(spacing: 16) {
-            // 背景选择
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 6) {
-                    ForEach(0 ..< MagicBackgroundGroup.all.count, id: \.self) { index in
-                        let gradient = MagicBackgroundGroup.all[index]
-                        makeItem(gradient)
-                            .frame(width: 22, height: 22)
-                    }
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 6) {
+                ForEach(0 ..< MagicBackgroundGroup.all.count, id: \.self) { index in
+                    let gradient = MagicBackgroundGroup.all[index]
+                    makeItem(gradient)
+                        .frame(width: 22, height: 22)
                 }
             }
-            .frame(height: 30)
-            
-            // 图标调整工具
-            IconAdjustments()
         }
+        .frame(height: 30)
     }
 
     func makeItem(_ gradient: MagicBackgroundGroup.GradientName) -> some View {

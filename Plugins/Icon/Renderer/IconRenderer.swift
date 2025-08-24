@@ -3,38 +3,10 @@ import SwiftUI
 
 /**
  * 图标渲染器
- * 根据IconData和IconAsset来渲染最终的图标样式
- * 充分利用所有定制属性：透明度、缩放比例、圆角半径等
- * 不关心图标是本地还是远程，只负责组合背景和图标
+ * 主要用于生成图标截图，支持本地和远程图标
+ * 现在主要用于导出和保存功能，预览使用响应式视图
  */
 class IconRenderer {
-    /// 异步渲染静态图标
-    /// - Parameters:
-    ///   - iconData: 图标数据
-    ///   - iconAsset: 图标资源
-    ///   - size: 图标尺寸
-    /// - Returns: 完全静态的图标视图，适合截图
-    @MainActor
-    static func renderStaticIconAsync(iconData: IconData, iconAsset: IconAsset, size: CGFloat) async -> some View {
-        // 先异步获取图标图片
-        let iconImage = await iconAsset.getImageAsync()
-
-        // 然后构建静态视图
-        return ZStack {
-            // 背景
-            renderBackground(iconData: iconData)
-
-            // 图标内容 - 使用已获取的图片
-            iconImage
-                .resizable()
-                .scaledToFit()
-                .scaleEffect(iconData.scale ?? 1.0)
-        }
-        .frame(width: size, height: size)
-        .cornerRadius(iconData.cornerRadius > 0 ? CGFloat(iconData.cornerRadius) : 0)
-        .opacity(iconData.opacity)
-    }
-    
     /// 生成图标截图
     /// - Parameters:
     ///   - iconData: 图标数据
@@ -43,13 +15,17 @@ class IconRenderer {
     ///   - savePath: 保存路径
     /// - Returns: 截图是否成功
     @MainActor static func snapshotIcon(iconData: IconData, iconAsset: IconAsset, size: Int, savePath: URL) async -> Bool {
-        let _ = await MagicImage.snapshot(
-            MagicImage.makeImage(
-                renderStaticIconAsync(iconData: iconData, iconAsset: iconAsset, size: CGFloat(size))
-            )
-            .resizable()
-            .scaledToFit()
-            .frame(width: CGFloat(size), height: CGFloat(size)),
+        // 先异步获取图标图片
+        let iconImage = await iconAsset.getImageAsync()
+        
+        // 创建图标视图
+        let iconView = createIconView(iconData: iconData, iconAsset: iconAsset, size: CGFloat(size), preloadedImage: iconImage)
+        
+        let _ = MagicImage.snapshot(
+            MagicImage.makeImage(iconView)
+                .resizable()
+                .scaledToFit()
+                .frame(width: CGFloat(size), height: CGFloat(size)),
             path: savePath
         )
 
@@ -65,8 +41,11 @@ class IconRenderer {
     ///   - savePath: 保存路径
     /// - Returns: 截图是否成功
     @MainActor static func snapshotIconAsync(iconData: IconData, iconAsset: IconAsset, size: Int, savePath: URL) async -> Bool {
-        // 先异步渲染图标视图
-        let iconView = await renderStaticIconAsync(iconData: iconData, iconAsset: iconAsset, size: CGFloat(size))
+        // 先异步获取图标图片
+        let iconImage = await iconAsset.getImageAsync()
+        
+        // 创建图标视图
+        let iconView = createIconView(iconData: iconData, iconAsset: iconAsset, size: CGFloat(size), preloadedImage: iconImage)
 
         let _ = MagicImage.snapshot(
             MagicImage.makeImage(iconView)
@@ -80,23 +59,22 @@ class IconRenderer {
         return FileManager.default.fileExists(atPath: savePath.path)
     }
 
-    // MARK: - 私有渲染方法
+    // MARK: - 私有方法
 
-    /// 渲染背景
-    /// - Parameter iconData: 图标数据
-    /// - Returns: 背景视图
-    private static func renderBackground(iconData: IconData) -> some View {
-        MagicBackgroundGroup(for: iconData.backgroundId)
-            .opacity(iconData.opacity)
-    }
-
-    /// 渲染图标图片
+    /// 创建图标视图（用于截图）
     /// - Parameters:
     ///   - iconData: 图标数据
     ///   - iconAsset: 图标资源
-    /// - Returns: 图标图片视图
-    private static func renderIconImage(iconData: IconData, iconAsset: IconAsset) -> some View {
-        Group {
+    ///   - size: 图标尺寸
+    ///   - preloadedImage: 预加载的图片（可选）
+    /// - Returns: 图标视图
+    private static func createIconView(iconData: IconData, iconAsset: IconAsset, size: CGFloat, preloadedImage: Image? = nil) -> some View {
+        ZStack {
+            // 背景
+            MagicBackgroundGroup(for: iconData.backgroundId)
+                .opacity(iconData.opacity)
+            
+            // 图标内容
             if let imageURL = iconData.imageURL {
                 // 使用自定义图片URL
                 AsyncImage(url: imageURL) { phase in
@@ -108,66 +86,38 @@ class IconRenderer {
                         image
                             .resizable()
                             .scaledToFit()
-                            .scaleEffect(iconData.scale ?? 1.0) // 应用缩放效果
+                            .scaleEffect(iconData.scale ?? 1.0)
                     case .failure:
                         Image(systemName: "photo")
                             .resizable()
                             .scaledToFit()
                             .foregroundColor(.secondary)
-                            .scaleEffect(iconData.scale ?? 1.0) // 应用缩放效果
+                            .scaleEffect(iconData.scale ?? 1.0)
                     @unknown default:
                         Image(systemName: "photo")
                             .resizable()
                             .scaledToFit()
                             .foregroundColor(.secondary)
-                            .scaleEffect(iconData.scale ?? 1.0) // 应用缩放效果
+                            .scaleEffect(iconData.scale ?? 1.0)
                     }
                 }
+            } else if let preloadedImage = preloadedImage {
+                // 使用预加载的图片
+                preloadedImage
+                    .resizable()
+                    .scaledToFit()
+                    .scaleEffect(iconData.scale ?? 1.0)
             } else {
-                AsyncIconImage(iconData: iconData, iconAsset: iconAsset)
+                // 使用占位符图片，因为这里主要用于截图，应该总是有预加载的图片
+                Image(systemName: "photo")
+                    .resizable()
+                    .scaledToFit()
+                    .foregroundColor(.secondary)
+                    .scaleEffect(iconData.scale ?? 1.0)
             }
         }
-    }
-
-    /// 异步图标图片组件
-    private struct AsyncIconImage: View {
-        let iconData: IconData
-        let iconAsset: IconAsset
-        @State private var loadedImage: Image?
-        @State private var isLoading = false
-
-        var body: some View {
-            Group {
-                if let loadedImage = loadedImage {
-                    loadedImage
-                        .resizable()
-                        .scaledToFit()
-                        .scaleEffect(iconData.scale ?? 1.0) // 应用缩放效果
-                } else if isLoading {
-                    ProgressView()
-                        .frame(width: 50, height: 50)
-                } else {
-                    Image(systemName: "photo")
-                        .resizable()
-                        .scaledToFit()
-                        .foregroundColor(.secondary)
-                        .scaleEffect(iconData.scale ?? 1.0) // 应用缩放效果
-                }
-            }
-            .onAppear {
-                loadIconImage()
-            }
-        }
-
-        @MainActor
-        private func loadIconImage() {
-            isLoading = true
-            Task {
-                let image = await iconAsset.getImageAsync()
-                loadedImage = image
-                isLoading = false
-            }
-        }
+        .frame(width: size, height: size)
+        .cornerRadius(iconData.cornerRadius > 0 ? CGFloat(iconData.cornerRadius) : 0)
     }
 }
 

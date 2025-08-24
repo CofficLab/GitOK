@@ -8,65 +8,49 @@ struct DownloadButton: View {
     let title: String
     let icon: String
     let color: Color
-    let infoText: String
     let action: () -> Void
+    let isDisabled: Bool
     
-    @State private var showInfo = false
+    /// 初始化方法
+    /// - Parameters:
+    ///   - title: 按钮标题
+    ///   - icon: 按钮图标
+    ///   - color: 按钮颜色
+    ///   - action: 点击动作
+    ///   - isDisabled: 是否禁用，默认为false
+    init(title: String, icon: String, color: Color, action: @escaping () -> Void, isDisabled: Bool = false) {
+        self.title = title
+        self.icon = icon
+        self.color = color
+        self.action = action
+        self.isDisabled = isDisabled
+    }
     
     var body: some View {
-        HStack(spacing: 12) {
-            // 主下载按钮
-            Button(action: action) {
-                HStack(spacing: 16) {
-                    Image(systemName: icon)
-                        .font(.title2)
-                        .foregroundColor(color)
-                        .frame(width: 24)
-                    
-                    Text(title)
-                        .font(.headline)
-                        .foregroundColor(.primary)
-                    
-                    Spacer()
-                }
-                .padding()
-                .background(Color.gray.opacity(0.05))
-                .cornerRadius(8)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 8)
-                        .stroke(color.opacity(0.3), lineWidth: 1)
-                )
+        // 主下载按钮
+        Button(action: action) {
+            HStack(spacing: 16) {
+                Image(systemName: icon)
+                    .font(.title2)
+                    .foregroundColor(isDisabled ? .secondary : color)
+                    .frame(width: 24)
+                
+                Text(title)
+                    .font(.headline)
+                    .foregroundColor(isDisabled ? .secondary : .primary)
+                
+                Spacer()
             }
-            .buttonStyle(PlainButtonStyle())
-            
-            // 信息按钮
-            Button(action: { showInfo = true }) {
-                Image.info
-                    .font(.title3)
-                    .foregroundColor(.secondary)
-            }
-            .buttonStyle(PlainButtonStyle())
-            .popover(isPresented: $showInfo) {
-                VStack(alignment: .leading, spacing: 12) {
-                    HStack {
-                        Image(systemName: icon)
-                            .foregroundColor(color)
-                            .font(.title2)
-                        Text(title)
-                            .font(.headline)
-                        Spacer()
-                    }
-                    
-                    Text(infoText)
-                        .font(.body)
-                        .foregroundColor(.secondary)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
-                .padding()
-                .frame(maxWidth: 300)
-                .frame(maxHeight: 200)
-            }
+            .padding()
+            .background(isDisabled ? Color.gray.opacity(0.02) : Color.gray.opacity(0.05))
+            .cornerRadius(8)
+            .overlay(
+                RoundedRectangle(cornerRadius: 8)
+                    .stroke(isDisabled ? Color.gray.opacity(0.2) : color.opacity(0.3), lineWidth: 1)
+            )
         }
+        .buttonStyle(PlainButtonStyle())
+        .disabled(isDisabled)
     }
 }
 
@@ -87,4 +71,25 @@ struct DownloadButton: View {
     }
     .frame(width: 1200)
     .frame(height: 1200)
+}
+
+#Preview("DownloadButton - Enabled") {
+    DownloadButton(
+        title: "下载 Xcode 格式",
+        icon: "xcode",
+        color: .blue,
+        action: {}
+    )
+    .padding()
+}
+
+#Preview("DownloadButton - Disabled") {
+    DownloadButton(
+        title: "下载 Xcode 格式",
+        icon: "xcode",
+        color: .blue,
+        action: {},
+        isDisabled: true
+    )
+    .padding()
 }

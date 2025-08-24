@@ -13,36 +13,22 @@ struct IconMaker: View {
     @EnvironmentObject var i: IconProvider
 
     var body: some View {
-        Group {
-            if let icon = i.currentData {
-                GeometryReader { geometry in
-                    HStack {
-                        // 左侧：图标预览区域
-                        IconPreview()
-                            .padding()
-                            .frame(width: geometry.size.width * 0.7)
+        if let icon = i.currentData {
+            IconPreview()
+        } else {
+            VStack(spacing: 16) {
+                Image(systemName: "photo")
+                    .font(.system(size: 48))
+                    .foregroundColor(.secondary)
 
-                        // 右侧：下载按钮区域
-                        DownloadButtons(icon: icon)
-                            .padding()
-                            .frame(width: geometry.size.width * 0.3)
-                    }
-                }
-            } else {
-                VStack(spacing: 16) {
-                    Image(systemName: "photo")
-                        .font(.system(size: 48))
-                        .foregroundColor(.secondary)
+                Text("请选择或新建一个图标")
+                    .font(.headline)
+                    .foregroundColor(.secondary)
 
-                    Text("请选择或新建一个图标")
-                        .font(.headline)
-                        .foregroundColor(.secondary)
-
-                    Text("选择一个图标后，您可以预览不同尺寸的效果并下载多种格式")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                        .multilineTextAlignment(.center)
-                }
+                Text("选择一个图标后，您可以预览不同尺寸的效果并下载多种格式")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                    .multilineTextAlignment(.center)
             }
         }
     }

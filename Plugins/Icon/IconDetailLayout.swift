@@ -15,15 +15,30 @@ struct IconDetailLayout: View {
             } else {
                 VStack {
                     IconBgs()
-                        .padding(1)
+                        .padding(8)
                         .background(.blue.opacity(0.05))
 
+                    // 图标调整工具
+                    HStack(spacing: 20) {
+                        OpacityControl()
+                        ScaleControl()
+                        CornerRadiusControl()
+                    }
+                    .padding(8)
+                    .background(Color.yellow.opacity(0.05))
+
                     IconBox()
-                        .padding(.horizontal)
-                        .padding(.bottom)
                         .background(.green.opacity(0.05))
 
-                    IconMaker()
+                    HStack(spacing: 0) {
+                        IconMaker()
+                            .background(.orange.opacity(0.05))
+
+                        // 下载区域
+                        DownloadButtons()
+                            .background(.red.opacity(0.05))
+                    }
+                    .background(.cyan.opacity(0.05))
                 }
             }
         }

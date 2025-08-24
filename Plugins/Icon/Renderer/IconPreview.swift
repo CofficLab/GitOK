@@ -4,7 +4,7 @@ import SwiftUI
 /**
  * 图标预览组件
  * 显示单个图标预览，自动适应当前可用空间
- * 使用IconRenderer来渲染图标样式
+ * 使用响应式视图直接绑定数据状态，避免重复渲染
  * 自动从IconProvider环境变量中获取图标数据
  */
 struct IconPreview: View {
@@ -12,8 +12,6 @@ struct IconPreview: View {
     @State private var iconAsset: IconAsset?
     @State private var isLoading: Bool = false
     @State private var errorMessage: String?
-    @State private var renderedView: AnyView?
-    @State private var isRendering: Bool = false
 
     var body: some View {
         GeometryReader { geometry in
@@ -24,10 +22,13 @@ struct IconPreview: View {
             let centerY = containerHeight / 2
 
             Group {
-                if let renderedView = renderedView {
-                    renderedView
-                } else if isRendering {
-                    renderLoadingView(size: constrainedSize)
+                if let iconAsset = iconAsset, let iconData = iconProvider.currentData {
+                    // 响应式图标视图，直接绑定数据状态
+                    ResponsiveIconView(
+                        iconData: iconData,
+                        iconAsset: iconAsset,
+                        size: constrainedSize
+                    )
                 } else if isLoading {
                     IconStateView(
                         icon: nil,
@@ -64,55 +65,23 @@ struct IconPreview: View {
             loadIconAsset()
         }
         .onChange(of: iconProvider.selectedIconId) { _, newValue in
-            // 当selectedIconId变化时，立即清空当前图标并重新加载
+            // 当selectedIconId变化时，重新加载图标资源
             if !newValue.isEmpty {
                 self.iconAsset = nil
                 self.errorMessage = nil
                 self.isLoading = true
-                self.renderedView = nil
                 loadIconAsset()
             } else {
                 // 如果没有选中的图标，清空所有状态
                 self.iconAsset = nil
                 self.errorMessage = nil
                 self.isLoading = false
-                self.renderedView = nil
             }
         }
         .onChange(of: iconProvider.currentData) { _, newValue in
             // 当currentData变化时，重新加载图标资源
             if newValue != nil {
                 loadIconAsset()
-            }
-        }
-        .onChange(of: iconProvider.currentData?.opacity) { _, _ in
-            // 当透明度变化时重新渲染
-            if let iconData = iconProvider.currentData, let iconAsset = iconAsset {
-                renderIcon(iconData: iconData, iconAsset: iconAsset, size: 300) // 使用约束后的尺寸
-            }
-        }
-        .onChange(of: iconProvider.currentData?.scale) { _, _ in
-            // 当缩放比例变化时重新渲染
-            if let iconData = iconProvider.currentData, let iconAsset = iconAsset {
-                renderIcon(iconData: iconData, iconAsset: iconAsset, size: 300) // 使用约束后的尺寸
-            }
-        }
-        .onChange(of: iconProvider.currentData?.cornerRadius) { _, _ in
-            // 当圆角半径变化时重新渲染
-            if let iconData = iconProvider.currentData, let iconAsset = iconAsset {
-                renderIcon(iconData: iconData, iconAsset: iconAsset, size: 300) // 使用约束后的尺寸
-            }
-        }
-        .onChange(of: iconProvider.currentData?.backgroundId) { _, _ in
-            // 当背景样式变化时重新渲染
-            if let iconData = iconProvider.currentData, let iconAsset = iconAsset {
-                renderIcon(iconData: iconData, iconAsset: iconAsset, size: 300) // 使用约束后的尺寸
-            }
-        }
-        .onChange(of: iconProvider.currentData?.imageURL) { _, _ in
-            // 当自定义图片URL变化时重新渲染
-            if let iconData = iconProvider.currentData, let iconAsset = iconAsset {
-                renderIcon(iconData: iconData, iconAsset: iconAsset, size: 300) // 使用约束后的尺寸
             }
         }
     }
@@ -122,7 +91,6 @@ struct IconPreview: View {
             self.iconAsset = nil
             self.errorMessage = nil
             self.isLoading = false
-            self.renderedView = nil
             return
         }
 
@@ -134,46 +102,115 @@ struct IconPreview: View {
                     self.iconAsset = iconAsset
                     self.errorMessage = nil
                     self.isLoading = false
-                    // 加载完图标资源后，开始渲染
-                    renderIcon(iconData: iconProvider.currentData, iconAsset: iconAsset, size: 300) // 使用约束后的尺寸
                 } else {
                     self.iconAsset = nil
                     self.errorMessage = "未找到图标：\(iconProvider.selectedIconId)"
                     self.isLoading = false
-                    self.renderedView = nil
                 }
             }
         }
     }
+}
 
-    @MainActor
-    private func renderIcon(iconData: IconData?, iconAsset: IconAsset, size: CGFloat) {
-        guard let iconData = iconData else { return }
-
-        isRendering = true
-
-        Task {
-            let view = await IconRenderer.renderStaticIconAsync(
+/**
+ * 响应式图标视图
+ * 直接绑定IconData的状态，自动响应所有属性变化
+ * 无需重新渲染，性能更好，响应更快
+ */
+struct ResponsiveIconView: View {
+    let iconData: IconData
+    let iconAsset: IconAsset
+    let size: CGFloat
+    
+    var body: some View {
+        ZStack {
+            // 背景 - 直接绑定backgroundId和opacity
+            MagicBackgroundGroup(for: iconData.backgroundId)
+                .opacity(iconData.opacity)
+            
+            // 图标内容 - 直接绑定所有相关属性
+            ResponsiveIconContent(
                 iconData: iconData,
-                iconAsset: iconAsset,
-                size: size
+                iconAsset: iconAsset
             )
-
-            self.renderedView = AnyView(view)
-            self.isRendering = false
-        }
-    }
-
-    // 提取渲染加载视图为单独的方法
-    private func renderLoadingView(size: CGFloat) -> some View {
-        VStack(spacing: 12) {
-            ProgressView()
-                .frame(width: 50, height: 50)
-            Text("渲染图标中...")
-                .font(.caption)
-                .foregroundColor(.secondary)
         }
         .frame(width: size, height: size)
+        .cornerRadius(iconData.cornerRadius > 0 ? CGFloat(iconData.cornerRadius) : 0)
+    }
+}
+
+/**
+ * 响应式图标内容组件
+ * 处理图标的显示逻辑，自动响应数据变化
+ */
+struct ResponsiveIconContent: View {
+    let iconData: IconData
+    let iconAsset: IconAsset
+    @State private var loadedImage: Image?
+    @State private var isLoading = false
+    
+    var body: some View {
+        Group {
+            if let imageURL = iconData.imageURL {
+                // 自定义图片URL
+                AsyncImage(url: imageURL) { phase in
+                    switch phase {
+                    case .empty:
+                        ProgressView()
+                            .frame(width: 50, height: 50)
+                    case let .success(image):
+                        image
+                            .resizable()
+                            .scaledToFit()
+                            .scaleEffect(iconData.scale ?? 1.0)
+                    case .failure:
+                        Image(systemName: "photo")
+                            .resizable()
+                            .scaledToFit()
+                            .foregroundColor(.secondary)
+                            .scaleEffect(iconData.scale ?? 1.0)
+                    @unknown default:
+                        Image(systemName: "photo")
+                            .resizable()
+                            .scaledToFit()
+                            .foregroundColor(.secondary)
+                            .scaleEffect(iconData.scale ?? 1.0)
+                    }
+                }
+            } else {
+                // 使用IconAsset的图片
+                if let loadedImage = loadedImage {
+                    loadedImage
+                        .resizable()
+                        .scaledToFit()
+                        .scaleEffect(iconData.scale ?? 1.0)
+                } else if isLoading {
+                    ProgressView()
+                        .frame(width: 50, height: 50)
+                } else {
+                    Image(systemName: "photo")
+                        .resizable()
+                        .scaledToFit()
+                        .foregroundColor(.secondary)
+                        .scaleEffect(iconData.scale ?? 1.0)
+                }
+            }
+        }
+        .onAppear {
+            if loadedImage == nil && !isLoading {
+                loadIconImage()
+            }
+        }
+    }
+    
+    @MainActor
+    private func loadIconImage() {
+        isLoading = true
+        Task {
+            let image = await iconAsset.getImageAsync()
+            loadedImage = image
+            isLoading = false
+        }
     }
 }
 

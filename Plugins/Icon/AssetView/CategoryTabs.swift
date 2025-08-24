@@ -11,10 +11,10 @@ struct CategoryTabs: View {
     @EnvironmentObject var m: MagicMessageProvider
 
     var body: some View {
-        HStack(spacing: 8) {
+        HStack(spacing: 0) {
             // 左侧：分类标签页（可滚动）
             ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 8) {
+                HStack(spacing: 0) {
                     ForEach(iconProvider.availableCategories, id: \.id) { category in
                         CategoryTab(
                             category: category,
@@ -26,9 +26,21 @@ struct CategoryTabs: View {
                     }
                 }
             }
+            .background(.yellow.opacity(0.1))
 
             // 右侧：功能按钮组
             HStack(spacing: 8) {
+                // 网络仓库启用/禁用按钮
+                Button(action: {
+                    iconProvider.toggleRemoteRepository()
+                }) {
+                    Image(systemName: iconProvider.enableRemoteRepository ? "network" : "network.slash")
+                        .font(.title3)
+                        .foregroundColor(iconProvider.enableRemoteRepository ? .green : .red)
+                }
+                .buttonStyle(.plain)
+                .help(iconProvider.enableRemoteRepository ? "禁用网络仓库" : "启用网络仓库")
+                
                 // 换图按钮
                 Button(action: changeImage) {
                     Image.add
@@ -38,6 +50,13 @@ struct CategoryTabs: View {
                 .buttonStyle(.plain)
                 .help("更换图片")
             }
+            .frame(maxHeight: .infinity)
+            .padding(.horizontal, 4)
+            .background(
+                RoundedRectangle(cornerRadius: 0)
+                    .fill(.purple.opacity(0.2))
+                    .shadow(color: .black.opacity(0.8), radius: 4, x: -2, y: 0)
+            )
         }
         .onAppear {
             // 确保有选中的分类
