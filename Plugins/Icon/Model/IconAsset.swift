@@ -133,14 +133,6 @@ class IconAsset: Identifiable {
         }
     }
     
-    /// 加载远程缩略图
-    /// - Returns: SwiftUI Image
-    private func loadRemoteThumbnail() -> Image {
-        // 对于远程图标，返回一个美观的占位符图片
-        // 实际的远程图片加载将在UI层面异步处理
-        return Image(systemName: "globe")
-    }
-    
     /// 异步加载远程图标
     /// - Returns: 加载完成的SwiftUI Image
     @MainActor
@@ -172,92 +164,6 @@ class IconAsset: Identifiable {
         } catch {
             print("加载远程图标失败: \(error)")
             return Image(systemName: "exclamationmark.triangle")
-        }
-    }
-}
-
-// MARK: - 远程图标视图组件
-
-/**
- * 远程图标视图组件
- * 负责异步加载和显示远程图标
- */
-struct RemoteIconView: View {
-    let iconAsset: IconAsset
-    @State private var loadedImage: Image?
-    @State private var isLoading = false
-    @State private var hasError = false
-    
-    var body: some View {
-        Group {
-            if let loadedImage = loadedImage {
-                // 显示已加载的图片
-                loadedImage
-                    .resizable()
-                    .scaledToFit()
-            } else if isLoading {
-                // 显示加载状态
-                ProgressView()
-                    .frame(width: 50, height: 50)
-            } else if hasError {
-                // 显示错误状态
-                Image(systemName: "exclamationmark.triangle")
-                    .resizable()
-                    .scaledToFit()
-                    .foregroundColor(.orange)
-            } else {
-                // 显示默认占位符
-                Image(systemName: "photo")
-                    .resizable()
-                    .scaledToFit()
-                    .foregroundColor(.secondary)
-            }
-        }
-        .onAppear {
-            loadRemoteImage()
-        }
-    }
-    
-    private func loadRemoteImage() {
-        guard let remotePath = iconAsset.remotePath else {
-            return
-        }
-        
-        isLoading = true
-        hasError = false
-        
-        Task {
-            await performRemoteImageLoad(remotePath: remotePath)
-        }
-    }
-    
-    @MainActor
-    private func performRemoteImageLoad(remotePath: String) async {
-        do {
-            // 使用WebIconRepo获取远程图标的URL
-            guard let iconURL = WebIconRepo.shared.getIconURL(for: remotePath) else {
-                throw RemoteIconError.invalidURL
-            }
-            
-            // 异步加载远程图片
-            let (data, response) = try await URLSession.shared.data(from: iconURL)
-            
-            guard let httpResponse = response as? HTTPURLResponse,
-                  httpResponse.statusCode == 200 else {
-                throw RemoteIconError.networkError
-            }
-            
-            // 将数据转换为NSImage，然后转换为SwiftUI Image
-            guard let nsImage = NSImage(data: data) else {
-                throw RemoteIconError.decodingError
-            }
-            
-            loadedImage = Image(nsImage: nsImage)
-            isLoading = false
-        } catch {
-            hasError = true
-            isLoading = false
-            print("加载远程图标失败: \(error)")
         }
     }
 }
