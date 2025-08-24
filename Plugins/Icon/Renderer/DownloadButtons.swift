@@ -244,19 +244,10 @@ struct DownloadButtons: View {
             // 显示生成进度
             MagicMessageProvider.shared.info("生成 macOS \(size)x\(size) 图标...")
             
-            let _ = MagicImage.snapshot(
-                MagicImage.makeImage(
-                    IconRenderer.renderIcon(iconData: icon, iconAsset: iconAsset)
-                        .frame(width: CGFloat(size), height: CGFloat(size))
-                )
-                .resizable()
-                .scaledToFit()
-                .frame(width: CGFloat(size), height: CGFloat(size)),
-                path: saveTo
-            )
+            let success = IconRenderer.snapshotIcon(iconData: icon, iconAsset: iconAsset, size: size, savePath: saveTo)
             
             // 检查文件是否生成成功
-            if FileManager.default.fileExists(atPath: saveTo.path) {
+            if success {
                 MagicMessageProvider.shared.info("✅ 成功生成 \(fileName)")
             } else {
                 MagicMessageProvider.shared.error("❌ 生成 \(fileName) 失败")
@@ -271,19 +262,10 @@ struct DownloadButtons: View {
         
         MagicMessageProvider.shared.info("生成 iOS \(size)x\(size) 图标...")
         
-        let _ = MagicImage.snapshot(
-            MagicImage.makeImage(
-                IconRenderer.renderIcon(iconData: icon, iconAsset: iconAsset)
-                    .frame(width: CGFloat(size), height: CGFloat(size))
-            )
-            .resizable()
-            .scaledToFit()
-            .frame(width: CGFloat(size), height: CGFloat(size)),
-            path: saveTo
-        )
+        let success = IconRenderer.snapshotIcon(iconData: icon, iconAsset: iconAsset, size: size, savePath: saveTo)
         
         // 检查文件是否生成成功
-        if FileManager.default.fileExists(atPath: saveTo.path) {
+        if success {
             MagicMessageProvider.shared.info("✅ 成功生成 \(fileName)")
         } else {
             MagicMessageProvider.shared.error("❌ 生成 \(fileName) 失败")
@@ -390,19 +372,10 @@ struct DownloadButtons: View {
         let fileName = "\(tag)-\(size)x\(size).png"
         let saveTo = folderPath.appendingPathComponent(fileName)
         
-        let _ = MagicImage.snapshot(
-            MagicImage.makeImage(
-                IconRenderer.renderIcon(iconData: icon, iconAsset: iconAsset)
-                    .frame(width: CGFloat(size), height: CGFloat(size))
-            )
-            .resizable()
-            .scaledToFit()
-            .frame(width: CGFloat(size), height: CGFloat(size)),
-            path: saveTo
-        )
+        let success = IconRenderer.snapshotIcon(iconData: icon, iconAsset: iconAsset, size: size, savePath: saveTo)
         
         // 返回文件是否成功生成
-        return FileManager.default.fileExists(atPath: saveTo.path)
+        return success
     }
     
     @MainActor private func generateFaviconHTML(folderPath: URL) async {
@@ -443,13 +416,6 @@ struct DownloadButtons: View {
             MagicMessageProvider.shared.info("生成 HTML 引用代码文件")
         } catch {
             MagicMessageProvider.shared.error("生成 HTML 文件失败：\(error)")
-        }
-    }
-    
-    @MainActor private func generateAllPNG(folderPath: URL, tag: String, iconAsset: IconAsset) async {
-        let sizes = [16, 32, 48, 64, 128, 256, 512, 1024]
-        for size in sizes {
-            _ = await generatePNG(size: size, folderPath: folderPath, tag: tag, iconAsset: iconAsset)
         }
     }
 }

@@ -24,6 +24,64 @@ class IconRenderer {
         .opacity(iconData.opacity)
     }
     
+    /// 渲染静态图标（用于截图）
+    /// - Parameters:
+    ///   - iconData: 图标数据
+    ///   - iconAsset: 图标资源
+    ///   - size: 图标尺寸
+    /// - Returns: 完全静态的图标视图，适合截图
+    static func renderStaticIcon(iconData: IconData, iconAsset: IconAsset, size: CGFloat) -> some View {
+        ZStack {
+            // 背景
+            renderBackground(iconData: iconData)
+                .frame(width: size, height: size)
+            
+            // 图标内容 - 确保完全静态
+            if iconAsset.source == .local {
+                // 本地图标：直接使用静态图片
+                iconAsset.getImage()
+                    .resizable()
+                    .scaledToFit()
+                    .scaleEffect(iconData.scale ?? 1.0)
+                    .frame(width: size * 0.6, height: size * 0.6)
+            } else {
+                // 远程图标：使用静态占位符，避免异步加载问题
+                Image(systemName: "photo")
+                    .resizable()
+                    .scaledToFit()
+                    .foregroundColor(.white)
+                    .scaleEffect(iconData.scale ?? 1.0)
+                    .frame(width: size * 0.6, height: size * 0.6)
+            }
+        }
+        .frame(width: size, height: size)
+        .cornerRadius(iconData.cornerRadius > 0 ? CGFloat(iconData.cornerRadius) : 0)
+        .opacity(iconData.opacity)
+        .clipped()
+    }
+    
+    /// 生成图标截图
+    /// - Parameters:
+    ///   - iconData: 图标数据
+    ///   - iconAsset: 图标资源
+    ///   - size: 图标尺寸
+    ///   - savePath: 保存路径
+    /// - Returns: 截图是否成功
+    @MainActor static func snapshotIcon(iconData: IconData, iconAsset: IconAsset, size: Int, savePath: URL) -> Bool {
+        let _ = MagicImage.snapshot(
+            MagicImage.makeImage(
+                renderStaticIcon(iconData: iconData, iconAsset: iconAsset, size: CGFloat(size))
+            )
+            .resizable()
+            .scaledToFit()
+            .frame(width: CGFloat(size), height: CGFloat(size)),
+            path: savePath
+        )
+        
+        // 返回文件是否成功生成
+        return FileManager.default.fileExists(atPath: savePath.path)
+    }
+    
     /// 渲染背景
     /// - Parameter iconData: 图标数据
     /// - Returns: 背景视图
