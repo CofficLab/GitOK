@@ -19,7 +19,7 @@ struct IconMaker: View {
             if let icon = self.icon {
                 HStack(spacing: 24) {
                     // 左侧：图标预览区域
-                    IconPreview(iconData: icon, iconAsset: getIconAsset(for: icon))
+                    IconPreview(iconData: icon)
                         .frame(maxWidth: .infinity)
                     
                     // 右侧：下载按钮区域
@@ -54,17 +54,12 @@ struct IconMaker: View {
             self.icon = newValue
         }
     }
-    
-    private func getIconAsset(for iconData: IconData) -> IconAsset {
-        // 这里需要根据iconData.iconId获取对应的IconAsset
-        // 暂时返回一个默认的IconAsset
-        return IconAsset(fileURL: URL(fileURLWithPath: "/tmp/default.png"))
-    }
 }
 
 #Preview("App - Small Screen") {
     RootView {
-        ContentLayout().setInitialTab("Icon")
+        ContentLayout()
+            .setInitialTab(IconPlugin.label)
             .hideSidebar()
             .hideProjectActions()
     }
@@ -74,7 +69,8 @@ struct IconMaker: View {
 
 #Preview("App - Big Screen") {
     RootView {
-        ContentLayout().setInitialTab("Icon")
+        ContentLayout()
+            .setInitialTab(IconPlugin.label)
             .hideSidebar()
     }
     .frame(width: 1200)
