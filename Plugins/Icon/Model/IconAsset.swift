@@ -19,7 +19,7 @@ enum IconSource {
  */
 class IconAsset: Identifiable {
     /// 图标来源类型
-    let source: IconSource
+    private let source: IconSource
     
     /// 图标文件URL（本地图标）或远程路径（远程图标）
     let fileURL: URL?
@@ -71,14 +71,15 @@ class IconAsset: Identifiable {
         self.remotePath = remotePath
     }
     
-    /// 获取图标图片
-    /// - Returns: SwiftUI Image
-    func getImage() -> Image {
+    /// 异步获取图标图片（支持远程图标加载）
+    /// - Returns: 加载完成的SwiftUI Image
+    @MainActor
+    func getImageAsync() async -> Image {
         switch source {
         case .local:
             return loadImage()
         case .remote:
-            return Image(systemName: "photo")
+            return await loadRemoteImage()
         }
     }
     
@@ -146,9 +147,43 @@ class IconAsset: Identifiable {
     /// 加载远程缩略图
     /// - Returns: SwiftUI Image
     private func loadRemoteThumbnail() -> Image {
-        // 对于远程图标，返回一个占位符图片
+        // 对于远程图标，返回一个美观的占位符图片
         // 实际的远程图片加载将在UI层面异步处理
-        return Image(systemName: "photo")
+        return Image(systemName: "globe")
+    }
+    
+    /// 异步加载远程图标
+    /// - Returns: 加载完成的SwiftUI Image
+    @MainActor
+    private func loadRemoteImage() async -> Image {
+        guard let remotePath = remotePath else {
+            return Image(systemName: "exclamationmark.triangle")
+        }
+        
+        do {
+            // 使用WebIconRepo获取远程图标的URL
+            guard let iconURL = WebIconRepo.shared.getIconURL(for: remotePath) else {
+                throw RemoteIconError.invalidURL
+            }
+            
+            // 异步加载远程图片
+            let (data, response) = try await URLSession.shared.data(from: iconURL)
+            
+            guard let httpResponse = response as? HTTPURLResponse,
+                  httpResponse.statusCode == 200 else {
+                throw RemoteIconError.networkError
+            }
+            
+            // 将数据转换为NSImage，然后转换为SwiftUI Image
+            guard let nsImage = NSImage(data: data) else {
+                throw RemoteIconError.decodingError
+            }
+            
+            return Image(nsImage: nsImage)
+        } catch {
+            print("加载远程图标失败: \(error)")
+            return Image(systemName: "exclamationmark.triangle")
+        }
     }
 }
 
@@ -195,8 +230,7 @@ struct RemoteIconView: View {
     }
     
     private func loadRemoteImage() {
-        guard iconAsset.source == .remote,
-              let remotePath = iconAsset.remotePath else {
+        guard let remotePath = iconAsset.remotePath else {
             return
         }
         

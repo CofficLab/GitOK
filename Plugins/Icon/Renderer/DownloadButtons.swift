@@ -244,7 +244,7 @@ struct DownloadButtons: View {
             // 显示生成进度
             MagicMessageProvider.shared.info("生成 macOS \(size)x\(size) 图标...")
             
-            let success = IconRenderer.snapshotIcon(iconData: icon, iconAsset: iconAsset, size: size, savePath: saveTo)
+            let success = await IconRenderer.snapshotIcon(iconData: icon, iconAsset: iconAsset, size: size, savePath: saveTo)
             
             // 检查文件是否生成成功
             if success {
@@ -262,7 +262,7 @@ struct DownloadButtons: View {
         
         MagicMessageProvider.shared.info("生成 iOS \(size)x\(size) 图标...")
         
-        let success = IconRenderer.snapshotIcon(iconData: icon, iconAsset: iconAsset, size: size, savePath: saveTo)
+        let success = await IconRenderer.snapshotIcon(iconData: icon, iconAsset: iconAsset, size: size, savePath: saveTo)
         
         // 检查文件是否生成成功
         if success {
@@ -372,7 +372,7 @@ struct DownloadButtons: View {
         let fileName = "\(tag)-\(size)x\(size).png"
         let saveTo = folderPath.appendingPathComponent(fileName)
         
-        let success = IconRenderer.snapshotIcon(iconData: icon, iconAsset: iconAsset, size: size, savePath: saveTo)
+        let success = await IconRenderer.snapshotIcon(iconData: icon, iconAsset: iconAsset, size: size, savePath: saveTo)
         
         // 返回文件是否成功生成
         return success

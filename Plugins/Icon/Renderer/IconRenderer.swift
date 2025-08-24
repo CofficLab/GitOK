@@ -23,20 +23,26 @@ class IconRenderer {
         .cornerRadius(iconData.cornerRadius > 0 ? CGFloat(iconData.cornerRadius) : 0)
         .opacity(iconData.opacity)
     }
-
-    /// 渲染静态图标（用于截图）
+    
+    /// 异步渲染静态图标（支持远程图标预加载）
     /// - Parameters:
     ///   - iconData: 图标数据
     ///   - iconAsset: 图标资源
     ///   - size: 图标尺寸
     /// - Returns: 完全静态的图标视图，适合截图
-    static func renderStaticIcon(iconData: IconData, iconAsset: IconAsset, size: CGFloat) -> some View {
-        ZStack {
+    @MainActor
+    static func renderStaticIconAsync(iconData: IconData, iconAsset: IconAsset, size: CGFloat) async -> some View {
+        // 先异步获取图标图片
+        let iconImage = await iconAsset.getImageAsync()
+        
+        // 然后构建静态视图
+        return ZStack {
             // 背景
             renderBackground(iconData: iconData)
                 .frame(width: size, height: size)
-
-            iconAsset.getImage()
+            
+            // 图标内容 - 使用已获取的图片
+            iconImage
                 .resizable()
                 .scaledToFit()
                 .scaleEffect(iconData.scale ?? 1.0)
@@ -47,7 +53,7 @@ class IconRenderer {
         .opacity(iconData.opacity)
         .clipped()
     }
-
+    
     /// 生成图标截图
     /// - Parameters:
     ///   - iconData: 图标数据
@@ -55,17 +61,40 @@ class IconRenderer {
     ///   - size: 图标尺寸
     ///   - savePath: 保存路径
     /// - Returns: 截图是否成功
-    @MainActor static func snapshotIcon(iconData: IconData, iconAsset: IconAsset, size: Int, savePath: URL) -> Bool {
-        let _ = MagicImage.snapshot(
+    @MainActor static func snapshotIcon(iconData: IconData, iconAsset: IconAsset, size: Int, savePath: URL) async -> Bool {
+        let _ = await MagicImage.snapshot(
             MagicImage.makeImage(
-                renderStaticIcon(iconData: iconData, iconAsset: iconAsset, size: CGFloat(size))
+                renderStaticIconAsync(iconData: iconData, iconAsset: iconAsset, size: CGFloat(size))
             )
             .resizable()
             .scaledToFit()
             .frame(width: CGFloat(size), height: CGFloat(size)),
             path: savePath
         )
-
+        
+        // 返回文件是否成功生成
+        return FileManager.default.fileExists(atPath: savePath.path)
+    }
+    
+    /// 异步生成图标截图（支持远程图标预加载）
+    /// - Parameters:
+    ///   - iconData: 图标数据
+    ///   - iconAsset: 图标资源
+    ///   - size: 图标尺寸
+    ///   - savePath: 保存路径
+    /// - Returns: 截图是否成功
+    @MainActor static func snapshotIconAsync(iconData: IconData, iconAsset: IconAsset, size: Int, savePath: URL) async -> Bool {
+        // 先异步渲染图标视图
+        let iconView = await renderStaticIconAsync(iconData: iconData, iconAsset: iconAsset, size: CGFloat(size))
+        
+        let _ = MagicImage.snapshot(
+            MagicImage.makeImage(iconView)
+                .resizable()
+                .scaledToFit()
+                .frame(width: CGFloat(size), height: CGFloat(size)),
+            path: savePath
+        )
+        
         // 返回文件是否成功生成
         return FileManager.default.fileExists(atPath: savePath.path)
     }
@@ -108,12 +137,48 @@ class IconRenderer {
                     }
                 }
             } else {
-                iconAsset.getImage()
-                    .resizable()
-                    .scaledToFit()
+                // 使用异步方法获取图标图片
+                AsyncIconImage(iconAsset: iconAsset)
             }
         }
-        .scaleEffect(iconData.scale ?? 1.0)
+    }
+    
+    /// 异步图标图片组件
+    private struct AsyncIconImage: View {
+        let iconAsset: IconAsset
+        @State private var loadedImage: Image?
+        @State private var isLoading = false
+        
+        var body: some View {
+            Group {
+                if let loadedImage = loadedImage {
+                    loadedImage
+                        .resizable()
+                        .scaledToFit()
+                } else if isLoading {
+                    ProgressView()
+                        .frame(width: 50, height: 50)
+                } else {
+                    Image(systemName: "photo")
+                        .resizable()
+                        .scaledToFit()
+                        .foregroundColor(.secondary)
+                }
+            }
+            .onAppear {
+                loadIconImage()
+            }
+        }
+        
+        @MainActor
+        private func loadIconImage() {
+            isLoading = true
+            Task {
+                let image = await iconAsset.getImageAsync()
+                loadedImage = image
+                isLoading = false
+            }
+        }
     }
 }
 
