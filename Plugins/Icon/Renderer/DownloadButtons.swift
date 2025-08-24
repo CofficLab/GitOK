@@ -9,7 +9,10 @@ import UniformTypeIdentifiers
  */
 struct DownloadButtons: View {
     let icon: IconData
+    
+    @EnvironmentObject var iconProvider: IconProvider
     @State private var isGenerating = false
+    @State private var currentIconAsset: IconAsset?
     
     var body: some View {
         VStack(spacing: 16) {
@@ -25,7 +28,7 @@ struct DownloadButtons: View {
                     }
                 }
                 .buttonStyle(.borderedProminent)
-                .disabled(isGenerating)
+                .disabled(isGenerating || currentIconAsset == nil)
                 
                 // SVG格式下载
                 Button("下载 SVG 格式") {
@@ -34,7 +37,7 @@ struct DownloadButtons: View {
                     }
                 }
                 .buttonStyle(.bordered)
-                .disabled(isGenerating)
+                .disabled(isGenerating || currentIconAsset == nil)
                 
                 // Favicon下载
                 Button("下载 Favicon") {
@@ -43,7 +46,7 @@ struct DownloadButtons: View {
                     }
                 }
                 .buttonStyle(.bordered)
-                .disabled(isGenerating)
+                .disabled(isGenerating || currentIconAsset == nil)
                 
                 // 批量下载
                 Button("批量下载所有格式") {
@@ -52,22 +55,60 @@ struct DownloadButtons: View {
                     }
                 }
                 .buttonStyle(.bordered)
-                .disabled(isGenerating)
+                .disabled(isGenerating || currentIconAsset == nil)
             }
             
             if isGenerating {
                 ProgressView("正在生成...")
                     .progressViewStyle(.circular)
             }
+            
+            if currentIconAsset == nil {
+                Text("请先选择一个图标")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
         }
         .padding()
         .background(Color.gray.opacity(0.05))
         .cornerRadius(12)
+        .onAppear {
+            loadCurrentIconAsset()
+        }
+        .onChange(of: iconProvider.selectedIconId) { _, _ in
+            loadCurrentIconAsset()
+        }
+    }
+    
+    // MARK: - 私有方法
+    
+    private func loadCurrentIconAsset() {
+        guard !iconProvider.selectedIconId.isEmpty else {
+            currentIconAsset = nil
+            return
+        }
+        
+        Task {
+            if let iconAsset = await IconRepo.shared.getIconAsset(byId: iconProvider.selectedIconId) {
+                await MainActor.run {
+                    self.currentIconAsset = iconAsset
+                }
+            } else {
+                await MainActor.run {
+                    self.currentIconAsset = nil
+                }
+            }
+        }
     }
     
     // MARK: - 下载方法
     
     @MainActor private func downloadPNG() async {
+        guard let iconAsset = currentIconAsset else {
+            MagicMessageProvider.shared.error("没有可用的图标资源")
+            return
+        }
+        
         isGenerating = true
         defer { isGenerating = false }
         
@@ -91,13 +132,18 @@ struct DownloadButtons: View {
         // 生成不同尺寸的PNG文件
         let sizes = [16, 32, 48, 64, 128, 256, 512, 1024]
         for size in sizes {
-            await generatePNG(size: size, folderPath: folderPath, tag: tag)
+            await generatePNG(size: size, folderPath: folderPath, tag: tag, iconAsset: iconAsset)
         }
         
         MagicMessageProvider.shared.info("PNG格式下载完成，保存在：\(folderPath.path)")
     }
     
     @MainActor private func downloadSVG() async {
+        guard let iconAsset = currentIconAsset else {
+            MagicMessageProvider.shared.error("没有可用的图标资源")
+            return
+        }
+        
         isGenerating = true
         defer { isGenerating = false }
         
@@ -119,12 +165,17 @@ struct DownloadButtons: View {
         }
         
         // 生成SVG文件
-        await generateSVG(folderPath: folderPath, tag: tag)
+        await generateSVG(folderPath: folderPath, tag: tag, iconAsset: iconAsset)
         
         MagicMessageProvider.shared.info("SVG格式下载完成，保存在：\(folderPath.path)")
     }
     
     @MainActor private func downloadFavicon() async {
+        guard let iconAsset = currentIconAsset else {
+            MagicMessageProvider.shared.error("没有可用的图标资源")
+            return
+        }
+        
         isGenerating = true
         defer { isGenerating = false }
         
@@ -148,16 +199,21 @@ struct DownloadButtons: View {
         // 生成不同尺寸的PNG文件
         let sizes = [16, 32, 48]
         for size in sizes {
-            await generatePNG(size: size, folderPath: folderPath, tag: tag)
+            await generatePNG(size: size, folderPath: folderPath, tag: tag, iconAsset: iconAsset)
         }
         
         // 生成ICO文件
-        await generateICO(folderPath: folderPath, tag: tag)
+        await generateICO(folderPath: folderPath, tag: tag, iconAsset: iconAsset)
         
         MagicMessageProvider.shared.info("Favicon下载完成，保存在：\(folderPath.path)")
     }
     
     @MainActor private func downloadAll() async {
+        guard let iconAsset = currentIconAsset else {
+            MagicMessageProvider.shared.error("没有可用的图标资源")
+            return
+        }
+        
         isGenerating = true
         defer { isGenerating = false }
         
@@ -188,9 +244,9 @@ struct DownloadButtons: View {
         try! FileManager.default.createDirectory(at: faviconFolder, withIntermediateDirectories: true)
         
         // 并行生成所有格式
-        async let pngTask = generateAllPNG(folderPath: pngFolder, tag: tag)
-        async let svgTask = generateSVG(folderPath: svgFolder, tag: tag)
-        async let faviconTask = generateAllFavicon(folderPath: faviconFolder, tag: tag)
+        async let pngTask = generateAllPNG(folderPath: pngFolder, tag: tag, iconAsset: iconAsset)
+        async let svgTask = generateSVG(folderPath: svgFolder, tag: tag, iconAsset: iconAsset)
+        async let faviconTask = generateAllFavicon(folderPath: faviconFolder, tag: tag, iconAsset: iconAsset)
         
         await (pngTask, svgTask, faviconTask)
         
@@ -199,16 +255,13 @@ struct DownloadButtons: View {
     
     // MARK: - 生成方法
     
-    @MainActor private func generatePNG(size: Int, folderPath: URL, tag: String) async {
+    @MainActor private func generatePNG(size: Int, folderPath: URL, tag: String, iconAsset: IconAsset) async {
         let fileName = "\(tag)-\(size)x\(size).png"
         let saveTo = folderPath.appendingPathComponent(fileName)
         
-        // 创建临时IconAsset用于渲染
-        let tempIconAsset = IconAsset(fileURL: URL(fileURLWithPath: "/tmp/default.png"))
-        
         _ = MagicImage.snapshot(
             MagicImage.makeImage(
-                IconRenderer.renderIcon(iconData: icon, iconAsset: tempIconAsset)
+                IconRenderer.renderIcon(iconData: icon, iconAsset: iconAsset)
                     .frame(width: CGFloat(size), height: CGFloat(size))
             )
             .resizable()
@@ -218,45 +271,39 @@ struct DownloadButtons: View {
         )
     }
     
-    @MainActor private func generateAllPNG(folderPath: URL, tag: String) async {
+    @MainActor private func generateAllPNG(folderPath: URL, tag: String, iconAsset: IconAsset) async {
         let sizes = [16, 32, 48, 64, 128, 256, 512, 1024]
         for size in sizes {
-            await generatePNG(size: size, folderPath: folderPath, tag: tag)
+            await generatePNG(size: size, folderPath: folderPath, tag: tag, iconAsset: iconAsset)
         }
     }
     
-    @MainActor private func generateSVG(folderPath: URL, tag: String) async {
+    @MainActor private func generateSVG(folderPath: URL, tag: String, iconAsset: IconAsset) async {
         let fileName = "\(tag).svg"
         let saveTo = folderPath.appendingPathComponent(fileName)
         
-        // 创建临时IconAsset用于渲染
-        let tempIconAsset = IconAsset(fileURL: URL(fileURLWithPath: "/tmp/default.png"))
-        
         // 生成SVG内容
-        let svgContent = generateSVGContent(iconData: icon, iconAsset: tempIconAsset)
+        let svgContent = generateSVGContent(iconData: icon, iconAsset: iconAsset)
         
         try! svgContent.write(to: saveTo, atomically: true, encoding: .utf8)
     }
     
-    @MainActor private func generateICO(folderPath: URL, tag: String) async {
+    @MainActor private func generateICO(folderPath: URL, tag: String, iconAsset: IconAsset) async {
         let fileName = "\(tag).ico"
         let saveTo = folderPath.appendingPathComponent(fileName)
         
-        // 创建临时IconAsset用于渲染
-        let tempIconAsset = IconAsset(fileURL: URL(fileURLWithPath: "/tmp/default.png"))
-        
         // 生成ICO文件（这里简化处理，实际应该生成真正的ICO格式）
-        let icoContent = generateICOContent(iconData: icon, iconAsset: tempIconAsset)
+        let icoContent = generateICOContent(iconData: icon, iconAsset: iconAsset)
         
         try! icoContent.write(to: saveTo, atomically: true, encoding: .utf8)
     }
     
-    @MainActor private func generateAllFavicon(folderPath: URL, tag: String) async {
+    @MainActor private func generateAllFavicon(folderPath: URL, tag: String, iconAsset: IconAsset) async {
         let sizes = [16, 32, 48]
         for size in sizes {
-            await generatePNG(size: size, folderPath: folderPath, tag: tag)
+            await generatePNG(size: size, folderPath: folderPath, tag: tag, iconAsset: iconAsset)
         }
-        await generateICO(folderPath: folderPath, tag: tag)
+        await generateICO(folderPath: folderPath, tag: tag, iconAsset: iconAsset)
     }
     
     // MARK: - 辅助方法
@@ -289,7 +336,8 @@ extension Date {
 
 #Preview("App - Small Screen") {
     RootView {
-        ContentLayout().setInitialTab("Icon")
+        ContentLayout()
+            .setInitialTab(IconPlugin.label)
             .hideSidebar()
             .hideProjectActions()
     }
@@ -299,7 +347,8 @@ extension Date {
 
 #Preview("App - Big Screen") {
     RootView {
-        ContentLayout().setInitialTab("Icon")
+        ContentLayout()
+            .setInitialTab(IconPlugin.label)
             .hideSidebar()
     }
     .frame(width: 1200)

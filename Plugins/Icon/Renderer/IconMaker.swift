@@ -17,14 +17,16 @@ struct IconMaker: View {
     var body: some View {
         Group {
             if let icon = self.icon {
-                HStack(spacing: 24) {
-                    // 左侧：图标预览区域
-                    IconPreview(iconData: icon)
-                        .frame(maxWidth: .infinity)
-                    
-                    // 右侧：下载按钮区域
-                    DownloadButtons(icon: icon)
-                        .frame(maxWidth: .infinity)
+                GeometryReader { geometry in
+                    HStack(spacing: 24) {
+                        // 左侧：图标预览区域 (70%)
+                        IconPreview(iconData: icon)
+                            .frame(width: geometry.size.width * 0.7)
+                        
+                        // 右侧：下载按钮区域 (30%)
+                        DownloadButtons(icon: icon)
+                            .frame(width: geometry.size.width * 0.3)
+                    }
                 }
                 .padding()
             } else {
