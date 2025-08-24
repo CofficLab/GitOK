@@ -53,6 +53,20 @@ struct IconBox: View {
         }
         .onAppear {
             iconProvider.refreshCategories()
+            // 确保有选中的分类，如果没有则选择第一个
+            if iconProvider.selectedCategory == nil {
+                Task {
+                    let categories = await IconRepo.shared.getAllCategories()
+                    if let firstCategory = categories.first {
+                        await MainActor.run {
+                            iconProvider.selectCategory(firstCategory)
+                        }
+                    }
+                }
+            } else {
+                // 如果已有选中的分类，直接加载图标
+                loadIconAssets()
+            }
         }
         .onChange(of: iconProvider.selectedCategory) {
             loadIconAssets()
