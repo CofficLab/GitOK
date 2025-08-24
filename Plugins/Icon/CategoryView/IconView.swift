@@ -8,7 +8,6 @@ import MagicCore
  */
 struct IconView: View {
     let iconAsset: IconAsset
-    let onTap: () -> Void
     
     @EnvironmentObject var iconProvider: IconProvider
     @State private var image = Image(systemName: "photo")
@@ -44,7 +43,7 @@ struct IconView: View {
             )
             .cornerRadius(8)
             .onTapGesture {
-                onTap()
+                self.iconProvider.selectIcon(iconAsset.iconId)
             }
             .onHover { hovering in
                 isHovered = hovering

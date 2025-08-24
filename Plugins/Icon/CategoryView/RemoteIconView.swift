@@ -8,11 +8,15 @@ import MagicCore
  */
 struct RemoteIconView: View {
     let remoteIcon: RemoteIcon
-    let onTap: () -> Void
     
+    @EnvironmentObject private var iconProvider: IconProvider
     @State private var image: Image = Image(systemName: "photo")
     @State private var isLoading: Bool = true
     @State private var hasError: Bool = false
+    
+    init(_ remoteIcon: RemoteIcon) {
+        self.remoteIcon = remoteIcon
+    }
     
     var body: some View {
         Group {
@@ -37,7 +41,7 @@ struct RemoteIconView: View {
         .cornerRadius(8)
         .onTapGesture {
             if !isLoading && !hasError {
-                onTap()
+                self.iconProvider.selectIcon(remoteIcon.id)
             }
         }
         .onAppear {
@@ -132,7 +136,7 @@ struct RemoteIconView: View {
             .hideProjectActions()
     }
     .frame(width: 800)
-    .frame(height: 600)
+    .frame(height: 800)
 }
 
 #Preview("App - Big Screen") {

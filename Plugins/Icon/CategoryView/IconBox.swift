@@ -6,7 +6,7 @@ import SwiftUI
  * 负责管理分类选择和图标展示的整体布局
  * 数据流：IconCategoryRepo -> IconCategory -> IconAsset List
  */
-struct IconBoxView: View {
+struct IconBox: View {
     @EnvironmentObject var iconProvider: IconProvider
     @State private var gridItems: [GridItem] = Array(repeating: .init(.flexible()), count: 10)
     
@@ -26,27 +26,18 @@ struct IconBoxView: View {
                         if iconProvider.isUsingRemoteRepo {
                             // 显示远程图标网格
                             RemoteIconGrid(
-                                gridItems: gridItems,
-                                onIconSelected: { selectedIconId in
-                                    handleIconSelection(selectedIconId)
-                                }
+                                gridItems: gridItems
                             )
                         } else if let selectedCategory = iconProvider.selectedCategory {
                             // 显示本地图标网格
                             IconGrid(
                                 category: selectedCategory,
-                                gridItems: gridItems,
-                                onIconSelected: { selectedIconId in
-                                    handleIconSelection(selectedIconId)
-                                }
+                                gridItems: gridItems
                             )
                         } else if let firstCategory = IconRepo.shared.getAllCategories().first {
                             IconGrid(
                                 category: firstCategory,
-                                gridItems: gridItems,
-                                onIconSelected: { selectedIconId in
-                                    handleIconSelection(selectedIconId)
-                                }
+                                gridItems: gridItems
                             )
                         } else {
                             Text("没有可用的图标分类")
@@ -71,17 +62,6 @@ struct IconBoxView: View {
     private func updateGridItems(_ geo: GeometryProxy) {
         let columns = max(Int(geo.size.width / 60), 1)
         gridItems = Array(repeating: .init(.flexible()), count: columns)
-    }
-    
-    private func handleIconSelection(_ iconId: String) {
-        iconProvider.selectIcon(iconId)
-        
-        // 发送图标选择通知
-        NotificationCenter.default.post(
-            name: Notification.Name("IconSelected"),
-            object: nil,
-            userInfo: ["iconId": iconId]
-        )
     }
 }
 

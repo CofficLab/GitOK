@@ -9,7 +9,6 @@ import MagicCore
 struct IconGrid: View {
     let category: IconCategory
     let gridItems: [GridItem]
-    let onIconSelected: (String) -> Void
     
     /// 缓存图标资源，避免重复创建
     @State private var iconAssets: [IconAsset] = []
@@ -18,10 +17,7 @@ struct IconGrid: View {
         LazyVGrid(columns: gridItems, spacing: 12) {
             ForEach(iconAssets, id: \.id) { iconAsset in
                 IconView(
-                    iconAsset: iconAsset,
-                    onTap: {
-                        onIconSelected(iconAsset.iconId)
-                    }
+                    iconAsset: iconAsset
                 )
             }
         }

@@ -28,18 +28,12 @@ struct CategoryIconSelector: View {
             if let selectedCategory = iconProvider.selectedCategory {
                 IconGrid(
                     category: selectedCategory,
-                    gridItems: gridItems,
-                    onIconSelected: { selectedIconId in
-                        handleIconSelection(selectedIconId)
-                    }
+                    gridItems: gridItems
                 )
             } else if let firstCategory = IconRepo.shared.getAllCategories().first {
                 IconGrid(
                     category: firstCategory,
-                    gridItems: gridItems,
-                    onIconSelected: { selectedIconId in
-                        handleIconSelection(selectedIconId)
-                    }
+                    gridItems: gridItems
                 )
             } else {
                 Text("没有可用的图标分类")

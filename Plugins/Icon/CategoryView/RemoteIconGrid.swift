@@ -1,5 +1,5 @@
-import SwiftUI
 import MagicCore
+import SwiftUI
 
 /**
  * 远程图标网格组件
@@ -8,18 +8,17 @@ import MagicCore
  */
 struct RemoteIconGrid: View {
     let gridItems: [GridItem]
-    let onIconSelected: (String) -> Void
-    
+
     @State private var remoteIcons: [RemoteIcon] = []
     @State private var isLoading: Bool = true
     @State private var hasError: Bool = false
     @EnvironmentObject var iconProvider: IconProvider
-    
+
     /// 当前选中的分类ID
     private var selectedCategoryId: String {
         iconProvider.selectedRemoteCategoryId.isEmpty ? "basic" : iconProvider.selectedRemoteCategoryId
     }
-    
+
     var body: some View {
         VStack(spacing: 16) {
             if isLoading {
@@ -51,12 +50,7 @@ struct RemoteIconGrid: View {
                 // 正常显示图标网格
                 LazyVGrid(columns: gridItems, spacing: 12) {
                     ForEach(remoteIcons, id: \.id) { remoteIcon in
-                        RemoteIconView(
-                            remoteIcon: remoteIcon,
-                            onTap: {
-                                onIconSelected(remoteIcon.name)
-                            }
-                        )
+                        RemoteIconView(remoteIcon)
                     }
                 }
                 .padding(.horizontal)
@@ -69,12 +63,12 @@ struct RemoteIconGrid: View {
             loadRemoteIcons()
         }
     }
-    
+
     /// 加载远程图标
     private func loadRemoteIcons() {
         isLoading = true
         hasError = false
-        
+
         Task {
             do {
                 let icons = try await RemoteIconRepo().getIcons(for: selectedCategoryId)

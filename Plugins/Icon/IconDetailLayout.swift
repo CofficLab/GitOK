@@ -18,7 +18,7 @@ struct IconDetailLayout: View {
                         .padding(1)
                         .background(.blue.opacity(0.05))
 
-                    IconBoxView()
+                    IconBox()
                         .padding(.horizontal)
                         .padding(.bottom)
                         .background(.green.opacity(0.05))
