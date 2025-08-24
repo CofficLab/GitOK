@@ -138,50 +138,6 @@ class IconRepo: SuperLog {
     }
 }
 
-// MARK: - 统一数据模型
-
-/**
- * 统一图标分类
- * 整合本地和远程分类数据
- */
-struct UnifiedIconCategory: Identifiable, Hashable {
-    let id: URL
-    let name: String
-    let displayName: String
-    let iconCount: Int
-    let source: IconSource
-    let localCategory: IconCategory?
-    let remoteCategory: RemoteIconCategory?
-    
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
-    }
-    
-    static func == (lhs: UnifiedIconCategory, rhs: UnifiedIconCategory) -> Bool {
-        lhs.id == rhs.id
-    }
-}
-
-/**
- * 统一图标
- * 整合本地和远程图标数据
- */
-struct UnifiedIcon: Identifiable, Hashable {
-    let id: String
-    let name: String
-    let source: IconSource
-    let localIcon: IconAsset?
-    let remoteIcon: RemoteIcon?
-    
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
-    }
-    
-    static func == (lhs: UnifiedIcon, rhs: UnifiedIcon) -> Bool {
-        lhs.id == rhs.id
-    }
-}
-
 /**
  * 图标来源类型
  */
@@ -198,7 +154,7 @@ enum IconSource {
             .hideProjectActions()
     }
     .frame(width: 800)
-    .frame(height: 600)
+    .frame(height: 800)
 }
 
 #Preview("App - Big Screen") {
