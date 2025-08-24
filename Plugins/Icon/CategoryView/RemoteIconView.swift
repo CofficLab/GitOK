@@ -51,7 +51,7 @@ struct RemoteIconView: View {
     
     /// 加载远程图标
     private func loadRemoteIcon() {
-        guard let iconURL = RemoteIconRepo().getIconURL(for: remoteIcon.path) else {
+        guard let iconURL = IconRepo.shared.getIconURL(for: remoteIcon.path) else {
             print("RemoteIconView: 无法构建图标URL，路径: \(remoteIcon.path)")
             hasError = true
             isLoading = false

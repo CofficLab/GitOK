@@ -132,11 +132,12 @@ class IconProvider: NSObject, ObservableObject, SuperLog {
         if isUsingRemoteRepo {
             // 使用远程仓库
             Task {
-                let remoteCategories = await RemoteIconRepo().getAllCategories()
+                let allCategories = await IconRepo.shared.getAllCategories()
+                let remoteCategories = allCategories.filter { $0.source == .remote }
                 await MainActor.run {
                     // 选择第一个远程分类作为默认选中
                     if let firstRemoteCategory = remoteCategories.first {
-                        selectedRemoteCategoryId = firstRemoteCategory.id
+                        selectedRemoteCategoryId = firstRemoteCategory.id.absoluteString
                     }
                 }
             }
@@ -180,7 +181,7 @@ class IconProvider: NSObject, ObservableObject, SuperLog {
             .setInitialTab("Icon")
     }
     .frame(width: 800)
-    .frame(height: 600)
+    .frame(height: 800)
 }
 
 #Preview("App - Big Screen") {

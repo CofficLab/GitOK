@@ -4,7 +4,7 @@ import MagicCore
 /**
  * 远程分类标签页组件
  * 负责显示远程图标分类，支持异步加载和错误处理
- * 数据流：RemoteIconRepo -> RemoteIconCategory List
+ * 数据流：IconRepo -> RemoteIconCategory List
  */
 struct RemoteCategoryTabs: View {
     @State private var remoteCategories: [RemoteIconCategory] = []
@@ -52,7 +52,8 @@ struct RemoteCategoryTabs: View {
     private func loadRemoteCategories() {
         Task {
             do {
-                let categories = try await RemoteIconRepo().getAllCategories()
+                let allCategories = await IconRepo.shared.getAllCategories()
+                let categories = allCategories.filter { $0.source == .remote }.compactMap { $0.remoteCategory }
                 await MainActor.run {
                     remoteCategories = categories
                     isLoading = false

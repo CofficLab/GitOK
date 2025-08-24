@@ -4,7 +4,7 @@ import SwiftUI
 /**
  * 远程图标网格组件
  * 负责展示远程图标，支持异步加载和错误处理
- * 数据流：RemoteIconRepo -> RemoteIcon List
+ * 数据流：IconRepo -> RemoteIcon List
  */
 struct RemoteIconGrid: View {
     let gridItems: [GridItem]
@@ -71,10 +71,19 @@ struct RemoteIconGrid: View {
 
         Task {
             do {
-                let icons = try await RemoteIconRepo().getIcons(for: selectedCategoryId)
-                await MainActor.run {
-                    remoteIcons = icons
-                    isLoading = false
+                let allCategories = await IconRepo.shared.getAllCategories()
+                if let remoteCategory = allCategories.first(where: { $0.source == .remote && $0.remoteCategory?.id == selectedCategoryId }) {
+                    let icons = await IconRepo.shared.getIcons(for: remoteCategory)
+                    let remoteIcons = icons.compactMap { $0.remoteIcon }
+                    await MainActor.run {
+                        self.remoteIcons = remoteIcons
+                        isLoading = false
+                    }
+                } else {
+                    await MainActor.run {
+                        remoteIcons = []
+                        isLoading = false
+                    }
                 }
             } catch {
                 await MainActor.run {

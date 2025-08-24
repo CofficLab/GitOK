@@ -17,8 +17,20 @@ class IconRepo: SuperLog {
     /// 本地图标仓库
     private let localRepo = AppIconRepo.shared
     
-    /// 远程图标仓库
-    private let remoteRepo = RemoteIconRepo()
+    /// 远程API的基础URL
+    private let baseURL = "https://gitok.coffic.cn"
+    
+    /// 图标清单API端点
+    private let manifestEndpoint = "/icon-manifest.json"
+    
+    /// 缓存的数据
+    private var cachedCategories: [RemoteIconCategory] = []
+    
+    /// 缓存时间戳
+    private var lastCacheTime: Date?
+    
+    /// 缓存有效期（5分钟）
+    private let cacheValidityDuration: TimeInterval = 300
     
     /// 私有初始化方法，确保单例模式
     private init() {}
@@ -30,7 +42,7 @@ class IconRepo: SuperLog {
         let localCategories = localRepo.getAllCategories()
         
         // 获取远程分类
-        let remoteCategories = await remoteRepo.getAllCategories()
+        let remoteCategories = await getRemoteCategories()
         
         // 合并分类，本地优先
         var unifiedCategories: [UnifiedIconCategory] = []
@@ -69,6 +81,60 @@ class IconRepo: SuperLog {
         return unifiedCategories.sorted { $0.name < $1.name }
     }
     
+    /// 获取远程图标分类
+    /// - Returns: 远程图标分类数组
+    private func getRemoteCategories() async -> [RemoteIconCategory] {
+        // 检查缓存是否有效
+        if isCacheValid() {
+            return cachedCategories
+        }
+        
+        // 从网络获取数据
+        do {
+            let categories = try await fetchCategoriesFromNetwork()
+            cachedCategories = categories
+            lastCacheTime = Date()
+            return categories
+        } catch {
+            os_log(.error, "\(self.t)获取远程分类失败：\(error.localizedDescription)")
+            return []
+        }
+    }
+    
+    /// 从网络获取分类数据
+    /// - Returns: 远程图标分类数组
+    /// - Throws: 网络请求错误
+    private func fetchCategoriesFromNetwork() async throws -> [RemoteIconCategory] {
+        guard let url = URL(string: baseURL + manifestEndpoint) else {
+            throw RemoteIconError.invalidURL
+        }
+        
+        let (data, response) = try await URLSession.shared.data(from: url)
+        
+        guard let httpResponse = response as? HTTPURLResponse,
+              httpResponse.statusCode == 200 else {
+            throw RemoteIconError.networkError
+        }
+        
+        let manifest = try JSONDecoder().decode(IconManifest.self, from: data)
+        return manifest.categories.map { categoryData in
+            RemoteIconCategory(
+                id: categoryData.id,
+                name: categoryData.name,
+                displayName: categoryData.name.uppercased(),
+                iconCount: categoryData.count,
+                remoteIconIds: manifest.iconsByCategory[categoryData.id] ?? []
+            )
+        }
+    }
+    
+    /// 检查缓存是否有效
+    /// - Returns: 缓存是否有效
+    private func isCacheValid() -> Bool {
+        guard let lastCacheTime = lastCacheTime else { return false }
+        return Date().timeIntervalSince(lastCacheTime) < cacheValidityDuration
+    }
+    
     /// 获取指定分类的图标列表
     /// - Parameter category: 统一图标分类
     /// - Returns: 统一图标数组
@@ -89,7 +155,7 @@ class IconRepo: SuperLog {
             
         case .remote:
             guard let remoteCategory = category.remoteCategory else { return [] }
-            let remoteIcons = await remoteRepo.getIcons(for: remoteCategory.id)
+            let remoteIcons = await getRemoteIcons(for: remoteCategory.id)
             return remoteIcons.map { remoteIcon in
                 UnifiedIcon(
                     id: remoteIcon.id,
@@ -100,6 +166,49 @@ class IconRepo: SuperLog {
                 )
             }
         }
+    }
+    
+    /// 获取指定分类的远程图标列表
+    /// - Parameter categoryId: 分类ID
+    /// - Returns: 远程图标数组
+    private func getRemoteIcons(for categoryId: String) async -> [RemoteIcon] {
+        guard let url = URL(string: baseURL + manifestEndpoint) else {
+            return []
+        }
+        
+        do {
+            let (data, response) = try await URLSession.shared.data(from: url)
+            
+            guard let httpResponse = response as? HTTPURLResponse,
+                  httpResponse.statusCode == 200 else {
+                return []
+            }
+            
+            let manifest = try JSONDecoder().decode(IconManifest.self, from: data)
+            let categoryIcons = manifest.iconsByCategory[categoryId] ?? []
+            
+            return categoryIcons.map { iconData in
+                RemoteIcon(
+                    id: iconData.name,
+                    name: iconData.name,
+                    path: iconData.path,
+                    category: iconData.category,
+                    fullPath: iconData.fullPath,
+                    size: iconData.size,
+                    modified: iconData.modified
+                )
+            }
+        } catch {
+            os_log(.error, "\(self.t)获取分类图标失败：\(error.localizedDescription)")
+            return []
+        }
+    }
+    
+    /// 获取图标的完整URL
+    /// - Parameter iconPath: 图标路径
+    /// - Returns: 图标的完整URL
+    func getIconURL(for iconPath: String) -> URL? {
+        return URL(string: baseURL + "/icons/" + iconPath)
     }
     
     /// 获取指定名称的分类
@@ -138,13 +247,7 @@ class IconRepo: SuperLog {
     }
 }
 
-/**
- * 图标来源类型
- */
-enum IconSource {
-    case local
-    case remote
-}
+
 
 #Preview("App - Small Screen") {
     RootView {
