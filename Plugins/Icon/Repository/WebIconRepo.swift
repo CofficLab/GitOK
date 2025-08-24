@@ -88,8 +88,8 @@ class WebIconRepo: SuperLog {
     
     /// 获取指定分类的图标列表
     /// - Parameter categoryId: 分类ID
-    /// - Returns: 远程图标数组
-    func getIcons(for categoryId: String) async -> [RemoteIcon] {
+    /// - Returns: IconAsset数组
+    func getIcons(for categoryId: String) async -> [IconAsset] {
         guard let url = URL(string: baseURL + manifestEndpoint) else {
             return []
         }
@@ -106,15 +106,7 @@ class WebIconRepo: SuperLog {
             let categoryIcons = manifest.iconsByCategory[categoryId] ?? []
             
             return categoryIcons.map { iconData in
-                RemoteIcon(
-                    id: iconData.name,
-                    name: iconData.name,
-                    path: iconData.path,
-                    category: iconData.category,
-                    fullPath: iconData.fullPath,
-                    size: iconData.size,
-                    modified: iconData.modified
-                )
+                IconAsset(remotePath: iconData.path)
             }
         } catch {
             os_log(.error, "\(self.t)获取分类图标失败：\(error.localizedDescription)")

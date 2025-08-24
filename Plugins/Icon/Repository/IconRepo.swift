@@ -80,10 +80,7 @@ class IconRepo: SuperLog {
 
         case .remote:
             guard let remoteCategory = category.remoteCategory else { return [] }
-            let remoteIcons = await remoteRepo.getIcons(for: remoteCategory.id)
-            return remoteIcons.map { remoteIcon in
-                IconAsset(remotePath: remoteIcon.path)
-            }
+            return await remoteRepo.getIcons(for: remoteCategory.id)
         }
     }
 

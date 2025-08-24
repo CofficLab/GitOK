@@ -4,28 +4,6 @@ import SwiftUI
 // MARK: - 远程图标相关结构体
 
 /**
- * 远程图标
- * 对应网络API返回的图标数据结构
- */
-struct RemoteIcon: Identifiable, Hashable {
-    let id: String
-    let name: String
-    let path: String
-    let category: String
-    let fullPath: String
-    let size: Int
-    let modified: String
-    
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
-    }
-    
-    static func == (lhs: RemoteIcon, rhs: RemoteIcon) -> Bool {
-        lhs.id == rhs.id
-    }
-}
-
-/**
  * 远程图标分类
  * 对应网络API返回的分类数据结构
  */
