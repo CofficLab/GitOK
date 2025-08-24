@@ -36,23 +36,11 @@ class IconRenderer {
             renderBackground(iconData: iconData)
                 .frame(width: size, height: size)
             
-            // 图标内容 - 确保完全静态
-            if iconAsset.source == .local {
-                // 本地图标：直接使用静态图片
-                iconAsset.getImage()
+            iconAsset.getImage()
                     .resizable()
                     .scaledToFit()
                     .scaleEffect(iconData.scale ?? 1.0)
                     .frame(width: size * 0.6, height: size * 0.6)
-            } else {
-                // 远程图标：使用静态占位符，避免异步加载问题
-                Image(systemName: "photo")
-                    .resizable()
-                    .scaledToFit()
-                    .foregroundColor(.white)
-                    .scaleEffect(iconData.scale ?? 1.0)
-                    .frame(width: size * 0.6, height: size * 0.6)
-            }
         }
         .frame(width: size, height: size)
         .cornerRadius(iconData.cornerRadius > 0 ? CGFloat(iconData.cornerRadius) : 0)

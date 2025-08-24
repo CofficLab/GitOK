@@ -119,17 +119,6 @@ class IconAsset: Identifiable {
         }
     }
     
-    /// 获取图标缩略图
-    /// - Returns: SwiftUI Image
-    func getThumbnail() -> Image {
-        switch source {
-        case .local:
-            return loadLocalThumbnail()
-        case .remote:
-            return loadRemoteThumbnail()
-        }
-    }
-    
     /// 检查图标文件是否存在
     /// - Returns: 是否存在
     func exists() -> Bool {
