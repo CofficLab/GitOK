@@ -138,7 +138,7 @@ class WebIconRepo: SuperLog {
             .hideProjectActions()
     }
     .frame(width: 800)
-    .frame(height: 600)
+    .frame(height: 800)
 }
 
 #Preview("App - Big Screen") {
