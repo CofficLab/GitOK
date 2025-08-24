@@ -1,3 +1,4 @@
+import MagicCore
 import SwiftUI
 
 struct IconTile: View {
@@ -17,33 +18,25 @@ struct IconTile: View {
                 Text(icon.title).font(.title3)
                 Spacer()
             }
-
-            HStack {
-                Text("图标ID: \(icon.iconId)").font(.caption).opacity(0.5)
-                Spacer()
-            }
-
-            HStack {
-                Text("背景ID: \(icon.backgroundId)").font(.caption).opacity(0.5)
-                Spacer()
-            }
         }
     }
 }
 
 #Preview("App - Small Screen") {
     RootView {
-        ContentLayout().setInitialTab("Icon")
+        ContentLayout()
+            .setInitialTab(IconPlugin.label)
             .hideSidebar()
             .hideProjectActions()
     }
     .frame(width: 800)
-    .frame(height: 600)
+    .frame(height: 800)
 }
 
 #Preview("App - Big Screen") {
     RootView {
-        ContentLayout().setInitialTab("Icon")
+        ContentLayout()
+            .setInitialTab(IconPlugin.label)
             .hideSidebar()
     }
     .frame(width: 1200)

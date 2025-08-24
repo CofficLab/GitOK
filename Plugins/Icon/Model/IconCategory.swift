@@ -136,7 +136,7 @@ struct IconCategory: Identifiable, Hashable {
 
 #Preview("App - Small Screen") {
     RootView {
-        ContentLayout().setInitialTab("Icon")
+        ContentLayout().setInitialTab(IconPlugin.label)
             .hideSidebar()
             .hideProjectActions()
     }
@@ -146,7 +146,7 @@ struct IconCategory: Identifiable, Hashable {
 
 #Preview("App - Big Screen") {
     RootView {
-        ContentLayout().setInitialTab("Icon")
+        ContentLayout().setInitialTab(IconPlugin.label)
             .hideSidebar()
     }
     .frame(width: 1200)

@@ -13,7 +13,7 @@ struct IconListActions: View {
 
 #Preview("App - Small Screen") {
     RootView {
-        ContentLayout().setInitialTab("Icon")
+        ContentLayout().setInitialTab(IconPlugin.label)
             .hideSidebar()
             .hideProjectActions()
     }
@@ -23,7 +23,7 @@ struct IconListActions: View {
 
 #Preview("App - Big Screen") {
     RootView {
-        ContentLayout().setInitialTab("Icon")
+        ContentLayout().setInitialTab(IconPlugin.label)
             .hideSidebar()
     }
     .frame(width: 1200)

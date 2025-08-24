@@ -128,7 +128,7 @@ class IconRepo: SuperLog {
 #Preview("App - Small Screen") {
     RootView {
         ContentLayout()
-            .setInitialTab("Icon")
+            .setInitialTab(IconPlugin.label)
             .hideSidebar()
             .hideProjectActions()
     }
@@ -139,7 +139,7 @@ class IconRepo: SuperLog {
 #Preview("App - Big Screen") {
     RootView {
         ContentLayout()
-            .setInitialTab("Icon")
+            .setInitialTab(IconPlugin.label)
             .hideSidebar()
     }
     .frame(width: 1200)
