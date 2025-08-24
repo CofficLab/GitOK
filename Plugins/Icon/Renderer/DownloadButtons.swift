@@ -237,7 +237,7 @@ struct DownloadButtons: View {
     @MainActor private func generateMacOSIcons(folderPath: URL, tag: String, iconAsset: IconAsset) async {
         let sizes = [16, 32, 128, 256, 512]
         
-        for (index, size) in sizes.enumerated() {
+        for (_, size) in sizes.enumerated() {
             let fileName = "\(tag)-macOS-\(size)x\(size).png"
             let saveTo = folderPath.appendingPathComponent(fileName)
             

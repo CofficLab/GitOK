@@ -83,17 +83,6 @@ class IconAsset: Identifiable {
         }
     }
     
-    /// 检查图标文件是否存在
-    /// - Returns: 是否存在
-    func exists() -> Bool {
-        switch source {
-        case .local:
-            return fileURL != nil && FileManager.default.fileExists(atPath: fileURL!.path)
-        case .remote:
-            return remotePath != nil
-        }
-    }
-    
     // MARK: - 私有实例方法
     
     /// 加载图片（支持多种格式）
