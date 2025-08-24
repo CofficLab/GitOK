@@ -23,18 +23,43 @@ struct IconPreview: View {
             let centerX = containerWidth / 2
             let centerY = containerHeight / 2
 
-            if iconAsset != nil, !isLoading && errorMessage == nil {
-                if iconProvider.currentData != nil {
-                    if let renderedView = renderedView, !isRendering {
-                        renderedView
-                            .frame(width: constrainedSize, height: constrainedSize)
-                            .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
-                            .position(x: centerX, y: centerY)
+            Group {
+                if iconAsset != nil, !isLoading && errorMessage == nil {
+                    if iconProvider.currentData != nil {
+                        if let renderedView = renderedView, !isRendering {
+                            renderedView
+                                .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
+                        } else {
+                            renderLoadingView(size: constrainedSize)
+                        }
                     } else {
-                        // 显示渲染中的状态
-                        renderLoadingView(size: constrainedSize)
-                            .position(x: centerX, y: centerY)
+                        IconStateView(
+                            icon: "photo",
+                            title: "请选择一个图标",
+                            subtitle: nil,
+                            color: .secondary,
+                            size: constrainedSize
+                        )
                     }
+                } else if isLoading {
+                    IconStateView(
+                        icon: nil,
+                        title: "加载图标中...",
+                        subtitle: nil,
+                        color: .secondary,
+                        size: constrainedSize,
+                        showProgress: true
+                    )
+                } else if let errorMessage = errorMessage {
+                    IconStateView(
+                        icon: "exclamationmark.triangle",
+                        title: "加载失败",
+                        subtitle: errorMessage,
+                        color: .orange,
+                        size: constrainedSize,
+                        showRetryButton: true,
+                        onRetry: loadIconAsset
+                    )
                 } else {
                     IconStateView(
                         icon: "photo",
@@ -43,40 +68,10 @@ struct IconPreview: View {
                         color: .secondary,
                         size: constrainedSize
                     )
-                    .position(x: centerX, y: centerY)
                 }
             }
-            else if isLoading {
-                IconStateView(
-                    icon: nil,
-                    title: "加载图标中...",
-                    subtitle: nil,
-                    color: .secondary,
-                    size: constrainedSize,
-                    showProgress: true
-                )
-                .position(x: centerX, y: centerY)
-            } else if let errorMessage = errorMessage {
-                IconStateView(
-                    icon: "exclamationmark.triangle",
-                    title: "加载失败",
-                    subtitle: errorMessage,
-                    color: .orange,
-                    size: constrainedSize,
-                    showRetryButton: true,
-                    onRetry: loadIconAsset
-                )
-                .position(x: centerX, y: centerY)
-            } else {
-                IconStateView(
-                    icon: "photo",
-                    title: "请选择一个图标",
-                    subtitle: nil,
-                    color: .secondary,
-                    size: constrainedSize
-                )
-                .position(x: centerX, y: centerY)
-            }
+            .position(x: centerX, y: centerY)
+            .frame(width: constrainedSize, height: constrainedSize)
         }
         .onAppear {
             loadIconAsset()
@@ -103,31 +98,31 @@ struct IconPreview: View {
                 loadIconAsset()
             }
         }
-        .onChange(of: iconProvider.currentData?.opacity) { _, newValue in
+        .onChange(of: iconProvider.currentData?.opacity) { _, _ in
             // 当透明度变化时重新渲染
             if let iconData = iconProvider.currentData, let iconAsset = iconAsset {
                 renderIcon(iconData: iconData, iconAsset: iconAsset, size: 300) // 使用约束后的尺寸
             }
         }
-        .onChange(of: iconProvider.currentData?.scale) { _, newValue in
+        .onChange(of: iconProvider.currentData?.scale) { _, _ in
             // 当缩放比例变化时重新渲染
             if let iconData = iconProvider.currentData, let iconAsset = iconAsset {
                 renderIcon(iconData: iconData, iconAsset: iconAsset, size: 300) // 使用约束后的尺寸
             }
         }
-        .onChange(of: iconProvider.currentData?.cornerRadius) { _, newValue in
+        .onChange(of: iconProvider.currentData?.cornerRadius) { _, _ in
             // 当圆角半径变化时重新渲染
             if let iconData = iconProvider.currentData, let iconAsset = iconAsset {
                 renderIcon(iconData: iconData, iconAsset: iconAsset, size: 300) // 使用约束后的尺寸
             }
         }
-        .onChange(of: iconProvider.currentData?.backgroundId) { _, newValue in
+        .onChange(of: iconProvider.currentData?.backgroundId) { _, _ in
             // 当背景样式变化时重新渲染
             if let iconData = iconProvider.currentData, let iconAsset = iconAsset {
                 renderIcon(iconData: iconData, iconAsset: iconAsset, size: 300) // 使用约束后的尺寸
             }
         }
-        .onChange(of: iconProvider.currentData?.imageURL) { _, newValue in
+        .onChange(of: iconProvider.currentData?.imageURL) { _, _ in
             // 当自定义图片URL变化时重新渲染
             if let iconData = iconProvider.currentData, let iconAsset = iconAsset {
                 renderIcon(iconData: iconData, iconAsset: iconAsset, size: 300) // 使用约束后的尺寸
@@ -163,25 +158,25 @@ struct IconPreview: View {
             }
         }
     }
-    
+
     @MainActor
     private func renderIcon(iconData: IconData?, iconAsset: IconAsset, size: CGFloat) {
         guard let iconData = iconData else { return }
-        
+
         isRendering = true
-        
+
         Task {
             let view = await IconRenderer.renderStaticIconAsync(
                 iconData: iconData,
                 iconAsset: iconAsset,
                 size: size
             )
-            
+
             self.renderedView = AnyView(view)
             self.isRendering = false
         }
     }
-    
+
     // 提取渲染加载视图为单独的方法
     private func renderLoadingView(size: CGFloat) -> some View {
         VStack(spacing: 12) {
