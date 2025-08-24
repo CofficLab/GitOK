@@ -4,6 +4,7 @@ import MagicCore
 /**
  * 图标渲染器
  * 根据IconData和IconAsset来渲染最终的图标样式
+ * 不关心图标是本地还是远程，只负责组合背景和图标
  */
 class IconRenderer {
     /// 渲染图标
@@ -39,14 +40,30 @@ class IconRenderer {
         Group {
             if let imageURL = iconData.imageURL {
                 // 使用自定义图片URL
-                Image(nsImage: NSImage(data: try! Data(contentsOf: imageURL))!)
-                    .resizable()
-                    .scaledToFit()
+                AsyncImage(url: imageURL) { phase in
+                    switch phase {
+                    case .empty:
+                        ProgressView()
+                            .frame(width: 50, height: 50)
+                    case .success(let image):
+                        image
+                            .resizable()
+                            .scaledToFit()
+                    case .failure:
+                        Image(systemName: "photo")
+                            .resizable()
+                            .scaledToFit()
+                            .foregroundColor(.secondary)
+                    @unknown default:
+                        Image(systemName: "photo")
+                            .resizable()
+                            .scaledToFit()
+                            .foregroundColor(.secondary)
+                    }
+                }
             } else {
-                // 使用IconAsset的图片
-                iconAsset.getImage()
-                    .resizable()
-                    .scaledToFit()
+                // 使用IconAsset的视图（自动处理本地和远程）
+                iconAsset.getIconView()
             }
         }
         .scaleEffect(iconData.scale ?? 1.0)
