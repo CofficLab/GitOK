@@ -20,11 +20,10 @@ struct CategoryTab: View {
                     .fontWeight(.medium)
             }
             .padding(.horizontal, 12)
-            .padding(.vertical, 8)
+            .padding(.vertical, 9.5)
             .frame(maxWidth: .infinity)
             .background(isSelected ? Color.accentColor.opacity(0.2) : Color.clear)
             .foregroundColor(isSelected ? .accentColor : .primary)
-            .cornerRadius(8)
         }
         .buttonStyle(PlainButtonStyle())
     }

@@ -28,14 +28,12 @@ struct IconDetailLayout: View {
                     .background(Color.yellow.opacity(0.05))
 
                     IconBox()
-                        .padding(.horizontal)
-                        .padding(.vertical, 8)
                         .background(.green.opacity(0.05))
 
                     HStack(spacing: 0) {
                         IconMaker()
                             .background(.orange.opacity(0.05))
-                        
+
                         // 下载区域
                         DownloadButtons()
                             .background(.red.opacity(0.05))
