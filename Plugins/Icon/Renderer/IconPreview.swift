@@ -207,7 +207,7 @@ struct ResponsiveIconContent: View {
     private func loadIconImage() {
         isLoading = true
         Task {
-            let image = await iconAsset.getImageAsync()
+            let image = await iconAsset.getImage()
             loadedImage = image
             isLoading = false
         }

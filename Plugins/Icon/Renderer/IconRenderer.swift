@@ -16,7 +16,7 @@ class IconRenderer {
     /// - Returns: 截图是否成功
     @MainActor static func snapshotIcon(iconData: IconData, iconAsset: IconAsset, size: Int, savePath: URL) async -> Bool {
         // 先异步获取图标图片
-        let iconImage = await iconAsset.getImageAsync()
+        let iconImage = await iconAsset.getImage()
         
         // 创建图标视图
         let iconView = createIconView(iconData: iconData, iconAsset: iconAsset, size: CGFloat(size), preloadedImage: iconImage)
@@ -42,7 +42,7 @@ class IconRenderer {
     /// - Returns: 截图是否成功
     @MainActor static func snapshotIconAsync(iconData: IconData, iconAsset: IconAsset, size: Int, savePath: URL) async -> Bool {
         // 先异步获取图标图片
-        let iconImage = await iconAsset.getImageAsync()
+        let iconImage = await iconAsset.getImage()
         
         // 创建图标视图
         let iconView = createIconView(iconData: iconData, iconAsset: iconAsset, size: CGFloat(size), preloadedImage: iconImage)

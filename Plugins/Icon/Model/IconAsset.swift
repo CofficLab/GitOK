@@ -74,7 +74,7 @@ class IconAsset: Identifiable {
     /// 异步获取图标图片（支持远程图标加载）
     /// - Returns: 加载完成的SwiftUI Image
     @MainActor
-    func getImageAsync() async -> Image {
+    func getImage() async -> Image {
         switch source {
         case .local:
             return loadImage()
