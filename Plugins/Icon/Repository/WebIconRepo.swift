@@ -29,6 +29,14 @@ class WebIconRepo: SuperLog {
     /// 缓存有效期（5分钟）
     private let cacheValidityDuration: TimeInterval = 300
     
+    /// 分类图标缓存
+    /// Key: 分类ID, Value: 图标数组
+    private var cachedIconsByCategory: [String: [IconAsset]] = [:]
+    
+    /// 分类图标缓存时间戳
+    /// Key: 分类ID, Value: 缓存时间
+    private var lastIconCacheTimeByCategory: [String: Date] = [:]
+    
     /// 私有初始化方法，确保单例模式
     private init() {}
     
@@ -86,31 +94,58 @@ class WebIconRepo: SuperLog {
         return Date().timeIntervalSince(lastCacheTime) < cacheValidityDuration
     }
     
+    /// 检查指定分类的图标缓存是否有效
+    /// - Parameter categoryId: 分类ID
+    /// - Returns: 缓存是否有效
+    private func isIconCacheValid(for categoryId: String) -> Bool {
+        guard let lastCacheTime = lastIconCacheTimeByCategory[categoryId] else { return false }
+        return Date().timeIntervalSince(lastCacheTime) < cacheValidityDuration
+    }
+    
     /// 获取指定分类的图标列表
     /// - Parameter categoryId: 分类ID
     /// - Returns: IconAsset数组
     func getIcons(for categoryId: String) async -> [IconAsset] {
-        guard let url = URL(string: baseURL + manifestEndpoint) else {
-            return []
+        // 检查缓存是否有效
+        if isIconCacheValid(for: categoryId),
+           let cachedIcons = cachedIconsByCategory[categoryId] {
+            return cachedIcons
         }
         
+        // 从网络获取数据
         do {
-            let (data, response) = try await URLSession.shared.data(from: url)
-            
-            guard let httpResponse = response as? HTTPURLResponse,
-                  httpResponse.statusCode == 200 else {
-                return []
-            }
-            
-            let manifest = try JSONDecoder().decode(IconManifest.self, from: data)
-            let categoryIcons = manifest.iconsByCategory[categoryId] ?? []
-            
-            return categoryIcons.map { iconData in
-                IconAsset(remotePath: iconData.path)
-            }
+            let icons = try await fetchIconsFromNetwork(for: categoryId)
+            // 更新缓存
+            cachedIconsByCategory[categoryId] = icons
+            lastIconCacheTimeByCategory[categoryId] = Date()
+            return icons
         } catch {
             os_log(.error, "\(self.t)获取分类图标失败：\(error.localizedDescription)")
             return []
+        }
+    }
+    
+    /// 从网络获取指定分类的图标数据
+    /// - Parameter categoryId: 分类ID
+    /// - Returns: IconAsset数组
+    /// - Throws: 网络请求错误
+    private func fetchIconsFromNetwork(for categoryId: String) async throws -> [IconAsset] {
+        guard let url = URL(string: baseURL + manifestEndpoint) else {
+            throw RemoteIconError.invalidURL
+        }
+        
+        let (data, response) = try await URLSession.shared.data(from: url)
+        
+        guard let httpResponse = response as? HTTPURLResponse,
+              httpResponse.statusCode == 200 else {
+            throw RemoteIconError.networkError
+        }
+        
+        let manifest = try JSONDecoder().decode(IconManifest.self, from: data)
+        let categoryIcons = manifest.iconsByCategory[categoryId] ?? []
+        
+        return categoryIcons.map { iconData in
+            IconAsset(remotePath: iconData.path)
         }
     }
     
@@ -119,6 +154,22 @@ class WebIconRepo: SuperLog {
     /// - Returns: 图标的完整URL
     func getIconURL(for iconPath: String) -> URL? {
         return URL(string: baseURL + "/icons/" + iconPath)
+    }
+    
+    /// 清除所有缓存
+    /// 用于强制刷新数据
+    func clearCache() {
+        cachedCategories.removeAll()
+        cachedIconsByCategory.removeAll()
+        lastCacheTime = nil
+        lastIconCacheTimeByCategory.removeAll()
+    }
+    
+    /// 清除指定分类的图标缓存
+    /// - Parameter categoryId: 分类ID
+    func clearIconCache(for categoryId: String) {
+        cachedIconsByCategory.removeValue(forKey: categoryId)
+        lastIconCacheTimeByCategory.removeValue(forKey: categoryId)
     }
 }
 

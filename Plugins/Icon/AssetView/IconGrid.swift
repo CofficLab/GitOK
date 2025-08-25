@@ -31,8 +31,9 @@ struct IconGrid: View {
     }
     
     private func loadIconAssets() {
-        // 只在分类变化时重新加载图标资源
-        iconAssets = category.getAllIconAssets()
+        Task {
+            iconAssets = await category.getAllIconAssets()
+        }
     }
 }
 
