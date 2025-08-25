@@ -32,6 +32,8 @@ struct IconDetailLayout: View {
 
                     HStack(spacing: 0) {
                         IconMaker()
+                            .frame(maxWidth: .infinity)
+                            .frame(maxHeight: .infinity)
                             .background(.orange.opacity(0.05))
 
                         // 下载区域

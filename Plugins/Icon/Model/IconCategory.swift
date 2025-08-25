@@ -103,7 +103,7 @@ struct IconCategory: Identifiable, Hashable {
     
     /// 获取分类下的所有图标资源
     /// - Returns: IconAsset数组
-    func getAllIconAssets() -> [IconAsset] {
+    func getAllIconAssets() async -> [IconAsset] {
         switch source {
         case .local:
             do {
@@ -127,9 +127,7 @@ struct IconCategory: Identifiable, Hashable {
                 return []
             }
         case .remote:
-            // 远程分类的图标通过IconRepo异步获取，这里返回空数组
-            // 实际使用时应该调用IconRepo.getIcons(for:)
-            return []
+            return await IconRepo.shared.getIcons(for: self)
         }
     }
 }

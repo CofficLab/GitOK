@@ -33,7 +33,7 @@ struct IconBox: View {
                         } else {
                             LazyVGrid(columns: gridItems, spacing: 12) {
                                 ForEach(iconAssets, id: \.id) { iconAsset in
-                                    IconView(iconAsset: iconAsset)
+                                    IconView(iconAsset)
                                 }
                             }
                         }
@@ -83,7 +83,7 @@ struct IconBox: View {
         isLoading = true
 
         Task {
-            let assets = await IconRepo.shared.getIcons(for: selectedCategory)
+            let assets = await selectedCategory.getAllIconAssets()
             await MainActor.run {
                 self.iconAssets = assets
                 self.isLoading = false

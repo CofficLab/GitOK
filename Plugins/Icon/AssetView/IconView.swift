@@ -18,6 +18,10 @@ struct IconView: View {
     private var isSelected: Bool {
         iconProvider.selectedIconId == iconAsset.iconId
     }
+
+    init(_ iconAsset: IconAsset) {
+        self.iconAsset = iconAsset
+    }
     
     var body: some View {
         Group {
@@ -75,7 +79,7 @@ struct IconView: View {
     private func loadIconImage() {
         isLoading = true
         Task {
-            let image = await iconAsset.getImageAsync()
+            let image = await iconAsset.getImage()
             loadedImage = image
             isLoading = false
         }

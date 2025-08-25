@@ -4,14 +4,11 @@ import SwiftUI
 /**
  * 图标预览组件
  * 显示单个图标预览，自动适应当前可用空间
- * 使用响应式视图直接绑定数据状态，避免重复渲染
- * 自动从IconProvider环境变量中获取图标数据
+ * 接收明确的数据参数，专注于图标显示逻辑
  */
 struct IconPreview: View {
-    @EnvironmentObject var iconProvider: IconProvider
-    @State private var iconAsset: IconAsset?
-    @State private var isLoading: Bool = false
-    @State private var errorMessage: String?
+    let iconData: IconData
+    let iconAsset: IconAsset
 
     var body: some View {
         GeometryReader { geometry in
@@ -21,93 +18,14 @@ struct IconPreview: View {
             let centerX = containerWidth / 2
             let centerY = containerHeight / 2
 
-            Group {
-                if let iconAsset = iconAsset, let iconData = iconProvider.currentData {
-                    // 响应式图标视图，直接绑定数据状态
-                    ResponsiveIconView(
-                        iconData: iconData,
-                        iconAsset: iconAsset,
-                        size: constrainedSize
-                    )
-                } else if isLoading {
-                    IconStateView(
-                        icon: nil,
-                        title: "加载图标中...",
-                        subtitle: nil,
-                        color: .secondary,
-                        size: constrainedSize,
-                        showProgress: true
-                    )
-                } else if let errorMessage = errorMessage {
-                    IconStateView(
-                        icon: "exclamationmark.triangle",
-                        title: "加载失败",
-                        subtitle: errorMessage,
-                        color: .orange,
-                        size: constrainedSize,
-                        showRetryButton: true,
-                        onRetry: loadIconAsset
-                    )
-                } else {
-                    IconStateView(
-                        icon: "photo",
-                        title: "请选择一个图标",
-                        subtitle: nil,
-                        color: .secondary,
-                        size: constrainedSize
-                    )
-                }
-            }
+            // 响应式图标视图，直接使用传入的数据
+            ResponsiveIconView(
+                iconData: iconData,
+                iconAsset: iconAsset,
+                size: constrainedSize
+            )
             .position(x: centerX, y: centerY)
             .frame(width: constrainedSize, height: constrainedSize)
-        }
-        .onAppear {
-            loadIconAsset()
-        }
-        .onChange(of: iconProvider.selectedIconId) { _, newValue in
-            // 当selectedIconId变化时，重新加载图标资源
-            if !newValue.isEmpty {
-                self.iconAsset = nil
-                self.errorMessage = nil
-                self.isLoading = true
-                loadIconAsset()
-            } else {
-                // 如果没有选中的图标，清空所有状态
-                self.iconAsset = nil
-                self.errorMessage = nil
-                self.isLoading = false
-            }
-        }
-        .onChange(of: iconProvider.currentData) { _, newValue in
-            // 当currentData变化时，重新加载图标资源
-            if newValue != nil {
-                loadIconAsset()
-            }
-        }
-    }
-
-    private func loadIconAsset() {
-        guard !iconProvider.selectedIconId.isEmpty else {
-            self.iconAsset = nil
-            self.errorMessage = nil
-            self.isLoading = false
-            return
-        }
-
-        Task {
-            let iconAsset = await IconRepo.shared.getIconAsset(byId: iconProvider.selectedIconId)
-
-            await MainActor.run {
-                if let iconAsset = iconAsset {
-                    self.iconAsset = iconAsset
-                    self.errorMessage = nil
-                    self.isLoading = false
-                } else {
-                    self.iconAsset = nil
-                    self.errorMessage = "未找到图标：\(iconProvider.selectedIconId)"
-                    self.isLoading = false
-                }
-            }
         }
     }
 }
@@ -207,7 +125,7 @@ struct ResponsiveIconContent: View {
     private func loadIconImage() {
         isLoading = true
         Task {
-            let image = await iconAsset.getImageAsync()
+            let image = await iconAsset.getImage()
             loadedImage = image
             isLoading = false
         }

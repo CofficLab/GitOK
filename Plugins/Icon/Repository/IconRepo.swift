@@ -59,7 +59,7 @@ class IconRepo: SuperLog {
     func getIcons(for category: IconCategory) async -> [IconAsset] {
         switch category.source {
         case .local:
-            return category.getAllIconAssets()
+            return await category.getAllIconAssets()
 
         case .remote:
             guard let remoteCategory = category.remoteCategory else { return [] }
