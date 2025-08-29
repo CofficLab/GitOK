@@ -10,19 +10,15 @@ struct CategoryTabs: View {
     @EnvironmentObject var iconProvider: IconProvider
     @EnvironmentObject var m: MagicMessageProvider
 
+    @State private var cateogories: [IconCategory] = []
+
     var body: some View {
         HStack(spacing: 0) {
             // 左侧：分类标签页（可滚动）
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 0) {
-                    ForEach(iconProvider.availableCategories, id: \.id) { category in
-                        CategoryTab(
-                            category: category,
-                            isSelected: iconProvider.selectedCategory?.id == category.id,
-                            onTap: {
-                                iconProvider.selectCategory(category)
-                            }
-                        )
+                    ForEach(cateogories, id: \.id) { category in
+                        CategoryTab(category)
                     }
                 }
             }
@@ -40,7 +36,7 @@ struct CategoryTabs: View {
                 }
                 .buttonStyle(.plain)
                 .help(iconProvider.enableRemoteRepository ? "禁用网络仓库" : "启用网络仓库")
-                
+
                 // 换图按钮
                 Button(action: changeImage) {
                     Image.add
@@ -59,9 +55,8 @@ struct CategoryTabs: View {
             )
         }
         .onAppear {
-            // 确保有选中的分类
-            if iconProvider.selectedCategory == nil {
-                iconProvider.refreshCategories()
+            Task {
+                self.cateogories = await IconRepo.shared.getAllCategories()
             }
         }
     }
@@ -87,8 +82,6 @@ struct CategoryTabs: View {
             }
         }
     }
-    
-
 }
 
 #Preview("App - Small Screen") {

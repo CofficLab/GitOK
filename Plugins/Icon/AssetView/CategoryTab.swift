@@ -6,13 +6,21 @@ import SwiftUI
  * 数据流：IconCategory -> UnifiedCategoryTab
  */
 struct CategoryTab: View {
+    @EnvironmentObject var iconProvider: IconProvider
+    
     let category: IconCategory
-    let isSelected: Bool
-    let onTap: () -> Void
+    
+    init(_ category: IconCategory) {
+        self.category = category
+    }
+    
+    private var isSelected: Bool{
+        iconProvider.selectedCategory == self.category
+    }
     
     var body: some View {
         Button(action: {
-            onTap()
+            iconProvider.selectCategory(self.category)
         }) {
             VStack(spacing: 4) {
                 Text(category.displayName)

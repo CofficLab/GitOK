@@ -21,9 +21,6 @@ class IconProvider: NSObject, ObservableObject, SuperLog {
     /// 当前选中的分类
     @Published var selectedCategory: IconCategory?
     
-    /// 所有可用的分类
-    @Published var availableCategories: [IconCategory] = []
-    
     /// 是否启用网络仓库，默认启用
     @Published var enableRemoteRepository: Bool = true
     
@@ -36,9 +33,6 @@ class IconProvider: NSObject, ObservableObject, SuperLog {
         super.init()
         
         os_log("\(self.t)Initializing IconProvider")
-        
-        // 初始化时加载分类
-        refreshCategories()
         
         NotificationCenter.default.addObserver(
             self, selector: #selector(handleIconDidSave),
@@ -107,38 +101,6 @@ class IconProvider: NSObject, ObservableObject, SuperLog {
      */
     func toggleRemoteRepository() {
         self.enableRemoteRepository.toggle()
-        // 切换状态后刷新分类
-        refreshCategories()
-    }
-    
-    /**
-        刷新可用分类列表
-     */
-    func refreshCategories() {
-        Task {
-            let categories = await IconRepo.shared.getAllCategories(enableRemote: enableRemoteRepository)
-            await MainActor.run {
-                self.availableCategories = categories
-                
-                // 如果当前选中的分类不存在，选择第一个
-                if let selected = selectedCategory,
-                   !categories.contains(where: { $0.id == selected.id }) {
-                    selectedCategory = categories.first
-                }
-                
-                // 如果没有选中的分类，选择第一个
-                if selectedCategory == nil && !categories.isEmpty {
-                    selectedCategory = categories.first
-                }
-            }
-        }
-    }
-    
-    /// 获取指定名称的分类
-    /// - Parameter name: 分类名称
-    /// - Returns: 分类实例，如果不存在则返回nil
-    func getCategory(byName name: String) -> IconCategory? {
-        return availableCategories.first { $0.name == name }
     }
 }
 

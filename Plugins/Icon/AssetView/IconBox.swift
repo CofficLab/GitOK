@@ -11,6 +11,8 @@ struct IconBox: View {
     @State private var gridItems: [GridItem] = Array(repeating: .init(.flexible()), count: 10)
     @State private var iconAssets: [IconAsset] = []
     @State private var isLoading: Bool = false
+    
+    private var repo = IconRepo.shared
 
     var body: some View {
         VStack(spacing: 0) {
@@ -32,7 +34,7 @@ struct IconBox: View {
                                 .padding()
                         } else {
                             LazyVGrid(columns: gridItems, spacing: 12) {
-                                ForEach(iconAssets, id: \.id) { iconAsset in
+                                ForEach(iconAssets) { iconAsset in
                                     IconView(iconAsset)
                                 }
                             }
@@ -48,11 +50,10 @@ struct IconBox: View {
             }
         }
         .onAppear {
-            iconProvider.refreshCategories()
             // 确保有选中的分类，如果没有则选择第一个
             if iconProvider.selectedCategory == nil {
                 Task {
-                    let categories = await IconRepo.shared.getAllCategories(enableRemote: iconProvider.enableRemoteRepository)
+                    let categories = await repo.getAllCategories(enableRemote: iconProvider.enableRemoteRepository)
                     if let firstCategory = categories.first {
                         await MainActor.run {
                             iconProvider.selectCategory(firstCategory)

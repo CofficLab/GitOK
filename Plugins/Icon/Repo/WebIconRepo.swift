@@ -8,8 +8,9 @@ import MagicCore
  * 负责从网络API获取图标分类和图标数据
  * 支持缓存机制，避免重复网络请求
  * 支持本地图标缓存，提升加载性能
+ * 实现 IconSourceProtocol 协议以支持统一的图标来源管理
  */
-class WebIconRepo: SuperLog {
+class WebIconRepo: SuperLog, IconSourceProtocol {
     nonisolated static var emoji: String { "🌐" }
     
     /// 单例实例
@@ -55,9 +56,90 @@ class WebIconRepo: SuperLog {
     /// 私有初始化方法，确保单例模式
     private init() {}
     
-    /// 获取所有远程图标分类
-    /// - Returns: 远程图标分类数组
-    func getAllCategories() async -> [RemoteIconCategory] {
+    // MARK: - IconSourceProtocol Implementation
+    
+    var sourceType: IconSourceType {
+        return .remote
+    }
+    
+    var sourceName: String {
+        return "GitOK 远程图标库"
+    }
+    
+    var isAvailable: Bool {
+        get async {
+            // 简单检测网络连接
+            do {
+                let url = URL(string: baseURL)!
+                let (_, response) = try await URLSession.shared.data(from: url)
+                return (response as? HTTPURLResponse)?.statusCode == 200
+            } catch {
+                return false
+            }
+        }
+    }
+    
+    func getAllCategories() async -> [IconCategoryInfo] {
+        // 获取远程分类数据
+        let remoteCategories = await getAllRemoteCategories()
+        
+        // 转换为 IconCategoryInfo
+        return remoteCategories.map { remoteCategory in
+            IconCategoryInfo(
+                id: remoteCategory.id,
+                name: remoteCategory.name,
+                displayName: remoteCategory.displayName,
+                iconCount: remoteCategory.iconCount,
+                sourceType: .remote,
+                sourceIdentifier: "gitok_api",
+                metadata: ["remoteIconIds": remoteCategory.remoteIconIds.count]
+            )
+        }
+    }
+    
+    func getCategory(byName name: String) async -> IconCategoryInfo? {
+        let categories = await getAllCategories()
+        return categories.first { $0.name == name }
+    }
+    
+    func getIconAsset(byId iconId: String) async -> IconAsset? {
+        let categories = await getAllCategories()
+        
+        for category in categories {
+            let icons = await getIcons(for: category.id)
+            // 改进匹配逻辑：支持多种匹配方式
+            if let remoteIcon = icons.first(where: { icon in
+                // 精确匹配iconId
+                if icon.iconId == iconId {
+                    return true
+                }
+                // 模糊匹配：检查iconId是否包含在路径中
+                if icon.remotePath?.contains(iconId) == true {
+                    return true
+                }
+                // 检查路径的最后一部分（去掉扩展名）
+                if let path = icon.remotePath {
+                    let lastComponent = path.components(separatedBy: "/").last ?? ""
+                    let withoutExtension = lastComponent.replacingOccurrences(of: ".svg", with: "")
+                        .replacingOccurrences(of: ".png", with: "")
+                        .replacingOccurrences(of: ".jpg", with: "")
+                        .replacingOccurrences(of: ".jpeg", with: "")
+                    if withoutExtension == iconId {
+                        return true
+                    }
+                }
+                return false
+            }) {
+                return remoteIcon
+            }
+        }
+        
+        return nil
+    }
+    
+    /// 获取所有远程图标分类（兼容旧接口）
+    /// - Returns: RemoteIconCategory 数组
+    func getAllRemoteCategories() async -> [RemoteIconCategory] {
         // 检查缓存是否有效
         if isCacheValid() {
             return cachedCategories
