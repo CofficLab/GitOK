@@ -19,7 +19,7 @@ class IconProvider: NSObject, ObservableObject, SuperLog {
     @Published var selectedIconId: String = ""
 
     /// 当前选中的分类
-    @Published var selectedCategory: IconCategoryInfo?
+    @Published var selectedCategory: IconCategory?
 
     /// 当前选中的图标来源标识（用于无分类来源的增删操作）
     @Published var selectedSourceIdentifier: String? = nil
@@ -92,7 +92,7 @@ class IconProvider: NSObject, ObservableObject, SuperLog {
     /**
         选择图标分类
      */
-    func selectCategory(_ category: IconCategoryInfo?) {
+    func selectCategory(_ category: IconCategory?) {
         self.selectedCategory = category
     }
 

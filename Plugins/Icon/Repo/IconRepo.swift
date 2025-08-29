@@ -68,24 +68,20 @@ class IconRepo: SuperLog {
     // MARK: - 核心业务接口
     
     /// 获取所有可用的图标分类
-    /// - Parameter enableRemote: 是否启用远程分类，默认启用（保留开关向后兼容）
     /// - Returns: IconCategoryInfo 数组
-    func getAllCategories(enableRemote: Bool = true) async -> [IconCategoryInfo] {
-        var allCategories: [IconCategoryInfo] = []
-        print("[IconRepo] getAllCategories from sources: \(iconSources.count)")
+    func getAllCategories() async -> [IconCategory] {
+        var allCategories: [IconCategory] = []
         
         for source in iconSources {
-            print("[IconRepo] pulling from source: \(source.sourceName) [id=\(source.sourceIdentifier)]")
             do {
                 let categories = try await source.getAllCategories()
-                print("[IconRepo] source returned: \(categories.count) categories")
                 allCategories.append(contentsOf: categories)
             } catch {
                 print("[IconRepo] source error: \(error)")
             }
         }
         
-        var uniqueCategories: [IconCategoryInfo] = []
+        var uniqueCategories: [IconCategory] = []
         var seenKeys: Set<String> = []
         
         for category in allCategories {
@@ -103,7 +99,7 @@ class IconRepo: SuperLog {
     /// 获取指定分类的图标列表
     /// - Parameter categoryInfo: 分类信息
     /// - Returns: IconAsset 数组
-    func getIcons(for categoryInfo: IconCategoryInfo) async -> [IconAsset] {
+    func getIcons(for categoryInfo: IconCategory) async -> [IconAsset] {
         // 找到对应的图标来源（按 sourceIdentifier 精确匹配）
         guard let source = iconSources.first(where: { $0.sourceIdentifier == categoryInfo.sourceIdentifier }) else {
             return []
@@ -154,7 +150,7 @@ class IconRepo: SuperLog {
     /// 获取指定名称的分类
     /// - Parameter name: 分类名称
     /// - Returns: IconCategoryInfo 实例，如果不存在则返回nil
-    func getCategory(byName name: String) async -> IconCategoryInfo? {
+    func getCategory(byName name: String) async -> IconCategory? {
         let allCategories = await getAllCategories()
         return allCategories.first { $0.name == name }
     }

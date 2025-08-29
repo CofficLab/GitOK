@@ -13,10 +13,10 @@ struct IconGrid: View {
     @State private var iconAssets: [IconAsset] = []
     @State private var isLoading: Bool = false
 
-    let selectedCategory: IconCategoryInfo?
+    let selectedCategory: IconCategory?
     let selectedSourceIdentifier: String?
 
-    init(selectedCategory: IconCategoryInfo?, selectedSourceIdentifier: String?) {
+    init(selectedCategory: IconCategory?, selectedSourceIdentifier: String?) {
         self.selectedCategory = selectedCategory
         self.selectedSourceIdentifier = selectedSourceIdentifier
     }

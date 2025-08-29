@@ -9,10 +9,10 @@ import SwiftUI
  */
 struct CategoryList: View {
     let selectedSourceIdentifier: String?
-    let selectedCategory: IconCategoryInfo?
+    let selectedCategory: IconCategory?
 
     @EnvironmentObject var iconProvider: IconProvider
-    @State private var categories: [IconCategoryInfo] = []
+    @State private var categories: [IconCategory] = []
     @State private var searchText: String = ""
     @State private var isLoading: Bool = false
 
@@ -21,7 +21,7 @@ struct CategoryList: View {
         return IconRepo.shared.getAllIconSources().first(where: { $0.sourceIdentifier == sid })?.supportsMutations ?? false
     }
 
-    private var filteredCategories: [IconCategoryInfo] {
+    private var filteredCategories: [IconCategory] {
         let list = categories.filter { category in
             guard let sid = selectedSourceIdentifier else { return true }
             return category.sourceIdentifier == sid
@@ -83,7 +83,7 @@ struct CategoryList: View {
         isLoading = true
         Task {
             print("[CategoryList] loading categories...")
-            let allCategories = await IconRepo.shared.getAllCategories(enableRemote: true)
+            let allCategories = await IconRepo.shared.getAllCategories()
             await MainActor.run {
                 self.categories = allCategories.sorted { $0.name < $1.name }
                 self.isLoading = false
@@ -142,7 +142,7 @@ struct SearchBar: View {
  * 显示单个分类信息，支持选中状态和点击事件
  */
 struct CategoryRow: View {
-    let category: IconCategoryInfo
+    let category: IconCategory
     let isSelected: Bool
     let onTap: () -> Void
 

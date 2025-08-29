@@ -25,7 +25,7 @@ protocol IconSourceProtocol {
     /// 获取所有可用的图标分类
     /// - Returns: 分类数组
     /// - Throws: 当数据源不可用或解析失败时抛出错误
-    func getAllCategories() async throws -> [IconCategoryInfo]
+    func getAllCategories() async throws -> [IconCategory]
     
     /// 获取指定分类下的所有图标
     /// - Parameter categoryId: 分类标识符
@@ -45,7 +45,7 @@ protocol IconSourceProtocol {
     /// - Parameter name: 分类名称
     /// - Returns: 分类信息，如果找不到则返回nil
     /// - Throws: 当底层数据源拉取/解析失败时抛出错误
-    func getCategory(byName name: String) async throws -> IconCategoryInfo?
+    func getCategory(byName name: String) async throws -> IconCategory?
     
     /// 添加图片（默认不支持）
     func addImage(data: Data, filename: String) async -> Bool
@@ -76,7 +76,7 @@ extension IconSourceProtocol {
  * 图标分类信息结构体
  * 标准化不同来源的分类信息
  */
-struct IconCategoryInfo: Identifiable, Hashable {
+struct IconCategory: Identifiable, Hashable {
     /// 分类唯一标识符
     let id: String
     
@@ -118,7 +118,7 @@ struct IconCategoryInfo: Identifiable, Hashable {
         hasher.combine(sourceIdentifier)
     }
     
-    static func == (lhs: IconCategoryInfo, rhs: IconCategoryInfo) -> Bool {
+    static func == (lhs: IconCategory, rhs: IconCategory) -> Bool {
         return lhs.id == rhs.id &&
                lhs.sourceIdentifier == rhs.sourceIdentifier
     }

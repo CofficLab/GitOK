@@ -76,12 +76,12 @@ class WebIconRepo: SuperLog, IconSourceProtocol {
         }
     }
 
-    func getAllCategories() async throws -> [IconCategoryInfo] {
+    func getAllCategories() async throws -> [IconCategory] {
         print("[WebIconRepo] getAllCategories begin (cached: \(cachedCategories.count))")
         let remoteCategories = try await getAllRemoteCategories()
         print("[WebIconRepo] getAllCategories remote count: \(remoteCategories.count)")
         let mapped = remoteCategories.map { remoteCategory in
-            IconCategoryInfo(
+            IconCategory(
                 id: remoteCategory.id,
                 name: remoteCategory.name,
                 displayName: remoteCategory.displayName,
@@ -94,7 +94,7 @@ class WebIconRepo: SuperLog, IconSourceProtocol {
         return mapped
     }
 
-    func getCategory(byName name: String) async throws -> IconCategoryInfo? {
+    func getCategory(byName name: String) async throws -> IconCategory? {
         let categories = try await getAllCategories()
         return categories.first { $0.name == name }
     }

@@ -53,7 +53,7 @@ class AppIconRepo: SuperLog, IconSourceProtocol {
         return findIconFolder()
     }
 
-    func getAllCategories() async throws -> [IconCategoryInfo] {
+    func getAllCategories() async throws -> [IconCategory] {
         guard let iconFolderURL = iconFolderURL else {
             os_log(.error, "\(self.t)未找到图标文件夹")
             throw RemoteIconError.networkError
@@ -65,10 +65,10 @@ class AppIconRepo: SuperLog, IconSourceProtocol {
     /// 扫描图标分类
     /// - Parameter folderURL: 图标文件夹URL
     /// - Returns: IconCategoryInfo 分类数组
-    private func scanCategories(from folderURL: URL) -> [IconCategoryInfo] {
+    private func scanCategories(from folderURL: URL) -> [IconCategory] {
         do {
             let items = try FileManager.default.contentsOfDirectory(atPath: folderURL.path)
-            let categories = items.compactMap { item -> IconCategoryInfo? in
+            let categories = items.compactMap { item -> IconCategory? in
                 let categoryURL = folderURL.appendingPathComponent(item)
                 var isDir: ObjCBool = false
 
@@ -80,7 +80,7 @@ class AppIconRepo: SuperLog, IconSourceProtocol {
                 // 计算图标数量
                 let iconCount = getIconCount(in: categoryURL)
 
-                return IconCategoryInfo(
+                return IconCategory(
                     id: item,
                     name: item,
                     iconCount: iconCount,
@@ -114,7 +114,7 @@ class AppIconRepo: SuperLog, IconSourceProtocol {
         }
     }
 
-    func getCategory(byName name: String) async throws -> IconCategoryInfo? {
+    func getCategory(byName name: String) async throws -> IconCategory? {
         let categories = try await getAllCategories()
         return categories.first { $0.name == name }
     }

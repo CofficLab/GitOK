@@ -33,7 +33,7 @@ class CustomFolderIconRepo: IconSourceProtocol {
         }
     }
     
-    func getAllCategories() async -> [IconCategoryInfo] {
+    func getAllCategories() async -> [IconCategory] {
         guard let folderURL = customFolderURL,
               await isAvailable else {
             return []
@@ -41,7 +41,7 @@ class CustomFolderIconRepo: IconSourceProtocol {
         
         do {
             let items = try FileManager.default.contentsOfDirectory(atPath: folderURL.path)
-            let categories = items.compactMap { item -> IconCategoryInfo? in
+            let categories = items.compactMap { item -> IconCategory? in
                 let categoryURL = folderURL.appendingPathComponent(item)
                 var isDir: ObjCBool = false
                 
@@ -53,7 +53,7 @@ class CustomFolderIconRepo: IconSourceProtocol {
                 // 计算图标数量
                 let iconCount = getIconCount(in: categoryURL)
                 
-                return IconCategoryInfo(
+                return IconCategory(
                     id: item,
                     name: item,
                     iconCount: iconCount,
@@ -120,7 +120,7 @@ class CustomFolderIconRepo: IconSourceProtocol {
         return nil
     }
     
-    func getCategory(byName name: String) async -> IconCategoryInfo? {
+    func getCategory(byName name: String) async -> IconCategory? {
         let categories = await getAllCategories()
         return categories.first { $0.name == name }
     }

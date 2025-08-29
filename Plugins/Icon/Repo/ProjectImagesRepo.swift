@@ -94,7 +94,7 @@ class ProjectImagesRepo: IconSourceProtocol, SuperLog {
         }
     }
     
-    func getAllCategories() async -> [IconCategoryInfo] { [] }
+    func getAllCategories() async -> [IconCategory] { [] }
     
     func getIcons(for categoryId: String) async -> [IconAsset] { await getAllIcons() }
 
@@ -120,7 +120,7 @@ class ProjectImagesRepo: IconSourceProtocol, SuperLog {
         return nil
     }
     
-    func getCategory(byName name: String) async -> IconCategoryInfo? {
+    func getCategory(byName name: String) async -> IconCategory? {
         let categories = await getAllCategories()
         return categories.first { $0.name == name }
     }

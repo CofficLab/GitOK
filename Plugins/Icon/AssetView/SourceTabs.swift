@@ -19,7 +19,6 @@ struct SourceTabs: View {
                         isSelected: selectedSourceName == source.sourceName,
                         isAvailable: true,
                         onTap: {
-                            print("[SourceTabs] tap: id=\(source.sourceIdentifier), name=\(source.sourceName)")
                             selectedSourceName = source.sourceName
                         }
                     )
@@ -70,8 +69,8 @@ struct SourceTab: View {
             .hideSidebar()
             .hideProjectActions()
     }
-    .frame(width: 800)
-    .frame(height: 600)
+    .frame(width: 600)
+    .frame(height: 800)
 }
 
 #Preview("App - Big Screen") {
