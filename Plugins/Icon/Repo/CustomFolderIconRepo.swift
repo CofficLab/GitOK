@@ -9,37 +9,26 @@ import MagicCore
  * 演示如何轻松添加新的图标来源
  */
 class CustomFolderIconRepo: IconSourceProtocol {
-    /// 自定义文件夹路径
+    /// 自定义来源唯一标识
+    let sourceIdentifier: String
+    
+    /// 自定义来源显示名称
+    let sourceName: String
+    
+    /// 根文件夹 URL
     private let customFolderURL: URL?
     
-    /// 来源标识符
-    private let identifier: String
-    
-    /// 初始化方法
-    /// - Parameters:
-    ///   - folderPath: 自定义文件夹路径
-    ///   - identifier: 来源标识符（用于区分不同的自定义文件夹）
-    init(folderPath: String, identifier: String = "custom_folder") {
-        self.customFolderURL = URL(fileURLWithPath: folderPath)
-        self.identifier = identifier
-    }
-    
-    // MARK: - IconSourceProtocol Implementation
-    
-    var sourceType: IconSourceType {
-        return .custom
-    }
-    
-    var sourceName: String {
-        return "自定义文件夹 (\(customFolderURL?.lastPathComponent ?? "未知"))"
+    init(identifier: String, name: String, folderURL: URL?) {
+        self.sourceIdentifier = identifier
+        self.sourceName = name
+        self.customFolderURL = folderURL
     }
     
     var isAvailable: Bool {
         get async {
-            guard let folderURL = customFolderURL else { return false }
-            
+            guard let url = customFolderURL else { return false }
             var isDirectory: ObjCBool = false
-            let exists = FileManager.default.fileExists(atPath: folderURL.path, isDirectory: &isDirectory)
+            let exists = FileManager.default.fileExists(atPath: url.path, isDirectory: &isDirectory)
             return exists && isDirectory.boolValue
         }
     }
@@ -68,8 +57,7 @@ class CustomFolderIconRepo: IconSourceProtocol {
                     id: item,
                     name: item,
                     iconCount: iconCount,
-                    sourceType: .custom,
-                    sourceIdentifier: identifier,
+                    sourceIdentifier: self.sourceIdentifier,
                     metadata: [
                         "folderURL": categoryURL.path,
                         "parentFolder": folderURL.path
@@ -85,62 +73,10 @@ class CustomFolderIconRepo: IconSourceProtocol {
         }
     }
     
-    func getIcons(for categoryId: String) async -> [IconAsset] {
-        guard let folderURL = customFolderURL,
-              await isAvailable else {
-            return []
-        }
-        
-        let categoryURL = folderURL.appendingPathComponent(categoryId)
-        
-        do {
-            let files = try FileManager.default.contentsOfDirectory(atPath: categoryURL.path)
-            let supportedFormats = ["png", "svg", "jpg", "jpeg", "gif", "webp", "ico"]
-            
-            let iconFiles = files.filter { filename in
-                let fileExtension = filename.lowercased()
-                return supportedFormats.contains { format in
-                    fileExtension.hasSuffix(".\(format)")
-                }
-            }
-            
-            return iconFiles.map { filename in
-                let fileURL = categoryURL.appendingPathComponent(filename)
-                return IconAsset(fileURL: fileURL)
-            }
-        } catch {
-            os_log(.error, "无法读取自定义分类图标：\(error.localizedDescription)")
-            return []
-        }
-    }
-    
-    func getIconAsset(byId iconId: String) async -> IconAsset? {
-        let categories = await getAllCategories()
-        
-        for category in categories {
-            let icons = await getIcons(for: category.id)
-            if let icon = icons.first(where: { $0.iconId == iconId }) {
-                return icon
-            }
-        }
-        
-        return nil
-    }
-    
-    func getCategory(byName name: String) async -> IconCategoryInfo? {
-        let categories = await getAllCategories()
-        return categories.first { $0.name == name }
-    }
-    
-    // MARK: - Private Methods
-    
-    /// 计算分类下的图标数量
-    /// - Parameter categoryURL: 分类文件夹URL
-    /// - Returns: 图标数量
     private func getIconCount(in categoryURL: URL) -> Int {
         do {
             let files = try FileManager.default.contentsOfDirectory(atPath: categoryURL.path)
-            let supportedFormats = ["png", "svg", "jpg", "jpeg", "gif", "webp", "ico"]
+            let supportedFormats = ["png", "svg", "jpg", "jpeg", "gif", "webp"]
             return files.filter { filename in
                 let fileExtension = filename.lowercased()
                 return supportedFormats.contains { format in
@@ -150,6 +86,43 @@ class CustomFolderIconRepo: IconSourceProtocol {
         } catch {
             return 0
         }
+    }
+    
+    func getIcons(for categoryId: String) async -> [IconAsset] {
+        guard let folderURL = customFolderURL else { return [] }
+        let categoryURL = folderURL.appendingPathComponent(categoryId)
+        do {
+            let files = try FileManager.default.contentsOfDirectory(atPath: categoryURL.path)
+            let supportedFormats = ["png", "svg", "jpg", "jpeg", "gif", "webp"]
+            let iconFiles = files.filter { filename in
+                let fileExtension = filename.lowercased()
+                return supportedFormats.contains { format in
+                    fileExtension.hasSuffix(".\(format)")
+                }
+            }
+            return iconFiles.map { filename in
+                let fileURL = categoryURL.appendingPathComponent(filename)
+                return IconAsset(fileURL: fileURL)
+            }
+        } catch {
+            return []
+        }
+    }
+    
+    func getIconAsset(byId iconId: String) async -> IconAsset? {
+        let categories = await getAllCategories()
+        for category in categories {
+            let icons = await getIcons(for: category.id)
+            if let icon = icons.first(where: { $0.iconId == iconId }) {
+                return icon
+            }
+        }
+        return nil
+    }
+    
+    func getCategory(byName name: String) async -> IconCategoryInfo? {
+        let categories = await getAllCategories()
+        return categories.first { $0.name == name }
     }
 }
 

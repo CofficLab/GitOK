@@ -16,6 +16,12 @@ class AppIconRepo: SuperLog, IconSourceProtocol {
 
     /// 图标文件夹URL
     private let iconFolderURL: URL?
+    
+    /// 来源唯一标识
+    var sourceIdentifier: String { "app_bundle" }
+
+    /// 来源名称（用于显示）
+    var sourceName: String { "本地图标库" }
 
     /// 私有初始化方法，确保单例模式
     private init() {
@@ -23,14 +29,6 @@ class AppIconRepo: SuperLog, IconSourceProtocol {
     }
 
     // MARK: - IconSourceProtocol Implementation
-
-    var sourceType: IconSourceType {
-        return .local
-    }
-
-    var sourceName: String {
-        return "本地图标库"
-    }
 
     var isAvailable: Bool {
         get async {
@@ -86,8 +84,7 @@ class AppIconRepo: SuperLog, IconSourceProtocol {
                     id: item,
                     name: item,
                     iconCount: iconCount,
-                    sourceType: .local,
-                    sourceIdentifier: "app_bundle",
+                    sourceIdentifier: self.sourceIdentifier,
                     metadata: ["folderURL": categoryURL.path]
                 )
             }.sorted { $0.name < $1.name }

@@ -13,8 +13,8 @@ struct IconBox: View {
     
     private var repo = IconRepo.shared
     
-    private var currentSourceType: IconSourceType {
-        availableSources.first(where: { $0.sourceName == selectedSourceName })?.sourceType ?? .local
+    private var currentSourceIdentifier: String? {
+        availableSources.first(where: { $0.sourceName == selectedSourceName })?.sourceIdentifier
     }
 
     var body: some View {
@@ -28,9 +28,9 @@ struct IconBox: View {
             
             // 主体内容：左侧分类 + 右侧图标网格
             HStack(spacing: 0) {
-                // 左侧：分类列表（按来源类型过滤）
+                // 左侧：分类列表（按来源标识过滤）
                 CategoryList(
-                    selectedSourceType: currentSourceType,
+                    selectedSourceIdentifier: currentSourceIdentifier,
                     selectedCategory: iconProvider.selectedCategory
                 )
                 .frame(width: 200)

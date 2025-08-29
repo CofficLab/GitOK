@@ -38,10 +38,9 @@ class IconRepo: SuperLog {
     /// 添加图标来源
     /// - Parameter source: 图标来源实例
     func addIconSource(_ source: IconSourceProtocol) {
-        // 避免重复添加相同类型和标识的来源
+        // 避免重复添加相同标识的来源
         if !iconSources.contains(where: { existingSource in
-            existingSource.sourceType == source.sourceType && 
-            existingSource.sourceName == source.sourceName
+            existingSource.sourceIdentifier == source.sourceIdentifier
         }) {
             iconSources.append(source)
             os_log(.info, "\(self.t)添加图标来源：\(source.sourceName)")
@@ -49,13 +48,12 @@ class IconRepo: SuperLog {
     }
     
     /// 移除图标来源
-    /// - Parameter sourceType: 来源类型
-    /// - Parameter sourceName: 来源名称
-    func removeIconSource(type: IconSourceType, name: String) {
+    /// - Parameter sourceIdentifier: 来源唯一标识
+    func removeIconSource(identifier sourceIdentifier: String) {
         iconSources.removeAll { source in
-            source.sourceType == type && source.sourceName == name
+            source.sourceIdentifier == sourceIdentifier
         }
-        os_log(.info, "\(self.t)移除图标来源：\(name)")
+        os_log(.info, "\(self.t)移除图标来源：\(sourceIdentifier)")
     }
     
     /// 获取所有可用的图标来源
@@ -64,47 +62,34 @@ class IconRepo: SuperLog {
         return iconSources
     }
     
-    /// 获取指定类型的图标来源
-    /// - Parameter sourceType: 来源类型
-    /// - Returns: 匹配的图标来源数组
-    func getIconSources(byType sourceType: IconSourceType) -> [IconSourceProtocol] {
-        return iconSources.filter { $0.sourceType == sourceType }
-    }
-    
     // MARK: - 核心业务接口
     
     /// 获取所有可用的图标分类
-    /// - Parameter enableRemote: 是否启用远程分类，默认启用
+    /// - Parameter enableRemote: 是否启用远程分类，默认启用（保留开关向后兼容）
     /// - Returns: IconCategoryInfo 数组
     func getAllCategories(enableRemote: Bool = true) async -> [IconCategoryInfo] {
         var allCategories: [IconCategoryInfo] = []
+        print("[IconRepo] getAllCategories from sources: \(iconSources.count)")
         
         for source in iconSources {
-            // 根据设置过滤远程来源
-            if !enableRemote && source.sourceType == .remote {
-                continue
-            }
-            
-            // 检查来源是否可用
-            if await source.isAvailable {
-                let categories = await source.getAllCategories()
-                allCategories.append(contentsOf: categories)
-            }
+            print("[IconRepo] pulling from source: \(source.sourceName) [id=\(source.sourceIdentifier)]")
+            let categories = await source.getAllCategories()
+            print("[IconRepo] source returned: \(categories.count) categories")
+            allCategories.append(contentsOf: categories)
         }
         
-        // 去重（基于 id + sourceType + sourceIdentifier）
         var uniqueCategories: [IconCategoryInfo] = []
         var seenKeys: Set<String> = []
         
         for category in allCategories {
-            let key = "\(category.id)_\(category.sourceType)_\(category.sourceIdentifier)"
+            let key = "\(category.id)_\(category.sourceIdentifier)"
             if !seenKeys.contains(key) {
                 seenKeys.insert(key)
                 uniqueCategories.append(category)
             }
         }
+        print("[IconRepo] unique categories: \(uniqueCategories.count)")
         
-        // 按名称排序
         return uniqueCategories.sorted { $0.name < $1.name }
     }
 
@@ -112,20 +97,14 @@ class IconRepo: SuperLog {
     /// - Parameter categoryInfo: 分类信息
     /// - Returns: IconAsset 数组
     func getIcons(for categoryInfo: IconCategoryInfo) async -> [IconAsset] {
-        // 找到对应的图标来源
-        let matchingSources = iconSources.filter { source in
-            source.sourceType == categoryInfo.sourceType
+        // 找到对应的图标来源（按 sourceIdentifier 精确匹配）
+        guard let source = iconSources.first(where: { $0.sourceIdentifier == categoryInfo.sourceIdentifier }) else {
+            return []
         }
         
-        for source in matchingSources {
-            if await source.isAvailable {
-                let icons = await source.getIcons(for: categoryInfo.id)
-                if !icons.isEmpty {
-                    return icons
-                }
-            }
+        if await source.isAvailable {
+            return await source.getIcons(for: categoryInfo.id)
         }
-        
         return []
     }
 
@@ -139,9 +118,8 @@ class IconRepo: SuperLog {
     
     /// 根据图标ID获取图标
     /// - Parameter iconId: 图标ID
-    /// - Returns: IconAsset实例，如果找不到则返回nil
+    /// - Returns: 图标Asset实例，如果找不到则返回nil
     func getIconAsset(byId iconId: String) async -> IconAsset? {
-        // 遍历所有可用的图标来源
         for source in iconSources {
             if await source.isAvailable {
                 if let icon = await source.getIconAsset(byId: iconId) {
@@ -149,7 +127,6 @@ class IconRepo: SuperLog {
                 }
             }
         }
-        
         return nil
     }
 }

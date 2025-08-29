@@ -7,7 +7,7 @@ import SwiftUI
  * 支持分类选择、搜索和滚动浏览
  */
 struct CategoryList: View {
-    let selectedSourceType: IconSourceType
+    let selectedSourceIdentifier: String?
     let selectedCategory: IconCategoryInfo?
     
     @EnvironmentObject var iconProvider: IconProvider
@@ -16,11 +16,12 @@ struct CategoryList: View {
     @State private var isLoading: Bool = false
     
     private var filteredCategories: [IconCategoryInfo] {
-        if searchText.isEmpty {
-            return categories
-        } else {
-            return categories.filter { $0.name.localizedCaseInsensitiveContains(searchText) }
+        let list = categories.filter { category in
+            guard let sid = selectedSourceIdentifier else { return true }
+            return category.sourceIdentifier == sid
         }
+        if searchText.isEmpty { return list }
+        return list.filter { $0.name.localizedCaseInsensitiveContains(searchText) }
     }
     
     var body: some View {
@@ -48,6 +49,7 @@ struct CategoryList: View {
                         .padding(.horizontal, 16)
                     Spacer()
                 }
+                .onAppear { print("[CategoryList] filtered empty. selectedSourceIdentifier=\(selectedSourceIdentifier ?? "nil"), total=\(categories.count)") }
             } else {
                 ScrollView {
                     LazyVStack(spacing: 0) {
@@ -56,6 +58,7 @@ struct CategoryList: View {
                                 category: category,
                                 isSelected: selectedCategory?.id == category.id
                             ) {
+                                print("[CategoryList] select category: \(category.id) from \(category.sourceIdentifier)")
                                 iconProvider.selectCategory(category)
                             }
                         }
@@ -63,29 +66,32 @@ struct CategoryList: View {
                 }
             }
         }
-        .onAppear {
-            loadCategories()
-        }
-        .onChange(of: selectedSourceType) {
+        .onAppear { loadCategories() }
+        .onChange(of: selectedSourceIdentifier) { _ in 
+            print("[CategoryList] selectedSourceIdentifier changed to: \(selectedSourceIdentifier ?? "nil")")
             loadCategories()
         }
     }
     
-    /// 加载指定来源的分类
+    /// 加载所有分类
     private func loadCategories() {
         isLoading = true
-        
         Task {
+            print("[CategoryList] loading categories...")
             let allCategories = await IconRepo.shared.getAllCategories(enableRemote: true)
-            let filteredCategories = allCategories.filter { $0.sourceType == selectedSourceType }
-            
             await MainActor.run {
-                self.categories = filteredCategories.sorted { $0.name < $1.name }
+                self.categories = allCategories.sorted { $0.name < $1.name }
                 self.isLoading = false
+                print("[CategoryList] loaded categories: total=\(self.categories.count)")
+                if let sid = selectedSourceIdentifier {
+                    let count = self.categories.filter { $0.sourceIdentifier == sid }.count
+                    print("[CategoryList] filter by sid=\(sid) -> count=\(count)")
+                }
                 
-                // 如果当前选中的分类不在新来源中，清空选择
                 if let selectedCategory = selectedCategory,
-                   !filteredCategories.contains(where: { $0.id == selectedCategory.id }) {
+                   let sid = selectedSourceIdentifier,
+                   selectedCategory.sourceIdentifier != sid {
+                    print("[CategoryList] clearSelectedCategory due to sid mismatch")
                     iconProvider.clearSelectedCategory()
                 }
             }
