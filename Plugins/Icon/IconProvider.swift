@@ -21,8 +21,7 @@ class IconProvider: NSObject, ObservableObject, SuperLog {
     /// 当前选中的分类
     @Published var selectedCategory: IconCategoryInfo?
     
-    /// 是否启用网络仓库，默认启用
-    @Published var enableRemoteRepository: Bool = true
+
     
     /// 当前选中的图标分类名称（兼容性属性）
     var selectedCategoryName: String {
@@ -96,12 +95,7 @@ class IconProvider: NSObject, ObservableObject, SuperLog {
         self.selectedCategory = category
     }
     
-    /**
-        切换网络仓库启用状态
-     */
-    func toggleRemoteRepository() {
-        self.enableRemoteRepository.toggle()
-    }
+
 }
 
 #Preview("App - Small Screen") {

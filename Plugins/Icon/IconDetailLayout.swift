@@ -35,9 +35,18 @@ struct IconDetailLayout: View {
                             .frame(maxHeight: .infinity)
                             .background(.orange.opacity(0.05))
 
-                        // 下载区域
-                        DownloadButtons()
-                            .background(.red.opacity(0.05))
+                        // 右侧功能区域
+                        VStack(spacing: 16) {
+                            // 自定义图片按钮
+                            CustomImageButton()
+                            
+                            // 下载区域
+                            DownloadButtons()
+                                .background(.red.opacity(0.05))
+                        }
+                        .padding(.vertical, 16)
+                        .padding(.horizontal, 12)
+                        .background(.purple.opacity(0.05))
                     }
                     .background(.cyan.opacity(0.05))
                 }

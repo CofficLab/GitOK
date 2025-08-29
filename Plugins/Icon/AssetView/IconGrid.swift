@@ -12,11 +12,9 @@ struct IconGrid: View {
     @State private var isLoading: Bool = false
     
     let selectedCategory: IconCategoryInfo?
-    let enableRemote: Bool
     
-    init(selectedCategory: IconCategoryInfo?, enableRemote: Bool) {
+    init(selectedCategory: IconCategoryInfo?) {
         self.selectedCategory = selectedCategory
-        self.enableRemote = enableRemote
     }
     
     var body: some View {

@@ -19,15 +19,14 @@ struct IconBox: View {
 
             // 图标网格
             IconGrid(
-                selectedCategory: iconProvider.selectedCategory,
-                enableRemote: iconProvider.enableRemoteRepository
+                selectedCategory: iconProvider.selectedCategory
             )
         }
         .onAppear {
             // 确保有选中的分类，如果没有则选择第一个
             if iconProvider.selectedCategory == nil {
                 Task {
-                    let categories = await repo.getAllCategories(enableRemote: iconProvider.enableRemoteRepository)
+                    let categories = await repo.getAllCategories(enableRemote: true)
                     if let firstCategory = categories.first {
                         await MainActor.run {
                             iconProvider.selectCategory(firstCategory)
