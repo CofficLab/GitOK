@@ -111,6 +111,19 @@ class IconRepo: SuperLog {
         return []
     }
 
+    /// 获取指定来源的所有图标（用于不支持分类的来源）
+    /// - Parameter sourceIdentifier: 来源标识
+    /// - Returns: 该来源下的所有图标
+    func getAllIcons(for sourceIdentifier: String) async -> [IconAsset] {
+        guard let source = iconSources.first(where: { $0.sourceIdentifier == sourceIdentifier }) else {
+            return []
+        }
+        if await source.isAvailable {
+            return await source.getAllIcons()
+        }
+        return []
+    }
+
     /// 获取指定名称的分类
     /// - Parameter name: 分类名称
     /// - Returns: IconCategoryInfo 实例，如果不存在则返回nil

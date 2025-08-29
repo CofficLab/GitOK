@@ -18,6 +18,9 @@ class ProjectImagesRepo: IconSourceProtocol, SuperLog {
     // 支持增删
     var supportsMutations: Bool { true }
     
+    // 不支持分类（聚合展示）
+    var supportsCategories: Bool { false }
+    
     // 基础配置
     private let imagesRelativePath = ".gitok/images"
     private let supportedFormats = ["png", "svg", "jpg", "jpeg", "gif", "webp"]
@@ -95,36 +98,28 @@ class ProjectImagesRepo: IconSourceProtocol, SuperLog {
         }
     }
     
-    func getAllCategories() async -> [IconCategoryInfo] {
-        guard let imagesURL = currentProjectImagesURL() else { return [] }
-        var isDir: ObjCBool = false
-        guard FileManager.default.fileExists(atPath: imagesURL.path, isDirectory: &isDir), isDir.boolValue else { return [] }
-        
-        // 最小实现：提供一个聚合分类 "Project Images"
-        let iconFiles = listImageFiles(in: imagesURL)
-        let category = IconCategoryInfo(
-            id: "project_images",
-            name: "Project Images",
-            iconCount: iconFiles.count,
-            sourceIdentifier: sourceIdentifier,
-            metadata: ["folder": imagesURL.path]
-        )
-        return [category]
-    }
+    func getAllCategories() async -> [IconCategoryInfo] { [] }
     
-    func getIcons(for categoryId: String) async -> [IconAsset] {
-        guard categoryId == "project_images", let imagesURL = currentProjectImagesURL() else { return [] }
+    func getIcons(for categoryId: String) async -> [IconAsset] { await getAllIcons() }
+
+    func getAllIcons() async -> [IconAsset] {
+        guard let imagesURL = currentProjectImagesURL() else { return [] }
         let files = listImageFiles(in: imagesURL)
         return files.map { fileURL in IconAsset(fileURL: fileURL) }
     }
     
     func getIconAsset(byId iconId: String) async -> IconAsset? {
-        let categories = await getAllCategories()
-        for category in categories {
-            let icons = await getIcons(for: category.id)
-            if let icon = icons.first(where: { $0.iconId == iconId }) {
-                return icon
+        // 不支持分类：直接在所有文件中查找
+        let icons = await getAllIcons()
+        // 支持匹配去扩展名的文件名以及完整文件名
+        if let found = icons.first(where: { asset in
+            if asset.iconId == iconId { return true }
+            if let name = asset.fileURL?.lastPathComponent {
+                return name == iconId || name.hasPrefix(iconId + ".")
             }
+            return false
+        }) {
+            return found
         }
         return nil
     }

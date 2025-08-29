@@ -79,8 +79,11 @@ struct IconView: View {
         isLoading = true
         Task {
             let image = await iconAsset.getImage()
-            loadedImage = image
-            isLoading = false
+            
+            withAnimation {
+                loadedImage = image
+                isLoading = false
+            }
         }
     }
 }

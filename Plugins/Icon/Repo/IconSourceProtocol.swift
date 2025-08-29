@@ -19,6 +19,9 @@ protocol IconSourceProtocol {
     /// 该来源是否支持增删图标
     var supportsMutations: Bool { get }
     
+    /// 该来源是否支持分类
+    var supportsCategories: Bool { get }
+    
     /// 获取所有可用的图标分类
     /// - Returns: 分类数组
     func getAllCategories() async -> [IconCategoryInfo]
@@ -27,6 +30,9 @@ protocol IconSourceProtocol {
     /// - Parameter categoryId: 分类标识符
     /// - Returns: 图标数组
     func getIcons(for categoryId: String) async -> [IconAsset]
+    
+    /// 获取该来源下的所有图标（当不支持分类时调用）
+    func getAllIcons() async -> [IconAsset]
     
     /// 根据图标ID获取图标资源
     /// - Parameter iconId: 图标ID
@@ -47,6 +53,18 @@ protocol IconSourceProtocol {
 
 extension IconSourceProtocol {
     var supportsMutations: Bool { false }
+    var supportsCategories: Bool { true }
+    
+    func getAllIcons() async -> [IconAsset] {
+        // 默认实现：聚合所有分类下的图标
+        let categories = await getAllCategories()
+        var all: [IconAsset] = []
+        for category in categories {
+            let icons = await getIcons(for: category.id)
+            all.append(contentsOf: icons)
+        }
+        return all
+    }
     func addImage(data: Data, filename: String) async -> Bool { false }
     func deleteImage(filename: String) async -> Bool { false }
 }

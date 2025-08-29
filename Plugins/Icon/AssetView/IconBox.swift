@@ -16,6 +16,11 @@ struct IconBox: View {
     private var currentSourceIdentifier: String? {
         availableSources.first(where: { $0.sourceName == selectedSourceName })?.sourceIdentifier
     }
+    
+    private var currentSourceSupportsCategories: Bool {
+        guard let sid = currentSourceIdentifier else { return true }
+        return availableSources.first(where: { $0.sourceIdentifier == sid })?.supportsCategories ?? true
+    }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -26,29 +31,43 @@ struct IconBox: View {
             )
             .frame(height: 40)
             
-            // 主体内容：左侧分类 + 右侧图标网格
+            // 主体内容：左侧分类（可选） + 右侧图标网格
             HStack(spacing: 0) {
-                // 左侧：分类列表（按来源标识过滤）
-                CategoryList(
-                    selectedSourceIdentifier: currentSourceIdentifier,
-                    selectedCategory: iconProvider.selectedCategory
-                )
-                .frame(width: 200)
-                .background(Color(.controlBackgroundColor))
-                
-                // 分隔线
-                Divider()
-                    .frame(width: 1)
+                if currentSourceSupportsCategories {
+                    // 左侧：分类列表（按来源标识过滤）
+                    CategoryList(
+                        selectedSourceIdentifier: currentSourceIdentifier,
+                        selectedCategory: iconProvider.selectedCategory
+                    )
+                    .frame(width: 200)
+                    .background(Color(.controlBackgroundColor))
+                    
+                    // 分隔线
+                    Divider()
+                        .frame(width: 1)
+                }
                 
                 // 右侧：图标网格
                 IconGrid(
-                    selectedCategory: iconProvider.selectedCategory
+                    selectedCategory: iconProvider.selectedCategory,
+                    selectedSourceIdentifier: currentSourceIdentifier
                 )
             }
         }
         .onAppear {
             loadAvailableSources()
             ensureDefaultSelection()
+        }
+        .onChange(of: selectedSourceName) { _ in
+            // 当切换来源时，校正已选分类
+            guard let sid = currentSourceIdentifier,
+                  let source = availableSources.first(where: { $0.sourceIdentifier == sid }) else { return }
+            if source.supportsCategories == false {
+                iconProvider.clearSelectedCategory()
+            } else if let selected = iconProvider.selectedCategory,
+                      selected.sourceIdentifier != sid {
+                iconProvider.clearSelectedCategory()
+            }
         }
     }
     
