@@ -8,25 +8,29 @@ import SwiftUI
  */
 struct IconBox: View {
     @EnvironmentObject var iconProvider: IconProvider
-    @State private var selectedSourceType: IconSourceType = .local
+    @State private var selectedSourceName: String? = nil
     @State private var availableSources: [IconSourceProtocol] = []
     
     private var repo = IconRepo.shared
+    
+    private var currentSourceType: IconSourceType {
+        availableSources.first(where: { $0.sourceName == selectedSourceName })?.sourceType ?? .local
+    }
 
     var body: some View {
         VStack(spacing: 0) {
-            // 顶部：仓库来源选择tab
+            // 顶部：仓库来源选择tab（使用来源名称）
             SourceTabs(
-                selectedSourceType: $selectedSourceType,
+                selectedSourceName: $selectedSourceName,
                 availableSources: availableSources
             )
             .frame(height: 40)
             
             // 主体内容：左侧分类 + 右侧图标网格
             HStack(spacing: 0) {
-                // 左侧：分类列表
+                // 左侧：分类列表（按来源类型过滤）
                 CategoryList(
-                    selectedSourceType: selectedSourceType,
+                    selectedSourceType: currentSourceType,
                     selectedCategory: iconProvider.selectedCategory
                 )
                 .frame(width: 200)
@@ -55,13 +59,16 @@ struct IconBox: View {
     
     /// 确保有默认选择
     private func ensureDefaultSelection() {
+        if selectedSourceName == nil {
+            selectedSourceName = availableSources.first?.sourceName
+        }
+        
         if iconProvider.selectedCategory == nil {
             Task {
                 let categories = await repo.getAllCategories(enableRemote: true)
                 if let firstCategory = categories.first {
                     await MainActor.run {
                         iconProvider.selectCategory(firstCategory)
-                        selectedSourceType = firstCategory.sourceType
                     }
                 }
             }

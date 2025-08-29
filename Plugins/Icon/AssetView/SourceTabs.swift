@@ -3,23 +3,23 @@ import SwiftUI
 
 /**
  * 仓库来源选择标签页组件
- * 负责显示所有可用的图标来源，支持切换不同的来源类型
- * 顶部水平排列的标签页，显示本地、远程等不同来源
+ * 负责显示所有可用的图标来源（使用各自自定义名称），支持切换不同的来源
+ * 顶部水平排列的标签页
  */
 struct SourceTabs: View {
-    @Binding var selectedSourceType: IconSourceType
+    @Binding var selectedSourceName: String?
     let availableSources: [IconSourceProtocol]
     
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 0) {
-                ForEach(IconSourceType.allCases, id: \.self) { sourceType in
+                ForEach(availableSources, id: \.sourceName) { source in
                     SourceTab(
-                        sourceType: sourceType,
-                        isSelected: selectedSourceType == sourceType,
-                        isAvailable: availableSources.contains { $0.sourceType == sourceType }
+                        title: source.sourceName,
+                        isSelected: selectedSourceName == source.sourceName,
+                        isAvailable: true
                     ) {
-                        selectedSourceType = sourceType
+                        selectedSourceName = source.sourceName
                     }
                 }
             }
@@ -37,10 +37,10 @@ struct SourceTabs: View {
 
 /**
  * 单个仓库来源标签组件
- * 显示来源类型名称和可用状态，支持点击选择
+ * 显示来源名称和可用状态，支持点击选择
  */
 struct SourceTab: View {
-    let sourceType: IconSourceType
+    let title: String
     let isSelected: Bool
     let isAvailable: Bool
     let onTap: () -> Void
@@ -48,7 +48,7 @@ struct SourceTab: View {
     var body: some View {
         Button(action: onTap) {
             VStack(spacing: 4) {
-                Text(sourceType.displayName)
+                Text(title)
                     .font(.system(size: 13, weight: isSelected ? .semibold : .medium))
                     .foregroundColor(isSelected ? .accentColor : (isAvailable ? .primary : .secondary))
                 
