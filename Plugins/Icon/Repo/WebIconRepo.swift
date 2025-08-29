@@ -58,7 +58,7 @@ class WebIconRepo: SuperLog, IconSourceProtocol {
     // MARK: - IconSourceProtocol Implementation
 
     var sourceIdentifier: String { "gitok_api" }
-    var sourceName: String { "GitOK 远程图标库" }
+    var sourceName: String { "网络图标库" }
 
     var isAvailable: Bool {
         get async {
@@ -378,6 +378,7 @@ class WebIconRepo: SuperLog, IconSourceProtocol {
         ContentLayout()
             .setInitialTab(IconPlugin.label)
             .hideSidebar()
+            .hideTabPicker()
             .hideProjectActions()
     }
     .frame(width: 800)
@@ -389,6 +390,8 @@ class WebIconRepo: SuperLog, IconSourceProtocol {
         ContentLayout()
             .setInitialTab(IconPlugin.label)
             .hideSidebar()
+            .hideTabPicker()
+            .hideProjectActions()
     }
     .frame(width: 800)
     .frame(height: 1200)

@@ -5,6 +5,8 @@ struct IconDetailLayout: View {
     @EnvironmentObject var i: IconProvider
     @EnvironmentObject var g: DataProvider
     @State private var showWelcome = false
+    @State private var icons: [IconData] = []
+    @State private var selection: IconData?
 
     static let shared = IconDetailLayout()
 
@@ -14,7 +16,11 @@ struct IconDetailLayout: View {
                 IconWelcomeView()
             } else {
                 VStack(spacing: 0) {
+                    IconTabsBar(icons: icons, selection: $selection)
+                        .background(.gray.opacity(0.1))
+
                     IconBgs()
+                        .padding(.vertical, 2)
                         .background(.blue.opacity(0.05))
 
                     // 图标调整工具
@@ -45,15 +51,29 @@ struct IconDetailLayout: View {
         }
         .onAppear {
             checkWelcome()
+            refreshIcons()
+            selection = icons.first
         }
         .onNotification(.iconDidSave, perform: { _ in
             self.showWelcome = false
+            let selectedPath = selection?.path
+            refreshIcons()
+            if let selectedPath = selectedPath {
+                selection = icons.first(where: { $0.path == selectedPath })
+            } else {
+                selection = icons.first
+            }
         })
         .onNotification(.iconDidDelete, perform: { _ in
             checkWelcome()
+            refreshIcons()
         })
         .onChange(of: g.project) {
             checkWelcome()
+            refreshIcons()
+        }
+        .onChange(of: selection) { _, newValue in
+            i.updateCurrentModel(newModel: newValue)
         }
     }
 
@@ -64,6 +84,14 @@ struct IconDetailLayout: View {
 
         let icons = ProjectIconRepo.getIconData(from: project)
         self.showWelcome = icons.isEmpty
+    }
+
+    private func refreshIcons() {
+        if let project = g.project {
+            icons = ProjectIconRepo.getIconData(from: project)
+        } else {
+            icons = []
+        }
     }
 }
 
@@ -80,7 +108,9 @@ struct IconDetailLayout: View {
 
 #Preview("App - Big Screen") {
     RootView {
-        ContentLayout().setInitialTab(IconPlugin.label)
+        ContentLayout()
+            .hideProjectActions()
+            .setInitialTab(IconPlugin.label)
             .hideSidebar()
             .setInitialTab(IconPlugin.label)
     }

@@ -10,14 +10,6 @@ class IconPlugin: SuperPlugin, SuperLog {
     
     private init() {}
 
-    func addListView(tab: String, project: Project?) -> AnyView? {
-        if Self.label == tab {
-            AnyView(IconList())
-        } else {
-            nil
-        }
-    }
-
     func addDetailView() -> AnyView? {
         AnyView(IconDetailLayout.shared)
     }

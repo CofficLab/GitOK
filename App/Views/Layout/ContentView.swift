@@ -68,17 +68,7 @@ struct ContentView: View, SuperLog {
                     title: "项目不存在"
                 ).setIconColor(.red.opacity(0.5))
             } else {
-                HSplitView {
-                    VStack(spacing: 0) {
-                        ForEach(pluginListViews, id: \.plugin.instanceLabel) { item in
-                            item.view
-                        }
-                    }
-                    .frame(idealWidth: 200)
-                    .frame(minWidth: 120)
-                    .frame(maxWidth: 300)
-                    .frame(maxHeight: .infinity)
-
+                if pluginListViews.isEmpty {
                     VStack(spacing: 0) {
                         p.tabPlugins.first { $0.instanceLabel == tab }?.addDetailView()
 
@@ -87,6 +77,27 @@ struct ContentView: View, SuperLog {
                         }
                     }
                     .frame(maxHeight: .infinity)
+                } else {
+                    HSplitView {
+                        VStack(spacing: 0) {
+                            ForEach(pluginListViews, id: \.plugin.instanceLabel) { item in
+                                item.view
+                            }
+                        }
+                        .frame(idealWidth: 200)
+                        .frame(minWidth: 120)
+                        .frame(maxWidth: 300)
+                        .frame(maxHeight: .infinity)
+
+                        VStack(spacing: 0) {
+                            p.tabPlugins.first { $0.instanceLabel == tab }?.addDetailView()
+
+                            if statusBarVisibility {
+                                StatusBar()
+                            }
+                        }
+                        .frame(maxHeight: .infinity)
+                    }
                 }
             }
         }
