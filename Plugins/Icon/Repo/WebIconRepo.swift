@@ -77,9 +77,7 @@ class WebIconRepo: SuperLog, IconSourceProtocol {
     }
 
     func getAllCategories() async throws -> [IconCategory] {
-        print("[WebIconRepo] getAllCategories begin (cached: \(cachedCategories.count))")
         let remoteCategories = try await getAllRemoteCategories()
-        print("[WebIconRepo] getAllCategories remote count: \(remoteCategories.count)")
         let mapped = remoteCategories.map { remoteCategory in
             IconCategory(
                 id: remoteCategory.id,
@@ -90,7 +88,6 @@ class WebIconRepo: SuperLog, IconSourceProtocol {
                 metadata: ["remoteIconIds": remoteCategory.remoteIconIds.count]
             )
         }
-        print("[WebIconRepo] getAllCategories mapped count: \(mapped.count)")
         return mapped
     }
 
@@ -139,7 +136,6 @@ class WebIconRepo: SuperLog, IconSourceProtocol {
     func getAllRemoteCategories() async throws -> [RemoteIconCategory] {
         // 检查缓存是否有效
         if isCacheValid() {
-            print("[WebIconRepo] using cached categories: \(cachedCategories.count)")
             return cachedCategories
         }
 

@@ -15,6 +15,7 @@ struct CategoryList: View {
     @State private var categories: [IconCategory] = []
     @State private var searchText: String = ""
     @State private var isLoading: Bool = false
+    @State private var error: Error? = nil
 
     private var currentSourceSupportsMutations: Bool {
         guard let sid = selectedSourceIdentifier else { return false }
@@ -45,6 +46,8 @@ struct CategoryList: View {
                         .frame(maxWidth: .infinity)
                     Spacer()
                 }
+            } else if let error = error {
+                error.makeView()
             } else if filteredCategories.isEmpty {
                 VStack {
                     Spacer()
@@ -55,7 +58,6 @@ struct CategoryList: View {
                         .padding(.horizontal, 16)
                     Spacer()
                 }
-                .onAppear { print("[CategoryList] filtered empty. selectedSourceIdentifier=\(selectedSourceIdentifier ?? "nil"), total=\(categories.count)") }
             } else {
                 ScrollView {
                     LazyVStack(spacing: 0) {
@@ -64,7 +66,6 @@ struct CategoryList: View {
                                 category: category,
                                 isSelected: selectedCategory?.id == category.id
                             ) {
-                                print("[CategoryList] select category: \(category.id) from \(category.sourceIdentifier)")
                                 iconProvider.selectCategory(category)
                             }
                         }
@@ -82,21 +83,30 @@ struct CategoryList: View {
     private func loadCategories() {
         isLoading = true
         Task {
-            print("[CategoryList] loading categories...")
-            let allCategories = await IconRepo.shared.getAllCategories()
+            let allCategories: [IconCategory]
+            
+            if let sid = selectedSourceIdentifier {
+                // 只加载指定来源的分类
+                do {
+                    allCategories = try await IconRepo.shared.getAllCategories(for: sid)
+                    await MainActor.run { self.error = nil }
+                } catch {
+                    allCategories = []
+                    await MainActor.run { self.error = error }
+                }
+            } else {
+                // 没有指定来源时，分类列表为空
+                allCategories = []
+                await MainActor.run { self.error = nil }
+            }
+            
             await MainActor.run {
                 self.categories = allCategories.sorted { $0.name < $1.name }
                 self.isLoading = false
-                print("[CategoryList] loaded categories: total=\(self.categories.count)")
-                if let sid = selectedSourceIdentifier {
-                    let count = self.categories.filter { $0.sourceIdentifier == sid }.count
-                    print("[CategoryList] filter by sid=\(sid) -> count=\(count)")
-                }
 
                 if let selectedCategory = selectedCategory,
                    let sid = selectedSourceIdentifier,
                    selectedCategory.sourceIdentifier != sid {
-                    print("[CategoryList] clearSelectedCategory due to sid mismatch")
                     iconProvider.clearSelectedCategory()
                 }
             }

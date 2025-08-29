@@ -75,16 +75,16 @@ struct IconBox: View {
             selectedSourceName = availableSources.first?.sourceName
         }
 
-        if iconProvider.selectedCategory == nil {
-            Task {
-                let categories = await repo.getAllCategories()
-                if let firstCategory = categories.first {
-                    await MainActor.run {
-                        iconProvider.selectCategory(firstCategory)
-                    }
-                }
-            }
-        }
+//        if iconProvider.selectedCategory == nil {
+//            Task {
+//                let categories = await repo.getAllCategories()
+//                if let firstCategory = categories.first {
+//                    await MainActor.run {
+//                        iconProvider.selectCategory(firstCategory)
+//                    }
+//                }
+//            }
+//        }
     }
 }
 
@@ -100,14 +100,14 @@ extension IconBox {
         iconProvider.selectedSourceIdentifier = sid
 
         // 若新来源支持分类且当前未选择分类，则选择该来源的第一个分类
-        Task {
-            let categories = await repo.getAllCategories()
-            if let first = categories.first(where: { $0.sourceIdentifier == sid }) {
-                await MainActor.run {
-                    iconProvider.selectCategory(first)
-                }
-            }
-        }
+//        Task {
+//            let categories = await repo.getAllCategories()
+//            if let first = categories.first(where: { $0.sourceIdentifier == sid }) {
+//                await MainActor.run {
+//                    iconProvider.selectCategory(first)
+//                }
+//            }
+//        }
     }
 }
 

@@ -69,7 +69,7 @@ class IconRepo: SuperLog {
     
     /// 获取所有可用的图标分类
     /// - Returns: IconCategoryInfo 数组
-    func getAllCategories() async -> [IconCategory] {
+    func getAllCatekgories() async -> [IconCategory] {
         var allCategories: [IconCategory] = []
         
         for source in iconSources {
@@ -94,6 +94,19 @@ class IconRepo: SuperLog {
         print("[IconRepo] unique categories: \(uniqueCategories.count)")
         
         return uniqueCategories.sorted { $0.name < $1.name }
+    }
+
+    /// 获取指定来源的所有分类
+    /// - Parameter sourceIdentifier: 来源标识
+    /// - Returns: 该来源下的分类数组
+    func getAllCategories(for sourceIdentifier: String) async throws -> [IconCategory] {
+        guard let source = iconSources.first(where: { $0.sourceIdentifier == sourceIdentifier }) else {
+            return []
+        }
+        if await source.isAvailable {
+            return try await source.getAllCategories()
+        }
+        return []
     }
 
     /// 获取指定分类的图标列表
@@ -150,10 +163,10 @@ class IconRepo: SuperLog {
     /// 获取指定名称的分类
     /// - Parameter name: 分类名称
     /// - Returns: IconCategoryInfo 实例，如果不存在则返回nil
-    func getCategory(byName name: String) async -> IconCategory? {
-        let allCategories = await getAllCategories()
-        return allCategories.first { $0.name == name }
-    }
+//    func getCateg9ory(byName name: String) async -> IconCategory? {
+//        let allCategories = await getAllCategories()
+//        return allCategories.first { $0.name == name }
+//    }
     
     /// 根据图标ID获取图标
     /// - Parameter iconId: 图标ID
