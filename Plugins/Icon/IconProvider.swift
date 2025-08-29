@@ -21,6 +21,9 @@ class IconProvider: NSObject, ObservableObject, SuperLog {
     /// 当前选中的分类
     @Published var selectedCategory: IconCategoryInfo?
 
+    /// 当前选中的图标来源标识（用于无分类来源的增删操作）
+    @Published var selectedSourceIdentifier: String? = nil
+
     /// 当前选中的图标分类名称（兼容性属性）
     var selectedCategoryName: String {
         return selectedCategory?.name ?? ""
@@ -108,12 +111,8 @@ class IconProvider: NSObject, ObservableObject, SuperLog {
         - Returns: 是否成功
      */
     func addImageToProjectLibrary(data: Data, filename: String) -> Bool {
-        let ok = ProjectImagesRepo.shared.addImage(data: data, filename: filename)
-        if ok {
-            print("[IconProvider] addImageToProjectLibrary success: \(filename)")
-        } else {
-            print("[IconProvider] addImageToProjectLibrary failed: \(filename)")
-        }
+        guard let sid = selectedCategory?.sourceIdentifier ?? selectedSourceIdentifier else { return false }
+        let ok = awaitResult { await IconRepo.shared.addImage(data: data, filename: filename, to: sid) }
         return ok
     }
 
@@ -123,21 +122,25 @@ class IconProvider: NSObject, ObservableObject, SuperLog {
         - Returns: 是否成功
      */
     func deleteImageFromProjectLibrary(filename: String) -> Bool {
-        let ok = ProjectImagesRepo.shared.deleteImage(filename: filename)
+        guard let sid = selectedCategory?.sourceIdentifier ?? selectedSourceIdentifier else { return false }
+        let ok = awaitResult { await IconRepo.shared.deleteImage(filename: filename, from: sid) }
         if ok {
-            print("[IconProvider] deleteImageFromProjectLibrary success: \(filename)")
-            // 如果当前选中图标属于项目图标库且同名，则清空选中
-            if let currentCategory = selectedCategory,
-               currentCategory.sourceIdentifier == ProjectImagesRepo.shared.sourceIdentifier {
-                // 不强制刷新UI，仅清空不一致状态
-                if selectedIconId.hasSuffix("/\(filename)") || selectedIconId == filename {
-                    selectedIconId = ""
-                }
+            if selectedIconId.hasSuffix("/\(filename)") || selectedIconId == filename {
+                selectedIconId = ""
             }
-        } else {
-            print("[IconProvider] deleteImageFromProjectLibrary failed: \(filename)")
         }
         return ok
+    }
+
+    private func awaitResult(_ op: @escaping () async -> Bool) -> Bool {
+        var result = false
+        let semaphore = DispatchSemaphore(value: 0)
+        Task {
+            result = await op()
+            semaphore.signal()
+        }
+        semaphore.wait()
+        return result
     }
 }
 

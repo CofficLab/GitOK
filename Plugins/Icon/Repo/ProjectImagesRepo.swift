@@ -50,8 +50,8 @@ class ProjectImagesRepo: IconSourceProtocol, SuperLog {
     
     // MARK: - Mutations (Add/Delete)
     
-    /// 向项目图标库添加一张图片（同步实现）
-    func addImage(data: Data, filename: String) -> Bool {
+    /// 向项目图标库添加一张图片
+    func addImage(data: Data, filename: String) async -> Bool {
         guard let imagesURL = currentProjectImagesURL() else { return false }
         var isDir: ObjCBool = false
         if !FileManager.default.fileExists(atPath: imagesURL.path, isDirectory: &isDir) {
@@ -70,8 +70,8 @@ class ProjectImagesRepo: IconSourceProtocol, SuperLog {
         }
     }
     
-    /// 从项目图标库删除一张图片（同步实现）
-    func deleteImage(filename: String) -> Bool {
+    /// 从项目图标库删除一张图片
+    func deleteImage(filename: String) async -> Bool {
         guard let imagesURL = currentProjectImagesURL() else { return false }
         let fileURL = imagesURL.appendingPathComponent(filename)
         do {
@@ -83,10 +83,6 @@ class ProjectImagesRepo: IconSourceProtocol, SuperLog {
             return false
         }
     }
-    
-    // 异步桥接（协议默认提供，但本处提供具化实现以复用同步逻辑）
-    func addImage(data: Data, filename: String) async -> Bool { await addImage(data: data, filename: filename) }
-    func deleteImage(filename: String) async -> Bool { await deleteImage(filename: filename) }
     
     // MARK: - IconSourceProtocol
     

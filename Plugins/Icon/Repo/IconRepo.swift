@@ -124,6 +124,29 @@ class IconRepo: SuperLog {
         return []
     }
 
+    // MARK: - 统一增删接口
+
+    /// 向指定来源添加图片
+    /// - Parameters:
+    ///   - data: 图片二进制
+    ///   - filename: 文件名（含扩展名）
+    ///   - sourceIdentifier: 来源标识
+    /// - Returns: 是否成功
+    func addImage(data: Data, filename: String, to sourceIdentifier: String) async -> Bool {
+        guard let source = iconSources.first(where: { $0.sourceIdentifier == sourceIdentifier }) else { return false }
+        return await source.addImage(data: data, filename: filename)
+    }
+
+    /// 从指定来源删除图片
+    /// - Parameters:
+    ///   - filename: 文件名（含扩展名）
+    ///   - sourceIdentifier: 来源标识
+    /// - Returns: 是否成功
+    func deleteImage(filename: String, from sourceIdentifier: String) async -> Bool {
+        guard let source = iconSources.first(where: { $0.sourceIdentifier == sourceIdentifier }) else { return false }
+        return await source.deleteImage(filename: filename)
+    }
+
     /// 获取指定名称的分类
     /// - Parameter name: 分类名称
     /// - Returns: IconCategoryInfo 实例，如果不存在则返回nil
