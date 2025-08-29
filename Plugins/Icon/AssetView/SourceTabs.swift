@@ -17,11 +17,12 @@ struct SourceTabs: View {
                     SourceTab(
                         title: source.sourceName,
                         isSelected: selectedSourceName == source.sourceName,
-                        isAvailable: true
+                        isAvailable: true,
+                        onTap: {
+                            print("[SourceTabs] tap: id=\(source.sourceIdentifier), name=\(source.sourceName)")
+                            selectedSourceName = source.sourceName
+                        }
                     )
-                    .onTapGesture {
-                        selectedSourceName = source.sourceName
-                    }
                 }
             }
             .padding(.horizontal, 16)
@@ -37,24 +38,30 @@ struct SourceTab: View {
     let title: String
     let isSelected: Bool
     let isAvailable: Bool
+    let onTap: () -> Void
     
     var body: some View {
-            VStack(spacing: 4) {
-                Text(title)
-                    .font(.system(size: 13, weight: isSelected ? .semibold : .medium))
-                    .foregroundColor(isSelected ? .accentColor : (isAvailable ? .primary : .secondary))
-                
-                // 选中状态指示器
-                Rectangle()
-                    .frame(height: 2)
-                    .foregroundColor(isSelected ? .accentColor : .clear)
+            Button(action: onTap) {
+                VStack(spacing: 4) {
+                    Text(title)
+                        .font(.system(size: 13, weight: isSelected ? .semibold : .medium))
+                        .foregroundColor(isSelected ? .accentColor : (isAvailable ? .primary : .secondary))
+                    
+                    // 选中状态指示器
+                    Rectangle()
+                        .frame(height: 2)
+                        .foregroundColor(isSelected ? .accentColor : .clear)
+                }
+                .frame(height: 40)
+                .padding(.horizontal, 16)
+                .background(
+                    Rectangle()
+                        .fill(isSelected ? Color.accentColor.opacity(0.1) : Color.clear)
+                )
             }
-            .frame(height: 40)
-            .padding(.horizontal, 16)
-            .background(
-                Rectangle()
-                    .fill(isSelected ? Color.accentColor.opacity(0.1) : Color.clear)
-            )
+            .buttonStyle(PlainButtonStyle())
+            .disabled(!isAvailable)
+            .opacity(isAvailable ? 1.0 : 0.5)
     }
 }
 
