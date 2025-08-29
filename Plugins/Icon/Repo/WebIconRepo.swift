@@ -28,7 +28,7 @@ class WebIconRepo: SuperLog, IconSourceProtocol {
     private var lastCacheTime: Date?
 
     /// 缓存有效期（5分钟）
-    private let cacheValidityDuration: TimeInterval = 300
+    private let cacheValidityDuration: TimeInterval = 60*60
 
     /// 分类图标缓存
     /// Key: 分类ID, Value: 图标数组
@@ -52,6 +52,11 @@ class WebIconRepo: SuperLog, IconSourceProtocol {
         return cacheDir
     }()
 
+    /// 单飞任务：分类清单
+    private var inflightCategoriesTask: Task<[RemoteIconCategory], Error>? = nil
+    /// 单飞同步队列，避免并发竞态
+    private let inflightQueue = DispatchQueue(label: "webiconrepo.inflight")
+
     /// 私有初始化方法，确保单例模式
     private init() {}
 
@@ -60,21 +65,7 @@ class WebIconRepo: SuperLog, IconSourceProtocol {
     var sourceIdentifier: String { "gitok_api" }
     var sourceName: String { "网络图标库" }
 
-    var isAvailable: Bool {
-        get async {
-            do {
-                guard let url = URL(string: baseURL + manifestEndpoint) else { print("[WebIconRepo] isAvailable invalid URL"); return false }
-                print("[WebIconRepo] isAvailable checking: \(url.absoluteString)")
-                let (_, response) = try await URLSession.shared.data(from: url)
-                let code = (response as? HTTPURLResponse)?.statusCode ?? -1
-                print("[WebIconRepo] isAvailable status: \(code)")
-                return code == 200
-            } catch {
-                print("[WebIconRepo] isAvailable error: \(error)")
-                return false
-            }
-        }
-    }
+    var isAvailable: Bool = true
 
     func getAllCategories() async throws -> [IconCategory] {
         let remoteCategories = try await getAllRemoteCategories()
@@ -136,21 +127,47 @@ class WebIconRepo: SuperLog, IconSourceProtocol {
     func getAllRemoteCategories() async throws -> [RemoteIconCategory] {
         // 检查缓存是否有效
         if isCacheValid() {
+            print("[WebIconRepo] using cached categories: \(cachedCategories.count)")
             return cachedCategories
         }
 
-        // 从网络获取数据
+        // 命中单飞任务（加锁保护）
+        if let task = inflightQueue.sync(execute: { inflightCategoriesTask }) {
+            return try await task.value
+        }
+
         print("[WebIconRepo] fetching categories from network...")
-        let categories = try await fetchCategoriesFromNetwork()
+        let task = Task<[RemoteIconCategory], Error> {
+            try await fetchCategoriesWithRetry(maxRetry: 1)
+        }
+        inflightQueue.sync { inflightCategoriesTask = task }
+
+        defer { inflightQueue.sync { inflightCategoriesTask = nil } }
+        let categories = try await task.value
         cachedCategories = categories
         lastCacheTime = Date()
         print("[WebIconRepo] fetched categories: \(categories.count)")
         return categories
     }
 
-    /// 从网络获取分类数据
-    /// - Returns: 远程图标分类数组
-    /// - Throws: 网络请求错误
+    /// 带重试的清单获取
+    private func fetchCategoriesWithRetry(maxRetry: Int) async throws -> [RemoteIconCategory] {
+        var attempt = 0
+        var lastError: Error = RemoteIconError.networkError
+        while attempt <= maxRetry {
+            do {
+                return try await fetchCategoriesFromNetwork()
+            } catch {
+                lastError = error
+                attempt += 1
+                if attempt <= maxRetry {
+                    try? await Task.sleep(nanoseconds: 300_000_000) // 300ms
+                }
+            }
+        }
+        throw lastError
+    }
+
     private func fetchCategoriesFromNetwork() async throws -> [RemoteIconCategory] {
         guard let url = URL(string: baseURL + manifestEndpoint) else {
             print("[WebIconRepo] fetchCategories invalid URL: \(baseURL + manifestEndpoint)")
@@ -162,6 +179,11 @@ class WebIconRepo: SuperLog, IconSourceProtocol {
         print("[WebIconRepo] fetchCategories status: \(code), bytes: \(data.count)")
         guard code == 200 else {
             throw RemoteIconError.networkError
+        }
+        // 预校验：不是合法JSON则直接抛错进入重试
+        guard (try? JSONSerialization.jsonObject(with: data)) != nil else {
+            print("[WebIconRepo] JSON pre-validate failed")
+            throw RemoteIconError.decodingError
         }
         do {
             let manifest = try JSONDecoder().decode(IconManifest.self, from: data)
@@ -180,6 +202,8 @@ class WebIconRepo: SuperLog, IconSourceProtocol {
             throw error
         }
     }
+
+    // MARK: - 缓存管理
 
     /// 检查缓存是否有效
     /// - Returns: 缓存是否有效
@@ -242,6 +266,8 @@ class WebIconRepo: SuperLog, IconSourceProtocol {
         return categoryIcons.map { iconData in IconAsset(remotePath: iconData.path) }
     }
 
+    // MARK: - 图标缓存管理
+
     /// 获取图标的完整URL
     /// 优先返回本地缓存的图标，如果没有则返回网络URL
     /// - Parameter iconPath: 图标路径
@@ -299,7 +325,9 @@ class WebIconRepo: SuperLog, IconSourceProtocol {
             return false
         }
     }
-
+    
+    // MARK: - 批量图标缓存
+    
     /// 批量下载并缓存分类下的所有图标
     /// - Parameter categoryId: 分类ID
     /// - Returns: 成功缓存的图标数量
@@ -317,50 +345,13 @@ class WebIconRepo: SuperLog, IconSourceProtocol {
         os_log(.info, "\(self.t)分类 \(categoryId) 图标缓存完成：\(successCount)/\(icons.count)")
         return successCount
     }
-
-    /// 清除所有缓存
-    /// 用于强制刷新数据
-    func clearCache() {
-        cachedCategories.removeAll()
-        cachedIconsByCategory.removeAll()
-        lastCacheTime = nil
-        lastIconCacheTimeByCategory.removeAll()
-    }
-
-    /// 清除指定分类的图标缓存
-    /// - Parameter categoryId: 分类ID
-    func clearIconCache(for categoryId: String) {
-        cachedIconsByCategory.removeValue(forKey: categoryId)
-        lastIconCacheTimeByCategory.removeValue(forKey: categoryId)
-    }
-
-    /// 清除本地图标文件缓存
-    /// - Parameter iconPath: 图标路径，如果为nil则清除所有
-    func clearLocalIconCache(for iconPath: String? = nil) {
-        if let iconPath = iconPath {
-            // 清除指定图标
-            let localCacheURL = getLocalCacheURL(for: iconPath)
-            try? FileManager.default.removeItem(at: localCacheURL)
-        } else {
-            // 清除所有本地图标缓存
-            try? FileManager.default.removeItem(at: localCacheDir)
-            try? FileManager.default.createDirectory(at: localCacheDir, withIntermediateDirectories: true)
-        }
-    }
-
-    /// 获取本地缓存统计信息
-    /// - Returns: 缓存统计信息
-    func getLocalCacheStats() -> (totalFiles: Int, totalSize: Int64) {
-        do {
-            let files = try FileManager.default.contentsOfDirectory(at: localCacheDir, includingPropertiesForKeys: [.fileSizeKey])
-            let totalSize = files.reduce(Int64(0)) { sum, url in
-                let size = (try? url.resourceValues(forKeys: [.fileSizeKey]).fileSize) ?? 0
-                return sum + Int64(size)
-            }
-            return (files.count, totalSize)
-        } catch {
-            return (0, 0)
-        }
+    
+    // MARK: - 错误类型定义
+    
+    enum RemoteIconError: Error {
+        case networkError
+        case decodingError
+        case invalidURL
     }
 }
 
