@@ -18,8 +18,8 @@ struct ScaleControl: View {
                 .font(.caption)
                 .foregroundColor(.secondary)
             Slider(value: $localScale, in: 0.2...3.0)
-                .onChange(of: localScale) { newValue in
-                    updateScale(newValue)
+                .onChange(of: localScale) {
+                    updateScale(localScale)
                 }
         }
         .onAppear {

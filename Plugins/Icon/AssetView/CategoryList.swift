@@ -73,8 +73,7 @@ struct CategoryList: View {
             }
         }
         .onAppear { loadCategories() }
-        .onChange(of: selectedSourceIdentifier) { _ in
-            print("[CategoryList] selectedSourceIdentifier changed to: \(selectedSourceIdentifier ?? "nil")")
+        .onChange(of: selectedSourceIdentifier) {
             loadCategories()
         }
     }

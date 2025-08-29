@@ -186,7 +186,7 @@ struct IconGrid: View {
         panel.allowsMultipleSelection = true
         panel.canChooseDirectories = false
         panel.canChooseFiles = true
-        panel.allowedFileTypes = ["png", "svg", "jpg", "jpeg", "gif", "webp"]
+        panel.allowedContentTypes = [.png, .jpeg, .gif, .webP, .svg]
         panel.begin { response in
             guard response == .OK else { return }
             let urls = panel.urls
@@ -212,7 +212,7 @@ struct IconGrid: View {
         panel.allowsMultipleSelection = true
         panel.canChooseDirectories = false
         panel.canChooseFiles = true
-        panel.allowedFileTypes = ["png", "svg", "jpg", "jpeg", "gif", "webp"]
+        panel.allowedContentTypes = [.png, .jpeg, .gif, .webP, .svg]
         panel.begin { response in
             guard response == .OK else { return }
             let urls = panel.urls

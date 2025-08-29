@@ -91,17 +91,14 @@ extension IconBox {
     private func handleSourceChange() {
         iconProvider.clearSelectedCategory()
 
-        guard let sid = currentSourceIdentifier,
-              let source = availableSources.first(where: { $0.sourceIdentifier == sid }) else { return }
+        guard let sid = currentSourceIdentifier else { return }
 
         // 若新来源支持分类且当前未选择分类，则选择该来源的第一个分类
-        if iconProvider.selectedCategory == nil {
-            Task {
-                let categories = await repo.getAllCategories(enableRemote: true)
-                if let first = categories.first(where: { $0.sourceIdentifier == sid }) {
-                    await MainActor.run {
-                        iconProvider.selectCategory(first)
-                    }
+        Task {
+            let categories = await repo.getAllCategories(enableRemote: true)
+            if let first = categories.first(where: { $0.sourceIdentifier == sid }) {
+                await MainActor.run {
+                    iconProvider.selectCategory(first)
                 }
             }
         }
