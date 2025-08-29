@@ -33,7 +33,6 @@ struct IconDetailLayout: View {
                     .background(Color.yellow.opacity(0.05))
 
                     IconBox()
-                        .background(.green.opacity(0.05))
 
                     HStack(spacing: 0) {
                         IconMaker()

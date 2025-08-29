@@ -121,7 +121,7 @@ struct IconGrid: View {
                     ScrollView {
                         LazyVGrid(columns: gridItems, spacing: 16) {
                             ForEach(iconAssets) { iconAsset in
-                                IconView(iconAsset)
+                                IconTilePreview(iconAsset)
                             }
                         }
                         .padding(16)

@@ -149,6 +149,6 @@ struct ResponsiveIconContent: View {
             .setInitialTab(IconPlugin.label)
             .hideSidebar()
     }
-    .frame(width: 1200)
+    .frame(width: 800)
     .frame(height: 1200)
 }
