@@ -207,7 +207,7 @@ extension ContentView {
     .frame(height: 600)
 }
 
-#Preview("Default - Big Screen") {
+#Preview("App - Big Screen") {
     RootView {
         ContentLayout()
     }

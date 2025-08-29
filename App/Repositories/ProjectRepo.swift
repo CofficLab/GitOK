@@ -9,6 +9,10 @@ class ProjectRepo: BaseRepositoryImpl<Project>, ProjectRepoProtocol {
     
     func create(url: URL) throws -> Project {
         let project = Project(url)
+        
+        // 设置新项目的order为-1，使其显示在列表最前面
+        project.order = -1
+        
         modelContext.insert(project)
         try save()
         logger.info("➕ Created project: \(project.title)")
