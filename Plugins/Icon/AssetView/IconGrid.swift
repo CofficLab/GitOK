@@ -141,6 +141,9 @@ struct IconGrid: View {
         .onChange(of: selectedCategory) {
             loadIconAssets()
         }
+        .onChange(of: selectedSourceIdentifier) {
+            loadIconAssets()
+        }
     }
     
     /// 更新网格列数

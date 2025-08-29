@@ -18,20 +18,14 @@ struct SourceTabs: View {
                         title: source.sourceName,
                         isSelected: selectedSourceName == source.sourceName,
                         isAvailable: true
-                    ) {
+                    )
+                    .onTapGesture {
                         selectedSourceName = source.sourceName
                     }
                 }
             }
             .padding(.horizontal, 16)
         }
-        .background(Color(.windowBackgroundColor))
-        .overlay(
-            Rectangle()
-                .frame(height: 1)
-                .foregroundColor(Color(.separatorColor)),
-            alignment: .bottom
-        )
     }
 }
 
@@ -43,10 +37,8 @@ struct SourceTab: View {
     let title: String
     let isSelected: Bool
     let isAvailable: Bool
-    let onTap: () -> Void
     
     var body: some View {
-        Button(action: onTap) {
             VStack(spacing: 4) {
                 Text(title)
                     .font(.system(size: 13, weight: isSelected ? .semibold : .medium))
@@ -63,10 +55,6 @@ struct SourceTab: View {
                 Rectangle()
                     .fill(isSelected ? Color.accentColor.opacity(0.1) : Color.clear)
             )
-        }
-        .buttonStyle(PlainButtonStyle())
-        .disabled(!isAvailable)
-        .opacity(isAvailable ? 1.0 : 0.5)
     }
 }
 

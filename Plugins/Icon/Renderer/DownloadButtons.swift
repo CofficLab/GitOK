@@ -11,7 +11,7 @@ struct DownloadButtons: View {
     @State private var currentIconAsset: IconAsset?
 
     var body: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: 8) {
             XcodeDownloadButton(iconProvider: iconProvider, currentIconAsset: currentIconAsset)
             PNGDownloadButton(iconProvider: iconProvider, currentIconAsset: currentIconAsset)
             FaviconDownloadButton(iconProvider: iconProvider, currentIconAsset: currentIconAsset)
@@ -22,9 +22,6 @@ struct DownloadButtons: View {
                     .foregroundColor(.secondary)
             }
         }
-        .padding()
-        .frame(maxHeight: .infinity)
-        .background(Color.cyan.opacity(0.05))
         .onAppear {
             loadCurrentIconAsset()
         }

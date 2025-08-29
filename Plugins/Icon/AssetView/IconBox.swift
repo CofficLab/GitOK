@@ -60,7 +60,9 @@ struct IconBox: View {
             // 初始化当前来源标识
             iconProvider.selectedSourceIdentifier = currentSourceIdentifier
         }
-        .onChange(of: selectedSourceName, handleSourceChange)
+        .onChange(of: selectedSourceName) { _ in
+            handleSourceChange()
+        }
     }
 
     /// 加载可用的图标来源

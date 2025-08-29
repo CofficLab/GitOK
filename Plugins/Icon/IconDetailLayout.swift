@@ -28,13 +28,12 @@ struct IconDetailLayout: View {
 
                     VStack {
                         IconBox()
-
                         VStack(spacing: 4) {
-                            DownloadButtons()
                             IconBgs()
                             OpacityControl()
                             ScaleControl()
                             CornerRadiusControl()
+                            DownloadButtons()
                         }.padding()
                     }
                 }
