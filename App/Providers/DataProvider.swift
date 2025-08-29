@@ -126,23 +126,46 @@ extension DataProvider {
     func addProject(url: URL, using repo: any ProjectRepoProtocol) {
         do {
             // 检查项目是否已存在
-            if repo.exists(path: url.path) {
-                os_log("Project already exists: \(url.path)")
+            if let existingProject = try repo.findByPath(url.path) {
+                // 项目已存在，将其移动到第一个位置
+                os_log("Project already exists, moving to first: \(url.path)")
+                
+                // 从当前位置移除
+                if let index = self.projects.firstIndex(where: { $0.id == existingProject.id }) {
+                    self.projects.remove(at: index)
+                }
+                
+                // 设置order为-1，确保显示在最前面
+                existingProject.order = -1
+                try repo.update(existingProject)
+                
+                // 重新排序其他项目，确保order值连续
+                try reorderProjectsAfterMovingToFirst(existingProject: existingProject, using: repo)
+                
+                // 插入到数组开头
+                self.projects.insert(existingProject, at: 0)
+                
+                // 如果当前没有选中项目，设置为这个项目
+                if self.project == nil {
+                    self.setProject(existingProject, reason: "Moved existing project to first")
+                }
+                
+                os_log("Existing project moved to first: \(url.path)")
                 return
             }
 
-            // 通过仓库创建项目
+            // 通过仓库创建新项目
             let newProject = try repo.create(url: url)
 
-            // 添加到本地数组
-            self.projects.append(newProject)
+            // 添加到本地数组的开头，因为新项目的order为-1
+            self.projects.insert(newProject, at: 0)
 
             // 如果当前没有选中项目，设置为新添加的项目
             if self.project == nil {
                 self.setProject(newProject, reason: "Added first project")
             }
 
-            os_log("Project added successfully: \(url.path)")
+            os_log("New project added successfully: \(url.path)")
 
         } catch {
             os_log(.error, "Failed to add project: \(error.localizedDescription)")
@@ -184,6 +207,22 @@ extension DataProvider {
 
         } catch {
             os_log(.error, "Failed to delete project: \(error.localizedDescription)")
+        }
+    }
+    
+    /**
+     * 重新排序项目，确保order值连续
+     * @param existingProject 被移动到第一位的项目
+     * @param repo 项目仓库实例
+     */
+    private func reorderProjectsAfterMovingToFirst(existingProject: Project, using repo: any ProjectRepoProtocol) throws {
+        // 获取除了被移动项目之外的其他项目
+        let otherProjects = self.projects.filter { $0.id != existingProject.id }
+        
+        // 重新分配order值，从0开始
+        for (index, project) in otherProjects.enumerated() {
+            project.order = Int16(index)
+            try repo.update(project)
         }
     }
 }
