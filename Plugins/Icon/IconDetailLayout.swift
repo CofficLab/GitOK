@@ -27,6 +27,7 @@ struct IconDetailLayout: View {
                     }
 
                     VStack {
+                        Spacer()
                         IconBox()
                         VStack(spacing: 4) {
                             IconBgs()
@@ -37,7 +38,6 @@ struct IconDetailLayout: View {
                         }.padding()
                     }
                 }
-                .background(.cyan.opacity(0.05))
             }
         }
         .onAppear {
