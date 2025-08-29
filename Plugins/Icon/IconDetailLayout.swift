@@ -15,37 +15,30 @@ struct IconDetailLayout: View {
             if showWelcome {
                 IconWelcomeView()
             } else {
-                VStack(spacing: 0) {
-                    IconTabsBar(icons: icons, selection: $selection)
-                        .background(.gray.opacity(0.1))
+                HSplitView {
+                    VStack {
+                        IconTabsBar(icons: icons, selection: $selection)
+                            .background(.gray.opacity(0.1))
 
-                    IconBgs()
-                        .padding(.vertical, 2)
-                        .background(.blue.opacity(0.05))
-
-                    // 图标调整工具
-                    HStack(spacing: 20) {
-                        OpacityControl()
-                        ScaleControl()
-                        CornerRadiusControl()
-                    }
-                    .padding()
-                    .background(Color.yellow.opacity(0.05))
-
-                    IconBox()
-
-                    HStack(spacing: 0) {
                         IconMaker()
                             .frame(maxWidth: .infinity)
                             .frame(maxHeight: .infinity)
                             .background(.orange.opacity(0.1))
-
-                        // 下载区域
-                        DownloadButtons()
-                            .background(.red.opacity(0.05))
                     }
-                    .background(.cyan.opacity(0.05))
+
+                    VStack {
+                        IconBox()
+
+                        VStack(spacing: 4) {
+                            DownloadButtons()
+                            IconBgs()
+                            OpacityControl()
+                            ScaleControl()
+                            CornerRadiusControl()
+                        }.padding()
+                    }
                 }
+                .background(.cyan.opacity(0.05))
             }
         }
         .onAppear {

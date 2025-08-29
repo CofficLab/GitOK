@@ -24,7 +24,7 @@ struct IconBox: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            // 顶部：仓库来源选择tab（使用来源名称）
+            // 顶部：仓库来源选择tab
             SourceTabs(
                 selectedSourceName: $selectedSourceName,
                 availableSources: availableSources
