@@ -41,25 +41,24 @@ struct SourceTab: View {
     let onTap: () -> Void
     
     var body: some View {
-            Button(action: onTap) {
-                VStack(spacing: 4) {
-                    Text(title)
-                        .font(.system(size: 13, weight: isSelected ? .semibold : .medium))
-                        .foregroundColor(isSelected ? .accentColor : (isAvailable ? .primary : .secondary))
-                    
-                    // 选中状态指示器
-                    Rectangle()
-                        .frame(height: 2)
-                        .foregroundColor(isSelected ? .accentColor : .clear)
-                }
-                .frame(height: 40)
-                .padding(.horizontal, 16)
-                .background(
-                    Rectangle()
-                        .fill(isSelected ? Color.accentColor.opacity(0.1) : Color.clear)
-                )
+            VStack(spacing: 4) {
+                Text(title)
+                    .font(.system(size: 13, weight: isSelected ? .semibold : .medium))
+                    .foregroundColor(isSelected ? .accentColor : (isAvailable ? .primary : .secondary))
+                
+                // 选中状态指示器
+                Rectangle()
+                    .frame(height: 2)
+                    .foregroundColor(isSelected ? .accentColor : .clear)
             }
-            .buttonStyle(PlainButtonStyle())
+            .frame(height: 40)
+            .padding(.horizontal, 16)
+            .background(
+                Rectangle()
+                    .fill(isSelected ? Color.accentColor.opacity(0.1) : Color.clear)
+            )
+            .contentShape(Rectangle())
+            .onTapGesture(perform: onTap)
             .disabled(!isAvailable)
             .opacity(isAvailable ? 1.0 : 0.5)
     }

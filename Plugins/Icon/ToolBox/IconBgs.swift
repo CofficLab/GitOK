@@ -12,12 +12,10 @@ struct IconBgs: View {
                 ForEach(0 ..< MagicBackgroundGroup.all.count, id: \.self) { index in
                     let gradient = MagicBackgroundGroup.all[index]
                     makeItem(gradient)
-                        .frame(width: 22, height: 22)
+                        .frame(width: 36, height: 36)
                 }
             }
-        }
-        .frame(height: 30)
-    }
+        }    }
 
     func makeItem(_ gradient: MagicBackgroundGroup.GradientName) -> some View {
         Button(action: {

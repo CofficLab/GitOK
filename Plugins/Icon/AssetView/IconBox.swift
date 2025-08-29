@@ -31,15 +31,14 @@ struct IconBox: View {
             )
             .frame(height: 40)
 
-            // 主体内容：左侧分类（可选） + 右侧图标网格
-            HStack(spacing: 0) {
+            // 主体内容：分类 + 图标网格
+            VStack(spacing: 0) {
                 if currentSourceSupportsCategories {
-                    // 左侧：分类列表（按来源标识过滤）
+                    // 分类列表
                     CategoryList(
                         selectedSourceIdentifier: currentSourceIdentifier,
                         selectedCategory: iconProvider.selectedCategory
                     )
-                    .frame(width: 200)
                     .background(Color(.controlBackgroundColor))
 
                     // 分隔线
@@ -47,7 +46,7 @@ struct IconBox: View {
                         .frame(width: 1)
                 }
 
-                // 右侧：图标网格
+                // 图标网格
                 IconGrid(
                     selectedCategory: iconProvider.selectedCategory,
                     selectedSourceIdentifier: currentSourceIdentifier
@@ -119,7 +118,7 @@ extension IconBox {
             .hideProjectActions()
     }
     .frame(width: 800)
-    .frame(height: 600)
+    .frame(height: 800)
 }
 
 #Preview("App - Big Screen") {

@@ -8,6 +8,9 @@ struct IconDetailLayout: View {
     @State private var icons: [IconData] = []
     @State private var selection: IconData?
 
+    private enum RightPaneTab { case icon, controls }
+    @State private var selectedRightPaneTab: RightPaneTab = .icon
+
     static let shared = IconDetailLayout()
 
     var body: some View {
@@ -16,27 +19,65 @@ struct IconDetailLayout: View {
                 IconWelcomeView()
             } else {
                 HSplitView {
-                    VStack {
+                    // Left Pane
+                    VStack(spacing: 0) {
                         IconTabsBar(icons: icons, selection: $selection)
                             .background(.gray.opacity(0.1))
 
-                        IconMaker()
-                            .frame(maxWidth: .infinity)
-                            .frame(maxHeight: .infinity)
-                            .background(.orange.opacity(0.1))
+                        IconMaker().frame(maxHeight: .infinity)
                     }
 
-                    VStack {
-                        Spacer()
-                        IconBox()
-                        VStack(spacing: 4) {
-                            IconBgs()
-                            OpacityControl()
-                            ScaleControl()
-                            CornerRadiusControl()
-                            DownloadButtons()
-                        }.padding()
+                    // Right Pane
+                    VStack(spacing: 0) {
+                        // Custom Tab Bar
+                        HStack(spacing: 0) {
+                            Button(action: { selectedRightPaneTab = .icon }) {
+                                Text("Icon")
+                                    .fontWeight(.medium)
+                                    .padding(.vertical, 8)
+                                    .padding(.horizontal, 12)
+                                    .frame(maxWidth: .infinity)
+                                    .contentShape(Rectangle())
+                                    .background(selectedRightPaneTab == .icon ? Color.accentColor.opacity(0.2) : Color.clear)
+                                    .foregroundColor(selectedRightPaneTab == .icon ? .accentColor : .primary)
+                            }
+                            .buttonStyle(PlainButtonStyle())
+
+                            Button(action: { selectedRightPaneTab = .controls }) {
+                                Text("Controls")
+                                    .fontWeight(.medium)
+                                    .padding(.vertical, 8)
+                                    .padding(.horizontal, 12)
+                                    .frame(maxWidth: .infinity)
+                                    .contentShape(Rectangle())
+                                    .background(selectedRightPaneTab == .controls ? Color.accentColor.opacity(0.2) : Color.clear)
+                                    .foregroundColor(selectedRightPaneTab == .controls ? .accentColor : .primary)
+                            }
+                            .buttonStyle(PlainButtonStyle())
+                        }
+                        .padding(4)
+                        .background(Color.primary.opacity(0.05))
+                        .cornerRadius(8)
+                        .padding(.horizontal)
+                        .padding(.top, 8)
+
+                        Divider().padding(.top, 8)
+
+                        // View Content
+                        if selectedRightPaneTab == .icon {
+                            IconBox()
+                        } else {
+                            VStack(spacing: 24) {
+                                IconBgs()
+                                OpacityControl()
+                                ScaleControl()
+                                CornerRadiusControl()
+                                Spacer()
+                                DownloadButtons()
+                            }.padding()
+                        }
                     }
+                    .frame(minWidth: 300)
                 }
             }
         }
@@ -93,8 +134,8 @@ struct IconDetailLayout: View {
             .hideProjectActions()
             .setInitialTab(IconPlugin.label)
     }
-    .frame(width: 900)
-    .frame(height: 900)
+    .frame(width: 800)
+    .frame(height: 800)
 }
 
 #Preview("App - Big Screen") {
