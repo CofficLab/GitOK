@@ -11,18 +11,16 @@ import SwiftUI
  */
 class IconProvider: NSObject, ObservableObject, SuperLog {
     static var emoji = "🍒"
-    
+
     @Published private(set) var currentData: IconData? = nil
 
     /// 当前从候选列表中选中的图标ID
     /// 用于在图标选择器中高亮显示选中的图标
     @Published var selectedIconId: String = ""
-    
+
     /// 当前选中的分类
     @Published var selectedCategory: IconCategoryInfo?
-    
 
-    
     /// 当前选中的图标分类名称（兼容性属性）
     var selectedCategoryName: String {
         return selectedCategory?.name ?? ""
@@ -30,9 +28,9 @@ class IconProvider: NSObject, ObservableObject, SuperLog {
 
     override init() {
         super.init()
-        
+
         os_log("\(self.t)Initializing IconProvider")
-        
+
         NotificationCenter.default.addObserver(
             self, selector: #selector(handleIconDidSave),
             name: .iconDidSave,
@@ -71,13 +69,13 @@ class IconProvider: NSObject, ObservableObject, SuperLog {
         self.currentData = newModel
         self.selectedIconId = newModel?.iconId ?? ""
     }
-    
+
     /**
         选择图标
      */
     func selectIcon(_ iconId: String) {
         self.selectedIconId = iconId
-        
+
         // 如果当前有图标模型，同时更新模型
         if var model = self.currentData {
             do {
@@ -87,14 +85,14 @@ class IconProvider: NSObject, ObservableObject, SuperLog {
             }
         }
     }
-    
+
     /**
         选择图标分类
      */
     func selectCategory(_ category: IconCategoryInfo?) {
         self.selectedCategory = category
     }
-    
+
     /**
         清空选中的分类
      */
@@ -141,7 +139,6 @@ class IconProvider: NSObject, ObservableObject, SuperLog {
         }
         return ok
     }
-
 }
 
 #Preview("App - Small Screen") {
