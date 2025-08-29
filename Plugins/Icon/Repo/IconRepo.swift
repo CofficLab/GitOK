@@ -123,14 +123,24 @@ class IconRepo: SuperLog {
     /// - Parameter iconId: 图标ID
     /// - Returns: 图标Asset实例，如果找不到则返回nil
     func getIconAsset(byId iconId: String) async -> IconAsset? {
-        for source in iconSources {
-            if await source.isAvailable {
-                if let icon = await source.getIconAsset(byId: iconId) {
+        return await withTaskGroup(of: IconAsset?.self, returning: IconAsset?.self) { group in
+            for source in iconSources {
+                group.addTask {
+                    if await source.isAvailable {
+                        return await source.getIconAsset(byId: iconId)
+                    }
+                    return nil
+                }
+            }
+
+            for await result in group {
+                if let icon = result {
+                    group.cancelAll()
                     return icon
                 }
             }
+            return nil
         }
-        return nil
     }
 }
 
