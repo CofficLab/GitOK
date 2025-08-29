@@ -10,13 +10,13 @@ struct IconBox: View {
     @EnvironmentObject var iconProvider: IconProvider
     @State private var selectedSourceName: String? = nil
     @State private var availableSources: [IconSourceProtocol] = []
-    
+
     private var repo = IconRepo.shared
-    
+
     private var currentSourceIdentifier: String? {
         availableSources.first(where: { $0.sourceName == selectedSourceName })?.sourceIdentifier
     }
-    
+
     private var currentSourceSupportsCategories: Bool {
         guard let sid = currentSourceIdentifier else { return true }
         return availableSources.first(where: { $0.sourceIdentifier == sid })?.supportsCategories ?? true
@@ -30,7 +30,7 @@ struct IconBox: View {
                 availableSources: availableSources
             )
             .frame(height: 40)
-            
+
             // 主体内容：左侧分类（可选） + 右侧图标网格
             HStack(spacing: 0) {
                 if currentSourceSupportsCategories {
@@ -41,12 +41,12 @@ struct IconBox: View {
                     )
                     .frame(width: 200)
                     .background(Color(.controlBackgroundColor))
-                    
+
                     // 分隔线
                     Divider()
                         .frame(width: 1)
                 }
-                
+
                 // 右侧：图标网格
                 IconGrid(
                     selectedCategory: iconProvider.selectedCategory,
@@ -58,49 +58,49 @@ struct IconBox: View {
             loadAvailableSources()
             ensureDefaultSelection()
         }
-        .onChange(of: selectedSourceName) { _ in
-            // 当切换来源时，校正已选分类
-            guard let sid = currentSourceIdentifier,
-                  let source = availableSources.first(where: { $0.sourceIdentifier == sid }) else { return }
-            if source.supportsCategories == false {
-                iconProvider.clearSelectedCategory()
-            } else {
-                if let selected = iconProvider.selectedCategory,
-                   selected.sourceIdentifier != sid {
-                    iconProvider.clearSelectedCategory()
-                }
-                // 若新来源支持分类且当前未选择分类，则选择该来源的第一个分类
-                if iconProvider.selectedCategory == nil {
-                    Task {
-                        let categories = await repo.getAllCategories(enableRemote: true)
-                        if let first = categories.first(where: { $0.sourceIdentifier == sid }) {
-                            await MainActor.run {
-                                iconProvider.selectCategory(first)
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        .onChange(of: selectedSourceName, handleSourceChange)
     }
-    
+
     /// 加载可用的图标来源
     private func loadAvailableSources() {
         availableSources = repo.getAllIconSources()
     }
-    
+
     /// 确保有默认选择
     private func ensureDefaultSelection() {
         if selectedSourceName == nil {
             selectedSourceName = availableSources.first?.sourceName
         }
-        
+
         if iconProvider.selectedCategory == nil {
             Task {
                 let categories = await repo.getAllCategories(enableRemote: true)
                 if let firstCategory = categories.first {
                     await MainActor.run {
                         iconProvider.selectCategory(firstCategory)
+                    }
+                }
+            }
+        }
+    }
+}
+
+// MARK: - Event Handlers
+
+extension IconBox {
+    private func handleSourceChange() {
+        iconProvider.clearSelectedCategory()
+
+        guard let sid = currentSourceIdentifier,
+              let source = availableSources.first(where: { $0.sourceIdentifier == sid }) else { return }
+
+        // 若新来源支持分类且当前未选择分类，则选择该来源的第一个分类
+        if iconProvider.selectedCategory == nil {
+            Task {
+                let categories = await repo.getAllCategories(enableRemote: true)
+                if let first = categories.first(where: { $0.sourceIdentifier == sid }) {
+                    await MainActor.run {
+                        iconProvider.selectCategory(first)
                     }
                 }
             }

@@ -13,7 +13,7 @@ class ProjectImagesRepo: IconSourceProtocol, SuperLog {
     
     // 唯一标识与名称
     var sourceIdentifier: String { "project_images" }
-    var sourceName: String { "项目图标库" }
+    var sourceName: String { "项目图库" }
     
     // 支持增删
     var supportsMutations: Bool { true }

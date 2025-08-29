@@ -70,9 +70,9 @@ struct IconGrid: View {
                                 .foregroundColor(.primary)
                             Spacer()
                             if source.supportsMutations {
-                                Button("添加图标…") { addImagesViaPanel() }
+                                Button("添加图片") { addImagesViaPanel() }
                                     .buttonStyle(.bordered)
-                                Button("删除所选…") { deleteSelectedImage() }
+                                Button("删除所选") { deleteSelectedImage() }
                                     .buttonStyle(.bordered)
                                     .disabled(!canDeleteSelected(in: sid))
                             }
