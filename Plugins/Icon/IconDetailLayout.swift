@@ -33,7 +33,7 @@ struct IconDetailLayout: View {
                         IconMaker()
                             .frame(maxWidth: .infinity)
                             .frame(maxHeight: .infinity)
-                            .background(.orange.opacity(0.05))
+                            .background(.orange.opacity(0.1))
 
                         // 右侧功能区域
                         VStack(spacing: 16) {
@@ -84,7 +84,7 @@ struct IconDetailLayout: View {
             .setInitialTab(IconPlugin.label)
     }
     .frame(width: 900)
-    .frame(height: 800)
+    .frame(height: 900)
 }
 
 #Preview("App - Big Screen") {
@@ -93,6 +93,6 @@ struct IconDetailLayout: View {
             .hideSidebar()
             .setInitialTab(IconPlugin.label)
     }
-    .frame(width: 1200)
+    .frame(width: 800)
     .frame(height: 1200)
 }

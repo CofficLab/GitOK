@@ -36,10 +36,13 @@ class IconPlugin: SuperPlugin, SuperLog {
 
 #Preview("App - Big Screen") {
     RootView {
-        ContentLayout().setInitialTab(IconPlugin.label)
+        ContentLayout()
+            .setInitialTab(IconPlugin.label)
             .hideSidebar()
+            .hideTabPicker()
+            .hideProjectActions()
             .setInitialTab(IconPlugin.label)
     }
-    .frame(width: 1200)
+    .frame(width: 800)
     .frame(height: 1200)
 }

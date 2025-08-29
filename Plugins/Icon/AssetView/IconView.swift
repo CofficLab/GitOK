@@ -4,7 +4,7 @@ import MagicCore
 /**
  * 分类图标项组件
  * 负责显示单个图标，支持选中状态、悬停效果和点击事件
- * 数据流：IconAsset -> UI展示
+ * 数据流：IconAsset -> UI展示，优化了网格布局下的显示效果
  */
 struct IconView: View {
     let iconAsset: IconAsset
@@ -24,54 +24,53 @@ struct IconView: View {
     }
     
     var body: some View {
-        Group {
-            if let loadedImage = loadedImage {
-                // 显示已加载的图片
-                loadedImage
-                    .resizable()
-                    .frame(width: 40, height: 40)
-            } else if isLoading {
-                // 显示加载状态
-                ProgressView()
-                    .frame(width: 40, height: 40)
-            } else {
-                // 显示占位符
-                Image(systemName: "photo")
-                    .resizable()
-                    .frame(width: 40, height: 40)
-                    .foregroundColor(.secondary)
-            }
-        }
-        .background(
+        VStack(spacing: 4) {
+            // 图标显示区域
             Group {
-                if isSelected {
-                    // 选中状态：蓝色背景
-                    Color.accentColor.opacity(0.3)
-                } else if isHovered {
-                    // 悬停状态：浅色背景
-                    Color.accentColor.opacity(0.1)
+                if let loadedImage = loadedImage {
+                    // 显示已加载的图片
+                    loadedImage
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 48, height: 48)
+                } else if isLoading {
+                    // 显示加载状态
+                    ProgressView()
+                        .frame(width: 48, height: 48)
                 } else {
-                    // 默认状态：透明背景
-                    Color.clear
+                    // 显示占位符
+                    Image(systemName: "photo")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 48, height: 48)
+                        .foregroundColor(.secondary)
                 }
             }
-        )
-        .overlay(
-            // 选中状态显示蓝色边框
-            RoundedRectangle(cornerRadius: 8)
-                .stroke(isSelected ? Color.accentColor : Color.clear, lineWidth: 2)
-        )
-        .cornerRadius(8)
+            .background(
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(isSelected ? Color.accentColor.opacity(0.2) : 
+                          (isHovered ? Color.accentColor.opacity(0.1) : Color.clear))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 8)
+                    .stroke(isSelected ? Color.accentColor : Color.clear, lineWidth: 2)
+            )
+            .cornerRadius(8)
+        }
         .contentShape(Rectangle()) // 确保整个矩形区域都能响应点击
         .onTapGesture {
             self.iconProvider.selectIcon(iconAsset.iconId)
         }
         .onHover { hovering in
-            isHovered = hovering
+            withAnimation(.easeInOut(duration: 0.15)) {
+                isHovered = hovering
+            }
         }
         .onAppear {
             loadIconImage()
         }
+        .scaleEffect(isHovered ? 1.05 : 1.0)
+        .animation(.easeInOut(duration: 0.15), value: isHovered)
     }
     
     /// 异步加载图标图片

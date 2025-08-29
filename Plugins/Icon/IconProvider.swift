@@ -91,10 +91,16 @@ class IconProvider: NSObject, ObservableObject, SuperLog {
     /**
         选择图标分类
      */
-    func selectCategory(_ category: IconCategoryInfo) {
+    func selectCategory(_ category: IconCategoryInfo?) {
         self.selectedCategory = category
     }
     
+    /**
+        清空选中的分类
+     */
+    func clearSelectedCategory() {
+        self.selectedCategory = nil
+    }
 
 }
 
