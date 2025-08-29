@@ -31,6 +31,9 @@ class IconRepo: SuperLog {
         
         // 添加远程图标来源
         addIconSource(WebIconRepo.shared)
+        
+        // 添加项目图标来源
+        addIconSource(ProjectImagesRepo.shared)
     }
     
     // MARK: - 图标来源管理

@@ -82,7 +82,9 @@ struct SourceTab: View {
 
 #Preview("App - Big Screen") {
     RootView {
-        ContentLayout().setInitialTab(IconPlugin.label)
+        ContentLayout()
+            .setInitialTab(IconPlugin.label)
+            .hideTabPicker()
             .hideSidebar()
     }
     .frame(width: 800)
