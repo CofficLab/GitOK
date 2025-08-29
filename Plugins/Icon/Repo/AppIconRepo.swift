@@ -215,7 +215,10 @@ class AppIconRepo: SuperLog, IconSourceProtocol {
 #Preview("App-Big Screen") {
     RootView {
         ContentLayout()
+            .hideProjectActions()
+            .hideTabPicker()
+            .setInitialTab(IconPlugin.label)
     }
-    .frame(width: 1200)
+    .frame(width: 800)
     .frame(height: 1200)
 }

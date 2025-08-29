@@ -13,9 +13,8 @@ struct IconDetailLayout: View {
             if showWelcome {
                 IconWelcomeView()
             } else {
-                VStack {
+                VStack(spacing: 0) {
                     IconBgs()
-                        .padding(8)
                         .background(.blue.opacity(0.05))
 
                     // 图标调整工具
@@ -24,7 +23,7 @@ struct IconDetailLayout: View {
                         ScaleControl()
                         CornerRadiusControl()
                     }
-                    .padding(8)
+                    .padding()
                     .background(Color.yellow.opacity(0.05))
 
                     IconBox()
