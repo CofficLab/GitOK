@@ -16,6 +16,9 @@ protocol IconSourceProtocol {
     /// 是否可用（网络连接、文件访问权限等）
     var isAvailable: Bool { get async }
     
+    /// 该来源是否支持增删图标
+    var supportsMutations: Bool { get }
+    
     /// 获取所有可用的图标分类
     /// - Returns: 分类数组
     func getAllCategories() async -> [IconCategoryInfo]
@@ -34,6 +37,18 @@ protocol IconSourceProtocol {
     /// - Parameter name: 分类名称
     /// - Returns: 分类信息，如果找不到则返回nil
     func getCategory(byName name: String) async -> IconCategoryInfo?
+    
+    /// 添加图片（默认不支持）
+    func addImage(data: Data, filename: String) async -> Bool
+    
+    /// 删除图片（默认不支持）
+    func deleteImage(filename: String) async -> Bool
+}
+
+extension IconSourceProtocol {
+    var supportsMutations: Bool { false }
+    func addImage(data: Data, filename: String) async -> Bool { false }
+    func deleteImage(filename: String) async -> Bool { false }
 }
 
 /**

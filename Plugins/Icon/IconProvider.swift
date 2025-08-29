@@ -102,6 +102,46 @@ class IconProvider: NSObject, ObservableObject, SuperLog {
         self.selectedCategory = nil
     }
 
+    /**
+        向项目图标库添加图片
+        - Parameters:
+            - data: 图像二进制数据
+            - filename: 文件名（包含扩展名）
+        - Returns: 是否成功
+     */
+    func addImageToProjectLibrary(data: Data, filename: String) -> Bool {
+        let ok = ProjectImagesRepo.shared.addImage(data: data, filename: filename)
+        if ok {
+            print("[IconProvider] addImageToProjectLibrary success: \(filename)")
+        } else {
+            print("[IconProvider] addImageToProjectLibrary failed: \(filename)")
+        }
+        return ok
+    }
+
+    /**
+        从项目图标库删除图片
+        - Parameter filename: 文件名（包含扩展名）
+        - Returns: 是否成功
+     */
+    func deleteImageFromProjectLibrary(filename: String) -> Bool {
+        let ok = ProjectImagesRepo.shared.deleteImage(filename: filename)
+        if ok {
+            print("[IconProvider] deleteImageFromProjectLibrary success: \(filename)")
+            // 如果当前选中图标属于项目图标库且同名，则清空选中
+            if let currentCategory = selectedCategory,
+               currentCategory.sourceIdentifier == ProjectImagesRepo.shared.sourceIdentifier {
+                // 不强制刷新UI，仅清空不一致状态
+                if selectedIconId.hasSuffix("/\(filename)") || selectedIconId == filename {
+                    selectedIconId = ""
+                }
+            }
+        } else {
+            print("[IconProvider] deleteImageFromProjectLibrary failed: \(filename)")
+        }
+        return ok
+    }
+
 }
 
 #Preview("App - Small Screen") {

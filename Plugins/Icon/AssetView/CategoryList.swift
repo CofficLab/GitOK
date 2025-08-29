@@ -1,3 +1,4 @@
+import AppKit
 import MagicCore
 import SwiftUI
 
@@ -9,12 +10,17 @@ import SwiftUI
 struct CategoryList: View {
     let selectedSourceIdentifier: String?
     let selectedCategory: IconCategoryInfo?
-    
+
     @EnvironmentObject var iconProvider: IconProvider
     @State private var categories: [IconCategoryInfo] = []
     @State private var searchText: String = ""
     @State private var isLoading: Bool = false
-    
+
+    private var currentSourceSupportsMutations: Bool {
+        guard let sid = selectedSourceIdentifier else { return false }
+        return IconRepo.shared.getAllIconSources().first(where: { $0.sourceIdentifier == sid })?.supportsMutations ?? false
+    }
+
     private var filteredCategories: [IconCategoryInfo] {
         let list = categories.filter { category in
             guard let sid = selectedSourceIdentifier else { return true }
@@ -23,14 +29,27 @@ struct CategoryList: View {
         if searchText.isEmpty { return list }
         return list.filter { $0.name.localizedCaseInsensitiveContains(searchText) }
     }
-    
+
     var body: some View {
         VStack(spacing: 0) {
+            // 顶部工具条（当来源支持增删时显示）
+            if currentSourceSupportsMutations {
+                HStack(spacing: 8) {
+                    Button("添加图标…") { addImagesViaPanel() }
+                        .buttonStyle(.bordered)
+                    Button("删除图标…") { deleteImagesViaPanel() }
+                        .buttonStyle(.bordered)
+                    Spacer()
+                }
+                .padding(.horizontal, 12)
+                .padding(.top, 8)
+            }
+
             // 搜索框
             SearchBar(text: $searchText)
                 .padding(.horizontal, 12)
                 .padding(.vertical, 8)
-            
+
             // 分类列表
             if isLoading {
                 VStack {
@@ -67,12 +86,62 @@ struct CategoryList: View {
             }
         }
         .onAppear { loadCategories() }
-        .onChange(of: selectedSourceIdentifier) { _ in 
+        .onChange(of: selectedSourceIdentifier) { _ in
             print("[CategoryList] selectedSourceIdentifier changed to: \(selectedSourceIdentifier ?? "nil")")
             loadCategories()
         }
     }
-    
+
+    /// 通过文件选择器添加图片
+    private func addImagesViaPanel() {
+        guard currentSourceSupportsMutations else { return }
+        let panel = NSOpenPanel()
+        panel.allowsMultipleSelection = true
+        panel.canChooseDirectories = false
+        panel.canChooseFiles = true
+        panel.allowedFileTypes = ["png", "svg", "jpg", "jpeg", "gif", "webp"]
+        panel.begin { response in
+            guard response == .OK else { return }
+            let urls = panel.urls
+            Task { @MainActor in
+                var okCount = 0
+                for url in urls {
+                    if let data = try? Data(contentsOf: url) {
+                        if iconProvider.addImageToProjectLibrary(data: data, filename: url.lastPathComponent) {
+                            okCount += 1
+                        }
+                    }
+                }
+                print("[CategoryList] addImagesViaPanel done: \(okCount)/\(urls.count)")
+                loadCategories()
+            }
+        }
+    }
+
+    /// 通过文件选择器删除图片（选择要删除的文件名）
+    private func deleteImagesViaPanel() {
+        guard currentSourceSupportsMutations else { return }
+        let panel = NSOpenPanel()
+        panel.allowsMultipleSelection = true
+        panel.canChooseDirectories = false
+        panel.canChooseFiles = true
+        panel.allowedFileTypes = ["png", "svg", "jpg", "jpeg", "gif", "webp"]
+        panel.begin { response in
+            guard response == .OK else { return }
+            let urls = panel.urls
+            Task { @MainActor in
+                var okCount = 0
+                for url in urls {
+                    if iconProvider.deleteImageFromProjectLibrary(filename: url.lastPathComponent) {
+                        okCount += 1
+                    }
+                }
+                print("[CategoryList] deleteImagesViaPanel done: \(okCount)/\(urls.count)")
+                loadCategories()
+            }
+        }
+    }
+
     /// 加载所有分类
     private func loadCategories() {
         isLoading = true
@@ -87,7 +156,7 @@ struct CategoryList: View {
                     let count = self.categories.filter { $0.sourceIdentifier == sid }.count
                     print("[CategoryList] filter by sid=\(sid) -> count=\(count)")
                 }
-                
+
                 if let selectedCategory = selectedCategory,
                    let sid = selectedSourceIdentifier,
                    selectedCategory.sourceIdentifier != sid {
@@ -105,17 +174,17 @@ struct CategoryList: View {
  */
 struct SearchBar: View {
     @Binding var text: String
-    
+
     var body: some View {
         HStack {
             Image(systemName: "magnifyingglass")
                 .foregroundColor(.secondary)
                 .font(.system(size: 12))
-            
+
             TextField("搜索分类...", text: $text)
                 .textFieldStyle(PlainTextFieldStyle())
                 .font(.system(size: 12))
-            
+
             if !text.isEmpty {
                 Button(action: { text = "" }) {
                     Image(systemName: "xmark.circle.fill")
@@ -140,7 +209,7 @@ struct CategoryRow: View {
     let category: IconCategoryInfo
     let isSelected: Bool
     let onTap: () -> Void
-    
+
     var body: some View {
         Button(action: onTap) {
             HStack {
@@ -149,15 +218,15 @@ struct CategoryRow: View {
                         .font(.system(size: 13, weight: isSelected ? .medium : .regular))
                         .foregroundColor(isSelected ? .accentColor : .primary)
                         .lineLimit(1)
-                    
+
                     Text("\(category.iconCount) 个图标")
                         .font(.system(size: 11))
                         .foregroundColor(.secondary)
                         .lineLimit(1)
                 }
-                
+
                 Spacer()
-                
+
                 if isSelected {
                     Image(systemName: "checkmark")
                         .foregroundColor(.accentColor)
@@ -166,18 +235,21 @@ struct CategoryRow: View {
             }
             .padding(.horizontal, 12)
             .padding(.vertical, 8)
+            .frame(maxWidth: .infinity, alignment: .leading)
             .background(
                 Rectangle()
-                    .fill(isSelected ? Color.accentColor.opacity(0.1) : Color.clear)
+                    .fill(isSelected ? Color.accentColor.opacity(0.1) : Color.primary.opacity(0.01))
             )
         }
+        .contentShape(Rectangle())
         .buttonStyle(PlainButtonStyle())
     }
 }
 
 #Preview("App - Small Screen") {
     RootView {
-        ContentLayout().setInitialTab(IconPlugin.label)
+        ContentLayout()
+            .setInitialTab(IconPlugin.label)
             .hideSidebar()
             .hideProjectActions()
     }
@@ -187,7 +259,8 @@ struct CategoryRow: View {
 
 #Preview("App - Big Screen") {
     RootView {
-        ContentLayout().setInitialTab(IconPlugin.label)
+        ContentLayout()
+            .setInitialTab(IconPlugin.label)
             .hideSidebar()
     }
     .frame(width: 1200)
