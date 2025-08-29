@@ -7,6 +7,8 @@ import SwiftUI
  * 支持动态列数调整和滚动加载，优化了左右分栏布局
  */
 struct IconGrid: View {
+    @EnvironmentObject var iconProvider: IconProvider
+    
     @State private var gridItems: [GridItem] = Array(repeating: .init(.flexible()), count: 8)
     @State private var iconAssets: [IconAsset] = []
     @State private var isLoading: Bool = false
@@ -22,16 +24,28 @@ struct IconGrid: View {
             VStack(spacing: 0) {
                 // 分类标题
                 if let category = selectedCategory {
-                    HStack {
-                        Text(category.name)
-                            .font(.system(size: 16, weight: .medium))
-                            .foregroundColor(.primary)
+                    VStack(spacing: 8) {
+                        HStack {
+                            Text(category.name)
+                                .font(.system(size: 16, weight: .medium))
+                                .foregroundColor(.primary)
+                            Spacer()
+                            Text("\(iconAssets.count) 个图标")
+                                .font(.system(size: 12))
+                                .foregroundColor(.secondary)
+                        }
                         
-                        Spacer()
-                        
-                        Text("\(iconAssets.count) 个图标")
-                            .font(.system(size: 12))
-                            .foregroundColor(.secondary)
+                        // 右侧：在分类标题下方放置添加/删除按钮（当来源支持增删时显示）
+                        if let sid = category.sourceIdentifier as String?,
+                           IconRepo.shared.getAllIconSources().first(where: { $0.sourceIdentifier == sid })?.supportsMutations == true {
+                            HStack(spacing: 8) {
+                                Button("添加图标…") { addImagesViaPanel() }
+                                    .buttonStyle(.bordered)
+                                Button("删除图标…") { deleteImagesViaPanel() }
+                                    .buttonStyle(.bordered)
+                                Spacer()
+                            }
+                        }
                     }
                     .padding(.horizontal, 16)
                     .padding(.vertical, 12)
@@ -117,6 +131,56 @@ struct IconGrid: View {
             await MainActor.run {
                 self.iconAssets = assets
                 self.isLoading = false
+            }
+        }
+    }
+
+    /// 通过文件选择器添加图片
+    private func addImagesViaPanel() {
+        guard let sid = selectedCategory?.sourceIdentifier,
+              IconRepo.shared.getAllIconSources().first(where: { $0.sourceIdentifier == sid })?.supportsMutations == true else { return }
+        let panel = NSOpenPanel()
+        panel.allowsMultipleSelection = true
+        panel.canChooseDirectories = false
+        panel.canChooseFiles = true
+        panel.allowedFileTypes = ["png", "svg", "jpg", "jpeg", "gif", "webp"]
+        panel.begin { response in
+            guard response == .OK else { return }
+            let urls = panel.urls
+            Task { @MainActor in
+                var okCount = 0
+                for url in urls {
+                    if let data = try? Data(contentsOf: url) {
+                        if iconProvider.addImageToProjectLibrary(data: data, filename: url.lastPathComponent) {
+                            okCount += 1
+                        }
+                    }
+                }
+                print("[IconGrid] addImagesViaPanel done: \(okCount)/\(urls.count)")
+            }
+        }
+    }
+
+    /// 通过文件选择器删除图片
+    private func deleteImagesViaPanel() {
+        guard let sid = selectedCategory?.sourceIdentifier,
+              IconRepo.shared.getAllIconSources().first(where: { $0.sourceIdentifier == sid })?.supportsMutations == true else { return }
+        let panel = NSOpenPanel()
+        panel.allowsMultipleSelection = true
+        panel.canChooseDirectories = false
+        panel.canChooseFiles = true
+        panel.allowedFileTypes = ["png", "svg", "jpg", "jpeg", "gif", "webp"]
+        panel.begin { response in
+            guard response == .OK else { return }
+            let urls = panel.urls
+            Task { @MainActor in
+                var okCount = 0
+                for url in urls {
+                    if iconProvider.deleteImageFromProjectLibrary(filename: url.lastPathComponent) {
+                        okCount += 1
+                    }
+                }
+                print("[IconGrid] deleteImagesViaPanel done: \(okCount)/\(urls.count)")
             }
         }
     }

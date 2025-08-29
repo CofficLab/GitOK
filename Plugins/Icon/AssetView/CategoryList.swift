@@ -32,19 +32,6 @@ struct CategoryList: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            // 顶部工具条（当来源支持增删时显示）
-            if currentSourceSupportsMutations {
-                HStack(spacing: 8) {
-                    Button("添加图标…") { addImagesViaPanel() }
-                        .buttonStyle(.bordered)
-                    Button("删除图标…") { deleteImagesViaPanel() }
-                        .buttonStyle(.bordered)
-                    Spacer()
-                }
-                .padding(.horizontal, 12)
-                .padding(.top, 8)
-            }
-
             // 搜索框
             SearchBar(text: $searchText)
                 .padding(.horizontal, 12)
@@ -89,56 +76,6 @@ struct CategoryList: View {
         .onChange(of: selectedSourceIdentifier) { _ in
             print("[CategoryList] selectedSourceIdentifier changed to: \(selectedSourceIdentifier ?? "nil")")
             loadCategories()
-        }
-    }
-
-    /// 通过文件选择器添加图片
-    private func addImagesViaPanel() {
-        guard currentSourceSupportsMutations else { return }
-        let panel = NSOpenPanel()
-        panel.allowsMultipleSelection = true
-        panel.canChooseDirectories = false
-        panel.canChooseFiles = true
-        panel.allowedFileTypes = ["png", "svg", "jpg", "jpeg", "gif", "webp"]
-        panel.begin { response in
-            guard response == .OK else { return }
-            let urls = panel.urls
-            Task { @MainActor in
-                var okCount = 0
-                for url in urls {
-                    if let data = try? Data(contentsOf: url) {
-                        if iconProvider.addImageToProjectLibrary(data: data, filename: url.lastPathComponent) {
-                            okCount += 1
-                        }
-                    }
-                }
-                print("[CategoryList] addImagesViaPanel done: \(okCount)/\(urls.count)")
-                loadCategories()
-            }
-        }
-    }
-
-    /// 通过文件选择器删除图片（选择要删除的文件名）
-    private func deleteImagesViaPanel() {
-        guard currentSourceSupportsMutations else { return }
-        let panel = NSOpenPanel()
-        panel.allowsMultipleSelection = true
-        panel.canChooseDirectories = false
-        panel.canChooseFiles = true
-        panel.allowedFileTypes = ["png", "svg", "jpg", "jpeg", "gif", "webp"]
-        panel.begin { response in
-            guard response == .OK else { return }
-            let urls = panel.urls
-            Task { @MainActor in
-                var okCount = 0
-                for url in urls {
-                    if iconProvider.deleteImageFromProjectLibrary(filename: url.lastPathComponent) {
-                        okCount += 1
-                    }
-                }
-                print("[CategoryList] deleteImagesViaPanel done: \(okCount)/\(urls.count)")
-                loadCategories()
-            }
         }
     }
 
