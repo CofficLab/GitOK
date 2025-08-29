@@ -8,19 +8,19 @@ import SwiftUI
  */
 struct IconGrid: View {
     @EnvironmentObject var iconProvider: IconProvider
-    
+
     @State private var gridItems: [GridItem] = Array(repeating: .init(.flexible()), count: 8)
     @State private var iconAssets: [IconAsset] = []
     @State private var isLoading: Bool = false
-    
+
     let selectedCategory: IconCategoryInfo?
     let selectedSourceIdentifier: String?
-    
+
     init(selectedCategory: IconCategoryInfo?, selectedSourceIdentifier: String?) {
         self.selectedCategory = selectedCategory
         self.selectedSourceIdentifier = selectedSourceIdentifier
     }
-    
+
     var body: some View {
         GeometryReader { geo in
             VStack(spacing: 0) {
@@ -40,7 +40,7 @@ struct IconGrid: View {
                                 .font(.system(size: 12))
                                 .foregroundColor(.secondary)
                         }
-                        
+
                         // 右侧：在分类标题下方放置添加/删除按钮（当来源支持增删时显示）
                         if IconRepo.shared.getAllIconSources().first(where: { $0.sourceIdentifier == sid })?.supportsMutations == true {
                             HStack(spacing: 8) {
@@ -91,7 +91,7 @@ struct IconGrid: View {
                         alignment: .bottom
                     )
                 }
-                
+
                 // 图标网格内容
                 if isLoading {
                     VStack {
@@ -107,7 +107,7 @@ struct IconGrid: View {
                             Image(systemName: "photo.on.rectangle.angled")
                                 .font(.system(size: 48))
                                 .foregroundColor(.secondary)
-                            
+
                             let shouldSelectPrompt = (selectedSourceIdentifier == nil)
                             Text(shouldSelectPrompt ? "请选择一个分类" : "该来源下没有可用的图标")
                                 .font(.system(size: 14))
@@ -145,7 +145,7 @@ struct IconGrid: View {
             loadIconAssets()
         }
     }
-    
+
     /// 更新网格列数
     private func updateGridItems(_ geo: GeometryProxy) {
         let availableWidth = geo.size.width - 32 // 减去左右padding
@@ -154,11 +154,11 @@ struct IconGrid: View {
         let columns = max(Int((availableWidth + spacing) / (itemWidth + spacing)), 1)
         gridItems = Array(repeating: .init(.flexible()), count: columns)
     }
-    
+
     /// 加载图标资源
     private func loadIconAssets() {
         isLoading = true
-        
+
         Task {
             let assets: [IconAsset]
             if let sid = selectedSourceIdentifier,

@@ -68,7 +68,7 @@ struct IconDetailLayout: View {
                             IconBox()
                         } else {
                             VStack(spacing: 24) {
-                                IconBgs()
+                                IconBgs(itemSize: 48)
                                 OpacityControl()
                                 ScaleControl()
                                 CornerRadiusControl()
