@@ -19,7 +19,7 @@ class IconProvider: NSObject, ObservableObject, SuperLog {
     @Published var selectedIconId: String = ""
     
     /// 当前选中的分类
-    @Published var selectedCategory: IconCategory?
+    @Published var selectedCategory: IconCategoryInfo?
     
     /// 是否启用网络仓库，默认启用
     @Published var enableRemoteRepository: Bool = true
@@ -92,7 +92,7 @@ class IconProvider: NSObject, ObservableObject, SuperLog {
     /**
         选择图标分类
      */
-    func selectCategory(_ category: IconCategory) {
+    func selectCategory(_ category: IconCategoryInfo) {
         self.selectedCategory = category
     }
     

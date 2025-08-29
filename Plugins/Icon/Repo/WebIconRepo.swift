@@ -6,9 +6,8 @@ import MagicCore
 /**
  * 远程图标仓库
  * 负责从网络API获取图标分类和图标数据
- * 支持缓存机制，避免重复网络请求
- * 支持本地图标缓存，提升加载性能
- * 实现 IconSourceProtocol 协议以支持统一的图标来源管理
+ * 支持缓存机制和本地图标缓存，提升加载性能
+ * 实现 IconSourceProtocol 协议，提供统一的图标来源接口
  */
 class WebIconRepo: SuperLog, IconSourceProtocol {
     nonisolated static var emoji: String { "🌐" }

@@ -10,14 +10,14 @@ struct CategoryTabs: View {
     @EnvironmentObject var iconProvider: IconProvider
     @EnvironmentObject var m: MagicMessageProvider
 
-    @State private var cateogories: [IconCategory] = []
+    @State private var categories: [IconCategoryInfo] = []
 
     var body: some View {
         HStack(spacing: 0) {
             // 左侧：分类标签页（可滚动）
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 0) {
-                    ForEach(cateogories, id: \.id) { category in
+                    ForEach(categories, id: \.id) { category in
                         CategoryTab(category)
                     }
                 }
@@ -56,7 +56,7 @@ struct CategoryTabs: View {
         }
         .onAppear {
             Task {
-                self.cateogories = await IconRepo.shared.getAllCategories()
+                self.categories = await IconRepo.shared.getAllCategories(enableRemote: iconProvider.enableRemoteRepository)
             }
         }
     }

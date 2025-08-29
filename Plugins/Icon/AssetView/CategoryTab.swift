@@ -8,9 +8,9 @@ import SwiftUI
 struct CategoryTab: View {
     @EnvironmentObject var iconProvider: IconProvider
     
-    let category: IconCategory
+    let category: IconCategoryInfo
     
-    init(_ category: IconCategory) {
+    init(_ category: IconCategoryInfo) {
         self.category = category
     }
     
