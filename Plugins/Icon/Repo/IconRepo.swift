@@ -76,9 +76,13 @@ class IconRepo: SuperLog {
         
         for source in iconSources {
             print("[IconRepo] pulling from source: \(source.sourceName) [id=\(source.sourceIdentifier)]")
-            let categories = await source.getAllCategories()
-            print("[IconRepo] source returned: \(categories.count) categories")
-            allCategories.append(contentsOf: categories)
+            do {
+                let categories = try await source.getAllCategories()
+                print("[IconRepo] source returned: \(categories.count) categories")
+                allCategories.append(contentsOf: categories)
+            } catch {
+                print("[IconRepo] source error: \(error)")
+            }
         }
         
         var uniqueCategories: [IconCategoryInfo] = []
@@ -158,22 +162,38 @@ class IconRepo: SuperLog {
     /// 根据图标ID获取图标
     /// - Parameter iconId: 图标ID
     /// - Returns: 图标Asset实例，如果找不到则返回nil
-    func getIconAsset(byId iconId: String) async -> IconAsset? {
-        return await withTaskGroup(of: IconAsset?.self, returning: IconAsset?.self) { group in
+    func getIconAsset(byId iconId: String) async throws -> IconAsset? {
+        return try await withThrowingTaskGroup(of: Result<IconAsset?, Error>.self, returning: IconAsset?.self) { group in
             for source in iconSources {
                 group.addTask {
                     if await source.isAvailable {
-                        return await source.getIconAsset(byId: iconId)
+                        do {
+                            let icon = try await source.getIconAsset(byId: iconId)
+                            return .success(icon)
+                        } catch {
+                            return .failure(error)
+                        }
                     }
-                    return nil
+                    return .success(nil)
                 }
             }
 
-            for await result in group {
-                if let icon = result {
-                    group.cancelAll()
-                    return icon
+            var firstError: Error?
+
+            for try await result in group {
+                switch result {
+                case let .success(icon):
+                    if let icon = icon {
+                        group.cancelAll()
+                        return icon
+                    }
+                case let .failure(error):
+                    if firstError == nil { firstError = error }
                 }
+            }
+
+            if let error = firstError {
+                throw error
             }
             return nil
         }

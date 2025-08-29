@@ -42,14 +42,22 @@ struct DownloadButtons: View {
         }
 
         Task {
-            if let iconAsset = await IconRepo.shared.getIconAsset(byId: iconProvider.selectedIconId) {
-                await MainActor.run {
-                    self.currentIconAsset = iconAsset
+            do {
+                if let iconAsset = try await IconRepo.shared.getIconAsset(byId: iconProvider.selectedIconId) {
+                    await MainActor.run {
+                        self.currentIconAsset = iconAsset
+                    }
+                } else {
+                    await MainActor.run {
+                        self.currentIconAsset = nil
+                    }
                 }
-            } else {
+            } catch {
                 await MainActor.run {
                     self.currentIconAsset = nil
                 }
+                // 可以在这里添加错误日志或用户提示
+                print("加载图标失败：\(error.localizedDescription)")
             }
         }
     }

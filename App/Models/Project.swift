@@ -128,8 +128,40 @@ extension Project {
     func isGit() -> Bool {
         ShellGit.isGitRepository(at: path)
     }
+    
+    /**
+        异步检查项目是否为Git仓库
+        
+        使用异步方式避免阻塞主线程，解决CPU占用100%的问题
+        
+        ## 返回值
+        异步返回是否为Git仓库的布尔值
+        
+        ## 示例
+        ```swift
+        let isGit = await project.isGitAsync()
+        ```
+     */
+    func isGitAsync() async -> Bool {
+        // 使用Task.detached避免阻塞主线程
+        return await Task.detached(priority: .userInitiated) {
+            return ShellGit.isGitRepository(at: self.path)
+        }.value
+    }
 
     func isNotGit() -> Bool { !isGit() }
+    
+    /**
+        异步检查项目是否为Git仓库（非阻塞版本）
+        
+        使用异步方式避免阻塞主线程
+        
+        ## 返回值
+        异步返回是否为Git仓库的布尔值
+     */
+    func isNotGitAsync() async -> Bool {
+        return !(await isGitAsync())
+    }
 
     func isClean(verbose: Bool = true) throws -> Bool {
         guard isGit() else {

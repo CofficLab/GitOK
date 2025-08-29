@@ -1,5 +1,6 @@
 import OSLog
 import SwiftUI
+import MagicCore
 
 struct IconDetailLayout: View {
     @EnvironmentObject var i: IconProvider
@@ -31,30 +32,25 @@ struct IconDetailLayout: View {
                     VStack(spacing: 0) {
                         // Custom Tab Bar
                         HStack(spacing: 0) {
-                            Button(action: { selectedRightPaneTab = .icon }) {
-                                Text("Icon")
-                                    .fontWeight(.medium)
-                                    .padding(.vertical, 8)
-                                    .padding(.horizontal, 12)
-                                    .frame(maxWidth: .infinity)
-                                    .contentShape(Rectangle())
-                                    .background(selectedRightPaneTab == .icon ? Color.accentColor.opacity(0.2) : Color.clear)
-                                    .foregroundColor(selectedRightPaneTab == .icon ? .accentColor : .primary)
+                            MagicButton.simple(
+                                title: "Icon",
+                                style: selectedRightPaneTab == .icon ? .primary : .secondary,
+                                size: .auto,
+                                shape: .rectangle
+                            ) {
+                                selectedRightPaneTab = .icon
                             }
-                            .buttonStyle(PlainButtonStyle())
 
-                            Button(action: { selectedRightPaneTab = .controls }) {
-                                Text("Controls")
-                                    .fontWeight(.medium)
-                                    .padding(.vertical, 8)
-                                    .padding(.horizontal, 12)
-                                    .frame(maxWidth: .infinity)
-                                    .contentShape(Rectangle())
-                                    .background(selectedRightPaneTab == .controls ? Color.accentColor.opacity(0.2) : Color.clear)
-                                    .foregroundColor(selectedRightPaneTab == .controls ? .accentColor : .primary)
+                            MagicButton.simple(
+                                title: "Controls",
+                                style: selectedRightPaneTab == .controls ? .primary : .secondary,
+                                size: .auto,
+                                shape: .rectangle
+                            ) {
+                                selectedRightPaneTab = .controls
                             }
-                            .buttonStyle(PlainButtonStyle())
                         }
+                        .frame(height: 24)
                         .padding(4)
                         .background(Color.primary.opacity(0.05))
                         .cornerRadius(8)

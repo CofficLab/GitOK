@@ -24,7 +24,8 @@ protocol IconSourceProtocol {
     
     /// 获取所有可用的图标分类
     /// - Returns: 分类数组
-    func getAllCategories() async -> [IconCategoryInfo]
+    /// - Throws: 当数据源不可用或解析失败时抛出错误
+    func getAllCategories() async throws -> [IconCategoryInfo]
     
     /// 获取指定分类下的所有图标
     /// - Parameter categoryId: 分类标识符
@@ -37,12 +38,14 @@ protocol IconSourceProtocol {
     /// 根据图标ID获取图标资源
     /// - Parameter iconId: 图标ID
     /// - Returns: 图标资源，如果找不到则返回nil
-    func getIconAsset(byId iconId: String) async -> IconAsset?
+    /// - Throws: 当底层数据源拉取/解析失败时抛出错误
+    func getIconAsset(byId iconId: String) async throws -> IconAsset?
     
     /// 根据分类名称获取分类信息
     /// - Parameter name: 分类名称
     /// - Returns: 分类信息，如果找不到则返回nil
-    func getCategory(byName name: String) async -> IconCategoryInfo?
+    /// - Throws: 当底层数据源拉取/解析失败时抛出错误
+    func getCategory(byName name: String) async throws -> IconCategoryInfo?
     
     /// 添加图片（默认不支持）
     func addImage(data: Data, filename: String) async -> Bool
@@ -57,7 +60,7 @@ extension IconSourceProtocol {
     
     func getAllIcons() async -> [IconAsset] {
         // 默认实现：聚合所有分类下的图标
-        let categories = await getAllCategories()
+        let categories = (try? await getAllCategories()) ?? []
         var all: [IconAsset] = []
         for category in categories {
             let icons = await getIcons(for: category.id)

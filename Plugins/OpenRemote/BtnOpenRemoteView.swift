@@ -87,19 +87,42 @@ extension BtnOpenRemoteView {
 
         self.isGitProject = project.isGit()
     }
+    
+    /**
+        异步更新Git项目状态
+        
+        使用异步方式避免阻塞主线程，解决CPU占用100%的问题
+     */
+    func updateIsGitProjectAsync() async {
+        guard let project = g.project else {
+            await MainActor.run {
+                self.isGitProject = false
+            }
+            return
+        }
+        
+        let isGit = await project.isGitAsync()
+        await MainActor.run {
+            self.isGitProject = isGit
+        }
+    }
 }
 
 // MARK: - Event
 
 extension BtnOpenRemoteView {
     func onAppear() {
-        self.updateIsGitProject()
-        self.updateRemoteURL()
+        Task {
+            await self.updateIsGitProjectAsync()
+            self.updateRemoteURL()
+        }
     }
 
     func onProjectChange() {
-        self.updateIsGitProject()
-        self.updateRemoteURL()
+        Task {
+            await self.updateIsGitProjectAsync()
+            self.updateRemoteURL()
+        }
     }
 }
 

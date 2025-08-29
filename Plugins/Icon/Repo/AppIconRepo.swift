@@ -53,10 +53,10 @@ class AppIconRepo: SuperLog, IconSourceProtocol {
         return findIconFolder()
     }
 
-    func getAllCategories() async -> [IconCategoryInfo] {
+    func getAllCategories() async throws -> [IconCategoryInfo] {
         guard let iconFolderURL = iconFolderURL else {
             os_log(.error, "\(self.t)未找到图标文件夹")
-            return []
+            throw RemoteIconError.networkError
         }
 
         return scanCategories(from: iconFolderURL)
@@ -114,8 +114,8 @@ class AppIconRepo: SuperLog, IconSourceProtocol {
         }
     }
 
-    func getCategory(byName name: String) async -> IconCategoryInfo? {
-        let categories = await getAllCategories()
+    func getCategory(byName name: String) async throws -> IconCategoryInfo? {
+        let categories = try await getAllCategories()
         return categories.first { $0.name == name }
     }
 
@@ -145,8 +145,8 @@ class AppIconRepo: SuperLog, IconSourceProtocol {
         }
     }
 
-    func getIconAsset(byId iconId: String) async -> IconAsset? {
-        let categories = await getAllCategories()
+    func getIconAsset(byId iconId: String) async throws -> IconAsset? {
+        let categories = try await getAllCategories()
 
         for category in categories {
             let icons = await getIcons(for: category.id)

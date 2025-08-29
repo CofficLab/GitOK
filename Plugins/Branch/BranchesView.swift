@@ -113,6 +113,25 @@ extension BranchesView {
     func updateIsGitProject() {
         self.isGitProject = data.project?.isGit() ?? false
     }
+    
+    /**
+        异步更新Git项目状态
+        
+        使用异步方式避免阻塞主线程，解决CPU占用100%的问题
+     */
+    func updateIsGitProjectAsync() async {
+        guard let project = data.project else {
+            await MainActor.run {
+                self.isGitProject = false
+            }
+            return
+        }
+        
+        let isGit = await project.isGitAsync()
+        await MainActor.run {
+            self.isGitProject = isGit
+        }
+    }
 }
 
 // MARK: - Event
@@ -123,12 +142,17 @@ extension BranchesView {
     }
 
     func onProjectChanged() {
-        self.refreshBranches(reason: "Project Changed to \(data.project?.title ?? "")")
+        Task {
+            await self.updateIsGitProjectAsync()
+            self.refreshBranches(reason: "Project Changed to \(data.project?.title ?? "")")
+        }
     }
 
     func onAppear() {
-        self.updateIsGitProject()
-        self.refreshBranches(reason: "onAppear while project is \(data.project?.title ?? "")")
+        Task {
+            await self.updateIsGitProjectAsync()
+            self.refreshBranches(reason: "onAppear while project is \(data.project?.title ?? "")")
+        }
     }
     
     func onSelectionChange() {

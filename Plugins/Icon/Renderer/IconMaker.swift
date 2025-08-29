@@ -70,16 +70,24 @@ struct IconMaker: View {
         }
 
         Task {
-            let iconAsset = await IconRepo.shared.getIconAsset(byId: i.selectedIconId)
+            do {
+                let iconAsset = try await IconRepo.shared.getIconAsset(byId: i.selectedIconId)
 
-            await MainActor.run {
-                if let iconAsset = iconAsset {
-                    self.iconAsset = iconAsset
-                    self.errorMessage = nil
-                    self.isLoading = false
-                } else {
+                await MainActor.run {
+                    if let iconAsset = iconAsset {
+                        self.iconAsset = iconAsset
+                        self.errorMessage = nil
+                        self.isLoading = false
+                    } else {
+                        self.iconAsset = nil
+                        self.errorMessage = "未找到图标：\(i.selectedIconId)"
+                        self.isLoading = false
+                    }
+                }
+            } catch {
+                await MainActor.run {
                     self.iconAsset = nil
-                    self.errorMessage = "未找到图标：\(i.selectedIconId)"
+                    self.errorMessage = "加载图标失败：\(error.localizedDescription)"
                     self.isLoading = false
                 }
             }

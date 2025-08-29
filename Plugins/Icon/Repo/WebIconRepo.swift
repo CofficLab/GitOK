@@ -76,9 +76,9 @@ class WebIconRepo: SuperLog, IconSourceProtocol {
         }
     }
 
-    func getAllCategories() async -> [IconCategoryInfo] {
+    func getAllCategories() async throws -> [IconCategoryInfo] {
         print("[WebIconRepo] getAllCategories begin (cached: \(cachedCategories.count))")
-        let remoteCategories = await getAllRemoteCategories()
+        let remoteCategories = try await getAllRemoteCategories()
         print("[WebIconRepo] getAllCategories remote count: \(remoteCategories.count)")
         let mapped = remoteCategories.map { remoteCategory in
             IconCategoryInfo(
@@ -94,13 +94,13 @@ class WebIconRepo: SuperLog, IconSourceProtocol {
         return mapped
     }
 
-    func getCategory(byName name: String) async -> IconCategoryInfo? {
-        let categories = await getAllCategories()
+    func getCategory(byName name: String) async throws -> IconCategoryInfo? {
+        let categories = try await getAllCategories()
         return categories.first { $0.name == name }
     }
 
-    func getIconAsset(byId iconId: String) async -> IconAsset? {
-        let categories = await getAllCategories()
+    func getIconAsset(byId iconId: String) async throws -> IconAsset? {
+        let categories = try await getAllCategories()
 
         for category in categories {
             let icons = await getIcons(for: category.id)
@@ -136,7 +136,7 @@ class WebIconRepo: SuperLog, IconSourceProtocol {
 
     /// 获取所有远程图标分类（兼容旧接口）
     /// - Returns: RemoteIconCategory 数组
-    func getAllRemoteCategories() async -> [RemoteIconCategory] {
+    func getAllRemoteCategories() async throws -> [RemoteIconCategory] {
         // 检查缓存是否有效
         if isCacheValid() {
             print("[WebIconRepo] using cached categories: \(cachedCategories.count)")
@@ -144,17 +144,12 @@ class WebIconRepo: SuperLog, IconSourceProtocol {
         }
 
         // 从网络获取数据
-        do {
-            print("[WebIconRepo] fetching categories from network...")
-            let categories = try await fetchCategoriesFromNetwork()
-            cachedCategories = categories
-            lastCacheTime = Date()
-            print("[WebIconRepo] fetched categories: \(categories.count)")
-            return categories
-        } catch {
-            print("[WebIconRepo] fetch categories error: \(error), return cached: \(cachedCategories.count)")
-            return cachedCategories
-        }
+        print("[WebIconRepo] fetching categories from network...")
+        let categories = try await fetchCategoriesFromNetwork()
+        cachedCategories = categories
+        lastCacheTime = Date()
+        print("[WebIconRepo] fetched categories: \(categories.count)")
+        return categories
     }
 
     /// 从网络获取分类数据
