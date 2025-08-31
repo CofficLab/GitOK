@@ -9,6 +9,7 @@ import MagicCore
 enum IconSource {
     case local
     case remote
+    case generated
 }
 
 /**
@@ -24,6 +25,10 @@ class IconAsset: Identifiable {
     /// 图标文件URL（本地图标）或远程路径（远程图标）
     let fileURL: URL?
     let remotePath: String?
+    /// 生成型视图构造器（用于 MagicAsset 等基于 SwiftUI 的图标）
+    let viewBuilder: (() -> AnyView)?
+    /// 生成型视图的稳定标识
+    private let viewId: String?
     
     /// 稳定的ID
     var id: String { 
@@ -32,6 +37,8 @@ class IconAsset: Identifiable {
             return fileURL?.path ?? ""
         case .remote:
             return remotePath ?? ""
+        case .generated:
+            return viewId ?? ""
         }
     }
     
@@ -42,6 +49,8 @@ class IconAsset: Identifiable {
             return fileURL?.deletingLastPathComponent().lastPathComponent ?? ""
         case .remote:
             return remotePath?.components(separatedBy: "/").first ?? ""
+        case .generated:
+            return "MagicAsset"
         }
     }
     
@@ -52,6 +61,8 @@ class IconAsset: Identifiable {
             return fileURL?.deletingPathExtension().lastPathComponent ?? ""
         case .remote:
             return remotePath?.components(separatedBy: "/").last?.replacingOccurrences(of: ".svg", with: "") ?? ""
+        case .generated:
+            return viewId ?? ""
         }
     }
     
@@ -61,6 +72,8 @@ class IconAsset: Identifiable {
         self.source = .local
         self.fileURL = fileURL
         self.remotePath = nil
+        self.viewBuilder = nil
+        self.viewId = nil
     }
     
     /// 远程图标初始化方法
@@ -69,6 +82,20 @@ class IconAsset: Identifiable {
         self.source = .remote
         self.fileURL = nil
         self.remotePath = remotePath
+        self.viewBuilder = nil
+        self.viewId = nil
+    }
+
+    /// 生成型图标初始化方法（基于 SwiftUI 视图）
+    /// - Parameters:
+    ///   - viewBuilder: 返回任意 SwiftUI 视图的构造器
+    ///   - id: 稳定标识（用于选择/比较）
+    init(viewBuilder: @escaping () -> AnyView, id: String) {
+        self.source = .generated
+        self.fileURL = nil
+        self.remotePath = nil
+        self.viewBuilder = viewBuilder
+        self.viewId = id
     }
     
     /// 异步获取图标图片（支持远程图标加载）
@@ -80,6 +107,8 @@ class IconAsset: Identifiable {
             return loadImage()
         case .remote:
             return await loadRemoteImage()
+        case .generated:
+            return loadGeneratedImage()
         }
     }
     
@@ -132,6 +161,18 @@ class IconAsset: Identifiable {
             return Image(systemName: "plus")
         }
     }
+
+    /// 将生成型视图转为图片
+    /// - Returns: SwiftUI Image
+    @MainActor
+    private func loadGeneratedImage() -> Image {
+        guard let viewBuilder = viewBuilder else {
+            return Image(systemName: "sparkles")
+        }
+        // 为了避免缩略图模糊，先以较大的固定尺寸渲染，再缩小显示
+        let sizedView = AnyView(viewBuilder().frame(width: 1024, height: 1024))
+        return MagicImage.makeImage(sizedView)
+    }
     
     /// 异步加载远程图标
     /// - Returns: 加载完成的SwiftUI Image
@@ -177,7 +218,7 @@ class IconAsset: Identifiable {
             .hideSidebar()
             .hideProjectActions()
     }
-    .frame(width: 800)
+    .frame(width: 700)
     .frame(height: 800)
 }
 
