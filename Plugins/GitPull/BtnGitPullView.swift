@@ -98,13 +98,27 @@ extension BtnGitPullView {
     func updateIsGitProject() {
         self.isGitProject = data.project?.isGit() ?? false
     }
+    
+    /**
+        异步更新Git项目状态
+        
+        使用异步方式避免阻塞主线程，解决CPU占用100%的问题
+     */
+    func updateIsGitProjectAsync() async {
+        let isGit = data.project?.isGit() ?? false
+        await MainActor.run {
+            self.isGitProject = isGit
+        }
+    }
 }
 
 // MARK: - Event
 
 extension BtnGitPullView {
     func onAppear() {
-        self.updateIsGitProject()
+        Task {
+            await self.updateIsGitProjectAsync()
+        }
     }
 }
 

@@ -38,9 +38,15 @@ struct BtnRemoteRepositoryView: View, SuperLog {
             RemoteRepositoryView()
                 .environmentObject(data)
         }
-        .onAppear(perform: updateIsGitProject)
+        .onAppear(perform: {
+            Task {
+                await self.updateIsGitProjectAsync()
+            }
+        })
         .onChange(of: data.project) {
-            updateIsGitProject()
+            Task {
+                await self.updateIsGitProjectAsync()
+            }
         }
     }
 }
@@ -55,6 +61,25 @@ extension BtnRemoteRepositoryView {
         }
 
         isGitProject = project.isGit()
+    }
+    
+    /**
+        异步更新Git项目状态
+        
+        使用异步方式避免阻塞主线程，解决CPU占用100%的问题
+     */
+    private func updateIsGitProjectAsync() async {
+        guard let project = data.project else {
+            await MainActor.run {
+                self.isGitProject = false
+            }
+            return
+        }
+        
+        let isGit = await project.isGitAsync()
+        await MainActor.run {
+            self.isGitProject = isGit
+        }
     }
 }
 

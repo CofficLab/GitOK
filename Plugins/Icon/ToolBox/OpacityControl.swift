@@ -18,8 +18,8 @@ struct OpacityControl: View {
                 .font(.caption)
                 .foregroundColor(.secondary)
             Slider(value: $localOpacity, in: 0...1)
-                .onChange(of: localOpacity) { newValue in
-                    updateOpacity(newValue)
+                .onChange(of: localOpacity) {
+                    updateOpacity(localOpacity)
                 }
         }
         .onAppear {

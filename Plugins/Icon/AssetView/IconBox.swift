@@ -3,92 +3,111 @@ import SwiftUI
 
 /**
  * 图标盒子视图
- * 负责管理分类选择和图标展示的整体布局
- * 数据流：IconRepo -> IconCategory -> IconAsset List
+ * 负责管理仓库来源选择、分类选择和图标展示的整体布局
+ * 顶部显示仓库来源tab，左侧显示分类列表，右侧显示图标网格
  */
 struct IconBox: View {
     @EnvironmentObject var iconProvider: IconProvider
-    @State private var gridItems: [GridItem] = Array(repeating: .init(.flexible()), count: 10)
-    @State private var iconAssets: [IconAsset] = []
-    @State private var isLoading: Bool = false
+    @State private var selectedSourceName: String? = nil
+    @State private var availableSources: [IconSourceProtocol] = []
+
+    private var repo = IconRepo.shared
+
+    private var currentSourceIdentifier: String? {
+        availableSources.first(where: { $0.sourceName == selectedSourceName })?.sourceIdentifier
+    }
+
+    private var currentSourceSupportsCategories: Bool {
+        guard let sid = currentSourceIdentifier else { return true }
+        return availableSources.first(where: { $0.sourceIdentifier == sid })?.supportsCategories ?? true
+    }
 
     var body: some View {
         VStack(spacing: 0) {
-            // 分类标签页
-            CategoryTabs()
-                .frame(height: 32)
+            // 顶部：仓库来源选择tab
+            SourceTabs(
+                selectedSourceName: $selectedSourceName,
+                availableSources: availableSources
+            )
+            .frame(height: 40)
 
-            // 图标网格
-            GeometryReader { geo in
-                ScrollView {
-                    VStack {
-                        if isLoading {
-                            ProgressView("加载图标中...")
-                                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                                .padding()
-                        } else if iconAssets.isEmpty {
-                            Text("没有可用的图标")
-                                .foregroundColor(.secondary)
-                                .padding()
-                        } else {
-                            LazyVGrid(columns: gridItems, spacing: 12) {
-                                ForEach(iconAssets, id: \.id) { iconAsset in
-                                    IconView(iconAsset)
-                                }
-                            }
-                        }
-                    }
-                    .onAppear {
-                        updateGridItems(geo)
-                    }
-                    .onChange(of: geo.size.width) {
-                        updateGridItems(geo)
-                    }
+            // 主体内容：分类 + 图标网格
+            VStack(spacing: 0) {
+                if currentSourceSupportsCategories {
+                    // 分类列表
+                    CategoryList(
+                        selectedSourceIdentifier: currentSourceIdentifier,
+                        selectedCategory: iconProvider.selectedCategory
+                    )
+                    .background(Color(.controlBackgroundColor))
+
+                    // 分隔线
+                    Divider()
+                        .frame(width: 1)
                 }
+
+                // 图标网格
+                IconGrid(
+                    selectedCategory: iconProvider.selectedCategory,
+                    selectedSourceIdentifier: currentSourceIdentifier
+                )
             }
         }
         .onAppear {
-            iconProvider.refreshCategories()
-            // 确保有选中的分类，如果没有则选择第一个
-            if iconProvider.selectedCategory == nil {
-                Task {
-                    let categories = await IconRepo.shared.getAllCategories(enableRemote: iconProvider.enableRemoteRepository)
-                    if let firstCategory = categories.first {
-                        await MainActor.run {
-                            iconProvider.selectCategory(firstCategory)
-                        }
-                    }
-                }
-            } else {
-                // 如果已有选中的分类，直接加载图标
-                loadIconAssets()
-            }
+            loadAvailableSources()
+            ensureDefaultSelection()
+            // 初始化当前来源标识
+            iconProvider.selectedSourceIdentifier = currentSourceIdentifier
         }
-        .onChange(of: iconProvider.selectedCategory) {
-            loadIconAssets()
+        .onChange(of: selectedSourceName) {
+            handleSourceChange()
         }
     }
 
-    private func updateGridItems(_ geo: GeometryProxy) {
-        let columns = max(Int(geo.size.width / 60), 1)
-        gridItems = Array(repeating: .init(.flexible()), count: columns)
+    /// 加载可用的图标来源
+    private func loadAvailableSources() {
+        availableSources = repo.getAllIconSources()
     }
 
-    private func loadIconAssets() {
-        guard let selectedCategory = iconProvider.selectedCategory else {
-            iconAssets = []
-            return
+    /// 确保有默认选择
+    private func ensureDefaultSelection() {
+        if selectedSourceName == nil {
+            selectedSourceName = availableSources.first?.sourceName
         }
 
-        isLoading = true
+//        if iconProvider.selectedCategory == nil {
+//            Task {
+//                let categories = await repo.getAllCategories()
+//                if let firstCategory = categories.first {
+//                    await MainActor.run {
+//                        iconProvider.selectCategory(firstCategory)
+//                    }
+//                }
+//            }
+//        }
+    }
+}
 
-        Task {
-            let assets = await selectedCategory.getAllIconAssets()
-            await MainActor.run {
-                self.iconAssets = assets
-                self.isLoading = false
-            }
-        }
+// MARK: - Event Handlers
+
+extension IconBox {
+    private func handleSourceChange() {
+        iconProvider.clearSelectedCategory()
+
+        guard let sid = currentSourceIdentifier else { return }
+        
+        // 同步当前来源标识到 Provider，供增删操作使用
+        iconProvider.selectedSourceIdentifier = sid
+
+        // 若新来源支持分类且当前未选择分类，则选择该来源的第一个分类
+//        Task {
+//            let categories = await repo.getAllCategories()
+//            if let first = categories.first(where: { $0.sourceIdentifier == sid }) {
+//                await MainActor.run {
+//                    iconProvider.selectCategory(first)
+//                }
+//            }
+//        }
     }
 }
 
@@ -107,6 +126,6 @@ struct IconBox: View {
         ContentLayout().setInitialTab(IconPlugin.label)
             .hideSidebar()
     }
-    .frame(width: 1200)
+    .frame(width: 800)
     .frame(height: 1200)
 }

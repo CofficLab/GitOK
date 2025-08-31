@@ -142,8 +142,11 @@ class IconAsset: Identifiable {
         }
         
         do {
-            // 使用WebIconRepo获取远程图标的URL
-            guard let iconURL = WebIconRepo.shared.getIconURL(for: remotePath) else {
+            // 构建远程图标的完整URL
+            let baseURL = "https://gitok.coffic.cn"
+            let iconURL = URL(string: baseURL + "/icons/" + remotePath)
+            
+            guard let iconURL = iconURL else {
                 throw RemoteIconError.invalidURL
             }
             

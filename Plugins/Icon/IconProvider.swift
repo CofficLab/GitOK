@@ -11,22 +11,19 @@ import SwiftUI
  */
 class IconProvider: NSObject, ObservableObject, SuperLog {
     static var emoji = "🍒"
-    
+
     @Published private(set) var currentData: IconData? = nil
 
     /// 当前从候选列表中选中的图标ID
     /// 用于在图标选择器中高亮显示选中的图标
     @Published var selectedIconId: String = ""
-    
+
     /// 当前选中的分类
     @Published var selectedCategory: IconCategory?
-    
-    /// 所有可用的分类
-    @Published var availableCategories: [IconCategory] = []
-    
-    /// 是否启用网络仓库，默认启用
-    @Published var enableRemoteRepository: Bool = true
-    
+
+    /// 当前选中的图标来源标识（用于无分类来源的增删操作）
+    @Published var selectedSourceIdentifier: String? = nil
+
     /// 当前选中的图标分类名称（兼容性属性）
     var selectedCategoryName: String {
         return selectedCategory?.name ?? ""
@@ -34,12 +31,9 @@ class IconProvider: NSObject, ObservableObject, SuperLog {
 
     override init() {
         super.init()
-        
+
         os_log("\(self.t)Initializing IconProvider")
-        
-        // 初始化时加载分类
-        refreshCategories()
-        
+
         NotificationCenter.default.addObserver(
             self, selector: #selector(handleIconDidSave),
             name: .iconDidSave,
@@ -78,13 +72,13 @@ class IconProvider: NSObject, ObservableObject, SuperLog {
         self.currentData = newModel
         self.selectedIconId = newModel?.iconId ?? ""
     }
-    
+
     /**
         选择图标
      */
     func selectIcon(_ iconId: String) {
         self.selectedIconId = iconId
-        
+
         // 如果当前有图标模型，同时更新模型
         if var model = self.currentData {
             do {
@@ -94,51 +88,59 @@ class IconProvider: NSObject, ObservableObject, SuperLog {
             }
         }
     }
-    
+
     /**
         选择图标分类
      */
-    func selectCategory(_ category: IconCategory) {
+    func selectCategory(_ category: IconCategory?) {
         self.selectedCategory = category
     }
-    
+
     /**
-        切换网络仓库启用状态
+        清空选中的分类
      */
-    func toggleRemoteRepository() {
-        self.enableRemoteRepository.toggle()
-        // 切换状态后刷新分类
-        refreshCategories()
+    func clearSelectedCategory() {
+        self.selectedCategory = nil
     }
-    
+
     /**
-        刷新可用分类列表
+        向项目图标库添加图片
+        - Parameters:
+            - data: 图像二进制数据
+            - filename: 文件名（包含扩展名）
+        - Returns: 是否成功
      */
-    func refreshCategories() {
-        Task {
-            let categories = await IconRepo.shared.getAllCategories(enableRemote: enableRemoteRepository)
-            await MainActor.run {
-                self.availableCategories = categories
-                
-                // 如果当前选中的分类不存在，选择第一个
-                if let selected = selectedCategory,
-                   !categories.contains(where: { $0.id == selected.id }) {
-                    selectedCategory = categories.first
-                }
-                
-                // 如果没有选中的分类，选择第一个
-                if selectedCategory == nil && !categories.isEmpty {
-                    selectedCategory = categories.first
-                }
+    func addImageToProjectLibrary(data: Data, filename: String) -> Bool {
+        guard let sid = selectedCategory?.sourceIdentifier ?? selectedSourceIdentifier else { return false }
+        let ok = awaitResult { await IconRepo.shared.addImage(data: data, filename: filename, to: sid) }
+        return ok
+    }
+
+    /**
+        从项目图标库删除图片
+        - Parameter filename: 文件名（包含扩展名）
+        - Returns: 是否成功
+     */
+    func deleteImageFromProjectLibrary(filename: String) -> Bool {
+        guard let sid = selectedCategory?.sourceIdentifier ?? selectedSourceIdentifier else { return false }
+        let ok = awaitResult { await IconRepo.shared.deleteImage(filename: filename, from: sid) }
+        if ok {
+            if selectedIconId.hasSuffix("/\(filename)") || selectedIconId == filename {
+                selectedIconId = ""
             }
         }
+        return ok
     }
-    
-    /// 获取指定名称的分类
-    /// - Parameter name: 分类名称
-    /// - Returns: 分类实例，如果不存在则返回nil
-    func getCategory(byName name: String) -> IconCategory? {
-        return availableCategories.first { $0.name == name }
+
+    private func awaitResult(_ op: @escaping () async -> Bool) -> Bool {
+        var result = false
+        let semaphore = DispatchSemaphore(value: 0)
+        Task {
+            result = await op()
+            semaphore.signal()
+        }
+        semaphore.wait()
+        return result
     }
 }
 

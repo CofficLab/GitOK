@@ -18,8 +18,8 @@ struct CornerRadiusControl: View {
                 .font(.caption)
                 .foregroundColor(.secondary)
             Slider(value: $localCornerRadius, in: 0...50, step: 1)
-                .onChange(of: localCornerRadius) { newValue in
-                    updateCornerRadius(newValue)
+                .onChange(of: localCornerRadius) {
+                    updateCornerRadius(localCornerRadius)
                 }
         }
         .onAppear {

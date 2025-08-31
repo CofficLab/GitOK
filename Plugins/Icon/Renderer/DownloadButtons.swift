@@ -11,7 +11,7 @@ struct DownloadButtons: View {
     @State private var currentIconAsset: IconAsset?
 
     var body: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: 8) {
             XcodeDownloadButton(iconProvider: iconProvider, currentIconAsset: currentIconAsset)
             PNGDownloadButton(iconProvider: iconProvider, currentIconAsset: currentIconAsset)
             FaviconDownloadButton(iconProvider: iconProvider, currentIconAsset: currentIconAsset)
@@ -22,9 +22,6 @@ struct DownloadButtons: View {
                     .foregroundColor(.secondary)
             }
         }
-        .padding()
-        .frame(maxHeight: .infinity)
-        .background(Color.cyan.opacity(0.05))
         .onAppear {
             loadCurrentIconAsset()
         }
@@ -45,14 +42,22 @@ struct DownloadButtons: View {
         }
 
         Task {
-            if let iconAsset = await IconRepo.shared.getIconAsset(byId: iconProvider.selectedIconId) {
-                await MainActor.run {
-                    self.currentIconAsset = iconAsset
+            do {
+                if let iconAsset = try await IconRepo.shared.getIconAsset(byId: iconProvider.selectedIconId) {
+                    await MainActor.run {
+                        self.currentIconAsset = iconAsset
+                    }
+                } else {
+                    await MainActor.run {
+                        self.currentIconAsset = nil
+                    }
                 }
-            } else {
+            } catch {
                 await MainActor.run {
                     self.currentIconAsset = nil
                 }
+                // 可以在这里添加错误日志或用户提示
+                print("加载图标失败：\(error.localizedDescription)")
             }
         }
     }
