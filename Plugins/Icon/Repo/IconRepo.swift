@@ -67,35 +67,6 @@ class IconRepo: SuperLog {
     
     // MARK: - 核心业务接口
     
-    /// 获取所有可用的图标分类
-    /// - Returns: IconCategoryInfo 数组
-    func getAllCatekgories() async -> [IconCategory] {
-        var allCategories: [IconCategory] = []
-        
-        for source in iconSources {
-            do {
-                let categories = try await source.getAllCategories()
-                allCategories.append(contentsOf: categories)
-            } catch {
-                print("[IconRepo] source error: \(error)")
-            }
-        }
-        
-        var uniqueCategories: [IconCategory] = []
-        var seenKeys: Set<String> = []
-        
-        for category in allCategories {
-            let key = "\(category.id)_\(category.sourceIdentifier)"
-            if !seenKeys.contains(key) {
-                seenKeys.insert(key)
-                uniqueCategories.append(category)
-            }
-        }
-        print("[IconRepo] unique categories: \(uniqueCategories.count)")
-        
-        return uniqueCategories.sorted { $0.name < $1.name }
-    }
-
     /// 获取指定来源的所有分类
     /// - Parameter sourceIdentifier: 来源标识
     /// - Returns: 该来源下的分类数组
@@ -104,7 +75,7 @@ class IconRepo: SuperLog {
             return []
         }
         if await source.isAvailable {
-            return try await source.getAllCategories()
+            return try await source.getAllCategories(reason: "repo_get_all_categories")
         }
         return []
     }

@@ -47,7 +47,12 @@ struct CategoryList: View {
                     Spacer()
                 }
             } else if let error = error {
-                error.makeView()
+                VStack {
+                    error.makeView().padding()
+                    Button("打开缓存目录"){
+                        URL.temp.openHttpCacheDirectory()
+                    }
+                }
             } else if filteredCategories.isEmpty {
                 VStack {
                     Spacer()

@@ -23,9 +23,10 @@ protocol IconSourceProtocol {
     var supportsCategories: Bool { get }
     
     /// 获取所有可用的图标分类
+    /// - Parameter reason: 获取原因（用于日志与调优，必须提供，如："ui_list_categories"）
     /// - Returns: 分类数组
     /// - Throws: 当数据源不可用或解析失败时抛出错误
-    func getAllCategories() async throws -> [IconCategory]
+    func getAllCategories(reason: String) async throws -> [IconCategory]
     
     /// 获取指定分类下的所有图标
     /// - Parameter categoryId: 分类标识符
@@ -58,16 +59,6 @@ extension IconSourceProtocol {
     var supportsMutations: Bool { false }
     var supportsCategories: Bool { true }
     
-    func getAllIcons() async -> [IconAsset] {
-        // 默认实现：聚合所有分类下的图标
-        let categories = (try? await getAllCategories()) ?? []
-        var all: [IconAsset] = []
-        for category in categories {
-            let icons = await getIcons(for: category.id)
-            all.append(contentsOf: icons)
-        }
-        return all
-    }
     func addImage(data: Data, filename: String) async -> Bool { false }
     func deleteImage(filename: String) async -> Bool { false }
 }

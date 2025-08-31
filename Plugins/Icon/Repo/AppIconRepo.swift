@@ -9,6 +9,10 @@ import SwiftUI
  * 实现 IconSourceProtocol 协议，提供统一的图标来源接口
  */
 class AppIconRepo: SuperLog, IconSourceProtocol {
+    func getAllIcons() async -> [IconAsset] {
+        []
+    }
+    
     nonisolated static var emoji: String { "🎨" }
 
     /// 单例实例
@@ -53,7 +57,7 @@ class AppIconRepo: SuperLog, IconSourceProtocol {
         return findIconFolder()
     }
 
-    func getAllCategories() async throws -> [IconCategory] {
+    func getAllCategories(reason: String) async throws -> [IconCategory] {
         guard let iconFolderURL = iconFolderURL else {
             os_log(.error, "\(self.t)未找到图标文件夹")
             throw RemoteIconError.networkError
@@ -115,7 +119,7 @@ class AppIconRepo: SuperLog, IconSourceProtocol {
     }
 
     func getCategory(byName name: String) async throws -> IconCategory? {
-        let categories = try await getAllCategories()
+        let categories = try await getAllCategories(reason: "get_category_by_name")
         return categories.first { $0.name == name }
     }
 
@@ -146,7 +150,7 @@ class AppIconRepo: SuperLog, IconSourceProtocol {
     }
 
     func getIconAsset(byId iconId: String) async throws -> IconAsset? {
-        let categories = try await getAllCategories()
+        let categories = try await getAllCategories(reason: "get_icon_by_id")
 
         for category in categories {
             let icons = await getIcons(for: category.id)

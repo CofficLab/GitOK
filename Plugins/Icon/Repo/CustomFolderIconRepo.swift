@@ -9,6 +9,10 @@ import MagicCore
  * 演示如何轻松添加新的图标来源
  */
 class CustomFolderIconRepo: IconSourceProtocol {
+    func getAllIcons() async -> [IconAsset] {
+        []
+    }
+    
     /// 自定义来源唯一标识
     let sourceIdentifier: String
     
@@ -33,7 +37,7 @@ class CustomFolderIconRepo: IconSourceProtocol {
         }
     }
     
-    func getAllCategories() async -> [IconCategory] {
+    func getAllCategories(reason: String) async -> [IconCategory] {
         guard let folderURL = customFolderURL,
               await isAvailable else {
             return []
@@ -110,7 +114,7 @@ class CustomFolderIconRepo: IconSourceProtocol {
     }
     
     func getIconAsset(byId iconId: String) async -> IconAsset? {
-        let categories = await getAllCategories()
+        let categories = await getAllCategories(reason: "get_icon_by_id")
         for category in categories {
             let icons = await getIcons(for: category.id)
             if let icon = icons.first(where: { $0.iconId == iconId }) {
@@ -121,7 +125,7 @@ class CustomFolderIconRepo: IconSourceProtocol {
     }
     
     func getCategory(byName name: String) async -> IconCategory? {
-        let categories = await getAllCategories()
+        let categories = await getAllCategories(reason: "get_category_by_name")
         return categories.first { $0.name == name }
     }
 }
