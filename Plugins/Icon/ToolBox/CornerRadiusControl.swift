@@ -14,10 +14,10 @@ struct CornerRadiusControl: View {
     
     var body: some View {
         VStack(spacing: 8) {
-            Text("圆角 \(Int(localCornerRadius))px")
+            Text("圆角 \(Int(localCornerRadius))")
                 .font(.caption)
                 .foregroundColor(.secondary)
-            Slider(value: $localCornerRadius, in: 0...50, step: 1)
+            Slider(value: $localCornerRadius, in: 0...512, step: 1)
                 .onChange(of: localCornerRadius) {
                     updateCornerRadius(localCornerRadius)
                 }
@@ -38,7 +38,8 @@ struct CornerRadiusControl: View {
     
     private func updateCornerRadius(_ newValue: Double) {
         if var icon = i.currentData {
-            try? icon.updateCornerRadius(newValue)
+            let clamped = max(0, min(newValue, 512))
+            try? icon.updateCornerRadius(clamped)
         }
     }
 }

@@ -34,6 +34,9 @@ class IconRepo: SuperLog {
         
         // 添加项目图标来源
         addIconSource(ProjectImagesRepo.shared)
+
+        // 添加 MagicAsset 图标来源
+        addIconSource(MagicAssetRepo.shared)
     }
     
     // MARK: - 图标来源管理

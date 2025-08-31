@@ -117,7 +117,12 @@ class IconRenderer {
             }
         }
         .frame(width: size, height: size)
-        .cornerRadius(iconData.cornerRadius > 0 ? CGFloat(iconData.cornerRadius) : 0)
+        // 将圆角按尺寸比例缩放：以 1024 为基准，保证不同导出尺寸视觉一致
+        .cornerRadius({
+            let base: CGFloat = 1024
+            let scaled = CGFloat(iconData.cornerRadius) * (size / base)
+            return iconData.cornerRadius > 0 ? max(0, scaled) : 0
+        }())
     }
 }
 
