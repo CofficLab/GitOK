@@ -61,7 +61,6 @@ struct RemoteIconData: Codable {
     let name: String
     let path: String
     let category: String
-    let fullPath: String
     let size: Int
     let modified: String
 }
