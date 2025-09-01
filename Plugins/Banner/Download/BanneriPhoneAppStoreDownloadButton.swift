@@ -56,19 +56,23 @@ struct BanneriPhoneAppStoreDownloadButton: View {
             return
         }
 
-        // iPhone App Store官方要求的截图尺寸（竖屏优先）
-        let iPhoneAppStoreSizes = [
-            // 最新iPhone尺寸 (必需)
-            (1290, 2796, "iPhone 16 Pro Max (6.9\")"),
-            (1284, 2778, "iPhone 15 Pro Max (6.5\")"),
-            (1179, 2556, "iPhone 16 Pro (6.3\")"),
-            (1170, 2532, "iPhone 15 Pro (6.1\")"),
-            
-            // 经典尺寸 (兼容性)
-            (1242, 2208, "iPhone 8 Plus (5.5\")"),
-            (750, 1334, "iPhone SE (4.7\")"),
-            (640, 1136, "iPhone SE 1st (4.0\")")
-        ]
+        // 根据当前设备类型获取合适的iPhone App Store截图尺寸
+        let currentDevice = bannerProvider.banner.getDevice()
+        let iPhoneAppStoreSizes: [(Int, Int, String)]
+        
+        if currentDevice.isiPhone {
+            // iPhone设备：只生成当前设备的原始尺寸，这是最合适的
+            let deviceWidth = Int(currentDevice.width)
+            let deviceHeight = Int(currentDevice.height)
+            iPhoneAppStoreSizes = [
+                (deviceWidth, deviceHeight, "\(deviceWidth)x\(deviceHeight) (\(currentDevice.description))")
+            ]
+        } else {
+            // 非iPhone设备：生成标准iPhone App Store尺寸作为通用方案
+            iPhoneAppStoreSizes = [
+                (1290, 2796, "1290x2796 (通用iPhone尺寸)")
+            ]
+        }
         var successCount = 0
 
         for (index, (width, height, description)) in iPhoneAppStoreSizes.enumerated() {

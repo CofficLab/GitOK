@@ -56,13 +56,23 @@ struct BannerAppStoreDownloadButton: View {
             return
         }
 
-        // Mac App Store官方要求的截图尺寸 (16:10宽高比)
-        let appStoreSizes = [
-            (2880, 1800, "2880x1800 (Retina 5K)"),
-            (2560, 1600, "2560x1600 (Retina 4K)"),
-            (1440, 900, "1440x900 (标准)"),
-            (1280, 800, "1280x800 (最小)")
-        ]
+        // 根据当前设备类型获取合适的Mac App Store截图尺寸
+        let currentDevice = bannerProvider.banner.getDevice()
+        let appStoreSizes: [(Int, Int, String)]
+        
+        if currentDevice.isMac {
+            // Mac设备：只生成当前设备的原始尺寸，这是最合适的
+            let deviceWidth = Int(currentDevice.width)
+            let deviceHeight = Int(currentDevice.height)
+            appStoreSizes = [
+                (deviceWidth, deviceHeight, "\(deviceWidth)x\(deviceHeight) (\(currentDevice.description))")
+            ]
+        } else {
+            // 非Mac设备：生成标准Mac App Store尺寸作为通用方案
+            appStoreSizes = [
+                (2880, 1800, "2880x1800 (通用Mac尺寸)")
+            ]
+        }
         var successCount = 0
 
         for (index, (width, height, description)) in appStoreSizes.enumerated() {
@@ -106,8 +116,9 @@ struct BannerAppStoreDownloadButton: View {
     
     @ViewBuilder
     private func createBannerView(width: CGFloat, height: CGFloat) -> some View {
-        ScalableBannerLayout(targetWidth: width, targetHeight: height)
+        BannerLayout()
             .environmentObject(bannerProvider)
+            .frame(width: width, height: height)
     }
     
     private func generateReadmeContent() -> String {

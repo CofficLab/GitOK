@@ -92,8 +92,9 @@ struct BannerPNGDownloadButton: View {
     
     @ViewBuilder
     private func createBannerView(width: CGFloat, height: CGFloat) -> some View {
-        ScalableBannerLayout(targetWidth: width, targetHeight: height)
+        BannerLayout()
             .environmentObject(bannerProvider)
+            .frame(width: width, height: height)
     }
 }
 
