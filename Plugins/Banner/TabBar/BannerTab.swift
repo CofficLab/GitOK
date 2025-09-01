@@ -85,5 +85,5 @@ struct BannerTab: View {
             .hideSidebar()
     }
     .frame(width: 700)
-    .frame(height: 1200)
+    .frame(height: 1000)
 }

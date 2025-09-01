@@ -37,18 +37,12 @@ struct Backgrounds: View {
     }
 }
 
-#Preview("Backgrounds") {
-    RootView {
-        Backgrounds(current: .constant("3"))
-    }
-}
-
 #Preview("App - Small Screen") {
     RootView {
         ContentLayout()
             .hideSidebar()
             .hideTabPicker()
-//            .hideProjectActions()
+            .hideProjectActions()
     }
     .frame(width: 800)
     .frame(height: 600)
@@ -58,7 +52,10 @@ struct Backgrounds: View {
     RootView {
         ContentLayout()
             .hideSidebar()
+            .hideProjectActions()
+            .setInitialTab(BannerPlugin.label)
+            .hideTabPicker()
     }
-    .frame(width: 1200)
-    .frame(height: 1200)
+    .frame(width: 800)
+    .frame(height: 1000)
 }
