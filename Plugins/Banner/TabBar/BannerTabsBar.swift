@@ -4,6 +4,7 @@ import MagicCore
 /**
     Banner标签栏视图
     水平展示所有项目中的Banner项，点击切换当前选中Banner。
+    直接与BannerRepo交互获取Banner列表数据。
 **/
 struct BannerTabsBar: View {
     @EnvironmentObject var b: BannerProvider
@@ -15,13 +16,16 @@ struct BannerTabsBar: View {
 
     /// 当前选中的Banner
     @Binding var selection: BannerData?
+    
+    /// Banner仓库实例
+    private let bannerRepo = BannerRepo.shared
 
     var body: some View {
         HStack(spacing: 8) {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 8) {
                     ForEach(banners) { banner in
-                        BannerTabButton(banner: banner, selection: $selection)
+                        BannerTab(banner: banner, selection: $selection)
                     }
                 }
                 .padding(.horizontal, 12)
@@ -29,15 +33,20 @@ struct BannerTabsBar: View {
             
             // 添加新Banner按钮
             BannerBtnAdd()
+                .frame(height: 28)
+                .frame(width: 28)
                 .padding(.trailing, 12)
         }
-        .frame(height: 44)
+        .frame(height: 36)
         .onAppear {
             refreshBanners()
         }
         .onChange(of: g.project) {
             refreshBanners()
         }
+        .onBannerAdded { _ in
+            refreshBanners()
+        }   
         .onBannerDidSave { _ in
             let selectedId = selection?.id
             refreshBanners()
@@ -58,8 +67,7 @@ struct BannerTabsBar: View {
     /// 刷新Banner列表
     private func refreshBanners() {
         if let project = g.project {
-            b.setBanners(project)
-            banners = b.banners
+            banners = bannerRepo.getBanners(from: project)
             
             // 如果没有选中项或选中项不在列表中，选择第一个
             if selection == nil || !banners.contains(where: { $0.id == selection?.id }) {

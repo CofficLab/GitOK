@@ -7,121 +7,58 @@ import OSLog
 import SwiftUI
 import MagicCore
 
+/**
+    Banner状态管理器
+**/
 @MainActor
 class BannerProvider: NSObject, ObservableObject, SuperLog {
-    @Published var banners: [BannerData] = []
+    /// 当前选中的Banner
     @Published var banner: BannerData = .empty
 
     var emoji = "🐘"
     
-    /// Banner仓库实例
-    private let bannerRepo = BannerRepo.shared
+    // MARK: - Banner状态管理方法
 
-    // MARK: - Banner管理方法
-
-    func appendBanner(_ b: BannerData) {
-        if !Thread.isMainThread {
-            assertionFailure("appendBanner called from background thread")
-        }
-
-        self.banners.append(b)
-        self.setBanner(b)
-    }
-
-    func removeBanner(_ b: BannerData) {
-        if !Thread.isMainThread {
-            assertionFailure("removeBanner called from background thread")
-        }
-
-        do {
-            try bannerRepo.deleteBanner(b)
-            self.banners.removeAll(where: { $0 == b })
-        } catch {
-            os_log(.error, "\(self.emoji) 删除Banner失败: \(error.localizedDescription)")
-        }
-    }
-
+    /**
+        设置当前选中的Banner
+        
+        ## 参数
+        - `b`: 要设置为当前选中的Banner数据
+    */
     func setBanner(_ b: BannerData) {
         if !Thread.isMainThread {
             assertionFailure("setBanner called from background thread")
         }
 
         self.banner = b
+        
+        // 发送Banner改变通知
+        NotificationCenter.default.post(
+            name: .bannerChanged,
+            object: nil,
+            userInfo: ["banner": b]
+        )
     }
-
-    func setBanners(_ b: [BannerData]) {
+    
+    /**
+        清除当前选中的Banner
+        将当前Banner重置为空状态
+    */
+    func clearBanner() {
         if !Thread.isMainThread {
-            assertionFailure("setBanners called from background thread")
+            assertionFailure("clearBanner called from background thread")
         }
-
-        self.banners = b
-        if !banners.contains(self.banner) {
-            self.banner = banners.first ?? .empty
-        }
-    }
-
-    func setBanners(_ project: Project) {
-        if !Thread.isMainThread {
-            assertionFailure("setBanners called from background thread")
-        }
-
-        let bannerData = bannerRepo.getBanners(from: project)
-        self.setBanners(bannerData)
-    }
-    
-    // MARK: - 新增方法
-
-    /// 创建新的Banner
-    /// - Parameters:
-    ///   - project: 所属项目
-    ///   - title: Banner标题
-    func createBanner(in project: Project, title: String = "New Banner") {
-        do {
-            let newBanner = try bannerRepo.createBanner(in: project, title: title)
-            self.appendBanner(newBanner)
-        } catch {
-            os_log(.error, "\(self.emoji) 创建Banner失败: \(error.localizedDescription)")
-        }
-    }
-    
-    /// 保存Banner
-    /// - Parameter banner: 要保存的Banner
-    func saveBanner(_ banner: BannerData) {
-        do {
-            try bannerRepo.saveBanner(banner)
-        } catch {
-            os_log(.error, "\(self.emoji) 保存Banner失败: \(error.localizedDescription)")
-        }
-    }
-    
-    /// 更新Banner
-    /// - Parameters:
-    ///   - banner: 原Banner
-    ///   - updates: 更新数据
-    func updateBanner(_ banner: BannerData, with updates: BannerDataUpdate) {
-        do {
-            let updatedBanner = try bannerRepo.updateBanner(banner, with: updates)
-            
-            // 更新本地数据
-            if let index = banners.firstIndex(where: { $0.id == banner.id }) {
-                banners[index] = updatedBanner
-            }
-            
-            if self.banner.id == banner.id {
-                self.banner = updatedBanner
-            }
-        } catch {
-            os_log(.error, "\(self.emoji) 更新Banner失败: \(error.localizedDescription)")
-        }
+        
+        self.banner = .empty
     }
 }
 
 #Preview("App - Small Screen") {
     RootView {
         ContentLayout()
+            .setInitialTab(BannerPlugin.label)
             .hideSidebar()
-            .hideTabPicker()
-//            .hideProjectActions()
+            .hideProjectActions()
     }
     .frame(width: 800)
     .frame(height: 600)
@@ -130,6 +67,7 @@ class BannerProvider: NSObject, ObservableObject, SuperLog {
 #Preview("App - Big Screen") {
     RootView {
         ContentLayout()
+            .setInitialTab(BannerPlugin.label)
             .hideSidebar()
     }
     .frame(width: 1200)

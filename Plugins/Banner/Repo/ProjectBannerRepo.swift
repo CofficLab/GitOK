@@ -101,7 +101,11 @@ class ProjectBannerRepo: SuperLog {
         
         // 发送创建通知
         DispatchQueue.main.async {
-            NotificationCenter.default.post(name: .bannerAdded, object: bannerData)
+            NotificationCenter.default.post(
+                name: .bannerAdded, 
+                object: bannerData, 
+                userInfo: ["id": bannerData.id]
+            )
         }
         
         os_log(.info, "\(Self.emoji) 创建新Banner: \(title)")
@@ -194,6 +198,6 @@ class ProjectBannerRepo: SuperLog {
             .setInitialTab(BannerPlugin.label)
             .hideSidebar()
     }
-    .frame(width: 1200)
+    .frame(width: 800)
     .frame(height: 1200)
 }
