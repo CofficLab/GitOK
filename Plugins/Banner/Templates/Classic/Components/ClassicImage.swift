@@ -16,6 +16,7 @@ struct ClassicImage: View {
             .aspectRatio(contentMode: .fit)
             .clipShape(RoundedRectangle(cornerRadius: getCornerRadius()))
             .shadow(color: .black.opacity(0.2), radius: 12, x: 0, y: 6)
+            
     }
     
     private func getCornerRadius() -> CGFloat {

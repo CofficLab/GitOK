@@ -109,12 +109,6 @@ struct ClassicImageEditor: View {
         b.updateBanner { banner in
             banner.inScreen = inScreen
         }
-        
-        do {
-            try BannerRepo.shared.saveBanner(b.banner)
-        } catch {
-            m.error("保存设置失败: \(error.localizedDescription)")
-        }
     }
 }
 
@@ -125,7 +119,7 @@ struct ClassicImageEditor: View {
             .hideSidebar()
             .hideProjectActions()
     }
-    .frame(width: 800)
+    .frame(width: 600)
     .frame(height: 600)
 }
 
