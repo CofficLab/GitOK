@@ -127,7 +127,7 @@ struct BannerFile: SuperLog {
     func saveImage(_ url: URL) throws -> String {
         let ext = url.pathExtension
         let projectURL = URL(fileURLWithPath: project.path)
-        let bannerRootURL = projectURL.appendingPathComponent(ProjectBannerRepo.bannerStoragePath)
+        let bannerRootURL = projectURL.appendingPathComponent(BannerRepo.bannerStoragePath)
         let imagesFolder = bannerRootURL.appendingPathComponent("images")
         let storeURL = imagesFolder.appendingPathComponent("\(Date.nowCompact).\(ext)")
         

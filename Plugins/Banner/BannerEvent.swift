@@ -155,13 +155,26 @@ extension View {
         监听Banner保存完成事件
         
         ## 参数
-        - `action`: 事件处理闭包，接收Notification对象
+        - `action`: 事件处理闭包，直接接收更新后的Banner对象
         
         ## 返回值
         返回添加了事件监听的View
+        
+        ## 示例
+        ```swift
+        SomeView()
+            .onBannerDidSave { updatedBanner in
+                // 直接获得更新后的Banner对象
+                print("已保存Banner: \(updatedBanner.title)")
+            }
+        ```
     */
-    func onBannerDidSave(perform action: @escaping (Notification) -> Void) -> some View {
-        self.onReceive(NotificationCenter.default.publisher(for: .bannerDidSave), perform: action)
+    func onBannerDidSave(perform action: @escaping (BannerFile) -> Void) -> some View {
+        self.onReceive(NotificationCenter.default.publisher(for: .bannerDidSave)) { notification in
+            if let updatedBanner = notification.object as? BannerFile {
+                action(updatedBanner)
+            }
+        }
     }
     
     /**
@@ -188,20 +201,6 @@ extension View {
                 action(deletedId)
             }
         }
-    }
-    
-    /**
-        监听Banner删除完成事件（原始版本）
-        提供对原始Notification对象的访问，用于需要更多信息的场景
-        
-        ## 参数
-        - `action`: 事件处理闭包，接收Notification对象
-        
-        ## 返回值
-        返回添加了事件监听的View
-    */
-    func onBannerDidDeleteNotification(perform action: @escaping (Notification) -> Void) -> some View {
-        self.onReceive(NotificationCenter.default.publisher(for: .bannerDidDelete), perform: action)
     }
     
     /**

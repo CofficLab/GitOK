@@ -106,7 +106,7 @@ struct ClassicImageEditor: View {
     }
     
     private func updateInScreen() {
-        b.updateBanner { banner in
+        try? b.updateBanner { banner in
             banner.inScreen = inScreen
         }
     }

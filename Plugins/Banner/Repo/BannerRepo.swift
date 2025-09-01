@@ -132,7 +132,7 @@ class BannerRepo: SuperLog {
         
         // 发送保存通知
         DispatchQueue.main.async {
-            NotificationCenter.default.post(name: .bannerDidSave, object: banner, userInfo: ["id": banner.id])
+            NotificationCenter.default.post(name: .bannerDidSave, object: banner)
         }
         
         os_log(.info, "\(Self.emoji) 保存Banner: \(banner.title)")

@@ -45,14 +45,8 @@ struct ClassicOpacityEditor: View {
     }
     
     private func updateOpacity(_ newOpacity: Double) {
-        b.updateBanner { banner in
+        try? b.updateBanner { banner in
             banner.opacity = newOpacity
-        }
-        
-        do {
-            try BannerRepo.shared.saveBanner(b.banner)
-        } catch {
-            m.error("保存透明度失败: \(error.localizedDescription)")
         }
     }
 }

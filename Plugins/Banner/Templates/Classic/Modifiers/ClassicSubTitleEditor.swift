@@ -1,5 +1,5 @@
-import SwiftUI
 import MagicCore
+import SwiftUI
 
 /**
  经典模板的副标题编辑器
@@ -8,10 +8,10 @@ import MagicCore
 struct ClassicSubTitleEditor: View {
     @EnvironmentObject var b: BannerProvider
     @EnvironmentObject var m: MagicMessageProvider
-    
+
     @State private var subTitleText: String = ""
     @State private var subTitleColor: Color = .secondary
-    
+
     var body: some View {
         GroupBox("副标题设置") {
             VStack(spacing: 12) {
@@ -19,25 +19,25 @@ struct ClassicSubTitleEditor: View {
                 HStack {
                     Text("副标题")
                         .frame(width: 60, alignment: .leading)
-                    
+
                     TextField("输入副标题", text: $subTitleText)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
                         .onChange(of: subTitleText) {
                             updateSubTitle()
                         }
                 }
-                
+
                 // 副标题颜色选择
                 HStack {
                     Text("颜色")
                         .frame(width: 60, alignment: .leading)
-                    
+
                     ColorPicker("选择颜色", selection: $subTitleColor)
                         .labelsHidden()
                         .onChange(of: subTitleColor) {
                             updateSubTitleColor()
                         }
-                    
+
                     Spacer()
                 }
             }
@@ -47,33 +47,21 @@ struct ClassicSubTitleEditor: View {
             loadCurrentValues()
         }
     }
-    
+
     private func loadCurrentValues() {
         subTitleText = b.banner.subTitle
         subTitleColor = b.banner.subTitleColor ?? .secondary
     }
-    
+
     private func updateSubTitle() {
-        b.updateBanner { banner in
+        try? b.updateBanner { banner in
             banner.subTitle = subTitleText
         }
-        
-        do {
-            try BannerRepo.shared.saveBanner(b.banner)
-        } catch {
-            m.error(error, title: "保存副标题失败")
-        }
     }
-    
+
     private func updateSubTitleColor() {
-        b.updateBanner { banner in
+        try? b.updateBanner { banner in
             banner.subTitleColor = subTitleColor
-        }
-        
-        do {
-            try BannerRepo.shared.saveBanner(b.banner)
-        } catch {
-            m.error(error, title: "保存副标题颜色失败")
         }
     }
 }
@@ -85,7 +73,7 @@ struct ClassicSubTitleEditor: View {
             .hideSidebar()
             .hideProjectActions()
     }
-    .frame(width: 800)
+    .frame(width: 600)
     .frame(height: 600)
 }
 

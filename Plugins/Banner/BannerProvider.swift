@@ -75,15 +75,15 @@ class BannerProvider: NSObject, ObservableObject, SuperLog {
          ## 参数
          - `update`: 用于更新Banner的闭包
      */
-    func updateBanner(_ update: (inout BannerFile) -> Void) {
-        if !Thread.isMainThread {
-            assertionFailure("updateBanner called from background thread")
-        }
-
-        var updatedBanner = self.banner
-        update(&updatedBanner)
-        self.banner = updatedBanner
-    }
+//    func updateBanner(_ update: (inout BannerFile) -> Void) {
+//        if !Thread.isMainThread {
+//            assertionFailure("updateBanner called from background thread")
+//        }
+//
+//        var updatedBanner = self.banner
+//        update(&updatedBanner)
+//        self.banner = updatedBanner
+//    }
 
     /**
          更新当前Banner的特定属性（支持抛出错误）

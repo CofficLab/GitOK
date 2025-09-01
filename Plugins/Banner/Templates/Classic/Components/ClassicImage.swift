@@ -7,6 +7,7 @@ import MagicCore
  */
 struct ClassicImage: View {
     @EnvironmentObject var b: BannerProvider
+    @EnvironmentObject var m: MagicMessageProvider
     
     let inScreen: Bool = true
     
@@ -16,7 +17,9 @@ struct ClassicImage: View {
             .aspectRatio(contentMode: .fit)
             .clipShape(RoundedRectangle(cornerRadius: getCornerRadius()))
             .shadow(color: .black.opacity(0.2), radius: 12, x: 0, y: 6)
-            
+            .onBannerDidSave(perform: { banner in
+                m.info("已更新")
+            })
     }
     
     private func getCornerRadius() -> CGFloat {
