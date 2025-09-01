@@ -137,9 +137,9 @@ struct MinimalImageEditor: View {
     
     private func changeImage(_ url: URL) {
         do {
-            var updatedBanner = b.banner
-            try updatedBanner.changeImage(url)
-            b.banner = updatedBanner
+            try b.updateBanner { banner in
+                try banner.changeImage(url)
+            }
             m.success("图片更新成功")
         } catch {
             m.error("更新图片失败: \(error.localizedDescription)")

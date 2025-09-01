@@ -11,9 +11,9 @@ struct BannerDetailLayout: View {
 
     @EnvironmentObject var g: DataProvider
     @EnvironmentObject var m: MagicMessageProvider
+    @EnvironmentObject var b: BannerProvider
 
     @State private var selection: BannerData?
-    @State private var selectedDevice: Device = .iPhoneBig
     @State private var scale: CGFloat = 1.0
     @State private var lastScale: CGFloat = 1.0
     @State private var selectedTemplate: any BannerTemplateProtocol = ClassicBannerTemplate()
@@ -29,7 +29,6 @@ struct BannerDetailLayout: View {
                     
                     // 设备选择器
                     DeviceSelector(
-                        selectedDevice: $selectedDevice,
                         scale: $scale,
                         lastScale: $lastScale
                     )
@@ -40,7 +39,7 @@ struct BannerDetailLayout: View {
                     Divider()
 
                     // 模板提供的预览视图
-                    selectedTemplate.createPreviewView(device: selectedDevice)
+                    selectedTemplate.createPreviewView()
                         .frame(maxHeight: .infinity)
                 }
 

@@ -84,12 +84,12 @@ struct ClassicFeaturesEditor: View {
     }
     
     private func updateFeatures() {
-        var updatedBanner = b.banner
-        updatedBanner.features = features
+        b.updateBanner { banner in
+            banner.features = features
+        }
         
         do {
-            try BannerRepo.shared.saveBanner(updatedBanner)
-            b.banner = updatedBanner
+            try BannerRepo.shared.saveBanner(b.banner)
         } catch {
             m.error("保存特性列表失败: \(error.localizedDescription)")
         }

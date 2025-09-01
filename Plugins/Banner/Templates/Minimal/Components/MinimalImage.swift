@@ -7,7 +7,6 @@ import MagicCore
  */
 struct MinimalImage: View {
     @EnvironmentObject var b: BannerProvider
-    let device: Device
     
     var body: some View {
         b.banner.getImage()

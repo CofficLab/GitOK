@@ -10,9 +10,9 @@ struct ClassicBannerTemplate: BannerTemplateProtocol {
     let description = "左侧标题副标题和特性，右侧产品图片"
     let systemImageName = "rectangle.split.2x1"
     
-    func createPreviewView(device: Device) -> AnyView {
+    func createPreviewView() -> AnyView {
         AnyView(
-            ClassicBannerLayout(device: device)
+            ClassicBannerLayout()
                 .environmentObject(BannerProvider.shared)
         )
     }

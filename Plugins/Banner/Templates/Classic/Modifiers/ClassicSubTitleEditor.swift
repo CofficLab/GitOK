@@ -54,24 +54,24 @@ struct ClassicSubTitleEditor: View {
     }
     
     private func updateSubTitle() {
-        var updatedBanner = b.banner
-        updatedBanner.subTitle = subTitleText
+        b.updateBanner { banner in
+            banner.subTitle = subTitleText
+        }
         
         do {
-            try BannerRepo.shared.saveBanner(updatedBanner)
-            b.banner = updatedBanner
+            try BannerRepo.shared.saveBanner(b.banner)
         } catch {
             m.error(error, title: "保存副标题失败")
         }
     }
     
     private func updateSubTitleColor() {
-        var updatedBanner = b.banner
-        updatedBanner.subTitleColor = subTitleColor
+        b.updateBanner { banner in
+            banner.subTitleColor = subTitleColor
+        }
         
         do {
-            try BannerRepo.shared.saveBanner(updatedBanner)
-            b.banner = updatedBanner
+            try BannerRepo.shared.saveBanner(b.banner)
         } catch {
             m.error(error, title: "保存副标题颜色失败")
         }

@@ -5,14 +5,22 @@ import SwiftUI
  独立的设备选择下拉菜单，支持切换不同设备类型
  */
 struct DeviceSelector: View {
-    @Binding var selectedDevice: Device
+    @EnvironmentObject var b: BannerProvider
     @Binding var scale: CGFloat
     @Binding var lastScale: CGFloat
     
     var body: some View {
         HStack(spacing: 16) {
             // 设备选择下拉菜单
-            Picker("设备", selection: $selectedDevice) {
+            Picker("设备", selection: Binding(
+                get: { b.selectedDevice },
+                set: { newDevice in
+                    b.setSelectedDevice(newDevice)
+                    // 切换设备时重置缩放
+                    scale = 1.0
+                    lastScale = 1.0
+                }
+            )) {
                 ForEach([Device.iMac, Device.MacBook, Device.iPhoneBig, Device.iPhoneSmall, Device.iPad], id: \.self) { device in
                     HStack {
                         Image(systemName: device.systemImageName)
@@ -22,19 +30,14 @@ struct DeviceSelector: View {
                 }
             }
             .pickerStyle(MenuPickerStyle())
-            .onChange(of: selectedDevice) {
-                // 切换设备时重置缩放
-                scale = 1.0
-                lastScale = 1.0
-            }
 
             Spacer()
 
             // 显示当前设备尺寸
             HStack(spacing: 4) {
-                Image(systemName: selectedDevice.systemImageName)
+                Image(systemName: b.selectedDevice.systemImageName)
                     .foregroundColor(.secondary)
-                Text("\(Int(selectedDevice.width)) × \(Int(selectedDevice.height))")
+                Text("\(Int(b.selectedDevice.width)) × \(Int(b.selectedDevice.height))")
                     .font(.caption)
                     .foregroundColor(.secondary)
             }

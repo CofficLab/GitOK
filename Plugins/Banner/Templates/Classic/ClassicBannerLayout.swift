@@ -7,7 +7,6 @@ import MagicCore
  */
 struct ClassicBannerLayout: View {
     @EnvironmentObject var b: BannerProvider
-    let device: Device
     
     @State private var visible = false
 
@@ -15,7 +14,7 @@ struct ClassicBannerLayout: View {
         GeometryReader { geo in
             ZStack {
                 content
-                    .frame(width: device.width, height: device.height)
+                    .frame(width: b.selectedDevice.width, height: b.selectedDevice.height)
                     .scaleEffect(calculateOptimalScale(geometry: geo))
             }
             .frame(width: geo.size.width, height: geo.size.height, alignment: .center)
@@ -25,7 +24,7 @@ struct ClassicBannerLayout: View {
     
     private var content: some View {
         ZStack {
-            switch device {
+            switch b.selectedDevice {
             case .iMac, .MacBook:
                 HStack(spacing: 0) {
                     VStack(spacing: 0, content: {
@@ -34,15 +33,15 @@ struct ClassicBannerLayout: View {
                             ClassicTitle()
                             ClassicSubTitle()
                         }
-                        .frame(height: device.height / 3)
+                        .frame(height: b.selectedDevice.height / 3)
                         ClassicFeatures()
                         Spacer()
                     })
-                    .frame(width: device.width / 3)
+                    .frame(width: b.selectedDevice.width / 3)
 
-                    ClassicImage(device: device)
+                    ClassicImage()
                         .padding(.horizontal, 50)
-                        .frame(width: device.width / 3 * 2)
+                        .frame(width: b.selectedDevice.width / 3 * 2)
                         .frame(maxHeight: .infinity)
                 }
             case .iPhoneSmall, .iPhoneBig:
@@ -51,7 +50,7 @@ struct ClassicBannerLayout: View {
                     ClassicTitle()
                     ClassicSubTitle()
                     Spacer()
-                    ClassicImage(device: device)
+                    ClassicImage()
                         .frame(maxHeight: .infinity)
                 }.padding()
             case .iPad:
@@ -59,7 +58,7 @@ struct ClassicBannerLayout: View {
                     ClassicTitle()
                     ClassicSubTitle()
                     Spacer()
-                    ClassicImage(device: device)
+                    ClassicImage()
                 }
             }
         }
@@ -74,8 +73,8 @@ struct ClassicBannerLayout: View {
         let availableHeight = geometry.size.height
 
         // 直接使用当前设备的尺寸进行计算
-        let widthScale = availableWidth / device.width
-        let heightScale = availableHeight / device.height
+        let widthScale = availableWidth / b.selectedDevice.width
+        let heightScale = availableHeight / b.selectedDevice.height
 
         // 选择较小的比例确保完整显示
         return min(widthScale, heightScale)

@@ -96,9 +96,9 @@ struct ClassicImageEditor: View {
     
     private func changeImage(_ url: URL) {
         do {
-            var updatedBanner = b.banner
-            try updatedBanner.changeImage(url)
-            b.banner = updatedBanner
+            try b.updateBanner { banner in
+                try banner.changeImage(url)
+            }
             m.success("图片更新成功")
         } catch {
             m.error("更新图片失败: \(error.localizedDescription)")
@@ -106,12 +106,12 @@ struct ClassicImageEditor: View {
     }
     
     private func updateInScreen() {
-        var updatedBanner = b.banner
-        updatedBanner.inScreen = inScreen
+        b.updateBanner { banner in
+            banner.inScreen = inScreen
+        }
         
         do {
-            try BannerRepo.shared.saveBanner(updatedBanner)
-            b.banner = updatedBanner
+            try BannerRepo.shared.saveBanner(b.banner)
         } catch {
             m.error("保存设置失败: \(error.localizedDescription)")
         }

@@ -8,7 +8,6 @@ import MagicCore
 struct ClassicImage: View {
     @EnvironmentObject var b: BannerProvider
     
-    let device: Device
     let inScreen: Bool = true
     
     var body: some View {

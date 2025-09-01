@@ -11,9 +11,9 @@ struct MinimalBannerTemplate: BannerTemplateProtocol {
     let description = "居中布局，简洁优雅"
     let systemImageName = "rectangle.center.inset.filled"
     
-    func createPreviewView(device: Device) -> AnyView {
+    func createPreviewView() -> AnyView {
         AnyView(
-            MinimalBannerLayout(device: device)
+            MinimalBannerLayout()
                 .environmentObject(BannerProvider.shared)
         )
     }

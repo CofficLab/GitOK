@@ -17,7 +17,10 @@ class BannerProvider: NSObject, ObservableObject, SuperLog {
     private override init() {}
     
     /// 当前选中的Banner
-    @Published var banner: BannerData = .empty
+    @Published private(set) var banner: BannerData = .empty
+    
+    /// 当前选中的设备
+    @Published private(set) var selectedDevice: Device = .iPhoneBig
 
     var emoji = "🐘"
     
@@ -48,6 +51,53 @@ class BannerProvider: NSObject, ObservableObject, SuperLog {
         
         self.banner = .empty
     }
+    
+    /**
+        设置当前选中的设备
+        
+        ## 参数
+        - `device`: 要设置为当前选中的设备
+    */
+    func setSelectedDevice(_ device: Device) {
+        if !Thread.isMainThread {
+            assertionFailure("setSelectedDevice called from background thread")
+        }
+        
+        self.selectedDevice = device
+    }
+    
+    /**
+        更新当前Banner的特定属性
+        
+        ## 参数
+        - `update`: 用于更新Banner的闭包
+    */
+    func updateBanner(_ update: (inout BannerData) -> Void) {
+        if !Thread.isMainThread {
+            assertionFailure("updateBanner called from background thread")
+        }
+        
+        var updatedBanner = self.banner
+        update(&updatedBanner)
+        self.banner = updatedBanner
+    }
+    
+    /**
+        更新当前Banner的特定属性（支持抛出错误）
+        
+        ## 参数
+        - `update`: 用于更新Banner的闭包，可以抛出错误
+        - `throws`: 如果更新过程中发生错误
+    */
+    func updateBanner(_ update: (inout BannerData) throws -> Void) throws {
+        if !Thread.isMainThread {
+            assertionFailure("updateBanner called from background thread")
+        }
+        
+        var updatedBanner = self.banner
+        try update(&updatedBanner)
+        self.banner = updatedBanner
+    }
 }
 
 #Preview("App - Small Screen") {
@@ -57,8 +107,8 @@ class BannerProvider: NSObject, ObservableObject, SuperLog {
             .hideSidebar()
             .hideProjectActions()
     }
-    .frame(width: 800)
-    .frame(height: 600)
+    .frame(width: 700)
+    .frame(height: 800)
 }
 
 #Preview("App - Big Screen") {

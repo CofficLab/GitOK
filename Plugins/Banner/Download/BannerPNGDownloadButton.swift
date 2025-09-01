@@ -99,11 +99,11 @@ struct BannerPNGDownloadButton: View {
     private func createBannerView(device: Device) -> some View {
         if let template = template {
             // 使用当前选择的模板
-            template.createPreviewView(device: device)
+            template.createPreviewView()
                 .frame(width: device.width, height: device.height)
         } else {
             // 后备方案：使用默认的经典模板
-            ClassicBannerLayout(device: device)
+            ClassicBannerLayout()
                 .environmentObject(bannerProvider)
                 .frame(width: device.width, height: device.height)
         }

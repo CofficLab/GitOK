@@ -58,12 +58,12 @@ struct MinimalTitleEditor: View {
     
     private func saveData() {
         do {
-            var updatedBanner = b.banner
             let template = MinimalBannerTemplate()
-            try template.saveData(minimalData, to: &updatedBanner)
+            try b.updateBanner { banner in
+                try template.saveData(minimalData, to: &banner)
+            }
             
-            try BannerRepo.shared.saveBanner(updatedBanner)
-            b.banner = updatedBanner
+            try BannerRepo.shared.saveBanner(b.banner)
         } catch {
             m.error(error, title: "保存数据失败")
         }

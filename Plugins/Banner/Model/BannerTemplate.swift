@@ -26,7 +26,7 @@ protocol BannerTemplateProtocol: Identifiable {
     var systemImageName: String { get }
     
     /// 创建预览视图
-    func createPreviewView(device: Device) -> AnyView
+    func createPreviewView() -> AnyView
     
     /// 创建修改器视图
     func createModifierView() -> AnyView

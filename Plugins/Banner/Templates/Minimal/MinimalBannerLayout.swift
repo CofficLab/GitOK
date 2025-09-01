@@ -7,7 +7,6 @@ import MagicCore
  */
 struct MinimalBannerLayout: View {
     @EnvironmentObject var b: BannerProvider
-    let device: Device
     
     @State private var scale: CGFloat = 1.0
     @State private var lastScale: CGFloat = 1.0
@@ -46,9 +45,9 @@ struct MinimalBannerLayout: View {
             Spacer()
             
             // 居中的图片
-            MinimalImage(device: device)
-                .frame(width: min(device.width * 0.3, 300))
-                .frame(height: min(device.height * 0.3, 200))
+            MinimalImage()
+                .frame(width: min(b.selectedDevice.width * 0.3, 300))
+                .frame(height: min(b.selectedDevice.height * 0.3, 200))
             
             Spacer()
         }
@@ -60,8 +59,8 @@ struct MinimalBannerLayout: View {
     private func calculateOptimalScale(geometry: GeometryProxy) -> CGFloat {
         let availableWidth = geometry.size.width
         let availableHeight = geometry.size.height
-        let widthScale = availableWidth / device.width
-        let heightScale = availableHeight / device.height
+        let widthScale = availableWidth / b.selectedDevice.width
+        let heightScale = availableHeight / b.selectedDevice.height
         return min(widthScale, heightScale)
     }
     

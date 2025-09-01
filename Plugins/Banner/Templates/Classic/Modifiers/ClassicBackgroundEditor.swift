@@ -44,12 +44,12 @@ struct ClassicBackgroundEditor: View {
     private func selectBackground(_ backgroundId: String) {
         selectedBackgroundId = backgroundId
         
-        var updatedBanner = b.banner
-        updatedBanner.backgroundId = backgroundId
+        b.updateBanner { banner in
+            banner.backgroundId = backgroundId
+        }
         
         do {
-            try BannerRepo.shared.saveBanner(updatedBanner)
-            b.banner = updatedBanner
+            try BannerRepo.shared.saveBanner(b.banner)
         } catch {
             m.error("保存背景设置失败: \(error.localizedDescription)")
         }
