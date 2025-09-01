@@ -13,6 +13,9 @@ struct BannerDetailLayout: View {
     @EnvironmentObject var m: MagicMessageProvider
 
     @State private var selection: BannerData?
+    @State private var selectedDevice: Device = .iMac
+    @State private var scale: CGFloat = 1.0
+    @State private var lastScale: CGFloat = 1.0
 
     var body: some View {
         GeometryReader { geometry in
@@ -21,8 +24,20 @@ struct BannerDetailLayout: View {
                     BannerTabsBar(selection: $selection)
                         .background(.gray.opacity(0.1))
 
-                    BannerEditor()
+                    BannerEditor(selectedDevice: selectedDevice)
                         .frame(maxHeight: .infinity)
+                    
+                    Divider()
+                    
+                    // 设备选择器
+                    DeviceSelector(
+                        selectedDevice: $selectedDevice,
+                        scale: $scale,
+                        lastScale: $lastScale
+                    )
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 8)
+                    .background(Color(.controlBackgroundColor))
                 }
 
                 VStack(spacing: 0) {

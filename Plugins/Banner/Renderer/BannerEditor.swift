@@ -22,22 +22,16 @@ struct BannerEditor: View {
     @State var visible = false
     @State private var scale: CGFloat = 1.0
     @State private var lastScale: CGFloat = 1.0
-    @State private var selectedDevice: Device = .iMac
+    
+    // 设备选择状态由外部传入
+    let selectedDevice: Device
 
     @MainActor private var imageSize: String {
         "\(MagicImage.getViewWidth(content)) X \(MagicImage.getViewHeigth(content))"
     }
 
     var body: some View {
-        VStack {
-            // 设备选择器
-            deviceSelector
-                .padding(.horizontal, 16)
-                .padding(.vertical, 8)
-                .background(Color(.controlBackgroundColor))
-
-            bodyBanner
-        }
+        bodyBanner
     }
 
     var bodyBanner: some View {
@@ -102,48 +96,14 @@ struct BannerEditor: View {
             .environmentObject(BannerProvider.shared)
     }
 
-    private var deviceSelector: some View {
-        HStack(spacing: 16) {
-            // 设备选择下拉菜单
-            Picker("设备", selection: $selectedDevice) {
-                ForEach([Device.iMac, Device.MacBook, Device.iPhoneBig, Device.iPhoneSmall, Device.iPad], id: \.self) { device in
-                    HStack {
-                        Image(systemName: device.systemImageName)
-                        Text(device.description)
-                    }
-                    .tag(device)
-                }
-            }
-            .pickerStyle(MenuPickerStyle())
-            .onChange(of: selectedDevice) {
-                // 切换设备时重置缩放
-                scale = 1.0
-                lastScale = 1.0
-            }
 
-            Spacer()
-
-            // 显示当前设备尺寸
-            HStack(spacing: 4) {
-                Image(systemName: selectedDevice.systemImageName)
-                    .foregroundColor(.secondary)
-                Text("\(Int(selectedDevice.width)) × \(Int(selectedDevice.height))")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-            }
-            .padding(.horizontal, 8)
-            .padding(.vertical, 4)
-            .background(Color(.controlBackgroundColor))
-            .cornerRadius(4)
-        }
-    }
 
     /// 计算最优缩放比例 - 恢复原版本的简单高效逻辑
     /// 根据当前选中设备和容器大小计算最佳显示比例
     private func calculateOptimalScale(geometry: GeometryProxy) -> CGFloat {
-        // 计算可用空间，为设备选择器预留空间
+        // 计算可用空间
         let availableWidth = geometry.size.width
-        let availableHeight = geometry.size.height - 45 // 为下拉选择器预留更少空间
+        let availableHeight = geometry.size.height
 
         // 直接使用当前选中设备的尺寸进行计算
         let widthScale = availableWidth / selectedDevice.width
