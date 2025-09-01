@@ -23,6 +23,9 @@ extension Notification.Name {
     
     /// Banner删除完成事件
     static let bannerDidDelete = Notification.Name("bannerDidDelete")
+    
+    /// Banner截图事件
+    static let bannerSnapshot = Notification.Name("bannerSnapshot")
 }
 
 /**
@@ -199,5 +202,28 @@ extension View {
     */
     func onBannerDidDeleteNotification(perform action: @escaping (Notification) -> Void) -> some View {
         self.onReceive(NotificationCenter.default.publisher(for: .bannerDidDelete), perform: action)
+    }
+    
+    /**
+        监听Banner截图事件
+        
+        ## 参数
+        - `action`: 事件处理闭包，直接接收截图请求
+        
+        ## 返回值
+        返回添加了事件监听的View
+        
+        ## 示例
+        ```swift
+        SomeView()
+            .onBannerSnapshot {
+                // 处理截图请求
+            }
+        ```
+    */
+    func onBannerSnapshot(perform action: @escaping () -> Void) -> some View {
+        self.onReceive(NotificationCenter.default.publisher(for: .bannerSnapshot)) { _ in
+            action()
+        }
     }
 }

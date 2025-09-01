@@ -7,10 +7,11 @@ import SwiftUI
      主要的Banner编辑界面，包含顶部的Banner标签页和主要的编辑区域。
  **/
 struct BannerDetailLayout: View {
-    @EnvironmentObject var b: BannerProvider
-    @EnvironmentObject var g: DataProvider
-    @EnvironmentObject var m: MagicMessageProvider
+    static let shared = BannerDetailLayout()
+    
     @State private var selection: BannerData?
+    @State private var showBorder: Bool = false
+    @State private var snapshotTapped: Bool = false
 
     var body: some View {
         HSplitView {
@@ -20,54 +21,31 @@ struct BannerDetailLayout: View {
 
                 // 主要编辑区域
                 if let selectedBanner = selection {
-                    BannerEditor(banner: Binding(
-                        get: { selectedBanner },
-                        set: { newValue in
-                            selection = newValue
-                            b.setBanner(newValue)
-
-                            // 保存到磁盘
-                            do {
-                                try newValue.saveToDisk()
-                            } catch {
-                                m.error(error.localizedDescription)
-                            }
-                        }
-                    ))
-                    .frame(maxHeight: .infinity)
+                    BannerEditor()
+                        .frame(maxHeight: .infinity)
                 } else {
                     EmptyBannerTip()
                 }
             }
             .frame(height: .infinity)
-            .onChange(of: selection) { _, newValue in
-                if let newValue = newValue {
-                    b.setBanner(newValue)
-                }
-            }
 
             VStack(spacing: 0) {
                 if let selectedBanner = selection {
-                    HStack {
-                        HStack(spacing: 0) {
-                            Devices()
+                    GroupBox {
+                        HStack {
+                            HStack(spacing: 0) {
+                                Devices()
 
-                            Spacer()
+                                Spacer()
+                            }
+
+                            SnapshotButton()
+                                .environmentObject(BannerProvider.shared)
+                            
+                            BorderToggleButton(showBorder: $showBorder)
                         }
-
-                        MagicButton.simple(
-                            icon: "camera.aperture", title: "截图",
-                            action: {
-                                //                            self.snapshotTapped = true
-                            }
-                        )
-                        MagicButton.simple(
-                            icon: "square.dashed", title: "边框",
-                            action: {
-                                //                            self.showBorder.toggle()
-                            }
-                        )
                     }
+                    
                     GroupBox {
                         Backgrounds(current: Binding(
                             get: { selectedBanner.backgroundId },
@@ -82,13 +60,9 @@ struct BannerDetailLayout: View {
             }
             .frame(height: .infinity)
             .frame(maxHeight: .infinity)
-            .onChange(of: selection) { _, newValue in
-                if let newValue = newValue {
-                    b.setBanner(newValue)
-                }
-            }
         }
         .frame(height: .infinity)
+        .environmentObject(BannerProvider.shared)
     }
 }
 

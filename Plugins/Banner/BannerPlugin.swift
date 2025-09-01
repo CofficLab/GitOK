@@ -11,7 +11,7 @@ class BannerPlugin: SuperPlugin, SuperLog {
     private init() {}
 
     func addDetailView() -> AnyView? {
-        AnyView(BannerDetailLayout())
+        AnyView(BannerDetailLayout.shared)
     }
 }
 

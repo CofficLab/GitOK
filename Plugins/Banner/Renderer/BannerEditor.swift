@@ -1,14 +1,24 @@
 import MagicCore
 import SwiftUI
 
+/**
+     Banner编辑器
+     提供Banner的可视化编辑和预览功能，支持缩放、截图等操作。
+     直接从BannerProvider获取数据，通过事件通知处理截图操作。
+
+     ## 功能特性
+     - 实时编辑预览
+     - 手势缩放支持
+     - 事件驱动的截图功能
+     - 自适应布局调整
+     - 异步加载优化
+ **/
 struct BannerEditor: View {
-    @EnvironmentObject var app: AppProvider
+    @EnvironmentObject var b: BannerProvider
+    @EnvironmentObject var g: DataProvider
     @EnvironmentObject var m: MagicMessageProvider
 
-    @Binding var banner: BannerData
-    
     @State var showBorder: Bool = false
-    @State var snapshotTapped: Bool = false
     @State var visible = false
     @State private var scale: CGFloat = 1.0
     @State private var lastScale: CGFloat = 1.0
@@ -35,12 +45,9 @@ struct BannerEditor: View {
                 viewBody
             }
         }
-        .onChange(of: snapshotTapped, {
-            if snapshotTapped {
-                m.info(MagicImage.snapshot(content, title: "\(banner.device)-\(self.getTimeString())"))
-                self.snapshotTapped = false
-            }
-        })
+        .onBannerSnapshot {
+            handleSnapshot()
+        }
     }
 
     var viewBody: some View {
@@ -50,13 +57,13 @@ struct BannerEditor: View {
                 .frame(height: geo.size.height)
                 .alignmentGuide(HorizontalAlignment.center) { _ in geo.size.width / 2 }
                 .alignmentGuide(VerticalAlignment.center) { _ in geo.size.height / 2 }
-                .scaleEffect(min(geo.size.width / banner.getDevice().width, geo.size.height / banner.getDevice().height) * scale)
+                .scaleEffect(min(geo.size.width / b.banner.getDevice().width, geo.size.height / b.banner.getDevice().height) * scale)
                 .gesture(
                     MagnificationGesture()
                         .onChanged { value in
                             scale = lastScale * value
                         }
-                        .onEnded { value in
+                        .onEnded { _ in
                             lastScale = scale
                         }
                 )
@@ -81,8 +88,25 @@ struct BannerEditor: View {
 
     private var content: some View {
         BannerLayout(showBorder: $showBorder)
-            .frame(width: banner.getDevice().width)
-            .frame(height: banner.getDevice().height)
+            .frame(width: b.banner.getDevice().width)
+            .frame(height: b.banner.getDevice().height)
+            .environmentObject(BannerProvider.shared)
+    }
+
+    /// 处理截图事件
+    private func handleSnapshot() {
+        guard let project = g.project else {
+            m.error("没有选中的项目")
+            return
+        }
+
+        // 生成截图文件名
+        let timestamp = getTimeString()
+        let fileName = "\(b.banner.title)_\(timestamp).png"
+
+        let result = MagicImage.snapshot(content)
+
+        m.success(result)
     }
 
     private func getTimeString() -> String {
@@ -114,4 +138,3 @@ struct BannerEditor: View {
     .frame(width: 800)
     .frame(height: 1000)
 }
-

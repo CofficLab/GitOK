@@ -14,7 +14,6 @@ final class RootBox: SuperLog {
     nonisolated static let emoji = "🚉"
 
     let app: AppProvider
-    let banner: BannerProvider
     let icon: IconProvider
     let git: DataProvider
     let repoManager: RepoManager
@@ -58,7 +57,6 @@ final class RootBox: SuperLog {
         
         // Providers
         self.app = AppProvider(repoManager: self.repoManager)
-        self.banner = BannerProvider()
         self.icon = IconProvider()
         self.pluginProvider = PluginProvider(plugins: plugins)
 

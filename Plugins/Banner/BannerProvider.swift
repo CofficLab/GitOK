@@ -12,6 +12,10 @@ import MagicCore
 **/
 @MainActor
 class BannerProvider: NSObject, ObservableObject, SuperLog {
+    static let shared = BannerProvider()
+    
+    private override init() {}
+    
     /// 当前选中的Banner
     @Published var banner: BannerData = .empty
 
