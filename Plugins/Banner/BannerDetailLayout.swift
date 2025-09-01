@@ -13,7 +13,7 @@ struct BannerDetailLayout: View {
     @EnvironmentObject var m: MagicMessageProvider
 
     @State private var selection: BannerData?
-    @State private var selectedDevice: Device = .iMac
+    @State private var selectedDevice: Device = .iPhoneBig
     @State private var scale: CGFloat = 1.0
     @State private var lastScale: CGFloat = 1.0
     @State private var selectedTemplate: any BannerTemplateProtocol = ClassicBannerTemplate()

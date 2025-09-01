@@ -1,1 +1,1 @@
-{"opacity":0.75,"backgroundId":"yellow2blue_tl2br","title":"Git客户端","inScreen":true,"features":["Git客户端","Banner制作","图标制作","项目管理"],"subTitle":"简洁的风格2"}
+{"backgroundId":"yellow2blue_tl2br","subTitle":"Banner SubTitle","title":"Banner Title","templateData":"{\"spacing\":8,\"opacity\":0.75,\"titleSize\":36,\"subtitleSize\":18,\"subtitle\":\"Banner SubTitle\",\"titleWeightRaw\":\"bold\",\"subtitleWeightRaw\":\"medium\",\"title\":\"Banner Title\",\"backgroundId\":\"yellow2blue_tl2br\"}","opacity":0.75,"features":["Git客户端","Banner制作","图标制作","项目管理"],"inScreen":true}

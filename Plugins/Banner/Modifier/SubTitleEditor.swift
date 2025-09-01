@@ -144,7 +144,7 @@ struct SubTitleEditor: View {
         do {
             try bannerRepo.saveBanner(updatedBanner)
         } catch {
-            m.error("保存副标题失败：\(error.localizedDescription)")
+            m.error(error, title: "保存副标题失败")
         }
     }
     
@@ -171,7 +171,7 @@ struct SubTitleEditor: View {
         do {
             try bannerRepo.saveBanner(updatedBanner)
         } catch {
-            m.error("保存副标题颜色失败：\(error.localizedDescription)")
+            m.error(error, title: "保存副标题颜色失败")
         }
     }
 }
