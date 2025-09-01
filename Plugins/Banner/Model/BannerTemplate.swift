@@ -17,6 +17,9 @@ protocol BannerTemplateProtocol: Identifiable {
     /// 创建修改器视图
     func createModifierView() -> AnyView
     
+    /// 创建示例视图（用于模板选择器）
+    func createExampleView() -> AnyView
+    
     /// 获取模板的默认数据
     func getDefaultData() -> Any
 }
@@ -40,6 +43,10 @@ struct ClassicBannerTemplate: BannerTemplateProtocol {
     
     func createModifierView() -> AnyView {
         AnyView(ClassicBannerModifiers())
+    }
+    
+    func createExampleView() -> AnyView {
+        AnyView(ClassicBannerExampleView())
     }
     
     func getDefaultData() -> Any {
@@ -77,8 +84,8 @@ class BannerTemplateRegistry {
     
     private func registerDefaultTemplates() {
         register(ClassicBannerTemplate())
+        register(MinimalBannerTemplate())
         // 将来可以注册更多模板
-        // register(MinimalBannerTemplate())
         // register(ModernBannerTemplate())
     }
     
