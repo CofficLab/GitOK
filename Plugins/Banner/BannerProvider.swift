@@ -17,10 +17,13 @@ class BannerProvider: NSObject, ObservableObject, SuperLog {
     private override init() {}
     
     /// 当前选中的Banner
-    @Published private(set) var banner: BannerData = .empty
+    @Published private(set) var banner: BannerFile = .empty
     
     /// 当前选中的设备
     @Published private(set) var selectedDevice: Device = .iPhoneBig
+    
+    /// 当前选中的模板
+    @Published private(set) var selectedTemplate: any BannerTemplateProtocol = ClassicBannerTemplate()
 
     var emoji = "🐘"
     
@@ -32,7 +35,7 @@ class BannerProvider: NSObject, ObservableObject, SuperLog {
         ## 参数
         - `b`: 要设置为当前选中的Banner数据
     */
-    func setBanner(_ b: BannerData) {
+    func setBanner(_ b: BannerFile) {
         if !Thread.isMainThread {
             assertionFailure("setBanner called from background thread")
         }
@@ -72,7 +75,7 @@ class BannerProvider: NSObject, ObservableObject, SuperLog {
         ## 参数
         - `update`: 用于更新Banner的闭包
     */
-    func updateBanner(_ update: (inout BannerData) -> Void) {
+    func updateBanner(_ update: (inout BannerFile) -> Void) {
         if !Thread.isMainThread {
             assertionFailure("updateBanner called from background thread")
         }
@@ -89,7 +92,7 @@ class BannerProvider: NSObject, ObservableObject, SuperLog {
         - `update`: 用于更新Banner的闭包，可以抛出错误
         - `throws`: 如果更新过程中发生错误
     */
-    func updateBanner(_ update: (inout BannerData) throws -> Void) throws {
+    func updateBanner(_ update: (inout BannerFile) throws -> Void) throws {
         if !Thread.isMainThread {
             assertionFailure("updateBanner called from background thread")
         }
@@ -97,6 +100,20 @@ class BannerProvider: NSObject, ObservableObject, SuperLog {
         var updatedBanner = self.banner
         try update(&updatedBanner)
         self.banner = updatedBanner
+    }
+    
+    /**
+        设置当前选中的模板
+        
+        ## 参数
+        - `template`: 要设置为当前选中的模板
+    */
+    func setSelectedTemplate(_ template: any BannerTemplateProtocol) {
+        if !Thread.isMainThread {
+            assertionFailure("setSelectedTemplate called from background thread")
+        }
+        
+        self.selectedTemplate = template
     }
 }
 

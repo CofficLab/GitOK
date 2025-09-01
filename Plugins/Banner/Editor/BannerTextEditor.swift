@@ -9,7 +9,7 @@ struct BannerTextEditor: View {
         .black, .white, .red, .green, .blue,
     ]
 
-    @Binding var banner: BannerData
+    @Binding var banner: BannerFile
     let isTitle: Bool // 用于区分是标题还是副标题
 
     var text: Binding<String> {

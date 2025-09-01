@@ -30,7 +30,7 @@ struct MinimalBannerTemplate: BannerTemplateProtocol {
         return MinimalBannerData()
     }
     
-    func restoreData(from bannerData: BannerData) -> Any {
+    func restoreData(from bannerData: BannerFile) -> Any {
         // 首先从通用字段恢复基本数据
         var minimalData = MinimalBannerData(
             title: bannerData.title,
@@ -62,7 +62,7 @@ struct MinimalBannerTemplate: BannerTemplateProtocol {
         return minimalData
     }
     
-    func saveData(_ templateData: Any, to bannerData: inout BannerData) throws {
+    func saveData(_ templateData: Any, to bannerData: inout BannerFile) throws {
         guard let minimalData = templateData as? MinimalBannerData else {
             throw BannerError.invalidTemplateData
         }

@@ -9,9 +9,9 @@ import SwiftUI
     不包含任何UI渲染逻辑，只负责数据的序列化和反序列化
     类似于IconData的设计模式，遵循单一职责原则
 **/
-struct BannerData: SuperLog {
+struct BannerFile: SuperLog {
     static var emoji = "📄"
-    static var empty = BannerData(path: "", project: Project.null)
+    static var empty = BannerFile(path: "", project: Project.null)
     
     // MARK: - 基本属性
     
@@ -151,7 +151,7 @@ struct BannerData: SuperLog {
 
 // MARK: - Update
 
-extension BannerData { 
+extension BannerFile { 
     mutating func updateBackgroundId(_ backgroundId: String) throws {
         self.backgroundId = backgroundId
         try self.saveToDisk()
@@ -160,7 +160,7 @@ extension BannerData {
 
 // MARK: - Identifiable
 
-extension BannerData: Identifiable {
+extension BannerFile: Identifiable {
     var id: String {
         path
     }
@@ -168,15 +168,15 @@ extension BannerData: Identifiable {
 
 // MARK: - Equatable
 
-extension BannerData: Equatable {
-    static func == (lhs: BannerData, rhs: BannerData) -> Bool {
+extension BannerFile: Equatable {
+    static func == (lhs: BannerFile, rhs: BannerFile) -> Bool {
         lhs.id == rhs.id
     }
 }
 
 // MARK: - Codable
 
-extension BannerData: Codable {
+extension BannerFile: Codable {
     enum CodingKeys: String, CodingKey {
         case title
         case subTitle
@@ -231,7 +231,7 @@ extension BannerData: Codable {
             .hideSidebar()
             .hideProjectActions()
     }
-    .frame(width: 800)
+    .frame(width: 600)
     .frame(height: 600)
 }
 

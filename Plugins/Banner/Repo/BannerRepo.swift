@@ -23,7 +23,7 @@ class BannerRepo: SuperLog {
     /// 获取项目下的所有Banner
     /// - Parameter project: Project对象
     /// - Returns: 该项目下的所有BannerData数组
-    func getBanners(from project: Project) -> [BannerData] {
+    func getBanners(from project: Project) -> [BannerFile] {
         return ProjectBannerRepo.getBannerData(from: project)
     }
     
@@ -32,19 +32,19 @@ class BannerRepo: SuperLog {
     ///   - project: 所属项目
     ///   - title: Banner标题
     /// - Returns: 新创建的BannerData
-    func createBanner(in project: Project, title: String = "New Banner") throws -> BannerData {
+    func createBanner(in project: Project, title: String = "New Banner") throws -> BannerFile {
         return try ProjectBannerRepo.createBanner(in: project, title: title)
     }
     
     /// 保存Banner数据
     /// - Parameter banner: 要保存的Banner数据
-    func saveBanner(_ banner: BannerData) throws {
+    func saveBanner(_ banner: BannerFile) throws {
         try ProjectBannerRepo.saveBanner(banner)
     }
     
     /// 删除Banner
     /// - Parameter banner: 要删除的Banner数据
-    func deleteBanner(_ banner: BannerData) throws {
+    func deleteBanner(_ banner: BannerFile) throws {
         try ProjectBannerRepo.deleteBanner(banner)
     }
     
@@ -53,7 +53,7 @@ class BannerRepo: SuperLog {
     ///   - banner: 原Banner数据
     ///   - updates: 更新的数据
     /// - Returns: 更新后的BannerData
-    func updateBanner(_ banner: BannerData, with updates: BannerDataUpdate) throws -> BannerData {
+    func updateBanner(_ banner: BannerFile, with updates: BannerDataUpdate) throws -> BannerFile {
         return try ProjectBannerRepo.updateBanner(banner, with: updates)
     }
 }

@@ -18,10 +18,10 @@ struct BannerTab: View {
     @EnvironmentObject var m: MagicMessageProvider
     
     /// Banner数据
-    let banner: BannerData
+    let banner: BannerFile
     
     /// 当前选中的Banner
-    @Binding var selection: BannerData?
+    @Binding var selection: BannerFile?
     
     /// Banner仓库实例
     private let bannerRepo = BannerRepo.shared

@@ -38,10 +38,10 @@ protocol BannerTemplateProtocol: Identifiable {
     func getDefaultData() -> Any
     
     /// 从BannerData中恢复模板特定的数据
-    func restoreData(from bannerData: BannerData) -> Any
+    func restoreData(from bannerData: BannerFile) -> Any
     
     /// 将模板特定的数据保存到BannerData中
-    func saveData(_ templateData: Any, to bannerData: inout BannerData) throws
+    func saveData(_ templateData: Any, to bannerData: inout BannerFile) throws
 }
 
 /**

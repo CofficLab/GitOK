@@ -13,10 +13,10 @@ struct BannerDetailLayout: View {
     @EnvironmentObject var m: MagicMessageProvider
     @EnvironmentObject var b: BannerProvider
 
-    @State private var selection: BannerData?
+    @State private var selection: BannerFile?
     @State private var scale: CGFloat = 1.0
     @State private var lastScale: CGFloat = 1.0
-    @State private var selectedTemplate: any BannerTemplateProtocol = ClassicBannerTemplate()
+
 
     var body: some View {
         GeometryReader { geometry in
@@ -39,19 +39,19 @@ struct BannerDetailLayout: View {
                     Divider()
 
                     // 模板提供的预览视图
-                    selectedTemplate.createPreviewView()
+                    b.selectedTemplate.createPreviewView()
                         .frame(maxHeight: .infinity)
                 }
 
                 VStack(spacing: 0) {
                     // 模板选择器
-                    TemplateSelector(selectedTemplate: $selectedTemplate)
+                    TemplateSelector()
                         .padding(.horizontal, 16)
                         .padding(.vertical, 8)
                         .background(Color(.controlBackgroundColor))
                     
                     // 模板提供的修改器视图
-                    selectedTemplate.createModifierView()
+                    b.selectedTemplate.createModifierView()
                         .frame(maxHeight: .infinity)
                     
                     // 下载按钮区域
@@ -59,7 +59,7 @@ struct BannerDetailLayout: View {
                         Divider()
                             .padding(.bottom, 16)
                         
-                        BannerDownloadButtons(template: selectedTemplate)
+                        BannerDownloadButtons()
                             .environmentObject(BannerProvider.shared)
                             .padding(.horizontal)
                             .padding(.bottom, 16)
@@ -80,7 +80,7 @@ struct BannerDetailLayout: View {
             .hideSidebar()
             .hideProjectActions()
     }
-    .frame(width: 800)
+    .frame(width: 600)
     .frame(height: 600)
 }
 

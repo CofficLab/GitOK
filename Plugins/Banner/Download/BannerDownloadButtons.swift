@@ -8,7 +8,6 @@ import SwiftUI
  */
 struct BannerDownloadButtons: View {
     @EnvironmentObject var bannerProvider: BannerProvider
-    let template: (any BannerTemplateProtocol)?
 
     var body: some View {
         VStack(spacing: 8) {
@@ -18,13 +17,13 @@ struct BannerDownloadButtons: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.bottom, 4)
 
-            BannerPNGDownloadButton(template: template)
+            BannerPNGDownloadButton(template: bannerProvider.selectedTemplate)
                 .environmentObject(bannerProvider)
 
-            BannerAppStoreDownloadButton(template: template)
+            BannerAppStoreDownloadButton(template: bannerProvider.selectedTemplate)
                 .environmentObject(bannerProvider)
 
-            BanneriPhoneAppStoreDownloadButton(template: template)
+            BanneriPhoneAppStoreDownloadButton(template: bannerProvider.selectedTemplate)
                 .environmentObject(bannerProvider)
 
             if bannerProvider.banner.path.isEmpty {

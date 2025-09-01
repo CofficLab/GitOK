@@ -101,7 +101,7 @@ final class Project: SuperLog {
         }
     }
 
-    func getBanners() -> [BannerData] {
+    func getBanners() -> [BannerFile] {
         let verbose = false
 
         if verbose {

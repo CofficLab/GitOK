@@ -29,7 +29,7 @@ struct ClassicBannerTemplate: BannerTemplateProtocol {
         return ClassicBannerData()
     }
     
-    func restoreData(from bannerData: BannerData) -> Any {
+    func restoreData(from bannerData: BannerFile) -> Any {
         // 经典模板目前使用通用字段，不需要额外的模板特定数据
         return ClassicBannerData(
             title: bannerData.title,
@@ -44,7 +44,7 @@ struct ClassicBannerTemplate: BannerTemplateProtocol {
         )
     }
     
-    func saveData(_ templateData: Any, to bannerData: inout BannerData) throws {
+    func saveData(_ templateData: Any, to bannerData: inout BannerFile) throws {
         guard let classicData = templateData as? ClassicBannerData else {
             throw BannerError.invalidTemplateData
         }

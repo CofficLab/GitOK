@@ -19,11 +19,11 @@ class ProjectBannerRepo: SuperLog {
     /// 从Project对象获取所有Banner模型
     /// - Parameter project: Project对象
     /// - Returns: 该project下的所有BannerData数组
-    static func getBannerData(from project: Project) -> [BannerData] {
+    static func getBannerData(from project: Project) -> [BannerFile] {
         let projectRootURL = URL(fileURLWithPath: project.path)
         let bannerDirectoryURL = projectRootURL.appendingPathComponent(bannerStoragePath)
         
-        var models: [BannerData] = []
+        var models: [BannerFile] = []
         
         do {
             // 检查Banner目录是否存在
@@ -57,10 +57,10 @@ class ProjectBannerRepo: SuperLog {
     ///   - fileURL: Banner配置文件URL
     ///   - project: 所属项目
     /// - Returns: Banner模型，如果加载失败则返回nil
-    private static func tryLoadBannerData(from fileURL: URL, project: Project) -> BannerData? {
+    private static func tryLoadBannerData(from fileURL: URL, project: Project) -> BannerFile? {
         do {
             let data = try Data(contentsOf: fileURL)
-            var bannerData = try JSONDecoder().decode(BannerData.self, from: data)
+            var bannerData = try JSONDecoder().decode(BannerFile.self, from: data)
             bannerData.path = fileURL.path
             bannerData.project = project
             return bannerData
@@ -77,7 +77,7 @@ class ProjectBannerRepo: SuperLog {
     ///   - project: 所属项目
     ///   - title: Banner标题
     /// - Returns: 新创建的BannerData
-    static func createBanner(in project: Project, title: String = "New Banner") throws -> BannerData {
+    static func createBanner(in project: Project, title: String = "New Banner") throws -> BannerFile {
         let projectRootURL = URL(fileURLWithPath: project.path)
         let bannerDirectoryURL = projectRootURL.appendingPathComponent(bannerStoragePath)
         
@@ -90,7 +90,7 @@ class ProjectBannerRepo: SuperLog {
         let fileURL = bannerDirectoryURL.appendingPathComponent(fileName)
         
         // 创建新的BannerData
-        var bannerData = BannerData(
+        var bannerData = BannerFile(
             title: title,
             path: fileURL.path,
             project: project
@@ -116,7 +116,7 @@ class ProjectBannerRepo: SuperLog {
     
     /// 保存Banner数据
     /// - Parameter banner: 要保存的Banner数据
-    static func saveBanner(_ banner: BannerData) throws {
+    static func saveBanner(_ banner: BannerFile) throws {
         let fileURL = URL(fileURLWithPath: banner.path)
         try saveBannerToFile(banner, at: fileURL)
         
@@ -132,7 +132,7 @@ class ProjectBannerRepo: SuperLog {
     /// - Parameters:
     ///   - banner: Banner数据
     ///   - fileURL: 文件URL
-    private static func saveBannerToFile(_ banner: BannerData, at fileURL: URL) throws {
+    private static func saveBannerToFile(_ banner: BannerFile, at fileURL: URL) throws {
         let data = try JSONEncoder().encode(banner)
         try data.write(to: fileURL)
     }
@@ -144,7 +144,7 @@ class ProjectBannerRepo: SuperLog {
     ///   - banner: 原Banner数据
     ///   - updates: 更新的数据
     /// - Returns: 更新后的BannerData
-    static func updateBanner(_ banner: BannerData, with updates: BannerDataUpdate) throws -> BannerData {
+    static func updateBanner(_ banner: BannerFile, with updates: BannerDataUpdate) throws -> BannerFile {
         var updatedBanner = banner
         
         // 应用更新
@@ -166,7 +166,7 @@ class ProjectBannerRepo: SuperLog {
     
     /// 删除Banner
     /// - Parameter banner: 要删除的Banner数据
-    static func deleteBanner(_ banner: BannerData) throws {
+    static func deleteBanner(_ banner: BannerFile) throws {
         let fileURL = URL(fileURLWithPath: banner.path)
         
         // 删除文件

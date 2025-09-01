@@ -5,7 +5,7 @@ import SwiftUI
  横向滚动的卡片式模板选择器，直观展示各模板效果
  */
 struct TemplateSelector: View {
-    @Binding var selectedTemplate: any BannerTemplateProtocol
+    @EnvironmentObject var b: BannerProvider
     @State private var availableTemplates: [any BannerTemplateProtocol] = []
     
     var body: some View {
@@ -29,9 +29,9 @@ struct TemplateSelector: View {
                     ForEach(availableTemplates, id: \.id) { template in
                         TemplateCard(
                             template: template,
-                            isSelected: selectedTemplate.id == template.id,
+                            isSelected: b.selectedTemplate.id == template.id,
                             onSelect: {
-                                selectedTemplate = template
+                                b.setSelectedTemplate(template)
                             }
                         )
                     }
@@ -46,8 +46,8 @@ struct TemplateSelector: View {
     
     private func loadTemplates() {
         availableTemplates = BannerTemplateRepo.shared.getAllTemplates()
-        if selectedTemplate.id.isEmpty {
-            selectedTemplate = BannerTemplateRepo.shared.getDefaultTemplate()
+        if b.selectedTemplate.id.isEmpty {
+            b.setSelectedTemplate(BannerTemplateRepo.shared.getDefaultTemplate())
         }
     }
 }
