@@ -64,7 +64,7 @@ struct MinimalTitleEditor: View {
             try BannerRepo.shared.saveBanner(updatedBanner)
             b.banner = updatedBanner
         } catch {
-            m.error("保存标题失败: \(error.localizedDescription)")
+            m.error(error, title: "保存标题失败")
         }
     }
     
