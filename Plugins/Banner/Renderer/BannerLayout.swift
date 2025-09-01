@@ -16,7 +16,6 @@ struct BannerLayout: View {
     @EnvironmentObject var b: BannerProvider
     @EnvironmentObject var m: MagicMessageProvider
     
-    @Binding var showBorder: Bool
     @State private var showOpacityToolbar: Bool = false
     
     /// Banner仓库实例
@@ -40,21 +39,11 @@ struct BannerLayout: View {
                         Spacer()
                     })
                     .frame(width: device.width / 3)
-                    .overlay(
-                        showBorder ? Rectangle()
-                            .strokeBorder(style: StrokeStyle(lineWidth: 20, dash: [5]))
-                            .foregroundColor(.red) : nil
-                    )
 
                     BannerImage(banner: bannerBinding)
                         .padding(.horizontal, 50)
                         .frame(width: device.width / 3 * 2)
                         .frame(maxHeight: .infinity)
-                        .overlay(
-                            showBorder ? Rectangle()
-                                .strokeBorder(style: StrokeStyle(lineWidth: 20, dash: [5]))
-                                .foregroundColor(.yellow) : nil
-                        )
                 }
             case .iPhoneSmall, .iPhoneBig:
                 VStack(spacing: 40, content: {
@@ -63,11 +52,6 @@ struct BannerLayout: View {
                     Spacer()
                     BannerImage(banner: bannerBinding)
                         .frame(maxHeight: .infinity)
-                        .overlay(
-                            showBorder ? Rectangle()
-                                .strokeBorder(style: StrokeStyle(lineWidth: 2, dash: [5]))
-                                .foregroundColor(.black) : nil
-                        )
                 })
             case .iPad, .none:
                 GeometryReader { _ in
@@ -75,11 +59,6 @@ struct BannerLayout: View {
                     BannerTextEditor(banner: bannerBinding, isTitle: false)
                     Spacer()
                     BannerImage(banner: bannerBinding)
-                        .overlay(
-                            showBorder ? Rectangle()
-                                .strokeBorder(style: StrokeStyle(lineWidth: 2, dash: [5]))
-                                .foregroundColor(.black) : nil
-                        )
                 }
             }
         }
@@ -119,7 +98,7 @@ struct BannerLayout: View {
                 do {
                     try bannerRepo.saveBanner(newBanner)
                 } catch {
-                    m.error("保存Banner失败：\(error.localizedDescription)")
+                    m.error(error)
                 }
             }
         )
@@ -157,7 +136,7 @@ struct BannerLayout: View {
         do {
             try bannerRepo.saveBanner(updatedBanner)
         } catch {
-            m.error("保存Banner失败：\(error.localizedDescription)")
+            m.error(error)
         }
     }
 }

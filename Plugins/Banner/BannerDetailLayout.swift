@@ -13,7 +13,6 @@ struct BannerDetailLayout: View {
     @EnvironmentObject var m: MagicMessageProvider
 
     @State private var selection: BannerData?
-    @State private var showBorder: Bool = false
 
     var body: some View {
         GeometryReader { geometry in
@@ -36,8 +35,6 @@ struct BannerDetailLayout: View {
                             }
 
                             SnapshotButton()
-
-                            BorderToggleButton(showBorder: $showBorder)
                         }
                     }
 

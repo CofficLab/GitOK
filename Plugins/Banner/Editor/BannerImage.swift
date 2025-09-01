@@ -60,8 +60,7 @@ struct BannerImage: View, SuperLog {
                     do {
                         try self.banner.changeImage(url)
                     } catch let e {
-                        os_log(.error, "Error changing image: \(e)")
-                        m.error(e.localizedDescription)
+                        m.error(e)
                     }
                 }
             }
@@ -74,7 +73,7 @@ struct BannerImage: View, SuperLog {
         ContentLayout()
             .hideSidebar()
             .hideTabPicker()
-//            .hideProjectActions()
+            .hideProjectActions()
     }
     .frame(width: 800)
     .frame(height: 600)
@@ -84,7 +83,10 @@ struct BannerImage: View, SuperLog {
     RootView {
         ContentLayout()
             .hideSidebar()
+            .hideProjectActions()
+            .hideTabPicker()
+            .setInitialTab(BannerPlugin.label)
     }
-    .frame(width: 1200)
-    .frame(height: 1200)
+    .frame(width: 800)
+    .frame(height: 1000)
 }

@@ -87,7 +87,7 @@ struct BannerEditor: View {
     }
 
     private var content: some View {
-        BannerLayout(showBorder: $showBorder)
+        BannerLayout()
             .frame(width: b.banner.getDevice().width)
             .frame(height: b.banner.getDevice().height)
             .environmentObject(BannerProvider.shared)
@@ -95,14 +95,10 @@ struct BannerEditor: View {
 
     /// 处理截图事件
     private func handleSnapshot() {
-        guard let project = g.project else {
+        guard g.project != nil else {
             m.error("没有选中的项目")
             return
         }
-
-        // 生成截图文件名
-        let timestamp = getTimeString()
-        let fileName = "\(b.banner.title)_\(timestamp).png"
 
         let result = MagicImage.snapshot(content)
 

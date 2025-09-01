@@ -44,6 +44,11 @@ struct BannerTabsBar: View {
         .onChange(of: g.project) {
             refreshBanners()
         }
+        .onChange(of: selection, {
+            if let s = selection {
+                self.b.setBanner(s)
+            }
+        })
         .onBannerAdded { _ in
             refreshBanners()
         }   
