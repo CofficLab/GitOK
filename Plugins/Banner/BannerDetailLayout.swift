@@ -7,30 +7,26 @@ import SwiftUI
      主要的Banner编辑界面，包含顶部的Banner标签页和主要的编辑区域。
  **/
 struct BannerDetailLayout: View {
-    static let shared = BannerDetailLayout()
-    
+    static var shared = BannerDetailLayout()
+
+    @EnvironmentObject var g: DataProvider
+    @EnvironmentObject var m: MagicMessageProvider
+
     @State private var selection: BannerData?
     @State private var showBorder: Bool = false
-    @State private var snapshotTapped: Bool = false
 
     var body: some View {
-        HSplitView {
-            VStack(spacing: 0) {
-                BannerTabsBar(selection: $selection)
-                    .background(.gray.opacity(0.1))
+        GeometryReader { geometry in
+            HSplitView {
+                VStack(spacing: 0) {
+                    BannerTabsBar(selection: $selection)
+                        .background(.gray.opacity(0.1))
 
-                // 主要编辑区域
-                if let selectedBanner = selection {
                     BannerEditor()
                         .frame(maxHeight: .infinity)
-                } else {
-                    EmptyBannerTip()
                 }
-            }
-            .frame(height: .infinity)
 
-            VStack(spacing: 0) {
-                if let selectedBanner = selection {
+                VStack(spacing: 0) {
                     GroupBox {
                         HStack {
                             HStack(spacing: 0) {
@@ -40,29 +36,22 @@ struct BannerDetailLayout: View {
                             }
 
                             SnapshotButton()
-                                .environmentObject(BannerProvider.shared)
-                            
+
                             BorderToggleButton(showBorder: $showBorder)
                         }
                     }
-                    
+
                     GroupBox {
-                        Backgrounds(current: Binding(
-                            get: { selectedBanner.backgroundId },
-                            set: { _ in }
-                        ))
+                        Backgrounds()
                     }.padding()
 
                     Spacer()
-                } else {
-                    EmptyBannerTip()
                 }
+                .frame(maxWidth: geometry.size.width * 0.5)
+                .frame(maxHeight: .infinity)
             }
-            .frame(height: .infinity)
-            .frame(maxHeight: .infinity)
+            .environmentObject(BannerProvider.shared)
         }
-        .frame(height: .infinity)
-        .environmentObject(BannerProvider.shared)
     }
 }
 
