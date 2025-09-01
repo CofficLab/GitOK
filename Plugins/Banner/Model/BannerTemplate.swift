@@ -2,6 +2,20 @@ import Foundation
 import SwiftUI
 
 /**
+ Banner错误类型
+ */
+enum BannerError: Error, LocalizedError {
+    case invalidTemplateData
+    
+    var errorDescription: String? {
+        switch self {
+        case .invalidTemplateData:
+            return "无效的模板数据"
+        }
+    }
+}
+
+/**
  Banner模板协议
  定义每个模板必须实现的接口
  */
@@ -22,6 +36,12 @@ protocol BannerTemplateProtocol: Identifiable {
     
     /// 获取模板的默认数据
     func getDefaultData() -> Any
+    
+    /// 从BannerData中恢复模板特定的数据
+    func restoreData(from bannerData: BannerData) -> Any
+    
+    /// 将模板特定的数据保存到BannerData中
+    func saveData(_ templateData: Any, to bannerData: inout BannerData) throws
 }
 
 /**
@@ -51,6 +71,40 @@ struct ClassicBannerTemplate: BannerTemplateProtocol {
     
     func getDefaultData() -> Any {
         return ClassicBannerData()
+    }
+    
+    func restoreData(from bannerData: BannerData) -> Any {
+        // 经典模板目前使用通用字段，不需要额外的模板特定数据
+        return ClassicBannerData(
+            title: bannerData.title,
+            subTitle: bannerData.subTitle,
+            features: bannerData.features,
+            imageId: bannerData.imageId,
+            backgroundId: bannerData.backgroundId,
+            inScreen: bannerData.inScreen,
+            opacity: bannerData.opacity,
+            titleColor: bannerData.titleColor,
+            subTitleColor: bannerData.subTitleColor
+        )
+    }
+    
+    func saveData(_ templateData: Any, to bannerData: inout BannerData) throws {
+        guard let classicData = templateData as? ClassicBannerData else {
+            throw BannerError.invalidTemplateData
+        }
+        
+        bannerData.title = classicData.title
+        bannerData.subTitle = classicData.subTitle
+        bannerData.features = classicData.features
+        bannerData.imageId = classicData.imageId
+        bannerData.backgroundId = classicData.backgroundId
+        bannerData.inScreen = classicData.inScreen
+        bannerData.opacity = classicData.opacity
+        bannerData.titleColor = classicData.titleColor
+        bannerData.subTitleColor = classicData.subTitleColor
+        
+        // 经典模板目前不需要额外的模板特定数据存储
+        bannerData.templateData = nil
     }
 }
 

@@ -48,6 +48,9 @@ struct BannerData: SuperLog {
     /// 副标题颜色（可选）
     var subTitleColor: Color?
     
+    /// 模板特定的数据（JSON格式存储）
+    var templateData: String?
+    
     // MARK: - 初始化方法
     
     init(
@@ -61,7 +64,8 @@ struct BannerData: SuperLog {
         path: String,
         project: Project,
         titleColor: Color? = nil,
-        subTitleColor: Color? = nil
+        subTitleColor: Color? = nil,
+        templateData: String? = nil
     ) {
         self.title = title
         self.subTitle = subTitle
@@ -74,6 +78,7 @@ struct BannerData: SuperLog {
         self.project = project
         self.titleColor = titleColor
         self.subTitleColor = subTitleColor
+        self.templateData = templateData
     }
     
     // MARK: - 业务方法
@@ -182,6 +187,7 @@ extension BannerData: Codable {
         case opacity
         case titleColor
         case subTitleColor
+        case templateData
         // path 和 project 不需要序列化，它们在加载时设置
     }
     
@@ -201,6 +207,7 @@ extension BannerData: Codable {
         project = Project.null
         titleColor = nil
         subTitleColor = nil
+        templateData = try container.decodeIfPresent(String.self, forKey: .templateData)
     }
     
     func encode(to encoder: Encoder) throws {
@@ -213,6 +220,7 @@ extension BannerData: Codable {
         try container.encode(backgroundId, forKey: .backgroundId)
         try container.encode(inScreen, forKey: .inScreen)
         try container.encode(opacity, forKey: .opacity)
+        try container.encodeIfPresent(templateData, forKey: .templateData)
     }
 }
 

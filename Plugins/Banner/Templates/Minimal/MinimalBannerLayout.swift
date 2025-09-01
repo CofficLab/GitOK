@@ -38,22 +38,22 @@ struct MinimalBannerLayout: View {
             Spacer()
             
             // 居中的标题和副标题
-            VStack(spacing: 20) {
-                BannerTitle()
-                BannerSubTitle()
+            VStack(spacing: getSpacing()) {
+                MinimalTitle()
+                MinimalSubTitle()
             }
             
             Spacer()
             
             // 居中的图片
-            BannerImage(device: device)
+            MinimalImage(device: device)
                 .frame(width: min(device.width * 0.3, 300))
                 .frame(height: min(device.height * 0.3, 200))
             
             Spacer()
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(BannerBackground())
+        .background(MinimalBackground())
     }
     
     /// 计算最优缩放比例
@@ -63,6 +63,13 @@ struct MinimalBannerLayout: View {
         let widthScale = availableWidth / device.width
         let heightScale = availableHeight / device.height
         return min(widthScale, heightScale)
+    }
+    
+    /// 获取标题和副标题之间的间距
+    private func getSpacing() -> CGFloat {
+        let template = MinimalBannerTemplate()
+        let minimalData = template.restoreData(from: b.banner) as! MinimalBannerData
+        return CGFloat(minimalData.spacing)
     }
 }
 

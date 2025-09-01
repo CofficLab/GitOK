@@ -42,38 +42,38 @@ struct ClassicBannerLayout: View {
                     VStack(spacing: 0, content: {
                         Spacer()
                         VStack(spacing: 50) {
-                            BannerTitle()
-                            BannerSubTitle()
+                            ClassicTitle()
+                            ClassicSubTitle()
                         }
                         .frame(height: device.height / 3)
-                        Features()
+                        ClassicFeatures()
                         Spacer()
                     })
                     .frame(width: device.width / 3)
 
-                    BannerImage(device: device)
+                    ClassicImage(device: device)
                         .padding(.horizontal, 50)
                         .frame(width: device.width / 3 * 2)
                         .frame(maxHeight: .infinity)
                 }
             case .iPhoneSmall, .iPhoneBig:
                 VStack(spacing: 40, content: {
-                    BannerTitle()
-                    BannerSubTitle()
+                    ClassicTitle()
+                    ClassicSubTitle()
                     Spacer()
-                    BannerImage(device: device)
+                    ClassicImage(device: device)
                         .frame(maxHeight: .infinity)
                 })
             case .iPad:
                 GeometryReader { _ in
-                    BannerTitle()
-                    BannerSubTitle()
+                    ClassicTitle()
+                    ClassicSubTitle()
                     Spacer()
-                    BannerImage(device: device)
+                    ClassicImage(device: device)
                 }
             }
         }
-        .background(BannerBackground())
+        .background(ClassicBackground())
     }
     
     /// 计算最优缩放比例

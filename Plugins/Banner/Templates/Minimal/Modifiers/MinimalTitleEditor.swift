@@ -9,18 +9,17 @@ struct MinimalTitleEditor: View {
     @EnvironmentObject var b: BannerProvider
     @EnvironmentObject var m: MagicMessageProvider
     
-    @State private var titleText: String = ""
-    @State private var titleSize: Double = 36.0
+    @State private var minimalData: MinimalBannerData = MinimalBannerData()
     
     var body: some View {
         GroupBox("主标题") {
             VStack(spacing: 12) {
                 // 标题输入
-                TextField("输入主标题", text: $titleText)
+                TextField("输入主标题", text: $minimalData.title)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .font(.title2)
-                    .onChange(of: titleText) {
-                        updateTitle()
+                    .onChange(of: minimalData.title) {
+                        saveData()
                     }
                 
                 // 字体大小调节
@@ -30,15 +29,15 @@ struct MinimalTitleEditor: View {
                         .foregroundColor(.secondary)
                     
                     Slider(
-                        value: $titleSize,
+                        value: $minimalData.titleSize,
                         in: 24.0...72.0,
                         step: 2.0
                     )
-                    .onChange(of: titleSize) { _ in
-                        updateTitleSize()
+                    .onChange(of: minimalData.titleSize) { _ in
+                        saveData()
                     }
                     
-                    Text("\(Int(titleSize))pt")
+                    Text("\(Int(minimalData.titleSize))pt")
                         .font(.caption)
                         .foregroundColor(.secondary)
                         .frame(width: 40, alignment: .trailing)
@@ -52,25 +51,22 @@ struct MinimalTitleEditor: View {
     }
     
     private func loadCurrentValues() {
-        titleText = b.banner.title
-        // 简约模板可能有自己的字体大小设置
+        // 从当前Banner数据恢复简约模板数据
+        let template = MinimalBannerTemplate()
+        minimalData = template.restoreData(from: b.banner) as! MinimalBannerData
     }
     
-    private func updateTitle() {
-        var updatedBanner = b.banner
-        updatedBanner.title = titleText
-        
+    private func saveData() {
         do {
+            var updatedBanner = b.banner
+            let template = MinimalBannerTemplate()
+            try template.saveData(minimalData, to: &updatedBanner)
+            
             try BannerRepo.shared.saveBanner(updatedBanner)
             b.banner = updatedBanner
         } catch {
-            m.error(error, title: "保存标题失败")
+            m.error(error, title: "保存数据失败")
         }
-    }
-    
-    private func updateTitleSize() {
-        // 简约模板特有的字体大小更新逻辑
-        // 这里可以扩展为保存到模板特定的数据结构中
     }
 }
 
