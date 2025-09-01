@@ -13,11 +13,12 @@ struct ClassicBannerLayout: View {
 
     var body: some View {
         GeometryReader { geo in
-            content
-                .frame(width: geo.size.width)
-                .frame(height: geo.size.height)
-                .alignmentGuide(HorizontalAlignment.center) { _ in geo.size.width / 2 }
-                .alignmentGuide(VerticalAlignment.center) { _ in geo.size.height / 2 }
+            ZStack {
+                content
+                    .frame(width: device.width, height: device.height)
+                    .scaleEffect(calculateOptimalScale(geometry: geo))
+            }
+            .frame(width: geo.size.width, height: geo.size.height, alignment: .center)
         }
         .padding()
     }
@@ -45,13 +46,14 @@ struct ClassicBannerLayout: View {
                         .frame(maxHeight: .infinity)
                 }
             case .iPhoneSmall, .iPhoneBig:
-                VStack(spacing: 40, content: {
+                VStack(spacing: 40) {
+                    Spacer()
                     ClassicTitle()
                     ClassicSubTitle()
                     Spacer()
                     ClassicImage(device: device)
                         .frame(maxHeight: .infinity)
-                })
+                }.padding()
             case .iPad:
                 GeometryReader { _ in
                     ClassicTitle()
@@ -88,7 +90,7 @@ struct ClassicBannerLayout: View {
             .hideProjectActions()
     }
     .frame(width: 800)
-    .frame(height: 600)
+    .frame(height: 800)
 }
 
 #Preview("App - Big Screen") {

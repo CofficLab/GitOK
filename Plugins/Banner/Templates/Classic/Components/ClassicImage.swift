@@ -7,7 +7,9 @@ import MagicCore
  */
 struct ClassicImage: View {
     @EnvironmentObject var b: BannerProvider
+    
     let device: Device
+    let inScreen: Bool = true
     
     var body: some View {
         b.banner.getImage()
@@ -30,8 +32,8 @@ struct ClassicImage: View {
             .hideSidebar()
             .hideProjectActions()
     }
-    .frame(width: 800)
-    .frame(height: 600)
+    .frame(width: 600)
+    .frame(height: 800)
 }
 
 #Preview("App - Big Screen") {
