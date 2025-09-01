@@ -2,20 +2,20 @@ import MagicCore
 import OSLog
 import SwiftUI
 
-struct BannerImage: View, SuperLog {
-    @EnvironmentObject var app: AppProvider
-    @EnvironmentObject var m: MagicMessageProvider
+/**
+ * Banner图片纯显示组件
+ * 只负责显示图片，不包含任何编辑功能
+ * 数据变化时自动重新渲染
+ */
+struct BannerImage: View {
+    @EnvironmentObject var b: BannerProvider
 
-    @State var isEditingTitle = false
-
-    @Binding var banner: BannerData
-
-    var image: Image { banner.getImage() }
+    var image: Image { b.banner.getImage() }
 
     var body: some View {
         ZStack {
-            if banner.inScreen {
-                switch banner.getDevice() {
+            if b.banner.inScreen {
+                switch b.banner.getDevice() {
                 case .iMac:
                     ScreeniMac(content: {
                         image.resizable().scaledToFit()
@@ -42,37 +42,14 @@ struct BannerImage: View, SuperLog {
                     .scaledToFit()
             }
         }
-        .contextMenu(menuItems: {
-            Button("显示/隐藏边框") {
-                banner.inScreen.toggle()
-            }
-
-            // MARK: Change Image
-
-            Button("换图") {
-                let panel = NSOpenPanel()
-                panel.allowsMultipleSelection = false
-                panel.canChooseDirectories = false
-
-                if panel.runModal() == .OK, let url = panel.url {
-                    os_log("\(self.t)Change Image -> \(url.relativeString)")
-
-                    do {
-                        try self.banner.changeImage(url)
-                    } catch let e {
-                        m.error(e)
-                    }
-                }
-            }
-        })
     }
 }
 
 #Preview("App - Small Screen") {
     RootView {
         ContentLayout()
+            .setInitialTab(BannerPlugin.label)
             .hideSidebar()
-            .hideTabPicker()
             .hideProjectActions()
     }
     .frame(width: 800)
@@ -82,11 +59,9 @@ struct BannerImage: View, SuperLog {
 #Preview("App - Big Screen") {
     RootView {
         ContentLayout()
-            .hideSidebar()
-            .hideProjectActions()
-            .hideTabPicker()
             .setInitialTab(BannerPlugin.label)
+            .hideSidebar()
     }
-    .frame(width: 800)
-    .frame(height: 1000)
+    .frame(width: 1200)
+    .frame(height: 1200)
 }

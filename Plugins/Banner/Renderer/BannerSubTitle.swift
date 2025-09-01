@@ -1,74 +1,27 @@
 import SwiftUI
+import MagicCore
 
+/**
+ * Banner副标题纯显示组件
+ * 只负责显示副标题文本，不包含任何编辑功能
+ * 数据变化时自动重新渲染
+ */
 struct BannerSubTitle: View {
-    @State var isEditing = false
-    @State private var isShowingColorPicker = false
-    
-    // 预定义的颜色选项
-    private let colorOptions: [Color] = [
-        .red, .green, .yellow,
-        .white, .black, .blue,
-    ]
-    
-    @Binding var banner: BannerData
+    @EnvironmentObject var b: BannerProvider
     
     var body: some View {
-        if isEditing {
-            GeometryReader { geo in
-                TextField("副标题", text: $banner.subTitle)
-                    .font(.system(size: 100))
-                    .padding(.horizontal)
-                    .frame(width: geo.size.width)
-                    .onSubmit {
-                        self.isEditing = false
-                    }
-            }
-        } else {
-            Text(banner.subTitle.isEmpty ? "副标题" : banner.subTitle)
-                .font(.system(size: 100))
-                .foregroundColor(banner.subTitleColor ?? .white)
-                .onTapGesture {
-                    self.isEditing = true
-                }
-                .overlay(alignment: .top) {
-                    HStack(spacing: 20) {
-                        ForEach(colorOptions, id: \.self) { color in
-                            Circle()
-                                .fill(color)
-                                .frame(width: 120, height: 120)
-                                .overlay(
-                                    Circle()
-                                        .stroke(Color.white, lineWidth: 2)
-                                )
-                                .shadow(radius: 2)
-                                .onTapGesture {
-                                    banner.subTitleColor = color
-                                }
-                        }
-                    }
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 8)
-                    .background(
-                        RoundedRectangle(cornerRadius: 8)
-                            .fill(.background)
-                            .shadow(radius: 3)
-                    )
-                    .offset(y: -150)
-                    .opacity(isShowingColorPicker ? 1 : 0)
-                    .animation(.easeInOut, value: isShowingColorPicker)
-                    .onHover { isHovering in
-                        isShowingColorPicker = isHovering
-                    }
-                }
-        }
+        Text(b.banner.subTitle.isEmpty ? "副标题" : b.banner.subTitle)
+            .font(.system(size: 100))
+            .foregroundColor(b.banner.subTitleColor ?? .white)
+            .multilineTextAlignment(.center)
     }
 }
 
 #Preview("App - Small Screen") {
     RootView {
         ContentLayout()
+            .setInitialTab(BannerPlugin.label)
             .hideSidebar()
-            .hideTabPicker()
             .hideProjectActions()
     }
     .frame(width: 800)
@@ -78,11 +31,9 @@ struct BannerSubTitle: View {
 #Preview("App - Big Screen") {
     RootView {
         ContentLayout()
-            .hideSidebar()
-            .hideProjectActions()
-            .hideTabPicker()
             .setInitialTab(BannerPlugin.label)
+            .hideSidebar()
     }
-    .frame(width: 800)
+    .frame(width: 1200)
     .frame(height: 1200)
 }

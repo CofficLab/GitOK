@@ -11,18 +11,12 @@ struct BannerDownloadButtons: View {
 
     var body: some View {
         VStack(spacing: 8) {
-            Text("导出Banner")
-                .font(.headline)
-                .foregroundColor(.primary)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.bottom, 4)
-            
             BannerPNGDownloadButton()
                 .environmentObject(bannerProvider)
-            
+
             BannerAppStoreDownloadButton()
                 .environmentObject(bannerProvider)
-            
+
             BanneriPhoneAppStoreDownloadButton()
                 .environmentObject(bannerProvider)
 
@@ -33,9 +27,6 @@ struct BannerDownloadButtons: View {
                     .padding(.top, 8)
             }
         }
-        .padding()
-        .background(Color.gray.opacity(0.05))
-        .cornerRadius(8)
     }
 }
 

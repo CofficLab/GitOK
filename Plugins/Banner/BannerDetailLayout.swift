@@ -26,21 +26,31 @@ struct BannerDetailLayout: View {
                 }
 
                 VStack(spacing: 0) {
-                    GroupBox {
+                    // 设备选择器
+                    GroupBox("设备类型") {
                         HStack {
-                            HStack(spacing: 0) {
-                                Devices()
-
-                                Spacer()
-                            }
+                            Devices()
+                            Spacer()
                         }
                     }
-
-                    GroupBox {
-                        Backgrounds()
-                    }.padding()
-
-                    Spacer()
+                    .padding(.horizontal)
+                    
+                    // 编辑器区域
+                    ScrollView {
+                        VStack(spacing: 16) {
+                            TitleEditor()
+                            SubTitleEditor()
+                            FeaturesEditor()
+                            ImageEditor()
+                            
+                            GroupBox("背景设置") {
+                                Backgrounds()
+                            }
+                            
+                            OpacityEditor()
+                        }
+                        .padding()
+                    }
                     
                     // 下载按钮区域
                     VStack(spacing: 0) {

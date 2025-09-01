@@ -3,26 +3,20 @@ import SwiftUI
 
 /**
     Banner布局渲染器
-    根据不同设备类型渲染Banner布局，直接从BannerProvider获取和修改数据。
+    纯显示组件，只负责根据不同设备类型渲染Banner布局。
+    不包含任何编辑功能，数据变化时自动重新渲染。
     
     ## 功能特性
     - 支持多种设备类型布局
-    - 实时编辑文本和图片
-    - 动态调节透明度
-    - 边框显示辅助功能
-    - 自动保存更改
+    - 纯显示，无编辑功能
+    - 响应数据变化自动重新渲染
+    - 清晰的布局结构
 **/
 struct BannerLayout: View {
     @EnvironmentObject var b: BannerProvider
-    @EnvironmentObject var m: MagicMessageProvider
-    
-    @State private var showOpacityToolbar: Bool = false
-    
-    /// Banner仓库实例
-    private let bannerRepo = BannerRepo.shared
     
     var device: Device { b.banner.getDevice() }
-
+    
     var body: some View {
         ZStack {
             switch Device(rawValue: b.banner.device) {
@@ -31,120 +25,39 @@ struct BannerLayout: View {
                     VStack(spacing: 0, content: {
                         Spacer()
                         VStack(spacing: 50) {
-                            BannerTextEditor(banner: bannerBinding, isTitle: true)
-                            BannerTextEditor(banner: bannerBinding, isTitle: false)
+                            BannerTitle()
+                            BannerSubTitle()
                         }
                         .frame(height: device.height / 3)
-                        Features(features: featuresBinding)
+                        Features()
                         Spacer()
                     })
                     .frame(width: device.width / 3)
-
-                    BannerImage(banner: bannerBinding)
+                    
+                    BannerImage()
                         .padding(.horizontal, 50)
                         .frame(width: device.width / 3 * 2)
                         .frame(maxHeight: .infinity)
                 }
             case .iPhoneSmall, .iPhoneBig:
                 VStack(spacing: 40, content: {
-                    BannerTextEditor(banner: bannerBinding, isTitle: true)
-                    BannerTextEditor(banner: bannerBinding, isTitle: false)
+                    BannerTitle()
+                    BannerSubTitle()
                     Spacer()
-                    BannerImage(banner: bannerBinding)
+                    BannerImage()
                         .frame(maxHeight: .infinity)
                 })
             case .iPad, .none:
                 GeometryReader { _ in
-                    BannerTextEditor(banner: bannerBinding, isTitle: true)
-                    BannerTextEditor(banner: bannerBinding, isTitle: false)
+                    BannerTitle()
+                    BannerSubTitle()
                     Spacer()
-                    BannerImage(banner: bannerBinding)
+                    BannerImage()
                 }
             }
         }
-        .background(BannerBackground(banner: bannerBinding))
-        .onTapGesture {
-            showOpacityToolbar.toggle()
-        }
-        .overlay(
-            showOpacityToolbar ? VStack {
-                Slider(value: Binding(
-                    get: { b.banner.opacity },
-                    set: { newOpacity in
-                        updateBanner { banner in
-                            banner.opacity = newOpacity
-                        }
-                    }
-                ), in: 0...1)
-                    .frame(width: 200)
-                    .padding()
-                    .background(Color.white.opacity(0.8))
-                    .cornerRadius(8)
-                Spacer()
-            } : nil
-        )
+        .background(BannerBackground())
     }
-    
-    // MARK: - 计算属性
-    
-    /// Banner数据Binding
-    private var bannerBinding: Binding<BannerData> {
-        Binding(
-            get: { b.banner },
-            set: { newBanner in
-                b.setBanner(newBanner)
-                
-                // 保存到磁盘
-                do {
-                    try bannerRepo.saveBanner(newBanner)
-                } catch {
-                    m.error(error)
-                }
-            }
-        )
-    }
-    
-    /// Features数据Binding
-    private var featuresBinding: Binding<[String]> {
-        Binding(
-            get: { b.banner.features },
-            set: { newFeatures in
-                updateBanner { banner in
-                    banner.features = newFeatures
-                }
-            }
-        )
-    }
-    
-    /**
-        更新Banner数据
-        提供一个修改闭包来更新Banner的属性，并自动保存到磁盘
-        
-        ## 参数
-        - `modifier`: 修改Banner属性的闭包
-    */
-    private func updateBanner(_ modifier: (inout BannerData) -> Void) {
-        guard b.banner != .empty else { return }
-        
-        var updatedBanner = b.banner
-        modifier(&updatedBanner)
-        
-        // 更新Provider中的状态
-        b.setBanner(updatedBanner)
-        
-        // 保存到磁盘
-        do {
-            try bannerRepo.saveBanner(updatedBanner)
-        } catch {
-            m.error(error)
-        }
-    }
-}
-
-// MARK: - Event Handlers
-
-extension BannerLayout {
-   
 }
 
 // MARK: - Preview
