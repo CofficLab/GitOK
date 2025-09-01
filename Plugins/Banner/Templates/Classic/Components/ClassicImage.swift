@@ -1,5 +1,5 @@
-import SwiftUI
 import MagicCore
+import SwiftUI
 
 /**
  经典模板的图片组件
@@ -8,20 +8,44 @@ import MagicCore
 struct ClassicImage: View {
     @EnvironmentObject var b: BannerProvider
     @EnvironmentObject var m: MagicMessageProvider
-    
-    let inScreen: Bool = true
-    
+
+    var banner: BannerFile { b.banner }
+    var image: Image { banner.getImage() }
+    var device: Device { b.selectedDevice }
+
     var body: some View {
-        b.banner.getImage()
-            .resizable()
-            .aspectRatio(contentMode: .fit)
-            .clipShape(RoundedRectangle(cornerRadius: getCornerRadius()))
-            .shadow(color: .black.opacity(0.2), radius: 12, x: 0, y: 6)
-            .onBannerDidSave(perform: { banner in
-                m.info("已更新")
-            })
+        ZStack {
+            if banner.inScreen {
+                switch device {
+                case .iMac:
+                    ScreeniMac(content: {
+                        image.resizable().scaledToFit()
+                    })
+                case .MacBook:
+                    ScreenMacBook(content: {
+                        image.resizable().scaledToFit()
+                    })
+                case .iPhoneBig:
+                    ScreeniPhone(content: {
+                        image.resizable().scaledToFit()
+                    })
+                case .iPhoneSmall:
+                    ScreeniPhone(content: {
+                        image.resizable().scaledToFit()
+                    })
+                case .iPad:
+                    ScreeniPad(content: {
+                        image.resizable().scaledToFit()
+                    })
+                }
+            } else {
+                image
+                    .resizable()
+                    .scaledToFit()
+            }
+        }
     }
-    
+
     private func getCornerRadius() -> CGFloat {
         // 经典模板使用适中的圆角
         return 12.0
