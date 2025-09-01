@@ -33,8 +33,6 @@ struct BannerDetailLayout: View {
 
                                 Spacer()
                             }
-
-                            SnapshotButton()
                         }
                     }
 
@@ -43,6 +41,17 @@ struct BannerDetailLayout: View {
                     }.padding()
 
                     Spacer()
+                    
+                    // 下载按钮区域
+                    VStack(spacing: 0) {
+                        Divider()
+                            .padding(.bottom, 16)
+                        
+                        BannerDownloadButtons()
+                            .environmentObject(BannerProvider.shared)
+                            .padding(.horizontal)
+                            .padding(.bottom, 16)
+                    }
                 }
                 .frame(maxWidth: geometry.size.width * 0.5)
                 .frame(maxHeight: .infinity)

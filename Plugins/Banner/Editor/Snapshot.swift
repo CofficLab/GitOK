@@ -51,20 +51,17 @@ struct Snapshot<Content>: View where Content: View {
         HStack {
             Spacer()
             if !mark.isEmpty {
-//                MagicImage.makeCard(mark)
+                Text(mark)
+                    .font(.caption)
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(Color.black.opacity(0.6))
+                    .cornerRadius(4)
             }
 
             Operator("\(MagicImage.getViewWidth(content)) X \(MagicImage.getViewHeigth(content))")
             
-            Spacer()
-
-            Button {
-                onMessage(MagicImage.snapshot(content))
-            } label: {
-//                ViewHelper.makeCard("截图")
-            }
-            .buttonStyle(.plain)
-
             Spacer()
         }
         .foregroundStyle(.white)
@@ -74,9 +71,9 @@ struct Snapshot<Content>: View where Content: View {
 #Preview("App - Small Screen") {
     RootView {
         ContentLayout()
+            .setInitialTab(BannerPlugin.label)
             .hideSidebar()
-            .hideTabPicker()
-//            .hideProjectActions()
+            .hideProjectActions()
     }
     .frame(width: 800)
     .frame(height: 600)
@@ -85,6 +82,7 @@ struct Snapshot<Content>: View where Content: View {
 #Preview("App - Big Screen") {
     RootView {
         ContentLayout()
+            .setInitialTab(BannerPlugin.label)
             .hideSidebar()
     }
     .frame(width: 1200)
