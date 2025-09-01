@@ -8,6 +8,7 @@ import SwiftUI
  */
 struct BanneriPhoneAppStoreDownloadButton: View {
     @EnvironmentObject var bannerProvider: BannerProvider
+    let template: (any BannerTemplateProtocol)?
     
     @State private var isGenerating = false
     @State private var progressText = ""
@@ -112,9 +113,16 @@ struct BanneriPhoneAppStoreDownloadButton: View {
     
     @ViewBuilder
     private func createBannerView(device: Device) -> some View {
-        BannerLayout(device: device)
-            .environmentObject(bannerProvider)
-            .frame(width: device.width, height: device.height)
+        if let template = template {
+            // 使用当前选择的模板
+            template.createPreviewView(device: device)
+                .frame(width: device.width, height: device.height)
+        } else {
+            // 后备方案：使用默认的经典模板
+            ClassicBannerLayout(device: device)
+                .environmentObject(bannerProvider)
+                .frame(width: device.width, height: device.height)
+        }
     }
     
     private func generateiPhoneReadmeContent() -> String {

@@ -16,6 +16,7 @@ struct BannerDetailLayout: View {
     @State private var selectedDevice: Device = .iMac
     @State private var scale: CGFloat = 1.0
     @State private var lastScale: CGFloat = 1.0
+    @State private var selectedTemplate: any BannerTemplateProtocol = ClassicBannerTemplate()
 
     var body: some View {
         GeometryReader { geometry in
@@ -24,8 +25,11 @@ struct BannerDetailLayout: View {
                     BannerTabsBar(selection: $selection)
                         .background(.gray.opacity(0.1))
 
-                    BannerEditor(selectedDevice: selectedDevice)
-                        .frame(maxHeight: .infinity)
+                    // 模板选择器
+                    TemplateSelector(selectedTemplate: $selectedTemplate)
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 8)
+                        .background(Color(.controlBackgroundColor))
                     
                     Divider()
                     
@@ -38,32 +42,26 @@ struct BannerDetailLayout: View {
                     .padding(.horizontal, 16)
                     .padding(.vertical, 8)
                     .background(Color(.controlBackgroundColor))
+                    
+                    Divider()
+
+                    // 模板提供的预览视图
+                    selectedTemplate.createPreviewView(device: selectedDevice)
+                        .frame(maxHeight: .infinity)
                 }
 
                 VStack(spacing: 0) {
                     
-                    // 编辑器区域
-                    ScrollView {
-                        VStack(spacing: 16) {
-                            TitleEditor()
-                            SubTitleEditor()
-                            FeaturesEditor()
-                            ImageEditor()
-                            OpacityEditor()
-                            
-                            GroupBox("背景设置") {
-                                Backgrounds()
-                            }
-                        }
-                        .padding()
-                    }
+                    // 模板提供的修改器视图
+                    selectedTemplate.createModifierView()
+                        .frame(maxHeight: .infinity)
                     
                     // 下载按钮区域
                     VStack(spacing: 0) {
                         Divider()
                             .padding(.bottom, 16)
                         
-                        BannerDownloadButtons()
+                        BannerDownloadButtons(template: selectedTemplate)
                             .environmentObject(BannerProvider.shared)
                             .padding(.horizontal)
                             .padding(.bottom, 16)
