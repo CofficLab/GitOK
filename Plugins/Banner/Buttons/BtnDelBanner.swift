@@ -4,7 +4,7 @@ import SwiftUI
 struct BtnDelBanner: View {
     @EnvironmentObject var b: BannerProvider
 
-    var banner: BannerModel
+    var banner: BannerData
 
     var body: some View {
         TabBtn(title: "删除「\(banner.title)」", imageName: "trash", onTap: {

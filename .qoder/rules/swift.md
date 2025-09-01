@@ -1,0 +1,150 @@
+---
+trigger: glob
+glob: *.swift
+---
+
+# Swift文件预览代码规则
+
+每个Swift文件都必须在文件结尾包含以下预览代码：
+
+```swift
+#Preview("App - Small Screen") {
+    RootView {
+        ContentLayout()
+            .setInitialTab("TabName")
+            .hideSidebar()
+            .hideProjectActions()
+    }
+    .frame(width: 800)
+    .frame(height: 600)
+}
+
+#Preview("App - Big Screen") {
+    RootView {
+        ContentLayout()
+            .setInitialTab("TabName")
+            .hideSidebar()
+    }
+    .frame(width: 1200)
+    .frame(height: 1200)
+}
+```
+
+## 规则说明
+
+- 这些预览代码必须添加到每个Swift文件的末尾
+- 第一个预览用于小屏幕（800x600左右，未必一定是这个值）
+- 第二个预览用于大屏幕（1200x1200左右，未必一定是这个值）
+- 小屏幕预览隐藏侧边栏和项目操作
+- 大屏幕预览只隐藏侧边栏
+- **必须设置初始Tab**：使用 `.setInitialTab("TabName")` 设置预览时显示的标签页
+
+## 初始Tab设置规则
+
+### 1. 确定Tab名称的方法
+
+- **查找当前目录**：在当前文件所在目录中寻找 `xxxPlugin.swift` 文件
+- **查找父目录**：如果当前目录没有，向上查找父目录中的 `xxxPlugin.swift` 文件
+- **查找更上层目录**：继续向上查找直到找到 `xxxPlugin.swift` 文件
+
+### 2. 获取Tab名称
+
+在找到的 `xxxPlugin.swift` 文件中，查找类似以下的代码：
+
+```swift
+static var label: String = "TabName"
+```
+
+使用这个 `label` 的值作为 `setInitialTab()` 的参数。
+
+### 3. 常见Tab名称示例
+
+- **Icon相关**：`"Icon"`
+- **Git相关**：`"Git"`
+- **Banner相关**：`"Banner"`
+- **其他插件**：根据具体插件的 `label` 值
+
+## 注意事项
+
+- 确保在添加预览代码前检查文件是否已经包含类似的预览代码
+- 如果文件已有预览代码，请替换为上述标准格式
+
+- **重要：必须设置正确的初始Tab** - 这样预览时才能显示相关的内容，而不是默认的Git标签页
+
+## 开发流程
+
+- **修改完代码不需要构建** - 在Cursor中修改Swift代码后，无需手动运行xcodebuild命令
+- 代码修改会自动保存，可以直接在Xcode中运行和测试
+- 只有在需要验证构建成功或解决编译错误时才需要构建项目
+
+## 组件文件组织规则
+
+- **每个struct一个文件** - 将复杂的组件文件拆分为多个独立的文件，每个文件只包含一个主要的struct
+- **文件命名** - 文件名应与struct名称保持一致，使用PascalCase命名
+- **目录结构** - 相关组件应放在同一目录下，便于管理和查找
+- **导入依赖** - 每个组件文件应包含必要的import语句和依赖
+- **预览代码** - 每个组件文件都应包含完整的预览代码，便于独立测试
+
+## 实际应用示例
+
+### 示例1：Icon相关文件
+
+假设你在 `Plugins/Icon/ToolBar/IconTopBar.swift` 文件中添加预览代码：
+
+1. **查找Plugin文件**：在当前目录 `Plugins/Icon/` 中找到 `IconPlugin.swift`
+2. **获取Tab名称**：在 `IconPlugin.swift` 中找到 `static var label: String = "Icon"`
+3. **设置预览代码**：
+
+```swift
+#Preview("App - Small Screen") {
+    RootView {
+        ContentLayout()
+            .setInitialTab(IconPlugin.label)  // 使用找到的label值
+            .hideSidebar()
+            .hideProjectActions()
+    }
+    .frame(width: 800)
+    .frame(height: 600)
+}
+```
+
+### 示例2：Git相关文件
+
+假设你在 `Plugins/Git/GitDetail.swift` 文件中添加预览代码：
+
+1. **查找Plugin文件**：在当前目录 `Plugins/Git/` 中找到 `GitPlugin.swift`
+2. **获取Tab名称**：在 `GitPlugin.swift` 中找到 `static var label: String = "Git"`
+3. **设置预览代码**：
+
+```swift
+#Preview("App - Big Screen") {
+    RootView {
+        ContentLayout()
+            .setInitialTab(GitPlugin.label)  // 使用找到的label值
+            .hideSidebar()
+    }
+    .frame(width: 1200)
+    .frame(height: 1200)
+}
+```
+
+### 示例3：Banner相关文件
+
+假设你在 `Plugins/Banner/Editor/BannerTitle.swift` 文件中添加预览代码：
+
+1. **查找Plugin文件**：向上查找找到 `Plugins/Banner/BannerPlugin.swift`
+2. **获取Tab名称**：在 `BannerPlugin.swift` 中找到 `static var label: String = "Banner"`
+3. **设置预览代码**：
+
+```swift
+#Preview("App - Small Screen") {
+    RootView {
+        ContentLayout()
+            .setInitialTab(BannerPlugin.label)  // 使用找到的label值
+            .hideSidebar()
+            .hideProjectActions()
+    }
+    .frame(width: 800)
+    .frame(height: 600)
+}
+```

@@ -101,14 +101,14 @@ final class Project: SuperLog {
         }
     }
 
-    func getBanners() throws -> [BannerModel] {
+    func getBanners() -> [BannerData] {
         let verbose = false
 
         if verbose {
             os_log("\(self.t)GetBanners for project -> \(self.path)")
         }
 
-        return try BannerModel.all(self)
+        return BannerRepo.shared.getBanners(from: self)
     }
 
     func isExist() -> Bool {

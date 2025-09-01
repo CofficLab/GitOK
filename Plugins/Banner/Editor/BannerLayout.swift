@@ -2,7 +2,7 @@ import MagicCore
 import SwiftUI
 
 struct BannerLayout: View {
-    @Binding var banner: BannerModel
+    @Binding var banner: BannerData
     @Binding var showBorder: Bool
     @State private var showOpacityToolbar: Bool = false
 
@@ -86,7 +86,7 @@ struct BannerLayout: View {
 
 #Preview("BannerHome") {
     struct PreviewWrapper: View {
-        @State var previewBanner = BannerModel(
+        @State var previewBanner = BannerData(
             title: "制作海报",
             subTitle: "简单又快捷",
             features: [
@@ -95,7 +95,8 @@ struct BannerLayout: View {
                 "无弹窗",
                 "无会员",
             ],
-            path: ""
+            path: "",
+            project: Project.null
         )
 
         var body: some View {

@@ -10,7 +10,7 @@ struct BannerSubTitle: View {
         .white, .black, .blue,
     ]
     
-    @Binding var banner: BannerModel
+    @Binding var banner: BannerData
     
     var body: some View {
         if isEditing {
@@ -66,7 +66,7 @@ struct BannerSubTitle: View {
 
 #Preview("BannerHome") {
     struct PreviewWrapper: View {
-        @State var previewBanner = BannerModel(
+        @State var previewBanner = BannerData(
             title: "制作海报",
             subTitle: "简单又快捷",
             features: [
@@ -75,7 +75,8 @@ struct BannerSubTitle: View {
                 "无弹窗",
                 "无会员",
             ],
-            path: ""
+            path: "",
+            project: Project.null
         )
 
         var body: some View {

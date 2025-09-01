@@ -10,15 +10,29 @@ class BannerPlugin: SuperPlugin, SuperLog {
     
     private init() {}
 
-    func addListView(tab: String, project: Project?) -> AnyView? {
-        if tab == Self.label {
-            AnyView(BannerList())
-        } else {
-            nil
-        }
-    }
-
     func addDetailView() -> AnyView? {
-        AnyView(BannerDetail())
+        AnyView(BannerDetailLayout())
     }
+}
+
+#Preview("App - Small Screen") {
+    RootView {
+        ContentLayout()
+            .hideSidebar()
+            .hideTabPicker()
+            .hideProjectActions()
+    }
+    .frame(width: 800)
+    .frame(height: 600)
+}
+
+#Preview("App - Big Screen") {
+    RootView {
+        ContentLayout()
+            .hideProjectActions()
+            .setInitialTab(BannerPlugin.label)
+            .hideSidebar()
+    }
+    .frame(width: 800)
+    .frame(height: 1200)
 }

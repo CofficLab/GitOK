@@ -9,7 +9,7 @@ struct BannerTextEditor: View {
         .black, .white, .red, .green, .blue,
     ]
 
-    @Binding var banner: BannerModel
+    @Binding var banner: BannerData
     let isTitle: Bool // 用于区分是标题还是副标题
 
     var text: Binding<String> {
@@ -170,7 +170,7 @@ struct BannerTextEditor: View {
 
 #Preview("BannerHome") {
     struct PreviewWrapper: View {
-        @State var previewBanner = BannerModel(
+        @State var previewBanner = BannerData(
             title: "制作海报",
             subTitle: "简单又快捷",
             features: [
@@ -179,7 +179,8 @@ struct BannerTextEditor: View {
                 "无弹窗",
                 "无会员",
             ],
-            path: ""
+            path: "",
+            project: Project.null
         )
 
         var body: some View {

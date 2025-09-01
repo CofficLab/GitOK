@@ -1,7 +1,6 @@
 ---
 description: Swift struct注释规范规则
 globs: *.swift
-alwaysApply: false
 ---
 
 # Swift Struct注释规范规则

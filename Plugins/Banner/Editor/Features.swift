@@ -45,7 +45,7 @@ struct Features: View {
 
 #Preview("BannerHome") {
     struct PreviewWrapper: View {
-        @State var previewBanner = BannerModel(
+        @State var previewBanner = BannerData(
             title: "制作海报",
             subTitle: "简单又快捷",
             features: [
@@ -54,7 +54,8 @@ struct Features: View {
                 "无弹窗",
                 "无会员",
             ],
-            path: ""
+            path: "",
+            project: Project.null
         )
 
         var body: some View {

@@ -2,7 +2,7 @@ import SwiftUI
 import MagicCore
 
 struct BannerBackground: View {
-    @Binding var banner: BannerModel
+    @Binding var banner: BannerData
 
     var body: some View {
         MagicBackgroundGroup(for:banner.backgroundId)
@@ -14,7 +14,7 @@ struct BannerBackground: View {
 
 #Preview("BannerHome") {
     struct PreviewWrapper: View {
-        @State var previewBanner = BannerModel(
+        @State var previewBanner = BannerData(
             title: "制作海报",
             subTitle: "简单又快捷",
             features: [
@@ -23,7 +23,8 @@ struct BannerBackground: View {
                 "无弹窗",
                 "无会员",
             ],
-            path: ""
+            path: "",
+            project: Project.null
         )
 
         var body: some View {

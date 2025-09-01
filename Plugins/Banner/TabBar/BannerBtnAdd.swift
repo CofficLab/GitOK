@@ -11,9 +11,9 @@ struct BannerBtnAdd: View, SuperThread {
 
     var body: some View {
         if let project = g.project {
-            TabBtn(title: "新建 Banner", imageName: "plus.circle", onTap: {
-                b.appendBanner(BannerModel.new(project))
-            })
+            MagicButton.simple(icon: .iconAdd, title: "新建") {
+                b.createBanner(in: project)
+            }
         }
     }
 }
@@ -23,7 +23,7 @@ struct BannerBtnAdd: View, SuperThread {
         ContentLayout()
             .hideSidebar()
             .hideTabPicker()
-//            .hideProjectActions()
+            .hideProjectActions()
     }
     .frame(width: 800)
     .frame(height: 600)
@@ -33,7 +33,10 @@ struct BannerBtnAdd: View, SuperThread {
     RootView {
         ContentLayout()
             .hideSidebar()
+            .hideProjectActions()
+            .hideTabPicker()
+            .setInitialTab(BannerPlugin.label)
     }
-    .frame(width: 1200)
-    .frame(height: 1200)
+    .frame(width: 800)
+    .frame(height: 1000)
 }
