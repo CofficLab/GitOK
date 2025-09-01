@@ -29,14 +29,13 @@ struct GitOKApp: App {
 }
 
 #Preview("App - Small Screen") {
-    RootView {
-        ContentLayout()
-            .hideSidebar()
-            .hideTabPicker()
-//            .hideProjectActions()
-    }
-    .frame(width: 800)
-    .frame(height: 600)
+    ContentLayout()
+        .hideSidebar()
+        .hideTabPicker()
+        .hideProjectActions()
+        .inRootView()
+        .frame(width: 800)
+        .frame(height: 600)
 }
 
 #Preview("App - Big Screen") {

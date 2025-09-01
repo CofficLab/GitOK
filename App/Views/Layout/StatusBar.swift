@@ -17,38 +17,27 @@ struct StatusBar: View {
         .padding(.trailing, 10)
         .labelStyle(.iconOnly)
         .frame(maxWidth: .infinity)
-        .background(background)
-    }
-    
-    private var background: some View {
-        ZStack {
-            if MagicApp.isDebug {
-                MagicBackground.aurora.opacity(0.6)
-            } else {
-                MagicBackground.deepOceanCurrent.opacity(0.2)
-            }
-        }
+        .background(MagicBackground.desert.opacity(0.3))
     }
 }
 
-#Preview("StatusBar") {
-    RootView {
-        StatusBar()
-    }
+#Preview("App - Small Screen") {
+    ContentLayout()
+        .setInitialTab(BannerPlugin.label)
+        .hideSidebar()
+        .hideProjectActions()
+        .inRootView()
+        .frame(width: 800)
+        .frame(height: 600)
 }
 
-#Preview("APP") {
-    RootView(content: {
-        ContentLayout()
-    })
-    .frame(width: 800, height: 800)
+#Preview("App - Big Screen") {
+    ContentLayout()
+        .setInitialTab(BannerPlugin.label)
+        .hideSidebar()
+        .hideProjectActions()
+        .hideTabPicker()
+        .inRootView()
+        .frame(width: 800)
+        .frame(height: 1000)
 }
-
-#Preview("App-Big Screen") {
-    RootView {
-        ContentLayout()
-    }
-    .frame(width: 1200)
-    .frame(height: 1200)
-}
-
