@@ -2,21 +2,17 @@ import SwiftUI
 
 /**
  简约Banner模板的修改器视图
- 简化版的编辑控件，只包含核心功能
+ 简化版的编辑控件，专为简约风格定制
  */
 struct MinimalBannerModifiers: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 16) {
-                TitleEditor()
-                SubTitleEditor()
-                ImageEditor()
-                
-                GroupBox("背景设置") {
-                    Backgrounds()
-                }
-                
-                OpacityEditor()
+                MinimalTitleEditor()
+                ClassicSubTitleEditor() // 暂时复用，将来可以创建MinimalSubTitleEditor
+                MinimalImageEditor()
+                ClassicBackgroundEditor() // 暂时复用，将来可以创建MinimalBackgroundEditor
+                ClassicOpacityEditor() // 暂时复用，将来可以创建MinimalOpacityEditor
             }
             .padding()
         }

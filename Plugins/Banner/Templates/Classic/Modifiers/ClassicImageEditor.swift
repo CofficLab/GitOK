@@ -1,0 +1,140 @@
+import SwiftUI
+import MagicCore
+import UniformTypeIdentifiers
+
+/**
+ 经典模板的图片编辑器
+ 专门为经典布局定制的图片编辑组件
+ */
+struct ClassicImageEditor: View {
+    @EnvironmentObject var b: BannerProvider
+    @EnvironmentObject var m: MagicMessageProvider
+    
+    @State private var showImagePicker = false
+    @State private var inScreen = false
+    
+    var body: some View {
+        GroupBox("产品图片") {
+            VStack(spacing: 12) {
+                // 图片预览
+                if b.banner.imageId != nil {
+                    b.banner.getImage()
+                        .resizable()
+                        .scaledToFit()
+                        .frame(height: 100)
+                        .cornerRadius(8)
+                        .onTapGesture {
+                            showImagePicker = true
+                        }
+                } else {
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(Color.gray.opacity(0.3))
+                        .frame(height: 100)
+                        .overlay(
+                            VStack {
+                                Image(systemName: "photo")
+                                    .font(.title)
+                                Text("点击选择图片")
+                                    .font(.caption)
+                            }
+                            .foregroundColor(.secondary)
+                        )
+                        .onTapGesture {
+                            showImagePicker = true
+                        }
+                }
+                
+                // 控制选项
+                VStack(spacing: 8) {
+                    // 更换图片按钮
+                    Button("更换图片") {
+                        showImagePicker = true
+                    }
+                    .frame(maxWidth: .infinity)
+                    
+                    // 屏幕显示开关
+                    HStack {
+                        Text("在屏幕中显示")
+                            .font(.body)
+                        
+                        Spacer()
+                        
+                        Toggle("", isOn: $inScreen)
+                            .onChange(of: inScreen) {
+                                updateInScreen()
+                            }
+                    }
+                }
+            }
+            .padding(8)
+        }
+        .fileImporter(
+            isPresented: $showImagePicker,
+            allowedContentTypes: [.image],
+            allowsMultipleSelection: false
+        ) { result in
+            handleImageSelection(result)
+        }
+        .onAppear {
+            loadCurrentValues()
+        }
+    }
+    
+    private func loadCurrentValues() {
+        inScreen = b.banner.inScreen
+    }
+    
+    private func handleImageSelection(_ result: Result<[URL], Error>) {
+        switch result {
+        case .success(let urls):
+            guard let url = urls.first else { return }
+            changeImage(url)
+        case .failure(let error):
+            m.error("选择图片失败: \(error.localizedDescription)")
+        }
+    }
+    
+    private func changeImage(_ url: URL) {
+        do {
+            var updatedBanner = b.banner
+            try updatedBanner.changeImage(url)
+            b.banner = updatedBanner
+            m.success("图片更新成功")
+        } catch {
+            m.error("更新图片失败: \(error.localizedDescription)")
+        }
+    }
+    
+    private func updateInScreen() {
+        var updatedBanner = b.banner
+        updatedBanner.inScreen = inScreen
+        
+        do {
+            try BannerRepo.shared.saveBanner(updatedBanner)
+            b.banner = updatedBanner
+        } catch {
+            m.error("保存设置失败: \(error.localizedDescription)")
+        }
+    }
+}
+
+#Preview("App - Small Screen") {
+    RootView {
+        ContentLayout()
+            .setInitialTab(BannerPlugin.label)
+            .hideSidebar()
+            .hideProjectActions()
+    }
+    .frame(width: 800)
+    .frame(height: 600)
+}
+
+#Preview("App - Big Screen") {
+    RootView {
+        ContentLayout()
+            .setInitialTab(BannerPlugin.label)
+            .hideSidebar()
+    }
+    .frame(width: 800)
+    .frame(height: 1000)
+}
