@@ -9,8 +9,6 @@ struct ClassicBannerLayout: View {
     @EnvironmentObject var b: BannerProvider
     let device: Device
     
-    @State private var scale: CGFloat = 1.0
-    @State private var lastScale: CGFloat = 1.0
     @State private var visible = false
 
     var body: some View {
@@ -20,16 +18,6 @@ struct ClassicBannerLayout: View {
                 .frame(height: geo.size.height)
                 .alignmentGuide(HorizontalAlignment.center) { _ in geo.size.width / 2 }
                 .alignmentGuide(VerticalAlignment.center) { _ in geo.size.height / 2 }
-                .scaleEffect(calculateOptimalScale(geometry: geo) * scale)
-                .gesture(
-                    MagnificationGesture()
-                        .onChanged { value in
-                            scale = lastScale * value
-                        }
-                        .onEnded { _ in
-                            lastScale = scale
-                        }
-                )
         }
         .padding()
     }
