@@ -21,7 +21,7 @@ struct Devices: View {
             self.selection = bannerProvider.banner.getDevice()
         }
         .onChange(of: selection) {
-            self.bannerProvider.banner.device = selection?.rawValue ?? ""
+            try? self.bannerProvider.banner.updateDevice(selection?.rawValue ?? "")
         }
     }
 }

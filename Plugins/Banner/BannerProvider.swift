@@ -31,13 +31,6 @@ class BannerProvider: NSObject, ObservableObject, SuperLog {
         }
 
         self.banner = b
-        
-        // 发送Banner改变通知
-        NotificationCenter.default.post(
-            name: .bannerChanged,
-            object: nil,
-            userInfo: ["banner": b]
-        )
     }
     
     /**

@@ -159,6 +159,20 @@ struct BannerData: SuperLog {
     }
 }
 
+// MARK: - Update
+
+extension BannerData { 
+    mutating func updateBackgroundId(_ backgroundId: String) throws {
+        self.backgroundId = backgroundId
+        try self.saveToDisk()
+    }
+
+    mutating func updateDevice(_ device: String) throws {
+        self.device = device
+        try self.saveToDisk()
+    }
+}
+
 // MARK: - Identifiable
 
 extension BannerData: Identifiable {
@@ -242,6 +256,6 @@ extension BannerData: Codable {
             .setInitialTab(BannerPlugin.label)
             .hideSidebar()
     }
-    .frame(width: 1200)
-    .frame(height: 1200)
+    .frame(width: 800)
+    .frame(height: 1000)
 }

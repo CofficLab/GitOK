@@ -6,9 +6,6 @@ import SwiftUI
     定义了所有Banner相关的系统通知事件，用于组件间的消息传递。
 **/
 extension Notification.Name {
-    /// Banner选中状态改变事件
-    static let bannerChanged = Notification.Name("bannerChanged")
-    
     /// Banner列表发生变化事件
     static let bannerListChanged = Notification.Name("bannerListChanged")
     
@@ -44,19 +41,6 @@ extension Notification.Name {
     ```
 **/
 extension View {
-    
-    /**
-        监听Banner选中状态改变事件
-        
-        ## 参数
-        - `action`: 事件处理闭包，接收Notification对象
-        
-        ## 返回值
-        返回添加了事件监听的View
-    */
-    func onBannerChanged(perform action: @escaping (Notification) -> Void) -> some View {
-        self.onReceive(NotificationCenter.default.publisher(for: .bannerChanged), perform: action)
-    }
     
     /**
         监听Banner列表变化事件

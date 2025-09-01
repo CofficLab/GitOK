@@ -4,6 +4,7 @@ import SwiftUI
 struct BannerLayout: View {
     @Binding var banner: BannerData
     @Binding var showBorder: Bool
+    
     @State private var showOpacityToolbar: Bool = false
 
     var device: Device { banner.getDevice() }
@@ -83,6 +84,14 @@ struct BannerLayout: View {
         )
     }
 }
+
+// MARK: - Event Handlers
+
+extension BannerLayout {
+   
+}
+
+// MARK: - Preview
 
 #Preview("App - Small Screen") {
     RootView {
