@@ -80,7 +80,7 @@ struct BannerEditor: View {
     }
 
     private var content: some View {
-        BannerLayout(banner: $banner, showBorder: $showBorder)
+        BannerLayout(showBorder: $showBorder)
             .frame(width: banner.getDevice().width)
             .frame(height: banner.getDevice().height)
     }
