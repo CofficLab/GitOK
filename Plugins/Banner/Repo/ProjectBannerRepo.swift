@@ -153,7 +153,7 @@ class ProjectBannerRepo: SuperLog {
         if let features = updates.features { updatedBanner.features = features }
         if let imageId = updates.imageId { updatedBanner.imageId = imageId }
         if let backgroundId = updates.backgroundId { updatedBanner.backgroundId = backgroundId }
-        if let device = updates.device { updatedBanner.device = device }
+
         if let opacity = updates.opacity { updatedBanner.opacity = opacity }
         
         // 保存更新后的数据

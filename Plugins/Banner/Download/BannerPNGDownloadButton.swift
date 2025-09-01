@@ -56,18 +56,22 @@ struct BannerPNGDownloadButton: View {
             return
         }
 
-        // 生成不同尺寸的标准PNG文件
-        let sizes = [(1200, 630), (800, 420), (600, 315), (400, 210)]
+        // 为所有设备生成PNG截图
+        let allDevices = [Device.iMac, Device.MacBook, Device.iPhoneBig, Device.iPhoneSmall, Device.iPad]
         var successCount = 0
 
-        for (index, (width, height)) in sizes.enumerated() {
-            progressText = "正在生成 \(width)x\(height) 标准PNG (\(index + 1)/\(sizes.count))..."
+        for (index, device) in allDevices.enumerated() {
+            let width = Int(device.width)
+            let height = Int(device.height)
+            let description = "\(width)x\(height) (\(device.description))"
             
-            let fileName = "banner-std-\(width)x\(height).png"
+            progressText = "正在生成 \(description) (\(index + 1)/\(allDevices.count))..."
+            
+            let fileName = "banner-\(device.rawValue)-\(width)x\(height).png"
             let filePath = folderPath.appendingPathComponent(fileName)
             
             // 创建Banner视图进行截图
-            let bannerView = createBannerView(width: CGFloat(width), height: CGFloat(height))
+            let bannerView = createBannerView(device: device)
             
             let result = MagicImage.snapshot(
                 bannerView,
@@ -81,20 +85,20 @@ struct BannerPNGDownloadButton: View {
         }
 
         // 显示结果
-        if successCount == sizes.count {
-            MagicMessageProvider.shared.success("成功生成 \(successCount) 个标准PNG文件")
+        if successCount == allDevices.count {
+            MagicMessageProvider.shared.success("成功生成 \(successCount) 个PNG文件")
             // 打开下载文件夹
             NSWorkspace.shared.open(folderPath)
         } else {
-            MagicMessageProvider.shared.error("只成功生成了 \(successCount)/\(sizes.count) 个文件")
+            MagicMessageProvider.shared.error("只成功生成了 \(successCount)/\(allDevices.count) 个文件")
         }
     }
     
     @ViewBuilder
-    private func createBannerView(width: CGFloat, height: CGFloat) -> some View {
-        BannerLayout()
+    private func createBannerView(device: Device) -> some View {
+        BannerLayout(device: device)
             .environmentObject(bannerProvider)
-            .frame(width: width, height: height)
+            .frame(width: device.width, height: device.height)
     }
 }
 

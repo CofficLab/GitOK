@@ -26,14 +26,6 @@ struct BannerDetailLayout: View {
                 }
 
                 VStack(spacing: 0) {
-                    // 设备选择器
-                    GroupBox("设备类型") {
-                        HStack {
-                            Devices()
-                            Spacer()
-                        }
-                    }
-                    .padding(.horizontal)
                     
                     // 编辑器区域
                     ScrollView {
@@ -42,12 +34,11 @@ struct BannerDetailLayout: View {
                             SubTitleEditor()
                             FeaturesEditor()
                             ImageEditor()
+                            OpacityEditor()
                             
                             GroupBox("背景设置") {
                                 Backgrounds()
                             }
-                            
-                            OpacityEditor()
                         }
                         .padding()
                     }

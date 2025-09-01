@@ -14,12 +14,11 @@ import SwiftUI
 **/
 struct BannerLayout: View {
     @EnvironmentObject var b: BannerProvider
-    
-    var device: Device { b.banner.getDevice() }
+    let device: Device
     
     var body: some View {
         ZStack {
-            switch Device(rawValue: b.banner.device) {
+            switch device {
             case .iMac, .MacBook:
                 HStack(spacing: 0) {
                     VStack(spacing: 0, content: {
@@ -34,7 +33,7 @@ struct BannerLayout: View {
                     })
                     .frame(width: device.width / 3)
                     
-                    BannerImage()
+                    BannerImage(device: device)
                         .padding(.horizontal, 50)
                         .frame(width: device.width / 3 * 2)
                         .frame(maxHeight: .infinity)
@@ -44,15 +43,15 @@ struct BannerLayout: View {
                     BannerTitle()
                     BannerSubTitle()
                     Spacer()
-                    BannerImage()
+                    BannerImage(device: device)
                         .frame(maxHeight: .infinity)
                 })
-            case .iPad, .none:
+            case .iPad:
                 GeometryReader { _ in
                     BannerTitle()
                     BannerSubTitle()
                     Spacer()
-                    BannerImage()
+                    BannerImage(device: device)
                 }
             }
         }

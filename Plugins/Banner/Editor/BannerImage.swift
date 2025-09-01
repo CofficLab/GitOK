@@ -9,13 +9,14 @@ import SwiftUI
  */
 struct BannerImage: View {
     @EnvironmentObject var b: BannerProvider
+    let device: Device
 
     var image: Image { b.banner.getImage() }
 
     var body: some View {
         ZStack {
             if b.banner.inScreen {
-                switch b.banner.getDevice() {
+                switch device {
                 case .iMac:
                     ScreeniMac(content: {
                         image.resizable().scaledToFit()

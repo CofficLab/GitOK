@@ -1,30 +1,30 @@
 import MagicCore
-import SwiftUI
 import OSLog
+import SwiftUI
 
 /**
-    图片编辑修改器
-    以类似Backgrounds.swift的方式提供图片编辑功能。
-    直接从BannerProvider获取和修改数据，实现自包含的组件设计。
-    
-    ## 功能特性
-    - 图片选择和更换
-    - 显示模式切换（在屏幕内/外）
-    - 实时预览效果
-    - 自动保存更改
-**/
+     图片编辑修改器
+     以类似Backgrounds.swift的方式提供图片编辑功能。
+     直接从BannerProvider获取和修改数据，实现自包含的组件设计。
+
+     ## 功能特性
+     - 图片选择和更换
+     - 显示模式切换（在屏幕内/外）
+     - 实时预览效果
+     - 自动保存更改
+ **/
 struct ImageEditor: View {
     @EnvironmentObject var b: BannerProvider
     @EnvironmentObject var m: MagicMessageProvider
-    
+
     /// Banner仓库实例
     private let bannerRepo = BannerRepo.shared
-    
+
     var body: some View {
         VStack(spacing: 16) {
             // 图片预览和基本信息
             GroupBox("图片设置") {
-                VStack(spacing: 12) {
+                HStack(spacing: 12) {
                     // 图片预览
                     HStack {
                         if let imageId = b.banner.imageId {
@@ -58,114 +58,97 @@ struct ImageEditor: View {
                                     }
                                 )
                         }
-                        
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text(b.banner.imageId?.isEmpty == false ? "已设置图片" : "未设置图片")
-                                .font(.subheadline)
-                                .foregroundColor(.primary)
-                            
-                            Text("显示模式: \(b.banner.inScreen ? "屏幕内" : "直接显示")")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                            
+
+                        Spacer()
+                    }
+
+                    // 操作按钮
+                    VStack {
+                        HStack(spacing: 12) {
+                            Button("选择图片") {
+                                selectImage()
+                            }
+                            .buttonStyle(.borderedProminent)
+
+                            if b.banner.imageId?.isEmpty == false {
+                                Button("移除图片") {
+                                    removeImage()
+                                }
+                                .buttonStyle(.bordered)
+                            }
+
                             Spacer()
                         }
                         
                         Spacer()
+
+                        HStack {
+                            Toggle("在屏幕内显示", isOn: Binding(
+                                get: { b.banner.inScreen },
+                                set: { newValue in
+                                    updateScreenMode(newValue)
+                                }
+                            ))
+                            .toggleStyle(SwitchToggleStyle())
+                            Spacer()
+                        }
                     }
-                    
-                    // 操作按钮
-                    HStack(spacing: 12) {
-                        Button("选择图片") {
-                            selectImage()
-                        }
-                        .buttonStyle(.borderedProminent)
-                        
-                        if b.banner.imageId?.isEmpty == false {
-                            Button("移除图片") {
-                                removeImage()
-                            }
-                            .buttonStyle(.bordered)
-                        }
-                        
-                        Spacer()
-                    }
-                }
-            }
-            
-            // 显示模式设置
-            GroupBox("显示模式") {
-                VStack(spacing: 12) {
-                    Toggle("在屏幕内显示", isOn: Binding(
-                        get: { b.banner.inScreen },
-                        set: { newValue in
-                            updateScreenMode(newValue)
-                        }
-                    ))
-                    .toggleStyle(SwitchToggleStyle())
-                    
-                    Text(b.banner.inScreen ? 
-                         "图片将显示在设备屏幕内，增强视觉效果" : 
-                         "图片将直接显示，无设备边框")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                        .frame(maxWidth: .infinity, alignment: .leading)
                 }
             }
         }
     }
-    
+
     /**
-        选择图片
-        打开文件选择器让用户选择图片文件
-    */
+         选择图片
+         打开文件选择器让用户选择图片文件
+     */
     private func selectImage() {
-        guard b.banner != .empty else { 
+        guard b.banner != .empty else {
             m.error("Banner为空，无法选择图片")
             return
         }
-        
+
         let panel = NSOpenPanel()
         panel.allowsMultipleSelection = false
         panel.canChooseDirectories = false
         panel.allowedContentTypes = [.image]
         panel.title = "选择图片"
         panel.message = "请选择要添加到Banner的图片文件"
-        
+
         if panel.runModal() == .OK, let url = panel.url {
             do {
                 var updatedBanner = b.banner
                 try updatedBanner.changeImage(url)
-                
+
                 // 更新Provider中的状态
                 b.setBanner(updatedBanner)
-                
+
                 // 保存到磁盘
                 try bannerRepo.saveBanner(updatedBanner)
-                
+
                 m.success("图片更新成功")
             } catch {
                 m.error("更新图片失败：\(error.localizedDescription)")
             }
         }
     }
-    
+
     /**
-        移除图片
-        清除当前设置的图片
-    */
+         移除图片
+         清除当前设置的图片
+     */
     private func removeImage() {
-        guard b.banner != .empty else { 
+        guard b.banner != .empty else {
             m.error("Banner为空，无法移除图片")
             return
         }
-        
+
         var updatedBanner = b.banner
         updatedBanner.imageId = nil
-        
+
         // 更新Provider中的状态
         b.setBanner(updatedBanner)
-        
+
         // 保存到磁盘
         do {
             try bannerRepo.saveBanner(updatedBanner)
@@ -174,25 +157,25 @@ struct ImageEditor: View {
             m.error("移除图片失败：\(error.localizedDescription)")
         }
     }
-    
+
     /**
-        更新屏幕显示模式
-        
-        ## 参数
-        - `inScreen`: 是否在屏幕内显示
-    */
+         更新屏幕显示模式
+
+         ## 参数
+         - `inScreen`: 是否在屏幕内显示
+     */
     private func updateScreenMode(_ inScreen: Bool) {
-        guard b.banner != .empty else { 
+        guard b.banner != .empty else {
             m.error("Banner为空，无法更新显示模式")
             return
         }
-        
+
         var updatedBanner = b.banner
         updatedBanner.inScreen = inScreen
-        
+
         // 更新Provider中的状态
         b.setBanner(updatedBanner)
-        
+
         // 保存到磁盘
         do {
             try bannerRepo.saveBanner(updatedBanner)
@@ -217,8 +200,10 @@ struct ImageEditor: View {
     RootView {
         ContentLayout()
             .setInitialTab(BannerPlugin.label)
+            .hideTabPicker()
+            .hideProjectActions()
             .hideSidebar()
     }
-    .frame(width: 1200)
-    .frame(height: 1200)
+    .frame(width: 800)
+    .frame(height: 1000)
 }

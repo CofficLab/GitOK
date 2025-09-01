@@ -33,9 +33,6 @@ struct BannerData: SuperLog {
     /// 是否在屏幕中显示
     var inScreen: Bool = false
     
-    /// 设备类型
-    var device: String = Device.iMac.rawValue
-    
     /// 透明度（0.0 - 1.0）
     var opacity: Double = 1.0
     
@@ -60,7 +57,6 @@ struct BannerData: SuperLog {
         imageId: String? = nil,
         backgroundId: String = "1",
         inScreen: Bool = false,
-        device: String = Device.iMac.rawValue,
         opacity: Double = 1.0,
         path: String,
         project: Project,
@@ -73,7 +69,6 @@ struct BannerData: SuperLog {
         self.imageId = imageId
         self.backgroundId = backgroundId
         self.inScreen = inScreen
-        self.device = device
         self.opacity = opacity
         self.path = path
         self.project = project
@@ -83,20 +78,10 @@ struct BannerData: SuperLog {
     
     // MARK: - 业务方法
     
-    /// 获取设备类型
-    /// - Returns: Device枚举值
-    func getDevice() -> Device {
-        Device(rawValue: device) ?? .iMac
-    }
-    
     /// 获取图片
     /// - Returns: SwiftUI Image对象
     func getImage() -> Image {
         var image = Image("Snapshot-1")
-        
-        if getDevice() == .iPad {
-            image = Image("Snapshot-iPad")
-        }
         
         if let generatedIcon = getGeneratedIcon() {
             image = generatedIcon.getImage(self.project.url)
@@ -166,11 +151,6 @@ extension BannerData {
         self.backgroundId = backgroundId
         try self.saveToDisk()
     }
-
-    mutating func updateDevice(_ device: String) throws {
-        self.device = device
-        try self.saveToDisk()
-    }
 }
 
 // MARK: - Identifiable
@@ -199,7 +179,6 @@ extension BannerData: Codable {
         case imageId
         case backgroundId
         case inScreen
-        case device
         case opacity
         case titleColor
         case subTitleColor
@@ -215,7 +194,6 @@ extension BannerData: Codable {
         imageId = try container.decodeIfPresent(String.self, forKey: .imageId)
         backgroundId = try container.decodeIfPresent(String.self, forKey: .backgroundId) ?? "1"
         inScreen = try container.decodeIfPresent(Bool.self, forKey: .inScreen) ?? false
-        device = try container.decodeIfPresent(String.self, forKey: .device) ?? Device.iMac.rawValue
         opacity = try container.decodeIfPresent(Double.self, forKey: .opacity) ?? 1.0
         
         // 这些值在反序列化时临时设置，实际值由ProjectBannerRepo在加载时设置
@@ -234,7 +212,6 @@ extension BannerData: Codable {
         try container.encodeIfPresent(imageId, forKey: .imageId)
         try container.encode(backgroundId, forKey: .backgroundId)
         try container.encode(inScreen, forKey: .inScreen)
-        try container.encode(device, forKey: .device)
         try container.encode(opacity, forKey: .opacity)
     }
 }

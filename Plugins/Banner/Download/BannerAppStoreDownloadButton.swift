@@ -56,33 +56,29 @@ struct BannerAppStoreDownloadButton: View {
             return
         }
 
-        // 根据当前设备类型获取合适的Mac App Store截图尺寸
-        let currentDevice = bannerProvider.banner.getDevice()
-        let appStoreSizes: [(Int, Int, String)]
+        // 为所有Mac设备生成App Store截图
+        let macDevices = [Device.iMac, Device.MacBook]
+        var appStoreSizes: [(Int, Int, String)] = []
         
-        if currentDevice.isMac {
-            // Mac设备：只生成当前设备的原始尺寸，这是最合适的
-            let deviceWidth = Int(currentDevice.width)
-            let deviceHeight = Int(currentDevice.height)
-            appStoreSizes = [
-                (deviceWidth, deviceHeight, "\(deviceWidth)x\(deviceHeight) (\(currentDevice.description))")
-            ]
-        } else {
-            // 非Mac设备：生成标准Mac App Store尺寸作为通用方案
-            appStoreSizes = [
-                (2880, 1800, "2880x1800 (通用Mac尺寸)")
-            ]
+        for device in macDevices {
+            let width = Int(device.width)
+            let height = Int(device.height)
+            appStoreSizes.append((width, height, "\(width)x\(height) (\(device.description))"))
         }
         var successCount = 0
 
-        for (index, (width, height, description)) in appStoreSizes.enumerated() {
-            progressText = "正在生成 \(description) (\(index + 1)/\(appStoreSizes.count))..."
+        for (index, device) in macDevices.enumerated() {
+            let width = Int(device.width)
+            let height = Int(device.height)
+            let description = "\(width)x\(height) (\(device.description))"
             
-            let fileName = "appstore-screenshot-\(width)x\(height).png"
+            progressText = "正在生成 \(description) (\(index + 1)/\(macDevices.count))..."
+            
+            let fileName = "appstore-screenshot-\(device.rawValue)-\(width)x\(height).png"
             let filePath = folderPath.appendingPathComponent(fileName)
             
             // 创建Banner视图进行截图
-            let bannerView = createBannerView(width: CGFloat(width), height: CGFloat(height))
+            let bannerView = createBannerView(device: device)
             
             let result = MagicImage.snapshot(
                 bannerView,
@@ -105,20 +101,20 @@ struct BannerAppStoreDownloadButton: View {
         }
 
         // 显示结果
-        if successCount == appStoreSizes.count {
+        if successCount == macDevices.count {
             MagicMessageProvider.shared.success("成功生成 \(successCount) 个App Store截图")
             // 打开下载文件夹
             NSWorkspace.shared.open(folderPath)
         } else {
-            MagicMessageProvider.shared.error("只成功生成了 \(successCount)/\(appStoreSizes.count) 个截图")
+            MagicMessageProvider.shared.error("只成功生成了 \(successCount)/\(macDevices.count) 个截图")
         }
     }
     
     @ViewBuilder
-    private func createBannerView(width: CGFloat, height: CGFloat) -> some View {
-        BannerLayout()
+    private func createBannerView(device: Device) -> some View {
+        BannerLayout(device: device)
             .environmentObject(bannerProvider)
-            .frame(width: width, height: height)
+            .frame(width: device.width, height: device.height)
     }
     
     private func generateReadmeContent() -> String {

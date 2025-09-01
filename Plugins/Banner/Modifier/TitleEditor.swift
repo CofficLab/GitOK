@@ -181,6 +181,7 @@ struct TitleEditor: View {
         ContentLayout()
             .setInitialTab(BannerPlugin.label)
             .hideSidebar()
+            .hideTabPicker()
             .hideProjectActions()
     }
     .frame(width: 800)
@@ -192,7 +193,9 @@ struct TitleEditor: View {
         ContentLayout()
             .setInitialTab(BannerPlugin.label)
             .hideSidebar()
+            .hideTabPicker()
+            .hideProjectActions()
     }
-    .frame(width: 1200)
-    .frame(height: 1200)
+    .frame(width: 800)
+    .frame(height: 1000)
 }

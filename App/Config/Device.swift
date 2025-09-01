@@ -43,9 +43,24 @@ enum Device: String, Equatable {
         case .iPad:
             return "iPad"
         case .iPhoneBig:
-            return "iPhoneBig"
+            return "iPhone Pro Max"
         case .iPhoneSmall:
-            return "iPhoneSmall"
+            return "iPhone"
+        }
+    }
+    
+    var systemImageName: String {
+        switch self {
+        case .iMac:
+            return "desktopcomputer"
+        case .MacBook:
+            return "laptopcomputer"
+        case .iPad:
+            return "ipad"
+        case .iPhoneBig:
+            return "iphone"
+        case .iPhoneSmall:
+            return "iphone"
         }
     }
 
