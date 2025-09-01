@@ -57,6 +57,7 @@ struct ClassicImage: View {
         ContentLayout()
             .setInitialTab(BannerPlugin.label)
             .hideSidebar()
+            .hideTabPicker()
             .hideProjectActions()
     }
     .frame(width: 600)

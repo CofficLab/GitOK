@@ -36,7 +36,7 @@ struct TemplateSelector: View {
                         )
                     }
                 }
-                .padding(.horizontal, 4)
+                .padding()
             }
         }
         .onAppear {
@@ -112,10 +112,11 @@ private struct TemplateCard: View {
         ContentLayout()
             .setInitialTab(BannerPlugin.label)
             .hideSidebar()
+            .hideTabPicker()
             .hideProjectActions()
     }
-    .frame(width: 800)
-    .frame(height: 600)
+    .frame(width: 600)
+    .frame(height: 800)
 }
 
 #Preview("App - Big Screen") {

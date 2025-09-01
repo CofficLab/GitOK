@@ -11,12 +11,6 @@ struct BannerDownloadButtons: View {
 
     var body: some View {
         VStack(spacing: 8) {
-            Text("导出Banner")
-                .font(.headline)
-                .foregroundColor(.primary)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.bottom, 4)
-
             BannerPNGDownloadButton(template: bannerProvider.selectedTemplate)
                 .environmentObject(bannerProvider)
 
@@ -41,10 +35,11 @@ struct BannerDownloadButtons: View {
         ContentLayout()
             .setInitialTab(BannerPlugin.label)
             .hideSidebar()
+            .hideTabPicker()
             .hideProjectActions()
     }
-    .frame(width: 800)
-    .frame(height: 600)
+    .frame(width: 600)
+    .frame(height: 800)
 }
 
 #Preview("App - Big Screen") {

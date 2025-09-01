@@ -47,7 +47,7 @@ struct BannerDetailLayout: View {
                     // 模板选择器
                     TemplateSelector()
                         .padding(.horizontal, 16)
-                        .padding(.vertical, 8)
+                        .padding(.vertical, 32)
                         .background(Color(.controlBackgroundColor))
                     
                     // 模板提供的修改器视图
