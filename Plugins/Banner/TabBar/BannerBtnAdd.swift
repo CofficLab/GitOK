@@ -13,6 +13,7 @@ struct BannerBtnAdd: View, SuperThread {
         if let project = g.project {
             MagicButton.simple(icon: .iconAdd, title: "新建") {
                 b.createBanner(in: project)
+                m.info("已添加新的Banner文件")
             }
         }
     }

@@ -38,23 +38,21 @@ struct BannerTabsBar: View {
         .onChange(of: g.project) {
             refreshBanners()
         }
-        .onNotification(.bannerDidSave, perform: { _ in
+        .onBannerDidSave { _ in
             let selectedId = selection?.id
             refreshBanners()
             // 保持选中状态
             if let selectedId = selectedId {
                 selection = banners.first(where: { $0.id == selectedId })
             }
-        })
-        .onNotification(.bannerDidDelete, perform: { notification in
+        }
+        .onBannerDidDelete { deletedId in
             refreshBanners()
             // 如果删除的是当前选中的banner，清除选中状态
-            if let deletedId = notification.userInfo?["id"] as? String {
-                if deletedId == selection?.id {
-                    selection = banners.first
-                }
+            if deletedId == selection?.id {
+                selection = banners.first
             }
-        })
+        }
     }
 
     /// 刷新Banner列表
@@ -90,6 +88,8 @@ struct BannerTabsBar: View {
         ContentLayout()
             .setInitialTab(BannerPlugin.label)
             .hideSidebar()
+            .hideProjectActions()
+            .hideTabPicker()
     }
     .frame(width: 800)
     .frame(height: 1000)
