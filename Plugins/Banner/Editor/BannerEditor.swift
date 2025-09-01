@@ -18,19 +18,7 @@ struct BannerEditor: View {
     }
 
     var body: some View {
-        VStack {
-            BannerTopBar(
-                snapshotTapped: $snapshotTapped,
-                banner: $banner,
-                showBorder: $showBorder
-            )
-
-            GroupBox {
-                bodyBanner
-            }.padding()
-        }
-        .frame(maxHeight: .infinity)
-        .frame(maxWidth: .infinity)
+        bodyBanner
     }
 
     var bodyBanner: some View {

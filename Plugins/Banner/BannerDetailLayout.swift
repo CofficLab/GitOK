@@ -48,7 +48,39 @@ struct BannerDetailLayout: View {
 
             VStack(spacing: 0) {
                 if let selectedBanner = selection {
-                    
+                    HStack {
+                        HStack(spacing: 0) {
+                            Picker("", selection: .constant(Device.iMac)) {
+                                Text("iMac").tag(Device.iMac)
+                                Text("MacBook").tag(Device.MacBook)
+                                Text("iPhoneBig").tag(Device.iPhoneBig)
+                                Text("iPhoneSmall").tag(Device.iPhoneSmall)
+                                Text("iPad").tag(Device.iPad)
+                            }
+                            .frame(width: 120)
+                            .onAppear {
+//                                self.device = self.banner.getDevice()
+                            }
+//                            .onChange(of: device) {
+//                                self.banner.device = device.rawValue
+//                            }
+
+                            Spacer()
+                        }
+                        
+                        MagicButton.simple(
+                            icon: "camera.aperture", title: "截图",
+                            action: {
+                                //                            self.snapshotTapped = true
+                            }
+                        )
+                        MagicButton.simple(
+                            icon: "square.dashed", title: "边框",
+                            action: {
+                                //                            self.showBorder.toggle()
+                            }
+                        )
+                    }
                     GroupBox {
                         Backgrounds(current: Binding(
                             get: { selectedBanner.backgroundId },
@@ -56,7 +88,7 @@ struct BannerDetailLayout: View {
                         ))
                     }.padding()
                     
-                    
+                    Spacer()
                 } else {
                     EmptyBannerTip()
                 }
@@ -89,6 +121,7 @@ struct BannerDetailLayout: View {
         ContentLayout()
             .setInitialTab(BannerPlugin.label)
             .hideProjectActions()
+            .hideTabPicker()
             .hideSidebar()
     }
     .frame(width: 800)
