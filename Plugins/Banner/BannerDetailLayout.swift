@@ -1,11 +1,11 @@
+import MagicCore
 import OSLog
 import SwiftUI
-import MagicCore
 
 /**
-    Banner详情布局视图
-    主要的Banner编辑界面，包含顶部的Banner标签页和主要的编辑区域。
-**/
+     Banner详情布局视图
+     主要的Banner编辑界面，包含顶部的Banner标签页和主要的编辑区域。
+ **/
 struct BannerDetailLayout: View {
     @EnvironmentObject var b: BannerProvider
     @EnvironmentObject var g: DataProvider
@@ -17,7 +17,7 @@ struct BannerDetailLayout: View {
             VStack(spacing: 0) {
                 BannerTabsBar(selection: $selection)
                     .background(.gray.opacity(0.1))
-                
+
                 // 主要编辑区域
                 if let selectedBanner = selection {
                     BannerEditor(banner: Binding(
@@ -25,7 +25,7 @@ struct BannerDetailLayout: View {
                         set: { newValue in
                             selection = newValue
                             b.setBanner(newValue)
-                            
+
                             // 保存到磁盘
                             do {
                                 try newValue.saveToDisk()
@@ -39,26 +39,37 @@ struct BannerDetailLayout: View {
                     EmptyBannerTip()
                 }
             }
+            .frame(height: .infinity)
             .onChange(of: selection) { _, newValue in
                 if let newValue = newValue {
                     b.setBanner(newValue)
                 }
             }
-            
+
             VStack(spacing: 0) {
-                // 主要编辑区域
                 if let selectedBanner = selection {
+                    
+                    GroupBox {
+                        Backgrounds(current: Binding(
+                            get: { selectedBanner.backgroundId },
+                            set: { _ in }
+                        ))
+                    }.padding()
+                    
                     
                 } else {
                     EmptyBannerTip()
                 }
             }
+            .frame(height: .infinity)
+            .frame(maxHeight: .infinity)
             .onChange(of: selection) { _, newValue in
                 if let newValue = newValue {
                     b.setBanner(newValue)
                 }
             }
         }
+        .frame(height: .infinity)
     }
 }
 

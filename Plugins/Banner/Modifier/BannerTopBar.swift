@@ -51,12 +51,6 @@ struct BannerTopBar: View {
             .frame(maxWidth: .infinity)
             .labelStyle(.iconOnly)
             .background(.secondary.opacity(0.5))
-
-            // MARK: Row2
-
-            GroupBox {
-                Backgrounds(current: $banner.backgroundId)
-            }.padding()
         }
     }
 }
