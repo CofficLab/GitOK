@@ -13,34 +13,50 @@ struct BannerDetailLayout: View {
     @State private var selection: BannerData?
 
     var body: some View {
-        VStack(spacing: 0) {
-            BannerTabsBar(selection: $selection)
-                .background(.gray.opacity(0.1))
-
-            // 主要编辑区域
-            if let selectedBanner = selection {
-                BannerEditor(banner: Binding(
-                    get: { selectedBanner },
-                    set: { newValue in
-                        selection = newValue
-                        b.setBanner(newValue)
-                        
-                        // 保存到磁盘
-                        do {
-                            try newValue.saveToDisk()
-                        } catch {
-                            m.error(error.localizedDescription)
+        HSplitView {
+            VStack(spacing: 0) {
+                BannerTabsBar(selection: $selection)
+                    .background(.gray.opacity(0.1))
+                
+                // 主要编辑区域
+                if let selectedBanner = selection {
+                    BannerEditor(banner: Binding(
+                        get: { selectedBanner },
+                        set: { newValue in
+                            selection = newValue
+                            b.setBanner(newValue)
+                            
+                            // 保存到磁盘
+                            do {
+                                try newValue.saveToDisk()
+                            } catch {
+                                m.error(error.localizedDescription)
+                            }
                         }
-                    }
-                ))
-                .frame(maxHeight: .infinity)
-            } else {
-                EmptyBannerTip()
+                    ))
+                    .frame(maxHeight: .infinity)
+                } else {
+                    EmptyBannerTip()
+                }
             }
-        }
-        .onChange(of: selection) { _, newValue in
-            if let newValue = newValue {
-                b.setBanner(newValue)
+            .onChange(of: selection) { _, newValue in
+                if let newValue = newValue {
+                    b.setBanner(newValue)
+                }
+            }
+            
+            VStack(spacing: 0) {
+                // 主要编辑区域
+                if let selectedBanner = selection {
+                    
+                } else {
+                    EmptyBannerTip()
+                }
+            }
+            .onChange(of: selection) { _, newValue in
+                if let newValue = newValue {
+                    b.setBanner(newValue)
+                }
             }
         }
     }
