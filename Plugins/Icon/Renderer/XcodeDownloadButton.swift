@@ -9,7 +9,7 @@ import SwiftUI
 struct XcodeDownloadButton: View {
     let iconProvider: IconProvider
     let currentIconAsset: IconAsset?
-    
+
     @State private var isGenerating = false
     @State private var progressText = ""
 
@@ -35,7 +35,7 @@ struct XcodeDownloadButton: View {
 
         isGenerating = true
         progressText = "正在生成 Xcode 图标集..."
-        defer { 
+        defer {
             isGenerating = false
             progressText = ""
         }
@@ -78,11 +78,29 @@ struct XcodeDownloadButton: View {
             return
         }
 
+        // 基础尺寸
         let sizes = [16, 32, 128, 256, 512]
+        // @2x 尺寸
+        let retinaSizes = [32, 64, 256, 512, 1024]
 
+        // 生成基础尺寸图标
         for (index, size) in sizes.enumerated() {
-            progressText = "正在生成 macOS \(size)×\(size) (\(index + 1)/\(sizes.count))"
+            progressText = "正在生成 macOS \(size)×\(size) (\(index + 1)/\(sizes.count * 2))"
             let fileName = "\(tag)-macOS-\(size)x\(size).png"
+            let saveTo = folderPath.appendingPathComponent(fileName)
+
+            let success = await IconRenderer.snapshotIcon(iconData: iconData, iconAsset: iconAsset, size: size, savePath: saveTo)
+
+            // 检查文件是否生成成功
+            if success == false {
+                MagicMessageProvider.shared.error("❌ 生成 \(fileName) 失败")
+            }
+        }
+
+        // 生成 @2x 尺寸图标
+        for (index, size) in retinaSizes.enumerated() {
+            progressText = "正在生成 macOS \(sizes[index])×\(sizes[index])@2x (\(index + sizes.count + 1)/\(sizes.count * 2))"
+            let fileName = "\(tag)-macOS-\(sizes[index])x\(sizes[index])@2x.png"
             let saveTo = folderPath.appendingPathComponent(fileName)
 
             let success = await IconRenderer.snapshotIcon(iconData: iconData, iconAsset: iconAsset, size: size, savePath: saveTo)
@@ -114,11 +132,19 @@ struct XcodeDownloadButton: View {
 
     @MainActor private func generateContentJson(folderPath: URL, tag: String) async {
         let imageSet: [[String: Any]] = [
+            // macOS 1x
             ["filename": "\(tag)-macOS-16x16.png", "idiom": "mac", "scale": "1x", "size": "16x16"],
             ["filename": "\(tag)-macOS-32x32.png", "idiom": "mac", "scale": "1x", "size": "32x32"],
             ["filename": "\(tag)-macOS-128x128.png", "idiom": "mac", "scale": "1x", "size": "128x128"],
             ["filename": "\(tag)-macOS-256x256.png", "idiom": "mac", "scale": "1x", "size": "256x256"],
             ["filename": "\(tag)-macOS-512x512.png", "idiom": "mac", "scale": "1x", "size": "512x512"],
+            // macOS @2x
+            ["filename": "\(tag)-macOS-16x16@2x.png", "idiom": "mac", "scale": "2x", "size": "16x16"],
+            ["filename": "\(tag)-macOS-32x32@2x.png", "idiom": "mac", "scale": "2x", "size": "32x32"],
+            ["filename": "\(tag)-macOS-128x128@2x.png", "idiom": "mac", "scale": "2x", "size": "128x128"],
+            ["filename": "\(tag)-macOS-256x256@2x.png", "idiom": "mac", "scale": "2x", "size": "256x256"],
+            ["filename": "\(tag)-macOS-512x512@2x.png", "idiom": "mac", "scale": "2x", "size": "512x512"],
+            // iOS
             ["filename": "\(tag)-iOS-1024x1024.png", "idiom": "universal", "platform": "ios", "size": "1024x1024"],
         ]
 
@@ -208,22 +234,22 @@ struct XcodeDownloadButton: View {
 }
 
 #Preview("App - Small Screen") {
-    RootView {
-        ContentLayout()
-            .setInitialTab(IconPlugin.label)
-            .hideSidebar()
-            .hideProjectActions()
-    }
-    .frame(width: 800)
-    .frame(height: 800)
+    ContentLayout()
+        .setInitialTab(IconPlugin.label)
+        .hideSidebar()
+        .hideTabPicker()
+        .hideProjectActions()
+        .inRootView()
+        .frame(width: 800)
+        .frame(height: 800)
 }
 
 #Preview("App - Big Screen") {
-    RootView {
-        ContentLayout()
-            .setInitialTab(IconPlugin.label)
-            .hideSidebar()
-    }
-    .frame(width: 1200)
-    .frame(height: 1200)
+    ContentLayout()
+        .setInitialTab(IconPlugin.label)
+        .hideTabPicker()
+        .hideSidebar()
+        .inRootView()
+        .frame(width: 1200)
+        .frame(height: 1200)
 }
