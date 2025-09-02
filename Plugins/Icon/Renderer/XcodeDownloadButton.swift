@@ -123,7 +123,12 @@ struct XcodeDownloadButton: View {
         let fileName = "\(tag)-iOS-\(size)x\(size).png"
         let saveTo = folderPath.appendingPathComponent(fileName)
 
-        let success = await IconRenderer.snapshotIcon(iconData: iconData, iconAsset: iconAsset, size: size, savePath: saveTo)
+        // 导出时强制不透明、无圆角（仅影响导出流程，不修改原数据）
+        var exportData = iconData
+        exportData.opacity = 1.0
+        exportData.cornerRadius = 0
+
+        let success = await IconRenderer.snapshotIcon(iconData: exportData, iconAsset: iconAsset, size: size, savePath: saveTo)
 
         if success == false {
             MagicMessageProvider.shared.error("❌ 生成 \(fileName) 失败")
@@ -240,7 +245,7 @@ struct XcodeDownloadButton: View {
         .hideTabPicker()
         .hideProjectActions()
         .inRootView()
-        .frame(width: 800)
+        .frame(width: 600)
         .frame(height: 800)
 }
 
