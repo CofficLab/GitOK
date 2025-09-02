@@ -3,65 +3,45 @@ import MagicCore
 import UniformTypeIdentifiers
 
 /**
- 简约模板的图片编辑器
- 专门为简约布局定制的图片编辑组件，支持圆形裁剪
+ 经典模板的图片编辑器
+ 专门为经典布局定制的图片编辑组件
  */
 struct MinimalImageEditor: View {
     @EnvironmentObject var b: BannerProvider
     @EnvironmentObject var m: MagicMessageProvider
     
     @State private var showImagePicker = false
-    @State private var isCircular = true
-    @State private var imageSize: Double = 200.0
+    @State private var inScreen = false
     
     var body: some View {
-        GroupBox("图片设置") {
+        GroupBox("产品图片") {
             VStack(spacing: 12) {
                 // 图片预览
                 if b.banner.imageId != nil {
-                    let image = b.banner.getImage()
-                    Group {
-                        if isCircular {
-                            image
-                                .resizable()
-                                .scaledToFill()
-                                .frame(width: 80, height: 80)
-                                .clipShape(Circle())
-                        } else {
-                            image
-                                .resizable()
-                                .scaledToFit()
-                                .frame(height: 80)
-                                .cornerRadius(8)
+                    b.banner.getImage()
+                        .resizable()
+                        .scaledToFit()
+                        .frame(height: 100)
+                        .cornerRadius(8)
+                        .onTapGesture {
+                            showImagePicker = true
                         }
-                    }
-                    .onTapGesture {
-                        showImagePicker = true
-                    }
                 } else {
-                    Group {
-                        if isCircular {
-                            Circle()
-                                .fill(Color.gray.opacity(0.3))
-                                .frame(width: 80, height: 80)
-                        } else {
-                            RoundedRectangle(cornerRadius: 8)
-                                .fill(Color.gray.opacity(0.3))
-                                .frame(height: 80)
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(Color.gray.opacity(0.3))
+                        .frame(height: 100)
+                        .overlay(
+                            VStack {
+                                Image(systemName: "photo")
+                                    .font(.title)
+                                Text("点击选择图片")
+                                    .font(.caption)
+                            }
+                            .foregroundColor(.secondary)
+                        )
+                        .onTapGesture {
+                            showImagePicker = true
                         }
-                    }
-                    .overlay(
-                        VStack {
-                            Image(systemName: "photo")
-                                .font(.title2)
-                            Text("选择图片")
-                                .font(.caption2)
-                        }
-                        .foregroundColor(.secondary)
-                    )
-                    .onTapGesture {
-                        showImagePicker = true
-                    }
                 }
                 
                 // 控制选项
@@ -72,38 +52,17 @@ struct MinimalImageEditor: View {
                     }
                     .frame(maxWidth: .infinity)
                     
-                    // 圆形显示开关
+                    // 屏幕显示开关
                     HStack {
-                        Text("圆形显示")
+                        Text("显示设备边框")
                             .font(.body)
                         
                         Spacer()
                         
-                        Toggle("", isOn: $isCircular)
-                            .onChange(of: isCircular) {
-                                updateImageStyle()
+                        Toggle("", isOn: $inScreen)
+                            .onChange(of: inScreen) {
+                                updateInScreen()
                             }
-                    }
-                    
-                    // 图片大小调节
-                    HStack {
-                        Text("图片大小")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                        
-                        Slider(
-                            value: $imageSize,
-                            in: 100.0...400.0,
-                            step: 10.0
-                        )
-                        .onChange(of: imageSize) {
-                            updateImageSize()
-                        }
-                        
-                        Text("\(Int(imageSize))px")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                            .frame(width: 50, alignment: .trailing)
                     }
                 }
             }
@@ -122,7 +81,7 @@ struct MinimalImageEditor: View {
     }
     
     private func loadCurrentValues() {
-        // 加载简约模板特有的图片设置
+        inScreen = b.banner.inScreen
     }
     
     private func handleImageSelection(_ result: Result<[URL], Error>) {
@@ -146,12 +105,10 @@ struct MinimalImageEditor: View {
         }
     }
     
-    private func updateImageStyle() {
-        // 简约模板特有的图片样式更新逻辑
-    }
-    
-    private func updateImageSize() {
-        // 简约模板特有的图片大小更新逻辑
+    private func updateInScreen() {
+        try? b.updateBanner { banner in
+            banner.inScreen = inScreen
+        }
     }
 }
 
@@ -162,7 +119,7 @@ struct MinimalImageEditor: View {
             .hideSidebar()
             .hideProjectActions()
     }
-    .frame(width: 800)
+    .frame(width: 600)
     .frame(height: 600)
 }
 

@@ -9,38 +9,36 @@ struct MinimalTitleEditor: View {
     @EnvironmentObject var b: BannerProvider
     @EnvironmentObject var m: MagicMessageProvider
     
-    @State private var minimalData: MinimalBannerData = MinimalBannerData()
+    @State private var titleText: String = ""
+    @State private var titleColor: Color = .primary
     
     var body: some View {
-        GroupBox("主标题") {
+        GroupBox("标题设置") {
             VStack(spacing: 12) {
                 // 标题输入
-                TextField("输入主标题", text: $minimalData.title)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .font(.title2)
-                    .onChange(of: minimalData.title) {
-                        saveData()
-                    }
-                
-                // 字体大小调节
                 HStack {
-                    Text("字体大小")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
+                    Text("标题")
+                        .frame(width: 60, alignment: .leading)
                     
-                    Slider(
-                        value: $minimalData.titleSize,
-                        in: 24.0...72.0,
-                        step: 2.0
-                    )
-                    .onChange(of: minimalData.titleSize) { _ in
-                        saveData()
-                    }
+                    TextField("输入标题", text: $titleText)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                        .onChange(of: titleText) {
+                            updateTitle()
+                        }
+                }
+                
+                // 标题颜色选择
+                HStack {
+                    Text("颜色")
+                        .frame(width: 60, alignment: .leading)
                     
-                    Text("\(Int(minimalData.titleSize))pt")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                        .frame(width: 40, alignment: .trailing)
+                    ColorPicker("选择颜色", selection: $titleColor)
+                        .labelsHidden()
+                        .onChange(of: titleColor) {
+                            updateTitleColor()
+                        }
+                    
+                    Spacer()
                 }
             }
             .padding(8)
@@ -51,21 +49,19 @@ struct MinimalTitleEditor: View {
     }
     
     private func loadCurrentValues() {
-        // 从当前Banner数据恢复简约模板数据
-        let template = MinimalBannerTemplate()
-        minimalData = template.restoreData(from: b.banner) as! MinimalBannerData
+        titleText = b.banner.title
+        titleColor = b.banner.titleColor ?? .primary
     }
     
-    private func saveData() {
-        do {
-            let template = MinimalBannerTemplate()
-            try b.updateBanner { banner in
-                try template.saveData(minimalData, to: &banner)
-            }
-            
-            try BannerRepo.shared.saveBanner(b.banner)
-        } catch {
-            m.error(error, title: "保存数据失败")
+    private func updateTitle() {
+        try? b.updateBanner { banner in
+            banner.title = titleText
+        }
+    }
+    
+    private func updateTitleColor() {
+        try? b.updateBanner { banner in
+            banner.titleColor = titleColor
         }
     }
 }

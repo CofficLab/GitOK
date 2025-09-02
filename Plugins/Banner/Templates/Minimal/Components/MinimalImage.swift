@@ -1,5 +1,5 @@
-import SwiftUI
 import MagicCore
+import SwiftUI
 
 /**
  简约模板的图片组件
@@ -7,15 +7,45 @@ import MagicCore
  */
 struct MinimalImage: View {
     @EnvironmentObject var b: BannerProvider
-    
+    @EnvironmentObject var m: MagicMessageProvider
+
+    var banner: BannerFile { b.banner }
+    var image: Image { banner.getImage() }
+    var device: Device { b.selectedDevice }
+
     var body: some View {
-        b.banner.getImage()
-            .resizable()
-            .aspectRatio(contentMode: .fit)
-            .clipShape(RoundedRectangle(cornerRadius: getCornerRadius()))
-            .shadow(color: .black.opacity(0.1), radius: 8, x: 0, y: 4)
+        ZStack {
+            if banner.inScreen {
+                switch device {
+                case .iMac:
+                    ScreeniMac(content: {
+                        image.resizable().scaledToFit()
+                    })
+                case .MacBook:
+                    ScreenMacBook(content: {
+                        image.resizable().scaledToFit()
+                    })
+                case .iPhoneBig:
+                    ScreeniPhone(content: {
+                        image.resizable().scaledToFit()
+                    })
+                case .iPhoneSmall:
+                    ScreeniPhone(content: {
+                        image.resizable().scaledToFit()
+                    })
+                case .iPad:
+                    ScreeniPad(content: {
+                        image.resizable().scaledToFit()
+                    })
+                }
+            } else {
+                image
+                    .resizable()
+                    .scaledToFit()
+            }
+        }
     }
-    
+
     private func getCornerRadius() -> CGFloat {
         // 简约模板使用较大的圆角
         return 16.0
@@ -27,10 +57,11 @@ struct MinimalImage: View {
         ContentLayout()
             .setInitialTab(BannerPlugin.label)
             .hideSidebar()
+            .hideTabPicker()
             .hideProjectActions()
     }
-    .frame(width: 800)
-    .frame(height: 600)
+    .frame(width: 600)
+    .frame(height: 800)
 }
 
 #Preview("App - Big Screen") {

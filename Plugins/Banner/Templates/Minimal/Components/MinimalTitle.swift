@@ -10,15 +10,25 @@ struct MinimalTitle: View {
     
     var fontSize: CGFloat = 48
     
-    init(fontSize: CGFloat = 48) {
+    init(fontSize: CGFloat) {
         self.fontSize = fontSize
     }
     
     var body: some View {
         Text(b.banner.title)
-            .font(.system(size: fontSize))
+            .font(.system(size: fontSize, weight: .bold, design: .default))
+            .foregroundColor(getTitleColor())
             .multilineTextAlignment(.center)
             .lineLimit(2)
+    }
+    
+    private func getTitleColor() -> Color {
+        // 优先使用通用颜色设置
+        if let bannerColor = b.banner.titleColor {
+            return bannerColor
+        } else {
+            return .primary
+        }
     }
 }
 
@@ -30,7 +40,7 @@ struct MinimalTitle: View {
             .hideProjectActions()
     }
     .frame(width: 800)
-    .frame(height: 600)
+    .frame(height: 800)
 }
 
 #Preview("App - Big Screen") {
