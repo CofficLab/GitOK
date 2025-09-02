@@ -9,24 +9,22 @@ alwaysApply: false
 
 ```swift
 #Preview("App - Small Screen") {
-    RootView {
-        ContentLayout()
-            .setInitialTab("TabName")
-            .hideSidebar()
-            .hideProjectActions()
-    }
-    .frame(width: 800)
-    .frame(height: 600)
+    ContentLayout()
+        .setInitialTab("TabName")
+        .hideSidebar()
+        .hideProjectActions()
+        .inRootView()
+        .frame(width: 800)
+        .frame(height: 600)
 }
 
 #Preview("App - Big Screen") {
-    RootView {
-        ContentLayout()
-            .setInitialTab("TabName")
-            .hideSidebar()
-    }
-    .frame(width: 1200)
-    .frame(height: 1200)
+    ContentLayout()
+        .setInitialTab("TabName")
+        .hideSidebar()
+        .inRootView()
+        .frame(width: 1200)
+        .frame(height: 1200)
 }
 ```
 
@@ -97,14 +95,13 @@ static var label: String = "TabName"
 
 ```swift
 #Preview("App - Small Screen") {
-    RootView {
-        ContentLayout()
-            .setInitialTab(IconPlugin.label)  // 使用找到的label值
-            .hideSidebar()
-            .hideProjectActions()
-    }
-    .frame(width: 800)
-    .frame(height: 600)
+    ContentLayout()
+        .setInitialTab(IconPlugin.label)  // 使用找到的label值
+        .hideSidebar()
+        .hideProjectActions()
+        .inRootView()
+        .frame(width: 800)
+        .frame(height: 600)
 }
 ```
 
@@ -118,13 +115,12 @@ static var label: String = "TabName"
 
 ```swift
 #Preview("App - Big Screen") {
-    RootView {
-        ContentLayout()
-            .setInitialTab(GitPlugin.label)  // 使用找到的label值
-            .hideSidebar()
-    }
-    .frame(width: 1200)
-    .frame(height: 1200)
+    ContentLayout()
+        .setInitialTab(GitPlugin.label)  // 使用找到的label值
+        .hideSidebar()
+        .inRootView()
+        .frame(width: 1200)
+        .frame(height: 1200)
 }
 ```
 
@@ -138,13 +134,12 @@ static var label: String = "TabName"
 
 ```swift
 #Preview("App - Small Screen") {
-    RootView {
-        ContentLayout()
-            .setInitialTab(BannerPlugin.label)  // 使用找到的label值
-            .hideSidebar()
-            .hideProjectActions()
-    }
-    .frame(width: 800)
-    .frame(height: 600)
+    ContentLayout()
+        .setInitialTab(BannerPlugin.label)  // 使用找到的label值
+        .hideSidebar()
+        .hideProjectActions()
+        .inRootView()
+        .frame(width: 800)
+        .frame(height: 600)
 }
 ```

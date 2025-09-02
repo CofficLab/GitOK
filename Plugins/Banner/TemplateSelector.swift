@@ -1,0 +1,109 @@
+import SwiftUI
+
+/**
+ 模板选择器组件
+ 横向滚动的卡片式模板选择器，直观展示各模板效果
+ */
+struct TemplateSelector: View {
+    @EnvironmentObject var b: BannerProvider
+    @State private var availableTemplates: [any BannerTemplateProtocol] = []
+
+    var body: some View {
+        // 横向滚动的模板卡片
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 8) {
+                ForEach(availableTemplates, id: \.id) { template in
+                    TemplateCard(
+                        template: template,
+                        isSelected: b.selectedTemplate.id == template.id,
+                        onSelect: {
+                            b.setSelectedTemplate(template)
+                        }
+                    )
+                }
+            }
+            .padding(8)
+        }
+        .onAppear {
+            loadTemplates()
+        }
+    }
+
+    private func loadTemplates() {
+        availableTemplates = BannerTemplateRepo.shared.getAllTemplates()
+        
+        // 如果没有选择模板
+        if b.selectedTemplate.id.isEmpty {
+            // 优先使用上次选择的模板
+            if !b.banner.lastSelectedTemplateId.isEmpty,
+               let lastTemplate = availableTemplates.first(where: { $0.id == b.banner.lastSelectedTemplateId }) {
+                b.setSelectedTemplate(lastTemplate)
+            } else {
+                // 如果没有上次选择的模板，使用默认模板
+                b.setSelectedTemplate(BannerTemplateRepo.shared.getDefaultTemplate())
+            }
+        }
+    }
+}
+
+/**
+ 模板卡片组件
+ 展示单个模板的预览和信息
+ */
+private struct TemplateCard: View {
+    let template: any BannerTemplateProtocol
+    let isSelected: Bool
+    let onSelect: () -> Void
+
+    var body: some View {
+        VStack(spacing: 8) {
+            // 模板示例预览
+            template.createExampleView()
+                .frame(width: 120, height: 80)
+                .clipped()
+
+            // 模板信息
+            Text(template.name)
+                .font(.caption)
+                .fontWeight(.medium)
+                .foregroundColor(.primary)
+        }
+        .frame(width: 120)
+        .padding(8)
+        .background(
+            RoundedRectangle(cornerRadius: 8)
+                .fill(isSelected ? Color.accentColor.opacity(0.1) : Color(.controlBackgroundColor))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 8)
+                .stroke(isSelected ? Color.accentColor : Color.clear, lineWidth: 2)
+        )
+        .onTapGesture {
+            onSelect()
+        }
+        .scaleEffect(isSelected ? 1.02 : 1.0)
+        .animation(.easeInOut(duration: 0.2), value: isSelected)
+    }
+}
+
+#Preview("App - Small Screen") {
+    ContentLayout()
+        .hideSidebar()
+        .hideTabPicker()
+        .hideProjectActions()
+        .setInitialTab(BannerPlugin.label)
+        .inRootView()
+        .frame(width: 800)
+        .frame(height: 600)
+}
+
+#Preview("App - Big Screen") {
+    ContentLayout()
+        .hideSidebar()
+        .hideProjectActions()
+        .setInitialTab(BannerPlugin.label)
+        .hideTabPicker()
+        .inRootView()
+        .frame(width: 800)
+        .frame(height: 1000)
+}

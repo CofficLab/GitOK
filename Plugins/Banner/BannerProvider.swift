@@ -2,81 +2,134 @@
 import AVKit
 import Combine
 import Foundation
+import MagicCore
+import MagicScreen
 import MediaPlayer
 import OSLog
 import SwiftUI
-import MagicCore
 
+/**
+     Banner状态管理器
+ **/
 @MainActor
 class BannerProvider: NSObject, ObservableObject, SuperLog {
-    @Published var banners: [BannerModel] = []
-    @Published var banner: BannerModel = .empty
+    static let shared = BannerProvider()
+
+    override private init() {}
+
+    /// 当前选中的Banner
+    @Published private(set) var banner: BannerFile = .empty
+
+    /// 当前选中的设备
+    @Published private(set) var selectedDevice: Device = .iPhoneBig
+
+    /// 当前选中的模板
+    @Published private(set) var selectedTemplate: any BannerTemplateProtocol = ClassicBannerTemplate()
 
     var emoji = "🐘"
 
-    func appendBanner(_ b: BannerModel) {
-        if !Thread.isMainThread {
-            assertionFailure("appendBanner called from background thread")
-        }
+    // MARK: - Banner状态管理方法
 
-        self.banners.append(b)
-        self.setBanner(b)
-    }
+    /**
+         设置当前选中的Banner
 
-    func removeBanner(_ b: BannerModel) {
-        if !Thread.isMainThread {
-            assertionFailure("removeBanner called from background thread")
-        }
-
-        b.delete()
-        self.banners.removeAll(where: { $0 == b })
-    }
-
-    func setBanner(_ b: BannerModel) {
+         ## 参数
+         - `b`: 要设置为当前选中的Banner数据
+     */
+    func setBanner(_ b: BannerFile) {
         if !Thread.isMainThread {
             assertionFailure("setBanner called from background thread")
+        }
+        
+        if self.banner.id == b.id {
+            return
         }
 
         self.banner = b
     }
 
-    func setBanners(_ b: [BannerModel]) {
+    /**
+         清除当前选中的Banner
+         将当前Banner重置为空状态
+     */
+    func clearBanner() {
         if !Thread.isMainThread {
-            assertionFailure("appendBanner called from background thread")
+            assertionFailure("clearBanner called from background thread")
         }
 
-        self.banners = b
-        if !banners.contains(self.banner) {
-            self.banner = banners.first ?? .empty
-        }
+        self.banner = .empty
     }
 
-    func setBanners(_ project: Project) {
+    /**
+         设置当前选中的设备
+
+         ## 参数
+         - `device`: 要设置为当前选中的设备
+     */
+    func setSelectedDevice(_ device: Device) {
         if !Thread.isMainThread {
-            assertionFailure("appendBanner called from background thread")
+            assertionFailure("setSelectedDevice called from background thread")
         }
 
-        self.setBanners(try! project.getBanners())
+        self.selectedDevice = device
+    }
+
+    /**
+         更新当前Banner的特定属性（支持抛出错误）
+
+         ## 参数
+         - `update`: 用于更新Banner的闭包，可以抛出错误
+         - `throws`: 如果更新过程中发生错误
+     */
+    func updateBanner(_ update: (inout BannerFile) throws -> Void) throws {
+        if !Thread.isMainThread {
+            assertionFailure("updateBanner called from background thread")
+        }
+
+        var updatedBanner = self.banner
+        try update(&updatedBanner)
+        self.banner = updatedBanner
+
+        try BannerRepo.shared.saveBanner(banner)
+    }
+
+    /**
+         设置当前选中的模板
+
+         ## 参数
+         - `template`: 要设置为当前选中的模板
+     */
+    func setSelectedTemplate(_ template: any BannerTemplateProtocol) {
+        if !Thread.isMainThread {
+            assertionFailure("setSelectedTemplate called from background thread")
+        }
+
+        self.selectedTemplate = template
+        
+        // 保存选择的模板ID
+        try? updateBanner { banner in
+            banner.lastSelectedTemplateId = template.id
+        }
     }
 }
 
 #Preview("App - Small Screen") {
-    RootView {
-        ContentLayout()
-            .hideSidebar()
-            .hideTabPicker()
-//            .hideProjectActions()
-    }
-    .frame(width: 800)
-    .frame(height: 600)
+    ContentLayout()
+        .hideSidebar()
+        .hideTabPicker()
+        .hideProjectActions()
+        .setInitialTab(BannerPlugin.label)
+        .inRootView()
+        .frame(width: 800)
+        .frame(height: 600)
 }
 
 #Preview("App - Big Screen") {
-    RootView {
-        ContentLayout()
-            .hideSidebar()
-    }
-    .frame(width: 1200)
-    .frame(height: 1200)
+    ContentLayout()
+        .hideSidebar()
+        .hideProjectActions()
+        .hideTabPicker()
+        .inRootView()
+        .frame(width: 800)
+        .frame(height: 1000)
 }
-

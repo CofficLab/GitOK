@@ -101,14 +101,14 @@ final class Project: SuperLog {
         }
     }
 
-    func getBanners() throws -> [BannerModel] {
+    func getBanners() -> [BannerFile] {
         let verbose = false
 
         if verbose {
             os_log("\(self.t)GetBanners for project -> \(self.path)")
         }
 
-        return try BannerModel.all(self)
+        return BannerRepo.shared.getBanners(from: self)
     }
 
     func isExist() -> Bool {
@@ -439,20 +439,21 @@ extension Project {
 // MARK: - Preview
 
 #Preview("App - Small Screen") {
-    RootView {
-        ContentLayout()
-            .hideSidebar()
-            .hideProjectActions()
-    }
-    .frame(width: 800)
-    .frame(height: 600)
+    ContentLayout()
+        .hideSidebar()
+        .hideTabPicker()
+        .hideProjectActions()
+        .inRootView()
+        .frame(width: 800)
+        .frame(height: 600)
 }
 
 #Preview("App - Big Screen") {
-    RootView {
-        ContentLayout()
-            .hideSidebar()
-    }
-    .frame(width: 1200)
-    .frame(height: 1200)
+    ContentLayout()
+        .hideSidebar()
+        .hideProjectActions()
+        .hideTabPicker()
+        .inRootView()
+        .frame(width: 800)
+        .frame(height: 1000)
 }

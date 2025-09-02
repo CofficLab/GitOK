@@ -14,7 +14,6 @@ final class RootBox: SuperLog {
     nonisolated static let emoji = "🚉"
 
     let app: AppProvider
-    let banner: BannerProvider
     let icon: IconProvider
     let git: DataProvider
     let repoManager: RepoManager
@@ -58,7 +57,6 @@ final class RootBox: SuperLog {
         
         // Providers
         self.app = AppProvider(repoManager: self.repoManager)
-        self.banner = BannerProvider()
         self.icon = IconProvider()
         self.pluginProvider = PluginProvider(plugins: plugins)
 
@@ -74,21 +72,22 @@ final class RootBox: SuperLog {
 }
 
 #Preview("App - Small Screen") {
-    RootView {
-        ContentLayout()
-            .hideSidebar()
-            .hideTabPicker()
-//            .hideProjectActions()
-    }
-    .frame(width: 700)
-    .frame(height: 700)
+    ContentLayout()
+        .hideSidebar()
+        .hideTabPicker()
+        .hideProjectActions()
+        .inRootView()
+        .frame(width: 800)
+        .frame(height: 600)
 }
 
 #Preview("App - Big Screen") {
-    RootView {
-        ContentLayout()
-            .hideSidebar()
-    }
-    .frame(width: 1200)
-    .frame(height: 1200)
+    ContentLayout()
+        .hideSidebar()
+        .hideProjectActions()
+        .hideTabPicker()
+        .inRootView()
+        .frame(width: 800)
+        .frame(height: 1000)
 }
+

@@ -15,6 +15,7 @@ struct DownloadButtons: View {
             XcodeDownloadButton(iconProvider: iconProvider, currentIconAsset: currentIconAsset)
             PNGDownloadButton(iconProvider: iconProvider, currentIconAsset: currentIconAsset)
             FaviconDownloadButton(iconProvider: iconProvider, currentIconAsset: currentIconAsset)
+            ImageSetDownloadButton(iconProvider: iconProvider, currentIconAsset: currentIconAsset)
 
             if currentIconAsset == nil || iconProvider.currentData == nil {
                 Text("请先选择一个图标")

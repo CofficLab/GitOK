@@ -208,20 +208,21 @@ extension ContentView {
 }
 
 #Preview("App - Small Screen") {
-    RootView {
-        ContentLayout()
-            .hideProjectActions()
-            .hideTabPicker()
-            .hideSidebar()
-    }
-    .frame(width: 600)
-    .frame(height: 600)
+    ContentLayout()
+        .hideSidebar()
+        .hideTabPicker()
+        .hideProjectActions()
+        .inRootView()
+        .frame(width: 800)
+        .frame(height: 600)
 }
 
 #Preview("App - Big Screen") {
-    RootView {
-        ContentLayout()
-    }
-    .frame(width: 1200)
-    .frame(height: 1200)
+    ContentLayout()
+        .hideSidebar()
+        .hideProjectActions()
+        .hideTabPicker()
+        .inRootView()
+        .frame(width: 800)
+        .frame(height: 1000)
 }

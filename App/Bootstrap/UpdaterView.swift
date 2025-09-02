@@ -21,7 +21,29 @@ struct UpdaterView: View {
     }
 
     var body: some View {
-        Button("Check for Updates…", action: updater.checkForUpdates)
+        Button("检查更新", action: updater.checkForUpdates)
             .disabled(!checkForUpdatesViewModel.canCheckForUpdates)
     }
+}
+
+#Preview("App - Small Screen") {
+    ContentLayout()
+        .setInitialTab(IconPlugin.label)
+        .hideSidebar()
+        .hideProjectActions()
+        .setInitialTab(IconPlugin.label)
+        .inRootView()
+        .frame(width: 800)
+        .frame(height: 800)
+}
+
+#Preview("App - Big Screen") {
+    ContentLayout()
+        .hideProjectActions()
+        .setInitialTab(IconPlugin.label)
+        .hideSidebar()
+        .setInitialTab(IconPlugin.label)
+        .inRootView()
+        .frame(width: 800)
+        .frame(height: 1200)
 }

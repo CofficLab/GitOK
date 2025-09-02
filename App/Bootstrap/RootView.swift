@@ -5,7 +5,6 @@ import SwiftUI
 struct RootView<Content>: View, SuperEvent where Content: View {
     var content: Content
     var a: AppProvider
-    var b: BannerProvider
     var i: IconProvider
     var p: PluginProvider
 
@@ -18,7 +17,6 @@ struct RootView<Content>: View, SuperEvent where Content: View {
 
         self.box = RootBox.shared
         self.a = box.app
-        self.b = box.banner
         self.i = box.icon
         self.p = box.pluginProvider
     }
@@ -27,7 +25,6 @@ struct RootView<Content>: View, SuperEvent where Content: View {
         content
             .withMagicToast()
             .environmentObject(a)
-            .environmentObject(b)
             .environmentObject(i)
             .environmentObject(p)
             .environmentObject(m)
@@ -47,21 +44,21 @@ extension View {
 } 
 
 #Preview("App - Small Screen") {
-    RootView {
-        ContentLayout()
-            .hideSidebar()
-            .hideTabPicker()
-//            .hideProjectActions()
-    }
-    .frame(width: 800)
-    .frame(height: 600)
+    ContentLayout()
+        .hideSidebar()
+        .hideTabPicker()
+        .hideProjectActions()
+        .inRootView()
+        .frame(width: 800)
+        .frame(height: 600)
 }
 
 #Preview("App - Big Screen") {
-    RootView {
-        ContentLayout()
-            .hideSidebar()
-    }
-    .frame(width: 1200)
-    .frame(height: 1200)
+    ContentLayout()
+        .hideSidebar()
+        .hideProjectActions()
+        .hideTabPicker()
+        .inRootView()
+        .frame(width: 800)
+        .frame(height: 1000)
 }

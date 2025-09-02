@@ -133,14 +133,6 @@ class IconRepo: SuperLog {
         guard let source = iconSources.first(where: { $0.sourceIdentifier == sourceIdentifier }) else { return false }
         return await source.deleteImage(filename: filename)
     }
-
-    /// 获取指定名称的分类
-    /// - Parameter name: 分类名称
-    /// - Returns: IconCategoryInfo 实例，如果不存在则返回nil
-//    func getCateg9ory(byName name: String) async -> IconCategory? {
-//        let allCategories = await getAllCategories()
-//        return allCategories.first { $0.name == name }
-//    }
     
     /// 根据图标ID获取图标
     /// - Parameter iconId: 图标ID

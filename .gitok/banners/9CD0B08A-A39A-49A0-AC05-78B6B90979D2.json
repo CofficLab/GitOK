@@ -1,1 +1,10 @@
-{"backgroundId":"mint2teal_tl2br","device":"iMac","features":["Feature 1","Feature 2","Feature 3","Feature 4"],"imageId":"20241207223731.png","inScreen":false,"opacity":0.8699279817703204,"subTitle":"sub3","title":"图标制作"}
+{
+  "backgroundId": "burgundy2pink_bl2tr",
+  "subTitle": "Banner SubTitle",
+  "inScreen": false,
+  "opacity": 1,
+  "templateData": "{\"titleSize\":36,\"subtitleSize\":18,\"title\":\"Banner Title\",\"opacity\":1,\"subtitleWeightRaw\":\"medium\",\"subtitle\":\"Banner SubTitle\",\"spacing\":8,\"backgroundId\":\"blue2yellow_tl2br\",\"titleWeightRaw\":\"bold\"}",
+  "title": "Banner Title",
+  "imageId": "20241207223731.png",
+  "features": ["Feature 1", "Feature 2"]
+}

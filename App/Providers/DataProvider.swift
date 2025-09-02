@@ -34,9 +34,6 @@ class DataProvider: NSObject, ObservableObject, SuperLog {
 
         super.init()
 
-        // 设置事件监听
-        setupEventListeners()
-
         self.checkIfProjectExists()
     }
 }
@@ -194,15 +191,6 @@ extension DataProvider {
                 self.project = self.projects.first
             }
 
-            // 发送删除通知
-//            DispatchQueue.main.async {
-//                NotificationCenter.default.post(
-//                    name: .gitProjectDeleted,
-//                    object: self,
-//                    userInfo: ["path": path]
-//                )
-//            }
-
             os_log("Project deleted successfully: \(path)")
 
         } catch {
@@ -329,39 +317,6 @@ extension DataProvider {
 
 extension DataProvider {
     /**
-     * 设置事件监听器
-     */
-    private func setupEventListeners() {
-        // 监听项目删除事件
-//        NotificationCenter.default.publisher(for: .gitProjectDeleted)
-//            .sink { [weak self] notification in
-//                self?.handleProjectDeleted(notification)
-//            }
-//            .store(in: &cancellables)
-//
-//        // 监听提交成功事件
-//        NotificationCenter.default.publisher(for: .gitCommitSuccess)
-//            .sink { [weak self] notification in
-//                self?.handleGitOperationSuccess(notification)
-//            }
-//            .store(in: &cancellables)
-//
-//        // 监听推送成功事件
-//        NotificationCenter.default.publisher(for: .gitPushSuccess)
-//            .sink { [weak self] notification in
-//                self?.handleGitOperationSuccess(notification)
-//            }
-//            .store(in: &cancellables)
-//
-//        // 监听拉取成功事件
-//        NotificationCenter.default.publisher(for: .gitPullSuccess)
-//            .sink { [weak self] notification in
-//                self?.handleGitOperationSuccess(notification)
-//            }
-//            .store(in: &cancellables)
-    }
-
-    /**
      * 处理Git操作成功事件
      */
     private func handleGitOperationSuccess(_ notification: Notification) {
@@ -386,24 +341,22 @@ extension DataProvider {
     }
 }
 
-// MARK: - Previews
-
 #Preview("App - Small Screen") {
-    RootView {
-        ContentLayout()
-            .hideSidebar()
-            .hideTabPicker()
-//            .hideProjectActions()
-    }
-    .frame(width: 800)
-    .frame(height: 600)
+    ContentLayout()
+        .hideSidebar()
+        .hideTabPicker()
+        .hideProjectActions()
+        .inRootView()
+        .frame(width: 800)
+        .frame(height: 600)
 }
 
 #Preview("App - Big Screen") {
-    RootView {
-        ContentLayout()
-            .hideSidebar()
-    }
-    .frame(width: 1200)
-    .frame(height: 1200)
+    ContentLayout()
+        .hideSidebar()
+        .hideProjectActions()
+        .hideTabPicker()
+        .inRootView()
+        .frame(width: 800)
+        .frame(height: 1000)
 }

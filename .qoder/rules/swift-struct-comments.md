@@ -1,0 +1,124 @@
+---
+description: Swift struct注释规范规则
+globs: *.swift
+---
+
+# Swift Struct注释规范规则
+
+每个Swift struct都必须包含规范的注释，遵循以下格式和标准：
+
+## 注释格式要求
+
+### 1. 基本注释结构
+
+```swift
+/**
+    结构体的功能描述
+    可以包含多行描述，说明用途、职责等
+**/
+struct StructName {
+    // 结构体内容
+}
+```
+
+### 2. 属性注释
+
+```swift
+struct ExampleStruct {
+    /// 属性的详细说明
+    /// - 用途：描述属性的作用
+    /// - 类型：说明数据类型
+    /// - 默认值：如果有默认值需要说明
+    let propertyName: String
+
+    /// 计算属性的说明
+    /// - 计算逻辑：描述计算过程
+    /// - 返回值：说明返回值的含义
+    var computedProperty: Int {
+        // 计算逻辑
+    }
+}
+```
+
+### 3. 方法注释
+
+````swift
+struct ExampleStruct {
+    /**
+        方法的详细说明
+
+        ## 参数
+        - `param1`: 参数1的说明
+        - `param2`: 参数2的说明
+
+        ## 返回值
+        返回值的详细说明
+
+        ## 异常
+        - `ErrorType1`: 异常1的说明
+        - `ErrorType2`: 异常2的说明
+
+        ## 示例
+        ```swift
+        let result = instance.methodName(param1: value1, param2: value2)
+        ```
+     */
+    func methodName(param1: String, param2: Int) throws -> Result {
+        // 方法实现
+    }
+}
+````
+
+## 注释内容要求
+
+### 1. 必须包含的信息
+
+- **功能描述**：清晰说明struct的用途和职责
+
+### 2. 可选包含的信息
+
+- **示例代码**：展示如何使用这个struct
+- **性能说明**：如果有性能相关的注意事项
+- **线程安全**：如果涉及多线程使用
+- **版本信息**：如果API有版本变化
+
+## 注释风格规范
+
+### 1. 语言要求
+
+- 使用中文进行注释，保持与项目语言一致
+- 专业术语可以使用英文
+- 注释要简洁明了，避免冗长
+
+### 2. 格式要求
+
+- 使用 `/**` 和 `*/` 进行多行注释
+- 使用 `///` 进行单行注释
+- 保持适当的缩进和空行
+- 使用Markdown格式增强可读性
+
+## 示例参考
+
+参考项目中的优秀注释示例：
+
+- [IconModel.swift](mdc:Plugins/Icon/Model/IconModel.swift) - 模型结构体注释
+- [IconProvider.swift](mdc:Plugins/Icon/IconProvider.swift) - 提供者类注释
+- [IconPlugin.swift](mdc:Plugins/Icon/IconPlugin.swift) - 插件类注释
+
+## 检查清单
+
+在创建或修改struct时，请确保：
+
+- [ ] 有清晰的功能描述
+- [ ] 说明了使用场景
+- [ ] 重要属性有详细注释
+- [ ] 包含必要的注意事项
+- [ ] 注释格式规范统一
+- [ ] 使用中文进行注释
+
+## 注意事项
+
+1. **及时更新**：当struct功能发生变化时，要及时更新注释
+2. **保持一致性**：整个项目的注释风格要保持一致
+3. **避免冗余**：不要重复代码中已经明显的信息
+4. **重点突出**：重点说明复杂逻辑和重要注意事项

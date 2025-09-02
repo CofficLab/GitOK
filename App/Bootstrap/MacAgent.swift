@@ -5,6 +5,15 @@ import OSLog
 import SwiftData
 import SwiftUI
 
+extension Notification.Name {
+    static let appReady = Notification.Name("appReady")
+    static let appExit = Notification.Name("appExit")
+    static let appError = Notification.Name("appError")
+    static let appWillBecomeActive = Notification.Name("appWillBecomeActive")
+    static let appWillResignActive = Notification.Name("appWillResignActive")
+    static let appDidBecomeActive = Notification.Name("appDidBecomeActive")
+}
+
 class MacAgent: NSObject, NSApplicationDelegate, ObservableObject, SuperLog, SuperEvent {
     var label: String { "🍎 MacAgent::" }
 
@@ -73,18 +82,22 @@ class MacAgent: NSObject, NSApplicationDelegate, ObservableObject, SuperLog, Sup
     }
 }
 
-#Preview("APP") {
-    RootView(content: {
-        ContentLayout()
-    }).frame(width: 700, height: 600)
+#Preview("App - Small Screen") {
+    ContentLayout()
+        .hideSidebar()
+        .hideTabPicker()
+        .hideProjectActions()
+        .inRootView()
+        .frame(width: 800)
+        .frame(height: 600)
 }
 
-#Preview("Big Screen") {
-    RootView {
-        ContentLayout()
-            .hideSidebar()
-            .hideProjectActions()
-    }
-    .frame(width: 1200)
-    .frame(height: 1200)
+#Preview("App - Big Screen") {
+    ContentLayout()
+        .hideSidebar()
+        .hideProjectActions()
+        .hideTabPicker()
+        .inRootView()
+        .frame(width: 800)
+        .frame(height: 1000)
 }
