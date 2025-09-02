@@ -71,22 +71,6 @@ class BannerProvider: NSObject, ObservableObject, SuperLog {
     }
 
     /**
-         更新当前Banner的特定属性
-
-         ## 参数
-         - `update`: 用于更新Banner的闭包
-     */
-//    func updateBanner(_ update: (inout BannerFile) -> Void) {
-//        if !Thread.isMainThread {
-//            assertionFailure("updateBanner called from background thread")
-//        }
-//
-//        var updatedBanner = self.banner
-//        update(&updatedBanner)
-//        self.banner = updatedBanner
-//    }
-
-    /**
          更新当前Banner的特定属性（支持抛出错误）
 
          ## 参数
@@ -125,6 +109,7 @@ class BannerProvider: NSObject, ObservableObject, SuperLog {
         .hideSidebar()
         .hideTabPicker()
         .hideProjectActions()
+        .setInitialTab(BannerPlugin.label)
         .inRootView()
         .frame(width: 800)
         .frame(height: 600)

@@ -41,6 +41,7 @@ struct ClassicBackground: View {
         .hideSidebar()
         .hideProjectActions()
         .hideTabPicker()
+        .setInitialTab(BannerPlugin.label)
         .inRootView()
         .frame(width: 800)
         .frame(height: 1000)

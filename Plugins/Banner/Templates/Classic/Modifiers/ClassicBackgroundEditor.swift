@@ -42,8 +42,12 @@ struct ClassicBackgroundEditor: View {
     private func selectBackground(_ backgroundId: String) {
         selectedBackgroundId = backgroundId
         
-        try? b.updateBanner { banner in
-            banner.backgroundId = backgroundId
+        do {
+            try b.updateBanner { banner in
+                banner.backgroundId = backgroundId
+            }
+        } catch {
+            m.error("更新背景失败: \(error.localizedDescription)")
         }
     }
 }
@@ -88,6 +92,7 @@ private struct BackgroundPreview: View {
     ContentLayout()
         .hideSidebar()
         .hideProjectActions()
+        .setInitialTab(BannerPlugin.label)
         .hideTabPicker()
         .inRootView()
         .frame(width: 800)
