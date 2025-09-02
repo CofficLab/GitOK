@@ -14,6 +14,8 @@ struct ClassicImageEditor: View {
     @State private var showImagePicker = false
     @State private var selectedDevice: Device? = nil
     
+    var classicData: ClassicBannerData? { b.banner.classicData }
+    
     var body: some View {
         GroupBox("产品图片") {
             VStack(spacing: 12) {
@@ -66,7 +68,7 @@ struct ClassicImageEditor: View {
                                 Text(device.name).tag(Optional(device))
                             }
                         }
-                        .frame(width: 120)
+                        .frame(width: 240)
                         .onChange(of: selectedDevice) {
                             updateSelectedDevice()
                         }
@@ -85,12 +87,13 @@ struct ClassicImageEditor: View {
         .onAppear {
             loadCurrentValues()
         }
+        .onChange(of: classicData?.selectedDevice) {
+            loadCurrentValues()
+        }
     }
     
     private func loadCurrentValues() {
-        if let classicData = b.banner.classicData {
-            selectedDevice = classicData.selectedDevice
-        }
+        selectedDevice = classicData?.selectedDevice
     }
     
     private func handleImageSelection(_ result: Result<[URL], Error>) {
@@ -130,6 +133,7 @@ struct ClassicImageEditor: View {
         .hideSidebar()
         .hideTabPicker()
         .hideProjectActions()
+        .setInitialTab(BannerPlugin.label)
         .inRootView()
         .frame(width: 800)
         .frame(height: 600)
@@ -139,6 +143,7 @@ struct ClassicImageEditor: View {
     ContentLayout()
         .hideSidebar()
         .hideProjectActions()
+        .setInitialTab(BannerPlugin.label)
         .hideTabPicker()
         .inRootView()
         .frame(width: 800)

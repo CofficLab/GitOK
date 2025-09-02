@@ -14,6 +14,8 @@ struct MinimalImageEditor: View {
     @State private var showImagePicker = false
     @State private var selectedDevice: Device? = nil
     
+    var minimalData: MinimalBannerData? { b.banner.minimalData }
+    
     var body: some View {
         GroupBox("产品图片") {
             VStack(spacing: 12) {
@@ -85,12 +87,13 @@ struct MinimalImageEditor: View {
         .onAppear {
             loadCurrentValues()
         }
+        .onChange(of: minimalData?.selectedDevice) {
+            loadCurrentValues()
+        }
     }
     
     private func loadCurrentValues() {
-        if let minimalData = b.banner.minimalData {
-            selectedDevice = minimalData.selectedDevice
-        }
+        selectedDevice = minimalData?.selectedDevice
     }
     
     private func handleImageSelection(_ result: Result<[URL], Error>) {
