@@ -8,8 +8,14 @@ import MagicCore
 struct ClassicFeatures: View {
     @EnvironmentObject var b: BannerProvider
     
+    var fontSize: CGFloat = 24
+    
+    init(fontSize: CGFloat) {
+        self.fontSize = fontSize
+    }
+    
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .center, spacing: 12) {
             ForEach(b.banner.features, id: \.self) { feature in
                 HStack(spacing: 8) {
                     // 经典模板使用圆点作为特性标记
@@ -18,18 +24,13 @@ struct ClassicFeatures: View {
                         .frame(width: 6, height: 6)
                     
                     Text(feature)
-                        .font(.system(size: getFeatureSize(), weight: .regular, design: .default))
+                        .font(.system(size: fontSize))
                         .foregroundColor(getFeatureTextColor())
                         .multilineTextAlignment(.leading)
                 }
             }
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
-    }
-    
-    private func getFeatureSize() -> CGFloat {
-        // 经典模板使用中等大小的特性文字
-        return 16.0
+        .frame(maxWidth: .infinity)
     }
     
     private func getFeatureColor() -> Color {

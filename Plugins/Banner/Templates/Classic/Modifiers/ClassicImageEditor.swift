@@ -54,7 +54,7 @@ struct ClassicImageEditor: View {
                     
                     // 屏幕显示开关
                     HStack {
-                        Text("在屏幕中显示")
+                        Text("显示设备边框")
                             .font(.body)
                         
                         Spacer()

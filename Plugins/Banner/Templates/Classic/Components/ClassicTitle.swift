@@ -8,17 +8,18 @@ import MagicCore
 struct ClassicTitle: View {
     @EnvironmentObject var b: BannerProvider
     
+    var fontSize: CGFloat = 48
+    
+    init(fontSize: CGFloat) {
+        self.fontSize = fontSize
+    }
+    
     var body: some View {
         Text(b.banner.title)
-            .font(.system(size: getTitleSize(), weight: .bold, design: .default))
+            .font(.system(size: fontSize, weight: .bold, design: .default))
             .foregroundColor(getTitleColor())
             .multilineTextAlignment(.leading)
             .lineLimit(2)
-    }
-    
-    private func getTitleSize() -> CGFloat {
-        // 经典模板使用较大的标题字体
-        return 48.0
     }
     
     private func getTitleColor() -> Color {

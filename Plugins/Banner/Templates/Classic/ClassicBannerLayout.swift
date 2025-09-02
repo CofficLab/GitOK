@@ -1,27 +1,23 @@
-import SwiftUI
 import MagicCore
+import SwiftUI
 
 /**
  经典Banner布局视图
- 专门为经典模板设计的布局组件，包含缩放和手势支持
  */
 struct ClassicBannerLayout: View {
     @EnvironmentObject var b: BannerProvider
-    
+
     @State private var visible = false
 
     var body: some View {
         GeometryReader { geo in
-            ZStack {
-                content
-                    .frame(width: b.selectedDevice.width, height: b.selectedDevice.height)
-                    .scaleEffect(calculateOptimalScale(geometry: geo))
-            }
-            .frame(width: geo.size.width, height: geo.size.height, alignment: .center)
-        }
-        .padding()
+            content
+                .frame(width: b.selectedDevice.width, height: b.selectedDevice.height)
+                .scaleEffect(calculateOptimalScale(geometry: geo))
+                .frame(width: geo.size.width, height: geo.size.height, alignment: .center)
+        }.padding()
     }
-    
+
     private var content: some View {
         ZStack {
             switch b.selectedDevice {
@@ -30,11 +26,10 @@ struct ClassicBannerLayout: View {
                     VStack(spacing: 0, content: {
                         Spacer()
                         VStack(spacing: 50) {
-                            ClassicTitle()
-                            ClassicSubTitle()
-                        }
-                        .frame(height: b.selectedDevice.height / 3)
-                        ClassicFeatures()
+                            ClassicTitle(fontSize: 120)
+                            ClassicSubTitle(fontSize: 80)
+                        }.frame(height: b.selectedDevice.height / 3)
+                        ClassicFeatures(fontSize: 67)
                         Spacer()
                     })
                     .frame(width: b.selectedDevice.width / 3)
@@ -47,16 +42,15 @@ struct ClassicBannerLayout: View {
             case .iPhoneSmall, .iPhoneBig:
                 VStack(spacing: 40) {
                     Spacer()
-                    ClassicTitle()
-                    ClassicSubTitle()
+                    ClassicTitle(fontSize: 120)
+                    ClassicSubTitle(fontSize: 80)
                     Spacer()
                     ClassicImage()
-                        .frame(maxHeight: .infinity)
                 }.padding()
             case .iPad:
                 GeometryReader { _ in
-                    ClassicTitle()
-                    ClassicSubTitle()
+                    ClassicTitle(fontSize: 120)
+                    ClassicSubTitle(fontSize: 120)
                     Spacer()
                     ClassicImage()
                 }
@@ -64,7 +58,7 @@ struct ClassicBannerLayout: View {
         }
         .background(ClassicBackground())
     }
-    
+
     /// 计算最优缩放比例
     /// 根据当前设备和容器大小计算最佳显示比例
     private func calculateOptimalScale(geometry: GeometryProxy) -> CGFloat {
