@@ -12,7 +12,7 @@ struct ClassicImage: View {
 
     var banner: BannerFile { b.banner }
     var classicData: ClassicBannerData? { banner.classicData }
-    var image: Image { classicData?.getImage(banner.project.url) ?? Image("Snapshot-1") }
+    var image: Image { classicData?.getImage(banner.project.url) ?? Image(ClassicBannerData.defaultImageId) }
 
     var body: some View {
         ZStack {
