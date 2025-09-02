@@ -160,6 +160,7 @@ struct BannerAppStoreDownloadButton: View {
         .hideSidebar()
         .hideTabPicker()
         .hideProjectActions()
+        .setInitialTab(BannerPlugin.label)
         .inRootView()
         .frame(width: 800)
         .frame(height: 600)

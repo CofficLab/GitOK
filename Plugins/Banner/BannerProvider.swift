@@ -40,6 +40,10 @@ class BannerProvider: NSObject, ObservableObject, SuperLog {
         if !Thread.isMainThread {
             assertionFailure("setBanner called from background thread")
         }
+        
+        if self.banner.id == b.id {
+            return
+        }
 
         self.banner = b
     }

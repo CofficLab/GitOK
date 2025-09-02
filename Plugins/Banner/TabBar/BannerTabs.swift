@@ -43,12 +43,6 @@ struct BannerTabs: View {
         }
         .onBannerAdded { _ in
             refreshBanners()
-        }   
-        .onBannerDidSave { savedBanner in
-            // 更新banners数组中的对应项，使用BannerProvider中的最新数据
-            if let index = banners.firstIndex(where: { $0.id == savedBanner.id }) {
-                banners[index] = self.b.banner
-            }
         }
         .onBannerDidDelete { deletedId in
             refreshBanners()

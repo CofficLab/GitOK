@@ -29,6 +29,16 @@ class BannerRepo: SuperLog {
     func getBanners(from project: Project) -> [BannerFile] {
         return getBannerData(from: project)
     }
+
+    /// 根据ID查找Banner
+    /// - Parameters:
+    ///   - id: Banner的ID
+    ///   - project: 所属项目
+    /// - Returns: 找到的BannerFile，如果未找到则返回nil
+    func getBanner(by id: String, from project: Project) -> BannerFile? {
+        let banners = getBanners(from: project)
+        return banners.first { $0.id == id }
+    }
     
     /// 从Project对象获取所有Banner模型
     /// - Parameter project: Project对象
