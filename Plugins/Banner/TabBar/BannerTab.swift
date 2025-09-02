@@ -12,6 +12,7 @@ import OSLog
     - 提供右键删除功能
     - 响应点击切换选中状态
     - 集成删除Banner的完整逻辑
+    - 直接与BannerProvider交互，无需外部参数
 **/
 struct BannerTab: View {
     @EnvironmentObject var b: BannerProvider
@@ -20,15 +21,17 @@ struct BannerTab: View {
     /// Banner数据
     let banner: BannerFile
     
-    /// 当前选中的Banner
-    @Binding var selection: BannerFile?
-    
     /// Banner仓库实例
     private let bannerRepo = BannerRepo.shared
+    
+    /// 检查当前Banner是否为选中状态
+    private var isSelected: Bool {
+        b.banner.id == banner.id
+    }
 
     var body: some View {
-        MagicButton.simple(action: { selection = banner })
-            .magicStyle(selection == banner ? .primary : .secondary)
+        MagicButton.simple(action: { b.setBanner(banner) })
+            .magicStyle(isSelected ? .primary : .secondary)
             .magicShape(.rectangle)
             .magicSize(.mini)
             .magicIcon(.iconDocument)
@@ -38,11 +41,6 @@ struct BannerTab: View {
                     Label("删除「\(banner.title.isEmpty ? "Untitled" : banner.title)」", systemImage: "trash")
                 }
             }
-    }
-
-    /// 检查当前Banner是否为选中状态
-    private var isSelected: Bool {
-        selection?.id == banner.id
     }
     
     /**

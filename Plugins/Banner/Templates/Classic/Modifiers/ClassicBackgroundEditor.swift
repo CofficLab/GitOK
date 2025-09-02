@@ -33,6 +33,9 @@ struct ClassicBackgroundEditor: View {
         .onAppear {
             loadCurrentBackground()
         }
+        .onChange(of: b.banner.id) {
+            loadCurrentBackground()
+        }
     }
     
     private func loadCurrentBackground() {
@@ -83,6 +86,7 @@ private struct BackgroundPreview: View {
         .hideSidebar()
         .hideTabPicker()
         .hideProjectActions()
+        .setInitialTab(BannerPlugin.label)
         .inRootView()
         .frame(width: 800)
         .frame(height: 600)
