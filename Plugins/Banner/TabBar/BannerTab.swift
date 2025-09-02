@@ -46,10 +46,9 @@ struct BannerTab: View {
         .magicShape(.rectangle)
         .magicSize(.mini)
         .magicIcon(.iconDocument)
-        .magicTitle(banner.title)
         .contextMenu {
             Button(action: { deleteBanner() }) {
-                Label("删除「\(banner.title.isEmpty ? "Untitled" : banner.title)」", systemImage: "trash")
+                Label("删除", systemImage: "trash")
             }
         }
     }
@@ -67,7 +66,7 @@ struct BannerTab: View {
                 b.clearBanner()
             }
 
-            m.info("已删除Banner：\(banner.title.isEmpty ? "Untitled" : banner.title)")
+            m.info("已删除")
         } catch {
             m.error("删除Banner失败：\(error.localizedDescription)")
         }

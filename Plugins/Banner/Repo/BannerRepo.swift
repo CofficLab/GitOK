@@ -73,7 +73,7 @@ class BannerRepo: SuperLog {
         }
         
         // 按标题排序，保持稳定的顺序
-        return models.sorted { $0.title < $1.title }
+        return models.sorted { $0.id < $1.id }
     }
     
     /// 尝试加载Banner模型
@@ -113,7 +113,6 @@ class BannerRepo: SuperLog {
         
         // 创建新的BannerData
         var bannerData = BannerFile(
-            title: title,
             path: fileURL.path,
             project: project
         )
@@ -130,7 +129,6 @@ class BannerRepo: SuperLog {
             )
         }
         
-        os_log(.info, "\(Self.emoji) 创建新Banner: \(title)")
         return bannerData
     }
     
@@ -144,8 +142,6 @@ class BannerRepo: SuperLog {
         DispatchQueue.main.async {
             NotificationCenter.default.post(name: .bannerDidSave, object: banner)
         }
-        
-        os_log(.info, "\(Self.emoji) 保存Banner: \(banner.title)")
     }
     
     /// 将Banner数据保存到文件
@@ -169,8 +165,6 @@ class BannerRepo: SuperLog {
         DispatchQueue.main.async {
             NotificationCenter.default.post(name: .bannerDidDelete, object: banner, userInfo: ["id": banner.id])
         }
-        
-        os_log(.info, "\(Self.emoji) 删除Banner: \(banner.title)")
     }
     
     /// 更新Banner数据
@@ -180,14 +174,6 @@ class BannerRepo: SuperLog {
     /// - Returns: 更新后的BannerData
     func updateBanner(_ banner: BannerFile, with updates: BannerDataUpdate) throws -> BannerFile {
         var updatedBanner = banner
-        
-        // 应用更新
-        if let title = updates.title { updatedBanner.title = title }
-        if let subTitle = updates.subTitle { updatedBanner.subTitle = subTitle }
-        if let features = updates.features { updatedBanner.features = features }
-        if let imageId = updates.imageId { updatedBanner.imageId = imageId }
-        if let backgroundId = updates.backgroundId { updatedBanner.backgroundId = backgroundId }
-        if let opacity = updates.opacity { updatedBanner.opacity = opacity }
         
         // 保存更新后的数据
         try saveBanner(updatedBanner)

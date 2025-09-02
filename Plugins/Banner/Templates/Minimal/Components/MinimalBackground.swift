@@ -8,10 +8,13 @@ import MagicCore
 struct MinimalBackground: View {
     @EnvironmentObject var b: BannerProvider
     
+    var minimalData: MinimalBannerData? { b.banner.minimalData }
+    
     var body: some View {
         ZStack {
             // 使用 MagicBackgroundGroup 提供的背景
-            if let gradientName = MagicBackgroundGroup.GradientName(rawValue: b.banner.backgroundId) {
+            if let data = minimalData,
+               let gradientName = MagicBackgroundGroup.GradientName(rawValue: data.backgroundId) {
                 MagicBackgroundGroup(for: gradientName)
                     .opacity(getOpacity())
             } else {
@@ -22,7 +25,7 @@ struct MinimalBackground: View {
     }
     
     private func getOpacity() -> Double {
-        return b.banner.opacity
+        return minimalData?.opacity ?? 1.0
     }
 }
 

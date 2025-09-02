@@ -36,14 +36,18 @@ struct MinimalBackgroundEditor: View {
     }
     
     private func loadCurrentBackground() {
-        selectedBackgroundId = b.banner.backgroundId
+        if let minimalData = b.banner.minimalData {
+            selectedBackgroundId = minimalData.backgroundId
+        }
     }
     
     private func selectBackground(_ backgroundId: String) {
         selectedBackgroundId = backgroundId
         
         try? b.updateBanner { banner in
-            banner.backgroundId = backgroundId
+            var minimalData = banner.minimalData ?? MinimalBannerData()
+            minimalData.backgroundId = backgroundId
+            banner.minimalData = minimalData
         }
     }
 }

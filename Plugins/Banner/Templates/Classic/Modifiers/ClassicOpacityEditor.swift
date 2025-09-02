@@ -41,12 +41,16 @@ struct ClassicOpacityEditor: View {
     }
     
     private func loadCurrentOpacity() {
-        opacity = b.banner.opacity
+        if let classicData = b.banner.classicData {
+            opacity = classicData.opacity
+        }
     }
     
     private func updateOpacity(_ newOpacity: Double) {
         try? b.updateBanner { banner in
-            banner.opacity = newOpacity
+            var classicData = banner.classicData ?? ClassicBannerData()
+            classicData.opacity = newOpacity
+            banner.classicData = classicData
         }
     }
 }

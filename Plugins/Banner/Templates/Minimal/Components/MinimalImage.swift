@@ -11,12 +11,13 @@ struct MinimalImage: View {
     @EnvironmentObject var m: MagicMessageProvider
 
     var banner: BannerFile { b.banner }
-    var image: Image { banner.getImage() }
+    var minimalData: MinimalBannerData? { banner.minimalData }
+    var image: Image { minimalData?.getImage(banner.project.url) ?? Image("Snapshot-1") }
     var device: Device { b.selectedDevice }
 
     var body: some View {
         ZStack {
-            if banner.inScreen {
+            if minimalData?.inScreen ?? false {
                 switch device {
                 case .iMac:
                     ScreeniMac(content: {

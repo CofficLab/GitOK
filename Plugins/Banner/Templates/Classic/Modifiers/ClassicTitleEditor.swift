@@ -49,19 +49,25 @@ struct ClassicTitleEditor: View {
     }
     
     private func loadCurrentValues() {
-        titleText = b.banner.title
-        titleColor = b.banner.titleColor ?? .primary
+        if let classicData = b.banner.classicData {
+            titleText = classicData.title
+            titleColor = classicData.titleColor ?? .primary
+        }
     }
     
     private func updateTitle() {
         try? b.updateBanner { banner in
-            banner.title = titleText
+            var classicData = banner.classicData ?? ClassicBannerData()
+            classicData.title = titleText
+            banner.classicData = classicData
         }
     }
     
     private func updateTitleColor() {
         try? b.updateBanner { banner in
-            banner.titleColor = titleColor
+            var classicData = banner.classicData ?? ClassicBannerData()
+            classicData.titleColor = titleColor
+            banner.classicData = classicData
         }
     }
 }

@@ -65,7 +65,9 @@ struct ClassicFeaturesEditor: View {
     }
     
     private func loadCurrentFeatures() {
-        features = b.banner.features
+        if let classicData = b.banner.classicData {
+            features = classicData.features
+        }
     }
     
     private func addFeature() {
@@ -85,7 +87,9 @@ struct ClassicFeaturesEditor: View {
     
     private func updateFeatures() {
         try? b.updateBanner { banner in
-            banner.features = features
+            var classicData = banner.classicData ?? ClassicBannerData()
+            classicData.features = features
+            banner.classicData = classicData
         }
     }
 }

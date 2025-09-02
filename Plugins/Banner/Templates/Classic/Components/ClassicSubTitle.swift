@@ -14,8 +14,10 @@ struct ClassicSubTitle: View {
         self.fontSize = fontSize
     }
     
+    var classicData: ClassicBannerData? { b.banner.classicData }
+    
     var body: some View {
-        Text(b.banner.subTitle)
+        Text(classicData?.subTitle ?? "Banner SubTitle")
             .font(.system(size: fontSize, weight: .medium, design: .default))
             .foregroundColor(getSubTitleColor())
             .multilineTextAlignment(.leading)
@@ -23,12 +25,7 @@ struct ClassicSubTitle: View {
     }
     
     private func getSubTitleColor() -> Color {
-        // 优先使用通用颜色设置
-        if let bannerColor = b.banner.subTitleColor {
-            return bannerColor
-        } else {
-            return .secondary
-        }
+        return classicData?.subTitleColor ?? .secondary
     }
 }
 

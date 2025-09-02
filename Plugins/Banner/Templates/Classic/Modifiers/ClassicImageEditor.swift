@@ -17,8 +17,8 @@ struct ClassicImageEditor: View {
         GroupBox("产品图片") {
             VStack(spacing: 12) {
                 // 图片预览
-                if b.banner.imageId != nil {
-                    b.banner.getImage()
+                if let classicData = b.banner.classicData, classicData.imageId != nil {
+                    classicData.getImage(b.banner.project.url)
                         .resizable()
                         .scaledToFit()
                         .frame(height: 100)
@@ -81,7 +81,9 @@ struct ClassicImageEditor: View {
     }
     
     private func loadCurrentValues() {
-        inScreen = b.banner.inScreen
+        if let classicData = b.banner.classicData {
+            inScreen = classicData.inScreen
+        }
     }
     
     private func handleImageSelection(_ result: Result<[URL], Error>) {
@@ -97,7 +99,9 @@ struct ClassicImageEditor: View {
     private func changeImage(_ url: URL) {
         do {
             try b.updateBanner { banner in
-                try banner.changeImage(url)
+                var classicData = banner.classicData ?? ClassicBannerData()
+                classicData = try classicData.changeImage(url, projectURL: banner.project.url)
+                banner.classicData = classicData
             }
             m.success("图片更新成功")
         } catch {
@@ -107,7 +111,9 @@ struct ClassicImageEditor: View {
     
     private func updateInScreen() {
         try? b.updateBanner { banner in
-            banner.inScreen = inScreen
+            var classicData = banner.classicData ?? ClassicBannerData()
+            classicData.inScreen = inScreen
+            banner.classicData = classicData
         }
     }
 }

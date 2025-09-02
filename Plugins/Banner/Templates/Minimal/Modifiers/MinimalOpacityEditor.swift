@@ -41,12 +41,16 @@ struct MinimalOpacityEditor: View {
     }
     
     private func loadCurrentOpacity() {
-        opacity = b.banner.opacity
+        if let minimalData = b.banner.minimalData {
+            opacity = minimalData.opacity
+        }
     }
     
     private func updateOpacity(_ newOpacity: Double) {
         try? b.updateBanner { banner in
-            banner.opacity = newOpacity
+            var minimalData = banner.minimalData ?? MinimalBannerData()
+            minimalData.opacity = newOpacity
+            banner.minimalData = minimalData
         }
     }
 }

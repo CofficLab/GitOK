@@ -17,8 +17,8 @@ struct MinimalImageEditor: View {
         GroupBox("产品图片") {
             VStack(spacing: 12) {
                 // 图片预览
-                if b.banner.imageId != nil {
-                    b.banner.getImage()
+                if let minimalData = b.banner.minimalData, minimalData.imageId != nil {
+                    minimalData.getImage(b.banner.project.url)
                         .resizable()
                         .scaledToFit()
                         .frame(height: 100)
@@ -81,7 +81,9 @@ struct MinimalImageEditor: View {
     }
     
     private func loadCurrentValues() {
-        inScreen = b.banner.inScreen
+        if let minimalData = b.banner.minimalData {
+            inScreen = minimalData.inScreen
+        }
     }
     
     private func handleImageSelection(_ result: Result<[URL], Error>) {
@@ -97,7 +99,9 @@ struct MinimalImageEditor: View {
     private func changeImage(_ url: URL) {
         do {
             try b.updateBanner { banner in
-                try banner.changeImage(url)
+                var minimalData = banner.minimalData ?? MinimalBannerData()
+                minimalData = try minimalData.changeImage(url, projectURL: banner.project.url)
+                banner.minimalData = minimalData
             }
             m.success("图片更新成功")
         } catch {
@@ -107,7 +111,9 @@ struct MinimalImageEditor: View {
     
     private func updateInScreen() {
         try? b.updateBanner { banner in
-            banner.inScreen = inScreen
+            var minimalData = banner.minimalData ?? MinimalBannerData()
+            minimalData.inScreen = inScreen
+            banner.minimalData = minimalData
         }
     }
 }

@@ -14,8 +14,10 @@ struct ClassicTitle: View {
         self.fontSize = fontSize
     }
     
+    var classicData: ClassicBannerData? { b.banner.classicData }
+    
     var body: some View {
-        Text(b.banner.title)
+        Text(classicData?.title ?? "Banner Title")
             .font(.system(size: fontSize, weight: .bold, design: .default))
             .foregroundColor(getTitleColor())
             .multilineTextAlignment(.leading)
@@ -23,12 +25,7 @@ struct ClassicTitle: View {
     }
     
     private func getTitleColor() -> Color {
-        // 优先使用通用颜色设置
-        if let bannerColor = b.banner.titleColor {
-            return bannerColor
-        } else {
-            return .primary
-        }
+        return classicData?.titleColor ?? .primary
     }
 }
 
