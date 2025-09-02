@@ -25,16 +25,21 @@ struct BannerFile: SuperLog {
     /// key 是模板的 ID，value 是模板的数据
     var templateData: [String: String] = [:]
     
+    /// 最后选择的模板ID
+    var lastSelectedTemplateId: String = ""
+    
     // MARK: - 初始化方法
     
     init(
         path: String,
         project: Project,
-        templateData: [String: String] = [:]
+        templateData: [String: String] = [:],
+        lastSelectedTemplateId: String = ""
     ) {
         self.path = path
         self.project = project
         self.templateData = templateData
+        self.lastSelectedTemplateId = lastSelectedTemplateId
     }
     
     // MARK: - 业务方法
@@ -114,6 +119,7 @@ extension BannerFile: Equatable {
 extension BannerFile: Codable {
     enum CodingKeys: String, CodingKey {
         case templateData
+        case lastSelectedTemplateId
         // path 和 project 不需要序列化，它们在加载时设置
     }
     
@@ -124,11 +130,13 @@ extension BannerFile: Codable {
         path = ""
         project = Project.null
         templateData = try container.decodeIfPresent([String: String].self, forKey: .templateData) ?? [:]
+        lastSelectedTemplateId = try container.decodeIfPresent(String.self, forKey: .lastSelectedTemplateId) ?? ""
     }
     
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(templateData, forKey: .templateData)
+        try container.encode(lastSelectedTemplateId, forKey: .lastSelectedTemplateId)
     }
 }
 

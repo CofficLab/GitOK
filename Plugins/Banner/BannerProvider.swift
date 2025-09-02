@@ -105,6 +105,11 @@ class BannerProvider: NSObject, ObservableObject, SuperLog {
         }
 
         self.selectedTemplate = template
+        
+        // 保存选择的模板ID
+        try? updateBanner { banner in
+            banner.lastSelectedTemplateId = template.id
+        }
     }
 }
 
