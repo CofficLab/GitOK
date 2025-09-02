@@ -5,6 +5,15 @@ import OSLog
 import SwiftData
 import SwiftUI
 
+extension Notification.Name {
+    static let appReady = Notification.Name("appReady")
+    static let appExit = Notification.Name("appExit")
+    static let appError = Notification.Name("appError")
+    static let appWillBecomeActive = Notification.Name("appWillBecomeActive")
+    static let appWillResignActive = Notification.Name("appWillResignActive")
+    static let appDidBecomeActive = Notification.Name("appDidBecomeActive")
+}
+
 class MacAgent: NSObject, NSApplicationDelegate, ObservableObject, SuperLog, SuperEvent {
     var label: String { "🍎 MacAgent::" }
 
