@@ -50,14 +50,6 @@ struct DebugCommand: Commands {
                 
                 NSWorkspace.shared.open(dir)
             }
-            
-            Button("打开iCloud Documents") {
-                NSWorkspace.shared.open(AppConfig.cloudDocumentsDir)
-            }
-            
-            Button("打开图片目录") {
-                NSWorkspace.shared.open(AppConfig.imagesDir)
-            }
         }
         #endif
     }
