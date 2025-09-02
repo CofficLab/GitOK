@@ -8,40 +8,17 @@ import MagicCore
 struct MinimalTitle: View {
     @EnvironmentObject var b: BannerProvider
     
+    var fontSize: CGFloat = 48
+    
+    init(fontSize: CGFloat = 48) {
+        self.fontSize = fontSize
+    }
+    
     var body: some View {
         Text(b.banner.title)
-            .font(.system(size: getTitleSize(), weight: getTitleWeight(), design: .default))
-            .foregroundColor(getTitleColor())
+            .font(.system(size: fontSize))
             .multilineTextAlignment(.center)
             .lineLimit(2)
-    }
-    
-    private func getTitleSize() -> CGFloat {
-        // 从模板数据中获取字体大小
-        let template = MinimalBannerTemplate()
-        let minimalData = template.restoreData(from: b.banner) as! MinimalBannerData
-        return CGFloat(minimalData.titleSize)
-    }
-    
-    private func getTitleWeight() -> Font.Weight {
-        // 从模板数据中获取字体粗细
-        let template = MinimalBannerTemplate()
-        let minimalData = template.restoreData(from: b.banner) as! MinimalBannerData
-        return minimalData.titleWeight
-    }
-    
-    private func getTitleColor() -> Color {
-        // 优先使用模板特定的颜色，否则使用通用颜色
-        let template = MinimalBannerTemplate()
-        let minimalData = template.restoreData(from: b.banner) as! MinimalBannerData
-        
-        if let templateColor = minimalData.titleColor {
-            return templateColor
-        } else if let bannerColor = b.banner.titleColor {
-            return bannerColor
-        } else {
-            return .primary
-        }
     }
 }
 

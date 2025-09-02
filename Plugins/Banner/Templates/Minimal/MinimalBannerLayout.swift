@@ -14,22 +14,10 @@ struct MinimalBannerLayout: View {
     var body: some View {
         GeometryReader { geo in
             content
-                .frame(width: geo.size.width)
-                .frame(height: geo.size.height)
-                .alignmentGuide(HorizontalAlignment.center) { _ in geo.size.width / 2 }
-                .alignmentGuide(VerticalAlignment.center) { _ in geo.size.height / 2 }
-                .scaleEffect(calculateOptimalScale(geometry: geo) * scale)
-                .gesture(
-                    MagnificationGesture()
-                        .onChanged { value in
-                            scale = lastScale * value
-                        }
-                        .onEnded { _ in
-                            lastScale = scale
-                        }
-                )
-        }
-        .padding()
+                .frame(width: b.selectedDevice.width, height: b.selectedDevice.height)
+                .scaleEffect(calculateOptimalScale(geometry: geo))
+                .frame(width: geo.size.width, height: geo.size.height, alignment: .center)
+        }.padding()
     }
     
     private var content: some View {
@@ -38,8 +26,7 @@ struct MinimalBannerLayout: View {
             
             // 居中的标题和副标题
             VStack(spacing: getSpacing()) {
-                MinimalTitle()
-                MinimalSubTitle()
+                MinimalTitle(fontSize: 120)
             }
             
             Spacer()
