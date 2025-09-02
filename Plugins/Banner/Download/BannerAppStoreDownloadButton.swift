@@ -65,14 +65,14 @@ struct BannerAppStoreDownloadButton: View {
         for device in macDevices {
             let width = Int(device.width)
             let height = Int(device.height)
-            appStoreSizes.append((width, height, "\(width)x\(height) (\(device.description))"))
+            appStoreSizes.append((width, height, "\(width)x\(height) (\(device.name))"))
         }
         var successCount = 0
 
         for (index, device) in macDevices.enumerated() {
             let width = Int(device.width)
             let height = Int(device.height)
-            let description = "\(width)x\(height) (\(device.description))"
+            let description = "\(width)x\(height) (\(device.name))"
             
             progressText = "正在生成 \(description) (\(index + 1)/\(macDevices.count))..."
             

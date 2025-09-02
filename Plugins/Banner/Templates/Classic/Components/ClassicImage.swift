@@ -13,12 +13,10 @@ struct ClassicImage: View {
     var banner: BannerFile { b.banner }
     var classicData: ClassicBannerData? { banner.classicData }
     var image: Image { classicData?.getImage(banner.project.url) ?? Image("Snapshot-1") }
-    var device: Device { b.selectedDevice }
-    var inScreen: Bool { classicData?.inScreen ?? false }
 
     var body: some View {
         ZStack {
-            if inScreen {
+            if let device = classicData?.selectedDevice {
                 switch device {
                 case .iMac:
                     ScreeniMac(content: {

@@ -22,9 +22,9 @@
 		F513321E2E6686A300D6BE9C /* MagicScreen in Frameworks */ = {isa = PBXBuildFile; productRef = F513321D2E6686A300D6BE9C /* MagicScreen */; };
 		F54178E42E00F91F00503C7B /* MarkdownUI in Frameworks */ = {isa = PBXBuildFile; productRef = F54178E32E00F91F00503C7B /* MarkdownUI */; };
 		F54D04C42DF2D01300FFB434 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = F54D04C32DF2D01300FFB434 /* Localizable.xcstrings */; };
-		F5BA578C2E668C2D0054D586 /* MagicAsset in Frameworks */ = {isa = PBXBuildFile; productRef = F5BA578B2E668C2D0054D586 /* MagicAsset */; };
-		F5BA578E2E668C2D0054D586 /* MagicCore in Frameworks */ = {isa = PBXBuildFile; productRef = F5BA578D2E668C2D0054D586 /* MagicCore */; };
-		F5BA57902E668C2D0054D586 /* MagicScreen in Frameworks */ = {isa = PBXBuildFile; productRef = F5BA578F2E668C2D0054D586 /* MagicScreen */; };
+		F55951842E66BAC7002161F2 /* MagicAsset in Frameworks */ = {isa = PBXBuildFile; productRef = F55951832E66BAC7002161F2 /* MagicAsset */; };
+		F55951862E66BAC7002161F2 /* MagicCore in Frameworks */ = {isa = PBXBuildFile; productRef = F55951852E66BAC7002161F2 /* MagicCore */; };
+		F55951882E66BAC7002161F2 /* MagicScreen in Frameworks */ = {isa = PBXBuildFile; productRef = F55951872E66BAC7002161F2 /* MagicScreen */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -61,7 +61,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0B3CC95E2DF1C49000E22263 /* Sparkle in Frameworks */,
-				F5BA578C2E668C2D0054D586 /* MagicAsset in Frameworks */,
+				F55951842E66BAC7002161F2 /* MagicAsset in Frameworks */,
 				F51013D32E6684DF00FA7ACA /* MagicAsset in Frameworks */,
 				F513321A2E6686A300D6BE9C /* MagicAsset in Frameworks */,
 				0BDD346E2DFE86FA00C58C15 /* MagicCore in Frameworks */,
@@ -72,9 +72,9 @@
 				F513321C2E6686A300D6BE9C /* MagicCore in Frameworks */,
 				0BD163992E63E0E700448518 /* MagicCore in Frameworks */,
 				F54178E42E00F91F00503C7B /* MarkdownUI in Frameworks */,
-				F5BA57902E668C2D0054D586 /* MagicScreen in Frameworks */,
+				F55951882E66BAC7002161F2 /* MagicScreen in Frameworks */,
 				F51013DA2E66853500FA7ACA /* MagicCore in Frameworks */,
-				F5BA578E2E668C2D0054D586 /* MagicCore in Frameworks */,
+				F55951862E66BAC7002161F2 /* MagicCore in Frameworks */,
 				F51013D52E6684DF00FA7ACA /* MagicCore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -157,9 +157,9 @@
 				F51332192E6686A300D6BE9C /* MagicAsset */,
 				F513321B2E6686A300D6BE9C /* MagicCore */,
 				F513321D2E6686A300D6BE9C /* MagicScreen */,
-				F5BA578B2E668C2D0054D586 /* MagicAsset */,
-				F5BA578D2E668C2D0054D586 /* MagicCore */,
-				F5BA578F2E668C2D0054D586 /* MagicScreen */,
+				F55951832E66BAC7002161F2 /* MagicAsset */,
+				F55951852E66BAC7002161F2 /* MagicCore */,
+				F55951872E66BAC7002161F2 /* MagicScreen */,
 			);
 			productName = GitOK;
 			productReference = 0B0E167D2BD89A8F0078942B /* GitOK.app */;
@@ -193,7 +193,7 @@
 			packageReferences = (
 				F5F794E72C5B192600DCB824 /* XCRemoteSwiftPackageReference "Sparkle" */,
 				F54178E22E00F91F00503C7B /* XCRemoteSwiftPackageReference "swift-markdown-ui" */,
-				F5BA578A2E668C2D0054D586 /* XCRemoteSwiftPackageReference "MagicKit" */,
+				F55951822E66BAC7002161F2 /* XCLocalSwiftPackageReference "../MagicKit" */,
 			);
 			productRefGroup = 0B0E167E2BD89A8F0078942B /* Products */;
 			projectDirPath = "";
@@ -460,6 +460,13 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCLocalSwiftPackageReference section */
+		F55951822E66BAC7002161F2 /* XCLocalSwiftPackageReference "../MagicKit" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../MagicKit;
+		};
+/* End XCLocalSwiftPackageReference section */
+
 /* Begin XCRemoteSwiftPackageReference section */
 		F54178E22E00F91F00503C7B /* XCRemoteSwiftPackageReference "swift-markdown-ui" */ = {
 			isa = XCRemoteSwiftPackageReference;
@@ -467,14 +474,6 @@
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 2.4.1;
-			};
-		};
-		F5BA578A2E668C2D0054D586 /* XCRemoteSwiftPackageReference "MagicKit" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/CofficLab/MagicKit";
-			requirement = {
-				branch = dev;
-				kind = branch;
 			};
 		};
 		F5F794E72C5B192600DCB824 /* XCRemoteSwiftPackageReference "Sparkle" */ = {
@@ -542,19 +541,16 @@
 			package = F54178E22E00F91F00503C7B /* XCRemoteSwiftPackageReference "swift-markdown-ui" */;
 			productName = MarkdownUI;
 		};
-		F5BA578B2E668C2D0054D586 /* MagicAsset */ = {
+		F55951832E66BAC7002161F2 /* MagicAsset */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = F5BA578A2E668C2D0054D586 /* XCRemoteSwiftPackageReference "MagicKit" */;
 			productName = MagicAsset;
 		};
-		F5BA578D2E668C2D0054D586 /* MagicCore */ = {
+		F55951852E66BAC7002161F2 /* MagicCore */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = F5BA578A2E668C2D0054D586 /* XCRemoteSwiftPackageReference "MagicKit" */;
 			productName = MagicCore;
 		};
-		F5BA578F2E668C2D0054D586 /* MagicScreen */ = {
+		F55951872E66BAC7002161F2 /* MagicScreen */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = F5BA578A2E668C2D0054D586 /* XCRemoteSwiftPackageReference "MagicKit" */;
 			productName = MagicScreen;
 		};
 /* End XCSwiftPackageProductDependency section */

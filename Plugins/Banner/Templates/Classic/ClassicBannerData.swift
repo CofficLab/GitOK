@@ -1,4 +1,5 @@
 import SwiftUI
+import MagicScreen
 
 /**
  经典布局的数据模型
@@ -9,7 +10,7 @@ struct ClassicBannerData: Codable {
     var features: [String] = []
     var imageId: String? = nil
     var backgroundId: String = "1"
-    var inScreen: Bool = false
+    var selectedDevice: Device? = nil
     var opacity: Double = 1.0
     var titleColor: Color? = nil
     var subTitleColor: Color? = nil
@@ -22,7 +23,7 @@ struct ClassicBannerData: Codable {
         features: [String] = [],
         imageId: String? = nil,
         backgroundId: String = "1",
-        inScreen: Bool = false,
+        selectedDevice: Device? = nil,
         opacity: Double = 1.0,
         titleColor: Color? = nil,
         subTitleColor: Color? = nil
@@ -32,14 +33,14 @@ struct ClassicBannerData: Codable {
         self.features = features
         self.imageId = imageId
         self.backgroundId = backgroundId
-        self.inScreen = inScreen
+        self.selectedDevice = selectedDevice
         self.opacity = opacity
         self.titleColor = titleColor
         self.subTitleColor = subTitleColor
     }
     
     enum CodingKeys: String, CodingKey {
-        case title, subTitle, features, imageId, backgroundId, inScreen, opacity
+        case title, subTitle, features, imageId, backgroundId, selectedDevice, opacity
         // 颜色暂时不需要序列化，因为 SwiftUI.Color 不支持 Codable
     }
     
@@ -50,7 +51,9 @@ struct ClassicBannerData: Codable {
         features = try container.decodeIfPresent([String].self, forKey: .features) ?? []
         imageId = try container.decodeIfPresent(String.self, forKey: .imageId)
         backgroundId = try container.decodeIfPresent(String.self, forKey: .backgroundId) ?? "1"
-        inScreen = try container.decodeIfPresent(Bool.self, forKey: .inScreen) ?? false
+        if let deviceRawValue = try container.decodeIfPresent(String.self, forKey: .selectedDevice) {
+            selectedDevice = Device(rawValue: deviceRawValue)
+        }
         opacity = try container.decodeIfPresent(Double.self, forKey: .opacity) ?? 1.0
     }
     
@@ -61,7 +64,7 @@ struct ClassicBannerData: Codable {
         try container.encode(features, forKey: .features)
         try container.encodeIfPresent(imageId, forKey: .imageId)
         try container.encode(backgroundId, forKey: .backgroundId)
-        try container.encode(inScreen, forKey: .inScreen)
+        try container.encodeIfPresent(selectedDevice?.rawValue, forKey: .selectedDevice)
         try container.encode(opacity, forKey: .opacity)
     }
     

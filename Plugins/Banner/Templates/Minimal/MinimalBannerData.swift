@@ -1,4 +1,5 @@
 import SwiftUI
+import MagicScreen
 
 /**
  简约布局的数据模型
@@ -7,7 +8,7 @@ struct MinimalBannerData: Codable {
     var title: String = "App Title"
     var imageId: String? = nil
     var backgroundId: String = "1"
-    var inScreen: Bool = false
+    var selectedDevice: Device? = nil
     var opacity: Double = 1.0
     var titleColor: Color? = nil
     
@@ -17,20 +18,20 @@ struct MinimalBannerData: Codable {
         title: String = "App Title",
         imageId: String? = nil,
         backgroundId: String = "1",
-        inScreen: Bool = false,
+        selectedDevice: Device? = nil,
         opacity: Double = 1.0,
         titleColor: Color? = nil
     ) {
         self.title = title
         self.imageId = imageId
         self.backgroundId = backgroundId
-        self.inScreen = inScreen
+        self.selectedDevice = selectedDevice
         self.opacity = opacity
         self.titleColor = titleColor
     }
     
     enum CodingKeys: String, CodingKey {
-        case title, imageId, backgroundId, inScreen, opacity
+        case title, imageId, backgroundId, selectedDevice, opacity
         // 颜色暂时不需要序列化，因为 SwiftUI.Color 不支持 Codable
     }
     
@@ -39,7 +40,9 @@ struct MinimalBannerData: Codable {
         title = try container.decodeIfPresent(String.self, forKey: .title) ?? "App Title"
         imageId = try container.decodeIfPresent(String.self, forKey: .imageId)
         backgroundId = try container.decodeIfPresent(String.self, forKey: .backgroundId) ?? "1"
-        inScreen = try container.decodeIfPresent(Bool.self, forKey: .inScreen) ?? false
+        if let deviceRawValue = try container.decodeIfPresent(String.self, forKey: .selectedDevice) {
+            selectedDevice = Device(rawValue: deviceRawValue)
+        }
         opacity = try container.decodeIfPresent(Double.self, forKey: .opacity) ?? 1.0
     }
     
@@ -48,7 +51,7 @@ struct MinimalBannerData: Codable {
         try container.encode(title, forKey: .title)
         try container.encodeIfPresent(imageId, forKey: .imageId)
         try container.encode(backgroundId, forKey: .backgroundId)
-        try container.encode(inScreen, forKey: .inScreen)
+        try container.encodeIfPresent(selectedDevice?.rawValue, forKey: .selectedDevice)
         try container.encode(opacity, forKey: .opacity)
     }
     

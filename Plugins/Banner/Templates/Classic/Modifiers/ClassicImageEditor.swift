@@ -1,5 +1,6 @@
 import SwiftUI
 import MagicCore
+import MagicScreen
 import UniformTypeIdentifiers
 
 /**
@@ -11,7 +12,7 @@ struct ClassicImageEditor: View {
     @EnvironmentObject var m: MagicMessageProvider
     
     @State private var showImagePicker = false
-    @State private var inScreen = false
+    @State private var selectedDevice: Device? = nil
     
     var body: some View {
         GroupBox("产品图片") {
@@ -52,17 +53,23 @@ struct ClassicImageEditor: View {
                     }
                     .frame(maxWidth: .infinity)
                     
-                    // 屏幕显示开关
+                    // 设备选择
                     HStack {
-                        Text("显示设备边框")
+                        Text("设备边框")
                             .font(.body)
                         
                         Spacer()
                         
-                        Toggle("", isOn: $inScreen)
-                            .onChange(of: inScreen) {
-                                updateInScreen()
+                        Picker("选择设备", selection: $selectedDevice) {
+                            Text("无边框").tag(Optional<Device>.none)
+                            ForEach(Device.allCases, id: \.self) { device in
+                                Text(device.name).tag(Optional(device))
                             }
+                        }
+                        .frame(width: 120)
+                        .onChange(of: selectedDevice) {
+                            updateSelectedDevice()
+                        }
                     }
                 }
             }
@@ -82,7 +89,7 @@ struct ClassicImageEditor: View {
     
     private func loadCurrentValues() {
         if let classicData = b.banner.classicData {
-            inScreen = classicData.inScreen
+            selectedDevice = classicData.selectedDevice
         }
     }
     
@@ -109,10 +116,10 @@ struct ClassicImageEditor: View {
         }
     }
     
-    private func updateInScreen() {
+    private func updateSelectedDevice() {
         try? b.updateBanner { banner in
             var classicData = banner.classicData ?? ClassicBannerData()
-            classicData.inScreen = inScreen
+            classicData.selectedDevice = selectedDevice
             banner.classicData = classicData
         }
     }

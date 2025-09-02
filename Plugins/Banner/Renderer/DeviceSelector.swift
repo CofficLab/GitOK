@@ -13,21 +13,24 @@ struct DeviceSelector: View {
     var body: some View {
         HStack(spacing: 16) {
             // 设备选择下拉菜单
-            Picker("尺寸", selection: Binding(
-                get: { b.selectedDevice },
-                set: { newDevice in
-                    b.setSelectedDevice(newDevice)
-                    // 切换设备时重置缩放
-                    scale = 1.0
-                    lastScale = 1.0
-                }
-            )) {
+            Menu {
                 ForEach([Device.iMac, Device.MacBook, Device.iPhoneBig, Device.iPhoneSmall, Device.iPad], id: \.self) { device in
-                    HStack {
-                        Image(systemName: device.systemImageName)
-                        Text(device.description)
+                    Button(action: {
+                        b.setSelectedDevice(device)
+                        // 切换设备时重置缩放
+                        scale = 1.0
+                        lastScale = 1.0
+                    }) {
+                        HStack {
+                            Image(systemName: device.systemImageName)
+                            Text(device.name)
+                        }
                     }
-                    .tag(device)
+                }
+            } label: {
+                HStack {
+                    Image(systemName: b.selectedDevice.systemImageName)
+                    Text(b.selectedDevice.name)
                 }
             }
             .pickerStyle(MenuPickerStyle())

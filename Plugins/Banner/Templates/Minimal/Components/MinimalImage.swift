@@ -13,11 +13,10 @@ struct MinimalImage: View {
     var banner: BannerFile { b.banner }
     var minimalData: MinimalBannerData? { banner.minimalData }
     var image: Image { minimalData?.getImage(banner.project.url) ?? Image("Snapshot-1") }
-    var device: Device { b.selectedDevice }
 
     var body: some View {
         ZStack {
-            if minimalData?.inScreen ?? false {
+            if let device = minimalData?.selectedDevice {
                 switch device {
                 case .iMac:
                     ScreeniMac(content: {

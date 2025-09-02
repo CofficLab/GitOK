@@ -65,14 +65,14 @@ struct BanneriPhoneAppStoreDownloadButton: View {
         for device in iPhoneDevices {
             let width = Int(device.width)
             let height = Int(device.height)
-            iPhoneAppStoreSizes.append((width, height, "\(width)x\(height) (\(device.description))"))
+            iPhoneAppStoreSizes.append((width, height, "\(width)x\(height) (\(device.name))"))
         }
         var successCount = 0
 
         for (index, device) in iPhoneDevices.enumerated() {
             let width = Int(device.width)
             let height = Int(device.height)
-            let description = "\(width)x\(height) (\(device.description))"
+            let description = "\(width)x\(height) (\(device.name))"
             
             progressText = "正在生成 \(description) (\(index + 1)/\(iPhoneDevices.count))..."
             
@@ -133,6 +133,7 @@ struct BanneriPhoneAppStoreDownloadButton: View {
     ContentLayout()
         .hideSidebar()
         .hideProjectActions()
+        .setInitialTab(BannerPlugin.label)
         .hideTabPicker()
         .inRootView()
         .frame(width: 800)
