@@ -1,5 +1,6 @@
 import Foundation
 import OSLog
+import SwiftUI
 
 // MARK: 路径配置
 
@@ -58,4 +59,26 @@ extension AppConfig {
 
         return url
     }
+}
+
+#Preview("App - Small Screen") {
+    ContentLayout()
+        .setInitialTab(IconPlugin.label)
+        .hideSidebar()
+        .hideProjectActions()
+        .setInitialTab(IconPlugin.label)
+        .inRootView()
+        .frame(width: 800)
+        .frame(height: 800)
+}
+
+#Preview("App - Big Screen") {
+    ContentLayout()
+        .hideProjectActions()
+        .setInitialTab(IconPlugin.label)
+        .hideSidebar()
+        .setInitialTab(IconPlugin.label)
+        .inRootView()
+        .frame(width: 800)
+        .frame(height: 1200)
 }

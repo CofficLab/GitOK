@@ -22,10 +22,24 @@ protocol GitUserConfigRepoProtocol: BaseRepo where Entity == GitUserConfig {
     func getRecentConfigs(limit: Int) throws -> [GitUserConfig]
 }
 
-#Preview("App-Big Screen") {
-    RootView {
-        ContentLayout()
-    }
-    .frame(width: 1200)
-    .frame(height: 1200)
-} 
+#Preview("App - Small Screen") {
+    ContentLayout()
+        .setInitialTab(IconPlugin.label)
+        .hideSidebar()
+        .hideProjectActions()
+        .setInitialTab(IconPlugin.label)
+        .inRootView()
+        .frame(width: 800)
+        .frame(height: 800)
+}
+
+#Preview("App - Big Screen") {
+    ContentLayout()
+        .hideProjectActions()
+        .setInitialTab(IconPlugin.label)
+        .hideSidebar()
+        .setInitialTab(IconPlugin.label)
+        .inRootView()
+        .frame(width: 800)
+        .frame(height: 1200)
+}

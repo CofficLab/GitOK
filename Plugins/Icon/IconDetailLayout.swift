@@ -1,11 +1,11 @@
+import MagicCore
 import OSLog
 import SwiftUI
-import MagicCore
 
 struct IconDetailLayout: View {
     @EnvironmentObject var i: IconProvider
     @EnvironmentObject var g: DataProvider
-    
+
     @State private var showWelcome = false
     @State private var icons: [IconData] = []
     @State private var selection: IconData?
@@ -125,25 +125,23 @@ struct IconDetailLayout: View {
 }
 
 #Preview("App - Small Screen") {
-    RootView {
-        ContentLayout()
-            .setInitialTab(IconPlugin.label)
-            .hideSidebar()
-            .hideProjectActions()
-            .setInitialTab(IconPlugin.label)
-    }
-    .frame(width: 800)
-    .frame(height: 800)
+    ContentLayout()
+        .setInitialTab(IconPlugin.label)
+        .hideSidebar()
+        .hideProjectActions()
+        .setInitialTab(IconPlugin.label)
+        .inRootView()
+        .frame(width: 800)
+        .frame(height: 800)
 }
 
 #Preview("App - Big Screen") {
-    RootView {
-        ContentLayout()
-            .hideProjectActions()
-            .setInitialTab(IconPlugin.label)
-            .hideSidebar()
-            .setInitialTab(IconPlugin.label)
-    }
-    .frame(width: 800)
-    .frame(height: 1200)
+    ContentLayout()
+        .hideProjectActions()
+        .setInitialTab(IconPlugin.label)
+        .hideSidebar()
+        .setInitialTab(IconPlugin.label)
+        .inRootView()
+        .frame(width: 800)
+        .frame(height: 1200)
 }
