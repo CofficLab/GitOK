@@ -58,7 +58,7 @@ struct BannerAppStoreDownloadButton: View {
         }
 
         // 为所有Mac设备生成App Store截图
-        let macDevices = [Device.iMac, Device.MacBook]
+        let macDevices = [ScreenSize.iMac, ScreenSize.MacBook]
         var appStoreSizes: [(Int, Int, String)] = []
         
         for device in macDevices {
@@ -112,7 +112,7 @@ struct BannerAppStoreDownloadButton: View {
     }
     
     @ViewBuilder
-    private func createBannerView(device: Device) -> some View {
+    private func createBannerView(device: ScreenSize) -> some View {
         if let template = template {
             // 使用当前选择的模板
             template.createPreviewView()

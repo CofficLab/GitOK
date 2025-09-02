@@ -20,7 +20,7 @@ class BannerProvider: NSObject, ObservableObject, SuperLog {
     @Published private(set) var banner: BannerFile = .empty
 
     /// 当前选中的设备
-    @Published private(set) var selectedDevice: Device = .iPhoneBig
+    @Published private(set) var selectedDevice: ScreenSize = .iPhoneBig
 
     /// 当前选中的模板
     @Published private(set) var selectedTemplate: any BannerTemplateProtocol = ClassicBannerTemplate()
@@ -61,7 +61,7 @@ class BannerProvider: NSObject, ObservableObject, SuperLog {
          ## 参数
          - `device`: 要设置为当前选中的设备
      */
-    func setSelectedDevice(_ device: Device) {
+    func setSelectedDevice(_ device: ScreenSize) {
         if !Thread.isMainThread {
             assertionFailure("setSelectedDevice called from background thread")
         }

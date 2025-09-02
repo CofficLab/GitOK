@@ -9,7 +9,7 @@ import SwiftUI
  */
 struct BannerImage: View {
     @EnvironmentObject var b: BannerProvider
-    let device: Device
+    let device: ScreenSize
 
     var image: Image { b.banner.getImage() }
 

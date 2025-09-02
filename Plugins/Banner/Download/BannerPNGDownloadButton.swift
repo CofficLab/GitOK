@@ -58,7 +58,7 @@ struct BannerPNGDownloadButton: View {
         }
 
         // 为所有设备生成PNG截图
-        let allDevices = [Device.iMac, Device.MacBook, Device.iPhoneBig, Device.iPhoneSmall, Device.iPad]
+        let allDevices = [ScreenSize.iMac, ScreenSize.MacBook, ScreenSize.iPhoneBig, ScreenSize.iPhoneSmall, ScreenSize.iPad]
         var successCount = 0
 
         for (index, device) in allDevices.enumerated() {
@@ -96,7 +96,7 @@ struct BannerPNGDownloadButton: View {
     }
     
     @ViewBuilder
-    private func createBannerView(device: Device) -> some View {
+    private func createBannerView(device: ScreenSize) -> some View {
         if let template = template {
             // 使用当前选择的模板
             template.createPreviewView()

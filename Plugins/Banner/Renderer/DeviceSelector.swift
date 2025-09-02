@@ -21,7 +21,7 @@ struct DeviceSelector: View {
                     lastScale = 1.0
                 }
             )) {
-                ForEach([Device.iMac, Device.MacBook, Device.iPhoneBig, Device.iPhoneSmall, Device.iPad], id: \.self) { device in
+                ForEach([ScreenSize.iMac, ScreenSize.MacBook, ScreenSize.iPhoneBig, ScreenSize.iPhoneSmall, ScreenSize.iPad], id: \.self) { device in
                     HStack {
                         Image(systemName: device.systemImageName)
                         Text(device.description)

@@ -1,13 +1,7 @@
 import Foundation
 import SwiftUI
 
-enum DeviceType: Equatable {
-    case Mac
-    case iPhone
-    case iPad
-}
-
-enum Device: String, Equatable {
+enum ScreenSize: String, Equatable {
     case iMac
     case MacBook
     case iPhoneBig

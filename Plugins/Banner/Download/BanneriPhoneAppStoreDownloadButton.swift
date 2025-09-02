@@ -58,7 +58,7 @@ struct BanneriPhoneAppStoreDownloadButton: View {
         }
 
         // 为所有iPhone设备生成App Store截图
-        let iPhoneDevices = [Device.iPhoneBig, Device.iPhoneSmall]
+        let iPhoneDevices = [ScreenSize.iPhoneBig, ScreenSize.iPhoneSmall]
         var iPhoneAppStoreSizes: [(Int, Int, String)] = []
         
         for device in iPhoneDevices {
@@ -112,7 +112,7 @@ struct BanneriPhoneAppStoreDownloadButton: View {
     }
     
     @ViewBuilder
-    private func createBannerView(device: Device) -> some View {
+    private func createBannerView(device: ScreenSize) -> some View {
         if let template = template {
             // 使用当前选择的模板
             template.createPreviewView()
