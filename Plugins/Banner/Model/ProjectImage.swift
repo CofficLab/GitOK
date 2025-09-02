@@ -5,7 +5,7 @@ import SwiftUI
 import AppKit
 import MagicCore
 
-class GeneratedIcon: SuperLog {
+class ProjectImage: SuperLog {
     static var dir: String = ".gitok/images"
     
     let emoji = "🎨"
@@ -28,8 +28,8 @@ class GeneratedIcon: SuperLog {
         }
     }
     
-    static func fromImageId(_ imageId: String) -> GeneratedIcon {
-        return GeneratedIcon(id: imageId)
+    static func fromImageId(_ imageId: String) -> ProjectImage {
+        return ProjectImage(id: imageId)
     }
 
     static func removeImage(_ id: String, projectURL: URL) throws {

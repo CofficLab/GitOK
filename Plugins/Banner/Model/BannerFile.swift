@@ -97,12 +97,12 @@ struct BannerFile: SuperLog {
     
     /// 获取生成的图标
     /// - Returns: GeneratedIcon对象（如果存在）
-    func getGeneratedIcon() -> GeneratedIcon? {
+    func getGeneratedIcon() -> ProjectImage? {
         guard let imageId = self.imageId else {
             return nil
         }
         
-        return GeneratedIcon.fromImageId(imageId)
+        return ProjectImage.fromImageId(imageId)
     }
     
     /// 更改图片
