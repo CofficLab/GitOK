@@ -46,8 +46,8 @@ struct BannerDetailLayout: View {
                 VStack(spacing: 0) {
                     // 模板选择器
                     TemplateSelector()
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 32)
+                        .padding(.horizontal, 4)
+                        .padding(.vertical, 8)
                         .background(Color(.controlBackgroundColor))
                     
                     // 模板提供的修改器视图

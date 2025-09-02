@@ -10,39 +10,14 @@ struct ClassicBackground: View {
     
     var body: some View {
         ZStack {
-            // 基础背景
-            getBackgroundColor()
-                .opacity(getOpacity())
-            
-            // 经典模板特有的纹理效果
-            LinearGradient(
-                gradient: Gradient(colors: [
-                    getBackgroundColor().opacity(0.9),
-                    getBackgroundColor().opacity(0.6),
-                    getBackgroundColor().opacity(0.8)
-                ]),
-                startPoint: .top,
-                endPoint: .bottom
-            )
-            .opacity(getOpacity())
-        }
-    }
-    
-    private func getBackgroundColor() -> Color {
-        // 根据背景ID返回对应的颜色
-        switch b.banner.backgroundId {
-        case "1":
-            return Color.blue
-        case "2":
-            return Color.green
-        case "3":
-            return Color.purple
-        case "4":
-            return Color.orange
-        case "5":
-            return Color.red
-        default:
-            return Color.blue
+            // 使用 MagicBackgroundGroup 提供的背景
+            if let gradientName = MagicBackgroundGroup.GradientName(rawValue: b.banner.backgroundId) {
+                MagicBackgroundGroup(for: gradientName)
+                    .opacity(getOpacity())
+            } else {
+                // 如果背景ID无效，使用默认背景
+                Color.blue.opacity(getOpacity())
+            }
         }
     }
     

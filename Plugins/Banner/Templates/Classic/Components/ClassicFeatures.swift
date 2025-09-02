@@ -1,5 +1,5 @@
-import SwiftUI
 import MagicCore
+import SwiftUI
 
 /**
  经典模板的特性列表组件
@@ -7,58 +7,23 @@ import MagicCore
  */
 struct ClassicFeatures: View {
     @EnvironmentObject var b: BannerProvider
-    
+
     var fontSize: CGFloat = 24
-    
+
     init(fontSize: CGFloat) {
         self.fontSize = fontSize
     }
-    
+
     var body: some View {
         VStack(alignment: .center, spacing: 12) {
             ForEach(b.banner.features, id: \.self) { feature in
-                HStack(spacing: 8) {
-                    // 经典模板使用圆点作为特性标记
-                    Circle()
-                        .fill(getFeatureColor())
-                        .frame(width: 6, height: 6)
-                    
-                    Text(feature)
-                        .font(.system(size: fontSize))
-                        .foregroundColor(getFeatureTextColor())
-                        .multilineTextAlignment(.leading)
-                }
+                Text(feature)
+                    .font(.system(size: fontSize))
+                    .foregroundColor(.secondary)
+                    .multilineTextAlignment(.leading)
             }
         }
         .frame(maxWidth: .infinity)
-    }
-    
-    private func getFeatureColor() -> Color {
-        // 特性标记使用主题色
-        return getBackgroundColor()
-    }
-    
-    private func getFeatureTextColor() -> Color {
-        // 特性文字使用次要颜色
-        return .secondary
-    }
-    
-    private func getBackgroundColor() -> Color {
-        // 根据背景ID返回对应的颜色
-        switch b.banner.backgroundId {
-        case "1":
-            return Color.blue
-        case "2":
-            return Color.green
-        case "3":
-            return Color.purple
-        case "4":
-            return Color.orange
-        case "5":
-            return Color.red
-        default:
-            return Color.blue
-        }
     }
 }
 

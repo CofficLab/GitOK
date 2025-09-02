@@ -13,24 +13,22 @@ struct ClassicBackgroundEditor: View {
     
     var body: some View {
         GroupBox("背景设置") {
-            VStack(spacing: 12) {
-                // 背景选择网格
-                LazyVGrid(columns: [
-                    GridItem(.adaptive(minimum: 60, maximum: 80), spacing: 8)
-                ], spacing: 8) {
-                    ForEach(1...12, id: \.self) { backgroundId in
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 6) {
+                    ForEach(0 ..< MagicBackgroundGroup.all.count, id: \.self) { index in
+                        let gradient = MagicBackgroundGroup.all[index]
                         BackgroundPreview(
-                            backgroundId: "\(backgroundId)",
-                            isSelected: selectedBackgroundId == "\(backgroundId)",
+                            gradient: gradient,
+                            isSelected: selectedBackgroundId == gradient.rawValue,
                             onSelect: {
-                                selectBackground("\(backgroundId)")
+                                selectBackground(gradient.rawValue)
                             }
                         )
+                        .frame(width: 60, height: 40)
                     }
                 }
                 .padding(8)
             }
-            .padding(8)
         }
         .onAppear {
             loadCurrentBackground()
@@ -54,48 +52,25 @@ struct ClassicBackgroundEditor: View {
  背景预览组件
  */
 private struct BackgroundPreview: View {
-    let backgroundId: String
+    let gradient: MagicBackgroundGroup.GradientName
     let isSelected: Bool
     let onSelect: () -> Void
     
     var body: some View {
         Button(action: onSelect) {
-            RoundedRectangle(cornerRadius: 6)
-                .fill(backgroundGradient)
-                .frame(width: 60, height: 40)
-                .overlay(
+            ZStack {
+                MagicBackgroundGroup(for: gradient)
+                    .clipShape(RoundedRectangle(cornerRadius: 6))
+                
+                if isSelected {
                     RoundedRectangle(cornerRadius: 6)
-                        .stroke(isSelected ? Color.accentColor : Color.clear, lineWidth: 2)
-                )
-                .overlay(
-                    Text(backgroundId)
-                        .font(.caption2)
-                        .foregroundColor(.white)
-                        .fontWeight(.medium)
-                )
+                        .stroke(Color.accentColor, lineWidth: 2)
+                }
+            }
         }
         .buttonStyle(PlainButtonStyle())
         .scaleEffect(isSelected ? 1.1 : 1.0)
         .animation(.easeInOut(duration: 0.2), value: isSelected)
-    }
-    
-    private var backgroundGradient: LinearGradient {
-        switch backgroundId {
-        case "1":
-            return LinearGradient(colors: [.blue, .purple], startPoint: .topLeading, endPoint: .bottomTrailing)
-        case "2":
-            return LinearGradient(colors: [.green, .blue], startPoint: .topLeading, endPoint: .bottomTrailing)
-        case "3":
-            return LinearGradient(colors: [.orange, .red], startPoint: .topLeading, endPoint: .bottomTrailing)
-        case "4":
-            return LinearGradient(colors: [.pink, .orange], startPoint: .topLeading, endPoint: .bottomTrailing)
-        case "5":
-            return LinearGradient(colors: [.cyan, .blue], startPoint: .topLeading, endPoint: .bottomTrailing)
-        case "6":
-            return LinearGradient(colors: [.yellow, .orange], startPoint: .topLeading, endPoint: .bottomTrailing)
-        default:
-            return LinearGradient(colors: [.gray, .black], startPoint: .topLeading, endPoint: .bottomTrailing)
-        }
     }
 }
 
