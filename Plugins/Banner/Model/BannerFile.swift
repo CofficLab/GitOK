@@ -15,105 +15,34 @@ struct BannerFile: SuperLog {
     
     // MARK: - 基本属性
     
-    /// Banner标题
-    var title: String = "Banner Title"
-    
-    /// Banner副标题
-    var subTitle: String = "Banner SubTitle"
-    
-    /// 功能特性列表
-    var features: [String] = []
-    
-    /// 图片资源ID（可选）
-    var imageId: String?
-    
-    /// 背景样式ID
-    var backgroundId: String = "1"
-    
-    /// 是否在屏幕中显示
-    var inScreen: Bool = false
-    
-    /// 透明度（0.0 - 1.0）
-    var opacity: Double = 1.0
-    
     /// 配置文件路径
     var path: String
     
     /// 所属项目
     var project: Project
     
-    /// 标题颜色（可选）
-    var titleColor: Color?
-    
-    /// 副标题颜色（可选）
-    var subTitleColor: Color?
-    
     /// 模板特定的数据（JSON格式存储）
-    var templateData: String?
+    /// key 是模板的 ID，value 是模板的数据
+    var templateData: [String: String] = [:]
+    
+    /// 最后选择的模板ID
+    var lastSelectedTemplateId: String = ""
     
     // MARK: - 初始化方法
     
     init(
-        title: String = "Banner Title",
-        subTitle: String = "Banner SubTitle",
-        features: [String] = [],
-        imageId: String? = nil,
-        backgroundId: String = "1",
-        inScreen: Bool = false,
-        opacity: Double = 1.0,
         path: String,
         project: Project,
-        titleColor: Color? = nil,
-        subTitleColor: Color? = nil,
-        templateData: String? = nil
+        templateData: [String: String] = [:],
+        lastSelectedTemplateId: String = ""
     ) {
-        self.title = title
-        self.subTitle = subTitle
-        self.features = features
-        self.imageId = imageId
-        self.backgroundId = backgroundId
-        self.inScreen = inScreen
-        self.opacity = opacity
         self.path = path
         self.project = project
-        self.titleColor = titleColor
-        self.subTitleColor = subTitleColor
         self.templateData = templateData
+        self.lastSelectedTemplateId = lastSelectedTemplateId
     }
     
     // MARK: - 业务方法
-    
-    /// 获取图片
-    /// - Returns: SwiftUI Image对象
-    func getImage() -> Image {
-        var image = Image("Snapshot-1")
-        
-        if let generatedIcon = getGeneratedIcon() {
-            image = generatedIcon.getImage(self.project.url)
-        }
-        
-        return image
-    }
-    
-    /// 获取生成的图标
-    /// - Returns: GeneratedIcon对象（如果存在）
-    func getGeneratedIcon() -> ProjectImage? {
-        guard let imageId = self.imageId else {
-            return nil
-        }
-        
-        return ProjectImage.fromImageId(imageId)
-    }
-    
-    /// 更改图片
-    /// - Parameter url: 新图片的URL
-    mutating func changeImage(_ url: URL) throws {
-        // 保存图片并获取新的imageId
-        let newImageId = try saveImage(url)
-        self.imageId = newImageId
-        
-        os_log(.info, "\(Self.emoji) 更改图片成功: \(newImageId)")
-    }
     
     /// 保存到磁盘
     /// - Throws: 保存失败时抛出错误
@@ -149,11 +78,22 @@ struct BannerFile: SuperLog {
     }
 }
 
-// MARK: - Update
+// MARK: - Template Data
 
-extension BannerFile { 
-    mutating func updateBackgroundId(_ backgroundId: String) throws {
-        self.backgroundId = backgroundId
+extension BannerFile {
+    /// 获取模板数据
+    /// - Parameter templateId: 模板ID
+    /// - Returns: 模板数据的JSON字符串
+    func getTemplateData(_ templateId: String) -> String? {
+        return templateData[templateId]
+    }
+    
+    /// 设置模板数据
+    /// - Parameters:
+    ///   - templateId: 模板ID
+    ///   - data: 模板数据的JSON字符串
+    mutating func setTemplateData(_ templateId: String, data: String) throws {
+        templateData[templateId] = data
         try self.saveToDisk()
     }
 }
@@ -178,49 +118,25 @@ extension BannerFile: Equatable {
 
 extension BannerFile: Codable {
     enum CodingKeys: String, CodingKey {
-        case title
-        case subTitle
-        case features
-        case imageId
-        case backgroundId
-        case inScreen
-        case opacity
-        case titleColor
-        case subTitleColor
         case templateData
+        case lastSelectedTemplateId
         // path 和 project 不需要序列化，它们在加载时设置
     }
     
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
-        title = try container.decodeIfPresent(String.self, forKey: .title) ?? "Banner Title"
-        subTitle = try container.decodeIfPresent(String.self, forKey: .subTitle) ?? "Banner SubTitle"
-        features = try container.decodeIfPresent([String].self, forKey: .features) ?? []
-        imageId = try container.decodeIfPresent(String.self, forKey: .imageId)
-        backgroundId = try container.decodeIfPresent(String.self, forKey: .backgroundId) ?? "1"
-        inScreen = try container.decodeIfPresent(Bool.self, forKey: .inScreen) ?? false
-        opacity = try container.decodeIfPresent(Double.self, forKey: .opacity) ?? 1.0
-        
         // 这些值在反序列化时临时设置，实际值由ProjectBannerRepo在加载时设置
         path = ""
         project = Project.null
-        titleColor = nil
-        subTitleColor = nil
-        templateData = try container.decodeIfPresent(String.self, forKey: .templateData)
+        templateData = try container.decodeIfPresent([String: String].self, forKey: .templateData) ?? [:]
+        lastSelectedTemplateId = try container.decodeIfPresent(String.self, forKey: .lastSelectedTemplateId) ?? ""
     }
     
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        
-        try container.encode(title, forKey: .title)
-        try container.encode(subTitle, forKey: .subTitle)
-        try container.encode(features, forKey: .features)
-        try container.encodeIfPresent(imageId, forKey: .imageId)
-        try container.encode(backgroundId, forKey: .backgroundId)
-        try container.encode(inScreen, forKey: .inScreen)
-        try container.encode(opacity, forKey: .opacity)
-        try container.encodeIfPresent(templateData, forKey: .templateData)
+        try container.encode(templateData, forKey: .templateData)
+        try container.encode(lastSelectedTemplateId, forKey: .lastSelectedTemplateId)
     }
 }
 

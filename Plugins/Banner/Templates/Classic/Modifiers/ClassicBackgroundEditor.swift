@@ -33,17 +33,28 @@ struct ClassicBackgroundEditor: View {
         .onAppear {
             loadCurrentBackground()
         }
+        .onChange(of: b.banner.id) {
+            loadCurrentBackground()
+        }
     }
     
     private func loadCurrentBackground() {
-        selectedBackgroundId = b.banner.backgroundId
+        if let classicData = b.banner.classicData {
+            selectedBackgroundId = classicData.backgroundId
+        }
     }
     
     private func selectBackground(_ backgroundId: String) {
         selectedBackgroundId = backgroundId
         
-        try? b.updateBanner { banner in
-            banner.backgroundId = backgroundId
+        do {
+            try b.updateBanner { banner in
+                var classicData = banner.classicData ?? ClassicBannerData()
+                classicData.backgroundId = backgroundId
+                banner.classicData = classicData
+            }
+        } catch {
+            m.error("更新背景失败: \(error.localizedDescription)")
         }
     }
 }
@@ -79,6 +90,7 @@ private struct BackgroundPreview: View {
         .hideSidebar()
         .hideTabPicker()
         .hideProjectActions()
+        .setInitialTab(BannerPlugin.label)
         .inRootView()
         .frame(width: 800)
         .frame(height: 600)
@@ -88,6 +100,7 @@ private struct BackgroundPreview: View {
     ContentLayout()
         .hideSidebar()
         .hideProjectActions()
+        .setInitialTab(BannerPlugin.label)
         .hideTabPicker()
         .inRootView()
         .frame(width: 800)

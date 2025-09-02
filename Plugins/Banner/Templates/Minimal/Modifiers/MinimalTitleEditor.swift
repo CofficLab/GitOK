@@ -49,19 +49,25 @@ struct MinimalTitleEditor: View {
     }
     
     private func loadCurrentValues() {
-        titleText = b.banner.title
-        titleColor = b.banner.titleColor ?? .primary
+        if let minimalData = b.banner.minimalData {
+            titleText = minimalData.title
+            titleColor = minimalData.titleColor ?? .primary
+        }
     }
     
     private func updateTitle() {
         try? b.updateBanner { banner in
-            banner.title = titleText
+            var minimalData = banner.minimalData ?? MinimalBannerData()
+            minimalData.title = titleText
+            banner.minimalData = minimalData
         }
     }
     
     private func updateTitleColor() {
         try? b.updateBanner { banner in
-            banner.titleColor = titleColor
+            var minimalData = banner.minimalData ?? MinimalBannerData()
+            minimalData.titleColor = titleColor
+            banner.minimalData = minimalData
         }
     }
 }

@@ -31,8 +31,17 @@ struct TemplateSelector: View {
 
     private func loadTemplates() {
         availableTemplates = BannerTemplateRepo.shared.getAllTemplates()
+        
+        // 如果没有选择模板
         if b.selectedTemplate.id.isEmpty {
-            b.setSelectedTemplate(BannerTemplateRepo.shared.getDefaultTemplate())
+            // 优先使用上次选择的模板
+            if !b.banner.lastSelectedTemplateId.isEmpty,
+               let lastTemplate = availableTemplates.first(where: { $0.id == b.banner.lastSelectedTemplateId }) {
+                b.setSelectedTemplate(lastTemplate)
+            } else {
+                // 如果没有上次选择的模板，使用默认模板
+                b.setSelectedTemplate(BannerTemplateRepo.shared.getDefaultTemplate())
+            }
         }
     }
 }
@@ -82,6 +91,7 @@ private struct TemplateCard: View {
         .hideSidebar()
         .hideTabPicker()
         .hideProjectActions()
+        .setInitialTab(BannerPlugin.label)
         .inRootView()
         .frame(width: 800)
         .frame(height: 600)
@@ -91,6 +101,7 @@ private struct TemplateCard: View {
     ContentLayout()
         .hideSidebar()
         .hideProjectActions()
+        .setInitialTab(BannerPlugin.label)
         .hideTabPicker()
         .inRootView()
         .frame(width: 800)

@@ -10,13 +10,17 @@ struct ClassicFeatures: View {
 
     var fontSize: CGFloat = 24
 
+    var features: [String] {
+        return b.banner.classicData?.features ?? []
+    }
+
     init(fontSize: CGFloat) {
         self.fontSize = fontSize
     }
 
     var body: some View {
         VStack(alignment: .center, spacing: 12) {
-            ForEach(b.banner.features, id: \.self) { feature in
+            ForEach(features, id: \.self) { feature in
                 Text(feature)
                     .font(.system(size: fontSize))
                     .foregroundColor(.secondary)

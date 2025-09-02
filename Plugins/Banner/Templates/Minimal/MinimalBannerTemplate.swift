@@ -25,20 +25,18 @@ struct MinimalBannerTemplate: BannerTemplateProtocol {
         AnyView(MinimalBannerExampleView())
     }
     
-    func getDefaultData() -> Any {
+    func getDefaultData() -> MinimalBannerData {
         return MinimalBannerData()
     }
     
-    func restoreData(from bannerData: BannerFile) -> Any {
-        // 简约模板目前使用通用字段，不需要额外的模板特定数据
-        return MinimalBannerData(
-            title: bannerData.title,
-            imageId: bannerData.imageId,
-            backgroundId: bannerData.backgroundId,
-            inScreen: bannerData.inScreen,
-            opacity: bannerData.opacity,
-            titleColor: bannerData.titleColor
-        )
+    func restoreData(from bannerData: BannerFile) -> MinimalBannerData {
+        // 从模板数据中恢复
+        if let minimalData = bannerData.minimalData {
+            return minimalData
+        }
+        
+        // 如果没有数据，返回默认值
+        return getDefaultData()
     }
     
     func saveData(_ templateData: Any, to bannerData: inout BannerFile) throws {
@@ -46,15 +44,8 @@ struct MinimalBannerTemplate: BannerTemplateProtocol {
             throw BannerError.invalidTemplateData
         }
         
-        bannerData.title = minimalData.title
-        bannerData.imageId = minimalData.imageId
-        bannerData.backgroundId = minimalData.backgroundId
-        bannerData.inScreen = minimalData.inScreen
-        bannerData.opacity = minimalData.opacity
-        bannerData.titleColor = minimalData.titleColor
-        
-        // 简约模板目前不需要额外的模板特定数据存储
-        bannerData.templateData = nil
+        // 保存模板数据
+        bannerData.minimalData = minimalData
     }
 }
 

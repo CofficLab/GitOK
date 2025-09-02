@@ -14,8 +14,10 @@ struct MinimalTitle: View {
         self.fontSize = fontSize
     }
     
+    var minimalData: MinimalBannerData? { b.banner.minimalData }
+    
     var body: some View {
-        Text(b.banner.title)
+        Text(minimalData?.title ?? "App Title")
             .font(.system(size: fontSize, weight: .bold, design: .default))
             .foregroundColor(getTitleColor())
             .multilineTextAlignment(.center)
@@ -23,12 +25,7 @@ struct MinimalTitle: View {
     }
     
     private func getTitleColor() -> Color {
-        // 优先使用通用颜色设置
-        if let bannerColor = b.banner.titleColor {
-            return bannerColor
-        } else {
-            return .primary
-        }
+        return minimalData?.titleColor ?? .primary
     }
 }
 

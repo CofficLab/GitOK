@@ -25,23 +25,18 @@ struct ClassicBannerTemplate: BannerTemplateProtocol {
         AnyView(ClassicBannerExampleView())
     }
     
-    func getDefaultData() -> Any {
+    func getDefaultData() -> ClassicBannerData {
         return ClassicBannerData()
     }
     
-    func restoreData(from bannerData: BannerFile) -> Any {
-        // 经典模板目前使用通用字段，不需要额外的模板特定数据
-        return ClassicBannerData(
-            title: bannerData.title,
-            subTitle: bannerData.subTitle,
-            features: bannerData.features,
-            imageId: bannerData.imageId,
-            backgroundId: bannerData.backgroundId,
-            inScreen: bannerData.inScreen,
-            opacity: bannerData.opacity,
-            titleColor: bannerData.titleColor,
-            subTitleColor: bannerData.subTitleColor
-        )
+    func restoreData(from bannerData: BannerFile) -> ClassicBannerData {
+        // 从模板数据中恢复
+        if let classicData = bannerData.classicData {
+            return classicData
+        }
+        
+        // 如果没有数据，返回默认值
+        return getDefaultData()
     }
     
     func saveData(_ templateData: Any, to bannerData: inout BannerFile) throws {
@@ -49,18 +44,8 @@ struct ClassicBannerTemplate: BannerTemplateProtocol {
             throw BannerError.invalidTemplateData
         }
         
-        bannerData.title = classicData.title
-        bannerData.subTitle = classicData.subTitle
-        bannerData.features = classicData.features
-        bannerData.imageId = classicData.imageId
-        bannerData.backgroundId = classicData.backgroundId
-        bannerData.inScreen = classicData.inScreen
-        bannerData.opacity = classicData.opacity
-        bannerData.titleColor = classicData.titleColor
-        bannerData.subTitleColor = classicData.subTitleColor
-        
-        // 经典模板目前不需要额外的模板特定数据存储
-        bannerData.templateData = nil
+        // 保存模板数据
+        bannerData.classicData = classicData
     }
 }
 

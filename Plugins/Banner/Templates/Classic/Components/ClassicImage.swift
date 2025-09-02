@@ -11,12 +11,12 @@ struct ClassicImage: View {
     @EnvironmentObject var m: MagicMessageProvider
 
     var banner: BannerFile { b.banner }
-    var image: Image { banner.getImage() }
-    var device: Device { b.selectedDevice }
+    var classicData: ClassicBannerData? { banner.classicData }
+    var image: Image { classicData?.getImage(banner.project.url) ?? Image("Snapshot-1") }
 
     var body: some View {
         ZStack {
-            if banner.inScreen {
+            if let device = classicData?.selectedDevice {
                 switch device {
                 case .iMac:
                     ScreeniMac(content: {
@@ -45,11 +45,6 @@ struct ClassicImage: View {
                     .scaledToFit()
             }
         }
-    }
-
-    private func getCornerRadius() -> CGFloat {
-        // 经典模板使用适中的圆角
-        return 12.0
     }
 }
 

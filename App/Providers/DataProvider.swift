@@ -34,9 +34,6 @@ class DataProvider: NSObject, ObservableObject, SuperLog {
 
         super.init()
 
-        // 设置事件监听
-        setupEventListeners()
-
         self.checkIfProjectExists()
     }
 }
@@ -194,15 +191,6 @@ extension DataProvider {
                 self.project = self.projects.first
             }
 
-            // 发送删除通知
-//            DispatchQueue.main.async {
-//                NotificationCenter.default.post(
-//                    name: .gitProjectDeleted,
-//                    object: self,
-//                    userInfo: ["path": path]
-//                )
-//            }
-
             os_log("Project deleted successfully: \(path)")
 
         } catch {
@@ -328,39 +316,6 @@ extension DataProvider {
 // MARK: - Event Handling
 
 extension DataProvider {
-    /**
-     * 设置事件监听器
-     */
-    private func setupEventListeners() {
-        // 监听项目删除事件
-//        NotificationCenter.default.publisher(for: .gitProjectDeleted)
-//            .sink { [weak self] notification in
-//                self?.handleProjectDeleted(notification)
-//            }
-//            .store(in: &cancellables)
-//
-//        // 监听提交成功事件
-//        NotificationCenter.default.publisher(for: .gitCommitSuccess)
-//            .sink { [weak self] notification in
-//                self?.handleGitOperationSuccess(notification)
-//            }
-//            .store(in: &cancellables)
-//
-//        // 监听推送成功事件
-//        NotificationCenter.default.publisher(for: .gitPushSuccess)
-//            .sink { [weak self] notification in
-//                self?.handleGitOperationSuccess(notification)
-//            }
-//            .store(in: &cancellables)
-//
-//        // 监听拉取成功事件
-//        NotificationCenter.default.publisher(for: .gitPullSuccess)
-//            .sink { [weak self] notification in
-//                self?.handleGitOperationSuccess(notification)
-//            }
-//            .store(in: &cancellables)
-    }
-
     /**
      * 处理Git操作成功事件
      */

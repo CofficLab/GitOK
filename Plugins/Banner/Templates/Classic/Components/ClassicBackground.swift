@@ -8,21 +8,25 @@ import MagicCore
 struct ClassicBackground: View {
     @EnvironmentObject var b: BannerProvider
     
+    private var backgroundId: String {
+        return b.banner.classicData?.backgroundId ?? "1"
+    }
+
+    private var opacity: Double {
+        return b.banner.classicData?.opacity ?? 1
+    }
+    
     var body: some View {
         ZStack {
             // 使用 MagicBackgroundGroup 提供的背景
-            if let gradientName = MagicBackgroundGroup.GradientName(rawValue: b.banner.backgroundId) {
+            if let gradientName = MagicBackgroundGroup.GradientName(rawValue: backgroundId) {
                 MagicBackgroundGroup(for: gradientName)
-                    .opacity(getOpacity())
+                    .opacity(opacity)
             } else {
                 // 如果背景ID无效，使用默认背景
-                Color.blue.opacity(getOpacity())
+                Color.blue.opacity(opacity)
             }
         }
-    }
-    
-    private func getOpacity() -> Double {
-        return b.banner.opacity
     }
 }
 
@@ -31,6 +35,7 @@ struct ClassicBackground: View {
         .hideSidebar()
         .hideTabPicker()
         .hideProjectActions()
+        .setInitialTab(BannerPlugin.label)
         .inRootView()
         .frame(width: 800)
         .frame(height: 600)
@@ -41,6 +46,7 @@ struct ClassicBackground: View {
         .hideSidebar()
         .hideProjectActions()
         .hideTabPicker()
+        .setInitialTab(BannerPlugin.label)
         .inRootView()
         .frame(width: 800)
         .frame(height: 1000)

@@ -13,16 +13,14 @@ struct BannerDetailLayout: View {
     @EnvironmentObject var m: MagicMessageProvider
     @EnvironmentObject var b: BannerProvider
 
-    @State private var selection: BannerFile?
     @State private var scale: CGFloat = 1.0
     @State private var lastScale: CGFloat = 1.0
-
 
     var body: some View {
         GeometryReader { geometry in
             HSplitView {
                 VStack(spacing: 0) {
-                    BannerTabsBar(selection: $selection)
+                    BannerTabs()
                         .background(.gray.opacity(0.1))
                     
                     Divider()

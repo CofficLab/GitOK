@@ -1,5 +1,6 @@
 import SwiftUI
 import MagicCore
+import MagicScreen
 import UniformTypeIdentifiers
 
 /**
@@ -11,14 +12,16 @@ struct ClassicImageEditor: View {
     @EnvironmentObject var m: MagicMessageProvider
     
     @State private var showImagePicker = false
-    @State private var inScreen = false
+    @State private var selectedDevice: Device? = nil
+    
+    var classicData: ClassicBannerData? { b.banner.classicData }
     
     var body: some View {
         GroupBox("产品图片") {
             VStack(spacing: 12) {
                 // 图片预览
-                if b.banner.imageId != nil {
-                    b.banner.getImage()
+                if let classicData = b.banner.classicData, classicData.imageId != nil {
+                    classicData.getImage(b.banner.project.url)
                         .resizable()
                         .scaledToFit()
                         .frame(height: 100)
@@ -52,17 +55,23 @@ struct ClassicImageEditor: View {
                     }
                     .frame(maxWidth: .infinity)
                     
-                    // 屏幕显示开关
+                    // 设备选择
                     HStack {
-                        Text("显示设备边框")
+                        Text("设备边框")
                             .font(.body)
                         
                         Spacer()
                         
-                        Toggle("", isOn: $inScreen)
-                            .onChange(of: inScreen) {
-                                updateInScreen()
+                        Picker("选择设备", selection: $selectedDevice) {
+                            Text("无边框").tag(Optional<Device>.none)
+                            ForEach(Device.allCases, id: \.self) { device in
+                                Text(device.name).tag(Optional(device))
                             }
+                        }
+                        .frame(width: 240)
+                        .onChange(of: selectedDevice) {
+                            updateSelectedDevice()
+                        }
                     }
                 }
             }
@@ -78,10 +87,13 @@ struct ClassicImageEditor: View {
         .onAppear {
             loadCurrentValues()
         }
+        .onChange(of: classicData?.selectedDevice) {
+            loadCurrentValues()
+        }
     }
     
     private func loadCurrentValues() {
-        inScreen = b.banner.inScreen
+        selectedDevice = classicData?.selectedDevice
     }
     
     private func handleImageSelection(_ result: Result<[URL], Error>) {
@@ -97,7 +109,9 @@ struct ClassicImageEditor: View {
     private func changeImage(_ url: URL) {
         do {
             try b.updateBanner { banner in
-                try banner.changeImage(url)
+                var classicData = banner.classicData ?? ClassicBannerData()
+                classicData = try classicData.changeImage(url, projectURL: banner.project.url)
+                banner.classicData = classicData
             }
             m.success("图片更新成功")
         } catch {
@@ -105,9 +119,11 @@ struct ClassicImageEditor: View {
         }
     }
     
-    private func updateInScreen() {
+    private func updateSelectedDevice() {
         try? b.updateBanner { banner in
-            banner.inScreen = inScreen
+            var classicData = banner.classicData ?? ClassicBannerData()
+            classicData.selectedDevice = selectedDevice
+            banner.classicData = classicData
         }
     }
 }
@@ -117,6 +133,7 @@ struct ClassicImageEditor: View {
         .hideSidebar()
         .hideTabPicker()
         .hideProjectActions()
+        .setInitialTab(BannerPlugin.label)
         .inRootView()
         .frame(width: 800)
         .frame(height: 600)
@@ -126,6 +143,7 @@ struct ClassicImageEditor: View {
     ContentLayout()
         .hideSidebar()
         .hideProjectActions()
+        .setInitialTab(BannerPlugin.label)
         .hideTabPicker()
         .inRootView()
         .frame(width: 800)

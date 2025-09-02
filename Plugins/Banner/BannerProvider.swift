@@ -40,6 +40,10 @@ class BannerProvider: NSObject, ObservableObject, SuperLog {
         if !Thread.isMainThread {
             assertionFailure("setBanner called from background thread")
         }
+        
+        if self.banner.id == b.id {
+            return
+        }
 
         self.banner = b
     }
@@ -69,22 +73,6 @@ class BannerProvider: NSObject, ObservableObject, SuperLog {
 
         self.selectedDevice = device
     }
-
-    /**
-         更新当前Banner的特定属性
-
-         ## 参数
-         - `update`: 用于更新Banner的闭包
-     */
-//    func updateBanner(_ update: (inout BannerFile) -> Void) {
-//        if !Thread.isMainThread {
-//            assertionFailure("updateBanner called from background thread")
-//        }
-//
-//        var updatedBanner = self.banner
-//        update(&updatedBanner)
-//        self.banner = updatedBanner
-//    }
 
     /**
          更新当前Banner的特定属性（支持抛出错误）
@@ -117,6 +105,11 @@ class BannerProvider: NSObject, ObservableObject, SuperLog {
         }
 
         self.selectedTemplate = template
+        
+        // 保存选择的模板ID
+        try? updateBanner { banner in
+            banner.lastSelectedTemplateId = template.id
+        }
     }
 }
 
@@ -125,6 +118,7 @@ class BannerProvider: NSObject, ObservableObject, SuperLog {
         .hideSidebar()
         .hideTabPicker()
         .hideProjectActions()
+        .setInitialTab(BannerPlugin.label)
         .inRootView()
         .frame(width: 800)
         .frame(height: 600)

@@ -49,19 +49,25 @@ struct ClassicSubTitleEditor: View {
     }
 
     private func loadCurrentValues() {
-        subTitleText = b.banner.subTitle
-        subTitleColor = b.banner.subTitleColor ?? .secondary
+        if let classicData = b.banner.classicData {
+            subTitleText = classicData.subTitle
+            subTitleColor = classicData.subTitleColor ?? .secondary
+        }
     }
 
     private func updateSubTitle() {
         try? b.updateBanner { banner in
-            banner.subTitle = subTitleText
+            var classicData = banner.classicData ?? ClassicBannerData()
+            classicData.subTitle = subTitleText
+            banner.classicData = classicData
         }
     }
 
     private func updateSubTitleColor() {
         try? b.updateBanner { banner in
-            banner.subTitleColor = subTitleColor
+            var classicData = banner.classicData ?? ClassicBannerData()
+            classicData.subTitleColor = subTitleColor
+            banner.classicData = classicData
         }
     }
 }
