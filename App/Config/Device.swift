@@ -1,4 +1,5 @@
 import Foundation
+import SwiftUI
 
 enum Device: String, Equatable {
     case iMac
@@ -41,14 +42,14 @@ enum Device: String, Equatable {
         case .MacBook:
             return "MacBook"
         case .iPad:
-            return "iPad"
+            return "iPad - 13英寸显示屏"
         case .iPhoneBig:
-            return "iPhone Pro Max"
+            return "iPhone - 6.9英寸显示屏"
         case .iPhoneSmall:
-            return "iPhone"
+            return "iPhone - 6.5英寸显示屏"
         }
     }
-    
+
     var systemImageName: String {
         switch self {
         case .iMac:
@@ -93,4 +94,25 @@ enum Device: String, Equatable {
             2732
         }
     }
+}
+
+#Preview("App - Small Screen") {
+    ContentLayout()
+        .setInitialTab(IconPlugin.label)
+        .hideSidebar()
+        .hideProjectActions()
+        .inRootView()
+        .frame(width: 800)
+        .frame(height: 600)
+}
+
+#Preview("App - Big Screen") {
+    ContentLayout()
+        .setInitialTab(BannerPlugin.label)
+        .hideProjectActions()
+        .hideTabPicker()
+        .hideSidebar()
+        .inRootView()
+        .frame(width: 800)
+        .frame(height: 1000)
 }

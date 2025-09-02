@@ -12,7 +12,7 @@ struct DeviceSelector: View {
     var body: some View {
         HStack(spacing: 16) {
             // 设备选择下拉菜单
-            Picker("设备", selection: Binding(
+            Picker("尺寸", selection: Binding(
                 get: { b.selectedDevice },
                 set: { newDevice in
                     b.setSelectedDevice(newDevice)
