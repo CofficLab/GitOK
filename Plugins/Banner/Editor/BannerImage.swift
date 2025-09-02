@@ -1,4 +1,5 @@
 import MagicCore
+import MagicScreen
 import OSLog
 import SwiftUI
 
@@ -9,7 +10,7 @@ import SwiftUI
  */
 struct BannerImage: View {
     @EnvironmentObject var b: BannerProvider
-    let device: ScreenSize
+    let device: Device
 
     var image: Image { b.banner.getImage() }
 

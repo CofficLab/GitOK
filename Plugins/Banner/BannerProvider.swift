@@ -3,6 +3,7 @@ import AVKit
 import Combine
 import Foundation
 import MagicCore
+import MagicScreen
 import MediaPlayer
 import OSLog
 import SwiftUI
@@ -20,7 +21,7 @@ class BannerProvider: NSObject, ObservableObject, SuperLog {
     @Published private(set) var banner: BannerFile = .empty
 
     /// 当前选中的设备
-    @Published private(set) var selectedDevice: ScreenSize = .iPhoneBig
+    @Published private(set) var selectedDevice: Device = .iPhoneBig
 
     /// 当前选中的模板
     @Published private(set) var selectedTemplate: any BannerTemplateProtocol = ClassicBannerTemplate()
@@ -61,7 +62,7 @@ class BannerProvider: NSObject, ObservableObject, SuperLog {
          ## 参数
          - `device`: 要设置为当前选中的设备
      */
-    func setSelectedDevice(_ device: ScreenSize) {
+    func setSelectedDevice(_ device: Device) {
         if !Thread.isMainThread {
             assertionFailure("setSelectedDevice called from background thread")
         }
@@ -120,22 +121,22 @@ class BannerProvider: NSObject, ObservableObject, SuperLog {
 }
 
 #Preview("App - Small Screen") {
-    RootView {
-        ContentLayout()
-            .setInitialTab(BannerPlugin.label)
-            .hideSidebar()
-            .hideProjectActions()
-    }
-    .frame(width: 700)
-    .frame(height: 800)
+    ContentLayout()
+        .setInitialTab(BannerPlugin.label)
+        .hideSidebar()
+        .hideProjectActions()
+        .inRootView()
+        .frame(width: 700)
+        .frame(height: 800)
 }
 
 #Preview("App - Big Screen") {
-    RootView {
-        ContentLayout()
-            .setInitialTab(BannerPlugin.label)
-            .hideSidebar()
-    }
-    .frame(width: 1200)
-    .frame(height: 1200)
+    ContentLayout()
+        .setInitialTab(BannerPlugin.label)
+        .hideSidebar()
+        .hideTabPicker()
+        .hideProjectActions()
+        .inRootView()
+        .frame(width: 800)
+        .frame(height: 1000)
 }

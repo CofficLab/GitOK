@@ -1,5 +1,6 @@
 import MagicCore
 import SwiftUI
+import MagicScreen
 
 /**
  经典Banner布局视图

@@ -1,4 +1,5 @@
 import MagicCore
+import MagicScreen
 import SwiftUI
 
 /**
@@ -11,7 +12,7 @@ struct MinimalImage: View {
 
     var banner: BannerFile { b.banner }
     var image: Image { banner.getImage() }
-    var device: ScreenSize { b.selectedDevice }
+    var device: Device { b.selectedDevice }
 
     var body: some View {
         ZStack {
