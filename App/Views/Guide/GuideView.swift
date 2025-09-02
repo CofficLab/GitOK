@@ -107,20 +107,22 @@ extension GuideView {
     }
 }
 
-#Preview("App-Small Screen") {
-    RootView {
-        ContentLayout()
-            .hideProjectActions()
-            .hideTabPicker()
-    }
-    .frame(width: 800)
-    .frame(height: 600)
+#Preview("App - Small Screen") {
+    ContentLayout()
+        .hideSidebar()
+        .hideTabPicker()
+        .hideProjectActions()
+        .inRootView()
+        .frame(width: 800)
+        .frame(height: 600)
 }
 
-#Preview("Default-Big Screen") {
-    RootView {
-        ContentLayout()
-    }
-    .frame(width: 1200)
-    .frame(height: 1200)
+#Preview("App - Big Screen") {
+    ContentLayout()
+        .hideSidebar()
+        .hideProjectActions()
+        .hideTabPicker()
+        .inRootView()
+        .frame(width: 800)
+        .frame(height: 1000)
 }

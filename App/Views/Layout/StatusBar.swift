@@ -23,8 +23,8 @@ struct StatusBar: View {
 
 #Preview("App - Small Screen") {
     ContentLayout()
-        .setInitialTab(BannerPlugin.label)
         .hideSidebar()
+        .hideTabPicker()
         .hideProjectActions()
         .inRootView()
         .frame(width: 800)
@@ -33,7 +33,6 @@ struct StatusBar: View {
 
 #Preview("App - Big Screen") {
     ContentLayout()
-        .setInitialTab(BannerPlugin.label)
         .hideSidebar()
         .hideProjectActions()
         .hideTabPicker()

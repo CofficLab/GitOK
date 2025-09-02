@@ -122,20 +122,19 @@ class BannerProvider: NSObject, ObservableObject, SuperLog {
 
 #Preview("App - Small Screen") {
     ContentLayout()
-        .setInitialTab(BannerPlugin.label)
         .hideSidebar()
+        .hideTabPicker()
         .hideProjectActions()
         .inRootView()
-        .frame(width: 700)
-        .frame(height: 800)
+        .frame(width: 800)
+        .frame(height: 600)
 }
 
 #Preview("App - Big Screen") {
     ContentLayout()
-        .setInitialTab(BannerPlugin.label)
         .hideSidebar()
-        .hideTabPicker()
         .hideProjectActions()
+        .hideTabPicker()
         .inRootView()
         .frame(width: 800)
         .frame(height: 1000)

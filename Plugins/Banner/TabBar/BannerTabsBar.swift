@@ -86,24 +86,21 @@ struct BannerTabsBar: View {
 }
 
 #Preview("App - Small Screen") {
-    RootView {
-        ContentLayout()
-            .setInitialTab(BannerPlugin.label)
-            .hideSidebar()
-            .hideProjectActions()
-    }
-    .frame(width: 800)
-    .frame(height: 600)
+    ContentLayout()
+        .hideSidebar()
+        .hideTabPicker()
+        .hideProjectActions()
+        .inRootView()
+        .frame(width: 800)
+        .frame(height: 600)
 }
 
 #Preview("App - Big Screen") {
-    RootView {
-        ContentLayout()
-            .setInitialTab(BannerPlugin.label)
-            .hideSidebar()
-            .hideProjectActions()
-            .hideTabPicker()
-    }
-    .frame(width: 800)
-    .frame(height: 1000)
+    ContentLayout()
+        .hideSidebar()
+        .hideProjectActions()
+        .hideTabPicker()
+        .inRootView()
+        .frame(width: 800)
+        .frame(height: 1000)
 }
