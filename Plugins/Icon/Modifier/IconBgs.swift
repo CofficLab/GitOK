@@ -22,12 +22,14 @@ struct IconBgs: View {
     }
 
     var body: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 6) {
-                ForEach(0 ..< MagicBackgroundGroup.all.count, id: \.self) { index in
-                    let gradient = MagicBackgroundGroup.all[index]
-                    makeItem(gradient)
-                        .frame(width: itemSize, height: itemSize)
+        GroupBox {
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 6) {
+                    ForEach(0 ..< MagicBackgroundGroup.all.count, id: \.self) { index in
+                        let gradient = MagicBackgroundGroup.all[index]
+                        makeItem(gradient)
+                            .frame(width: itemSize, height: itemSize)
+                    }
                 }
             }
         }

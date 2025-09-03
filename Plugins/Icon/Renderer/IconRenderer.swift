@@ -69,7 +69,10 @@ class IconRenderer {
     ///   - preloadedImage: 预加载的图片（可选）
     /// - Returns: 图标视图
     private static func createIconView(iconData: IconData, iconAsset: IconAsset, size: CGFloat, preloadedImage: Image? = nil) -> some View {
-        ZStack {
+        // 计算实际内容尺寸（考虑padding）
+        let contentSize = size * (1.0 - iconData.padding * 2)
+        
+        return ZStack {
             // 背景
             MagicBackgroundGroup(for: iconData.backgroundId)
                 .opacity(iconData.opacity)
@@ -116,13 +119,14 @@ class IconRenderer {
                     .scaleEffect(iconData.scale ?? 1.0)
             }
         }
-        .frame(width: size, height: size)
         // 将圆角按尺寸比例缩放：以 1024 为基准，保证不同导出尺寸视觉一致
         .cornerRadius({
             let base: CGFloat = 1024
-            let scaled = CGFloat(iconData.cornerRadius) * (size / base)
+            let scaled = CGFloat(iconData.cornerRadius) * (contentSize / base)
             return iconData.cornerRadius > 0 ? max(0, scaled) : 0
         }())
+        .frame(width: contentSize, height: contentSize)
+        .frame(width: size, height: size)
     }
 }
 
@@ -143,6 +147,6 @@ class IconRenderer {
             .setInitialTab(IconPlugin.label)
             .hideSidebar()
     }
-    .frame(width: 1200)
-    .frame(height: 1200)
+    .frame(width: 800)
+    .frame(height: 1000)
 }
