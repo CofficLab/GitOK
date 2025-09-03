@@ -13,20 +13,22 @@ struct CornerRadiusControl: View {
     @State private var localCornerRadius: Double = 0.0
     
     var body: some View {
-        VStack(spacing: 8) {
-            Text("圆角 \(Int(localCornerRadius))")
-                .font(.caption)
-                .foregroundColor(.secondary)
-            Slider(value: $localCornerRadius, in: 0...512, step: 1)
-                .onChange(of: localCornerRadius) {
-                    updateCornerRadius(localCornerRadius)
-                }
-        }
-        .onAppear {
-            syncLocalState()
-        }
-        .onChange(of: i.currentData) { _, newValue in
-            syncLocalState()
+        GroupBox {
+            VStack(spacing: 8) {
+                Text("圆角 \(Int(localCornerRadius))")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                Slider(value: $localCornerRadius, in: 0...512, step: 1)
+                    .onChange(of: localCornerRadius) {
+                        updateCornerRadius(localCornerRadius)
+                    }
+            }
+            .onAppear {
+                syncLocalState()
+            }
+            .onChange(of: i.currentData) { _, newValue in
+                syncLocalState()
+            }
         }
     }
     

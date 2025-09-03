@@ -18,14 +18,20 @@ struct IconPreview: View {
             let centerX = containerWidth / 2
             let centerY = containerHeight / 2
 
-            // 响应式图标视图，直接使用传入的数据
-            ResponsiveIconView(
-                iconData: iconData,
-                iconAsset: iconAsset,
-                size: constrainedSize
-            )
+            ZStack {
+                // 外边框
+                RoundedRectangle(cornerRadius: 4)
+                    .stroke(Color.blue.opacity(0.2), lineWidth: 1)
+                    .frame(width: constrainedSize, height: constrainedSize)
+                
+                // 响应式图标视图，直接使用传入的数据
+                ResponsiveIconView(
+                    iconData: iconData,
+                    iconAsset: iconAsset,
+                    size: constrainedSize
+                )
+            }
             .position(x: centerX, y: centerY)
-            .frame(width: constrainedSize, height: constrainedSize)
         }
     }
 }
@@ -42,23 +48,30 @@ struct ResponsiveIconView: View {
     
     var body: some View {
         ZStack {
-            // 背景 - 直接绑定backgroundId和opacity
-            MagicBackgroundGroup(for: iconData.backgroundId)
-                .opacity(iconData.opacity)
+            // 内边框
+            RoundedRectangle(cornerRadius: 4)
+                .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+                .frame(width: size * (1.0 - iconData.padding * 2), height: size * (1.0 - iconData.padding * 2))
             
-            // 图标内容 - 直接绑定所有相关属性
-            ResponsiveIconContent(
-                iconData: iconData,
-                iconAsset: iconAsset
-            )
+            ZStack {
+                // 背景 - 直接绑定backgroundId和opacity
+                MagicBackgroundGroup(for: iconData.backgroundId)
+                    .opacity(iconData.opacity)
+                
+                // 图标内容 - 直接绑定所有相关属性
+                ResponsiveIconContent(
+                    iconData: iconData,
+                    iconAsset: iconAsset
+                )
+            }
+            .frame(width: size * (1.0 - iconData.padding * 2), height: size * (1.0 - iconData.padding * 2))
+            // 将圆角按尺寸比例缩放：以 1024 为基准，保证不同预览尺寸视觉一致
+            .cornerRadius({
+                let base: CGFloat = 1024
+                let scaled = CGFloat(iconData.cornerRadius) * (size / base)
+                return iconData.cornerRadius > 0 ? max(0, scaled) : 0
+            }())
         }
-        .frame(width: size, height: size)
-        // 将圆角按尺寸比例缩放：以 1024 为基准，保证不同预览尺寸视觉一致
-        .cornerRadius({
-            let base: CGFloat = 1024
-            let scaled = CGFloat(iconData.cornerRadius) * (size / base)
-            return iconData.cornerRadius > 0 ? max(0, scaled) : 0
-        }())
     }
 }
 

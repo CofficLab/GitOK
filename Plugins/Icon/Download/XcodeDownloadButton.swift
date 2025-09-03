@@ -77,6 +77,17 @@ struct XcodeDownloadButton: View {
             MagicMessageProvider.shared.error("没有可用的图标数据")
             return
         }
+        
+        // 创建用于导出的数据副本
+        var exportData = iconData
+        
+        // 检查并调整padding（仅用于导出）
+        let originalPadding = exportData.padding
+        let standardPadding = 0.12 // macOS标准内边距为12%
+        
+        if originalPadding != standardPadding {
+            exportData.padding = standardPadding
+        }
 
         // 基础尺寸
         let sizes = [16, 32, 128, 256, 512]
@@ -89,7 +100,7 @@ struct XcodeDownloadButton: View {
             let fileName = "\(tag)-macOS-\(size)x\(size).png"
             let saveTo = folderPath.appendingPathComponent(fileName)
 
-            let success = await IconRenderer.snapshotIcon(iconData: iconData, iconAsset: iconAsset, size: size, savePath: saveTo)
+            let success = await IconRenderer.snapshotIcon(iconData: exportData, iconAsset: iconAsset, size: size, savePath: saveTo)
 
             // 检查文件是否生成成功
             if success == false {
@@ -103,7 +114,7 @@ struct XcodeDownloadButton: View {
             let fileName = "\(tag)-macOS-\(sizes[index])x\(sizes[index])@2x.png"
             let saveTo = folderPath.appendingPathComponent(fileName)
 
-            let success = await IconRenderer.snapshotIcon(iconData: iconData, iconAsset: iconAsset, size: size, savePath: saveTo)
+            let success = await IconRenderer.snapshotIcon(iconData: exportData, iconAsset: iconAsset, size: size, savePath: saveTo)
 
             // 检查文件是否生成成功
             if success == false {
@@ -123,10 +134,11 @@ struct XcodeDownloadButton: View {
         let fileName = "\(tag)-iOS-\(size)x\(size).png"
         let saveTo = folderPath.appendingPathComponent(fileName)
 
-        // 导出时强制不透明、无圆角（仅影响导出流程，不修改原数据）
+        // 导出时强制不透明、无圆角、无padding（仅影响导出流程，不修改原数据）
         var exportData = iconData
         exportData.opacity = 1.0
         exportData.cornerRadius = 0
+        exportData.padding = 0  // iOS图标不需要padding
 
         let success = await IconRenderer.snapshotIcon(iconData: exportData, iconAsset: iconAsset, size: size, savePath: saveTo)
 
@@ -253,8 +265,9 @@ struct XcodeDownloadButton: View {
     ContentLayout()
         .setInitialTab(IconPlugin.label)
         .hideTabPicker()
+        .hideProjectActions()
         .hideSidebar()
         .inRootView()
-        .frame(width: 1200)
-        .frame(height: 1200)
+        .frame(width: 800)
+        .frame(height: 1000)
 }

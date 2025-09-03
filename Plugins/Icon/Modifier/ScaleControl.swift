@@ -13,20 +13,22 @@ struct ScaleControl: View {
     @State private var localScale: Double = 1.0
     
     var body: some View {
-        VStack(spacing: 8) {
-            Text("缩放 \(String(format: "%.1f", localScale))")
-                .font(.caption)
-                .foregroundColor(.secondary)
-            Slider(value: $localScale, in: 0.2...3.0)
-                .onChange(of: localScale) {
-                    updateScale(localScale)
-                }
-        }
-        .onAppear {
-            syncLocalState()
-        }
-        .onChange(of: i.currentData) { _, newValue in
-            syncLocalState()
+        GroupBox {
+            VStack(spacing: 8) {
+                Text("缩放 \(String(format: "%.1f", localScale))")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                Slider(value: $localScale, in: 0.2...3.0)
+                    .onChange(of: localScale) {
+                        updateScale(localScale)
+                    }
+            }
+            .onAppear {
+                syncLocalState()
+            }
+            .onChange(of: i.currentData) { _, newValue in
+                syncLocalState()
+            }
         }
     }
     

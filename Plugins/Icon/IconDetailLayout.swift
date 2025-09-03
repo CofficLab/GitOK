@@ -11,7 +11,7 @@ struct IconDetailLayout: View {
     @State private var selection: IconData?
 
     private enum RightPaneTab { case icon, controls }
-    @State private var selectedRightPaneTab: RightPaneTab = .icon
+    @State private var selectedRightPaneTab: RightPaneTab = .controls
 
     static let shared = IconDetailLayout()
 
@@ -69,6 +69,7 @@ struct IconDetailLayout: View {
                                 OpacityControl()
                                 ScaleControl()
                                 CornerRadiusControl()
+                                PaddingControl()
                                 Spacer()
                                 DownloadButtons()
                             }.padding()
