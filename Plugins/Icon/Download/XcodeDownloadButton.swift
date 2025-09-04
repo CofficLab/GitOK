@@ -83,7 +83,7 @@ struct XcodeDownloadButton: View {
         
         // 检查并调整padding（仅用于导出）
         let originalPadding = exportData.padding
-        let standardPadding = 0.12 // macOS标准内边距为12%
+        let standardPadding = 0.1
         
         if originalPadding != standardPadding {
             exportData.padding = standardPadding
