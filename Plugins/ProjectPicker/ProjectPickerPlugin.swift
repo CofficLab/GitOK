@@ -2,7 +2,7 @@ import MagicCore
 import OSLog
 import SwiftUI
 
-class ProjectPickerPlugin: SuperPlugin, SuperLog {
+class ProjectPickerPlugin: SuperPlugin, SuperLog, PluginRegistrant {
     let emoji = "📁"
     static var label: String = "ProjectPicker"
 
@@ -36,4 +36,15 @@ class ProjectPickerPlugin: SuperPlugin, SuperLog {
     }
     .frame(width: 1200)
     .frame(height: 1200)
+}
+
+// MARK: - PluginRegistrant
+extension ProjectPickerPlugin {
+    @objc static func register() {
+        Task {
+            await PluginRegistry.shared.register(id: "ProjectPicker", order: 24) {
+                ProjectPickerPlugin.shared
+            }
+        }
+    }
 }

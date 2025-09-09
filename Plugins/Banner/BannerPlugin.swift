@@ -2,7 +2,7 @@ import MagicCore
 import OSLog
 import SwiftUI
 
-class BannerPlugin: SuperPlugin, SuperLog {
+class BannerPlugin: SuperPlugin, SuperLog, PluginRegistrant {
     static let shared = BannerPlugin()
     let emoji = "📣"
     static var label: String = "Banner"
@@ -12,6 +12,17 @@ class BannerPlugin: SuperPlugin, SuperLog {
 
     func addDetailView() -> AnyView? {
         AnyView(BannerDetailLayout.shared.environmentObject(BannerProvider.shared))
+    }
+}
+
+// MARK: - PluginRegistrant
+extension BannerPlugin {
+    @objc static func register() {
+        Task {
+            await PluginRegistry.shared.register(id: "Banner", order: 1) {
+                BannerPlugin.shared
+            }
+        }
     }
 }
 

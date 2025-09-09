@@ -7,7 +7,7 @@ import SwiftUI
 
 class PluginProvider: ObservableObject, SuperLog, SuperThread {
     let emoji = "🧩"
-    let plugins: [SuperPlugin]
+    @Published private(set) var plugins: [SuperPlugin] = []
     
     /// 获取所有标记为标签页的插件
     /// - Returns: 可作为标签页显示的插件数组
@@ -47,6 +47,40 @@ class PluginProvider: ObservableObject, SuperLog, SuperThread {
         let duplicateLabels = labelCounts.filter { $0.value > 1 }.map { $0.key }
         if !duplicateLabels.isEmpty {
             assertionFailure("Duplicate labels: \(duplicateLabels)")
+        }
+    }
+    
+    /// 使用自动发现插件的初始化方法
+    init(autoDiscover: Bool = true) {
+        let verbose = false
+        if verbose {
+            os_log("\(Self.onInit) PluginProvider with auto discovery")
+        }
+        
+        if autoDiscover {
+            Task { [weak self] in
+                guard let self else { return }
+                await MainActor.run {
+                    autoRegisterPlugins()
+                }
+                let discoveredPlugins = await PluginRegistry.shared.buildAll()
+                await MainActor.run {
+                    self.plugins = discoveredPlugins
+                    
+                    // 检查重复标签
+                    var labelCounts: [String: Int] = [:]
+                    for plugin in discoveredPlugins {
+                        labelCounts[plugin.instanceLabel, default: 0] += 1
+                    }
+                    
+                    let duplicateLabels = labelCounts.filter { $0.value > 1 }.map { $0.key }
+                    if !duplicateLabels.isEmpty {
+                        assertionFailure("Duplicate labels: \(duplicateLabels)")
+                    }
+                }
+            }
+        } else {
+            self.plugins = []
         }
     }
 }

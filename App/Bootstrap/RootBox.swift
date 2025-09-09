@@ -29,36 +29,10 @@ final class RootBox: SuperLog {
 
         self.repoManager = RepoManager(modelContext: ModelContext(c))
         
-        // Plugins
-        let plugins: [SuperPlugin] = [
-            GitPlugin.shared,
-            BannerPlugin.shared,
-            IconPlugin.shared,
-    
-            OpenCursorPlugin.shared,
-            OpenTraePlugin.shared,
-            OpenXcodePlugin.shared,
-            OpenVSCodePlugin.shared,
-            OpenFinderPlugin.shared,
-            OpenTerminalPlugin.shared,
-            OpenRemotePlugin.shared,
-            
-            SyncPlugin.shared,
-            GitPullPlugin.shared,
-            BranchPlugin.shared,
-            CommitPlugin.shared,
-            ProjectPickerPlugin.shared,
-            SmartMergePlugin.shared,
-//            QuickMergePlugin.shared,
-            SmartFilePlugin.shared,
-            RemoteRepositoryPlugin.shared,
-            ReadmePlugin.shared
-        ]
-        
         // Providers
         self.app = AppProvider(repoManager: self.repoManager)
         self.icon = IconProvider()
-        self.pluginProvider = PluginProvider(plugins: plugins)
+        self.pluginProvider = PluginProvider(autoDiscover: true)
 
         do {
             let projects = try self.repoManager.projectRepo.findAll(sortedBy: .ascending)
