@@ -13,20 +13,22 @@ struct OpacityControl: View {
     @State private var localOpacity: Double = 1.0
     
     var body: some View {
-        VStack(spacing: 8) {
-            Text("背景透明度 \(String(format: "%.1f", localOpacity))")
-                .font(.caption)
-                .foregroundColor(.secondary)
-            Slider(value: $localOpacity, in: 0...1)
-                .onChange(of: localOpacity) {
-                    updateOpacity(localOpacity)
-                }
-        }
-        .onAppear {
-            syncLocalState()
-        }
-        .onChange(of: i.currentData) { _, newValue in
-            syncLocalState()
+        GroupBox {
+            VStack(spacing: 8) {
+                Text("背景透明度 \(String(format: "%.1f", localOpacity))")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                Slider(value: $localOpacity, in: 0...1)
+                    .onChange(of: localOpacity) {
+                        updateOpacity(localOpacity)
+                    }
+            }
+            .onAppear {
+                syncLocalState()
+            }
+            .onChange(of: i.currentData) { _, newValue in
+                syncLocalState()
+            }
         }
     }
     

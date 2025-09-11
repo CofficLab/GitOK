@@ -23,11 +23,9 @@ struct IconWelcomeView: View {
                 .padding(.vertical, 20)
 
             VStack(alignment: .leading, spacing: 15) {
-                HStack {
-                    Image(systemName: "plus.circle.fill")
-                        .foregroundColor(.accentColor)
-                    Text("点击左侧列表的" + "按钮，开始创建新图标。")
-                }
+                BtnNewIcon()
+                    .frame(width: 250)
+                    .frame(height: 40)
             }
             .font(.headline)
             .foregroundColor(.secondary)

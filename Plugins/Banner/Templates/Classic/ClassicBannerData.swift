@@ -15,6 +15,7 @@ struct ClassicBannerData: Codable {
     var titleColor: Color? = nil
     var subTitleColor: Color? = nil
     
+    static let defaultImageId = "Snapshot-iPhone"
     static let templateId = "classic"
     
     init(
@@ -74,23 +75,19 @@ struct ClassicBannerData: Codable {
     /// - Parameter projectURL: 项目URL
     /// - Returns: SwiftUI Image对象
     func getImage(_ projectURL: URL) -> Image {
-        var image = Image("Snapshot-1")
-        
-        if let generatedIcon = getGeneratedIcon() {
-            image = generatedIcon.getImage(projectURL)
-        }
-        
-        return image
-    }
-    
-    /// 获取生成的图标
-    /// - Returns: GeneratedIcon对象（如果存在）
-    func getGeneratedIcon() -> ProjectImage? {
         guard let imageId = self.imageId else {
-            return nil
+            return Image(Self.defaultImageId)
         }
         
-        return ProjectImage.fromImageId(imageId)
+        // 移除路径中的多余转义字符
+        let cleanPath = imageId.replacingOccurrences(of: "\\/", with: "/")
+        let imageURL = URL(fileURLWithPath: projectURL.path).appendingPathComponent(cleanPath)
+        
+        if let nsImage = NSImage(contentsOf: imageURL) {
+            return Image(nsImage: nsImage)
+        }
+        
+        return Image(Self.defaultImageId)
     }
     
     /// 更改图片

@@ -2,7 +2,7 @@ import MagicCore
 import OSLog
 import SwiftUI
 
-class GitPlugin: SuperPlugin, SuperLog {
+class GitPlugin: SuperPlugin, SuperLog, PluginRegistrant {
     static let shared = GitPlugin()
     let emoji = "📣"
     static var label: String = "Git"
@@ -12,6 +12,17 @@ class GitPlugin: SuperPlugin, SuperLog {
 
     func addDetailView() -> AnyView? {
         AnyView(GitDetail.shared)
+    }
+}
+
+// MARK: - PluginRegistrant
+extension GitPlugin {
+    @objc static func register() {
+        Task {
+            await PluginRegistry.shared.register(id: "Git", order: 0) {
+                GitPlugin.shared
+            }
+        }
     }
 }
 

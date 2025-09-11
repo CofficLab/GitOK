@@ -10,8 +10,8 @@ struct ImageSetDownloadButton: View {
     let iconProvider: IconProvider
     let currentIconAsset: IconAsset?
 
-    /// 基准点尺寸（1x 像素），最小实现：固定一个常用值，避免过度设计
-    private let basePointSize: Int = 64
+    /// 基准点尺寸（1x 像素）
+    private let basePointSize: Int = 256
 
     @State private var isGenerating = false
     @State private var progressText = ""
@@ -140,10 +140,12 @@ struct ImageSetDownloadButton: View {
     RootView {
         ContentLayout()
             .setInitialTab(IconPlugin.label)
+            .hideTabPicker()
+            .hideProjectActions()
             .hideSidebar()
     }
-    .frame(width: 1200)
-    .frame(height: 1200)
+    .frame(width: 800)
+    .frame(height: 1000)
 }
 
 

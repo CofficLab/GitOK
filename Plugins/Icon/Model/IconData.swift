@@ -34,6 +34,9 @@ struct IconData: SuperJsonModel {
     
     /// 圆角半径
     var cornerRadius: Double = 0
+    
+    /// 图标内边距（0.0 - 0.3）
+    var padding: Double = 0.12
 
     init(title: String = "1", iconId: String = "1", backgroundId: String = "3", imageURL: URL? = nil, path: String) {
         self.title = title
@@ -56,6 +59,7 @@ extension IconData: Codable {
         case opacity
         case scale
         case cornerRadius
+        case padding
     }
 
     init(from decoder: Decoder) throws {
@@ -72,6 +76,7 @@ extension IconData: Codable {
         self.opacity = try container.decodeIfPresent(Double.self, forKey: .opacity) ?? 1.0
         self.scale = try container.decodeIfPresent(Double.self, forKey: .scale)
         self.cornerRadius = try container.decodeIfPresent(Double.self, forKey: .cornerRadius) ?? 0.0
+        self.padding = try container.decodeIfPresent(Double.self, forKey: .padding) ?? 0.12
         self.path = ""
     }
 }
@@ -105,6 +110,11 @@ extension IconData {
     
     mutating func updateCornerRadius(_ radius: Double) throws {
         self.cornerRadius = radius
+        try self.saveToDisk()
+    }
+    
+    mutating func updatePadding(_ p: Double) throws {
+        self.padding = p
         try self.saveToDisk()
     }
 

@@ -2,7 +2,7 @@ import MagicCore
 import OSLog
 import SwiftUI
 
-class QuickMergePlugin: SuperPlugin, SuperLog {
+class QuickMergePlugin: SuperPlugin, SuperLog, PluginRegistrant {
     let emoji = "📣"
     static var label: String = "QuickMerge"
 
@@ -32,4 +32,15 @@ class QuickMergePlugin: SuperPlugin, SuperLog {
     }
     .frame(width: 1200)
     .frame(height: 1200)
+}
+
+// MARK: - PluginRegistrant
+extension QuickMergePlugin {
+    @objc static func register() {
+        Task {
+            await PluginRegistry.shared.register(id: "QuickMerge", order: 30) {
+                QuickMergePlugin.shared
+            }
+        }
+    }
 }

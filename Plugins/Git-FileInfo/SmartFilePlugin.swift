@@ -2,7 +2,7 @@ import MagicCore
 import OSLog
 import SwiftUI
 
-class SmartFilePlugin: SuperPlugin, SuperLog {
+class SmartFilePlugin: SuperPlugin, SuperLog, PluginRegistrant {
     let emoji = "📣"
     static var label: String = "SmartFile"
 
@@ -33,4 +33,15 @@ class SmartFilePlugin: SuperPlugin, SuperLog {
     }
     .frame(width: 1200)
     .frame(height: 1200)
+}
+
+// MARK: - PluginRegistrant
+extension SmartFilePlugin {
+    @objc static func register() {
+        Task {
+            await PluginRegistry.shared.register(id: "SmartFile", order: 26) {
+                SmartFilePlugin.shared
+            }
+        }
+    }
 }
