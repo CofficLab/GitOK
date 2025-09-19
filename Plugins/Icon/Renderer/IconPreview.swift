@@ -9,6 +9,13 @@ import SwiftUI
 struct IconPreview: View {
     let iconData: IconData
     let iconAsset: IconAsset
+    let applyBackground: Bool
+    
+    init(iconData: IconData, iconAsset: IconAsset, applyBackground: Bool = false) {
+        self.iconData = iconData
+        self.iconAsset = iconAsset
+        self.applyBackground = applyBackground
+    }
 
     var body: some View {
         GeometryReader { geometry in
@@ -28,7 +35,8 @@ struct IconPreview: View {
                 ResponsiveIconView(
                     iconData: iconData,
                     iconAsset: iconAsset,
-                    size: constrainedSize
+                    size: constrainedSize,
+                    applyBackground: applyBackground
                 )
             }
             .position(x: centerX, y: centerY)
@@ -45,6 +53,7 @@ struct ResponsiveIconView: View {
     let iconData: IconData
     let iconAsset: IconAsset
     let size: CGFloat
+    let applyBackground: Bool
     
     var body: some View {
         ZStack {
@@ -55,8 +64,10 @@ struct ResponsiveIconView: View {
             
             ZStack {
                 // 背景 - 直接绑定backgroundId和opacity
-                MagicBackgroundGroup(for: iconData.backgroundId)
-                    .opacity(iconData.opacity)
+                if self.applyBackground {
+                    MagicBackgroundGroup(for: iconData.backgroundId)
+                        .opacity(iconData.opacity)
+                }
                 
                 // 图标内容 - 直接绑定所有相关属性
                 ResponsiveIconContent(
