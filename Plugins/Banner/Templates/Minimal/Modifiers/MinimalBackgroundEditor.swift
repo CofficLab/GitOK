@@ -1,5 +1,7 @@
 import SwiftUI
 import MagicCore
+import MagicAlert
+import MagicBackground
 
 /**
  经典模板的背景编辑器

@@ -1,5 +1,6 @@
 import MagicCore
 import SwiftData
+import MagicAlert
 import SwiftUI
 
 struct RootView<Content>: View, SuperEvent where Content: View {

@@ -45,12 +45,26 @@ struct MinimalBannerLayout: View {
                     Spacer()
                     MinimalImage()
                 }.padding()
-            case .iPad:
+            case .iPad_mini:
                 GeometryReader { _ in
                     MinimalTitle(fontSize: 120)
                     Spacer()
                     MinimalImage()
                 }
+            case .iPhone_15:
+                VStack(spacing: 40) {
+                    Spacer()
+                    MinimalTitle(fontSize: 120)
+                    Spacer()
+                    MinimalImage()
+                }.padding()
+            case .iPhone_SE:
+                VStack(spacing: 40) {
+                    Spacer()
+                    MinimalTitle(fontSize: 120)
+                    Spacer()
+                    MinimalImage()
+                }.padding()
             }
         }
         .background(MinimalBackground())

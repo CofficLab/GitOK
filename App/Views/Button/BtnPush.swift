@@ -1,5 +1,6 @@
 import SwiftUI
 import MagicCore
+import MagicAlert
 
 struct BtnPush: View {
     @EnvironmentObject var m: MagicMessageProvider

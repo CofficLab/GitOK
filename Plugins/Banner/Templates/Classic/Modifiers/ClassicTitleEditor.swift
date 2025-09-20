@@ -1,5 +1,6 @@
 import SwiftUI
 import MagicCore
+import MagicAlert
 
 /**
  经典模板的标题编辑器

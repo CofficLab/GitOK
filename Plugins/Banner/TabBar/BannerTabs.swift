@@ -1,5 +1,6 @@
 import SwiftUI
 import MagicCore
+import MagicAlert
 
 /**
     Banner标签栏视图

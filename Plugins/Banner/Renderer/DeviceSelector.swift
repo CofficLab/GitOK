@@ -1,5 +1,7 @@
 import SwiftUI
-import MagicScreen
+import MagicDevice
+import MagicCore
+import MagicUI
 
 /**
  设备选择器组件
@@ -14,7 +16,7 @@ struct DeviceSelector: View {
         HStack(spacing: 16) {
             // 设备选择下拉菜单
             Menu {
-                ForEach([Device.iMac, Device.MacBook, Device.iPhoneBig, Device.iPhoneSmall, Device.iPad], id: \.self) { device in
+                ForEach([MagicDevice.iMac, MagicDevice.MacBook, MagicDevice.iPhoneBig, MagicDevice.iPhoneSmall, MagicDevice.iPad_mini], id: \.self) { device in
                     Button(action: {
                         b.setSelectedDevice(device)
                         // 切换设备时重置缩放
@@ -22,15 +24,15 @@ struct DeviceSelector: View {
                         lastScale = 1.0
                     }) {
                         HStack {
-                            Image(systemName: device.systemImageName)
-                            Text(device.name)
+//                            Image(systemName: device.systemImageName)
+                            Text(device.description)
                         }
                     }
                 }
             } label: {
                 HStack {
-                    Image(systemName: b.selectedDevice.systemImageName)
-                    Text(b.selectedDevice.name)
+//                    Image(systemName: b.selectedDevice.systemImageName)
+                    Text(b.selectedDevice.description)
                 }
             }
             .pickerStyle(MenuPickerStyle())
@@ -39,8 +41,8 @@ struct DeviceSelector: View {
 
             // 显示当前设备尺寸
             HStack(spacing: 4) {
-                Image(systemName: b.selectedDevice.systemImageName)
-                    .foregroundColor(.secondary)
+//                Image(systemName: b.selectedDevice.systemImageName)
+//                    .foregroundColor(.secondary)
                 Text("\(Int(b.selectedDevice.width)) × \(Int(b.selectedDevice.height))")
                     .font(.caption)
                     .foregroundColor(.secondary)

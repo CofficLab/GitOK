@@ -1,5 +1,6 @@
 import SwiftUI
-import MagicScreen
+import MagicUI
+import MagicCore
 
 /**
  简约布局的数据模型
@@ -8,7 +9,7 @@ struct MinimalBannerData: Codable {
     var title: String = "App Title"
     var imageId: String? = nil
     var backgroundId: String = "1"
-    var selectedDevice: Device? = nil
+    var selectedDevice: MagicDevice? = nil
     var opacity: Double = 1.0
     var titleColor: Color? = nil
     
@@ -18,7 +19,7 @@ struct MinimalBannerData: Codable {
         title: String = "App Title",
         imageId: String? = nil,
         backgroundId: String = "1",
-        selectedDevice: Device? = nil,
+        selectedDevice: MagicDevice? = nil,
         opacity: Double = 1.0,
         titleColor: Color? = nil
     ) {
@@ -41,7 +42,7 @@ struct MinimalBannerData: Codable {
         imageId = try container.decodeIfPresent(String.self, forKey: .imageId)
         backgroundId = try container.decodeIfPresent(String.self, forKey: .backgroundId) ?? "1"
         if let deviceRawValue = try container.decodeIfPresent(String.self, forKey: .selectedDevice) {
-            selectedDevice = Device(rawValue: deviceRawValue)
+            selectedDevice = MagicDevice(rawValue: deviceRawValue)
         }
         opacity = try container.decodeIfPresent(Double.self, forKey: .opacity) ?? 1.0
     }

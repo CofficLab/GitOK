@@ -1,6 +1,6 @@
 import MagicCore
 import SwiftUI
-import MagicScreen
+import MagicDevice
 
 /**
  经典Banner布局视图
@@ -48,13 +48,29 @@ struct ClassicBannerLayout: View {
                     Spacer()
                     ClassicImage()
                 }.padding()
-            case .iPad:
+            case .iPad_mini:
                 GeometryReader { _ in
                     ClassicTitle(fontSize: 120)
                     ClassicSubTitle(fontSize: 120)
                     Spacer()
                     ClassicImage()
                 }
+            case .iPhone_15:
+                VStack(spacing: 40) {
+                    Spacer()
+                    ClassicTitle(fontSize: 120)
+                    ClassicSubTitle(fontSize: 80)
+                    Spacer()
+                    ClassicImage()
+                }.padding()
+            case .iPhone_SE:
+                VStack(spacing: 40) {
+                    Spacer()
+                    ClassicTitle(fontSize: 120)
+                    ClassicSubTitle(fontSize: 80)
+                    Spacer()
+                    ClassicImage()
+                }.padding()
             }
         }
         .background(ClassicBackground())

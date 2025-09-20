@@ -1,5 +1,6 @@
 import MagicCore
 import SwiftUI
+import MagicBackground
 
 struct StatusBar: View {
     @EnvironmentObject var p: PluginProvider

@@ -1,5 +1,6 @@
 import SwiftUI
 import OSLog
+import MagicAlert
 import MagicCore
 
 struct TileProject: View, SuperLog, SuperThread {

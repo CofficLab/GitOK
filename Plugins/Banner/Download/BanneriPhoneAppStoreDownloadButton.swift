@@ -1,6 +1,7 @@
 import MagicCore
 import SwiftUI
-import MagicScreen
+import MagicAlert
+import MagicDevice
 
 /**
  * Banner iPhone App Store截图下载按钮
@@ -59,20 +60,20 @@ struct BanneriPhoneAppStoreDownloadButton: View {
         }
 
         // 为所有iPhone设备生成App Store截图
-        let iPhoneDevices = [Device.iPhoneBig, Device.iPhoneSmall]
+        let iPhoneDevices = [MagicDevice.iPhoneBig, MagicDevice.iPhoneSmall]
         var iPhoneAppStoreSizes: [(Int, Int, String)] = []
         
         for device in iPhoneDevices {
             let width = Int(device.width)
             let height = Int(device.height)
-            iPhoneAppStoreSizes.append((width, height, "\(width)x\(height) (\(device.name))"))
+            iPhoneAppStoreSizes.append((width, height, "\(width)x\(height) (\(device.description))"))
         }
         var successCount = 0
 
         for (index, device) in iPhoneDevices.enumerated() {
             let width = Int(device.width)
             let height = Int(device.height)
-            let description = "\(width)x\(height) (\(device.name))"
+            let description = "\(width)x\(height) (\(device.description))"
             
             progressText = "正在生成 \(description) (\(index + 1)/\(iPhoneDevices.count))..."
             
@@ -104,7 +105,7 @@ struct BanneriPhoneAppStoreDownloadButton: View {
     }
     
     @ViewBuilder
-    private func createBannerView(device: Device) -> some View {
+    private func createBannerView(device: MagicDevice) -> some View {
         if let template = template {
             // 使用当前选择的模板
             template.createPreviewView()
