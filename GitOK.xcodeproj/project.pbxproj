@@ -20,6 +20,16 @@
 		0B54FA762E7EBD7D008F2C5E /* MagicError in Frameworks */ = {isa = PBXBuildFile; productRef = 0B54FA752E7EBD7D008F2C5E /* MagicError */; };
 		0B54FA782E7EBD7D008F2C5E /* MagicHTTP in Frameworks */ = {isa = PBXBuildFile; productRef = 0B54FA772E7EBD7D008F2C5E /* MagicHTTP */; };
 		0B54FA7A2E7EBD7D008F2C5E /* MagicUI in Frameworks */ = {isa = PBXBuildFile; productRef = 0B54FA792E7EBD7D008F2C5E /* MagicUI */; };
+		0BB468D22E7EDC0200639009 /* MagicAlert in Frameworks */ = {isa = PBXBuildFile; productRef = 0BB468D12E7EDC0200639009 /* MagicAlert */; };
+		0BB468D42E7EDC0200639009 /* MagicAsset in Frameworks */ = {isa = PBXBuildFile; productRef = 0BB468D32E7EDC0200639009 /* MagicAsset */; };
+		0BB468D62E7EDC0200639009 /* MagicBackground in Frameworks */ = {isa = PBXBuildFile; productRef = 0BB468D52E7EDC0200639009 /* MagicBackground */; };
+		0BB468D82E7EDC0200639009 /* MagicContainer in Frameworks */ = {isa = PBXBuildFile; productRef = 0BB468D72E7EDC0200639009 /* MagicContainer */; };
+		0BB468DA2E7EDC0200639009 /* MagicCore in Frameworks */ = {isa = PBXBuildFile; productRef = 0BB468D92E7EDC0200639009 /* MagicCore */; };
+		0BB468DC2E7EDC0200639009 /* MagicDesktop in Frameworks */ = {isa = PBXBuildFile; productRef = 0BB468DB2E7EDC0200639009 /* MagicDesktop */; };
+		0BB468DE2E7EDC0200639009 /* MagicDevice in Frameworks */ = {isa = PBXBuildFile; productRef = 0BB468DD2E7EDC0200639009 /* MagicDevice */; };
+		0BB468E02E7EDC0200639009 /* MagicDiffView in Frameworks */ = {isa = PBXBuildFile; productRef = 0BB468DF2E7EDC0200639009 /* MagicDiffView */; };
+		0BB468E22E7EDC0200639009 /* MagicHTTP in Frameworks */ = {isa = PBXBuildFile; productRef = 0BB468E12E7EDC0200639009 /* MagicHTTP */; };
+		0BB468E42E7EDC0200639009 /* MagicUI in Frameworks */ = {isa = PBXBuildFile; productRef = 0BB468E32E7EDC0200639009 /* MagicUI */; };
 		0BD163992E63E0E700448518 /* MagicCore in Frameworks */ = {isa = PBXBuildFile; productRef = 0BD163982E63E0E700448518 /* MagicCore */; };
 		0BDD33062DFE566200C58C15 /* MagicCore in Frameworks */ = {isa = PBXBuildFile; productRef = 0BDD33052DFE566200C58C15 /* MagicCore */; };
 		0BDD346E2DFE86FA00C58C15 /* MagicCore in Frameworks */ = {isa = PBXBuildFile; productRef = 0BDD346D2DFE86FA00C58C15 /* MagicCore */; };
@@ -70,6 +80,9 @@
 			files = (
 				0B3CC95E2DF1C49000E22263 /* Sparkle in Frameworks */,
 				F55951842E66BAC7002161F2 /* MagicAsset in Frameworks */,
+				0BB468E02E7EDC0200639009 /* MagicDiffView in Frameworks */,
+				0BB468DA2E7EDC0200639009 /* MagicCore in Frameworks */,
+				0BB468E42E7EDC0200639009 /* MagicUI in Frameworks */,
 				F51013D32E6684DF00FA7ACA /* MagicAsset in Frameworks */,
 				F513321A2E6686A300D6BE9C /* MagicAsset in Frameworks */,
 				0BDD346E2DFE86FA00C58C15 /* MagicCore in Frameworks */,
@@ -83,14 +96,21 @@
 				0B54FA6E2E7EBD7D008F2C5E /* MagicCore in Frameworks */,
 				F54178E42E00F91F00503C7B /* MarkdownUI in Frameworks */,
 				0B54FA782E7EBD7D008F2C5E /* MagicHTTP in Frameworks */,
+				0BB468D42E7EDC0200639009 /* MagicAsset in Frameworks */,
 				0B54FA6A2E7EBD7D008F2C5E /* MagicBackground in Frameworks */,
 				0B54FA722E7EBD7D008F2C5E /* MagicDevice in Frameworks */,
 				F51013DA2E66853500FA7ACA /* MagicCore in Frameworks */,
 				0B54FA762E7EBD7D008F2C5E /* MagicError in Frameworks */,
 				F55951862E66BAC7002161F2 /* MagicCore in Frameworks */,
+				0BB468D22E7EDC0200639009 /* MagicAlert in Frameworks */,
 				0B54FA702E7EBD7D008F2C5E /* MagicDesktop in Frameworks */,
+				0BB468DE2E7EDC0200639009 /* MagicDevice in Frameworks */,
 				0B54FA7A2E7EBD7D008F2C5E /* MagicUI in Frameworks */,
+				0BB468D62E7EDC0200639009 /* MagicBackground in Frameworks */,
 				0B54FA6C2E7EBD7D008F2C5E /* MagicContainer in Frameworks */,
+				0BB468DC2E7EDC0200639009 /* MagicDesktop in Frameworks */,
+				0BB468D82E7EDC0200639009 /* MagicContainer in Frameworks */,
+				0BB468E22E7EDC0200639009 /* MagicHTTP in Frameworks */,
 				F51013D52E6684DF00FA7ACA /* MagicCore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -184,6 +204,16 @@
 				0B54FA752E7EBD7D008F2C5E /* MagicError */,
 				0B54FA772E7EBD7D008F2C5E /* MagicHTTP */,
 				0B54FA792E7EBD7D008F2C5E /* MagicUI */,
+				0BB468D12E7EDC0200639009 /* MagicAlert */,
+				0BB468D32E7EDC0200639009 /* MagicAsset */,
+				0BB468D52E7EDC0200639009 /* MagicBackground */,
+				0BB468D72E7EDC0200639009 /* MagicContainer */,
+				0BB468D92E7EDC0200639009 /* MagicCore */,
+				0BB468DB2E7EDC0200639009 /* MagicDesktop */,
+				0BB468DD2E7EDC0200639009 /* MagicDevice */,
+				0BB468DF2E7EDC0200639009 /* MagicDiffView */,
+				0BB468E12E7EDC0200639009 /* MagicHTTP */,
+				0BB468E32E7EDC0200639009 /* MagicUI */,
 			);
 			productName = GitOK;
 			productReference = 0B0E167D2BD89A8F0078942B /* GitOK.app */;
@@ -217,7 +247,7 @@
 			packageReferences = (
 				F5F794E72C5B192600DCB824 /* XCRemoteSwiftPackageReference "Sparkle" */,
 				F54178E22E00F91F00503C7B /* XCRemoteSwiftPackageReference "swift-markdown-ui" */,
-				0B54FA642E7EBD7C008F2C5E /* XCLocalSwiftPackageReference "../MagicKit" */,
+				0BB468D02E7EDC0200639009 /* XCRemoteSwiftPackageReference "MagicKit" */,
 			);
 			productRefGroup = 0B0E167E2BD89A8F0078942B /* Products */;
 			projectDirPath = "";
@@ -484,14 +514,15 @@
 		};
 /* End XCConfigurationList section */
 
-/* Begin XCLocalSwiftPackageReference section */
-		0B54FA642E7EBD7C008F2C5E /* XCLocalSwiftPackageReference "../MagicKit" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = ../MagicKit;
-		};
-/* End XCLocalSwiftPackageReference section */
-
 /* Begin XCRemoteSwiftPackageReference section */
+		0BB468D02E7EDC0200639009 /* XCRemoteSwiftPackageReference "MagicKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/CofficLab/MagicKit";
+			requirement = {
+				branch = dev;
+				kind = branch;
+			};
+		};
 		F54178E22E00F91F00503C7B /* XCRemoteSwiftPackageReference "swift-markdown-ui" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/gonzalezreal/swift-markdown-ui";
@@ -558,6 +589,56 @@
 		};
 		0B54FA792E7EBD7D008F2C5E /* MagicUI */ = {
 			isa = XCSwiftPackageProductDependency;
+			productName = MagicUI;
+		};
+		0BB468D12E7EDC0200639009 /* MagicAlert */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0BB468D02E7EDC0200639009 /* XCRemoteSwiftPackageReference "MagicKit" */;
+			productName = MagicAlert;
+		};
+		0BB468D32E7EDC0200639009 /* MagicAsset */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0BB468D02E7EDC0200639009 /* XCRemoteSwiftPackageReference "MagicKit" */;
+			productName = MagicAsset;
+		};
+		0BB468D52E7EDC0200639009 /* MagicBackground */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0BB468D02E7EDC0200639009 /* XCRemoteSwiftPackageReference "MagicKit" */;
+			productName = MagicBackground;
+		};
+		0BB468D72E7EDC0200639009 /* MagicContainer */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0BB468D02E7EDC0200639009 /* XCRemoteSwiftPackageReference "MagicKit" */;
+			productName = MagicContainer;
+		};
+		0BB468D92E7EDC0200639009 /* MagicCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0BB468D02E7EDC0200639009 /* XCRemoteSwiftPackageReference "MagicKit" */;
+			productName = MagicCore;
+		};
+		0BB468DB2E7EDC0200639009 /* MagicDesktop */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0BB468D02E7EDC0200639009 /* XCRemoteSwiftPackageReference "MagicKit" */;
+			productName = MagicDesktop;
+		};
+		0BB468DD2E7EDC0200639009 /* MagicDevice */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0BB468D02E7EDC0200639009 /* XCRemoteSwiftPackageReference "MagicKit" */;
+			productName = MagicDevice;
+		};
+		0BB468DF2E7EDC0200639009 /* MagicDiffView */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0BB468D02E7EDC0200639009 /* XCRemoteSwiftPackageReference "MagicKit" */;
+			productName = MagicDiffView;
+		};
+		0BB468E12E7EDC0200639009 /* MagicHTTP */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0BB468D02E7EDC0200639009 /* XCRemoteSwiftPackageReference "MagicKit" */;
+			productName = MagicHTTP;
+		};
+		0BB468E32E7EDC0200639009 /* MagicUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0BB468D02E7EDC0200639009 /* XCRemoteSwiftPackageReference "MagicKit" */;
 			productName = MagicUI;
 		};
 		0BD163982E63E0E700448518 /* MagicCore */ = {
