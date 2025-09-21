@@ -135,6 +135,9 @@ struct XcodeDownloadButton: View {
         
         // 创建用于导出的数据副本
         var exportData = iconData
+
+        // 清除透明度
+        var clearOpacity = false
         
         // 根据版本选择是否调整内边距、圆角和透明度
         if selectedVersion == .version16 {
@@ -148,7 +151,7 @@ struct XcodeDownloadButton: View {
         } else {
             // Xcode 26: 移除圆角，强制不透明，使用用户设置的内边距
             exportData.cornerRadius = 0
-            exportData.opacity = 1.0
+            clearOpacity = true
         }
 
         // 基础尺寸
@@ -162,7 +165,13 @@ struct XcodeDownloadButton: View {
                         let fileName = "\(tag)-macOS-\(size)x\(size).png"
                         let saveTo = folderPath.appendingPathComponent(fileName)
             do {
-                try await IconRenderer.snapshot(iconData: exportData, iconAsset: iconAsset, size: size, savePath: saveTo)
+                try await IconRenderer.snapshot(
+                    iconData: exportData, 
+                    iconAsset: iconAsset, 
+                    size: size, 
+                    savePath: saveTo, 
+                    clearOpacity: clearOpacity
+                )
             } catch {
                 MagicMessageProvider.shared.error("❌ 生成 \(fileName) 失败: \(error.localizedDescription)")
             }
@@ -175,7 +184,13 @@ struct XcodeDownloadButton: View {
             let saveTo = folderPath.appendingPathComponent(fileName)
 
             do {
-                try await IconRenderer.snapshot(iconData: exportData, iconAsset: iconAsset, size: size, savePath: saveTo)
+                try await IconRenderer.snapshot(
+                    iconData: exportData, 
+                    iconAsset: iconAsset, 
+                    size: size, 
+                    savePath: saveTo, 
+                    clearOpacity: clearOpacity
+                )
             } catch {
                 MagicMessageProvider.shared.error("❌ 生成 \(fileName) 失败: \(error.localizedDescription)")
             }
@@ -196,19 +211,25 @@ struct XcodeDownloadButton: View {
         // 创建用于导出的数据副本
         var exportData = iconData
         
+        var clearOpacity = false
+        
         // 根据版本选择是否调整内边距、圆角和透明度
         if selectedVersion == .version16 {
-            exportData.padding = 0  // Xcode 16: iOS图标不需要padding
-            exportData.opacity = 1.0  // Xcode 16: 强制不透明
-            // Xcode 16: 保持原有圆角设置
+            exportData.padding = 0
+            clearOpacity = true
         } else {
-            // Xcode 26: 移除圆角，强制不透明，使用用户设置的内边距
             exportData.cornerRadius = 0
-            exportData.opacity = 1.0
+            clearOpacity = true
         }
 
         do {
-            try await IconRenderer.snapshot(iconData: exportData, iconAsset: iconAsset, size: size, savePath: saveTo)
+            try await IconRenderer.snapshot(
+                iconData: exportData,
+                iconAsset: iconAsset,
+                size: size,
+                savePath: saveTo,
+                clearOpacity: clearOpacity
+            )
         } catch {
             MagicMessageProvider.shared.error("❌ 生成 \(fileName) 失败: \(error.localizedDescription)")
         }

@@ -13,14 +13,21 @@ class IconRenderer {
     ///   - iconAsset: 图标资源
     ///   - size: 图标尺寸
     ///   - savePath: 保存路径
+    ///   - clearOpacity: 消除透明度
     /// - Returns: 截图是否成功
-    @MainActor static func snapshot(iconData: IconData, iconAsset: IconAsset, size: Int, savePath: URL) async throws {
+    @MainActor static func snapshot(
+        iconData: IconData,
+        iconAsset: IconAsset,
+        size: Int,
+        savePath: URL,
+        clearOpacity: Bool = false
+    ) async throws {
         // 先异步获取图标图片
         let iconImage = await iconAsset.getImage()
         let scale: CGFloat = 8.0 // 使用高缩放比例以获得清晰的矢量渲染
         let viewSize = CGFloat(size) / scale
 
-        let view = IconRenderView(
+        let baseView = IconRenderView(
             iconData: iconData,
             iconAsset: iconAsset,
             size: viewSize,
@@ -28,6 +35,10 @@ class IconRenderer {
             preloadedImage: iconImage
         )
         .frame(width: viewSize, height: viewSize)
+        
+        let view = clearOpacity ? 
+            AnyView(baseView.background(Color(.windowBackgroundColor))) :
+            AnyView(baseView)
 
         try view.snapshot(path: savePath, scale: scale)
     }
@@ -41,6 +52,8 @@ struct IconRenderView: View {
     let iconData: IconData
     let iconAsset: IconAsset
     let size: CGFloat
+    
+    // 是否显示背景色，比如：图标仓库中的预览不需要背景色
     let applyBackground: Bool
 
     // 允许传入预加载的图片，用于快照
