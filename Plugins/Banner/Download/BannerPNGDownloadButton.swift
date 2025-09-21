@@ -76,10 +76,7 @@ struct BannerPNGDownloadButton: View {
             // 创建Banner视图进行截图
             let bannerView = createBannerView(device: device)
             
-            let result = MagicImage.snapshot(
-                bannerView,
-                path: filePath
-            )
+            let result = bannerView.snapshot(path: filePath)
             
             // 检查文件是否成功生成
             if FileManager.default.fileExists(atPath: filePath.path) {

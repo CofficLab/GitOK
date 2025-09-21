@@ -171,7 +171,7 @@ class IconAsset: Identifiable {
         }
         // 为了避免缩略图模糊，先以较大的固定尺寸渲染，再缩小显示
         let sizedView = AnyView(viewBuilder().frame(width: 1024, height: 1024))
-        return MagicImage.makeImage(sizedView)
+        return sizedView.toImage()
     }
     
     /// 异步加载远程图标

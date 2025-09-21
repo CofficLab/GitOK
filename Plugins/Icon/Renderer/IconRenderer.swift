@@ -22,13 +22,7 @@ class IconRenderer {
         // 创建图标视图
         let iconView = createIconView(iconData: iconData, iconAsset: iconAsset, size: CGFloat(size), preloadedImage: iconImage)
         
-        let _ = MagicImage.snapshot(
-            MagicImage.makeImage(iconView)
-                .resizable()
-                .scaledToFit()
-                .frame(width: CGFloat(size), height: CGFloat(size)),
-            path: savePath
-        )
+        let _ = iconView.snapshot(path: savePath)
 
         // 返回文件是否成功生成
         return FileManager.default.fileExists(atPath: savePath.path)
@@ -48,13 +42,7 @@ class IconRenderer {
         // 创建图标视图
         let iconView = createIconView(iconData: iconData, iconAsset: iconAsset, size: CGFloat(size), preloadedImage: iconImage)
 
-        let _ = MagicImage.snapshot(
-            MagicImage.makeImage(iconView)
-                .resizable()
-                .scaledToFit()
-                .frame(width: CGFloat(size), height: CGFloat(size)),
-            path: savePath
-        )
+        let _ = iconView.snapshot(path: savePath)
 
         // 返回文件是否成功生成
         return FileManager.default.fileExists(atPath: savePath.path)
