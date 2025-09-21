@@ -101,7 +101,7 @@ struct XcodeDownloadButton: View {
             let fileName = "\(tag)-macOS-\(size)x\(size).png"
             let saveTo = folderPath.appendingPathComponent(fileName)
 
-            let success = await IconRenderer.snapshotIcon(iconData: exportData, iconAsset: iconAsset, size: size, savePath: saveTo)
+            let success = await IconRenderer.snapshot(iconData: exportData, iconAsset: iconAsset, size: size, savePath: saveTo)
 
             // 检查文件是否生成成功
             if success == false {
@@ -115,7 +115,7 @@ struct XcodeDownloadButton: View {
             let fileName = "\(tag)-macOS-\(sizes[index])x\(sizes[index])@2x.png"
             let saveTo = folderPath.appendingPathComponent(fileName)
 
-            let success = await IconRenderer.snapshotIcon(iconData: exportData, iconAsset: iconAsset, size: size, savePath: saveTo)
+            let success = await IconRenderer.snapshot(iconData: exportData, iconAsset: iconAsset, size: size, savePath: saveTo)
 
             // 检查文件是否生成成功
             if success == false {
@@ -141,7 +141,7 @@ struct XcodeDownloadButton: View {
         exportData.cornerRadius = 0
         exportData.padding = 0  // iOS图标不需要padding
 
-        let success = await IconRenderer.snapshotIcon(iconData: exportData, iconAsset: iconAsset, size: size, savePath: saveTo)
+        let success = await IconRenderer.snapshot(iconData: exportData, iconAsset: iconAsset, size: size, savePath: saveTo)
 
         if success == false {
             MagicMessageProvider.shared.error("❌ 生成 \(fileName) 失败")

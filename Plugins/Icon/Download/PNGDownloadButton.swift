@@ -85,10 +85,7 @@ struct PNGDownloadButton: View {
         let fileName = "\(tag)-\(size)x\(size).png"
         let saveTo = folderPath.appendingPathComponent(fileName)
 
-        let success = await IconRenderer.snapshotIcon(iconData: iconData, iconAsset: iconAsset, size: size, savePath: saveTo)
-
-        // 返回文件是否成功生成
-        return success
+        return await IconRenderer.snapshot(iconData: iconData, iconAsset: iconAsset, size: size, savePath: saveTo)
     }
 }
 

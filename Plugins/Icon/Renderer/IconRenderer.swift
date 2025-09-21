@@ -1,5 +1,5 @@
-import MagicCore
 import MagicBackground
+import MagicCore
 import SwiftUI
 
 /**
@@ -15,14 +15,12 @@ class IconRenderer {
     ///   - size: 图标尺寸
     ///   - savePath: 保存路径
     /// - Returns: 截图是否成功
-    @MainActor static func snapshotIcon(iconData: IconData, iconAsset: IconAsset, size: Int, savePath: URL) async -> Bool {
+    @MainActor static func snapshot(iconData: IconData, iconAsset: IconAsset, size: Int, savePath: URL) async -> Bool {
         // 先异步获取图标图片
         let iconImage = await iconAsset.getImage()
-        
-        // 创建图标视图
-        let iconView = createIconView(iconData: iconData, iconAsset: iconAsset, size: CGFloat(size), preloadedImage: iconImage)
-        
-        let _ = iconView.snapshot(path: savePath)
+
+        createIconView(iconData: iconData, iconAsset: iconAsset, size: CGFloat(size), preloadedImage: iconImage)
+            .snapshot(path: savePath)
 
         // 返回文件是否成功生成
         return FileManager.default.fileExists(atPath: savePath.path)
@@ -40,12 +38,12 @@ class IconRenderer {
     private static func createIconView(iconData: IconData, iconAsset: IconAsset, size: CGFloat, preloadedImage: Image? = nil) -> some View {
         // 计算实际内容尺寸（考虑padding）
         let contentSize = size * (1.0 - iconData.padding * 2)
-        
+
         return ZStack {
             // 背景
             MagicBackgroundGroup(for: iconData.backgroundId)
                 .opacity(iconData.opacity)
-            
+
             // 图标内容
             if let imageURL = iconData.imageURL {
                 // 使用自定义图片URL

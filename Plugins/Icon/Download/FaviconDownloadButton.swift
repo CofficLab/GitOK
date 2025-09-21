@@ -95,7 +95,7 @@ struct FaviconDownloadButton: View {
         let fileName = "\(tag)-\(size)x\(size).png"
         let saveTo = folderPath.appendingPathComponent(fileName)
 
-        let success = await IconRenderer.snapshotIcon(iconData: iconData, iconAsset: iconAsset, size: size, savePath: saveTo)
+        let success = await IconRenderer.snapshot(iconData: iconData, iconAsset: iconAsset, size: size, savePath: saveTo)
 
         // 返回文件是否成功生成
         return success
@@ -157,7 +157,7 @@ struct FaviconDownloadButton: View {
         // 生成32x32的PNG作为ICO的基础（最常用的尺寸）
         let tempPNGPath = folderPath.appendingPathComponent("\(tag)-temp-32x32.png")
 
-        let success = await IconRenderer.snapshotIcon(iconData: iconData, iconAsset: iconAsset, size: 32, savePath: tempPNGPath)
+        let success = await IconRenderer.snapshot(iconData: iconData, iconAsset: iconAsset, size: 32, savePath: tempPNGPath)
 
         if !success {
             MagicMessageProvider.shared.error("生成ICO临时文件失败")

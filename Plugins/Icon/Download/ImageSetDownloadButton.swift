@@ -90,7 +90,7 @@ struct ImageSetDownloadButton: View {
         let fileName = "\(tag)-\(scaleLabel).png"
         let saveTo = folderPath.appendingPathComponent(fileName)
 
-        let success = await IconRenderer.snapshotIcon(iconData: iconData, iconAsset: iconAsset, size: size, savePath: saveTo)
+        let success = await IconRenderer.snapshot(iconData: iconData, iconAsset: iconAsset, size: size, savePath: saveTo)
         return success
     }
 
