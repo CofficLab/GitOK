@@ -14,7 +14,7 @@ struct XcodeDownloadButton: View {
 
     @State private var isGenerating = false
     @State private var progressText = ""
-    @State private var selectedVersion: XcodeVersion = .version16
+    @State private var selectedVersion: XcodeVersion = .version26
     
     enum XcodeVersion: String, CaseIterable {
         case version16 = "Xcode 16"
@@ -31,19 +31,17 @@ struct XcodeDownloadButton: View {
     }
 
     var body: some View {
-        VStack(spacing: 8) {
-            DownloadButton(
-                title: progressText.isEmpty ? "下载 \(selectedVersion.rawValue) 格式" : progressText,
-                icon: "applelogo",
-                color: selectedVersion.color,
-                action: {
-                    Task {
-                        await downloadXcode()
-                    }
-                },
-                isDisabled: isGenerating || currentIconAsset == nil || iconProvider.currentData == nil
-            )
-            
+        DownloadButton(
+            title: progressText.isEmpty ? "下载 \(selectedVersion.rawValue) 格式" : progressText,
+            icon: "applelogo",
+            color: selectedVersion.color,
+            action: {
+                Task {
+                    await downloadXcode()
+                }
+            },
+            isDisabled: isGenerating || currentIconAsset == nil || iconProvider.currentData == nil
+        ) {
             // 版本选择器
             HStack {
                 Picker("", selection: $selectedVersion) {
