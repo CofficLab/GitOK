@@ -1,6 +1,7 @@
 import Cocoa
 import Foundation
 import MagicCore
+import MagicHTTP
 import SwiftUI
 
 /**
@@ -179,12 +180,7 @@ class IconAsset: Identifiable {
 
         do {
             // 异步加载远程图片
-            let (data, response) = try await URLSession.shared.data(from: iconURL)
-
-            guard let httpResponse = response as? HTTPURLResponse,
-                  httpResponse.statusCode == 200 else {
-                throw RemoteIconError.networkError
-            }
+            let (data, _) = try await iconURL.httpGetData(cacheMaxAge: 3600)
 
             // 将数据转换为NSImage，然后转换为SwiftUI Image
             guard let nsImage = NSImage(data: data) else {
