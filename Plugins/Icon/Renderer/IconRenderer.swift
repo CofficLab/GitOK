@@ -28,7 +28,7 @@ class IconRenderer {
             preloadedImage: iconImage
         )
         .frame(width: viewSize, height: viewSize)
-        
+
         try view.snapshot(path: savePath, scale: scale)
     }
 }
@@ -42,10 +42,10 @@ struct IconRenderView: View {
     let iconAsset: IconAsset
     let size: CGFloat
     let applyBackground: Bool
-    
+
     // 允许传入预加载的图片，用于快照
     let preloadedImage: Image?
-    
+
     // 用于异步加载图片（预览时）
     @State private var loadedImage: Image?
     @State private var isLoading = false
@@ -62,30 +62,23 @@ struct IconRenderView: View {
         let contentSize = size * (1.0 - iconData.padding * 2)
 
         ZStack {
-            // 内边框
-            RoundedRectangle(cornerRadius: 4)
-                .stroke(Color.gray.opacity(0.3), lineWidth: 1)
-                .frame(width: contentSize, height: contentSize)
-            
-            ZStack {
-                // 背景
-                if applyBackground {
-                    MagicBackgroundGroup(for: iconData.backgroundId)
-                        .opacity(iconData.opacity)
-                }
-                
-                // 图标内容
-                iconContentView
+            // 背景
+            if applyBackground {
+                MagicBackgroundGroup(for: iconData.backgroundId)
+                    .opacity(iconData.opacity)
             }
-            .frame(width: contentSize, height: contentSize)
-            .cornerRadius({
-                let base: CGFloat = 1024
-                let scaled = CGFloat(iconData.cornerRadius) * (size / base)
-                return iconData.cornerRadius > 0 ? max(0, scaled) : 0
-            }())
+
+            // 图标内容
+            iconContentView
         }
+        .frame(width: contentSize, height: contentSize)
+        .cornerRadius({
+            let base: CGFloat = 1024
+            let scaled = CGFloat(iconData.cornerRadius) * (size / base)
+            return iconData.cornerRadius > 0 ? max(0, scaled) : 0
+        }())
     }
-    
+
     private var iconContentView: some View {
         Group {
             if let imageURL = iconData.imageURL {
@@ -139,7 +132,7 @@ struct IconRenderView: View {
             }
         }
     }
-    
+
     @MainActor
     private func loadIconImage() {
         isLoading = true
@@ -150,7 +143,6 @@ struct IconRenderView: View {
         }
     }
 }
-
 
 #Preview("App - Small Screen") {
     RootView {
