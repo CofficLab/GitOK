@@ -1,6 +1,7 @@
 import MagicCore
+import MagicAlert
 import SwiftUI
-import MagicScreen
+import MagicDevice
 
 /**
  * Banner PNG格式下载按钮
@@ -59,13 +60,13 @@ struct BannerPNGDownloadButton: View {
         }
 
         // 为所有设备生成PNG截图
-        let allDevices = [Device.iMac, Device.MacBook, Device.iPhoneBig, Device.iPhoneSmall, Device.iPad]
+        let allDevices = [MagicDevice.iMac, MagicDevice.MacBook, MagicDevice.iPhoneBig, MagicDevice.iPhoneSmall, MagicDevice.iPad_mini]
         var successCount = 0
 
         for (index, device) in allDevices.enumerated() {
             let width = Int(device.width)
             let height = Int(device.height)
-            let description = "\(width)x\(height) (\(device.name))"
+            let description = "\(width)x\(height) (\(device.description))"
             
             progressText = "正在生成 \(description) (\(index + 1)/\(allDevices.count))..."
             
@@ -75,14 +76,11 @@ struct BannerPNGDownloadButton: View {
             // 创建Banner视图进行截图
             let bannerView = createBannerView(device: device)
             
-            let result = MagicImage.snapshot(
-                bannerView,
-                path: filePath
-            )
-            
-            // 检查文件是否成功生成
-            if FileManager.default.fileExists(atPath: filePath.path) {
+            do {
+                try bannerView.snapshot(path: filePath)
                 successCount += 1
+            } catch {
+                MagicMessageProvider.shared.error("生成PNG \(description) 失败: \(error.localizedDescription)")
             }
         }
 
@@ -97,7 +95,7 @@ struct BannerPNGDownloadButton: View {
     }
     
     @ViewBuilder
-    private func createBannerView(device: Device) -> some View {
+    private func createBannerView(device: MagicDevice) -> some View {
         if let template = template {
             // 使用当前选择的模板
             template.createPreviewView()

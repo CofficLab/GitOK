@@ -1,5 +1,7 @@
 import SwiftUI
-import MagicScreen
+import MagicCore
+import MagicDevice
+import MagicUI
 
 /**
  经典布局的数据模型
@@ -10,7 +12,7 @@ struct ClassicBannerData: Codable {
     var features: [String] = []
     var imageId: String? = nil
     var backgroundId: String = "1"
-    var selectedDevice: Device? = nil
+    var selectedDevice: MagicDevice? = nil
     var opacity: Double = 1.0
     var titleColor: Color? = nil
     var subTitleColor: Color? = nil
@@ -24,7 +26,7 @@ struct ClassicBannerData: Codable {
         features: [String] = [],
         imageId: String? = nil,
         backgroundId: String = "1",
-        selectedDevice: Device? = nil,
+        selectedDevice: MagicDevice? = nil,
         opacity: Double = 1.0,
         titleColor: Color? = nil,
         subTitleColor: Color? = nil
@@ -53,7 +55,7 @@ struct ClassicBannerData: Codable {
         imageId = try container.decodeIfPresent(String.self, forKey: .imageId)
         backgroundId = try container.decodeIfPresent(String.self, forKey: .backgroundId) ?? "1"
         if let deviceRawValue = try container.decodeIfPresent(String.self, forKey: .selectedDevice) {
-            selectedDevice = Device(rawValue: deviceRawValue)
+            selectedDevice = MagicDevice(rawValue: deviceRawValue)
         }
         opacity = try container.decodeIfPresent(Double.self, forKey: .opacity) ?? 1.0
     }

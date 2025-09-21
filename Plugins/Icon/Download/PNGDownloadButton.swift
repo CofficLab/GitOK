@@ -1,4 +1,5 @@
 import MagicCore
+import MagicAlert
 import SwiftUI
 
 /**
@@ -84,10 +85,13 @@ struct PNGDownloadButton: View {
         let fileName = "\(tag)-\(size)x\(size).png"
         let saveTo = folderPath.appendingPathComponent(fileName)
 
-        let success = await IconRenderer.snapshotIcon(iconData: iconData, iconAsset: iconAsset, size: size, savePath: saveTo)
-
-        // 返回文件是否成功生成
-        return success
+        do {
+            try await IconRenderer.snapshot(iconData: iconData, iconAsset: iconAsset, size: size, savePath: saveTo)
+            return true
+        } catch {
+            MagicMessageProvider.shared.error("尺寸 \(size)x\(size) 生成失败: \(error.localizedDescription)")
+            return false
+        }
     }
 }
 

@@ -109,13 +109,13 @@ class WebIconRepo: SuperLog, IconSourceProtocol {
                 if icon.iconId == iconId {
                     return true
                 }
-                // 模糊匹配：检查iconId是否包含在路径中
-                if icon.remotePath?.contains(iconId) == true {
+                // 模糊匹配：检查iconId是否包含在URL中
+                if let urlString = icon.fileURL?.absoluteString, urlString.contains(iconId) {
                     return true
                 }
-                // 检查路径的最后一部分（去掉扩展名）
-                if let path = icon.remotePath {
-                    let lastComponent = path.components(separatedBy: "/").last ?? ""
+                // 检查URL的最后一部分（去掉扩展名）
+                if let url = icon.fileURL {
+                    let lastComponent = url.lastPathComponent
                     let withoutExtension = lastComponent.replacingOccurrences(of: ".svg", with: "")
                         .replacingOccurrences(of: ".png", with: "")
                         .replacingOccurrences(of: ".jpg", with: "")
@@ -231,7 +231,10 @@ class WebIconRepo: SuperLog, IconSourceProtocol {
         let manifest = try JSONDecoder().decode(IconManifest.self, from: data)
         let categoryIcons = manifest.iconsByCategory[categoryId] ?? []
         os_log(.info, "\(self.t)icons for cat=\(categoryId): \(categoryIcons.count)")
-        return categoryIcons.map { iconData in IconAsset(remotePath: iconData.path) }
+        return categoryIcons.map { iconData in 
+            let remoteURL = URL(string: baseURL + "/icons/" + iconData.path)!
+            return IconAsset(remoteURL: remoteURL)
+        }
     }
 
     // MARK: - 图标缓存管理
@@ -261,18 +264,16 @@ class WebIconRepo: SuperLog, IconSourceProtocol {
     }
 
     /// 下载并缓存图标到本地
-    /// - Parameter iconPath: 图标路径
+    /// - Parameter remoteURL: 远程图标URL
     /// - Returns: 是否下载成功
-    func downloadAndCacheIcon(for iconPath: String) async -> Bool {
+    func downloadAndCacheIcon(for remoteURL: URL) async -> Bool {
+        // 从URL中提取路径部分用于本地缓存
+        let iconPath = String(remoteURL.path.dropFirst()) // 去掉开头的 "/"
+        
         // 检查本地是否已有缓存
         let localCacheURL = getLocalCacheURL(for: iconPath)
         if FileManager.default.fileExists(atPath: localCacheURL.path) {
             return true
-        }
-
-        // 从网络下载图标
-        guard let remoteURL = URL(string: baseURL + "/icons/" + iconPath) else {
-            return false
         }
 
         do {
@@ -298,8 +299,8 @@ class WebIconRepo: SuperLog, IconSourceProtocol {
         var successCount = 0
 
         for icon in icons {
-            if let remotePath = icon.remotePath,
-               await downloadAndCacheIcon(for: remotePath) {
+            if let remoteURL = icon.fileURL,
+               await downloadAndCacheIcon(for: remoteURL) {
                 successCount += 1
             }
         }

@@ -1,6 +1,7 @@
+import MagicAlert
 import MagicCore
+import MagicDevice
 import SwiftUI
-import MagicScreen
 
 /**
  * Banner Mac App Store截图下载按钮
@@ -10,7 +11,7 @@ import MagicScreen
 struct BannerAppStoreDownloadButton: View {
     @EnvironmentObject var bannerProvider: BannerProvider
     let template: (any BannerTemplateProtocol)?
-    
+
     @State private var isGenerating = false
     @State private var progressText = ""
 
@@ -36,7 +37,7 @@ struct BannerAppStoreDownloadButton: View {
 
         isGenerating = true
         progressText = "正在生成App Store截图..."
-        defer { 
+        defer {
             isGenerating = false
             progressText = ""
         }
@@ -59,37 +60,34 @@ struct BannerAppStoreDownloadButton: View {
         }
 
         // 为所有Mac设备生成App Store截图
-        let macDevices = [Device.iMac, Device.MacBook]
+        let macDevices = [MagicDevice.iMac, MagicDevice.MacBook]
         var appStoreSizes: [(Int, Int, String)] = []
-        
+
         for device in macDevices {
             let width = Int(device.width)
             let height = Int(device.height)
-            appStoreSizes.append((width, height, "\(width)x\(height) (\(device.name))"))
+            appStoreSizes.append((width, height, "\(width)x\(height) (\(device.description))"))
         }
         var successCount = 0
 
         for (index, device) in macDevices.enumerated() {
             let width = Int(device.width)
             let height = Int(device.height)
-            let description = "\(width)x\(height) (\(device.name))"
-            
+            let description = "\(width)x\(height) (\(device.description))"
+
             progressText = "正在生成 \(description) (\(index + 1)/\(macDevices.count))..."
-            
+
             let fileName = "appstore-screenshot-\(device.rawValue)-\(width)x\(height).png"
             let filePath = folderPath.appendingPathComponent(fileName)
-            
+
             // 创建Banner视图进行截图
             let bannerView = createBannerView(device: device)
-            
-            let result = MagicImage.snapshot(
-                bannerView,
-                path: filePath
-            )
-            
-            // 检查文件是否成功生成
-            if FileManager.default.fileExists(atPath: filePath.path) {
+
+            do {
+                try bannerView.snapshot(path: filePath)
                 successCount += 1
+            } catch {
+                MagicMessageProvider.shared.error("生成截图 \(description) 失败: \(error.localizedDescription)")
             }
         }
 
@@ -102,9 +100,9 @@ struct BannerAppStoreDownloadButton: View {
             MagicMessageProvider.shared.error("只成功生成了 \(successCount)/\(macDevices.count) 个截图")
         }
     }
-    
+
     @ViewBuilder
-    private func createBannerView(device: Device) -> some View {
+    private func createBannerView(device: MagicDevice) -> some View {
         if let template = template {
             // 使用当前选择的模板
             template.createPreviewView()

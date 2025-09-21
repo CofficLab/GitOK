@@ -1,6 +1,7 @@
 import SwiftUI
 import MagicCore
-import MagicScreen
+import MagicDevice
+import MagicAlert
 import UniformTypeIdentifiers
 
 /**
@@ -12,7 +13,7 @@ struct ClassicImageEditor: View {
     @EnvironmentObject var m: MagicMessageProvider
     
     @State private var showImagePicker = false
-    @State private var selectedDevice: Device? = nil
+    @State private var selectedDevice: MagicDevice? = nil
     
     var classicData: ClassicBannerData? { b.banner.classicData }
     
@@ -63,9 +64,9 @@ struct ClassicImageEditor: View {
                         Spacer()
                         
                         Picker("选择设备", selection: $selectedDevice) {
-                            Text("无边框").tag(Optional<Device>.none)
-                            ForEach(Device.allCases, id: \.self) { device in
-                                Text(device.name).tag(Optional(device))
+                            Text("无边框").tag(Optional<MagicDevice>.none)
+                            ForEach(MagicDevice.allCases, id: \.self) { device in
+                                Text(device.description).tag(Optional(device))
                             }
                         }
                         .frame(width: 240)

@@ -1,5 +1,6 @@
 import MagicCore
-import MagicScreen
+import MagicDevice
+import MagicAlert
 import SwiftUI
 
 /**
@@ -19,23 +20,31 @@ struct ClassicImage: View {
             if let device = classicData?.selectedDevice {
                 switch device {
                 case .iMac:
-                    ScreeniMac(content: {
+                    iMacScreen(content: {
                         image.resizable().scaledToFit()
                     })
                 case .MacBook:
-                    ScreenMacBook(content: {
+                    MacBookScreen(content: {
                         image.resizable().scaledToFit()
                     })
                 case .iPhoneBig:
-                    ScreeniPhone(content: {
+                    iPhoneScreen(content: {
                         image.resizable().scaledToFit()
                     })
                 case .iPhoneSmall:
-                    ScreeniPhone(content: {
+                    iPhoneScreen(content: {
                         image.resizable().scaledToFit()
                     })
-                case .iPad:
-                    ScreeniPad(content: {
+                case .iPad_mini:
+                    iPadScreen(content: {
+                        image.resizable().scaledToFit()
+                    })
+                case .iPhone_15:
+                    iPhoneScreen(content: {
+                        image.resizable().scaledToFit()
+                    })
+                case .iPhone_SE:
+                    iPhoneScreen(content: {
                         image.resizable().scaledToFit()
                     })
                 }

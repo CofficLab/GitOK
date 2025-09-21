@@ -1,5 +1,6 @@
 import SwiftUI
 import MagicCore
+import MagicAlert
 
 struct BtnChangeImage: View {
     @EnvironmentObject var m: MagicMessageProvider

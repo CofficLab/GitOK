@@ -1,7 +1,7 @@
-import Foundation
-import SwiftUI
 import Cocoa
+import Foundation
 import MagicCore
+import SwiftUI
 
 /**
  * 图标来源类型
@@ -21,67 +21,68 @@ enum IconSource {
 class IconAsset: Identifiable {
     /// 图标来源类型
     private let source: IconSource
-    
-    /// 图标文件URL（本地图标）或远程路径（远程图标）
+
+    /// 图标文件URL（本地图标和远程图标统一使用）
     let fileURL: URL?
-    let remotePath: String?
     /// 生成型视图构造器（用于 MagicAsset 等基于 SwiftUI 的图标）
     let viewBuilder: (() -> AnyView)?
     /// 生成型视图的稳定标识
     private let viewId: String?
-    
+
     /// 稳定的ID
-    var id: String { 
+    var id: String {
         switch source {
         case .local:
             return fileURL?.path ?? ""
         case .remote:
-            return remotePath ?? ""
+            return fileURL?.absoluteString ?? ""
         case .generated:
             return viewId ?? ""
         }
     }
-    
+
     /// 图标所属分类名称
     var categoryName: String {
         switch source {
         case .local:
             return fileURL?.deletingLastPathComponent().lastPathComponent ?? ""
         case .remote:
-            return remotePath?.components(separatedBy: "/").first ?? ""
+            return fileURL?.pathComponents.dropFirst().first ?? ""
         case .generated:
             return "MagicAsset"
         }
     }
-    
+
     /// 图标ID
     var iconId: String {
         switch source {
         case .local:
             return fileURL?.deletingPathExtension().lastPathComponent ?? ""
         case .remote:
-            return remotePath?.components(separatedBy: "/").last?.replacingOccurrences(of: ".svg", with: "") ?? ""
+            let lastComponent = fileURL?.lastPathComponent ?? ""
+            return lastComponent.replacingOccurrences(of: ".svg", with: "")
+                .replacingOccurrences(of: ".png", with: "")
+                .replacingOccurrences(of: ".jpg", with: "")
+                .replacingOccurrences(of: ".jpeg", with: "")
         case .generated:
             return viewId ?? ""
         }
     }
-    
+
     /// 本地图标初始化方法
     /// - Parameter fileURL: 图标文件URL
     init(fileURL: URL) {
         self.source = .local
         self.fileURL = fileURL
-        self.remotePath = nil
         self.viewBuilder = nil
         self.viewId = nil
     }
-    
+
     /// 远程图标初始化方法
-    /// - Parameter remotePath: 远程图标路径
-    init(remotePath: String) {
+    /// - Parameter remoteURL: 远程图标URL
+    init(remoteURL: URL) {
         self.source = .remote
-        self.fileURL = nil
-        self.remotePath = remotePath
+        self.fileURL = remoteURL
         self.viewBuilder = nil
         self.viewId = nil
     }
@@ -93,11 +94,10 @@ class IconAsset: Identifiable {
     init(viewBuilder: @escaping () -> AnyView, id: String) {
         self.source = .generated
         self.fileURL = nil
-        self.remotePath = nil
         self.viewBuilder = viewBuilder
         self.viewId = id
     }
-    
+
     /// 异步获取图标图片（支持远程图标加载）
     /// - Returns: 加载完成的SwiftUI Image
     @MainActor
@@ -111,18 +111,18 @@ class IconAsset: Identifiable {
             return loadGeneratedImage()
         }
     }
-    
+
     // MARK: - 私有实例方法
-    
+
     /// 加载图片（支持多种格式）
     /// - Returns: SwiftUI Image
     private func loadImage() -> Image {
         guard let fileURL = fileURL else {
             return Image(systemName: "plus")
         }
-        
+
         let fileExtension = fileURL.pathExtension.lowercased()
-        
+
         switch fileExtension {
         case "svg":
             return loadSVGImage()
@@ -132,29 +132,24 @@ class IconAsset: Identifiable {
             return Image(systemName: "plus")
         }
     }
-    
+
     /// 加载SVG图片
     /// - Returns: SwiftUI Image
     private func loadSVGImage() -> Image {
-        guard let fileURL = fileURL else {
-            return Image(systemName: "doc.text.image")
+        guard let fileURL = fileURL, let nsImage = NSImage(contentsOf: fileURL) else {
+            return Image.doc
         }
-        
-        // macOS原生支持SVG格式，可以直接使用NSImage加载
-        if let nsImage = NSImage(contentsOf: fileURL) {
-            return Image(nsImage: nsImage)
-        } else {
-            return Image(systemName: "doc.text.image")
-        }
+
+        return Image(nsImage: nsImage)
     }
-    
+
     /// 加载光栅图片（PNG、JPG等）
     /// - Returns: SwiftUI Image
     private func loadRasterImage() -> Image {
         guard let fileURL = fileURL else {
             return Image(systemName: "plus")
         }
-        
+
         if let nsImage = NSImage(contentsOf: fileURL) {
             return Image(nsImage: nsImage)
         } else {
@@ -171,39 +166,31 @@ class IconAsset: Identifiable {
         }
         // 为了避免缩略图模糊，先以较大的固定尺寸渲染，再缩小显示
         let sizedView = AnyView(viewBuilder().frame(width: 1024, height: 1024))
-        return MagicImage.makeImage(sizedView)
+        return sizedView.toImage()
     }
-    
+
     /// 异步加载远程图标
     /// - Returns: 加载完成的SwiftUI Image
     @MainActor
     private func loadRemoteImage() async -> Image {
-        guard let remotePath = remotePath else {
+        guard let iconURL = fileURL else {
             return Image(systemName: "exclamationmark.triangle")
         }
-        
+
         do {
-            // 构建远程图标的完整URL
-            let baseURL = "https://gitok.coffic.cn"
-            let iconURL = URL(string: baseURL + "/icons/" + remotePath)
-            
-            guard let iconURL = iconURL else {
-                throw RemoteIconError.invalidURL
-            }
-            
             // 异步加载远程图片
             let (data, response) = try await URLSession.shared.data(from: iconURL)
-            
+
             guard let httpResponse = response as? HTTPURLResponse,
                   httpResponse.statusCode == 200 else {
                 throw RemoteIconError.networkError
             }
-            
+
             // 将数据转换为NSImage，然后转换为SwiftUI Image
             guard let nsImage = NSImage(data: data) else {
                 throw RemoteIconError.decodingError
             }
-            
+
             return Image(nsImage: nsImage)
         } catch {
             print("加载远程图标失败: \(error)")

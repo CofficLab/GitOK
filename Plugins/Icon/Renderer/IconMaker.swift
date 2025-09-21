@@ -1,5 +1,6 @@
 import MagicCore
 import SwiftUI
+import MagicAlert
 import UniformTypeIdentifiers
 
 /**
@@ -22,7 +23,8 @@ struct IconMaker: View {
                 // 有图标数据时显示预览
                 IconPreview(
                     iconData: iconData,
-                    iconAsset: iconAsset
+                    iconAsset: iconAsset,
+                    applyBackground: true
                 )
                 .padding()
             } else if isLoading {
