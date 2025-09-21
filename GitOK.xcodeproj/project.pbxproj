@@ -10,6 +10,7 @@
 		0B0E168B2BD89A910078942B /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0B0E168A2BD89A910078942B /* Preview Assets.xcassets */; };
 		0B3CC95E2DF1C49000E22263 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = 0B3CC95D2DF1C49000E22263 /* Sparkle */; };
 		0B750F162E7F934F00140214 /* MarkdownUI in Frameworks */ = {isa = PBXBuildFile; productRef = 0B750F152E7F934F00140214 /* MarkdownUI */; };
+		0B750F192E7FB00D00140214 /* MagicKit in Frameworks */ = {isa = PBXBuildFile; productRef = 0B750F182E7FB00D00140214 /* MagicKit */; };
 		0B7E62102E7F92EA0054DEB5 /* MagicKit in Frameworks */ = {isa = PBXBuildFile; productRef = 0B7E620F2E7F92EA0054DEB5 /* MagicKit */; };
 		F54D04C42DF2D01300FFB434 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = F54D04C32DF2D01300FFB434 /* Localizable.xcstrings */; };
 /* End PBXBuildFile section */
@@ -48,6 +49,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0B750F162E7F934F00140214 /* MarkdownUI in Frameworks */,
+				0B750F192E7FB00D00140214 /* MagicKit in Frameworks */,
 				0B3CC95E2DF1C49000E22263 /* Sparkle in Frameworks */,
 				0B7E62102E7F92EA0054DEB5 /* MagicKit in Frameworks */,
 			);
@@ -121,6 +123,7 @@
 				0B3CC95D2DF1C49000E22263 /* Sparkle */,
 				0B7E620F2E7F92EA0054DEB5 /* MagicKit */,
 				0B750F152E7F934F00140214 /* MarkdownUI */,
+				0B750F182E7FB00D00140214 /* MagicKit */,
 			);
 			productName = GitOK;
 			productReference = 0B0E167D2BD89A8F0078942B /* GitOK.app */;
@@ -154,7 +157,7 @@
 			packageReferences = (
 				F5F794E72C5B192600DCB824 /* XCRemoteSwiftPackageReference "Sparkle" */,
 				F54178E22E00F91F00503C7B /* XCRemoteSwiftPackageReference "swift-markdown-ui" */,
-				0B7E620E2E7F92EA0054DEB5 /* XCLocalSwiftPackageReference "../MagicKit" */,
+				0B750F172E7FB00D00140214 /* XCRemoteSwiftPackageReference "MagicKit" */,
 			);
 			productRefGroup = 0B0E167E2BD89A8F0078942B /* Products */;
 			projectDirPath = "";
@@ -421,14 +424,15 @@
 		};
 /* End XCConfigurationList section */
 
-/* Begin XCLocalSwiftPackageReference section */
-		0B7E620E2E7F92EA0054DEB5 /* XCLocalSwiftPackageReference "../MagicKit" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = ../MagicKit;
-		};
-/* End XCLocalSwiftPackageReference section */
-
 /* Begin XCRemoteSwiftPackageReference section */
+		0B750F172E7FB00D00140214 /* XCRemoteSwiftPackageReference "MagicKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/CofficLab/MagicKit";
+			requirement = {
+				branch = dev;
+				kind = branch;
+			};
+		};
 		F54178E22E00F91F00503C7B /* XCRemoteSwiftPackageReference "swift-markdown-ui" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/gonzalezreal/swift-markdown-ui";
@@ -457,6 +461,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = F54178E22E00F91F00503C7B /* XCRemoteSwiftPackageReference "swift-markdown-ui" */;
 			productName = MarkdownUI;
+		};
+		0B750F182E7FB00D00140214 /* MagicKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0B750F172E7FB00D00140214 /* XCRemoteSwiftPackageReference "MagicKit" */;
+			productName = MagicKit;
 		};
 		0B7E620F2E7F92EA0054DEB5 /* MagicKit */ = {
 			isa = XCSwiftPackageProductDependency;
