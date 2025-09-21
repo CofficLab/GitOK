@@ -27,26 +27,6 @@ class IconRenderer {
         // 返回文件是否成功生成
         return FileManager.default.fileExists(atPath: savePath.path)
     }
-    
-    /// 异步生成图标截图（支持远程图标预加载）
-    /// - Parameters:
-    ///   - iconData: 图标数据
-    ///   - iconAsset: 图标资源
-    ///   - size: 图标尺寸
-    ///   - savePath: 保存路径
-    /// - Returns: 截图是否成功
-    @MainActor static func snapshotIconAsync(iconData: IconData, iconAsset: IconAsset, size: Int, savePath: URL) async -> Bool {
-        // 先异步获取图标图片
-        let iconImage = await iconAsset.getImage()
-        
-        // 创建图标视图
-        let iconView = createIconView(iconData: iconData, iconAsset: iconAsset, size: CGFloat(size), preloadedImage: iconImage)
-
-        let _ = iconView.snapshot(path: savePath)
-
-        // 返回文件是否成功生成
-        return FileManager.default.fileExists(atPath: savePath.path)
-    }
 
     // MARK: - 私有方法
 
