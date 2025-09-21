@@ -4,9 +4,9 @@ import SwiftUI
 
 /**
  * Xcode 格式下载按钮
- * 支持选择 Xcode 16 或 26 版本
- * Xcode 16: 自动调整内边距
- * Xcode 26: 使用用户设置的内边距
+ * 自动生成两种格式：
+ * - 适用于 macOS 26 和 iOS 26 之前的版本
+ * - 适用于 macOS 26 和 iOS 26 版本
  */
 struct XcodeDownloadButton: View {
     let iconProvider: IconProvider
@@ -14,72 +14,19 @@ struct XcodeDownloadButton: View {
 
     @State private var isGenerating = false
     @State private var progressText = ""
-    @State private var selectedVersion: XcodeVersion = .version26
-    
-    enum XcodeVersion: String, CaseIterable {
-        case version16 = "Xcode 16"
-        case version26 = "Xcode 26"
-        
-        var color: Color {
-            switch self {
-            case .version16:
-                return .blue
-            case .version26:
-                return .purple
-            }
-        }
-    }
 
     var body: some View {
         DownloadButton(
-            title: progressText.isEmpty ? "下载 \(selectedVersion.rawValue) 格式" : progressText,
+            title: progressText.isEmpty ? "下载 Xcode 格式" : progressText,
             icon: "applelogo",
-            color: selectedVersion.color,
+            color: .blue,
             action: {
                 Task {
                     await downloadXcode()
                 }
             },
             isDisabled: isGenerating || currentIconAsset == nil || iconProvider.currentData == nil
-        ) {
-            // 版本选择器
-            VStack(alignment: .leading, spacing: 8) {
-                HStack {
-                    Picker("", selection: $selectedVersion) {
-                        ForEach(XcodeVersion.allCases, id: \.self) { version in
-                            Text(version.rawValue)
-                                .tag(version)
-                        }
-                    }
-                    .pickerStyle(SegmentedPickerStyle())
-                    .frame(maxWidth: 200)
-                    
-                    Spacer()
-                }
-                
-                // 版本规则说明
-                VStack(alignment: .leading, spacing: 4) {
-                    if selectedVersion == .version16 {
-                        Text("• 自动调整内边距为 0.1")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                        Text("• 保持原有圆角和透明度设置")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    } else {
-                        Text("• 使用用户自定义内边距")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                        Text("• 强制移除圆角 (cornerRadius = 0)")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                        Text("• 强制不透明 (opacity = 1.0)")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    }
-                }
-            }
-        }
+        )
     }
 
     @MainActor private func downloadXcode() async {
@@ -89,45 +36,82 @@ struct XcodeDownloadButton: View {
         }
 
         isGenerating = true
-        progressText = "正在生成 \(selectedVersion.rawValue) 图标集..."
+        progressText = "正在生成 Xcode 图标集..."
         defer {
             isGenerating = false
             progressText = ""
         }
 
         let tag = Date.nowCompact
-        let folderName = "\(selectedVersion.rawValue.replacingOccurrences(of: " ", with: ""))Icons-\(tag).appiconset"
 
         guard let downloadsURL = FileManager.default.urls(for: .downloadsDirectory, in: .userDomainMask).first else {
             MagicMessageProvider.shared.error("无权访问下载文件夹")
             return
         }
 
+        // 生成两种格式的图标集
+        await generateBothFormats(downloadsURL: downloadsURL, tag: tag, iconAsset: iconAsset)
+
+        MagicMessageProvider.shared.success("两种格式的 Xcode 图标集已存储到下载目录")
+    }
+
+    @MainActor private func generateBothFormats(downloadsURL: URL, tag: String, iconAsset: IconAsset) async {
+        // 生成适用于 macOS 26 和 iOS 26 之前版本的格式
+        await generateLegacyFormat(downloadsURL: downloadsURL, tag: tag, iconAsset: iconAsset)
+        
+        // 生成适用于 macOS 26 和 iOS 26 版本的格式
+        await generateModernFormat(downloadsURL: downloadsURL, tag: tag, iconAsset: iconAsset)
+    }
+    
+    @MainActor private func generateLegacyFormat(downloadsURL: URL, tag: String, iconAsset: IconAsset) async {
+        let folderName = "XcodeIcons-Legacy-\(tag).appiconset"
         let folderPath = downloadsURL.appendingPathComponent(folderName, isDirectory: true)
 
         do {
             try FileManager.default.createDirectory(at: folderPath, withIntermediateDirectories: true)
         } catch {
-            MagicMessageProvider.shared.error("创建目标目录失败：\(error)")
+            MagicMessageProvider.shared.error("创建传统格式目录失败：\(error)")
             return
         }
 
-        // 生成macOS图标
-        await generateMacOSIcons(folderPath: folderPath, tag: tag, iconAsset: iconAsset)
+        // 生成macOS图标（传统格式）
+        await generateMacOSIcons(folderPath: folderPath, tag: tag, iconAsset: iconAsset, isLegacy: true)
 
-        // 生成iOS图标
-        await generateIOSIcons(folderPath: folderPath, tag: tag, iconAsset: iconAsset)
+        // 生成iOS图标（传统格式）
+        await generateIOSIcons(folderPath: folderPath, tag: tag, iconAsset: iconAsset, isLegacy: true)
 
         // 生成Contents.json文件
-        await generateContentJson(folderPath: folderPath, tag: tag)
+        await generateContentJson(folderPath: folderPath, tag: tag, isLegacy: true)
 
         // 生成README文件
-        await generateReadmeFile(folderPath: folderPath, tag: tag)
+        await generateReadmeFile(folderPath: folderPath, tag: tag, isLegacy: true)
+    }
+    
+    @MainActor private func generateModernFormat(downloadsURL: URL, tag: String, iconAsset: IconAsset) async {
+        let folderName = "XcodeIcons-Modern-\(tag).appiconset"
+        let folderPath = downloadsURL.appendingPathComponent(folderName, isDirectory: true)
 
-        MagicMessageProvider.shared.success("\(selectedVersion.rawValue) 图标集已存储到下载目录")
+        do {
+            try FileManager.default.createDirectory(at: folderPath, withIntermediateDirectories: true)
+        } catch {
+            MagicMessageProvider.shared.error("创建现代格式目录失败：\(error)")
+            return
+        }
+
+        // 生成macOS图标（现代格式）
+        await generateMacOSIcons(folderPath: folderPath, tag: tag, iconAsset: iconAsset, isLegacy: false)
+
+        // 生成iOS图标（现代格式）
+        await generateIOSIcons(folderPath: folderPath, tag: tag, iconAsset: iconAsset, isLegacy: false)
+
+        // 生成Contents.json文件
+        await generateContentJson(folderPath: folderPath, tag: tag, isLegacy: false)
+
+        // 生成README文件
+        await generateReadmeFile(folderPath: folderPath, tag: tag, isLegacy: false)
     }
 
-    @MainActor private func generateMacOSIcons(folderPath: URL, tag: String, iconAsset: IconAsset) async {
+    @MainActor private func generateMacOSIcons(folderPath: URL, tag: String, iconAsset: IconAsset, isLegacy: Bool) async {
         guard let iconData = iconProvider.currentData else {
             MagicMessageProvider.shared.error("没有可用的图标数据")
             return
@@ -135,13 +119,13 @@ struct XcodeDownloadButton: View {
         
         // 创建用于导出的数据副本
         var exportData = iconData
-
+        
         // 清除透明度
         var clearOpacity = false
         
-        // 根据版本选择是否调整内边距、圆角和透明度
-        if selectedVersion == .version16 {
-            // Xcode 16: 自动调整内边距
+        // 根据格式选择是否调整内边距、圆角和透明度
+        if isLegacy {
+            // 传统格式: 自动调整内边距
             let originalPadding = exportData.padding
             let standardPadding = 0.1
             
@@ -149,7 +133,7 @@ struct XcodeDownloadButton: View {
                 exportData.padding = standardPadding
             }
         } else {
-            // Xcode 26: 移除圆角，强制不透明，使用用户设置的内边距
+            // 现代格式: 移除圆角，强制不透明，使用用户设置的内边距
             exportData.cornerRadius = 0
             clearOpacity = true
         }
@@ -162,14 +146,14 @@ struct XcodeDownloadButton: View {
         // 生成基础尺寸图标
         for (index, size) in sizes.enumerated() {
             progressText = "正在生成 macOS \(size)×\(size) (\(index + 1)/\(sizes.count * 2))"
-                        let fileName = "\(tag)-macOS-\(size)x\(size).png"
-                        let saveTo = folderPath.appendingPathComponent(fileName)
+            let fileName = "\(tag)-macOS-\(size)x\(size).png"
+            let saveTo = folderPath.appendingPathComponent(fileName)
             do {
                 try await IconRenderer.snapshot(
-                    iconData: exportData, 
-                    iconAsset: iconAsset, 
-                    size: size, 
-                    savePath: saveTo, 
+                    iconData: exportData,
+                    iconAsset: iconAsset,
+                    size: size,
+                    savePath: saveTo,
                     clearOpacity: clearOpacity
                 )
             } catch {
@@ -184,20 +168,14 @@ struct XcodeDownloadButton: View {
             let saveTo = folderPath.appendingPathComponent(fileName)
 
             do {
-                try await IconRenderer.snapshot(
-                    iconData: exportData, 
-                    iconAsset: iconAsset, 
-                    size: size, 
-                    savePath: saveTo, 
-                    clearOpacity: clearOpacity
-                )
+                try await IconRenderer.snapshot(iconData: exportData, iconAsset: iconAsset, size: size, savePath: saveTo)
             } catch {
                 MagicMessageProvider.shared.error("❌ 生成 \(fileName) 失败: \(error.localizedDescription)")
             }
         }
     }
 
-    @MainActor private func generateIOSIcons(folderPath: URL, tag: String, iconAsset: IconAsset) async {
+    @MainActor private func generateIOSIcons(folderPath: URL, tag: String, iconAsset: IconAsset, isLegacy: Bool) async {
         guard let iconData = iconProvider.currentData else {
             MagicMessageProvider.shared.error("没有可用的图标数据")
             return
@@ -213,11 +191,12 @@ struct XcodeDownloadButton: View {
         
         var clearOpacity = false
         
-        // 根据版本选择是否调整内边距、圆角和透明度
-        if selectedVersion == .version16 {
+        // 根据格式选择是否调整内边距、圆角和透明度
+        if isLegacy {
             exportData.padding = 0
             clearOpacity = true
         } else {
+            // Xcode 26: 移除圆角，强制不透明，使用用户设置的内边距
             exportData.cornerRadius = 0
             clearOpacity = true
         }
@@ -235,7 +214,7 @@ struct XcodeDownloadButton: View {
         }
     }
 
-    @MainActor private func generateContentJson(folderPath: URL, tag: String) async {
+    @MainActor private func generateContentJson(folderPath: URL, tag: String, isLegacy: Bool) async {
         let imageSet: [[String: Any]] = [
             // macOS 1x
             ["filename": "\(tag)-macOS-16x16.png", "idiom": "mac", "scale": "1x", "size": "16x16"],
@@ -277,17 +256,20 @@ struct XcodeDownloadButton: View {
         }
     }
 
-    @MainActor private func generateReadmeFile(folderPath: URL, tag: String) async {
+    @MainActor private func generateReadmeFile(folderPath: URL, tag: String, isLegacy: Bool) async {
         let fileName = "README.md"
         let saveTo = folderPath.appendingPathComponent(fileName)
 
+        let formatName = isLegacy ? "传统格式（适用于 macOS 26 和 iOS 26 之前的版本）" : "现代格式（适用于 macOS 26 和 iOS 26 版本）"
+        let formatDescription = isLegacy ? "此版本适用于 macOS 26 和 iOS 26 之前的版本，自动调整内边距以确保最佳显示效果。" : "此版本适用于 macOS 26 和 iOS 26 版本，使用用户设置的内边距，并移除圆角、强制不透明以符合新版本要求。"
+        
         let readmeContent = """
-        # \(selectedVersion.rawValue) 图标集使用说明
+        # \(formatName) 图标集使用说明
 
         ## 文件说明
 
         这个 `.appiconset` 文件夹包含了适用于 iOS 和 macOS 应用的所有图标文件。
-        \(selectedVersion == .version16 ? "此版本自动调整内边距以确保最佳显示效果。" : "此版本使用用户设置的内边距，并移除圆角、强制不透明以符合 Xcode 26 要求。")
+        \(formatDescription)
 
         ## 使用方法
 
@@ -316,7 +298,7 @@ struct XcodeDownloadButton: View {
 
         - 所有图标都使用 PNG 格式，支持透明背景
         - 图标已根据设计规范优化，确保在不同尺寸下都清晰显示
-        - \(selectedVersion == .version16 ? "内边距已自动调整以符合 Apple 设计规范" : "内边距保持用户自定义设置，圆角已移除，透明度强制为1以符合 Xcode 26 要求")
+        - \(isLegacy ? "内边距已自动调整以符合 Apple 设计规范，适用于 macOS 26 和 iOS 26 之前的版本" : "内边距保持用户自定义设置，圆角已移除，透明度强制为1以符合 macOS 26 和 iOS 26 版本要求")
         - 如果需要在 Xcode 中调整图标，建议使用矢量工具重新生成
 
         ## 生成信息
@@ -327,7 +309,7 @@ struct XcodeDownloadButton: View {
         - 圆角设置：\(iconProvider.currentData?.cornerRadius ?? 0)
         - 缩放比例：\(iconProvider.currentData?.scale ?? 1.0)
         - 透明度：\(iconProvider.currentData?.opacity ?? 1.0)
-        - 内边距：\(iconProvider.currentData?.padding ?? 0.0)（\(selectedVersion == .version16 ? "自动调整" : "用户设置")）
+        - 内边距：\(iconProvider.currentData?.padding ?? 0.0)（\(isLegacy ? "自动调整，适用于 macOS 26 和 iOS 26 之前版本" : "用户设置，适用于 macOS 26 和 iOS 26 版本")）
 
         ---
         由 GitOK 图标生成器创建
