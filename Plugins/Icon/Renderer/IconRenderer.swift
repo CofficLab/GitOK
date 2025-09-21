@@ -23,7 +23,7 @@ class IconRenderer {
             .snapshot(path: savePath)
 
         // 返回文件是否成功生成
-        return FileManager.default.fileExists(atPath: savePath.path)
+        return savePath.isFileExist
     }
 
     // MARK: - 私有方法
@@ -77,6 +77,7 @@ class IconRenderer {
                     .resizable()
                     .scaledToFit()
                     .scaleEffect(iconData.scale ?? 1.0)
+                    .frame(width: size, height: size)
             } else {
                 // 使用占位符图片，因为这里主要用于截图，应该总是有预加载的图片
                 Image(systemName: "photo")
