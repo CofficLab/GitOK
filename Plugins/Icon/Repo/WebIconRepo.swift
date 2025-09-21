@@ -12,7 +12,7 @@ class WebIconRepo: SuperLog, IconSourceProtocol {
     func getAllIcons() async -> [IconAsset] {
         []
     }
-    
+
     nonisolated static var emoji: String { "🛜" }
 
     /// 单例实例
@@ -24,17 +24,8 @@ class WebIconRepo: SuperLog, IconSourceProtocol {
     /// 图标清单API端点
     private let manifestEndpoint = "/icon-manifest.json"
 
-    /// 缓存的数据
-    private var cachedCategories: [RemoteIconCategory] = []
-
-    /// 缓存时间戳
-    private var lastCacheTime: Date?
-
-    /// 缓存有效期
-    private let cacheValidityDuration: TimeInterval = 60*60
-
     /// HTTP 层面的缓存时间
-    private let httpCacheMaxAge: TimeInterval = 60*60
+    private let httpCacheMaxAge: TimeInterval = 60 * 60
 
     /// 私有初始化方法，确保单例模式
     private init() {}
@@ -49,14 +40,9 @@ class WebIconRepo: SuperLog, IconSourceProtocol {
     func getAllCategories(reason: String) async throws -> [IconCategory] {
         os_log(.info, "\(self.t)getAllCategories reason: \(reason)")
         let remoteCategories: [RemoteIconCategory]
-        if isCacheValid() {
-            remoteCategories = cachedCategories
-        } else {
-            let categories = try await fetchCategoriesFromNetwork()
-            cachedCategories = categories
-            lastCacheTime = Date()
-            remoteCategories = categories
-        }
+        let categories = try await fetchCategoriesFromNetwork()
+        remoteCategories = categories
+
         let mapped = remoteCategories.map { remoteCategory in
             IconCategory(
                 id: remoteCategory.id,
@@ -121,7 +107,7 @@ class WebIconRepo: SuperLog, IconSourceProtocol {
         let headers = [
             "Accept": "application/json",
             "Accept-Encoding": "identity",
-            "User-Agent": "GitOK/1.0 (macOS; SwiftURLSession)"
+            "User-Agent": "GitOK/1.0 (macOS; SwiftURLSession)",
         ]
         let (data, response) = try await url.httpGetData(headers: headers, cacheMaxAge: httpCacheMaxAge)
         let code = response.statusCode
@@ -148,20 +134,10 @@ class WebIconRepo: SuperLog, IconSourceProtocol {
         }
     }
 
-    // MARK: - 缓存管理
-
-    /// 检查缓存是否有效
-    /// - Returns: 缓存是否有效
-    private func isCacheValid() -> Bool {
-        guard let lastCacheTime = lastCacheTime else { return false }
-        return Date().timeIntervalSince(lastCacheTime) < cacheValidityDuration
-    }
-
     /// 获取指定分类的图标列表
     /// - Parameter categoryId: 分类ID
     /// - Returns: IconAsset数组
     func getIcons(for categoryId: String) async -> [IconAsset] {
-        // 直接从网络获取数据
         do {
             return try await fetchIconsFromNetwork(for: categoryId)
         } catch {
@@ -181,7 +157,7 @@ class WebIconRepo: SuperLog, IconSourceProtocol {
         let headers = [
             "Accept": "application/json",
             "Accept-Encoding": "identity",
-            "User-Agent": "GitOK/1.0 (macOS; SwiftURLSession)"
+            "User-Agent": "GitOK/1.0 (macOS; SwiftURLSession)",
         ]
         let (data, response) = try await url.httpGetData(headers: headers, cacheMaxAge: httpCacheMaxAge)
         let code = response.statusCode
@@ -189,15 +165,14 @@ class WebIconRepo: SuperLog, IconSourceProtocol {
         let manifest = try JSONDecoder().decode(IconManifest.self, from: data)
         let categoryIcons = manifest.iconsByCategory[categoryId] ?? []
         os_log(.info, "\(self.t)icons for cat=\(categoryId): \(categoryIcons.count)")
-        return categoryIcons.map { iconData in 
+        return categoryIcons.map { iconData in
             let remoteURL = URL(string: baseURL + "/icons/" + iconData.path)!
             return IconAsset(remoteURL: remoteURL)
         }
     }
 
-    
     // MARK: - 错误类型定义
-    
+
     enum RemoteIconError: Error {
         case networkError
         case decodingError
