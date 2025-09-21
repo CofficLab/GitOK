@@ -1,11 +1,7 @@
 import SwiftUI
 import MagicCore
 
-/**
-    图标网格项预览
-    使用 IconPreview 显示图标内容；
-    背景与 IconPreview 保持一致；选中时显示边框；支持悬停高亮与点击选择。
-**/
+/// 图标网格项预览
 struct IconTilePreview: View {
     let iconAsset: IconAsset
 
