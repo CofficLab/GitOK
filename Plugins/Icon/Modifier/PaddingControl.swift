@@ -19,7 +19,7 @@ struct PaddingControl: View {
                     Text("内边距 \(String(format: "%.1f", localPadding))")
                         .font(.caption)
                         .foregroundColor(.secondary)
-                    Text("导出Xcode格式时将自动调整")
+                    Text("Xcode 16 格式会自动调整，Xcode 26 格式保持用户设置")
                         .font(.caption2)
                         .foregroundColor(.secondary.opacity(0.8))
                 }
