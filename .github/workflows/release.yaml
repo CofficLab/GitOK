@@ -75,7 +75,7 @@ jobs:
           echo "pp_path=$PP_PATH" >> $GITHUB_OUTPUT
           echo "api_key_path=$API_KEY_PATH" >> $GITHUB_OUTPUT
       - name: Build App
-        run: servon xcode build --scheme ${{ env.SCHEME }} --arch arm64 --clean=false
+        run: servon xcode build --scheme ${{ env.SCHEME }} --arch arm64 --clean=false -v
       - name: Codesign App
         run: |
           servon xcode codesign --path ./temp/arm64/Build/Products/Release/${{ env.SCHEME }}.app \
