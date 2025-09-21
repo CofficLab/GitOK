@@ -22,9 +22,8 @@ class IconAsset: Identifiable {
     /// 图标来源类型
     private let source: IconSource
     
-    /// 图标文件URL（本地图标）或远程路径（远程图标）
+    /// 图标文件URL（本地图标和远程图标统一使用）
     let fileURL: URL?
-    let remotePath: String?
     /// 生成型视图构造器（用于 MagicAsset 等基于 SwiftUI 的图标）
     let viewBuilder: (() -> AnyView)?
     /// 生成型视图的稳定标识
@@ -36,7 +35,7 @@ class IconAsset: Identifiable {
         case .local:
             return fileURL?.path ?? ""
         case .remote:
-            return remotePath ?? ""
+            return fileURL?.absoluteString ?? ""
         case .generated:
             return viewId ?? ""
         }
@@ -48,7 +47,7 @@ class IconAsset: Identifiable {
         case .local:
             return fileURL?.deletingLastPathComponent().lastPathComponent ?? ""
         case .remote:
-            return remotePath?.components(separatedBy: "/").first ?? ""
+            return fileURL?.pathComponents.dropFirst().first ?? ""
         case .generated:
             return "MagicAsset"
         }
@@ -60,7 +59,11 @@ class IconAsset: Identifiable {
         case .local:
             return fileURL?.deletingPathExtension().lastPathComponent ?? ""
         case .remote:
-            return remotePath?.components(separatedBy: "/").last?.replacingOccurrences(of: ".svg", with: "") ?? ""
+            let lastComponent = fileURL?.lastPathComponent ?? ""
+            return lastComponent.replacingOccurrences(of: ".svg", with: "")
+                .replacingOccurrences(of: ".png", with: "")
+                .replacingOccurrences(of: ".jpg", with: "")
+                .replacingOccurrences(of: ".jpeg", with: "")
         case .generated:
             return viewId ?? ""
         }
@@ -71,17 +74,15 @@ class IconAsset: Identifiable {
     init(fileURL: URL) {
         self.source = .local
         self.fileURL = fileURL
-        self.remotePath = nil
         self.viewBuilder = nil
         self.viewId = nil
     }
     
     /// 远程图标初始化方法
-    /// - Parameter remotePath: 远程图标路径
-    init(remotePath: String) {
+    /// - Parameter remoteURL: 远程图标URL
+    init(remoteURL: URL) {
         self.source = .remote
-        self.fileURL = nil
-        self.remotePath = remotePath
+        self.fileURL = remoteURL
         self.viewBuilder = nil
         self.viewId = nil
     }
@@ -93,7 +94,6 @@ class IconAsset: Identifiable {
     init(viewBuilder: @escaping () -> AnyView, id: String) {
         self.source = .generated
         self.fileURL = nil
-        self.remotePath = nil
         self.viewBuilder = viewBuilder
         self.viewId = id
     }
@@ -178,19 +178,11 @@ class IconAsset: Identifiable {
     /// - Returns: 加载完成的SwiftUI Image
     @MainActor
     private func loadRemoteImage() async -> Image {
-        guard let remotePath = remotePath else {
+        guard let iconURL = fileURL else {
             return Image(systemName: "exclamationmark.triangle")
         }
         
         do {
-            // 构建远程图标的完整URL
-            let baseURL = "https://gitok.coffic.cn"
-            let iconURL = URL(string: baseURL + "/icons/" + remotePath)
-            
-            guard let iconURL = iconURL else {
-                throw RemoteIconError.invalidURL
-            }
-            
             // 异步加载远程图片
             let (data, response) = try await URLSession.shared.data(from: iconURL)
             
