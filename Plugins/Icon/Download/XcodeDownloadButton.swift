@@ -43,17 +43,41 @@ struct XcodeDownloadButton: View {
             isDisabled: isGenerating || currentIconAsset == nil || iconProvider.currentData == nil
         ) {
             // 版本选择器
-            HStack {
-                Picker("", selection: $selectedVersion) {
-                    ForEach(XcodeVersion.allCases, id: \.self) { version in
-                        Text(version.rawValue)
-                            .tag(version)
+            VStack(alignment: .leading, spacing: 8) {
+                HStack {
+                    Picker("", selection: $selectedVersion) {
+                        ForEach(XcodeVersion.allCases, id: \.self) { version in
+                            Text(version.rawValue)
+                                .tag(version)
+                        }
+                    }
+                    .pickerStyle(SegmentedPickerStyle())
+                    .frame(maxWidth: 200)
+                    
+                    Spacer()
+                }
+                
+                // 版本规则说明
+                VStack(alignment: .leading, spacing: 4) {
+                    if selectedVersion == .version16 {
+                        Text("• 自动调整内边距为 0.1")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                        Text("• 保持原有圆角和透明度设置")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    } else {
+                        Text("• 使用用户自定义内边距")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                        Text("• 强制移除圆角 (cornerRadius = 0)")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                        Text("• 强制不透明 (opacity = 1.0)")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
                     }
                 }
-                .pickerStyle(SegmentedPickerStyle())
-                .frame(maxWidth: 200)
-                
-                Spacer()
             }
         }
     }
@@ -112,7 +136,7 @@ struct XcodeDownloadButton: View {
         // 创建用于导出的数据副本
         var exportData = iconData
         
-        // 根据版本选择是否调整内边距
+        // 根据版本选择是否调整内边距、圆角和透明度
         if selectedVersion == .version16 {
             // Xcode 16: 自动调整内边距
             let originalPadding = exportData.padding
@@ -121,8 +145,11 @@ struct XcodeDownloadButton: View {
             if originalPadding != standardPadding {
                 exportData.padding = standardPadding
             }
+        } else {
+            // Xcode 26: 移除圆角，强制不透明，使用用户设置的内边距
+            exportData.cornerRadius = 0
+            exportData.opacity = 1.0
         }
-        // Xcode 26: 使用用户设置的内边距，不调整
 
         // 基础尺寸
         let sizes = [16, 32, 128, 256, 512]
@@ -166,16 +193,19 @@ struct XcodeDownloadButton: View {
         let fileName = "\(tag)-iOS-\(size)x\(size).png"
         let saveTo = folderPath.appendingPathComponent(fileName)
 
-        // 导出时强制不透明、无圆角
+        // 创建用于导出的数据副本
         var exportData = iconData
-        exportData.opacity = 1.0
-        exportData.cornerRadius = 0
         
-        // 根据版本选择是否调整内边距
+        // 根据版本选择是否调整内边距、圆角和透明度
         if selectedVersion == .version16 {
             exportData.padding = 0  // Xcode 16: iOS图标不需要padding
+            exportData.opacity = 1.0  // Xcode 16: 强制不透明
+            // Xcode 16: 保持原有圆角设置
+        } else {
+            // Xcode 26: 移除圆角，强制不透明，使用用户设置的内边距
+            exportData.cornerRadius = 0
+            exportData.opacity = 1.0
         }
-        // Xcode 26: 使用用户设置的内边距
 
         do {
             try await IconRenderer.snapshot(iconData: exportData, iconAsset: iconAsset, size: size, savePath: saveTo)
@@ -236,7 +266,7 @@ struct XcodeDownloadButton: View {
         ## 文件说明
 
         这个 `.appiconset` 文件夹包含了适用于 iOS 和 macOS 应用的所有图标文件。
-        \(selectedVersion == .version16 ? "此版本自动调整内边距以确保最佳显示效果。" : "此版本使用用户设置的内边距，保持自定义效果。")
+        \(selectedVersion == .version16 ? "此版本自动调整内边距以确保最佳显示效果。" : "此版本使用用户设置的内边距，并移除圆角、强制不透明以符合 Xcode 26 要求。")
 
         ## 使用方法
 
@@ -265,7 +295,7 @@ struct XcodeDownloadButton: View {
 
         - 所有图标都使用 PNG 格式，支持透明背景
         - 图标已根据设计规范优化，确保在不同尺寸下都清晰显示
-        - \(selectedVersion == .version16 ? "内边距已自动调整以符合 Apple 设计规范" : "内边距保持用户自定义设置")
+        - \(selectedVersion == .version16 ? "内边距已自动调整以符合 Apple 设计规范" : "内边距保持用户自定义设置，圆角已移除，透明度强制为1以符合 Xcode 26 要求")
         - 如果需要在 Xcode 中调整图标，建议使用矢量工具重新生成
 
         ## 生成信息
