@@ -14,22 +14,22 @@ class IconRenderer {
     ///   - size: 图标尺寸
     ///   - savePath: 保存路径
     /// - Returns: 截图是否成功
-    @MainActor static func snapshot(iconData: IconData, iconAsset: IconAsset, size: Int, savePath: URL) async -> Bool {
+    @MainActor static func snapshot(iconData: IconData, iconAsset: IconAsset, size: Int, savePath: URL) async throws {
         // 先异步获取图标图片
         let iconImage = await iconAsset.getImage()
+        let scale: CGFloat = 8.0 // 使用高缩放比例以获得清晰的矢量渲染
+        let viewSize = CGFloat(size) / scale
 
         let view = IconRenderView(
             iconData: iconData,
             iconAsset: iconAsset,
-            size: CGFloat(size),
+            size: viewSize,
             applyBackground: true,
             preloadedImage: iconImage
         )
+        .frame(width: viewSize, height: viewSize)
         
-        view.snapshot(path: savePath)
-
-        // 返回文件是否成功生成
-        return savePath.isFileExist
+        try view.snapshot(path: savePath, scale: scale)
     }
 }
 
@@ -58,7 +58,7 @@ struct IconRenderView: View {
         self.preloadedImage = preloadedImage
     }
 
-    public var body: some View {
+    var body: some View {
         let contentSize = size * (1.0 - iconData.padding * 2)
 
         ZStack {
@@ -84,7 +84,6 @@ struct IconRenderView: View {
                 return iconData.cornerRadius > 0 ? max(0, scaled) : 0
             }())
         }
-        .frame(width: size, height: size)
     }
     
     private var iconContentView: some View {

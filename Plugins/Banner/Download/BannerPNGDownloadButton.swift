@@ -76,11 +76,11 @@ struct BannerPNGDownloadButton: View {
             // 创建Banner视图进行截图
             let bannerView = createBannerView(device: device)
             
-            let result = bannerView.snapshot(path: filePath)
-            
-            // 检查文件是否成功生成
-            if FileManager.default.fileExists(atPath: filePath.path) {
+            do {
+                try bannerView.snapshot(path: filePath)
                 successCount += 1
+            } catch {
+                MagicMessageProvider.shared.error("生成PNG \(description) 失败: \(error.localizedDescription)")
             }
         }
 

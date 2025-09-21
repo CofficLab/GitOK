@@ -85,7 +85,13 @@ struct PNGDownloadButton: View {
         let fileName = "\(tag)-\(size)x\(size).png"
         let saveTo = folderPath.appendingPathComponent(fileName)
 
-        return await IconRenderer.snapshot(iconData: iconData, iconAsset: iconAsset, size: size, savePath: saveTo)
+        do {
+            try await IconRenderer.snapshot(iconData: iconData, iconAsset: iconAsset, size: size, savePath: saveTo)
+            return true
+        } catch {
+            MagicMessageProvider.shared.error("尺寸 \(size)x\(size) 生成失败: \(error.localizedDescription)")
+            return false
+        }
     }
 }
 

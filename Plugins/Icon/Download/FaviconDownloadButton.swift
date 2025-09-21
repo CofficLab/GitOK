@@ -1,5 +1,5 @@
-import MagicCore
 import MagicAlert
+import MagicCore
 import SwiftUI
 
 /**
@@ -10,7 +10,7 @@ import SwiftUI
 struct FaviconDownloadButton: View {
     let iconProvider: IconProvider
     let currentIconAsset: IconAsset?
-    
+
     @State private var isGenerating = false
     @State private var progressText = ""
 
@@ -36,7 +36,7 @@ struct FaviconDownloadButton: View {
 
         isGenerating = true
         progressText = "正在生成 Favicon..."
-        defer { 
+        defer {
             isGenerating = false
             progressText = ""
         }
@@ -95,10 +95,13 @@ struct FaviconDownloadButton: View {
         let fileName = "\(tag)-\(size)x\(size).png"
         let saveTo = folderPath.appendingPathComponent(fileName)
 
-        let success = await IconRenderer.snapshot(iconData: iconData, iconAsset: iconAsset, size: size, savePath: saveTo)
-
-        // 返回文件是否成功生成
-        return success
+        do {
+            try await IconRenderer.snapshot(iconData: iconData, iconAsset: iconAsset, size: size, savePath: saveTo)
+            return true
+        } catch {
+            MagicMessageProvider.shared.error("生成 Favicon PNG \(size)x\(size) 失败: \(error.localizedDescription)")
+            return false
+        }
     }
 
     @MainActor private func generateFaviconHTML(folderPath: URL) async {
@@ -157,9 +160,9 @@ struct FaviconDownloadButton: View {
         // 生成32x32的PNG作为ICO的基础（最常用的尺寸）
         let tempPNGPath = folderPath.appendingPathComponent("\(tag)-temp-32x32.png")
 
-        let success = await IconRenderer.snapshot(iconData: iconData, iconAsset: iconAsset, size: 32, savePath: tempPNGPath)
-
-        if !success {
+        do {
+            try await IconRenderer.snapshot(iconData: iconData, iconAsset: iconAsset, size: 32, savePath: tempPNGPath)
+        } catch {
             MagicMessageProvider.shared.error("生成ICO临时文件失败")
             return false
         }

@@ -98,14 +98,12 @@ struct XcodeDownloadButton: View {
         // 生成基础尺寸图标
         for (index, size) in sizes.enumerated() {
             progressText = "正在生成 macOS \(size)×\(size) (\(index + 1)/\(sizes.count * 2))"
-            let fileName = "\(tag)-macOS-\(size)x\(size).png"
-            let saveTo = folderPath.appendingPathComponent(fileName)
-
-            let success = await IconRenderer.snapshot(iconData: exportData, iconAsset: iconAsset, size: size, savePath: saveTo)
-
-            // 检查文件是否生成成功
-            if success == false {
-                MagicMessageProvider.shared.error("❌ 生成 \(fileName) 失败")
+                        let fileName = "\(tag)-macOS-\(size)x\(size).png"
+                        let saveTo = folderPath.appendingPathComponent(fileName)
+            do {
+                try await IconRenderer.snapshot(iconData: exportData, iconAsset: iconAsset, size: size, savePath: saveTo)
+            } catch {
+                MagicMessageProvider.shared.error("❌ 生成 \(fileName) 失败: \(error.localizedDescription)")
             }
         }
 
@@ -115,11 +113,10 @@ struct XcodeDownloadButton: View {
             let fileName = "\(tag)-macOS-\(sizes[index])x\(sizes[index])@2x.png"
             let saveTo = folderPath.appendingPathComponent(fileName)
 
-            let success = await IconRenderer.snapshot(iconData: exportData, iconAsset: iconAsset, size: size, savePath: saveTo)
-
-            // 检查文件是否生成成功
-            if success == false {
-                MagicMessageProvider.shared.error("❌ 生成 \(fileName) 失败")
+            do {
+                try await IconRenderer.snapshot(iconData: exportData, iconAsset: iconAsset, size: size, savePath: saveTo)
+            } catch {
+                MagicMessageProvider.shared.error("❌ 生成 \(fileName) 失败: \(error.localizedDescription)")
             }
         }
     }
@@ -141,10 +138,10 @@ struct XcodeDownloadButton: View {
         exportData.cornerRadius = 0
         exportData.padding = 0  // iOS图标不需要padding
 
-        let success = await IconRenderer.snapshot(iconData: exportData, iconAsset: iconAsset, size: size, savePath: saveTo)
-
-        if success == false {
-            MagicMessageProvider.shared.error("❌ 生成 \(fileName) 失败")
+        do {
+            try await IconRenderer.snapshot(iconData: exportData, iconAsset: iconAsset, size: size, savePath: saveTo)
+        } catch {
+            MagicMessageProvider.shared.error("❌ 生成 \(fileName) 失败: \(error.localizedDescription)")
         }
     }
 

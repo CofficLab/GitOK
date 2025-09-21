@@ -90,8 +90,13 @@ struct ImageSetDownloadButton: View {
         let fileName = "\(tag)-\(scaleLabel).png"
         let saveTo = folderPath.appendingPathComponent(fileName)
 
-        let success = await IconRenderer.snapshot(iconData: iconData, iconAsset: iconAsset, size: size, savePath: saveTo)
-        return success
+        do {
+            try await IconRenderer.snapshot(iconData: iconData, iconAsset: iconAsset, size: size, savePath: saveTo)
+            return true
+        } catch {
+            MagicMessageProvider.shared.error("生成 ImageSet PNG \(scaleLabel) 失败: \(error.localizedDescription)")
+            return false
+        }
     }
 
     @MainActor private func generateContentJson(folderPath: URL, tag: String) async {
