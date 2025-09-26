@@ -1,7 +1,7 @@
 import MagicCore
 import MagicAlert
 import SwiftUI
-import MagicDevice
+import MagicAll
 
 /**
  * Banner PNG格式下载按钮

@@ -1,6 +1,7 @@
 import MagicCore
 import MagicAlert
 import MagicUI
+import MagicAll
 import MagicContainer
 import SwiftUI
 import OSLog

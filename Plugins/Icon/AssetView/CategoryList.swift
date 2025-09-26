@@ -1,6 +1,5 @@
 import AppKit
-import MagicCore
-import MagicHTTP
+import MagicAll
 import SwiftUI
 
 /**

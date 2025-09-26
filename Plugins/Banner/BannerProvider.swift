@@ -3,7 +3,7 @@ import AVKit
 import Combine
 import Foundation
 import MagicCore
-import MagicDevice
+import MagicAll
 import MediaPlayer
 import OSLog
 import SwiftUI

@@ -1,7 +1,7 @@
 import Cocoa
 import Foundation
 import MagicCore
-import MagicHTTP
+import MagicHttp
 import SwiftUI
 
 /**

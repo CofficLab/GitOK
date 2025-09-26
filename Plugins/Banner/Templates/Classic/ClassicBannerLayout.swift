@@ -1,6 +1,6 @@
 import MagicCore
 import SwiftUI
-import MagicDevice
+import MagicAll
 
 /**
  经典Banner布局视图
