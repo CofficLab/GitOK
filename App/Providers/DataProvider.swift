@@ -16,6 +16,7 @@ class DataProvider: NSObject, ObservableObject, SuperLog {
     @Published private(set) var file: GitDiffFile? = nil
     @Published private(set) var projectExists = true
     @Published private(set) var branch: GitBranch? = nil
+    @Published var activityStatus: String? = nil
 
     nonisolated static let emoji = "🏠"
     private let verbose = false

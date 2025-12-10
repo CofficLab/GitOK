@@ -27,14 +27,24 @@ struct BtnCommitAndPush: View, SuperLog, SuperThread {
 
                 os_log("\(self.t)💼 Commit")
 
+                func setStatus(_ text: String?) {
+                    Task { @MainActor in
+                        g.activityStatus = text
+                    }
+                }
+
                 DispatchQueue.main.async {
+                    setStatus("添加文件中…")
                     do {
                         try project.addAll()
-                        
-                        // 如果 commitMessage 为空，使用默认消息
+
                         let message = commitMessage.isEmpty ? "Auto commit" : commitMessage
+
+                        setStatus("提交中…")
                         try project.submit(message)
+
                         if commitOnly == false {
+                            setStatus("推送中…")
                             try project.push()
                         }
 
@@ -47,6 +57,7 @@ struct BtnCommitAndPush: View, SuperLog, SuperThread {
                         m.error(error.localizedDescription)
                     }
 
+                    setStatus(nil)
                     completion()
                 }
             }

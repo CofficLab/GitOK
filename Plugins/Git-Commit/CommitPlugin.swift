@@ -30,6 +30,10 @@ class CommitPlugin: SuperPlugin, SuperLog, PluginRegistrant {
             return nil
         }
     }
+
+    func addStatusBarTrailingView() -> AnyView? {
+        AnyView(CommitStatusTile())
+    }
 }
 
 #Preview("APP") {
