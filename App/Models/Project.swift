@@ -363,6 +363,23 @@ extension Project {
             userInfo: [NSLocalizedDescriptionKey: "README.md file not found"]
         )
     }
+
+    /// 获取项目根目录的 .gitignore 内容
+    /// - Returns: .gitignore 文件内容，如果不存在则抛出异常
+    func getGitignoreContent() async throws -> String {
+        let gitignoreURL = URL(fileURLWithPath: self.path).appendingPathComponent(".gitignore")
+        let fileManager = FileManager.default
+
+        guard fileManager.fileExists(atPath: gitignoreURL.path) else {
+            throw NSError(
+                domain: "ProjectError",
+                code: 404,
+                userInfo: [NSLocalizedDescriptionKey: ".gitignore file not found"]
+            )
+        }
+
+        return try String(contentsOf: gitignoreURL, encoding: .utf8)
+    }
 }
 
 // MARK: - Remote

@@ -1,15 +1,26 @@
-
-.DS_Store
-
-## User settings
-xcuserdata/
-
-## Xcode 8 and earlier
-*.xcscmblueprint
-*.xccheckout
+# Xcode
+DerivedData/
 *.xcuserstate
+xcuserdata/
+*.xccheckout
+*.moved-aside
+*.xcscmblueprint
 
+# Flutter
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+Flutter.podspec
+.symlinks/
+pubspec.lock
+.generated/
+ios/Flutter/Flutter.framework
+ios/Flutter/Flutter.podspec
+ios/ServiceDefinitions.json
+
+# Other
+.DS_Store
 node_modules
-
 temp/
 build/
