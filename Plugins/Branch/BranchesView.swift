@@ -3,6 +3,7 @@ import MagicAlert
 import OSLog
 import SwiftUI
 
+/// 分支列表视图：负责展示可选分支并支持切换当前分支。
 struct BranchesView: View, SuperThread, SuperLog, SuperEvent {
     static let shared = BranchesView()
 
@@ -180,6 +181,9 @@ extension BranchesView {
 #Preview("App - Big Screen") {
     RootView {
         ContentLayout()
+            .setInitialTab(GitPlugin.label)
+            .hideToolbar()
+            .hideTabPicker()
             .hideSidebar()
     }
     .frame(width: 1200)

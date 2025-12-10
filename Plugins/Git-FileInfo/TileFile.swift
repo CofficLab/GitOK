@@ -3,14 +3,11 @@ import OSLog
 import MagicAlert
 import MagicCore
 
+/// 状态栏文件信息 Tile：显示当前选中文件的文件名。
 struct TileFile: View, SuperLog, SuperThread {
     @EnvironmentObject var a: AppProvider
     @EnvironmentObject var m: MagicMessageProvider
     @EnvironmentObject var data: DataProvider
-    
-    @State var hovered = false
-    @State var isPresented = false
-    @State var live = false
     
     static let shared = TileFile()
     
@@ -20,33 +17,38 @@ struct TileFile: View, SuperLog, SuperThread {
 
     var body: some View {
         if let file = file {
-            HStack {
-                Image(systemName: "doc.text").padding(.leading)
-                Text(file.file).font(.footnote)
+            let components = file.file.split(separator: "/").map(String.init)
+            StatusBarTile(icon: "doc.text") {
+                HStack(spacing: 4) {
+                    ForEach(Array(components.enumerated()), id: \.offset) { idx, comp in
+                        Text(comp)
+                            .font(.footnote.weight(idx == components.count - 1 ? .semibold : .regular))
+                            .foregroundColor(idx == components.count - 1 ? .primary : .secondary)
+                        if idx < components.count - 1 {
+                            Text("›")
+                                .font(.footnote)
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                }
             }
-            .onHover(perform: { hovering in
-                hovered = hovering
-            })
-            .padding(.vertical, 6)
-            .padding(.horizontal, 8)
-            .clipShape(RoundedRectangle(cornerRadius: 0))
-            .background(hovered ? Color(.controlAccentColor).opacity(0.2) : .clear)
         }
     }
 }
 
-#Preview("默认") {
-    RootView {
-        ContentLayout()
-    }
-    .frame(height: 600)
-    .frame(width: 600)
+#Preview("App - Small Screen") {
+    ContentLayout()
+        .hideSidebar()
+        .hideProjectActions()
+        .inRootView()
+        .frame(width: 800)
+        .frame(height: 600)
 }
 
-#Preview("App-Big Screen") {
-    RootView {
-        ContentLayout()
-    }
-    .frame(width: 1200)
-    .frame(height: 1200)
+#Preview("App - Big Screen") {
+    ContentLayout()
+        .hideSidebar()
+        .inRootView()
+        .frame(width: 1200)
+        .frame(height: 1200)
 }

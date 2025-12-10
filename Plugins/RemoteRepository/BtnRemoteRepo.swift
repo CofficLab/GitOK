@@ -9,7 +9,6 @@ struct BtnRemoteRepositoryView: View, SuperLog {
 
     @State private var showRemoteManagement = false
     @State private var isGitProject = false
-    @State private var hovered = false
 
     static let shared = BtnRemoteRepositoryView()
 
@@ -18,20 +17,12 @@ struct BtnRemoteRepositoryView: View, SuperLog {
     var body: some View {
         ZStack {
             if data.project != nil, isGitProject {
-                HStack {
-                    Image(systemName: .iconGlobe)
+                StatusBarTile(icon: .iconGlobe, onTap: {
+                    showRemoteManagement = true
+                }) {
+                    EmptyView()
                 }
                 .help("管理远程仓库")
-                .onTapGesture {
-                    showRemoteManagement = true
-                }
-                .onHover(perform: { hovering in
-                    hovered = hovering
-                })
-                .padding(.vertical, 6)
-                .padding(.horizontal, 8)
-                .background(hovered ? Color(.controlAccentColor).opacity(0.2) : .clear)
-                .clipShape(RoundedRectangle(cornerRadius: 0))
             }
         }
         .sheet(isPresented: $showRemoteManagement) {
@@ -85,7 +76,21 @@ extension BtnRemoteRepositoryView {
 
 // MARK: - Preview
 
-#Preview("Button Remote Repository View") {
-    BtnRemoteRepositoryView()
+#Preview("App - Small Screen") {
+    ContentLayout()
+        .setInitialTab(RemoteRepositoryPlugin.label)
+        .hideSidebar()
+        .hideProjectActions()
         .inRootView()
+        .frame(width: 800)
+        .frame(height: 600)
+}
+
+#Preview("App - Big Screen") {
+    ContentLayout()
+        .setInitialTab(RemoteRepositoryPlugin.label)
+        .hideSidebar()
+        .inRootView()
+        .frame(width: 1200)
+        .frame(height: 1200)
 }
