@@ -81,7 +81,7 @@ struct GuideView: View {
                 .frame(width: 500)
 
             if let path = g.project?.path {
-                MagicButton { _ in
+                MagicButton.simple {
                     openInFinder(path)
                 }
                 .magicTitle("在 Finder 中打开")
