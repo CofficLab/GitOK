@@ -1,5 +1,6 @@
 import Foundation
 import MagicCore
+import MagicUI
 import OSLog
 import SwiftUI
 
@@ -97,60 +98,55 @@ struct UserConfigSheet: View, SuperLog {
             Spacer()
 
             HStack {
-                Button("取消") {
+                MagicButton(
+                    icon: .iconClose,
+                    title: "取消",
+                    preventDoubleClick: true
+                ) { completion in
                     dismiss()
+                    completion()
                 }
-                .buttonStyle(.borderless)
+                .magicSize(.auto)
+                .frame(width: 120)
 
                 Spacer()
 
-                Button("保存为预设") {
+                MagicButton(
+                    icon: .iconUpload,
+                    title: "保存为预设",
+                    preventDoubleClick: true
+                ) { completion in
                     saveAsPreset()
+                    completion()
                 }
-                .buttonStyle(.bordered)
+                .magicSize(.auto)
+                .frame(width: 120)
                 .disabled(isLoading || userName.isEmpty || userEmail.isEmpty)
 
-                Button("应用") {
+                MagicButton(
+                    icon: .iconUpload,
+                    title: "应用",
+                    preventDoubleClick: true
+                ) { completion in
                     saveUserConfig()
+                    completion()
                 }
-                .buttonStyle(.borderedProminent)
+                .magicSize(.auto)
+                .frame(width: 120)
                 .disabled(isLoading || !hasChanges || userName.isEmpty || userEmail.isEmpty)
             }
+            .frame(height: 32)
         }
         .padding()
         .navigationTitle("Git用户配置")
         .frame(width: 600, height: 600)
-        .onAppear {
-            loadCurrentUserInfo()
-            loadSavedConfigs()
-        }
+        .onAppear(perform: handleOnAppear)
         .disabled(isLoading)
     }
+}
 
-    private func loadCurrentUserInfo() {
-        guard let project = data.project else { return }
-
-        isLoading = true
-        errorMessage = nil
-
-        do {
-            userName = try project.getUserName()
-            userEmail = try project.getUserEmail()
-            hasChanges = false
-
-            if verbose {
-                os_log("\(self.t)✅ Loaded user info - name: \(userName), email: \(userEmail)")
-            }
-        } catch {
-            errorMessage = "无法加载当前用户信息: \(error.localizedDescription)"
-            if verbose {
-                os_log(.error, "\(self.t)❌ Failed to load user info: \(error)")
-            }
-        }
-
-        isLoading = false
-    }
-
+// MARK: - Action
+extension UserConfigSheet {
     private func saveUserConfig() {
         guard let project = data.project else { return }
 
@@ -178,27 +174,6 @@ struct UserConfigSheet: View, SuperLog {
         }
 
         isLoading = false
-    }
-
-    private func loadSavedConfigs() {
-        do {
-            savedConfigs = try configRepo.getRecentConfigs(limit: 10)
-
-            // 如果有默认配置，自动选择
-            if let defaultConfig = try configRepo.findDefault() {
-                selectedConfig = defaultConfig
-                userName = defaultConfig.name
-                userEmail = defaultConfig.email
-            }
-
-            if verbose {
-                os_log("\(self.t)✅ Loaded \(savedConfigs.count) saved configs")
-            }
-        } catch {
-            if verbose {
-                os_log(.error, "\(self.t)❌ Failed to load saved configs: \(error)")
-            }
-        }
     }
 
     private func saveAsPreset() {
@@ -233,6 +208,63 @@ struct UserConfigSheet: View, SuperLog {
     }
 }
 
+// MARK: - Event Handler
+extension UserConfigSheet {
+    private func handleOnAppear() {
+        loadCurrentUserInfo()
+        loadSavedConfigs()
+    }
+}
+
+// MARK: - Private Helpers
+extension UserConfigSheet {
+    private func loadCurrentUserInfo() {
+        guard let project = data.project else { return }
+
+        isLoading = true
+        errorMessage = nil
+
+        do {
+            userName = try project.getUserName()
+            userEmail = try project.getUserEmail()
+            hasChanges = false
+
+            if verbose {
+                os_log("\(self.t)✅ Loaded user info - name: \(userName), email: \(userEmail)")
+            }
+        } catch {
+            errorMessage = "无法加载当前用户信息: \(error.localizedDescription)"
+            if verbose {
+                os_log(.error, "\(self.t)❌ Failed to load user info: \(error)")
+            }
+        }
+
+        isLoading = false
+    }
+
+    private func loadSavedConfigs() {
+        do {
+            savedConfigs = try configRepo.getRecentConfigs(limit: 10)
+
+            // 如果有默认配置，自动选择
+            if let defaultConfig = try configRepo.findDefault() {
+                selectedConfig = defaultConfig
+                userName = defaultConfig.name
+                userEmail = defaultConfig.email
+            }
+
+            if verbose {
+                os_log("\(self.t)✅ Loaded \(savedConfigs.count) saved configs")
+            }
+        } catch {
+            if verbose {
+                os_log(.error, "\(self.t)❌ Failed to load saved configs: \(error)")
+            }
+        }
+    }
+}
+
+// MARK: - Preview
 #Preview {
     UserConfigSheet().inRootView()
 }
