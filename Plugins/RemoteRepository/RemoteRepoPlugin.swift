@@ -2,6 +2,7 @@ import MagicCore
 import OSLog
 import SwiftUI
 
+/// RemoteRepository 插件：在状态栏提供远程仓库管理入口。
 class RemoteRepositoryPlugin: SuperPlugin, SuperLog, PluginRegistrant {
     static let shared = RemoteRepositoryPlugin()
     static let emoji = "🔗"
@@ -23,4 +24,21 @@ extension RemoteRepositoryPlugin {
             }
         }
     }
+}
+
+#Preview("App - Small Screen") {
+    ContentLayout()
+        .hideSidebar()
+        .hideProjectActions()
+        .inRootView()
+        .frame(width: 800)
+        .frame(height: 600)
+}
+
+#Preview("App - Big Screen") {
+    ContentLayout()
+        .hideSidebar()
+        .inRootView()
+        .frame(width: 1200)
+        .frame(height: 1200)
 }

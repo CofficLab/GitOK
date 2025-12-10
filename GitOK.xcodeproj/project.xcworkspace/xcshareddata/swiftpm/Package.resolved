@@ -1,5 +1,5 @@
 {
-  "originHash" : "f4b259cec4dc9b388d33073c86fb02b92262611b39863b2a91d7902da6a23ae8",
+  "originHash" : "ab982301214b4c052118ace6f18e169dbd66bdb7a1b4df8fc53f577c4d20f9c4",
   "pins" : [
     {
       "identity" : "id3tageditor",
@@ -16,7 +16,7 @@
       "location" : "https://github.com/CofficLab/MagicKit",
       "state" : {
         "branch" : "dev",
-        "revision" : "23c1107cd5a0e0c74b1fc10a315b0a53be3ce8e9"
+        "revision" : "7500c277229098c5082560326fd54642772d0ee2"
       }
     },
     {

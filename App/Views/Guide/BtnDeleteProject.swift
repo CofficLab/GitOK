@@ -18,6 +18,7 @@ struct BtnDeleteProject: View {
         }
         .magicTitle("删除项目")
         .magicSize(.auto)
+        .magicIcon(.iconTrash)
         .magicBackground(MagicBackground.cherry)
     }
 

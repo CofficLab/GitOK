@@ -3,10 +3,10 @@ import MagicAlert
 import OSLog
 import SwiftUI
 
+/// SmartMerge 状态栏按钮：点击弹出合并表单。
 struct TileMerge: View, SuperLog, SuperThread {
     @EnvironmentObject var m: MagicMessageProvider
 
-    @State var hovered = false
     @State var isPresented = false
     
     static let shared = TileMerge()
@@ -14,19 +14,11 @@ struct TileMerge: View, SuperLog, SuperThread {
     private init() {}
 
     var body: some View {
-        HStack {
-            Image(systemName: "arrow.trianglehead.merge")
-        }
-        .onHover(perform: { hovering in
-            hovered = hovering
-        })
-        .onTapGesture {
+        StatusBarTile(icon: "arrow.trianglehead.merge", onTap: {
             self.isPresented.toggle()
+        }) {
+            EmptyView()
         }
-        .padding(.vertical, 6)
-        .padding(.horizontal, 8)
-        .background(hovered ? Color(.controlAccentColor).opacity(0.2) : .clear)
-        .clipShape(RoundedRectangle(cornerRadius: 0))
         .popover(isPresented: $isPresented, content: {
             VStack {
                 MergeForm().padding()
@@ -35,4 +27,21 @@ struct TileMerge: View, SuperLog, SuperThread {
             .frame(width: 200)
         })
     }
+}
+
+#Preview("App - Small Screen") {
+    ContentLayout()
+        .hideSidebar()
+        .hideProjectActions()
+        .inRootView()
+        .frame(width: 800)
+        .frame(height: 600)
+}
+
+#Preview("App - Big Screen") {
+    ContentLayout()
+        .hideSidebar()
+        .inRootView()
+        .frame(width: 1200)
+        .frame(height: 1200)
 }

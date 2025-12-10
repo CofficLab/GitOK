@@ -310,6 +310,7 @@ extension DataProvider {
         }
 
         try project.setCurrentBranch(branch)
+        self.branch = branch
     }
 }
 

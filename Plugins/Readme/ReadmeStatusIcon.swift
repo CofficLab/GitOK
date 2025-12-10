@@ -3,34 +3,24 @@ import MagicCore
 import OSLog
 import SwiftUI
 
+/// README 状态栏图标：存在 README 时可点击弹出查看。
 struct ReadmeStatusIcon: View, SuperLog {
     @EnvironmentObject var data: DataProvider
     
     @State private var isSheetPresented = false
     @State private var hasReadme = false
-    @State var hovered = false
     
     static let shared = ReadmeStatusIcon()
     
     init() {}
     
     var body: some View {
-        HStack {            
-            Image(systemName: "doc.text.magnifyingglass")
-        }
-        .help(hasReadme ? "查看 README.md 文档" : "未找到 README.md 文件")
-        .onHover(perform: { hovering in
-            hovered = hovering
-        })
-        .onTapGesture {
+        StatusBarTile(icon: "doc.text.magnifyingglass", onTap: {
             if hasReadme {
                 isSheetPresented.toggle()
             }
-        }
-        .padding(.vertical, 6)
-        .padding(.horizontal, 8)
-        .background(hovered ? Color(.controlAccentColor).opacity(0.2) : .clear)
-        .clipShape(RoundedRectangle(cornerRadius: 0))
+        })
+        .help(hasReadme ? "查看 README.md 文档" : "未找到 README.md 文件")
         .sheet(isPresented: $isSheetPresented) {
             ReadmeViewer()
                 .frame(minWidth: 800, minHeight: 600)
@@ -61,6 +51,10 @@ struct ReadmeStatusIcon: View, SuperLog {
 }
 
 #Preview("ReadmeStatusIcon") {
-    ReadmeStatusIcon.shared
-        .frame(width: 50, height: 30)
+    ContentLayout()
+        .hideSidebar()
+        .hideProjectActions()
+        .inRootView()
+        .frame(width: 800)
+        .frame(height: 600)
 } 

@@ -1,4 +1,7 @@
 import SwiftUI
+import AppKit
+import MagicUI
+import MagicBackground
 
 /// 通用的引导提示视图组件
 /// 用于显示带有图标和文本的提示界面
@@ -77,6 +80,19 @@ struct GuideView: View {
                 .padding()
                 .frame(width: 500)
 
+            if let path = g.project?.path {
+                MagicButton.simple {
+                    openInFinder(path)
+                }
+                .magicTitle("在 Finder 中打开")
+                .magicSize(.auto)
+                .magicIcon(.iconFinder)
+                .magicBackground(MagicBackground.forest)
+                .frame(width: 200)
+                .frame(height: 40)
+                .padding(.top, 20)
+            }
+
             if g.projectExists == false, let p = g.project {
                 BtnDeleteProject(project: p)
                     .frame(width: 200)
@@ -104,6 +120,10 @@ extension GuideView {
             actionLabel: self.actionLabel,
             iconColor: color
         )
+    }
+
+    private func openInFinder(_ path: String) {
+        NSWorkspace.shared.selectFile(nil, inFileViewerRootedAtPath: path)
     }
 }
 
