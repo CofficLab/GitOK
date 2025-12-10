@@ -1,6 +1,7 @@
 import Foundation
-import MagicAsset
+import MagicAll
 import MagicCore
+import MagicAsset
 import SwiftUI
 
 /**

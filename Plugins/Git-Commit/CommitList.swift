@@ -299,3 +299,11 @@ extension CommitList {
     .frame(width: 800)
     .frame(height: 800)
 }
+
+#Preview("App - Big Screen") {
+    RootView {
+        ContentLayout()
+    }
+    .frame(width: 1200)
+    .frame(height: 1200)
+}
