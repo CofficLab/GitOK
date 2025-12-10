@@ -13,7 +13,7 @@ struct BtnDeleteProject: View {
     var project: Project
 
     var body: some View {
-        MagicButton {_ in 
+        MagicButton.simple { 
             deleteItem(project)
         }
         .magicTitle("删除项目")

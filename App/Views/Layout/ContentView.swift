@@ -14,6 +14,8 @@ struct ContentView: View, SuperLog {
     @State private var tabPickerVisibility = true
     @State private var projectActionsVisibility = true
 
+    /// 控制状态栏布局：true 为全宽（底部跨越左右栏），false 为旧布局（仅 detail 内部）
+    var useFullWidthStatusBar: Bool = true
     var defaultStatusBarVisibility: Bool? = nil
     var defaultTab: String? = nil
     var defaultColumnVisibility: NavigationSplitViewVisibility? = nil
@@ -53,6 +55,27 @@ struct ContentView: View, SuperLog {
     }
 
     var body: some View {
+        Group {
+            if useFullWidthStatusBar {
+                VStack(spacing: 0) {
+                    navigationSplitView(fullWidthStatusBar: true)
+
+                    if statusBarVisibility && g.projectExists {
+                        Divider()
+                        StatusBar()
+                            .frame(maxWidth: .infinity)
+                    }
+                }
+            } else {
+                navigationSplitView(fullWidthStatusBar: false)
+            }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+}
+
+extension ContentView {
+    private func navigationSplitView(fullWidthStatusBar: Bool) -> some View {
         NavigationSplitView(columnVisibility: $columnVisibility) {
             Projects()
                 .navigationSplitViewColumnWidth(min: 200, ideal: 200, max: 300)
@@ -62,44 +85,7 @@ struct ContentView: View, SuperLog {
                     }
                 })
         } detail: {
-            if g.projectExists == false {
-                GuideView(
-                    systemImage: "folder.badge.questionmark",
-                    title: "项目不存在"
-                ).setIconColor(.red.opacity(0.5))
-            } else {
-                if pluginListViews.isEmpty {
-                    VStack(spacing: 0) {
-                        p.tabPlugins.first { $0.instanceLabel == tab }?.addDetailView()
-
-                        if statusBarVisibility {
-                            StatusBar()
-                        }
-                    }
-                    .frame(maxHeight: .infinity)
-                } else {
-                    HSplitView {
-                        VStack(spacing: 0) {
-                            ForEach(pluginListViews, id: \.plugin.instanceLabel) { item in
-                                item.view
-                            }
-                        }
-                        .frame(idealWidth: 200)
-                        .frame(minWidth: 120)
-                        .frame(maxWidth: 300)
-                        .frame(maxHeight: .infinity)
-
-                        VStack(spacing: 0) {
-                            p.tabPlugins.first { $0.instanceLabel == tab }?.addDetailView()
-
-                            if statusBarVisibility {
-                                StatusBar()
-                            }
-                        }
-                        .frame(maxHeight: .infinity)
-                    }
-                }
-            }
+            detailContent(fullWidthStatusBar: fullWidthStatusBar)
         }
         .onAppear(perform: onAppear)
         .onChange(of: g.project, onProjectChange)
@@ -133,6 +119,48 @@ struct ContentView: View, SuperLog {
                 })
             }
         })
+    }
+
+    @ViewBuilder
+    private func detailContent(fullWidthStatusBar: Bool) -> some View {
+        if g.projectExists == false {
+            GuideView(
+                systemImage: "folder.badge.questionmark",
+                title: "项目不存在"
+            ).setIconColor(.red.opacity(0.5))
+        } else {
+            if pluginListViews.isEmpty {
+                VStack(spacing: 0) {
+                    p.tabPlugins.first { $0.instanceLabel == tab }?.addDetailView()
+
+                    if fullWidthStatusBar == false, statusBarVisibility {
+                        StatusBar()
+                    }
+                }
+                .frame(maxHeight: .infinity)
+            } else {
+                HSplitView {
+                    VStack(spacing: 0) {
+                        ForEach(pluginListViews, id: \.plugin.instanceLabel) { item in
+                            item.view
+                        }
+                    }
+                    .frame(idealWidth: 200)
+                    .frame(minWidth: 120)
+                    .frame(maxWidth: 300)
+                    .frame(maxHeight: .infinity)
+
+                    VStack(spacing: 0) {
+                        p.tabPlugins.first { $0.instanceLabel == tab }?.addDetailView()
+
+                        if fullWidthStatusBar == false, statusBarVisibility {
+                            StatusBar()
+                        }
+                    }
+                    .frame(maxHeight: .infinity)
+                }
+            }
+        }
     }
 }
 

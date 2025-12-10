@@ -16,12 +16,18 @@
         "notarytool",
         "pbxproj",
         "pkcs",
+        "podspec",
         "provisionprofile",
+        "pubspec",
         "softprops",
         "stefanzweifel",
         "trianglehead",
         "uppercased",
+        "xccheckout",
         "xcrun",
+        "xcscmblueprint",
+        "xcuserdata",
+        "xcuserstate",
         "yanamura"
     ]
 }
