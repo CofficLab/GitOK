@@ -15,7 +15,6 @@ struct StatusBar: View {
                 plugin.addStatusBarTrailingView()
             }
         }
-        .padding(.horizontal, 10)
         .labelStyle(.iconOnly)
         .frame(maxWidth: .infinity)
         .frame(height: 32)
