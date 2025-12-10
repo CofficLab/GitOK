@@ -57,7 +57,9 @@ extension CurrentWorkingStateView {
 
         do {
             let count = try await project.untrackedFiles().count
-            self.changedFileCount = count
+            await MainActor.run {
+                self.changedFileCount = count
+            }
         } catch {
             os_log(.error, "\(self.t)❌ Failed to load changed file count: \(error)")
         }
@@ -111,6 +113,7 @@ extension CurrentWorkingStateView {
 #Preview("App - Big Screen") {
     ContentLayout()
         .hideSidebar()
+        .hideProjectActions()
         .inRootView()
         .frame(width: 1200)
         .frame(height: 1200)
