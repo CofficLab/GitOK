@@ -60,24 +60,33 @@ struct BtnSyncView: View, SuperLog, SuperEvent, SuperThread {
     }
 
     func sync(path: String) {
-        withAnimation {
-            working = true
+        func setStatus(_ text: String?) {
+            Task { @MainActor in
+                data.activityStatus = text
+            }
         }
 
-        // 显示加载状态
-        m.loading("正在同步...")
+        Task { @MainActor in
+            withAnimation {
+                working = true
+            }
+        }
 
-        do {
-            try self.data.project?.sync()
-
-            // 隐藏加载状态 - 成功消息会通过Project的事件系统自动显示
-            m.hideLoading()
-            self.reset()
-        } catch let error {
-            // 隐藏加载状态并显示错误
-            m.hideLoading()
-            self.reset()
-            m.error(error.localizedDescription)
+        Task.detached {
+            setStatus("同步中…")
+            do {
+                try await self.data.project?.sync()
+                await MainActor.run {
+                    self.reset()
+                }
+            } catch let error {
+                await MainActor.run {
+                    self.m.hideLoading()
+                    self.reset()
+                    self.m.error(error.localizedDescription)
+                }
+            }
+            setStatus(nil)
         }
     }
 
