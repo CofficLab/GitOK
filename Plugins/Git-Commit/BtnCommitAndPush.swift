@@ -33,7 +33,7 @@ struct BtnCommitAndPush: View, SuperLog, SuperThread {
                     }
                 }
 
-                DispatchQueue.main.async {
+                Task.detached {
                     setStatus("添加文件中…")
                     do {
                         try project.addAll()
@@ -41,24 +41,32 @@ struct BtnCommitAndPush: View, SuperLog, SuperThread {
                         let message = commitMessage.isEmpty ? "Auto commit" : commitMessage
 
                         setStatus("提交中…")
-                        try project.submit(message)
+                        try await MainActor.run {
+                            try project.submit(message)
+                        }
 
                         if commitOnly == false {
                             setStatus("推送中…")
                             try project.push()
                         }
 
-                        if commitOnly == false {
-                            m.info("Commit and push success")
-                        } else {
-                            m.info("Commit success")
+                        await MainActor.run {
+                            if commitOnly == false {
+                                m.info("Commit and push success")
+                            } else {
+                                m.info("Commit success")
+                            }
                         }
                     } catch {
-                        m.error(error.localizedDescription)
+                        await MainActor.run {
+                            m.error(error.localizedDescription)
+                        }
                     }
 
                     setStatus(nil)
-                    completion()
+                    await MainActor.run {
+                        completion()
+                    }
                 }
             }
         )
