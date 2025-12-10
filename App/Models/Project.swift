@@ -380,6 +380,31 @@ extension Project {
 
         return try String(contentsOf: gitignoreURL, encoding: .utf8)
     }
+
+    /// 获取 LICENSE 内容（支持多种常见文件名）
+    func getLicenseContent() async throws -> String {
+        let licenseFiles = ["LICENSE", "LICENSE.txt", "License", "license"]
+        let fileManager = FileManager.default
+
+        for file in licenseFiles {
+            let url = URL(fileURLWithPath: self.path).appendingPathComponent(file)
+            if fileManager.fileExists(atPath: url.path) {
+                return try String(contentsOf: url, encoding: .utf8)
+            }
+        }
+
+        throw NSError(
+            domain: "ProjectError",
+            code: 404,
+            userInfo: [NSLocalizedDescriptionKey: "LICENSE file not found"]
+        )
+    }
+
+    /// 写入/创建 LICENSE 内容，使用 `LICENSE` 文件名
+    func saveLicenseContent(_ content: String) async throws {
+        let licenseURL = URL(fileURLWithPath: self.path).appendingPathComponent("LICENSE")
+        try content.write(to: licenseURL, atomically: true, encoding: .utf8)
+    }
 }
 
 // MARK: - Remote
