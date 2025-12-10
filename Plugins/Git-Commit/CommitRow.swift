@@ -41,6 +41,15 @@ struct CommitRow: View, SuperThread {
                             .padding(.vertical, 1)
                             .font(.system(size: 11))
                             .foregroundColor(.secondary)
+
+                            // 第三行：提交时间（完整）
+                            HStack {
+                                Text(commit.date.fullDateTime)
+                                    .lineLimit(1)
+                                    .font(.system(size: 10))
+                                    .foregroundColor(.secondary)
+                                Spacer()
+                            }
                         }
                         .padding(.vertical, 6)
                         .padding(.horizontal, 8)
