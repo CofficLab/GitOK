@@ -27,27 +27,46 @@ struct BtnCommitAndPush: View, SuperLog, SuperThread {
 
                 os_log("\(self.t)💼 Commit")
 
-                DispatchQueue.main.async {
+                func setStatus(_ text: String?) {
+                    Task { @MainActor in
+                        g.activityStatus = text
+                    }
+                }
+
+                Task.detached {
+                    setStatus("添加文件中…")
                     do {
                         try project.addAll()
-                        
-                        // 如果 commitMessage 为空，使用默认消息
+
                         let message = commitMessage.isEmpty ? "Auto commit" : commitMessage
-                        try project.submit(message)
+
+                        setStatus("提交中…")
+                        try await MainActor.run {
+                            try project.submit(message)
+                        }
+
                         if commitOnly == false {
+                            setStatus("推送中…")
                             try project.push()
                         }
 
-                        if commitOnly == false {
-                            m.info("Commit and push success")
-                        } else {
-                            m.info("Commit success")
+                        await MainActor.run {
+                            if commitOnly == false {
+                                m.info("Commit and push success")
+                            } else {
+                                m.info("Commit success")
+                            }
                         }
                     } catch {
-                        m.error(error.localizedDescription)
+                        await MainActor.run {
+                            m.error(error.localizedDescription)
+                        }
                     }
 
-                    completion()
+                    setStatus(nil)
+                    await MainActor.run {
+                        completion()
+                    }
                 }
             }
         )
