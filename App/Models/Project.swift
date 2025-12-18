@@ -388,6 +388,51 @@ extension Project {
         try await ShellGit.diffFileList(staged: true, at: self.path)
     }
     
+    /// 丢弃文件的更改（恢复到 HEAD 版本）
+    /// - Parameter filePath: 文件路径（相对于仓库根目录）
+    /// - Throws: Git操作异常
+    func discardFileChanges(_ filePath: String) throws {
+        do {
+            // 使用 git checkout -- <file> 丢弃工作区的更改
+            let process = Process()
+            process.executableURL = URL(fileURLWithPath: "/usr/bin/git")
+            process.arguments = ["checkout", "--", filePath]
+            process.currentDirectoryURL = URL(fileURLWithPath: self.path)
+            
+            let pipe = Pipe()
+            process.standardOutput = pipe
+            process.standardError = pipe
+            
+            try process.run()
+            process.waitUntilExit()
+            
+            if process.terminationStatus != 0 {
+                let data = pipe.fileHandleForReading.readDataToEndOfFile()
+                let output = String(data: data, encoding: .utf8) ?? ""
+                throw NSError(
+                    domain: "GitError",
+                    code: Int(process.terminationStatus),
+                    userInfo: [NSLocalizedDescriptionKey: "Failed to discard changes: \(output)"]
+                )
+            }
+            
+            postEvent(
+                name: .projectDidCommit,
+                operation: "discardFileChanges",
+                additionalInfo: ["filePath": filePath]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "discardFileChanges",
+                success: false,
+                error: error,
+                additionalInfo: ["filePath": filePath]
+            )
+            throw error
+        }
+    }
+    
     /// 获取项目的README.md文件内容
     /// - Returns: README.md文件的内容，如果文件不存在则抛出异常
     /// - Throws: 文件不存在或读取错误

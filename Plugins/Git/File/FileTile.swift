@@ -3,6 +3,7 @@ import SwiftUI
 
 struct FileTile: View {
     var file: GitDiffFile
+    var onDiscardChanges: ((GitDiffFile) -> Void)?
 
     @State var isPresented: Bool = false
 
@@ -13,6 +14,13 @@ struct FileTile: View {
                 .font(.footnote)
                 .foregroundStyle(getColor())
             Spacer()
+        }
+        .contextMenu {
+            if let onDiscardChanges = onDiscardChanges {
+                Button("Discard Changes") {
+                    onDiscardChanges(file)
+                }
+            }
         }
     }
 
