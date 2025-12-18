@@ -54,8 +54,13 @@ struct FileList: View, SuperThread, SuperLog {
             // 文件列表
             ScrollViewReader { scrollProxy in
                 List(files, id: \.self, selection: $selection) {
-                    FileTile(file: $0)
-                        .tag($0 as GitDiffFile?)
+                    FileTile(
+                        file: $0,
+                        onDiscardChanges: {
+                            discardChanges(for: $0)
+                        }
+                    )
+                    .tag($0 as GitDiffFile?)
                 }
                 .background(.blue)
                 .onChange(of: files, {
@@ -76,6 +81,27 @@ struct FileList: View, SuperThread, SuperLog {
 // MARK: - Action
 
 extension FileList {
+    func discardChanges(for file: GitDiffFile) {
+        guard let project = data.project else { return }
+        
+        Task.detached {
+            do {
+                try project.discardFileChanges(file.file)
+                
+                await MainActor.run {
+                    self.m.info("已丢弃文件更改: \(file.file)")
+                }
+                
+                // 刷新文件列表
+                await self.refresh(reason: "AfterDiscardChanges")
+            } catch {
+                await MainActor.run {
+                    self.m.error("丢弃更改失败: \(error.localizedDescription)")
+                }
+            }
+        }
+    }
+    
     func refresh(reason: String) async {
         // 取消之前的任务
         refreshTask?.cancel()

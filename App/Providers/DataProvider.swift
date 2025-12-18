@@ -359,6 +359,6 @@ extension DataProvider {
         .hideProjectActions()
         .hideTabPicker()
         .inRootView()
-        .frame(width: 800)
+        .frame(width: 1000)
         .frame(height: 1000)
 }

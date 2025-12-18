@@ -1,0 +1,22 @@
+---
+alwaysApply: true
+---
+
+# Commit Message Rules
+
+在任务到达阶段性的里程碑时，按照以下步骤自动创建一个合适的commit：
+
+- 执行 `pnpm type-check` 进行类型检查，确保代码无类型错误
+- 创建commit
+
+## Commit Message Style
+
+- 使用英文编写提交信息
+- 保持简洁明了，描述本次提交的主要变更
+- 使用动词开头，如"添加"、"修复"、"更新"、"重构"、"删除"等
+
+参考例子：
+
+```text
+🔧 Config: 更新 wrangler.jsonc 配置文件
+```
