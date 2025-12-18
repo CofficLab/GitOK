@@ -8,13 +8,19 @@ struct FileTile: View {
     @State var isPresented: Bool = false
 
     var body: some View {
-        HStack {
-//            image
+        HStack(spacing: 12) {
             Text(file.file)
                 .font(.footnote)
-                .foregroundStyle(getColor())
+                .lineLimit(1)
+                .foregroundColor(.primary)
+
             Spacer()
+
+            statusIcon
         }
+        .padding(.vertical, 0)
+        .padding(.horizontal, 8)
+        .cornerRadius(4)
         .contextMenu {
             if let onDiscardChanges = onDiscardChanges {
                 Button("Discard Changes") {
@@ -24,29 +30,26 @@ struct FileTile: View {
         }
     }
 
-    var image: some View {
-        switch file.changeType {
-        case "M":
-            Image(systemName: "square.and.pencil")
-        case "A":
-            Image(systemName: "plus.square")
-        case "D":
-            Image(systemName: "trash.square")
-        default:
-            Image(systemName: "trash.square")
-        }
+    private var statusIcon: some View {
+        let (icon, color) = iconInfo(for: file.changeType)
+        return Image(systemName: icon)
+            .font(.system(size: 12, weight: .semibold))
+            .foregroundColor(color)
+            .padding(2)
+            .background(color.opacity(0.2))
+            .cornerRadius(6)
     }
 
-    func getColor() -> Color {
-        switch file.changeType {
+    private func iconInfo(for change: String) -> (String, Color) {
+        switch change {
         case "M":
-            Color.orange
+            return ("square.and.pencil", .orange)
         case "A":
-            Color.green
+            return ("plus.square", .green)
         case "D":
-            Color.red
+            return ("trash.square", .red)
         default:
-            Color.gray
+            return ("exclamationmark.square", .gray)
         }
     }
 }
