@@ -56,9 +56,9 @@ struct FileList: View, SuperThread, SuperLog {
                 List(files, id: \.self, selection: $selection) {
                     FileTile(
                         file: $0,
-                        onDiscardChanges: {
+                        onDiscardChanges: data.commit == nil ? {
                             discardChanges(for: $0)
-                        }
+                        } : nil
                     )
                     .tag($0 as GitDiffFile?)
                 }
