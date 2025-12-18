@@ -34,7 +34,7 @@ struct TileFile: View, SuperLog, SuperThread {
                                 .foregroundColor(.secondary)
                         }
                     }
-                }
+                }.frame(maxHeight: .infinity)
             }
             .frame(maxHeight: .infinity)
             .popover(isPresented: $isPopoverPresented) {
