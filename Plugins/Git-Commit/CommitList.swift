@@ -38,29 +38,21 @@ struct CommitList: View, SuperThread, SuperLog {
                             ScrollView {
                                 LazyVStack(spacing: 0, pinnedViews: []) {
                                     Divider()
-                                    
-                                    // 刷新时的 loading 提示，显示在第一个 commit 之上
-                                    if isRefreshing && !commits.isEmpty {
-                                        HStack {
-                                            Spacer()
-                                            ProgressView()
-                                                .controlSize(.small)
-                                            Text("刷新中...")
-                                                .font(.caption)
-                                                .foregroundColor(.secondary)
-                                            Spacer()
-                                        }
-                                        .frame(height: 44)
-                                        .padding(.vertical, 8)
-                                        
-                                        Divider()
-                                    }
 
-                                    ForEach(commits) { commit in
+                                    ForEach(commits.indices, id: \.self) { index in
+                                        let commit = commits[index]
                                         CommitRow(commit: commit)
+                                            .overlay(alignment: .trailing) {
+                                                // 在第一个 commit 右侧显示刷新 loading
+                                                if index == 0 && isRefreshing {
+                                                    ProgressView()
+                                                        .controlSize(.small)
+                                                        .scaleEffect(0.8)
+                                                        .padding(.trailing, 8)
+                                                }
+                                            }
                                             .onAppear {
                                                 // 只在最后几个commit出现时触发加载更多
-                                                let index = commits.firstIndex(of: commit) ?? 0
                                                 let threshold = max(commits.count - 10, Int(Double(commits.count) * 0.8))
 
                                                 if index >= threshold && hasMoreCommits && !loading {
