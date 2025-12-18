@@ -206,6 +206,51 @@ extension Project {
     func getBranches() throws -> [GitBranch] {
         try ShellGit.branchList(at: self.path)
     }
+    
+    /// 创建新分支并切换到该分支
+    /// - Parameter branchName: 分支名称
+    /// - Throws: Git操作异常
+    func createBranch(_ branchName: String) throws {
+        do {
+            // 使用 Process 执行 git checkout -b 命令
+            let process = Process()
+            process.executableURL = URL(fileURLWithPath: "/usr/bin/git")
+            process.arguments = ["checkout", "-b", branchName]
+            process.currentDirectoryURL = URL(fileURLWithPath: self.path)
+            
+            let pipe = Pipe()
+            process.standardOutput = pipe
+            process.standardError = pipe
+            
+            try process.run()
+            process.waitUntilExit()
+            
+            if process.terminationStatus != 0 {
+                let data = pipe.fileHandleForReading.readDataToEndOfFile()
+                let output = String(data: data, encoding: .utf8) ?? ""
+                throw NSError(
+                    domain: "GitError",
+                    code: Int(process.terminationStatus),
+                    userInfo: [NSLocalizedDescriptionKey: "Failed to create branch: \(output)"]
+                )
+            }
+            
+            postEvent(
+                name: .projectDidChangeBranch,
+                operation: "createBranch",
+                additionalInfo: ["branchName": branchName]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "createBranch",
+                success: false,
+                error: error,
+                additionalInfo: ["branchName": branchName]
+            )
+            throw error
+        }
+    }
 }
 
 // MARK: - Add

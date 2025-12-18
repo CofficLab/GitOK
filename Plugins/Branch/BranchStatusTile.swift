@@ -4,6 +4,8 @@ import SwiftUI
 /// 状态栏分支信息胶囊，显示当前分支或占位提示。
 struct BranchStatusTile: View {
     @EnvironmentObject var data: DataProvider
+    
+    @State private var isPresented = false
 
     private var branchText: String {
         if let branch = data.branch {
@@ -16,8 +18,14 @@ struct BranchStatusTile: View {
     }
 
     var body: some View {
-        StatusBarTile(icon: "arrow.branch") {
+        StatusBarTile(icon: "arrow.branch", onTap: {
+            self.isPresented.toggle()
+        }) {
             Text(branchText)
+        }
+        .popover(isPresented: $isPresented) {
+            BranchForm()
+                .frame(width: 300, height: 500)
         }
     }
 }
