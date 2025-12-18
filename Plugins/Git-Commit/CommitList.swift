@@ -38,6 +38,23 @@ struct CommitList: View, SuperThread, SuperLog {
                             ScrollView {
                                 LazyVStack(spacing: 0, pinnedViews: []) {
                                     Divider()
+                                    
+                                    // 刷新时的 loading 提示，显示在第一个 commit 之上
+                                    if isRefreshing && !commits.isEmpty {
+                                        HStack {
+                                            Spacer()
+                                            ProgressView()
+                                                .controlSize(.small)
+                                            Text("刷新中...")
+                                                .font(.caption)
+                                                .foregroundColor(.secondary)
+                                            Spacer()
+                                        }
+                                        .frame(height: 44)
+                                        .padding(.vertical, 8)
+                                        
+                                        Divider()
+                                    }
 
                                     ForEach(commits) { commit in
                                         CommitRow(commit: commit)
@@ -83,6 +100,7 @@ struct CommitList: View, SuperThread, SuperLog {
         .onNotification(.projectDidCommit, perform: onCommitSuccess)
         .onNotification(.projectDidPull, perform: onPullSuccess)
         .onNotification(.projectDidPush, perform: onPushSuccess)
+        .onNotification(.appDidBecomeActive, perform: onAppDidBecomeActive)
     }
 
     private func loadMoreCommits() {
@@ -163,12 +181,28 @@ extension CommitList {
             os_log("\(self.t)🍋 Refresh(\(reason))")
         }
 
-        guard let project = data.project, !isRefreshing else {
+        guard let project = data.project else {
+            return
+        }
+        
+        // 如果正在刷新，先重置状态，然后延迟刷新
+        if isRefreshing {
+            DispatchQueue.main.async {
+                self.isRefreshing = false
+                self.loading = false
+            }
+            // 延迟刷新，确保状态重置完成
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                self.refresh(reason)
+            }
             return
         }
 
-        isRefreshing = true
-        loading = true
+        // 在主线程更新 UI 状态
+        DispatchQueue.main.async {
+            self.isRefreshing = true
+            self.loading = true
+        }
 
         currentPage = 0
         hasMoreCommits = true
@@ -178,13 +212,19 @@ extension CommitList {
                 0, limit: self.pageSize
             )
 
-            commits = initialCommits
-            loading = false
-            isRefreshing = false
-            currentPage = 1
+            // 在主线程更新 UI 状态
+            DispatchQueue.main.async {
+                self.commits = initialCommits
+                self.loading = false
+                self.isRefreshing = false
+                self.currentPage = 1
+            }
         } catch {
-            loading = false
-            isRefreshing = false
+            // 在主线程更新 UI 状态
+            DispatchQueue.main.async {
+                self.loading = false
+                self.isRefreshing = false
+            }
         }
     }
 
@@ -257,8 +297,13 @@ extension CommitList {
     }
 
     func onCommitSuccess(_ notification: Notification) {
-        self.bg.async {
-            self.refresh("GitCommitSuccess")
+        // 延迟一小段时间，确保 Git 操作完全完成
+        Task.detached {
+            // 等待 100ms，确保 Git 操作完成
+            try? await Task.sleep(nanoseconds: 100_000_000)
+            await MainActor.run {
+                self.refresh("GitCommitSuccess")
+            }
         }
     }
 
@@ -279,14 +324,25 @@ extension CommitList {
     }
 
     func onPushSuccess(_ notification: Notification) {
-        self.bg.async {
-            self.refresh("GitPushSuccess")
+        // 延迟一小段时间，确保 Git 操作完全完成
+        Task.detached {
+            // 等待 100ms，确保 Git 操作完成
+            try? await Task.sleep(nanoseconds: 100_000_000)
+            await MainActor.run {
+                self.refresh("GitPushSuccess")
+            }
         }
     }
 
     func onAppWillBecomeActive(_ notification: Notification) {
         self.bg.async {
             self.refresh("AppWillBecomeActive")
+        }
+    }
+    
+    func onAppDidBecomeActive(_ notification: Notification) {
+        self.bg.async {
+            self.refresh("AppDidBecomeActive")
         }
     }
 }
