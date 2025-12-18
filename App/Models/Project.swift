@@ -73,11 +73,22 @@ final class Project: SuperLog {
             additionalInfo: additionalInfo
         )
 
-        NotificationCenter.default.post(
-            name: name,
-            object: self,
-            userInfo: ["eventInfo": eventInfo]
-        )
+        // 确保在主线程发送通知，避免线程安全问题
+        if Thread.isMainThread {
+            NotificationCenter.default.post(
+                name: name,
+                object: self,
+                userInfo: ["eventInfo": eventInfo]
+            )
+        } else {
+            DispatchQueue.main.async {
+                NotificationCenter.default.post(
+                    name: name,
+                    object: self,
+                    userInfo: ["eventInfo": eventInfo]
+                )
+            }
+        }
 
         if Self.verbose {
             os_log("\(self.t)🍋 Event posted: \(operation) - Success: \(success)")
