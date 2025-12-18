@@ -6,6 +6,7 @@ struct CurrentWorkingStateView: View, SuperLog {
     @EnvironmentObject var data: DataProvider
 
     @State private var changedFileCount = 0
+    @State private var isRefreshing = false
 
     private var isSelected: Bool {
         data.commit == nil
@@ -15,19 +16,31 @@ struct CurrentWorkingStateView: View, SuperLog {
 
     var body: some View {
         VStack(spacing: 0) {
-            HStack(spacing: 12) {
-                Image(systemName: "clock.arrow.circlepath")
-                    .font(.system(size: 16, weight: .medium))
+            ZStack {
+                HStack(spacing: 12) {
+                    Image(systemName: "clock.arrow.circlepath")
+                        .font(.system(size: 16, weight: .medium))
 
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("当前工作状态")
-                        .font(.system(size: 14, weight: .medium))
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("当前工作状态")
+                            .font(.system(size: 14, weight: .medium))
 
-                    Text("(\(changedFileCount) 个未提交文件)")
-                        .font(.system(size: 11))
+                        Text("(\(changedFileCount) 个未提交文件)")
+                            .font(.system(size: 11))
+                    }
+
+                    Spacer()
                 }
-
-                Spacer()
+                
+                if isRefreshing {
+                    HStack {
+                        Spacer()
+                        ProgressView()
+                            .controlSize(.small)
+                            .scaleEffect(0.8)
+                            .padding(.trailing, 8)
+                    }
+                }
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 12)
@@ -44,6 +57,7 @@ struct CurrentWorkingStateView: View, SuperLog {
         .onAppear(perform: onAppear)
         .onChange(of: data.project, onProjectDidChange)
         .onNotification(.projectDidCommit, onProjectDidCommit)
+        .onNotification(.appDidBecomeActive, onAppDidBecomeActive)
     }
 }
 
@@ -54,13 +68,25 @@ extension CurrentWorkingStateView {
         guard let project = data.project else {
             return
         }
+        
+        // 在状态栏显示刷新消息并显示 loading 提示
+        await MainActor.run {
+            data.activityStatus = "刷新文件列表…"
+            isRefreshing = true
+        }
 
         do {
             let count = try await project.untrackedFiles().count
             await MainActor.run {
                 self.changedFileCount = count
+                data.activityStatus = nil
+                isRefreshing = false
             }
         } catch {
+            await MainActor.run {
+                data.activityStatus = nil
+                isRefreshing = false
+            }
             os_log(.error, "\(self.t)❌ Failed to load changed file count: \(error)")
         }
     }
@@ -77,6 +103,9 @@ extension CurrentWorkingStateView {
 
     func onTap() {
         data.commit = nil
+        Task {
+            await self.loadChangedFileCount()
+        }
     }
 
     func onProjectDidCommit(_ notification: Notification) {
@@ -86,6 +115,12 @@ extension CurrentWorkingStateView {
     }
 
     func onProjectDidChange() {
+        Task {
+            await self.loadChangedFileCount()
+        }
+    }
+    
+    func onAppDidBecomeActive(_ notification: Notification) {
         Task {
             await self.loadChangedFileCount()
         }
