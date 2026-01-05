@@ -18,5 +18,5 @@ alwaysApply: true
 参考例子：
 
 ```text
-🔧 Config: 更新 wrangler.jsonc 配置文件
+config: 更新 wrangler.jsonc 配置文件
 ```

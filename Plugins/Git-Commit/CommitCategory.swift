@@ -66,78 +66,78 @@ enum CommitCategory: String, CaseIterable, Equatable {
     var title: String {
         switch self {
         case .Bugfix:
-            "Bugfix"
+            "bugfix"
         case .Chore:
-            "Chore"
+            "chore"
         case .CI:
-            "CI"
+            "ci"
         case .Config:
-            "Config"
+            "config"
         case .Docker:
-            "Docker"
+            "docker"
         case .Document:
-            "Document"
+            "document"
         case .Feature:
-            "Feature"
+            "feature"
         case .FirstCommit:
-            "First Commit"
+            "first commit"
         case .Improve:
-            "Improve"
+            "improve"
         case.I18n:
-            "I18n"
+            "i18n"
         case .Release:
-            "Release"
+            "release"
         case .Trash:
-            "Trash"
+            "trash"
         case .Typo:
-            "Typo"
+            "typo"
         case .UI:
-            "UI"
+            "ui"
         case .PackageUpdate:
-            "Package Update"
+            "package update"
         case .Test:
-            "Test"
+            "test"
         }
     }
 
     var text: String {
-        "\(self.emoji) \(self.title): "
+        "\(self.title): "
     }
     
     var defaultMessage: String {
         switch self {
         case .Bugfix:
-            return "Fix a bug"
+            return "fix a bug"
         case .Chore:
-            return "Minor adjustments"
+            return "minor adjustments"
         case .CI:
-            return "Configure continuous integration"
+            return "configure continuous integration"
         case .Config:
-            return "Update configuration settings"
+            return "update configuration settings"
         case .Docker:
-            return "Update Docker configuration"
+            return "update docker configuration"
         case .Document:
-            return "Update documentation"
+            return "update documentation"
         case .Feature:
-            return "Implement a new feature"
+            return "implement a new feature"
         case .FirstCommit:
-            return "Initial commit"
+            return "initial commit"
         case .Improve:
-            return "Enhance existing functionality"
+            return "enhance existing functionality"
         case.I18n:
-            return "Translate or localize content"
+            return "translate or localize content"
         case .Release:
-            return "Prepare for release"
+            return "prepare for release"
         case .Trash:
-            return "Delete unnecessary code or files"
+            return "delete unnecessary code or files"
         case .Typo:
-            return "Correct a typo"
+            return "correct a typo"
         case .UI:
-            return "Update user interface elements"
+            return "update user interface elements"
         case .PackageUpdate:
-            return "Update package dependencies"
+            return "update package dependencies"
         case .Test:
-            return "Add or update tests"
+            return "add or update tests"
         }
     }
 }

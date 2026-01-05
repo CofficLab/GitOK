@@ -90,6 +90,8 @@ struct BtnCommitAndPush: View, SuperLog, SuperThread {
     RootView {
         ContentLayout()
             .hideSidebar()
+            .hideTabPicker()
+            .hideProjectActions()
     }
     .frame(width: 1200)
     .frame(height: 1200)
