@@ -101,7 +101,7 @@ enum CommitCategory: String, CaseIterable, Equatable {
     }
 
     var text: String {
-        "\(self.emoji) \(self.title): "
+        "\(self.title): "
     }
     
     var defaultMessage: String {
