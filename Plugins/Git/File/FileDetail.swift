@@ -1,7 +1,7 @@
 import AppKit
-import MagicCore
-import MagicAll
 import MagicAlert
+import MagicAll
+import MagicCore
 import OSLog
 import SwiftUI
 
@@ -35,10 +35,11 @@ struct FileDetail: View, SuperLog, SuperEvent, SuperThread {
                 }
                 .padding(.horizontal, 12)
                 .padding(.vertical, 8)
-                .background(Color(NSColor.textBackgroundColor))
+                .background(.background)
             }
-            
+
             MagicDiffView(oldText: oldText, newText: newText, verbose: false)
+                .background(.white)
         }
         .onChange(of: data.file, onFileChange)
         .onChange(of: data.commit, onCommitChange)
@@ -54,7 +55,7 @@ struct FileDetail: View, SuperLog, SuperEvent, SuperThread {
         guard let file = data.file, let project = data.project else {
             return
         }
-        
+
         do {
             if let commit = data.commit {
                 let (beforeContent, afterContent) = try project.fileContentChange(at: commit.hash, file: file.file)
@@ -104,9 +105,10 @@ extension FileDetail {
 }
 
 #Preview("App-Big Screen") {
-    RootView {
-        ContentLayout()
-    }
-    .frame(width: 1200)
-    .frame(height: 1200)
+    ContentLayout()
+        .hideTabPicker()
+        .hideProjectActions()
+        .inRootView()
+        .frame(width: 1200)
+        .frame(height: 1200)
 }

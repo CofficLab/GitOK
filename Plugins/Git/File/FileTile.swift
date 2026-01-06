@@ -36,7 +36,6 @@ struct FileTile: View {
             .font(.system(size: 12, weight: .semibold))
             .foregroundColor(color)
             .padding(2)
-            .background(color.opacity(0.2))
             .cornerRadius(6)
     }
 
@@ -68,6 +67,8 @@ struct FileTile: View {
 #Preview("App - Big Screen") {
     RootView {
         ContentLayout()
+            .hideTabPicker()
+            .hideProjectActions()
             .hideSidebar()
     }
     .frame(width: 1200)

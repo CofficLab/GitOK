@@ -147,7 +147,7 @@ enum CommitCategory: String, CaseIterable, Equatable {
         ContentLayout()
             .hideSidebar()
             .hideTabPicker()
-//            .hideProjectActions()
+            .hideProjectActions()
     }
     .frame(width: 800)
     .frame(height: 600)
@@ -157,6 +157,8 @@ enum CommitCategory: String, CaseIterable, Equatable {
     RootView {
         ContentLayout()
             .hideSidebar()
+            .hideProjectActions()
+            .hideTabPicker()
     }
     .frame(width: 1200)
     .frame(height: 1200)
