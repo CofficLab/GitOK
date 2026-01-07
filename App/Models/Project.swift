@@ -436,58 +436,9 @@ extension Project {
     }
 
     func getCommitsWithPagination(_ page: Int, limit: Int) throws -> [GitCommit] {
-        // ShellGit has issues with commit listing, use direct git commands instead
-        let process = Process()
-        process.executableURL = URL(fileURLWithPath: "/usr/bin/git")
-        process.currentDirectoryURL = URL(fileURLWithPath: self.path)
-
-        if page == 0 {
-            // First page: get latest commits
-            process.arguments = ["log", "--oneline", "-n", "\(limit)"]
-        } else {
-            // Subsequent pages: skip previous pages
-            let skip = page * limit
-            process.arguments = ["log", "--oneline", "--skip", "\(skip)", "-n", "\(limit)"]
-        }
-
-        let pipe = Pipe()
-        process.standardOutput = pipe
-        process.standardError = pipe
-
-        try process.run()
-        process.waitUntilExit()
-
-        if process.terminationStatus != 0 {
-            let data = pipe.fileHandleForReading.readDataToEndOfFile()
-            let output = String(data: data, encoding: .utf8) ?? ""
-            throw NSError(domain: "GitError", code: Int(process.terminationStatus),
-                         userInfo: [NSLocalizedDescriptionKey: "Failed to get commits: \(output)"])
-        }
-
-        let data = pipe.fileHandleForReading.readDataToEndOfFile()
-        let output = String(data: data, encoding: .utf8) ?? ""
-        let lines = output.components(separatedBy: .newlines).filter { !$0.isEmpty }
-
-        var commits: [GitCommit] = []
-        for line in lines {
-            let parts = line.split(separator: " ", maxSplits: 1, omittingEmptySubsequences: true)
-            if parts.count >= 2 {
-                let hash = String(parts[0])
-                let message = String(parts[1])
-                // Create a basic GitCommit - we need to check what properties are required
-                let commit = GitCommit(hash: hash, message: message, author: "", date: Date(), parents: [])
-                commits.append(commit)
-            }
-        }
-
-        if Self.verbose {
-            os_log("\(self.t)📄 Direct git log page=\(page), limit=\(limit) returned \(commits.count) commits")
-            for (index, commit) in commits.prefix(5).enumerated() {
-                os_log("\(self.t)📄 Commit \(index): \(commit.hash.prefix(8)) - \(commit.message.prefix(50))")
-            }
-        }
-
-        return commits
+        // ShellGit.commitListWithPagination expects page to start from 1, but our logic uses 0-based pages
+        // This causes issues when page=0 results in negative skip values
+        try ShellGit.commitListWithPagination(page: page + 1, size: limit, at: self.path)
     }
 }
 
