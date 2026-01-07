@@ -436,13 +436,42 @@ extension Project {
     }
 
     func getCommitsWithPagination(_ page: Int, limit: Int) throws -> [GitCommit] {
-        // MagicKit's "fix" still doesn't work properly for 0-based pagination
-        // Use hybrid approach: commitList for first page, pagination for others
+        // Debug: Let's check what ShellGit is actually returning
         if page == 0 {
-            // For first page, use commitList to get all commits
-            return try ShellGit.commitList(limit: limit, at: self.path)
+            let commitListResult = try ShellGit.commitList(limit: limit, at: self.path)
+            let paginationResult = try ShellGit.commitListWithPagination(page: page, size: limit, at: self.path)
+
+            os_log("🔍 commitList returned \(commitListResult.count) commits")
+            os_log("🔍 commitListWithPagination(page=0) returned \(paginationResult.count) commits")
+
+            // Let's manually call the git command to see raw output
+            let process = Process()
+            process.executableURL = URL(fileURLWithPath: "/usr/bin/git")
+            process.currentDirectoryURL = URL(fileURLWithPath: self.path)
+            process.arguments = ["log", "--pretty=format:%H%x09%an%x09%ae%x09%cI%x09%s%x09%D", "--skip=0", "-50"]
+
+            let pipe = Pipe()
+            process.standardOutput = pipe
+            process.standardError = pipe
+
+            try process.run()
+            process.waitUntilExit()
+
+            if process.terminationStatus == 0 {
+                let data = pipe.fileHandleForReading.readDataToEndOfFile()
+                let rawOutput = String(data: data, encoding: .utf8) ?? ""
+                os_log("🔍 Raw git command output: \(rawOutput)")
+                let lines = rawOutput.split(separator: "\n")
+                os_log("🔍 Raw output has \(lines.count) lines")
+                for (index, line) in lines.prefix(2).enumerated() {
+                    os_log("🔍 Line \(index): \(line)")
+                    let parts = line.split(separator: "\t", omittingEmptySubsequences: false)
+                    os_log("🔍   Parts count: \(parts.count)")
+                }
+            }
+
+            return commitListResult  // Use commitList for now as it works
         } else {
-            // For subsequent pages, use pagination with 1-based indexing
             return try ShellGit.commitListWithPagination(page: page + 1, size: limit, at: self.path)
         }
     }
