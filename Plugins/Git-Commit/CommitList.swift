@@ -89,9 +89,7 @@ struct CommitList: View, SuperThread, SuperLog {
         }
         .onAppear(perform: onAppear)
         .onChange(of: data.project, onProjectChange)
-        .onProjectDidChangeBranch { eventInfo in
-            onBranchChanged(eventInfo)
-        }
+        .onProjectDidChangeBranch { eventInfo in onBranchChanged(eventInfo) }
         .onNotification(.projectDidCommit, perform: onCommitSuccess)
         .onNotification(.projectDidPull, perform: onPullSuccess)
         .onNotification(.projectDidPush, perform: onPushSuccess)
