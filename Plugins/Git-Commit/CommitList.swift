@@ -94,7 +94,6 @@ struct CommitList: View, SuperThread, SuperLog {
         .onProjectDidPull(perform: onPullSuccess)
         .onProjectDidPush(perform: onPushSuccess)
     }
-
 }
 
 // MARK: - Action
@@ -306,7 +305,7 @@ extension CommitList {
         // 延迟一小段时间，确保 Git 操作完全完成
         Task.detached {
             // 等待 100ms，确保 Git 操作完成
-            try? await Task.sleep(nanoseconds: 100_000_000)
+            try? await Task.sleep(nanoseconds: 100000000)
             await MainActor.run {
                 self.refresh("GitCommitSuccess")
             }
@@ -333,7 +332,7 @@ extension CommitList {
         // 延迟一小段时间，确保 Git 操作完全完成
         Task.detached {
             // 等待 100ms，确保 Git 操作完成
-            try? await Task.sleep(nanoseconds: 100_000_000)
+            try? await Task.sleep(nanoseconds: 100000000)
             await MainActor.run {
                 self.refresh("GitPushSuccess")
             }
@@ -345,7 +344,7 @@ extension CommitList {
             self.refresh("AppWillBecomeActive")
         }
     }
-    
+
     func onAppDidBecomeActive(_ notification: Notification) {
         self.bg.async {
             self.refresh("AppDidBecomeActive")

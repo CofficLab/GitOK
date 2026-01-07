@@ -42,11 +42,11 @@ struct FileTile: View {
     private func iconInfo(for change: String) -> (String, Color) {
         switch change {
         case "M":
-            return ("square.and.pencil", .orange)
+            return (.iconEditCircle, .orange)
         case "A":
-            return ("plus.square", .green)
+            return (.iconPlus, .green)
         case "D":
-            return ("trash.square", .red)
+            return (.iconMinus, .red)
         default:
             return ("exclamationmark.square", .gray)
         }

@@ -1,6 +1,6 @@
 import AppKit
-import MagicCore
 import MagicAlert
+import MagicCore
 import OSLog
 import SwiftUI
 
@@ -19,6 +19,8 @@ struct FileList: View, SuperThread, SuperLog {
         VStack(spacing: 0) {
             // 文件信息栏
             HStack {
+                Spacer()
+
                 HStack(spacing: 4) {
                     Image(systemName: "doc.text")
                         .foregroundColor(.secondary)
@@ -84,15 +86,15 @@ struct FileList: View, SuperThread, SuperLog {
 extension FileList {
     func discardChanges(for file: GitDiffFile) {
         guard let project = data.project else { return }
-        
+
         Task.detached {
             do {
                 try project.discardFileChanges(file.file)
-                
+
                 await MainActor.run {
                     self.m.info("已丢弃文件更改: \(file.file)")
                 }
-                
+
                 // 刷新文件列表
                 await self.refresh(reason: "AfterDiscardChanges")
             } catch {
@@ -102,20 +104,20 @@ extension FileList {
             }
         }
     }
-    
+
     func refresh(reason: String) async {
         // 取消之前的任务
         refreshTask?.cancel()
-        
+
         // 创建新的任务
         refreshTask = Task {
             await performRefresh(reason: reason)
         }
-        
+
         // 等待任务完成
         await refreshTask?.value
     }
-    
+
     private func performRefresh(reason: String) async {
         self.isLoading = true
 
@@ -131,16 +133,16 @@ extension FileList {
         do {
             // 检查任务是否被取消
             try Task.checkCancellation()
-            
+
             if let commit = data.commit {
                 self.files = try await project.fileList(atCommit: commit.hash)
             } else {
                 self.files = try await project.untrackedFiles()
             }
-            
+
             // 再次检查任务是否被取消
             try Task.checkCancellation()
-            
+
             self.selection = self.files.first
             DispatchQueue.main.async {
                 self.data.setFile(self.selection)
@@ -153,7 +155,7 @@ extension FileList {
         } catch {
             self.m.error(error.localizedDescription)
         }
-        
+
         self.isLoading = false
     }
 }
