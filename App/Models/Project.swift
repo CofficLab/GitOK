@@ -436,9 +436,7 @@ extension Project {
     }
 
     func getCommitsWithPagination(_ page: Int, limit: Int) throws -> [GitCommit] {
-        // ShellGit.commitListWithPagination expects page to start from 1, but our logic uses 0-based pages
-        // This causes issues when page=0 results in negative skip values
-        try ShellGit.commitListWithPagination(page: page + 1, size: limit, at: self.path)
+        try ShellGit.commitListWithPagination(page: page, size: limit, at: self.path)
     }
 }
 
