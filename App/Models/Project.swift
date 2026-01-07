@@ -436,58 +436,13 @@ extension Project {
     }
 
     func getCommitsWithPagination(_ page: Int, limit: Int) throws -> [GitCommit] {
-        // WORKAROUND: ShellGit has parsing issues, use direct git commands
-        let process = Process()
-        process.executableURL = URL(fileURLWithPath: "/usr/bin/git")
-        process.currentDirectoryURL = URL(fileURLWithPath: self.path)
-
+        // Based on ShellGitLogPreview2, ShellGit.commitList should work correctly
+        // Let's try using commitList for page=0 like the preview does
         if page == 0 {
-            // First page: get latest commits
-            process.arguments = ["log", "--pretty=format:%H%x09%an%x09%ae%x09%cI%x09%s%x09%D", "-n", "\(limit)"]
+            return try ShellGit.commitList(limit: limit, at: self.path)
         } else {
-            // Subsequent pages: skip previous pages
-            let skip = page * limit
-            process.arguments = ["log", "--pretty=format:%H%x09%an%x09%ae%x09%cI%x09%s%x09%D", "--skip=\(skip)", "-n", "\(limit)"]
-        }
-
-        let pipe = Pipe()
-        process.standardOutput = pipe
-        process.standardError = pipe
-
-        try process.run()
-        process.waitUntilExit()
-
-        if process.terminationStatus != 0 {
-            let data = pipe.fileHandleForReading.readDataToEndOfFile()
-            let output = String(data: data, encoding: .utf8) ?? ""
-            throw NSError(domain: "GitError", code: Int(process.terminationStatus),
-                         userInfo: [NSLocalizedDescriptionKey: "Failed to get commits: \(output)"])
-        }
-
-        let data = pipe.fileHandleForReading.readDataToEndOfFile()
-        let rawOutput = String(data: data, encoding: .utf8) ?? ""
-        let lines = rawOutput.split(separator: "\n")
-
-        let dateFormatter = ISO8601DateFormatter()
-        dateFormatter.formatOptions = [.withInternetDateTime]
-
-        return lines.compactMap { line in
-            let parts = line.split(separator: "\t", omittingEmptySubsequences: false)
-            guard parts.count >= 5 else { return nil } // Allow missing refs field
-
-            let hash = String(parts[0])
-            let author = String(parts[1])
-            let email = String(parts[2])
-            let dateStr = String(parts[3])
-            let message = String(parts[4])
-            let refsStr = parts.count > 5 ? String(parts[5]) : ""
-
-            guard let date = dateFormatter.date(from: dateStr) else { return nil }
-
-            let tags = refsStr.matches(for: "tag \\w+[-.\\w]*").map { $0.replacingOccurrences(of: "tag ", with: "").trimmingCharacters(in: .whitespaces) }
-            let refArray = refsStr.components(separatedBy: ", ").filter{!$0.isEmpty}
-
-            return GitCommit(id: hash, hash: hash, author: author, email: email, date: date, message: message, refs: refArray, tags: tags)
+            // For pagination, use commitListWithPagination
+            return try ShellGit.commitListWithPagination(page: page, size: limit, at: self.path)
         }
     }
 }
