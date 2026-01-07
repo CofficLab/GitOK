@@ -62,7 +62,6 @@ struct FileList: View, SuperThread, SuperLog {
                     )
                     .tag($0 as GitDiffFile?)
                 }
-                .background(.blue)
                 .onChange(of: files, {
                     withAnimation {
                         // 在主线程中调用 scrollTo 方法
