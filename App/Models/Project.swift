@@ -103,7 +103,7 @@ struct ProjectEventInfo {
 
 @Model
 final class Project: SuperLog {
-    static var verbose = true
+    static var verbose = false
     static var null = Project(URL(fileURLWithPath: ""))
     static var order = [
         SortDescriptor<Project>(\.order, order: .forward),
