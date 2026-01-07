@@ -498,26 +498,25 @@ extension Project {
                 }
 
                 os_log("🔍 Manual parsing would create \(wouldParseCount) commits out of \(lines.count) lines")
-            }
 
-            // Let's test if the issue is in GitCommit creation
-            // Try to see what happens if we manually parse and compare with ShellGit result
-            let manualParseResult = lines.compactMap { line -> (hash: String, message: String)? in
-                let parts = line.split(separator: "\t", omittingEmptySubsequences: false)
-                guard parts.count >= 6 else { return nil }
-                let hash = String(parts[0])
-                let message = String(parts[4])
-                return (hash: hash, message: message)
-            }
+                // Compare with ShellGit result
+                let manualParseResult = lines.compactMap { line -> (hash: String, message: String)? in
+                    let parts = line.split(separator: "\t", omittingEmptySubsequences: false)
+                    guard parts.count >= 6 else { return nil }
+                    let hash = String(parts[0])
+                    let message = String(parts[4])
+                    return (hash: hash, message: message)
+                }
 
-            os_log("🔍 Manual parse found \(manualParseResult.count) potential commits:")
-            for (idx, item) in manualParseResult.enumerated() {
-                os_log("🔍   \(idx): \(item.hash.prefix(8)) - \(item.message)")
-            }
+                os_log("🔍 Manual parse found \(manualParseResult.count) potential commits:")
+                for (idx, item) in manualParseResult.enumerated() {
+                    os_log("🔍   \(idx): \(item.hash.prefix(8)) - \(item.message)")
+                }
 
-            os_log("🔍 commitListResult has \(commitListResult.count) commits:")
-            for (idx, commit) in commitListResult.enumerated() {
-                os_log("🔍   \(idx): \(commit.hash.prefix(8)) - \(commit.message)")
+                os_log("🔍 commitListResult has \(commitListResult.count) commits:")
+                for (idx, commit) in commitListResult.enumerated() {
+                    os_log("🔍   \(idx): \(commit.hash.prefix(8)) - \(commit.message)")
+                }
             }
 
             return commitListResult
