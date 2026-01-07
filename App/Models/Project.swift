@@ -103,7 +103,7 @@ struct ProjectEventInfo {
 
 @Model
 final class Project: SuperLog {
-    static var verbose = true
+    static var verbose = false
     static var null = Project(URL(fileURLWithPath: ""))
     static var order = [
         SortDescriptor<Project>(\.order, order: .forward),
@@ -436,7 +436,7 @@ extension Project {
     }
 
     func getCommitsWithPagination(_ page: Int, limit: Int) throws -> [GitCommit] {
-        try ShellGit.commitListWithPagination(page: page, size: limit, at: self.path)
+        return try ShellGit.commitListWithPagination(page: page, size: limit, at: self.path)
     }
 }
 

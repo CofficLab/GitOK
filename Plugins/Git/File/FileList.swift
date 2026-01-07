@@ -153,7 +153,7 @@ extension FileList {
                 os_log("\(self.t)🐜 Refresh cancelled: \(reason)")
             }
         } catch {
-            self.m.error(error.localizedDescription)
+            self.m.error(error)
         }
 
         self.isLoading = false

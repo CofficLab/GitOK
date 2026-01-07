@@ -67,7 +67,7 @@ struct FileDetail: View, SuperLog, SuperEvent, SuperThread {
                 self.newText = afterContent ?? ""
             }
         } catch {
-            self.m.error(error.localizedDescription)
+            self.m.error(error)
         }
     }
 }

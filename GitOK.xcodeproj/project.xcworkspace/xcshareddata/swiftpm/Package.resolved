@@ -11,12 +11,21 @@
       }
     },
     {
+      "identity" : "magicalert",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/nookery/MagicAlert.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "ce9f3a412a27e57b12b74c87c84110135fbf3981"
+      }
+    },
+    {
       "identity" : "magickit",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/CofficLab/MagicKit",
       "state" : {
         "branch" : "dev",
-        "revision" : "878f434cb719857575e2c6c5543f0c08d3bb2f7f"
+        "revision" : "256d6ff05995c659ec775645f34454831027bcb9"
       }
     },
     {
