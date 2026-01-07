@@ -171,7 +171,7 @@ final class Project: SuperLog {
         }
 
         do {
-            return (try ShellGit.commitList(limit: 10, at: self.path))
+            return (try ShellGit.commitList(limit: Int.max, at: self.path))
         } catch let error {
             os_log(.error, "\(self.t)GetCommits has error")
             os_log(.error, "\(error)")
