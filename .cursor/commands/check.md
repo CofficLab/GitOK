@@ -9,3 +9,5 @@
 1. 按照 [Swift 文件日志记录规范](.cursor/rules/swift-log-rule.mdc) 的要求检查文档，修复不规范的地方
 
 2. 按照 [Swift 文件 MARK 分组规范](.cursor/rules/swift-mark-rule.mdc) 的要求检查文档，修复不规范的地方
+
+3. 按照 [Swift 文件事件监听扩展规则](.cursor/rules/swift-event-rule.mdc) 的要求检查文档，修复不规范的地方
