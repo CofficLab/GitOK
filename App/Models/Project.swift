@@ -436,7 +436,16 @@ extension Project {
     }
 
     func getCommitsWithPagination(_ page: Int, limit: Int) throws -> [GitCommit] {
-        try ShellGit.commitListWithPagination(page: page, size: limit, at: self.path)
+        os_log("🔍 getCommitsWithPagination called: page=\(page), limit=\(limit), path=\(self.path)")
+
+        let result = try ShellGit.commitListWithPagination(page: page, size: limit, at: self.path)
+
+        os_log("🔍 ShellGit.commitListWithPagination returned \(result.count) commits")
+        for (index, commit) in result.prefix(min(3, result.count)).enumerated() {
+            os_log("🔍   Commit \(index): \(commit.hash.prefix(8)) - \(commit.message.prefix(50))")
+        }
+
+        return result
     }
 }
 

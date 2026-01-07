@@ -114,10 +114,17 @@ extension CommitList {
         loading = true
 
         do {
+            os_log("📋 CommitList.loadMoreCommits() - calling getCommitsWithPagination(\(self.currentPage), limit: \(self.pageSize))")
+
             let newCommits = try project.getCommitsWithPagination(
                 self.currentPage,
                 limit: self.pageSize
             )
+
+            os_log("📋 CommitList.loadMoreCommits() - received \(newCommits.count) commits from page \(self.currentPage)")
+            for (index, commit) in newCommits.prefix(min(5, newCommits.count)).enumerated() {
+                os_log("📋   New Commit \(index): \(commit.hash.prefix(8)) - \(commit.message.prefix(50))")
+            }
 
             if Self.verbose {
                 os_log("\(self.t)🔄 LoadMoreCommits - page: \(self.currentPage), fetched: \(newCommits.count) commits")
@@ -207,9 +214,16 @@ extension CommitList {
         hasMoreCommits = true
 
         do {
+            os_log("📋 CommitList.refresh() - calling getCommitsWithPagination(0, limit: \(self.pageSize))")
+
             let initialCommits = try project.getCommitsWithPagination(
                 0, limit: self.pageSize
             )
+
+            os_log("📋 CommitList.refresh() - received \(initialCommits.count) commits from page 0")
+            for (index, commit) in initialCommits.prefix(min(5, initialCommits.count)).enumerated() {
+                os_log("📋   Initial Commit \(index): \(commit.hash.prefix(8)) - \(commit.message.prefix(50))")
+            }
 
             if Self.verbose {
                 os_log("\(self.t)🔄 Refresh - fetched \(initialCommits.count) commits from page 0")
@@ -224,6 +238,11 @@ extension CommitList {
                 self.loading = false
                 self.isRefreshing = false
                 self.currentPage = 1  // Next page to load
+
+                os_log("📋 UI updated: commits array now has \(initialCommits.count) commits")
+                for (index, commit) in initialCommits.prefix(min(5, initialCommits.count)).enumerated() {
+                    os_log("📋   UI Commit \(index): \(commit.hash.prefix(8)) - \(commit.message.prefix(50))")
+                }
             }
         } catch {
             // 在主线程更新 UI 状态
