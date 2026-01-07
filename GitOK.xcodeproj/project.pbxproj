@@ -468,7 +468,7 @@
 		};
 		0BFAFEA22F0E939E0076A5E4 /* XCRemoteSwiftPackageReference "MagicKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/CofficLab/MagicKit";
+			repositoryURL = "https://github.com/nookery/MagicKit";
 			requirement = {
 				branch = dev;
 				kind = branch;

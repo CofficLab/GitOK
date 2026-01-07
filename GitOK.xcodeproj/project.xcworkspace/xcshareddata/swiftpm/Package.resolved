@@ -1,5 +1,5 @@
 {
-  "originHash" : "73be54c511f83033feee498426e18651a6b9f952227e32de72afd1163fb1ee05",
+  "originHash" : "7d2ac1882a11aab02aa4d892ec01709a93a47899ef721e85881956bf3faed9db",
   "pins" : [
     {
       "identity" : "id3tageditor",
@@ -40,7 +40,7 @@
     {
       "identity" : "magickit",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/CofficLab/MagicKit",
+      "location" : "https://github.com/nookery/MagicKit",
       "state" : {
         "branch" : "dev",
         "revision" : "defd850105cd6d74771bfce0f693ef3aab47626b"
