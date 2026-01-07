@@ -47,15 +47,53 @@ extension View {
 - **语义清晰**：方法名应清晰表达监听的事件类型
 - **参数命名**：使用 `perform action` 参数名
 
-### 4. 实现要求
+### 4. 调用语法规范
 
-#### NotificationCenter 事件监听
+**所有事件监听必须使用 `perform:` 参数语法，一行代码完成：**
+
+```swift
+// ✅ 正确：一行代码 + perform 参数
+.onProjectDidChangeBranch(perform: onBranchChanged)
+
+// ❌ 错误：使用闭包语法
+.onProjectDidChangeBranch { eventInfo in
+    onBranchChanged(eventInfo)
+}
+```
+
+### 5. 实现要求
+
+#### View 扩展实现
 
 ```swift
 extension View {
-    func onEventName(perform action: @escaping () -> Void) -> some View {
-        self.onReceive(NotificationCenter.default.publisher(for: .eventName)) { _ in
-            action()
+    func onEventName(perform action: @escaping (ProjectEventInfo) -> Void) -> some View {
+        self.onReceive(NotificationCenter.default.publisher(for: .eventName)) { notification in
+            if let userInfo = notification.userInfo, let eventInfo = userInfo["eventInfo"] as? ProjectEventInfo {
+                action(eventInfo)
+            }
+        }
+    }
+}
+```
+
+#### 事件处理方法实现
+
+```swift
+extension MyView {
+    func onEventName(_ eventInfo: ProjectEventInfo) {
+        // 具体业务逻辑在这里实现
+        // eventInfo 包含 project, operation, success, error, additionalInfo 等信息
+
+        switch eventInfo.operation {
+        case "commit":
+            // 处理提交成功事件
+            refreshData()
+        case "push":
+            // 处理推送成功事件
+            updateUI()
+        default:
+            break
         }
     }
 }
@@ -73,20 +111,30 @@ extension View {
 }
 ```
 
-### 5. 使用示例
+### 6. 使用示例
 
 ```swift
 struct MyView: View {
     var body: some View {
         Text("Hello")
-            .onApplicationDidBecomeActive {
-                // 监听应用变为活跃状态
-                print("App became active!")
-            }
-            .onCustomEvent {
-                // 监听自定义事件
-                print("Custom event received!")
-            }
+            .onApplicationDidBecomeActive(perform: handleAppDidBecomeActive)
+            .onProjectDidCommit(perform: handleCommitSuccess)
+    }
+}
+
+// MARK: - Event Handlers
+
+extension MyView {
+    func handleAppDidBecomeActive(_ eventInfo: ProjectEventInfo) {
+        // 处理应用激活事件
+        print("App became active!")
+        refreshData()
+    }
+
+    func handleCommitSuccess(_ eventInfo: ProjectEventInfo) {
+        // 处理提交成功事件
+        print("Commit successful: \(eventInfo.additionalInfo?["message"] ?? "unknown")")
+        updateCommitList()
     }
 }
 ```
@@ -110,13 +158,18 @@ struct MyView: View {
 - **解耦合**：View 不需要知道具体的 NotificationCenter 实现
 - **可测试性**：事件监听逻辑独立，便于单元测试
 - **可重用性**：扩展方法可在项目任何地方使用
+- **类型安全**：使用 `ProjectEventInfo` 提供强类型事件数据
+- **代码简洁**：一行代码完成事件监听，逻辑分离到独立方法
 
 ## 注意事项
 
+- **调用语法**：必须使用 `perform:` 参数语法，一行代码完成事件监听
+- **方法签名**：事件处理方法必须接受 `ProjectEventInfo` 参数
 - **作用域**：扩展方法应放在抛出事件的同一个文件中，或相关工具文件中
 - **命名冲突**：确保 `onXxx` 方法名在项目中唯一
 - **线程安全**：确保事件监听在主线程执行 UI 更新操作
 - **内存管理**：注意避免循环引用，特别是使用 Combine Publisher 时
+- **错误处理**：利用 `ProjectEventInfo` 中的 `success`、`error` 字段进行错误处理
 
 ## 常见模式
 
@@ -142,11 +195,33 @@ extension View {
 
 ```swift
 extension View {
-    func onProjectLoaded(perform action: @escaping (Project) -> Void) -> some View {
+    func onProjectLoaded(perform action: @escaping (ProjectEventInfo) -> Void) -> some View {
         self.onReceive(NotificationCenter.default.publisher(for: .projectLoaded)) { notification in
-            if let project = notification.object as? Project {
-                action(project)
+            if let userInfo = notification.userInfo, let eventInfo = userInfo["eventInfo"] as? ProjectEventInfo {
+                action(eventInfo)
             }
+        }
+    }
+}
+
+// 使用示例
+struct ProjectListView: View {
+    var body: some View {
+        List(projects) { project in
+            Text(project.title)
+        }
+        .onProjectLoaded(perform: handleProjectLoaded)
+    }
+}
+
+extension ProjectListView {
+    func handleProjectLoaded(_ eventInfo: ProjectEventInfo) {
+        if eventInfo.success {
+            // 刷新项目列表
+            loadProjects()
+        } else {
+            // 处理加载失败
+            showError(eventInfo.error)
         }
     }
 }
