@@ -436,26 +436,15 @@ extension Project {
     }
 
     func getCommitsWithPagination(_ page: Int, limit: Int) throws -> [GitCommit] {
-        os_log("🔍 getCommitsWithPagination called: page=\(page), limit=\(limit), path=\(self.path)")
-
-        // MagicKit's "fix" still doesn't work properly. Let's try both approaches
-        var result: [GitCommit] = []
-
+        // MagicKit's "fix" still doesn't work properly for 0-based pagination
+        // Use hybrid approach: commitList for first page, pagination for others
         if page == 0 {
-            // For first page, try to get all commits using commitList instead
-            result = try ShellGit.commitList(limit: limit, at: self.path)
-            os_log("🔍 Using ShellGit.commitList for page=0, returned \(result.count) commits")
+            // For first page, use commitList to get all commits
+            return try ShellGit.commitList(limit: limit, at: self.path)
         } else {
-            // For subsequent pages, use pagination with page+1
-            result = try ShellGit.commitListWithPagination(page: page + 1, size: limit, at: self.path)
-            os_log("🔍 Using ShellGit.commitListWithPagination(page=\(page + 1)) for page=\(page), returned \(result.count) commits")
+            // For subsequent pages, use pagination with 1-based indexing
+            return try ShellGit.commitListWithPagination(page: page + 1, size: limit, at: self.path)
         }
-
-        for (index, commit) in result.prefix(min(3, result.count)).enumerated() {
-            os_log("🔍   Commit \(index): \(commit.hash.prefix(8)) - \(commit.message.prefix(50))")
-        }
-
-        return result
     }
 }
 
