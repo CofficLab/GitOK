@@ -96,6 +96,11 @@ struct CommitList: View, SuperThread, SuperLog {
         .onNotification(.appDidBecomeActive, perform: onAppDidBecomeActive)
     }
 
+}
+
+// MARK: - Action
+
+extension CommitList {
     private func loadMoreCommits() {
         guard let project = data.project, !loading, hasMoreCommits else {
             if Self.verbose {
@@ -158,11 +163,7 @@ struct CommitList: View, SuperThread, SuperLog {
             commitRepo.saveLastSelectedCommit(projectPath: projectPath, commit: commit)
         }
     }
-}
 
-// MARK: - Action
-
-extension CommitList {
     func setCommit(_ commit: GitCommit?) {
         DispatchQueue.main.async {
             data.setCommit(commit)
@@ -177,7 +178,7 @@ extension CommitList {
         guard let project = data.project else {
             return
         }
-        
+
         // 如果正在刷新，先重置状态，然后延迟刷新
         if isRefreshing {
             DispatchQueue.main.async {
