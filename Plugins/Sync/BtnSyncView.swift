@@ -83,7 +83,7 @@ struct BtnSyncView: View, SuperLog, SuperEvent, SuperThread {
                 await MainActor.run {
                     self.m.hideLoading()
                     self.reset()
-                    self.m.error(error.localizedDescription)
+                    self.m.error(error)
                 }
             }
             setStatus(nil)
