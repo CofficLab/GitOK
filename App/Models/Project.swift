@@ -103,7 +103,7 @@ struct ProjectEventInfo {
 
 @Model
 final class Project: SuperLog {
-    static var verbose = false
+    static var verbose = true
     static var null = Project(URL(fileURLWithPath: ""))
     static var order = [
         SortDescriptor<Project>(\.order, order: .forward),
@@ -164,14 +164,21 @@ final class Project: SuperLog {
     }
 
     func getCommits(_ reason: String) -> [GitCommit] {
-        let verbose = false
+        let verbose = true  // Enable for debugging
 
         if verbose {
             os_log("\(self.t)GetCommit(\(reason))")
         }
 
         do {
-            return (try ShellGit.commitList(limit: 10, at: self.path))
+            let result = try ShellGit.commitList(limit: 10, at: self.path)
+            if verbose {
+                os_log("\(self.t)GetCommits returned \(result.count) commits")
+                for (index, commit) in result.prefix(5).enumerated() {
+                    os_log("\(self.t)Commit \(index): \(commit.hash.prefix(8)) - \(commit.message.prefix(50))")
+                }
+            }
+            return result
         } catch let error {
             os_log(.error, "\(self.t)GetCommits has error")
             os_log(.error, "\(error)")
@@ -436,22 +443,28 @@ extension Project {
     }
 
     func getCommitsWithPagination(_ page: Int, limit: Int) throws -> [GitCommit] {
+        // Test both methods to compare
         if page == 0 {
-            // For first page, use non-paginated version to ensure we get all commits including the first one
-            let allCommits = try ShellGit.commitList(limit: limit, at: self.path)
+            let commitListResult = try ShellGit.commitList(limit: limit, at: self.path)
+            let paginatedResult = try ShellGit.commitListWithPagination(page: 0, size: limit, at: self.path)
+
             if Self.verbose {
-                os_log("\(self.t)📄 getCommitsWithPagination page=0, using commitList, returned \(allCommits.count) commits")
-                for (index, commit) in allCommits.prefix(3).enumerated() {
-                    os_log("\(self.t)📄 Commit \(index): \(commit.hash.prefix(8)) - \(commit.message.prefix(50))")
+                os_log("\(self.t)📄 commitList(limit: \(limit)) returned \(commitListResult.count) commits")
+                os_log("\(self.t)📄 commitListWithPagination(page: 0, size: \(limit)) returned \(paginatedResult.count) commits")
+
+                for (index, commit) in commitListResult.prefix(3).enumerated() {
+                    os_log("\(self.t)📄 commitList Commit \(index): \(commit.hash.prefix(8)) - \(commit.message.prefix(50))")
+                }
+                for (index, commit) in paginatedResult.prefix(3).enumerated() {
+                    os_log("\(self.t)📄 paginated Commit \(index): \(commit.hash.prefix(8)) - \(commit.message.prefix(50))")
                 }
             }
-            return allCommits
+
+            // Use commitList for first page as it seems more reliable
+            return commitListResult
         } else {
             // For subsequent pages, use pagination
             let result = try ShellGit.commitListWithPagination(page: page, size: limit, at: self.path)
-            if Self.verbose {
-                os_log("\(self.t)📄 getCommitsWithPagination page=\(page), using pagination, returned \(result.count) commits")
-            }
             return result
         }
     }
