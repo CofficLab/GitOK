@@ -103,7 +103,7 @@ struct ProjectEventInfo {
 
 @Model
 final class Project: SuperLog {
-    static var verbose = true
+    static var verbose = false
     static var null = Project(URL(fileURLWithPath: ""))
     static var order = [
         SortDescriptor<Project>(\.order, order: .forward),
@@ -164,21 +164,14 @@ final class Project: SuperLog {
     }
 
     func getCommits(_ reason: String) -> [GitCommit] {
-        let verbose = true  // Enable for debugging
+        let verbose = false
 
         if verbose {
             os_log("\(self.t)GetCommit(\(reason))")
         }
 
         do {
-            let result = try ShellGit.commitList(limit: 10, at: self.path)
-            if verbose {
-                os_log("\(self.t)GetCommits returned \(result.count) commits")
-                for (index, commit) in result.prefix(5).enumerated() {
-                    os_log("\(self.t)Commit \(index): \(commit.hash.prefix(8)) - \(commit.message.prefix(50))")
-                }
-            }
-            return result
+            return (try ShellGit.commitList(limit: 10, at: self.path))
         } catch let error {
             os_log(.error, "\(self.t)GetCommits has error")
             os_log(.error, "\(error)")
