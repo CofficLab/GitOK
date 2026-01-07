@@ -3,6 +3,9 @@ import OSLog
 import SwiftUI
 
 struct CommitList: View, SuperThread, SuperLog {
+    nonisolated static let emoji = "🖥️"
+    nonisolated static let verbose = false
+
     static var shared = CommitList()
 
     @EnvironmentObject var app: AppProvider
@@ -17,11 +20,8 @@ struct CommitList: View, SuperThread, SuperLog {
 
     // 使用GitCommitRepo来存储和恢复commit选择
     private let commitRepo = GitCommitRepo.shared
-    private let verbose = false
 
     private init() {}
-
-    static var emoji = "🖥️"
 
     var body: some View {
         ZStack {
@@ -56,7 +56,7 @@ struct CommitList: View, SuperThread, SuperLog {
                                                 let threshold = max(commits.count - 10, Int(Double(commits.count) * 0.8))
 
                                                 if index >= threshold && hasMoreCommits && !loading {
-                                                    if verbose {
+                                                    if Self.verbose {
                                                         os_log("\(self.t)👁️ Commit \(index) appeared, triggering loadMore")
                                                     }
                                                     loadMoreCommits()
@@ -97,13 +97,13 @@ struct CommitList: View, SuperThread, SuperLog {
 
     private func loadMoreCommits() {
         guard let project = data.project, !loading, hasMoreCommits else {
-            if verbose {
+            if Self.verbose {
                 os_log("\(self.t)🔄 LoadMoreCommits skipped - loading: \(loading), hasMore: \(hasMoreCommits)")
             }
             return
         }
 
-        if verbose {
+        if Self.verbose {
             os_log("\(self.t)🔄 LoadMoreCommits started - page: \(currentPage), total: \(commits.count)")
         }
 
@@ -123,19 +123,19 @@ struct CommitList: View, SuperThread, SuperLog {
                     }
                 }
 
-                if verbose {
+                if Self.verbose {
                     os_log("\(self.t)🔄 LoadMoreCommits - fetched: \(newCommits.count), unique: \(uniqueNewCommits.count)")
                 }
 
                 if !uniqueNewCommits.isEmpty {
                     commits.append(contentsOf: uniqueNewCommits)
-                } else if verbose {
+                } else if Self.verbose {
                     os_log("\(self.t)⚠️ LoadMoreCommits - all commits were duplicates!")
                 }
                 currentPage += 1
             } else {
                 hasMoreCommits = false
-                if verbose {
+                if Self.verbose {
                     os_log("\(self.t)🔄 LoadMoreCommits - no more commits available")
                 }
             }
@@ -143,7 +143,7 @@ struct CommitList: View, SuperThread, SuperLog {
 
         } catch {
             loading = false
-            if verbose {
+            if Self.verbose {
                 os_log(.error, "\(self.t)❌ LoadMoreCommits error: \(error)")
             }
         }
@@ -169,7 +169,7 @@ extension CommitList {
     }
 
     func refresh(_ reason: String = "") {
-        if verbose {
+        if Self.verbose {
             os_log("\(self.t)🍋 Refresh(\(reason))")
         }
 
