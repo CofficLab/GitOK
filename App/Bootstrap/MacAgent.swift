@@ -20,6 +20,12 @@ extension View {
             action()
         }
     }
+
+    func onApplicationWillBecomeActive(perform action: @escaping () -> Void) -> some View {
+        self.onReceive(NotificationCenter.default.publisher(for: .appWillBecomeActive)) { _ in
+            action()
+        }
+    }
 }
 
 class MacAgent: NSObject, NSApplicationDelegate, ObservableObject, SuperLog, SuperEvent {
