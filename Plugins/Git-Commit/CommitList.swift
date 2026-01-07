@@ -282,6 +282,13 @@ extension CommitList {
     }
 }
 
+// MARK: - Setter
+
+extension CommitList {
+    // UI 状态设置相关方法
+    // 如有需要可在此添加 @MainActor 标记的状态更新方法
+}
+
 // MARK: - Event Handlers
 
 extension CommitList {
@@ -347,6 +354,8 @@ extension CommitList {
         }
     }
 }
+
+// MARK: - Preview
 
 #Preview("App-Small Screen") {
     RootView {
