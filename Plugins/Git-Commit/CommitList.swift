@@ -89,6 +89,9 @@ struct CommitList: View, SuperThread, SuperLog {
         }
         .onAppear(perform: onAppear)
         .onChange(of: data.project, onProjectChange)
+        .onProjectDidChangeBranch { eventInfo in
+            onBranchChanged(eventInfo)
+        }
         .onNotification(.projectDidCommit, perform: onCommitSuccess)
         .onNotification(.projectDidPull, perform: onPullSuccess)
         .onNotification(.projectDidPush, perform: onPushSuccess)
@@ -285,6 +288,12 @@ extension CommitList {
     func onProjectChange() {
         self.bg.async {
             self.refresh("Project Changed")
+        }
+    }
+
+    func onBranchChanged(_ eventInfo: ProjectEventInfo) {
+        self.bg.async {
+            self.refresh("Branch Changed to \(eventInfo.additionalInfo?["branchName"] as? String ?? "unknown")")
         }
     }
 
