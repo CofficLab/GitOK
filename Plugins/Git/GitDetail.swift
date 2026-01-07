@@ -60,7 +60,7 @@ struct GitDetail: View, SuperEvent, SuperLog {
         }
         .onAppear(perform: onAppear)
         .onChange(of: data.project, onProjectChange)
-        .onNotification(.projectDidCommit, perform: onGitCommitSuccess)
+        .onProjectDidCommit(perform: onGitCommitSuccess)
         .onNotification(.appWillBecomeActive, perform: onAppWillBecomeActive)
     }
 
@@ -140,7 +140,7 @@ extension GitDetail {
         self.updateIsProjectClean()
     }
 
-    func onGitCommitSuccess(_ notification: Notification) {
+    func onGitCommitSuccess(_ eventInfo: ProjectEventInfo) {
         self.updateIsProjectClean()
     }
 }

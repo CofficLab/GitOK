@@ -1,14 +1,14 @@
 import MagicCore
 import SwiftUI
+import OSLog
 
-// MARK: - BranchStatusTile
-
-struct BranchStatusTile: View {
+struct BranchStatusTile: View, SuperLog {
+    nonisolated static let emoji = "🌿"
+    nonisolated static let verbose = false
+    
     @EnvironmentObject var data: DataProvider
 
     @State private var isPresented = false
-
-    private let verbose = false
 
     private var branchText: String {
         if let branch = data.branch {
@@ -45,23 +45,22 @@ extension BranchStatusTile {
     private func handleBranchChanged(_ eventInfo: ProjectEventInfo) {
         // 分支变更事件处理 - DataProvider 已自动更新分支信息
         // 此处可添加额外的 UI 响应逻辑，如动画或通知
-        if verbose {
-            os_log("BranchStatusTile: Branch changed to \(eventInfo.additionalInfo?["branchName"] as? String ?? "unknown")")
+        if Self.verbose {
+            os_log("\(self.t)Branch changed to \(eventInfo.additionalInfo?["branchName"] as? String ?? "unknown")")
         }
     }
 
     private func handleApplicationDidBecomeActive() {
         // 应用变为活跃状态时的处理逻辑
         // 分支信息已由 DataProvider 在应用激活时自动刷新
-        if verbose {
-            os_log("BranchStatusTile: Application became active")
+        if Self.verbose {
+            os_log("\(self.t)Application became active")
         }
     }
 }
 
 // MARK: - Preview
 
-#if os(macOS)
 #Preview("App - Small Screen") {
     ContentLayout()
         .hideSidebar()
@@ -74,24 +73,7 @@ extension BranchStatusTile {
 #Preview("App - Big Screen") {
     ContentLayout()
         .hideSidebar()
-        .inRootView()
-        .frame(width: 1200)
-        .frame(height: 1200)
-}
-#endif
-
-#Preview("App - Small Screen") {
-    ContentLayout()
-        .hideSidebar()
-        .hideProjectActions()
-        .inRootView()
-        .frame(width: 800)
-        .frame(height: 600)
-}
-
-#Preview("App - Big Screen") {
-    ContentLayout()
-        .hideSidebar()
+        .hideTabPicker()
         .inRootView()
         .frame(width: 1200)
         .frame(height: 1200)

@@ -60,7 +60,7 @@ struct CommitForm: View, SuperLog {
             }
             .frame(height: 40)
         }
-        .onNotification(.projectDidCommit, perform: onProjectDidCommit)
+        .onProjectDidCommit(perform: onProjectDidCommit)
         .onChange(of: category, onCategoryDidChange)
         .onAppear(perform: onAppear)
     }
@@ -69,7 +69,7 @@ struct CommitForm: View, SuperLog {
 // MARK: - Action
 
 extension CommitForm {
-    func onProjectDidCommit(_ notification: Notification) {
+    func onProjectDidCommit(_ eventInfo: ProjectEventInfo) {
         self.text = self.category.defaultMessage
     }
 

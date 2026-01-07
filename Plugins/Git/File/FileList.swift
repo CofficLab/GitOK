@@ -74,7 +74,7 @@ struct FileList: View, SuperThread, SuperLog {
         .onAppear(perform: onAppear)
         .onChange(of: data.commit, onCommitChange)
         .onChange(of: selection, onSelectionChange)
-        .onNotification(.projectDidCommit, perform: onProjectDidCommit)
+        .onProjectDidCommit(perform: onProjectDidCommit)
     }
 }
 
@@ -176,7 +176,7 @@ extension FileList {
         self.data.setFile(self.selection)
     }
 
-    func onProjectDidCommit(_ notification: Notification) {
+    func onProjectDidCommit(_ eventInfo: ProjectEventInfo) {
         Task {
             await self.refresh(reason: "OnProjectDidCommit")
         }

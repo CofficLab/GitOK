@@ -33,12 +33,14 @@ struct MyView: View, SuperLog {
 ### 2. 静态常量定义
 
 #### Emoji 定义
+
 - **必须定义**: `nonisolated static let emoji = "🎯"`
 - **唯一性**: 每个类型使用独特的 emoji，便于日志过滤
 - **相关性**: emoji 应与类型功能相关
 - **位置**: 放在类型定义的最上方
 
 #### Verbose 控制
+
 - **必须定义**: `nonisolated static let verbose = false`
 - **类型**: `Bool` 类型，控制详细日志输出
 - **默认值**: 通常设为 `false`，生产环境关闭详细日志
@@ -47,11 +49,13 @@ struct MyView: View, SuperLog {
 ### 3. 日志记录规范
 
 #### 使用 self.t 标签
+
 ```swift
 os_log("\(self.t)Operation completed successfully")
 ```
 
 #### 日志级别控制
+
 ```swift
 if Self.verbose {
     os_log("\(self.t)Detailed debug information")
@@ -61,6 +65,7 @@ if Self.verbose {
 ```
 
 #### 日志内容格式
+
 - **前缀**: 使用 `\(self.t)` 作为前缀，自动包含 emoji 和类型名
 - **动词**: 使用主动语态描述操作
 - **时态**: 使用一般现在时或过去时
@@ -120,6 +125,7 @@ class GitManager: SuperLog {
 ## Emoji 选择指南
 
 ### UI 相关
+
 - `🌿` - View 组件 (BranchStatusTile)
 - `📱` - 移动端相关
 - `🖥️` - 桌面端相关
@@ -127,12 +133,14 @@ class GitManager: SuperLog {
 - `📋` - 表单组件
 
 ### 数据相关
+
 - `🏠` - 数据提供者 (DataProvider)
 - `💾` - 数据存储
 - `📊` - 数据分析
 - `🔄` - 数据同步
 
 ### 业务功能
+
 - `🔧` - 工具类
 - `📁` - 文件管理
 - `🌳` - 项目管理
@@ -140,6 +148,7 @@ class GitManager: SuperLog {
 - `🔍` - 搜索功能
 
 ### 系统相关
+
 - `🍎` - macOS 相关 (MacAgent)
 - `⚙️` - 系统配置
 - `🔗` - 网络连接
@@ -198,21 +207,25 @@ log stream | grep "🏠"
 ## 规则优势
 
 ### 1. 统一的日志格式
+
 - 所有日志都有统一的 `\(self.t)` 前缀
 - emoji 提供视觉识别
 - 类型名提供上下文信息
 
 ### 2. 便于调试
+
 - 可以通过 emoji 快速定位问题类型
 - verbose 控制提供调试级别的灵活性
 - 结构化的日志内容易于解析
 
 ### 3. 性能优化
+
 - `nonisolated static` 属性避免实例开销
 - verbose 控制避免不必要的字符串操作
 - 编译时常量优化
 
 ### 4. 维护友好
+
 - 协议化实现保证一致性
 - 静态配置便于全局控制
 - emoji 映射提供功能概览

@@ -90,10 +90,9 @@ struct CommitList: View, SuperThread, SuperLog {
         .onAppear(perform: onAppear)
         .onChange(of: data.project, onProjectChange)
         .onProjectDidChangeBranch(perform: onBranchChanged)
-        .onNotification(.projectDidCommit) { onCommitSuccess($0) }
-        .onNotification(.projectDidPull) { onPullSuccess($0) }
-        .onNotification(.projectDidPush) { onPushSuccess($0) }
-        .onNotification(.appDidBecomeActive) { onAppDidBecomeActive($0) }
+        .onProjectDidCommit(perform: onCommitSuccess)
+        .onProjectDidPull(perform: onPullSuccess)
+        .onProjectDidPush(perform: onPushSuccess)
     }
 
 }
@@ -303,7 +302,7 @@ extension CommitList {
         }
     }
 
-    func onCommitSuccess(_ notification: Notification) {
+    func onCommitSuccess(_ eventInfo: ProjectEventInfo) {
         // 延迟一小段时间，确保 Git 操作完全完成
         Task.detached {
             // 等待 100ms，确保 Git 操作完成
@@ -324,13 +323,13 @@ extension CommitList {
     func onChangeOfSelection() {
     }
 
-    func onPullSuccess(_ notification: Notification) {
+    func onPullSuccess(_ eventInfo: ProjectEventInfo) {
         self.bg.async {
             self.refresh("GitPullSuccess")
         }
     }
 
-    func onPushSuccess(_ notification: Notification) {
+    func onPushSuccess(_ eventInfo: ProjectEventInfo) {
         // 延迟一小段时间，确保 Git 操作完全完成
         Task.detached {
             // 等待 100ms，确保 Git 操作完成

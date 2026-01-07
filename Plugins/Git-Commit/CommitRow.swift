@@ -72,7 +72,7 @@ struct CommitRow: View, SuperThread {
             .background(data.commit == self.commit ? Color.accentColor.opacity(0.1) : Color.clear)
             .onAppear(perform: onAppear)
             .onNotification(.appWillBecomeActive, onAppWillBecomeActive)
-            .onNotification(.projectDidCommit, onGitCommitSuccess)
+            .onProjectDidCommit(perform: onGitCommitSuccess)
 
             Divider()
         }
@@ -108,7 +108,7 @@ extension CommitRow {
         loadTag()
     }
 
-    func onGitCommitSuccess(_ n: Notification) {
+    func onGitCommitSuccess(_ eventInfo: ProjectEventInfo) {
         loadTag()
     }
 }

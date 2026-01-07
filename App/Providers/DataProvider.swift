@@ -36,7 +36,6 @@ class DataProvider: NSObject, ObservableObject, SuperLog {
         super.init()
 
         self.checkIfProjectExists()
-        self.setupEventListeners()
     }
 }
 
@@ -56,7 +55,6 @@ extension DataProvider {
         self.project = p
         self.repoManager.stateRepo.setProjectPath(self.project?.path ?? "")
         self.checkIfProjectExists()
-        self.updateCurrentBranch()
     }
 
     /**
@@ -321,27 +319,6 @@ extension DataProvider {
 
 extension DataProvider {
     /**
-     * 设置事件监听器
-     */
-    private func setupEventListeners() {
-        // 监听项目分支变更事件
-        NotificationCenter.default.publisher(for: .projectDidChangeBranch)
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] notification in
-                self?.handleBranchChanged(notification)
-            }
-            .store(in: &cancellables)
-
-        // 监听应用变为活跃状态事件，用于刷新分支信息
-        NotificationCenter.default.publisher(for: .appDidBecomeActive)
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] _ in
-                self?.updateCurrentBranch()
-            }
-            .store(in: &cancellables)
-    }
-
-    /**
      * 处理Git操作成功事件
      */
     private func handleGitOperationSuccess(_ notification: Notification) {
@@ -362,19 +339,6 @@ extension DataProvider {
                 self.project = projects.first
                 os_log("\(self.t)Project deleted, switched to first project")
             }
-        }
-    }
-
-    /**
-     * 处理分支变更事件
-     */
-    private func handleBranchChanged(_ notification: Notification) {
-        // 当接收到分支变更通知时，更新当前分支信息
-        if let userInfo = notification.userInfo,
-           let eventInfo = userInfo["eventInfo"] as? ProjectEventInfo,
-           eventInfo.project.id == self.project?.id {
-            // 只有当事件来自当前项目时才更新
-            self.updateCurrentBranch()
         }
     }
 }
