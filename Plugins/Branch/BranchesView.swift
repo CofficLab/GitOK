@@ -39,8 +39,8 @@ struct BranchesView: View, SuperThread, SuperLog, SuperEvent {
         }
         .onChange(of: data.project) { self.onProjectChanged() }
         .onChange(of: self.selection, onSelectionChange)
-        .onNotification(.appWillBecomeActive, perform: onAppWillBecomeActive)
         .onAppear(perform: onAppear)
+        .onApplicationWillBecomeActive(perform: onAppWillBecomeActive)
     }
 }
 
@@ -139,7 +139,7 @@ extension BranchesView {
 // MARK: - Event
 
 extension BranchesView {
-    func onAppWillBecomeActive(_ notification: Notification) {
+    func onAppWillBecomeActive() {
         self.refreshBranches(reason: "AppWillBecomeActive(\(data.project?.title ?? ""))")
     }
 

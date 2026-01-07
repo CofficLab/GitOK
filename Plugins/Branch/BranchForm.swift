@@ -19,7 +19,7 @@ struct BranchForm: View, SuperLog {
     var project: Project? { data.project }
     
     var body: some View {
-        if let project = project {
+        if project != nil {
             VStack(spacing: 16) {
                 // 新建分支区域
                 VStack(alignment: .leading, spacing: 8) {

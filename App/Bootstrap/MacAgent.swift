@@ -14,6 +14,20 @@ extension Notification.Name {
     static let appDidBecomeActive = Notification.Name("appDidBecomeActive")
 }
 
+extension View {
+    func onApplicationDidBecomeActive(perform action: @escaping () -> Void) -> some View {
+        self.onReceive(NotificationCenter.default.publisher(for: .appDidBecomeActive)) { _ in
+            action()
+        }
+    }
+
+    func onApplicationWillBecomeActive(perform action: @escaping () -> Void) -> some View {
+        self.onReceive(NotificationCenter.default.publisher(for: .appWillBecomeActive)) { _ in
+            action()
+        }
+    }
+}
+
 class MacAgent: NSObject, NSApplicationDelegate, ObservableObject, SuperLog, SuperEvent {
     var label: String { "🍎 MacAgent::" }
 

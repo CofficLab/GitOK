@@ -1,6 +1,6 @@
 import AppKit
-import MagicCore
 import MagicAlert
+import MagicCore
 import OSLog
 import SwiftUI
 
@@ -19,6 +19,8 @@ struct FileList: View, SuperThread, SuperLog {
         VStack(spacing: 0) {
             // 文件信息栏
             HStack {
+                Spacer()
+
                 HStack(spacing: 4) {
                     Image(systemName: "doc.text")
                         .foregroundColor(.secondary)
@@ -41,7 +43,7 @@ struct FileList: View, SuperThread, SuperLog {
                     }
                 }
             }
-            .padding(.horizontal, 12)
+            .padding(.horizontal, 0)
             .padding(.vertical, 6)
             .background(Color(NSColor.controlBackgroundColor))
             .overlay(
@@ -61,8 +63,9 @@ struct FileList: View, SuperThread, SuperLog {
                         } : nil
                     )
                     .tag($0 as GitDiffFile?)
+                    .listRowInsets(.init()) // 移除 List 的默认内边距
                 }
-                .background(.blue)
+                .listStyle(.plain) // 使用 plain 样式移除额外的 padding
                 .onChange(of: files, {
                     withAnimation {
                         // 在主线程中调用 scrollTo 方法
@@ -74,7 +77,7 @@ struct FileList: View, SuperThread, SuperLog {
         .onAppear(perform: onAppear)
         .onChange(of: data.commit, onCommitChange)
         .onChange(of: selection, onSelectionChange)
-        .onNotification(.projectDidCommit, perform: onProjectDidCommit)
+        .onProjectDidCommit(perform: onProjectDidCommit)
     }
 }
 
@@ -83,15 +86,15 @@ struct FileList: View, SuperThread, SuperLog {
 extension FileList {
     func discardChanges(for file: GitDiffFile) {
         guard let project = data.project else { return }
-        
+
         Task.detached {
             do {
                 try project.discardFileChanges(file.file)
-                
+
                 await MainActor.run {
                     self.m.info("已丢弃文件更改: \(file.file)")
                 }
-                
+
                 // 刷新文件列表
                 await self.refresh(reason: "AfterDiscardChanges")
             } catch {
@@ -101,20 +104,20 @@ extension FileList {
             }
         }
     }
-    
+
     func refresh(reason: String) async {
         // 取消之前的任务
         refreshTask?.cancel()
-        
+
         // 创建新的任务
         refreshTask = Task {
             await performRefresh(reason: reason)
         }
-        
+
         // 等待任务完成
         await refreshTask?.value
     }
-    
+
     private func performRefresh(reason: String) async {
         self.isLoading = true
 
@@ -130,16 +133,16 @@ extension FileList {
         do {
             // 检查任务是否被取消
             try Task.checkCancellation()
-            
+
             if let commit = data.commit {
                 self.files = try await project.fileList(atCommit: commit.hash)
             } else {
                 self.files = try await project.untrackedFiles()
             }
-            
+
             // 再次检查任务是否被取消
             try Task.checkCancellation()
-            
+
             self.selection = self.files.first
             DispatchQueue.main.async {
                 self.data.setFile(self.selection)
@@ -152,7 +155,7 @@ extension FileList {
         } catch {
             self.m.error(error.localizedDescription)
         }
-        
+
         self.isLoading = false
     }
 }
@@ -176,7 +179,7 @@ extension FileList {
         self.data.setFile(self.selection)
     }
 
-    func onProjectDidCommit(_ notification: Notification) {
+    func onProjectDidCommit(_ eventInfo: ProjectEventInfo) {
         Task {
             await self.refresh(reason: "OnProjectDidCommit")
         }

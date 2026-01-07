@@ -39,7 +39,7 @@ struct FileDetail: View, SuperLog, SuperEvent, SuperThread {
             }
 
             MagicDiffView(oldText: oldText, newText: newText, verbose: false)
-                .background(.white)
+                .background(.background)
         }
         .onChange(of: data.file, onFileChange)
         .onChange(of: data.commit, onCommitChange)

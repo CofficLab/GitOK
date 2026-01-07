@@ -3,6 +3,9 @@ import OSLog
 import SwiftUI
 
 struct CommitList: View, SuperThread, SuperLog {
+    nonisolated static let emoji = "🖥️"
+    nonisolated static let verbose = false
+
     static var shared = CommitList()
 
     @EnvironmentObject var app: AppProvider
@@ -17,11 +20,8 @@ struct CommitList: View, SuperThread, SuperLog {
 
     // 使用GitCommitRepo来存储和恢复commit选择
     private let commitRepo = GitCommitRepo.shared
-    private let verbose = false
 
     private init() {}
-
-    static var emoji = "🖥️"
 
     var body: some View {
         ZStack {
@@ -56,7 +56,7 @@ struct CommitList: View, SuperThread, SuperLog {
                                                 let threshold = max(commits.count - 10, Int(Double(commits.count) * 0.8))
 
                                                 if index >= threshold && hasMoreCommits && !loading {
-                                                    if verbose {
+                                                    if Self.verbose {
                                                         os_log("\(self.t)👁️ Commit \(index) appeared, triggering loadMore")
                                                     }
                                                     loadMoreCommits()
@@ -89,21 +89,25 @@ struct CommitList: View, SuperThread, SuperLog {
         }
         .onAppear(perform: onAppear)
         .onChange(of: data.project, onProjectChange)
-        .onNotification(.projectDidCommit, perform: onCommitSuccess)
-        .onNotification(.projectDidPull, perform: onPullSuccess)
-        .onNotification(.projectDidPush, perform: onPushSuccess)
-        .onNotification(.appDidBecomeActive, perform: onAppDidBecomeActive)
+        .onProjectDidChangeBranch(perform: onBranchChanged)
+        .onProjectDidCommit(perform: onCommitSuccess)
+        .onProjectDidPull(perform: onPullSuccess)
+        .onProjectDidPush(perform: onPushSuccess)
     }
+}
 
+// MARK: - Action
+
+extension CommitList {
     private func loadMoreCommits() {
         guard let project = data.project, !loading, hasMoreCommits else {
-            if verbose {
+            if Self.verbose {
                 os_log("\(self.t)🔄 LoadMoreCommits skipped - loading: \(loading), hasMore: \(hasMoreCommits)")
             }
             return
         }
 
-        if verbose {
+        if Self.verbose {
             os_log("\(self.t)🔄 LoadMoreCommits started - page: \(currentPage), total: \(commits.count)")
         }
 
@@ -123,19 +127,19 @@ struct CommitList: View, SuperThread, SuperLog {
                     }
                 }
 
-                if verbose {
+                if Self.verbose {
                     os_log("\(self.t)🔄 LoadMoreCommits - fetched: \(newCommits.count), unique: \(uniqueNewCommits.count)")
                 }
 
                 if !uniqueNewCommits.isEmpty {
                     commits.append(contentsOf: uniqueNewCommits)
-                } else if verbose {
+                } else if Self.verbose {
                     os_log("\(self.t)⚠️ LoadMoreCommits - all commits were duplicates!")
                 }
                 currentPage += 1
             } else {
                 hasMoreCommits = false
-                if verbose {
+                if Self.verbose {
                     os_log("\(self.t)🔄 LoadMoreCommits - no more commits available")
                 }
             }
@@ -143,7 +147,7 @@ struct CommitList: View, SuperThread, SuperLog {
 
         } catch {
             loading = false
-            if verbose {
+            if Self.verbose {
                 os_log(.error, "\(self.t)❌ LoadMoreCommits error: \(error)")
             }
         }
@@ -157,11 +161,7 @@ struct CommitList: View, SuperThread, SuperLog {
             commitRepo.saveLastSelectedCommit(projectPath: projectPath, commit: commit)
         }
     }
-}
 
-// MARK: - Action
-
-extension CommitList {
     func setCommit(_ commit: GitCommit?) {
         DispatchQueue.main.async {
             data.setCommit(commit)
@@ -169,14 +169,14 @@ extension CommitList {
     }
 
     func refresh(_ reason: String = "") {
-        if verbose {
+        if Self.verbose {
             os_log("\(self.t)🍋 Refresh(\(reason))")
         }
 
         guard let project = data.project else {
             return
         }
-        
+
         // 如果正在刷新，先重置状态，然后延迟刷新
         if isRefreshing {
             DispatchQueue.main.async {
@@ -279,6 +279,13 @@ extension CommitList {
     }
 }
 
+// MARK: - Setter
+
+extension CommitList {
+    // UI 状态设置相关方法
+    // 如有需要可在此添加 @MainActor 标记的状态更新方法
+}
+
 // MARK: - Event Handlers
 
 extension CommitList {
@@ -288,11 +295,17 @@ extension CommitList {
         }
     }
 
-    func onCommitSuccess(_ notification: Notification) {
+    func onBranchChanged(_ eventInfo: ProjectEventInfo) {
+        self.bg.async {
+            self.refresh("Branch Changed to \(eventInfo.additionalInfo?["branchName"] as? String ?? "unknown")")
+        }
+    }
+
+    func onCommitSuccess(_ eventInfo: ProjectEventInfo) {
         // 延迟一小段时间，确保 Git 操作完全完成
         Task.detached {
             // 等待 100ms，确保 Git 操作完成
-            try? await Task.sleep(nanoseconds: 100_000_000)
+            try? await Task.sleep(nanoseconds: 100000000)
             await MainActor.run {
                 self.refresh("GitCommitSuccess")
             }
@@ -309,17 +322,17 @@ extension CommitList {
     func onChangeOfSelection() {
     }
 
-    func onPullSuccess(_ notification: Notification) {
+    func onPullSuccess(_ eventInfo: ProjectEventInfo) {
         self.bg.async {
             self.refresh("GitPullSuccess")
         }
     }
 
-    func onPushSuccess(_ notification: Notification) {
+    func onPushSuccess(_ eventInfo: ProjectEventInfo) {
         // 延迟一小段时间，确保 Git 操作完全完成
         Task.detached {
             // 等待 100ms，确保 Git 操作完成
-            try? await Task.sleep(nanoseconds: 100_000_000)
+            try? await Task.sleep(nanoseconds: 100000000)
             await MainActor.run {
                 self.refresh("GitPushSuccess")
             }
@@ -331,13 +344,15 @@ extension CommitList {
             self.refresh("AppWillBecomeActive")
         }
     }
-    
+
     func onAppDidBecomeActive(_ notification: Notification) {
         self.bg.async {
             self.refresh("AppDidBecomeActive")
         }
     }
 }
+
+// MARK: - Preview
 
 #Preview("App-Small Screen") {
     RootView {
