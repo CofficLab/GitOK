@@ -436,14 +436,7 @@ extension Project {
     }
 
     func getCommitsWithPagination(_ page: Int, limit: Int) throws -> [GitCommit] {
-        // Based on ShellGitLogPreview2, ShellGit.commitList should work correctly
-        // Let's try using commitList for page=0 like the preview does
-        if page == 0 {
-            return try ShellGit.commitList(limit: limit, at: self.path)
-        } else {
-            // For pagination, use commitListWithPagination
-            return try ShellGit.commitListWithPagination(page: page, size: limit, at: self.path)
-        }
+        return try ShellGit.commitListWithPagination(page: page, size: limit, at: self.path)
     }
 }
 

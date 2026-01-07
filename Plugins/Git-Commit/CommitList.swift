@@ -223,7 +223,7 @@ extension CommitList {
                 self.commits = initialCommits
                 self.loading = false
                 self.isRefreshing = false
-                self.currentPage = 1  // Next page to load
+                self.currentPage = 1 // Next page to load
             }
         } catch {
             // 在主线程更新 UI 状态
