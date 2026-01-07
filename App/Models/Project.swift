@@ -436,92 +436,58 @@ extension Project {
     }
 
     func getCommitsWithPagination(_ page: Int, limit: Int) throws -> [GitCommit] {
-        // Debug: Let's check what ShellGit is actually returning
+        // WORKAROUND: ShellGit has parsing issues, use direct git commands
+        let process = Process()
+        process.executableURL = URL(fileURLWithPath: "/usr/bin/git")
+        process.currentDirectoryURL = URL(fileURLWithPath: self.path)
+
         if page == 0 {
-            let commitListResult = try ShellGit.commitList(limit: limit, at: self.path)
-            let paginationResult = try ShellGit.commitListWithPagination(page: page, size: limit, at: self.path)
-
-            os_log("🔍 commitList returned \(commitListResult.count) commits")
-            os_log("🔍 commitListWithPagination(page=0) returned \(paginationResult.count) commits")
-
-            // Let's manually call the git command to see raw output
-            let process = Process()
-            process.executableURL = URL(fileURLWithPath: "/usr/bin/git")
-            process.currentDirectoryURL = URL(fileURLWithPath: self.path)
-            process.arguments = ["log", "--pretty=format:%H%x09%an%x09%ae%x09%cI%x09%s%x09%D", "--skip=0", "-50"]
-
-            let pipe = Pipe()
-            process.standardOutput = pipe
-            process.standardError = pipe
-
-            try process.run()
-            process.waitUntilExit()
-
-            if process.terminationStatus == 0 {
-                let data = pipe.fileHandleForReading.readDataToEndOfFile()
-                let rawOutput = String(data: data, encoding: .utf8) ?? ""
-                os_log("🔍 Raw git command output: \(rawOutput)")
-                let lines = rawOutput.split(separator: "\n")
-                os_log("🔍 Raw output has \(lines.count) lines")
-
-                // Simulate ShellGit parsing logic (without creating GitCommit objects)
-                var wouldParseCount = 0
-                for (index, line) in lines.enumerated() {
-                    let parts = line.split(separator: "\t", omittingEmptySubsequences: false)
-                    os_log("🔍 Parsing line \(index): \(line.prefix(100))...")
-                    os_log("🔍   Parts count: \(parts.count)")
-
-                    guard parts.count >= 6 else {
-                        os_log("🔍   Line \(index) failed: not enough parts (\(parts.count) < 6)")
-                        continue
-                    }
-
-                    let hash = String(parts[0])
-                    let author = String(parts[1])
-                    let email = String(parts[2])
-                    let dateStr = String(parts[3])
-                    let message = String(parts[4])
-                    let refs = String(parts[5])
-
-                    os_log("🔍   Line \(index) - Hash: \(hash.prefix(8)), Message: \(message.prefix(30)), Refs: '\(refs)'")
-
-                    // Check date parsing
-                    let dateFormatter = ISO8601DateFormatter()
-                    dateFormatter.formatOptions = [.withInternetDateTime]
-                    if let date = dateFormatter.date(from: dateStr) {
-                        os_log("🔍   Line \(index) - Date parsed successfully")
-                        wouldParseCount += 1
-                        os_log("🔍   Line \(index) would be successfully parsed into GitCommit")
-                    } else {
-                        os_log("🔍   Line \(index) failed: invalid date '\(dateStr)'")
-                    }
-                }
-
-                os_log("🔍 Manual parsing would create \(wouldParseCount) commits out of \(lines.count) lines")
-
-                // Compare with ShellGit result
-                let manualParseResult = lines.compactMap { line -> (hash: String, message: String)? in
-                    let parts = line.split(separator: "\t", omittingEmptySubsequences: false)
-                    guard parts.count >= 6 else { return nil }
-                    let hash = String(parts[0])
-                    let message = String(parts[4])
-                    return (hash: hash, message: message)
-                }
-
-                os_log("🔍 Manual parse found \(manualParseResult.count) potential commits:")
-                for (idx, item) in manualParseResult.enumerated() {
-                    os_log("🔍   \(idx): \(item.hash.prefix(8)) - \(item.message)")
-                }
-
-                os_log("🔍 commitListResult has \(commitListResult.count) commits:")
-                for (idx, commit) in commitListResult.enumerated() {
-                    os_log("🔍   \(idx): \(commit.hash.prefix(8)) - \(commit.message)")
-                }
-            }
-
-            return commitListResult
+            // First page: get latest commits
+            process.arguments = ["log", "--pretty=format:%H%x09%an%x09%ae%x09%cI%x09%s%x09%D", "-n", "\(limit)"]
         } else {
-            return try ShellGit.commitListWithPagination(page: page + 1, size: limit, at: self.path)
+            // Subsequent pages: skip previous pages
+            let skip = page * limit
+            process.arguments = ["log", "--pretty=format:%H%x09%an%x09%ae%x09%cI%x09%s%x09%D", "--skip=\(skip)", "-n", "\(limit)"]
+        }
+
+        let pipe = Pipe()
+        process.standardOutput = pipe
+        process.standardError = pipe
+
+        try process.run()
+        process.waitUntilExit()
+
+        if process.terminationStatus != 0 {
+            let data = pipe.fileHandleForReading.readDataToEndOfFile()
+            let output = String(data: data, encoding: .utf8) ?? ""
+            throw NSError(domain: "GitError", code: Int(process.terminationStatus),
+                         userInfo: [NSLocalizedDescriptionKey: "Failed to get commits: \(output)"])
+        }
+
+        let data = pipe.fileHandleForReading.readDataToEndOfFile()
+        let rawOutput = String(data: data, encoding: .utf8) ?? ""
+        let lines = rawOutput.split(separator: "\n")
+
+        let dateFormatter = ISO8601DateFormatter()
+        dateFormatter.formatOptions = [.withInternetDateTime]
+
+        return lines.compactMap { line in
+            let parts = line.split(separator: "\t", omittingEmptySubsequences: false)
+            guard parts.count >= 5 else { return nil } // Allow missing refs field
+
+            let hash = String(parts[0])
+            let author = String(parts[1])
+            let email = String(parts[2])
+            let dateStr = String(parts[3])
+            let message = String(parts[4])
+            let refsStr = parts.count > 5 ? String(parts[5]) : ""
+
+            guard let date = dateFormatter.date(from: dateStr) else { return nil }
+
+            let tags = refsStr.matches(for: "tag \\w+[-.\\w]*").map { $0.replacingOccurrences(of: "tag ", with: "").trimmingCharacters(in: .whitespaces) }
+            let refArray = refsStr.components(separatedBy: ", ").filter{!$0.isEmpty}
+
+            return GitCommit(id: hash, hash: hash, author: author, email: email, date: date, message: message, refs: refArray, tags: tags)
         }
     }
 }
