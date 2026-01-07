@@ -464,19 +464,18 @@ extension Project {
                 let lines = rawOutput.split(separator: "\n")
                 os_log("🔍 Raw output has \(lines.count) lines")
 
-                // Simulate ShellGit parsing
-                let parsedCommits = lines.compactMap { line -> GitCommit? in
+                // Simulate ShellGit parsing logic (without creating GitCommit objects)
+                var wouldParseCount = 0
+                for (index, line) in lines.enumerated() {
                     let parts = line.split(separator: "\t", omittingEmptySubsequences: false)
-                    os_log("🔍 Parsing line: \(line)")
-                    os_log("🔍   Parts: \(parts)")
+                    os_log("🔍 Parsing line \(index): \(line.prefix(100))...")
                     os_log("🔍   Parts count: \(parts.count)")
 
                     guard parts.count >= 6 else {
-                        os_log("🔍   Failed: not enough parts")
-                        return nil
+                        os_log("🔍   Line \(index) failed: not enough parts (\(parts.count) < 6)")
+                        continue
                     }
 
-                    // Try to create GitCommit like ShellGit does
                     let hash = String(parts[0])
                     let author = String(parts[1])
                     let email = String(parts[2])
@@ -484,25 +483,21 @@ extension Project {
                     let message = String(parts[4])
                     let refs = String(parts[5])
 
-                    os_log("🔍   Hash: \(hash), Author: \(author), Message: \(message), Refs: '\(refs)'")
+                    os_log("🔍   Line \(index) - Hash: \(hash.prefix(8)), Message: \(message.prefix(30)), Refs: '\(refs)'")
 
                     // Check date parsing
                     let dateFormatter = ISO8601DateFormatter()
                     dateFormatter.formatOptions = [.withInternetDateTime]
-                    guard let date = dateFormatter.date(from: dateStr) else {
-                        os_log("🔍   Failed: invalid date format '\(dateStr)'")
-                        return nil
+                    if let date = dateFormatter.date(from: dateStr) {
+                        os_log("🔍   Line \(index) - Date parsed successfully")
+                        wouldParseCount += 1
+                        os_log("🔍   Line \(index) would be successfully parsed into GitCommit")
+                    } else {
+                        os_log("🔍   Line \(index) failed: invalid date '\(dateStr)'")
                     }
-
-                    let tags = refs.components(separatedBy: ", ").filter { $0.contains("tag:") }.map { $0.replacingOccurrences(of: "tag:", with: "").trimmingCharacters(in: .whitespaces) }
-                    let refArray = refs.components(separatedBy: ", ").filter{!$0.isEmpty}
-
-                    let commit = GitCommit(id: hash, hash: hash, author: author, email: email, date: date, message: message, refs: refArray, tags: tags)
-                    os_log("🔍   Successfully created commit: \(commit.hash.prefix(8))")
-                    return commit
                 }
 
-                os_log("🔍 Manual parsing created \(parsedCommits.count) commits")
+                os_log("🔍 Manual parsing would create \(wouldParseCount) commits out of \(lines.count) lines")
             }
 
             return commitListResult  // Use commitList for now as it works
