@@ -20,6 +20,15 @@
       }
     },
     {
+      "identity" : "magicdevice",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/nookery/MagicDevice.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "60c9bf7cd59566ec64b7088fa8672a6b1c2c5cf2"
+      }
+    },
+    {
       "identity" : "magicdiffview",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/nookery/MagicDiffView",
@@ -34,7 +43,7 @@
       "location" : "https://github.com/CofficLab/MagicKit",
       "state" : {
         "branch" : "dev",
-        "revision" : "41fc7d29a71c0bc767d62b34eea6eb4d98e6ae3d"
+        "revision" : "1560f2b614bff984b384e3fca61cd91a92c8e2f7"
       }
     },
     {

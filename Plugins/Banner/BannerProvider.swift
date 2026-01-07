@@ -4,6 +4,7 @@ import Combine
 import Foundation
 import MagicCore
 import MagicAll
+import MagicDevice
 import MediaPlayer
 import OSLog
 import SwiftUI

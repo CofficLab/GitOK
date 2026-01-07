@@ -1,6 +1,7 @@
 import MagicAlert
 import MagicCore
 import MagicAll
+import MagicDevice
 import SwiftUI
 
 /**
