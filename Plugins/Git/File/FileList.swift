@@ -41,7 +41,7 @@ struct FileList: View, SuperThread, SuperLog {
                     }
                 }
             }
-            .padding(.horizontal, 12)
+            .padding(.horizontal, 0)
             .padding(.vertical, 6)
             .background(Color(NSColor.controlBackgroundColor))
             .overlay(
@@ -61,7 +61,9 @@ struct FileList: View, SuperThread, SuperLog {
                         } : nil
                     )
                     .tag($0 as GitDiffFile?)
+                    .listRowInsets(.init()) // 移除 List 的默认内边距
                 }
+                .listStyle(.plain) // 使用 plain 样式移除额外的 padding
                 .onChange(of: files, {
                     withAnimation {
                         // 在主线程中调用 scrollTo 方法
