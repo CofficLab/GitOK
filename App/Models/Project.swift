@@ -436,7 +436,9 @@ extension Project {
     }
 
     func getCommitsWithPagination(_ page: Int, limit: Int) throws -> [GitCommit] {
-        try ShellGit.commitListWithPagination(page: page, size: limit, at: self.path)
+        // Fix pagination: Git log uses 0-based skip, but ShellGit might expect 1-based page
+        // If page=0 returns commits starting from the second one, try page+1
+        try ShellGit.commitListWithPagination(page: page + 1, size: limit, at: self.path)
     }
 }
 

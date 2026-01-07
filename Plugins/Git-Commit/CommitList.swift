@@ -119,6 +119,13 @@ extension CommitList {
                 limit: self.pageSize
             )
 
+            if Self.verbose {
+                os_log("\(self.t)🔄 LoadMoreCommits - page: \(self.currentPage), fetched: \(newCommits.count) commits")
+                for (index, commit) in newCommits.prefix(3).enumerated() {
+                    os_log("\(self.t)🔄 New Commit \(index): \(commit.hash.prefix(8)) - \(commit.message.prefix(50))")
+                }
+            }
+
             if !newCommits.isEmpty {
                 // 添加去重逻辑，防止重复添加相同的commit
                 let uniqueNewCommits = newCommits.filter { newCommit in
@@ -204,12 +211,19 @@ extension CommitList {
                 0, limit: self.pageSize
             )
 
+            if Self.verbose {
+                os_log("\(self.t)🔄 Refresh - fetched \(initialCommits.count) commits from page 0")
+                for (index, commit) in initialCommits.prefix(3).enumerated() {
+                    os_log("\(self.t)🔄 Commit \(index): \(commit.hash.prefix(8)) - \(commit.message.prefix(50))")
+                }
+            }
+
             // 在主线程更新 UI 状态
             DispatchQueue.main.async {
                 self.commits = initialCommits
                 self.loading = false
                 self.isRefreshing = false
-                self.currentPage = 1
+                self.currentPage = 1  // Next page to load
             }
         } catch {
             // 在主线程更新 UI 状态
