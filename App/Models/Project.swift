@@ -463,11 +463,46 @@ extension Project {
                 os_log("🔍 Raw git command output: \(rawOutput)")
                 let lines = rawOutput.split(separator: "\n")
                 os_log("🔍 Raw output has \(lines.count) lines")
-                for (index, line) in lines.prefix(2).enumerated() {
-                    os_log("🔍 Line \(index): \(line)")
+
+                // Simulate ShellGit parsing
+                let parsedCommits = lines.compactMap { line -> GitCommit? in
                     let parts = line.split(separator: "\t", omittingEmptySubsequences: false)
+                    os_log("🔍 Parsing line: \(line)")
+                    os_log("🔍   Parts: \(parts)")
                     os_log("🔍   Parts count: \(parts.count)")
+
+                    guard parts.count >= 6 else {
+                        os_log("🔍   Failed: not enough parts")
+                        return nil
+                    }
+
+                    // Try to create GitCommit like ShellGit does
+                    let hash = String(parts[0])
+                    let author = String(parts[1])
+                    let email = String(parts[2])
+                    let dateStr = String(parts[3])
+                    let message = String(parts[4])
+                    let refs = String(parts[5])
+
+                    os_log("🔍   Hash: \(hash), Author: \(author), Message: \(message), Refs: '\(refs)'")
+
+                    // Check date parsing
+                    let dateFormatter = ISO8601DateFormatter()
+                    dateFormatter.formatOptions = [.withInternetDateTime]
+                    guard let date = dateFormatter.date(from: dateStr) else {
+                        os_log("🔍   Failed: invalid date format '\(dateStr)'")
+                        return nil
+                    }
+
+                    let tags = refs.components(separatedBy: ", ").filter { $0.contains("tag:") }.map { $0.replacingOccurrences(of: "tag:", with: "").trimmingCharacters(in: .whitespaces) }
+                    let refArray = refs.components(separatedBy: ", ").filter{!$0.isEmpty}
+
+                    let commit = GitCommit(id: hash, hash: hash, author: author, email: email, date: date, message: message, refs: refArray, tags: tags)
+                    os_log("🔍   Successfully created commit: \(commit.hash.prefix(8))")
+                    return commit
                 }
+
+                os_log("🔍 Manual parsing created \(parsedCommits.count) commits")
             }
 
             return commitListResult  // Use commitList for now as it works
