@@ -76,7 +76,7 @@ struct BtnSyncView: View, SuperLog, SuperEvent, SuperThread {
             setStatus("同步中…")
             do {
                 // 检查是否有远程仓库
-                if let project = self.data.project {
+                if let project = await self.data.project {
                     let remotes = try project.getRemotes()
                     if remotes.isEmpty {
                         await MainActor.run {

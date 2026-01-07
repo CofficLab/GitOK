@@ -10,8 +10,8 @@
 		0B0E168B2BD89A910078942B /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0B0E168A2BD89A910078942B /* Preview Assets.xcassets */; };
 		0B3CC95E2DF1C49000E22263 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = 0B3CC95D2DF1C49000E22263 /* Sparkle */; };
 		0B750F162E7F934F00140214 /* MarkdownUI in Frameworks */ = {isa = PBXBuildFile; productRef = 0B750F152E7F934F00140214 /* MarkdownUI */; };
+		F53348EB2F0E499A00FDDD9B /* MagicAlert in Frameworks */ = {isa = PBXBuildFile; productRef = F53348EA2F0E499A00FDDD9B /* MagicAlert */; };
 		F54D04C42DF2D01300FFB434 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = F54D04C32DF2D01300FFB434 /* Localizable.xcstrings */; };
-		F55B06D42EE8FDBD00EA3AD2 /* MagicAlert in Frameworks */ = {isa = PBXBuildFile; productRef = F55B06D32EE8FDBD00EA3AD2 /* MagicAlert */; };
 		F55B06D62EE8FDBD00EA3AD2 /* MagicAll in Frameworks */ = {isa = PBXBuildFile; productRef = F55B06D52EE8FDBD00EA3AD2 /* MagicAll */; };
 		F55B06D82EE8FDBD00EA3AD2 /* MagicAsset in Frameworks */ = {isa = PBXBuildFile; productRef = F55B06D72EE8FDBD00EA3AD2 /* MagicAsset */; };
 		F55B06DA2EE8FDBD00EA3AD2 /* MagicBackground in Frameworks */ = {isa = PBXBuildFile; productRef = F55B06D92EE8FDBD00EA3AD2 /* MagicBackground */; };
@@ -27,7 +27,6 @@
 		F55B06EE2EE8FDBD00EA3AD2 /* MagicPlayMan in Frameworks */ = {isa = PBXBuildFile; productRef = F55B06ED2EE8FDBD00EA3AD2 /* MagicPlayMan */; };
 		F55B06F02EE8FDBD00EA3AD2 /* MagicSync in Frameworks */ = {isa = PBXBuildFile; productRef = F55B06EF2EE8FDBD00EA3AD2 /* MagicSync */; };
 		F55B06F22EE8FDBD00EA3AD2 /* MagicUI in Frameworks */ = {isa = PBXBuildFile; productRef = F55B06F12EE8FDBD00EA3AD2 /* MagicUI */; };
-		F5B909292EE8FB4B008BEB16 /* MagicAlert in Frameworks */ = {isa = PBXBuildFile; productRef = F5B909282EE8FB4B008BEB16 /* MagicAlert */; };
 		F5B9092B2EE8FB4B008BEB16 /* MagicAll in Frameworks */ = {isa = PBXBuildFile; productRef = F5B9092A2EE8FB4B008BEB16 /* MagicAll */; };
 		F5B9092D2EE8FB4B008BEB16 /* MagicAsset in Frameworks */ = {isa = PBXBuildFile; productRef = F5B9092C2EE8FB4B008BEB16 /* MagicAsset */; };
 		F5B9092F2EE8FB4B008BEB16 /* MagicBackground in Frameworks */ = {isa = PBXBuildFile; productRef = F5B9092E2EE8FB4B008BEB16 /* MagicBackground */; };
@@ -77,16 +76,15 @@
 				F5B909392EE8FB4B008BEB16 /* MagicDevice in Frameworks */,
 				F5B9092D2EE8FB4B008BEB16 /* MagicAsset in Frameworks */,
 				F55B06F02EE8FDBD00EA3AD2 /* MagicSync in Frameworks */,
-				F5B909292EE8FB4B008BEB16 /* MagicAlert in Frameworks */,
 				F55B06E02EE8FDBD00EA3AD2 /* MagicData in Frameworks */,
 				F55B06EE2EE8FDBD00EA3AD2 /* MagicPlayMan in Frameworks */,
 				F5B909332EE8FB4B008BEB16 /* MagicCore in Frameworks */,
+				F53348EB2F0E499A00FDDD9B /* MagicAlert in Frameworks */,
 				F55B06DA2EE8FDBD00EA3AD2 /* MagicBackground in Frameworks */,
 				0B750F162E7F934F00140214 /* MarkdownUI in Frameworks */,
 				F55B06D62EE8FDBD00EA3AD2 /* MagicAll in Frameworks */,
 				F5B9093D2EE8FB4B008BEB16 /* MagicError in Frameworks */,
 				F55B06DE2EE8FDBD00EA3AD2 /* MagicCore in Frameworks */,
-				F55B06D42EE8FDBD00EA3AD2 /* MagicAlert in Frameworks */,
 				F55B06E42EE8FDBD00EA3AD2 /* MagicDevice in Frameworks */,
 				F55B06EC2EE8FDBD00EA3AD2 /* MagicKit in Frameworks */,
 				F5B9092B2EE8FB4B008BEB16 /* MagicAll in Frameworks */,
@@ -172,7 +170,6 @@
 			packageProductDependencies = (
 				0B3CC95D2DF1C49000E22263 /* Sparkle */,
 				0B750F152E7F934F00140214 /* MarkdownUI */,
-				F5B909282EE8FB4B008BEB16 /* MagicAlert */,
 				F5B9092A2EE8FB4B008BEB16 /* MagicAll */,
 				F5B9092C2EE8FB4B008BEB16 /* MagicAsset */,
 				F5B9092E2EE8FB4B008BEB16 /* MagicBackground */,
@@ -183,7 +180,6 @@
 				F5B909382EE8FB4B008BEB16 /* MagicDevice */,
 				F5B9093A2EE8FB4B008BEB16 /* MagicDiffView */,
 				F5B9093C2EE8FB4B008BEB16 /* MagicError */,
-				F55B06D32EE8FDBD00EA3AD2 /* MagicAlert */,
 				F55B06D52EE8FDBD00EA3AD2 /* MagicAll */,
 				F55B06D72EE8FDBD00EA3AD2 /* MagicAsset */,
 				F55B06D92EE8FDBD00EA3AD2 /* MagicBackground */,
@@ -199,6 +195,7 @@
 				F55B06ED2EE8FDBD00EA3AD2 /* MagicPlayMan */,
 				F55B06EF2EE8FDBD00EA3AD2 /* MagicSync */,
 				F55B06F12EE8FDBD00EA3AD2 /* MagicUI */,
+				F53348EA2F0E499A00FDDD9B /* MagicAlert */,
 			);
 			productName = GitOK;
 			productReference = 0B0E167D2BD89A8F0078942B /* GitOK.app */;
@@ -233,6 +230,7 @@
 				F5F794E72C5B192600DCB824 /* XCRemoteSwiftPackageReference "Sparkle" */,
 				F54178E22E00F91F00503C7B /* XCRemoteSwiftPackageReference "swift-markdown-ui" */,
 				F55B06D22EE8FDBD00EA3AD2 /* XCRemoteSwiftPackageReference "MagicKit" */,
+				F53348E92F0E499A00FDDD9B /* XCRemoteSwiftPackageReference "MagicAlert" */,
 			);
 			productRefGroup = 0B0E167E2BD89A8F0078942B /* Products */;
 			projectDirPath = "";
@@ -502,6 +500,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		F53348E92F0E499A00FDDD9B /* XCRemoteSwiftPackageReference "MagicAlert" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/nookery/MagicAlert";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
 		F54178E22E00F91F00503C7B /* XCRemoteSwiftPackageReference "swift-markdown-ui" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/gonzalezreal/swift-markdown-ui";
@@ -539,9 +545,9 @@
 			package = F54178E22E00F91F00503C7B /* XCRemoteSwiftPackageReference "swift-markdown-ui" */;
 			productName = MarkdownUI;
 		};
-		F55B06D32EE8FDBD00EA3AD2 /* MagicAlert */ = {
+		F53348EA2F0E499A00FDDD9B /* MagicAlert */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = F55B06D22EE8FDBD00EA3AD2 /* XCRemoteSwiftPackageReference "MagicKit" */;
+			package = F53348E92F0E499A00FDDD9B /* XCRemoteSwiftPackageReference "MagicAlert" */;
 			productName = MagicAlert;
 		};
 		F55B06D52EE8FDBD00EA3AD2 /* MagicAll */ = {
@@ -618,10 +624,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = F55B06D22EE8FDBD00EA3AD2 /* XCRemoteSwiftPackageReference "MagicKit" */;
 			productName = MagicUI;
-		};
-		F5B909282EE8FB4B008BEB16 /* MagicAlert */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = MagicAlert;
 		};
 		F5B9092A2EE8FB4B008BEB16 /* MagicAll */ = {
 			isa = XCSwiftPackageProductDependency;

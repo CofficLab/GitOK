@@ -97,7 +97,7 @@ extension BranchesView {
                 }
             }
         } catch let e {
-            self.m.error(e.localizedDescription)
+            self.m.error(e)
         }
 
         // 重置刷新状态
