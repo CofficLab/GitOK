@@ -1,5 +1,5 @@
 {
-  "originHash" : "ab982301214b4c052118ace6f18e169dbd66bdb7a1b4df8fc53f577c4d20f9c4",
+  "originHash" : "ccbf03687b2c654dac676bb872216debeb46de67008759b7f17131e7aab2f197",
   "pins" : [
     {
       "identity" : "id3tageditor",
@@ -20,12 +20,21 @@
       }
     },
     {
+      "identity" : "magicdiffview",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/nookery/MagicDiffView",
+      "state" : {
+        "branch" : "main",
+        "revision" : "230e6166373362c6f6e90bb60184bbfc5c2330e6"
+      }
+    },
+    {
       "identity" : "magickit",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/CofficLab/MagicKit",
       "state" : {
         "branch" : "dev",
-        "revision" : "256d6ff05995c659ec775645f34454831027bcb9"
+        "revision" : "41fc7d29a71c0bc767d62b34eea6eb4d98e6ae3d"
       }
     },
     {
