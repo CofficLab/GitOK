@@ -116,6 +116,29 @@ struct UserConfigSheet: View, SuperLog {
                         Text("选择 commit 消息风格")
                             .font(.caption)
                             .foregroundColor(.secondary)
+
+                        // 显示当前风格的例子
+                        VStack(alignment: .leading, spacing: 6) {
+                            Text("风格预览")
+                                .font(.subheadline)
+                                .foregroundColor(.secondary)
+
+                            VStack(alignment: .leading, spacing: 4) {
+                                ForEach([
+                                    (category: CommitCategory.Chore, message: "Update dependencies"),
+                                    (category: CommitCategory.Feature, message: "Add user authentication"),
+                                    (category: CommitCategory.Bugfix, message: "Fix login validation")
+                                ], id: \.category) { item in
+                                    let fullMessage = "\(item.category.text(style: commitStyle))\(commitStyle.isLowercase ? item.message.lowercased() : item.message)"
+                                    Text(fullMessage)
+                                        .font(.system(.body, design: .monospaced))
+                                        .foregroundColor(.primary)
+                                }
+                            }
+                            .padding(8)
+                            .background(Color.gray.opacity(0.1))
+                            .cornerRadius(6)
+                        }
                     }
                 }
             }
