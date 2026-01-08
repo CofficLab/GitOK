@@ -414,6 +414,28 @@ extension Project {
         try ShellGit.unpushedCommitList(remote: "origin", branch: nil, at: self.path)
     }
 
+    func getUnPulledCommits() throws -> [GitCommit] {
+        let branchName = try ShellGit.currentBranch(at: self.path)
+        let log = try Shell.runSync("git log \(branchName)..origin/\(branchName) --pretty=format:%H%x09%an%x09%ae%x09%ad%x09%s%x09%D", at: self.path)
+        let lines = log.split(separator: "\n").map { String($0) }
+        var commits: [GitCommit] = []
+        let dateFormatter = ISO8601DateFormatter()
+        for line in lines {
+            let parts = line.split(separator: "\t").map { String($0) }
+            guard parts.count >= 5 else { continue }
+            let hash = parts[0]
+            let author = parts[1]
+            let email = parts[2]
+            let dateStr = parts[3]
+            let message = parts[4]
+            let refs = parts.count > 5 ? parts[5].split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces) } : []
+            let tags = refs.filter { $0.contains("tag:") }.map { $0.replacingOccurrences(of: "tag:", with: "").trimmingCharacters(in: .whitespaces) }
+            let date = dateFormatter.date(from: dateStr) ?? Date()
+            commits.append(GitCommit(id: hash, hash: hash, author: author, email: email, date: date, message: message, refs: refs, tags: tags))
+        }
+        return commits
+    }
+
     func submit(_ message: String) throws {
         assert(Thread.isMainThread, "setCommit(_:) 必须在主线程调用，否则会导致线程安全问题！")
         do {

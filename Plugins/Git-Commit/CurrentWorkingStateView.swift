@@ -16,6 +16,7 @@ struct CurrentWorkingStateView: View, SuperLog {
 
     var body: some View {
         VStack(spacing: 0) {
+            // 当前工作状态部分
             ZStack {
                 HStack(spacing: 12) {
                     Image(systemName: "clock.arrow.circlepath")
@@ -31,7 +32,7 @@ struct CurrentWorkingStateView: View, SuperLog {
 
                     Spacer()
                 }
-                
+
                 if isRefreshing {
                     HStack {
                         Spacer()
@@ -47,6 +48,9 @@ struct CurrentWorkingStateView: View, SuperLog {
 
             Divider()
                 .background(Color.white.opacity(0.2))
+
+            // 远程同步状态部分
+            RemoteSyncStatusView()
         }
         .background(
             isSelected

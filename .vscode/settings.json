@@ -7,7 +7,9 @@
     "cSpell.words": [
         "agvtool",
         "appcast",
+        "autoreverses",
         "Autoupdate",
+        "circlepath",
         "Codesign",
         "codesigning",
         "Coffic",
@@ -23,6 +25,8 @@
         "softprops",
         "stefanzweifel",
         "trianglehead",
+        "unpulled",
+        "unpushed",
         "uppercased",
         "xccheckout",
         "xcrun",
