@@ -32,6 +32,17 @@ class CommitPlugin: SuperPlugin, SuperLog, PluginRegistrant {
     }
 }
 
+// MARK: - PluginRegistrant
+extension CommitPlugin {
+    @objc static func register() {
+        Task {
+            await PluginRegistry.shared.register(id: "Commit", order: 23) {
+                CommitPlugin.shared
+            }
+        }
+    }
+}
+
 #Preview("APP") {
     RootView(content: {
         ContentLayout()
@@ -46,15 +57,4 @@ class CommitPlugin: SuperPlugin, SuperLog, PluginRegistrant {
     }
     .frame(width: 1200)
     .frame(height: 1200)
-}
-
-// MARK: - PluginRegistrant
-extension CommitPlugin {
-    @objc static func register() {
-        Task {
-            await PluginRegistry.shared.register(id: "Commit", order: 23) {
-                CommitPlugin.shared
-            }
-        }
-    }
 }

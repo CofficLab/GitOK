@@ -10,13 +10,13 @@ protocol StateRepoProtocol {
     var currentTaskUUID: String { get set }
     var currentTab: String { get set }
     var sidebarVisibility: Bool { get set }
-    var commitStyleIncludeEmoji: Bool { get set }
+    var commitStyle: CommitStyle { get set }
 
     func setProjectPath(_ path: String)
     func setCurrentTaskUUID(_ id: String)
     func setCurrentTab(_ tab: String)
     func setSidebarVisibility(_ visible: Bool)
-    func setCommitStyleIncludeEmoji(_ include: Bool)
+    func setCommitStyle(_ style: CommitStyle)
 }
 
 // MARK: - 状态管理Repository实现
@@ -40,8 +40,8 @@ class StateRepo: StateRepoProtocol, SuperLog, ObservableObject {
     @AppStorage("App.SidebarVisibility")
     var sidebarVisibility: Bool = true
 
-    @AppStorage("App.CommitStyleIncludeEmoji")
-    var commitStyleIncludeEmoji: Bool = true
+    @AppStorage("App.CommitStyle")
+    var commitStyle: CommitStyle = .emoji
     
     // MARK: - 初始化
     
@@ -94,10 +94,10 @@ class StateRepo: StateRepoProtocol, SuperLog, ObservableObject {
         }
     }
 
-    func setCommitStyleIncludeEmoji(_ include: Bool) {
-        self.commitStyleIncludeEmoji = include
+    func setCommitStyle(_ style: CommitStyle) {
+        self.commitStyle = style
         if verbose {
-            os_log("\(self.t)Commit style include emoji set to \(include)")
+            os_log("\(self.t)Commit style set to \(style.label)")
         }
     }
 }

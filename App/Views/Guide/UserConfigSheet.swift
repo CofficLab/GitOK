@@ -15,7 +15,7 @@ struct UserConfigSheet: View, SuperLog {
     @State private var hasChanges = false
     @State private var savedConfigs: [GitUserConfig] = []
     @State private var selectedConfig: GitUserConfig?
-    @State private var commitStyleIncludeEmoji: Bool = true
+    @State private var commitStyle: CommitStyle = .emoji
 
     private let verbose = true
 
@@ -100,13 +100,20 @@ struct UserConfigSheet: View, SuperLog {
 
                             Spacer()
 
-                            Toggle("包含 Emoji", isOn: $commitStyleIncludeEmoji)
-                                .onChange(of: commitStyleIncludeEmoji) {
-                                    saveCommitStyle()
+                            Picker("", selection: $commitStyle) {
+                                ForEach(CommitStyle.allCases, id: \.self) { style in
+                                    Text(style.label)
+                                        .tag(style as CommitStyle?)
                                 }
+                            }
+                            .frame(width: 120)
+                            .pickerStyle(.automatic)
+                            .onChange(of: commitStyle) { _, _ in
+                                saveCommitStyle()
+                            }
                         }
 
-                        Text("选择 commit 消息是否包含 emoji 前缀")
+                        Text("选择 commit 消息风格")
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }
@@ -242,11 +249,11 @@ extension UserConfigSheet {
     }
 
     private func loadCommitStyle() {
-        commitStyleIncludeEmoji = stateRepo.commitStyleIncludeEmoji
+        commitStyle = stateRepo.commitStyle
     }
 
     private func saveCommitStyle() {
-        stateRepo.setCommitStyleIncludeEmoji(commitStyleIncludeEmoji)
+        stateRepo.setCommitStyle(commitStyle)
     }
 }
 

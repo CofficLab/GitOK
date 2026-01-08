@@ -99,7 +99,7 @@ extension FileList {
                 await self.refresh(reason: "AfterDiscardChanges")
             } catch {
                 await MainActor.run {
-                    self.m.error("丢弃更改失败: \(error.localizedDescription)")
+                    self.m.error(error)
                 }
             }
         }

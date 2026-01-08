@@ -8,6 +8,7 @@ struct CommitForm: View, SuperLog {
 
     @State var text: String = ""
     @State var category: CommitCategory = .Chore
+    @State var commitStyle: CommitStyle = .emoji
 
     var commitMessage: String {
         var c = text
@@ -15,26 +16,30 @@ struct CommitForm: View, SuperLog {
             c = "Auto Committed by GitOK"
         }
 
-        let includeEmoji = g.repoManager.stateRepo.commitStyleIncludeEmoji
-        return "\(category.text(includeEmoji: includeEmoji)) \(c)"
+        return "\(category.text(style: commitStyle)) \(c)"
     }
 
     var body: some View {
         VStack(spacing: 0) {
             HStack(spacing: 0) {
-                CommitCategoryPicker(
-                    selection: $category
-                )
+                HStack(spacing: 0) {
+                    CommitStylePicker(
+                        selection: $commitStyle
+                    )
+
+                    CommitCategoryPicker(
+                        selection: $category,
+                        commitStyle: commitStyle
+                    )
+                }
 
                 Spacer()
-                TextField("commit", text: $text)
-                    .textFieldStyle(.roundedBorder)
-                    .padding(.vertical)
+                CommitMessageInput(text: $text)
             }
 
             HStack {
                 UserView().frame(maxWidth: 300)
-                
+
                 Spacer()
 
                 BtnCommitAndPush(commitMessage: commitMessage, commitOnly: true)
@@ -44,6 +49,9 @@ struct CommitForm: View, SuperLog {
         }
         .onProjectDidCommit(perform: onProjectDidCommit)
         .onChange(of: category, onCategoryDidChange)
+        .onChange(of: commitStyle) { _, _ in
+            onCommitStyleDidChange()
+        }
         .onAppear(perform: onAppear)
     }
 }
@@ -52,15 +60,27 @@ struct CommitForm: View, SuperLog {
 
 extension CommitForm {
     func onProjectDidCommit(_ eventInfo: ProjectEventInfo) {
-        self.text = self.category.defaultMessage
+        self.text = CommitMessageHelper.defaultMessage(for: category, style: commitStyle)
     }
 
     func onCategoryDidChange() {
-        self.text = self.category.defaultMessage
+        self.text = CommitMessageHelper.defaultMessage(for: category, style: commitStyle)
+    }
+
+    func onCommitStyleDidChange() {
+        // 如果当前文本是该类别的默认消息（任何风格），则更新为新风格的默认消息
+        let isDefaultMessage = CommitStyle.allCases.contains { style in
+            text == CommitMessageHelper.defaultMessage(for: category, style: style)
+        }
+
+        if isDefaultMessage || text.isEmpty {
+            self.text = CommitMessageHelper.defaultMessage(for: category, style: commitStyle)
+        }
     }
 
     func onAppear() {
-        self.text = self.category.defaultMessage
+        self.text = CommitMessageHelper.defaultMessage(for: category, style: commitStyle)
+        self.commitStyle = g.repoManager.stateRepo.commitStyle
     }
 }
 
