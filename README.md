@@ -4,6 +4,8 @@
 [![Maintainer](https://img.shields.io/badge/Maintainer-blue)](https://github.com/nookery)
 ![GitHub License](https://img.shields.io/github/license/cofficlab/gitok)
 
+📖 [中文版](README-zh.md) | [English](README.md)
+
 ## What
 
 GitOK is a comprehensive project management tool.

@@ -66,37 +66,37 @@ enum CommitCategory: String, CaseIterable, Equatable {
     var title: String {
         switch self {
         case .Bugfix:
-            "bugfix"
+            "Bugfix"
         case .Chore:
-            "chore"
+            "Chore"
         case .CI:
-            "ci"
+            "CI"
         case .Config:
-            "config"
+            "Config"
         case .Docker:
-            "docker"
+            "Docker"
         case .Document:
-            "document"
+            "Document"
         case .Feature:
-            "feature"
+            "Feature"
         case .FirstCommit:
-            "first commit"
+            "First Commit"
         case .Improve:
-            "improve"
+            "Improve"
         case.I18n:
-            "i18n"
+            "I18n"
         case .Release:
-            "release"
+            "Release"
         case .Trash:
-            "trash"
+            "Trash"
         case .Typo:
-            "typo"
+            "Typo"
         case .UI:
-            "ui"
+            "UI"
         case .PackageUpdate:
-            "package update"
+            "Package Update"
         case .Test:
-            "test"
+            "Test"
         }
     }
 

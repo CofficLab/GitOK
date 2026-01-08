@@ -383,20 +383,20 @@ extension CommitList {
 // MARK: - Preview
 
 #Preview("App-Small Screen") {
-    RootView {
-        ContentLayout()
-            .hideTabPicker()
-            .hideProjectActions()
-            .hideSidebar()
-    }
-    .frame(width: 800)
-    .frame(height: 800)
+    ContentLayout()
+        .hideTabPicker()
+        .hideProjectActions()
+        .hideSidebar()
+        .inRootView()
+        .frame(width: 800)
+        .frame(height: 800)
 }
 
 #Preview("App - Big Screen") {
-    RootView {
-        ContentLayout()
-    }
-    .frame(width: 1200)
-    .frame(height: 1200)
+    ContentLayout()
+        .hideTabPicker()
+        .hideProjectActions()
+        .inRootView()
+        .frame(width: 1200)
+        .frame(height: 1200)
 }
