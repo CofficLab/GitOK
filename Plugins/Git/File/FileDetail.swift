@@ -1,4 +1,5 @@
 import AppKit
+import MagicDiffView
 import MagicAlert
 import MagicAll
 import MagicCore

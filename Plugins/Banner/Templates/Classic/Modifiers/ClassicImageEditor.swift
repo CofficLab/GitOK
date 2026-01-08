@@ -2,6 +2,7 @@ import SwiftUI
 import MagicCore
 import MagicAll
 import MagicAlert
+import MagicDevice
 import UniformTypeIdentifiers
 
 /**
