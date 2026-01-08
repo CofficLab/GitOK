@@ -34,55 +34,11 @@ struct CommitList: View, SuperThread, SuperLog {
                             Spacer()
                         } else {
                             CurrentWorkingStateView()
-
-                            ScrollView {
-                                LazyVStack(spacing: 0, pinnedViews: []) {
-                                    Divider()
-
-                                    ForEach(commits.indices, id: \.self) { index in
-                                        let commit = commits[index]
-                                        CommitRow(commit: commit)
-                                            .overlay(alignment: .trailing) {
-                                                // 在第一个 commit 右侧显示刷新 loading
-                                                if index == 0 && isRefreshing {
-                                                    ProgressView()
-                                                        .controlSize(.small)
-                                                        .scaleEffect(0.8)
-                                                        .padding(.trailing, 8)
-                                                }
-                                            }
-                                            .onAppear {
-                                                // 只在最后几个commit出现时触发加载更多
-                                                let threshold = max(commits.count - 10, Int(Double(commits.count) * 0.8))
-
-                                                if index >= threshold && hasMoreCommits && !loading {
-                                                    if Self.verbose {
-                                                        os_log("\(self.t)👁️ Commit \(index) appeared, triggering loadMore")
-                                                    }
-                                                    loadMoreCommits()
-                                                }
-                                            }
-                                    }
-
-                                    if loading && !commits.isEmpty {
-                                        HStack {
-                                            Spacer()
-                                            ProgressView()
-                                            Spacer()
-                                        }
-                                        .frame(height: 44)
-
-                                        Divider()
-                                    }
-                                }
-                            }
-                            .background(Color(.controlBackgroundColor))
+                            commitListView
                         }
                     }
                     .onAppear {
-                        let rowHeight: CGFloat = 31
-                        let visibleRows = Int(ceil(geometry.size.height / rowHeight))
-                        pageSize = max(self.pageSize, visibleRows + 5)
+                        onGeometryAppear(geometry)
                     }
                 }
             }
@@ -93,6 +49,56 @@ struct CommitList: View, SuperThread, SuperLog {
         .onProjectDidCommit(perform: onCommitSuccess)
         .onProjectDidPull(perform: onPullSuccess)
         .onProjectDidPush(perform: onPushSuccess)
+    }
+}
+
+// MARK: - View
+
+extension CommitList {
+    /// 提交列表视图：包含滚动视图和所有提交项
+    private var commitListView: some View {
+        ScrollView {
+            LazyVStack(spacing: 0, pinnedViews: []) {
+                Divider()
+
+                ForEach(commits.indices, id: \.self) { index in
+                    let commit = commits[index]
+                    CommitRow(commit: commit)
+                        .overlay(alignment: .trailing) {
+                            // 在第一个 commit 右侧显示刷新 loading
+                            if index == 0 && isRefreshing {
+                                ProgressView()
+                                    .controlSize(.small)
+                                    .scaleEffect(0.8)
+                                    .padding(.trailing, 8)
+                            }
+                        }
+                        .onAppear {
+                            // 只在最后几个commit出现时触发加载更多
+                            let threshold = max(commits.count - 10, Int(Double(commits.count) * 0.8))
+
+                            if index >= threshold && hasMoreCommits && !loading {
+                                if Self.verbose {
+                                    os_log("\(self.t)👁️ Commit \(index) appeared, triggering loadMore")
+                                }
+                                loadMoreCommits()
+                            }
+                        }
+                }
+
+                if loading && !commits.isEmpty {
+                    HStack {
+                        Spacer()
+                        ProgressView()
+                        Spacer()
+                    }
+                    .frame(height: 44)
+
+                    Divider()
+                }
+            }
+        }
+        .background(Color(.controlBackgroundColor))
     }
 }
 
@@ -303,6 +309,14 @@ extension CommitList {
 // MARK: - Event Handlers
 
 extension CommitList {
+    /// 几何尺寸改变事件处理：根据视图高度动态调整页面大小
+    /// - Parameter geometry: 几何尺寸信息
+    func onGeometryAppear(_ geometry: GeometryProxy) {
+        let rowHeight: CGFloat = 31
+        let visibleRows = Int(ceil(geometry.size.height / rowHeight))
+        pageSize = max(self.pageSize, visibleRows + 5)
+    }
+
     func onProjectChange() {
         self.bg.async {
             self.refresh("Project Changed")
@@ -371,6 +385,8 @@ extension CommitList {
 #Preview("App-Small Screen") {
     RootView {
         ContentLayout()
+            .hideTabPicker()
+            .hideProjectActions()
             .hideSidebar()
     }
     .frame(width: 800)

@@ -42,7 +42,7 @@ struct CurrentWorkingStateView: View, SuperLog {
                         Text("当前状态")
                             .font(.system(size: 14, weight: .medium))
 
-                        Text("(\(changedFileCount) 未提交)")
+                        Text(isRefreshing ? "正在刷新..." : "(\(changedFileCount) 未提交)")
                             .font(.system(size: 11))
                     }
 
