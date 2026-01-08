@@ -1,7 +1,5 @@
 import Foundation
-import MagicCore
-import MagicAll
-import MagicHttp
+import MagicKit
 import OSLog
 import SwiftUI
 

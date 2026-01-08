@@ -1,4 +1,4 @@
-import MagicCore
+import MagicKit
 import SwiftUI
 
 /// Gitignore 插件：在状态栏提供 .gitignore 查看入口。

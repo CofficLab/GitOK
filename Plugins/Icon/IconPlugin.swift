@@ -1,6 +1,6 @@
-import MagicCore
 import OSLog
 import SwiftUI
+import MagicKit
 
 class IconPlugin: SuperPlugin, SuperLog, PluginRegistrant {
     static let shared = IconPlugin()

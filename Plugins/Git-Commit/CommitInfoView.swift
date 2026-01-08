@@ -1,6 +1,6 @@
 import SwiftUI
-import MagicShell
-import MagicCore
+import MagicKit
+
 
 /**
  * 展示 Commit 信息的视图组件

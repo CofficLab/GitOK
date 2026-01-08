@@ -1,5 +1,5 @@
 import SwiftUI
-import MagicCore
+
 
 struct IconListActions: View {
     var body: some View {

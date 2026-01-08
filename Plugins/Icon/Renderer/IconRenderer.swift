@@ -1,5 +1,5 @@
-import MagicBackground
-import MagicCore
+import MagicUI
+
 import SwiftUI
 
 /**

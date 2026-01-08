@@ -1,5 +1,5 @@
 import SwiftUI
-import MagicCore
+
 
 /**
  * 缩放控制组件

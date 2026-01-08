@@ -1,6 +1,7 @@
 import SwiftUI
+import MagicKit
 import OSLog
-import MagicCore
+
 
 // MARK: - 状态管理Repository协议
 

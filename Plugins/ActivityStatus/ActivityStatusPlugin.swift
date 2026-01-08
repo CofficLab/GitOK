@@ -1,4 +1,4 @@
-import MagicCore
+import MagicKit
 import SwiftUI
 
 /// 状态栏活动状态插件：展示当前长耗时操作的状态文本。

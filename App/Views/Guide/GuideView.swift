@@ -1,7 +1,6 @@
 import SwiftUI
 import AppKit
 import MagicUI
-import MagicBackground
 
 /// 通用的引导提示视图组件
 /// 用于显示带有图标和文本的提示界面

@@ -1,5 +1,5 @@
 import SwiftUI
-import MagicCore
+
 
 /**
     图标标签栏视图

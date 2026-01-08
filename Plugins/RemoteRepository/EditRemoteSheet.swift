@@ -1,6 +1,6 @@
 import SwiftUI
-import MagicShell
-import MagicCore
+import MagicKit
+
 
 struct EditRemoteSheet: View {
     @Environment(\.dismiss) private var dismiss

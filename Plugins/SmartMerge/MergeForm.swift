@@ -1,7 +1,6 @@
 import OSLog
-import MagicShell
+import MagicKit
 import SwiftUI
-import MagicCore
 
 struct MergeForm: View {
     @EnvironmentObject var app: AppProvider

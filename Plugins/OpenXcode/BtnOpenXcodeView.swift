@@ -1,5 +1,5 @@
 import SwiftUI
-import MagicCore
+
 
 struct BtnOpenXcodeView: View {
     @EnvironmentObject var g: DataProvider

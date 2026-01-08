@@ -1,7 +1,8 @@
-import MagicCore
+
 import OSLog
 import SwiftData
 import SwiftUI
+import MagicKit
 
 /**
  * 核心服务管理器

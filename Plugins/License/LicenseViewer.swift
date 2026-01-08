@@ -1,7 +1,7 @@
-import MagicCore
 import MagicUI
 import OSLog
 import SwiftUI
+import MagicKit
 
 struct LicenseViewer: View, SuperLog {
     @EnvironmentObject var data: DataProvider

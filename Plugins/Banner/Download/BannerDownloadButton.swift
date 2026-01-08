@@ -1,5 +1,5 @@
 import SwiftUI
-import MagicCore
+
 
 /**
  * Banner下载按钮基础组件

@@ -1,5 +1,5 @@
 import SwiftUI
-import MagicCore
+
 
 /**
  * 图标内边距控制组件

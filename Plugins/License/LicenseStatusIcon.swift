@@ -1,5 +1,5 @@
-import MagicCore
 import SwiftUI
+import MagicKit
 
 /// LICENSE 状态栏图标：存在 LICENSE 时可点击查看/编辑。
 struct LicenseStatusIcon: View, SuperLog {

@@ -1,5 +1,5 @@
-import MagicCore
 import SwiftUI
+import MagicKit
 
 /// LICENSE 插件：在状态栏提供 LICENSE 入口。
 class LicensePlugin: SuperPlugin, SuperLog, PluginRegistrant {

@@ -1,8 +1,7 @@
-import MagicCore
 import SwiftUI
 import MagicAlert
 import MagicDevice
-import MagicAll
+import MagicKit
 
 /**
  * Banner iPhone App Store截图下载按钮

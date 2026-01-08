@@ -1,5 +1,5 @@
 import CloudKit
-import MagicCore
+
 import OSLog
 import SwiftData
 import SwiftUI

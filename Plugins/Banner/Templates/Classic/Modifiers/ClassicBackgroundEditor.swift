@@ -1,6 +1,5 @@
 import SwiftUI
-import MagicCore
-import MagicBackground
+import MagicUI
 import MagicAlert
 
 /**

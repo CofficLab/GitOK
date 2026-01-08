@@ -1,8 +1,8 @@
 import Foundation
+import MagicKit
 import SwiftData
 import OSLog
 import SwiftUI
-import MagicCore
 
 // MARK: - Repository管理器
 

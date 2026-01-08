@@ -1,4 +1,4 @@
-import MagicCore
+
 import SwiftUI
 
 struct GitignoreOrganizerView: View {

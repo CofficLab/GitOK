@@ -1,8 +1,8 @@
 import AppKit
 import MagicDiffView
 import MagicAlert
-import MagicAll
-import MagicCore
+import MagicKit
+
 import OSLog
 import SwiftUI
 

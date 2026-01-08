@@ -1,6 +1,7 @@
-import MagicCore
+
 import OSLog
 import SwiftUI
+import MagicKit
 
 class BannerPlugin: SuperPlugin, SuperLog, PluginRegistrant {
     static let shared = BannerPlugin()

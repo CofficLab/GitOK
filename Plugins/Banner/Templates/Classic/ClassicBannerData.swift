@@ -1,7 +1,6 @@
 import SwiftUI
-import MagicCore
 import MagicDevice
-import MagicAll
+import MagicKit
 import MagicUI
 
 /**

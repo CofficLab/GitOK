@@ -1,7 +1,6 @@
 import AppKit
-import MagicShell
 import MagicAlert
-import MagicCore
+import MagicKit
 import OSLog
 import SwiftUI
 

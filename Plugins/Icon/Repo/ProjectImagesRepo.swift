@@ -1,7 +1,7 @@
 import Foundation
 import OSLog
 import SwiftUI
-import MagicCore
+import MagicKit
 
 /**
  * 项目图标仓库（当前项目内）

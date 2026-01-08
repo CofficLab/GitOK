@@ -1,6 +1,6 @@
 import SwiftUI
 import MagicAlert
-import MagicCore
+
 
 /**
  经典模板的透明度编辑器

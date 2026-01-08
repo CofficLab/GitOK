@@ -1,5 +1,5 @@
 import SwiftUI
-import MagicCore
+
 
 /**
  * 透明度控制组件

@@ -1,6 +1,6 @@
 import SwiftUI
 import OSLog
-import MagicCore
+
 
 struct BtnOpenRemote: View {
     @EnvironmentObject var g: DataProvider

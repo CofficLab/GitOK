@@ -1,5 +1,5 @@
 import SwiftUI
-import MagicCore
+
 
 struct AddRemoteSheet: View {
     @Environment(\.dismiss) private var dismiss

@@ -1,9 +1,9 @@
 import Foundation
+import MagicKit
 import OSLog
 import SwiftData
 import SwiftUI
 import AppKit
-import MagicCore
 
 class ProjectImage: SuperLog {
     static var dir: String = ".gitok/images"

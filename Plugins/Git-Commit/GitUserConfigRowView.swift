@@ -1,5 +1,5 @@
 import SwiftUI
-import MagicCore
+
 
 struct GitUserConfigRowView: View {
     let config: GitUserConfig

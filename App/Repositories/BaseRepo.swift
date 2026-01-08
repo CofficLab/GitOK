@@ -1,7 +1,7 @@
 import Foundation
 import SwiftData
 import OSLog
-import MagicCore
+import MagicKit
 import SwiftUI
 
 // MARK: - Repository基础协议

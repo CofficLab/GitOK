@@ -1,5 +1,5 @@
-import MagicCore
-import MagicAll
+
+import MagicKit
 import MagicAlert
 import MagicDevice
 import SwiftUI

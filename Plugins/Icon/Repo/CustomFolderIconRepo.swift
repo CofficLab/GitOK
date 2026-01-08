@@ -1,7 +1,7 @@
 import Foundation
 import SwiftUI
 import OSLog
-import MagicCore
+
 
 /**
  * 自定义文件夹图标仓库

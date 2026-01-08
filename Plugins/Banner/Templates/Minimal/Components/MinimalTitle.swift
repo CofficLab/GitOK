@@ -1,5 +1,5 @@
 import SwiftUI
-import MagicCore
+
 
 /**
  简约模板的标题组件

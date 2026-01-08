@@ -1,5 +1,5 @@
 import SwiftUI
-import MagicCore
+
 import MagicAlert
 
 struct BtnChangeImage: View {

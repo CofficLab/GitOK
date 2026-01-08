@@ -2,8 +2,8 @@
 import AVKit
 import Combine
 import Foundation
-import MagicCore
-import MagicAll
+
+import MagicKit
 import MagicDevice
 import MediaPlayer
 import OSLog

@@ -1,6 +1,6 @@
 import CloudKit
+import MagicKit
 import Foundation
-import MagicCore
 import OSLog
 import SwiftData
 import SwiftUI

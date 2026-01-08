@@ -1,9 +1,9 @@
-import MagicCore
 import MagicAlert
 import MagicUI
 import OSLog
 import SwiftData
 import SwiftUI
+import MagicKit
 
 /**
     添加Banner按钮

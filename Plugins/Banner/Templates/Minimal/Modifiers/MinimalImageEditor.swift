@@ -1,7 +1,7 @@
 import SwiftUI
-import MagicCore
+
 import MagicAlert
-import MagicAll
+import MagicKit
 import MagicDevice
 import UniformTypeIdentifiers
 

@@ -1,5 +1,5 @@
 import AppKit
-import MagicAll
+import MagicKit
 import SwiftUI
 
 /**
