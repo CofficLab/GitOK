@@ -1,4 +1,5 @@
 import SwiftUI
+import MagicShell
 import MagicCore
 
 /**

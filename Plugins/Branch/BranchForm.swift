@@ -1,4 +1,5 @@
 import MagicCore
+import MagicShell
 import MagicAlert
 import MagicUI
 import OSLog

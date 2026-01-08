@@ -1,4 +1,5 @@
 import MagicCore
+import MagicShell
 import SwiftUI
 
 struct FileTile: View {

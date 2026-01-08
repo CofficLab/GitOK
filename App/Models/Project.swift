@@ -1,5 +1,6 @@
 import Foundation
 import MagicCore
+import MagicShell
 import OSLog
 import SwiftData
 import SwiftUI
@@ -482,7 +483,25 @@ extension Project {
     }
 
     func untrackedFiles() async throws -> [GitDiffFile] {
-        try await ShellGit.diffFileList(staged: false, at: self.path)
+        // 获取已变更的文件（修改、删除等）
+        var files = try await ShellGit.diffFileList(staged: false, at: self.path)
+
+        // 获取未跟踪的文件（新增文件）
+        let untrackedOutput = try Shell.runSync("git ls-files --others --exclude-standard", at: self.path)
+        let untrackedFileNames = untrackedOutput.split(separator: "\n").map { String($0) }.filter { !$0.isEmpty }
+
+        // 为每个未跟踪文件创建 GitDiffFile 对象
+        for fileName in untrackedFileNames {
+            let gitDiffFile = GitDiffFile(
+                id: fileName,
+                file: fileName,
+                changeType: "A", // 使用 "A" 表示新增文件
+                diff: "" // 未跟踪文件没有 diff 内容
+            )
+            files.append(gitDiffFile)
+        }
+
+        return files
     }
 
     func stagedFiles() async throws -> [GitDiffFile] {

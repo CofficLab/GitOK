@@ -1,4 +1,5 @@
 import AVKit
+import MagicShell
 import Combine
 import Foundation
 import MagicCore
