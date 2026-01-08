@@ -107,37 +107,37 @@ enum CommitCategory: String, CaseIterable, Equatable {
     var defaultMessage: String {
         switch self {
         case .Bugfix:
-            return "fix a bug"
+            return "Fix a bug"
         case .Chore:
-            return "minor adjustments"
+            return "Minor adjustments"
         case .CI:
-            return "configure continuous integration"
+            return "Configure continuous integration"
         case .Config:
-            return "update configuration settings"
+            return "Update configuration settings"
         case .Docker:
-            return "update docker configuration"
+            return "Update Docker configuration"
         case .Document:
-            return "update documentation"
+            return "Update documentation"
         case .Feature:
-            return "implement a new feature"
+            return "Implement a new feature"
         case .FirstCommit:
-            return "initial commit"
+            return "Initial commit"
         case .Improve:
-            return "enhance existing functionality"
+            return "Enhance existing functionality"
         case.I18n:
-            return "translate or localize content"
+            return "Translate or localize content"
         case .Release:
-            return "prepare for release"
+            return "Prepare for release"
         case .Trash:
-            return "delete unnecessary code or files"
+            return "Delete unnecessary code or files"
         case .Typo:
-            return "correct a typo"
+            return "Correct a typo"
         case .UI:
-            return "update user interface elements"
+            return "Update user interface elements"
         case .PackageUpdate:
-            return "update package dependencies"
+            return "Update package dependencies"
         case .Test:
-            return "add or update tests"
+            return "Add or update tests"
         }
     }
 }
