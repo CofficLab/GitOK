@@ -18,7 +18,7 @@ struct CommitRow: View, SuperThread {
                     // 主要内容
                     HStack {
                         VStack(alignment: .leading, spacing: 2) {
-                            // 第一行：提交消息
+                            // 第一行：提交消息标题
                             HStack {
                                 Text(commit.message)
                                     .lineLimit(1)
@@ -26,9 +26,9 @@ struct CommitRow: View, SuperThread {
                                 Spacer()
                             }
 
-                            // 第二行：提交人和提交时间
+                            // 第二行：所有作者（包括 Co-Authored-By）
                             HStack {
-                                Text(commit.author)
+                                Text(commit.allAuthors)
                                     .padding(.vertical, 1)
                                     .lineLimit(1)
 
@@ -50,6 +50,17 @@ struct CommitRow: View, SuperThread {
                                     .font(.system(size: 10))
                                     .foregroundColor(.secondary)
                                 Spacer()
+                            }
+
+                            // 第四行：提交消息 body（如果有）
+                            if !commit.body.isEmpty {
+                                HStack {
+                                    Text(commit.body)
+                                        .lineLimit(2)
+                                        .font(.system(size: 10))
+                                        .foregroundColor(.secondary)
+                                    Spacer()
+                                }
                             }
                         }
                         .padding(.vertical, 6)
@@ -115,21 +126,21 @@ extension CommitRow {
 }
 
 #Preview("App - Small Screen") {
-    RootView {
-        ContentLayout()
-            .hideSidebar()
-            .hideTabPicker()
-            .hideProjectActions()
-    }
-    .frame(width: 700)
-    .frame(height: 700)
+    ContentLayout()
+        .hideSidebar()
+        .hideTabPicker()
+        .hideProjectActions()
+        .inRootView()
+        .frame(width: 700)
+        .frame(height: 700)
 }
 
 #Preview("App - Big Screen") {
-    RootView {
-        ContentLayout()
-            .hideSidebar()
-    }
-    .frame(width: 1200)
-    .frame(height: 1200)
+    ContentLayout()
+        .hideSidebar()
+        .hideTabPicker()
+        .hideProjectActions()
+        .inRootView()
+        .frame(width: 1200)
+        .frame(height: 1200)
 }

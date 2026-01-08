@@ -169,6 +169,8 @@ extension CurrentWorkingStateView {
 #Preview("App - Big Screen") {
     ContentLayout()
         .hideSidebar()
+        .hideTabPicker()
+        .hideProjectActions()
         .inRootView()
         .frame(width: 1200)
         .frame(height: 1200)

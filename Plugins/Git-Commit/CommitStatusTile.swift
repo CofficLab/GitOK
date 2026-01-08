@@ -27,6 +27,7 @@ struct CommitStatusTile: View {
 #Preview("App - Big Screen") {
     ContentLayout()
         .hideSidebar()
+        .hideProjectActions()
         .inRootView()
         .frame(width: 1200)
         .frame(height: 1200)

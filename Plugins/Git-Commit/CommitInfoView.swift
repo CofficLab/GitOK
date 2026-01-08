@@ -1,6 +1,5 @@
-import SwiftUI
 import MagicKit
-
+import SwiftUI
 
 /**
  * 展示 Commit 信息的视图组件
@@ -26,6 +25,23 @@ struct CommitInfoView: View {
                 Spacer()
             }
 
+            // Commit body（如果有）
+            if !commit.body.isEmpty {
+                HStack(alignment: .top, spacing: 8) {
+                    Image(systemName: "text.alignleft")
+                        .foregroundColor(.secondary)
+                        .font(.system(size: 12))
+
+                    Text(commit.body)
+                        .font(.body)
+                        .foregroundColor(.secondary)
+                        .lineLimit(10)
+                        .textSelection(.enabled)
+
+                    Spacer()
+                }
+            }
+
             HStack(spacing: 16) {
                 // 作者信息
                 if !commit.author.isEmpty {
@@ -33,7 +49,7 @@ struct CommitInfoView: View {
                         Image(systemName: "person.circle")
                             .foregroundColor(.secondary)
                             .font(.system(size: 12))
-                        Text(commit.author)
+                        Text(commit.allAuthors)
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }
@@ -95,20 +111,20 @@ struct CommitInfoView: View {
 }
 
 #Preview("App - Small Screen") {
-    RootView {
-        ContentLayout()
-            .hideSidebar()
-            .hideTabPicker()
-            .hideProjectActions()
-    }
-    .frame(width: 600)
-    .frame(height: 600)
+    ContentLayout()
+        .hideSidebar()
+        .hideTabPicker()
+        .hideProjectActions()
+        .inRootView()
+        .frame(width: 600)
+        .frame(height: 600)
 }
 
 #Preview("App - Big Screen") {
-    RootView {
-        ContentLayout()
-    }
-    .frame(width: 1200)
-    .frame(height: 1200)
+    ContentLayout()
+        .hideTabPicker()
+        .hideProjectActions()
+        .inRootView()
+        .frame(width: 1200)
+        .frame(height: 1200)
 }
