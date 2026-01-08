@@ -2,18 +2,34 @@ import MagicCore
 import OSLog
 import SwiftUI
 
+/// 显示当前工作状态的视图组件
+/// 显示未提交文件数量，并提供选择当前工作状态的功能
 struct CurrentWorkingStateView: View, SuperLog {
+    /// 环境对象：数据提供者
     @EnvironmentObject var data: DataProvider
 
+    /// 未提交文件数量
     @State private var changedFileCount = 0
+
+    /// 是否正在刷新文件列表
     @State private var isRefreshing = false
 
+    /// 是否正在进行远程同步刷新
+    @State private var isRemoteSyncRefreshing = false
+
+    /// 是否被选中（当前工作状态）
     private var isSelected: Bool {
         data.commit == nil
     }
 
+    /// 是否启用详细日志输出
+    static let verbose = false
+
+    /// 日志标识符
     static let emoji = "🌳"
 
+    /// 视图主体
+    /// 显示当前工作状态信息和远程同步状态
     var body: some View {
         VStack(spacing: 0) {
             // 当前工作状态部分
@@ -23,17 +39,17 @@ struct CurrentWorkingStateView: View, SuperLog {
                         .font(.system(size: 16, weight: .medium))
 
                     VStack(alignment: .leading, spacing: 2) {
-                        Text("当前工作状态")
+                        Text("当前状态")
                             .font(.system(size: 14, weight: .medium))
 
-                        Text("(\(changedFileCount) 个未提交文件)")
+                        Text("(\(changedFileCount) 未提交)")
                             .font(.system(size: 11))
                     }
 
                     Spacer()
                 }
 
-                if isRefreshing {
+                if isRefreshing || isRemoteSyncRefreshing {
                     HStack {
                         Spacer()
                         ProgressView()
@@ -50,7 +66,7 @@ struct CurrentWorkingStateView: View, SuperLog {
                 .background(Color.white.opacity(0.2))
 
             // 远程同步状态部分
-            RemoteSyncStatusView()
+            RemoteSyncStatusView(isRefreshing: $isRemoteSyncRefreshing)
         }
         .background(
             isSelected
@@ -68,6 +84,8 @@ struct CurrentWorkingStateView: View, SuperLog {
 // MARK: - Action
 
 extension CurrentWorkingStateView {
+    /// 加载未提交文件数量
+    /// 获取当前项目的未跟踪文件数量并更新UI
     private func loadChangedFileCount() async {
         guard let project = data.project else {
             return
@@ -99,12 +117,14 @@ extension CurrentWorkingStateView {
 // MARK: - Event
 
 extension CurrentWorkingStateView {
+    /// 视图出现时的事件处理：加载文件状态
     func onAppear() {
         Task {
             await self.loadChangedFileCount()
         }
     }
 
+    /// 点击事件处理：选择当前工作状态并刷新文件列表
     func onTap() {
         data.commit = nil
         Task {
@@ -112,18 +132,21 @@ extension CurrentWorkingStateView {
         }
     }
 
+    /// 项目提交完成事件处理：刷新文件列表
     func onProjectDidCommit(_ eventInfo: ProjectEventInfo) {
         Task {
             await self.loadChangedFileCount()
         }
     }
 
+    /// 项目改变事件处理：刷新文件列表
     func onProjectDidChange() {
         Task {
             await self.loadChangedFileCount()
         }
     }
-    
+
+    /// 应用激活事件处理：刷新文件列表
     func onAppDidBecomeActive(_ notification: Notification) {
         Task {
             await self.loadChangedFileCount()
@@ -133,26 +156,19 @@ extension CurrentWorkingStateView {
 
 // MARK: - Preview
 
-#Preview {
-    CurrentWorkingStateView()
-        .inRootView()
-        .frame(width: 400)
-}
-
 #Preview("App - Small Screen") {
     ContentLayout()
         .hideSidebar()
         .hideTabPicker()
         .hideProjectActions()
         .inRootView()
-        .frame(width: 700)
-        .frame(height: 700)
+        .frame(width: 800)
+        .frame(height: 600)
 }
 
 #Preview("App - Big Screen") {
     ContentLayout()
         .hideSidebar()
-        .hideProjectActions()
         .inRootView()
         .frame(width: 1200)
         .frame(height: 1200)

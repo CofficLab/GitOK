@@ -5,6 +5,8 @@ import SwiftUI
 /// 显示远程仓库同步状态的视图组件
 /// 显示本地领先远程和远程领先本地的提交数量，并提供手动刷新功能
 struct RemoteSyncStatusView: View, SuperLog {
+    /// 绑定到外部的刷新状态
+    @Binding var isRefreshing: Bool
     /// 是否启用详细日志输出
     static let verbose = true
 
@@ -35,8 +37,6 @@ struct RemoteSyncStatusView: View, SuperLog {
     /// 是否正在执行 push 操作
     @State private var isPushing = false
 
-    /// 刷新时显示的提示文字
-    @State private var statusMessage: String? = nil
 
     /// 是否有需要显示的同步状态
     private var hasSyncStatus: Bool {
@@ -69,25 +69,11 @@ struct RemoteSyncStatusView: View, SuperLog {
                     .background(Color.white.opacity(0.2))
             }
 
-            // 显示刷新状态提示文字
-            if let message = statusMessage {
-                HStack {
-                    Text(message)
-                        .font(.system(size: 11))
-                        .foregroundColor(.secondary)
-                    Spacer()
-                }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 6)
-                .background(Color.secondary.opacity(0.05))
-                .transition(.opacity.combined(with: .move(edge: .top)))
-            }
         }
         .onAppear(perform: onAppear)
         .onChange(of: data.project) { _, _ in
             onProjectChange()
         }
-        .animation(.easeInOut(duration: 0.3), value: statusMessage)
     }
 }
 
@@ -220,7 +206,7 @@ extension RemoteSyncStatusView {
         Task {
             await MainActor.run {
                 isLoading = true
-                statusMessage = "正在刷新同步状态…"
+                isRefreshing = true
             }
 
             do {
@@ -231,7 +217,6 @@ extension RemoteSyncStatusView {
             } catch {
                 await MainActor.run {
                     self.unpushedCount = 0
-                    statusMessage = "获取未推送提交失败"
                     os_log(.error, "\(self.t)❌ Failed to load unpushed commits count: \(error)")
                 }
             }
@@ -241,21 +226,15 @@ extension RemoteSyncStatusView {
                 await MainActor.run {
                     self.unpulledCount = unpulled.count
                     isLoading = false
-                    statusMessage = "刷新完成"
+                    isRefreshing = false
                 }
             } catch {
                 await MainActor.run {
                     self.unpulledCount = 0
                     isLoading = false
-                    statusMessage = "获取未拉取提交失败"
+                    isRefreshing = false
                     os_log(.error, "\(self.t)❌ Failed to load unpulled commits count: \(error)")
                 }
-            }
-
-            // 2秒后自动隐藏提示文字
-            try? await Task.sleep(nanoseconds: 2_000_000_000)
-            await MainActor.run {
-                statusMessage = nil
             }
         }
     }
@@ -276,33 +255,26 @@ extension RemoteSyncStatusView {
         Task {
             await MainActor.run {
                 isPulling = true
-                statusMessage = "正在拉取远程提交…"
+                isRefreshing = true
             }
 
             do {
-                try await project.pull()
+                try project.pull()
                 await MainActor.run {
-                    statusMessage = "拉取成功"
                     os_log("\(self.t)✅ Git pull succeeded")
                 }
             } catch {
                 await MainActor.run {
-                    statusMessage = "拉取失败: \(error.localizedDescription)"
                     os_log(.error, "\(self.t)❌ Git pull failed: \(error)")
                 }
             }
 
             // 重新加载同步状态
-            await loadSyncStatus()
+            loadSyncStatus()
 
             await MainActor.run {
                 isPulling = false
-            }
-
-            // 2秒后自动隐藏提示文字
-            try? await Task.sleep(nanoseconds: 2_000_000_000)
-            await MainActor.run {
-                statusMessage = nil
+                isRefreshing = false
             }
         }
     }
@@ -323,33 +295,26 @@ extension RemoteSyncStatusView {
         Task {
             await MainActor.run {
                 isPushing = true
-                statusMessage = "正在推送本地提交…"
+                isRefreshing = true
             }
 
             do {
-                try await project.push()
+                try project.push()
                 await MainActor.run {
-                    statusMessage = "推送成功"
                     os_log("\(self.t)✅ Git push succeeded")
                 }
             } catch {
                 await MainActor.run {
-                    statusMessage = "推送失败: \(error.localizedDescription)"
                     os_log(.error, "\(self.t)❌ Git push failed: \(error)")
                 }
             }
 
             // 重新加载同步状态
-            await loadSyncStatus()
+            loadSyncStatus()
 
             await MainActor.run {
                 isPushing = false
-            }
-
-            // 2秒后自动隐藏提示文字
-            try? await Task.sleep(nanoseconds: 2_000_000_000)
-            await MainActor.run {
-                statusMessage = nil
+                isRefreshing = false
             }
         }
     }
