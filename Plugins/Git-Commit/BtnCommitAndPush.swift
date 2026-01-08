@@ -59,7 +59,7 @@ struct BtnCommitAndPush: View, SuperLog, SuperThread {
                         }
                     } catch {
                         await MainActor.run {
-                            m.error(error.localizedDescription)
+                            m.error(error)
                         }
                     }
 
