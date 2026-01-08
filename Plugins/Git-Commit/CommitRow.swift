@@ -51,17 +51,6 @@ struct CommitRow: View, SuperThread {
                                     .foregroundColor(.secondary)
                                 Spacer()
                             }
-
-                            // 第四行：提交消息 body（如果有）
-                            if !commit.body.isEmpty {
-                                HStack {
-                                    Text(commit.body)
-                                        .lineLimit(2)
-                                        .font(.system(size: 10))
-                                        .foregroundColor(.secondary)
-                                    Spacer()
-                                }
-                            }
                         }
                         .padding(.vertical, 6)
                         .padding(.horizontal, 8)

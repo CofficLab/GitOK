@@ -4,7 +4,15 @@
       "Bash(swift build:*)",
       "Bash(xcodebuild:*)",
       "Bash(find:*)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(git push:*)",
+      "Bash(while:*)",
+      "Bash(done:*)",
+      "Bash(cat:*)",
+      "Bash(xxd:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git rev-parse:*)"
     ]
   }
 }
