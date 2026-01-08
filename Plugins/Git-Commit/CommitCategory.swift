@@ -103,6 +103,14 @@ enum CommitCategory: String, CaseIterable, Equatable {
     var text: String {
         "\(self.emoji) \(self.title): "
     }
+
+    func text(includeEmoji: Bool) -> String {
+        if includeEmoji {
+            return "\(self.emoji) \(self.title): "
+        } else {
+            return "\(self.title): "
+        }
+    }
     
     var defaultMessage: String {
         switch self {

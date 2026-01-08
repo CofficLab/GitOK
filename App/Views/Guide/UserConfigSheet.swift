@@ -15,11 +15,16 @@ struct UserConfigSheet: View, SuperLog {
     @State private var hasChanges = false
     @State private var savedConfigs: [GitUserConfig] = []
     @State private var selectedConfig: GitUserConfig?
+    @State private var commitStyleIncludeEmoji: Bool = true
 
     private let verbose = true
 
     private var configRepo: any GitUserConfigRepoProtocol {
         data.repoManager.gitUserConfigRepo
+    }
+
+    private var stateRepo: any StateRepoProtocol {
+        data.repoManager.stateRepo
     }
 
     var body: some View {
@@ -84,6 +89,26 @@ struct UserConfigSheet: View, SuperLog {
                                 hasChanges = true
                                 selectedConfig = nil
                             }
+                    }
+
+                    Divider()
+
+                    VStack(alignment: .leading, spacing: 8) {
+                        HStack {
+                            Text("Commit 风格")
+                                .font(.headline)
+
+                            Spacer()
+
+                            Toggle("包含 Emoji", isOn: $commitStyleIncludeEmoji)
+                                .onChange(of: commitStyleIncludeEmoji) {
+                                    saveCommitStyle()
+                                }
+                        }
+
+                        Text("选择 commit 消息是否包含 emoji 前缀")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
                     }
                 }
             }
@@ -213,6 +238,15 @@ extension UserConfigSheet {
     private func handleOnAppear() {
         loadCurrentUserInfo()
         loadSavedConfigs()
+        loadCommitStyle()
+    }
+
+    private func loadCommitStyle() {
+        commitStyleIncludeEmoji = stateRepo.commitStyleIncludeEmoji
+    }
+
+    private func saveCommitStyle() {
+        stateRepo.setCommitStyleIncludeEmoji(commitStyleIncludeEmoji)
     }
 }
 

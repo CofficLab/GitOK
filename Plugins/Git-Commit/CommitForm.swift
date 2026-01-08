@@ -15,7 +15,8 @@ struct CommitForm: View, SuperLog {
             c = "Auto Committed by GitOK"
         }
 
-        return "\(category.text) \(c)"
+        let includeEmoji = g.repoManager.stateRepo.commitStyleIncludeEmoji
+        return "\(category.text(includeEmoji: includeEmoji)) \(c)"
     }
 
     var body: some View {

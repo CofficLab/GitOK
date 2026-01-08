@@ -53,6 +53,9 @@
     "commit" : {
 
     },
+    "Commit 风格" : {
+
+    },
     "current_head" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -381,6 +384,9 @@
     "加载失败" : {
 
     },
+    "包含 Emoji" : {
+
+    },
     "取消" : {
 
     },
@@ -670,6 +676,9 @@
 
     },
     "远程名称" : {
+
+    },
+    "选择 commit 消息是否包含 emoji 前缀" : {
 
     },
     "选择一个图标开始制作，或创建新的设计" : {
