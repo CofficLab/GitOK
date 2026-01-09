@@ -8,6 +8,7 @@ struct CommitForm: View, SuperLog {
 
     @State var text: String = ""
     @State var category: CommitCategory = .Chore
+    @State var commitStyle: CommitStyle = .emoji
 
     var commitMessage: String {
         var c = text
@@ -15,44 +16,30 @@ struct CommitForm: View, SuperLog {
             c = "Auto Committed by GitOK"
         }
 
-        return "\(category.text) \(c)"
+        return "\(category.text(style: commitStyle)) \(c)"
     }
 
     var body: some View {
         VStack(spacing: 0) {
             HStack(spacing: 0) {
-                // 当前分支信息显示区域
-                if let currentBranch = g.branch {
-                    HStack {
-                        Image(systemName: "arrow.branch")
-                            .foregroundColor(.secondary)
-                            .font(.system(size: 14))
+                HStack(spacing: 0) {
+                    CommitStylePicker(
+                        selection: $commitStyle
+                    )
 
-                        Text(currentBranch.name)
-                            .font(.caption)
-                            .fontWeight(.medium)
-                            .foregroundColor(.primary)
-                    }
-                    .padding(.trailing, 12)
+                    CommitCategoryPicker(
+                        selection: $category,
+                        commitStyle: commitStyle
+                    )
                 }
 
-                Picker("", selection: $category, content: {
-                    ForEach(CommitCategory.allCases, id: \.self, content: {
-                        Text($0.label).tag($0 as CommitCategory?)
-                    })
-                })
-                .frame(width: 135)
-                .pickerStyle(.automatic)
-
                 Spacer()
-                TextField("commit", text: $text)
-                    .textFieldStyle(.roundedBorder)
-                    .padding(.vertical)
+                CommitMessageInput(text: $text)
             }
 
             HStack {
                 UserView().frame(maxWidth: 300)
-                
+
                 Spacer()
 
                 BtnCommitAndPush(commitMessage: commitMessage, commitOnly: true)
@@ -62,6 +49,9 @@ struct CommitForm: View, SuperLog {
         }
         .onProjectDidCommit(perform: onProjectDidCommit)
         .onChange(of: category, onCategoryDidChange)
+        .onChange(of: commitStyle) { _, _ in
+            onCommitStyleDidChange()
+        }
         .onAppear(perform: onAppear)
     }
 }
@@ -69,16 +59,48 @@ struct CommitForm: View, SuperLog {
 // MARK: - Action
 
 extension CommitForm {
+    /// 根据类别和风格生成默认消息
+    private func defaultMessage(for category: CommitCategory, style: CommitStyle) -> String {
+        let baseMessage = category.defaultMessage
+
+        // 如果是小写风格，将首字母转换为小写
+        if style.isLowercase {
+            return lowercasedFirst(baseMessage)
+        }
+
+        return baseMessage
+    }
+
+    /// 将字符串的首字母转换为小写
+    private func lowercasedFirst(_ string: String) -> String {
+        guard let first = string.first else {
+            return string
+        }
+
+        return first.lowercased() + string.dropFirst()
+    }
     func onProjectDidCommit(_ eventInfo: ProjectEventInfo) {
-        self.text = self.category.defaultMessage
+        self.text = defaultMessage(for: category, style: commitStyle)
     }
 
     func onCategoryDidChange() {
-        self.text = self.category.defaultMessage
+        self.text = defaultMessage(for: category, style: commitStyle)
+    }
+
+    func onCommitStyleDidChange() {
+        // 如果当前文本是该类别的默认消息（任何风格），则更新为新风格的默认消息
+        let isDefaultMessage = CommitStyle.allCases.contains { style in
+            text == defaultMessage(for: category, style: style)
+        }
+
+        if isDefaultMessage || text.isEmpty {
+            self.text = defaultMessage(for: category, style: commitStyle)
+        }
     }
 
     func onAppear() {
-        self.text = self.category.defaultMessage
+        self.text = defaultMessage(for: category, style: commitStyle)
+        self.commitStyle = g.repoManager.stateRepo.commitStyle
     }
 }
 

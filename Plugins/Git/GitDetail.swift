@@ -35,7 +35,7 @@ struct GitDetail: View, SuperEvent, SuperLog {
                                 CommitForm()
                             }
                         }
-                        .padding(.horizontal, 16)
+                        .padding(.horizontal, 8)
                         .padding(.vertical, 8)
 
                         if !self.isProjectClean || self.data.commit != nil {

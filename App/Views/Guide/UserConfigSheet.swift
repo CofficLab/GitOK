@@ -15,11 +15,16 @@ struct UserConfigSheet: View, SuperLog {
     @State private var hasChanges = false
     @State private var savedConfigs: [GitUserConfig] = []
     @State private var selectedConfig: GitUserConfig?
+    @State private var commitStyle: CommitStyle = .emoji
 
     private let verbose = true
 
     private var configRepo: any GitUserConfigRepoProtocol {
         data.repoManager.gitUserConfigRepo
+    }
+
+    private var stateRepo: any StateRepoProtocol {
+        data.repoManager.stateRepo
     }
 
     var body: some View {
@@ -84,6 +89,56 @@ struct UserConfigSheet: View, SuperLog {
                                 hasChanges = true
                                 selectedConfig = nil
                             }
+                    }
+
+                    Divider()
+
+                    VStack(alignment: .leading, spacing: 8) {
+                        HStack {
+                            Text("Commit 风格")
+                                .font(.headline)
+
+                            Spacer()
+
+                            Picker("", selection: $commitStyle) {
+                                ForEach(CommitStyle.allCases, id: \.self) { style in
+                                    Text(style.label)
+                                        .tag(style as CommitStyle?)
+                                }
+                            }
+                            .frame(width: 120)
+                            .pickerStyle(.automatic)
+                            .onChange(of: commitStyle) { _, _ in
+                                saveCommitStyle()
+                            }
+                        }
+
+                        Text("选择 commit 消息风格")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+
+                        // 显示当前风格的例子
+                        VStack(alignment: .leading, spacing: 6) {
+                            Text("风格预览")
+                                .font(.subheadline)
+                                .foregroundColor(.secondary)
+
+                            VStack(alignment: .leading, spacing: 4) {
+                                ForEach([
+                                    (category: CommitCategory.Chore, message: "Update dependencies"),
+                                    (category: CommitCategory.Feature, message: "Add user authentication"),
+                                    (category: CommitCategory.Bugfix, message: "Fix login validation")
+                                ], id: \.category) { item in
+                                    let fullMessage = "\(item.category.text(style: commitStyle))\(commitStyle.isLowercase ? item.message.lowercased() : item.message)"
+                                    Text(fullMessage)
+                                        .font(.system(.body, design: .monospaced))
+                                        .foregroundColor(.primary)
+                                }
+                            }
+                            .padding(8)
+                            .background(Color.gray.opacity(0.1))
+                            .cornerRadius(6)
+                        }
                     }
                 }
             }
@@ -213,6 +268,15 @@ extension UserConfigSheet {
     private func handleOnAppear() {
         loadCurrentUserInfo()
         loadSavedConfigs()
+        loadCommitStyle()
+    }
+
+    private func loadCommitStyle() {
+        commitStyle = stateRepo.commitStyle
+    }
+
+    private func saveCommitStyle() {
+        stateRepo.setCommitStyle(commitStyle)
     }
 }
 

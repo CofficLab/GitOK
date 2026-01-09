@@ -103,6 +103,26 @@ enum CommitCategory: String, CaseIterable, Equatable {
     var text: String {
         "\(self.emoji) \(self.title): "
     }
+
+    func text(includeEmoji: Bool) -> String {
+        if includeEmoji {
+            return "\(self.emoji) \(self.title): "
+        } else {
+            return "\(self.title): "
+        }
+    }
+
+    func text(style: CommitStyle) -> String {
+        let prefix: String
+        if style.includeEmoji {
+            prefix = "\(self.emoji) \(self.title): "
+        } else if style.isLowercase {
+            prefix = "\(self.title.lowercased()): "
+        } else {
+            prefix = "\(self.title): "
+        }
+        return prefix
+    }
     
     var defaultMessage: String {
         switch self {
