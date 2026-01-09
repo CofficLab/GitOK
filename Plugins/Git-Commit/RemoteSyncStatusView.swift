@@ -8,7 +8,7 @@ struct RemoteSyncStatusView: View, SuperLog {
     /// 绑定到外部的刷新状态
     @Binding var isRefreshing: Bool
     /// 是否启用详细日志输出
-    static let verbose = true
+    static let verbose = false
 
     /// 环境对象：数据提供者
     @EnvironmentObject var data: DataProvider

@@ -6,11 +6,13 @@ import MediaPlayer
 import OSLog
 import SwiftUI
 
-/**
-    图标提供者，统一管理所有图标插件相关的状态
- */
+/// 图标提供者，统一管理所有图标插件相关的状态
 class IconProvider: NSObject, ObservableObject, SuperLog {
-    static var emoji = "🍒"
+    /// emoji 标识符
+    nonisolated static let emoji = "🍒"
+
+    /// 是否启用详细日志输出
+    nonisolated static let verbose = false
 
     @Published private(set) var currentData: IconData? = nil
 
@@ -29,10 +31,13 @@ class IconProvider: NSObject, ObservableObject, SuperLog {
         return selectedCategory?.name ?? ""
     }
 
+    /// 初始化图标提供者
     override init() {
         super.init()
 
-        os_log("\(self.t)Initializing IconProvider")
+        if Self.verbose {
+            os_log("\(self.t)Initializing IconProvider")
+        }
 
         NotificationCenter.default.addObserver(
             self, selector: #selector(handleIconDidSave),
@@ -49,6 +54,8 @@ class IconProvider: NSObject, ObservableObject, SuperLog {
         NotificationCenter.default.removeObserver(self)
     }
 
+    /// 处理图标保存通知
+    /// - Parameter notification: 通知对象
     @objc private func handleIconDidSave(_ notification: Notification) {
         // 只有在图标真正保存时才更新模型，避免参数调整时的频繁更新
         let iconPath = self.currentData?.path
@@ -61,6 +68,8 @@ class IconProvider: NSObject, ObservableObject, SuperLog {
         }
     }
 
+    /// 处理图标删除通知
+    /// - Parameter notification: 通知对象
     @objc private func handleIconDidDelete(_ notification: Notification) {
         let path = notification.userInfo?["path"] as? String
         if let path = path, path == self.currentData?.path {
@@ -68,14 +77,15 @@ class IconProvider: NSObject, ObservableObject, SuperLog {
         }
     }
 
+    /// 更新当前模型
+    /// - Parameter newModel: 新的图标数据模型
     func updateCurrentModel(newModel: IconData?) {
         self.currentData = newModel
         self.selectedIconId = newModel?.iconId ?? ""
     }
 
-    /**
-        选择图标
-     */
+    /// 选择图标
+    /// - Parameter iconId: 图标ID
     func selectIcon(_ iconId: String) {
         self.selectedIconId = iconId
 
@@ -89,38 +99,31 @@ class IconProvider: NSObject, ObservableObject, SuperLog {
         }
     }
 
-    /**
-        选择图标分类
-     */
+    /// 选择图标分类
+    /// - Parameter category: 图标分类
     func selectCategory(_ category: IconCategory?) {
         self.selectedCategory = category
     }
 
-    /**
-        清空选中的分类
-     */
+    /// 清空选中的分类
     func clearSelectedCategory() {
         self.selectedCategory = nil
     }
 
-    /**
-        向项目图标库添加图片
-        - Parameters:
-            - data: 图像二进制数据
-            - filename: 文件名（包含扩展名）
-        - Returns: 是否成功
-     */
+    /// 向项目图标库添加图片
+    /// - Parameters:
+    ///   - data: 图像二进制数据
+    ///   - filename: 文件名（包含扩展名）
+    /// - Returns: 是否成功
     func addImageToProjectLibrary(data: Data, filename: String) -> Bool {
         guard let sid = selectedCategory?.sourceIdentifier ?? selectedSourceIdentifier else { return false }
         let ok = awaitResult { await IconRepo.shared.addImage(data: data, filename: filename, to: sid) }
         return ok
     }
 
-    /**
-        从项目图标库删除图片
-        - Parameter filename: 文件名（包含扩展名）
-        - Returns: 是否成功
-     */
+    /// 从项目图标库删除图片
+    /// - Parameter filename: 文件名（包含扩展名）
+    /// - Returns: 是否成功
     func deleteImageFromProjectLibrary(filename: String) -> Bool {
         guard let sid = selectedCategory?.sourceIdentifier ?? selectedSourceIdentifier else { return false }
         let ok = awaitResult { await IconRepo.shared.deleteImage(filename: filename, from: sid) }
@@ -132,6 +135,9 @@ class IconProvider: NSObject, ObservableObject, SuperLog {
         return ok
     }
 
+    /// 等待异步操作结果
+    /// - Parameter op: 异步操作
+    /// - Returns: 操作结果
     private func awaitResult(_ op: @escaping () async -> Bool) -> Bool {
         var result = false
         let semaphore = DispatchSemaphore(value: 0)
@@ -144,22 +150,24 @@ class IconProvider: NSObject, ObservableObject, SuperLog {
     }
 }
 
+// MARK: - Preview
+
 #Preview("App - Small Screen") {
     RootView {
         ContentLayout().setInitialTab(IconPlugin.label)
             .hideSidebar()
+            .hideTabPicker()
             .hideProjectActions()
-            .setInitialTab(IconPlugin.label)
     }
     .frame(width: 800)
-    .frame(height: 800)
+    .frame(height: 600)
 }
 
 #Preview("App - Big Screen") {
     RootView {
         ContentLayout().setInitialTab(IconPlugin.label)
             .hideSidebar()
-            .setInitialTab(IconPlugin.label)
+            .hideTabPicker()
     }
     .frame(width: 1200)
     .frame(height: 1200)

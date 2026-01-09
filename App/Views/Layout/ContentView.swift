@@ -2,28 +2,56 @@ import MagicKit
 import OSLog
 import SwiftUI
 
+/// 主内容视图，管理应用的整体布局和导航结构
 struct ContentView: View, SuperLog {
+    /// emoji 标识符
+    nonisolated static let emoji = "📱"
+
+    /// 是否启用详细日志输出
+    nonisolated static let verbose = false
+
     @EnvironmentObject var app: AppProvider
     @EnvironmentObject var g: DataProvider
     @EnvironmentObject var p: PluginProvider
 
+    /// 导航分栏视图的列可见性状态
     @State private var columnVisibility: NavigationSplitViewVisibility = .automatic
+
+    /// 当前选中的标签页
     @State private var tab: String = GitPlugin.label
+
+    /// 状态栏是否可见
     @State private var statusBarVisibility = true
+
+    /// 工具栏是否可见
     @State private var toolbarVisibility = true
+
+    /// 标签页选择器是否可见
     @State private var tabPickerVisibility = true
+
+    /// 项目操作按钮是否可见
     @State private var projectActionsVisibility = true
 
     /// 控制状态栏布局：true 为全宽（底部跨越左右栏），false 为旧布局（仅 detail 内部）
     var useFullWidthStatusBar: Bool = true
-    var defaultStatusBarVisibility: Bool? = nil
-    var defaultTab: String? = nil
-    var defaultColumnVisibility: NavigationSplitViewVisibility? = nil
-    var defaultToolbarVisibility: Bool? = nil
-    var defaultProjectActionsVisibility: Bool? = nil
-    var defaultTabVisibility: Bool? = nil
 
-    // MARK: - Computed Properties for Performance Optimization
+    /// 默认状态栏可见性
+    var defaultStatusBarVisibility: Bool? = nil
+
+    /// 默认选中的标签页
+    var defaultTab: String? = nil
+
+    /// 默认列可见性
+    var defaultColumnVisibility: NavigationSplitViewVisibility? = nil
+
+    /// 默认工具栏可见性
+    var defaultToolbarVisibility: Bool? = nil
+
+    /// 默认项目操作可见性
+    var defaultProjectActionsVisibility: Bool? = nil
+
+    /// 默认标签页可见性
+    var defaultTabVisibility: Bool? = nil
 
     /// 缓存工具栏前导视图的插件和视图对
     private var toolbarLeadingViews: [(plugin: SuperPlugin, view: AnyView)] {
@@ -45,6 +73,7 @@ struct ContentView: View, SuperLog {
         }
     }
 
+    /// 缓存插件列表视图的插件和视图对
     private var pluginListViews: [(plugin: SuperPlugin, view: AnyView)] {
         p.plugins.compactMap { plugin in
             if let view = plugin.addListView(tab: tab, project: g.project) {
@@ -74,7 +103,12 @@ struct ContentView: View, SuperLog {
     }
 }
 
+// MARK: - View
+
 extension ContentView {
+    /// 创建导航分栏视图
+    /// - Parameter fullWidthStatusBar: 是否使用全宽状态栏
+    /// - Returns: 配置好的导航分栏视图
     private func navigationSplitView(fullWidthStatusBar: Bool) -> some View {
         NavigationSplitView(columnVisibility: $columnVisibility) {
             Projects()
@@ -121,6 +155,9 @@ extension ContentView {
         })
     }
 
+    /// 创建详情内容视图
+    /// - Parameter fullWidthStatusBar: 是否使用全宽状态栏
+    /// - Returns: 详情内容视图
     @ViewBuilder
     private func detailContent(fullWidthStatusBar: Bool) -> some View {
         if g.projectExists == false {
@@ -164,9 +201,10 @@ extension ContentView {
     }
 }
 
-// MARK: - Event
+// MARK: - Event Handler
 
 extension ContentView {
+    /// 视图出现时的事件处理
     func onAppear() {
         // 如果提供了默认的，则使用默认的
         // 否则使用存储的
@@ -185,11 +223,15 @@ extension ContentView {
         }
 
         if let d = defaultTab {
-            os_log("\(self.t)🎯 Setting default tab to: \(d)")
+            if Self.verbose {
+                os_log("\(self.t)Setting default tab to: \(d)")
+            }
             self.tab = d
         } else {
             // 如果没有提供默认标签页，使用Git标签页作为默认值
-            os_log("\(self.t)🎯 No default tab provided, using GitPlugin.label: \(GitPlugin.label)")
+            if Self.verbose {
+                os_log("\(self.t)No default tab provided, using GitPlugin.label: \(GitPlugin.label)")
+            }
             self.tab = GitPlugin.label
         }
 
@@ -215,14 +257,16 @@ extension ContentView {
     }
 
     /// 处理标签页变更事件
-    /// 当用户切换标签页时，更新应用程序的当前标签页状态
     func onChangeOfTab() {
         app.setTab(tab)
     }
 
     /// 检查并处理导航分栏视图可见性变化
+    /// - Parameter reason: 变化的原因描述
     func checkColumnVisibility(reason: String) {
-        os_log("\(self.t)📺 onCheckColumnVisibility(\(reason))")
+        if Self.verbose {
+            os_log("\(self.t)Check column visibility: \(reason)")
+        }
         if columnVisibility == .detailOnly {
             app.hideSidebar()
         } else {
@@ -230,10 +274,13 @@ extension ContentView {
         }
     }
 
+    /// 处理列可见性变更事件
     func onChangeColumnVisibility() {
         self.checkColumnVisibility(reason: "onChangeColumnVisibility")
     }
 }
+
+// MARK: - Preview
 
 #Preview("App - Small Screen") {
     ContentLayout()
@@ -248,9 +295,8 @@ extension ContentView {
 #Preview("App - Big Screen") {
     ContentLayout()
         .hideSidebar()
-        .hideProjectActions()
         .hideTabPicker()
         .inRootView()
-        .frame(width: 800)
-        .frame(height: 1000)
+        .frame(width: 1200)
+        .frame(height: 1200)
 }
