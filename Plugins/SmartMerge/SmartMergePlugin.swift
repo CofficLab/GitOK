@@ -4,16 +4,48 @@ import SwiftUI
 
 /// SmartMerge 插件：在状态栏提供合并入口（TileMerge）。
 class SmartMergePlugin: SuperPlugin, SuperLog, PluginRegistrant {
+    /// 是否启用详细日志输出
+    nonisolated static let verbose = false
+    nonisolated static let emoji = "🔀"
+    nonisolated static let enable = true
+
+    /// 单例实例
     static let shared = SmartMergePlugin()
-    let emoji = "📣"
+
+    /// 插件标签
     static var label: String = "SmartMerge"
 
+    /// 私有初始化方法
     private init() {}
 
+    /// 添加状态栏尾部视图
+    /// - Returns: 返回TileMerge组件的AnyView包装
     func addStatusBarTrailingView() -> AnyView? {
         AnyView(TileMerge.shared)
     }
 }
+
+// MARK: - Action
+
+extension SmartMergePlugin {
+    /// 插件注册方法
+    /// 将SmartMerge插件注册到插件注册表中
+    @objc static func register() {
+        guard enable else { return }
+        
+        Task {
+            if verbose {
+                os_log("\(self.t)SmartMergePlugin register")
+            }
+
+            await PluginRegistry.shared.register(id: "SmartMerge", order: 25) {
+                SmartMergePlugin.shared
+            }
+        }
+    }
+}
+
+// MARK: - Preview
 
 #Preview("App - Small Screen") {
     ContentLayout()
@@ -32,15 +64,4 @@ class SmartMergePlugin: SuperPlugin, SuperLog, PluginRegistrant {
         .inRootView()
         .frame(width: 1200)
         .frame(height: 1200)
-}
-
-// MARK: - PluginRegistrant
-extension SmartMergePlugin {
-    @objc static func register() {
-        Task {
-            await PluginRegistry.shared.register(id: "SmartMerge", order: 25) {
-                SmartMergePlugin.shared
-            }
-        }
-    }
 }

@@ -45,10 +45,15 @@ extension BtnMerge {
     func merge() {
         do {
             _ = try ShellGit.checkout(to.name, at: path)
+
+            // 发布分支切换事件
+            let project = Project(URL(fileURLWithPath: path))
+            project.postEvent(name: .projectDidChangeBranch, operation: "checkout",
+                              additionalInfo: ["branch": to.name, "reason": "merge_setup"])
+
             _ = try ShellGit.merge(from.name, at: path)
 
             // 发布合并成功事件
-            let project = Project(URL(fileURLWithPath: path))
             project.postEvent(name: .projectDidMerge, operation: "merge",
                               additionalInfo: ["fromBranch": from.name, "toBranch": to.name])
 
