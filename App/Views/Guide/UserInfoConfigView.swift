@@ -6,23 +6,53 @@ import SwiftUI
 
 /// 用户信息配置视图
 struct UserInfoConfigView: View, SuperLog {
+    /// emoji 标识符
+    nonisolated static let emoji = "👤"
+
+    /// 是否启用详细日志输出
+    nonisolated static let verbose = false
+
     @EnvironmentObject var data: DataProvider
+
+    /// 用户名绑定
     @Binding var userName: String
+
+    /// 用户邮箱绑定
     @Binding var userEmail: String
+
+    /// 是否有未保存的更改
     @Binding var hasChanges: Bool
+
+    /// 是否正在加载
     @Binding var isLoading: Bool
+
+    /// 错误消息
     @Binding var errorMessage: String?
 
+    /// 已保存的配置列表
     @Binding var savedConfigs: [GitUserConfig]
+
+    /// 当前选中的配置
     @Binding var selectedConfig: GitUserConfig?
 
-    private let verbose = true
+    /// 数据提供者
     let dataProvider: DataProvider
 
+    /// 配置仓库
     private var configRepo: any GitUserConfigRepoProtocol {
         dataProvider.repoManager.gitUserConfigRepo
     }
 
+    /// 初始化用户信息配置视图
+    /// - Parameters:
+    ///   - userName: 用户名绑定
+    ///   - userEmail: 用户邮箱绑定
+    ///   - hasChanges: 更改状态绑定
+    ///   - isLoading: 加载状态绑定
+    ///   - errorMessage: 错误消息绑定
+    ///   - savedConfigs: 已保存配置绑定
+    ///   - selectedConfig: 选中配置绑定
+    ///   - dataProvider: 数据提供者
     init(
         userName: Binding<String>,
         userEmail: Binding<String>,
@@ -137,16 +167,16 @@ struct UserInfoConfigView: View, SuperLog {
 
             hasChanges = false
 
-            if verbose {
-                os_log("\(Self.t)✅ Saved user config - name: \(userName), email: \(userEmail)")
+            if Self.verbose {
+                os_log("\(Self.t)Saved user config - name: \(userName), email: \(userEmail)")
             }
 
             isLoading = false
             return true
         } catch {
             errorMessage = "保存失败: \(error.localizedDescription)"
-            if verbose {
-                os_log(.error, "\(Self.t)❌ Failed to save user config: \(error)")
+            if Self.verbose {
+                os_log(.error, "\(Self.t)Failed to save user config: \(error)")
             }
 
             isLoading = false
@@ -173,14 +203,14 @@ struct UserInfoConfigView: View, SuperLog {
             // 选择刚保存的配置
             selectedConfig = config
 
-            if verbose {
-                os_log("\(Self.t)✅ Saved as preset: \(trimmedName) <\(trimmedEmail)>")
+            if Self.verbose {
+                os_log("\(Self.t)Saved as preset: \(trimmedName) <\(trimmedEmail)>")
             }
 
         } catch {
             errorMessage = "保存预设失败: \(error.localizedDescription)"
-            if verbose {
-                os_log(.error, "\(Self.t)❌ Failed to save preset: \(error)")
+            if Self.verbose {
+                os_log(.error, "\(Self.t)Failed to save preset: \(error)")
             }
         }
     }
@@ -198,13 +228,13 @@ struct UserInfoConfigView: View, SuperLog {
             userEmail = try project.getUserEmail()
             hasChanges = false
 
-            if verbose {
-                os_log("\(Self.t)✅ Loaded user info - name: \(userName), email: \(userEmail)")
+            if Self.verbose {
+                os_log("\(Self.t)Loaded user info - name: \(userName), email: \(userEmail)")
             }
         } catch {
             errorMessage = "无法加载当前用户信息: \(error.localizedDescription)"
-            if verbose {
-                os_log(.error, "\(Self.t)❌ Failed to load user info: \(error)")
+            if Self.verbose {
+                os_log(.error, "\(Self.t)Failed to load user info: \(error)")
             }
         }
 
@@ -222,12 +252,12 @@ struct UserInfoConfigView: View, SuperLog {
                 userEmail = defaultConfig.email
             }
 
-            if verbose {
-                os_log("\(Self.t)✅ Loaded \(savedConfigs.count) saved configs")
+            if Self.verbose {
+                os_log("\(Self.t)Loaded \(savedConfigs.count) saved configs")
             }
         } catch {
-            if verbose {
-                os_log(.error, "\(Self.t)❌ Failed to load saved configs: \(error)")
+            if Self.verbose {
+                os_log(.error, "\(Self.t)Failed to load saved configs: \(error)")
             }
         }
     }
@@ -241,13 +271,14 @@ struct UserInfoConfigView: View, SuperLog {
         .hideTabPicker()
         .hideProjectActions()
         .inRootView()
-        .frame(width: 700)
-        .frame(height: 700)
+        .frame(width: 800)
+        .frame(height: 600)
 }
 
 #Preview("App - Big Screen") {
     ContentLayout()
         .hideSidebar()
+        .hideTabPicker()
         .inRootView()
         .frame(width: 1200)
         .frame(height: 1200)

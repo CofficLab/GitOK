@@ -1,14 +1,31 @@
 
+import MagicKit
 import MagicUI
 import SwiftUI
 
-struct UserView: View {
+/// 用户信息显示视图
+struct UserView: View, SuperLog {
+    /// emoji 标识符
+    nonisolated static let emoji = "👤"
+
+    /// 是否启用详细日志输出
+    nonisolated static let verbose = false
+
     @EnvironmentObject var data: DataProvider
 
+    /// 文本输入
     @State var text: String = ""
+
+    /// 当前选择的提交类别
     @State var category: CommitCategory = .Chore
+
+    /// 当前用户名
     @State var currentUser: String = ""
+
+    /// 当前用户邮箱
     @State var currentEmail: String = ""
+
+    /// 是否显示用户配置表单
     @State var showUserConfig = false
 
     var body: some View {
@@ -104,14 +121,14 @@ extension UserView {
         .hideTabPicker()
         .hideProjectActions()
         .inRootView()
-
-        .frame(width: 600)
+        .frame(width: 800)
         .frame(height: 600)
 }
 
 #Preview("App - Big Screen") {
     ContentLayout()
         .hideSidebar()
+        .hideTabPicker()
         .inRootView()
         .frame(width: 1200)
         .frame(height: 1200)

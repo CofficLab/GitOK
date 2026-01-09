@@ -5,17 +5,34 @@ import OSLog
 import SwiftUI
 
 /// Commit 风格配置视图
-struct CommitStyleConfigView: View {
+struct CommitStyleConfigView: View, SuperLog {
+    /// emoji 标识符
+    nonisolated static let emoji = "🎨"
+
+    /// 是否启用详细日志输出
+    nonisolated static let verbose = false
+
     @EnvironmentObject var data: DataProvider
+
+    /// 当前项目的 commit 风格绑定
     @Binding var commitStyle: CommitStyle
+
+    /// 全局默认 commit 风格绑定
     @Binding var globalCommitStyle: CommitStyle
 
+    /// 数据提供者
     let dataProvider: DataProvider
 
+    /// 状态仓库
     private var stateRepo: any StateRepoProtocol {
         dataProvider.repoManager.stateRepo
     }
 
+    /// 初始化 Commit 风格配置视图
+    /// - Parameters:
+    ///   - commitStyle: 项目 commit 风格绑定
+    ///   - globalCommitStyle: 全局 commit 风格绑定
+    ///   - dataProvider: 数据提供者
     init(
         commitStyle: Binding<CommitStyle>,
         globalCommitStyle: Binding<CommitStyle>,
@@ -197,13 +214,14 @@ struct CommitStyleConfigView: View {
         .hideTabPicker()
         .hideProjectActions()
         .inRootView()
-        .frame(width: 700)
-        .frame(height: 700)
+        .frame(width: 800)
+        .frame(height: 600)
 }
 
 #Preview("App - Big Screen") {
     ContentLayout()
         .hideSidebar()
+        .hideTabPicker()
         .inRootView()
         .frame(width: 1200)
         .frame(height: 1200)

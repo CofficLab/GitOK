@@ -4,25 +4,46 @@ import MagicUI
 import OSLog
 import SwiftUI
 
+/// 用户配置表单视图
 struct UserConfigSheet: View, SuperLog {
+    /// emoji 标识符
+    nonisolated static let emoji = "⚙️"
+
+    /// 是否启用详细日志输出
+    nonisolated static let verbose = false
+
     @EnvironmentObject var data: DataProvider
     @Environment(\.dismiss) private var dismiss
 
-    // 用户信息相关状态
+    /// 用户名
     @State private var userName: String = ""
+
+    /// 用户邮箱
     @State private var userEmail: String = ""
+
+    /// 是否正在加载
     @State private var isLoading = false
+
+    /// 错误消息
     @State private var errorMessage: String?
+
+    /// 是否有未保存的更改
     @State private var hasChanges = false
+
+    /// 已保存的配置列表
     @State private var savedConfigs: [GitUserConfig] = []
+
+    /// 当前选中的配置
     @State private var selectedConfig: GitUserConfig?
 
-    // Commit 风格相关状态
+    /// Commit 风格
     @State private var commitStyle: CommitStyle = .emoji
-    @State private var globalCommitStyle: CommitStyle = .emoji
-    @State private var selectedTab: Int = 0
 
-    private let verbose = true
+    /// 全局 Commit 风格
+    @State private var globalCommitStyle: CommitStyle = .emoji
+
+    /// 当前选中的标签页
+    @State private var selectedTab: Int = 0
 
     var body: some View {
         VStack(spacing: 0) {
@@ -200,23 +221,20 @@ extension UserConfigSheet {
 }
 
 // MARK: - Preview
-#Preview {
-    UserConfigSheet().inRootView()
-}
-
 #Preview("App - Small Screen") {
     ContentLayout()
         .hideSidebar()
         .hideTabPicker()
         .hideProjectActions()
         .inRootView()
-        .frame(width: 700)
-        .frame(height: 700)
+        .frame(width: 800)
+        .frame(height: 600)
 }
 
 #Preview("App - Big Screen") {
     ContentLayout()
         .hideSidebar()
+        .hideTabPicker()
         .inRootView()
         .frame(width: 1200)
         .frame(height: 1200)
