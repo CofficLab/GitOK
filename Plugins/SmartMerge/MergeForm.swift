@@ -95,6 +95,8 @@ extension MergeForm {
 #Preview("App - Big Screen") {
     ContentLayout()
         .hideSidebar()
+        .hideProjectActions()
+        .hideTabPicker()
         .inRootView()
         .frame(width: 1200)
         .frame(height: 1200)
