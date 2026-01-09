@@ -49,7 +49,10 @@ struct CommitStylePicker: View {
     }
 
     private func saveCommitStyle() {
-        g.repoManager.stateRepo.setCommitStyle(selection)
+        // 保存到当前项目，而不是全局配置
+        if let project = g.project {
+            project.commitStyle = selection
+        }
     }
 }
 

@@ -272,11 +272,15 @@ extension UserConfigSheet {
     }
 
     private func loadCommitStyle() {
-        commitStyle = stateRepo.commitStyle
+        // 从当前项目读取 commitStyle
+        commitStyle = data.project?.commitStyle ?? .emoji
     }
 
     private func saveCommitStyle() {
-        stateRepo.setCommitStyle(commitStyle)
+        // 保存到当前项目
+        if let project = data.project {
+            project.commitStyle = commitStyle
+        }
     }
 }
 

@@ -100,7 +100,8 @@ extension CommitForm {
 
     func onAppear() {
         self.text = defaultMessage(for: category, style: commitStyle)
-        self.commitStyle = g.repoManager.stateRepo.commitStyle
+        // 从当前项目读取 commitStyle，如果没有项目则使用默认值
+        self.commitStyle = g.project?.commitStyle ?? .emoji
     }
 }
 

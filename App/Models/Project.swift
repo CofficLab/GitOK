@@ -125,6 +125,7 @@ final class Project: SuperLog {
     var timestamp: Date
     var url: URL
     var order: Int16 = 0
+    var commitStyleRawValue: String = CommitStyle.emoji.rawValue
 
     var title: String {
         url.lastPathComponent
@@ -132,6 +133,11 @@ final class Project: SuperLog {
 
     var path: String {
         url.path
+    }
+
+    var commitStyle: CommitStyle {
+        get { CommitStyle(rawValue: commitStyleRawValue) ?? .emoji }
+        set { commitStyleRawValue = newValue.rawValue }
     }
 
     init(_ url: URL) {
