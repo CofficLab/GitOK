@@ -11,6 +11,7 @@ extension Notification.Name {
     static let projectDidCommit = Notification.Name("projectDidCommit")
     static let projectDidPush = Notification.Name("projectDidPush")
     static let projectDidPull = Notification.Name("projectDidPull")
+    static let projectDidMerge = Notification.Name("projectDidMerge")
     static let projectDidSync = Notification.Name("projectDidSync")
     static let projectDidChangeBranch = Notification.Name("projectDidChangeBranch")
     static let projectDidUpdateUserInfo = Notification.Name("projectDidUpdateUserInfo")
@@ -46,6 +47,14 @@ extension View {
 
     func onProjectDidPull(perform action: @escaping (ProjectEventInfo) -> Void) -> some View {
         self.onReceive(NotificationCenter.default.publisher(for: .projectDidPull)) { notification in
+            if let userInfo = notification.userInfo, let eventInfo = userInfo["eventInfo"] as? ProjectEventInfo {
+                action(eventInfo)
+            }
+        }
+    }
+
+    func onProjectDidMerge(perform action: @escaping (ProjectEventInfo) -> Void) -> some View {
+        self.onReceive(NotificationCenter.default.publisher(for: .projectDidMerge)) { notification in
             if let userInfo = notification.userInfo, let eventInfo = userInfo["eventInfo"] as? ProjectEventInfo {
                 action(eventInfo)
             }
@@ -132,7 +141,7 @@ final class Project: SuperLog {
 
     // MARK: - Event Notification Helper
 
-    private func postEvent(name: Notification.Name, operation: String, success: Bool = true, error: Error? = nil, additionalInfo: [String: Any]? = nil) {
+    func postEvent(name: Notification.Name, operation: String, success: Bool = true, error: Error? = nil, additionalInfo: [String: Any]? = nil) {
         let eventInfo = ProjectEventInfo(
             project: self,
             operation: operation,
