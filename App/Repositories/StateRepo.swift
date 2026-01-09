@@ -10,13 +10,14 @@ protocol StateRepoProtocol {
     var currentTaskUUID: String { get set }
     var currentTab: String { get set }
     var sidebarVisibility: Bool { get set }
-    var commitStyle: CommitStyle { get set }
+    var globalCommitStyle: CommitStyle { get set }
 
     func setProjectPath(_ path: String)
     func setCurrentTaskUUID(_ id: String)
     func setCurrentTab(_ tab: String)
     func setSidebarVisibility(_ visible: Bool)
-    func setCommitStyle(_ style: CommitStyle)
+    func setGlobalCommitStyle(_ style: CommitStyle)
+    func getCommitStyle(for project: Project?) -> CommitStyle
 }
 
 // MARK: - 状态管理Repository实现
@@ -41,7 +42,7 @@ class StateRepo: StateRepoProtocol, SuperLog, ObservableObject {
     var sidebarVisibility: Bool = true
 
     @AppStorage("App.CommitStyle")
-    var commitStyle: CommitStyle = .emoji
+    var globalCommitStyle: CommitStyle = .emoji
     
     // MARK: - 初始化
     
@@ -94,11 +95,19 @@ class StateRepo: StateRepoProtocol, SuperLog, ObservableObject {
         }
     }
 
-    func setCommitStyle(_ style: CommitStyle) {
-        self.commitStyle = style
+    func setGlobalCommitStyle(_ style: CommitStyle) {
+        self.globalCommitStyle = style
         if verbose {
-            os_log("\(self.t)Commit style set to \(style.label)")
+            os_log("\(self.t)Global commit style set to \(style.label)")
         }
+    }
+
+    func getCommitStyle(for project: Project?) -> CommitStyle {
+        // 如果项目有自定义风格，使用项目风格；否则使用全局风格
+        if let project = project {
+            return project.commitStyle
+        }
+        return globalCommitStyle
     }
 }
 
