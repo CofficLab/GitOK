@@ -10,6 +10,7 @@
 		0B0E168B2BD89A910078942B /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0B0E168A2BD89A910078942B /* Preview Assets.xcassets */; };
 		0B3CC95E2DF1C49000E22263 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = 0B3CC95D2DF1C49000E22263 /* Sparkle */; };
 		0B750F162E7F934F00140214 /* MarkdownUI in Frameworks */ = {isa = PBXBuildFile; productRef = 0B750F152E7F934F00140214 /* MarkdownUI */; };
+		0BDAA1392F1147D200A4283A /* static-libgit2 in Frameworks */ = {isa = PBXBuildFile; productRef = 0BDAA1382F1147D200A4283A /* static-libgit2 */; };
 		0BFAFE9C2F0E87980076A5E4 /* MagicDiffView in Frameworks */ = {isa = PBXBuildFile; productRef = 0BFAFE9B2F0E87980076A5E4 /* MagicDiffView */; };
 		0BFAFEA12F0E90E40076A5E4 /* MagicDevice in Frameworks */ = {isa = PBXBuildFile; productRef = 0BFAFEA02F0E90E40076A5E4 /* MagicDevice */; };
 		F54D04C42DF2D01300FFB434 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = F54D04C32DF2D01300FFB434 /* Localizable.xcstrings */; };
@@ -59,6 +60,7 @@
 				0BFAFEA12F0E90E40076A5E4 /* MagicDevice in Frameworks */,
 				0B750F162E7F934F00140214 /* MarkdownUI in Frameworks */,
 				F5D122862F0E5B040001A5D2 /* MagicKit in Frameworks */,
+				0BDAA1392F1147D200A4283A /* static-libgit2 in Frameworks */,
 				F5A396022F0F899C0031F79F /* MagicKit in Frameworks */,
 				F5D122802F0E5B040001A5D2 /* MagicDiffView in Frameworks */,
 				0BFAFE9C2F0E87980076A5E4 /* MagicDiffView in Frameworks */,
@@ -145,6 +147,7 @@
 				0BFAFE9B2F0E87980076A5E4 /* MagicDiffView */,
 				0BFAFEA02F0E90E40076A5E4 /* MagicDevice */,
 				F5A396012F0F899C0031F79F /* MagicKit */,
+				0BDAA1382F1147D200A4283A /* static-libgit2 */,
 			);
 			productName = GitOK;
 			productReference = 0B0E167D2BD89A8F0078942B /* GitOK.app */;
@@ -181,6 +184,7 @@
 				0BFAFE9A2F0E87980076A5E4 /* XCRemoteSwiftPackageReference "MagicDiffView" */,
 				0BFAFE9F2F0E90E40076A5E4 /* XCRemoteSwiftPackageReference "MagicDevice" */,
 				F5A396002F0F899C0031F79F /* XCRemoteSwiftPackageReference "MagicKit" */,
+				0BDAA1372F1147D200A4283A /* XCRemoteSwiftPackageReference "static-libgit2" */,
 			);
 			productRefGroup = 0B0E167E2BD89A8F0078942B /* Products */;
 			projectDirPath = "";
@@ -450,6 +454,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		0BDAA1372F1147D200A4283A /* XCRemoteSwiftPackageReference "static-libgit2" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/bdewey/static-libgit2.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.5.0;
+			};
+		};
 		0BFAFE9A2F0E87980076A5E4 /* XCRemoteSwiftPackageReference "MagicDiffView" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/nookery/MagicDiffView";
@@ -502,6 +514,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = F54178E22E00F91F00503C7B /* XCRemoteSwiftPackageReference "swift-markdown-ui" */;
 			productName = MarkdownUI;
+		};
+		0BDAA1382F1147D200A4283A /* static-libgit2 */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0BDAA1372F1147D200A4283A /* XCRemoteSwiftPackageReference "static-libgit2" */;
+			productName = "static-libgit2";
 		};
 		0BFAFE9B2F0E87980076A5E4 /* MagicDiffView */ = {
 			isa = XCSwiftPackageProductDependency;

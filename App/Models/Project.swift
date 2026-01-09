@@ -373,11 +373,11 @@ extension Project {
 
 extension Project {
     func getUserName() throws -> String {
-        try ShellGit.userName(at: self.path)
+        try GitConfig.getUserName(at: self.path)
     }
 
     func getUserEmail() throws -> String {
-        try ShellGit.userEmail(at: self.path)
+        try GitConfig.getUserEmail(at: self.path)
     }
 
     /// 设置项目的Git用户信息（仅针对当前项目）
