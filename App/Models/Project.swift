@@ -511,8 +511,20 @@ extension Project {
     }
 
     func untrackedFiles() async throws -> [GitDiffFile] {
-        // For now, just get the diff file list which includes untracked files
-        return try LibGit2.getDiffFileList(at: self.path, staged: false)
+        // Get both staged and unstaged changes to show all uncommitted changes
+        let stagedFiles = try LibGit2.getDiffFileList(at: self.path, staged: true)
+        let unstagedFiles = try LibGit2.getDiffFileList(at: self.path, staged: false)
+
+        // Merge the two lists, removing duplicates by file path
+        var mergedFiles: [String: GitDiffFile] = [:]
+        for file in stagedFiles + unstagedFiles {
+            // If the same file appears in both, prefer the staged version
+            if mergedFiles[file.file] == nil {
+                mergedFiles[file.file] = file
+            }
+        }
+
+        return Array(mergedFiles.values)
     }
 
     func stagedDiffFileList() async throws -> [GitDiffFile] {
