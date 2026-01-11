@@ -1,4 +1,5 @@
 import MagicKit
+import MagicAlert
 import OSLog
 import SwiftUI
 
@@ -12,6 +13,8 @@ struct RemoteSyncStatusView: View, SuperLog {
 
     /// 环境对象：数据提供者
     @EnvironmentObject var data: DataProvider
+    /// 环境对象：消息提供者
+    @EnvironmentObject var m: MagicMessageProvider
 
     /// 未推送的提交数量（本地领先远程）
     @State private var unpushedCount = 0
@@ -266,6 +269,7 @@ extension RemoteSyncStatusView {
             } catch {
                 await MainActor.run {
                     os_log(.error, "\(self.t)❌ Git pull failed: \(error)")
+                    m.error(error)
                 }
             }
 
@@ -306,6 +310,7 @@ extension RemoteSyncStatusView {
             } catch {
                 await MainActor.run {
                     os_log(.error, "\(self.t)❌ Git push failed: \(error)")
+                    m.error(error)
                 }
             }
 
