@@ -316,29 +316,9 @@ extension Project {
     /// - Throws: Git操作异常
     func createBranch(_ branchName: String) throws {
         do {
-            // 使用 Process 执行 git checkout -b 命令
-            let process = Process()
-            process.executableURL = URL(fileURLWithPath: "/usr/bin/git")
-            process.arguments = ["checkout", "-b", branchName]
-            process.currentDirectoryURL = URL(fileURLWithPath: self.path)
-            
-            let pipe = Pipe()
-            process.standardOutput = pipe
-            process.standardError = pipe
-            
-            try process.run()
-            process.waitUntilExit()
-            
-            if process.terminationStatus != 0 {
-                let data = pipe.fileHandleForReading.readDataToEndOfFile()
-                let output = String(data: data, encoding: .utf8) ?? ""
-                throw NSError(
-                    domain: "GitError",
-                    code: Int(process.terminationStatus),
-                    userInfo: [NSLocalizedDescriptionKey: "Failed to create branch: \(output)"]
-                )
-            }
-            
+            // 使用 LibGit2Swift 创建并切换到新分支
+            try LibGit2.checkoutNewBranch(named: branchName, at: self.path)
+
             postEvent(
                 name: .projectDidChangeBranch,
                 operation: "createBranch",
@@ -536,29 +516,9 @@ extension Project {
     /// - Throws: Git操作异常
     func discardFileChanges(_ filePath: String) throws {
         do {
-            // 使用 git checkout -- <file> 丢弃工作区的更改
-            let process = Process()
-            process.executableURL = URL(fileURLWithPath: "/usr/bin/git")
-            process.arguments = ["checkout", "--", filePath]
-            process.currentDirectoryURL = URL(fileURLWithPath: self.path)
-            
-            let pipe = Pipe()
-            process.standardOutput = pipe
-            process.standardError = pipe
-            
-            try process.run()
-            process.waitUntilExit()
-            
-            if process.terminationStatus != 0 {
-                let data = pipe.fileHandleForReading.readDataToEndOfFile()
-                let output = String(data: data, encoding: .utf8) ?? ""
-                throw NSError(
-                    domain: "GitError",
-                    code: Int(process.terminationStatus),
-                    userInfo: [NSLocalizedDescriptionKey: "Failed to discard changes: \(output)"]
-                )
-            }
-            
+            // 使用 LibGit2Swift 丢弃工作区的更改
+            try LibGit2.checkoutFile(filePath, at: self.path)
+
             postEvent(
                 name: .projectDidCommit,
                 operation: "discardFileChanges",
