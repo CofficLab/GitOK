@@ -13,6 +13,7 @@
 		0B5178012F13D6A70085381F /* LibGit2Swift in Frameworks */ = {isa = PBXBuildFile; productRef = 0B5178002F13D6A70085381F /* LibGit2Swift */; };
 		0B750F162E7F934F00140214 /* MarkdownUI in Frameworks */ = {isa = PBXBuildFile; productRef = 0B750F152E7F934F00140214 /* MarkdownUI */; };
 		0B76CC0A2F13D95C00BFB2C3 /* LibGit2Swift in Frameworks */ = {isa = PBXBuildFile; productRef = 0B76CC092F13D95C00BFB2C3 /* LibGit2Swift */; };
+		0B76CC0D2F13DB3A00BFB2C3 /* LibGit2Swift in Frameworks */ = {isa = PBXBuildFile; productRef = 0B76CC0C2F13DB3A00BFB2C3 /* LibGit2Swift */; };
 		0BDAA1392F1147D200A4283A /* static-libgit2 in Frameworks */ = {isa = PBXBuildFile; productRef = 0BDAA1382F1147D200A4283A /* static-libgit2 */; };
 		0BFAFE9C2F0E87980076A5E4 /* MagicDiffView in Frameworks */ = {isa = PBXBuildFile; productRef = 0BFAFE9B2F0E87980076A5E4 /* MagicDiffView */; };
 		0BFAFEA12F0E90E40076A5E4 /* MagicDevice in Frameworks */ = {isa = PBXBuildFile; productRef = 0BFAFEA02F0E90E40076A5E4 /* MagicDevice */; };
@@ -812,6 +813,7 @@
 				0B750F162E7F934F00140214 /* MarkdownUI in Frameworks */,
 				F5D122862F0E5B040001A5D2 /* MagicKit in Frameworks */,
 				0B516AC72F1397E90085381F /* LibGit2Swift in Frameworks */,
+				0B76CC0D2F13DB3A00BFB2C3 /* LibGit2Swift in Frameworks */,
 				0BDAA1392F1147D200A4283A /* static-libgit2 in Frameworks */,
 				F5A396022F0F899C0031F79F /* MagicKit in Frameworks */,
 				F5D122802F0E5B040001A5D2 /* MagicDiffView in Frameworks */,
@@ -1216,6 +1218,7 @@
 				0B516AC62F1397E90085381F /* LibGit2Swift */,
 				0B5178002F13D6A70085381F /* LibGit2Swift */,
 				0B76CC092F13D95C00BFB2C3 /* LibGit2Swift */,
+				0B76CC0C2F13DB3A00BFB2C3 /* LibGit2Swift */,
 			);
 			productName = GitOK;
 			productReference = 0B0E167D2BD89A8F0078942B /* GitOK.app */;
@@ -1253,7 +1256,7 @@
 				0BFAFE9F2F0E90E40076A5E4 /* XCRemoteSwiftPackageReference "MagicDevice" */,
 				F5A396002F0F899C0031F79F /* XCRemoteSwiftPackageReference "MagicKit" */,
 				0BDAA1372F1147D200A4283A /* XCRemoteSwiftPackageReference "static-libgit2" */,
-				0B76CC082F13D95C00BFB2C3 /* XCLocalSwiftPackageReference "../LibGit2Swift" */,
+				0B76CC0B2F13DB3A00BFB2C3 /* XCRemoteSwiftPackageReference "Libgit2swift" */,
 			);
 			productRefGroup = 0B0E167E2BD89A8F0078942B /* Products */;
 			projectDirPath = "";
@@ -2369,14 +2372,15 @@
 		};
 /* End XCConfigurationList section */
 
-/* Begin XCLocalSwiftPackageReference section */
-		0B76CC082F13D95C00BFB2C3 /* XCLocalSwiftPackageReference "../LibGit2Swift" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = ../LibGit2Swift;
-		};
-/* End XCLocalSwiftPackageReference section */
-
 /* Begin XCRemoteSwiftPackageReference section */
+		0B76CC0B2F13DB3A00BFB2C3 /* XCRemoteSwiftPackageReference "Libgit2swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/nookery/Libgit2swift";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
 		0BDAA1372F1147D200A4283A /* XCRemoteSwiftPackageReference "static-libgit2" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/bdewey/static-libgit2.git";
@@ -2448,6 +2452,11 @@
 		};
 		0B76CC092F13D95C00BFB2C3 /* LibGit2Swift */ = {
 			isa = XCSwiftPackageProductDependency;
+			productName = LibGit2Swift;
+		};
+		0B76CC0C2F13DB3A00BFB2C3 /* LibGit2Swift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0B76CC0B2F13DB3A00BFB2C3 /* XCRemoteSwiftPackageReference "Libgit2swift" */;
 			productName = LibGit2Swift;
 		};
 		0BDAA1382F1147D200A4283A /* static-libgit2 */ = {
