@@ -120,7 +120,7 @@ extension CommitList {
         loading = true
 
         do {
-            let newCommits = try project.getCommitsWithPagination(
+            let newCommits = try project.getMagicKitCommitsWithPagination(
                 self.currentPage,
                 limit: self.pageSize
             )
@@ -213,7 +213,7 @@ extension CommitList {
         hasMoreCommits = true
 
         do {
-            let initialCommits = try project.getCommitsWithPagination(
+            let initialCommits = try project.getMagicKitCommitsWithPagination(
                 0, limit: self.pageSize
             )
 
@@ -265,7 +265,7 @@ extension CommitList {
         loading = true
 
         do {
-            let newCommits = try project.getCommitsWithPagination(
+            let newCommits = try project.getMagicKitCommitsWithPagination(
                 currentPage,
                 limit: pageSize
             )

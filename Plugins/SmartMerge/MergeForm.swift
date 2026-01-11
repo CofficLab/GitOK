@@ -70,7 +70,7 @@ extension MergeForm {
         guard let project = project else { return }
 
         do {
-            self.branches = try project.getBranches()
+            self.branches = try project.getMagicKitBranches()
             self.branch1 = branches.first
             self.branch2 = branches.count >= 2 ? branches[1] : branches.first
 

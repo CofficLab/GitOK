@@ -13,7 +13,17 @@
       "Bash(git add:*)",
       "Bash(git commit:*)",
       "Bash(git rev-parse:*)",
-      "Bash(git config:*)"
+      "Bash(git config:*)",
+      "Bash(grep:*)",
+      "mcp__zread__get_repo_structure",
+      "Bash(tee:*)",
+      "Bash(swift test:*)",
+      "Bash(git -C /Users/angel/Code/Coffic/GitOK log --oneline -20)",
+      "Bash(/usr/bin/git:*)",
+      "Bash(git log:*)",
+      "mcp__zread__search_doc",
+      "mcp__web-search-prime__webSearchPrime",
+      "mcp__web-reader__webReader"
     ]
   }
 }

@@ -184,7 +184,7 @@ extension RemoteRepositoryView {
         errorMessage = nil
         
         do {
-            remotes = try project.getRemotes()
+            remotes = try project.getMagicKitRemotes()
             
             if verbose {
                 os_log("\(self.t)✅ Loaded \(remotes.count) remotes")

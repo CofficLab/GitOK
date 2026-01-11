@@ -230,7 +230,7 @@ extension DataProvider {
         }
 
         do {
-            self.branch = try project.getCurrentBranch()
+            self.branch = try project.getMagicKitCurrentBranch()
         } catch _ {
             self.branch = nil
         }
@@ -310,7 +310,7 @@ extension DataProvider {
             return
         }
 
-        try project.setCurrentBranch(branch)
+        try project.checkout(magicKitBranch: branch)
         self.branch = branch
     }
 }

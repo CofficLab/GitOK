@@ -50,7 +50,7 @@ extension BtnGitPullView {
     }
 
     func updateIsGitProject() {
-        self.isGitProject = data.project?.isGit() ?? false
+        self.isGitProject = data.project?.isGitRepo ?? false
     }
 
     /**

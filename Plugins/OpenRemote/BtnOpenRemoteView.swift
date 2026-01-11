@@ -47,7 +47,7 @@ extension BtnOpenRemoteView {
         isLoading = true
 
         do {
-            let remotes = try project.getRemotes()
+            let remotes = try project.remoteList()
             var remoteURL: String?
 
             for remote in remotes {
@@ -85,7 +85,7 @@ extension BtnOpenRemoteView {
             return
         }
 
-        self.isGitProject = project.isGit()
+        self.isGitProject = project.isGitRepo
     }
     
     /**

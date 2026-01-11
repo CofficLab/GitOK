@@ -121,10 +121,10 @@ extension BranchForm {
     
     private func switchBranch(_ branch: GitBranch) {
         guard let project = project else { return }
-        
+
         Task.detached {
             do {
-                try project.setCurrentBranch(branch)
+                try project.checkout(magicKitBranch: branch)
                 
                 await MainActor.run {
                     self.selectedBranch = branch
@@ -146,7 +146,7 @@ extension BranchForm {
         }
         
         // 检查是否是 git 项目
-        guard project.isGit() else {
+        guard project.isGitRepo else {
             branches = []
             isLoading = false
             return
@@ -156,8 +156,8 @@ extension BranchForm {
         
         Task.detached {
             do {
-                let allBranches = try project.getBranches()
-                let currentBranch = try project.getCurrentBranch()
+                let allBranches = try project.getMagicKitBranches()
+                let currentBranch = try project.getMagicKitCurrentBranch()
                 
                 await MainActor.run {
                     self.branches = allBranches

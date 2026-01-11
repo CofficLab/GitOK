@@ -80,7 +80,7 @@ extension BranchesView {
         }
 
         do {
-            branches = try project.getBranches()
+            branches = try project.getMagicKitBranches()
             if branches.isEmpty {
                 os_log("\(self.t)🍋 Refresh, but no branches")
                 self.updateSelection(nil, reason: "Refresh, but no branches")
@@ -114,7 +114,7 @@ extension BranchesView {
     }
 
     func updateIsGitProject() {
-        self.isGitProject = data.project?.isGit() ?? false
+        self.isGitProject = data.project?.isGitRepo ?? false
     }
     
     /**

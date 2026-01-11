@@ -99,7 +99,7 @@ extension GitDetail {
             return
         }
 
-        self.isGitProject = project.isGit()
+        self.isGitProject = project.isGitRepo
     }
     
     /**

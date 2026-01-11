@@ -139,7 +139,7 @@ extension FileList {
             if let commit = data.commit {
                 self.files = try await project.fileList(atCommit: commit.hash)
             } else {
-                self.files = try await project.untrackedFiles()
+                self.files = try await project.getMagicKitUntrackedFiles()
             }
 
             // 再次检查任务是否被取消

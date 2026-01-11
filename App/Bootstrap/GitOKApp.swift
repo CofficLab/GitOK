@@ -1,3 +1,4 @@
+import LibGit2Swift
 import Sparkle
 import SwiftData
 import SwiftUI
