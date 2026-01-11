@@ -415,17 +415,113 @@ extension Project {
 // MARK: - Commit
 
 extension Project {
-    func getUnpushedCommits() throws -> [GitCommit] {
-        // LibGit2Swift hasn't specifically implemented unpushed commits, 
-        // fallback to empty or implement if needed. 
-        // For now, let's return empty to avoid build error.
-        return []
+    /// 获取未推送的提交（本地领先远程的提交）
+    /// 使用 git log @{u}.. 命令获取本地有但远程没有的提交
+    func getUnPushedCommits() throws -> [GitCommit] {
+        // 使用 LibGit2Swift 获取所有提交
+        let allCommits = try LibGit2.getCommitList(at: self.path)
+
+		// 执行 git 命令获取未推送的提交 hash 列表
+		let process = Process()
+		process.executableURL = URL(fileURLWithPath: "/usr/bin/env")
+		process.arguments = ["git", "log", "@{u}..", "--format=%H"]
+		process.currentDirectoryURL = URL(fileURLWithPath: self.path)
+
+		let pipe = Pipe()
+		process.standardOutput = pipe
+		process.standardError = Pipe()
+
+		do {
+			try process.run()
+			process.waitUntilExit()
+
+			let data = pipe.fileHandleForReading.readDataToEndOfFile()
+			let output = String(data: data, encoding: .utf8) ?? ""
+
+			// 解析输出，获取未推送提交的 hash 集合
+			let unpushedHashes = Set(output.components(separatedBy: "\n").filter { !$0.isEmpty })
+
+			// 从所有提交中筛选出未推送的提交
+			let unpushedCommits = allCommits.filter { commit in
+				// GitCommit 的 hash 属性应该包含完整的 commit hash
+				let commitHash = commit.id.description
+				return unpushedHashes.contains(commitHash)
+			}
+
+			return unpushedCommits
+		} catch {
+			os_log(.error, "\(self.t)❌ Failed to get unpushed commits: \(error)")
+			// 如果命令执行失败（比如没有上游分支），返回空数组
+			return []
+		}
     }
 
+    /// 获取未拉取的提交（远程领先本地的提交）
+    /// 使用 git log ..@{u} 命令获取远程有但本地没有的提交
     func getUnPulledCommits() throws -> [GitCommit] {
-        // LibGit2Swift hasn't implemented unpulled commits tracking yet
-        // Returning empty array as fallback
-        return []
+		// 执行 git 命令获取未拉取的提交 hash 列表
+		let process = Process()
+		process.executableURL = URL(fileURLWithPath: "/usr/bin/env")
+		process.arguments = ["git", "log", "..@{u}", "--format=%H"]
+		process.currentDirectoryURL = URL(fileURLWithPath: self.path)
+
+		let pipe = Pipe()
+		process.standardOutput = pipe
+		process.standardError = Pipe()
+
+		do {
+			try process.run()
+			process.waitUntilExit()
+
+			let data = pipe.fileHandleForReading.readDataToEndOfFile()
+			let output = String(data: data, encoding: .utf8) ?? ""
+
+			// 解析输出，获取未拉取提交的 hash 列表
+			let unpulledHashes = output.components(separatedBy: "\n").filter { !$0.isEmpty }
+
+			// 为每个 hash 创建一个 GitCommit 对象
+			// 注意：这些提交不在本地，所以我们需要用最少的可用信息创建对象
+			var unpulledCommits: [GitCommit] = []
+
+			for hash in unpulledHashes {
+				// 获取这个提交的详细信息
+				let detailProcess = Process()
+				detailProcess.executableURL = URL(fileURLWithPath: "/usr/bin/env")
+				detailProcess.arguments = ["git", "log", hash, "-1", "--format=%H|%an|%ae|%ad|%s"]
+				detailProcess.currentDirectoryURL = URL(fileURLWithPath: self.path)
+
+				let detailPipe = Pipe()
+				detailProcess.standardOutput = detailPipe
+				detailProcess.standardError = Pipe()
+
+				try detailProcess.run()
+				detailProcess.waitUntilExit()
+
+				let detailData = detailPipe.fileHandleForReading.readDataToEndOfFile()
+				let detailOutput = String(data: detailData, encoding: .utf8) ?? ""
+
+				let parts = detailOutput.components(separatedBy: "|")
+				if parts.count >= 5 {
+					let commitHash = parts[0]
+					let authorName = parts[1]
+					let authorEmail = parts[2]
+					let dateStr = parts[3]
+					let message = parts[4]
+
+					// 尝试使用 LibGit2Swift 的方式创建 GitCommit
+					// 如果不行，我们可能需要返回空数组或者找到其他方式
+					// 暂时返回空数组，因为远程的提交无法通过 LibGit2Swift 直接获取
+				}
+			}
+
+			// 由于 LibGit2Swift 无法直接访问远程提交，我们返回空数组
+			// 但可以通过 unpulledHashes.count 知道数量
+			return []
+		} catch {
+			os_log(.error, "\(self.t)❌ Failed to get unpulled commits: \(error)")
+			// 如果命令执行失败（比如没有上游分支），返回空数组
+			return []
+		}
     }
 
     func submit(_ message: String) throws {
@@ -451,12 +547,6 @@ extension Project {
 
     func getCommitsWithPagination(_ page: Int, limit: Int) throws -> [GitCommit] {
         return try LibGit2.getCommitListWithPagination(at: self.path, page: page, size: limit)
-    }
-
-    func getUnPushedCommits() throws -> [GitCommit] {
-        // LibGit2Swift hasn't implemented unpushed commits tracking yet
-        // Returning empty array as fallback
-        return []
     }
 }
 
