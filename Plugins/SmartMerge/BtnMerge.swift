@@ -45,14 +45,14 @@ extension BtnMerge {
     /// 先切换到目标分支，然后将源分支合并到当前分支
     func merge() {
         do {
-            _ = try ShellGit.checkout(to.name, at: path)
+            try LibGit2.checkout(branch: to.name, at: path)
 
             // 发布分支切换事件
             let project = Project(URL(fileURLWithPath: path))
             project.postEvent(name: .projectDidChangeBranch, operation: "checkout",
                               additionalInfo: ["branch": to.name, "reason": "merge_setup"])
 
-            _ = try ShellGit.merge(from.name, at: path)
+            try LibGit2.merge(branchName: from.name, at: path)
 
             // 发布合并成功事件
             project.postEvent(name: .projectDidMerge, operation: "merge",

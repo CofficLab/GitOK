@@ -205,14 +205,14 @@ extension RemoteRepositoryView {
             errorMessage = "没有选择项目"
             return
         }
-        
+
         isLoading = true
         errorMessage = nil
-        
+
         do {
-            _ = try ShellGit.addRemote(name, url: url, at: project.path)
+            try LibGit2.addRemote(name: name, url: url, at: project.path)
             loadRemotes() // 重新加载列表
-            
+
             if verbose {
                 os_log("\(self.t)✅ Added remote: \(name) -> \(url)")
             }
@@ -222,7 +222,7 @@ extension RemoteRepositoryView {
                 os_log(.error, "\(self.t)❌ Failed to add remote: \(error)")
             }
         }
-        
+
         isLoading = false
     }
     
@@ -240,23 +240,17 @@ extension RemoteRepositoryView {
             errorMessage = "没有选择项目"
             return
         }
-        
+
         isLoading = true
         errorMessage = nil
-        
+
         do {
-            if originalName != newName {
-                // 如果名称有变化，需要先删除旧的远程仓库，再添加新的
-                _ = try ShellGit.removeRemote(originalName, at: project.path)
-                _ = try ShellGit.addRemote(newName, url: newURL, at: project.path)
-            } else {
-                // 如果只是URL变化，也是先删除再添加
-                _ = try ShellGit.removeRemote(originalName, at: project.path)
-                _ = try ShellGit.addRemote(newName, url: newURL, at: project.path)
-            }
-            
+            // 先删除旧的远程仓库，再添加新的
+            try LibGit2.removeRemote(name: originalName, at: project.path)
+            try LibGit2.addRemote(name: newName, url: newURL, at: project.path)
+
             loadRemotes() // 重新加载列表
-            
+
             if verbose {
                 os_log("\(self.t)✅ Updated remote: \(originalName) -> \(newName): \(newURL)")
             }
@@ -266,7 +260,7 @@ extension RemoteRepositoryView {
                 os_log(.error, "\(self.t)❌ Failed to update remote: \(error)")
             }
         }
-        
+
         isLoading = false
     }
     
@@ -275,18 +269,18 @@ extension RemoteRepositoryView {
             errorMessage = "没有选择项目"
             return
         }
-        
+
         isLoading = true
         errorMessage = nil
-        
+
         do {
-            _ = try ShellGit.removeRemote(remote.name, at: project.path)
+            try LibGit2.removeRemote(name: remote.name, at: project.path)
             loadRemotes() // 重新加载列表
-            
+
             if selectedRemote?.id == remote.id {
                 selectedRemote = nil
             }
-            
+
             if verbose {
                 os_log("\(self.t)✅ Removed remote: \(remote.name)")
             }
@@ -296,7 +290,7 @@ extension RemoteRepositoryView {
                 os_log(.error, "\(self.t)❌ Failed to remove remote: \(error)")
             }
         }
-        
+
         isLoading = false
     }
 }
