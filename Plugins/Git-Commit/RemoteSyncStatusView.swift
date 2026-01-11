@@ -40,6 +40,9 @@ struct RemoteSyncStatusView: View, SuperLog {
     /// 是否正在执行 push 操作
     @State private var isPushing = false
 
+    /// 是否显示凭据输入界面
+    @State private var showCredentialInput = false
+
 
     /// 是否有需要显示的同步状态
     private var hasSyncStatus: Bool {
@@ -76,6 +79,21 @@ struct RemoteSyncStatusView: View, SuperLog {
         .onAppear(perform: onAppear)
         .onChange(of: data.project) { _, _ in
             onProjectChange()
+        }
+        .sheet(isPresented: $showCredentialInput) {
+            CredentialInputView {
+                // 凭据保存后，重新执行 push/pull
+                if isPushing || isPulling {
+                    // 等待一下让 UI 更新
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        if isPushing {
+                            performPush()
+                        } else if isPulling {
+                            performPull()
+                        }
+                    }
+                }
+            }
         }
     }
 }
@@ -269,7 +287,13 @@ extension RemoteSyncStatusView {
             } catch {
                 await MainActor.run {
                     os_log(.error, "\(self.t)❌ Git pull failed: \(error)")
-                    m.error(error)
+
+                    // 检查是否是认证错误
+                    if isCredentialError(error) {
+                        showCredentialInput = true
+                    } else {
+                        m.error(error)
+                    }
                 }
             }
 
@@ -310,7 +334,13 @@ extension RemoteSyncStatusView {
             } catch {
                 await MainActor.run {
                     os_log(.error, "\(self.t)❌ Git push failed: \(error)")
-                    m.error(error)
+
+                    // 检查是否是认证错误
+                    if isCredentialError(error) {
+                        showCredentialInput = true
+                    } else {
+                        m.error(error)
+                    }
                 }
             }
 
