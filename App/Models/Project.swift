@@ -488,13 +488,11 @@ extension Project {
     }
 
     func fileContentChange(at commit: String, file: String) throws -> (before: String?, after: String?) {
-        // LibGit2Swift implementation needed for fileContentChange
-        return (nil, nil)
+        try LibGit2.getFileContentChange(atCommit: commit, file: file, at: self.path)
     }
 
     func uncommittedFileContentChange(file: String) throws -> (before: String?, after: String?) {
-        // LibGit2Swift implementation needed for uncommittedFileContentChange
-        return (nil, nil)
+        try LibGit2.getUncommittedFileContentChange(for: file, at: self.path)
     }
 
     func changedFilesDetail(in atCommit: String) async throws -> [GitDiffFile] {
