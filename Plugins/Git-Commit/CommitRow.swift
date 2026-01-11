@@ -1,5 +1,6 @@
 
 import MagicKit
+import LibGit2Swift
 import SwiftUI
 
 struct CommitRow: View, SuperThread {

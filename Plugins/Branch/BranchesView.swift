@@ -3,6 +3,7 @@ import MagicKit
 import MagicAlert
 import OSLog
 import SwiftUI
+import LibGit2Swift
 
 /// 分支列表视图：负责展示可选分支并支持切换当前分支。
 struct BranchesView: View, SuperThread, SuperLog, SuperEvent {
@@ -80,7 +81,7 @@ extension BranchesView {
         }
 
         do {
-            branches = try project.getMagicKitBranches()
+            branches = try project.getBranches()
             if branches.isEmpty {
                 os_log("\(self.t)🍋 Refresh, but no branches")
                 self.updateSelection(nil, reason: "Refresh, but no branches")

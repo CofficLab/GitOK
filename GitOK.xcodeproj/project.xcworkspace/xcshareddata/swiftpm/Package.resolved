@@ -1,5 +1,5 @@
 {
-  "originHash" : "bf371532f0457f7b6bbb7dbfa9dd42c5c8f54e2eb36a0c5fbbcd134f302e578f",
+  "originHash" : "8127879237852ebb3cc90d3ea17de5eb403e50f761e18e3ed658aca5554d3678",
   "pins" : [
     {
       "identity" : "id3tageditor",
@@ -16,7 +16,7 @@
       "location" : "https://github.com/nookery/Libgit2swift",
       "state" : {
         "branch" : "main",
-        "revision" : "ec0d4c7f214fe127664cd000b7572704a3b1b932"
+        "revision" : "b63c6ac43aca17f21424a7523793e3deb4817d9b"
       }
     },
     {
@@ -52,7 +52,7 @@
       "location" : "https://github.com/CofficLab/MagicKit",
       "state" : {
         "branch" : "dev",
-        "revision" : "0e458c22612b7d8b0f87881dd90f8c1ce396328f"
+        "revision" : "0a8323a596331a5a2de38f060eb576aa3876b548"
       }
     },
     {

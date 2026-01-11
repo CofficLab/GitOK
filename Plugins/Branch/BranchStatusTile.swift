@@ -1,4 +1,5 @@
 import MagicKit
+import LibGit2Swift
 import SwiftUI
 import OSLog
 
@@ -59,7 +60,7 @@ extension BranchStatusTile {
 
             // 尝试从项目获取最新的分支对象
             do {
-                if let newBranch = try eventInfo.project.getMagicKitCurrentBranch(),
+                if let newBranch = try eventInfo.project.getCurrentBranch(),
                    newBranch.name == newBranchName {
 
                     // 更新 data 中的分支

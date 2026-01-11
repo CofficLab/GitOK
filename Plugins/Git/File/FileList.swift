@@ -1,6 +1,7 @@
 import AppKit
 import MagicAlert
 import MagicKit
+import LibGit2Swift
 import OSLog
 import SwiftUI
 
@@ -137,9 +138,9 @@ extension FileList {
             try Task.checkCancellation()
 
             if let commit = data.commit {
-                self.files = try await project.fileList(atCommit: commit.hash)
+                self.files = try await project.changedFilesDetail(in: commit.hash)
             } else {
-                self.files = try await project.getMagicKitUntrackedFiles()
+                self.files = try await project.untrackedFiles()
             }
 
             // 再次检查任务是否被取消

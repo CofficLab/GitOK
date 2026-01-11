@@ -1,4 +1,5 @@
 import MagicKit
+import LibGit2Swift
 import OSLog
 import SwiftUI
 
@@ -120,7 +121,7 @@ extension CommitList {
         loading = true
 
         do {
-            let newCommits = try project.getMagicKitCommitsWithPagination(
+            let newCommits = try project.getCommitsWithPagination(
                 self.currentPage,
                 limit: self.pageSize
             )
@@ -213,7 +214,7 @@ extension CommitList {
         hasMoreCommits = true
 
         do {
-            let initialCommits = try project.getMagicKitCommitsWithPagination(
+            let initialCommits = try project.getCommitsWithPagination(
                 0, limit: self.pageSize
             )
 
@@ -265,7 +266,7 @@ extension CommitList {
         loading = true
 
         do {
-            let newCommits = try project.getMagicKitCommitsWithPagination(
+            let newCommits = try project.getCommitsWithPagination(
                 currentPage,
                 limit: pageSize
             )

@@ -1,5 +1,6 @@
 
 import MagicKit
+import LibGit2Swift
 import MagicAlert
 import MagicUI
 import OSLog
@@ -124,7 +125,7 @@ extension BranchForm {
 
         Task.detached {
             do {
-                try project.checkout(magicKitBranch: branch)
+                try project.checkout(branch: branch)
                 
                 await MainActor.run {
                     self.selectedBranch = branch
@@ -156,8 +157,8 @@ extension BranchForm {
         
         Task.detached {
             do {
-                let allBranches = try project.getMagicKitBranches()
-                let currentBranch = try project.getMagicKitCurrentBranch()
+                let allBranches = try project.getBranches()
+                let currentBranch = try project.getCurrentBranch()
                 
                 await MainActor.run {
                     self.branches = allBranches

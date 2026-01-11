@@ -2,6 +2,7 @@ import AppKit
 
 import MagicAlert
 import MagicKit
+import LibGit2Swift
 import MagicUI
 import OSLog
 import SwiftUI

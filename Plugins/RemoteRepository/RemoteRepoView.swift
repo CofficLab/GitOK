@@ -1,5 +1,6 @@
 
 import MagicKit
+import LibGit2Swift
 import MagicAlert
 import MagicUI
 import SwiftUI
@@ -184,7 +185,7 @@ extension RemoteRepositoryView {
         errorMessage = nil
         
         do {
-            remotes = try project.getMagicKitRemotes()
+            remotes = try project.remoteList()
             
             if verbose {
                 os_log("\(self.t)✅ Loaded \(remotes.count) remotes")

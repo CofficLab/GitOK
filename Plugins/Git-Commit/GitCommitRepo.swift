@@ -1,5 +1,6 @@
 import Foundation
 import MagicKit
+import LibGit2Swift
 import OSLog
 import SwiftUI
 

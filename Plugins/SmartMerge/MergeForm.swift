@@ -1,4 +1,5 @@
 import MagicKit
+import LibGit2Swift
 import OSLog
 import SwiftUI
 
@@ -70,7 +71,7 @@ extension MergeForm {
         guard let project = project else { return }
 
         do {
-            self.branches = try project.getMagicKitBranches()
+            self.branches = try project.getBranches()
             self.branch1 = branches.first
             self.branch2 = branches.count >= 2 ? branches[1] : branches.first
 

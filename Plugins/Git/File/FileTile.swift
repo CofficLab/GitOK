@@ -1,4 +1,5 @@
 import MagicKit
+import LibGit2Swift
 import SwiftUI
 
 struct FileTile: View {
