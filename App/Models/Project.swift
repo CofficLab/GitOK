@@ -497,9 +497,7 @@ extension Project {
 
     /// 获取指定提交中文件的 diff 字符串
     func fileDiff(at commit: String, file: String) throws -> String {
-        // TODO: Implement this in LibGit2Swift
-        // For now, return empty string
-        return ""
+        try LibGit2.getFileDiff(atCommit: commit, for: file, at: self.path)
     }
 
     /// 获取未提交文件的 diff 字符串

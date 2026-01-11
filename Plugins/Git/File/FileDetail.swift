@@ -39,7 +39,7 @@ struct FileDetail: View, SuperLog, SuperEvent, SuperThread {
                 .background(.background)
             }
 
-            MagicDiffView(oldText: oldText, newText: newText, verbose: false)
+            MagicDiffView(oldText: oldText, newText: newText)
                 .background(.background)
         }
         .onChange(of: data.file, onFileChange)
@@ -69,6 +69,8 @@ struct FileDetail: View, SuperLog, SuperEvent, SuperThread {
             }
         } catch {
             self.m.error(error)
+            self.oldText = ""
+            self.newText = ""
         }
     }
 }
