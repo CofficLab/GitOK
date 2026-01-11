@@ -495,6 +495,18 @@ extension Project {
         try LibGit2.getUncommittedFileContentChange(for: file, at: self.path)
     }
 
+    /// 获取指定提交中文件的 diff 字符串
+    func fileDiff(at commit: String, file: String) throws -> String {
+        // TODO: Implement this in LibGit2Swift
+        // For now, return empty string
+        return ""
+    }
+
+    /// 获取未提交文件的 diff 字符串
+    func uncommittedFileDiff(file: String) throws -> String {
+        try LibGit2.getFileDiff(for: file, at: self.path, staged: false)
+    }
+
     func changedFilesDetail(in atCommit: String) async throws -> [GitDiffFile] {
         // 使用 LibGit2Swift 获取指定commit修改的文件列表
         return try LibGit2.getCommitDiffFiles(atCommit: atCommit, at: self.path)
