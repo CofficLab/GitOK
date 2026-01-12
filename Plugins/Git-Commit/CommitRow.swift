@@ -7,6 +7,7 @@ struct CommitRow: View, SuperThread {
     @EnvironmentObject var data: DataProvider
 
     let commit: GitCommit
+    let isUnpushed: Bool  // 是否未同步到远程
 
     @State private var tag: String = ""
 
@@ -25,6 +26,14 @@ struct CommitRow: View, SuperThread {
                                     .lineLimit(1)
                                     .font(.system(size: 13))
                                 Spacer()
+
+                                // 未同步到远程的图标
+                                if isUnpushed {
+                                    Image(systemName: "arrow.uturn.up")
+                                        .font(.system(size: 10))
+                                        .foregroundColor(.secondary.opacity(0.6))
+                                        .help("尚未推送到远程仓库")
+                                }
                             }
 
                             // 第二行：所有作者（包括 Co-Authored-By）

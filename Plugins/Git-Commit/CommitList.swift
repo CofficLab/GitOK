@@ -18,6 +18,7 @@ struct CommitList: View, SuperThread, SuperLog {
     @State private var hasMoreCommits = true
     @State private var currentPage = 0
     @State private var pageSize: Int = 50
+    @State private var unpushedCommits: Set<String> = []  // 存储未推送 commit 的 hash
 
     // 使用GitCommitRepo来存储和恢复commit选择
     private let commitRepo = GitCommitRepo.shared
@@ -64,7 +65,8 @@ extension CommitList {
 
                 ForEach(commits.indices, id: \.self) { index in
                     let commit = commits[index]
-                    CommitRow(commit: commit)
+                    let isUnpushed = unpushedCommits.contains(commit.hash)
+                    CommitRow(commit: commit, isUnpushed: isUnpushed)
                         .overlay(alignment: .trailing) {
                             // 在第一个 commit 右侧显示刷新 loading
                             if index == 0 && isRefreshing {
@@ -218,8 +220,13 @@ extension CommitList {
                 0, limit: self.pageSize
             )
 
+            // 获取未推送的 commits
+            let unpushed = try project.getUnPushedCommits()
+            let unpushedHashes = Set(unpushed.map { $0.hash })
+
             if Self.verbose {
                 os_log("\(self.t)🔄 Refresh - fetched \(initialCommits.count) commits from page 0")
+                os_log("\(self.t)🔄 Refresh - \(unpushed.count) unpushed commits")
                 for (index, commit) in initialCommits.prefix(3).enumerated() {
                     os_log("\(self.t)🔄 Commit \(index): \(commit.hash.prefix(8)) - \(commit.message.prefix(50))")
                 }
@@ -228,6 +235,7 @@ extension CommitList {
             // 在主线程更新 UI 状态
             DispatchQueue.main.async {
                 self.commits = initialCommits
+                self.unpushedCommits = unpushedHashes
                 self.loading = false
                 self.isRefreshing = false
                 self.currentPage = 1 // Next page to load
@@ -363,6 +371,7 @@ extension CommitList {
             // 等待 100ms，确保 Git 操作完成
             try? await Task.sleep(nanoseconds: 100000000)
             await MainActor.run {
+                // 刷新会自动更新 unpushedCommits
                 self.refresh("GitPushSuccess")
             }
         }
