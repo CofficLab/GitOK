@@ -14,6 +14,7 @@ struct FileList: View, SuperThread, SuperLog {
     @State var isLoading = true
     @State var selection: GitDiffFile?
     @State private var refreshTask: Task<Void, Never>?
+    @State private var lastRefreshTime: Date = Date.distantPast
     var verbose = false
 
     var body: some View {
@@ -108,6 +109,18 @@ extension FileList {
     }
 
     func refresh(reason: String) async {
+        let now = Date()
+
+        // 防抖：500ms 内的重复刷新请求会被忽略
+        guard now.timeIntervalSince(lastRefreshTime) > 0.5 else {
+            if verbose {
+                os_log("\(self.t)🚫 Refresh skipped (debounced): \(reason)")
+            }
+            return
+        }
+
+        lastRefreshTime = now
+
         // 取消之前的任务
         refreshTask?.cancel()
 
