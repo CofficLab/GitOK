@@ -1,5 +1,5 @@
 {
-  "originHash" : "8127879237852ebb3cc90d3ea17de5eb403e50f761e18e3ed658aca5554d3678",
+  "originHash" : "e686047501da144a46b28bed206a37cd76ed698a41c4795f1ed73b4920ef71d3",
   "pins" : [
     {
       "identity" : "id3tageditor",
@@ -13,10 +13,10 @@
     {
       "identity" : "libgit2swift",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/nookery/Libgit2swift",
+      "location" : "https://github.com/nookery/LibGit2Swift",
       "state" : {
         "branch" : "main",
-        "revision" : "9dab0eeb6c5908b8648eac3c3b89b68916330a10"
+        "revision" : "55afae10adeeb030785b9b5429fc7013d059d59f"
       }
     },
     {
@@ -31,7 +31,7 @@
     {
       "identity" : "magicdevice",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/nookery/MagicDevice",
+      "location" : "https://github.com/nookery/MagicDevice.git",
       "state" : {
         "branch" : "main",
         "revision" : "60c9bf7cd59566ec64b7088fa8672a6b1c2c5cf2"

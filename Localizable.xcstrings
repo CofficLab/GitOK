@@ -79,6 +79,12 @@
     "Flutter" : {
 
     },
+    "ghp_xxxxxxxxxxxxxxxxxxxx" : {
+
+    },
+    "GitHub 用户名" : {
+
+    },
     "Git用户配置" : {
 
     },
@@ -222,6 +228,9 @@
         }
       }
     },
+    "Personal Access Token" : {
+
+    },
     "project_not_exist" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -318,10 +327,16 @@
     "Xcode 16 格式会自动调整，Xcode 26 格式保持用户设置" : {
 
     },
+    "为 %@ 添加您的 Git 认证信息" : {
+
+    },
     "产品图片" : {
 
     },
     "从远程仓库拉取最新代码" : {
+
+    },
+    "例如: CofficLab" : {
 
     },
     "例如: https://github.com/user/repo.git" : {
@@ -331,6 +346,15 @@
 
     },
     "保存" : {
+
+    },
+    "保存凭据" : {
+
+    },
+    "保存失败" : {
+
+    },
+    "保存成功" : {
 
     },
     "修改远程仓库的名称和URL" : {
@@ -343,6 +367,9 @@
 
     },
     "内边距 %@" : {
+
+    },
+    "凭据已安全保存到 macOS Keychain" : {
 
     },
     "分支名称" : {
@@ -400,6 +427,9 @@
 
     },
     "圆角 %lld" : {
+
+    },
+    "在 GitHub Settings → Developer settings → Personal access tokens 中创建" : {
 
     },
     "在Finder中打开" : {
@@ -552,6 +582,9 @@
     "添加" : {
 
     },
+    "添加 Git 凭据" : {
+
+    },
     "添加一个新的Git远程仓库" : {
 
     },
@@ -616,6 +649,9 @@
 
     },
     "用终端打开" : {
+
+    },
+    "确定" : {
 
     },
     "确定要删除远程仓库 \"%@\" 吗？此操作不可撤销。" : {
