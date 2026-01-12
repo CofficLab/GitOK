@@ -695,7 +695,7 @@ extension Project {
 extension Project {
     func push() throws {
         do {
-            try LibGit2.push(at: self.path)
+            try LibGit2.push(at: self.path, verbose: false)
             postEvent(
                 name: .projectDidPush,
                 operation: "push"
