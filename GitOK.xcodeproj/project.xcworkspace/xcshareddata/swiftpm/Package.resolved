@@ -16,7 +16,7 @@
       "location" : "https://github.com/nookery/LibGit2Swift",
       "state" : {
         "branch" : "main",
-        "revision" : "55afae10adeeb030785b9b5429fc7013d059d59f"
+        "revision" : "67044d94f207ba272c46e9ccc851ecfd6bf07f4e"
       }
     },
     {
@@ -53,6 +53,15 @@
       "state" : {
         "branch" : "dev",
         "revision" : "0a8323a596331a5a2de38f060eb576aa3876b548"
+      }
+    },
+    {
+      "identity" : "magiclog",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/nookery/MagicLog.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "f3680135b72e6c2158d21fba5769f17ba77798e5"
       }
     },
     {

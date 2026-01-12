@@ -25,7 +25,8 @@
 		F5D122862F0E5B040001A5D2 /* MagicKit in Frameworks */ = {isa = PBXBuildFile; productRef = F5D122852F0E5B040001A5D2 /* MagicKit */; };
 		F5D1228F2F0E5D4D0001A5D2 /* MagicAlert in Frameworks */ = {isa = PBXBuildFile; productRef = F5D1228E2F0E5D4D0001A5D2 /* MagicAlert */; };
 		F5DFDC712F147D62001332BB /* LibGit2Swift in Frameworks */ = {isa = PBXBuildFile; productRef = F5DFDC702F147D62001332BB /* LibGit2Swift */; };
-		F5DFE1D62F148BC6001332BB /* LibGit2Swift in Frameworks */ = {isa = PBXBuildFile; productRef = F5DFE1D52F148BC6001332BB /* LibGit2Swift */; };
+		F5F472D12F14AE1E0006F064 /* LibGit2Swift in Frameworks */ = {isa = PBXBuildFile; productRef = F5F472D02F14AE1E0006F064 /* LibGit2Swift */; };
+		F5F472D42F14BE1F0006F064 /* LibGit2Swift in Frameworks */ = {isa = PBXBuildFile; productRef = F5F472D32F14BE1F0006F064 /* LibGit2Swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -820,8 +821,9 @@
 				0BFAFE9C2F0E87980076A5E4 /* MagicDiffView in Frameworks */,
 				F5D1228F2F0E5D4D0001A5D2 /* MagicAlert in Frameworks */,
 				F5DFDC712F147D62001332BB /* LibGit2Swift in Frameworks */,
-				F5DFE1D62F148BC6001332BB /* LibGit2Swift in Frameworks */,
+				F5F472D12F14AE1E0006F064 /* LibGit2Swift in Frameworks */,
 				F5D1227E2F0E5B040001A5D2 /* MagicDevice in Frameworks */,
+				F5F472D42F14BE1F0006F064 /* LibGit2Swift in Frameworks */,
 				F5B9093B2EE8FB4B008BEB16 /* MagicDiffView in Frameworks */,
 				0B3CC95E2DF1C49000E22263 /* Sparkle in Frameworks */,
 				0B76CC0A2F13D95C00BFB2C3 /* LibGit2Swift in Frameworks */,
@@ -1221,7 +1223,8 @@
 				0B5178002F13D6A70085381F /* LibGit2Swift */,
 				0B76CC092F13D95C00BFB2C3 /* LibGit2Swift */,
 				F5DFDC702F147D62001332BB /* LibGit2Swift */,
-				F5DFE1D52F148BC6001332BB /* LibGit2Swift */,
+				F5F472D02F14AE1E0006F064 /* LibGit2Swift */,
+				F5F472D32F14BE1F0006F064 /* LibGit2Swift */,
 			);
 			productName = GitOK;
 			productReference = 0B0E167D2BD89A8F0078942B /* GitOK.app */;
@@ -1259,7 +1262,7 @@
 				0BFAFE9F2F0E90E40076A5E4 /* XCRemoteSwiftPackageReference "MagicDevice" */,
 				F5A396002F0F899C0031F79F /* XCRemoteSwiftPackageReference "MagicKit" */,
 				0BDAA1372F1147D200A4283A /* XCRemoteSwiftPackageReference "static-libgit2" */,
-				F5DFE1D42F148BC6001332BB /* XCRemoteSwiftPackageReference "LibGit2Swift" */,
+				F5F472D22F14BE1F0006F064 /* XCRemoteSwiftPackageReference "LibGit2Swift" */,
 			);
 			productRefGroup = 0B0E167E2BD89A8F0078942B /* Products */;
 			projectDirPath = "";
@@ -2418,7 +2421,7 @@
 				kind = branch;
 			};
 		};
-		F5DFE1D42F148BC6001332BB /* XCRemoteSwiftPackageReference "LibGit2Swift" */ = {
+		F5F472D22F14BE1F0006F064 /* XCRemoteSwiftPackageReference "LibGit2Swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/nookery/LibGit2Swift";
 			requirement = {
@@ -2507,9 +2510,13 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = LibGit2Swift;
 		};
-		F5DFE1D52F148BC6001332BB /* LibGit2Swift */ = {
+		F5F472D02F14AE1E0006F064 /* LibGit2Swift */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = F5DFE1D42F148BC6001332BB /* XCRemoteSwiftPackageReference "LibGit2Swift" */;
+			productName = LibGit2Swift;
+		};
+		F5F472D32F14BE1F0006F064 /* LibGit2Swift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F5F472D22F14BE1F0006F064 /* XCRemoteSwiftPackageReference "LibGit2Swift" */;
 			productName = LibGit2Swift;
 		};
 /* End XCSwiftPackageProductDependency section */

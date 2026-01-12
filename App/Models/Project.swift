@@ -272,11 +272,11 @@ extension Project {
             return true
         }
         
-        return try LibGit2.hasUncommittedChanges(at: self.path) == false
+        return try LibGit2.hasUncommittedChanges(at: self.path, verbose: verbose) == false
     }
     
     func hasNoUncommittedChanges() throws -> Bool {
-        return try LibGit2.hasUncommittedChanges(at: self.path) == false
+        return try LibGit2.hasUncommittedChanges(at: self.path, verbose: false) == false
     }
 }
 
@@ -342,7 +342,7 @@ extension Project {
 extension Project {
     func addAll() throws {
         do {
-            try LibGit2.addFiles([], at: self.path)
+            try LibGit2.addFiles([], at: self.path, verbose: false)
             postEvent(
                 name: .projectDidAddFiles,
                 operation: "addAll"
@@ -363,11 +363,11 @@ extension Project {
 
 extension Project {
     func getUserName() throws -> String {
-        try LibGit2.getConfig(key: "user.name", at: self.path)
+        try LibGit2.getConfig(key: "user.name", at: self.path, verbose: false)
     }
 
     func getUserEmail() throws -> String {
-        try LibGit2.getConfig(key: "user.email", at: self.path)
+        try LibGit2.getConfig(key: "user.email", at: self.path, verbose: false)
     }
 
     /// 设置项目的Git用户信息（仅针对当前项目）
@@ -527,7 +527,7 @@ extension Project {
     func submit(_ message: String) throws {
         assert(Thread.isMainThread, "setCommit(_:) 必须在主线程调用，否则会导致线程安全问题！")
         do {
-            try LibGit2.createCommit(message: message, at: self.path)
+            try LibGit2.createCommit(message: message, at: self.path, verbose: false)
             postEvent(
                 name: .projectDidCommit,
                 operation: "commit",
@@ -713,7 +713,7 @@ extension Project {
 
     func pull() throws {
         do {
-            try LibGit2.pull(at: self.path)
+            try LibGit2.pull(at: self.path, verbose: false)
             postEvent(
                 name: .projectDidPull,
                 operation: "pull"
