@@ -79,7 +79,6 @@ struct FileList: View, SuperThread, SuperLog {
         .onChange(of: data.commit, onCommitChange)
         .onChange(of: selection, onSelectionChange)
         .onProjectDidCommit(perform: onProjectDidCommit)
-        .onApplicationWillBecomeActive(perform: onAppWillBecomeActive)
         .onApplicationDidBecomeActive(perform: onAppDidBecomeActive)
     }
 }
@@ -185,12 +184,6 @@ extension FileList {
     func onProjectDidCommit(_ eventInfo: ProjectEventInfo) {
         Task {
             await self.refresh(reason: "OnProjectDidCommit")
-        }
-    }
-
-    func onAppWillBecomeActive() {
-        Task {
-            await self.refresh(reason: "OnAppWillBecomeActive")
         }
     }
 

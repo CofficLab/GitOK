@@ -83,14 +83,24 @@ extension GitDetail {
             return
         }
 
-        do {
-            self.isProjectClean = try project.isClean(verbose: false)
-        } catch {
-            os_log(.error, "\(self.t)❌ Failed to update isProjectClean: \(error)")
-        }
+        // 在后台执行，避免阻塞主线程
+        Task.detached(priority: .utility) {
+            let isClean: Bool
+            do {
+                isClean = try project.isClean(verbose: false)
+            } catch {
+                await MainActor.run {
+                    os_log(.error, "\(Self.t)❌ Failed to update isProjectClean: \(error)")
+                }
+                return
+            }
 
-        if verbose {
-            os_log(.info, "\(self.t)🔄 Update isProjectClean: \(self.isProjectClean)")
+            await MainActor.run {
+                self.isProjectClean = isClean
+                if self.verbose {
+                    os_log(.info, "\(Self.t)🔄 Update isProjectClean: \(isClean)")
+                }
+            }
         }
     }
 
@@ -126,7 +136,11 @@ extension GitDetail {
 
 extension GitDetail {
     func onAppWillBecomeActive(_ notification: Notification) {
-        self.updateIsProjectClean()
+        // 延迟执行，避免与其他组件同时刷新
+        Task {
+            try? await Task.sleep(nanoseconds: 300_000_000)  // 延迟 0.3 秒
+            self.updateIsProjectClean()
+        }
     }
 
     func onAppear() {

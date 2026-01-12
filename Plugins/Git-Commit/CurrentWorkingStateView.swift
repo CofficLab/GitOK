@@ -146,9 +146,11 @@ extension CurrentWorkingStateView {
         }
     }
 
-    /// 应用激活事件处理：刷新文件列表
+    /// 应用激活事件处理：延迟刷新文件列表，避免与其他组件同时刷新
     func onAppDidBecomeActive(_ notification: Notification) {
         Task {
+            // 延迟 0.5 秒，让其他组件先完成刷新
+            try? await Task.sleep(nanoseconds: 500_000_000)
             await self.loadChangedFileCount()
         }
     }
