@@ -73,7 +73,7 @@ struct BtnSyncView: View, SuperLog, SuperEvent, SuperThread {
         }
 
         Task.detached {
-            setStatus("同步中…")
+            await setStatus("同步中…")
             do {
                 // 检查是否有远程仓库
                 if let project = await self.data.project {
@@ -84,7 +84,7 @@ struct BtnSyncView: View, SuperLog, SuperEvent, SuperThread {
                             self.reset()
                             self.m.info("该项目还没有配置远程仓库，请先推送代码建立远程连接")
                         }
-                        setStatus(nil)
+                        await setStatus(nil)
                         return
                     }
                 }
@@ -100,7 +100,7 @@ struct BtnSyncView: View, SuperLog, SuperEvent, SuperThread {
                     self.m.error(error)
                 }
             }
-            setStatus(nil)
+            await setStatus(nil)
         }
     }
 

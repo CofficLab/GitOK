@@ -79,7 +79,7 @@ extension BtnGitPullView {
         }
 
         Task.detached {
-            setStatus("拉取中…")
+            await setStatus("拉取中…")
             do {
                 try await self.data.project?.pull()
                 await MainActor.run {
@@ -93,7 +93,7 @@ extension BtnGitPullView {
                     self.m.error("拉取失败: \(error.localizedDescription)")
                 }
             }
-            setStatus(nil)
+            await setStatus(nil)
             await MainActor.run {
                 onComplete()
             }
