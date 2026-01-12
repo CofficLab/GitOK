@@ -215,36 +215,42 @@ extension CommitList {
         currentPage = 0
         hasMoreCommits = true
 
-        do {
-            let initialCommits = try project.getCommitsWithPagination(
-                0, limit: self.pageSize
-            )
+        // 捕获 pageSize 以避免 main actor 隔离问题
+        let pageSize = self.pageSize
 
-            // 获取未推送的 commits
-            let unpushed = try await project.getUnPushedCommits()
-            let unpushedHashes = Set(unpushed.map { $0.hash })
+        // 使用 Task.detached 在后台执行异步操作
+        Task.detached(priority: .userInitiated) {
+            do {
+                let initialCommits = try project.getCommitsWithPagination(
+                    0, limit: pageSize
+                )
 
-            if Self.verbose {
-                os_log("\(self.t)🔄 Refresh - fetched \(initialCommits.count) commits from page 0")
-                os_log("\(self.t)🔄 Refresh - \(unpushed.count) unpushed commits")
-                for (index, commit) in initialCommits.prefix(3).enumerated() {
-                    os_log("\(self.t)🔄 Commit \(index): \(commit.hash.prefix(8)) - \(commit.message.prefix(50))")
+                // 获取未推送的 commits
+                let unpushed = try await project.getUnPushedCommits()
+                let unpushedHashes = Set(unpushed.map { $0.hash })
+
+                if Self.verbose {
+                    os_log("\(self.t)🔄 Refresh - fetched \(initialCommits.count) commits from page 0")
+                    os_log("\(self.t)🔄 Refresh - \(unpushed.count) unpushed commits")
+                    for (index, commit) in initialCommits.prefix(3).enumerated() {
+                        os_log("\(self.t)🔄 Commit \(index): \(commit.hash.prefix(8)) - \(commit.message.prefix(50))")
+                    }
                 }
-            }
 
-            // 在主线程更新 UI 状态
-            DispatchQueue.main.async {
-                self.commits = initialCommits
-                self.unpushedCommits = unpushedHashes
-                self.loading = false
-                self.isRefreshing = false
-                self.currentPage = 1 // Next page to load
-            }
-        } catch {
-            // 在主线程更新 UI 状态
-            DispatchQueue.main.async {
-                self.loading = false
-                self.isRefreshing = false
+                // 在主线程更新 UI 状态
+                await MainActor.run {
+                    self.commits = initialCommits
+                    self.unpushedCommits = unpushedHashes
+                    self.loading = false
+                    self.isRefreshing = false
+                    self.currentPage = 1 // Next page to load
+                }
+            } catch {
+                // 在主线程更新 UI 状态
+                await MainActor.run {
+                    self.loading = false
+                    self.isRefreshing = false
+                }
             }
         }
     }
