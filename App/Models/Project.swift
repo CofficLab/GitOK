@@ -377,7 +377,7 @@ extension Project {
     /// - Throws: Git操作异常
     func setUserConfig(name userName: String, email userEmail: String) throws {
         do {
-            _ = try LibGit2.setUserConfig(name: userName, email: userEmail, at: self.path)
+            _ = try LibGit2.setUserConfig(name: userName, email: userEmail, at: self.path, verbose: false)
             postEvent(
                 name: .projectDidUpdateUserInfo,
                 operation: "setUserConfig",
@@ -399,7 +399,7 @@ extension Project {
     /// - Returns: 用户配置信息（用户名，邮箱）
     /// - Throws: Git操作异常
     func getUserConfig() throws -> (name: String, email: String) {
-        try LibGit2.getUserConfig(at: self.path)
+        try LibGit2.getUserConfig(at: self.path, verbose: false)
     }
 
     /// 批量设置用户信息

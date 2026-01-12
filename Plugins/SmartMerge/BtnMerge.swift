@@ -52,7 +52,7 @@ extension BtnMerge {
             project.postEvent(name: .projectDidChangeBranch, operation: "checkout",
                               additionalInfo: ["branch": to.name, "reason": "merge_setup"])
 
-            try LibGit2.merge(branchName: from.name, at: path)
+            try LibGit2.merge(branchName: from.name, at: path, verbose: false)
 
             // 发布合并成功事件
             project.postEvent(name: .projectDidMerge, operation: "merge",
