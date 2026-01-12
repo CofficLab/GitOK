@@ -1,6 +1,7 @@
 import AppKit
 import MagicAlert
 import MagicKit
+import LibGit2Swift
 import OSLog
 import SwiftUI
 
@@ -78,6 +79,8 @@ struct FileList: View, SuperThread, SuperLog {
         .onChange(of: data.commit, onCommitChange)
         .onChange(of: selection, onSelectionChange)
         .onProjectDidCommit(perform: onProjectDidCommit)
+        .onApplicationWillBecomeActive(perform: onAppWillBecomeActive)
+        .onApplicationDidBecomeActive(perform: onAppDidBecomeActive)
     }
 }
 
@@ -135,7 +138,7 @@ extension FileList {
             try Task.checkCancellation()
 
             if let commit = data.commit {
-                self.files = try await project.fileList(atCommit: commit.hash)
+                self.files = try await project.changedFilesDetail(in: commit.hash)
             } else {
                 self.files = try await project.untrackedFiles()
             }
@@ -182,6 +185,18 @@ extension FileList {
     func onProjectDidCommit(_ eventInfo: ProjectEventInfo) {
         Task {
             await self.refresh(reason: "OnProjectDidCommit")
+        }
+    }
+
+    func onAppWillBecomeActive() {
+        Task {
+            await self.refresh(reason: "OnAppWillBecomeActive")
+        }
+    }
+
+    func onAppDidBecomeActive() {
+        Task {
+            await self.refresh(reason: "OnAppDidBecomeActive")
         }
     }
 }

@@ -4,14 +4,24 @@ import MagicUI
 import OSLog
 import SwiftUI
 
+/// 提交并推送按钮组件
 struct BtnCommitAndPush: View, SuperLog, SuperThread {
+    /// emoji 标识符
+    nonisolated static let emoji = "🐔"
+
+    /// 是否启用详细日志输出
+    nonisolated static let verbose = false
+
     @EnvironmentObject var g: DataProvider
     @EnvironmentObject var m: MagicMessageProvider
 
-    static let emoji = "🐔"
+    /// 提交消息
     var commitMessage: String = ""
+
+    /// 是否只执行提交操作，不推送
     var commitOnly: Bool = false
 
+    /// 按钮视图主体
     var body: some View {
         MagicButton(
             icon: .iconUpload,
@@ -25,8 +35,12 @@ struct BtnCommitAndPush: View, SuperLog, SuperThread {
                     return
                 }
 
-                os_log("\(self.t)💼 Commit")
+                if Self.verbose {
+                    os_log("\(self.t)Starting commit operation")
+                }
 
+                /// 设置状态信息
+                /// - Parameter text: 状态文本，nil 表示清除状态
                 func setStatus(_ text: String?) {
                     Task { @MainActor in
                         g.activityStatus = text
@@ -75,6 +89,8 @@ struct BtnCommitAndPush: View, SuperLog, SuperThread {
     }
 }
 
+// MARK: - Preview
+
 #Preview("App - Small Screen") {
     RootView {
         ContentLayout()
@@ -82,7 +98,7 @@ struct BtnCommitAndPush: View, SuperLog, SuperThread {
             .hideTabPicker()
             .hideProjectActions()
     }
-    .frame(width: 600)
+    .frame(width: 800)
     .frame(height: 600)
 }
 
@@ -91,7 +107,6 @@ struct BtnCommitAndPush: View, SuperLog, SuperThread {
         ContentLayout()
             .hideSidebar()
             .hideTabPicker()
-            .hideProjectActions()
     }
     .frame(width: 1200)
     .frame(height: 1200)

@@ -1,5 +1,5 @@
-import MagicKit
 import MagicAlert
+import MagicKit
 import OSLog
 import SwiftUI
 
@@ -8,9 +8,9 @@ struct TileMerge: View, SuperLog, SuperThread {
     @EnvironmentObject var m: MagicMessageProvider
 
     @State var isPresented = false
-    
+
     static let shared = TileMerge()
-    
+
     private init() {}
 
     var body: some View {

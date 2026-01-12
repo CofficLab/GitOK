@@ -1,5 +1,5 @@
 {
-  "originHash" : "0e7d141e33537a5463e405b178c789fa10c690244e278cf5553cb39d55592138",
+  "originHash" : "ec9c1e8bd73c2380100d24b78c68cdc426a2c6e068c9aaa3e9584477323f2e6d",
   "pins" : [
     {
       "identity" : "id3tageditor",
@@ -8,6 +8,15 @@
       "state" : {
         "revision" : "3ccc31eafae0ded1fea8c9acd5e7ef7dfdbf1e8e",
         "version" : "4.6.0"
+      }
+    },
+    {
+      "identity" : "libgit2swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/nookery/LibGit2Swift",
+      "state" : {
+        "branch" : "main",
+        "revision" : "774e6f699e66a80defecc076412b9c092602a6b9"
       }
     },
     {
@@ -34,7 +43,7 @@
       "location" : "https://github.com/nookery/MagicDiffView",
       "state" : {
         "branch" : "main",
-        "revision" : "b03f80f28bf9f73bdfd2e72ec65fbcd1b2acaa90"
+        "revision" : "c404dfc32fd389a11434ce48022a87f866c0d046"
       }
     },
     {
@@ -43,7 +52,16 @@
       "location" : "https://github.com/CofficLab/MagicKit",
       "state" : {
         "branch" : "dev",
-        "revision" : "a1c5ad580b1859f02046bae796b628f813746bb7"
+        "revision" : "0a8323a596331a5a2de38f060eb576aa3876b548"
+      }
+    },
+    {
+      "identity" : "magiclog",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/nookery/MagicLog.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "f3680135b72e6c2158d21fba5769f17ba77798e5"
       }
     },
     {
@@ -71,6 +89,15 @@
       "state" : {
         "revision" : "0ef1ee0220239b3776f433314515fd849025673f",
         "version" : "2.6.4"
+      }
+    },
+    {
+      "identity" : "static-libgit2",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/bdewey/static-libgit2.git",
+      "state" : {
+        "revision" : "ca2b13cb2cd04365c9416803c1d7e26116b23efd",
+        "version" : "0.5.0"
       }
     },
     {

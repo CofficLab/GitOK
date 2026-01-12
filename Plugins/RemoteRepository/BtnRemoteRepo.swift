@@ -51,7 +51,7 @@ extension BtnRemoteRepositoryView {
             return
         }
 
-        isGitProject = project.isGit()
+        isGitProject = project.isGitRepo
     }
     
     /**

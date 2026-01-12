@@ -1,4 +1,5 @@
 import MagicKit
+import LibGit2Swift
 import SwiftUI
 import OSLog
 
@@ -43,10 +44,45 @@ struct BranchStatusTile: View, SuperLog {
 
 extension BranchStatusTile {
     private func handleBranchChanged(_ eventInfo: ProjectEventInfo) {
-        // 分支变更事件处理 - DataProvider 已自动更新分支信息
-        // 此处可添加额外的 UI 响应逻辑，如动画或通知
-        if Self.verbose {
-            os_log("\(self.t)Branch changed to \(eventInfo.additionalInfo?["branchName"] as? String ?? "unknown")")
+        // 分支变更事件处理
+        guard let newBranchName = eventInfo.additionalInfo?["branchName"] as? String else {
+            if Self.verbose {
+                os_log(.error, "\(self.t)No branch name found in event info")
+            }
+            return
+        }
+
+        // 检查 data 中的分支是否与事件中的分支一致
+        if data.branch?.name != newBranchName {
+            if Self.verbose {
+                os_log("\(self.t)Branch mismatch detected. Data branch: \(data.branch?.name ?? "nil"), Event branch: \(newBranchName)")
+            }
+
+            // 尝试从项目获取最新的分支对象
+            do {
+                if let newBranch = try eventInfo.project.getCurrentBranch(),
+                   newBranch.name == newBranchName {
+
+                    // 更新 data 中的分支
+                    try? data.setBranch(newBranch)
+
+                    if Self.verbose {
+                        os_log("\(self.t)Updated data branch to \(newBranchName)")
+                    }
+                } else {
+                    if Self.verbose {
+                        os_log(.error, "\(self.t)Failed to get current branch or branch name mismatch")
+                    }
+                }
+            } catch {
+                if Self.verbose {
+                    os_log(.error, "\(self.t)Failed to update branch: \(error.localizedDescription)")
+                }
+            }
+        } else {
+            if Self.verbose {
+                os_log("\(self.t)Branch already in sync: \(newBranchName)")
+            }
         }
     }
 

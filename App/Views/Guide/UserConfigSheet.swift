@@ -4,168 +4,108 @@ import MagicUI
 import OSLog
 import SwiftUI
 
+/// 用户配置表单视图
 struct UserConfigSheet: View, SuperLog {
+    /// emoji 标识符
+    nonisolated static let emoji = "⚙️"
+
+    /// 是否启用详细日志输出
+    nonisolated static let verbose = false
+
     @EnvironmentObject var data: DataProvider
     @Environment(\.dismiss) private var dismiss
 
+    /// 用户名
     @State private var userName: String = ""
+
+    /// 用户邮箱
     @State private var userEmail: String = ""
+
+    /// 是否正在加载
     @State private var isLoading = false
+
+    /// 错误消息
     @State private var errorMessage: String?
+
+    /// 是否有未保存的更改
     @State private var hasChanges = false
+
+    /// 已保存的配置列表
     @State private var savedConfigs: [GitUserConfig] = []
+
+    /// 当前选中的配置
     @State private var selectedConfig: GitUserConfig?
+
+    /// Commit 风格
     @State private var commitStyle: CommitStyle = .emoji
 
-    private let verbose = true
+    /// 全局 Commit 风格
+    @State private var globalCommitStyle: CommitStyle = .emoji
 
-    private var configRepo: any GitUserConfigRepoProtocol {
-        data.repoManager.gitUserConfigRepo
-    }
-
-    private var stateRepo: any StateRepoProtocol {
-        data.repoManager.stateRepo
-    }
+    /// 当前选中的标签页
+    @State private var selectedTab: Int = 0
 
     var body: some View {
-        VStack(spacing: 20) {
-            VStack(alignment: .leading, spacing: 8) {
-                Text("配置当前项目的Git用户信息")
-                    .font(.title2)
-                    .fontWeight(.medium)
-
-                Text("这些设置仅适用于当前项目，不会影响全局Git配置")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-
-            VStack(spacing: 16) {
-                // 预设配置选择
-                if !savedConfigs.isEmpty {
-                    VStack(alignment: .leading, spacing: 8) {
-                        ScrollView {
-                            LazyVStack(spacing: 4) {
-                                ForEach(savedConfigs) { config in
-                                    GitUserConfigRowView(
-                                        config: config,
-                                        selectedConfig: selectedConfig,
-                                        onTap: { selectedConfig in
-                                            self.selectedConfig = selectedConfig
-                                            userName = selectedConfig.name
-                                            userEmail = selectedConfig.email
-                                            hasChanges = true
-                                        }
-                                    )
-                                }
-                            }
-                        }
-                        .frame(maxHeight: 120)
-                    }
-
-                    Divider()
+        VStack(spacing: 0) {
+            TabView(selection: $selectedTab) {
+                // 用户信息配置 Tab
+                UserInfoConfigView(
+                    userName: $userName,
+                    userEmail: $userEmail,
+                    hasChanges: $hasChanges,
+                    isLoading: $isLoading,
+                    errorMessage: $errorMessage,
+                    savedConfigs: $savedConfigs,
+                    selectedConfig: $selectedConfig,
+                    dataProvider: data
+                )
+                .tabItem {
+                    Label("用户信息", systemImage: "person.circle")
                 }
+                .tag(0)
 
-                VStack(spacing: 16) {
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text("用户名")
-                            .font(.headline)
-
-                        TextField("输入用户名", text: $userName)
-                            .textFieldStyle(RoundedBorderTextFieldStyle())
-                            .onChange(of: userName) {
-                                hasChanges = true
-                                selectedConfig = nil
-                            }
-                    }
-
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text("邮箱")
-                            .font(.headline)
-
-                        TextField("输入邮箱", text: $userEmail)
-                            .textFieldStyle(RoundedBorderTextFieldStyle())
-                            .onChange(of: userEmail) {
-                                hasChanges = true
-                                selectedConfig = nil
-                            }
-                    }
-
-                    Divider()
-
-                    VStack(alignment: .leading, spacing: 8) {
-                        HStack {
-                            Text("Commit 风格")
-                                .font(.headline)
-
-                            Spacer()
-
-                            Picker("", selection: $commitStyle) {
-                                ForEach(CommitStyle.allCases, id: \.self) { style in
-                                    Text(style.label)
-                                        .tag(style as CommitStyle?)
-                                }
-                            }
-                            .frame(width: 120)
-                            .pickerStyle(.automatic)
-                            .onChange(of: commitStyle) { _, _ in
-                                saveCommitStyle()
-                            }
-                        }
-
-                        Text("选择 commit 消息风格")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-
-                        // 显示当前风格的例子
-                        VStack(alignment: .leading, spacing: 6) {
-                            Text("风格预览")
-                                .font(.subheadline)
-                                .foregroundColor(.secondary)
-
-                            VStack(alignment: .leading, spacing: 4) {
-                                ForEach([
-                                    (category: CommitCategory.Chore, message: "Update dependencies"),
-                                    (category: CommitCategory.Feature, message: "Add user authentication"),
-                                    (category: CommitCategory.Bugfix, message: "Fix login validation")
-                                ], id: \.category) { item in
-                                    let fullMessage = "\(item.category.text(style: commitStyle))\(commitStyle.isLowercase ? item.message.lowercased() : item.message)"
-                                    Text(fullMessage)
-                                        .font(.system(.body, design: .monospaced))
-                                        .foregroundColor(.primary)
-                                }
-                            }
-                            .padding(8)
-                            .background(Color.gray.opacity(0.1))
-                            .cornerRadius(6)
-                        }
-                    }
+                // Commit 风格配置 Tab
+                CommitStyleConfigView(
+                    commitStyle: $commitStyle,
+                    globalCommitStyle: $globalCommitStyle,
+                    dataProvider: data
+                )
+                .tabItem {
+                    Label("Commit 风格", systemImage: "text.alignleft")
                 }
+                .tag(1)
             }
+            .frame(maxHeight: .infinity)
 
-            if let errorMessage = errorMessage {
-                Text(errorMessage)
-                    .foregroundColor(.red)
-                    .font(.caption)
-                    .padding(.horizontal)
+            Divider()
+
+            // 底部按钮区域
+            bottomButtons
+        }
+        .navigationTitle("Git用户配置")
+        .frame(width: 600, height: 600)
+        .onAppear(perform: handleOnAppear)
+        .disabled(isLoading)
+    }
+
+    // MARK: - 底部按钮
+    private var bottomButtons: some View {
+        HStack {
+            MagicButton(
+                icon: .iconClose,
+                title: "取消",
+                preventDoubleClick: true
+            ) { completion in
+                dismiss()
+                completion()
             }
+            .magicSize(.auto)
+            .frame(width: 120)
 
             Spacer()
 
-            HStack {
-                MagicButton(
-                    icon: .iconClose,
-                    title: "取消",
-                    preventDoubleClick: true
-                ) { completion in
-                    dismiss()
-                    completion()
-                }
-                .magicSize(.auto)
-                .frame(width: 120)
-
-                Spacer()
-
+            // 只在用户信息 Tab 显示"保存为预设"和"应用"按钮
+            if selectedTab == 0 {
                 MagicButton(
                     icon: .iconUpload,
                     title: "保存为预设",
@@ -190,76 +130,9 @@ struct UserConfigSheet: View, SuperLog {
                 .frame(width: 120)
                 .disabled(isLoading || !hasChanges || userName.isEmpty || userEmail.isEmpty)
             }
-            .frame(height: 32)
         }
         .padding()
-        .navigationTitle("Git用户配置")
-        .frame(width: 600, height: 600)
-        .onAppear(perform: handleOnAppear)
-        .disabled(isLoading)
-    }
-}
-
-// MARK: - Action
-extension UserConfigSheet {
-    private func saveUserConfig() {
-        guard let project = data.project else { return }
-
-        isLoading = true
-        errorMessage = nil
-
-        do {
-            try project.setUserConfig(
-                name: userName.trimmingCharacters(in: .whitespacesAndNewlines),
-                email: userEmail.trimmingCharacters(in: .whitespacesAndNewlines)
-            )
-
-            hasChanges = false
-
-            if verbose {
-                os_log("\(self.t)✅ Saved user config - name: \(userName), email: \(userEmail)")
-            }
-
-            dismiss()
-        } catch {
-            errorMessage = "保存失败: \(error.localizedDescription)"
-            if verbose {
-                os_log(.error, "\(self.t)❌ Failed to save user config: \(error)")
-            }
-        }
-
-        isLoading = false
-    }
-
-    private func saveAsPreset() {
-        guard !userName.isEmpty && !userEmail.isEmpty else { return }
-
-        do {
-            let trimmedName = userName.trimmingCharacters(in: .whitespacesAndNewlines)
-            let trimmedEmail = userEmail.trimmingCharacters(in: .whitespacesAndNewlines)
-
-            let config = try configRepo.create(
-                name: trimmedName,
-                email: trimmedEmail,
-                isDefault: savedConfigs.isEmpty // 如果是第一个配置，自动设为默认
-            )
-
-            // 重新加载配置列表
-            loadSavedConfigs()
-
-            // 选择刚保存的配置
-            selectedConfig = config
-
-            if verbose {
-                os_log("\(self.t)✅ Saved as preset: \(trimmedName) <\(trimmedEmail)>")
-            }
-
-        } catch {
-            errorMessage = "保存预设失败: \(error.localizedDescription)"
-            if verbose {
-                os_log(.error, "\(self.t)❌ Failed to save preset: \(error)")
-            }
-        }
+        .frame(height: 32)
     }
 }
 
@@ -272,80 +145,96 @@ extension UserConfigSheet {
     }
 
     private func loadCommitStyle() {
-        commitStyle = stateRepo.commitStyle
+        // 创建一个临时的 CommitStyleConfigView 来调用其方法
+        let configView = CommitStyleConfigView(
+            commitStyle: $commitStyle,
+            globalCommitStyle: $globalCommitStyle,
+            dataProvider: data
+        )
+        configView.loadCommitStyle()
+    }
+}
+
+// MARK: - Actions
+extension UserConfigSheet {
+    private func saveUserConfig() {
+        let configView = UserInfoConfigView(
+            userName: $userName,
+            userEmail: $userEmail,
+            hasChanges: $hasChanges,
+            isLoading: $isLoading,
+            errorMessage: $errorMessage,
+            savedConfigs: $savedConfigs,
+            selectedConfig: $selectedConfig,
+            dataProvider: data
+        )
+
+        if configView.saveUserConfig() {
+            dismiss()
+        }
     }
 
-    private func saveCommitStyle() {
-        stateRepo.setCommitStyle(commitStyle)
+    private func saveAsPreset() {
+        let configView = UserInfoConfigView(
+            userName: $userName,
+            userEmail: $userEmail,
+            hasChanges: $hasChanges,
+            isLoading: $isLoading,
+            errorMessage: $errorMessage,
+            savedConfigs: $savedConfigs,
+            selectedConfig: $selectedConfig,
+            dataProvider: data
+        )
+        configView.saveAsPreset()
     }
 }
 
 // MARK: - Private Helpers
 extension UserConfigSheet {
     private func loadCurrentUserInfo() {
-        guard let project = data.project else { return }
-
-        isLoading = true
-        errorMessage = nil
-
-        do {
-            userName = try project.getUserName()
-            userEmail = try project.getUserEmail()
-            hasChanges = false
-
-            if verbose {
-                os_log("\(self.t)✅ Loaded user info - name: \(userName), email: \(userEmail)")
-            }
-        } catch {
-            errorMessage = "无法加载当前用户信息: \(error.localizedDescription)"
-            if verbose {
-                os_log(.error, "\(self.t)❌ Failed to load user info: \(error)")
-            }
-        }
-
-        isLoading = false
+        let configView = UserInfoConfigView(
+            userName: $userName,
+            userEmail: $userEmail,
+            hasChanges: $hasChanges,
+            isLoading: $isLoading,
+            errorMessage: $errorMessage,
+            savedConfigs: $savedConfigs,
+            selectedConfig: $selectedConfig,
+            dataProvider: data
+        )
+        configView.loadCurrentUserInfo()
     }
 
     private func loadSavedConfigs() {
-        do {
-            savedConfigs = try configRepo.getRecentConfigs(limit: 10)
-
-            // 如果有默认配置，自动选择
-            if let defaultConfig = try configRepo.findDefault() {
-                selectedConfig = defaultConfig
-                userName = defaultConfig.name
-                userEmail = defaultConfig.email
-            }
-
-            if verbose {
-                os_log("\(self.t)✅ Loaded \(savedConfigs.count) saved configs")
-            }
-        } catch {
-            if verbose {
-                os_log(.error, "\(self.t)❌ Failed to load saved configs: \(error)")
-            }
-        }
+        let configView = UserInfoConfigView(
+            userName: $userName,
+            userEmail: $userEmail,
+            hasChanges: $hasChanges,
+            isLoading: $isLoading,
+            errorMessage: $errorMessage,
+            savedConfigs: $savedConfigs,
+            selectedConfig: $selectedConfig,
+            dataProvider: data
+        )
+        configView.loadSavedConfigs()
     }
 }
 
 // MARK: - Preview
-#Preview {
-    UserConfigSheet().inRootView()
-}
-
 #Preview("App - Small Screen") {
     ContentLayout()
         .hideSidebar()
         .hideTabPicker()
         .hideProjectActions()
         .inRootView()
-        .frame(width: 700)
-        .frame(height: 700)
+        .frame(width: 800)
+        .frame(height: 600)
 }
 
 #Preview("App - Big Screen") {
     ContentLayout()
         .hideSidebar()
+        .hideTabPicker()
         .inRootView()
         .frame(width: 1200)
         .frame(height: 1200)

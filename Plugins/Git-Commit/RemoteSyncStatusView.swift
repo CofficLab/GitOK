@@ -1,6 +1,8 @@
 import MagicKit
+import MagicAlert
 import OSLog
 import SwiftUI
+import LibGit2Swift
 
 /// 显示远程仓库同步状态的视图组件
 /// 显示本地领先远程和远程领先本地的提交数量，并提供手动刷新功能
@@ -8,10 +10,12 @@ struct RemoteSyncStatusView: View, SuperLog {
     /// 绑定到外部的刷新状态
     @Binding var isRefreshing: Bool
     /// 是否启用详细日志输出
-    static let verbose = true
+    static let verbose = false
 
     /// 环境对象：数据提供者
     @EnvironmentObject var data: DataProvider
+    /// 环境对象：消息提供者
+    @EnvironmentObject var m: MagicMessageProvider
 
     /// 未推送的提交数量（本地领先远程）
     @State private var unpushedCount = 0
@@ -36,6 +40,9 @@ struct RemoteSyncStatusView: View, SuperLog {
 
     /// 是否正在执行 push 操作
     @State private var isPushing = false
+
+    /// 是否显示凭据输入界面
+    @State private var showCredentialInput = false
 
 
     /// 是否有需要显示的同步状态
@@ -73,6 +80,21 @@ struct RemoteSyncStatusView: View, SuperLog {
         .onAppear(perform: onAppear)
         .onChange(of: data.project) { _, _ in
             onProjectChange()
+        }
+        .sheet(isPresented: $showCredentialInput) {
+            CredentialInputView {
+                // 凭据保存后，重新执行 push/pull
+                if isPushing || isPulling {
+                    // 等待一下让 UI 更新
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        if isPushing {
+                            performPush()
+                        } else if isPulling {
+                            performPull()
+                        }
+                    }
+                }
+            }
         }
     }
 }
@@ -266,6 +288,13 @@ extension RemoteSyncStatusView {
             } catch {
                 await MainActor.run {
                     os_log(.error, "\(self.t)❌ Git pull failed: \(error)")
+
+                    // 检查是否是认证错误
+                    if isCredentialError(error) {
+                        showCredentialInput = true
+                    } else {
+                        m.error(error)
+                    }
                 }
             }
 
@@ -306,6 +335,13 @@ extension RemoteSyncStatusView {
             } catch {
                 await MainActor.run {
                     os_log(.error, "\(self.t)❌ Git push failed: \(error)")
+
+                    // 检查是否是认证错误
+                    if isCredentialError(error) {
+                        showCredentialInput = true
+                    } else {
+                        m.error(error)
+                    }
                 }
             }
 
@@ -317,6 +353,38 @@ extension RemoteSyncStatusView {
                 isRefreshing = false
             }
         }
+    }
+}
+
+// MARK: - Credential Helper
+
+extension RemoteSyncStatusView {
+    /// 检查错误是否是认证错误
+    /// - Parameter error: 错误对象
+    /// - Returns: 如果是认证错误返回 true
+    func isCredentialError(_ error: Error) -> Bool {
+        // 检查是否是 LibGit2Error.authenticationError
+        if let libGit2Error = error as? LibGit2Error {
+            if case .authenticationError = libGit2Error {
+                return true
+            }
+        }
+
+        // 检查错误描述中是否包含认证相关的关键词
+        let errorDescription = (error as Error).localizedDescription.lowercased()
+        let authKeywords = [
+            "authentication",
+            "auth",
+            "credential",
+            "permission",
+            "denied",
+            "unauthorized",
+            "401",
+            "403",
+            "forbidden"
+        ]
+
+        return authKeywords.contains { errorDescription.contains($0) }
     }
 }
 

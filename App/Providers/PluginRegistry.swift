@@ -34,7 +34,7 @@ func autoRegisterPlugins() {
     defer { free(UnsafeMutableRawPointer(classList)) }
 
     let classes = UnsafeBufferPointer(start: classList, count: Int(count))
-    for i in 0..<classes.count {
+    for i in 0 ..< classes.count {
         let cls: AnyClass = classes[i]
         if class_conformsToProtocol(cls, PluginRegistrant.self) {
             (cls as? PluginRegistrant.Type)?.register()

@@ -24,3 +24,5 @@ ios/ServiceDefinitions.json
 node_modules
 temp/
 build/
+build.log
+Packages/LibGit2Swift/build_result.txt

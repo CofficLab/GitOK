@@ -84,7 +84,7 @@ extension GitDetail {
         }
 
         do {
-            self.isProjectClean = try project.isClean()
+            self.isProjectClean = try project.isClean(verbose: false)
         } catch {
             os_log(.error, "\(self.t)❌ Failed to update isProjectClean: \(error)")
         }
@@ -99,7 +99,7 @@ extension GitDetail {
             return
         }
 
-        self.isGitProject = project.isGit()
+        self.isGitProject = project.isGitRepo
     }
     
     /**

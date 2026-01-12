@@ -1,4 +1,5 @@
 import AVKit
+import LibGit2Swift
 import MagicKit
 import Combine
 import Foundation
@@ -310,7 +311,14 @@ extension DataProvider {
             return
         }
 
-        try project.setCurrentBranch(branch)
+        // 检查目标分支是否已经是当前工作目录的分支，避免不必要的 checkout 操作
+        if let currentBranch = try? project.getCurrentBranch(),
+           currentBranch.name == branch.name {
+            self.branch = branch
+            return
+        }
+
+        try project.checkout(branch: branch)
         self.branch = branch
     }
 }

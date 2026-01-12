@@ -73,18 +73,18 @@ struct BtnSyncView: View, SuperLog, SuperEvent, SuperThread {
         }
 
         Task.detached {
-            setStatus("同步中…")
+            await setStatus("同步中…")
             do {
                 // 检查是否有远程仓库
                 if let project = await self.data.project {
-                    let remotes = try project.getRemotes()
+                    let remotes = try project.remoteList()
                     if remotes.isEmpty {
                         await MainActor.run {
                             self.m.hideLoading()
                             self.reset()
                             self.m.info("该项目还没有配置远程仓库，请先推送代码建立远程连接")
                         }
-                        setStatus(nil)
+                        await setStatus(nil)
                         return
                     }
                 }
@@ -100,7 +100,7 @@ struct BtnSyncView: View, SuperLog, SuperEvent, SuperThread {
                     self.m.error(error)
                 }
             }
-            setStatus(nil)
+            await setStatus(nil)
         }
     }
 
@@ -121,7 +121,7 @@ struct BtnSyncView: View, SuperLog, SuperEvent, SuperThread {
 
 extension BtnSyncView {
     func updateIsGitProject() {
-        self.isGitProject = data.project?.isGit() ?? false
+        self.isGitProject = data.project?.isGitRepo ?? false
     }
     
     /**
@@ -130,7 +130,7 @@ extension BtnSyncView {
         使用异步方式避免阻塞主线程，解决CPU占用100%的问题
      */
     func updateIsGitProjectAsync() async {
-        let isGit = data.project?.isGit() ?? false
+        let isGit = data.project?.isGitRepo ?? false
         await MainActor.run {
             self.isGitProject = isGit
         }

@@ -1,10 +1,17 @@
 import SwiftUI
 import AppKit
+import MagicKit
 import MagicUI
 
 /// 通用的引导提示视图组件
 /// 用于显示带有图标和文本的提示界面
-struct GuideView: View {
+struct GuideView: View, SuperLog {
+    /// emoji 标识符
+    nonisolated static let emoji = "🧭"
+
+    /// 是否启用详细日志输出
+    nonisolated static let verbose = false
+
     @EnvironmentObject var g: DataProvider
 
     let systemImage: String
@@ -126,6 +133,8 @@ extension GuideView {
     }
 }
 
+// MARK: - Preview
+
 #Preview("App - Small Screen") {
     ContentLayout()
         .hideSidebar()
@@ -139,9 +148,8 @@ extension GuideView {
 #Preview("App - Big Screen") {
     ContentLayout()
         .hideSidebar()
-        .hideProjectActions()
         .hideTabPicker()
         .inRootView()
-        .frame(width: 800)
-        .frame(height: 1000)
+        .frame(width: 1200)
+        .frame(height: 1200)
 }

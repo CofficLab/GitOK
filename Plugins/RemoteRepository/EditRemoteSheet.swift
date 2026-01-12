@@ -1,5 +1,6 @@
 import SwiftUI
 import MagicKit
+import LibGit2Swift
 
 
 struct EditRemoteSheet: View {

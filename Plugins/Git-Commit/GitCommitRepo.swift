@@ -1,4 +1,5 @@
 import Foundation
+import LibGit2Swift
 import MagicKit
 import OSLog
 import SwiftUI
@@ -25,16 +26,16 @@ class GitCommitRepo: GitCommitRepoProtocol, SuperLog {
     ///   - commit: 选择的commit
     func saveLastSelectedCommit(projectPath: String, commit: GitCommit) {
         let key = getKey(for: projectPath)
-    
+
         let commitData: [String: Any] = [
             "hash": commit.hash,
             "message": commit.message,
             "author": commit.author,
             "date": commit.date.timeIntervalSince1970, // 保存为时间戳
         ]
-    
+
         userDefaults.set(commitData, forKey: key)
-        
+
         if verbose {
             os_log("\(self.t)已保存项目 \(projectPath) 的最后选择的commit: \(commit.hash)")
         }
@@ -45,20 +46,16 @@ class GitCommitRepo: GitCommitRepoProtocol, SuperLog {
     /// - Returns: 最后选择的commit，如果没有则返回nil
     func getLastSelectedCommit(projectPath: String) -> GitCommit? {
         let key = getKey(for: projectPath)
-    
+
         guard let commitData = userDefaults.dictionary(forKey: key),
-              let hash = commitData["hash"] as? String,
-              let message = commitData["message"] as? String,
-              let author = commitData["author"] as? String,
-              let dateTimestamp = commitData["date"] as? TimeInterval,
-              let path = commitData["path"] as? String else {
+              let _ = commitData["hash"] as? String,
+              let _ = commitData["message"] as? String,
+              let _ = commitData["author"] as? String,
+              let _ = commitData["date"] as? TimeInterval,
+              let _ = commitData["path"] as? String else {
             return nil
         }
-    
-        // 获取isHead属性，如果不存在则默认为false
-        let isHead = (commitData["isHead"] as? Bool) ?? false
-        let date = Date(timeIntervalSince1970: dateTimestamp)
-    
+
         return nil
     }
 

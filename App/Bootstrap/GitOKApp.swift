@@ -1,3 +1,4 @@
+import LibGit2Swift
 import Sparkle
 import SwiftData
 import SwiftUI
@@ -9,6 +10,9 @@ struct GitOKApp: App {
     private let updaterController: SPUStandardUpdaterController
 
     init() {
+        // 初始化 libgit2
+        LibGit2.initialize()
+        
         updaterController = SPUStandardUpdaterController(startingUpdater: true, updaterDelegate: nil, userDriverDelegate: nil)
     }
 

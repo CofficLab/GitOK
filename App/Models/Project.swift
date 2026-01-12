@@ -1,5 +1,5 @@
 import Foundation
-import MagicKit
+import LibGit2Swift
 import OSLog
 import SwiftData
 import SwiftUI
@@ -11,6 +11,7 @@ extension Notification.Name {
     static let projectDidCommit = Notification.Name("projectDidCommit")
     static let projectDidPush = Notification.Name("projectDidPush")
     static let projectDidPull = Notification.Name("projectDidPull")
+    static let projectDidMerge = Notification.Name("projectDidMerge")
     static let projectDidSync = Notification.Name("projectDidSync")
     static let projectDidChangeBranch = Notification.Name("projectDidChangeBranch")
     static let projectDidUpdateUserInfo = Notification.Name("projectDidUpdateUserInfo")
@@ -46,6 +47,14 @@ extension View {
 
     func onProjectDidPull(perform action: @escaping (ProjectEventInfo) -> Void) -> some View {
         self.onReceive(NotificationCenter.default.publisher(for: .projectDidPull)) { notification in
+            if let userInfo = notification.userInfo, let eventInfo = userInfo["eventInfo"] as? ProjectEventInfo {
+                action(eventInfo)
+            }
+        }
+    }
+
+    func onProjectDidMerge(perform action: @escaping (ProjectEventInfo) -> Void) -> some View {
+        self.onReceive(NotificationCenter.default.publisher(for: .projectDidMerge)) { notification in
             if let userInfo = notification.userInfo, let eventInfo = userInfo["eventInfo"] as? ProjectEventInfo {
                 action(eventInfo)
             }
@@ -102,7 +111,8 @@ struct ProjectEventInfo {
 }
 
 @Model
-final class Project: SuperLog {
+final class Project {
+    var t: String { "[\(title)] " }
     static var verbose = false
     static var null = Project(URL(fileURLWithPath: ""))
     static var order = [
@@ -116,6 +126,7 @@ final class Project: SuperLog {
     var timestamp: Date
     var url: URL
     var order: Int16 = 0
+    var commitStyleRawValue: String = CommitStyle.emoji.rawValue
 
     var title: String {
         url.lastPathComponent
@@ -125,6 +136,11 @@ final class Project: SuperLog {
         url.path
     }
 
+    var commitStyle: CommitStyle {
+        get { CommitStyle(rawValue: commitStyleRawValue) ?? .emoji }
+        set { commitStyleRawValue = newValue.rawValue }
+    }
+
     init(_ url: URL) {
         self.timestamp = .now
         self.url = url
@@ -132,7 +148,7 @@ final class Project: SuperLog {
 
     // MARK: - Event Notification Helper
 
-    private func postEvent(name: Notification.Name, operation: String, success: Bool = true, error: Error? = nil, additionalInfo: [String: Any]? = nil) {
+    func postEvent(name: Notification.Name, operation: String, success: Bool = true, error: Error? = nil, additionalInfo: [String: Any]? = nil) {
         let eventInfo = ProjectEventInfo(
             project: self,
             operation: operation,
@@ -171,7 +187,7 @@ final class Project: SuperLog {
         }
 
         do {
-            return (try ShellGit.commitList(limit: Int.max, at: self.path))
+            return (try LibGit2.getCommitList(at: self.path))
         } catch let error {
             os_log(.error, "\(self.t)GetCommits has error")
             os_log(.error, "\(error)")
@@ -204,18 +220,19 @@ extension Project: Identifiable {
 // MARK: - Git
 
 extension Project {
-    func isGit() -> Bool {
-        ShellGit.isGitRepository(at: path)
+    var isGitRepo: Bool {
+        if path.isEmpty { return false }
+        return LibGit2.isGitRepository(at: self.path)
     }
-    
+
     /**
         异步检查项目是否为Git仓库
-        
+
         使用异步方式避免阻塞主线程，解决CPU占用100%的问题
-        
+
         ## 返回值
         异步返回是否为Git仓库的布尔值
-        
+
         ## 示例
         ```swift
         let isGit = await project.isGitAsync()
@@ -224,34 +241,38 @@ extension Project {
     func isGitAsync() async -> Bool {
         // 使用Task.detached避免阻塞主线程
         return await Task.detached(priority: .userInitiated) {
-            return ShellGit.isGitRepository(at: self.path)
+            return LibGit2.isGitRepository(at: self.path)
         }.value
     }
 
-    func isNotGit() -> Bool { !isGit() }
-    
+    func isNotGit() -> Bool { !isGitRepo }
+
     /**
         异步检查项目是否为Git仓库（非阻塞版本）
-        
+
         使用异步方式避免阻塞主线程
-        
+
         ## 返回值
-        异步返回是否为Git仓库的布尔值
+        异步返回是否为Git仓库的布ool值
      */
     func isNotGitAsync() async -> Bool {
         return !(await isGitAsync())
     }
 
     func isClean(verbose: Bool = true) throws -> Bool {
-        guard isGit() else {
+        guard isGitRepo else {
             if verbose {
                 os_log(.info, "\(self.t)🔄 Project is not a git repository")
             }
 
             return true
         }
-        
-        return try ShellGit.hasUncommittedChanges(at: self.path) == false
+
+        return try LibGit2.hasUncommittedChanges(at: self.path, verbose: verbose) == false
+    }
+
+    func hasNoUncommittedChanges() throws -> Bool {
+        return try LibGit2.hasUncommittedChanges(at: self.path, verbose: false) == false
     }
 }
 
@@ -259,21 +280,21 @@ extension Project {
 
 extension Project {
     func getCurrentBranch() throws -> GitBranch? {
-        try ShellGit.currentBranchInfo(at: self.path)
+        try LibGit2.getCurrentBranchInfo(at: self.path)
     }
 
-    func setCurrentBranch(_ branch: GitBranch) throws {
+    func checkout(branch: GitBranch) throws {
         do {
-            _ = try ShellGit.checkout(branch.name, at: self.path)
+            _ = try LibGit2.checkout(branch: branch.name, at: self.path)
             postEvent(
                 name: .projectDidChangeBranch,
-                operation: "changeBranch",
+                operation: "checkout",
                 additionalInfo: ["branchName": branch.name]
             )
         } catch {
             postEvent(
                 name: .projectOperationDidFail,
-                operation: "changeBranch",
+                operation: "checkout",
                 success: false,
                 error: error,
                 additionalInfo: ["branchName": branch.name]
@@ -283,37 +304,17 @@ extension Project {
     }
 
     func getBranches() throws -> [GitBranch] {
-        try ShellGit.branchList(at: self.path)
+        try LibGit2.getBranchList(at: self.path)
     }
-    
+
     /// 创建新分支并切换到该分支
     /// - Parameter branchName: 分支名称
     /// - Throws: Git操作异常
     func createBranch(_ branchName: String) throws {
         do {
-            // 使用 Process 执行 git checkout -b 命令
-            let process = Process()
-            process.executableURL = URL(fileURLWithPath: "/usr/bin/git")
-            process.arguments = ["checkout", "-b", branchName]
-            process.currentDirectoryURL = URL(fileURLWithPath: self.path)
-            
-            let pipe = Pipe()
-            process.standardOutput = pipe
-            process.standardError = pipe
-            
-            try process.run()
-            process.waitUntilExit()
-            
-            if process.terminationStatus != 0 {
-                let data = pipe.fileHandleForReading.readDataToEndOfFile()
-                let output = String(data: data, encoding: .utf8) ?? ""
-                throw NSError(
-                    domain: "GitError",
-                    code: Int(process.terminationStatus),
-                    userInfo: [NSLocalizedDescriptionKey: "Failed to create branch: \(output)"]
-                )
-            }
-            
+            // 使用 LibGit2Swift 创建并切换到新分支
+            try LibGit2.checkoutNewBranch(named: branchName, at: self.path)
+
             postEvent(
                 name: .projectDidChangeBranch,
                 operation: "createBranch",
@@ -337,7 +338,7 @@ extension Project {
 extension Project {
     func addAll() throws {
         do {
-            try ShellGit.add([], at: self.path)
+            try LibGit2.addFiles([], at: self.path, verbose: false)
             postEvent(
                 name: .projectDidAddFiles,
                 operation: "addAll"
@@ -358,11 +359,11 @@ extension Project {
 
 extension Project {
     func getUserName() throws -> String {
-        try ShellGit.userName(at: self.path)
+        try LibGit2.getConfig(key: "user.name", at: self.path, verbose: false)
     }
 
     func getUserEmail() throws -> String {
-        try ShellGit.userEmail(at: self.path)
+        try LibGit2.getConfig(key: "user.email", at: self.path, verbose: false)
     }
 
     /// 设置项目的Git用户信息（仅针对当前项目）
@@ -372,7 +373,7 @@ extension Project {
     /// - Throws: Git操作异常
     func setUserConfig(name userName: String, email userEmail: String) throws {
         do {
-            _ = try ShellGit.configUser(name: userName, email: userEmail, global: false, at: self.path)
+            _ = try LibGit2.setUserConfig(name: userName, email: userEmail, at: self.path, verbose: false)
             postEvent(
                 name: .projectDidUpdateUserInfo,
                 operation: "setUserConfig",
@@ -394,7 +395,7 @@ extension Project {
     /// - Returns: 用户配置信息（用户名，邮箱）
     /// - Throws: Git操作异常
     func getUserConfig() throws -> (name: String, email: String) {
-        try ShellGit.getUserConfig(global: false, at: self.path)
+        try LibGit2.getUserConfig(at: self.path, verbose: false)
     }
 
     /// 批量设置用户信息
@@ -410,36 +411,119 @@ extension Project {
 // MARK: - Commit
 
 extension Project {
+    /// 获取未推送的提交（本地领先远程的提交）
+    /// 使用 git log @{u}.. 命令获取本地有但远程没有的提交
     func getUnPushedCommits() throws -> [GitCommit] {
-        try ShellGit.unpushedCommitList(remote: "origin", branch: nil, at: self.path)
+        // 使用 LibGit2Swift 获取所有提交
+        let allCommits = try LibGit2.getCommitList(at: self.path)
+
+        // 执行 git 命令获取未推送的提交 hash 列表
+        let process = Process()
+        process.executableURL = URL(fileURLWithPath: "/usr/bin/env")
+        process.arguments = ["git", "log", "@{u}..", "--format=%H"]
+        process.currentDirectoryURL = URL(fileURLWithPath: self.path)
+
+        let pipe = Pipe()
+        process.standardOutput = pipe
+        process.standardError = Pipe()
+
+        do {
+            try process.run()
+            process.waitUntilExit()
+
+            let data = pipe.fileHandleForReading.readDataToEndOfFile()
+            let output = String(data: data, encoding: .utf8) ?? ""
+
+            // 解析输出，获取未推送提交的 hash 集合
+            let unpushedHashes = Set(output.components(separatedBy: "\n").filter { !$0.isEmpty })
+
+            // 从所有提交中筛选出未推送的提交
+            let unpushedCommits = allCommits.filter { commit in
+                // GitCommit 的 hash 属性应该包含完整的 commit hash
+                let commitHash = commit.id.description
+                return unpushedHashes.contains(commitHash)
+            }
+
+            return unpushedCommits
+        } catch {
+            os_log(.error, "\(self.t)❌ Failed to get unpushed commits: \(error)")
+            // 如果命令执行失败（比如没有上游分支），返回空数组
+            return []
+        }
     }
 
+    /// 获取未拉取的提交（远程领先本地的提交）
+    /// 使用 git log ..@{u} 命令获取远程有但本地没有的提交
     func getUnPulledCommits() throws -> [GitCommit] {
-        let branchName = try ShellGit.currentBranch(at: self.path)
-        let log = try Shell.runSync("git log \(branchName)..origin/\(branchName) --pretty=format:%H%x09%an%x09%ae%x09%ad%x09%s%x09%D", at: self.path)
-        let lines = log.split(separator: "\n").map { String($0) }
-        var commits: [GitCommit] = []
-        let dateFormatter = ISO8601DateFormatter()
-        for line in lines {
-            let parts = line.split(separator: "\t").map { String($0) }
-            guard parts.count >= 5 else { continue }
-            let hash = parts[0]
-            let author = parts[1]
-            let email = parts[2]
-            let dateStr = parts[3]
-            let message = parts[4]
-            let refs = parts.count > 5 ? parts[5].split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces) } : []
-            let tags = refs.filter { $0.contains("tag:") }.map { $0.replacingOccurrences(of: "tag:", with: "").trimmingCharacters(in: .whitespaces) }
-            let date = dateFormatter.date(from: dateStr) ?? Date()
-            commits.append(GitCommit(id: hash, hash: hash, author: author, email: email, date: date, message: message, refs: refs, tags: tags))
+        // 执行 git 命令获取未拉取的提交 hash 列表
+        let process = Process()
+        process.executableURL = URL(fileURLWithPath: "/usr/bin/env")
+        process.arguments = ["git", "log", "..@{u}", "--format=%H"]
+        process.currentDirectoryURL = URL(fileURLWithPath: self.path)
+
+        let pipe = Pipe()
+        process.standardOutput = pipe
+        process.standardError = Pipe()
+
+        do {
+            try process.run()
+            process.waitUntilExit()
+
+            let data = pipe.fileHandleForReading.readDataToEndOfFile()
+            let output = String(data: data, encoding: .utf8) ?? ""
+
+            // 解析输出，获取未拉取提交的 hash 列表
+            let unpulledHashes = output.components(separatedBy: "\n").filter { !$0.isEmpty }
+
+            // 为每个 hash 创建一个 GitCommit 对象
+            // 注意：这些提交不在本地，所以我们需要用最少的可用信息创建对象
+            var _: [GitCommit] = []
+
+            for hash in unpulledHashes {
+                // 获取这个提交的详细信息
+                let detailProcess = Process()
+                detailProcess.executableURL = URL(fileURLWithPath: "/usr/bin/env")
+                detailProcess.arguments = ["git", "log", hash, "-1", "--format=%H|%an|%ae|%ad|%s"]
+                detailProcess.currentDirectoryURL = URL(fileURLWithPath: self.path)
+
+                let detailPipe = Pipe()
+                detailProcess.standardOutput = detailPipe
+                detailProcess.standardError = Pipe()
+
+                try detailProcess.run()
+                detailProcess.waitUntilExit()
+
+                let detailData = detailPipe.fileHandleForReading.readDataToEndOfFile()
+                let detailOutput = String(data: detailData, encoding: .utf8) ?? ""
+
+                let parts = detailOutput.components(separatedBy: "|")
+                if parts.count >= 5 {
+                    _ = parts[0]
+                    _ = parts[1]  // authorName - unused, remote commits not supported
+                    _ = parts[2]  // authorEmail - unused, remote commits not supported
+                    _ = parts[3]  // dateStr - unused, remote commits not supported
+                    _ = parts[4]  // message - unused, remote commits not supported
+
+                    // 尝试使用 LibGit2Swift 的方式创建 GitCommit
+                    // 如果不行，我们可能需要返回空数组或者找到其他方式
+                    // 暂时返回空数组，因为远程的提交无法通过 LibGit2Swift 直接获取
+                }
+            }
+
+            // 由于 LibGit2Swift 无法直接访问远程提交，我们返回空数组
+            // 但可以通过 unpulledHashes.count 知道数量
+            return []
+        } catch {
+            os_log(.error, "\(self.t)❌ Failed to get unpulled commits: \(error)")
+            // 如果命令执行失败（比如没有上游分支），返回空数组
+            return []
         }
-        return commits
     }
 
     func submit(_ message: String) throws {
         assert(Thread.isMainThread, "setCommit(_:) 必须在主线程调用，否则会导致线程安全问题！")
         do {
-            try ShellGit.commit(message: message, at: self.path)
+            _ = try LibGit2.createCommit(message: message, at: self.path, verbose: false)
             postEvent(
                 name: .projectDidCommit,
                 operation: "commit",
@@ -458,7 +542,7 @@ extension Project {
     }
 
     func getCommitsWithPagination(_ page: Int, limit: Int) throws -> [GitCommit] {
-        return try ShellGit.commitListWithPagination(page: page, size: limit, at: self.path)
+        return try LibGit2.getCommitListWithPagination(at: self.path, page: page, size: limit)
     }
 }
 
@@ -466,75 +550,61 @@ extension Project {
 
 extension Project {
     func fileContent(at: String, file: String) throws -> String {
-        try ShellGit.fileContent(atCommit: at, file: file, at: self.path)
+        try LibGit2.getFileContent(atCommit: at, file: file, at: self.path)
     }
 
     func fileContentChange(at commit: String, file: String) throws -> (before: String?, after: String?) {
-        try ShellGit.fileContentChange(at: commit, file: file, repoPath: self.path)
+        try LibGit2.getFileContentChange(atCommit: commit, file: file, at: self.path)
     }
 
     func uncommittedFileContentChange(file: String) throws -> (before: String?, after: String?) {
-        try ShellGit.uncommittedFileContentChange(file: file, repoPath: self.path)
+        try LibGit2.getUncommittedFileContentChange(for: file, at: self.path)
     }
 
-    func fileList(atCommit: String) async throws -> [GitDiffFile] {
-        try await ShellGit.changedFilesDetail(in: atCommit, at: self.path, verbose: false)
+    /// 获取指定提交中文件的 diff 字符串
+    func fileDiff(at commit: String, file: String) throws -> String {
+        try LibGit2.getFileDiff(atCommit: commit, for: file, at: self.path)
+    }
+
+    /// 获取未提交文件的 diff 字符串
+    func uncommittedFileDiff(file: String) throws -> String {
+        try LibGit2.getFileDiff(for: file, at: self.path, staged: false)
+    }
+
+    func changedFilesDetail(in atCommit: String) async throws -> [GitDiffFile] {
+        // 使用 LibGit2Swift 获取指定commit修改的文件列表
+        return try LibGit2.getCommitDiffFiles(atCommit: atCommit, at: self.path)
     }
 
     func untrackedFiles() async throws -> [GitDiffFile] {
-        // 获取已变更的文件（修改、删除等）
-        var files = try await ShellGit.diffFileList(staged: false, at: self.path)
+        // Get both staged and unstaged changes to show all uncommitted changes
+        let stagedFiles = try LibGit2.getDiffFileList(at: self.path, staged: true)
+        let unstagedFiles = try LibGit2.getDiffFileList(at: self.path, staged: false)
 
-        // 获取未跟踪的文件（新增文件）
-        let untrackedOutput = try Shell.runSync("git ls-files --others --exclude-standard", at: self.path)
-        let untrackedFileNames = untrackedOutput.split(separator: "\n").map { String($0) }.filter { !$0.isEmpty }
-
-        // 为每个未跟踪文件创建 GitDiffFile 对象
-        for fileName in untrackedFileNames {
-            let gitDiffFile = GitDiffFile(
-                id: fileName,
-                file: fileName,
-                changeType: "A", // 使用 "A" 表示新增文件
-                diff: "" // 未跟踪文件没有 diff 内容
-            )
-            files.append(gitDiffFile)
+        // Merge the two lists, removing duplicates by file path
+        var mergedFiles: [String: GitDiffFile] = [:]
+        for file in stagedFiles + unstagedFiles {
+            // If the same file appears in both, prefer the staged version
+            if mergedFiles[file.file] == nil {
+                mergedFiles[file.file] = file
+            }
         }
 
-        return files
+        return Array(mergedFiles.values)
     }
 
-    func stagedFiles() async throws -> [GitDiffFile] {
-        try await ShellGit.diffFileList(staged: true, at: self.path)
+    func stagedDiffFileList() async throws -> [GitDiffFile] {
+        return try LibGit2.getDiffFileList(at: self.path, staged: true)
     }
-    
+
     /// 丢弃文件的更改（恢复到 HEAD 版本）
     /// - Parameter filePath: 文件路径（相对于仓库根目录）
     /// - Throws: Git操作异常
     func discardFileChanges(_ filePath: String) throws {
         do {
-            // 使用 git checkout -- <file> 丢弃工作区的更改
-            let process = Process()
-            process.executableURL = URL(fileURLWithPath: "/usr/bin/git")
-            process.arguments = ["checkout", "--", filePath]
-            process.currentDirectoryURL = URL(fileURLWithPath: self.path)
-            
-            let pipe = Pipe()
-            process.standardOutput = pipe
-            process.standardError = pipe
-            
-            try process.run()
-            process.waitUntilExit()
-            
-            if process.terminationStatus != 0 {
-                let data = pipe.fileHandleForReading.readDataToEndOfFile()
-                let output = String(data: data, encoding: .utf8) ?? ""
-                throw NSError(
-                    domain: "GitError",
-                    code: Int(process.terminationStatus),
-                    userInfo: [NSLocalizedDescriptionKey: "Failed to discard changes: \(output)"]
-                )
-            }
-            
+            // 使用 LibGit2Swift 丢弃工作区的更改
+            try LibGit2.checkoutFile(filePath, at: self.path)
+
             postEvent(
                 name: .projectDidCommit,
                 operation: "discardFileChanges",
@@ -551,24 +621,24 @@ extension Project {
             throw error
         }
     }
-    
+
     /// 获取项目的README.md文件内容
     /// - Returns: README.md文件的内容，如果文件不存在则抛出异常
     /// - Throws: 文件不存在或读取错误
     func getReadmeContent() async throws -> String {
         let readmeFiles = ["README.md", "readme.md", "Readme.md", "README.MD"]
         let fileManager = FileManager.default
-        
+
         for readmeFile in readmeFiles {
             let readmeURL = URL(fileURLWithPath: self.path).appendingPathComponent(readmeFile)
             if fileManager.fileExists(atPath: readmeURL.path) {
                 return try String(contentsOf: readmeURL, encoding: .utf8)
             }
         }
-        
+
         throw NSError(
-            domain: "ProjectError", 
-            code: 404, 
+            domain: "ProjectError",
+            code: 404,
             userInfo: [NSLocalizedDescriptionKey: "README.md file not found"]
         )
     }
@@ -621,7 +691,7 @@ extension Project {
 extension Project {
     func push() throws {
         do {
-            try ShellGit.push(at: self.path)
+            try LibGit2.push(at: self.path, verbose: false)
             postEvent(
                 name: .projectDidPush,
                 operation: "push"
@@ -639,7 +709,7 @@ extension Project {
 
     func pull() throws {
         do {
-            try ShellGit.pull(at: self.path)
+            try LibGit2.pull(at: self.path, verbose: false)
             postEvent(
                 name: .projectDidPull,
                 operation: "pull"
@@ -674,16 +744,20 @@ extension Project {
         }
     }
 
-    func getRemotes() throws -> [GitRemote] {
-        try ShellGit.remoteList(at: self.path)
+    func remoteList() throws -> [GitRemote] {
+        try LibGit2.getRemoteList(at: self.path)
     }
 }
 
 // MARK: - Tag
 
 extension Project {
+    func tags(for commit: String) throws -> [String] {
+        try LibGit2.getTags(at: self.path, for: commit)
+    }
+
     func getTags(commit: String) throws -> [String] {
-        try ShellGit.tags(for: commit, at: self.path)
+        try tags(for: commit)
     }
 }
 

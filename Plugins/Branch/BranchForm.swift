@@ -1,5 +1,6 @@
 
 import MagicKit
+import LibGit2Swift
 import MagicAlert
 import MagicUI
 import OSLog
@@ -121,10 +122,10 @@ extension BranchForm {
     
     private func switchBranch(_ branch: GitBranch) {
         guard let project = project else { return }
-        
+
         Task.detached {
             do {
-                try project.setCurrentBranch(branch)
+                try project.checkout(branch: branch)
                 
                 await MainActor.run {
                     self.selectedBranch = branch
@@ -146,7 +147,7 @@ extension BranchForm {
         }
         
         // 检查是否是 git 项目
-        guard project.isGit() else {
+        guard project.isGitRepo else {
             branches = []
             isLoading = false
             return
