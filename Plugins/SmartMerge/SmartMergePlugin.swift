@@ -4,16 +4,20 @@ import SwiftUI
 
 /// SmartMerge 插件：在状态栏提供合并入口（TileMerge）。
 class SmartMergePlugin: SuperPlugin, SuperLog, PluginRegistrant {
-    /// 是否启用详细日志输出
-    nonisolated static let verbose = false
+    /// 日志标识符
     nonisolated static let emoji = "🔀"
-    nonisolated static let enable = true
 
     /// 单例实例
     static let shared = SmartMergePlugin()
 
     /// 插件标签
     static var label: String = "SmartMerge"
+
+    /// 是否启用该插件
+    static let enable = true
+
+    /// 是否启用详细日志输出
+    nonisolated static let verbose = false
 
     /// 私有初始化方法
     private init() {}
@@ -34,8 +38,8 @@ extension SmartMergePlugin {
         guard enable else { return }
         
         Task {
-            if verbose {
-                os_log("\(self.t)SmartMergePlugin register")
+            if Self.verbose {
+                os_log("\(self.t)🚀 Register SmartMergePlugin")
             }
 
             await PluginRegistry.shared.register(id: "SmartMerge", order: 25) {

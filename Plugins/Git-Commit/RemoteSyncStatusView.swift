@@ -10,7 +10,7 @@ struct RemoteSyncStatusView: View, SuperLog {
     /// 绑定到外部的刷新状态
     @Binding var isRefreshing: Bool
     /// 是否启用详细日志输出
-    static let verbose = true
+    static let verbose = false
 
     /// 环境对象：数据提供者
     @EnvironmentObject var data: DataProvider
@@ -222,7 +222,7 @@ extension RemoteSyncStatusView {
         }
 
         if Self.verbose {
-            os_log("\(self.t)Loading sync status for project: \(project.path)")
+            os_log("\(self.t)<\(project.path)>Loading sync status")
         }
 
         // 使用 Task.detached 确保在后台执行，不继承 actor 上下文
@@ -275,7 +275,7 @@ extension RemoteSyncStatusView {
         }
 
         if Self.verbose {
-            os_log("\(self.t)Performing git pull for project: \(project.path)")
+            os_log("\(self.t)<\(project.path)>Performing git pull")
         }
 
         // 立即更新 UI 状态
@@ -331,7 +331,7 @@ extension RemoteSyncStatusView {
         }
 
         if Self.verbose {
-            os_log("\(self.t)Performing git push for project: \(project.path)")
+            os_log("\(self.t)<\(project.path)>Performing git push")
         }
 
         // 立即更新 UI 状态

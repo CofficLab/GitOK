@@ -4,9 +4,17 @@ import SwiftUI
 
 /// RemoteRepository 插件：在状态栏提供远程仓库管理入口。
 class RemoteRepositoryPlugin: SuperPlugin, SuperLog, PluginRegistrant {
+    /// 日志标识符
+    nonisolated static let emoji = "🔗"
+
     static let shared = RemoteRepositoryPlugin()
-    static let emoji = "🔗"
     static var label: String = "RemoteRepository"
+
+    /// 是否启用该插件
+    static let enable = true
+
+    /// 是否启用详细日志输出
+    nonisolated static let verbose = false
 
     private init() {}
 
@@ -18,7 +26,13 @@ class RemoteRepositoryPlugin: SuperPlugin, SuperLog, PluginRegistrant {
 // MARK: - PluginRegistrant
 extension RemoteRepositoryPlugin {
     @objc static func register() {
+        guard enable else { return }
+
         Task {
+            if Self.verbose {
+                os_log("\(self.t)🚀 Register RemoteRepoPlugin")
+            }
+
             await PluginRegistry.shared.register(id: "RemoteRepository", order: 27) {
                 RemoteRepositoryPlugin.shared
             }

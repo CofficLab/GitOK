@@ -6,7 +6,7 @@ alwaysApply: true
 
 在任务到达阶段性的里程碑时，按照以下步骤自动创建一个合适的commit：
 
-- 执行 `pnpm type-check` 进行类型检查，确保代码无类型错误
+- 构建，确保无错误
 - 创建commit
 
 ## Commit Message Style

@@ -9,17 +9,32 @@ import LibGit2Swift
 struct BranchesView: View, SuperThread, SuperLog, SuperEvent {
     static let shared = BranchesView()
 
+    /// 环境对象：应用提供者
     @EnvironmentObject var app: AppProvider
+
+    /// 环境对象：数据提供者
     @EnvironmentObject var data: DataProvider
+
+    /// 环境对象：消息提供者
     @EnvironmentObject var m: MagicMessageProvider
 
+    /// 可选分支列表
     @State var branches: [GitBranch] = []
+
+    /// 当前选中的分支
     @State private var selection: GitBranch?
+
+    /// 是否正在刷新分支列表
     @State private var isRefreshing = false
+
+    /// 是否为Git项目
     @State private var isGitProject = false
 
-    static var emoji = "🌿"
-    private let verbose = false
+    /// 是否启用详细日志输出
+    nonisolated static let emoji = "🌿"
+
+    /// 是否启用详细日志输出
+    nonisolated static let verbose = true
     
     private init() {}
 
@@ -49,10 +64,8 @@ struct BranchesView: View, SuperThread, SuperLog, SuperEvent {
 // MARK: - Action
 
 extension BranchesView {
-    /**
-     * 刷新分支列表
-     * @param reason 刷新原因
-     */
+    /// 刷新分支列表
+    /// - Parameter reason: 刷新原因
     func refreshBranches(reason: String) {
         // 防止并发执行
         guard !isRefreshing else {
@@ -61,7 +74,7 @@ extension BranchesView {
         }
 
         guard let project = data.project else {
-            if verbose {
+            if Self.verbose {
                 os_log("\(self.t)⚠️ Refresh(\(reason)) but project is nil")
             }
             return
@@ -76,7 +89,7 @@ extension BranchesView {
         // 设置刷新状态
         isRefreshing = true
 
-        if verbose {
+        if Self.verbose {
             os_log("\(self.t)🍋 Refresh(\(reason))")
         }
 
@@ -105,24 +118,29 @@ extension BranchesView {
         // 重置刷新状态
         isRefreshing = false
     }
-    
+}
+
+// MARK: - Setter
+
+extension BranchesView {
+    /// 更新选中分支
+    /// - Parameters:
+    ///   - s: 要选中的分支
+    ///   - reason: 更新原因
     func updateSelection(_ s: GitBranch?, reason: String) {
-        if verbose {
+        if Self.verbose {
             os_log("\(self.t)Update Selection to \(s?.id ?? "nil") (\(reason))")
         }
-        
+
         self.selection = s
     }
 
+    /// 更新Git项目状态
     func updateIsGitProject() {
         self.isGitProject = data.project?.isGitRepo ?? false
     }
-    
-    /**
-        异步更新Git项目状态
-        
-        使用异步方式避免阻塞主线程，解决CPU占用100%的问题
-     */
+
+    /// 异步更新Git项目状态：使用异步方式避免阻塞主线程，解决CPU占用100%的问题
     func updateIsGitProjectAsync() async {
         guard let project = data.project else {
             await MainActor.run {
@@ -130,7 +148,7 @@ extension BranchesView {
             }
             return
         }
-        
+
         let isGit = await project.isGitAsync()
         await MainActor.run {
             self.isGitProject = isGit
@@ -138,7 +156,7 @@ extension BranchesView {
     }
 }
 
-// MARK: - Event
+// MARK: - Event Handler
 
 extension BranchesView {
     func onAppWillBecomeActive() {
@@ -170,24 +188,18 @@ extension BranchesView {
 }
 
 #Preview("App - Small Screen") {
-    RootView {
-        ContentLayout()
-            .hideSidebar()
-            .hideTabPicker()
-//            .hideProjectActions()
-    }
-    .frame(width: 800)
-    .frame(height: 600)
+    ContentLayout()
+        .hideSidebar()
+        .hideProjectActions()
+        .inRootView()
+        .frame(width: 800)
+        .frame(height: 600)
 }
 
 #Preview("App - Big Screen") {
-    RootView {
-        ContentLayout()
-            .setInitialTab(GitPlugin.label)
-            .hideToolbar()
-            .hideTabPicker()
-            .hideSidebar()
-    }
-    .frame(width: 1200)
-    .frame(height: 1200)
+    ContentLayout()
+        .hideSidebar()
+        .inRootView()
+        .frame(width: 1200)
+        .frame(height: 1200)
 }
