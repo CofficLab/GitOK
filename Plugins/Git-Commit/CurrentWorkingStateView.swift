@@ -306,7 +306,7 @@ extension CurrentWorkingStateView {
             let unpulledCount: Int
 
             do {
-                let unpushed = try project.getUnPushedCommits()
+                let unpushed = try await project.getUnPushedCommits()
                 unpushedCount = unpushed.count
             } catch {
                 unpushedCount = 0
@@ -316,7 +316,7 @@ extension CurrentWorkingStateView {
             }
 
             do {
-                let unpulled = try project.getUnPulledCommits()
+                let unpulled = try await project.getUnPulledCommits()
                 unpulledCount = unpulled.count
             } catch {
                 unpulledCount = 0

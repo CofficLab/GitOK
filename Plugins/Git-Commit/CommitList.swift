@@ -221,7 +221,7 @@ extension CommitList {
             )
 
             // 获取未推送的 commits
-            let unpushed = try project.getUnPushedCommits()
+            let unpushed = try await project.getUnPushedCommits()
             let unpushedHashes = Set(unpushed.map { $0.hash })
 
             if Self.verbose {
