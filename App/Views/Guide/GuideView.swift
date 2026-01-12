@@ -2,14 +2,8 @@ import SwiftUI
 import AppKit
 import MagicKit
 import MagicUI
+import LibGit2Swift
 import OSLog
-
-/// 远程仓库信息
-struct RemoteInfo: Identifiable {
-    let id = UUID()
-    let name: String
-    let url: String
-}
 
 /// 通用的引导提示视图组件
 /// 用于显示带有图标和文本的提示界面
@@ -88,7 +82,7 @@ struct GuideView: View, SuperLog {
                                 .foregroundColor(.secondary)
                                 .font(.headline)
 
-                            ForEach(remotes, id: \.name) { remote in
+                            ForEach(remotes) { remote in
                                 VStack(spacing: 2) {
                                     HStack(spacing: 4) {
                                         Image(systemName: "arrow.left.arrow.right")
@@ -172,46 +166,13 @@ extension GuideView {
 
     /// 获取远程仓库信息
     /// - Returns: 远程仓库信息数组，如果获取失败则返回 nil
-    private func getRemoteInfo() -> [RemoteInfo]? {
+    private func getRemoteInfo() -> [GitRemote]? {
         guard let project = g.project else {
             return nil
         }
 
-        let process = Process()
-        process.executableURL = URL(fileURLWithPath: "/usr/bin/env")
-        process.arguments = ["git", "remote", "-v"]
-        process.currentDirectoryURL = URL(fileURLWithPath: project.path)
-
-        let pipe = Pipe()
-        process.standardOutput = pipe
-        process.standardError = Pipe()
-
         do {
-            try process.run()
-            process.waitUntilExit()
-
-            let data = pipe.fileHandleForReading.readDataToEndOfFile()
-            let output = String(data: data, encoding: .utf8) ?? ""
-
-            // 解析 git remote -v 输出
-            // 格式: origin  https://github.com/CofficLab/GitOK.git (fetch)
-            let lines = output.components(separatedBy: "\n").filter { !$0.isEmpty }
-            var remotes: [RemoteInfo] = []
-
-            for line in lines {
-                let components = line.components(separatedBy: .whitespaces).filter { !$0.isEmpty }
-                if components.count >= 2 {
-                    let name = components[0]
-                    let url = components[1]
-                    let remote = RemoteInfo(name: name, url: url)
-
-                    // 避免重复（fetch 和 push 会显示两次）
-                    if !remotes.contains(where: { $0.name == name }) {
-                        remotes.append(remote)
-                    }
-                }
-            }
-
+            let remotes = try project.remoteList()
             return remotes.isEmpty ? nil : remotes
         } catch {
             if Self.verbose {
