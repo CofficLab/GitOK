@@ -56,6 +56,13 @@ extension DataProvider {
         self.project = p
         self.repoManager.stateRepo.setProjectPath(self.project?.path ?? "")
         self.checkIfProjectExists()
+
+        // 异步更新 isGitRepo 缓存
+        if let project = p {
+            Task.detached(priority: .userInitiated) {
+                await project.updateIsGitRepoCache()
+            }
+        }
     }
 
     /**

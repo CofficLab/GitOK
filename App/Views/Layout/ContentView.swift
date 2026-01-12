@@ -54,34 +54,13 @@ struct ContentView: View, SuperLog {
   var defaultTabVisibility: Bool? = nil
 
   /// 缓存工具栏前导视图的插件和视图对
-  private var toolbarLeadingViews: [(plugin: SuperPlugin, view: AnyView)] {
-    p.plugins.compactMap { plugin in
-      if let view = plugin.addToolBarLeadingView() {
-        return (plugin, view)
-      }
-      return nil
-    }
-  }
+  @State private var toolbarLeadingViews: [(plugin: SuperPlugin, view: AnyView)] = []
 
   /// 缓存工具栏后置视图的插件和视图对
-  private var toolbarTrailingViews: [(plugin: SuperPlugin, view: AnyView)] {
-    p.plugins.compactMap { plugin in
-      if let view = plugin.addToolBarTrailingView() {
-        return (plugin, view)
-      }
-      return nil
-    }
-  }
+  @State private var toolbarTrailingViews: [(plugin: SuperPlugin, view: AnyView)] = []
 
   /// 缓存插件列表视图的插件和视图对
-  private var pluginListViews: [(plugin: SuperPlugin, view: AnyView)] {
-    p.plugins.compactMap { plugin in
-      if let view = plugin.addListView(tab: tab, project: g.project) {
-        return (plugin, view)
-      }
-      return nil
-    }
-  }
+  @State private var pluginListViews: [(plugin: SuperPlugin, view: AnyView)] = []
 
   var body: some View {
     Group {
@@ -206,6 +185,41 @@ extension ContentView {
 // MARK: - Event Handler
 
 extension ContentView {
+  /// 更新缓存的视图
+  func updateCachedViews() {
+    if Self.verbose {
+      os_log("\(self.t)🔄 Updating cached views")
+    }
+
+    // 更新工具栏前导视图
+    toolbarLeadingViews = p.plugins.compactMap { plugin in
+      if let view = plugin.addToolBarLeadingView() {
+        return (plugin, view)
+      }
+      return nil
+    }
+
+    // 更新工具栏后置视图
+    toolbarTrailingViews = p.plugins.compactMap { plugin in
+      if let view = plugin.addToolBarTrailingView() {
+        return (plugin, view)
+      }
+      return nil
+    }
+
+    // 更新插件列表视图
+    pluginListViews = p.plugins.compactMap { plugin in
+      if let view = plugin.addListView(tab: tab, project: g.project) {
+        return (plugin, view)
+      }
+      return nil
+    }
+
+    if Self.verbose {
+      os_log("\(self.t)✅ Cached views updated: \(toolbarLeadingViews.count) leading, \(toolbarTrailingViews.count) trailing, \(pluginListViews.count) list views")
+    }
+  }
+
   /// 视图出现时的事件处理
   func onAppear() {
     // 如果提供了默认的，则使用默认的
@@ -252,15 +266,20 @@ extension ContentView {
     if let d = defaultProjectActionsVisibility {
       self.projectActionsVisibility = d
     }
+
+    // 初始化缓存的视图
+    updateCachedViews()
   }
 
   /// 处理项目变更事件
   func onProjectChange() {
+    updateCachedViews()
   }
 
   /// 处理标签页变更事件
   func onChangeOfTab() {
     app.setTab(tab)
+    updateCachedViews()
   }
 
   /// 检查并处理导航分栏视图可见性变化

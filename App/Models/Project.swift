@@ -141,6 +141,9 @@ final class Project {
         set { commitStyleRawValue = newValue.rawValue }
     }
 
+    /// 缓存的 Git 仓库检查结果（不被持久化）
+    @Transient private var _isGitRepo: Bool?
+
     init(_ url: URL) {
         self.timestamp = .now
         self.url = url
@@ -222,7 +225,8 @@ extension Project: Identifiable {
 extension Project {
     var isGitRepo: Bool {
         if path.isEmpty { return false }
-        return LibGit2.isGitRepository(at: self.path)
+        // 返回缓存值，避免重复检查
+        return _isGitRepo ?? false
     }
 
     /**
@@ -257,6 +261,18 @@ extension Project {
      */
     func isNotGitAsync() async -> Bool {
         return !(await isGitAsync())
+    }
+
+    /**
+        更新 isGitRepo 缓存（异步）
+
+        在后台检查 Git 仓库状态并更新缓存，避免阻塞主线程
+     */
+    func updateIsGitRepoCache() async {
+        let result = await isGitAsync()
+        await MainActor.run {
+            self._isGitRepo = result
+        }
     }
 
     func isClean(verbose: Bool = true) throws -> Bool {
