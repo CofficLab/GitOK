@@ -112,7 +112,7 @@ class BannerRepo: SuperLog {
         let fileURL = bannerDirectoryURL.appendingPathComponent(fileName)
         
         // 创建新的BannerData
-        var bannerData = BannerFile(
+        let bannerData = BannerFile(
             path: fileURL.path,
             project: project
         )
@@ -173,7 +173,7 @@ class BannerRepo: SuperLog {
     ///   - updates: 更新的数据
     /// - Returns: 更新后的BannerData
     func updateBanner(_ banner: BannerFile, with updates: BannerDataUpdate) throws -> BannerFile {
-        var updatedBanner = banner
+        let updatedBanner = banner
         
         // 保存更新后的数据
         try saveBanner(updatedBanner)

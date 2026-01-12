@@ -220,23 +220,19 @@ extension Project: Identifiable {
 // MARK: - Git
 
 extension Project {
-    static func checkGitRepository(at path: String) {
-        LibGit2.isGitRepository(at: path)
-    }
-    
     var isGitRepo: Bool {
         if path.isEmpty { return false }
         return LibGit2.isGitRepository(at: self.path)
     }
-    
+
     /**
         异步检查项目是否为Git仓库
-        
+
         使用异步方式避免阻塞主线程，解决CPU占用100%的问题
-        
+
         ## 返回值
         异步返回是否为Git仓库的布尔值
-        
+
         ## 示例
         ```swift
         let isGit = await project.isGitAsync()
@@ -250,12 +246,12 @@ extension Project {
     }
 
     func isNotGit() -> Bool { !isGitRepo }
-    
+
     /**
         异步检查项目是否为Git仓库（非阻塞版本）
-        
+
         使用异步方式避免阻塞主线程
-        
+
         ## 返回值
         异步返回是否为Git仓库的布ool值
      */
@@ -271,10 +267,10 @@ extension Project {
 
             return true
         }
-        
+
         return try LibGit2.hasUncommittedChanges(at: self.path, verbose: verbose) == false
     }
-    
+
     func hasNoUncommittedChanges() throws -> Bool {
         return try LibGit2.hasUncommittedChanges(at: self.path, verbose: false) == false
     }
@@ -310,7 +306,7 @@ extension Project {
     func getBranches() throws -> [GitBranch] {
         try LibGit2.getBranchList(at: self.path)
     }
-    
+
     /// 创建新分支并切换到该分支
     /// - Parameter branchName: 分支名称
     /// - Throws: Git操作异常
@@ -421,113 +417,113 @@ extension Project {
         // 使用 LibGit2Swift 获取所有提交
         let allCommits = try LibGit2.getCommitList(at: self.path)
 
-		// 执行 git 命令获取未推送的提交 hash 列表
-		let process = Process()
-		process.executableURL = URL(fileURLWithPath: "/usr/bin/env")
-		process.arguments = ["git", "log", "@{u}..", "--format=%H"]
-		process.currentDirectoryURL = URL(fileURLWithPath: self.path)
+        // 执行 git 命令获取未推送的提交 hash 列表
+        let process = Process()
+        process.executableURL = URL(fileURLWithPath: "/usr/bin/env")
+        process.arguments = ["git", "log", "@{u}..", "--format=%H"]
+        process.currentDirectoryURL = URL(fileURLWithPath: self.path)
 
-		let pipe = Pipe()
-		process.standardOutput = pipe
-		process.standardError = Pipe()
+        let pipe = Pipe()
+        process.standardOutput = pipe
+        process.standardError = Pipe()
 
-		do {
-			try process.run()
-			process.waitUntilExit()
+        do {
+            try process.run()
+            process.waitUntilExit()
 
-			let data = pipe.fileHandleForReading.readDataToEndOfFile()
-			let output = String(data: data, encoding: .utf8) ?? ""
+            let data = pipe.fileHandleForReading.readDataToEndOfFile()
+            let output = String(data: data, encoding: .utf8) ?? ""
 
-			// 解析输出，获取未推送提交的 hash 集合
-			let unpushedHashes = Set(output.components(separatedBy: "\n").filter { !$0.isEmpty })
+            // 解析输出，获取未推送提交的 hash 集合
+            let unpushedHashes = Set(output.components(separatedBy: "\n").filter { !$0.isEmpty })
 
-			// 从所有提交中筛选出未推送的提交
-			let unpushedCommits = allCommits.filter { commit in
-				// GitCommit 的 hash 属性应该包含完整的 commit hash
-				let commitHash = commit.id.description
-				return unpushedHashes.contains(commitHash)
-			}
+            // 从所有提交中筛选出未推送的提交
+            let unpushedCommits = allCommits.filter { commit in
+                // GitCommit 的 hash 属性应该包含完整的 commit hash
+                let commitHash = commit.id.description
+                return unpushedHashes.contains(commitHash)
+            }
 
-			return unpushedCommits
-		} catch {
-			os_log(.error, "\(self.t)❌ Failed to get unpushed commits: \(error)")
-			// 如果命令执行失败（比如没有上游分支），返回空数组
-			return []
-		}
+            return unpushedCommits
+        } catch {
+            os_log(.error, "\(self.t)❌ Failed to get unpushed commits: \(error)")
+            // 如果命令执行失败（比如没有上游分支），返回空数组
+            return []
+        }
     }
 
     /// 获取未拉取的提交（远程领先本地的提交）
     /// 使用 git log ..@{u} 命令获取远程有但本地没有的提交
     func getUnPulledCommits() throws -> [GitCommit] {
-		// 执行 git 命令获取未拉取的提交 hash 列表
-		let process = Process()
-		process.executableURL = URL(fileURLWithPath: "/usr/bin/env")
-		process.arguments = ["git", "log", "..@{u}", "--format=%H"]
-		process.currentDirectoryURL = URL(fileURLWithPath: self.path)
+        // 执行 git 命令获取未拉取的提交 hash 列表
+        let process = Process()
+        process.executableURL = URL(fileURLWithPath: "/usr/bin/env")
+        process.arguments = ["git", "log", "..@{u}", "--format=%H"]
+        process.currentDirectoryURL = URL(fileURLWithPath: self.path)
 
-		let pipe = Pipe()
-		process.standardOutput = pipe
-		process.standardError = Pipe()
+        let pipe = Pipe()
+        process.standardOutput = pipe
+        process.standardError = Pipe()
 
-		do {
-			try process.run()
-			process.waitUntilExit()
+        do {
+            try process.run()
+            process.waitUntilExit()
 
-			let data = pipe.fileHandleForReading.readDataToEndOfFile()
-			let output = String(data: data, encoding: .utf8) ?? ""
+            let data = pipe.fileHandleForReading.readDataToEndOfFile()
+            let output = String(data: data, encoding: .utf8) ?? ""
 
-			// 解析输出，获取未拉取提交的 hash 列表
-			let unpulledHashes = output.components(separatedBy: "\n").filter { !$0.isEmpty }
+            // 解析输出，获取未拉取提交的 hash 列表
+            let unpulledHashes = output.components(separatedBy: "\n").filter { !$0.isEmpty }
 
-			// 为每个 hash 创建一个 GitCommit 对象
-			// 注意：这些提交不在本地，所以我们需要用最少的可用信息创建对象
-			var unpulledCommits: [GitCommit] = []
+            // 为每个 hash 创建一个 GitCommit 对象
+            // 注意：这些提交不在本地，所以我们需要用最少的可用信息创建对象
+            var _: [GitCommit] = []
 
-			for hash in unpulledHashes {
-				// 获取这个提交的详细信息
-				let detailProcess = Process()
-				detailProcess.executableURL = URL(fileURLWithPath: "/usr/bin/env")
-				detailProcess.arguments = ["git", "log", hash, "-1", "--format=%H|%an|%ae|%ad|%s"]
-				detailProcess.currentDirectoryURL = URL(fileURLWithPath: self.path)
+            for hash in unpulledHashes {
+                // 获取这个提交的详细信息
+                let detailProcess = Process()
+                detailProcess.executableURL = URL(fileURLWithPath: "/usr/bin/env")
+                detailProcess.arguments = ["git", "log", hash, "-1", "--format=%H|%an|%ae|%ad|%s"]
+                detailProcess.currentDirectoryURL = URL(fileURLWithPath: self.path)
 
-				let detailPipe = Pipe()
-				detailProcess.standardOutput = detailPipe
-				detailProcess.standardError = Pipe()
+                let detailPipe = Pipe()
+                detailProcess.standardOutput = detailPipe
+                detailProcess.standardError = Pipe()
 
-				try detailProcess.run()
-				detailProcess.waitUntilExit()
+                try detailProcess.run()
+                detailProcess.waitUntilExit()
 
-				let detailData = detailPipe.fileHandleForReading.readDataToEndOfFile()
-				let detailOutput = String(data: detailData, encoding: .utf8) ?? ""
+                let detailData = detailPipe.fileHandleForReading.readDataToEndOfFile()
+                let detailOutput = String(data: detailData, encoding: .utf8) ?? ""
 
-				let parts = detailOutput.components(separatedBy: "|")
-				if parts.count >= 5 {
-					let commitHash = parts[0]
-					let authorName = parts[1]
-					let authorEmail = parts[2]
-					let dateStr = parts[3]
-					let message = parts[4]
+                let parts = detailOutput.components(separatedBy: "|")
+                if parts.count >= 5 {
+                    _ = parts[0]
+                    _ = parts[1]  // authorName - unused, remote commits not supported
+                    _ = parts[2]  // authorEmail - unused, remote commits not supported
+                    _ = parts[3]  // dateStr - unused, remote commits not supported
+                    _ = parts[4]  // message - unused, remote commits not supported
 
-					// 尝试使用 LibGit2Swift 的方式创建 GitCommit
-					// 如果不行，我们可能需要返回空数组或者找到其他方式
-					// 暂时返回空数组，因为远程的提交无法通过 LibGit2Swift 直接获取
-				}
-			}
+                    // 尝试使用 LibGit2Swift 的方式创建 GitCommit
+                    // 如果不行，我们可能需要返回空数组或者找到其他方式
+                    // 暂时返回空数组，因为远程的提交无法通过 LibGit2Swift 直接获取
+                }
+            }
 
-			// 由于 LibGit2Swift 无法直接访问远程提交，我们返回空数组
-			// 但可以通过 unpulledHashes.count 知道数量
-			return []
-		} catch {
-			os_log(.error, "\(self.t)❌ Failed to get unpulled commits: \(error)")
-			// 如果命令执行失败（比如没有上游分支），返回空数组
-			return []
-		}
+            // 由于 LibGit2Swift 无法直接访问远程提交，我们返回空数组
+            // 但可以通过 unpulledHashes.count 知道数量
+            return []
+        } catch {
+            os_log(.error, "\(self.t)❌ Failed to get unpulled commits: \(error)")
+            // 如果命令执行失败（比如没有上游分支），返回空数组
+            return []
+        }
     }
 
     func submit(_ message: String) throws {
         assert(Thread.isMainThread, "setCommit(_:) 必须在主线程调用，否则会导致线程安全问题！")
         do {
-            try LibGit2.createCommit(message: message, at: self.path, verbose: false)
+            _ = try LibGit2.createCommit(message: message, at: self.path, verbose: false)
             postEvent(
                 name: .projectDidCommit,
                 operation: "commit",
@@ -600,7 +596,7 @@ extension Project {
     func stagedDiffFileList() async throws -> [GitDiffFile] {
         return try LibGit2.getDiffFileList(at: self.path, staged: true)
     }
-    
+
     /// 丢弃文件的更改（恢复到 HEAD 版本）
     /// - Parameter filePath: 文件路径（相对于仓库根目录）
     /// - Throws: Git操作异常
@@ -625,24 +621,24 @@ extension Project {
             throw error
         }
     }
-    
+
     /// 获取项目的README.md文件内容
     /// - Returns: README.md文件的内容，如果文件不存在则抛出异常
     /// - Throws: 文件不存在或读取错误
     func getReadmeContent() async throws -> String {
         let readmeFiles = ["README.md", "readme.md", "Readme.md", "README.MD"]
         let fileManager = FileManager.default
-        
+
         for readmeFile in readmeFiles {
             let readmeURL = URL(fileURLWithPath: self.path).appendingPathComponent(readmeFile)
             if fileManager.fileExists(atPath: readmeURL.path) {
                 return try String(contentsOf: readmeURL, encoding: .utf8)
             }
         }
-        
+
         throw NSError(
-            domain: "ProjectError", 
-            code: 404, 
+            domain: "ProjectError",
+            code: 404,
             userInfo: [NSLocalizedDescriptionKey: "README.md file not found"]
         )
     }
