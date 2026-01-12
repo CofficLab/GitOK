@@ -1,5 +1,5 @@
 {
-  "originHash" : "2a1b49497b5065a98d3d6904f5b125cd77cd617cf18bfa4662a8341207c1d14c",
+  "originHash" : "8426d06aa33c1c3b986c81289d6ea550e13dccb9b4a4ea3b638e08402e051c8a",
   "pins" : [
     {
       "identity" : "id3tageditor",
@@ -61,7 +61,7 @@
       "location" : "https://github.com/nookery/MagicUI.git",
       "state" : {
         "branch" : "main",
-        "revision" : "44dcbba19fdab0a192c1e10195e669b5515e5d14"
+        "revision" : "37a6d798df97ea97c398feababdf4cb2b51ecb7e"
       }
     },
     {

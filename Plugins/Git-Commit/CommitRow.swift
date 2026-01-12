@@ -29,7 +29,7 @@ struct CommitRow: View, SuperThread {
 
                                 // 未同步到远程的图标
                                 if isUnpushed {
-                                    Image(systemName: "arrow.uturn.up")
+                                    Image(systemName: .iconUpload)
                                         .font(.system(size: 10))
                                         .foregroundColor(.secondary.opacity(0.6))
                                         .help("尚未推送到远程仓库")
