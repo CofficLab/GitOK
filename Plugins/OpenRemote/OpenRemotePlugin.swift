@@ -10,10 +10,10 @@ class OpenRemotePlugin: SuperPlugin, SuperLog, PluginRegistrant {
     static var label: String = "OpenRemote"
 
     /// 是否启用该插件
-    static let enable = true
+    static let enable = false
 
     /// 是否启用详细日志输出
-    nonisolated static let verbose = false
+    nonisolated static let verbose = true
 
     private init() {}
 

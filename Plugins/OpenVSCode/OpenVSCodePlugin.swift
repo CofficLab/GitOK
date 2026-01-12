@@ -9,10 +9,10 @@ class OpenVSCodePlugin: SuperPlugin, SuperLog, PluginRegistrant {
     nonisolated static let emoji = "💻"
 
     /// 是否启用该插件
-    static let enable = true
+    static let enable = false
 
     /// 是否启用详细日志输出
-    nonisolated static let verbose = false
+    nonisolated static let verbose = true
 
     static var label: String = "OpenVSCode"
 
