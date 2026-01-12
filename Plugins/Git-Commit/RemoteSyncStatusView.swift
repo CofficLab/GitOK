@@ -10,7 +10,7 @@ struct RemoteSyncStatusView: View, SuperLog {
     /// 绑定到外部的刷新状态
     @Binding var isRefreshing: Bool
     /// 是否启用详细日志输出
-    static let verbose = false
+    static let verbose = true
 
     /// 环境对象：数据提供者
     @EnvironmentObject var data: DataProvider
@@ -225,40 +225,44 @@ extension RemoteSyncStatusView {
             os_log("\(self.t)Loading sync status for project: \(project.path)")
         }
 
-        Task {
-            await MainActor.run {
-                isLoading = true
-                isRefreshing = true
-            }
+        // 使用 Task.detached 确保在后台执行，不继承 actor 上下文
+        Task.detached(priority: .userInitiated) {
+            // 在后台线程执行耗时操作
+            let unpushedCount: Int
+            let unpulledCount: Int
 
             do {
                 let unpushed = try project.getUnPushedCommits()
-                await MainActor.run {
-                    self.unpushedCount = unpushed.count
-                }
+                unpushedCount = unpushed.count
             } catch {
+                unpushedCount = 0
                 await MainActor.run {
-                    self.unpushedCount = 0
-                    os_log(.error, "\(self.t)❌ Failed to load unpushed commits count: \(error)")
+                    os_log(.error, "\(Self.t)❌ Failed to load unpushed commits count: \(error)")
                 }
             }
 
             do {
                 let unpulled = try project.getUnPulledCommits()
-                await MainActor.run {
-                    self.unpulledCount = unpulled.count
-                    isLoading = false
-                    isRefreshing = false
-                }
+                unpulledCount = unpulled.count
             } catch {
+                unpulledCount = 0
                 await MainActor.run {
-                    self.unpulledCount = 0
-                    isLoading = false
-                    isRefreshing = false
-                    os_log(.error, "\(self.t)❌ Failed to load unpulled commits count: \(error)")
+                    os_log(.error, "\(Self.t)❌ Failed to load unpulled commits count: \(error)")
                 }
             }
+
+            // 在主线程更新 UI
+            await MainActor.run {
+                self.unpushedCount = unpushedCount
+                self.unpulledCount = unpulledCount
+                self.isLoading = false
+                self.isRefreshing = false
+            }
         }
+
+        // 立即更新 loading 状态
+        isLoading = true
+        isRefreshing = true
     }
 
     /// 执行 git pull 操作拉取远程提交
@@ -274,36 +278,45 @@ extension RemoteSyncStatusView {
             os_log("\(self.t)Performing git pull for project: \(project.path)")
         }
 
-        Task {
-            await MainActor.run {
-                isPulling = true
-                isRefreshing = true
-            }
+        // 立即更新 UI 状态
+        isPulling = true
+        isRefreshing = true
+
+        // 使用 Task.detached 确保在后台执行
+        Task.detached(priority: .userInitiated) {
+            let result: Result<Void, Error>
 
             do {
+                // 在后台线程执行耗时操作
                 try project.pull()
+                result = .success(())
                 await MainActor.run {
-                    os_log("\(self.t)✅ Git pull succeeded")
+                    os_log("\(Self.t)✅ Git pull succeeded")
                 }
             } catch {
+                result = .failure(error)
                 await MainActor.run {
-                    os_log(.error, "\(self.t)❌ Git pull failed: \(error)")
-
-                    // 检查是否是认证错误
-                    if isCredentialError(error) {
-                        showCredentialInput = true
-                    } else {
-                        m.error(error)
-                    }
+                    os_log(.error, "\(Self.t)❌ Git pull failed: \(error)")
                 }
             }
 
-            // 重新加载同步状态
-            loadSyncStatus()
-
+            // 在主线程处理结果和更新 UI
             await MainActor.run {
-                isPulling = false
-                isRefreshing = false
+                self.isPulling = false
+                self.isRefreshing = false
+
+                switch result {
+                case .success:
+                    // 重新加载同步状态（不阻塞）
+                    self.loadSyncStatus()
+                case .failure(let error):
+                    // 检查是否需要凭据
+                    if self.isCredentialError(error) {
+                        self.showCredentialInput = true
+                    } else {
+                        self.m.error(error)
+                    }
+                }
             }
         }
     }
@@ -321,36 +334,45 @@ extension RemoteSyncStatusView {
             os_log("\(self.t)Performing git push for project: \(project.path)")
         }
 
-        Task {
-            await MainActor.run {
-                isPushing = true
-                isRefreshing = true
-            }
+        // 立即更新 UI 状态
+        isPushing = true
+        isRefreshing = true
+
+        // 使用 Task.detached 确保在后台执行
+        Task.detached(priority: .userInitiated) {
+            let result: Result<Void, Error>
 
             do {
+                // 在后台线程执行耗时操作
                 try project.push()
+                result = .success(())
                 await MainActor.run {
-                    os_log("\(self.t)✅ Git push succeeded")
+                    os_log("\(Self.t)✅ Git push succeeded")
                 }
             } catch {
+                result = .failure(error)
                 await MainActor.run {
-                    os_log(.error, "\(self.t)❌ Git push failed: \(error)")
-
-                    // 检查是否是认证错误
-                    if isCredentialError(error) {
-                        showCredentialInput = true
-                    } else {
-                        m.error(error)
-                    }
+                    os_log(.error, "\(Self.t)❌ Git push failed: \(error)")
                 }
             }
 
-            // 重新加载同步状态
-            loadSyncStatus()
-
+            // 在主线程处理结果和更新 UI
             await MainActor.run {
-                isPushing = false
-                isRefreshing = false
+                self.isPushing = false
+                self.isRefreshing = false
+
+                switch result {
+                case .success:
+                    // 重新加载同步状态（不阻塞）
+                    self.loadSyncStatus()
+                case .failure(let error):
+                    // 检查是否需要凭据
+                    if self.isCredentialError(error) {
+                        self.showCredentialInput = true
+                    } else {
+                        self.m.error(error)
+                    }
+                }
             }
         }
     }
