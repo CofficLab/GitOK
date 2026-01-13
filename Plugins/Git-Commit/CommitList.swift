@@ -73,7 +73,7 @@ extension CommitList {
                             if index == 0 && isRefreshing {
                                 ProgressView()
                                     .controlSize(.small)
-                                    .scaleEffect(0.8)
+                                    .scaleEffect(1)
                                     .padding(.trailing, 8)
                             }
                         }
