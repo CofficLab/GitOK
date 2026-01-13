@@ -1,21 +1,21 @@
-import SwiftUI
-import OSLog
 import MagicAlert
 import MagicKit
+import OSLog
+import SwiftUI
 
 struct TileProject: View, SuperLog, SuperThread {
     @EnvironmentObject var a: AppProvider
     @EnvironmentObject var m: MagicMessageProvider
     @EnvironmentObject var data: DataProvider
-    
+
     @State var hovered = false
     @State var isPresented = false
     @State var live = false
-    
+
     static let shared = TileProject()
-    
+
     private init() {}
-    
+
     var project: Project? { data.project }
 
     var body: some View {
@@ -54,4 +54,3 @@ struct TileProject: View, SuperLog, SuperThread {
     .frame(width: 1200)
     .frame(height: 1200)
 }
-

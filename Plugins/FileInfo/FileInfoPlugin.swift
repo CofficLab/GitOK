@@ -14,12 +14,11 @@ class SmartFilePlugin: SuperPlugin, SuperLog, PluginRegistrant {
     /// 是否启用详细日志输出
     nonisolated static let verbose = true
 
-
     static let shared = SmartFilePlugin()
     static var label: String = "SmartFile"
-    
+
     private init() {}
-    
+
     func addStatusBarLeadingView() -> AnyView? {
         AnyView(TileFile.shared)
     }
@@ -43,6 +42,7 @@ class SmartFilePlugin: SuperPlugin, SuperLog, PluginRegistrant {
 }
 
 // MARK: - PluginRegistrant
+
 extension SmartFilePlugin {
     @objc static func register() {
         guard enable else { return }
