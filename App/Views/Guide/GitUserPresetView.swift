@@ -128,6 +128,8 @@ struct GitUserPresetView: View, SuperLog {
                 showManagePresets = true
             }
             .magicIcon(.iconSettings)
+            .magicShape(.circle)
+            .magicShapeVisibility(.onHover)
         }
     }
 

@@ -83,18 +83,12 @@ struct GuideView: View, SuperLog {
                 // 项目信息区域
                 if let project = g.project {
                     VStack(alignment: .center) {
-                        // 当前项目信息
-                        ProjectInfoView(project: project)
-
-                        // 当前分支信息
-                        if let branch = g.branch {
-                            BranchInfoView(branch: branch)
-                        }
-
-                        // 远程仓库信息
-                        if let remotes = getRemoteInfo() {
-                            RemoteInfoView(remotes: remotes)
-                        }
+                        // 仓库信息（本地、远程、分支）
+                        RepositoryInfoView(
+                            project: project,
+                            remotes: getRemoteInfo() ?? [],
+                            branch: g.branch
+                        )
 
                         // 当前项目 Git 用户配置
                         CurrentUserConfigView(project: project)
