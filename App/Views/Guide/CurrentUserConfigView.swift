@@ -11,6 +11,19 @@ extension Notification.Name {
     static let didUpdateGitUserConfig = Notification.Name("didUpdateGitUserConfig")
 }
 
+// MARK: - View Extensions
+
+extension View {
+    /// 当 Git 用户配置更新时调用的便捷方法
+    /// - Parameter perform: 更新时执行的操作
+    /// - Returns: 修改后的视图
+    func onGitUserConfigUpdated(perform action: @escaping () -> Void) -> some View {
+        self.onReceive(NotificationCenter.default.publisher(for: .didUpdateGitUserConfig)) { _ in
+            action()
+        }
+    }
+}
+
 /// 显示当前项目 Git 用户配置的视图组件
 struct CurrentUserConfigView: View, SuperLog {
     /// emoji 标识符
@@ -40,9 +53,7 @@ struct CurrentUserConfigView: View, SuperLog {
             }
         }
         .onAppear(perform: loadUserInfo)
-        .onReceive(NotificationCenter.default.publisher(for: .didUpdateGitUserConfig)) { _ in
-            loadUserInfo()
-        }
+        .onGitUserConfigUpdated(perform: loadUserInfo)
     }
 
     // MARK: - View Components
