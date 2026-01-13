@@ -23,6 +23,15 @@ struct GuideView: View, SuperLog {
     let actionLabel: String?
     let iconColor: Color?
 
+    /// 当前用户名
+    @State private var currentUser: String = ""
+
+    /// 当前用户邮箱
+    @State private var currentEmail: String = ""
+
+    /// 是否显示用户配置表单
+    @State private var showUserConfig = false
+
     /// 初始化引导视图
     /// - Parameters:
     ///   - systemImage: SF Symbol 图标名称
@@ -131,9 +140,21 @@ struct GuideView: View, SuperLog {
                             }
                         }
 
-                        // 用户信息
-                        UserView()
-                            .frame(maxWidth: 600)
+                        // Git 用户信息
+                        MagicSettingSection(title: "Git 用户信息", titleAlignment: .leading) {
+                            VStack(spacing: 0) {
+                                MagicSettingRow(
+                                    title: currentUser.isEmpty ? "未配置" : currentUser,
+                                    description: currentUser.isEmpty ? "点击配置 Git 用户信息" : currentEmail,
+                                    icon: .iconUser
+                                ) {
+                                    MagicButton.simple {
+                                        self.showUserConfig = true
+                                    }
+                                    .magicIcon(.iconSettings)
+                                }
+                            }
+                        }
 
                         // 项目不存在时的删除按钮
                         if !g.projectExists {
@@ -157,6 +178,16 @@ struct GuideView: View, SuperLog {
             }
         }
         .background(Color(.windowBackgroundColor))
+        .sheet(isPresented: $showUserConfig) {
+            UserConfigSheet()
+                .environmentObject(g)
+                .onDisappear {
+                    loadUserInfo()
+                }
+        }
+        .onAppear {
+            loadUserInfo()
+        }
     }
 }
 
@@ -167,6 +198,8 @@ extension GuideView {
     /// - Parameter color: 图标颜色
     /// - Returns: 新的 GuideView 实例
     func setIconColor(_ color: Color) -> GuideView {
+        var view = self
+        // 通过重新创建来设置颜色（SwiftUI View 的不可变性）
         return GuideView(
             systemImage: self.systemImage,
             title: self.title,
@@ -179,6 +212,23 @@ extension GuideView {
 
     private func openInFinder(_ path: String) {
         NSWorkspace.shared.selectFile(nil, inFileViewerRootedAtPath: path)
+    }
+
+    /// 加载 Git 用户信息
+    private func loadUserInfo() {
+        do {
+            let userName = try g.project?.getUserName()
+            let userEmail = try g.project?.getUserEmail()
+
+            self.currentUser = userName ?? ""
+            self.currentEmail = userEmail ?? ""
+        } catch {
+            if Self.verbose {
+                os_log("\(Self.t)❌ Failed to load user info: \(error)")
+            }
+            self.currentUser = ""
+            self.currentEmail = ""
+        }
     }
 
     /// 获取远程仓库信息
