@@ -14,20 +14,35 @@ struct CommitStyleSettingView: View, SuperLog {
 
     @EnvironmentObject var data: DataProvider
 
-    /// Commit 风格绑定
-    @Binding var commitStyle: CommitStyle
+    /// Commit 风格
+    @State private var commitStyle: CommitStyle = .emoji
 
-    /// 全局 Commit 风格绑定
-    @Binding var globalCommitStyle: CommitStyle
+    /// 全局 Commit 风格
+    @State private var globalCommitStyle: CommitStyle = .emoji
 
     var body: some View {
-        MagicSettingSection(title: "Commit 风格", titleAlignment: .leading) {
-            VStack(spacing: 0) {
-                projectCommitStylePicker
-                Divider()
-                globalCommitStylePicker
+        ScrollView {
+            VStack(alignment: .leading, spacing: 24) {
+                MagicSettingSection(title: "Commit 风格", titleAlignment: .leading) {
+                    VStack(spacing: 0) {
+                        projectCommitStylePicker
+                        Divider()
+                        globalCommitStylePicker
+                    }
+                }
+            }
+            .padding()
+        }
+        .navigationTitle("Commit 风格")
+        .toolbar {
+            ToolbarItem(placement: .confirmationAction) {
+                Button("完成") {
+                    // 关闭设置视图
+                    NotificationCenter.default.post(name: .didSaveGitUserConfig, object: nil)
+                }
             }
         }
+        .onAppear(perform: loadData)
     }
 
     // MARK: - View Components
@@ -69,13 +84,38 @@ struct CommitStyleSettingView: View, SuperLog {
             )
         ) { $0 }
     }
+
+    // MARK: - Load Data
+
+    private func loadData() {
+        if let project = data.project {
+            commitStyle = project.commitStyle
+        }
+
+        if let savedStyleRaw = UserDefaults.standard.string(forKey: "globalCommitStyle"),
+           let savedStyle = CommitStyle(rawValue: savedStyleRaw) {
+            globalCommitStyle = savedStyle
+        }
+    }
 }
 
 // MARK: - Preview
 
-#Preview("Commit Style Settings") {
-    CommitStyleSettingView(
-        commitStyle: .constant(.emoji),
-        globalCommitStyle: .constant(.emoji)
-    )
+#Preview("App - Small Screen") {
+    ContentLayout()
+        .hideSidebar()
+        .hideTabPicker()
+        .hideProjectActions()
+        .inRootView()
+        .frame(width: 800)
+        .frame(height: 600)
+}
+
+#Preview("App - Big Screen") {
+    ContentLayout()
+        .hideSidebar()
+        .hideTabPicker()
+        .inRootView()
+        .frame(width: 1200)
+        .frame(height: 1200)
 }
