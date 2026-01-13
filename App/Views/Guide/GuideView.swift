@@ -1,9 +1,9 @@
-import SwiftUI
 import AppKit
+import LibGit2Swift
 import MagicKit
 import MagicUI
-import LibGit2Swift
 import OSLog
+import SwiftUI
 
 /// 通用的引导提示视图组件
 /// 用于显示带有图标和文本的提示界面
@@ -48,97 +48,114 @@ struct GuideView: View, SuperLog {
     }
 
     var body: some View {
-        VStack(spacing: 20) {
-            Image(systemName: systemImage)
-                .font(.system(size: 80))
-                .foregroundColor(iconColor ?? .gray)
+        ScrollView {
+            VStack(spacing: 24) {
+                Spacer()
+                
+                // 主标题和图标
+                VStack(spacing: 16) {
+                    Image(systemName: systemImage)
+                        .font(.system(size: 64))
+                        .foregroundColor(iconColor ?? .gray)
 
-            Text(title)
-                .font(.largeTitle)
-                .foregroundColor(.secondary)
-
-            if let subtitle = subtitle {
-                Text(subtitle)
-                    .font(.body)
-                    .multilineTextAlignment(.center)
-            }
-
-            if let projectPath = g.project?.path {
-                VStack(spacing: 8) {
-                    Text("当前项目：\(projectPath)")
+                    Text(title)
+                        .font(.title2)
                         .foregroundColor(.secondary)
-                        .multilineTextAlignment(.center)
+                        .fontWeight(.medium)
 
-                    if let branch = g.branch {
-                        Text("当前分支：\(branch.name)")
+                    if let subtitle = subtitle {
+                        Text(subtitle)
+                            .font(.body)
                             .foregroundColor(.secondary)
                             .multilineTextAlignment(.center)
                     }
+                }
+                .padding(.top, 20)
 
-                    // 显示远程仓库信息
-                    if let remotes = getRemoteInfo() {
-                        VStack(spacing: 6) {
-                            Text("远程仓库：")
-                                .foregroundColor(.secondary)
-                                .font(.headline)
+                // 操作按钮
+                if let action = action, let actionLabel = actionLabel {
+                    Button(action: action) {
+                        Text(actionLabel)
+                    }
+                    .buttonStyle(.borderedProminent)
+                }
 
-                            ForEach(remotes) { remote in
-                                VStack(spacing: 2) {
-                                    HStack(spacing: 4) {
-                                        Image(systemName: "arrow.left.arrow.right")
-                                            .font(.system(size: 10))
-                                            .foregroundColor(.blue)
-                                        Text(remote.name)
-                                            .foregroundColor(.primary)
-                                            .font(.system(size: 11, weight: .medium))
+                // 项目信息区域
+                if let project = g.project {
+                    VStack(alignment: .center) {
+                        // 当前项目信息
+                        MagicSettingSection(title: "当前项目", titleAlignment: .leading) {
+                            VStack(spacing: 0) {
+                                MagicSettingRow(
+                                    title: project.title,
+                                    description: project.path,
+                                    icon: .iconFolder
+                                ) {
+                                    MagicButton.simple {
+                                        project.url.openFolder()
                                     }
-
-                                    Text(remote.url)
-                                        .foregroundColor(.secondary)
-                                        .font(.system(size: 10))
-                                        .lineLimit(1)
-                                        .truncationMode(.middle)
+                                    .magicIcon(.iconFinder)
                                 }
-                                .padding(.horizontal, 20)
                             }
                         }
+
+                        // 当前分支信息
+                        if let branch = g.branch {
+                            MagicSettingSection(title: "当前分支", titleAlignment: .leading) {
+                                MagicSettingRow(
+                                    title: branch.name,
+                                    description: "当前检出的分支",
+                                    icon: .iconLog
+                                ) {
+                                }
+                            }
+                        }
+
+                        // 远程仓库信息
+                        if let remotes = getRemoteInfo() {
+                            MagicSettingSection(title: "远程仓库", titleAlignment: .leading) {
+                                VStack(spacing: 0) {
+                                    ForEach(remotes) { remote in
+                                        MagicSettingRow(
+                                            title: remote.name,
+                                            description: remote.url,
+                                            icon: .iconCloud
+                                        ) {
+                                        }
+
+                                        if remote != remotes.last {
+                                            Divider()
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        // 用户信息
+                        UserView()
+                            .frame(maxWidth: 600)
+
+                        // 项目不存在时的删除按钮
+                        if !g.projectExists {
+                            VStack(spacing: 12) {
+                                Text("项目路径不存在")
+                                    .font(.headline)
+                                    .foregroundColor(.red)
+
+                                BtnDeleteProject(project: project)
+                                    .frame(width: 200, height: 40)
+                            }
+                            .padding(.vertical, 20)
+                        }
                     }
+                    .padding(.horizontal)
+                    .frame(maxWidth: 600)
+                    .inMagicHStackCenter()
                 }
-                .padding(.horizontal)
-            }
-
-            if let action = action, let actionLabel = actionLabel {
-                Button(action: action) {
-                    Text(actionLabel)
-                }
-                .buttonStyle(.borderedProminent)
-            }
-            
-            UserView()
-                .padding()
-                .frame(width: 500)
-
-            if let path = g.project?.path {
-                MagicButton.simple {
-                    openInFinder(path)
-                }
-                .magicTitle("在 Finder 中打开")
-                .magicSize(.auto)
-                .magicIcon(.iconFinder)
-                .magicBackground(MagicBackground.forest)
-                .frame(width: 200)
-                .frame(height: 40)
-                .padding(.top, 20)
-            }
-
-            if g.projectExists == false, let p = g.project {
-                BtnDeleteProject(project: p)
-                    .frame(width: 200)
-                    .frame(height: 40)
-                    .padding(.top, 50)
+                
+                Spacer()
             }
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color(.windowBackgroundColor))
     }
 }
