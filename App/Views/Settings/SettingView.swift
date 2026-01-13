@@ -4,7 +4,7 @@ import MagicUI
 import OSLog
 import SwiftUI
 
-/// 设置视图 - 入口索引视图
+/// 设置视图 - Tab 样式
 struct SettingView: View, SuperLog {
     /// emoji 标识符
     nonisolated static let emoji = "⚙️"
@@ -42,62 +42,86 @@ struct SettingView: View, SuperLog {
     /// 全局 Commit 风格
     @State private var globalCommitStyle: CommitStyle = .emoji
 
-    var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 24) {
-                // Git 用户信息设置
-                GitUserInfoSettingView(
-                    userName: $userName,
-                    userEmail: $userEmail,
-                    hasChanges: $hasChanges,
-                    isLoading: $isLoading,
-                    errorMessage: $errorMessage,
-                    savedConfigs: $savedConfigs,
-                    selectedConfig: $selectedConfig
-                )
-                .environmentObject(data)
+    /// 当前选中的 Tab
+    @State private var selectedTab: SettingTab = .userInfo
 
-                // Commit 风格设置
-                CommitStyleSettingView(
-                    commitStyle: $commitStyle,
-                    globalCommitStyle: $globalCommitStyle
-                )
-                .environmentObject(data)
+    /// 设置 Tab 枚举
+    enum SettingTab: String, CaseIterable {
+        case userInfo = "用户信息"
+        case commitStyle = "Commit 风格"
 
-                // 错误消息
-                if let errorMessage = errorMessage {
-                    HStack(spacing: 8) {
-                        Image(systemName: .iconWarning)
-                            .foregroundColor(.red)
-                        Text(errorMessage)
-                            .font(.caption)
-                            .foregroundColor(.red)
-                    }
-                    .padding()
-                    .background(Color.red.opacity(0.1))
-                    .cornerRadius(8)
-                }
-
-                // 底部完成按钮
-                MagicButton(
-                    icon: .iconCheckmark,
-                    title: "完成",
-                    preventDoubleClick: true
-                ) { completion in
-                    dismiss()
-                    completion()
-                }
-                .magicSize(.auto)
-                .frame(height: 50)
-                .frame(width: 100)
-                .padding(.top, 8)
-                .inMagicHStackCenter()
+        var icon: String {
+            switch self {
+            case .userInfo: return "person.circle"
+            case .commitStyle: return "text.alignleft"
             }
-            .padding()
         }
-        .navigationTitle("Git 用户配置")
-        .frame(width: 600, height: 600)
+    }
+
+    var body: some View {
+        NavigationSplitView {
+            // Sidebar
+            List(SettingTab.allCases, id: \.self, selection: $selectedTab) { tab in
+                NavigationLink(value: tab) {
+                    Label(tab.rawValue, systemImage: tab.icon)
+                }
+            }
+            .navigationSplitViewColumnWidth(min: 150, ideal: 200)
+        } detail: {
+            // Detail 内容
+            ScrollView {
+                VStack(alignment: .leading, spacing: 24) {
+                    switch selectedTab {
+                    case .userInfo:
+                        GitUserInfoSettingView(
+                            userName: $userName,
+                            userEmail: $userEmail,
+                            hasChanges: $hasChanges,
+                            isLoading: $isLoading,
+                            errorMessage: $errorMessage,
+                            savedConfigs: $savedConfigs,
+                            selectedConfig: $selectedConfig
+                        )
+                        .environmentObject(data)
+
+                    case .commitStyle:
+                        CommitStyleSettingView(
+                            commitStyle: $commitStyle,
+                            globalCommitStyle: $globalCommitStyle
+                        )
+                        .environmentObject(data)
+                    }
+
+                    // 错误消息
+                    if let errorMessage = errorMessage {
+                        HStack(spacing: 8) {
+                            Image(systemName: .iconWarning)
+                                .foregroundColor(.red)
+                            Text(errorMessage)
+                                .font(.caption)
+                                .foregroundColor(.red)
+                        }
+                        .padding()
+                        .background(Color.red.opacity(0.1))
+                        .cornerRadius(8)
+                    }
+                }
+                .padding()
+            }
+            .navigationTitle(selectedTab.rawValue)
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("完成") {
+                        dismiss()
+                    }
+                }
+            }
+        }
+        .frame(width: 700, height: 500)
         .onAppear(perform: handleOnAppear)
+        .onReceive(NotificationCenter.default.publisher(for: .didSaveGitUserConfig)) { _ in
+            dismiss()
+        }
         .disabled(isLoading)
     }
 }
