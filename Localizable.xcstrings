@@ -50,9 +50,6 @@
     "branch" : {
 
     },
-    "Commit 风格" : {
-
-    },
     "current_head" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -82,10 +79,10 @@
     "ghp_xxxxxxxxxxxxxxxxxxxx" : {
 
     },
-    "GitHub 用户名" : {
+    "Git 用户配置" : {
 
     },
-    "Git用户配置" : {
+    "GitHub 用户名" : {
 
     },
     "LICENSE" : {
@@ -639,9 +636,6 @@
     "用Xcode打开" : {
 
     },
-    "用户信息" : {
-
-    },
     "用户名" : {
 
     },
@@ -679,9 +673,6 @@
 
     },
     "设备边框" : {
-
-    },
-    "设置类型" : {
 
     },
     "该来源下没有可用的图标" : {
