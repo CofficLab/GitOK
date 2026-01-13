@@ -106,7 +106,7 @@ extension GitDetail {
 
 extension GitDetail {
     /// 更新项目清理状态：检查工作目录是否有未提交的变更
-    func updateIsProjectClean() {
+    func updateIsProjectClean(reason: String) {
         let now = Date()
 
         // 防抖：300ms 内的重复更新请求会被忽略
@@ -144,7 +144,7 @@ extension GitDetail {
 
                 self.isProjectClean = isClean
                 if Self.verbose {
-                    os_log(.info, "\(Self.t)🔄 Update isProjectClean: \(isClean)")
+                    os_log(.info, "\(Self.t)🔄<\(reason)> Update isProjectClean: \(isClean)")
                 }
             }
         }
@@ -183,7 +183,7 @@ extension GitDetail {
         // 延迟执行，避免与其他组件同时刷新
         Task {
             try? await Task.sleep(nanoseconds: 300_000_000)  // 延迟 0.3 秒
-            self.updateIsProjectClean()
+            self.updateIsProjectClean(reason: "onAppWillBecomeActive")
         }
     }
 
@@ -191,18 +191,18 @@ extension GitDetail {
     func onAppear() {
         Task {
             await self.updateIsGitProjectAsync()
-            self.updateIsProjectClean()
+            self.updateIsProjectClean(reason: "onAppear")
         }
     }
 
     /// 项目变更时的事件处理
     func onProjectChange() {
-        self.updateIsProjectClean()
+        self.updateIsProjectClean(reason: "onProjectChange")
     }
 
     /// Git 提交成功时的事件处理
     func onGitCommitSuccess(_ eventInfo: ProjectEventInfo) {
-        self.updateIsProjectClean()
+        self.updateIsProjectClean(reason: "onGitCommitSuccess")
     }
 }
 
