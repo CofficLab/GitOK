@@ -99,8 +99,8 @@ struct GuideView: View, SuperLog {
                         // 当前项目 Git 用户配置
                         CurrentUserConfigView(project: project)
 
-                        // Git 用户信息
-                        UserInfoView()
+                        // Git 用户预设管理
+                        GitUserPresetView()
 
                         // 项目不存在时的删除按钮
                         if !g.projectExists {

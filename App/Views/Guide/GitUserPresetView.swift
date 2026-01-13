@@ -5,8 +5,8 @@ import MagicUI
 import OSLog
 import SwiftUI
 
-/// 显示Git用户信息的视图组件
-struct UserInfoView: View, SuperLog {
+/// Git用户预设管理视图组件
+struct GitUserPresetView: View, SuperLog {
     /// emoji 标识符
     nonisolated static let emoji = "👤"
 
