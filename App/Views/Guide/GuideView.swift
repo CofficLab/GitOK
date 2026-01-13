@@ -179,7 +179,7 @@ struct GuideView: View, SuperLog {
         }
         .background(Color(.windowBackgroundColor))
         .sheet(isPresented: $showUserConfig) {
-            UserConfigSheet()
+            SettingView()
                 .environmentObject(g)
                 .onDisappear {
                     loadUserInfo()

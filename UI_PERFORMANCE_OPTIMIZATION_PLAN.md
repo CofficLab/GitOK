@@ -347,7 +347,7 @@ ForEach(files, id: \.self) { file in
 
 ### 8. **实时文本输入导致频繁更新** ⚠️ 低优先级
 
-**位置**: `App/Views/Guide/UserConfigSheet.swift:122`
+**位置**: `App/Views/Settings/SettingView.swift:122`
 
 **问题代码**:
 ```swift
@@ -843,7 +843,7 @@ class FPSMonitor: ObservableObject {
 
 12. ⚪ **图片加载缓存** - Banner 相关
 13. ⚪ **FPS 监控** - 开发工具
-14. ⚪ **文本输入防抖** - `UserConfigSheet.swift`
+14. ⚪ **文本输入防抖** - `SettingView.swift`
 15. ⚪ **应用激活协调器** - 新增文件
 
 **第三阶段预期效果**:

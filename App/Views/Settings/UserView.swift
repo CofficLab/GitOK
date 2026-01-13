@@ -77,7 +77,7 @@ struct UserView: View, SuperLog {
             }
         }
         .sheet(isPresented: $showUserConfig) {
-            UserConfigSheet()
+            SettingView()
                 .environmentObject(data)
                 .onDisappear {
                     loadUserInfo()

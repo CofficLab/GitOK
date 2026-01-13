@@ -4,8 +4,8 @@ import MagicUI
 import OSLog
 import SwiftUI
 
-/// 用户配置表单视图
-struct UserConfigSheet: View, SuperLog {
+/// 设置视图
+struct SettingView: View, SuperLog {
     /// emoji 标识符
     nonisolated static let emoji = "⚙️"
 
@@ -137,7 +137,7 @@ struct UserConfigSheet: View, SuperLog {
 }
 
 // MARK: - Event Handler
-extension UserConfigSheet {
+extension SettingView {
     private func handleOnAppear() {
         loadCurrentUserInfo()
         loadSavedConfigs()
@@ -156,7 +156,7 @@ extension UserConfigSheet {
 }
 
 // MARK: - Actions
-extension UserConfigSheet {
+extension SettingView {
     private func saveUserConfig() {
         let configView = UserInfoConfigView(
             userName: $userName,
@@ -190,7 +190,7 @@ extension UserConfigSheet {
 }
 
 // MARK: - Private Helpers
-extension UserConfigSheet {
+extension SettingView {
     private func loadCurrentUserInfo() {
         let configView = UserInfoConfigView(
             userName: $userName,
