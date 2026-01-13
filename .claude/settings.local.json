@@ -29,7 +29,8 @@
       "Bash(git rev-list:*)",
       "mcp__zread__read_file",
       "Bash(git rm:*)",
-      "Bash(security find-internet-password:*)"
+      "Bash(security find-internet-password:*)",
+      "Bash(tree:*)"
     ]
   }
 }
