@@ -23,15 +23,6 @@ struct GuideView: View, SuperLog {
     let actionLabel: String?
     let iconColor: Color?
 
-    /// 当前用户名
-    @State private var currentUser: String = ""
-
-    /// 当前用户邮箱
-    @State private var currentEmail: String = ""
-
-    /// 是否显示用户配置表单
-    @State private var showUserConfig = false
-
     /// 初始化引导视图
     /// - Parameters:
     ///   - systemImage: SF Symbol 图标名称
@@ -60,7 +51,7 @@ struct GuideView: View, SuperLog {
         ScrollView {
             VStack(spacing: 24) {
                 Spacer()
-                
+
                 // 主标题和图标
                 VStack(spacing: 16) {
                     Image(systemName: systemImage)
@@ -105,12 +96,11 @@ struct GuideView: View, SuperLog {
                             RemoteInfoView(remotes: remotes)
                         }
 
+                        // 当前项目 Git 用户配置
+                        CurrentUserConfigView(project: project)
+
                         // Git 用户信息
-                        UserInfoView(
-                            currentUser: currentUser,
-                            currentEmail: currentEmail,
-                            onShowUserConfig: { self.showUserConfig = true }
-                        )
+                        UserInfoView()
 
                         // 项目不存在时的删除按钮
                         if !g.projectExists {
@@ -121,21 +111,11 @@ struct GuideView: View, SuperLog {
                     .frame(maxWidth: 600)
                     .inMagicHStackCenter()
                 }
-                
+
                 Spacer()
             }
         }
         .background(Color(.windowBackgroundColor))
-        .sheet(isPresented: $showUserConfig) {
-            SettingView()
-                .environmentObject(g)
-                .onDisappear {
-                    loadUserInfo()
-                }
-        }
-        .onAppear {
-            loadUserInfo()
-        }
     }
 }
 
@@ -160,23 +140,6 @@ extension GuideView {
 
     private func openInFinder(_ path: String) {
         NSWorkspace.shared.selectFile(nil, inFileViewerRootedAtPath: path)
-    }
-
-    /// 加载 Git 用户信息
-    private func loadUserInfo() {
-        do {
-            let userName = try g.project?.getUserName()
-            let userEmail = try g.project?.getUserEmail()
-
-            self.currentUser = userName ?? ""
-            self.currentEmail = userEmail ?? ""
-        } catch {
-            if Self.verbose {
-                os_log("\(Self.t)❌ Failed to load user info: \(error)")
-            }
-            self.currentUser = ""
-            self.currentEmail = ""
-        }
     }
 
     /// 获取远程仓库信息
