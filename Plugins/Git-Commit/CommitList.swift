@@ -19,6 +19,7 @@ struct CommitList: View, SuperThread, SuperLog {
     @State private var currentPage = 0
     @State private var pageSize: Int = 50
     @State private var unpushedCommits: Set<String> = []  // 存储未推送 commit 的 hash
+    @State private var isLoadingMoreScheduled = false  // 防止快速连续触发加载更多
 
     // 使用GitCommitRepo来存储和恢复commit选择
     private let commitRepo = GitCommitRepo.shared
@@ -80,11 +81,21 @@ extension CommitList {
                             // 只在最后几个commit出现时触发加载更多
                             let threshold = max(commits.count - 10, Int(Double(commits.count) * 0.8))
 
-                            if index >= threshold && hasMoreCommits && !loading {
+                            if index >= threshold && hasMoreCommits && !loading && !isLoadingMoreScheduled {
+                                isLoadingMoreScheduled = true
+
                                 if Self.verbose {
-                                    os_log("\(self.t)👁️ Commit \(index) appeared, triggering loadMore")
+                                    os_log("\(self.t)👁️ Commit \(index) appeared, scheduling loadMore")
                                 }
-                                loadMoreCommits()
+
+                                // 延迟 100ms，避免快速连续触发
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                    self.isLoadingMoreScheduled = false
+                                    if Self.verbose {
+                                        os_log("\(self.t)🔄 Executing scheduled loadMore")
+                                    }
+                                    self.loadMoreCommits()
+                                }
                             }
                         }
                 }
