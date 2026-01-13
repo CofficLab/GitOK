@@ -49,7 +49,7 @@ struct FileTile: View {
         case "D":
             return (.iconMinus, .red)
         default:
-            return ("exclamationmark.square", .gray)
+            return (.iconInfo, .gray)
         }
     }
 }
