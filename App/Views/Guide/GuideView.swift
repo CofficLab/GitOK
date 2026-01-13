@@ -83,27 +83,29 @@ struct GuideView: View, SuperLog {
                 // 项目信息区域
                 if let project = g.project {
                     VStack(alignment: .center) {
-                        // 仓库信息（本地、远程、分支）
-                        RepositoryInfoView(
-                            project: project,
-                            remotes: getRemoteInfo() ?? [],
-                            branch: g.branch
-                        )
+                        if g.projectExists {
+                            // 仓库信息（本地、远程、分支）
+                            RepositoryInfoView(
+                                project: project,
+                                remotes: getRemoteInfo() ?? [],
+                                branch: g.branch
+                            )
 
-                        // 当前项目 Git 用户配置
-                        CurrentUserConfigView(project: project)
+                            // 当前项目 Git 用户配置
+                            CurrentUserConfigView(project: project)
 
-                        // Git 用户预设管理
-                        GitUserPresetView()
+                            // Git 用户预设管理
+                            GitUserPresetView()
 
-                        // 项目不存在时的删除按钮
-                        if !g.projectExists {
+                        } else {
+                            // 项目不存在时的删除按钮
                             ProjectNotFoundView(project: project)
                         }
                     }
                     .padding(.horizontal)
                     .frame(maxWidth: 600)
                     .inMagicHStackCenter()
+                    .inMagicVStackCenter()
                 }
 
                 Spacer()
@@ -120,7 +122,6 @@ extension GuideView {
     /// - Parameter color: 图标颜色
     /// - Returns: 新的 GuideView 实例
     func setIconColor(_ color: Color) -> GuideView {
-        var view = self
         // 通过重新创建来设置颜色（SwiftUI View 的不可变性）
         return GuideView(
             systemImage: self.systemImage,

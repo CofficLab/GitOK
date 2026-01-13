@@ -15,10 +15,6 @@ struct ProjectNotFoundView: View, SuperLog {
 
     var body: some View {
         VStack(spacing: 12) {
-            Text("项目路径不存在")
-                .font(.headline)
-                .foregroundColor(.red)
-
             BtnDeleteProject(project: project)
                 .frame(width: 200, height: 40)
         }

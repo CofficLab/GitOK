@@ -2297,7 +2297,7 @@
 					"$(PROJECT_DIR)/Resources/webview/node_modules/.pnpm/@rollup+rollup-darwin-arm64@4.19.1/node_modules/@rollup/rollup-darwin-arm64",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 15.0;
-				MARKETING_VERSION = 2.0.19;
+				MARKETING_VERSION = 2.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yueyi.GitOK;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
@@ -2346,7 +2346,7 @@
 					"$(PROJECT_DIR)/Resources/webview/node_modules/.pnpm/@rollup+rollup-darwin-arm64@4.19.1/node_modules/@rollup/rollup-darwin-arm64",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 15.0;
-				MARKETING_VERSION = 2.0.19;
+				MARKETING_VERSION = 2.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yueyi.GitOK;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
