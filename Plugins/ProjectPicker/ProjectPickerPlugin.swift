@@ -4,14 +4,13 @@ import SwiftUI
 
 class ProjectPickerPlugin: SuperPlugin, SuperLog, PluginRegistrant {
     /// 日志标识符
-    ////  日志标识符
     nonisolated static let emoji = "📁"
 
     /// 是否启用该插件
     static let enable = true
 
     /// 是否启用详细日志输出
-    nonisolated static let verbose = false
+    nonisolated static let verbose = true
 
     static var label: String = "ProjectPicker"
 
@@ -48,6 +47,7 @@ class ProjectPickerPlugin: SuperPlugin, SuperLog, PluginRegistrant {
 }
 
 // MARK: - PluginRegistrant
+
 extension ProjectPickerPlugin {
     @objc static func register() {
         guard enable else { return }

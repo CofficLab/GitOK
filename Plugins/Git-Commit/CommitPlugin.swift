@@ -25,14 +25,7 @@ class CommitPlugin: SuperPlugin, SuperLog, PluginRegistrant {
      */
     func addListView(tab: String, project: Project?) -> AnyView? {
         if tab == GitPlugin.label, project != nil {
-            if Self.verbose {
-                os_log("\(self.t)🔄 CommitPlugin enabled addListView: \(tab)")
-            }
             return AnyView(CommitList.shared)
-        }
-
-        if Self.verbose {
-            os_log("\(self.t)🔄 CommitPlugin disabled addListView: \(tab)")
         }
         
         return nil

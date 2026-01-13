@@ -5,11 +5,10 @@ import SwiftUI
 /// SmartFile 插件：在状态栏左侧展示当前文件信息的 Tile。
 class SmartFilePlugin: SuperPlugin, SuperLog, PluginRegistrant {
     /// 日志标识符
-    ////  日志标识符
     nonisolated static let emoji = "📄"
 
     /// 是否启用该插件
-    static let enable = false
+    static let enable = true
 
     /// 是否启用详细日志输出
     nonisolated static let verbose = true

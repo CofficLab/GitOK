@@ -11,7 +11,7 @@ class BranchPlugin: SuperPlugin, SuperLog, PluginRegistrant {
     static var label: String = "Branch"
 
     /// 是否启用该插件
-    static let enable = false
+    static let enable = true
 
     /// 是否启用详细日志输出
     nonisolated static let verbose = true
@@ -28,6 +28,7 @@ class BranchPlugin: SuperPlugin, SuperLog, PluginRegistrant {
 }
 
 // MARK: - PluginRegistrant
+
 extension BranchPlugin {
     @objc static func register() {
         guard enable else { return }

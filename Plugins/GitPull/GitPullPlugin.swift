@@ -5,7 +5,6 @@ import SwiftUI
 class GitPullPlugin: SuperPlugin, SuperLog, PluginRegistrant {
     static let shared = GitPullPlugin()
     /// 日志标识符
-    ////  日志标识符
     nonisolated static let emoji = "⬇️"
 
     /// 是否启用该插件

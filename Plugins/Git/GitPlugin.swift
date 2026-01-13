@@ -4,14 +4,13 @@ import SwiftUI
 
 class GitPlugin: SuperPlugin, SuperLog, PluginRegistrant {
     /// 日志标识符
-    nonisolated static let emoji = "📣"
+    nonisolated static let emoji = "🚄"
 
     /// 是否启用该插件
     static let enable = true
 
     /// 是否启用详细日志输出
-    nonisolated static let verbose = false
-
+    nonisolated static let verbose = true
 
     static let shared = GitPlugin()
     static var label: String = "Git"
@@ -25,6 +24,7 @@ class GitPlugin: SuperPlugin, SuperLog, PluginRegistrant {
 }
 
 // MARK: - PluginRegistrant
+
 extension GitPlugin {
     @objc static func register() {
         guard enable else { return }

@@ -1,6 +1,6 @@
-import SwiftUI
 import MagicKit
 import OSLog
+import SwiftUI
 
 /// LICENSE 插件：在状态栏提供 LICENSE 入口。
 class LicensePlugin: SuperPlugin, SuperLog, PluginRegistrant {
@@ -9,7 +9,7 @@ class LicensePlugin: SuperPlugin, SuperLog, PluginRegistrant {
     nonisolated static let emoji = "📜"
 
     /// 是否启用该插件
-    static let enable = false
+    static let enable = true
 
     /// 是否启用详细日志输出
     nonisolated static let verbose = true
@@ -24,6 +24,7 @@ class LicensePlugin: SuperPlugin, SuperLog, PluginRegistrant {
 }
 
 // MARK: - PluginRegistrant
+
 extension LicensePlugin {
     @objc static func register() {
         guard enable else { return }
@@ -56,4 +57,3 @@ extension LicensePlugin {
         .frame(width: 1200)
         .frame(height: 1200)
 }
-

@@ -1,6 +1,6 @@
 import MagicKit
-import SwiftUI
 import OSLog
+import SwiftUI
 
 /// 状态栏活动状态插件：展示当前长耗时操作的状态文本。
 class ActivityStatusPlugin: SuperPlugin, SuperLog, PluginRegistrant {
@@ -11,8 +11,7 @@ class ActivityStatusPlugin: SuperPlugin, SuperLog, PluginRegistrant {
     static let enable = true
 
     /// 是否启用详细日志输出
-    nonisolated static let verbose = false
-
+    nonisolated static let verbose = true
 
     static let shared = ActivityStatusPlugin()
     static let label = "ActivityStatus"
@@ -25,6 +24,7 @@ class ActivityStatusPlugin: SuperPlugin, SuperLog, PluginRegistrant {
 }
 
 // MARK: - PluginRegistrant
+
 extension ActivityStatusPlugin {
     @objc static func register() {
         guard enable else { return }
@@ -57,4 +57,3 @@ extension ActivityStatusPlugin {
         .frame(width: 1200)
         .frame(height: 1200)
 }
-
