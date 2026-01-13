@@ -5,7 +5,7 @@ import SwiftUI
 
 struct CommitList: View, SuperThread, SuperLog {
     nonisolated static let emoji = "🖥️"
-    nonisolated static let verbose = true
+    nonisolated static let verbose = false
 
     static var shared = CommitList()
 
