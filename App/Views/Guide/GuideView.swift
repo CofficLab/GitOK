@@ -93,80 +93,28 @@ struct GuideView: View, SuperLog {
                 if let project = g.project {
                     VStack(alignment: .center) {
                         // 当前项目信息
-                        MagicSettingSection(title: "当前项目", titleAlignment: .leading) {
-                            VStack(spacing: 0) {
-                                MagicSettingRow(
-                                    title: project.title,
-                                    description: project.path,
-                                    icon: .iconFolder
-                                ) {
-                                    MagicButton.simple {
-                                        project.url.openFolder()
-                                    }
-                                    .magicIcon(.iconFinder)
-                                }
-                            }
-                        }
+                        ProjectInfoView(project: project)
 
                         // 当前分支信息
                         if let branch = g.branch {
-                            MagicSettingSection(title: "当前分支", titleAlignment: .leading) {
-                                MagicSettingRow(
-                                    title: branch.name,
-                                    description: "当前检出的分支",
-                                    icon: .iconLog
-                                ) {
-                                }
-                            }
+                            BranchInfoView(branch: branch)
                         }
 
                         // 远程仓库信息
                         if let remotes = getRemoteInfo() {
-                            MagicSettingSection(title: "远程仓库", titleAlignment: .leading) {
-                                VStack(spacing: 0) {
-                                    ForEach(remotes) { remote in
-                                        MagicSettingRow(
-                                            title: remote.name,
-                                            description: remote.url,
-                                            icon: .iconCloud
-                                        ) {
-                                        }
-
-                                        if remote != remotes.last {
-                                            Divider()
-                                        }
-                                    }
-                                }
-                            }
+                            RemoteInfoView(remotes: remotes)
                         }
 
                         // Git 用户信息
-                        MagicSettingSection(title: "Git 用户信息", titleAlignment: .leading) {
-                            VStack(spacing: 0) {
-                                MagicSettingRow(
-                                    title: currentUser.isEmpty ? "未配置" : currentUser,
-                                    description: currentUser.isEmpty ? "点击配置 Git 用户信息" : currentEmail,
-                                    icon: .iconUser
-                                ) {
-                                    MagicButton.simple {
-                                        self.showUserConfig = true
-                                    }
-                                    .magicIcon(.iconSettings)
-                                }
-                            }
-                        }
+                        UserInfoView(
+                            currentUser: currentUser,
+                            currentEmail: currentEmail,
+                            onShowUserConfig: { self.showUserConfig = true }
+                        )
 
                         // 项目不存在时的删除按钮
                         if !g.projectExists {
-                            VStack(spacing: 12) {
-                                Text("项目路径不存在")
-                                    .font(.headline)
-                                    .foregroundColor(.red)
-
-                                BtnDeleteProject(project: project)
-                                    .frame(width: 200, height: 40)
-                            }
-                            .padding(.vertical, 20)
+                            ProjectNotFoundView(project: project)
                         }
                     }
                     .padding(.horizontal)
