@@ -1,5 +1,5 @@
 {
-  "originHash" : "8426d06aa33c1c3b986c81289d6ea550e13dccb9b4a4ea3b638e08402e051c8a",
+  "originHash" : "bd6c432c36e89b4c16d483ec0f23bd5b312a718c9cd7ce631152dea5e6451648",
   "pins" : [
     {
       "identity" : "id3tageditor",
@@ -22,7 +22,7 @@
     {
       "identity" : "magicdevice",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/nookery/MagicDevice",
+      "location" : "https://github.com/nookery/MagicDevice.git",
       "state" : {
         "branch" : "main",
         "revision" : "60c9bf7cd59566ec64b7088fa8672a6b1c2c5cf2"

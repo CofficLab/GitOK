@@ -430,7 +430,7 @@ extension Project {
     /// 获取未推送的提交（本地领先远程的提交）
     /// 使用 LibGit2Swift 原生实现
     func getUnPushedCommits() async throws -> [GitCommit] {
-        return try LibGit2.getUnPushedCommits(at: self.path)
+        return try LibGit2.getUnPushedCommits(at: self.path, verbose: false)
     }
 
     /// 获取未拉取的提交（远程领先本地的提交）
@@ -498,8 +498,9 @@ extension Project {
     }
 
     func changedFilesDetail(in atCommit: String) async throws -> [GitDiffFile] {
-        // 使用 LibGit2Swift 获取指定commit修改的文件列表
+        // 使用 LibGit2Swift 获取指定commit修改的文件列表，并按文件路径排序
         return try LibGit2.getCommitDiffFiles(atCommit: atCommit, at: self.path)
+            .sorted { $0.file < $1.file }
     }
 
     func untrackedFiles() async throws -> [GitDiffFile] {
@@ -516,11 +517,13 @@ extension Project {
             }
         }
 
-        return Array(mergedFiles.values)
+        // 按文件路径排序，确保顺序稳定
+        return Array(mergedFiles.values).sorted { $0.file < $1.file }
     }
 
     func stagedDiffFileList() async throws -> [GitDiffFile] {
         return try LibGit2.getDiffFileList(at: self.path, staged: true)
+            .sorted { $0.file < $1.file }
     }
 
     /// 丢弃文件的更改（恢复到 HEAD 版本）

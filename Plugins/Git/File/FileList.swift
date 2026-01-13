@@ -1,14 +1,13 @@
 import AppKit
+import LibGit2Swift
 import MagicAlert
 import MagicKit
-import LibGit2Swift
 import OSLog
 import SwiftUI
 
 /// 显示 Git 仓库文件变更列表的视图组件
 /// 支持显示暂存区文件或提交间的文件差异，并提供文件丢弃更改功能
 struct FileList: View, SuperThread, SuperLog {
-    /// 是否启用详细日志输出
     nonisolated static let emoji = "📁"
     nonisolated static let verbose = false
 
@@ -122,15 +121,17 @@ extension FileList {
     func discardChanges(for file: GitDiffFile) {
         guard let project = data.project else { return }
 
-        Task.detached {
+        Task.detached(priority: .userInitiated) {
             do {
-                try project.discardFileChanges(file.file)
+                // 在后台执行耗时操作
+                try await project.discardFileChanges(file.file)
 
+                // 在主线程更新 UI
                 await MainActor.run {
                     self.m.info("已丢弃文件更改: \(file.file)")
                 }
 
-                // 刷新文件列表
+                // 刷新文件列表（refresh 内部已经处理了后台线程）
                 await self.refresh(reason: "AfterDiscardChanges")
             } catch {
                 await MainActor.run {
@@ -169,47 +170,71 @@ extension FileList {
 
     /// 执行文件列表刷新操作
     /// - Parameter reason: 刷新原因，用于日志记录
-    /// 执行文件列表刷新操作
-    /// - Parameter reason: 刷新原因，用于日志记录
     private func performRefresh(reason: String) async {
-        self.isLoading = true
-
-        if Self.verbose {
-            os_log("\(self.t)🍋 Refreshing \(reason)")
+        // 先在主线程更新加载状态
+        await MainActor.run {
+            self.isLoading = true
         }
 
         guard let project = data.project else {
-            self.isLoading = false
+            await MainActor.run {
+                self.isLoading = false
+            }
             return
         }
 
         do {
-            // 检查任务是否被取消
-            try Task.checkCancellation()
+            // 在后台线程执行耗时操作
+            let (newFiles, selectedCommitHash) = try await Task.detached(priority: .userInitiated) {
+                if Self.verbose {
+                    os_log("\(self.t)🍋 Refreshing \(reason)")
+                }
 
-            if let commit = data.commit {
-                self.files = try await project.changedFilesDetail(in: commit.hash)
-            } else {
-                self.files = try await project.untrackedFiles()
-            }
+                // 检查任务是否被取消
+                try Task.checkCancellation()
 
-            // 再次检查任务是否被取消
-            try Task.checkCancellation()
+                let newFiles: [GitDiffFile]
+                if let commit = await data.commit {
+                    newFiles = try await project.changedFilesDetail(in: commit.hash)
+                } else {
+                    newFiles = try await project.untrackedFiles()
+                }
 
-            self.selection = self.files.first
-            DispatchQueue.main.async {
+                // 再次检查任务是否被取消
+                try Task.checkCancellation()
+
+                return (newFiles, await data.commit?.hash)
+            }.value
+
+            // 在主线程更新 UI
+            await MainActor.run {
+                // 确保在刷新过程中 commit 没有变化
+                guard selectedCommitHash == self.data.commit?.hash else {
+                    if Self.verbose {
+                        os_log("\(self.t)🔄 Commit changed during refresh, skipping UI update")
+                    }
+                    return
+                }
+
+                self.files = newFiles
+                self.selection = newFiles.first
                 self.data.setFile(self.selection)
+                self.isLoading = false
             }
         } catch is CancellationError {
-            // 任务被取消，不做任何处理
+            // 任务被取消，在主线程更新状态
+            await MainActor.run {
+                self.isLoading = false
+            }
             if Self.verbose {
                 os_log("\(self.t)🐜 Refresh cancelled: \(reason)")
             }
         } catch {
-            self.m.error(error)
+            await MainActor.run {
+                self.isLoading = false
+                self.m.error(error)
+            }
         }
-
-        self.isLoading = false
     }
 }
 
