@@ -12,6 +12,7 @@ extension Notification.Name {
     static let appWillBecomeActive = Notification.Name("appWillBecomeActive")
     static let appWillResignActive = Notification.Name("appWillResignActive")
     static let appDidBecomeActive = Notification.Name("appDidBecomeActive")
+    static let openSettings = Notification.Name("openSettings")
 }
 
 extension View {
