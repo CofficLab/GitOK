@@ -39,9 +39,9 @@ struct StatusBar: View, SuperLog {
         .frame(maxWidth: .infinity)
         .frame(height: 32)
         #if DEBUG
-        .background(MagicBackground.desert.opacity(0.3))
+        .background(Color.accentColor.opacity(0.4))
         #else
-        .background(MagicBackground.colorGreen.opacity(0.3))
+        .background(Color.accentColor.opacity(0.4))
         #endif
     }
 }
