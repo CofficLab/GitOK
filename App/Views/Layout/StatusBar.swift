@@ -16,10 +16,21 @@ struct StatusBar: View, SuperLog {
     /// 视图主体
     var body: some View {
         HStack(spacing: 0) {
+            // 状态栏左侧区域
             ForEach(p.plugins, id: \.instanceLabel) { plugin in
                 plugin.addStatusBarLeadingView()
             }
+
             Spacer()
+
+            // 状态栏中间区域
+            ForEach(p.plugins, id: \.instanceLabel) { plugin in
+                plugin.addStatusBarCenterView()
+            }
+
+            Spacer()
+
+            // 状态栏右侧区域
             ForEach(p.plugins, id: \.instanceLabel) { plugin in
                 plugin.addStatusBarTrailingView()
             }
