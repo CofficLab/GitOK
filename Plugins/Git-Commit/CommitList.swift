@@ -232,9 +232,6 @@ extension CommitList {
                 if Self.verbose {
                     os_log("\(self.t)🔄 Refresh - fetched \(initialCommits.count) commits from page 0")
                     os_log("\(self.t)🔄 Refresh - \(unpushed.count) unpushed commits")
-                    for (index, commit) in initialCommits.prefix(3).enumerated() {
-                        os_log("\(self.t)🔄 Commit \(index): \(commit.hash.prefix(8)) - \(commit.message.prefix(50))")
-                    }
                 }
 
                 // 在主线程更新 UI 状态

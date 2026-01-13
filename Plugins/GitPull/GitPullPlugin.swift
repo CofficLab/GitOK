@@ -9,7 +9,7 @@ class GitPullPlugin: SuperPlugin, SuperLog, PluginRegistrant {
     nonisolated static let emoji = "⬇️"
 
     /// 是否启用该插件
-    static let enable = false
+    static let enable = true
 
     /// 是否启用详细日志输出
     nonisolated static let verbose = true
@@ -21,8 +21,10 @@ class GitPullPlugin: SuperPlugin, SuperLog, PluginRegistrant {
     func addToolBarTrailingView() -> AnyView? {
         AnyView(BtnGitPullView.shared)
     }
-} 
+}
+
 // MARK: - PluginRegistrant
+
 extension GitPullPlugin {
     @objc static func register() {
         guard enable else { return }
