@@ -261,6 +261,19 @@ struct GitUserPresetView: View, SuperLog {
     }
 }
 
+// MARK: - View Extensions
+
+extension View {
+    /// 当 Git 用户配置更新时调用的便捷方法
+    /// - Parameter perform: 更新时执行的操作
+    /// - Returns: 修改后的视图
+    func onGitUserConfigUpdated(perform action: @escaping () -> Void) -> some View {
+        self.onReceive(NotificationCenter.default.publisher(for: .didUpdateGitUserConfig)) { _ in
+            action()
+        }
+    }
+}
+
 // MARK: - Preview
 
 #Preview("App - Small Screen") {
