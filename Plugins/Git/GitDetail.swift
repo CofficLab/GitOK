@@ -5,22 +5,40 @@ import MagicUI
 import OSLog
 import SwiftUI
 
+/// Git 详情视图：显示 Git 项目的状态、提交信息和文件变更列表。
 struct GitDetail: View, SuperEvent, SuperLog {
+    /// 日志标识符
+    nonisolated static let emoji = "🚄"
+
+    /// 是否启用详细日志输出
+    nonisolated static let verbose = true
+
+    /// 环境对象：应用提供者
     @EnvironmentObject var app: AppProvider
+
+    /// 环境对象：数据提供者
     @EnvironmentObject var data: DataProvider
+
+    /// 环境对象：消息提供者
     @EnvironmentObject var m: MagicMessageProvider
 
+    /// 项目是否干净（无未提交的变更）
     @State private var isProjectClean: Bool = true
+
+    /// 是否为 Git 项目
     @State private var isGitProject: Bool = false
+
+    /// 更新清理状态的任务
     @State private var updateCleanTask: Task<Void, Never>?
+
+    /// 最后更新时间（用于防抖）
     @State private var lastUpdateTime: Date = Date.distantPast
 
+    /// 单例实例
     static let shared = GitDetail()
 
-    private var verbose = false
-
     private init() {
-        if verbose {
+        if Self.verbose {
             os_log("\(Self.onInit)")
         }
     }
@@ -66,6 +84,7 @@ struct GitDetail: View, SuperEvent, SuperLog {
         .onNotification(.appWillBecomeActive, perform: onAppWillBecomeActive)
     }
 
+    /// 背景视图：根据提交状态显示不同的背景颜色
     private var background: some View {
         ZStack {
             if data.commit == nil {
@@ -77,15 +96,22 @@ struct GitDetail: View, SuperEvent, SuperLog {
     }
 }
 
+// MARK: - View
+
+extension GitDetail {
+    // View 相关的辅助视图和修饰符可以在这里添加
+}
+
 // MARK: - Action
 
 extension GitDetail {
+    /// 更新项目清理状态：检查工作目录是否有未提交的变更
     func updateIsProjectClean() {
         let now = Date()
 
         // 防抖：300ms 内的重复更新请求会被忽略
         guard now.timeIntervalSince(lastUpdateTime) > 0.3 else {
-            if verbose {
+            if Self.verbose {
                 os_log("\(Self.t)🚫 updateIsProjectClean skipped (debounced)")
             }
             return
@@ -117,13 +143,14 @@ extension GitDetail {
                 guard !Task.isCancelled else { return }
 
                 self.isProjectClean = isClean
-                if self.verbose {
+                if Self.verbose {
                     os_log(.info, "\(Self.t)🔄 Update isProjectClean: \(isClean)")
                 }
             }
         }
     }
 
+    /// 更新 Git 项目状态：检查当前项目是否为 Git 仓库
     func updateIsGitProject() {
         guard let project = data.project else {
             return
@@ -131,12 +158,8 @@ extension GitDetail {
 
         self.isGitProject = project.isGitRepo
     }
-    
-    /**
-        异步更新Git项目状态
-        
-        使用异步方式避免阻塞主线程，解决CPU占用100%的问题
-     */
+
+    /// 异步更新 Git 项目状态：使用异步方式避免阻塞主线程，解决 CPU 占用 100% 的问题
     func updateIsGitProjectAsync() async {
         guard let project = data.project else {
             await MainActor.run {
@@ -152,9 +175,10 @@ extension GitDetail {
     }
 }
 
-// MARK: Event
+// MARK: - Event Handler
 
 extension GitDetail {
+    /// 应用即将变为活跃状态的事件处理
     func onAppWillBecomeActive(_ notification: Notification) {
         // 延迟执行，避免与其他组件同时刷新
         Task {
@@ -163,6 +187,7 @@ extension GitDetail {
         }
     }
 
+    /// 视图出现时的事件处理
     func onAppear() {
         Task {
             await self.updateIsGitProjectAsync()
@@ -170,30 +195,30 @@ extension GitDetail {
         }
     }
 
+    /// 项目变更时的事件处理
     func onProjectChange() {
         self.updateIsProjectClean()
     }
 
+    /// Git 提交成功时的事件处理
     func onGitCommitSuccess(_ eventInfo: ProjectEventInfo) {
         self.updateIsProjectClean()
     }
 }
 
 #Preview("App - Small Screen") {
-    RootView {
-        ContentLayout()
-            .hideSidebar()
-            .hideTabPicker()
-            .hideProjectActions()
-    }
-    .frame(width: 600)
-    .frame(height: 600)
+    ContentLayout()
+        .hideSidebar()
+        .hideProjectActions()
+        .inRootView()
+        .frame(width: 600)
+        .frame(height: 600)
 }
 
 #Preview("App - Big Screen") {
-    RootView {
-        ContentLayout()
-    }
-    .frame(width: 1200)
-    .frame(height: 1200)
+    ContentLayout()
+        .hideSidebar()
+        .inRootView()
+        .frame(width: 1200)
+        .frame(height: 1200)
 }
