@@ -1,5 +1,5 @@
 {
-  "originHash" : "ec9c1e8bd73c2380100d24b78c68cdc426a2c6e068c9aaa3e9584477323f2e6d",
+  "originHash" : "02b0d01f78154e03db5bc82ef7b00aa8a62301aaf7040f079e27bb8f108907cc",
   "pins" : [
     {
       "identity" : "id3tageditor",
@@ -13,7 +13,7 @@
     {
       "identity" : "libgit2swift",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/nookery/LibGit2Swift",
+      "location" : "https://github.com/nookery/Libgit2swift",
       "state" : {
         "branch" : "main",
         "revision" : "df95fa919e77f236a709b2fbad7b8cc3466a9927"
@@ -89,15 +89,6 @@
       "state" : {
         "revision" : "0ef1ee0220239b3776f433314515fd849025673f",
         "version" : "2.6.4"
-      }
-    },
-    {
-      "identity" : "static-libgit2",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/bdewey/static-libgit2.git",
-      "state" : {
-        "revision" : "ca2b13cb2cd04365c9416803c1d7e26116b23efd",
-        "version" : "0.5.0"
       }
     },
     {
