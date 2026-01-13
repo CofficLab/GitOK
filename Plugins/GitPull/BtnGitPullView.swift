@@ -90,7 +90,7 @@ extension BtnGitPullView {
                 await MainActor.run {
                     self.m.hideLoading()
                     self.reset()
-                    self.m.error("拉取失败: \(error.localizedDescription)")
+                    self.m.error(error)
                 }
             }
             await setStatus(nil)

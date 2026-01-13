@@ -1,3 +1,4 @@
+import Cocoa
 import MagicKit
 import OSLog
 import SwiftUI
@@ -28,14 +29,65 @@ extension OpenVSCodePlugin {
     @objc static func register() {
         guard enable else { return }
 
+        // 检查 VSCode 是否安装
+        guard isVSCodeInstalled() else {
+            if Self.verbose {
+                os_log("\(Self.t)⚠️ VSCode is not installed, skipping OpenVSCodePlugin registration")
+            }
+            return
+        }
+
         Task {
             if Self.verbose {
-                os_log("\(self.t)🚀 Register OpenVSCodePlugin")
+                os_log("\(Self.t)🚀 Register OpenVSCodePlugin")
             }
 
             await PluginRegistry.shared.register(id: "OpenVSCode", order: 12) {
                 OpenVSCodePlugin.shared
             }
         }
+    }
+
+    /// 检查 VSCode 是否已安装
+    /// - Returns: 如果 VSCode 已安装返回 true，否则返回 false
+    private static func isVSCodeInstalled() -> Bool {
+        // 方法1: 通过 Bundle Identifier 检查（VSCode 和 VSCode Insiders）
+        let bundleIds = [
+            "com.microsoft.VSCode",
+            "com.microsoft.VSCodeInsiders"
+        ]
+
+        for bundleId in bundleIds {
+            if let appURL = NSWorkspace.shared.urlForApplication(withBundleIdentifier: bundleId) {
+                if Self.verbose {
+                    os_log("\(Self.t)✅ Found VSCode at: \(appURL.path)")
+                }
+                return true
+            }
+        }
+
+        // 方法2: 通过应用路径检查（作为备选）
+        let applicationPaths = [
+            "/Applications/Visual Studio Code.app",
+            "/Applications/Visual Studio Code Insiders.app",
+            "/Applications/VSCode.app",
+            NSHomeDirectory() + "/Applications/Visual Studio Code.app",
+            NSHomeDirectory() + "/Applications/VSCode.app"
+        ]
+
+        for path in applicationPaths {
+            if FileManager.default.fileExists(atPath: path) {
+                if Self.verbose {
+                    os_log("\(Self.t)✅ Found VSCode at: \(path)")
+                }
+                return true
+            }
+        }
+
+        if Self.verbose {
+            os_log("\(Self.t)❌ VSCode not found in system")
+        }
+
+        return false
     }
 }

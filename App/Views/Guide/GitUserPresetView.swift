@@ -11,7 +11,7 @@ struct GitUserPresetView: View, SuperLog {
     nonisolated static let emoji = "👤"
 
     /// 是否启用详细日志输出
-    nonisolated static let verbose = true
+    nonisolated static let verbose = false
 
     @EnvironmentObject var data: DataProvider
 
