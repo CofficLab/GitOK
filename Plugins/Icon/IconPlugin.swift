@@ -1,13 +1,21 @@
+import MagicKit
 import OSLog
 import SwiftUI
-import MagicKit
 
 class IconPlugin: SuperPlugin, SuperLog, PluginRegistrant {
     static let shared = IconPlugin()
-    let emoji = "📣"
+    /// 日志标识符
+    nonisolated static let emoji = "📣"
+
+    /// 是否启用该插件
+    static let enable = true
+
+    /// 是否启用详细日志输出
+    nonisolated static let verbose = true
+
     static var label: String = "Icon"
     var isTab: Bool = true
-    
+
     private init() {}
 
     func addDetailView() -> AnyView? {
@@ -16,9 +24,16 @@ class IconPlugin: SuperPlugin, SuperLog, PluginRegistrant {
 }
 
 // MARK: - PluginRegistrant
+
 extension IconPlugin {
     @objc static func register() {
+        guard enable else { return }
+
         Task {
+            if Self.verbose {
+                os_log("\(self.t)🚀 Register IconPlugin")
+            }
+
             await PluginRegistry.shared.register(id: "Icon", order: 2) {
                 IconPlugin.shared
             }

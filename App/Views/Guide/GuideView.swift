@@ -1,7 +1,9 @@
-import SwiftUI
 import AppKit
+import LibGit2Swift
 import MagicKit
 import MagicUI
+import OSLog
+import SwiftUI
 
 /// 通用的引导提示视图组件
 /// 用于显示带有图标和文本的提示界面
@@ -46,67 +48,69 @@ struct GuideView: View, SuperLog {
     }
 
     var body: some View {
-        VStack(spacing: 20) {
-            Image(systemName: systemImage)
-                .font(.system(size: 80))
-                .foregroundColor(iconColor ?? .gray)
+        ScrollView {
+            VStack(spacing: 24) {
+                Spacer()
 
-            Text(title)
-                .font(.largeTitle)
-                .foregroundColor(.secondary)
+                // 主标题和图标
+                VStack(spacing: 16) {
+                    Image(systemName: systemImage)
+                        .font(.system(size: 64))
+                        .foregroundColor(iconColor ?? .gray)
 
-            if let subtitle = subtitle {
-                Text(subtitle)
-                    .font(.body)
-                    .multilineTextAlignment(.center)
-            }
-
-            if let projectPath = g.project?.path {
-                Text("当前项目：\(projectPath)")
-                    .foregroundColor(.secondary)
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal)
-                
-                if let branch = g.branch {
-                    Text("当前分支：\(branch.name)")
+                    Text(title)
+                        .font(.title2)
                         .foregroundColor(.secondary)
-                        .multilineTextAlignment(.center)
-                        .padding(.horizontal)
-                }
-            }
+                        .fontWeight(.medium)
 
-            if let action = action, let actionLabel = actionLabel {
-                Button(action: action) {
-                    Text(actionLabel)
+                    if let subtitle = subtitle {
+                        Text(subtitle)
+                            .font(.body)
+                            .foregroundColor(.secondary)
+                            .multilineTextAlignment(.center)
+                    }
                 }
-                .buttonStyle(.borderedProminent)
-            }
-            
-            UserView()
-                .padding()
-                .frame(width: 500)
-
-            if let path = g.project?.path {
-                MagicButton.simple {
-                    openInFinder(path)
-                }
-                .magicTitle("在 Finder 中打开")
-                .magicSize(.auto)
-                .magicIcon(.iconFinder)
-                .magicBackground(MagicBackground.forest)
-                .frame(width: 200)
-                .frame(height: 40)
                 .padding(.top, 20)
-            }
 
-            if g.projectExists == false, let p = g.project {
-                BtnDeleteProject(project: p)
-                    .frame(width: 200)
-                    .frame(height: 40)
-                    .padding(.top, 50)
+                // 操作按钮
+                if let action = action, let actionLabel = actionLabel {
+                    Button(action: action) {
+                        Text(actionLabel)
+                    }
+                    .buttonStyle(.borderedProminent)
+                }
+
+                // 项目信息区域
+                if let project = g.project {
+                    VStack(alignment: .center) {
+                        if g.projectExists {
+                            // 仓库信息（本地、远程、分支）
+                            RepositoryInfoView(
+                                project: project,
+                                remotes: getRemoteInfo() ?? [],
+                                branch: g.branch
+                            )
+
+                            // 当前项目 Git 用户配置
+                            CurrentUserConfigView(project: project)
+
+                            // Git 用户预设管理
+                            GitUserPresetView()
+
+                        } else {
+                            // 项目不存在时的删除按钮
+                            ProjectNotFoundView(project: project)
+                        }
+                    }
+                    .padding(.horizontal)
+                    .frame(maxWidth: 600)
+                    .inMagicHStackCenter()
+                    .inMagicVStackCenter()
+                }
+
+                Spacer()
             }
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color(.windowBackgroundColor))
     }
 }
@@ -118,6 +122,7 @@ extension GuideView {
     /// - Parameter color: 图标颜色
     /// - Returns: 新的 GuideView 实例
     func setIconColor(_ color: Color) -> GuideView {
+        // 通过重新创建来设置颜色（SwiftUI View 的不可变性）
         return GuideView(
             systemImage: self.systemImage,
             title: self.title,
@@ -130,6 +135,24 @@ extension GuideView {
 
     private func openInFinder(_ path: String) {
         NSWorkspace.shared.selectFile(nil, inFileViewerRootedAtPath: path)
+    }
+
+    /// 获取远程仓库信息
+    /// - Returns: 远程仓库信息数组，如果获取失败则返回 nil
+    private func getRemoteInfo() -> [GitRemote]? {
+        guard let project = g.project else {
+            return nil
+        }
+
+        do {
+            let remotes = try project.remoteList()
+            return remotes.isEmpty ? nil : remotes
+        } catch {
+            if Self.verbose {
+                os_log("\(Self.t)❌ Failed to get remote info: \(error)")
+            }
+            return nil
+        }
     }
 }
 

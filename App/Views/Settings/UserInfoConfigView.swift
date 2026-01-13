@@ -74,81 +74,111 @@ struct UserInfoConfigView: View, SuperLog {
     }
 
     var body: some View {
-        VStack(spacing: 20) {
-            VStack(alignment: .leading, spacing: 8) {
-                Text("配置当前项目的Git用户信息")
-                    .font(.title2)
-                    .fontWeight(.medium)
+        ScrollView {
+            VStack(spacing: 20) {
+                // 说明文本
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("配置当前项目的Git用户信息")
+                        .font(.title2)
+                        .fontWeight(.medium)
 
-                Text("这些设置仅适用于当前项目，不会影响全局Git配置")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
+                    Text("这些设置仅适用于当前项目，不会影响全局Git配置")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
 
-            VStack(spacing: 16) {
                 // 预设配置选择
                 if !savedConfigs.isEmpty {
-                    VStack(alignment: .leading, spacing: 8) {
-                        ScrollView {
-                            LazyVStack(spacing: 4) {
-                                ForEach(savedConfigs) { config in
-                                    GitUserConfigRowView(
-                                        config: config,
-                                        selectedConfig: selectedConfig,
-                                        onTap: { selectedConfig in
-                                            self.selectedConfig = selectedConfig
-                                            userName = selectedConfig.name
-                                            userEmail = selectedConfig.email
-                                            hasChanges = true
-                                        }
-                                    )
+                    MagicSettingSection(title: "预设配置", titleAlignment: .leading) {
+                        VStack(spacing: 0) {
+                            ForEach(savedConfigs) { config in
+                                MagicSettingRow(
+                                    title: config.name,
+                                    description: config.email,
+                                    icon: selectedConfig?.id == config.id ? .iconCheckmark : .iconUser
+                                ) {
+                                    if selectedConfig?.id == config.id {
+                                        Image(systemName: .iconCheckmark)
+                                            .foregroundColor(.accentColor)
+                                    }
+                                }
+                                .contentShape(Rectangle())
+                                .onTapGesture {
+                                    selectedConfig = config
+                                    userName = config.name
+                                    userEmail = config.email
+                                    hasChanges = true
+                                }
+
+                                if config != savedConfigs.last {
+                                    Divider()
                                 }
                             }
                         }
-                        .frame(maxHeight: 120)
                     }
 
                     Divider()
+                        .padding(.vertical, 8)
                 }
 
-                VStack(spacing: 16) {
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text("用户名")
-                            .font(.headline)
+                // 用户信息输入
+                MagicSettingSection(title: "用户信息", titleAlignment: .leading) {
+                    VStack(spacing: 0) {
+                        // 用户名输入
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("用户名")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                                .padding(.horizontal)
 
-                        TextField("输入用户名", text: $userName)
-                            .textFieldStyle(RoundedBorderTextFieldStyle())
-                            .onChange(of: userName) {
-                                hasChanges = true
-                                selectedConfig = nil
-                            }
-                    }
+                            TextField("输入用户名", text: $userName)
+                                .textFieldStyle(.roundedBorder)
+                                .onChange(of: userName) {
+                                    hasChanges = true
+                                    selectedConfig = nil
+                                }
+                                .padding(.horizontal)
+                        }
+                        .padding(.vertical, 12)
 
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text("邮箱")
-                            .font(.headline)
+                        Divider()
 
-                        TextField("输入邮箱", text: $userEmail)
-                            .textFieldStyle(RoundedBorderTextFieldStyle())
-                            .onChange(of: userEmail) {
-                                hasChanges = true
-                                selectedConfig = nil
-                            }
+                        // 邮箱输入
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("邮箱")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                                .padding(.horizontal)
+
+                            TextField("输入邮箱", text: $userEmail)
+                                .textFieldStyle(.roundedBorder)
+                                .onChange(of: userEmail) {
+                                    hasChanges = true
+                                    selectedConfig = nil
+                                }
+                                .padding(.horizontal)
+                        }
+                        .padding(.vertical, 12)
                     }
                 }
-            }
 
-            if let errorMessage = errorMessage {
-                Text(errorMessage)
-                    .foregroundColor(.red)
-                    .font(.caption)
-                    .padding(.horizontal)
+                // 错误消息
+                if let errorMessage = errorMessage {
+                    HStack(spacing: 8) {
+                        Image(systemName: .iconWarning)
+                            .foregroundColor(.red)
+                        Text(errorMessage)
+                            .font(.caption)
+                            .foregroundColor(.red)
+                    }
+                    .padding()
+                    .background(Color.red.opacity(0.1))
+                    .cornerRadius(8)
+                }
             }
-
-            Spacer()
+            .padding()
         }
-        .padding()
     }
 
     // MARK: - Actions

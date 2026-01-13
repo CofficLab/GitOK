@@ -4,9 +4,17 @@ import SwiftUI
 
 /// Branch 插件：提供分支列表视图（工具栏右侧）并在状态栏左侧展示当前分支。
 class BranchPlugin: SuperPlugin, SuperLog, PluginRegistrant {
-    let emoji = "🌿"
+    /// 日志标识符
+    nonisolated static let emoji = "🌿"
+
     static let shared = BranchPlugin()
     static var label: String = "Branch"
+
+    /// 是否启用该插件
+    static let enable = true
+
+    /// 是否启用详细日志输出
+    nonisolated static let verbose = true
 
     private init() {}
 
@@ -20,9 +28,16 @@ class BranchPlugin: SuperPlugin, SuperLog, PluginRegistrant {
 }
 
 // MARK: - PluginRegistrant
+
 extension BranchPlugin {
     @objc static func register() {
+        guard enable else { return }
+
         Task {
+            if Self.verbose {
+                os_log("\(self.t)🚀 Register BranchPlugin")
+            }
+
             await PluginRegistry.shared.register(id: "Branch", order: 22) {
                 BranchPlugin.shared
             }

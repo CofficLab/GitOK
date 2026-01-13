@@ -30,9 +30,19 @@ class DataProvider: NSObject, ObservableObject, SuperLog {
         self.projects = projects
         self.repoManager = repoManager
 
-        self.project = projects.first(where: {
+        // 首先尝试从状态恢复上次的项目
+        var initialProject = projects.first(where: {
             $0.path == repoManager.stateRepo.projectPath
         })
+
+        // 如果找不到匹配的项目，默认选择第一个可用项目
+        if initialProject == nil, let firstProject = projects.first {
+            initialProject = firstProject
+            // 更新状态，保存当前选择的项目路径
+            repoManager.stateRepo.setProjectPath(firstProject.path)
+        }
+
+        self.project = initialProject
 
         super.init()
 
@@ -56,6 +66,13 @@ extension DataProvider {
         self.project = p
         self.repoManager.stateRepo.setProjectPath(self.project?.path ?? "")
         self.checkIfProjectExists()
+
+        // 异步更新 isGitRepo 缓存
+        if let project = p {
+            Task.detached(priority: .userInitiated) {
+                await project.updateIsGitRepoCache()
+            }
+        }
     }
 
     /**

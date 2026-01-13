@@ -5,7 +5,15 @@ import SwiftUI
 /// Readme 插件：在状态栏提供 README 入口。
 class ReadmePlugin: SuperPlugin, SuperLog, PluginRegistrant {
     static let shared = ReadmePlugin()
-    let emoji = "📖"
+    /// 日志标识符
+    nonisolated static let emoji = "📖"
+
+    /// 是否启用该插件
+    static let enable = true
+
+    /// 是否启用详细日志输出
+    nonisolated static let verbose = true
+
     static var label: String = "Readme"
 
     private init() {}
@@ -13,11 +21,19 @@ class ReadmePlugin: SuperPlugin, SuperLog, PluginRegistrant {
     func addStatusBarTrailingView() -> AnyView? {
         AnyView(ReadmeStatusIcon.shared)
     }
-} 
+}
+
 // MARK: - PluginRegistrant
+
 extension ReadmePlugin {
     @objc static func register() {
+        guard enable else { return }
+
         Task {
+            if Self.verbose {
+                os_log("\(self.t)🚀 Register ReadmePlugin")
+            }
+
             await PluginRegistry.shared.register(id: "Readme", order: 28) {
                 ReadmePlugin.shared
             }

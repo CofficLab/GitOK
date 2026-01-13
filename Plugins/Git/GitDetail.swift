@@ -12,6 +12,8 @@ struct GitDetail: View, SuperEvent, SuperLog {
 
     @State private var isProjectClean: Bool = true
     @State private var isGitProject: Bool = false
+    @State private var updateCleanTask: Task<Void, Never>?
+    @State private var lastUpdateTime: Date = Date.distantPast
 
     static let shared = GitDetail()
 
@@ -79,18 +81,46 @@ struct GitDetail: View, SuperEvent, SuperLog {
 
 extension GitDetail {
     func updateIsProjectClean() {
-        guard let project = data.project else {
+        let now = Date()
+
+        // 防抖：300ms 内的重复更新请求会被忽略
+        guard now.timeIntervalSince(lastUpdateTime) > 0.3 else {
+            if verbose {
+                os_log("\(Self.t)🚫 updateIsProjectClean skipped (debounced)")
+            }
             return
         }
 
-        do {
-            self.isProjectClean = try project.isClean(verbose: false)
-        } catch {
-            os_log(.error, "\(self.t)❌ Failed to update isProjectClean: \(error)")
-        }
+        lastUpdateTime = now
 
-        if verbose {
-            os_log(.info, "\(self.t)🔄 Update isProjectClean: \(self.isProjectClean)")
+        // 取消之前的任务
+        updateCleanTask?.cancel()
+
+        // 在后台执行，避免阻塞主线程
+        updateCleanTask = Task.detached(priority: .utility) {
+            guard let project = await self.data.project else {
+                return
+            }
+
+            let isClean: Bool
+            do {
+                isClean = try project.isClean(verbose: false)
+            } catch {
+                await MainActor.run {
+                    os_log(.error, "\(Self.t)❌ Failed to update isProjectClean: \(error)")
+                }
+                return
+            }
+
+            await MainActor.run {
+                // 检查任务是否被取消
+                guard !Task.isCancelled else { return }
+
+                self.isProjectClean = isClean
+                if self.verbose {
+                    os_log(.info, "\(Self.t)🔄 Update isProjectClean: \(isClean)")
+                }
+            }
         }
     }
 
@@ -126,7 +156,11 @@ extension GitDetail {
 
 extension GitDetail {
     func onAppWillBecomeActive(_ notification: Notification) {
-        self.updateIsProjectClean()
+        // 延迟执行，避免与其他组件同时刷新
+        Task {
+            try? await Task.sleep(nanoseconds: 300_000_000)  // 延迟 0.3 秒
+            self.updateIsProjectClean()
+        }
     }
 
     func onAppear() {

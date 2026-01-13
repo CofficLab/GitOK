@@ -1,5 +1,5 @@
 {
-  "originHash" : "ec9c1e8bd73c2380100d24b78c68cdc426a2c6e068c9aaa3e9584477323f2e6d",
+  "originHash" : "e686047501da144a46b28bed206a37cd76ed698a41c4795f1ed73b4920ef71d3",
   "pins" : [
     {
       "identity" : "id3tageditor",
@@ -16,7 +16,7 @@
       "location" : "https://github.com/nookery/LibGit2Swift",
       "state" : {
         "branch" : "main",
-        "revision" : "dc3b3fa326ae95103bbb142f327bcc672a6acecd"
+        "revision" : "c03d6b0f1aa32e044c2f551ed6ea74bb5bc2992b"
       }
     },
     {
@@ -70,7 +70,7 @@
       "location" : "https://github.com/nookery/MagicUI.git",
       "state" : {
         "branch" : "main",
-        "revision" : "44dcbba19fdab0a192c1e10195e669b5515e5d14"
+        "revision" : "37a6d798df97ea97c398feababdf4cb2b51ecb7e"
       }
     },
     {

@@ -10,6 +10,10 @@
 
 GitOK is a comprehensive project management tool.
 
+## Screenshot
+
+![GitOK App Screenshot](docs/hero.png)
+
 ## Download
 
 <https://github.com/CofficLab/GitOK/releases>

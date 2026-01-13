@@ -6,11 +6,17 @@ import SwiftUI
  * Commit插件 - 负责显示和管理Git提交列表
  */
 class CommitPlugin: SuperPlugin, SuperLog, PluginRegistrant {
-    static let shared = CommitPlugin()
-    static let emoji = "🍒"
-    static let label: String = "Commit"
+    /// 日志标识符
+    nonisolated static let emoji = "🍒"
 
-    var verbose = false
+    /// 是否启用该插件
+    static let enable = true
+
+    /// 是否启用详细日志输出
+    nonisolated static let verbose = true
+
+    static let shared = CommitPlugin()
+    static let label: String = "Commit"
     
     private init() {}
 
@@ -19,23 +25,23 @@ class CommitPlugin: SuperPlugin, SuperLog, PluginRegistrant {
      */
     func addListView(tab: String, project: Project?) -> AnyView? {
         if tab == GitPlugin.label, project != nil {
-            if verbose {
-                os_log("\(self.t)CommitPlugin addListView")
-            }
             return AnyView(CommitList.shared)
-        } else {
-            if verbose {
-                os_log("\(self.t)CommitPlugin addListView nil")
-            }
-            return nil
         }
+        
+        return nil
     }
 }
 
 // MARK: - PluginRegistrant
 extension CommitPlugin {
     @objc static func register() {
+        guard enable else { return }
+
         Task {
+            if Self.verbose {
+                os_log("\(self.t)🚀 Register CommitPlugin")
+            }
+
             await PluginRegistry.shared.register(id: "Commit", order: 23) {
                 CommitPlugin.shared
             }

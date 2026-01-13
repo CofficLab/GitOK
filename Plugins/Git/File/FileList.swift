@@ -1,104 +1,137 @@
 import AppKit
+import LibGit2Swift
 import MagicAlert
 import MagicKit
-import LibGit2Swift
 import OSLog
 import SwiftUI
 
+/// 显示 Git 仓库文件变更列表的视图组件
+/// 支持显示暂存区文件或提交间的文件差异，并提供文件丢弃更改功能
 struct FileList: View, SuperThread, SuperLog {
+    nonisolated static let emoji = "📁"
+    nonisolated static let verbose = false
+
+    /// 环境对象：应用提供者
     @EnvironmentObject var app: AppProvider
+
+    /// 环境对象：消息提供者，用于显示提示信息
     @EnvironmentObject var m: MagicMessageProvider
+
+    /// 环境对象：数据提供者，包含项目和提交信息
     @EnvironmentObject var data: DataProvider
 
+    /// 当前显示的文件列表
     @State var files: [GitDiffFile] = []
+
+    /// 是否正在加载文件列表
     @State var isLoading = true
+
+    /// 当前选中的文件
     @State var selection: GitDiffFile?
+
+    /// 当前的刷新任务，用于取消之前的刷新操作
     @State private var refreshTask: Task<Void, Never>?
-    var verbose = false
+
+    /// 上次刷新时间，用于防抖控制
+    @State private var lastRefreshTime: Date = Date.distantPast
 
     var body: some View {
         VStack(spacing: 0) {
-            // 文件信息栏
-            HStack {
-                Spacer()
-
-                HStack(spacing: 4) {
-                    Image(systemName: "doc.text")
-                        .foregroundColor(.secondary)
-                        .font(.system(size: 12))
-
-                    Text("\(files.count) 个文件")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                }
-
-                Spacer()
-
-                if isLoading {
-                    HStack(spacing: 4) {
-                        ProgressView()
-                            .controlSize(.small)
-                        Text("加载中...")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    }
-                }
-            }
-            .padding(.horizontal, 0)
-            .padding(.vertical, 6)
-            .background(Color(NSColor.controlBackgroundColor))
-            .overlay(
-                Rectangle()
-                    .frame(height: 0.5)
-                    .foregroundColor(Color(NSColor.separatorColor)),
-                alignment: .bottom
-            )
-
-            // 文件列表
-            ScrollViewReader { scrollProxy in
-                List(files, id: \.self, selection: $selection) {
-                    FileTile(
-                        file: $0,
-                        onDiscardChanges: data.commit == nil ? {
-                            discardChanges(for: $0)
-                        } : nil
-                    )
-                    .tag($0 as GitDiffFile?)
-                    .listRowInsets(.init()) // 移除 List 的默认内边距
-                }
-                .listStyle(.plain) // 使用 plain 样式移除额外的 padding
-                .onChange(of: files, {
-                    withAnimation {
-                        // 在主线程中调用 scrollTo 方法
-                        scrollProxy.scrollTo(data.file, anchor: .top)
-                    }
-                })
-            }
+            fileInfoBar
+            fileListView
         }
         .onAppear(perform: onAppear)
         .onChange(of: data.commit, onCommitChange)
         .onChange(of: selection, onSelectionChange)
         .onProjectDidCommit(perform: onProjectDidCommit)
-        .onApplicationWillBecomeActive(perform: onAppWillBecomeActive)
         .onApplicationDidBecomeActive(perform: onAppDidBecomeActive)
+    }
+}
+
+// MARK: - View
+
+extension FileList {
+    /// 文件信息栏：显示文件数量和加载状态
+    private var fileInfoBar: some View {
+        HStack {
+            Spacer()
+
+            HStack(spacing: 4) {
+                Image(systemName: "doc.text")
+                    .foregroundColor(.secondary)
+                    .font(.system(size: 12))
+
+                Text("\(files.count) 个文件")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+
+            Spacer()
+
+            if isLoading {
+                HStack(spacing: 4) {
+                    ProgressView()
+                        .controlSize(.small)
+                    Text("加载中...")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+            }
+        }
+        .padding(.horizontal, 0)
+        .padding(.vertical, 6)
+        .background(Color(NSColor.controlBackgroundColor))
+        .overlay(
+            Rectangle()
+                .frame(height: 0.5)
+                .foregroundColor(Color(NSColor.separatorColor)),
+            alignment: .bottom
+        )
+    }
+
+    /// 文件列表视图：显示可滚动的文件列表
+    private var fileListView: some View {
+        ScrollViewReader { scrollProxy in
+            List(files, id: \.self, selection: $selection) {
+                FileTile(
+                    file: $0,
+                    onDiscardChanges: data.commit == nil ? {
+                        discardChanges(for: $0)
+                    } : nil
+                )
+                .tag($0 as GitDiffFile?)
+                .listRowInsets(.init()) // 移除 List 的默认内边距
+            }
+            .listStyle(.plain) // 使用 plain 样式移除额外的 padding
+            .onChange(of: files, {
+                withAnimation {
+                    // 在主线程中调用 scrollTo 方法
+                    scrollProxy.scrollTo(data.file, anchor: .top)
+                }
+            })
+        }
     }
 }
 
 // MARK: - Action
 
 extension FileList {
+    /// 丢弃指定文件的更改
+    /// - Parameter file: 要丢弃更改的文件
     func discardChanges(for file: GitDiffFile) {
         guard let project = data.project else { return }
 
-        Task.detached {
+        Task.detached(priority: .userInitiated) {
             do {
-                try project.discardFileChanges(file.file)
+                // 在后台执行耗时操作
+                try await project.discardFileChanges(file.file)
 
+                // 在主线程更新 UI
                 await MainActor.run {
                     self.m.info("已丢弃文件更改: \(file.file)")
                 }
 
-                // 刷新文件列表
+                // 刷新文件列表（refresh 内部已经处理了后台线程）
                 await self.refresh(reason: "AfterDiscardChanges")
             } catch {
                 await MainActor.run {
@@ -108,7 +141,21 @@ extension FileList {
         }
     }
 
+    /// 刷新文件列表，支持防抖控制
+    /// - Parameter reason: 刷新原因，用于日志记录
     func refresh(reason: String) async {
+        let now = Date()
+
+        // 防抖：500ms 内的重复刷新请求会被忽略
+        guard now.timeIntervalSince(lastRefreshTime) > 0.5 else {
+            if Self.verbose {
+                os_log("\(self.t)🚫 Refresh skipped (debounced): \(reason)")
+            }
+            return
+        }
+
+        lastRefreshTime = now
+
         // 取消之前的任务
         refreshTask?.cancel()
 
@@ -121,79 +168,107 @@ extension FileList {
         await refreshTask?.value
     }
 
+    /// 执行文件列表刷新操作
+    /// - Parameter reason: 刷新原因，用于日志记录
     private func performRefresh(reason: String) async {
-        self.isLoading = true
-
-        if verbose {
-            os_log("\(self.t)🍋 Refreshing \(reason)")
+        // 先在主线程更新加载状态
+        await MainActor.run {
+            self.isLoading = true
         }
 
         guard let project = data.project else {
-            self.isLoading = false
+            await MainActor.run {
+                self.isLoading = false
+            }
             return
         }
 
         do {
-            // 检查任务是否被取消
-            try Task.checkCancellation()
+            // 在后台线程执行耗时操作
+            let (newFiles, selectedCommitHash) = try await Task.detached(priority: .userInitiated) {
+                if Self.verbose {
+                    os_log("\(self.t)🍋 Refreshing \(reason)")
+                }
 
-            if let commit = data.commit {
-                self.files = try await project.changedFilesDetail(in: commit.hash)
-            } else {
-                self.files = try await project.untrackedFiles()
-            }
+                // 检查任务是否被取消
+                try Task.checkCancellation()
 
-            // 再次检查任务是否被取消
-            try Task.checkCancellation()
+                let newFiles: [GitDiffFile]
+                if let commit = await data.commit {
+                    newFiles = try await project.changedFilesDetail(in: commit.hash)
+                } else {
+                    newFiles = try await project.untrackedFiles()
+                }
 
-            self.selection = self.files.first
-            DispatchQueue.main.async {
+                // 再次检查任务是否被取消
+                try Task.checkCancellation()
+
+                return (newFiles, await data.commit?.hash)
+            }.value
+
+            // 在主线程更新 UI
+            await MainActor.run {
+                // 确保在刷新过程中 commit 没有变化
+                guard selectedCommitHash == self.data.commit?.hash else {
+                    if Self.verbose {
+                        os_log("\(self.t)🔄 Commit changed during refresh, skipping UI update")
+                    }
+                    return
+                }
+
+                self.files = newFiles
+                self.selection = newFiles.first
                 self.data.setFile(self.selection)
+                self.isLoading = false
             }
         } catch is CancellationError {
-            // 任务被取消，不做任何处理
-            if verbose {
+            // 任务被取消，在主线程更新状态
+            await MainActor.run {
+                self.isLoading = false
+            }
+            if Self.verbose {
                 os_log("\(self.t)🐜 Refresh cancelled: \(reason)")
             }
         } catch {
-            self.m.error(error)
+            await MainActor.run {
+                self.isLoading = false
+                self.m.error(error)
+            }
         }
-
-        self.isLoading = false
     }
 }
 
-// MARK: - Event
+// MARK: - Event Handler
 
 extension FileList {
+    /// 视图出现时的事件处理
     func onAppear() {
         Task {
             await self.refresh(reason: "OnAppear")
         }
     }
 
+    /// 提交变更时的事件处理
     func onCommitChange() {
         Task {
             await self.refresh(reason: "OnCommitChanged")
         }
     }
 
+    /// 选中文件变更时的事件处理
     func onSelectionChange() {
         self.data.setFile(self.selection)
     }
 
+    /// 项目提交完成时的事件处理
+    /// - Parameter eventInfo: 项目事件信息
     func onProjectDidCommit(_ eventInfo: ProjectEventInfo) {
         Task {
             await self.refresh(reason: "OnProjectDidCommit")
         }
     }
 
-    func onAppWillBecomeActive() {
-        Task {
-            await self.refresh(reason: "OnAppWillBecomeActive")
-        }
-    }
-
+    /// 应用变为活跃状态时的事件处理
     func onAppDidBecomeActive() {
         Task {
             await self.refresh(reason: "OnAppDidBecomeActive")
@@ -201,20 +276,20 @@ extension FileList {
     }
 }
 
+// MARK: - Preview
+
 #Preview("App - Small Screen") {
     ContentLayout()
         .hideSidebar()
-        .hideTabPicker()
         .hideProjectActions()
         .inRootView()
-        .frame(width: 600)
+        .frame(width: 800)
         .frame(height: 600)
 }
 
 #Preview("App - Big Screen") {
-    ContentLayout().hideSidebar()
-        .hideTabPicker()
-        .hideProjectActions()
+    ContentLayout()
+        .hideSidebar()
         .inRootView()
         .frame(width: 1200)
         .frame(height: 1200)

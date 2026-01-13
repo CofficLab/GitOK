@@ -30,7 +30,9 @@
       "mcp__zread__read_file",
       "Bash(git rm:*)",
       "Bash(security find-internet-password:*)",
-      "Bash(tree:*)"
+      "Bash(tree:*)",
+      "mcp__zai-mcp-server__extract_text_from_screenshot",
+      "Bash(swift package list-packages:*)"
     ]
   }
 }
