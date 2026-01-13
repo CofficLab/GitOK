@@ -10,6 +10,10 @@
 
 GitOK 是一个综合性的项目管理工具。
 
+## 截图
+
+![GitOK App 截图](docs/hero.png)
+
 ## 下载
 
 <https://github.com/CofficLab/GitOK/releases>
