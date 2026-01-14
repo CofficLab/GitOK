@@ -7,6 +7,7 @@ struct FileTile: View {
     var onDiscardChanges: ((GitDiffFile) -> Void)?
 
     @State var isPresented: Bool = false
+    @State private var showDiscardAlert = false
 
     var body: some View {
         HStack(spacing: 12) {
@@ -25,9 +26,19 @@ struct FileTile: View {
         .contextMenu {
             if let onDiscardChanges = onDiscardChanges {
                 Button("丢弃更改") {
+                    showDiscardAlert = true
+                }
+            }
+        }
+        .alert("确认丢弃更改", isPresented: $showDiscardAlert) {
+            Button("取消", role: .cancel) { }
+            Button("丢弃", role: .destructive) {
+                if let onDiscardChanges = onDiscardChanges {
                     onDiscardChanges(file)
                 }
             }
+        } message: {
+            Text("确定要丢弃文件 \"\(file.file)\" 的更改吗？此操作不可撤销。")
         }
     }
 

@@ -32,6 +32,15 @@ struct FileList: View, SuperThread, SuperLog {
     /// 当前的刷新任务，用于取消之前的刷新操作
     @State private var refreshTask: Task<Void, Never>?
 
+    /// 是否显示丢弃单个文件更改的确认对话框
+    @State private var showDiscardFileAlert = false
+
+    /// 要丢弃更改的文件
+    @State private var fileToDiscard: GitDiffFile?
+
+    /// 是否显示丢弃所有更改的确认对话框
+    @State private var showDiscardAllAlert = false
+
     /// 上次刷新时间，用于防抖控制
     @State private var lastRefreshTime: Date = Date.distantPast
 
@@ -45,6 +54,14 @@ struct FileList: View, SuperThread, SuperLog {
         .onChange(of: selection, onSelectionChange)
         .onProjectDidCommit(perform: onProjectDidCommit)
         .onApplicationDidBecomeActive(perform: onAppDidBecomeActive)
+        .alert("确认丢弃所有更改", isPresented: $showDiscardAllAlert) {
+            Button("取消", role: .cancel) { }
+            Button("丢弃所有", role: .destructive) {
+                discardAllChanges()
+            }
+        } message: {
+            Text("确定要丢弃所有文件的更改吗？此操作不可撤销。")
+        }
     }
 }
 
@@ -54,6 +71,20 @@ extension FileList {
     /// 文件信息栏：显示文件数量和加载状态
     private var fileInfoBar: some View {
         HStack {
+            if data.commit == nil && !files.isEmpty {
+                Button(action: {
+                    showDiscardAllAlert = true
+                }) {
+                    Image(systemName: "arrow.uturn.backward")
+                        .font(.system(size: 12))
+                    Text("丢弃所有更改")
+                        .font(.caption)
+                }
+                .buttonStyle(.borderless)
+                .foregroundColor(.red)
+                .help("丢弃所有文件的更改")
+            }
+
             Spacer()
 
             HStack(spacing: 4) {
@@ -133,6 +164,30 @@ extension FileList {
 
                 // 刷新文件列表（refresh 内部已经处理了后台线程）
                 await self.refresh(reason: "AfterDiscardChanges")
+            } catch {
+                await MainActor.run {
+                    self.m.error(error)
+                }
+            }
+        }
+    }
+
+    /// 丢弃所有文件的更改
+    func discardAllChanges() {
+        guard let project = data.project else { return }
+
+        Task.detached(priority: .userInitiated) {
+            do {
+                // 在后台执行耗时操作
+                try await project.discardAllChanges()
+
+                // 在主线程更新 UI
+                await MainActor.run {
+                    self.m.info("已丢弃所有文件的更改")
+                }
+
+                // 刷新文件列表（refresh 内部已经处理了后台线程）
+                await self.refresh(reason: "AfterDiscardAllChanges")
             } catch {
                 await MainActor.run {
                     self.m.error(error)
