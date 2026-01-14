@@ -36,7 +36,14 @@
       "Bash(git -C /Users/colorfy/Code/CofficLab/LibGit2Swift/.build/checkouts/static-libgit2 log -1 --format=\"%H %cd\" --date=short)",
       "Bash(chmod:*)",
       "Bash(./build-libgit2-framework.sh:*)",
-      "Bash(test:*)"
+      "Bash(test:*)",
+      "Bash(ssh:*)",
+      "Bash(ssh-keyscan:*)",
+      "Bash(GIT_SSH_COMMAND=\"ssh -v\" GIT_TRACE=1 git ls-remote:*)",
+      "Bash(git remote set-url:*)",
+      "Bash(git checkout:*)",
+      "Bash(swift:*)",
+      "Bash(ssh-add:*)"
     ]
   }
 }

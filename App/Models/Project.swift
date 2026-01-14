@@ -620,7 +620,11 @@ extension Project {
 extension Project {
     func push() throws {
         do {
-            try LibGit2.push(at: self.path, verbose: false)
+            // 处理 SSH URL 转换
+            try performWithConvertedSSHURL(operation: "push") {
+                try LibGit2.push(at: self.path, verbose: false)
+            }
+
             postEvent(
                 name: .projectDidPush,
                 operation: "push"
@@ -638,7 +642,11 @@ extension Project {
 
     func pull() throws {
         do {
-            try LibGit2.pull(at: self.path, verbose: false)
+            // 处理 SSH URL 转换
+            try performWithConvertedSSHURL(operation: "pull") {
+                try LibGit2.pull(at: self.path, verbose: false)
+            }
+
             postEvent(
                 name: .projectDidPull,
                 operation: "pull"
@@ -651,6 +659,52 @@ extension Project {
                 error: error
             )
             throw error
+        }
+    }
+
+    /// 执行 Git 操作，如果需要则转换 SSH URL
+    /// - Parameters:
+    ///   - operation: 操作名称（push/pull）
+    ///   - block: 要执行的操作
+    private func performWithConvertedSSHURL(operation: String, block: () throws -> Void) throws {
+        // 获取当前远程 URL
+        guard let remoteURL = LibGit2.getRemoteURL(at: self.path, remote: "origin") else {
+            print("⚠️ [Project] Failed to get remote URL, executing without conversion")
+            try block()
+            return
+        }
+
+        print("🔍 [Project] Current remote URL for \(operation): \(remoteURL)")
+
+        // 检查是否需要转换
+        let convertedURL = SSHHelper.applySSHConfig(to: remoteURL)
+
+        if convertedURL == remoteURL {
+            // 不需要转换，直接执行
+            print("ℹ️ [Project] No URL conversion needed for \(operation)")
+            try block()
+        } else {
+            // 需要转换，临时修改远程 URL
+            print("🔄 [Project] Converting SSH URL for \(operation): \(remoteURL) -> \(convertedURL)")
+
+            // 保存原始 URL
+            let originalURL = remoteURL
+
+            // 修改为转换后的 URL
+            try LibGit2.setRemoteURL(at: self.path, remote: "origin", url: convertedURL)
+
+            // 设置 defer 确保恢复原始 URL
+            defer {
+                do {
+                    try LibGit2.setRemoteURL(at: self.path, remote: "origin", url: originalURL)
+                    print("✅ [Project] Restored original SSH URL")
+                } catch {
+                    print("⚠️ [Project] Failed to restore original URL: \(error)")
+                }
+            }
+
+            // 执行操作
+            try block()
         }
     }
 

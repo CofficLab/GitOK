@@ -53,12 +53,21 @@ struct RepositoryInfoView: View, SuperLog {
             description: project.path,
             icon: .iconFolder
         ) {
-            MagicButton.simple {
-                project.url.openFolder()
+            HStack(spacing: 8) {
+                MagicButton.simple {
+                    project.url.openFolder()
+                }
+                .magicIcon(.iconFinder)
+                .magicShapeVisibility(.onHover)
+                .magicShape(.circle)
+
+                MagicButton.simple {
+                    project.url.absoluteString.copy()
+                }
+                .magicIcon(.iconCopy)
+                .magicShapeVisibility(.onHover)
+                .magicShape(.circle)
             }
-            .magicIcon(.iconFinder)
-            .magicShapeVisibility(.onHover)
-            .magicShape(.circle)
         }
     }
 
@@ -68,13 +77,24 @@ struct RepositoryInfoView: View, SuperLog {
             description: remotes.first?.url ?? "未配置",
             icon: .iconCloud
         ) {
-            if let url = remotes.first?.url, let httpsURL = convertToHTTPSURL(url) {
-                MagicButton.simple {
-                    httpsURL.openInBrowser()
+            if let url = remotes.first?.url {
+                HStack(spacing: 8) {
+                    if let httpsURL = convertToHTTPSURL(url) {
+                        MagicButton.simple {
+                            httpsURL.openInBrowser()
+                        }
+                        .magicIcon(.iconSafari)
+                        .magicShapeVisibility(.onHover)
+                        .magicShape(.circle)
+                    }
+
+                    MagicButton.simple {
+                        url.copy()
+                    }
+                    .magicIcon(.iconCopy)
+                    .magicShapeVisibility(.onHover)
+                    .magicShape(.circle)
                 }
-                .magicIcon(.iconSafari)
-                .magicShapeVisibility(.onHover)
-                .magicShape(.circle)
             }
         }
     }
