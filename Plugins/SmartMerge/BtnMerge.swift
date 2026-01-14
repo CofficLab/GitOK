@@ -26,7 +26,7 @@ struct BtnMerge: View, SuperEvent, SuperThread, SuperLog {
     @State private var isHovering = false
 
     var body: some View {
-        Button("Merge", action: merge)
+        Button("合并", action: merge)
             .help("合并分支")
             .padding()
             .cornerRadius(8)

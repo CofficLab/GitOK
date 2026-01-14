@@ -7,6 +7,7 @@ struct FileTile: View {
     var onDiscardChanges: ((GitDiffFile) -> Void)?
 
     @State var isPresented: Bool = false
+    @State private var showDiscardAlert = false
 
     var body: some View {
         HStack(spacing: 12) {
@@ -24,10 +25,20 @@ struct FileTile: View {
         .cornerRadius(4)
         .contextMenu {
             if let onDiscardChanges = onDiscardChanges {
-                Button("Discard Changes") {
+                Button("丢弃更改") {
+                    showDiscardAlert = true
+                }
+            }
+        }
+        .alert("确认丢弃更改", isPresented: $showDiscardAlert) {
+            Button("取消", role: .cancel) { }
+            Button("丢弃", role: .destructive) {
+                if let onDiscardChanges = onDiscardChanges {
                     onDiscardChanges(file)
                 }
             }
+        } message: {
+            Text("确定要丢弃文件 \"\(file.file)\" 的更改吗？此操作不可撤销。")
         }
     }
 
@@ -41,14 +52,20 @@ struct FileTile: View {
     }
 
     private func iconInfo(for change: String) -> (String, Color) {
-        switch change {
-        case "M":
+        let normalizedChange = change.uppercased()
+        switch normalizedChange {
+        case "M", "MODIFIED":
             return (.iconEditCircle, .orange)
-        case "A":
+        case "A", "ADDED", "NEW":
             return (.iconPlus, .green)
-        case "D":
+        case "D", "DELETED":
             return (.iconMinus, .red)
+        case "R", "RENAMED":
+            return (.iconEditCircle, .blue)
+        case "C", "COPIED":
+            return (.iconEditCircle, .purple)
         default:
+            print("[FileTile] Unknown change type: '\(change)'")
             return (.iconInfo, .gray)
         }
     }

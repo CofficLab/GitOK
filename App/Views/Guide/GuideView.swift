@@ -97,6 +97,9 @@ struct GuideView: View, SuperLog {
                             // Git 用户预设管理
                             GitUserPresetView()
 
+                            // Commit 风格预设管理
+                            CommitStylePresetView()
+
                         } else {
                             // 项目不存在时的删除按钮
                             ProjectNotFoundView(project: project)

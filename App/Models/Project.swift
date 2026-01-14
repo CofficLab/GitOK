@@ -551,6 +551,105 @@ extension Project {
         }
     }
 
+    /// 丢弃所有工作区更改
+    /// 将工作区重置为HEAD状态，丢弃所有未提交的更改
+    /// - Throws: Git操作异常
+    func discardAllChanges() throws {
+        do {
+            // 获取所有更改的文件
+            let changedFiles = try LibGit2.getDiffFileList(at: self.path, staged: false)
+
+            // 逐个丢弃每个文件的更改
+            for file in changedFiles {
+                try LibGit2.checkoutFile(file.file, at: self.path)
+            }
+
+            postEvent(
+                name: .projectDidCommit,
+                operation: "discardAllChanges"
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "discardAllChanges",
+                success: false,
+                error: error
+            )
+            throw error
+        }
+    }
+
+    /// 保存当前工作区更改到stash
+    /// - Parameter message: stash的描述信息，可选
+    /// - Throws: Git操作异常
+    // TODO: 实现stash功能，需要正确配置LibGit2Swift包依赖
+    func stashSave(message: String? = nil) throws {
+        throw NSError(domain: "GitOK", code: -1, userInfo: [NSLocalizedDescriptionKey: "Stash功能暂未实现"])
+    }
+
+    /// 获取stash列表
+    /// - Returns: stash列表，每个stash包含索引和消息
+    /// - Throws: Git操作异常
+    func stashList() throws -> [(index: Int, message: String)] {
+        // TODO: 实现stash列表功能
+        return []
+    }
+
+    /// 应用指定的stash（保留stash）
+    /// - Parameter index: stash的索引
+    /// - Throws: Git操作异常
+    func stashApply(index: Int) throws {
+        throw NSError(domain: "GitOK", code: -1, userInfo: [NSLocalizedDescriptionKey: "Stash功能暂未实现"])
+    }
+
+    /// 弹出指定的stash（应用并删除stash）
+    /// - Parameter index: stash的索引
+    /// - Throws: Git操作异常
+    func stashPop(index: Int) throws {
+        throw NSError(domain: "GitOK", code: -1, userInfo: [NSLocalizedDescriptionKey: "Stash功能暂未实现"])
+    }
+
+    /// 删除指定的stash
+    /// - Parameter index: stash的索引
+    /// - Throws: Git操作异常
+    func stashDrop(index: Int) throws {
+        throw NSError(domain: "GitOK", code: -1, userInfo: [NSLocalizedDescriptionKey: "Stash功能暂未实现"])
+    }
+
+    /// 获取合并冲突文件列表
+    /// - Returns: 冲突文件路径列表
+    /// - Throws: Git操作异常
+    func getMergeConflictFiles() async throws -> [String] {
+        throw NSError(domain: "GitOK", code: -1, userInfo: [NSLocalizedDescriptionKey: "冲突解决功能暂未实现"])
+    }
+
+    /// 检查是否正在合并状态
+    /// - Returns: 如果正在合并返回true
+    /// - Throws: Git操作异常
+    func isMerging() async throws -> Bool {
+        throw NSError(domain: "GitOK", code: -1, userInfo: [NSLocalizedDescriptionKey: "冲突解决功能暂未实现"])
+    }
+
+    /// 检查是否有合并冲突
+    /// - Returns: 如果有冲突返回true
+    /// - Throws: Git操作异常
+    func hasMergeConflicts() async throws -> Bool {
+        throw NSError(domain: "GitOK", code: -1, userInfo: [NSLocalizedDescriptionKey: "冲突解决功能暂未实现"])
+    }
+
+    /// 中止合并操作
+    /// - Throws: Git操作异常
+    func abortMerge() async throws {
+        throw NSError(domain: "GitOK", code: -1, userInfo: [NSLocalizedDescriptionKey: "冲突解决功能暂未实现"])
+    }
+
+    /// 继续合并操作（解决冲突后）
+    /// - Parameter branchName: 要合并的分支名
+    /// - Throws: Git操作异常
+    func continueMerge(branchName: String) async throws {
+        throw NSError(domain: "GitOK", code: -1, userInfo: [NSLocalizedDescriptionKey: "冲突解决功能暂未实现"])
+    }
+
     /// 获取项目的README.md文件内容
     /// - Returns: README.md文件的内容，如果文件不存在则抛出异常
     /// - Throws: 文件不存在或读取错误

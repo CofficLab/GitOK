@@ -61,7 +61,7 @@ struct RemoteRepositoryRowView: View {
 
                 if let fetchURL = remote.fetchURL, fetchURL != remote.url {
                     HStack {
-                        Text("Fetch:")
+                        Text("获取:")
                             .font(.caption2)
                             .foregroundColor(.secondary)
                         Text(fetchURL)
@@ -74,7 +74,7 @@ struct RemoteRepositoryRowView: View {
 
                 if let pushURL = remote.pushURL, pushURL != remote.url {
                     HStack {
-                        Text("Push:")
+                        Text("推送:")
                             .font(.caption2)
                             .foregroundColor(.secondary)
                         Text(pushURL)

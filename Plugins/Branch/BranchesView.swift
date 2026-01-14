@@ -41,14 +41,14 @@ struct BranchesView: View, SuperThread, SuperLog, SuperEvent {
     var body: some View {
         ZStack {
             if self.isGitProject && branches.isNotEmpty && selection != nil {
-                Picker("branch", selection: $selection, content: {
+                Picker("分支", selection: $selection, content: {
                     ForEach(branches, id: \.id, content: {
                         Text($0.name)
                             .tag($0 as GitBranch?)
                     })
                 })
             } else {
-                Picker("branch", selection: .constant(nil as GitBranch?), content: {
+                Picker("分支", selection: .constant(nil as GitBranch?), content: {
                     Text("项目不存在")
                         .tag(nil as GitBranch?)
                 }).disabled(true)

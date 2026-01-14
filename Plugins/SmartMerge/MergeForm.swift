@@ -40,7 +40,7 @@ struct MergeForm: View, SuperLog {
                             })
                         })
 
-                        Text("to").padding()
+                        Text("至").padding()
 
                         Picker("", selection: $branch2, content: {
                             ForEach(branches, id: \.self, content: {

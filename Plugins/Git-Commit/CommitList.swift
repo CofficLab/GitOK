@@ -52,6 +52,9 @@ struct CommitList: View, SuperThread, SuperLog {
         .onProjectDidCommit(perform: onCommitSuccess)
         .onProjectDidPull(perform: onPullSuccess)
         .onProjectDidPush(perform: onPushSuccess)
+        .onApplicationDidBecomeActive {
+            self.onApplicationDidBecomeActive()
+        }
     }
 }
 
@@ -400,6 +403,12 @@ extension CommitList {
     func onAppDidBecomeActive(_ notification: Notification) {
         self.bg.async {
             self.refresh("AppDidBecomeActive")
+        }
+    }
+
+    func onApplicationDidBecomeActive() {
+        self.bg.async {
+            self.refresh("ApplicationDidBecomeActive")
         }
     }
 }
