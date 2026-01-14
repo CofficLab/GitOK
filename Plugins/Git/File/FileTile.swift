@@ -41,14 +41,20 @@ struct FileTile: View {
     }
 
     private func iconInfo(for change: String) -> (String, Color) {
-        switch change {
-        case "M":
+        let normalizedChange = change.uppercased()
+        switch normalizedChange {
+        case "M", "MODIFIED":
             return (.iconEditCircle, .orange)
-        case "A":
+        case "A", "ADDED", "NEW":
             return (.iconPlus, .green)
-        case "D":
+        case "D", "DELETED":
             return (.iconMinus, .red)
+        case "R", "RENAMED":
+            return (.iconEditCircle, .blue)
+        case "C", "COPIED":
+            return (.iconEditCircle, .purple)
         default:
+            print("[FileTile] Unknown change type: '\(change)'")
             return (.iconInfo, .gray)
         }
     }
