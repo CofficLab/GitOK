@@ -32,7 +32,11 @@
       "Bash(security find-internet-password:*)",
       "Bash(tree:*)",
       "mcp__zai-mcp-server__extract_text_from_screenshot",
-      "Bash(swift package list-packages:*)"
+      "Bash(swift package list-packages:*)",
+      "Bash(git -C /Users/colorfy/Code/CofficLab/LibGit2Swift/.build/checkouts/static-libgit2 log -1 --format=\"%H %cd\" --date=short)",
+      "Bash(chmod:*)",
+      "Bash(./build-libgit2-framework.sh:*)",
+      "Bash(test:*)"
     ]
   }
 }

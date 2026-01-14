@@ -24,6 +24,10 @@ struct Projects: View, SuperLog {
         Text(item.title).tag(item as Project?)
           .contextMenu(
             ContextMenu(menuItems: {
+              Button("置顶") {
+                pinItem(item)
+              }
+
               Button("删除") {
                 deleteItem(item)
               }
@@ -52,6 +56,26 @@ struct Projects: View, SuperLog {
 // MARK: - Action
 
 extension Projects {
+  /// 置顶项目到列表最上方
+  /// - Parameter project: 要置顶的项目
+  private func pinItem(_ project: Project) {
+    // 查找当前项目的索引
+    if let currentIndex = data.projects.firstIndex(of: project) {
+      // 如果项目已经在最上方，不需要移动
+      guard currentIndex > 0 else { return }
+
+      withAnimation {
+        // 将项目移动到列表最上方（索引0）
+        let source = IndexSet([currentIndex])
+        data.moveProjects(from: source, to: 0, using: data.repoManager.projectRepo)
+      }
+
+      if Self.verbose {
+        os_log("\(self.t)Pinned project '\(project.title)' to top")
+      }
+    }
+  }
+
   /// 删除单个项目
   /// - Parameter project: 要删除的项目
   private func deleteItem(_ project: Project) {
