@@ -1,7 +1,10 @@
 
 import SwiftUI
 
+/// 提交状态指示器组件
+/// 显示当前的提交活动状态信息
 struct CommitStatusTile: View {
+    /// 环境对象：数据提供者
     @EnvironmentObject var g: DataProvider
 
     var body: some View {
@@ -14,6 +17,8 @@ struct CommitStatusTile: View {
         }
     }
 }
+
+// MARK: - Preview
 
 #Preview("App - Small Screen") {
     ContentLayout()

@@ -2,12 +2,19 @@ import MagicKit
 import LibGit2Swift
 import SwiftUI
 
-/**
- * 展示 Commit 信息的视图组件
- * 包含提交消息、作者信息、时间和 Hash 等详细信息
- */
-struct CommitInfoView: View {
+/// 提交信息显示视图组件
+/// 包含提交消息、作者信息、时间和 Hash 等详细信息
+struct CommitInfoView: View, SuperLog {
+    /// 日志标识符
+    nonisolated static let emoji = "📋"
+
+    /// 是否启用详细日志输出
+    nonisolated static let verbose = false
+
+    /// 提交对象
     let commit: GitCommit
+
+    /// 是否已复制到剪贴板
     @State private var isCopied: Bool = false
 
     var body: some View {

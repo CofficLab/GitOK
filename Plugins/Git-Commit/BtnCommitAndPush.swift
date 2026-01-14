@@ -92,22 +92,18 @@ struct BtnCommitAndPush: View, SuperLog, SuperThread {
 // MARK: - Preview
 
 #Preview("App - Small Screen") {
-    RootView {
-        ContentLayout()
-            .hideSidebar()
-            .hideTabPicker()
-            .hideProjectActions()
-    }
-    .frame(width: 800)
-    .frame(height: 600)
+    ContentLayout()
+        .hideSidebar()
+        .hideProjectActions()
+        .inRootView()
+        .frame(width: 800)
+        .frame(height: 600)
 }
 
 #Preview("App - Big Screen") {
-    RootView {
-        ContentLayout()
-            .hideSidebar()
-            .hideTabPicker()
-    }
-    .frame(width: 1200)
-    .frame(height: 1200)
+    ContentLayout()
+        .hideSidebar()
+        .inRootView()
+        .frame(width: 1200)
+        .frame(height: 1200)
 }

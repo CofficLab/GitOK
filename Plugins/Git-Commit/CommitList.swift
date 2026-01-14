@@ -3,13 +3,21 @@ import LibGit2Swift
 import OSLog
 import SwiftUI
 
+/// Git 提交列表视图组件
+/// 显示项目的提交历史记录，支持分页加载和刷新
 struct CommitList: View, SuperThread, SuperLog {
+    /// 日志标识符
     nonisolated static let emoji = "🖥️"
+
+    /// 是否启用详细日志输出
     nonisolated static let verbose = false
 
     static var shared = CommitList()
 
+    /// 环境对象：应用提供者
     @EnvironmentObject var app: AppProvider
+
+    /// 环境对象：数据提供者
     @EnvironmentObject var data: DataProvider
 
     @State private var commits: [GitCommit] = []
@@ -415,20 +423,18 @@ extension CommitList {
 
 // MARK: - Preview
 
-#Preview("App-Small Screen") {
+#Preview("App - Small Screen") {
     ContentLayout()
-        .hideTabPicker()
-        .hideProjectActions()
         .hideSidebar()
+        .hideProjectActions()
         .inRootView()
         .frame(width: 800)
-        .frame(height: 800)
+        .frame(height: 600)
 }
 
 #Preview("App - Big Screen") {
     ContentLayout()
-        .hideTabPicker()
-        .hideProjectActions()
+        .hideSidebar()
         .inRootView()
         .frame(width: 1200)
         .frame(height: 1200)

@@ -1,9 +1,13 @@
 import SwiftUI
 import MagicKit
 
-/// Commit 类别选择器
+/// Commit 类别选择器组件
+/// 提供提交类别的下拉选择功能，支持不同风格的显示
 struct CommitCategoryPicker: View {
+    /// 绑定到外部的选中类别
     @Binding var selection: CommitCategory
+
+    /// 提交风格，用于控制显示格式
     var commitStyle: CommitStyle = .emoji
 
     var body: some View {
@@ -17,6 +21,9 @@ struct CommitCategoryPicker: View {
         .pickerStyle(.automatic)
     }
 
+    /// 根据提交风格生成类别显示标签
+    /// - Parameter category: 提交类别
+    /// - Returns: 格式化后的显示标签
     private func displayLabel(for category: CommitCategory) -> String {
         if commitStyle.includeEmoji {
             return category.label
@@ -30,20 +37,18 @@ struct CommitCategoryPicker: View {
 
 // MARK: - Preview
 
-#Preview("App-Small Screen") {
+#Preview("App - Small Screen") {
     ContentLayout()
-        .hideTabPicker()
-        .hideProjectActions()
         .hideSidebar()
+        .hideProjectActions()
         .inRootView()
         .frame(width: 800)
-        .frame(height: 800)
+        .frame(height: 600)
 }
 
 #Preview("App - Big Screen") {
     ContentLayout()
-        .hideTabPicker()
-        .hideProjectActions()
+        .hideSidebar()
         .inRootView()
         .frame(width: 1200)
         .frame(height: 1200)

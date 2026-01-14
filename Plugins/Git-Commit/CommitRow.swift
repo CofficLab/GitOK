@@ -3,12 +3,19 @@ import MagicKit
 import LibGit2Swift
 import SwiftUI
 
+/// 提交记录行视图组件
+/// 显示单个 Git 提交的详细信息，包括消息、作者、时间等
 struct CommitRow: View, SuperThread {
+    /// 环境对象：数据提供者
     @EnvironmentObject var data: DataProvider
 
+    /// 提交对象
     let commit: GitCommit
-    let isUnpushed: Bool  // 是否未同步到远程
 
+    /// 是否未同步到远程
+    let isUnpushed: Bool
+
+    /// 标签文本
     @State private var tag: String = ""
 
     var body: some View {
@@ -124,21 +131,20 @@ extension CommitRow {
     }
 }
 
+// MARK: - Preview
+
 #Preview("App - Small Screen") {
     ContentLayout()
         .hideSidebar()
-        .hideTabPicker()
         .hideProjectActions()
         .inRootView()
-        .frame(width: 700)
-        .frame(height: 700)
+        .frame(width: 800)
+        .frame(height: 600)
 }
 
 #Preview("App - Big Screen") {
     ContentLayout()
         .hideSidebar()
-        .hideTabPicker()
-        .hideProjectActions()
         .inRootView()
         .frame(width: 1200)
         .frame(height: 1200)
