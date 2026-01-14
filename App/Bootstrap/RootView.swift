@@ -6,12 +6,7 @@ import MagicKit
 
 /// 根视图容器组件
 /// 为应用提供统一的上下文环境，包括数据提供者、图标提供者和插件提供者
-struct RootView<Content>: View, SuperEvent, SuperLog where Content: View {
-    /// 日志标识符
-    nonisolated static let emoji = "🏠"
-
-    /// 是否启用详细日志输出
-    nonisolated static let verbose = false
+struct RootView<Content>: View, SuperEvent where Content: View {
 
     /// 视图内容
     var content: Content
