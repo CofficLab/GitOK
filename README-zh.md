@@ -37,6 +37,10 @@ GitOK 是一个综合性的项目管理工具。
 - 辅助人类提交良好格式的 `commit message`
 - 快速生成 APP 的多个平台的图标
 
+## Our Other Projects
+
+* [Cisum](https://github.com/CofficLab/Cisum_SwiftUI) - Apple 平台音频播放器
+
 ## References
 
 - [git commit emoji 使用指南](https://github.com/liuchengxu/git-commit-emoji-cn)

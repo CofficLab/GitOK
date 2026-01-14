@@ -81,7 +81,7 @@ struct CurrentWorkingStateView: View, SuperLog {
         }
         .background(
             isSelected
-                ? Color.green.opacity(0.12)
+                ? Color.accentColor.opacity(0.1)
                 : Color(.controlBackgroundColor)
         )
         .onTapGesture(perform: onTap)

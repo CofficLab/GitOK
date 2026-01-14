@@ -76,6 +76,12 @@ struct ContentView: View, SuperLog {
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .sheet(isPresented: $app.showSettings) {
+            SettingView()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .openSettings)) { _ in
+            app.openSettings()
+        }
     }
 }
 

@@ -41,6 +41,10 @@ protocol SuperPlugin {
     /// - Returns: 包装在 AnyView 中的状态栏前部视图
     func addStatusBarLeadingView() -> AnyView?
 
+    /// 返回插件在状态栏中间区域的视图
+    /// - Returns: 包装在 AnyView 中的状态栏中间视图
+    func addStatusBarCenterView() -> AnyView?
+
     /// 返回插件在状态栏后部区域的视图
     /// - Returns: 包装在 AnyView 中的状态栏后部视图
     func addStatusBarTrailingView() -> AnyView?
@@ -67,6 +71,11 @@ extension SuperPlugin {
 
     /// 默认的状态栏前部视图实现，返回空视图
     func addStatusBarLeadingView() -> AnyView? {
+        nil
+    }
+
+    /// 默认的状态栏中间视图实现，返回空视图
+    func addStatusBarCenterView() -> AnyView? {
         nil
     }
 

@@ -24,6 +24,7 @@ struct GitOKApp: App {
         .modelContainer(AppConfig.getContainer())
         .commands(content: {
             DebugCommand()
+            SettingsCommand()
 
             CommandGroup(after: .appInfo) {
                 UpdaterView(updater: updaterController.updater)

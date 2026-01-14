@@ -13,7 +13,7 @@
     {
       "identity" : "libgit2swift",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/nookery/Libgit2swift",
+      "location" : "https://github.com/nookery/LibGit2Swift",
       "state" : {
         "branch" : "main",
         "revision" : "595ac4cd50eaa1f7fa673a4128010e90d1817436"
@@ -31,7 +31,7 @@
     {
       "identity" : "magicdevice",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/nookery/MagicDevice",
+      "location" : "https://github.com/nookery/MagicDevice.git",
       "state" : {
         "branch" : "main",
         "revision" : "60c9bf7cd59566ec64b7088fa8672a6b1c2c5cf2"
