@@ -33,14 +33,6 @@ struct CommitRow: View, SuperThread {
                                     .lineLimit(1)
                                     .font(.system(size: 13))
                                 Spacer()
-
-                                // 未同步到远程的图标
-                                if isUnpushed {
-                                    Image(systemName: .iconUpload)
-                                        .font(.system(size: 10))
-                                        .foregroundColor(.secondary.opacity(0.6))
-                                        .help("尚未推送到远程仓库")
-                                }
                             }
 
                             // 第二行：所有作者（包括 Co-Authored-By）
@@ -75,14 +67,29 @@ struct CommitRow: View, SuperThread {
                         .contentShape(Rectangle())
                     }
 
-                    // 标签作为右下角背景
-                    if !tag.isEmpty {
-                        Text(tag)
-                            .font(.system(size: 12))
-                            .padding(.horizontal, 6)
-                            .padding(.vertical, 2)
-                            .background(Color.blue.opacity(0.2))
-                            .cornerRadius(0)
+                    // 右下角背景元素
+                    HStack(spacing: 4) {
+                        // 未推送到远程的图标作为背景
+                        if isUnpushed {
+                            Image(systemName: .iconUpload)
+                                .font(.system(size: 10))
+                                .foregroundColor(.secondary.opacity(0.6))
+                                .padding(.horizontal, 4)
+                                .padding(.vertical, 2)
+                                .background(Color.orange.opacity(0.1))
+                                .cornerRadius(0)
+                                .help("尚未推送到远程仓库")
+                        }
+
+                        // 标签作为右下角背景
+                        if !tag.isEmpty {
+                            Text(tag)
+                                .font(.system(size: 12))
+                                .padding(.horizontal, 6)
+                                .padding(.vertical, 2)
+                                .background(Color.blue.opacity(0.2))
+                                .cornerRadius(0)
+                        }
                     }
                 }
             }
