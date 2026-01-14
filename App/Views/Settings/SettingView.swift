@@ -15,8 +15,11 @@ struct SettingView: View, SuperLog {
     @EnvironmentObject var data: DataProvider
     @Environment(\.dismiss) private var dismiss
 
+    /// 默认显示的 Tab
+    var defaultTab: SettingTab = .userInfo
+
     /// 当前选中的 Tab
-    @State private var selectedTab: SettingTab = .userInfo
+    @State private var selectedTab: SettingTab
 
     /// 设置 Tab 枚举
     enum SettingTab: String, CaseIterable {
@@ -31,6 +34,11 @@ struct SettingView: View, SuperLog {
             case .about: return "info.circle"
             }
         }
+    }
+
+    init(defaultTab: SettingTab = .userInfo) {
+        self.defaultTab = defaultTab
+        self._selectedTab = State(initialValue: defaultTab)
     }
 
     var body: some View {
