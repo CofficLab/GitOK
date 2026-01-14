@@ -33,7 +33,7 @@ final class RootBox: SuperLog {
     let pluginProvider: PluginProvider
 
     private init(reason: String) {
-        if verbose {
+        if Self.verbose {
             os_log("\(Self.onInit)(\(reason))")
         }
 

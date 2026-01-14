@@ -1,4 +1,5 @@
 import SwiftUI
+import MagicKit
 import AppKit
 
 /// 设置命令：在应用菜单中添加设置入口

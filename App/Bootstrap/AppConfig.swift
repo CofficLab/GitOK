@@ -5,7 +5,7 @@ import SwiftUI
 
 /// 应用配置枚举
 /// 提供应用的基本配置信息和数据库设置
-enum AppConfig: SuperLog {
+enum AppConfig {
     /// 日志标识符
     nonisolated static let emoji = "⚙️"
 
@@ -14,13 +14,10 @@ enum AppConfig: SuperLog {
 
     /// 文件管理器实例
     static let fileManager = FileManager.default
-    static let fileManager = FileManager.default
     static func getAppName() -> String {
         if let appName = Bundle.main.infoDictionary?["CFBundleName"] as? String {
             return appName
         } else {
-            os_log("无法获取应用程序名称")
-
             return ""
         }
     }

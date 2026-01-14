@@ -1,4 +1,5 @@
 import SwiftUI
+import MagicKit
 
 /// Git 用户配置行视图组件
 /// 显示单个用户配置项，支持选择和交互

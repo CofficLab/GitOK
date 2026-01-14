@@ -1,4 +1,5 @@
 import Foundation
+import MagicKit
 import SwiftUI
 import Sparkle
 

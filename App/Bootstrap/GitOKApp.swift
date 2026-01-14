@@ -1,4 +1,5 @@
 import LibGit2Swift
+import MagicKit
 import Sparkle
 import SwiftData
 import SwiftUI
