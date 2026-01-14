@@ -25,7 +25,7 @@ struct BtnCommitAndPush: View, SuperLog, SuperThread {
     var body: some View {
         MagicButton(
             icon: .iconUpload,
-            title: commitOnly ? "Commit" : "Commit and Push",
+            title: commitOnly ? "提交" : "提交并推送",
             size: .auto,
             preventDoubleClick: true,
             loadingStyle: .spinner,
@@ -52,7 +52,7 @@ struct BtnCommitAndPush: View, SuperLog, SuperThread {
                     do {
                         try project.addAll()
 
-                        let message = commitMessage.isEmpty ? "Auto commit" : commitMessage
+                        let message = commitMessage.isEmpty ? "自动提交" : commitMessage
 
                         setStatus("提交中…")
                         try await MainActor.run {
@@ -66,9 +66,9 @@ struct BtnCommitAndPush: View, SuperLog, SuperThread {
 
                         await MainActor.run {
                             if commitOnly == false {
-                                m.info("Commit and push success")
+                                m.info("提交并推送成功")
                             } else {
-                                m.info("Commit success")
+                                m.info("提交成功")
                             }
                         }
                     } catch {

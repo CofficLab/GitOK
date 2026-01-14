@@ -24,7 +24,7 @@ struct FileTile: View {
         .cornerRadius(4)
         .contextMenu {
             if let onDiscardChanges = onDiscardChanges {
-                Button("Discard Changes") {
+                Button("丢弃更改") {
                     onDiscardChanges(file)
                 }
             }

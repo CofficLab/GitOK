@@ -22,9 +22,9 @@ struct ProjectPickerView: View, SuperLog {
     var body: some View {
         Group {
             if app.sidebarVisibility == false {
-                Picker("select_project", selection: $selection) {
+                Picker("选择项目", selection: $selection) {
                     if selection == nil {
-                        Text("select_a_project").tag(nil as Project?)
+                        Text("请选择项目").tag(nil as Project?)
                     }
                     ForEach(data.projects, id: \.url) { project in
                         Text(project.title).tag(project as Project?)

@@ -13,10 +13,10 @@ struct GitignoreOrganizerView: View {
     var body: some View {
         HStack(spacing: 8) {
             Menu {
-                Button("Xcode") {
+                Button("Xcode 模板") {
                     applyTemplate(.xcode)
                 }
-                Button("Flutter") {
+                Button("Flutter 模板") {
                     applyTemplate(.flutter)
                 }
             } label: {
