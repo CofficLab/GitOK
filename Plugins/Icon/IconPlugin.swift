@@ -41,26 +41,23 @@ extension IconPlugin {
     }
 }
 
+// MARK: - Preview
+
 #Preview("App - Small Screen") {
-    RootView {
-        ContentLayout().setInitialTab(IconPlugin.label)
-            .hideSidebar()
-            .hideProjectActions()
-            .setInitialTab(IconPlugin.label)
-    }
-    .frame(width: 800)
-    .frame(height: 600)
+    ContentLayout()
+        .setInitialTab(IconPlugin.label)
+        .hideSidebar()
+        .hideProjectActions()
+        .inRootView()
+        .frame(width: 800)
+        .frame(height: 600)
 }
 
 #Preview("App - Big Screen") {
-    RootView {
-        ContentLayout()
-            .setInitialTab(IconPlugin.label)
-            .hideSidebar()
-            .hideTabPicker()
-            .hideProjectActions()
-            .setInitialTab(IconPlugin.label)
-    }
-    .frame(width: 800)
-    .frame(height: 1200)
+    ContentLayout()
+        .setInitialTab(IconPlugin.label)
+        .hideSidebar()
+        .inRootView()
+        .frame(width: 1200)
+        .frame(height: 1200)
 }

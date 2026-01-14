@@ -4,22 +4,33 @@ import SwiftData
 import SwiftUI
 import MagicKit
 
-/**
- * 核心服务管理器
- * 用于集中管理应用程序的核心服务和提供者，避免重复初始化
- * 配合 RootView 使用
- */
+/// 核心服务管理器
+/// 用于集中管理应用程序的核心服务和提供者，避免重复初始化
+/// 配合 RootView 使用
 @MainActor
 final class RootBox: SuperLog {
-    static let shared = RootBox(reason: "Shared")
+    /// 日志标识符
     nonisolated static let emoji = "🚉"
 
+    /// 是否启用详细日志输出
+    nonisolated static let verbose = false
+
+    static let shared = RootBox(reason: "Shared")
+
+    /// 应用提供者
     let app: AppProvider
+
+    /// 图标提供者
     let icon: IconProvider
+
+    /// Git 数据提供者
     let git: DataProvider
+
+    /// 仓库管理器
     let repoManager: RepoManager
+
+    /// 插件提供者
     let pluginProvider: PluginProvider
-    private var verbose = false
 
     private init(reason: String) {
         if verbose {

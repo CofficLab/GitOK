@@ -3,6 +3,8 @@ import MagicKit
 import OSLog
 import SwiftUI
 
+/// 打开 Xcode 插件
+/// 提供在工具栏中打开当前项目 Xcode 的功能
 class OpenXcodePlugin: SuperPlugin, SuperLog, PluginRegistrant {
     static let shared = OpenXcodePlugin()
     /// 日志标识符

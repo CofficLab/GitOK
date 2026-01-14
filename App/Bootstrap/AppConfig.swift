@@ -3,7 +3,17 @@ import OSLog
 import SwiftData
 import SwiftUI
 
-enum AppConfig {
+/// 应用配置枚举
+/// 提供应用的基本配置信息和数据库设置
+enum AppConfig: SuperLog {
+    /// 日志标识符
+    nonisolated static let emoji = "⚙️"
+
+    /// 是否启用详细日志输出
+    nonisolated static let verbose = false
+
+    /// 文件管理器实例
+    static let fileManager = FileManager.default
     static let fileManager = FileManager.default
     static func getAppName() -> String {
         if let appName = Bundle.main.infoDictionary?["CFBundleName"] as? String {

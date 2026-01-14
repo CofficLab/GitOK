@@ -1,7 +1,13 @@
 import SwiftUI
 import CloudKit
 
-struct DebugCommand: Commands {
+/// 调试命令：在应用菜单中添加调试相关的功能入口
+struct DebugCommand: Commands, SuperLog {
+    /// 日志标识符
+    nonisolated static let emoji = "🐛"
+
+    /// 是否启用详细日志输出
+    nonisolated static let verbose = false
     var body: some Commands {
         SidebarCommands()
 
