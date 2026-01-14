@@ -337,6 +337,14 @@ extension CurrentWorkingStateView {
         isSyncLoading = true
     }
 
+    /// 设置活动状态日志
+    /// - Parameter text: 状态文本，为 nil 时清除状态
+    private func setStatus(_ text: String?) async {
+        await MainActor.run {
+            data.activityStatus = text
+        }
+    }
+
     /// 执行 git pull 操作拉取远程提交
     private func performPull() {
         guard let project = data.project else {
@@ -352,6 +360,9 @@ extension CurrentWorkingStateView {
 
         // 立即更新 UI 状态
         isPulling = true
+
+        // 设置状态日志
+        Task { await setStatus("拉取中…") }
 
         // 使用 Task.detached 确保在后台执行
         Task.detached(priority: .userInitiated) {
@@ -388,6 +399,9 @@ extension CurrentWorkingStateView {
                     }
                 }
             }
+
+            // 清除状态日志
+            await setStatus(nil)
         }
     }
 
@@ -406,6 +420,9 @@ extension CurrentWorkingStateView {
 
         // 立即更新 UI 状态
         isPushing = true
+
+        // 设置状态日志
+        Task { await setStatus("推送中…") }
 
         // 使用 Task.detached 确保在后台执行
         Task.detached(priority: .userInitiated) {
@@ -442,6 +459,9 @@ extension CurrentWorkingStateView {
                     }
                 }
             }
+
+            // 清除状态日志
+            await setStatus(nil)
         }
     }
 
