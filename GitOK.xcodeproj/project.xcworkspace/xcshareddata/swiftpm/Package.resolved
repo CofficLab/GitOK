@@ -1,5 +1,5 @@
 {
-  "originHash" : "e686047501da144a46b28bed206a37cd76ed698a41c4795f1ed73b4920ef71d3",
+  "originHash" : "9fb4299cb873e58b6d9ef33838b2f9e22bbd06b6621b55cfa63343bf78f61355",
   "pins" : [
     {
       "identity" : "id3tageditor",
@@ -13,10 +13,10 @@
     {
       "identity" : "libgit2swift",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/nookery/LibGit2Swift",
+      "location" : "https://github.com/nookery/Libgit2swift",
       "state" : {
         "branch" : "main",
-        "revision" : "c03d6b0f1aa32e044c2f551ed6ea74bb5bc2992b"
+        "revision" : "595ac4cd50eaa1f7fa673a4128010e90d1817436"
       }
     },
     {
@@ -31,7 +31,7 @@
     {
       "identity" : "magicdevice",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/nookery/MagicDevice.git",
+      "location" : "https://github.com/nookery/MagicDevice",
       "state" : {
         "branch" : "main",
         "revision" : "60c9bf7cd59566ec64b7088fa8672a6b1c2c5cf2"
@@ -89,15 +89,6 @@
       "state" : {
         "revision" : "0ef1ee0220239b3776f433314515fd849025673f",
         "version" : "2.6.4"
-      }
-    },
-    {
-      "identity" : "static-libgit2",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/bdewey/static-libgit2.git",
-      "state" : {
-        "revision" : "ca2b13cb2cd04365c9416803c1d7e26116b23efd",
-        "version" : "0.5.0"
       }
     },
     {

@@ -20,10 +20,11 @@ struct TileFile: View, SuperLog, SuperThread {
     var file: GitDiffFile? { data.file }
 
     @State private var isPopoverPresented = false
+    @State private var cachedComponents: [String] = []
 
     var body: some View {
         if let file = file {
-            let components = file.file.split(separator: "/").map(String.init)
+            let components = cachedComponents.isEmpty ? file.file.split(separator: "/").map(String.init) : cachedComponents
             StatusBarTile(icon: "doc.text", onTap: { isPopoverPresented.toggle() }) {
                 HStack(spacing: 4) {
                     ForEach(Array(components.enumerated()), id: \.offset) { idx, comp in
@@ -39,6 +40,14 @@ struct TileFile: View, SuperLog, SuperThread {
                 }.frame(maxHeight: .infinity)
             }
             .frame(maxHeight: .infinity)
+            .onChange(of: data.file) { _, newFile in
+                // 更新缓存的路径组件
+                if let newFile = newFile {
+                    cachedComponents = newFile.file.split(separator: "/").map(String.init)
+                } else {
+                    cachedComponents = []
+                }
+            }
             .popover(isPresented: $isPopoverPresented) {
                 VStack(alignment: .leading, spacing: 8) {
                     Text("文件操作")

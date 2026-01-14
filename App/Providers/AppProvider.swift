@@ -20,6 +20,9 @@ class AppProvider: NSObject, ObservableObject, AVAudioPlayerDelegate, SuperLog {
     /// 侧边栏是否可见
     @Published var sidebarVisibility: Bool
 
+    /// 是否显示设置
+    @Published var showSettings: Bool = false
+
     /// 仓库管理器实例
     private let repoManager: RepoManager
 
@@ -73,6 +76,11 @@ extension AppProvider {
     ///   - reason: 设置的原因
     func setSidebarVisibility(_ v: Bool, reason: String) {
         v ? showSidebar(reason: reason) : hideSidebar()
+    }
+
+    /// 显示设置界面
+    func openSettings() {
+        showSettings = true
     }
 }
 

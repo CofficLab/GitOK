@@ -18,7 +18,7 @@ class ActivityStatusPlugin: SuperPlugin, SuperLog, PluginRegistrant {
 
     private init() {}
 
-    func addStatusBarTrailingView() -> AnyView? {
+    func addStatusBarCenterView() -> AnyView? {
         AnyView(ActivityStatusTile())
     }
 }

@@ -16,10 +16,21 @@ struct StatusBar: View, SuperLog {
     /// 视图主体
     var body: some View {
         HStack(spacing: 0) {
+            // 状态栏左侧区域
             ForEach(p.plugins, id: \.instanceLabel) { plugin in
                 plugin.addStatusBarLeadingView()
             }
+
             Spacer()
+
+            // 状态栏中间区域
+            ForEach(p.plugins, id: \.instanceLabel) { plugin in
+                plugin.addStatusBarCenterView()
+            }
+
+            Spacer()
+
+            // 状态栏右侧区域
             ForEach(p.plugins, id: \.instanceLabel) { plugin in
                 plugin.addStatusBarTrailingView()
             }
@@ -28,9 +39,9 @@ struct StatusBar: View, SuperLog {
         .frame(maxWidth: .infinity)
         .frame(height: 32)
         #if DEBUG
-        .background(MagicBackground.desert.opacity(0.3))
+        .background(Color.accentColor.opacity(0.4))
         #else
-        .background(MagicBackground.colorGreen.opacity(0.3))
+        .background(Color.accentColor.opacity(0.4))
         #endif
     }
 }

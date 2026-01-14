@@ -37,6 +37,10 @@ We need a tool to improve our work efficiency, and we'd like it to have the foll
 - Assisting users in writing well-formatted `commit messages`
 - Quickly generating app icons for multiple platforms
 
+## Our Other Projects
+
+* [Cisum](https://github.com/CofficLab/Cisum_SwiftUI) - A player for Apple platform
+
 ## References
 
 - [git commit emoji usage guide (in Chinese)](https://github.com/liuchengxu/git-commit-emoji-cn)
