@@ -28,10 +28,6 @@ struct Projects: View, SuperLog {
                 pinItem(item)
               }
 
-              Button("删除") {
-                deleteItem(item)
-              }
-
               if FileManager.default.fileExists(atPath: item.path) {
                 Button("在Finder中显示") {
                   let url = URL(fileURLWithPath: item.path)
@@ -42,6 +38,12 @@ struct Projects: View, SuperLog {
                   // 禁止点击
                 }
                 .disabled(true)
+              }
+
+              Divider()
+
+              Button("删除") {
+                deleteItem(item)
               }
             }))
       }
