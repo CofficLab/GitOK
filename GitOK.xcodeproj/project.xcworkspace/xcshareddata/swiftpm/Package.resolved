@@ -13,10 +13,10 @@
     {
       "identity" : "libgit2swift",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/nookery/LibGit2Swift",
+      "location" : "https://github.com/nookery/Libgit2swift",
       "state" : {
         "branch" : "main",
-        "revision" : "595ac4cd50eaa1f7fa673a4128010e90d1817436"
+        "revision" : "645820fb49dffcb2c7f9e277b81fb5c780d43d73"
       }
     },
     {
