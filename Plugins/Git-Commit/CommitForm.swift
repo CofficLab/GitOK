@@ -73,7 +73,7 @@ struct CommitForm: View, SuperLog {
                         .frame(maxWidth: 300)
 
                     // 合作者选择器
-                    CoAuthorPicker(selectedCoAuthors: $selectedCoAuthors)
+//                    CoAuthorPicker(selectedCoAuthors: $selectedCoAuthors)
                 }
 
                 Spacer()

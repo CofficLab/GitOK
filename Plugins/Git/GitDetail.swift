@@ -47,7 +47,7 @@ struct GitDetail: View, SuperEvent, SuperLog {
         ZStack {
             if data.project != nil {
                 if self.isGitProject {
-                    VStack(alignment: .leading, spacing: 8) {
+                    VStack(alignment: .leading, spacing: 0) {
                         Group {
                             if let commit = data.commit {
                                 CommitInfoView(commit: commit)
@@ -81,7 +81,7 @@ struct GitDetail: View, SuperEvent, SuperLog {
         .onAppear(perform: onAppear)
         .onChange(of: data.project, onProjectChange)
         .onProjectDidCommit(perform: onGitCommitSuccess)
-        .onNotification(.appWillBecomeActive, perform: onAppWillBecomeActive)
+        .onApplicationWillBecomeActive(perform: onAppWillBecomeActive)
     }
 
     /// 背景视图：根据提交状态显示不同的背景颜色
@@ -179,7 +179,7 @@ extension GitDetail {
 
 extension GitDetail {
     /// 应用即将变为活跃状态的事件处理
-    func onAppWillBecomeActive(_ notification: Notification) {
+    func onAppWillBecomeActive() {
         // 延迟执行，避免与其他组件同时刷新
         Task {
             try? await Task.sleep(nanoseconds: 300_000_000)  // 延迟 0.3 秒
