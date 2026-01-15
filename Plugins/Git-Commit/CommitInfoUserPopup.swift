@@ -47,55 +47,67 @@ struct CommitInfoUserInfoPopup: View, SuperLog {
 
             Divider()
 
-            // 信息列表（使用 MagicSettingRow）
+            // 信息列表
             VStack(spacing: 0) {
                 // 用户名
-                infoRow(
+                MagicSettingRow(
                     title: "用户名",
-                    value: user.name,
+                    description: user.name,
                     icon: .iconUser
-                )
+                ) {
+                    EmptyView()
+                }
 
                 Divider()
 
                 // 头像地址（总是显示）
                 if let avatarURL = displayedAvatarURL {
-                    infoRow(
+                    MagicSettingRow(
                         title: "头像地址",
-                        value: avatarURL.absoluteString,
-                        icon: .iconSafari,
-                        selectable: true
-                    )
+                        description: avatarURL.absoluteString,
+                        icon: .iconSafari
+                    ) {
+                        EmptyView()
+                    }
                 } else {
-                    infoRow(
+                    MagicSettingRow(
                         title: "头像地址",
-                        value: "加载中...",
-                        icon: .iconSafari,
-                        selectable: false
-                    )
+                        description: "加载中...",
+                        icon: .iconSafari
+                    ) {
+                        EmptyView()
+                    }
                 }
 
                 // 邮箱（如果有）
                 if !user.email.isEmpty {
                     Divider()
 
-                    infoRow(
+                    MagicSettingRow(
                         title: "邮箱",
-                        value: user.email,
-                        icon: .iconMail,
-                        selectable: true
-                    )
+                        description: user.email,
+                        icon: .iconMail
+                    ) {
+                        EmptyView()
+                    }
                 }
 
                 // GitHub 主页按钮（如果有）
                 if let githubURL = gitHubURL {
                     Divider()
 
-                    linkRow(
+                    MagicSettingRow(
                         title: "GitHub 主页",
-                        url: githubURL.absoluteString,
+                        description: githubURL.absoluteString,
                         icon: .iconSafari
-                    )
+                    ) {
+                        MagicButton.simple {
+                            NSWorkspace.shared.open(githubURL)
+                        }
+                        .magicIcon(.iconSafari)
+                        .magicShape(.circle)
+                        .magicShapeVisibility(.onHover)
+                    }
                 }
             }
         }
@@ -120,43 +132,6 @@ struct CommitInfoUserInfoPopup: View, SuperLog {
 // MARK: - View
 
 extension CommitInfoUserInfoPopup {
-    /// 信息行（类似 AboutView 的样式）
-    private func infoRow(title: String, value: String, icon: String, selectable: Bool = false) -> some View {
-        MagicSettingRow(
-            title: title,
-            description: value,
-            icon: icon
-        ) {
-            if selectable {
-                // 可选择的文本，可以复制
-                Text(value)
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-                    .textSelection(.enabled)
-            } else {
-                EmptyView()
-            }
-        }
-    }
-
-    /// 链接行（可点击打开）
-    private func linkRow(title: String, url: String, icon: String) -> some View {
-        MagicSettingRow(
-            title: title,
-            description: url,
-            icon: icon
-        ) {
-            MagicButton.simple {
-                if let url = URL(string: url) {
-                    NSWorkspace.shared.open(url)
-                }
-            }
-            .magicIcon(.iconSafari)
-            .magicShape(.circle)
-            .magicShapeVisibility(.onHover)
-        }
-    }
-
     /// 从邮箱中提取 GitHub 用户名
     /// 如果是 GitHub 的自动生成邮箱，则返回 @用户名 格式
     private var gitHubUsername: String {
