@@ -18,61 +18,72 @@ struct PluginSettingsView: View, SuperLog {
     @State private var pluginStates: [String: Bool] = [:]
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            // 标题
-            Text("插件管理")
-                .font(.title2)
-                .fontWeight(.bold)
-                .padding(.bottom, 16)
+        ScrollView {
+            VStack(alignment: .leading, spacing: 0) {
+                // 标题
+                Text("插件管理")
+                    .font(.title2)
+                    .fontWeight(.bold)
+                    .padding(.bottom, 16)
 
-            Text("启用或禁用 GitOK 的插件功能")
-                .font(.subheadline)
-                .foregroundColor(.secondary)
-                .padding(.bottom, 24)
-
-            // 插件列表
-            ForEach(ConfigurablePlugins.allPlugins) { plugin in
-                PluginToggleRow(
-                    plugin: plugin,
-                    isEnabled: Binding(
-                        get: { pluginStates[plugin.id, default: true] },
-                        set: { newValue in
-                            pluginStates[plugin.id] = newValue
-                            settingsStore.setPluginEnabled(plugin.id, enabled: newValue)
-
-                            if Self.verbose {
-                                os_log("\(Self.t)🔌 Plugin '\(plugin.id)' is now \(newValue ? "enabled" : "disabled")")
-                            }
-                        }
-                    )
-                )
-
-                if plugin.id != ConfigurablePlugins.allPlugins.last?.id {
-                    Divider()
-                        .padding(.leading, 16)
-                }
-            }
-
-            Spacer()
-
-            // 提示信息
-            VStack(alignment: .leading, spacing: 8) {
-                HStack(spacing: 6) {
-                    Image(systemName: "info.circle")
-                        .foregroundColor(.blue)
-                    Text("提示")
-                        .font(.subheadline)
-                        .fontWeight(.semibold)
-                        .foregroundColor(.blue)
-                }
-
-                Text("禁用的插件将不会在界面中显示，也不会加载相关功能。部分插件可能需要重启应用才能完全生效。")
-                    .font(.caption)
+                Text("启用或禁用 GitOK 的插件功能")
+                    .font(.subheadline)
                     .foregroundColor(.secondary)
+                    .padding(.bottom, 24)
+
+                // 插件列表
+                ForEach(ConfigurablePlugins.allPlugins) { plugin in
+                    PluginToggleRow(
+                        plugin: plugin,
+                        isEnabled: Binding(
+                            get: { pluginStates[plugin.id, default: true] },
+                            set: { newValue in
+                                pluginStates[plugin.id] = newValue
+                                settingsStore.setPluginEnabled(plugin.id, enabled: newValue)
+
+                                if Self.verbose {
+                                    os_log("\(Self.t)🔌 Plugin '\(plugin.id)' is now \(newValue ? "enabled" : "disabled")")
+                                }
+                            }
+                        )
+                    )
+
+                    if plugin.id != ConfigurablePlugins.allPlugins.last?.id {
+                        Divider()
+                            .padding(.leading, 16)
+                    }
+                }
+
+                Spacer()
+
+                // 提示信息
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack(spacing: 6) {
+                        Image(systemName: "info.circle")
+                            .foregroundColor(.blue)
+                        Text("提示")
+                            .font(.subheadline)
+                            .fontWeight(.semibold)
+                            .foregroundColor(.blue)
+                    }
+
+                    Text("禁用的插件将不会在界面中显示，也不会加载相关功能。部分插件可能需要重启应用才能完全生效。")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+                .padding(.top, 16)
             }
-            .padding(.top, 16)
+            .padding(24)
         }
-        .padding(24)
+        .navigationTitle("插件管理")
+        .toolbar {
+            ToolbarItem(placement: .confirmationAction) {
+                Button("完成") {
+                    // 关闭设置视图
+                    NotificationCenter.default.post(name: .didSaveGitUserConfig, object: nil)
+                }
+            }
+        }
         .onAppear {
             loadPluginStates()
         }
