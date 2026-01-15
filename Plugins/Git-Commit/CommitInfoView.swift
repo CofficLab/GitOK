@@ -26,6 +26,12 @@ struct CommitInfoView: View, SuperLog {
     /// 是否显示提交Hash详情弹窗
     @State private var showingHashPopup = false
 
+    /// 是否正在悬停时间区域
+    @State private var isTimeHovering = false
+
+    /// 是否正在悬停Hash区域
+    @State private var isHashHovering = false
+
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
@@ -90,11 +96,22 @@ struct CommitInfoView: View, SuperLog {
                                 .font(.system(size: 12))
                             Text(commit.date.fullDateTime)
                                 .font(.caption)
-                                .foregroundColor(.secondary)
+                                .foregroundColor(isTimeHovering ? .primary : .secondary)
                         }
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 3)
+                        .background(
+                            RoundedRectangle(cornerRadius: 6)
+                                .fill(isTimeHovering ? Color.secondary.opacity(0.2) : Color.clear)
+                        )
+                        .scaleEffect(isTimeHovering ? 1.02 : 1.0)
+                        .animation(.easeInOut(duration: 0.2), value: isTimeHovering)
                     }
                     .buttonStyle(.plain)
                     .help("点击查看完整时间信息")
+                    .onHover { hovering in
+                        isTimeHovering = hovering
+                    }
                     .popover(isPresented: $showingTimePopup, arrowEdge: .bottom) {
                         CommitTimePopup(commit: commit)
                             .frame(width: 350)
@@ -113,7 +130,7 @@ struct CommitInfoView: View, SuperLog {
                                 .font(.system(size: 12))
                             Text(commit.hash.prefix(8))
                                 .font(.system(.caption, design: .monospaced))
-                                .foregroundColor(.secondary)
+                                .foregroundColor(isHashHovering ? .primary : .secondary)
                                 .textSelection(.enabled)
 
                             // 复制按钮
@@ -140,9 +157,20 @@ struct CommitInfoView: View, SuperLog {
 
                             Spacer()
                         }
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 3)
+                        .background(
+                            RoundedRectangle(cornerRadius: 6)
+                                .fill(isHashHovering ? Color.secondary.opacity(0.2) : Color.clear)
+                        )
+                        .scaleEffect(isHashHovering ? 1.02 : 1.0)
+                        .animation(.easeInOut(duration: 0.2), value: isHashHovering)
                     }
                     .buttonStyle(.plain)
                     .help("点击查看完整 Hash 信息")
+                    .onHover { hovering in
+                        isHashHovering = hovering
+                    }
                     .popover(isPresented: $showingHashPopup, arrowEdge: .bottom) {
                         CommitHashPopup(commit: commit, isCopied: $isCopied)
                             .frame(width: 450)
