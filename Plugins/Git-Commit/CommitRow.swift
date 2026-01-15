@@ -27,12 +27,6 @@ struct CommitRow: View, SuperThread {
                 data.setCommit(commit)
             }) {
                 HStack(alignment: .center, spacing: 12) {
-                    // 左侧：头像堆栈
-                    if !avatarUsers.isEmpty {
-                        AvatarStackView(users: avatarUsers, avatarSize: 24, maxVisibleCount: 2)
-                            .frame(width: 50, height: 24)
-                    }
-
                     // 中间：主要内容
                     VStack(alignment: .leading, spacing: 2) {
                         // 第一行：提交消息标题
@@ -43,8 +37,14 @@ struct CommitRow: View, SuperThread {
                             Spacer()
                         }
 
-                        // 第二行：所有作者（包括 Co-Authored-By）
-                        HStack {
+                        // 第二行：头像 + 作者（包括 Co-Authored-By）
+                        HStack(spacing: 4) {
+                            // 头像堆栈
+                            if !avatarUsers.isEmpty {
+                                AvatarStackView(users: avatarUsers, avatarSize: 14, maxVisibleCount: 2)
+                            }
+
+                            // 作者文本
                             Text(commit.allAuthors)
                                 .padding(.vertical, 1)
                                 .lineLimit(1)
