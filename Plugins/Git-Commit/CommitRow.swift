@@ -18,13 +18,22 @@ struct CommitRow: View, SuperThread {
     /// 标签文本
     @State private var tag: String = ""
 
+    /// 头像用户列表
+    @State private var avatarUsers: [AvatarUser] = []
+
     var body: some View {
         VStack(spacing: 0) {
             Button(action: {
                 data.setCommit(commit)
             }) {
-                HStack(alignment: .center, spacing: 8) {
-                    // 左侧：主要内容
+                HStack(alignment: .center, spacing: 12) {
+                    // 左侧：头像堆栈
+                    if !avatarUsers.isEmpty {
+                        AvatarStackView(users: avatarUsers, avatarSize: 24, maxVisibleCount: 2)
+                            .frame(width: 50, height: 24)
+                    }
+
+                    // 中间：主要内容
                     VStack(alignment: .leading, spacing: 2) {
                         // 第一行：提交消息标题
                         HStack {
@@ -103,12 +112,89 @@ struct CommitRow: View, SuperThread {
             // 获取tag失败时不显示tag
         }
     }
+
+    /// 解析提交的作者信息（包括 co-authors）
+    private func loadAvatarUsers() {
+        var users: [AvatarUser] = []
+
+        // 解析作者信息
+        let authorName: String
+        let authorEmail: String
+
+        // author 格式可能是 "name <email>" 或只是 "name"
+        if let emailRange = commit.author.range(of: "<([^>]+)>", options: .regularExpression) {
+            // 有邮箱
+            let emailStartIndex = commit.author.index(emailRange.lowerBound, offsetBy: 1)
+            let emailEndIndex = commit.author.index(emailRange.upperBound, offsetBy: -1)
+            authorEmail = String(commit.author[emailStartIndex..<emailEndIndex])
+
+            let nameEndIndex = commit.author.index(emailRange.lowerBound, offsetBy: -2)
+            authorName = String(commit.author[..<nameEndIndex]).trimmingCharacters(in: .whitespaces)
+        } else {
+            // 没有邮箱，使用 author 作为 name
+            authorName = commit.author
+            authorEmail = ""
+        }
+
+        // 添加主作者
+        let author = AvatarUser(
+            name: authorName,
+            email: authorEmail
+        )
+        users.append(author)
+
+        // 解析 co-authors
+        let coAuthors = parseCoAuthors(from: commit.message)
+        users.append(contentsOf: coAuthors)
+
+        // 去重（基于邮箱）
+        var seenEmails = Set<String>()
+        var uniqueUsers: [AvatarUser] = []
+
+        for user in users {
+            if !seenEmails.contains(user.email) {
+                seenEmails.insert(user.email)
+                uniqueUsers.append(user)
+            }
+        }
+
+        self.avatarUsers = uniqueUsers
+    }
+
+    /// 从 commit 消息中解析 co-authors
+    /// - Parameter message: commit 消息
+    /// - Returns: co-author 列表
+    private func parseCoAuthors(from message: String) -> [AvatarUser] {
+        var coAuthors: [AvatarUser] = []
+
+        // Co-authored-by 格式：Co-authored-by: name <email>
+        let pattern = #"Co-authored-by:\s*([^<]+?)\s*<([^>]+)>"#
+        if let regex = try? NSRegularExpression(pattern: pattern) {
+            let range = NSRange(message.startIndex..., in: message)
+            let matches = regex.matches(in: message, range: range)
+
+            for match in matches {
+                if match.numberOfRanges >= 3 {
+                    let nameRange = Range(match.range(at: 1), in: message)!
+                    let emailRange = Range(match.range(at: 2), in: message)!
+
+                    let name = String(message[nameRange]).trimmingCharacters(in: .whitespaces)
+                    let email = String(message[emailRange]).trimmingCharacters(in: .whitespaces)
+
+                    coAuthors.append(AvatarUser(name: name, email: email))
+                }
+            }
+        }
+
+        return coAuthors
+    }
 }
 
 // MARK: - Event
 
 extension CommitRow {
     func onAppear() {
+        loadAvatarUsers()
         self.bg.async {
             loadTag()
         }
