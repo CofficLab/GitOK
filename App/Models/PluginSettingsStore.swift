@@ -146,6 +146,13 @@ enum ConfigurablePlugins {
                 description: "在状态栏提供 LICENSE 入口",
                 icon: "doc.on.doc",
                 isDeveloperEnabled: { LicensePlugin.enable }
+            ),
+            PluginInfo(
+                id: "SettingsButton",
+                name: "SettingsButton",
+                description: "在状态栏右侧显示设置按钮",
+                icon: "gearshape",
+                isDeveloperEnabled: { SettingsButtonPlugin.enable }
             )
         ].filter { $0.isDeveloperEnabled() }
     }
