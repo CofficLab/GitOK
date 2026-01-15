@@ -11,6 +11,15 @@ struct UserInfoPopup: View {
 
     @State private var avatarURL: URL?
 
+    /// 当前显示的头像 URL（优先使用从 API 获取的，否则使用 Gravatar）
+    private var displayedAvatarURL: URL {
+        if let url = avatarURL {
+            return url
+        }
+        // 使用 Gravatar URL 作为默认值
+        return AvatarService.shared.getGravatarURL(email: user.email, size: 64)
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             // 头部：头像和名称
@@ -73,17 +82,15 @@ struct UserInfoPopup: View {
                         Divider()
                     }
 
-                    // 头像 URL（如果有）
-                    if let url = avatarURL {
-                        infoRow(
-                            title: "头像地址",
-                            value: url.absoluteString,
-                            icon: .iconSafari,
-                            selectable: true
-                        )
+                    // 头像地址（总是显示）
+                    infoRow(
+                        title: "头像地址",
+                        value: displayedAvatarURL.absoluteString,
+                        icon: .iconSafari,
+                        selectable: true
+                    )
 
-                        Divider()
-                    }
+                    Divider()
 
                     // GitHub 主页按钮
                     if let githubURL = gitHubURL {
