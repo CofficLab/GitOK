@@ -18,6 +18,9 @@ struct CommitInfoUserInfoPopup: View, SuperLog {
     /// 显示的头像 URL（从 AvatarService 获取）
     @State private var displayedAvatarURL: URL?
 
+    /// 是否正在加载头像 URL
+    @State private var isLoadingAvatarURL: Bool = true
+
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             // 头部：头像和名称
@@ -61,7 +64,15 @@ struct CommitInfoUserInfoPopup: View, SuperLog {
                 Divider()
 
                 // 头像地址（总是显示）
-                if let avatarURL = displayedAvatarURL {
+                if isLoadingAvatarURL {
+                    MagicSettingRow(
+                        title: "头像地址",
+                        description: "加载中...",
+                        icon: .iconSafari
+                    ) {
+                        EmptyView()
+                    }
+                } else if let avatarURL = displayedAvatarURL {
                     MagicSettingRow(
                         title: "头像地址",
                         description: avatarURL.absoluteString,
@@ -72,7 +83,7 @@ struct CommitInfoUserInfoPopup: View, SuperLog {
                 } else {
                     MagicSettingRow(
                         title: "头像地址",
-                        description: "加载中...",
+                        description: "无",
                         icon: .iconSafari
                     ) {
                         EmptyView()
@@ -124,6 +135,7 @@ struct CommitInfoUserInfoPopup: View, SuperLog {
             let url = await AvatarService.shared.getAvatarURL(name: user.name, email: user.email, verbose: Self.verbose)
             await MainActor.run {
                 self.displayedAvatarURL = url
+                self.isLoadingAvatarURL = false
             }
         }
     }

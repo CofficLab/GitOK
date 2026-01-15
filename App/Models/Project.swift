@@ -260,7 +260,7 @@ extension Project {
         异步返回是否为Git仓库的布ool值
      */
     func isNotGitAsync() async -> Bool {
-        return !(await isGitAsync())
+        return (await isGitAsync()) == false
     }
 
     /**
@@ -786,10 +786,6 @@ extension Project {
 
             // 在推送前记录未推送的 commits
             let unpushedBeforePush = try LibGit2.getUnPushedCommits(at: self.path, verbose: false)
-            os_log(.default, "🔄 Before push: \(unpushedBeforePush.count) unpushed commits")
-            for commit in unpushedBeforePush.prefix(3) {
-                os_log(.default, "🔄 Unpushed: \(commit.hash.prefix(8)) - \(commit.message.prefix(50))")
-            }
 
             // 处理 SSH URL 转换
             try performWithConvertedSSHURL(operation: "push") {
@@ -844,24 +840,16 @@ extension Project {
     private func performWithConvertedSSHURL(operation: String, block: () throws -> Void) throws {
         // 获取当前远程 URL
         guard let remoteURL = LibGit2.getRemoteURL(at: self.path, remote: "origin") else {
-            print("⚠️ [Project] Failed to get remote URL, executing without conversion")
             try block()
             return
         }
-
-        print("🔍 [Project] Current remote URL for \(operation): \(remoteURL)")
 
         // 检查是否需要转换
         let convertedURL = SSHHelper.applySSHConfig(to: remoteURL)
 
         if convertedURL == remoteURL {
-            // 不需要转换，直接执行
-            print("ℹ️ [Project] No URL conversion needed for \(operation)")
             try block()
         } else {
-            // 需要转换，临时修改远程 URL
-            print("🔄 [Project] Converting SSH URL for \(operation): \(remoteURL) -> \(convertedURL)")
-
             // 保存原始 URL
             let originalURL = remoteURL
 
@@ -872,9 +860,8 @@ extension Project {
             defer {
                 do {
                     try LibGit2.setRemoteURL(at: self.path, remote: "origin", url: originalURL)
-                    print("✅ [Project] Restored original SSH URL")
                 } catch {
-                    print("⚠️ [Project] Failed to restore original URL: \(error)")
+                    os_log(.error, "\(self.t)Failed to restore original URL: \(error)")
                 }
             }
 
