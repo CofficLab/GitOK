@@ -73,7 +73,7 @@ enum ConfigurablePlugins {
                 id: "OpenVSCode",
                 name: "OpenVSCode",
                 description: "在 VS Code 中打开当前项目",
-                icon: "code",
+                icon: .iconCode,
                 isDeveloperEnabled: { OpenVSCodePlugin.enable }
             ),
             PluginInfo(
