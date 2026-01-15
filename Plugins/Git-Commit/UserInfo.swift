@@ -1,3 +1,4 @@
+import LibGit2Swift
 import MagicKit
 import MagicUI
 import OSLog
@@ -14,14 +15,11 @@ struct UserInfo: View, SuperLog {
     /// 是否启用详细日志输出
     nonisolated static let verbose = false
 
-    /// 要显示的用户列表
-    let users: [AvatarUser]
+    /// 提交对象，用于解析用户信息
+    let commit: GitCommit
 
-    /// 头像尺寸
-    let avatarSize: CGFloat
-
-    /// 最大显示的用户数量
-    let maxVisibleCount: Int
+    /// 解析出的用户信息
+    @State private var avatarUser: AvatarUser?
 
     /// 是否显示用户信息弹窗
     @State private var showingPopup = false
@@ -30,34 +28,49 @@ struct UserInfo: View, SuperLog {
     @State private var isHovering = false
 
     /// 初始化可点击用户信息组件
-    /// - Parameters:
-    ///   - users: 要显示的用户列表
-    ///   - avatarSize: 头像尺寸，默认18
-    ///   - maxVisibleCount: 最大显示的用户数量，默认3
-    init(users: [AvatarUser], avatarSize: CGFloat = 18, maxVisibleCount: Int = 3) {
-        self.users = users
-        self.avatarSize = avatarSize
-        self.maxVisibleCount = maxVisibleCount
+    /// - Parameter commit: 提交对象，用于解析用户信息
+    init(commit: GitCommit) {
+        self.commit = commit
+        _avatarUser = State(initialValue: parseAuthorInfo())
+    }
+
+    /// 解析提交的作者信息
+    private func parseAuthorInfo() -> AvatarUser? {
+        // author 格式可能是 "name <email>" 或只是 "name"
+        if let emailRange = commit.author.range(of: "<([^>]+)>", options: .regularExpression) {
+            // 有邮箱
+            let emailStartIndex = commit.author.index(emailRange.lowerBound, offsetBy: 1)
+            let emailEndIndex = commit.author.index(emailRange.upperBound, offsetBy: -1)
+            let authorEmail = String(commit.author[emailStartIndex ..< emailEndIndex])
+
+            let nameEndIndex = commit.author.index(emailRange.lowerBound, offsetBy: -2)
+            let authorName = String(commit.author[..<nameEndIndex]).trimmingCharacters(in: .whitespaces)
+
+            return AvatarUser(name: authorName, email: authorEmail)
+        } else {
+            // 没有邮箱，使用 author 作为 name
+            return AvatarUser(name: commit.author, email: "")
+        }
     }
 
     var body: some View {
         Button(action: {
             showingPopup = true
             if Self.verbose {
-                if let firstUser = users.first {
-                    os_log("\(self.t)点击了用户: \(firstUser.name), 邮箱: \(firstUser.email)")
+                if let user = avatarUser {
+                    os_log("\(self.t)点击了用户: \(user.name), 邮箱: \(user.email)")
                 } else {
-                    os_log("\(self.t)用户列表为空")
+                    os_log("\(self.t)用户信息为空")
                 }
             }
         }) {
             HStack(spacing: 6) {
-                // 头像堆栈或回退图标
-                if !users.isEmpty {
-                    AvatarStackView(users: users, avatarSize: avatarSize, maxVisibleCount: maxVisibleCount)
+                // 头像或回退图标
+                if let user = avatarUser {
+                    AvatarView(user: user, size: 18)
 
                     // 用户名
-                    Text(allAuthorsText)
+                    Text(user.name)
                         .font(.caption)
                         .foregroundColor(isHovering ? .primary : .secondary)
                 } else {
@@ -87,8 +100,8 @@ struct UserInfo: View, SuperLog {
             isHovering = hovering
         }
         .popover(isPresented: $showingPopup, arrowEdge: .bottom) {
-            // 直接使用 users.first，不依赖状态
-            if let user = users.first {
+            // 直接使用 avatarUser
+            if let user = avatarUser {
                 UserInfoPopup(user: user)
                     .frame(width: 800)
                     .background(Color(nsColor: .windowBackgroundColor))
@@ -100,10 +113,6 @@ struct UserInfo: View, SuperLog {
         }
     }
 
-    /// 所有作者姓名的文本表示（用逗号分隔）
-    private var allAuthorsText: String {
-        users.map { $0.name }.joined(separator: ", ")
-    }
 }
 
 // MARK: - Preview
@@ -111,44 +120,31 @@ struct UserInfo: View, SuperLog {
 #Preview("App - Small Screen") {
     HStack(spacing: 20) {
         UserInfo(
-            users: [
-                AvatarUser(name: "octocat", email: "octocat@users.noreply.github.com"),
-            ],
-            avatarSize: 18
+            commit: GitCommit(
+                id: "1",
+                hash: "abc123",
+                author: "octocat <octocat@users.noreply.github.com>",
+                email: "",
+                date: Date(),
+                message: "Test commit",
+                body: "",
+                refs: [],
+                tags: []
+            )
         )
 
         UserInfo(
-            users: [
-                AvatarUser(name: "Alice", email: "alice@example.com"),
-                AvatarUser(name: "Bob", email: "bob@example.com"),
-            ],
-            avatarSize: 18
-        )
-
-        UserInfo(
-            users: [],
-            avatarSize: 18
-        )
-    }
-    .padding()
-}
-
-#Preview("App - Big Screen") {
-    VStack(spacing: 20) {
-        UserInfo(
-            users: [
-                AvatarUser(name: "octocat", email: "octocat@users.noreply.github.com"),
-            ],
-            avatarSize: 24
-        )
-
-        UserInfo(
-            users: [
-                AvatarUser(name: "Alice", email: "alice@example.com"),
-                AvatarUser(name: "Bob", email: "bob@example.com"),
-                AvatarUser(name: "Charlie", email: "charlie@example.com"),
-            ],
-            avatarSize: 24
+            commit: GitCommit(
+                id: "2",
+                hash: "def456",
+                author: "Alice",
+                email: "",
+                date: Date(),
+                message: "Test commit 2",
+                body: "",
+                refs: [],
+                tags: []
+            )
         )
     }
     .padding()
