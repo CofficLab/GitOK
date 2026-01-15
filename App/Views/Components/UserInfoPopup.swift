@@ -125,7 +125,6 @@ struct ClickableUserInfo: View {
     let maxVisibleCount: Int
 
     @State private var showingPopup = false
-    @State private var selectedUser: AvatarUser?
 
     init(users: [AvatarUser], avatarSize: CGFloat = 18, maxVisibleCount: Int = 3) {
         self.users = users
@@ -135,14 +134,9 @@ struct ClickableUserInfo: View {
 
     var body: some View {
         Button(action: {
-            // 点击第一个用户
+            showingPopup = true
             if let firstUser = users.first {
-                selectedUser = firstUser
                 print("点击了用户: \(firstUser.name), 邮箱: \(firstUser.email)")
-                // 延迟一帧，确保 selectedUser 先更新
-                DispatchQueue.main.async {
-                    showingPopup = true
-                }
             } else {
                 print("用户列表为空")
             }
@@ -162,13 +156,13 @@ struct ClickableUserInfo: View {
         .buttonStyle(.plain)
         .help("点击查看用户信息")
         .popover(isPresented: $showingPopup, arrowEdge: .bottom) {
-            if let user = selectedUser {
-                VStack {
-                    UserInfoPopup(user: user)
-                }
-                .frame(width: 300, height: 200)
-                .background(Color(nsColor: .windowBackgroundColor))
+            // 直接使用 users.first，不依赖状态
+            if let user = users.first {
+                UserInfoPopup(user: user)
+                    .frame(width: 300)
+                    .background(Color(nsColor: .windowBackgroundColor))
             } else {
+                // 只有在真的没有用户时才显示这个
                 Text("未找到用户信息")
                     .frame(width: 200, height: 100)
             }
