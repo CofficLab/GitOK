@@ -28,52 +28,77 @@ struct CommitInfoView: View, SuperLog {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            HStack {
-                // Commit 图标
-                Image.dotCircle
-                    .foregroundColor(.blue)
-                    .font(.system(size: 12))
-
-                // Commit 消息
-                Text(commit.message)
-                    .font(.headline)
-                    .lineLimit(2)
-
-                Spacer()
-            }
+            commitMessageHeader
 
             Divider()
 
-            // Commit body（如果有）
+            /// Commit body（如果有）
             CommitBodyInfo(commit: commit)
 
-            HStack(spacing: 16) {
-                // 作者信息（可点击的头像+用户名）
-                if !commit.author.isEmpty {
-                    UserInfo(users: avatarUsers, avatarSize: 18, maxVisibleCount: 3)
-                }
-
-                // 提交时间
-                CommitTimeInfo(commit: commit, showingTimePopup: $showingTimePopup)
-
-                // Hash 信息
-                CommitHashInfo(commit: commit, isCopied: $isCopied, showingHashPopup: $showingHashPopup)
-
-                Spacer()
-            }
+            commitDetailsSection
         }
-        .onAppear {
-            loadAvatarUsers()
+        .onApplicationDidBecomeActive(perform: handleOnAppear)
+    }
+}
+
+// MARK: - View
+
+extension CommitInfoView {
+    /// 提交消息头部显示
+    private var commitMessageHeader: some View {
+        HStack {
+            /// Commit 图标
+            Image.dotCircle
+                .foregroundColor(.blue)
+                .font(.system(size: 12))
+
+            /// Commit 消息
+            Text(commit.message)
+                .font(.headline)
+                .lineLimit(2)
+
+            Spacer()
         }
     }
 
-    // MARK: - 头像加载
+    /// 提交详细信息区域
+    private var commitDetailsSection: some View {
+        HStack(spacing: 16) {
+            /// 作者信息
+            if !commit.author.isEmpty {
+                UserInfo(users: avatarUsers, avatarSize: 18, maxVisibleCount: 3)
+            }
+
+            /// 提交时间
+            CommitTimeInfo(commit: commit, showingTimePopup: $showingTimePopup)
+
+            /// Hash 信息
+            CommitHashInfo(commit: commit, isCopied: $isCopied, showingHashPopup: $showingHashPopup)
+
+            Spacer()
+        }
+    }
+}
+
+// MARK: - Event Handler
+
+extension CommitInfoView {
+    /// 视图出现时的事件处理
+    func handleOnAppear() {
+        loadAvatarUsers()
+    }
+}
+
+// MARK: - Private Helpers
+
+extension CommitInfoView {
+    // MARK: - Avatar Loading
 
     /// 解析提交的作者信息（包括 co-authors）
     private func loadAvatarUsers() {
         var users: [AvatarUser] = []
 
-        // 解析作者信息
+        /// 解析作者信息
         let authorName: String
         let authorEmail: String
 
