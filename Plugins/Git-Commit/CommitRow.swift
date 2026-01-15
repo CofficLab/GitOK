@@ -39,9 +39,9 @@ struct CommitRow: View, SuperThread {
 
                         // 第二行：头像 + 作者（包括 Co-Authored-By）
                         HStack(spacing: 4) {
-                            // 头像堆栈
-                            if !avatarUsers.isEmpty {
-                                AvatarStackView(users: avatarUsers, avatarSize: 14, maxVisibleCount: 2)
+                            // 单个头像（只显示主作者）
+                            if let firstUser = avatarUsers.first {
+                                AvatarView(user: firstUser, size: 14)
                             }
 
                             // 作者文本
