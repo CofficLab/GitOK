@@ -26,12 +26,6 @@ struct CommitInfoView: View, SuperLog {
     /// 是否显示提交Hash详情弹窗
     @State private var showingHashPopup = false
 
-    /// 是否正在悬停时间区域
-    @State private var isTimeHovering = false
-
-    /// 是否正在悬停Hash区域
-    @State private var isHashHovering = false
-
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
@@ -86,97 +80,10 @@ struct CommitInfoView: View, SuperLog {
                 }
 
                 // 提交时间
-                if commit.date != Date(timeIntervalSince1970: 0) {
-                    Button(action: {
-                        showingTimePopup = true
-                    }) {
-                        HStack(spacing: 4) {
-                            Image(systemName: "clock")
-                                .foregroundColor(.secondary)
-                                .font(.system(size: 12))
-                            Text(commit.date.fullDateTime)
-                                .font(.caption)
-                                .foregroundColor(isTimeHovering ? .primary : .secondary)
-                        }
-                        .padding(.horizontal, 6)
-                        .padding(.vertical, 3)
-                        .background(
-                            RoundedRectangle(cornerRadius: 6)
-                                .fill(isTimeHovering ? Color.secondary.opacity(0.2) : Color.clear)
-                        )
-                        .scaleEffect(isTimeHovering ? 1.02 : 1.0)
-                        .animation(.easeInOut(duration: 0.2), value: isTimeHovering)
-                    }
-                    .buttonStyle(.plain)
-                    .help("点击查看完整时间信息")
-                    .onHover { hovering in
-                        isTimeHovering = hovering
-                    }
-                    .popover(isPresented: $showingTimePopup, arrowEdge: .bottom) {
-                        CommitTimePopup(commit: commit)
-                            .frame(width: 350)
-                            .background(Color(nsColor: .windowBackgroundColor))
-                    }
-                }
+                CommitTimeInfo(commit: commit, showingTimePopup: $showingTimePopup)
 
                 // Hash 信息
-                if !commit.hash.isEmpty {
-                    Button(action: {
-                        showingHashPopup = true
-                    }) {
-                        HStack(spacing: 4) {
-                            Image(systemName: "number")
-                                .foregroundColor(.secondary)
-                                .font(.system(size: 12))
-                            Text(commit.hash.prefix(8))
-                                .font(.system(.caption, design: .monospaced))
-                                .foregroundColor(isHashHovering ? .primary : .secondary)
-                                .textSelection(.enabled)
-
-                            // 复制按钮
-                            Button(action: {
-                                commit.hash.copy()
-                                withAnimation(.spring()) {
-                                    isCopied = true
-                                }
-
-                                // 1.5秒后重置状态
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-                                    withAnimation(.spring()) {
-                                        isCopied = false
-                                    }
-                                }
-                            }) {
-                                Image(systemName: isCopied ? "checkmark.circle" : "doc.on.doc")
-                                    .font(.system(size: 10))
-                                    .foregroundColor(isCopied ? .green : .secondary)
-                                    .scaleEffect(isCopied ? 1.2 : 1.0)
-                            }
-                            .buttonStyle(.plain)
-                            .help(isCopied ? "已复制" : "复制完整 Hash")
-
-                            Spacer()
-                        }
-                        .padding(.horizontal, 6)
-                        .padding(.vertical, 3)
-                        .background(
-                            RoundedRectangle(cornerRadius: 6)
-                                .fill(isHashHovering ? Color.secondary.opacity(0.2) : Color.clear)
-                        )
-                        .scaleEffect(isHashHovering ? 1.02 : 1.0)
-                        .animation(.easeInOut(duration: 0.2), value: isHashHovering)
-                    }
-                    .buttonStyle(.plain)
-                    .help("点击查看完整 Hash 信息")
-                    .onHover { hovering in
-                        isHashHovering = hovering
-                    }
-                    .popover(isPresented: $showingHashPopup, arrowEdge: .bottom) {
-                        CommitHashPopup(commit: commit, isCopied: $isCopied)
-                            .frame(width: 450)
-                            .background(Color(nsColor: .windowBackgroundColor))
-                    }
-                }
+                CommitHashInfo(commit: commit, isCopied: $isCopied, showingHashPopup: $showingHashPopup)
 
                 Spacer()
             }
