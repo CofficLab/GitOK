@@ -49,9 +49,7 @@ struct CommitInfoView: View, SuperLog {
             /// 提交详细信息区域
             HStack(spacing: 16) {
                 /// 作者信息
-                if !commit.author.isEmpty {
-                    UserInfo(commit: commit)
-                }
+                UserInfo(commit: commit)
 
                 /// 提交时间
                 CommitTimeInfo(commit: commit, showingTimePopup: $showingTimePopup)
