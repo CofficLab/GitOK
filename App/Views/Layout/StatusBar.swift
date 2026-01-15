@@ -39,7 +39,7 @@ struct StatusBar: View, SuperLog {
         .frame(maxWidth: .infinity)
         .frame(height: 32)
         #if DEBUG
-        .background(Color.accentColor.opacity(0.4))
+        .background(Color.primary.opacity(0.4))
         #else
         .background(Color.accentColor.opacity(0.4))
         #endif
