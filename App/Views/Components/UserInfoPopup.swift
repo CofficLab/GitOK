@@ -1,45 +1,8 @@
 import SwiftUI
+import MagicUI
 
 // 确保能访问 AvatarUser、AvatarView、AvatarStackView
 // 这些类型已在其他文件中定义
-
-/// 信息行组件（类似设置界面的 key-value 展示）
-struct InfoRow: View {
-    let label: String
-    let value: String
-    var selectable: Bool = false
-
-    var body: some View {
-        HStack(alignment: .top, spacing: 12) {
-            // 标签
-            Text(label)
-                .font(.caption)
-                .foregroundColor(.secondary)
-                .frame(width: 70, alignment: .leading)
-                .padding(.top, 8)
-
-            // 值
-            if selectable {
-                Text(value)
-                    .font(.caption)
-                    .foregroundColor(.primary)
-                    .textSelection(.enabled)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.top, 8)
-                    .padding(.trailing, 16)
-            } else {
-                Text(value)
-                    .font(.caption)
-                    .foregroundColor(.primary)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.top, 8)
-                    .padding(.trailing, 16)
-            }
-        }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 4)
-    }
-}
 
 /// 用户信息弹出视图组件
 /// 显示用户的详细信息，包括头像、名称、邮箱等
@@ -76,63 +39,63 @@ struct UserInfoPopup: View {
 
             Divider()
 
-            // 信息列表
-            VStack(alignment: .leading, spacing: 0) {
+            // 信息列表（使用 MagicSettingRow）
+            VStack(spacing: 0) {
                 // 用户名
-                InfoRow(label: "用户名", value: user.name)
+                infoRow(
+                    title: "用户名",
+                    value: user.name,
+                    icon: .iconUser
+                )
 
                 if !user.email.isEmpty {
                     Divider()
-                        .padding(.leading, 16)
 
-                    InfoRow(label: "邮箱", value: user.email, selectable: true)
+                    // 邮箱
+                    infoRow(
+                        title: "邮箱",
+                        value: user.email,
+                        icon: .iconMail,
+                        selectable: true
+                    )
 
                     Divider()
-                        .padding(.leading, 16)
 
                     // GitHub 用户名（如果有）
                     if !gitHubUsername.isEmpty {
-                        InfoRow(label: "GitHub", value: gitHubUsername)
-                    }
+                        infoRow(
+                            title: "GitHub",
+                            value: gitHubUsername,
+                            icon: .iconInfo
+                        )
 
-                    Divider()
-                        .padding(.leading, 16)
+                        Divider()
+                    }
 
                     // 头像 URL（如果有）
                     if let url = avatarURL {
-                        InfoRow(label: "头像地址", value: url.absoluteString, selectable: true)
+                        infoRow(
+                            title: "头像地址",
+                            value: url.absoluteString,
+                            icon: .iconSafari,
+                            selectable: true
+                        )
+
+                        Divider()
                     }
 
-                    Divider()
-                        .padding(.leading, 16)
-
-                    // GitHub 链接
+                    // GitHub 主页按钮
                     if let githubURL = gitHubURL {
-                        Button(action: {
-                            NSWorkspace.shared.open(githubURL)
-                        }) {
-                            HStack {
-                                Text("GitHub 主页")
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
-                                Spacer()
-                                Text("打开")
-                                    .font(.caption)
-                                    .foregroundColor(.blue)
-                                Image(systemName: "arrow.up.right.square")
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
-                            }
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 8)
-                            .contentShape(Rectangle())
-                        }
-                        .buttonStyle(.plain)
+                        linkRow(
+                            title: "GitHub 主页",
+                            url: githubURL.absoluteString,
+                            icon: .iconSafari
+                        )
                     }
                 }
             }
         }
-        .frame(width: 320)
+        .frame(width: 350)
         .onAppear {
             loadAvatarURL()
         }
@@ -146,6 +109,45 @@ struct UserInfoPopup: View {
                     self.avatarURL = url
                 }
             }
+        }
+    }
+
+    // MARK: - View Components
+
+    /// 信息行（类似 AboutView 的样式）
+    private func infoRow(title: String, value: String, icon: String, selectable: Bool = false) -> some View {
+        MagicSettingRow(
+            title: title,
+            description: value,
+            icon: icon
+        ) {
+            if selectable {
+                // 可选择的文本，可以复制
+                Text(value)
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                    .textSelection(.enabled)
+            } else {
+                EmptyView()
+            }
+        }
+    }
+
+    /// 链接行（可点击打开）
+    private func linkRow(title: String, url: String, icon: String) -> some View {
+        MagicSettingRow(
+            title: title,
+            description: url,
+            icon: icon
+        ) {
+            MagicButton.simple {
+                if let url = URL(string: url) {
+                    NSWorkspace.shared.open(url)
+                }
+            }
+            .magicIcon(.iconSafari)
+            .magicShape(.circle)
+            .magicShapeVisibility(.onHover)
         }
     }
 
