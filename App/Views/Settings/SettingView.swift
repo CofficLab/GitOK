@@ -115,15 +115,21 @@ struct SettingView: View, SuperLog {
                 .font(.headline)
                 .fontWeight(.semibold)
 
-            // App 版本
-            Text("v\(appInfo.version)")
-                .font(.caption2)
-                .foregroundColor(.secondary)
+            // 版本和 Build 信息
+            VStack(alignment: .center, spacing: 2) {
+                Text("v\(appInfo.version)")
+                    .font(.caption2)
+                    .foregroundColor(.secondary)
+
+                Text("Build \(appInfo.build)")
+                    .font(.caption2)
+                    .foregroundColor(.secondary)
+            }
 
             Spacer().frame(height: 16)
         }
         .frame(maxWidth: .infinity)
-        .background(Color(nsColor: .controlBackgroundColor))
+        // .background(Color(nsColor: .controlBackgroundColor))
     }
 }
 
