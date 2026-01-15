@@ -79,6 +79,7 @@ extension CommitList {
                     let commit = commits[index]
                     let isUnpushed = unpushedCommits.contains(commit.hash)
                     CommitRow(commit: commit, isUnpushed: isUnpushed)
+                        .id(commit.hash) // 根据 commit hash 强制视图刷新，避免状态复用
                         .overlay(alignment: .trailing) {
                             // 在第一个 commit 右侧显示刷新 loading
                             if index == 0 && isRefreshing {
