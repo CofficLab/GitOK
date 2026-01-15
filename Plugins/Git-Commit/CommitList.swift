@@ -10,7 +10,7 @@ struct CommitList: View, SuperThread, SuperLog {
     nonisolated static let emoji = "🖥️"
 
     /// 是否启用详细日志输出
-    nonisolated static let verbose = false
+    nonisolated static let verbose = true
 
     /// 单例实例
     static var shared = CommitList()
@@ -147,14 +147,7 @@ extension CommitList {
     /// 使用分页方式获取下一页的提交数据
     private func loadMoreCommits() {
         guard let project = data.project, !loading, hasMoreCommits else {
-            if Self.verbose {
-                os_log("\(self.t)🔄 LoadMoreCommits skipped - loading: \(loading), hasMore: \(hasMoreCommits)")
-            }
             return
-        }
-
-        if Self.verbose {
-            os_log("\(self.t)🔄 LoadMoreCommits started - page: \(currentPage), total: \(commits.count)")
         }
 
         loading = true
@@ -165,23 +158,12 @@ extension CommitList {
                 limit: self.pageSize
             )
 
-            if Self.verbose {
-                os_log("\(self.t)🔄 LoadMoreCommits - page: \(self.currentPage), fetched: \(newCommits.count) commits")
-                for (index, commit) in newCommits.prefix(3).enumerated() {
-                    os_log("\(self.t)🔄 New Commit \(index): \(commit.hash.prefix(8)) - \(commit.message.prefix(50))")
-                }
-            }
-
             if !newCommits.isEmpty {
                 // 添加去重逻辑，防止重复添加相同的commit
                 let uniqueNewCommits = newCommits.filter { newCommit in
                     !commits.contains { existingCommit in
                         existingCommit.hash == newCommit.hash
                     }
-                }
-
-                if Self.verbose {
-                    os_log("\(self.t)🔄 LoadMoreCommits - fetched: \(newCommits.count), unique: \(uniqueNewCommits.count)")
                 }
 
                 if !uniqueNewCommits.isEmpty {
@@ -192,9 +174,6 @@ extension CommitList {
                 currentPage += 1
             } else {
                 hasMoreCommits = false
-                if Self.verbose {
-                    os_log("\(self.t)🔄 LoadMoreCommits - no more commits available")
-                }
             }
             loading = false
 
@@ -218,9 +197,7 @@ extension CommitList {
     /// 设置当前选中的提交（异步版本）
     /// - Parameter commit: 要设置的提交对象，可选
     func setCommit(_ commit: GitCommit?) {
-        DispatchQueue.main.async {
-            data.setCommit(commit)
-        }
+        data.setCommit(commit)
     }
 
     /// 刷新提交列表数据
