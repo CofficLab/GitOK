@@ -84,6 +84,13 @@ enum ConfigurablePlugins {
                 isDeveloperEnabled: { OpenTraePlugin.enable }
             ),
             PluginInfo(
+                id: "OpenAntigravity",
+                name: "OpenAntigravity",
+                description: "在 Antigravity 中打开当前项目",
+                icon: "paperplane",
+                isDeveloperEnabled: { OpenAntigravityPlugin.enable }
+            ),
+            PluginInfo(
                 id: "OpenFinder",
                 name: "OpenFinder",
                 description: "在 Finder 中打开当前项目目录",

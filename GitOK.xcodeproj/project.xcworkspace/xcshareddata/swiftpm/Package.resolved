@@ -31,7 +31,7 @@
     {
       "identity" : "magicdevice",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/nookery/MagicDevice.git",
+      "location" : "https://github.com/nookery/MagicDevice",
       "state" : {
         "branch" : "main",
         "revision" : "60c9bf7cd59566ec64b7088fa8672a6b1c2c5cf2"
@@ -52,7 +52,7 @@
       "location" : "https://github.com/CofficLab/MagicKit",
       "state" : {
         "branch" : "dev",
-        "revision" : "9d70346ebba7a25e03f4d2c5bfbb4fd5a57eee18"
+        "revision" : "b14716eb747f83f2f7cf094ba0307440071025c6"
       }
     },
     {
@@ -87,8 +87,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/sparkle-project/Sparkle",
       "state" : {
-        "revision" : "0ef1ee0220239b3776f433314515fd849025673f",
-        "version" : "2.6.4"
+        "revision" : "5581748cef2bae787496fe6d61139aebe0a451f6",
+        "version" : "2.8.1"
       }
     },
     {
