@@ -1,14 +1,21 @@
-import SwiftUI
+import MagicKit
 import MagicUI
-
-// 确保能访问 AvatarUser、AvatarView、AvatarStackView
-// 这些类型已在其他文件中定义
+import OSLog
+import SwiftUI
 
 /// 用户信息弹出视图组件
 /// 显示用户的详细信息，包括头像、名称、邮箱等
-struct UserInfoPopup: View {
+struct UserInfoPopup: View, SuperLog {
+    /// 日志标识符
+    nonisolated static let emoji = "👤"
+
+    /// 是否启用详细日志输出
+    nonisolated static let verbose = false
+
+    /// 要显示的用户信息
     let user: AvatarUser
 
+    /// 从API获取的头像URL
     @State private var avatarURL: URL?
 
     /// 当前显示的头像 URL（优先使用从 API 获取的，否则使用 Gravatar）
@@ -92,13 +99,14 @@ struct UserInfoPopup: View {
                 }
             }
         }
-        .frame(width: 450)
+        .frame(width: 600)
         .onAppear {
             loadAvatarURL()
         }
     }
 
     /// 异步加载头像 URL
+    /// 从 AvatarService 获取用户的头像 URL
     private func loadAvatarURL() {
         Task {
             if let url = await AvatarService.shared.getAvatarURL(name: user.name, email: user.email) {
@@ -108,9 +116,11 @@ struct UserInfoPopup: View {
             }
         }
     }
+}
 
-    // MARK: - View Components
+// MARK: - View
 
+extension UserInfoPopup {
     /// 信息行（类似 AboutView 的样式）
     private func infoRow(title: String, value: String, icon: String, selectable: Bool = false) -> some View {
         MagicSettingRow(
@@ -149,6 +159,7 @@ struct UserInfoPopup: View {
     }
 
     /// 从邮箱中提取 GitHub 用户名
+    /// 如果是 GitHub 的自动生成邮箱，则返回 @用户名 格式
     private var gitHubUsername: String {
         // GitHub 邮箱格式：username@users.noreply.github.com
         let pattern = #"^(.+)@users\.noreply\.github\.com$"#
@@ -184,14 +195,34 @@ struct UserInfoPopup: View {
     }
 }
 
+// MARK: - ClickableUserInfo
+
 /// 可点击的用户信息组件
-struct ClickableUserInfo: View {
+/// 点击时显示用户详细信息弹窗
+struct ClickableUserInfo: View, SuperLog {
+    /// 日志标识符
+    nonisolated static let emoji = "👆"
+
+    /// 是否启用详细日志输出
+    nonisolated static let verbose = false
+
+    /// 要显示的用户列表
     let users: [AvatarUser]
+
+    /// 头像尺寸
     let avatarSize: CGFloat
+
+    /// 最大显示的用户数量
     let maxVisibleCount: Int
 
+    /// 是否显示用户信息弹窗
     @State private var showingPopup = false
 
+    /// 初始化可点击用户信息组件
+    /// - Parameters:
+    ///   - users: 要显示的用户列表
+    ///   - avatarSize: 头像尺寸，默认18
+    ///   - maxVisibleCount: 最大显示的用户数量，默认3
     init(users: [AvatarUser], avatarSize: CGFloat = 18, maxVisibleCount: Int = 3) {
         self.users = users
         self.avatarSize = avatarSize
@@ -201,10 +232,12 @@ struct ClickableUserInfo: View {
     var body: some View {
         Button(action: {
             showingPopup = true
-            if let firstUser = users.first {
-                print("点击了用户: \(firstUser.name), 邮箱: \(firstUser.email)")
-            } else {
-                print("用户列表为空")
+            if Self.verbose {
+                if let firstUser = users.first {
+                    os_log("\(self.t)点击了用户: \(firstUser.name), 邮箱: \(firstUser.email)")
+                } else {
+                    os_log("\(self.t)用户列表为空")
+                }
             }
         }) {
             HStack(spacing: 6) {
@@ -235,12 +268,15 @@ struct ClickableUserInfo: View {
         }
     }
 
+    /// 所有作者姓名的文本表示（用逗号分隔）
     private var allAuthorsText: String {
         users.map { $0.name }.joined(separator: ", ")
     }
 }
 
-#Preview("User Info Popup") {
+// MARK: - Preview
+
+#Preview("App - Small Screen") {
     VStack(spacing: 20) {
         // GitHub 用户
         UserInfoPopup(user: AvatarUser(name: "octocat", email: "octocat@users.noreply.github.com"))
@@ -259,11 +295,11 @@ struct ClickableUserInfo: View {
     .frame(width: 400)
 }
 
-#Preview("Clickable User Info") {
+#Preview("App - Big Screen") {
     HStack(spacing: 20) {
         ClickableUserInfo(
             users: [
-                AvatarUser(name: "octocat", email: "octocat@users.noreply.github.com")
+                AvatarUser(name: "octocat", email: "octocat@users.noreply.github.com"),
             ],
             avatarSize: 18
         )
@@ -271,7 +307,7 @@ struct ClickableUserInfo: View {
         ClickableUserInfo(
             users: [
                 AvatarUser(name: "Alice", email: "alice@example.com"),
-                AvatarUser(name: "Bob", email: "bob@example.com")
+                AvatarUser(name: "Bob", email: "bob@example.com"),
             ],
             avatarSize: 18
         )
