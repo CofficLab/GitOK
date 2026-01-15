@@ -20,6 +20,12 @@ struct CommitInfoView: View, SuperLog {
     /// 头像用户列表
     @State private var avatarUsers: [AvatarUser] = []
 
+    /// 是否显示提交时间详情弹窗
+    @State private var showingTimePopup = false
+
+    /// 是否显示提交Hash详情弹窗
+    @State private var showingHashPopup = false
+
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
@@ -75,50 +81,72 @@ struct CommitInfoView: View, SuperLog {
 
                 // 提交时间
                 if commit.date != Date(timeIntervalSince1970: 0) {
-                    HStack(spacing: 4) {
-                        Image(systemName: "clock")
-                            .foregroundColor(.secondary)
-                            .font(.system(size: 12))
-                        Text(commit.date.fullDateTime)
-                            .font(.caption)
-                            .foregroundColor(.secondary)
+                    Button(action: {
+                        showingTimePopup = true
+                    }) {
+                        HStack(spacing: 4) {
+                            Image(systemName: "clock")
+                                .foregroundColor(.secondary)
+                                .font(.system(size: 12))
+                            Text(commit.date.fullDateTime)
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                    .buttonStyle(.plain)
+                    .help("点击查看完整时间信息")
+                    .popover(isPresented: $showingTimePopup, arrowEdge: .bottom) {
+                        CommitTimePopup(commit: commit)
+                            .frame(width: 350)
+                            .background(Color(nsColor: .windowBackgroundColor))
                     }
                 }
 
                 // Hash 信息
                 if !commit.hash.isEmpty {
-                    HStack(spacing: 4) {
-                        Image(systemName: "number")
-                            .foregroundColor(.secondary)
-                            .font(.system(size: 12))
-                        Text(commit.hash.prefix(8))
-                            .font(.system(.caption, design: .monospaced))
-                            .foregroundColor(.secondary)
-                            .textSelection(.enabled)
+                    Button(action: {
+                        showingHashPopup = true
+                    }) {
+                        HStack(spacing: 4) {
+                            Image(systemName: "number")
+                                .foregroundColor(.secondary)
+                                .font(.system(size: 12))
+                            Text(commit.hash.prefix(8))
+                                .font(.system(.caption, design: .monospaced))
+                                .foregroundColor(.secondary)
+                                .textSelection(.enabled)
 
-                        // 复制按钮
-                        Button(action: {
-                            commit.hash.copy()
-                            withAnimation(.spring()) {
-                                isCopied = true
-                            }
-
-                            // 1.5秒后重置状态
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                            // 复制按钮
+                            Button(action: {
+                                commit.hash.copy()
                                 withAnimation(.spring()) {
-                                    isCopied = false
+                                    isCopied = true
                                 }
-                            }
-                        }) {
-                            Image(systemName: isCopied ? "checkmark.circle" : "doc.on.doc")
-                                .font(.system(size: 10))
-                                .foregroundColor(isCopied ? .green : .secondary)
-                                .scaleEffect(isCopied ? 1.2 : 1.0)
-                        }
-                        .buttonStyle(.plain)
-                        .help(isCopied ? "已复制" : "复制完整 Hash")
 
-                        Spacer()
+                                // 1.5秒后重置状态
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                                    withAnimation(.spring()) {
+                                        isCopied = false
+                                    }
+                                }
+                            }) {
+                                Image(systemName: isCopied ? "checkmark.circle" : "doc.on.doc")
+                                    .font(.system(size: 10))
+                                    .foregroundColor(isCopied ? .green : .secondary)
+                                    .scaleEffect(isCopied ? 1.2 : 1.0)
+                            }
+                            .buttonStyle(.plain)
+                            .help(isCopied ? "已复制" : "复制完整 Hash")
+
+                            Spacer()
+                        }
+                    }
+                    .buttonStyle(.plain)
+                    .help("点击查看完整 Hash 信息")
+                    .popover(isPresented: $showingHashPopup, arrowEdge: .bottom) {
+                        CommitHashPopup(commit: commit, isCopied: $isCopied)
+                            .frame(width: 450)
+                            .background(Color(nsColor: .windowBackgroundColor))
                     }
                 }
 
@@ -218,6 +246,202 @@ struct CommitInfoView: View, SuperLog {
         .frame(width: 600)
         .frame(height: 600)
 }
+
+// MARK: - CommitTimePopup
+
+/// 提交时间详情弹出组件
+struct CommitTimePopup: View {
+    let commit: GitCommit
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            // 标题
+            Text("提交时间详情")
+                .font(.headline)
+                .foregroundColor(.primary)
+
+            Divider()
+
+            // 时间信息列表
+            VStack(spacing: 12) {
+                // 完整日期时间
+                timeInfoRow(
+                    title: "完整时间",
+                    value: commit.date.fullDateTime,
+                    icon: "clock.fill"
+                )
+
+                // 相对时间
+                timeInfoRow(
+                    title: "相对时间",
+                    value: commit.date.formatted(.relative(presentation: .named)),
+                    icon: "clock.arrow.circlepath"
+                )
+
+                // ISO 格式
+                timeInfoRow(
+                    title: "ISO 格式",
+                    value: ISO8601DateFormatter().string(from: commit.date),
+                    icon: "calendar.badge.clock",
+                    selectable: true
+                )
+
+                // Unix 时间戳
+                timeInfoRow(
+                    title: "Unix 时间戳",
+                    value: "\(Int(commit.date.timeIntervalSince1970))",
+                    icon: "number.circle",
+                    selectable: true
+                )
+            }
+        }
+        .padding(20)
+    }
+
+    private func timeInfoRow(title: String, value: String, icon: String, selectable: Bool = false) -> some View {
+        HStack(spacing: 12) {
+            Image(systemName: icon)
+                .foregroundColor(.secondary)
+                .font(.system(size: 16))
+                .frame(width: 20)
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title)
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+
+                if selectable {
+                    Text(value)
+                        .font(.system(.body, design: .monospaced))
+                        .foregroundColor(.primary)
+                        .textSelection(.enabled)
+                } else {
+                    Text(value)
+                        .font(.system(.body, design: .monospaced))
+                        .foregroundColor(.primary)
+                }
+            }
+
+            Spacer()
+        }
+        .padding(.vertical, 8)
+    }
+}
+
+// MARK: - CommitHashPopup
+
+/// 提交Hash详情弹出组件
+struct CommitHashPopup: View {
+    let commit: GitCommit
+    @Binding var isCopied: Bool
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            // 标题
+            Text("提交 Hash 详情")
+                .font(.headline)
+                .foregroundColor(.primary)
+
+            Divider()
+
+            // Hash 信息列表
+            VStack(spacing: 12) {
+                // 完整 Hash
+                hashInfoRow(
+                    title: "完整 Hash",
+                    value: commit.hash,
+                    icon: "number.circle.fill",
+                    selectable: true,
+                    showCopyButton: true
+                )
+
+                // 短 Hash (8位)
+                hashInfoRow(
+                    title: "短 Hash (8位)",
+                    value: String(commit.hash.prefix(8)),
+                    icon: "number.circle",
+                    selectable: true,
+                    showCopyButton: true
+                )
+
+                // Hash 长度
+                hashInfoRow(
+                    title: "Hash 长度",
+                    value: "\(commit.hash.count) 字符",
+                    icon: "ruler",
+                    selectable: false,
+                    showCopyButton: false
+                )
+
+                // Hash 前缀检查
+                if commit.hash.hasPrefix("0") {
+                    hashInfoRow(
+                        title: "前缀特征",
+                        value: "以 0 开头",
+                        icon: "exclamationmark.triangle",
+                        selectable: false,
+                        showCopyButton: false
+                    )
+                }
+            }
+        }
+        .padding(20)
+    }
+
+    private func hashInfoRow(title: String, value: String, icon: String, selectable: Bool, showCopyButton: Bool) -> some View {
+        HStack(spacing: 12) {
+            Image(systemName: icon)
+                .foregroundColor(.secondary)
+                .font(.system(size: 16))
+                .frame(width: 20)
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title)
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+
+                if selectable {
+                    Text(value)
+                        .font(.system(.body, design: .monospaced))
+                        .foregroundColor(.primary)
+                        .textSelection(.enabled)
+                } else {
+                    Text(value)
+                        .font(.system(.body, design: .monospaced))
+                        .foregroundColor(.primary)
+                }
+            }
+
+            Spacer()
+
+            if showCopyButton {
+                Button(action: {
+                    value.copy()
+                    withAnimation(.spring()) {
+                        isCopied = true
+                    }
+
+                    // 1.5秒后重置状态
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                        withAnimation(.spring()) {
+                            isCopied = false
+                        }
+                    }
+                }) {
+                    Image(systemName: isCopied ? "checkmark.circle.fill" : "doc.on.doc.fill")
+                        .font(.system(size: 14))
+                        .foregroundColor(isCopied ? .green : .secondary)
+                        .scaleEffect(isCopied ? 1.2 : 1.0)
+                }
+                .buttonStyle(.plain)
+                .help(isCopied ? "已复制" : "复制到剪贴板")
+            }
+        }
+        .padding(.vertical, 8)
+    }
+}
+
+// MARK: - Preview
 
 #Preview("App - Big Screen") {
     ContentLayout()
