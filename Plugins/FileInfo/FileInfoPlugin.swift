@@ -46,9 +46,17 @@ extension SmartFilePlugin {
     @objc static func register() {
         guard enable else { return }
 
+        // 检查用户是否禁用了此插件
+        guard PluginSettingsStore.shared.isPluginEnabled("SmartFile") else {
+            if Self.verbose {
+                os_log("\(Self.t)⚠️ SmartFilePlugin is disabled by user settings")
+            }
+            return
+        }
+
         Task {
             if Self.verbose {
-                os_log("\(self.t)🚀 Register SmartFilePlugin")
+                os_log("\(Self.t)🚀 Register SmartFilePlugin")
             }
 
             await PluginRegistry.shared.register(id: "SmartFile", order: 26) {

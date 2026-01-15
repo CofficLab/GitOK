@@ -110,6 +110,42 @@ enum ConfigurablePlugins {
                 description: "打开远程仓库链接",
                 icon: "link",
                 isDeveloperEnabled: { OpenRemotePlugin.enable }
+            ),
+            // 状态栏插件
+            PluginInfo(
+                id: "ActivityStatus",
+                name: "ActivityStatus",
+                description: "在状态栏显示当前长耗时操作的状态",
+                icon: "hourglass",
+                isDeveloperEnabled: { ActivityStatusPlugin.enable }
+            ),
+            PluginInfo(
+                id: "SmartFile",
+                name: "SmartFile",
+                description: "在状态栏左侧展示当前文件信息",
+                icon: "doc.text",
+                isDeveloperEnabled: { SmartFilePlugin.enable }
+            ),
+            PluginInfo(
+                id: "Readme",
+                name: "Readme",
+                description: "在状态栏提供 README 入口",
+                icon: "book",
+                isDeveloperEnabled: { ReadmePlugin.enable }
+            ),
+            PluginInfo(
+                id: "Gitignore",
+                name: "Gitignore",
+                description: "在状态栏提供 .gitignore 查看入口",
+                icon: "doc.badge.gearshape",
+                isDeveloperEnabled: { GitignorePlugin.enable }
+            ),
+            PluginInfo(
+                id: "License",
+                name: "License",
+                description: "在状态栏提供 LICENSE 入口",
+                icon: "doc.on.doc",
+                isDeveloperEnabled: { LicensePlugin.enable }
             )
         ].filter { $0.isDeveloperEnabled() }
     }
