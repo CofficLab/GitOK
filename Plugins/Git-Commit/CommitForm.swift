@@ -23,18 +23,30 @@ struct CommitForm: View, SuperLog {
     /// 提交分类
     @State var category: CommitCategory = .Chore
 
+    /// 选中的合作者列表
+    @State var selectedCoAuthors: [CoAuthor] = []
+
     /// 提交消息风格
     @State var commitStyle: CommitStyle = .emoji
 
     /// 生成的完整提交消息
     /// 根据选择的分类和风格自动生成提交消息格式
+    /// 如果有合作者，会在消息末尾添加 Co-authored-by 行
     var commitMessage: String {
         var c = text
         if c.isEmpty {
             c = "Auto Committed by GitOK"
         }
 
-        return "\(category.text(style: commitStyle)) \(c)"
+        var message = "\(category.text(style: commitStyle)) \(c)"
+
+        // 如果有合作者，添加 Co-authored-by 行
+        if !selectedCoAuthors.isEmpty {
+            let coAuthorLines = selectedCoAuthors.map { $0.coAuthoredByLine }
+            message += "\n\n" + coAuthorLines.joined(separator: "\n")
+        }
+
+        return message
     }
 
     var body: some View {
@@ -56,14 +68,20 @@ struct CommitForm: View, SuperLog {
             }
 
             HStack {
-                UserView().frame(maxWidth: 300)
+                VStack(alignment: .leading, spacing: 4) {
+                    UserView()
+                        .frame(maxWidth: 300)
+
+                    // 合作者选择器
+                    CoAuthorPicker(selectedCoAuthors: $selectedCoAuthors)
+                }
 
                 Spacer()
 
                 BtnCommitAndPush(commitMessage: commitMessage, commitOnly: true)
                 BtnCommitAndPush(commitMessage: commitMessage)
             }
-            .frame(height: 40)
+            .frame(height: 50)
         }
         .onProjectDidCommit(perform: onProjectDidCommit)
         .onChange(of: category, onCategoryDidChange)
