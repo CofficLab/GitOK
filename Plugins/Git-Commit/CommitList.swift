@@ -255,6 +255,9 @@ extension CommitList {
                 if Self.verbose {
                     os_log("\(self.t)🔄 Refresh - fetched \(initialCommits.count) commits from page 0")
                     os_log("\(self.t)🔄 Refresh - \(unpushed.count) unpushed commits")
+                    for commit in unpushed.prefix(3) {
+                        os_log("\(self.t)🔄 Unpushed commit: \(commit.hash.prefix(8)) - \(commit.message.prefix(50))")
+                    }
                 }
 
                 // 在主线程更新 UI 状态
@@ -392,10 +395,28 @@ extension CommitList {
     }
 
     func onPushSuccess(_ eventInfo: ProjectEventInfo) {
-        // 延迟一小段时间，确保 Git 操作完全完成
+        // 延迟一段时间，确保 Git push 操作和远程状态同步完全完成
         Task.detached {
-            // 等待 100ms，确保 Git 操作完成
-            try? await Task.sleep(nanoseconds: 100000000)
+            // 等待 500ms，确保 Git push 和远程同步完成
+            try? await Task.sleep(nanoseconds: 500000000)
+
+            // 在刷新前先检查一下未推送的 commits 数量
+            if let project = await MainActor.run(body: { data.project }) {
+                do {
+                    let unpushedBeforeRefresh = try await project.getUnPushedCommits()
+                    if Self.verbose {
+                        os_log("\(self.t)📊 Before refresh - \(unpushedBeforeRefresh.count) unpushed commits")
+                        for commit in unpushedBeforeRefresh.prefix(3) {
+                            os_log("\(self.t)📊 Unpushed: \(commit.hash.prefix(8)) - \(commit.message.prefix(50))")
+                        }
+                    }
+                } catch {
+                    if Self.verbose {
+                        os_log(.error, "\(self.t)❌ Failed to check unpushed commits before refresh: \(error)")
+                    }
+                }
+            }
+
             await MainActor.run {
                 // 刷新会自动更新 unpushedCommits
                 self.refresh("GitPushSuccess")

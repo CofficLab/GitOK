@@ -11,7 +11,7 @@ struct CommitInfoUser: View, SuperLog {
     nonisolated static let emoji = "👆"
 
     /// 是否启用详细日志输出
-    nonisolated static let verbose = true
+    nonisolated static let verbose = false
 
     /// 提交对象，用于解析用户信息
     let commit: GitCommit
