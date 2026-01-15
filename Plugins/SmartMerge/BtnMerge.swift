@@ -50,7 +50,7 @@ extension BtnMerge {
             // 发布分支切换事件
             let project = Project(URL(fileURLWithPath: path))
             project.postEvent(name: .projectDidChangeBranch, operation: "checkout",
-                              additionalInfo: ["branch": to.name, "reason": "merge_setup"])
+                              additionalInfo: ["branchName": to.name, "reason": "merge_setup"])
 
             try LibGit2.merge(branchName: from.name, at: path, verbose: false)
 
