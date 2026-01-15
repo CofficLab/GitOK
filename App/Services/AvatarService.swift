@@ -44,10 +44,11 @@ class AvatarService: ObservableObject, SuperLog {
     ///   - name: 用户名
     ///   - email: 邮箱
     ///   - verbose: 是否启用详细日志输出
+    ///   - userUseGravatar: 用户是否使用 Gravatar
     /// - Returns: 头像 URL，如果获取失败返回 nil
-    func getAvatarURL(name: String, email: String, verbose: Bool) async -> URL? {
+    func getAvatarURL(name: String, email: String, verbose: Bool, userUseGravatar: Bool = false) async -> URL? {
         if verbose {
-            os_log("\(self.t)🔍 尝试从AvatarService获取头像URL: \(name) <\(email)>")
+            os_log("\(self.t)🔍 尝试从AvatarService获取头像URL: \(name) <\(email)>，userUseGravatar: \(userUseGravatar)")
         }
 
         let normalizedEmail = normalizeEmail(email)
@@ -58,7 +59,7 @@ class AvatarService: ObservableObject, SuperLog {
                 os_log("\(self.t)📝 邮箱为空，跳过缓存检查: \(name)")
             }
 
-            return await fetchAvatarURL(name: name, email: normalizedEmail, verbose: verbose)
+            return await fetchAvatarURL(name: name, email: normalizedEmail, verbose: verbose, userUseGravatar: userUseGravatar)
         }
 
         // 检查是否是 bot 账户
@@ -80,19 +81,44 @@ class AvatarService: ObservableObject, SuperLog {
         // 检查失败缓存
         if let failedDate = failedCache[normalizedEmail],
            Date().timeIntervalSince(failedDate) < failedCacheTimeout {
-            if verbose {
-                os_log("\(self.t)❌ 失败缓存中获取头像URL，回退到 Gravatar: \(normalizedEmail)")
+            if userUseGravatar {
+                if verbose {
+                    os_log("\(self.t)❌ 失败缓存中获取头像URL，回退到 Gravatar: \(normalizedEmail)")
+                }
+                return getGravatarURL(email: normalizedEmail, verbose: verbose)
+            } else {
+                if verbose {
+                    os_log("\(self.t)❌ 失败缓存中且不允许使用 Gravatar: \(normalizedEmail)")
+                }
+                return nil
             }
-            return getGravatarURL(email: normalizedEmail, verbose: verbose)
         }
 
         // 尝试获取头像
-        let avatarURL = await fetchAvatarURL(name: name, email: normalizedEmail, verbose: verbose)
-        avatarCache[normalizedEmail] = avatarURL
-        if verbose {
-            os_log("\(self.t)✅ 获取头像URL: \(avatarURL?.absoluteString ?? "nil")")
+        if let avatarURL = await fetchAvatarURL(name: name, email: normalizedEmail, verbose: verbose) {
+            avatarCache[normalizedEmail] = avatarURL
+            if verbose {
+                os_log("\(self.t)✅ 获取头像URL: \(avatarURL.absoluteString)")
+            }
+            return avatarURL
         }
-        return avatarURL
+
+        // 如果用户允许使用 Gravatar，返回 Gravatar URL
+        if userUseGravatar {
+            let gravatarURL = getGravatarURL(email: normalizedEmail, verbose: verbose)
+            avatarCache[normalizedEmail] = gravatarURL
+            if verbose {
+                os_log("\(self.t)🔄 未找到 GitHub 头像，使用 Gravatar: \(gravatarURL.absoluteString)")
+            }
+            return gravatarURL
+        }
+
+        // 用户不允许使用 Gravatar，标记为失败
+        failedCache[normalizedEmail] = Date()
+        if verbose {
+            os_log("\(self.t)❌ 未找到头像且不允许使用 Gravatar: \(normalizedEmail)")
+        }
+        return nil
     }
 
     /// 获取 Gravatar URL
@@ -122,7 +148,7 @@ class AvatarService: ObservableObject, SuperLog {
     // MARK: - 私有方法
 
     /// 获取头像 URL（优先级策略）
-    private func fetchAvatarURL(name: String, email: String, verbose: Bool) async -> URL? {
+    private func fetchAvatarURL(name: String, email: String, verbose: Bool, userUseGravatar: Bool = false) async -> URL? {
         // 优先级 1: 尝试 GitHub API（需要用户名）
         if !name.isEmpty {
             if verbose {
@@ -134,7 +160,10 @@ class AvatarService: ObservableObject, SuperLog {
         }
 
         // 优先级 2: 使用 Gravatar
-        return getGravatarURL(email: email, verbose: verbose)
+        if userUseGravatar {
+            return getGravatarURL(email: email, verbose: verbose)
+        }
+        return nil
     }
 
     /// 从 GitHub API 获取头像 URL
