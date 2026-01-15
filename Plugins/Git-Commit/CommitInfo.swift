@@ -63,6 +63,7 @@ struct CommitInfoView: View, SuperLog {
 
                 Spacer()
             }
+            .background(.red.opacity(0))
         }
         .onApplicationDidBecomeActive(perform: handleOnAppear)
     }

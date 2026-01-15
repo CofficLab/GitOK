@@ -52,8 +52,6 @@ struct CommitHashInfo: View {
                     }
                     .buttonStyle(.plain)
                     .help(isCopied ? "已复制" : "复制完整 Hash")
-
-                    Spacer()
                 }
                 .padding(.horizontal, 6)
                 .padding(.vertical, 3)
@@ -80,23 +78,23 @@ struct CommitHashInfo: View {
 
 // MARK: - Preview
 
-#Preview("Commit Hash Info") {
-    @State var isCopied = false
-    @State var showingHashPopup = false
+#Preview("App - Small Screen") {
+    ContentLayout()
+        .hideSidebar()
+        .hideTabPicker()
+        .hideProjectActions()
+        .inRootView()
+        .frame(width: 600)
+        .frame(height: 600)
+}
 
-    CommitHashInfo(
-        commit: GitCommit(
-            id: "abc123",
-            hash: "abc123def456789abcdef0123456789abcdef0123",
-            author: "Test Author",
-            email: "test@example.com",
-            date: Date(),
-            message: "Test commit",
-            body: "Test body",
-            refs: [],
-            tags: []
-        ),
-        isCopied: $isCopied,
-        showingHashPopup: $showingHashPopup
-    )
+// MARK: - Preview
+
+#Preview("App - Big Screen") {
+    ContentLayout()
+        .hideTabPicker()
+        .hideProjectActions()
+        .inRootView()
+        .frame(width: 1200)
+        .frame(height: 1200)
 }
