@@ -3,13 +3,53 @@ import SwiftUI
 // 确保能访问 AvatarUser、AvatarView、AvatarStackView
 // 这些类型已在其他文件中定义
 
+/// 信息行组件（类似设置界面的 key-value 展示）
+struct InfoRow: View {
+    let label: String
+    let value: String
+    var selectable: Bool = false
+
+    var body: some View {
+        HStack(alignment: .top, spacing: 12) {
+            // 标签
+            Text(label)
+                .font(.caption)
+                .foregroundColor(.secondary)
+                .frame(width: 70, alignment: .leading)
+                .padding(.top, 8)
+
+            // 值
+            if selectable {
+                Text(value)
+                    .font(.caption)
+                    .foregroundColor(.primary)
+                    .textSelection(.enabled)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.top, 8)
+                    .padding(.trailing, 16)
+            } else {
+                Text(value)
+                    .font(.caption)
+                    .foregroundColor(.primary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.top, 8)
+                    .padding(.trailing, 16)
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 4)
+    }
+}
+
 /// 用户信息弹出视图组件
 /// 显示用户的详细信息，包括头像、名称、邮箱等
 struct UserInfoPopup: View {
     let user: AvatarUser
 
+    @State private var avatarURL: URL?
+
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: 0) {
             // 头部：头像和名称
             HStack(spacing: 12) {
                 // 大头像
@@ -31,55 +71,82 @@ struct UserInfoPopup: View {
 
                 Spacer()
             }
-            .padding(.bottom, 8)
+            .padding(16)
+            .padding(.bottom, 12)
 
             Divider()
 
-            // 邮箱信息
-            if !user.email.isEmpty {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("邮箱")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
+            // 信息列表
+            VStack(alignment: .leading, spacing: 0) {
+                // 用户名
+                InfoRow(label: "用户名", value: user.name)
 
-                    Text(user.email)
-                        .font(.body)
-                        .foregroundColor(.primary)
-                        .textSelection(.enabled)
-                }
+                if !user.email.isEmpty {
+                    Divider()
+                        .padding(.leading, 16)
 
-                Divider()
-            }
+                    InfoRow(label: "邮箱", value: user.email, selectable: true)
 
-            // GitHub 链接
-            if !user.email.isEmpty, let url = gitHubURL {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("GitHub")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
+                    Divider()
+                        .padding(.leading, 16)
 
-                    Button(action: {
-                        NSWorkspace.shared.open(url)
-                    }) {
-                        HStack {
-                            Image(systemName: "link")
-                                .font(.caption)
-                            Text(url.absoluteString)
-                                .font(.body)
-                                .foregroundColor(.blue)
-                            Spacer()
-                            Image(systemName: "arrow.up.right.square")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                        }
-                        .contentShape(Rectangle())
+                    // GitHub 用户名（如果有）
+                    if !gitHubUsername.isEmpty {
+                        InfoRow(label: "GitHub", value: gitHubUsername)
                     }
-                    .buttonStyle(.plain)
+
+                    Divider()
+                        .padding(.leading, 16)
+
+                    // 头像 URL（如果有）
+                    if let url = avatarURL {
+                        InfoRow(label: "头像地址", value: url.absoluteString, selectable: true)
+                    }
+
+                    Divider()
+                        .padding(.leading, 16)
+
+                    // GitHub 链接
+                    if let githubURL = gitHubURL {
+                        Button(action: {
+                            NSWorkspace.shared.open(githubURL)
+                        }) {
+                            HStack {
+                                Text("GitHub 主页")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                                Spacer()
+                                Text("打开")
+                                    .font(.caption)
+                                    .foregroundColor(.blue)
+                                Image(systemName: "arrow.up.right.square")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 8)
+                            .contentShape(Rectangle())
+                        }
+                        .buttonStyle(.plain)
+                    }
                 }
             }
         }
-        .padding(16)
-        .frame(width: 280)
+        .frame(width: 320)
+        .onAppear {
+            loadAvatarURL()
+        }
+    }
+
+    /// 异步加载头像 URL
+    private func loadAvatarURL() {
+        Task {
+            if let url = await AvatarService.shared.getAvatarURL(name: user.name, email: user.email) {
+                await MainActor.run {
+                    self.avatarURL = url
+                }
+            }
+        }
     }
 
     /// 从邮箱中提取 GitHub 用户名
