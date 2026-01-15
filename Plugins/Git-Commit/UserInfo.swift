@@ -52,12 +52,22 @@ struct UserInfo: View, SuperLog {
             }
         }) {
             HStack(spacing: 6) {
-                // 头像堆栈
+                // 头像堆栈或回退图标
                 if !users.isEmpty {
                     AvatarStackView(users: users, avatarSize: avatarSize, maxVisibleCount: maxVisibleCount)
 
                     // 用户名
                     Text(allAuthorsText)
+                        .font(.caption)
+                        .foregroundColor(isHovering ? .primary : .secondary)
+                } else {
+                    // 回退图标
+                    Image(systemName: "person.circle")
+                        .foregroundColor(.secondary)
+                        .font(.system(size: 12))
+
+                    // 默认文本
+                    Text("Unknown")
                         .font(.caption)
                         .foregroundColor(isHovering ? .primary : .secondary)
                 }
@@ -112,6 +122,11 @@ struct UserInfo: View, SuperLog {
                 AvatarUser(name: "Alice", email: "alice@example.com"),
                 AvatarUser(name: "Bob", email: "bob@example.com"),
             ],
+            avatarSize: 18
+        )
+
+        UserInfo(
+            users: [],
             avatarSize: 18
         )
     }

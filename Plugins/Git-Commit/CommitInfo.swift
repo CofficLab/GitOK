@@ -50,19 +50,7 @@ struct CommitInfoView: View, SuperLog {
             HStack(spacing: 16) {
                 // 作者信息（可点击的头像+用户名）
                 if !commit.author.isEmpty {
-                    if !avatarUsers.isEmpty {
-                        UserInfo(users: avatarUsers, avatarSize: 18, maxVisibleCount: 3)
-                    } else {
-                        // 回退图标
-                        HStack(spacing: 6) {
-                            Image(systemName: "person.circle")
-                                .foregroundColor(.secondary)
-                                .font(.system(size: 12))
-                            Text(commit.allAuthors)
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                        }
-                    }
+                    UserInfo(users: avatarUsers, avatarSize: 18, maxVisibleCount: 3)
                 }
 
                 // 提交时间
