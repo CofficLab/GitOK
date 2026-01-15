@@ -347,6 +347,67 @@ extension Project {
             throw error
         }
     }
+
+    /// 合并分支
+    /// - Parameter branchName: 要合并的分支名称
+    /// - Throws: Git操作异常
+    /// 合并分支：将来源分支合并到目标分支
+    /// - Parameters:
+    ///   - fromBranch: 来源分支
+    ///   - toBranch: 目标分支
+    /// - Throws: Git 错误
+    func mergeBranches(fromBranch: GitBranch, toBranch: GitBranch) throws {
+        do {
+            // 切换到目标分支
+            _ = try LibGit2.checkout(branch: toBranch.name, at: self.path)
+            postEvent(
+                name: .projectDidChangeBranch,
+                operation: "checkout",
+                additionalInfo: ["branchName": toBranch.name, "reason": "merge_setup"]
+            )
+
+            // 执行合并
+            try LibGit2.merge(branchName: fromBranch.name, at: self.path, verbose: false)
+            postEvent(
+                name: .projectDidMerge,
+                operation: "merge",
+                additionalInfo: ["fromBranch": fromBranch.name, "toBranch": toBranch.name]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "merge",
+                success: false,
+                error: error,
+                additionalInfo: ["fromBranch": fromBranch.name, "toBranch": toBranch.name]
+            )
+            throw error
+        }
+    }
+
+    /// 合并分支（兼容旧接口）
+    /// - Parameter branchName: 要合并的分支名称
+    /// - Throws: Git 错误
+    func merge(branchName: String) throws {
+        do {
+            try LibGit2.merge(branchName: branchName, at: self.path, verbose: false)
+
+            postEvent(
+                name: .projectDidMerge,
+                operation: "merge",
+                additionalInfo: ["branchName": branchName]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "merge",
+                success: false,
+                error: error,
+                additionalInfo: ["branchName": branchName]
+            )
+            throw error
+        }
+    }
 }
 
 // MARK: - Add
