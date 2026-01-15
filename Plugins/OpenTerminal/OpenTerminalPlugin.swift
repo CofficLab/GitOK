@@ -30,13 +30,21 @@ extension OpenTerminalPlugin {
     @objc static func register() {
         guard enable else { return }
 
+        // 检查用户是否禁用了此插件
+        guard PluginSettingsStore.shared.isPluginEnabled("OpenTerminal") else {
+            if Self.verbose {
+                os_log("\(Self.t)⚠️ OpenTerminalPlugin is disabled by user settings")
+            }
+            return
+        }
+
         Task {
             if Self.verbose {
                 os_log("\(self.t)🚀 Register OpenTerminalPlugin")
             }
 
             await PluginRegistry.shared.register(id: "OpenTerminal", order: 15) {
-                OpenTerminalPlugin.shared
+                OpenTerminalPlugin()
             }
         }
     }

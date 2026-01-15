@@ -61,6 +61,42 @@ enum ConfigurablePlugins {
     /// 所有可配置的插件（仅包含开发者启用的插件）
     static var allPlugins: [PluginInfo] {
         [
+            // Open 系列插件
+            PluginInfo(
+                id: "OpenXcode",
+                name: "OpenXcode",
+                description: "在 Xcode 中打开当前项目",
+                icon: "hammer",
+                isDeveloperEnabled: { OpenXcodePlugin.enable }
+            ),
+            PluginInfo(
+                id: "OpenVSCode",
+                name: "OpenVSCode",
+                description: "在 VS Code 中打开当前项目",
+                icon: "code",
+                isDeveloperEnabled: { OpenVSCodePlugin.enable }
+            ),
+            PluginInfo(
+                id: "OpenTrae",
+                name: "OpenTrae",
+                description: "在 Trae 中打开当前项目",
+                icon: "brain",
+                isDeveloperEnabled: { OpenTraePlugin.enable }
+            ),
+            PluginInfo(
+                id: "OpenFinder",
+                name: "OpenFinder",
+                description: "在 Finder 中打开当前项目目录",
+                icon: "folder",
+                isDeveloperEnabled: { OpenFinderPlugin.enable }
+            ),
+            PluginInfo(
+                id: "OpenTerminal",
+                name: "OpenTerminal",
+                description: "在终端中打开当前项目目录",
+                icon: "terminal",
+                isDeveloperEnabled: { OpenTerminalPlugin.enable }
+            ),
             PluginInfo(
                 id: "OpenCursor",
                 name: "OpenCursor",

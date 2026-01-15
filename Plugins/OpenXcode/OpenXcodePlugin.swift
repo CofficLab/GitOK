@@ -31,6 +31,14 @@ extension OpenXcodePlugin {
     @objc static func register() {
         guard enable else { return }
 
+        // 检查用户是否禁用了此插件
+        guard PluginSettingsStore.shared.isPluginEnabled("OpenXcode") else {
+            if Self.verbose {
+                os_log("\(Self.t)⚠️ OpenXcodePlugin is disabled by user settings")
+            }
+            return
+        }
+
         // 检查 Xcode 是否安装
         guard isXcodeInstalled() else {
             if Self.verbose {
