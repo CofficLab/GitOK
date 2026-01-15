@@ -1,7 +1,14 @@
+import MagicKit
+import OSLog
 import SwiftUI
 
 /// 头像视图组件
-struct AvatarView: View {
+struct AvatarView: View, SuperLog {
+    /// 日志标识符
+    nonisolated static let emoji = "👤"
+
+    /// 是否启用详细日志输出
+    nonisolated static let verbose = true
     let user: AvatarUser
     let size: CGFloat
 
@@ -20,12 +27,12 @@ struct AvatarView: View {
                 AsyncImage(url: url) { phase in
                     switch phase {
                     /// 图片加载成功
-                    case .success(let image):
+                    case let .success(image):
                         image
                             .resizable()
                             .aspectRatio(contentMode: .fill)
                     /// 图片加载失败
-                    case .failure(_):
+                    case .failure:
                         defaultAvatar
                     /// 图片加载中
                     case .empty:
@@ -41,9 +48,7 @@ struct AvatarView: View {
         }
         .frame(width: size, height: size)
         .clipShape(Circle())
-        .onAppear {
-            loadAvatar()
-        }
+        .onAppear(perform: handleOnAppear)
     }
 }
 
@@ -77,20 +82,37 @@ extension AvatarView {
     /// 异步加载用户头像
     /// 首先尝试从AvatarService获取头像，失败时回退到Gravatar
     private func loadAvatar() {
+        if Self.verbose {
+            os_log("\(self.t)开始加载头像: \(user.name) <\(user.email)>")
+        }
+
         Task {
             /// 设置加载状态
             isLoading = true
 
             /// 尝试从AvatarService获取头像URL
-            let url = await avatarService.getAvatarURL(name: user.name, email: user.email)
+            let url = await avatarService.getAvatarURL(name: user.name, email: user.email, verbose: Self.verbose)
 
             /// 在主线程更新UI
             await MainActor.run {
-                /// 如果获取失败，使用Gravatar作为后备
-                self.avatarURL = url ?? avatarService.getGravatarURL(email: user.email, size: Int(size))
+                /// 如果头像服务获取失败，使用默认头像
+                if let url = url {
+                    self.avatarURL = url
+                } else {
+                    self.avatarURL = nil // 将显示 defaultAvatar
+                }
                 self.isLoading = false
             }
         }
+    }
+}
+
+// MARK: - Event Handlers
+
+extension AvatarView {
+    /// 视图出现时的事件处理
+    func handleOnAppear() {
+        loadAvatar()
     }
 }
 

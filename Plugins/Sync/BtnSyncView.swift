@@ -10,7 +10,7 @@ struct BtnSyncView: View, SuperLog, SuperEvent, SuperThread {
     nonisolated static let emoji = "🔄"
 
     /// 是否启用详细日志输出
-    nonisolated static let verbose = true
+    nonisolated static let verbose = false
 
     /// 环境对象：消息提供者
     @EnvironmentObject var m: MagicMessageProvider

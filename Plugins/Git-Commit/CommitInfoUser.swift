@@ -79,8 +79,8 @@ struct CommitInfoUser: View, SuperLog {
             .popover(isPresented: $showingPopup, arrowEdge: .bottom) {
                 /// 直接使用 avatarUser
                 if let user = avatarUser {
-                    UserInfoPopup(user: user)
-                        .frame(width: 800)
+                    CommitInfoUserInfoPopup(user: user)
+                        .frame(width: 600)
                         .background(Color(nsColor: .windowBackgroundColor))
                 } else {
                     /// 只有在真的没有用户时才显示这个
@@ -119,9 +119,6 @@ extension CommitInfoUser {
         } else {
             /// 没有邮箱，使用 author 作为 name
             let user = AvatarUser(name: commit.author, email: "")
-            if Self.verbose {
-                os_log("\(self.t)ℹ️ 解析为无邮箱作者: \(commit.author)")
-            }
             return user
         }
     }

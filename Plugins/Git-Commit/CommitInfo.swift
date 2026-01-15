@@ -49,7 +49,7 @@ struct CommitInfoView: View, SuperLog {
             /// 提交详细信息区域
             HStack(spacing: 16) {
                 /// 作者信息
-                UserInfo(commit: commit)
+                CommitInfoUser(commit: commit)
 
                 /// 提交时间
                 CommitTimeInfo(commit: commit, showingTimePopup: $showingTimePopup)
@@ -61,29 +61,7 @@ struct CommitInfoView: View, SuperLog {
             }
             .background(.red.opacity(0))
         }
-        .onApplicationDidBecomeActive(perform: handleOnAppear)
     }
-}
-
-// MARK: - View
-
-extension CommitInfoView {
-
-}
-
-// MARK: - Event Handler
-
-extension CommitInfoView {
-    /// 视图出现时的事件处理
-    func handleOnAppear() {
-        // 用户信息现在由 UserInfo 组件内部处理
-    }
-}
-
-// MARK: - Private Helpers
-
-extension CommitInfoView {
-    // 用户信息解析现在由 UserInfo 组件内部处理
 }
 
 #Preview("App - Small Screen") {

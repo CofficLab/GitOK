@@ -5,7 +5,7 @@ import SwiftUI
 
 /// 用户信息弹出视图组件
 /// 显示用户的详细信息，包括头像、名称、邮箱等
-struct UserInfoPopup: View, SuperLog {
+struct CommitInfoUserInfoPopup: View, SuperLog {
     /// 日志标识符
     nonisolated static let emoji = "👤"
 
@@ -15,17 +15,8 @@ struct UserInfoPopup: View, SuperLog {
     /// 要显示的用户信息
     let user: AvatarUser
 
-    /// 从API获取的头像URL
-    @State private var avatarURL: URL?
-
-    /// 当前显示的头像 URL（优先使用从 API 获取的，否则使用 Gravatar）
-    private var displayedAvatarURL: URL {
-        if let url = avatarURL {
-            return url
-        }
-        // 使用 Gravatar URL 作为默认值
-        return AvatarService.shared.getGravatarURL(email: user.email, size: 64)
-    }
+    /// 显示的头像 URL（从 AvatarService 获取）
+    @State private var displayedAvatarURL: URL?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -68,12 +59,21 @@ struct UserInfoPopup: View, SuperLog {
                 Divider()
 
                 // 头像地址（总是显示）
-                infoRow(
-                    title: "头像地址",
-                    value: displayedAvatarURL.absoluteString,
-                    icon: .iconSafari,
-                    selectable: true
-                )
+                if let avatarURL = displayedAvatarURL {
+                    infoRow(
+                        title: "头像地址",
+                        value: avatarURL.absoluteString,
+                        icon: .iconSafari,
+                        selectable: true
+                    )
+                } else {
+                    infoRow(
+                        title: "头像地址",
+                        value: "加载中...",
+                        icon: .iconSafari,
+                        selectable: false
+                    )
+                }
 
                 // 邮箱（如果有）
                 if !user.email.isEmpty {
@@ -109,10 +109,9 @@ struct UserInfoPopup: View, SuperLog {
     /// 从 AvatarService 获取用户的头像 URL
     private func loadAvatarURL() {
         Task {
-            if let url = await AvatarService.shared.getAvatarURL(name: user.name, email: user.email) {
-                await MainActor.run {
-                    self.avatarURL = url
-                }
+            let url = await AvatarService.shared.getAvatarURL(name: user.name, email: user.email, verbose: Self.verbose)
+            await MainActor.run {
+                self.displayedAvatarURL = url
             }
         }
     }
@@ -120,7 +119,7 @@ struct UserInfoPopup: View, SuperLog {
 
 // MARK: - View
 
-extension UserInfoPopup {
+extension CommitInfoUserInfoPopup {
     /// 信息行（类似 AboutView 的样式）
     private func infoRow(title: String, value: String, icon: String, selectable: Bool = false) -> some View {
         MagicSettingRow(
@@ -200,17 +199,17 @@ extension UserInfoPopup {
 #Preview("App - Small Screen") {
     VStack(spacing: 20) {
         // GitHub 用户
-        UserInfoPopup(user: AvatarUser(name: "octocat", email: "octocat@users.noreply.github.com"))
+        CommitInfoUserInfoPopup(user: AvatarUser(name: "octocat", email: "octocat@users.noreply.github.com"))
 
         Divider()
 
         // 普通用户
-        UserInfoPopup(user: AvatarUser(name: "John Doe", email: "john@example.com"))
+        CommitInfoUserInfoPopup(user: AvatarUser(name: "John Doe", email: "john@example.com"))
 
         Divider()
 
         // 无邮箱用户
-        UserInfoPopup(user: AvatarUser(name: "Anonymous", email: ""))
+        CommitInfoUserInfoPopup(user: AvatarUser(name: "Anonymous", email: ""))
     }
     .padding()
     .frame(width: 800)
@@ -218,7 +217,7 @@ extension UserInfoPopup {
 
 #Preview("App - Big Screen") {
     HStack(spacing: 20) {
-        UserInfoPopup(user: AvatarUser(name: "octocat", email: "octocat@users.noreply.github.com"))
+        CommitInfoUserInfoPopup(user: AvatarUser(name: "octocat", email: "octocat@users.noreply.github.com"))
             .frame(width: 400)
     }
     .padding()
