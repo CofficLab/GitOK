@@ -1,0 +1,214 @@
+import SwiftUI
+
+// 确保能访问 AvatarUser、AvatarView、AvatarStackView
+// 这些类型已在其他文件中定义
+
+/// 用户信息弹出视图组件
+/// 显示用户的详细信息，包括头像、名称、邮箱等
+struct UserInfoPopup: View {
+    let user: AvatarUser
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            // 头部：头像和名称
+            HStack(spacing: 12) {
+                // 大头像
+                AvatarView(user: user, size: 48)
+
+                VStack(alignment: .leading, spacing: 4) {
+                    // 用户名
+                    Text(user.name)
+                        .font(.headline)
+                        .foregroundColor(.primary)
+
+                    // GitHub 用户标识
+                    if !user.email.isEmpty {
+                        Text(gitHubUsername)
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                }
+
+                Spacer()
+            }
+            .padding(.bottom, 8)
+
+            Divider()
+
+            // 邮箱信息
+            if !user.email.isEmpty {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("邮箱")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+
+                    Text(user.email)
+                        .font(.body)
+                        .foregroundColor(.primary)
+                        .textSelection(.enabled)
+                }
+
+                Divider()
+            }
+
+            // GitHub 链接
+            if !user.email.isEmpty, let url = gitHubURL {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("GitHub")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+
+                    Button(action: {
+                        NSWorkspace.shared.open(url)
+                    }) {
+                        HStack {
+                            Image(systemName: "link")
+                                .font(.caption)
+                            Text(url.absoluteString)
+                                .font(.body)
+                                .foregroundColor(.blue)
+                            Spacer()
+                            Image(systemName: "arrow.up.right.square")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                        .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+        }
+        .padding(16)
+        .frame(width: 280)
+    }
+
+    /// 从邮箱中提取 GitHub 用户名
+    private var gitHubUsername: String {
+        // GitHub 邮箱格式：username@users.noreply.github.com
+        let pattern = #"^(.+)@users\.noreply\.github\.com$"#
+        if let regex = try? NSRegularExpression(pattern: pattern),
+           let match = regex.firstMatch(in: user.email, range: NSRange(user.email.startIndex..., in: user.email)) {
+            if let usernameRange = Range(match.range(at: 1), in: user.email) {
+                return "@\(String(user.email[usernameRange]))"
+            }
+        }
+
+        // 如果不是 GitHub 邮箱，返回空
+        return ""
+    }
+
+    /// 生成 GitHub 个人主页 URL
+    private var gitHubURL: URL? {
+        // 从邮箱中提取用户名
+        let pattern = #"^(.+)@users\.noreply\.github\.com$"#
+        if let regex = try? NSRegularExpression(pattern: pattern),
+           let match = regex.firstMatch(in: user.email, range: NSRange(user.email.startIndex..., in: user.email)) {
+            if let usernameRange = Range(match.range(at: 1), in: user.email) {
+                let username = String(user.email[usernameRange])
+                return URL(string: "https://github.com/\(username)")
+            }
+        }
+
+        // 如果邮箱不是 GitHub 格式，尝试使用名称作为用户名
+        if !user.name.isEmpty {
+            return URL(string: "https://github.com/\(user.name)")
+        }
+
+        return nil
+    }
+}
+
+/// 可点击的用户信息组件
+struct ClickableUserInfo: View {
+    let users: [AvatarUser]
+    let avatarSize: CGFloat
+    let maxVisibleCount: Int
+
+    @State private var showingPopup = false
+    @State private var popupPosition: CGPoint = .zero
+    @State private var selectedUser: AvatarUser?
+
+    init(users: [AvatarUser], avatarSize: CGFloat = 18, maxVisibleCount: Int = 3) {
+        self.users = users
+        self.avatarSize = avatarSize
+        self.maxVisibleCount = maxVisibleCount
+    }
+
+    var body: some View {
+        HStack(spacing: 6) {
+            // 头像堆栈（可点击）
+            if !users.isEmpty {
+                AvatarStackView(users: users, avatarSize: avatarSize, maxVisibleCount: maxVisibleCount)
+                    .onTapGesture {
+                        // 点击第一个用户
+                        showUserInfo(for: users.first)
+                    }
+
+                // 用户名（可点击）
+                Text(allAuthorsText)
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        // 点击第一个用户
+                        showUserInfo(for: users.first)
+                    }
+            }
+        }
+        .popover(isPresented: $showingPopup, arrowEdge: .bottom) {
+            if let user = selectedUser {
+                UserInfoPopup(user: user)
+                    .background(Color(nsColor: .windowBackgroundColor))
+            }
+        }
+    }
+
+    private var allAuthorsText: String {
+        users.map { $0.name }.joined(separator: ", ")
+    }
+
+    private func showUserInfo(for user: AvatarUser?) {
+        guard let user = user else { return }
+        selectedUser = user
+        showingPopup = true
+    }
+}
+
+#Preview("User Info Popup") {
+    VStack(spacing: 20) {
+        // GitHub 用户
+        UserInfoPopup(user: AvatarUser(name: "octocat", email: "octocat@users.noreply.github.com"))
+
+        Divider()
+
+        // 普通用户
+        UserInfoPopup(user: AvatarUser(name: "John Doe", email: "john@example.com"))
+
+        Divider()
+
+        // 无邮箱用户
+        UserInfoPopup(user: AvatarUser(name: "Anonymous", email: ""))
+    }
+    .padding()
+    .frame(width: 400)
+}
+
+#Preview("Clickable User Info") {
+    HStack(spacing: 20) {
+        ClickableUserInfo(
+            users: [
+                AvatarUser(name: "octocat", email: "octocat@users.noreply.github.com")
+            ],
+            avatarSize: 18
+        )
+
+        ClickableUserInfo(
+            users: [
+                AvatarUser(name: "Alice", email: "alice@example.com"),
+                AvatarUser(name: "Bob", email: "bob@example.com")
+            ],
+            avatarSize: 18
+        )
+    }
+    .padding()
+}
