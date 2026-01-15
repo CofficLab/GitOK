@@ -278,14 +278,14 @@ extension CommitList {
     private func restoreLastSelectedCommit() {
         guard let project = data.project else { return }
 
-        // 获取上次选择的commit
-        if let lastCommit = commitRepo.getLastSelectedCommit(projectPath: project.path) {
+        // 获取上次选择的commit hash
+        if let lastCommitHash = commitRepo.getLastSelectedCommitHash(projectPath: project.path) {
             // 在当前commit列表中查找匹配的commit
-            if let matchedCommit = commits.first(where: { $0.hash == lastCommit.hash }) {
+            if let matchedCommit = commits.first(where: { $0.hash == lastCommitHash }) {
                 self.setCommit(matchedCommit)
             } else if hasMoreCommits {
                 // 如果在当前页面没有找到，并且还有更多commit，尝试加载更多
-                loadMoreCommitsUntilFound(targetHash: lastCommit.hash)
+                loadMoreCommitsUntilFound(targetHash: lastCommitHash)
             }
         } else {
             self.setCommit(self.commits.first)

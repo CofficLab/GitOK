@@ -307,6 +307,11 @@ extension DataProvider {
         assert(Thread.isMainThread, "setCommit(_:) 必须在主线程调用，否则会导致线程安全问题！")
         guard commit?.id != c?.id else { return }
         commit = c
+
+        // 保存选择的 commit 到持久化存储
+        if let commit = c, let projectPath = project?.path {
+            GitCommitRepo.shared.saveLastSelectedCommit(projectPath: projectPath, commit: commit)
+        }
     }
 
     /**

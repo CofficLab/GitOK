@@ -8,7 +8,7 @@ import SwiftUI
 /// 定义提交数据持久化的接口
 protocol GitCommitRepoProtocol {
     func saveLastSelectedCommit(projectPath: String, commit: GitCommit)
-    func getLastSelectedCommit(projectPath: String) -> GitCommit?
+    func getLastSelectedCommitHash(projectPath: String) -> String?
 }
 
 /// Git 提交仓库类
@@ -51,22 +51,18 @@ class GitCommitRepo: GitCommitRepoProtocol, SuperLog {
         }
     }
 
-    /// 获取项目的最后选择的commit
+    /// 获取项目的最后选择的commit hash
     /// - Parameter projectPath: 项目路径
-    /// - Returns: 最后选择的commit，如果没有则返回nil
-    func getLastSelectedCommit(projectPath: String) -> GitCommit? {
+    /// - Returns: 最后选择的commit hash，如果没有则返回nil
+    func getLastSelectedCommitHash(projectPath: String) -> String? {
         let key = getKey(for: projectPath)
 
         guard let commitData = userDefaults.dictionary(forKey: key),
-              let _ = commitData["hash"] as? String,
-              let _ = commitData["message"] as? String,
-              let _ = commitData["author"] as? String,
-              let _ = commitData["date"] as? TimeInterval,
-              let _ = commitData["path"] as? String else {
+              let hash = commitData["hash"] as? String else {
             return nil
         }
 
-        return nil
+        return hash
     }
 
     /// 清除项目的最后选择的commit
