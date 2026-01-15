@@ -151,13 +151,19 @@ struct CurrentWorkingStateView: View, SuperLog {
     private var downloadButton: some View {
         Button(action: performPull) {
             HStack(spacing: 4) {
-                Image(systemName: isPulling ? "arrow.down.circle" : "arrow.down.circle.fill")
-                    .foregroundColor(.blue)
-                    .font(.system(size: 14))
-                    .rotationEffect(.degrees(isPulling ? 360 : 0))
-                    .animation(isPulling ? .linear(duration: 1).repeatForever(autoreverses: false) : .default, value: isPulling)
+                if isPulling {
+                    // Loading 状态：显示进度视图
+                    ProgressView()
+                        .controlSize(.small)
+                        .scaleEffect(0.8)
+                } else {
+                    // 正常状态：显示下载图标
+                    Image(systemName: "arrow.down.circle.fill")
+                        .foregroundColor(.blue)
+                        .font(.system(size: 14))
+                }
 
-                Text("拉取")
+                Text(isPulling ? "拉取中..." : "拉取")
                     .font(.system(size: 12, weight: .medium))
                     .foregroundColor(.blue)
             }
@@ -185,13 +191,19 @@ struct CurrentWorkingStateView: View, SuperLog {
     private var uploadButton: some View {
         Button(action: performPush) {
             HStack(spacing: 4) {
-                Image(systemName: isPushing ? "arrow.up.circle" : "arrow.up.circle.fill")
-                    .foregroundColor(.orange)
-                    .font(.system(size: 14))
-                    .rotationEffect(.degrees(isPushing ? 360 : 0))
-                    .animation(isPushing ? .linear(duration: 1).repeatForever(autoreverses: false) : .default, value: isPushing)
+                if isPushing {
+                    // Loading 状态：显示进度视图
+                    ProgressView()
+                        .controlSize(.small)
+                        .scaleEffect(0.8)
+                } else {
+                    // 正常状态：显示上传图标
+                    Image(systemName: "arrow.up.circle.fill")
+                        .foregroundColor(.orange)
+                        .font(.system(size: 14))
+                }
 
-                Text("推送")
+                Text(isPushing ? "推送中..." : "推送")
                     .font(.system(size: 12, weight: .medium))
                     .foregroundColor(.orange)
             }
