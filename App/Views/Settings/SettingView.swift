@@ -45,12 +45,25 @@ struct SettingView: View, SuperLog {
         self._selectedTab = State(initialValue: defaultTab)
     }
 
+    /// 应用信息
+    private var appInfo: AppInfo {
+        AppInfo()
+    }
+
     var body: some View {
         NavigationSplitView {
             // Sidebar
-            List(SettingTab.allCases, id: \.self, selection: $selectedTab) { tab in
-                NavigationLink(value: tab) {
-                    Label(tab.rawValue, systemImage: tab.icon)
+            VStack(spacing: 0) {
+                // 应用信息头部
+                sidebarHeader
+
+                Divider()
+
+                // 设置列表
+                List(SettingTab.allCases, id: \.self, selection: $selectedTab) { tab in
+                    NavigationLink(value: tab) {
+                        Label(tab.rawValue, systemImage: tab.icon)
+                    }
                 }
             }
             .navigationSplitViewColumnWidth(min: 150, ideal: 200)
@@ -79,6 +92,38 @@ struct SettingView: View, SuperLog {
         .onReceive(NotificationCenter.default.publisher(for: .didSaveGitUserConfig)) { _ in
             dismiss()
         }
+    }
+
+    // MARK: - View Components
+
+    /// 侧边栏头部 - 应用信息
+    private var sidebarHeader: some View {
+        VStack(alignment: .center, spacing: 12) {
+            Spacer().frame(height: 20)
+
+            // App 图标
+            if let appIcon = NSImage(named: "AppIcon") {
+                Image(nsImage: appIcon)
+                    .resizable()
+                    .frame(width: 64, height: 64)
+                    .cornerRadius(14)
+                    .shadow(radius: 3)
+            }
+
+            // App 名称
+            Text(appInfo.name)
+                .font(.headline)
+                .fontWeight(.semibold)
+
+            // App 版本
+            Text("v\(appInfo.version)")
+                .font(.caption2)
+                .foregroundColor(.secondary)
+
+            Spacer().frame(height: 16)
+        }
+        .frame(maxWidth: .infinity)
+        .background(Color(nsColor: .controlBackgroundColor))
     }
 }
 
