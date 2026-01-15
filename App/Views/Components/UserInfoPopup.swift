@@ -125,7 +125,6 @@ struct ClickableUserInfo: View {
     let maxVisibleCount: Int
 
     @State private var showingPopup = false
-    @State private var popupPosition: CGPoint = .zero
     @State private var selectedUser: AvatarUser?
 
     init(users: [AvatarUser], avatarSize: CGFloat = 18, maxVisibleCount: Int = 3) {
@@ -135,42 +134,49 @@ struct ClickableUserInfo: View {
     }
 
     var body: some View {
-        HStack(spacing: 6) {
-            // 头像堆栈（可点击）
-            if !users.isEmpty {
-                AvatarStackView(users: users, avatarSize: avatarSize, maxVisibleCount: maxVisibleCount)
-                    .onTapGesture {
-                        // 点击第一个用户
-                        showUserInfo(for: users.first)
-                    }
+        Button(action: {
+            // 点击第一个用户
+            if let firstUser = users.first {
+                selectedUser = firstUser
+                print("点击了用户: \(firstUser.name), 邮箱: \(firstUser.email)")
+                // 延迟一帧，确保 selectedUser 先更新
+                DispatchQueue.main.async {
+                    showingPopup = true
+                }
+            } else {
+                print("用户列表为空")
+            }
+        }) {
+            HStack(spacing: 6) {
+                // 头像堆栈
+                if !users.isEmpty {
+                    AvatarStackView(users: users, avatarSize: avatarSize, maxVisibleCount: maxVisibleCount)
 
-                // 用户名（可点击）
-                Text(allAuthorsText)
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-                    .contentShape(Rectangle())
-                    .onTapGesture {
-                        // 点击第一个用户
-                        showUserInfo(for: users.first)
-                    }
+                    // 用户名
+                    Text(allAuthorsText)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
             }
         }
+        .buttonStyle(.plain)
+        .help("点击查看用户信息")
         .popover(isPresented: $showingPopup, arrowEdge: .bottom) {
             if let user = selectedUser {
-                UserInfoPopup(user: user)
-                    .background(Color(nsColor: .windowBackgroundColor))
+                VStack {
+                    UserInfoPopup(user: user)
+                }
+                .frame(width: 300, height: 200)
+                .background(Color(nsColor: .windowBackgroundColor))
+            } else {
+                Text("未找到用户信息")
+                    .frame(width: 200, height: 100)
             }
         }
     }
 
     private var allAuthorsText: String {
         users.map { $0.name }.joined(separator: ", ")
-    }
-
-    private func showUserInfo(for user: AvatarUser?) {
-        guard let user = user else { return }
-        selectedUser = user
-        showingPopup = true
     }
 }
 
