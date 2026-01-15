@@ -28,7 +28,20 @@ struct CommitInfoView: View, SuperLog {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            commitMessageHeader
+            /// 提交消息头部显示
+            HStack {
+                /// Commit 图标
+                Image.dotCircle
+                    .foregroundColor(.blue)
+                    .font(.system(size: 12))
+
+                /// Commit 消息
+                Text(commit.message)
+                    .font(.headline)
+                    .lineLimit(2)
+
+                Spacer()
+            }
 
             Divider()
 
@@ -58,22 +71,6 @@ struct CommitInfoView: View, SuperLog {
 // MARK: - View
 
 extension CommitInfoView {
-    /// 提交消息头部显示
-    private var commitMessageHeader: some View {
-        HStack {
-            /// Commit 图标
-            Image.dotCircle
-                .foregroundColor(.blue)
-                .font(.system(size: 12))
-
-            /// Commit 消息
-            Text(commit.message)
-                .font(.headline)
-                .lineLimit(2)
-
-            Spacer()
-        }
-    }
 
 }
 
