@@ -16,8 +16,10 @@ struct CommitInfoUser: View, SuperLog {
     /// 提交对象，用于解析用户信息
     let commit: GitCommit
 
-    /// 解析出的用户信息
-    @State private var avatarUser: AvatarUser?
+    /// 解析出的用户信息（基于当前commit计算）
+    private var avatarUser: AvatarUser? {
+        parseAuthorInfo()
+    }
 
     /// 是否显示用户信息弹窗
     @State private var showingPopup = false
@@ -29,7 +31,6 @@ struct CommitInfoUser: View, SuperLog {
     /// - Parameter commit: 提交对象，用于解析用户信息
     init(commit: GitCommit) {
         self.commit = commit
-        _avatarUser = State(initialValue: parseAuthorInfo())
     }
 
     var body: some View {
@@ -95,15 +96,14 @@ struct CommitInfoUser: View, SuperLog {
 
 extension CommitInfoUser {
     /// 解析提交的作者信息
-    /// ⚠️ 注意：Git提交的作者信息仅供显示，不保证真实性
     private func parseAuthorInfo() -> AvatarUser? {
         if Self.verbose {
-            os_log("\(self.t)🔍 解析提交作者字段: \(commit.author)")
+            os_log("\(self.t)开始解析作者信息: \(commit.author)")
         }
 
         /// author 格式可能是 "name <email>" 或只是 "name"
         if let emailRange = commit.author.range(of: "<([^>]+)>", options: .regularExpression) {
-            /// 有邮箱格式
+            /// 有邮箱
             let emailStartIndex = commit.author.index(emailRange.lowerBound, offsetBy: 1)
             let emailEndIndex = commit.author.index(emailRange.upperBound, offsetBy: -1)
             let authorEmail = String(commit.author[emailStartIndex ..< emailEndIndex])
@@ -113,14 +113,14 @@ extension CommitInfoUser {
 
             let user = AvatarUser(name: authorName, email: authorEmail)
             if Self.verbose {
-                os_log("\(self.t)📝 提取到作者信息: \(authorName) <\(authorEmail)> (未经验证)")
+                os_log("\(self.t)✅ 成功解析带邮箱的作者: \(authorName) <\(authorEmail)>")
             }
             return user
         } else {
-            /// 无邮箱格式，仅有用户名
+            /// 没有邮箱，使用 author 作为 name
             let user = AvatarUser(name: commit.author, email: "")
             if Self.verbose {
-                os_log("\(self.t)📝 提取到用户名: \(commit.author) (未经验证)")
+                os_log("\(self.t)ℹ️ 解析为无邮箱作者: \(commit.author)")
             }
             return user
         }
