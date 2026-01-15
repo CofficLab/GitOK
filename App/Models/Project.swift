@@ -1,5 +1,6 @@
 import Foundation
 import LibGit2Swift
+import MagicKit
 import OSLog
 import SwiftData
 import SwiftUI
@@ -110,10 +111,17 @@ struct ProjectEventInfo {
     }
 }
 
+/// 项目模型类
+/// 表示一个Git项目的核心数据模型，包含项目的基本信息和操作方法
 @Model
-final class Project {
+final class Project: SuperLog {
+    /// 日志标识符
+    nonisolated static let emoji = "🌳"
+
+    /// 是否启用详细日志输出
+    nonisolated static let verbose = false
+
     var t: String { "[\(title)] " }
-    static var verbose = false
     static var null = Project(URL(fileURLWithPath: ""))
     static var order = [
         SortDescriptor<Project>(\.order, order: .forward),
@@ -121,8 +129,6 @@ final class Project {
     static var orderReverse = [
         SortDescriptor<Project>(\.order, order: .reverse),
     ]
-
-    static let emoji = "🌳"
     var timestamp: Date
     var url: URL
     var order: Int16 = 0
@@ -558,7 +564,17 @@ extension Project {
         try LibGit2.getFileDiff(for: file, at: self.path, staged: false)
     }
 
-    func changedFilesDetail(in atCommit: String) async throws -> [GitDiffFile] {
+    /// 获取指定提交中文件的 diff 字符串
+    /// - Parameters:
+    ///   - atCommit: 提交哈希
+    ///   - verbose: 是否启用详细日志输出
+    /// - Returns: 文件列表
+    /// - Throws: Git操作异常
+    func changedFilesDetail(in atCommit: String, verbose: Bool = false) async throws -> [GitDiffFile] {
+        if verbose {
+            os_log(.info, "\(self.t)🍋 changedFilesDetail(in: \(atCommit))")
+        }
+        
         // 使用 LibGit2Swift 获取指定commit修改的文件列表，并按文件路径排序
         return try LibGit2.getCommitDiffFiles(atCommit: atCommit, at: self.path)
             .sorted { $0.file < $1.file }

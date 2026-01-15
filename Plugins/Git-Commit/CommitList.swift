@@ -10,7 +10,7 @@ struct CommitList: View, SuperThread, SuperLog {
     nonisolated static let emoji = "🖥️"
 
     /// 是否启用详细日志输出
-    nonisolated static let verbose = false
+    nonisolated static let verbose = true
 
     /// 单例实例
     static var shared = CommitList()
@@ -44,6 +44,11 @@ struct CommitList: View, SuperThread, SuperLog {
 
     /// 是否已调度加载更多操作（防止快速连续触发）
     @State private var isLoadingMoreScheduled = false
+
+    /// 当前刷新任务
+    @State private var currentRefreshTask: Task<Void, Never>? = nil
+    /// 后台刷新工作任务
+    @State private var currentRefreshWorkerTask: Task<([GitCommit], Set<String>), Error>? = nil
 
     /// Git 提交仓库，用于存储和恢复提交选择状态
     private let commitRepo = GitCommitRepo.shared
@@ -203,49 +208,53 @@ extension CommitList {
     /// 刷新提交列表数据
     /// - Parameter reason: 刷新原因描述，用于调试
     func refresh(_ reason: String = "") {
-        if Self.verbose {
-            os_log("\(self.t)🍋 Refresh(\(reason))")
-        }
-
         guard let project = data.project else {
             return
         }
 
-        // 如果正在刷新，先重置状态，然后延迟刷新
-        if isRefreshing {
-            DispatchQueue.main.async {
-                self.isRefreshing = false
-                self.loading = false
-            }
-            // 延迟刷新，确保状态重置完成
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                self.refresh(reason)
-            }
-            return
-        }
-
+        // 取消之前的刷新任务
+        currentRefreshTask?.cancel()
+        currentRefreshWorkerTask?.cancel()
+        
         // 在主线程更新 UI 状态
-        DispatchQueue.main.async {
-            self.isRefreshing = true
-            self.loading = true
-        }
-
+        self.isRefreshing = true
+        self.loading = true
+        
         currentPage = 0
         hasMoreCommits = true
 
         // 捕获 pageSize 以避免 main actor 隔离问题
         let pageSize = self.pageSize
 
-        // 使用 Task.detached 在后台执行异步操作
-        Task.detached(priority: .userInitiated) {
+        // 启动新任务
+        currentRefreshTask = Task {
+            if Task.isCancelled { return }
+            
             do {
-                let initialCommits = try project.getCommitsWithPagination(
-                    0, limit: pageSize
-                )
+                // 使用 Task.detached 在后台执行异步操作
+                let worker = Task.detached(priority: .userInitiated) {
+                    try Task.checkCancellation()
+                    
+                    if Self.verbose {
+                        os_log("\(Self.t)🍋 Refresh(\(reason))")
+                    }
+                    
+                    let commits = try project.getCommitsWithPagination(
+                        0, limit: pageSize
+                    )
+                    
+                    try Task.checkCancellation()
 
-                // 获取未推送的 commits
-                let unpushed = try await project.getUnPushedCommits()
-                let unpushedHashes = Set(unpushed.map { $0.hash })
+                    // 获取未推送的 commits
+                    let unpushed = try await project.getUnPushedCommits()
+                    let unpushedHashes = Set(unpushed.map { $0.hash })
+                    
+                    return (commits, unpushedHashes)
+                }
+                currentRefreshWorkerTask = worker
+                let (initialCommits, unpushedHashes) = try await worker.value
+
+                if Task.isCancelled { return }
 
                 // 在主线程更新 UI 状态
                 await MainActor.run {
@@ -256,6 +265,8 @@ extension CommitList {
                     self.currentPage = 1 // Next page to load
                 }
             } catch {
+                if Task.isCancelled { return }
+                
                 // 在主线程更新 UI 状态
                 await MainActor.run {
                     self.loading = false
@@ -399,7 +410,11 @@ extension CommitList {
 
     /// 应用变为活跃状态事件处理（通用版本）
     func onApplicationDidBecomeActive() {
-        self.refresh("ApplicationDidBecomeActive")
+        Task {
+            // 延迟刷新，避免与系统恢复焦点时的其他操作竞争
+            try? await Task.sleep(nanoseconds: 800 * 1_000_000)
+            await self.refresh("ApplicationDidBecomeActive")
+        }
     }
 }
 
