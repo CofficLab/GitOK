@@ -30,7 +30,7 @@ struct CommitInfoView: View, SuperLog {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
                 // Commit 图标
-                Image(systemName: "smallcircle.filled.circle")
+                Image.dotCircle
                     .foregroundColor(.blue)
                     .font(.system(size: 12))
 
@@ -45,21 +45,7 @@ struct CommitInfoView: View, SuperLog {
             Divider()
 
             // Commit body（如果有）
-            if !commit.body.isEmpty {
-                HStack(alignment: .top, spacing: 8) {
-                    Image(systemName: "text.alignleft")
-                        .foregroundColor(.secondary)
-                        .font(.system(size: 12))
-
-                    Text(commit.body)
-                        .font(.body)
-                        .foregroundColor(.secondary)
-                        .lineLimit(10)
-                        .textSelection(.enabled)
-
-                    Spacer()
-                }
-            }
+            CommitBodyInfo(commit: commit)
 
             HStack(spacing: 16) {
                 // 作者信息（可点击的头像+用户名）
