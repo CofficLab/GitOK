@@ -26,6 +26,9 @@ struct UserInfo: View, SuperLog {
     /// 是否显示用户信息弹窗
     @State private var showingPopup = false
 
+    /// 是否正在悬停
+    @State private var isHovering = false
+
     /// 初始化可点击用户信息组件
     /// - Parameters:
     ///   - users: 要显示的用户列表
@@ -56,12 +59,23 @@ struct UserInfo: View, SuperLog {
                     // 用户名
                     Text(allAuthorsText)
                         .font(.caption)
-                        .foregroundColor(.secondary)
+                        .foregroundColor(isHovering ? .primary : .secondary)
                 }
             }
+            .padding(.horizontal, 6)
+            .padding(.vertical, 3)
+            .background(
+                RoundedRectangle(cornerRadius: 6)
+                    .fill(isHovering ? Color.secondary.opacity(0.2) : Color.clear)
+            )
+            .scaleEffect(isHovering ? 1.02 : 1.0)
+            .animation(.easeInOut(duration: 0.2), value: isHovering)
         }
         .buttonStyle(.plain)
         .help("点击查看用户信息")
+        .onHover { hovering in
+            isHovering = hovering
+        }
         .popover(isPresented: $showingPopup, arrowEdge: .bottom) {
             // 直接使用 users.first，不依赖状态
             if let user = users.first {
