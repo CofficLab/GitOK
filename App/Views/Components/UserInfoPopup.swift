@@ -92,7 +92,7 @@ struct UserInfoPopup: View {
                 }
             }
         }
-        .frame(width: 360)
+        .frame(width: 450)
         .onAppear {
             loadAvatarURL()
         }
