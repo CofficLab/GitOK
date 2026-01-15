@@ -292,7 +292,7 @@ struct ClickableUserInfo: View, SuperLog {
         UserInfoPopup(user: AvatarUser(name: "Anonymous", email: ""))
     }
     .padding()
-    .frame(width: 400)
+    .frame(width: 800)
 }
 
 #Preview("App - Big Screen") {
@@ -313,4 +313,24 @@ struct ClickableUserInfo: View, SuperLog {
         )
     }
     .padding()
+}
+
+#Preview("App - Small Screen") {
+    ContentLayout()
+        .hideSidebar()
+        .hideTabPicker()
+        .hideProjectActions()
+        .inRootView()
+        .frame(width: 800)
+        .frame(height: 600)
+}
+
+#Preview("App - Big Screen") {
+    ContentLayout()
+        .hideSidebar()
+        .hideProjectActions()
+        .hideTabPicker()
+        .inRootView()
+        .frame(width: 800)
+        .frame(height: 1000)
 }

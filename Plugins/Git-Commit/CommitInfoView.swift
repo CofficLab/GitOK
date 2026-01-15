@@ -1,5 +1,5 @@
-import MagicKit
 import LibGit2Swift
+import MagicKit
 import SwiftUI
 
 /// 提交信息显示视图组件
@@ -35,6 +35,8 @@ struct CommitInfoView: View, SuperLog {
 
                 Spacer()
             }
+
+            Divider()
 
             // Commit body（如果有）
             if !commit.body.isEmpty {
@@ -143,7 +145,7 @@ struct CommitInfoView: View, SuperLog {
             // 有邮箱
             let emailStartIndex = commit.author.index(emailRange.lowerBound, offsetBy: 1)
             let emailEndIndex = commit.author.index(emailRange.upperBound, offsetBy: -1)
-            authorEmail = String(commit.author[emailStartIndex..<emailEndIndex])
+            authorEmail = String(commit.author[emailStartIndex ..< emailEndIndex])
 
             let nameEndIndex = commit.author.index(emailRange.lowerBound, offsetBy: -2)
             authorName = String(commit.author[..<nameEndIndex]).trimmingCharacters(in: .whitespaces)
