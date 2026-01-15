@@ -44,30 +44,37 @@ struct PluginInfo: Identifiable {
     let name: String
     let description: String
     let icon: String
+    /// 插件是否开发者启用（检查插件的 static let enable 属性）
+    let isDeveloperEnabled: () -> Bool
 
-    init(id: String, name: String, description: String, icon: String = "puzzlepiece.extension") {
+    init(id: String, name: String, description: String, icon: String = "puzzlepiece.extension", isDeveloperEnabled: @escaping () -> Bool = { true }) {
         self.id = id
         self.name = name
         self.description = description
         self.icon = icon
+        self.isDeveloperEnabled = isDeveloperEnabled
     }
 }
 
 /// 可配置的插件列表
 enum ConfigurablePlugins {
-    /// 所有可配置的插件
-    static let allPlugins: [PluginInfo] = [
-        PluginInfo(
-            id: "OpenCursor",
-            name: "OpenCursor",
-            description: "在 Cursor 中打开当前项目",
-            icon: "cursor.rays"
-        ),
-        PluginInfo(
-            id: "OpenRemote",
-            name: "OpenRemote",
-            description: "打开远程仓库链接",
-            icon: "link"
-        )
-    ]
+    /// 所有可配置的插件（仅包含开发者启用的插件）
+    static var allPlugins: [PluginInfo] {
+        [
+            PluginInfo(
+                id: "OpenCursor",
+                name: "OpenCursor",
+                description: "在 Cursor 中打开当前项目",
+                icon: "cursor.rays",
+                isDeveloperEnabled: { OpenCursorPlugin.enable }
+            ),
+            PluginInfo(
+                id: "OpenRemote",
+                name: "OpenRemote",
+                description: "打开远程仓库链接",
+                icon: "link",
+                isDeveloperEnabled: { OpenRemotePlugin.enable }
+            )
+        ].filter { $0.isDeveloperEnabled() }
+    }
 }
