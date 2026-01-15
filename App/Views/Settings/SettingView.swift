@@ -25,12 +25,14 @@ struct SettingView: View, SuperLog {
     enum SettingTab: String, CaseIterable {
         case userInfo = "用户信息"
         case commitStyle = "Commit 风格"
+        case plugins = "插件管理"
         case about = "关于"
 
         var icon: String {
             switch self {
             case .userInfo: return "person.circle"
             case .commitStyle: return "text.alignleft"
+            case .plugins: return "puzzlepiece.extension"
             case .about: return "info.circle"
             }
         }
@@ -60,6 +62,9 @@ struct SettingView: View, SuperLog {
             case .commitStyle:
                 CommitStyleSettingView()
                     .environmentObject(data)
+
+            case .plugins:
+                PluginSettingsView()
 
             case .about:
                 AboutView()
