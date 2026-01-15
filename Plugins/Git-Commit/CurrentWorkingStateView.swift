@@ -5,7 +5,7 @@ import OSLog
 import SwiftUI
 
 /// 显示当前工作状态的视图组件
-/// 显示未提交文件数量、远程同步状态，并提供 git push/pull 功能
+/// 显示未提交文件数量、远程同步状态，并提供 git pull 功能
 struct CurrentWorkingStateView: View, SuperLog {
     /// 环境对象：数据提供者
     @EnvironmentObject var data: DataProvider
@@ -36,28 +36,14 @@ struct CurrentWorkingStateView: View, SuperLog {
     /// 是否正在加载同步状态
     @State private var isSyncLoading = false
 
-    /// 刷新按钮是否被鼠标悬停
-    @State private var isRefreshButtonHovered = false
-
-    /// 未拉取按钮是否被鼠标悬停
-    @State private var isUnpulledIndicatorHovered = false
-
-    /// 未推送按钮是否被鼠标悬停
-    @State private var isUnpushedIndicatorHovered = false
+    /// 下载按钮是否被鼠标悬停
+    @State private var isDownloadButtonHovered = false
 
     /// 是否正在执行 pull 操作
     @State private var isPulling = false
 
-    /// 是否正在执行 push 操作
-    @State private var isPushing = false
-
     /// 是否显示凭据输入界面
     @State private var showCredentialInput = false
-
-    /// 是否有需要显示的同步状态
-    private var hasSyncStatus: Bool {
-        unpushedCount > 0 || unpulledCount > 0
-    }
 
     /// 是否启用详细日志输出
     static let verbose = false
@@ -67,185 +53,90 @@ struct CurrentWorkingStateView: View, SuperLog {
 
     /// 视图主体
     var body: some View {
-        VStack(spacing: 0) {
-            // 当前工作状态部分
-            localStatusSection
+        // 只在本地没有未提交文件时显示
+        if changedFileCount == 0 {
+            HStack(spacing: 12) {
+                Image(systemName: "checkmark.circle")
+                    .font(.system(size: 16, weight: .medium))
+                    .foregroundColor(.green)
 
-            Divider()
-                .background(Color.white.opacity(0.2))
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("工作区干净")
+                        .font(.system(size: 14, weight: .medium))
 
-            // 远程同步状态部分
-            if hasSyncStatus {
-                syncStatusSection
+                    if unpulledCount > 0 {
+                        Text("远程有 \(unpulledCount) 个提交可拉取")
+                            .font(.system(size: 11))
+                            .foregroundColor(.secondary)
+                    } else {
+                        Text("所有更改已提交")
+                            .font(.system(size: 11))
+                            .foregroundColor(.secondary)
+                    }
+                }
+
+                Spacer()
+
+                // 只在远程有未拉取提交时显示下载按钮
+                if unpulledCount > 0 {
+                    downloadButton
+                }
             }
-        }
-        .background(
-            isSelected
-                ? Color.accentColor.opacity(0.1)
-                : Color(.controlBackgroundColor)
-        )
-        .onTapGesture(perform: onTap)
-        .onAppear(perform: onAppear)
-        .onChange(of: data.project, onProjectDidChange)
-        .onProjectDidCommit(perform: onProjectDidCommit)
-        .onProjectDidPush(perform: onProjectDidPush)
-        .onProjectDidPull(perform: onProjectDidPull)
-        .onNotification(.appDidBecomeActive, onAppDidBecomeActive)
-        .sheet(isPresented: $showCredentialInput) {
-            CredentialInputView {
-                // 凭据保存后，重新执行 push/pull
-                if isPushing || isPulling {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                        if isPushing {
-                            performPush()
-                        } else if isPulling {
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+            .background(
+                isSelected
+                    ? Color.accentColor.opacity(0.1)
+                    : Color(.controlBackgroundColor)
+            )
+            .onTapGesture(perform: onTap)
+            .onAppear(perform: onAppear)
+            .onChange(of: data.project, onProjectDidChange)
+            .onProjectDidCommit(perform: onProjectDidCommit)
+            .onProjectDidPush(perform: onProjectDidPush)
+            .onProjectDidPull(perform: onProjectDidPull)
+            .onNotification(.appDidBecomeActive, onAppDidBecomeActive)
+            .sheet(isPresented: $showCredentialInput) {
+                CredentialInputView {
+                    // 凭据保存后，重新执行 pull
+                    if isPulling {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                             performPull()
                         }
                     }
                 }
             }
+        } else {
+            // 本地有未提交文件，不显示任何内容
+            EmptyView()
         }
     }
 
-    /// 本地状态部分
-    private var localStatusSection: some View {
-        ZStack {
-            HStack(spacing: 12) {
-                Image(systemName: "clock.arrow.circlepath")
-                    .font(.system(size: 16, weight: .medium))
-
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("当前状态")
-                        .font(.system(size: 14, weight: .medium))
-
-                    Text(isRefreshing ? "正在刷新..." : "(\(changedFileCount) 未提交)")
-                        .font(.system(size: 11))
-                }
-
-                Spacer()
-            }
-
-            if isRefreshing || isSyncLoading {
-                HStack {
-                    Spacer()
-                    ProgressView()
-                        .controlSize(.small)
-                        .scaleEffect(0.8)
-                        .padding(.trailing, 8)
-                }
-            }
-        }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 12)
-    }
-
-    /// 远程同步状态部分
-    private var syncStatusSection: some View {
-        HStack(spacing: 12) {
-            if unpushedCount > 0 {
-                unpushedIndicator
-            }
-
-            if unpulledCount > 0 {
-                unpulledIndicator
-            }
-
-            Spacer()
-
-            refreshButton
-        }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 8)
-    }
-}
-
-// MARK: - View Components
-
-extension CurrentWorkingStateView {
-    /// 未推送提交指示器：橙色向上箭头 + 数量（可点击执行 push）
-    private var unpushedIndicator: some View {
-        Button(action: performPush) {
-            HStack(spacing: 2) {
-                Image(systemName: isPushing ? "arrow.up.circle" : "arrow.up.circle.fill")
-                    .foregroundColor(.orange)
-                    .font(.system(size: 12))
-                    .rotationEffect(.degrees(isPushing ? 360 : 0))
-                    .animation(isPushing ? .linear(duration: 1).repeatForever(autoreverses: false) : .default, value: isPushing)
-
-                Text("\(unpushedCount)")
-                    .font(.system(size: 11, weight: .medium))
-                    .foregroundColor(.orange)
-            }
-            .padding(4)
-            .background(isUnpushedIndicatorHovered ? Color.orange.opacity(0.2) : Color.orange.opacity(0.1))
-            .cornerRadius(4)
-        }
-        .buttonStyle(PlainButtonStyle())
-        .disabled(isPushing)
-        .help("点击执行 git push 推送本地提交")
-        .onHover { hovering in
-            withAnimation(.easeInOut(duration: 0.2)) {
-                isUnpushedIndicatorHovered = hovering
-            }
-            if hovering {
-                NSCursor.pointingHand.push()
-            } else {
-                NSCursor.pointingHand.pop()
-            }
-        }
-    }
-
-    /// 未拉取提交指示器：蓝色向下箭头 + 数量（可点击执行 pull）
-    private var unpulledIndicator: some View {
+    /// 下载按钮（执行 git pull）
+    private var downloadButton: some View {
         Button(action: performPull) {
-            HStack(spacing: 2) {
+            HStack(spacing: 4) {
                 Image(systemName: isPulling ? "arrow.down.circle" : "arrow.down.circle.fill")
                     .foregroundColor(.blue)
-                    .font(.system(size: 12))
+                    .font(.system(size: 14))
                     .rotationEffect(.degrees(isPulling ? 360 : 0))
                     .animation(isPulling ? .linear(duration: 1).repeatForever(autoreverses: false) : .default, value: isPulling)
 
-                Text("\(unpulledCount)")
-                    .font(.system(size: 11, weight: .medium))
+                Text("拉取")
+                    .font(.system(size: 12, weight: .medium))
                     .foregroundColor(.blue)
             }
-            .padding(4)
-            .background(isUnpulledIndicatorHovered ? Color.blue.opacity(0.2) : Color.blue.opacity(0.1))
-            .cornerRadius(4)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 6)
+            .background(isDownloadButtonHovered ? Color.blue.opacity(0.2) : Color.blue.opacity(0.1))
+            .cornerRadius(6)
         }
         .buttonStyle(PlainButtonStyle())
         .disabled(isPulling)
         .help("点击执行 git pull 拉取远程提交")
         .onHover { hovering in
             withAnimation(.easeInOut(duration: 0.2)) {
-                isUnpulledIndicatorHovered = hovering
-            }
-            if hovering {
-                NSCursor.pointingHand.push()
-            } else {
-                NSCursor.pointingHand.pop()
-            }
-        }
-    }
-
-    /// 刷新按钮：点击时重新加载同步状态，支持旋转动画
-    private var refreshButton: some View {
-        Button(action: loadSyncStatus) {
-            Image(systemName: "arrow.clockwise")
-                .font(.system(size: 12, weight: .medium))
-                .foregroundColor(.secondary)
-                .rotationEffect(.degrees(isSyncLoading ? 360 : 0))
-                .animation(isSyncLoading ? .linear(duration: 1).repeatForever(autoreverses: false) : .default, value: isSyncLoading)
-                .padding(4)
-                .background(isRefreshButtonHovered ? Color.secondary.opacity(0.2) : Color.secondary.opacity(0.1))
-                .cornerRadius(4)
-        }
-        .buttonStyle(PlainButtonStyle())
-        .disabled(isSyncLoading)
-        .help("刷新同步状态")
-        .onHover { hovering in
-            withAnimation(.easeInOut(duration: 0.2)) {
-                isRefreshButtonHovered = hovering
+                isDownloadButtonHovered = hovering
             }
             if hovering {
                 NSCursor.pointingHand.push()
@@ -405,66 +296,6 @@ extension CurrentWorkingStateView {
         }
     }
 
-    /// 执行 git push 操作推送本地提交
-    private func performPush() {
-        guard let project = data.project else {
-            if Self.verbose {
-                os_log("\(self.t)No project found")
-            }
-            return
-        }
-
-        if Self.verbose {
-            os_log("\(self.t)<\(project.path)>Performing git push")
-        }
-
-        // 立即更新 UI 状态
-        isPushing = true
-
-        // 设置状态日志
-        Task { await setStatus("推送中…") }
-
-        // 使用 Task.detached 确保在后台执行
-        Task.detached(priority: .userInitiated) {
-            let result: Result<Void, Error>
-
-            do {
-                // 在后台线程执行耗时操作
-                try project.push()
-                result = .success(())
-                await MainActor.run {
-                    os_log("\(Self.t)✅ Git push succeeded")
-                }
-            } catch {
-                result = .failure(error)
-                await MainActor.run {
-                    os_log(.error, "\(Self.t)❌ Git push failed: \(error)")
-                }
-            }
-
-            // 在主线程处理结果和更新 UI
-            await MainActor.run {
-                self.isPushing = false
-
-                switch result {
-                case .success:
-                    // 重新加载同步状态
-                    self.loadSyncStatus()
-                case .failure(let error):
-                    // 检查是否需要凭据
-                    if self.isCredentialError(error) {
-                        self.showCredentialInput = true
-                    } else {
-                        self.m.error(error)
-                    }
-                }
-            }
-
-            // 清除状态日志
-            await setStatus(nil)
-        }
-    }
-
     /// 检查错误是否是认证错误
     private func isCredentialError(_ error: Error) -> Bool {
         // 检查是否是 LibGit2Error.authenticationError
@@ -552,6 +383,7 @@ extension CurrentWorkingStateView {
 #Preview("App - Small Screen") {
     ContentLayout()
         .hideSidebar()
+        .hideTabPicker()
         .hideProjectActions()
         .inRootView()
         .frame(width: 800)
@@ -561,6 +393,7 @@ extension CurrentWorkingStateView {
 #Preview("App - Big Screen") {
     ContentLayout()
         .hideSidebar()
+        .hideProjectActions()
         .inRootView()
         .frame(width: 1200)
         .frame(height: 1200)
