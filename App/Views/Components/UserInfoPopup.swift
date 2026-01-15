@@ -14,28 +14,29 @@ struct UserInfoPopup: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             // 头部：头像和名称
-            HStack(spacing: 12) {
+            HStack(alignment: .center, spacing: 12) {
                 // 大头像
                 AvatarView(user: user, size: 48)
 
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .leading, spacing: 2) {
                     // 用户名
                     Text(user.name)
-                        .font(.headline)
+                        .font(.system(size: 16, weight: .semibold))
                         .foregroundColor(.primary)
+                        .lineLimit(1)
 
                     // GitHub 用户标识
-                    if !user.email.isEmpty {
+                    if !user.email.isEmpty, !gitHubUsername.isEmpty {
                         Text(gitHubUsername)
-                            .font(.caption)
+                            .font(.system(size: 12))
                             .foregroundColor(.secondary)
+                            .lineLimit(1)
                     }
                 }
 
                 Spacer()
             }
             .padding(16)
-            .padding(.bottom, 12)
 
             Divider()
 
@@ -95,7 +96,7 @@ struct UserInfoPopup: View {
                 }
             }
         }
-        .frame(width: 350)
+        .frame(width: 360)
         .onAppear {
             loadAvatarURL()
         }
