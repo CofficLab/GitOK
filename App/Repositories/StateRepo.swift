@@ -42,7 +42,7 @@ class StateRepo: StateRepoProtocol, SuperLog, ObservableObject {
     var sidebarVisibility: Bool = true
 
     @AppStorage("App.CommitStyle")
-    var globalCommitStyle: CommitStyle = .emoji
+    var globalCommitStyle: CommitStyle = .lowercase
     
     // MARK: - 初始化
     

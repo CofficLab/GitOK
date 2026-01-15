@@ -59,7 +59,7 @@ struct CommitInfoView: View, SuperLog {
                 // 作者信息（可点击的头像+用户名）
                 if !commit.author.isEmpty {
                     if !avatarUsers.isEmpty {
-                        ClickableUserInfo(users: avatarUsers, avatarSize: 18, maxVisibleCount: 3)
+                        UserInfo(users: avatarUsers, avatarSize: 18, maxVisibleCount: 3)
                     } else {
                         // 回退图标
                         HStack(spacing: 6) {
