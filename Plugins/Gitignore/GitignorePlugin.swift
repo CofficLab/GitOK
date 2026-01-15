@@ -29,9 +29,17 @@ extension GitignorePlugin {
     @objc static func register() {
         guard enable else { return }
 
+        // 检查用户是否禁用了此插件
+        guard PluginSettingsStore.shared.isPluginEnabled("Gitignore") else {
+            if Self.verbose {
+                os_log("\(Self.t)⚠️ GitignorePlugin is disabled by user settings")
+            }
+            return
+        }
+
         Task {
             if Self.verbose {
-                os_log("\(self.t)🚀 Register GitignorePlugin")
+                os_log("\(Self.t)🚀 Register GitignorePlugin")
             }
 
             await PluginRegistry.shared.register(id: "Gitignore", order: 29) {

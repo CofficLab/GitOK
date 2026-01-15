@@ -25,12 +25,18 @@ struct SettingView: View, SuperLog {
     enum SettingTab: String, CaseIterable {
         case userInfo = "用户信息"
         case commitStyle = "Commit 风格"
+//        case appearance = "外观"
+//        case systemInfo = "系统信息"
+        case plugins = "插件管理"
         case about = "关于"
 
         var icon: String {
             switch self {
             case .userInfo: return "person.circle"
             case .commitStyle: return "text.alignleft"
+//            case .appearance: return "paintbrush"
+//            case .systemInfo: return "desktopcomputer.trianglebadge.exclamationmark"
+            case .plugins: return "puzzlepiece.extension"
             case .about: return "info.circle"
             }
         }
@@ -41,12 +47,25 @@ struct SettingView: View, SuperLog {
         self._selectedTab = State(initialValue: defaultTab)
     }
 
+    /// 应用信息
+    private var appInfo: AppInfo {
+        AppInfo()
+    }
+
     var body: some View {
         NavigationSplitView {
             // Sidebar
-            List(SettingTab.allCases, id: \.self, selection: $selectedTab) { tab in
-                NavigationLink(value: tab) {
-                    Label(tab.rawValue, systemImage: tab.icon)
+            VStack(spacing: 0) {
+                // 应用信息头部
+                sidebarHeader
+
+                Divider()
+
+                // 设置列表
+                List(SettingTab.allCases, id: \.self, selection: $selectedTab) { tab in
+                    NavigationLink(value: tab) {
+                        Label(tab.rawValue, systemImage: tab.icon)
+                    }
                 }
             }
             .navigationSplitViewColumnWidth(min: 150, ideal: 200)
@@ -61,6 +80,15 @@ struct SettingView: View, SuperLog {
                 CommitStyleSettingView()
                     .environmentObject(data)
 
+//            case .appearance:
+//                AppAppearanceSettingView()
+
+//            case .systemInfo:
+//                SystemInfoSettingView()
+
+            case .plugins:
+                PluginSettingsView()
+
             case .about:
                 AboutView()
             }
@@ -69,6 +97,44 @@ struct SettingView: View, SuperLog {
         .onReceive(NotificationCenter.default.publisher(for: .didSaveGitUserConfig)) { _ in
             dismiss()
         }
+    }
+
+    // MARK: - View Components
+
+    /// 侧边栏头部 - 应用信息
+    private var sidebarHeader: some View {
+        VStack(alignment: .center, spacing: 12) {
+            Spacer().frame(height: 20)
+
+            // App 图标
+            if let appIcon = NSImage(named: "AppIcon") {
+                Image(nsImage: appIcon)
+                    .resizable()
+                    .frame(width: 64, height: 64)
+                    .cornerRadius(14)
+                    .shadow(radius: 3)
+            }
+
+            // App 名称
+            Text(appInfo.name)
+                .font(.headline)
+                .fontWeight(.semibold)
+
+            // 版本和 Build 信息
+            VStack(alignment: .center, spacing: 2) {
+                Text("v\(appInfo.version)")
+                    .font(.caption2)
+                    .foregroundColor(.secondary)
+
+                Text("Build \(appInfo.build)")
+                    .font(.caption2)
+                    .foregroundColor(.secondary)
+            }
+
+            Spacer().frame(height: 16)
+        }
+        .frame(maxWidth: .infinity)
+        // .background(Color(nsColor: .controlBackgroundColor))
     }
 }
 

@@ -1,6 +1,8 @@
 import Foundation
 import SwiftUI
 
+/// Git 提交类别枚举
+/// 定义不同类型的提交类别，每个类别都有对应的 emoji 和描述文本
 enum CommitCategory: String, CaseIterable, Equatable {
     static var auto = "\(CommitCategory.Chore.text) Auto Committed by GitOK"
     static var merge = "\(CommitCategory.CI.text) Merged by GitOK"
@@ -162,24 +164,21 @@ enum CommitCategory: String, CaseIterable, Equatable {
     }
 }
 
+// MARK: - Preview
+
 #Preview("App - Small Screen") {
-    RootView {
-        ContentLayout()
-            .hideSidebar()
-            .hideTabPicker()
-            .hideProjectActions()
-    }
-    .frame(width: 800)
-    .frame(height: 600)
+    ContentLayout()
+        .hideSidebar()
+        .hideProjectActions()
+        .inRootView()
+        .frame(width: 800)
+        .frame(height: 600)
 }
 
 #Preview("App - Big Screen") {
-    RootView {
-        ContentLayout()
-            .hideSidebar()
-            .hideProjectActions()
-            .hideTabPicker()
-    }
-    .frame(width: 1200)
-    .frame(height: 1200)
+    ContentLayout()
+        .hideSidebar()
+        .inRootView()
+        .frame(width: 1200)
+        .frame(height: 1200)
 }

@@ -1,7 +1,7 @@
 
+import LibGit2Swift
 import MagicAlert
 import MagicKit
-import LibGit2Swift
 import OSLog
 import SwiftUI
 
@@ -45,28 +45,13 @@ extension BtnMerge {
     /// 先切换到目标分支，然后将源分支合并到当前分支
     func merge() {
         do {
-            try LibGit2.checkout(branch: to.name, at: path)
-
-            // 发布分支切换事件
             let project = Project(URL(fileURLWithPath: path))
-            project.postEvent(name: .projectDidChangeBranch, operation: "checkout",
-                              additionalInfo: ["branch": to.name, "reason": "merge_setup"])
 
-            try LibGit2.merge(branchName: from.name, at: path, verbose: false)
-
-            // 发布合并成功事件
-            project.postEvent(name: .projectDidMerge, operation: "merge",
-                              additionalInfo: ["fromBranch": from.name, "toBranch": to.name])
+            try project.mergeBranches(fromBranch: from, toBranch: to)
 
             self.m.info("已将 \(from.name) 合并到 \(to.name), 并切换到 \(to.name)")
         } catch let error {
             os_log(.error, "\(self.t)❌ 分支合并失败: \(error.localizedDescription)")
-
-            // 发布合并失败事件
-            let project = Project(URL(fileURLWithPath: path))
-            project.postEvent(name: .projectOperationDidFail, operation: "merge", success: false, error: error,
-                              additionalInfo: ["fromBranch": from.name, "toBranch": to.name])
-
             m.error(error)
         }
     }

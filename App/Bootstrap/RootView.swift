@@ -4,14 +4,26 @@ import MagicAlert
 import SwiftUI
 import MagicKit
 
+/// 根视图容器组件
+/// 为应用提供统一的上下文环境，包括数据提供者、图标提供者和插件提供者
 struct RootView<Content>: View, SuperEvent where Content: View {
+
+    /// 视图内容
     var content: Content
+
+    /// 应用提供者
     var a: AppProvider
+
+    /// 图标提供者
     var i: IconProvider
+
+    /// 插件提供者
     var p: PluginProvider
 
+    /// 根视图容器
     private var box: RootBox
 
+    /// 消息提供者
     @StateObject var m = MagicMessageProvider.shared
 
     init(@ViewBuilder content: () -> Content) {

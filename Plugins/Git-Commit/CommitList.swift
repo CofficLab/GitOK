@@ -1,30 +1,52 @@
-import MagicKit
 import LibGit2Swift
+import MagicKit
 import OSLog
 import SwiftUI
 
+/// Git 提交列表视图组件
+/// 显示项目的提交历史记录，支持分页加载和刷新
 struct CommitList: View, SuperThread, SuperLog {
+    /// 日志标识符
     nonisolated static let emoji = "🖥️"
+
+    /// 是否启用详细日志输出
     nonisolated static let verbose = false
 
+    /// 单例实例
     static var shared = CommitList()
 
+    /// 环境对象：应用提供者
     @EnvironmentObject var app: AppProvider
+
+    /// 环境对象：数据提供者
     @EnvironmentObject var data: DataProvider
 
+    /// 提交列表数据
     @State private var commits: [GitCommit] = []
+
+    /// 是否正在加载数据
     @State private var loading = false
+
+    /// 是否正在刷新数据
     @State private var isRefreshing = false
+
+    /// 是否还有更多提交可以加载
     @State private var hasMoreCommits = true
+
+    /// 当前页码
     @State private var currentPage = 0
+
+    /// 每页加载的提交数量
     @State private var pageSize: Int = 50
-    @State private var unpushedCommits: Set<String> = []  // 存储未推送 commit 的 hash
-    @State private var isLoadingMoreScheduled = false  // 防止快速连续触发加载更多
 
-    // 使用GitCommitRepo来存储和恢复commit选择
+    /// 未推送提交的哈希集合
+    @State private var unpushedCommits: Set<String> = []
+
+    /// 是否已调度加载更多操作（防止快速连续触发）
+    @State private var isLoadingMoreScheduled = false
+
+    /// Git 提交仓库，用于存储和恢复提交选择状态
     private let commitRepo = GitCommitRepo.shared
-
-    private init() {}
 
     var body: some View {
         ZStack {
@@ -52,9 +74,7 @@ struct CommitList: View, SuperThread, SuperLog {
         .onProjectDidCommit(perform: onCommitSuccess)
         .onProjectDidPull(perform: onPullSuccess)
         .onProjectDidPush(perform: onPushSuccess)
-        .onApplicationDidBecomeActive {
-            self.onApplicationDidBecomeActive()
-        }
+        .onApplicationDidBecomeActive(perform: onApplicationDidBecomeActive)
     }
 }
 
@@ -71,6 +91,7 @@ extension CommitList {
                     let commit = commits[index]
                     let isUnpushed = unpushedCommits.contains(commit.hash)
                     CommitRow(commit: commit, isUnpushed: isUnpushed)
+                        .id(commit.hash) // 根据 commit hash 强制视图刷新，避免状态复用
                         .overlay(alignment: .trailing) {
                             // 在第一个 commit 右侧显示刷新 loading
                             if index == 0 && isRefreshing {
@@ -122,16 +143,11 @@ extension CommitList {
 // MARK: - Action
 
 extension CommitList {
+    /// 加载更多提交记录
+    /// 使用分页方式获取下一页的提交数据
     private func loadMoreCommits() {
         guard let project = data.project, !loading, hasMoreCommits else {
-            if Self.verbose {
-                os_log("\(self.t)🔄 LoadMoreCommits skipped - loading: \(loading), hasMore: \(hasMoreCommits)")
-            }
             return
-        }
-
-        if Self.verbose {
-            os_log("\(self.t)🔄 LoadMoreCommits started - page: \(currentPage), total: \(commits.count)")
         }
 
         loading = true
@@ -142,23 +158,12 @@ extension CommitList {
                 limit: self.pageSize
             )
 
-            if Self.verbose {
-                os_log("\(self.t)🔄 LoadMoreCommits - page: \(self.currentPage), fetched: \(newCommits.count) commits")
-                for (index, commit) in newCommits.prefix(3).enumerated() {
-                    os_log("\(self.t)🔄 New Commit \(index): \(commit.hash.prefix(8)) - \(commit.message.prefix(50))")
-                }
-            }
-
             if !newCommits.isEmpty {
                 // 添加去重逻辑，防止重复添加相同的commit
                 let uniqueNewCommits = newCommits.filter { newCommit in
                     !commits.contains { existingCommit in
                         existingCommit.hash == newCommit.hash
                     }
-                }
-
-                if Self.verbose {
-                    os_log("\(self.t)🔄 LoadMoreCommits - fetched: \(newCommits.count), unique: \(uniqueNewCommits.count)")
                 }
 
                 if !uniqueNewCommits.isEmpty {
@@ -169,20 +174,17 @@ extension CommitList {
                 currentPage += 1
             } else {
                 hasMoreCommits = false
-                if Self.verbose {
-                    os_log("\(self.t)🔄 LoadMoreCommits - no more commits available")
-                }
             }
             loading = false
 
         } catch {
             loading = false
-            if Self.verbose {
-                os_log(.error, "\(self.t)❌ LoadMoreCommits error: \(error)")
-            }
+            os_log(.error, "\(self.t)❌ LoadMoreCommits error: \(error)")
         }
     }
 
+    /// 选择指定的提交
+    /// - Parameter commit: 要选择的提交对象
     private func selectCommit(_ commit: GitCommit) {
         data.setCommit(commit)
 
@@ -192,12 +194,14 @@ extension CommitList {
         }
     }
 
+    /// 设置当前选中的提交（异步版本）
+    /// - Parameter commit: 要设置的提交对象，可选
     func setCommit(_ commit: GitCommit?) {
-        DispatchQueue.main.async {
-            data.setCommit(commit)
-        }
+        data.setCommit(commit)
     }
 
+    /// 刷新提交列表数据
+    /// - Parameter reason: 刷新原因描述，用于调试
     func refresh(_ reason: String = "") {
         if Self.verbose {
             os_log("\(self.t)🍋 Refresh(\(reason))")
@@ -243,11 +247,6 @@ extension CommitList {
                 let unpushed = try await project.getUnPushedCommits()
                 let unpushedHashes = Set(unpushed.map { $0.hash })
 
-                if Self.verbose {
-                    os_log("\(self.t)🔄 Refresh - fetched \(initialCommits.count) commits from page 0")
-                    os_log("\(self.t)🔄 Refresh - \(unpushed.count) unpushed commits")
-                }
-
                 // 在主线程更新 UI 状态
                 await MainActor.run {
                     self.commits = initialCommits
@@ -266,25 +265,29 @@ extension CommitList {
         }
     }
 
-    // 恢复上次选择的commit
+    /// 恢复上次选择的提交
+    /// 从本地存储中恢复用户之前选择的提交位置
     private func restoreLastSelectedCommit() {
         guard let project = data.project else { return }
 
-        // 获取上次选择的commit
-        if let lastCommit = commitRepo.getLastSelectedCommit(projectPath: project.path) {
+        // 获取上次选择的commit hash
+        if let lastCommitHash = commitRepo.getLastSelectedCommitHash(projectPath: project.path) {
             // 在当前commit列表中查找匹配的commit
-            if let matchedCommit = commits.first(where: { $0.hash == lastCommit.hash }) {
+            if let matchedCommit = commits.first(where: { $0.hash == lastCommitHash }) {
                 self.setCommit(matchedCommit)
             } else if hasMoreCommits {
                 // 如果在当前页面没有找到，并且还有更多commit，尝试加载更多
-                loadMoreCommitsUntilFound(targetHash: lastCommit.hash)
+                loadMoreCommitsUntilFound(targetHash: lastCommitHash)
             }
         } else {
             self.setCommit(self.commits.first)
         }
     }
 
-    // 加载更多commit直到找到目标commit
+    /// 加载更多提交直到找到目标提交
+    /// - Parameters:
+    ///   - targetHash: 目标提交的哈希值
+    ///   - maxAttempts: 最大尝试次数，防止无限循环
     private func loadMoreCommitsUntilFound(targetHash: String, maxAttempts: Int = 3) {
         guard let project = data.project, !loading, hasMoreCommits, maxAttempts > 0 else { return }
 
@@ -343,92 +346,77 @@ extension CommitList {
         pageSize = max(self.pageSize, visibleRows + 5)
     }
 
+    /// 项目变更事件处理
     func onProjectChange() {
-        self.bg.async {
-            self.refresh("Project Changed")
-        }
+        self.refresh("Project Changed")
     }
 
+    /// 分支变更事件处理
+    /// - Parameter eventInfo: 事件信息，包含新分支名称
     func onBranchChanged(_ eventInfo: ProjectEventInfo) {
-        self.bg.async {
-            self.refresh("Branch Changed to \(eventInfo.additionalInfo?["branchName"] as? String ?? "unknown")")
-        }
+        self.refresh("Branch Changed")
     }
 
+    /// 提交成功事件处理
+    /// - Parameter eventInfo: 事件信息
     func onCommitSuccess(_ eventInfo: ProjectEventInfo) {
-        // 延迟一小段时间，确保 Git 操作完全完成
-        Task.detached {
-            // 等待 100ms，确保 Git 操作完成
-            try? await Task.sleep(nanoseconds: 100000000)
-            await MainActor.run {
-                self.refresh("GitCommitSuccess")
-            }
-        }
+        self.refresh("GitCommitSuccess")
     }
 
+    /// 视图出现事件处理
     func onAppear() {
-        self.bg.async {
-            self.refresh("OnAppear")
-            self.restoreLastSelectedCommit()
-        }
+        self.refresh("OnAppear")
+        self.restoreLastSelectedCommit()
     }
 
+    /// 选择变更事件处理
     func onChangeOfSelection() {
     }
 
+    /// 拉取成功事件处理
+    /// - Parameter eventInfo: 事件信息
     func onPullSuccess(_ eventInfo: ProjectEventInfo) {
-        self.bg.async {
-            self.refresh("GitPullSuccess")
-        }
+        self.refresh("GitPullSuccess")
     }
 
+    /// 推送成功事件处理
+    /// - Parameter eventInfo: 事件信息
     func onPushSuccess(_ eventInfo: ProjectEventInfo) {
-        // 延迟一小段时间，确保 Git 操作完全完成
-        Task.detached {
-            // 等待 100ms，确保 Git 操作完成
-            try? await Task.sleep(nanoseconds: 100000000)
-            await MainActor.run {
-                // 刷新会自动更新 unpushedCommits
-                self.refresh("GitPushSuccess")
-            }
-        }
+        self.refresh("GitPushSuccess")
     }
 
+    /// 应用即将变为活跃状态事件处理
+    /// - Parameter notification: 通知对象
     func onAppWillBecomeActive(_ notification: Notification) {
-        self.bg.async {
-            self.refresh("AppWillBecomeActive")
-        }
+        self.refresh("AppWillBecomeActive")
     }
 
+    /// 应用变为活跃状态事件处理
+    /// - Parameter notification: 通知对象
     func onAppDidBecomeActive(_ notification: Notification) {
-        self.bg.async {
-            self.refresh("AppDidBecomeActive")
-        }
+        self.refresh("AppDidBecomeActive")
     }
 
+    /// 应用变为活跃状态事件处理（通用版本）
     func onApplicationDidBecomeActive() {
-        self.bg.async {
-            self.refresh("ApplicationDidBecomeActive")
-        }
+        self.refresh("ApplicationDidBecomeActive")
     }
 }
 
 // MARK: - Preview
 
-#Preview("App-Small Screen") {
+#Preview("App - Small Screen") {
     ContentLayout()
-        .hideTabPicker()
-        .hideProjectActions()
         .hideSidebar()
+        .hideProjectActions()
         .inRootView()
         .frame(width: 800)
-        .frame(height: 800)
+        .frame(height: 600)
 }
 
 #Preview("App - Big Screen") {
     ContentLayout()
-        .hideTabPicker()
-        .hideProjectActions()
+        .hideSidebar()
         .inRootView()
         .frame(width: 1200)
         .frame(height: 1200)

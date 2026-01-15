@@ -3,6 +3,8 @@ import MagicKit
 import OSLog
 import SwiftUI
 
+/// Banner 插件类
+/// 负责管理和提供应用横幅生成功能
 class BannerPlugin: SuperPlugin, SuperLog, PluginRegistrant {
     /// 日志标识符
     nonisolated static let emoji = "📣"

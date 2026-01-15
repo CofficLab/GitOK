@@ -29,9 +29,17 @@ extension LicensePlugin {
     @objc static func register() {
         guard enable else { return }
 
+        // 检查用户是否禁用了此插件
+        guard PluginSettingsStore.shared.isPluginEnabled("License") else {
+            if Self.verbose {
+                os_log("\(Self.t)⚠️ LicensePlugin is disabled by user settings")
+            }
+            return
+        }
+
         Task {
             if Self.verbose {
-                os_log("\(self.t)🚀 Register LicensePlugin")
+                os_log("\(Self.t)🚀 Register LicensePlugin")
             }
 
             await PluginRegistry.shared.register(id: "License", order: 29) {

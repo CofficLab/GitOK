@@ -29,9 +29,17 @@ extension ReadmePlugin {
     @objc static func register() {
         guard enable else { return }
 
+        // 检查用户是否禁用了此插件
+        guard PluginSettingsStore.shared.isPluginEnabled("Readme") else {
+            if Self.verbose {
+                os_log("\(Self.t)⚠️ ReadmePlugin is disabled by user settings")
+            }
+            return
+        }
+
         Task {
             if Self.verbose {
-                os_log("\(self.t)🚀 Register ReadmePlugin")
+                os_log("\(Self.t)🚀 Register ReadmePlugin")
             }
 
             await PluginRegistry.shared.register(id: "Readme", order: 28) {

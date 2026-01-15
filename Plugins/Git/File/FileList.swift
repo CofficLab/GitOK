@@ -87,18 +87,6 @@ extension FileList {
 
             Spacer()
 
-            HStack(spacing: 4) {
-                Image(systemName: "doc.text")
-                    .foregroundColor(.secondary)
-                    .font(.system(size: 12))
-
-                Text("\(files.count) 个文件")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-            }
-
-            Spacer()
-
             if isLoading {
                 HStack(spacing: 4) {
                     ProgressView()
@@ -107,9 +95,19 @@ extension FileList {
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
+            } else {
+                HStack(spacing: 4) {
+                    Image.doc
+                        .foregroundColor(.secondary)
+                        .font(.system(size: 12))
+
+                    Text("\(files.count) 个文件")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
             }
         }
-        .padding(.horizontal, 0)
+        .padding(.horizontal, 3)
         .padding(.vertical, 6)
         .background(Color(NSColor.controlBackgroundColor))
         .overlay(

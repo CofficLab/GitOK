@@ -26,7 +26,13 @@ class OpenRemotePlugin: SuperPlugin, SuperLog, PluginRegistrant {
 
 extension OpenRemotePlugin {
     @objc static func register() {
-        guard enable else { return }
+        // 检查用户是否禁用了此插件
+        guard PluginSettingsStore.shared.isPluginEnabled("OpenRemote") else {
+            if Self.verbose {
+                os_log("\(Self.t)⚠️ OpenRemotePlugin is disabled by user settings")
+            }
+            return
+        }
 
         Task {
             if Self.verbose {

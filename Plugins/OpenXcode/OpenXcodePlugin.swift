@@ -3,6 +3,8 @@ import MagicKit
 import OSLog
 import SwiftUI
 
+/// 打开 Xcode 插件
+/// 提供在工具栏中打开当前项目 Xcode 的功能
 class OpenXcodePlugin: SuperPlugin, SuperLog, PluginRegistrant {
     static let shared = OpenXcodePlugin()
     /// 日志标识符
@@ -28,6 +30,14 @@ class OpenXcodePlugin: SuperPlugin, SuperLog, PluginRegistrant {
 extension OpenXcodePlugin {
     @objc static func register() {
         guard enable else { return }
+
+        // 检查用户是否禁用了此插件
+        guard PluginSettingsStore.shared.isPluginEnabled("OpenXcode") else {
+            if Self.verbose {
+                os_log("\(Self.t)⚠️ OpenXcodePlugin is disabled by user settings")
+            }
+            return
+        }
 
         // 检查 Xcode 是否安装
         guard isXcodeInstalled() else {

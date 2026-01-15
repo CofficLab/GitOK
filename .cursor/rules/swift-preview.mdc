@@ -5,7 +5,7 @@ alwaysApply: false
 
 # Swift文件预览代码规则
 
-每个Swift文件都必须在文件结尾包含以下预览代码：
+每个Swift文件都必须在文件结尾包含预览代码，建议使用以下标准格式：
 
 ```swift
 #Preview("App - Small Screen") {
@@ -31,13 +31,16 @@ alwaysApply: false
 - 这些预览代码必须添加到每个Swift文件的末尾
 - 第一个预览用于小屏幕（800x600左右，未必一定是这个值）
 - 第二个预览用于大屏幕（1200x1200左右，未必一定是这个值）
-- 小屏幕预览隐藏侧边栏和项目操作
-- 大屏幕预览只隐藏侧边栏
+- **重要：** `ContentLayout.hidexxx()` 系列函数调用不属于规范检查范围
+- **无需修改现有代码：** 如果现有代码已经包含其他 `.hidexxx()` 调用（如 `.hideTabPicker()`），无需强制改为标准格式
+- **灵活性原则：** 开发者可以根据实际预览需要选择合适的隐藏选项，保持现有代码的合理性
 
 ## 注意事项
 
 - 确保在添加预览代码前检查文件是否已经包含类似的预览代码
-- 如果文件已有预览代码，请替换为上述标准格式
+- 如果文件已有预览代码，可以保持现有格式，无需强制替换为标准格式
+- **保留现有代码：** 如果现有预览代码包含其他 `.hidexxx()` 调用（如 `.hideTabPicker()`），这些调用是合理的，无需修改
+- **规范重点：** 规则主要关注预览的基本结构（ContentLayout + inRootView + frame），而非具体的隐藏选项
 
 ## 开发流程
 
@@ -55,9 +58,7 @@ alwaysApply: false
 
 ## 实际应用示例
 
-### 示例1：Icon相关文件
-
-假设你在 `Plugins/Icon/ToolBar/IconTopBar.swift` 文件中添加预览代码：
+### 示例1：标准格式（推荐用于新文件）
 
 ```swift
 #Preview("App - Small Screen") {
@@ -68,13 +69,7 @@ alwaysApply: false
         .frame(width: 800)
         .frame(height: 600)
 }
-```
 
-### 示例2：Git相关文件
-
-假设你在 `Plugins/Git/GitDetail.swift` 文件中添加预览代码：
-
-```swift
 #Preview("App - Big Screen") {
     ContentLayout()
         .hideSidebar()
@@ -84,17 +79,34 @@ alwaysApply: false
 }
 ```
 
-### 示例3：Banner相关文件
+### 示例2：现有代码保持不变（推荐做法）
 
-假设你在 `Plugins/Banner/Editor/BannerTitle.swift` 文件中添加预览代码：
+如果现有代码包含其他 `.hidexxx()` 调用，应该保持不变：
 
 ```swift
 #Preview("App - Small Screen") {
     ContentLayout()
         .hideSidebar()
+        .hideTabPicker()        // 现有调用，无需修改
         .hideProjectActions()
         .inRootView()
         .frame(width: 800)
         .frame(height: 600)
+}
+```
+
+### 示例3：根据实际需要调整
+
+开发者可以根据组件的实际预览需求选择合适的隐藏选项：
+
+```swift
+#Preview("Component Preview") {
+    ContentLayout()
+        .hideSidebar()
+        .hideProjectActions()
+        .hideTabPicker()        // 根据需要添加
+        .inRootView()
+        .frame(width: 600)      // 根据需要调整尺寸
+        .frame(height: 400)
 }
 ```

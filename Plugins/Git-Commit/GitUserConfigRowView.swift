@@ -1,9 +1,22 @@
 import SwiftUI
+import MagicKit
 
+/// Git 用户配置行视图组件
+/// 显示单个用户配置项，支持选择和交互
+struct GitUserConfigRowView: View, SuperLog {
+    /// 日志标识符
+    nonisolated static let emoji = "👤"
 
-struct GitUserConfigRowView: View {
+    /// 是否启用详细日志输出
+    nonisolated static let verbose = false
+
+    /// 用户配置对象
     let config: GitUserConfig
+
+    /// 当前选中的配置
     let selectedConfig: GitUserConfig?
+
+    /// 点击回调
     let onTap: (GitUserConfig) -> Void
     
     @State private var isHovered = false
@@ -108,19 +121,21 @@ struct GitUserConfigRowView: View {
     }
 }
 
-#Preview {
-    VStack(spacing: 8) {
-        GitUserConfigRowView(
-            config: GitUserConfig(name: "John Doe", email: "john@example.com", isDefault: true),
-            selectedConfig: nil,
-            onTap: { _ in }
-        )
-        
-        GitUserConfigRowView(
-            config: GitUserConfig(name: "Jane Smith", email: "jane@company.com", isDefault: false),
-            selectedConfig: GitUserConfig(name: "Jane Smith", email: "jane@company.com", isDefault: false),
-            onTap: { _ in }
-        )
-    }
-    .padding()
+// MARK: - Preview
+
+#Preview("App - Small Screen") {
+    ContentLayout()
+        .hideSidebar()
+        .hideProjectActions()
+        .inRootView()
+        .frame(width: 800)
+        .frame(height: 600)
+}
+
+#Preview("App - Big Screen") {
+    ContentLayout()
+        .hideSidebar()
+        .inRootView()
+        .frame(width: 1200)
+        .frame(height: 1200)
 } 

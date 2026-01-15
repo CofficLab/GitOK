@@ -29,7 +29,16 @@ extension View {
     }
 }
 
+/// macOS 应用代理
+/// 负责处理应用生命周期事件和系统通知
 class MacAgent: NSObject, NSApplicationDelegate, ObservableObject, SuperLog, SuperEvent {
+    /// 日志标识符
+    nonisolated static let emoji = "🍎"
+
+    /// 是否启用详细日志输出
+    nonisolated static let verbose = false
+
+    /// 日志标签
     var label: String { "🍎 MacAgent::" }
 
     func application(

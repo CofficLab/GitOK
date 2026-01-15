@@ -27,7 +27,13 @@ class OpenCursorPlugin: SuperPlugin, SuperLog, PluginRegistrant {
 
 extension OpenCursorPlugin {
     @objc static func register() {
-        guard enable else { return }
+        // 检查用户是否禁用了此插件
+        guard PluginSettingsStore.shared.isPluginEnabled("OpenCursor") else {
+            if Self.verbose {
+                os_log("\(Self.t)⚠️ OpenCursorPlugin is disabled by user settings")
+            }
+            return
+        }
 
         // 检查 Cursor 是否安装
         guard isCursorInstalled() else {
