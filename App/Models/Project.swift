@@ -798,16 +798,6 @@ extension Project {
 
             // 在推送后记录未推送的 commits
             let unpushedAfterPush = try LibGit2.getUnPushedCommits(at: self.path, verbose: false)
-            os_log(.default, "✅ After push: \(unpushedAfterPush.count) unpushed commits")
-
-            if unpushedAfterPush.count > 0 {
-                os_log(.default, "⚠️ Push completed but still has \(unpushedAfterPush.count) unpushed commits")
-                for commit in unpushedAfterPush {
-                    os_log(.default, "⚠️ Still unpushed: \(commit.hash.prefix(8)) - \(commit.message.prefix(50))")
-                }
-            } else {
-                os_log(.default, "✅ All commits pushed successfully")
-            }
 
             postEvent(
                 name: .projectDidPush,

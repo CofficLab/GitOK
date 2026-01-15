@@ -1,11 +1,18 @@
 
 import LibGit2Swift
 import MagicKit
+import OSLog
 import SwiftUI
 
 /// 提交记录行视图组件
 /// 显示单个 Git 提交的详细信息，包括消息、作者、时间等
-struct CommitRow: View, SuperThread {
+struct CommitRow: View, SuperThread, SuperLog {
+    /// 日志标识符
+    nonisolated static let emoji = "📝"
+
+    /// 是否启用详细日志输出
+    nonisolated static let verbose = false
+
     /// 环境对象：数据提供者
     @EnvironmentObject var data: DataProvider
 
@@ -14,6 +21,9 @@ struct CommitRow: View, SuperThread {
 
     /// 是否未同步到远程
     let isUnpushed: Bool
+
+    /// 实际的未推送状态（会根据推送事件更新）
+    @State private var isActuallyUnpushed: Bool = false
 
     /// 标签文本
     @State private var tag: String = ""
@@ -74,7 +84,7 @@ struct CommitRow: View, SuperThread {
                     .frame(minHeight: 25)
 
                     // 右侧：未推送到远程的图标（当需要显示时）
-                    if isUnpushed {
+                    if isActuallyUnpushed {
                         Image(systemName: .iconUpload)
                             .font(.system(size: 16))
                             .foregroundColor(.orange)
@@ -92,6 +102,7 @@ struct CommitRow: View, SuperThread {
             .onAppear(perform: onAppear)
             .onNotification(.appWillBecomeActive, onAppWillBecomeActive)
             .onProjectDidCommit(perform: onGitCommitSuccess)
+            .onProjectDidPush(perform: onGitPushSuccess)
 
             Divider()
         }
@@ -193,19 +204,51 @@ struct CommitRow: View, SuperThread {
 // MARK: - Event
 
 extension CommitRow {
+    /// 视图出现时初始化状态
     func onAppear() {
+        // 初始化实际的未推送状态
+        isActuallyUnpushed = isUnpushed
+
         loadAvatarUsers()
         self.bg.async {
             loadTag()
         }
     }
 
+    /// 应用变为活跃状态时重新加载标签
     func onAppWillBecomeActive(_ n: Notification) {
         loadTag()
     }
 
+    /// Git 提交成功时重新加载标签
     func onGitCommitSuccess(_ eventInfo: ProjectEventInfo) {
         loadTag()
+    }
+
+    /// Git 推送成功时检查是否仍然未推送
+    func onGitPushSuccess(_ eventInfo: ProjectEventInfo) {
+        // 异步检查这个 commit 是否仍然在未推送列表中
+        Task {
+            guard let project = data.project else { return }
+
+            do {
+                let unpushedCommits = try await project.getUnPushedCommits()
+                let isStillUnpushed = unpushedCommits.contains { $0.hash == commit.hash }
+
+                await MainActor.run {
+                    // 更新实际的未推送状态
+                    isActuallyUnpushed = isStillUnpushed
+
+                    if Self.verbose {
+                        os_log("\(self.t)🔄 Push event - commit \(commit.hash.prefix(8)) isStillUnpushed: \(isStillUnpushed)")
+                    }
+                }
+            } catch {
+                if Self.verbose {
+                    os_log(.error, "\(self.t)❌ Failed to check unpushed status after push: \(error)")
+                }
+            }
+        }
     }
 }
 
