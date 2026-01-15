@@ -780,9 +780,33 @@ extension Project {
 extension Project {
     func push() throws {
         do {
+            // 获取当前分支信息
+            let currentBranch = try LibGit2.getCurrentBranch(at: self.path)
+            os_log(.default, "📍 Current branch: \(currentBranch)")
+
+            // 在推送前记录未推送的 commits
+            let unpushedBeforePush = try LibGit2.getUnPushedCommits(at: self.path, verbose: false)
+            os_log(.default, "🔄 Before push: \(unpushedBeforePush.count) unpushed commits")
+            for commit in unpushedBeforePush.prefix(3) {
+                os_log(.default, "🔄 Unpushed: \(commit.hash.prefix(8)) - \(commit.message.prefix(50))")
+            }
+
             // 处理 SSH URL 转换
             try performWithConvertedSSHURL(operation: "push") {
                 try LibGit2.push(at: self.path, verbose: false)
+            }
+
+            // 在推送后记录未推送的 commits
+            let unpushedAfterPush = try LibGit2.getUnPushedCommits(at: self.path, verbose: false)
+            os_log(.default, "✅ After push: \(unpushedAfterPush.count) unpushed commits")
+
+            if unpushedAfterPush.count > 0 {
+                os_log(.default, "⚠️ Push completed but still has \(unpushedAfterPush.count) unpushed commits")
+                for commit in unpushedAfterPush {
+                    os_log(.default, "⚠️ Still unpushed: \(commit.hash.prefix(8)) - \(commit.message.prefix(50))")
+                }
+            } else {
+                os_log(.default, "✅ All commits pushed successfully")
             }
 
             postEvent(
@@ -790,6 +814,7 @@ extension Project {
                 operation: "push"
             )
         } catch {
+            os_log(.default, "❌ Push failed: \(error.localizedDescription)")
             postEvent(
                 name: .projectOperationDidFail,
                 operation: "push",
