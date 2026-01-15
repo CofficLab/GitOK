@@ -58,48 +58,37 @@ struct UserInfoPopup: View {
                     icon: .iconUser
                 )
 
+                Divider()
+
+                // 头像地址（总是显示）
+                infoRow(
+                    title: "头像地址",
+                    value: displayedAvatarURL.absoluteString,
+                    icon: .iconSafari,
+                    selectable: true
+                )
+
+                // 邮箱（如果有）
                 if !user.email.isEmpty {
                     Divider()
 
-                    // 邮箱
                     infoRow(
                         title: "邮箱",
                         value: user.email,
                         icon: .iconMail,
                         selectable: true
                     )
+                }
 
+                // GitHub 主页按钮（如果有）
+                if let githubURL = gitHubURL {
                     Divider()
 
-                    // GitHub 用户名（如果有）
-                    if !gitHubUsername.isEmpty {
-                        infoRow(
-                            title: "GitHub",
-                            value: gitHubUsername,
-                            icon: .iconInfo
-                        )
-
-                        Divider()
-                    }
-
-                    // 头像地址（总是显示）
-                    infoRow(
-                        title: "头像地址",
-                        value: displayedAvatarURL.absoluteString,
-                        icon: .iconSafari,
-                        selectable: true
+                    linkRow(
+                        title: "GitHub 主页",
+                        url: githubURL.absoluteString,
+                        icon: .iconSafari
                     )
-
-                    Divider()
-
-                    // GitHub 主页按钮
-                    if let githubURL = gitHubURL {
-                        linkRow(
-                            title: "GitHub 主页",
-                            url: githubURL.absoluteString,
-                            icon: .iconSafari
-                        )
-                    }
                 }
             }
         }
