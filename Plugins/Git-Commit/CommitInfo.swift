@@ -35,7 +35,21 @@ struct CommitInfoView: View, SuperLog {
             /// Commit body（如果有）
             CommitBodyInfo(commit: commit)
 
-            commitDetailsSection
+            /// 提交详细信息区域
+            HStack(spacing: 16) {
+                /// 作者信息
+                if !commit.author.isEmpty {
+                    UserInfo(users: avatarUsers, avatarSize: 18, maxVisibleCount: 3)
+                }
+
+                /// 提交时间
+                CommitTimeInfo(commit: commit, showingTimePopup: $showingTimePopup)
+
+                /// Hash 信息
+                CommitHashInfo(commit: commit, isCopied: $isCopied, showingHashPopup: $showingHashPopup)
+
+                Spacer()
+            }
         }
         .onApplicationDidBecomeActive(perform: handleOnAppear)
     }
@@ -61,23 +75,6 @@ extension CommitInfoView {
         }
     }
 
-    /// 提交详细信息区域
-    private var commitDetailsSection: some View {
-        HStack(spacing: 16) {
-            /// 作者信息
-            if !commit.author.isEmpty {
-                UserInfo(users: avatarUsers, avatarSize: 18, maxVisibleCount: 3)
-            }
-
-            /// 提交时间
-            CommitTimeInfo(commit: commit, showingTimePopup: $showingTimePopup)
-
-            /// Hash 信息
-            CommitHashInfo(commit: commit, isCopied: $isCopied, showingHashPopup: $showingHashPopup)
-
-            Spacer()
-        }
-    }
 }
 
 // MARK: - Event Handler
