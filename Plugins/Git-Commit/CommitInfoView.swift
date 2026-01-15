@@ -17,6 +17,9 @@ struct CommitInfoView: View, SuperLog {
     /// 是否已复制到剪贴板
     @State private var isCopied: Bool = false
 
+    /// 头像用户列表
+    @State private var avatarUsers: [AvatarUser] = []
+
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
@@ -51,12 +54,19 @@ struct CommitInfoView: View, SuperLog {
             }
 
             HStack(spacing: 16) {
-                // 作者信息
+                // 作者信息（带头像）
                 if !commit.author.isEmpty {
-                    HStack(spacing: 4) {
-                        Image(systemName: "person.circle")
-                            .foregroundColor(.secondary)
-                            .font(.system(size: 12))
+                    HStack(spacing: 6) {
+                        // 头像堆栈
+                        if !avatarUsers.isEmpty {
+                            AvatarStackView(users: avatarUsers, avatarSize: 18, maxVisibleCount: 3)
+                        } else {
+                            // 回退图标
+                            Image(systemName: "person.circle")
+                                .foregroundColor(.secondary)
+                                .font(.system(size: 12))
+                        }
+
                         Text(commit.allAuthors)
                             .font(.caption)
                             .foregroundColor(.secondary)
@@ -115,6 +125,87 @@ struct CommitInfoView: View, SuperLog {
                 Spacer()
             }
         }
+        .onAppear {
+            loadAvatarUsers()
+        }
+    }
+
+    // MARK: - 头像加载
+
+    /// 解析提交的作者信息（包括 co-authors）
+    private func loadAvatarUsers() {
+        var users: [AvatarUser] = []
+
+        // 解析作者信息
+        let authorName: String
+        let authorEmail: String
+
+        // author 格式可能是 "name <email>" 或只是 "name"
+        if let emailRange = commit.author.range(of: "<([^>]+)>", options: .regularExpression) {
+            // 有邮箱
+            let emailStartIndex = commit.author.index(emailRange.lowerBound, offsetBy: 1)
+            let emailEndIndex = commit.author.index(emailRange.upperBound, offsetBy: -1)
+            authorEmail = String(commit.author[emailStartIndex..<emailEndIndex])
+
+            let nameEndIndex = commit.author.index(emailRange.lowerBound, offsetBy: -2)
+            authorName = String(commit.author[..<nameEndIndex]).trimmingCharacters(in: .whitespaces)
+        } else {
+            // 没有邮箱，使用 author 作为 name
+            authorName = commit.author
+            authorEmail = ""
+        }
+
+        // 添加主作者
+        let author = AvatarUser(
+            name: authorName,
+            email: authorEmail
+        )
+        users.append(author)
+
+        // 解析 co-authors
+        let coAuthors = parseCoAuthors(from: commit.message)
+        users.append(contentsOf: coAuthors)
+
+        // 去重（基于邮箱）
+        var seenEmails = Set<String>()
+        var uniqueUsers: [AvatarUser] = []
+
+        for user in users {
+            if !seenEmails.contains(user.email) {
+                seenEmails.insert(user.email)
+                uniqueUsers.append(user)
+            }
+        }
+
+        self.avatarUsers = uniqueUsers
+    }
+
+    /// 从 commit 消息中解析 co-authors
+    /// - Parameter message: commit 消息
+    /// - Returns: co-author 列表
+    private func parseCoAuthors(from message: String) -> [AvatarUser] {
+        var coAuthors: [AvatarUser] = []
+
+        // Co-authored-by 格式：Co-authored-by: name <email>
+        let pattern = #"Co-authored-by:\s*([^<]+?)\s*<([^>]+)>"#
+        if let regex = try? NSRegularExpression(pattern: pattern) {
+            let range = NSRange(message.startIndex..., in: message)
+            let matches = regex.matches(in: message, range: range)
+
+            for match in matches {
+                if match.numberOfRanges >= 3 {
+                    let nameRange = Range(match.range(at: 1), in: message)!
+                    let emailRange = Range(match.range(at: 2), in: message)!
+
+                    let name = String(message[nameRange]).trimmingCharacters(in: .whitespaces)
+                    let email = String(message[emailRange]).trimmingCharacters(in: .whitespaces)
+
+                    coAuthors.append(AvatarUser(name: name, email: email))
+                }
+            }
+        }
+
+        return coAuthors
     }
 }
 
