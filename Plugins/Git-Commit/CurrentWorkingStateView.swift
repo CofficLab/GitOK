@@ -39,8 +39,14 @@ struct CurrentWorkingStateView: View, SuperLog {
     /// 下载按钮是否被鼠标悬停
     @State private var isDownloadButtonHovered = false
 
+    /// 上传按钮是否被鼠标悬停
+    @State private var isUploadButtonHovered = false
+
     /// 是否正在执行 pull 操作
     @State private var isPulling = false
+
+    /// 是否正在执行 push 操作
+    @State private var isPushing = false
 
     /// 是否显示凭据输入界面
     @State private var showCredentialInput = false
@@ -53,14 +59,23 @@ struct CurrentWorkingStateView: View, SuperLog {
 
     /// 视图主体
     var body: some View {
-        // 只在本地没有未提交文件时显示
-        if changedFileCount == 0 {
-            HStack(spacing: 12) {
+        HStack(spacing: 12) {
+            // 图标和文本
+            if changedFileCount == 0 {
+                // 工作区干净
                 Image(systemName: "checkmark.circle")
                     .font(.system(size: 16, weight: .medium))
                     .foregroundColor(.green)
+            } else {
+                // 有未提交文件
+                Image(systemName: "clock.arrow.circlepath")
+                    .font(.system(size: 16, weight: .medium))
+                    .foregroundColor(.orange)
+            }
 
-                VStack(alignment: .leading, spacing: 2) {
+            VStack(alignment: .leading, spacing: 2) {
+                if changedFileCount == 0 {
+                    // 工作区干净
                     Text("工作区干净")
                         .font(.system(size: 14, weight: .medium))
 
@@ -73,42 +88,62 @@ struct CurrentWorkingStateView: View, SuperLog {
                             .font(.system(size: 11))
                             .foregroundColor(.secondary)
                     }
-                }
+                } else {
+                    // 有未提交文件
+                    Text("当前状态")
+                        .font(.system(size: 14, weight: .medium))
 
-                Spacer()
-
-                // 只在远程有未拉取提交时显示下载按钮
-                if unpulledCount > 0 {
-                    downloadButton
+                    Text("(\(changedFileCount)) 未提交")
+                        .font(.system(size: 11))
+                        .foregroundColor(.secondary)
                 }
             }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 12)
-            .background(
-                isSelected
-                    ? Color.accentColor.opacity(0.1)
-                    : Color(.controlBackgroundColor)
-            )
-            .onTapGesture(perform: onTap)
-            .onAppear(perform: onAppear)
-            .onChange(of: data.project, onProjectDidChange)
-            .onProjectDidCommit(perform: onProjectDidCommit)
-            .onProjectDidPush(perform: onProjectDidPush)
-            .onProjectDidPull(perform: onProjectDidPull)
-            .onNotification(.appDidBecomeActive, onAppDidBecomeActive)
-            .sheet(isPresented: $showCredentialInput) {
-                CredentialInputView {
-                    // 凭据保存后，重新执行 pull
-                    if isPulling {
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                            performPull()
-                        }
+
+            Spacer()
+
+            // 按钮显示逻辑
+            if changedFileCount == 0 {
+                // 本地干净
+                if unpulledCount > 0 {
+                    // 远程有新提交，显示下载按钮
+                    downloadButton
+                }
+                // 否则不显示按钮
+            } else {
+                // 有未提交文件
+                if unpulledCount == 0 {
+                    // 远程没有新提交，显示上传按钮
+                    uploadButton
+                }
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
+        .background(
+            isSelected
+                ? Color.accentColor.opacity(0.1)
+                : Color(.controlBackgroundColor)
+        )
+        .onTapGesture(perform: onTap)
+        .onAppear(perform: onAppear)
+        .onChange(of: data.project, onProjectDidChange)
+        .onProjectDidCommit(perform: onProjectDidCommit)
+        .onProjectDidPush(perform: onProjectDidPush)
+        .onProjectDidPull(perform: onProjectDidPull)
+        .onNotification(.appDidBecomeActive, onAppDidBecomeActive)
+        .sheet(isPresented: $showCredentialInput) {
+            CredentialInputView {
+                // 凭据保存后，重新执行 push/pull
+                if isPushing {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        performPush()
+                    }
+                } else if isPulling {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        performPull()
                     }
                 }
             }
-        } else {
-            // 本地有未提交文件，不显示任何内容
-            EmptyView()
         }
     }
 
@@ -137,6 +172,40 @@ struct CurrentWorkingStateView: View, SuperLog {
         .onHover { hovering in
             withAnimation(.easeInOut(duration: 0.2)) {
                 isDownloadButtonHovered = hovering
+            }
+            if hovering {
+                NSCursor.pointingHand.push()
+            } else {
+                NSCursor.pointingHand.pop()
+            }
+        }
+    }
+
+    /// 上传按钮（执行 git push）
+    private var uploadButton: some View {
+        Button(action: performPush) {
+            HStack(spacing: 4) {
+                Image(systemName: isPushing ? "arrow.up.circle" : "arrow.up.circle.fill")
+                    .foregroundColor(.orange)
+                    .font(.system(size: 14))
+                    .rotationEffect(.degrees(isPushing ? 360 : 0))
+                    .animation(isPushing ? .linear(duration: 1).repeatForever(autoreverses: false) : .default, value: isPushing)
+
+                Text("推送")
+                    .font(.system(size: 12, weight: .medium))
+                    .foregroundColor(.orange)
+            }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 6)
+            .background(isUploadButtonHovered ? Color.orange.opacity(0.2) : Color.orange.opacity(0.1))
+            .cornerRadius(6)
+        }
+        .buttonStyle(PlainButtonStyle())
+        .disabled(isPushing)
+        .help("点击执行 git push 推送本地提交")
+        .onHover { hovering in
+            withAnimation(.easeInOut(duration: 0.2)) {
+                isUploadButtonHovered = hovering
             }
             if hovering {
                 NSCursor.pointingHand.push()
@@ -276,6 +345,66 @@ extension CurrentWorkingStateView {
             // 在主线程处理结果和更新 UI
             await MainActor.run {
                 self.isPulling = false
+
+                switch result {
+                case .success:
+                    // 重新加载同步状态
+                    self.loadSyncStatus()
+                case .failure(let error):
+                    // 检查是否需要凭据
+                    if self.isCredentialError(error) {
+                        self.showCredentialInput = true
+                    } else {
+                        self.m.error(error)
+                    }
+                }
+            }
+
+            // 清除状态日志
+            await setStatus(nil)
+        }
+    }
+
+    /// 执行 git push 操作推送本地提交
+    private func performPush() {
+        guard let project = data.project else {
+            if Self.verbose {
+                os_log("\(self.t)No project found")
+            }
+            return
+        }
+
+        if Self.verbose {
+            os_log("\(self.t)<\(project.path)>Performing git push")
+        }
+
+        // 立即更新 UI 状态
+        isPushing = true
+
+        // 设置状态日志
+        Task { await setStatus("推送中…") }
+
+        // 使用 Task.detached 确保在后台执行
+        Task.detached(priority: .userInitiated) {
+            let result: Result<Void, Error>
+
+            do {
+                // 在后台线程执行耗时操作
+                try project.push()
+                result = .success(())
+                await MainActor.run {
+                    os_log("\(Self.t)✅ Git push succeeded")
+                }
+            } catch {
+                result = .failure(error)
+                await MainActor.run {
+                    os_log(.error, "\(Self.t)❌ Git push failed: \(error)")
+                }
+            }
+
+            // 在主线程处理结果和更新 UI
+            await MainActor.run {
+                self.isPushing = false
 
                 switch result {
                 case .success:
