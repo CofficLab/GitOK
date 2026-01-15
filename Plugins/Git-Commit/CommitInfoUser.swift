@@ -96,6 +96,10 @@ struct CommitInfoUser: View, SuperLog {
 extension CommitInfoUser {
     /// 解析提交的作者信息
     private func parseAuthorInfo() -> AvatarUser? {
+        if Self.verbose {
+            os_log("\(self.t)开始解析作者信息: \(commit.author)")
+        }
+
         /// author 格式可能是 "name <email>" 或只是 "name"
         if let emailRange = commit.author.range(of: "<([^>]+)>", options: .regularExpression) {
             /// 有邮箱
@@ -106,10 +110,18 @@ extension CommitInfoUser {
             let nameEndIndex = commit.author.index(emailRange.lowerBound, offsetBy: -2)
             let authorName = String(commit.author[..<nameEndIndex]).trimmingCharacters(in: .whitespaces)
 
-            return AvatarUser(name: authorName, email: authorEmail)
+            let user = AvatarUser(name: authorName, email: authorEmail)
+            if Self.verbose {
+                os_log("\(self.t)✅ 成功解析带邮箱的作者: \(authorName) <\(authorEmail)>")
+            }
+            return user
         } else {
             /// 没有邮箱，使用 author 作为 name
-            return AvatarUser(name: commit.author, email: "")
+            let user = AvatarUser(name: commit.author, email: "")
+            if Self.verbose {
+                os_log("\(self.t)ℹ️ 解析为无邮箱作者: \(commit.author)")
+            }
+            return user
         }
     }
 }
