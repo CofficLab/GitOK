@@ -20,18 +20,18 @@
 
 项目应能够正常编译和运行。如果尚未创建，请先完成此步骤。
 
-## 1. 配置项目依赖
+### 配置项目依赖
 
-在`Package.swift`中添加核心依赖：
+在Xcode中添加核心依赖包：
 
-```swift
-dependencies: [
-    .package(url: "https://github.com/CofficLab/MagicKit.git", branch: "dev"),
-    .package(url: "https://github.com/sparkle-project/Sparkle.git", from: "2.0.0"),
-]
-```
+1. 选择菜单 `File` → `Add Packages...`
+2. 添加以下包：
+   - **MagicKit**: `https://github.com/CofficLab/MagicKit.git` (分支: dev)
+   - **Sparkle**: `https://github.com/sparkle-project/Sparkle.git` (版本: 2.0.0+)
 
-## 2. 创建Bootstrap层
+**注意**：依赖管理将通过Xcode界面完成，无需手动编辑Package.swift文件。
+
+## 1. 创建Bootstrap层
 
 **创建Core/Bootstrap/目录结构：**
 
