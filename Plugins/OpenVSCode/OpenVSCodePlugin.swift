@@ -34,7 +34,12 @@ class OpenVSCodePlugin: SuperPlugin, SuperLog, PluginRegistrant {
     private init() {}
 
     func addToolBarTrailingView() -> AnyView? {
-        AnyView(BtnOpenVSCodeView.shared)
+        // 检查用户是否启用了此插件
+        guard PluginSettingsStore.shared.isPluginEnabled("OpenVSCode") else {
+            return nil
+        }
+
+        return AnyView(BtnOpenVSCodeView.shared)
     }
 }
 
@@ -44,13 +49,6 @@ extension OpenVSCodePlugin {
     @objc static func register() {
         guard enable else { return }
 
-        // 检查用户是否禁用了此插件
-        guard PluginSettingsStore.shared.isPluginEnabled("OpenVSCode") else {
-            if Self.verbose {
-                os_log("\(Self.t)⚠️ OpenVSCodePlugin is disabled by user settings")
-            }
-            return
-        }
 
         // 检查 VSCode 是否安装
         guard isVSCodeInstalled() else {

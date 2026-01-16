@@ -34,7 +34,12 @@ class GitignorePlugin: SuperPlugin, SuperLog, PluginRegistrant {
     private init() {}
 
     func addStatusBarTrailingView() -> AnyView? {
-        AnyView(GitignoreStatusIcon.shared)
+        // 检查用户是否启用了此插件
+        guard PluginSettingsStore.shared.isPluginEnabled("Gitignore") else {
+            return nil
+        }
+
+        return AnyView(GitignoreStatusIcon.shared)
     }
 }
 
@@ -44,13 +49,6 @@ extension GitignorePlugin {
     @objc static func register() {
         guard enable else { return }
 
-        // 检查用户是否禁用了此插件
-        guard PluginSettingsStore.shared.isPluginEnabled("Gitignore") else {
-            if Self.verbose {
-                os_log("\(Self.t)⚠️ GitignorePlugin is disabled by user settings")
-            }
-            return
-        }
 
         Task {
             if Self.verbose {

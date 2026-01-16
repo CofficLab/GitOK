@@ -34,7 +34,12 @@ class OpenTraePlugin: SuperPlugin, SuperLog, PluginRegistrant {
     private init() {}
 
     func addToolBarTrailingView() -> AnyView? {
-        AnyView(BtnOpenTraeView.shared)
+        // 检查用户是否启用了此插件
+        guard PluginSettingsStore.shared.isPluginEnabled("OpenTrae") else {
+            return nil
+        }
+
+        return AnyView(BtnOpenTraeView.shared)
     }
 }
 
@@ -44,13 +49,6 @@ extension OpenTraePlugin {
     @objc static func register() {
         guard enable else { return }
 
-        // 检查用户是否禁用了此插件
-        guard PluginSettingsStore.shared.isPluginEnabled("OpenTrae") else {
-            if Self.verbose {
-                os_log("\(Self.t)⚠️ OpenTraePlugin is disabled by user settings")
-            }
-            return
-        }
 
         // 检查 Trae 是否安装
         guard isTraeInstalled() else {

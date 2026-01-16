@@ -35,7 +35,12 @@ class OpenTerminalPlugin: SuperPlugin, SuperLog, PluginRegistrant {
     private init() {}
 
     func addToolBarTrailingView() -> AnyView? {
-        AnyView(BtnOpenTerminalView())
+        // 检查用户是否启用了此插件
+        guard PluginSettingsStore.shared.isPluginEnabled("OpenTerminal") else {
+            return nil
+        }
+
+        return AnyView(BtnOpenTerminalView())
     }
 }
 
@@ -45,13 +50,6 @@ extension OpenTerminalPlugin {
     @objc static func register() {
         guard enable else { return }
 
-        // 检查用户是否禁用了此插件
-        guard PluginSettingsStore.shared.isPluginEnabled("OpenTerminal") else {
-            if Self.verbose {
-                os_log("\(Self.t)⚠️ OpenTerminalPlugin is disabled by user settings")
-            }
-            return
-        }
 
         Task {
             if Self.verbose {

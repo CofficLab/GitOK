@@ -16,7 +16,7 @@ class GitPullPlugin: SuperPlugin, SuperLog, PluginRegistrant {
     static var iconName: String = "arrow.down"
 
     /// 插件是否可配置（是否在设置中由用户控制启用/停用）
-    static var isConfigurable: Bool = false
+    static var isConfigurable: Bool = true
     static let shared = GitPullPlugin()
     /// 日志标识符
     nonisolated static let emoji = "⬇️"
@@ -32,7 +32,12 @@ class GitPullPlugin: SuperPlugin, SuperLog, PluginRegistrant {
     private init() {}
 
     func addToolBarTrailingView() -> AnyView? {
-        AnyView(BtnGitPullView.shared)
+        // 检查用户是否启用了此插件
+        guard PluginSettingsStore.shared.isPluginEnabled("GitPull") else {
+            return nil
+        }
+
+        return AnyView(BtnGitPullView.shared)
     }
 }
 

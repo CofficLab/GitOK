@@ -34,7 +34,12 @@ class ReadmePlugin: SuperPlugin, SuperLog, PluginRegistrant {
     private init() {}
 
     func addStatusBarTrailingView() -> AnyView? {
-        AnyView(ReadmeStatusIcon.shared)
+        // 检查用户是否启用了此插件
+        guard PluginSettingsStore.shared.isPluginEnabled("Readme") else {
+            return nil
+        }
+
+        return AnyView(ReadmeStatusIcon.shared)
     }
 }
 
@@ -44,13 +49,6 @@ extension ReadmePlugin {
     @objc static func register() {
         guard enable else { return }
 
-        // 检查用户是否禁用了此插件
-        guard PluginSettingsStore.shared.isPluginEnabled("Readme") else {
-            if Self.verbose {
-                os_log("\(Self.t)⚠️ ReadmePlugin is disabled by user settings")
-            }
-            return
-        }
 
         Task {
             if Self.verbose {

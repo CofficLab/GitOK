@@ -34,7 +34,12 @@ class LicensePlugin: SuperPlugin, SuperLog, PluginRegistrant {
     private init() {}
 
     func addStatusBarTrailingView() -> AnyView? {
-        AnyView(LicenseStatusIcon.shared)
+        // 检查用户是否启用了此插件
+        guard PluginSettingsStore.shared.isPluginEnabled("License") else {
+            return nil
+        }
+
+        return AnyView(LicenseStatusIcon.shared)
     }
 }
 
@@ -44,13 +49,6 @@ extension LicensePlugin {
     @objc static func register() {
         guard enable else { return }
 
-        // 检查用户是否禁用了此插件
-        guard PluginSettingsStore.shared.isPluginEnabled("License") else {
-            if Self.verbose {
-                os_log("\(Self.t)⚠️ LicensePlugin is disabled by user settings")
-            }
-            return
-        }
 
         Task {
             if Self.verbose {

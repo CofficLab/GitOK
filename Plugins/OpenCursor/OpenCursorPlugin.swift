@@ -34,7 +34,12 @@ class OpenCursorPlugin: SuperPlugin, SuperLog, PluginRegistrant {
     private init() {}
 
     func addToolBarTrailingView() -> AnyView? {
-        AnyView(BtnOpenCursorView.shared)
+        // 检查用户是否启用了此插件
+        guard PluginSettingsStore.shared.isPluginEnabled("OpenCursor") else {
+            return nil
+        }
+
+        return AnyView(BtnOpenCursorView.shared)
     }
 }
 
@@ -42,13 +47,6 @@ class OpenCursorPlugin: SuperPlugin, SuperLog, PluginRegistrant {
 
 extension OpenCursorPlugin {
     @objc static func register() {
-        // 检查用户是否禁用了此插件
-        guard PluginSettingsStore.shared.isPluginEnabled("OpenCursor") else {
-            if Self.verbose {
-                os_log("\(Self.t)⚠️ OpenCursorPlugin is disabled by user settings")
-            }
-            return
-        }
 
         // 检查 Cursor 是否安装
         guard isCursorInstalled() else {

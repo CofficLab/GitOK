@@ -33,7 +33,12 @@ class OpenRemotePlugin: SuperPlugin, SuperLog, PluginRegistrant {
     private init() {}
 
     func addToolBarTrailingView() -> AnyView? {
-        AnyView(BtnOpenRemoteView.shared)
+        // 检查用户是否启用了此插件
+        guard PluginSettingsStore.shared.isPluginEnabled("OpenRemote") else {
+            return nil
+        }
+
+        return AnyView(BtnOpenRemoteView.shared)
     }
 }
 
@@ -41,13 +46,6 @@ class OpenRemotePlugin: SuperPlugin, SuperLog, PluginRegistrant {
 
 extension OpenRemotePlugin {
     @objc static func register() {
-        // 检查用户是否禁用了此插件
-        guard PluginSettingsStore.shared.isPluginEnabled("OpenRemote") else {
-            if Self.verbose {
-                os_log("\(Self.t)⚠️ OpenRemotePlugin is disabled by user settings")
-            }
-            return
-        }
 
         Task {
             if Self.verbose {

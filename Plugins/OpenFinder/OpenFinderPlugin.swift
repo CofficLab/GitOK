@@ -35,7 +35,12 @@ class OpenFinderPlugin: SuperPlugin, SuperLog, PluginRegistrant {
     private init() {}
 
     func addToolBarTrailingView() -> AnyView? {
-        AnyView(BtnOpenFinderView.shared)
+        // 检查用户是否启用了此插件
+        guard PluginSettingsStore.shared.isPluginEnabled("OpenFinder") else {
+            return nil
+        }
+
+        return AnyView(BtnOpenFinderView.shared)
     }
 }
 
@@ -45,13 +50,6 @@ extension OpenFinderPlugin {
     @objc static func register() {
         guard enable else { return }
 
-        // 检查用户是否禁用了此插件
-        guard PluginSettingsStore.shared.isPluginEnabled("OpenFinder") else {
-            if Self.verbose {
-                os_log("\(Self.t)⚠️ OpenFinderPlugin is disabled by user settings")
-            }
-            return
-        }
 
         Task {
             if Self.verbose {
