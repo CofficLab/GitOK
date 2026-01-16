@@ -134,10 +134,6 @@ struct CommitRow: View, SuperThread, SuperLog {
             // UI状态更新需要在主线程进行
             await MainActor.run {
                 self.tag = tagValue
-
-                if Self.verbose {
-                    os_log("\(self.t)✅ Tag loaded - commit: \(commit.hash.prefix(8)), tag: '\(tagValue)'")
-                }
             }
         } catch {
             // 即使出错也要在主线程更新UI状态
@@ -152,7 +148,7 @@ struct CommitRow: View, SuperThread, SuperLog {
     }
 
     /// 解析提交的作者信息（包括 co-authors）
-    private func loadAvatarUsers() {
+    private func loadAvatarUsers() async {
         if Self.verbose {
             os_log("\(self.t)👤 Loading avatar users for commit: \(commit.hash.prefix(8))")
         }
@@ -200,10 +196,13 @@ struct CommitRow: View, SuperThread, SuperLog {
             }
         }
 
-        self.avatarUsers = uniqueUsers
+        // UI状态更新需要在主线程进行
+        await MainActor.run {
+            self.avatarUsers = uniqueUsers
 
-        if Self.verbose {
-            os_log("\(self.t)✅ Avatar users loaded - commit: \(commit.hash.prefix(8)), users: \(uniqueUsers.count)")
+            if Self.verbose {
+                os_log("\(self.t)✅ Avatar users loaded - commit: \(commit.hash.prefix(8)), users: \(uniqueUsers.count)")
+            }
         }
     }
 
@@ -252,8 +251,8 @@ extension CommitRow {
         // 初始化实际的未推送状态
         isActuallyUnpushed = isUnpushed
 
-        loadAvatarUsers()
         Task {
+            await loadAvatarUsers()
             await loadTag()
         }
     }
