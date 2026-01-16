@@ -24,6 +24,7 @@ struct SettingView: View, SuperLog {
     /// 设置 Tab 枚举
     enum SettingTab: String, CaseIterable {
         case userInfo = "用户信息"
+        case repository = "仓库设置"
         case commitStyle = "Commit 风格"
 //        case appearance = "外观"
 //        case systemInfo = "系统信息"
@@ -33,6 +34,7 @@ struct SettingView: View, SuperLog {
         var icon: String {
             switch self {
             case .userInfo: return "person.circle"
+            case .repository: return "folder.badge.gearshape"
             case .commitStyle: return "text.alignleft"
 //            case .appearance: return "paintbrush"
 //            case .systemInfo: return "desktopcomputer.trianglebadge.exclamationmark"
@@ -76,6 +78,10 @@ struct SettingView: View, SuperLog {
                 GitUserInfoSettingView()
                     .environmentObject(data)
 
+            case .repository:
+                RepositorySettingView()
+                    .environmentObject(data)
+
             case .commitStyle:
                 CommitStyleSettingView()
                     .environmentObject(data)
@@ -95,6 +101,9 @@ struct SettingView: View, SuperLog {
         }
         .frame(width: 700, height: 800)
         .onReceive(NotificationCenter.default.publisher(for: .didSaveGitUserConfig)) { _ in
+            dismiss()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .didUpdateRemoteRepository)) { _ in
             dismiss()
         }
     }

@@ -157,6 +157,13 @@ final class Project: SuperLog {
 
     // MARK: - Event Notification Helper
 
+    /// 发送项目事件通知
+    /// - Parameters:
+    ///   - name: 通知名称
+    ///   - operation: 操作类型
+    ///   - success: 操作是否成功
+    ///   - error: 错误信息（如果有）
+    ///   - additionalInfo: 额外信息
     func postEvent(name: Notification.Name, operation: String, success: Bool = true, error: Error? = nil, additionalInfo: [String: Any]? = nil) {
         let eventInfo = ProjectEventInfo(
             project: self,
@@ -270,6 +277,15 @@ extension Project {
     }
 
     /**
+        更新 isGitRepo 缓存（同步）
+
+        直接设置缓存值，用于避免竞态条件
+     */
+    func updateIsGitRepoCacheSync(_ value: Bool) {
+        self._isGitRepo = value
+    }
+
+    /**
         更新 isGitRepo 缓存（异步）
 
         在后台检查 Git 仓库状态并更新缓存，避免阻塞主线程
@@ -290,9 +306,51 @@ extension Project {
             return true
         }
 
-        return try LibGit2.hasUncommittedChanges(at: self.path, verbose: verbose) == false
+        // 检查是否有未提交的已跟踪文件变更
+        let hasUncommittedChanges = try LibGit2.hasUncommittedChanges(at: self.path, verbose: verbose)
+        if hasUncommittedChanges {
+            if verbose {
+                os_log(.info, "\(self.t)🔄 Project has uncommitted changes")
+            }
+            return false
+        }
+
+        // 检查是否有未跟踪的文件
+        let hasUntrackedFiles = try self.hasUntrackedFiles(verbose: verbose)
+        if hasUntrackedFiles {
+            if verbose {
+                os_log(.info, "\(self.t)🔄 Project has untracked files")
+            }
+            return false
+        }
+
+        if verbose {
+            os_log(.info, "\(self.t)🔄 Project is clean")
+        }
+        return true
     }
 
+    /// 检查是否有未跟踪的文件
+    /// - Parameter verbose: 是否启用详细日志
+    /// - Returns: 如果有未跟踪文件返回 true，否则返回 false
+    private func hasUntrackedFiles(verbose: Bool = false) throws -> Bool {
+        // 获取 unstaged 文件列表（包含未跟踪文件）
+        let unstagedFiles = try LibGit2.getDiffFileList(at: self.path, staged: false)
+
+        // 检查是否有未跟踪文件（change type 为 "?"）
+        let hasUntracked = unstagedFiles.contains { $0.changeType == "?" }
+
+        if verbose && hasUntracked {
+            let untrackedCount = unstagedFiles.filter { $0.changeType == "?" }.count
+            os_log(.info, "\(self.t)🔄 Found \(untrackedCount) untracked files")
+        }
+
+        return hasUntracked
+    }
+
+    /// 检查项目是否没有未提交的更改
+    /// - Returns: 如果没有未提交的更改返回 true，否则返回 false
+    /// - Throws: Git 操作相关的错误
     func hasNoUncommittedChanges() throws -> Bool {
         return try LibGit2.hasUncommittedChanges(at: self.path, verbose: false) == false
     }
@@ -301,10 +359,16 @@ extension Project {
 // MARK: - Branch
 
 extension Project {
+    /// 获取当前分支信息
+    /// - Returns: 当前分支对象，如果获取失败返回 nil
+    /// - Throws: Git 操作相关的错误
     func getCurrentBranch() throws -> GitBranch? {
         try LibGit2.getCurrentBranchInfo(at: self.path)
     }
 
+    /// 切换到指定分支
+    /// - Parameter branch: 要切换到的分支
+    /// - Throws: Git 操作相关的错误
     func checkout(branch: GitBranch) throws {
         do {
             _ = try LibGit2.checkout(branch: branch.name, at: self.path)
@@ -419,6 +483,8 @@ extension Project {
 // MARK: - Add
 
 extension Project {
+    /// 将所有更改的文件添加到Git暂存区
+    /// - Throws: Git 操作相关的错误
     func addAll() throws {
         do {
             try LibGit2.addFiles([], at: self.path, verbose: false)
@@ -794,6 +860,8 @@ extension Project {
 // MARK: - Remote
 
 extension Project {
+    /// 推送当前分支到远程仓库
+    /// - Throws: Git 操作相关的错误
     func push() throws {
         do {
             // 获取当前分支信息

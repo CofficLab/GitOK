@@ -35,7 +35,6 @@ class BaseRepositoryImpl<T: PersistentModel>: BaseRepo, SuperLog {
     
     func save() throws {
         try modelContext.save()
-        logger.info("✅ Saved \(String(describing: T.self))")
     }
     
     func fetch(_ descriptor: FetchDescriptor<T>) throws -> [T] {

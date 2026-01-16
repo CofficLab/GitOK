@@ -26,3 +26,4 @@ temp/
 build/
 build.log
 Packages/LibGit2Swift/build_result.txt
+/.build

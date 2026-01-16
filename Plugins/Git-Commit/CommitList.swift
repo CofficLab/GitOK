@@ -276,9 +276,11 @@ extension CommitList {
                 }
             } catch {
                 if Task.isCancelled { return }
-                
+
                 // 在主线程更新 UI 状态
                 await MainActor.run {
+                    self.commits = []
+                    self.unpushedCommits = []
                     self.loading = false
                     self.isRefreshing = false
                 }
