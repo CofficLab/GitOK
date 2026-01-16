@@ -299,7 +299,46 @@ extension Project {
             return true
         }
 
-        return try LibGit2.hasUncommittedChanges(at: self.path, verbose: verbose) == false
+        // 检查是否有未提交的已跟踪文件变更
+        let hasUncommittedChanges = try LibGit2.hasUncommittedChanges(at: self.path, verbose: verbose)
+        if hasUncommittedChanges {
+            if verbose {
+                os_log(.info, "\(self.t)🔄 Project has uncommitted changes")
+            }
+            return false
+        }
+
+        // 检查是否有未跟踪的文件
+        let hasUntrackedFiles = try self.hasUntrackedFiles(verbose: verbose)
+        if hasUntrackedFiles {
+            if verbose {
+                os_log(.info, "\(self.t)🔄 Project has untracked files")
+            }
+            return false
+        }
+
+        if verbose {
+            os_log(.info, "\(self.t)🔄 Project is clean")
+        }
+        return true
+    }
+
+    /// 检查是否有未跟踪的文件
+    /// - Parameter verbose: 是否启用详细日志
+    /// - Returns: 如果有未跟踪文件返回 true，否则返回 false
+    private func hasUntrackedFiles(verbose: Bool = false) throws -> Bool {
+        // 获取 unstaged 文件列表（包含未跟踪文件）
+        let unstagedFiles = try LibGit2.getDiffFileList(at: self.path, staged: false)
+
+        // 检查是否有未跟踪文件（change type 为 "?"）
+        let hasUntracked = unstagedFiles.contains { $0.changeType == "?" }
+
+        if verbose && hasUntracked {
+            let untrackedCount = unstagedFiles.filter { $0.changeType == "?" }.count
+            os_log(.info, "\(self.t)🔄 Found \(untrackedCount) untracked files")
+        }
+
+        return hasUntracked
     }
 
     func hasNoUncommittedChanges() throws -> Bool {

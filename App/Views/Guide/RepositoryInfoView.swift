@@ -22,26 +22,42 @@ struct RepositoryInfoView: View, SuperLog {
     /// 当前分支（可选）
     let branch: GitBranch?
 
+    /// 是否显示设置界面
+    @State private var showSettings = false
+
     var body: some View {
         MagicSettingSection(title: "仓库信息", titleAlignment: .leading) {
             VStack(spacing: 0) {
                 // 本地仓库位置
                 localRepositoryRow
-
-                if !remotes.isEmpty {
-                    Divider()
-
-                    // 远程仓库位置
-                    remoteRepositoryRow
-                }
-
+                
                 if let branch = branch {
                     Divider()
 
                     // 当前分支
                     currentBranchRow(branch: branch)
                 }
+
+                // 远程仓库位置
+                if !remotes.isEmpty {
+                    Divider()
+
+                    remoteRepositoryRow
+                } else {
+                    // 没有远程仓库时显示配置入口
+                    Divider()
+
+                    configRemoteRepositoryRow
+                }
             }
+        }
+        .sheet(isPresented: $showSettings) {
+            SettingView(defaultTab: .repository)
+                .onAppear {
+                    if Self.verbose {
+                        os_log("\(Self.t)Opening repository settings for project: \(project.title)")
+                    }
+                }
         }
     }
 
@@ -96,6 +112,22 @@ struct RepositoryInfoView: View, SuperLog {
                     .magicShape(.circle)
                 }
             }
+        }
+    }
+
+    /// 配置远程仓库行（当没有远程仓库时显示）
+    private var configRemoteRepositoryRow: some View {
+        MagicSettingRow(
+            title: "远程仓库",
+            description: "未配置",
+            icon: .iconCloud
+        ) {
+            MagicButton.simple {
+                showSettings = true
+            }
+            .magicIcon(.iconSettings)
+            .magicShape(.circle)
+            .magicShapeVisibility(.onHover)
         }
     }
 
