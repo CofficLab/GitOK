@@ -253,7 +253,7 @@ extension CommitRow {
         isActuallyUnpushed = isUnpushed
 
         loadAvatarUsers()
-        self.bg.async {
+        Task {
             await loadTag()
         }
     }
@@ -263,7 +263,7 @@ extension CommitRow {
         if Self.verbose {
             os_log("\(self.t)🔄 App became active - reloading tag for commit: \(commit.hash.prefix(8))")
         }
-        self.bg.async {
+        Task {
             await loadTag()
         }
     }
@@ -273,7 +273,7 @@ extension CommitRow {
         if Self.verbose {
             os_log("\(self.t)✨ Git commit success - reloading tag for commit: \(commit.hash.prefix(8))")
         }
-        self.bg.async {
+        Task {
             await loadTag()
         }
     }
