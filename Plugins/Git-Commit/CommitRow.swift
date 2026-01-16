@@ -4,6 +4,35 @@ import MagicKit
 import OSLog
 import SwiftUI
 
+// MARK: - View Extensions
+
+extension View {
+    /// 应用变为活跃状态时执行操作
+    func onApplicationWillBecomeActive(perform action: @escaping () -> Void) -> some View {
+        self.onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
+            action()
+        }
+    }
+
+    /// Git 提交成功时执行操作
+    func onProjectDidCommit(perform action: @escaping (ProjectEventInfo) -> Void) -> some View {
+        self.onReceive(NotificationCenter.default.publisher(for: .projectDidCommit)) { notification in
+            if let userInfo = notification.userInfo, let eventInfo = userInfo["eventInfo"] as? ProjectEventInfo {
+                action(eventInfo)
+            }
+        }
+    }
+
+    /// Git 推送成功时执行操作
+    func onProjectDidPush(perform action: @escaping (ProjectEventInfo) -> Void) -> some View {
+        self.onReceive(NotificationCenter.default.publisher(for: .projectDidPush)) { notification in
+            if let userInfo = notification.userInfo, let eventInfo = userInfo["eventInfo"] as? ProjectEventInfo {
+                action(eventInfo)
+            }
+        }
+    }
+}
+
 /// 提交记录行视图组件
 /// 显示单个 Git 提交的详细信息，包括消息、作者、时间等
 struct CommitRow: View, SuperThread, SuperLog {
@@ -32,13 +61,13 @@ struct CommitRow: View, SuperThread, SuperLog {
     @State private var avatarUsers: [AvatarUser] = []
 
     var body: some View {
+        commitRowContent
+    }
+
+    /// 提交行主要内容视图
+    private var commitRowContent: some View {
         VStack(spacing: 0) {
-            Button(action: {
-                if Self.verbose {
-                    os_log("\(Self.t)👆 Commit selected - hash: \(commit.hash.prefix(8)), message: \(commit.message.prefix(30))")
-                }
-                data.setCommit(commit)
-            }) {
+            Button(action: selectCommit) {
                 HStack(alignment: .center, spacing: 12) {
                     // 中间：主要内容
                     VStack(alignment: .leading, spacing: 2) {
@@ -111,6 +140,52 @@ struct CommitRow: View, SuperThread, SuperLog {
         }
     }
 
+    // MARK: - Action
+
+    /// 选择提交并设置为当前选中的提交
+    private func selectCommit() {
+        if Self.verbose {
+            os_log("\(self.t)👆 Commit selected - hash: \(commit.hash.prefix(8)), message: \(commit.message.prefix(30))")
+        }
+        data.setCommit(commit)
+    }
+
+    // MARK: - Setter
+    /// 设置未推送状态
+    /// - Parameter unpushed: 是否未推送
+    @MainActor
+    private func setUnpushedStatus(_ unpushed: Bool) {
+        let wasUnpushed = isActuallyUnpushed
+        isActuallyUnpushed = unpushed
+
+        if Self.verbose && wasUnpushed != unpushed {
+            os_log("\(self.t)🔄 Push status changed - commit \(commit.hash.prefix(8)) was: \(wasUnpushed), now: \(unpushed)")
+        }
+    }
+
+    /// 设置标签文本
+    /// - Parameter tag: 标签文本
+    @MainActor
+    private func setTag(_ tag: String) {
+        self.tag = tag
+
+        if Self.verbose {
+            os_log("\(self.t)✅ Tag loaded - commit: \(commit.hash.prefix(8)), tag: '\(tag)'")
+        }
+    }
+
+    /// 设置头像用户列表
+    /// - Parameter users: 用户列表
+    @MainActor
+    private func setAvatarUsers(_ users: [AvatarUser]) {
+        avatarUsers = users
+
+        if Self.verbose {
+            os_log("\(self.t)✅ Avatar users loaded - commit: \(commit.hash.prefix(8)), users: \(users.count)")
+        }
+    }
+
+    // MARK: - Private Helpers
     /// 异步加载commit的tag信息
     private func loadTag() async {
         if Self.verbose {
@@ -118,12 +193,7 @@ struct CommitRow: View, SuperThread, SuperLog {
         }
 
         guard let project = data.project else {
-            await MainActor.run {
-                if Self.verbose {
-                    os_log("\(self.t)⚠️ No project available for tag loading")
-                }
-                self.tag = ""
-            }
+            await setTag("")
             return
         }
 
@@ -131,19 +201,9 @@ struct CommitRow: View, SuperThread, SuperLog {
             let tags = try project.getTags(commit: self.commit.hash)
             let tagValue = tags.first ?? ""
 
-            // UI状态更新需要在主线程进行
-            await MainActor.run {
-                self.tag = tagValue
-            }
+            await setTag(tagValue)
         } catch {
-            // 即使出错也要在主线程更新UI状态
-            await MainActor.run {
-                self.tag = ""
-
-                if Self.verbose {
-                    os_log(.error, "\(self.t)❌ Failed to load tag for commit \(commit.hash.prefix(8)): \(error)")
-                }
-            }
+            await setTag("")
         }
     }
 
@@ -196,14 +256,7 @@ struct CommitRow: View, SuperThread, SuperLog {
             }
         }
 
-        // UI状态更新需要在主线程进行
-        await MainActor.run {
-            self.avatarUsers = uniqueUsers
-
-            if Self.verbose {
-                os_log("\(self.t)✅ Avatar users loaded - commit: \(commit.hash.prefix(8)), users: \(uniqueUsers.count)")
-            }
-        }
+        await setAvatarUsers(uniqueUsers)
     }
 
     /// 从 commit 消息中解析 co-authors
@@ -237,11 +290,8 @@ struct CommitRow: View, SuperThread, SuperLog {
 
         return coAuthors
     }
-}
 
-// MARK: - Event
-
-extension CommitRow {
+    // MARK: - Event Handler
     /// 视图出现时初始化状态
     func onAppear() {
         if Self.verbose {
@@ -300,15 +350,7 @@ extension CommitRow {
                     os_log("\(self.t)📊 Push status check - total unpushed: \(unpushedCommits.count), commit \(commit.hash.prefix(8)) still unpushed: \(isStillUnpushed)")
                 }
 
-                await MainActor.run {
-                    // 更新实际的未推送状态
-                    let wasUnpushed = isActuallyUnpushed
-                    isActuallyUnpushed = isStillUnpushed
-
-                    if Self.verbose && wasUnpushed != isStillUnpushed {
-                        os_log("\(self.t)🔄 Push status changed - commit \(commit.hash.prefix(8)) was: \(wasUnpushed), now: \(isStillUnpushed)")
-                    }
-                }
+                await setUnpushedStatus(isStillUnpushed)
             } catch {
                 if Self.verbose {
                     os_log(.error, "\(self.t)❌ Failed to check unpushed status after push for commit \(commit.hash.prefix(8)): \(error)")
@@ -316,7 +358,6 @@ extension CommitRow {
             }
         }
     }
-}
 
 // MARK: - Preview
 
