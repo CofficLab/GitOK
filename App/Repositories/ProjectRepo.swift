@@ -15,7 +15,6 @@ class ProjectRepo: BaseRepositoryImpl<Project>, ProjectRepoProtocol {
         
         modelContext.insert(project)
         try save()
-        logger.info("➕ Created project: \(project.title)")
         return project
     }
     

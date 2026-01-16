@@ -180,9 +180,6 @@ extension DataProvider {
             if self.project == nil {
                 self.setProject(newProject, reason: "Added first project")
             }
-
-            os_log("New project added successfully: \(url.path)")
-
         } catch {
             os_log(.error, "Failed to add project: \(error.localizedDescription)")
         }

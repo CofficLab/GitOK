@@ -191,7 +191,10 @@ extension GitDetail {
 
     /// 项目变更时的事件处理
     func onProjectChange() {
-        self.updateIsProjectClean(reason: "onProjectChange")
+        Task {
+            await self.updateIsGitProjectAsync()
+            self.updateIsProjectClean(reason: "onProjectChange")
+        }
     }
 
     /// Git 提交成功时的事件处理
