@@ -4,7 +4,6 @@ import MagicKit
 import OSLog
 import SwiftUI
 
-
 /// 提交记录行视图组件
 /// 显示单个 Git 提交的详细信息，包括消息、作者、时间等
 struct CommitRow: View, SuperThread, SuperLog {
@@ -12,7 +11,7 @@ struct CommitRow: View, SuperThread, SuperLog {
     nonisolated static let emoji = "📝"
 
     /// 是否启用详细日志输出
-    nonisolated static let verbose = true
+    nonisolated static let verbose = false
 
     /// 环境对象：数据提供者
     @EnvironmentObject var data: DataProvider
@@ -123,6 +122,7 @@ struct CommitRow: View, SuperThread, SuperLog {
     }
 
     // MARK: - Setter
+
     /// 设置未推送状态
     /// - Parameter unpushed: 是否未推送
     @MainActor
@@ -140,10 +140,6 @@ struct CommitRow: View, SuperThread, SuperLog {
     @MainActor
     private func setTag(_ tag: String) {
         self.tag = tag
-
-        if Self.verbose {
-            os_log("\(self.t)✅ Tag loaded - commit: \(commit.hash.prefix(8)), tag: '\(tag)'")
-        }
     }
 
     /// 设置头像用户列表
@@ -151,84 +147,89 @@ struct CommitRow: View, SuperThread, SuperLog {
     @MainActor
     private func setAvatarUsers(_ users: [AvatarUser]) {
         avatarUsers = users
-
-        if Self.verbose {
-            os_log("\(self.t)✅ Avatar users loaded - commit: \(commit.hash.prefix(8)), users: \(users.count)")
-        }
     }
 
     // MARK: - Private Helpers
+
     /// 异步加载commit的tag信息
     private func loadTag() async {
-        if Self.verbose {
-            os_log("\(self.t)🏷️ Loading tag for commit: \(commit.hash.prefix(8))")
-        }
-
         guard let project = data.project else {
-            await setTag("")
+            setTag("")
             return
         }
 
-        do {
-            let tags = try project.getTags(commit: self.commit.hash)
-            let tagValue = tags.first ?? ""
+        let commitHash = self.commit.hash
 
-            await setTag(tagValue)
-        } catch {
-            await setTag("")
+        Task.detached(priority: .userInitiated) {
+            if Self.verbose {
+                os_log("\(Self.t)🏷️ Loading tag for commit: \(commitHash)")
+            }
+
+            do {
+                let tags = try project.getTags(commit: commitHash)
+                let tagValue = tags.first ?? ""
+
+                await self.setTag(tagValue)
+            } catch {
+                await self.setTag("")
+            }
         }
     }
 
     /// 解析提交的作者信息（包括 co-authors）
     private func loadAvatarUsers() async {
-        if Self.verbose {
-            os_log("\(self.t)👤 Loading avatar users for commit: \(commit.hash.prefix(8))")
-        }
+        let commit = self.commit
 
-        var users: [AvatarUser] = []
-
-        // 解析作者信息
-        let authorName: String
-        let authorEmail: String
-
-        // author 格式可能是 "name <email>" 或只是 "name"
-        if let emailRange = commit.author.range(of: "<([^>]+)>", options: .regularExpression) {
-            // 有邮箱
-            let emailStartIndex = commit.author.index(emailRange.lowerBound, offsetBy: 1)
-            let emailEndIndex = commit.author.index(emailRange.upperBound, offsetBy: -1)
-            authorEmail = String(commit.author[emailStartIndex..<emailEndIndex])
-
-            let nameEndIndex = commit.author.index(emailRange.lowerBound, offsetBy: -2)
-            authorName = String(commit.author[..<nameEndIndex]).trimmingCharacters(in: .whitespaces)
-        } else {
-            // 没有邮箱，使用 author 作为 name
-            authorName = commit.author
-            authorEmail = ""
-        }
-
-        // 添加主作者
-        let author = AvatarUser(
-            name: authorName,
-            email: authorEmail
-        )
-        users.append(author)
-
-        // 解析 co-authors
-        let coAuthors = parseCoAuthors(from: commit.message)
-        users.append(contentsOf: coAuthors)
-
-        // 去重（基于邮箱）
-        var seenEmails = Set<String>()
-        var uniqueUsers: [AvatarUser] = []
-
-        for user in users {
-            if !seenEmails.contains(user.email) {
-                seenEmails.insert(user.email)
-                uniqueUsers.append(user)
+        Task.detached(priority: .userInitiated) {
+            if Self.verbose {
+                os_log("\(Self.t)👤 Loading avatar users for commit: \(commit.hash.prefix(8))")
             }
-        }
 
-        await setAvatarUsers(uniqueUsers)
+            var users: [AvatarUser] = []
+
+            // 解析作者信息
+            let authorName: String
+            let authorEmail: String
+
+            // author 格式可能是 "name <email>" 或只是 "name"
+            if let emailRange = commit.author.range(of: "<([^>]+)>", options: .regularExpression) {
+                // 有邮箱
+                let emailStartIndex = commit.author.index(emailRange.lowerBound, offsetBy: 1)
+                let emailEndIndex = commit.author.index(emailRange.upperBound, offsetBy: -1)
+                authorEmail = String(commit.author[emailStartIndex ..< emailEndIndex])
+
+                let nameEndIndex = commit.author.index(emailRange.lowerBound, offsetBy: -2)
+                authorName = String(commit.author[..<nameEndIndex]).trimmingCharacters(in: .whitespaces)
+            } else {
+                // 没有邮箱，使用 author 作为 name
+                authorName = commit.author
+                authorEmail = ""
+            }
+
+            // 添加主作者
+            let author = AvatarUser(
+                name: authorName,
+                email: authorEmail
+            )
+            users.append(author)
+
+            // 解析 co-authors
+            let coAuthors = self.parseCoAuthors(from: commit.message)
+            users.append(contentsOf: coAuthors)
+
+            // 去重（基于邮箱）
+            var seenEmails = Set<String>()
+            var uniqueUsers: [AvatarUser] = []
+
+            for user in users {
+                if !seenEmails.contains(user.email) {
+                    seenEmails.insert(user.email)
+                    uniqueUsers.append(user)
+                }
+            }
+
+            await self.setAvatarUsers(uniqueUsers)
+        }
     }
 
     /// 从 commit 消息中解析 co-authors
@@ -264,12 +265,9 @@ struct CommitRow: View, SuperThread, SuperLog {
     }
 
     // MARK: - Event Handler
+
     /// 视图出现时初始化状态
     func onAppear() {
-        if Self.verbose {
-            os_log("\(self.t)🎯 CommitRow onAppear - hash: \(commit.hash.prefix(8)), message: \(commit.message.prefix(50))")
-        }
-
         // 初始化实际的未推送状态
         isActuallyUnpushed = isUnpushed
 
@@ -281,9 +279,6 @@ struct CommitRow: View, SuperThread, SuperLog {
 
     /// 应用变为活跃状态时重新加载标签
     func onAppWillBecomeActive(_ n: Notification) {
-        if Self.verbose {
-            os_log("\(self.t)🔄 App became active - reloading tag for commit: \(commit.hash.prefix(8))")
-        }
         Task {
             await loadTag()
         }
@@ -306,26 +301,28 @@ struct CommitRow: View, SuperThread, SuperLog {
         }
 
         // 异步检查这个 commit 是否仍然在未推送列表中
-        Task {
-            guard let project = data.project else {
-                if Self.verbose {
-                    os_log("\(self.t)⚠️ No project available for push status check")
-                }
-                return
+        guard let project = data.project else {
+            if Self.verbose {
+                os_log("\(self.t)⚠️ No project available for push status check")
             }
+            return
+        }
 
+        let commitHash = self.commit.hash
+
+        Task.detached(priority: .userInitiated) {
             do {
                 let unpushedCommits = try await project.getUnPushedCommits()
-                let isStillUnpushed = unpushedCommits.contains { $0.hash == commit.hash }
+                let isStillUnpushed = unpushedCommits.contains { $0.hash == commitHash }
 
                 if Self.verbose {
-                    os_log("\(self.t)📊 Push status check - total unpushed: \(unpushedCommits.count), commit \(commit.hash.prefix(8)) still unpushed: \(isStillUnpushed)")
+                    os_log("\(self.t)📊 Push status check - total unpushed: \(unpushedCommits.count), commit \(commitHash.prefix(8)) still unpushed: \(isStillUnpushed)")
                 }
 
-                await setUnpushedStatus(isStillUnpushed)
+                await self.setUnpushedStatus(isStillUnpushed)
             } catch {
                 if Self.verbose {
-                    os_log(.error, "\(self.t)❌ Failed to check unpushed status after push for commit \(commit.hash.prefix(8)): \(error)")
+                    os_log(.error, "\(self.t)❌ Failed to check unpushed status after push for commit \(commitHash.prefix(8)): \(error)")
                 }
             }
         }
