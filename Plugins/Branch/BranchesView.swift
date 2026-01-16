@@ -58,6 +58,9 @@ struct BranchesView: View, SuperThread, SuperLog, SuperEvent {
         .onChange(of: self.selection, onSelectionChange)
         .onAppear(perform: onAppear)
         .onApplicationWillBecomeActive(perform: onAppWillBecomeActive)
+        .onProjectDidChangeBranch { eventInfo in
+            handleBranchChanged(eventInfo)
+        }
     }
 }
 
@@ -188,10 +191,17 @@ extension BranchesView {
         }
     }
     
+    func handleBranchChanged(_ eventInfo: ProjectEventInfo) {
+        // 分支变更事件处理 - 刷新分支列表以反映最新状态
+        if Self.verbose {
+            os_log("\(self.t)🌿 Branch changed, refreshing branches list")
+        }
+        self.refreshBranches(reason: "BranchChanged(\(eventInfo.additionalInfo?["branchName"] as? String ?? "unknown"))")
+    }
+
     func onSelectionChange() {
         do {
             try data.setBranch(self.selection)
-            // 成功消息会通过Project的事件系统自动显示，这里不需要重复显示
         } catch let e {
             m.error(e.localizedDescription)
         }
