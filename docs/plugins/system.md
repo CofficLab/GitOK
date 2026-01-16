@@ -103,6 +103,7 @@ actor PluginRegistry {
 ```
 
 **职责：**
+
 - 作为单例提供全局访问点
 - 存储插件工厂（而非实例）以支持延迟初始化
 - 按优先级排序插件
@@ -120,6 +121,7 @@ class PluginProvider: ObservableObject {
 ```
 
 **职责：**
+
 - 管理所有已加载的插件实例
 - 区分标签页插件和普通插件
 - 为 UI 提供插件查询接口
@@ -231,6 +233,7 @@ extension SuperPlugin {
 ```
 
 **设计理念：**
+
 - 插件只需实现需要的方法
 - 提供合理的默认值
 - 支持渐进式采用
@@ -258,7 +261,7 @@ class MyPlugin: SuperPlugin, PluginRegistrant {
 
 ### UI 区域划分
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────┐
 │  工具栏 (ToolBar)                                           │
 │  [Leading Views] [Tab Picker] [Trailing Views]             │
@@ -285,6 +288,7 @@ class MyPlugin: SuperPlugin, PluginRegistrant {
 **用途：** 显示项目相关列表，如提交历史、分支列表
 
 **上下文感知：**
+
 ```swift
 func addListView(tab: String, project: Project?) -> AnyView? {
     // 只在 Git 标签页且项目存在时显示
@@ -302,6 +306,7 @@ func addListView(tab: String, project: Project?) -> AnyView? {
 **用途：** 插件的主要功能界面
 
 **示例：**
+
 ```swift
 func addDetailView() -> AnyView? {
     AnyView(GitDetail.shared)
@@ -311,6 +316,7 @@ func addDetailView() -> AnyView? {
 #### 3. 工具栏视图
 
 **前置视图 (Leading)：**
+
 ```swift
 func addToolBarLeadingView() -> AnyView? {
     AnyView(ProjectPickerView())
@@ -318,6 +324,7 @@ func addToolBarLeadingView() -> AnyView? {
 ```
 
 **后置视图 (Trailing)：**
+
 ```swift
 func addToolBarTrailingView() -> AnyView? {
     AnyView(BranchPickerView())
@@ -359,6 +366,7 @@ func updateCachedViews() {
 ```
 
 **缓存触发时机：**
+
 - 项目切换
 - 标签页切换
 - 插件加载完成
@@ -452,7 +460,7 @@ extension Notification.Name {
 
 ### 初始化阶段
 
-```
+```text
 1. App 启动
    ↓
 2. PluginProvider.init()
@@ -472,7 +480,7 @@ extension Notification.Name {
 
 ### 运行阶段
 
-```
+```text
 ┌─────────────────────────────────────────────────────────┐
 │  插件运行期                                              │
 ├─────────────────────────────────────────────────────────┤
@@ -529,6 +537,7 @@ class MyPlugin: SuperPlugin {
 ```
 
 **原因：**
+
 - 插件通常只需要一个实例
 - 方便从其他地方访问
 - 避免重复初始化
@@ -783,6 +792,7 @@ GitOK 的插件系统提供了一个强大而灵活的架构，使得：
 4. **用户**可以根据需要启用/禁用功能
 
 通过遵循本文档的设计模式和最佳实践，您可以：
+
 - 创建符合规范的插件
 - 与其他插件良好协作
 - 提供一致的用户体验

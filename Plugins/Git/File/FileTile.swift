@@ -1,5 +1,5 @@
-import MagicKit
 import LibGit2Swift
+import MagicKit
 import OSLog
 import SwiftUI
 
@@ -65,7 +65,6 @@ struct FileTile: View, SuperLog {
             .padding(2)
             .cornerRadius(6)
     }
-}
 
     /// 获取文件变更类型的图标和颜色信息
     /// - Parameter change: 文件变更类型字符串
