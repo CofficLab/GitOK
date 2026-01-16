@@ -358,6 +358,7 @@ struct CommitRow: View, SuperThread, SuperLog {
             }
         }
     }
+}
 
 // MARK: - Preview
 
