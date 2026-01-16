@@ -223,6 +223,7 @@
       }
     },
     "not_git_project" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {

@@ -68,7 +68,7 @@ struct GitDetail: View, SuperEvent, SuperLog {
                         }
                     }
                 } else {
-                    NoGitProjectView()
+                    ProjectNotGitView()
                 }
             }
         }
