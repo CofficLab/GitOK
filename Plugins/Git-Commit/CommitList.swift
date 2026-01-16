@@ -156,35 +156,45 @@ extension CommitList {
         }
 
         loading = true
+        
+        let currentPage = self.currentPage
+        let pageSize = self.pageSize
+        let currentCommits = self.commits
 
-        do {
-            let newCommits = try project.getCommitsWithPagination(
-                self.currentPage,
-                limit: self.pageSize
-            )
+        Task.detached(priority: .userInitiated) {
+            do {
+                let newCommits = try project.getCommitsWithPagination(
+                    currentPage,
+                    limit: pageSize
+                )
 
-            if !newCommits.isEmpty {
-                // 添加去重逻辑，防止重复添加相同的commit
-                let uniqueNewCommits = newCommits.filter { newCommit in
-                    !commits.contains { existingCommit in
-                        existingCommit.hash == newCommit.hash
+                await MainActor.run {
+                    if !newCommits.isEmpty {
+                        // 添加去重逻辑，防止重复添加相同的commit
+                        let uniqueNewCommits = newCommits.filter { newCommit in
+                            !currentCommits.contains { existingCommit in
+                                existingCommit.hash == newCommit.hash
+                            }
+                        }
+
+                        if !uniqueNewCommits.isEmpty {
+                            self.commits.append(contentsOf: uniqueNewCommits)
+                        } else if Self.verbose {
+                            os_log("\(Self.t)⚠️ LoadMoreCommits - all commits were duplicates!")
+                        }
+                        self.currentPage += 1
+                    } else {
+                        self.hasMoreCommits = false
                     }
+                    self.loading = false
                 }
 
-                if !uniqueNewCommits.isEmpty {
-                    commits.append(contentsOf: uniqueNewCommits)
-                } else if Self.verbose {
-                    os_log("\(self.t)⚠️ LoadMoreCommits - all commits were duplicates!")
+            } catch {
+                await MainActor.run {
+                    self.loading = false
                 }
-                currentPage += 1
-            } else {
-                hasMoreCommits = false
+                os_log(.error, "\(Self.t)❌ LoadMoreCommits error: \(error)")
             }
-            loading = false
-
-        } catch {
-            loading = false
-            os_log(.error, "\(self.t)❌ LoadMoreCommits error: \(error)")
         }
     }
 
@@ -303,38 +313,49 @@ extension CommitList {
         guard let project = data.project, !loading, hasMoreCommits, maxAttempts > 0 else { return }
 
         loading = true
+        
+        let currentPage = self.currentPage
+        let pageSize = self.pageSize
+        let currentCommits = self.commits
 
-        do {
-            let newCommits = try project.getCommitsWithPagination(
-                currentPage,
-                limit: pageSize
-            )
+        Task.detached(priority: .userInitiated) {
+            do {
+                let newCommits = try project.getCommitsWithPagination(
+                    currentPage,
+                    limit: pageSize
+                )
 
-            if !newCommits.isEmpty {
-                // 添加去重逻辑
-                let uniqueNewCommits = newCommits.filter { newCommit in
-                    !commits.contains { existingCommit in
-                        existingCommit.hash == newCommit.hash
+                await MainActor.run {
+                    if !newCommits.isEmpty {
+                        // 添加去重逻辑
+                        let uniqueNewCommits = newCommits.filter { newCommit in
+                            !currentCommits.contains { existingCommit in
+                                existingCommit.hash == newCommit.hash
+                            }
+                        }
+                        self.commits.append(contentsOf: uniqueNewCommits)
+                        self.currentPage += 1
+
+                        // 检查是否找到目标commit
+                        if let matchedCommit = newCommits.first(where: { $0.hash == targetHash }) {
+                            // 选择找到的commit
+                            self.setCommit(matchedCommit)
+                        } else if self.hasMoreCommits {
+                            // 如果还没找到，继续加载更多
+                            // 注意：这里递归调用可能会导致堆栈过深，但在异步任务中应该没问题，且有 maxAttempts 限制
+                            self.loadMoreCommitsUntilFound(targetHash: targetHash, maxAttempts: maxAttempts - 1)
+                        }
+                    } else {
+                        self.hasMoreCommits = false
                     }
+                    self.loading = false
                 }
-                commits.append(contentsOf: uniqueNewCommits)
-                currentPage += 1
 
-                // 检查是否找到目标commit
-                if let matchedCommit = newCommits.first(where: { $0.hash == targetHash }) {
-                    // 选择找到的commit
-                    self.setCommit(matchedCommit)
-                } else if hasMoreCommits {
-                    // 如果还没找到，继续加载更多
-                    loadMoreCommitsUntilFound(targetHash: targetHash, maxAttempts: maxAttempts - 1)
+            } catch {
+                await MainActor.run {
+                    self.loading = false
                 }
-            } else {
-                hasMoreCommits = false
             }
-            loading = false
-
-        } catch {
-            loading = false
         }
     }
 }
