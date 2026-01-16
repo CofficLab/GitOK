@@ -67,8 +67,14 @@ extension DataProvider {
         self.repoManager.stateRepo.setProjectPath(self.project?.path ?? "")
         self.checkIfProjectExists()
 
-        // 异步更新 isGitRepo 缓存
+        // 同步设置 isGitRepo 初始值，避免竞态条件
+        // 然后异步更新以确保准确性
         if let project = p {
+            // 先设置一个初始值（同步）
+            let isGit = LibGit2.isGitRepository(at: project.path)
+            project.updateIsGitRepoCacheSync(isGit)
+
+            // 再异步更新一次以确保准确性
             Task.detached(priority: .userInitiated) {
                 await project.updateIsGitRepoCache()
             }

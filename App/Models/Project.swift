@@ -270,6 +270,15 @@ extension Project {
     }
 
     /**
+        更新 isGitRepo 缓存（同步）
+
+        直接设置缓存值，用于避免竞态条件
+     */
+    func updateIsGitRepoCacheSync(_ value: Bool) {
+        self._isGitRepo = value
+    }
+
+    /**
         更新 isGitRepo 缓存（异步）
 
         在后台检查 Git 仓库状态并更新缓存，避免阻塞主线程
