@@ -1,12 +1,26 @@
 import MagicKit
 import LibGit2Swift
+import OSLog
 import SwiftUI
 
-struct FileTile: View {
+/// 文件状态显示组件：显示单个文件的Git状态和操作选项
+struct FileTile: View, SuperLog {
+    /// 日志标识符
+    nonisolated static let emoji = "📄"
+
+    /// 是否启用详细日志输出
+    nonisolated static let verbose = false
+
+    /// Git 差异文件对象
     var file: GitDiffFile
+
+    /// 丢弃更改的回调函数
     var onDiscardChanges: ((GitDiffFile) -> Void)?
 
+    /// 是否显示详细信息弹窗
     @State var isPresented: Bool = false
+
+    /// 是否显示丢弃更改确认对话框
     @State private var showDiscardAlert = false
 
     var body: some View {
@@ -42,6 +56,7 @@ struct FileTile: View {
         }
     }
 
+    /// 文件状态图标视图：根据文件变更类型显示对应的图标和颜色
     private var statusIcon: some View {
         let (icon, color) = iconInfo(for: file.changeType)
         return Image(systemName: icon)
@@ -50,7 +65,11 @@ struct FileTile: View {
             .padding(2)
             .cornerRadius(6)
     }
+}
 
+    /// 获取文件变更类型的图标和颜色信息
+    /// - Parameter change: 文件变更类型字符串
+    /// - Returns: 返回图标名称和对应颜色的元组
     private func iconInfo(for change: String) -> (String, Color) {
         let normalizedChange = change.uppercased()
         switch normalizedChange {
@@ -64,31 +83,35 @@ struct FileTile: View {
             return (.iconEditCircle, .blue)
         case "C", "COPIED":
             return (.iconEditCircle, .purple)
+        case "?", "UNTRACKED":
+            return (.iconPlus, .gray)
         default:
-            print("[FileTile] Unknown change type: '\(change)'")
+            if Self.verbose {
+                os_log(.info, "\(self.t)Unknown change type: '\(change)'")
+            }
             return (.iconInfo, .gray)
         }
     }
 }
 
+// MARK: - Preview
+
 #Preview("App - Small Screen") {
-    RootView {
-        ContentLayout()
-            .hideSidebar()
-            .hideTabPicker()
-            .hideProjectActions()
-    }
-    .frame(width: 800)
-    .frame(height: 600)
+    ContentLayout()
+        .hideSidebar()
+        .hideTabPicker()
+        .hideProjectActions()
+        .inRootView()
+        .frame(width: 800)
+        .frame(height: 600)
 }
 
 #Preview("App - Big Screen") {
-    RootView {
-        ContentLayout()
-            .hideTabPicker()
-            .hideProjectActions()
-            .hideSidebar()
-    }
-    .frame(width: 1200)
-    .frame(height: 1200)
+    ContentLayout()
+        .hideSidebar()
+        .hideTabPicker()
+        .hideProjectActions()
+        .inRootView()
+        .frame(width: 1200)
+        .frame(height: 1200)
 }
