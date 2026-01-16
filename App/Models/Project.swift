@@ -1,5 +1,6 @@
 import Foundation
 import LibGit2Swift
+import MagicKit
 import OSLog
 import SwiftData
 import SwiftUI
@@ -110,10 +111,17 @@ struct ProjectEventInfo {
     }
 }
 
+/// 项目模型类
+/// 表示一个Git项目的核心数据模型，包含项目的基本信息和操作方法
 @Model
-final class Project {
+final class Project: SuperLog {
+    /// 日志标识符
+    nonisolated static let emoji = "🌳"
+
+    /// 是否启用详细日志输出
+    nonisolated static let verbose = false
+
     var t: String { "[\(title)] " }
-    static var verbose = false
     static var null = Project(URL(fileURLWithPath: ""))
     static var order = [
         SortDescriptor<Project>(\.order, order: .forward),
@@ -121,8 +129,6 @@ final class Project {
     static var orderReverse = [
         SortDescriptor<Project>(\.order, order: .reverse),
     ]
-
-    static let emoji = "🌳"
     var timestamp: Date
     var url: URL
     var order: Int16 = 0
@@ -260,7 +266,7 @@ extension Project {
         异步返回是否为Git仓库的布ool值
      */
     func isNotGitAsync() async -> Bool {
-        return !(await isGitAsync())
+        return (await isGitAsync()) == false
     }
 
     /**
@@ -558,7 +564,17 @@ extension Project {
         try LibGit2.getFileDiff(for: file, at: self.path, staged: false)
     }
 
-    func changedFilesDetail(in atCommit: String) async throws -> [GitDiffFile] {
+    /// 获取指定提交中文件的 diff 字符串
+    /// - Parameters:
+    ///   - atCommit: 提交哈希
+    ///   - verbose: 是否启用详细日志输出
+    /// - Returns: 文件列表
+    /// - Throws: Git操作异常
+    func changedFilesDetail(in atCommit: String, verbose: Bool = false) async throws -> [GitDiffFile] {
+        if verbose {
+            os_log(.info, "\(self.t)🍋 changedFilesDetail(in: \(atCommit))")
+        }
+        
         // 使用 LibGit2Swift 获取指定commit修改的文件列表，并按文件路径排序
         return try LibGit2.getCommitDiffFiles(atCommit: atCommit, at: self.path)
             .sorted { $0.file < $1.file }
@@ -786,10 +802,6 @@ extension Project {
 
             // 在推送前记录未推送的 commits
             let unpushedBeforePush = try LibGit2.getUnPushedCommits(at: self.path, verbose: false)
-            os_log(.default, "🔄 Before push: \(unpushedBeforePush.count) unpushed commits")
-            for commit in unpushedBeforePush.prefix(3) {
-                os_log(.default, "🔄 Unpushed: \(commit.hash.prefix(8)) - \(commit.message.prefix(50))")
-            }
 
             // 处理 SSH URL 转换
             try performWithConvertedSSHURL(operation: "push") {
@@ -844,24 +856,16 @@ extension Project {
     private func performWithConvertedSSHURL(operation: String, block: () throws -> Void) throws {
         // 获取当前远程 URL
         guard let remoteURL = LibGit2.getRemoteURL(at: self.path, remote: "origin") else {
-            print("⚠️ [Project] Failed to get remote URL, executing without conversion")
             try block()
             return
         }
-
-        print("🔍 [Project] Current remote URL for \(operation): \(remoteURL)")
 
         // 检查是否需要转换
         let convertedURL = SSHHelper.applySSHConfig(to: remoteURL)
 
         if convertedURL == remoteURL {
-            // 不需要转换，直接执行
-            print("ℹ️ [Project] No URL conversion needed for \(operation)")
             try block()
         } else {
-            // 需要转换，临时修改远程 URL
-            print("🔄 [Project] Converting SSH URL for \(operation): \(remoteURL) -> \(convertedURL)")
-
             // 保存原始 URL
             let originalURL = remoteURL
 
@@ -872,9 +876,8 @@ extension Project {
             defer {
                 do {
                     try LibGit2.setRemoteURL(at: self.path, remote: "origin", url: originalURL)
-                    print("✅ [Project] Restored original SSH URL")
                 } catch {
-                    print("⚠️ [Project] Failed to restore original URL: \(error)")
+                    os_log(.error, "\(self.t)Failed to restore original URL: \(error)")
                 }
             }
 

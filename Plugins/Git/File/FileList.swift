@@ -9,7 +9,7 @@ import SwiftUI
 /// 支持显示暂存区文件或提交间的文件差异，并提供文件丢弃更改功能
 struct FileList: View, SuperThread, SuperLog {
     nonisolated static let emoji = "📁"
-    nonisolated static let verbose = false
+    nonisolated static let verbose = true
 
     /// 环境对象：应用提供者
     @EnvironmentObject var app: AppProvider
@@ -31,6 +31,8 @@ struct FileList: View, SuperThread, SuperLog {
 
     /// 当前的刷新任务，用于取消之前的刷新操作
     @State private var refreshTask: Task<Void, Never>?
+    /// 后台刷新工作任务
+    @State private var refreshWorkerTask: Task<([GitDiffFile], String?), Error>?
 
     /// 是否显示丢弃单个文件更改的确认对话框
     @State private var showDiscardFileAlert = false
@@ -153,7 +155,7 @@ extension FileList {
         Task.detached(priority: .userInitiated) {
             do {
                 // 在后台执行耗时操作
-                try await project.discardFileChanges(file.file)
+                try project.discardFileChanges(file.file)
 
                 // 在主线程更新 UI
                 await MainActor.run {
@@ -177,7 +179,7 @@ extension FileList {
         Task.detached(priority: .userInitiated) {
             do {
                 // 在后台执行耗时操作
-                try await project.discardAllChanges()
+                try project.discardAllChanges()
 
                 // 在主线程更新 UI
                 await MainActor.run {
@@ -211,6 +213,7 @@ extension FileList {
 
         // 取消之前的任务
         refreshTask?.cancel()
+        refreshWorkerTask?.cancel()
 
         // 创建新的任务
         refreshTask = Task {
@@ -236,19 +239,22 @@ extension FileList {
             return
         }
 
+        // 捕获必要的数据，避免在后台任务中访问 MainActor
+        let currentCommitHash = data.commit?.hash
+
         do {
-            // 在后台线程执行耗时操作
-            let (newFiles, selectedCommitHash) = try await Task.detached(priority: .userInitiated) {
+            // 创建后台任务
+            let worker = Task.detached(priority: .userInitiated) {
                 if Self.verbose {
-                    os_log("\(self.t)🍋 Refreshing \(reason)")
+                    os_log("\(Self.t)🍋 Refreshing \(reason)")
                 }
 
                 // 检查任务是否被取消
                 try Task.checkCancellation()
 
                 let newFiles: [GitDiffFile]
-                if let commit = await data.commit {
-                    newFiles = try await project.changedFilesDetail(in: commit.hash)
+                if let hash = currentCommitHash {
+                    newFiles = try await project.changedFilesDetail(in: hash)
                 } else {
                     newFiles = try await project.untrackedFiles()
                 }
@@ -256,8 +262,10 @@ extension FileList {
                 // 再次检查任务是否被取消
                 try Task.checkCancellation()
 
-                return (newFiles, await data.commit?.hash)
-            }.value
+                return (newFiles, currentCommitHash)
+            }
+            refreshWorkerTask = worker
+            let (newFiles, selectedCommitHash) = try await worker.value
 
             // 在主线程更新 UI
             await MainActor.run {
@@ -280,7 +288,7 @@ extension FileList {
                 self.isLoading = false
             }
             if Self.verbose {
-                os_log("\(self.t)🐜 Refresh cancelled: \(reason)")
+                os_log("\(Self.t)🐜 Refresh cancelled: \(reason)")
             }
         } catch {
             await MainActor.run {
@@ -324,6 +332,8 @@ extension FileList {
     /// 应用变为活跃状态时的事件处理
     func onAppDidBecomeActive() {
         Task {
+            // 延迟刷新，避免与系统恢复焦点时的其他操作竞争
+            try? await Task.sleep(nanoseconds: 500 * 1_000_000)
             await self.refresh(reason: "OnAppDidBecomeActive")
         }
     }
