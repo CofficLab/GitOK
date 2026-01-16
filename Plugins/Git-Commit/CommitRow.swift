@@ -4,34 +4,6 @@ import MagicKit
 import OSLog
 import SwiftUI
 
-// MARK: - View Extensions
-
-extension View {
-    /// 应用变为活跃状态时执行操作
-    func onApplicationWillBecomeActive(perform action: @escaping () -> Void) -> some View {
-        self.onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
-            action()
-        }
-    }
-
-    /// Git 提交成功时执行操作
-    func onProjectDidCommit(perform action: @escaping (ProjectEventInfo) -> Void) -> some View {
-        self.onReceive(NotificationCenter.default.publisher(for: .projectDidCommit)) { notification in
-            if let userInfo = notification.userInfo, let eventInfo = userInfo["eventInfo"] as? ProjectEventInfo {
-                action(eventInfo)
-            }
-        }
-    }
-
-    /// Git 推送成功时执行操作
-    func onProjectDidPush(perform action: @escaping (ProjectEventInfo) -> Void) -> some View {
-        self.onReceive(NotificationCenter.default.publisher(for: .projectDidPush)) { notification in
-            if let userInfo = notification.userInfo, let eventInfo = userInfo["eventInfo"] as? ProjectEventInfo {
-                action(eventInfo)
-            }
-        }
-    }
-}
 
 /// 提交记录行视图组件
 /// 显示单个 Git 提交的详细信息，包括消息、作者、时间等
