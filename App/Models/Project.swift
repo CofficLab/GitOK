@@ -157,6 +157,13 @@ final class Project: SuperLog {
 
     // MARK: - Event Notification Helper
 
+    /// 发送项目事件通知
+    /// - Parameters:
+    ///   - name: 通知名称
+    ///   - operation: 操作类型
+    ///   - success: 操作是否成功
+    ///   - error: 错误信息（如果有）
+    ///   - additionalInfo: 额外信息
     func postEvent(name: Notification.Name, operation: String, success: Bool = true, error: Error? = nil, additionalInfo: [String: Any]? = nil) {
         let eventInfo = ProjectEventInfo(
             project: self,
@@ -341,6 +348,9 @@ extension Project {
         return hasUntracked
     }
 
+    /// 检查项目是否没有未提交的更改
+    /// - Returns: 如果没有未提交的更改返回 true，否则返回 false
+    /// - Throws: Git 操作相关的错误
     func hasNoUncommittedChanges() throws -> Bool {
         return try LibGit2.hasUncommittedChanges(at: self.path, verbose: false) == false
     }
@@ -349,10 +359,16 @@ extension Project {
 // MARK: - Branch
 
 extension Project {
+    /// 获取当前分支信息
+    /// - Returns: 当前分支对象，如果获取失败返回 nil
+    /// - Throws: Git 操作相关的错误
     func getCurrentBranch() throws -> GitBranch? {
         try LibGit2.getCurrentBranchInfo(at: self.path)
     }
 
+    /// 切换到指定分支
+    /// - Parameter branch: 要切换到的分支
+    /// - Throws: Git 操作相关的错误
     func checkout(branch: GitBranch) throws {
         do {
             _ = try LibGit2.checkout(branch: branch.name, at: self.path)
@@ -467,6 +483,8 @@ extension Project {
 // MARK: - Add
 
 extension Project {
+    /// 将所有更改的文件添加到Git暂存区
+    /// - Throws: Git 操作相关的错误
     func addAll() throws {
         do {
             try LibGit2.addFiles([], at: self.path, verbose: false)
@@ -842,6 +860,8 @@ extension Project {
 // MARK: - Remote
 
 extension Project {
+    /// 推送当前分支到远程仓库
+    /// - Throws: Git 操作相关的错误
     func push() throws {
         do {
             // 获取当前分支信息
