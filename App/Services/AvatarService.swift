@@ -12,7 +12,7 @@ class AvatarService: ObservableObject, SuperLog {
     nonisolated static let emoji = "👤"
 
     /// 是否启用详细日志输出
-    static let verbose = true
+    static let verbose = false
     static let shared = AvatarService()
 
     private let logger = OSLog(subsystem: "GitOK.AvatarService", category: "Avatar")
