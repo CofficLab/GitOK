@@ -29,7 +29,7 @@
    - **MagicKit**: `https://github.com/CofficLab/MagicKit.git` (分支: dev)
    - **Sparkle**: `https://github.com/sparkle-project/Sparkle.git` (版本: 2.0.0+)
 
-**注意**：依赖管理将通过Xcode界面完成，无需手动编辑Package.swift文件。
+**注意**：必须询问用户是否完成，然后才能继续。
 
 ## 1. 创建Bootstrap层
 
