@@ -5,112 +5,6 @@ import OSLog
 import SwiftData
 import SwiftUI
 
-// MARK: - Project Events
-
-extension Notification.Name {
-    static let projectDidAddFiles = Notification.Name("projectDidAddFiles")
-    static let projectDidCommit = Notification.Name("projectDidCommit")
-    static let projectDidPush = Notification.Name("projectDidPush")
-    static let projectDidPull = Notification.Name("projectDidPull")
-    static let projectDidMerge = Notification.Name("projectDidMerge")
-    static let projectDidSync = Notification.Name("projectDidSync")
-    static let projectDidChangeBranch = Notification.Name("projectDidChangeBranch")
-    static let projectDidUpdateUserInfo = Notification.Name("projectDidUpdateUserInfo")
-    static let projectOperationDidFail = Notification.Name("projectOperationDidFail")
-}
-
-// MARK: - View Extensions for Project Events
-
-extension View {
-    func onProjectDidAddFiles(perform action: @escaping (ProjectEventInfo) -> Void) -> some View {
-        self.onReceive(NotificationCenter.default.publisher(for: .projectDidAddFiles)) { notification in
-            if let userInfo = notification.userInfo, let eventInfo = userInfo["eventInfo"] as? ProjectEventInfo {
-                action(eventInfo)
-            }
-        }
-    }
-
-    func onProjectDidCommit(perform action: @escaping (ProjectEventInfo) -> Void) -> some View {
-        self.onReceive(NotificationCenter.default.publisher(for: .projectDidCommit)) { notification in
-            if let userInfo = notification.userInfo, let eventInfo = userInfo["eventInfo"] as? ProjectEventInfo {
-                action(eventInfo)
-            }
-        }
-    }
-
-    func onProjectDidPush(perform action: @escaping (ProjectEventInfo) -> Void) -> some View {
-        self.onReceive(NotificationCenter.default.publisher(for: .projectDidPush)) { notification in
-            if let userInfo = notification.userInfo, let eventInfo = userInfo["eventInfo"] as? ProjectEventInfo {
-                action(eventInfo)
-            }
-        }
-    }
-
-    func onProjectDidPull(perform action: @escaping (ProjectEventInfo) -> Void) -> some View {
-        self.onReceive(NotificationCenter.default.publisher(for: .projectDidPull)) { notification in
-            if let userInfo = notification.userInfo, let eventInfo = userInfo["eventInfo"] as? ProjectEventInfo {
-                action(eventInfo)
-            }
-        }
-    }
-
-    func onProjectDidMerge(perform action: @escaping (ProjectEventInfo) -> Void) -> some View {
-        self.onReceive(NotificationCenter.default.publisher(for: .projectDidMerge)) { notification in
-            if let userInfo = notification.userInfo, let eventInfo = userInfo["eventInfo"] as? ProjectEventInfo {
-                action(eventInfo)
-            }
-        }
-    }
-
-    func onProjectDidSync(perform action: @escaping (ProjectEventInfo) -> Void) -> some View {
-        self.onReceive(NotificationCenter.default.publisher(for: .projectDidSync)) { notification in
-            if let userInfo = notification.userInfo, let eventInfo = userInfo["eventInfo"] as? ProjectEventInfo {
-                action(eventInfo)
-            }
-        }
-    }
-
-    func onProjectDidChangeBranch(perform action: @escaping (ProjectEventInfo) -> Void) -> some View {
-        self.onReceive(NotificationCenter.default.publisher(for: .projectDidChangeBranch)) { notification in
-            if let userInfo = notification.userInfo, let eventInfo = userInfo["eventInfo"] as? ProjectEventInfo {
-                action(eventInfo)
-            }
-        }
-    }
-
-    func onProjectDidUpdateUserInfo(perform action: @escaping (ProjectEventInfo) -> Void) -> some View {
-        self.onReceive(NotificationCenter.default.publisher(for: .projectDidUpdateUserInfo)) { notification in
-            if let userInfo = notification.userInfo, let eventInfo = userInfo["eventInfo"] as? ProjectEventInfo {
-                action(eventInfo)
-            }
-        }
-    }
-
-    func onProjectOperationDidFail(perform action: @escaping (ProjectEventInfo) -> Void) -> some View {
-        self.onReceive(NotificationCenter.default.publisher(for: .projectOperationDidFail)) { notification in
-            if let userInfo = notification.userInfo, let eventInfo = userInfo["eventInfo"] as? ProjectEventInfo {
-                action(eventInfo)
-            }
-        }
-    }
-}
-
-struct ProjectEventInfo {
-    let project: Project
-    let operation: String
-    let success: Bool
-    let error: Error?
-    let additionalInfo: [String: Any]?
-
-    init(project: Project, operation: String, success: Bool = true, error: Error? = nil, additionalInfo: [String: Any]? = nil) {
-        self.project = project
-        self.operation = operation
-        self.success = success
-        self.error = error
-        self.additionalInfo = additionalInfo
-    }
-}
-
 /// 项目模型类
 /// 表示一个Git项目的核心数据模型，包含项目的基本信息和操作方法
 @Model
@@ -121,7 +15,6 @@ final class Project: SuperLog {
     /// 是否启用详细日志输出
     nonisolated static let verbose = false
 
-    var t: String { "[\(title)] " }
     static var null = Project(URL(fileURLWithPath: ""))
     static var order = [
         SortDescriptor<Project>(\.order, order: .forward),
@@ -310,7 +203,7 @@ extension Project {
         let hasUncommittedChanges = try LibGit2.hasUncommittedChanges(at: self.path, verbose: verbose)
         if hasUncommittedChanges {
             if verbose {
-                os_log(.info, "\(self.t)🔄 Project has uncommitted changes")
+                os_log("\(self.t)🔄 Project has uncommitted changes")
             }
             return false
         }
@@ -640,7 +533,7 @@ extension Project {
         if verbose {
             os_log(.info, "\(self.t)🍋 changedFilesDetail(in: \(atCommit))")
         }
-        
+
         // 使用 LibGit2Swift 获取指定commit修改的文件列表，并按文件路径排序
         return try LibGit2.getCommitDiffFiles(atCommit: atCommit, at: self.path)
             .sorted { $0.file < $1.file }
@@ -987,6 +880,112 @@ extension Project {
 
     func getTags(commit: String) throws -> [String] {
         try tags(for: commit)
+    }
+}
+
+// MARK: - Project Events
+
+extension Notification.Name {
+    static let projectDidAddFiles = Notification.Name("projectDidAddFiles")
+    static let projectDidCommit = Notification.Name("projectDidCommit")
+    static let projectDidPush = Notification.Name("projectDidPush")
+    static let projectDidPull = Notification.Name("projectDidPull")
+    static let projectDidMerge = Notification.Name("projectDidMerge")
+    static let projectDidSync = Notification.Name("projectDidSync")
+    static let projectDidChangeBranch = Notification.Name("projectDidChangeBranch")
+    static let projectDidUpdateUserInfo = Notification.Name("projectDidUpdateUserInfo")
+    static let projectOperationDidFail = Notification.Name("projectOperationDidFail")
+}
+
+// MARK: - View Extensions for Project Events
+
+extension View {
+    func onProjectDidAddFiles(perform action: @escaping (ProjectEventInfo) -> Void) -> some View {
+        self.onReceive(NotificationCenter.default.publisher(for: .projectDidAddFiles)) { notification in
+            if let userInfo = notification.userInfo, let eventInfo = userInfo["eventInfo"] as? ProjectEventInfo {
+                action(eventInfo)
+            }
+        }
+    }
+
+    func onProjectDidCommit(perform action: @escaping (ProjectEventInfo) -> Void) -> some View {
+        self.onReceive(NotificationCenter.default.publisher(for: .projectDidCommit)) { notification in
+            if let userInfo = notification.userInfo, let eventInfo = userInfo["eventInfo"] as? ProjectEventInfo {
+                action(eventInfo)
+            }
+        }
+    }
+
+    func onProjectDidPush(perform action: @escaping (ProjectEventInfo) -> Void) -> some View {
+        self.onReceive(NotificationCenter.default.publisher(for: .projectDidPush)) { notification in
+            if let userInfo = notification.userInfo, let eventInfo = userInfo["eventInfo"] as? ProjectEventInfo {
+                action(eventInfo)
+            }
+        }
+    }
+
+    func onProjectDidPull(perform action: @escaping (ProjectEventInfo) -> Void) -> some View {
+        self.onReceive(NotificationCenter.default.publisher(for: .projectDidPull)) { notification in
+            if let userInfo = notification.userInfo, let eventInfo = userInfo["eventInfo"] as? ProjectEventInfo {
+                action(eventInfo)
+            }
+        }
+    }
+
+    func onProjectDidMerge(perform action: @escaping (ProjectEventInfo) -> Void) -> some View {
+        self.onReceive(NotificationCenter.default.publisher(for: .projectDidMerge)) { notification in
+            if let userInfo = notification.userInfo, let eventInfo = userInfo["eventInfo"] as? ProjectEventInfo {
+                action(eventInfo)
+            }
+        }
+    }
+
+    func onProjectDidSync(perform action: @escaping (ProjectEventInfo) -> Void) -> some View {
+        self.onReceive(NotificationCenter.default.publisher(for: .projectDidSync)) { notification in
+            if let userInfo = notification.userInfo, let eventInfo = userInfo["eventInfo"] as? ProjectEventInfo {
+                action(eventInfo)
+            }
+        }
+    }
+
+    func onProjectDidChangeBranch(perform action: @escaping (ProjectEventInfo) -> Void) -> some View {
+        self.onReceive(NotificationCenter.default.publisher(for: .projectDidChangeBranch)) { notification in
+            if let userInfo = notification.userInfo, let eventInfo = userInfo["eventInfo"] as? ProjectEventInfo {
+                action(eventInfo)
+            }
+        }
+    }
+
+    func onProjectDidUpdateUserInfo(perform action: @escaping (ProjectEventInfo) -> Void) -> some View {
+        self.onReceive(NotificationCenter.default.publisher(for: .projectDidUpdateUserInfo)) { notification in
+            if let userInfo = notification.userInfo, let eventInfo = userInfo["eventInfo"] as? ProjectEventInfo {
+                action(eventInfo)
+            }
+        }
+    }
+
+    func onProjectOperationDidFail(perform action: @escaping (ProjectEventInfo) -> Void) -> some View {
+        self.onReceive(NotificationCenter.default.publisher(for: .projectOperationDidFail)) { notification in
+            if let userInfo = notification.userInfo, let eventInfo = userInfo["eventInfo"] as? ProjectEventInfo {
+                action(eventInfo)
+            }
+        }
+    }
+}
+
+struct ProjectEventInfo {
+    let project: Project
+    let operation: String
+    let success: Bool
+    let error: Error?
+    let additionalInfo: [String: Any]?
+
+    init(project: Project, operation: String, success: Bool = true, error: Error? = nil, additionalInfo: [String: Any]? = nil) {
+        self.project = project
+        self.operation = operation
+        self.success = success
+        self.error = error
+        self.additionalInfo = additionalInfo
     }
 }
 
