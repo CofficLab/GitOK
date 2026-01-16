@@ -9,7 +9,7 @@ import SwiftUI
 /// 支持显示暂存区文件或提交间的文件差异，并提供文件丢弃更改功能
 struct FileList: View, SuperThread, SuperLog {
     nonisolated static let emoji = "📁"
-    nonisolated static let verbose = true
+    nonisolated static let verbose = false
 
     /// 环境对象：应用提供者
     @EnvironmentObject var app: AppProvider

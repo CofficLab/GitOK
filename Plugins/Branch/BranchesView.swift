@@ -92,31 +92,42 @@ extension BranchesView {
         if Self.verbose {
             os_log("\(self.t)🍋 Refresh(\(reason))")
         }
+        
+        Task.detached(priority: .userInitiated) {
+            do {
+                let branches = try project.getBranches()
+                let currentBranch = try project.getCurrentBranch()
+                
+                await MainActor.run {
+                    self.branches = branches
+                    
+                    if branches.isEmpty {
+                        os_log("\(Self.t)🍋 Refresh, but no branches")
+                        self.updateSelection(nil, reason: "Refresh, but no branches")
+                    } else {
+                        // 尝试选择当前分支
+                        self.updateSelection(branches.first(where: {
+                            $0.id == currentBranch?.id
+                        }), reason: "Refresh, branches is not empty")
 
-        do {
-            branches = try project.getBranches()
-            if branches.isEmpty {
-                os_log("\(self.t)🍋 Refresh, but no branches")
-                self.updateSelection(nil, reason: "Refresh, but no branches")
-            } else {
-                // 尝试选择当前分支
-                let currentBranch = try self.data.project?.getCurrentBranch()
-                self.updateSelection(branches.first(where: {
-                    $0.id == currentBranch?.id
-                }), reason: "Refresh, branches is not empty")
-
-                // 如果没有找到匹配的分支，则选择第一个分支
-                if selection == nil {
-                    self.updateSelection(branches.first, reason: "Refresh, set first branch")
-                    os_log("\(self.t)🍋 No matching branch found, selecting first branch: \(selection?.id ?? "unknown")")
+                        // 如果没有找到匹配的分支，则选择第一个分支
+                        if self.selection == nil {
+                            self.updateSelection(branches.first, reason: "Refresh, set first branch")
+                            os_log("\(Self.t)🍋 No matching branch found, selecting first branch: \(self.selection?.id ?? "unknown")")
+                        }
+                    }
+                    // 重置刷新状态
+                    self.isRefreshing = false
+                }
+            } catch let e {
+                await MainActor.run {
+                    self.m.error(e)
+                    // 重置刷新状态
+                    self.isRefreshing = false
                 }
             }
-        } catch let e {
-            self.m.error(e)
         }
 
-        // 重置刷新状态
-        isRefreshing = false
     }
 }
 
