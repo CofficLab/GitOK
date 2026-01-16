@@ -14,6 +14,22 @@ class GitPlugin: SuperPlugin, SuperLog, PluginRegistrant {
 
     static let shared = GitPlugin()
     static var label: String = "Git"
+
+    /// 插件的唯一标识符，用于设置管理
+    static var id: String = "Git"
+
+    /// 插件显示名称
+    static var displayName: String = "Git"
+
+    /// 插件描述
+    static var description: String = "Git 版本控制管理"
+
+    /// 插件图标名称
+    static var iconName: String = "arrow.up.arrow.down"
+
+    /// 插件是否可配置（是否在设置中由用户控制启用/停用）
+    static var isConfigurable: Bool = false
+
     var isTab: Bool = true
 
     private init() {}

@@ -14,6 +14,9 @@ struct PluginSettingsView: View, SuperLog {
     /// 插件设置存储
     private let settingsStore = PluginSettingsStore.shared
 
+    /// 插件提供者
+    @EnvironmentObject var pluginProvider: PluginProvider
+
     /// 插件启用状态
     @State private var pluginStates: [String: Bool] = [:]
 
@@ -32,7 +35,7 @@ struct PluginSettingsView: View, SuperLog {
                     .padding(.bottom, 24)
 
                 // 插件列表
-                ForEach(ConfigurablePlugins.allPlugins) { plugin in
+                ForEach(configurablePlugins) { plugin in
                     PluginToggleRow(
                         plugin: plugin,
                         isEnabled: Binding(
@@ -48,35 +51,23 @@ struct PluginSettingsView: View, SuperLog {
                         )
                     )
 
-                    if plugin.id != ConfigurablePlugins.allPlugins.last?.id {
+                    if plugin.id != configurablePlugins.last?.id {
                         Divider()
                             .padding(.leading, 16)
                     }
                 }
 
                 Spacer()
-
-                // 提示信息
-                VStack(alignment: .leading, spacing: 8) {
-                    HStack(spacing: 6) {
-                        Image(systemName: "info.circle")
-                            .foregroundColor(.blue)
-                        Text("提示")
-                            .font(.subheadline)
-                            .fontWeight(.semibold)
-                            .foregroundColor(.blue)
-                    }
-
-                    Text("禁用的插件将不会在界面中显示，也不会加载相关功能。部分插件可能需要重启应用才能完全生效。")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                }
-                .padding(.top, 16)
             }
             .padding(24)
         }
         .navigationTitle("插件管理")
         .toolbar {
+            ToolbarItem(placement: .automatic) {
+                Text("重启应用才能完全生效。")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
             ToolbarItem(placement: .confirmationAction) {
                 Button("完成") {
                     // 关闭设置视图
@@ -89,10 +80,26 @@ struct PluginSettingsView: View, SuperLog {
         }
     }
 
+    /// 获取可配置的插件列表（从自动发现的插件中提取）
+    private var configurablePlugins: [PluginInfo] {
+        pluginProvider.plugins
+            .filter { type(of: $0).isConfigurable }
+            .map { plugin in
+                let pluginType = type(of: plugin)
+                return PluginInfo(
+                    id: pluginType.id,
+                    name: pluginType.displayName,
+                    description: pluginType.description,
+                    icon: pluginType.iconName,
+                    isDeveloperEnabled: { true }
+                )
+            }
+    }
+
     /// 加载插件状态
     private func loadPluginStates() {
         var states: [String: Bool] = [:]
-        for plugin in ConfigurablePlugins.allPlugins {
+        for plugin in configurablePlugins {
             states[plugin.id] = settingsStore.isPluginEnabled(plugin.id)
         }
         pluginStates = states

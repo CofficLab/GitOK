@@ -17,6 +17,21 @@ class CommitPlugin: SuperPlugin, SuperLog, PluginRegistrant {
 
     static let shared = CommitPlugin()
     static let label: String = "Commit"
+
+    /// 插件的唯一标识符，用于设置管理
+    static var id: String = "Commit"
+
+    /// 插件显示名称
+    static var displayName: String = "Commit"
+
+    /// 插件描述
+    static var description: String = "Git 提交管理"
+
+    /// 插件图标名称
+    static var iconName: String = "arrow.up.arrow.down"
+
+    /// 插件是否可配置（是否在设置中由用户控制启用/停用）
+    static var isConfigurable: Bool = false
     
     private init() {}
 

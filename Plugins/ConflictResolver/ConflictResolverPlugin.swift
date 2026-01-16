@@ -4,6 +4,20 @@ import SwiftUI
 
 /// 冲突解决插件：提供可视化的合并冲突解决界面
 class ConflictResolverPlugin: SuperPlugin, SuperLog, PluginRegistrant {
+    /// 插件的唯一标识符，用于设置管理
+    static var id: String = "ConflictResolver"
+
+    /// 插件显示名称
+    static var displayName: String = "ConflictResolver"
+
+    /// 插件描述
+    static var description: String = "Git 冲突解决"
+
+    /// 插件图标名称
+    static var iconName: String = "exclamationmark.triangle"
+
+    /// 插件是否可配置（是否在设置中由用户控制启用/停用）
+    static var isConfigurable: Bool = false
     /// 日志标识符
     nonisolated static let emoji = "⚔️"
 

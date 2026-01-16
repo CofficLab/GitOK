@@ -10,10 +10,25 @@ import SwiftUI
 protocol SuperPlugin {
     /// 插件的唯一标签，用于标识和区分不同的插件
     static var label: String { get }
-    
+
     /// 插件的实例标签，用于在 ForEach 等需要实例属性的地方作为标识符
     /// 默认实现返回静态 label 属性的值
     var instanceLabel: String { get }
+
+    /// 插件的唯一标识符，用于设置管理
+    static var id: String { get }
+
+    /// 插件显示名称
+    static var displayName: String { get }
+
+    /// 插件描述
+    static var description: String { get }
+
+    /// 插件图标名称
+    static var iconName: String { get }
+
+    /// 插件是否可配置（是否在设置中显示）
+    static var isConfigurable: Bool { get }
 
     /// 指示插件是否作为主界面的标签页显示
     var isTab: Bool { get }
@@ -54,10 +69,30 @@ protocol SuperPlugin {
 /// 提供了一些方法的空实现，使插件开发者只需实现他们关心的方法
 extension SuperPlugin {
     var isTab: Bool { false }
-    
+
     /// 默认的实例标签实现，返回静态 label 属性的值
     var instanceLabel: String {
         return type(of: self).label
+    }
+
+    /// 默认的插件ID实现，返回静态 label 属性的值
+    static var id: String {
+        return label
+    }
+
+    /// 默认的显示名称实现，返回静态 label 属性的值
+    static var displayName: String {
+        return label
+    }
+
+    /// 默认的插件描述实现，返回空字符串
+    static var description: String {
+        return ""
+    }
+
+    /// 默认的图标名称实现
+    static var iconName: String {
+        return "puzzlepiece.extension"
     }
     /// 默认的工具栏前部视图实现，返回空视图
     func addToolBarLeadingView() -> AnyView? {

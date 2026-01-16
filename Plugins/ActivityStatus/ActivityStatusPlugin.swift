@@ -16,6 +16,21 @@ class ActivityStatusPlugin: SuperPlugin, SuperLog, PluginRegistrant {
     static let shared = ActivityStatusPlugin()
     static let label = "ActivityStatus"
 
+    /// 插件的唯一标识符，用于设置管理
+    static var id: String = "ActivityStatus"
+
+    /// 插件显示名称
+    static var displayName: String = "ActivityStatus"
+
+    /// 插件描述
+    static var description: String = "在状态栏显示当前长耗时操作的状态"
+
+    /// 插件图标名称
+    static var iconName: String = "hourglass"
+
+    /// 插件是否可配置（是否在设置中由用户控制启用/停用）
+    static var isConfigurable: Bool = false
+
     private init() {}
 
     func addStatusBarCenterView() -> AnyView? {

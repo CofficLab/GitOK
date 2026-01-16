@@ -16,6 +16,21 @@ class SettingsButtonPlugin: SuperPlugin, SuperLog, PluginRegistrant {
 
     static var label: String = "SettingsButton"
 
+    /// 插件的唯一标识符，用于设置管理
+    static var id: String = "SettingsButton"
+
+    /// 插件显示名称
+    static var displayName: String = "SettingsButton"
+
+    /// 插件描述
+    static var description: String = "在状态栏右侧显示设置按钮"
+
+    /// 插件图标名称
+    static var iconName: String = "gearshape"
+
+    /// 插件是否可配置（是否在设置中由用户控制启用/停用）
+    static var isConfigurable: Bool = false
+
     private init() {}
 
     func addStatusBarTrailingView() -> AnyView? {

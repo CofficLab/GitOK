@@ -3,6 +3,20 @@ import OSLog
 import SwiftUI
 
 class GitPullPlugin: SuperPlugin, SuperLog, PluginRegistrant {
+    /// 插件的唯一标识符，用于设置管理
+    static var id: String = "GitPull"
+
+    /// 插件显示名称
+    static var displayName: String = "GitPull"
+
+    /// 插件描述
+    static var description: String = "Git 拉取操作"
+
+    /// 插件图标名称
+    static var iconName: String = "arrow.down"
+
+    /// 插件是否可配置（是否在设置中由用户控制启用/停用）
+    static var isConfigurable: Bool = false
     static let shared = GitPullPlugin()
     /// 日志标识符
     nonisolated static let emoji = "⬇️"

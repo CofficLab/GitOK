@@ -17,6 +17,21 @@ class OpenFinderPlugin: SuperPlugin, SuperLog, PluginRegistrant {
 
     static var label: String = "OpenFinder"
 
+    /// 插件的唯一标识符，用于设置管理
+    static var id: String = "OpenFinder"
+
+    /// 插件显示名称
+    static var displayName: String = "OpenFinder"
+
+    /// 插件描述
+    static var description: String = "在 Finder 中打开当前项目目录"
+
+    /// 插件图标名称
+    static var iconName: String = "folder"
+
+    /// 插件是否可配置（是否在设置中由用户控制启用/停用）
+    static var isConfigurable: Bool = true
+
     private init() {}
 
     func addToolBarTrailingView() -> AnyView? {
