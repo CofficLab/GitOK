@@ -11,7 +11,7 @@ struct CommitRow: View, SuperThread, SuperLog {
     nonisolated static let emoji = "📝"
 
     /// 是否启用详细日志输出
-    nonisolated static let verbose = false
+    nonisolated static let verbose = true
 
     /// 环境对象：数据提供者
     @EnvironmentObject var data: DataProvider
@@ -34,6 +34,9 @@ struct CommitRow: View, SuperThread, SuperLog {
     var body: some View {
         VStack(spacing: 0) {
             Button(action: {
+                if Self.verbose {
+                    os_log("\(Self.t)👆 Commit selected - hash: \(commit.hash.prefix(8)), message: \(commit.message.prefix(30))")
+                }
                 data.setCommit(commit)
             }) {
                 HStack(alignment: .center, spacing: 12) {
@@ -110,7 +113,14 @@ struct CommitRow: View, SuperThread, SuperLog {
 
     /// 异步加载commit的tag信息
     private func loadTag() {
+        if Self.verbose {
+            os_log("\(self.t)🏷️ Loading tag for commit: \(commit.hash.prefix(8))")
+        }
+
         guard let project = data.project else {
+            if Self.verbose {
+                os_log("\(self.t)⚠️ No project available for tag loading")
+            }
             self.tag = ""
             return
         }
@@ -119,13 +129,23 @@ struct CommitRow: View, SuperThread, SuperLog {
             let tags = try project.getTags(commit: self.commit.hash)
 
             self.tag = tags.first ?? ""
+
+            if Self.verbose {
+                os_log("\(self.t)✅ Tag loaded - commit: \(commit.hash.prefix(8)), tag: '\(self.tag)'")
+            }
         } catch {
-            // 获取tag失败时不显示tag
+            if Self.verbose {
+                os_log(.error, "\(self.t)❌ Failed to load tag for commit \(commit.hash.prefix(8)): \(error)")
+            }
         }
     }
 
     /// 解析提交的作者信息（包括 co-authors）
     private func loadAvatarUsers() {
+        if Self.verbose {
+            os_log("\(self.t)👤 Loading avatar users for commit: \(commit.hash.prefix(8))")
+        }
+
         var users: [AvatarUser] = []
 
         // 解析作者信息
@@ -170,6 +190,10 @@ struct CommitRow: View, SuperThread, SuperLog {
         }
 
         self.avatarUsers = uniqueUsers
+
+        if Self.verbose {
+            os_log("\(self.t)✅ Avatar users loaded - commit: \(commit.hash.prefix(8)), users: \(uniqueUsers.count)")
+        }
     }
 
     /// 从 commit 消息中解析 co-authors
@@ -197,6 +221,10 @@ struct CommitRow: View, SuperThread, SuperLog {
             }
         }
 
+        if Self.verbose && !coAuthors.isEmpty {
+            os_log("\(self.t)👥 Parsed co-authors for commit \(commit.hash.prefix(8)): \(coAuthors.count) authors")
+        }
+
         return coAuthors
     }
 }
@@ -206,6 +234,10 @@ struct CommitRow: View, SuperThread, SuperLog {
 extension CommitRow {
     /// 视图出现时初始化状态
     func onAppear() {
+        if Self.verbose {
+            os_log("\(self.t)🎯 CommitRow onAppear - hash: \(commit.hash.prefix(8)), message: \(commit.message.prefix(50))")
+        }
+
         // 初始化实际的未推送状态
         isActuallyUnpushed = isUnpushed
 
@@ -217,35 +249,55 @@ extension CommitRow {
 
     /// 应用变为活跃状态时重新加载标签
     func onAppWillBecomeActive(_ n: Notification) {
+        if Self.verbose {
+            os_log("\(self.t)🔄 App became active - reloading tag for commit: \(commit.hash.prefix(8))")
+        }
         loadTag()
     }
 
     /// Git 提交成功时重新加载标签
     func onGitCommitSuccess(_ eventInfo: ProjectEventInfo) {
+        if Self.verbose {
+            os_log("\(self.t)✨ Git commit success - reloading tag for commit: \(commit.hash.prefix(8))")
+        }
         loadTag()
     }
 
     /// Git 推送成功时检查是否仍然未推送
     func onGitPushSuccess(_ eventInfo: ProjectEventInfo) {
+        if Self.verbose {
+            os_log("\(self.t)🚀 Git push success - checking status for commit: \(commit.hash.prefix(8))")
+        }
+
         // 异步检查这个 commit 是否仍然在未推送列表中
         Task {
-            guard let project = data.project else { return }
+            guard let project = data.project else {
+                if Self.verbose {
+                    os_log("\(self.t)⚠️ No project available for push status check")
+                }
+                return
+            }
 
             do {
                 let unpushedCommits = try await project.getUnPushedCommits()
                 let isStillUnpushed = unpushedCommits.contains { $0.hash == commit.hash }
 
+                if Self.verbose {
+                    os_log("\(self.t)📊 Push status check - total unpushed: \(unpushedCommits.count), commit \(commit.hash.prefix(8)) still unpushed: \(isStillUnpushed)")
+                }
+
                 await MainActor.run {
                     // 更新实际的未推送状态
+                    let wasUnpushed = isActuallyUnpushed
                     isActuallyUnpushed = isStillUnpushed
 
-                    if Self.verbose {
-                        os_log("\(self.t)🔄 Push event - commit \(commit.hash.prefix(8)) isStillUnpushed: \(isStillUnpushed)")
+                    if Self.verbose && wasUnpushed != isStillUnpushed {
+                        os_log("\(self.t)🔄 Push status changed - commit \(commit.hash.prefix(8)) was: \(wasUnpushed), now: \(isStillUnpushed)")
                     }
                 }
             } catch {
                 if Self.verbose {
-                    os_log(.error, "\(self.t)❌ Failed to check unpushed status after push: \(error)")
+                    os_log(.error, "\(self.t)❌ Failed to check unpushed status after push for commit \(commit.hash.prefix(8)): \(error)")
                 }
             }
         }
