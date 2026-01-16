@@ -112,30 +112,41 @@ struct CommitRow: View, SuperThread, SuperLog {
     }
 
     /// 异步加载commit的tag信息
-    private func loadTag() {
+    private func loadTag() async {
         if Self.verbose {
             os_log("\(self.t)🏷️ Loading tag for commit: \(commit.hash.prefix(8))")
         }
 
         guard let project = data.project else {
-            if Self.verbose {
-                os_log("\(self.t)⚠️ No project available for tag loading")
+            await MainActor.run {
+                if Self.verbose {
+                    os_log("\(self.t)⚠️ No project available for tag loading")
+                }
+                self.tag = ""
             }
-            self.tag = ""
             return
         }
 
         do {
             let tags = try project.getTags(commit: self.commit.hash)
+            let tagValue = tags.first ?? ""
 
-            self.tag = tags.first ?? ""
+            // UI状态更新需要在主线程进行
+            await MainActor.run {
+                self.tag = tagValue
 
-            if Self.verbose {
-                os_log("\(self.t)✅ Tag loaded - commit: \(commit.hash.prefix(8)), tag: '\(self.tag)'")
+                if Self.verbose {
+                    os_log("\(self.t)✅ Tag loaded - commit: \(commit.hash.prefix(8)), tag: '\(tagValue)'")
+                }
             }
         } catch {
-            if Self.verbose {
-                os_log(.error, "\(self.t)❌ Failed to load tag for commit \(commit.hash.prefix(8)): \(error)")
+            // 即使出错也要在主线程更新UI状态
+            await MainActor.run {
+                self.tag = ""
+
+                if Self.verbose {
+                    os_log(.error, "\(self.t)❌ Failed to load tag for commit \(commit.hash.prefix(8)): \(error)")
+                }
             }
         }
     }
@@ -243,7 +254,7 @@ extension CommitRow {
 
         loadAvatarUsers()
         self.bg.async {
-            loadTag()
+            await loadTag()
         }
     }
 
@@ -252,7 +263,9 @@ extension CommitRow {
         if Self.verbose {
             os_log("\(self.t)🔄 App became active - reloading tag for commit: \(commit.hash.prefix(8))")
         }
-        loadTag()
+        self.bg.async {
+            await loadTag()
+        }
     }
 
     /// Git 提交成功时重新加载标签
@@ -260,7 +273,9 @@ extension CommitRow {
         if Self.verbose {
             os_log("\(self.t)✨ Git commit success - reloading tag for commit: \(commit.hash.prefix(8))")
         }
-        loadTag()
+        self.bg.async {
+            await loadTag()
+        }
     }
 
     /// Git 推送成功时检查是否仍然未推送
