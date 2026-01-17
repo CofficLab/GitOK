@@ -91,7 +91,7 @@ extension AvatarView {
             isLoading = true
 
             /// 尝试从AvatarService获取头像URL
-            let url = await avatarService.getAvatarURL(name: user.name, email: user.email, verbose: Self.verbose)
+            let url = await avatarService.getAvatarURL(name: user.name, email: user.email)
 
             /// 在主线程更新UI
             await MainActor.run {

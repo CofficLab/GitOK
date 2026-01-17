@@ -1,8 +1,7 @@
-
 import MagicKit
 import MagicAlert
-import MagicDevice
 import SwiftUI
+import MagicDevice
 
 /**
  简约模板的图片组件

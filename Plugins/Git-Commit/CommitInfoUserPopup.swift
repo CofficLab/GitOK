@@ -132,7 +132,7 @@ struct CommitInfoUserInfoPopup: View, SuperLog {
     /// 从 AvatarService 获取用户的头像 URL
     private func loadAvatarURL() {
         Task {
-            let url = await AvatarService.shared.getAvatarURL(name: user.name, email: user.email, verbose: Self.verbose)
+            let url = await AvatarService.shared.getAvatarURL(name: user.name, email: user.email)
             await MainActor.run {
                 self.displayedAvatarURL = url
                 self.isLoadingAvatarURL = false
