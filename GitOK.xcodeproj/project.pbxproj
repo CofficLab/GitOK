@@ -7,10 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0B0E168B2BD89A910078942B /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0B0E168A2BD89A910078942B /* Preview Assets.xcassets */; };
 		0B3CC95E2DF1C49000E22263 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = 0B3CC95D2DF1C49000E22263 /* Sparkle */; };
 		0B516AC72F1397E90085381F /* LibGit2Swift in Frameworks */ = {isa = PBXBuildFile; productRef = 0B516AC62F1397E90085381F /* LibGit2Swift */; };
 		0B5178012F13D6A70085381F /* LibGit2Swift in Frameworks */ = {isa = PBXBuildFile; productRef = 0B5178002F13D6A70085381F /* LibGit2Swift */; };
+		0B559DBC2F1A5D41005C6809 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0B559D792F1A5D41005C6809 /* Assets.xcassets */; };
 		0B750F162E7F934F00140214 /* MarkdownUI in Frameworks */ = {isa = PBXBuildFile; productRef = 0B750F152E7F934F00140214 /* MarkdownUI */; };
 		0B76CC0A2F13D95C00BFB2C3 /* LibGit2Swift in Frameworks */ = {isa = PBXBuildFile; productRef = 0B76CC092F13D95C00BFB2C3 /* LibGit2Swift */; };
 		0B76CE342F151D1900BFB2C3 /* LibGit2Swift in Frameworks */ = {isa = PBXBuildFile; productRef = 0B76CE332F151D1900BFB2C3 /* LibGit2Swift */; };
@@ -763,11 +763,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		0B0E167D2BD89A8F0078942B /* GitOK.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GitOK.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0B0E16882BD89A910078942B /* GitOK.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = GitOK.entitlements; sourceTree = "<group>"; };
-		0B0E168A2BD89A910078942B /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
-		0B332F052BDA01E600DFA5BB /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		0B332F062BDA02BC00DFA5BB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		0B559D792F1A5D41005C6809 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		0B55A0222F1B0F38005C6809 /* GitOK.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GitOK.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0BDA033E2F1373C500A4283A /* Demo.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = Demo.xcodeproj; sourceTree = "<group>"; };
 		0BDA047D2F1373C500A4283A /* ID3TagEditor.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = ID3TagEditor.xcodeproj; sourceTree = "<group>"; };
 		0BDA05412F1373C500A4283A /* MagicApp.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = MagicApp.xcodeproj; sourceTree = "<group>"; };
@@ -842,40 +841,15 @@
 		0B0E16742BD89A8F0078942B = {
 			isa = PBXGroup;
 			children = (
+				0B559D792F1A5D41005C6809 /* Assets.xcassets */,
 				F59C22452DE69D6C0018876A /* Core */,
-				0B62FCFA2DE0CF1200230C70 /* Frameworks */,
 				0B0E16882BD89A910078942B /* GitOK.entitlements */,
 				0B332F062BDA02BC00DFA5BB /* Info.plist */,
 				F54D04C32DF2D01300FFB434 /* Localizable.xcstrings */,
 				F59C238F2DE69DB30018876A /* Plugins */,
-				0B0E16892BD89A910078942B /* Preview Content */,
-				0B0E167E2BD89A8F0078942B /* Products */,
-				0B332F052BDA01E600DFA5BB /* README.md */,
 				F59C23152DE69D900018876A /* Resources */,
+				0B55A0222F1B0F38005C6809 /* GitOK.app */,
 			);
-			sourceTree = "<group>";
-		};
-		0B0E167E2BD89A8F0078942B /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				0B0E167D2BD89A8F0078942B /* GitOK.app */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		0B0E16892BD89A910078942B /* Preview Content */ = {
-			isa = PBXGroup;
-			children = (
-				0B0E168A2BD89A910078942B /* Preview Assets.xcassets */,
-			);
-			path = "Preview Content";
-			sourceTree = "<group>";
-		};
-		0B62FCFA2DE0CF1200230C70 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		0BDA2A8E2F1373C500A4283A /* Products */ = {
@@ -1236,7 +1210,7 @@
 				F55AF1022F1765A800ADF40B /* LibGit2Swift */,
 			);
 			productName = GitOK;
-			productReference = 0B0E167D2BD89A8F0078942B /* GitOK.app */;
+			productReference = 0B55A0222F1B0F38005C6809 /* GitOK.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -1272,7 +1246,7 @@
 				F5A396002F0F899C0031F79F /* XCRemoteSwiftPackageReference "MagicKit" */,
 				F55AF1012F1765A800ADF40B /* XCRemoteSwiftPackageReference "LibGit2Swift" */,
 			);
-			productRefGroup = 0B0E167E2BD89A8F0078942B /* Products */;
+			productRefGroup = 0B0E16742BD89A8F0078942B;
 			projectDirPath = "";
 			projectReferences = (
 				{
@@ -2126,7 +2100,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F54D04C42DF2D01300FFB434 /* Localizable.xcstrings in Resources */,
-				0B0E168B2BD89A910078942B /* Preview Assets.xcassets in Resources */,
+				0B559DBC2F1A5D41005C6809 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2278,7 +2252,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 318;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_ASSET_PATHS = "\"Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "";
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -2327,7 +2301,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 318;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_ASSET_PATHS = "\"Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "";
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
