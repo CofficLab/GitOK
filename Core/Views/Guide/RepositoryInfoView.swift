@@ -42,7 +42,12 @@ struct RepositoryInfoView: View, SuperLog {
                 if !remotes.isEmpty {
                     Divider()
 
-                    remoteRepositoryRow
+                    ForEach(remotes, id: \.name) { remote in
+                        if remote != remotes.first {
+                            Divider()
+                        }
+                        remoteRepositoryRow(for: remote)
+                    }
                 } else {
                     // 没有远程仓库时显示配置入口
                     Divider()
@@ -87,30 +92,28 @@ struct RepositoryInfoView: View, SuperLog {
         }
     }
 
-    private var remoteRepositoryRow: some View {
+    private func remoteRepositoryRow(for remote: GitRemote) -> some View {
         MagicSettingRow(
-            title: "远程仓库",
-            description: remotes.first?.url ?? "未配置",
+            title: "远程仓库 (\(remote.name))",
+            description: remote.url,
             icon: .iconCloud
         ) {
-            if let url = remotes.first?.url {
-                HStack(spacing: 8) {
-                    if let httpsURL = convertToHTTPSURL(url) {
-                        MagicButton.simple {
-                            httpsURL.openInBrowser()
-                        }
-                        .magicIcon(.iconSafari)
-                        .magicShapeVisibility(.onHover)
-                        .magicShape(.circle)
-                    }
-
+            HStack(spacing: 8) {
+                if let httpsURL = convertToHTTPSURL(remote.url) {
                     MagicButton.simple {
-                        url.copy()
+                        httpsURL.openInBrowser()
                     }
-                    .magicIcon(.iconCopy)
+                    .magicIcon(.iconSafari)
                     .magicShapeVisibility(.onHover)
                     .magicShape(.circle)
                 }
+
+                MagicButton.simple {
+                    remote.url.copy()
+                }
+                .magicIcon(.iconCopy)
+                .magicShapeVisibility(.onHover)
+                .magicShape(.circle)
             }
         }
     }
