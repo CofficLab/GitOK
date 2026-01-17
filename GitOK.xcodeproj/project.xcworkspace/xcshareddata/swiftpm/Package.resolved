@@ -1,5 +1,5 @@
 {
-  "originHash" : "d830abf8606ced7a348de38a648f1ac901fa4757b1a53db10c417e8a6cd7eac9",
+  "originHash" : "6876d289a4accd518d1f546e6ced10eef5f57575e746c99efb3d1d7779c67480",
   "pins" : [
     {
       "identity" : "id3tageditor",
@@ -24,8 +24,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/nookery/MagicAlert.git",
       "state" : {
-        "revision" : "8a6e2513094744a651834a18ff6cc2600638be4a",
-        "version" : "0.0.3"
+        "revision" : "73156d25eee668ed481df28e587538ceda2ce978",
+        "version" : "0.0.4"
       }
     },
     {
@@ -33,8 +33,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/nookery/MagicDevice",
       "state" : {
-        "branch" : "main",
-        "revision" : "60c9bf7cd59566ec64b7088fa8672a6b1c2c5cf2"
+        "revision" : "9d836a20cf7d584071ad0db643944bc2c0c018ba",
+        "version" : "0.0.2"
       }
     },
     {
@@ -49,10 +49,10 @@
     {
       "identity" : "magickit",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/CofficLab/MagicKit",
+      "location" : "https://github.com/nookery/MagicKit",
       "state" : {
-        "branch" : "dev",
-        "revision" : "727a84903cead7399ca2f4a291009f30e1c8d9cb"
+        "revision" : "b598c7b3370d88132e8115b3e1c25bda15c7de8c",
+        "version" : "1.2.2"
       }
     },
     {
@@ -69,8 +69,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/nookery/MagicUI.git",
       "state" : {
-        "branch" : "main",
-        "revision" : "f787084a5b6833dfa09f13f56650d997b450980c"
+        "revision" : "34bd2637615ccb09922f18483acd8a5410d64ccd",
+        "version" : "0.0.2"
       }
     },
     {

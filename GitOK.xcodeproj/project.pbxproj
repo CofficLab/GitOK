@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0B1807AB2F1BCBB000E4E23B /* MagicKit in Frameworks */ = {isa = PBXBuildFile; productRef = 0B1807AA2F1BCBB000E4E23B /* MagicKit */; };
+		0B1807AE2F1BCCF800E4E23B /* MagicDevice in Frameworks */ = {isa = PBXBuildFile; productRef = 0B1807AD2F1BCCF800E4E23B /* MagicDevice */; };
 		0B3CC95E2DF1C49000E22263 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = 0B3CC95D2DF1C49000E22263 /* Sparkle */; };
 		0B516AC72F1397E90085381F /* LibGit2Swift in Frameworks */ = {isa = PBXBuildFile; productRef = 0B516AC62F1397E90085381F /* LibGit2Swift */; };
 		0B5178012F13D6A70085381F /* LibGit2Swift in Frameworks */ = {isa = PBXBuildFile; productRef = 0B5178002F13D6A70085381F /* LibGit2Swift */; };
@@ -15,19 +17,14 @@
 		0B76CC0A2F13D95C00BFB2C3 /* LibGit2Swift in Frameworks */ = {isa = PBXBuildFile; productRef = 0B76CC092F13D95C00BFB2C3 /* LibGit2Swift */; };
 		0B76CE342F151D1900BFB2C3 /* LibGit2Swift in Frameworks */ = {isa = PBXBuildFile; productRef = 0B76CE332F151D1900BFB2C3 /* LibGit2Swift */; };
 		0BFAFE9C2F0E87980076A5E4 /* MagicDiffView in Frameworks */ = {isa = PBXBuildFile; productRef = 0BFAFE9B2F0E87980076A5E4 /* MagicDiffView */; };
-		0BFAFEA12F0E90E40076A5E4 /* MagicDevice in Frameworks */ = {isa = PBXBuildFile; productRef = 0BFAFEA02F0E90E40076A5E4 /* MagicDevice */; };
 		F54D04C42DF2D01300FFB434 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = F54D04C32DF2D01300FFB434 /* Localizable.xcstrings */; };
 		F55AF1032F1765A800ADF40B /* LibGit2Swift in Frameworks */ = {isa = PBXBuildFile; productRef = F55AF1022F1765A800ADF40B /* LibGit2Swift */; };
 		F56441B02F174859006C76BB /* LibGit2Swift in Frameworks */ = {isa = PBXBuildFile; productRef = F56441AF2F174859006C76BB /* LibGit2Swift */; };
 		F56441B32F1748F7006C76BB /* LibGit2Swift in Frameworks */ = {isa = PBXBuildFile; productRef = F56441B22F1748F7006C76BB /* LibGit2Swift */; };
 		F56441B62F174908006C76BB /* LibGit2Swift in Frameworks */ = {isa = PBXBuildFile; productRef = F56441B52F174908006C76BB /* LibGit2Swift */; };
-		F5A396022F0F899C0031F79F /* MagicKit in Frameworks */ = {isa = PBXBuildFile; productRef = F5A396012F0F899C0031F79F /* MagicKit */; };
-		F5B909392EE8FB4B008BEB16 /* MagicDevice in Frameworks */ = {isa = PBXBuildFile; productRef = F5B909382EE8FB4B008BEB16 /* MagicDevice */; };
 		F5B9093B2EE8FB4B008BEB16 /* MagicDiffView in Frameworks */ = {isa = PBXBuildFile; productRef = F5B9093A2EE8FB4B008BEB16 /* MagicDiffView */; };
-		F5D1227E2F0E5B040001A5D2 /* MagicDevice in Frameworks */ = {isa = PBXBuildFile; productRef = F5D1227D2F0E5B040001A5D2 /* MagicDevice */; };
 		F5D122802F0E5B040001A5D2 /* MagicDiffView in Frameworks */ = {isa = PBXBuildFile; productRef = F5D1227F2F0E5B040001A5D2 /* MagicDiffView */; };
 		F5D122862F0E5B040001A5D2 /* MagicKit in Frameworks */ = {isa = PBXBuildFile; productRef = F5D122852F0E5B040001A5D2 /* MagicKit */; };
-		F5D1228F2F0E5D4D0001A5D2 /* MagicAlert in Frameworks */ = {isa = PBXBuildFile; productRef = F5D1228E2F0E5D4D0001A5D2 /* MagicAlert */; };
 		F5DFDC712F147D62001332BB /* LibGit2Swift in Frameworks */ = {isa = PBXBuildFile; productRef = F5DFDC702F147D62001332BB /* LibGit2Swift */; };
 		F5F472D12F14AE1E0006F064 /* LibGit2Swift in Frameworks */ = {isa = PBXBuildFile; productRef = F5F472D02F14AE1E0006F064 /* LibGit2Swift */; };
 /* End PBXBuildFile section */
@@ -811,20 +808,17 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F5B909392EE8FB4B008BEB16 /* MagicDevice in Frameworks */,
-				0BFAFEA12F0E90E40076A5E4 /* MagicDevice in Frameworks */,
 				F55AF1032F1765A800ADF40B /* LibGit2Swift in Frameworks */,
 				0B5178012F13D6A70085381F /* LibGit2Swift in Frameworks */,
+				0B1807AB2F1BCBB000E4E23B /* MagicKit in Frameworks */,
 				0B750F162E7F934F00140214 /* MarkdownUI in Frameworks */,
 				F5D122862F0E5B040001A5D2 /* MagicKit in Frameworks */,
 				0B516AC72F1397E90085381F /* LibGit2Swift in Frameworks */,
-				F5A396022F0F899C0031F79F /* MagicKit in Frameworks */,
 				F5D122802F0E5B040001A5D2 /* MagicDiffView in Frameworks */,
 				0BFAFE9C2F0E87980076A5E4 /* MagicDiffView in Frameworks */,
-				F5D1228F2F0E5D4D0001A5D2 /* MagicAlert in Frameworks */,
 				F5DFDC712F147D62001332BB /* LibGit2Swift in Frameworks */,
 				F5F472D12F14AE1E0006F064 /* LibGit2Swift in Frameworks */,
-				F5D1227E2F0E5B040001A5D2 /* MagicDevice in Frameworks */,
+				0B1807AE2F1BCCF800E4E23B /* MagicDevice in Frameworks */,
 				0B76CE342F151D1900BFB2C3 /* LibGit2Swift in Frameworks */,
 				F56441B62F174908006C76BB /* LibGit2Swift in Frameworks */,
 				F56441B32F1748F7006C76BB /* LibGit2Swift in Frameworks */,
@@ -1189,15 +1183,10 @@
 			packageProductDependencies = (
 				0B3CC95D2DF1C49000E22263 /* Sparkle */,
 				0B750F152E7F934F00140214 /* MarkdownUI */,
-				F5B909382EE8FB4B008BEB16 /* MagicDevice */,
 				F5B9093A2EE8FB4B008BEB16 /* MagicDiffView */,
-				F5D1227D2F0E5B040001A5D2 /* MagicDevice */,
 				F5D1227F2F0E5B040001A5D2 /* MagicDiffView */,
 				F5D122852F0E5B040001A5D2 /* MagicKit */,
-				F5D1228E2F0E5D4D0001A5D2 /* MagicAlert */,
 				0BFAFE9B2F0E87980076A5E4 /* MagicDiffView */,
-				0BFAFEA02F0E90E40076A5E4 /* MagicDevice */,
-				F5A396012F0F899C0031F79F /* MagicKit */,
 				0B516AC62F1397E90085381F /* LibGit2Swift */,
 				0B5178002F13D6A70085381F /* LibGit2Swift */,
 				0B76CC092F13D95C00BFB2C3 /* LibGit2Swift */,
@@ -1208,6 +1197,8 @@
 				F56441B22F1748F7006C76BB /* LibGit2Swift */,
 				F56441B52F174908006C76BB /* LibGit2Swift */,
 				F55AF1022F1765A800ADF40B /* LibGit2Swift */,
+				0B1807AA2F1BCBB000E4E23B /* MagicKit */,
+				0B1807AD2F1BCCF800E4E23B /* MagicDevice */,
 			);
 			productName = GitOK;
 			productReference = 0B55A0222F1B0F38005C6809 /* GitOK.app */;
@@ -1242,9 +1233,9 @@
 				F5F794E72C5B192600DCB824 /* XCRemoteSwiftPackageReference "Sparkle" */,
 				F54178E22E00F91F00503C7B /* XCRemoteSwiftPackageReference "swift-markdown-ui" */,
 				0BFAFE9A2F0E87980076A5E4 /* XCRemoteSwiftPackageReference "MagicDiffView" */,
-				0BFAFE9F2F0E90E40076A5E4 /* XCRemoteSwiftPackageReference "MagicDevice" */,
-				F5A396002F0F899C0031F79F /* XCRemoteSwiftPackageReference "MagicKit" */,
 				F55AF1012F1765A800ADF40B /* XCRemoteSwiftPackageReference "LibGit2Swift" */,
+				0B1807A92F1BCBB000E4E23B /* XCRemoteSwiftPackageReference "MagicKit" */,
+				0B1807AC2F1BCCF800E4E23B /* XCRemoteSwiftPackageReference "MagicDevice" */,
 			);
 			productRefGroup = 0B0E16742BD89A8F0078942B;
 			projectDirPath = "";
@@ -2363,17 +2354,25 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		0B1807A92F1BCBB000E4E23B /* XCRemoteSwiftPackageReference "MagicKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/nookery/MagicKit";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
+		0B1807AC2F1BCCF800E4E23B /* XCRemoteSwiftPackageReference "MagicDevice" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/nookery/MagicDevice";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.0.0;
+			};
+		};
 		0BFAFE9A2F0E87980076A5E4 /* XCRemoteSwiftPackageReference "MagicDiffView" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/nookery/MagicDiffView";
-			requirement = {
-				branch = main;
-				kind = branch;
-			};
-		};
-		0BFAFE9F2F0E90E40076A5E4 /* XCRemoteSwiftPackageReference "MagicDevice" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/nookery/MagicDevice";
 			requirement = {
 				branch = main;
 				kind = branch;
@@ -2395,14 +2394,6 @@
 				kind = branch;
 			};
 		};
-		F5A396002F0F899C0031F79F /* XCRemoteSwiftPackageReference "MagicKit" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/CofficLab/MagicKit";
-			requirement = {
-				branch = dev;
-				kind = branch;
-			};
-		};
 		F5F794E72C5B192600DCB824 /* XCRemoteSwiftPackageReference "Sparkle" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/sparkle-project/Sparkle";
@@ -2414,6 +2405,16 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		0B1807AA2F1BCBB000E4E23B /* MagicKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0B1807A92F1BCBB000E4E23B /* XCRemoteSwiftPackageReference "MagicKit" */;
+			productName = MagicKit;
+		};
+		0B1807AD2F1BCCF800E4E23B /* MagicDevice */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0B1807AC2F1BCCF800E4E23B /* XCRemoteSwiftPackageReference "MagicDevice" */;
+			productName = MagicDevice;
+		};
 		0B3CC95D2DF1C49000E22263 /* Sparkle */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = F5F794E72C5B192600DCB824 /* XCRemoteSwiftPackageReference "Sparkle" */;
@@ -2445,11 +2446,6 @@
 			package = 0BFAFE9A2F0E87980076A5E4 /* XCRemoteSwiftPackageReference "MagicDiffView" */;
 			productName = MagicDiffView;
 		};
-		0BFAFEA02F0E90E40076A5E4 /* MagicDevice */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 0BFAFE9F2F0E90E40076A5E4 /* XCRemoteSwiftPackageReference "MagicDevice" */;
-			productName = MagicDevice;
-		};
 		F55AF1022F1765A800ADF40B /* LibGit2Swift */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = F55AF1012F1765A800ADF40B /* XCRemoteSwiftPackageReference "LibGit2Swift" */;
@@ -2467,22 +2463,9 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = LibGit2Swift;
 		};
-		F5A396012F0F899C0031F79F /* MagicKit */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = F5A396002F0F899C0031F79F /* XCRemoteSwiftPackageReference "MagicKit" */;
-			productName = MagicKit;
-		};
-		F5B909382EE8FB4B008BEB16 /* MagicDevice */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = MagicDevice;
-		};
 		F5B9093A2EE8FB4B008BEB16 /* MagicDiffView */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = MagicDiffView;
-		};
-		F5D1227D2F0E5B040001A5D2 /* MagicDevice */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = MagicDevice;
 		};
 		F5D1227F2F0E5B040001A5D2 /* MagicDiffView */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -2491,10 +2474,6 @@
 		F5D122852F0E5B040001A5D2 /* MagicKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = MagicKit;
-		};
-		F5D1228E2F0E5D4D0001A5D2 /* MagicAlert */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = MagicAlert;
 		};
 		F5DFDC702F147D62001332BB /* LibGit2Swift */ = {
 			isa = XCSwiftPackageProductDependency;

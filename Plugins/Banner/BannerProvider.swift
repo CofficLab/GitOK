@@ -1,8 +1,6 @@
-
 import AVKit
 import Combine
 import Foundation
-
 import MagicKit
 import MagicDevice
 import MediaPlayer

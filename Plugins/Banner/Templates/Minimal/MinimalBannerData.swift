@@ -1,8 +1,7 @@
 import SwiftUI
 import MagicUI
-import MagicDevice
-
 import MagicKit
+import MagicDevice
 
 /**
  简约布局的数据模型

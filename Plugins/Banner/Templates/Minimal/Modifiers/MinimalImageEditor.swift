@@ -1,5 +1,4 @@
 import SwiftUI
-
 import MagicAlert
 import MagicKit
 import MagicDevice
@@ -12,12 +11,12 @@ import UniformTypeIdentifiers
 struct MinimalImageEditor: View {
     @EnvironmentObject var b: BannerProvider
     @EnvironmentObject var m: MagicMessageProvider
-    
+
     @State private var showImagePicker = false
     @State private var selectedDevice: MagicDevice? = nil
-    
+
     var minimalData: MinimalBannerData? { b.banner.minimalData }
-    
+
     var body: some View {
         GroupBox("产品图片") {
             VStack(spacing: 12) {
@@ -48,7 +47,7 @@ struct MinimalImageEditor: View {
                             showImagePicker = true
                         }
                 }
-                
+
                 // 控制选项
                 VStack(spacing: 8) {
                     // 更换图片按钮
@@ -56,14 +55,14 @@ struct MinimalImageEditor: View {
                         showImagePicker = true
                     }
                     .frame(maxWidth: .infinity)
-                    
+
                     // 设备选择
                     HStack {
                         Text("设备边框")
                             .font(.body)
-                        
+
                         Spacer()
-                        
+
                         Picker("选择设备", selection: $selectedDevice) {
                             Text("无边框").tag(Optional<MagicDevice>.none)
 //                            ForEach(MagicDevice.allCases, id: \.self) { device in
@@ -93,21 +92,21 @@ struct MinimalImageEditor: View {
             loadCurrentValues()
         }
     }
-    
+
     private func loadCurrentValues() {
         selectedDevice = minimalData?.selectedDevice
     }
-    
+
     private func handleImageSelection(_ result: Result<[URL], Error>) {
         switch result {
-        case .success(let urls):
+        case let .success(urls):
             guard let url = urls.first else { return }
             changeImage(url)
-        case .failure(let error):
+        case let .failure(error):
             m.error("选择图片失败: \(error.localizedDescription)")
         }
     }
-    
+
     private func changeImage(_ url: URL) {
         do {
             try b.updateBanner { banner in
@@ -120,7 +119,7 @@ struct MinimalImageEditor: View {
             m.error("更新图片失败: \(error.localizedDescription)")
         }
     }
-    
+
     private func updateSelectedDevice() {
         try? b.updateBanner { banner in
             var minimalData = banner.minimalData ?? MinimalBannerData()
