@@ -5,12 +5,6 @@ import MagicUI
 import OSLog
 import SwiftUI
 
-// MARK: - Notifications
-
-extension Notification.Name {
-    static let didUpdateRemoteRepository = Notification.Name("didUpdateRemoteRepository")
-}
-
 /// 仓库设置视图
 struct RepositorySettingView: View, SuperLog {
     /// emoji 标识符

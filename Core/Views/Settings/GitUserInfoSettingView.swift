@@ -4,12 +4,6 @@ import MagicUI
 import OSLog
 import SwiftUI
 
-// MARK: - Notifications
-
-extension Notification.Name {
-    static let didSaveGitUserConfig = Notification.Name("didSaveGitUserConfig")
-}
-
 /// Git 用户信息设置视图
 struct GitUserInfoSettingView: View, SuperLog {
     /// emoji 标识符

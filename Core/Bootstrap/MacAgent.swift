@@ -5,30 +5,6 @@ import OSLog
 import SwiftData
 import SwiftUI
 
-extension Notification.Name {
-    static let appReady = Notification.Name("appReady")
-    static let appExit = Notification.Name("appExit")
-    static let appError = Notification.Name("appError")
-    static let appWillBecomeActive = Notification.Name("appWillBecomeActive")
-    static let appWillResignActive = Notification.Name("appWillResignActive")
-    static let appDidBecomeActive = Notification.Name("appDidBecomeActive")
-    static let openSettings = Notification.Name("openSettings")
-}
-
-extension View {
-    func onApplicationDidBecomeActive(perform action: @escaping () -> Void) -> some View {
-        self.onReceive(NotificationCenter.default.publisher(for: .appDidBecomeActive)) { _ in
-            action()
-        }
-    }
-
-    func onApplicationWillBecomeActive(perform action: @escaping () -> Void) -> some View {
-        self.onReceive(NotificationCenter.default.publisher(for: .appWillBecomeActive)) { _ in
-            action()
-        }
-    }
-}
-
 /// macOS 应用代理
 /// 负责处理应用生命周期事件和系统通知
 class MacAgent: NSObject, NSApplicationDelegate, ObservableObject, SuperLog, SuperEvent {

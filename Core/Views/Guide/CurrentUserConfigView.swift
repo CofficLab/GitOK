@@ -5,13 +5,6 @@ import MagicUI
 import OSLog
 import SwiftUI
 
-// MARK: - Notifications
-
-extension Notification.Name {
-    static let didUpdateGitUserConfig = Notification.Name("didUpdateGitUserConfig")
-}
-
-
 /// 显示当前项目 Git 用户配置的视图组件
 struct CurrentUserConfigView: View, SuperLog {
     /// emoji 标识符
