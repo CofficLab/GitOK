@@ -41,14 +41,18 @@ func autoRegisterPlugins() {
            let registrantType = cls as? PluginRegistrant.Type {
 
             // 检查插件是否启用，只有启用的插件才注册
-            // 通过 Objective-C runtime 检查 enable 属性的值
-            if let enableValue = cls.value(forKey: "enable") as? Bool {
-                guard enableValue else { continue }
+            // 通过 Objective-C runtime 访问 enable 静态属性
+            var enabled = true // 默认启用
+            if let enableMethod = class_getClassMethod(cls, Selector("enable")) {
+                typealias EnableGetter = @convention(c) (AnyClass) -> Bool
+                let getter = unsafeBitCast(method_getImplementation(enableMethod), to: EnableGetter.self)
+                enabled = getter(cls)
             }
+            guard enabled else { continue }
 
             // 记录插件注册日志
             let className = NSStringFromClass(cls)
-            os_log(.info, "🚀 Register plugin: \(className)")
+            os_log("🚀 Register plugin: \(className)")
 
             registrantType.register()
         }
