@@ -11,12 +11,6 @@ struct ContentView: View, SuperLog {
     @EnvironmentObject var g: DataProvider
     @EnvironmentObject var p: PluginProvider
 
-    /// 检查插件是否被用户启用
-    /// - Parameter plugin: 要检查的插件
-    /// - Returns: 如果插件被启用则返回true
-    private func isPluginEnabled(_ plugin: any SuperPlugin) -> Bool {
-        PluginSettingsStore.shared.isPluginEnabled(plugin.instanceLabel)
-    }
 
     /// 导航分栏视图的列可见性状态
     @State private var columnVisibility: NavigationSplitViewVisibility = .automatic
@@ -160,9 +154,8 @@ extension ContentView {
         } else {
             if pluginListViews.isEmpty {
                 VStack(spacing: 0) {
-                    if let tabPlugin = p.tabPlugins.first(where: { $0.instanceLabel == tab }),
-                       isPluginEnabled(tabPlugin) {
-                        tabPlugin.addDetailView()
+                    if let tabDetailView = p.getEnabledTabDetailView(tab: tab) {
+                        tabDetailView
                     }
 
                     if fullWidthStatusBar == false, statusBarVisibility {
@@ -183,9 +176,8 @@ extension ContentView {
                     .frame(maxHeight: .infinity)
 
                     VStack(spacing: 0) {
-                        if let tabPlugin = p.tabPlugins.first(where: { $0.instanceLabel == tab }),
-                           isPluginEnabled(tabPlugin) {
-                            tabPlugin.addDetailView()
+                        if let tabDetailView = p.getEnabledTabDetailView(tab: tab) {
+                            tabDetailView
                         }
 
                         if fullWidthStatusBar == false, statusBarVisibility {
@@ -209,28 +201,13 @@ extension ContentView {
         }
 
         // 更新工具栏前导视图
-        toolbarLeadingViews = p.plugins.compactMap { plugin in
-            if isPluginEnabled(plugin), let view = plugin.addToolBarLeadingView() {
-                return (plugin, view)
-            }
-            return nil
-        }
+        toolbarLeadingViews = p.getEnabledToolbarLeadingViews()
 
         // 更新工具栏后置视图
-        toolbarTrailingViews = p.plugins.compactMap { plugin in
-            if isPluginEnabled(plugin), let view = plugin.addToolBarTrailingView() {
-                return (plugin, view)
-            }
-            return nil
-        }
+        toolbarTrailingViews = p.getEnabledToolbarTrailingViews()
 
         // 更新插件列表视图
-        pluginListViews = p.plugins.compactMap { plugin in
-            if isPluginEnabled(plugin), let view = plugin.addListView(tab: tab, project: g.project) {
-                return (plugin, view)
-            }
-            return nil
-        }
+        pluginListViews = p.getEnabledPluginListViews(tab: tab, project: g.project)
 
         if Self.verbose {
             os_log("\(self.t)✅ Cached views updated: \(toolbarLeadingViews.count) leading, \(toolbarTrailingViews.count) trailing, \(pluginListViews.count) list views")
