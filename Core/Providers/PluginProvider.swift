@@ -113,16 +113,18 @@ class PluginProvider: ObservableObject, SuperLog, SuperThread {
 
     /// 使用自动发现插件的初始化方法
     init(autoDiscover: Bool = true) {
-        let verbose = false
-        if verbose {
-            os_log("\(Self.onInit) PluginProvider with auto discovery")
-        }
+        os_log("🏭 PluginProvider init with autoDiscover: \(autoDiscover)")
 
         if autoDiscover {
+            os_log("🔄 Starting auto plugin registration")
             // 自动注册插件
             autoRegisterPlugins()
+
+            os_log("📦 Building all plugins")
             // 构建所有插件
             self.plugins = PluginRegistry.shared.buildAll()
+
+            os_log("📊 PluginProvider initialized with \(self.plugins.count) plugins")
 
             // 检查重复标签
             var labelCounts: [String: Int] = [:]
@@ -132,9 +134,11 @@ class PluginProvider: ObservableObject, SuperLog, SuperThread {
 
             let duplicateLabels = labelCounts.filter { $0.value > 1 }.map { $0.key }
             if !duplicateLabels.isEmpty {
+                os_log("❌ Duplicate plugin labels: \(duplicateLabels)")
                 assertionFailure("Duplicate labels: \(duplicateLabels)")
             }
         } else {
+            os_log("⏭️ Auto discovery disabled")
             self.plugins = []
         }
     }
