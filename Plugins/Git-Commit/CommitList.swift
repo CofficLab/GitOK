@@ -92,20 +92,32 @@ extension CommitList {
             LazyVStack(spacing: 0, pinnedViews: []) {
                 Divider()
 
+                // 顶部加载指示器
+                if isRefreshing {
+                    HStack {
+                        Spacer()
+                        ProgressView()
+                            .controlSize(.small)
+                        Text("正在刷新")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                        Spacer()
+                    }
+                    .padding(.vertical, 8)
+                    .background(Color(NSColor.controlBackgroundColor))
+                    .overlay(
+                        Rectangle()
+                            .frame(height: 0.5)
+                            .foregroundColor(Color(NSColor.separatorColor)),
+                        alignment: .bottom
+                    )
+                }
+
                 ForEach(commits.indices, id: \.self) { index in
                     let commit = commits[index]
                     let isUnpushed = unpushedCommits.contains(commit.hash)
                     CommitRow(commit: commit, isUnpushed: isUnpushed)
                         .id(commit.hash) // 根据 commit hash 强制视图刷新，避免状态复用
-                        .overlay(alignment: .trailing) {
-                            // 在第一个 commit 右侧显示刷新 loading
-                            if index == 0 && isRefreshing {
-                                ProgressView()
-                                    .controlSize(.small)
-                                    .scaleEffect(1)
-                                    .padding(.trailing, 8)
-                            }
-                        }
                         .onAppear {
                             // 只在最后几个commit出现时触发加载更多
                             let threshold = max(commits.count - 10, Int(Double(commits.count) * 0.8))
