@@ -54,20 +54,33 @@ func autoRegisterPlugins() {
         let className = NSStringFromClass(cls)
 
         // 检查是否符合SuperPlugin协议
-        if let protocolPtr = objc_getProtocol("SuperPlugin"),
-           class_conformsToProtocol(cls, protocolPtr) {
+        let protocolPtr = objc_getProtocol("SuperPlugin")
+        os_log("🔍 Checking SuperPlugin protocol conformance")
+
+        if protocolPtr != nil && class_conformsToProtocol(cls, protocolPtr) {
 
             os_log("✅ Found SuperPlugin class: \(className)")
 
             // 检查插件是否启用
             var enabled = true // 默认启用
-            if let enableMethod = class_getClassMethod(cls, Selector("enable")) {
+            let enableSelector = Selector("enable")
+            os_log("🔍 Looking for enable method in \(className)")
+
+            if let enableMethod = class_getClassMethod(cls, enableSelector) {
+                os_log("✅ Found enable method for \(className)")
                 typealias EnableGetter = @convention(c) (AnyClass) -> Bool
                 let getter = unsafeBitCast(method_getImplementation(enableMethod), to: EnableGetter.self)
                 enabled = getter(cls)
                 os_log("🔧 Enable status for \(className): \(enabled)")
             } else {
                 os_log("⚠️ No enable method found for \(className), using default: true")
+                // 尝试直接通过KVC访问
+                if let enableValue = cls.value(forKey: "enable") as? Bool {
+                    enabled = enableValue
+                    os_log("🔧 Enable via KVC for \(className): \(enabled)")
+                } else {
+                    os_log("⚠️ Enable KVC also failed for \(className)")
+                }
             }
 
             guard enabled else {
