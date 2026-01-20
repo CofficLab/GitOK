@@ -9,11 +9,18 @@ class PluginProvider: ObservableObject, SuperLog, SuperThread {
     let emoji = "🧩"
     @Published private(set) var plugins: [SuperPlugin] = []
 
-    /// 检查插件是否被用户启用
+    /// 检查插件是否被启用
     /// - Parameter plugin: 要检查的插件
     /// - Returns: 如果插件被启用则返回true
+    /// - Note: 如果插件不可配置(isConfigurable = false)，则总是返回true
     private func isPluginEnabled(_ plugin: any SuperPlugin) -> Bool {
-        PluginSettingsStore.shared.isPluginEnabled(plugin.instanceLabel)
+        // 如果插件不可由用户控制，则必须启用
+        if !type(of: plugin).isConfigurable {
+            return true
+        }
+
+        // 否则根据用户设置决定
+        return PluginSettingsStore.shared.isPluginEnabled(plugin.instanceLabel)
     }
 
     /// 获取所有标记为标签页的插件
