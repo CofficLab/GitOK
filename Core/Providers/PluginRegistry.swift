@@ -6,7 +6,7 @@ import ObjectiveC.runtime
     static func register()
 }
 
-actor PluginRegistry {
+class PluginRegistry {
     static let shared = PluginRegistry()
 
     private struct FactoryItem {
@@ -21,14 +21,21 @@ actor PluginRegistry {
         factoryItems.append(FactoryItem(id: id, order: order, factory: factory))
     }
 
+    func registerSync(id: String, order: Int = 0, factory: @escaping () -> any SuperPlugin) {
+        register(id: id, order: order, factory: factory)
+    }
+
     func buildAll() -> [any SuperPlugin] {
         factoryItems
             .sorted { $0.order < $1.order }
             .map { $0.factory() }
     }
+
+    var count: Int {
+        factoryItems.count
+    }
 }
 
-@MainActor
 func autoRegisterPlugins() {
     var count: UInt32 = 0
     guard let classList = objc_copyClassList(&count) else { return }
@@ -54,16 +61,14 @@ func autoRegisterPlugins() {
             let className = NSStringFromClass(cls)
             os_log("🚀 Register plugin: \(className)")
 
-            // 直接注册插件到PluginRegistry
-            Task {
-                // 通过反射访问静态属性
-                let idValue = cls.value(forKey: "id") as? String ?? className
-                let orderValue = cls.value(forKey: "order") as? Int ?? 0
+            // 通过反射访问静态属性
+            let idValue = cls.value(forKey: "id") as? String ?? className
+            let orderValue = cls.value(forKey: "order") as? Int ?? 0
 
-                await PluginRegistry.shared.register(id: idValue, order: orderValue) {
-                    // 使用 shared 实例
-                    cls.value(forKey: "shared") as! any SuperPlugin
-                }
+            // 直接注册插件到PluginRegistry（同步）
+            PluginRegistry.shared.register(id: idValue, order: orderValue) {
+                // 使用 shared 实例
+                cls.value(forKey: "shared") as! any SuperPlugin
             }
         }
     }

@@ -119,26 +119,20 @@ class PluginProvider: ObservableObject, SuperLog, SuperThread {
         }
 
         if autoDiscover {
-            Task { [weak self] in
-                guard let self else { return }
-                await MainActor.run {
-                    autoRegisterPlugins()
-                }
-                let discoveredPlugins = await PluginRegistry.shared.buildAll()
-                await MainActor.run {
-                    self.plugins = discoveredPlugins
+            // 自动注册插件
+            autoRegisterPlugins()
+            // 构建所有插件
+            self.plugins = PluginRegistry.shared.buildAll()
 
-                    // 检查重复标签
-                    var labelCounts: [String: Int] = [:]
-                    for plugin in discoveredPlugins {
-                        labelCounts[plugin.instanceLabel, default: 0] += 1
-                    }
+            // 检查重复标签
+            var labelCounts: [String: Int] = [:]
+            for plugin in plugins {
+                labelCounts[plugin.instanceLabel, default: 0] += 1
+            }
 
-                    let duplicateLabels = labelCounts.filter { $0.value > 1 }.map { $0.key }
-                    if !duplicateLabels.isEmpty {
-                        assertionFailure("Duplicate labels: \(duplicateLabels)")
-                    }
-                }
+            let duplicateLabels = labelCounts.filter { $0.value > 1 }.map { $0.key }
+            if !duplicateLabels.isEmpty {
+                assertionFailure("Duplicate labels: \(duplicateLabels)")
             }
         } else {
             self.plugins = []
