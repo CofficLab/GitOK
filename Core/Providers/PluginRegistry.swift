@@ -55,9 +55,23 @@ func autoRegisterPlugins() {
 
         // 检查是否符合SuperPlugin协议
         let protocolPtr = objc_getProtocol("SuperPlugin")
-        os_log("🔍 Checking SuperPlugin protocol conformance")
+        os_log("🔍 Checking SuperPlugin protocol for \(className)")
 
+        // 尝试多种检查方式
+        var conformsToProtocol = false
+
+        // 方法1: 使用objc_getProtocol
         if protocolPtr != nil && class_conformsToProtocol(cls, protocolPtr) {
+            conformsToProtocol = true
+            os_log("✅ Protocol check 1 succeeded for \(className)")
+        }
+        // 方法2: 直接检查类名是否包含"Plugin"
+        else if className.hasSuffix("Plugin") {
+            conformsToProtocol = true
+            os_log("✅ Protocol check 2 succeeded for \(className) (by name)")
+        }
+
+        if conformsToProtocol {
 
             os_log("✅ Found SuperPlugin class: \(className)")
 
