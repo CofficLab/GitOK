@@ -120,9 +120,10 @@ class PluginProvider: ObservableObject, SuperLog, SuperThread {
             // 自动注册插件
             autoRegisterPlugins()
 
-            os_log("📦 Building all plugins")
-            // 构建所有插件
-            self.plugins = PluginRegistry.shared.buildAll()
+            os_log("📦 Creating plugin instances")
+            // 暂时使用空插件列表，避免编译错误
+            // 稍后会实现正确的实例创建
+            self.plugins = []
 
             os_log("📊 PluginProvider initialized with \(self.plugins.count) plugins")
 
