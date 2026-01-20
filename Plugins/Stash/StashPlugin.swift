@@ -25,7 +25,7 @@ class StashPlugin: NSObject, SuperPlugin, SuperLog {
     static var label: String = "Stash"
 
     /// 是否启用该插件
-    static let enable = false // TODO: 需要正确配置 LibGit2Swift 包依赖
+    @objc static let enable = false // TODO: 需要正确配置 LibGit2Swift 包依赖
 
     /// 是否启用详细日志输出
     nonisolated static let verbose = true

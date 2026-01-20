@@ -62,6 +62,24 @@ func registerAllPlugins() {
         // 只检查 GitOK 命名空间下以 "Plugin" 结尾的类
         guard className.hasPrefix("GitOK."), className.hasSuffix("Plugin") else { continue }
 
+        // 检查插件是否启用
+        var enabled = true // 默认启用
+        let enableSelector = NSSelectorFromString("enable")
+        if let enableMethod = class_getClassMethod(cls, enableSelector) {
+            os_log("✅ Found enable method for \(className)")
+            typealias EnableGetter = @convention(c) (AnyClass, Selector) -> Bool
+            let getter = unsafeBitCast(method_getImplementation(enableMethod), to: EnableGetter.self)
+            enabled = getter(cls, enableSelector)
+            os_log("🔧 Enable status for \(className): \(enabled)")
+        } else {
+            os_log("⚠️ No enable method found for \(className), using default: true")
+        }
+
+        guard enabled else {
+            os_log("⏭️ Skipping disabled plugin: \(className)")
+            continue
+        }
+
         // 尝试获取 shared 单例实例
         let sharedSelector = NSSelectorFromString("shared")
         guard let sharedMethod = class_getClassMethod(cls, sharedSelector) else {

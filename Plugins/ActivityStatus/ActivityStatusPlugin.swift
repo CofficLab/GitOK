@@ -8,7 +8,7 @@ class ActivityStatusPlugin: NSObject, SuperPlugin, SuperLog {
     nonisolated static let emoji = "⌛️"
 
     /// 是否启用该插件
-    static let enable = true
+    @objc static let enable = true
 
     /// 是否启用详细日志输出
     nonisolated static let verbose = true
