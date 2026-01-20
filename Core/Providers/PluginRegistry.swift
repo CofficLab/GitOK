@@ -88,13 +88,8 @@ func autoRegisterPlugins() {
                 os_log("🔧 Enable status for \(className): \(enabled)")
             } else {
                 os_log("⚠️ No enable method found for \(className), using default: true")
-                // 尝试直接通过KVC访问
-                if let enableValue = cls.value(forKey: "enable") as? Bool {
-                    enabled = enableValue
-                    os_log("🔧 Enable via KVC for \(className): \(enabled)")
-                } else {
-                    os_log("⚠️ Enable KVC also failed for \(className)")
-                }
+                // 注意：Swift静态属性不通过KVC暴露，所以这里使用默认值
+                // 如果需要更精确的控制，可以考虑使用不同的机制
             }
 
             guard enabled else {
