@@ -48,16 +48,11 @@ extension OpenXcodePlugin {
 
         // 检查 Xcode 是否安装
         guard isXcodeInstalled() else {
-            if Self.verbose {
                 os_log("\(Self.t)⚠️ Xcode is not installed, skipping OpenXcodePlugin registration")
-            }
             return
         }
 
         Task {
-            if Self.verbose {
-                os_log("\(Self.t)🚀 Register OpenXcodePlugin")
-            }
 
             await PluginRegistry.shared.register(id: "OpenXcode", order: 11) {
                 OpenXcodePlugin.shared
@@ -76,9 +71,7 @@ extension OpenXcodePlugin {
 
         for bundleId in bundleIds {
             if let appURL = NSWorkspace.shared.urlForApplication(withBundleIdentifier: bundleId) {
-                if Self.verbose {
                     os_log("\(Self.t)✅ Found Xcode at: \(appURL.path)")
-                }
                 return true
             }
         }
@@ -93,16 +86,12 @@ extension OpenXcodePlugin {
 
         for path in applicationPaths {
             if FileManager.default.fileExists(atPath: path) {
-                if Self.verbose {
                     os_log("\(Self.t)✅ Found Xcode at: \(path)")
-                }
                 return true
             }
         }
 
-        if Self.verbose {
             os_log("\(Self.t)❌ Xcode not found in system")
-        }
 
         return false
     }

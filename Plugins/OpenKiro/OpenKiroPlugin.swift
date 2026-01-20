@@ -45,16 +45,11 @@ extension OpenKiroPlugin {
 
         // 检查 Kiro 是否安装
         guard isKiroInstalled() else {
-            if Self.verbose {
                 os_log("\(Self.t)⚠️ Kiro is not installed, skipping OpenKiroPlugin registration")
-            }
             return
         }
 
         Task {
-            if Self.verbose {
-                os_log("\(Self.t)🚀 Register OpenKiroPlugin")
-            }
 
             await PluginRegistry.shared.register(id: "OpenKiro", order: 15) {
                 OpenKiroPlugin.shared
@@ -67,9 +62,7 @@ extension OpenKiroPlugin {
     private static func isKiroInstalled() -> Bool {
         // 方法1: 通过 Bundle Identifier 检查
         if let appURL = NSWorkspace.shared.urlForApplication(withBundleIdentifier: "dev.kiro.desktop") {
-            if Self.verbose {
                 os_log("\(Self.t)✅ Found Kiro at: \(appURL.path)")
-            }
             return true
         }
 
@@ -81,16 +74,12 @@ extension OpenKiroPlugin {
 
         for path in applicationPaths {
             if FileManager.default.fileExists(atPath: path) {
-                if Self.verbose {
                     os_log("\(Self.t)✅ Found Kiro at: \(path)")
-                }
                 return true
             }
         }
 
-        if Self.verbose {
             os_log("\(Self.t)❌ Kiro not found in system")
-        }
 
         return false
     }

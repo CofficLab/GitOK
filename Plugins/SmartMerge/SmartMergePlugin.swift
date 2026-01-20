@@ -51,9 +51,6 @@ extension SmartMergePlugin {
     @objc static func register() {
 
         Task {
-            if Self.verbose {
-                os_log("\(self.t)🚀 Register SmartMergePlugin")
-            }
 
             await PluginRegistry.shared.register(id: "SmartMerge", order: 25) {
                 SmartMergePlugin.shared

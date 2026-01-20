@@ -45,9 +45,6 @@ extension ReadmePlugin {
 
 
         Task {
-            if Self.verbose {
-                os_log("\(Self.t)🚀 Register ReadmePlugin")
-            }
 
             await PluginRegistry.shared.register(id: "Readme", order: 28) {
                 ReadmePlugin.shared

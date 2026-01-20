@@ -46,16 +46,11 @@ extension OpenVSCodePlugin {
 
         // 检查 VSCode 是否安装
         guard isVSCodeInstalled() else {
-            if Self.verbose {
                 os_log("\(Self.t)⚠️ VSCode is not installed, skipping OpenVSCodePlugin registration")
-            }
             return
         }
 
         Task {
-            if Self.verbose {
-                os_log("\(Self.t)🚀 Register OpenVSCodePlugin")
-            }
 
             await PluginRegistry.shared.register(id: "OpenVSCode", order: 12) {
                 OpenVSCodePlugin.shared
@@ -74,9 +69,7 @@ extension OpenVSCodePlugin {
 
         for bundleId in bundleIds {
             if let appURL = NSWorkspace.shared.urlForApplication(withBundleIdentifier: bundleId) {
-                if Self.verbose {
                     os_log("\(Self.t)✅ Found VSCode at: \(appURL.path)")
-                }
                 return true
             }
         }
@@ -92,16 +85,12 @@ extension OpenVSCodePlugin {
 
         for path in applicationPaths {
             if FileManager.default.fileExists(atPath: path) {
-                if Self.verbose {
                     os_log("\(Self.t)✅ Found VSCode at: \(path)")
-                }
                 return true
             }
         }
 
-        if Self.verbose {
             os_log("\(Self.t)❌ VSCode not found in system")
-        }
 
         return false
     }

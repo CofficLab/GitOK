@@ -45,16 +45,11 @@ extension SettingsButtonPlugin {
 
         // 检查用户是否禁用了此插件
         guard PluginSettingsStore.shared.isPluginEnabled("SettingsButton") else {
-            if Self.verbose {
                 os_log("\(Self.t)⚠️ SettingsButtonPlugin is disabled by user settings")
-            }
             return
         }
 
         Task {
-            if Self.verbose {
-                os_log("\(Self.t)🚀 Register SettingsButtonPlugin")
-            }
 
             await PluginRegistry.shared.register(id: "SettingsButton", order: 100) {
                 SettingsButtonPlugin.shared

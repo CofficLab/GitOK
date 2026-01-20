@@ -46,16 +46,11 @@ extension OpenTraePlugin {
 
         // 检查 Trae 是否安装
         guard isTraeInstalled() else {
-            if Self.verbose {
                 os_log("\(Self.t)⚠️ Trae is not installed, skipping OpenTraePlugin registration")
-            }
             return
         }
 
         Task {
-            if Self.verbose {
-                os_log("\(Self.t)🚀 Register OpenTraePlugin")
-            }
 
             await PluginRegistry.shared.register(id: "OpenTrae", order: 13) {
                 OpenTraePlugin.shared
@@ -68,9 +63,7 @@ extension OpenTraePlugin {
     private static func isTraeInstalled() -> Bool {
         // 方法1: 通过 Bundle Identifier 检查
         if let appURL = NSWorkspace.shared.urlForApplication(withBundleIdentifier: "com.abuilder.trae") {
-            if Self.verbose {
                 os_log("\(Self.t)✅ Found Trae at: \(appURL.path)")
-            }
             return true
         }
 
@@ -83,16 +76,12 @@ extension OpenTraePlugin {
 
         for path in applicationPaths {
             if FileManager.default.fileExists(atPath: path) {
-                if Self.verbose {
                     os_log("\(Self.t)✅ Found Trae at: \(path)")
-                }
                 return true
             }
         }
 
-        if Self.verbose {
             os_log("\(Self.t)❌ Trae not found in system")
-        }
 
         return false
     }

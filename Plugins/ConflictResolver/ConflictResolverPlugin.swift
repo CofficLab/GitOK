@@ -47,9 +47,6 @@ extension ConflictResolverPlugin {
     @objc static func register() {
 
         Task {
-            if Self.verbose {
-                os_log("\(self.t)🚀 Register ConflictResolverPlugin")
-            }
 
             await PluginRegistry.shared.register(id: "ConflictResolver", order: 20) {
                 ConflictResolverPlugin.shared

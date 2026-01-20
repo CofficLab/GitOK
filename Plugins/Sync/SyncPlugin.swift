@@ -42,9 +42,6 @@ extension SyncPlugin {
     @objc static func register() {
 
         Task {
-            if Self.verbose {
-                os_log("\(self.t)🚀 Register SyncPlugin")
-            }
 
             await PluginRegistry.shared.register(id: "Sync", order: 20) {
                 SyncPlugin.shared

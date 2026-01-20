@@ -43,9 +43,6 @@ extension OpenRemotePlugin {
     @objc static func register() {
 
         Task {
-            if Self.verbose {
-                os_log("\(self.t)🚀 Register OpenRemotePlugin")
-            }
 
             await PluginRegistry.shared.register(id: "OpenRemote", order: 16) {
                 OpenRemotePlugin.shared

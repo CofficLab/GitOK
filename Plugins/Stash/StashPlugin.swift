@@ -47,9 +47,6 @@ extension StashPlugin {
     @objc static func register() {
 
         Task {
-            if Self.verbose {
-                os_log("\(self.t)🚀 Register StashPlugin")
-            }
 
             await PluginRegistry.shared.register(id: "Stash", order: 21) {
                 StashPlugin.shared

@@ -54,16 +54,11 @@ extension OpenGitHubDesktopPlugin {
 
         // 检查 GitHub Desktop 是否安装
         guard isGitHubDesktopInstalled() else {
-            if Self.verbose {
                 os_log("\(Self.t)⚠️ GitHub Desktop 未安装，跳过注册")
-            }
             return
         }
 
         Task {
-            if Self.verbose {
-                os_log("\(Self.t)🚀 Register OpenGitHubDesktopPlugin")
-            }
             // 排序为 17，位于 OpenRemote(16) 之后
             await PluginRegistry.shared.register(id: Self.id, order: 17) {
                 OpenGitHubDesktopPlugin.shared
@@ -76,9 +71,7 @@ extension OpenGitHubDesktopPlugin {
     private static func isGitHubDesktopInstalled() -> Bool {
         // 方法1: 通过 Bundle Identifier 检查
         if let appURL = NSWorkspace.shared.urlForApplication(withBundleIdentifier: "com.github.GitHubClient") {
-            if Self.verbose {
                 os_log("\(Self.t)✅ Found GitHub Desktop at: \(appURL.path)")
-            }
             return true
         }
 
@@ -90,16 +83,12 @@ extension OpenGitHubDesktopPlugin {
 
         for path in applicationPaths {
             if FileManager.default.fileExists(atPath: path) {
-                if Self.verbose {
                     os_log("\(Self.t)✅ Found GitHub Desktop at: \(path)")
-                }
                 return true
             }
         }
 
-        if Self.verbose {
             os_log("\(Self.t)❌ GitHub Desktop not found in system")
-        }
 
         return false
     }

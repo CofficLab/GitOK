@@ -48,9 +48,6 @@ extension BannerPlugin {
     @objc static func register() {
 
         Task {
-            if Self.verbose {
-                os_log("\(self.t)🚀 Register BannerPlugin")
-            }
 
             await PluginRegistry.shared.register(id: "Banner", order: 1) {
                 BannerPlugin.shared

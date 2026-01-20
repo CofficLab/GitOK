@@ -46,9 +46,6 @@ extension OpenFinderPlugin {
 
 
         Task {
-            if Self.verbose {
-                os_log("\(Self.t)🚀 Register OpenFinderPlugin")
-            }
 
             await PluginRegistry.shared.register(id: "OpenFinder", order: 14) {
                 OpenFinderPlugin.shared

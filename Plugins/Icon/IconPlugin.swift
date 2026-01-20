@@ -43,9 +43,6 @@ extension IconPlugin {
     @objc static func register() {
 
         Task {
-            if Self.verbose {
-                os_log("\(self.t)🚀 Register IconPlugin")
-            }
 
             await PluginRegistry.shared.register(id: "Icon", order: 2) {
                 IconPlugin.shared

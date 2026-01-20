@@ -45,16 +45,11 @@ extension ActivityStatusPlugin {
 
         // 检查用户是否禁用了此插件
         guard PluginSettingsStore.shared.isPluginEnabled("ActivityStatus") else {
-            if Self.verbose {
                 os_log("\(Self.t)⚠️ ActivityStatusPlugin is disabled by user settings")
-            }
             return
         }
 
         Task {
-            if Self.verbose {
-                os_log("\(Self.t)🚀 Register ActivityStatusPlugin")
-            }
 
             await PluginRegistry.shared.register(id: Self.label, order: 10) {
                 ActivityStatusPlugin.shared

@@ -45,9 +45,6 @@ extension LicensePlugin {
 
 
         Task {
-            if Self.verbose {
-                os_log("\(Self.t)🚀 Register LicensePlugin")
-            }
 
             await PluginRegistry.shared.register(id: "License", order: 29) {
                 LicensePlugin.shared

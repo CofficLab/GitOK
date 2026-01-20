@@ -47,9 +47,6 @@ extension BranchPlugin {
     @objc static func register() {
 
         Task {
-            if Self.verbose {
-                os_log("\(self.t)🚀 Register BranchPlugin")
-            }
 
             await PluginRegistry.shared.register(id: "Branch", order: 22) {
                 BranchPlugin.shared

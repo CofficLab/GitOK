@@ -67,9 +67,6 @@ extension ProjectPickerPlugin {
     @objc static func register() {
 
         Task {
-            if Self.verbose {
-                os_log("\(self.t)🚀 Register ProjectPickerPlugin")
-            }
 
             await PluginRegistry.shared.register(id: "ProjectPicker", order: 24) {
                 ProjectPickerPlugin.shared

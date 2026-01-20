@@ -46,9 +46,6 @@ extension OpenTerminalPlugin {
 
 
         Task {
-            if Self.verbose {
-                os_log("\(self.t)🚀 Register OpenTerminalPlugin")
-            }
 
             await PluginRegistry.shared.register(id: "OpenTerminal", order: 15) {
                 OpenTerminalPlugin()

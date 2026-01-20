@@ -52,9 +52,6 @@ extension GitPushPlugin {
     @objc static func register() {
 
         Task {
-            if Self.verbose {
-                os_log("\(self.t)🚀 Register GitPushPlugin")
-            }
             // 设置排序为 19，位于 Sync(20) 与 Pull(21) 之前
             await PluginRegistry.shared.register(id: Self.id, order: 19) {
                 GitPushPlugin.shared

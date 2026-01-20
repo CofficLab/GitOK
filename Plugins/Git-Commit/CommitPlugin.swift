@@ -52,9 +52,6 @@ extension CommitPlugin {
     @objc static func register() {
 
         Task {
-            if Self.verbose {
-                os_log("\(self.t)🚀 Register CommitPlugin")
-            }
 
             await PluginRegistry.shared.register(id: "Commit", order: 23) {
                 CommitPlugin.shared

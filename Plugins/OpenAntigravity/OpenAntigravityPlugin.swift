@@ -45,16 +45,11 @@ extension OpenAntigravityPlugin {
 
         // 检查 Antigravity 是否安装
         guard isAntigravityInstalled() else {
-            if Self.verbose {
                 os_log("\(Self.t)⚠️ Antigravity is not installed, skipping OpenAntigravityPlugin registration")
-            }
             return
         }
 
         Task {
-            if Self.verbose {
-                os_log("\(Self.t)🚀 Register OpenAntigravityPlugin")
-            }
 
             await PluginRegistry.shared.register(id: "OpenAntigravity", order: 14) {
                 OpenAntigravityPlugin.shared
@@ -67,9 +62,7 @@ extension OpenAntigravityPlugin {
     private static func isAntigravityInstalled() -> Bool {
         // 方法1: 通过 Bundle Identifier 检查
         if let appURL = NSWorkspace.shared.urlForApplication(withBundleIdentifier: "com.antigravity.app") {
-            if Self.verbose {
                 os_log("\(Self.t)✅ Found Antigravity at: \(appURL.path)")
-            }
             return true
         }
 
@@ -81,16 +74,12 @@ extension OpenAntigravityPlugin {
 
         for path in applicationPaths {
             if FileManager.default.fileExists(atPath: path) {
-                if Self.verbose {
                     os_log("\(Self.t)✅ Found Antigravity at: \(path)")
-                }
                 return true
             }
         }
 
-        if Self.verbose {
             os_log("\(Self.t)❌ Antigravity not found in system")
-        }
 
         return false
     }

@@ -45,16 +45,11 @@ extension OpenCursorPlugin {
 
         // 检查 Cursor 是否安装
         guard isCursorInstalled() else {
-            if Self.verbose {
                 os_log("\(Self.t)⚠️ Cursor is not installed, skipping OpenCursorPlugin registration")
-            }
             return
         }
 
         Task {
-            if Self.verbose {
-                os_log("\(Self.t)🚀 Register OpenCursorPlugin")
-            }
 
             await PluginRegistry.shared.register(id: "OpenCursor", order: 10) {
                 OpenCursorPlugin.shared
@@ -67,9 +62,7 @@ extension OpenCursorPlugin {
     private static func isCursorInstalled() -> Bool {
         // 方法1: 通过 Bundle Identifier 检查
         if let appURL = NSWorkspace.shared.urlForApplication(withBundleIdentifier: "dev.cursor.Cursor") {
-            if Self.verbose {
                 os_log("\(Self.t)✅ Found Cursor at: \(appURL.path)")
-            }
             return true
         }
 
@@ -82,16 +75,12 @@ extension OpenCursorPlugin {
 
         for path in applicationPaths {
             if FileManager.default.fileExists(atPath: path) {
-                if Self.verbose {
                     os_log("\(Self.t)✅ Found Cursor at: \(path)")
-                }
                 return true
             }
         }
 
-        if Self.verbose {
             os_log("\(Self.t)❌ Cursor not found in system")
-        }
 
         return false
     }

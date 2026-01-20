@@ -62,16 +62,11 @@ extension SmartFilePlugin {
 
         // 检查用户是否禁用了此插件
         guard PluginSettingsStore.shared.isPluginEnabled("SmartFile") else {
-            if Self.verbose {
                 os_log("\(Self.t)⚠️ SmartFilePlugin is disabled by user settings")
-            }
             return
         }
 
         Task {
-            if Self.verbose {
-                os_log("\(Self.t)🚀 Register SmartFilePlugin")
-            }
 
             await PluginRegistry.shared.register(id: "SmartFile", order: 26) {
                 SmartFilePlugin.shared

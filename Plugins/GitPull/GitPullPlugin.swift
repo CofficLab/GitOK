@@ -42,9 +42,6 @@ extension GitPullPlugin {
     @objc static func register() {
 
         Task {
-            if Self.verbose {
-                os_log("\(self.t)🚀 Register GitPullPlugin")
-            }
 
             await PluginRegistry.shared.register(id: "GitPull", order: 21) {
                 GitPullPlugin.shared

@@ -45,9 +45,6 @@ extension GitignorePlugin {
 
 
         Task {
-            if Self.verbose {
-                os_log("\(Self.t)🚀 Register GitignorePlugin")
-            }
 
             await PluginRegistry.shared.register(id: "Gitignore", order: 29) {
                 GitignorePlugin.shared

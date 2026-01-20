@@ -43,9 +43,6 @@ extension RemoteRepositoryPlugin {
     @objc static func register() {
 
         Task {
-            if Self.verbose {
-                os_log("\(self.t)🚀 Register RemoteRepoPlugin")
-            }
 
             await PluginRegistry.shared.register(id: "RemoteRepository", order: 27) {
                 RemoteRepositoryPlugin.shared

@@ -1,4 +1,5 @@
 import Foundation
+import OSLog
 import ObjectiveC.runtime
 
 @objc protocol PluginRegistrant {
@@ -44,6 +45,10 @@ func autoRegisterPlugins() {
             if let enableValue = cls.value(forKey: "enable") as? Bool {
                 guard enableValue else { continue }
             }
+
+            // 记录插件注册日志
+            let className = NSStringFromClass(cls)
+            os_log(.info, "🚀 Register plugin: \(className)")
 
             registrantType.register()
         }

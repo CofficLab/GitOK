@@ -45,9 +45,6 @@ extension GitPlugin {
     @objc static func register() {
 
         Task {
-            if Self.verbose {
-                os_log("\(self.t)🚀 Register GitPlugin")
-            }
 
             await PluginRegistry.shared.register(id: "Git", order: 0) {
                 GitPlugin.shared
