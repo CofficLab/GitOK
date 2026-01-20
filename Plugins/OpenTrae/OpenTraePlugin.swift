@@ -3,8 +3,8 @@ import MagicKit
 import OSLog
 import SwiftUI
 
-class OpenTraePlugin: SuperPlugin, SuperLog {
-    static let shared = OpenTraePlugin()
+class OpenTraePlugin: NSObject, SuperPlugin, SuperLog {
+    @objc static let shared = OpenTraePlugin()
     /// 日志标识符
     nonisolated static let emoji = "🤖"
 
@@ -31,7 +31,7 @@ class OpenTraePlugin: SuperPlugin, SuperLog {
     /// 插件是否可配置（是否在设置中由用户控制启用/停用）
     static var isConfigurable: Bool = true
 
-    private init() {}
+    private override init() {}
 
     func addToolBarTrailingView() -> AnyView? {
         return AnyView(BtnOpenTraeView.shared)

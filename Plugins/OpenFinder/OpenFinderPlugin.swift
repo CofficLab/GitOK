@@ -4,8 +4,8 @@ import SwiftUI
 
 /// 打开 Finder 插件
 /// 提供在工具栏中打开当前项目目录的 Finder 的功能
-class OpenFinderPlugin: SuperPlugin, SuperLog {
-    static let shared = OpenFinderPlugin()
+class OpenFinderPlugin: NSObject, SuperPlugin, SuperLog {
+    @objc static let shared = OpenFinderPlugin()
     /// 日志标识符
     nonisolated static let emoji = "📂"
 
@@ -32,7 +32,7 @@ class OpenFinderPlugin: SuperPlugin, SuperLog {
     /// 插件是否可配置（是否在设置中由用户控制启用/停用）
     static var isConfigurable: Bool = true
 
-    private init() {}
+    private override init() {}
 
     func addToolBarTrailingView() -> AnyView? {
         return AnyView(BtnOpenFinderView.shared)

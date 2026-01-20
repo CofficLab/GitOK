@@ -2,7 +2,7 @@ import MagicKit
 import OSLog
 import SwiftUI
 
-class GitPlugin: SuperPlugin, SuperLog {
+class GitPlugin: NSObject, SuperPlugin, SuperLog {
     /// 日志标识符
     nonisolated static let emoji = "🚄"
 
@@ -12,7 +12,7 @@ class GitPlugin: SuperPlugin, SuperLog {
     /// 是否启用详细日志输出
     nonisolated static let verbose = true
 
-    static let shared = GitPlugin()
+    @objc static let shared = GitPlugin()
     static var label: String = "Git"
 
     /// 插件的唯一标识符，用于设置管理
@@ -35,7 +35,7 @@ class GitPlugin: SuperPlugin, SuperLog {
 
     var isTab: Bool = true
 
-    private init() {}
+    private override init() {}
 
     func addDetailView() -> AnyView? {
         return AnyView(GitDetail.shared)

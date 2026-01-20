@@ -3,8 +3,8 @@ import OSLog
 import SwiftUI
 
 /// Readme 插件：在状态栏提供 README 入口。
-class ReadmePlugin: SuperPlugin, SuperLog {
-    static let shared = ReadmePlugin()
+class ReadmePlugin: NSObject, SuperPlugin, SuperLog {
+    @objc static let shared = ReadmePlugin()
     /// 日志标识符
     nonisolated static let emoji = "📖"
 
@@ -31,7 +31,7 @@ class ReadmePlugin: SuperPlugin, SuperLog {
     /// 插件是否可配置（是否在设置中由用户控制启用/停用）
     static var isConfigurable: Bool = true
 
-    private init() {}
+    private override init() {}
 
     func addStatusBarTrailingView() -> AnyView? {
         return AnyView(ReadmeStatusIcon.shared)

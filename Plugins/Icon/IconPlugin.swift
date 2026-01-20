@@ -2,7 +2,7 @@ import MagicKit
 import OSLog
 import SwiftUI
 
-class IconPlugin: SuperPlugin, SuperLog {
+class IconPlugin: NSObject, SuperPlugin, SuperLog {
     /// 插件的唯一标识符，用于设置管理
     static var id: String = "Icon"
 
@@ -17,7 +17,7 @@ class IconPlugin: SuperPlugin, SuperLog {
 
     /// 插件是否可配置（是否在设置中由用户控制启用/停用）
     static var isConfigurable: Bool = false
-    static let shared = IconPlugin()
+    @objc static let shared = IconPlugin()
     /// 日志标识符
     nonisolated static let emoji = "📣"
 
@@ -30,7 +30,7 @@ class IconPlugin: SuperPlugin, SuperLog {
     static var label: String = "Icon"
     var isTab: Bool = true
 
-    private init() {}
+    private override init() {}
 
     func addDetailView() -> AnyView? {
         return AnyView(IconDetailLayout.shared)

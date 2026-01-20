@@ -3,7 +3,7 @@ import OSLog
 import SwiftUI
 
 /// GitPush 插件：在工具栏提供“推送”按钮
-class GitPushPlugin: SuperPlugin, SuperLog {
+class GitPushPlugin: NSObject, SuperPlugin, SuperLog {
     /// 插件的唯一标识符，用于设置管理
     static var id: String = "GitPush"
 
@@ -31,8 +31,8 @@ class GitPushPlugin: SuperPlugin, SuperLog {
     /// 插件标签（用于实例化标识）
     static var label: String = "GitPush"
 
-    static let shared = GitPushPlugin()
-    private init() {}
+    @objc static let shared = GitPushPlugin()
+    private override init() {}
 
     /// 在工具栏右侧添加视图
     /// - Returns: 推送按钮视图

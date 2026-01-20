@@ -2,7 +2,7 @@ import MagicKit
 import OSLog
 import SwiftUI
 
-class GitPullPlugin: SuperPlugin, SuperLog {
+class GitPullPlugin: NSObject, SuperPlugin, SuperLog {
     /// 插件的唯一标识符，用于设置管理
     static var id: String = "GitPull"
 
@@ -17,7 +17,7 @@ class GitPullPlugin: SuperPlugin, SuperLog {
 
     /// 插件是否可配置（是否在设置中由用户控制启用/停用）
     static var isConfigurable: Bool = true
-    static let shared = GitPullPlugin()
+    @objc static let shared = GitPullPlugin()
     /// 日志标识符
     nonisolated static let emoji = "⬇️"
 
@@ -29,7 +29,7 @@ class GitPullPlugin: SuperPlugin, SuperLog {
 
     static var label: String = "GitPull"
 
-    private init() {}
+    private override init() {}
 
     func addToolBarTrailingView() -> AnyView? {
         return AnyView(BtnGitPullView.shared)

@@ -2,7 +2,7 @@ import MagicKit
 import OSLog
 import SwiftUI
 
-class ProjectPickerPlugin: SuperPlugin, SuperLog {
+class ProjectPickerPlugin: NSObject, SuperPlugin, SuperLog {
     /// 插件的唯一标识符，用于设置管理
     static var id: String = "ProjectPicker"
 
@@ -29,9 +29,9 @@ class ProjectPickerPlugin: SuperPlugin, SuperLog {
 
     static var label: String = "ProjectPicker"
 
-    static let shared = ProjectPickerPlugin()
+    @objc static let shared = ProjectPickerPlugin()
 
-    private init() {
+    private override init() {
     }
 
     func addToolBarLeadingView() -> AnyView? {

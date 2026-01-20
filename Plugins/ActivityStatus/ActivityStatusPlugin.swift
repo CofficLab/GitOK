@@ -3,7 +3,7 @@ import OSLog
 import SwiftUI
 
 /// 状态栏活动状态插件：展示当前长耗时操作的状态文本。
-class ActivityStatusPlugin: SuperPlugin, SuperLog {
+class ActivityStatusPlugin: NSObject, SuperPlugin, SuperLog {
     /// 日志标识符
     nonisolated static let emoji = "⌛️"
 
@@ -13,7 +13,7 @@ class ActivityStatusPlugin: SuperPlugin, SuperLog {
     /// 是否启用详细日志输出
     nonisolated static let verbose = true
 
-    static let shared = ActivityStatusPlugin()
+    @objc static let shared = ActivityStatusPlugin()
     static let label = "ActivityStatus"
 
     /// 插件的唯一标识符，用于设置管理
@@ -31,7 +31,7 @@ class ActivityStatusPlugin: SuperPlugin, SuperLog {
     /// 插件是否可配置（是否在设置中由用户控制启用/停用）
     static var isConfigurable: Bool = false
 
-    private init() {}
+    private override init() {}
 
     func addStatusBarCenterView() -> AnyView? {
         AnyView(ActivityStatusTile())

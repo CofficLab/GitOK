@@ -4,8 +4,8 @@ import SwiftUI
 
 /// 打开终端插件
 /// 提供在工具栏中打开当前项目目录的终端的功能
-class OpenTerminalPlugin: SuperPlugin, SuperLog {
-    static let shared = OpenTerminalPlugin()
+class OpenTerminalPlugin: NSObject, SuperPlugin, SuperLog {
+    @objc static let shared = OpenTerminalPlugin()
     /// 日志标识符
     nonisolated static let emoji = "⌨️"
 
@@ -32,7 +32,7 @@ class OpenTerminalPlugin: SuperPlugin, SuperLog {
     /// 插件是否可配置（是否在设置中由用户控制启用/停用）
     static var isConfigurable: Bool = true
 
-    private init() {}
+    private override init() {}
 
     func addToolBarTrailingView() -> AnyView? {
         return AnyView(BtnOpenTerminalView())

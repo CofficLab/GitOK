@@ -3,8 +3,8 @@ import MagicKit
 import OSLog
 import SwiftUI
 
-class OpenKiroPlugin: SuperPlugin, SuperLog {
-    static let shared = OpenKiroPlugin()
+class OpenKiroPlugin: NSObject, SuperPlugin, SuperLog {
+    @objc static let shared = OpenKiroPlugin()
     /// 日志标识符
     nonisolated static let emoji = "🌊"
 
@@ -31,7 +31,7 @@ class OpenKiroPlugin: SuperPlugin, SuperLog {
     /// 插件是否可配置（是否在设置中由用户控制启用/停用）
     static var isConfigurable: Bool = true
 
-    private init() {}
+    private override init() {}
 
     func addToolBarTrailingView() -> AnyView? {
         return AnyView(BtnOpenKiroView.shared)

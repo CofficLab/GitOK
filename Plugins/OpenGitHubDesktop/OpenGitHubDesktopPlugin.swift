@@ -5,8 +5,8 @@ import SwiftUI
 
 /// 打开 GitHub Desktop 插件
 /// 在工具栏中提供用 GitHub Desktop 打开当前项目的功能
-class OpenGitHubDesktopPlugin: SuperPlugin, SuperLog {
-    static let shared = OpenGitHubDesktopPlugin()
+class OpenGitHubDesktopPlugin: NSObject, SuperPlugin, SuperLog {
+    @objc static let shared = OpenGitHubDesktopPlugin()
     /// 日志标识符
     nonisolated static let emoji = "🐱"
 
@@ -33,7 +33,7 @@ class OpenGitHubDesktopPlugin: SuperPlugin, SuperLog {
     /// 插件是否可配置（是否在设置中由用户控制启用/停用）
     static var isConfigurable: Bool = true
 
-    private init() {}
+    private override init() {}
 
     /// 在工具栏右侧添加视图
     /// - Returns: 打开 GitHub Desktop 的按钮视图

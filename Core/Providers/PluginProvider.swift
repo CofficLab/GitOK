@@ -116,14 +116,13 @@ class PluginProvider: ObservableObject, SuperLog, SuperThread {
         os_log("🏭 PluginProvider init with autoDiscover: \(autoDiscover)")
 
         if autoDiscover {
-            os_log("🔄 Starting auto plugin registration")
-            // 自动注册插件
-            autoRegisterPlugins()
+            os_log("🔄 Starting plugin registration")
+            // 注册所有插件到 PluginRegistry
+            registerAllPlugins()
 
-            os_log("📦 Creating plugin instances")
-            // 暂时使用空插件列表，避免编译错误
-            // 稍后会实现正确的实例创建
-            self.plugins = []
+            os_log("📦 Loading plugin instances from registry")
+            // 从 PluginRegistry 获取所有已注册的插件实例
+            self.plugins = PluginRegistry.shared.getAllPlugins()
 
             os_log("📊 PluginProvider initialized with \(self.plugins.count) plugins")
 

@@ -5,8 +5,8 @@ import SwiftUI
 
 /// 打开 Xcode 插件
 /// 提供在工具栏中打开当前项目 Xcode 的功能
-class OpenXcodePlugin: SuperPlugin, SuperLog {
-    static let shared = OpenXcodePlugin()
+class OpenXcodePlugin: NSObject, SuperPlugin, SuperLog {
+    @objc static let shared = OpenXcodePlugin()
     /// 日志标识符
     nonisolated static let emoji = "🛠️"
 
@@ -33,7 +33,7 @@ class OpenXcodePlugin: SuperPlugin, SuperLog {
     /// 插件是否可配置（是否在设置中由用户控制启用/停用）
     static var isConfigurable: Bool = true
 
-    private init() {}
+    private override init() {}
 
     func addToolBarTrailingView() -> AnyView? {
         return AnyView(BtnOpenXcodeView.shared)

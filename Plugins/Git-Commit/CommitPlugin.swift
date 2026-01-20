@@ -5,7 +5,7 @@ import SwiftUI
 /**
  * Commit插件 - 负责显示和管理Git提交列表
  */
-class CommitPlugin: SuperPlugin, SuperLog {
+class CommitPlugin: NSObject, SuperPlugin, SuperLog {
     /// 日志标识符
     nonisolated static let emoji = "🍒"
 
@@ -15,7 +15,7 @@ class CommitPlugin: SuperPlugin, SuperLog {
     /// 是否启用详细日志输出
     nonisolated static let verbose = true
 
-    static let shared = CommitPlugin()
+    @objc static let shared = CommitPlugin()
     static let label: String = "Commit"
 
     /// 插件的唯一标识符，用于设置管理
@@ -33,7 +33,7 @@ class CommitPlugin: SuperPlugin, SuperLog {
     /// 插件是否可配置（是否在设置中由用户控制启用/停用）
     static var isConfigurable: Bool = false
     
-    private init() {}
+    private override init() {}
 
     /**
      * 添加列表视图 - 显示提交列表

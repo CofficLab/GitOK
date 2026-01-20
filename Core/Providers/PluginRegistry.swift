@@ -2,42 +2,48 @@ import Foundation
 import OSLog
 import ObjectiveC.runtime
 
-@objc protocol PluginRegistrant {
-    static func register()
-}
-
+/// 插件注册表
+/// 负责自动发现和管理所有插件实例
 class PluginRegistry {
+    /// 单例实例
     static let shared = PluginRegistry()
 
-    private struct PluginItem {
-        let id: String
-        let order: Int
-        let className: String
+    /// 已注册的插件实例列表
+    private var registeredPlugins: [any SuperPlugin] = []
+
+    private init() {}
+
+    /// 注册一个插件实例
+    /// - Parameter plugin: 要注册的插件实例
+    func register(_ plugin: any SuperPlugin) {
+        registeredPlugins.append(plugin)
     }
 
-    private var pluginItems: [PluginItem] = []
-
-    func register(id: String, order: Int = 0, className: String) {
-        pluginItems.append(PluginItem(id: id, order: order, className: className))
+    /// 获取所有已注册的插件实例，按 order 排序
+    /// - Returns: 排序后的插件实例数组
+    func getAllPlugins() -> [any SuperPlugin] {
+        registeredPlugins.sorted { type(of: $0).order < type(of: $1).order }
     }
 
-    func getRegisteredPlugins() -> [(id: String, order: Int, className: String)] {
-        pluginItems
-            .sorted { $0.order < $1.order }
-            .map { (id: $0.id, order: $0.order, className: $0.className) }
-    }
-
-    func buildAll() -> [any SuperPlugin] {
-        // 由于实例创建移到了PluginProvider，这里返回空数组
-        []
-    }
-
+    /// 已注册插件数量
     var count: Int {
-        pluginItems.count
+        registeredPlugins.count
+    }
+
+    /// 清空所有注册的插件
+    func clear() {
+        registeredPlugins.removeAll()
     }
 }
 
-func autoRegisterPlugins() {
+/// 自动发现并注册所有插件
+/// 通过扫描 Objective-C runtime 中所有以 "Plugin" 结尾的类
+func registerAllPlugins() {
+    let registry = PluginRegistry.shared
+
+    // 清空已有注册（防止重复注册）
+    registry.clear()
+
     var count: UInt32 = 0
     guard let classList = objc_copyClassList(&count) else {
         os_log("❌ Failed to get class list")
@@ -45,56 +51,43 @@ func autoRegisterPlugins() {
     }
     defer { free(UnsafeMutableRawPointer(classList)) }
 
-    os_log("🔍 Found \(count) classes to check")
+    os_log("🔍 Scanning classes for plugins...")
 
     let classes = UnsafeBufferPointer(start: classList, count: Int(count))
-    var pluginCount = 0
 
     for i in 0 ..< classes.count {
         let cls: AnyClass = classes[i]
         let className = NSStringFromClass(cls)
 
-        // 检查是否是插件类（通过类名）
-        guard className.hasSuffix("Plugin") else { continue }
+        // 只检查 GitOK 命名空间下以 "Plugin" 结尾的类
+        guard className.hasPrefix("GitOK."), className.hasSuffix("Plugin") else { continue }
 
-        os_log("✅ Found plugin class: \(className)")
-
-        // 检查插件是否启用
-        var enabled = true // 默认启用
-        let enableSelector = Selector("enable")
-        os_log("🔍 Looking for enable method in \(className)")
-
-        if let enableMethod = class_getClassMethod(cls, enableSelector) {
-            os_log("✅ Found enable method for \(className)")
-            typealias EnableGetter = @convention(c) (AnyClass) -> Bool
-            let getter = unsafeBitCast(method_getImplementation(enableMethod), to: EnableGetter.self)
-            enabled = getter(cls)
-            os_log("🔧 Enable status for \(className): \(enabled)")
-        } else {
-            os_log("⚠️ No enable method found for \(className), using default: true")
-            // 注意：Swift静态属性不通过KVC暴露，所以这里使用默认值
-            // 如果需要更精确的控制，可以考虑使用不同的机制
-        }
-
-        guard enabled else {
-            os_log("⏭️ Skipping disabled plugin: \(className)")
+        // 尝试获取 shared 单例实例
+        let sharedSelector = NSSelectorFromString("shared")
+        guard let sharedMethod = class_getClassMethod(cls, sharedSelector) else {
+            os_log("⚠️ No @objc shared found for \(className), skipping")
             continue
         }
 
-        // 记录插件注册日志
-        os_log("🚀 Register plugin: \(className)")
+        // 调用 shared 方法获取实例
+        typealias SharedGetter = @convention(c) (AnyClass, Selector) -> AnyObject?
+        let getter = unsafeBitCast(method_getImplementation(sharedMethod), to: SharedGetter.self)
 
-        // 通过反射访问静态属性
-        let idValue = cls.value(forKey: "id") as? String ?? className
-        let orderValue = cls.value(forKey: "order") as? Int ?? 0
+        guard let instance = getter(cls, sharedSelector) else {
+            os_log("⚠️ Failed to get shared instance for \(className)")
+            continue
+        }
 
-        os_log("📋 Plugin \(className) - id: \(idValue), order: \(orderValue)")
+        // 检查实例是否符合 SuperPlugin 协议
+        guard let plugin = instance as? any SuperPlugin else {
+            os_log("⚠️ Instance of \(className) does not conform to SuperPlugin")
+            continue
+        }
 
-        // 注册插件信息到PluginRegistry
-        PluginRegistry.shared.register(id: idValue, order: orderValue, className: className)
-
-        pluginCount += 1
+        // 注册插件
+        registry.register(plugin)
+        os_log("🚀 Registered plugin: \(className) (order: \(type(of: plugin).order))")
     }
 
-    os_log("📊 Registered \(pluginCount) plugins total")
+    os_log("📊 Registered \(registry.count) plugins total")
 }

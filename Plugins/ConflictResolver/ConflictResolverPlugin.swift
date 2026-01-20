@@ -3,7 +3,7 @@ import OSLog
 import SwiftUI
 
 /// 冲突解决插件：提供可视化的合并冲突解决界面
-class ConflictResolverPlugin: SuperPlugin, SuperLog {
+class ConflictResolverPlugin: NSObject, SuperPlugin, SuperLog {
     /// 插件的唯一标识符，用于设置管理
     static var id: String = "ConflictResolver"
 
@@ -21,7 +21,7 @@ class ConflictResolverPlugin: SuperPlugin, SuperLog {
     /// 日志标识符
     nonisolated static let emoji = "⚔️"
 
-    static let shared = ConflictResolverPlugin()
+    @objc static let shared = ConflictResolverPlugin()
     static var label: String = "ConflictResolver"
 
     /// 是否启用该插件
@@ -30,7 +30,7 @@ class ConflictResolverPlugin: SuperPlugin, SuperLog {
     /// 是否启用详细日志输出
     nonisolated static let verbose = true
 
-    private init() {}
+    private override init() {}
 
     func addToolBarTrailingView() -> AnyView? {
         return AnyView(ConflictResolverList.shared)

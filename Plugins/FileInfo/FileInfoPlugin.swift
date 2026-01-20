@@ -3,7 +3,7 @@ import OSLog
 import SwiftUI
 
 /// SmartFile 插件：在状态栏左侧展示当前文件信息的 Tile。
-class SmartFilePlugin: SuperPlugin, SuperLog {
+class SmartFilePlugin: NSObject, SuperPlugin, SuperLog {
     /// 日志标识符
     nonisolated static let emoji = "📄"
 
@@ -13,7 +13,7 @@ class SmartFilePlugin: SuperPlugin, SuperLog {
     /// 是否启用详细日志输出
     nonisolated static let verbose = true
 
-    static let shared = SmartFilePlugin()
+    @objc static let shared = SmartFilePlugin()
     static var label: String = "SmartFile"
 
     /// 插件的唯一标识符，用于设置管理
@@ -31,7 +31,7 @@ class SmartFilePlugin: SuperPlugin, SuperLog {
     /// 插件是否可配置（是否在设置中由用户控制启用/停用）
     static var isConfigurable: Bool = false
 
-    private init() {}
+    private override init() {}
 
     func addStatusBarLeadingView() -> AnyView? {
         AnyView(TileFile.shared)

@@ -5,7 +5,7 @@ import SwiftUI
 
 /// Banner 插件类
 /// 负责管理和提供应用横幅生成功能
-class BannerPlugin: SuperPlugin, SuperLog {
+class BannerPlugin: NSObject, SuperPlugin, SuperLog {
     /// 日志标识符
     nonisolated static let emoji = "📣"
 
@@ -15,7 +15,7 @@ class BannerPlugin: SuperPlugin, SuperLog {
     /// 是否启用详细日志输出
     nonisolated static let verbose = true
 
-    static let shared = BannerPlugin()
+    @objc static let shared = BannerPlugin()
     static var label: String = "Banner"
 
     /// 插件注册顺序
@@ -38,7 +38,7 @@ class BannerPlugin: SuperPlugin, SuperLog {
 
     var isTab: Bool = true
 
-    private init() {}
+    private override init() {}
 
     func addDetailView() -> AnyView? {
         return AnyView(BannerDetailLayout.shared.environmentObject(BannerProvider.shared))

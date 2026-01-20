@@ -2,11 +2,11 @@ import MagicKit
 import OSLog
 import SwiftUI
 
-class OpenRemotePlugin: SuperPlugin, SuperLog {
+class OpenRemotePlugin: NSObject, SuperPlugin, SuperLog {
     /// 日志标识符
     nonisolated static let emoji = "🌐"
 
-    static let shared = OpenRemotePlugin()
+    @objc static let shared = OpenRemotePlugin()
     static var label: String = "OpenRemote"
 
     /// 插件的唯一标识符，用于设置管理
@@ -30,7 +30,7 @@ class OpenRemotePlugin: SuperPlugin, SuperLog {
     /// 是否启用详细日志输出
     nonisolated static let verbose = true
 
-    private init() {}
+    private override init() {}
 
     func addToolBarTrailingView() -> AnyView? {
         return AnyView(BtnOpenRemoteView.shared)
