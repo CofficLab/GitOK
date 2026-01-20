@@ -42,7 +42,6 @@ class GitignorePlugin: SuperPlugin, SuperLog, PluginRegistrant {
 
 extension GitignorePlugin {
     @objc static func register() {
-        guard enable else { return }
 
 
         Task {

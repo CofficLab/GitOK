@@ -42,7 +42,6 @@ class OpenTraePlugin: SuperPlugin, SuperLog, PluginRegistrant {
 
 extension OpenTraePlugin {
     @objc static func register() {
-        guard enable else { return }
 
 
         // 检查 Trae 是否安装

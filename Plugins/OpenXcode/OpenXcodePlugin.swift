@@ -44,7 +44,6 @@ class OpenXcodePlugin: SuperPlugin, SuperLog, PluginRegistrant {
 
 extension OpenXcodePlugin {
     @objc static func register() {
-        guard enable else { return }
 
 
         // 检查 Xcode 是否安装

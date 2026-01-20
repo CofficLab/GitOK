@@ -43,7 +43,6 @@ class OpenFinderPlugin: SuperPlugin, SuperLog, PluginRegistrant {
 
 extension OpenFinderPlugin {
     @objc static func register() {
-        guard enable else { return }
 
 
         Task {

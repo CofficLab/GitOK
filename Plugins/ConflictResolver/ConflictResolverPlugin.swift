@@ -45,7 +45,6 @@ class ConflictResolverPlugin: SuperPlugin, SuperLog, PluginRegistrant {
 
 extension ConflictResolverPlugin {
     @objc static func register() {
-        guard enable else { return }
 
         Task {
             if Self.verbose {

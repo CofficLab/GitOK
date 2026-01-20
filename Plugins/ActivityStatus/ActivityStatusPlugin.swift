@@ -42,7 +42,6 @@ class ActivityStatusPlugin: SuperPlugin, SuperLog, PluginRegistrant {
 
 extension ActivityStatusPlugin {
     @objc static func register() {
-        guard enable else { return }
 
         // 检查用户是否禁用了此插件
         guard PluginSettingsStore.shared.isPluginEnabled("ActivityStatus") else {

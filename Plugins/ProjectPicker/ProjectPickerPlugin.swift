@@ -65,7 +65,6 @@ class ProjectPickerPlugin: SuperPlugin, SuperLog, PluginRegistrant {
 
 extension ProjectPickerPlugin {
     @objc static func register() {
-        guard enable else { return }
 
         Task {
             if Self.verbose {

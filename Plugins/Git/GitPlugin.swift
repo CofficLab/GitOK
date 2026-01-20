@@ -43,7 +43,6 @@ class GitPlugin: SuperPlugin, SuperLog, PluginRegistrant {
 
 extension GitPlugin {
     @objc static func register() {
-        guard enable else { return }
 
         Task {
             if Self.verbose {

@@ -41,7 +41,6 @@ class IconPlugin: SuperPlugin, SuperLog, PluginRegistrant {
 
 extension IconPlugin {
     @objc static func register() {
-        guard enable else { return }
 
         Task {
             if Self.verbose {

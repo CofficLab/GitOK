@@ -45,7 +45,6 @@ class StashPlugin: SuperPlugin, SuperLog, PluginRegistrant {
 
 extension StashPlugin {
     @objc static func register() {
-        guard enable else { return }
 
         Task {
             if Self.verbose {

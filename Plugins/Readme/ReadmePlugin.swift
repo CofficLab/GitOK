@@ -42,7 +42,6 @@ class ReadmePlugin: SuperPlugin, SuperLog, PluginRegistrant {
 
 extension ReadmePlugin {
     @objc static func register() {
-        guard enable else { return }
 
 
         Task {

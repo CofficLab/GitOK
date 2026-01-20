@@ -40,7 +40,6 @@ class SyncPlugin: SuperPlugin, SuperLog, PluginRegistrant {
 
 extension SyncPlugin {
     @objc static func register() {
-        guard enable else { return }
 
         Task {
             if Self.verbose {

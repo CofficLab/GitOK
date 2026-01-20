@@ -36,8 +36,16 @@ func autoRegisterPlugins() {
     let classes = UnsafeBufferPointer(start: classList, count: Int(count))
     for i in 0 ..< classes.count {
         let cls: AnyClass = classes[i]
-        if class_conformsToProtocol(cls, PluginRegistrant.self) {
-            (cls as? PluginRegistrant.Type)?.register()
+        if class_conformsToProtocol(cls, PluginRegistrant.self),
+           let registrantType = cls as? PluginRegistrant.Type {
+
+            // 检查插件是否启用，只有启用的插件才注册
+            // 通过 Objective-C runtime 检查 enable 属性的值
+            if let enableValue = cls.value(forKey: "enable") as? Bool {
+                guard enableValue else { continue }
+            }
+
+            registrantType.register()
         }
     }
 }

@@ -42,7 +42,6 @@ class OpenVSCodePlugin: SuperPlugin, SuperLog, PluginRegistrant {
 
 extension OpenVSCodePlugin {
     @objc static func register() {
-        guard enable else { return }
 
 
         // 检查 VSCode 是否安装

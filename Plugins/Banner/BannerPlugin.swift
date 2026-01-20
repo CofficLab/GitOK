@@ -46,7 +46,6 @@ class BannerPlugin: SuperPlugin, SuperLog, PluginRegistrant {
 
 extension BannerPlugin {
     @objc static func register() {
-        guard enable else { return }
 
         Task {
             if Self.verbose {

@@ -42,7 +42,6 @@ class OpenKiroPlugin: SuperPlugin, SuperLog, PluginRegistrant {
 
 extension OpenKiroPlugin {
     @objc static func register() {
-        guard enable else { return }
 
         // 检查 Kiro 是否安装
         guard isKiroInstalled() else {

@@ -42,7 +42,6 @@ class LicensePlugin: SuperPlugin, SuperLog, PluginRegistrant {
 
 extension LicensePlugin {
     @objc static func register() {
-        guard enable else { return }
 
 
         Task {

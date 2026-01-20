@@ -41,7 +41,6 @@ class RemoteRepositoryPlugin: SuperPlugin, SuperLog, PluginRegistrant {
 
 extension RemoteRepositoryPlugin {
     @objc static func register() {
-        guard enable else { return }
 
         Task {
             if Self.verbose {

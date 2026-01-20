@@ -43,7 +43,6 @@ class OpenTerminalPlugin: SuperPlugin, SuperLog, PluginRegistrant {
 
 extension OpenTerminalPlugin {
     @objc static func register() {
-        guard enable else { return }
 
 
         Task {

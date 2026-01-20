@@ -40,7 +40,6 @@ class GitPullPlugin: SuperPlugin, SuperLog, PluginRegistrant {
 
 extension GitPullPlugin {
     @objc static func register() {
-        guard enable else { return }
 
         Task {
             if Self.verbose {

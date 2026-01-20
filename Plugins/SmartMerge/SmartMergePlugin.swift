@@ -49,7 +49,6 @@ extension SmartMergePlugin {
     /// 插件注册方法
     /// 将SmartMerge插件注册到插件注册表中
     @objc static func register() {
-        guard enable else { return }
 
         Task {
             if Self.verbose {

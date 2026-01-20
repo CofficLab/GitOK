@@ -50,7 +50,6 @@ class GitPushPlugin: SuperPlugin, SuperLog, PluginRegistrant {
 extension GitPushPlugin {
     /// 自动注册插件到插件注册表
     @objc static func register() {
-        guard enable else { return }
 
         Task {
             if Self.verbose {

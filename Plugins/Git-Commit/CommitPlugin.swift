@@ -50,7 +50,6 @@ class CommitPlugin: SuperPlugin, SuperLog, PluginRegistrant {
 // MARK: - PluginRegistrant
 extension CommitPlugin {
     @objc static func register() {
-        guard enable else { return }
 
         Task {
             if Self.verbose {

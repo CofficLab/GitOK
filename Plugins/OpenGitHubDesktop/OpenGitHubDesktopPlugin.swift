@@ -51,7 +51,6 @@ class OpenGitHubDesktopPlugin: SuperPlugin, SuperLog, PluginRegistrant {
 extension OpenGitHubDesktopPlugin {
     /// 自动注册插件到插件注册表（当系统检测到安装后）
     @objc static func register() {
-        guard enable else { return }
 
         // 检查 GitHub Desktop 是否安装
         guard isGitHubDesktopInstalled() else {

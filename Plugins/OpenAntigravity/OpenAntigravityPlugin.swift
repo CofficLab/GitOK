@@ -42,7 +42,6 @@ class OpenAntigravityPlugin: SuperPlugin, SuperLog, PluginRegistrant {
 
 extension OpenAntigravityPlugin {
     @objc static func register() {
-        guard enable else { return }
 
         // 检查 Antigravity 是否安装
         guard isAntigravityInstalled() else {
