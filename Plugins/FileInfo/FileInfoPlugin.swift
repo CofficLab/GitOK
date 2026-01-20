@@ -60,12 +60,6 @@ class SmartFilePlugin: SuperPlugin, SuperLog, PluginRegistrant {
 extension SmartFilePlugin {
     @objc static func register() {
 
-        // 检查用户是否禁用了此插件
-        guard PluginSettingsStore.shared.isPluginEnabled("SmartFile") else {
-                os_log("\(Self.t)⚠️ SmartFilePlugin is disabled by user settings")
-            return
-        }
-
         Task {
 
             await PluginRegistry.shared.register(id: "SmartFile", order: 26) {

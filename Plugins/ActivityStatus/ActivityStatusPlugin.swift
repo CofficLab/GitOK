@@ -43,12 +43,6 @@ class ActivityStatusPlugin: SuperPlugin, SuperLog, PluginRegistrant {
 extension ActivityStatusPlugin {
     @objc static func register() {
 
-        // 检查用户是否禁用了此插件
-        guard PluginSettingsStore.shared.isPluginEnabled("ActivityStatus") else {
-                os_log("\(Self.t)⚠️ ActivityStatusPlugin is disabled by user settings")
-            return
-        }
-
         Task {
 
             await PluginRegistry.shared.register(id: Self.label, order: 10) {

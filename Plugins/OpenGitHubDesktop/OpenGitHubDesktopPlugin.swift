@@ -38,10 +38,6 @@ class OpenGitHubDesktopPlugin: SuperPlugin, SuperLog, PluginRegistrant {
     /// 在工具栏右侧添加视图
     /// - Returns: 打开 GitHub Desktop 的按钮视图
     func addToolBarTrailingView() -> AnyView? {
-        // 检查用户是否启用了此插件
-        guard PluginSettingsStore.shared.isPluginEnabled(Self.id) else {
-            return nil
-        }
         return AnyView(BtnOpenGitHubDesktopView.shared)
     }
 }

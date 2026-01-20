@@ -43,12 +43,6 @@ class SettingsButtonPlugin: SuperPlugin, SuperLog, PluginRegistrant {
 extension SettingsButtonPlugin {
     @objc static func register() {
 
-        // 检查用户是否禁用了此插件
-        guard PluginSettingsStore.shared.isPluginEnabled("SettingsButton") else {
-                os_log("\(Self.t)⚠️ SettingsButtonPlugin is disabled by user settings")
-            return
-        }
-
         Task {
 
             await PluginRegistry.shared.register(id: "SettingsButton", order: 100) {

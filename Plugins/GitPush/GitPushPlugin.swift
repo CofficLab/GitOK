@@ -37,10 +37,6 @@ class GitPushPlugin: SuperPlugin, SuperLog, PluginRegistrant {
     /// 在工具栏右侧添加视图
     /// - Returns: 推送按钮视图
     func addToolBarTrailingView() -> AnyView? {
-        // 检查用户是否启用了此插件
-        guard PluginSettingsStore.shared.isPluginEnabled(Self.id) else {
-            return nil
-        }
         return AnyView(BtnGitPushView.shared)
     }
 }
