@@ -59,9 +59,9 @@ struct CommitList: View, SuperThread, SuperLog {
                 GeometryReader { geometry in
                     VStack(spacing: 0) {
                         if loading && commits.isEmpty {
-                            Spacer()
-                            Text(LocalizedStringKey("loading"))
-                            Spacer()
+                            Text("正在加载")
+                                .inMagicHStackCenter()
+                                .inMagicVStackCenter()
                         } else {
                             CurrentWorkingStateView()
                             commitListView

@@ -105,6 +105,7 @@
 
     },
     "loading" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -725,6 +726,9 @@
 
     },
     "模板" : {
+
+    },
+    "正在加载" : {
 
     },
     "正在加载 .gitignore ..." : {
