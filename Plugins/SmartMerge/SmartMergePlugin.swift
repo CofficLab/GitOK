@@ -39,11 +39,6 @@ class SmartMergePlugin: SuperPlugin, SuperLog, PluginRegistrant {
     /// 添加状态栏尾部视图
     /// - Returns: 返回TileMerge组件的AnyView包装
     func addStatusBarTrailingView() -> AnyView? {
-        // 检查用户是否启用了此插件
-        guard PluginSettingsStore.shared.isPluginEnabled("SmartMerge") else {
-            return nil
-        }
-
         return AnyView(TileMerge.shared)
     }
 }

@@ -33,11 +33,6 @@ class IconPlugin: SuperPlugin, SuperLog, PluginRegistrant {
     private init() {}
 
     func addDetailView() -> AnyView? {
-        // 检查用户是否启用了此插件
-        guard PluginSettingsStore.shared.isPluginEnabled("Icon") else {
-            return nil
-        }
-
         return AnyView(IconDetailLayout.shared)
     }
 }

@@ -35,11 +35,6 @@ class ProjectPickerPlugin: SuperPlugin, SuperLog, PluginRegistrant {
     }
 
     func addToolBarLeadingView() -> AnyView? {
-        // 检查用户是否启用了此插件
-        guard PluginSettingsStore.shared.isPluginEnabled("ProjectPicker") else {
-            return nil
-        }
-
         return AnyView(ProjectPickerView.shared)
     }
 }

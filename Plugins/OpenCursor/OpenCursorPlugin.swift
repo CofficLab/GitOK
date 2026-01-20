@@ -34,11 +34,6 @@ class OpenCursorPlugin: SuperPlugin, SuperLog, PluginRegistrant {
     private init() {}
 
     func addToolBarTrailingView() -> AnyView? {
-        // 检查用户是否启用了此插件
-        guard PluginSettingsStore.shared.isPluginEnabled("OpenCursor") else {
-            return nil
-        }
-
         return AnyView(BtnOpenCursorView.shared)
     }
 }

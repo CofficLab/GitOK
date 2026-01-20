@@ -34,11 +34,6 @@ class OpenAntigravityPlugin: SuperPlugin, SuperLog, PluginRegistrant {
     private init() {}
 
     func addToolBarTrailingView() -> AnyView? {
-        // 检查用户是否启用了此插件
-        guard PluginSettingsStore.shared.isPluginEnabled("OpenAntigravity") else {
-            return nil
-        }
-
         return AnyView(BtnOpenAntigravityView.shared)
     }
 }

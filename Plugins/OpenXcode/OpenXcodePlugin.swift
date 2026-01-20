@@ -36,11 +36,6 @@ class OpenXcodePlugin: SuperPlugin, SuperLog, PluginRegistrant {
     private init() {}
 
     func addToolBarTrailingView() -> AnyView? {
-        // 检查用户是否启用了此插件
-        guard PluginSettingsStore.shared.isPluginEnabled("OpenXcode") else {
-            return nil
-        }
-
         return AnyView(BtnOpenXcodeView.shared)
     }
 }

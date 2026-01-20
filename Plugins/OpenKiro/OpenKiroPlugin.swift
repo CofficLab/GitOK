@@ -34,11 +34,6 @@ class OpenKiroPlugin: SuperPlugin, SuperLog, PluginRegistrant {
     private init() {}
 
     func addToolBarTrailingView() -> AnyView? {
-        // 检查用户是否启用了此插件
-        guard PluginSettingsStore.shared.isPluginEnabled("OpenKiro") else {
-            return nil
-        }
-
         return AnyView(BtnOpenKiroView.shared)
     }
 }
