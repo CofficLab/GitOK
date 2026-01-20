@@ -3,7 +3,7 @@ import OSLog
 import SwiftUI
 
 /// RemoteRepository 插件：在状态栏提供远程仓库管理入口。
-class RemoteRepositoryPlugin: SuperPlugin, SuperLog, PluginRegistrant {
+class RemoteRepositoryPlugin: SuperPlugin, SuperLog {
     /// 插件的唯一标识符，用于设置管理
     static var id: String = "RemoteRepository"
 
@@ -37,19 +37,6 @@ class RemoteRepositoryPlugin: SuperPlugin, SuperLog, PluginRegistrant {
     }
 }
 
-// MARK: - PluginRegistrant
-
-extension RemoteRepositoryPlugin {
-    @objc static func register() {
-
-        Task {
-
-            await PluginRegistry.shared.register(id: "RemoteRepository", order: 27) {
-                RemoteRepositoryPlugin.shared
-            }
-        }
-    }
-}
 
 #Preview("App - Small Screen") {
     ContentLayout()

@@ -37,8 +37,8 @@ func autoRegisterPlugins() {
     let classes = UnsafeBufferPointer(start: classList, count: Int(count))
     for i in 0 ..< classes.count {
         let cls: AnyClass = classes[i]
-        if class_conformsToProtocol(cls, PluginRegistrant.self),
-           let registrantType = cls as? PluginRegistrant.Type {
+        if let protocolPtr = objc_getProtocol("SuperPlugin"),
+           class_conformsToProtocol(cls, protocolPtr) {
 
             // 检查插件是否启用，只有启用的插件才注册
             // 通过 Objective-C runtime 访问 enable 静态属性
@@ -54,7 +54,17 @@ func autoRegisterPlugins() {
             let className = NSStringFromClass(cls)
             os_log("🚀 Register plugin: \(className)")
 
-            registrantType.register()
+            // 直接注册插件到PluginRegistry
+            Task {
+                // 通过反射访问静态属性
+                let idValue = cls.value(forKey: "id") as? String ?? className
+                let orderValue = cls.value(forKey: "order") as? Int ?? 0
+
+                await PluginRegistry.shared.register(id: idValue, order: orderValue) {
+                    // 使用 shared 实例
+                    cls.value(forKey: "shared") as! any SuperPlugin
+                }
+            }
         }
     }
 }

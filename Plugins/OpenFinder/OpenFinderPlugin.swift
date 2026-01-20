@@ -4,7 +4,7 @@ import SwiftUI
 
 /// 打开 Finder 插件
 /// 提供在工具栏中打开当前项目目录的 Finder 的功能
-class OpenFinderPlugin: SuperPlugin, SuperLog, PluginRegistrant {
+class OpenFinderPlugin: SuperPlugin, SuperLog {
     static let shared = OpenFinderPlugin()
     /// 日志标识符
     nonisolated static let emoji = "📂"
@@ -39,17 +39,3 @@ class OpenFinderPlugin: SuperPlugin, SuperLog, PluginRegistrant {
     }
 }
 
-// MARK: - PluginRegistrant
-
-extension OpenFinderPlugin {
-    @objc static func register() {
-
-
-        Task {
-
-            await PluginRegistry.shared.register(id: "OpenFinder", order: 14) {
-                OpenFinderPlugin.shared
-            }
-        }
-    }
-}

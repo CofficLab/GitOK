@@ -2,7 +2,7 @@ import MagicKit
 import OSLog
 import SwiftUI
 
-class SyncPlugin: SuperPlugin, SuperLog, PluginRegistrant {
+class SyncPlugin: SuperPlugin, SuperLog {
     /// 插件的唯一标识符，用于设置管理
     static var id: String = "Sync"
 
@@ -29,6 +29,9 @@ class SyncPlugin: SuperPlugin, SuperLog, PluginRegistrant {
 
     static var label: String = "Sync"
 
+    /// 插件注册顺序
+    static var order: Int = 20
+
     private init() {}
 
     func addToolBarTrailingView() -> AnyView? {
@@ -36,16 +39,3 @@ class SyncPlugin: SuperPlugin, SuperLog, PluginRegistrant {
     }
 }
 
-// MARK: - PluginRegistrant
-
-extension SyncPlugin {
-    @objc static func register() {
-
-        Task {
-
-            await PluginRegistry.shared.register(id: "Sync", order: 20) {
-                SyncPlugin.shared
-            }
-        }
-    }
-}

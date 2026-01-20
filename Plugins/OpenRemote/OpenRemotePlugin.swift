@@ -2,7 +2,7 @@ import MagicKit
 import OSLog
 import SwiftUI
 
-class OpenRemotePlugin: SuperPlugin, SuperLog, PluginRegistrant {
+class OpenRemotePlugin: SuperPlugin, SuperLog {
     /// 日志标识符
     nonisolated static let emoji = "🌐"
 
@@ -37,16 +37,3 @@ class OpenRemotePlugin: SuperPlugin, SuperLog, PluginRegistrant {
     }
 }
 
-// MARK: - PluginRegistrant
-
-extension OpenRemotePlugin {
-    @objc static func register() {
-
-        Task {
-
-            await PluginRegistry.shared.register(id: "OpenRemote", order: 16) {
-                OpenRemotePlugin.shared
-            }
-        }
-    }
-}

@@ -2,7 +2,7 @@ import MagicKit
 import OSLog
 import SwiftUI
 
-class GitPullPlugin: SuperPlugin, SuperLog, PluginRegistrant {
+class GitPullPlugin: SuperPlugin, SuperLog {
     /// 插件的唯一标识符，用于设置管理
     static var id: String = "GitPull"
 
@@ -36,16 +36,3 @@ class GitPullPlugin: SuperPlugin, SuperLog, PluginRegistrant {
     }
 }
 
-// MARK: - PluginRegistrant
-
-extension GitPullPlugin {
-    @objc static func register() {
-
-        Task {
-
-            await PluginRegistry.shared.register(id: "GitPull", order: 21) {
-                GitPullPlugin.shared
-            }
-        }
-    }
-}

@@ -3,7 +3,7 @@ import OSLog
 import SwiftUI
 
 /// LICENSE 插件：在状态栏提供 LICENSE 入口。
-class LicensePlugin: SuperPlugin, SuperLog, PluginRegistrant {
+class LicensePlugin: SuperPlugin, SuperLog {
     static let shared = LicensePlugin()
     /// 日志标识符
     nonisolated static let emoji = "📜"
@@ -38,20 +38,6 @@ class LicensePlugin: SuperPlugin, SuperLog, PluginRegistrant {
     }
 }
 
-// MARK: - PluginRegistrant
-
-extension LicensePlugin {
-    @objc static func register() {
-
-
-        Task {
-
-            await PluginRegistry.shared.register(id: "License", order: 29) {
-                LicensePlugin.shared
-            }
-        }
-    }
-}
 
 #Preview("App - Small Screen") {
     ContentLayout()

@@ -2,7 +2,7 @@ import MagicKit
 import OSLog
 import SwiftUI
 
-class ProjectPickerPlugin: SuperPlugin, SuperLog, PluginRegistrant {
+class ProjectPickerPlugin: SuperPlugin, SuperLog {
     /// 插件的唯一标识符，用于设置管理
     static var id: String = "ProjectPicker"
 
@@ -61,16 +61,3 @@ class ProjectPickerPlugin: SuperPlugin, SuperLog, PluginRegistrant {
     .frame(height: 1200)
 }
 
-// MARK: - PluginRegistrant
-
-extension ProjectPickerPlugin {
-    @objc static func register() {
-
-        Task {
-
-            await PluginRegistry.shared.register(id: "ProjectPicker", order: 24) {
-                ProjectPickerPlugin.shared
-            }
-        }
-    }
-}

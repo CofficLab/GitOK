@@ -3,7 +3,7 @@ import OSLog
 import SwiftUI
 
 /// 设置按钮插件：在状态栏右侧显示设置按钮
-class SettingsButtonPlugin: SuperPlugin, SuperLog, PluginRegistrant {
+class SettingsButtonPlugin: SuperPlugin, SuperLog {
     static let shared = SettingsButtonPlugin()
     /// 日志标识符
     nonisolated static let emoji = "⚙️"
@@ -38,19 +38,6 @@ class SettingsButtonPlugin: SuperPlugin, SuperLog, PluginRegistrant {
     }
 }
 
-// MARK: - PluginRegistrant
-
-extension SettingsButtonPlugin {
-    @objc static func register() {
-
-        Task {
-
-            await PluginRegistry.shared.register(id: "SettingsButton", order: 100) {
-                SettingsButtonPlugin.shared
-            }
-        }
-    }
-}
 
 #Preview("App - Small Screen") {
     ContentLayout()

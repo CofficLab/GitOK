@@ -5,7 +5,7 @@ import SwiftUI
 /**
  * Commit插件 - 负责显示和管理Git提交列表
  */
-class CommitPlugin: SuperPlugin, SuperLog, PluginRegistrant {
+class CommitPlugin: SuperPlugin, SuperLog {
     /// 日志标识符
     nonisolated static let emoji = "🍒"
 
@@ -47,18 +47,6 @@ class CommitPlugin: SuperPlugin, SuperLog, PluginRegistrant {
     }
 }
 
-// MARK: - PluginRegistrant
-extension CommitPlugin {
-    @objc static func register() {
-
-        Task {
-
-            await PluginRegistry.shared.register(id: "Commit", order: 23) {
-                CommitPlugin.shared
-            }
-        }
-    }
-}
 
 // MARK: - Preview
 

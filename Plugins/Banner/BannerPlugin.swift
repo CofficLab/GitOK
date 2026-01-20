@@ -5,7 +5,7 @@ import SwiftUI
 
 /// Banner 插件类
 /// 负责管理和提供应用横幅生成功能
-class BannerPlugin: SuperPlugin, SuperLog, PluginRegistrant {
+class BannerPlugin: SuperPlugin, SuperLog {
     /// 日志标识符
     nonisolated static let emoji = "📣"
 
@@ -17,6 +17,9 @@ class BannerPlugin: SuperPlugin, SuperLog, PluginRegistrant {
 
     static let shared = BannerPlugin()
     static var label: String = "Banner"
+
+    /// 插件注册顺序
+    static var order: Int = 1
 
     /// 插件的唯一标识符，用于设置管理
     static var id: String = "Banner"
@@ -42,19 +45,6 @@ class BannerPlugin: SuperPlugin, SuperLog, PluginRegistrant {
     }
 }
 
-// MARK: - PluginRegistrant
-
-extension BannerPlugin {
-    @objc static func register() {
-
-        Task {
-
-            await PluginRegistry.shared.register(id: "Banner", order: 1) {
-                BannerPlugin.shared
-            }
-        }
-    }
-}
 
 #Preview("App - Small Screen") {
     ContentLayout()

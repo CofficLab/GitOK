@@ -3,7 +3,7 @@ import OSLog
 import SwiftUI
 
 /// 状态栏活动状态插件：展示当前长耗时操作的状态文本。
-class ActivityStatusPlugin: SuperPlugin, SuperLog, PluginRegistrant {
+class ActivityStatusPlugin: SuperPlugin, SuperLog {
     /// 日志标识符
     nonisolated static let emoji = "⌛️"
 
@@ -38,19 +38,6 @@ class ActivityStatusPlugin: SuperPlugin, SuperLog, PluginRegistrant {
     }
 }
 
-// MARK: - PluginRegistrant
-
-extension ActivityStatusPlugin {
-    @objc static func register() {
-
-        Task {
-
-            await PluginRegistry.shared.register(id: Self.label, order: 10) {
-                ActivityStatusPlugin.shared
-            }
-        }
-    }
-}
 
 #Preview("App - Small Screen") {
     ContentLayout()

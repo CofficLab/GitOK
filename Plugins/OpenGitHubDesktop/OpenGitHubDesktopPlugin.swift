@@ -5,7 +5,7 @@ import SwiftUI
 
 /// 打开 GitHub Desktop 插件
 /// 在工具栏中提供用 GitHub Desktop 打开当前项目的功能
-class OpenGitHubDesktopPlugin: SuperPlugin, SuperLog, PluginRegistrant {
+class OpenGitHubDesktopPlugin: SuperPlugin, SuperLog {
     static let shared = OpenGitHubDesktopPlugin()
     /// 日志标识符
     nonisolated static let emoji = "🐱"
@@ -42,53 +42,6 @@ class OpenGitHubDesktopPlugin: SuperPlugin, SuperLog, PluginRegistrant {
     }
 }
 
-// MARK: - PluginRegistrant
-
-extension OpenGitHubDesktopPlugin {
-    /// 自动注册插件到插件注册表（当系统检测到安装后）
-    @objc static func register() {
-
-        // 检查 GitHub Desktop 是否安装
-        guard isGitHubDesktopInstalled() else {
-                os_log("\(Self.t)⚠️ GitHub Desktop 未安装，跳过注册")
-            return
-        }
-
-        Task {
-            // 排序为 17，位于 OpenRemote(16) 之后
-            await PluginRegistry.shared.register(id: Self.id, order: 17) {
-                OpenGitHubDesktopPlugin.shared
-            }
-        }
-    }
-
-    /// 检查 GitHub Desktop 是否已安装
-    /// - Returns: 如果已安装返回 true，否则返回 false
-    private static func isGitHubDesktopInstalled() -> Bool {
-        // 方法1: 通过 Bundle Identifier 检查
-        if let appURL = NSWorkspace.shared.urlForApplication(withBundleIdentifier: "com.github.GitHubClient") {
-                os_log("\(Self.t)✅ Found GitHub Desktop at: \(appURL.path)")
-            return true
-        }
-
-        // 方法2: 通过应用路径检查（作为备选）
-        let applicationPaths = [
-            "/Applications/GitHub Desktop.app",
-            NSHomeDirectory() + "/Applications/GitHub Desktop.app"
-        ]
-
-        for path in applicationPaths {
-            if FileManager.default.fileExists(atPath: path) {
-                    os_log("\(Self.t)✅ Found GitHub Desktop at: \(path)")
-                return true
-            }
-        }
-
-            os_log("\(Self.t)❌ GitHub Desktop not found in system")
-
-        return false
-    }
-}
 
 // MARK: - Preview
 

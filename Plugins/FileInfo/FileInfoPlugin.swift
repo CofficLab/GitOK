@@ -3,7 +3,7 @@ import OSLog
 import SwiftUI
 
 /// SmartFile 插件：在状态栏左侧展示当前文件信息的 Tile。
-class SmartFilePlugin: SuperPlugin, SuperLog, PluginRegistrant {
+class SmartFilePlugin: SuperPlugin, SuperLog {
     /// 日志标识符
     nonisolated static let emoji = "📄"
 
@@ -55,16 +55,3 @@ class SmartFilePlugin: SuperPlugin, SuperLog, PluginRegistrant {
         .frame(height: 1200)
 }
 
-// MARK: - PluginRegistrant
-
-extension SmartFilePlugin {
-    @objc static func register() {
-
-        Task {
-
-            await PluginRegistry.shared.register(id: "SmartFile", order: 26) {
-                SmartFilePlugin.shared
-            }
-        }
-    }
-}

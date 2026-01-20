@@ -4,7 +4,7 @@ import SwiftUI
 
 /// 打开终端插件
 /// 提供在工具栏中打开当前项目目录的终端的功能
-class OpenTerminalPlugin: SuperPlugin, SuperLog, PluginRegistrant {
+class OpenTerminalPlugin: SuperPlugin, SuperLog {
     static let shared = OpenTerminalPlugin()
     /// 日志标识符
     nonisolated static let emoji = "⌨️"
@@ -39,17 +39,3 @@ class OpenTerminalPlugin: SuperPlugin, SuperLog, PluginRegistrant {
     }
 }
 
-// MARK: - PluginRegistrant
-
-extension OpenTerminalPlugin {
-    @objc static func register() {
-
-
-        Task {
-
-            await PluginRegistry.shared.register(id: "OpenTerminal", order: 15) {
-                OpenTerminalPlugin()
-            }
-        }
-    }
-}

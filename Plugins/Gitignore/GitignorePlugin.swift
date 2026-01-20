@@ -3,7 +3,7 @@ import OSLog
 import SwiftUI
 
 /// Gitignore 插件：在状态栏提供 .gitignore 查看入口。
-class GitignorePlugin: SuperPlugin, SuperLog, PluginRegistrant {
+class GitignorePlugin: SuperPlugin, SuperLog {
     static let shared = GitignorePlugin()
     /// 日志标识符
     nonisolated static let emoji = "📄"
@@ -38,20 +38,6 @@ class GitignorePlugin: SuperPlugin, SuperLog, PluginRegistrant {
     }
 }
 
-// MARK: - PluginRegistrant
-
-extension GitignorePlugin {
-    @objc static func register() {
-
-
-        Task {
-
-            await PluginRegistry.shared.register(id: "Gitignore", order: 29) {
-                GitignorePlugin.shared
-            }
-        }
-    }
-}
 
 #Preview("App - Small Screen") {
     ContentLayout()

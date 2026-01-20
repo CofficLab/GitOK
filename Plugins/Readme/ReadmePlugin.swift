@@ -3,7 +3,7 @@ import OSLog
 import SwiftUI
 
 /// Readme 插件：在状态栏提供 README 入口。
-class ReadmePlugin: SuperPlugin, SuperLog, PluginRegistrant {
+class ReadmePlugin: SuperPlugin, SuperLog {
     static let shared = ReadmePlugin()
     /// 日志标识符
     nonisolated static let emoji = "📖"
@@ -38,20 +38,6 @@ class ReadmePlugin: SuperPlugin, SuperLog, PluginRegistrant {
     }
 }
 
-// MARK: - PluginRegistrant
-
-extension ReadmePlugin {
-    @objc static func register() {
-
-
-        Task {
-
-            await PluginRegistry.shared.register(id: "Readme", order: 28) {
-                ReadmePlugin.shared
-            }
-        }
-    }
-}
 
 #Preview("App - Small Screen") {
     ContentLayout()

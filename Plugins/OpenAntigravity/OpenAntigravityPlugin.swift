@@ -3,7 +3,7 @@ import MagicKit
 import OSLog
 import SwiftUI
 
-class OpenAntigravityPlugin: SuperPlugin, SuperLog, PluginRegistrant {
+class OpenAntigravityPlugin: SuperPlugin, SuperLog {
     static let shared = OpenAntigravityPlugin()
     /// 日志标识符
     nonisolated static let emoji = "🌌"
@@ -38,49 +38,3 @@ class OpenAntigravityPlugin: SuperPlugin, SuperLog, PluginRegistrant {
     }
 }
 
-// MARK: - PluginRegistrant
-
-extension OpenAntigravityPlugin {
-    @objc static func register() {
-
-        // 检查 Antigravity 是否安装
-        guard isAntigravityInstalled() else {
-                os_log("\(Self.t)⚠️ Antigravity is not installed, skipping OpenAntigravityPlugin registration")
-            return
-        }
-
-        Task {
-
-            await PluginRegistry.shared.register(id: "OpenAntigravity", order: 14) {
-                OpenAntigravityPlugin.shared
-            }
-        }
-    }
-
-    /// 检查 Antigravity 是否已安装
-    /// - Returns: 如果 Antigravity 已安装返回 true，否则返回 false
-    private static func isAntigravityInstalled() -> Bool {
-        // 方法1: 通过 Bundle Identifier 检查
-        if let appURL = NSWorkspace.shared.urlForApplication(withBundleIdentifier: "com.antigravity.app") {
-                os_log("\(Self.t)✅ Found Antigravity at: \(appURL.path)")
-            return true
-        }
-
-        // 方法2: 通过应用路径检查（作为备选）
-        let applicationPaths = [
-            "/Applications/Antigravity.app",
-            NSHomeDirectory() + "/Applications/Antigravity.app"
-        ]
-
-        for path in applicationPaths {
-            if FileManager.default.fileExists(atPath: path) {
-                    os_log("\(Self.t)✅ Found Antigravity at: \(path)")
-                return true
-            }
-        }
-
-            os_log("\(Self.t)❌ Antigravity not found in system")
-
-        return false
-    }
-}

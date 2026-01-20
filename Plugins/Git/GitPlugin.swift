@@ -2,7 +2,7 @@ import MagicKit
 import OSLog
 import SwiftUI
 
-class GitPlugin: SuperPlugin, SuperLog, PluginRegistrant {
+class GitPlugin: SuperPlugin, SuperLog {
     /// 日志标识符
     nonisolated static let emoji = "🚄"
 
@@ -17,6 +17,9 @@ class GitPlugin: SuperPlugin, SuperLog, PluginRegistrant {
 
     /// 插件的唯一标识符，用于设置管理
     static var id: String = "Git"
+
+    /// 插件注册顺序
+    static var order: Int = 0
 
     /// 插件显示名称
     static var displayName: String = "Git"
@@ -39,19 +42,6 @@ class GitPlugin: SuperPlugin, SuperLog, PluginRegistrant {
     }
 }
 
-// MARK: - PluginRegistrant
-
-extension GitPlugin {
-    @objc static func register() {
-
-        Task {
-
-            await PluginRegistry.shared.register(id: "Git", order: 0) {
-                GitPlugin.shared
-            }
-        }
-    }
-}
 
 // MARK: - Preview
 

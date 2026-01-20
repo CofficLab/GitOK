@@ -3,7 +3,7 @@ import OSLog
 import SwiftUI
 
 /// SmartMerge 插件：在状态栏提供合并入口（TileMerge）。
-class SmartMergePlugin: SuperPlugin, SuperLog, PluginRegistrant {
+class SmartMergePlugin: SuperPlugin, SuperLog {
     /// 插件的唯一标识符，用于设置管理
     static var id: String = "SmartMerge"
 

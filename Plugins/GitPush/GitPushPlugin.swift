@@ -3,7 +3,7 @@ import OSLog
 import SwiftUI
 
 /// GitPush 插件：在工具栏提供“推送”按钮
-class GitPushPlugin: SuperPlugin, SuperLog, PluginRegistrant {
+class GitPushPlugin: SuperPlugin, SuperLog {
     /// 插件的唯一标识符，用于设置管理
     static var id: String = "GitPush"
 
@@ -41,20 +41,6 @@ class GitPushPlugin: SuperPlugin, SuperLog, PluginRegistrant {
     }
 }
 
-// MARK: - PluginRegistrant
-
-extension GitPushPlugin {
-    /// 自动注册插件到插件注册表
-    @objc static func register() {
-
-        Task {
-            // 设置排序为 19，位于 Sync(20) 与 Pull(21) 之前
-            await PluginRegistry.shared.register(id: Self.id, order: 19) {
-                GitPushPlugin.shared
-            }
-        }
-    }
-}
 
 // MARK: - Preview
 

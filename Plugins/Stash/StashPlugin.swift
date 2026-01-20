@@ -3,7 +3,7 @@ import OSLog
 import SwiftUI
 
 /// Stash 插件：提供stash暂存功能，包括保存、查看、应用和删除stash
-class StashPlugin: SuperPlugin, SuperLog, PluginRegistrant {
+class StashPlugin: SuperPlugin, SuperLog {
     /// 插件的唯一标识符，用于设置管理
     static var id: String = "Stash"
 
@@ -41,19 +41,6 @@ class StashPlugin: SuperPlugin, SuperLog, PluginRegistrant {
     }
 }
 
-// MARK: - PluginRegistrant
-
-extension StashPlugin {
-    @objc static func register() {
-
-        Task {
-
-            await PluginRegistry.shared.register(id: "Stash", order: 21) {
-                StashPlugin.shared
-            }
-        }
-    }
-}
 
 #Preview("App - Small Screen") {
     ContentLayout()

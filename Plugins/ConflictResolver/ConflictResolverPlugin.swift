@@ -3,7 +3,7 @@ import OSLog
 import SwiftUI
 
 /// 冲突解决插件：提供可视化的合并冲突解决界面
-class ConflictResolverPlugin: SuperPlugin, SuperLog, PluginRegistrant {
+class ConflictResolverPlugin: SuperPlugin, SuperLog {
     /// 插件的唯一标识符，用于设置管理
     static var id: String = "ConflictResolver"
 
@@ -41,19 +41,6 @@ class ConflictResolverPlugin: SuperPlugin, SuperLog, PluginRegistrant {
     }
 }
 
-// MARK: - PluginRegistrant
-
-extension ConflictResolverPlugin {
-    @objc static func register() {
-
-        Task {
-
-            await PluginRegistry.shared.register(id: "ConflictResolver", order: 20) {
-                ConflictResolverPlugin.shared
-            }
-        }
-    }
-}
 
 #Preview("App - Small Screen") {
     ContentLayout()

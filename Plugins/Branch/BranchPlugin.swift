@@ -3,7 +3,7 @@ import OSLog
 import SwiftUI
 
 /// Branch 插件：提供分支列表视图（工具栏右侧）并在状态栏左侧展示当前分支。
-class BranchPlugin: SuperPlugin, SuperLog, PluginRegistrant {
+class BranchPlugin: SuperPlugin, SuperLog {
     /// 插件的唯一标识符，用于设置管理
     static var id: String = "Branch"
 
@@ -24,6 +24,9 @@ class BranchPlugin: SuperPlugin, SuperLog, PluginRegistrant {
     static let shared = BranchPlugin()
     static var label: String = "Branch"
 
+    /// 插件注册顺序
+    static var order: Int = 22
+
     /// 是否启用该插件
     static let enable = true
 
@@ -41,19 +44,6 @@ class BranchPlugin: SuperPlugin, SuperLog, PluginRegistrant {
     }
 }
 
-// MARK: - PluginRegistrant
-
-extension BranchPlugin {
-    @objc static func register() {
-
-        Task {
-
-            await PluginRegistry.shared.register(id: "Branch", order: 22) {
-                BranchPlugin.shared
-            }
-        }
-    }
-}
 
 #Preview("App - Small Screen") {
     ContentLayout()
