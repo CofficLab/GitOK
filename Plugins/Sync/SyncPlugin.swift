@@ -32,7 +32,12 @@ class SyncPlugin: SuperPlugin, SuperLog, PluginRegistrant {
     private init() {}
 
     func addToolBarTrailingView() -> AnyView? {
-        AnyView(BtnSyncView.shared)
+        // 检查用户是否启用了此插件
+        guard PluginSettingsStore.shared.isPluginEnabled("Sync") else {
+            return nil
+        }
+
+        return AnyView(BtnSyncView.shared)
     }
 }
 

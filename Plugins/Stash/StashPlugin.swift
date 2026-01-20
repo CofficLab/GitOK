@@ -33,11 +33,21 @@ class StashPlugin: SuperPlugin, SuperLog, PluginRegistrant {
     private init() {}
 
     func addToolBarTrailingView() -> AnyView? {
-        AnyView(StashList.shared)
+        // 检查用户是否启用了此插件
+        guard PluginSettingsStore.shared.isPluginEnabled("Stash") else {
+            return nil
+        }
+
+        return AnyView(StashList.shared)
     }
 
     func addStatusBarLeadingView() -> AnyView? {
-        AnyView(StashStatusTile())
+        // 检查用户是否启用了此插件
+        guard PluginSettingsStore.shared.isPluginEnabled("Stash") else {
+            return nil
+        }
+
+        return AnyView(StashStatusTile())
     }
 }
 

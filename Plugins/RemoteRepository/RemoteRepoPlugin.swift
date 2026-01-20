@@ -33,7 +33,12 @@ class RemoteRepositoryPlugin: SuperPlugin, SuperLog, PluginRegistrant {
     private init() {}
 
     func addStatusBarTrailingView() -> AnyView? {
-        AnyView(BtnRemoteRepositoryView.shared)
+        // 检查用户是否启用了此插件
+        guard PluginSettingsStore.shared.isPluginEnabled("RemoteRepository") else {
+            return nil
+        }
+
+        return AnyView(BtnRemoteRepositoryView.shared)
     }
 }
 

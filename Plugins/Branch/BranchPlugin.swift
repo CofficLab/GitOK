@@ -33,11 +33,21 @@ class BranchPlugin: SuperPlugin, SuperLog, PluginRegistrant {
     private init() {}
 
     func addToolBarTrailingView() -> AnyView? {
-        AnyView(BranchesView.shared)
+        // 检查用户是否启用了此插件
+        guard PluginSettingsStore.shared.isPluginEnabled("Branch") else {
+            return nil
+        }
+
+        return AnyView(BranchesView.shared)
     }
 
     func addStatusBarLeadingView() -> AnyView? {
-        AnyView(BranchStatusTile())
+        // 检查用户是否启用了此插件
+        guard PluginSettingsStore.shared.isPluginEnabled("Branch") else {
+            return nil
+        }
+
+        return AnyView(BranchStatusTile())
     }
 }
 

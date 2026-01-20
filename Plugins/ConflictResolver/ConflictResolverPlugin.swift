@@ -33,11 +33,21 @@ class ConflictResolverPlugin: SuperPlugin, SuperLog, PluginRegistrant {
     private init() {}
 
     func addToolBarTrailingView() -> AnyView? {
-        AnyView(ConflictResolverList.shared)
+        // 检查用户是否启用了此插件
+        guard PluginSettingsStore.shared.isPluginEnabled("ConflictResolver") else {
+            return nil
+        }
+
+        return AnyView(ConflictResolverList.shared)
     }
 
     func addStatusBarLeadingView() -> AnyView? {
-        AnyView(ConflictStatusTile())
+        // 检查用户是否启用了此插件
+        guard PluginSettingsStore.shared.isPluginEnabled("ConflictResolver") else {
+            return nil
+        }
+
+        return AnyView(ConflictStatusTile())
     }
 }
 

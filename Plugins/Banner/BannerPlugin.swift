@@ -38,7 +38,12 @@ class BannerPlugin: SuperPlugin, SuperLog, PluginRegistrant {
     private init() {}
 
     func addDetailView() -> AnyView? {
-        AnyView(BannerDetailLayout.shared.environmentObject(BannerProvider.shared))
+        // 检查用户是否启用了此插件
+        guard PluginSettingsStore.shared.isPluginEnabled("Banner") else {
+            return nil
+        }
+
+        return AnyView(BannerDetailLayout.shared.environmentObject(BannerProvider.shared))
     }
 }
 
