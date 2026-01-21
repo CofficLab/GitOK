@@ -78,10 +78,17 @@ struct ContentView: View, SuperLog {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .sheet(isPresented: $app.showSettings) {
-            SettingView()
+            SettingView(defaultTab: app.defaultSettingTab == "plugins" ? .plugins : .userInfo)
+                .onDisappear {
+                    // 重置默认标签
+                    app.defaultSettingTab = nil
+                }
         }
         .onReceive(NotificationCenter.default.publisher(for: .openSettings)) { _ in
             app.openSettings()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .openPluginSettings)) { _ in
+            app.openPluginSettings()
         }
     }
 }

@@ -17,6 +17,13 @@ struct SettingsCommand: Commands, SuperLog {
                 NotificationCenter.default.post(name: .openSettings, object: nil)
             }
             .keyboardShortcut(",", modifiers: .command)
+
+            Divider()
+
+            Button("插件管理...") {
+                // 发送打开插件设置的通知
+                NotificationCenter.default.post(name: .openPluginSettings, object: nil)
+            }
         }
         #endif
     }

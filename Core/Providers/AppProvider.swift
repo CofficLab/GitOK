@@ -23,6 +23,9 @@ class AppProvider: NSObject, ObservableObject, AVAudioPlayerDelegate, SuperLog {
     /// 是否显示设置
     @Published var showSettings: Bool = false
 
+    /// 默认打开的设置标签（nil 表示使用默认）
+    @Published var defaultSettingTab: String? = nil
+
     /// 仓库管理器实例
     private let repoManager: RepoManager
 
@@ -80,6 +83,12 @@ extension AppProvider {
 
     /// 显示设置界面
     func openSettings() {
+        showSettings = true
+    }
+
+    /// 打开插件管理设置
+    func openPluginSettings() {
+        defaultSettingTab = "plugins"
         showSettings = true
     }
 }

@@ -7,7 +7,10 @@ import SwiftUI
 extension Notification.Name {
     /// 打开设置视图事件
     static let openSettings = Notification.Name("openSettings")
-    
+
+    /// 打开插件设置事件（打开设置并定位到插件管理标签）
+    static let openPluginSettings = Notification.Name("openPluginSettings")
+
     /// 关闭设置视图事件
     static let dismissSettings = Notification.Name("dismissSettings")
     
@@ -29,6 +32,15 @@ extension View {
     /// - Returns: 修改后的视图
     func onOpenSettings(perform action: @escaping () -> Void) -> some View {
         self.onReceive(NotificationCenter.default.publisher(for: .openSettings)) { _ in
+            action()
+        }
+    }
+
+    /// 监听打开插件设置事件
+    /// - Parameter action: 事件处理闭包
+    /// - Returns: 修改后的视图
+    func onOpenPluginSettings(perform action: @escaping () -> Void) -> some View {
+        self.onReceive(NotificationCenter.default.publisher(for: .openPluginSettings)) { _ in
             action()
         }
     }
