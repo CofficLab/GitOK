@@ -3,21 +3,11 @@ import MagicKit
 import OSLog
 import SwiftUI
 
-class OpenCursorPlugin: NSObject, SuperPlugin, SuperLog {
+class OpenCursorPlugin: NSObject, SuperPlugin {
     @objc static let shared = OpenCursorPlugin()
-    /// 日志标识符
-    nonisolated static let emoji = "🖱️"
 
     /// 是否启用该插件
-    @objc static let enable = true
-
-    /// 是否启用详细日志输出
-    nonisolated static let verbose = true
-
-    static var label: String = "OpenCursor"
-
-    /// 插件的唯一标识符，用于设置管理
-    static var id: String = "OpenCursor"
+    @objc static let shouldRegister = true
 
     /// 插件显示名称
     static var displayName: String = "OpenCursor"
@@ -29,12 +19,12 @@ class OpenCursorPlugin: NSObject, SuperPlugin, SuperLog {
     static var iconName: String = "cursor.rays"
 
     /// 插件是否可配置（是否在设置中由用户控制启用/停用）
-    static var isConfigurable: Bool = true
+    static var allowUserToggle = true
 
-    private override init() {}
+    /// 插件默认启用状态
+    static var defaultEnabled: Bool = true
 
     func addToolBarTrailingView() -> AnyView? {
         return AnyView(BtnOpenCursorView.shared)
     }
 }
-

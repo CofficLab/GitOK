@@ -9,12 +9,25 @@ class PluginSettingsStore {
     private init() {}
 
     /// 获取插件的启用状态
-    /// - Parameter pluginId: 插件ID
+    /// - Parameters:
+    ///   - pluginId: 插件ID
+    ///   - defaultEnabled: 插件的默认启用状态
     /// - Returns: true 表示启用，false 表示禁用
-    func isPluginEnabled(_ pluginId: String) -> Bool {
+    func isPluginEnabled(_ pluginId: String, defaultEnabled: Bool = true) -> Bool {
         let settings = loadSettings()
-        // 如果没有设置，默认启用
-        return settings[pluginId] ?? true
+        // 如果用户配置过，使用用户配置；否则使用默认值
+        if let userSetting = settings[pluginId] {
+            return userSetting
+        }
+        return defaultEnabled
+    }
+
+    /// 检查插件是否被用户配置过
+    /// - Parameter pluginId: 插件ID
+    /// - Returns: true 表示用户配置过，false 表示未配置
+    func hasUserConfigured(_ pluginId: String) -> Bool {
+        let settings = loadSettings()
+        return settings[pluginId] != nil
     }
 
     /// 设置插件的启用状态
@@ -44,14 +57,17 @@ struct PluginInfo: Identifiable {
     let name: String
     let description: String
     let icon: String
+    /// 插件默认启用状态
+    let defaultEnabled: Bool
     /// 插件是否开发者启用（检查插件的 static let enable 属性）
     let isDeveloperEnabled: () -> Bool
 
-    init(id: String, name: String, description: String, icon: String = "puzzlepiece.extension", isDeveloperEnabled: @escaping () -> Bool = { true }) {
+    init(id: String, name: String, description: String, icon: String = "puzzlepiece.extension", defaultEnabled: Bool = true, isDeveloperEnabled: @escaping () -> Bool = { true }) {
         self.id = id
         self.name = name
         self.description = description
         self.icon = icon
+        self.defaultEnabled = defaultEnabled
         self.isDeveloperEnabled = isDeveloperEnabled
     }
 }

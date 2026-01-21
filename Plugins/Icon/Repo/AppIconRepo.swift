@@ -207,7 +207,7 @@ class AppIconRepo: SuperLog, IconSourceProtocol {
             .hideProjectActions()
             .hideSidebar()
             .hideTabPicker()
-            .setInitialTab(IconPlugin.label)
+            .setInitialTab("Icon")
     }
     .frame(width: 600)
     .frame(height: 800)
@@ -218,7 +218,7 @@ class AppIconRepo: SuperLog, IconSourceProtocol {
         ContentLayout()
             .hideProjectActions()
             .hideTabPicker()
-            .setInitialTab(IconPlugin.label)
+            .setInitialTab("Icon")
     }
     .frame(width: 800)
     .frame(height: 1200)

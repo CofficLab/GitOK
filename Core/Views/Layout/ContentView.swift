@@ -16,7 +16,7 @@ struct ContentView: View, SuperLog {
     @State private var columnVisibility: NavigationSplitViewVisibility = .automatic
 
     /// 当前选中的标签页
-    @State private var tab: String = GitPlugin.label
+    @State private var tab: String = "Git"
 
     /// 状态栏是否可见
     @State private var statusBarVisibility = true
@@ -78,10 +78,17 @@ struct ContentView: View, SuperLog {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .sheet(isPresented: $app.showSettings) {
-            SettingView()
+            SettingView(defaultTab: app.defaultSettingTab == "plugins" ? .plugins : .userInfo)
+                .onDisappear {
+                    // 重置默认标签
+                    app.defaultSettingTab = nil
+                }
         }
         .onReceive(NotificationCenter.default.publisher(for: .openSettings)) { _ in
             app.openSettings()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .openPluginSettings)) { _ in
+            app.openPluginSettings()
         }
     }
 }
@@ -120,8 +127,8 @@ extension ContentView {
             if tabPickerVisibility {
                 ToolbarItem(placement: .principal) {
                     Picker("选择标签", selection: $tab) {
-                        ForEach(p.tabPlugins, id: \.instanceLabel) { plugin in
-                            Text(plugin.instanceLabel).tag(plugin.instanceLabel)
+                        ForEach(p.tabNames, id: \.self) { tabName in
+                            Text(tabName).tag(tabName)
                         }
                     }
                     .pickerStyle(SegmentedPickerStyle())
@@ -156,6 +163,18 @@ extension ContentView {
                 VStack(spacing: 0) {
                     if let tabDetailView = p.getEnabledTabDetailView(tab: tab) {
                         tabDetailView
+                    } else {
+                        // 没有可用的详情视图时显示引导界面
+                        GuideView(
+                            systemImage: "puzzlepiece.extension",
+                            title: "暂无可用视图",
+                            subtitle: "请在设置中启用相关插件以显示内容",
+                            action: {
+                                app.openPluginSettings()
+                            },
+                            actionLabel: "打开插件设置"
+                        )
+                        .setIconColor(.secondary)
                     }
 
                     if fullWidthStatusBar == false, statusBarVisibility {
@@ -178,6 +197,18 @@ extension ContentView {
                     VStack(spacing: 0) {
                         if let tabDetailView = p.getEnabledTabDetailView(tab: tab) {
                             tabDetailView
+                        } else {
+                            // 没有可用的详情视图时显示引导界面
+                            GuideView(
+                                systemImage: "puzzlepiece.extension",
+                                title: "暂无可用视图",
+                                subtitle: "请在设置中启用相关插件以显示内容",
+                                action: {
+                                    app.openPluginSettings()
+                                },
+                                actionLabel: "打开插件设置"
+                            )
+                            .setIconColor(.secondary)
                         }
 
                         if fullWidthStatusBar == false, statusBarVisibility {
@@ -238,11 +269,11 @@ extension ContentView {
             }
             self.tab = d
         } else {
-            // 如果没有提供默认标签页，使用Git标签页作为默认值
+            // 如果没有提供默认标签页，使用"Git"标签页作为默认值
             if Self.verbose {
-                os_log("\(self.t)No default tab provided, using GitPlugin.label: \(GitPlugin.label)")
+                os_log("\(self.t)No default tab provided, using default tab: Git")
             }
-            self.tab = GitPlugin.label
+            self.tab = "Git"
         }
 
         if let d = defaultStatusBarVisibility {

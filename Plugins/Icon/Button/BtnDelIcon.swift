@@ -23,7 +23,7 @@ struct BtnDelIcon: View {
 
 #Preview("App - Small Screen") {
     RootView {
-        ContentLayout().setInitialTab(IconPlugin.label)
+        ContentLayout().setInitialTab("Icon")
             .hideSidebar()
             .hideProjectActions()
     }
@@ -33,7 +33,7 @@ struct BtnDelIcon: View {
 
 #Preview("App - Big Screen") {
     RootView {
-        ContentLayout().setInitialTab(IconPlugin.label)
+        ContentLayout().setInitialTab("Icon")
             .hideSidebar()
     }
     .frame(width: 1200)

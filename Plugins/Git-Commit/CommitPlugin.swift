@@ -5,21 +5,15 @@ import SwiftUI
 /**
  * Commit插件 - 负责显示和管理Git提交列表
  */
-class CommitPlugin: NSObject, SuperPlugin, SuperLog {
-    /// 日志标识符
-    nonisolated static let emoji = "🍒"
+class CommitPlugin: NSObject, SuperPlugin {
 
     /// 是否启用该插件
-    @objc static let enable = true
+    @objc static let shouldRegister = true
 
-    /// 是否启用详细日志输出
-    nonisolated static let verbose = true
 
     @objc static let shared = CommitPlugin()
     static let label: String = "Commit"
 
-    /// 插件的唯一标识符，用于设置管理
-    static var id: String = "Commit"
 
     /// 插件显示名称
     static var displayName: String = "Commit"
@@ -31,7 +25,10 @@ class CommitPlugin: NSObject, SuperPlugin, SuperLog {
     static var iconName: String = "arrow.up.arrow.down"
 
     /// 插件是否可配置（是否在设置中由用户控制启用/停用）
-    static var isConfigurable: Bool = false
+    static var allowUserToggle: Bool = false
+    /// 插件默认启用状态
+    static var defaultEnabled: Bool = true
+
     
     private override init() {}
 
@@ -39,7 +36,7 @@ class CommitPlugin: NSObject, SuperPlugin, SuperLog {
      * 添加列表视图 - 显示提交列表
      */
     func addListView(tab: String, project: Project?) -> AnyView? {
-        if tab == GitPlugin.label, let project = project, project.isGitRepo {
+        if tab == "Git", let project = project, project.isGitRepo {
             return AnyView(CommitList.shared)
         }
 

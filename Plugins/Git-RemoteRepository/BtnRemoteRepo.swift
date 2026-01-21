@@ -78,7 +78,7 @@ extension BtnRemoteRepositoryView {
 
 #Preview("App - Small Screen") {
     ContentLayout()
-        .setInitialTab(RemoteRepositoryPlugin.label)
+        .setInitialTab("RemoteRepository")
         .hideSidebar()
         .hideProjectActions()
         .inRootView()
@@ -88,7 +88,7 @@ extension BtnRemoteRepositoryView {
 
 #Preview("App - Big Screen") {
     ContentLayout()
-        .setInitialTab(RemoteRepositoryPlugin.label)
+        .setInitialTab("RemoteRepository")
         .hideSidebar()
         .inRootView()
         .frame(width: 1200)

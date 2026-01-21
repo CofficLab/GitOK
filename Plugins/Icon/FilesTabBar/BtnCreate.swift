@@ -24,7 +24,7 @@ struct BtnCreate: View {
 
 #Preview("App - Small Screen") {
     RootView {
-        ContentLayout().setInitialTab(IconPlugin.label)
+        ContentLayout().setInitialTab("Icon")
             .hideSidebar()
             .hideProjectActions()
     }
@@ -36,7 +36,7 @@ struct BtnCreate: View {
     RootView {
         ContentLayout()
             .hideProjectActions()
-            .setInitialTab(IconPlugin.label)
+            .setInitialTab("Icon")
             .hideSidebar()
     }
     .frame(width: 800)

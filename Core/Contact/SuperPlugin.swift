@@ -8,15 +8,9 @@ import SwiftUI
 /// - 插件在不同界面区域的视图渲染方法
 /// - 插件的生命周期管理方法
 protocol SuperPlugin {
-    /// 插件的唯一标签，用于标识和区分不同的插件
-    static var label: String { get }
-
     /// 插件的实例标签，用于在 ForEach 等需要实例属性的地方作为标识符
-    /// 默认实现返回静态 label 属性的值
+    /// 默认实现使用反射获取类名
     var instanceLabel: String { get }
-
-    /// 插件的唯一标识符，用于设置管理
-    static var id: String { get }
 
     /// 插件注册顺序，数字越小越先注册
     static var order: Int { get }
@@ -30,11 +24,21 @@ protocol SuperPlugin {
     /// 插件图标名称
     static var iconName: String { get }
 
-    /// 插件是否可配置（是否在设置中显示）
-    static var isConfigurable: Bool { get }
+    /// 是否允许用户在设置中切换启用/禁用此插件
+    /// 如果为 false，插件始终启用且不在设置中显示
+    /// 如果为 true，插件显示在设置中，用户可控制启用状态
+    static var allowUserToggle: Bool { get }
 
-    /// 指示插件是否作为主界面的标签页显示
-    var isTab: Bool { get }
+    /// 插件默认启用状态（仅在用户未配置时生效）
+    /// 如果用户配置过，以用户配置为准
+    static var defaultEnabled: Bool { get }
+
+    /// 插件是否应该注册到系统中
+    /// 开发者可通过此属性控制插件是否启用
+    static var shouldRegister: Bool { get }
+
+    /// 返回插件的标签项名称，如果插件提供标签页则返回标签名称，否则返回 nil
+    func addTabItem() -> String?
 
     /// 返回插件的列表视图
     /// - Parameters:
@@ -44,8 +48,9 @@ protocol SuperPlugin {
     func addListView(tab: String, project: Project?) -> AnyView?
 
     /// 返回插件的详情视图
+    /// - Parameter tab: 标签页的名称
     /// - Returns: 包装在 AnyView 中的详情视图
-    func addDetailView() -> AnyView?
+    func addDetailView(for tab: String) -> AnyView?
 
     /// 返回插件在工具栏前部区域的视图
     /// - Returns: 包装在 AnyView 中的工具栏前部视图
@@ -71,26 +76,32 @@ protocol SuperPlugin {
 /// SuperPlugin 协议的默认实现
 /// 提供了一些方法的空实现，使插件开发者只需实现他们关心的方法
 extension SuperPlugin {
-    var isTab: Bool { false }
+    /// 默认的标签项实现，返回 nil 表示不提供标签页
+    func addTabItem() -> String? { nil }
 
-    /// 默认的实例标签实现，返回静态 label 属性的值
+    /// 默认的实例标签实现，使用反射获取类名
     var instanceLabel: String {
-        return type(of: self).label
-    }
-
-    /// 默认的插件ID实现，返回静态 label 属性的值
-    static var id: String {
-        return label
+        let typeName = String(describing: type(of: self))
+        // 移除模块前缀（例如 "GitOK."）
+        if let dotIndex = typeName.lastIndex(of: ".") {
+            return String(typeName[typeName.index(after: dotIndex)...])
+        }
+        return typeName
     }
 
     /// 默认的注册顺序实现
     static var order: Int {
-        return 0
+        return 9999
     }
 
-    /// 默认的显示名称实现，返回静态 label 属性的值
+    /// 默认的显示名称实现，使用反射获取类名
     static var displayName: String {
-        return label
+        let typeName = String(describing: self)
+        // 移除模块前缀（例如 "GitOK."）
+        if let dotIndex = typeName.lastIndex(of: ".") {
+            return String(typeName[typeName.index(after: dotIndex)...])
+        }
+        return typeName
     }
 
     /// 默认的插件描述实现，返回空字符串
@@ -102,7 +113,13 @@ extension SuperPlugin {
     static var iconName: String {
         return "puzzlepiece.extension"
     }
-    static var isConfigurable: Bool { true }
+
+    /// 默认允许用户切换
+    static var allowUserToggle: Bool { true }
+
+    /// 默认应该注册
+    static var shouldRegister: Bool { true }
+
     /// 默认的工具栏前部视图实现，返回空视图
     func addToolBarLeadingView() -> AnyView? {
         nil
@@ -129,7 +146,7 @@ extension SuperPlugin {
     }
 
     /// 默认的详情视图实现，返回空视图
-    func addDetailView() -> AnyView? {
+    func addDetailView(for tab: String) -> AnyView? {
         nil
     }
 

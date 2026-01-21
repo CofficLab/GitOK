@@ -28,7 +28,7 @@ struct BtnChangeImage: View {
 
 #Preview("App - Small Screen") {
     RootView {
-        ContentLayout().setInitialTab(IconPlugin.label)
+        ContentLayout().setInitialTab("Icon")
             .hideSidebar()
             .hideProjectActions()
     }
@@ -38,7 +38,7 @@ struct BtnChangeImage: View {
 
 #Preview("App - Big Screen") {
     RootView {
-        ContentLayout().setInitialTab(IconPlugin.label)
+        ContentLayout().setInitialTab("Icon")
             .hideSidebar()
     }
     .frame(width: 1200)

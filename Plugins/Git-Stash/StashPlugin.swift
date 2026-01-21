@@ -3,10 +3,7 @@ import OSLog
 import SwiftUI
 
 /// Stash 插件：提供stash暂存功能，包括保存、查看、应用和删除stash
-class StashPlugin: NSObject, SuperPlugin, SuperLog {
-    /// 插件的唯一标识符，用于设置管理
-    static var id: String = "Stash"
-
+class StashPlugin: NSObject, SuperPlugin {
     /// 插件显示名称
     static var displayName: String = "Stash"
 
@@ -17,20 +14,14 @@ class StashPlugin: NSObject, SuperPlugin, SuperLog {
     static var iconName: String = "archivebox"
 
     /// 插件是否可配置（是否在设置中由用户控制启用/停用）
-    static var isConfigurable: Bool = false
-    /// 日志标识符
-    nonisolated static let emoji = "📦"
+    static var allowUserToggle: Bool = false
+    /// 插件默认启用状态
+    static var defaultEnabled: Bool = true
 
     @objc static let shared = StashPlugin()
-    static var label: String = "Stash"
 
     /// 是否启用该插件
-    @objc static let enable = false // TODO: 需要正确配置 LibGit2Swift 包依赖
-
-    /// 是否启用详细日志输出
-    nonisolated static let verbose = true
-
-    private override init() {}
+    @objc static let shouldRegister = false // TODO: 需要正确配置 LibGit2Swift 包依赖
 
     func addToolBarTrailingView() -> AnyView? {
         return AnyView(StashList.shared)
@@ -41,10 +32,9 @@ class StashPlugin: NSObject, SuperPlugin, SuperLog {
     }
 }
 
-
 #Preview("App - Small Screen") {
     ContentLayout()
-        .setInitialTab(StashPlugin.label)
+        .setInitialTab("Stash")
         .hideSidebar()
         .hideProjectActions()
         .inRootView()
@@ -54,7 +44,7 @@ class StashPlugin: NSObject, SuperPlugin, SuperLog {
 
 #Preview("App - Big Screen") {
     ContentLayout()
-        .setInitialTab(StashPlugin.label)
+        .setInitialTab("Stash")
         .hideSidebar()
         .inRootView()
         .frame(width: 1200)

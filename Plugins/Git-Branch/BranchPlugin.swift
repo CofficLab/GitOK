@@ -3,10 +3,7 @@ import OSLog
 import SwiftUI
 
 /// Branch 插件：提供分支列表视图（工具栏右侧）并在状态栏左侧展示当前分支。
-class BranchPlugin: NSObject, SuperPlugin, SuperLog {
-    /// 插件的唯一标识符，用于设置管理
-    static var id: String = "Branch"
-
+class BranchPlugin: NSObject, SuperPlugin {
     /// 插件显示名称
     static var displayName: String = "Branch"
 
@@ -17,23 +14,19 @@ class BranchPlugin: NSObject, SuperPlugin, SuperLog {
     static var iconName: String = "arrow.triangle.branch"
 
     /// 插件是否可配置（是否在设置中由用户控制启用/停用）
-    static var isConfigurable: Bool = false
-    /// 日志标识符
-    nonisolated static let emoji = "🌿"
+    static var allowUserToggle = true
+    /// 插件默认启用状态
+    static var defaultEnabled: Bool = true
 
     @objc static let shared = BranchPlugin()
-    static var label: String = "Branch"
 
     /// 插件注册顺序
     static var order: Int = 22
 
     /// 是否启用该插件
-    @objc static let enable = true
+    @objc static let shouldRegister = true
 
-    /// 是否启用详细日志输出
-    nonisolated static let verbose = true
-
-    private override init() {}
+    
 
     func addToolBarTrailingView() -> AnyView? {
         return AnyView(BranchesView.shared)
@@ -44,10 +37,9 @@ class BranchPlugin: NSObject, SuperPlugin, SuperLog {
     }
 }
 
-
 #Preview("App - Small Screen") {
     ContentLayout()
-        .setInitialTab(BranchPlugin.label)
+        .setInitialTab("Branch")
         .hideSidebar()
         .hideProjectActions()
         .inRootView()
@@ -57,7 +49,7 @@ class BranchPlugin: NSObject, SuperPlugin, SuperLog {
 
 #Preview("App - Big Screen") {
     ContentLayout()
-        .setInitialTab(BranchPlugin.label)
+        .setInitialTab("Branch")
         .hideSidebar()
         .inRootView()
         .frame(width: 1200)

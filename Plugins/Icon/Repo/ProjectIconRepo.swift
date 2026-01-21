@@ -65,7 +65,7 @@ class ProjectIconRepo {
             .hideProjectActions()
             .hideSidebar()
             .hideTabPicker()
-            .setInitialTab(IconPlugin.label)
+            .setInitialTab("Icon")
     }
     .frame(width: 800)
     .frame(height: 800)

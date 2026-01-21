@@ -325,7 +325,7 @@ struct XcodeDownloadButton: View {
 
 #Preview("App - Small Screen") {
     ContentLayout()
-        .setInitialTab(IconPlugin.label)
+        .setInitialTab("Icon")
         .hideSidebar()
         .hideTabPicker()
         .hideProjectActions()
@@ -336,7 +336,7 @@ struct XcodeDownloadButton: View {
 
 #Preview("App - Big Screen") {
     ContentLayout()
-        .setInitialTab(IconPlugin.label)
+        .setInitialTab("Icon")
         .hideTabPicker()
         .hideProjectActions()
         .hideSidebar()

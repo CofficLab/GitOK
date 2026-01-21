@@ -154,7 +154,7 @@ class IconProvider: NSObject, ObservableObject, SuperLog {
 
 #Preview("App - Small Screen") {
     RootView {
-        ContentLayout().setInitialTab(IconPlugin.label)
+        ContentLayout().setInitialTab("Icon")
             .hideSidebar()
             .hideTabPicker()
             .hideProjectActions()
@@ -165,7 +165,7 @@ class IconProvider: NSObject, ObservableObject, SuperLog {
 
 #Preview("App - Big Screen") {
     RootView {
-        ContentLayout().setInitialTab(IconPlugin.label)
+        ContentLayout().setInitialTab("Icon")
             .hideSidebar()
             .hideTabPicker()
     }

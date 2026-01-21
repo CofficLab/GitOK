@@ -134,7 +134,7 @@ struct ImageSetDownloadButton: View {
 #Preview("App - Small Screen") {
     RootView {
         ContentLayout()
-            .setInitialTab(IconPlugin.label)
+            .setInitialTab("Icon")
             .hideSidebar()
             .hideProjectActions()
     }
@@ -145,7 +145,7 @@ struct ImageSetDownloadButton: View {
 #Preview("App - Big Screen") {
     RootView {
         ContentLayout()
-            .setInitialTab(IconPlugin.label)
+            .setInitialTab("Icon")
             .hideTabPicker()
             .hideProjectActions()
             .hideSidebar()

@@ -90,7 +90,7 @@ enum RemoteIconError: Error, LocalizedError {
 #Preview("App - Small Screen") {
     RootView {
         ContentLayout()
-            .setInitialTab(IconPlugin.label)
+            .setInitialTab("Icon")
             .hideSidebar()
             .hideProjectActions()
     }
@@ -101,7 +101,7 @@ enum RemoteIconError: Error, LocalizedError {
 #Preview("App - Big Screen") {
     RootView {
         ContentLayout()
-            .setInitialTab(IconPlugin.label)
+            .setInitialTab("Icon")
             .hideSidebar()
     }
     .frame(width: 1200)

@@ -2,10 +2,7 @@ import MagicKit
 import OSLog
 import SwiftUI
 
-class ProjectPickerPlugin: NSObject, SuperPlugin, SuperLog {
-    /// 插件的唯一标识符，用于设置管理
-    static var id: String = "ProjectPicker"
-
+class ProjectPickerPlugin: NSObject, SuperPlugin {
     /// 插件显示名称
     static var displayName: String = "ProjectPicker"
 
@@ -16,22 +13,19 @@ class ProjectPickerPlugin: NSObject, SuperPlugin, SuperLog {
     static var iconName: String = "folder"
 
     /// 插件是否可配置（是否在设置中由用户控制启用/停用）
-    static var isConfigurable: Bool = false
+    static var allowUserToggle: Bool = false
+    /// 插件默认启用状态
+    static var defaultEnabled: Bool = true
 
-    /// 日志标识符
-    nonisolated static let emoji = "📁"
+
 
     /// 是否启用该插件
-    @objc static let enable = true
+    @objc static let shouldRegister = true
 
-    /// 是否启用详细日志输出
-    nonisolated static let verbose = true
-
-    static var label: String = "ProjectPicker"
 
     @objc static let shared = ProjectPickerPlugin()
 
-    private override init() {
+    override private init() {
     }
 
     func addToolBarLeadingView() -> AnyView? {
@@ -60,4 +54,3 @@ class ProjectPickerPlugin: NSObject, SuperPlugin, SuperLog {
     .frame(width: 1200)
     .frame(height: 1200)
 }
-

@@ -196,7 +196,7 @@ class IconAsset: Identifiable {
 
 #Preview("App - Small Screen") {
     RootView {
-        ContentLayout().setInitialTab(IconPlugin.label)
+        ContentLayout().setInitialTab("Icon")
             .hideSidebar()
             .hideProjectActions()
     }
@@ -206,7 +206,7 @@ class IconAsset: Identifiable {
 
 #Preview("App - Big Screen") {
     RootView {
-        ContentLayout().setInitialTab(IconPlugin.label)
+        ContentLayout().setInitialTab("Icon")
             .frame(width: 1200)
             .frame(height: 1200)
     }

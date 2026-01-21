@@ -69,7 +69,7 @@ struct IconTabsBar: View {
 #Preview("App - Small Screen") {
     RootView {
         ContentLayout()
-            .setInitialTab(IconPlugin.label)
+            .setInitialTab("Icon")
             .hideSidebar()
             .hideProjectActions()
     }
@@ -82,7 +82,7 @@ struct IconTabsBar: View {
         ContentLayout()
             .hideProjectActions()
             .hideTabPicker()
-            .setInitialTab(IconPlugin.label)
+            .setInitialTab("Icon")
             .hideSidebar()
     }
     .frame(width: 800)

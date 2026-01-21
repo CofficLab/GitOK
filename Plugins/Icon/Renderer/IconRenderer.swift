@@ -160,7 +160,7 @@ struct IconRenderView: View {
 #Preview("App - Small Screen") {
     RootView {
         ContentLayout()
-            .setInitialTab(IconPlugin.label)
+            .setInitialTab("Icon")
             .hideSidebar()
             .hideProjectActions()
     }
@@ -171,7 +171,7 @@ struct IconRenderView: View {
 #Preview("App - Big Screen") {
     RootView {
         ContentLayout()
-            .setInitialTab(IconPlugin.label)
+            .setInitialTab("Icon")
             .hideSidebar()
     }
     .frame(width: 800)

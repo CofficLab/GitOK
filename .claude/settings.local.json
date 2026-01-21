@@ -48,7 +48,12 @@
       "WebSearch",
       "Bash(defaults read:*)",
       "Bash(mdfind:*)",
-      "Bash(mkdir:*)"
+      "Bash(mkdir:*)",
+      "Bash(git restore:*)",
+      "Bash(git mv:*)",
+      "Bash(for file in /Users/colorfy/Code/CofficLab/GitOK/Plugins/*/*Plugin.swift:*)",
+      "Bash(do:*)",
+      "Bash(python3 -c \"\nimport sys\nlines = open\\(''$file''\\).readlines\\(\\)\nseen = set\\(\\)\nresult = []\nfor line in lines:\n    if ''static var defaultEnabled'' in line:\n        if ''defaultEnabled'' not in seen:\n            result.append\\(line\\)\n            seen.add\\(''defaultEnabled''\\)\n    else:\n        result.append\\(line\\)\nopen\\(''$file'', ''w''\\).writelines\\(result\\)\n\")"
     ]
   }
 }
