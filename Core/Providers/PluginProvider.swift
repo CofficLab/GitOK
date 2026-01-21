@@ -56,6 +56,9 @@ class PluginProvider: ObservableObject, SuperLog, SuperThread {
 
         let classes = UnsafeBufferPointer(start: classList, count: Int(count))
 
+        // 临时存储发现的插件，用于排序
+        var discoveredPlugins: [(plugin: any SuperPlugin, className: String, order: Int)] = []
+
         for i in 0 ..< classes.count {
             let cls: AnyClass = classes[i]
             let className = NSStringFromClass(cls)
@@ -101,9 +104,17 @@ class PluginProvider: ObservableObject, SuperLog, SuperThread {
                 continue
             }
 
-            // 注册插件
+            // 添加到临时数组，稍后按 order 排序
+            let pluginOrder = type(of: plugin).order
+            discoveredPlugins.append((plugin, className, pluginOrder))
+        }
+
+        // 按 order 排序后注册
+        discoveredPlugins.sort { $0.order < $1.order }
+
+        for (plugin, className, order) in discoveredPlugins {
             register(plugin)
-            if Self.verbose { os_log("\(self.t)🚀 Registered plugin: \(className) (order: \(type(of: plugin).order))") }
+            if Self.verbose { os_log("\(self.t)🚀 Registered plugin: \(className) (order: \(order))") }
         }
 
         if Self.verbose {
