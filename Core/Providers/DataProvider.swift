@@ -47,6 +47,12 @@ class DataProvider: NSObject, ObservableObject, SuperLog {
         super.init()
 
         self.checkIfProjectExists()
+
+        // 初始化时也需要更新 isGitRepo 缓存
+        if let project = initialProject {
+            let isGit = LibGit2.isGitRepository(at: project.path)
+            project.updateIsGitRepoCacheSync(isGit)
+        }
     }
 }
 

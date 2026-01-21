@@ -52,6 +52,7 @@ struct FileList: View, SuperThread, SuperLog {
             fileListView
         }
         .onAppear(perform: onAppear)
+        .onChange(of: data.project, onProjectChange)
         .onChange(of: data.commit, onCommitChange)
         .onChange(of: selection, onSelectionChange)
         .onProjectDidCommit(perform: onProjectDidCommit)
@@ -306,6 +307,13 @@ extension FileList {
     func onAppear() {
         Task {
             await self.refresh(reason: "OnAppear")
+        }
+    }
+
+    /// 项目变更时的事件处理
+    func onProjectChange() {
+        Task {
+            await self.refresh(reason: "OnProjectChanged")
         }
     }
 

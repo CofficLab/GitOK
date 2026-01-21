@@ -3,13 +3,13 @@ import OSLog
 import SwiftUI
 
 /// Readme 插件：在状态栏提供 README 入口。
-class ReadmePlugin: SuperPlugin, SuperLog, PluginRegistrant {
-    static let shared = ReadmePlugin()
+class ReadmePlugin: NSObject, SuperPlugin, SuperLog {
+    @objc static let shared = ReadmePlugin()
     /// 日志标识符
     nonisolated static let emoji = "📖"
 
     /// 是否启用该插件
-    static let enable = true
+    @objc static let enable = true
 
     /// 是否启用详细日志输出
     nonisolated static let verbose = true
@@ -31,36 +31,13 @@ class ReadmePlugin: SuperPlugin, SuperLog, PluginRegistrant {
     /// 插件是否可配置（是否在设置中由用户控制启用/停用）
     static var isConfigurable: Bool = true
 
-    private init() {}
+    private override init() {}
 
     func addStatusBarTrailingView() -> AnyView? {
-        // 检查用户是否启用了此插件
-        guard PluginSettingsStore.shared.isPluginEnabled("Readme") else {
-            return nil
-        }
-
         return AnyView(ReadmeStatusIcon.shared)
     }
 }
 
-// MARK: - PluginRegistrant
-
-extension ReadmePlugin {
-    @objc static func register() {
-        guard enable else { return }
-
-
-        Task {
-            if Self.verbose {
-                os_log("\(Self.t)🚀 Register ReadmePlugin")
-            }
-
-            await PluginRegistry.shared.register(id: "Readme", order: 28) {
-                ReadmePlugin.shared
-            }
-        }
-    }
-}
 
 #Preview("App - Small Screen") {
     ContentLayout()

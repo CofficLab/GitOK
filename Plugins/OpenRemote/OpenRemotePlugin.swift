@@ -2,11 +2,11 @@ import MagicKit
 import OSLog
 import SwiftUI
 
-class OpenRemotePlugin: SuperPlugin, SuperLog, PluginRegistrant {
+class OpenRemotePlugin: NSObject, SuperPlugin, SuperLog {
     /// 日志标识符
     nonisolated static let emoji = "🌐"
 
-    static let shared = OpenRemotePlugin()
+    @objc static let shared = OpenRemotePlugin()
     static var label: String = "OpenRemote"
 
     /// 插件的唯一标识符，用于设置管理
@@ -25,36 +25,15 @@ class OpenRemotePlugin: SuperPlugin, SuperLog, PluginRegistrant {
     static var isConfigurable: Bool = true
 
     /// 是否启用该插件
-    static let enable = true
+    @objc static let enable = true
 
     /// 是否启用详细日志输出
     nonisolated static let verbose = true
 
-    private init() {}
+    private override init() {}
 
     func addToolBarTrailingView() -> AnyView? {
-        // 检查用户是否启用了此插件
-        guard PluginSettingsStore.shared.isPluginEnabled("OpenRemote") else {
-            return nil
-        }
-
         return AnyView(BtnOpenRemoteView.shared)
     }
 }
 
-// MARK: - PluginRegistrant
-
-extension OpenRemotePlugin {
-    @objc static func register() {
-
-        Task {
-            if Self.verbose {
-                os_log("\(self.t)🚀 Register OpenRemotePlugin")
-            }
-
-            await PluginRegistry.shared.register(id: "OpenRemote", order: 16) {
-                OpenRemotePlugin.shared
-            }
-        }
-    }
-}

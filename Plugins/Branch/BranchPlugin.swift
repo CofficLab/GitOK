@@ -3,7 +3,7 @@ import OSLog
 import SwiftUI
 
 /// Branch 插件：提供分支列表视图（工具栏右侧）并在状态栏左侧展示当前分支。
-class BranchPlugin: SuperPlugin, SuperLog, PluginRegistrant {
+class BranchPlugin: NSObject, SuperPlugin, SuperLog {
     /// 插件的唯一标识符，用于设置管理
     static var id: String = "Branch"
 
@@ -21,43 +21,29 @@ class BranchPlugin: SuperPlugin, SuperLog, PluginRegistrant {
     /// 日志标识符
     nonisolated static let emoji = "🌿"
 
-    static let shared = BranchPlugin()
+    @objc static let shared = BranchPlugin()
     static var label: String = "Branch"
 
+    /// 插件注册顺序
+    static var order: Int = 22
+
     /// 是否启用该插件
-    static let enable = true
+    @objc static let enable = true
 
     /// 是否启用详细日志输出
     nonisolated static let verbose = true
 
-    private init() {}
+    private override init() {}
 
     func addToolBarTrailingView() -> AnyView? {
-        AnyView(BranchesView.shared)
+        return AnyView(BranchesView.shared)
     }
 
     func addStatusBarLeadingView() -> AnyView? {
-        AnyView(BranchStatusTile())
+        return AnyView(BranchStatusTile())
     }
 }
 
-// MARK: - PluginRegistrant
-
-extension BranchPlugin {
-    @objc static func register() {
-        guard enable else { return }
-
-        Task {
-            if Self.verbose {
-                os_log("\(self.t)🚀 Register BranchPlugin")
-            }
-
-            await PluginRegistry.shared.register(id: "Branch", order: 22) {
-                BranchPlugin.shared
-            }
-        }
-    }
-}
 
 #Preview("App - Small Screen") {
     ContentLayout()

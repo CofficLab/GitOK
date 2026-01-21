@@ -5,18 +5,21 @@ import SwiftUI
 
 /// Banner 插件类
 /// 负责管理和提供应用横幅生成功能
-class BannerPlugin: SuperPlugin, SuperLog, PluginRegistrant {
+class BannerPlugin: NSObject, SuperPlugin, SuperLog {
     /// 日志标识符
     nonisolated static let emoji = "📣"
 
     /// 是否启用该插件
-    static let enable = true
+    @objc static let enable = true
 
     /// 是否启用详细日志输出
     nonisolated static let verbose = true
 
-    static let shared = BannerPlugin()
+    @objc static let shared = BannerPlugin()
     static var label: String = "Banner"
+
+    /// 插件注册顺序
+    static var order: Int = 1
 
     /// 插件的唯一标识符，用于设置管理
     static var id: String = "Banner"
@@ -35,30 +38,13 @@ class BannerPlugin: SuperPlugin, SuperLog, PluginRegistrant {
 
     var isTab: Bool = true
 
-    private init() {}
+    private override init() {}
 
     func addDetailView() -> AnyView? {
-        AnyView(BannerDetailLayout.shared.environmentObject(BannerProvider.shared))
+        return AnyView(BannerDetailLayout.shared.environmentObject(BannerProvider.shared))
     }
 }
 
-// MARK: - PluginRegistrant
-
-extension BannerPlugin {
-    @objc static func register() {
-        guard enable else { return }
-
-        Task {
-            if Self.verbose {
-                os_log("\(self.t)🚀 Register BannerPlugin")
-            }
-
-            await PluginRegistry.shared.register(id: "Banner", order: 1) {
-                BannerPlugin.shared
-            }
-        }
-    }
-}
 
 #Preview("App - Small Screen") {
     ContentLayout()

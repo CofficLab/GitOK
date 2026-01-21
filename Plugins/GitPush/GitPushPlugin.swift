@@ -3,7 +3,7 @@ import OSLog
 import SwiftUI
 
 /// GitPush 插件：在工具栏提供“推送”按钮
-class GitPushPlugin: SuperPlugin, SuperLog, PluginRegistrant {
+class GitPushPlugin: NSObject, SuperPlugin, SuperLog {
     /// 插件的唯一标识符，用于设置管理
     static var id: String = "GitPush"
 
@@ -23,7 +23,7 @@ class GitPushPlugin: SuperPlugin, SuperLog, PluginRegistrant {
     nonisolated static let emoji = "⬆️"
 
     /// 是否启用该插件
-    static let enable = true
+    @objc static let enable = true
 
     /// 是否启用详细日志输出
     nonisolated static let verbose = true
@@ -31,38 +31,16 @@ class GitPushPlugin: SuperPlugin, SuperLog, PluginRegistrant {
     /// 插件标签（用于实例化标识）
     static var label: String = "GitPush"
 
-    static let shared = GitPushPlugin()
-    private init() {}
+    @objc static let shared = GitPushPlugin()
+    private override init() {}
 
     /// 在工具栏右侧添加视图
     /// - Returns: 推送按钮视图
     func addToolBarTrailingView() -> AnyView? {
-        // 检查用户是否启用了此插件
-        guard PluginSettingsStore.shared.isPluginEnabled(Self.id) else {
-            return nil
-        }
         return AnyView(BtnGitPushView.shared)
     }
 }
 
-// MARK: - PluginRegistrant
-
-extension GitPushPlugin {
-    /// 自动注册插件到插件注册表
-    @objc static func register() {
-        guard enable else { return }
-
-        Task {
-            if Self.verbose {
-                os_log("\(self.t)🚀 Register GitPushPlugin")
-            }
-            // 设置排序为 19，位于 Sync(20) 与 Pull(21) 之前
-            await PluginRegistry.shared.register(id: Self.id, order: 19) {
-                GitPushPlugin.shared
-            }
-        }
-    }
-}
 
 // MARK: - Preview
 

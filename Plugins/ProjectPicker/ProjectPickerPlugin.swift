@@ -2,7 +2,7 @@ import MagicKit
 import OSLog
 import SwiftUI
 
-class ProjectPickerPlugin: SuperPlugin, SuperLog, PluginRegistrant {
+class ProjectPickerPlugin: NSObject, SuperPlugin, SuperLog {
     /// 插件的唯一标识符，用于设置管理
     static var id: String = "ProjectPicker"
 
@@ -22,20 +22,20 @@ class ProjectPickerPlugin: SuperPlugin, SuperLog, PluginRegistrant {
     nonisolated static let emoji = "📁"
 
     /// 是否启用该插件
-    static let enable = true
+    @objc static let enable = true
 
     /// 是否启用详细日志输出
     nonisolated static let verbose = true
 
     static var label: String = "ProjectPicker"
 
-    static let shared = ProjectPickerPlugin()
+    @objc static let shared = ProjectPickerPlugin()
 
-    private init() {
+    private override init() {
     }
 
     func addToolBarLeadingView() -> AnyView? {
-        AnyView(ProjectPickerView.shared)
+        return AnyView(ProjectPickerView.shared)
     }
 }
 
@@ -61,20 +61,3 @@ class ProjectPickerPlugin: SuperPlugin, SuperLog, PluginRegistrant {
     .frame(height: 1200)
 }
 
-// MARK: - PluginRegistrant
-
-extension ProjectPickerPlugin {
-    @objc static func register() {
-        guard enable else { return }
-
-        Task {
-            if Self.verbose {
-                os_log("\(self.t)🚀 Register ProjectPickerPlugin")
-            }
-
-            await PluginRegistry.shared.register(id: "ProjectPicker", order: 24) {
-                ProjectPickerPlugin.shared
-            }
-        }
-    }
-}
