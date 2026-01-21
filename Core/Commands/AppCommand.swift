@@ -2,8 +2,8 @@ import SwiftUI
 import MagicKit
 import AppKit
 
-/// 设置命令：在应用菜单中添加设置入口
-struct SettingsCommand: Commands, SuperLog {
+/// 在应用菜单中添加入口
+struct AppCommand: Commands, SuperLog {
     /// 日志标识符
     nonisolated static let emoji = "⚙️"
 
@@ -17,13 +17,6 @@ struct SettingsCommand: Commands, SuperLog {
                 NotificationCenter.default.post(name: .openSettings, object: nil)
             }
             .keyboardShortcut(",", modifiers: .command)
-
-            Divider()
-
-            Button("插件管理...") {
-                // 发送打开插件设置的通知
-                NotificationCenter.default.post(name: .openPluginSettings, object: nil)
-            }
         }
         #endif
     }

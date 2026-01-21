@@ -72,6 +72,9 @@
     "Commit 风格" : {
 
     },
+    "Commit 风格..." : {
+
+    },
     "current_head" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -378,6 +381,9 @@
 
     },
     "仓库设置" : {
+
+    },
+    "仓库设置..." : {
 
     },
     "例如: CofficLab" : {
@@ -1026,6 +1032,9 @@
 
     },
     "邮箱" : {
+
+    },
+    "配置" : {
 
     },
     "配置 Commit 消息风格" : {

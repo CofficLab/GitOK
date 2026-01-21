@@ -91,6 +91,18 @@ extension AppProvider {
         defaultSettingTab = "plugins"
         showSettings = true
     }
+
+    /// 打开仓库设置
+    func openRepositorySettings() {
+        defaultSettingTab = "repository"
+        showSettings = true
+    }
+
+    /// 打开Commit风格设置
+    func openCommitStyleSettings() {
+        defaultSettingTab = "commitStyle"
+        showSettings = true
+    }
 }
 
 // MARK: - Preview
