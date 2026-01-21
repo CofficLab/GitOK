@@ -1,5 +1,6 @@
 import Foundation
 import MagicKit
+import ObjectiveC.runtime
 import OSLog
 import StoreKit
 import SwiftData
@@ -8,6 +9,105 @@ import SwiftUI
 class PluginProvider: ObservableObject, SuperLog, SuperThread {
     let emoji = "🧩"
     @Published private(set) var plugins: [SuperPlugin] = []
+
+    // MARK: - Plugin Registration
+
+    /// 已注册的插件实例列表
+    private var registeredPlugins: [any SuperPlugin] = []
+
+    /// 注册一个插件实例
+    /// - Parameter plugin: 要注册的插件实例
+    private func register(_ plugin: any SuperPlugin) {
+        registeredPlugins.append(plugin)
+    }
+
+    /// 获取所有已注册的插件实例，按 order 排序
+    /// - Returns: 排序后的插件实例数组
+    private func getAllPlugins() -> [any SuperPlugin] {
+        registeredPlugins.sorted { type(of: $0).order < type(of: $1).order }
+    }
+
+    /// 清空所有注册的插件
+    private func clearRegisteredPlugins() {
+        registeredPlugins.removeAll()
+    }
+
+    /// 已注册插件数量
+    private var registeredCount: Int {
+        registeredPlugins.count
+    }
+
+    /// 自动发现并注册所有插件
+    /// 通过扫描 Objective-C runtime 中所有以 "Plugin" 结尾的类
+    private func autoDiscoverAndRegisterPlugins() {
+        // 清空已有注册（防止重复注册）
+        clearRegisteredPlugins()
+
+        var count: UInt32 = 0
+        guard let classList = objc_copyClassList(&count) else {
+            os_log("❌ Failed to get class list")
+            return
+        }
+        defer { free(UnsafeMutableRawPointer(classList)) }
+
+        os_log("🔍 Scanning classes for plugins...")
+
+        let classes = UnsafeBufferPointer(start: classList, count: Int(count))
+
+        for i in 0 ..< classes.count {
+            let cls: AnyClass = classes[i]
+            let className = NSStringFromClass(cls)
+
+            // 只检查 GitOK 命名空间下以 "Plugin" 结尾的类
+            guard className.hasPrefix("GitOK."), className.hasSuffix("Plugin") else { continue }
+
+            // 检查插件是否启用
+            var enabled = true // 默认启用
+            let enableSelector = NSSelectorFromString("enable")
+            if let enableMethod = class_getClassMethod(cls, enableSelector) {
+                typealias EnableGetter = @convention(c) (AnyClass, Selector) -> Bool
+                let getter = unsafeBitCast(method_getImplementation(enableMethod), to: EnableGetter.self)
+                enabled = getter(cls, enableSelector)
+            } else {
+                os_log("⚠️ No enable method found for \(className), using default: true")
+            }
+
+            guard enabled else {
+                os_log("⏭️ Skipping disabled plugin: \(className)")
+                continue
+            }
+
+            // 尝试获取 shared 单例实例
+            let sharedSelector = NSSelectorFromString("shared")
+            guard let sharedMethod = class_getClassMethod(cls, sharedSelector) else {
+                os_log("⚠️ No @objc shared found for \(className), skipping")
+                continue
+            }
+
+            // 调用 shared 方法获取实例
+            typealias SharedGetter = @convention(c) (AnyClass, Selector) -> AnyObject?
+            let getter = unsafeBitCast(method_getImplementation(sharedMethod), to: SharedGetter.self)
+
+            guard let instance = getter(cls, sharedSelector) else {
+                os_log("⚠️ Failed to get shared instance for \(className)")
+                continue
+            }
+
+            // 检查实例是否符合 SuperPlugin 协议
+            guard let plugin = instance as? any SuperPlugin else {
+                os_log("⚠️ Instance of \(className) does not conform to SuperPlugin")
+                continue
+            }
+
+            // 注册插件
+            register(plugin)
+            os_log("🚀 Registered plugin: \(className) (order: \(type(of: plugin).order))")
+        }
+
+        os_log("📊 Registered \(self.registeredCount) plugins total")
+    }
+
+    // MARK: - Plugin Query Methods
 
     /// 检查插件是否被启用
     /// - Parameter plugin: 要检查的插件
@@ -104,6 +204,8 @@ class PluginProvider: ObservableObject, SuperLog, SuperThread {
         return nil
     }
 
+    // MARK: - Initialization
+
     init(plugins: [SuperPlugin]) {
         let verbose = false
         if verbose {
@@ -128,13 +230,13 @@ class PluginProvider: ObservableObject, SuperLog, SuperThread {
         os_log("🏭 PluginProvider init with autoDiscover: \(autoDiscover)")
 
         if autoDiscover {
-            os_log("🔄 Starting plugin registration")
-            // 注册所有插件到 PluginRegistry
-            registerAllPlugins()
+            os_log("🔄 Starting plugin auto-discovery and registration")
+            // 自动发现并注册所有插件
+            autoDiscoverAndRegisterPlugins()
 
-            os_log("📦 Loading plugin instances from registry")
-            // 从 PluginRegistry 获取所有已注册的插件实例
-            self.plugins = PluginRegistry.shared.getAllPlugins()
+            os_log("📦 Loading plugin instances")
+            // 从内部注册表获取所有已注册的插件实例
+            self.plugins = getAllPlugins()
 
             os_log("📊 PluginProvider initialized with \(self.plugins.count) plugins")
 
