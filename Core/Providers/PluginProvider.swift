@@ -7,7 +7,9 @@ import SwiftData
 import SwiftUI
 
 class PluginProvider: ObservableObject, SuperLog, SuperThread {
-    let emoji = "🧩"
+    nonisolated static let emoji = "🧩"
+    static let verbose = true
+
     @Published private(set) var plugins: [SuperPlugin] = []
 
     // MARK: - Plugin Registration
@@ -45,12 +47,12 @@ class PluginProvider: ObservableObject, SuperLog, SuperThread {
 
         var count: UInt32 = 0
         guard let classList = objc_copyClassList(&count) else {
-            os_log("❌ Failed to get class list")
+            os_log(.error, "\(self.t)❌ Failed to get class list")
             return
         }
         defer { free(UnsafeMutableRawPointer(classList)) }
 
-        os_log("🔍 Scanning classes for plugins...")
+        if Self.verbose { os_log("\(self.t)🔍 Scanning classes for plugins...") }
 
         let classes = UnsafeBufferPointer(start: classList, count: Int(count))
 
@@ -69,18 +71,18 @@ class PluginProvider: ObservableObject, SuperLog, SuperThread {
                 let getter = unsafeBitCast(method_getImplementation(enableMethod), to: EnableGetter.self)
                 enabled = getter(cls, enableSelector)
             } else {
-                os_log("⚠️ No enable method found for \(className), using default: true")
+                if Self.verbose { os_log("\(self.t)⚠️ No enable method found for \(className), using default: true") }
             }
 
             guard enabled else {
-                os_log("⏭️ Skipping disabled plugin: \(className)")
+                if Self.verbose { os_log("\(self.t)⏭️ Skipping disabled plugin: \(className)") }
                 continue
             }
 
             // 尝试获取 shared 单例实例
             let sharedSelector = NSSelectorFromString("shared")
             guard let sharedMethod = class_getClassMethod(cls, sharedSelector) else {
-                os_log("⚠️ No @objc shared found for \(className), skipping")
+                if Self.verbose { os_log("\(self.t)⚠️ No @objc shared found for \(className), skipping") }
                 continue
             }
 
@@ -89,22 +91,24 @@ class PluginProvider: ObservableObject, SuperLog, SuperThread {
             let getter = unsafeBitCast(method_getImplementation(sharedMethod), to: SharedGetter.self)
 
             guard let instance = getter(cls, sharedSelector) else {
-                os_log("⚠️ Failed to get shared instance for \(className)")
+                if Self.verbose { os_log("\(self.t)⚠️ Failed to get shared instance for \(className)") }
                 continue
             }
 
             // 检查实例是否符合 SuperPlugin 协议
             guard let plugin = instance as? any SuperPlugin else {
-                os_log("⚠️ Instance of \(className) does not conform to SuperPlugin")
+                if Self.verbose { os_log("\(self.t)⚠️ Instance of \(className) does not conform to SuperPlugin") }
                 continue
             }
 
             // 注册插件
             register(plugin)
-            os_log("🚀 Registered plugin: \(className) (order: \(type(of: plugin).order))")
+            if Self.verbose { os_log("\(self.t)🚀 Registered plugin: \(className) (order: \(type(of: plugin).order))") }
         }
 
-        os_log("📊 Registered \(self.registeredCount) plugins total")
+        if Self.verbose {
+            os_log("\(self.t)📊 Registered \(self.registeredCount) plugins total")
+        }
     }
 
     // MARK: - Plugin Query Methods
@@ -206,14 +210,14 @@ class PluginProvider: ObservableObject, SuperLog, SuperThread {
 
     // MARK: - Initialization
 
-    init(plugins: [SuperPlugin]) {
-        let verbose = false
-        if verbose {
-            os_log("\(Self.onInit) PluginProvider")
-        }
+    init() {
+        // 自动发现并注册所有插件
+        autoDiscoverAndRegisterPlugins()
 
-        self.plugins = plugins
+        // 从内部注册表获取所有已注册的插件实例
+        self.plugins = getAllPlugins()
 
+        // 检查重复标签
         var labelCounts: [String: Int] = [:]
         for plugin in plugins {
             labelCounts[plugin.instanceLabel, default: 0] += 1
@@ -221,39 +225,8 @@ class PluginProvider: ObservableObject, SuperLog, SuperThread {
 
         let duplicateLabels = labelCounts.filter { $0.value > 1 }.map { $0.key }
         if !duplicateLabels.isEmpty {
+            os_log("❌ Duplicate plugin labels: \(duplicateLabels)")
             assertionFailure("Duplicate labels: \(duplicateLabels)")
-        }
-    }
-
-    /// 使用自动发现插件的初始化方法
-    init(autoDiscover: Bool = true) {
-        os_log("🏭 PluginProvider init with autoDiscover: \(autoDiscover)")
-
-        if autoDiscover {
-            os_log("🔄 Starting plugin auto-discovery and registration")
-            // 自动发现并注册所有插件
-            autoDiscoverAndRegisterPlugins()
-
-            os_log("📦 Loading plugin instances")
-            // 从内部注册表获取所有已注册的插件实例
-            self.plugins = getAllPlugins()
-
-            os_log("📊 PluginProvider initialized with \(self.plugins.count) plugins")
-
-            // 检查重复标签
-            var labelCounts: [String: Int] = [:]
-            for plugin in plugins {
-                labelCounts[plugin.instanceLabel, default: 0] += 1
-            }
-
-            let duplicateLabels = labelCounts.filter { $0.value > 1 }.map { $0.key }
-            if !duplicateLabels.isEmpty {
-                os_log("❌ Duplicate plugin labels: \(duplicateLabels)")
-                assertionFailure("Duplicate labels: \(duplicateLabels)")
-            }
-        } else {
-            os_log("⏭️ Auto discovery disabled")
-            self.plugins = []
         }
     }
 }

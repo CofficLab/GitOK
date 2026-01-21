@@ -44,7 +44,7 @@ struct RootView<Content>: View, SuperEvent, SuperLog where Content: View {
         // 初始化提供者
         self.appProvider = AppProvider(repoManager: self.repoManager)
         self.iconProvider = IconProvider()
-        self.pluginProvider = PluginProvider(autoDiscover: true)
+        self.pluginProvider = PluginProvider()
 
         // 初始化数据提供者
         do {
