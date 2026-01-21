@@ -3,16 +3,12 @@ import MagicKit
 import OSLog
 import SwiftUI
 
-class OpenKiroPlugin: NSObject, SuperPlugin, SuperLog {
+class OpenKiroPlugin: NSObject, SuperPlugin {
     @objc static let shared = OpenKiroPlugin()
-    /// 日志标识符
-    nonisolated static let emoji = "🌊"
 
     /// 是否启用该插件
     @objc static let shouldRegister = false
 
-    /// 是否启用详细日志输出
-    nonisolated static let verbose = true
 
     /// 插件显示名称
     static var displayName: String = "OpenKiro"

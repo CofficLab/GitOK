@@ -5,15 +5,11 @@ import SwiftUI
 /**
  * Commit插件 - 负责显示和管理Git提交列表
  */
-class CommitPlugin: NSObject, SuperPlugin, SuperLog {
-    /// 日志标识符
-    nonisolated static let emoji = "🍒"
+class CommitPlugin: NSObject, SuperPlugin {
 
     /// 是否启用该插件
     @objc static let shouldRegister = false
 
-    /// 是否启用详细日志输出
-    nonisolated static let verbose = true
 
     @objc static let shared = CommitPlugin()
     static let label: String = "Commit"

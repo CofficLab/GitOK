@@ -3,7 +3,7 @@ import OSLog
 import SwiftUI
 
 /// Branch 插件：提供分支列表视图（工具栏右侧）并在状态栏左侧展示当前分支。
-class BranchPlugin: NSObject, SuperPlugin, SuperLog {
+class BranchPlugin: NSObject, SuperPlugin {
     /// 插件显示名称
     static var displayName: String = "Branch"
 
@@ -14,11 +14,7 @@ class BranchPlugin: NSObject, SuperPlugin, SuperLog {
     static var iconName: String = "arrow.triangle.branch"
 
     /// 插件是否可配置（是否在设置中由用户控制启用/停用）
-    static var allowUserToggle: Bool = true
-
-
-    /// 日志标识符
-    nonisolated static let emoji = "🌿"
+    static var allowUserToggle = true
 
     @objc static let shared = BranchPlugin()
 
@@ -27,9 +23,6 @@ class BranchPlugin: NSObject, SuperPlugin, SuperLog {
 
     /// 是否启用该插件
     @objc static let shouldRegister = false
-
-    /// 是否启用详细日志输出
-    nonisolated static let verbose = true
 
     override private init() {}
 

@@ -3,7 +3,7 @@ import OSLog
 import SwiftUI
 
 /// SmartMerge 插件：在状态栏提供合并入口（TileMerge）。
-class SmartMergePlugin: NSObject, SuperPlugin, SuperLog {
+class SmartMergePlugin: NSObject, SuperPlugin {
     /// 插件显示名称
     static var displayName: String = "SmartMerge"
 
@@ -17,8 +17,6 @@ class SmartMergePlugin: NSObject, SuperPlugin, SuperLog {
     static var allowUserToggle: Bool = true
 
 
-    /// 日志标识符
-    nonisolated static let emoji = "🔀"
 
     /// 单例实例
     @objc static let shared = SmartMergePlugin()
@@ -26,8 +24,6 @@ class SmartMergePlugin: NSObject, SuperPlugin, SuperLog {
     /// 是否启用该插件
     @objc static let shouldRegister = false
 
-    /// 是否启用详细日志输出
-    nonisolated static let verbose = true
 
     /// 私有初始化方法
     override private init() {}

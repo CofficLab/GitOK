@@ -2,9 +2,7 @@ import MagicKit
 import OSLog
 import SwiftUI
 
-class OpenRemotePlugin: NSObject, SuperPlugin, SuperLog {
-    /// 日志标识符
-    nonisolated static let emoji = "🌐"
+class OpenRemotePlugin: NSObject, SuperPlugin {
 
     @objc static let shared = OpenRemotePlugin()
 
@@ -24,8 +22,6 @@ class OpenRemotePlugin: NSObject, SuperPlugin, SuperLog {
     /// 是否启用该插件
     @objc static let shouldRegister = false
 
-    /// 是否启用详细日志输出
-    nonisolated static let verbose = true
 
     override private init() {}
 

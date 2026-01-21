@@ -3,15 +3,11 @@ import OSLog
 import SwiftUI
 
 /// Git 详情视图插件 - 负责提供 Git 标签页的详情视图
-class GitDetailPlugin: NSObject, SuperPlugin, SuperLog {
-    /// 日志标识符
-    nonisolated static let emoji = "🚄"
+class GitDetailPlugin: NSObject, SuperPlugin {
 
     /// 是否启用该插件
     @objc static let shouldRegister = false
 
-    /// 是否启用详细日志输出
-    nonisolated static let verbose = true
 
     @objc static let shared = GitDetailPlugin()
 

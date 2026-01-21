@@ -3,16 +3,12 @@ import OSLog
 import SwiftUI
 
 /// Readme 插件：在状态栏提供 README 入口。
-class ReadmePlugin: NSObject, SuperPlugin, SuperLog {
+class ReadmePlugin: NSObject, SuperPlugin {
     @objc static let shared = ReadmePlugin()
-    /// 日志标识符
-    nonisolated static let emoji = "📖"
 
     /// 是否启用该插件
     @objc static let shouldRegister = false
 
-    /// 是否启用详细日志输出
-    nonisolated static let verbose = true
 
     /// 插件显示名称
     static var displayName: String = "Readme"

@@ -2,7 +2,7 @@ import MagicKit
 import OSLog
 import SwiftUI
 
-class SyncPlugin: NSObject, SuperPlugin, SuperLog {
+class SyncPlugin: NSObject, SuperPlugin {
     /// 插件显示名称
     static var displayName: String = "Sync"
 
@@ -18,14 +18,10 @@ class SyncPlugin: NSObject, SuperPlugin, SuperLog {
 
     @objc static let shared = SyncPlugin()
 
-    /// 日志标识符
-    nonisolated static let emoji = "🔄"
 
     /// 是否启用该插件
     @objc static let shouldRegister = false
 
-    /// 是否启用详细日志输出
-    nonisolated static let verbose = true
 
     /// 插件注册顺序
     static var order: Int = 20

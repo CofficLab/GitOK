@@ -3,7 +3,7 @@ import OSLog
 import SwiftUI
 
 /// RemoteRepository 插件：在状态栏提供远程仓库管理入口。
-class RemoteRepositoryPlugin: NSObject, SuperPlugin, SuperLog {
+class RemoteRepositoryPlugin: NSObject, SuperPlugin {
 
     /// 插件显示名称
     static var displayName: String = "RemoteRepository"
@@ -17,16 +17,12 @@ class RemoteRepositoryPlugin: NSObject, SuperPlugin, SuperLog {
     /// 插件是否可配置（是否在设置中由用户控制启用/停用）
     static var allowUserToggle: Bool = false
 
-    /// 日志标识符
-    nonisolated static let emoji = "🔗"
 
     @objc static let shared = RemoteRepositoryPlugin()
 
     /// 是否启用该插件
     @objc static let shouldRegister = false
 
-    /// 是否启用详细日志输出
-    nonisolated static let verbose = true
 
     private override init() {}
 

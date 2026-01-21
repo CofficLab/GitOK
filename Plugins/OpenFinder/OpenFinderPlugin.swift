@@ -4,16 +4,12 @@ import SwiftUI
 
 /// 打开 Finder 插件
 /// 提供在工具栏中打开当前项目目录的 Finder 的功能
-class OpenFinderPlugin: NSObject, SuperPlugin, SuperLog {
+class OpenFinderPlugin: NSObject, SuperPlugin {
     @objc static let shared = OpenFinderPlugin()
-    /// 日志标识符
-    nonisolated static let emoji = "📂"
 
     /// 是否启用该插件
     @objc static let shouldRegister = false
 
-    /// 是否启用详细日志输出
-    nonisolated static let verbose = true
 
     /// 插件显示名称
     static var displayName: String = "OpenFinder"
