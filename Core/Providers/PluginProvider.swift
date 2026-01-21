@@ -26,7 +26,18 @@ class PluginProvider: ObservableObject, SuperLog, SuperThread {
     /// 获取所有标记为标签页的插件
     /// - Returns: 可作为标签页显示的插件数组
     var tabPlugins: [SuperPlugin] {
-        plugins.filter { $0.isTab }
+        plugins.filter { $0.addTabItem() != nil }
+    }
+
+    /// 获取所有可用的标签页名称
+    /// - Returns: 标签页名称数组
+    var tabNames: [String] {
+        plugins.compactMap { plugin in
+            if isPluginEnabled(plugin), let tabName = plugin.addTabItem() {
+                return tabName
+            }
+            return nil
+        }
     }
 
     /// 检查是否所有插件的列表视图都为空
@@ -85,9 +96,10 @@ class PluginProvider: ObservableObject, SuperLog, SuperThread {
     /// - Parameter tab: 标签页标识符
     /// - Returns: 如果找到启用的标签页插件，则返回其详情视图，否则返回nil
     func getEnabledTabDetailView(tab: String) -> AnyView? {
-        if let tabPlugin = tabPlugins.first(where: { $0.instanceLabel == tab }),
-           isPluginEnabled(tabPlugin) {
-            return tabPlugin.addDetailView()
+        for plugin in plugins {
+            if isPluginEnabled(plugin), let view = plugin.addDetailView(for: tab) {
+                return view
+            }
         }
         return nil
     }

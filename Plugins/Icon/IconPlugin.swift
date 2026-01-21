@@ -3,21 +3,6 @@ import OSLog
 import SwiftUI
 
 class IconPlugin: NSObject, SuperPlugin, SuperLog {
-    /// 插件的唯一标识符，用于设置管理
-    static var id: String = "Icon"
-
-    /// 插件显示名称
-    static var displayName: String = "Icon"
-
-    /// 插件描述
-    static var description: String = "图标管理"
-
-    /// 插件图标名称
-    static var iconName: String = "photo"
-
-    /// 插件是否可配置（是否在设置中由用户控制启用/停用）
-    static var isConfigurable: Bool = false
-    @objc static let shared = IconPlugin()
     /// 日志标识符
     nonisolated static let emoji = "📣"
 
@@ -27,12 +12,29 @@ class IconPlugin: NSObject, SuperPlugin, SuperLog {
     /// 是否启用详细日志输出
     nonisolated static let verbose = true
 
-    static var label: String = "Icon"
-    var isTab: Bool = true
+    @objc static let shared = IconPlugin()
+    static var label: String = "IconDetail"
+
+    /// 插件的唯一标识符，用于设置管理
+    static var id: String = "IconDetail"
+
+    /// 插件显示名称
+    static var displayName: String = "Icon Detail"
+
+    /// 插件描述
+    static var description: String = "图标详情视图"
+
+    /// 插件图标名称
+    static var iconName: String = "photo"
+
+    /// 插件是否可配置（是否在设置中由用户控制启用/停用）
+    static var isConfigurable: Bool = false
 
     private override init() {}
 
-    func addDetailView() -> AnyView? {
+    /// 返回 Icon 标签页的详情视图
+    func addDetailView(for tab: String) -> AnyView? {
+        guard tab == "Icon" else { return nil }
         return AnyView(IconDetailLayout.shared)
     }
 }

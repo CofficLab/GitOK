@@ -16,7 +16,7 @@ struct ContentView: View, SuperLog {
     @State private var columnVisibility: NavigationSplitViewVisibility = .automatic
 
     /// 当前选中的标签页
-    @State private var tab: String = GitPlugin.label
+    @State private var tab: String = "Git"
 
     /// 状态栏是否可见
     @State private var statusBarVisibility = true
@@ -120,8 +120,8 @@ extension ContentView {
             if tabPickerVisibility {
                 ToolbarItem(placement: .principal) {
                     Picker("选择标签", selection: $tab) {
-                        ForEach(p.tabPlugins, id: \.instanceLabel) { plugin in
-                            Text(plugin.instanceLabel).tag(plugin.instanceLabel)
+                        ForEach(p.tabNames, id: \.self) { tabName in
+                            Text(tabName).tag(tabName)
                         }
                     }
                     .pickerStyle(SegmentedPickerStyle())
@@ -238,11 +238,11 @@ extension ContentView {
             }
             self.tab = d
         } else {
-            // 如果没有提供默认标签页，使用Git标签页作为默认值
+            // 如果没有提供默认标签页，使用"Git"标签页作为默认值
             if Self.verbose {
-                os_log("\(self.t)No default tab provided, using GitPlugin.label: \(GitPlugin.label)")
+                os_log("\(self.t)No default tab provided, using default tab: Git")
             }
-            self.tab = GitPlugin.label
+            self.tab = "Git"
         }
 
         if let d = defaultStatusBarVisibility {

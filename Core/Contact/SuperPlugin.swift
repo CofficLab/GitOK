@@ -33,8 +33,8 @@ protocol SuperPlugin {
     /// 插件是否可配置（是否在设置中显示）
     static var isConfigurable: Bool { get }
 
-    /// 指示插件是否作为主界面的标签页显示
-    var isTab: Bool { get }
+    /// 返回插件的标签项名称，如果插件提供标签页则返回标签名称，否则返回 nil
+    func addTabItem() -> String?
 
     /// 返回插件的列表视图
     /// - Parameters:
@@ -44,8 +44,9 @@ protocol SuperPlugin {
     func addListView(tab: String, project: Project?) -> AnyView?
 
     /// 返回插件的详情视图
+    /// - Parameter tab: 标签页的名称
     /// - Returns: 包装在 AnyView 中的详情视图
-    func addDetailView() -> AnyView?
+    func addDetailView(for tab: String) -> AnyView?
 
     /// 返回插件在工具栏前部区域的视图
     /// - Returns: 包装在 AnyView 中的工具栏前部视图
@@ -71,7 +72,8 @@ protocol SuperPlugin {
 /// SuperPlugin 协议的默认实现
 /// 提供了一些方法的空实现，使插件开发者只需实现他们关心的方法
 extension SuperPlugin {
-    var isTab: Bool { false }
+    /// 默认的标签项实现，返回 nil 表示不提供标签页
+    func addTabItem() -> String? { nil }
 
     /// 默认的实例标签实现，返回静态 label 属性的值
     var instanceLabel: String {
@@ -129,7 +131,7 @@ extension SuperPlugin {
     }
 
     /// 默认的详情视图实现，返回空视图
-    func addDetailView() -> AnyView? {
+    func addDetailView(for tab: String) -> AnyView? {
         nil
     }
 

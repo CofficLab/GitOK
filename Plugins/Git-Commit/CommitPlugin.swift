@@ -39,7 +39,7 @@ class CommitPlugin: NSObject, SuperPlugin, SuperLog {
      * 添加列表视图 - 显示提交列表
      */
     func addListView(tab: String, project: Project?) -> AnyView? {
-        if tab == GitPlugin.label, let project = project, project.isGitRepo {
+        if tab == "Git", let project = project, project.isGitRepo {
             return AnyView(CommitList.shared)
         }
 

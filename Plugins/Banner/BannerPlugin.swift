@@ -16,19 +16,19 @@ class BannerPlugin: NSObject, SuperPlugin, SuperLog {
     nonisolated static let verbose = true
 
     @objc static let shared = BannerPlugin()
-    static var label: String = "Banner"
+    static var label: String = "BannerDetail"
 
     /// 插件注册顺序
-    static var order: Int = 1
+    static var order: Int = 2
 
     /// 插件的唯一标识符，用于设置管理
-    static var id: String = "Banner"
+    static var id: String = "BannerDetail"
 
     /// 插件显示名称
-    static var displayName: String = "Banner"
+    static var displayName: String = "Banner Detail"
 
     /// 插件描述
-    static var description: String = "生成项目横幅图片"
+    static var description: String = "Banner 详情视图"
 
     /// 插件图标名称
     static var iconName: String = "photo"
@@ -36,11 +36,11 @@ class BannerPlugin: NSObject, SuperPlugin, SuperLog {
     /// 插件是否可配置（是否在设置中由用户控制启用/停用）
     static var isConfigurable: Bool = false
 
-    var isTab: Bool = true
-
     private override init() {}
 
-    func addDetailView() -> AnyView? {
+    /// 返回 Banner 标签页的详情视图
+    func addDetailView(for tab: String) -> AnyView? {
+        guard tab == "Banner" else { return nil }
         return AnyView(BannerDetailLayout.shared.environmentObject(BannerProvider.shared))
     }
 }
