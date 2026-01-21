@@ -22,11 +22,11 @@ class SmartMergePlugin: NSObject, SuperPlugin {
     @objc static let shared = SmartMergePlugin()
 
     /// 是否启用该插件
-    @objc static let shouldRegister = false
+    @objc static let shouldRegister = true
 
 
     /// 私有初始化方法
-    override private init() {}
+    
 
     /// 添加状态栏尾部视图
     /// - Returns: 返回TileMerge组件的AnyView包装

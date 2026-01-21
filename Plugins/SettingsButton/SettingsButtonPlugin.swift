@@ -7,7 +7,7 @@ class SettingsButtonPlugin: NSObject, SuperPlugin {
     @objc static let shared = SettingsButtonPlugin()
 
     /// 是否启用该插件
-    @objc static let shouldRegister = false
+    @objc static let shouldRegister = true
 
 
     /// 插件显示名称
@@ -23,7 +23,7 @@ class SettingsButtonPlugin: NSObject, SuperPlugin {
     static var allowUserToggle: Bool = false
 
 
-    override private init() {}
+    
 
     func addStatusBarTrailingView() -> AnyView? {
         AnyView(SettingsButtonView.shared)

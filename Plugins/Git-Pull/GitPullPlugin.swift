@@ -20,10 +20,10 @@ class GitPullPlugin: NSObject, SuperPlugin {
 
 
     /// 是否启用该插件
-    @objc static let shouldRegister = false
+    @objc static let shouldRegister = true
 
 
-    override private init() {}
+    
 
     func addToolBarTrailingView() -> AnyView? {
         return AnyView(BtnGitPullView.shared)

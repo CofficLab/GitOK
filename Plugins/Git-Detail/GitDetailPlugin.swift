@@ -15,7 +15,7 @@ class GitDetailPlugin: NSObject, SuperPlugin {
     /// 插件是否可配置（是否在设置中由用户控制启用/停用）
     static var allowUserToggle: Bool = false
 
-    override private init() {}
+    
 
     /// 返回 Git 标签页的详情视图
     func addDetailView(for tab: String) -> AnyView? {

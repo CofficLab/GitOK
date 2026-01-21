@@ -20,13 +20,13 @@ class SyncPlugin: NSObject, SuperPlugin {
 
 
     /// 是否启用该插件
-    @objc static let shouldRegister = false
+    @objc static let shouldRegister = true
 
 
     /// 插件注册顺序
     static var order: Int = 20
 
-    override private init() {}
+    
 
     func addToolBarTrailingView() -> AnyView? {
         return AnyView(BtnSyncView.shared)

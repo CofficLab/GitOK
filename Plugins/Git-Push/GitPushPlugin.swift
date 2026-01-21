@@ -19,13 +19,13 @@ class GitPushPlugin: NSObject, SuperPlugin {
 
 
     /// 是否启用该插件
-    @objc static let shouldRegister = false
+    @objc static let shouldRegister = true
 
 
     /// 插件标签（用于实例化标识）
 
     @objc static let shared = GitPushPlugin()
-    override private init() {}
+    
 
     /// 在工具栏右侧添加视图
     /// - Returns: 推送按钮视图

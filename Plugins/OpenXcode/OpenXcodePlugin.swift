@@ -9,8 +9,7 @@ class OpenXcodePlugin: NSObject, SuperPlugin {
     @objc static let shared = OpenXcodePlugin()
 
     /// 是否启用该插件
-    @objc static let shouldRegister = false
-
+    @objc static let shouldRegister = true
 
     /// 插件显示名称
     static var displayName: String = "OpenXcode"
@@ -22,10 +21,7 @@ class OpenXcodePlugin: NSObject, SuperPlugin {
     static var iconName: String = "hammer"
 
     /// 插件是否可配置（是否在设置中由用户控制启用/停用）
-    static var allowUserToggle: Bool = true
-
-    
-    override private init() {}
+    static var allowUserToggle = true
 
     func addToolBarTrailingView() -> AnyView? {
         return AnyView(BtnOpenXcodeView.shared)

@@ -21,7 +21,7 @@ class StashPlugin: NSObject, SuperPlugin {
     @objc static let shared = StashPlugin()
 
     /// 是否启用该插件
-    @objc static let shouldRegister = false // TODO: 需要正确配置 LibGit2Swift 包依赖
+    @objc static let shouldRegister = true // TODO: 需要正确配置 LibGit2Swift 包依赖
 
 
     private override init() {}

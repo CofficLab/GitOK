@@ -3,7 +3,6 @@ import OSLog
 import SwiftUI
 
 class OpenRemotePlugin: NSObject, SuperPlugin {
-
     @objc static let shared = OpenRemotePlugin()
 
     /// 插件显示名称
@@ -16,14 +15,10 @@ class OpenRemotePlugin: NSObject, SuperPlugin {
     static var iconName: String = "link"
 
     /// 插件是否可配置（是否在设置中由用户控制启用/停用）
-    static var allowUserToggle: Bool = true
-
+    static var allowUserToggle = true
 
     /// 是否启用该插件
-    @objc static let shouldRegister = false
-
-
-    override private init() {}
+    @objc static let shouldRegister = true
 
     func addToolBarTrailingView() -> AnyView? {
         return AnyView(BtnOpenRemoteView.shared)

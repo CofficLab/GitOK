@@ -14,7 +14,7 @@ import SwiftUI
 class BannerProvider: NSObject, ObservableObject, SuperLog {
     static let shared = BannerProvider()
 
-    override private init() {}
+    
 
     /// 当前选中的Banner
     @Published private(set) var banner: BannerFile = .empty
