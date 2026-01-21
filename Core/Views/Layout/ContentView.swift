@@ -168,7 +168,11 @@ extension ContentView {
                         GuideView(
                             systemImage: "puzzlepiece.extension",
                             title: "暂无可用视图",
-                            subtitle: "请在设置中启用相关插件以显示内容"
+                            subtitle: "请在设置中启用相关插件以显示内容",
+                            action: {
+                                app.openPluginSettings()
+                            },
+                            actionLabel: "打开插件设置"
                         )
                         .setIconColor(.secondary)
                     }
@@ -198,7 +202,11 @@ extension ContentView {
                             GuideView(
                                 systemImage: "puzzlepiece.extension",
                                 title: "暂无可用视图",
-                                subtitle: "请在设置中启用相关插件以显示内容"
+                                subtitle: "请在设置中启用相关插件以显示内容",
+                                action: {
+                                    app.openPluginSettings()
+                                },
+                                actionLabel: "打开插件设置"
                             )
                             .setIconColor(.secondary)
                         }

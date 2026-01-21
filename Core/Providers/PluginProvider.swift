@@ -11,7 +11,7 @@ class PluginProvider: ObservableObject, SuperLog, SuperThread {
     static let verbose = true
 
     /// 是否注册所有插件（开发调试用，设为 false 可禁用所有插件）
-    static var registerAllPlugins: Bool = true
+    static var registerAllPlugins: Bool = false
 
     @Published private(set) var plugins: [SuperPlugin] = []
 
