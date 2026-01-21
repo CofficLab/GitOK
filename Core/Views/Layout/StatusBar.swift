@@ -17,22 +17,22 @@ struct StatusBar: View, SuperLog {
     var body: some View {
         HStack(spacing: 0) {
             // 状态栏左侧区域
-            ForEach(p.plugins.filter { p.isPluginEnabled($0) }, id: \.instanceLabel) { plugin in
-                plugin.addStatusBarLeadingView()
+            ForEach(Array(p.getEnabledStatusBarLeadingViews().enumerated()), id: \.offset) { _, view in
+                view
             }
 
             Spacer()
 
             // 状态栏中间区域
-            ForEach(p.plugins.filter { p.isPluginEnabled($0) }, id: \.instanceLabel) { plugin in
-                plugin.addStatusBarCenterView()
+            ForEach(Array(p.getEnabledStatusBarCenterViews().enumerated()), id: \.offset) { _, view in
+                view
             }
 
             Spacer()
 
             // 状态栏右侧区域
-            ForEach(p.plugins.filter { p.isPluginEnabled($0) }, id: \.instanceLabel) { plugin in
-                plugin.addStatusBarTrailingView()
+            ForEach(Array(p.getEnabledStatusBarTrailingViews().enumerated()), id: \.offset) { _, view in
+                view
             }
         }
         .labelStyle(.iconOnly)

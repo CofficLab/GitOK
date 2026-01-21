@@ -236,6 +236,32 @@ class PluginProvider: ObservableObject, SuperLog, SuperThread {
         return nil
     }
 
+    // MARK: - StatusBar Views
+
+    /// 获取状态栏前导视图
+    /// - Returns: 启用插件的状态栏前导视图数组
+    func getEnabledStatusBarLeadingViews() -> [AnyView] {
+        plugins
+            .filter { isPluginEnabled($0) }
+            .compactMap { $0.addStatusBarLeadingView() }
+    }
+
+    /// 获取状态栏中间视图
+    /// - Returns: 启用插件的状态栏中间视图数组
+    func getEnabledStatusBarCenterViews() -> [AnyView] {
+        plugins
+            .filter { isPluginEnabled($0) }
+            .compactMap { $0.addStatusBarCenterView() }
+    }
+
+    /// 获取状态栏后置视图
+    /// - Returns: 启用插件的状态栏后置视图数组
+    func getEnabledStatusBarTrailingViews() -> [AnyView] {
+        plugins
+            .filter { isPluginEnabled($0) }
+            .compactMap { $0.addStatusBarTrailingView() }
+    }
+
     // MARK: - Initialization
 
     init() {
