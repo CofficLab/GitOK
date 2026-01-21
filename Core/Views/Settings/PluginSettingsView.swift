@@ -56,7 +56,7 @@ struct PluginSettingsView: View, SuperLog {
                         PluginToggleRow(
                             plugin: plugin,
                             isEnabled: Binding(
-                                get: { pluginStates[plugin.id, default: true] },
+                                get: { pluginStates[plugin.id, default: plugin.defaultEnabled] },
                                 set: { newValue in
                                     pluginStates[plugin.id] = newValue
                                     settingsStore.setPluginEnabled(plugin.id, enabled: newValue)
@@ -107,11 +107,11 @@ struct PluginSettingsView: View, SuperLog {
     private func loadPluginStates() {
         var states: [String: Bool] = [:]
         for plugin in configurablePlugins {
-            // 检查用户配置，如果没有配置则默认为启用
+            // 检查用户配置，如果没有配置则使用插件的默认启用状态
             if settingsStore.hasUserConfigured(plugin.id) {
-                states[plugin.id] = settingsStore.isPluginEnabled(plugin.id, defaultEnabled: true)
+                states[plugin.id] = settingsStore.isPluginEnabled(plugin.id, defaultEnabled: plugin.defaultEnabled)
             } else {
-                states[plugin.id] = true
+                states[plugin.id] = plugin.defaultEnabled
             }
         }
         pluginStates = states

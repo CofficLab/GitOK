@@ -29,6 +29,10 @@ protocol SuperPlugin {
     /// 如果为 true，插件显示在设置中，用户可控制启用状态
     static var allowUserToggle: Bool { get }
 
+    /// 插件默认启用状态（仅在用户未配置时生效）
+    /// 如果用户配置过，以用户配置为准
+    static var defaultEnabled: Bool { get }
+
     /// 插件是否应该注册到系统中
     /// 开发者可通过此属性控制插件是否启用
     static var shouldRegister: Bool { get }
@@ -112,6 +116,9 @@ extension SuperPlugin {
 
     /// 默认允许用户切换
     static var allowUserToggle: Bool { true }
+
+    /// 默认启用
+    static var defaultEnabled: Bool { true }
 
     /// 默认应该注册
     static var shouldRegister: Bool { true }

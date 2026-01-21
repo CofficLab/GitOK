@@ -156,11 +156,11 @@ class PluginProvider: ObservableObject, SuperLog, SuperThread {
         // 检查用户配置
         let pluginId = plugin.instanceLabel
         if PluginSettingsStore.shared.hasUserConfigured(pluginId) {
-            return PluginSettingsStore.shared.isPluginEnabled(pluginId, defaultEnabled: true)
+            return PluginSettingsStore.shared.isPluginEnabled(pluginId, defaultEnabled: pluginType.defaultEnabled)
         }
 
-        // 用户未配置过，默认启用
-        return true
+        // 用户未配置过，使用插件的默认启用状态
+        return pluginType.defaultEnabled
     }
 
     /// 获取所有可用的标签页名称
@@ -184,6 +184,7 @@ class PluginProvider: ObservableObject, SuperLog, SuperThread {
                     name: pluginType.displayName,
                     description: pluginType.description,
                     icon: pluginType.iconName,
+                    defaultEnabled: pluginType.defaultEnabled,
                     isDeveloperEnabled: { true }
                 )
             }
