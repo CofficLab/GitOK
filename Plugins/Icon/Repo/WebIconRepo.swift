@@ -183,7 +183,7 @@ class WebIconRepo: SuperLog, IconSourceProtocol {
 #Preview("App - Small Screen") {
     RootView {
         ContentLayout()
-            .setInitialTab(IconPlugin.label)
+            .setInitialTab("Icon")
             .hideSidebar()
             .hideTabPicker()
             .hideProjectActions()
@@ -195,7 +195,7 @@ class WebIconRepo: SuperLog, IconSourceProtocol {
 #Preview("App - Big Screen") {
     RootView {
         ContentLayout()
-            .setInitialTab(IconPlugin.label)
+            .setInitialTab("Icon")
             .hideSidebar()
             .hideTabPicker()
             .hideProjectActions()

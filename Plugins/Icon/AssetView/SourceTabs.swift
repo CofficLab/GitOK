@@ -65,7 +65,7 @@ struct SourceTab: View {
 
 #Preview("App - Small Screen") {
     RootView {
-        ContentLayout().setInitialTab(IconPlugin.label)
+        ContentLayout().setInitialTab("Icon")
             .hideSidebar()
             .hideProjectActions()
     }
@@ -76,7 +76,7 @@ struct SourceTab: View {
 #Preview("App - Big Screen") {
     RootView {
         ContentLayout()
-            .setInitialTab(IconPlugin.label)
+            .setInitialTab("Icon")
             .hideTabPicker()
             .hideSidebar()
     }

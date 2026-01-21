@@ -23,7 +23,6 @@ class SmartMergePlugin: NSObject, SuperPlugin, SuperLog {
     @objc static let shared = SmartMergePlugin()
 
     /// 插件标签
-    static var label: String = "SmartMerge"
 
     /// 是否启用该插件
     @objc static let enable = true
@@ -45,7 +44,7 @@ class SmartMergePlugin: NSObject, SuperPlugin, SuperLog {
 
 #Preview("App - Small Screen") {
     ContentLayout()
-        .setInitialTab(SmartMergePlugin.label)
+        .setInitialTab("SmartMerge")
         .hideSidebar()
         .hideProjectActions()
         .inRootView()
@@ -55,7 +54,7 @@ class SmartMergePlugin: NSObject, SuperPlugin, SuperLog {
 
 #Preview("App - Big Screen") {
     ContentLayout()
-        .setInitialTab(SmartMergePlugin.label)
+        .setInitialTab("SmartMerge")
         .hideSidebar()
         .inRootView()
         .frame(width: 1200)

@@ -15,7 +15,6 @@ class IconTabPlugin: NSObject, SuperPlugin, SuperLog {
 
     @objc static let shared = IconTabPlugin()
 
-    static var label: String = "IconTab"
 
 
     /// 插件注册顺序

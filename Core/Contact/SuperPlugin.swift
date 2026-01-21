@@ -8,11 +8,8 @@ import SwiftUI
 /// - 插件在不同界面区域的视图渲染方法
 /// - 插件的生命周期管理方法
 protocol SuperPlugin {
-    /// 插件的唯一标签，用于标识和区分不同的插件
-    static var label: String { get }
-
     /// 插件的实例标签，用于在 ForEach 等需要实例属性的地方作为标识符
-    /// 默认实现返回静态 label 属性的值
+    /// 默认实现使用反射获取类名
     var instanceLabel: String { get }
 
     /// 插件注册顺序，数字越小越先注册
@@ -72,9 +69,14 @@ extension SuperPlugin {
     /// 默认的标签项实现，返回 nil 表示不提供标签页
     func addTabItem() -> String? { nil }
 
-    /// 默认的实例标签实现，返回静态 label 属性的值
+    /// 默认的实例标签实现，使用反射获取类名
     var instanceLabel: String {
-        return type(of: self).label
+        let typeName = String(describing: type(of: self))
+        // 移除模块前缀（例如 "GitOK."）
+        if let dotIndex = typeName.lastIndex(of: ".") {
+            return String(typeName[typeName.index(after: dotIndex)...])
+        }
+        return typeName
     }
 
     /// 默认的注册顺序实现
@@ -82,9 +84,14 @@ extension SuperPlugin {
         return 0
     }
 
-    /// 默认的显示名称实现，返回静态 label 属性的值
+    /// 默认的显示名称实现，使用反射获取类名
     static var displayName: String {
-        return label
+        let typeName = String(describing: self)
+        // 移除模块前缀（例如 "GitOK."）
+        if let dotIndex = typeName.lastIndex(of: ".") {
+            return String(typeName[typeName.index(after: dotIndex)...])
+        }
+        return typeName
     }
 
     /// 默认的插件描述实现，返回空字符串

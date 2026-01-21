@@ -7,7 +7,6 @@ class OpenRemotePlugin: NSObject, SuperPlugin, SuperLog {
     nonisolated static let emoji = "🌐"
 
     @objc static let shared = OpenRemotePlugin()
-    static var label: String = "OpenRemote"
 
 
     /// 插件显示名称

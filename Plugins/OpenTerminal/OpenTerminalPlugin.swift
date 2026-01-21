@@ -15,7 +15,6 @@ class OpenTerminalPlugin: NSObject, SuperPlugin, SuperLog {
     /// 是否启用详细日志输出
     nonisolated static let verbose = true
 
-    static var label: String = "OpenTerminal"
 
 
     /// 插件显示名称

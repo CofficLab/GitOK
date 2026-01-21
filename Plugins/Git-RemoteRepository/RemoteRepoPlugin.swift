@@ -20,7 +20,6 @@ class RemoteRepositoryPlugin: NSObject, SuperPlugin, SuperLog {
     nonisolated static let emoji = "🔗"
 
     @objc static let shared = RemoteRepositoryPlugin()
-    static var label: String = "RemoteRepository"
 
     /// 是否启用该插件
     @objc static let enable = true

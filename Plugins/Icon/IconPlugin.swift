@@ -13,7 +13,6 @@ class IconPlugin: NSObject, SuperPlugin, SuperLog {
     nonisolated static let verbose = true
 
     @objc static let shared = IconPlugin()
-    static var label: String = "IconDetail"
 
 
     /// 插件显示名称
@@ -42,7 +41,7 @@ class IconPlugin: NSObject, SuperPlugin, SuperLog {
 
 #Preview("App - Small Screen") {
     ContentLayout()
-        .setInitialTab(IconPlugin.label)
+        .setInitialTab("Icon")
         .hideSidebar()
         .hideProjectActions()
         .inRootView()
@@ -52,7 +51,7 @@ class IconPlugin: NSObject, SuperPlugin, SuperLog {
 
 #Preview("App - Big Screen") {
     ContentLayout()
-        .setInitialTab(IconPlugin.label)
+        .setInitialTab("Icon")
         .hideSidebar()
         .inRootView()
         .frame(width: 1200)

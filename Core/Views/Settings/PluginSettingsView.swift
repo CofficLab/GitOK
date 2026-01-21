@@ -86,8 +86,11 @@ struct PluginSettingsView: View, SuperLog {
             .filter { type(of: $0).isConfigurable }
             .map { plugin in
                 let pluginType = type(of: plugin)
+                // 使用反射获取插件类型名称作为 ID
+                let typeName = String(describing: pluginType)
+                let pluginId = typeName.contains(".") ? typeName.components(separatedBy: ".").last ?? typeName : typeName
                 return PluginInfo(
-                    id: pluginType.label,
+                    id: pluginId,
                     name: pluginType.displayName,
                     description: pluginType.description,
                     icon: pluginType.iconName,

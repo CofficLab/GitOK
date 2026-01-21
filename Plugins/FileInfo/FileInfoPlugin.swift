@@ -14,7 +14,6 @@ class SmartFilePlugin: NSObject, SuperPlugin, SuperLog {
     nonisolated static let verbose = true
 
     @objc static let shared = SmartFilePlugin()
-    static var label: String = "SmartFile"
 
 
     /// 插件显示名称

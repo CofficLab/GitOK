@@ -16,7 +16,6 @@ class OpenXcodePlugin: NSObject, SuperPlugin, SuperLog {
     /// 是否启用详细日志输出
     nonisolated static let verbose = true
 
-    static var label: String = "OpenXcode"
 
 
     /// 插件显示名称

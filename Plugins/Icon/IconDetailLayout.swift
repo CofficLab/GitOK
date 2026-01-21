@@ -128,10 +128,10 @@ struct IconDetailLayout: View {
 
 #Preview("App - Small Screen") {
     ContentLayout()
-        .setInitialTab(IconPlugin.label)
+        .setInitialTab("Icon")
         .hideSidebar()
         .hideProjectActions()
-        .setInitialTab(IconPlugin.label)
+        .setInitialTab("Icon")
         .inRootView()
         .frame(width: 800)
         .frame(height: 800)
@@ -140,9 +140,9 @@ struct IconDetailLayout: View {
 #Preview("App - Big Screen") {
     ContentLayout()
         .hideProjectActions()
-        .setInitialTab(IconPlugin.label)
+        .setInitialTab("Icon")
         .hideSidebar()
-        .setInitialTab(IconPlugin.label)
+        .setInitialTab("Icon")
         .inRootView()
         .frame(width: 800)
         .frame(height: 1200)

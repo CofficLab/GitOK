@@ -27,7 +27,6 @@ class GitPushPlugin: NSObject, SuperPlugin, SuperLog {
     nonisolated static let verbose = true
 
     /// 插件标签（用于实例化标识）
-    static var label: String = "GitPush"
 
     @objc static let shared = GitPushPlugin()
     private override init() {}

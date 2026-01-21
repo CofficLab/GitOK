@@ -15,7 +15,6 @@ class GitTabPlugin: NSObject, SuperPlugin, SuperLog {
 
     @objc static let shared = GitTabPlugin()
 
-    static var label: String = "GitTab"
 
 
     /// 插件注册顺序

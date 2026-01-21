@@ -20,7 +20,6 @@ class ConflictResolverPlugin: NSObject, SuperPlugin, SuperLog {
     nonisolated static let emoji = "⚔️"
 
     @objc static let shared = ConflictResolverPlugin()
-    static var label: String = "ConflictResolver"
 
     /// 是否启用该插件
     @objc static let enable = false // TODO: 需要正确配置 LibGit2Swift 包依赖
@@ -42,7 +41,7 @@ class ConflictResolverPlugin: NSObject, SuperPlugin, SuperLog {
 
 #Preview("App - Small Screen") {
     ContentLayout()
-        .setInitialTab(ConflictResolverPlugin.label)
+        .setInitialTab("ConflictResolver")
         .hideSidebar()
         .hideProjectActions()
         .inRootView()
@@ -52,7 +51,7 @@ class ConflictResolverPlugin: NSObject, SuperPlugin, SuperLog {
 
 #Preview("App - Big Screen") {
     ContentLayout()
-        .setInitialTab(ConflictResolverPlugin.label)
+        .setInitialTab("ConflictResolver")
         .hideSidebar()
         .inRootView()
         .frame(width: 1200)

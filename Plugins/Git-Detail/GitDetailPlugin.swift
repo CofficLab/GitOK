@@ -14,7 +14,6 @@ class GitDetailPlugin: NSObject, SuperPlugin, SuperLog {
     nonisolated static let verbose = true
 
     @objc static let shared = GitDetailPlugin()
-    static var label: String = "GitDetail"
 
 
     /// 插件注册顺序

@@ -14,7 +14,6 @@ class BannerTabPlugin: NSObject, SuperPlugin, SuperLog {
     nonisolated static let verbose = true
 
     @objc static let shared = BannerTabPlugin()
-    static var label: String = "BannerTab"
 
     /// 插件注册顺序
     static var order: Int = 2

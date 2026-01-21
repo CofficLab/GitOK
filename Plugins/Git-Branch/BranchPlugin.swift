@@ -20,7 +20,6 @@ class BranchPlugin: NSObject, SuperPlugin, SuperLog {
     nonisolated static let emoji = "🌿"
 
     @objc static let shared = BranchPlugin()
-    static var label: String = "Branch"
 
     /// 插件注册顺序
     static var order: Int = 22
@@ -45,7 +44,7 @@ class BranchPlugin: NSObject, SuperPlugin, SuperLog {
 
 #Preview("App - Small Screen") {
     ContentLayout()
-        .setInitialTab(BranchPlugin.label)
+        .setInitialTab("Branch")
         .hideSidebar()
         .hideProjectActions()
         .inRootView()
@@ -55,7 +54,7 @@ class BranchPlugin: NSObject, SuperPlugin, SuperLog {
 
 #Preview("App - Big Screen") {
     ContentLayout()
-        .setInitialTab(BranchPlugin.label)
+        .setInitialTab("Branch")
         .hideSidebar()
         .inRootView()
         .frame(width: 1200)

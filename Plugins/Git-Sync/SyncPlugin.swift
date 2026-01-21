@@ -25,7 +25,6 @@ class SyncPlugin: NSObject, SuperPlugin, SuperLog {
     /// 是否启用详细日志输出
     nonisolated static let verbose = true
 
-    static var label: String = "Sync"
 
     /// 插件注册顺序
     static var order: Int = 20
