@@ -21,6 +21,8 @@ class OpenVSCodePlugin: NSObject, SuperPlugin {
 
     /// 插件是否可配置（是否在设置中由用户控制启用/停用）
     static var allowUserToggle: Bool = true
+    /// 插件默认启用状态
+    static var defaultEnabled: Bool = true
 
 
     

@@ -16,6 +16,8 @@ class BannerPlugin: NSObject, SuperPlugin {
 
     /// 插件是否可配置（是否在设置中由用户控制启用/停用）
     static var allowUserToggle = false
+    /// 插件默认启用状态
+    static var defaultEnabled: Bool = true
 
     /// 返回 Banner 标签页的详情视图
     func addDetailView(for tab: String) -> AnyView? {

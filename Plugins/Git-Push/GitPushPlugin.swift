@@ -15,6 +15,8 @@ class GitPushPlugin: NSObject, SuperPlugin {
 
     /// 插件是否可配置（在设置中显示启用/禁用开关）
     static var allowUserToggle: Bool = true
+    /// 插件默认启用状态
+    static var defaultEnabled: Bool = true
 
     /// 是否启用该插件
     @objc static let shouldRegister = true

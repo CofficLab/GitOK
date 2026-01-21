@@ -117,9 +117,6 @@ extension SuperPlugin {
     /// 默认允许用户切换
     static var allowUserToggle: Bool { true }
 
-    /// 默认启用
-    static var defaultEnabled: Bool { true }
-
     /// 默认应该注册
     static var shouldRegister: Bool { true }
 
