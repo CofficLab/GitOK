@@ -17,9 +17,24 @@ class PluginProvider: ObservableObject, SuperLog, SuperThread {
     /// 已注册的插件实例列表
     private var registeredPlugins: [any SuperPlugin] = []
 
+    /// 已使用的插件标签集合（用于检测重复）
+    private var usedLabels: Set<String> = []
+
     /// 注册一个插件实例
     /// - Parameter plugin: 要注册的插件实例
     private func register(_ plugin: any SuperPlugin) {
+        let label = plugin.instanceLabel
+
+        // 检查标签是否已存在
+        if usedLabels.contains(label) {
+            let pluginType = String(describing: type(of: plugin))
+            os_log(.error, "\(Self.t)❌ Duplicate plugin label '\(label)' in \(pluginType)")
+            assertionFailure("Duplicate plugin label: \(label)")
+            return
+        }
+
+        // 标记该标签已使用
+        usedLabels.insert(label)
         registeredPlugins.append(plugin)
     }
 
@@ -32,6 +47,7 @@ class PluginProvider: ObservableObject, SuperLog, SuperThread {
     /// 清空所有注册的插件
     private func clearRegisteredPlugins() {
         registeredPlugins.removeAll()
+        usedLabels.removeAll()
     }
 
     /// 已注册插件数量
@@ -129,30 +145,10 @@ class PluginProvider: ObservableObject, SuperLog, SuperThread {
 
     // MARK: - Plugin Query Methods
 
-    /// 获取所有标记为标签页的插件
-    /// - Returns: 可作为标签页显示的插件数组
-    var tabPlugins: [SuperPlugin] {
-        plugins.filter { $0.addTabItem() != nil }
-    }
-
     /// 获取所有可用的标签页名称
     /// - Returns: 标签页名称数组
     var tabNames: [String] {
         plugins.compactMap { $0.addTabItem() }
-    }
-
-    /// 检查是否所有插件的列表视图都为空
-    /// - Parameter
-    ///      - tab: 当前选中的标签页
-    ///     - project: 当前选中的项目
-    /// - Returns: 如果所有插件的addListView都返回nil则返回true，否则返回false
-    func allListViewsEmpty(tab: String, project: Project?) -> Bool {
-        for plugin in plugins {
-            if let listView = plugin.addListView(tab: tab, project: project) {
-                return false
-            }
-        }
-        return true
     }
 
     /// 获取工具栏前导视图
@@ -205,18 +201,6 @@ class PluginProvider: ObservableObject, SuperLog, SuperThread {
 
         // 从内部注册表获取所有已注册的插件实例
         self.plugins = getAllPlugins()
-
-        // 检查重复标签
-        var labelCounts: [String: Int] = [:]
-        for plugin in plugins {
-            labelCounts[plugin.instanceLabel, default: 0] += 1
-        }
-
-        let duplicateLabels = labelCounts.filter { $0.value > 1 }.map { $0.key }
-        if !duplicateLabels.isEmpty {
-            os_log("❌ Duplicate plugin labels: \(duplicateLabels)")
-            assertionFailure("Duplicate labels: \(duplicateLabels)")
-        }
     }
 }
 
