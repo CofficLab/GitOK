@@ -151,6 +151,24 @@ class PluginProvider: ObservableObject, SuperLog, SuperThread {
         plugins.compactMap { $0.addTabItem() }
     }
 
+    /// 获取可配置的插件信息列表（用于设置界面）
+    /// - Returns: 允许用户切换启用/禁用状态的插件信息数组
+    var configurablePlugins: [PluginInfo] {
+        plugins
+            .filter { type(of: $0).allowUserToggle }
+            .map { plugin in
+                let pluginType = type(of: plugin)
+                let pluginId = plugin.instanceLabel
+                return PluginInfo(
+                    id: pluginId,
+                    name: pluginType.displayName,
+                    description: pluginType.description,
+                    icon: pluginType.iconName,
+                    isDeveloperEnabled: { true }
+                )
+            }
+    }
+
     /// 获取工具栏前导视图
     /// - Returns: 插件及其对应的工具栏前导视图数组
     func getEnabledToolbarLeadingViews() -> [(plugin: SuperPlugin, view: AnyView)] {

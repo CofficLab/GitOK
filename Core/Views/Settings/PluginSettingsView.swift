@@ -98,23 +98,9 @@ struct PluginSettingsView: View, SuperLog {
         }
     }
 
-    /// 获取可配置的插件列表（从自动发现的插件中提取）
+    /// 获取可配置的插件列表
     private var configurablePlugins: [PluginInfo] {
-        pluginProvider.plugins
-            .filter { type(of: $0).allowUserToggle }
-            .map { plugin in
-                let pluginType = type(of: plugin)
-                // 使用反射获取插件类型名称作为 ID
-                let typeName = String(describing: pluginType)
-                let pluginId = typeName.contains(".") ? typeName.components(separatedBy: ".").last ?? typeName : typeName
-                return PluginInfo(
-                    id: pluginId,
-                    name: pluginType.displayName,
-                    description: pluginType.description,
-                    icon: pluginType.iconName,
-                    isDeveloperEnabled: { true }
-                )
-            }
+        pluginProvider.configurablePlugins
     }
 
     /// 加载插件状态
