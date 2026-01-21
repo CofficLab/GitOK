@@ -4,7 +4,6 @@ import SwiftUI
 
 /// GitPush 插件：在工具栏提供“推送”按钮
 class GitPushPlugin: NSObject, SuperPlugin, SuperLog {
-
     /// 插件显示名称
     static var displayName: String = "GitPush"
 
@@ -16,6 +15,9 @@ class GitPushPlugin: NSObject, SuperPlugin, SuperLog {
 
     /// 插件是否可配置（在设置中显示启用/禁用开关）
     static var isConfigurable: Bool = true
+
+    ///  插件默认启用状态
+    static var defaultEnabled: Bool = false
 
     /// 日志标识符
     nonisolated static let emoji = "⬆️"
@@ -29,7 +31,7 @@ class GitPushPlugin: NSObject, SuperPlugin, SuperLog {
     /// 插件标签（用于实例化标识）
 
     @objc static let shared = GitPushPlugin()
-    private override init() {}
+    override private init() {}
 
     /// 在工具栏右侧添加视图
     /// - Returns: 推送按钮视图
@@ -37,7 +39,6 @@ class GitPushPlugin: NSObject, SuperPlugin, SuperLog {
         return AnyView(BtnGitPushView.shared)
     }
 }
-
 
 // MARK: - Preview
 

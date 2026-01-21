@@ -14,8 +14,6 @@ class GitignorePlugin: NSObject, SuperPlugin, SuperLog {
     /// 是否启用详细日志输出
     nonisolated static let verbose = true
 
-
-
     /// 插件显示名称
     static var displayName: String = "Gitignore"
 
@@ -28,13 +26,17 @@ class GitignorePlugin: NSObject, SuperPlugin, SuperLog {
     /// 插件是否可配置（是否在设置中由用户控制启用/停用）
     static var isConfigurable: Bool = true
 
-    private override init() {}
+    ///  插件默认启用状态
+    static var defaultEnabled: Bool = false
+
+    ///  插件默认启用状态
+
+    override private init() {}
 
     func addStatusBarTrailingView() -> AnyView? {
         return AnyView(GitignoreStatusIcon.shared)
     }
 }
-
 
 #Preview("App - Small Screen") {
     ContentLayout()

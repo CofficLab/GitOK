@@ -110,9 +110,6 @@ extension SuperPlugin {
 
     static var isConfigurable: Bool { true }
 
-    /// 默认的启用状态实现，默认为启用
-    static var defaultEnabled: Bool { true }
-
     /// 默认的工具栏前部视图实现，返回空视图
     func addToolBarLeadingView() -> AnyView? {
         nil

@@ -16,8 +16,6 @@ class OpenGitHubDesktopPlugin: NSObject, SuperPlugin, SuperLog {
     /// 是否启用详细日志输出
     nonisolated static let verbose = true
 
-
-
     /// 插件显示名称
     static var displayName: String = "OpenGitHubDesktop"
 
@@ -30,7 +28,10 @@ class OpenGitHubDesktopPlugin: NSObject, SuperPlugin, SuperLog {
     /// 插件是否可配置（是否在设置中由用户控制启用/停用）
     static var isConfigurable: Bool = true
 
-    private override init() {}
+    /// 插件默认启用状态
+    static var defaultEnabled: Bool = false
+
+    override private init() {}
 
     /// 在工具栏右侧添加视图
     /// - Returns: 打开 GitHub Desktop 的按钮视图
@@ -38,7 +39,6 @@ class OpenGitHubDesktopPlugin: NSObject, SuperPlugin, SuperLog {
         return AnyView(BtnOpenGitHubDesktopView.shared)
     }
 }
-
 
 // MARK: - Preview
 
