@@ -20,8 +20,9 @@ class OpenAntigravityPlugin: NSObject, SuperPlugin {
 
     /// 插件是否可配置（是否在设置中由用户控制启用/停用）
     static var allowUserToggle = true
+    
     /// 插件默认启用状态
-    static var defaultEnabled: Bool = true
+    static var defaultEnabled: Bool = false
 
     func addToolBarTrailingView() -> AnyView? {
         return AnyView(BtnOpenAntigravityView.shared)
