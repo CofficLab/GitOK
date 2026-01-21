@@ -11,7 +11,7 @@ class PluginProvider: ObservableObject, SuperLog, SuperThread {
     static let verbose = true
 
     /// 是否注册所有插件（开发调试用，设为 false 可禁用所有插件）
-    static var registerAllPlugins: Bool = false
+    static var registerAllPlugins: Bool = true
 
     @Published private(set) var plugins: [SuperPlugin] = []
 
@@ -187,6 +187,7 @@ class PluginProvider: ObservableObject, SuperLog, SuperThread {
                     isDeveloperEnabled: { true }
                 )
             }
+            .sorted { $0.name < $1.name }
     }
 
     /// 获取工具栏前导视图
