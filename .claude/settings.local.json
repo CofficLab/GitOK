@@ -48,7 +48,8 @@
       "WebSearch",
       "Bash(defaults read:*)",
       "Bash(mdfind:*)",
-      "Bash(mkdir:*)"
+      "Bash(mkdir:*)",
+      "Bash(git restore:*)"
     ]
   }
 }
