@@ -15,9 +15,6 @@ protocol SuperPlugin {
     /// 默认实现返回静态 label 属性的值
     var instanceLabel: String { get }
 
-    /// 插件的唯一标识符，用于设置管理
-    static var id: String { get }
-
     /// 插件注册顺序，数字越小越先注册
     static var order: Int { get }
 
@@ -78,11 +75,6 @@ extension SuperPlugin {
     /// 默认的实例标签实现，返回静态 label 属性的值
     var instanceLabel: String {
         return type(of: self).label
-    }
-
-    /// 默认的插件ID实现，返回静态 label 属性的值
-    static var id: String {
-        return label
     }
 
     /// 默认的注册顺序实现

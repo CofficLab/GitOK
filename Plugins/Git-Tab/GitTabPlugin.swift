@@ -17,8 +17,6 @@ class GitTabPlugin: NSObject, SuperPlugin, SuperLog {
 
     static var label: String = "GitTab"
 
-    /// 插件的唯一标识符，用于设置管理
-    static var id: String = "GitTab"
 
     /// 插件注册顺序
     static var order: Int = 0

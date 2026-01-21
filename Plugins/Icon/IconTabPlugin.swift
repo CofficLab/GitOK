@@ -17,8 +17,6 @@ class IconTabPlugin: NSObject, SuperPlugin, SuperLog {
 
     static var label: String = "IconTab"
 
-    /// 插件的唯一标识符，用于设置管理
-    static var id: String = "IconTab"
 
     /// 插件注册顺序
     static var order: Int = 1

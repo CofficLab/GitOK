@@ -4,8 +4,6 @@ import SwiftUI
 
 /// 冲突解决插件：提供可视化的合并冲突解决界面
 class ConflictResolverPlugin: NSObject, SuperPlugin, SuperLog {
-    /// 插件的唯一标识符，用于设置管理
-    static var id: String = "ConflictResolver"
 
     /// 插件显示名称
     static var displayName: String = "ConflictResolver"

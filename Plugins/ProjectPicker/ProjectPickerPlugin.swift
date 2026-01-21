@@ -3,8 +3,6 @@ import OSLog
 import SwiftUI
 
 class ProjectPickerPlugin: NSObject, SuperPlugin, SuperLog {
-    /// 插件的唯一标识符，用于设置管理
-    static var id: String = "ProjectPicker"
 
     /// 插件显示名称
     static var displayName: String = "ProjectPicker"

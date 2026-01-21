@@ -16,8 +16,6 @@ class ActivityStatusPlugin: NSObject, SuperPlugin, SuperLog {
     @objc static let shared = ActivityStatusPlugin()
     static let label = "ActivityStatus"
 
-    /// 插件的唯一标识符，用于设置管理
-    static var id: String = "ActivityStatus"
 
     /// 插件显示名称
     static var displayName: String = "ActivityStatus"

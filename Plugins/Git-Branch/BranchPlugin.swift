@@ -4,8 +4,6 @@ import SwiftUI
 
 /// Branch 插件：提供分支列表视图（工具栏右侧）并在状态栏左侧展示当前分支。
 class BranchPlugin: NSObject, SuperPlugin, SuperLog {
-    /// 插件的唯一标识符，用于设置管理
-    static var id: String = "Branch"
 
     /// 插件显示名称
     static var displayName: String = "Branch"

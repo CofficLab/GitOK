@@ -16,8 +16,6 @@ class SmartFilePlugin: NSObject, SuperPlugin, SuperLog {
     @objc static let shared = SmartFilePlugin()
     static var label: String = "SmartFile"
 
-    /// 插件的唯一标识符，用于设置管理
-    static var id: String = "SmartFile"
 
     /// 插件显示名称
     static var displayName: String = "SmartFile"

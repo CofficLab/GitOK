@@ -4,8 +4,6 @@ import SwiftUI
 
 /// RemoteRepository 插件：在状态栏提供远程仓库管理入口。
 class RemoteRepositoryPlugin: NSObject, SuperPlugin, SuperLog {
-    /// 插件的唯一标识符，用于设置管理
-    static var id: String = "RemoteRepository"
 
     /// 插件显示名称
     static var displayName: String = "RemoteRepository"

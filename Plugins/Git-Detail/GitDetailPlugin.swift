@@ -16,8 +16,6 @@ class GitDetailPlugin: NSObject, SuperPlugin, SuperLog {
     @objc static let shared = GitDetailPlugin()
     static var label: String = "GitDetail"
 
-    /// 插件的唯一标识符，用于设置管理
-    static var id: String = "GitDetail"
 
     /// 插件注册顺序
     static var order: Int = 0

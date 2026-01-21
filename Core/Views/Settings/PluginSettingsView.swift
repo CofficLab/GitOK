@@ -87,7 +87,7 @@ struct PluginSettingsView: View, SuperLog {
             .map { plugin in
                 let pluginType = type(of: plugin)
                 return PluginInfo(
-                    id: pluginType.id,
+                    id: pluginType.label,
                     name: pluginType.displayName,
                     description: pluginType.description,
                     icon: pluginType.iconName,

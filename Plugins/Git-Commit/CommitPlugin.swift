@@ -18,8 +18,6 @@ class CommitPlugin: NSObject, SuperPlugin, SuperLog {
     @objc static let shared = CommitPlugin()
     static let label: String = "Commit"
 
-    /// 插件的唯一标识符，用于设置管理
-    static var id: String = "Commit"
 
     /// 插件显示名称
     static var displayName: String = "Commit"

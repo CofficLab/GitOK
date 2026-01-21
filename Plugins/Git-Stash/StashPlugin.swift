@@ -4,8 +4,6 @@ import SwiftUI
 
 /// Stash 插件：提供stash暂存功能，包括保存、查看、应用和删除stash
 class StashPlugin: NSObject, SuperPlugin, SuperLog {
-    /// 插件的唯一标识符，用于设置管理
-    static var id: String = "Stash"
 
     /// 插件显示名称
     static var displayName: String = "Stash"

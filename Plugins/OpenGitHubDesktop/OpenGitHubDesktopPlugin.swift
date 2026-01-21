@@ -18,8 +18,6 @@ class OpenGitHubDesktopPlugin: NSObject, SuperPlugin, SuperLog {
 
     static var label: String = "OpenGitHubDesktop"
 
-    /// 插件的唯一标识符，用于设置管理
-    static var id: String = "OpenGitHubDesktop"
 
     /// 插件显示名称
     static var displayName: String = "OpenGitHubDesktop"
