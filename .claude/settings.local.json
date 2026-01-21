@@ -49,7 +49,8 @@
       "Bash(defaults read:*)",
       "Bash(mdfind:*)",
       "Bash(mkdir:*)",
-      "Bash(git restore:*)"
+      "Bash(git restore:*)",
+      "Bash(git mv:*)"
     ]
   }
 }

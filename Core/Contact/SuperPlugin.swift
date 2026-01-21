@@ -103,7 +103,9 @@ extension SuperPlugin {
     static var iconName: String {
         return "puzzlepiece.extension"
     }
+
     static var isConfigurable: Bool { true }
+
     /// 默认的工具栏前部视图实现，返回空视图
     func addToolBarLeadingView() -> AnyView? {
         nil
