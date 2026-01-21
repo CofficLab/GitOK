@@ -145,7 +145,7 @@ class PluginProvider: ObservableObject, SuperLog, SuperThread {
     /// 检查插件是否被用户启用
     /// - Parameter plugin: 要检查的插件
     /// - Returns: 如果插件被启用则返回true
-    private func isPluginEnabled(_ plugin: any SuperPlugin) -> Bool {
+    func isPluginEnabled(_ plugin: any SuperPlugin) -> Bool {
         let pluginType = type(of: plugin)
 
         // 如果不允许用户切换，则始终启用
