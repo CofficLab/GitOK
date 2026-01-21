@@ -9,7 +9,7 @@ class GitignorePlugin: NSObject, SuperPlugin, SuperLog {
     nonisolated static let emoji = "📄"
 
     /// 是否启用该插件
-    @objc static let enable = true
+    @objc static let shouldRegister = false
 
     /// 是否启用详细日志输出
     nonisolated static let verbose = true
@@ -24,12 +24,9 @@ class GitignorePlugin: NSObject, SuperPlugin, SuperLog {
     static var iconName: String = "doc.badge.gearshape"
 
     /// 插件是否可配置（是否在设置中由用户控制启用/停用）
-    static var isConfigurable: Bool = true
+    static var allowUserToggle: Bool = true
 
-    ///  插件默认启用状态
-    static var defaultEnabled: Bool = false
 
-    ///  插件默认启用状态
 
     override private init() {}
 

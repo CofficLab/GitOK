@@ -15,17 +15,15 @@ class RemoteRepositoryPlugin: NSObject, SuperPlugin, SuperLog {
     static var iconName: String = "network"
 
     /// 插件是否可配置（是否在设置中由用户控制启用/停用）
-    static var isConfigurable: Bool = false
+    static var allowUserToggle: Bool = false
 
-    ///  插件默认启用状态
-    static var defaultEnabled: Bool = true
     /// 日志标识符
     nonisolated static let emoji = "🔗"
 
     @objc static let shared = RemoteRepositoryPlugin()
 
     /// 是否启用该插件
-    @objc static let enable = true
+    @objc static let shouldRegister = false
 
     /// 是否启用详细日志输出
     nonisolated static let verbose = true

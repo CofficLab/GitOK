@@ -35,25 +35,43 @@ struct PluginSettingsView: View, SuperLog {
                     .padding(.bottom, 24)
 
                 // 插件列表
-                ForEach(configurablePlugins) { plugin in
-                    PluginToggleRow(
-                        plugin: plugin,
-                        isEnabled: Binding(
-                            get: { pluginStates[plugin.id, default: true] },
-                            set: { newValue in
-                                pluginStates[plugin.id] = newValue
-                                settingsStore.setPluginEnabled(plugin.id, enabled: newValue)
+                if configurablePlugins.isEmpty {
+                    // 空状态提示
+                    VStack(spacing: 16) {
+                        Image(systemName: "puzzlepiece.extension")
+                            .font(.system(size: 48))
+                            .foregroundColor(.secondary)
 
-                                if Self.verbose {
-                                    os_log("\(Self.t)🔌 Plugin '\(plugin.id)' is now \(newValue ? "enabled" : "disabled")")
+                        Text("暂无可配置插件")
+                            .font(.title3)
+                            .fontWeight(.medium)
+
+                        Text("当前没有可以在设置中管理的插件")
+                            .font(.body)
+                            .foregroundColor(.secondary)
+                    }
+                    .frame(maxWidth: .infinity, minHeight: 200)
+                } else {
+                    ForEach(configurablePlugins) { plugin in
+                        PluginToggleRow(
+                            plugin: plugin,
+                            isEnabled: Binding(
+                                get: { pluginStates[plugin.id, default: true] },
+                                set: { newValue in
+                                    pluginStates[plugin.id] = newValue
+                                    settingsStore.setPluginEnabled(plugin.id, enabled: newValue)
+
+                                    if Self.verbose {
+                                        os_log("\(Self.t)🔌 Plugin '\(plugin.id)' is now \(newValue ? "enabled" : "disabled")")
+                                    }
                                 }
-                            }
+                            )
                         )
-                    )
 
-                    if plugin.id != configurablePlugins.last?.id {
-                        Divider()
-                            .padding(.leading, 16)
+                        if plugin.id != configurablePlugins.last?.id {
+                            Divider()
+                                .padding(.leading, 16)
+                        }
                     }
                 }
 
@@ -83,7 +101,7 @@ struct PluginSettingsView: View, SuperLog {
     /// 获取可配置的插件列表（从自动发现的插件中提取）
     private var configurablePlugins: [PluginInfo] {
         pluginProvider.plugins
-            .filter { type(of: $0).isConfigurable }
+            .filter { type(of: $0).allowUserToggle }
             .map { plugin in
                 let pluginType = type(of: plugin)
                 // 使用反射获取插件类型名称作为 ID
@@ -94,7 +112,6 @@ struct PluginSettingsView: View, SuperLog {
                     name: pluginType.displayName,
                     description: pluginType.description,
                     icon: pluginType.iconName,
-                    defaultEnabled: pluginType.defaultEnabled,
                     isDeveloperEnabled: { true }
                 )
             }
@@ -104,11 +121,11 @@ struct PluginSettingsView: View, SuperLog {
     private func loadPluginStates() {
         var states: [String: Bool] = [:]
         for plugin in configurablePlugins {
-            // 如果用户配置过，使用用户配置；否则使用插件的默认值
+            // 检查用户配置，如果没有配置则默认为启用
             if settingsStore.hasUserConfigured(plugin.id) {
-                states[plugin.id] = settingsStore.isPluginEnabled(plugin.id, defaultEnabled: plugin.defaultEnabled)
+                states[plugin.id] = settingsStore.isPluginEnabled(plugin.id, defaultEnabled: true)
             } else {
-                states[plugin.id] = plugin.defaultEnabled
+                states[plugin.id] = true
             }
         }
         pluginStates = states

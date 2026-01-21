@@ -66,26 +66,10 @@ class PluginProvider: ObservableObject, SuperLog, SuperThread {
             // 只检查 GitOK 命名空间下以 "Plugin" 结尾的类
             guard className.hasPrefix("GitOK."), className.hasSuffix("Plugin") else { continue }
 
-            // 检查插件是否启用
-            var enabled = true // 默认启用
-            let enableSelector = NSSelectorFromString("enable")
-            if let enableMethod = class_getClassMethod(cls, enableSelector) {
-                typealias EnableGetter = @convention(c) (AnyClass, Selector) -> Bool
-                let getter = unsafeBitCast(method_getImplementation(enableMethod), to: EnableGetter.self)
-                enabled = getter(cls, enableSelector)
-            } else {
-                if Self.verbose { os_log("\(self.t)⚠️ No enable method found for \(className), using default: true") }
-            }
-
-            guard enabled else {
-                if Self.verbose { os_log("\(self.t)⏭️ Skipping disabled plugin: \(className)") }
-                continue
-            }
-
             // 尝试获取 shared 单例实例
             let sharedSelector = NSSelectorFromString("shared")
             guard let sharedMethod = class_getClassMethod(cls, sharedSelector) else {
-                if Self.verbose { os_log("\(self.t)⚠️ No @objc shared found for \(className), skipping") }
+                if Self.verbose { os_log("\(Self.t)⚠️ No @objc shared found for \(className), skipping") }
                 continue
             }
 
@@ -104,8 +88,29 @@ class PluginProvider: ObservableObject, SuperLog, SuperThread {
                 continue
             }
 
+            // 获取插件类型
+            let pluginType = type(of: plugin)
+            let pluginOrder = pluginType.order
+
+            // 检查插件是否应该注册
+            if !pluginType.shouldRegister {
+                if Self.verbose { os_log("\(self.t)⏭️ Skipping plugin (shouldRegister=false): \(className)") }
+                continue
+            }
+
+            // 检查用户是否禁用了此插件（仅当允许用户切换时）
+            if pluginType.allowUserToggle {
+                let pluginId = plugin.instanceLabel
+                if PluginSettingsStore.shared.hasUserConfigured(pluginId) {
+                    let enabled = PluginSettingsStore.shared.isPluginEnabled(pluginId, defaultEnabled: true)
+                    if !enabled {
+                        if Self.verbose { os_log("\(self.t)⏭️ Skipping plugin (user disabled): \(className)") }
+                        continue
+                    }
+                }
+            }
+
             // 添加到临时数组，稍后按 order 排序
-            let pluginOrder = type(of: plugin).order
             discoveredPlugins.append((plugin, className, pluginOrder))
         }
 
@@ -124,31 +129,6 @@ class PluginProvider: ObservableObject, SuperLog, SuperThread {
 
     // MARK: - Plugin Query Methods
 
-    /// 检查插件是否被启用
-    /// - Parameter plugin: 要检查的插件
-    /// - Returns: 如果插件被启用则返回true
-    /// - Note: 如果插件不可配置(isConfigurable = false)，则总是返回true
-    /// - Note: 如果插件可配置但用户未配置过，使用插件的 defaultEnabled 值
-    private func isPluginEnabled(_ plugin: any SuperPlugin) -> Bool {
-        // 如果插件不可由用户控制，则必须启用
-        if !type(of: plugin).isConfigurable {
-            return true
-        }
-
-        // 获取插件类型
-        let pluginType = type(of: plugin)
-        let pluginId = plugin.instanceLabel
-
-        // 检查用户是否配置过
-        if PluginSettingsStore.shared.hasUserConfigured(pluginId) {
-            // 用户配置过，使用用户配置
-            return PluginSettingsStore.shared.isPluginEnabled(pluginId, defaultEnabled: true)
-        } else {
-            // 用户未配置过，使用插件的默认启用状态
-            return pluginType.defaultEnabled
-        }
-    }
-
     /// 获取所有标记为标签页的插件
     /// - Returns: 可作为标签页显示的插件数组
     var tabPlugins: [SuperPlugin] {
@@ -158,12 +138,7 @@ class PluginProvider: ObservableObject, SuperLog, SuperThread {
     /// 获取所有可用的标签页名称
     /// - Returns: 标签页名称数组
     var tabNames: [String] {
-        plugins.compactMap { plugin in
-            if isPluginEnabled(plugin), let tabName = plugin.addTabItem() {
-                return tabName
-            }
-            return nil
-        }
+        plugins.compactMap { $0.addTabItem() }
     }
 
     /// 检查是否所有插件的列表视图都为空
@@ -172,58 +147,50 @@ class PluginProvider: ObservableObject, SuperLog, SuperThread {
     ///     - project: 当前选中的项目
     /// - Returns: 如果所有插件的addListView都返回nil则返回true，否则返回false
     func allListViewsEmpty(tab: String, project: Project?) -> Bool {
-        var allEmpty = true
         for plugin in plugins {
-            if isPluginEnabled(plugin), let listView = plugin.addListView(tab: tab, project: project) {
-                allEmpty = false
-                break
+            if let listView = plugin.addListView(tab: tab, project: project) {
+                return false
             }
         }
-        return allEmpty
+        return true
     }
 
-    /// 获取启用的工具栏前导视图
-    /// - Returns: 启用的插件及其对应的工具栏前导视图数组
+    /// 获取工具栏前导视图
+    /// - Returns: 插件及其对应的工具栏前导视图数组
     func getEnabledToolbarLeadingViews() -> [(plugin: SuperPlugin, view: AnyView)] {
         plugins.compactMap { plugin in
-            if isPluginEnabled(plugin), let view = plugin.addToolBarLeadingView() {
-                return (plugin, view)
-            }
-            return nil
+            guard let view = plugin.addToolBarLeadingView() else { return nil }
+            return (plugin, view)
         }
     }
 
-    /// 获取启用的工具栏后置视图
-    /// - Returns: 启用的插件及其对应的工具栏后置视图数组
+    /// 获取工具栏后置视图
+    /// - Returns: 插件及其对应的工具栏后置视图数组
     func getEnabledToolbarTrailingViews() -> [(plugin: SuperPlugin, view: AnyView)] {
         plugins.compactMap { plugin in
-            if isPluginEnabled(plugin), let view = plugin.addToolBarTrailingView() {
-                return (plugin, view)
-            }
-            return nil
+            guard let view = plugin.addToolBarTrailingView() else { return nil }
+            return (plugin, view)
         }
     }
 
-    /// 获取启用的插件列表视图
+    /// 获取插件列表视图
     /// - Parameters:
     ///   - tab: 当前选中的标签页
     ///   - project: 当前选中的项目
-    /// - Returns: 启用的插件及其对应的列表视图数组
+    /// - Returns: 插件及其对应的列表视图数组
     func getEnabledPluginListViews(tab: String, project: Project?) -> [(plugin: SuperPlugin, view: AnyView)] {
         plugins.compactMap { plugin in
-            if isPluginEnabled(plugin), let view = plugin.addListView(tab: tab, project: project) {
-                return (plugin, view)
-            }
-            return nil
+            guard let view = plugin.addListView(tab: tab, project: project) else { return nil }
+            return (plugin, view)
         }
     }
 
-    /// 获取启用的标签页详情视图
+    /// 获取标签页详情视图
     /// - Parameter tab: 标签页标识符
-    /// - Returns: 如果找到启用的标签页插件，则返回其详情视图，否则返回nil
+    /// - Returns: 如果找到标签页插件，则返回其详情视图，否则返回nil
     func getEnabledTabDetailView(tab: String) -> AnyView? {
         for plugin in plugins {
-            if isPluginEnabled(plugin), let view = plugin.addDetailView(for: tab) {
+            if let view = plugin.addDetailView(for: tab) {
                 return view
             }
         }

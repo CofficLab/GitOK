@@ -24,12 +24,14 @@ protocol SuperPlugin {
     /// 插件图标名称
     static var iconName: String { get }
 
-    /// 插件是否可配置（是否在设置中显示）
-    static var isConfigurable: Bool { get }
+    /// 是否允许用户在设置中切换启用/禁用此插件
+    /// 如果为 false，插件始终启用且不在设置中显示
+    /// 如果为 true，插件显示在设置中，用户可控制启用状态
+    static var allowUserToggle: Bool { get }
 
-    /// 插件默认启用状态，仅在用户未配置时生效
-    /// 如果用户配置过，以用户配置为准
-    static var defaultEnabled: Bool { get }
+    /// 插件是否应该注册到系统中
+    /// 开发者可通过此属性控制插件是否启用
+    static var shouldRegister: Bool { get }
 
     /// 返回插件的标签项名称，如果插件提供标签页则返回标签名称，否则返回 nil
     func addTabItem() -> String?
@@ -108,7 +110,11 @@ extension SuperPlugin {
         return "puzzlepiece.extension"
     }
 
-    static var isConfigurable: Bool { true }
+    /// 默认允许用户切换
+    static var allowUserToggle: Bool { true }
+
+    /// 默认应该注册
+    static var shouldRegister: Bool { true }
 
     /// 默认的工具栏前部视图实现，返回空视图
     func addToolBarLeadingView() -> AnyView? {
