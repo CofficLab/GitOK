@@ -156,6 +156,14 @@ extension ContentView {
                 VStack(spacing: 0) {
                     if let tabDetailView = p.getEnabledTabDetailView(tab: tab) {
                         tabDetailView
+                    } else {
+                        // 没有可用的详情视图时显示引导界面
+                        GuideView(
+                            systemImage: "puzzlepiece.extension",
+                            title: "暂无可用视图",
+                            subtitle: "请在设置中启用相关插件以显示内容"
+                        )
+                        .setIconColor(.secondary)
                     }
 
                     if fullWidthStatusBar == false, statusBarVisibility {
@@ -178,6 +186,14 @@ extension ContentView {
                     VStack(spacing: 0) {
                         if let tabDetailView = p.getEnabledTabDetailView(tab: tab) {
                             tabDetailView
+                        } else {
+                            // 没有可用的详情视图时显示引导界面
+                            GuideView(
+                                systemImage: "puzzlepiece.extension",
+                                title: "暂无可用视图",
+                                subtitle: "请在设置中启用相关插件以显示内容"
+                            )
+                            .setIconColor(.secondary)
                         }
 
                         if fullWidthStatusBar == false, statusBarVisibility {
