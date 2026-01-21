@@ -10,6 +10,9 @@ class PluginProvider: ObservableObject, SuperLog, SuperThread {
     nonisolated static let emoji = "🧩"
     static let verbose = true
 
+    /// 是否注册所有插件（开发调试用，设为 false 可禁用所有插件）
+    static var registerAllPlugins: Bool = true
+
     @Published private(set) var plugins: [SuperPlugin] = []
 
     // MARK: - Plugin Registration
@@ -58,6 +61,12 @@ class PluginProvider: ObservableObject, SuperLog, SuperThread {
     /// 自动发现并注册所有插件
     /// 通过扫描 Objective-C runtime 中所有以 "Plugin" 结尾的类
     private func autoDiscoverAndRegisterPlugins() {
+        // 检查是否禁用所有插件注册
+        if !Self.registerAllPlugins {
+            if Self.verbose { os_log("\(self.t)⚠️ Plugin registration is disabled via registerAllPlugins=false") }
+            return
+        }
+
         // 清空已有注册（防止重复注册）
         clearRegisteredPlugins()
 
