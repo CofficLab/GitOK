@@ -27,6 +27,10 @@ protocol SuperPlugin {
     /// 插件是否可配置（是否在设置中显示）
     static var isConfigurable: Bool { get }
 
+    /// 插件默认启用状态，仅在用户未配置时生效
+    /// 如果用户配置过，以用户配置为准
+    static var defaultEnabled: Bool { get }
+
     /// 返回插件的标签项名称，如果插件提供标签页则返回标签名称，否则返回 nil
     func addTabItem() -> String?
 
@@ -105,6 +109,9 @@ extension SuperPlugin {
     }
 
     static var isConfigurable: Bool { true }
+
+    /// 默认的启用状态实现，默认为启用
+    static var defaultEnabled: Bool { true }
 
     /// 默认的工具栏前部视图实现，返回空视图
     func addToolBarLeadingView() -> AnyView? {

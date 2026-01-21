@@ -94,6 +94,7 @@ struct PluginSettingsView: View, SuperLog {
                     name: pluginType.displayName,
                     description: pluginType.description,
                     icon: pluginType.iconName,
+                    defaultEnabled: pluginType.defaultEnabled,
                     isDeveloperEnabled: { true }
                 )
             }
@@ -103,7 +104,12 @@ struct PluginSettingsView: View, SuperLog {
     private func loadPluginStates() {
         var states: [String: Bool] = [:]
         for plugin in configurablePlugins {
-            states[plugin.id] = settingsStore.isPluginEnabled(plugin.id)
+            // 如果用户配置过，使用用户配置；否则使用插件的默认值
+            if settingsStore.hasUserConfigured(plugin.id) {
+                states[plugin.id] = settingsStore.isPluginEnabled(plugin.id, defaultEnabled: plugin.defaultEnabled)
+            } else {
+                states[plugin.id] = plugin.defaultEnabled
+            }
         }
         pluginStates = states
     }

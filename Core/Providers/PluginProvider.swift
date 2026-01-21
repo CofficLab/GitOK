@@ -128,14 +128,25 @@ class PluginProvider: ObservableObject, SuperLog, SuperThread {
     /// - Parameter plugin: 要检查的插件
     /// - Returns: 如果插件被启用则返回true
     /// - Note: 如果插件不可配置(isConfigurable = false)，则总是返回true
+    /// - Note: 如果插件可配置但用户未配置过，使用插件的 defaultEnabled 值
     private func isPluginEnabled(_ plugin: any SuperPlugin) -> Bool {
         // 如果插件不可由用户控制，则必须启用
         if !type(of: plugin).isConfigurable {
             return true
         }
 
-        // 否则根据用户设置决定
-        return PluginSettingsStore.shared.isPluginEnabled(plugin.instanceLabel)
+        // 获取插件类型
+        let pluginType = type(of: plugin)
+        let pluginId = plugin.instanceLabel
+
+        // 检查用户是否配置过
+        if PluginSettingsStore.shared.hasUserConfigured(pluginId) {
+            // 用户配置过，使用用户配置
+            return PluginSettingsStore.shared.isPluginEnabled(pluginId, defaultEnabled: true)
+        } else {
+            // 用户未配置过，使用插件的默认启用状态
+            return pluginType.defaultEnabled
+        }
     }
 
     /// 获取所有标记为标签页的插件
