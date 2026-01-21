@@ -114,7 +114,7 @@ class PluginProvider: ObservableObject, SuperLog, SuperThread {
 
         for (plugin, className, order) in discoveredPlugins {
             register(plugin)
-            if Self.verbose { os_log("\(self.t)🚀 Registered plugin: \(className) (order: \(order))") }
+            if Self.verbose { os_log("\(self.t)🚀 #\(order) Registered: \(className)") }
         }
 
         if Self.verbose {

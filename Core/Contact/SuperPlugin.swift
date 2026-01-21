@@ -81,7 +81,7 @@ extension SuperPlugin {
 
     /// 默认的注册顺序实现
     static var order: Int {
-        return 0
+        return 9999
     }
 
     /// 默认的显示名称实现，使用反射获取类名
