@@ -16,16 +16,10 @@ class GitPushPlugin: NSObject, SuperPlugin {
     /// 插件是否可配置（在设置中显示启用/禁用开关）
     static var allowUserToggle: Bool = true
 
-
-
     /// 是否启用该插件
     @objc static let shouldRegister = true
 
-
-    /// 插件标签（用于实例化标识）
-
     @objc static let shared = GitPushPlugin()
-    
 
     /// 在工具栏右侧添加视图
     /// - Returns: 推送按钮视图

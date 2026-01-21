@@ -4,7 +4,6 @@ import SwiftUI
 
 /// RemoteRepository 插件：在状态栏提供远程仓库管理入口。
 class RemoteRepositoryPlugin: NSObject, SuperPlugin {
-
     /// 插件显示名称
     static var displayName: String = "RemoteRepository"
 
@@ -17,20 +16,15 @@ class RemoteRepositoryPlugin: NSObject, SuperPlugin {
     /// 插件是否可配置（是否在设置中由用户控制启用/停用）
     static var allowUserToggle: Bool = false
 
-
     @objc static let shared = RemoteRepositoryPlugin()
 
     /// 是否启用该插件
     @objc static let shouldRegister = true
 
-
-    private override init() {}
-
     func addStatusBarTrailingView() -> AnyView? {
         return AnyView(BtnRemoteRepositoryView.shared)
     }
 }
-
 
 #Preview("App - Small Screen") {
     ContentLayout()

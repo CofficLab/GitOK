@@ -9,7 +9,6 @@ class SettingsButtonPlugin: NSObject, SuperPlugin {
     /// 是否启用该插件
     @objc static let shouldRegister = true
 
-
     /// 插件显示名称
     static var displayName: String = "SettingsButton"
 
@@ -20,10 +19,7 @@ class SettingsButtonPlugin: NSObject, SuperPlugin {
     static var iconName: String = "gearshape"
 
     /// 插件是否可配置（是否在设置中由用户控制启用/停用）
-    static var allowUserToggle: Bool = false
-
-
-    
+    static var allowUserToggle: Bool = true
 
     func addStatusBarTrailingView() -> AnyView? {
         AnyView(SettingsButtonView.shared)

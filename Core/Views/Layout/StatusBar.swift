@@ -17,21 +17,21 @@ struct StatusBar: View, SuperLog {
     var body: some View {
         HStack(spacing: 0) {
             // 状态栏左侧区域
-            ForEach(p.plugins, id: \.instanceLabel) { plugin in
+            ForEach(p.plugins.filter { isPluginEnabled($0) }, id: \.instanceLabel) { plugin in
                 plugin.addStatusBarLeadingView()
             }
 
             Spacer()
 
             // 状态栏中间区域
-            ForEach(p.plugins, id: \.instanceLabel) { plugin in
+            ForEach(p.plugins.filter { isPluginEnabled($0) }, id: \.instanceLabel) { plugin in
                 plugin.addStatusBarCenterView()
             }
 
             Spacer()
 
             // 状态栏右侧区域
-            ForEach(p.plugins, id: \.instanceLabel) { plugin in
+            ForEach(p.plugins.filter { isPluginEnabled($0) }, id: \.instanceLabel) { plugin in
                 plugin.addStatusBarTrailingView()
             }
         }
@@ -43,6 +43,27 @@ struct StatusBar: View, SuperLog {
         #else
         .background(Color.accentColor.opacity(0.4))
         #endif
+    }
+
+    /// 检查插件是否被用户启用
+    /// - Parameter plugin: 要检查的插件
+    /// - Returns: 如果插件被启用则返回true
+    private func isPluginEnabled(_ plugin: any SuperPlugin) -> Bool {
+        let pluginType = type(of: plugin)
+
+        // 如果不允许用户切换，则始终启用
+        if !pluginType.allowUserToggle {
+            return true
+        }
+
+        // 检查用户配置
+        let pluginId = plugin.instanceLabel
+        if PluginSettingsStore.shared.hasUserConfigured(pluginId) {
+            return PluginSettingsStore.shared.isPluginEnabled(pluginId, defaultEnabled: true)
+        }
+
+        // 用户未配置过，默认启用
+        return true
     }
 }
 
