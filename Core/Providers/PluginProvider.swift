@@ -5,6 +5,7 @@ import OSLog
 import StoreKit
 import SwiftData
 import SwiftUI
+import Combine
 
 class PluginProvider: ObservableObject, SuperLog, SuperThread {
     nonisolated static let emoji = "🧩"
@@ -14,6 +15,12 @@ class PluginProvider: ObservableObject, SuperLog, SuperThread {
     static var registerAllPlugins: Bool = true
 
     @Published private(set) var plugins: [SuperPlugin] = []
+
+    /// 插件设置存储
+    private let settingsStore = PluginSettingsStore.shared
+
+    /// Combine 订阅集合
+    private var cancellables = Set<AnyCancellable>()
 
     // MARK: - Plugin Registration
 
@@ -271,6 +278,13 @@ class PluginProvider: ObservableObject, SuperLog, SuperThread {
 
         // 从内部注册表获取所有已注册的插件实例
         self.plugins = getAllPlugins()
+
+        // 订阅设置变化，当设置改变时触发 UI 更新
+        settingsStore.$settings
+            .sink { [weak self] _ in
+                self?.objectWillChange.send()
+            }
+            .store(in: &cancellables)
     }
 }
 

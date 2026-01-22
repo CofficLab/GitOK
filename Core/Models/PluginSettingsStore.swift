@@ -1,12 +1,19 @@
 import Foundation
+import Combine
 
 /// 插件设置存储：管理插件的启用/禁用状态
-class PluginSettingsStore {
+class PluginSettingsStore: ObservableObject {
     static let shared = PluginSettingsStore()
 
     private let userDefaultsKey = "GitOK_PluginSettings"
 
-    private init() {}
+    /// 发布设置变化，让订阅者能够实时响应
+    @Published private(set) var settings: [String: Bool] = [:]
+
+    private init() {
+        // 初始化时从 UserDefaults 加载设置
+        self.settings = loadSettings()
+    }
 
     /// 获取插件的启用状态
     /// - Parameters:
@@ -14,7 +21,6 @@ class PluginSettingsStore {
     ///   - defaultEnabled: 插件的默认启用状态
     /// - Returns: true 表示启用，false 表示禁用
     func isPluginEnabled(_ pluginId: String, defaultEnabled: Bool = true) -> Bool {
-        let settings = loadSettings()
         // 如果用户配置过，使用用户配置；否则使用默认值
         if let userSetting = settings[pluginId] {
             return userSetting
@@ -26,7 +32,6 @@ class PluginSettingsStore {
     /// - Parameter pluginId: 插件ID
     /// - Returns: true 表示用户配置过，false 表示未配置
     func hasUserConfigured(_ pluginId: String) -> Bool {
-        let settings = loadSettings()
         return settings[pluginId] != nil
     }
 
@@ -35,9 +40,8 @@ class PluginSettingsStore {
     ///   - pluginId: 插件ID
     ///   - enabled: true 表示启用，false 表示禁用
     func setPluginEnabled(_ pluginId: String, enabled: Bool) {
-        var settings = loadSettings()
         settings[pluginId] = enabled
-        saveSettings(settings)
+        saveSettings()
     }
 
     /// 加载所有插件设置
@@ -46,7 +50,7 @@ class PluginSettingsStore {
     }
 
     /// 保存插件设置
-    private func saveSettings(_ settings: [String: Bool]) {
+    private func saveSettings() {
         UserDefaults.standard.set(settings, forKey: userDefaultsKey)
     }
 }
@@ -71,4 +75,3 @@ struct PluginInfo: Identifiable {
         self.isDeveloperEnabled = isDeveloperEnabled
     }
 }
-
