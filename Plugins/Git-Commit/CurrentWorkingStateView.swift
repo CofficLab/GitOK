@@ -3,6 +3,7 @@ import MagicAlert
 import LibGit2Swift
 import OSLog
 import SwiftUI
+import Combine
 
 /// 显示当前工作状态的视图组件
 /// 显示未提交文件数量、远程同步状态，并提供 git pull 功能
@@ -35,6 +36,12 @@ struct CurrentWorkingStateView: View, SuperLog {
 
     /// 是否正在加载同步状态
     @State private var isSyncLoading = false
+
+    /// 定时检查远程状态的订阅
+    @State private var timerCancellable: AnyCancellable? = nil
+
+    /// 定时器间隔（秒）
+    private let timerInterval: TimeInterval = 60
 
     /// 下载按钮是否被鼠标悬停
     @State private var isDownloadButtonHovered = false
@@ -126,6 +133,7 @@ struct CurrentWorkingStateView: View, SuperLog {
         )
         .onTapGesture(perform: onTap)
         .onAppear(perform: onAppear)
+        .onDisappear(perform: onDisappear)
         .onChange(of: data.project, onProjectDidChange)
         .onProjectDidCommit(perform: onProjectDidCommit)
         .onProjectDidPush(perform: onProjectDidPush)
@@ -271,6 +279,9 @@ extension CurrentWorkingStateView {
             os_log("\(self.t)<\(project.path)>Loading sync status")
         }
 
+        // 设置活动状态
+        setStatus("检查远程状态…")
+
         // 使用 Task.detached 确保在后台执行，不继承 actor 上下文
         Task.detached(priority: .userInitiated) {
             // 在后台线程执行耗时操作
@@ -288,8 +299,8 @@ extension CurrentWorkingStateView {
             }
 
             do {
-                let unpulled = try await project.getUnPulledCommits()
-                unpulledCount = unpulled.count
+                // 使用 getUnPulledCount() 获取远程领先的提交数量
+                unpulledCount = try project.getUnPulledCount()
             } catch {
                 unpulledCount = 0
                 await MainActor.run {
@@ -302,17 +313,25 @@ extension CurrentWorkingStateView {
                 self.unpushedCount = unpushedCount
                 self.unpulledCount = unpulledCount
                 self.isSyncLoading = false
+
+                if Self.verbose {
+                    os_log("\(self.t)✅ Sync status updated: unpushed=\(unpushedCount), unpulled=\(unpulledCount)")
+                }
             }
+
+            // 延迟清除状态，确保用户能看到提示（至少显示2秒）
+            try? await Task.sleep(nanoseconds: 2000_000_000)
+            self.setStatus(nil)
         }
 
         // 立即更新 loading 状态
         isSyncLoading = true
     }
 
-    /// 设置活动状态日志
+    /// 设置活动状态
     /// - Parameter text: 状态文本，为 nil 时清除状态
-    private func setStatus(_ text: String?) async {
-        await MainActor.run {
+    private func setStatus(_ text: String?) {
+        Task { @MainActor in
             data.activityStatus = text
         }
     }
@@ -334,7 +353,7 @@ extension CurrentWorkingStateView {
         isPulling = true
 
         // 设置状态日志
-        Task { await setStatus("拉取中…") }
+        setStatus("拉取中…")
 
         // 使用 Task.detached 确保在后台执行
         Task.detached(priority: .userInitiated) {
@@ -373,7 +392,7 @@ extension CurrentWorkingStateView {
             }
 
             // 清除状态日志
-            await setStatus(nil)
+            self.setStatus(nil)
         }
     }
 
@@ -394,7 +413,7 @@ extension CurrentWorkingStateView {
         isPushing = true
 
         // 设置状态日志
-        Task { await setStatus("推送中…") }
+        setStatus("推送中…")
 
         // 使用 Task.detached 确保在后台执行
         Task.detached(priority: .userInitiated) {
@@ -433,7 +452,7 @@ extension CurrentWorkingStateView {
             }
 
             // 清除状态日志
-            await setStatus(nil)
+            self.setStatus(nil)
         }
     }
 
@@ -467,12 +486,47 @@ extension CurrentWorkingStateView {
 // MARK: - Event Handlers
 
 extension CurrentWorkingStateView {
-    /// 视图出现时的事件处理：加载状态
+    /// 视图出现时的事件处理：加载状态并启动定时器
     func onAppear() {
         Task {
             await self.loadChangedFileCount()
         }
         loadSyncStatus()
+        startRemoteStatusTimer()
+    }
+
+    /// 视图消失时的事件处理：停止定时器
+    func onDisappear() {
+        stopRemoteStatusTimer()
+    }
+
+    /// 启动定时器，定期检查远程状态
+    private func startRemoteStatusTimer() {
+        // 取消之前的定时器
+        timerCancellable?.cancel()
+
+        // 创建新的定时器
+        timerCancellable = Timer.publish(every: timerInterval, on: .main, in: .common)
+            .autoconnect()
+            .sink { [self] _ in
+                if Self.verbose {
+                    os_log("\(self.t)⏰ Timer fired, checking remote status")
+                }
+                self.loadSyncStatus()
+            }
+
+        if Self.verbose {
+            os_log("\(self.t)⏰ Started remote status timer (interval: \(timerInterval)s)")
+        }
+    }
+
+    /// 停止定时器
+    private func stopRemoteStatusTimer() {
+        timerCancellable?.cancel()
+        timerCancellable = nil
+        if Self.verbose {
+            os_log("\(self.t)⏰ Stopped remote status timer")
+        }
     }
 
     /// 点击事件处理：选择当前工作状态并刷新文件列表
