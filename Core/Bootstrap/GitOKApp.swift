@@ -35,7 +35,8 @@ struct GitOKApp: App, SuperLog {
         .modelContainer(AppConfig.getContainer())
         .commands(content: {
             DebugCommand()
-            SettingsCommand()
+            ConfigCommand()
+            AppCommand()
 
             CommandGroup(after: .appInfo) {
                 UpdaterView(updater: updaterController.updater)

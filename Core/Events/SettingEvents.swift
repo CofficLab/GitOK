@@ -11,6 +11,12 @@ extension Notification.Name {
     /// 打开插件设置事件（打开设置并定位到插件管理标签）
     static let openPluginSettings = Notification.Name("openPluginSettings")
 
+    /// 打开仓库设置事件（打开设置并定位到仓库设置标签）
+    static let openRepositorySettings = Notification.Name("openRepositorySettings")
+
+    /// 打开Commit风格设置事件（打开设置并定位到Commit风格标签）
+    static let openCommitStyleSettings = Notification.Name("openCommitStyleSettings")
+
     /// 关闭设置视图事件
     static let dismissSettings = Notification.Name("dismissSettings")
     

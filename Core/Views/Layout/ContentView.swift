@@ -78,7 +78,7 @@ struct ContentView: View, SuperLog {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .sheet(isPresented: $app.showSettings) {
-            SettingView(defaultTab: app.defaultSettingTab == "plugins" ? .plugins : .userInfo)
+            SettingView(defaultTab: settingTabFromString(app.defaultSettingTab))
                 .onDisappear {
                     // 重置默认标签
                     app.defaultSettingTab = nil
@@ -89,6 +89,23 @@ struct ContentView: View, SuperLog {
         }
         .onReceive(NotificationCenter.default.publisher(for: .openPluginSettings)) { _ in
             app.openPluginSettings()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .openRepositorySettings)) { _ in
+            app.openRepositorySettings()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .openCommitStyleSettings)) { _ in
+            app.openCommitStyleSettings()
+        }
+    }
+
+    /// 将字符串转换为设置Tab枚举
+    private func settingTabFromString(_ tab: String?) -> SettingView.SettingTab {
+        guard let tab = tab else { return .userInfo }
+        switch tab {
+        case "plugins": return .plugins
+        case "repository": return .repository
+        case "commitStyle": return .commitStyle
+        default: return .userInfo
         }
     }
 }
@@ -116,6 +133,7 @@ extension ContentView {
         .onChange(of: self.tab, onChangeOfTab)
         .onChange(of: self.columnVisibility, onChangeColumnVisibility)
         .onChange(of: p.plugins.count, onPluginsLoaded)
+        .onReceive(p.objectWillChange, perform: onPluginProviderChange)
         .toolbarVisibility(toolbarVisibility ? .visible : .hidden)
         .toolbar(content: {
             ToolbarItem(placement: .navigation) {
@@ -334,6 +352,14 @@ extension ContentView {
             }
             updateCachedViews()
         }
+    }
+
+    /// 处理插件提供者变化事件（如插件启用/禁用）
+    func onPluginProviderChange() {
+        if Self.verbose {
+            os_log("\(self.t)🔔 PluginProvider changed, updating cached views")
+        }
+        updateCachedViews()
     }
 }
 

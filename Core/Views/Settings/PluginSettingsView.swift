@@ -81,11 +81,6 @@ struct PluginSettingsView: View, SuperLog {
         }
         .navigationTitle("插件管理")
         .toolbar {
-            ToolbarItem(placement: .automatic) {
-                Text("重启应用才能完全生效。")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-            }
             ToolbarItem(placement: .confirmationAction) {
                 Button("完成") {
                     // 关闭设置视图
