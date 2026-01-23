@@ -23,6 +23,9 @@ struct CommitStyleSettingView: View, SuperLog {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
+                // 风格示例展示
+                styleExamplesSection
+
                 MagicSettingSection(title: "Commit 风格", titleAlignment: .leading) {
                     VStack(spacing: 0) {
                         projectCommitStylePicker
@@ -46,6 +49,69 @@ struct CommitStyleSettingView: View, SuperLog {
     }
 
     // MARK: - View Components
+
+    /// 风格示例展示区
+    private var styleExamplesSection: some View {
+        MagicSettingSection(title: "风格示例", titleAlignment: .leading) {
+            VStack(alignment: .leading, spacing: 16) {
+                Text("选择不同的风格会改变 Commit 消息的显示方式：")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+
+                VStack(alignment: .leading, spacing: 12) {
+                    exampleCard(
+                        title: "Emoji 风格",
+                        examples: [
+                            "✨ Feature: Add periodic remote status check",
+                            "🐛 Fix: Plugin still shows when disabled",
+                            "♻️ Refactor: Move logic to PluginProvider"
+                        ]
+                    )
+
+                    exampleCard(
+                        title: "纯文本风格",
+                        examples: [
+                            "Feature: Add periodic remote status check",
+                            "Fix: Plugin still shows when disabled",
+                            "Refactor: Move logic to PluginProvider"
+                        ]
+                    )
+
+                    exampleCard(
+                        title: "纯文本小写",
+                        examples: [
+                            "feature: Add periodic remote status check",
+                            "fix: Plugin still shows when disabled",
+                            "refactor: Move logic to PluginProvider"
+                        ]
+                    )
+                }
+            }
+        }
+    }
+
+    /// 示例卡片
+    private func exampleCard(title: String, examples: [String]) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(title)
+                .font(.headline)
+                .foregroundColor(.primary)
+
+            VStack(alignment: .leading, spacing: 4) {
+                ForEach(examples, id: \.self) { example in
+                    Text(example)
+                        .font(.system(.body, design: .monospaced))
+                        .foregroundColor(.secondary)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 6)
+                        .background(
+                            RoundedRectangle(cornerRadius: 6)
+                                .fill(Color(.controlBackgroundColor))
+                        )
+                }
+            }
+        }
+    }
 
     private var projectCommitStylePicker: some View {
         MagicSettingPicker(
