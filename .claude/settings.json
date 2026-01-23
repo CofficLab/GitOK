@@ -25,7 +25,55 @@
       "Bash(tee:*)",
       "Bash(rm:*)",
       "Bash(cp:*)",
-      "Bash(mv:*)"
+      "Bash(mv:*)",
+      "Bash(swift-format:*)",
+      "Bash(swiftlint:*)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "swiftlint lint --path $FILEPATH 2>/dev/null || true",
+            "statusMessage": "Running SwiftLint..."
+          }
+        ]
+      },
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "swiftlint lint --path $FILEPATH 2>/dev/null || true",
+            "statusMessage": "Running SwiftLint..."
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "If the command is 'git commit' with -m flag, check if swift build and swiftlint run successfully first. Use $ARGUMENTS to see the command.",
+            "statusMessage": "Checking pre-commit conditions..."
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "swift-format --in-place $FILEPATH 2>/dev/null || true",
+            "statusMessage": "Formatting Swift code..."
+          }
+        ]
+      }
     ]
   }
 }
