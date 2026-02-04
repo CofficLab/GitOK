@@ -10,7 +10,7 @@ struct BtnPush: View, SuperLog {
     /// 是否启用详细日志输出
     nonisolated static let verbose = false
 
-    @EnvironmentObject var m: MagicMessageProvider
+    
     @EnvironmentObject var data: DataProvider
 
     /// 消息绑定
@@ -30,7 +30,7 @@ struct BtnPush: View, SuperLog {
                 do {
                     try data.project?.push()
                 } catch let error {
-                    m.warning("Push出错", subtitle: error.localizedDescription)
+                    alert_warning("Push出错", subtitle: error.localizedDescription)
                 }
             }
         )

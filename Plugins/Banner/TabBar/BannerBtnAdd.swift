@@ -12,7 +12,7 @@ struct BannerBtnAdd: View, SuperThread {
     @EnvironmentObject var app: AppProvider
     @EnvironmentObject var g: DataProvider
     @EnvironmentObject var b: BannerProvider
-    @EnvironmentObject var m: MagicMessageProvider
+    
 
     /// Banner仓库实例
     private let bannerRepo = BannerRepo.shared
@@ -39,9 +39,9 @@ struct BannerBtnAdd: View, SuperThread {
             // 设置为当前选中的Banner
             b.setBanner(newBanner)
 
-            m.info("已添加新的Banner文件")
+            alert_info("已添加新的Banner文件")
         } catch {
-            m.error("创建Banner失败：\(error.localizedDescription)")
+            alert_error("创建Banner失败：\(error.localizedDescription)")
         }
     }
 }

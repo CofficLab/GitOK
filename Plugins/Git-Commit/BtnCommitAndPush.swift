@@ -12,7 +12,7 @@ struct BtnCommitAndPush: View, SuperLog, SuperThread {
     nonisolated static let verbose = false
 
     @EnvironmentObject var g: DataProvider
-    @EnvironmentObject var m: MagicMessageProvider
+    
 
     /// 提交消息
     var commitMessage: String = ""
@@ -54,14 +54,14 @@ struct BtnCommitAndPush: View, SuperLog, SuperThread {
 
                     await MainActor.run {
                         if commitOnly == false {
-                            m.info("提交并推送成功")
+                            alert_info("提交并推送成功")
                         } else {
-                            m.info("提交成功")
+                            alert_info("提交成功")
                         }
                     }
                 } catch {
                     await MainActor.run {
-                        m.error(error)
+                        alert_error(error)
                     }
                 }
 

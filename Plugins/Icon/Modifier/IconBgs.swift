@@ -10,7 +10,7 @@ import SwiftUI
 **/
 struct IconBgs: View {
     @EnvironmentObject var i: IconProvider
-    @EnvironmentObject var m: MagicMessageProvider
+    
     
     /// 背景项的大小
     /// - 默认值：36x36
@@ -51,10 +51,10 @@ struct IconBgs: View {
                 do {
                     try icon.updateBackgroundId(gradient.rawValue)
                 } catch {
-                    m.error(error.localizedDescription)
+                    alert_error(error.localizedDescription)
                 }
             } else {
-                m.error("先选择一个图标文件")
+                alert_error("先选择一个图标文件")
             }
         }) {
             ZStack {

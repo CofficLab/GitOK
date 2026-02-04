@@ -7,7 +7,7 @@ import OSLog
 import SwiftUI
 
 struct FileDetail: View, SuperLog, SuperEvent, SuperThread {
-    @EnvironmentObject var m: MagicMessageProvider
+    
     @EnvironmentObject var data: DataProvider
 
     @State private var oldText = ""
@@ -68,7 +68,7 @@ struct FileDetail: View, SuperLog, SuperEvent, SuperThread {
                 self.newText = afterContent ?? ""
             }
         } catch {
-            self.m.error(error)
+            alert_error(error)
             self.oldText = ""
             self.newText = ""
         }

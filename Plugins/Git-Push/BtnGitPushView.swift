@@ -11,7 +11,7 @@ struct BtnGitPushView: View, SuperLog, SuperThread {
     nonisolated static let verbose = false
 
     /// 环境对象：消息提供者
-    @EnvironmentObject var m: MagicMessageProvider
+    
 
     /// 环境对象：数据提供者
     @EnvironmentObject var data: DataProvider
@@ -55,7 +55,7 @@ extension BtnGitPushView {
     /// - Parameter error: 要显示的错误信息
     func alert(error: Error) {
         self.main.async {
-            m.error(error)
+            alert_error(error)
         }
     }
 
@@ -92,14 +92,14 @@ extension BtnGitPushView {
                     try self.data.project?.push()
                 }
                 await MainActor.run {
-                    self.m.hideLoading()
+                    MagicMessageProvider.shared.hideLoading()
                     self.reset()
                 }
             } catch let error {
                 await MainActor.run {
-                    self.m.hideLoading()
+                    MagicMessageProvider.shared.hideLoading()
                     self.reset()
-                    self.m.error(error)
+                    alert_error(error)
                 }
             }
             await setStatus(nil)

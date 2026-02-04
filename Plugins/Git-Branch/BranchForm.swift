@@ -6,7 +6,7 @@ import SwiftUI
 
 struct BranchForm: View, SuperLog {
     @EnvironmentObject var data: DataProvider
-    @EnvironmentObject var m: MagicMessageProvider
+    
     
     @State private var branches: [GitBranch] = []
     @State private var newBranchName: String = ""
@@ -102,13 +102,13 @@ extension BranchForm {
                 await MainActor.run {
                     self.isCreating = false
                     self.newBranchName = ""
-                    self.m.info("已创建并切换到分支: \(branchName)")
+                    alert_info("已创建并切换到分支: \(branchName)")
                     self.loadBranches()
                 }
             } catch {
                 await MainActor.run {
                     self.isCreating = false
-                    self.m.error("创建分支失败: \(error.localizedDescription)")
+                    alert_error("创建分支失败: \(error.localizedDescription)")
                 }
             }
         }
@@ -123,12 +123,12 @@ extension BranchForm {
                 
                 await MainActor.run {
                     self.selectedBranch = branch
-                    self.m.info("已切换到分支: \(branch.name)")
+                    alert_info("已切换到分支: \(branch.name)")
                     self.loadBranches()
                 }
             } catch {
                 await MainActor.run {
-                    self.m.error("切换分支失败: \(error.localizedDescription)")
+                    alert_error("切换分支失败: \(error.localizedDescription)")
                 }
             }
         }
@@ -166,7 +166,7 @@ extension BranchForm {
                     if verbose {
                         os_log(.error, "\(self.t)Failed to load branches: \(error.localizedDescription)")
                     }
-                    self.m.error("加载分支列表失败: \(error.localizedDescription)")
+                    alert_error("加载分支列表失败: \(error.localizedDescription)")
                 }
             }
         }

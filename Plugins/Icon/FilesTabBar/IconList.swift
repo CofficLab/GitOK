@@ -6,7 +6,7 @@ import SwiftUI
 
 struct IconList: View {
     @EnvironmentObject var app: AppProvider
-    @EnvironmentObject var m: MagicMessageProvider
+    
     @EnvironmentObject var g: DataProvider
     @EnvironmentObject var i: IconProvider
 

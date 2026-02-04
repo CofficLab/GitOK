@@ -11,7 +11,7 @@ struct BannerDetailLayout: View {
     static var shared = BannerDetailLayout()
 
     @EnvironmentObject var g: DataProvider
-    @EnvironmentObject var m: MagicMessageProvider
+    
     @EnvironmentObject var b: BannerProvider
 
     @State private var scale: CGFloat = 1.0

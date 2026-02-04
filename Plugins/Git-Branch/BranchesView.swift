@@ -16,7 +16,7 @@ struct BranchesView: View, SuperThread, SuperLog, SuperEvent {
     @EnvironmentObject var data: DataProvider
 
     /// 环境对象：消息提供者
-    @EnvironmentObject var m: MagicMessageProvider
+    
 
     /// 可选分支列表
     @State var branches: [GitBranch] = []
@@ -124,7 +124,7 @@ extension BranchesView {
                 }
             } catch let e {
                 await MainActor.run {
-                    self.m.error(e)
+                    alert_error(e)
                     // 重置刷新状态
                     self.isRefreshing = false
                 }
@@ -203,7 +203,7 @@ extension BranchesView {
         do {
             try data.setBranch(self.selection)
         } catch let e {
-            m.error(e.localizedDescription)
+            alert_error(e.localizedDescription)
         }
     }
 }

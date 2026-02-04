@@ -8,7 +8,7 @@ import MagicAlert
  */
 struct ClassicBackgroundEditor: View {
     @EnvironmentObject var b: BannerProvider
-    @EnvironmentObject var m: MagicMessageProvider
+    
     
     @State private var selectedBackgroundId: String = "1"
     
@@ -55,7 +55,7 @@ struct ClassicBackgroundEditor: View {
                 banner.classicData = classicData
             }
         } catch {
-            m.error("更新背景失败: \(error.localizedDescription)")
+            alert_error("更新背景失败: \(error.localizedDescription)")
         }
     }
 }

@@ -12,7 +12,7 @@ struct BtnSyncView: View, SuperLog, SuperEvent, SuperThread {
     nonisolated static let verbose = false
 
     /// 环境对象：消息提供者
-    @EnvironmentObject var m: MagicMessageProvider
+    
 
     /// 环境对象：数据提供者
     @EnvironmentObject var data: DataProvider
@@ -105,9 +105,9 @@ extension BtnSyncView {
                             os_log("\(self.t)No remote repositories configured")
                         }
                         await MainActor.run {
-                            self.m.hideLoading()
+                            MagicMessageProvider.shared.hideLoading()
                             self.reset()
-                            self.m.info("该项目还没有配置远程仓库，请先推送代码建立远程连接")
+                            alert_info("该项目还没有配置远程仓库，请先推送代码建立远程连接")
                         }
                         await setStatus(nil)
                         return
@@ -122,9 +122,9 @@ extension BtnSyncView {
             } catch let error {
                 os_log(.error, "\(self.t)❌ Sync failed: \(error.localizedDescription)")
                 await MainActor.run {
-                    self.m.hideLoading()
+                    MagicMessageProvider.shared.hideLoading()
                     self.reset()
-                    self.m.error(error)
+                    alert_error(error)
                 }
             }
             await setStatus(nil)
@@ -135,7 +135,7 @@ extension BtnSyncView {
     /// - Parameter error: 错误对象
     func alert(error: Error) {
         self.main.async {
-            m.error(error.localizedDescription)
+            alert_error(error.localizedDescription)
         }
     }
 }

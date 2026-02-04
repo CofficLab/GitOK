@@ -10,7 +10,7 @@ import UniformTypeIdentifiers
  */
 struct IconMaker: View {
     @EnvironmentObject var app: AppProvider
-    @EnvironmentObject var m: MagicMessageProvider
+    
     @EnvironmentObject var i: IconProvider
     
     @State private var iconAsset: IconAsset?

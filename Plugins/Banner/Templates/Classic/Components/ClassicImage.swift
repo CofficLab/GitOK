@@ -9,7 +9,7 @@ import SwiftUI
  */
 struct ClassicImage: View {
     @EnvironmentObject var b: BannerProvider
-    @EnvironmentObject var m: MagicMessageProvider
+    
 
     var banner: BannerFile { b.banner }
     var classicData: ClassicBannerData? { banner.classicData }

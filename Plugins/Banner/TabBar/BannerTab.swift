@@ -17,7 +17,7 @@ import SwiftUI
 struct BannerTab: View {
     @EnvironmentObject var b: BannerProvider
     @EnvironmentObject var d: DataProvider
-    @EnvironmentObject var m: MagicMessageProvider
+    
 
     /// Banner数据
     let banner: BannerFile
@@ -62,9 +62,9 @@ struct BannerTab: View {
                 b.clearBanner()
             }
 
-            m.info("已删除")
+            alert_info("已删除")
         } catch {
-            m.error("删除Banner失败：\(error.localizedDescription)")
+            alert_error("删除Banner失败：\(error.localizedDescription)")
         }
     }
 }

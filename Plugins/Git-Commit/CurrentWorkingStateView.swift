@@ -11,7 +11,7 @@ struct CurrentWorkingStateView: View, SuperLog {
     /// 环境对象：数据提供者
     @EnvironmentObject var data: DataProvider
     /// 环境对象：消息提供者
-    @EnvironmentObject var m: MagicMessageProvider
+    
 
     // MARK: - 本地状态
 
@@ -386,7 +386,7 @@ extension CurrentWorkingStateView {
                     if self.isCredentialError(error) {
                         self.showCredentialInput = true
                     } else {
-                        self.m.error(error)
+                        alert_error(error)
                     }
                 }
             }
@@ -446,7 +446,7 @@ extension CurrentWorkingStateView {
                     if self.isCredentialError(error) {
                         self.showCredentialInput = true
                     } else {
-                        self.m.error(error)
+                        alert_error(error)
                     }
                 }
             }

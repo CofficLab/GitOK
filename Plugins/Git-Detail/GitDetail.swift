@@ -19,7 +19,7 @@ struct GitDetail: View, SuperEvent, SuperLog {
     @EnvironmentObject var data: DataProvider
 
     /// 环境对象：消息提供者
-    @EnvironmentObject var m: MagicMessageProvider
+    
 
     /// 项目是否干净（无未提交的变更）
     @State private var isProjectClean: Bool = true
