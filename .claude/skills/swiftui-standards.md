@@ -20,13 +20,15 @@ description: SwiftUI 开发标准规范，包括代码组织、MARK 分组、日
 ### 1. 代码组织原则
 
 **文件组织：**
+
 - 每个 struct/class 应该放在独立的文件中
 - 文件名应与类型名称保持一致
 - 相关组件应组织在同一目录下
 - 代码迁移后不添加"已迁移"注释
 
 **目录结构：**
-```
+
+```tree
 Core/
 ├── Events/          # 所有事件相关代码
 │   ├── AppEvents.swift
@@ -49,6 +51,7 @@ Core/
 ```
 
 **示例模板：**
+
 ```swift
 import SwiftUI
 
@@ -134,11 +137,13 @@ struct MyView: View, SuperLog {
 ```
 
 **协议要求：**
+
 - 实现 `nonisolated static let emoji` - 独特的 emoji 标识
 - 实现 `nonisolated static let verbose` - 详细日志控制
 - 使用 `self.t` 作为日志前缀（自动包含 emoji 和类型名）
 
 **日志级别：**
+
 ```swift
 // 总是输出
 os_log("\(self.t)Important operation completed")
@@ -172,6 +177,7 @@ func handleEvent() {
 ```
 
 **事件文件组织：**
+
 - 所有事件扩展放在 `Core/Events/` 目录
 - `AppEvents.swift` - 应用生命周期事件
 - `SettingEvents.swift` - 设置相关事件
@@ -206,6 +212,7 @@ func handleEvent() {
 ## Emoji 选择指南
 
 ### UI 相关
+
 - `🌿` - View 组件
 - `📱` - 移动端
 - `🖥️` - 桌面端
@@ -213,12 +220,14 @@ func handleEvent() {
 - `📋` - 表单组件
 
 ### 数据相关
+
 - `🏠` - 数据提供者
 - `💾` - 数据存储
 - `📊` - 数据分析
 - `🔄` - 数据同步
 
 ### 业务功能
+
 - `🔧` - 工具类
 - `📁` - 文件管理
 - `🌳` - 项目管理
@@ -226,6 +235,7 @@ func handleEvent() {
 - `🔍` - 搜索功能
 
 ### 系统相关
+
 - `🍎` - macOS
 - `⚙️` - 系统配置
 - `🔗` - 网络连接
@@ -234,24 +244,28 @@ func handleEvent() {
 ## 最佳实践
 
 ### 代码组织
+
 - ✅ 使用 extension 隔离不同分组
 - ✅ 保持 MARK 分组顺序统一
 - ✅ 语义化命名：`onXxx` / `handleXxx`
 - ✅ 状态更新集中在 Setter 分组
 
 ### 日志记录
+
 - ✅ 通过 emoji 快速过滤日志：`log stream | grep "🌿"`
 - ✅ 使用 verbose 控制调试级别
 - ✅ 避免记录敏感信息
 - ✅ 使用 `nonisolated static` 优化性能
 
 ### 事件处理
+
 - ✅ 使用 `perform:` 语法一行完成
 - ✅ 事件扩展放在 `Core/Events/` 目录
 - ✅ 确保方法名唯一
 - ✅ 注意线程安全和内存管理
 
 ### 预览代码
+
 - ✅ 提供多种尺寸预览
 - ✅ 使用条件编译适配平台
 - ✅ 使用 `inRootView()` 包装

@@ -588,17 +588,13 @@ extension Project {
     }
 
     /// 丢弃所有工作区更改
-    /// 将工作区重置为HEAD状态，丢弃所有未提交的更改
+    /// 将工作区重置为HEAD状态，丢弃所有未提交的更改（包括已暂存和未暂存的）
     /// - Throws: Git操作异常
     func discardAllChanges() throws {
         do {
-            // 获取所有更改的文件
-            let changedFiles = try LibGit2.getDiffFileList(at: self.path, staged: false)
-
-            // 逐个丢弃每个文件的更改
-            for file in changedFiles {
-                try LibGit2.checkoutFile(file.file, at: self.path)
-            }
+            // 使用硬重置一次性丢弃所有更改（包括暂存区和工作区）
+            // 相比之前的逐个文件 checkout，这种方法能正确处理已暂存的文件
+            try LibGit2.reset(to: nil, mode: "hard", at: self.path, verbose: false)
 
             postEvent(
                 name: .projectDidCommit,
