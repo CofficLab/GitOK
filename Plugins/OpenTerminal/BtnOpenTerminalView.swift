@@ -9,13 +9,11 @@ struct BtnOpenTerminalView: View {
                 .resizable()
                 .frame(height: 16)
                 .frame(width: 16)
-                .padding(.horizontal, 5)
-                .padding(.vertical, 5)
-                .hoverBackground(.regularMaterial)
                 .inButtonWithAction {
                     project.url.openInTerminal()
                 }
                 .help("在终端打开")
+                .toolbarButtonStyle()
         }
     }
 }

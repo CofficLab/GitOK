@@ -13,13 +13,11 @@ struct BtnOpenCursorView: View {
                 .resizable()
                 .frame(height: 22)
                 .frame(width: 22)
-                .padding(.horizontal, 5)
-                .padding(.vertical, 5)
-                .hoverBackground(.regularMaterial)
                 .inButtonWithAction {
                     project.url.openInCursor()
                 }
                 .help("用 Cursor 打开")
+                .toolbarButtonStyle()
         }
     }
 }

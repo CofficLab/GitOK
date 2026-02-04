@@ -11,7 +11,6 @@ struct ContentView: View, SuperLog {
     @EnvironmentObject var g: DataProvider
     @EnvironmentObject var p: PluginProvider
 
-
     /// 导航分栏视图的列可见性状态
     @State private var columnVisibility: NavigationSplitViewVisibility = .automatic
 

@@ -13,13 +13,11 @@ struct BtnOpenFinderView: View {
                 .resizable()
                 .frame(height: 22)
                 .frame(width: 22)
-                .padding(.horizontal, 5)
-                .padding(.vertical, 5)
-                .hoverBackground(.regularMaterial)
                 .inButtonWithAction {
                     project.url.openInFinder()
                 }
                 .help("在Finder中打开")
+                .toolbarButtonStyle()
         }
     }
 }

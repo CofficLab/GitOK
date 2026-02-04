@@ -14,13 +14,11 @@ struct BtnOpenAntigravityView: View {
                 .resizable()
                 .frame(height: 22)
                 .frame(width: 22)
-                .padding(.horizontal, 5)
-                .padding(.vertical, 5)
-                .hoverBackground(.regularMaterial)
                 .inButtonWithAction {
                     project.url.openInAntigravity()
                 }
                 .help("用 Antigravity 打开")
+                .toolbarButtonStyle()
         }
     }
 }

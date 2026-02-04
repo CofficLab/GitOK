@@ -24,7 +24,7 @@ class SyncPlugin: NSObject, SuperPlugin {
     @objc static let shouldRegister = true
 
     /// 插件注册顺序
-    static var order: Int = 20
+    static var order: Int = 9999
 
     func addToolBarTrailingView() -> AnyView? {
         return AnyView(BtnSyncView.shared)

@@ -34,13 +34,11 @@ struct BtnGitPullView: View, SuperLog, SuperEvent, SuperThread {
                     .resizable()
                     .frame(height: 18)
                     .frame(width: 18)
-                    .padding(.horizontal, 5)
-                    .padding(.vertical, 5)
-                    .hoverBackground(.regularMaterial)
                     .inButtonWithAction {
                         pull(path: project.path, onComplete: {})
                     }
                     .disabled(working)
+                    .toolbarButtonStyle()
             } else {
                 // 空状态占位符，确保视图始终有内容
                 Color.clear.frame(width: 24, height: 24)
