@@ -26,6 +26,7 @@
 		F5D122862F0E5B040001A5D2 /* MagicKit in Frameworks */ = {isa = PBXBuildFile; productRef = F5D122852F0E5B040001A5D2 /* MagicKit */; };
 		F5DFDC712F147D62001332BB /* LibGit2Swift in Frameworks */ = {isa = PBXBuildFile; productRef = F5DFDC702F147D62001332BB /* LibGit2Swift */; };
 		F5E60E1D2F3314B700F79149 /* MagicKit in Frameworks */ = {isa = PBXBuildFile; productRef = F5E60E1C2F3314B700F79149 /* MagicKit */; };
+		F5E6143F2F33311F00F79149 /* MagicKit in Frameworks */ = {isa = PBXBuildFile; productRef = F5E6143E2F33311F00F79149 /* MagicKit */; };
 		F5F472D12F14AE1E0006F064 /* LibGit2Swift in Frameworks */ = {isa = PBXBuildFile; productRef = F5F472D02F14AE1E0006F064 /* LibGit2Swift */; };
 /* End PBXBuildFile section */
 
@@ -816,6 +817,7 @@
 				F5D122802F0E5B040001A5D2 /* MagicDiffView in Frameworks */,
 				0BFAFE9C2F0E87980076A5E4 /* MagicDiffView in Frameworks */,
 				F5DFDC712F147D62001332BB /* LibGit2Swift in Frameworks */,
+				F5E6143F2F33311F00F79149 /* MagicKit in Frameworks */,
 				F5F472D12F14AE1E0006F064 /* LibGit2Swift in Frameworks */,
 				F5E60E1D2F3314B700F79149 /* MagicKit in Frameworks */,
 				0B1807AE2F1BCCF800E4E23B /* MagicDevice in Frameworks */,
@@ -1199,6 +1201,7 @@
 				F55AF1022F1765A800ADF40B /* LibGit2Swift */,
 				0B1807AD2F1BCCF800E4E23B /* MagicDevice */,
 				F5E60E1C2F3314B700F79149 /* MagicKit */,
+				F5E6143E2F33311F00F79149 /* MagicKit */,
 			);
 			productName = GitOK;
 			productReference = 0B55A0222F1B0F38005C6809 /* GitOK.app */;
@@ -1235,7 +1238,7 @@
 				0BFAFE9A2F0E87980076A5E4 /* XCRemoteSwiftPackageReference "MagicDiffView" */,
 				F55AF1012F1765A800ADF40B /* XCRemoteSwiftPackageReference "LibGit2Swift" */,
 				0B1807AC2F1BCCF800E4E23B /* XCRemoteSwiftPackageReference "MagicDevice" */,
-				F5E60E1B2F3314B700F79149 /* XCLocalSwiftPackageReference "../MagicKit" */,
+				F5E6143D2F33311F00F79149 /* XCRemoteSwiftPackageReference "MagicKit" */,
 			);
 			productRefGroup = 0B0E16742BD89A8F0078942B;
 			projectDirPath = "";
@@ -2353,13 +2356,6 @@
 		};
 /* End XCConfigurationList section */
 
-/* Begin XCLocalSwiftPackageReference section */
-		F5E60E1B2F3314B700F79149 /* XCLocalSwiftPackageReference "../MagicKit" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = ../MagicKit;
-		};
-/* End XCLocalSwiftPackageReference section */
-
 /* Begin XCRemoteSwiftPackageReference section */
 		0B1807AC2F1BCCF800E4E23B /* XCRemoteSwiftPackageReference "MagicDevice" */ = {
 			isa = XCRemoteSwiftPackageReference;
@@ -2391,6 +2387,14 @@
 			requirement = {
 				branch = main;
 				kind = branch;
+			};
+		};
+		F5E6143D2F33311F00F79149 /* XCRemoteSwiftPackageReference "MagicKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/CofficLab/MagicKit";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.5.17;
 			};
 		};
 		F5F794E72C5B192600DCB824 /* XCRemoteSwiftPackageReference "Sparkle" */ = {
@@ -2475,6 +2479,11 @@
 		};
 		F5E60E1C2F3314B700F79149 /* MagicKit */ = {
 			isa = XCSwiftPackageProductDependency;
+			productName = MagicKit;
+		};
+		F5E6143E2F33311F00F79149 /* MagicKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F5E6143D2F33311F00F79149 /* XCRemoteSwiftPackageReference "MagicKit" */;
 			productName = MagicKit;
 		};
 		F5F472D02F14AE1E0006F064 /* LibGit2Swift */ = {
