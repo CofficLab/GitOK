@@ -23,8 +23,9 @@ struct BtnOpenRemoteView: View, SuperLog {
                     .resizable()
                     .frame(height: 22)
                     .frame(width: 22)
-                    .hoverScale(105)
-                    .padding(2)
+                    .padding(.horizontal, 5)
+                    .padding(.vertical, 5)
+                    .hoverBackground(.regularMaterial)
                     .inButtonWithAction {
                         url.openInSafari()
                     }

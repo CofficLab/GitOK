@@ -32,10 +32,11 @@ struct BtnGitPullView: View, SuperLog, SuperEvent, SuperThread {
             if let project = data.project, self.isGitProject {
                 Image.download
                     .resizable()
-                    .frame(height: 20)
-                    .frame(width: 20)
-                    .hoverScale(105)
+                    .frame(height: 18)
+                    .frame(width: 18)
                     .padding(.horizontal, 5)
+                    .padding(.vertical, 5)
+                    .hoverBackground(.regularMaterial)
                     .inButtonWithAction {
                         pull(path: project.path, onComplete: {})
                     }
@@ -153,6 +154,7 @@ extension BtnGitPullView {
 #Preview("App - Big Screen") {
     ContentLayout()
         .hideSidebar()
+        .hideTabPicker()
         .inRootView()
         .frame(width: 1200)
         .frame(height: 1200)

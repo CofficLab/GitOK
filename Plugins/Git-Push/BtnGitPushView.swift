@@ -33,10 +33,11 @@ struct BtnGitPushView: View, SuperLog, SuperThread {
             if let project = data.project, self.isGitProject {
                 Image.upload
                     .resizable()
-                    .frame(height: 20)
-                    .frame(width: 20)
-                    .hoverScale(105)
+                    .frame(height: 18)
+                    .frame(width: 18)
                     .padding(.horizontal, 5)
+                    .padding(.vertical, 5)
+                    .hoverBackground(.regularMaterial)
                     .inButtonWithAction {
                         push(path: project.path, onComplete: {})
                     }

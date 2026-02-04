@@ -13,8 +13,9 @@ struct BtnOpenCursorView: View {
                 .resizable()
                 .frame(height: 22)
                 .frame(width: 22)
-                .hoverScale(105)
                 .padding(.horizontal, 5)
+                .padding(.vertical, 5)
+                .hoverBackground(.regularMaterial)
                 .inButtonWithAction {
                     project.url.openInCursor()
                 }
