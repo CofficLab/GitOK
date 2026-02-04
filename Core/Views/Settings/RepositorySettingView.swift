@@ -1,7 +1,6 @@
 import Foundation
 import LibGit2Swift
 import MagicKit
-import MagicUI
 import OSLog
 import SwiftUI
 
@@ -104,12 +103,9 @@ struct RepositorySettingView: View, SuperLog {
                     description: project.path,
                     icon: .iconFilter
                 ) {
-                    MagicButton.simple {
+                    Image.finder.inButtonWithAction {
                         project.url.openFolder()
                     }
-                    .magicIcon(.iconFinder)
-                    .magicShape(.circle)
-                    .magicShapeVisibility(.onHover)
                 }
             }
         }
@@ -139,29 +135,20 @@ struct RepositorySettingView: View, SuperLog {
             HStack(spacing: 8) {
                 // 在浏览器中打开（如果是 HTTPS）
                 if let httpsURL = convertToHTTPSURL(remote.url) {
-                    MagicButton.simple {
+                    Image.safari.inButtonWithAction {
                         httpsURL.openInBrowser()
                     }
-                    .magicIcon(.iconSafari)
-                    .magicShape(.circle)
-                    .magicShapeVisibility(.onHover)
                 }
 
                 // 复制 URL
-                MagicButton.simple {
+                Image.copyIcon.inButtonWithAction {
                     remote.url.copy()
                 }
-                .magicIcon(.iconCopy)
-                .magicShape(.circle)
-                .magicShapeVisibility(.onHover)
 
                 // 删除按钮
-                MagicButton.simple {
+                Image.trash.inButtonWithAction {
                     deleteRemoteRepository(remote)
                 }
-                .magicIcon(.iconTrash)
-                .magicShape(.circle)
-                .magicShapeVisibility(.onHover)
             }
         }
     }
@@ -199,12 +186,9 @@ struct RepositorySettingView: View, SuperLog {
                     ProgressView()
                         .scaleEffect(0.8)
                 } else {
-                    MagicButton.simple {
+                    Image.add.inButtonWithAction {
                         showAddRemoteSheet = true
                     }
-                    .magicIcon(.iconPlus)
-                    .magicShape(.circle)
-                    .magicShapeVisibility(.onHover)
                 }
             }
         }

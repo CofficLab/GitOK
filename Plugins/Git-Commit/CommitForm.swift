@@ -71,9 +71,6 @@ struct CommitForm: View, SuperLog {
                 VStack(alignment: .leading, spacing: 4) {
                     UserView()
                         .frame(maxWidth: 300)
-
-                    // 合作者选择器
-//                    CoAuthorPicker(selectedCoAuthors: $selectedCoAuthors)
                 }
 
                 Spacer()

@@ -1,7 +1,5 @@
 import SwiftUI
-
 import MagicAlert
-import MagicUI
 
 /**
  简约模板的标题编辑器

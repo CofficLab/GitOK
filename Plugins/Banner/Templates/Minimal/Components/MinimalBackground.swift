@@ -1,6 +1,6 @@
 import SwiftUI
+import MagicKit
 import MagicAlert
-import MagicUI
 
 /**
  简约模板的背景组件

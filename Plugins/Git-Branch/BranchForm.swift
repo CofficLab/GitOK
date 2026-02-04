@@ -1,8 +1,6 @@
-
 import MagicKit
 import LibGit2Swift
 import MagicAlert
-import MagicUI
 import OSLog
 import SwiftUI
 
@@ -32,13 +30,9 @@ struct BranchForm: View, SuperLog {
                         TextField("分支名称", text: $newBranchName)
                             .textFieldStyle(RoundedBorderTextFieldStyle())
                         
-                        MagicButton.simple {
+                        Image.add.inButtonWithAction {
                             createBranch()
                         }
-                        .magicTitle("创建")
-                        .magicSize(.regular)
-                        .magicIcon(.iconPlus)   
-                        .disabled(newBranchName.isEmpty || isCreating)
                     }
                 }
                 

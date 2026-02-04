@@ -1,4 +1,3 @@
-import MagicUI
 import OSLog
 import SwiftUI
 import MagicKit
@@ -78,15 +77,12 @@ struct LicenseViewer: View, SuperLog {
                             .foregroundColor(.secondary)
                     }
                     Spacer()
-                    MagicButton.simple {
+                    
+                    Text("应用到当前").inButtonWithAction {
                         content = template.content
                         pane = .current
                         statusMessage = "已应用模板：\(template.title)"
                     }
-                    .magicTitle("应用到当前")
-                    .magicIcon(.iconCopy)
-                    .magicSize(.auto)
-                    .magicShape(.roundedRectangle)
                     .frame(width: 120)
                 }
                 .frame(height: 40)

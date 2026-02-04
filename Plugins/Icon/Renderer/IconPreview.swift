@@ -1,5 +1,3 @@
-
-import MagicUI
 import SwiftUI
 
 /**

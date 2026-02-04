@@ -1,6 +1,5 @@
 import MagicKit
 import LibGit2Swift
-import MagicUI
 import SwiftUI
 
 struct RemoteRepositoryRowView: View {
@@ -90,19 +89,13 @@ struct RemoteRepositoryRowView: View {
 
             // Action Buttons
             HStack(spacing: 8) {
-                MagicButton(icon: .iconEdit, action: { completion in
+                Image.edit.inButtonWithAction {
                     onEdit(remote)
-                    completion()
-                })
-                .help("编辑")
+                }
 
-                MagicButton(icon: .iconTrash, action: { completion in
+                Image.trash.inButtonWithAction {
                     showDeleteAlert = true
-                    completion()
-                })
-                .buttonStyle(.borderless)
-                .foregroundColor(.red)
-                .help("删除")
+                }
             }
             .transition(.opacity.combined(with: .scale))
         }

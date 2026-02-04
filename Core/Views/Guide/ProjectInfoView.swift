@@ -21,10 +21,9 @@ struct ProjectInfoView: View, SuperLog {
                     description: project.path,
                     icon: .iconFolder
                 ) {
-                    MagicButton.simple {
+                    Image.finder.inButtonWithAction {
                         project.url.openFolder()
                     }
-                    .magicIcon(.iconFinder)
                 }
             }
         }

@@ -1,5 +1,4 @@
 import MagicKit
-import MagicUI
 import OSLog
 import SwiftUI
 
@@ -112,12 +111,9 @@ struct CommitInfoUserInfoPopup: View, SuperLog {
                         description: githubURL.absoluteString,
                         icon: .iconSafari
                     ) {
-                        MagicButton.simple {
+                        Image.safari.inButtonWithAction {
                             NSWorkspace.shared.open(githubURL)
                         }
-                        .magicIcon(.iconSafari)
-                        .magicShape(.circle)
-                        .magicShapeVisibility(.onHover)
                     }
                 }
             }

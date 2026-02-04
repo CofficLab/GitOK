@@ -17,7 +17,6 @@ struct BtnOpenGitHubDesktopView: View {
         if let project = g.project {
             project.url
                 .makeOpenButton(.githubDesktop, useRealIcon: true)
-                .magicShapeVisibility(.onHover)
                 .help("用 GitHub Desktop 打开")
         }
     }

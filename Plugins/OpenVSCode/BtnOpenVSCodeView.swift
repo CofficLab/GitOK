@@ -11,7 +11,6 @@ struct BtnOpenVSCodeView: View {
         if let project = g.project {
             project.url
                 .makeOpenButton(.vscode, useRealIcon: true)
-                .magicShapeVisibility(.onHover)
                 .help("用 VSCode 打开")
         }
     }

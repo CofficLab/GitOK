@@ -1,6 +1,5 @@
 import MagicKit
 import MagicAlert
-import MagicUI
 import OSLog
 import SwiftUI
 
@@ -37,13 +36,9 @@ struct BtnSyncView: View, SuperLog, SuperEvent, SuperThread {
     var body: some View {
         ZStack {
             if let project = data.project, self.isGitProject {
-                MagicButton(icon: .iconSync) { completion in
+                Image.sync.inButtonWithAction {
                     sync(path: project.path)
-                    completion()
                 }
-                .magicShape(.circle)
-                .magicStyle(.secondary)
-                .magicShapeVisibility(.onHover)
                 .help("和远程仓库同步")
                 .disabled(working)
                 .onAppear(perform: onAppear)

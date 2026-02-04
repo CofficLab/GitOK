@@ -1,5 +1,5 @@
 import SwiftUI
-import MagicUI
+import MagicKit
 
 /**
  经典模板的背景组件

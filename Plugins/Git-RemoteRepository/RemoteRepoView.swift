@@ -1,8 +1,6 @@
-
 import MagicKit
 import LibGit2Swift
 import MagicAlert
-import MagicUI
 import SwiftUI
 import OSLog
 

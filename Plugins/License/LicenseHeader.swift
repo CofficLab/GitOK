@@ -1,5 +1,3 @@
-
-import MagicUI
 import SwiftUI
 
 struct LicenseHeader: View {
@@ -37,29 +35,16 @@ struct LicenseHeader: View {
                     .foregroundColor(.secondary)
             }
 
-            MagicButton(
-                icon: .iconUpload,
-                title: "保存",
-                preventDoubleClick: true,
-                loadingStyle: .spinner
-            ) { completion in
+            Image.upload.inButtonWithAction {
                 onSave {
-                    completion()
                 }
             }
-            .magicSize(.auto)
             .frame(width: 120)
             .disabled(isSaving || isLoading)
 
-            MagicButton(
-                icon: .iconClose,
-                title: "关闭",
-                preventDoubleClick: true
-            ) { completion in
+            Image.close.inButtonWithAction {
                 dismiss()
-                completion()
             }
-            .magicSize(.auto)
             .frame(width: 120)
             .keyboardShortcut(.cancelAction)
         }

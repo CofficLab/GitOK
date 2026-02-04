@@ -1,7 +1,6 @@
 import Foundation
 import LibGit2Swift
 import MagicKit
-import MagicUI
 import OSLog
 import SwiftUI
 
@@ -75,19 +74,13 @@ struct RepositoryInfoView: View, SuperLog {
             icon: .iconFolder
         ) {
             HStack(spacing: 8) {
-                MagicButton.simple {
+                Image.finder.inButtonWithAction {
                     project.url.openFolder()
                 }
-                .magicIcon(.iconFinder)
-                .magicShapeVisibility(.onHover)
-                .magicShape(.circle)
 
-                MagicButton.simple {
+                Image.copyIcon.inButtonWithAction {
                     project.url.absoluteString.copy()
                 }
-                .magicIcon(.iconCopy)
-                .magicShapeVisibility(.onHover)
-                .magicShape(.circle)
             }
         }
     }
@@ -100,20 +93,14 @@ struct RepositoryInfoView: View, SuperLog {
         ) {
             HStack(spacing: 8) {
                 if let httpsURL = convertToHTTPSURL(remote.url) {
-                    MagicButton.simple {
+                    Image.infoIcon.inButtonWithAction {
                         httpsURL.openInBrowser()
                     }
-                    .magicIcon(.iconSafari)
-                    .magicShapeVisibility(.onHover)
-                    .magicShape(.circle)
                 }
 
-                MagicButton.simple {
+                Image.copyIcon.inButtonWithAction {
                     remote.url.copy()
                 }
-                .magicIcon(.iconCopy)
-                .magicShapeVisibility(.onHover)
-                .magicShape(.circle)
             }
         }
     }
@@ -125,12 +112,9 @@ struct RepositoryInfoView: View, SuperLog {
             description: "未配置",
             icon: .iconCloud
         ) {
-            MagicButton.simple {
+            Image.settings.inButtonWithAction {
                 showSettings = true
             }
-            .magicIcon(.iconSettings)
-            .magicShape(.circle)
-            .magicShapeVisibility(.onHover)
         }
     }
 

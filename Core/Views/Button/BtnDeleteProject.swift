@@ -1,6 +1,5 @@
 
 import MagicKit
-import MagicUI
 import OSLog
 import SwiftUI
 
@@ -18,13 +17,9 @@ struct BtnDeleteProject: View, SuperLog {
     var project: Project
 
     var body: some View {
-        MagicButton.simple { 
+        Image.trash.inButtonWithAction {
             deleteItem(project)
         }
-        .magicTitle("删除项目")
-        .magicSize(.auto)
-        .magicIcon(.iconTrash)
-        .magicBackground(MagicBackground.cherry)
     }
 
     /// 删除项目

@@ -1,6 +1,5 @@
 import Foundation
 import MagicKit
-import MagicUI
 import OSLog
 import SwiftUI
 
@@ -154,14 +153,11 @@ struct AboutView: View, SuperLog {
             description: url,
             icon: icon
         ) {
-            MagicButton.simple {
+            Image.safari.inButtonWithAction {
                 if let url = URL(string: url) {
                     NSWorkspace.shared.open(url)
                 }
             }
-            .magicIcon(.iconSafari)
-            .magicShape(.circle)
-            .magicShapeVisibility(.onHover)
         }
     }
 }

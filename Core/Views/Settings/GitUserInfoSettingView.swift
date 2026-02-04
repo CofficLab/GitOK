@@ -1,6 +1,5 @@
 import Foundation
 import MagicKit
-import MagicUI
 import OSLog
 import SwiftUI
 
@@ -159,24 +158,16 @@ struct GitUserInfoSettingView: View, SuperLog {
     }
 
     private var saveButtonsView: some View {
-        MagicButton(
-            icon: .iconPlus,
-            title: "添加",
-            preventDoubleClick: true
-        ) { completion in
+        Image.add.inButtonWithAction {
             saveAsPreset()
             // 清空输入框
             userName = ""
             userEmail = ""
             hasChanges = false
-            completion()
         }
-        .magicSize(.auto)
         .disabled(isLoading || userName.isEmpty || userEmail.isEmpty)
-        .frame(height: 50)
+        .frame(height: 40)
         .frame(width: 120)
-        .padding(.top, 12)
-        .padding(.bottom, 12)
     }
 
     // MARK: - Actions

@@ -12,7 +12,6 @@ struct BtnOpenAntigravityView: View {
         if let project = g.project {
             project.url
                 .makeOpenButton(.antigravity, useRealIcon: true)
-                .magicShapeVisibility(.onHover)
                 .help("用 Antigravity 打开")
         }
     }

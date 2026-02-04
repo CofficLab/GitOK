@@ -12,7 +12,6 @@ struct BtnOpenKiroView: View {
         if let project = g.project {
             project.url
                 .makeOpenButton(.kiro, useRealIcon: true)
-                .magicShapeVisibility(.onHover)
                 .help("用 Kiro 打开")
         }
     }
