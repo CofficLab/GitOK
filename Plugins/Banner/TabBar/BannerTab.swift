@@ -1,6 +1,4 @@
-
 import MagicAlert
-import MagicUI
 import OSLog
 import SwiftUI
 
@@ -33,7 +31,7 @@ struct BannerTab: View {
     }
 
     var body: some View {
-        MagicButton.simple(action: {
+        Image.document.inButtonWithAction {
             guard let project = d.project else {
                 return
             }
@@ -43,11 +41,7 @@ struct BannerTab: View {
             }
             
             b.setBanner(latest)
-        })
-        .magicStyle(isSelected ? .primary : .secondary)
-        .magicShape(.rectangle)
-        .magicSize(.mini)
-        .magicIcon(.iconDocument)
+        }
         .contextMenu {
             Button(action: { deleteBanner() }) {
                 Label("删除", systemImage: "trash")

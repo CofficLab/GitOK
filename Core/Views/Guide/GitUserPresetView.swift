@@ -1,7 +1,6 @@
 import Foundation
 import LibGit2Swift
 import MagicKit
-import MagicUI
 import OSLog
 import SwiftUI
 
@@ -124,12 +123,9 @@ struct GitUserPresetView: View, SuperLog {
             description: "添加、编辑或删除用户预设",
             icon: .iconSettings
         ) {
-            MagicButton.simple {
+            Image.settings.inButtonWithAction {
                 showManagePresets = true
             }
-            .magicIcon(.iconSettings)
-            .magicShape(.circle)
-            .magicShapeVisibility(.onHover)
         }
     }
 

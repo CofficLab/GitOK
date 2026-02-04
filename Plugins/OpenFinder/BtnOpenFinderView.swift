@@ -9,10 +9,15 @@ struct BtnOpenFinderView: View {
 
     var body: some View {
         if let project = g.project {
-            project.url
-                .makeOpenButton(.finder, useRealIcon: true)
-                .magicShapeVisibility(.onHover)
+            Image.finderApp
+                .resizable()
+                .frame(height: 22)
+                .frame(width: 22)
+                .inButtonWithAction {
+                    project.url.openInFinder()
+                }
                 .help("在Finder中打开")
+                .toolbarButtonStyle()
         }
     }
 }

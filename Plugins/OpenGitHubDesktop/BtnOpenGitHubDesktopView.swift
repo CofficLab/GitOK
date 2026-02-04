@@ -15,10 +15,15 @@ struct BtnOpenGitHubDesktopView: View {
     /// 视图主体
     var body: some View {
         if let project = g.project {
-            project.url
-                .makeOpenButton(.githubDesktop, useRealIcon: true)
-                .magicShapeVisibility(.onHover)
+            Image.githubDesktopApp
+                .resizable()
+                .frame(height: 22)
+                .frame(width: 22)
+                .inButtonWithAction {
+                    project.url.openInGitHubDesktop()
+                }
                 .help("用 GitHub Desktop 打开")
+                .toolbarButtonStyle()
         }
     }
 
@@ -47,7 +52,7 @@ struct BtnOpenGitHubDesktopView: View {
         }
         let paths = [
             "/Applications/GitHub Desktop.app",
-            NSHomeDirectory() + "/Applications/GitHub Desktop.app"
+            NSHomeDirectory() + "/Applications/GitHub Desktop.app",
         ]
         for path in paths {
             if FileManager.default.fileExists(atPath: path) {

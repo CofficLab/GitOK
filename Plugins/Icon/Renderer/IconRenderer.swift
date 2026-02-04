@@ -1,6 +1,5 @@
-import MagicUI
-
 import SwiftUI
+import MagicKit
 
 /**
  * 图标渲染器

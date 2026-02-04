@@ -1,6 +1,5 @@
-import MagicKit
 import MagicAlert
-import MagicUI
+import MagicKit
 import OSLog
 import SwiftUI
 
@@ -37,43 +36,43 @@ struct BtnSyncView: View, SuperLog, SuperEvent, SuperThread {
     var body: some View {
         ZStack {
             if let project = data.project, self.isGitProject {
-                MagicButton(icon: .iconSync) { completion in
-                    sync(path: project.path)
-                    completion()
-                }
-                .magicShape(.circle)
-                .magicStyle(.secondary)
-                .magicShapeVisibility(.onHover)
-                .help("和远程仓库同步")
-                .disabled(working)
-                .onAppear(perform: onAppear)
-                .onChange(of: working) {
-                    let duration = 0.02
-                    if working {
-                        Timer.scheduledTimer(withTimeInterval: duration, repeats: true) { timer in
-                            if !working {
-                                timer.invalidate()
-                                withAnimation(.easeInOut(duration: duration)) {
-                                    rotationAngle = 0.0
-                                }
-                            } else {
-                                withAnimation(.easeInOut(duration: duration)) {
-                                    rotationAngle += 7
-                                }
-                            }
-                        }
-                    } else {
-                        withAnimation(.easeInOut(duration: 0.1)) {
-                            rotationAngle = 0.0
-                        }
+                Image.sync
+                    .resizable()
+                    .frame(height: 18)
+                    .frame(width: 22)
+                    .inButtonWithAction {
+                        sync(path: project.path)
                     }
-                }
+                    .help("和远程仓库同步")
+                    .disabled(working)
+                    .toolbarButtonStyle()
             } else {
                 // 空状态占位符，确保视图始终有内容
                 Color.clear.frame(width: 24, height: 24)
             }
         }
         .onAppear(perform: onAppear)
+        .onChange(of: working) {
+            let duration = 0.02
+            if working {
+                Timer.scheduledTimer(withTimeInterval: duration, repeats: true) { timer in
+                    if !working {
+                        timer.invalidate()
+                        withAnimation(.easeInOut(duration: duration)) {
+                            rotationAngle = 0.0
+                        }
+                    } else {
+                        withAnimation(.easeInOut(duration: duration)) {
+                            rotationAngle += 7
+                        }
+                    }
+                }
+            } else {
+                withAnimation(.easeInOut(duration: 0.1)) {
+                    rotationAngle = 0.0
+                }
+            }
+        }
     }
 }
 

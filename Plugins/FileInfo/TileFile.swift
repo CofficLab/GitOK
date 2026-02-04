@@ -1,9 +1,7 @@
 import AppKit
-
 import LibGit2Swift
 import MagicAlert
 import MagicKit
-import MagicUI
 import OSLog
 import SwiftUI
 
@@ -54,32 +52,24 @@ struct TileFile: View, SuperLog, SuperThread {
                         .font(.headline)
                         .padding(.bottom, 4)
 
-                    MagicButton.simple {
+                    Image.finder.inButtonWithAction {
                         revealInFinder()
                         isPopoverPresented = false
                     }
-                    .magicTitle("在 Finder 中展示")
-                    .magicSize(.auto)
-                    .magicIcon(.iconFinder)
-                    .frame(width: 200)
-                    .frame(height: 40)
-                    MagicButton.simple {
-                        openInVSCode()
-                        isPopoverPresented = false
-                    }
-                    .magicTitle("用 VS Code 打开")
-                    .magicSize(.auto)
-                    .magicIcon(.iconTerminal)
                     .frame(width: 200)
                     .frame(height: 40)
 
-                    MagicButton.simple {
+                    Image.code.inButtonWithAction {
+                        openInVSCode()
+                        isPopoverPresented = false
+                    }
+                    .frame(width: 200)
+                    .frame(height: 40)
+
+                    Image.copyIcon.inButtonWithAction {
                         copyPath()
                         isPopoverPresented = false
                     }
-                    .magicTitle("复制路径")
-                    .magicSize(.auto)
-                    .magicIcon(.iconCopy)
                     .frame(width: 200)
                     .frame(height: 40)
                 }

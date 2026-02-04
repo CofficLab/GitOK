@@ -1,6 +1,5 @@
 import MagicAlert
 import MagicKit
-import MagicUI
 import SwiftUI
 
 /// Git 推送按钮视图：提供将本地提交推送到远程仓库的功能按钮。
@@ -32,14 +31,14 @@ struct BtnGitPushView: View, SuperLog, SuperThread {
     var body: some View {
         ZStack {
             if let project = data.project, self.isGitProject {
-                MagicButton(icon: .iconUpload) { completion in
-                    push(path: project.path, onComplete: completion)
-                }
-                .magicShape(.circle)
-                .magicStyle(.secondary)
-                .magicShapeVisibility(.onHover)
-                .help("将本地提交推送到远程仓库")
-                .disabled(working)
+                Image.upload
+                    .resizable()
+                    .frame(height: 18)
+                    .frame(width: 18)
+                    .inButtonWithAction {
+                        push(path: project.path, onComplete: {})
+                    }
+                    .toolbarButtonStyle()
             } else {
                 // 空状态占位符，确保视图始终有内容
                 Color.clear.frame(width: 24, height: 24)

@@ -9,10 +9,15 @@ struct BtnOpenCursorView: View {
 
     var body: some View {
         if let project = g.project {
-            project.url
-                .makeOpenButton(.cursor, useRealIcon: true)
-                .magicShapeVisibility(.onHover)
+            Image.cursorApp
+                .resizable()
+                .frame(height: 22)
+                .frame(width: 22)
+                .inButtonWithAction {
+                    project.url.openInCursor()
+                }
                 .help("用 Cursor 打开")
+                .toolbarButtonStyle()
         }
     }
 }

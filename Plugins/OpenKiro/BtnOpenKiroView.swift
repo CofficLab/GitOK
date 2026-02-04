@@ -10,10 +10,15 @@ struct BtnOpenKiroView: View {
 
     var body: some View {
         if let project = g.project {
-            project.url
-                .makeOpenButton(.kiro, useRealIcon: true)
-                .magicShapeVisibility(.onHover)
+            Image.kiroApp
+                .resizable()
+                .frame(height: 22)
+                .frame(width: 22)
+                .inButtonWithAction {
+                    project.url.openInKiro()
+                }
                 .help("用 Kiro 打开")
+                .toolbarButtonStyle()
         }
     }
 }

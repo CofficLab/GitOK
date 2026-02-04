@@ -9,10 +9,12 @@ struct BtnOpenVSCodeView: View {
 
     var body: some View {
         if let project = g.project {
-            project.url
-                .makeOpenButton(.vscode, useRealIcon: true)
-                .magicShapeVisibility(.onHover)
+            Image.vscodeApp
+                .resizable()
+                .frame(height: 22)
+                .frame(width: 22)
                 .help("用 VSCode 打开")
+                .toolbarButtonStyle()
         }
     }
 }

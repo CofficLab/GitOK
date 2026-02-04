@@ -5,10 +5,15 @@ struct BtnOpenTerminalView: View {
 
     var body: some View {
         if let project = g.project {
-            project.url
-                .makeOpenButton(.terminal, useRealIcon: true)
-                .magicShapeVisibility(.onHover)
+            Image.terminalApp
+                .resizable()
+                .frame(height: 16)
+                .frame(width: 16)
+                .inButtonWithAction {
+                    project.url.openInTerminal()
+                }
                 .help("在终端打开")
+                .toolbarButtonStyle()
         }
     }
 }

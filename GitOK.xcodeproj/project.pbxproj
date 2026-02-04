@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0B1807AB2F1BCBB000E4E23B /* MagicKit in Frameworks */ = {isa = PBXBuildFile; productRef = 0B1807AA2F1BCBB000E4E23B /* MagicKit */; };
 		0B1807AE2F1BCCF800E4E23B /* MagicDevice in Frameworks */ = {isa = PBXBuildFile; productRef = 0B1807AD2F1BCCF800E4E23B /* MagicDevice */; };
 		0B3CC95E2DF1C49000E22263 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = 0B3CC95D2DF1C49000E22263 /* Sparkle */; };
 		0B516AC72F1397E90085381F /* LibGit2Swift in Frameworks */ = {isa = PBXBuildFile; productRef = 0B516AC62F1397E90085381F /* LibGit2Swift */; };
@@ -26,6 +25,8 @@
 		F5D122802F0E5B040001A5D2 /* MagicDiffView in Frameworks */ = {isa = PBXBuildFile; productRef = F5D1227F2F0E5B040001A5D2 /* MagicDiffView */; };
 		F5D122862F0E5B040001A5D2 /* MagicKit in Frameworks */ = {isa = PBXBuildFile; productRef = F5D122852F0E5B040001A5D2 /* MagicKit */; };
 		F5DFDC712F147D62001332BB /* LibGit2Swift in Frameworks */ = {isa = PBXBuildFile; productRef = F5DFDC702F147D62001332BB /* LibGit2Swift */; };
+		F5E60E1D2F3314B700F79149 /* MagicKit in Frameworks */ = {isa = PBXBuildFile; productRef = F5E60E1C2F3314B700F79149 /* MagicKit */; };
+		F5E6143F2F33311F00F79149 /* MagicKit in Frameworks */ = {isa = PBXBuildFile; productRef = F5E6143E2F33311F00F79149 /* MagicKit */; };
 		F5F472D12F14AE1E0006F064 /* LibGit2Swift in Frameworks */ = {isa = PBXBuildFile; productRef = F5F472D02F14AE1E0006F064 /* LibGit2Swift */; };
 /* End PBXBuildFile section */
 
@@ -810,14 +811,15 @@
 			files = (
 				F55AF1032F1765A800ADF40B /* LibGit2Swift in Frameworks */,
 				0B5178012F13D6A70085381F /* LibGit2Swift in Frameworks */,
-				0B1807AB2F1BCBB000E4E23B /* MagicKit in Frameworks */,
 				0B750F162E7F934F00140214 /* MarkdownUI in Frameworks */,
 				F5D122862F0E5B040001A5D2 /* MagicKit in Frameworks */,
 				0B516AC72F1397E90085381F /* LibGit2Swift in Frameworks */,
 				F5D122802F0E5B040001A5D2 /* MagicDiffView in Frameworks */,
 				0BFAFE9C2F0E87980076A5E4 /* MagicDiffView in Frameworks */,
 				F5DFDC712F147D62001332BB /* LibGit2Swift in Frameworks */,
+				F5E6143F2F33311F00F79149 /* MagicKit in Frameworks */,
 				F5F472D12F14AE1E0006F064 /* LibGit2Swift in Frameworks */,
+				F5E60E1D2F3314B700F79149 /* MagicKit in Frameworks */,
 				0B1807AE2F1BCCF800E4E23B /* MagicDevice in Frameworks */,
 				0B76CE342F151D1900BFB2C3 /* LibGit2Swift in Frameworks */,
 				F56441B62F174908006C76BB /* LibGit2Swift in Frameworks */,
@@ -1197,8 +1199,9 @@
 				F56441B22F1748F7006C76BB /* LibGit2Swift */,
 				F56441B52F174908006C76BB /* LibGit2Swift */,
 				F55AF1022F1765A800ADF40B /* LibGit2Swift */,
-				0B1807AA2F1BCBB000E4E23B /* MagicKit */,
 				0B1807AD2F1BCCF800E4E23B /* MagicDevice */,
+				F5E60E1C2F3314B700F79149 /* MagicKit */,
+				F5E6143E2F33311F00F79149 /* MagicKit */,
 			);
 			productName = GitOK;
 			productReference = 0B55A0222F1B0F38005C6809 /* GitOK.app */;
@@ -1234,8 +1237,8 @@
 				F54178E22E00F91F00503C7B /* XCRemoteSwiftPackageReference "swift-markdown-ui" */,
 				0BFAFE9A2F0E87980076A5E4 /* XCRemoteSwiftPackageReference "MagicDiffView" */,
 				F55AF1012F1765A800ADF40B /* XCRemoteSwiftPackageReference "LibGit2Swift" */,
-				0B1807A92F1BCBB000E4E23B /* XCRemoteSwiftPackageReference "MagicKit" */,
 				0B1807AC2F1BCCF800E4E23B /* XCRemoteSwiftPackageReference "MagicDevice" */,
+				F5E6143D2F33311F00F79149 /* XCRemoteSwiftPackageReference "MagicKit" */,
 			);
 			productRefGroup = 0B0E16742BD89A8F0078942B;
 			projectDirPath = "";
@@ -2354,14 +2357,6 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		0B1807A92F1BCBB000E4E23B /* XCRemoteSwiftPackageReference "MagicKit" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/nookery/MagicKit";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.0;
-			};
-		};
 		0B1807AC2F1BCCF800E4E23B /* XCRemoteSwiftPackageReference "MagicDevice" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/nookery/MagicDevice";
@@ -2394,6 +2389,14 @@
 				kind = branch;
 			};
 		};
+		F5E6143D2F33311F00F79149 /* XCRemoteSwiftPackageReference "MagicKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/CofficLab/MagicKit";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.5.17;
+			};
+		};
 		F5F794E72C5B192600DCB824 /* XCRemoteSwiftPackageReference "Sparkle" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/sparkle-project/Sparkle";
@@ -2405,11 +2408,6 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		0B1807AA2F1BCBB000E4E23B /* MagicKit */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 0B1807A92F1BCBB000E4E23B /* XCRemoteSwiftPackageReference "MagicKit" */;
-			productName = MagicKit;
-		};
 		0B1807AD2F1BCCF800E4E23B /* MagicDevice */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 0B1807AC2F1BCCF800E4E23B /* XCRemoteSwiftPackageReference "MagicDevice" */;
@@ -2478,6 +2476,15 @@
 		F5DFDC702F147D62001332BB /* LibGit2Swift */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = LibGit2Swift;
+		};
+		F5E60E1C2F3314B700F79149 /* MagicKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MagicKit;
+		};
+		F5E6143E2F33311F00F79149 /* MagicKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F5E6143D2F33311F00F79149 /* XCRemoteSwiftPackageReference "MagicKit" */;
+			productName = MagicKit;
 		};
 		F5F472D02F14AE1E0006F064 /* LibGit2Swift */ = {
 			isa = XCSwiftPackageProductDependency;

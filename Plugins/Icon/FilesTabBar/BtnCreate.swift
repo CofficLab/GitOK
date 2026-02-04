@@ -1,7 +1,6 @@
-
 import MagicAlert
-import MagicUI
 import SwiftUI
+import MagicKit
 
 struct BtnCreate: View {
     @EnvironmentObject var g: DataProvider
@@ -9,7 +8,7 @@ struct BtnCreate: View {
 
     var body: some View {
         if let project = g.project {
-            MagicButton.simple(icon: .iconAdd, title: "新建") {
+            Image.add.inButtonWithAction {
                 do {
                     let model = try IconData.new(project)
                     m.info("新建 Icon(\(model.title)) 成功")
@@ -17,7 +16,6 @@ struct BtnCreate: View {
                     m.error(error.localizedDescription)
                 }
             }
-            .magicSize(.auto)
         }
     }
 } 

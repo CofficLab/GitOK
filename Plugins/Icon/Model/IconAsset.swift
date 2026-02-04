@@ -1,6 +1,5 @@
 import Cocoa
 import Foundation
-import MagicUI
 import SwiftUI
 
 /**

@@ -1,5 +1,3 @@
-
-import MagicUI
 import OSLog
 import SwiftUI
 
@@ -34,21 +32,11 @@ struct IconDetailLayout: View {
                     VStack(spacing: 0) {
                         // Custom Tab Bar
                         HStack(spacing: 0) {
-                            MagicButton.simple(
-                                title: "Icon",
-                                style: selectedRightPaneTab == .icon ? .primary : .secondary,
-                                size: .auto,
-                                shape: .rectangle
-                            ) {
+                            Image.photos.inButtonWithAction {
                                 selectedRightPaneTab = .icon
                             }
 
-                            MagicButton.simple(
-                                title: "Controls",
-                                style: selectedRightPaneTab == .controls ? .primary : .secondary,
-                                size: .auto,
-                                shape: .rectangle
-                            ) {
+                            Image.console.inButtonWithAction {
                                 selectedRightPaneTab = .controls
                             }
                         }

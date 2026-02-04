@@ -1,7 +1,5 @@
-
 import Foundation
 import MagicKit
-import MagicUI
 import OSLog
 import SwiftUI
 

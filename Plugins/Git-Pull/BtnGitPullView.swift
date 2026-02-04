@@ -1,6 +1,5 @@
 import MagicAlert
 import MagicKit
-import MagicUI
 import SwiftUI
 
 /// Git 拉取按钮视图：提供从远程仓库拉取最新代码的功能按钮。
@@ -31,14 +30,15 @@ struct BtnGitPullView: View, SuperLog, SuperEvent, SuperThread {
     var body: some View {
         ZStack {
             if let project = data.project, self.isGitProject {
-                MagicButton(icon: .iconDownload) { completion in
-                    pull(path: project.path, onComplete: completion)
-                }
-                .magicShape(.circle)
-                .magicStyle(.secondary)
-                .magicShapeVisibility(.onHover)
-                .help("从远程仓库拉取最新代码")
-                .disabled(working)
+                Image.download
+                    .resizable()
+                    .frame(height: 18)
+                    .frame(width: 18)
+                    .inButtonWithAction {
+                        pull(path: project.path, onComplete: {})
+                    }
+                    .disabled(working)
+                    .toolbarButtonStyle()
             } else {
                 // 空状态占位符，确保视图始终有内容
                 Color.clear.frame(width: 24, height: 24)
@@ -152,6 +152,7 @@ extension BtnGitPullView {
 #Preview("App - Big Screen") {
     ContentLayout()
         .hideSidebar()
+        .hideTabPicker()
         .inRootView()
         .frame(width: 1200)
         .frame(height: 1200)

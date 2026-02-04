@@ -1,7 +1,5 @@
-
 import MagicKit
 import LibGit2Swift
-import MagicUI
 import SwiftUI
 
 struct BranchRowView: View {
@@ -22,12 +20,9 @@ struct BranchRowView: View {
             Spacer()
             
             if !isSelected {
-                MagicButton.simple {
+                Image.checkmark.inButtonWithAction {
                     onSwitch()
                 }
-                .magicTitle("切换")
-                .magicSize(.small)
-                .magicIcon(.iconCheckmark)
             } else {
                 Text("当前")
                     .font(.caption)
