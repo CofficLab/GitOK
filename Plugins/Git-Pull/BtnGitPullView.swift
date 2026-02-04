@@ -30,10 +30,16 @@ struct BtnGitPullView: View, SuperLog, SuperEvent, SuperThread {
     var body: some View {
         ZStack {
             if let project = data.project, self.isGitProject {
-                Image.add.inButtonWithAction {
-                    pull(path: project.path, onComplete: {})
-                }
-                .disabled(working)
+                Image.download
+                    .resizable()
+                    .frame(height: 20)
+                    .frame(width: 20)
+                    .hoverScale(105)
+                    .padding(.horizontal, 5)
+                    .inButtonWithAction {
+                        pull(path: project.path, onComplete: {})
+                    }
+                    .disabled(working)
             } else {
                 // 空状态占位符，确保视图始终有内容
                 Color.clear.frame(width: 24, height: 24)

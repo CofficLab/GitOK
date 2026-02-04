@@ -36,6 +36,7 @@ struct BtnGitPushView: View, SuperLog, SuperThread {
                     .frame(height: 20)
                     .frame(width: 20)
                     .hoverScale(105)
+                    .padding(.horizontal, 5)
                     .inButtonWithAction {
                         push(path: project.path, onComplete: {})
                     }
