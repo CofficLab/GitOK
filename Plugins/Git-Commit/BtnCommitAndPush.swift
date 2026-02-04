@@ -70,7 +70,7 @@ struct BtnCommitAndPush: View, SuperLog, SuperThread {
         }
         .frame(height: 40)
         .frame(width: 150)
-        .background(Color.accentColor.opacity(0.8))
+        .background(Color.accentColor.opacity(0.2))
         .roundedMedium()
         .hoverScale(105)
     }

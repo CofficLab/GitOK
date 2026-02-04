@@ -9,8 +9,15 @@ struct BtnOpenTraeView: View {
 
     var body: some View {
         if let project = g.project {
-            project.url
-                .makeOpenButton(.trae, useRealIcon: true)
+            Image.traeApp
+                .resizable()
+                .frame(height: 22)
+                .frame(width: 22)
+                .hoverScale(105)
+                .padding(.horizontal, 5)
+                .inButtonWithAction {
+                    project.url.openInTrae()
+                }
                 .help("用 Trae 打开")
         }
     }

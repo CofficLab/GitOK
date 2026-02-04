@@ -10,53 +10,27 @@ struct BtnOpenAntigravityView: View {
 
     var body: some View {
         if let project = g.project {
-            project.url
-                .makeOpenButton(.antigravity, useRealIcon: true)
-                .help("用 Antigravity 打开")
-        }
-    }
-}
-
-fileprivate extension URL {
-    func makeOpenAntigravityButton() -> some View {
-        Button(action: {
-            openAntigravity(url: self)
-        }, label: {
-            Label(
-                title: { Text("用 Antigravity 打开") },
-                icon: {
-                    Image(systemName: "paperplane")
-                        .resizable()
-                        .scaledToFit()
-                        .scaleEffect(0.9)
+            Image.antigravityApp
+                .resizable()
+                .frame(height: 22)
+                .frame(width: 22)
+                .hoverScale(105)
+                .padding(.horizontal, 5)
+                .inButtonWithAction {
+                    project.url.openInAntigravity()
                 }
-            )
-        })
-    }
-
-    func openAntigravity(url: URL) {
-        var appURL: URL?
-        if let url = NSWorkspace.shared.urlForApplication(withBundleIdentifier: "com.antigravity.app") {
-            appURL = url
-        } else if FileManager.default.fileExists(atPath: "/Applications/Antigravity.app") {
-            appURL = URL(fileURLWithPath: "/Applications/Antigravity.app")
-        } else if FileManager.default.fileExists(atPath: NSHomeDirectory() + "/Applications/Antigravity.app") {
-            appURL = URL(fileURLWithPath: NSHomeDirectory() + "/Applications/Antigravity.app")
-        }
-
-        if let appURL = appURL {
-            NSWorkspace.shared.open([url], withApplicationAt: appURL, configuration: NSWorkspace.OpenConfiguration(), completionHandler: nil)
+                .help("用 Antigravity 打开")
         }
     }
 }
 
 // MARK: - Preview
 
-#Preview("App - Small Screen") {
+#Preview("App") {
     ContentLayout()
         .hideSidebar()
         .hideTabPicker()
         .inRootView()
-        .frame(width: 600)
+        .frame(width: 1200)
         .frame(height: 600)
 }

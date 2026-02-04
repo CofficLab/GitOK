@@ -19,7 +19,15 @@ struct BtnOpenRemoteView: View, SuperLog {
     var body: some View {
         ZStack {
             if let url = webURL {
-                url.makeOpenButton(.safari, useRealIcon: true)
+                Image.safariApp
+                    .resizable()
+                    .frame(height: 22)
+                    .frame(width: 22)
+                    .hoverScale(105)
+                    .padding(2)
+                    .inButtonWithAction {
+                        url.openInSafari()
+                    }
             } else if isLoading {
                 // 添加加载指示器或占位符
                 Color.clear.frame(width: 24, height: 24)

@@ -31,9 +31,14 @@ struct BtnGitPushView: View, SuperLog, SuperThread {
     var body: some View {
         ZStack {
             if let project = data.project, self.isGitProject {
-                Image.upload.inButtonWithAction {
-                    push(path: project.path, onComplete: {})
-                }
+                Image.upload
+                    .resizable()
+                    .frame(height: 20)
+                    .frame(width: 20)
+                    .hoverScale(105)
+                    .inButtonWithAction {
+                        push(path: project.path, onComplete: {})
+                    }
             } else {
                 // 空状态占位符，确保视图始终有内容
                 Color.clear.frame(width: 24, height: 24)
