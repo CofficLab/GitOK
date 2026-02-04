@@ -31,6 +31,17 @@ struct CommitRow: View, SuperThread, SuperLog {
     /// 头像用户列表
     @State private var avatarUsers: [AvatarUser] = []
 
+    // MARK: - Push Popover State
+
+    /// Popover 显示状态
+    @State private var showPushPopover = false
+
+    /// 推送中状态
+    @State private var isPushing = false
+
+    /// 推送错误信息
+    @State private var pushError: Error?
+
     var body: some View {
         commitRowContent
     }
@@ -88,12 +99,27 @@ struct CommitRow: View, SuperThread, SuperLog {
 
                     // 右侧：未推送到远程的图标（当需要显示时）
                     if isActuallyUnpushed {
-                        Image(systemName: .iconUpload)
-                            .font(.system(size: 16))
-                            .foregroundColor(.orange)
-                            .frame(width: 24, height: 24)
-                            .padding(.trailing, 8)
-                            .help("尚未推送到远程仓库")
+                        Button(action: {
+                            showPushPopover = true
+                        }) {
+                            Image(systemName: .iconUpload)
+                                .font(.system(size: 16))
+                                .foregroundColor(.orange)
+                                .frame(width: 24, height: 24)
+                        }
+                        .buttonStyle(.borderless)
+                        .help("点击推送到远程仓库")
+                        .popover(isPresented: $showPushPopover) {
+                            PushPopoverContent(
+                                isPushing: $isPushing,
+                                pushError: $pushError,
+                                onPush: performPush,
+                                onCancel: {
+                                    showPushPopover = false
+                                    pushError = nil
+                                }
+                            )
+                        }
                     }
 
                     Spacer()
@@ -119,6 +145,29 @@ struct CommitRow: View, SuperThread, SuperLog {
             os_log("\(self.t)👆 Commit selected - hash: \(commit.hash.prefix(8)), message: \(commit.message.prefix(30))")
         }
         data.setCommit(commit)
+    }
+
+    /// 执行推送操作
+    private func performPush() async throws {
+        guard let project = data.project else {
+            throw NSError(domain: "GitOK", code: -1, userInfo: [
+                NSLocalizedDescriptionKey: "项目不可用"
+            ])
+        }
+
+        if Self.verbose {
+            os_log("\(self.t)🚀 Pushing commit \(commit.hash.prefix(8)) to remote")
+        }
+
+        // 执行推送
+        try project.push()
+
+        // 推送成功后，更新未推送状态
+        await setUnpushedStatus(false)
+
+        if Self.verbose {
+            os_log("\(self.t)✅ Push completed successfully for commit \(commit.hash.prefix(8))")
+        }
     }
 
     // MARK: - Setter
@@ -326,6 +375,108 @@ struct CommitRow: View, SuperThread, SuperLog {
                 }
             }
         }
+    }
+}
+
+// MARK: - Push Popover View
+
+/// 推送 Popover 内容视图（简洁模式）
+struct PushPopoverContent: View {
+    @Binding var isPushing: Bool
+    @Binding var pushError: Error?
+    let onPush: () async throws -> Void
+    let onCancel: () -> Void
+
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        VStack(spacing: 16) {
+            // 标题
+            HStack {
+                Image(systemName: "arrow.up.circle.fill")
+                    .foregroundColor(.orange)
+                Text("推送到远程")
+                    .font(.headline)
+                Spacer()
+            }
+
+            Divider()
+
+            if isPushing {
+                // 推送中状态
+                VStack(spacing: 12) {
+                    ProgressView()
+                        .controlSize(.regular)
+                    Text("正在推送中...")
+                        .font(.body)
+                        .foregroundColor(.secondary)
+                }
+                .frame(minHeight: 60)
+            } else {
+                // 正常或错误状态
+                VStack(alignment: .leading, spacing: 12) {
+                    // 提示信息
+                    HStack(spacing: 8) {
+                        Image(systemName: "info.circle.fill")
+                            .foregroundColor(.orange)
+                        Text("当前提交尚未推送到远程")
+                            .font(.body)
+                    }
+
+                    // 错误信息（如果有）
+                    if let error = pushError {
+                        VStack(alignment: .leading, spacing: 4) {
+                            HStack(spacing: 4) {
+                                Image(systemName: "exclamationmark.triangle.fill")
+                                    .foregroundColor(.red)
+                                Text("推送失败")
+                                    .font(.subheadline)
+                                    .fontWeight(.medium)
+                                    .foregroundColor(.red)
+                            }
+                            Text(error.localizedDescription)
+                                .font(.caption)
+                                .foregroundColor(.red)
+                        }
+                        .padding(.vertical, 8)
+                        .padding(.horizontal, 12)
+                        .background(Color.red.opacity(0.1))
+                        .cornerRadius(6)
+                    }
+
+                    // 按钮组
+                    HStack(spacing: 12) {
+                        Button("取消") {
+                            onCancel()
+                        }
+                        .keyboardShortcut(.cancelAction)
+
+                        Button(pushError == nil ? "推送" : "重试") {
+                            Task {
+                                do {
+                                    isPushing = true
+                                    pushError = nil
+                                    try await onPush()
+                                    // 立即关闭（用户选择的模式）
+                                    dismiss()
+                                } catch {
+                                    isPushing = false
+                                    pushError = error
+                                }
+                            }
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .keyboardShortcut(.defaultAction)
+                        .disabled(isPushing)
+                    }
+
+                    Spacer()
+                }
+            }
+        }
+        .padding(16)
+        .frame(width: 280, height: pushError != nil ? 200 : (isPushing ? 160 : 180))
+        .background(Color(nsColor: .windowBackgroundColor))
     }
 }
 
