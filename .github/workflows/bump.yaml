@@ -34,14 +34,14 @@ jobs:
       - name: 生成标签（pre 分支）
         if: github.ref == 'refs/heads/pre'
         run: |
-          version=$(bash scripts/get-version.sh)
+          version=$(bash .github/scripts/get-version.sh)
           echo "版本号->$version"
           build=$(agvtool what-version -terse)
           echo "tag=p$version($build)" >> $GITHUB_ENV
       - name: 生成标签（main 分支）
         if: github.ref == 'refs/heads/main'
         run: |
-          version=$(bash scripts/get-version.sh)
+          version=$(bash .github/scripts/get-version.sh)
           echo "版本号->$version"
           # build=$(agvtool what-version -terse)
           echo "tag=v$version" >> $GITHUB_ENV
