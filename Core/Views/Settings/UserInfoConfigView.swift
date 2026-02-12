@@ -77,11 +77,11 @@ struct UserInfoConfigView: View, SuperLog {
             VStack(spacing: 20) {
                 // 说明文本
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("配置当前项目的Git用户信息")
+                    Text("配置当前项目的Git用户信息", tableName: "Core")
                         .font(.title2)
                         .fontWeight(.medium)
 
-                    Text("这些设置仅适用于当前项目，不会影响全局Git配置")
+                    Text("这些设置仅适用于当前项目，不会影响全局Git配置", tableName: "Core")
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
@@ -89,7 +89,7 @@ struct UserInfoConfigView: View, SuperLog {
 
                 // 预设配置选择
                 if !savedConfigs.isEmpty {
-                    MagicSettingSection(title: "预设配置", titleAlignment: .leading) {
+                    MagicSettingSection(title: String(localized: "预设配置", table: "Core"), titleAlignment: .leading) {
                         VStack(spacing: 0) {
                             ForEach(savedConfigs) { config in
                                 MagicSettingRow(
@@ -122,42 +122,38 @@ struct UserInfoConfigView: View, SuperLog {
                 }
 
                 // 用户信息输入
-                MagicSettingSection(title: "用户信息", titleAlignment: .leading) {
+                MagicSettingSection(title: String(localized: "用户信息", table: "Core"), titleAlignment: .leading) {
                     VStack(spacing: 0) {
-                        // 用户名输入
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text("用户名")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                                .padding(.horizontal)
-
-                            TextField("输入用户名", text: $userName)
-                                .textFieldStyle(.roundedBorder)
+                        // 用户名
+                        HStack {
+                            Text("用户名", tableName: "Core")
+                                .frame(width: 80, alignment: .leading)
+                            TextField(String(localized: "输入用户名", table: "Core"), text: $userName)
+                                .textFieldStyle(.plain)
                                 .onChange(of: userName) {
                                     hasChanges = true
                                     selectedConfig = nil
                                 }
-                                .padding(.horizontal)
                         }
-                        .padding(.vertical, 12)
+                        .padding(.vertical, 8)
+                        .padding(.horizontal, 16)
 
                         Divider()
+                            .padding(.leading, 16)
 
-                        // 邮箱输入
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text("邮箱")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                                .padding(.horizontal)
-
-                            TextField("输入邮箱", text: $userEmail)
-                                .textFieldStyle(.roundedBorder)
+                        // 邮箱
+                        HStack {
+                            Text("邮箱", tableName: "Core")
+                                .frame(width: 80, alignment: .leading)
+                            TextField(String(localized: "输入邮箱", table: "Core"), text: $userEmail)
+                                .textFieldStyle(.plain)
                                 .onChange(of: userEmail) {
                                     hasChanges = true
                                     selectedConfig = nil
                                 }
-                                .padding(.horizontal)
                         }
+                        .padding(.vertical, 8)
+                        .padding(.horizontal, 16)
                         .padding(.vertical, 12)
                     }
                 }
@@ -203,7 +199,7 @@ struct UserInfoConfigView: View, SuperLog {
             isLoading = false
             return true
         } catch {
-            errorMessage = "保存失败: \(error.localizedDescription)"
+        errorMessage = String.localizedStringWithFormat(String(localized: "保存失败: %@", table: "Core"), error.localizedDescription)
             if Self.verbose {
                 os_log(.error, "\(Self.t)Failed to save user config: \(error)")
             }
@@ -237,7 +233,7 @@ struct UserInfoConfigView: View, SuperLog {
             }
 
         } catch {
-            errorMessage = "保存预设失败: \(error.localizedDescription)"
+        errorMessage = String.localizedStringWithFormat(String(localized: "保存预设失败: %@", table: "Core"), error.localizedDescription)
             if Self.verbose {
                 os_log(.error, "\(Self.t)Failed to save preset: \(error)")
             }
@@ -261,7 +257,7 @@ struct UserInfoConfigView: View, SuperLog {
                 os_log("\(Self.t)Loaded user info - name: \(userName), email: \(userEmail)")
             }
         } catch {
-            errorMessage = "无法加载当前用户信息: \(error.localizedDescription)"
+        errorMessage = String.localizedStringWithFormat(String(localized: "无法加载当前用户信息: %@", table: "Core"), error.localizedDescription)
             if Self.verbose {
                 os_log(.error, "\(Self.t)Failed to load user info: \(error)")
             }

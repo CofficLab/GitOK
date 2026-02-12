@@ -30,6 +30,10 @@ struct SettingView: View, SuperLog {
         case plugins = "插件管理"
         case about = "关于"
 
+        var displayName: String {
+            String(localized: String.LocalizationValue(self.rawValue), table: "Core")
+        }
+
         var icon: String {
             switch self {
             case .userInfo: return "person.circle"
@@ -65,7 +69,7 @@ struct SettingView: View, SuperLog {
                 // 设置列表
                 List(SettingTab.allCases, id: \.self, selection: $selectedTab) { tab in
                     NavigationLink(value: tab) {
-                        Label(tab.rawValue, systemImage: tab.icon)
+                        Label(tab.displayName, systemImage: tab.icon)
                     }
                 }
             }
@@ -130,11 +134,11 @@ struct SettingView: View, SuperLog {
 
             // 版本和 Build 信息
             VStack(alignment: .center, spacing: 2) {
-                Text("v\(appInfo.version)")
+                Text(String.localizedStringWithFormat(NSLocalizedString("v%@", tableName: "Core", comment: ""), appInfo.version))
                     .font(.caption2)
                     .foregroundColor(.secondary)
 
-                Text("Build \(appInfo.build)")
+                Text(String.localizedStringWithFormat(NSLocalizedString("Build %@", tableName: "Core", comment: ""), appInfo.build))
                     .font(.caption2)
                     .foregroundColor(.secondary)
             }

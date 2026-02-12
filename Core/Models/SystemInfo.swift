@@ -192,6 +192,38 @@ struct SystemInfo {
         let used = diskTotal - diskAvailable
         return Int((used / diskTotal) * 100)
     }
+
+    // MARK: - 格式化辅助
+
+    /// 总内存 (GB 格式化)
+    var totalMemory: String {
+        String(format: "%.1f GB", memorySize)
+    }
+
+    /// 可用内存 (GB 格式化)
+    var freeMemory: String {
+        String(format: "%.1f GB", memoryAvailable)
+    }
+
+    /// 已用内存 (GB 格式化)
+    var usedMemory: String {
+        String(format: "%.1f GB", memorySize - memoryAvailable)
+    }
+
+    /// 总磁盘空间 (GB 格式化)
+    var totalDiskSpace: String {
+        String(format: "%.1f GB", diskTotal)
+    }
+
+    /// 可用磁盘空间 (GB 格式化)
+    var freeDiskSpace: String {
+        String(format: "%.1f GB", diskAvailable)
+    }
+
+    /// 已用磁盘空间 (GB 格式化)
+    var usedDiskSpace: String {
+        String(format: "%.1f GB", diskTotal - diskAvailable)
+    }
 }
 
 // MARK: - Host Statistics (简化版)

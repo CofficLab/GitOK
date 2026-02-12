@@ -17,7 +17,7 @@ struct BannerPNGDownloadButton: View {
 
     var body: some View {
         BannerDownloadButton(
-            title: progressText.isEmpty ? "下载 标准 PNG" : progressText,
+            title: progressText.isEmpty ? String(localized: "下载 标准 PNG", table: "Banner") : progressText,
             icon: "photo",
             color: .green,
             action: {
@@ -31,12 +31,12 @@ struct BannerPNGDownloadButton: View {
 
     @MainActor private func downloadPNG() async {
         guard !bannerProvider.banner.path.isEmpty else {
-            MagicMessageProvider.shared.error("没有可用的Banner")
+            MagicMessageProvider.shared.error(String(localized: "没有可用的Banner", table: "Banner"))
             return
         }
 
         isGenerating = true
-        progressText = "正在生成标准PNG..."
+        progressText = String(localized: "正在生成标准PNG...", table: "Banner")
         defer { 
             isGenerating = false
             progressText = ""
@@ -46,7 +46,7 @@ struct BannerPNGDownloadButton: View {
         let folderName = "Banner-Standard-PNG-\(tag)"
 
         guard let downloadsURL = FileManager.default.urls(for: .downloadsDirectory, in: .userDomainMask).first else {
-            MagicMessageProvider.shared.error("无权访问下载文件夹")
+            MagicMessageProvider.shared.error(String(localized: "无权访问下载文件夹", table: "Banner"))
             return
         }
 
@@ -55,7 +55,11 @@ struct BannerPNGDownloadButton: View {
         do {
             try FileManager.default.createDirectory(at: folderPath, withIntermediateDirectories: true)
         } catch {
-            MagicMessageProvider.shared.error("创建目标目录失败：\(error)")
+            let msg = String.localizedStringWithFormat(
+                String(localized: "创建目标目录失败：%@", table: "Banner"),
+                error.localizedDescription
+            )
+            MagicMessageProvider.shared.error(msg)
             return
         }
 
@@ -68,7 +72,12 @@ struct BannerPNGDownloadButton: View {
             let height = Int(device.height)
             let description = "\(width)x\(height) (\(device.description))"
             
-            progressText = "正在生成 \(description) (\(index + 1)/\(allDevices.count))..."
+            progressText = String.localizedStringWithFormat(
+                String(localized: "正在生成 %@ (%d/%d)...", table: "Banner"),
+                description,
+                index + 1,
+                allDevices.count
+            )
             
             let fileName = "banner-\(device.rawValue)-\(width)x\(height).png"
             let filePath = folderPath.appendingPathComponent(fileName)
@@ -80,17 +89,31 @@ struct BannerPNGDownloadButton: View {
                 try bannerView.snapshot(path: filePath)
                 successCount += 1
             } catch {
-                MagicMessageProvider.shared.error("生成PNG \(description) 失败: \(error.localizedDescription)")
+                let msg = String.localizedStringWithFormat(
+                    String(localized: "生成PNG %@ 失败: %@", table: "Banner"),
+                    description,
+                    error.localizedDescription
+                )
+                MagicMessageProvider.shared.error(msg)
             }
         }
 
         // 显示结果
         if successCount == allDevices.count {
-            MagicMessageProvider.shared.success("成功生成 \(successCount) 个PNG文件")
+            let msg = String.localizedStringWithFormat(
+                String(localized: "成功生成 %d 个PNG文件", table: "Banner"),
+                successCount
+            )
+            MagicMessageProvider.shared.success(msg)
             // 打开下载文件夹
             NSWorkspace.shared.open(folderPath)
         } else {
-            MagicMessageProvider.shared.error("只成功生成了 \(successCount)/\(allDevices.count) 个文件")
+            let msg = String.localizedStringWithFormat(
+                String(localized: "只成功生成了 %d/%d 个文件", table: "Banner"),
+                successCount,
+                allDevices.count
+            )
+            MagicMessageProvider.shared.error(msg)
         }
     }
     

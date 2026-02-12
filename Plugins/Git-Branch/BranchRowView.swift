@@ -24,7 +24,7 @@ struct BranchRowView: View {
                     onSwitch()
                 }
             } else {
-                Text("当前")
+                Text("当前", tableName: "GitBranch")
                     .font(.caption)
                     .foregroundColor(.secondary)
                     .padding(.horizontal, 8)

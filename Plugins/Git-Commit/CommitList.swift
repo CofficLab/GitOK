@@ -59,7 +59,7 @@ struct CommitList: View, SuperThread, SuperLog {
                 GeometryReader { geometry in
                     VStack(spacing: 0) {
                         if loading && commits.isEmpty {
-                            Text("正在加载")
+                            Text("正在加载", tableName: "GitCommit")
                                 .inMagicHStackCenter()
                                 .inMagicVStackCenter()
                         } else {

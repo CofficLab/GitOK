@@ -56,7 +56,7 @@ struct CommitInfoUser: View, SuperLog {
                             .font(.system(size: 12))
 
                         /// 默认文本
-                        Text("Unknown")
+                        Text("Unknown", tableName: "GitCommit")
                             .font(.caption)
                             .foregroundColor(isHovering ? .primary : .secondary)
                     }
@@ -71,7 +71,7 @@ struct CommitInfoUser: View, SuperLog {
                 .animation(.easeInOut(duration: 0.2), value: isHovering)
             }
             .buttonStyle(.plain)
-            .help("点击查看用户信息")
+            .help(String(localized: "点击查看用户信息", table: "GitCommit"))
             .onHover { hovering in
                 isHovering = hovering
             }
@@ -83,7 +83,7 @@ struct CommitInfoUser: View, SuperLog {
                         .background(Color(nsColor: .windowBackgroundColor))
                 } else {
                     /// 只有在真的没有用户时才显示这个
-                    Text("未找到用户信息")
+                    Text("未找到用户信息", tableName: "GitCommit")
                         .frame(width: 200, height: 100)
                 }
             }

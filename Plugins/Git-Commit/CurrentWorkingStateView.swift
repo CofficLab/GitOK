@@ -83,24 +83,24 @@ struct CurrentWorkingStateView: View, SuperLog {
             VStack(alignment: .leading, spacing: 2) {
                 if changedFileCount == 0 {
                     // 工作区干净
-                    Text("工作区干净")
+                    Text("工作区干净", tableName: "GitCommit")
                         .font(.system(size: 14, weight: .medium))
 
                     if unpulledCount > 0 {
-                        Text("远程有 \(unpulledCount) 个提交可拉取")
+                        Text("远程有 \(unpulledCount) 个提交可拉取", tableName: "GitCommit")
                             .font(.system(size: 11))
                             .foregroundColor(.secondary)
                     } else {
-                        Text("所有更改已提交")
+                        Text("所有更改已提交", tableName: "GitCommit")
                             .font(.system(size: 11))
                             .foregroundColor(.secondary)
                     }
                 } else {
                     // 有未提交文件
-                    Text("当前状态")
+                    Text("当前状态", tableName: "GitCommit")
                         .font(.system(size: 14, weight: .medium))
 
-                    Text("(\(changedFileCount)) 未提交")
+                    Text("(\(changedFileCount)) 未提交", tableName: "GitCommit")
                         .font(.system(size: 11))
                         .foregroundColor(.secondary)
                 }
@@ -171,7 +171,7 @@ struct CurrentWorkingStateView: View, SuperLog {
                         .font(.system(size: 14))
                 }
 
-                Text(isPulling ? "拉取中..." : "拉取")
+                Text(isPulling ? "拉取中..." : "拉取", tableName: "GitCommit")
                     .font(.system(size: 12, weight: .medium))
                     .foregroundColor(.blue)
             }
@@ -182,7 +182,7 @@ struct CurrentWorkingStateView: View, SuperLog {
         }
         .buttonStyle(PlainButtonStyle())
         .disabled(isPulling)
-        .help("点击执行 git pull 拉取远程提交")
+        .help(String(localized: "点击执行 git pull 拉取远程提交", table: "GitCommit"))
         .onHover { hovering in
             withAnimation(.easeInOut(duration: 0.2)) {
                 isDownloadButtonHovered = hovering
@@ -211,7 +211,7 @@ struct CurrentWorkingStateView: View, SuperLog {
                         .font(.system(size: 14))
                 }
 
-                Text(isPushing ? "推送中..." : "推送")
+                Text(isPushing ? "推送中..." : "推送", tableName: "GitCommit")
                     .font(.system(size: 12, weight: .medium))
                     .foregroundColor(.orange)
             }
@@ -222,7 +222,7 @@ struct CurrentWorkingStateView: View, SuperLog {
         }
         .buttonStyle(PlainButtonStyle())
         .disabled(isPushing)
-        .help("点击执行 git push 推送本地提交")
+        .help(String(localized: "点击执行 git push 推送本地提交", table: "GitCommit"))
         .onHover { hovering in
             withAnimation(.easeInOut(duration: 0.2)) {
                 isUploadButtonHovered = hovering
@@ -246,7 +246,7 @@ extension CurrentWorkingStateView {
         }
 
         await MainActor.run {
-            data.activityStatus = "刷新文件列表…"
+            data.activityStatus = String(localized: "刷新文件列表…", table: "GitCommit")
             isRefreshing = true
         }
 
@@ -280,7 +280,7 @@ extension CurrentWorkingStateView {
         }
 
         // 设置活动状态
-        setStatus("检查远程状态…")
+        setStatus(String(localized: "检查远程状态…", table: "GitCommit"))
 
         // 使用 Task.detached 确保在后台执行，不继承 actor 上下文
         Task.detached(priority: .userInitiated) {
@@ -353,7 +353,7 @@ extension CurrentWorkingStateView {
         isPulling = true
 
         // 设置状态日志
-        setStatus("拉取中…")
+        setStatus(String(localized: "拉取中…", table: "GitCommit"))
 
         // 使用 Task.detached 确保在后台执行
         Task.detached(priority: .userInitiated) {

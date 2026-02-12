@@ -10,7 +10,7 @@ enum CommitStyle: String, CaseIterable {
 
     /// 显示标签
     var label: String {
-        return self.rawValue
+        return String(localized: String.LocalizationValue(self.rawValue), table: "GitCommit")
     }
 
     /// 是否包含 emoji

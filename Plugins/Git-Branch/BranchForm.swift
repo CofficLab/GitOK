@@ -23,11 +23,11 @@ struct BranchForm: View, SuperLog {
             VStack(spacing: 16) {
                 // 新建分支区域
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("新建分支")
+                    Text("新建分支", tableName: "GitBranch")
                         .font(.headline)
                     
                     HStack(spacing: 8) {
-                        TextField("分支名称", text: $newBranchName)
+                        TextField(String(localized: "分支名称", table: "GitBranch"), text: $newBranchName)
                             .textFieldStyle(RoundedBorderTextFieldStyle())
                         
                         Image.add.inButtonWithAction {
@@ -40,7 +40,7 @@ struct BranchForm: View, SuperLog {
                 
                 // 分支列表
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("切换分支")
+                    Text("切换分支", tableName: "GitBranch")
                         .font(.headline)
                     
                     if isLoading {
@@ -52,7 +52,7 @@ struct BranchForm: View, SuperLog {
                         }
                         .frame(height: 60)
                     } else if branches.isEmpty {
-                        Text("暂无分支")
+                        Text("暂无分支", tableName: "GitBranch")
                             .font(.caption)
                             .foregroundColor(.secondary)
                             .frame(maxWidth: .infinity, alignment: .center)
@@ -102,13 +102,21 @@ extension BranchForm {
                 await MainActor.run {
                     self.isCreating = false
                     self.newBranchName = ""
-                    alert_info("已创建并切换到分支: \(branchName)")
+                    let msg = String.localizedStringWithFormat(
+                        String(localized: "已创建并切换到分支: %@", table: "GitBranch"),
+                        branchName
+                    )
+                    alert_info(msg)
                     self.loadBranches()
                 }
             } catch {
                 await MainActor.run {
                     self.isCreating = false
-                    alert_error("创建分支失败: \(error.localizedDescription)")
+                    let msg = String.localizedStringWithFormat(
+                        String(localized: "创建分支失败: %@", table: "GitBranch"),
+                        error.localizedDescription
+                    )
+                    alert_error(msg)
                 }
             }
         }
@@ -123,12 +131,20 @@ extension BranchForm {
                 
                 await MainActor.run {
                     self.selectedBranch = branch
-                    alert_info("已切换到分支: \(branch.name)")
+                    let msg = String.localizedStringWithFormat(
+                        String(localized: "已切换到分支: %@", table: "GitBranch"),
+                        branch.name
+                    )
+                    alert_info(msg)
                     self.loadBranches()
                 }
             } catch {
                 await MainActor.run {
-                    alert_error("切换分支失败: \(error.localizedDescription)")
+                    let msg = String.localizedStringWithFormat(
+                        String(localized: "切换分支失败: %@", table: "GitBranch"),
+                        error.localizedDescription
+                    )
+                    alert_error(msg)
                 }
             }
         }
@@ -147,6 +163,7 @@ extension BranchForm {
             return
         }
         
+        // 设置刷新状态
         isLoading = true
         
         Task.detached {
@@ -163,10 +180,14 @@ extension BranchForm {
                 await MainActor.run {
                     self.branches = []
                     self.isLoading = false
-                    if verbose {
-                        os_log(.error, "\(self.t)Failed to load branches: \(error.localizedDescription)")
+                    if self.verbose {
+                        os_log(.error, "Failed to load branches: \(error.localizedDescription)")
                     }
-                    alert_error("加载分支列表失败: \(error.localizedDescription)")
+                    let msg = String.localizedStringWithFormat(
+                        String(localized: "加载分支列表失败: %@", table: "GitBranch"),
+                        error.localizedDescription
+                    )
+                    alert_error(msg)
                 }
             }
         }

@@ -46,11 +46,11 @@ struct CommitStyleConfigView: View, SuperLog {
         ScrollView {
             VStack(spacing: 20) {
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("配置 Commit 消息风格")
+                    Text("配置 Commit 消息风格", tableName: "Core")
                         .font(.title2)
                         .fontWeight(.medium)
 
-                    Text("项目配置优先级高于全局配置")
+                    Text("项目配置优先级高于全局配置", tableName: "Core")
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
@@ -61,23 +61,23 @@ struct CommitStyleConfigView: View, SuperLog {
                     HStack {
                         Image(systemName: "globe")
                             .foregroundColor(.blue)
-                        Text("全局默认风格")
+                        Text("全局默认风格", tableName: "Core")
                             .font(.headline)
                     }
 
-                    Text("应用于所有新项目的默认风格")
+                    Text("应用于所有新项目的默认风格", tableName: "Core")
                         .font(.caption)
                         .foregroundColor(.secondary)
 
                     HStack {
-                        Text("风格")
+                        Text("风格", tableName: "Core")
                             .font(.subheadline)
 
                         Spacer()
 
                         Picker("", selection: $globalCommitStyle) {
                             ForEach(CommitStyle.allCases, id: \.self) { style in
-                                Text(style.label)
+                                Text(verbatim: style.label)
                                     .tag(style as CommitStyle?)
                             }
                         }
@@ -90,7 +90,7 @@ struct CommitStyleConfigView: View, SuperLog {
 
                     // 全局风格预览
                     VStack(alignment: .leading, spacing: 6) {
-                        Text("预览")
+                        Text("预览", tableName: "Core")
                             .font(.subheadline)
                             .foregroundColor(.secondary)
 
@@ -119,24 +119,24 @@ struct CommitStyleConfigView: View, SuperLog {
                     HStack {
                         Image(systemName: "folder")
                             .foregroundColor(.orange)
-                        Text("当前项目风格")
+                        Text("当前项目风格", tableName: "Core")
                             .font(.headline)
                     }
 
                     if let project = dataProvider.project {
-                        Text("项目：\(project.title)")
+                        Text(verbatim: String.localizedStringWithFormat(NSLocalizedString("项目：%@", tableName: "Core", comment: ""), project.title))
                             .font(.caption)
                             .foregroundColor(.secondary)
 
                         HStack {
-                            Text("风格")
+                            Text("风格", tableName: "Core")
                                 .font(.subheadline)
 
                             Spacer()
 
                             Picker("", selection: $commitStyle) {
                                 ForEach(CommitStyle.allCases, id: \.self) { style in
-                                    Text(style.label)
+                                    Text(verbatim: style.label)
                                         .tag(style as CommitStyle?)
                                 }
                             }
@@ -149,7 +149,7 @@ struct CommitStyleConfigView: View, SuperLog {
 
                         // 项目风格预览
                         VStack(alignment: .leading, spacing: 6) {
-                            Text("预览")
+                            Text("预览", tableName: "Core")
                                 .font(.subheadline)
                                 .foregroundColor(.secondary)
 
@@ -169,7 +169,7 @@ struct CommitStyleConfigView: View, SuperLog {
                             .cornerRadius(6)
                         }
                     } else {
-                        Text("未打开项目")
+                        Text("未打开项目", tableName: "Core")
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }

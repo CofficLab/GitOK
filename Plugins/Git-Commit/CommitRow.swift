@@ -108,7 +108,7 @@ struct CommitRow: View, SuperThread, SuperLog {
                                 .frame(width: 24, height: 24)
                         }
                         .buttonStyle(.borderless)
-                        .help("点击推送到远程仓库")
+                        .help(String(localized: "点击推送到远程仓库", table: "GitCommit"))
                         .popover(isPresented: $showPushPopover) {
                             PushPopoverContent(
                                 isPushing: $isPushing,
@@ -151,7 +151,7 @@ struct CommitRow: View, SuperThread, SuperLog {
     private func performPush() async throws {
         guard let project = data.project else {
             throw NSError(domain: "GitOK", code: -1, userInfo: [
-                NSLocalizedDescriptionKey: "项目不可用"
+                NSLocalizedDescriptionKey: String(localized: "项目不可用", table: "GitCommit")
             ])
         }
 
@@ -395,7 +395,7 @@ struct PushPopoverContent: View {
             HStack {
                 Image(systemName: "arrow.up.circle.fill")
                     .foregroundColor(.orange)
-                Text("推送到远程")
+                Text("推送到远程", tableName: "GitCommit")
                     .font(.headline)
                 Spacer()
             }
@@ -407,7 +407,7 @@ struct PushPopoverContent: View {
                 VStack(spacing: 12) {
                     ProgressView()
                         .controlSize(.regular)
-                    Text("正在推送中...")
+                    Text("正在推送中...", tableName: "GitCommit")
                         .font(.body)
                         .foregroundColor(.secondary)
                 }
@@ -419,39 +419,42 @@ struct PushPopoverContent: View {
                     HStack(spacing: 8) {
                         Image(systemName: "info.circle.fill")
                             .foregroundColor(.orange)
-                        Text("当前提交尚未推送到远程")
+                        Text("当前提交尚未推送到远程", tableName: "GitCommit")
                             .font(.body)
                     }
 
                     // 错误信息（如果有）
                     if let error = pushError {
-                        VStack(alignment: .leading, spacing: 4) {
-                            HStack(spacing: 4) {
-                                Image(systemName: "exclamationmark.triangle.fill")
-                                    .foregroundColor(.red)
-                                Text("推送失败")
-                                    .font(.subheadline)
-                                    .fontWeight(.medium)
-                                    .foregroundColor(.red)
-                            }
-                            Text(error.localizedDescription)
+                            VStack(alignment: .leading, spacing: 4) {
+                                HStack(spacing: 4) {
+                                    Image(systemName: "exclamationmark.triangle.fill")
+                                        .foregroundColor(.red)
+                                    Text("推送失败", tableName: "GitCommit")
+                                        .font(.subheadline)
+                                        .fontWeight(.medium)
+                                        .foregroundColor(.red)
+                                }
+                                Text(String.localizedStringWithFormat(
+                                    String(localized: "推送失败", table: "GitCommit") + ": %@",
+                                    error.localizedDescription
+                                ))
                                 .font(.caption)
                                 .foregroundColor(.red)
+                            }
+                            .padding(.vertical, 8)
+                            .padding(.horizontal, 12)
+                            .background(Color.red.opacity(0.1))
+                            .cornerRadius(6)
                         }
-                        .padding(.vertical, 8)
-                        .padding(.horizontal, 12)
-                        .background(Color.red.opacity(0.1))
-                        .cornerRadius(6)
-                    }
 
                     // 按钮组
                     HStack(spacing: 12) {
-                        Button("取消") {
+                        Button(String(localized: "取消", table: "GitCommit")) {
                             onCancel()
                         }
                         .keyboardShortcut(.cancelAction)
-
-                        Button(pushError == nil ? "推送" : "重试") {
+                        
+                        Button(pushError == nil ? String(localized: "推送", table: "GitCommit") : String(localized: "重试", table: "GitCommit")) {
                             Task {
                                 do {
                                     isPushing = true

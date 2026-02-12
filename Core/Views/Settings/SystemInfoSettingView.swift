@@ -36,12 +36,14 @@ struct SystemInfoSettingView: View, SuperLog {
             }
             .padding()
         }
-        .navigationTitle("系统信息")
+        .navigationTitle(Text("系统信息", tableName: "Core"))
         .toolbar {
             ToolbarItem(placement: .confirmationAction) {
-                Button("完成") {
+                Button(action: {
                     // 关闭设置视图
                     NotificationCenter.default.post(name: .didSaveGitUserConfig, object: nil)
+                }) {
+                    Text("完成", tableName: "Core")
                 }
             }
 
@@ -63,70 +65,92 @@ struct SystemInfoSettingView: View, SuperLog {
 
     /// 系统基本信息
     private var systemBasicInfoSection: some View {
-        MagicSettingSection(title: "系统", titleAlignment: .leading) {
+        MagicSettingSection(title: String(localized: "系统", table: "Core"), titleAlignment: .leading) {
             VStack(spacing: 0) {
-                infoRow(
-                    title: "系统名称",
-                    value: systemInfo.systemName,
-                    icon: "desktopcomputer"
-                )
+                // 系统名称
+                MagicSettingRow(
+                    title: String(localized: "系统名称", table: "Core"),
+                    description: systemInfo.systemName,
+                    icon: .iconGear
+                ) {
+                    EmptyView()
+                }
 
                 Divider()
+                    .padding(.leading, 16)
 
-                infoRow(
-                    title: "系统版本",
-                    value: systemInfo.systemVersion,
-                    icon: "info.circle"
-                )
-
-                Divider()
-
-                infoRow(
-                    title: "系统架构",
-                    value: systemInfo.architecture,
-                    icon: "cpu"
-                )
+                // 系统版本
+                MagicSettingRow(
+                    title: String(localized: "系统版本", table: "Core"),
+                    description: systemInfo.systemVersion,
+                    icon: .iconGear
+                ) {
+                    EmptyView()
+                }
 
                 Divider()
+                    .padding(.leading, 16)
 
-                infoRow(
-                    title: "主机名",
-                    value: systemInfo.hostname,
-                    icon: "server.rack"
-                )
+                // 系统架构
+                MagicSettingRow(
+                    title: String(localized: "系统架构", table: "Core"),
+                    description: systemInfo.architecture,
+                    icon: .iconGear
+                ) {
+                    EmptyView()
+                }
+
+                Divider()
+                    .padding(.leading, 16)
+
+                // 主机名
+                MagicSettingRow(
+                    title: String(localized: "主机名", table: "Core"),
+                    description: systemInfo.hostname,
+                    icon: .iconGear
+                ) {
+                    EmptyView()
+                }
             }
         }
     }
 
     /// 硬件信息
     private var hardwareInfoSection: some View {
-        MagicSettingSection(title: "硬件", titleAlignment: .leading) {
+        MagicSettingSection(title: String(localized: "硬件", table: "Core"), titleAlignment: .leading) {
             VStack(spacing: 0) {
-                infoRow(
-                    title: "处理器",
-                    value: systemInfo.cpuModel,
-                    icon: "cpu"
-                )
+                // 处理器
+                MagicSettingRow(
+                    title: String(localized: "处理器", table: "Core"),
+                    description: systemInfo.cpuModel,
+                    icon: .iconGear
+                ) {
+                    EmptyView()
+                }
 
                 Divider()
+                    .padding(.leading, 16)
 
-                infoRow(
-                    title: "核心数",
-                    value: "\(systemInfo.cpuCores) 核",
-                    icon: "number"
-                )
+                // 核心数
+                MagicSettingRow(
+                    title: String(localized: "核心数", table: "Core"),
+                    description: String.localizedStringWithFormat(String(localized: "%lld 核", table: "Core"), Int64(systemInfo.cpuCores)),
+                    icon: .iconGear
+                ) {
+                    EmptyView()
+                }
             }
         }
     }
 
     /// 内存信息
     private var memoryInfoSection: some View {
-        MagicSettingSection(title: "内存", titleAlignment: .leading) {
+        MagicSettingSection(title: String(localized: "内存", table: "Core"), titleAlignment: .leading) {
             VStack(alignment: .leading, spacing: 16) {
                 // 内存使用条
                 VStack(alignment: .leading, spacing: 8) {
                     HStack {
-                        Text("内存使用")
+                        Text("内存使用", tableName: "Core")
                             .font(.caption)
                             .foregroundColor(.secondary)
 
@@ -144,27 +168,35 @@ struct SystemInfoSettingView: View, SuperLog {
 
                 // 内存详情
                 VStack(spacing: 0) {
-                    infoRow(
-                        title: "总内存",
-                        value: String(format: "%.1f GB", systemInfo.memorySize),
-                        icon: "memorychip"
-                    )
+                    MagicSettingRow(
+                        title: String(localized: "总内存", table: "Core"),
+                        description: systemInfo.totalMemory,
+                        icon: .iconGear
+                    ) {
+                        EmptyView()
+                    }
 
                     Divider()
+                        .padding(.leading, 16)
 
-                    infoRow(
-                        title: "可用内存",
-                        value: String(format: "%.1f GB", systemInfo.memoryAvailable),
-                        icon: "checkmark.circle"
-                    )
+                    MagicSettingRow(
+                        title: String(localized: "可用内存", table: "Core"),
+                        description: systemInfo.freeMemory,
+                        icon: .iconGear
+                    ) {
+                        EmptyView()
+                    }
 
                     Divider()
+                        .padding(.leading, 16)
 
-                    infoRow(
-                        title: "已用内存",
-                        value: String(format: "%.1f GB", systemInfo.memorySize - systemInfo.memoryAvailable),
-                        icon: "arrow.up.circle"
-                    )
+                    MagicSettingRow(
+                        title: String(localized: "已用内存", table: "Core"),
+                        description: systemInfo.usedMemory,
+                        icon: .iconGear
+                    ) {
+                        EmptyView()
+                    }
                 }
             }
         }
@@ -172,12 +204,12 @@ struct SystemInfoSettingView: View, SuperLog {
 
     /// 磁盘信息
     private var diskInfoSection: some View {
-        MagicSettingSection(title: "磁盘", titleAlignment: .leading) {
+        MagicSettingSection(title: String(localized: "磁盘", table: "Core"), titleAlignment: .leading) {
             VStack(alignment: .leading, spacing: 16) {
                 // 磁盘使用条
                 VStack(alignment: .leading, spacing: 8) {
                     HStack {
-                        Text("磁盘使用")
+                        Text("磁盘使用", tableName: "Core")
                             .font(.caption)
                             .foregroundColor(.secondary)
 
@@ -195,27 +227,35 @@ struct SystemInfoSettingView: View, SuperLog {
 
                 // 磁盘详情
                 VStack(spacing: 0) {
-                    infoRow(
-                        title: "总容量",
-                        value: String(format: "%.0f GB", systemInfo.diskTotal),
-                        icon: "internaldrive"
-                    )
+                    MagicSettingRow(
+                        title: String(localized: "总容量", table: "Core"),
+                        description: systemInfo.totalDiskSpace,
+                        icon: .iconGear
+                    ) {
+                        EmptyView()
+                    }
 
                     Divider()
+                        .padding(.leading, 16)
 
-                    infoRow(
-                        title: "可用容量",
-                        value: String(format: "%.0f GB", systemInfo.diskAvailable),
-                        icon: "checkmark.circle"
-                    )
+                    MagicSettingRow(
+                        title: String(localized: "可用容量", table: "Core"),
+                        description: systemInfo.freeDiskSpace,
+                        icon: .iconGear
+                    ) {
+                        EmptyView()
+                    }
 
                     Divider()
+                        .padding(.leading, 16)
 
-                    infoRow(
-                        title: "已用容量",
-                        value: String(format: "%.0f GB", systemInfo.diskTotal - systemInfo.diskAvailable),
-                        icon: "arrow.up.circle"
-                    )
+                    MagicSettingRow(
+                        title: String(localized: "已用容量", table: "Core"),
+                        description: systemInfo.usedDiskSpace,
+                        icon: .iconGear
+                    ) {
+                        EmptyView()
+                    }
                 }
             }
         }
@@ -223,31 +263,24 @@ struct SystemInfoSettingView: View, SuperLog {
 
     /// Git 信息
     private var gitInfoSection: some View {
-        MagicSettingSection(title: "Git", titleAlignment: .leading) {
+        MagicSettingSection(title: String(localized: "Git", table: "Core"), titleAlignment: .leading) {
             VStack(spacing: 0) {
                 if let gitVersion = systemInfo.gitVersion {
-                    infoRow(
-                        title: "Git 版本",
-                        value: gitVersion,
-                        icon: "git"
-                    )
-                } else {
-                    HStack {
-                        Image(systemName: "git")
-                            .foregroundColor(.secondary)
-                            .frame(width: 28)
-
-                        Text("Git 版本")
-                            .font(.system(size: 13))
-
-                        Spacer()
-
-                        Text("未安装")
-                            .font(.system(size: 13))
-                            .foregroundColor(.secondary)
+                    MagicSettingRow(
+                        title: String(localized: "Git 版本", table: "Core"),
+                        description: gitVersion,
+                        icon: .iconGear
+                    ) {
+                        EmptyView()
                     }
-                    .padding(.horizontal)
-                    .padding(.vertical, 12)
+                } else {
+                    MagicSettingRow(
+                        title: String(localized: "Git 版本", table: "Core"),
+                        description: String(localized: "未安装", table: "Core"),
+                        icon: .iconGear
+                    ) {
+                        EmptyView()
+                    }
                 }
             }
         }

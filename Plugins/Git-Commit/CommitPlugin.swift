@@ -19,7 +19,7 @@ class CommitPlugin: NSObject, SuperPlugin {
     static var displayName: String = "Commit"
 
     /// 插件描述
-    static var description: String = "Git 提交管理"
+    static var description: String = String(localized: "Git 提交管理", table: "GitCommit")
 
     /// 插件图标名称
     static var iconName: String = "arrow.up.arrow.down"
