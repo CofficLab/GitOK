@@ -155,10 +155,8 @@ extension GitDetail {
 extension GitDetail {
     /// 应用即将变为活跃状态的事件处理
     func onAppWillBecomeActive() {
-        Task {
-            self.updateIsGitProject()
-            await self.updateIsProjectCleanNoDebounce(reason: "onAppWillBecomeActive")
-        }
+        self.updateIsGitProject()
+        self.updateIsProjectClean(reason: "onAppWillBecomeActive")
     }
 
     /// Git 提交成功时的事件处理
@@ -168,67 +166,14 @@ extension GitDetail {
 
     /// 视图出现时的事件处理
     func onAppear() {
-        Task {
-            self.updateIsGitProject()
-            self.updateIsProjectClean(reason: "onAppear")
-        }
+        self.updateIsGitProject()
+        self.updateIsProjectClean(reason: "onAppear")
     }
 
     /// 项目变更时的事件处理
     func onProjectChange() {
-        Task {
-            await self.updateIsGitProject()
-            self.updateIsProjectClean(reason: "onProjectChange")
-        }
-    }
-
-    /// 更新项目清理状态（无防抖版本，用于关键事件）
-    func updateIsProjectCleanNoDebounce(reason: String) async {
-        // 取消之前的任务
-        updateCleanTask?.cancel()
-
-        // 在后台执行，避免阻塞主线程
-        updateCleanTask = Task.detached(priority: .utility) {
-            // 检查是否已有任务在执行
-            let alreadyChecking = await MainActor.run {
-                if self.isCheckingClean {
-                    return true
-                }
-                self.isCheckingClean = true
-                return false
-            }
-
-            if alreadyChecking { return }
-
-            defer {
-                Task { @MainActor in
-                    self.isCheckingClean = false
-                }
-            }
-
-            guard let project = self.data.project else {
-                await MainActor.run {
-                    os_log(.error, "\(Self.t)❌ No project available")
-                }
-                return
-            }
-
-            let isClean: Bool
-            do {
-                isClean = try project.isClean(verbose: Self.verbose)
-            } catch {
-                await MainActor.run {
-                    os_log(.error, "\(Self.t)❌ Failed to update isProjectClean: \(error)")
-                }
-                return
-            }
-
-            await MainActor.run {
-                // 检查任务是否被取消
-                guard !Task.isCancelled else { return }
-                self.isProjectClean = isClean
-            }
-        }
+        self.updateIsGitProject()
+        self.updateIsProjectClean(reason: "onProjectChange")
     }
 }
 

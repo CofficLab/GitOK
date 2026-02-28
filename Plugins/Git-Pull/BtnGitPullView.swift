@@ -136,9 +136,9 @@ extension BtnGitPullView {
             await self.updateIsGitProjectAsync()
         }
 
-        // 在后台延迟 5 秒后启动自动拉取管理器
+        // 启动自动拉取管理器
         Task.detached(priority: .utility) {
-            try? await Task.sleep(nanoseconds: 5_000_000_000) // 5 秒延迟
+            try? await Task.sleep(nanoseconds: 60_000_000_000) // 60 秒延迟
             await MainActor.run {
                 AutoPullManager.shared.setDataProvider(data)
                 AutoPullManager.shared.start()
