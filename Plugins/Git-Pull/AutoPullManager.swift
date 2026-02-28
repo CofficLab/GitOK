@@ -246,9 +246,9 @@ class AutoPullManager: NSObject, ObservableObject, SuperLog, SuperThread {
         }
 
         do {
-            // 执行拉取
+            // 执行拉取（直接使用 LibGit2，避免触发 projectDidPull 事件）
             try await MainActor.run {
-                try project.pull()
+                try LibGit2.pull(at: project.path, verbose: false)
             }
 
             if Self.verbose {
