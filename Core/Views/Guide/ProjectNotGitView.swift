@@ -17,7 +17,7 @@ struct ProjectNotGitView: View, SuperLog, SuperThread, SuperEvent {
     @EnvironmentObject var data: DataProvider
 
     /// 环境对象：消息提供者
-    @EnvironmentObject var m: MagicMessageProvider
+    
 
     /// 是否正在初始化
     @State private var isInitializing = false
@@ -38,7 +38,7 @@ extension ProjectNotGitView {
     /// 初始化 Git 仓库
     func initializeGitRepository() {
         guard let project = data.project else {
-            m.error("项目不存在")
+            alert_error("项目不存在")
             return
         }
 
@@ -74,7 +74,7 @@ extension ProjectNotGitView {
             } catch let error {
                 await MainActor.run {
                     isInitializing = false
-                    m.error("初始化 Git 仓库失败: \(error.localizedDescription)")
+                    alert_error("初始化 Git 仓库失败: \(error.localizedDescription)")
                     os_log(.error, "\(Self.t)❌ Failed to initialize Git repository: \(error)")
                 }
             }

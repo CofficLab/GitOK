@@ -11,7 +11,7 @@ struct BtnGitPullView: View, SuperLog, SuperEvent, SuperThread {
     nonisolated static let verbose = false
 
     /// 环境对象：消息提供者
-    @EnvironmentObject var m: MagicMessageProvider
+    
 
     /// 环境对象：数据提供者
     @EnvironmentObject var data: DataProvider
@@ -45,6 +45,7 @@ struct BtnGitPullView: View, SuperLog, SuperEvent, SuperThread {
             }
         }
         .onAppear(perform: onAppear)
+        .onDisappear(perform: onDisappear)
     }
 }
 
@@ -61,7 +62,7 @@ extension BtnGitPullView {
     /// - Parameter error: 要显示的错误信息
     func alert(error: Error) {
         self.main.async {
-            m.error(error)
+            alert_error(error)
         }
     }
 
@@ -94,14 +95,14 @@ extension BtnGitPullView {
             do {
                 try await self.data.project?.pull()
                 await MainActor.run {
-                    self.m.hideLoading()
+                    MagicMessageProvider.shared.hideLoading()
                     self.reset()
                 }
             } catch let error {
                 await MainActor.run {
-                    self.m.hideLoading()
+                    MagicMessageProvider.shared.hideLoading()
                     self.reset()
-                    self.m.error(error)
+                    alert_error(error)
                 }
             }
             await setStatus(nil)
@@ -137,6 +138,16 @@ extension BtnGitPullView {
         Task {
             await self.updateIsGitProjectAsync()
         }
+
+        // 启动自动拉取管理器
+        AutoPullManager.shared.setDataProvider(data)
+        AutoPullManager.shared.start()
+    }
+
+    /// 视图消失时的事件处理
+    func onDisappear() {
+        // 停止自动拉取管理器
+        AutoPullManager.shared.stop()
     }
 }
 

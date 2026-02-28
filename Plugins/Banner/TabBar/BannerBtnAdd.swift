@@ -12,7 +12,7 @@ struct BannerBtnAdd: View, SuperThread {
     @EnvironmentObject var app: AppProvider
     @EnvironmentObject var g: DataProvider
     @EnvironmentObject var b: BannerProvider
-    @EnvironmentObject var m: MagicMessageProvider
+    
 
     /// Banner仓库实例
     private let bannerRepo = BannerRepo.shared
@@ -34,14 +34,21 @@ struct BannerBtnAdd: View, SuperThread {
      */
     private func createBanner(in project: Project) {
         do {
-            let newBanner = try bannerRepo.createBanner(in: project, title: "New Banner")
+            let newBanner = try bannerRepo.createBanner(
+                in: project,
+                title: String(localized: "New Banner", table: "Banner")
+            )
 
             // 设置为当前选中的Banner
             b.setBanner(newBanner)
 
-            m.info("已添加新的Banner文件")
+            alert_info(String(localized: "已添加新的Banner文件", table: "Banner"))
         } catch {
-            m.error("创建Banner失败：\(error.localizedDescription)")
+            let msg = String.localizedStringWithFormat(
+                String(localized: "创建Banner失败：%@", table: "Banner"),
+                error.localizedDescription
+            )
+            alert_error(msg)
         }
     }
 }

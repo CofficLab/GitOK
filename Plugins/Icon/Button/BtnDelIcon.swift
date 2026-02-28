@@ -4,7 +4,7 @@ import OSLog
 import SwiftUI
 
 struct BtnDelIcon: View {
-    @EnvironmentObject var m: MagicMessageProvider
+    
 
     var icon: IconData
 
@@ -13,7 +13,7 @@ struct BtnDelIcon: View {
             do {
                 try self.icon.deleteFromDisk()
             } catch {
-                m.error(error.localizedDescription)
+                alert_error(error.localizedDescription)
             }
         }) {
             Label("删除「\(icon.title)」", systemImage: "trash")

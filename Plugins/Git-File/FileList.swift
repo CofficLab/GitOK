@@ -15,7 +15,7 @@ struct FileList: View, SuperThread, SuperLog {
     @EnvironmentObject var app: AppProvider
 
     /// 环境对象：消息提供者，用于显示提示信息
-    @EnvironmentObject var m: MagicMessageProvider
+    
 
     /// 环境对象：数据提供者，包含项目和提交信息
     @EnvironmentObject var data: DataProvider
@@ -160,14 +160,14 @@ extension FileList {
 
                 // 在主线程更新 UI
                 await MainActor.run {
-                    self.m.info("已丢弃文件更改: \(file.file)")
+                    alert_info("已丢弃文件更改: \(file.file)")
                 }
 
                 // 刷新文件列表（refresh 内部已经处理了后台线程）
                 await self.refresh(reason: "AfterDiscardChanges")
             } catch {
                 await MainActor.run {
-                    self.m.error(error)
+                    alert_error(error)
                 }
             }
         }
@@ -184,14 +184,14 @@ extension FileList {
 
                 // 在主线程更新 UI
                 await MainActor.run {
-                    self.m.info("已丢弃所有文件的更改")
+                    alert_info("已丢弃所有文件的更改")
                 }
 
                 // 刷新文件列表（refresh 内部已经处理了后台线程）
                 await self.refresh(reason: "AfterDiscardAllChanges")
             } catch {
                 await MainActor.run {
-                    self.m.error(error)
+                    alert_error(error)
                 }
             }
         }
@@ -294,7 +294,7 @@ extension FileList {
         } catch {
             await MainActor.run {
                 self.isLoading = false
-                self.m.error(error)
+                alert_error(error)
             }
         }
     }

@@ -8,7 +8,7 @@ import MagicKit
  */
 struct MinimalBackgroundEditor: View {
     @EnvironmentObject var b: BannerProvider
-    @EnvironmentObject var m: MagicMessageProvider
+    
     
     @State private var selectedBackgroundId: String = "1"
     

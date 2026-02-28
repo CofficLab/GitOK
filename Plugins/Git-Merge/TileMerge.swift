@@ -5,7 +5,7 @@ import SwiftUI
 
 /// SmartMerge 状态栏按钮：点击弹出合并表单。
 struct TileMerge: View, SuperLog, SuperThread {
-    @EnvironmentObject var m: MagicMessageProvider
+    
 
     @State var isPresented = false
 

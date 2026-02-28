@@ -16,9 +16,9 @@ struct BranchStatusTile: View, SuperLog {
             return branch.name
         }
         if data.project == nil {
-            return "未选择项目"
+            return String(localized: "未选择项目", table: "GitBranch")
         }
-        return "无分支"
+        return String(localized: "无分支", table: "GitBranch")
     }
 
     var body: some View {

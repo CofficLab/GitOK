@@ -8,7 +8,7 @@ import SwiftUI
 /// 状态栏文件信息 Tile：显示当前选中文件的文件名。
 struct TileFile: View, SuperLog, SuperThread {
     @EnvironmentObject var a: AppProvider
-    @EnvironmentObject var m: MagicMessageProvider
+    
     @EnvironmentObject var data: DataProvider
 
     static let shared = TileFile()
@@ -102,7 +102,7 @@ struct TileFile: View, SuperLog, SuperThread {
         guard let url = targetFileURL else { return }
         NSPasteboard.general.clearContents()
         NSPasteboard.general.setString(url.path, forType: .string)
-        m.info("已复制路径")
+        alert_info("已复制路径")
     }
 }
 

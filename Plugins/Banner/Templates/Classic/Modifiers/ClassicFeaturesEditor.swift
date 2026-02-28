@@ -8,7 +8,7 @@ import MagicAlert
  */
 struct ClassicFeaturesEditor: View {
     @EnvironmentObject var b: BannerProvider
-    @EnvironmentObject var m: MagicMessageProvider
+    
     
     @State private var features: [String] = []
     @State private var newFeature: String = ""

@@ -62,12 +62,14 @@ struct RepositorySettingView: View, SuperLog {
             }
             .padding()
         }
-        .navigationTitle("仓库设置")
+        .navigationTitle(Text("仓库设置", tableName: "Core"))
         .toolbar {
             ToolbarItem(placement: .confirmationAction) {
-                Button("完成") {
+                Button(action: {
                     // 关闭设置视图（通过通知）
                     NotificationCenter.default.post(name: .didUpdateRemoteRepository, object: nil)
+                }) {
+                    Text("完成", tableName: "Core")
                 }
             }
         }
@@ -86,10 +88,10 @@ struct RepositorySettingView: View, SuperLog {
 
     /// 当前项目信息
     private func currentProjectInfo(project: Project) -> some View {
-        MagicSettingSection(title: "当前项目", titleAlignment: .leading) {
+        MagicSettingSection(title: String(localized: "当前项目", table: "Core"), titleAlignment: .leading) {
             VStack(spacing: 0) {
                 MagicSettingRow(
-                    title: "项目名称",
+                    title: String(localized: "项目名称", table: "Core"),
                     description: project.title,
                     icon: .iconFolder
                 ) {
@@ -99,7 +101,7 @@ struct RepositorySettingView: View, SuperLog {
                 Divider()
 
                 MagicSettingRow(
-                    title: "本地路径",
+                    title: String(localized: "本地路径", table: "Core"),
                     description: project.path,
                     icon: .iconFilter
                 ) {
@@ -113,7 +115,7 @@ struct RepositorySettingView: View, SuperLog {
 
     /// 远程仓库列表
     private var remoteRepositoryList: some View {
-        MagicSettingSection(title: "远程仓库", titleAlignment: .leading) {
+        MagicSettingSection(title: String(localized: "远程仓库", table: "Core"), titleAlignment: .leading) {
             VStack(spacing: 0) {
                 ForEach(remotes) { remote in
                     remoteRepositoryRow(remote)
@@ -155,18 +157,18 @@ struct RepositorySettingView: View, SuperLog {
 
     /// 空状态提示
     private var emptyRemoteRepositoryState: some View {
-        MagicSettingSection(title: "远程仓库", titleAlignment: .leading) {
+        MagicSettingSection(title: String(localized: "远程仓库", table: "Core"), titleAlignment: .leading) {
             VStack(spacing: 12) {
                 HStack {
                     Image(systemName: .iconCloud)
                         .foregroundColor(.secondary)
-                    Text("未配置远程仓库")
+                    Text(String(localized: "未配置远程仓库", table: "Core"))
                         .font(.body)
                         .foregroundColor(.secondary)
                 }
                 .padding()
 
-                Text("添加远程仓库以便进行推送和拉取操作")
+                Text(String(localized: "添加远程仓库以便进行推送和拉取操作", table: "Core"))
                     .font(.caption)
                     .foregroundColor(.secondary)
                     .multilineTextAlignment(.center)
@@ -178,35 +180,34 @@ struct RepositorySettingView: View, SuperLog {
     private var addRemoteRepositoryButton: some View {
         MagicSettingSection(title: "", titleAlignment: .leading) {
             MagicSettingRow(
-                title: "添加远程仓库",
-                description: "添加新的远程仓库地址",
+                title: String(localized: "添加远程仓库", table: "Core"),
+                description: String(localized: "添加新的远程仓库地址", table: "Core"),
                 icon: .iconPlus
             ) {
-                if isLoading {
-                    ProgressView()
-                        .scaleEffect(0.8)
-                } else {
-                    Image.add.inButtonWithAction {
-                        showAddRemoteSheet = true
-                    }
-                }
+                EmptyView()
+            }
+            .contentShape(Rectangle())
+            .onTapGesture {
+                showAddRemoteSheet = true
             }
         }
     }
 
     /// 没有选中项目
     private var noProjectSelected: some View {
-        VStack(spacing: 12) {
-            Image(systemName: "folder.badge.questionmark")
-                .font(.system(size: 48))
-                .foregroundColor(.secondary)
+        MagicSettingSection(title: "", titleAlignment: .leading) {
+            VStack(spacing: 12) {
+                Image(systemName: "folder.badge.questionmark")
+                    .font(.system(size: 48))
+                    .foregroundColor(.secondary)
 
-            Text("请先选择一个项目")
-                .font(.body)
-                .foregroundColor(.secondary)
+                Text(String(localized: "请先选择一个项目", table: "Core"))
+                    .font(.body)
+                    .foregroundColor(.secondary)
+            }
+            .frame(maxWidth: .infinity)
+            .padding()
         }
-        .frame(maxWidth: .infinity)
-        .padding()
     }
 
     // MARK: - Actions
@@ -214,7 +215,7 @@ struct RepositorySettingView: View, SuperLog {
     /// 添加远程仓库
     private func addRemoteRepository(name: String, url: String) {
         guard let project = data.project else {
-            errorMessage = "请先选择一个项目"
+        errorMessage = String(localized: "请先选择一个项目", table: "Core")
             return
         }
 
@@ -235,7 +236,7 @@ struct RepositorySettingView: View, SuperLog {
             NotificationCenter.default.post(name: .didUpdateRemoteRepository, object: nil)
         } catch {
             isLoading = false
-            errorMessage = "添加远程仓库失败: \(error.localizedDescription)"
+        errorMessage = String.localizedStringWithFormat(String(localized: "添加远程仓库失败: %@", table: "Core"), error.localizedDescription)
 
             if Self.verbose {
                 os_log(.error, "\(Self.t)❌ Failed to add remote: \(error)")
@@ -266,7 +267,7 @@ struct RepositorySettingView: View, SuperLog {
             NotificationCenter.default.post(name: .didUpdateRemoteRepository, object: nil)
         } catch {
             isLoading = false
-            errorMessage = "删除远程仓库失败: \(error.localizedDescription)"
+        errorMessage = String.localizedStringWithFormat(String(localized: "删除远程仓库失败: %@", table: "Core"), error.localizedDescription)
 
             if Self.verbose {
                 os_log(.error, "\(Self.t)❌ Failed to remove remote: \(error)")
@@ -302,7 +303,7 @@ struct RepositorySettingView: View, SuperLog {
                 await MainActor.run {
                     self.remotes = []
                     self.isLoading = false
-                    self.errorMessage = "加载远程仓库失败: \(error.localizedDescription)"
+                    self.errorMessage = String.localizedStringWithFormat(String(localized: "加载远程仓库失败: %@", table: "Core"), error.localizedDescription)
 
                     if Self.verbose {
                         os_log(.error, "\(Self.t)❌ Failed to load remotes: \(error)")
@@ -346,11 +347,11 @@ struct AddRemoteRepositorySheet: View {
     var body: some View {
         NavigationView {
             Form {
-                Section(header: Text("远程仓库信息")) {
-                    TextField("名称", text: $remoteName)
+                Section(header: Text("远程仓库信息", tableName: "Core")) {
+                    TextField(String(localized: "名称", table: "Core"), text: $remoteName)
                         .textFieldStyle(.plain)
 
-                    TextField("URL", text: $remoteURL)
+                    TextField(String(localized: "URL", table: "Core"), text: $remoteURL)
                         .textFieldStyle(.plain)
                         .disableAutocorrection(true)
                 }
@@ -368,17 +369,21 @@ struct AddRemoteRepositorySheet: View {
                 }
             }
             .formStyle(.grouped)
-            .navigationTitle("添加远程仓库")
+            .navigationTitle(Text("添加远程仓库", tableName: "Core"))
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("取消") {
+                    Button(action: {
                         dismiss()
+                    }) {
+                        Text("取消", tableName: "Core")
                     }
                 }
 
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("添加") {
+                    Button(action: {
                         addRemote()
+                    }) {
+                        Text("添加", tableName: "Core")
                     }
                     .disabled(remoteName.isEmpty || remoteURL.isEmpty || isLoading)
                 }
@@ -397,7 +402,7 @@ struct AddRemoteRepositorySheet: View {
             if !isValidGitURL(remoteURL) {
                 await MainActor.run {
                     isLoading = false
-                    errorMessage = "请输入有效的 Git URL"
+                    errorMessage = String(localized: "请输入有效的 Git URL", table: "Core")
                 }
                 return
             }

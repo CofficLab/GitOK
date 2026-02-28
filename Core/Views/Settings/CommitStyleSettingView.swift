@@ -25,7 +25,7 @@ struct CommitStyleSettingView: View, SuperLog {
                 // 风格示例展示
                 styleExamplesSection
 
-                MagicSettingSection(title: "Commit 风格", titleAlignment: .leading) {
+                MagicSettingSection(title: String(localized: "Commit 风格", table: "Core"), titleAlignment: .leading) {
                     VStack(spacing: 0) {
                         projectCommitStylePicker
                         Divider()
@@ -35,12 +35,14 @@ struct CommitStyleSettingView: View, SuperLog {
             }
             .padding()
         }
-        .navigationTitle("Commit 风格")
+        .navigationTitle(Text("Commit 风格", tableName: "Core"))
         .toolbar {
             ToolbarItem(placement: .confirmationAction) {
-                Button("完成") {
+                Button(action: {
                     // 关闭设置视图
                     NotificationCenter.default.post(name: .didSaveGitUserConfig, object: nil)
+                }) {
+                    Text("完成", tableName: "Core")
                 }
             }
         }
@@ -51,15 +53,15 @@ struct CommitStyleSettingView: View, SuperLog {
 
     /// 风格示例展示区
     private var styleExamplesSection: some View {
-        MagicSettingSection(title: "风格示例", titleAlignment: .leading) {
+        MagicSettingSection(title: String(localized: "风格示例", table: "Core"), titleAlignment: .leading) {
             VStack(alignment: .leading, spacing: 16) {
-                Text("选择不同的风格会改变 Commit 消息的显示方式：")
+                Text("选择不同的风格会改变 Commit 消息的显示方式：", tableName: "Core")
                     .font(.subheadline)
                     .foregroundColor(.secondary)
 
                 VStack(alignment: .leading, spacing: 12) {
                     exampleCard(
-                        title: "Emoji 风格",
+                        title: String(localized: "Emoji 风格", table: "Core"),
                         examples: [
                             "✨ Feature: Add periodic remote status check",
                             "🐛 Fix: Plugin still shows when disabled",
@@ -68,7 +70,7 @@ struct CommitStyleSettingView: View, SuperLog {
                     )
 
                     exampleCard(
-                        title: "纯文本风格",
+                        title: String(localized: "纯文本风格", table: "Core"),
                         examples: [
                             "Feature: Add periodic remote status check",
                             "Fix: Plugin still shows when disabled",
@@ -77,7 +79,7 @@ struct CommitStyleSettingView: View, SuperLog {
                     )
 
                     exampleCard(
-                        title: "纯文本小写",
+                        title: String(localized: "纯文本小写", table: "Core"),
                         examples: [
                             "feature: Add periodic remote status check",
                             "fix: Plugin still shows when disabled",
@@ -114,14 +116,14 @@ struct CommitStyleSettingView: View, SuperLog {
 
     private var projectCommitStylePicker: some View {
         MagicSettingPicker(
-            title: "当前项目风格",
-            description: "此项目的 Commit 消息显示风格",
+            title: String(localized: "当前项目风格", table: "Core"),
+            description: String(localized: "此项目的 Commit 消息显示风格", table: "Core"),
             icon: .iconTextEdit,
-            options: CommitStyle.allCases.map { $0.label },
+            options: CommitStyle.allCases.map { String(localized: .init(String.LocalizationValue($0.rawValue), table: "Core")) },
             selection: Binding(
-                get: { commitStyle.label },
+                get: { String(localized: .init(String.LocalizationValue(commitStyle.rawValue), table: "Core")) },
                 set: { newValue in
-                    if let style = CommitStyle.allCases.first(where: { $0.label == newValue }) {
+                    if let style = CommitStyle.allCases.first(where: { String(localized: .init(String.LocalizationValue($0.rawValue), table: "Core")) == newValue }) {
                         commitStyle = style
                         if let project = data.project {
                             project.commitStyle = style
@@ -134,14 +136,14 @@ struct CommitStyleSettingView: View, SuperLog {
 
     private var globalCommitStylePicker: some View {
         MagicSettingPicker(
-            title: "全局默认风格",
-            description: "新项目的默认 Commit 消息显示风格",
+            title: String(localized: "全局默认风格", table: "Core"),
+            description: String(localized: "新项目的默认 Commit 消息显示风格", table: "Core"),
             icon: .iconSort,
-            options: CommitStyle.allCases.map { $0.label },
+            options: CommitStyle.allCases.map { String(localized: .init(String.LocalizationValue($0.rawValue), table: "Core")) },
             selection: Binding(
-                get: { globalCommitStyle.label },
+                get: { String(localized: .init(String.LocalizationValue(globalCommitStyle.rawValue), table: "Core")) },
                 set: { newValue in
-                    if let style = CommitStyle.allCases.first(where: { $0.label == newValue }) {
+                    if let style = CommitStyle.allCases.first(where: { String(localized: .init(String.LocalizationValue($0.rawValue), table: "Core")) == newValue }) {
                         globalCommitStyle = style
                         UserDefaults.standard.set(style.rawValue, forKey: "globalCommitStyle")
                     }

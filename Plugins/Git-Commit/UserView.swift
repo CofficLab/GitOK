@@ -63,7 +63,7 @@ struct UserView: View, SuperLog {
             Button(action: {
                 showUserConfig = true
             }) {
-                Text("管理预设...")
+                Text("管理预设...", tableName: "GitCommit")
             }
         } label: {
             // 当前用户信息显示
@@ -99,7 +99,7 @@ struct UserView: View, SuperLog {
                         .foregroundColor(.orange)
                         .font(.system(size: 14))
 
-                    Text("未配置用户信息")
+                    Text("未配置用户信息", tableName: "GitCommit")
                         .font(.caption)
                         .foregroundColor(.orange)
 

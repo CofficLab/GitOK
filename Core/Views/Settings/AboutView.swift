@@ -37,11 +37,11 @@ struct AboutView: View, SuperLog {
 
                     // App 版本
                     VStack(spacing: 4) {
-                        Text("版本 \(appInfo.version)")
+                        Text(String.localizedStringWithFormat(String(localized: "版本 %@", table: "Core"), appInfo.version))
                             .font(.body)
                             .foregroundColor(.secondary)
 
-                        Text("Build \(appInfo.build)")
+                        Text(String.localizedStringWithFormat(NSLocalizedString("Build %@", tableName: "Core", comment: ""), appInfo.build))
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }
@@ -51,11 +51,11 @@ struct AboutView: View, SuperLog {
                 VStack(spacing: 24) {
                     // 描述
                     VStack(alignment: .leading, spacing: 8) {
-                        Text("关于")
+                        Text("关于", tableName: "Core")
                             .font(.headline)
                             .frame(maxWidth: .infinity, alignment: .leading)
 
-                        Text(appInfo.description)
+                        Text(String(localized: .init(appInfo.description), table: "Core"))
                             .font(.body)
                             .foregroundColor(.secondary)
                             .frame(maxWidth: .infinity, alignment: .leading)
@@ -64,10 +64,10 @@ struct AboutView: View, SuperLog {
                     Divider()
 
                     // 基本信息
-                    MagicSettingSection(title: "应用信息", titleAlignment: .leading) {
+                    MagicSettingSection(title: String(localized: "应用信息", table: "Core"), titleAlignment: .leading) {
                         VStack(spacing: 0) {
                             infoRow(
-                                title: "应用名称",
+                                title: String(localized: "应用名称", table: "Core"),
                                 value: appInfo.name,
                                 icon: .iconGear
                             )
@@ -75,7 +75,7 @@ struct AboutView: View, SuperLog {
                             Divider()
 
                             infoRow(
-                                title: "版本",
+                                title: String(localized: "版本", table: "Core"),
                                 value: appInfo.version,
                                 icon: .iconVolume
                             )
@@ -83,7 +83,7 @@ struct AboutView: View, SuperLog {
                             Divider()
 
                             infoRow(
-                                title: "Build",
+                                title: String(localized: "Build", table: "Core"),
                                 value: appInfo.build,
                                 icon: .iconBulletList
                             )
@@ -91,7 +91,7 @@ struct AboutView: View, SuperLog {
                             Divider()
 
                             infoRow(
-                                title: "Bundle ID",
+                                title: String(localized: "Bundle ID", table: "Core"),
                                 value: appInfo.bundleIdentifier,
                                 icon: .iconInfo
                             )
@@ -99,10 +99,10 @@ struct AboutView: View, SuperLog {
                     }
 
                     // 链接
-                    MagicSettingSection(title: "链接", titleAlignment: .leading) {
+                    MagicSettingSection(title: String(localized: "链接", table: "Core"), titleAlignment: .leading) {
                         VStack(spacing: 0) {
                             linkRow(
-                                title: "官方网站",
+                                title: String(localized: "官方网站", table: "Core"),
                                 url: appInfo.website,
                                 icon: .iconSafari
                             )
@@ -111,7 +111,7 @@ struct AboutView: View, SuperLog {
                                 Divider()
 
                                 linkRow(
-                                    title: "源代码",
+                                    title: String(localized: "源代码", table: "Core"),
                                     url: appInfo.repository,
                                     icon: .iconCalendar
                                 )
@@ -124,10 +124,10 @@ struct AboutView: View, SuperLog {
                 Spacer()
             }
         }
-        .navigationTitle("关于")
+        .navigationTitle(Text("关于", tableName: "Core"))
         .toolbar {
             ToolbarItem(placement: .confirmationAction) {
-                Button("完成") {
+                Button(String(localized: "完成", table: "Core")) {
                     // 关闭设置视图
                     NotificationCenter.default.post(name: .didSaveGitUserConfig, object: nil)
                 }

@@ -8,7 +8,7 @@ class ConflictResolverPlugin: NSObject, SuperPlugin {
     static var displayName: String = "ConflictResolver"
 
     /// 插件描述
-    static var description: String = "Git 冲突解决"
+    static var description: String = String(localized: "Git 冲突解决", table: "GitConflictResolver")
 
     /// 插件图标名称
     static var iconName: String = "exclamationmark.triangle"

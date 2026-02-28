@@ -7,7 +7,7 @@ class GitPullPlugin: NSObject, SuperPlugin {
     static var displayName: String = "GitPull"
 
     /// 插件描述
-    static var description: String = "Git 拉取操作"
+    static var description: String = "Git 拉取操作（含自动拉取）"
 
     /// 插件图标名称
     static var iconName: String = "arrow.down"

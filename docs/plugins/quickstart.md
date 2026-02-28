@@ -254,7 +254,7 @@ struct MyView: View {
 
 ```swift
 struct MyView: View {
-    @EnvironmentObject var m: MagicMessageProvider
+    
 
     var body: some View {
         VStack {}
@@ -264,7 +264,7 @@ struct MyView: View {
         do {
             try something()
         } catch {
-            m.error("操作失败：\(error.localizedDescription)")
+            alert_error("操作失败：\(error.localizedDescription)")
         }
     }
 }

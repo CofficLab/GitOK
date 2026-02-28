@@ -1,0 +1,471 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "iPhone App Store 截图" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iPhone App Store 截图"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iPhone App Store 截圖"
+          }
+        }
+      }
+    },
+    "Mac App Store 截图" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mac App Store 截图"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mac App Store 截圖"
+          }
+        }
+      }
+    },
+    "New Banner" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新建横幅"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新建橫幅"
+          }
+        }
+      }
+    },
+    "下载 标准 PNG" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "下载 标准 PNG"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "下載 標準 PNG"
+          }
+        }
+      }
+    },
+    "创建Banner失败：%@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "创建 Banner 失败：%@"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "建立 Banner 失敗：%@"
+          }
+        }
+      }
+    },
+    "创建目标目录失败：%@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "创建目标目录失败：%@"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "建立目標目錄失敗：%@"
+          }
+        }
+      }
+    },
+    "删除" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "删除"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "刪除"
+          }
+        }
+      }
+    },
+    "删除Banner失败：%@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "删除Banner失败：%@"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "刪除 Banner 失敗：%@"
+          }
+        }
+      }
+    },
+    "只成功生成了 %d/%d 个截图" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "只成功生成了 %d/%d 个截图"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "只成功生成了 %d/%d 個截圖"
+          }
+        }
+      }
+    },
+    "只成功生成了 %d/%d 个文件" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "只成功生成了 %d/%d 个文件"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "只成功生成了 %d/%d 個檔案"
+          }
+        }
+      }
+    },
+    "居中布局，简洁优雅" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "居中布局，简洁优雅"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "居中佈局，簡潔優雅"
+          }
+        }
+      }
+    },
+    "左侧标题副标题和特性，右侧 product 图片" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "左侧标题副标题和特性，右侧产品图片"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "左側標題副標題和特性，右側產品圖片"
+          }
+        }
+      }
+    },
+    "左侧标题副标题和特性，右侧产品图片" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "左侧标题副标题和特性，右侧产品图片"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "左側標題副標題和特性，右側產品圖片"
+          }
+        }
+      }
+    },
+    "已删除" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已删除"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已刪除"
+          }
+        }
+      }
+    },
+    "已添加新的Banner文件" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已添加新的 Banner 文件"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已添加新的 Banner 檔案"
+          }
+        }
+      }
+    },
+    "成功生成 %d 个App Store截图" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "成功生成 %d 个App Store截图"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "成功生成 %d 個 App Store 截圖"
+          }
+        }
+      }
+    },
+    "成功生成 %d 个iPhone App Store截图" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "成功生成 %d 个iPhone App Store截图"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "成功生成 %d 個 iPhone App Store 截圖"
+          }
+        }
+      }
+    },
+    "成功生成 %d 个PNG文件" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "成功生成 %d 个PNG文件"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "成功生成 %d 個 PNG 檔案"
+          }
+        }
+      }
+    },
+    "无权访问下载文件夹" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无权访问下载文件夹"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "無權存取下載資料夾"
+          }
+        }
+      }
+    },
+    "正在生成 %@ (%d/%d)..." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在生成 %@ (%d/%d)..."
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在生成 %@ (%d/%d)..."
+          }
+        }
+      }
+    },
+    "正在生成App Store截图..." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在生成App Store截图..."
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在生成 App Store 截圖..."
+          }
+        }
+      }
+    },
+    "正在生成iPhone App Store截图..." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在生成iPhone App Store截图..."
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在生成 iPhone App Store 截圖..."
+          }
+        }
+      }
+    },
+    "正在生成标准PNG..." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在生成标准PNG..."
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在生成標準 PNG..."
+          }
+        }
+      }
+    },
+    "没有可用的Banner" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "没有可用的Banner"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "沒有可用的 Banner"
+          }
+        }
+      }
+    },
+    "生成PNG %@ 失败: %@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "生成PNG %@ 失败: %@"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "生成 PNG %@ 失敗: %@"
+          }
+        }
+      }
+    },
+    "生成截图 %@ 失败: %@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "生成截图 %@ 失败: %@"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "生成截圖 %@ 失敗: %@"
+          }
+        }
+      }
+    },
+    "简约风格" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "简约风格"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "簡約風格"
+          }
+        }
+      }
+    },
+    "经典布局" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "经典布局"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "經典佈局"
+          }
+        }
+      }
+    },
+    "请先选择一个Banner" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请先选择一个Banner"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "請先選擇一個 Banner"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}
