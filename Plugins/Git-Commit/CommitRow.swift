@@ -138,6 +138,9 @@ struct CommitRow: View, SuperThread, SuperLog {
             .buttonStyle(PlainButtonStyle())
             .background(data.commit == self.commit ? Color.accentColor.opacity(0.1) : Color.clear)
             .onAppear(perform: onAppear)
+            .onChange(of: isUnpushed) { newValue in
+                onUnpushedChange()
+            }
             .onNotification(.appWillBecomeActive, onAppWillBecomeActive)
             .onProjectDidCommit(perform: onGitCommitSuccess)
             .onProjectDidPush(perform: onGitPushSuccess)
@@ -328,6 +331,17 @@ struct CommitRow: View, SuperThread, SuperLog {
         Task {
             await loadAvatarUsers()
             await loadTag()
+        }
+    }
+
+    /// 监听 isUnpushed 变化（用于处理外部 app 推送后的状态同步）
+    func onUnpushedChange() {
+        // 当 isUnpushed 变化时，同步更新 isActuallyUnpushed
+        if isActuallyUnpushed != isUnpushed {
+            isActuallyUnpushed = isUnpushed
+            if Self.verbose {
+                os_log("\(self.t)🔄 isUnpushed changed to \(isUnpushed) for commit \(commit.hash.prefix(8))")
+            }
         }
     }
 
