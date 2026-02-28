@@ -62,7 +62,7 @@ class AutoPullManager: NSObject, ObservableObject, SuperLog, SuperThread {
         // 取消之前的定时器
         timerCancellable?.cancel()
 
-        // 创建新的定时器
+        // 创建新的定时器（Timer 需要在 main runloop，但执行会在后台）
         timerCancellable = Timer.publish(every: timerInterval, on: .main, in: .common)
             .autoconnect()
             .sink { [weak self] _ in
@@ -73,8 +73,11 @@ class AutoPullManager: NSObject, ObservableObject, SuperLog, SuperThread {
             os_log("\(self.t)✅ AutoPull started (interval: \(self.timerInterval)s)")
         }
 
-        // 立即执行一次检查
-        performAutoPullIfSafe()
+        // 在后台延迟后立即执行一次检查
+        Task.detached(priority: .utility) { [weak self] in
+            try? await Task.sleep(nanoseconds: 1_000_000_000) // 延迟 1 秒
+            self?.performAutoPullIfSafe()
+        }
     }
 
     /// 停止自动拉取
@@ -106,7 +109,7 @@ class AutoPullManager: NSObject, ObservableObject, SuperLog, SuperThread {
     }
 
     private func performAutoPullIfSafeAsync() async {
-        guard let dataProvider = await self.dataProvider else { return }
+        guard let dataProvider = self.dataProvider else { return }
 
         // 获取所有项目
         let allProjects = await MainActor.run {
