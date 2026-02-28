@@ -25,9 +25,6 @@ class AutoPullManager: NSObject, ObservableObject, SuperLog, SuperThread {
     /// 最后检查时间
     @Published private(set) var lastCheckTime: Date?
 
-    /// 最后拉取结果
-    @Published private(set) var lastPullResult: PullResult?
-
     // MARK: - Timer Management
 
     private var timerCancellable: AnyCancellable?
@@ -107,26 +104,51 @@ class AutoPullManager: NSObject, ObservableObject, SuperLog, SuperThread {
     private func performAutoPullIfSafeAsync() async {
         guard let dataProvider = await self.dataProvider else { return }
 
-        // 在 MainActor 上执行所有安全检查和拉取操作
-        await MainActor.run {
-            guard let project = dataProvider.project else { return }
+        // 获取所有项目
+        let allProjects = await MainActor.run {
+            dataProvider.projects
+        }
 
-            // 使用 Task.detached 执行异步检查
-            Task.detached(priority: .utility) { [weak self] in
-                guard let self = self else { return }
-
-                // 执行安全检查
-                guard await self.checkSafetyConditions(for: project, dataProvider: dataProvider) else {
-                    if Self.verbose {
-                        await MainActor.run {
-                            os_log("\(Self.t)⏭️ Safety check failed, skipping auto pull")
-                        }
-                    }
-                    return
+        guard !allProjects.isEmpty else {
+            if Self.verbose {
+                await MainActor.run {
+                    os_log("\(Self.t)⚠️ No projects available for auto pull")
                 }
+            }
+            return
+        }
 
-                // 执行拉取
-                await self.executePull(for: project)
+        if Self.verbose {
+            await MainActor.run {
+                os_log("\(Self.t)🔍 Checking \(allProjects.count) projects for auto pull")
+            }
+        }
+
+        // 遍历所有项目，为每个安全的项目执行拉取
+        var pullResults: [(project: Project, success: Bool)] = []
+
+        for project in allProjects {
+            // 执行安全检查
+            guard await self.checkSafetyConditions(for: project, dataProvider: dataProvider) else {
+                if Self.verbose {
+                    await MainActor.run {
+                        os_log("\(Self.t)⏭️ Skipping \(project.title) - safety check failed")
+                    }
+                }
+                continue
+            }
+
+            // 执行拉取
+            let success = await self.executePull(for: project)
+            pullResults.append((project, success))
+        }
+
+        // 记录统计信息
+        await MainActor.run {
+            let successCount = pullResults.filter { $0.success }.count
+            let totalCount = pullResults.count
+            if totalCount > 0 {
+                os_log("\(Self.t)📊 Auto pull completed: \(successCount)/\(totalCount) projects pulled successfully")
             }
         }
     }
@@ -212,15 +234,13 @@ class AutoPullManager: NSObject, ObservableObject, SuperLog, SuperThread {
     // MARK: - Pull Execution
 
     /// 执行拉取操作
-    private func executePull(for project: Project) async {
+    /// - Parameter project: 要拉取的项目
+    /// - Returns: 是否成功
+    @discardableResult
+    private func executePull(for project: Project) async -> Bool {
         await MainActor.run {
             os_log("\(Self.t)🔄 Executing auto pull for \(project.title)")
         }
-
-        // 设置活动状态
-        await setStatus("自动拉取中…")
-
-        let result: PullResult
 
         do {
             // 执行拉取
@@ -228,48 +248,30 @@ class AutoPullManager: NSObject, ObservableObject, SuperLog, SuperThread {
                 try project.pull()
             }
 
-            result = PullResult.success(commitCount: 0)
-
             await MainActor.run {
-                os_log("\(Self.t)✅ Auto pull succeeded")
+                os_log("\(Self.t)✅ Auto pull succeeded for \(project.title)")
             }
+
+            // 如果成功，显示简短通知
+            await showSuccessNotification(for: project)
+
+            return true
 
         } catch {
-            result = PullResult.failure(error)
-
             await MainActor.run {
-                os_log(.error, "\(Self.t)❌ Auto pull failed: \(error)")
+                os_log(.error, "\(Self.t)❌ Auto pull failed for \(project.title): \(error)")
             }
-        }
 
-        // 更新结果
-        await MainActor.run {
-            self.lastPullResult = result
-        }
-
-        // 清除活动状态
-        await setStatus(nil)
-
-        // 如果成功，显示简短通知
-        if result.success {
-            await showSuccessNotification(result)
+            return false
         }
     }
 
     // MARK: - Helpers
 
-    private func setStatus(_ text: String?) {
-        Task { @MainActor in
-            dataProvider?.activityStatus = text
-        }
-    }
-
-    private func showSuccessNotification(_ result: PullResult) async {
-        // 只在确实拉取到新提交时显示通知
-        // 由于我们无法精确知道拉取了多少提交，暂时显示通用消息
+    private func showSuccessNotification(for project: Project) async {
         await MainActor.run {
             // 可选：使用 MagicToast 显示简短提示
-            os_log("\(Self.t)📢 \(result.localizedMessage)")
+            os_log("\(Self.t)📢 Auto pull completed for \(project.title)")
         }
     }
 }
