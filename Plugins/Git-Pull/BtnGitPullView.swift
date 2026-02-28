@@ -45,6 +45,7 @@ struct BtnGitPullView: View, SuperLog, SuperEvent, SuperThread {
             }
         }
         .onAppear(perform: onAppear)
+        .onDisappear(perform: onDisappear)
     }
 }
 
@@ -137,6 +138,16 @@ extension BtnGitPullView {
         Task {
             await self.updateIsGitProjectAsync()
         }
+
+        // 启动自动拉取管理器
+        AutoPullManager.shared.setDataProvider(data)
+        AutoPullManager.shared.start()
+    }
+
+    /// 视图消失时的事件处理
+    func onDisappear() {
+        // 停止自动拉取管理器
+        AutoPullManager.shared.stop()
     }
 }
 
