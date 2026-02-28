@@ -56,7 +56,7 @@ struct FileList: View, SuperThread, SuperLog {
         .onChange(of: data.commit, onCommitChange)
         .onChange(of: selection, onSelectionChange)
         .onProjectDidCommit(perform: onProjectDidCommit)
-        .onApplicationDidBecomeActive(perform: onAppDidBecomeActive)
+        .onApplicationWillBecomeActive(perform: onAppWillBecomeActive)
         .alert("确认丢弃所有更改", isPresented: $showDiscardAllAlert) {
             Button("取消", role: .cancel) { }
             Button("丢弃所有", role: .destructive) {
@@ -337,12 +337,11 @@ extension FileList {
         }
     }
 
-    /// 应用变为活跃状态时的事件处理
-    func onAppDidBecomeActive() {
+    /// 应用即将变为活跃状态时的事件处理
+    func onAppWillBecomeActive() {
         Task {
-            // 延迟刷新，避免与系统恢复焦点时的其他操作竞争
-            try? await Task.sleep(nanoseconds: 500 * 1_000_000)
-            await self.refresh(reason: "OnAppDidBecomeActive")
+            // 绕过防抖机制，直接执行刷新（应用激活是关键事件，需要立即响应）
+            await self.performRefresh(reason: "OnAppWillBecomeActive")
         }
     }
 }

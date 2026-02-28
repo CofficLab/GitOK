@@ -79,7 +79,7 @@ struct CommitList: View, SuperThread, SuperLog {
         .onProjectDidCommit(perform: onCommitSuccess)
         .onProjectDidPull(perform: onPullSuccess)
         .onProjectDidPush(perform: onPushSuccess)
-        .onApplicationDidBecomeActive(perform: onApplicationDidBecomeActive)
+        .onApplicationWillBecomeActive(perform: onAppWillBecomeActive)
     }
 }
 
@@ -432,23 +432,9 @@ extension CommitList {
     }
 
     /// 应用即将变为活跃状态事件处理
-    /// - Parameter notification: 通知对象
-    func onAppWillBecomeActive(_ notification: Notification) {
-        self.refresh("AppWillBecomeActive")
-    }
-
-    /// 应用变为活跃状态事件处理
-    /// - Parameter notification: 通知对象
-    func onAppDidBecomeActive(_ notification: Notification) {
-        self.refresh("AppDidBecomeActive")
-    }
-
-    /// 应用变为活跃状态事件处理（通用版本）
-    func onApplicationDidBecomeActive() {
+    func onAppWillBecomeActive() {
         Task {
-            // 延迟刷新，避免与系统恢复焦点时的其他操作竞争
-            try? await Task.sleep(nanoseconds: 800 * 1_000_000)
-            await self.refresh("ApplicationDidBecomeActive")
+            self.refresh("ApplicationWillBecomeActive")
         }
     }
 }

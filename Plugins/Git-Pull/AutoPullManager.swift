@@ -178,7 +178,7 @@ class AutoPullManager: NSObject, ObservableObject, SuperLog, SuperThread {
             return SafetyCheckResult(isSafe: false, reason: "Not a Git repository")
         }
 
-        // 2. 检查工作区是否干净
+        // 2. 检查工作区是否干净（已包含未提交更改和未跟踪文件的检查）
         do {
             let isClean = try await MainActor.run {
                 try project.isClean(verbose: false)
@@ -191,20 +191,7 @@ class AutoPullManager: NSObject, ObservableObject, SuperLog, SuperThread {
             return SafetyCheckResult(isSafe: false, reason: "Error checking working directory")
         }
 
-        // 3. 检查是否有未提交的更改
-        do {
-            let hasNoUncommitted = try await MainActor.run {
-                try project.hasNoUncommittedChanges()
-            }
-            guard hasNoUncommitted else {
-                return SafetyCheckResult(isSafe: false, reason: "Has uncommitted changes")
-            }
-        } catch {
-            os_log(.error, "\(Self.t)❌ Error checking uncommitted changes: \(error)")
-            return SafetyCheckResult(isSafe: false, reason: "Error checking uncommitted changes")
-        }
-
-        // 4. 检查远程是否有新提交
+        // 3. 检查远程是否有新提交
         do {
             let unpulledCount = try await MainActor.run {
                 try project.getUnPulledCount()
@@ -221,7 +208,7 @@ class AutoPullManager: NSObject, ObservableObject, SuperLog, SuperThread {
             return SafetyCheckResult(isSafe: false, reason: "Error checking unpulled commits")
         }
 
-        // 5. 检查是否正在进行 Git 操作
+        // 4. 检查是否正在进行 Git 操作
         if let activityStatus = await dataProvider.activityStatus,
            !activityStatus.isEmpty
         {

@@ -18,9 +18,6 @@ struct GitDetail: View, SuperEvent, SuperLog {
     /// 环境对象：数据提供者
     @EnvironmentObject var data: DataProvider
 
-    /// 环境对象：消息提供者
-    
-
     /// 项目是否干净（无未提交的变更）
     @State private var isProjectClean: Bool = true
 
@@ -32,6 +29,9 @@ struct GitDetail: View, SuperEvent, SuperLog {
 
     /// 最后更新时间（用于防抖）
     @State private var lastUpdateTime: Date = Date.distantPast
+
+    /// 是否正在执行清理检查（用于防止并发调用）
+    @State private var isCheckingClean: Bool = false
 
     /// 单例实例
     static let shared = GitDetail()
@@ -74,7 +74,7 @@ struct GitDetail: View, SuperEvent, SuperLog {
         .onAppear(perform: onAppear)
         .onChange(of: data.project, onProjectChange)
         .onProjectDidCommit(perform: onGitCommitSuccess)
-        .onApplicationWillBecomeActive(perform: onAppWillBecomeActive)
+//        .onApplicationWillBecomeActive(perform: onAppWillBecomeActive)
     }
 
     /// 背景视图：根据提交状态显示不同的背景颜色
@@ -89,12 +89,6 @@ struct GitDetail: View, SuperEvent, SuperLog {
     }
 }
 
-// MARK: - View
-
-extension GitDetail {
-    // View 相关的辅助视图和修饰符可以在这里添加
-}
-
 // MARK: - Action
 
 extension GitDetail {
@@ -104,9 +98,6 @@ extension GitDetail {
 
         // 防抖：300ms 内的重复更新请求会被忽略
         guard now.timeIntervalSince(lastUpdateTime) > 0.3 else {
-            if Self.verbose {
-                os_log("\(Self.t)🚫 updateIsProjectClean skipped (debounced)")
-            }
             return
         }
 
@@ -117,7 +108,27 @@ extension GitDetail {
 
         // 在后台执行，避免阻塞主线程
         updateCleanTask = Task.detached(priority: .utility) {
+            // 检查是否已有任务在执行
+            let alreadyChecking = await MainActor.run {
+                if self.isCheckingClean {
+                    return true
+                }
+                self.isCheckingClean = true
+                return false
+            }
+
+            if alreadyChecking { return }
+
+            defer {
+                Task { @MainActor in
+                    self.isCheckingClean = false
+                }
+            }
+
             guard let project = await self.data.project else {
+                await MainActor.run {
+                    os_log(.error, "\(Self.t)❌ No project available")
+                }
                 return
             }
 
@@ -134,11 +145,7 @@ extension GitDetail {
             await MainActor.run {
                 // 检查任务是否被取消
                 guard !Task.isCancelled else { return }
-
                 self.isProjectClean = isClean
-                if Self.verbose {
-                    os_log(.info, "\(Self.t)🔄<\(reason)> Update isProjectClean: \(isClean)")
-                }
             }
         }
     }
@@ -173,11 +180,15 @@ extension GitDetail {
 extension GitDetail {
     /// 应用即将变为活跃状态的事件处理
     func onAppWillBecomeActive() {
-        // 延迟执行，避免与其他组件同时刷新
         Task {
-            try? await Task.sleep(nanoseconds: 300000000) // 延迟 0.3 秒
-            self.updateIsProjectClean(reason: "onAppWillBecomeActive")
+            await self.updateIsGitProjectAsync()
+            await self.updateIsProjectCleanNoDebounce(reason: "onAppWillBecomeActive")
         }
+    }
+
+    /// Git 提交成功时的事件处理
+    func onGitCommitSuccess(_ eventInfo: ProjectEventInfo) {
+        self.updateIsProjectClean(reason: "onGitCommitSuccess")
     }
 
     /// 视图出现时的事件处理
@@ -196,9 +207,53 @@ extension GitDetail {
         }
     }
 
-    /// Git 提交成功时的事件处理
-    func onGitCommitSuccess(_ eventInfo: ProjectEventInfo) {
-        self.updateIsProjectClean(reason: "onGitCommitSuccess")
+    /// 更新项目清理状态（无防抖版本，用于关键事件）
+    func updateIsProjectCleanNoDebounce(reason: String) async {
+        // 取消之前的任务
+        updateCleanTask?.cancel()
+
+        // 在后台执行，避免阻塞主线程
+        updateCleanTask = Task.detached(priority: .utility) {
+            // 检查是否已有任务在执行
+            let alreadyChecking = await MainActor.run {
+                if self.isCheckingClean {
+                    return true
+                }
+                self.isCheckingClean = true
+                return false
+            }
+
+            if alreadyChecking { return }
+
+            defer {
+                Task { @MainActor in
+                    self.isCheckingClean = false
+                }
+            }
+
+            guard let project = await self.data.project else {
+                await MainActor.run {
+                    os_log(.error, "\(Self.t)❌ No project available")
+                }
+                return
+            }
+
+            let isClean: Bool
+            do {
+                isClean = try project.isClean(verbose: Self.verbose)
+            } catch {
+                await MainActor.run {
+                    os_log(.error, "\(Self.t)❌ Failed to update isProjectClean: \(error)")
+                }
+                return
+            }
+
+            await MainActor.run {
+                // 检查任务是否被取消
+                guard !Task.isCancelled else { return }
+                self.isProjectClean = isClean
+            }
+        }
     }
 }
 
