@@ -67,7 +67,7 @@ extension BtnRemoteRepositoryView {
             return
         }
         
-        let isGit = await project.isGitAsync()
+        let isGit = await project.isGit()
         await MainActor.run {
             self.isGitProject = isGit
         }

@@ -173,7 +173,7 @@ class AutoPullManager: NSObject, ObservableObject, SuperLog, SuperThread {
     /// - Returns: SafetyCheckResult 包含是否安全及失败原因
     private func checkSafetyConditions(for project: Project, dataProvider: DataProvider) async -> SafetyCheckResult {
         // 1. 检查是否是 Git 仓库（使用异步检查，避免缓存问题）
-        let isGitRepo = await project.isGitAsync()
+        let isGitRepo = await project.isGit()
         guard isGitRepo else {
             return SafetyCheckResult(isSafe: false, reason: "Not a Git repository")
         }

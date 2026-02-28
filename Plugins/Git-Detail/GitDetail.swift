@@ -76,17 +76,6 @@ struct GitDetail: View, SuperEvent, SuperLog {
         .onProjectDidCommit(perform: onGitCommitSuccess)
 //        .onApplicationWillBecomeActive(perform: onAppWillBecomeActive)
     }
-
-    /// 背景视图：根据提交状态显示不同的背景颜色
-    private var background: some View {
-        ZStack {
-            if data.commit == nil {
-                MagicBackground.orange.opacity(0.15)
-            } else {
-                MagicBackground.colorGreen.opacity(0.15)
-            }
-        }
-    }
 }
 
 // MARK: - Action
@@ -150,28 +139,14 @@ extension GitDetail {
         }
     }
 
-    /// 更新 Git 项目状态：检查当前项目是否为 Git 仓库
+    /// 更新 Git 项目状态
     func updateIsGitProject() {
         guard let project = data.project else {
+            self.isGitProject = false
             return
         }
 
-        self.isGitProject = project.isGitRepo
-    }
-
-    /// 异步更新 Git 项目状态：使用异步方式避免阻塞主线程，解决 CPU 占用 100% 的问题
-    func updateIsGitProjectAsync() async {
-        guard let project = data.project else {
-            await MainActor.run {
-                self.isGitProject = false
-            }
-            return
-        }
-
-        let isGit = await project.isGitAsync()
-        await MainActor.run {
-            self.isGitProject = isGit
-        }
+        self.isGitProject = project.isGit()
     }
 }
 
@@ -181,7 +156,7 @@ extension GitDetail {
     /// 应用即将变为活跃状态的事件处理
     func onAppWillBecomeActive() {
         Task {
-            await self.updateIsGitProjectAsync()
+            self.updateIsGitProject()
             await self.updateIsProjectCleanNoDebounce(reason: "onAppWillBecomeActive")
         }
     }
@@ -194,7 +169,7 @@ extension GitDetail {
     /// 视图出现时的事件处理
     func onAppear() {
         Task {
-            await self.updateIsGitProjectAsync()
+            self.updateIsGitProject()
             self.updateIsProjectClean(reason: "onAppear")
         }
     }
@@ -202,7 +177,7 @@ extension GitDetail {
     /// 项目变更时的事件处理
     func onProjectChange() {
         Task {
-            await self.updateIsGitProjectAsync()
+            await self.updateIsGitProject()
             self.updateIsProjectClean(reason: "onProjectChange")
         }
     }
@@ -231,7 +206,7 @@ extension GitDetail {
                 }
             }
 
-            guard let project = await self.data.project else {
+            guard let project = self.data.project else {
                 await MainActor.run {
                     os_log(.error, "\(Self.t)❌ No project available")
                 }

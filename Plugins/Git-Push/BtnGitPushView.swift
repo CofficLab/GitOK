@@ -120,7 +120,7 @@ extension BtnGitPushView {
 
     /// 异步更新 Git 项目状态：使用异步方式避免阻塞主线程，解决 CPU 占用 100% 的问题
     func updateIsGitProjectAsync() async {
-        let isGit = await data.project?.isGitAsync() ?? false
+        let isGit = await data.project?.isGit() ?? false
         await MainActor.run {
             self.isGitProject = isGit
         }
