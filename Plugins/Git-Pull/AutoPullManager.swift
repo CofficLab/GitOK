@@ -69,7 +69,9 @@ class AutoPullManager: NSObject, ObservableObject, SuperLog, SuperThread {
                 self?.performAutoPullIfSafe()
             }
 
-        os_log("\(self.t)✅ AutoPull started (interval: \(self.timerInterval)s)")
+        if Self.verbose {
+            os_log("\(self.t)✅ AutoPull started (interval: \(self.timerInterval)s)")
+        }
 
         // 立即执行一次检查
         performAutoPullIfSafe()
@@ -83,7 +85,9 @@ class AutoPullManager: NSObject, ObservableObject, SuperLog, SuperThread {
         timerCancellable?.cancel()
         timerCancellable = nil
 
-        os_log("\(self.t)⏹️ AutoPull stopped")
+        if Self.verbose {
+            os_log("\(self.t)⏹️ AutoPull stopped")
+        }
     }
 
     // MARK: - Auto Pull Logic
@@ -129,10 +133,12 @@ class AutoPullManager: NSObject, ObservableObject, SuperLog, SuperThread {
 
         for project in allProjects {
             // 执行安全检查
-            guard await self.checkSafetyConditions(for: project, dataProvider: dataProvider) else {
+            let safetyResult = await self.checkSafetyConditions(for: project, dataProvider: dataProvider)
+            guard safetyResult.isSafe else {
                 if Self.verbose {
                     await MainActor.run {
-                        os_log("\(Self.t)⏭️ Skipping \(project.title) - safety check failed")
+                        let reason = safetyResult.reason ?? "Unknown reason"
+                        os_log("\(Self.t)⏭️ Skipping \(project.title) - \(reason)")
                     }
                 }
                 continue
@@ -144,25 +150,32 @@ class AutoPullManager: NSObject, ObservableObject, SuperLog, SuperThread {
         }
 
         // 记录统计信息
-        await MainActor.run {
-            let successCount = pullResults.filter { $0.success }.count
-            let totalCount = pullResults.count
-            if totalCount > 0 {
-                os_log("\(Self.t)📊 Auto pull completed: \(successCount)/\(totalCount) projects pulled successfully")
+        if Self.verbose {
+            await MainActor.run {
+                let successCount = pullResults.filter { $0.success }.count
+                let totalCount = pullResults.count
+                if totalCount > 0 {
+                    os_log("\(Self.t)📊 Auto pull completed: \(successCount)/\(totalCount) projects pulled successfully")
+                }
             }
         }
     }
 
     // MARK: - Safety Checks
 
+    /// 安全检查结果
+    private struct SafetyCheckResult {
+        let isSafe: Bool
+        let reason: String?
+    }
+
     /// 检查是否满足自动拉取的安全条件
-    private func checkSafetyConditions(for project: Project, dataProvider: DataProvider) async -> Bool {
-        // 1. 检查是否是 Git 仓库
-        guard project.isGitRepo else {
-            if Self.verbose {
-                os_log("\(Self.t)❌ Not a Git repository")
-            }
-            return false
+    /// - Returns: SafetyCheckResult 包含是否安全及失败原因
+    private func checkSafetyConditions(for project: Project, dataProvider: DataProvider) async -> SafetyCheckResult {
+        // 1. 检查是否是 Git 仓库（使用异步检查，避免缓存问题）
+        let isGitRepo = await project.isGitAsync()
+        guard isGitRepo else {
+            return SafetyCheckResult(isSafe: false, reason: "Not a Git repository")
         }
 
         // 2. 检查工作区是否干净
@@ -171,14 +184,11 @@ class AutoPullManager: NSObject, ObservableObject, SuperLog, SuperThread {
                 try project.isClean(verbose: false)
             }
             guard isClean else {
-                if Self.verbose {
-                    os_log("\(Self.t)❌ Working directory is not clean")
-                }
-                return false
+                return SafetyCheckResult(isSafe: false, reason: "Working directory not clean")
             }
         } catch {
             os_log(.error, "\(Self.t)❌ Error checking working directory: \(error)")
-            return false
+            return SafetyCheckResult(isSafe: false, reason: "Error checking working directory")
         }
 
         // 3. 检查是否有未提交的更改
@@ -187,14 +197,11 @@ class AutoPullManager: NSObject, ObservableObject, SuperLog, SuperThread {
                 try project.hasNoUncommittedChanges()
             }
             guard hasNoUncommitted else {
-                if Self.verbose {
-                    os_log("\(Self.t)❌ Has uncommitted changes")
-                }
-                return false
+                return SafetyCheckResult(isSafe: false, reason: "Has uncommitted changes")
             }
         } catch {
             os_log(.error, "\(Self.t)❌ Error checking uncommitted changes: \(error)")
-            return false
+            return SafetyCheckResult(isSafe: false, reason: "Error checking uncommitted changes")
         }
 
         // 4. 检查远程是否有新提交
@@ -203,10 +210,7 @@ class AutoPullManager: NSObject, ObservableObject, SuperLog, SuperThread {
                 try project.getUnPulledCount()
             }
             guard unpulledCount > 0 else {
-                if Self.verbose {
-                    os_log("\(Self.t)⏭️ No new commits to pull")
-                }
-                return false
+                return SafetyCheckResult(isSafe: false, reason: "No new commits to pull")
             }
 
             if Self.verbose {
@@ -214,21 +218,18 @@ class AutoPullManager: NSObject, ObservableObject, SuperLog, SuperThread {
             }
         } catch {
             os_log(.error, "\(Self.t)❌ Error checking unpulled commits: \(error)")
-            return false
+            return SafetyCheckResult(isSafe: false, reason: "Error checking unpulled commits")
         }
 
         // 5. 检查是否正在进行 Git 操作
         if let activityStatus = await dataProvider.activityStatus,
            !activityStatus.isEmpty
         {
-            if Self.verbose {
-                os_log("\(Self.t)⏭️ Git operation in progress: \(activityStatus)")
-            }
-            return false
+            return SafetyCheckResult(isSafe: false, reason: "Git operation in progress: \(activityStatus)")
         }
 
         // 所有检查通过
-        return true
+        return SafetyCheckResult(isSafe: true, reason: nil)
     }
 
     // MARK: - Pull Execution
@@ -238,8 +239,10 @@ class AutoPullManager: NSObject, ObservableObject, SuperLog, SuperThread {
     /// - Returns: 是否成功
     @discardableResult
     private func executePull(for project: Project) async -> Bool {
-        await MainActor.run {
-            os_log("\(Self.t)🔄 Executing auto pull for \(project.title)")
+        if Self.verbose {
+            await MainActor.run {
+                os_log("\(Self.t)🔄 Executing auto pull for \(project.title)")
+            }
         }
 
         do {
@@ -248,8 +251,10 @@ class AutoPullManager: NSObject, ObservableObject, SuperLog, SuperThread {
                 try project.pull()
             }
 
-            await MainActor.run {
-                os_log("\(Self.t)✅ Auto pull succeeded for \(project.title)")
+            if Self.verbose {
+                await MainActor.run {
+                    os_log("\(Self.t)✅ Auto pull succeeded for \(project.title)")
+                }
             }
 
             // 如果成功，显示简短通知
@@ -269,9 +274,11 @@ class AutoPullManager: NSObject, ObservableObject, SuperLog, SuperThread {
     // MARK: - Helpers
 
     private func showSuccessNotification(for project: Project) async {
-        await MainActor.run {
-            // 可选：使用 MagicToast 显示简短提示
-            os_log("\(Self.t)📢 Auto pull completed for \(project.title)")
+        if Self.verbose {
+            await MainActor.run {
+                // 可选：使用 MagicToast 显示简短提示
+                os_log("\(Self.t)📢 Auto pull completed for \(project.title)")
+            }
         }
     }
 }
