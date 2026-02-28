@@ -3,7 +3,7 @@ import SwiftUI
 import MagicAlert
 
 struct BtnChangeImage: View {
-    @EnvironmentObject var m: MagicMessageProvider
+    
     @EnvironmentObject var i: IconProvider
 
     var body: some View {
@@ -16,10 +16,10 @@ struct BtnChangeImage: View {
                     if var icon = i.currentData {
                         try icon.updateImageURL(url)
                     } else {
-                        m.error("没有找到可以更新的图标")
+                        alert_error("没有找到可以更新的图标")
                     }
                 } catch {
-                    m.error(error.localizedDescription)
+                    alert_error(error.localizedDescription)
                 }
             }
         }

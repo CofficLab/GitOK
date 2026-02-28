@@ -7,7 +7,7 @@ import MagicAlert
  */
 struct MinimalTitleEditor: View {
     @EnvironmentObject var b: BannerProvider
-    @EnvironmentObject var m: MagicMessageProvider
+    
     
     @State private var titleText: String = ""
     @State private var titleColor: Color = .primary

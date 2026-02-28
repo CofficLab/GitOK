@@ -9,7 +9,7 @@ import Combine
 
 class PluginProvider: ObservableObject, SuperLog, SuperThread {
     nonisolated static let emoji = "🧩"
-    static let verbose = true
+    static let verbose = false
 
     /// 是否注册所有插件（开发调试用，设为 false 可禁用所有插件）
     static var registerAllPlugins: Bool = true
@@ -186,10 +186,12 @@ class PluginProvider: ObservableObject, SuperLog, SuperThread {
             .map { plugin in
                 let pluginType = type(of: plugin)
                 let pluginId = plugin.instanceLabel
+                let tableName = pluginType.tableName
+                
                 return PluginInfo(
                     id: pluginId,
-                    name: pluginType.displayName,
-                    description: pluginType.description,
+                    name: String(localized: .init(stringLiteral: pluginType.displayName), table: tableName),
+                    description: String(localized: .init(stringLiteral: pluginType.description), table: tableName),
                     icon: pluginType.iconName,
                     defaultEnabled: pluginType.defaultEnabled,
                     isDeveloperEnabled: { true }

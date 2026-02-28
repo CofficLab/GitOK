@@ -38,7 +38,7 @@ extension ConflictResolverList {
     private var headerBar: some View {
         VStack(spacing: 0) {
             HStack {
-                Text("冲突解决")
+                Text(String(localized: "冲突解决", table: "GitConflictResolver"))
                     .font(.headline)
                     .foregroundColor(.primary)
 
@@ -49,7 +49,7 @@ extension ConflictResolverList {
                         Button(action: {
                             continueMerge()
                         }) {
-                            Text("继续合并")
+                            Text(String(localized: "继续合并", table: "GitConflictResolver"))
                                 .font(.caption)
                         }
                         .buttonStyle(.borderedProminent)
@@ -58,7 +58,7 @@ extension ConflictResolverList {
                         Button(action: {
                             abortMerge()
                         }) {
-                            Text("中止合并")
+                            Text(String(localized: "中止合并", table: "GitConflictResolver"))
                                 .font(.caption)
                         }
                         .buttonStyle(.bordered)
@@ -73,7 +73,7 @@ extension ConflictResolverList {
                 HStack {
                     Image(systemName: "exclamationmark.triangle")
                         .foregroundColor(.red)
-                    Text("发现 \(conflictFiles.count) 个冲突文件需要解决")
+                    Text(String.localizedStringWithFormat(String(localized: "发现 %lld 个冲突文件需要解决", table: "GitConflictResolver"), Int64(conflictFiles.count)))
                         .font(.caption)
                         .foregroundColor(.red)
                     Spacer()
@@ -97,7 +97,7 @@ extension ConflictResolverList {
         ScrollView {
             LazyVStack(spacing: 0) {
                 if isLoading {
-                    ProgressView("检查冲突状态...")
+                    ProgressView(String(localized: "检查冲突状态...", table: "GitConflictResolver"))
                         .padding()
                 } else if !isMerging {
                     VStack(spacing: 12) {
@@ -105,11 +105,11 @@ extension ConflictResolverList {
                             .font(.system(size: 48))
                             .foregroundColor(.green)
 
-                        Text("没有正在进行的合并")
+                        Text(String(localized: "没有正在进行的合并", table: "GitConflictResolver"))
                             .font(.headline)
                             .foregroundColor(.secondary)
 
-                        Text("当您执行合并操作遇到冲突时，此处会显示需要解决的文件")
+                        Text(String(localized: "当您执行合并操作遇到冲突时，此处会显示需要解决的文件", table: "GitConflictResolver"))
                             .font(.caption)
                             .foregroundColor(.secondary)
                             .multilineTextAlignment(.center)
@@ -121,11 +121,11 @@ extension ConflictResolverList {
                             .font(.system(size: 48))
                             .foregroundColor(.green)
 
-                        Text("所有冲突已解决")
+                        Text(String(localized: "所有冲突已解决", table: "GitConflictResolver"))
                             .font(.headline)
                             .foregroundColor(.green)
 
-                        Text("点击上方\"继续合并\"按钮完成合并操作")
+                        Text(String(localized: "点击上方\"继续合并\"按钮完成合并操作", table: "GitConflictResolver"))
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }

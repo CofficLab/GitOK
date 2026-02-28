@@ -6,8 +6,8 @@ import SwiftUI
  */
 struct ClassicBannerTemplate: BannerTemplateProtocol {
     let id = "classic"
-    let name = "经典布局"
-    let description = "左侧标题副标题和特性，右侧产品图片"
+    let name = String(localized: "经典布局", table: "Banner")
+    let description = String(localized: "左侧标题副标题和特性，右侧产品图片", table: "Banner")
     let systemImageName = "rectangle.split.2x1"
     
     func createPreviewView() -> AnyView {

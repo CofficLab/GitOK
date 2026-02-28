@@ -8,7 +8,7 @@ import SwiftUI
  */
 struct ClassicSubTitleEditor: View {
     @EnvironmentObject var b: BannerProvider
-    @EnvironmentObject var m: MagicMessageProvider
+    
 
     @State private var subTitleText: String = ""
     @State private var subTitleColor: Color = .secondary

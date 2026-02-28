@@ -32,9 +32,6 @@ struct RootView<Content>: View, SuperEvent, SuperLog where Content: View {
     /// 仓库管理器
     private let repoManager: RepoManager
 
-    /// 消息提供者
-    @StateObject var messageProvider = MagicMessageProvider.shared
-
     init(@ViewBuilder content: () -> Content) {
         self.content = content()
 
@@ -62,7 +59,6 @@ struct RootView<Content>: View, SuperEvent, SuperLog where Content: View {
             .environmentObject(appProvider)
             .environmentObject(iconProvider)
             .environmentObject(pluginProvider)
-            .environmentObject(messageProvider)
             .environmentObject(git)
             .navigationTitle("")
     }

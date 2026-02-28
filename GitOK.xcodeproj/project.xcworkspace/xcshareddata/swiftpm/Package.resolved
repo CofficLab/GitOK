@@ -1,5 +1,5 @@
 {
-  "originHash" : "263dd65ca3bc976229557f137b22432b1c330492facbd02b01cfcbaa44aca383",
+  "originHash" : "aa80c9ec45a1dda53498f22800bb0d317151f4997d7a33ad85cfaf79f8e690e5",
   "pins" : [
     {
       "identity" : "id3tageditor",
@@ -16,7 +16,7 @@
       "location" : "https://github.com/nookery/LibGit2Swift",
       "state" : {
         "branch" : "main",
-        "revision" : "db9cea87937cab5713115f78e458132f20109f4f"
+        "revision" : "8c62842668c80de70d2e1fc186ad536ffdd4acb1"
       }
     },
     {

@@ -48,23 +48,25 @@ struct AppAppearanceSettingView: View, SuperLog {
             }
             .padding()
         }
-        .navigationTitle("外观")
+        .navigationTitle(Text("外观", tableName: "Core"))
         .toolbar {
             ToolbarItem(placement: .confirmationAction) {
-                Button("完成") {
+                Button(action: {
                     // 关闭设置视图
                     NotificationCenter.default.post(name: .didSaveGitUserConfig, object: nil)
+                }) {
+                    Text("完成", tableName: "Core")
                 }
             }
         }
         .onAppear(perform: loadData)
-        .alert("重置外观设置", isPresented: $showResetConfirmation) {
-            Button("取消", role: .cancel) { }
-            Button("重置", role: .destructive) {
+        .alert(String(localized: "重置外观设置", table: "Core"), isPresented: $showResetConfirmation) {
+            Button(String(localized: "取消", table: "Core"), role: .cancel) { }
+            Button(String(localized: "重置", table: "Core"), role: .destructive) {
                 resetToDefaults()
             }
         } message: {
-            Text("确定要将所有外观设置重置为默认值吗？")
+            Text("确定要将所有外观设置重置为默认值吗？", tableName: "Core")
         }
     }
 
@@ -72,7 +74,7 @@ struct AppAppearanceSettingView: View, SuperLog {
 
     /// 主题模式设置
     private var themeModeSection: some View {
-        MagicSettingSection(title: "主题模式", titleAlignment: .leading) {
+        MagicSettingSection(title: String(localized: "主题模式", table: "Core"), titleAlignment: .leading) {
             VStack(spacing: 0) {
                 ForEach(AppAppearanceSettingsStore.ThemeMode.allCases) { mode in
                     themeModeRow(mode)
@@ -91,7 +93,7 @@ struct AppAppearanceSettingView: View, SuperLog {
                 .frame(width: 28)
 
             VStack(alignment: .leading, spacing: 4) {
-                Text(mode.displayName)
+                Text(verbatim: mode.displayName)
                     .font(.system(size: 13))
 
                 Text(modeDescription(mode))
@@ -120,19 +122,19 @@ struct AppAppearanceSettingView: View, SuperLog {
     private func modeDescription(_ mode: AppAppearanceSettingsStore.ThemeMode) -> String {
         switch mode {
         case .system:
-            return "跟随系统设置自动切换"
+            return String(localized: "跟随系统设置自动切换", table: "Core")
         case .light:
-            return "始终使用浅色外观"
+            return String(localized: "始终使用浅色外观", table: "Core")
         case .dark:
-            return "始终使用深色外观"
+            return String(localized: "始终使用深色外观", table: "Core")
         }
     }
 
     /// 强调色设置
     private var accentColorSection: some View {
-        MagicSettingSection(title: "强调色", titleAlignment: .leading) {
+        MagicSettingSection(title: String(localized: "强调色", table: "Core"), titleAlignment: .leading) {
             VStack(alignment: .leading, spacing: 16) {
-                Text("选择应用的主要强调色")
+                Text("选择应用的主要强调色", tableName: "Core")
                     .font(.caption)
                     .foregroundColor(.secondary)
                     .padding(.horizontal)
@@ -179,7 +181,7 @@ struct AppAppearanceSettingView: View, SuperLog {
 
     /// 字体大小设置
     private var fontSizeSection: some View {
-        MagicSettingSection(title: "字体大小", titleAlignment: .leading) {
+        MagicSettingSection(title: String(localized: "字体大小", table: "Core"), titleAlignment: .leading) {
             VStack(spacing: 0) {
                 ForEach(AppAppearanceSettingsStore.FontSize.allCases) { size in
                     fontSizeRow(size)
@@ -199,10 +201,10 @@ struct AppAppearanceSettingView: View, SuperLog {
                 .frame(width: 40)
 
             VStack(alignment: .leading, spacing: 4) {
-                Text(size.displayName)
+                Text(verbatim: size.displayName)
                     .font(.system(size: 13))
 
-                Text("缩放比例: \(Int(size.scaleFactor * 100))%")
+                Text(verbatim: String.localizedStringWithFormat(NSLocalizedString("缩放比例: %lld%%", tableName: "Core", comment: ""), Int64(size.scaleFactor * 100)))
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
@@ -234,7 +236,7 @@ struct AppAppearanceSettingView: View, SuperLog {
 
     /// 布局密度设置
     private var layoutDensitySection: some View {
-        MagicSettingSection(title: "布局密度", titleAlignment: .leading) {
+        MagicSettingSection(title: String(localized: "布局密度", table: "Core"), titleAlignment: .leading) {
             VStack(spacing: 0) {
                 ForEach(AppAppearanceSettingsStore.LayoutDensity.allCases) { density in
                     layoutDensityRow(density)
@@ -253,7 +255,7 @@ struct AppAppearanceSettingView: View, SuperLog {
                 .frame(width: 28)
 
             VStack(alignment: .leading, spacing: 4) {
-                Text(density.displayName)
+                Text(verbatim: density.displayName)
                     .font(.system(size: 13))
 
                 Text(densityDescription(density))
@@ -284,11 +286,11 @@ struct AppAppearanceSettingView: View, SuperLog {
     private func densityDescription(_ density: AppAppearanceSettingsStore.LayoutDensity) -> String {
         switch density {
         case .compact:
-            return "更紧凑的布局，显示更多内容"
+            return String(localized: "更紧凑的布局，显示更多内容", table: "Core")
         case .comfortable:
-            return "平衡的布局，适合大多数场景"
+            return String(localized: "平衡的布局，适合大多数场景", table: "Core")
         case .spacious:
-            return "更宽松的布局，视觉更舒适"
+            return String(localized: "更宽松的布局，视觉更舒适", table: "Core")
         }
     }
 
@@ -302,13 +304,13 @@ struct AppAppearanceSettingView: View, SuperLog {
 
     /// 重置设置
     private var resetSection: some View {
-        MagicSettingSection(title: "重置", titleAlignment: .leading) {
+        MagicSettingSection(title: String(localized: "重置", table: "Core"), titleAlignment: .leading) {
             Button(role: .destructive) {
                 showResetConfirmation = true
             } label: {
                 HStack {
                     Image(systemName: "arrow.counterclockwise")
-                    Text("重置所有外观设置")
+                    Text("重置所有外观设置", tableName: "Core")
                 }
             }
             .buttonStyle(.plain)

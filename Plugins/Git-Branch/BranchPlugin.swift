@@ -8,7 +8,7 @@ class BranchPlugin: NSObject, SuperPlugin {
     static var displayName: String = "Branch"
 
     /// 插件描述
-    static var description: String = "Git 分支管理"
+    static var description: String = String(localized: "Git 分支管理", table: "GitBranch")
 
     /// 插件图标名称
     static var iconName: String = "arrow.triangle.branch"

@@ -33,6 +33,9 @@ protocol SuperPlugin {
     /// 如果用户配置过，以用户配置为准
     static var defaultEnabled: Bool { get }
 
+    /// 插件多语言表名，默认为插件类名
+    static var tableName: String { get }
+
     /// 插件是否应该注册到系统中
     /// 开发者可通过此属性控制插件是否启用
     static var shouldRegister: Bool { get }
@@ -78,6 +81,16 @@ protocol SuperPlugin {
 extension SuperPlugin {
     /// 默认的标签项实现，返回 nil 表示不提供标签页
     func addTabItem() -> String? { nil }
+
+    /// 默认的多语言表名实现，使用反射获取类名
+    static var tableName: String {
+        let typeName = String(describing: self)
+        // 移除模块前缀（例如 "GitOK."）
+        if let dotIndex = typeName.lastIndex(of: ".") {
+            return String(typeName[typeName.index(after: dotIndex)...]).replacingOccurrences(of: "Plugin", with: "")
+        }
+        return typeName.replacingOccurrences(of: "Plugin", with: "")
+    }
 
     /// 默认的实例标签实现，使用反射获取类名
     var instanceLabel: String {

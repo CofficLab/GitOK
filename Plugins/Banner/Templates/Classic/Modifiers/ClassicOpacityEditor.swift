@@ -8,7 +8,7 @@ import MagicAlert
  */
 struct ClassicOpacityEditor: View {
     @EnvironmentObject var b: BannerProvider
-    @EnvironmentObject var m: MagicMessageProvider
+    
     
     @State private var opacity: Double = 1.0
     

@@ -13,7 +13,7 @@ struct BtnMerge: View, SuperEvent, SuperThread, SuperLog {
     nonisolated static let verbose = false
 
     /// 环境对象：消息提供者
-    @EnvironmentObject var m: MagicMessageProvider
+    
 
     /// 项目路径
     var path: String
@@ -49,10 +49,10 @@ extension BtnMerge {
 
             try project.mergeBranches(fromBranch: from, toBranch: to)
 
-            self.m.info("已将 \(from.name) 合并到 \(to.name), 并切换到 \(to.name)")
+            alert_info("已将 \(from.name) 合并到 \(to.name), 并切换到 \(to.name)")
         } catch let error {
             os_log(.error, "\(self.t)❌ 分支合并失败: \(error.localizedDescription)")
-            m.error(error)
+            alert_error(error)
         }
     }
 }

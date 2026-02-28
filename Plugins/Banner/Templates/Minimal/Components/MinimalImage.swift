@@ -9,7 +9,7 @@ import MagicDevice
  */
 struct MinimalImage: View {
     @EnvironmentObject var b: BannerProvider
-    @EnvironmentObject var m: MagicMessageProvider
+    
 
     var banner: BannerFile { b.banner }
     var minimalData: MinimalBannerData? { banner.minimalData }

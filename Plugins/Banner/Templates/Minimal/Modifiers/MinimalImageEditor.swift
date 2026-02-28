@@ -10,7 +10,7 @@ import UniformTypeIdentifiers
  */
 struct MinimalImageEditor: View {
     @EnvironmentObject var b: BannerProvider
-    @EnvironmentObject var m: MagicMessageProvider
+    
 
     @State private var showImagePicker = false
     @State private var selectedDevice: MagicDevice? = nil
@@ -103,7 +103,7 @@ struct MinimalImageEditor: View {
             guard let url = urls.first else { return }
             changeImage(url)
         case let .failure(error):
-            m.error("选择图片失败: \(error.localizedDescription)")
+            alert_error("选择图片失败: \(error.localizedDescription)")
         }
     }
 
@@ -114,9 +114,9 @@ struct MinimalImageEditor: View {
                 minimalData = try minimalData.changeImage(url, projectURL: banner.project.url)
                 banner.minimalData = minimalData
             }
-            m.success("图片更新成功")
+            alert_success("图片更新成功")
         } catch {
-            m.error("更新图片失败: \(error.localizedDescription)")
+            alert_error("更新图片失败: \(error.localizedDescription)")
         }
     }
 

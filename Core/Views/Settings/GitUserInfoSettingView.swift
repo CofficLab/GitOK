@@ -41,7 +41,7 @@ struct GitUserInfoSettingView: View, SuperLog {
             VStack(alignment: .leading, spacing: 24) {
                 // 现有预设配置列表
                 if !savedConfigs.isEmpty {
-                    MagicSettingSection(title: "现有预设", titleAlignment: .leading) {
+                    MagicSettingSection(title: String(localized: "现有预设", table: "Core"), titleAlignment: .leading) {
                         VStack(spacing: 0) {
                             ForEach(savedConfigs) { config in
                                 presetConfigRow(config)
@@ -72,12 +72,14 @@ struct GitUserInfoSettingView: View, SuperLog {
             }
             .padding()
         }
-        .navigationTitle("用户信息")
+        .navigationTitle(Text(String(localized: "用户信息", table: "Core")))
         .toolbar {
             ToolbarItem(placement: .confirmationAction) {
-                Button("完成") {
+                Button(action: {
                     // 关闭设置视图（通过通知）
                     NotificationCenter.default.post(name: .didSaveGitUserConfig, object: nil)
+                }) {
+                    Text(String(localized: "完成", table: "Core"))
                 }
             }
         }
@@ -99,20 +101,23 @@ struct GitUserInfoSettingView: View, SuperLog {
                     .font(.system(size: 14))
             }
             .buttonStyle(.plain)
-            .help("删除此预设")
+            .help(Text(String(localized: "删除此预设", table: "Core")))
         }
         .contentShape(Rectangle())
         .contextMenu {
             Button(role: .destructive) {
                 deletePreset(config)
             } label: {
-                Label("删除预设", systemImage: .iconTrash)
+                Label(
+                    title: { Text(String(localized: "删除预设", table: "Core")) },
+                    icon: { Image(systemName: .iconTrash) }
+                )
             }
         }
     }
 
     private var addNewPresetSection: some View {
-        MagicSettingSection(title: "添加新预设", titleAlignment: .leading) {
+        MagicSettingSection(title: String(localized: "添加新预设", table: "Core"), titleAlignment: .leading) {
             VStack(spacing: 0) {
                 userNameInputView
                 Divider()
@@ -125,12 +130,12 @@ struct GitUserInfoSettingView: View, SuperLog {
 
     private var userNameInputView: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("用户名")
+            Text(String(localized: "用户名", table: "Core"))
                 .font(.caption)
                 .foregroundColor(.secondary)
                 .padding(.horizontal)
 
-            TextField("输入用户名", text: $userName)
+            TextField(String(localized: "输入用户名", table: "Core"), text: $userName)
                 .textFieldStyle(.roundedBorder)
                 .onChange(of: userName) {
                     hasChanges = true
@@ -142,12 +147,12 @@ struct GitUserInfoSettingView: View, SuperLog {
 
     private var userEmailInputView: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("邮箱")
+            Text(String(localized: "邮箱", table: "Core"))
                 .font(.caption)
                 .foregroundColor(.secondary)
                 .padding(.horizontal)
 
-            TextField("输入邮箱", text: $userEmail)
+            TextField(String(localized: "输入邮箱", table: "Core"), text: $userEmail)
                 .textFieldStyle(.roundedBorder)
                 .onChange(of: userEmail) {
                     hasChanges = true
@@ -195,13 +200,13 @@ struct GitUserInfoSettingView: View, SuperLog {
             // 保存成功后发送通知
             NotificationCenter.default.post(name: .didSaveGitUserConfig, object: nil)
         } catch {
-            errorMessage = "保存失败: \(error.localizedDescription)"
+            errorMessage = String.localizedStringWithFormat(NSLocalizedString("保存失败: %@", tableName: "Core", comment: ""), error.localizedDescription)
             if Self.verbose {
                 os_log(.error, "\(Self.t)Failed to save user config: \(error)")
             }
-
-            isLoading = false
         }
+
+        isLoading = false
     }
 
     private func saveAsPreset() {
@@ -224,7 +229,7 @@ struct GitUserInfoSettingView: View, SuperLog {
             }
 
         } catch {
-            errorMessage = "保存预设失败: \(error.localizedDescription)"
+            errorMessage = String.localizedStringWithFormat(NSLocalizedString("保存预设失败: %@", tableName: "Core", comment: ""), error.localizedDescription)
             if Self.verbose {
                 os_log(.error, "\(Self.t)Failed to save preset: \(error)")
             }
@@ -243,7 +248,7 @@ struct GitUserInfoSettingView: View, SuperLog {
             }
 
         } catch {
-            errorMessage = "删除预设失败: \(error.localizedDescription)"
+            errorMessage = String.localizedStringWithFormat(NSLocalizedString("删除预设失败: %@", tableName: "Core", comment: ""), error.localizedDescription)
             if Self.verbose {
                 os_log(.error, "\(Self.t)Failed to delete preset: \(error)")
             }
@@ -271,7 +276,7 @@ struct GitUserInfoSettingView: View, SuperLog {
                 os_log("\(Self.t)Loaded user info - name: \(userName), email: \(userEmail)")
             }
         } catch {
-            errorMessage = "无法加载当前用户信息: \(error.localizedDescription)"
+            errorMessage = String.localizedStringWithFormat(NSLocalizedString("无法加载当前用户信息: %@", tableName: "Core", comment: ""), error.localizedDescription)
             if Self.verbose {
                 os_log(.error, "\(Self.t)Failed to load user info: \(error)")
             }

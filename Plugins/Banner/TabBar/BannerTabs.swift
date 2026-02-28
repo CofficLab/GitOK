@@ -10,7 +10,7 @@ import MagicAlert
 struct BannerTabs: View {
     @EnvironmentObject var b: BannerProvider
     @EnvironmentObject var g: DataProvider
-    @EnvironmentObject var m: MagicMessageProvider
+    
     
     /// Banner数据源
     @State private var banners: [BannerFile] = []

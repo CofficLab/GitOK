@@ -23,33 +23,19 @@ struct PluginSettingsView: View, SuperLog {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
                 // 标题
-                Text("插件管理")
+                Text(String(localized: "插件管理", table: "Core"))
                     .font(.title2)
                     .fontWeight(.bold)
                     .padding(.bottom, 16)
 
-                Text("启用或禁用 GitOK 的插件功能")
+                Text(String(localized: "启用或禁用 GitOK 的插件功能", table: "Core"))
                     .font(.subheadline)
                     .foregroundColor(.secondary)
                     .padding(.bottom, 24)
 
                 // 插件列表
                 if configurablePlugins.isEmpty {
-                    // 空状态提示
-                    VStack(spacing: 16) {
-                        Image(systemName: "puzzlepiece.extension")
-                            .font(.system(size: 48))
-                            .foregroundColor(.secondary)
-
-                        Text("暂无可配置插件")
-                            .font(.title3)
-                            .fontWeight(.medium)
-
-                        Text("当前没有可以在设置中管理的插件")
-                            .font(.body)
-                            .foregroundColor(.secondary)
-                    }
-                    .frame(maxWidth: .infinity, minHeight: 200)
+                    emptyView
                 } else {
                     ForEach(configurablePlugins) { plugin in
                         PluginToggleRow(
@@ -78,12 +64,14 @@ struct PluginSettingsView: View, SuperLog {
             }
             .padding(24)
         }
-        .navigationTitle("插件管理")
+        .navigationTitle(Text(String(localized: "插件管理", table: "Core")))
         .toolbar {
             ToolbarItem(placement: .confirmationAction) {
-                Button("完成") {
+                Button(action: {
                     // 关闭设置视图
                     NotificationCenter.default.post(name: .didSaveGitUserConfig, object: nil)
+                }) {
+                    Text(String(localized: "完成", table: "Core"))
                 }
             }
         }
@@ -95,6 +83,23 @@ struct PluginSettingsView: View, SuperLog {
     /// 获取可配置的插件列表
     private var configurablePlugins: [PluginInfo] {
         pluginProvider.configurablePlugins
+    }
+
+    private var emptyView: some View {
+        VStack(spacing: 12) {
+            Image(systemName: "puzzlepiece")
+                .font(.system(size: 48))
+                .foregroundColor(.secondary)
+
+            Text(String(localized: "暂无可配置插件", table: "Core"))
+                .font(.headline)
+
+            Text(String(localized: "当前没有可以在设置中管理的插件", table: "Core"))
+                .font(.subheadline)
+                .foregroundColor(.secondary)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .padding()
     }
 
     /// 加载插件状态
