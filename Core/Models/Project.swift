@@ -4,6 +4,7 @@ import MagicKit
 import OSLog
 import SwiftData
 import SwiftUI
+import Clibgit2
 
 /// 项目模型类
 /// 表示一个Git项目的核心数据模型，包含项目的基本信息和操作方法
@@ -871,7 +872,61 @@ extension Project {
 
 extension Project {
     func tags(for commit: String) throws -> [String] {
-        try LibGit2.getTags(at: self.path, for: commit)
+        var repo: OpaquePointer?
+        let result = git_repository_open(&repo, self.path)
+        guard result == 0, let repository = repo else {
+            throw NSError(domain: "GitOK", code: -1, userInfo: [NSLocalizedDescriptionKey: "Failed to open repository"])
+        }
+        defer { git_repository_free(repo) }
+
+        var tagNames = git_strarray()
+        defer { git_strarray_free(&tagNames) }
+
+        let listResult = git_tag_list(&tagNames, repository)
+        guard listResult == 0 else {
+            return []
+        }
+
+        var targetOID = git_oid()
+        guard git_oid_fromstr(&targetOID, commit) == 0 else {
+            return []
+        }
+
+        var matchingTags: [String] = []
+        let count = tagNames.count
+        for i in 0..<count {
+            guard let namePtr = tagNames.strings[i] else { continue }
+            let tagName = String(cString: namePtr)
+
+            let tagNameRef = "refs/tags/\(tagName)"
+
+            var reference: OpaquePointer? = nil
+            if git_reference_lookup(&reference, repository, tagNameRef) == 0, let ref = reference {
+                if let target = git_reference_target(ref) {
+                    var isMatch = false
+                    
+                    var tag: OpaquePointer? = nil
+                    if git_tag_lookup(&tag, repository, target) == 0, let tagPtr = tag {
+                        let tagTargetOID = git_tag_target_id(tagPtr)
+                        if git_oid_equal(tagTargetOID, &targetOID) == 1 {
+                            isMatch = true
+                        }
+                        git_tag_free(tag)
+                    } else {
+                        if git_oid_equal(target, &targetOID) == 1 {
+                            isMatch = true
+                        }
+                    }
+                    
+                    if isMatch {
+                        matchingTags.append(tagName)
+                    }
+                }
+                git_reference_free(reference)
+            }
+        }
+
+        return matchingTags
     }
 
     func getTags(commit: String) throws -> [String] {

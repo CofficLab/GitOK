@@ -58,6 +58,15 @@ struct CommitRow: View, SuperThread, SuperLog {
                             Text(commit.message)
                                 .lineLimit(1)
                                 .font(.system(size: 13))
+                            if !tag.isEmpty {
+                                Text(tag)
+                                    .font(.system(size: 10))
+                                    .padding(.horizontal, 6)
+                                    .padding(.vertical, 1)
+                                    .background(Color.accentColor.opacity(0.15))
+                                    .foregroundColor(.accentColor)
+                                    .cornerRadius(3)
+                            }
                             Spacer()
                         }
 
@@ -210,10 +219,6 @@ struct CommitRow: View, SuperThread, SuperLog {
         let commitHash = self.commit.hash
 
         Task.detached(priority: .userInitiated) {
-            if Self.verbose {
-                os_log("\(Self.t)🏷️ Loading tag for commit: \(commitHash)")
-            }
-
             do {
                 let tags = try project.getTags(commit: commitHash)
                 let tagValue = tags.first ?? ""

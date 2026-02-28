@@ -9,7 +9,7 @@ import Combine
 
 class PluginProvider: ObservableObject, SuperLog, SuperThread {
     nonisolated static let emoji = "🧩"
-    static let verbose = true
+    static let verbose = false
 
     /// 是否注册所有插件（开发调试用，设为 false 可禁用所有插件）
     static var registerAllPlugins: Bool = true
