@@ -120,7 +120,7 @@ extension BtnGitPullView {
 
     /// 异步更新 Git 项目状态：使用异步方式避免阻塞主线程，解决 CPU 占用 100% 的问题
     func updateIsGitProjectAsync() async {
-        let isGit = await data.project?.isGit() ?? false
+        let isGit = data.project?.isGit() ?? false
         await MainActor.run {
             self.isGitProject = isGit
         }
@@ -138,7 +138,7 @@ extension BtnGitPullView {
 
         // 启动自动拉取管理器
         Task.detached(priority: .utility) {
-            try? await Task.sleep(nanoseconds: 60_000_000_000) // 60 秒延迟
+            try? await Task.sleep(nanoseconds: 3_000_000_000) // 3 秒延迟
             await MainActor.run {
                 AutoPullManager.shared.setDataProvider(data)
                 AutoPullManager.shared.start()
