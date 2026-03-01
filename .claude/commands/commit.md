@@ -1,6 +1,6 @@
 # 智能生成 Commit Message
 
-自动分析代码更改并生成符合规范的提交信息（Conventional Commits 格式）。
+自动分析代码更改并生成符合规范的提交信息（Conventional Commits 格式），并自动提交。
 
 ## 工作流程
 
@@ -66,17 +66,10 @@
      - Breaking Changes 说明
      - 其他参考信息
 
-5. **显示建议**
-   - 展示生成的 commit message
-   - 展示更改的文件列表
-   - 展示代码差异摘要
-
-6. **执行确认**
-   - 询问用户是否使用生成的 commit message
-   - 如果确认，执行：
+5. **执行**
+   - 执行：
      - `git add` （如果需要）
      - `git commit -m "message"`
-   - 如果需要修改，允许用户编辑
 
 ## Commit Message 模板
 
@@ -131,31 +124,6 @@ This issue affected users with long-lived sessions.
 Fixes #456
 ```
 
-## 示例输出
-
-```text
-📝 建议的 Commit Message:
-
-feat(pages): add market search page
-
-Implement semantic search functionality for markets with
-debounced input, loading states, and error handling.
-
-- Create /markets/search route
-- Add SearchBar component with debounce
-- Integrate vector search API
-- Display search results with MarketCard
-- Handle loading and error states
-
-Modified files:
-  + app/markets/search/page.tsx (new)
-  + components/SearchBar.tsx (new)
-  + components/MarketList.tsx (modified)
-  + lib/api/search.ts (new)
-
-是否使用此 commit message？(y/n/edit)
-```
-
 ## 注意事项
 
 - ✅ 使用英文的 commit message
@@ -164,12 +132,5 @@ Modified files:
 - ✅ 使用清晰、描述性的语言
 - ✅ 保持 subject 简洁（< 50 字符）
 - ✅ 在 body 中解释 "为什么" 而非 "是什么"
-- ❌ 不要在没有用户确认的情况下执行 commit
 - ❌ 不要忽略 staging area 的状态
 - ❌ 不要生成过于通用的 commit message
-
-## 相关命令
-
-- 使用 `/plan` 在实现复杂功能前进行规划
-- 使用 `/code-review` 在 commit 前审查代码
-- 使用 `/test-coverage` 确保测试覆盖率足够

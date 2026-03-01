@@ -11,13 +11,16 @@ struct CurrentWorkingStateView: View, SuperLog {
     /// 环境对象：数据提供者
     @EnvironmentObject var data: DataProvider
 
+    /// CommitList 是否正在刷新
+    @Binding var isRefreshing: Bool
+
     // MARK: - 本地状态
 
     /// 未提交文件数量
     @State private var changedFileCount = 0
 
     /// 是否正在刷新文件列表
-    @State private var isRefreshing = false
+    @State private var isRefreshingFileList = false
 
     /// 是否被选中（当前工作状态）
     private var isSelected: Bool {
@@ -61,6 +64,11 @@ struct CurrentWorkingStateView: View, SuperLog {
 
     /// 日志标识符
     static let emoji = "🌳"
+
+    /// 初始化方法，提供默认的 binding 值
+    init(isRefreshing: Binding<Bool> = .constant(false)) {
+        _isRefreshing = isRefreshing
+    }
 
     /// 视图主体
     var body: some View {
@@ -107,7 +115,21 @@ struct CurrentWorkingStateView: View, SuperLog {
             Spacer()
 
             // 按钮显示逻辑
-            if changedFileCount == 0 {
+            if isRefreshing {
+                // 刷新中，显示 loading 提示
+                HStack(spacing: 4) {
+                    ProgressView()
+                        .controlSize(.small)
+                        .scaleEffect(0.8)
+                    Text("刷新中", tableName: "GitCommit")
+                        .font(.system(size: 12, weight: .medium))
+                        .foregroundColor(.secondary)
+                }
+                .padding(.horizontal, 12)
+                .padding(.vertical, 6)
+                .background(Color.secondary.opacity(0.1))
+                .cornerRadius(6)
+            } else if changedFileCount == 0 {
                 // 本地干净
                 if unpulledCount > 0 {
                     // 远程有新提交，显示下载按钮
@@ -245,7 +267,7 @@ extension CurrentWorkingStateView {
 
         await MainActor.run {
             data.activityStatus = String(localized: "刷新文件列表…", table: "GitCommit")
-            isRefreshing = true
+            isRefreshingFileList = true
         }
 
         do {
@@ -253,12 +275,12 @@ extension CurrentWorkingStateView {
             await MainActor.run {
                 self.changedFileCount = count
                 data.activityStatus = nil
-                isRefreshing = false
+                isRefreshingFileList = false
             }
         } catch {
             await MainActor.run {
                 data.activityStatus = nil
-                isRefreshing = false
+                isRefreshingFileList = false
             }
             os_log(.error, "\(self.t)❌ Failed to load changed file count: \(error)")
         }
