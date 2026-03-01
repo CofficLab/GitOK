@@ -17,11 +17,9 @@ class GitDetailPlugin: NSObject, SuperPlugin {
     /// 插件默认启用状态
     static var defaultEnabled: Bool = true
 
-    
-
     /// 返回 Git 标签页的详情视图
     func addDetailView(for tab: String) -> AnyView? {
-        guard tab == "Git" else { return nil }
+        guard tab == GitTabPlugin.displayName else { return nil }
         return AnyView(GitDetail.shared)
     }
 }

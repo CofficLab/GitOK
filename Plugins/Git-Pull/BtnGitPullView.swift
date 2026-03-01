@@ -10,9 +10,6 @@ struct BtnGitPullView: View, SuperLog, SuperEvent, SuperThread {
     /// 是否启用详细日志输出
     nonisolated static let verbose = false
 
-    /// 环境对象：消息提供者
-    
-
     /// 环境对象：数据提供者
     @EnvironmentObject var data: DataProvider
 
@@ -123,7 +120,7 @@ extension BtnGitPullView {
 
     /// 异步更新 Git 项目状态：使用异步方式避免阻塞主线程，解决 CPU 占用 100% 的问题
     func updateIsGitProjectAsync() async {
-        let isGit = await data.project?.isGitAsync() ?? false
+        let isGit = data.project?.isGit() ?? false
         await MainActor.run {
             self.isGitProject = isGit
         }
@@ -140,8 +137,13 @@ extension BtnGitPullView {
         }
 
         // 启动自动拉取管理器
-        AutoPullManager.shared.setDataProvider(data)
-        AutoPullManager.shared.start()
+        Task.detached(priority: .utility) {
+            try? await Task.sleep(nanoseconds: 3_000_000_000) // 3 秒延迟
+            await MainActor.run {
+                AutoPullManager.shared.setDataProvider(data)
+                AutoPullManager.shared.start()
+            }
+        }
     }
 
     /// 视图消失时的事件处理

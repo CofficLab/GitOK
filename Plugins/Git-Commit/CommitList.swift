@@ -27,9 +27,6 @@ struct CommitList: View, SuperThread, SuperLog {
     /// 是否正在加载数据
     @State private var loading = false
 
-    /// 是否正在刷新数据
-    @State private var isRefreshing = false
-
     /// 是否还有更多提交可以加载
     @State private var hasMoreCommits = true
 
@@ -63,7 +60,7 @@ struct CommitList: View, SuperThread, SuperLog {
                                 .inMagicHStackCenter()
                                 .inMagicVStackCenter()
                         } else {
-                            CurrentWorkingStateView()
+                            CurrentWorkingStateView(isRefreshing: $loading)
                             commitListView
                         }
                     }
@@ -79,7 +76,7 @@ struct CommitList: View, SuperThread, SuperLog {
         .onProjectDidCommit(perform: onCommitSuccess)
         .onProjectDidPull(perform: onPullSuccess)
         .onProjectDidPush(perform: onPushSuccess)
-        .onApplicationDidBecomeActive(perform: onApplicationDidBecomeActive)
+        .onApplicationWillBecomeActive(perform: onAppWillBecomeActive)
     }
 }
 
@@ -91,27 +88,6 @@ extension CommitList {
         ScrollView {
             LazyVStack(spacing: 0, pinnedViews: []) {
                 Divider()
-
-                // 顶部加载指示器
-                if isRefreshing {
-                    HStack {
-                        Spacer()
-                        ProgressView()
-                            .controlSize(.small)
-                        Text("正在刷新")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                        Spacer()
-                    }
-                    .padding(.vertical, 8)
-                    .background(Color(NSColor.controlBackgroundColor))
-                    .overlay(
-                        Rectangle()
-                            .frame(height: 0.5)
-                            .foregroundColor(Color(NSColor.separatorColor)),
-                        alignment: .bottom
-                    )
-                }
 
                 ForEach(commits.indices, id: \.self) { index in
                     let commit = commits[index]
@@ -237,11 +213,10 @@ extension CommitList {
         // 取消之前的刷新任务
         currentRefreshTask?.cancel()
         currentRefreshWorkerTask?.cancel()
-        
+
         // 在主线程更新 UI 状态
-        self.isRefreshing = true
         self.loading = true
-        
+
         currentPage = 0
         hasMoreCommits = true
 
@@ -251,26 +226,26 @@ extension CommitList {
         // 启动新任务
         currentRefreshTask = Task {
             if Task.isCancelled { return }
-            
+
             do {
                 // 使用 Task.detached 在后台执行异步操作
                 let worker = Task.detached(priority: .userInitiated) {
                     try Task.checkCancellation()
-                    
+
                     if Self.verbose {
                         os_log("\(Self.t)🍋 Refresh(\(reason))")
                     }
-                    
+
                     let commits = try project.getCommitsWithPagination(
                         0, limit: pageSize
                     )
-                    
+
                     try Task.checkCancellation()
 
                     // 获取未推送的 commits
                     let unpushed = try await project.getUnPushedCommits()
                     let unpushedHashes = Set(unpushed.map { $0.hash })
-                    
+
                     return (commits, unpushedHashes)
                 }
                 currentRefreshWorkerTask = worker
@@ -283,7 +258,6 @@ extension CommitList {
                     self.commits = initialCommits
                     self.unpushedCommits = unpushedHashes
                     self.loading = false
-                    self.isRefreshing = false
                     self.currentPage = 1 // Next page to load
                 }
             } catch {
@@ -294,7 +268,6 @@ extension CommitList {
                     self.commits = []
                     self.unpushedCommits = []
                     self.loading = false
-                    self.isRefreshing = false
                 }
             }
         }
@@ -432,23 +405,9 @@ extension CommitList {
     }
 
     /// 应用即将变为活跃状态事件处理
-    /// - Parameter notification: 通知对象
-    func onAppWillBecomeActive(_ notification: Notification) {
-        self.refresh("AppWillBecomeActive")
-    }
-
-    /// 应用变为活跃状态事件处理
-    /// - Parameter notification: 通知对象
-    func onAppDidBecomeActive(_ notification: Notification) {
-        self.refresh("AppDidBecomeActive")
-    }
-
-    /// 应用变为活跃状态事件处理（通用版本）
-    func onApplicationDidBecomeActive() {
+    func onAppWillBecomeActive() {
         Task {
-            // 延迟刷新，避免与系统恢复焦点时的其他操作竞争
-            try? await Task.sleep(nanoseconds: 800 * 1_000_000)
-            await self.refresh("ApplicationDidBecomeActive")
+            self.refresh("ApplicationWillBecomeActive")
         }
     }
 }

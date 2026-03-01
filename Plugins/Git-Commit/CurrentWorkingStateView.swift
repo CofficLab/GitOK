@@ -1,17 +1,18 @@
-import MagicKit
-import MagicAlert
+import Combine
 import LibGit2Swift
+import MagicAlert
+import MagicKit
 import OSLog
 import SwiftUI
-import Combine
 
 /// 显示当前工作状态的视图组件
 /// 显示未提交文件数量、远程同步状态，并提供 git pull 功能
 struct CurrentWorkingStateView: View, SuperLog {
     /// 环境对象：数据提供者
     @EnvironmentObject var data: DataProvider
-    /// 环境对象：消息提供者
-    
+
+    /// CommitList 是否正在刷新
+    @Binding var isRefreshing: Bool
 
     // MARK: - 本地状态
 
@@ -19,7 +20,7 @@ struct CurrentWorkingStateView: View, SuperLog {
     @State private var changedFileCount = 0
 
     /// 是否正在刷新文件列表
-    @State private var isRefreshing = false
+    @State private var isRefreshingFileList = false
 
     /// 是否被选中（当前工作状态）
     private var isSelected: Bool {
@@ -63,6 +64,11 @@ struct CurrentWorkingStateView: View, SuperLog {
 
     /// 日志标识符
     static let emoji = "🌳"
+
+    /// 初始化方法，提供默认的 binding 值
+    init(isRefreshing: Binding<Bool> = .constant(false)) {
+        _isRefreshing = isRefreshing
+    }
 
     /// 视图主体
     var body: some View {
@@ -109,7 +115,21 @@ struct CurrentWorkingStateView: View, SuperLog {
             Spacer()
 
             // 按钮显示逻辑
-            if changedFileCount == 0 {
+            if isRefreshing {
+                // 刷新中，显示 loading 提示
+                HStack(spacing: 4) {
+                    ProgressView()
+                        .controlSize(.small)
+                        .scaleEffect(0.8)
+                    Text("刷新中", tableName: "GitCommit")
+                        .font(.system(size: 12, weight: .medium))
+                        .foregroundColor(.secondary)
+                }
+                .padding(.horizontal, 12)
+                .padding(.vertical, 6)
+                .background(Color.secondary.opacity(0.1))
+                .cornerRadius(6)
+            } else if changedFileCount == 0 {
                 // 本地干净
                 if unpulledCount > 0 {
                     // 远程有新提交，显示下载按钮
@@ -247,7 +267,7 @@ extension CurrentWorkingStateView {
 
         await MainActor.run {
             data.activityStatus = String(localized: "刷新文件列表…", table: "GitCommit")
-            isRefreshing = true
+            isRefreshingFileList = true
         }
 
         do {
@@ -255,12 +275,12 @@ extension CurrentWorkingStateView {
             await MainActor.run {
                 self.changedFileCount = count
                 data.activityStatus = nil
-                isRefreshing = false
+                isRefreshingFileList = false
             }
         } catch {
             await MainActor.run {
                 data.activityStatus = nil
-                isRefreshing = false
+                isRefreshingFileList = false
             }
             os_log(.error, "\(self.t)❌ Failed to load changed file count: \(error)")
         }
@@ -320,7 +340,7 @@ extension CurrentWorkingStateView {
             }
 
             // 延迟清除状态，确保用户能看到提示（至少显示2秒）
-            try? await Task.sleep(nanoseconds: 2000_000_000)
+            try? await Task.sleep(nanoseconds: 2000000000)
             self.setStatus(nil)
         }
 
@@ -381,7 +401,7 @@ extension CurrentWorkingStateView {
                 case .success:
                     // 重新加载同步状态
                     self.loadSyncStatus()
-                case .failure(let error):
+                case let .failure(error):
                     // 检查是否需要凭据
                     if self.isCredentialError(error) {
                         self.showCredentialInput = true
@@ -441,7 +461,7 @@ extension CurrentWorkingStateView {
                 case .success:
                     // 重新加载同步状态
                     self.loadSyncStatus()
-                case .failure(let error):
+                case let .failure(error):
                     // 检查是否需要凭据
                     if self.isCredentialError(error) {
                         self.showCredentialInput = true
@@ -476,7 +496,7 @@ extension CurrentWorkingStateView {
             "unauthorized",
             "401",
             "403",
-            "forbidden"
+            "forbidden",
         ]
 
         return authKeywords.contains { errorDescription.contains($0) }
@@ -567,7 +587,7 @@ extension CurrentWorkingStateView {
     func onAppDidBecomeActive(_ notification: Notification) {
         Task {
             // 延迟 0.5 秒，让其他组件先完成刷新
-            try? await Task.sleep(nanoseconds: 500_000_000)
+            try? await Task.sleep(nanoseconds: 500000000)
             await self.loadChangedFileCount()
         }
     }
