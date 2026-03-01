@@ -1,17 +1,15 @@
-import MagicKit
-import MagicAlert
+import Combine
 import LibGit2Swift
+import MagicAlert
+import MagicKit
 import OSLog
 import SwiftUI
-import Combine
 
 /// 显示当前工作状态的视图组件
 /// 显示未提交文件数量、远程同步状态，并提供 git pull 功能
 struct CurrentWorkingStateView: View, SuperLog {
     /// 环境对象：数据提供者
     @EnvironmentObject var data: DataProvider
-    /// 环境对象：消息提供者
-    
 
     // MARK: - 本地状态
 
@@ -320,7 +318,7 @@ extension CurrentWorkingStateView {
             }
 
             // 延迟清除状态，确保用户能看到提示（至少显示2秒）
-            try? await Task.sleep(nanoseconds: 2000_000_000)
+            try? await Task.sleep(nanoseconds: 2000000000)
             self.setStatus(nil)
         }
 
@@ -381,7 +379,7 @@ extension CurrentWorkingStateView {
                 case .success:
                     // 重新加载同步状态
                     self.loadSyncStatus()
-                case .failure(let error):
+                case let .failure(error):
                     // 检查是否需要凭据
                     if self.isCredentialError(error) {
                         self.showCredentialInput = true
@@ -441,7 +439,7 @@ extension CurrentWorkingStateView {
                 case .success:
                     // 重新加载同步状态
                     self.loadSyncStatus()
-                case .failure(let error):
+                case let .failure(error):
                     // 检查是否需要凭据
                     if self.isCredentialError(error) {
                         self.showCredentialInput = true
@@ -476,7 +474,7 @@ extension CurrentWorkingStateView {
             "unauthorized",
             "401",
             "403",
-            "forbidden"
+            "forbidden",
         ]
 
         return authKeywords.contains { errorDescription.contains($0) }
@@ -567,7 +565,7 @@ extension CurrentWorkingStateView {
     func onAppDidBecomeActive(_ notification: Notification) {
         Task {
             // 延迟 0.5 秒，让其他组件先完成刷新
-            try? await Task.sleep(nanoseconds: 500_000_000)
+            try? await Task.sleep(nanoseconds: 500000000)
             await self.loadChangedFileCount()
         }
     }
