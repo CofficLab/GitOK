@@ -74,7 +74,7 @@ struct GitDetail: View, SuperEvent, SuperLog {
         .onAppear(perform: onAppear)
         .onChange(of: data.project, onProjectChange)
         .onProjectDidCommit(perform: onGitCommitSuccess)
-//        .onApplicationWillBecomeActive(perform: onAppWillBecomeActive)
+        .onApplicationWillBecomeActive(perform: onAppWillBecomeActive)
     }
 }
 

@@ -9,7 +9,7 @@ class AutoPullManager: SuperLog, SuperThread {
     // MARK: - Logging
 
     nonisolated static let emoji = "🔄"
-    nonisolated static let verbose = true
+    nonisolated static let verbose = false
 
     // MARK: - Configuration
 
