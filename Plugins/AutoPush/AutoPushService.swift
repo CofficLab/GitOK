@@ -5,18 +5,24 @@ import OSLog
 import SwiftUI
 import Combine
 
-/// 自动推送服务：监听分支变化并自动执行推送
+/// 自动推送服务：定时检查并自动执行推送
+@MainActor
 class AutoPushService: ObservableObject, SuperLog {
     static let shared = AutoPushService()
     
     nonisolated static let emoji = "🚀"
     static let verbose = true
     
+    /// 定时检查间隔（秒）
+    static let checkInterval: TimeInterval = 30.0
+    
     @Published var isPushing = false
     @Published var lastPushStatus: PushStatus?
+    @Published var isTimerRunning = false
     
     private var cancellables = Set<AnyCancellable>()
     private var dataProvider: DataProvider?
+    private var timer: Timer?
     
     enum PushStatus {
         case idle
@@ -27,60 +33,74 @@ class AutoPushService: ObservableObject, SuperLog {
     
     private init() {}
     
-    /// 注册服务，开始监听事件
+    /// 注册服务，启动定时器
     func register(dataProvider: DataProvider) {
         self.dataProvider = dataProvider
         
         if Self.verbose {
-            os_log(.info, "\(Self.t)AutoPushService registered")
+            os_log(.info, "\(Self.t)AutoPushService registered, timer interval: \(Self.checkInterval)s")
         }
         
-        // 监听分支变化事件
-        NotificationCenter.default.publisher(for: .projectDidChangeBranch)
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] notification in
-                self?.handleBranchChange(notification)
-            }
-            .store(in: &cancellables)
-        
-        // 在项目变化时检查是否需要自动推送
-        // 由于 DataProvider 是 @MainActor 隔离的，我们需要在主线程订阅
-        Task { @MainActor in
-            dataProvider.$project
-                .receive(on: DispatchQueue.main)
-                .sink { [weak self] project in
-                    if let project = project {
-                        self?.checkAndAutoPush(project: project)
-                    }
-                }
-                .store(in: &self.cancellables)
-        }
+        // 启动定时器，定时检查并推送
+        startTimer()
     }
     
-    /// 处理分支变化事件
-    private func handleBranchChange(_ notification: Notification) {
-        guard let userInfo = notification.userInfo,
-              let eventInfo = userInfo["eventInfo"] as? ProjectEventInfo else {
+    /// 启动定时器
+    func startTimer() {
+        guard timer == nil else {
+            if Self.verbose {
+                os_log(.info, "\(Self.t)Timer already running")
+            }
             return
         }
         
         if Self.verbose {
-            os_log(.info, "\(Self.t)Branch changed: \(eventInfo.project.path) -> \(eventInfo.additionalInfo?["branchName"] as? String ?? "unknown")")
+            os_log(.info, "\(Self.t)Starting timer...")
         }
         
-        checkAndAutoPush(project: eventInfo.project)
+        // 立即执行一次检查
+        checkAndAutoPushForCurrentProject()
+        
+        // 创建定时器
+        timer = Timer.scheduledTimer(withTimeInterval: Self.checkInterval, repeats: true) { [weak self] _ in
+            Task { @MainActor in
+                self?.checkAndAutoPushForCurrentProject()
+            }
+        }
+        
+        withAnimation {
+            isTimerRunning = true
+        }
     }
     
-    /// 检查并执行自动推送
-    private func checkAndAutoPush(project: Project) {
-        // 确保在主线程执行
-        guard Thread.isMainThread else {
-            DispatchQueue.main.async {
-                self.checkAndAutoPush(project: project)
+    /// 停止定时器
+    func stopTimer() {
+        if Self.verbose {
+            os_log(.info, "\(Self.t)Stopping timer...")
+        }
+        
+        timer?.invalidate()
+        timer = nil
+        
+        withAnimation {
+            isTimerRunning = false
+        }
+    }
+    
+    /// 检查当前项目并执行自动推送
+    private func checkAndAutoPushForCurrentProject() {
+        guard let project = dataProvider?.project else {
+            if Self.verbose {
+                os_log(.info, "\(Self.t)No project selected, skip auto push")
             }
             return
         }
         
+        checkAndAutoPush(project: project)
+    }
+    
+    /// 检查并执行自动推送
+    private func checkAndAutoPush(project: Project) {
         // 获取当前分支
         guard let currentBranch = try? project.getCurrentBranch() else {
             if Self.verbose {
@@ -215,7 +235,6 @@ class AutoPushService: ObservableObject, SuperLog {
     
     /// 显示错误提示
     private func alertError(_ error: Error) {
-        DispatchQueue.main.async {
-        }
+        // 空实现，错误已在 performPush 中处理
     }
 }
