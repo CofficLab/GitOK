@@ -9,7 +9,9 @@ struct AutoPushConfigView: View, SuperLog {
     @EnvironmentObject var data: DataProvider
     @Environment(\.dismiss) private var dismiss
     
-    @StateObject private var settingsStore = AutoPushSettingsStore.shared
+    /// 修复：使用 ObservedObject 而不是 StateObject，避免创建新实例
+    @ObservedObject private var settingsStore = AutoPushSettingsStore.shared
+    
     @State private var currentProjectAutoPushEnabled = false
     @State private var isLoading = false
     @State private var statusMessage: String?
@@ -176,7 +178,7 @@ struct AutoPushConfigView: View, SuperLog {
                     }
                 }
                 
-                Text("启用后，当切换到该分支时会自动推送到远程仓库")
+                Text("启用后，将定时自动推送到远程仓库（每 30 秒检查一次）")
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
