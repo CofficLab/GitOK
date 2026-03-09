@@ -543,8 +543,32 @@ extension Project {
     /// - Throws: Git操作异常
     func discardFileChanges(_ filePath: String) throws {
         do {
-            // 使用 LibGit2Swift 丢弃工作区的更改
-            try LibGit2.checkoutFile(filePath, at: self.path)
+            // 未跟踪文件不在 HEAD 中，checkout 不会删除，需要物理删除
+            let unstagedFiles = try LibGit2.getDiffFileList(at: self.path, staged: false)
+            let isUntrackedFile = unstagedFiles.contains {
+                $0.file == filePath && ($0.changeType == "?" || $0.changeType.uppercased() == "UNTRACKED")
+            }
+
+            if isUntrackedFile {
+                let repoURL = URL(fileURLWithPath: self.path, isDirectory: true)
+                let targetURL = URL(fileURLWithPath: filePath, relativeTo: repoURL).standardizedFileURL
+
+                // 防止路径逃逸到仓库外
+                guard targetURL.path.hasPrefix(repoURL.standardizedFileURL.path + "/") else {
+                    throw NSError(
+                        domain: "GitOK",
+                        code: -1,
+                        userInfo: [NSLocalizedDescriptionKey: "非法文件路径: \(filePath)"]
+                    )
+                }
+
+                if FileManager.default.fileExists(atPath: targetURL.path) {
+                    try FileManager.default.removeItem(at: targetURL)
+                }
+            } else {
+                // 使用 LibGit2Swift 丢弃已跟踪文件的更改
+                try LibGit2.checkoutFile(filePath, at: self.path)
+            }
 
             postEvent(
                 name: .projectDidCommit,
