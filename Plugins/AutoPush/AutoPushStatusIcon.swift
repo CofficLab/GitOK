@@ -12,6 +12,9 @@ struct AutoPushStatusIcon: View, SuperLog {
     @State private var hasRemoteBranch = false
     @State private var serviceRegistered = false
     
+    /// 订阅设置存储的变化
+    @ObservedObject private var settingsStore = AutoPushSettingsStore.shared
+    
     static let shared = AutoPushStatusIcon()
     
     init() {}
@@ -32,13 +35,21 @@ struct AutoPushStatusIcon: View, SuperLog {
                 serviceRegistered = true
                 AutoPushService.shared.register(dataProvider: data)
                 if AutoPushService.verbose {
-                    os_log(.info, "AutoPushService registered from status icon")
+                    os_log(.info, "\(Self.t)AutoPushService registered from status icon")
                 }
             }
             updateStatus()
         }
-        .onChange(of: data.project, updateStatus)
-        .onChange(of: data.branch, updateStatus)
+        .onChange(of: data.project) { _, _ in
+            updateStatus()
+        }
+        .onChange(of: data.branch) { _, _ in
+            updateStatus()
+        }
+        // 监听设置变化，当配置改变时自动更新状态
+        .onChange(of: settingsStore.settings) { _, _ in
+            updateStatus()
+        }
     }
     
     private func updateStatus() {

@@ -36,7 +36,7 @@ struct CommitList: View, SuperThread, SuperLog {
     /// 每页加载的提交数量
     @State private var pageSize: Int = 50
 
-    /// 未推送提交的哈希集合
+    /// 未推送提交的哈希集合（由 CommitList 统一管理，避免竞争条件）
     @State private var unpushedCommits: Set<String> = []
 
     /// 是否已调度加载更多操作（防止快速连续触发）
@@ -95,7 +95,7 @@ extension CommitList {
                     CommitRow(commit: commit, isUnpushed: isUnpushed)
                         .id(commit.hash) // 根据 commit hash 强制视图刷新，避免状态复用
                         .onAppear {
-                            // 只在最后几个commit出现时触发加载更多
+                            // 只在最后几个 commit 出现时触发加载更多
                             let threshold = max(commits.count - 10, Int(Double(commits.count) * 0.8))
 
                             if index >= threshold && hasMoreCommits && !loading && !isLoadingMoreScheduled {
@@ -158,7 +158,7 @@ extension CommitList {
 
                 await MainActor.run {
                     if !newCommits.isEmpty {
-                        // 添加去重逻辑，防止重复添加相同的commit
+                        // 添加去重逻辑，防止重复添加相同的 commit
                         let uniqueNewCommits = newCommits.filter { newCommit in
                             !currentCommits.contains { existingCommit in
                                 existingCommit.hash == newCommit.hash
@@ -191,7 +191,7 @@ extension CommitList {
     private func selectCommit(_ commit: GitCommit) {
         data.setCommit(commit)
 
-        // 保存选择的commit
+        // 保存选择的 commit
         if let projectPath = data.project?.path {
             commitRepo.saveLastSelectedCommit(projectPath: projectPath, commit: commit)
         }
@@ -273,18 +273,49 @@ extension CommitList {
         }
     }
 
+    /// 刷新未推送状态（不重新加载提交列表）
+    /// 用于推送成功后快速更新 UI 状态
+    func refreshUnpushedStatus() {
+        guard let project = data.project else {
+            return
+        }
+
+        if Self.verbose {
+            os_log("\(Self.t)🔄 Refreshing unpushed status only")
+        }
+
+        Task.detached(priority: .userInitiated) {
+            do {
+                let unpushed = try await project.getUnPushedCommits()
+                let unpushedHashes = Set(unpushed.map { $0.hash })
+
+                if Self.verbose {
+                    os_log("\(Self.t)📊 Unpushed status updated: \(unpushedHashes.count) commits")
+                }
+
+                await MainActor.run {
+                    self.unpushedCommits = unpushedHashes
+                }
+            } catch {
+                if Self.verbose {
+                    os_log(.error, "\(Self.t)❌ Failed to refresh unpushed status: \(error)")
+                }
+            }
+        }
+    }
+
     /// 恢复上次选择的提交
     /// 从本地存储中恢复用户之前选择的提交位置
     private func restoreLastSelectedCommit() {
         guard let project = data.project else { return }
 
-        // 获取上次选择的commit hash
+        // 获取上次选择的 commit hash
         if let lastCommitHash = commitRepo.getLastSelectedCommitHash(projectPath: project.path) {
-            // 在当前commit列表中查找匹配的commit
+            // 在当前 commit 列表中查找匹配的 commit
             if let matchedCommit = commits.first(where: { $0.hash == lastCommitHash }) {
                 self.setCommit(matchedCommit)
             } else if hasMoreCommits {
-                // 如果在当前页面没有找到，并且还有更多commit，尝试加载更多
+                // 如果在当前页面没有找到，并且还有更多 commit，尝试加载更多
                 loadMoreCommitsUntilFound(targetHash: lastCommitHash)
             }
         } else {
@@ -323,9 +354,9 @@ extension CommitList {
                         self.commits.append(contentsOf: uniqueNewCommits)
                         self.currentPage += 1
 
-                        // 检查是否找到目标commit
+                        // 检查是否找到目标 commit
                         if let matchedCommit = newCommits.first(where: { $0.hash == targetHash }) {
-                            // 选择找到的commit
+                            // 选择找到的 commit
                             self.setCommit(matchedCommit)
                         } else if self.hasMoreCommits {
                             // 如果还没找到，继续加载更多
@@ -398,10 +429,14 @@ extension CommitList {
         self.refresh("GitPullSuccess")
     }
 
-    /// 推送成功事件处理
+    /// 推送成功事件处理 - 只刷新未推送状态，不重新加载提交列表
     /// - Parameter eventInfo: 事件信息
     func onPushSuccess(_ eventInfo: ProjectEventInfo) {
-        self.refresh("GitPushSuccess")
+        if Self.verbose {
+            os_log("\(Self.t)🚀 Git push success - refreshing unpushed status only")
+        }
+        // 只更新未推送状态，避免不必要的提交列表重新加载
+        self.refreshUnpushedStatus()
     }
 
     /// 应用即将变为活跃状态事件处理

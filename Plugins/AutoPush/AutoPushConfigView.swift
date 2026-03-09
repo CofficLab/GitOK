@@ -9,7 +9,9 @@ struct AutoPushConfigView: View, SuperLog {
     @EnvironmentObject var data: DataProvider
     @Environment(\.dismiss) private var dismiss
     
-    @StateObject private var settingsStore = AutoPushSettingsStore.shared
+    /// 修复：使用 ObservedObject 而不是 StateObject，避免创建新实例
+    @ObservedObject private var settingsStore = AutoPushSettingsStore.shared
+    
     @State private var currentProjectAutoPushEnabled = false
     @State private var isLoading = false
     @State private var statusMessage: String?
@@ -96,10 +98,10 @@ struct AutoPushConfigView: View, SuperLog {
         .onAppear {
             updateCurrentProjectStatus()
         }
-        .onChange(of: data.project) { _ in
+        .onChange(of: data.project) { _, _ in
             updateCurrentProjectStatus()
         }
-        .onChange(of: data.branch) { _ in
+        .onChange(of: data.branch) { _, _ in
             updateCurrentProjectStatus()
         }
     }
@@ -162,6 +164,10 @@ struct AutoPushConfigView: View, SuperLog {
                     }
                     .toggleStyle(.switch)
                     .disabled(!project.isGitRepo)
+                    .onChange(of: currentProjectAutoPushEnabled) { _, newValue in
+                        // 关键修复：切换开关时保存到设置存储（后台执行）
+                        saveCurrentProjectSetting(project: project, branch: branch, enabled: newValue)
+                    }
                     
                     Spacer()
                     
@@ -176,7 +182,7 @@ struct AutoPushConfigView: View, SuperLog {
                     }
                 }
                 
-                Text("启用后，当切换到该分支时会自动推送到远程仓库")
+                Text("启用后，将定时自动推送到远程仓库（每 30 秒检查一次）")
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
@@ -208,7 +214,7 @@ struct AutoPushConfigView: View, SuperLog {
             
             if settingsStore.settings.isEmpty {
                 VStack(spacing: 16) {
-                    Image(systemName: "arrow.up.circle.dashed")
+                    Image.cloudUpload
                         .font(.system(size: 48))
                         .foregroundColor(.secondary)
                     Text("暂无配置")
@@ -249,9 +255,36 @@ struct AutoPushConfigView: View, SuperLog {
         )
     }
     
+    /// 保存当前项目的自动推送设置（后台执行）
+    private func saveCurrentProjectSetting(project: Project, branch: GitBranch, enabled: Bool) {
+        // 保存设置（已经是线程安全的）
+        settingsStore.setAutoPushEnabled(
+            for: project.path,
+            branchName: branch.name,
+            enabled: enabled
+        )
+        
+        // 如果启用，在后台执行推送
+        if enabled {
+            Task.detached {
+                await self.performPush(project: project, branch: branch)
+            }
+        }
+        
+        // 更新状态消息（主线程）
+        Task { @MainActor in
+            self.statusMessage = "\(enabled ? "已启用" : "已禁用") 自动推送：\(project.title)/\(branch.name)"
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                self.statusMessage = nil
+            }
+        }
+    }
+    
     private func toggleAutoPush(_ config: ProjectBranchAutoPushConfig) {
         let newStatus = !config.isEnabled
         
+        // 保存设置（后台）
         settingsStore.setAutoPushEnabled(
             for: config.projectPath,
             branchName: config.branchName,
@@ -262,39 +295,52 @@ struct AutoPushConfigView: View, SuperLog {
         if let project = data.project,
            let branch = data.branch,
            config.projectPath == project.path && config.branchName == branch.name {
-            withAnimation {
-                currentProjectAutoPushEnabled = newStatus
+            Task { @MainActor in
+                withAnimation {
+                    self.currentProjectAutoPushEnabled = newStatus
+                }
+            }
+            
+            // 如果启用且是当前项目，在后台执行推送
+            if newStatus {
+                Task.detached {
+                    await self.performPush(project: project, branch: branch)
+                }
             }
         }
         
-        // 如果启用且是当前项目，立即执行一次推送
-        if newStatus && isCurrentProject(config: config) {
-            performPush()
-        }
-        
-        statusMessage = "\(newStatus ? "已启用" : "已禁用") 自动推送：\(config.projectTitle)/\(config.branchName)"
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-            statusMessage = nil
+        // 更新状态消息
+        Task { @MainActor in
+            self.statusMessage = "\(newStatus ? "已启用" : "已禁用") 自动推送：\(config.projectTitle)/\(config.branchName)"
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                self.statusMessage = nil
+            }
         }
     }
     
     private func deleteConfig(_ config: ProjectBranchAutoPushConfig) {
+        // 删除配置（后台）
         settingsStore.removeConfig(for: config.projectPath, branchName: config.branchName)
         
         // 如果删除的是当前项目分支，同步更新状态
         if let project = data.project,
            let branch = data.branch,
            config.projectPath == project.path && config.branchName == branch.name {
-            withAnimation {
-                currentProjectAutoPushEnabled = false
+            Task { @MainActor in
+                withAnimation {
+                    self.currentProjectAutoPushEnabled = false
+                }
             }
         }
         
-        statusMessage = "已删除配置：\(config.projectTitle)/\(config.branchName)"
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-            statusMessage = nil
+        // 更新状态消息
+        Task { @MainActor in
+            self.statusMessage = "已删除配置：\(config.projectTitle)/\(config.branchName)"
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                self.statusMessage = nil
+            }
         }
     }
     
@@ -307,45 +353,46 @@ struct AutoPushConfigView: View, SuperLog {
     }
     
     private func hasRemoteBranch(project: Project) -> Bool {
-        // 简单检查是否有 remote
+        // 同步检查远程仓库（在 UI 中直接调用，不阻塞）
         return (try? project.remoteList().isEmpty) == false
     }
     
-    private func performPush() {
-        guard let project = data.project else { return }
+    /// 执行推送操作（后台执行）
+    private func performPush(project: Project, branch: GitBranch) async {
+        await Task { @MainActor in
+            self.isLoading = true
+            self.statusMessage = "正在推送..."
+        }.value
         
-        isLoading = true
-        statusMessage = "正在推送..."
-        
-        Task {
-            do {
+        do {
+            try await Task.detached {
                 try project.push()
-                await MainActor.run {
-                    isLoading = false
-                    statusMessage = "推送成功"
-                    
-                    // 更新最后推送时间
-                    if let branch = data.branch {
-                        AutoPushSettingsStore.shared.updateLastPushedDate(
-                            for: project.path,
-                            branchName: branch.name
-                        )
-                    }
-                    
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                        statusMessage = nil
-                    }
+            }.value
+            
+            // 更新最后推送时间
+            AutoPushSettingsStore.shared.updateLastPushedDate(
+                for: project.path,
+                branchName: branch.name
+            )
+            
+            await Task { @MainActor in
+                self.isLoading = false
+                self.statusMessage = "推送成功"
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                    self.statusMessage = nil
                 }
-            } catch {
-                await MainActor.run {
-                    isLoading = false
-                    statusMessage = "推送失败：\(error.localizedDescription)"
-                    
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                        statusMessage = nil
-                    }
+            }.value
+            
+        } catch {
+            await Task { @MainActor in
+                self.isLoading = false
+                self.statusMessage = "推送失败：\(error.localizedDescription)"
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                    self.statusMessage = nil
                 }
-            }
+            }.value
         }
     }
 }

@@ -2,21 +2,26 @@ import Foundation
 import LibGit2Swift
 import MagicKit
 import OSLog
-import SwiftUI
 import Combine
+import SwiftUI
 
-/// 自动推送服务：监听分支变化并自动执行推送
+/// 自动推送服务：定时检查并自动执行推送（后台执行）
 class AutoPushService: ObservableObject, SuperLog {
     static let shared = AutoPushService()
     
     nonisolated static let emoji = "🚀"
     static let verbose = true
     
+    /// 定时检查间隔（秒）
+    static let checkInterval: TimeInterval = 30.0
+    
     @Published var isPushing = false
     @Published var lastPushStatus: PushStatus?
+    @Published var isTimerRunning = false
     
     private var cancellables = Set<AnyCancellable>()
-    private var dataProvider: DataProvider?
+    private weak var dataProvider: DataProvider?
+    private var timer: Timer?
     
     enum PushStatus {
         case idle
@@ -27,73 +32,104 @@ class AutoPushService: ObservableObject, SuperLog {
     
     private init() {}
     
-    /// 注册服务，开始监听事件
+    /// 注册服务，启动定时器
     func register(dataProvider: DataProvider) {
         self.dataProvider = dataProvider
         
         if Self.verbose {
-            os_log(.info, "\(Self.t)AutoPushService registered")
+            os_log(.info, "\(Self.t)AutoPushService registered, timer interval: \(Self.checkInterval)s")
         }
         
-        // 监听分支变化事件
-        NotificationCenter.default.publisher(for: .projectDidChangeBranch)
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] notification in
-                self?.handleBranchChange(notification)
-            }
-            .store(in: &cancellables)
-        
-        // 在项目变化时检查是否需要自动推送
-        // 由于 DataProvider 是 @MainActor 隔离的，我们需要在主线程订阅
-        Task { @MainActor in
-            dataProvider.$project
-                .receive(on: DispatchQueue.main)
-                .sink { [weak self] project in
-                    if let project = project {
-                        self?.checkAndAutoPush(project: project)
-                    }
-                }
-                .store(in: &self.cancellables)
-        }
+        // 启动定时器，定时检查并推送
+        startTimer()
     }
     
-    /// 处理分支变化事件
-    private func handleBranchChange(_ notification: Notification) {
-        guard let userInfo = notification.userInfo,
-              let eventInfo = userInfo["eventInfo"] as? ProjectEventInfo else {
+    /// 启动定时器
+    func startTimer() {
+        guard timer == nil else {
+            if Self.verbose {
+                os_log(.info, "\(Self.t)Timer already running")
+            }
             return
         }
         
         if Self.verbose {
-            os_log(.info, "\(Self.t)Branch changed: \(eventInfo.project.path) -> \(eventInfo.additionalInfo?["branchName"] as? String ?? "unknown")")
+            os_log(.info, "\(Self.t)Starting timer...")
         }
         
-        checkAndAutoPush(project: eventInfo.project)
+        // 立即执行一次检查（在后台）
+        Task.detached { [weak self] in
+            await self?.checkAndAutoPushForCurrentProject()
+        }
+        
+        // 创建定时器，在后台执行检查
+        timer = Timer.scheduledTimer(withTimeInterval: Self.checkInterval, repeats: true) { [weak self] _ in
+            Task.detached { [weak self] in
+                await self?.checkAndAutoPushForCurrentProject()
+            }
+        }
+        
+        Task { @MainActor in
+            withAnimation {
+                self.isTimerRunning = true
+            }
+        }
     }
     
-    /// 检查并执行自动推送
-    private func checkAndAutoPush(project: Project) {
-        // 确保在主线程执行
-        guard Thread.isMainThread else {
-            DispatchQueue.main.async {
-                self.checkAndAutoPush(project: project)
+    /// 停止定时器
+    func stopTimer() {
+        if Self.verbose {
+            os_log(.info, "\(Self.t)Stopping timer...")
+        }
+        
+        timer?.invalidate()
+        timer = nil
+        
+        Task { @MainActor in
+            withAnimation {
+                self.isTimerRunning = false
+            }
+        }
+    }
+    
+    /// 检查当前项目并执行自动推送
+    private func checkAndAutoPushForCurrentProject() async {
+        // 确保在主线程获取数据（DataProvider 可能是 @MainActor）
+        let project: Project? = await Task { @MainActor in
+            self.dataProvider?.project
+        }.value
+        
+        guard let project = project else {
+            if Self.verbose {
+                os_log(.info, "\(Self.t)No project selected, skip auto push")
             }
             return
         }
         
-        // 获取当前分支
-        guard let currentBranch = try? project.getCurrentBranch() else {
+        await checkAndAutoPush(project: project)
+    }
+    
+    /// 检查并执行自动推送
+    private func checkAndAutoPush(project: Project) async {
+        // 获取当前分支（可能在后台执行）
+        let currentBranch: GitBranch? = await Task.detached {
+            try? project.getCurrentBranch()
+        }.value
+        
+        guard let currentBranch = currentBranch else {
             if Self.verbose {
                 os_log(.info, "\(Self.t)Cannot get current branch, skip auto push")
             }
             return
         }
         
-        // 检查是否启用了自动推送
-        let isEnabled = AutoPushSettingsStore.shared.isAutoPushEnabled(
-            for: project.path,
-            branchName: currentBranch.name
-        )
+        // 检查是否启用了自动推送（后台读取）
+        let isEnabled = await Task.detached {
+            AutoPushSettingsStore.shared.isAutoPushEnabled(
+                for: project.path,
+                branchName: currentBranch.name
+            )
+        }.value
         
         if !isEnabled {
             if Self.verbose {
@@ -110,34 +146,52 @@ class AutoPushService: ObservableObject, SuperLog {
             return
         }
         
-        // 检查是否有远程仓库
-        guard let remoteURL = LibGit2.getRemoteURL(at: project.path, remote: "origin"),
-              !remoteURL.isEmpty else {
+        // 检查是否有远程仓库（后台执行）
+        let hasRemote = await Task.detached {
+            guard let remoteURL = LibGit2.getRemoteURL(at: project.path, remote: "origin"),
+                  !remoteURL.isEmpty else {
+                return false
+            }
+            return true
+        }.value
+        
+        if !hasRemote {
             if Self.verbose {
                 os_log(.info, "\(Self.t)No remote repository configured, skip auto push")
             }
             return
         }
         
-        // 执行推送
-        performPush(project: project, branchName: currentBranch.name)
+        // 执行推送（完全在后台）
+        await performPush(project: project, branchName: currentBranch.name)
     }
     
-    /// 执行推送操作
-    private func performPush(project: Project, branchName: String) {
-        guard !isPushing else {
+    /// 执行推送操作（完全在后台）
+    private func performPush(project: Project, branchName: String) async {
+        // 检查是否正在推送
+        let currentlyPushing = await Task { @MainActor in
+            self.isPushing
+        }.value
+        
+        guard !currentlyPushing else {
             if Self.verbose {
                 os_log(.info, "\(Self.t)Already pushing, skip")
             }
             return
         }
         
-        withAnimation {
-            isPushing = true
-            lastPushStatus = .pushing
-        }
+        // 更新 UI 状态
+        await Task { @MainActor in
+            withAnimation {
+                self.isPushing = true
+                self.lastPushStatus = .pushing
+            }
+        }.value
         
-        Task.detached {
+        // 在后台执行推送
+        await Task.detached { [weak self] in
+            guard let self = self else { return }
+            
             do {
                 // 检查是否有未推送的提交
                 let unpushedCommits = try LibGit2.getUnPushedCommits(at: project.path, verbose: false)
@@ -146,12 +200,7 @@ class AutoPushService: ObservableObject, SuperLog {
                     if Self.verbose {
                         os_log(.info, "\(Self.t)No unpushed commits, skip push")
                     }
-                    await MainActor.run {
-                        withAnimation {
-                            self.isPushing = false
-                            self.lastPushStatus = .idle
-                        }
-                    }
+                    await self.updateStatus(.idle)
                     return
                 }
                 
@@ -159,63 +208,57 @@ class AutoPushService: ObservableObject, SuperLog {
                     os_log(.info, "\(Self.t)Pushing \(unpushedCommits.count) commit(s) to remote...")
                 }
                 
-                // 执行推送
+                // 执行推送（耗时操作）
                 try project.push()
                 
                 // 更新最后推送时间
-                await MainActor.run {
-                    AutoPushSettingsStore.shared.updateLastPushedDate(
-                        for: project.path,
-                        branchName: branchName
-                    )
+                AutoPushSettingsStore.shared.updateLastPushedDate(
+                    for: project.path,
+                    branchName: branchName
+                )
+                
+                if Self.verbose {
+                    os_log(.info, "\(Self.t)Auto push succeeded")
                 }
                 
-                await MainActor.run {
-                    withAnimation {
-                        self.isPushing = false
-                        self.lastPushStatus = .success
-                    }
-                    
-                    if Self.verbose {
-                        os_log(.info, "\(Self.t)Auto push succeeded")
-                    }
-                    
-                    // 3 秒后重置状态
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                        withAnimation {
-                            self.lastPushStatus = .idle
-                        }
-                    }
-                }
+                await self.updateStatus(.success)
+                
+                // 3 秒后重置状态
+                try? await Task.sleep(nanoseconds: 3_000_000_000)
+                await self.updateStatus(.idle)
                 
             } catch {
-                await MainActor.run {
-                    withAnimation {
-                        self.isPushing = false
-                        self.lastPushStatus = .failed(error)
-                    }
-                    
-                    if Self.verbose {
-                        os_log(.error, "\(Self.t)Auto push failed: \(error.localizedDescription)")
-                    }
-                    
-                    // 显示错误提示
-                    self.alertError(error)
-                    
-                    // 5 秒后重置状态
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
-                        withAnimation {
-                            self.lastPushStatus = .idle
-                        }
-                    }
+                if Self.verbose {
+                    os_log(.error, "\(Self.t)Auto push failed: \(error.localizedDescription)")
                 }
+                
+                await self.updateStatus(.failed(error))
+                
+                // 显示错误提示
+                await self.alertError(error)
+                
+                // 5 秒后重置状态
+                try? await Task.sleep(nanoseconds: 5_000_000_000)
+                await self.updateStatus(.idle)
             }
-        }
+        }.value
     }
     
-    /// 显示错误提示
-    private func alertError(_ error: Error) {
-        DispatchQueue.main.async {
-        }
+    /// 更新状态（在主线程）
+    private func updateStatus(_ status: PushStatus) async {
+        await Task { @MainActor in
+            withAnimation {
+                self.isPushing = false
+                self.lastPushStatus = status
+            }
+        }.value
+    }
+    
+    /// 显示错误提示（在主线程）
+    private func alertError(_ error: Error) async {
+        await Task { @MainActor in
+            // 可以在这里显示 NSAlert
+            // 暂时空实现，错误日志已记录
+        }.value
     }
 }
