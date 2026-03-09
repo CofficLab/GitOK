@@ -1,10 +1,13 @@
 import Foundation
 import Combine
+import MagicKit
 import OSLog
 
 /// 自动推送配置存储：管理每个项目每个分支的自动推送设置
-class AutoPushSettingsStore: ObservableObject {
+class AutoPushSettingsStore: ObservableObject, SuperLog {
     static let shared = AutoPushSettingsStore()
+    
+    nonisolated static let emoji = "💾"
 
     private let userDefaultsKey = "GitOK_AutoPushSettings"
     
@@ -19,7 +22,7 @@ class AutoPushSettingsStore: ObservableObject {
         self.settings = loadSettings()
         
         if verbose {
-            os_log(.info, "AutoPushSettingsStore loaded %d settings", settings.count)
+            os_log(.info, "%{public}@ loaded %d settings", Self.t, settings.count)
         }
     }
 
@@ -60,8 +63,8 @@ class AutoPushSettingsStore: ObservableObject {
         let key = makeKey(projectPath: projectPath, branchName: branchName)
         let enabled = settings[key]?.isEnabled == true
         if verbose {
-            os_log(.info, "isAutoPushEnabled for %{public}@/%{public}@: %{public}@", 
-                   projectPath, branchName, enabled ? "true" : "false")
+            os_log(.info, "%{public}@ isAutoPushEnabled for %{public}@/%{public}@: %{public}@", 
+                   Self.t, projectPath, branchName, enabled ? "true" : "false")
         }
         return enabled
     }
@@ -94,9 +97,9 @@ class AutoPushSettingsStore: ObservableObject {
         saveSettings()
         
         if verbose {
-            os_log(.info, "AutoPushSettingsStore set %{public}@/%{public}@ = %{public}@", 
-                   projectPath, branchName, enabled ? "true" : "false")
-            os_log(.info, "AutoPushSettingsStore saved %d settings", settings.count)
+            os_log(.info, "%{public}@ set %{public}@/%{public}@ = %{public}@", 
+                   Self.t, projectPath, branchName, enabled ? "true" : "false")
+            os_log(.info, "%{public}@ saved %d settings", Self.t, settings.count)
         }
     }
 
@@ -168,13 +171,13 @@ class AutoPushSettingsStore: ObservableObject {
         guard let data = UserDefaults.standard.data(forKey: userDefaultsKey),
               let decoded = try? JSONDecoder().decode([String: ProjectBranchAutoPushConfig].self, from: data) else {
             if verbose {
-                os_log(.info, "AutoPushSettingsStore: no settings found in UserDefaults")
+                os_log(.info, "%{public}@ no settings found in UserDefaults", Self.t)
             }
             return [:]
         }
         
         if verbose {
-            os_log(.info, "AutoPushSettingsStore loaded %d settings from UserDefaults", decoded.count)
+            os_log(.info, "%{public}@ loaded %d settings from UserDefaults", Self.t, decoded.count)
             for (key, config) in decoded {
                 os_log(.info, "  - %{public}@: enabled=%{public}@", key, config.isEnabled ? "true" : "false")
             }
@@ -190,22 +193,22 @@ class AutoPushSettingsStore: ObservableObject {
             UserDefaults.standard.synchronize() // 强制立即写入磁盘
             
             if verbose {
-                os_log(.info, "AutoPushSettingsStore saved %d settings to UserDefaults", settings.count)
+                os_log(.info, "%{public}@ saved %d settings to UserDefaults", Self.t, settings.count)
                 
                 // 验证保存的数据
                 if let savedData = UserDefaults.standard.data(forKey: userDefaultsKey),
                    let savedSettings = try? JSONDecoder().decode([String: ProjectBranchAutoPushConfig].self, from: savedData) {
-                    os_log(.info, "AutoPushSettingsStore verified: %d settings saved successfully", savedSettings.count)
+                    os_log(.info, "%{public}@ verified: %d settings saved successfully", Self.t, savedSettings.count)
                 }
             }
         } else {
-            os_log(.error, "AutoPushSettingsStore failed to encode settings")
+            os_log(.error, "%{public}@ failed to encode settings", Self.t)
         }
     }
 }
 
 /// 项目分支自动推送配置模型
-struct ProjectBranchAutoPushConfig: Codable, Identifiable {
+struct ProjectBranchAutoPushConfig: Codable, Identifiable, Equatable {
     let id: String
     let projectPath: String
     let branchName: String
