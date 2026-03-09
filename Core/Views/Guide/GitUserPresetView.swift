@@ -4,7 +4,7 @@ import MagicKit
 import OSLog
 import SwiftUI
 
-/// Git用户预设管理视图组件
+/// Git 用户预设管理视图组件
 struct GitUserPresetView: View, SuperLog {
     /// emoji 标识符
     nonisolated static let emoji = "👤"
@@ -28,6 +28,9 @@ struct GitUserPresetView: View, SuperLog {
 
     /// 是否显示管理预设表单
     @State private var showManagePresets = false
+
+    /// 管理预设按钮的 hover 状态
+    @State private var managePresetsButtonHovered = false
 
     /// 配置仓库
     private var configRepo: any GitUserConfigRepoProtocol {
@@ -123,9 +126,22 @@ struct GitUserPresetView: View, SuperLog {
             description: "添加、编辑或删除用户预设",
             icon: .iconSettings
         ) {
-            Image.settings.inButtonWithAction {
-                showManagePresets = true
-            }
+            Image.settings
+                .inButtonWithAction {
+                    showManagePresets = true
+                }
+                .foregroundColor(managePresetsButtonHovered ? .accentColor : .primary)
+                .padding(6)
+                .background(
+                    RoundedRectangle(cornerRadius: 6)
+                        .fill(managePresetsButtonHovered ? Color.accentColor.opacity(0.15) : Color.clear)
+                )
+                .contentShape(Rectangle())
+                .onHover { hovering in
+                    withAnimation(.easeInOut(duration: 0.2)) {
+                        managePresetsButtonHovered = hovering
+                    }
+                }
         }
     }
 

@@ -24,6 +24,18 @@ struct RepositoryInfoView: View, SuperLog {
     /// 是否显示设置界面
     @State private var showSettings = false
 
+    /// Finder 按钮的 hover 状态
+    @State private var finderButtonHovered = false
+
+    /// 复制按钮的 hover 状态
+    @State private var copyButtonHovered = false
+
+    /// 远程仓库信息按钮的 hover 状态
+    @State private var remoteInfoButtonHovered = false
+
+    /// 远程仓库复制按钮的 hover 状态
+    @State private var remoteCopyButtonHovered = false
+
     var body: some View {
         MagicSettingSection(title: "仓库信息", titleAlignment: .leading) {
             VStack(spacing: 0) {
@@ -74,13 +86,39 @@ struct RepositoryInfoView: View, SuperLog {
             icon: .iconFolder
         ) {
             HStack(spacing: 8) {
-                Image.finder.inButtonWithAction {
-                    project.url.openFolder()
-                }
+                Image.finder
+                    .inButtonWithAction {
+                        project.url.openFolder()
+                    }
+                    .foregroundColor(finderButtonHovered ? .accentColor : .primary)
+                    .padding(6)
+                    .background(
+                        RoundedRectangle(cornerRadius: 6)
+                            .fill(finderButtonHovered ? Color.accentColor.opacity(0.15) : Color.clear)
+                    )
+                    .contentShape(Rectangle())
+                    .onHover { hovering in
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            finderButtonHovered = hovering
+                        }
+                    }
 
-                Image.copyIcon.inButtonWithAction {
-                    project.url.absoluteString.copy()
-                }
+                Image.copyIcon
+                    .inButtonWithAction {
+                        project.url.absoluteString.copy()
+                    }
+                    .foregroundColor(copyButtonHovered ? .accentColor : .primary)
+                    .padding(6)
+                    .background(
+                        RoundedRectangle(cornerRadius: 6)
+                            .fill(copyButtonHovered ? Color.accentColor.opacity(0.15) : Color.clear)
+                    )
+                    .contentShape(Rectangle())
+                    .onHover { hovering in
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            copyButtonHovered = hovering
+                        }
+                    }
             }
         }
     }
@@ -93,14 +131,40 @@ struct RepositoryInfoView: View, SuperLog {
         ) {
             HStack(spacing: 8) {
                 if let httpsURL = convertToHTTPSURL(remote.url) {
-                    Image.infoIcon.inButtonWithAction {
-                        httpsURL.openInBrowser()
-                    }
+                    Image.infoIcon
+                        .inButtonWithAction {
+                            httpsURL.openInBrowser()
+                        }
+                        .foregroundColor(remoteInfoButtonHovered ? .accentColor : .primary)
+                        .padding(6)
+                        .background(
+                            RoundedRectangle(cornerRadius: 6)
+                                .fill(remoteInfoButtonHovered ? Color.accentColor.opacity(0.15) : Color.clear)
+                        )
+                        .contentShape(Rectangle())
+                        .onHover { hovering in
+                            withAnimation(.easeInOut(duration: 0.2)) {
+                                remoteInfoButtonHovered = hovering
+                            }
+                        }
                 }
 
-                Image.copyIcon.inButtonWithAction {
-                    remote.url.copy()
-                }
+                Image.copyIcon
+                    .inButtonWithAction {
+                        remote.url.copy()
+                    }
+                    .foregroundColor(remoteCopyButtonHovered ? .accentColor : .primary)
+                    .padding(6)
+                    .background(
+                        RoundedRectangle(cornerRadius: 6)
+                            .fill(remoteCopyButtonHovered ? Color.accentColor.opacity(0.15) : Color.clear)
+                    )
+                    .contentShape(Rectangle())
+                    .onHover { hovering in
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            remoteCopyButtonHovered = hovering
+                        }
+                    }
             }
         }
     }
