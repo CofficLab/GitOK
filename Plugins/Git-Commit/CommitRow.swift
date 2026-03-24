@@ -1,4 +1,3 @@
-
 import LibGit2Swift
 import MagicKit
 import OSLog
@@ -19,11 +18,8 @@ struct CommitRow: View, SuperThread, SuperLog {
     /// 提交对象
     let commit: GitCommit
 
-    /// 是否未同步到远程
+    /// 是否未同步到远程（由父组件 CommitList 统一管理）
     let isUnpushed: Bool
-
-    /// 实际的未推送状态（会根据推送事件更新）
-    @State private var isActuallyUnpushed: Bool = false
 
     /// 标签文本
     @State private var tag: String = ""
@@ -107,11 +103,11 @@ struct CommitRow: View, SuperThread, SuperLog {
                     .frame(minHeight: 25)
 
                     // 右侧：未推送到远程的图标（当需要显示时）
-                    if isActuallyUnpushed {
+                    if isUnpushed {
                         Button(action: {
                             showPushPopover = true
                         }) {
-                            Image(systemName: .iconUpload)
+                            Image(systemName: "arrow.up.circle.fill")
                                 .font(.system(size: 16))
                                 .foregroundColor(.orange)
                                 .frame(width: 24, height: 24)
@@ -138,12 +134,8 @@ struct CommitRow: View, SuperThread, SuperLog {
             .buttonStyle(PlainButtonStyle())
             .background(data.commit == self.commit ? Color.accentColor.opacity(0.1) : Color.clear)
             .onAppear(perform: onAppear)
-            .onChange(of: isUnpushed) { newValue in
-                onUnpushedChange()
-            }
             .onNotification(.appWillBecomeActive, onAppWillBecomeActive)
             .onProjectDidCommit(perform: onGitCommitSuccess)
-            .onProjectDidPush(perform: onGitPushSuccess)
 
             Divider()
         }
@@ -174,8 +166,7 @@ struct CommitRow: View, SuperThread, SuperLog {
         // 执行推送
         try project.push()
 
-        // 推送成功后，更新未推送状态
-        await setUnpushedStatus(false)
+        // 注意：不再单独更新未推送状态，由父组件 CommitList 统一管理
 
         if Self.verbose {
             os_log("\(self.t)✅ Push completed successfully for commit \(commit.hash.prefix(8))")
@@ -183,18 +174,6 @@ struct CommitRow: View, SuperThread, SuperLog {
     }
 
     // MARK: - Setter
-
-    /// 设置未推送状态
-    /// - Parameter unpushed: 是否未推送
-    @MainActor
-    private func setUnpushedStatus(_ unpushed: Bool) {
-        let wasUnpushed = isActuallyUnpushed
-        isActuallyUnpushed = unpushed
-
-        if Self.verbose && wasUnpushed != unpushed {
-            os_log("\(self.t)🔄 Push status changed - commit \(commit.hash.prefix(8)) was: \(wasUnpushed), now: \(unpushed)")
-        }
-    }
 
     /// 设置标签文本
     /// - Parameter tag: 标签文本
@@ -212,7 +191,7 @@ struct CommitRow: View, SuperThread, SuperLog {
 
     // MARK: - Private Helpers
 
-    /// 异步加载commit的tag信息
+    /// 异步加载 commit 的 tag 信息
     private func loadTag() async {
         guard let project = data.project else {
             setTag("")
@@ -325,23 +304,9 @@ struct CommitRow: View, SuperThread, SuperLog {
 
     /// 视图出现时初始化状态
     func onAppear() {
-        // 初始化实际的未推送状态
-        isActuallyUnpushed = isUnpushed
-
         Task {
             await loadAvatarUsers()
             await loadTag()
-        }
-    }
-
-    /// 监听 isUnpushed 变化（用于处理外部 app 推送后的状态同步）
-    func onUnpushedChange() {
-        // 当 isUnpushed 变化时，同步更新 isActuallyUnpushed
-        if isActuallyUnpushed != isUnpushed {
-            isActuallyUnpushed = isUnpushed
-            if Self.verbose {
-                os_log("\(self.t)🔄 isUnpushed changed to \(isUnpushed) for commit \(commit.hash.prefix(8))")
-            }
         }
     }
 
@@ -359,40 +324,6 @@ struct CommitRow: View, SuperThread, SuperLog {
         }
         Task {
             await loadTag()
-        }
-    }
-
-    /// Git 推送成功时检查是否仍然未推送
-    func onGitPushSuccess(_ eventInfo: ProjectEventInfo) {
-        if Self.verbose {
-            os_log("\(self.t)🚀 Git push success - checking status for commit: \(commit.hash.prefix(8))")
-        }
-
-        // 异步检查这个 commit 是否仍然在未推送列表中
-        guard let project = data.project else {
-            if Self.verbose {
-                os_log("\(self.t)⚠️ No project available for push status check")
-            }
-            return
-        }
-
-        let commitHash = self.commit.hash
-
-        Task.detached(priority: .userInitiated) {
-            do {
-                let unpushedCommits = try await project.getUnPushedCommits()
-                let isStillUnpushed = unpushedCommits.contains { $0.hash == commitHash }
-
-                if Self.verbose {
-                    os_log("\(self.t)📊 Push status check - total unpushed: \(unpushedCommits.count), commit \(commitHash.prefix(8)) still unpushed: \(isStillUnpushed)")
-                }
-
-                await self.setUnpushedStatus(isStillUnpushed)
-            } catch {
-                if Self.verbose {
-                    os_log(.error, "\(self.t)❌ Failed to check unpushed status after push for commit \(commitHash.prefix(8)): \(error)")
-                }
-            }
         }
     }
 }
@@ -444,27 +375,27 @@ struct PushPopoverContent: View {
 
                     // 错误信息（如果有）
                     if let error = pushError {
-                            VStack(alignment: .leading, spacing: 4) {
-                                HStack(spacing: 4) {
-                                    Image(systemName: "exclamationmark.triangle.fill")
-                                        .foregroundColor(.red)
-                                    Text("推送失败", tableName: "GitCommit")
-                                        .font(.subheadline)
-                                        .fontWeight(.medium)
-                                        .foregroundColor(.red)
-                                }
-                                Text(String.localizedStringWithFormat(
-                                    String(localized: "推送失败", table: "GitCommit") + ": %@",
-                                    error.localizedDescription
-                                ))
-                                .font(.caption)
-                                .foregroundColor(.red)
+                        VStack(alignment: .leading, spacing: 4) {
+                            HStack(spacing: 4) {
+                                Image(systemName: "exclamationmark.triangle.fill")
+                                    .foregroundColor(.red)
+                                Text("推送失败", tableName: "GitCommit")
+                                    .font(.subheadline)
+                                    .fontWeight(.medium)
+                                    .foregroundColor(.red)
                             }
-                            .padding(.vertical, 8)
-                            .padding(.horizontal, 12)
-                            .background(Color.red.opacity(0.1))
-                            .cornerRadius(6)
+                            Text(String.localizedStringWithFormat(
+                                String(localized: "推送失败", table: "GitCommit") + ": %@",
+                                error.localizedDescription
+                            ))
+                            .font(.caption)
+                            .foregroundColor(.red)
                         }
+                        .padding(.vertical, 8)
+                        .padding(.horizontal, 12)
+                        .background(Color.red.opacity(0.1))
+                        .cornerRadius(6)
+                    }
 
                     // 按钮组
                     HStack(spacing: 12) {

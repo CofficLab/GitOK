@@ -3,12 +3,12 @@
     <channel>
         <title>GitOK</title>
         <item>
-            <title>2.2.15</title>
-            <pubDate>Sun, 01 Mar 2026 01:49:54 +0000</pubDate>
-            <sparkle:version>328</sparkle:version>
-            <sparkle:shortVersionString>2.2.15</sparkle:shortVersionString>
+            <title>2.2.18</title>
+            <pubDate>Mon, 09 Mar 2026 09:16:48 +0000</pubDate>
+            <sparkle:version>331</sparkle:version>
+            <sparkle:shortVersionString>2.2.18</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
-            <enclosure url="https://github.com/CofficLab/GitOK/releases/latest/download/GitOK-arm64-2_2_15.dmg" length="18365549" type="application/octet-stream" sparkle:edSignature="pWrCXEZ1VllarFwBPeTosmBvAliBEwnCa+0kHF8jzqzPiWcwHE4ea5cggWylLEa78NTCRgKtC4dYgLs5YGWrDg=="/>
+            <enclosure url="https://github.com/CofficLab/GitOK/releases/latest/download/GitOK-arm64-2_2_18.dmg" length="18479843" type="application/octet-stream" sparkle:edSignature="QnK5H0r6hPmBIwfT0rF2X1K5/HFTEPRpOryGo03/tOVuQ6A0qWdN2xKhMgCj1VkzmpUO9I0LnJ6m6GMDyONWAg=="/>
         </item>
     </channel>
 </rss>
