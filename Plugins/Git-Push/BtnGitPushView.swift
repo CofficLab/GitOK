@@ -27,7 +27,7 @@ struct BtnGitPushView: View, SuperLog, SuperThread {
 
     private init() {}
 
-    /// 视图主体：当存在项目且为 Git 仓库时显示推送按钮
+    /// 视图主体：当存在项目且为Git仓库时显示推送按钮
     var body: some View {
         ZStack {
             if let project = data.project, self.isGitProject {
@@ -85,14 +85,12 @@ extension BtnGitPushView {
             }
         }
 
-        // ✅ 修复：在后台线程执行 Git 操作，避免阻塞主线程
         Task.detached {
             await setStatus("推送中…")
-            
             do {
-                // ✅ 关键修复：push() 是阻塞操作，必须在后台线程执行，不能在 MainActor.run 中
-                try self.data.project?.push()
-                
+                try await MainActor.run {
+                    try self.data.project?.push()
+                }
                 await MainActor.run {
                     MagicMessageProvider.shared.hideLoading()
                     self.reset()
@@ -104,7 +102,6 @@ extension BtnGitPushView {
                     alert_error(error)
                 }
             }
-            
             await setStatus(nil)
             await MainActor.run {
                 onComplete()

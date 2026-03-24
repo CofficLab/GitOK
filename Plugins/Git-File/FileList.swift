@@ -46,9 +46,6 @@ struct FileList: View, SuperThread, SuperLog {
     /// 上次刷新时间，用于防抖控制
     @State private var lastRefreshTime: Date = Date.distantPast
 
-    /// 丢弃所有按钮的 hover 状态
-    @State private var discardButtonHovered = false
-
     var body: some View {
         VStack(spacing: 0) {
             fileInfoBar
@@ -81,28 +78,14 @@ extension FileList {
                 Button(action: {
                     showDiscardAllAlert = true
                 }) {
-                    HStack(spacing: 4) {
-                        Image(systemName: "arrow.uturn.backward")
-                            .font(.system(size: 12))
-                        Text("丢弃所有更改")
-                            .font(.caption)
-                    }
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 4)
-                    .background(
-                        Capsule()
-                            .fill(discardButtonHovered ? Color.red.opacity(0.15) : Color.clear)
-                    )
-                    .contentShape(Rectangle())
+                    Image(systemName: "arrow.uturn.backward")
+                        .font(.system(size: 12))
+                    Text("丢弃所有更改")
+                        .font(.caption)
                 }
                 .buttonStyle(.borderless)
-                .foregroundColor(discardButtonHovered ? .white : .red)
+                .foregroundColor(.red)
                 .help("丢弃所有文件的更改")
-                .onHover { hovering in
-                    withAnimation(.easeInOut(duration: 0.2)) {
-                        discardButtonHovered = hovering
-                    }
-                }
             }
 
             Spacer()
@@ -306,7 +289,7 @@ extension FileList {
                 self.isLoading = false
             }
             if Self.verbose {
-                os_log("\(self.t)🐜 Refresh cancelled: \(reason)")
+                os_log("\(Self.t)🐜 Refresh cancelled: \(reason)")
             }
         } catch {
             await MainActor.run {
