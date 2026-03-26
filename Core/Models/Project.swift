@@ -588,12 +588,34 @@ extension Project {
     }
 
     /// 丢弃所有工作区更改
-    /// 将工作区重置为HEAD状态，丢弃所有未提交的更改（包括已暂存和未暂存的）
-    /// - Throws: Git操作异常
+    /// 将工作区重置为 HEAD 状态，丢弃所有未提交的更改（包括已暂存和未暂存的）
+    /// - Throws: Git 操作异常
     func discardAllChanges() throws {
         do {
-            // 使用硬重置一次性丢弃所有更改（包括暂存区和工作区）
-            // 相比之前的逐个文件 checkout，这种方法能正确处理已暂存的文件
+            // 1. 首先获取所有未跟踪的文件列表
+            let unstagedFiles = try LibGit2.getDiffFileList(at: self.path, staged: false)
+            let untrackedFiles = unstagedFiles.filter { $0.changeType == "?" || $0.changeType.uppercased() == "UNTRACKED" }
+            
+            // 2. 删除所有未跟踪的文件
+            let repoURL = URL(fileURLWithPath: self.path, isDirectory: true)
+            for file in untrackedFiles {
+                let targetURL = URL(fileURLWithPath: file.file, relativeTo: repoURL).standardizedFileURL
+                
+                // 防止路径逃逸到仓库外
+                guard targetURL.path.hasPrefix(repoURL.standardizedFileURL.path + "/") else {
+                    os_log(.error, "\(self.t)⚠️ Skipping unsafe file path: \(file.file)")
+                    continue
+                }
+                
+                if FileManager.default.fileExists(atPath: targetURL.path) {
+                    try FileManager.default.removeItem(at: targetURL)
+                    if Self.verbose {
+                        os_log("\(self.t)🗑️ Deleted untracked file: \(file.file)")
+                    }
+                }
+            }
+            
+            // 3. 使用硬重置一次性丢弃所有已跟踪文件的更改（包括暂存区和工作区）
             try LibGit2.reset(to: nil, mode: "hard", at: self.path, verbose: false)
 
             postEvent(
