@@ -248,7 +248,7 @@ struct CommitRow: View, SuperThread, SuperLog {
             users.append(author)
 
             // 解析 co-authors
-            let coAuthors = self.parseCoAuthors(from: commit.message)
+            let coAuthors = await self.parseCoAuthors(from: commit.message)
             users.append(contentsOf: coAuthors)
 
             // 去重（基于邮箱）

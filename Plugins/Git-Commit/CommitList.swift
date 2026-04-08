@@ -60,7 +60,7 @@ struct CommitList: View, SuperThread, SuperLog {
                                 .inMagicHStackCenter()
                                 .inMagicVStackCenter()
                         } else {
-                            CurrentWorkingStateView(isRefreshing: $loading)
+                            WorkingStateView(isRefreshing: $loading)
                             commitListView
                         }
                     }

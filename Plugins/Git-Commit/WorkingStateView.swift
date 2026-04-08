@@ -7,7 +7,7 @@ import SwiftUI
 
 /// 显示当前工作状态的视图组件
 /// 显示未提交文件数量、远程同步状态，并提供 git pull 功能
-struct CurrentWorkingStateView: View, SuperLog {
+struct WorkingStateView: View, SuperLog {
     /// 环境对象：数据提供者
     @EnvironmentObject var data: DataProvider
 
@@ -200,7 +200,7 @@ struct CurrentWorkingStateView: View, SuperLog {
 
 // MARK: - Actions
 
-extension CurrentWorkingStateView {
+extension WorkingStateView {
     /// 加载未提交文件数量
     private func loadChangedFileCount() async {
         guard let project = data.project else {
@@ -447,7 +447,7 @@ extension CurrentWorkingStateView {
 
 // MARK: - Event Handlers
 
-extension CurrentWorkingStateView {
+extension WorkingStateView {
     /// 视图出现时的事件处理：加载状态并启动定时器
     func onAppear() {
         Task {
