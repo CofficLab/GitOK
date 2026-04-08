@@ -70,7 +70,7 @@ struct CommitForm: View, SuperLog {
             HStack {
                 VStack(alignment: .leading, spacing: 4) {
                     UserView()
-                        .frame(maxWidth: 300)
+                        .frame(maxWidth: 100)
                 }
 
                 Spacer()
@@ -82,9 +82,7 @@ struct CommitForm: View, SuperLog {
         }
         .onProjectDidCommit(perform: onProjectDidCommit)
         .onChange(of: category, onCategoryDidChange)
-        .onChange(of: commitStyle) { _, _ in
-            onCommitStyleDidChange()
-        }
+        .onChange(of: commitStyle, onCommitStyleDidChange)
         .onAppear(perform: onAppear)
     }
 }

@@ -72,7 +72,6 @@ struct BtnCommitAndPush: View, SuperLog, SuperThread {
                 setStatus(nil)
             }
         })
-        .frame(width: 150)
     }
 }
 
