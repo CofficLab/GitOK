@@ -71,11 +71,13 @@ struct CredentialInputView: View {
 
                         Spacer()
 
-                        Button(action: openTokenHelp) {
-                            Image(systemName: "questionmark.circle")
-                                .foregroundColor(.blue)
+                        AppIconButton(
+                            systemImage: "questionmark.circle",
+                            tint: .blue,
+                            size: .regular
+                        ) {
+                            openTokenHelp()
                         }
-                        .buttonStyle(.plain)
                     }
 
                     SecureField("ghp_xxxxxxxxxxxxxxxxxxxx", text: $token)
@@ -93,16 +95,14 @@ struct CredentialInputView: View {
 
             // 按钮
             HStack(spacing: 12) {
-                Button("取消") {
+                AppButton("取消", style: .secondary) {
                     dismiss()
                 }
-                .buttonStyle(.bordered)
                 .disabled(isSaving)
 
-                Button("保存凭据") {
+                AppButton("保存凭据", style: .primary) {
                     saveCredentials()
                 }
-                .buttonStyle(.borderedProminent)
                 .disabled(username.isEmpty || token.isEmpty || isSaving)
             }
             .padding(.bottom, 20)

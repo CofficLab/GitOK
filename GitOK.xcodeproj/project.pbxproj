@@ -803,6 +803,7 @@
 		F59C22452DE69D6C0018876A /* Core */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Core; sourceTree = "<group>"; };
 		F59C23152DE69D900018876A /* Resources */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (Icons, ); path = Resources; sourceTree = "<group>"; };
 		F59C238F2DE69DB30018876A /* Plugins */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Plugins; sourceTree = "<group>"; };
+		F5A3D5852F85DCC000D4DD4A /* UI */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = UI; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -841,12 +842,13 @@
 			children = (
 				0B559D792F1A5D41005C6809 /* Assets.xcassets */,
 				F59C22452DE69D6C0018876A /* Core */,
+				0B55A0222F1B0F38005C6809 /* GitOK.app */,
 				0B0E16882BD89A910078942B /* GitOK.entitlements */,
 				0B332F062BDA02BC00DFA5BB /* Info.plist */,
 				F54D04C32DF2D01300FFB434 /* Localizable.xcstrings */,
 				F59C238F2DE69DB30018876A /* Plugins */,
 				F59C23152DE69D900018876A /* Resources */,
-				0B55A0222F1B0F38005C6809 /* GitOK.app */,
+				F5A3D5852F85DCC000D4DD4A /* UI */,
 			);
 			sourceTree = "<group>";
 		};
@@ -1182,6 +1184,7 @@
 				F59C22452DE69D6C0018876A /* Core */,
 				F59C23152DE69D900018876A /* Resources */,
 				F59C238F2DE69DB30018876A /* Plugins */,
+				F5A3D5852F85DCC000D4DD4A /* UI */,
 			);
 			name = GitOK;
 			packageProductDependencies = (

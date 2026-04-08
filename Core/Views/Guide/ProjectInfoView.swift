@@ -14,14 +14,14 @@ struct ProjectInfoView: View, SuperLog {
     let project: Project
 
     var body: some View {
-        MagicSettingSection(title: "当前项目", titleAlignment: .leading) {
+        AppSettingSection(title: "当前项目", titleAlignment: .leading) {
             VStack(spacing: 0) {
-                MagicSettingRow(
+                AppSettingRow(
                     title: project.title,
                     description: project.path,
                     icon: .iconFolder
                 ) {
-                    Image.finder.inButtonWithAction {
+                    AppIconButton(systemImage: "folder", size: .regular) {
                         project.url.openFolder()
                     }
                 }

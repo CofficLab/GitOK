@@ -12,21 +12,27 @@ struct ProjectNotFoundView: View, SuperLog {
 
     /// 项目实例
     let project: Project
+    
+    @EnvironmentObject var g: DataProvider
 
     var body: some View {
-        MagicSettingSection(title: "项目状态", titleAlignment: .leading) {
+        AppSettingSection(title: "项目状态", titleAlignment: .leading) {
             VStack(spacing: 0) {
-                MagicSettingRow(
+                AppSettingRow(
                     title: "项目路径不存在",
                     description: project.path,
                     icon: .iconFolder
                 ) {
-                    BtnDeleteProject(project: project)
+                    AppIconButton(systemImage: "trash", size: .regular) {
+                        withAnimation {
+                            g.deleteProject(project, using: g.repoManager.projectRepo)
+                        }
+                    }
                 }
 
                 Divider()
 
-                MagicSettingRow(
+                AppSettingRow(
                     title: "建议处理",
                     description: "删除该失效项目后重新添加正确路径",
                     icon: .iconSettings

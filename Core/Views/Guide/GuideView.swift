@@ -73,10 +73,11 @@ struct GuideView: View, SuperLog {
 
                 // 操作按钮
                 if let action = action, let actionLabel = actionLabel {
-                    Button(action: action) {
-                        Text(actionLabel)
-                    }
-                    .buttonStyle(.borderedProminent)
+                    AppButton(
+                        LocalizedStringKey(actionLabel),
+                        style: .primary,
+                        action: action
+                    )
                 }
 
                 // 项目信息区域

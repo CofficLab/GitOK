@@ -23,9 +23,6 @@ struct CommitInfoUser: View, SuperLog {
     /// 是否显示用户信息弹窗
     @State private var showingPopup = false
 
-    /// 是否正在悬停
-    @State private var isHovering = false
-
     /// 初始化可点击用户信息组件
     /// - Parameter commit: 提交对象，用于解析用户信息
     init(commit: GitCommit) {
@@ -37,44 +34,15 @@ struct CommitInfoUser: View, SuperLog {
         if commit.author.isEmpty {
             EmptyView()
         } else {
-            Button(action: {
+            AppIconButton(
+                systemImage: "person.circle",
+                label: avatarUser?.name ?? String(localized: "Unknown", table: "GitCommit"),
+                tint: DesignTokens.Color.semantic.textSecondary,
+                size: .regular
+            ) {
                 showingPopup = true
-            }) {
-                HStack(spacing: 6) {
-                    /// 头像或回退图标
-                    if let user = avatarUser {
-                        AvatarView(user: user, size: 18)
-
-                        /// 用户名
-                        Text(user.name)
-                            .font(.caption)
-                            .foregroundColor(isHovering ? .primary : .secondary)
-                    } else {
-                        /// 回退图标
-                        Image(systemName: "person.circle")
-                            .foregroundColor(.secondary)
-                            .font(.system(size: 12))
-
-                        /// 默认文本
-                        Text("Unknown", tableName: "GitCommit")
-                            .font(.caption)
-                            .foregroundColor(isHovering ? .primary : .secondary)
-                    }
-                }
-                .padding(.horizontal, 6)
-                .padding(.vertical, 3)
-                .background(
-                    RoundedRectangle(cornerRadius: 6)
-                        .fill(isHovering ? Color.secondary.opacity(0.2) : Color.clear)
-                )
-                .scaleEffect(isHovering ? 1.02 : 1.0)
-                .animation(.easeInOut(duration: 0.2), value: isHovering)
             }
-            .buttonStyle(.plain)
             .help(String(localized: "点击查看用户信息", table: "GitCommit"))
-            .onHover { hovering in
-                isHovering = hovering
-            }
             .popover(isPresented: $showingPopup, arrowEdge: .bottom) {
                 /// 直接使用 avatarUser
                 if let user = avatarUser {

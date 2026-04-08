@@ -22,7 +22,11 @@ struct BtnCommitAndPush: View, SuperLog, SuperThread {
 
     /// 按钮视图主体
     var body: some View {
-        Label(commitOnly ? "提交" : "提交并推送", systemImage: .iconUpload).inButtonWithAction {
+        AppButton(
+            commitOnly ? "提交" : "提交并推送",
+            systemImage: .iconUpload,
+            style: .primary,
+            action: {
             guard let project = g.project else {
                 return
             }
@@ -67,12 +71,7 @@ struct BtnCommitAndPush: View, SuperLog, SuperThread {
 
                 setStatus(nil)
             }
-        }
-        .frame(height: 40)
-        .frame(width: 150)
-        .background(Color.accentColor.opacity(0.2))
-        .roundedMedium()
-        .hoverScale(105)
+        })
     }
 }
 

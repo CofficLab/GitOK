@@ -104,15 +104,13 @@ struct CommitRow: View, SuperThread, SuperLog {
 
                     // 右侧：未推送到远程的图标（当需要显示时）
                     if isUnpushed {
-                        Button(action: {
+                        AppIconButton(
+                            systemImage: "arrow.up.circle.fill",
+                            tint: .orange,
+                            size: .regular
+                        ) {
                             showPushPopover = true
-                        }) {
-                            Image(systemName: "arrow.up.circle.fill")
-                                .font(.system(size: 16))
-                                .foregroundColor(.orange)
-                                .frame(width: 24, height: 24)
                         }
-                        .buttonStyle(.borderless)
                         .help(String(localized: "点击推送到远程仓库", table: "GitCommit"))
                         .popover(isPresented: $showPushPopover) {
                             PushPopoverContent(
@@ -399,12 +397,20 @@ struct PushPopoverContent: View {
 
                     // 按钮组
                     HStack(spacing: 12) {
-                        Button(String(localized: "取消", table: "GitCommit")) {
+                        AppButton(
+                            LocalizedStringKey(String(localized: "取消", table: "GitCommit")),
+                            style: .secondary,
+                            size: .small
+                        ) {
                             onCancel()
                         }
                         .keyboardShortcut(.cancelAction)
                         
-                        Button(pushError == nil ? String(localized: "推送", table: "GitCommit") : String(localized: "重试", table: "GitCommit")) {
+                        AppButton(
+                            LocalizedStringKey(pushError == nil ? String(localized: "推送", table: "GitCommit") : String(localized: "重试", table: "GitCommit")),
+                            style: .primary,
+                            size: .small
+                        ) {
                             Task {
                                 do {
                                     isPushing = true
@@ -418,7 +424,6 @@ struct PushPopoverContent: View {
                                 }
                             }
                         }
-                        .buttonStyle(.borderedProminent)
                         .keyboardShortcut(.defaultAction)
                         .disabled(isPushing)
                     }

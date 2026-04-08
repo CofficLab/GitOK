@@ -23,21 +23,21 @@ struct RepositoryInfoView: View, SuperLog {
 
     /// 是否显示设置界面
     @State private var showSettings = false
-
-    /// Finder 按钮的 hover 状态
-    @State private var finderButtonHovered = false
-
-    /// 复制按钮的 hover 状态
-    @State private var copyButtonHovered = false
-
-    /// 远程仓库信息按钮的 hover 状态
-    @State private var remoteInfoButtonHovered = false
-
-    /// 远程仓库复制按钮的 hover 状态
-    @State private var remoteCopyButtonHovered = false
+    
+    /// 本地仓库路径复制后的反馈状态
+    @State private var didCopyLocalPath = false
+    
+    /// 本地复制反馈的令牌，用于避免快速连续点击导致状态提前恢复
+    @State private var localCopyFeedbackToken = UUID()
+    
+    /// 当前显示“已复制”反馈的远程仓库名
+    @State private var copiedRemoteName: String?
+    
+    /// 远程复制反馈的令牌
+    @State private var remoteCopyFeedbackToken = UUID()
 
     var body: some View {
-        MagicSettingSection(title: "仓库信息", titleAlignment: .leading) {
+        AppSettingSection(title: "仓库信息", titleAlignment: .leading) {
             VStack(spacing: 0) {
                 // 本地仓库位置
                 localRepositoryRow
@@ -80,103 +80,61 @@ struct RepositoryInfoView: View, SuperLog {
     // MARK: - View Components
 
     private var localRepositoryRow: some View {
-        MagicSettingRow(
+        AppSettingRow(
             title: "本地仓库",
             description: project.path,
             icon: .iconFolder
         ) {
             HStack(spacing: 8) {
-                Image.finder
-                    .inButtonWithAction {
-                        project.url.openFolder()
-                    }
-                    .foregroundColor(finderButtonHovered ? .accentColor : .primary)
-                    .padding(6)
-                    .background(
-                        RoundedRectangle(cornerRadius: 6)
-                            .fill(finderButtonHovered ? Color.accentColor.opacity(0.15) : Color.clear)
-                    )
-                    .contentShape(Rectangle())
-                    .onHover { hovering in
-                        withAnimation(.easeInOut(duration: 0.2)) {
-                            finderButtonHovered = hovering
-                        }
-                    }
+                AppIconButton(systemImage: "folder", size: .regular) {
+                    project.url.openFolder()
+                }
 
-                Image.copyIcon
-                    .inButtonWithAction {
-                        project.url.absoluteString.copy()
-                    }
-                    .foregroundColor(copyButtonHovered ? .accentColor : .primary)
-                    .padding(6)
-                    .background(
-                        RoundedRectangle(cornerRadius: 6)
-                            .fill(copyButtonHovered ? Color.accentColor.opacity(0.15) : Color.clear)
-                    )
-                    .contentShape(Rectangle())
-                    .onHover { hovering in
-                        withAnimation(.easeInOut(duration: 0.2)) {
-                            copyButtonHovered = hovering
-                        }
-                    }
+                AppIconButton(
+                    systemImage: didCopyLocalPath ? "checkmark" : "doc.on.doc",
+                    tint: didCopyLocalPath ? .green : DesignTokens.Color.semantic.textSecondary.opacity(0.8),
+                    size: .regular,
+                    isActive: didCopyLocalPath
+                ) {
+                    copyLocalRepositoryPath()
+                }
             }
         }
     }
 
     private func remoteRepositoryRow(for remote: GitRemote) -> some View {
-        MagicSettingRow(
+        AppSettingRow(
             title: "远程仓库 (\(remote.name))",
             description: remote.url,
             icon: .iconCloud
         ) {
             HStack(spacing: 8) {
                 if let httpsURL = convertToHTTPSURL(remote.url) {
-                    Image.infoIcon
-                        .inButtonWithAction {
-                            httpsURL.openInBrowser()
-                        }
-                        .foregroundColor(remoteInfoButtonHovered ? .accentColor : .primary)
-                        .padding(6)
-                        .background(
-                            RoundedRectangle(cornerRadius: 6)
-                                .fill(remoteInfoButtonHovered ? Color.accentColor.opacity(0.15) : Color.clear)
-                        )
-                        .contentShape(Rectangle())
-                        .onHover { hovering in
-                            withAnimation(.easeInOut(duration: 0.2)) {
-                                remoteInfoButtonHovered = hovering
-                            }
-                        }
+                    AppIconButton(systemImage: .iconSafari, size: .regular) {
+                        httpsURL.openInBrowser()
+                    }
                 }
 
-                Image.copyIcon
-                    .inButtonWithAction {
-                        remote.url.copy()
-                    }
-                    .foregroundColor(remoteCopyButtonHovered ? .accentColor : .primary)
-                    .padding(6)
-                    .background(
-                        RoundedRectangle(cornerRadius: 6)
-                            .fill(remoteCopyButtonHovered ? Color.accentColor.opacity(0.15) : Color.clear)
-                    )
-                    .contentShape(Rectangle())
-                    .onHover { hovering in
-                        withAnimation(.easeInOut(duration: 0.2)) {
-                            remoteCopyButtonHovered = hovering
-                        }
-                    }
+                AppIconButton(
+                    systemImage: copiedRemoteName == remote.name ? "checkmark" : "doc.on.doc",
+                    tint: copiedRemoteName == remote.name ? .green : DesignTokens.Color.semantic.textSecondary.opacity(0.8),
+                    size: .regular,
+                    isActive: copiedRemoteName == remote.name
+                ) {
+                    copyRemoteRepositoryURL(remote)
+                }
             }
         }
     }
 
     /// 配置远程仓库行（当没有远程仓库时显示）
     private var configRemoteRepositoryRow: some View {
-        MagicSettingRow(
+        AppSettingRow(
             title: "远程仓库",
             description: "未配置",
             icon: .iconCloud
         ) {
-            Image.settings.inButtonWithAction {
+            AppIconButton(systemImage: "gearshape", size: .regular) {
                 showSettings = true
             }
         }
@@ -207,9 +165,45 @@ struct RepositoryInfoView: View, SuperLog {
         // 如果已经是 HTTPS 格式，直接使用
         return URL(string: formatted)
     }
+    
+    private func copyLocalRepositoryPath() {
+        project.url.absoluteString.copy()
+        
+        let token = UUID()
+        localCopyFeedbackToken = token
+        
+        withAnimation(.easeOut(duration: 0.12)) {
+            didCopyLocalPath = true
+        }
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
+            guard localCopyFeedbackToken == token else { return }
+            withAnimation(.easeOut(duration: 0.2)) {
+                didCopyLocalPath = false
+            }
+        }
+    }
+    
+    private func copyRemoteRepositoryURL(_ remote: GitRemote) {
+        remote.url.copy()
+        
+        let token = UUID()
+        remoteCopyFeedbackToken = token
+        
+        withAnimation(.easeOut(duration: 0.12)) {
+            copiedRemoteName = remote.name
+        }
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
+            guard remoteCopyFeedbackToken == token else { return }
+            withAnimation(.easeOut(duration: 0.2)) {
+                copiedRemoteName = nil
+            }
+        }
+    }
 
     private func currentBranchRow(branch: GitBranch) -> some View {
-        MagicSettingRow(
+        AppSettingRow(
             title: "当前分支",
             description: branch.name,
             icon: .iconLog

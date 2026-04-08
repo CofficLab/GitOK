@@ -71,6 +71,7 @@ struct GitDetail: View, SuperEvent, SuperLog {
         .onAppear(perform: onAppear)
         .onChange(of: data.project, onProjectChange)
         .onProjectDidCommit(perform: onGitCommitSuccess)
+        .onChange(of: data.commit, onCommitChange)
         .onApplicationWillBecomeActive(perform: onAppWillBecomeActive)
     }
 }
@@ -146,6 +147,11 @@ extension GitDetail {
     func onProjectChange() {
         self.updateIsGitProject()
         self.updateIsProjectClean(reason: "onProjectChange")
+    }
+
+    /// 选择的Commit变动时的事件处理
+    func onCommitChange() {
+        self.updateIsProjectClean(reason: "onCommitChange")
     }
 }
 

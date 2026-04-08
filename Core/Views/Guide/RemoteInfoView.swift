@@ -14,10 +14,10 @@ struct RemoteInfoView: View, SuperLog {
     let remotes: [GitRemote]
 
     var body: some View {
-        MagicSettingSection(title: "远程仓库", titleAlignment: .leading) {
+        AppSettingSection(title: "远程仓库", titleAlignment: .leading) {
             VStack(spacing: 0) {
                 ForEach(remotes) { remote in
-                    MagicSettingRow(
+                    AppSettingRow(
                         title: remote.name,
                         description: remote.url,
                         icon: .iconCloud
