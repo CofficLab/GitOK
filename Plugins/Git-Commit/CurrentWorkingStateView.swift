@@ -44,12 +44,6 @@ struct CurrentWorkingStateView: View, SuperLog {
     /// 定时器间隔（秒）
     private let timerInterval: TimeInterval = 60
 
-    /// 下载按钮是否被鼠标悬停
-    @State private var isDownloadButtonHovered = false
-
-    /// 上传按钮是否被鼠标悬停
-    @State private var isUploadButtonHovered = false
-
     /// 是否正在执行 pull 操作
     @State private var isPulling = false
 
@@ -177,82 +171,30 @@ struct CurrentWorkingStateView: View, SuperLog {
 
     /// 下载按钮（执行 git pull）
     private var downloadButton: some View {
-        Button(action: performPull) {
-            HStack(spacing: 4) {
-                if isPulling {
-                    // Loading 状态：显示进度视图
-                    ProgressView()
-                        .controlSize(.small)
-                        .scaleEffect(0.8)
-                } else {
-                    // 正常状态：显示下载图标
-                    Image(systemName: "arrow.down.circle.fill")
-                        .foregroundColor(.blue)
-                        .font(.system(size: 14))
-                }
-
-                Text(isPulling ? "拉取中..." : "拉取", tableName: "GitCommit")
-                    .font(.system(size: 12, weight: .medium))
-                    .foregroundColor(.blue)
-            }
-            .padding(.horizontal, 12)
-            .padding(.vertical, 6)
-            .background(isDownloadButtonHovered ? Color.blue.opacity(0.2) : Color.blue.opacity(0.1))
-            .cornerRadius(6)
+        AppButton(
+            LocalizedStringKey(isPulling ? "拉取中..." : "拉取"),
+            systemImage: isPulling ? nil : "arrow.down.circle.fill",
+            style: .tonal,
+            size: .small
+        ) {
+            performPull()
         }
-        .buttonStyle(PlainButtonStyle())
         .disabled(isPulling)
         .help(String(localized: "点击执行 git pull 拉取远程提交", table: "GitCommit"))
-        .onHover { hovering in
-            withAnimation(.easeInOut(duration: 0.2)) {
-                isDownloadButtonHovered = hovering
-            }
-            if hovering {
-                NSCursor.pointingHand.push()
-            } else {
-                NSCursor.pointingHand.pop()
-            }
-        }
     }
 
     /// 上传按钮（执行 git push）
     private var uploadButton: some View {
-        Button(action: performPush) {
-            HStack(spacing: 4) {
-                if isPushing {
-                    // Loading 状态：显示进度视图
-                    ProgressView()
-                        .controlSize(.small)
-                        .scaleEffect(0.8)
-                } else {
-                    // 正常状态：显示上传图标
-                    Image(systemName: "arrow.up.circle.fill")
-                        .foregroundColor(.orange)
-                        .font(.system(size: 14))
-                }
-
-                Text(isPushing ? "推送中..." : "推送", tableName: "GitCommit")
-                    .font(.system(size: 12, weight: .medium))
-                    .foregroundColor(.orange)
-            }
-            .padding(.horizontal, 12)
-            .padding(.vertical, 6)
-            .background(isUploadButtonHovered ? Color.orange.opacity(0.2) : Color.orange.opacity(0.1))
-            .cornerRadius(6)
+        AppButton(
+            LocalizedStringKey(isPushing ? "推送中..." : "推送"),
+            systemImage: isPushing ? nil : "arrow.up.circle.fill",
+            style: .tonal,
+            size: .small
+        ) {
+            performPush()
         }
-        .buttonStyle(PlainButtonStyle())
         .disabled(isPushing)
         .help(String(localized: "点击执行 git push 推送本地提交", table: "GitCommit"))
-        .onHover { hovering in
-            withAnimation(.easeInOut(duration: 0.2)) {
-                isUploadButtonHovered = hovering
-            }
-            if hovering {
-                NSCursor.pointingHand.push()
-            } else {
-                NSCursor.pointingHand.pop()
-            }
-        }
     }
 }
 

@@ -1959,6 +1959,7 @@
       }
     },
     "拉取" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1975,6 +1976,7 @@
       }
     },
     "拉取中..." : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -2039,6 +2041,7 @@
       }
     },
     "推送中..." : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {

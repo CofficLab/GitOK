@@ -106,12 +106,12 @@ struct CommitInfoUserInfoPopup: View, SuperLog {
                 if let githubURL = gitHubURL {
                     Divider()
 
-                    MagicSettingRow(
+                    AppSettingRow(
                         title: "GitHub 主页",
                         description: githubURL.absoluteString,
                         icon: .iconSafari
                     ) {
-                        Image.safari.inButtonWithAction {
+                        AppIconButton(systemImage: "safari", size: .regular) {
                             NSWorkspace.shared.open(githubURL)
                         }
                     }

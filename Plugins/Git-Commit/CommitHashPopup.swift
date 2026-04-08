@@ -98,7 +98,12 @@ struct CommitHashPopup: View {
             Spacer()
 
             if showCopyButton {
-                Button(action: {
+                AppIconButton(
+                    systemImage: isCopied ? "checkmark.circle.fill" : "doc.on.doc.fill",
+                    tint: isCopied ? .green : DesignTokens.Color.semantic.textSecondary,
+                    size: .regular,
+                    isActive: isCopied
+                ) {
                     value.copy()
                     withAnimation(.spring()) {
                         isCopied = true
@@ -110,13 +115,7 @@ struct CommitHashPopup: View {
                             isCopied = false
                         }
                     }
-                }) {
-                    Image(systemName: isCopied ? "checkmark.circle.fill" : "doc.on.doc.fill")
-                        .font(.system(size: 14))
-                        .foregroundColor(isCopied ? .green : .secondary)
-                        .scaleEffect(isCopied ? 1.2 : 1.0)
                 }
-                .buttonStyle(.plain)
                 .help(isCopied ? "已复制" : "复制到剪贴板")
             }
         }
