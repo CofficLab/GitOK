@@ -33,12 +33,11 @@ struct Projects: View, SuperLog {
   /// 视图主体
   var body: some View {
     VStack(spacing: 0) {
-      // 搜索框
-      if !data.projects.isEmpty {
-        AppSearchBar(text: $searchText, placeholder: "搜索项目...")
+      // 搜索框 - 仅在项目数超过10个时显示
+      if data.projects.count > 10 {
+        AppSearchBar(text: $searchText, placeholder: "搜索...")
           .padding(.horizontal, 12)
           .padding(.vertical, 8)
-          .background(Color(.controlBackgroundColor))
       }
 
       // 项目列表
