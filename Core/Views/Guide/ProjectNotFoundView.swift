@@ -14,11 +14,27 @@ struct ProjectNotFoundView: View, SuperLog {
     let project: Project
 
     var body: some View {
-        VStack(spacing: 12) {
-            BtnDeleteProject(project: project)
-                .frame(width: 200, height: 40)
+        MagicSettingSection(title: "项目状态", titleAlignment: .leading) {
+            VStack(spacing: 0) {
+                MagicSettingRow(
+                    title: "项目路径不存在",
+                    description: project.path,
+                    icon: .iconFolder
+                ) {
+                    BtnDeleteProject(project: project)
+                }
+
+                Divider()
+
+                MagicSettingRow(
+                    title: "建议处理",
+                    description: "删除该失效项目后重新添加正确路径",
+                    icon: .iconSettings
+                ) {
+                    EmptyView()
+                }
+            }
         }
-        .padding(.vertical, 20)
     }
 }
 
