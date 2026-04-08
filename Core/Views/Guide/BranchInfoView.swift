@@ -14,8 +14,8 @@ struct BranchInfoView: View, SuperLog {
     let branch: GitBranch
 
     var body: some View {
-        MagicSettingSection(title: "当前分支", titleAlignment: .leading) {
-            MagicSettingRow(
+        AppSettingSection(title: "当前分支", titleAlignment: .leading) {
+            AppSettingRow(
                 title: branch.name,
                 description: "当前检出的分支",
                 icon: .iconLog

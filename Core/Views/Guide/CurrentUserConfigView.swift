@@ -25,7 +25,7 @@ struct CurrentUserConfigView: View, SuperLog {
     @State private var isLoading = true
 
     var body: some View {
-        MagicSettingSection(title: "Git 用户配置", titleAlignment: .leading) {
+        AppSettingSection(title: "Git 用户配置", titleAlignment: .leading) {
             VStack(spacing: 0) {
                 userNameRow
                 Divider()
@@ -39,7 +39,7 @@ struct CurrentUserConfigView: View, SuperLog {
     // MARK: - View Components
 
     private var userNameRow: some View {
-        MagicSettingRow(
+        AppSettingRow(
             title: "用户名",
             description: userName.isEmpty ? "未配置 user.name" : userName,
             icon: .iconUser
@@ -52,7 +52,7 @@ struct CurrentUserConfigView: View, SuperLog {
     }
 
     private var userEmailRow: some View {
-        MagicSettingRow(
+        AppSettingRow(
             title: "邮箱",
             description: userEmail.isEmpty ? "未配置 user.email" : userEmail,
             icon: .iconMail

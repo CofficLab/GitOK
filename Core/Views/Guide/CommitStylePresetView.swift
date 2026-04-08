@@ -20,7 +20,7 @@ struct CommitStylePresetView: View, SuperLog {
     @State private var globalCommitStyle: CommitStyle = .emoji
 
     var body: some View {
-        MagicSettingSection(title: "Commit 风格", titleAlignment: .leading) {
+        AppSettingSection(title: "Commit 风格", titleAlignment: .leading) {
             VStack(spacing: 0) {
                 // 当前项目风格
                 projectCommitStylePicker

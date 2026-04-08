@@ -29,16 +29,13 @@ struct GitUserPresetView: View, SuperLog {
     /// 是否显示管理预设表单
     @State private var showManagePresets = false
 
-    /// 管理预设按钮的 hover 状态
-    @State private var managePresetsButtonHovered = false
-
     /// 配置仓库
     private var configRepo: any GitUserConfigRepoProtocol {
         data.repoManager.gitUserConfigRepo
     }
 
     var body: some View {
-        MagicSettingSection(title: "Git 用户预设", titleAlignment: .leading) {
+        AppSettingSection(title: "Git 用户预设", titleAlignment: .leading) {
             VStack(spacing: 0) {
                 // 预设配置列表
                 if !savedConfigs.isEmpty {
@@ -72,7 +69,7 @@ struct GitUserPresetView: View, SuperLog {
 
     /// 空状态视图
     private var emptyStateView: some View {
-        MagicSettingRow(
+        AppSettingRow(
             title: "暂无预设",
             description: "点击下方按钮添加用户预设",
             icon: .iconUser
@@ -97,7 +94,7 @@ struct GitUserPresetView: View, SuperLog {
     private func presetConfigRow(_ config: GitUserConfig) -> some View {
         let isSelected = currentUserName == config.name && currentUserEmail == config.email
 
-        return MagicSettingRow(
+        return AppSettingRow(
             title: config.name,
             description: config.email,
             icon: .iconUser,
@@ -121,27 +118,14 @@ struct GitUserPresetView: View, SuperLog {
 
     /// 管理预设按钮
     private var managePresetsButton: some View {
-        MagicSettingRow(
+        AppSettingRow(
             title: "管理预设",
             description: "添加、编辑或删除用户预设",
             icon: .iconSettings
         ) {
-            Image.settings
-                .inButtonWithAction {
-                    showManagePresets = true
-                }
-                .foregroundColor(managePresetsButtonHovered ? .accentColor : .primary)
-                .padding(6)
-                .background(
-                    RoundedRectangle(cornerRadius: 6)
-                        .fill(managePresetsButtonHovered ? Color.accentColor.opacity(0.15) : Color.clear)
-                )
-                .contentShape(Rectangle())
-                .onHover { hovering in
-                    withAnimation(.easeInOut(duration: 0.2)) {
-                        managePresetsButtonHovered = hovering
-                    }
-                }
+            AppIconButton(systemImage: "gearshape", size: .regular) {
+                showManagePresets = true
+            }
         }
     }
 
