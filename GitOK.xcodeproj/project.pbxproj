@@ -22,6 +22,7 @@
 		F56441B32F1748F7006C76BB /* LibGit2Swift in Frameworks */ = {isa = PBXBuildFile; productRef = F56441B22F1748F7006C76BB /* LibGit2Swift */; };
 		F56441B62F174908006C76BB /* LibGit2Swift in Frameworks */ = {isa = PBXBuildFile; productRef = F56441B52F174908006C76BB /* LibGit2Swift */; };
 		F5A3DF6A2F85FA4B00D4DD4A /* MagicDiffView in Frameworks */ = {isa = PBXBuildFile; productRef = F5A3DF692F85FA4B00D4DD4A /* MagicDiffView */; };
+		F5A3E6C22F8610E100D4DD4A /* MagicDiffView in Frameworks */ = {isa = PBXBuildFile; productRef = F5A3E6C12F8610E100D4DD4A /* MagicDiffView */; };
 		F5B9093B2EE8FB4B008BEB16 /* MagicDiffView in Frameworks */ = {isa = PBXBuildFile; productRef = F5B9093A2EE8FB4B008BEB16 /* MagicDiffView */; };
 		F5D122802F0E5B040001A5D2 /* MagicDiffView in Frameworks */ = {isa = PBXBuildFile; productRef = F5D1227F2F0E5B040001A5D2 /* MagicDiffView */; };
 		F5D122862F0E5B040001A5D2 /* MagicKit in Frameworks */ = {isa = PBXBuildFile; productRef = F5D122852F0E5B040001A5D2 /* MagicKit */; };
@@ -812,6 +813,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0B5178012F13D6A70085381F /* LibGit2Swift in Frameworks */,
+				F5A3E6C22F8610E100D4DD4A /* MagicDiffView in Frameworks */,
 				0B750F162E7F934F00140214 /* MarkdownUI in Frameworks */,
 				F5A3DF6A2F85FA4B00D4DD4A /* MagicDiffView in Frameworks */,
 				F5D122862F0E5B040001A5D2 /* MagicKit in Frameworks */,
@@ -1208,6 +1210,7 @@
 				F533707F2F52F8D600020751 /* LibGit2Swift */,
 				F53370822F52F9BF00020751 /* LibGit2Swift */,
 				F5A3DF692F85FA4B00D4DD4A /* MagicDiffView */,
+				F5A3E6C12F8610E100D4DD4A /* MagicDiffView */,
 			);
 			productName = GitOK;
 			productReference = 0B55A0222F1B0F38005C6809 /* GitOK.app */;
@@ -1245,7 +1248,7 @@
 				0B1807AC2F1BCCF800E4E23B /* XCRemoteSwiftPackageReference "MagicDevice" */,
 				F5E6143D2F33311F00F79149 /* XCRemoteSwiftPackageReference "MagicKit" */,
 				F53370812F52F9BF00020751 /* XCRemoteSwiftPackageReference "LibGit2Swift" */,
-				F5A3DF682F85FA4B00D4DD4A /* XCLocalSwiftPackageReference "../MagicDiffView" */,
+				F5A3E6C02F8610E100D4DD4A /* XCRemoteSwiftPackageReference "MagicDiffView" */,
 			);
 			productRefGroup = 0B0E16742BD89A8F0078942B;
 			projectDirPath = "";
@@ -2363,13 +2366,6 @@
 		};
 /* End XCConfigurationList section */
 
-/* Begin XCLocalSwiftPackageReference section */
-		F5A3DF682F85FA4B00D4DD4A /* XCLocalSwiftPackageReference "../MagicDiffView" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = ../MagicDiffView;
-		};
-/* End XCLocalSwiftPackageReference section */
-
 /* Begin XCRemoteSwiftPackageReference section */
 		0B1807AC2F1BCCF800E4E23B /* XCRemoteSwiftPackageReference "MagicDevice" */ = {
 			isa = XCRemoteSwiftPackageReference;
@@ -2393,6 +2389,14 @@
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 2.4.1;
+			};
+		};
+		F5A3E6C02F8610E100D4DD4A /* XCRemoteSwiftPackageReference "MagicDiffView" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/nookery/MagicDiffView";
+			requirement = {
+				branch = main;
+				kind = branch;
 			};
 		};
 		F5E6143D2F33311F00F79149 /* XCRemoteSwiftPackageReference "MagicKit" */ = {
@@ -2468,6 +2472,11 @@
 		};
 		F5A3DF692F85FA4B00D4DD4A /* MagicDiffView */ = {
 			isa = XCSwiftPackageProductDependency;
+			productName = MagicDiffView;
+		};
+		F5A3E6C12F8610E100D4DD4A /* MagicDiffView */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F5A3E6C02F8610E100D4DD4A /* XCRemoteSwiftPackageReference "MagicDiffView" */;
 			productName = MagicDiffView;
 		};
 		F5B9093A2EE8FB4B008BEB16 /* MagicDiffView */ = {
