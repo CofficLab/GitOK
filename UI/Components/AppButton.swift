@@ -21,6 +21,8 @@ struct AppButton: View {
     let fillsWidth: Bool
     let action: () -> Void
 
+    @State private var isHovered: Bool = false
+
     init(
         _ title: LocalizedStringKey,
         systemImage: String? = nil,
@@ -53,8 +55,13 @@ struct AppButton: View {
             .background(background)
             .overlay(border)
             .clipShape(RoundedRectangle(cornerRadius: DesignTokens.Radius.sm, style: .continuous))
+            .scaleEffect(isHovered ? 1.02 : 1.0)
+            .animation(.easeInOut(duration: 0.15), value: isHovered)
         }
         .buttonStyle(.plain)
+        .onHover { hovering in
+            isHovered = hovering
+        }
     }
 
     private var font: Font {
@@ -96,15 +103,16 @@ struct AppButton: View {
             switch style {
             case .primary:
                 RoundedRectangle(cornerRadius: DesignTokens.Radius.sm, style: .continuous)
-                    .fill(Color.accentColor)
+                    .fill(isHovered ? Color.accentColor.opacity(0.85) : Color.accentColor)
             case .secondary:
                 RoundedRectangle(cornerRadius: DesignTokens.Radius.sm, style: .continuous)
-                    .fill(DesignTokens.Material.glass)
+                    .fill(isHovered ? Color.white.opacity(0.15) : Color.white.opacity(0.08))
             case .ghost:
-                Color.clear
+                RoundedRectangle(cornerRadius: DesignTokens.Radius.sm, style: .continuous)
+                    .fill(isHovered ? Color.accentColor.opacity(0.12) : Color.clear)
             case .tonal:
                 RoundedRectangle(cornerRadius: DesignTokens.Radius.sm, style: .continuous)
-                    .fill(DesignTokens.Color.semantic.textSecondary.opacity(0.10))
+                    .fill(isHovered ? DesignTokens.Color.semantic.textSecondary.opacity(0.18) : DesignTokens.Color.semantic.textSecondary.opacity(0.10))
             }
         }
     }
