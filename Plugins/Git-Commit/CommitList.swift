@@ -89,11 +89,9 @@ extension CommitList {
             LazyVStack(spacing: 0, pinnedViews: []) {
                 Divider()
 
-                ForEach(commits.indices, id: \.self) { index in
-                    let commit = commits[index]
+                ForEach(Array(commits.enumerated()), id: \.element.hash) { index, commit in
                     let isUnpushed = unpushedCommits.contains(commit.hash)
                     CommitRow(commit: commit, isUnpushed: isUnpushed)
-                        .id(commit.hash) // 根据 commit hash 强制视图刷新，避免状态复用
                         .onAppear {
                             // 只在最后几个 commit 出现时触发加载更多
                             let threshold = max(commits.count - 10, Int(Double(commits.count) * 0.8))
