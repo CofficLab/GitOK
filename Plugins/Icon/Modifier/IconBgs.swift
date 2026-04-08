@@ -51,9 +51,11 @@ struct IconBgs: View {
                 do {
                     try icon.updateBackgroundId(gradient.rawValue)
                 } catch {
+                    os_log(.error, "❌ 更新图标背景失败: \(error.localizedDescription)")
                     alert_error(error.localizedDescription)
                 }
             } else {
+                os_log(.error, "❌ 未选择图标文件")
                 alert_error("先选择一个图标文件")
             }
         }) {

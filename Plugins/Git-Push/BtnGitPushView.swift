@@ -1,5 +1,6 @@
 import MagicAlert
 import MagicKit
+import OSLog
 import SwiftUI
 
 /// Git 推送按钮视图：提供将本地提交推送到远程仓库的功能按钮。
@@ -55,6 +56,7 @@ extension BtnGitPushView {
     /// - Parameter error: 要显示的错误信息
     func alert(error: Error) {
         self.main.async {
+            os_log(.error, "\(Self.t)❌ 推送错误: \(error.localizedDescription)")
             alert_error(error)
         }
     }
@@ -99,6 +101,7 @@ extension BtnGitPushView {
                 }
             } catch let error {
                 await MainActor.run {
+                    os_log(.error, "\(Self.t)❌ Git 推送失败: \(error.localizedDescription)")
                     MagicMessageProvider.shared.hideLoading()
                     self.reset()
                     alert_error(error)

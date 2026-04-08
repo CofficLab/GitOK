@@ -184,6 +184,7 @@ extension FileList {
                 await self.refresh(reason: "AfterDiscardChanges")
             } catch {
                 await MainActor.run {
+                    os_log(.error, "\(Self.t)❌ 丢弃文件更改失败: \(error.localizedDescription)")
                     alert_error(error)
                 }
             }
@@ -208,6 +209,7 @@ extension FileList {
                 await self.refresh(reason: "AfterDiscardAllChanges")
             } catch {
                 await MainActor.run {
+                    os_log(.error, "\(Self.t)❌ 丢弃所有更改失败: \(error.localizedDescription)")
                     alert_error(error)
                 }
             }
@@ -311,6 +313,7 @@ extension FileList {
         } catch {
             await MainActor.run {
                 self.isLoading = false
+                os_log(.error, "\(Self.t)❌ 刷新文件列表失败: \(error.localizedDescription)")
                 alert_error(error)
             }
         }

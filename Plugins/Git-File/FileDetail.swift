@@ -68,6 +68,7 @@ struct FileDetail: View, SuperLog, SuperEvent, SuperThread {
                 self.newText = afterContent ?? ""
             }
         } catch {
+            os_log(.error, "\(Self.t)❌ 更新差异视图失败: \(error.localizedDescription)")
             alert_error(error)
             self.oldText = ""
             self.newText = ""

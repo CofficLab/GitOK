@@ -44,6 +44,7 @@ struct BannerBtnAdd: View, SuperThread {
 
             alert_info(String(localized: "已添加新的Banner文件", table: "Banner"))
         } catch {
+            os_log(.error, "❌ 创建 Banner 失败: \(error.localizedDescription)")
             let msg = String.localizedStringWithFormat(
                 String(localized: "创建Banner失败：%@", table: "Banner"),
                 error.localizedDescription

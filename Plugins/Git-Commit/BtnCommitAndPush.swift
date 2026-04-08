@@ -65,6 +65,7 @@ struct BtnCommitAndPush: View, SuperLog, SuperThread {
                     }
                 } catch {
                     await MainActor.run {
+                        os_log(.error, "\(Self.t)❌ 提交或推送失败: \(error.localizedDescription)")
                         alert_error(error)
                     }
                 }

@@ -1,6 +1,7 @@
 import SwiftUI
 import MagicKit
 import MagicAlert
+import OSLog
 
 /**
  经典模板的背景编辑器
@@ -55,6 +56,7 @@ struct ClassicBackgroundEditor: View {
                 banner.classicData = classicData
             }
         } catch {
+            os_log(.error, "❌ 更新背景失败: \(error.localizedDescription)")
             alert_error("更新背景失败: \(error.localizedDescription)")
         }
     }

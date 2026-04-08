@@ -1,5 +1,5 @@
 {
-  "originHash" : "aa80c9ec45a1dda53498f22800bb0d317151f4997d7a33ad85cfaf79f8e690e5",
+  "originHash" : "9cb32dac850e817b4090cdbe5804f38cd6b6cf441733c7bf4e300009d4f57c12",
   "pins" : [
     {
       "identity" : "id3tageditor",
@@ -43,7 +43,7 @@
       "location" : "https://github.com/nookery/MagicDiffView",
       "state" : {
         "branch" : "main",
-        "revision" : "c404dfc32fd389a11434ce48022a87f866c0d046"
+        "revision" : "1e790a3fc6d23ebfcf154533ddb93628068fa698"
       }
     },
     {

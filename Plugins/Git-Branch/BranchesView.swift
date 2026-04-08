@@ -124,6 +124,7 @@ extension BranchesView {
                 }
             } catch let e {
                 await MainActor.run {
+                    os_log(.error, "\(Self.t)❌ 刷新分支列表失败: \(e.localizedDescription)")
                     alert_error(e)
                     // 重置刷新状态
                     self.isRefreshing = false
@@ -203,6 +204,7 @@ extension BranchesView {
         do {
             try data.setBranch(self.selection)
         } catch let e {
+            os_log(.error, "\(Self.t)❌ 切换分支失败: \(e.localizedDescription)")
             alert_error(e.localizedDescription)
         }
     }

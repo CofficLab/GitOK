@@ -64,6 +64,7 @@ struct BannerTab: View {
 
             alert_info(String(localized: "已删除", table: "Banner"))
         } catch {
+            os_log(.error, "❌ 删除 Banner 失败: \(error.localizedDescription)")
             let msg = String.localizedStringWithFormat(
                 String(localized: "删除Banner失败：%@", table: "Banner"),
                 error.localizedDescription
