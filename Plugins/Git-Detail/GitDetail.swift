@@ -24,9 +24,6 @@ struct GitDetail: View, SuperEvent, SuperLog {
     /// 是否为 Git 项目
     @State private var isGitProject: Bool = false
 
-    /// 更新清理状态的任务
-    @State private var updateCleanTask: Task<Void, Never>?
-
     /// 最后更新时间（用于防抖）
     @State private var lastUpdateTime: Date = Date.distantPast
 
@@ -92,50 +89,25 @@ extension GitDetail {
 
         lastUpdateTime = now
 
-        // 取消之前的任务
-        updateCleanTask?.cancel()
+        // 防止并发执行
+        guard !isCheckingClean else {
+            return
+        }
 
-        // 在后台执行，避免阻塞主线程
-        updateCleanTask = Task.detached(priority: .utility) {
-            // 检查是否已有任务在执行
-            let alreadyChecking = await MainActor.run {
-                if self.isCheckingClean {
-                    return true
-                }
-                self.isCheckingClean = true
-                return false
-            }
+        isCheckingClean = true
+        defer {
+            isCheckingClean = false
+        }
 
-            if alreadyChecking { return }
+        guard let project = data.project else {
+            os_log(.error, "\(Self.t)❌ No project available")
+            return
+        }
 
-            defer {
-                Task { @MainActor in
-                    self.isCheckingClean = false
-                }
-            }
-
-            guard let project = await self.data.project else {
-                await MainActor.run {
-                    os_log(.error, "\(Self.t)❌ No project available")
-                }
-                return
-            }
-
-            let isClean: Bool
-            do {
-                isClean = try project.isClean(verbose: Self.verbose)
-            } catch {
-                await MainActor.run {
-                    os_log(.error, "\(Self.t)❌ Failed to update isProjectClean: \(error)")
-                }
-                return
-            }
-
-            await MainActor.run {
-                // 检查任务是否被取消
-                guard !Task.isCancelled else { return }
-                self.isProjectClean = isClean
-            }
+        do {
+            self.isProjectClean = try project.isClean(verbose: Self.verbose)
+        } catch {
+            os_log(.error, "\(Self.t)❌ Failed to update isProjectClean: \(error)")
         }
     }
 
