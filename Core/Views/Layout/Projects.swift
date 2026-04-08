@@ -35,7 +35,7 @@ struct Projects: View, SuperLog {
     VStack(spacing: 0) {
       // 搜索框 - 仅在项目数超过10个时显示
       if data.projects.count > 10 {
-        AppSearchBar(text: $searchText, placeholder: "搜索...")
+        AppSearchBar(text: $searchText, placeholder: "Search...")
           .padding(.horizontal, 12)
           .padding(.vertical, 8)
       }

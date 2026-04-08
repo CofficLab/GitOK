@@ -649,6 +649,9 @@
         }
       }
     },
+    "Search..." : {
+
+    },
     "select_a_project" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -2136,9 +2139,6 @@
           }
         }
       }
-    },
-    "搜索..." : {
-
     },
     "搜索分类..." : {
       "localizations" : {
