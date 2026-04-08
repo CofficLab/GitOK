@@ -1,5 +1,6 @@
 import LibGit2Swift
 import MagicKit
+import MagicAlert
 import OSLog
 import SwiftUI
 
@@ -37,6 +38,19 @@ struct CommitRow: View, SuperThread, SuperLog {
 
     /// 推送错误信息
     @State private var pushError: Error?
+
+    // MARK: - Undo State
+
+    /// 是否显示撤销确认弹窗
+    @State private var showUndoConfirmation = false
+
+    /// 是否正在执行撤销操作
+    @State private var isUndoing = false
+
+    /// 是否可以撤销（未推送 + 无标签 + 有父提交）
+    private var canUndo: Bool {
+        isUnpushed && commit.tags.isEmpty && !commit.parentHashes.isEmpty
+    }
 
     var body: some View {
         commitRowContent
@@ -102,26 +116,41 @@ struct CommitRow: View, SuperThread, SuperLog {
                     .padding(.leading, 8)
                     .frame(minHeight: 25)
 
-                    // 右侧：未推送到远程的图标（当需要显示时）
+                    // 右侧：未推送到远程的操作按钮
                     if isUnpushed {
-                        AppIconButton(
-                            systemImage: "arrow.up.circle.fill",
-                            tint: .orange,
-                            size: .regular
-                        ) {
-                            showPushPopover = true
-                        }
-                        .help(String(localized: "点击推送到远程仓库", table: "GitCommit"))
-                        .popover(isPresented: $showPushPopover) {
-                            PushPopoverContent(
-                                isPushing: $isPushing,
-                                pushError: $pushError,
-                                onPush: performPush,
-                                onCancel: {
-                                    showPushPopover = false
-                                    pushError = nil
+                        HStack(spacing: 4) {
+                            // 撤销提交按钮
+                            if canUndo {
+                                AppIconButton(
+                                    systemImage: "arrow.uturn.backward.circle",
+                                    tint: .red,
+                                    size: .regular
+                                ) {
+                                    showUndoConfirmation = true
                                 }
-                            )
+                                .help("撤销此提交")
+                            }
+
+                            // 推送按钮
+                            AppIconButton(
+                                systemImage: "arrow.up.circle.fill",
+                                tint: .orange,
+                                size: .regular
+                            ) {
+                                showPushPopover = true
+                            }
+                            .help(String(localized: "点击推送到远程仓库", table: "GitCommit"))
+                            .popover(isPresented: $showPushPopover) {
+                                PushPopoverContent(
+                                    isPushing: $isPushing,
+                                    pushError: $pushError,
+                                    onPush: performPush,
+                                    onCancel: {
+                                        showPushPopover = false
+                                        pushError = nil
+                                    }
+                                )
+                            }
                         }
                     }
 
@@ -134,6 +163,25 @@ struct CommitRow: View, SuperThread, SuperLog {
             .onAppear(perform: onAppear)
             .onNotification(.appWillBecomeActive, onAppWillBecomeActive)
             .onProjectDidCommit(perform: onGitCommitSuccess)
+            // 右键菜单：撤销提交
+            .contextMenu {
+                if canUndo {
+                    Button(role: .destructive) {
+                        showUndoConfirmation = true
+                    } label: {
+                        Label("撤销提交", systemImage: "arrow.uturn.backward")
+                    }
+                }
+            }
+            // 撤销确认弹窗
+            .alert("确认撤销提交？", isPresented: $showUndoConfirmation) {
+                Button("取消", role: .cancel) {}
+                Button("撤销", role: .destructive) {
+                    performUndo()
+                }
+            } message: {
+                Text("撤销后，此提交的文件变更将保留在工作区中，可以重新编辑和提交。")
+            }
 
             Divider()
         }
@@ -168,6 +216,40 @@ struct CommitRow: View, SuperThread, SuperLog {
 
         if Self.verbose {
             os_log("\(self.t)✅ Push completed successfully for commit \(commit.hash.prefix(8))")
+        }
+    }
+
+    /// 执行撤销提交操作
+    /// 使用 git reset --mixed 回退到父提交，文件变更保留在工作区
+    private func performUndo() {
+        guard let project = data.project else {
+            alert_error("项目不可用")
+            return
+        }
+
+        isUndoing = true
+
+        Task.detached(priority: .userInitiated) {
+            do {
+                try project.undoCommit(commit)
+
+                if Self.verbose {
+                    os_log("\(self.t)✅ Commit undone: \(commit.hash.prefix(8))")
+                }
+
+                await MainActor.run {
+                    isUndoing = false
+                    showUndoConfirmation = false
+                    // 撤销后取消选中 commit，显示工作区变更
+                    data.setCommit(nil)
+                }
+            } catch {
+                await MainActor.run {
+                    isUndoing = false
+                    showUndoConfirmation = false
+                    alert_error(error)
+                }
+            }
         }
     }
 

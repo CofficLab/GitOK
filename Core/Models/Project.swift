@@ -472,6 +472,42 @@ extension Project {
     func getCommitsWithPagination(_ page: Int, limit: Int) throws -> [GitCommit] {
         return try LibGit2.getCommitListWithPagination(at: self.path, page: page, size: limit)
     }
+
+    /// 撤销指定的提交（仅限未推送的 HEAD commit）
+    /// 原理：执行 git reset --mixed <parentHash>，将提交的文件变更保留在工作区（未暂存状态）
+    /// - Parameter commit: 要撤销的提交
+    /// - Throws: Git 操作异常
+    func undoCommit(_ commit: GitCommit) throws {
+        do {
+            if commit.parentHashes.isEmpty {
+                // 初始提交无法通过 reset 撤销，需要特殊处理
+                throw NSError(
+                    domain: "GitOK",
+                    code: -1,
+                    userInfo: [NSLocalizedDescriptionKey: "暂不支持撤销初始提交"]
+                )
+            }
+
+            // 使用 mixed reset：HEAD 回退到 parent，文件变更保留在工作区
+            let parentHash = commit.parentHashes[0]
+            try LibGit2.reset(to: parentHash, mode: "mixed", at: self.path, verbose: false)
+
+            postEvent(
+                name: .projectDidCommit,
+                operation: "undoCommit",
+                additionalInfo: ["commitHash": commit.hash, "parentHash": parentHash]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "undoCommit",
+                success: false,
+                error: error,
+                additionalInfo: ["commitHash": commit.hash]
+            )
+            throw error
+        }
+    }
 }
 
 // MARK: - File
