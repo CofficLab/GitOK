@@ -2,6 +2,7 @@ import SwiftUI
 import MagicAlert
 import MagicKit
 import MagicDevice
+import OSLog
 import UniformTypeIdentifiers
 
 /**
@@ -103,6 +104,7 @@ struct MinimalImageEditor: View {
             guard let url = urls.first else { return }
             changeImage(url)
         case let .failure(error):
+            os_log(.error, "❌ 选择图片失败: \(error.localizedDescription)")
             alert_error("选择图片失败: \(error.localizedDescription)")
         }
     }
@@ -116,6 +118,7 @@ struct MinimalImageEditor: View {
             }
             alert_success("图片更新成功")
         } catch {
+            os_log(.error, "❌ 更新图片失败: \(error.localizedDescription)")
             alert_error("更新图片失败: \(error.localizedDescription)")
         }
     }

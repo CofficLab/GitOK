@@ -38,6 +38,7 @@ extension ProjectNotGitView {
     /// 初始化 Git 仓库
     func initializeGitRepository() {
         guard let project = data.project else {
+            os_log(.error, "\(Self.t)❌ 项目不存在")
             alert_error("项目不存在")
             return
         }
@@ -74,8 +75,8 @@ extension ProjectNotGitView {
             } catch let error {
                 await MainActor.run {
                     isInitializing = false
+                    os_log(.error, "\(Self.t)❌ 初始化 Git 仓库失败: \(error.localizedDescription)")
                     alert_error("初始化 Git 仓库失败: \(error.localizedDescription)")
-                    os_log(.error, "\(Self.t)❌ Failed to initialize Git repository: \(error)")
                 }
             }
         }

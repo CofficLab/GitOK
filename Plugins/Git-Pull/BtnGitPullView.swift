@@ -1,5 +1,6 @@
 import MagicAlert
 import MagicKit
+import OSLog
 import SwiftUI
 
 /// Git 拉取按钮视图：提供从远程仓库拉取最新代码的功能按钮。
@@ -59,6 +60,7 @@ extension BtnGitPullView {
     /// - Parameter error: 要显示的错误信息
     func alert(error: Error) {
         self.main.async {
+            os_log(.error, "\(Self.t)❌ 拉取错误: \(error.localizedDescription)")
             alert_error(error)
         }
     }
@@ -97,6 +99,7 @@ extension BtnGitPullView {
                 }
             } catch let error {
                 await MainActor.run {
+                    os_log(.error, "\(Self.t)❌ Git 拉取失败: \(error.localizedDescription)")
                     MagicMessageProvider.shared.hideLoading()
                     self.reset()
                     alert_error(error)
