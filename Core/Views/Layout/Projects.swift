@@ -17,41 +17,65 @@ struct Projects: View, SuperLog {
   /// 当前选中的项目
   @State private var selection: Project? = nil
 
+  /// 搜索文本
+  @State private var searchText = ""
+
+  /// 过滤后的项目列表
+  private var filteredProjects: [Project] {
+    if searchText.isEmpty {
+      return data.projects
+    }
+    return data.projects.filter { project in
+      project.title.localizedCaseInsensitiveContains(searchText)
+    }
+  }
+
   /// 视图主体
   var body: some View {
-    List(selection: $selection) {
-      ForEach(data.projects, id: \.self) { item in
-        Text(item.title).tag(item as Project?)
-          .contextMenu(
-            ContextMenu(menuItems: {
-              Button("置顶") {
-                pinItem(item)
-              }
-
-              if FileManager.default.fileExists(atPath: item.path) {
-                Button("在Finder中显示") {
-                  let url = URL(fileURLWithPath: item.path)
-                  NSWorkspace.shared.activateFileViewerSelecting([url])
-                }
-              } else {
-                Button("项目已不存在") {
-                  // 禁止点击
-                }
-                .disabled(true)
-              }
-
-              Divider()
-
-              Button("删除") {
-                deleteItem(item)
-              }
-            }))
+    VStack(spacing: 0) {
+      // 搜索框
+      if !data.projects.isEmpty {
+        AppSearchBar(text: $searchText, placeholder: "搜索项目...")
+          .padding(.horizontal, 12)
+          .padding(.vertical, 8)
+          .background(Color(.controlBackgroundColor))
       }
-      .onDelete(perform: deleteItems)
-      .onMove(perform: moveItems)
+
+      // 项目列表
+      List(selection: $selection) {
+        ForEach(filteredProjects, id: \.self) { item in
+          Text(item.title).tag(item as Project?)
+            .contextMenu(
+              ContextMenu(menuItems: {
+                Button("置顶") {
+                  pinItem(item)
+                }
+
+                if FileManager.default.fileExists(atPath: item.path) {
+                  Button("在Finder中显示") {
+                    let url = URL(fileURLWithPath: item.path)
+                    NSWorkspace.shared.activateFileViewerSelecting([url])
+                  }
+                } else {
+                  Button("项目已不存在") {
+                    // 禁止点击
+                  }
+                  .disabled(true)
+                }
+
+                Divider()
+
+                Button("删除") {
+                  deleteItem(item)
+                }
+              }))
+        }
+        .onDelete(perform: deleteItems)
+        .onMove(perform: moveItems)
+      }
+      .onChange(of: selection, { self.data.setProject(selection, reason: self.className) })
+      .onAppear(perform: onAppear)
     }
-    .onChange(of: selection, { self.data.setProject(selection, reason: self.className) })
-    .onAppear(perform: onAppear)
   }
 }
 
