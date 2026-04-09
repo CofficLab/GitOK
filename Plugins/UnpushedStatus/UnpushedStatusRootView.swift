@@ -6,12 +6,13 @@ import SwiftUI
 /// 未推送状态根视图
 /// 包裹整个应用内容，监听项目变化并更新未推送提交数量
 struct UnpushedStatusRootView<Content: View>: View, SuperLog {
-    nonisolated static let emoji = "📤"
-    nonisolated static let verbose = false
+    nonisolated static var emoji: String { "📤" }
 
     let content: Content
 
     @EnvironmentObject var vm: ProjectVM
+
+    private let verbose = false
 
     var body: some View {
         content
@@ -54,14 +55,14 @@ struct UnpushedStatusRootView<Content: View>: View, SuperLog {
                     vm.updateUnpushedCommits(count, hashes: hashes)
                 }
 
-                if Self.verbose {
+                if self.verbose {
                     os_log("\(Self.t)📊 Unpushed count updated: \(count)")
                 }
             } catch {
                 await MainActor.run {
                     vm.updateUnpushedCommits(0, hashes: [])
                 }
-                if Self.verbose {
+                if self.verbose {
                     os_log(.error, "\(Self.t)❌ Failed to refresh unpushed count: \(error)")
                 }
             }
