@@ -171,16 +171,6 @@ struct AutoPushConfigView: View, SuperLog {
                     }
                     
                     Spacer()
-                    
-                    if currentProjectAutoPushEnabled {
-                        Label("已启用", systemImage: "checkmark.circle.fill")
-                            .foregroundColor(.green)
-                            .font(.caption)
-                    } else {
-                        Label("已禁用", systemImage: "circle")
-                            .foregroundColor(.secondary)
-                            .font(.caption)
-                    }
                 }
                 
                 Text("启用后，将定时自动推送到远程仓库（每 30 秒检查一次）")

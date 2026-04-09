@@ -1710,6 +1710,7 @@
       }
     },
     "已启用" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1742,6 +1743,7 @@
       }
     },
     "已禁用" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
