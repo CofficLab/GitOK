@@ -40,7 +40,6 @@ class UnpushedStatusPlugin: NSObject, SuperPlugin {
     /// 添加根视图包裹
     /// 监听项目变化，自动更新未推送提交数量到 ProjectVM
     func addRootView<Content>(@ViewBuilder content: () -> Content) -> AnyView? where Content: View {
-        os_log("🔍 UnpushedStatusPlugin.addRootView() called!")
         return AnyView(
             UnpushedStatusRootView(content: content())
         )
