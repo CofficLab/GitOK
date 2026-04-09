@@ -183,6 +183,27 @@ extension SuperPlugin {
     func addRootView<Content>(@ViewBuilder content: () -> Content) -> AnyView? where Content: View {
         nil
     }
+
+    /// 提供根视图（接收 AnyView 参数的便捷方法）
+    ///
+    /// 内部调用 `addRootView`，将 AnyView 转换为 ViewBuilder。
+    func provideRootView(_ content: AnyView) -> AnyView? {
+        self.addRootView { content }
+    }
+
+    /// 包裹根视图（安全版本）
+    ///
+    /// 如果插件提供了根视图包装，则返回包装后的视图；
+    /// 否则返回原始视图。
+    ///
+    /// - Parameter content: 要包裹的视图
+    /// - Returns: 包裹后的视图
+    func wrapRoot(_ content: AnyView) -> AnyView {
+        if let wrapped = self.provideRootView(content) {
+            return wrapped
+        }
+        return content
+    }
 }
 
 #Preview("App - Small Screen") {

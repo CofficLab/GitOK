@@ -285,9 +285,7 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
 
         for plugin in plugins {
             guard isPluginEnabled(plugin) else { continue }
-            if let pluginWrapped = plugin.addRootView({ wrapped }) {
-                wrapped = pluginWrapped
-            }
+            wrapped = plugin.wrapRoot(wrapped)
         }
 
         return wrapped

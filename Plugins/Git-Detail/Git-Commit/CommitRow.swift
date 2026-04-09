@@ -17,7 +17,7 @@ struct CommitRow: View, SuperThread, SuperLog {
     /// 提交对象
     let commit: GitCommit
 
-    /// 当前提交是否未推送（从 VM 中读取）
+    /// 当前提交是否未推送
     private var isUnpushed: Bool {
         vm.isCommitUnpushed(commit.hash)
     }
