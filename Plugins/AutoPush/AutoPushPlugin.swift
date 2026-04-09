@@ -7,7 +7,7 @@ class AutoPushPlugin: NSObject, SuperPlugin {
     @objc static let shared = AutoPushPlugin()
 
     /// 是否启用该插件
-    @objc static let shouldRegister = false
+    @objc static let shouldRegister = true
 
     /// 插件显示名称
     static var displayName: String = "AutoPush"
