@@ -11,10 +11,8 @@ struct FileList: View, SuperThread, SuperLog {
     nonisolated static let emoji = "📁"
     nonisolated static let verbose = false
 
-    /// 环境对象：应用提供者
+    /// 环境对象
     @EnvironmentObject var app: AppVM
-
-    /// 环境对象：数据提供者，包含项目和提交信息
     @EnvironmentObject var data: DataVM
     @EnvironmentObject var vm: ProjectVM
 
@@ -47,10 +45,21 @@ struct FileList: View, SuperThread, SuperLog {
     /// 丢弃所有按钮的 hover 状态
     @State private var discardButtonHovered = false
 
+    /// 当前错误信息
+    @State private var errorMessage: String?
+
     var body: some View {
         VStack(spacing: 0) {
             fileInfoBar
-            fileListView
+            if let error = errorMessage {
+                FileListErrorView(message: error) {
+                    Task {
+                        await self.refresh(reason: "RetryAfterError")
+                    }
+                }
+            } else {
+                fileListView
+            }
         }
         .onAppear(perform: onAppear)
         .onChange(of: vm.project, onProjectChange)
@@ -248,6 +257,7 @@ extension FileList {
         // 先在主线程更新加载状态
         await MainActor.run {
             self.isLoading = true
+            self.errorMessage = nil  // 清除之前的错误
         }
 
         guard let project = vm.project else {
@@ -311,8 +321,9 @@ extension FileList {
         } catch {
             await MainActor.run {
                 self.isLoading = false
-                os_log(.error, "\(Self.t)❌ 刷新文件列表失败: \(error.localizedDescription)")
-                alert_error(error)
+                let gitDetailError = GitDetailError.from(error, context: "refreshFileList")
+                self.errorMessage = gitDetailError.localizedDescription
+                os_log(.error, "\(Self.t)❌ 刷新文件列表失败: \(gitDetailError.localizedDescription)")
             }
         }
     }
