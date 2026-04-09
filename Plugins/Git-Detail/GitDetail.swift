@@ -10,7 +10,7 @@ struct GitDetail: View, SuperEvent, SuperLog {
     nonisolated static let emoji = "🚄"
 
     /// 是否启用详细日志输出
-    nonisolated static let verbose = false
+    nonisolated static let verbose = true
 
     /// 环境对象：应用提供者
     @EnvironmentObject var app: AppProvider

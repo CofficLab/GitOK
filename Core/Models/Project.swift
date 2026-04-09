@@ -160,7 +160,7 @@ extension Project {
         在后台检查 Git 仓库状态并更新缓存，避免阻塞主线程
      */
     func updateIsGitRepoCache() async {
-        let result = await isGit()
+        let result = isGit()
         await MainActor.run {
             self._isGitRepo = result
         }
