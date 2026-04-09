@@ -13,6 +13,7 @@ struct RepositorySettingView: View, SuperLog {
     nonisolated static let verbose = false
 
     @EnvironmentObject var data: DataProvider
+    @EnvironmentObject var vm: ProjectVM
 
     /// 当前项目的远程仓库列表
     @State private var remotes: [GitRemote] = []
@@ -30,7 +31,7 @@ struct RepositorySettingView: View, SuperLog {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
                 // 当前项目信息
-                if let project = data.project {
+                if let project = vm.project {
                     currentProjectInfo(project: project)
 
                     // 远程仓库列表
@@ -214,7 +215,7 @@ struct RepositorySettingView: View, SuperLog {
 
     /// 添加远程仓库
     private func addRemoteRepository(name: String, url: String) {
-        guard let project = data.project else {
+        guard let project = vm.project else {
         errorMessage = String(localized: "请先选择一个项目", table: "Core")
             return
         }
@@ -248,7 +249,7 @@ struct RepositorySettingView: View, SuperLog {
 
     /// 删除远程仓库
     private func deleteRemoteRepository(_ remote: GitRemote) {
-        guard let project = data.project else { return }
+        guard let project = vm.project else { return }
 
         isLoading = true
         errorMessage = nil
@@ -280,7 +281,7 @@ struct RepositorySettingView: View, SuperLog {
     // MARK: - Load Data
 
     private func loadData() {
-        guard let project = data.project else {
+        guard let project = vm.project else {
             remotes = []
             return
         }

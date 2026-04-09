@@ -13,6 +13,7 @@ struct MergeForm: View, SuperLog {
     @EnvironmentObject var app: AppProvider
     /// 环境对象：数据提供者
     @EnvironmentObject var g: DataProvider
+    @EnvironmentObject var vm: ProjectVM
 
     /// 项目分支列表
     @State var branches: [GitBranch] = []
@@ -26,7 +27,7 @@ struct MergeForm: View, SuperLog {
     @State var branch2: GitBranch? = nil
 
     /// 当前项目
-    var project: Project? { g.project }
+    var project: Project? { vm.project }
 
     var body: some View {
         if let project = project {

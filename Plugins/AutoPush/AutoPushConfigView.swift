@@ -7,6 +7,7 @@ import SwiftUI
 /// 自动推送配置视图：管理项目分支的自动推送设置
 struct AutoPushConfigView: View, SuperLog {
     @EnvironmentObject var data: DataProvider
+    @EnvironmentObject var vm: ProjectVM
     @Environment(\.dismiss) private var dismiss
     
     /// 修复：使用 ObservedObject 而不是 StateObject，避免创建新实例
@@ -65,7 +66,7 @@ struct AutoPushConfigView: View, SuperLog {
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
                     // 当前项目配置
-                    if let project = data.project, let branch = data.branch {
+                    if let project = vm.project, let branch = data.branch {
                         currentProjectSection(project: project, branch: branch)
                     }
                     
@@ -98,7 +99,7 @@ struct AutoPushConfigView: View, SuperLog {
         .onAppear {
             updateCurrentProjectStatus()
         }
-        .onChange(of: data.project) { _, _ in
+        .onChange(of: vm.project) { _, _ in
             updateCurrentProjectStatus()
         }
         .onChange(of: data.branch) { _, _ in
@@ -243,7 +244,7 @@ struct AutoPushConfigView: View, SuperLog {
     // MARK: - Helper Methods
     
     private func updateCurrentProjectStatus() {
-        guard let project = data.project,
+        guard let project = vm.project,
               let branch = data.branch else {
             currentProjectAutoPushEnabled = false
             return
@@ -292,7 +293,7 @@ struct AutoPushConfigView: View, SuperLog {
         )
         
         // 如果切换的是当前项目分支，同步更新状态
-        if let project = data.project,
+        if let project = vm.project,
            let branch = data.branch,
            config.projectPath == project.path && config.branchName == branch.name {
             Task { @MainActor in
@@ -324,7 +325,7 @@ struct AutoPushConfigView: View, SuperLog {
         settingsStore.removeConfig(for: config.projectPath, branchName: config.branchName)
         
         // 如果删除的是当前项目分支，同步更新状态
-        if let project = data.project,
+        if let project = vm.project,
            let branch = data.branch,
            config.projectPath == project.path && config.branchName == branch.name {
             Task { @MainActor in
@@ -345,7 +346,7 @@ struct AutoPushConfigView: View, SuperLog {
     }
     
     private func isCurrentProject(config: ProjectBranchAutoPushConfig) -> Bool {
-        guard let project = data.project,
+        guard let project = vm.project,
               let branch = data.branch else {
             return false
         }

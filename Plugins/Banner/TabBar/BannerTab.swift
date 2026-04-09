@@ -17,7 +17,7 @@ import SwiftUI
 struct BannerTab: View {
     @EnvironmentObject var b: BannerProvider
     @EnvironmentObject var d: DataProvider
-    
+    @EnvironmentObject var vm: ProjectVM
 
     /// Banner数据
     let banner: BannerFile
@@ -32,7 +32,7 @@ struct BannerTab: View {
 
     var body: some View {
         Image.document.inButtonWithAction {
-            guard let project = d.project else {
+            guard let project = vm.project else {
                 return
             }
             

@@ -13,6 +13,7 @@ struct GitUserPresetView: View, SuperLog {
     nonisolated static let verbose = false
 
     @EnvironmentObject var data: DataProvider
+    @EnvironmentObject var vm: ProjectVM
 
     /// 已保存的配置列表
     @State private var savedConfigs: [GitUserConfig] = []
@@ -137,7 +138,7 @@ struct GitUserPresetView: View, SuperLog {
             os_log("\(Self.t)Applying config: \(config.name) <\(config.email)>")
         }
 
-        guard let project = data.project else { return }
+        guard let project = vm.project else { return }
 
         // 如果已经是当前配置，不需要重新应用
         if currentUserName == config.name && currentUserEmail == config.email {
@@ -204,7 +205,7 @@ struct GitUserPresetView: View, SuperLog {
     }
 
     private func loadCurrentUserInfo() {
-        guard let project = data.project else { return }
+        guard let project = vm.project else { return }
 
         do {
             // 使用同步方式获取当前用户信息

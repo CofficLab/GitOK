@@ -16,6 +16,7 @@ struct FileList: View, SuperThread, SuperLog {
 
     /// 环境对象：数据提供者，包含项目和提交信息
     @EnvironmentObject var data: DataProvider
+    @EnvironmentObject var vm: ProjectVM
 
     /// 当前显示的文件列表
     @State var files: [GitDiffFile] = []
@@ -52,7 +53,7 @@ struct FileList: View, SuperThread, SuperLog {
             fileListView
         }
         .onAppear(perform: onAppear)
-        .onChange(of: data.project, onProjectChange)
+        .onChange(of: vm.project, onProjectChange)
         .onChange(of: data.commit, onCommitChange)
         .onChange(of: selection, onSelectionChange)
         .onProjectDidCommit(perform: onProjectDidCommit)
@@ -152,7 +153,7 @@ extension FileList {
             .onChange(of: files, {
                 withAnimation {
                     // 在主线程中调用 scrollTo 方法
-                    scrollProxy.scrollTo(data.file, anchor: .top)
+                    scrollProxy.scrollTo(vm.file, anchor: .top)
                 }
             })
         }
@@ -165,7 +166,7 @@ extension FileList {
     /// 丢弃指定文件的更改
     /// - Parameter file: 要丢弃更改的文件
     func discardChanges(for file: GitDiffFile) {
-        guard let project = data.project else { return }
+        guard let project = vm.project else { return }
 
         Task.detached(priority: .userInitiated) {
             do {
@@ -190,7 +191,7 @@ extension FileList {
 
     /// 丢弃所有文件的更改
     func discardAllChanges() {
-        guard let project = data.project else { return }
+        guard let project = vm.project else { return }
 
         Task.detached(priority: .userInitiated) {
             do {
@@ -249,7 +250,7 @@ extension FileList {
             self.isLoading = true
         }
 
-        guard let project = data.project else {
+        guard let project = vm.project else {
             await MainActor.run {
                 self.isLoading = false
             }
@@ -296,7 +297,7 @@ extension FileList {
 
                 self.files = newFiles
                 self.selection = newFiles.first
-                self.data.setFile(self.selection)
+                self.vm.setFile(self.selection)
                 self.isLoading = false
             }
         } catch is CancellationError {
@@ -343,7 +344,7 @@ extension FileList {
 
     /// 选中文件变更时的事件处理
     func onSelectionChange() {
-        self.data.setFile(self.selection)
+        self.vm.setFile(self.selection)
     }
 
     /// 项目提交完成时的事件处理

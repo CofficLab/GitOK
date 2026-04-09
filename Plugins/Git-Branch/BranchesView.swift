@@ -9,14 +9,10 @@ import LibGit2Swift
 struct BranchesView: View, SuperThread, SuperLog, SuperEvent {
     static let shared = BranchesView()
 
-    /// 环境对象：应用提供者
+    /// 环境对象
     @EnvironmentObject var app: AppProvider
-
-    /// 环境对象：数据提供者
     @EnvironmentObject var data: DataProvider
-
-    /// 环境对象：消息提供者
-    
+    @EnvironmentObject var vm: ProjectVM
 
     /// 可选分支列表
     @State var branches: [GitBranch] = []
@@ -54,7 +50,7 @@ struct BranchesView: View, SuperThread, SuperLog, SuperEvent {
                 }).disabled(true)
             }
         }
-        .onChange(of: data.project) { self.onProjectChanged() }
+        .onChange(of: vm.project) { self.onProjectChanged() }
         .onChange(of: self.selection, onSelectionChange)
         .onAppear(perform: onAppear)
         .onApplicationWillBecomeActive(perform: onAppWillBecomeActive)
@@ -76,7 +72,7 @@ extension BranchesView {
             return
         }
 
-        guard let project = data.project else {
+        guard let project = vm.project else {
             if Self.verbose {
                 os_log("\(self.t)⚠️ Refresh(\(reason)) but project is nil")
             }
@@ -152,12 +148,12 @@ extension BranchesView {
 
     /// 更新Git项目状态
     func updateIsGitProject() {
-        self.isGitProject = data.project?.isGitRepo ?? false
+        self.isGitProject = vm.project?.isGitRepo ?? false
     }
 
     /// 异步更新Git项目状态：使用异步方式避免阻塞主线程，解决CPU占用100%的问题
     func updateIsGitProjectAsync() async {
-        guard let project = data.project else {
+        guard let project = vm.project else {
             await MainActor.run {
                 self.isGitProject = false
             }
@@ -175,20 +171,20 @@ extension BranchesView {
 
 extension BranchesView {
     func onAppWillBecomeActive() {
-        self.refreshBranches(reason: "AppWillBecomeActive(\(data.project?.title ?? ""))")
+        self.refreshBranches(reason: "AppWillBecomeActive(\(vm.project?.title ?? ""))")
     }
 
     func onProjectChanged() {
         Task {
             await self.updateIsGitProjectAsync()
-            self.refreshBranches(reason: "Project Changed to \(data.project?.title ?? "")")
+            self.refreshBranches(reason: "Project Changed to \(vm.project?.title ?? "")")
         }
     }
 
     func onAppear() {
         Task {
             await self.updateIsGitProjectAsync()
-            self.refreshBranches(reason: "onAppear while project is \(data.project?.title ?? "")")
+            self.refreshBranches(reason: "onAppear while project is \(vm.project?.title ?? "")")
         }
     }
     
@@ -202,7 +198,7 @@ extension BranchesView {
 
     func onSelectionChange() {
         do {
-            try data.setBranch(self.selection)
+            try data.setBranch(self.selection, project: vm.project)
         } catch let e {
             os_log(.error, "\(Self.t)❌ 切换分支失败: \(e.localizedDescription)")
             alert_error(e.localizedDescription)

@@ -8,6 +8,7 @@ struct IconList: View {
     @EnvironmentObject var app: AppProvider
     
     @EnvironmentObject var g: DataProvider
+    @EnvironmentObject var vm: ProjectVM
     @EnvironmentObject var i: IconProvider
 
     @State var icons: [IconData] = []
@@ -27,7 +28,7 @@ struct IconList: View {
 
             IconListActions()
         }
-        .onChange(of: g.project) {
+        .onChange(of: vm.project) {
             self.refreshIcons()
         }
         .onAppear {
@@ -64,7 +65,7 @@ struct IconList: View {
     }
 
     func refreshIcons() {
-        if let project = g.project {
+        if let project = vm.project {
             icons = ProjectIconRepo.getIconData(from: project)
         }
     }

@@ -12,6 +12,7 @@ struct BtnCommitAndPush: View, SuperLog, SuperThread {
     nonisolated static let verbose = false
 
     @EnvironmentObject var g: DataProvider
+    @EnvironmentObject var vm: ProjectVM
     
 
     /// 提交消息
@@ -27,7 +28,7 @@ struct BtnCommitAndPush: View, SuperLog, SuperThread {
             systemImage: .iconUpload,
             style: .primary,
             action: {
-            guard let project = g.project else {
+            guard let project = vm.project else {
                 return
             }
 

@@ -5,10 +5,11 @@ import SwiftUI
 
 struct BtnNewIcon: View {
     @EnvironmentObject var g: DataProvider
+    @EnvironmentObject var vm: ProjectVM
     
 
     var body: some View {
-        if let project = g.project {
+        if let project = vm.project {
             TabBtn(title: "新建 Icon", imageName: "plus.circle") {
                 do {
                     let model = try IconData.new(project)

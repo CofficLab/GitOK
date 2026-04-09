@@ -10,6 +10,7 @@ import SwiftUI
 struct WorkingStateView: View, SuperLog {
     /// 环境对象：数据提供者
     @EnvironmentObject var data: DataProvider
+    @EnvironmentObject var vm: ProjectVM
 
     /// CommitList 是否正在刷新
     @Binding var isRefreshing: Bool
@@ -148,7 +149,7 @@ struct WorkingStateView: View, SuperLog {
         .onTapGesture(perform: onTap)
         .onAppear(perform: onAppear)
         .onDisappear(perform: onDisappear)
-        .onChange(of: data.project, onProjectDidChange)
+        .onChange(of: vm.project, onProjectDidChange)
         .onProjectDidCommit(perform: onProjectDidCommit)
         .onProjectDidPush(perform: onProjectDidPush)
         .onProjectDidPull(perform: onProjectDidPull)
@@ -203,7 +204,7 @@ struct WorkingStateView: View, SuperLog {
 extension WorkingStateView {
     /// 加载未提交文件数量
     private func loadChangedFileCount() async {
-        guard let project = data.project else {
+        guard let project = vm.project else {
             return
         }
 
@@ -230,7 +231,7 @@ extension WorkingStateView {
 
     /// 加载远程同步状态：获取未推送和未拉取的提交数量
     private func loadSyncStatus() {
-        guard let project = data.project else {
+        guard let project = vm.project else {
             if Self.verbose {
                 os_log("\(self.t)No project found")
             }
@@ -300,7 +301,7 @@ extension WorkingStateView {
 
     /// 执行 git pull 操作拉取远程提交
     private func performPull() {
-        guard let project = data.project else {
+        guard let project = vm.project else {
             if Self.verbose {
                 os_log("\(self.t)No project found")
             }
@@ -360,7 +361,7 @@ extension WorkingStateView {
 
     /// 执行 git push 操作推送本地提交
     private func performPush() {
-        guard let project = data.project else {
+        guard let project = vm.project else {
             if Self.verbose {
                 os_log("\(self.t)No project found")
             }

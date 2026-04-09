@@ -2,13 +2,14 @@ import SwiftUI
 
 struct BtnOpenXcodeView: View {
     @EnvironmentObject var g: DataProvider
+    @EnvironmentObject var vm: ProjectVM
 
     static let shared = BtnOpenXcodeView()
 
     private init() {}
 
     var body: some View {
-        if let project = g.project {
+        if let project = vm.project {
             Image.xcodeApp
                 .resizable()
                 .frame(height: 22)

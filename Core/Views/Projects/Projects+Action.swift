@@ -26,7 +26,7 @@ extension Projects {
     /// - Parameter project: 要删除的项目
     func deleteItem(_ project: Project) {
         withAnimation {
-            self.data.deleteProject(project, using: data.repoManager.projectRepo)
+            data.deleteProject(project, using: data.repoManager.projectRepo)
         }
     }
 
@@ -35,7 +35,7 @@ extension Projects {
     func deleteItems(offsets: IndexSet) {
         withAnimation {
             for index in offsets {
-                try? self.data.repoManager.projectRepo.delete(data.projects[index])
+                try? data.repoManager.projectRepo.delete(data.projects[index])
             }
         }
     }

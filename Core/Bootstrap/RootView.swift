@@ -29,6 +29,9 @@ struct RootView<Content>: View, SuperEvent, SuperLog where Content: View {
     /// Git 数据提供者
     var git: DataProvider
 
+    /// 当前项目状态
+    var projectVM: ProjectVM
+
     /// 仓库管理器
     private let repoManager: RepoManager
 
@@ -44,12 +47,24 @@ struct RootView<Content>: View, SuperEvent, SuperLog where Content: View {
         self.pluginProvider = PluginProvider()
 
         // 初始化数据提供者
+        var initialProject: Project? = nil
         do {
             let projects = try self.repoManager.projectRepo.findAll(sortedBy: .ascending)
             self.git = DataProvider(projects: projects, repoManager: self.repoManager)
+
+            // 恢复上次选中的项目
+            let savedPath = self.repoManager.stateRepo.projectPath
+            initialProject = projects.first(where: { $0.path == savedPath })
+            if initialProject == nil, let firstProject = projects.first {
+                initialProject = firstProject
+                self.repoManager.stateRepo.setProjectPath(firstProject.path)
+            }
+
+            self.projectVM = ProjectVM(project: initialProject, repoManager: self.repoManager)
         } catch let e {
             os_log(.error, "\(Self.t) Failed to load projects: \(e.localizedDescription)")
             self.git = DataProvider(projects: [], repoManager: self.repoManager)
+            self.projectVM = ProjectVM(project: initialProject, repoManager: self.repoManager)
         }
     }
 
@@ -60,6 +75,7 @@ struct RootView<Content>: View, SuperEvent, SuperLog where Content: View {
             .environmentObject(iconProvider)
             .environmentObject(pluginProvider)
             .environmentObject(git)
+            .environmentObject(projectVM)
             .navigationTitle("")
     }
 }
@@ -72,7 +88,7 @@ extension View {
             self
         }
     }
-} 
+}
 
 #Preview("App - Small Screen") {
     ContentLayout()
@@ -87,9 +103,8 @@ extension View {
 #Preview("App - Big Screen") {
     ContentLayout()
         .hideSidebar()
-        .hideProjectActions()
         .hideTabPicker()
         .inRootView()
-        .frame(width: 800)
-        .frame(height: 1000)
+        .frame(width: 1200)
+        .frame(height: 1200)
 }

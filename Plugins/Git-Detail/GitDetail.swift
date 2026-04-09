@@ -17,6 +17,7 @@ struct GitDetail: View, SuperEvent, SuperLog {
 
     /// 环境对象：数据提供者
     @EnvironmentObject var data: DataProvider
+    @EnvironmentObject var vm: ProjectVM
 
     /// 项目是否干净（无未提交的变更）
     @State private var isProjectClean: Bool = true
@@ -35,7 +36,7 @@ struct GitDetail: View, SuperEvent, SuperLog {
 
     var body: some View {
         ZStack {
-            if data.project != nil {
+            if vm.project != nil {
                 if self.isGitProject {
                     VStack(alignment: .leading, spacing: 0) {
                         Group {
@@ -69,7 +70,7 @@ struct GitDetail: View, SuperEvent, SuperLog {
             }
         }
         .onAppear(perform: onAppear)
-        .onChange(of: data.project, onProjectChange)
+        .onChange(of: vm.project, onProjectChange)
         .onProjectDidCommit(perform: onGitCommitSuccess)
         .onChange(of: data.commit, onCommitChange)
         .onApplicationWillBecomeActive(perform: onAppWillBecomeActive)
@@ -100,7 +101,7 @@ extension GitDetail {
             isCheckingClean = false
         }
 
-        guard let project = data.project else {
+        guard let project = vm.project else {
             os_log(.error, "\(Self.t)❌ No project available")
             return
         }
@@ -114,7 +115,7 @@ extension GitDetail {
 
     /// 更新 Git 项目状态
     func updateIsGitProject() {
-        guard let project = data.project else {
+        guard let project = vm.project else {
             self.isGitProject = false
             return
         }

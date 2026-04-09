@@ -6,6 +6,7 @@ import SwiftUI
 
 struct BranchForm: View, SuperLog {
     @EnvironmentObject var data: DataProvider
+    @EnvironmentObject var vm: ProjectVM
     
     
     @State private var branches: [GitBranch] = []
@@ -16,7 +17,7 @@ struct BranchForm: View, SuperLog {
     
     private let verbose = false
     
-    var project: Project? { data.project }
+    var project: Project? { vm.project }
     
     var body: some View {
         if project != nil {

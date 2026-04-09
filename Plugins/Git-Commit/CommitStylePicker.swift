@@ -39,6 +39,7 @@ enum CommitStyle: String, CaseIterable {
 struct CommitStylePicker: View {
     /// 环境对象：数据提供者
     @EnvironmentObject var g: DataProvider
+    @EnvironmentObject var vm: ProjectVM
 
     /// 绑定到外部的选中风格
     @Binding var selection: CommitStyle
@@ -60,7 +61,7 @@ struct CommitStylePicker: View {
     /// 保存提交风格到当前项目配置
     private func saveCommitStyle() {
         // 保存到当前项目，而不是全局配置
-        if let project = g.project {
+        if let project = vm.project {
             project.commitStyle = selection
         }
     }

@@ -12,6 +12,7 @@ struct CommitStylePresetView: View, SuperLog {
     nonisolated static let verbose = false
 
     @EnvironmentObject var data: DataProvider
+    @EnvironmentObject var vm: ProjectVM
 
     /// 当前项目 Commit 风格
     @State private var projectCommitStyle: CommitStyle = .emoji
@@ -49,7 +50,7 @@ struct CommitStylePresetView: View, SuperLog {
                 set: { newValue in
                     if let style = CommitStyle.allCases.first(where: { $0.label == newValue }) {
                         projectCommitStyle = style
-                        if let project = data.project {
+                        if let project = vm.project {
                             project.commitStyle = style
                         }
                     }
@@ -80,7 +81,7 @@ struct CommitStylePresetView: View, SuperLog {
     // MARK: - Load Data
 
     private func loadData() {
-        if let project = data.project {
+        if let project = vm.project {
             projectCommitStyle = project.commitStyle
         }
 

@@ -8,8 +8,8 @@ extension Projects {
     func onAppear() {
         if Self.verbose {
             os_log("\(self.t)onAppear, projects.count = \(data.projects.count)")
-            os_log("\(self.t)Current Project: \(data.project?.path ?? "")")
+            os_log("\(self.t)Current Project: \(projectVM.project?.path ?? "")")
         }
-        self.selection = data.project
+        self.selection = projectVM.project
     }
 }

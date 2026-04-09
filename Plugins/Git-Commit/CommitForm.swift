@@ -16,6 +16,7 @@ struct CommitForm: View, SuperLog {
 
     /// 环境对象：数据提供者
     @EnvironmentObject var g: DataProvider
+    @EnvironmentObject var vm: ProjectVM
 
     /// 提交消息文本
     @State var text: String = ""
@@ -167,7 +168,7 @@ extension CommitForm {
     func onAppear() {
         setText(defaultMessage(for: category, style: commitStyle))
         // 从当前项目读取 commitStyle，如果没有项目则使用默认值
-        setCommitStyle(g.project?.commitStyle ?? .emoji)
+        setCommitStyle(vm.project?.commitStyle ?? .emoji)
     }
 }
 

@@ -20,7 +20,7 @@ class AutoPushService: ObservableObject, SuperLog {
     @Published var isTimerRunning = false
     
     private var cancellables = Set<AnyCancellable>()
-    private weak var dataProvider: DataProvider?
+    private weak var projectVM: ProjectVM?
     private var timer: Timer?
     
     enum PushStatus {
@@ -33,8 +33,8 @@ class AutoPushService: ObservableObject, SuperLog {
     private init() {}
     
     /// 注册服务，启动定时器
-    func register(dataProvider: DataProvider) {
-        self.dataProvider = dataProvider
+    func register(projectVM: ProjectVM) {
+        self.projectVM = projectVM
         
         if Self.verbose {
             os_log(.info, "\(Self.t)AutoPushService registered, timer interval: \(Self.checkInterval)s")
@@ -94,10 +94,11 @@ class AutoPushService: ObservableObject, SuperLog {
     
     /// 检查当前项目并执行自动推送
     private func checkAndAutoPushForCurrentProject() async {
-        // 确保在主线程获取数据（DataProvider 可能是 @MainActor）
-        let project: Project? = await Task { @MainActor in
-            self.dataProvider?.project
-        }.value
+        // 从 ProjectVM 获取当前项目（projectVM 是 weak 引用，需要在主线程访问）
+        var project: Project?
+        await MainActor.run {
+            project = self.projectVM?.project
+        }
         
         guard let project = project else {
             if Self.verbose {

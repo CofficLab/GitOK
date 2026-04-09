@@ -3,13 +3,14 @@ import SwiftUI
 
 struct BtnOpenKiroView: View {
     @EnvironmentObject var g: DataProvider
+    @EnvironmentObject var vm: ProjectVM
 
     static let shared = BtnOpenKiroView()
 
     private init() {}
 
     var body: some View {
-        if let project = g.project {
+        if let project = vm.project {
             Image.kiroApp
                 .resizable()
                 .frame(height: 22)

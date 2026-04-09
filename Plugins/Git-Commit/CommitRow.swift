@@ -15,6 +15,7 @@ struct CommitRow: View, SuperThread, SuperLog {
 
     /// 环境对象：数据提供者
     @EnvironmentObject var data: DataProvider
+    @EnvironmentObject var vm: ProjectVM
 
     /// 提交对象
     let commit: GitCommit
@@ -199,7 +200,7 @@ struct CommitRow: View, SuperThread, SuperLog {
 
     /// 执行推送操作
     private func performPush() async throws {
-        guard let project = data.project else {
+        guard let project = vm.project else {
             throw NSError(domain: "GitOK", code: -1, userInfo: [
                 NSLocalizedDescriptionKey: String(localized: "项目不可用", table: "GitCommit")
             ])
@@ -222,7 +223,7 @@ struct CommitRow: View, SuperThread, SuperLog {
     /// 执行撤销提交操作
     /// 使用 git reset --mixed 回退到父提交，文件变更保留在工作区
     private func performUndo() {
-        guard let project = data.project else {
+        guard let project = vm.project else {
             alert_error("项目不可用")
             return
         }
@@ -273,7 +274,7 @@ struct CommitRow: View, SuperThread, SuperLog {
 
     /// 异步加载 commit 的 tag 信息
     private func loadTag() async {
-        guard let project = data.project else {
+        guard let project = vm.project else {
             setTag("")
             return
         }

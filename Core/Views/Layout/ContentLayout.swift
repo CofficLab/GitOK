@@ -13,9 +13,6 @@ struct ContentLayout: View, SuperThread, SuperEvent, SuperLog {
   /// 应用状态提供者环境对象
   @EnvironmentObject var app: AppProvider
 
-  /// 数据提供者环境对象
-  @EnvironmentObject var g: DataProvider
-
   /// 插件提供者环境对象
   @EnvironmentObject var p: PluginProvider
 

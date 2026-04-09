@@ -14,6 +14,7 @@ struct GuideView: View, SuperLog {
     nonisolated static let verbose = false
 
     @EnvironmentObject var g: DataProvider
+    @EnvironmentObject var vm: ProjectVM
 
     let systemImage: String
     let title: String
@@ -81,9 +82,9 @@ struct GuideView: View, SuperLog {
                 }
 
                 // 项目信息区域
-                if let project = g.project {
+                if let project = vm.project {
                     VStack(alignment: .center) {
-                        if g.projectExists {
+                        if vm.projectExists {
                             // 仓库信息（本地、远程、分支）
                             RepositoryInfoView(
                                 project: project,
@@ -143,7 +144,7 @@ extension GuideView {
     /// 获取远程仓库信息
     /// - Returns: 远程仓库信息数组，如果获取失败则返回 nil
     private func getRemoteInfo() -> [GitRemote]? {
-        guard let project = g.project else {
+        guard let project = vm.project else {
             return nil
         }
 

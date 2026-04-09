@@ -11,6 +11,7 @@ import SwiftUI
 struct BannerBtnAdd: View, SuperThread {
     @EnvironmentObject var app: AppProvider
     @EnvironmentObject var g: DataProvider
+    @EnvironmentObject var vm: ProjectVM
     @EnvironmentObject var b: BannerProvider
     
 
@@ -18,7 +19,7 @@ struct BannerBtnAdd: View, SuperThread {
     private let bannerRepo = BannerRepo.shared
 
     var body: some View {
-        if let project = g.project {
+        if let project = vm.project {
             Image.add.inButtonWithAction {
                 createBanner(in: project)
             }

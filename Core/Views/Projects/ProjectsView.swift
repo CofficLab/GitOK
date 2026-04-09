@@ -14,6 +14,9 @@ struct Projects: View, SuperLog {
     /// 数据提供者环境对象
     @EnvironmentObject var data: DataProvider
 
+    /// 当前项目状态
+    @EnvironmentObject var projectVM: ProjectVM
+
     /// 当前选中的项目
     @State var selection: Project? = nil
 
@@ -49,7 +52,7 @@ struct Projects: View, SuperLog {
                             isSelected: selection == item
                         ) {
                             selection = item
-                            self.data.setProject(item, reason: self.className)
+                            projectVM.setProject(item, reason: self.className)
                         }
                         .contextMenu { ProjectContextMenu(item: item, pinAction: pinItem, deleteAction: deleteItem) }
                     }

@@ -4,6 +4,7 @@ import MagicKit
 /// LICENSE 状态栏图标：存在 LICENSE 时可点击查看/编辑。
 struct LicenseStatusIcon: View, SuperLog {
     @EnvironmentObject var data: DataProvider
+    @EnvironmentObject var vm: ProjectVM
 
     @State private var isSheetPresented = false
     @State private var hasLicense = false
@@ -26,11 +27,11 @@ struct LicenseStatusIcon: View, SuperLog {
                 .frame(minWidth: 800, minHeight: 600)
         }
         .onAppear(perform: checkLicenseExistence)
-        .onChange(of: data.project, checkLicenseExistence)
+        .onChange(of: vm.project, checkLicenseExistence)
     }
 
     private func checkLicenseExistence() {
-        guard let project = data.project else {
+        guard let project = vm.project else {
             hasLicense = false
             return
         }

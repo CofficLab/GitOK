@@ -6,6 +6,7 @@ import SwiftUI
 /// 自动推送状态栏图标：显示自动推送状态并提供配置入口
 struct AutoPushStatusIcon: View, SuperLog {
     @EnvironmentObject var data: DataProvider
+    @EnvironmentObject var vm: ProjectVM
     
     @State private var isSheetPresented = false
     @State private var isAutoPushEnabled = false
@@ -33,14 +34,14 @@ struct AutoPushStatusIcon: View, SuperLog {
             // 注册自动推送服务（只注册一次）
             if !serviceRegistered {
                 serviceRegistered = true
-                AutoPushService.shared.register(dataProvider: data)
+                AutoPushService.shared.register(projectVM: vm)
                 if AutoPushService.verbose {
                     os_log(.info, "\(Self.t)AutoPushService registered from status icon")
                 }
             }
             updateStatus()
         }
-        .onChange(of: data.project) { _, _ in
+        .onChange(of: vm.project) { _, _ in
             updateStatus()
         }
         .onChange(of: data.branch) { _, _ in
@@ -53,7 +54,7 @@ struct AutoPushStatusIcon: View, SuperLog {
     }
     
     private func updateStatus() {
-        guard let project = data.project,
+        guard let project = vm.project,
               let branch = data.branch,
               project.isGitRepo else {
             isAutoPushEnabled = false

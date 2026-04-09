@@ -3,6 +3,7 @@ import SwiftUI
 
 struct GitignoreOrganizerView: View {
     @EnvironmentObject var data: DataProvider
+    @EnvironmentObject var vm: ProjectVM
 
     @Binding var content: String
     @Binding var isLoading: Bool
@@ -37,7 +38,7 @@ struct GitignoreOrganizerView: View {
     }
 
     private func applyTemplate(_ template: GitignoreTemplate) {
-        guard let project = data.project else {
+        guard let project = vm.project else {
             return
         }
 
@@ -74,7 +75,7 @@ struct GitignoreOrganizerView: View {
     }
 
     private func organizeGitignore() {
-        guard let project = data.project else { return }
+        guard let project = vm.project else { return }
 
         isOrganizing = true
         statusMessage = nil

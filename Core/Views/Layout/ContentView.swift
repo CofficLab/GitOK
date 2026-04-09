@@ -10,6 +10,7 @@ struct ContentView: View, SuperLog {
     @EnvironmentObject var app: AppProvider
     @EnvironmentObject var g: DataProvider
     @EnvironmentObject var p: PluginProvider
+    @EnvironmentObject var vm: ProjectVM
 
     /// 导航分栏视图的列可见性状态
     @State private var columnVisibility: NavigationSplitViewVisibility = .automatic
@@ -65,7 +66,7 @@ struct ContentView: View, SuperLog {
                 VStack(spacing: 0) {
                     navigationSplitView(fullWidthStatusBar: true)
 
-                    if statusBarVisibility && g.projectExists {
+                    if statusBarVisibility && vm.projectExists {
                         Divider()
                         StatusBar()
                             .frame(maxWidth: .infinity)
@@ -128,7 +129,7 @@ extension ContentView {
             detailContent(fullWidthStatusBar: fullWidthStatusBar)
         }
         .onAppear(perform: onAppear)
-        .onChange(of: g.project, onProjectChange)
+        .onChange(of: vm.project, onProjectChange)
         .onChange(of: self.tab, onChangeOfTab)
         .onChange(of: self.columnVisibility, onChangeColumnVisibility)
         .onChange(of: p.plugins.count, onPluginsLoaded)
@@ -153,7 +154,7 @@ extension ContentView {
                 }
             }
 
-            if g.project != nil, projectActionsVisibility {
+            if vm.project != nil, projectActionsVisibility {
                 ToolbarItemGroup(
                     placement: .cancellationAction,
                     content: {
@@ -170,7 +171,7 @@ extension ContentView {
     /// - Returns: 详情内容视图
     @ViewBuilder
     private func detailContent(fullWidthStatusBar: Bool) -> some View {
-        if g.projectExists == false {
+        if vm.projectExists == false {
             GuideView(
                 systemImage: "folder.badge.questionmark",
                 title: "项目不存在"
@@ -181,7 +182,6 @@ extension ContentView {
                     if let tabDetailView = p.getEnabledTabDetailView(tab: tab) {
                         tabDetailView
                     } else {
-                        // 没有可用的详情视图时显示引导界面
                         GuideView(
                             systemImage: "puzzlepiece.extension",
                             title: "暂无可用视图",
@@ -215,7 +215,6 @@ extension ContentView {
                         if let tabDetailView = p.getEnabledTabDetailView(tab: tab) {
                             tabDetailView
                         } else {
-                            // 没有可用的详情视图时显示引导界面
                             GuideView(
                                 systemImage: "puzzlepiece.extension",
                                 title: "暂无可用视图",
@@ -230,9 +229,9 @@ extension ContentView {
 
                         if fullWidthStatusBar == false, statusBarVisibility {
                             StatusBar()
-                        }
                     }
-                    .frame(maxHeight: .infinity)
+                }
+                .frame(maxHeight: .infinity)
                 }
             }
         }
@@ -248,14 +247,9 @@ extension ContentView {
             os_log("\(self.t)🔄 Updating cached views")
         }
 
-        // 更新工具栏前导视图
         toolbarLeadingViews = p.getEnabledToolbarLeadingViews()
-
-        // 更新工具栏后置视图
         toolbarTrailingViews = p.getEnabledToolbarTrailingViews()
-
-        // 更新插件列表视图
-        pluginListViews = p.getEnabledPluginListViews(tab: tab, project: g.project)
+        pluginListViews = p.getEnabledPluginListViews(tab: tab, project: vm.project)
 
         if Self.verbose {
             os_log("\(self.t)✅ Cached views updated: \(toolbarLeadingViews.count) leading, \(toolbarTrailingViews.count) trailing, \(pluginListViews.count) list views")
@@ -264,9 +258,6 @@ extension ContentView {
 
     /// 视图出现时的事件处理
     func onAppear() {
-        // 如果提供了默认的，则使用默认的
-        // 否则使用存储的
-
         if let d = defaultColumnVisibility {
             self.columnVisibility = d
 
@@ -286,7 +277,6 @@ extension ContentView {
             }
             self.tab = d
         } else {
-            // 如果没有提供默认标签页，使用"Git"标签页作为默认值
             if Self.verbose {
                 os_log("\(self.t)No default tab provided, using default tab: Git")
             }
@@ -309,7 +299,6 @@ extension ContentView {
             self.projectActionsVisibility = d
         }
 
-        // 初始化缓存的视图
         updateCachedViews()
     }
 
@@ -324,8 +313,6 @@ extension ContentView {
         updateCachedViews()
     }
 
-    /// 检查并处理导航分栏视图可见性变化
-    /// - Parameter reason: 变化的原因描述
     func checkColumnVisibility(reason: String) {
         if Self.verbose {
             os_log("\(self.t)Check column visibility: \(reason)")
@@ -337,14 +324,11 @@ extension ContentView {
         }
     }
 
-    /// 处理列可见性变更事件
     func onChangeColumnVisibility() {
         self.checkColumnVisibility(reason: "onChangeColumnVisibility")
     }
 
-    /// 处理插件加载完成事件
     func onPluginsLoaded() {
-        // 当插件列表从空变为非空时，更新缓存的视图
         if !p.plugins.isEmpty {
             if Self.verbose {
                 os_log("\(self.t)🔌 Plugins loaded, updating cached views")
@@ -353,7 +337,6 @@ extension ContentView {
         }
     }
 
-    /// 处理插件提供者变化事件（如插件启用/禁用）
     func onPluginProviderChange() {
         if Self.verbose {
             os_log("\(self.t)🔔 PluginProvider changed, updating cached views")

@@ -20,6 +20,7 @@ struct CommitList: View, SuperThread, SuperLog {
 
     /// 环境对象：数据提供者
     @EnvironmentObject var data: DataProvider
+    @EnvironmentObject var vm: ProjectVM
 
     /// 提交列表数据
     @State private var commits: [GitCommit] = []
@@ -52,7 +53,7 @@ struct CommitList: View, SuperThread, SuperLog {
 
     var body: some View {
         ZStack {
-            if data.project != nil {
+            if vm.project != nil {
                 GeometryReader { geometry in
                     VStack(spacing: 0) {
                         if loading && commits.isEmpty {
@@ -71,7 +72,7 @@ struct CommitList: View, SuperThread, SuperLog {
             }
         }
         .onAppear(perform: onAppear)
-        .onChange(of: data.project, onProjectChange)
+        .onChange(of: vm.project, onProjectChange)
         .onProjectDidChangeBranch(perform: onBranchChanged)
         .onProjectDidCommit(perform: onCommitSuccess)
         .onProjectDidPull(perform: onPullSuccess)
@@ -137,7 +138,7 @@ extension CommitList {
     /// 加载更多提交记录
     /// 使用分页方式获取下一页的提交数据
     private func loadMoreCommits() {
-        guard let project = data.project, !loading, hasMoreCommits else {
+        guard let project = vm.project, !loading, hasMoreCommits else {
             return
         }
 
@@ -190,7 +191,7 @@ extension CommitList {
         data.setCommit(commit)
 
         // 保存选择的 commit
-        if let projectPath = data.project?.path {
+        if let projectPath = vm.project?.path {
             commitRepo.saveLastSelectedCommit(projectPath: projectPath, commit: commit)
         }
     }
@@ -204,7 +205,7 @@ extension CommitList {
     /// 刷新提交列表数据
     /// - Parameter reason: 刷新原因描述，用于调试
     func refresh(_ reason: String = "") {
-        guard let project = data.project else {
+        guard let project = vm.project else {
             return
         }
 
@@ -274,7 +275,7 @@ extension CommitList {
     /// 刷新未推送状态（不重新加载提交列表）
     /// 用于推送成功后快速更新 UI 状态
     func refreshUnpushedStatus() {
-        guard let project = data.project else {
+        guard let project = vm.project else {
             return
         }
 
@@ -305,7 +306,7 @@ extension CommitList {
     /// 恢复上次选择的提交
     /// 从本地存储中恢复用户之前选择的提交位置
     private func restoreLastSelectedCommit() {
-        guard let project = data.project else { return }
+        guard let project = vm.project else { return }
 
         // 获取上次选择的 commit hash
         if let lastCommitHash = commitRepo.getLastSelectedCommitHash(projectPath: project.path) {
@@ -326,7 +327,7 @@ extension CommitList {
     ///   - targetHash: 目标提交的哈希值
     ///   - maxAttempts: 最大尝试次数，防止无限循环
     private func loadMoreCommitsUntilFound(targetHash: String, maxAttempts: Int = 3) {
-        guard let project = data.project, !loading, hasMoreCommits, maxAttempts > 0 else { return }
+        guard let project = vm.project, !loading, hasMoreCommits, maxAttempts > 0 else { return }
 
         loading = true
         

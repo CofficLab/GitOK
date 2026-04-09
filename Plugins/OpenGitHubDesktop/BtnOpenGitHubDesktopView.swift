@@ -6,6 +6,7 @@ import SwiftUI
 struct BtnOpenGitHubDesktopView: View {
     /// 数据提供者（包含当前项目）
     @EnvironmentObject var g: DataProvider
+    @EnvironmentObject var vm: ProjectVM
 
     /// 单例实例
     static let shared = BtnOpenGitHubDesktopView()
@@ -14,7 +15,7 @@ struct BtnOpenGitHubDesktopView: View {
 
     /// 视图主体
     var body: some View {
-        if let project = g.project {
+        if let project = vm.project {
             Image.githubDesktopApp
                 .resizable()
                 .frame(height: 22)

@@ -12,6 +12,7 @@ struct UserView: View, SuperLog {
     nonisolated static let verbose = false
 
     @EnvironmentObject var data: DataProvider
+    @EnvironmentObject var vm: ProjectVM
 
     /// 文本输入
     @State var text: String = ""
@@ -135,8 +136,8 @@ struct UserView: View, SuperLog {
 extension UserView {
     private func loadUserInfo() {
         do {
-            let userName = try data.project?.getUserName()
-            let userEmail = try data.project?.getUserEmail()
+            let userName = try vm.project?.getUserName()
+            let userEmail = try vm.project?.getUserEmail()
 
             self.currentUser = userName ?? ""
             self.currentEmail = userEmail ?? ""
@@ -162,7 +163,7 @@ extension UserView {
     }
 
     private func applyConfig(_ config: GitUserConfig) {
-        guard let project = data.project else { return }
+        guard let project = vm.project else { return }
 
         // 如果已经是当前配置，不需要重新应用
         if currentUser == config.name && currentEmail == config.email {

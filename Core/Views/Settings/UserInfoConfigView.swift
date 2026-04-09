@@ -12,6 +12,7 @@ struct UserInfoConfigView: View, SuperLog {
     nonisolated static let verbose = false
 
     @EnvironmentObject var data: DataProvider
+    @EnvironmentObject var vm: ProjectVM
 
     /// 用户名绑定
     @Binding var userName: String
@@ -179,7 +180,7 @@ struct UserInfoConfigView: View, SuperLog {
     // MARK: - Actions
 
     func saveUserConfig() -> Bool {
-        guard let project = dataProvider.project else { return false }
+        guard let project = vm.project else { return false }
 
         isLoading = true
         errorMessage = nil
@@ -243,7 +244,7 @@ struct UserInfoConfigView: View, SuperLog {
     // MARK: - Load Data
 
     func loadCurrentUserInfo() {
-        guard let project = dataProvider.project else { return }
+        guard let project = vm.project else { return }
 
         isLoading = true
         errorMessage = nil

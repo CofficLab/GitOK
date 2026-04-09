@@ -11,6 +11,7 @@ struct ConflictStatusTile: View, SuperLog {
     nonisolated static let verbose = false
 
     @EnvironmentObject var data: DataProvider
+    @EnvironmentObject var vm: ProjectVM
     @State private var conflictCount = 0
     @State private var isLoading = false
     @State private var isMerging = false
@@ -42,7 +43,7 @@ struct ConflictStatusTile: View, SuperLog {
 
     /// 加载冲突状态
     private func loadConflictStatus() {
-        guard let project = data.project else {
+        guard let project = vm.project else {
             conflictCount = 0
             isMerging = false
             return
