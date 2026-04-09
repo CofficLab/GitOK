@@ -1,23 +1,31 @@
 import AppKit
 import MagicKit
-import OSLog
+import os
 import SwiftUI
 
 /// 自动推送状态栏图标：显示自动推送状态并提供配置入口
 struct AutoPushStatusIcon: View, SuperLog {
     @EnvironmentObject var data: DataVM
     @EnvironmentObject var vm: ProjectVM
-    
+
     @State private var isSheetPresented = false
     @State private var isAutoPushEnabled = false
     @State private var hasRemoteBranch = false
     @State private var serviceRegistered = false
-    
+
     /// 订阅设置存储的变化
     @ObservedObject private var settingsStore = AutoPushSettingsStore.shared
-    
+
+    // MARK: - Logger & Config
+
+    /// 日志标识 emoji
+    nonisolated static let emoji = "📡"
+
+    /// 是否启用详细日志
+    nonisolated static let verbose = false
+
     static let shared = AutoPushStatusIcon()
-    
+
     init() {}
     
     var body: some View {
@@ -35,8 +43,8 @@ struct AutoPushStatusIcon: View, SuperLog {
             if !serviceRegistered {
                 serviceRegistered = true
                 AutoPushService.shared.register(projectVM: vm)
-                if AutoPushService.verbose {
-                    os_log(.info, "\(Self.t)AutoPushService registered from status icon")
+                if Self.verbose {
+                    AutoPushPlugin.logger.info("\(Self.t)📝 从状态栏注册 AutoPushService")
                 }
             }
             updateStatus()

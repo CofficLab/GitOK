@@ -3,20 +3,26 @@ import LibGit2Swift
 import MagicKit
 
 /// 自动推送配置视图：管理项目分支的自动推送设置
-/// 
+///
 /// 这是主视图，整合所有子组件
 struct AutoPushConfigView: View, SuperLog {
     @EnvironmentObject var data: DataVM
     @EnvironmentObject var vm: ProjectVM
     @Environment(\.dismiss) private var dismiss
-    
+
     @ObservedObject private var settingsStore = AutoPushSettingsStore.shared
-    
+
     @State private var currentProjectAutoPushEnabled = false
     @State private var isLoading = false
     @State private var statusMessage: String?
-    
-    private let verbose = false
+
+    // MARK: - Logger & Config
+
+    /// 日志标识 emoji
+    nonisolated static let emoji = "🖥️"
+
+    /// 是否启用详细日志
+    nonisolated static let verbose = false
     
     var body: some View {
         VStack(spacing: 0) {

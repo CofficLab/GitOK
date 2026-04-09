@@ -1,7 +1,7 @@
 import Foundation
 import Combine
 import MagicKit
-import OSLog
+import os
 
 /// 自动推送配置存储：管理每个项目每个分支的自动推送设置
 /// 
@@ -14,8 +14,13 @@ import OSLog
 final class AutoPushSettingsStore: ObservableObject, SuperLog {
     static let shared = AutoPushSettingsStore()
     
+    // MARK: - Logger & Config
+
+    /// 日志标识 emoji
     nonisolated static let emoji = "💾"
-    nonisolated static let verbose = true
+
+    /// 是否启用详细日志
+    nonisolated static let verbose = false
 
     // MARK: - 文件路径配置
     
@@ -35,9 +40,9 @@ final class AutoPushSettingsStore: ObservableObject, SuperLog {
     private init() {
         // 初始化时从文件加载设置
         self.settings = loadSettings()
-        
+
         if Self.verbose {
-            os_log(.info, "%{public}@ initialized with %d settings", Self.t, settings.count)
+            AutoPushPlugin.logger.info("\(Self.t)📦 初始化完成，加载了 \(self.settings.count) 个配置")
         }
     }
 
@@ -68,10 +73,9 @@ final class AutoPushSettingsStore: ObservableObject, SuperLog {
         queue.sync {
             let key = makeKey(projectPath: projectPath, branchName: branchName)
             let enabled = settings[key]?.isEnabled == true
-            
+
             if Self.verbose {
-                os_log(.info, "%{public}@ isAutoPushEnabled for %{public}@/%{public}@: %{public}@", 
-                       Self.t, projectPath, branchName, enabled ? "true" : "false")
+                AutoPushPlugin.logger.info("\(Self.t)检查启用状态 \(projectPath)/\(branchName): \(enabled ? "✅ 启用" : "⛔️ 禁用")")
             }
             return enabled
         }
@@ -98,14 +102,13 @@ final class AutoPushSettingsStore: ObservableObject, SuperLog {
             
             // 触发 SwiftUI 观察更新
             objectWillChange.send()
-            
+
             // 持久化到文件
             persistSettingsToCurrentFile(settings: settings)
-            
+
             if Self.verbose {
-                os_log(.info, "%{public}@ set %{public}@/%{public}@ = %{public}@", 
-                       Self.t, projectPath, branchName, enabled ? "true" : "false")
-                os_log(.info, "%{public}@ saved %d settings", Self.t, settings.count)
+                AutoPushPlugin.logger.info("\(Self.t)💾 设置自动推送状态 \(projectPath)/\(branchName): \(enabled ? "✅ 启用" : "⛔️ 禁用")")
+                AutoPushPlugin.logger.info("\(Self.t)💾 已保存 \(self.settings.count) 个配置")
             }
         }
     }
@@ -181,26 +184,25 @@ final class AutoPushSettingsStore: ObservableObject, SuperLog {
     /// 从文件加载设置
     private func loadSettings() -> [String: ProjectBranchAutoPushConfig] {
         let fileURL = currentStateFileURL()
-        
+
         guard FileManager.default.fileExists(atPath: fileURL.path) else {
             if Self.verbose {
-                os_log(.info, "%{public}@ no settings file found, using defaults", Self.t)
+                AutoPushPlugin.logger.info("\(Self.t)📂 配置文件不存在，使用默认配置")
             }
             return [:]
         }
-        
+
         guard let data = try? Data(contentsOf: fileURL),
               let settings = try? JSONDecoder().decode([String: ProjectBranchAutoPushConfig].self, from: data) else {
-            if Self.verbose {
-                os_log(.error, "%{public}@ failed to decode settings file", Self.t)
-            }
+            // 错误日志始终输出
+            AutoPushPlugin.logger.error("\(Self.t)❌ 解析配置文件失败")
             return [:]
         }
-        
+
         if Self.verbose {
-            os_log(.info, "%{public}@ loaded %d settings from file", Self.t, settings.count)
+            AutoPushPlugin.logger.info("\(Self.t)📂 从文件加载了 \(settings.count) 个配置")
         }
-        
+
         return settings
     }
 
@@ -208,7 +210,7 @@ final class AutoPushSettingsStore: ObservableObject, SuperLog {
     private func persistSettingsToCurrentFile(settings: [String: ProjectBranchAutoPushConfig]) {
         let fileManager = FileManager.default
         let settingsDir = currentSettingsDirURL()
-        
+
         // 确保目录存在
         try? fileManager.createDirectory(at: settingsDir, withIntermediateDirectories: true, attributes: nil)
 
@@ -216,28 +218,30 @@ final class AutoPushSettingsStore: ObservableObject, SuperLog {
         let tmpURL = settingsDir.appendingPathComponent(Self.tmpFileName, isDirectory: false)
 
         guard let data = try? JSONEncoder().encode(settings) else {
-            os_log(.error, "%{public}@ failed to encode settings", Self.t)
+            // 错误日志始终输出
+            AutoPushPlugin.logger.error("\(Self.t)❌ 序列化配置失败")
             return
         }
 
         do {
             // 写入临时文件（atomic）
             try data.write(to: tmpURL, options: .atomic)
-            
+
             // 替换原文件
             if fileManager.fileExists(atPath: fileURL.path) {
                 _ = try? fileManager.replaceItemAt(fileURL, withItemAt: tmpURL)
             } else {
                 try fileManager.moveItem(at: tmpURL, to: fileURL)
             }
-            
+
             if Self.verbose {
-                os_log(.info, "%{public}@ saved %d settings to file", Self.t, settings.count)
+                AutoPushPlugin.logger.info("\(Self.t)💾 已保存 \(settings.count) 个配置到文件")
             }
         } catch {
             // 失败时清理临时文件
             try? fileManager.removeItem(at: tmpURL)
-            os_log(.error, "%{public}@ failed to save settings: %{public}@", Self.t, error.localizedDescription)
+            // 错误日志始终输出
+            AutoPushPlugin.logger.error("\(Self.t)❌ 保存配置失败: \(error.localizedDescription)")
         }
     }
 
