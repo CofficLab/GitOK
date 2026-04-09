@@ -7,7 +7,7 @@ import SwiftUI
 /// 监听项目变化并更新 isClean 状态到 ProjectVM
 struct CleanStatusRootView<Content: View>: View, SuperLog {
     nonisolated static var emoji: String { "✅" }
-    private let verbose = true
+    private let verbose = false
 
     let content: Content
 

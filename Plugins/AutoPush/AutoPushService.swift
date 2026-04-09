@@ -10,7 +10,7 @@ class AutoPushService: ObservableObject, SuperLog {
     static let shared = AutoPushService()
     
     nonisolated static let emoji = "🚀"
-    static let verbose = true  // 设为 true 以查看详细日志
+    static let verbose = true
     
     /// 定时检查间隔（秒）
     static let checkInterval: TimeInterval = 30.0
