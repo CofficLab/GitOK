@@ -43,7 +43,7 @@ struct CommitList: View, SuperThread, SuperLog {
     /// 当前刷新任务
     @State private var currentRefreshTask: Task<Void, Never>? = nil
     /// 后台刷新工作任务
-    @State private var currentRefreshWorkerTask: Task<([GitCommit], Set<String>), Error>? = nil
+    @State private var currentRefreshWorkerTask: Task<[GitCommit], Error>? = nil
 
     /// Git 提交仓库，用于存储和恢复提交选择状态
     private let commitRepo = GitCommitRepo.shared
