@@ -815,16 +815,10 @@ extension Project {
             let currentBranch = try LibGit2.getCurrentBranch(at: self.path)
             os_log(.default, "📍 Current branch: \(currentBranch)")
 
-            // 在推送前记录未推送的 commits
-            let unpushedBeforePush = try LibGit2.getUnPushedCommits(at: self.path, verbose: false)
-
             // 处理 SSH URL 转换
             try performWithConvertedSSHURL(operation: "push") {
                 try LibGit2.push(at: self.path, verbose: false)
             }
-
-            // 在推送后记录未推送的 commits
-            let unpushedAfterPush = try LibGit2.getUnPushedCommits(at: self.path, verbose: false)
 
             postEvent(
                 name: .projectDidPush,
