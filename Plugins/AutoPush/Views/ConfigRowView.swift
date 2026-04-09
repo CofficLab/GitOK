@@ -52,37 +52,37 @@ struct ConfigRowView: View {
                 Text(config.projectTitle)
                     .font(.system(.body, design: .monospaced))
                     .fontWeight(.medium)
-                
+
                 Text("/")
                     .foregroundColor(.secondary)
-                
+
                 Text(config.branchName)
                     .font(.system(.body, design: .monospaced))
                     .foregroundColor(.purple)
-                
+
                 if isCurrentProject {
-                    Label("当前", systemImage: "star.fill")
+                    Label("Current", systemImage: "star.fill")
                         .font(.caption)
                         .foregroundColor(.orange)
                 }
             }
-            
+
             Text(config.projectPath)
                 .font(.caption)
                 .foregroundColor(.secondary)
                 .lineLimit(1)
         }
     }
-    
+
     @ViewBuilder
     private var lastPushedTime: some View {
         if let lastPushed = config.lastPushedAt {
-            Text(formatDate(lastPushed))
+            Text(String(localized: "Last pushed: \(formatDate(lastPushed))", table: "AutoPush"))
                 .font(.caption)
                 .foregroundColor(.secondary)
         }
     }
-    
+
     private var toggleButton: some View {
         Toggle(isOn: Binding(
             get: { config.isEnabled },
@@ -93,7 +93,7 @@ struct ConfigRowView: View {
         .toggleStyle(.switch)
         .scaleEffect(0.9)
     }
-    
+
     private var deleteButton: some View {
         Button(action: { onDelete(config) }) {
             Image(systemName: "trash")

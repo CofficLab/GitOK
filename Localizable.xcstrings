@@ -173,6 +173,9 @@
         }
       }
     },
+    "%lld configs" : {
+
+    },
     "%lld 个图标" : {
       "localizations" : {
         "zh-Hans" : {
@@ -222,6 +225,7 @@
       }
     },
     "%lld 个配置" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -301,6 +305,9 @@
         }
       }
     },
+    "After enabling auto-push in the current project, the configuration will be displayed here" : {
+
+    },
     "Amazing Description" : {
       "localizations" : {
         "zh-Hans" : {
@@ -348,6 +355,9 @@
           }
         }
       }
+    },
+    "Current" : {
+
     },
     "current_head" : {
       "extractionState" : "stale",
@@ -458,6 +468,9 @@
           }
         }
       }
+    },
+    "No remote repository" : {
+
     },
     "no_branches" : {
       "extractionState" : "manual",
@@ -596,6 +609,9 @@
           }
         }
       }
+    },
+    "Not a Git repository" : {
+
     },
     "not_git_project" : {
       "extractionState" : "stale",
@@ -1438,6 +1454,7 @@
       }
     },
     "启用后，将定时自动推送到远程仓库（每 30 秒检查一次）" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1454,6 +1471,7 @@
       }
     },
     "启用自动推送" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1582,6 +1600,7 @@
       }
     },
     "在当前项目中启用自动推送后，配置将显示在这里" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1776,6 +1795,7 @@
       }
     },
     "已配置的项目分支" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1872,6 +1892,7 @@
       }
     },
     "当前项目" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -2287,6 +2308,7 @@
       }
     },
     "无远程仓库" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -2367,6 +2389,7 @@
       }
     },
     "暂无配置" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -3266,6 +3289,7 @@
       }
     },
     "管理项目分支的自动推送设置" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -3362,6 +3386,7 @@
       }
     },
     "自动推送已启用 - 点击管理" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -3378,6 +3403,7 @@
       }
     },
     "自动推送已禁用 - 点击配置" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -3394,6 +3420,7 @@
       }
     },
     "自动推送配置" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -3794,6 +3821,7 @@
       }
     },
     "非 Git 项目" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {

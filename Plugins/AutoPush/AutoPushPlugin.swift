@@ -26,10 +26,10 @@ class AutoPushPlugin: NSObject, SuperPlugin, SuperLog {
     @objc static let shouldRegister = true
 
     /// 插件显示名称
-    static var displayName: String = "AutoPush"
+    static var displayName: String = String(localized: "Auto Push", table: "AutoPush")
 
     /// 插件描述
-    static var description: String = "自动推送当前分支到远程仓库"
+    static var description: String = String(localized: "Automatically push the current branch to remote repository.", table: "AutoPush")
 
     /// 插件图标名称
     static var iconName: String = "arrow.up.circle"

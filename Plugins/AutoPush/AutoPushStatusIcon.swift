@@ -32,7 +32,7 @@ struct AutoPushStatusIcon: View, SuperLog {
         StatusBarTile(icon: isAutoPushEnabled ? "arrow.up.circle.fill" : "arrow.up.circle", onTap: {
             isSheetPresented.toggle()
         })
-        .help(isAutoPushEnabled ? "自动推送已启用 - 点击管理" : "自动推送已禁用 - 点击配置")
+        .help(isAutoPushEnabled ? String(localized: "Auto-push is enabled - Click to manage", table: "AutoPush") : String(localized: "Auto-push is disabled - Click to configure", table: "AutoPush"))
         .foregroundColor(isAutoPushEnabled ? .green : .secondary)
         .sheet(isPresented: $isSheetPresented) {
             AutoPushConfigView()

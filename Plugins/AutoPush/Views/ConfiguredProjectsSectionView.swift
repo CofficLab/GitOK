@@ -20,34 +20,34 @@ struct ConfiguredProjectsSectionView: View {
     }
     
     // MARK: - Subviews
-    
+
     private var sectionHeader: some View {
         HStack {
             Image(systemName: "list.bullet")
                 .foregroundColor(.blue)
-            Text("已配置的项目分支")
+            Text(String(localized: "Configured Projects", table: "AutoPush"))
                 .font(.headline)
             Spacer()
-            
+
             if !settingsStore.settings.isEmpty {
-                Text("\(settingsStore.settings.count) 个配置")
+                Text("\(settingsStore.settings.count) configs")
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
         }
     }
-    
+
     private var emptyState: some View {
         VStack(spacing: 16) {
             Image(systemName: "cloudUpload")
                 .font(.system(size: 48))
                 .foregroundColor(.secondary)
-            
-            Text("暂无配置")
+
+            Text(String(localized: "No configured projects", table: "AutoPush"))
                 .font(.headline)
                 .foregroundColor(.secondary)
-            
-            Text("在当前项目中启用自动推送后，配置将显示在这里")
+
+            Text("After enabling auto-push in the current project, the configuration will be displayed here")
                 .font(.caption)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)

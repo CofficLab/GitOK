@@ -17,17 +17,17 @@ struct CurrentProjectSectionView: View {
     }
     
     // MARK: - Subviews
-    
+
     private var sectionHeader: some View {
         HStack {
             Image(systemName: "folder")
                 .foregroundColor(.blue)
-            Text("当前项目")
+            Text(String(localized: "Current Project", table: "AutoPush"))
                 .font(.headline)
             Spacer()
         }
     }
-    
+
     private var configurationCard: some View {
         VStack(alignment: .leading, spacing: 8) {
             projectInfo
@@ -38,29 +38,29 @@ struct CurrentProjectSectionView: View {
         .padding()
         .background(cardBackground)
     }
-    
+
     private var projectInfo: some View {
         HStack {
             VStack(alignment: .leading, spacing: 4) {
                 Text(project.title)
                     .font(.system(.body, design: .monospaced))
                     .fontWeight(.medium)
-                
+
                 Text(project.path)
                     .font(.caption)
                     .foregroundColor(.secondary)
                     .lineLimit(1)
             }
-            
+
             Spacer()
-            
+
             VStack(alignment: .trailing, spacing: 4) {
                 branchInfo
                 statusBadge
             }
         }
     }
-    
+
     private var branchInfo: some View {
         HStack(spacing: 4) {
             Image(systemName: "arrow.triangle.branch")
@@ -70,24 +70,24 @@ struct CurrentProjectSectionView: View {
                 .fontWeight(.medium)
         }
     }
-    
+
     @ViewBuilder
     private var statusBadge: some View {
         if !project.isGitRepo {
-            Label("非 Git 项目", systemImage: "exclamationmark.triangle")
+            Label("Not a Git repository", systemImage: "exclamationmark.triangle")
                 .font(.caption)
                 .foregroundColor(.red)
         } else if !hasRemoteBranch {
-            Label("无远程仓库", systemImage: "cloud")
+            Label("No remote repository", systemImage: "cloud")
                 .font(.caption)
                 .foregroundColor(.orange)
         }
     }
-    
+
     private var toggleSection: some View {
         HStack {
             Toggle(isOn: $isEnabled) {
-                Text("启用自动推送")
+                Text(String(localized: "Enable auto-push", table: "AutoPush"))
                     .fontWeight(.medium)
             }
             .toggleStyle(.switch)
@@ -95,13 +95,13 @@ struct CurrentProjectSectionView: View {
             .onChange(of: isEnabled) { _, newValue in
                 onToggle(newValue)
             }
-            
+
             Spacer()
         }
     }
-    
+
     private var descriptionText: some View {
-        Text("启用后，将定时自动推送到远程仓库（每 30 秒检查一次）")
+        Text(String(localized: "Enable auto-push will automatically push to remote repository every 30 seconds.", table: "AutoPush"))
             .font(.caption)
             .foregroundColor(.secondary)
     }

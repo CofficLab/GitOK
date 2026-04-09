@@ -23,7 +23,7 @@ struct AutoPushConfigView: View, SuperLog {
 
     /// 是否启用详细日志
     nonisolated static let verbose = false
-    
+
     var body: some View {
         VStack(spacing: 0) {
             // 标题栏
@@ -31,7 +31,7 @@ struct AutoPushConfigView: View, SuperLog {
                 isLoading: isLoading,
                 onClose: { dismiss() }
             )
-            
+
             // 内容区域
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
@@ -46,7 +46,7 @@ struct AutoPushConfigView: View, SuperLog {
                             }
                         )
                     }
-                    
+
                     // 所有已配置的项目分支
                     ConfiguredProjectsSectionView(
                         settingsStore: settingsStore,
@@ -57,7 +57,7 @@ struct AutoPushConfigView: View, SuperLog {
                 }
                 .padding()
             }
-            
+
             // 底部状态栏
             AutoPushStatusBarView(message: statusMessage)
         }
@@ -72,22 +72,22 @@ struct AutoPushConfigView: View, SuperLog {
             updateCurrentProjectStatus()
         }
     }
-    
+
     // MARK: - Event Handlers
-    
+
     private func updateCurrentProjectStatus() {
         guard let project = vm.project,
               let branch = data.branch else {
             currentProjectAutoPushEnabled = false
             return
         }
-        
+
         currentProjectAutoPushEnabled = settingsStore.isAutoPushEnabled(
             for: project.path,
             branchName: branch.name
         )
     }
-    
+
     private func handleToggle(project: Project, branch: GitBranch, enabled: Bool) {
         // 保存设置
         settingsStore.setAutoPushEnabled(
@@ -95,25 +95,26 @@ struct AutoPushConfigView: View, SuperLog {
             branchName: branch.name,
             enabled: enabled
         )
-        
+
         // 如果启用，执行推送
         if enabled {
             performPush(project: project, branch: branch)
         }
-        
+
         // 显示状态消息
-        showStatusMessage("\(enabled ? "已启用" : "已禁用") 自动推送：\(project.title)/\(branch.name)")
+        let status = enabled ? "enabled" : "disabled"
+        showStatusMessage(String(localized: "Auto-push \(status): \(project.title)/\(branch.name)", table: "AutoPush"))
     }
-    
+
     private func handleToggleConfig(_ config: ProjectBranchAutoPushConfig) {
         let newStatus = !config.isEnabled
-        
+
         settingsStore.setAutoPushEnabled(
             for: config.projectPath,
             branchName: config.branchName,
             enabled: newStatus
         )
-        
+
         // 如果是当前项目，同步更新状态
         if let project = vm.project,
            let branch = data.branch,
@@ -121,22 +122,23 @@ struct AutoPushConfigView: View, SuperLog {
             withAnimation {
                 currentProjectAutoPushEnabled = newStatus
             }
-            
+
             // 如果启用，执行推送
             if newStatus {
                 performPush(project: project, branch: branch)
             }
         }
-        
-        showStatusMessage("\(newStatus ? "已启用" : "已禁用") 自动推送：\(config.projectTitle)/\(config.branchName)")
+
+        let status = newStatus ? "enabled" : "disabled"
+        showStatusMessage(String(localized: "Auto-push \(status): \(config.projectTitle)/\(config.branchName)", table: "AutoPush"))
     }
-    
+
     private func handleDeleteConfig(_ config: ProjectBranchAutoPushConfig) {
         settingsStore.removeConfig(
             for: config.projectPath,
             branchName: config.branchName
         )
-        
+
         // 如果是当前项目，同步更新状态
         if let project = vm.project,
            let branch = data.branch,
@@ -145,12 +147,12 @@ struct AutoPushConfigView: View, SuperLog {
                 currentProjectAutoPushEnabled = false
             }
         }
-        
-        showStatusMessage("已删除配置：\(config.projectTitle)/\(config.branchName)")
+
+        showStatusMessage(String(localized: "Configuration deleted: \(config.projectTitle)/\(config.branchName)", table: "AutoPush"))
     }
-    
+
     // MARK: - Helper Methods
-    
+
     private func isCurrentProject(_ config: ProjectBranchAutoPushConfig) -> Bool {
         guard let project = vm.project,
               let branch = data.branch else {
@@ -158,37 +160,37 @@ struct AutoPushConfigView: View, SuperLog {
         }
         return config.projectPath == project.path && config.branchName == branch.name
     }
-    
+
     private func showStatusMessage(_ message: String) {
         statusMessage = message
-        
+
         DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
             withAnimation {
                 self.statusMessage = nil
             }
         }
     }
-    
+
     private func performPush(project: Project, branch: GitBranch) {
         Task { @MainActor in
             isLoading = true
-            statusMessage = "正在推送..."
+            statusMessage = String(localized: "Pushing...", table: "AutoPush")
         }
-        
+
         Task.detached {
             do {
                 try project.push()
-                
+
                 // 更新最后推送时间
                 AutoPushSettingsStore.shared.updateLastPushedDate(
                     for: project.path,
                     branchName: branch.name
                 )
-                
+
                 await MainActor.run {
                     isLoading = false
-                    statusMessage = "推送成功"
-                    
+                    statusMessage = String(localized: "Push succeeded", table: "AutoPush")
+
                     DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                         withAnimation {
                             statusMessage = nil
@@ -198,7 +200,7 @@ struct AutoPushConfigView: View, SuperLog {
             } catch {
                 await MainActor.run {
                     isLoading = false
-                    statusMessage = "推送失败：\(error.localizedDescription)"
+                    statusMessage = String(localized: "Push failed: \(error.localizedDescription)", table: "AutoPush")
                 }
             }
         }
