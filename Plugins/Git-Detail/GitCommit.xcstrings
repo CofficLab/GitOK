@@ -199,40 +199,6 @@
         }
       }
     },
-    "拉取" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "拉取"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "拉取"
-          }
-        }
-      }
-    },
-    "拉取中..." : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "拉取中..."
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "拉取中..."
-          }
-        }
-      }
-    },
     "拉取中…" : {
       "localizations" : {
         "zh-Hans" : {
