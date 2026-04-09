@@ -6,7 +6,7 @@ import OSLog
 import SwiftUI
 
 @MainActor
-class DataProvider: NSObject, ObservableObject, SuperLog {
+class DataVM: NSObject, ObservableObject, SuperLog {
     // MARK: - Properties
 
     @Published var projects: [Project] = []
@@ -31,7 +31,7 @@ class DataProvider: NSObject, ObservableObject, SuperLog {
 
 // MARK: - Project Management
 
-extension DataProvider {
+extension DataVM {
     /**
      * 移动项目并更新排序
      * @param source 源索引集合
@@ -150,7 +150,7 @@ extension DataProvider {
 
 // MARK: - Action
 
-extension DataProvider {
+extension DataVM {
     /**
      * 设置当前选中的提交
      * @param c 要设置的提交

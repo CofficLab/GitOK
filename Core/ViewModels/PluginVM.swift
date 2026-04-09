@@ -7,7 +7,7 @@ import SwiftData
 import SwiftUI
 import Combine
 
-class PluginProvider: ObservableObject, SuperLog, SuperThread {
+class PluginVM: ObservableObject, SuperLog, SuperThread {
     nonisolated static let emoji = "🧩"
     static let verbose = false
 
