@@ -13,7 +13,6 @@ struct BtnCommitAndPush: View, SuperLog, SuperThread {
 
     @EnvironmentObject var g: DataVM
     @EnvironmentObject var vm: ProjectVM
-    
 
     /// 提交消息
     var commitMessage: String = ""
@@ -28,52 +27,52 @@ struct BtnCommitAndPush: View, SuperLog, SuperThread {
             systemImage: .iconUpload,
             style: .primary,
             action: {
-            guard let project = vm.project else {
-                return
-            }
-
-            /// 设置状态信息
-            /// - Parameter text: 状态文本，nil 表示清除状态
-            func setStatus(_ text: String?) {
-                Task { @MainActor in
-                    g.activityStatus = text
+                guard let project = vm.project else {
+                    return
                 }
-            }
 
-            Task.detached {
-                setStatus("添加文件中…")
-                do {
-                    try project.addAll()
-
-                    let message = commitMessage.isEmpty ? "自动提交" : commitMessage
-
-                    setStatus("提交中…")
-                    try await MainActor.run {
-                        try project.submit(message)
+                /// 设置状态信息
+                /// - Parameter text: 状态文本，nil 表示清除状态
+                func setStatus(_ text: String?) {
+                    Task { @MainActor in
+                        g.activityStatus = text
                     }
+                }
 
-                    if commitOnly == false {
-                        setStatus("推送中…")
-                        try project.push()
-                    }
+                Task.detached {
+                    setStatus("添加文件中…")
+                    do {
+                        try project.addAll()
 
-                    await MainActor.run {
+                        let message = commitMessage.isEmpty ? "自动提交" : commitMessage
+
+                        setStatus("提交中…")
+                        try await MainActor.run {
+                            try project.submit(message)
+                        }
+
                         if commitOnly == false {
-                            alert_info("提交并推送成功")
-                        } else {
-                            alert_info("提交成功")
+                            setStatus("推送中…")
+                            try project.push()
+                        }
+
+                        await MainActor.run {
+                            if commitOnly == false {
+                                alert_info("提交并推送成功")
+                            } else {
+                                alert_info("提交成功")
+                            }
+                        }
+                    } catch {
+                        await MainActor.run {
+                            os_log(.error, "\(Self.t)❌ 提交或推送失败: \(error.localizedDescription)")
+                            alert_error(error)
                         }
                     }
-                } catch {
-                    await MainActor.run {
-                        os_log(.error, "\(Self.t)❌ 提交或推送失败: \(error.localizedDescription)")
-                        alert_error(error)
-                    }
-                }
 
-                setStatus(nil)
-            }
-        })
+                    setStatus(nil)
+                }
+            })
     }
 }
 

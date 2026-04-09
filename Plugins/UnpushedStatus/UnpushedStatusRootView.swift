@@ -7,7 +7,7 @@ import SwiftUI
 /// 包裹整个应用内容，监听项目变化并更新未推送提交数量
 struct UnpushedStatusRootView<Content: View>: View, SuperLog {
     nonisolated static var emoji: String { "📤" }
-    private let verbose = true
+    private let verbose = false
 
     let content: Content
 

@@ -98,9 +98,6 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
             // 只检查 GitOK 命名空间下以 "Plugin" 结尾的类
             guard className.hasPrefix("GitOK."), className.hasSuffix("Plugin") else { continue }
 
-            // 调试：打印所有发现的插件类名
-            os_log("🔍 Found plugin candidate: \(className)")
-
             // 尝试获取 shared 单例实例
             let sharedSelector = NSSelectorFromString("shared")
             guard let sharedMethod = class_getClassMethod(cls, sharedSelector) else {
@@ -132,8 +129,7 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
                 if Self.verbose { os_log("\(self.t)⏭️ Skipping plugin (shouldRegister=false): \(className)") }
                 continue
             }
-
-            os_log("✅ Registering plugin: \(className), order: \(pluginOrder)")
+            
             // 添加到临时数组，稍后按 order 排序
             discoveredPlugins.append((plugin, className, pluginOrder))
         }
