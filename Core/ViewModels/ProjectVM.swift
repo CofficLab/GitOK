@@ -27,6 +27,9 @@ class ProjectVM: ObservableObject, SuperLog {
     /// 未推送提交的哈希集合（用于快速查询某个 commit 是否未推送）
     @Published private(set) var unpushedCommitHashes: Set<String> = []
 
+    /// 项目是否 clean（无未提交的更改）
+    @Published private(set) var isClean: Bool = true
+
     /// 仓库管理器
     private let repoManager: RepoManager
 
@@ -90,6 +93,12 @@ class ProjectVM: ObservableObject, SuperLog {
     /// - Returns: 是否未推送
     func isCommitUnpushed(_ commitHash: String) -> Bool {
         return unpushedCommitHashes.contains(commitHash)
+    }
+
+    /// 更新项目的 clean 状态（供插件调用）
+    /// - Parameter isClean: 项目是否 clean
+    func updateIsClean(_ isClean: Bool) {
+        self.isClean = isClean
     }
 
     // MARK: - Private
