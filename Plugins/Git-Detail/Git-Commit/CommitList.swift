@@ -15,11 +15,10 @@ struct CommitList: View, SuperThread, SuperLog {
     /// 单例实例
     static var shared = CommitList()
 
-    /// 环境对象：应用提供者
-    @EnvironmentObject var app: AppProvider
-
-    /// 环境对象：数据提供者
-    @EnvironmentObject var data: DataProvider
+    /// 环境对象
+    @EnvironmentObject var app: AppVM
+    @EnvironmentObject var data: DataVM
+    @EnvironmentObject var vm: ProjectVM
 
     /// 提交列表数据
     @State private var commits: [GitCommit] = []
@@ -36,23 +35,20 @@ struct CommitList: View, SuperThread, SuperLog {
     /// 每页加载的提交数量
     @State private var pageSize: Int = 50
 
-    /// 未推送提交的哈希集合（由 CommitList 统一管理，避免竞争条件）
-    @State private var unpushedCommits: Set<String> = []
-
     /// 是否已调度加载更多操作（防止快速连续触发）
     @State private var isLoadingMoreScheduled = false
 
     /// 当前刷新任务
     @State private var currentRefreshTask: Task<Void, Never>? = nil
     /// 后台刷新工作任务
-    @State private var currentRefreshWorkerTask: Task<([GitCommit], Set<String>), Error>? = nil
+    @State private var currentRefreshWorkerTask: Task<[GitCommit], Error>? = nil
 
     /// Git 提交仓库，用于存储和恢复提交选择状态
     private let commitRepo = GitCommitRepo.shared
 
     var body: some View {
         ZStack {
-            if data.project != nil {
+            if vm.project != nil {
                 GeometryReader { geometry in
                     VStack(spacing: 0) {
                         if loading && commits.isEmpty {
@@ -71,7 +67,7 @@ struct CommitList: View, SuperThread, SuperLog {
             }
         }
         .onAppear(perform: onAppear)
-        .onChange(of: data.project, onProjectChange)
+        .onChange(of: vm.project, onProjectChange)
         .onProjectDidChangeBranch(perform: onBranchChanged)
         .onProjectDidCommit(perform: onCommitSuccess)
         .onProjectDidPull(perform: onPullSuccess)
@@ -89,9 +85,14 @@ extension CommitList {
             LazyVStack(spacing: 0, pinnedViews: []) {
                 Divider()
 
+                // 获取第一个 commit 的 hash，用于判断是否允许撤销
+                let firstCommitHash = commits.first?.hash
+
                 ForEach(Array(commits.enumerated()), id: \.element.hash) { index, commit in
-                    let isUnpushed = unpushedCommits.contains(commit.hash)
-                    CommitRow(commit: commit, isUnpushed: isUnpushed)
+                    CommitRow(
+                        commit: commit,
+                        isFirstCommit: commit.hash == firstCommitHash
+                    )
                         .onAppear {
                             // 只在最后几个 commit 出现时触发加载更多
                             let threshold = max(commits.count - 10, Int(Double(commits.count) * 0.8))
@@ -137,7 +138,7 @@ extension CommitList {
     /// 加载更多提交记录
     /// 使用分页方式获取下一页的提交数据
     private func loadMoreCommits() {
-        guard let project = data.project, !loading, hasMoreCommits else {
+        guard let project = vm.project, !loading, hasMoreCommits else {
             return
         }
 
@@ -190,7 +191,7 @@ extension CommitList {
         data.setCommit(commit)
 
         // 保存选择的 commit
-        if let projectPath = data.project?.path {
+        if let projectPath = vm.project?.path {
             commitRepo.saveLastSelectedCommit(projectPath: projectPath, commit: commit)
         }
     }
@@ -204,7 +205,7 @@ extension CommitList {
     /// 刷新提交列表数据
     /// - Parameter reason: 刷新原因描述，用于调试
     func refresh(_ reason: String = "") {
-        guard let project = data.project else {
+        guard let project = vm.project else {
             return
         }
 
@@ -238,23 +239,16 @@ extension CommitList {
                         0, limit: pageSize
                     )
 
-                    try Task.checkCancellation()
-
-                    // 获取未推送的 commits
-                    let unpushed = try await project.getUnPushedCommits()
-                    let unpushedHashes = Set(unpushed.map { $0.hash })
-
-                    return (commits, unpushedHashes)
+                    return commits
                 }
                 currentRefreshWorkerTask = worker
-                let (initialCommits, unpushedHashes) = try await worker.value
+                let initialCommits = try await worker.value
 
                 if Task.isCancelled { return }
 
                 // 在主线程更新 UI 状态
                 await MainActor.run {
                     self.commits = initialCommits
-                    self.unpushedCommits = unpushedHashes
                     self.loading = false
                     self.currentPage = 1 // Next page to load
                 }
@@ -264,39 +258,7 @@ extension CommitList {
                 // 在主线程更新 UI 状态
                 await MainActor.run {
                     self.commits = []
-                    self.unpushedCommits = []
                     self.loading = false
-                }
-            }
-        }
-    }
-
-    /// 刷新未推送状态（不重新加载提交列表）
-    /// 用于推送成功后快速更新 UI 状态
-    func refreshUnpushedStatus() {
-        guard let project = data.project else {
-            return
-        }
-
-        if Self.verbose {
-            os_log("\(Self.t)🔄 Refreshing unpushed status only")
-        }
-
-        Task.detached(priority: .userInitiated) {
-            do {
-                let unpushed = try await project.getUnPushedCommits()
-                let unpushedHashes = Set(unpushed.map { $0.hash })
-
-                if Self.verbose {
-                    os_log("\(Self.t)📊 Unpushed status updated: \(unpushedHashes.count) commits")
-                }
-
-                await MainActor.run {
-                    self.unpushedCommits = unpushedHashes
-                }
-            } catch {
-                if Self.verbose {
-                    os_log(.error, "\(Self.t)❌ Failed to refresh unpushed status: \(error)")
                 }
             }
         }
@@ -305,7 +267,7 @@ extension CommitList {
     /// 恢复上次选择的提交
     /// 从本地存储中恢复用户之前选择的提交位置
     private func restoreLastSelectedCommit() {
-        guard let project = data.project else { return }
+        guard let project = vm.project else { return }
 
         // 获取上次选择的 commit hash
         if let lastCommitHash = commitRepo.getLastSelectedCommitHash(projectPath: project.path) {
@@ -326,7 +288,7 @@ extension CommitList {
     ///   - targetHash: 目标提交的哈希值
     ///   - maxAttempts: 最大尝试次数，防止无限循环
     private func loadMoreCommitsUntilFound(targetHash: String, maxAttempts: Int = 3) {
-        guard let project = data.project, !loading, hasMoreCommits, maxAttempts > 0 else { return }
+        guard let project = vm.project, !loading, hasMoreCommits, maxAttempts > 0 else { return }
 
         loading = true
         
@@ -427,14 +389,10 @@ extension CommitList {
         self.refresh("GitPullSuccess")
     }
 
-    /// 推送成功事件处理 - 只刷新未推送状态，不重新加载提交列表
+    /// 推送成功事件处理
     /// - Parameter eventInfo: 事件信息
     func onPushSuccess(_ eventInfo: ProjectEventInfo) {
-        if Self.verbose {
-            os_log("\(Self.t)🚀 Git push success - refreshing unpushed status only")
-        }
-        // 只更新未推送状态，避免不必要的提交列表重新加载
-        self.refreshUnpushedStatus()
+        // 提交列表刷新由其他事件触发
     }
 
     /// 应用即将变为活跃状态事件处理

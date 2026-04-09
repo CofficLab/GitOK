@@ -3,7 +3,8 @@ import SwiftUI
 
 /// .gitignore 状态栏图标：存在 .gitignore 时可点击查看。
 struct GitignoreStatusIcon: View, SuperLog {
-    @EnvironmentObject var data: DataProvider
+    @EnvironmentObject var data: DataVM
+    @EnvironmentObject var vm: ProjectVM
 
     @State private var isSheetPresented = false
     @State private var hasGitignore = false
@@ -24,11 +25,11 @@ struct GitignoreStatusIcon: View, SuperLog {
                 .frame(minWidth: 800, minHeight: 600)
         }
         .onAppear(perform: checkGitignoreExistence)
-        .onChange(of: data.project, checkGitignoreExistence)
+        .onChange(of: vm.project, checkGitignoreExistence)
     }
 
     private func checkGitignoreExistence() {
-        guard let project = data.project else {
+        guard let project = vm.project else {
             hasGitignore = false
             return
         }

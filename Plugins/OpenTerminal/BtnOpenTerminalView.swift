@@ -1,10 +1,11 @@
 import SwiftUI
 
 struct BtnOpenTerminalView: View {
-    @EnvironmentObject var g: DataProvider
+    @EnvironmentObject var g: DataVM
+    @EnvironmentObject var vm: ProjectVM
 
     var body: some View {
-        if let project = g.project {
+        if let project = vm.project {
             Image.terminalApp
                 .resizable()
                 .frame(height: 16)

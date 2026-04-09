@@ -3,7 +3,8 @@ import SwiftUI
 import MagicKit
 
 struct LicenseViewer: View, SuperLog {
-    @EnvironmentObject var data: DataProvider
+    @EnvironmentObject var data: DataVM
+    @EnvironmentObject var vm: ProjectVM
     @Environment(\.dismiss) private var dismiss
 
     @State private var content: String = ""
@@ -43,7 +44,7 @@ struct LicenseViewer: View, SuperLog {
         }
         .frame(minWidth: 800, minHeight: 500)
         .onAppear(perform: loadLicense)
-        .onChange(of: data.project, loadLicense)
+        .onChange(of: vm.project, loadLicense)
     }
 
     private var loadingView: some View {
@@ -99,7 +100,7 @@ struct LicenseViewer: View, SuperLog {
     }
 
     private func loadLicense() {
-        guard let project = data.project else {
+        guard let project = vm.project else {
             content = ""
             isLoading = false
             hasError = true
@@ -133,7 +134,7 @@ struct LicenseViewer: View, SuperLog {
     }
 
     private func saveLicense(onComplete: @escaping () -> Void) {
-        guard let project = data.project else { return }
+        guard let project = vm.project else { return }
         isSaving = true
         statusMessage = nil
 

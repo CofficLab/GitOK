@@ -11,14 +11,10 @@ struct FileList: View, SuperThread, SuperLog {
     nonisolated static let emoji = "📁"
     nonisolated static let verbose = false
 
-    /// 环境对象：应用提供者
-    @EnvironmentObject var app: AppProvider
-
-    /// 环境对象：消息提供者，用于显示提示信息
-    
-
-    /// 环境对象：数据提供者，包含项目和提交信息
-    @EnvironmentObject var data: DataProvider
+    /// 环境对象
+    @EnvironmentObject var app: AppVM
+    @EnvironmentObject var data: DataVM
+    @EnvironmentObject var vm: ProjectVM
 
     /// 当前显示的文件列表
     @State var files: [GitDiffFile] = []
@@ -49,13 +45,24 @@ struct FileList: View, SuperThread, SuperLog {
     /// 丢弃所有按钮的 hover 状态
     @State private var discardButtonHovered = false
 
+    /// 当前错误信息
+    @State private var errorMessage: String?
+
     var body: some View {
         VStack(spacing: 0) {
             fileInfoBar
-            fileListView
+            if let error = errorMessage {
+                FileListErrorView(message: error) {
+                    Task {
+                        await self.refresh(reason: "RetryAfterError")
+                    }
+                }
+            } else {
+                fileListView
+            }
         }
         .onAppear(perform: onAppear)
-        .onChange(of: data.project, onProjectChange)
+        .onChange(of: vm.project, onProjectChange)
         .onChange(of: data.commit, onCommitChange)
         .onChange(of: selection, onSelectionChange)
         .onProjectDidCommit(perform: onProjectDidCommit)
@@ -155,7 +162,7 @@ extension FileList {
             .onChange(of: files, {
                 withAnimation {
                     // 在主线程中调用 scrollTo 方法
-                    scrollProxy.scrollTo(data.file, anchor: .top)
+                    scrollProxy.scrollTo(vm.file, anchor: .top)
                 }
             })
         }
@@ -168,7 +175,7 @@ extension FileList {
     /// 丢弃指定文件的更改
     /// - Parameter file: 要丢弃更改的文件
     func discardChanges(for file: GitDiffFile) {
-        guard let project = data.project else { return }
+        guard let project = vm.project else { return }
 
         Task.detached(priority: .userInitiated) {
             do {
@@ -193,7 +200,7 @@ extension FileList {
 
     /// 丢弃所有文件的更改
     func discardAllChanges() {
-        guard let project = data.project else { return }
+        guard let project = vm.project else { return }
 
         Task.detached(priority: .userInitiated) {
             do {
@@ -250,9 +257,10 @@ extension FileList {
         // 先在主线程更新加载状态
         await MainActor.run {
             self.isLoading = true
+            self.errorMessage = nil  // 清除之前的错误
         }
 
-        guard let project = data.project else {
+        guard let project = vm.project else {
             await MainActor.run {
                 self.isLoading = false
             }
@@ -299,7 +307,7 @@ extension FileList {
 
                 self.files = newFiles
                 self.selection = newFiles.first
-                self.data.setFile(self.selection)
+                self.vm.setFile(self.selection)
                 self.isLoading = false
             }
         } catch is CancellationError {
@@ -313,8 +321,9 @@ extension FileList {
         } catch {
             await MainActor.run {
                 self.isLoading = false
-                os_log(.error, "\(Self.t)❌ 刷新文件列表失败: \(error.localizedDescription)")
-                alert_error(error)
+                let gitDetailError = GitDetailError.from(error, context: "refreshFileList")
+                self.errorMessage = gitDetailError.localizedDescription
+                os_log(.error, "\(Self.t)❌ 刷新文件列表失败: \(gitDetailError.localizedDescription)")
             }
         }
     }
@@ -346,7 +355,7 @@ extension FileList {
 
     /// 选中文件变更时的事件处理
     func onSelectionChange() {
-        self.data.setFile(self.selection)
+        self.vm.setFile(self.selection)
     }
 
     /// 项目提交完成时的事件处理

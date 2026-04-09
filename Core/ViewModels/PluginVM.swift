@@ -7,7 +7,7 @@ import SwiftData
 import SwiftUI
 import Combine
 
-class PluginProvider: ObservableObject, SuperLog, SuperThread {
+class PluginVM: ObservableObject, SuperLog, SuperThread {
     nonisolated static let emoji = "🧩"
     static let verbose = false
 
@@ -101,7 +101,7 @@ class PluginProvider: ObservableObject, SuperLog, SuperThread {
             // 尝试获取 shared 单例实例
             let sharedSelector = NSSelectorFromString("shared")
             guard let sharedMethod = class_getClassMethod(cls, sharedSelector) else {
-                if Self.verbose { os_log("\(Self.t)⚠️ No @objc shared found for \(className), skipping") }
+                os_log("\(Self.t)⚠️ No @objc shared found for \(className), skipping")
                 continue
             }
 
@@ -110,13 +110,13 @@ class PluginProvider: ObservableObject, SuperLog, SuperThread {
             let getter = unsafeBitCast(method_getImplementation(sharedMethod), to: SharedGetter.self)
 
             guard let instance = getter(cls, sharedSelector) else {
-                if Self.verbose { os_log("\(self.t)⚠️ Failed to get shared instance for \(className)") }
+                os_log("⚠️ Failed to get shared instance for \(className)")
                 continue
             }
 
             // 检查实例是否符合 SuperPlugin 协议
             guard let plugin = instance as? any SuperPlugin else {
-                if Self.verbose { os_log("\(self.t)⚠️ Instance of \(className) does not conform to SuperPlugin") }
+                os_log("⚠️ Instance of \(className) does not conform to SuperPlugin")
                 continue
             }
 
@@ -129,7 +129,7 @@ class PluginProvider: ObservableObject, SuperLog, SuperThread {
                 if Self.verbose { os_log("\(self.t)⏭️ Skipping plugin (shouldRegister=false): \(className)") }
                 continue
             }
-
+            
             // 添加到临时数组，稍后按 order 排序
             discoveredPlugins.append((plugin, className, pluginOrder))
         }
@@ -270,6 +270,25 @@ class PluginProvider: ObservableObject, SuperLog, SuperThread {
         plugins
             .filter { isPluginEnabled($0) }
             .compactMap { $0.addStatusBarTrailingView() }
+    }
+
+    // MARK: - Root View Wrapper
+
+    /// 获取所有插件的根视图包裹
+    /// 将所有插件提供的根视图包装器依次应用于内容视图。
+    /// 包装顺序与插件的 `order` 顺序一致。
+    ///
+    /// - Parameter content: 原始内容视图
+    /// - Returns: 经过所有插件依次包裹后的视图
+    func getRootViewWrapper<Content: View>(@ViewBuilder content: () -> Content) -> AnyView {
+        var wrapped: AnyView = AnyView(content())
+
+        for plugin in plugins {
+            guard isPluginEnabled(plugin) else { continue }
+            wrapped = plugin.wrapRoot(wrapped)
+        }
+
+        return wrapped
     }
 
     // MARK: - Initialization

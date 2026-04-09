@@ -2,7 +2,7 @@
 import SwiftUI
 
 struct ActivityStatusTile: View {
-    @EnvironmentObject var data: DataProvider
+    @EnvironmentObject var data: DataVM
 
     var body: some View {
         if let status = data.activityStatus, status.isEmpty == false {

@@ -11,7 +11,7 @@ struct BtnDeleteProject: View, SuperLog {
     /// 是否启用详细日志输出
     nonisolated static let verbose = false
 
-    @EnvironmentObject var g: DataProvider
+    @EnvironmentObject var g: DataVM
 
     /// 要删除的项目
     var project: Project

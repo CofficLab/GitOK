@@ -11,7 +11,8 @@ struct GitUserInfoSettingView: View, SuperLog {
     /// 是否启用详细日志输出
     nonisolated static let verbose = false
 
-    @EnvironmentObject var data: DataProvider
+    @EnvironmentObject var data: DataVM
+    @EnvironmentObject var vm: ProjectVM
 
     /// 用户名
     @State private var userName: String = ""
@@ -178,7 +179,7 @@ struct GitUserInfoSettingView: View, SuperLog {
     // MARK: - Actions
 
     private func saveUserConfig() {
-        guard let project = data.project else { return }
+        guard let project = vm.project else { return }
 
         isLoading = true
         errorMessage = nil
@@ -262,7 +263,7 @@ struct GitUserInfoSettingView: View, SuperLog {
     }
 
     private func loadCurrentUserInfo() {
-        guard let project = data.project else { return }
+        guard let project = vm.project else { return }
 
         isLoading = true
         errorMessage = nil

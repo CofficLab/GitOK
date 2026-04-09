@@ -1,595 +1,531 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "(%lld) 未提交" : {
+    "Auto Push" : {
+      "extractionState" : "manual",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Auto Push"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "(%lld) 未提交"
+            "value" : "自动推送"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "(%lld) 未提交"
+            "value" : "自動推送"
           }
         }
       }
     },
-    "Emoji风格" : {
-      "extractionState" : "stale",
+    "Auto Push Configuration" : {
+      "extractionState" : "manual",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Auto Push Configuration"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Emoji Style"
+            "value" : "自动推送配置"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Emoji风格"
+            "value" : "自動推送配置"
           }
         }
       }
     },
-    "Git 提交管理" : {
+    "Auto-push %@: %@/%@" : {
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Auto-push %1$@: %2$@/%3$@"
+          }
+        }
+      }
+    },
+    "Auto-push disabled - Click to configure" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Auto-push disabled - Click to configure"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Git 提交管理"
+            "value" : "自动推送已禁用 - 点击配置"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Git 提交管理"
+            "value" : "自動推送已禁用 - 點擊配置"
           }
         }
       }
     },
-    "Loading" : {
-      "extractionState" : "stale",
+    "Auto-push disabled: %@/%@" : {
+      "extractionState" : "manual",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Auto-push disabled: %@/%@"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "正在加载"
+            "value" : "已禁用自动推送：%@/%@"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "正在載入"
+            "value" : "已禁用自動推送：%@/%@"
           }
         }
       }
     },
-    "Unknown" : {
+    "Auto-push enabled - Click to manage" : {
+      "extractionState" : "manual",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Auto-push enabled - Click to manage"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "未知"
+            "value" : "自动推送已启用 - 点击管理"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "未知"
+            "value" : "自動推送已啟用 - 點擊管理"
           }
         }
       }
     },
-    "刷新中" : {
+    "Auto-push enabled: %@/%@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Auto-push enabled: %@/%@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已启用自动推送：%@/%@"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已啟用自動推送：%@/%@"
+          }
+        }
+      }
+    },
+    "Auto-push is disabled" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Auto-push is disabled"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自动推送已禁用"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自動推送已禁用"
+          }
+        }
+      }
+    },
+    "Auto-push is disabled - Click to configure" : {
 
     },
-    "刷新文件列表…" : {
+    "Auto-push is enabled" : {
+      "extractionState" : "manual",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Auto-push is enabled"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "刷新文件列表…"
+            "value" : "自动推送已启用"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "重新整理檔案列表…"
+            "value" : "自動推送已啟用"
           }
         }
       }
     },
-    "取消" : {
+    "Auto-push is enabled - Click to manage" : {
+
+    },
+    "Automatically push the current branch to remote repository." : {
+      "extractionState" : "manual",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Automatically push the current branch to remote repository."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "取消"
+            "value" : "自动推送当前分支到远程仓库。"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "取消"
+            "value" : "自動推送當前分支到遠程倉庫。"
           }
         }
       }
     },
-    "工作区干净" : {
+    "Close" : {
+      "extractionState" : "manual",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Close"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "工作区干净"
+            "value" : "关闭"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "工作區乾淨"
+            "value" : "關閉"
           }
         }
       }
     },
-    "已推送到远程" : {
-      "extractionState" : "stale",
+    "Configuration deleted: %@/%@" : {
+      "extractionState" : "manual",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Configuration deleted: %@/%@"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "已推送到远程"
+            "value" : "已删除配置：%@/%@"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "已推送到遠端"
+            "value" : "已刪除配置：%@/%@"
           }
         }
       }
     },
-    "当前提交尚未推送到远程" : {
+    "Configured Projects" : {
+      "extractionState" : "manual",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Configured Projects"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "当前提交尚未推送到远程"
+            "value" : "已配置的项目"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "目前提交尚未推送到遠端"
+            "value" : "已配置的項目"
           }
         }
       }
     },
-    "当前状态" : {
+    "Current Project" : {
+      "extractionState" : "manual",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Current Project"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "当前状态"
+            "value" : "当前项目"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "目前狀態"
+            "value" : "目前項目"
           }
         }
       }
     },
-    "所有更改已提交" : {
+    "Delete configuration" : {
+      "extractionState" : "manual",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete configuration"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "所有更改已提交"
+            "value" : "删除配置"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "所有更改已提交"
+            "value" : "刪除配置"
           }
         }
       }
     },
-    "拉取" : {
-      "extractionState" : "stale",
+    "Enable auto-push" : {
+      "extractionState" : "manual",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enable auto-push"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "拉取"
+            "value" : "启用自动推送"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "拉取"
+            "value" : "啟用自動推送"
           }
         }
       }
     },
-    "拉取中..." : {
-      "extractionState" : "stale",
+    "Enable auto-push will automatically push to remote repository every 30 seconds." : {
+
+    },
+    "Last pushed: %@" : {
+      "extractionState" : "manual",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Last pushed: %@"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "拉取中..."
+            "value" : "最后推送：%@"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "拉取中..."
+            "value" : "最後推送：%@"
           }
         }
       }
     },
-    "拉取中…" : {
+    "Manage auto-push settings for project branches." : {
+      "extractionState" : "manual",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Manage auto-push settings for project branches."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "拉取中…"
+            "value" : "管理项目分支的自动推送设置。"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "擷取中…~"
+            "value" : "管理項目分支的自動推送設置。"
           }
         }
       }
     },
-    "推送" : {
+    "Never" : {
+      "extractionState" : "manual",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Never"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "推送"
+            "value" : "从未"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "推送"
+            "value" : "從未"
           }
         }
       }
     },
-    "推送中..." : {
-      "extractionState" : "stale",
+    "No configured projects" : {
+      "extractionState" : "manual",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No configured projects"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "推送中..."
+            "value" : "暂无已配置的项目"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "推送中..."
+            "value" : "暫無已配置的項目"
           }
         }
       }
     },
-    "推送到远程" : {
+    "Push failed: %@" : {
+      "extractionState" : "manual",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Push failed: %@"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "推送到远程"
+            "value" : "推送失败：%@"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "推送到遠端"
+            "value" : "推送失敗：%@"
           }
         }
       }
     },
-    "推送失败" : {
+    "Push succeeded" : {
+      "extractionState" : "manual",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Push succeeded"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "推送失败"
+            "value" : "推送成功"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "推送失敗"
+            "value" : "推送成功"
           }
         }
       }
     },
-    "提交已推送" : {
-      "extractionState" : "stale",
+    "Pushing..." : {
+      "extractionState" : "manual",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pushing..."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "提交已推送"
+            "value" : "正在推送..."
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "提交已推送"
-          }
-        }
-      }
-    },
-    "暂未推送到远程" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "暂未推送到远程"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "暫未推送到遠端~"
-          }
-        }
-      }
-    },
-    "未找到用户信息" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "未找到用户信息"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "未找到用戶資訊"
-          }
-        }
-      }
-    },
-    "未配置用户信息" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "未配置用户信息"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "未配置用戶資訊"
-          }
-        }
-      }
-    },
-    "检查远程状态…" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "检查远程状态…"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "檢查遠端狀態…"
-          }
-        }
-      }
-    },
-    "正在加载" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "正在加载"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "正在載入"
-          }
-        }
-      }
-    },
-    "正在推送中..." : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "正在推送中..."
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "正在推送中..."
-          }
-        }
-      }
-    },
-    "点击执行 git pull 拉取远程提交" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "点击执行 git pull 拉取远程提交"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "點擊執行 git pull 擷取遠端提交"
-          }
-        }
-      }
-    },
-    "点击执行 git push 推送本地提交" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "点击执行 git push 推送本地提交"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "點擊執行 git push 推送本地提交"
-          }
-        }
-      }
-    },
-    "点击推送到远程仓库" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "点击推送到远程仓库"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "點擊推送至遠端倉庫"
-          }
-        }
-      }
-    },
-    "点击查看用户信息" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "点击查看用户信息"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "點擊查看使用者資訊"
-          }
-        }
-      }
-    },
-    "管理预设..." : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "管理预设..."
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "管理預設..."
-          }
-        }
-      }
-    },
-    "纯文本小写" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plain Text Lowercase"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "纯文本小写"
-          }
-        }
-      }
-    },
-    "纯文本风格" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plain Text Style"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "纯文本风格"
-          }
-        }
-      }
-    },
-    "远程有 %lld 个提交可拉取" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "远程有 %lld 个提交可拉取"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "遠程有 %lld 個提交可拉取"
-          }
-        }
-      }
-    },
-    "重试" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "重试"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "重試"
-          }
-        }
-      }
-    },
-    "项目不可用" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "项目不可用"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "專案不可用"
+            "value" : "正在推送..."
           }
         }
       }
     }
   },
-  "version" : "1.0"
+  "version" : "1.1"
 }

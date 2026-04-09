@@ -11,7 +11,8 @@ struct CommitStyleConfigView: View, SuperLog {
     /// 是否启用详细日志输出
     nonisolated static let verbose = false
 
-    @EnvironmentObject var data: DataProvider
+    @EnvironmentObject var data: DataVM
+    @EnvironmentObject var vm: ProjectVM
 
     /// 当前项目的 commit 风格绑定
     @Binding var commitStyle: CommitStyle
@@ -20,7 +21,7 @@ struct CommitStyleConfigView: View, SuperLog {
     @Binding var globalCommitStyle: CommitStyle
 
     /// 数据提供者
-    let dataProvider: DataProvider
+    let dataProvider: DataVM
 
     /// 状态仓库
     private var stateRepo: any StateRepoProtocol {
@@ -35,7 +36,7 @@ struct CommitStyleConfigView: View, SuperLog {
     init(
         commitStyle: Binding<CommitStyle>,
         globalCommitStyle: Binding<CommitStyle>,
-        dataProvider: DataProvider
+        dataProvider: DataVM
     ) {
         self._commitStyle = commitStyle
         self._globalCommitStyle = globalCommitStyle
@@ -123,7 +124,7 @@ struct CommitStyleConfigView: View, SuperLog {
                             .font(.headline)
                     }
 
-                    if let project = dataProvider.project {
+                    if let project = vm.project {
                         Text(verbatim: String.localizedStringWithFormat(NSLocalizedString("项目：%@", tableName: "Core", comment: ""), project.title))
                             .font(.caption)
                             .foregroundColor(.secondary)
@@ -189,12 +190,12 @@ struct CommitStyleConfigView: View, SuperLog {
         globalCommitStyle = stateRepo.globalCommitStyle
 
         // 加载当前项目风格
-        commitStyle = dataProvider.project?.commitStyle ?? .emoji
+        commitStyle = vm.project?.commitStyle ?? .emoji
     }
 
     func saveCommitStyle() {
         // 保存到当前项目
-        if let project = dataProvider.project {
+        if let project = vm.project {
             project.commitStyle = commitStyle
         }
     }

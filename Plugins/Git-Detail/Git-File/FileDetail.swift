@@ -8,7 +8,8 @@ import SwiftUI
 
 struct FileDetail: View, SuperLog, SuperEvent, SuperThread {
     
-    @EnvironmentObject var data: DataProvider
+    @EnvironmentObject var data: DataVM
+    @EnvironmentObject var vm: ProjectVM
 
     @State private var oldText = ""
     @State private var newText = ""
@@ -19,7 +20,7 @@ struct FileDetail: View, SuperLog, SuperEvent, SuperThread {
 
     var body: some View {
         VStack(spacing: 0) {
-            if let file = data.file {
+            if let file = vm.file {
                 // 文件路径显示组件
                 HStack(spacing: 6) {
                     Image(systemName: "doc.text")
@@ -42,7 +43,7 @@ struct FileDetail: View, SuperLog, SuperEvent, SuperThread {
             MagicDiffView(oldText: oldText, newText: newText)
                 .background(.background)
         }
-        .onChange(of: data.file, onFileChange)
+        .onChange(of: vm.file, onFileChange)
         .onChange(of: data.commit, onCommitChange)
         .onAppear(perform: onAppear)
         .frame(maxHeight: .infinity)
@@ -53,7 +54,7 @@ struct FileDetail: View, SuperLog, SuperEvent, SuperThread {
             os_log("\(self.t)🍋 UpdateDiffView(\(reason))")
         }
 
-        guard let file = data.file, let project = data.project else {
+        guard let file = vm.file, let project = vm.project else {
             return
         }
 

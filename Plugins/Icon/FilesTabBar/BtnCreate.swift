@@ -4,11 +4,12 @@ import SwiftUI
 import MagicKit
 
 struct BtnCreate: View {
-    @EnvironmentObject var g: DataProvider
+    @EnvironmentObject var g: DataVM
+    @EnvironmentObject var vm: ProjectVM
     
 
     var body: some View {
-        if let project = g.project {
+        if let project = vm.project {
             Image.add.inButtonWithAction {
                 do {
                     let model = try IconData.new(project)

@@ -7,7 +7,7 @@ import OSLog
 import SwiftUI
 
 /// 应用状态提供者，管理全局应用状态和用户界面控制
-class AppProvider: NSObject, ObservableObject, AVAudioPlayerDelegate, SuperLog {
+class AppVM: NSObject, ObservableObject, AVAudioPlayerDelegate, SuperLog {
     /// emoji 标识符
     nonisolated static let emoji = "🏠"
 
@@ -41,7 +41,7 @@ class AppProvider: NSObject, ObservableObject, AVAudioPlayerDelegate, SuperLog {
 
 // MARK: - Action
 
-extension AppProvider {
+extension AppVM {
     /// 设置当前选中的标签页
     /// - Parameter t: 标签页名称
     func setTab(_ t: String) {

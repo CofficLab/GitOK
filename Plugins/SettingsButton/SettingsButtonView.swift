@@ -5,7 +5,7 @@ import SwiftUI
 
 /// 设置按钮视图：在状态栏右侧显示设置图标，点击打开设置界面
 struct SettingsButtonView: View, SuperLog {
-    @EnvironmentObject var data: DataProvider
+    @EnvironmentObject var data: DataVM
 
     /// emoji 标识符
     nonisolated static let emoji = "⚙️"

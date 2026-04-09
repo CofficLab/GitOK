@@ -10,7 +10,8 @@ struct StashStatusTile: View, SuperLog {
     /// 是否启用详细日志输出
     nonisolated static let verbose = false
 
-    @EnvironmentObject var data: DataProvider
+    @EnvironmentObject var data: DataVM
+    @EnvironmentObject var vm: ProjectVM
     @State private var stashCount = 0
     @State private var isLoading = false
 
@@ -41,7 +42,7 @@ struct StashStatusTile: View, SuperLog {
 
     /// 加载stash数量
     private func loadStashCount() {
-        guard let project = data.project else {
+        guard let project = vm.project else {
             stashCount = 0
             return
         }

@@ -4,8 +4,9 @@ import SwiftData
 import SwiftUI
 
 struct ProjectPickerView: View, SuperLog {
-    @EnvironmentObject var data: DataProvider
-    @EnvironmentObject var app: AppProvider
+    @EnvironmentObject var data: DataVM
+    @EnvironmentObject var vm: ProjectVM
+    @EnvironmentObject var app: AppVM
 
     @State private var selection: Project?
 
@@ -31,19 +32,19 @@ struct ProjectPickerView: View, SuperLog {
                     }
                 }
                 .onChange(of: selection) { _, newValue in
-                    if let newProject = newValue, newValue != data.project {
-                        data.setProject(newProject, reason: self.className)
+                    if let newProject = newValue, newValue != vm.project {
+                        vm.setProject(newProject, reason: self.className)
                     }
                 }
-                .onChange(of: data.project, {
-                    if let project = data.project, project != selection {
+                .onChange(of: vm.project, {
+                    if let project = vm.project, project != selection {
                         self.selection = project
                     }
                 })
             }
         }
         .onAppear {
-            self.selection = data.project
+            self.selection = vm.project
         }
     }
 }

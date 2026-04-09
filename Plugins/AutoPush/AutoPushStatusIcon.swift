@@ -1,29 +1,38 @@
 import AppKit
 import MagicKit
-import OSLog
+import os
 import SwiftUI
 
 /// 自动推送状态栏图标：显示自动推送状态并提供配置入口
 struct AutoPushStatusIcon: View, SuperLog {
-    @EnvironmentObject var data: DataProvider
-    
+    @EnvironmentObject var data: DataVM
+    @EnvironmentObject var vm: ProjectVM
+
     @State private var isSheetPresented = false
     @State private var isAutoPushEnabled = false
     @State private var hasRemoteBranch = false
     @State private var serviceRegistered = false
-    
+
     /// 订阅设置存储的变化
     @ObservedObject private var settingsStore = AutoPushSettingsStore.shared
-    
+
+    // MARK: - Logger & Config
+
+    /// 日志标识 emoji
+    nonisolated static let emoji = "📡"
+
+    /// 是否启用详细日志
+    nonisolated static let verbose = false
+
     static let shared = AutoPushStatusIcon()
-    
+
     init() {}
     
     var body: some View {
         StatusBarTile(icon: isAutoPushEnabled ? "arrow.up.circle.fill" : "arrow.up.circle", onTap: {
             isSheetPresented.toggle()
         })
-        .help(isAutoPushEnabled ? "自动推送已启用 - 点击管理" : "自动推送已禁用 - 点击配置")
+        .help(isAutoPushEnabled ? String(localized: "Auto-push is enabled - Click to manage", table: "AutoPush") : String(localized: "Auto-push is disabled - Click to configure", table: "AutoPush"))
         .foregroundColor(isAutoPushEnabled ? .green : .secondary)
         .sheet(isPresented: $isSheetPresented) {
             AutoPushConfigView()
@@ -33,14 +42,14 @@ struct AutoPushStatusIcon: View, SuperLog {
             // 注册自动推送服务（只注册一次）
             if !serviceRegistered {
                 serviceRegistered = true
-                AutoPushService.shared.register(dataProvider: data)
-                if AutoPushService.verbose {
-                    os_log(.info, "\(Self.t)AutoPushService registered from status icon")
+                AutoPushService.shared.register(projectVM: vm)
+                if Self.verbose {
+                    AutoPushPlugin.logger.info("\(Self.t)📝 从状态栏注册 AutoPushService")
                 }
             }
             updateStatus()
         }
-        .onChange(of: data.project) { _, _ in
+        .onChange(of: vm.project) { _, _ in
             updateStatus()
         }
         .onChange(of: data.branch) { _, _ in
@@ -53,7 +62,7 @@ struct AutoPushStatusIcon: View, SuperLog {
     }
     
     private func updateStatus() {
-        guard let project = data.project,
+        guard let project = vm.project,
               let branch = data.branch,
               project.isGitRepo else {
             isAutoPushEnabled = false

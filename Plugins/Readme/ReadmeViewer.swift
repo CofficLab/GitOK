@@ -5,7 +5,8 @@ import SwiftUI
 import MarkdownUI
 
 struct ReadmeViewer: View, SuperLog {
-    @EnvironmentObject var data: DataProvider
+    @EnvironmentObject var data: DataVM
+    @EnvironmentObject var vm: ProjectVM
     @Environment(\.dismiss) private var dismiss
     
     @State private var readmeContent: String = ""
@@ -28,7 +29,7 @@ struct ReadmeViewer: View, SuperLog {
                             .font(.headline)
                             .fontWeight(.semibold)
                         
-                        if let project = data.project {
+                        if let project = vm.project {
                             Text(project.title)
                                 .font(.caption)
                                 .foregroundColor(.secondary)
@@ -100,11 +101,11 @@ struct ReadmeViewer: View, SuperLog {
         }
         .frame(minWidth: 600, minHeight: 400)
         .onAppear(perform: loadReadme)
-        .onChange(of: data.project, loadReadme)
+        .onChange(of: vm.project, loadReadme)
     }
     
     private func loadReadme() {
-        guard let project = data.project else {
+        guard let project = vm.project else {
             readmeContent = ""
             isLoading = false
             hasError = true

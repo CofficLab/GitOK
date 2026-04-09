@@ -3,7 +3,8 @@ import OSLog
 import SwiftUI
 
 struct BtnOpenRemoteView: View, SuperLog {
-    @EnvironmentObject var g: DataProvider
+    @EnvironmentObject var g: DataVM
+    @EnvironmentObject var vm: ProjectVM
 
     @State private var webURL: URL?
     @State private var isLoading = false
@@ -36,7 +37,7 @@ struct BtnOpenRemoteView: View, SuperLog {
             }
         }
         .onAppear(perform: onAppear)
-        .onChange(of: g.project?.url, onProjectChange)
+        .onChange(of: vm.project?.url, onProjectChange)
         .help("在浏览器打开")
     }
 }
@@ -45,7 +46,7 @@ struct BtnOpenRemoteView: View, SuperLog {
 
 extension BtnOpenRemoteView {
     func updateRemoteURL() {
-        guard let project = g.project, self.isGitProject else {
+        guard let project = vm.project, self.isGitProject else {
             webURL = nil
             return
         }
@@ -87,7 +88,7 @@ extension BtnOpenRemoteView {
     }
 
     func updateIsGitProject() {
-        guard let project = g.project else {
+        guard let project = vm.project else {
             return
         }
 
@@ -100,7 +101,7 @@ extension BtnOpenRemoteView {
         使用异步方式避免阻塞主线程，解决CPU占用100%的问题
      */
     func updateIsGitProjectAsync() async {
-        guard let project = g.project else {
+        guard let project = vm.project else {
             await MainActor.run {
                 self.isGitProject = false
             }

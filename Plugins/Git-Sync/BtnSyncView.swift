@@ -15,7 +15,8 @@ struct BtnSyncView: View, SuperLog, SuperEvent, SuperThread {
     
 
     /// 环境对象：数据提供者
-    @EnvironmentObject var data: DataProvider
+    @EnvironmentObject var data: DataVM
+    @EnvironmentObject var vm: ProjectVM
 
     /// 是否正在执行同步操作
     @State var working = false
@@ -35,7 +36,7 @@ struct BtnSyncView: View, SuperLog, SuperEvent, SuperThread {
 
     var body: some View {
         ZStack {
-            if let project = data.project, self.isGitProject {
+            if let project = vm.project, self.isGitProject {
                 Image.sync
                     .resizable()
                     .frame(height: 18)
@@ -98,7 +99,7 @@ extension BtnSyncView {
             await setStatus("同步中…")
             do {
                 // 检查是否有远程仓库
-                if let project = await self.data.project {
+                if let project = await self.vm.project {
                     let remotes = try project.remoteList()
                     if remotes.isEmpty {
                         if Self.verbose {
@@ -114,7 +115,7 @@ extension BtnSyncView {
                     }
                 }
 
-                try await self.data.project?.sync()
+                try await self.vm.project?.sync()
                 os_log("\(self.t)Sync completed successfully")
                 await MainActor.run {
                     self.reset()
@@ -145,13 +146,13 @@ extension BtnSyncView {
 extension BtnSyncView {
     /// 更新Git项目状态
     func updateIsGitProject() {
-        self.isGitProject = data.project?.isGitRepo ?? false
+        self.isGitProject = vm.project?.isGitRepo ?? false
     }
 
     /// 异步更新Git项目状态
     /// 使用异步方式避免阻塞主线程，解决CPU占用100%的问题
     func updateIsGitProjectAsync() async {
-        let isGit = data.project?.isGitRepo ?? false
+        let isGit = vm.project?.isGitRepo ?? false
         await MainActor.run {
             self.isGitProject = isGit
         }

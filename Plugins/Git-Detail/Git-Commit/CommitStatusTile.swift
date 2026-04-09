@@ -5,7 +5,7 @@ import SwiftUI
 /// 显示当前的提交活动状态信息
 struct CommitStatusTile: View {
     /// 环境对象：数据提供者
-    @EnvironmentObject var g: DataProvider
+    @EnvironmentObject var g: DataVM
 
     var body: some View {
         if let status = g.activityStatus, status.isEmpty == false {

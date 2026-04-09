@@ -12,7 +12,8 @@ struct BtnGitPullView: View, SuperLog, SuperEvent, SuperThread {
     nonisolated static let verbose = false
 
     /// 环境对象：数据提供者
-    @EnvironmentObject var data: DataProvider
+    @EnvironmentObject var data: DataVM
+    @EnvironmentObject var vm: ProjectVM
 
     /// 是否正在执行拉取操作
     @State var working = false
@@ -27,7 +28,7 @@ struct BtnGitPullView: View, SuperLog, SuperEvent, SuperThread {
 
     var body: some View {
         ZStack {
-            if let project = data.project, self.isGitProject {
+            if let project = vm.project, self.isGitProject {
                 Image.download
                     .resizable()
                     .frame(height: 18)
@@ -92,7 +93,7 @@ extension BtnGitPullView {
         Task.detached {
             await setStatus("拉取中…")
             do {
-                try await self.data.project?.pull()
+                try await self.vm.project?.pull()
                 await MainActor.run {
                     MagicMessageProvider.shared.hideLoading()
                     self.reset()
@@ -118,12 +119,12 @@ extension BtnGitPullView {
 extension BtnGitPullView {
     /// 更新 Git 项目状态：检查当前项目是否为 Git 仓库
     func updateIsGitProject() {
-        self.isGitProject = data.project?.isGitRepo ?? false
+        self.isGitProject = vm.project?.isGitRepo ?? false
     }
 
     /// 异步更新 Git 项目状态：使用异步方式避免阻塞主线程，解决 CPU 占用 100% 的问题
     func updateIsGitProjectAsync() async {
-        let isGit = data.project?.isGit() ?? false
+        let isGit = vm.project?.isGit() ?? false
         await MainActor.run {
             self.isGitProject = isGit
         }

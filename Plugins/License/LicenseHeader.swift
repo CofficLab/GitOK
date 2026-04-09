@@ -1,7 +1,8 @@
 import SwiftUI
 
 struct LicenseHeader: View {
-    @EnvironmentObject var data: DataProvider
+    @EnvironmentObject var data: DataVM
+    @EnvironmentObject var vm: ProjectVM
     @Environment(\.dismiss) private var dismiss
 
     let isSaving: Bool
@@ -20,7 +21,7 @@ struct LicenseHeader: View {
                     .font(.headline)
                     .fontWeight(.semibold)
 
-                if let project = data.project {
+                if let project = vm.project {
                     Text(project.title)
                         .font(.caption)
                         .foregroundColor(.secondary)

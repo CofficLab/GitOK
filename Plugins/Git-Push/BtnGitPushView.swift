@@ -15,7 +15,8 @@ struct BtnGitPushView: View, SuperLog, SuperThread {
     
 
     /// 环境对象：数据提供者
-    @EnvironmentObject var data: DataProvider
+    @EnvironmentObject var data: DataVM
+    @EnvironmentObject var vm: ProjectVM
 
     /// 是否正在执行推送操作
     @State var working = false
@@ -31,7 +32,7 @@ struct BtnGitPushView: View, SuperLog, SuperThread {
     /// 视图主体：当存在项目且为 Git 仓库时显示推送按钮
     var body: some View {
         ZStack {
-            if let project = data.project, self.isGitProject {
+            if let project = vm.project, self.isGitProject {
                 Image.upload
                     .resizable()
                     .frame(height: 18)
@@ -93,7 +94,7 @@ extension BtnGitPushView {
             
             do {
                 // ✅ 关键修复：push() 是阻塞操作，必须在后台线程执行，不能在 MainActor.run 中
-                try self.data.project?.push()
+                try self.vm.project?.push()
                 
                 await MainActor.run {
                     MagicMessageProvider.shared.hideLoading()
@@ -121,12 +122,12 @@ extension BtnGitPushView {
 extension BtnGitPushView {
     /// 更新 Git 项目状态：检查当前项目是否为 Git 仓库
     func updateIsGitProject() {
-        self.isGitProject = data.project?.isGitRepo ?? false
+        self.isGitProject = vm.project?.isGitRepo ?? false
     }
 
     /// 异步更新 Git 项目状态：使用异步方式避免阻塞主线程，解决 CPU 占用 100% 的问题
     func updateIsGitProjectAsync() async {
-        let isGit = await data.project?.isGit() ?? false
+        let isGit = await vm.project?.isGit() ?? false
         await MainActor.run {
             self.isGitProject = isGit
         }

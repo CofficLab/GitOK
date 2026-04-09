@@ -12,8 +12,9 @@ struct StashList: View, SuperLog, SuperThread {
 
     static let shared = StashList()
 
-    @EnvironmentObject var app: AppProvider
-    @EnvironmentObject var data: DataProvider
+    @EnvironmentObject var app: AppVM
+    @EnvironmentObject var data: DataVM
+    @EnvironmentObject var vm: ProjectVM
 
     @State private var stashes: [(index: Int, message: String)] = []
     @State private var isLoading = true
@@ -66,7 +67,7 @@ extension StashList {
                     .font(.system(size: 12))
             }
             .buttonStyle(.borderless)
-            .disabled(data.project == nil)
+            .disabled(vm.project == nil)
             .help("创建新暂存")
         }
         .padding(.horizontal, 16)
@@ -150,7 +151,7 @@ extension StashList {
 extension StashList {
     /// 创建新的stash
     private func createStash() {
-        guard let project = data.project else { return }
+        guard let project = vm.project else { return }
 
         Task.detached(priority: .userInitiated) {
             do {
@@ -173,7 +174,7 @@ extension StashList {
 
     /// 应用stash
     private func applyStash(at index: Int) {
-        guard let project = data.project else { return }
+        guard let project = vm.project else { return }
 
         Task.detached(priority: .userInitiated) {
             do {
@@ -193,7 +194,7 @@ extension StashList {
 
     /// 弹出stash
     private func popStash(at index: Int) {
-        guard let project = data.project else { return }
+        guard let project = vm.project else { return }
 
         Task.detached(priority: .userInitiated) {
             do {
@@ -213,7 +214,7 @@ extension StashList {
 
     /// 删除stash
     private func dropStash(at index: Int) {
-        guard let project = data.project else { return }
+        guard let project = vm.project else { return }
 
         Task.detached(priority: .userInitiated) {
             do {
@@ -233,7 +234,7 @@ extension StashList {
 
     /// 加载stash列表
     private func loadStashes() {
-        guard let project = data.project else {
+        guard let project = vm.project else {
             stashes = []
             isLoading = false
             return

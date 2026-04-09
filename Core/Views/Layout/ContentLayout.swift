@@ -11,13 +11,10 @@ struct ContentLayout: View, SuperThread, SuperEvent, SuperLog {
   /// 是否启用详细日志输出
   nonisolated static let verbose = false
   /// 应用状态提供者环境对象
-  @EnvironmentObject var app: AppProvider
-
-  /// 数据提供者环境对象
-  @EnvironmentObject var g: DataProvider
+  @EnvironmentObject var app: AppVM
 
   /// 插件提供者环境对象
-  @EnvironmentObject var p: PluginProvider
+  @EnvironmentObject var p: PluginVM
 
   /// 当前选中的标签页
   private(set) var tab: String?
