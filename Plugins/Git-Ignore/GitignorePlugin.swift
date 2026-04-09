@@ -9,7 +9,6 @@ class GitignorePlugin: NSObject, SuperPlugin {
     /// 是否启用该插件
     @objc static let shouldRegister = true
 
-
     /// 插件显示名称
     static var displayName: String = "Gitignore"
 
@@ -23,10 +22,6 @@ class GitignorePlugin: NSObject, SuperPlugin {
     static var allowUserToggle: Bool = true
     /// 插件默认启用状态
     static var defaultEnabled: Bool = true
-
-
-
-    
 
     func addStatusBarTrailingView() -> AnyView? {
         return AnyView(GitignoreStatusIcon.shared)
