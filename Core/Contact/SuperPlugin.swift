@@ -74,6 +74,17 @@ protocol SuperPlugin {
     /// 返回插件在状态栏后部区域的视图
     /// - Returns: 包装在 AnyView 中的状态栏后部视图
     func addStatusBarTrailingView() -> AnyView?
+
+    /// 添加根视图包裹
+    /// 允许插件包裹整个应用的内容视图，实现全局拦截、修饰等功能。
+    /// 此方法在视图层次的最外层执行，可以用于：
+    /// - 添加全局 overlay
+    /// - 拦截手势事件
+    /// - 应用全局样式
+    ///
+    /// - Parameter content: 要被包裹的原始内容视图
+    /// - Returns: 包裹后的视图，如果不需要则返回 nil
+    func addRootView<Content>(@ViewBuilder content: () -> Content) -> AnyView? where Content: View
 }
 
 /// SuperPlugin 协议的默认实现
@@ -165,6 +176,11 @@ extension SuperPlugin {
 
     /// 默认的列表视图实现，返回空
     func addListView(tab: String, project: Project?) -> AnyView? {
+        nil
+    }
+
+    /// 默认的根视图包裹实现，返回 nil 表示不包裹
+    func addRootView<Content>(@ViewBuilder content: () -> Content) -> AnyView? where Content: View {
         nil
     }
 }

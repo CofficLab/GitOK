@@ -272,6 +272,27 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
             .compactMap { $0.addStatusBarTrailingView() }
     }
 
+    // MARK: - Root View Wrapper
+
+    /// 获取所有插件的根视图包裹
+    /// 将所有插件提供的根视图包装器依次应用于内容视图。
+    /// 包装顺序与插件的 `order` 顺序一致。
+    ///
+    /// - Parameter content: 原始内容视图
+    /// - Returns: 经过所有插件依次包裹后的视图
+    func getRootViewWrapper<Content: View>(@ViewBuilder content: () -> Content) -> AnyView {
+        var wrapped: AnyView = AnyView(content())
+
+        for plugin in plugins {
+            guard isPluginEnabled(plugin) else { continue }
+            if let pluginWrapped = plugin.addRootView({ wrapped }) {
+                wrapped = pluginWrapped
+            }
+        }
+
+        return wrapped
+    }
+
     // MARK: - Initialization
 
     init() {

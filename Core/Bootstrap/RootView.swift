@@ -69,14 +69,17 @@ struct RootView<Content>: View, SuperEvent, SuperLog where Content: View {
     }
 
     var body: some View {
-        content
-            .withMagicToast()
-            .environmentObject(appProvider)
-            .environmentObject(iconProvider)
-            .environmentObject(pluginProvider)
-            .environmentObject(git)
-            .environmentObject(projectVM)
-            .navigationTitle("")
+        // 使用插件的根视图包裹功能
+        pluginProvider.getRootViewWrapper {
+            content
+                .withMagicToast()
+                .environmentObject(appProvider)
+                .environmentObject(iconProvider)
+                .environmentObject(pluginProvider)
+                .environmentObject(git)
+                .environmentObject(projectVM)
+                .navigationTitle("")
+        }
     }
 }
 
