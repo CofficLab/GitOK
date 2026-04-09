@@ -15,7 +15,7 @@ struct BtnSyncView: View, SuperLog, SuperEvent, SuperThread {
     
 
     /// 环境对象：数据提供者
-    @EnvironmentObject var data: DataProvider
+    @EnvironmentObject var data: DataVM
     @EnvironmentObject var vm: ProjectVM
 
     /// 是否正在执行同步操作

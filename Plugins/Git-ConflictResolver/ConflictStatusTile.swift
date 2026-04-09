@@ -10,7 +10,7 @@ struct ConflictStatusTile: View, SuperLog {
     /// 是否启用详细日志输出
     nonisolated static let verbose = false
 
-    @EnvironmentObject var data: DataProvider
+    @EnvironmentObject var data: DataVM
     @EnvironmentObject var vm: ProjectVM
     @State private var conflictCount = 0
     @State private var isLoading = false

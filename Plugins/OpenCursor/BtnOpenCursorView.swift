@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct BtnOpenCursorView: View {
-    @EnvironmentObject var g: DataProvider
+    @EnvironmentObject var g: DataVM
     @EnvironmentObject var vm: ProjectVM
 
     static let shared = BtnOpenCursorView()

@@ -6,7 +6,7 @@ import SwiftUI
 
 /// 自动推送配置视图：管理项目分支的自动推送设置
 struct AutoPushConfigView: View, SuperLog {
-    @EnvironmentObject var data: DataProvider
+    @EnvironmentObject var data: DataVM
     @EnvironmentObject var vm: ProjectVM
     @Environment(\.dismiss) private var dismiss
     

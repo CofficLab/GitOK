@@ -3,7 +3,7 @@ import OSLog
 import SwiftUI
 
 struct BtnOpenRemoteView: View, SuperLog {
-    @EnvironmentObject var g: DataProvider
+    @EnvironmentObject var g: DataVM
     @EnvironmentObject var vm: ProjectVM
 
     @State private var webURL: URL?

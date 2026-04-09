@@ -13,10 +13,10 @@ struct GitDetail: View, SuperEvent, SuperLog {
     nonisolated static let verbose = true
 
     /// 环境对象：应用提供者
-    @EnvironmentObject var app: AppProvider
+    @EnvironmentObject var app: AppVM
 
     /// 环境对象：数据提供者
-    @EnvironmentObject var data: DataProvider
+    @EnvironmentObject var data: DataVM
     @EnvironmentObject var vm: ProjectVM
 
     /// 项目是否干净（无未提交的变更）

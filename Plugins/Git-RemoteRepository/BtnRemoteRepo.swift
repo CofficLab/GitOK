@@ -5,7 +5,7 @@ import SwiftUI
 /// 远程仓库管理按钮视图
 /// 提供一个按钮来打开远程仓库管理界面
 struct BtnRemoteRepositoryView: View, SuperLog {
-    @EnvironmentObject var data: DataProvider
+    @EnvironmentObject var data: DataVM
     @EnvironmentObject var vm: ProjectVM
 
     @State private var showRemoteManagement = false

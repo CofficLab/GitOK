@@ -14,7 +14,7 @@ struct ProjectNotGitView: View, SuperLog, SuperThread, SuperEvent {
     nonisolated static let verbose = false
 
     /// 环境对象：数据提供者
-    @EnvironmentObject var data: DataProvider
+    @EnvironmentObject var data: DataVM
 
     /// 环境对象：项目状态管理
     @EnvironmentObject var vm: ProjectVM

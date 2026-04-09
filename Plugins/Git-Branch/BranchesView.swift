@@ -10,8 +10,8 @@ struct BranchesView: View, SuperThread, SuperLog, SuperEvent {
     static let shared = BranchesView()
 
     /// 环境对象
-    @EnvironmentObject var app: AppProvider
-    @EnvironmentObject var data: DataProvider
+    @EnvironmentObject var app: AppVM
+    @EnvironmentObject var data: DataVM
     @EnvironmentObject var vm: ProjectVM
 
     /// 可选分支列表

@@ -4,7 +4,7 @@ import OSLog
 import SwiftUI
 
 struct BtnNewIcon: View {
-    @EnvironmentObject var g: DataProvider
+    @EnvironmentObject var g: DataVM
     @EnvironmentObject var vm: ProjectVM
     
 

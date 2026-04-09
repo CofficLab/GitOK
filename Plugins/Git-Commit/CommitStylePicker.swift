@@ -38,7 +38,7 @@ enum CommitStyle: String, CaseIterable {
 /// 提供提交风格的下拉选择功能，并自动保存到项目配置
 struct CommitStylePicker: View {
     /// 环境对象：数据提供者
-    @EnvironmentObject var g: DataProvider
+    @EnvironmentObject var g: DataVM
     @EnvironmentObject var vm: ProjectVM
 
     /// 绑定到外部的选中风格

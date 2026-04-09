@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct BtnOpenTraeView: View {
-    @EnvironmentObject var g: DataProvider
+    @EnvironmentObject var g: DataVM
     @EnvironmentObject var vm: ProjectVM
 
     static let shared = BtnOpenTraeView()

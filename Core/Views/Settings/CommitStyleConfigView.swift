@@ -11,7 +11,7 @@ struct CommitStyleConfigView: View, SuperLog {
     /// 是否启用详细日志输出
     nonisolated static let verbose = false
 
-    @EnvironmentObject var data: DataProvider
+    @EnvironmentObject var data: DataVM
     @EnvironmentObject var vm: ProjectVM
 
     /// 当前项目的 commit 风格绑定
@@ -21,7 +21,7 @@ struct CommitStyleConfigView: View, SuperLog {
     @Binding var globalCommitStyle: CommitStyle
 
     /// 数据提供者
-    let dataProvider: DataProvider
+    let dataProvider: DataVM
 
     /// 状态仓库
     private var stateRepo: any StateRepoProtocol {
@@ -36,7 +36,7 @@ struct CommitStyleConfigView: View, SuperLog {
     init(
         commitStyle: Binding<CommitStyle>,
         globalCommitStyle: Binding<CommitStyle>,
-        dataProvider: DataProvider
+        dataProvider: DataVM
     ) {
         self._commitStyle = commitStyle
         self._globalCommitStyle = globalCommitStyle

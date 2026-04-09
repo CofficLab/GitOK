@@ -3,7 +3,7 @@ import SwiftUI
 
 /// .gitignore 状态栏图标：存在 .gitignore 时可点击查看。
 struct GitignoreStatusIcon: View, SuperLog {
-    @EnvironmentObject var data: DataProvider
+    @EnvironmentObject var data: DataVM
     @EnvironmentObject var vm: ProjectVM
 
     @State private var isSheetPresented = false

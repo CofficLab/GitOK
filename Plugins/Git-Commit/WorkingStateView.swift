@@ -9,7 +9,7 @@ import SwiftUI
 /// 显示未提交文件数量、远程同步状态，并提供 git pull 功能
 struct WorkingStateView: View, SuperLog {
     /// 环境对象：数据提供者
-    @EnvironmentObject var data: DataProvider
+    @EnvironmentObject var data: DataVM
     @EnvironmentObject var vm: ProjectVM
 
     /// CommitList 是否正在刷新

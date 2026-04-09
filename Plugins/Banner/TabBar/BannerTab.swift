@@ -16,7 +16,7 @@ import SwiftUI
  **/
 struct BannerTab: View {
     @EnvironmentObject var b: BannerProvider
-    @EnvironmentObject var d: DataProvider
+    @EnvironmentObject var d: DataVM
     @EnvironmentObject var vm: ProjectVM
 
     /// Banner数据

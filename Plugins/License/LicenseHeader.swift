@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct LicenseHeader: View {
-    @EnvironmentObject var data: DataProvider
+    @EnvironmentObject var data: DataVM
     @EnvironmentObject var vm: ProjectVM
     @Environment(\.dismiss) private var dismiss
 

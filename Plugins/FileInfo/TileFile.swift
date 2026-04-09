@@ -7,9 +7,9 @@ import SwiftUI
 
 /// 状态栏文件信息 Tile：显示当前选中文件的文件名。
 struct TileFile: View, SuperLog, SuperThread {
-    @EnvironmentObject var a: AppProvider
+    @EnvironmentObject var a: AppVM
     
-    @EnvironmentObject var data: DataProvider
+    @EnvironmentObject var data: DataVM
     @EnvironmentObject var vm: ProjectVM
 
     static let shared = TileFile()

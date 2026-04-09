@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct BtnOpenXcodeView: View {
-    @EnvironmentObject var g: DataProvider
+    @EnvironmentObject var g: DataVM
     @EnvironmentObject var vm: ProjectVM
 
     static let shared = BtnOpenXcodeView()

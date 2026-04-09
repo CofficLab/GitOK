@@ -7,7 +7,7 @@ struct BranchStatusTile: View, SuperLog {
     nonisolated static let emoji = "🌿"
     nonisolated static let verbose = false
     
-    @EnvironmentObject var data: DataProvider
+    @EnvironmentObject var data: DataVM
     @EnvironmentObject var vm: ProjectVM
 
     @State private var isPresented = false

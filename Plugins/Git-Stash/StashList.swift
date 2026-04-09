@@ -12,8 +12,8 @@ struct StashList: View, SuperLog, SuperThread {
 
     static let shared = StashList()
 
-    @EnvironmentObject var app: AppProvider
-    @EnvironmentObject var data: DataProvider
+    @EnvironmentObject var app: AppVM
+    @EnvironmentObject var data: DataVM
     @EnvironmentObject var vm: ProjectVM
 
     @State private var stashes: [(index: Int, message: String)] = []

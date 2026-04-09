@@ -3,7 +3,7 @@ import SwiftUI
 
 struct IconDetailLayout: View {
     @EnvironmentObject var i: IconProvider
-    @EnvironmentObject var g: DataProvider
+    @EnvironmentObject var g: DataVM
     @EnvironmentObject var vm: ProjectVM
 
     @State private var showWelcome = false

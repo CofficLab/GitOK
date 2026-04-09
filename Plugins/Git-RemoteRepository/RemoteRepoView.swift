@@ -7,7 +7,7 @@ import OSLog
 /// 远程仓库管理视图
 /// 用于展示、添加、编辑和删除Git远程仓库
 struct RemoteRepositoryView: View, SuperLog {
-    @EnvironmentObject var data: DataProvider
+    @EnvironmentObject var data: DataVM
     @EnvironmentObject var vm: ProjectVM
     @Environment(\.dismiss) private var dismiss
     

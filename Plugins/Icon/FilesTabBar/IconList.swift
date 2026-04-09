@@ -5,9 +5,9 @@ import SwiftData
 import SwiftUI
 
 struct IconList: View {
-    @EnvironmentObject var app: AppProvider
+    @EnvironmentObject var app: AppVM
     
-    @EnvironmentObject var g: DataProvider
+    @EnvironmentObject var g: DataVM
     @EnvironmentObject var vm: ProjectVM
     @EnvironmentObject var i: IconProvider
 

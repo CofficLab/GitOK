@@ -5,7 +5,7 @@ import SwiftUI
 /// 提供一键用 GitHub Desktop 打开当前项目的功能
 struct BtnOpenGitHubDesktopView: View {
     /// 数据提供者（包含当前项目）
-    @EnvironmentObject var g: DataProvider
+    @EnvironmentObject var g: DataVM
     @EnvironmentObject var vm: ProjectVM
 
     /// 单例实例

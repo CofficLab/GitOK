@@ -2,7 +2,7 @@
 import SwiftUI
 
 struct GitignoreOrganizerView: View {
-    @EnvironmentObject var data: DataProvider
+    @EnvironmentObject var data: DataVM
     @EnvironmentObject var vm: ProjectVM
 
     @Binding var content: String

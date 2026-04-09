@@ -4,9 +4,9 @@ import SwiftData
 import SwiftUI
 
 struct ProjectPickerView: View, SuperLog {
-    @EnvironmentObject var data: DataProvider
+    @EnvironmentObject var data: DataVM
     @EnvironmentObject var vm: ProjectVM
-    @EnvironmentObject var app: AppProvider
+    @EnvironmentObject var app: AppVM
 
     @State private var selection: Project?
 

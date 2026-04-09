@@ -8,7 +8,7 @@ import SwiftUI
 
 struct FileDetail: View, SuperLog, SuperEvent, SuperThread {
     
-    @EnvironmentObject var data: DataProvider
+    @EnvironmentObject var data: DataVM
     @EnvironmentObject var vm: ProjectVM
 
     @State private var oldText = ""

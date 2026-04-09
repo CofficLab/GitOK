@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct BtnOpenFinderView: View {
-    @EnvironmentObject var g: DataProvider
+    @EnvironmentObject var g: DataVM
     @EnvironmentObject var vm: ProjectVM
     
     static let shared = BtnOpenFinderView()

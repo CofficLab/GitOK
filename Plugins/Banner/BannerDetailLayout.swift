@@ -10,7 +10,7 @@ import SwiftUI
 struct BannerDetailLayout: View {
     static var shared = BannerDetailLayout()
 
-    @EnvironmentObject var g: DataProvider
+    @EnvironmentObject var g: DataVM
     
     @EnvironmentObject var b: BannerProvider
 

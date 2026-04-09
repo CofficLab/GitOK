@@ -5,7 +5,7 @@ import SwiftUI
 
 /// 自动推送状态栏图标：显示自动推送状态并提供配置入口
 struct AutoPushStatusIcon: View, SuperLog {
-    @EnvironmentObject var data: DataProvider
+    @EnvironmentObject var data: DataVM
     @EnvironmentObject var vm: ProjectVM
     
     @State private var isSheetPresented = false

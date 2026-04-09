@@ -12,7 +12,7 @@ struct Projects: View, SuperLog {
     nonisolated static let verbose = false
 
     /// 数据提供者环境对象
-    @EnvironmentObject var data: DataProvider
+    @EnvironmentObject var data: DataVM
 
     /// 当前项目状态
     @EnvironmentObject var projectVM: ProjectVM

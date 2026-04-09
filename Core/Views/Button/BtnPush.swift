@@ -11,7 +11,7 @@ struct BtnPush: View, SuperLog {
     nonisolated static let verbose = false
 
     
-    @EnvironmentObject var data: DataProvider
+    @EnvironmentObject var data: DataVM
     @EnvironmentObject var vm: ProjectVM
 
     /// 消息绑定

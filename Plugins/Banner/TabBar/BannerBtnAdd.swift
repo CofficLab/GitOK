@@ -9,8 +9,8 @@ import SwiftUI
      提供创建新Banner的功能，直接与BannerRepo交互进行创建操作。
  **/
 struct BannerBtnAdd: View, SuperThread {
-    @EnvironmentObject var app: AppProvider
-    @EnvironmentObject var g: DataProvider
+    @EnvironmentObject var app: AppVM
+    @EnvironmentObject var g: DataVM
     @EnvironmentObject var vm: ProjectVM
     @EnvironmentObject var b: BannerProvider
     

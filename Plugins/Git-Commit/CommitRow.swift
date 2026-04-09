@@ -14,7 +14,7 @@ struct CommitRow: View, SuperThread, SuperLog {
     nonisolated static let verbose = false
 
     /// 环境对象：数据提供者
-    @EnvironmentObject var data: DataProvider
+    @EnvironmentObject var data: DataVM
     @EnvironmentObject var vm: ProjectVM
 
     /// 提交对象

@@ -9,7 +9,7 @@ import MagicAlert
 **/
 struct BannerTabs: View {
     @EnvironmentObject var b: BannerProvider
-    @EnvironmentObject var g: DataProvider
+    @EnvironmentObject var g: DataVM
     @EnvironmentObject var vm: ProjectVM
     
     

@@ -3,7 +3,7 @@ import MagicKit
 
 /// LICENSE 状态栏图标：存在 LICENSE 时可点击查看/编辑。
 struct LicenseStatusIcon: View, SuperLog {
-    @EnvironmentObject var data: DataProvider
+    @EnvironmentObject var data: DataVM
     @EnvironmentObject var vm: ProjectVM
 
     @State private var isSheetPresented = false

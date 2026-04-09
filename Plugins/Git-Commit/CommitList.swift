@@ -16,10 +16,10 @@ struct CommitList: View, SuperThread, SuperLog {
     static var shared = CommitList()
 
     /// 环境对象：应用提供者
-    @EnvironmentObject var app: AppProvider
+    @EnvironmentObject var app: AppVM
 
     /// 环境对象：数据提供者
-    @EnvironmentObject var data: DataProvider
+    @EnvironmentObject var data: DataVM
     @EnvironmentObject var vm: ProjectVM
 
     /// 提交列表数据

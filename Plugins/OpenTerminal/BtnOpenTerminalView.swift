@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct BtnOpenTerminalView: View {
-    @EnvironmentObject var g: DataProvider
+    @EnvironmentObject var g: DataVM
     @EnvironmentObject var vm: ProjectVM
 
     var body: some View {

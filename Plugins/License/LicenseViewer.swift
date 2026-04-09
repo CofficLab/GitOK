@@ -3,7 +3,7 @@ import SwiftUI
 import MagicKit
 
 struct LicenseViewer: View, SuperLog {
-    @EnvironmentObject var data: DataProvider
+    @EnvironmentObject var data: DataVM
     @EnvironmentObject var vm: ProjectVM
     @Environment(\.dismiss) private var dismiss
 

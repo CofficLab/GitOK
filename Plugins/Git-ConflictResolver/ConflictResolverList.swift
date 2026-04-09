@@ -12,7 +12,7 @@ struct ConflictResolverList: View, SuperLog, SuperThread {
 
     static let shared = ConflictResolverList()
 
-    @EnvironmentObject var data: DataProvider
+    @EnvironmentObject var data: DataVM
     @EnvironmentObject var vm: ProjectVM
 
     @State private var conflictFiles: [String] = []

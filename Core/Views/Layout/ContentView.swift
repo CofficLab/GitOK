@@ -7,9 +7,9 @@ struct ContentView: View, SuperLog {
     nonisolated static let emoji = "📱"
     nonisolated static let verbose = false
 
-    @EnvironmentObject var app: AppProvider
-    @EnvironmentObject var g: DataProvider
-    @EnvironmentObject var p: PluginProvider
+    @EnvironmentObject var app: AppVM
+    @EnvironmentObject var g: DataVM
+    @EnvironmentObject var p: PluginVM
     @EnvironmentObject var vm: ProjectVM
 
     /// 导航分栏视图的列可见性状态

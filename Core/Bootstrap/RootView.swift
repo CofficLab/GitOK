@@ -18,16 +18,16 @@ struct RootView<Content>: View, SuperEvent, SuperLog where Content: View {
     var content: Content
 
     /// 应用提供者
-    var appProvider: AppProvider
+    var appProvider: AppVM
 
     /// 图标提供者
     var iconProvider: IconProvider
 
     /// 插件提供者
-    var pluginProvider: PluginProvider
+    var pluginProvider: PluginVM
 
     /// Git 数据提供者
-    var git: DataProvider
+    var git: DataVM
 
     /// 当前项目状态
     var projectVM: ProjectVM
@@ -42,15 +42,15 @@ struct RootView<Content>: View, SuperEvent, SuperLog where Content: View {
         self.repoManager = RepoManager(modelContext: ModelContext(c))
 
         // 初始化提供者
-        self.appProvider = AppProvider(repoManager: self.repoManager)
+        self.appProvider = AppVM(repoManager: self.repoManager)
         self.iconProvider = IconProvider()
-        self.pluginProvider = PluginProvider()
+        self.pluginProvider = PluginVM()
 
         // 初始化数据提供者
         var initialProject: Project? = nil
         do {
             let projects = try self.repoManager.projectRepo.findAll(sortedBy: .ascending)
-            self.git = DataProvider(projects: projects, repoManager: self.repoManager)
+            self.git = DataVM(projects: projects, repoManager: self.repoManager)
 
             // 恢复上次选中的项目
             let savedPath = self.repoManager.stateRepo.projectPath
@@ -63,7 +63,7 @@ struct RootView<Content>: View, SuperEvent, SuperLog where Content: View {
             self.projectVM = ProjectVM(project: initialProject, repoManager: self.repoManager)
         } catch let e {
             os_log(.error, "\(Self.t) Failed to load projects: \(e.localizedDescription)")
-            self.git = DataProvider(projects: [], repoManager: self.repoManager)
+            self.git = DataVM(projects: [], repoManager: self.repoManager)
             self.projectVM = ProjectVM(project: initialProject, repoManager: self.repoManager)
         }
     }

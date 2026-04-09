@@ -10,7 +10,7 @@ struct StatusBar: View, SuperLog {
     nonisolated static let verbose = false
 
     /// 插件提供者环境对象
-    @EnvironmentObject var p: PluginProvider
+    @EnvironmentObject var p: PluginVM
 
     /// 视图主体
     var body: some View {

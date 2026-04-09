@@ -11,7 +11,7 @@ struct BtnCommitAndPush: View, SuperLog, SuperThread {
     /// 是否启用详细日志输出
     nonisolated static let verbose = false
 
-    @EnvironmentObject var g: DataProvider
+    @EnvironmentObject var g: DataVM
     @EnvironmentObject var vm: ProjectVM
     
 

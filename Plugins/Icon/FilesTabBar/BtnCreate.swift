@@ -4,7 +4,7 @@ import SwiftUI
 import MagicKit
 
 struct BtnCreate: View {
-    @EnvironmentObject var g: DataProvider
+    @EnvironmentObject var g: DataVM
     @EnvironmentObject var vm: ProjectVM
     
 

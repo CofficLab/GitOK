@@ -13,7 +13,7 @@ struct ProjectNotFoundView: View, SuperLog {
     /// 项目实例
     let project: Project
     
-    @EnvironmentObject var g: DataProvider
+    @EnvironmentObject var g: DataVM
 
     var body: some View {
         AppSettingSection(title: "项目状态", titleAlignment: .leading) {
