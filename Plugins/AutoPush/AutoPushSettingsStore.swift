@@ -12,7 +12,7 @@ class AutoPushSettingsStore: ObservableObject, SuperLog {
     private let userDefaultsKey = "GitOK_AutoPushSettings"
     
     /// 本地 verbose 标志，避免访问 @MainActor 隔离的属性
-    private let verbose = AutoPushService.verbose
+    private let verbose = true  // 设为 true 以查看详细日志
 
     /// 发布设置变化，让订阅者能够实时响应
     @Published private(set) var settings: [String: ProjectBranchAutoPushConfig] = [:]
