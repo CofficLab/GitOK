@@ -85,8 +85,14 @@ extension CommitList {
             LazyVStack(spacing: 0, pinnedViews: []) {
                 Divider()
 
+                // 获取第一个 commit 的 hash，用于判断是否允许撤销
+                let firstCommitHash = commits.first?.hash
+
                 ForEach(Array(commits.enumerated()), id: \.element.hash) { index, commit in
-                    CommitRow(commit: commit)
+                    CommitRow(
+                        commit: commit,
+                        isFirstCommit: commit.hash == firstCommitHash
+                    )
                         .onAppear {
                             // 只在最后几个 commit 出现时触发加载更多
                             let threshold = max(commits.count - 10, Int(Double(commits.count) * 0.8))

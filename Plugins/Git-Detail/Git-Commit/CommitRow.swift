@@ -17,6 +17,9 @@ struct CommitRow: View, SuperThread, SuperLog {
     /// 提交对象
     let commit: GitCommit
 
+    /// 是否为列表中的第一个提交（最新的提交）
+    let isFirstCommit: Bool
+
     /// 当前提交是否未推送
     private var isUnpushed: Bool {
         vm.isCommitUnpushed(commit.hash)
@@ -47,9 +50,10 @@ struct CommitRow: View, SuperThread, SuperLog {
     /// 是否正在执行撤销操作
     @State private var isUndoing = false
 
-    /// 是否可以撤销（未推送 + 无标签 + 有父提交）
+    /// 是否可以撤销（第一个提交 + 未推送 + 无标签 + 有父提交）
+    /// 与 GitHub Desktop 保持一致：只允许撤销最新的提交
     private var canUndo: Bool {
-        isUnpushed && commit.tags.isEmpty && !commit.parentHashes.isEmpty
+        isFirstCommit && isUnpushed && commit.tags.isEmpty && !commit.parentHashes.isEmpty
     }
 
     var body: some View {
