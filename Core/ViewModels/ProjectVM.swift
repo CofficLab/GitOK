@@ -24,6 +24,9 @@ class ProjectVM: ObservableObject, SuperLog {
     /// 未推送提交数量（由 UnpushedStatusPlugin 插件更新）
     @Published private(set) var unpushedCommitsCount: Int = 0
 
+    /// 未推送提交的哈希集合（用于快速查询某个 commit 是否未推送）
+    @Published private(set) var unpushedCommitHashes: Set<String> = []
+
     /// 仓库管理器
     private let repoManager: RepoManager
 
@@ -73,10 +76,20 @@ class ProjectVM: ObservableObject, SuperLog {
         file = f
     }
 
-    /// 更新未推送提交数量（供插件调用）
-    /// - Parameter count: 未推送提交数量
-    func updateUnpushedCommitsCount(_ count: Int) {
+    /// 更新未推送提交数量和哈希集合（供插件调用）
+    /// - Parameters:
+    ///   - count: 未推送提交数量
+    ///   - hashes: 未推送提交的哈希数组
+    func updateUnpushedCommits(_ count: Int, hashes: [String]) {
         self.unpushedCommitsCount = count
+        self.unpushedCommitHashes = Set(hashes)
+    }
+
+    /// 检查指定提交是否未推送
+    /// - Parameter commitHash: 提交的哈希值
+    /// - Returns: 是否未推送
+    func isCommitUnpushed(_ commitHash: String) -> Bool {
+        return unpushedCommitHashes.contains(commitHash)
     }
 
     // MARK: - Private

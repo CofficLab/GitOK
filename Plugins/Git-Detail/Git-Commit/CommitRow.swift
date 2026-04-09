@@ -7,10 +7,7 @@ import SwiftUI
 /// 提交记录行视图组件
 /// 显示单个 Git 提交的详细信息，包括消息、作者、时间等
 struct CommitRow: View, SuperThread, SuperLog {
-    /// 日志标识符
     nonisolated static let emoji = "📝"
-
-    /// 是否启用详细日志输出
     nonisolated static let verbose = false
 
     /// 环境对象：数据提供者
@@ -20,8 +17,10 @@ struct CommitRow: View, SuperThread, SuperLog {
     /// 提交对象
     let commit: GitCommit
 
-    /// 是否未同步到远程（由父组件 CommitList 统一管理）
-    let isUnpushed: Bool
+    /// 当前提交是否未推送（从 VM 中读取）
+    private var isUnpushed: Bool {
+        vm.isCommitUnpushed(commit.hash)
+    }
 
     /// 标签文本
     @State private var tag: String = ""

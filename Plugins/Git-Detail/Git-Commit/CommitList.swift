@@ -15,10 +15,8 @@ struct CommitList: View, SuperThread, SuperLog {
     /// 单例实例
     static var shared = CommitList()
 
-    /// 环境对象：应用提供者
+    /// 环境对象
     @EnvironmentObject var app: AppVM
-
-    /// 环境对象：数据提供者
     @EnvironmentObject var data: DataVM
     @EnvironmentObject var vm: ProjectVM
 
@@ -88,7 +86,7 @@ extension CommitList {
                 Divider()
 
                 ForEach(Array(commits.enumerated()), id: \.element.hash) { index, commit in
-                    CommitRow(commit: commit, isUnpushed: false)
+                    CommitRow(commit: commit)
                         .onAppear {
                             // 只在最后几个 commit 出现时触发加载更多
                             let threshold = max(commits.count - 10, Int(Double(commits.count) * 0.8))
