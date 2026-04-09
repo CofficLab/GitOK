@@ -21,6 +21,9 @@ class ProjectVM: ObservableObject, SuperLog {
     /// 当前项目路径是否存在
     @Published private(set) var projectExists = true
 
+    /// 未推送提交数量（由 UnpushedStatusPlugin 插件更新）
+    @Published private(set) var unpushedCommitsCount: Int = 0
+
     /// 仓库管理器
     private let repoManager: RepoManager
 
@@ -68,6 +71,12 @@ class ProjectVM: ObservableObject, SuperLog {
     func setFile(_ f: GitDiffFile?) {
         if f == self.file { return }
         file = f
+    }
+
+    /// 更新未推送提交数量（供插件调用）
+    /// - Parameter count: 未推送提交数量
+    func updateUnpushedCommitsCount(_ count: Int) {
+        self.unpushedCommitsCount = count
     }
 
     // MARK: - Private
