@@ -98,10 +98,13 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
             // 只检查 GitOK 命名空间下以 "Plugin" 结尾的类
             guard className.hasPrefix("GitOK."), className.hasSuffix("Plugin") else { continue }
 
+            // 调试：打印所有发现的插件类名
+            os_log("🔍 Found plugin candidate: \(className)")
+
             // 尝试获取 shared 单例实例
             let sharedSelector = NSSelectorFromString("shared")
             guard let sharedMethod = class_getClassMethod(cls, sharedSelector) else {
-                if Self.verbose { os_log("\(Self.t)⚠️ No @objc shared found for \(className), skipping") }
+                os_log("\(Self.t)⚠️ No @objc shared found for \(className), skipping")
                 continue
             }
 
@@ -110,13 +113,13 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
             let getter = unsafeBitCast(method_getImplementation(sharedMethod), to: SharedGetter.self)
 
             guard let instance = getter(cls, sharedSelector) else {
-                if Self.verbose { os_log("\(self.t)⚠️ Failed to get shared instance for \(className)") }
+                os_log("⚠️ Failed to get shared instance for \(className)")
                 continue
             }
 
             // 检查实例是否符合 SuperPlugin 协议
             guard let plugin = instance as? any SuperPlugin else {
-                if Self.verbose { os_log("\(self.t)⚠️ Instance of \(className) does not conform to SuperPlugin") }
+                os_log("⚠️ Instance of \(className) does not conform to SuperPlugin")
                 continue
             }
 
@@ -130,6 +133,7 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
                 continue
             }
 
+            os_log("✅ Registering plugin: \(className), order: \(pluginOrder)")
             // 添加到临时数组，稍后按 order 排序
             discoveredPlugins.append((plugin, className, pluginOrder))
         }

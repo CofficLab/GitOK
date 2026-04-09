@@ -16,7 +16,7 @@ class UnpushedStatusPlugin: NSObject, SuperPlugin {
     static var iconName: String = "arrow.up.circle"
 
     /// 插件是否可配置
-    static var allowUserToggle = true
+    static var allowUserToggle = false
 
     /// 插件默认启用状态
     static var defaultEnabled: Bool = true
@@ -28,10 +28,10 @@ class UnpushedStatusPlugin: NSObject, SuperPlugin {
     @objc static let shouldRegister = true
 
     /// 是否启用详细日志输出
-    private let verbose = false
+    private let verbose = true
 
     /// 单例实例
-    static var shared = UnpushedStatusPlugin()
+    @objc static var shared = UnpushedStatusPlugin()
 
     override init() {
         super.init()
@@ -40,7 +40,8 @@ class UnpushedStatusPlugin: NSObject, SuperPlugin {
     /// 添加根视图包裹
     /// 监听项目变化，自动更新未推送提交数量到 ProjectVM
     func addRootView<Content>(@ViewBuilder content: () -> Content) -> AnyView? where Content: View {
-        AnyView(
+        os_log("🔍 UnpushedStatusPlugin.addRootView() called!")
+        return AnyView(
             UnpushedStatusRootView(content: content())
         )
     }

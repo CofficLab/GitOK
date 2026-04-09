@@ -96,6 +96,11 @@ struct ContentView: View, SuperLog {
         .onReceive(NotificationCenter.default.publisher(for: .openCommitStyleSettings)) { _ in
             app.openCommitStyleSettings()
         }
+        .overlay(alignment: .bottom) {
+            p.getRootViewWrapper {
+                EmptyView()
+            }
+        }
     }
 
     /// 将字符串转换为设置Tab枚举

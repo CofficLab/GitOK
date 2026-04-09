@@ -1,13 +1,12 @@
-import SwiftData
 import MagicAlert
-import SwiftUI
 import MagicKit
 import OSLog
+import SwiftData
+import SwiftUI
 
 /// 根视图容器组件
 /// 为应用提供统一的上下文环境，包括数据提供者、图标提供者和插件提供者
 struct RootView<Content>: View, SuperEvent, SuperLog where Content: View {
-
     /// 日志标识符
     static var emoji: String { "🚉" }
 
@@ -47,7 +46,7 @@ struct RootView<Content>: View, SuperEvent, SuperLog where Content: View {
         self.pluginProvider = PluginVM()
 
         // 初始化数据提供者
-        var initialProject: Project? = nil
+        var initialProject: Project?
         do {
             let projects = try self.repoManager.projectRepo.findAll(sortedBy: .ascending)
             self.git = DataVM(projects: projects, repoManager: self.repoManager)
@@ -69,17 +68,14 @@ struct RootView<Content>: View, SuperEvent, SuperLog where Content: View {
     }
 
     var body: some View {
-        // 使用插件的根视图包裹功能
-        pluginProvider.getRootViewWrapper {
-            content
-                .withMagicToast()
-                .environmentObject(appProvider)
-                .environmentObject(iconProvider)
-                .environmentObject(pluginProvider)
-                .environmentObject(git)
-                .environmentObject(projectVM)
-                .navigationTitle("")
-        }
+        content
+            .withMagicToast()
+            .environmentObject(appProvider)
+            .environmentObject(iconProvider)
+            .environmentObject(pluginProvider)
+            .environmentObject(git)
+            .environmentObject(projectVM)
+            .navigationTitle("")
     }
 }
 
