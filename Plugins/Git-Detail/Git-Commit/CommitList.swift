@@ -37,9 +37,6 @@ struct CommitList: View, SuperThread, SuperLog {
     /// 每页加载的提交数量
     @State private var pageSize: Int = 50
 
-    /// 未推送提交的哈希集合（由 CommitList 统一管理，避免竞争条件）
-    @State private var unpushedCommits: Set<String> = []
-
     /// 是否已调度加载更多操作（防止快速连续触发）
     @State private var isLoadingMoreScheduled = false
 
@@ -91,8 +88,7 @@ extension CommitList {
                 Divider()
 
                 ForEach(Array(commits.enumerated()), id: \.element.hash) { index, commit in
-                    let isUnpushed = unpushedCommits.contains(commit.hash)
-                    CommitRow(commit: commit, isUnpushed: isUnpushed)
+                    CommitRow(commit: commit, isUnpushed: false)
                         .onAppear {
                             // 只在最后几个 commit 出现时触发加载更多
                             let threshold = max(commits.count - 10, Int(Double(commits.count) * 0.8))
@@ -239,23 +235,16 @@ extension CommitList {
                         0, limit: pageSize
                     )
 
-                    try Task.checkCancellation()
-
-                    // 获取未推送的 commits
-                    let unpushed = try await project.getUnPushedCommits()
-                    let unpushedHashes = Set(unpushed.map { $0.hash })
-
-                    return (commits, unpushedHashes)
+                    return commits
                 }
                 currentRefreshWorkerTask = worker
-                let (initialCommits, unpushedHashes) = try await worker.value
+                let initialCommits = try await worker.value
 
                 if Task.isCancelled { return }
 
                 // 在主线程更新 UI 状态
                 await MainActor.run {
                     self.commits = initialCommits
-                    self.unpushedCommits = unpushedHashes
                     self.loading = false
                     self.currentPage = 1 // Next page to load
                 }
@@ -265,39 +254,7 @@ extension CommitList {
                 // 在主线程更新 UI 状态
                 await MainActor.run {
                     self.commits = []
-                    self.unpushedCommits = []
                     self.loading = false
-                }
-            }
-        }
-    }
-
-    /// 刷新未推送状态（不重新加载提交列表）
-    /// 用于推送成功后快速更新 UI 状态
-    func refreshUnpushedStatus() {
-        guard let project = vm.project else {
-            return
-        }
-
-        if Self.verbose {
-            os_log("\(Self.t)🔄 Refreshing unpushed status only")
-        }
-
-        Task.detached(priority: .userInitiated) {
-            do {
-                let unpushed = try await project.getUnPushedCommits()
-                let unpushedHashes = Set(unpushed.map { $0.hash })
-
-                if Self.verbose {
-                    os_log("\(Self.t)📊 Unpushed status updated: \(unpushedHashes.count) commits")
-                }
-
-                await MainActor.run {
-                    self.unpushedCommits = unpushedHashes
-                }
-            } catch {
-                if Self.verbose {
-                    os_log(.error, "\(Self.t)❌ Failed to refresh unpushed status: \(error)")
                 }
             }
         }
@@ -428,14 +385,10 @@ extension CommitList {
         self.refresh("GitPullSuccess")
     }
 
-    /// 推送成功事件处理 - 只刷新未推送状态，不重新加载提交列表
+    /// 推送成功事件处理
     /// - Parameter eventInfo: 事件信息
     func onPushSuccess(_ eventInfo: ProjectEventInfo) {
-        if Self.verbose {
-            os_log("\(Self.t)🚀 Git push success - refreshing unpushed status only")
-        }
-        // 只更新未推送状态，避免不必要的提交列表重新加载
-        self.refreshUnpushedStatus()
+        // 提交列表刷新由其他事件触发
     }
 
     /// 应用即将变为活跃状态事件处理

@@ -41,29 +41,6 @@ class UnpushedStatusPlugin: NSObject, SuperPlugin {
     func addStatusBarTrailingView() -> AnyView? {
         return AnyView(UnpushedStatusTile())
     }
-
-    /// 刷新未推送提交状态
-    func refresh() {
-        guard let appDelegate = NSApplication.shared.delegate as? AppDelegate else {
-            return
-        }
-
-        // 通过 AppDelegate 获取 ProjectVM
-        // 由于 ProjectVM 是通过环境对象传递的，我们需要找到一种方式来更新它
-        // 这里我们使用 NotificationCenter 来通知刷新
-
-        if verbose {
-            os_log("\(Self.t)🔄 Refreshing unpushed status")
-        }
-
-        NotificationCenter.default.post(name: .refreshUnpushedStatus, object: nil)
-    }
-}
-
-// MARK: - Notification Names
-
-extension Notification.Name {
-    static let refreshUnpushedStatus = Notification.Name("refreshUnpushedStatus")
 }
 
 // MARK: - Preview

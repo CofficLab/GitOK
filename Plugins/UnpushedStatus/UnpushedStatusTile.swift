@@ -12,9 +12,6 @@ struct UnpushedStatusTile: View, SuperLog {
     /// 是否启用详细日志输出
     nonisolated static let verbose = false
 
-    /// 插件提供者环境对象（用于获取插件实例）
-    @EnvironmentObject var p: PluginVM
-
     /// 未推送提交数量（从 ProjectVM 获取）
     @EnvironmentObject var vm: ProjectVM
 
@@ -52,6 +49,9 @@ struct UnpushedStatusTile: View, SuperLog {
             UnpushedCommitsDetailView()
                 .frame(width: 400, height: 500)
         }
+        .onAppear {
+            refreshStatus()
+        }
         .onProjectDidChangeBranch { _ in
             refreshStatus()
         }
@@ -70,10 +70,32 @@ struct UnpushedStatusTile: View, SuperLog {
     }
 
     private func refreshStatus() {
-        guard let plugin = p.plugins.first(where: { $0.instanceLabel == "UnpushedStatusPlugin" }) as? UnpushedStatusPlugin else {
+        guard let project = vm.project else {
+            vm.updateUnpushedCommitsCount(0)
             return
         }
-        plugin.refresh()
+
+        Task.detached(priority: .userInitiated) {
+            do {
+                let unpushed = try await project.getUnPushedCommits()
+                let count = unpushed.count
+
+                await MainActor.run {
+                    vm.updateUnpushedCommitsCount(count)
+                }
+
+                if Self.verbose {
+                    os_log("\(Self.t)📊 Unpushed status refreshed: \(count) commits")
+                }
+            } catch {
+                await MainActor.run {
+                    vm.updateUnpushedCommitsCount(0)
+                }
+                if Self.verbose {
+                    os_log(.error, "\(Self.t)❌ Failed to refresh unpushed status: \(error)")
+                }
+            }
+        }
     }
 }
 
@@ -115,27 +137,6 @@ struct UnpushedCommitsDetailView: View, SuperLog {
                 Text("没有未推送的提交", tableName: "UnpushedStatus")
                     .foregroundStyle(.secondary)
                 Spacer()
-            } else {
-                List(commits, id: \.hash) { commit in
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text(commit.message.firstLine ?? "")
-                            .font(.system(.body, design: .monospaced))
-                            .lineLimit(2)
-
-                        HStack {
-                            Text(commit.hash.prefix(7))
-                                .font(.system(.caption, design: .monospaced))
-                                .foregroundStyle(.secondary)
-
-                            Spacer()
-
-                            Text(commit.author.name)
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                        }
-                    }
-                    .padding(.vertical, 4)
-                }
             }
         }
         .onAppear {
