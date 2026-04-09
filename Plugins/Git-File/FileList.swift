@@ -14,9 +14,6 @@ struct FileList: View, SuperThread, SuperLog {
     /// 环境对象：应用提供者
     @EnvironmentObject var app: AppProvider
 
-    /// 环境对象：消息提供者，用于显示提示信息
-    
-
     /// 环境对象：数据提供者，包含项目和提交信息
     @EnvironmentObject var data: DataProvider
 
