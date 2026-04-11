@@ -18,6 +18,7 @@ struct ProjectRow: View {
                 .padding(.vertical, 6)
                 .background(rowBackground)
                 .clipShape(RoundedRectangle(cornerRadius: 4))
+                .contentShape(Rectangle()) // 确保整个区域都可点击
         }
         .buttonStyle(.plain)
         .onHover { hovering in
