@@ -3,7 +3,8 @@ import OSLog
 import SwiftUI
 
 struct GitignoreViewer: View, SuperLog {
-    @EnvironmentObject var data: DataProvider
+    @EnvironmentObject var data: DataVM
+    @EnvironmentObject var vm: ProjectVM
     @Environment(\.dismiss) private var dismiss
 
     @State private var content: String = ""
@@ -39,7 +40,7 @@ struct GitignoreViewer: View, SuperLog {
         }
         .frame(minWidth: 600, minHeight: 400)
         .onAppear(perform: loadGitignore)
-        .onChange(of: data.project, loadGitignore)
+        .onChange(of: vm.project, loadGitignore)
     }
 
     private var header: some View {
@@ -54,7 +55,7 @@ struct GitignoreViewer: View, SuperLog {
                         .font(.headline)
                         .fontWeight(.semibold)
 
-                    if let project = data.project {
+                    if let project = vm.project {
                         Text(project.title)
                             .font(.caption)
                             .foregroundColor(.secondary)
@@ -123,7 +124,7 @@ struct GitignoreViewer: View, SuperLog {
     }
 
     private func loadGitignore() {
-        guard let project = data.project else {
+        guard let project = vm.project else {
             content = ""
             isLoading = false
             hasError = true
@@ -156,7 +157,7 @@ struct GitignoreViewer: View, SuperLog {
     }
 
     private func applyTemplate(_ template: GitignoreTemplate) {
-        guard let project = data.project else {
+        guard let project = vm.project else {
             return
         }
 
@@ -272,7 +273,7 @@ struct GitignoreViewer: View, SuperLog {
     }
 
     private func organizeGitignore() {
-        guard let project = data.project else { return }
+        guard let project = vm.project else { return }
 
         isOrganizing = true
         statusMessage = nil

@@ -11,7 +11,8 @@ struct CommitStylePresetView: View, SuperLog {
     /// 是否启用详细日志输出
     nonisolated static let verbose = false
 
-    @EnvironmentObject var data: DataProvider
+    @EnvironmentObject var data: DataVM
+    @EnvironmentObject var vm: ProjectVM
 
     /// 当前项目 Commit 风格
     @State private var projectCommitStyle: CommitStyle = .emoji
@@ -20,7 +21,7 @@ struct CommitStylePresetView: View, SuperLog {
     @State private var globalCommitStyle: CommitStyle = .emoji
 
     var body: some View {
-        MagicSettingSection(title: "Commit 风格", titleAlignment: .leading) {
+        AppSettingSection(title: "Commit 风格", titleAlignment: .leading) {
             VStack(spacing: 0) {
                 // 当前项目风格
                 projectCommitStylePicker
@@ -49,7 +50,7 @@ struct CommitStylePresetView: View, SuperLog {
                 set: { newValue in
                     if let style = CommitStyle.allCases.first(where: { $0.label == newValue }) {
                         projectCommitStyle = style
-                        if let project = data.project {
+                        if let project = vm.project {
                             project.commitStyle = style
                         }
                     }
@@ -80,7 +81,7 @@ struct CommitStylePresetView: View, SuperLog {
     // MARK: - Load Data
 
     private func loadData() {
-        if let project = data.project {
+        if let project = vm.project {
             projectCommitStyle = project.commitStyle
         }
 

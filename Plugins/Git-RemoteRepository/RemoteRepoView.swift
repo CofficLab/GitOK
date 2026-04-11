@@ -7,7 +7,8 @@ import OSLog
 /// 远程仓库管理视图
 /// 用于展示、添加、编辑和删除Git远程仓库
 struct RemoteRepositoryView: View, SuperLog {
-    @EnvironmentObject var data: DataProvider
+    @EnvironmentObject var data: DataVM
+    @EnvironmentObject var vm: ProjectVM
     @Environment(\.dismiss) private var dismiss
     
     @State private var remotes: [GitRemote] = []
@@ -174,7 +175,7 @@ struct RemoteRepositoryView: View, SuperLog {
 
 extension RemoteRepositoryView {
     private func loadRemotes() {
-        guard let project = data.project else {
+        guard let project = vm.project else {
             errorMessage = "没有选择项目"
             return
         }
@@ -199,7 +200,7 @@ extension RemoteRepositoryView {
     }
     
     private func addRemote(name: String, url: String) {
-        guard let project = data.project else {
+        guard let project = vm.project else {
             errorMessage = "没有选择项目"
             return
         }
@@ -234,7 +235,7 @@ extension RemoteRepositoryView {
     }
     
     private func updateRemote(originalName: String, newName: String, newURL: String) {
-        guard let project = data.project else {
+        guard let project = vm.project else {
             errorMessage = "没有选择项目"
             return
         }
@@ -263,7 +264,7 @@ extension RemoteRepositoryView {
     }
     
     private func deleteRemote(_ remote: GitRemote) {
-        guard let project = data.project else {
+        guard let project = vm.project else {
             errorMessage = "没有选择项目"
             return
         }

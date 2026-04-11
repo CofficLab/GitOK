@@ -12,7 +12,8 @@ struct ConflictResolverList: View, SuperLog, SuperThread {
 
     static let shared = ConflictResolverList()
 
-    @EnvironmentObject var data: DataProvider
+    @EnvironmentObject var data: DataVM
+    @EnvironmentObject var vm: ProjectVM
 
     @State private var conflictFiles: [String] = []
     @State private var isLoading = true
@@ -150,7 +151,7 @@ extension ConflictResolverList {
 extension ConflictResolverList {
     /// 继续合并操作
     private func continueMerge() {
-        guard let project = data.project else { return }
+        guard let project = vm.project else { return }
 
         Task.detached(priority: .userInitiated) {
             do {
@@ -171,7 +172,7 @@ extension ConflictResolverList {
 
     /// 中止合并操作
     private func abortMerge() {
-        guard let project = data.project else { return }
+        guard let project = vm.project else { return }
 
         Task.detached(priority: .userInitiated) {
             do {
@@ -191,7 +192,7 @@ extension ConflictResolverList {
 
     /// 加载冲突状态
     private func loadConflictStatus() {
-        guard let project = data.project else {
+        guard let project = vm.project else {
             conflictFiles = []
             isMerging = false
             isLoading = false

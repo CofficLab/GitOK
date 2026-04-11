@@ -2,14 +2,15 @@ import MagicKit
 import SwiftUI
 
 struct BtnOpenAntigravityView: View {
-    @EnvironmentObject var g: DataProvider
+    @EnvironmentObject var g: DataVM
+    @EnvironmentObject var vm: ProjectVM
 
     static let shared = BtnOpenAntigravityView()
 
     private init() {}
 
     var body: some View {
-        if let project = g.project {
+        if let project = vm.project {
             Image.antigravityApp
                 .resizable()
                 .frame(height: 22)

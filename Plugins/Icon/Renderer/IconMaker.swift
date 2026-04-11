@@ -9,7 +9,7 @@ import UniformTypeIdentifiers
  * 采用水平布局：左侧显示图标预览，右侧提供下载选项
  */
 struct IconMaker: View {
-    @EnvironmentObject var app: AppProvider
+    @EnvironmentObject var app: AppVM
     
     @EnvironmentObject var i: IconProvider
     

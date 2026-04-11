@@ -5,7 +5,8 @@ import SwiftUI
 /// 远程仓库管理按钮视图
 /// 提供一个按钮来打开远程仓库管理界面
 struct BtnRemoteRepositoryView: View, SuperLog {
-    @EnvironmentObject var data: DataProvider
+    @EnvironmentObject var data: DataVM
+    @EnvironmentObject var vm: ProjectVM
 
     @State private var showRemoteManagement = false
     @State private var isGitProject = false
@@ -16,7 +17,7 @@ struct BtnRemoteRepositoryView: View, SuperLog {
 
     var body: some View {
         ZStack {
-            if data.project != nil, isGitProject {
+            if vm.project != nil, isGitProject {
                 StatusBarTile(icon: .iconGlobe, onTap: {
                     showRemoteManagement = true
                 }) {
@@ -34,7 +35,7 @@ struct BtnRemoteRepositoryView: View, SuperLog {
                 await self.updateIsGitProjectAsync()
             }
         })
-        .onChange(of: data.project) {
+        .onChange(of: vm.project) {
             Task {
                 await self.updateIsGitProjectAsync()
             }
@@ -46,7 +47,7 @@ struct BtnRemoteRepositoryView: View, SuperLog {
 
 extension BtnRemoteRepositoryView {
     private func updateIsGitProject() {
-        guard let project = data.project else {
+        guard let project = vm.project else {
             isGitProject = false
             return
         }
@@ -60,7 +61,7 @@ extension BtnRemoteRepositoryView {
         使用异步方式避免阻塞主线程，解决CPU占用100%的问题
      */
     private func updateIsGitProjectAsync() async {
-        guard let project = data.project else {
+        guard let project = vm.project else {
             await MainActor.run {
                 self.isGitProject = false
             }

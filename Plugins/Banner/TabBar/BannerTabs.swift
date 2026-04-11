@@ -9,7 +9,8 @@ import MagicAlert
 **/
 struct BannerTabs: View {
     @EnvironmentObject var b: BannerProvider
-    @EnvironmentObject var g: DataProvider
+    @EnvironmentObject var g: DataVM
+    @EnvironmentObject var vm: ProjectVM
     
     
     /// Banner数据源
@@ -39,7 +40,7 @@ struct BannerTabs: View {
         .onAppear {
             refreshBanners()
         }
-        .onChange(of: g.project) {
+        .onChange(of: vm.project) {
             refreshBanners()
         }
         .onBannerAdded { _ in
@@ -58,7 +59,7 @@ struct BannerTabs: View {
 
     /// 刷新Banner列表
     private func refreshBanners() {
-        if let project = g.project {
+        if let project = vm.project {
             banners = repo.getBanners(from: project)
             
             // 如果当前banner不在列表中，选择第一个可用的banner

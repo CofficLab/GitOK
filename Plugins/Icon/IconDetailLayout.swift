@@ -3,7 +3,8 @@ import SwiftUI
 
 struct IconDetailLayout: View {
     @EnvironmentObject var i: IconProvider
-    @EnvironmentObject var g: DataProvider
+    @EnvironmentObject var g: DataVM
+    @EnvironmentObject var vm: ProjectVM
 
     @State private var showWelcome = false
     @State private var icons: [IconData] = []
@@ -87,7 +88,7 @@ struct IconDetailLayout: View {
             checkWelcome()
             refreshIcons()
         })
-        .onChange(of: g.project) {
+        .onChange(of: vm.project) {
             checkWelcome()
             refreshIcons()
         }
@@ -97,7 +98,7 @@ struct IconDetailLayout: View {
     }
 
     private func checkWelcome() {
-        guard let project = g.project else {
+        guard let project = vm.project else {
             return
         }
 
@@ -106,7 +107,7 @@ struct IconDetailLayout: View {
     }
 
     private func refreshIcons() {
-        if let project = g.project {
+        if let project = vm.project {
             icons = ProjectIconRepo.getIconData(from: project)
         } else {
             icons = []

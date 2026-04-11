@@ -1,14 +1,15 @@
 import SwiftUI
 
 struct BtnOpenTraeView: View {
-    @EnvironmentObject var g: DataProvider
+    @EnvironmentObject var g: DataVM
+    @EnvironmentObject var vm: ProjectVM
 
     static let shared = BtnOpenTraeView()
 
     private init() {}
 
     var body: some View {
-        if let project = g.project {
+        if let project = vm.project {
             Image.traeApp
                 .resizable()
                 .frame(height: 22)
@@ -28,7 +29,7 @@ struct BtnOpenTraeView: View {
     ContentLayout()
         .hideSidebar()
         .hideTabPicker()
-//        .hideProjectActions()
+        .hideProjectActions()
         .inRootView()
         .frame(width: 600)
         .frame(height: 600)

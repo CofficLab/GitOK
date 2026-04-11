@@ -7,15 +7,16 @@ import SwiftUI
 
 /// 状态栏文件信息 Tile：显示当前选中文件的文件名。
 struct TileFile: View, SuperLog, SuperThread {
-    @EnvironmentObject var a: AppProvider
+    @EnvironmentObject var a: AppVM
     
-    @EnvironmentObject var data: DataProvider
+    @EnvironmentObject var data: DataVM
+    @EnvironmentObject var vm: ProjectVM
 
     static let shared = TileFile()
 
     private init() {}
 
-    var file: GitDiffFile? { data.file }
+    var file: GitDiffFile? { vm.file }
 
     @State private var isPopoverPresented = false
     @State private var cachedComponents: [String] = []
@@ -38,7 +39,7 @@ struct TileFile: View, SuperLog, SuperThread {
                 }.frame(maxHeight: .infinity)
             }
             .frame(maxHeight: .infinity)
-            .onChange(of: data.file) { _, newFile in
+            .onChange(of: vm.file) { _, newFile in
                 // 更新缓存的路径组件
                 if let newFile = newFile {
                     cachedComponents = newFile.file.split(separator: "/").map(String.init)
@@ -80,7 +81,7 @@ struct TileFile: View, SuperLog, SuperThread {
     }
 
     private var targetFileURL: URL? {
-        guard let file = file, let project = data.project else { return nil }
+        guard let file = file, let project = vm.project else { return nil }
         let baseURL = URL(fileURLWithPath: project.path)
         return URL(fileURLWithPath: file.file, relativeTo: baseURL).standardizedFileURL
     }

@@ -160,7 +160,7 @@ extension Project {
         在后台检查 Git 仓库状态并更新缓存，避免阻塞主线程
      */
     func updateIsGitRepoCache() async {
-        let result = await isGit()
+        let result = isGit()
         await MainActor.run {
             self._isGitRepo = result
         }
@@ -472,6 +472,42 @@ extension Project {
     func getCommitsWithPagination(_ page: Int, limit: Int) throws -> [GitCommit] {
         return try LibGit2.getCommitListWithPagination(at: self.path, page: page, size: limit)
     }
+
+    /// 撤销指定的提交（仅限未推送的 HEAD commit）
+    /// 原理：执行 git reset --mixed <parentHash>，将提交的文件变更保留在工作区（未暂存状态）
+    /// - Parameter commit: 要撤销的提交
+    /// - Throws: Git 操作异常
+    func undoCommit(_ commit: GitCommit) throws {
+        do {
+            if commit.parentHashes.isEmpty {
+                // 初始提交无法通过 reset 撤销，需要特殊处理
+                throw NSError(
+                    domain: "GitOK",
+                    code: -1,
+                    userInfo: [NSLocalizedDescriptionKey: "暂不支持撤销初始提交"]
+                )
+            }
+
+            // 使用 mixed reset：HEAD 回退到 parent，文件变更保留在工作区
+            let parentHash = commit.parentHashes[0]
+            try LibGit2.reset(to: parentHash, mode: "mixed", at: self.path, verbose: false)
+
+            postEvent(
+                name: .projectDidCommit,
+                operation: "undoCommit",
+                additionalInfo: ["commitHash": commit.hash, "parentHash": parentHash]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "undoCommit",
+                success: false,
+                error: error,
+                additionalInfo: ["commitHash": commit.hash]
+            )
+            throw error
+        }
+    }
 }
 
 // MARK: - File
@@ -779,16 +815,10 @@ extension Project {
             let currentBranch = try LibGit2.getCurrentBranch(at: self.path)
             os_log(.default, "📍 Current branch: \(currentBranch)")
 
-            // 在推送前记录未推送的 commits
-            let unpushedBeforePush = try LibGit2.getUnPushedCommits(at: self.path, verbose: false)
-
             // 处理 SSH URL 转换
             try performWithConvertedSSHURL(operation: "push") {
                 try LibGit2.push(at: self.path, verbose: false)
             }
-
-            // 在推送后记录未推送的 commits
-            let unpushedAfterPush = try LibGit2.getUnPushedCommits(at: self.path, verbose: false)
 
             postEvent(
                 name: .projectDidPush,

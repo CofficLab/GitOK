@@ -13,6 +13,7 @@ struct BtnDelIcon: View {
             do {
                 try self.icon.deleteFromDisk()
             } catch {
+                os_log(.error, "❌ 删除图标失败: \(error.localizedDescription)")
                 alert_error(error.localizedDescription)
             }
         }) {

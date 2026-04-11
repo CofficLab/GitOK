@@ -9,8 +9,9 @@ import SwiftUI
      提供创建新Banner的功能，直接与BannerRepo交互进行创建操作。
  **/
 struct BannerBtnAdd: View, SuperThread {
-    @EnvironmentObject var app: AppProvider
-    @EnvironmentObject var g: DataProvider
+    @EnvironmentObject var app: AppVM
+    @EnvironmentObject var g: DataVM
+    @EnvironmentObject var vm: ProjectVM
     @EnvironmentObject var b: BannerProvider
     
 
@@ -18,7 +19,7 @@ struct BannerBtnAdd: View, SuperThread {
     private let bannerRepo = BannerRepo.shared
 
     var body: some View {
-        if let project = g.project {
+        if let project = vm.project {
             Image.add.inButtonWithAction {
                 createBanner(in: project)
             }
@@ -44,6 +45,7 @@ struct BannerBtnAdd: View, SuperThread {
 
             alert_info(String(localized: "已添加新的Banner文件", table: "Banner"))
         } catch {
+            os_log(.error, "❌ 创建 Banner 失败: \(error.localizedDescription)")
             let msg = String.localizedStringWithFormat(
                 String(localized: "创建Banner失败：%@", table: "Banner"),
                 error.localizedDescription

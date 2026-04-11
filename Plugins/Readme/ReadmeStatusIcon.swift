@@ -5,7 +5,8 @@ import SwiftUI
 
 /// README 状态栏图标：存在 README 时可点击弹出查看。
 struct ReadmeStatusIcon: View, SuperLog {
-    @EnvironmentObject var data: DataProvider
+    @EnvironmentObject var data: DataVM
+    @EnvironmentObject var vm: ProjectVM
     
     @State private var isSheetPresented = false
     @State private var hasReadme = false
@@ -26,11 +27,11 @@ struct ReadmeStatusIcon: View, SuperLog {
                 .frame(minWidth: 800, minHeight: 600)
         }
         .onAppear(perform: checkReadmeExistence)
-        .onChange(of: data.project, checkReadmeExistence)
+        .onChange(of: vm.project, checkReadmeExistence)
     }
     
     private func checkReadmeExistence() {
-        guard let project = data.project else {
+        guard let project = vm.project else {
             hasReadme = false
             return
         }

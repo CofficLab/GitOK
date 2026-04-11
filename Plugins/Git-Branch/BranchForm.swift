@@ -5,7 +5,8 @@ import OSLog
 import SwiftUI
 
 struct BranchForm: View, SuperLog {
-    @EnvironmentObject var data: DataProvider
+    @EnvironmentObject var data: DataVM
+    @EnvironmentObject var vm: ProjectVM
     
     
     @State private var branches: [GitBranch] = []
@@ -16,7 +17,7 @@ struct BranchForm: View, SuperLog {
     
     private let verbose = false
     
-    var project: Project? { data.project }
+    var project: Project? { vm.project }
     
     var body: some View {
         if project != nil {
@@ -112,6 +113,7 @@ extension BranchForm {
             } catch {
                 await MainActor.run {
                     self.isCreating = false
+                    os_log(.error, "❌ 创建分支失败: \(error.localizedDescription)")
                     let msg = String.localizedStringWithFormat(
                         String(localized: "创建分支失败: %@", table: "GitBranch"),
                         error.localizedDescription
@@ -140,6 +142,7 @@ extension BranchForm {
                 }
             } catch {
                 await MainActor.run {
+                    os_log(.error, "❌ 切换分支失败: \(error.localizedDescription)")
                     let msg = String.localizedStringWithFormat(
                         String(localized: "切换分支失败: %@", table: "GitBranch"),
                         error.localizedDescription
@@ -180,9 +183,7 @@ extension BranchForm {
                 await MainActor.run {
                     self.branches = []
                     self.isLoading = false
-                    if self.verbose {
-                        os_log(.error, "Failed to load branches: \(error.localizedDescription)")
-                    }
+                    os_log(.error, "❌ 加载分支列表失败: \(error.localizedDescription)")
                     let msg = String.localizedStringWithFormat(
                         String(localized: "加载分支列表失败: %@", table: "GitBranch"),
                         error.localizedDescription

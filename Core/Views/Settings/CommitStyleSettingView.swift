@@ -11,7 +11,8 @@ struct CommitStyleSettingView: View, SuperLog {
     /// 是否启用详细日志输出
     nonisolated static let verbose = false
 
-    @EnvironmentObject var data: DataProvider
+    @EnvironmentObject var data: DataVM
+    @EnvironmentObject var vm: ProjectVM
 
     /// Commit 风格
     @State private var commitStyle: CommitStyle = .emoji
@@ -125,7 +126,7 @@ struct CommitStyleSettingView: View, SuperLog {
                 set: { newValue in
                     if let style = CommitStyle.allCases.first(where: { String(localized: .init(String.LocalizationValue($0.rawValue), table: "Core")) == newValue }) {
                         commitStyle = style
-                        if let project = data.project {
+                        if let project = vm.project {
                             project.commitStyle = style
                         }
                     }
@@ -155,7 +156,7 @@ struct CommitStyleSettingView: View, SuperLog {
     // MARK: - Load Data
 
     private func loadData() {
-        if let project = data.project {
+        if let project = vm.project {
             commitStyle = project.commitStyle
         }
 

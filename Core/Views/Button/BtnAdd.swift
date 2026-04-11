@@ -11,7 +11,7 @@ struct BtnAdd: View, SuperLog {
     nonisolated static let verbose = false
 
     /// 数据提供者环境对象
-    @EnvironmentObject var g: DataProvider
+    @EnvironmentObject var g: DataVM
 
     /// 按钮视图主体
     var body: some View {

@@ -14,7 +14,7 @@ struct PluginSettingsView: View, SuperLog {
     private let settingsStore = PluginSettingsStore.shared
 
     /// 插件提供者
-    @EnvironmentObject var pluginProvider: PluginProvider
+    @EnvironmentObject var pluginProvider: PluginVM
 
     /// 插件启用状态
     @State private var pluginStates: [String: Bool] = [:]

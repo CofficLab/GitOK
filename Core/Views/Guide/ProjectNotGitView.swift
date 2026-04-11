@@ -14,10 +14,10 @@ struct ProjectNotGitView: View, SuperLog, SuperThread, SuperEvent {
     nonisolated static let verbose = false
 
     /// 环境对象：数据提供者
-    @EnvironmentObject var data: DataProvider
+    @EnvironmentObject var data: DataVM
 
-    /// 环境对象：消息提供者
-    
+    /// 环境对象：项目状态管理
+    @EnvironmentObject var vm: ProjectVM
 
     /// 是否正在初始化
     @State private var isInitializing = false
@@ -37,7 +37,8 @@ struct ProjectNotGitView: View, SuperLog, SuperThread, SuperEvent {
 extension ProjectNotGitView {
     /// 初始化 Git 仓库
     func initializeGitRepository() {
-        guard let project = data.project else {
+        guard let project = vm.project else {
+            os_log(.error, "\(Self.t)❌ 项目不存在")
             alert_error("项目不存在")
             return
         }
@@ -65,8 +66,8 @@ extension ProjectNotGitView {
 
                         // 重新设置项目以触发 ContentView 的 updateCachedViews
                         await MainActor.run {
-                            if let currentProject = data.project {
-                                data.setProject(currentProject, reason: "Git initialized")
+                            if let currentProject = vm.project {
+                                vm.setProject(currentProject, reason: "Git initialized")
                             }
                         }
                     }
@@ -74,8 +75,8 @@ extension ProjectNotGitView {
             } catch let error {
                 await MainActor.run {
                     isInitializing = false
+                    os_log(.error, "\(Self.t)❌ 初始化 Git 仓库失败: \(error.localizedDescription)")
                     alert_error("初始化 Git 仓库失败: \(error.localizedDescription)")
-                    os_log(.error, "\(Self.t)❌ Failed to initialize Git repository: \(error)")
                 }
             }
         }

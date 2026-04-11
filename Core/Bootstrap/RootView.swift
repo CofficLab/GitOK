@@ -1,13 +1,12 @@
-import SwiftData
 import MagicAlert
-import SwiftUI
 import MagicKit
 import OSLog
+import SwiftData
+import SwiftUI
 
 /// 根视图容器组件
 /// 为应用提供统一的上下文环境，包括数据提供者、图标提供者和插件提供者
 struct RootView<Content>: View, SuperEvent, SuperLog where Content: View {
-
     /// 日志标识符
     static var emoji: String { "🚉" }
 
@@ -18,16 +17,19 @@ struct RootView<Content>: View, SuperEvent, SuperLog where Content: View {
     var content: Content
 
     /// 应用提供者
-    var appProvider: AppProvider
+    var appProvider: AppVM
 
     /// 图标提供者
     var iconProvider: IconProvider
 
     /// 插件提供者
-    var pluginProvider: PluginProvider
+    var pluginProvider: PluginVM
 
     /// Git 数据提供者
-    var git: DataProvider
+    var git: DataVM
+
+    /// 当前项目状态
+    var projectVM: ProjectVM
 
     /// 仓库管理器
     private let repoManager: RepoManager
@@ -39,17 +41,29 @@ struct RootView<Content>: View, SuperEvent, SuperLog where Content: View {
         self.repoManager = RepoManager(modelContext: ModelContext(c))
 
         // 初始化提供者
-        self.appProvider = AppProvider(repoManager: self.repoManager)
+        self.appProvider = AppVM(repoManager: self.repoManager)
         self.iconProvider = IconProvider()
-        self.pluginProvider = PluginProvider()
+        self.pluginProvider = PluginVM()
 
         // 初始化数据提供者
+        var initialProject: Project?
         do {
             let projects = try self.repoManager.projectRepo.findAll(sortedBy: .ascending)
-            self.git = DataProvider(projects: projects, repoManager: self.repoManager)
+            self.git = DataVM(projects: projects, repoManager: self.repoManager)
+
+            // 恢复上次选中的项目
+            let savedPath = self.repoManager.stateRepo.projectPath
+            initialProject = projects.first(where: { $0.path == savedPath })
+            if initialProject == nil, let firstProject = projects.first {
+                initialProject = firstProject
+                self.repoManager.stateRepo.setProjectPath(firstProject.path)
+            }
+
+            self.projectVM = ProjectVM(project: initialProject, repoManager: self.repoManager)
         } catch let e {
             os_log(.error, "\(Self.t) Failed to load projects: \(e.localizedDescription)")
-            self.git = DataProvider(projects: [], repoManager: self.repoManager)
+            self.git = DataVM(projects: [], repoManager: self.repoManager)
+            self.projectVM = ProjectVM(project: initialProject, repoManager: self.repoManager)
         }
     }
 
@@ -60,6 +74,7 @@ struct RootView<Content>: View, SuperEvent, SuperLog where Content: View {
             .environmentObject(iconProvider)
             .environmentObject(pluginProvider)
             .environmentObject(git)
+            .environmentObject(projectVM)
             .navigationTitle("")
     }
 }
@@ -72,7 +87,7 @@ extension View {
             self
         }
     }
-} 
+}
 
 #Preview("App - Small Screen") {
     ContentLayout()
@@ -87,9 +102,8 @@ extension View {
 #Preview("App - Big Screen") {
     ContentLayout()
         .hideSidebar()
-        .hideProjectActions()
         .hideTabPicker()
         .inRootView()
-        .frame(width: 800)
-        .frame(height: 1000)
+        .frame(width: 1200)
+        .frame(height: 1200)
 }

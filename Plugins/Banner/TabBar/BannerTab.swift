@@ -16,8 +16,8 @@ import SwiftUI
  **/
 struct BannerTab: View {
     @EnvironmentObject var b: BannerProvider
-    @EnvironmentObject var d: DataProvider
-    
+    @EnvironmentObject var d: DataVM
+    @EnvironmentObject var vm: ProjectVM
 
     /// Banner数据
     let banner: BannerFile
@@ -32,7 +32,7 @@ struct BannerTab: View {
 
     var body: some View {
         Image.document.inButtonWithAction {
-            guard let project = d.project else {
+            guard let project = vm.project else {
                 return
             }
             
@@ -64,6 +64,7 @@ struct BannerTab: View {
 
             alert_info(String(localized: "已删除", table: "Banner"))
         } catch {
+            os_log(.error, "❌ 删除 Banner 失败: \(error.localizedDescription)")
             let msg = String.localizedStringWithFormat(
                 String(localized: "删除Banner失败：%@", table: "Banner"),
                 error.localizedDescription

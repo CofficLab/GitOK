@@ -11,7 +11,8 @@ struct UserInfoConfigView: View, SuperLog {
     /// 是否启用详细日志输出
     nonisolated static let verbose = false
 
-    @EnvironmentObject var data: DataProvider
+    @EnvironmentObject var data: DataVM
+    @EnvironmentObject var vm: ProjectVM
 
     /// 用户名绑定
     @Binding var userName: String
@@ -35,7 +36,7 @@ struct UserInfoConfigView: View, SuperLog {
     @Binding var selectedConfig: GitUserConfig?
 
     /// 数据提供者
-    let dataProvider: DataProvider
+    let dataProvider: DataVM
 
     /// 配置仓库
     private var configRepo: any GitUserConfigRepoProtocol {
@@ -60,7 +61,7 @@ struct UserInfoConfigView: View, SuperLog {
         errorMessage: Binding<String?>,
         savedConfigs: Binding<[GitUserConfig]>,
         selectedConfig: Binding<GitUserConfig?>,
-        dataProvider: DataProvider
+        dataProvider: DataVM
     ) {
         self._userName = userName
         self._userEmail = userEmail
@@ -179,7 +180,7 @@ struct UserInfoConfigView: View, SuperLog {
     // MARK: - Actions
 
     func saveUserConfig() -> Bool {
-        guard let project = dataProvider.project else { return false }
+        guard let project = vm.project else { return false }
 
         isLoading = true
         errorMessage = nil
@@ -243,7 +244,7 @@ struct UserInfoConfigView: View, SuperLog {
     // MARK: - Load Data
 
     func loadCurrentUserInfo() {
-        guard let project = dataProvider.project else { return }
+        guard let project = vm.project else { return }
 
         isLoading = true
         errorMessage = nil

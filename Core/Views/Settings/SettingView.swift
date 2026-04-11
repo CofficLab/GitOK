@@ -11,7 +11,7 @@ struct SettingView: View, SuperLog {
     /// 是否启用详细日志输出
     nonisolated static let verbose = false
 
-    @EnvironmentObject var data: DataProvider
+    @EnvironmentObject var data: DataVM
     @Environment(\.dismiss) private var dismiss
 
     /// 默认显示的 Tab

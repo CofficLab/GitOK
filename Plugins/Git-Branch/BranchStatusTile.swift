@@ -7,7 +7,8 @@ struct BranchStatusTile: View, SuperLog {
     nonisolated static let emoji = "🌿"
     nonisolated static let verbose = false
     
-    @EnvironmentObject var data: DataProvider
+    @EnvironmentObject var data: DataVM
+    @EnvironmentObject var vm: ProjectVM
 
     @State private var isPresented = false
 
@@ -15,7 +16,7 @@ struct BranchStatusTile: View, SuperLog {
         if let branch = data.branch {
             return branch.name
         }
-        if data.project == nil {
+        if vm.project == nil {
             return String(localized: "未选择项目", table: "GitBranch")
         }
         return String(localized: "无分支", table: "GitBranch")
@@ -64,7 +65,7 @@ extension BranchStatusTile {
                    newBranch.name == newBranchName {
 
                     // 更新 data 中的分支
-                    try? data.setBranch(newBranch)
+                    try? data.setBranch(newBranch, project: vm.project)
 
                     if Self.verbose {
                         os_log("\(self.t)Updated data branch to \(newBranchName)")

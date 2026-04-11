@@ -27,7 +27,7 @@ class AutoPullManager: SuperLog, SuperThread {
 
     // MARK: - Dependencies
 
-    private weak var dataProvider: DataProvider?
+    private weak var dataProvider: DataVM?
 
     // MARK: - Singleton
 
@@ -38,7 +38,7 @@ class AutoPullManager: SuperLog, SuperThread {
     // MARK: - Lifecycle
 
     /// 设置数据提供者
-    func setDataProvider(_ provider: DataProvider) {
+    func setDataProvider(_ provider: DataVM) {
         dataProvider = provider
     }
 
@@ -154,7 +154,7 @@ class AutoPullManager: SuperLog, SuperThread {
 
     /// 检查是否满足自动拉取的安全条件
     /// - Returns: SafetyCheckResult 包含是否安全及失败原因
-    private func checkSafetyConditions(for project: Project, dataProvider: DataProvider) async -> SafetyCheckResult {
+    private func checkSafetyConditions(for project: Project, dataProvider: DataVM) async -> SafetyCheckResult {
         // 1. 检查是否是 Git 仓库（使用异步检查，避免缓存问题）
         let isGitRepo = await project.isGit()
         guard isGitRepo else {
