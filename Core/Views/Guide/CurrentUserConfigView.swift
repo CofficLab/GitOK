@@ -29,6 +29,7 @@ struct CurrentUserConfigView: View, SuperLog {
             VStack(spacing: 0) {
                 userNameRow
                 Divider()
+                    .padding(.vertical, 8)
                 userEmailRow
             }
         }
