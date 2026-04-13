@@ -194,11 +194,46 @@ class MacAgent: NSObject, NSApplicationDelegate, ObservableObject, SuperLog, Sup
 
     // MARK: - Private Helpers
 
+    /// 将可能的路径或 URL 字符串规范化为文件系统路径
+    /// 输入可能是：
+    ///   - 已规范化的路径：/Users/colorfy/project
+    ///   - file URL 字符串：file:///Users/colorfy/project
+    ///   - URL 编码路径：/Users/colorfy/my%20project
+    /// - Parameter raw: 原始字符串
+    /// - Returns: 规范化后的文件系统路径
+    private func normalizePath(_ raw: String) -> String {
+        // 去除首尾空白和尾部斜杠
+        var str = raw.trimmingCharacters(in: .whitespacesAndNewlines)
+        if str.hasSuffix("/") { str = String(str.dropLast()) }
+
+        // 如果是 file URL，先转换为路径
+        if str.hasPrefix("file://") {
+            if let url = URL(string: str) {
+                return url.path
+            }
+            // 兜底：手动去掉 file:// 前缀
+            let path = String(str.dropFirst("file://".count))
+            return path.isEmpty ? raw : path
+        }
+
+        // 如果以 / 开头，可能已经是合法路径
+        if str.hasPrefix("/") {
+            // URL 解码（处理 %20 等转义）
+            if let decoded = str.removingPercentEncoding {
+                return decoded
+            }
+            return str
+        }
+
+        return str
+    }
+
     /// 设置待打开的项目路径（在主线程）
     private func setOpenPath(_ path: String) {
-        os_log("\(self.label)📁 Set open path: \(path)")
+        let normalized = normalizePath(path)
+        os_log("\(self.label)📁 Set open path: \(normalized)")
         DispatchQueue.main.async { [weak self] in
-            self?.pendingOpenPath = path
+            self?.pendingOpenPath = normalized
         }
     }
 
@@ -230,14 +265,15 @@ class MacAgent: NSObject, NSApplicationDelegate, ObservableObject, SuperLog, Sup
     }
 
     /// 如果传入的是子目录，尝试向上查找 Git 仓库根目录
-    /// - Parameter path: 原始路径
+    /// - Parameter path: 原始路径（可能是 file URL 或文件路径）
     /// - Returns: Git 仓库根目录，如果找不到则返回原始路径
     private func resolveGitRoot(from path: String) -> String {
-        var currentURL = URL(fileURLWithPath: path)
+        let normalizedPath = normalizePath(path)
+        var currentURL = URL(fileURLWithPath: normalizedPath)
 
         // 如果是文件，取其所在目录
         var isDirectory: ObjCBool = false
-        if FileManager.default.fileExists(atPath: path, isDirectory: &isDirectory),
+        if FileManager.default.fileExists(atPath: normalizedPath, isDirectory: &isDirectory),
            !isDirectory.boolValue {
             currentURL = currentURL.deletingLastPathComponent()
         }
@@ -253,7 +289,7 @@ class MacAgent: NSObject, NSApplicationDelegate, ObservableObject, SuperLog, Sup
             currentURL = parent
         }
 
-        return path
+        return normalizedPath
     }
 }
 
