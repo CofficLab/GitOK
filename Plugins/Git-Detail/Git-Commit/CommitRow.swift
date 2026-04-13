@@ -60,6 +60,23 @@ struct CommitRow: View, SuperThread, SuperLog {
         commitRowContent
     }
 
+    // MARK: - Private Properties
+
+    /// Hover 状态
+    @State private var isHovered = false
+
+    /// 行背景颜色
+    @ViewBuilder
+    private var rowBackground: some View {
+        if data.commit == self.commit {
+            Color.accentColor.opacity(0.1)
+        } else if isHovered {
+            Color.primary.opacity(0.08)
+        } else {
+            Color.clear
+        }
+    }
+
     /// 提交行主要内容视图
     private var commitRowContent: some View {
         VStack(spacing: 0) {
@@ -163,7 +180,12 @@ struct CommitRow: View, SuperThread, SuperLog {
                 .contentShape(Rectangle())
             }
             .buttonStyle(PlainButtonStyle())
-            .background(data.commit == self.commit ? Color.accentColor.opacity(0.1) : Color.clear)
+            .background(rowBackground)
+            .onHover { hovering in
+                withAnimation(.easeInOut(duration: 0.15)) {
+                    isHovered = hovering
+                }
+            }
             .onAppear(perform: onAppear)
             .onNotification(.appWillBecomeActive, onAppWillBecomeActive)
             .onProjectDidCommit(perform: onGitCommitSuccess)
