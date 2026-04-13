@@ -44,6 +44,7 @@ struct RepositoryInfoView: View, SuperLog {
                 
                 if let branch = branch {
                     Divider()
+                        .padding(.vertical, 8)
 
                     // 当前分支
                     currentBranchRow(branch: branch)
@@ -52,16 +53,19 @@ struct RepositoryInfoView: View, SuperLog {
                 // 远程仓库位置
                 if !remotes.isEmpty {
                     Divider()
+                        .padding(.vertical, 8)
 
                     ForEach(remotes, id: \.name) { remote in
                         if remote != remotes.first {
                             Divider()
+                                .padding(.vertical, 8)
                         }
                         remoteRepositoryRow(for: remote)
                     }
                 } else {
                     // 没有远程仓库时显示配置入口
                     Divider()
+                        .padding(.vertical, 8)
 
                     configRemoteRepositoryRow
                 }
