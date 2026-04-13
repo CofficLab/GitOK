@@ -88,8 +88,10 @@ extension DataVM {
      * 添加项目
      * @param url 项目路径URL
      * @param repo 项目仓库实例
+     * @returns 添加或已存在的项目
      */
-    func addProject(url: URL, using repo: any ProjectRepoProtocol) {
+    @discardableResult
+    func addProject(url: URL, using repo: any ProjectRepoProtocol) -> Project? {
         do {
             if let existingProject = try repo.findByPath(url.path) {
                 os_log("Project already exists, moving to first: \(url.path)")
@@ -106,13 +108,16 @@ extension DataVM {
                 self.projects.insert(existingProject, at: 0)
 
                 os_log("Existing project moved to first: \(url.path)")
-                return
+                return existingProject
             }
 
             let newProject = try repo.create(url: url)
             self.projects.insert(newProject, at: 0)
+            os_log("New project added: \(url.path)")
+            return newProject
         } catch {
             os_log(.error, "Failed to add project: \(error.localizedDescription)")
+            return nil
         }
     }
 

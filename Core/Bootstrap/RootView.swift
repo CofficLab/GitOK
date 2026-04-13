@@ -115,10 +115,8 @@ struct RootView<Content>: View, SuperEvent, SuperLog where Content: View {
             // 添加新项目并选中
             let url = URL(fileURLWithPath: path, isDirectory: true)
             withAnimation {
-                git.addProject(url: url, using: git.repoManager.projectRepo)
-                // addProject 会将新项目插入到第一位，直接选中它
-                if let newProject = git.projects.first {
-                    projectVM.setProject(newProject, reason: "OpenProject")
+                if let addedProject = git.addProject(url: url, using: git.repoManager.projectRepo) {
+                    projectVM.setProject(addedProject, reason: "OpenProject")
                 }
             }
         }
