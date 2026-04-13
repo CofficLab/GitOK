@@ -60,6 +60,12 @@ struct Projects: View, SuperLog {
                 .padding(.horizontal, 8)
             }
             .onAppear(perform: onAppear)
+            .onChange(of: projectVM.project) { newProject in
+                // 当 projectVM.project 被外部改变时（如 Dock 拖拽），同步 selection 高亮
+                if selection != newProject {
+                    selection = newProject
+                }
+            }
         }
     }
 }
