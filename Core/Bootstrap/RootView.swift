@@ -31,6 +31,9 @@ struct RootView<Content>: View, SuperEvent, SuperLog where Content: View {
     /// 当前项目状态
     var projectVM: ProjectVM
 
+    /// 拖拽覆盖层是否可见
+    @State private var isDropTargeted = false
+
     /// 仓库管理器
     private let repoManager: RepoManager
 
@@ -68,20 +71,69 @@ struct RootView<Content>: View, SuperEvent, SuperLog where Content: View {
     }
 
     var body: some View {
-        content
-            .withMagicToast()
-            .environmentObject(appProvider)
-            .environmentObject(iconProvider)
-            .environmentObject(pluginProvider)
-            .environmentObject(git)
-            .environmentObject(projectVM)
-            .navigationTitle("")
-            .onAppear {
-                // 注册打开项目的回调（单例桥梁模式，确保时序可靠）
-                OpenProjectHandler.shared.onOpenProject = { [self] path in
-                    self.handleOpenProject(path: path)
+        ZStack {
+            content
+                .withMagicToast()
+                .environmentObject(appProvider)
+                .environmentObject(iconProvider)
+                .environmentObject(pluginProvider)
+                .environmentObject(git)
+                .environmentObject(projectVM)
+                .navigationTitle("")
+
+            // 拖拽覆盖层
+            if isDropTargeted {
+                DropOverlayCard(
+                    title: "松开即可添加项目",
+                    subtitle: "将文件夹拖到此处，自动切换为当前项目"
+                )
+                .transition(.opacity)
+            }
+        }
+        .onDrop(of: [.fileURL], isTargeted: $isDropTargeted) { providers in
+            handleDrop(providers: providers)
+            return true
+        }
+        .onAppear {
+            // 注册打开项目的回调（单例桥梁模式，确保时序可靠）
+            OpenProjectHandler.shared.onOpenProject = { [self] path in
+                self.handleOpenProject(path: path)
+            }
+        }
+    }
+
+    // MARK: - Drop Handler
+
+    /// 处理拖拽释放事件
+    /// - Parameter providers: 拖拽的文件提供者列表
+    private func handleDrop(providers: [NSItemProvider]) {
+        for provider in providers {
+            guard provider.hasItemConformingToTypeIdentifier("public.folder") ||
+                  provider.hasItemConformingToTypeIdentifier("public.directory") ||
+                  provider.hasItemConformingToTypeIdentifier("public.file-url") else {
+                continue
+            }
+
+            provider.loadItem(forTypeIdentifier: "public.file-url", options: nil) { item, _ in
+                guard let data = item as? Data,
+                      let url = URL(dataRepresentation: data, relativeTo: nil) else {
+                    // 尝试作为 URL 对象处理
+                    if let url = item as? URL {
+                        DispatchQueue.main.async {
+                            self.handleOpenProject(path: url.path)
+                        }
+                    }
+                    return
+                }
+
+                DispatchQueue.main.async {
+                    self.handleOpenProject(path: url.path)
                 }
             }
+
+            // 只处理第一个有效的提供者
+            return
+        }
     }
 
     // MARK: - Open Project Handler
