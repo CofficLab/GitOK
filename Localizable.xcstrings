@@ -1728,6 +1728,9 @@
         }
       }
     },
+    "将文件夹拖到此处，自动切换为当前项目" : {
+
+    },
     "已启用" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -2468,6 +2471,9 @@
           }
         }
       }
+    },
+    "松开即可添加项目" : {
+
     },
     "查看 .gitignore 文件" : {
       "localizations" : {
