@@ -80,6 +80,95 @@ class MacAgent: NSObject, NSApplicationDelegate, ObservableObject, SuperLog, Sup
             os_log("\(self.label)收到远程通知\n\(userInfo)")
         }
     }
+
+    // MARK: - Open File / URL
+
+    /// 处理通过 `open -a GitOK /path/to/repo` 或拖拽文件夹到 Dock 图标触发的打开事件
+    func application(_ application: NSApplication, openFile filename: String) -> Bool {
+        os_log("\(self.label)📂 Open file: \(filename)")
+
+        let path = resolveGitRoot(from: filename)
+        postOpenProject(path: path)
+        return true
+    }
+
+    /// 处理通过 URL Scheme（如 `gitok://openRepo?path=/xxx`）触发的打开事件
+    func application(_ application: NSApplication, open urls: [URL]) {
+        for url in urls {
+            os_log("\(self.label)🔗 Open URL: \(url.absoluteString)")
+            handleURL(url)
+        }
+    }
+
+    // MARK: - Private Helpers
+
+    /// 解析 URL Scheme 请求
+    /// 支持格式：
+    /// - `gitok://openRepo?path=/path/to/repo`
+    /// - `gitok:///path/to/repo`
+    private func handleURL(_ url: URL) {
+        guard url.scheme == "gitok" else { return }
+
+        let host = url.host?.lowercased()
+
+        // gitok://openRepo?path=/xxx
+        if host == "openrepo" {
+            let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
+            if let path = components?.queryItems?.first(where: { $0.name == "path" })?.value,
+               !path.isEmpty {
+                postOpenProject(path: resolveGitRoot(from: path))
+            }
+            return
+        }
+
+        // gitok:///path/to/repo（路径直接写在 URL 中）
+        let pathValue = url.path
+        if !pathValue.isEmpty {
+            postOpenProject(path: resolveGitRoot(from: pathValue))
+            return
+        }
+    }
+
+    /// 如果传入的是子目录，尝试向上查找 Git 仓库根目录
+    /// - Parameter path: 原始路径
+    /// - Returns: Git 仓库根目录，如果找不到则返回原始路径
+    private func resolveGitRoot(from path: String) -> String {
+        var currentURL = URL(fileURLWithPath: path)
+
+        // 如果是文件，取其所在目录
+        var isDirectory: ObjCBool = false
+        if FileManager.default.fileExists(atPath: path, isDirectory: &isDirectory),
+           !isDirectory.boolValue {
+            currentURL = currentURL.deletingLastPathComponent()
+        }
+
+        // 最多向上查找 10 层
+        for _ in 0 ..< 10 {
+            let gitPath = currentURL.appendingPathComponent(".git").path
+            if FileManager.default.fileExists(atPath: gitPath) {
+                return currentURL.path
+            }
+            let parent = currentURL.deletingLastPathComponent()
+            if parent.path == currentURL.path { break } // 已到根目录
+            currentURL = parent
+        }
+
+        return path
+    }
+
+    /// 发送打开项目的通知
+    /// - Parameter path: 项目路径
+    private func postOpenProject(path: String) {
+        os_log("\(self.label)📁 Post open project: \(path)")
+
+        DispatchQueue.main.async {
+            NotificationCenter.default.post(
+                name: .appOpenProject,
+                object: self,
+                userInfo: ["path": path]
+            )
+        }
+    }
 }
 
 #Preview("App - Small Screen") {

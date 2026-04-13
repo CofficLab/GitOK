@@ -76,6 +76,52 @@ struct RootView<Content>: View, SuperEvent, SuperLog where Content: View {
             .environmentObject(git)
             .environmentObject(projectVM)
             .navigationTitle("")
+            .onAppOpenProject { path in
+                handleOpenProject(path: path)
+            }
+    }
+
+    // MARK: - Open Project Handler
+
+    /// 处理打开项目请求
+    /// - 如果项目已存在于列表中，直接选中它
+    /// - 如果项目不存在，添加到列表并选中
+    /// - Parameter path: 项目路径
+    private func handleOpenProject(path: String) {
+        guard !path.isEmpty else { return }
+
+        // 检查路径是否存在
+        guard FileManager.default.fileExists(atPath: path) else {
+            os_log(.error, "\(Self.t) Open project path does not exist: \(path)")
+            return
+        }
+
+        // 在已有项目中查找
+        if let existingProject = git.projects.first(where: { $0.path == path }) {
+            os_log("\(Self.t)📂 Selecting existing project: \(path)")
+            withAnimation {
+                // 如果项目已在列表中，将其移到第一位并选中
+                if let index = git.projects.firstIndex(where: { $0.id == existingProject.id }) {
+                    git.projects.remove(at: index)
+                }
+                git.projects.insert(existingProject, at: 0)
+                projectVM.setProject(existingProject, reason: "OpenProject")
+            }
+        } else {
+            os_log("\(Self.t)📂 Adding new project: \(path)")
+            // 添加新项目并选中
+            let url = URL(fileURLWithPath: path, isDirectory: true)
+            withAnimation {
+                git.addProject(url: url, using: git.repoManager.projectRepo)
+                // addProject 会将新项目插入到第一位，直接选中它
+                if let newProject = git.projects.first {
+                    projectVM.setProject(newProject, reason: "OpenProject")
+                }
+            }
+        }
+
+        // 显示侧边栏以确保项目列表可见
+        appProvider.showSidebar(reason: "OpenProject")
     }
 }
 

@@ -22,6 +22,9 @@ extension Notification.Name {
     
     /// 应用已变为活跃状态
     static let appDidBecomeActive = Notification.Name("appDidBecomeActive")
+
+    /// 请求打开项目（通过 open-file、URL Scheme 或命令行触发）
+    static let appOpenProject = Notification.Name("appOpenProject")
 }
 
 // MARK: - View Extensions for App Events
@@ -78,6 +81,17 @@ extension View {
     func onApplicationDidBecomeActive(perform action: @escaping () -> Void) -> some View {
         self.onReceive(NotificationCenter.default.publisher(for: .appDidBecomeActive)) { _ in
             action()
+        }
+    }
+
+    /// 监听请求打开项目事件
+    /// - Parameter action: 事件处理闭包，接收项目路径字符串
+    /// - Returns: 修改后的视图
+    func onAppOpenProject(perform action: @escaping (String) -> Void) -> some View {
+        self.onReceive(NotificationCenter.default.publisher(for: .appOpenProject)) { notification in
+            if let path = notification.userInfo?["path"] as? String {
+                action(path)
+            }
         }
     }
 }
