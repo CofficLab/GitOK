@@ -54,6 +54,15 @@ class MacAgent: NSObject, NSApplicationDelegate, ObservableObject, SuperLog, Sup
         if verbose {
             os_log("\(self.label)Will Finish Launching")
         }
+
+        // 注册 Apple Event 处理器，截获 open-document 事件
+        // 这样可以防止 SwiftUI 的 WindowGroup 消费掉 open-file 事件
+        NSAppleEventManager.shared().setEventHandler(
+            self,
+            andSelector: #selector(handleOpenDocuments(_:withReplyEvent:)),
+            forEventClass: AEEventClass(kCoreEventClass),
+            andEventID: AEEventID(kAEOpenDocuments)
+        )
     }
 
     func applicationWillBecomeActive(_ notification: Notification) {
@@ -82,6 +91,31 @@ class MacAgent: NSObject, NSApplicationDelegate, ObservableObject, SuperLog, Sup
     }
 
     // MARK: - Open File / URL
+
+    /// 处理 macOS Apple Event 的 open-document 事件
+    /// 在 applicationWillFinishLaunching 中注册，优先于 SwiftUI 的 WindowGroup 处理
+    @objc private func handleOpenDocuments(_ event: NSAppleEventDescriptor, withReplyEvent replyEvent: NSAppleEventDescriptor) {
+        guard let fileList = event.paramDescriptor(forKeyword: AEKeyword(keyDirectObject)) else { return }
+
+        // 提取文件路径列表
+        var paths: [String] = []
+        if fileList.descriptorType == typeAEList {
+            for i in 1 ... fileList.numberOfItems {
+                if let item = fileList.atIndex(i),
+                   let url = URL(dataRepresentation: item.data, relativeTo: nil) {
+                    paths.append(url.path)
+                }
+            }
+        } else if let url = URL(dataRepresentation: fileList.data, relativeTo: nil) {
+            paths.append(url.path)
+        }
+
+        for path in paths {
+            os_log("\(self.label)📂 Apple Event open document: \(path)")
+            let resolvedPath = resolveGitRoot(from: path)
+            postOpenProject(path: resolvedPath)
+        }
+    }
 
     /// 处理通过 `open -a GitOK /path/to/repo` 或拖拽文件夹到 Dock 图标触发的打开事件
     func application(_ application: NSApplication, openFile filename: String) -> Bool {

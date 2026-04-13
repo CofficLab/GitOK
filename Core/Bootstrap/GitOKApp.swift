@@ -31,6 +31,7 @@ struct GitOKApp: App, SuperLog {
         WindowGroup {
             ContentLayout().inRootView()
         }
+        .handlesExternalEvents(matching: Set()) // 阻止 WindowGroup 为外部事件创建新窗口
         .windowToolbarStyle(.unified(showsTitle: false))
         .modelContainer(AppConfig.getContainer())
         .commands(content: {
