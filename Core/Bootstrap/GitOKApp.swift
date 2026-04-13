@@ -29,7 +29,16 @@ struct GitOKApp: App, SuperLog {
 
     var body: some Scene {
         WindowGroup {
-            ContentLayout().inRootView()
+            ContentLayout()
+                .inRootView()
+                .environmentObject(appDelegate)
+                .onReceive(appDelegate.$pendingOpenPath.compactMap { $0 }) { path in
+                    // 通过 Combine 直接监听 appDelegate 的 @Published 属性变化
+                    // 比 NotificationCenter 更可靠，不存在时序问题
+                    OpenProjectHandler.shared.requestOpen(path: path)
+                    // 清除 pending 状态，防止重复处理
+                    appDelegate.pendingOpenPath = nil
+                }
         }
         .handlesExternalEvents(matching: Set()) // 阻止 WindowGroup 为外部事件创建新窗口
         .windowToolbarStyle(.unified(showsTitle: false))

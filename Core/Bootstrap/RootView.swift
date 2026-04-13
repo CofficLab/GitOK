@@ -76,8 +76,11 @@ struct RootView<Content>: View, SuperEvent, SuperLog where Content: View {
             .environmentObject(git)
             .environmentObject(projectVM)
             .navigationTitle("")
-            .onAppOpenProject { path in
-                handleOpenProject(path: path)
+            .onAppear {
+                // 注册打开项目的回调（单例桥梁模式，确保时序可靠）
+                OpenProjectHandler.shared.onOpenProject = { [self] path in
+                    self.handleOpenProject(path: path)
+                }
             }
     }
 

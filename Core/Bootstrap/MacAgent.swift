@@ -17,6 +17,10 @@ class MacAgent: NSObject, NSApplicationDelegate, ObservableObject, SuperLog, Sup
     /// 日志标签
     var label: String { "🍎 MacAgent::" }
 
+    /// 待打开的项目路径（通过 Dock 拖拽、open 命令、URL Scheme 触发）
+    /// 使用 @Published + Combine 让 RootView 可以立即响应
+    @Published var pendingOpenPath: String? = nil
+
     func application(
         _ application: NSApplication,
         didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data
@@ -113,7 +117,7 @@ class MacAgent: NSObject, NSApplicationDelegate, ObservableObject, SuperLog, Sup
         for path in paths {
             os_log("\(self.label)📂 Apple Event open document: \(path)")
             let resolvedPath = resolveGitRoot(from: path)
-            postOpenProject(path: resolvedPath)
+            setOpenPath(resolvedPath)
         }
     }
 
@@ -122,7 +126,7 @@ class MacAgent: NSObject, NSApplicationDelegate, ObservableObject, SuperLog, Sup
         os_log("\(self.label)📂 Open file: \(filename)")
 
         let path = resolveGitRoot(from: filename)
-        postOpenProject(path: path)
+        setOpenPath(path)
         return true
     }
 
@@ -135,6 +139,14 @@ class MacAgent: NSObject, NSApplicationDelegate, ObservableObject, SuperLog, Sup
     }
 
     // MARK: - Private Helpers
+
+    /// 设置待打开的项目路径（在主线程）
+    private func setOpenPath(_ path: String) {
+        os_log("\(self.label)📁 Set open path: \(path)")
+        DispatchQueue.main.async { [weak self] in
+            self?.pendingOpenPath = path
+        }
+    }
 
     /// 解析 URL Scheme 请求
     /// 支持格式：
@@ -150,7 +162,7 @@ class MacAgent: NSObject, NSApplicationDelegate, ObservableObject, SuperLog, Sup
             let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
             if let path = components?.queryItems?.first(where: { $0.name == "path" })?.value,
                !path.isEmpty {
-                postOpenProject(path: resolveGitRoot(from: path))
+                setOpenPath(resolveGitRoot(from: path))
             }
             return
         }
@@ -158,7 +170,7 @@ class MacAgent: NSObject, NSApplicationDelegate, ObservableObject, SuperLog, Sup
         // gitok:///path/to/repo（路径直接写在 URL 中）
         let pathValue = url.path
         if !pathValue.isEmpty {
-            postOpenProject(path: resolveGitRoot(from: pathValue))
+            setOpenPath(resolveGitRoot(from: pathValue))
             return
         }
     }
@@ -188,20 +200,6 @@ class MacAgent: NSObject, NSApplicationDelegate, ObservableObject, SuperLog, Sup
         }
 
         return path
-    }
-
-    /// 发送打开项目的通知
-    /// - Parameter path: 项目路径
-    private func postOpenProject(path: String) {
-        os_log("\(self.label)📁 Post open project: \(path)")
-
-        DispatchQueue.main.async {
-            NotificationCenter.default.post(
-                name: .appOpenProject,
-                object: self,
-                userInfo: ["path": path]
-            )
-        }
     }
 }
 
