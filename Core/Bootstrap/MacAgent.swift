@@ -103,15 +103,19 @@ class MacAgent: NSObject, NSApplicationDelegate, ObservableObject, SuperLog, Sup
 
         // 提取文件路径列表
         var paths: [String] = []
+
         if fileList.descriptorType == typeAEList {
             for i in 1 ... fileList.numberOfItems {
-                if let item = fileList.atIndex(i),
-                   let url = URL(dataRepresentation: item.data, relativeTo: nil) {
-                    paths.append(url.path)
+                if let item = fileList.atIndex(i) {
+                    if let path = extractPath(from: item) {
+                        paths.append(path)
+                    }
                 }
             }
-        } else if let url = URL(dataRepresentation: fileList.data, relativeTo: nil) {
-            paths.append(url.path)
+        } else {
+            if let path = extractPath(from: fileList) {
+                paths.append(path)
+            }
         }
 
         for path in paths {
@@ -119,6 +123,48 @@ class MacAgent: NSObject, NSApplicationDelegate, ObservableObject, SuperLog, Sup
             let resolvedPath = resolveGitRoot(from: path)
             setOpenPath(resolvedPath)
         }
+    }
+
+    /// 从 Apple Event Descriptor 中提取文件路径
+    /// macOS 传入的可能是 alias（typeAlias）、file URL（typeFileURL）或路径字符串
+    private func extractPath(from descriptor: NSAppleEventDescriptor) -> String? {
+        let descType = descriptor.descriptorType
+
+        // 类型 1: file URL（typeFileURL = 'furl'）
+        if descType == typeFileURL {
+            let url = URL(dataRepresentation: descriptor.data, relativeTo: nil)
+            return url?.path
+        }
+
+        // 类型 2: alias — 用 Bookmark 解析
+        if descType == typeAlias || descType == typeFSRef {
+            do {
+                let bookmarkData = descriptor.data
+                var isStale = false
+                let url = try URL(
+                    resolvingBookmarkData: bookmarkData,
+                    options: .withoutUI,
+                    relativeTo: nil,
+                    bookmarkDataIsStale: &isStale
+                )
+                return url.path
+            } catch {
+                // Bookmark 解析失败，回退到 coercion 或字符串
+            }
+        }
+
+        // 类型 3: 路径字符串
+        if let str = descriptor.stringValue {
+            return str
+        }
+
+        // 类型 4: 尝试强制转为 file URL descriptor
+        if let urlDesc = descriptor.coerce(toDescriptorType: typeFileURL) {
+            let url = URL(dataRepresentation: urlDesc.data, relativeTo: nil)
+            return url?.path
+        }
+
+        return nil
     }
 
     /// 处理通过 `open -a GitOK /path/to/repo` 或拖拽文件夹到 Dock 图标触发的打开事件
