@@ -132,24 +132,22 @@ class MacAgent: NSObject, NSApplicationDelegate, ObservableObject, SuperLog, Sup
 
         // 类型 1: file URL（typeFileURL = 'furl'）
         if descType == typeFileURL {
-            let url = URL(dataRepresentation: descriptor.data, relativeTo: nil)
-            return url?.path
+            return filePathFromDescriptorData(descriptor.data)
         }
 
         // 类型 2: alias — 用 Bookmark 解析
         if descType == typeAlias || descType == typeFSRef {
             do {
-                let bookmarkData = descriptor.data
                 var isStale = false
                 let url = try URL(
-                    resolvingBookmarkData: bookmarkData,
+                    resolvingBookmarkData: descriptor.data,
                     options: .withoutUI,
                     relativeTo: nil,
                     bookmarkDataIsStale: &isStale
                 )
                 return url.path
             } catch {
-                // Bookmark 解析失败，回退到 coercion 或字符串
+                // Bookmark 解析失败，继续尝试其他方式
             }
         }
 
@@ -160,11 +158,21 @@ class MacAgent: NSObject, NSApplicationDelegate, ObservableObject, SuperLog, Sup
 
         // 类型 4: 尝试强制转为 file URL descriptor
         if let urlDesc = descriptor.coerce(toDescriptorType: typeFileURL) {
-            let url = URL(dataRepresentation: urlDesc.data, relativeTo: nil)
-            return url?.path
+            return filePathFromDescriptorData(urlDesc.data)
         }
 
         return nil
+    }
+
+    /// 从 file URL descriptor 的 data 中提取文件系统路径
+    /// descriptor.data 是 UTF-8 编码的 URL 字符串（如 "file:///Users/..."）
+    /// 不能用 URL(dataRepresentation:) 因为它会错误解析 path
+    private func filePathFromDescriptorData(_ data: Data) -> String? {
+        guard let urlString = String(data: data, encoding: .utf8),
+              let url = URL(string: urlString) else {
+            return nil
+        }
+        return url.path
     }
 
     /// 处理通过 `open -a GitOK /path/to/repo` 或拖拽文件夹到 Dock 图标触发的打开事件
