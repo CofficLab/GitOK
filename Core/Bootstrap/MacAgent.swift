@@ -59,14 +59,15 @@ class MacAgent: NSObject, NSApplicationDelegate, ObservableObject, SuperLog, Sup
             os_log("\(self.label)Will Finish Launching")
         }
 
-        // 注册 Apple Event 处理器，截获 open-document 事件
-        // 这样可以防止 SwiftUI 的 WindowGroup 消费掉 open-file 事件
-        NSAppleEventManager.shared().setEventHandler(
-            self,
-            andSelector: #selector(handleOpenDocuments(_:withReplyEvent:)),
-            forEventClass: AEEventClass(kCoreEventClass),
-            andEventID: AEEventID(kAEOpenDocuments)
-        )
+        // 不再使用 NSAppleEventManager 拦截 kAEOpenDocuments。
+        //
+        // 原因：拦截该事件会导致 SwiftUI WindowGroup 在冷启动时不创建窗口，
+        // 因为 macOS 认为"应用自己会处理 document 事件"，SwiftUI 就不会创建默认窗口。
+        // 表现为：菜单栏变成了 GitOK，但没有任何窗口出现。
+        //
+        // 改用 application(_:openFile:) 来接收路径，这是 NSApplicationDelegate
+        // 的标准方法，不影响 SwiftUI WindowGroup 的窗口创建。
+        // WindowGroup 的 .handlesExternalEvents(matching: Set()) 会阻止创建多余窗口。
     }
 
     func applicationWillBecomeActive(_ notification: Notification) {
@@ -96,90 +97,25 @@ class MacAgent: NSObject, NSApplicationDelegate, ObservableObject, SuperLog, Sup
 
     // MARK: - Open File / URL
 
-    /// 处理 macOS Apple Event 的 open-document 事件
-    /// 在 applicationWillFinishLaunching 中注册，优先于 SwiftUI 的 WindowGroup 处理
-    @objc private func handleOpenDocuments(_ event: NSAppleEventDescriptor, withReplyEvent replyEvent: NSAppleEventDescriptor) {
-        guard let fileList = event.paramDescriptor(forKeyword: AEKeyword(keyDirectObject)) else { return }
-
-        // 提取文件路径列表
-        var paths: [String] = []
-
-        if fileList.descriptorType == typeAEList {
-            for i in 1 ... fileList.numberOfItems {
-                if let item = fileList.atIndex(i) {
-                    if let path = extractPath(from: item) {
-                        paths.append(path)
-                    }
-                }
-            }
-        } else {
-            if let path = extractPath(from: fileList) {
-                paths.append(path)
+    /// 处理通过 `open -a GitOK /path/to/repo`、拖拽文件夹到 Dock 图标、
+    /// 以及 NSWorkspace.open([folderURL], withApplicationAt:) 触发的打开事件。
+    /// 这是 macOS 冷启动时传递路径的主要方式，且不影响 SwiftUI WindowGroup 的窗口创建。
+    func application(_ application: NSApplication, open urls: [URL]) {
+        for url in urls {
+            if url.isFileURL {
+                os_log("\(self.label)📂 Open file URL: \(url.path)")
+                let resolvedPath = resolveGitRoot(from: url.path)
+                setOpenPath(resolvedPath)
+            } else {
+                os_log("\(self.label)🔗 Open URL: \(url.absoluteString)")
+                handleURL(url)
             }
         }
-
-        for path in paths {
-            os_log("\(self.label)📂 Apple Event open document: \(path)")
-            let resolvedPath = resolveGitRoot(from: path)
-            setOpenPath(resolvedPath)
-        }
-
-        // 显式激活窗口，确保 macOS 切换到 GitOK 所在的 Space（包括全屏工作空间）
-        // 参考 GitHub Desktop 的处理: https://github.com/desktop/desktop/issues/973
         activateMainWindow()
     }
 
-    /// 从 Apple Event Descriptor 中提取文件路径
-    /// macOS 传入的可能是 alias（typeAlias）、file URL（typeFileURL）或路径字符串
-    private func extractPath(from descriptor: NSAppleEventDescriptor) -> String? {
-        let descType = descriptor.descriptorType
-
-        // 类型 1: file URL（typeFileURL = 'furl'）
-        if descType == typeFileURL {
-            return filePathFromDescriptorData(descriptor.data)
-        }
-
-        // 类型 2: alias — 用 Bookmark 解析
-        if descType == typeAlias || descType == typeFSRef {
-            do {
-                var isStale = false
-                let url = try URL(
-                    resolvingBookmarkData: descriptor.data,
-                    options: .withoutUI,
-                    relativeTo: nil,
-                    bookmarkDataIsStale: &isStale
-                )
-                return url.path
-            } catch {
-                // Bookmark 解析失败，继续尝试其他方式
-            }
-        }
-
-        // 类型 3: 路径字符串
-        if let str = descriptor.stringValue {
-            return str
-        }
-
-        // 类型 4: 尝试强制转为 file URL descriptor
-        if let urlDesc = descriptor.coerce(toDescriptorType: typeFileURL) {
-            return filePathFromDescriptorData(urlDesc.data)
-        }
-
-        return nil
-    }
-
-    /// 从 file URL descriptor 的 data 中提取文件系统路径
-    /// descriptor.data 是 UTF-8 编码的 URL 字符串（如 "file:///Users/..."）
-    /// 不能用 URL(dataRepresentation:) 因为它会错误解析 path
-    private func filePathFromDescriptorData(_ data: Data) -> String? {
-        guard let urlString = String(data: data, encoding: .utf8),
-              let url = URL(string: urlString) else {
-            return nil
-        }
-        return url.path
-    }
-
     /// 处理通过 `open -a GitOK /path/to/repo` 或拖拽文件夹到 Dock 图标触发的打开事件
+    /// 这是 macOS 的另一种文件打开方式，通常用于 Finder 拖拽或命令行 open 命令
     func application(_ application: NSApplication, openFile filename: String) -> Bool {
         os_log("\(self.label)📂 Open file: \(filename)")
 
@@ -187,15 +123,6 @@ class MacAgent: NSObject, NSApplicationDelegate, ObservableObject, SuperLog, Sup
         setOpenPath(path)
         activateMainWindow()
         return true
-    }
-
-    /// 处理通过 URL Scheme（如 `gitok://openRepo?path=/xxx`）触发的打开事件
-    func application(_ application: NSApplication, open urls: [URL]) {
-        for url in urls {
-            os_log("\(self.label)🔗 Open URL: \(url.absoluteString)")
-            handleURL(url)
-        }
-        activateMainWindow()
     }
 
     // MARK: - Private Helpers
@@ -217,8 +144,12 @@ class MacAgent: NSObject, NSApplicationDelegate, ObservableObject, SuperLog, Sup
     /// - Parameter retries: 剩余重试次数
     private func attemptActivate(retries: Int) {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [self] in
-            // 找到第一个非 Panel 的窗口
-            guard let window = NSApp.windows.first(where: { $0 is NSPanel == false }) else {
+            // SwiftUI WindowGroup 创建的主窗口使用 _NSWindowBackstage2 或类似内部类，
+            // 不是 NSPanel，但某些内部窗口（如 TUINSWindow）不能成为 key window。
+            // 使用 canBecomeKeyWindow 作为过滤条件，找到真正能成为 key window 的窗口。
+            guard let window = NSApp.windows.first(where: {
+                $0.canBecomeKey
+            }) else {
                 // 窗口还没创建（冷启动），延迟重试
                 if retries > 0 {
                     attemptActivate(retries: retries - 1)
