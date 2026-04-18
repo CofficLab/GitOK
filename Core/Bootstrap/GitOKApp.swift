@@ -44,7 +44,7 @@ struct GitOKApp: App, SuperLog {
                     // 参考 GitHub Desktop: https://github.com/desktop/desktop/issues/973
                     DispatchQueue.main.async {
                         NSApp.activate(ignoringOtherApps: true)
-                        if let window = NSApp.windows.first(where: { $0 is NSPanel == false }) {
+                        if let window = NSApp.windows.first(where: { $0.canBecomeKey }) {
                             window.makeKeyAndOrderFront(nil)
                         }
                     }

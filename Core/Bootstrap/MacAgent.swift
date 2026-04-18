@@ -144,8 +144,12 @@ class MacAgent: NSObject, NSApplicationDelegate, ObservableObject, SuperLog, Sup
     /// - Parameter retries: 剩余重试次数
     private func attemptActivate(retries: Int) {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [self] in
-            // 找到第一个非 Panel 的窗口
-            guard let window = NSApp.windows.first(where: { $0 is NSPanel == false }) else {
+            // SwiftUI WindowGroup 创建的主窗口使用 _NSWindowBackstage2 或类似内部类，
+            // 不是 NSPanel，但某些内部窗口（如 TUINSWindow）不能成为 key window。
+            // 使用 canBecomeKeyWindow 作为过滤条件，找到真正能成为 key window 的窗口。
+            guard let window = NSApp.windows.first(where: {
+                $0.canBecomeKey
+            }) else {
                 // 窗口还没创建（冷启动），延迟重试
                 if retries > 0 {
                     attemptActivate(retries: retries - 1)
