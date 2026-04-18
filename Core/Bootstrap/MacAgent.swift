@@ -203,15 +203,31 @@ class MacAgent: NSObject, NSApplicationDelegate, ObservableObject, SuperLog, Sup
     /// 激活应用主窗口并切换到其所在的 Space
     /// 当应用通过外部事件（open-document、URL Scheme 等）被激活时，
     /// macOS 不一定会自动切换到应用窗口所在的 Space（尤其是全屏模式）。
-    /// 需要显式调用 NSApp.activate + makeKeyAndOrderFront
-    /// 来确保切换到正确的工作空间。
-    /// 参考: https://github.com/desktop/desktop/issues/973
+    ///
+    /// GitHub Desktop 在每个入口都显式调用 window.focus() + window.show()：
+    /// https://github.com/desktop/desktop/issues/973
+    ///
+    /// SwiftUI 的 WindowGroup 窗口标题为空，不能用 title 过滤。
+    /// 冷启动时窗口可能还没创建，需要延迟重试等待窗口出现。
     private func activateMainWindow() {
-        DispatchQueue.main.async {
-            NSApp.activate(ignoringOtherApps: true)
-            if let window = NSApp.windows.first(where: { $0.isVisible && !$0.title.isEmpty }) {
-                window.makeKeyAndOrderFront(nil)
+        attemptActivate(retries: 5)
+    }
+
+    /// 尝试激活主窗口，支持延迟重试
+    /// - Parameter retries: 剩余重试次数
+    private func attemptActivate(retries: Int) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [self] in
+            // 找到第一个非 Panel 的窗口
+            guard let window = NSApp.windows.first(where: { $0 is NSPanel == false }) else {
+                // 窗口还没创建（冷启动），延迟重试
+                if retries > 0 {
+                    attemptActivate(retries: retries - 1)
+                }
+                return
             }
+
+            NSApp.activate(ignoringOtherApps: true)
+            window.makeKeyAndOrderFront(nil)
         }
     }
 
