@@ -123,6 +123,10 @@ class MacAgent: NSObject, NSApplicationDelegate, ObservableObject, SuperLog, Sup
             let resolvedPath = resolveGitRoot(from: path)
             setOpenPath(resolvedPath)
         }
+
+        // 显式激活窗口，确保 macOS 切换到 GitOK 所在的 Space（包括全屏工作空间）
+        // 参考 GitHub Desktop 的处理: https://github.com/desktop/desktop/issues/973
+        activateMainWindow()
     }
 
     /// 从 Apple Event Descriptor 中提取文件路径
@@ -181,6 +185,7 @@ class MacAgent: NSObject, NSApplicationDelegate, ObservableObject, SuperLog, Sup
 
         let path = resolveGitRoot(from: filename)
         setOpenPath(path)
+        activateMainWindow()
         return true
     }
 
@@ -190,9 +195,25 @@ class MacAgent: NSObject, NSApplicationDelegate, ObservableObject, SuperLog, Sup
             os_log("\(self.label)🔗 Open URL: \(url.absoluteString)")
             handleURL(url)
         }
+        activateMainWindow()
     }
 
     // MARK: - Private Helpers
+
+    /// 激活应用主窗口并切换到其所在的 Space
+    /// 当应用通过外部事件（open-document、URL Scheme 等）被激活时，
+    /// macOS 不一定会自动切换到应用窗口所在的 Space（尤其是全屏模式）。
+    /// 需要显式调用 NSApp.activate + makeKeyAndOrderFront
+    /// 来确保切换到正确的工作空间。
+    /// 参考: https://github.com/desktop/desktop/issues/973
+    private func activateMainWindow() {
+        DispatchQueue.main.async {
+            NSApp.activate(ignoringOtherApps: true)
+            if let window = NSApp.windows.first(where: { $0.isVisible && !$0.title.isEmpty }) {
+                window.makeKeyAndOrderFront(nil)
+            }
+        }
+    }
 
     /// 将可能的路径或 URL 字符串规范化为文件系统路径
     /// 输入可能是：
