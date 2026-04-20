@@ -86,6 +86,7 @@ struct GitUserPresetView: View, SuperLog {
                 presetConfigRow(config)
                 if config.persistentModelID != savedConfigs.last?.persistentModelID {
                     Divider()
+                        .padding(.vertical, 8)
                 }
             }
         }
