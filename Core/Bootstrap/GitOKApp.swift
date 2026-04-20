@@ -38,6 +38,16 @@ struct GitOKApp: App, SuperLog {
                     OpenProjectHandler.shared.requestOpen(path: path)
                     // 清除 pending 状态，防止重复处理
                     appDelegate.pendingOpenPath = nil
+
+                    // 确保窗口可见并激活（处理全屏 Space 切换和冷启动场景）
+                    // 此时机窗口一定已创建，是最可靠的激活点
+                    // 参考 GitHub Desktop: https://github.com/desktop/desktop/issues/973
+                    DispatchQueue.main.async {
+                        NSApp.activate(ignoringOtherApps: true)
+                        if let window = NSApp.windows.first(where: { $0.canBecomeKey }) {
+                            window.makeKeyAndOrderFront(nil)
+                        }
+                    }
                 }
         }
         .handlesExternalEvents(matching: Set()) // 阻止 WindowGroup 为外部事件创建新窗口
