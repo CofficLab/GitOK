@@ -141,13 +141,13 @@ extension BtnGitPullView {
         }
 
         // 启动自动拉取管理器
-        Task.detached(priority: .utility) {
-            try? await Task.sleep(nanoseconds: 3_000_000_000) // 3 秒延迟
-            await MainActor.run {
-                AutoPullManager.shared.setDataProvider(data)
-                AutoPullManager.shared.start()
-            }
-        }
+//        Task.detached(priority: .utility) {
+//            try? await Task.sleep(nanoseconds: 3_000_000_000) // 3 秒延迟
+//            await MainActor.run {
+//                AutoPullManager.shared.setDataProvider(data)
+//                AutoPullManager.shared.start()
+//            }
+//        }
     }
 
     /// 视图消失时的事件处理
