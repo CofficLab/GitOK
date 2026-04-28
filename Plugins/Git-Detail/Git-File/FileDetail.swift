@@ -11,8 +11,7 @@ struct FileDetail: View, SuperLog, SuperEvent, SuperThread {
     @EnvironmentObject var data: DataVM
     @EnvironmentObject var vm: ProjectVM
 
-    @State private var oldText = ""
-    @State private var newText = ""
+    @State private var unifiedDiffText = ""
 
     static let emoji = "🌍"
 
@@ -40,7 +39,7 @@ struct FileDetail: View, SuperLog, SuperEvent, SuperThread {
                 .background(.background)
             }
 
-            MagicDiffView(oldText: oldText, newText: newText)
+            MagicDiffView(diffOutput: unifiedDiffText)
                 .background(.background)
         }
         .onChange(of: vm.file, onFileChange)
@@ -60,19 +59,17 @@ struct FileDetail: View, SuperLog, SuperEvent, SuperThread {
 
         do {
             if let commit = data.commit {
-                let (beforeContent, afterContent) = try project.fileContentChange(at: commit.hash, file: file.file)
-                self.oldText = beforeContent ?? ""
-                self.newText = afterContent ?? ""
+                // 使用 git diff 输出，而不是纯文本内容对比
+                // 这样行号匹配与 GitHub Desktop 完全一致
+                self.unifiedDiffText = try project.fileDiff(at: commit.hash, file: file.file)
             } else {
-                let (beforeContent, afterContent) = try project.uncommittedFileContentChange(file: file.file)
-                self.oldText = beforeContent ?? ""
-                self.newText = afterContent ?? ""
+                // 未提交的变更也使用 git diff 输出
+                self.unifiedDiffText = try project.uncommittedFileDiff(file: file.file)
             }
         } catch {
             os_log(.error, "\(Self.t)❌ 更新差异视图失败: \(error.localizedDescription)")
             alert_error(error)
-            self.oldText = ""
-            self.newText = ""
+            self.unifiedDiffText = ""
         }
     }
 }
