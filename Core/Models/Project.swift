@@ -535,6 +535,20 @@ extension Project {
         try LibGit2.getFileDiff(for: file, at: self.path, staged: false)
     }
 
+    /// 获取指定提交中文件的原始二进制数据（支持图片等二进制文件）
+    func fileData(at commit: String, file: String) throws -> Data {
+        try LibGit2.getFileData(atCommit: commit, file: file, at: self.path)
+    }
+
+    /// 获取 HEAD 提交的哈希值
+    func headCommitHash() -> String? {
+        guard let commits = try? LibGit2.getCommitList(at: self.path),
+              let first = commits.first else {
+            return nil
+        }
+        return first.hash
+    }
+
     /// 获取指定提交中文件的 diff 字符串
     /// - Parameters:
     ///   - atCommit: 提交哈希
