@@ -352,6 +352,10 @@ extension Project {
 // MARK: - Add
 
 extension Project {
+    private var gitCLI: GitRepositoryCLI {
+        GitRepositoryCLI(repositoryURL: url)
+    }
+
     /// 将所有更改的文件添加到Git暂存区
     /// - Throws: Git 操作相关的错误
     func addAll() throws {
@@ -367,6 +371,29 @@ extension Project {
                 operation: "addAll",
                 success: false,
                 error: error
+            )
+            throw error
+        }
+    }
+
+    /// 将指定文件添加到 Git 暂存区
+    /// - Parameter filePaths: 相对于仓库根目录的文件路径
+    /// - Throws: Git 操作相关的错误
+    func addFiles(_ filePaths: [String]) throws {
+        do {
+            try gitCLI.addFiles(filePaths)
+            postEvent(
+                name: .projectDidAddFiles,
+                operation: "addFiles",
+                additionalInfo: ["files": filePaths]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "addFiles",
+                success: false,
+                error: error,
+                additionalInfo: ["files": filePaths]
             )
             throw error
         }
@@ -588,6 +615,11 @@ extension Project {
             .sorted { $0.file < $1.file }
     }
 
+    func unstagedDiffFileList() async throws -> [GitDiffFile] {
+        return try LibGit2.getDiffFileList(at: self.path, staged: false)
+            .sorted { $0.file < $1.file }
+    }
+
     /// 丢弃文件的更改（恢复到 HEAD 版本）
     /// - Parameter filePath: 文件路径（相对于仓库根目录）
     /// - Throws: Git操作异常
@@ -686,72 +718,168 @@ extension Project {
     /// 保存当前工作区更改到stash
     /// - Parameter message: stash的描述信息，可选
     /// - Throws: Git操作异常
-    // TODO: 实现stash功能，需要正确配置LibGit2Swift包依赖
     func stashSave(message: String? = nil) throws {
-        throw NSError(domain: "GitOK", code: -1, userInfo: [NSLocalizedDescriptionKey: "Stash功能暂未实现"])
+        do {
+            try gitCLI.stashSave(message: message)
+
+            postEvent(
+                name: .projectDidCommit,
+                operation: "stashSave",
+                additionalInfo: ["message": message ?? ""]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "stashSave",
+                success: false,
+                error: error,
+                additionalInfo: ["message": message ?? ""]
+            )
+            throw error
+        }
     }
 
     /// 获取stash列表
     /// - Returns: stash列表，每个stash包含索引和消息
     /// - Throws: Git操作异常
     func stashList() throws -> [(index: Int, message: String)] {
-        // TODO: 实现stash列表功能
-        return []
+        try gitCLI.stashList().map { (index: $0.index, message: $0.message) }
     }
 
     /// 应用指定的stash（保留stash）
     /// - Parameter index: stash的索引
     /// - Throws: Git操作异常
     func stashApply(index: Int) throws {
-        throw NSError(domain: "GitOK", code: -1, userInfo: [NSLocalizedDescriptionKey: "Stash功能暂未实现"])
+        do {
+            try gitCLI.stashApply(index: index)
+            postEvent(
+                name: .projectDidCommit,
+                operation: "stashApply",
+                additionalInfo: ["index": index]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "stashApply",
+                success: false,
+                error: error,
+                additionalInfo: ["index": index]
+            )
+            throw error
+        }
     }
 
     /// 弹出指定的stash（应用并删除stash）
     /// - Parameter index: stash的索引
     /// - Throws: Git操作异常
     func stashPop(index: Int) throws {
-        throw NSError(domain: "GitOK", code: -1, userInfo: [NSLocalizedDescriptionKey: "Stash功能暂未实现"])
+        do {
+            try gitCLI.stashPop(index: index)
+            postEvent(
+                name: .projectDidCommit,
+                operation: "stashPop",
+                additionalInfo: ["index": index]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "stashPop",
+                success: false,
+                error: error,
+                additionalInfo: ["index": index]
+            )
+            throw error
+        }
     }
 
     /// 删除指定的stash
     /// - Parameter index: stash的索引
     /// - Throws: Git操作异常
     func stashDrop(index: Int) throws {
-        throw NSError(domain: "GitOK", code: -1, userInfo: [NSLocalizedDescriptionKey: "Stash功能暂未实现"])
+        do {
+            try gitCLI.stashDrop(index: index)
+            postEvent(
+                name: .projectDidCommit,
+                operation: "stashDrop",
+                additionalInfo: ["index": index]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "stashDrop",
+                success: false,
+                error: error,
+                additionalInfo: ["index": index]
+            )
+            throw error
+        }
+    }
+
+    /// 获取当前正在合并的分支名
+    /// - Returns: 当前合并来源分支名，如果无法解析则返回 nil
+    func getCurrentMergeBranchName() throws -> String? {
+        try gitCLI.getCurrentMergeBranchName()
     }
 
     /// 获取合并冲突文件列表
     /// - Returns: 冲突文件路径列表
     /// - Throws: Git操作异常
     func getMergeConflictFiles() async throws -> [String] {
-        throw NSError(domain: "GitOK", code: -1, userInfo: [NSLocalizedDescriptionKey: "冲突解决功能暂未实现"])
+        try gitCLI.getMergeConflictFiles()
     }
 
     /// 检查是否正在合并状态
     /// - Returns: 如果正在合并返回true
     /// - Throws: Git操作异常
     func isMerging() async throws -> Bool {
-        throw NSError(domain: "GitOK", code: -1, userInfo: [NSLocalizedDescriptionKey: "冲突解决功能暂未实现"])
+        try gitCLI.isMerging()
     }
 
     /// 检查是否有合并冲突
     /// - Returns: 如果有冲突返回true
     /// - Throws: Git操作异常
     func hasMergeConflicts() async throws -> Bool {
-        throw NSError(domain: "GitOK", code: -1, userInfo: [NSLocalizedDescriptionKey: "冲突解决功能暂未实现"])
+        try await getMergeConflictFiles().isEmpty == false
     }
 
     /// 中止合并操作
     /// - Throws: Git操作异常
     func abortMerge() async throws {
-        throw NSError(domain: "GitOK", code: -1, userInfo: [NSLocalizedDescriptionKey: "冲突解决功能暂未实现"])
+        do {
+            try gitCLI.abortMerge()
+            postEvent(name: .projectDidMerge, operation: "abortMerge")
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "abortMerge",
+                success: false,
+                error: error
+            )
+            throw error
+        }
     }
 
     /// 继续合并操作（解决冲突后）
     /// - Parameter branchName: 要合并的分支名
     /// - Throws: Git操作异常
     func continueMerge(branchName: String) async throws {
-        throw NSError(domain: "GitOK", code: -1, userInfo: [NSLocalizedDescriptionKey: "冲突解决功能暂未实现"])
+        do {
+            try gitCLI.continueMerge()
+            postEvent(
+                name: .projectDidMerge,
+                operation: "continueMerge",
+                additionalInfo: ["branchName": branchName]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "continueMerge",
+                success: false,
+                error: error,
+                additionalInfo: ["branchName": branchName]
+            )
+            throw error
+        }
     }
 
     /// 获取项目的README.md文件内容

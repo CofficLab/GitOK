@@ -797,14 +797,18 @@
 		0BDAF47B2F136A5A00A4283A /* ID3TagEditor.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = ID3TagEditor.xcodeproj; sourceTree = "<group>"; };
 		0BDAF6A52F136A5A00A4283A /* ZIPFoundation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = ZIPFoundation.xcodeproj; sourceTree = "<group>"; };
 		0BDAF7F12F136A5B00A4283A /* MagicApp.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = MagicApp.xcodeproj; sourceTree = "<group>"; };
+		A1F000012F70000100ABC001 /* GitOKTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GitOKTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F54D04C32DF2D01300FFB434 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		F59C22452DE69D6C0018876A /* Core */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Core; sourceTree = "<group>"; };
-		F59C23152DE69D900018876A /* Resources */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (Icons, ); path = Resources; sourceTree = "<group>"; };
-		F59C238F2DE69DB30018876A /* Plugins */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Plugins; sourceTree = "<group>"; };
-		F5A3D5852F85DCC000D4DD4A /* UI */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = UI; sourceTree = "<group>"; };
+		A1F000032F70000100ABC001 /* Tests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Tests; sourceTree = "<group>"; };
+		A1F0000D2F70000100ABC001 /* Core/GitCore */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = APP/Core/GitCore; sourceTree = "<group>"; };
+		F59C22452DE69D6C0018876A /* Core */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = APP/Core; sourceTree = "<group>"; };
+		F59C23152DE69D900018876A /* Resources */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = APP/Resources; sourceTree = "<group>"; };
+		F59C238F2DE69DB30018876A /* Plugins */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = APP/Plugins; sourceTree = "<group>"; };
+		F5A3D5852F85DCC000D4DD4A /* UI */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = APP/UI; sourceTree = "<group>"; };
+		F5AE82732FAB49C900F014F8 /* APP */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = APP; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -836,21 +840,27 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		A1F000062F70000100ABC001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		0B0E16742BD89A8F0078942B = {
 			isa = PBXGroup;
 			children = (
+				F5AE82732FAB49C900F014F8 /* APP */,
 				0B559D792F1A5D41005C6809 /* Assets.xcassets */,
-				F59C22452DE69D6C0018876A /* Core */,
 				0B55A0222F1B0F38005C6809 /* GitOK.app */,
+				A1F000012F70000100ABC001 /* GitOKTests.xctest */,
 				0B0E16882BD89A910078942B /* GitOK.entitlements */,
 				0B332F062BDA02BC00DFA5BB /* Info.plist */,
 				F54D04C32DF2D01300FFB434 /* Localizable.xcstrings */,
-				F59C238F2DE69DB30018876A /* Plugins */,
-				F59C23152DE69D900018876A /* Resources */,
-				F5A3D5852F85DCC000D4DD4A /* UI */,
+				A1F000032F70000100ABC001 /* Tests */,
 			);
 			sourceTree = "<group>";
 		};
@@ -1166,6 +1176,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		F5AE7F252FAB499800F014F8 /* Recovered References */ = {
+			isa = PBXGroup;
+			children = (
+				A1F0000D2F70000100ABC001 /* Core/GitCore */,
+			);
+			name = "Recovered References";
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -1183,10 +1201,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				F59C22452DE69D6C0018876A /* Core */,
-				F59C23152DE69D900018876A /* Resources */,
-				F59C238F2DE69DB30018876A /* Plugins */,
-				F5A3D5852F85DCC000D4DD4A /* UI */,
+				F5AE82732FAB49C900F014F8 /* APP */,
 			);
 			name = GitOK;
 			packageProductDependencies = (
@@ -1216,6 +1231,29 @@
 			productReference = 0B55A0222F1B0F38005C6809 /* GitOK.app */;
 			productType = "com.apple.product-type.application";
 		};
+		A1F000042F70000100ABC001 /* GitOKTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A1F0000C2F70000100ABC001 /* Build configuration list for PBXNativeTarget "GitOKTests" */;
+			buildPhases = (
+				A1F000052F70000100ABC001 /* Sources */,
+				A1F000062F70000100ABC001 /* Frameworks */,
+				A1F000072F70000100ABC001 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				A1F000032F70000100ABC001 /* Tests */,
+				A1F0000D2F70000100ABC001 /* Core/GitCore */,
+			);
+			name = GitOKTests;
+			packageProductDependencies = (
+			);
+			productName = GitOKTests;
+			productReference = A1F000012F70000100ABC001 /* GitOKTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -1228,6 +1266,10 @@
 				TargetAttributes = {
 					0B0E167C2BD89A8F0078942B = {
 						CreatedOnToolsVersion = 15.3;
+					};
+					A1F000042F70000100ABC001 = {
+						CreatedOnToolsVersion = 26.2;
+						TestTargetID = 0B0E167C2BD89A8F0078942B;
 					};
 				};
 			};
@@ -1377,6 +1419,7 @@
 			projectRoot = "";
 			targets = (
 				0B0E167C2BD89A8F0078942B /* GitOK */,
+				A1F000042F70000100ABC001 /* GitOKTests */,
 			);
 		};
 /* End PBXProject section */
@@ -2108,10 +2151,24 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		A1F000072F70000100ABC001 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		0B0E16792BD89A8F0078942B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A1F000052F70000100ABC001 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -2279,8 +2336,6 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Packages/LibGit2Swift/.build/arm64-apple-macosx/debug",
-					"$(PROJECT_DIR)/Resources/webview/node_modules/.pnpm/@rollup+rollup-darwin-arm64@4.19.1/node_modules/@rollup/rollup-darwin-arm64",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 15.0;
 				MARKETING_VERSION = 2.2.38;
@@ -2328,8 +2383,6 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Packages/LibGit2Swift/.build/arm64-apple-macosx/debug",
-					"$(PROJECT_DIR)/Resources/webview/node_modules/.pnpm/@rollup+rollup-darwin-arm64@4.19.1/node_modules/@rollup/rollup-darwin-arm64",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 15.0;
 				MARKETING_VERSION = 2.2.38;
@@ -2339,6 +2392,44 @@
 				SUPPORTED_PLATFORMS = macosx;
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		A1F0000A2F70000100ABC001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.yueyi.GitOKTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		A1F0000B2F70000100ABC001 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.yueyi.GitOKTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
@@ -2360,6 +2451,15 @@
 			buildConfigurations = (
 				0B0E168F2BD89A910078942B /* Debug */,
 				0B0E16902BD89A910078942B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A1F0000C2F70000100ABC001 /* Build configuration list for PBXNativeTarget "GitOKTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A1F0000A2F70000100ABC001 /* Debug */,
+				A1F0000B2F70000100ABC001 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

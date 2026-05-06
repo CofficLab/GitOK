@@ -21,13 +21,11 @@ class StashPlugin: NSObject, SuperPlugin {
     @objc static let shared = StashPlugin()
 
     /// 是否启用该插件
-    @objc static let shouldRegister = false // TODO: 需要正确配置 LibGit2Swift 包依赖
+    @objc static let shouldRegister = true
 
-    func addToolBarTrailingView() -> AnyView? {
-        return AnyView(StashList.shared)
-    }
+    func addToolBarTrailingView() -> AnyView? { nil }
 
-    func addStatusBarLeadingView() -> AnyView? {
+    func addStatusBarTrailingView() -> AnyView? {
         return AnyView(StashStatusTile())
     }
 }

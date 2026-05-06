@@ -15,30 +15,55 @@ struct ConflictStatusTile: View, SuperLog {
     @State private var conflictCount = 0
     @State private var isLoading = false
     @State private var isMerging = false
+    @State private var isPresented = false
 
     var body: some View {
-        HStack(spacing: 4) {
-            Image(systemName: isMerging ? "exclamationmark.triangle" : "checkmark.circle")
-                .font(.system(size: 12))
-                .foregroundColor(isMerging ? .red : .green)
-
-            if isLoading {
-                ProgressView()
-                    .controlSize(.small)
-            } else if isMerging {
-                Text("\(conflictCount)")
-                    .font(.system(size: 12, weight: .medium))
-                    .foregroundColor(.red)
-            }
+        StatusBarTile(icon: iconName, onTap: {
+            isPresented.toggle()
+        }) {
+            content
         }
-        .padding(.horizontal, 8)
-        .padding(.vertical, 4)
-        .background(
-            RoundedRectangle(cornerRadius: 6)
-                .fill(isMerging ? Color.red.opacity(0.1) : Color.green.opacity(0.1))
-        )
+        .help(helpText)
+        .popover(isPresented: $isPresented) {
+            ConflictResolverList.shared
+                .frame(width: 440, height: 560)
+        }
         .onAppear(perform: loadConflictStatus)
+        .onChange(of: vm.project, loadConflictStatus)
+        .onApplicationDidBecomeActive {
+            loadConflictStatus()
+        }
         .onProjectDidMerge(perform: onProjectDidMerge)
+    }
+
+    private var iconName: String {
+        isMerging ? "exclamationmark.triangle.fill" : "checkmark.circle"
+    }
+
+    @ViewBuilder
+    private var content: some View {
+        if isLoading {
+            ProgressView()
+                .controlSize(.small)
+        } else if isMerging {
+            Text("冲突 \(conflictCount)")
+                .font(.footnote.weight(.medium))
+                .foregroundColor(.red)
+                .monospacedDigit()
+        } else {
+            Text("合并正常")
+                .foregroundColor(.secondary)
+        }
+    }
+
+    private var helpText: String {
+        if vm.project == nil {
+            return "未选择项目"
+        }
+        if isMerging {
+            return "存在 \(conflictCount) 个冲突文件，点击打开冲突处理"
+        }
+        return "当前没有合并冲突"
     }
 
     /// 加载冲突状态
@@ -46,6 +71,7 @@ struct ConflictStatusTile: View, SuperLog {
         guard let project = vm.project else {
             conflictCount = 0
             isMerging = false
+            isLoading = false
             return
         }
 

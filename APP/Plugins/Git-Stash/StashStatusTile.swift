@@ -14,36 +14,58 @@ struct StashStatusTile: View, SuperLog {
     @EnvironmentObject var vm: ProjectVM
     @State private var stashCount = 0
     @State private var isLoading = false
+    @State private var isPresented = false
 
     var body: some View {
-        HStack(spacing: 4) {
-            Image(systemName: "archivebox")
-                .font(.system(size: 12))
-                .foregroundColor(.secondary)
-
-            if isLoading {
-                ProgressView()
-                    .controlSize(.small)
-            } else {
-                Text("\(stashCount)")
-                    .font(.system(size: 12, weight: .medium))
-                    .foregroundColor(stashCount > 0 ? .blue : .secondary)
-            }
+        StatusBarTile(icon: "archivebox", onTap: {
+            isPresented.toggle()
+        }) {
+            content
         }
-        .padding(.horizontal, 8)
-        .padding(.vertical, 4)
-        .background(
-            RoundedRectangle(cornerRadius: 6)
-                .fill(Color.secondary.opacity(0.1))
-        )
+        .help(helpText)
+        .popover(isPresented: $isPresented) {
+            StashList.shared
+                .frame(width: 420, height: 520)
+        }
         .onAppear(perform: loadStashCount)
+        .onChange(of: vm.project, loadStashCount)
+        .onApplicationDidBecomeActive {
+            loadStashCount()
+        }
         .onProjectDidCommit(perform: onProjectDidCommit)
+    }
+
+    @ViewBuilder
+    private var content: some View {
+        if isLoading {
+            ProgressView()
+                .controlSize(.small)
+        } else if stashCount > 0 {
+            Text("Stash \(stashCount)")
+                .font(.footnote.weight(.medium))
+                .foregroundColor(.blue)
+                .monospacedDigit()
+        } else {
+            Text("Stash")
+                .foregroundColor(.secondary)
+        }
+    }
+
+    private var helpText: String {
+        if vm.project == nil {
+            return "未选择项目"
+        }
+        if stashCount > 0 {
+            return "查看 \(stashCount) 个 stash"
+        }
+        return "没有 stash，点击打开面板"
     }
 
     /// 加载stash数量
     private func loadStashCount() {
         guard let project = vm.project else {
             stashCount = 0
+            isLoading = false
             return
         }
 
@@ -51,7 +73,7 @@ struct StashStatusTile: View, SuperLog {
 
         Task {
             do {
-                let stashes = try await project.stashList()
+                let stashes = try project.stashList()
                 await MainActor.run {
                     self.stashCount = stashes.count
                     self.isLoading = false

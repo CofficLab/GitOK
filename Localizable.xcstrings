@@ -176,6 +176,9 @@
     "%lld configs" : {
 
     },
+    "%lld Merge Files" : {
+
+    },
     "%lld 个图标" : {
       "localizations" : {
         "zh-Hans" : {
@@ -209,6 +212,7 @@
       }
     },
     "%lld 个暂存" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -256,6 +260,9 @@
           }
         }
       }
+    },
+    "•" : {
+
     },
     "• %@" : {
       "localizations" : {
@@ -797,6 +804,9 @@
         }
       }
     },
+    "Selected" : {
+
+    },
     "Stash" : {
       "localizations" : {
         "zh-Hans" : {
@@ -813,6 +823,9 @@
         }
       }
     },
+    "Stash %lld" : {
+
+    },
     "stash@{%lld}" : {
       "localizations" : {
         "zh-Hans" : {
@@ -828,6 +841,9 @@
           }
         }
       }
+    },
+    "Working Tree Ready" : {
+
     },
     "Xcode 16 格式会自动调整，Xcode 26 格式保持用户设置" : {
       "localizations" : {
@@ -1158,6 +1174,9 @@
         }
       }
     },
+    "冲突 %lld" : {
+
+    },
     "凭据已安全保存到 macOS Keychain" : {
       "localizations" : {
         "zh-Hans" : {
@@ -1190,7 +1209,11 @@
         }
       }
     },
+    "创建 Stash" : {
+
+    },
     "创建Stash" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1255,6 +1278,7 @@
       }
     },
     "删除stash" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1420,6 +1444,9 @@
     "原因：%@" : {
 
     },
+    "参考 Desktop 的工作流，把临时改动放到可恢复的队列里。" : {
+
+    },
     "取消" : {
       "localizations" : {
         "zh-Hans" : {
@@ -1467,6 +1494,9 @@
           }
         }
       }
+    },
+    "合并正常" : {
+
     },
     "启用后，将定时自动推送到远程仓库（每 30 秒检查一次）" : {
       "extractionState" : "stale",
@@ -1849,6 +1879,7 @@
       }
     },
     "应用stash（保留stash）" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1881,6 +1912,7 @@
       }
     },
     "弹出stash（应用并删除stash）" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -2315,6 +2347,9 @@
         }
       }
     },
+    "新建暂存" : {
+
+    },
     "无法加载图片" : {
 
     },
@@ -2370,7 +2405,11 @@
         }
       }
     },
+    "暂无 stash" : {
+
+    },
     "暂无stash" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -2899,6 +2938,7 @@
       }
     },
     "点击上方 + 按钮创建第一个stash" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -2913,6 +2953,9 @@
           }
         }
       }
+    },
+    "点击上方“新建暂存”把当前改动临时收起。" : {
+
     },
     "点击下方按钮添加第一个远程仓库" : {
       "localizations" : {
