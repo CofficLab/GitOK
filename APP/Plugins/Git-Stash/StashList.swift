@@ -353,7 +353,7 @@ extension StashList {
     }
 
     func onProjectDidCommit(_ eventInfo: ProjectEventInfo) {
-        if ["stashSave", "stashApply", "stashPop", "stashDrop"].contains(eventInfo.operation) {
+        if ProjectEventRefreshRules.shouldRefreshStash(for: eventInfo.operation) {
             loadStashes()
         }
     }

@@ -88,13 +88,17 @@ final class Project: SuperLog {
         }
     }
 
+    func postEvent(_ descriptor: ProjectGitOperationEventDescriptor) {
+        postEvent(
+            name: descriptor.notificationName,
+            operation: descriptor.operation,
+            success: descriptor.success,
+            error: descriptor.error,
+            additionalInfo: descriptor.additionalInfo
+        )
+    }
+
     func getCommits(_ reason: String) -> [GitCommit] {
-        let verbose = false
-
-        if verbose {
-            os_log("\(self.t)GetCommit(\(reason))")
-        }
-
         do {
             return (try LibGit2.getCommitList(at: self.path))
         } catch let error {
@@ -106,12 +110,6 @@ final class Project: SuperLog {
     }
 
     func getBanners() -> [BannerFile] {
-        let verbose = false
-
-        if verbose {
-            os_log("\(self.t)GetBanners for project -> \(self.path)")
-        }
-
         return BannerRepo.shared.getBanners(from: self)
     }
 
@@ -154,6 +152,11 @@ extension Project {
         self._isGitRepo = value
     }
 
+    @MainActor
+    private func applyIsGitRepoCache(_ value: Bool) {
+        self._isGitRepo = value
+    }
+
     /**
         更新 isGitRepo 缓存（异步）
 
@@ -161,9 +164,7 @@ extension Project {
      */
     func updateIsGitRepoCache() async {
         let result = isGit()
-        await MainActor.run {
-            self._isGitRepo = result
-        }
+        await applyIsGitRepoCache(result)
     }
 
     func isClean(verbose: Bool = true) throws -> Bool {
@@ -721,20 +722,9 @@ extension Project {
     func stashSave(message: String? = nil) throws {
         do {
             try gitCLI.stashSave(message: message)
-
-            postEvent(
-                name: .projectDidCommit,
-                operation: "stashSave",
-                additionalInfo: ["message": message ?? ""]
-            )
+            postEvent(.stashSaveSuccess(message: message))
         } catch {
-            postEvent(
-                name: .projectOperationDidFail,
-                operation: "stashSave",
-                success: false,
-                error: error,
-                additionalInfo: ["message": message ?? ""]
-            )
+            postEvent(.stashSaveFailure(message: message, error: error))
             throw error
         }
     }
@@ -752,19 +742,9 @@ extension Project {
     func stashApply(index: Int) throws {
         do {
             try gitCLI.stashApply(index: index)
-            postEvent(
-                name: .projectDidCommit,
-                operation: "stashApply",
-                additionalInfo: ["index": index]
-            )
+            postEvent(.stashApplySuccess(index: index))
         } catch {
-            postEvent(
-                name: .projectOperationDidFail,
-                operation: "stashApply",
-                success: false,
-                error: error,
-                additionalInfo: ["index": index]
-            )
+            postEvent(.stashApplyFailure(index: index, error: error))
             throw error
         }
     }
@@ -775,19 +755,9 @@ extension Project {
     func stashPop(index: Int) throws {
         do {
             try gitCLI.stashPop(index: index)
-            postEvent(
-                name: .projectDidCommit,
-                operation: "stashPop",
-                additionalInfo: ["index": index]
-            )
+            postEvent(.stashPopSuccess(index: index))
         } catch {
-            postEvent(
-                name: .projectOperationDidFail,
-                operation: "stashPop",
-                success: false,
-                error: error,
-                additionalInfo: ["index": index]
-            )
+            postEvent(.stashPopFailure(index: index, error: error))
             throw error
         }
     }
@@ -798,19 +768,9 @@ extension Project {
     func stashDrop(index: Int) throws {
         do {
             try gitCLI.stashDrop(index: index)
-            postEvent(
-                name: .projectDidCommit,
-                operation: "stashDrop",
-                additionalInfo: ["index": index]
-            )
+            postEvent(.stashDropSuccess(index: index))
         } catch {
-            postEvent(
-                name: .projectOperationDidFail,
-                operation: "stashDrop",
-                success: false,
-                error: error,
-                additionalInfo: ["index": index]
-            )
+            postEvent(.stashDropFailure(index: index, error: error))
             throw error
         }
     }
@@ -847,14 +807,9 @@ extension Project {
     func abortMerge() async throws {
         do {
             try gitCLI.abortMerge()
-            postEvent(name: .projectDidMerge, operation: "abortMerge")
+            postEvent(.abortMergeSuccess())
         } catch {
-            postEvent(
-                name: .projectOperationDidFail,
-                operation: "abortMerge",
-                success: false,
-                error: error
-            )
+            postEvent(.abortMergeFailure(error: error))
             throw error
         }
     }
@@ -865,19 +820,9 @@ extension Project {
     func continueMerge(branchName: String) async throws {
         do {
             try gitCLI.continueMerge()
-            postEvent(
-                name: .projectDidMerge,
-                operation: "continueMerge",
-                additionalInfo: ["branchName": branchName]
-            )
+            postEvent(.continueMergeSuccess(branchName: branchName))
         } catch {
-            postEvent(
-                name: .projectOperationDidFail,
-                operation: "continueMerge",
-                success: false,
-                error: error,
-                additionalInfo: ["branchName": branchName]
-            )
+            postEvent(.continueMergeFailure(branchName: branchName, error: error))
             throw error
         }
     }
@@ -886,57 +831,18 @@ extension Project {
     /// - Returns: README.md文件的内容，如果文件不存在则抛出异常
     /// - Throws: 文件不存在或读取错误
     func getReadmeContent() async throws -> String {
-        let readmeFiles = ["README.md", "readme.md", "Readme.md", "README.MD"]
-        let fileManager = FileManager.default
-
-        for readmeFile in readmeFiles {
-            let readmeURL = URL(fileURLWithPath: self.path).appendingPathComponent(readmeFile)
-            if fileManager.fileExists(atPath: readmeURL.path) {
-                return try String(contentsOf: readmeURL, encoding: .utf8)
-            }
-        }
-
-        throw NSError(
-            domain: "ProjectError",
-            code: 404,
-            userInfo: [NSLocalizedDescriptionKey: "README.md file not found"]
-        )
+        try ProjectDocumentResolver.readReadmeContent(in: URL(fileURLWithPath: self.path))
     }
 
     /// 获取项目根目录的 .gitignore 内容
     /// - Returns: .gitignore 文件内容，如果不存在则抛出异常
     func getGitignoreContent() async throws -> String {
-        let gitignoreURL = URL(fileURLWithPath: self.path).appendingPathComponent(".gitignore")
-        let fileManager = FileManager.default
-
-        guard fileManager.fileExists(atPath: gitignoreURL.path) else {
-            throw NSError(
-                domain: "ProjectError",
-                code: 404,
-                userInfo: [NSLocalizedDescriptionKey: ".gitignore file not found"]
-            )
-        }
-
-        return try String(contentsOf: gitignoreURL, encoding: .utf8)
+        try ProjectDocumentResolver.readGitignoreContent(in: URL(fileURLWithPath: self.path))
     }
 
     /// 获取 LICENSE 内容（支持多种常见文件名）
     func getLicenseContent() async throws -> String {
-        let licenseFiles = ["LICENSE", "LICENSE.txt", "License", "license"]
-        let fileManager = FileManager.default
-
-        for file in licenseFiles {
-            let url = URL(fileURLWithPath: self.path).appendingPathComponent(file)
-            if fileManager.fileExists(atPath: url.path) {
-                return try String(contentsOf: url, encoding: .utf8)
-            }
-        }
-
-        throw NSError(
-            domain: "ProjectError",
-            code: 404,
-            userInfo: [NSLocalizedDescriptionKey: "LICENSE file not found"]
-        )
+        try ProjectDocumentResolver.readLicenseContent(in: URL(fileURLWithPath: self.path))
     }
 
     /// 写入/创建 LICENSE 内容，使用 `LICENSE` 文件名

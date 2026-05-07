@@ -105,27 +105,30 @@ class AutoPushService: ObservableObject, SuperLog {
 
     /// 检查当前项目并执行自动推送
     private func checkAndAutoPushForCurrentProject() async {
-        // 从 ProjectVM 获取当前项目（projectVM 是 weak 引用，需要在主线程访问）
-        var project: Project?
-        await MainActor.run {
-            project = self.projectVM?.project
+        let projectSnapshot = await MainActor.run { () -> (path: String, isGitRepo: Bool, title: String)? in
+            guard let project = self.projectVM?.project else { return nil }
+            return (project.path, project.isGitRepo, project.title)
         }
 
-        guard let project = project else {
+        guard let projectSnapshot else {
             if Self.verbose {
                 AutoPushPlugin.logger.info("\(Self.t)没有选中的项目，跳过自动推送")
             }
             return
         }
 
-        await checkAndAutoPush(project: project)
+        await checkAndAutoPush(
+            projectPath: projectSnapshot.path,
+            isGitRepo: projectSnapshot.isGitRepo,
+            projectTitle: projectSnapshot.title
+        )
     }
 
     /// 检查并执行自动推送
-    private func checkAndAutoPush(project: Project) async {
+    private func checkAndAutoPush(projectPath: String, isGitRepo: Bool, projectTitle: String) async {
         // 获取当前分支（可能在后台执行）
         let currentBranch: GitBranch? = await Task.detached {
-            try? project.getCurrentBranch()
+            try? LibGit2.getCurrentBranchInfo(at: projectPath)
         }.value
 
         guard let currentBranch = currentBranch else {
@@ -138,20 +141,20 @@ class AutoPushService: ObservableObject, SuperLog {
         // 检查是否启用了自动推送（后台读取）
         let isEnabled = await Task.detached {
             AutoPushSettingsStore.shared.isAutoPushEnabled(
-                for: project.path,
+                for: projectPath,
                 branchName: currentBranch.name
             )
         }.value
 
         if !isEnabled {
             if Self.verbose {
-                AutoPushPlugin.logger.info("\(Self.t)未启用自动推送 \(project.title)/\(currentBranch.name)")
+                AutoPushPlugin.logger.info("\(Self.t)未启用自动推送 \(projectTitle)/\(currentBranch.name)")
             }
             return
         }
 
         // 检查是否为 Git 仓库
-        guard project.isGitRepo else {
+        guard isGitRepo else {
             if Self.verbose {
                 AutoPushPlugin.logger.info("\(Self.t)不是 Git 仓库，跳过自动推送")
             }
@@ -160,7 +163,7 @@ class AutoPushService: ObservableObject, SuperLog {
 
         // 检查是否有远程仓库（后台执行）
         let hasRemote = await Task.detached {
-            guard let remoteURL = LibGit2.getRemoteURL(at: project.path, remote: "origin"),
+            guard let remoteURL = LibGit2.getRemoteURL(at: projectPath, remote: "origin"),
                   !remoteURL.isEmpty else {
                 return false
             }
@@ -175,11 +178,11 @@ class AutoPushService: ObservableObject, SuperLog {
         }
 
         // 执行推送（完全在后台）
-        await performPush(project: project, branchName: currentBranch.name)
+        await performPush(projectPath: projectPath, branchName: currentBranch.name)
     }
 
     /// 执行推送操作（完全在后台）
-    private func performPush(project: Project, branchName: String) async {
+    private func performPush(projectPath: String, branchName: String) async {
         // 检查是否正在推送
         let currentlyPushing = await Task { @MainActor in
             self.isPushing
@@ -206,7 +209,7 @@ class AutoPushService: ObservableObject, SuperLog {
 
             do {
                 // 检查是否有未推送的提交
-                let unpushedCommits = try LibGit2.getUnPushedCommits(at: project.path, verbose: false)
+                let unpushedCommits = try LibGit2.getUnPushedCommits(at: projectPath, verbose: false)
 
                 if unpushedCommits.isEmpty {
                     if Self.verbose {
@@ -221,11 +224,11 @@ class AutoPushService: ObservableObject, SuperLog {
                 }
 
                 // 执行推送（耗时操作）
-                try project.push()
+                try LibGit2.push(at: projectPath, verbose: false)
 
                 // 更新最后推送时间
                 AutoPushSettingsStore.shared.updateLastPushedDate(
-                    for: project.path,
+                    for: projectPath,
                     branchName: branchName
                 )
 

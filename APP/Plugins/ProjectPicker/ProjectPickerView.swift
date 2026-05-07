@@ -11,11 +11,11 @@ struct ProjectPickerView: View, SuperLog {
     @State private var selection: Project?
 
     static let emoji = "💺"
+    static let verbose = false
     static let shared = ProjectPickerView()
-    private let verbose = false
 
     private init() {
-        if verbose {
+        if Self.verbose {
             os_log("\(Self.onInit)")
         }
     }

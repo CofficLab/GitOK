@@ -253,17 +253,38 @@ struct CommitRow: View, SuperThread, SuperLog {
             return
         }
 
+        let projectPath = project.path
+        let commitSnapshot = commit
+
         isUndoing = true
 
         Task.detached(priority: .userInitiated) {
             do {
-                try project.undoCommit(commit)
+                guard let parentHash = commitSnapshot.parentHashes.first else {
+                    throw NSError(
+                        domain: "GitOK",
+                        code: -1,
+                        userInfo: [NSLocalizedDescriptionKey: "暂不支持撤销初始提交"]
+                    )
+                }
+
+                try LibGit2.reset(to: parentHash, mode: "mixed", at: projectPath, verbose: false)
 
                 if Self.verbose {
-                    os_log("\(self.t)✅ Commit undone: \(commit.hash.prefix(8))")
+                    os_log("\(self.t)✅ Commit undone: \(commitSnapshot.hash.prefix(8))")
                 }
 
                 await MainActor.run {
+                    if let activeProject = vm.project, activeProject.path == projectPath {
+                        activeProject.postEvent(
+                            name: .projectDidCommit,
+                            operation: "undoCommit",
+                            additionalInfo: [
+                                "commitHash": commitSnapshot.hash,
+                                "parentHash": parentHash
+                            ]
+                        )
+                    }
                     isUndoing = false
                     showUndoConfirmation = false
                     // 撤销后取消选中 commit，显示工作区变更
@@ -271,6 +292,15 @@ struct CommitRow: View, SuperThread, SuperLog {
                 }
             } catch {
                 await MainActor.run {
+                    if let activeProject = vm.project, activeProject.path == projectPath {
+                        activeProject.postEvent(
+                            name: .projectOperationDidFail,
+                            operation: "undoCommit",
+                            success: false,
+                            error: error,
+                            additionalInfo: ["commitHash": commitSnapshot.hash]
+                        )
+                    }
                     isUndoing = false
                     showUndoConfirmation = false
                     alert_error(error)

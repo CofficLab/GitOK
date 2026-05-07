@@ -74,6 +74,8 @@ extension BtnGitPushView {
     ///   - path: 项目路径
     ///   - onComplete: 完成回调
     func push(path: String, onComplete: @escaping () -> Void) {
+        let project = vm.project
+
         /// 设置状态信息
         /// - Parameter text: 状态文本，nil 表示清除状态
         func setStatus(_ text: String?) {
@@ -94,7 +96,7 @@ extension BtnGitPushView {
             
             do {
                 // ✅ 关键修复：push() 是阻塞操作，必须在后台线程执行，不能在 MainActor.run 中
-                try self.vm.project?.push()
+                try project?.push()
                 
                 await MainActor.run {
                     MagicMessageProvider.shared.hideLoading()
@@ -127,7 +129,7 @@ extension BtnGitPushView {
 
     /// 异步更新 Git 项目状态：使用异步方式避免阻塞主线程，解决 CPU 占用 100% 的问题
     func updateIsGitProjectAsync() async {
-        let isGit = await vm.project?.isGit() ?? false
+        let isGit = vm.project?.isGit() ?? false
         await MainActor.run {
             self.isGitProject = isGit
         }

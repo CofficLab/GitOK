@@ -10,6 +10,7 @@ struct MinimalBannerTemplate: BannerTemplateProtocol {
     let description = String(localized: "居中布局，简洁优雅", table: "Banner")
     let systemImageName = "rectangle.center.inset.filled"
     
+    @MainActor
     func createPreviewView() -> AnyView {
         AnyView(
             MinimalBannerLayout()

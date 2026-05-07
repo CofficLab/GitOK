@@ -236,6 +236,7 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
     /// 获取标签页详情视图
     /// - Parameter tab: 标签页标识符
     /// - Returns: 如果找到标签页插件，则返回其详情视图，否则返回nil
+    @MainActor
     func getEnabledTabDetailView(tab: String) -> AnyView? {
         for plugin in plugins {
             guard isPluginEnabled(plugin) else { continue }

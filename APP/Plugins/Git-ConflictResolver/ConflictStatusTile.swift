@@ -34,6 +34,7 @@ struct ConflictStatusTile: View, SuperLog {
             loadConflictStatus()
         }
         .onProjectDidMerge(perform: onProjectDidMerge)
+        .onProjectDidAddFiles(perform: onProjectDidAddFiles)
     }
 
     private var iconName: String {
@@ -102,6 +103,16 @@ struct ConflictStatusTile: View, SuperLog {
 
     /// 项目合并事件处理
     func onProjectDidMerge(_ eventInfo: ProjectEventInfo) {
+        handleRefreshTrigger(notificationName: .projectDidMerge)
+    }
+
+    /// 文件暂存后可能改变冲突状态
+    func onProjectDidAddFiles(_ eventInfo: ProjectEventInfo) {
+        handleRefreshTrigger(notificationName: .projectDidAddFiles)
+    }
+
+    private func handleRefreshTrigger(notificationName: Notification.Name) {
+        guard ProjectEventRefreshRules.shouldRefreshConflictStatus(for: notificationName) else { return }
         loadConflictStatus()
     }
 }

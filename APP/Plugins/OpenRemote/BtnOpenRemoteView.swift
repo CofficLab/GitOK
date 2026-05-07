@@ -108,7 +108,7 @@ extension BtnOpenRemoteView {
             return
         }
         
-        let isGit = await project.isGit()
+        let isGit = project.isGit()
         await MainActor.run {
             self.isGitProject = isGit
         }

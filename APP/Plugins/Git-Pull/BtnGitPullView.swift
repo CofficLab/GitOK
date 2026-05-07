@@ -78,6 +78,8 @@ extension BtnGitPullView {
     ///   - path: 项目路径
     ///   - onComplete: 完成回调
     func pull(path: String, onComplete: @escaping () -> Void) {
+        let project = vm.project
+
         func setStatus(_ text: String?) {
             Task { @MainActor in
                 data.activityStatus = text
@@ -93,7 +95,7 @@ extension BtnGitPullView {
         Task.detached {
             await setStatus("拉取中…")
             do {
-                try await self.vm.project?.pull()
+                try project?.pull()
                 await MainActor.run {
                     MagicMessageProvider.shared.hideLoading()
                     self.reset()

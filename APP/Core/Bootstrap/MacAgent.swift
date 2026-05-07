@@ -29,22 +29,19 @@ class MacAgent: NSObject, NSApplicationDelegate, ObservableObject, SuperLog, Sup
     }
 
     func applicationDidFinishLaunching(_ notification: Notification) {
-        let verbose = false
-        if verbose {
+        if Self.verbose {
             os_log("\(self.label)Finish Lanunching")
         }
     }
 
     func applicationWillTerminate(_ notification: Notification) {
-        let verbose = false
-        if verbose {
+        if Self.verbose {
             os_log("\(self.label)Will Terminate")
         }
     }
 
     func applicationDidBecomeActive(_ notification: Notification) {
-        let verbose = false
-        if verbose {
+        if Self.verbose {
             os_log("\(self.label)Did Become Active")
         }
 
@@ -54,8 +51,7 @@ class MacAgent: NSObject, NSApplicationDelegate, ObservableObject, SuperLog, Sup
     }
 
     func applicationWillFinishLaunching(_ notification: Notification) {
-        let verbose = false
-        if verbose {
+        if Self.verbose {
             os_log("\(self.label)Will Finish Launching")
         }
 
@@ -71,8 +67,7 @@ class MacAgent: NSObject, NSApplicationDelegate, ObservableObject, SuperLog, Sup
     }
 
     func applicationWillBecomeActive(_ notification: Notification) {
-        let verbose = false
-        if verbose {
+        if Self.verbose {
             os_log("\(self.label)Will Become Active")
         }
 
@@ -89,8 +84,7 @@ class MacAgent: NSObject, NSApplicationDelegate, ObservableObject, SuperLog, Sup
         _ application: NSApplication,
         didReceiveRemoteNotification userInfo: [String: Any]
     ) {
-        let verbose = false
-        if verbose {
+        if Self.verbose {
             os_log("\(self.label)收到远程通知\n\(userInfo)")
         }
     }

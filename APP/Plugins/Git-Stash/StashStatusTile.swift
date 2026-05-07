@@ -92,8 +92,7 @@ struct StashStatusTile: View, SuperLog {
 
     /// 项目提交完成时的事件处理
     func onProjectDidCommit(_ eventInfo: ProjectEventInfo) {
-        // 只有stash相关的操作才需要刷新stash数量
-        if ["stashSave", "stashApply", "stashPop", "stashDrop"].contains(eventInfo.operation) {
+        if ProjectEventRefreshRules.shouldRefreshStash(for: eventInfo.operation) {
             loadStashCount()
         }
     }

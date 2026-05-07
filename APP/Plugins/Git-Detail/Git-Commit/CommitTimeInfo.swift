@@ -34,7 +34,7 @@ struct CommitTimeInfo: View {
 // MARK: - Preview
 
 #Preview("Commit Time Info") {
-    @State var showingTimePopup = false
+    @Previewable @State var showingTimePopup = false
 
     return CommitTimeInfo(
         commit: GitCommit(

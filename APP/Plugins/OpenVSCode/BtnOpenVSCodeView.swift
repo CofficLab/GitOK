@@ -9,7 +9,7 @@ struct BtnOpenVSCodeView: View {
     private init() {}
 
     var body: some View {
-        if let project = vm.project {
+        if vm.project != nil {
             Image.vscodeApp
                 .resizable()
                 .frame(height: 22)

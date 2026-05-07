@@ -83,6 +83,8 @@ extension BtnSyncView {
             os_log("\(self.t)Starting sync for path: \(path)")
         }
 
+        let project = vm.project
+
         func setStatus(_ text: String?) {
             Task { @MainActor in
                 data.activityStatus = text
@@ -99,7 +101,7 @@ extension BtnSyncView {
             await setStatus("同步中…")
             do {
                 // 检查是否有远程仓库
-                if let project = await self.vm.project {
+                if let project {
                     let remotes = try project.remoteList()
                     if remotes.isEmpty {
                         if Self.verbose {
@@ -115,7 +117,7 @@ extension BtnSyncView {
                     }
                 }
 
-                try await self.vm.project?.sync()
+                try project?.sync()
                 os_log("\(self.t)Sync completed successfully")
                 await MainActor.run {
                     self.reset()

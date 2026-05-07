@@ -21,12 +21,13 @@ extension View {
     }
 
     /// 添加带快捷键提示的工具提示
-    func appTooltip(_ text: LocalizedStringKey, shortcut: KeyboardShortcut?) -> some View {
-        if let shortcut {
-            help("\(text) (\(shortcutText(shortcut)))")
+    func appTooltip(_ text: String, shortcut: KeyboardShortcut?) -> some View {
+        let helpText = if let shortcut {
+            "\(text) (\(shortcutText(shortcut)))"
         } else {
-            help(text)
+            text
         }
+        return help(helpText)
     }
 
     /// 将 KeyboardShortcut 转换为可读文本

@@ -126,7 +126,7 @@ struct CommitHashPopup: View {
 // MARK: - Preview
 
 #Preview("Commit Hash Popup") {
-    @State var isCopied = false
+    @Previewable @State var isCopied = false
 
     CommitHashPopup(
         commit: GitCommit(

@@ -38,7 +38,7 @@ struct FileTile: View, SuperLog {
         .padding(.horizontal, 8)
         .cornerRadius(4)
         .contextMenu {
-            if let onDiscardChanges = onDiscardChanges {
+            if onDiscardChanges != nil {
                 Button("丢弃更改") {
                     showDiscardAlert = true
                 }

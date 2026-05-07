@@ -26,6 +26,41 @@ final class GitRepositoryCLITests: XCTestCase {
         )
     }
 
+    func testParseStashListSkipsMalformedLinesAndKeepsEmptyMessages() {
+        let output = """
+        malformed
+        stash@{0}\u{1F}
+        stash@{x}\u{1F}bad index
+        stash@{2}\u{1F}kept
+        """
+
+        XCTAssertEqual(
+            GitParsers.parseStashList(output),
+            [
+                GitStashEntry(index: 0, message: ""),
+                GitStashEntry(index: 2, message: "kept"),
+            ]
+        )
+    }
+
+    func testParseStatusEntriesSkipsShortLinesAndKeepsSpacesInPaths() {
+        let output = """
+         M README.md
+        R  old name.swift -> new name.swift
+        ??
+        ?? folder/file with spaces.txt
+        """
+
+        XCTAssertEqual(
+            GitParsers.parseStatusEntries(output),
+            [
+                GitStatusEntry(path: "README.md", indexStatus: " ", workTreeStatus: "M"),
+                GitStatusEntry(path: "old name.swift -> new name.swift", indexStatus: "R", workTreeStatus: " "),
+                GitStatusEntry(path: "folder/file with spaces.txt", indexStatus: "?", workTreeStatus: "?"),
+            ]
+        )
+    }
+
     func testClassifyMergeFiles() {
         let files = GitParsers.classifyMergeFiles(
             unresolvedPaths: ["Sources/App.swift"],
@@ -42,6 +77,25 @@ final class GitRepositoryCLITests: XCTestCase {
                 GitMergeFile(path: "Sources/App.swift", state: .unresolved),
                 GitMergeFile(path: "Sources/NeedsStage.swift", state: .pendingStage),
                 GitMergeFile(path: "Sources/Ready.swift", state: .staged),
+            ]
+        )
+    }
+
+    func testClassifyMergeFilesSortsPathsAndMarksPendingStage() {
+        let files = GitParsers.classifyMergeFiles(
+            unresolvedPaths: ["b.swift"],
+            statusEntries: [
+                GitStatusEntry(path: "c.swift", indexStatus: "M", workTreeStatus: " "),
+                GitStatusEntry(path: "a.swift", indexStatus: " ", workTreeStatus: "M"),
+            ]
+        )
+
+        XCTAssertEqual(
+            files,
+            [
+                GitMergeFile(path: "a.swift", state: .pendingStage),
+                GitMergeFile(path: "b.swift", state: .unresolved),
+                GitMergeFile(path: "c.swift", state: .staged),
             ]
         )
     }
@@ -98,6 +152,28 @@ final class GitRepositoryCLITests: XCTestCase {
         XCTAssertTrue(try client.stashList().isEmpty)
     }
 
+    func testStashPopConflictKeepsEntryAndMarksConflict() throws {
+        let repo = try TestGitRepository()
+        try repo.write("shared.txt", content: "base\n")
+        try repo.run(["add", "."])
+        try repo.run(["commit", "-m", "base"])
+
+        let client = GitRepositoryCLI(repositoryURL: repo.url)
+
+        try repo.write("shared.txt", content: "stash change\n")
+        try client.stashSave(message: "pop conflict candidate")
+
+        try repo.write("shared.txt", content: "head change\n")
+        try repo.run(["commit", "-am", "head change"])
+
+        XCTAssertThrowsError(try client.stashPop(index: 0))
+        XCTAssertEqual(try client.stashList(), [GitStashEntry(index: 0, message: "pop conflict candidate")])
+        XCTAssertEqual(
+            try client.statusEntries(),
+            [GitStatusEntry(path: "shared.txt", indexStatus: "U", workTreeStatus: "U")]
+        )
+    }
+
     func testStashApplyConflictKeepsEntryAndMarksConflict() throws {
         let repo = try TestGitRepository()
         try repo.write("shared.txt", content: "base\n")
@@ -115,6 +191,17 @@ final class GitRepositoryCLITests: XCTestCase {
         XCTAssertThrowsError(try client.stashApply(index: 0))
         XCTAssertEqual(try client.stashList(), [GitStashEntry(index: 0, message: "conflict candidate")])
         XCTAssertEqual(try client.statusEntries(), [GitStatusEntry(path: "shared.txt", indexStatus: "U", workTreeStatus: "U")])
+    }
+
+    func testStashCommandsThrowForMissingIndex() throws {
+        let repo = try TestGitRepository()
+        try repo.run(["commit", "--allow-empty", "-m", "initial"])
+
+        let client = GitRepositoryCLI(repositoryURL: repo.url)
+
+        XCTAssertThrowsError(try client.stashApply(index: 99))
+        XCTAssertThrowsError(try client.stashPop(index: 99))
+        XCTAssertThrowsError(try client.stashDrop(index: 99))
     }
 
     func testMergeConflictLifecycle() throws {
@@ -160,6 +247,30 @@ final class GitRepositoryCLITests: XCTestCase {
         let client = GitRepositoryCLI(repositoryURL: repo.url)
         XCTAssertFalse(try client.isMerging())
         XCTAssertNil(try client.getCurrentMergeBranchName())
+    }
+
+    func testContinueMergeThrowsUntilFilesAreStaged() throws {
+        let repo = try TestGitRepository()
+        try repo.write("shared.txt", content: "base\n")
+        try repo.run(["add", "."])
+        try repo.run(["commit", "-m", "base"])
+
+        try repo.run(["checkout", "-b", "feature"])
+        try repo.write("shared.txt", content: "feature\n")
+        try repo.run(["commit", "-am", "feature change"])
+
+        try repo.run(["checkout", "master"])
+        try repo.write("shared.txt", content: "master\n")
+        try repo.run(["commit", "-am", "master change"])
+
+        let client = GitRepositoryCLI(repositoryURL: repo.url)
+        XCTAssertThrowsError(try repo.run(["merge", "feature"])) { _ in }
+
+        try repo.write("shared.txt", content: "resolved but unstaged\n")
+
+        XCTAssertThrowsError(try client.continueMerge())
+        XCTAssertTrue(try client.isMerging())
+        XCTAssertFalse(try client.canContinueMerge())
     }
 
     func testMergeResolutionFilesStayUnresolvedUntilStaged() throws {
@@ -218,6 +329,24 @@ final class GitRepositoryCLITests: XCTestCase {
         XCTAssertFalse(try client.isMerging())
         XCTAssertEqual(try client.getMergeConflictFiles(), [])
         XCTAssertEqual(try repo.read("shared.txt"), "master\n")
+    }
+
+    func testAbortMergeOutsideMergeThrows() throws {
+        let repo = try TestGitRepository()
+        try repo.run(["commit", "--allow-empty", "-m", "initial"])
+
+        let client = GitRepositoryCLI(repositoryURL: repo.url)
+        XCTAssertThrowsError(try client.abortMerge())
+    }
+
+    func testRunGitPrefersStderrInThrownError() throws {
+        let repo = try TestGitRepository()
+        let client = GitRepositoryCLI(repositoryURL: repo.url)
+
+        XCTAssertThrowsError(try client.runGit(["not-a-real-command"])) { error in
+            let description = (error as NSError).localizedDescription
+            XCTAssertTrue(description.contains("not-a-real-command"))
+        }
     }
 }
 

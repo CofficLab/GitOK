@@ -53,6 +53,7 @@ protocol SuperPlugin {
     /// 返回插件的详情视图
     /// - Parameter tab: 标签页的名称
     /// - Returns: 包装在 AnyView 中的详情视图
+    @MainActor
     func addDetailView(for tab: String) -> AnyView?
 
     /// 返回插件在工具栏前部区域的视图
@@ -170,6 +171,7 @@ extension SuperPlugin {
     }
 
     /// 默认的详情视图实现，返回空视图
+    @MainActor
     func addDetailView(for tab: String) -> AnyView? {
         nil
     }

@@ -35,7 +35,7 @@ struct BtnAdd: View, SuperLog {
     /// 添加项目URL
     /// - Parameter url: 项目目录URL
     private func addURL(_ url: URL) {
-        withAnimation {
+        _ = withAnimation {
             g.addProject(url: url, using: g.repoManager.projectRepo)
         }
     }

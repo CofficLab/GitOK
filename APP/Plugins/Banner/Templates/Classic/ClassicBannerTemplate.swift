@@ -10,6 +10,7 @@ struct ClassicBannerTemplate: BannerTemplateProtocol {
     let description = String(localized: "左侧标题副标题和特性，右侧产品图片", table: "Banner")
     let systemImageName = "rectangle.split.2x1"
     
+    @MainActor
     func createPreviewView() -> AnyView {
         AnyView(
             ClassicBannerLayout()
@@ -68,4 +69,3 @@ struct ClassicBannerTemplate: BannerTemplateProtocol {
         .frame(width: 800)
         .frame(height: 1000)
 }
-

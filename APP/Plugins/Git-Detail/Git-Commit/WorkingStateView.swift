@@ -238,8 +238,10 @@ extension WorkingStateView {
             return
         }
 
+        let projectPath = project.path
+
         if Self.verbose {
-            os_log("\(self.t)<\(project.path)>Loading sync status")
+            os_log("\(self.t)<\(projectPath)>Loading sync status")
         }
 
         // 设置活动状态
@@ -252,7 +254,7 @@ extension WorkingStateView {
             let unpulledCount: Int
 
             do {
-                let unpushed = try await project.getUnPushedCommits()
+                let unpushed = try LibGit2.getUnPushedCommits(at: projectPath, verbose: false)
                 unpushedCount = unpushed.count
             } catch {
                 unpushedCount = 0
@@ -263,7 +265,7 @@ extension WorkingStateView {
 
             do {
                 // 使用 getUnPulledCount() 获取远程领先的提交数量
-                unpulledCount = try project.getUnPulledCount()
+                unpulledCount = try LibGit2.getUnPulledCount(at: projectPath)
             } catch {
                 unpulledCount = 0
                 await MainActor.run {
@@ -284,7 +286,9 @@ extension WorkingStateView {
 
             // 延迟清除状态，确保用户能看到提示（至少显示2秒）
             try? await Task.sleep(nanoseconds: 2000000000)
-            self.setStatus(nil)
+            await MainActor.run {
+                self.setStatus(nil)
+            }
         }
 
         // 立即更新 loading 状态
@@ -308,8 +312,10 @@ extension WorkingStateView {
             return
         }
 
+        let projectPath = project.path
+
         if Self.verbose {
-            os_log("\(self.t)<\(project.path)>Performing git pull")
+            os_log("\(self.t)<\(projectPath)>Performing git pull")
         }
 
         // 立即更新 UI 状态
@@ -324,7 +330,7 @@ extension WorkingStateView {
 
             do {
                 // 在后台线程执行耗时操作
-                try project.pull()
+                try LibGit2.pull(at: projectPath, verbose: false)
                 result = .success(())
                 await MainActor.run {
                     os_log("\(Self.t)✅ Git pull succeeded")
@@ -355,7 +361,9 @@ extension WorkingStateView {
             }
 
             // 清除状态日志
-            self.setStatus(nil)
+            await MainActor.run {
+                self.setStatus(nil)
+            }
         }
     }
 
@@ -368,8 +376,10 @@ extension WorkingStateView {
             return
         }
 
+        let projectPath = project.path
+
         if Self.verbose {
-            os_log("\(self.t)<\(project.path)>Performing git push")
+            os_log("\(self.t)<\(projectPath)>Performing git push")
         }
 
         // 立即更新 UI 状态
@@ -384,7 +394,7 @@ extension WorkingStateView {
 
             do {
                 // 在后台线程执行耗时操作
-                try project.push()
+                try LibGit2.push(at: projectPath, verbose: false)
                 result = .success(())
                 await MainActor.run {
                     os_log("\(Self.t)✅ Git push succeeded")
@@ -415,7 +425,9 @@ extension WorkingStateView {
             }
 
             // 清除状态日志
-            self.setStatus(nil)
+            await MainActor.run {
+                self.setStatus(nil)
+            }
         }
     }
 

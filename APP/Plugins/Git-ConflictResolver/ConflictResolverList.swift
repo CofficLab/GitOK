@@ -19,8 +19,6 @@ struct ConflictResolverList: View, SuperLog, SuperThread {
     @State private var isMerging = false
     @State private var selectedFile: String?
     @State private var mergeBranchName = "unknown"
-    @State private var hasStagedResolutions = false
-    @State private var hasPendingUnstagedResolutions = false
     @State private var isPerformingAction = false
     @State private var activeActionFile: String?
 
@@ -42,33 +40,19 @@ struct ConflictResolverList: View, SuperLog, SuperThread {
             loadConflictStatus()
         }
         .onProjectDidMerge(perform: onProjectDidMerge)
-        .onProjectDidAddFiles { _ in
-            loadConflictStatus()
-        }
+        .onProjectDidAddFiles(perform: onProjectDidAddFiles)
     }
 }
 
 // MARK: - View
 
 extension ConflictResolverList {
-    private var canContinueMerge: Bool {
-        isMerging && mergeFiles.allSatisfy { $0.state == .staged } && hasStagedResolutions
+    private var resolutionState: ConflictResolutionState {
+        ConflictResolutionState(isMerging: isMerging, mergeFiles: mergeFiles)
     }
 
     private var statusSubtitle: String {
-        if !isMerging {
-            return "没有正在进行的冲突流程。"
-        }
-        if mergeFiles.contains(where: { $0.state == .unresolved }) {
-            return "先在编辑器中解决冲突，再将文件标记为已解决。"
-        }
-        if hasPendingUnstagedResolutions {
-            return "冲突标记已移除，但还有文件尚未暂存。"
-        }
-        if canContinueMerge {
-            return "所有合并文件都已暂存，可以继续完成合并。"
-        }
-        return "合并仍在进行中。"
+        resolutionState.statusSubtitle
     }
 
     private var headerBar: some View {
@@ -92,7 +76,7 @@ extension ConflictResolverList {
                             compactActionButton(
                                 title: String(localized: "继续合并", table: "GitConflictResolver"),
                                 style: .primary,
-                                isDisabled: !canContinueMerge || isPerformingAction,
+                                isDisabled: !resolutionState.canContinueMerge || isPerformingAction,
                                 action: continueMerge
                             )
                             compactActionButton(
@@ -137,7 +121,7 @@ extension ConflictResolverList {
                     .font(DesignTokens.Typography.bodyEmphasized)
                     .foregroundColor(DesignTokens.Color.semantic.textPrimary)
 
-                Text(isMerging ? continueHint : "No merge in progress")
+                Text(resolutionState.continueHint)
                     .font(DesignTokens.Typography.caption1)
                     .foregroundColor(DesignTokens.Color.semantic.textTertiary)
             }
@@ -148,19 +132,6 @@ extension ConflictResolverList {
             RoundedRectangle(cornerRadius: DesignTokens.Radius.md)
                 .fill((isMerging ? DesignTokens.Color.semantic.warning : DesignTokens.Color.semantic.success).opacity(0.12))
         )
-    }
-
-    private var continueHint: String {
-        if mergeFiles.contains(where: { $0.state == .unresolved }) {
-            return "Resolve conflicts before continue"
-        }
-        if hasPendingUnstagedResolutions {
-            return "Stage resolved files before continue"
-        }
-        if canContinueMerge {
-            return "Ready to continue merge"
-        }
-        return "Merge in progress"
     }
 
     private func compactActionButton(title: String, style: GlassButton.Style, isDisabled: Bool = false, action: @escaping () -> Void) -> some View {
@@ -240,7 +211,7 @@ extension ConflictResolverList {
 
 extension ConflictResolverList {
     private func continueMerge() {
-        guard let project = vm.project, canContinueMerge, !isPerformingAction else { return }
+        guard let project = vm.project, resolutionState.canContinueMerge, !isPerformingAction else { return }
 
         isPerformingAction = true
 
@@ -337,8 +308,6 @@ extension ConflictResolverList {
             mergeFiles = []
             isMerging = false
             mergeBranchName = "unknown"
-            hasStagedResolutions = false
-            hasPendingUnstagedResolutions = false
             isLoading = false
             return
         }
@@ -353,8 +322,6 @@ extension ConflictResolverList {
                         mergeFiles = []
                         isMerging = false
                         mergeBranchName = "unknown"
-                        hasStagedResolutions = false
-                        hasPendingUnstagedResolutions = false
                         isLoading = false
                     }
                     return
@@ -383,8 +350,6 @@ extension ConflictResolverList {
                     mergeFiles = files
                     isMerging = true
                     mergeBranchName = mergeBranch
-                    hasStagedResolutions = stagedPaths.isEmpty == false
-                    hasPendingUnstagedResolutions = files.contains { $0.state == .pendingStage }
                     isLoading = false
 
                     if let selectedFile, files.contains(where: { $0.path == selectedFile }) == false {
@@ -399,8 +364,6 @@ extension ConflictResolverList {
                     mergeFiles = []
                     isMerging = false
                     mergeBranchName = "unknown"
-                    hasStagedResolutions = false
-                    hasPendingUnstagedResolutions = false
                     isLoading = false
                 }
             }
@@ -416,6 +379,15 @@ extension ConflictResolverList {
     }
 
     func onProjectDidMerge(_ eventInfo: ProjectEventInfo) {
+        handleRefreshTrigger(notificationName: .projectDidMerge)
+    }
+
+    func onProjectDidAddFiles(_ eventInfo: ProjectEventInfo) {
+        handleRefreshTrigger(notificationName: .projectDidAddFiles)
+    }
+
+    private func handleRefreshTrigger(notificationName: Notification.Name) {
+        guard ProjectEventRefreshRules.shouldRefreshConflictStatus(for: notificationName) else { return }
         loadConflictStatus()
     }
 }
