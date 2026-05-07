@@ -20,6 +20,25 @@ struct ProjectEventInfo {
     }
 }
 
+// MARK: - Refresh Rules
+
+enum ProjectEventRefreshRules {
+    private static let stashOperations: Set<String> = [
+        "stashSave",
+        "stashApply",
+        "stashPop",
+        "stashDrop",
+    ]
+
+    static func shouldRefreshStash(for operation: String) -> Bool {
+        stashOperations.contains(operation)
+    }
+
+    static func shouldRefreshConflictStatus(for notificationName: Notification.Name) -> Bool {
+        notificationName == .projectDidMerge || notificationName == .projectDidAddFiles
+    }
+}
+
 // MARK: - Project Events
 
 /// 项目相关事件通知名称定义
@@ -154,4 +173,3 @@ extension View {
         }
     }
 }
-

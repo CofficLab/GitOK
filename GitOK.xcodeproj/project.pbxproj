@@ -20,7 +20,6 @@
 		A1F000142F70000100ABC001 /* APP/Plugins/Git-ConflictResolver/ConflictResolutionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F000152F70000100ABC001 /* APP/Plugins/Git-ConflictResolver/ConflictResolutionState.swift */; };
 		A1F000162F70000100ABC001 /* APP/Core/Models/ProjectDocumentResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F000172F70000100ABC001 /* APP/Core/Models/ProjectDocumentResolver.swift */; };
 		A1F000182F70000100ABC001 /* APP/Core/Events/ProjectGitOperationEventDescriptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F000192F70000100ABC001 /* APP/Core/Events/ProjectGitOperationEventDescriptor.swift */; };
-		A1F0001A2F70000100ABC001 /* APP/Core/Events/ProjectEventRefreshRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F0001B2F70000100ABC001 /* APP/Core/Events/ProjectEventRefreshRules.swift */; };
 		A1F0001C2F70000100ABC001 /* APP/Core/Bootstrap/OpenProjectPathResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F0001D2F70000100ABC001 /* APP/Core/Bootstrap/OpenProjectPathResolver.swift */; };
 		A1F0001E2F70000100ABC001 /* APP/Plugins/AutoPush/AutoPushDecision.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F0001F2F70000100ABC001 /* APP/Plugins/AutoPush/AutoPushDecision.swift */; };
 		A1F000202F70000100ABC001 /* APP/Plugins/AutoPush/AutoPushSettingsPersistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F000212F70000100ABC001 /* APP/Plugins/AutoPush/AutoPushSettingsPersistence.swift */; };
@@ -825,7 +824,6 @@
 		A1F000152F70000100ABC001 /* APP/Plugins/Git-ConflictResolver/ConflictResolutionState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "APP/Plugins/Git-ConflictResolver/ConflictResolutionState.swift"; sourceTree = "<group>"; };
 		A1F000172F70000100ABC001 /* APP/Core/Models/ProjectDocumentResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APP/Core/Models/ProjectDocumentResolver.swift; sourceTree = "<group>"; };
 		A1F000192F70000100ABC001 /* APP/Core/Events/ProjectGitOperationEventDescriptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APP/Core/Events/ProjectGitOperationEventDescriptor.swift; sourceTree = "<group>"; };
-		A1F0001B2F70000100ABC001 /* APP/Core/Events/ProjectEventRefreshRules.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APP/Core/Events/ProjectEventRefreshRules.swift; sourceTree = "<group>"; };
 		A1F0001D2F70000100ABC001 /* APP/Core/Bootstrap/OpenProjectPathResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APP/Core/Bootstrap/OpenProjectPathResolver.swift; sourceTree = "<group>"; };
 		A1F0001F2F70000100ABC001 /* APP/Plugins/AutoPush/AutoPushDecision.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APP/Plugins/AutoPush/AutoPushDecision.swift; sourceTree = "<group>"; };
 		A1F000212F70000100ABC001 /* APP/Plugins/AutoPush/AutoPushSettingsPersistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APP/Plugins/AutoPush/AutoPushSettingsPersistence.swift; sourceTree = "<group>"; };
@@ -1226,7 +1224,6 @@
 				A1F000152F70000100ABC001 /* APP/Plugins/Git-ConflictResolver/ConflictResolutionState.swift */,
 				A1F000172F70000100ABC001 /* APP/Core/Models/ProjectDocumentResolver.swift */,
 				A1F000192F70000100ABC001 /* APP/Core/Events/ProjectGitOperationEventDescriptor.swift */,
-				A1F0001B2F70000100ABC001 /* APP/Core/Events/ProjectEventRefreshRules.swift */,
 				A1F0001D2F70000100ABC001 /* APP/Core/Bootstrap/OpenProjectPathResolver.swift */,
 				A1F0001F2F70000100ABC001 /* APP/Plugins/AutoPush/AutoPushDecision.swift */,
 				A1F000212F70000100ABC001 /* APP/Plugins/AutoPush/AutoPushSettingsPersistence.swift */,
@@ -2240,7 +2237,6 @@
 				A1F000142F70000100ABC001 /* APP/Plugins/Git-ConflictResolver/ConflictResolutionState.swift in Sources */,
 				A1F000162F70000100ABC001 /* APP/Core/Models/ProjectDocumentResolver.swift in Sources */,
 				A1F000182F70000100ABC001 /* APP/Core/Events/ProjectGitOperationEventDescriptor.swift in Sources */,
-				A1F0001A2F70000100ABC001 /* APP/Core/Events/ProjectEventRefreshRules.swift in Sources */,
 				A1F0001C2F70000100ABC001 /* APP/Core/Bootstrap/OpenProjectPathResolver.swift in Sources */,
 				A1F0001E2F70000100ABC001 /* APP/Plugins/AutoPush/AutoPushDecision.swift in Sources */,
 				A1F000202F70000100ABC001 /* APP/Plugins/AutoPush/AutoPushSettingsPersistence.swift in Sources */,
