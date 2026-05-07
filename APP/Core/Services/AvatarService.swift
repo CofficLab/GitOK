@@ -28,15 +28,6 @@ class AvatarService: ObservableObject, SuperLog {
     private var failedCache: [String: Date] = [:]
     private let failedCacheTimeout: TimeInterval = 5 * 60 // 5分钟
 
-    /// Bot 头像缓存
-    private let botAvatarCache: [String: String] = [
-        "dependabot[bot]": "https://github.com/dependabot.png",
-        "github-actions[bot]": "https://github.com/github-actions.png",
-        "github-pages[bot]": "https://github.com/github-pages.png",
-        "renovate[bot]": "https://github.com/renovatebot.png",
-        "greenkeeper[bot]": "https://github.com/greenkeeper.png"
-    ]
-
     // MARK: - 公共方法
 
     /// 获取头像 URL
@@ -50,17 +41,17 @@ class AvatarService: ObservableObject, SuperLog {
             os_log("\(self.t)🔍 尝试从AvatarService获取头像URL: \(name) <\(email)>，userUseGravatar: \(userUseGravatar)")
         }
 
-        let normalizedEmail = normalizeEmail(email)
+        let normalizedEmail = AvatarIdentityRules.normalizeEmail(email)
 
         // 确定缓存 key：邮箱不为空时用邮箱，否则用用户名
-        let cacheKey = normalizedEmail.isEmpty ? name : normalizedEmail
+        let cacheKey = AvatarIdentityRules.cacheKey(name: name, email: normalizedEmail)
 
         if Self.verbose {
             os_log("\(self.t)🔑 使用缓存key: \(cacheKey)")
         }
 
         // 检查是否是 bot 账户
-        if let botURL = checkBotAccount(email: normalizedEmail, name: name) {
+        if let botURL = AvatarIdentityRules.botAvatarURL(email: normalizedEmail, name: name) {
             if Self.verbose {
                 os_log("\(self.t)✅ 成功获取 bot 账户头像URL: \(botURL)")
             }
@@ -82,7 +73,7 @@ class AvatarService: ObservableObject, SuperLog {
                 if Self.verbose {
                     os_log("\(self.t)❌ 失败缓存中获取头像URL，回退到 Gravatar: \(cacheKey)")
                 }
-                return getGravatarURL(email: normalizedEmail)
+                return AvatarIdentityRules.gravatarURL(email: normalizedEmail)
             } else {
                 if Self.verbose {
                     os_log("\(self.t)❌ 失败缓存中且不允许使用 Gravatar: \(cacheKey)")
@@ -102,7 +93,7 @@ class AvatarService: ObservableObject, SuperLog {
 
         // 如果用户允许使用 Gravatar，返回 Gravatar URL
         if userUseGravatar {
-            let gravatarURL = getGravatarURL(email: normalizedEmail)
+            let gravatarURL = AvatarIdentityRules.gravatarURL(email: normalizedEmail)
             avatarCache[cacheKey] = gravatarURL
             if Self.verbose {
                 os_log("\(self.t)🔄 未找到 GitHub 头像，使用 Gravatar: \(gravatarURL.absoluteString)")
@@ -124,16 +115,7 @@ class AvatarService: ObservableObject, SuperLog {
     ///   - size: 头像尺寸，默认 64
     /// - Returns: Gravatar URL
     private func getGravatarURL(email: String, size: Int = 64) -> URL {
-        let normalizedEmail = normalizeEmail(email)
-        let hash = md5Hash(string: normalizedEmail)
-
-        var components = URLComponents(string: "https://www.gravatar.com/avatar/\(hash)")!
-        components.queryItems = [
-            URLQueryItem(name: "s", value: "\(size)"),
-            URLQueryItem(name: "d", value: "identicon")
-        ]
-
-        let url = components.url!
+        let url = AvatarIdentityRules.gravatarURL(email: email, size: size)
         if Self.verbose {
             os_log("\(self.t)🔄 生成 Gravatar URL: \(url)")
         }
@@ -157,7 +139,7 @@ class AvatarService: ObservableObject, SuperLog {
 
         // 优先级 2: 使用 Gravatar
         if userUseGravatar {
-            return getGravatarURL(email: email)
+            return AvatarIdentityRules.gravatarURL(email: email)
         }
         return nil
     }
@@ -203,56 +185,6 @@ class AvatarService: ObservableObject, SuperLog {
         }
 
         return nil
-    }
-
-    /// 检查是否是 bot 账户并返回头像
-    /// - Parameters:
-    ///   - email: 邮箱
-    ///   - name: 用户名
-    /// - Returns: bot 头像 URL，如果不是 bot 返回 nil
-    private func checkBotAccount(email: String, name: String) -> URL? {
-        // 检查 bot 邮箱模式
-        let botEmailPattern = #"^(\d+)\+([\w-]+)\[bot\]@users\.noreply\.github\.com$"#
-        if let regex = try? NSRegularExpression(pattern: botEmailPattern),
-           let match = regex.firstMatch(in: email, range: NSRange(email.startIndex..., in: email)) {
-
-            let botName = (email as NSString).substring(with: match.range(at: 2))
-
-            // 从邮箱中提取 bot 名称（例如 "dependabot[bot]"）
-            if let botURL = URL(string: "https://github.com/\(botName).png") {
-                if Self.verbose {
-                    os_log("\(self.t)🤖 识别到邮箱模式的 bot 账户: \(botName)")
-                }
-                return botURL
-            }
-        }
-
-        // 检查预定义的 bot 名称
-        let botName = name.replacingOccurrences(of: "\\[bot\\]", with: "[bot]", options: .regularExpression)
-        if let botAvatarURL = botAvatarCache[botName],
-           let url = URL(string: botAvatarURL) {
-            if Self.verbose {
-                os_log("\(self.t)🤖 识别到预定义 bot 账户: \(botName)")
-            }
-            return url
-        }
-
-        return nil
-    }
-
-    /// 标准化邮箱地址
-    /// - Parameter email: 原始邮箱
-    /// - Returns: 标准化后的邮箱（小写、去除空格）
-    private func normalizeEmail(_ email: String) -> String {
-        email.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
-    }
-
-    /// 计算 MD5 哈希
-    /// - Parameter string: 输入字符串
-    /// - Returns: MD5 哈希值（小写十六进制）
-    private func md5Hash(string: String) -> String {
-        let hash = Insecure.MD5.hash(data: Data(string.utf8))
-        return hash.compactMap { String(format: "%02x", $0) }.joined()
     }
 
     /// 清除缓存

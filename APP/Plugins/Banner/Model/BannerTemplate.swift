@@ -53,6 +53,7 @@ class BannerTemplateRegistry {
     static let shared = BannerTemplateRegistry()
     
     private var templates: [any BannerTemplateProtocol] = []
+    private var orderedTemplateIDs: [String] = []
     
     private init() {
         registerDefaultTemplates()
@@ -66,6 +67,8 @@ class BannerTemplateRegistry {
     }
     
     func register(_ template: any BannerTemplateProtocol) {
+        BannerTemplateCatalog.registerTemplateID(template.id, into: &orderedTemplateIDs)
+        guard !templates.contains(where: { $0.id == template.id }) else { return }
         templates.append(template)
     }
     
@@ -78,7 +81,7 @@ class BannerTemplateRegistry {
     }
     
     func getDefaultTemplate() -> any BannerTemplateProtocol {
-        return ClassicBannerTemplate()
+        return getTemplate(by: BannerTemplateCatalog.defaultTemplateID) ?? ClassicBannerTemplate()
     }
 }
 

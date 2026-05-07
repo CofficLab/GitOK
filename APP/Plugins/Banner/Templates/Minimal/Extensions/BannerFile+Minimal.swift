@@ -7,28 +7,18 @@ extension BannerFile {
     /// 获取简约模板数据
     var minimalData: MinimalBannerData? {
         get {
-            guard let jsonString = getTemplateData(MinimalBannerData.templateId) else {
-                return nil
-            }
-            
-            guard let jsonData = jsonString.data(using: .utf8) else {
-                return nil
-            }
-            
-            return try? JSONDecoder().decode(MinimalBannerData.self, from: jsonData)
+            BannerTemplateDataStore.decode(
+                MinimalBannerData.self,
+                templateID: MinimalBannerData.templateId,
+                from: templateData
+            )
         }
         set {
-            guard let newValue = newValue else {
-                templateData.removeValue(forKey: MinimalBannerData.templateId)
-                return
-            }
-            
-            guard let jsonData = try? JSONEncoder().encode(newValue),
-                  let jsonString = String(data: jsonData, encoding: .utf8) else {
-                return
-            }
-            
-            try? setTemplateData(MinimalBannerData.templateId, data: jsonString)
+            BannerTemplateDataStore.updateEncoded(
+                newValue,
+                templateID: MinimalBannerData.templateId,
+                in: &templateData
+            )
         }
     }
 }

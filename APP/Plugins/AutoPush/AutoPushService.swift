@@ -131,35 +131,13 @@ class AutoPushService: ObservableObject, SuperLog {
             try? LibGit2.getCurrentBranchInfo(at: projectPath)
         }.value
 
-        guard let currentBranch = currentBranch else {
-            if Self.verbose {
-                AutoPushPlugin.logger.info("\(Self.t)无法获取当前分支，跳过自动推送")
-            }
-            return
-        }
-
         // 检查是否启用了自动推送（后台读取）
         let isEnabled = await Task.detached {
             AutoPushSettingsStore.shared.isAutoPushEnabled(
                 for: projectPath,
-                branchName: currentBranch.name
+                branchName: currentBranch?.name ?? ""
             )
         }.value
-
-        if !isEnabled {
-            if Self.verbose {
-                AutoPushPlugin.logger.info("\(Self.t)未启用自动推送 \(projectTitle)/\(currentBranch.name)")
-            }
-            return
-        }
-
-        // 检查是否为 Git 仓库
-        guard isGitRepo else {
-            if Self.verbose {
-                AutoPushPlugin.logger.info("\(Self.t)不是 Git 仓库，跳过自动推送")
-            }
-            return
-        }
 
         // 检查是否有远程仓库（后台执行）
         let hasRemote = await Task.detached {
@@ -170,15 +148,32 @@ class AutoPushService: ObservableObject, SuperLog {
             return true
         }.value
 
-        if !hasRemote {
+        switch AutoPushDecision.check(
+            currentBranchName: currentBranch?.name,
+            isEnabled: isEnabled,
+            isGitRepo: isGitRepo,
+            hasRemote: hasRemote
+        ) {
+        case .skip(.missingBranch):
+            if Self.verbose {
+                AutoPushPlugin.logger.info("\(Self.t)无法获取当前分支，跳过自动推送")
+            }
+        case .skip(.disabled):
+            if Self.verbose {
+                let branchName = currentBranch?.name ?? "unknown"
+                AutoPushPlugin.logger.info("\(Self.t)未启用自动推送 \(projectTitle)/\(branchName)")
+            }
+        case .skip(.notGitRepository):
+            if Self.verbose {
+                AutoPushPlugin.logger.info("\(Self.t)不是 Git 仓库，跳过自动推送")
+            }
+        case .skip(.missingRemote):
             if Self.verbose {
                 AutoPushPlugin.logger.info("\(Self.t)未配置远程仓库，跳过自动推送")
             }
-            return
+        case let .shouldPush(branchName):
+            await performPush(projectPath: projectPath, branchName: branchName)
         }
-
-        // 执行推送（完全在后台）
-        await performPush(projectPath: projectPath, branchName: currentBranch.name)
     }
 
     /// 执行推送操作（完全在后台）
@@ -188,7 +183,12 @@ class AutoPushService: ObservableObject, SuperLog {
             self.isPushing
         }.value
 
-        guard !currentlyPushing else {
+        let executionDecision = AutoPushDecision.execution(
+            isAlreadyPushing: currentlyPushing,
+            unpushedCommitCount: 1
+        )
+
+        guard executionDecision != .skipAlreadyPushing else {
             if Self.verbose {
                 AutoPushPlugin.logger.info("\(Self.t)正在推送中，跳过")
             }
@@ -211,7 +211,10 @@ class AutoPushService: ObservableObject, SuperLog {
                 // 检查是否有未推送的提交
                 let unpushedCommits = try LibGit2.getUnPushedCommits(at: projectPath, verbose: false)
 
-                if unpushedCommits.isEmpty {
+                if AutoPushDecision.execution(
+                    isAlreadyPushing: false,
+                    unpushedCommitCount: unpushedCommits.count
+                ) == .markIdle {
                     if Self.verbose {
                         AutoPushPlugin.logger.info("\(Self.t)没有未推送的提交，跳过推送")
                     }

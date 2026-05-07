@@ -48,14 +48,12 @@ final class AutoPushSettingsStore: ObservableObject, SuperLog {
 
     /// 生成项目分支的唯一键
     private func makeKey(projectPath: String, branchName: String) -> String {
-        return "\(projectPath)://\(branchName)"
+        return AutoPushSettingsPersistence.makeKey(projectPath: projectPath, branchName: branchName)
     }
 
     /// 解析配置键
     private func parseKey(_ key: String) -> (projectPath: String, branchName: String)? {
-        let components = key.components(separatedBy: "://")
-        guard components.count == 2 else { return nil }
-        return (projectPath: components[0], branchName: components[1])
+        AutoPushSettingsPersistence.parseKey(key)
     }
 
     // MARK: - 公共 API（线程安全）
@@ -84,21 +82,13 @@ final class AutoPushSettingsStore: ObservableObject, SuperLog {
     /// 设置指定项目分支的自动推送状态
     func setAutoPushEnabled(for projectPath: String, branchName: String, enabled: Bool) {
         queue.sync {
-            let key = makeKey(projectPath: projectPath, branchName: branchName)
-            
-            if var config = settings[key] {
-                config.isEnabled = enabled
-                config.lastModified = Date()
-                settings[key] = config
-            } else {
-                let config = ProjectBranchAutoPushConfig(
-                    projectPath: projectPath,
-                    branchName: branchName,
-                    isEnabled: enabled,
-                    lastModified: Date()
-                )
-                settings[key] = config
-            }
+            settings = AutoPushSettingsPersistence.updatedSettings(
+                settings: settings,
+                projectPath: projectPath,
+                branchName: branchName,
+                enabled: enabled,
+                now: Date()
+            )
             
             // 触发 SwiftUI 观察更新
             objectWillChange.send()
@@ -116,33 +106,36 @@ final class AutoPushSettingsStore: ObservableObject, SuperLog {
     /// 更新最后推送时间
     func updateLastPushedDate(for projectPath: String, branchName: String) {
         queue.sync {
-            let key = makeKey(projectPath: projectPath, branchName: branchName)
-            
-            if var config = settings[key] {
-                config.lastPushedAt = Date()
-                settings[key] = config
-                
-                // 触发 SwiftUI 观察更新
-                objectWillChange.send()
-                
-                // 持久化到文件
-                persistSettingsToCurrentFile(settings: settings)
-            }
+            settings = AutoPushSettingsPersistence.updatedLastPushedDate(
+                settings: settings,
+                projectPath: projectPath,
+                branchName: branchName,
+                now: Date()
+            )
+
+            // 触发 SwiftUI 观察更新
+            objectWillChange.send()
+
+            // 持久化到文件
+            persistSettingsToCurrentFile(settings: settings)
         }
     }
 
     /// 获取指定项目的所有自动推送配置
     func getConfigs(forProject projectPath: String) -> [ProjectBranchAutoPushConfig] {
         queue.sync {
-            return settings.values.filter { $0.projectPath == projectPath }
+            return AutoPushSettingsPersistence.configs(forProject: projectPath, in: settings)
         }
     }
 
     /// 删除指定项目分支的配置
     func removeConfig(for projectPath: String, branchName: String) {
         queue.sync {
-            let key = makeKey(projectPath: projectPath, branchName: branchName)
-            settings.removeValue(forKey: key)
+            settings = AutoPushSettingsPersistence.settingsByRemovingConfig(
+                settings: settings,
+                projectPath: projectPath,
+                branchName: branchName
+            )
             
             // 触发 SwiftUI 观察更新
             objectWillChange.send()
@@ -155,14 +148,10 @@ final class AutoPushSettingsStore: ObservableObject, SuperLog {
     /// 删除指定项目的所有配置
     func removeConfigs(forProject projectPath: String) {
         queue.sync {
-            let keysToRemove = settings.keys.filter { key in
-                guard let parsed = parseKey(key) else { return false }
-                return parsed.projectPath == projectPath
-            }
-            
-            for key in keysToRemove {
-                settings.removeValue(forKey: key)
-            }
+            settings = AutoPushSettingsPersistence.settingsByRemovingProject(
+                settings: settings,
+                projectPath: projectPath
+            )
             
             // 触发 SwiftUI 观察更新
             objectWillChange.send()
@@ -175,7 +164,7 @@ final class AutoPushSettingsStore: ObservableObject, SuperLog {
     /// 获取所有启用自动推送的配置
     func getAllEnabledConfigs() -> [ProjectBranchAutoPushConfig] {
         queue.sync {
-            return settings.values.filter { $0.isEnabled }
+            return AutoPushSettingsPersistence.enabledConfigs(in: settings)
         }
     }
 
@@ -183,21 +172,7 @@ final class AutoPushSettingsStore: ObservableObject, SuperLog {
 
     /// 从文件加载设置
     private func loadSettings() -> [String: ProjectBranchAutoPushConfig] {
-        let fileURL = currentStateFileURL()
-
-        guard FileManager.default.fileExists(atPath: fileURL.path) else {
-            if Self.verbose {
-                AutoPushPlugin.logger.info("\(Self.t)📂 配置文件不存在，使用默认配置")
-            }
-            return [:]
-        }
-
-        guard let data = try? Data(contentsOf: fileURL),
-              let settings = try? JSONDecoder().decode([String: ProjectBranchAutoPushConfig].self, from: data) else {
-            // 错误日志始终输出
-            AutoPushPlugin.logger.error("\(Self.t)❌ 解析配置文件失败")
-            return [:]
-        }
+        let settings = AutoPushSettingsPersistence.loadSettings(from: currentStateFileURL())
 
         if Self.verbose {
             AutoPushPlugin.logger.info("\(Self.t)📂 从文件加载了 \(settings.count) 个配置")
@@ -208,40 +183,10 @@ final class AutoPushSettingsStore: ObservableObject, SuperLog {
 
     /// 保存设置到文件（atomic write）
     private func persistSettingsToCurrentFile(settings: [String: ProjectBranchAutoPushConfig]) {
-        let fileManager = FileManager.default
-        let settingsDir = currentSettingsDirURL()
+        AutoPushSettingsPersistence.persist(settings, to: currentStateFileURL())
 
-        // 确保目录存在
-        try? fileManager.createDirectory(at: settingsDir, withIntermediateDirectories: true, attributes: nil)
-
-        let fileURL = currentStateFileURL()
-        let tmpURL = settingsDir.appendingPathComponent(Self.tmpFileName, isDirectory: false)
-
-        guard let data = try? JSONEncoder().encode(settings) else {
-            // 错误日志始终输出
-            AutoPushPlugin.logger.error("\(Self.t)❌ 序列化配置失败")
-            return
-        }
-
-        do {
-            // 写入临时文件（atomic）
-            try data.write(to: tmpURL, options: .atomic)
-
-            // 替换原文件
-            if fileManager.fileExists(atPath: fileURL.path) {
-                _ = try? fileManager.replaceItemAt(fileURL, withItemAt: tmpURL)
-            } else {
-                try fileManager.moveItem(at: tmpURL, to: fileURL)
-            }
-
-            if Self.verbose {
-                AutoPushPlugin.logger.info("\(Self.t)💾 已保存 \(settings.count) 个配置到文件")
-            }
-        } catch {
-            // 失败时清理临时文件
-            try? fileManager.removeItem(at: tmpURL)
-            // 错误日志始终输出
-            AutoPushPlugin.logger.error("\(Self.t)❌ 保存配置失败: \(error.localizedDescription)")
+        if Self.verbose {
+            AutoPushPlugin.logger.info("\(Self.t)💾 已保存 \(settings.count) 个配置到文件")
         }
     }
 
@@ -250,34 +195,11 @@ final class AutoPushSettingsStore: ObservableObject, SuperLog {
     private func currentSettingsDirURL() -> URL {
         AppConfig.getDBFolderURL()
             .appendingPathComponent(Self.pluginDirName, isDirectory: true)
-            .appendingPathComponent(Self.settingsDirName, isDirectory: true)
+            .appendingPathComponent(AutoPushSettingsPersistence.settingsDirName, isDirectory: true)
     }
 
     private func currentStateFileURL() -> URL {
         currentSettingsDirURL()
-            .appendingPathComponent(Self.stateFileName, isDirectory: false)
-    }
-}
-
-/// 项目分支自动推送配置模型
-struct ProjectBranchAutoPushConfig: Codable, Identifiable, Equatable {
-    let id: String
-    let projectPath: String
-    let branchName: String
-    var isEnabled: Bool
-    var lastModified: Date
-    var lastPushedAt: Date?
-
-    init(projectPath: String, branchName: String, isEnabled: Bool = false, lastModified: Date = Date(), lastPushedAt: Date? = nil) {
-        self.id = "\(projectPath)://\(branchName)"
-        self.projectPath = projectPath
-        self.branchName = branchName
-        self.isEnabled = isEnabled
-        self.lastModified = lastModified
-        self.lastPushedAt = lastPushedAt
-    }
-
-    var projectTitle: String {
-        return URL(fileURLWithPath: projectPath).lastPathComponent
+            .appendingPathComponent(AutoPushSettingsPersistence.stateFileName, isDirectory: false)
     }
 }

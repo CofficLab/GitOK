@@ -22,13 +22,16 @@ struct EditRemoteSheet: View {
     }
     
     private var isFormValid: Bool {
-        !remoteName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
-        !remoteURL.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        RemoteRepositoryFormRules.isFormValid(name: remoteName, url: remoteURL)
     }
     
     private var hasChanges: Bool {
-        remoteName.trimmingCharacters(in: .whitespacesAndNewlines) != remote.name ||
-        remoteURL.trimmingCharacters(in: .whitespacesAndNewlines) != remote.url
+        RemoteRepositoryFormRules.hasChanges(
+            originalName: remote.name,
+            originalURL: remote.url,
+            editedName: remoteName,
+            editedURL: remoteURL
+        )
     }
     
     var body: some View {
@@ -102,8 +105,9 @@ struct EditRemoteSheet: View {
     }
     
     private func saveRemote() {
-        let name = remoteName.trimmingCharacters(in: .whitespacesAndNewlines)
-        let url = remoteURL.trimmingCharacters(in: .whitespacesAndNewlines)
+        let input = RemoteRepositoryFormRules.normalizedInput(name: remoteName, url: remoteURL)
+        let name = input.name
+        let url = input.url
         
         guard !name.isEmpty && !url.isEmpty else {
             errorMessage = "请填写完整信息"

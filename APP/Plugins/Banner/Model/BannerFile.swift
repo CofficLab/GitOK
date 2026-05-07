@@ -70,7 +70,7 @@ struct BannerFile: SuperLog {
             
             // 复制图片到新位置
             try FileManager.default.copyItem(at: url, to: storeURL)
-            return storeURL.relativePath.replacingOccurrences(of: self.project.path, with: "")
+            return BannerStorageRules.relativeProjectPath(for: storeURL, projectPath: project.path)
         } catch {
             os_log(.error, "\(Self.emoji) 保存图片失败: \(error.localizedDescription)")
             throw error

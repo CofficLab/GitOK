@@ -98,7 +98,7 @@ class MacAgent: NSObject, NSApplicationDelegate, ObservableObject, SuperLog, Sup
         for url in urls {
             if url.isFileURL {
                 os_log("\(self.label)📂 Open file URL: \(url.path)")
-                let resolvedPath = resolveGitRoot(from: url.path)
+                let resolvedPath = OpenProjectPathResolver.resolveGitRoot(from: url.path)
                 setOpenPath(resolvedPath)
             } else {
                 os_log("\(self.label)🔗 Open URL: \(url.absoluteString)")
@@ -113,7 +113,7 @@ class MacAgent: NSObject, NSApplicationDelegate, ObservableObject, SuperLog, Sup
     func application(_ application: NSApplication, openFile filename: String) -> Bool {
         os_log("\(self.label)📂 Open file: \(filename)")
 
-        let path = resolveGitRoot(from: filename)
+        let path = OpenProjectPathResolver.resolveGitRoot(from: filename)
         setOpenPath(path)
         activateMainWindow()
         return true
@@ -156,43 +156,9 @@ class MacAgent: NSObject, NSApplicationDelegate, ObservableObject, SuperLog, Sup
         }
     }
 
-    /// 将可能的路径或 URL 字符串规范化为文件系统路径
-    /// 输入可能是：
-    ///   - 已规范化的路径：/Users/colorfy/project
-    ///   - file URL 字符串：file:///Users/colorfy/project
-    ///   - URL 编码路径：/Users/colorfy/my%20project
-    /// - Parameter raw: 原始字符串
-    /// - Returns: 规范化后的文件系统路径
-    private func normalizePath(_ raw: String) -> String {
-        // 去除首尾空白和尾部斜杠
-        var str = raw.trimmingCharacters(in: .whitespacesAndNewlines)
-        if str.hasSuffix("/") { str = String(str.dropLast()) }
-
-        // 如果是 file URL，先转换为路径
-        if str.hasPrefix("file://") {
-            if let url = URL(string: str) {
-                return url.path
-            }
-            // 兜底：手动去掉 file:// 前缀
-            let path = String(str.dropFirst("file://".count))
-            return path.isEmpty ? raw : path
-        }
-
-        // 如果以 / 开头，可能已经是合法路径
-        if str.hasPrefix("/") {
-            // URL 解码（处理 %20 等转义）
-            if let decoded = str.removingPercentEncoding {
-                return decoded
-            }
-            return str
-        }
-
-        return str
-    }
-
     /// 设置待打开的项目路径（在主线程）
     private func setOpenPath(_ path: String) {
-        let normalized = normalizePath(path)
+        let normalized = OpenProjectPathResolver.normalizePath(path)
         os_log("\(self.label)📁 Set open path: \(normalized)")
         DispatchQueue.main.async { [weak self] in
             self?.pendingOpenPath = normalized
@@ -204,54 +170,9 @@ class MacAgent: NSObject, NSApplicationDelegate, ObservableObject, SuperLog, Sup
     /// - `gitok://openRepo?path=/path/to/repo`
     /// - `gitok:///path/to/repo`
     private func handleURL(_ url: URL) {
-        guard url.scheme == "gitok" else { return }
-
-        let host = url.host?.lowercased()
-
-        // gitok://openRepo?path=/xxx
-        if host == "openrepo" {
-            let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
-            if let path = components?.queryItems?.first(where: { $0.name == "path" })?.value,
-               !path.isEmpty {
-                setOpenPath(resolveGitRoot(from: path))
-            }
-            return
+        if let path = OpenProjectPathResolver.resolvePath(fromOpenURL: url) {
+            setOpenPath(path)
         }
-
-        // gitok:///path/to/repo（路径直接写在 URL 中）
-        let pathValue = url.path
-        if !pathValue.isEmpty {
-            setOpenPath(resolveGitRoot(from: pathValue))
-            return
-        }
-    }
-
-    /// 如果传入的是子目录，尝试向上查找 Git 仓库根目录
-    /// - Parameter path: 原始路径（可能是 file URL 或文件路径）
-    /// - Returns: Git 仓库根目录，如果找不到则返回原始路径
-    private func resolveGitRoot(from path: String) -> String {
-        let normalizedPath = normalizePath(path)
-        var currentURL = URL(fileURLWithPath: normalizedPath)
-
-        // 如果是文件，取其所在目录
-        var isDirectory: ObjCBool = false
-        if FileManager.default.fileExists(atPath: normalizedPath, isDirectory: &isDirectory),
-           !isDirectory.boolValue {
-            currentURL = currentURL.deletingLastPathComponent()
-        }
-
-        // 最多向上查找 10 层
-        for _ in 0 ..< 10 {
-            let gitPath = currentURL.appendingPathComponent(".git").path
-            if FileManager.default.fileExists(atPath: gitPath) {
-                return currentURL.path
-            }
-            let parent = currentURL.deletingLastPathComponent()
-            if parent.path == currentURL.path { break } // 已到根目录
-            currentURL = parent
-        }
-
-        return normalizedPath
     }
 }
 

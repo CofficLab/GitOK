@@ -23,7 +23,6 @@ class ProjectImagesRepo: IconSourceProtocol, SuperLog {
     
     // 基础配置
     private let imagesRelativePath = ".gitok/images"
-    private let supportedFormats = ["png", "svg", "jpg", "jpeg", "gif", "webp"]
     
     private init() {}
     
@@ -38,11 +37,7 @@ class ProjectImagesRepo: IconSourceProtocol, SuperLog {
     private func listImageFiles(in directory: URL) -> [URL] {
         do {
             let items = try FileManager.default.contentsOfDirectory(atPath: directory.path)
-            return items.compactMap { name in
-                let lower = name.lowercased()
-                guard supportedFormats.contains(where: { lower.hasSuffix(".\($0)") }) else { return nil }
-                return directory.appendingPathComponent(name)
-            }
+            return IconFileRules.imageFileURLs(in: directory, entries: items)
         } catch {
             return []
         }
@@ -57,8 +52,7 @@ class ProjectImagesRepo: IconSourceProtocol, SuperLog {
         if !FileManager.default.fileExists(atPath: imagesURL.path, isDirectory: &isDir) {
             do { try FileManager.default.createDirectory(at: imagesURL, withIntermediateDirectories: true) } catch { return false }
         }
-        let lower = filename.lowercased()
-        guard supportedFormats.contains(where: { lower.hasSuffix(".\($0)") }) else { return false }
+        guard IconFileRules.isSupportedImageFile(filename) else { return false }
         let target = imagesURL.appendingPathComponent(filename)
         do {
             try data.write(to: target, options: .atomic)

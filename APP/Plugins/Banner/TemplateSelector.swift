@@ -31,17 +31,18 @@ struct TemplateSelector: View {
 
     private func loadTemplates() {
         availableTemplates = BannerTemplateRepo.shared.getAllTemplates()
-        
-        // 如果没有选择模板
-        if b.selectedTemplate.id.isEmpty {
-            // 优先使用上次选择的模板
-            if !b.banner.lastSelectedTemplateId.isEmpty,
-               let lastTemplate = availableTemplates.first(where: { $0.id == b.banner.lastSelectedTemplateId }) {
-                b.setSelectedTemplate(lastTemplate)
-            } else {
-                // 如果没有上次选择的模板，使用默认模板
-                b.setSelectedTemplate(BannerTemplateRepo.shared.getDefaultTemplate())
-            }
+
+        guard let selectionID = BannerTemplateSelectionRules.initialSelectionID(
+            currentSelectionID: b.selectedTemplate.id,
+            lastSelectedTemplateID: b.banner.lastSelectedTemplateId,
+            availableTemplateIDs: availableTemplates.map(\.id),
+            defaultTemplateID: BannerTemplateCatalog.defaultTemplateID
+        ) else {
+            return
+        }
+
+        if let template = availableTemplates.first(where: { $0.id == selectionID }) {
+            b.setSelectedTemplate(template)
         }
     }
 }

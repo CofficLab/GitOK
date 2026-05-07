@@ -12,8 +12,7 @@ struct AddRemoteSheet: View {
     let onAdd: (String, String) -> Void
     
     private var isFormValid: Bool {
-        !remoteName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
-        !remoteURL.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        RemoteRepositoryFormRules.isFormValid(name: remoteName, url: remoteURL)
     }
     
     var body: some View {
@@ -87,8 +86,9 @@ struct AddRemoteSheet: View {
     }
     
     private func addRemote() {
-        let name = remoteName.trimmingCharacters(in: .whitespacesAndNewlines)
-        let url = remoteURL.trimmingCharacters(in: .whitespacesAndNewlines)
+        let input = RemoteRepositoryFormRules.normalizedInput(name: remoteName, url: remoteURL)
+        let name = input.name
+        let url = input.url
         
         guard !name.isEmpty && !url.isEmpty else {
             errorMessage = "请填写完整信息"

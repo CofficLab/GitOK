@@ -32,14 +32,18 @@ struct ProjectPickerView: View, SuperLog {
                     }
                 }
                 .onChange(of: selection) { _, newValue in
-                    if let newProject = newValue, newValue != vm.project {
+                    if ProjectPickerSelectionRules.shouldApplySelectionChange(
+                        newSelection: newValue,
+                        currentProject: vm.project
+                    ), let newProject = newValue {
                         vm.setProject(newProject, reason: self.className)
                     }
                 }
                 .onChange(of: vm.project, {
-                    if let project = vm.project, project != selection {
-                        self.selection = project
-                    }
+                    self.selection = ProjectPickerSelectionRules.syncedSelection(
+                        currentSelection: selection,
+                        currentProject: vm.project
+                    )
                 })
             }
         }

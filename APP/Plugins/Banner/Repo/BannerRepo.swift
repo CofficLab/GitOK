@@ -44,36 +44,18 @@ class BannerRepo: SuperLog {
     /// - Parameter project: Project对象
     /// - Returns: 该project下的所有BannerData数组
     private func getBannerData(from project: Project) -> [BannerFile] {
-        let projectRootURL = URL(fileURLWithPath: project.path)
-        let bannerDirectoryURL = projectRootURL.appendingPathComponent(Self.bannerStoragePath)
-        
-        var models: [BannerFile] = []
-        
-        do {
-            // 检查Banner目录是否存在
-            var isDirectory: ObjCBool = false
-            guard FileManager.default.fileExists(atPath: bannerDirectoryURL.path, isDirectory: &isDirectory),
-                  isDirectory.boolValue else {
-                return []
-            }
-            
-            // 扫描Banner目录中的所有JSON文件
-            let files = try FileManager.default.contentsOfDirectory(atPath: bannerDirectoryURL.path)
-            for file in files {
-                if file.hasSuffix(".json") {
-                    let fileURL = bannerDirectoryURL.appendingPathComponent(file)
-                    if let model = tryLoadBannerData(from: fileURL, project: project) {
-                        models.append(model)
-                    }
-                }
-            }
-        } catch {
-            os_log(.error, "\(Self.emoji) 扫描Banner目录失败: \(error.localizedDescription)")
-            return []
-        }
-        
-        // 按标题排序，保持稳定的顺序
-        return models.sorted { $0.id < $1.id }
+        let bannerDirectoryURL = BannerStorageRules.bannerDirectoryURL(
+            projectPath: project.path,
+            storagePath: Self.bannerStoragePath
+        )
+
+        return BannerRepositoryIndex.loadModels(
+            from: bannerDirectoryURL,
+            load: { [weak self] fileURL in
+                self?.tryLoadBannerData(from: fileURL, project: project)
+            },
+            sort: { $0.id < $1.id }
+        )
     }
     
     /// 尝试加载Banner模型
@@ -100,15 +82,16 @@ class BannerRepo: SuperLog {
     ///   - title: Banner标题
     /// - Returns: 新创建的BannerData
     func createBanner(in project: Project, title: String = "New Banner") throws -> BannerFile {
-        let projectRootURL = URL(fileURLWithPath: project.path)
-        let bannerDirectoryURL = projectRootURL.appendingPathComponent(Self.bannerStoragePath)
+        let bannerDirectoryURL = BannerStorageRules.bannerDirectoryURL(
+            projectPath: project.path,
+            storagePath: Self.bannerStoragePath
+        )
         
         // 确保Banner目录存在
         try FileManager.default.createDirectory(at: bannerDirectoryURL, withIntermediateDirectories: true, attributes: nil)
         
         // 生成唯一的文件名
-        let timestamp = Date().timeIntervalSince1970
-        let fileName = "banner_\(Int(timestamp)).json"
+        let fileName = BannerStorageRules.newBannerFileName(now: Date())
         let fileURL = bannerDirectoryURL.appendingPathComponent(fileName)
         
         // 创建新的BannerData

@@ -106,13 +106,7 @@ class AppIconRepo: SuperLog, IconSourceProtocol {
     private func getIconCount(in categoryURL: URL) -> Int {
         do {
             let files = try FileManager.default.contentsOfDirectory(atPath: categoryURL.path)
-            let supportedFormats = ["png", "svg", "jpg", "jpeg", "gif", "webp"]
-            return files.filter { filename in
-                let fileExtension = filename.lowercased()
-                return supportedFormats.contains { format in
-                    fileExtension.hasSuffix(".\(format)")
-                }
-            }.count
+            return IconFileRules.iconCount(in: files)
         } catch {
             return 0
         }
@@ -130,14 +124,7 @@ class AppIconRepo: SuperLog, IconSourceProtocol {
 
         do {
             let files = try FileManager.default.contentsOfDirectory(atPath: categoryURL.path)
-            let supportedFormats = ["png", "svg", "jpg", "jpeg", "gif", "webp"]
-
-            let iconFiles = files.filter { filename in
-                let fileExtension = filename.lowercased()
-                return supportedFormats.contains { format in
-                    fileExtension.hasSuffix(".\(format)")
-                }
-            }
+            let iconFiles = files.filter(IconFileRules.isSupportedImageFile)
 
             return iconFiles.map { filename in
                 let fileURL = categoryURL.appendingPathComponent(filename)
@@ -174,24 +161,8 @@ class AppIconRepo: SuperLog, IconSourceProtocol {
 
         let categoryURL = iconFolderURL.appendingPathComponent(categoryName)
 
-        // 对于哈希文件名，直接查找文件（不需要添加扩展名）
-        // 首先检查是否已经是完整的文件名（包含扩展名）
-        let directURL = categoryURL.appendingPathComponent(iconId)
-        if FileManager.default.fileExists(atPath: directURL.path) {
-            return directURL
-        }
-
-        // 如果直接查找失败，尝试添加扩展名查找
-        // 优先查找PNG格式
-        let pngURL = categoryURL.appendingPathComponent("\(iconId).png")
-        if FileManager.default.fileExists(atPath: pngURL.path) {
-            return pngURL
-        }
-
-        // 查找其他支持的格式
-        let supportedFormats = ["svg", "jpg", "jpeg", "gif", "webp"]
-        for format in supportedFormats {
-            let url = categoryURL.appendingPathComponent("\(iconId).\(format)")
+        for candidate in IconFileRules.preferredLookupCandidates(for: iconId) {
+            let url = categoryURL.appendingPathComponent(candidate)
             if FileManager.default.fileExists(atPath: url.path) {
                 return url
             }

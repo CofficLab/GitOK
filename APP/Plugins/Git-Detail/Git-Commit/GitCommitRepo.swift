@@ -25,9 +25,6 @@ class GitCommitRepo: GitCommitRepoProtocol, SuperLog {
     /// UserDefaults 实例
     private let userDefaults = UserDefaults.standard
 
-    /// 最后提交记录的键前缀
-    private let lastCommitKeyPrefix = "Git.lastSelectedCommit_"
-
     private init() {}
 
     /// 保存项目的最后选择的commit
@@ -35,14 +32,13 @@ class GitCommitRepo: GitCommitRepoProtocol, SuperLog {
     ///   - projectPath: 项目路径
     ///   - commit: 选择的commit
     func saveLastSelectedCommit(projectPath: String, commit: GitCommit) {
-        let key = getKey(for: projectPath)
-
-        let commitData: [String: Any] = [
-            "hash": commit.hash,
-            "message": commit.message,
-            "author": commit.author,
-            "date": commit.date.timeIntervalSince1970, // 保存为时间戳
-        ]
+        let key = GitCommitSelectionStore.key(for: projectPath)
+        let commitData = GitCommitSelectionStore.commitData(
+            hash: commit.hash,
+            message: commit.message,
+            author: commit.author,
+            date: commit.date
+        )
 
         userDefaults.set(commitData, forKey: key)
 
@@ -55,28 +51,16 @@ class GitCommitRepo: GitCommitRepoProtocol, SuperLog {
     /// - Parameter projectPath: 项目路径
     /// - Returns: 最后选择的commit hash，如果没有则返回nil
     func getLastSelectedCommitHash(projectPath: String) -> String? {
-        let key = getKey(for: projectPath)
-
-        guard let commitData = userDefaults.dictionary(forKey: key),
-              let hash = commitData["hash"] as? String else {
-            return nil
-        }
-
-        return hash
+        GitCommitSelectionStore.selectedHash(
+            from: userDefaults.dictionary(forKey: GitCommitSelectionStore.key(for: projectPath))
+        )
     }
 
     /// 清除项目的最后选择的commit
     /// - Parameter projectPath: 项目路径
     func clearLastSelectedCommit(projectPath: String) {
-        let key = getKey(for: projectPath)
+        let key = GitCommitSelectionStore.key(for: projectPath)
         userDefaults.removeObject(forKey: key)
-    }
-
-    /// 获取UserDefaults中的key
-    /// - Parameter projectPath: 项目路径
-    /// - Returns: 对应的key
-    private func getKey(for projectPath: String) -> String {
-        return lastCommitKeyPrefix + projectPath
     }
 }
 
