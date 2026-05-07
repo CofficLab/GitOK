@@ -16,7 +16,7 @@
       "location" : "https://github.com/nookery/LibGit2Swift",
       "state" : {
         "branch" : "main",
-        "revision" : "5dd5f8bad6f3aae0a836ee2ce18814e6dd7e3cf3"
+        "revision" : "620d2ddd9d7fec0f17a8f9af6802e90f7c60cbbe"
       }
     },
     {
@@ -43,7 +43,7 @@
       "location" : "https://github.com/nookery/MagicDiffView",
       "state" : {
         "branch" : "main",
-        "revision" : "fd9c4fa311f70d5fbf65f3d3c1c00363238bd343"
+        "revision" : "b97553a3cb8d877981ec787f5f94e5fd0301c9cd"
       }
     },
     {
