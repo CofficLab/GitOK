@@ -1,4 +1,5 @@
 import AppKit
+import GitCoreKit
 import MagicAlert
 import MagicKit
 import OSLog

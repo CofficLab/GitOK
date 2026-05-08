@@ -1,6 +1,6 @@
 import Foundation
 
-enum ProjectEventRefreshRules {
+public enum ProjectEventRefreshRules {
     private static let stashOperations: Set<String> = [
         "stashSave",
         "stashApply",
@@ -8,11 +8,11 @@ enum ProjectEventRefreshRules {
         "stashDrop",
     ]
 
-    static func shouldRefreshStash(for operation: String) -> Bool {
+    public static func shouldRefreshStash(for operation: String) -> Bool {
         stashOperations.contains(operation)
     }
 
-    static func shouldRefreshConflictStatus(for notificationName: Notification.Name) -> Bool {
+    public static func shouldRefreshConflictStatus(for notificationName: Notification.Name) -> Bool {
         notificationName.rawValue == "projectDidMerge" || notificationName.rawValue == "projectDidAddFiles"
     }
 }

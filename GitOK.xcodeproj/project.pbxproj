@@ -36,6 +36,14 @@
 		A1F000362F70000100ABC001 /* APP/Plugins/Banner/Repo/BannerStorageRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F000372F70000100ABC001 /* APP/Plugins/Banner/Repo/BannerStorageRules.swift */; };
 		A1F000382F70000100ABC001 /* APP/Plugins/Git-RemoteRepository/RemoteRepositoryFormRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F000392F70000100ABC001 /* APP/Plugins/Git-RemoteRepository/RemoteRepositoryFormRules.swift */; };
 		A1F0003A2F70000100ABC001 /* APP/Plugins/Icon/Repo/IconFileRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F0003B2F70000100ABC001 /* APP/Plugins/Icon/Repo/IconFileRules.swift */; };
+		A1F100032F70000100ABC001 /* GitCoreKit in Frameworks */ = {isa = PBXBuildFile; productRef = A1F100022F70000100ABC001 /* GitCoreKit */; };
+		A1F100042F70000100ABC001 /* GitCoreKit in Frameworks */ = {isa = PBXBuildFile; productRef = A1F100022F70000100ABC001 /* GitCoreKit */; };
+		A1F200032F70000100ABC001 /* ProjectRulesKit in Frameworks */ = {isa = PBXBuildFile; productRef = A1F200022F70000100ABC001 /* ProjectRulesKit */; };
+		A1F200042F70000100ABC001 /* ProjectRulesKit in Frameworks */ = {isa = PBXBuildFile; productRef = A1F200022F70000100ABC001 /* ProjectRulesKit */; };
+		A1F300032F70000100ABC001 /* BannerCoreKit in Frameworks */ = {isa = PBXBuildFile; productRef = A1F300022F70000100ABC001 /* BannerCoreKit */; };
+		A1F300042F70000100ABC001 /* BannerCoreKit in Frameworks */ = {isa = PBXBuildFile; productRef = A1F300022F70000100ABC001 /* BannerCoreKit */; };
+		A1F400032F70000100ABC001 /* ProjectSupportKit in Frameworks */ = {isa = PBXBuildFile; productRef = A1F400022F70000100ABC001 /* ProjectSupportKit */; };
+		A1F400042F70000100ABC001 /* ProjectSupportKit in Frameworks */ = {isa = PBXBuildFile; productRef = A1F400022F70000100ABC001 /* ProjectSupportKit */; };
 		F53370802F52F8D600020751 /* LibGit2Swift in Frameworks */ = {isa = PBXBuildFile; productRef = F533707F2F52F8D600020751 /* LibGit2Swift */; };
 		F53370832F52F9BF00020751 /* LibGit2Swift in Frameworks */ = {isa = PBXBuildFile; productRef = F53370822F52F9BF00020751 /* LibGit2Swift */; };
 		F54D04C42DF2D01300FFB434 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = F54D04C32DF2D01300FFB434 /* Localizable.xcstrings */; };
@@ -843,9 +851,23 @@
 		F54D04C32DF2D01300FFB434 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		F526CF522FADB9FB00EFAB27 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				BannerCoreKit,
+				GitCoreKit,
+				ProjectSupportKit,
+				ProjectRulesKit,
+			);
+			target = 0B0E167C2BD89A8F0078942B /* GitOK */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		A1F000032F70000100ABC001 /* Tests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Tests; sourceTree = "<group>"; };
 		A1F0000D2F70000100ABC001 /* APP/Core/GitCore */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = APP/Core/GitCore; sourceTree = "<group>"; };
+		F526CF512FADB9FB00EFAB27 /* Packages */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (F526CF522FADB9FB00EFAB27 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Packages; sourceTree = "<group>"; };
 		F5AE82732FAB49C900F014F8 /* APP */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = APP; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
@@ -854,6 +876,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A1F300032F70000100ABC001 /* BannerCoreKit in Frameworks */,
+				A1F400032F70000100ABC001 /* ProjectSupportKit in Frameworks */,
+				A1F200032F70000100ABC001 /* ProjectRulesKit in Frameworks */,
+				A1F100032F70000100ABC001 /* GitCoreKit in Frameworks */,
 				0B5178012F13D6A70085381F /* LibGit2Swift in Frameworks */,
 				F5A3E6C22F8610E100D4DD4A /* MagicDiffView in Frameworks */,
 				0B750F162E7F934F00140214 /* MarkdownUI in Frameworks */,
@@ -882,6 +908,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A1F300042F70000100ABC001 /* BannerCoreKit in Frameworks */,
+				A1F400042F70000100ABC001 /* ProjectSupportKit in Frameworks */,
+				A1F200042F70000100ABC001 /* ProjectRulesKit in Frameworks */,
+				A1F100042F70000100ABC001 /* GitCoreKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -891,6 +921,7 @@
 		0B0E16742BD89A8F0078942B = {
 			isa = PBXGroup;
 			children = (
+				F526CF512FADB9FB00EFAB27 /* Packages */,
 				F5AE82732FAB49C900F014F8 /* APP */,
 				0B559D792F1A5D41005C6809 /* Assets.xcassets */,
 				0B55A0222F1B0F38005C6809 /* GitOK.app */,
@@ -1261,10 +1292,15 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
+				F526CF512FADB9FB00EFAB27 /* Packages */,
 				F5AE82732FAB49C900F014F8 /* APP */,
 			);
 			name = GitOK;
 			packageProductDependencies = (
+				A1F300022F70000100ABC001 /* BannerCoreKit */,
+				A1F400022F70000100ABC001 /* ProjectSupportKit */,
+				A1F200022F70000100ABC001 /* ProjectRulesKit */,
+				A1F100022F70000100ABC001 /* GitCoreKit */,
 				0B3CC95D2DF1C49000E22263 /* Sparkle */,
 				0B750F152E7F934F00140214 /* MarkdownUI */,
 				F5B9093A2EE8FB4B008BEB16 /* MagicDiffView */,
@@ -1309,6 +1345,10 @@
 			);
 			name = GitOKTests;
 			packageProductDependencies = (
+				A1F300022F70000100ABC001 /* BannerCoreKit */,
+				A1F400022F70000100ABC001 /* ProjectSupportKit */,
+				A1F200022F70000100ABC001 /* ProjectRulesKit */,
+				A1F100022F70000100ABC001 /* GitCoreKit */,
 			);
 			productName = GitOKTests;
 			productReference = A1F000012F70000100ABC001 /* GitOKTests.xctest */;
@@ -1345,6 +1385,10 @@
 			);
 			mainGroup = 0B0E16742BD89A8F0078942B;
 			packageReferences = (
+				A1F300012F70000100ABC001 /* XCLocalSwiftPackageReference "Packages/BannerCoreKit" */,
+				A1F400012F70000100ABC001 /* XCLocalSwiftPackageReference "Packages/ProjectSupportKit" */,
+				A1F200012F70000100ABC001 /* XCLocalSwiftPackageReference "Packages/ProjectRulesKit" */,
+				A1F100012F70000100ABC001 /* XCLocalSwiftPackageReference "Packages/GitCoreKit" */,
 				F5F794E72C5B192600DCB824 /* XCRemoteSwiftPackageReference "Sparkle" */,
 				F54178E22E00F91F00503C7B /* XCRemoteSwiftPackageReference "swift-markdown-ui" */,
 				0B1807AC2F1BCCF800E4E23B /* XCRemoteSwiftPackageReference "MagicDevice" */,
@@ -2543,6 +2587,25 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCLocalSwiftPackageReference section */
+		A1F100012F70000100ABC001 /* XCLocalSwiftPackageReference "Packages/GitCoreKit" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/GitCoreKit;
+		};
+		A1F200012F70000100ABC001 /* XCLocalSwiftPackageReference "Packages/ProjectRulesKit" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/ProjectRulesKit;
+		};
+		A1F300012F70000100ABC001 /* XCLocalSwiftPackageReference "Packages/BannerCoreKit" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/BannerCoreKit;
+		};
+		A1F400012F70000100ABC001 /* XCLocalSwiftPackageReference "Packages/ProjectSupportKit" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/ProjectSupportKit;
+		};
+/* End XCLocalSwiftPackageReference section */
+
 /* Begin XCRemoteSwiftPackageReference section */
 		0B1807AC2F1BCCF800E4E23B /* XCRemoteSwiftPackageReference "MagicDevice" */ = {
 			isa = XCRemoteSwiftPackageReference;
@@ -2625,6 +2688,26 @@
 		0B76CE332F151D1900BFB2C3 /* LibGit2Swift */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = LibGit2Swift;
+		};
+		A1F100022F70000100ABC001 /* GitCoreKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A1F100012F70000100ABC001 /* XCLocalSwiftPackageReference "Packages/GitCoreKit" */;
+			productName = GitCoreKit;
+		};
+		A1F200022F70000100ABC001 /* ProjectRulesKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A1F200012F70000100ABC001 /* XCLocalSwiftPackageReference "Packages/ProjectRulesKit" */;
+			productName = ProjectRulesKit;
+		};
+		A1F300022F70000100ABC001 /* BannerCoreKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A1F300012F70000100ABC001 /* XCLocalSwiftPackageReference "Packages/BannerCoreKit" */;
+			productName = BannerCoreKit;
+		};
+		A1F400022F70000100ABC001 /* ProjectSupportKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A1F400012F70000100ABC001 /* XCLocalSwiftPackageReference "Packages/ProjectSupportKit" */;
+			productName = ProjectSupportKit;
 		};
 		F533707F2F52F8D600020751 /* LibGit2Swift */ = {
 			isa = XCSwiftPackageProductDependency;

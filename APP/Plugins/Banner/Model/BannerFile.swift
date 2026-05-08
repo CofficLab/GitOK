@@ -1,3 +1,4 @@
+import BannerCoreKit
 import Foundation
 import MagicKit
 import OSLog
@@ -12,21 +13,12 @@ import SwiftUI
 struct BannerFile: SuperLog {
     static var emoji = "📄"
     static var empty = BannerFile(path: "", project: Project.null)
-    
-    // MARK: - 基本属性
-    
-    /// 配置文件路径
-    var path: String
-    
+
     /// 所属项目
     var project: Project
-    
-    /// 模板特定的数据（JSON格式存储）
-    /// key 是模板的 ID，value 是模板的数据
-    var templateData: [String: String] = [:]
-    
-    /// 最后选择的模板ID
-    var lastSelectedTemplateId: String = ""
+
+    /// 可序列化的磁盘记录，和 Project/UI 状态分离。
+    var record: BannerRecord = BannerRecord(path: "")
     
     // MARK: - 初始化方法
     
@@ -36,10 +28,14 @@ struct BannerFile: SuperLog {
         templateData: [String: String] = [:],
         lastSelectedTemplateId: String = ""
     ) {
-        self.path = path
         self.project = project
-        self.templateData = templateData
-        self.lastSelectedTemplateId = lastSelectedTemplateId
+        self.record = BannerRecord(
+            path: path,
+            document: BannerDocument(
+                templateData: templateData,
+                lastSelectedTemplateId: lastSelectedTemplateId
+            )
+        )
     }
     
     // MARK: - 业务方法
@@ -81,11 +77,36 @@ struct BannerFile: SuperLog {
 // MARK: - Template Data
 
 extension BannerFile {
+    /// 配置文件路径
+    var path: String {
+        get { record.path }
+        set { record.path = newValue }
+    }
+
+    /// 可序列化的文档核心
+    var document: BannerDocument {
+        get { record.document }
+        set { record.document = newValue }
+    }
+
+    /// 模板特定的数据（JSON格式存储）
+    /// key 是模板的 ID，value 是模板的数据
+    var templateData: [String: String] {
+        get { document.templateData }
+        set { document.templateData = newValue }
+    }
+
+    /// 最后选择的模板ID
+    var lastSelectedTemplateId: String {
+        get { document.lastSelectedTemplateId }
+        set { document.lastSelectedTemplateId = newValue }
+    }
+
     /// 获取模板数据
     /// - Parameter templateId: 模板ID
     /// - Returns: 模板数据的JSON字符串
     func getTemplateData(_ templateId: String) -> String? {
-        return templateData[templateId]
+        document.templateDataValue(for: templateId)
     }
     
     /// 设置模板数据
@@ -93,7 +114,7 @@ extension BannerFile {
     ///   - templateId: 模板ID
     ///   - data: 模板数据的JSON字符串
     mutating func setTemplateData(_ templateId: String, data: String) throws {
-        templateData[templateId] = data
+        document.setTemplateDataValue(data, for: templateId)
         try self.saveToDisk()
     }
 }
@@ -102,7 +123,7 @@ extension BannerFile {
 
 extension BannerFile: Identifiable {
     var id: String {
-        path
+        record.id
     }
 }
 
@@ -117,26 +138,14 @@ extension BannerFile: Equatable {
 // MARK: - Codable
 
 extension BannerFile: Codable {
-    enum CodingKeys: String, CodingKey {
-        case templateData
-        case lastSelectedTemplateId
-        // path 和 project 不需要序列化，它们在加载时设置
-    }
-    
     init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        
         // 这些值在反序列化时临时设置，实际值由ProjectBannerRepo在加载时设置
-        path = ""
         project = Project.null
-        templateData = try container.decodeIfPresent([String: String].self, forKey: .templateData) ?? [:]
-        lastSelectedTemplateId = try container.decodeIfPresent(String.self, forKey: .lastSelectedTemplateId) ?? ""
+        record = try BannerRecord(from: decoder)
     }
     
     func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(templateData, forKey: .templateData)
-        try container.encode(lastSelectedTemplateId, forKey: .lastSelectedTemplateId)
+        try record.encode(to: encoder)
     }
 }
 
