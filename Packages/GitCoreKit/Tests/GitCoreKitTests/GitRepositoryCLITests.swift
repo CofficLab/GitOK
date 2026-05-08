@@ -392,6 +392,48 @@ final class GitRepositoryCLITests: XCTestCase {
         XCTAssertThrowsError(try GitRepositoryCLI.clone(remoteURL: "/tmp/definitely-missing-repo", destinationURL: destinationURL))
         XCTAssertTrue(FileManager.default.fileExists(atPath: destinationURL.path))
     }
+
+    func testCloneCreatesParentDirectoryWhenItDoesNotExist() throws {
+        let remote = try TestGitRepository()
+        try remote.write("README.md", content: "hello\n")
+        try remote.run(["add", "."])
+        try remote.run(["commit", "-m", "initial"])
+
+        let destinationRoot = FileManager.default.temporaryDirectory
+            .appendingPathComponent(UUID().uuidString, isDirectory: true)
+        // Do NOT create destinationRoot - it should be created automatically
+        defer { try? FileManager.default.removeItem(at: destinationRoot) }
+
+        let destinationURL = destinationRoot.appendingPathComponent("cloned-repo", isDirectory: true)
+        try GitRepositoryCLI.clone(remoteURL: remote.url.path, destinationURL: destinationURL)
+
+        XCTAssertTrue(FileManager.default.fileExists(atPath: destinationURL.appendingPathComponent(".git").path))
+        XCTAssertEqual(try String(contentsOf: destinationURL.appendingPathComponent("README.md"), encoding: .utf8), "hello\n")
+    }
+
+    func testGetCurrentMergeBranchNameFallsBackToMergeMessageWhenRevParseReturnsUndefined() throws {
+        let repo = try TestGitRepository()
+        try repo.write("base.txt", content: "base\n")
+        try repo.run(["add", "."])
+        try repo.run(["commit", "-m", "base"])
+
+        try repo.run(["checkout", "-b", "feature"])
+        try repo.write("conflict.txt", content: "feature\n")
+        try repo.run(["add", "conflict.txt"])
+        try repo.run(["commit", "-m", "feature"])
+
+        try repo.run(["checkout", "master"])
+        try repo.write("conflict.txt", content: "master\n")
+        try repo.run(["add", "conflict.txt"])
+        try repo.run(["commit", "-m", "master"])
+
+        let client = GitRepositoryCLI(repositoryURL: repo.url)
+        XCTAssertThrowsError(try repo.run(["merge", "feature"])) { _ in }
+
+        // This should work and read from MERGE_MSG file
+        let branchName = try client.getCurrentMergeBranchName()
+        XCTAssertEqual(branchName, "feature")
+    }
 }
 
 private final class TestGitRepository {
