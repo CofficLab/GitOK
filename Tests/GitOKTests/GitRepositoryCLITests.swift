@@ -1,4 +1,5 @@
 import Foundation
+import GitCoreKit
 import XCTest
 
 final class GitRepositoryCLITests: XCTestCase {
@@ -347,6 +348,49 @@ final class GitRepositoryCLITests: XCTestCase {
             let description = (error as NSError).localizedDescription
             XCTAssertTrue(description.contains("not-a-real-command"))
         }
+    }
+
+    func testCloneRepositoryIntoNewDirectory() throws {
+        let remote = try TestGitRepository()
+        try remote.write("README.md", content: "hello\n")
+        try remote.run(["add", "."])
+        try remote.run(["commit", "-m", "initial"])
+
+        let destinationRoot = FileManager.default.temporaryDirectory
+            .appendingPathComponent(UUID().uuidString, isDirectory: true)
+        try FileManager.default.createDirectory(at: destinationRoot, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: destinationRoot) }
+
+        let destinationURL = destinationRoot.appendingPathComponent("cloned-repo", isDirectory: true)
+        try GitRepositoryCLI.clone(remoteURL: remote.url.path, destinationURL: destinationURL)
+
+        XCTAssertTrue(FileManager.default.fileExists(atPath: destinationURL.appendingPathComponent(".git").path))
+        XCTAssertEqual(try String(contentsOf: destinationURL.appendingPathComponent("README.md"), encoding: .utf8), "hello\n")
+    }
+
+    func testCloneFailureRemovesNewlyCreatedDestinationDirectory() throws {
+        let destinationRoot = FileManager.default.temporaryDirectory
+            .appendingPathComponent(UUID().uuidString, isDirectory: true)
+        try FileManager.default.createDirectory(at: destinationRoot, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: destinationRoot) }
+
+        let destinationURL = destinationRoot.appendingPathComponent("missing-repo", isDirectory: true)
+
+        XCTAssertThrowsError(try GitRepositoryCLI.clone(remoteURL: "/tmp/definitely-missing-repo", destinationURL: destinationURL))
+        XCTAssertFalse(FileManager.default.fileExists(atPath: destinationURL.path))
+    }
+
+    func testCloneFailureKeepsPreexistingDestinationDirectory() throws {
+        let destinationRoot = FileManager.default.temporaryDirectory
+            .appendingPathComponent(UUID().uuidString, isDirectory: true)
+        try FileManager.default.createDirectory(at: destinationRoot, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: destinationRoot) }
+
+        let destinationURL = destinationRoot.appendingPathComponent("existing-empty-dir", isDirectory: true)
+        try FileManager.default.createDirectory(at: destinationURL, withIntermediateDirectories: true)
+
+        XCTAssertThrowsError(try GitRepositoryCLI.clone(remoteURL: "/tmp/definitely-missing-repo", destinationURL: destinationURL))
+        XCTAssertTrue(FileManager.default.fileExists(atPath: destinationURL.path))
     }
 }
 

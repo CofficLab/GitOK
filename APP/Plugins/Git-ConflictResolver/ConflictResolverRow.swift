@@ -1,3 +1,4 @@
+import GitCoreKit
 import SwiftUI
 
 /// 显示单个冲突文件的行视图
