@@ -1617,6 +1617,9 @@
         }
       }
     },
+    "在 Cursor 中打开" : {
+
+    },
     "在 GitHub Settings → Developer settings → Personal access tokens 中创建" : {
       "localizations" : {
         "zh-Hans" : {
@@ -1632,6 +1635,12 @@
           }
         }
       }
+    },
+    "在 VS Code 中打开" : {
+
+    },
+    "在 Xcode 中打开" : {
+
     },
     "在Finder中打开" : {
       "localizations" : {
@@ -1764,6 +1773,9 @@
           }
         }
       }
+    },
+    "复制文件路径" : {
+
     },
     "复制消息内容" : {
       "localizations" : {
