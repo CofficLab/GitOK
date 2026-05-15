@@ -19,6 +19,18 @@ struct ProjectContextMenu: View {
                 NSWorkspace.shared.activateFileViewerSelecting([url])
             }
 
+            if isAppInstalled(at: "/Applications/Cursor.app") {
+                Button("在 Cursor 中打开") {
+                    openProjectInApp(at: "/Applications/Cursor.app")
+                }
+            }
+
+            if isAppInstalled(at: "/Applications/Visual Studio Code.app") {
+                Button("在 VS Code 中打开") {
+                    openProjectInApp(at: "/Applications/Visual Studio Code.app")
+                }
+            }
+
             if let xcodeProjectURL {
                 Button("在 Xcode 中打开") {
                     openInXcode(xcodeProjectURL)
@@ -62,6 +74,23 @@ struct ProjectContextMenu: View {
             .filter { $0.pathExtension.lowercased() == "xcodeproj" }
             .sorted(by: { $0.lastPathComponent < $1.lastPathComponent })
             .first
+    }
+
+    private func isAppInstalled(at path: String) -> Bool {
+        NSWorkspace.shared.urlForApplication(toOpen: URL(fileURLWithPath: path)) != nil
+    }
+
+    private func openProjectInApp(at appPath: String) {
+        guard let appURL = NSWorkspace.shared.urlForApplication(toOpen: URL(fileURLWithPath: appPath)) else {
+            return
+        }
+
+        NSWorkspace.shared.open(
+            [URL(fileURLWithPath: item.path)],
+            withApplicationAt: appURL,
+            configuration: NSWorkspace.OpenConfiguration(),
+            completionHandler: nil
+        )
     }
 
     private func openInXcode(_ url: URL) {
