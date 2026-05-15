@@ -413,11 +413,16 @@ extension FileList {
                     return
                 }
 
+                let selectedFilePath = self.selection?.file ?? self.vm.file?.file
+                let refreshedSelection = selectedFilePath.flatMap { path in
+                    newFiles.first { $0.file == path }
+                } ?? newFiles.first
+
                 self.files = newFiles
                 self.stagedFilePaths = Set(statusEntries.filter { $0.indexStatus != " " && $0.indexStatus != "?" }.map(\.path))
                 self.unstagedFilePaths = Set(statusEntries.filter { $0.workTreeStatus != " " || $0.indexStatus == "?" }.map(\.path))
                 self.untrackedFilePaths = Set(statusEntries.filter { $0.indexStatus == "?" }.map(\.path))
-                self.selection = newFiles.first
+                self.selection = refreshedSelection
                 self.vm.setFile(self.selection)
                 self.isLoading = false
             }
