@@ -194,6 +194,32 @@ public struct GitRepositoryCLI {
         _ = try runGit(["stash", "drop", "stash@{\(index)}"])
     }
 
+    public func fetch(remote: String = "origin") throws {
+        _ = try runGit(["fetch", "--prune", remote])
+    }
+
+    public func aheadBehind() throws -> GitAheadBehind {
+        let upstream = try runGit(
+            ["rev-parse", "--abbrev-ref", "--symbolic-full-name", "@{upstream}"],
+            allowNonZeroExit: true
+        )
+
+        guard upstream.isEmpty == false else {
+            return .noUpstream
+        }
+
+        let output = try runGit(["rev-list", "--left-right", "--count", "HEAD...@{upstream}"])
+        guard let counts = GitParsers.parseAheadBehindCounts(output) else {
+            throw NSError(
+                domain: "GitOK.GitCommand",
+                code: -1,
+                userInfo: [NSLocalizedDescriptionKey: "无法解析 ahead/behind 状态：\(output)"]
+            )
+        }
+
+        return GitAheadBehind(ahead: counts.ahead, behind: counts.behind, hasUpstream: true)
+    }
+
     public func addFiles(_ filePaths: [String]) throws {
         guard filePaths.isEmpty == false else { return }
         _ = try runGit(["add", "--"] + filePaths)

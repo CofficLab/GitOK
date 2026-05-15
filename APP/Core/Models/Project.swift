@@ -874,15 +874,47 @@ extension Project {
                 operation: "push"
             )
         } catch {
-            os_log(.default, "❌ Push failed: \(error.localizedDescription)")
+            let pushError: Error
+            if let message = GitOperationError.pushNeedsFetchMessage(from: error) {
+                pushError = GitOperationError.pushNeedsFetch(message: message)
+            } else {
+                pushError = error
+            }
+
+            os_log(.default, "❌ Push failed: \(pushError.localizedDescription)")
             postEvent(
                 name: .projectOperationDidFail,
                 operation: "push",
                 success: false,
-                error: error
+                error: pushError
+            )
+            throw pushError
+        }
+    }
+
+    func fetch(remote: String = "origin") throws {
+        do {
+            try gitCLI.fetch(remote: remote)
+
+            postEvent(
+                name: .projectDidFetch,
+                operation: "fetch",
+                additionalInfo: ["remote": remote]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "fetch",
+                success: false,
+                error: error,
+                additionalInfo: ["remote": remote]
             )
             throw error
         }
+    }
+
+    func aheadBehind() throws -> GitAheadBehind {
+        try gitCLI.aheadBehind()
     }
 
     func pull() throws {
@@ -946,8 +978,26 @@ extension Project {
 
     func sync() throws {
         do {
-            try self.push()
-            try self.pull()
+            try self.fetch()
+            let trackingState = try self.aheadBehind()
+
+            if trackingState.hasUpstream,
+               trackingState.ahead > 0,
+               trackingState.behind > 0 {
+                throw GitOperationError.syncNeedsUserDecision(
+                    ahead: trackingState.ahead,
+                    behind: trackingState.behind
+                )
+            }
+
+            if trackingState.hasUpstream, trackingState.behind > 0 {
+                try self.pull()
+            }
+
+            if trackingState.hasUpstream == false || trackingState.ahead > 0 {
+                try self.push()
+            }
+
             postEvent(
                 name: .projectDidSync,
                 operation: "sync"

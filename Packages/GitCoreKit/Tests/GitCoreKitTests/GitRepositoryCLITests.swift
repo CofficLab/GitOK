@@ -101,6 +101,17 @@ final class GitRepositoryCLITests: XCTestCase {
         )
     }
 
+    func testGitMergeFileIDUsesPath() {
+        XCTAssertEqual(GitMergeFile(path: "Sources/App.swift", state: .staged).id, "Sources/App.swift")
+    }
+
+    func testParseAheadBehindCounts() {
+        let counts = GitParsers.parseAheadBehindCounts("2\t3")
+        XCTAssertEqual(counts?.ahead, 2)
+        XCTAssertEqual(counts?.behind, 3)
+        XCTAssertNil(GitParsers.parseAheadBehindCounts("not-counts"))
+    }
+
     func testStashLifecycle() throws {
         let repo = try TestGitRepository()
         try repo.run(["commit", "--allow-empty", "-m", "initial"])
@@ -205,6 +216,49 @@ final class GitRepositoryCLITests: XCTestCase {
         XCTAssertThrowsError(try client.stashDrop(index: 99))
     }
 
+    func testAheadBehindReturnsNoUpstreamForLocalOnlyBranch() throws {
+        let repo = try TestGitRepository()
+        try repo.run(["commit", "--allow-empty", "-m", "initial"])
+
+        let client = GitRepositoryCLI(repositoryURL: repo.url)
+
+        XCTAssertEqual(try client.aheadBehind(), .noUpstream)
+    }
+
+    func testAheadBehindCountsLocalAndRemoteCommits() throws {
+        let remote = try TestGitRepository()
+        try remote.write("README.md", content: "hello\n")
+        try remote.run(["add", "."])
+        try remote.run(["commit", "-m", "initial"])
+
+        let destinationRoot = FileManager.default.temporaryDirectory
+            .appendingPathComponent(UUID().uuidString, isDirectory: true)
+        try FileManager.default.createDirectory(at: destinationRoot, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: destinationRoot) }
+
+        let localURL = destinationRoot.appendingPathComponent("local", isDirectory: true)
+        try GitRepositoryCLI.clone(remoteURL: remote.url.path, destinationURL: localURL)
+
+        let local = TestGitRepository(url: localURL)
+        try local.run(["config", "user.name", "Test User"])
+        try local.run(["config", "user.email", "test@example.com"])
+
+        let client = GitRepositoryCLI(repositoryURL: localURL)
+        XCTAssertEqual(try client.aheadBehind(), GitAheadBehind(ahead: 0, behind: 0, hasUpstream: true))
+
+        try local.write("local.txt", content: "local\n")
+        try local.run(["add", "."])
+        try local.run(["commit", "-m", "local change"])
+        XCTAssertEqual(try client.aheadBehind(), GitAheadBehind(ahead: 1, behind: 0, hasUpstream: true))
+
+        try remote.write("remote.txt", content: "remote\n")
+        try remote.run(["add", "."])
+        try remote.run(["commit", "-m", "remote change"])
+        try client.fetch()
+
+        XCTAssertEqual(try client.aheadBehind(), GitAheadBehind(ahead: 1, behind: 1, hasUpstream: true))
+    }
+
     func testMergeConflictLifecycle() throws {
         let repo = try TestGitRepository()
         try repo.write("shared.txt", content: "base\n")
@@ -248,6 +302,27 @@ final class GitRepositoryCLITests: XCTestCase {
         let client = GitRepositoryCLI(repositoryURL: repo.url)
         XCTAssertFalse(try client.isMerging())
         XCTAssertNil(try client.getCurrentMergeBranchName())
+    }
+
+    func testGetCurrentMergeBranchNameFallsBackToMergeMessage() throws {
+        let repo = try TestGitRepository()
+        try repo.write("shared.txt", content: "base\n")
+        try repo.run(["add", "."])
+        try repo.run(["commit", "-m", "base"])
+
+        try repo.run(["checkout", "-b", "feature"])
+        try repo.write("shared.txt", content: "feature\n")
+        try repo.run(["commit", "-am", "feature change"])
+
+        try repo.run(["checkout", "master"])
+        try repo.write("shared.txt", content: "master\n")
+        try repo.run(["commit", "-am", "master change"])
+
+        let client = GitRepositoryCLI(repositoryURL: repo.url)
+        XCTAssertThrowsError(try repo.run(["merge", "feature"])) { _ in }
+        try repo.run(["branch", "-D", "feature"])
+
+        XCTAssertEqual(try client.getCurrentMergeBranchName(), "feature")
     }
 
     func testContinueMergeThrowsUntilFilesAreStaged() throws {
@@ -411,29 +486,6 @@ final class GitRepositoryCLITests: XCTestCase {
         XCTAssertEqual(try String(contentsOf: destinationURL.appendingPathComponent("README.md"), encoding: .utf8), "hello\n")
     }
 
-    func testGetCurrentMergeBranchNameFallsBackToMergeMessageWhenRevParseReturnsUndefined() throws {
-        let repo = try TestGitRepository()
-        try repo.write("base.txt", content: "base\n")
-        try repo.run(["add", "."])
-        try repo.run(["commit", "-m", "base"])
-
-        try repo.run(["checkout", "-b", "feature"])
-        try repo.write("conflict.txt", content: "feature\n")
-        try repo.run(["add", "conflict.txt"])
-        try repo.run(["commit", "-m", "feature"])
-
-        try repo.run(["checkout", "master"])
-        try repo.write("conflict.txt", content: "master\n")
-        try repo.run(["add", "conflict.txt"])
-        try repo.run(["commit", "-m", "master"])
-
-        let client = GitRepositoryCLI(repositoryURL: repo.url)
-        XCTAssertThrowsError(try repo.run(["merge", "feature"])) { _ in }
-
-        // This should work and read from MERGE_MSG file
-        let branchName = try client.getCurrentMergeBranchName()
-        XCTAssertEqual(branchName, "feature")
-    }
 }
 
 private final class TestGitRepository {
@@ -448,6 +500,10 @@ private final class TestGitRepository {
         try run(["init", "-b", "master"])
         try run(["config", "user.name", "Test User"])
         try run(["config", "user.email", "test@example.com"])
+    }
+
+    init(url: URL) {
+        self.url = url
     }
 
     deinit {

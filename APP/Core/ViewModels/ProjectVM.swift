@@ -1,3 +1,4 @@
+import GitCoreKit
 import LibGit2Swift
 import MagicKit
 import OSLog
@@ -29,6 +30,12 @@ class ProjectVM: ObservableObject, SuperLog {
 
     /// 项目是否 clean（无未提交的更改）
     @Published private(set) var isClean: Bool = true
+
+    /// 当前分支相对 upstream 的 ahead/behind 状态
+    @Published private(set) var aheadCount: Int = 0
+    @Published private(set) var behindCount: Int = 0
+    @Published private(set) var hasUpstream: Bool = false
+    @Published private(set) var lastFetchedAt: Date? = nil
 
     /// 仓库管理器
     private let repoManager: RepoManager
@@ -99,6 +106,23 @@ class ProjectVM: ObservableObject, SuperLog {
     /// - Parameter isClean: 项目是否 clean
     func updateIsClean(_ isClean: Bool) {
         self.isClean = isClean
+    }
+
+    func updateAheadBehind(_ state: GitAheadBehind) {
+        self.aheadCount = state.ahead
+        self.behindCount = state.behind
+        self.hasUpstream = state.hasUpstream
+    }
+
+    func updateLastFetchedAt(_ date: Date?) {
+        self.lastFetchedAt = date
+    }
+
+    func resetRemoteTrackingState() {
+        self.aheadCount = 0
+        self.behindCount = 0
+        self.hasUpstream = false
+        self.lastFetchedAt = nil
     }
 
     // MARK: - Private

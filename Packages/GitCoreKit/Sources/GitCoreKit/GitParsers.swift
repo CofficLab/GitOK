@@ -39,6 +39,15 @@ public enum GitParsers {
             }
     }
 
+    public static func parseAheadBehindCounts(_ output: String) -> (ahead: Int, behind: Int)? {
+        let counts = output
+            .split(whereSeparator: { $0 == " " || $0 == "\t" || $0 == "\n" })
+            .compactMap { Int($0) }
+
+        guard counts.count >= 2 else { return nil }
+        return (ahead: counts[0], behind: counts[1])
+    }
+
     public static func classifyMergeFiles(
         unresolvedPaths: Set<String>,
         statusEntries: [GitStatusEntry]
@@ -51,9 +60,7 @@ public enum GitParsers {
                 return GitMergeFile(path: path, state: .unresolved)
             }
 
-            guard let entry = entryByPath[path] else {
-                return GitMergeFile(path: path, state: .staged)
-            }
+            let entry = entryByPath[path]!
 
             if entry.workTreeStatus != " " {
                 return GitMergeFile(path: path, state: .pendingStage)

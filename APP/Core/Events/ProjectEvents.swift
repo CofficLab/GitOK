@@ -32,6 +32,9 @@ extension Notification.Name {
     
     /// 项目推送事件
     static let projectDidPush = Notification.Name("projectDidPush")
+
+    /// 项目获取远程更新事件
+    static let projectDidFetch = Notification.Name("projectDidFetch")
     
     /// 项目拉取事件
     static let projectDidPull = Notification.Name("projectDidPull")
@@ -85,6 +88,17 @@ extension View {
     /// - Returns: 修改后的视图
     func onProjectDidPush(perform action: @escaping (ProjectEventInfo) -> Void) -> some View {
         self.onReceive(NotificationCenter.default.publisher(for: .projectDidPush)) { notification in
+            if let userInfo = notification.userInfo, let eventInfo = userInfo["eventInfo"] as? ProjectEventInfo {
+                action(eventInfo)
+            }
+        }
+    }
+
+    /// 监听项目获取远程更新事件
+    /// - Parameter action: 事件处理闭包，接收 ProjectEventInfo
+    /// - Returns: 修改后的视图
+    func onProjectDidFetch(perform action: @escaping (ProjectEventInfo) -> Void) -> some View {
+        self.onReceive(NotificationCenter.default.publisher(for: .projectDidFetch)) { notification in
             if let userInfo = notification.userInfo, let eventInfo = userInfo["eventInfo"] as? ProjectEventInfo {
                 action(eventInfo)
             }

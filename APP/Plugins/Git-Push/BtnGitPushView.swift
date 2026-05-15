@@ -24,6 +24,9 @@ struct BtnGitPushView: View, SuperLog, SuperThread {
     /// 是否为 Git 项目
     @State var isGitProject = false
 
+    /// Push 被远程拒绝且需要先获取远程更新
+    @State private var showPushNeedsFetchAlert = false
+
     /// 单例实例
     static let shared = BtnGitPushView()
 
@@ -33,26 +36,75 @@ struct BtnGitPushView: View, SuperLog, SuperThread {
     var body: some View {
         ZStack {
             if let project = vm.project, self.isGitProject {
-                Image.upload
+                actionIcon
                     .resizable()
                     .frame(height: 18)
                     .frame(width: 18)
                     .inButtonWithAction {
-                        push(path: project.path, onComplete: {})
+                        performPrimaryAction(for: project)
                     }
+                    .disabled(working)
                     .toolbarButtonStyle()
+                    .help(primaryActionHelp)
             } else {
                 // 空状态占位符，确保视图始终有内容
                 Color.clear.frame(width: 24, height: 24)
             }
         }
         .onAppear(perform: onAppear)
+        .alert("远程有新的提交", isPresented: $showPushNeedsFetchAlert) {
+            Button("Fetch") {
+                guard let project = vm.project else { return }
+                fetch(path: project.path, onComplete: {})
+            }
+            Button("取消", role: .cancel) {}
+        } message: {
+            Text("当前分支无法推送，因为远程分支包含本地还没有的提交。请先 Fetch，再选择 Pull 或 Rebase 后重新 Push。")
+        }
     }
 }
 
 // MARK: - Action
 
 extension BtnGitPushView {
+    private var actionIcon: Image {
+        if vm.hasUpstream, vm.behindCount > 0 {
+            return Image.download
+        }
+
+        if vm.hasUpstream, vm.aheadCount == 0 {
+            return Image(systemName: "arrow.clockwise")
+        }
+
+        return Image.upload
+    }
+
+    private var primaryActionHelp: String {
+        if vm.hasUpstream, vm.behindCount > 0 {
+            return "远程有 \(vm.behindCount) 个新提交，先拉取"
+        }
+
+        if vm.hasUpstream, vm.aheadCount == 0 {
+            return "获取远程更新"
+        }
+
+        return "推送本地提交"
+    }
+
+    private func performPrimaryAction(for project: Project) {
+        if vm.hasUpstream, vm.behindCount > 0 {
+            pull(path: project.path, onComplete: {})
+            return
+        }
+
+        if vm.hasUpstream, vm.aheadCount == 0 {
+            fetch(path: project.path, onComplete: {})
+            return
+        }
+
+        push(path: project.path, onComplete: {})
+    }
+
     /// 显示错误提示
     /// - Parameter error: 要显示的错误信息
     func alert(error: Error) {
@@ -107,10 +159,92 @@ extension BtnGitPushView {
                     os_log(.error, "\(Self.t)❌ Git 推送失败: \(error.localizedDescription)")
                     MagicMessageProvider.shared.hideLoading()
                     self.reset()
-                    alert_error(error)
+                    if case GitOperationError.pushNeedsFetch = error {
+                        showPushNeedsFetchAlert = true
+                    } else {
+                        alert_error(error)
+                    }
                 }
             }
             
+            await setStatus(nil)
+            await MainActor.run {
+                onComplete()
+            }
+        }
+    }
+
+    func pull(path: String, onComplete: @escaping () -> Void) {
+        let project = vm.project
+
+        func setStatus(_ text: String?) {
+            Task { @MainActor in
+                data.activityStatus = text
+            }
+        }
+
+        Task { @MainActor in
+            withAnimation {
+                working = true
+            }
+        }
+
+        Task.detached {
+            await setStatus("拉取中…")
+            do {
+                try project?.pull()
+                await MainActor.run {
+                    MagicMessageProvider.shared.hideLoading()
+                    self.reset()
+                }
+            } catch let error {
+                await MainActor.run {
+                    os_log(.error, "\(Self.t)❌ Git 拉取失败: \(error.localizedDescription)")
+                    MagicMessageProvider.shared.hideLoading()
+                    self.reset()
+                    alert_error(error)
+                }
+            }
+
+            await setStatus(nil)
+            await MainActor.run {
+                onComplete()
+            }
+        }
+    }
+
+    func fetch(path: String, onComplete: @escaping () -> Void) {
+        let project = vm.project
+
+        func setStatus(_ text: String?) {
+            Task { @MainActor in
+                data.activityStatus = text
+            }
+        }
+
+        Task { @MainActor in
+            withAnimation {
+                working = true
+            }
+        }
+
+        Task.detached {
+            await setStatus("获取远程更新中…")
+            do {
+                try project?.fetch()
+                await MainActor.run {
+                    MagicMessageProvider.shared.hideLoading()
+                    self.reset()
+                }
+            } catch let error {
+                await MainActor.run {
+                    os_log(.error, "\(Self.t)❌ Git Fetch 失败: \(error.localizedDescription)")
+                    MagicMessageProvider.shared.hideLoading()
+                    self.reset()
+                    alert_error(error)
+                }
+            }
+
             await setStatus(nil)
             await MainActor.run {
                 onComplete()

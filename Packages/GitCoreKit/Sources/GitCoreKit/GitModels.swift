@@ -39,3 +39,17 @@ public struct GitStatusEntry: Equatable, Sendable {
         self.workTreeStatus = workTreeStatus
     }
 }
+
+public struct GitAheadBehind: Equatable, Sendable {
+    public let ahead: Int
+    public let behind: Int
+    public let hasUpstream: Bool
+
+    public init(ahead: Int, behind: Int, hasUpstream: Bool) {
+        self.ahead = ahead
+        self.behind = behind
+        self.hasUpstream = hasUpstream
+    }
+
+    public static let noUpstream = GitAheadBehind(ahead: 0, behind: 0, hasUpstream: false)
+}

@@ -389,6 +389,9 @@
         }
       }
     },
+    "Fetch" : {
+
+    },
     "Flutter 模板" : {
       "localizations" : {
         "zh-Hans" : {
@@ -1979,6 +1982,9 @@
           }
         }
       }
+    },
+    "当前分支无法推送，因为远程分支包含本地还没有的提交。请先 Fetch，再选择 Pull 或 Rebase 后重新 Push。" : {
+
     },
     "当前项目" : {
       "extractionState" : "stale",
@@ -3792,6 +3798,9 @@
           }
         }
       }
+    },
+    "远程有新的提交" : {
+
     },
     "选择一个图标开始制作，或创建新的设计" : {
       "localizations" : {
