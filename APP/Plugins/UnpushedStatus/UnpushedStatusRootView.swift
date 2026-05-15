@@ -33,6 +33,11 @@ struct UnpushedStatusRootView<Content: View>: View, SuperLog {
             .onProjectDidPull { _ in
                 refreshUnpushedCount()
             }
+            .onProjectGitDirectoryDidChange { eventInfo in
+                guard eventInfo.project.path == vm.project?.path else { return }
+                guard eventInfo.additionalInfo?["headChanged"] as? Bool == true else { return }
+                refreshUnpushedCount()
+            }
             .onApplicationDidBecomeActive {
                 refreshUnpushedCount()
             }

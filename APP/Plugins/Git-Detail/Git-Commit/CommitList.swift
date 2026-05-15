@@ -41,7 +41,7 @@ struct CommitList: View, SuperThread, SuperLog {
     /// 当前刷新任务
     @State private var currentRefreshTask: Task<Void, Never>? = nil
     /// 后台刷新工作任务
-    @State private var currentRefreshWorkerTask: Task<[GitCommit], Error>? = nil
+    @State private var currentRefreshWorkerTask: Task<([GitCommit], [String]), Error>? = nil
 
     /// Git 提交仓库，用于存储和恢复提交选择状态
     private let commitRepo = GitCommitRepo.shared
@@ -72,6 +72,7 @@ struct CommitList: View, SuperThread, SuperLog {
         .onProjectDidCommit(perform: onCommitSuccess)
         .onProjectDidPull(perform: onPullSuccess)
         .onProjectDidPush(perform: onPushSuccess)
+        .onProjectGitDirectoryDidChange(perform: onGitDirectoryDidChange)
         .onApplicationWillBecomeActive(perform: onAppWillBecomeActive)
     }
 }
@@ -239,15 +240,19 @@ extension CommitList {
                         0, limit: pageSize
                     )
 
-                    return commits
+                    let unpushed = try await project.getUnPushedCommits()
+                    let unpushedHashes = unpushed.map { $0.hash }
+
+                    return (commits, unpushedHashes)
                 }
                 currentRefreshWorkerTask = worker
-                let initialCommits = try await worker.value
+                let (initialCommits, unpushedHashes) = try await worker.value
 
                 if Task.isCancelled { return }
 
                 // 在主线程更新 UI 状态
                 await MainActor.run {
+                    self.vm.updateUnpushedCommits(unpushedHashes.count, hashes: unpushedHashes)
                     self.commits = initialCommits
                     self.loading = false
                     self.currentPage = 1 // Next page to load
@@ -393,6 +398,14 @@ extension CommitList {
     /// - Parameter eventInfo: 事件信息
     func onPushSuccess(_ eventInfo: ProjectEventInfo) {
         // 提交列表刷新由其他事件触发
+    }
+
+    /// .git 目录发生变化时刷新提交列表
+    /// - Parameter eventInfo: 事件信息
+    func onGitDirectoryDidChange(_ eventInfo: ProjectEventInfo) {
+        guard eventInfo.project.path == vm.project?.path else { return }
+        guard eventInfo.additionalInfo?["headChanged"] as? Bool == true else { return }
+        self.refresh("GitDirectoryDidChange")
     }
 
     /// 应用即将变为活跃状态事件处理

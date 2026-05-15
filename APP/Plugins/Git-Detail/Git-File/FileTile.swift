@@ -87,6 +87,9 @@ struct FileTile: View, SuperLog {
         } message: {
             Text("确定要丢弃文件 \"\(file.file)\" 的更改吗？此操作不可撤销。")
         }
+        .onDrag {
+            filePathItemProvider()
+        }
     }
 
     /// 文件状态图标视图：根据文件变更类型显示对应的图标和颜色
@@ -130,6 +133,10 @@ struct FileTile: View, SuperLog {
         return URL(fileURLWithPath: file.file, relativeTo: project.url).standardizedFileURL
     }
 
+    private var displayFilePath: String {
+        targetFileURL?.path ?? file.file
+    }
+
     private var targetFileExists: Bool {
         guard let url = targetFileURL else { return false }
         return FileManager.default.fileExists(atPath: url.path)
@@ -164,6 +171,14 @@ struct FileTile: View, SuperLog {
             configuration: NSWorkspace.OpenConfiguration(),
             completionHandler: nil
         )
+    }
+
+    private func filePathItemProvider() -> NSItemProvider {
+        let provider = NSItemProvider(object: displayFilePath as NSString)
+        if let url = targetFileURL {
+            provider.registerObject(url as NSURL, visibility: .all)
+        }
+        return provider
     }
 }
 

@@ -66,6 +66,7 @@ struct FileList: View, SuperThread, SuperLog {
         .onChange(of: data.commit, onCommitChange)
         .onChange(of: selection, onSelectionChange)
         .onProjectDidCommit(perform: onProjectDidCommit)
+        .onProjectGitDirectoryDidChange(perform: onGitDirectoryDidChange)
         .onApplicationWillBecomeActive(perform: onAppWillBecomeActive)
         .alert("确认丢弃所有更改", isPresented: $showDiscardAllAlert) {
             Button("取消", role: .cancel) { }
@@ -363,6 +364,15 @@ extension FileList {
     func onProjectDidCommit(_ eventInfo: ProjectEventInfo) {
         Task {
             await self.refresh(reason: "OnProjectDidCommit")
+        }
+    }
+
+    /// .git 目录发生变化时刷新文件列表
+    /// - Parameter eventInfo: 项目事件信息
+    func onGitDirectoryDidChange(_ eventInfo: ProjectEventInfo) {
+        guard eventInfo.project.path == vm.project?.path else { return }
+        Task {
+            await self.refresh(reason: "OnGitDirectoryDidChange")
         }
     }
 

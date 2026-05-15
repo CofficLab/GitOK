@@ -33,6 +33,7 @@ struct StashStatusTile: View, SuperLog {
             loadStashCount()
         }
         .onProjectDidCommit(perform: onProjectDidCommit)
+        .onProjectGitDirectoryDidChange(perform: onGitDirectoryDidChange)
     }
 
     @ViewBuilder
@@ -95,5 +96,12 @@ struct StashStatusTile: View, SuperLog {
         if ProjectEventRefreshRules.shouldRefreshStash(for: eventInfo.operation) {
             loadStashCount()
         }
+    }
+
+    /// .git 目录变化后刷新 stash 数量
+    /// - Parameter eventInfo: 事件信息
+    func onGitDirectoryDidChange(_ eventInfo: ProjectEventInfo) {
+        guard eventInfo.project.path == vm.project?.path else { return }
+        loadStashCount()
     }
 }

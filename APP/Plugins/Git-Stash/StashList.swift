@@ -40,6 +40,7 @@ struct StashList: View, SuperLog, SuperThread {
         }
         .onAppear(perform: onAppear)
         .onProjectDidCommit(perform: onProjectDidCommit)
+        .onProjectGitDirectoryDidChange(perform: onGitDirectoryDidChange)
     }
 }
 
@@ -356,5 +357,10 @@ extension StashList {
         if ProjectEventRefreshRules.shouldRefreshStash(for: eventInfo.operation) {
             loadStashes()
         }
+    }
+
+    func onGitDirectoryDidChange(_ eventInfo: ProjectEventInfo) {
+        guard eventInfo.project.path == vm.project?.path else { return }
+        loadStashes()
     }
 }

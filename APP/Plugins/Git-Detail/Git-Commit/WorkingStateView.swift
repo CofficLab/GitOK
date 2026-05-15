@@ -153,6 +153,7 @@ struct WorkingStateView: View, SuperLog {
         .onProjectDidCommit(perform: onProjectDidCommit)
         .onProjectDidPush(perform: onProjectDidPush)
         .onProjectDidPull(perform: onProjectDidPull)
+        .onProjectGitDirectoryDidChange(perform: onGitDirectoryDidChange)
         .onNotification(.appDidBecomeActive, onAppDidBecomeActive)
         .sheet(isPresented: $showCredentialInput) {
             CredentialInputView {
@@ -536,6 +537,19 @@ extension WorkingStateView {
     /// 项目 pull 成功事件处理：刷新状态
     func onProjectDidPull(_ eventInfo: ProjectEventInfo) {
         loadSyncStatus()
+    }
+
+    /// .git 目录发生变化时刷新当前工作状态
+    /// - Parameter eventInfo: 事件信息
+    func onGitDirectoryDidChange(_ eventInfo: ProjectEventInfo) {
+        guard eventInfo.project.path == vm.project?.path else { return }
+        Task {
+            await self.loadChangedFileCount()
+        }
+
+        if eventInfo.additionalInfo?["headChanged"] as? Bool == true {
+            loadSyncStatus()
+        }
     }
 
     /// 应用激活事件处理：延迟刷新，避免与其他组件同时刷新

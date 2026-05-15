@@ -77,6 +77,13 @@ struct CleanStatusRootView<Content: View>: View, SuperLog {
                 }
                 checkCleanStatus()
             }
+            .onProjectGitDirectoryDidChange { eventInfo in
+                guard eventInfo.project.path == vm.project?.path else { return }
+                if verbose {
+                    os_log("\(Self.t) Git directory changed")
+                }
+                checkCleanStatus()
+            }
             .onApplicationDidBecomeActive {
                 if verbose {
                     os_log("\(Self.t) App became active")
