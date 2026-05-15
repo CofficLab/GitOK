@@ -175,9 +175,19 @@ struct SSHHelper {
     }
 
     /// 转换为 ssh:// 格式
-    private static func convertToSSHURL(_ originalURL: String, hostname: String, port: Int) -> String {
-        // 从原始 URL 提取用户和路径
-        let pattern = "^([^@]+)@[^:]+:(.+)$"
+    static func convertToSSHURL(_ originalURL: String, hostname: String, port: Int) -> String {
+        if originalURL.hasPrefix("ssh://"),
+           var components = URLComponents(string: originalURL),
+           components.scheme == "ssh",
+           components.user != nil,
+           components.path.isEmpty == false {
+            components.host = hostname
+            components.port = port
+            return components.string ?? originalURL
+        }
+
+        // 从 scp-like URL 提取用户和路径，例如 git@host:path
+        let pattern = "^([^@/:]+)@[^:]+:(.+)$"
 
         if let regex = try? NSRegularExpression(pattern: pattern),
            let match = regex.firstMatch(in: originalURL, range: NSRange(originalURL.startIndex..., in: originalURL)) {

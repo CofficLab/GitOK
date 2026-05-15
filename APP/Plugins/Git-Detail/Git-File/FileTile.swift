@@ -1,4 +1,6 @@
+import AppKit
 import LibGit2Swift
+import MagicAlert
 import MagicKit
 import OSLog
 import SwiftUI
@@ -13,6 +15,9 @@ struct FileTile: View, SuperLog {
 
     /// Git 差异文件对象
     var file: GitDiffFile
+
+    /// 环境对象
+    @EnvironmentObject var vm: ProjectVM
 
     /// 丢弃更改的回调函数
     var onDiscardChanges: ((GitDiffFile) -> Void)?
@@ -38,6 +43,34 @@ struct FileTile: View, SuperLog {
         .padding(.horizontal, 8)
         .cornerRadius(4)
         .contextMenu {
+            if targetFileExists {
+                Button("在Finder中显示") {
+                    revealInFinder()
+                }
+
+                Button("复制文件路径") {
+                    copyFilePath()
+                }
+
+                if isAppInstalled(at: "/Applications/Cursor.app") {
+                    Button("在 Cursor 中打开") {
+                        openFileInApp(at: "/Applications/Cursor.app")
+                    }
+                }
+
+                if isAppInstalled(at: "/Applications/Visual Studio Code.app") {
+                    Button("在 VS Code 中打开") {
+                        openFileInApp(at: "/Applications/Visual Studio Code.app")
+                    }
+                }
+
+                if isAppInstalled(at: "/Applications/Xcode.app") {
+                    Button("在 Xcode 中打开") {
+                        openFileInApp(at: "/Applications/Xcode.app")
+                    }
+                }
+            }
+
             if onDiscardChanges != nil {
                 Button("丢弃更改") {
                     showDiscardAlert = true
@@ -90,6 +123,47 @@ struct FileTile: View, SuperLog {
             }
             return (.iconInfo, .gray)
         }
+    }
+
+    private var targetFileURL: URL? {
+        guard let project = vm.project else { return nil }
+        return URL(fileURLWithPath: file.file, relativeTo: project.url).standardizedFileURL
+    }
+
+    private var targetFileExists: Bool {
+        guard let url = targetFileURL else { return false }
+        return FileManager.default.fileExists(atPath: url.path)
+    }
+
+    private func revealInFinder() {
+        guard let url = targetFileURL, targetFileExists else { return }
+        NSWorkspace.shared.activateFileViewerSelecting([url])
+    }
+
+    private func copyFilePath() {
+        guard let url = targetFileURL, targetFileExists else { return }
+        NSPasteboard.general.clearContents()
+        NSPasteboard.general.setString(url.path, forType: .string)
+        alert_info("已复制路径")
+    }
+
+    private func isAppInstalled(at path: String) -> Bool {
+        NSWorkspace.shared.urlForApplication(toOpen: URL(fileURLWithPath: path)) != nil
+    }
+
+    private func openFileInApp(at appPath: String) {
+        guard let url = targetFileURL,
+              targetFileExists,
+              let appURL = NSWorkspace.shared.urlForApplication(toOpen: URL(fileURLWithPath: appPath)) else {
+            return
+        }
+
+        NSWorkspace.shared.open(
+            [url],
+            withApplicationAt: appURL,
+            configuration: NSWorkspace.OpenConfiguration(),
+            completionHandler: nil
+        )
     }
 }
 
