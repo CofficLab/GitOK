@@ -1,3 +1,4 @@
+import GitCoreKit
 import MagicAlert
 import MagicKit
 import OSLog
@@ -51,7 +52,7 @@ extension ProjectNotGitView {
                     os_log("\(Self.t)🔧 Initializing Git repository at: \(project.path)")
                 }
 
-                try await initializeGit(at: project.path)
+                try GitRepositoryCLI.initialize(at: URL(fileURLWithPath: project.path))
 
                 await MainActor.run {
                     isInitializing = false
@@ -78,33 +79,6 @@ extension ProjectNotGitView {
                     os_log(.error, "\(Self.t)❌ 初始化 Git 仓库失败: \(error.localizedDescription)")
                     alert_error("初始化 Git 仓库失败: \(error.localizedDescription)")
                 }
-            }
-        }
-    }
-
-    /// 在指定路径初始化 Git 仓库
-    /// - Parameter path: 项目路径
-    private func initializeGit(at path: String) async throws {
-        try await withCheckedThrowingContinuation { continuation in
-            let process = Process()
-            process.executableURL = URL(fileURLWithPath: "/usr/bin/git")
-            process.arguments = ["init", path]
-
-            do {
-                try process.run()
-                process.waitUntilExit()
-
-                if process.terminationStatus == 0 {
-                    continuation.resume()
-                } else {
-                    continuation.resume(throwing: NSError(
-                        domain: "com.gitok.git",
-                        code: Int(process.terminationStatus),
-                        userInfo: [NSLocalizedDescriptionKey: "git init 命令执行失败"]
-                    ))
-                }
-            } catch {
-                continuation.resume(throwing: error)
             }
         }
     }

@@ -21,10 +21,10 @@
 
 ## P0：核心 Git 工作流缺口
 
-- [ ] 新建本地仓库 / 初始化仓库
+- [x] 新建本地仓库 / 初始化仓库
   - Desktop 参考：`app/src/ui/add-repository/create-repository.tsx`、`app/src/lib/git/init.ts`
-  - GitOK 现状：有 Clone 和添加本地项目，但缺少“Create Repository”流程。
-  - TODO：支持选择目录、仓库名校验、`git init`、默认 README、`.gitignore`、LICENSE 模板、初始提交。
+  - GitOK 现状：左侧添加入口已支持“新建仓库”，可选择目录、校验仓库名、执行 `git init`、创建 README、`.gitignore`、MIT LICENSE、初始提交，并自动导入项目列表。
+  - 后续：更多 LICENSE/.gitignore 模板、创建后 Publish 到远端、初始提交用户配置引导仍可继续完善。
 
 - [ ] GitHub/GitHub Enterprise 账号登录与仓库列表 Clone
   - Desktop 参考：`app/src/ui/sign-in`、`app/src/lib/auth.ts`、`app/src/ui/clone-repository/clone-github-repository.tsx`
@@ -36,20 +36,20 @@
   - GitOK 现状：可以管理 remote 和 push，但没有一键创建远端仓库并设置 upstream。
   - TODO：创建远程仓库、选择公开/私有、设置 `origin`、首次 push、已有 remote 冲突处理。
 
-- [ ] Fetch 与 ahead/behind 状态体系
+- [x] Fetch 与 ahead/behind 状态体系
   - Desktop 参考：`app/src/lib/git/fetch.ts`、`app/src/lib/stores/ahead-behind-store.ts`
-  - GitOK 现状：有 Pull/Push/Sync/Unpushed 状态，但 Fetch 和远端差异展示不完整。
-  - TODO：后台 fetch、手动 fetch、ahead/behind 计数、离线/认证失败状态、状态栏统一展示。
+  - GitOK 现状：已增加 fetch、ahead/behind 查询、Push 按钮远端差异状态、non-fast-forward 专门提示，并修正 Sync 为 fetch-first。
+  - 后续：后台定时 fetch、离线/认证失败状态、状态栏统一展示仍可继续打磨。
 
 - [ ] 精细化 stage / unstage / partial commit
   - Desktop 参考：`app/src/ui/changes`、`app/src/lib/git/stage.ts`
-  - GitOK 现状：有文件级 diff 和部分 add 能力，但 UI 仍需要面向“暂存区/工作区”的完整体验。
-  - TODO：文件级 stage/unstage、按 hunk/行选择、只提交选中改动、过滤后提交确认。
+  - GitOK 现状：已支持文件级 stage/unstage、文件暂存状态展示；提交按钮在存在 staged 改动时只提交 staged，否则保留一键提交全部。
+  - TODO：按 hunk/行选择、过滤后提交确认、Changes / Staged Changes 分区展示。
 
-- [ ] 安全的 discard / restore 体验
+- [x] 安全的 discard / restore 体验
   - Desktop 参考：`app/src/ui/discard-changes`
-  - GitOK 现状：已有单文件和全部 discard，但需要更严格的确认与失败恢复。
-  - TODO：区分 tracked/untracked、删除前二次确认、失败重试、被覆盖文件提示、可配置“不再确认”。
+  - GitOK 现状：单文件和全部 discard 已改为 Git CLI restore/rm/clean 路径；确认弹窗会区分已暂存、未暂存、未跟踪文件，并提示新文件会被删除；底层覆盖 tracked staged+unstaged、staged new file、untracked file 的恢复/删除。
+  - 后续：失败重试、被覆盖文件提示、可配置“不再确认”仍可继续完善。
 
 - [ ] Branch 完整管理
   - Desktop 参考：`app/src/ui/branches`、`app/src/ui/rename-branch`、`app/src/ui/delete-branch`
@@ -174,9 +174,9 @@
 
 ## 已有功能需要优先打磨
 
-- [ ] `Git-Sync` 的操作顺序需要重新评估
-  - 现状：`Project.sync()` 当前是先 `push()` 再 `pull()`。
-  - 建议：先 fetch/pull，确认无冲突或需 rebase/merge 后再 push；否则容易在远端领先时失败或产生不清晰错误。
+- [x] `Git-Sync` 的操作顺序需要重新评估
+  - 现状：`Project.sync()` 已调整为先 fetch，再根据 ahead/behind 决定 pull/push；本地和远端同时有新提交时提示用户处理。
+  - 已验证：`swift test --enable-code-coverage`、`xcodebuild -scheme GitOK -destination 'platform=macOS' build`。
 
 - [ ] `Git-Stash` 需要补充上下文
   - 现状：只显示 index 和 message。
@@ -200,9 +200,8 @@
 
 ## 推荐实施顺序
 
-1. 打牢本地 Git 闭环：Create Repository、Fetch/ahead-behind、stage/unstage、discard 安全确认。
+1. 打牢本地 Git 闭环：Create Repository、stage/unstage、discard 安全确认。
 2. 补全分支和历史：branch rename/delete/upstream、history compare、tag 管理。
 3. 完善高风险操作：rebase、cherry-pick、squash/revert/reset、conflict resolver。
 4. 接入远程平台：GitHub auth、publish repo/branch、PR 创建/展示、CI checks。
 5. 做桌面体验：快捷键、引导、错误日志、更新说明、无障碍。
-

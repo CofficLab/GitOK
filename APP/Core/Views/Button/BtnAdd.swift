@@ -13,10 +13,27 @@ struct BtnAdd: View, SuperLog {
     /// 数据提供者环境对象
     @EnvironmentObject var g: DataVM
 
+    @State private var showCreateRepositorySheet = false
+
     /// 按钮视图主体
     var body: some View {
-        Button(action: open) {
+        Menu {
+            Button {
+                open()
+            } label: {
+                Label("添加现有项目", systemImage: "folder")
+            }
+
+            Button {
+                showCreateRepositorySheet = true
+            } label: {
+                Label("新建仓库", systemImage: "plus.square.on.square")
+            }
+        } label: {
             Label("添加项目", systemImage: "plus")
+        }
+        .sheet(isPresented: $showCreateRepositorySheet) {
+            CreateRepositorySheet()
         }
     }
 
