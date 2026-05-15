@@ -54,6 +54,7 @@ struct BranchesView: View, SuperThread, SuperLog, SuperEvent {
         .onChange(of: self.selection, onSelectionChange)
         .onAppear(perform: onAppear)
         .onApplicationWillBecomeActive(perform: onAppWillBecomeActive)
+        .onProjectGitDirectoryDidChange(perform: onGitDirectoryDidChange)
         .onProjectDidChangeBranch { eventInfo in
             handleBranchChanged(eventInfo)
         }
@@ -172,6 +173,11 @@ extension BranchesView {
 extension BranchesView {
     func onAppWillBecomeActive() {
         self.refreshBranches(reason: "AppWillBecomeActive(\(vm.project?.title ?? ""))")
+    }
+
+    func onGitDirectoryDidChange(_ eventInfo: ProjectEventInfo) {
+        guard eventInfo.project.path == vm.project?.path else { return }
+        self.refreshBranches(reason: "GitDirectoryDidChange(\(vm.project?.title ?? ""))")
     }
 
     func onProjectChanged() {

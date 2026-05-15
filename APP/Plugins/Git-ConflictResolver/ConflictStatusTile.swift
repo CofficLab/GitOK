@@ -35,6 +35,7 @@ struct ConflictStatusTile: View, SuperLog {
         }
         .onProjectDidMerge(perform: onProjectDidMerge)
         .onProjectDidAddFiles(perform: onProjectDidAddFiles)
+        .onProjectGitDirectoryDidChange(perform: onGitDirectoryDidChange)
     }
 
     private var iconName: String {
@@ -109,6 +110,13 @@ struct ConflictStatusTile: View, SuperLog {
     /// 文件暂存后可能改变冲突状态
     func onProjectDidAddFiles(_ eventInfo: ProjectEventInfo) {
         handleRefreshTrigger(notificationName: .projectDidAddFiles)
+    }
+
+    /// .git 目录变化后刷新冲突状态
+    /// - Parameter eventInfo: 事件信息
+    func onGitDirectoryDidChange(_ eventInfo: ProjectEventInfo) {
+        guard eventInfo.project.path == vm.project?.path else { return }
+        loadConflictStatus()
     }
 
     private func handleRefreshTrigger(notificationName: Notification.Name) {
