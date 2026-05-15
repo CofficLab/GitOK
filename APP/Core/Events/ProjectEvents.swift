@@ -44,6 +44,9 @@ extension Notification.Name {
     
     /// 项目切换分支事件
     static let projectDidChangeBranch = Notification.Name("projectDidChangeBranch")
+
+    /// 项目的 .git 目录发生变化事件
+    static let projectGitDirectoryDidChange = Notification.Name("projectGitDirectoryDidChange")
     
     /// 项目更新用户信息事件
     static let projectDidUpdateUserInfo = Notification.Name("projectDidUpdateUserInfo")
@@ -126,6 +129,17 @@ extension View {
     /// - Returns: 修改后的视图
     func onProjectDidChangeBranch(perform action: @escaping (ProjectEventInfo) -> Void) -> some View {
         self.onReceive(NotificationCenter.default.publisher(for: .projectDidChangeBranch)) { notification in
+            if let userInfo = notification.userInfo, let eventInfo = userInfo["eventInfo"] as? ProjectEventInfo {
+                action(eventInfo)
+            }
+        }
+    }
+
+    /// 监听项目 .git 目录变化事件
+    /// - Parameter action: 事件处理闭包，接收 ProjectEventInfo
+    /// - Returns: 修改后的视图
+    func onProjectGitDirectoryDidChange(perform action: @escaping (ProjectEventInfo) -> Void) -> some View {
+        self.onReceive(NotificationCenter.default.publisher(for: .projectGitDirectoryDidChange)) { notification in
             if let userInfo = notification.userInfo, let eventInfo = userInfo["eventInfo"] as? ProjectEventInfo {
                 action(eventInfo)
             }

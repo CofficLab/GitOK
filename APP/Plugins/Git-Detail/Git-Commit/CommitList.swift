@@ -72,6 +72,7 @@ struct CommitList: View, SuperThread, SuperLog {
         .onProjectDidCommit(perform: onCommitSuccess)
         .onProjectDidPull(perform: onPullSuccess)
         .onProjectDidPush(perform: onPushSuccess)
+        .onProjectGitDirectoryDidChange(perform: onGitDirectoryDidChange)
         .onApplicationWillBecomeActive(perform: onAppWillBecomeActive)
     }
 }
@@ -393,6 +394,14 @@ extension CommitList {
     /// - Parameter eventInfo: 事件信息
     func onPushSuccess(_ eventInfo: ProjectEventInfo) {
         // 提交列表刷新由其他事件触发
+    }
+
+    /// .git 目录发生变化时刷新提交列表
+    /// - Parameter eventInfo: 事件信息
+    func onGitDirectoryDidChange(_ eventInfo: ProjectEventInfo) {
+        guard eventInfo.project.path == vm.project?.path else { return }
+        guard eventInfo.additionalInfo?["headChanged"] as? Bool == true else { return }
+        self.refresh("GitDirectoryDidChange")
     }
 
     /// 应用即将变为活跃状态事件处理
