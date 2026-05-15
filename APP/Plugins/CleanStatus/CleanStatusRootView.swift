@@ -77,10 +77,17 @@ struct CleanStatusRootView<Content: View>: View, SuperLog {
                 }
                 checkCleanStatus()
             }
-            .onProjectGitDirectoryDidChange { eventInfo in
+            .onProjectGitIndexDidChange { eventInfo in
                 guard eventInfo.project.path == vm.project?.path else { return }
                 if verbose {
-                    os_log("\(Self.t) Git directory changed")
+                    os_log("\(Self.t) Git index changed")
+                }
+                checkCleanStatus()
+            }
+            .onProjectGitHeadDidChange { eventInfo in
+                guard eventInfo.project.path == vm.project?.path else { return }
+                if verbose {
+                    os_log("\(Self.t) Git head changed")
                 }
                 checkCleanStatus()
             }

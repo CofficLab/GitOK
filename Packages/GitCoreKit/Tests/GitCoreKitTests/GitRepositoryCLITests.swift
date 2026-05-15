@@ -425,6 +425,129 @@ final class GitRepositoryCLITests: XCTestCase {
         }
     }
 
+    func testInitializeCreatesGitRepository() throws {
+        let destinationRoot = FileManager.default.temporaryDirectory
+            .appendingPathComponent(UUID().uuidString, isDirectory: true)
+        defer { try? FileManager.default.removeItem(at: destinationRoot) }
+
+        let repositoryURL = destinationRoot.appendingPathComponent("new-repo", isDirectory: true)
+        try GitRepositoryCLI.initialize(at: repositoryURL)
+
+        XCTAssertTrue(FileManager.default.fileExists(atPath: repositoryURL.appendingPathComponent(".git").path))
+    }
+
+    func testUnstageFilesMovesTrackedFileOutOfIndex() throws {
+        let repo = try TestGitRepository()
+        try repo.write("README.md", content: "base\n")
+        try repo.run(["add", "."])
+        try repo.run(["commit", "-m", "initial"])
+
+        try repo.write("README.md", content: "changed\n")
+        let client = GitRepositoryCLI(repositoryURL: repo.url)
+        try client.addFiles(["README.md"])
+        XCTAssertEqual(try client.statusEntries(), [GitStatusEntry(path: "README.md", indexStatus: "M", workTreeStatus: " ")])
+
+        try client.unstageFiles(["README.md"])
+
+        XCTAssertEqual(try client.statusEntries(), [GitStatusEntry(path: "README.md", indexStatus: " ", workTreeStatus: "M")])
+    }
+
+    func testUnstageFilesHandlesInitialRepositoryWithoutHead() throws {
+        let destinationRoot = FileManager.default.temporaryDirectory
+            .appendingPathComponent(UUID().uuidString, isDirectory: true)
+        defer { try? FileManager.default.removeItem(at: destinationRoot) }
+
+        let repositoryURL = destinationRoot.appendingPathComponent("new-repo", isDirectory: true)
+        try GitRepositoryCLI.initialize(at: repositoryURL)
+        let repo = TestGitRepository(url: repositoryURL)
+        try repo.write("README.md", content: "hello\n")
+
+        let client = GitRepositoryCLI(repositoryURL: repositoryURL)
+        try client.addFiles(["README.md"])
+        try client.unstageFiles(["README.md"])
+
+        XCTAssertEqual(try client.statusEntries(), [GitStatusEntry(path: "README.md", indexStatus: "?", workTreeStatus: "?")])
+    }
+
+    func testDiscardFileChangesRestoresTrackedFileAndIndex() throws {
+        let repo = try TestGitRepository()
+        try repo.write("README.md", content: "base\n")
+        try repo.run(["add", "."])
+        try repo.run(["commit", "-m", "initial"])
+
+        try repo.write("README.md", content: "staged\n")
+        try repo.run(["add", "README.md"])
+        try repo.write("README.md", content: "unstaged\n")
+
+        let client = GitRepositoryCLI(repositoryURL: repo.url)
+        XCTAssertEqual(try client.statusEntries(), [GitStatusEntry(path: "README.md", indexStatus: "M", workTreeStatus: "M")])
+
+        try client.discardFileChanges("README.md")
+
+        XCTAssertEqual(try repo.read("README.md"), "base\n")
+        XCTAssertEqual(try client.statusEntries(), [])
+    }
+
+    func testDiscardFileChangesRemovesStagedNewFile() throws {
+        let repo = try TestGitRepository()
+        try repo.run(["commit", "--allow-empty", "-m", "initial"])
+        try repo.write("new.txt", content: "new\n")
+        try repo.run(["add", "new.txt"])
+
+        let client = GitRepositoryCLI(repositoryURL: repo.url)
+        XCTAssertEqual(try client.statusEntries(), [GitStatusEntry(path: "new.txt", indexStatus: "A", workTreeStatus: " ")])
+
+        try client.discardFileChanges("new.txt")
+
+        XCTAssertNil(try repo.read("new.txt"))
+        XCTAssertEqual(try client.statusEntries(), [])
+    }
+
+    func testDiscardAllChangesRestoresTrackedAndRemovesNewFiles() throws {
+        let repo = try TestGitRepository()
+        try repo.write("README.md", content: "base\n")
+        try repo.run(["add", "."])
+        try repo.run(["commit", "-m", "initial"])
+
+        try repo.write("README.md", content: "changed\n")
+        try repo.write("staged-new.txt", content: "new\n")
+        try repo.run(["add", "README.md", "staged-new.txt"])
+        try repo.write("untracked.txt", content: "scratch\n")
+
+        let client = GitRepositoryCLI(repositoryURL: repo.url)
+        try client.discardAllChanges()
+
+        XCTAssertEqual(try repo.read("README.md"), "base\n")
+        XCTAssertNil(try repo.read("staged-new.txt"))
+        XCTAssertNil(try repo.read("untracked.txt"))
+        XCTAssertEqual(try client.statusEntries(), [])
+    }
+
+    func testCreateRepositoryWritesFilesAndInitialCommit() throws {
+        let destinationRoot = FileManager.default.temporaryDirectory
+            .appendingPathComponent(UUID().uuidString, isDirectory: true)
+        defer { try? FileManager.default.removeItem(at: destinationRoot) }
+
+        let repositoryURL = destinationRoot.appendingPathComponent("created-repo", isDirectory: true)
+        try GitRepositoryCLI.create(
+            at: repositoryURL,
+            options: .init(
+                readmeContent: "# Created Repo\n",
+                gitignoreContent: "DerivedData/\n",
+                licenseContent: "MIT License\n",
+                initialCommitMessage: "Initial commit",
+                userName: "Test User",
+                userEmail: "test@example.com"
+            )
+        )
+
+        let repo = TestGitRepository(url: repositoryURL)
+        XCTAssertEqual(try repo.read("README.md"), "# Created Repo\n")
+        XCTAssertEqual(try repo.read(".gitignore"), "DerivedData/\n")
+        XCTAssertEqual(try repo.read("LICENSE"), "MIT License\n")
+        XCTAssertEqual(try repo.run(["log", "--oneline", "--format=%s"]), "Initial commit")
+    }
+
     func testCloneRepositoryIntoNewDirectory() throws {
         let remote = try TestGitRepository()
         try remote.write("README.md", content: "hello\n")

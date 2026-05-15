@@ -42,7 +42,7 @@ struct ConflictResolverList: View, SuperLog, SuperThread {
         }
         .onProjectDidMerge(perform: onProjectDidMerge)
         .onProjectDidAddFiles(perform: onProjectDidAddFiles)
-        .onProjectGitDirectoryDidChange(perform: onGitDirectoryDidChange)
+        .onProjectGitIndexDidChange(perform: onGitDirectoryDidChange)
     }
 }
 

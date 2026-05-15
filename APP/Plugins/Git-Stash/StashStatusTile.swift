@@ -33,7 +33,7 @@ struct StashStatusTile: View, SuperLog {
             loadStashCount()
         }
         .onProjectDidCommit(perform: onProjectDidCommit)
-        .onProjectGitDirectoryDidChange(perform: onGitDirectoryDidChange)
+        .onProjectGitStashDidChange(perform: onGitDirectoryDidChange)
     }
 
     @ViewBuilder

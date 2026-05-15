@@ -37,7 +37,7 @@ private final class GitWatcherCoordinator: ObservableObject, SuperLog {
     private var project: Project?
     private var watcher: GitDirectoryWatcher?
     private var debounceTask: Task<Void, Never>?
-    private var lastHead: String?
+    private var lastSnapshot: GitDirectorySnapshot?
     private var watchedGitDirectory: String?
 
     func update(project: Project?) {
@@ -52,7 +52,7 @@ private final class GitWatcherCoordinator: ObservableObject, SuperLog {
         do {
             let gitDirectory = try GitDirectoryResolver.resolveGitDirectory(for: project.path)
             watchedGitDirectory = gitDirectory.path
-            lastHead = GitDirectoryResolver.readHeadHash(gitDirectory: gitDirectory)
+            lastSnapshot = GitDirectoryResolver.readSnapshot(gitDirectory: gitDirectory)
 
             watcher = try GitDirectoryWatcher(url: gitDirectory) { [weak self] in
                 Task { @MainActor in
@@ -76,7 +76,7 @@ private final class GitWatcherCoordinator: ObservableObject, SuperLog {
         watcher?.stop()
         watcher = nil
         watchedGitDirectory = nil
-        lastHead = nil
+        lastSnapshot = nil
     }
 
     private func scheduleChangeCheck() {
@@ -91,22 +91,38 @@ private final class GitWatcherCoordinator: ObservableObject, SuperLog {
         guard let project, let watchedGitDirectory else { return }
 
         let gitDirectory = URL(fileURLWithPath: watchedGitDirectory, isDirectory: true)
-        let currentHead = GitDirectoryResolver.readHeadHash(gitDirectory: gitDirectory)
-        let previousHead = lastHead
-        let headChanged = currentHead != previousHead
-        lastHead = currentHead
+        let currentSnapshot = GitDirectoryResolver.readSnapshot(gitDirectory: gitDirectory)
+        let previousSnapshot = lastSnapshot
+        let headChanged = currentSnapshot.head != previousSnapshot?.head
+        let indexChanged = currentSnapshot.index != previousSnapshot?.index
+        let stashChanged = currentSnapshot.stash != previousSnapshot?.stash
+        let refsChanged = currentSnapshot.refs != previousSnapshot?.refs
+
+        guard headChanged || indexChanged || stashChanged || refsChanged else {
+            return
+        }
+
+        lastSnapshot = currentSnapshot
 
         var additionalInfo: [String: Any] = [
             "gitPath": watchedGitDirectory,
-            "changeKind": headChanged ? "head" : "metadata",
-            "headChanged": headChanged
+            "changeKind": changeKind(
+                headChanged: headChanged,
+                indexChanged: indexChanged,
+                stashChanged: stashChanged,
+                refsChanged: refsChanged
+            ),
+            "headChanged": headChanged,
+            "indexChanged": indexChanged,
+            "stashChanged": stashChanged,
+            "refsChanged": refsChanged
         ]
 
-        if let previousHead {
+        if let previousHead = previousSnapshot?.head {
             additionalInfo["previousHead"] = previousHead
         }
 
-        if let currentHead {
+        if let currentHead = currentSnapshot.head {
             additionalInfo["head"] = currentHead
         }
 
@@ -115,5 +131,66 @@ private final class GitWatcherCoordinator: ObservableObject, SuperLog {
             operation: "gitDirectoryChanged",
             additionalInfo: additionalInfo
         )
+
+        postSpecificChangeEvents(
+            project: project,
+            headChanged: headChanged,
+            indexChanged: indexChanged,
+            stashChanged: stashChanged,
+            refsChanged: refsChanged,
+            additionalInfo: additionalInfo
+        )
+    }
+
+    private func changeKind(headChanged: Bool, indexChanged: Bool, stashChanged: Bool, refsChanged: Bool) -> String {
+        let changes = [
+            headChanged ? "head" : nil,
+            indexChanged ? "index" : nil,
+            stashChanged ? "stash" : nil,
+            refsChanged ? "refs" : nil
+        ].compactMap { $0 }
+
+        return changes.count == 1 ? changes[0] : "multiple"
+    }
+
+    private func postSpecificChangeEvents(
+        project: Project,
+        headChanged: Bool,
+        indexChanged: Bool,
+        stashChanged: Bool,
+        refsChanged: Bool,
+        additionalInfo: [String: Any]
+    ) {
+        if headChanged {
+            project.postEvent(
+                name: .projectGitHeadDidChange,
+                operation: "gitHeadChanged",
+                additionalInfo: additionalInfo
+            )
+        }
+
+        if indexChanged {
+            project.postEvent(
+                name: .projectGitIndexDidChange,
+                operation: "gitIndexChanged",
+                additionalInfo: additionalInfo
+            )
+        }
+
+        if stashChanged {
+            project.postEvent(
+                name: .projectGitStashDidChange,
+                operation: "gitStashChanged",
+                additionalInfo: additionalInfo
+            )
+        }
+
+        if refsChanged {
+            project.postEvent(
+                name: .projectGitRefsDidChange,
+                operation: "gitRefsChanged",
+                additionalInfo: additionalInfo
+            )
+        }
     }
 }

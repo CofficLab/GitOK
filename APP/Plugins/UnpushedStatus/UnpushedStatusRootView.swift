@@ -40,9 +40,13 @@ struct UnpushedStatusRootView<Content: View>: View, SuperLog {
                 refreshUnpushedCount()
                 refreshAheadBehind()
             }
-            .onProjectGitDirectoryDidChange { eventInfo in
+            .onProjectGitHeadDidChange { eventInfo in
                 guard eventInfo.project.path == vm.project?.path else { return }
-                guard eventInfo.additionalInfo?["headChanged"] as? Bool == true else { return }
+                refreshUnpushedCount()
+                refreshAheadBehind()
+            }
+            .onProjectGitRefsDidChange { eventInfo in
+                guard eventInfo.project.path == vm.project?.path else { return }
                 refreshUnpushedCount()
                 refreshAheadBehind()
             }

@@ -400,6 +400,36 @@ extension Project {
             throw error
         }
     }
+
+    func unstageFiles(_ filePaths: [String]) throws {
+        do {
+            try gitCLI.unstageFiles(filePaths)
+            postEvent(
+                name: .projectDidAddFiles,
+                operation: "unstageFiles",
+                additionalInfo: ["files": filePaths]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "unstageFiles",
+                success: false,
+                error: error,
+                additionalInfo: ["files": filePaths]
+            )
+            throw error
+        }
+    }
+
+    func statusEntries() throws -> [GitStatusEntry] {
+        try gitCLI.statusEntries()
+    }
+
+    func hasStagedChanges() throws -> Bool {
+        try statusEntries().contains { entry in
+            entry.indexStatus != " " && entry.indexStatus != "?"
+        }
+    }
 }
 
 // MARK: - User
@@ -627,32 +657,7 @@ extension Project {
     /// - Throws: Git操作异常
     func discardFileChanges(_ filePath: String) throws {
         do {
-            // 未跟踪文件不在 HEAD 中，checkout 不会删除，需要物理删除
-            let unstagedFiles = try LibGit2.getDiffFileList(at: self.path, staged: false)
-            let isUntrackedFile = unstagedFiles.contains {
-                $0.file == filePath && ($0.changeType == "?" || $0.changeType.uppercased() == "UNTRACKED")
-            }
-
-            if isUntrackedFile {
-                let repoURL = URL(fileURLWithPath: self.path, isDirectory: true)
-                let targetURL = URL(fileURLWithPath: filePath, relativeTo: repoURL).standardizedFileURL
-
-                // 防止路径逃逸到仓库外
-                guard targetURL.path.hasPrefix(repoURL.standardizedFileURL.path + "/") else {
-                    throw NSError(
-                        domain: "GitOK",
-                        code: -1,
-                        userInfo: [NSLocalizedDescriptionKey: "非法文件路径: \(filePath)"]
-                    )
-                }
-
-                if FileManager.default.fileExists(atPath: targetURL.path) {
-                    try FileManager.default.removeItem(at: targetURL)
-                }
-            } else {
-                // 使用 LibGit2Swift 丢弃已跟踪文件的更改
-                try LibGit2.checkoutFile(filePath, at: self.path)
-            }
+            try gitCLI.discardFileChanges(filePath)
 
             postEvent(
                 name: .projectDidCommit,
@@ -676,31 +681,7 @@ extension Project {
     /// - Throws: Git 操作异常
     func discardAllChanges() throws {
         do {
-            // 1. 首先获取所有未跟踪的文件列表
-            let unstagedFiles = try LibGit2.getDiffFileList(at: self.path, staged: false)
-            let untrackedFiles = unstagedFiles.filter { $0.changeType == "?" || $0.changeType.uppercased() == "UNTRACKED" }
-            
-            // 2. 删除所有未跟踪的文件
-            let repoURL = URL(fileURLWithPath: self.path, isDirectory: true)
-            for file in untrackedFiles {
-                let targetURL = URL(fileURLWithPath: file.file, relativeTo: repoURL).standardizedFileURL
-                
-                // 防止路径逃逸到仓库外
-                guard targetURL.path.hasPrefix(repoURL.standardizedFileURL.path + "/") else {
-                    os_log(.error, "\(self.t)⚠️ Skipping unsafe file path: \(file.file)")
-                    continue
-                }
-                
-                if FileManager.default.fileExists(atPath: targetURL.path) {
-                    try FileManager.default.removeItem(at: targetURL)
-                    if Self.verbose {
-                        os_log("\(self.t)🗑️ Deleted untracked file: \(file.file)")
-                    }
-                }
-            }
-            
-            // 3. 使用硬重置一次性丢弃所有已跟踪文件的更改（包括暂存区和工作区）
-            try LibGit2.reset(to: nil, mode: "hard", at: self.path, verbose: false)
+            try gitCLI.discardAllChanges()
 
             postEvent(
                 name: .projectDidCommit,

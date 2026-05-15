@@ -40,7 +40,7 @@ struct StashList: View, SuperLog, SuperThread {
         }
         .onAppear(perform: onAppear)
         .onProjectDidCommit(perform: onProjectDidCommit)
-        .onProjectGitDirectoryDidChange(perform: onGitDirectoryDidChange)
+        .onProjectGitStashDidChange(perform: onGitDirectoryDidChange)
     }
 }
 

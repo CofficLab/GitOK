@@ -54,7 +54,7 @@ struct BranchesView: View, SuperThread, SuperLog, SuperEvent {
         .onChange(of: self.selection, onSelectionChange)
         .onAppear(perform: onAppear)
         .onApplicationWillBecomeActive(perform: onAppWillBecomeActive)
-        .onProjectGitDirectoryDidChange(perform: onGitDirectoryDidChange)
+        .onProjectGitRefsDidChange(perform: onGitDirectoryDidChange)
         .onProjectDidChangeBranch { eventInfo in
             handleBranchChanged(eventInfo)
         }

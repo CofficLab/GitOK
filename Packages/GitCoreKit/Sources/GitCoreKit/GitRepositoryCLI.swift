@@ -116,6 +116,66 @@ public struct GitRepositoryCLI {
         self.repositoryURL = repositoryURL
     }
 
+    public struct CreateRepositoryOptions: Equatable, Sendable {
+        public var readmeContent: String?
+        public var gitignoreContent: String?
+        public var licenseContent: String?
+        public var initialCommitMessage: String?
+        public var userName: String?
+        public var userEmail: String?
+
+        public init(
+            readmeContent: String? = nil,
+            gitignoreContent: String? = nil,
+            licenseContent: String? = nil,
+            initialCommitMessage: String? = nil,
+            userName: String? = nil,
+            userEmail: String? = nil
+        ) {
+            self.readmeContent = readmeContent
+            self.gitignoreContent = gitignoreContent
+            self.licenseContent = licenseContent
+            self.initialCommitMessage = initialCommitMessage
+            self.userName = userName
+            self.userEmail = userEmail
+        }
+    }
+
+    public static func initialize(at repositoryURL: URL) throws {
+        if FileManager.default.fileExists(atPath: repositoryURL.path) == false {
+            try FileManager.default.createDirectory(at: repositoryURL, withIntermediateDirectories: true)
+        }
+
+        try runGit(["init"], in: repositoryURL, defaultErrorMessage: "git init 命令执行失败")
+    }
+
+    public static func create(at repositoryURL: URL, options: CreateRepositoryOptions = CreateRepositoryOptions()) throws {
+        let destinationExistsBeforeCreate = FileManager.default.fileExists(atPath: repositoryURL.path)
+
+        do {
+            try initialize(at: repositoryURL)
+            try writeCreateRepositoryFiles(at: repositoryURL, options: options)
+
+            if let userName = options.userName?.trimmingCharacters(in: .whitespacesAndNewlines), userName.isEmpty == false {
+                try runGit(["config", "user.name", userName], in: repositoryURL, defaultErrorMessage: "设置 git user.name 失败")
+            }
+
+            if let userEmail = options.userEmail?.trimmingCharacters(in: .whitespacesAndNewlines), userEmail.isEmpty == false {
+                try runGit(["config", "user.email", userEmail], in: repositoryURL, defaultErrorMessage: "设置 git user.email 失败")
+            }
+
+            if let message = options.initialCommitMessage?.trimmingCharacters(in: .whitespacesAndNewlines), message.isEmpty == false {
+                try runGit(["add", "."], in: repositoryURL, defaultErrorMessage: "添加初始文件失败")
+                try runGit(["commit", "--allow-empty", "-m", message], in: repositoryURL, defaultErrorMessage: "创建初始提交失败")
+            }
+        } catch {
+            if destinationExistsBeforeCreate == false {
+                try? FileManager.default.removeItem(at: repositoryURL)
+            }
+            throw error
+        }
+    }
+
     public static func clone(remoteURL: String, destinationURL: URL) throws {
         let parentURL = destinationURL.deletingLastPathComponent()
         let destinationExistsBeforeClone = FileManager.default.fileExists(atPath: destinationURL.path)
@@ -225,6 +285,55 @@ public struct GitRepositoryCLI {
         _ = try runGit(["add", "--"] + filePaths)
     }
 
+    public func unstageFiles(_ filePaths: [String]) throws {
+        guard filePaths.isEmpty == false else { return }
+
+        do {
+            _ = try runGit(["restore", "--staged", "--"] + filePaths)
+        } catch {
+            _ = try runGit(["rm", "--cached", "-r", "--"] + filePaths)
+        }
+    }
+
+    public func discardFileChanges(_ filePath: String) throws {
+        let trackedInHead = try isTrackedInHead(filePath)
+
+        if trackedInHead {
+            _ = try runGit(["restore", "--staged", "--worktree", "--", filePath])
+            return
+        }
+
+        _ = try runGit(["rm", "--cached", "-r", "--ignore-unmatch", "--", filePath])
+        try removeWorkingTreeItem(filePath)
+    }
+
+    public func discardAllChanges() throws {
+        let entries = try statusEntries()
+        var trackedPaths: [String] = []
+        var newPaths: [String] = []
+
+        for entry in entries {
+            if try isTrackedInHead(entry.path) {
+                trackedPaths.append(entry.path)
+            } else {
+                newPaths.append(entry.path)
+            }
+        }
+
+        if trackedPaths.isEmpty == false {
+            _ = try runGit(["restore", "--staged", "--worktree", "--"] + trackedPaths)
+        }
+
+        if newPaths.isEmpty == false {
+            _ = try runGit(["rm", "--cached", "-r", "--ignore-unmatch", "--"] + newPaths)
+            for path in newPaths {
+                try removeWorkingTreeItem(path)
+            }
+        }
+
+        _ = try runGit(["clean", "-fd", "--"])
+    }
+
     public func isMerging() throws -> Bool {
         let mergeHead = try runGit(["rev-parse", "-q", "--verify", "MERGE_HEAD"], allowNonZeroExit: true)
         return mergeHead.isEmpty == false
@@ -260,7 +369,7 @@ public struct GitRepositoryCLI {
     }
 
     public func statusEntries() throws -> [GitStatusEntry] {
-        let output = try runGit(["status", "--porcelain=v1"])
+        let output = try runGit(["status", "--porcelain=v1"], trimOutput: false)
         return GitParsers.parseStatusEntries(output)
     }
 
@@ -288,7 +397,12 @@ public struct GitRepositoryCLI {
         )
     }
 
-    public func runGit(_ arguments: [String], allowNonZeroExit: Bool = false, environment: [String: String] = [:]) throws -> String {
+    public func runGit(
+        _ arguments: [String],
+        allowNonZeroExit: Bool = false,
+        environment: [String: String] = [:],
+        trimOutput: Bool = true
+    ) throws -> String {
         let process = Process()
         process.currentDirectoryURL = repositoryURL
         process.executableURL = URL(fileURLWithPath: "/usr/bin/env")
@@ -320,7 +434,7 @@ public struct GitRepositoryCLI {
             )
         }
 
-        return stdout.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimOutput ? stdout.trimmingCharacters(in: .whitespacesAndNewlines) : stdout
     }
 
     private func readGitPathFile(_ relativeGitPath: String) throws -> String? {
@@ -329,5 +443,77 @@ public struct GitRepositoryCLI {
         guard FileManager.default.fileExists(atPath: fileURL.path) else { return nil }
         return try String(contentsOf: fileURL, encoding: .utf8)
             .trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    private func isTrackedInHead(_ filePath: String) throws -> Bool {
+        let output = try runGit(["ls-tree", "-r", "--name-only", "HEAD", "--", filePath], allowNonZeroExit: true)
+        return output.split(separator: "\n").contains { $0 == filePath }
+    }
+
+    private func removeWorkingTreeItem(_ filePath: String) throws {
+        let repoURL = repositoryURL.standardizedFileURL
+        let targetURL = URL(fileURLWithPath: filePath, relativeTo: repoURL).standardizedFileURL
+
+        guard targetURL.path == repoURL.path || targetURL.path.hasPrefix(repoURL.path + "/") else {
+            throw NSError(
+                domain: "GitOK.GitCommand",
+                code: -1,
+                userInfo: [NSLocalizedDescriptionKey: "非法文件路径: \(filePath)"]
+            )
+        }
+
+        guard FileManager.default.fileExists(atPath: targetURL.path) else { return }
+        try FileManager.default.removeItem(at: targetURL)
+    }
+
+    private static func writeCreateRepositoryFiles(at repositoryURL: URL, options: CreateRepositoryOptions) throws {
+        if let readmeContent = options.readmeContent {
+            try writeFileIfNeeded(repositoryURL.appendingPathComponent("README.md"), content: readmeContent)
+        }
+
+        if let gitignoreContent = options.gitignoreContent {
+            try writeFileIfNeeded(repositoryURL.appendingPathComponent(".gitignore"), content: gitignoreContent)
+        }
+
+        if let licenseContent = options.licenseContent {
+            try writeFileIfNeeded(repositoryURL.appendingPathComponent("LICENSE"), content: licenseContent)
+        }
+    }
+
+    private static func writeFileIfNeeded(_ url: URL, content: String) throws {
+        guard FileManager.default.fileExists(atPath: url.path) == false else { return }
+        try content.write(to: url, atomically: true, encoding: .utf8)
+    }
+
+    @discardableResult
+    private static func runGit(_ arguments: [String], in repositoryURL: URL, defaultErrorMessage: String) throws -> String {
+        let process = Process()
+        process.currentDirectoryURL = repositoryURL
+        process.executableURL = URL(fileURLWithPath: "/usr/bin/env")
+        process.arguments = ["git"] + arguments
+
+        let stdoutPipe = Pipe()
+        let stderrPipe = Pipe()
+        process.standardOutput = stdoutPipe
+        process.standardError = stderrPipe
+
+        try process.run()
+        process.waitUntilExit()
+
+        let stdout = String(data: stdoutPipe.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8) ?? ""
+        let stderr = String(data: stderrPipe.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8) ?? ""
+
+        guard process.terminationStatus == 0 else {
+            let message = stderr.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                ? stdout.trimmingCharacters(in: .whitespacesAndNewlines)
+                : stderr.trimmingCharacters(in: .whitespacesAndNewlines)
+            throw NSError(
+                domain: "GitOK.GitCommand",
+                code: Int(process.terminationStatus),
+                userInfo: [NSLocalizedDescriptionKey: message.isEmpty ? defaultErrorMessage : message]
+            )
+        }
+
+        return stdout.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 }

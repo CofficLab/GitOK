@@ -35,7 +35,7 @@ struct ConflictStatusTile: View, SuperLog {
         }
         .onProjectDidMerge(perform: onProjectDidMerge)
         .onProjectDidAddFiles(perform: onProjectDidAddFiles)
-        .onProjectGitDirectoryDidChange(perform: onGitDirectoryDidChange)
+        .onProjectGitIndexDidChange(perform: onGitDirectoryDidChange)
     }
 
     private var iconName: String {

@@ -1,6 +1,13 @@
 import CoreServices
 import Foundation
 
+struct GitDirectorySnapshot: Equatable {
+    let head: String?
+    let index: String?
+    let stash: String?
+    let refs: String?
+}
+
 enum GitDirectoryWatcherError: Error {
     case gitDirectoryNotFound(String)
     case invalidGitFile(String)
@@ -125,6 +132,79 @@ enum GitDirectoryResolver {
         }
 
         return readPackedRef(gitDirectory: gitDirectory, refPath: refPath)
+    }
+
+    static func readSnapshot(gitDirectory: URL) -> GitDirectorySnapshot {
+        GitDirectorySnapshot(
+            head: readHeadHash(gitDirectory: gitDirectory),
+            index: fileContentFingerprint(gitDirectory.appendingPathComponent("index")),
+            stash: stashFingerprint(gitDirectory: gitDirectory),
+            refs: refsFingerprint(gitDirectory: gitDirectory)
+        )
+    }
+
+    private static func stashFingerprint(gitDirectory: URL) -> String? {
+        let refsStash = fileContentFingerprint(gitDirectory.appendingPathComponent("refs/stash"))
+        let logsStash = fileContentFingerprint(gitDirectory.appendingPathComponent("logs/refs/stash"))
+
+        switch (refsStash, logsStash) {
+        case (nil, nil):
+            return nil
+        case let (refs?, nil):
+            return refs
+        case let (nil, logs?):
+            return logs
+        case let (refs?, logs?):
+            return "\(refs):\(logs)"
+        }
+    }
+
+    private static func refsFingerprint(gitDirectory: URL) -> String? {
+        let fingerprints = [
+            directoryContentFingerprint(gitDirectory.appendingPathComponent("refs/heads")),
+            directoryContentFingerprint(gitDirectory.appendingPathComponent("refs/remotes")),
+            directoryContentFingerprint(gitDirectory.appendingPathComponent("refs/tags")),
+            fileContentFingerprint(gitDirectory.appendingPathComponent("packed-refs"))
+        ].compactMap { $0 }
+
+        guard fingerprints.isEmpty == false else { return nil }
+        return fingerprints.joined(separator: "|")
+    }
+
+    private static func directoryContentFingerprint(_ url: URL) -> String? {
+        guard let enumerator = FileManager.default.enumerator(
+            at: url,
+            includingPropertiesForKeys: [.isRegularFileKey],
+            options: [.skipsHiddenFiles]
+        ) else {
+            return nil
+        }
+
+        var entries: [String] = []
+        for case let fileURL as URL in enumerator {
+            guard (try? fileURL.resourceValues(forKeys: [.isRegularFileKey]).isRegularFile) == true else {
+                continue
+            }
+
+            let relativePath = String(fileURL.path.dropFirst(url.path.count)).trimmingCharacters(in: CharacterSet(charactersIn: "/"))
+            guard let fingerprint = fileContentFingerprint(fileURL) else { continue }
+            entries.append("\(relativePath)=\(fingerprint)")
+        }
+
+        guard entries.isEmpty == false else { return nil }
+        return entries.sorted().joined(separator: ";")
+    }
+
+    private static func fileContentFingerprint(_ url: URL) -> String? {
+        guard let data = try? Data(contentsOf: url) else { return nil }
+
+        var hash: UInt64 = 14_695_981_039_346_656_037
+        for byte in data {
+            hash ^= UInt64(byte)
+            hash &*= 1_099_511_628_211
+        }
+
+        return "\(data.count):\(String(hash, radix: 16))"
     }
 
     private static func readPackedRef(gitDirectory: URL, refPath: String) -> String? {

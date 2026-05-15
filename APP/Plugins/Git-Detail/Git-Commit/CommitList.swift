@@ -72,7 +72,7 @@ struct CommitList: View, SuperThread, SuperLog {
         .onProjectDidCommit(perform: onCommitSuccess)
         .onProjectDidPull(perform: onPullSuccess)
         .onProjectDidPush(perform: onPushSuccess)
-        .onProjectGitDirectoryDidChange(perform: onGitDirectoryDidChange)
+        .onProjectGitHeadDidChange(perform: onGitDirectoryDidChange)
         .onApplicationWillBecomeActive(perform: onAppWillBecomeActive)
     }
 }

@@ -153,7 +153,8 @@ struct WorkingStateView: View, SuperLog {
         .onProjectDidCommit(perform: onProjectDidCommit)
         .onProjectDidPush(perform: onProjectDidPush)
         .onProjectDidPull(perform: onProjectDidPull)
-        .onProjectGitDirectoryDidChange(perform: onGitDirectoryDidChange)
+        .onProjectGitIndexDidChange(perform: onGitDirectoryDidChange)
+        .onProjectGitHeadDidChange(perform: onGitDirectoryDidChange)
         .onNotification(.appDidBecomeActive, onAppDidBecomeActive)
         .sheet(isPresented: $showCredentialInput) {
             CredentialInputView {
