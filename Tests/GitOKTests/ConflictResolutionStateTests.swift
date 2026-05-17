@@ -1,3 +1,4 @@
+import GitCoreKit
 import XCTest
 
 final class ConflictResolutionStateTests: XCTestCase {

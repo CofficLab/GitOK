@@ -23,18 +23,36 @@ struct UnpushedStatusRootView<Content: View>: View, SuperLog {
             }
             .onProjectDidChangeBranch { _ in
                 refreshUnpushedCount()
+                refreshAheadBehind()
             }
             .onProjectDidCommit { _ in
                 refreshUnpushedCount()
+                refreshAheadBehind()
+            }
+            .onProjectDidFetch { _ in
+                refreshAheadBehind(markFetched: true)
             }
             .onProjectDidPush { _ in
                 refreshUnpushedCount()
+                refreshAheadBehind()
             }
             .onProjectDidPull { _ in
                 refreshUnpushedCount()
+                refreshAheadBehind()
+            }
+            .onProjectGitHeadDidChange { eventInfo in
+                guard eventInfo.project.path == vm.project?.path else { return }
+                refreshUnpushedCount()
+                refreshAheadBehind()
+            }
+            .onProjectGitRefsDidChange { eventInfo in
+                guard eventInfo.project.path == vm.project?.path else { return }
+                refreshUnpushedCount()
+                refreshAheadBehind()
             }
             .onApplicationDidBecomeActive {
                 refreshUnpushedCount()
+                refreshAheadBehind()
             }
     }
 
@@ -63,6 +81,37 @@ struct UnpushedStatusRootView<Content: View>: View, SuperLog {
                 }
                 if self.verbose {
                     os_log(.error, "\(Self.t)❌ Failed to refresh unpushed count: \(error)")
+                }
+            }
+        }
+    }
+
+    private func refreshAheadBehind(markFetched: Bool = false) {
+        guard let project = vm.project else {
+            vm.resetRemoteTrackingState()
+            return
+        }
+
+        Task.detached(priority: .userInitiated) {
+            do {
+                let state = try project.aheadBehind()
+
+                await MainActor.run {
+                    vm.updateAheadBehind(state)
+                    if markFetched {
+                        vm.updateLastFetchedAt(.now)
+                    }
+                }
+
+                if self.verbose {
+                    os_log("\(Self.t)📊 Ahead/behind updated: +\(state.ahead) -\(state.behind)")
+                }
+            } catch {
+                await MainActor.run {
+                    vm.updateAheadBehind(.noUpstream)
+                }
+                if self.verbose {
+                    os_log(.error, "\(Self.t)❌ Failed to refresh ahead/behind: \(error)")
                 }
             }
         }

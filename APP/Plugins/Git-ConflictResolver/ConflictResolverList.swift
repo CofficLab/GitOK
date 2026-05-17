@@ -1,4 +1,5 @@
 import AppKit
+import GitCoreKit
 import MagicAlert
 import MagicKit
 import OSLog
@@ -41,6 +42,7 @@ struct ConflictResolverList: View, SuperLog, SuperThread {
         }
         .onProjectDidMerge(perform: onProjectDidMerge)
         .onProjectDidAddFiles(perform: onProjectDidAddFiles)
+        .onProjectGitIndexDidChange(perform: onGitDirectoryDidChange)
     }
 }
 
@@ -384,6 +386,11 @@ extension ConflictResolverList {
 
     func onProjectDidAddFiles(_ eventInfo: ProjectEventInfo) {
         handleRefreshTrigger(notificationName: .projectDidAddFiles)
+    }
+
+    func onGitDirectoryDidChange(_ eventInfo: ProjectEventInfo) {
+        guard eventInfo.project.path == vm.project?.path else { return }
+        loadConflictStatus()
     }
 
     private func handleRefreshTrigger(notificationName: Notification.Name) {

@@ -1,4 +1,5 @@
 import AppKit
+import GitCoreKit
 import LibGit2Swift
 import MagicAlert
 import MagicKit
@@ -25,10 +26,18 @@ struct FileList: View, SuperThread, SuperLog {
     /// 当前选中的文件
     @State var selection: GitDiffFile?
 
+    @State private var hoveredFile: GitDiffFile?
+
+    @State private var stagedFilePaths: Set<String> = []
+
+    @State private var unstagedFilePaths: Set<String> = []
+
+    @State private var untrackedFilePaths: Set<String> = []
+
     /// 当前的刷新任务，用于取消之前的刷新操作
     @State private var refreshTask: Task<Void, Never>?
     /// 后台刷新工作任务
-    @State private var refreshWorkerTask: Task<([GitDiffFile], String?), Error>?
+    @State private var refreshWorkerTask: Task<([GitDiffFile], String?, [GitStatusEntry]), Error>?
 
     /// 是否显示丢弃单个文件更改的确认对话框
     @State private var showDiscardFileAlert = false
@@ -66,6 +75,9 @@ struct FileList: View, SuperThread, SuperLog {
         .onChange(of: data.commit, onCommitChange)
         .onChange(of: selection, onSelectionChange)
         .onProjectDidCommit(perform: onProjectDidCommit)
+        .onProjectDidAddFiles(perform: onProjectDidAddFiles)
+        .onProjectGitIndexDidChange(perform: onGitDirectoryDidChange)
+        .onProjectGitHeadDidChange(perform: onGitDirectoryDidChange)
         .onApplicationWillBecomeActive(perform: onAppWillBecomeActive)
         .alert("确认丢弃所有更改", isPresented: $showDiscardAllAlert) {
             Button("取消", role: .cancel) { }
@@ -73,7 +85,7 @@ struct FileList: View, SuperThread, SuperLog {
                 discardAllChanges()
             }
         } message: {
-            Text("确定要丢弃所有文件的更改吗？此操作不可撤销。")
+            Text(discardAllAlertMessage)
         }
     }
 }
@@ -148,15 +160,38 @@ extension FileList {
     /// 文件列表视图：显示可滚动的文件列表
     private var fileListView: some View {
         ScrollViewReader { scrollProxy in
-            List(files, id: \.self, selection: $selection) {
+            List(files, id: \.self, selection: $selection) { file in
                 FileTile(
-                    file: $0,
+                    file: file,
                     onDiscardChanges: data.commit == nil ? {
                         discardChanges(for: $0)
-                    } : nil
+                    } : nil,
+                    stageState: stageState(for: file),
+                    onStage: data.commit == nil ? {
+                        stageFile($0)
+                    } : nil,
+                    onUnstage: data.commit == nil ? {
+                        unstageFile($0)
+                    } : nil,
+                    onSelect: {
+                        selection = $0
+                        vm.setFile($0)
+                    },
+                    onHoverChanged: { hovering in
+                        withAnimation(.easeInOut(duration: 0.12)) {
+                            if hovering {
+                                hoveredFile = file
+                            } else if hoveredFile == file {
+                                hoveredFile = nil
+                            }
+                        }
+                    }
                 )
-                .tag($0 as GitDiffFile?)
+                .tag(file as GitDiffFile?)
                 .listRowInsets(.init()) // 移除 List 的默认内边距
+                .listRowBackground(
+                    hoveredFile == file ? Color.accentColor.opacity(0.10) : Color.clear
+                )
             }
             .listStyle(.plain) // 使用 plain 样式移除额外的 padding
             .onChange(of: files, {
@@ -172,6 +207,76 @@ extension FileList {
 // MARK: - Action
 
 extension FileList {
+    func stageState(for file: GitDiffFile) -> FileStageState {
+        let isStaged = stagedFilePaths.contains(file.file)
+        let isUnstaged = unstagedFilePaths.contains(file.file)
+
+        if isStaged && isUnstaged {
+            return .stagedAndUnstaged
+        }
+
+        if isStaged {
+            return .staged
+        }
+
+        return .unstaged
+    }
+
+    var discardAllAlertMessage: String {
+        var details: [String] = []
+        if stagedFilePaths.isEmpty == false {
+            details.append("\(stagedFilePaths.count) 个已暂存文件")
+        }
+        if unstagedFilePaths.isEmpty == false {
+            details.append("\(unstagedFilePaths.count) 个未暂存文件")
+        }
+        if untrackedFilePaths.isEmpty == false {
+            details.append("\(untrackedFilePaths.count) 个未跟踪文件会被删除")
+        }
+
+        let summary = details.isEmpty ? "\(files.count) 个文件" : details.joined(separator: "、")
+        return "确定要丢弃所有更改吗？将影响 \(summary)。此操作不可撤销。"
+    }
+
+
+    func stageFile(_ file: GitDiffFile) {
+        guard let project = vm.project else { return }
+
+        Task.detached(priority: .userInitiated) {
+            do {
+                try project.addFiles([file.file])
+                await MainActor.run {
+                    alert_info("已暂存: \(file.file)")
+                }
+                await self.refresh(reason: "AfterStageFile")
+            } catch {
+                await MainActor.run {
+                    os_log(.error, "\(Self.t)❌ 暂存文件失败: \(error.localizedDescription)")
+                    alert_error(error)
+                }
+            }
+        }
+    }
+
+    func unstageFile(_ file: GitDiffFile) {
+        guard let project = vm.project else { return }
+
+        Task.detached(priority: .userInitiated) {
+            do {
+                try project.unstageFiles([file.file])
+                await MainActor.run {
+                    alert_info("已取消暂存: \(file.file)")
+                }
+                await self.refresh(reason: "AfterUnstageFile")
+            } catch {
+                await MainActor.run {
+                    os_log(.error, "\(Self.t)❌ 取消暂存失败: \(error.localizedDescription)")
+                    alert_error(error)
+                }
+            }
+        }
+    }
+
     /// 丢弃指定文件的更改
     /// - Parameter file: 要丢弃更改的文件
     func discardChanges(for file: GitDiffFile) {
@@ -281,19 +386,22 @@ extension FileList {
                 try Task.checkCancellation()
 
                 let newFiles: [GitDiffFile]
+                let statusEntries: [GitStatusEntry]
                 if let hash = currentCommitHash {
                     newFiles = try await project.changedFilesDetail(in: hash)
+                    statusEntries = []
                 } else {
                     newFiles = try await project.untrackedFiles()
+                    statusEntries = try project.statusEntries()
                 }
 
                 // 再次检查任务是否被取消
                 try Task.checkCancellation()
 
-                return (newFiles, currentCommitHash)
+                return (newFiles, currentCommitHash, statusEntries)
             }
             refreshWorkerTask = worker
-            let (newFiles, selectedCommitHash) = try await worker.value
+            let (newFiles, selectedCommitHash, statusEntries) = try await worker.value
 
             // 在主线程更新 UI
             await MainActor.run {
@@ -305,8 +413,16 @@ extension FileList {
                     return
                 }
 
+                let selectedFilePath = self.selection?.file ?? self.vm.file?.file
+                let refreshedSelection = selectedFilePath.flatMap { path in
+                    newFiles.first { $0.file == path }
+                } ?? newFiles.first
+
                 self.files = newFiles
-                self.selection = newFiles.first
+                self.stagedFilePaths = Set(statusEntries.filter { $0.indexStatus != " " && $0.indexStatus != "?" }.map(\.path))
+                self.unstagedFilePaths = Set(statusEntries.filter { $0.workTreeStatus != " " || $0.indexStatus == "?" }.map(\.path))
+                self.untrackedFilePaths = Set(statusEntries.filter { $0.indexStatus == "?" }.map(\.path))
+                self.selection = refreshedSelection
                 self.vm.setFile(self.selection)
                 self.isLoading = false
             }
@@ -363,6 +479,22 @@ extension FileList {
     func onProjectDidCommit(_ eventInfo: ProjectEventInfo) {
         Task {
             await self.refresh(reason: "OnProjectDidCommit")
+        }
+    }
+
+    func onProjectDidAddFiles(_ eventInfo: ProjectEventInfo) {
+        guard eventInfo.project.path == vm.project?.path else { return }
+        Task {
+            await self.refresh(reason: "OnProjectDidAddFiles")
+        }
+    }
+
+    /// .git 目录发生变化时刷新文件列表
+    /// - Parameter eventInfo: 项目事件信息
+    func onGitDirectoryDidChange(_ eventInfo: ProjectEventInfo) {
+        guard eventInfo.project.path == vm.project?.path else { return }
+        Task {
+            await self.refresh(reason: "OnGitDirectoryDidChange")
         }
     }
 

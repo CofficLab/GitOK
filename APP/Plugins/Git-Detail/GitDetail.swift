@@ -38,7 +38,7 @@ struct GitDetail: View, SuperEvent, SuperLog {
                             HSplitView {
                                 FileList()
                                     .frame(idealWidth: 200)
-                                    .frame(minWidth: 200, maxWidth: 300)
+                                    .frame(minWidth: 200, maxWidth: 420)
                                     .layoutPriority(1)
 
                                 FileDetail()

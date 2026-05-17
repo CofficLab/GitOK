@@ -40,9 +40,11 @@ struct BtnCommitAndPush: View, SuperLog, SuperThread {
                 }
 
                 Task.detached {
-                    setStatus("添加文件中…")
                     do {
-                        try project.addAll()
+                        if try project.hasStagedChanges() == false {
+                            setStatus("添加文件中…")
+                            try project.addAll()
+                        }
 
                         let message = commitMessage.isEmpty ? "自动提交" : commitMessage
 

@@ -1,4 +1,5 @@
 import XCTest
+import ProjectRulesKit
 
 final class AutoPushDecisionTests: XCTestCase {
     func testCheckSkipsWhenBranchIsMissing() {

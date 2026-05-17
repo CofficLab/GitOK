@@ -20,25 +20,6 @@ struct ProjectEventInfo {
     }
 }
 
-// MARK: - Refresh Rules
-
-enum ProjectEventRefreshRules {
-    private static let stashOperations: Set<String> = [
-        "stashSave",
-        "stashApply",
-        "stashPop",
-        "stashDrop",
-    ]
-
-    static func shouldRefreshStash(for operation: String) -> Bool {
-        stashOperations.contains(operation)
-    }
-
-    static func shouldRefreshConflictStatus(for notificationName: Notification.Name) -> Bool {
-        notificationName == .projectDidMerge || notificationName == .projectDidAddFiles
-    }
-}
-
 // MARK: - Project Events
 
 /// 项目相关事件通知名称定义
@@ -51,6 +32,9 @@ extension Notification.Name {
     
     /// 项目推送事件
     static let projectDidPush = Notification.Name("projectDidPush")
+
+    /// 项目获取远程更新事件
+    static let projectDidFetch = Notification.Name("projectDidFetch")
     
     /// 项目拉取事件
     static let projectDidPull = Notification.Name("projectDidPull")
@@ -63,6 +47,21 @@ extension Notification.Name {
     
     /// 项目切换分支事件
     static let projectDidChangeBranch = Notification.Name("projectDidChangeBranch")
+
+    /// 项目的 .git 目录发生变化事件
+    static let projectGitDirectoryDidChange = Notification.Name("projectGitDirectoryDidChange")
+
+    /// 项目的 HEAD 指向或当前提交发生变化事件
+    static let projectGitHeadDidChange = Notification.Name("projectGitHeadDidChange")
+
+    /// 项目的 index 暂存区内容发生变化事件
+    static let projectGitIndexDidChange = Notification.Name("projectGitIndexDidChange")
+
+    /// 项目的 stash 引用或日志发生变化事件
+    static let projectGitStashDidChange = Notification.Name("projectGitStashDidChange")
+
+    /// 项目的 refs 分支/标签/远程引用发生变化事件
+    static let projectGitRefsDidChange = Notification.Name("projectGitRefsDidChange")
     
     /// 项目更新用户信息事件
     static let projectDidUpdateUserInfo = Notification.Name("projectDidUpdateUserInfo")
@@ -107,6 +106,17 @@ extension View {
         }
     }
 
+    /// 监听项目获取远程更新事件
+    /// - Parameter action: 事件处理闭包，接收 ProjectEventInfo
+    /// - Returns: 修改后的视图
+    func onProjectDidFetch(perform action: @escaping (ProjectEventInfo) -> Void) -> some View {
+        self.onReceive(NotificationCenter.default.publisher(for: .projectDidFetch)) { notification in
+            if let userInfo = notification.userInfo, let eventInfo = userInfo["eventInfo"] as? ProjectEventInfo {
+                action(eventInfo)
+            }
+        }
+    }
+
     /// 监听项目拉取事件
     /// - Parameter action: 事件处理闭包，接收 ProjectEventInfo
     /// - Returns: 修改后的视图
@@ -145,6 +155,53 @@ extension View {
     /// - Returns: 修改后的视图
     func onProjectDidChangeBranch(perform action: @escaping (ProjectEventInfo) -> Void) -> some View {
         self.onReceive(NotificationCenter.default.publisher(for: .projectDidChangeBranch)) { notification in
+            if let userInfo = notification.userInfo, let eventInfo = userInfo["eventInfo"] as? ProjectEventInfo {
+                action(eventInfo)
+            }
+        }
+    }
+
+    /// 监听项目 .git 目录变化事件
+    /// - Parameter action: 事件处理闭包，接收 ProjectEventInfo
+    /// - Returns: 修改后的视图
+    func onProjectGitDirectoryDidChange(perform action: @escaping (ProjectEventInfo) -> Void) -> some View {
+        self.onReceive(NotificationCenter.default.publisher(for: .projectGitDirectoryDidChange)) { notification in
+            if let userInfo = notification.userInfo, let eventInfo = userInfo["eventInfo"] as? ProjectEventInfo {
+                action(eventInfo)
+            }
+        }
+    }
+
+    /// 监听项目 HEAD 变化事件
+    func onProjectGitHeadDidChange(perform action: @escaping (ProjectEventInfo) -> Void) -> some View {
+        self.onReceive(NotificationCenter.default.publisher(for: .projectGitHeadDidChange)) { notification in
+            if let userInfo = notification.userInfo, let eventInfo = userInfo["eventInfo"] as? ProjectEventInfo {
+                action(eventInfo)
+            }
+        }
+    }
+
+    /// 监听项目 index 变化事件
+    func onProjectGitIndexDidChange(perform action: @escaping (ProjectEventInfo) -> Void) -> some View {
+        self.onReceive(NotificationCenter.default.publisher(for: .projectGitIndexDidChange)) { notification in
+            if let userInfo = notification.userInfo, let eventInfo = userInfo["eventInfo"] as? ProjectEventInfo {
+                action(eventInfo)
+            }
+        }
+    }
+
+    /// 监听项目 stash 变化事件
+    func onProjectGitStashDidChange(perform action: @escaping (ProjectEventInfo) -> Void) -> some View {
+        self.onReceive(NotificationCenter.default.publisher(for: .projectGitStashDidChange)) { notification in
+            if let userInfo = notification.userInfo, let eventInfo = userInfo["eventInfo"] as? ProjectEventInfo {
+                action(eventInfo)
+            }
+        }
+    }
+
+    /// 监听项目 refs 变化事件
+    func onProjectGitRefsDidChange(perform action: @escaping (ProjectEventInfo) -> Void) -> some View {
+        self.onReceive(NotificationCenter.default.publisher(for: .projectGitRefsDidChange)) { notification in
             if let userInfo = notification.userInfo, let eventInfo = userInfo["eventInfo"] as? ProjectEventInfo {
                 action(eventInfo)
             }
