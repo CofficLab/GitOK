@@ -280,6 +280,30 @@ public struct GitRepositoryCLI {
         _ = try runGit(["branch", "-d", trimmedName])
     }
 
+    public func createLightweightTag(named tagName: String, commitHash: String) throws {
+        let trimmedName = tagName.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedHash = commitHash.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        guard trimmedName.isEmpty == false else {
+            throw NSError(
+                domain: "GitOK.GitCommand",
+                code: -1,
+                userInfo: [NSLocalizedDescriptionKey: "标签名称不能为空"]
+            )
+        }
+
+        guard trimmedHash.isEmpty == false else {
+            throw NSError(
+                domain: "GitOK.GitCommand",
+                code: -1,
+                userInfo: [NSLocalizedDescriptionKey: "提交哈希不能为空"]
+            )
+        }
+
+        _ = try runGit(["check-ref-format", "--allow-onelevel", trimmedName])
+        _ = try runGit(["tag", trimmedName, trimmedHash])
+    }
+
     public func aheadBehind() throws -> GitAheadBehind {
         let upstream = try runGit(
             ["rev-parse", "--abbrev-ref", "--symbolic-full-name", "@{upstream}"],

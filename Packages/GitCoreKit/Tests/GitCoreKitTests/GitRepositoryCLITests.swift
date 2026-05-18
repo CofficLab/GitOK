@@ -251,6 +251,28 @@ final class GitRepositoryCLITests: XCTestCase {
         }
     }
 
+    func testCreateLightweightTagCreatesTagAtCommit() throws {
+        let repo = try TestGitRepository()
+        try repo.run(["commit", "--allow-empty", "-m", "initial"])
+        let commitHash = try repo.run(["rev-parse", "HEAD"])
+
+        let client = GitRepositoryCLI(repositoryURL: repo.url)
+        try client.createLightweightTag(named: "v1.0.0", commitHash: commitHash)
+
+        XCTAssertEqual(try repo.run(["rev-parse", "v1.0.0"]), commitHash)
+    }
+
+    func testCreateLightweightTagRejectsEmptyName() throws {
+        let repo = try TestGitRepository()
+        try repo.run(["commit", "--allow-empty", "-m", "initial"])
+
+        let client = GitRepositoryCLI(repositoryURL: repo.url)
+
+        XCTAssertThrowsError(try client.createLightweightTag(named: "  ", commitHash: "HEAD")) { error in
+            XCTAssertTrue((error as NSError).localizedDescription.contains("标签名称不能为空"))
+        }
+    }
+
     func testAheadBehindCountsLocalAndRemoteCommits() throws {
         let remote = try TestGitRepository()
         try remote.write("README.md", content: "hello\n")

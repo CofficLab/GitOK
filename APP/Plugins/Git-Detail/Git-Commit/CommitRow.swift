@@ -50,6 +50,15 @@ struct CommitRow: View, SuperThread, SuperLog {
     /// 是否正在执行撤销操作
     @State private var isUndoing = false
 
+    /// 是否显示创建标签弹窗
+    @State private var showCreateTagAlert = false
+
+    /// 新标签名称
+    @State private var newTagName = ""
+
+    /// 是否正在创建标签
+    @State private var isCreatingTag = false
+
     /// 是否可以撤销（第一个提交 + 未推送 + 无标签 + 有父提交）
     /// 与 GitHub Desktop 保持一致：只允许撤销最新的提交
     private var canUndo: Bool {
@@ -189,8 +198,20 @@ struct CommitRow: View, SuperThread, SuperLog {
             .onAppear(perform: onAppear)
             .onNotification(.appWillBecomeActive, onAppWillBecomeActive)
             .onProjectDidCommit(perform: onGitCommitSuccess)
+            .onProjectGitRefsDidChange(perform: onGitRefsChanged)
             // 右键菜单：撤销提交
             .contextMenu {
+                Button {
+                    newTagName = ""
+                    showCreateTagAlert = true
+                } label: {
+                    Label {
+                        Text("创建标签", tableName: "GitCommit")
+                    } icon: {
+                        Image(systemName: "tag")
+                    }
+                }
+
                 if canUndo {
                     Button(role: .destructive) {
                         showUndoConfirmation = true
@@ -207,6 +228,23 @@ struct CommitRow: View, SuperThread, SuperLog {
                 }
             } message: {
                 Text("撤销后，此提交的文件变更将保留在工作区中，可以重新编辑和提交。")
+            }
+            .alert(String(localized: "创建标签", table: "GitCommit"), isPresented: $showCreateTagAlert) {
+                TextField(String(localized: "标签名称", table: "GitCommit"), text: $newTagName)
+                Button(String(localized: "取消", table: "GitCommit"), role: .cancel) {
+                    newTagName = ""
+                }
+                Button(String(localized: "创建", table: "GitCommit")) {
+                    createLightweightTag()
+                }
+                .disabled(newTagName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || isCreatingTag)
+            } message: {
+                Text(
+                    String.localizedStringWithFormat(
+                        String(localized: "为提交 %@ 创建 lightweight tag。", table: "GitCommit"),
+                        String(commit.hash.prefix(8))
+                    )
+                )
             }
 
             Divider()
@@ -309,6 +347,48 @@ struct CommitRow: View, SuperThread, SuperLog {
         }
     }
 
+    /// 为当前提交创建 lightweight tag。
+    private func createLightweightTag() {
+        guard let project = vm.project else {
+            alert_error(String(localized: "项目不可用", table: "GitCommit"))
+            return
+        }
+
+        let tagName = newTagName.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard tagName.isEmpty == false else {
+            alert_error(String(localized: "标签名称不能为空", table: "GitCommit"))
+            return
+        }
+
+        let commitHash = commit.hash
+        isCreatingTag = true
+
+        Task.detached(priority: .userInitiated) {
+            do {
+                try project.createLightweightTag(named: tagName, commitHash: commitHash)
+
+                await MainActor.run {
+                    isCreatingTag = false
+                    newTagName = ""
+                    showCreateTagAlert = false
+                    let message = String.localizedStringWithFormat(
+                        String(localized: "已创建标签: %@", table: "GitCommit"),
+                        tagName
+                    )
+                    alert_info(message)
+                    Task {
+                        await loadTag()
+                    }
+                }
+            } catch {
+                await MainActor.run {
+                    isCreatingTag = false
+                    alert_error(error)
+                }
+            }
+        }
+    }
+
     // MARK: - Setter
 
     /// 设置标签文本
@@ -345,6 +425,13 @@ struct CommitRow: View, SuperThread, SuperLog {
             } catch {
                 await self.setTag("")
             }
+        }
+    }
+
+    private func onGitRefsChanged(_ eventInfo: ProjectEventInfo) {
+        guard eventInfo.project.path == vm.project?.path else { return }
+        Task {
+            await loadTag()
         }
     }
 

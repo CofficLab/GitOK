@@ -25,7 +25,7 @@
 
 - [ ] Branch 完整管理
   - Desktop 参考：`app/src/ui/branches`、`app/src/ui/rename-branch`、`app/src/ui/delete-branch`
-  - GitOK 现状：已有查看、创建、切换、合并。
+  - GitOK 现状：已有查看、创建、切换、合并、删除本地分支。
   - TODO：重命名分支、删除远程分支、发布分支、设置/修改 upstream、分支搜索和分组。
 
 - [ ] History Compare / 分支比较
@@ -50,8 +50,8 @@
 
 - [ ] Tag 创建/删除/推送
   - Desktop 参考：`app/src/ui/create-tag`、`app/src/ui/delete-tag`、`app/src/lib/git/tag.ts`
-  - GitOK 现状：commit row 能显示 tag。
-  - TODO：创建 lightweight/annotated tag、删除本地 tag、推送 tag、删除远端 tag。
+  - GitOK 现状：commit row 能显示 tag，支持为 commit 创建 lightweight tag。
+  - TODO：创建 annotated tag、删除本地 tag、推送 tag、删除远端 tag。
 
 - [ ] Git LFS 支持
   - Desktop 参考：`app/src/ui/lfs`、`app/src/lib/git/lfs.ts`
@@ -168,8 +168,7 @@
 
 ## 推荐实施顺序
 
-1. 打牢本地 Git 闭环：Create Repository、stage/unstage、discard 安全确认。
-2. 补全分支和历史：branch rename/delete/upstream、history compare、tag 管理。
-3. 完善高风险操作：rebase、cherry-pick、squash/revert/reset、conflict resolver。
-4. 接入远程平台：GitHub auth、publish repo/branch、PR 创建/展示、CI checks。
-5. 做桌面体验：快捷键、引导、错误日志、更新说明、无障碍。
+1. 补全分支和历史：branch rename/upstream、history compare、tag 管理。
+2. 完善高风险操作：rebase、cherry-pick、squash/revert/reset、conflict resolver。
+3. 接入远程平台：GitHub auth、publish repo/branch、PR 创建/展示、CI checks。
+4. 做桌面体验：快捷键、引导、错误日志、更新说明、无障碍。

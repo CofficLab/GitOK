@@ -1032,6 +1032,26 @@ extension Project {
     func getTags(commit: String) throws -> [String] {
         try tags(for: commit)
     }
+
+    func createLightweightTag(named tagName: String, commitHash: String) throws {
+        do {
+            try gitCLI.createLightweightTag(named: tagName, commitHash: commitHash)
+            postEvent(
+                name: .projectGitRefsDidChange,
+                operation: "createLightweightTag",
+                additionalInfo: ["tagName": tagName, "commitHash": commitHash]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "createLightweightTag",
+                success: false,
+                error: error,
+                additionalInfo: ["tagName": tagName, "commitHash": commitHash]
+            )
+            throw error
+        }
+    }
 }
 
 // MARK: - Project Events

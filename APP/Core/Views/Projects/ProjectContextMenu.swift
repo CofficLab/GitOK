@@ -113,5 +113,6 @@ struct ProjectContextMenu: View {
     private func copyProjectPath() {
         NSPasteboard.general.clearContents()
         NSPasteboard.general.setString(item.path, forType: .string)
+        alert_success("已复制项目路径")
     }
 }
