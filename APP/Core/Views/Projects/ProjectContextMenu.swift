@@ -13,6 +13,10 @@ struct ProjectContextMenu: View {
             pinAction(item)
         }
 
+        Button("复制项目路径") {
+            copyProjectPath()
+        }
+
         if FileManager.default.fileExists(atPath: item.path) {
             Button("在Finder中显示") {
                 let url = URL(fileURLWithPath: item.path)
@@ -104,5 +108,10 @@ struct ProjectContextMenu: View {
             configuration: NSWorkspace.OpenConfiguration(),
             completionHandler: nil
         )
+    }
+
+    private func copyProjectPath() {
+        NSPasteboard.general.clearContents()
+        NSPasteboard.general.setString(item.path, forType: .string)
     }
 }
