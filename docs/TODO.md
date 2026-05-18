@@ -1,8 +1,24 @@
-# GitOK Desktop Reference TODO
+# TODO
 
-> 参考路径：`/Users/colorfy/Code/CofficLab/desktop/`
->
-> 对比对象是 GitHub Desktop 风格的 Electron 项目能力面。GitOK 已有自己的产品方向（项目管理、图标、Banner、插件系统），下面只整理 Git 工作流和桌面体验上可借鉴、缺失或需要完善的部分。
+## 当前待修复问题
+
+## 修复历史 Commit 文件列表误显示“未暂存”
+
+- 现象：在历史 commit 详情的 FileList 中，已提交文件仍显示“未暂存”标签。
+- 预期：历史 commit 文件列表不应展示工作区/暂存区状态；应隐藏暂存状态标签，或改为展示 commit diff 的变更类型，例如新增、修改、删除、重命名。
+- 初步原因：`FileList` 在查看 commit 时不会读取当前 status entries，`stageState(for:)` 在未命中 staged/unstaged path 时默认返回 `.unstaged`，导致历史 commit 文件被错误标记为“未暂存”。
+- 相关位置：
+  - `APP/Plugins/Git-Detail/Git-File/FileList.swift`
+  - `APP/Plugins/Git-Detail/Git-File/FileTile.swift`
+- 验收标准：
+  - 查看历史 commit 时，文件行不再显示“未暂存”。
+  - 查看当前工作区改动时，已暂存、未暂存、部分暂存状态仍正常显示。
+
+## GitHub Desktop 参考能力清单
+
+参考路径：`/Users/colorfy/Code/CofficLab/desktop/`
+
+对比对象是 GitHub Desktop 风格的 Electron 项目能力面。GitOK 已有自己的产品方向（项目管理、图标、Banner、插件系统），下面只整理 Git 工作流和桌面体验上可借鉴、缺失或需要完善的部分。
 
 ## 当前 GitOK 已覆盖的能力
 
@@ -205,3 +221,28 @@
 3. 完善高风险操作：rebase、cherry-pick、squash/revert/reset、conflict resolver。
 4. 接入远程平台：GitHub auth、publish repo/branch、PR 创建/展示、CI checks。
 5. 做桌面体验：快捷键、引导、错误日志、更新说明、无障碍。
+
+## 已完成专项归档
+
+### Push Behind Remote 工作流
+
+目标：参考 GitHub Desktop 的处理方式，让 GitOK 在“本地分支落后远程，同时本地又有新提交”时给出明确、可恢复的工作流。
+
+设计原则：
+
+- 不在 push 失败后自动 pull、merge 或 rebase。
+- 状态已知时，用按钮状态提前引导用户先 Pull/Fetch。
+- 状态未知时，允许 push 失败，但将 non-fast-forward 映射为专门提示。
+- Fetch 是安全操作，可以作为 push 失败后的默认下一步。
+
+完成项：
+
+- [x] 增加底层 Git fetch 能力：`GitRepositoryCLI.fetch(remote:)`、`Project.fetch()`、`projectDidFetch` 事件。
+- [x] 增加 ahead/behind 查询能力：新增 `GitAheadBehind`，使用 `git rev-list --left-right --count HEAD...@{upstream}` 查询当前分支与 upstream 的差异。
+- [x] 在 `ProjectVM` 暴露远端差异状态：`aheadCount`、`behindCount`、`hasUpstream`、`lastFetchedAt`。
+- [x] 改造 Push 按钮状态：落后远端时引导 Pull，领先时显示 Push，无 upstream 时显示 Publish Branch/设置 upstream 入口。
+- [x] 捕获 push non-fast-forward，并映射为 `pushNeedsFetch`。
+- [x] 增加 PushNeedsPull/Fetch 提示，主按钮为 `Fetch`，第一版不自动 Pull/Rebase。
+- [x] 修正 Sync 顺序：先 Fetch，再根据 ahead/behind 决定 Pull 或 Push；本地和远端同时有新提交时提示用户选择 Pull/Rebase。
+
+当前进度：8/8，已通过 `swift test` 和 `xcodebuild -scheme GitOK -destination 'platform=macOS' build`。
