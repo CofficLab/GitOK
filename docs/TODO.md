@@ -1,19 +1,5 @@
 # TODO
 
-## 当前待修复问题
-
-## 修复历史 Commit 文件列表误显示“未暂存”
-
-- 现象：在历史 commit 详情的 FileList 中，已提交文件仍显示“未暂存”标签。
-- 预期：历史 commit 文件列表不应展示工作区/暂存区状态；应隐藏暂存状态标签，或改为展示 commit diff 的变更类型，例如新增、修改、删除、重命名。
-- 初步原因：`FileList` 在查看 commit 时不会读取当前 status entries，`stageState(for:)` 在未命中 staged/unstaged path 时默认返回 `.unstaged`，导致历史 commit 文件被错误标记为“未暂存”。
-- 相关位置：
-  - `APP/Plugins/Git-Detail/Git-File/FileList.swift`
-  - `APP/Plugins/Git-Detail/Git-File/FileTile.swift`
-- 验收标准：
-  - 查看历史 commit 时，文件行不再显示“未暂存”。
-  - 查看当前工作区改动时，已暂存、未暂存、部分暂存状态仍正常显示。
-
 ## GitHub Desktop 参考能力清单
 
 参考路径：`/Users/colorfy/Code/CofficLab/desktop/`

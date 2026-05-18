@@ -167,6 +167,7 @@ extension FileList {
                         discardChanges(for: $0)
                     } : nil,
                     stageState: stageState(for: file),
+                    showsStageBadge: data.commit == nil,
                     onStage: data.commit == nil ? {
                         stageFile($0)
                     } : nil,

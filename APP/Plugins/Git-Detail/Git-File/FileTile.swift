@@ -24,6 +24,8 @@ struct FileTile: View, SuperLog {
 
     var stageState: FileStageState = .unstaged
 
+    var showsStageBadge = true
+
     var onStage: ((GitDiffFile) -> Void)?
 
     var onUnstage: ((GitDiffFile) -> Void)?
@@ -47,7 +49,9 @@ struct FileTile: View, SuperLog {
 
             Spacer()
 
-            stageBadge
+            if showsStageBadge {
+                stageBadge
+            }
             statusIcon
         }
         .frame(maxWidth: .infinity, alignment: .leading)
