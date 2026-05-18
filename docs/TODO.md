@@ -2,19 +2,6 @@
 
 ## 当前待修复问题
 
-## Project 列表右键菜单增加“复制项目路径”（已完成）
-
-- 现象：项目列表的右键菜单缺少直接复制项目路径的入口。
-- 预期：在 Project 列表中右键某个项目时，菜单提供“复制项目路径”操作。
-- 行为：点击后将该项目的本地绝对路径写入系统剪贴板。
-- 相关位置：
-  - `APP/Plugins/ProjectPicker`
-  - `APP/Core/Views/Projects`
-- 验收标准：
-  - [x] 右键项目行时可看到“复制项目路径”。
-  - [x] 点击后剪贴板内容等于该项目的本地路径。
-  - [x] 不影响现有项目选择、打开外部工具、删除/管理等菜单行为。
-
 ## 修复历史 Commit 文件列表误显示“未暂存”
 
 - 现象：在历史 commit 详情的 FileList 中，已提交文件仍显示“未暂存”标签。
@@ -33,27 +20,7 @@
 
 对比对象是 GitHub Desktop 风格的 Electron 项目能力面。GitOK 已有自己的产品方向（项目管理、图标、Banner、插件系统），下面只整理 Git 工作流和桌面体验上可借鉴、缺失或需要完善的部分。
 
-## 当前 GitOK 已覆盖的能力
-
-- [x] 项目列表与项目选择：`APP/Plugins/ProjectPicker`、`APP/Core/Views/Projects`
-- [x] 打开外部工具：Finder、Terminal、VS Code、Cursor、Xcode、Trae 等插件
-- [x] Clone 任意远程仓库：`APP/Plugins/Git-Clone`
-- [x] Git 状态、文件列表、Diff、提交列表、Commit 表单：`APP/Plugins/Git-Detail`
-- [x] Commit message 风格/分类、用户信息、Co-author 基础能力
-- [x] Branch 查看、创建、切换、Merge：`APP/Plugins/Git-Branch`、`APP/Plugins/Git-Merge`
-- [x] Push、Pull、Sync、Auto Pull、Auto Push：`APP/Plugins/Git-Push`、`APP/Plugins/Git-Pull`、`APP/Plugins/Git-Sync`、`APP/Plugins/AutoPush`
-- [x] 远程仓库列表、新增、编辑、删除：`APP/Plugins/Git-RemoteRepository`
-- [x] Stash 保存、列表、Apply、Pop、Drop：`APP/Plugins/Git-Stash`
-- [x] Merge conflict 状态、stage、continue、abort：`APP/Plugins/Git-ConflictResolver`
-- [x] Gitignore、README、LICENSE 编辑/查看：`APP/Plugins/Git-Ignore`、`APP/Plugins/Readme`、`APP/Plugins/License`
-- [x] App Icon 与 Banner 生成，这是 GitOK 相比 Desktop 的差异化能力
-
 ## P0：核心 Git 工作流缺口
-
-- [x] 新建本地仓库 / 初始化仓库
-  - Desktop 参考：`app/src/ui/add-repository/create-repository.tsx`、`app/src/lib/git/init.ts`
-  - GitOK 现状：左侧添加入口已支持“新建仓库”，可选择目录、校验仓库名、执行 `git init`、创建 README、`.gitignore`、MIT LICENSE、初始提交，并自动导入项目列表。
-  - 后续：更多 LICENSE/.gitignore 模板、创建后 Publish 到远端、初始提交用户配置引导仍可继续完善。
 
 - [ ] GitHub/GitHub Enterprise 账号登录与仓库列表 Clone
   - Desktop 参考：`app/src/ui/sign-in`、`app/src/lib/auth.ts`、`app/src/ui/clone-repository/clone-github-repository.tsx`
@@ -65,20 +32,10 @@
   - GitOK 现状：可以管理 remote 和 push，但没有一键创建远端仓库并设置 upstream。
   - TODO：创建远程仓库、选择公开/私有、设置 `origin`、首次 push、已有 remote 冲突处理。
 
-- [x] Fetch 与 ahead/behind 状态体系
-  - Desktop 参考：`app/src/lib/git/fetch.ts`、`app/src/lib/stores/ahead-behind-store.ts`
-  - GitOK 现状：已增加 fetch、ahead/behind 查询、Push 按钮远端差异状态、non-fast-forward 专门提示，并修正 Sync 为 fetch-first。
-  - 后续：后台定时 fetch、离线/认证失败状态、状态栏统一展示仍可继续打磨。
-
 - [ ] 精细化 stage / unstage / partial commit
   - Desktop 参考：`app/src/ui/changes`、`app/src/lib/git/stage.ts`
   - GitOK 现状：已支持文件级 stage/unstage、文件暂存状态展示；提交按钮在存在 staged 改动时只提交 staged，否则保留一键提交全部。
   - TODO：按 hunk/行选择、过滤后提交确认、Changes / Staged Changes 分区展示。
-
-- [x] 安全的 discard / restore 体验
-  - Desktop 参考：`app/src/ui/discard-changes`
-  - GitOK 现状：单文件和全部 discard 已改为 Git CLI restore/rm/clean 路径；确认弹窗会区分已暂存、未暂存、未跟踪文件，并提示新文件会被删除；底层覆盖 tracked staged+unstaged、staged new file、untracked file 的恢复/删除。
-  - 后续：失败重试、被覆盖文件提示、可配置“不再确认”仍可继续完善。
 
 - [ ] Branch 完整管理
   - Desktop 参考：`app/src/ui/branches`、`app/src/ui/rename-branch`、`app/src/ui/delete-branch`
@@ -203,10 +160,6 @@
 
 ## 已有功能需要优先打磨
 
-- [x] `Git-Sync` 的操作顺序需要重新评估
-  - 现状：`Project.sync()` 已调整为先 fetch，再根据 ahead/behind 决定 pull/push；本地和远端同时有新提交时提示用户处理。
-  - 已验证：`swift test --enable-code-coverage`、`xcodebuild -scheme GitOK -destination 'platform=macOS' build`。
-
 - [ ] `Git-Stash` 需要补充上下文
   - 现状：只显示 index 和 message。
   - 建议：显示创建分支、创建时间、文件数量、stash diff 预览，并在 apply/pop 前检测工作区是否 clean。
@@ -234,28 +187,3 @@
 3. 完善高风险操作：rebase、cherry-pick、squash/revert/reset、conflict resolver。
 4. 接入远程平台：GitHub auth、publish repo/branch、PR 创建/展示、CI checks。
 5. 做桌面体验：快捷键、引导、错误日志、更新说明、无障碍。
-
-## 已完成专项归档
-
-### Push Behind Remote 工作流
-
-目标：参考 GitHub Desktop 的处理方式，让 GitOK 在“本地分支落后远程，同时本地又有新提交”时给出明确、可恢复的工作流。
-
-设计原则：
-
-- 不在 push 失败后自动 pull、merge 或 rebase。
-- 状态已知时，用按钮状态提前引导用户先 Pull/Fetch。
-- 状态未知时，允许 push 失败，但将 non-fast-forward 映射为专门提示。
-- Fetch 是安全操作，可以作为 push 失败后的默认下一步。
-
-完成项：
-
-- [x] 增加底层 Git fetch 能力：`GitRepositoryCLI.fetch(remote:)`、`Project.fetch()`、`projectDidFetch` 事件。
-- [x] 增加 ahead/behind 查询能力：新增 `GitAheadBehind`，使用 `git rev-list --left-right --count HEAD...@{upstream}` 查询当前分支与 upstream 的差异。
-- [x] 在 `ProjectVM` 暴露远端差异状态：`aheadCount`、`behindCount`、`hasUpstream`、`lastFetchedAt`。
-- [x] 改造 Push 按钮状态：落后远端时引导 Pull，领先时显示 Push，无 upstream 时显示 Publish Branch/设置 upstream 入口。
-- [x] 捕获 push non-fast-forward，并映射为 `pushNeedsFetch`。
-- [x] 增加 PushNeedsPull/Fetch 提示，主按钮为 `Fetch`，第一版不自动 Pull/Rebase。
-- [x] 修正 Sync 顺序：先 Fetch，再根据 ahead/behind 决定 Pull 或 Push；本地和远端同时有新提交时提示用户选择 Pull/Rebase。
-
-当前进度：8/8，已通过 `swift test` 和 `xcodebuild -scheme GitOK -destination 'platform=macOS' build`。
