@@ -7,7 +7,7 @@ public enum GitParsers {
         return output
             .split(separator: "\n", omittingEmptySubsequences: true)
             .compactMap { line in
-                let parts = line.split(separator: "\u{1F}", maxSplits: 1, omittingEmptySubsequences: false)
+                let parts = line.split(separator: "\u{1F}", maxSplits: 2, omittingEmptySubsequences: false)
                 guard let ref = parts.first,
                       let start = ref.firstIndex(of: "{"),
                       let end = ref.firstIndex(of: "}"),
@@ -15,8 +15,15 @@ public enum GitParsers {
                     return nil
                 }
 
-                let message = parts.count > 1 ? normalizeStashMessage(String(parts[1])) : ""
-                return GitStashEntry(index: index, message: message)
+                let rawMessage = parts.count > 2 ? String(parts[2]) : (parts.count > 1 ? String(parts[1]) : "")
+                let message = normalizeStashMessage(rawMessage)
+                let relativeDate = parts.count > 2 ? String(parts[1]) : nil
+                return GitStashEntry(
+                    index: index,
+                    message: message,
+                    branchName: parseStashBranchName(rawMessage),
+                    relativeDate: relativeDate?.isEmpty == false ? relativeDate : nil
+                )
             }
     }
 
@@ -79,5 +86,17 @@ public enum GitParsers {
         let contentStart = message.index(after: separator)
         let normalized = message[contentStart...].trimmingCharacters(in: .whitespaces)
         return normalized.isEmpty ? message : normalized
+    }
+
+    private static func parseStashBranchName(_ message: String) -> String? {
+        let prefixes = ["On ", "WIP on "]
+        guard let prefix = prefixes.first(where: { message.hasPrefix($0) }),
+              let separator = message.firstIndex(of: ":") else {
+            return nil
+        }
+
+        let branchStart = message.index(message.startIndex, offsetBy: prefix.count)
+        let branchName = message[branchStart..<separator].trimmingCharacters(in: .whitespaces)
+        return branchName.isEmpty ? nil : branchName
     }
 }

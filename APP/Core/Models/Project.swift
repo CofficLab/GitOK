@@ -735,10 +735,10 @@ extension Project {
     }
 
     /// 获取stash列表
-    /// - Returns: stash列表，每个stash包含索引和消息
+    /// - Returns: stash列表，包含索引、消息、分支、时间和预览信息
     /// - Throws: Git操作异常
-    func stashList() throws -> [(index: Int, message: String)] {
-        try gitCLI.stashList().map { (index: $0.index, message: $0.message) }
+    func stashList() throws -> [GitStashEntry] {
+        try gitCLI.stashList()
     }
 
     /// 应用指定的stash（保留stash）
@@ -778,6 +778,16 @@ extension Project {
             postEvent(.stashDropFailure(index: index, error: error))
             throw error
         }
+    }
+
+    /// 基于指定 stash 创建分支并恢复改动。
+    /// - Parameters:
+    ///   - name: 新分支名称
+    ///   - index: stash 的索引
+    /// - Throws: Git 操作异常
+    func stashBranch(name: String, index: Int) throws {
+        try gitCLI.stashBranch(name: name, index: index)
+        postEvent(.stashPopSuccess(index: index))
     }
 
     /// 获取当前正在合并的分支名

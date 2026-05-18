@@ -3,10 +3,25 @@ import Foundation
 public struct GitStashEntry: Equatable, Sendable {
     public let index: Int
     public let message: String
+    public let branchName: String?
+    public let relativeDate: String?
+    public let changedFileCount: Int
+    public let diffPreview: String
 
-    public init(index: Int, message: String) {
+    public init(
+        index: Int,
+        message: String,
+        branchName: String? = nil,
+        relativeDate: String? = nil,
+        changedFileCount: Int = 0,
+        diffPreview: String = ""
+    ) {
         self.index = index
         self.message = message
+        self.branchName = branchName
+        self.relativeDate = relativeDate
+        self.changedFileCount = changedFileCount
+        self.diffPreview = diffPreview
     }
 }
 

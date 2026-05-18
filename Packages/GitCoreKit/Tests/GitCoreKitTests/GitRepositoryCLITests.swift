@@ -5,15 +5,15 @@ import XCTest
 final class GitRepositoryCLITests: XCTestCase {
     func testParseStashListOutput() {
         let output = """
-        stash@{0}\u{1F}WIP on main: abc123 first stash
-        stash@{1}\u{1F}custom message
+        stash@{0}\u{1F}2 hours ago\u{1F}WIP on main: abc123 first stash
+        stash@{1}\u{1F}yesterday\u{1F}custom message
         """
 
         XCTAssertEqual(
             GitParsers.parseStashList(output),
             [
-                GitStashEntry(index: 0, message: "WIP on main: abc123 first stash"),
-                GitStashEntry(index: 1, message: "custom message"),
+                GitStashEntry(index: 0, message: "WIP on main: abc123 first stash", branchName: "main", relativeDate: "2 hours ago"),
+                GitStashEntry(index: 1, message: "custom message", relativeDate: "yesterday"),
             ]
         )
     }
@@ -23,7 +23,7 @@ final class GitRepositoryCLITests: XCTestCase {
 
         XCTAssertEqual(
             GitParsers.parseStashList(output),
-            [GitStashEntry(index: 0, message: "WIP work")]
+            [GitStashEntry(index: 0, message: "WIP work", branchName: "feature/refactor")]
         )
     }
 
@@ -124,6 +124,10 @@ final class GitRepositoryCLITests: XCTestCase {
         let stashes = try client.stashList()
         XCTAssertEqual(stashes.count, 1)
         XCTAssertEqual(stashes[0].message, "save notes")
+        XCTAssertEqual(stashes[0].branchName, "master")
+        XCTAssertNotNil(stashes[0].relativeDate)
+        XCTAssertEqual(stashes[0].changedFileCount, 1)
+        XCTAssertTrue(stashes[0].diffPreview.contains("notes.txt"))
         XCTAssertEqual(try repo.read("notes.txt"), nil)
 
         try client.stashApply(index: 0)
@@ -154,12 +158,27 @@ final class GitRepositoryCLITests: XCTestCase {
         try client.stashSave(message: "untracked only")
 
         XCTAssertNil(try repo.read("draft.md"))
-        XCTAssertEqual(
-            try client.stashList(),
-            [GitStashEntry(index: 0, message: "untracked only")]
-        )
+        let stashes = try client.stashList()
+        XCTAssertEqual(stashes.count, 1)
+        XCTAssertEqual(stashes[0].message, "untracked only")
+        XCTAssertEqual(stashes[0].changedFileCount, 1)
 
         try client.stashPop(index: 0)
+        XCTAssertEqual(try repo.read("draft.md"), "hello\n")
+        XCTAssertTrue(try client.stashList().isEmpty)
+    }
+
+    func testStashBranchCreatesBranchAndRestoresChanges() throws {
+        let repo = try TestGitRepository()
+        try repo.run(["commit", "--allow-empty", "-m", "initial"])
+
+        try repo.write("draft.md", content: "hello\n")
+
+        let client = GitRepositoryCLI(repositoryURL: repo.url)
+        try client.stashSave(message: "branch me")
+        try client.stashBranch(name: "recover/stash", index: 0)
+
+        XCTAssertEqual(try repo.run(["branch", "--show-current"]), "recover/stash")
         XCTAssertEqual(try repo.read("draft.md"), "hello\n")
         XCTAssertTrue(try client.stashList().isEmpty)
     }
@@ -179,7 +198,10 @@ final class GitRepositoryCLITests: XCTestCase {
         try repo.run(["commit", "-am", "head change"])
 
         XCTAssertThrowsError(try client.stashPop(index: 0))
-        XCTAssertEqual(try client.stashList(), [GitStashEntry(index: 0, message: "pop conflict candidate")])
+        let stashes = try client.stashList()
+        XCTAssertEqual(stashes.count, 1)
+        XCTAssertEqual(stashes[0].message, "pop conflict candidate")
+        XCTAssertEqual(stashes[0].changedFileCount, 1)
         XCTAssertEqual(
             try client.statusEntries(),
             [GitStatusEntry(path: "shared.txt", indexStatus: "U", workTreeStatus: "U")]
@@ -201,7 +223,10 @@ final class GitRepositoryCLITests: XCTestCase {
         try repo.run(["commit", "-am", "head change"])
 
         XCTAssertThrowsError(try client.stashApply(index: 0))
-        XCTAssertEqual(try client.stashList(), [GitStashEntry(index: 0, message: "conflict candidate")])
+        let stashes = try client.stashList()
+        XCTAssertEqual(stashes.count, 1)
+        XCTAssertEqual(stashes[0].message, "conflict candidate")
+        XCTAssertEqual(stashes[0].changedFileCount, 1)
         XCTAssertEqual(try client.statusEntries(), [GitStatusEntry(path: "shared.txt", indexStatus: "U", workTreeStatus: "U")])
     }
 

@@ -566,8 +566,19 @@ public struct GitRepositoryCLI {
     }
 
     public func stashList() throws -> [GitStashEntry] {
-        let output = try runGit(["stash", "list", "--format=%gd%x1f%s"])
-        return GitParsers.parseStashList(output)
+        let output = try runGit(["stash", "list", "--format=%gd%x1f%cr%x1f%gs"])
+        return try GitParsers.parseStashList(output).map { entry in
+            let files = try stashChangedFiles(index: entry.index)
+            let preview = try stashDiffPreview(index: entry.index)
+            return GitStashEntry(
+                index: entry.index,
+                message: entry.message,
+                branchName: entry.branchName,
+                relativeDate: entry.relativeDate,
+                changedFileCount: files.count,
+                diffPreview: preview
+            )
+        }
     }
 
     public func stashApply(index: Int) throws {
@@ -580,6 +591,42 @@ public struct GitRepositoryCLI {
 
     public func stashDrop(index: Int) throws {
         _ = try runGit(["stash", "drop", "stash@{\(index)}"])
+    }
+
+    public func stashBranch(name: String, index: Int) throws {
+        let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard trimmedName.isEmpty == false else {
+            throw NSError(
+                domain: "GitOK.GitCommand",
+                code: -1,
+                userInfo: [NSLocalizedDescriptionKey: "分支名称不能为空"]
+            )
+        }
+
+        _ = try runGit(["stash", "branch", trimmedName, "stash@{\(index)}"])
+    }
+
+    private func stashChangedFiles(index: Int) throws -> [String] {
+        let output = try runGit(
+            ["stash", "show", "--include-untracked", "--name-only", "--format=", "stash@{\(index)}"],
+            allowNonZeroExit: true,
+            trimOutput: false
+        )
+
+        return output
+            .split(separator: "\n", omittingEmptySubsequences: true)
+            .map { String($0).trimmingCharacters(in: .whitespacesAndNewlines) }
+            .filter { $0.isEmpty == false }
+    }
+
+    private func stashDiffPreview(index: Int) throws -> String {
+        let output = try runGit(
+            ["stash", "show", "--include-untracked", "--patch", "--stat", "--color=never", "stash@{\(index)}"],
+            allowNonZeroExit: true,
+            trimOutput: false
+        )
+        let lines = output.split(separator: "\n", omittingEmptySubsequences: false).prefix(120)
+        return lines.joined(separator: "\n")
     }
 
     public func fetch(remote: String = "origin") throws {
