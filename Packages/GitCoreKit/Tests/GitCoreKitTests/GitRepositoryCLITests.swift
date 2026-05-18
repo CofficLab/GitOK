@@ -273,6 +273,131 @@ final class GitRepositoryCLITests: XCTestCase {
         }
     }
 
+    func testParseLFSVersionExtractsVersion() {
+        XCTAssertEqual(
+            GitRepositoryCLI.parseLFSVersion(from: "git-lfs/3.5.1 (GitHub; darwin arm64; go 1.21.8)"),
+            "3.5.1"
+        )
+    }
+
+    func testParseLFSVersionRejectsUnexpectedOutput() {
+        XCTAssertNil(GitRepositoryCLI.parseLFSVersion(from: "git: 'lfs' is not a git command"))
+        XCTAssertNil(GitRepositoryCLI.parseLFSVersion(from: ""))
+    }
+
+    func testInitializeLFSWritesLocalFilterConfigWhenAvailable() throws {
+        let repo = try TestGitRepository()
+        let client = GitRepositoryCLI(repositoryURL: repo.url)
+
+        guard client.lfsStatus().isAvailable else {
+            throw XCTSkip("git-lfs is not installed in this environment")
+        }
+
+        try client.initializeLFS()
+
+        XCTAssertEqual(try repo.run(["config", "--local", "filter.lfs.process"]), "git-lfs filter-process")
+        XCTAssertEqual(try repo.run(["config", "--local", "filter.lfs.required"]), "true")
+    }
+
+    func testLFSLargeFileCandidatesFindsFilesAboveThreshold() throws {
+        let repo = try TestGitRepository()
+        try repo.writeData("small.bin", data: Data(repeating: 1, count: 8))
+        try repo.writeData("assets/big.bin", data: Data(repeating: 2, count: 16))
+        try repo.writeData("assets/bigger.bin", data: Data(repeating: 3, count: 24))
+
+        let client = GitRepositoryCLI(repositoryURL: repo.url)
+
+        XCTAssertEqual(
+            try client.lfsLargeFileCandidates(thresholdBytes: 16),
+            [
+                GitRepositoryCLI.GitLFSLargeFileCandidate(path: "assets/bigger.bin", byteSize: 24),
+                GitRepositoryCLI.GitLFSLargeFileCandidate(path: "assets/big.bin", byteSize: 16),
+            ]
+        )
+    }
+
+    func testLFSLargeFileCandidatesSkipsGitDirectory() throws {
+        let repo = try TestGitRepository()
+        try repo.writeData(".git/objects/fake-large", data: Data(repeating: 1, count: 32))
+        try repo.writeData("tracked-large.bin", data: Data(repeating: 2, count: 32))
+
+        let client = GitRepositoryCLI(repositoryURL: repo.url)
+
+        XCTAssertEqual(
+            try client.lfsLargeFileCandidates(thresholdBytes: 16),
+            [GitRepositoryCLI.GitLFSLargeFileCandidate(path: "tracked-large.bin", byteSize: 32)]
+        )
+    }
+
+    func testLFSLargeFileCandidatesRejectsInvalidThreshold() throws {
+        let repo = try TestGitRepository()
+        let client = GitRepositoryCLI(repositoryURL: repo.url)
+
+        XCTAssertThrowsError(try client.lfsLargeFileCandidates(thresholdBytes: 0)) { error in
+            XCTAssertTrue((error as NSError).localizedDescription.contains("大文件阈值必须大于 0"))
+        }
+    }
+
+    func testIsLFSPointerBlobRecognizesPointer() {
+        let pointer = """
+        version https://git-lfs.github.com/spec/v1
+        oid sha256:0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+        size 123
+
+        """
+
+        XCTAssertTrue(GitRepositoryCLI.isLFSPointerBlob(pointer))
+        XCTAssertFalse(GitRepositoryCLI.isLFSPointerBlob("regular file content\n"))
+    }
+
+    func testLFSAttributeMismatchesFindsPointerWithoutAttribute() throws {
+        let repo = try TestGitRepository()
+        try repo.write("asset.bin", content: lfsPointer())
+        try repo.run(["add", "."])
+
+        let client = GitRepositoryCLI(repositoryURL: repo.url)
+
+        XCTAssertEqual(
+            try client.lfsAttributeMismatches(),
+            [
+                GitRepositoryCLI.GitLFSAttributeMismatch(
+                    path: "asset.bin",
+                    kind: .pointerWithoutLFSAttribute
+                )
+            ]
+        )
+    }
+
+    func testLFSAttributeMismatchesFindsAttributeWithoutPointer() throws {
+        let repo = try TestGitRepository()
+        try repo.write(".gitattributes", content: "*.bin filter=lfs diff=lfs merge=lfs -text\n")
+        try repo.write("asset.bin", content: "regular file content\n")
+        try repo.addWithDisabledLFSFilter()
+
+        let client = GitRepositoryCLI(repositoryURL: repo.url)
+
+        XCTAssertEqual(
+            try client.lfsAttributeMismatches(),
+            [
+                GitRepositoryCLI.GitLFSAttributeMismatch(
+                    path: "asset.bin",
+                    kind: .lfsAttributeWithoutPointer
+                )
+            ]
+        )
+    }
+
+    func testLFSAttributeMismatchesAcceptsPointerWithAttribute() throws {
+        let repo = try TestGitRepository()
+        try repo.write(".gitattributes", content: "*.bin filter=lfs diff=lfs merge=lfs -text\n")
+        try repo.write("asset.bin", content: lfsPointer())
+        try repo.addWithDisabledLFSFilter()
+
+        let client = GitRepositoryCLI(repositoryURL: repo.url)
+
+        XCTAssertEqual(try client.lfsAttributeMismatches(), [])
+    }
+
     func testAheadBehindCountsLocalAndRemoteCommits() throws {
         let remote = try TestGitRepository()
         try remote.write("README.md", content: "hello\n")
@@ -687,10 +812,25 @@ private final class TestGitRepository {
         try content.data(using: .utf8)?.write(to: fileURL)
     }
 
+    func writeData(_ relativePath: String, data: Data) throws {
+        let fileURL = url.appendingPathComponent(relativePath)
+        try FileManager.default.createDirectory(at: fileURL.deletingLastPathComponent(), withIntermediateDirectories: true)
+        try data.write(to: fileURL)
+    }
+
     func read(_ relativePath: String) throws -> String? {
         let fileURL = url.appendingPathComponent(relativePath)
         guard FileManager.default.fileExists(atPath: fileURL.path) else { return nil }
         return try String(contentsOf: fileURL, encoding: .utf8)
+    }
+
+    func addWithDisabledLFSFilter() throws {
+        try run([
+            "-c", "filter.lfs.process=",
+            "-c", "filter.lfs.clean=cat",
+            "-c", "filter.lfs.required=false",
+            "add", ".",
+        ])
     }
 
     @discardableResult
@@ -720,4 +860,13 @@ private final class TestGitRepository {
 
         return stdout.trimmingCharacters(in: .whitespacesAndNewlines)
     }
+}
+
+private func lfsPointer() -> String {
+    """
+    version https://git-lfs.github.com/spec/v1
+    oid sha256:0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+    size 123
+
+    """
 }

@@ -116,6 +116,41 @@ public struct GitRepositoryCLI {
         self.repositoryURL = repositoryURL
     }
 
+    public struct GitLFSStatus: Equatable, Sendable {
+        public let isAvailable: Bool
+        public let version: String?
+
+        public init(isAvailable: Bool, version: String?) {
+            self.isAvailable = isAvailable
+            self.version = version
+        }
+    }
+
+    public struct GitLFSLargeFileCandidate: Equatable, Sendable {
+        public let path: String
+        public let byteSize: Int64
+
+        public init(path: String, byteSize: Int64) {
+            self.path = path
+            self.byteSize = byteSize
+        }
+    }
+
+    public struct GitLFSAttributeMismatch: Equatable, Sendable {
+        public enum Kind: String, Sendable {
+            case pointerWithoutLFSAttribute
+            case lfsAttributeWithoutPointer
+        }
+
+        public let path: String
+        public let kind: Kind
+
+        public init(path: String, kind: Kind) {
+            self.path = path
+            self.kind = kind
+        }
+    }
+
     public struct CreateRepositoryOptions: Equatable, Sendable {
         public var readmeContent: String?
         public var gitignoreContent: String?
@@ -256,6 +291,120 @@ public struct GitRepositoryCLI {
 
     public func fetch(remote: String = "origin") throws {
         _ = try runGit(["fetch", "--prune", remote])
+    }
+
+    public func lfsStatus() -> GitLFSStatus {
+        guard let output = try? runGit(["lfs", "version"]) else {
+            return GitLFSStatus(isAvailable: false, version: nil)
+        }
+
+        return GitLFSStatus(
+            isAvailable: true,
+            version: Self.parseLFSVersion(from: output)
+        )
+    }
+
+    public static func parseLFSVersion(from output: String) -> String? {
+        let trimmed = output.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard trimmed.hasPrefix("git-lfs/") else { return nil }
+
+        let version = trimmed
+            .dropFirst("git-lfs/".count)
+            .split(separator: " ")
+            .first
+            .map(String.init)
+
+        return version?.isEmpty == false ? version : nil
+    }
+
+    public func initializeLFS() throws {
+        _ = try runGit(["lfs", "install", "--local"])
+    }
+
+    public func lfsLargeFileCandidates(thresholdBytes: Int64 = 50 * 1024 * 1024) throws -> [GitLFSLargeFileCandidate] {
+        guard thresholdBytes > 0 else {
+            throw NSError(
+                domain: "GitOK.GitCommand",
+                code: -1,
+                userInfo: [NSLocalizedDescriptionKey: "大文件阈值必须大于 0"]
+            )
+        }
+
+        let repositoryURL = repositoryURL.standardizedFileURL
+        let resourceKeys: [URLResourceKey] = [
+            .isDirectoryKey,
+            .isRegularFileKey,
+            .fileSizeKey,
+        ]
+
+        guard let enumerator = FileManager.default.enumerator(
+            at: repositoryURL,
+            includingPropertiesForKeys: resourceKeys,
+            options: [.skipsPackageDescendants]
+        ) else {
+            return []
+        }
+
+        var candidates: [GitLFSLargeFileCandidate] = []
+
+        for case let fileURL as URL in enumerator {
+            if fileURL.lastPathComponent == ".git" {
+                enumerator.skipDescendants()
+                continue
+            }
+
+            let values = try fileURL.resourceValues(forKeys: Set(resourceKeys))
+            guard values.isRegularFile == true, let fileSize = values.fileSize else { continue }
+
+            let byteSize = Int64(fileSize)
+            guard byteSize >= thresholdBytes else { continue }
+
+            candidates.append(
+                GitLFSLargeFileCandidate(
+                    path: Self.relativePath(for: fileURL.standardizedFileURL, in: repositoryURL),
+                    byteSize: byteSize
+                )
+            )
+        }
+
+        return candidates.sorted {
+            if $0.byteSize == $1.byteSize {
+                return $0.path < $1.path
+            }
+            return $0.byteSize > $1.byteSize
+        }
+    }
+
+    public func lfsAttributeMismatches() throws -> [GitLFSAttributeMismatch] {
+        let paths = try trackedFilePaths()
+        var mismatches: [GitLFSAttributeMismatch] = []
+
+        for path in paths {
+            let hasLFSAttribute = try fileHasLFSFilterAttribute(path)
+            let storesLFSPointer = try indexStoresLFSPointer(path)
+
+            if storesLFSPointer && hasLFSAttribute == false {
+                mismatches.append(GitLFSAttributeMismatch(path: path, kind: .pointerWithoutLFSAttribute))
+            } else if hasLFSAttribute && storesLFSPointer == false {
+                mismatches.append(GitLFSAttributeMismatch(path: path, kind: .lfsAttributeWithoutPointer))
+            }
+        }
+
+        return mismatches.sorted { $0.path < $1.path }
+    }
+
+    public static func isLFSPointerBlob(_ content: String) -> Bool {
+        let lines = content.split(separator: "\n", omittingEmptySubsequences: false)
+        guard lines.first == "version https://git-lfs.github.com/spec/v1" else { return false }
+
+        let hasOID = lines.contains { line in
+            line.range(of: #"^oid sha256:[0-9a-f]{64}$"#, options: .regularExpression) != nil
+        }
+        let hasSize = lines.contains { line in
+            line.range(of: #"^size [0-9]+$"#, options: .regularExpression) != nil
+        }
+
+        return hasOID && hasSize
     }
 
     public func deleteLocalBranch(named branchName: String) throws {
@@ -512,6 +661,27 @@ public struct GitRepositoryCLI {
         try FileManager.default.removeItem(at: targetURL)
     }
 
+    private func trackedFilePaths() throws -> [String] {
+        let output = try runGit(["ls-files", "-z"], trimOutput: false)
+        return output
+            .split(separator: "\0", omittingEmptySubsequences: true)
+            .map(String.init)
+    }
+
+    private func fileHasLFSFilterAttribute(_ filePath: String) throws -> Bool {
+        let output = try runGit(["check-attr", "filter", "--", filePath])
+        return output.hasSuffix(": filter: lfs")
+    }
+
+    private func indexStoresLFSPointer(_ filePath: String) throws -> Bool {
+        let blobReference = ":\(filePath)"
+        let sizeOutput = try runGit(["cat-file", "-s", blobReference], allowNonZeroExit: true)
+        guard let byteSize = Int64(sizeOutput), byteSize <= 1024 else { return false }
+
+        let content = try runGit(["cat-file", "blob", blobReference], allowNonZeroExit: true, trimOutput: false)
+        return Self.isLFSPointerBlob(content)
+    }
+
     private static func writeCreateRepositoryFiles(at repositoryURL: URL, options: CreateRepositoryOptions) throws {
         if let readmeContent = options.readmeContent {
             try writeFileIfNeeded(repositoryURL.appendingPathComponent("README.md"), content: readmeContent)
@@ -529,6 +699,17 @@ public struct GitRepositoryCLI {
     private static func writeFileIfNeeded(_ url: URL, content: String) throws {
         guard FileManager.default.fileExists(atPath: url.path) == false else { return }
         try content.write(to: url, atomically: true, encoding: .utf8)
+    }
+
+    private static func relativePath(for fileURL: URL, in repositoryURL: URL) -> String {
+        let repositoryPath = repositoryURL.path
+        let filePath = fileURL.path
+
+        guard filePath.hasPrefix(repositoryPath + "/") else {
+            return fileURL.lastPathComponent
+        }
+
+        return String(filePath.dropFirst(repositoryPath.count + 1))
     }
 
     @discardableResult
