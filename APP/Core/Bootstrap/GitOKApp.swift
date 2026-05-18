@@ -56,6 +56,7 @@ struct GitOKApp: App, SuperLog {
         .commands(content: {
             DebugCommand()
             ConfigCommand()
+            GitCommand()
             AppCommand()
 
             CommandGroup(after: .appInfo) {

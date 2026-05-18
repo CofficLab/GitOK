@@ -1,3 +1,4 @@
+import MagicAlert
 import MagicKit
 import OSLog
 import SwiftUI
@@ -96,10 +97,88 @@ struct ContentView: View, SuperLog {
         .onReceive(NotificationCenter.default.publisher(for: .openCommitStyleSettings)) { _ in
             app.openCommitStyleSettings()
         }
+        .onReceive(NotificationCenter.default.publisher(for: .gitCommandRefresh)) { _ in
+            performGitMenuCommand(.refresh)
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .gitCommandFetch)) { _ in
+            performGitMenuCommand(.fetch)
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .gitCommandPull)) { _ in
+            performGitMenuCommand(.pull)
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .gitCommandPush)) { _ in
+            performGitMenuCommand(.push)
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .gitCommandRepositorySettings)) { _ in
+            app.openRepositorySettings()
+        }
         .overlay(alignment: .bottom) {
             p.getRootViewWrapper {
                 EmptyView()
             }
+        }
+        .focusedSceneObject(vm)
+    }
+
+    private enum GitMenuCommand {
+        case refresh
+        case fetch
+        case pull
+        case push
+    }
+
+    private func performGitMenuCommand(_ command: GitMenuCommand) {
+        guard let project = vm.project, project.isGitRepo else {
+            alert_error("当前没有可操作的 Git 仓库")
+            return
+        }
+
+        Task.detached(priority: .userInitiated) {
+            await MainActor.run {
+                g.activityStatus = statusText(for: command)
+            }
+
+            do {
+                switch command {
+                case .refresh:
+                    project.postEvent(
+                        name: .projectGitDirectoryDidChange,
+                        operation: "menuRefresh"
+                    )
+                    project.postEvent(
+                        name: .projectGitRefsDidChange,
+                        operation: "menuRefresh"
+                    )
+                case .fetch:
+                    try project.fetch()
+                case .pull:
+                    try project.pull()
+                case .push:
+                    try project.push()
+                }
+
+                await MainActor.run {
+                    g.activityStatus = nil
+                }
+            } catch {
+                await MainActor.run {
+                    g.activityStatus = nil
+                    alert_error(error)
+                }
+            }
+        }
+    }
+
+    private func statusText(for command: GitMenuCommand) -> String {
+        switch command {
+        case .refresh:
+            return "刷新仓库状态中..."
+        case .fetch:
+            return "获取远程更新中..."
+        case .pull:
+            return "拉取中..."
+        case .push:
+            return "推送中..."
         }
     }
 

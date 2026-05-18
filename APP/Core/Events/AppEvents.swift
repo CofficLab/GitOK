@@ -25,6 +25,21 @@ extension Notification.Name {
 
     /// 请求打开项目（通过 open-file、URL Scheme 或命令行触发）
     static let appOpenProject = Notification.Name("appOpenProject")
+
+    /// 菜单命令：刷新当前仓库状态
+    static let gitCommandRefresh = Notification.Name("gitCommandRefresh")
+
+    /// 菜单命令：Fetch 当前仓库
+    static let gitCommandFetch = Notification.Name("gitCommandFetch")
+
+    /// 菜单命令：Pull 当前仓库
+    static let gitCommandPull = Notification.Name("gitCommandPull")
+
+    /// 菜单命令：Push 当前仓库
+    static let gitCommandPush = Notification.Name("gitCommandPush")
+
+    /// 菜单命令：打开当前项目设置
+    static let gitCommandRepositorySettings = Notification.Name("gitCommandRepositorySettings")
 }
 
 // MARK: - View Extensions for App Events
@@ -95,4 +110,3 @@ extension View {
         }
     }
 }
-
