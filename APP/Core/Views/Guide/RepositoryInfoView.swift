@@ -2,6 +2,7 @@ import Foundation
 import LibGit2Swift
 import MagicKit
 import OSLog
+import ProjectRulesKit
 import SwiftUI
 
 /// 显示仓库信息的视图组件（包含本地和远程仓库）
@@ -113,7 +114,7 @@ struct RepositoryInfoView: View, SuperLog {
             icon: .iconCloud
         ) {
             HStack(spacing: 8) {
-                if let httpsURL = convertToHTTPSURL(remote.url) {
+                if let httpsURL = RemoteRepositoryFormRules.remoteWebLink(for: remote.url)?.url {
                     AppIconButton(systemImage: .iconSafari, size: .regular) {
                         httpsURL.openInBrowser()
                     }
@@ -146,30 +147,6 @@ struct RepositoryInfoView: View, SuperLog {
 
     // MARK: - Helper Methods
 
-    /// 将 Git URL 转换为 HTTPS URL
-    /// - Parameter gitURL: Git URL（可能是 SSH 或 HTTPS 格式）
-    /// - Returns: 可在浏览器中打开的 HTTPS URL，如果无法转换则返回 nil
-    private func convertToHTTPSURL(_ gitURL: String) -> URL? {
-        var formatted = gitURL
-
-        // 处理 SSH 格式：git@github.com:user/repo.git
-        if formatted.hasPrefix("git@") {
-            formatted = formatted.replacingOccurrences(of: ":", with: "/")
-            formatted = formatted.replacingOccurrences(of: "git@", with: "https://")
-        }
-        // 处理 SSH 格式：ssh://git@github.com/user/repo.git
-        else if formatted.hasPrefix("ssh://") {
-            formatted = formatted.replacingOccurrences(of: "ssh://git@", with: "https://")
-        }
-        // 处理 git:// 协议
-        else if formatted.hasPrefix("git://") {
-            formatted = formatted.replacingOccurrences(of: "git://", with: "https://")
-        }
-
-        // 如果已经是 HTTPS 格式，直接使用
-        return URL(string: formatted)
-    }
-    
     private func copyLocalRepositoryPath() {
         project.url.absoluteString.copy()
         

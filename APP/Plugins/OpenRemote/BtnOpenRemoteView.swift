@@ -1,5 +1,6 @@
 import MagicKit
 import OSLog
+import ProjectRulesKit
 import SwiftUI
 
 struct BtnOpenRemoteView: View, SuperLog {
@@ -68,18 +69,10 @@ extension BtnOpenRemoteView {
                 os_log(.info, "\(self.t)🔄 Update remoteURL: \(remoteURL ?? "")")
             }
 
-            var formattedRemote = remoteURL ?? ""
-            if formattedRemote.hasPrefix("git@") {
-                formattedRemote = formattedRemote.replacingOccurrences(of: ":", with: "/")
-                formattedRemote = formattedRemote.replacingOccurrences(of: "git@", with: "https://")
-            }
+            let webLink = remoteURL.flatMap { RemoteRepositoryFormRules.remoteWebLink(for: $0) }
 
             DispatchQueue.main.async {
-                if !formattedRemote.isEmpty {
-                    self.webURL = URL(string: formattedRemote)
-                } else {
-                    self.webURL = nil
-                }
+                self.webURL = webLink?.url
                 isLoading = false
             }
         } catch {
