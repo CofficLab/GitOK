@@ -30,6 +30,23 @@ final class CloneRepositoryValidationTests: XCTestCase {
         )
     }
 
+    func testCredentialHostSupportsHTTPSRemoteAndShortcut() {
+        XCTAssertEqual(
+            CloneRepositoryValidation.credentialHost(from: "https://github.com/owner/repo.git"),
+            "github.com"
+        )
+        XCTAssertEqual(
+            CloneRepositoryValidation.credentialHost(from: "owner/repo"),
+            "github.com"
+        )
+    }
+
+    func testCredentialHostIgnoresSSHRemote() {
+        XCTAssertNil(
+            CloneRepositoryValidation.credentialHost(from: "git@github.com:owner/repo.git")
+        )
+    }
+
     func testRejectsInvalidRepositoryName() {
         XCTAssertNotNil(CloneRepositoryValidation.validateRepositoryName("bad/name"))
         XCTAssertNotNil(CloneRepositoryValidation.validateRepositoryName(".."))

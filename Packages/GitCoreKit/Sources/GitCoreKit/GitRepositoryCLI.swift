@@ -1,6 +1,49 @@
 import Foundation
 
 public enum CloneRepositoryValidation {
+    public enum CloneFailureKind: Equatable, Sendable {
+        case authentication
+        case sshAuthentication
+        case sshHostKey
+        case proxy
+        case certificate
+        case repositoryUnavailable
+        case network
+        case destination
+        case unknown
+    }
+
+    public struct CloneFailureDescription: Equatable, Sendable {
+        public let kind: CloneFailureKind
+        public let title: String
+        public let recoverySuggestion: String
+
+        public init(kind: CloneFailureKind, title: String, recoverySuggestion: String) {
+            self.kind = kind
+            self.title = title
+            self.recoverySuggestion = recoverySuggestion
+        }
+    }
+
+    public struct NetworkConfiguration: Equatable, Sendable {
+        public var httpProxy: String
+        public var httpsProxy: String
+        public var sslVerify: Bool
+        public var sslCAInfo: String
+
+        public init(
+            httpProxy: String = "",
+            httpsProxy: String = "",
+            sslVerify: Bool = true,
+            sslCAInfo: String = ""
+        ) {
+            self.httpProxy = httpProxy
+            self.httpsProxy = httpsProxy
+            self.sslVerify = sslVerify
+            self.sslCAInfo = sslCAInfo
+        }
+    }
+
     public enum DestinationState: Equatable, Sendable {
         case available
         case existingEmptyDirectory
@@ -34,6 +77,44 @@ public enum CloneRepositoryValidation {
 
         guard let candidate else { return nil }
         return sanitizeRepositoryName(candidate)
+    }
+
+    public static func credentialHost(from remote: String) -> String? {
+        let normalized = normalizedRemoteURL(from: remote)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+
+        guard let components = URLComponents(string: normalized),
+              let scheme = components.scheme?.lowercased(),
+              scheme == "https" || scheme == "http",
+              let host = components.host,
+              host.isEmpty == false else {
+            return nil
+        }
+
+        return host
+    }
+
+    public static func sshHost(from remote: String) -> String? {
+        let normalized = normalizedRemoteURL(from: remote)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+
+        guard normalized.isEmpty == false else { return nil }
+
+        if let components = URLComponents(string: normalized),
+           components.scheme?.lowercased() == "ssh",
+           let host = components.host,
+           host.isEmpty == false {
+            return host
+        }
+
+        let pattern = #"^[^@/\s]+@([^:\s]+):.+$"#
+        guard let regex = try? NSRegularExpression(pattern: pattern),
+              let match = regex.firstMatch(in: normalized, range: NSRange(normalized.startIndex..., in: normalized)),
+              let range = Range(match.range(at: 1), in: normalized) else {
+            return nil
+        }
+
+        return String(normalized[range])
     }
 
     public static func sanitizeRepositoryName(_ rawValue: String) -> String {
@@ -101,11 +182,190 @@ public enum CloneRepositoryValidation {
         }
     }
 
+    public static func cloneFailureDescription(from output: String) -> CloneFailureDescription {
+        let normalizedOutput = output.lowercased()
+
+        if normalizedOutput.contains("ssl certificate problem")
+            || normalizedOutput.contains("certificate verify failed")
+            || normalizedOutput.contains("unable to get local issuer certificate")
+            || normalizedOutput.contains("self-signed certificate")
+            || normalizedOutput.contains("server certificate verification failed")
+            || normalizedOutput.contains("schannel") {
+            return CloneFailureDescription(
+                kind: .certificate,
+                title: "证书验证失败",
+                recoverySuggestion: "请确认企业证书已被系统信任，或在网络设置中配置 Git 使用的 CA 证书文件。"
+            )
+        }
+
+        if normalizedOutput.contains("407 proxy authentication required")
+            || normalizedOutput.contains("http code 407 from proxy")
+            || normalizedOutput.contains("could not resolve proxy")
+            || normalizedOutput.contains("failed to connect to proxy")
+            || normalizedOutput.contains("proxy connect aborted")
+            || normalizedOutput.contains("proxy authentication required")
+            || normalizedOutput.contains("received http code 407") {
+            return CloneFailureDescription(
+                kind: .proxy,
+                title: "代理连接失败",
+                recoverySuggestion: "请检查 HTTP/HTTPS proxy 地址、认证信息和企业网络连接后重试。"
+            )
+        }
+
+        if normalizedOutput.contains("host key verification failed")
+            || normalizedOutput.contains("no matching host key type found")
+            || normalizedOutput.contains("remote host identification has changed")
+            || normalizedOutput.contains("offending key")
+            || normalizedOutput.contains("known_hosts") {
+            return CloneFailureDescription(
+                kind: .sshHostKey,
+                title: "SSH 主机验证失败",
+                recoverySuggestion: "请确认远程主机指纹可信，并更新 ~/.ssh/known_hosts 后重试。"
+            )
+        }
+
+        if normalizedOutput.contains("permission denied (publickey)")
+            || normalizedOutput.contains("permission denied (publickey,password)")
+            || normalizedOutput.contains("permission denied, please try again")
+            || normalizedOutput.contains("could not read passphrase")
+            || normalizedOutput.contains("bad passphrase")
+            || normalizedOutput.contains("incorrect passphrase")
+            || normalizedOutput.contains("load key")
+            || normalizedOutput.contains("sign_and_send_pubkey")
+            || normalizedOutput.contains("agent admitted failure")
+            || normalizedOutput.contains("no such identity") {
+            return CloneFailureDescription(
+                kind: .sshAuthentication,
+                title: "SSH 认证失败",
+                recoverySuggestion: "请确认 SSH key 已添加到 ssh-agent/Keychain，或先在终端执行 ssh-add 输入 passphrase 后重试。"
+            )
+        }
+
+        if normalizedOutput.contains("authentication failed")
+            || normalizedOutput.contains("could not read username")
+            || normalizedOutput.contains("could not read password")
+            || normalizedOutput.contains("terminal prompts disabled") {
+            return CloneFailureDescription(
+                kind: .authentication,
+                title: "认证失败",
+                recoverySuggestion: "请确认远程地址和凭据是否正确；私有仓库需要配置 Git credential helper、token 或可用的 SSH key。"
+            )
+        }
+
+        if normalizedOutput.contains("repository not found")
+            || normalizedOutput.contains("not found")
+            || normalizedOutput.contains("does not appear to be a git repository")
+            || normalizedOutput.contains("could not read from remote repository") {
+            return CloneFailureDescription(
+                kind: .repositoryUnavailable,
+                title: "仓库不可用",
+                recoverySuggestion: "请检查仓库地址是否正确，以及当前账号是否有访问权限。"
+            )
+        }
+
+        if normalizedOutput.contains("could not resolve host")
+            || normalizedOutput.contains("failed to connect")
+            || normalizedOutput.contains("connection timed out")
+            || normalizedOutput.contains("network is unreachable") {
+            return CloneFailureDescription(
+                kind: .network,
+                title: "网络连接失败",
+                recoverySuggestion: "请检查网络、代理、VPN 或企业证书配置后重试。"
+            )
+        }
+
+        if normalizedOutput.contains("destination path")
+            || normalizedOutput.contains("already exists")
+            || normalizedOutput.contains("permission denied") {
+            return CloneFailureDescription(
+                kind: .destination,
+                title: "目标路径不可用",
+                recoverySuggestion: "请更换本地目录、仓库名称，或确认目标目录有写入权限。"
+            )
+        }
+
+        return CloneFailureDescription(
+            kind: .unknown,
+            title: "克隆失败",
+            recoverySuggestion: "请查看 Git 输出并修正后重试。"
+        )
+    }
+
+    public static func cloneFailureMessage(from output: String) -> String {
+        let description = cloneFailureDescription(from: output)
+        let trimmedOutput = output.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard trimmedOutput.isEmpty == false else {
+            return "\(description.title)：\(description.recoverySuggestion)"
+        }
+        return "\(description.title)：\(description.recoverySuggestion)\n\nGit 输出：\(trimmedOutput)"
+    }
+
+    public static func loadGlobalNetworkConfiguration() throws -> NetworkConfiguration {
+        NetworkConfiguration(
+            httpProxy: try readGlobalGitConfig("http.proxy"),
+            httpsProxy: try readGlobalGitConfig("https.proxy"),
+            sslVerify: try readGlobalGitConfig("http.sslVerify").lowercased() != "false",
+            sslCAInfo: try readGlobalGitConfig("http.sslCAInfo")
+        )
+    }
+
+    public static func saveGlobalNetworkConfiguration(_ configuration: NetworkConfiguration) throws {
+        try writeGlobalGitConfig("http.proxy", value: configuration.httpProxy)
+        try writeGlobalGitConfig("https.proxy", value: configuration.httpsProxy)
+        try writeGlobalGitConfig("http.sslVerify", value: configuration.sslVerify ? nil : "false")
+        try writeGlobalGitConfig("http.sslCAInfo", value: configuration.sslCAInfo)
+    }
+
     private static func looksLikeGitHubShortcut(_ value: String) -> Bool {
         guard value.contains("://") == false else { return false }
         guard value.hasPrefix("git@") == false else { return false }
         let parts = value.split(separator: "/")
         return parts.count == 2 && parts.allSatisfy { $0.isEmpty == false }
+    }
+
+    private static func readGlobalGitConfig(_ key: String) throws -> String {
+        try runGitConfig(["config", "--global", "--get", key], allowNonZeroExit: true)
+    }
+
+    private static func writeGlobalGitConfig(_ key: String, value: String?) throws {
+        let trimmed = value?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+
+        if trimmed.isEmpty {
+            _ = try runGitConfig(["config", "--global", "--unset", key], allowNonZeroExit: true)
+        } else {
+            _ = try runGitConfig(["config", "--global", key, trimmed], allowNonZeroExit: false)
+        }
+    }
+
+    @discardableResult
+    private static func runGitConfig(_ arguments: [String], allowNonZeroExit: Bool) throws -> String {
+        let process = Process()
+        process.executableURL = URL(fileURLWithPath: "/usr/bin/env")
+        process.arguments = ["git"] + arguments
+
+        let stdoutPipe = Pipe()
+        let stderrPipe = Pipe()
+        process.standardOutput = stdoutPipe
+        process.standardError = stderrPipe
+
+        try process.run()
+        process.waitUntilExit()
+
+        let stdout = String(data: stdoutPipe.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8) ?? ""
+        let stderr = String(data: stderrPipe.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8) ?? ""
+
+        guard allowNonZeroExit || process.terminationStatus == 0 else {
+            let message = stderr.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                ? stdout.trimmingCharacters(in: .whitespacesAndNewlines)
+                : stderr.trimmingCharacters(in: .whitespacesAndNewlines)
+            throw NSError(
+                domain: "GitOK.GitCommand",
+                code: Int(process.terminationStatus),
+                userInfo: [NSLocalizedDescriptionKey: message.isEmpty ? "读取 Git 网络配置失败" : message]
+            )
+        }
+
+        return stdout.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 }
 
@@ -232,7 +492,11 @@ public struct GitRepositoryCLI {
         }
     }
 
-    public static func clone(remoteURL: String, destinationURL: URL) throws {
+    public static func clone(
+        remoteURL: String,
+        destinationURL: URL,
+        progress: (@Sendable (String) -> Void)? = nil
+    ) throws {
         let parentURL = destinationURL.deletingLastPathComponent()
         let destinationExistsBeforeClone = FileManager.default.fileExists(atPath: destinationURL.path)
 
@@ -253,26 +517,34 @@ public struct GitRepositoryCLI {
 
         let stdoutPipe = Pipe()
         let stderrPipe = Pipe()
+        let outputCollector = ProcessOutputCollector(progress: progress)
         process.standardOutput = stdoutPipe
         process.standardError = stderrPipe
+
+        stdoutPipe.fileHandleForReading.readabilityHandler = { handle in
+            outputCollector.append(handle.availableData)
+        }
+        stderrPipe.fileHandleForReading.readabilityHandler = { handle in
+            outputCollector.append(handle.availableData)
+        }
 
         try process.run()
         process.waitUntilExit()
 
-        let stdout = String(data: stdoutPipe.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8) ?? ""
-        let stderr = String(data: stderrPipe.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8) ?? ""
+        stdoutPipe.fileHandleForReading.readabilityHandler = nil
+        stderrPipe.fileHandleForReading.readabilityHandler = nil
+        outputCollector.append(stdoutPipe.fileHandleForReading.readDataToEndOfFile())
+        outputCollector.append(stderrPipe.fileHandleForReading.readDataToEndOfFile())
+        let output = outputCollector.output
 
         guard process.terminationStatus == 0 else {
             if destinationExistsBeforeClone == false {
                 try? FileManager.default.removeItem(at: destinationURL)
             }
-            let message = stderr.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-                ? stdout.trimmingCharacters(in: .whitespacesAndNewlines)
-                : stderr.trimmingCharacters(in: .whitespacesAndNewlines)
             throw NSError(
                 domain: "GitOK.GitCommand",
                 code: Int(process.terminationStatus),
-                userInfo: [NSLocalizedDescriptionKey: message.isEmpty ? "Git clone 执行失败" : message]
+                userInfo: [NSLocalizedDescriptionKey: CloneRepositoryValidation.cloneFailureMessage(from: output)]
             )
         }
 
@@ -866,5 +1138,43 @@ public struct GitRepositoryCLI {
         }
 
         return stdout.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+}
+
+private final class ProcessOutputCollector: @unchecked Sendable {
+    private let lock = NSLock()
+    private var data = Data()
+    private var pendingText = ""
+    private let progress: (@Sendable (String) -> Void)?
+
+    init(progress: (@Sendable (String) -> Void)?) {
+        self.progress = progress
+    }
+
+    var output: String {
+        lock.lock()
+        defer { lock.unlock() }
+        return String(data: data, encoding: .utf8) ?? ""
+    }
+
+    func append(_ chunk: Data) {
+        guard chunk.isEmpty == false else { return }
+
+        let text = String(data: chunk, encoding: .utf8) ?? ""
+        let progressLines: [String]
+
+        lock.lock()
+        data.append(chunk)
+        pendingText += text
+
+        let separators = CharacterSet(charactersIn: "\n\r")
+        let parts = pendingText.components(separatedBy: separators)
+        pendingText = parts.last ?? ""
+        progressLines = parts.dropLast().map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+        lock.unlock()
+
+        for line in progressLines where line.isEmpty == false {
+            progress?(line)
+        }
     }
 }
