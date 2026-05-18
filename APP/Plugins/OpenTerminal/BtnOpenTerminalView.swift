@@ -11,9 +11,9 @@ struct BtnOpenTerminalView: View {
                 .frame(height: 16)
                 .frame(width: 16)
                 .inButtonWithAction {
-                    project.url.openInTerminal()
+                    ExternalToolSettingsStore.shared.openDefaultTerminal(for: project.url)
                 }
-                .help("在终端打开")
+                .help("在默认终端打开")
                 .toolbarButtonStyle()
         }
     }
