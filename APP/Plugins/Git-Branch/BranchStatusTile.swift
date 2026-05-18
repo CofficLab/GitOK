@@ -30,7 +30,7 @@ struct BranchStatusTile: View, SuperLog {
         }
         .popover(isPresented: $isPresented) {
             BranchForm()
-                .frame(width: 300, height: 500)
+                .frame(width: 520, height: 640)
         }
         .onProjectDidChangeBranch { eventInfo in
             handleBranchChanged(eventInfo)
@@ -115,4 +115,3 @@ extension BranchStatusTile {
         .frame(width: 1200)
         .frame(height: 1200)
 }
-

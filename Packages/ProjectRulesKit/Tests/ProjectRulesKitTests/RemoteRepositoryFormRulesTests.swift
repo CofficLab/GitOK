@@ -133,48 +133,4 @@ struct RemoteRepositoryFormRulesTests {
         #expect(RemoteRepositoryFormRules.pullRequestWebLinks(remoteURL: "https://github.com/owner/repo.git", baseBranch: "main", headBranch: " ") == nil)
     }
 
-    @Test("CI web links map common hosting providers")
-    func ciWebLinksMapCommonHostingProviders() {
-        let github = RemoteRepositoryFormRules.ciWebLinks(
-            remoteURL: "git@github.com:owner/repo.git",
-            commitHash: "abc123"
-        )
-        #expect(github?.provider == .github)
-        #expect(github?.checksURL.absoluteString == "https://github.com/owner/repo/commit/abc123/checks")
-        #expect(github?.runsURL.absoluteString.contains("actions") == true)
-        #expect(github?.runsURL.absoluteString.contains("abc123") == true)
-        #expect(github?.statusNote.contains("API") == true)
-
-        let gitlab = RemoteRepositoryFormRules.ciWebLinks(
-            remoteURL: "https://gitlab.com/group/repo.git",
-            commitHash: "abc123"
-        )
-        #expect(gitlab?.provider == .gitlab)
-        #expect(gitlab?.checksURL.absoluteString == "https://gitlab.com/group/repo/-/commit/abc123/pipelines")
-        #expect(gitlab?.runsURL.absoluteString.contains("-/pipelines") == true)
-        #expect(gitlab?.runsURL.absoluteString.contains("sha=abc123") == true)
-
-        let bitbucket = RemoteRepositoryFormRules.ciWebLinks(
-            remoteURL: "git://bitbucket.org/team/repo.git",
-            commitHash: "abc123"
-        )
-        #expect(bitbucket?.provider == .bitbucket)
-        #expect(bitbucket?.checksURL.absoluteString == "https://bitbucket.org/team/repo/commits/abc123")
-        #expect(bitbucket?.runsURL.absoluteString.contains("pipelines/results") == true)
-
-        let azure = RemoteRepositoryFormRules.ciWebLinks(
-            remoteURL: "https://dev.azure.com/org/project/_git/repo",
-            commitHash: "abc123"
-        )
-        #expect(azure?.provider == .azureDevOps)
-        #expect(azure?.checksURL.absoluteString == "https://dev.azure.com/org/project/_git/repo/commit/abc123")
-        #expect(azure?.runsURL.absoluteString.contains("https://dev.azure.com/org/project/_build") == true)
-        #expect(azure?.runsURL.absoluteString.contains("sourceVersion=abc123") == true)
-    }
-
-    @Test("CI web links require recognized remote and commit")
-    func ciWebLinksRequireRecognizedRemoteAndCommit() {
-        #expect(RemoteRepositoryFormRules.ciWebLinks(remoteURL: "/tmp/repo.git", commitHash: "abc123") == nil)
-        #expect(RemoteRepositoryFormRules.ciWebLinks(remoteURL: "https://github.com/owner/repo.git", commitHash: " ") == nil)
-    }
 }

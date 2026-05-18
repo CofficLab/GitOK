@@ -8,6 +8,10 @@ struct BranchRowView: View {
     let onSwitch: () -> Void
 
     var onDelete: (() -> Void)?
+    var onRename: (() -> Void)?
+    var onPublish: (() -> Void)?
+    var onSetUpstream: (() -> Void)?
+    var onUnsetUpstream: (() -> Void)?
 
     @State private var showDeleteAlert = false
     
@@ -23,26 +27,59 @@ struct BranchRowView: View {
             
             Spacer()
             
-            if !isSelected {
-                HStack(spacing: 8) {
-                    Image.checkmark.inButtonWithAction {
+            HStack(spacing: 8) {
+                if !isSelected {
+                    Button {
                         onSwitch()
+                    } label: {
+                        Image(systemName: "checkmark")
+                    }
+                    .buttonStyle(.borderless)
+                } else {
+                    Text("当前", tableName: "GitBranch")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(Color.accentColor.opacity(0.1))
+                        .cornerRadius(4)
+                }
+
+                Menu {
+                    if onRename != nil {
+                        Button("重命名分支") {
+                            onRename?()
+                        }
                     }
 
-                    if onDelete != nil {
-                        Image.trash.inButtonWithAction {
+                    if onSetUpstream != nil {
+                        Button("设置 upstream") {
+                            onSetUpstream?()
+                        }
+                    }
+
+                    if onPublish != nil {
+                        Button("发布分支") {
+                            onPublish?()
+                        }
+                    }
+
+                    if onUnsetUpstream != nil {
+                        Button("取消 upstream") {
+                            onUnsetUpstream?()
+                        }
+                    }
+
+                    if onDelete != nil && !isSelected {
+                        Divider()
+                        Button("删除本地分支", role: .destructive) {
                             showDeleteAlert = true
                         }
                     }
+                } label: {
+                    Image(systemName: "ellipsis.circle")
                 }
-            } else {
-                Text("当前", tableName: "GitBranch")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 4)
-                    .background(Color.accentColor.opacity(0.1))
-                    .cornerRadius(4)
+                .menuStyle(.borderlessButton)
             }
         }
         .padding(.horizontal, 8)

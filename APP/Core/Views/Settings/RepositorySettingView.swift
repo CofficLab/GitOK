@@ -2,6 +2,7 @@ import Foundation
 import LibGit2Swift
 import MagicKit
 import OSLog
+import ProjectRulesKit
 import SwiftUI
 
 /// 仓库设置视图
@@ -83,6 +84,10 @@ struct RepositorySettingView: View, SuperLog {
         .onReceive(NotificationCenter.default.publisher(for: .didUpdateRemoteRepository)) { _ in
             loadData()
         }
+        .onProjectGitRefsDidChange { eventInfo in
+            guard eventInfo.project.path == vm.project?.path else { return }
+            loadData()
+        }
     }
 
     // MARK: - View Components
@@ -137,7 +142,7 @@ struct RepositorySettingView: View, SuperLog {
         ) {
             HStack(spacing: 8) {
                 // 在浏览器中打开（如果是 HTTPS）
-                if let httpsURL = convertToHTTPSURL(remote.url) {
+                if let httpsURL = RemoteRepositoryFormRules.remoteWebLink(for: remote.url)?.url {
                     Image.safari.inButtonWithAction {
                         httpsURL.openInBrowser()
                     }
@@ -224,7 +229,7 @@ struct RepositorySettingView: View, SuperLog {
         errorMessage = nil
 
         do {
-            try LibGit2.addRemote(name: name, url: url, at: project.path)
+            try project.addRemote(name: name, url: url)
 
             if Self.verbose {
                 os_log("\(Self.t)✅ Added remote: \(name)")
@@ -232,9 +237,6 @@ struct RepositorySettingView: View, SuperLog {
 
             // 重新加载列表
             loadData()
-
-            // 发送通知
-            NotificationCenter.default.post(name: .didUpdateRemoteRepository, object: nil)
         } catch {
             isLoading = false
         errorMessage = String.localizedStringWithFormat(String(localized: "添加远程仓库失败: %@", table: "Core"), error.localizedDescription)
@@ -255,7 +257,7 @@ struct RepositorySettingView: View, SuperLog {
         errorMessage = nil
 
         do {
-            try LibGit2.removeRemote(name: remote.name, at: project.path)
+            try project.removeRemote(name: remote.name)
 
             if Self.verbose {
                 os_log("\(Self.t)✅ Removed remote: \(remote.name)")
@@ -263,9 +265,6 @@ struct RepositorySettingView: View, SuperLog {
 
             // 重新加载列表
             loadData()
-
-            // 发送通知
-            NotificationCenter.default.post(name: .didUpdateRemoteRepository, object: nil)
         } catch {
             isLoading = false
         errorMessage = String.localizedStringWithFormat(String(localized: "删除远程仓库失败: %@", table: "Core"), error.localizedDescription)
@@ -316,21 +315,6 @@ struct RepositorySettingView: View, SuperLog {
 
     // MARK: - Helper Methods
 
-    /// 将 Git URL 转换为 HTTPS URL
-    private func convertToHTTPSURL(_ gitURL: String) -> URL? {
-        var formatted = gitURL
-
-        if formatted.hasPrefix("git@") {
-            formatted = formatted.replacingOccurrences(of: ":", with: "/")
-            formatted = formatted.replacingOccurrences(of: "git@", with: "https://")
-        } else if formatted.hasPrefix("ssh://") {
-            formatted = formatted.replacingOccurrences(of: "ssh://git@", with: "https://")
-        } else if formatted.hasPrefix("git://") {
-            formatted = formatted.replacingOccurrences(of: "git://", with: "https://")
-        }
-
-        return URL(string: formatted)
-    }
 }
 
 // MARK: - Add Remote Repository Sheet
@@ -386,7 +370,7 @@ struct AddRemoteRepositorySheet: View {
                     }) {
                         Text("添加", tableName: "Core")
                     }
-                    .disabled(remoteName.isEmpty || remoteURL.isEmpty || isLoading)
+                    .disabled(!RemoteRepositoryFormRules.isFormValid(name: remoteName, url: remoteURL) || isLoading)
                 }
             }
         }
@@ -394,13 +378,14 @@ struct AddRemoteRepositorySheet: View {
     }
 
     private func addRemote() {
-        guard !remoteName.isEmpty, !remoteURL.isEmpty else { return }
+        let input = RemoteRepositoryFormRules.normalizedInput(name: remoteName, url: remoteURL)
+        guard RemoteRepositoryFormRules.isFormValid(name: input.name, url: input.url) else { return }
 
         isLoading = true
 
         Task {
             // 简单验证
-            if !isValidGitURL(remoteURL) {
+            if !isValidGitURL(input.url) {
                 await MainActor.run {
                     isLoading = false
                     errorMessage = String(localized: "请输入有效的 Git URL", table: "Core")
@@ -409,7 +394,7 @@ struct AddRemoteRepositorySheet: View {
             }
 
             await MainActor.run {
-                onAdd(remoteName, remoteURL)
+                onAdd(input.name, input.url)
                 dismiss()
             }
         }

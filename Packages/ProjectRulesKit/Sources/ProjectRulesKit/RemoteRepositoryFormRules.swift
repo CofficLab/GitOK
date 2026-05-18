@@ -66,22 +66,6 @@ public enum RemoteRepositoryFormRules {
         }
     }
 
-    public struct CIWebLinks: Equatable, Sendable {
-        public let provider: HostingProvider
-        public let checksURL: URL
-        public let runsURL: URL
-        public let rerunURL: URL
-        public let statusNote: String
-
-        public init(provider: HostingProvider, checksURL: URL, runsURL: URL, rerunURL: URL, statusNote: String) {
-            self.provider = provider
-            self.checksURL = checksURL
-            self.runsURL = runsURL
-            self.rerunURL = rerunURL
-            self.statusNote = statusNote
-        }
-    }
-
     public static func normalizedValue(_ value: String) -> String {
         value.trimmingCharacters(in: .whitespacesAndNewlines)
     }
@@ -244,63 +228,6 @@ public enum RemoteRepositoryFormRules {
                 notificationsURL: link.url.appendingPathComponent("pullrequests").appending(queryItems: [
                     URLQueryItem(name: "status", value: "active"),
                 ])
-            )
-        case .unknown:
-            return nil
-        }
-    }
-
-    public static func ciWebLinks(remoteURL: String, commitHash: String) -> CIWebLinks? {
-        guard let link = remoteWebLink(for: remoteURL) else { return nil }
-
-        let hash = normalizedValue(commitHash)
-        guard hash.isEmpty == false else { return nil }
-
-        switch link.provider {
-        case .github:
-            let runsURL = link.url.appendingPathComponent("actions").appending(queryItems: [
-                URLQueryItem(name: "query", value: hash)
-            ])
-            return CIWebLinks(
-                provider: link.provider,
-                checksURL: link.url.appendingPathComponent("commit/\(hash)/checks"),
-                runsURL: runsURL,
-                rerunURL: runsURL,
-                statusNote: "GitHub check 状态和重新运行权限需要账号/API；当前打开 commit checks 与 Actions 搜索页。"
-            )
-        case .gitlab:
-            let pipelinesURL = link.url.appendingPathComponent("-/pipelines").appending(queryItems: [
-                URLQueryItem(name: "sha", value: hash)
-            ])
-            return CIWebLinks(
-                provider: link.provider,
-                checksURL: link.url.appendingPathComponent("-/commit/\(hash)/pipelines"),
-                runsURL: pipelinesURL,
-                rerunURL: pipelinesURL,
-                statusNote: "GitLab pipeline 状态和 retry 权限需要账号/API；当前打开 commit pipelines 与 Pipelines 筛选页。"
-            )
-        case .bitbucket:
-            let pipelinesURL = link.url.appendingPathComponent("pipelines/results/page/1").appending(queryItems: [
-                URLQueryItem(name: "search", value: hash)
-            ])
-            return CIWebLinks(
-                provider: link.provider,
-                checksURL: link.url.appendingPathComponent("commits/\(hash)"),
-                runsURL: pipelinesURL,
-                rerunURL: pipelinesURL,
-                statusNote: "Bitbucket pipeline 状态和 rerun 权限需要账号/API；当前打开 commit 与 Pipelines 搜索页。"
-            )
-        case .azureDevOps:
-            let projectURL = azureProjectURL(from: link.url) ?? link.url
-            let buildsURL = projectURL.appendingPathComponent("_build").appending(queryItems: [
-                URLQueryItem(name: "sourceVersion", value: hash)
-            ])
-            return CIWebLinks(
-                provider: link.provider,
-                checksURL: link.url.appendingPathComponent("commit/\(hash)"),
-                runsURL: buildsURL,
-                rerunURL: buildsURL,
-                statusNote: "Azure Pipelines 状态和 rerun 权限需要账号/API；当前打开 commit 与 Builds 筛选页。"
             )
         case .unknown:
             return nil

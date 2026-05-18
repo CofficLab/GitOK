@@ -282,6 +282,9 @@
         }
       }
     },
+    "远程分支" : {
+
+    },
     "项目不可用" : {
       "extractionState" : "stale",
       "localizations" : {
