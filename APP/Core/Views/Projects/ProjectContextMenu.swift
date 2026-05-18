@@ -1,3 +1,4 @@
+import MagicAlert
 import SwiftUI
 
 // MARK: - ProjectContextMenu
@@ -21,6 +22,14 @@ struct ProjectContextMenu: View {
             Button("在Finder中显示") {
                 let url = URL(fileURLWithPath: item.path)
                 NSWorkspace.shared.activateFileViewerSelecting([url])
+            }
+
+            Button("在默认编辑器中打开") {
+                ExternalToolSettingsStore.shared.openDefaultEditor(for: URL(fileURLWithPath: item.path))
+            }
+
+            Button("在默认终端中打开") {
+                ExternalToolSettingsStore.shared.openDefaultTerminal(for: URL(fileURLWithPath: item.path))
             }
 
             if isAppInstalled(at: "/Applications/Cursor.app") {
