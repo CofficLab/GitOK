@@ -129,6 +129,11 @@ jobs:
           u="https://github.com/CofficLab/GitOK/releases/latest/download/$dmg_file" 
           echo $u
           sed -i '' "s|\(enclosure url=\"\)[^\"]*|\1$u|" "appcast.xml"
+          if ! grep -q "sparkle:releaseNotesLink" appcast.xml; then
+            sed -i '' '/<sparkle:minimumSystemVersion>/a\
+            <sparkle:releaseNotesLink>https://github.com/CofficLab/GitOK/releases/latest</sparkle:releaseNotesLink>
+            ' appcast.xml
+          fi
           mv appcast.xml ../appcast.xml
       - name: 发布 Release
         uses: softprops/action-gh-release@v1
