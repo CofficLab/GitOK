@@ -26,7 +26,7 @@
 - [ ] Branch 完整管理
   - Desktop 参考：`app/src/ui/branches`、`app/src/ui/rename-branch`、`app/src/ui/delete-branch`
   - GitOK 现状：已有查看、创建、切换、合并。
-  - TODO：重命名分支、删除本地分支、删除远程分支、发布分支、设置/修改 upstream、分支搜索和分组。
+  - TODO：重命名分支、删除远程分支、发布分支、设置/修改 upstream、分支搜索和分组。
 
 - [ ] History Compare / 分支比较
   - Desktop 参考：`app/src/ui/history/compare.tsx`、`app/src/lib/compare.ts`

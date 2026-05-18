@@ -67,6 +67,9 @@ struct BranchForm: View, SuperLog {
                                         isSelected: selectedBranch?.id == branch.id,
                                         onSwitch: {
                                             switchBranch(branch)
+                                        },
+                                        onDelete: {
+                                            deleteBranch(branch)
                                         }
                                     )
                                 }
@@ -152,6 +155,38 @@ extension BranchForm {
             }
         }
     }
+
+    private func deleteBranch(_ branch: GitBranch) {
+        guard let project = project else { return }
+        guard selectedBranch?.id != branch.id else {
+            alert_error("不能删除当前分支")
+            return
+        }
+
+        Task.detached {
+            do {
+                try project.deleteLocalBranch(branch)
+
+                await MainActor.run {
+                    let msg = String.localizedStringWithFormat(
+                        String(localized: "已删除分支: %@", table: "GitBranch"),
+                        branch.name
+                    )
+                    alert_info(msg)
+                    self.loadBranches()
+                }
+            } catch {
+                await MainActor.run {
+                    os_log(.error, "❌ 删除分支失败: \(error.localizedDescription)")
+                    let msg = String.localizedStringWithFormat(
+                        String(localized: "删除分支失败: %@", table: "GitBranch"),
+                        error.localizedDescription
+                    )
+                    alert_error(msg)
+                }
+            }
+        }
+    }
     
     private func loadBranches() {
         guard let project = project else {
@@ -213,4 +248,3 @@ extension BranchForm {
         .frame(width: 1200)
         .frame(height: 1200)
 }
-

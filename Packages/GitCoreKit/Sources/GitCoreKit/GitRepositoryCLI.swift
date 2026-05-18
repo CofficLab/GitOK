@@ -258,6 +258,28 @@ public struct GitRepositoryCLI {
         _ = try runGit(["fetch", "--prune", remote])
     }
 
+    public func deleteLocalBranch(named branchName: String) throws {
+        let trimmedName = branchName.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard trimmedName.isEmpty == false else {
+            throw NSError(
+                domain: "GitOK.GitCommand",
+                code: -1,
+                userInfo: [NSLocalizedDescriptionKey: "分支名称不能为空"]
+            )
+        }
+
+        let currentBranch = try runGit(["branch", "--show-current"])
+        guard currentBranch != trimmedName else {
+            throw NSError(
+                domain: "GitOK.GitCommand",
+                code: -1,
+                userInfo: [NSLocalizedDescriptionKey: "不能删除当前分支"]
+            )
+        }
+
+        _ = try runGit(["branch", "-d", trimmedName])
+    }
+
     public func aheadBehind() throws -> GitAheadBehind {
         let upstream = try runGit(
             ["rev-parse", "--abbrev-ref", "--symbolic-full-name", "@{upstream}"],

@@ -6,6 +6,10 @@ struct BranchRowView: View {
     let branch: GitBranch
     let isSelected: Bool
     let onSwitch: () -> Void
+
+    var onDelete: (() -> Void)?
+
+    @State private var showDeleteAlert = false
     
     var body: some View {
         HStack {
@@ -20,8 +24,16 @@ struct BranchRowView: View {
             Spacer()
             
             if !isSelected {
-                Image.checkmark.inButtonWithAction {
-                    onSwitch()
+                HStack(spacing: 8) {
+                    Image.checkmark.inButtonWithAction {
+                        onSwitch()
+                    }
+
+                    if onDelete != nil {
+                        Image.trash.inButtonWithAction {
+                            showDeleteAlert = true
+                        }
+                    }
                 }
             } else {
                 Text("当前", tableName: "GitBranch")
@@ -37,6 +49,13 @@ struct BranchRowView: View {
         .padding(.vertical, 4)
         .background(isSelected ? Color.accentColor.opacity(0.1) : Color.clear)
         .cornerRadius(4)
+        .alert("确认删除分支", isPresented: $showDeleteAlert) {
+            Button("取消", role: .cancel) { }
+            Button("删除", role: .destructive) {
+                onDelete?()
+            }
+        } message: {
+            Text("确定要删除本地分支 \"\(branch.name)\" 吗？未合并的分支会由 Git 阻止删除。")
+        }
     }
 }
-

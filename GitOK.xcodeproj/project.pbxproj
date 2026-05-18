@@ -857,6 +857,7 @@
 			membershipExceptions = (
 				BannerCoreKit,
 				GitCoreKit,
+				GitOKAutomationKit,
 				ProjectSupportKit,
 				ProjectRulesKit,
 			);

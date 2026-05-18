@@ -289,6 +289,29 @@ extension Project {
         }
     }
 
+    /// 删除本地分支。
+    /// - Parameter branch: 要删除的本地分支。当前分支不能删除，未合并分支由 git 自身阻止。
+    /// - Throws: Git 操作相关的错误
+    func deleteLocalBranch(_ branch: GitBranch) throws {
+        do {
+            try gitCLI.deleteLocalBranch(named: branch.name)
+            postEvent(
+                name: .projectGitRefsDidChange,
+                operation: "deleteLocalBranch",
+                additionalInfo: ["branchName": branch.name]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "deleteLocalBranch",
+                success: false,
+                error: error,
+                additionalInfo: ["branchName": branch.name]
+            )
+            throw error
+        }
+    }
+
     /// 合并分支
     /// - Parameter branchName: 要合并的分支名称
     /// - Throws: Git操作异常

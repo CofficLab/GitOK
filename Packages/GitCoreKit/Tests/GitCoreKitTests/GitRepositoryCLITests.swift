@@ -225,6 +225,32 @@ final class GitRepositoryCLITests: XCTestCase {
         XCTAssertEqual(try client.aheadBehind(), .noUpstream)
     }
 
+    func testDeleteLocalBranchRemovesMergedBranch() throws {
+        let repo = try TestGitRepository()
+        try repo.run(["commit", "--allow-empty", "-m", "initial"])
+        try repo.run(["checkout", "-b", "done"])
+        try repo.run(["checkout", "master"])
+
+        let client = GitRepositoryCLI(repositoryURL: repo.url)
+        try client.deleteLocalBranch(named: "done")
+
+        let branches = try repo.run(["branch", "--format=%(refname:short)"])
+            .split(separator: "\n")
+            .map(String.init)
+        XCTAssertFalse(branches.contains("done"))
+    }
+
+    func testDeleteLocalBranchRejectsCurrentBranch() throws {
+        let repo = try TestGitRepository()
+        try repo.run(["commit", "--allow-empty", "-m", "initial"])
+
+        let client = GitRepositoryCLI(repositoryURL: repo.url)
+
+        XCTAssertThrowsError(try client.deleteLocalBranch(named: "master")) { error in
+            XCTAssertTrue((error as NSError).localizedDescription.contains("不能删除当前分支"))
+        }
+    }
+
     func testAheadBehindCountsLocalAndRemoteCommits() throws {
         let remote = try TestGitRepository()
         try remote.write("README.md", content: "hello\n")
