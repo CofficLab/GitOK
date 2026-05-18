@@ -557,6 +557,63 @@ public struct GitRepositoryCLI {
         }
     }
 
+    public static func approveCredential(
+        protocol scheme: String = "https",
+        host: String,
+        username: String,
+        password: String
+    ) throws {
+        let trimmedHost = host.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedUsername = username.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard trimmedHost.isEmpty == false, trimmedUsername.isEmpty == false, password.isEmpty == false else {
+            throw NSError(
+                domain: "GitOK.GitCommand",
+                code: -1,
+                userInfo: [NSLocalizedDescriptionKey: "凭据不完整"]
+            )
+        }
+
+        let process = Process()
+        process.executableURL = URL(fileURLWithPath: "/usr/bin/env")
+        process.arguments = ["git", "credential", "approve"]
+
+        let stdinPipe = Pipe()
+        let stdoutPipe = Pipe()
+        let stderrPipe = Pipe()
+        process.standardInput = stdinPipe
+        process.standardOutput = stdoutPipe
+        process.standardError = stderrPipe
+
+        try process.run()
+
+        let input = """
+        protocol=\(scheme)
+        host=\(trimmedHost)
+        username=\(trimmedUsername)
+        password=\(password)
+
+        """
+        if let data = input.data(using: .utf8) {
+            stdinPipe.fileHandleForWriting.write(data)
+        }
+        stdinPipe.fileHandleForWriting.closeFile()
+
+        process.waitUntilExit()
+
+        guard process.terminationStatus == 0 else {
+            let stdout = String(data: stdoutPipe.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8) ?? ""
+            let stderr = String(data: stderrPipe.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8) ?? ""
+            let message = stderr.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                ? stdout.trimmingCharacters(in: .whitespacesAndNewlines)
+                : stderr.trimmingCharacters(in: .whitespacesAndNewlines)
+            throw NSError(
+                domain: "GitOK.GitCommand",
+                code: Int(process.terminationStatus),
+                userInfo: [NSLocalizedDescriptionKey: message.isEmpty ? "保存 Git 凭据失败" : message]
+            )
+        }
+    }
+
     public func stashSave(message: String? = nil) throws {
         var arguments = ["stash", "push", "--include-untracked"]
         if let message, message.isEmpty == false {
@@ -819,6 +876,349 @@ public struct GitRepositoryCLI {
         _ = try runGit(["branch", "-d", trimmedName])
     }
 
+    public func renameBranch(from currentName: String, to newName: String) throws {
+        let trimmedCurrentName = currentName.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedNewName = newName.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        guard trimmedCurrentName.isEmpty == false else {
+            throw NSError(
+                domain: "GitOK.GitCommand",
+                code: -1,
+                userInfo: [NSLocalizedDescriptionKey: "原分支名称不能为空"]
+            )
+        }
+
+        guard trimmedNewName.isEmpty == false else {
+            throw NSError(
+                domain: "GitOK.GitCommand",
+                code: -1,
+                userInfo: [NSLocalizedDescriptionKey: "新分支名称不能为空"]
+            )
+        }
+
+        _ = try runGit(["check-ref-format", "--branch", trimmedNewName])
+        _ = try runGit(["branch", "-m", trimmedCurrentName, trimmedNewName])
+    }
+
+    public func remoteBranches(remote: String? = nil) throws -> [String] {
+        let output = try runGit(["branch", "-r", "--format=%(refname:short)"])
+        let trimmedRemote = remote?.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        return output
+            .split(separator: "\n", omittingEmptySubsequences: true)
+            .map { String($0).trimmingCharacters(in: .whitespacesAndNewlines) }
+            .filter { $0.isEmpty == false && $0.hasSuffix("/HEAD") == false }
+            .filter { branch in
+                guard let trimmedRemote, trimmedRemote.isEmpty == false else { return true }
+                return branch.hasPrefix(trimmedRemote + "/")
+            }
+            .sorted()
+    }
+
+    public func setUpstream(localBranch: String, upstreamBranch: String) throws {
+        let trimmedLocalBranch = localBranch.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedUpstreamBranch = upstreamBranch.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        guard trimmedLocalBranch.isEmpty == false else {
+            throw NSError(
+                domain: "GitOK.GitCommand",
+                code: -1,
+                userInfo: [NSLocalizedDescriptionKey: "本地分支名称不能为空"]
+            )
+        }
+
+        guard trimmedUpstreamBranch.isEmpty == false else {
+            throw NSError(
+                domain: "GitOK.GitCommand",
+                code: -1,
+                userInfo: [NSLocalizedDescriptionKey: "上游分支不能为空"]
+            )
+        }
+
+        _ = try runGit(["branch", "--set-upstream-to=\(trimmedUpstreamBranch)", trimmedLocalBranch])
+    }
+
+    public func unsetUpstream(localBranch: String) throws {
+        let trimmedLocalBranch = localBranch.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard trimmedLocalBranch.isEmpty == false else {
+            throw NSError(
+                domain: "GitOK.GitCommand",
+                code: -1,
+                userInfo: [NSLocalizedDescriptionKey: "本地分支名称不能为空"]
+            )
+        }
+
+        _ = try runGit(["branch", "--unset-upstream", trimmedLocalBranch])
+    }
+
+    public func deleteRemoteBranch(named branchName: String, remote: String = "origin") throws {
+        let trimmedName = branchName.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedRemote = remote.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        guard trimmedName.isEmpty == false else {
+            throw NSError(
+                domain: "GitOK.GitCommand",
+                code: -1,
+                userInfo: [NSLocalizedDescriptionKey: "远程分支名称不能为空"]
+            )
+        }
+
+        guard trimmedRemote.isEmpty == false else {
+            throw NSError(
+                domain: "GitOK.GitCommand",
+                code: -1,
+                userInfo: [NSLocalizedDescriptionKey: "远程仓库名称不能为空"]
+            )
+        }
+
+        let shortBranchName = trimmedName.hasPrefix(trimmedRemote + "/")
+            ? String(trimmedName.dropFirst(trimmedRemote.count + 1))
+            : trimmedName
+
+        guard shortBranchName.isEmpty == false && shortBranchName != "HEAD" else {
+            throw NSError(
+                domain: "GitOK.GitCommand",
+                code: -1,
+                userInfo: [NSLocalizedDescriptionKey: "不能删除远程 HEAD"]
+            )
+        }
+
+        _ = try runGit(["push", trimmedRemote, "--delete", shortBranchName])
+    }
+
+    public func publishBranch(localBranch: String, remote: String = "origin", remoteBranch: String? = nil) throws {
+        let trimmedLocalBranch = localBranch.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedRemote = remote.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedRemoteBranch = remoteBranch?.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        guard trimmedLocalBranch.isEmpty == false else {
+            throw NSError(
+                domain: "GitOK.GitCommand",
+                code: -1,
+                userInfo: [NSLocalizedDescriptionKey: "本地分支名称不能为空"]
+            )
+        }
+
+        guard trimmedRemote.isEmpty == false else {
+            throw NSError(
+                domain: "GitOK.GitCommand",
+                code: -1,
+                userInfo: [NSLocalizedDescriptionKey: "远程仓库名称不能为空"]
+            )
+        }
+
+        let destinationBranch = (trimmedRemoteBranch?.isEmpty == false ? trimmedRemoteBranch : nil) ?? trimmedLocalBranch
+        _ = try runGit(["push", "-u", trimmedRemote, "\(trimmedLocalBranch):\(destinationBranch)"])
+    }
+
+    public func compareBranches(base: String, head: String) throws -> GitBranchCompare {
+        let trimmedBase = base.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedHead = head.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        guard trimmedBase.isEmpty == false else {
+            throw NSError(
+                domain: "GitOK.GitCommand",
+                code: -1,
+                userInfo: [NSLocalizedDescriptionKey: "Base 分支不能为空"]
+            )
+        }
+
+        guard trimmedHead.isEmpty == false else {
+            throw NSError(
+                domain: "GitOK.GitCommand",
+                code: -1,
+                userInfo: [NSLocalizedDescriptionKey: "Head 分支不能为空"]
+            )
+        }
+
+        _ = try runGit(["rev-parse", "--verify", trimmedBase])
+        _ = try runGit(["rev-parse", "--verify", trimmedHead])
+
+        let countsOutput = try runGit(["rev-list", "--left-right", "--count", "\(trimmedBase)...\(trimmedHead)"])
+        let counts = countsOutput
+            .split(whereSeparator: { $0 == " " || $0 == "\t" || $0 == "\n" })
+            .compactMap { Int($0) }
+        let behind = counts.first ?? 0
+        let ahead = counts.dropFirst().first ?? 0
+
+        let commits = try branchCompareCommits(base: trimmedBase, head: trimmedHead)
+        let files = try branchCompareFiles(base: trimmedBase, head: trimmedHead)
+
+        return GitBranchCompare(
+            base: trimmedBase,
+            head: trimmedHead,
+            ahead: ahead,
+            behind: behind,
+            commits: commits,
+            files: files
+        )
+    }
+
+    public func rebaseStatus() throws -> GitRebaseStatus {
+        let rebaseMergePath = try gitPath("rebase-merge")
+        let rebaseApplyPath = try gitPath("rebase-apply")
+        let rebasePath: URL
+
+        if FileManager.default.fileExists(atPath: rebaseMergePath.path) {
+            rebasePath = rebaseMergePath
+        } else if FileManager.default.fileExists(atPath: rebaseApplyPath.path) {
+            rebasePath = rebaseApplyPath
+        } else {
+            return .inactive
+        }
+
+        let branchName = try readFileIfExists(rebasePath.appendingPathComponent("head-name"))?
+            .replacingOccurrences(of: "refs/heads/", with: "")
+        let onto = try readFileIfExists(rebasePath.appendingPathComponent("onto"))
+        let currentStep = try readFileIfExists(rebasePath.appendingPathComponent("msgnum")).flatMap { Int($0) }
+        let totalSteps = try readFileIfExists(rebasePath.appendingPathComponent("end")).flatMap { Int($0) }
+
+        return GitRebaseStatus(
+            isRebasing: true,
+            branchName: branchName,
+            onto: onto,
+            currentStep: currentStep,
+            totalSteps: totalSteps
+        )
+    }
+
+    public func isRebasing() throws -> Bool {
+        try rebaseStatus().isRebasing
+    }
+
+    public func startRebase(branch: String, onto upstream: String) throws {
+        let trimmedBranch = branch.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedUpstream = upstream.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        guard trimmedBranch.isEmpty == false else {
+            throw NSError(
+                domain: "GitOK.GitCommand",
+                code: -1,
+                userInfo: [NSLocalizedDescriptionKey: "Rebase 分支不能为空"]
+            )
+        }
+
+        guard trimmedUpstream.isEmpty == false else {
+            throw NSError(
+                domain: "GitOK.GitCommand",
+                code: -1,
+                userInfo: [NSLocalizedDescriptionKey: "Rebase 目标不能为空"]
+            )
+        }
+
+        _ = try runGit(["checkout", trimmedBranch])
+        _ = try runGit(["rebase", trimmedUpstream])
+    }
+
+    public func continueRebase() throws {
+        _ = try runGit(
+            ["-c", "core.editor=true", "rebase", "--continue"],
+            environment: ["GIT_EDITOR": "true"]
+        )
+    }
+
+    public func abortRebase() throws {
+        _ = try runGit(["rebase", "--abort"])
+    }
+
+    public func cherryPickStatus() throws -> GitCherryPickStatus {
+        guard let commitHash = try readGitPathFile("CHERRY_PICK_HEAD"), commitHash.isEmpty == false else {
+            return .inactive
+        }
+        return GitCherryPickStatus(isCherryPicking: true, commitHash: commitHash)
+    }
+
+    public func isCherryPicking() throws -> Bool {
+        try cherryPickStatus().isCherryPicking
+    }
+
+    public func cherryPick(commits: [String], onto branch: String? = nil) throws {
+        let trimmedCommits = commits
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .filter { $0.isEmpty == false }
+
+        guard trimmedCommits.isEmpty == false else {
+            throw NSError(
+                domain: "GitOK.GitCommand",
+                code: -1,
+                userInfo: [NSLocalizedDescriptionKey: "Cherry-pick 提交不能为空"]
+            )
+        }
+
+        if let branch {
+            let trimmedBranch = branch.trimmingCharacters(in: .whitespacesAndNewlines)
+            guard trimmedBranch.isEmpty == false else {
+                throw NSError(
+                    domain: "GitOK.GitCommand",
+                    code: -1,
+                    userInfo: [NSLocalizedDescriptionKey: "目标分支不能为空"]
+                )
+            }
+            _ = try runGit(["checkout", trimmedBranch])
+        }
+
+        _ = try runGit(["cherry-pick"] + trimmedCommits)
+    }
+
+    public func continueCherryPick() throws {
+        _ = try runGit(
+            ["-c", "core.editor=true", "cherry-pick", "--continue"],
+            environment: ["GIT_EDITOR": "true"]
+        )
+    }
+
+    public func abortCherryPick() throws {
+        _ = try runGit(["cherry-pick", "--abort"])
+    }
+
+    public func revertCommit(_ commitHash: String) throws {
+        let trimmedHash = commitHash.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard trimmedHash.isEmpty == false else {
+            throw NSError(
+                domain: "GitOK.GitCommand",
+                code: -1,
+                userInfo: [NSLocalizedDescriptionKey: "Revert 提交不能为空"]
+            )
+        }
+
+        _ = try runGit(["revert", "--no-edit", trimmedHash])
+    }
+
+    public func reset(to commitHash: String, mode: GitResetMode) throws {
+        let trimmedHash = commitHash.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard trimmedHash.isEmpty == false else {
+            throw NSError(
+                domain: "GitOK.GitCommand",
+                code: -1,
+                userInfo: [NSLocalizedDescriptionKey: "Reset 目标提交不能为空"]
+            )
+        }
+
+        _ = try runGit(["reset", "--\(mode.rawValue)", trimmedHash])
+    }
+
+    public func squashLastCommits(count: Int, message: String) throws {
+        let trimmedMessage = message.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard count >= 2 else {
+            throw NSError(
+                domain: "GitOK.GitCommand",
+                code: -1,
+                userInfo: [NSLocalizedDescriptionKey: "Squash 至少需要 2 个提交"]
+            )
+        }
+
+        guard trimmedMessage.isEmpty == false else {
+            throw NSError(
+                domain: "GitOK.GitCommand",
+                code: -1,
+                userInfo: [NSLocalizedDescriptionKey: "Squash 提交信息不能为空"]
+            )
+        }
+
+        _ = try runGit(["reset", "--soft", "HEAD~\(count)"])
+        _ = try runGit(["commit", "-m", trimmedMessage])
+    }
+
     public func createLightweightTag(named tagName: String, commitHash: String) throws {
         let trimmedName = tagName.trimmingCharacters(in: .whitespacesAndNewlines)
         let trimmedHash = commitHash.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -841,6 +1241,98 @@ public struct GitRepositoryCLI {
 
         _ = try runGit(["check-ref-format", "--allow-onelevel", trimmedName])
         _ = try runGit(["tag", trimmedName, trimmedHash])
+    }
+
+    public func createAnnotatedTag(named tagName: String, commitHash: String, message: String) throws {
+        let trimmedName = tagName.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedHash = commitHash.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedMessage = message.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        guard trimmedName.isEmpty == false else {
+            throw NSError(
+                domain: "GitOK.GitCommand",
+                code: -1,
+                userInfo: [NSLocalizedDescriptionKey: "标签名称不能为空"]
+            )
+        }
+
+        guard trimmedHash.isEmpty == false else {
+            throw NSError(
+                domain: "GitOK.GitCommand",
+                code: -1,
+                userInfo: [NSLocalizedDescriptionKey: "提交哈希不能为空"]
+            )
+        }
+
+        guard trimmedMessage.isEmpty == false else {
+            throw NSError(
+                domain: "GitOK.GitCommand",
+                code: -1,
+                userInfo: [NSLocalizedDescriptionKey: "标签说明不能为空"]
+            )
+        }
+
+        _ = try runGit(["check-ref-format", "--allow-onelevel", trimmedName])
+        _ = try runGit(["tag", "-a", trimmedName, trimmedHash, "-m", trimmedMessage])
+    }
+
+    public func deleteLocalTag(named tagName: String) throws {
+        let trimmedName = tagName.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard trimmedName.isEmpty == false else {
+            throw NSError(
+                domain: "GitOK.GitCommand",
+                code: -1,
+                userInfo: [NSLocalizedDescriptionKey: "标签名称不能为空"]
+            )
+        }
+
+        _ = try runGit(["tag", "-d", trimmedName])
+    }
+
+    public func pushTag(named tagName: String, remote: String = "origin") throws {
+        let trimmedName = tagName.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedRemote = remote.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        guard trimmedName.isEmpty == false else {
+            throw NSError(
+                domain: "GitOK.GitCommand",
+                code: -1,
+                userInfo: [NSLocalizedDescriptionKey: "标签名称不能为空"]
+            )
+        }
+
+        guard trimmedRemote.isEmpty == false else {
+            throw NSError(
+                domain: "GitOK.GitCommand",
+                code: -1,
+                userInfo: [NSLocalizedDescriptionKey: "远程仓库名称不能为空"]
+            )
+        }
+
+        _ = try runGit(["push", trimmedRemote, trimmedName])
+    }
+
+    public func deleteRemoteTag(named tagName: String, remote: String = "origin") throws {
+        let trimmedName = tagName.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedRemote = remote.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        guard trimmedName.isEmpty == false else {
+            throw NSError(
+                domain: "GitOK.GitCommand",
+                code: -1,
+                userInfo: [NSLocalizedDescriptionKey: "标签名称不能为空"]
+            )
+        }
+
+        guard trimmedRemote.isEmpty == false else {
+            throw NSError(
+                domain: "GitOK.GitCommand",
+                code: -1,
+                userInfo: [NSLocalizedDescriptionKey: "远程仓库名称不能为空"]
+            )
+        }
+
+        _ = try runGit(["push", trimmedRemote, ":refs/tags/\(trimmedName)"])
     }
 
     public func aheadBehind() throws -> GitAheadBehind {
@@ -868,6 +1360,27 @@ public struct GitRepositoryCLI {
     public func addFiles(_ filePaths: [String]) throws {
         guard filePaths.isEmpty == false else { return }
         _ = try runGit(["add", "--"] + filePaths)
+    }
+
+    public func fileDiff(_ filePath: String, staged: Bool, ignoreWhitespace: Bool = false) throws -> String {
+        var arguments = ["diff", "--no-ext-diff", "--color=never"]
+        if staged {
+            arguments.append("--cached")
+        }
+        if ignoreWhitespace {
+            arguments.append("--ignore-all-space")
+        }
+        arguments += ["--", filePath]
+        return try runGit(arguments, trimOutput: false)
+    }
+
+    public func applyPatch(_ patch: String, mode: GitPatchApplyMode) throws {
+        let normalizedPatch = patch.hasSuffix("\n") ? patch : patch + "\n"
+        var arguments = ["apply", "--cached", "--whitespace=nowarn"]
+        if mode == .unstage {
+            arguments.append("--reverse")
+        }
+        _ = try runGit(arguments, standardInput: normalizedPatch)
     }
 
     public func unstageFiles(_ filePaths: [String]) throws {
@@ -966,6 +1479,31 @@ public struct GitRepositoryCLI {
         )
     }
 
+    public func mergeFileContent(path: String, version: GitMergeFileVersion) throws -> String {
+        try runGit(["show", ":\(version.stageNumber):\(path)"], trimOutput: false)
+    }
+
+    public func mergeFileDiff(path: String) throws -> String {
+        try runGit(["diff", "--cc", "--color=never", "--", path], allowNonZeroExit: true, trimOutput: false)
+    }
+
+    public func checkoutMergeFileVersion(path: String, version: GitMergeFileVersion) throws {
+        switch version {
+        case .ours:
+            _ = try runGit(["checkout", "--ours", "--", path])
+        case .theirs:
+            _ = try runGit(["checkout", "--theirs", "--", path])
+        case .base:
+            let content = try mergeFileContent(path: path, version: .base)
+            let targetURL = repositoryURL.appendingPathComponent(path)
+            try FileManager.default.createDirectory(
+                at: targetURL.deletingLastPathComponent(),
+                withIntermediateDirectories: true
+            )
+            try content.write(to: targetURL, atomically: true, encoding: .utf8)
+        }
+    }
+
     public func canContinueMerge() throws -> Bool {
         let files = try mergeResolutionFiles()
         return files.isEmpty == false && files.allSatisfy { $0.state == .staged }
@@ -986,7 +1524,8 @@ public struct GitRepositoryCLI {
         _ arguments: [String],
         allowNonZeroExit: Bool = false,
         environment: [String: String] = [:],
-        trimOutput: Bool = true
+        trimOutput: Bool = true,
+        standardInput: String? = nil
     ) throws -> String {
         let process = Process()
         process.currentDirectoryURL = repositoryURL
@@ -1001,8 +1540,17 @@ public struct GitRepositoryCLI {
         let stderrPipe = Pipe()
         process.standardOutput = stdoutPipe
         process.standardError = stderrPipe
+        if standardInput != nil {
+            process.standardInput = Pipe()
+        }
 
         try process.run()
+        if let standardInput,
+           let stdinPipe = process.standardInput as? Pipe,
+           let inputData = standardInput.data(using: .utf8) {
+            stdinPipe.fileHandleForWriting.write(inputData)
+            stdinPipe.fileHandleForWriting.closeFile()
+        }
         process.waitUntilExit()
 
         let stdout = String(data: stdoutPipe.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8) ?? ""
@@ -1030,6 +1578,17 @@ public struct GitRepositoryCLI {
             .trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
+    private func gitPath(_ relativeGitPath: String) throws -> URL {
+        let output = try runGit(["rev-parse", "--git-path", relativeGitPath])
+        return URL(fileURLWithPath: output, relativeTo: repositoryURL).standardizedFileURL
+    }
+
+    private func readFileIfExists(_ url: URL) throws -> String? {
+        guard FileManager.default.fileExists(atPath: url.path) else { return nil }
+        return try String(contentsOf: url, encoding: .utf8)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
     private func isTrackedInHead(_ filePath: String) throws -> Bool {
         let output = try runGit(["ls-tree", "-r", "--name-only", "HEAD", "--", filePath], allowNonZeroExit: true)
         return output.split(separator: "\n").contains { $0 == filePath }
@@ -1049,6 +1608,57 @@ public struct GitRepositoryCLI {
 
         guard FileManager.default.fileExists(atPath: targetURL.path) else { return }
         try FileManager.default.removeItem(at: targetURL)
+    }
+
+    private func branchCompareCommits(base: String, head: String) throws -> [GitBranchCompareCommit] {
+        let output = try runGit([
+            "log",
+            "--format=%H%x1f%an <%ae>%x1f%aI%x1f%s",
+            "\(base)..\(head)",
+        ])
+
+        let fractionalFormatter = ISO8601DateFormatter()
+        fractionalFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        let formatter = ISO8601DateFormatter()
+
+        return output
+            .split(separator: "\n", omittingEmptySubsequences: true)
+            .compactMap { line in
+                let parts = line.split(separator: "\u{1F}", omittingEmptySubsequences: false).map(String.init)
+                guard parts.count >= 4 else { return nil }
+                let date = fractionalFormatter.date(from: parts[2]) ?? formatter.date(from: parts[2]) ?? Date(timeIntervalSince1970: 0)
+                return GitBranchCompareCommit(
+                    hash: parts[0],
+                    author: parts[1],
+                    date: date,
+                    subject: parts[3]
+                )
+            }
+    }
+
+    private func branchCompareFiles(base: String, head: String) throws -> [GitBranchCompareFile] {
+        let output = try runGit(["diff", "--name-status", "\(base)...\(head)"])
+
+        return output
+            .split(separator: "\n", omittingEmptySubsequences: true)
+            .compactMap { line in
+                let parts = line.split(separator: "\t", omittingEmptySubsequences: false).map(String.init)
+                guard parts.count >= 2 else { return nil }
+
+                let status = parts[0]
+                if status.hasPrefix("R") || status.hasPrefix("C") {
+                    guard parts.count >= 3 else { return nil }
+                    return GitBranchCompareFile(status: status, path: parts[2], oldPath: parts[1])
+                }
+
+                return GitBranchCompareFile(status: status, path: parts[1])
+            }
+            .sorted { lhs, rhs in
+                if lhs.path == rhs.path {
+                    return lhs.status < rhs.status
+                }
+                return lhs.path < rhs.path
+            }
     }
 
     private func trackedFilePaths() throws -> [String] {
