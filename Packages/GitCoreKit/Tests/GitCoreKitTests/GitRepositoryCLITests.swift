@@ -398,6 +398,73 @@ final class GitRepositoryCLITests: XCTestCase {
         XCTAssertEqual(try client.lfsAttributeMismatches(), [])
     }
 
+    func testParseSubmoduleStatusParsesAllStatusMarkers() {
+        let output = """
+         0123456789abcdef0123456789abcdef01234567 Vendor/Ready (heads/main)
+        -1111111111111111111111111111111111111111 Vendor/Missing
+        +2222222222222222222222222222222222222222 Vendor/Changed (v1.0.0)
+        U3333333333333333333333333333333333333333 Vendor/Conflict
+        malformed
+        """
+
+        XCTAssertEqual(
+            GitRepositoryCLI.parseSubmoduleStatus(output),
+            [
+                GitRepositoryCLI.GitSubmodule(
+                    path: "Vendor/Changed",
+                    commitHash: "2222222222222222222222222222222222222222",
+                    status: .modified,
+                    description: "v1.0.0"
+                ),
+                GitRepositoryCLI.GitSubmodule(
+                    path: "Vendor/Conflict",
+                    commitHash: "3333333333333333333333333333333333333333",
+                    status: .conflicted,
+                    description: nil
+                ),
+                GitRepositoryCLI.GitSubmodule(
+                    path: "Vendor/Missing",
+                    commitHash: "1111111111111111111111111111111111111111",
+                    status: .uninitialized,
+                    description: nil
+                ),
+                GitRepositoryCLI.GitSubmodule(
+                    path: "Vendor/Ready",
+                    commitHash: "0123456789abcdef0123456789abcdef01234567",
+                    status: .initialized,
+                    description: "heads/main"
+                ),
+            ]
+        )
+    }
+
+    func testInitializeSubmodulesChecksOutUninitializedSubmodule() throws {
+        let child = try TestGitRepository()
+        try child.write("README.md", content: "child\n")
+        try child.run(["add", "."])
+        try child.run(["commit", "-m", "child"])
+
+        let parent = try TestGitRepository()
+        try parent.run(["-c", "protocol.file.allow=always", "submodule", "add", child.url.path, "Vendor/Child"])
+        try parent.run(["commit", "-am", "add submodule"])
+
+        let destinationRoot = FileManager.default.temporaryDirectory
+            .appendingPathComponent(UUID().uuidString, isDirectory: true)
+        try FileManager.default.createDirectory(at: destinationRoot, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: destinationRoot) }
+
+        let localURL = destinationRoot.appendingPathComponent("local", isDirectory: true)
+        try GitRepositoryCLI.clone(remoteURL: parent.url.path, destinationURL: localURL)
+
+        let client = GitRepositoryCLI(repositoryURL: localURL)
+        XCTAssertEqual(try client.submodules().map(\.status), [.uninitialized])
+
+        try client.initializeSubmodules(allowFileProtocol: true)
+
+        XCTAssertEqual(try String(contentsOf: localURL.appendingPathComponent("Vendor/Child/README.md"), encoding: .utf8), "child\n")
+        XCTAssertEqual(try client.submodules().map(\.status), [.initialized])
+    }
+
     func testAheadBehindCountsLocalAndRemoteCommits() throws {
         let remote = try TestGitRepository()
         try remote.write("README.md", content: "hello\n")

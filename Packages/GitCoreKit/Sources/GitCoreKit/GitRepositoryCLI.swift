@@ -151,6 +151,27 @@ public struct GitRepositoryCLI {
         }
     }
 
+    public struct GitSubmodule: Equatable, Sendable {
+        public enum Status: String, Sendable {
+            case initialized
+            case uninitialized
+            case modified
+            case conflicted
+        }
+
+        public let path: String
+        public let commitHash: String
+        public let status: Status
+        public let description: String?
+
+        public init(path: String, commitHash: String, status: Status, description: String?) {
+            self.path = path
+            self.commitHash = commitHash
+            self.status = status
+            self.description = description
+        }
+    }
+
     public struct CreateRepositoryOptions: Equatable, Sendable {
         public var readmeContent: String?
         public var gitignoreContent: String?
@@ -291,6 +312,56 @@ public struct GitRepositoryCLI {
 
     public func fetch(remote: String = "origin") throws {
         _ = try runGit(["fetch", "--prune", remote])
+    }
+
+    public func submodules() throws -> [GitSubmodule] {
+        let output = try runGit(["submodule", "status", "--recursive"], allowNonZeroExit: true, trimOutput: false)
+        return Self.parseSubmoduleStatus(output)
+    }
+
+    public static func parseSubmoduleStatus(_ output: String) -> [GitSubmodule] {
+        output
+            .split(separator: "\n", omittingEmptySubsequences: true)
+            .compactMap { parseSubmoduleStatusLine(String($0)) }
+            .sorted { $0.path < $1.path }
+    }
+
+    public func initializeSubmodules(paths: [String] = [], recursive: Bool = true, allowFileProtocol: Bool = false) throws {
+        var arguments = ["submodule", "update", "--init"]
+        if recursive {
+            arguments.append("--recursive")
+        }
+        if paths.isEmpty == false {
+            arguments.append("--")
+            arguments.append(contentsOf: paths)
+        }
+        _ = try runGit(arguments, environment: submoduleEnvironment(allowFileProtocol: allowFileProtocol))
+    }
+
+    public func updateSubmodules(paths: [String] = [], recursive: Bool = true, allowFileProtocol: Bool = false) throws {
+        var arguments = ["submodule", "update", "--remote", "--merge"]
+        if recursive {
+            arguments.append("--recursive")
+        }
+        if paths.isEmpty == false {
+            arguments.append("--")
+            arguments.append(contentsOf: paths)
+        }
+        _ = try runGit(arguments, environment: submoduleEnvironment(allowFileProtocol: allowFileProtocol))
+    }
+
+    public func submoduleDiff(path: String) throws -> String {
+        let trimmedPath = path.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard trimmedPath.isEmpty == false else {
+            throw NSError(
+                domain: "GitOK.GitCommand",
+                code: -1,
+                userInfo: [NSLocalizedDescriptionKey: "子模块路径不能为空"]
+            )
+        }
+
+        return try runGit(["diff", "--submodule=log", "--", trimmedPath], trimOutput: false)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
     public func lfsStatus() -> GitLFSStatus {
@@ -682,6 +753,11 @@ public struct GitRepositoryCLI {
         return Self.isLFSPointerBlob(content)
     }
 
+    private func submoduleEnvironment(allowFileProtocol: Bool) -> [String: String] {
+        guard allowFileProtocol else { return [:] }
+        return ["GIT_ALLOW_PROTOCOL": "file:git:ssh:https:http"]
+    }
+
     private static func writeCreateRepositoryFiles(at repositoryURL: URL, options: CreateRepositoryOptions) throws {
         if let readmeContent = options.readmeContent {
             try writeFileIfNeeded(repositoryURL.appendingPathComponent("README.md"), content: readmeContent)
@@ -710,6 +786,54 @@ public struct GitRepositoryCLI {
         }
 
         return String(filePath.dropFirst(repositoryPath.count + 1))
+    }
+
+    private static func parseSubmoduleStatusLine(_ line: String) -> GitSubmodule? {
+        guard line.count >= 42 else { return nil }
+
+        let marker = line[line.startIndex]
+        let hashStart = line.index(after: line.startIndex)
+        let hashEnd = line.index(hashStart, offsetBy: 40)
+        let commitHash = String(line[hashStart..<hashEnd])
+
+        guard commitHash.range(of: #"^[0-9a-fA-F]{40}$"#, options: .regularExpression) != nil else {
+            return nil
+        }
+
+        let details = line[hashEnd...].trimmingCharacters(in: .whitespacesAndNewlines)
+        guard details.isEmpty == false else { return nil }
+
+        let path: String
+        let description: String?
+        if let descriptionRange = details.range(of: #" \(.+\)$"#, options: .regularExpression) {
+            path = String(details[..<descriptionRange.lowerBound])
+            description = String(details[descriptionRange])
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+                .trimmingCharacters(in: CharacterSet(charactersIn: "()"))
+        } else {
+            path = details
+            description = nil
+        }
+
+        return GitSubmodule(
+            path: path,
+            commitHash: commitHash,
+            status: submoduleStatus(for: marker),
+            description: description
+        )
+    }
+
+    private static func submoduleStatus(for marker: Character) -> GitSubmodule.Status {
+        switch marker {
+        case "-":
+            return .uninitialized
+        case "+":
+            return .modified
+        case "U":
+            return .conflicted
+        default:
+            return .initialized
+        }
     }
 
     @discardableResult
