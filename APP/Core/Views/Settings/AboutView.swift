@@ -116,6 +116,14 @@ struct AboutView: View, SuperLog {
                                     icon: .iconCalendar
                                 )
                             }
+
+                            Divider()
+
+                            linkRow(
+                                title: "版本更新说明",
+                                url: "https://github.com/CofficLab/GitOK/releases/latest",
+                                icon: "doc.text"
+                            )
                         }
                     }
                 }
