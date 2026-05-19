@@ -19,7 +19,7 @@ struct RemoteRepositoryView: View, SuperLog {
     @State private var selectedRemote: GitRemote?
     @State private var showEditRemoteSheet = false
     @State private var editingRemote: GitRemote?
-    @State private var aheadBehind: GitAheadBehind = .noUpstream
+    @State private var aheadBehind: GitCoreKit.GitAheadBehind = .noUpstream
     @State private var currentUpstreamRemoteName: String?
     @State private var postRemoteActionMessage: String?
     @State private var isPublishingCurrentBranch = false
@@ -438,11 +438,7 @@ extension RemoteRepositoryView {
 
     private func currentUpstreamRemoteName(for project: Project) throws -> String? {
         guard let branch = try project.getCurrentBranch()?.name else { return nil }
-        let upstream = try GitRepositoryCLI(repositoryURL: project.url).runGit([
-            "config",
-            "--get",
-            "branch.\(branch).remote",
-        ], allowNonZeroExit: true)
+        let upstream = try LibGit2.getConfig(key: "branch.\(branch).remote", at: project.path, verbose: false)
         return upstream.isEmpty ? nil : upstream
     }
 

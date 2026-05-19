@@ -21,7 +21,7 @@ struct BranchForm: View, SuperLog {
     @State private var selectedBranch: GitBranch?
     @State private var compareBaseBranch: GitBranch?
     @State private var compareHeadBranch: GitBranch?
-    @State private var branchCompare: GitBranchCompare?
+    @State private var branchCompare: GitCoreKit.GitBranchCompare?
     @State private var isComparing = false
     @State private var compareError: String?
     @State private var rebaseStatus: GitRebaseStatus = .inactive
@@ -346,7 +346,7 @@ struct BranchForm: View, SuperLog {
         }
     }
 
-    private func compareResultView(_ compare: GitBranchCompare) -> some View {
+    private func compareResultView(_ compare: GitCoreKit.GitBranchCompare) -> some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 12) {
                 Text("Ahead \(compare.ahead)")
@@ -431,7 +431,7 @@ struct BranchForm: View, SuperLog {
     }
 
     @ViewBuilder
-    private func pullRequestActions(compare: GitBranchCompare) -> some View {
+    private func pullRequestActions(compare: GitCoreKit.GitBranchCompare) -> some View {
         if let links = pullRequestLinks() {
             VStack(alignment: .leading, spacing: 6) {
                 Text("Pull Request")

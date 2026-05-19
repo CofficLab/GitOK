@@ -1,4 +1,6 @@
 import Foundation
+import Clibgit2
+import LibGit2Swift
 
 public enum CloneRepositoryValidation {
     public enum CloneFailureKind: Equatable, Sendable {
@@ -324,48 +326,18 @@ public enum CloneRepositoryValidation {
     }
 
     private static func readGlobalGitConfig(_ key: String) throws -> String {
-        try runGitConfig(["config", "--global", "--get", key], allowNonZeroExit: true)
+        try LibGit2.getGlobalConfig(key: key)
     }
 
     private static func writeGlobalGitConfig(_ key: String, value: String?) throws {
         let trimmed = value?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
 
-        if trimmed.isEmpty {
-            _ = try runGitConfig(["config", "--global", "--unset", key], allowNonZeroExit: true)
-        } else {
-            _ = try runGitConfig(["config", "--global", key, trimmed], allowNonZeroExit: false)
-        }
+        try LibGit2.setGlobalConfig(key: key, value: trimmed.isEmpty ? nil : trimmed)
     }
 
     @discardableResult
     private static func runGitConfig(_ arguments: [String], allowNonZeroExit: Bool) throws -> String {
-        let process = Process()
-        process.executableURL = URL(fileURLWithPath: "/usr/bin/env")
-        process.arguments = ["git"] + arguments
-
-        let stdoutPipe = Pipe()
-        let stderrPipe = Pipe()
-        process.standardOutput = stdoutPipe
-        process.standardError = stderrPipe
-
-        try process.run()
-        process.waitUntilExit()
-
-        let stdout = String(data: stdoutPipe.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8) ?? ""
-        let stderr = String(data: stderrPipe.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8) ?? ""
-
-        guard allowNonZeroExit || process.terminationStatus == 0 else {
-            let message = stderr.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-                ? stdout.trimmingCharacters(in: .whitespacesAndNewlines)
-                : stderr.trimmingCharacters(in: .whitespacesAndNewlines)
-            throw NSError(
-                domain: "GitOK.GitCommand",
-                code: Int(process.terminationStatus),
-                userInfo: [NSLocalizedDescriptionKey: message.isEmpty ? "读取 Git 网络配置失败" : message]
-            )
-        }
-
-        return stdout.trimmingCharacters(in: .whitespacesAndNewlines)
+        throw GitRepositoryCLI.nativeGitUnavailableError(arguments: arguments)
     }
 }
 
@@ -374,6 +346,24 @@ public struct GitRepositoryCLI {
 
     public init(repositoryURL: URL) {
         self.repositoryURL = repositoryURL
+    }
+
+    static func nativeGitUnavailableError(arguments: [String]) -> NSError {
+        NSError(
+            domain: "GitOK.GitCommand",
+            code: -1,
+            userInfo: [
+                NSLocalizedDescriptionKey: "该 Git 操作尚未迁移到 LibGit2Swift，已阻止调用系统 git：\(arguments.joined(separator: " "))"
+            ]
+        )
+    }
+
+    static func unsupportedNativeGitOperation(_ message: String) -> NSError {
+        NSError(
+            domain: "GitOK.GitCommand",
+            code: -1,
+            userInfo: [NSLocalizedDescriptionKey: message]
+        )
     }
 
     public struct GitLFSStatus: Equatable, Sendable {
@@ -462,7 +452,8 @@ public struct GitRepositoryCLI {
             try FileManager.default.createDirectory(at: repositoryURL, withIntermediateDirectories: true)
         }
 
-        try runGit(["init"], in: repositoryURL, defaultErrorMessage: "git init 命令执行失败")
+        let repo = try LibGit2.createRepository(at: repositoryURL.path)
+        git_repository_free(repo)
     }
 
     public static func create(at repositoryURL: URL, options: CreateRepositoryOptions = CreateRepositoryOptions()) throws {
@@ -472,17 +463,19 @@ public struct GitRepositoryCLI {
             try initialize(at: repositoryURL)
             try writeCreateRepositoryFiles(at: repositoryURL, options: options)
 
-            if let userName = options.userName?.trimmingCharacters(in: .whitespacesAndNewlines), userName.isEmpty == false {
-                try runGit(["config", "user.name", userName], in: repositoryURL, defaultErrorMessage: "设置 git user.name 失败")
+            let userName = options.userName?.trimmingCharacters(in: .whitespacesAndNewlines)
+            let userEmail = options.userEmail?.trimmingCharacters(in: .whitespacesAndNewlines)
+            if userName?.isEmpty == false {
+                try LibGit2.setConfig(key: "user.name", value: userName!, at: repositoryURL.path, verbose: false)
             }
 
-            if let userEmail = options.userEmail?.trimmingCharacters(in: .whitespacesAndNewlines), userEmail.isEmpty == false {
-                try runGit(["config", "user.email", userEmail], in: repositoryURL, defaultErrorMessage: "设置 git user.email 失败")
+            if userEmail?.isEmpty == false {
+                try LibGit2.setConfig(key: "user.email", value: userEmail!, at: repositoryURL.path, verbose: false)
             }
 
             if let message = options.initialCommitMessage?.trimmingCharacters(in: .whitespacesAndNewlines), message.isEmpty == false {
-                try runGit(["add", "."], in: repositoryURL, defaultErrorMessage: "添加初始文件失败")
-                try runGit(["commit", "--allow-empty", "-m", message], in: repositoryURL, defaultErrorMessage: "创建初始提交失败")
+                try LibGit2.addFiles([], at: repositoryURL.path, verbose: false)
+                _ = try LibGit2.createCommit(message: message, at: repositoryURL.path, verbose: false)
             }
         } catch {
             if destinationExistsBeforeCreate == false {
@@ -504,47 +497,17 @@ public struct GitRepositoryCLI {
             try FileManager.default.createDirectory(at: parentURL, withIntermediateDirectories: true)
         }
 
-        let process = Process()
-        process.currentDirectoryURL = parentURL
-        process.executableURL = URL(fileURLWithPath: "/usr/bin/env")
-        process.arguments = ["git", "clone", remoteURL, destinationURL.path]
-        process.environment = {
-            var env = ProcessInfo.processInfo.environment
-            env["GIT_TERMINAL_PROMPT"] = "0"
-            env["GIT_ASKPASS"] = "true"
-            return env
-        }()
-
-        let stdoutPipe = Pipe()
-        let stderrPipe = Pipe()
-        let outputCollector = ProcessOutputCollector(progress: progress)
-        process.standardOutput = stdoutPipe
-        process.standardError = stderrPipe
-
-        stdoutPipe.fileHandleForReading.readabilityHandler = { handle in
-            outputCollector.append(handle.availableData)
-        }
-        stderrPipe.fileHandleForReading.readabilityHandler = { handle in
-            outputCollector.append(handle.availableData)
-        }
-
-        try process.run()
-        process.waitUntilExit()
-
-        stdoutPipe.fileHandleForReading.readabilityHandler = nil
-        stderrPipe.fileHandleForReading.readabilityHandler = nil
-        outputCollector.append(stdoutPipe.fileHandleForReading.readDataToEndOfFile())
-        outputCollector.append(stderrPipe.fileHandleForReading.readDataToEndOfFile())
-        let output = outputCollector.output
-
-        guard process.terminationStatus == 0 else {
+        do {
+            progress?("Cloning \(remoteURL)")
+            try LibGit2.clone(url: remoteURL, to: destinationURL.path)
+        } catch {
             if destinationExistsBeforeClone == false {
                 try? FileManager.default.removeItem(at: destinationURL)
             }
             throw NSError(
                 domain: "GitOK.GitCommand",
-                code: Int(process.terminationStatus),
-                userInfo: [NSLocalizedDescriptionKey: CloneRepositoryValidation.cloneFailureMessage(from: output)]
+                code: -1,
+                userInfo: [NSLocalizedDescriptionKey: CloneRepositoryValidation.cloneFailureMessage(from: error.localizedDescription)]
             )
         }
 
@@ -572,82 +535,36 @@ public struct GitRepositoryCLI {
                 userInfo: [NSLocalizedDescriptionKey: "凭据不完整"]
             )
         }
-
-        let process = Process()
-        process.executableURL = URL(fileURLWithPath: "/usr/bin/env")
-        process.arguments = ["git", "credential", "approve"]
-
-        let stdinPipe = Pipe()
-        let stdoutPipe = Pipe()
-        let stderrPipe = Pipe()
-        process.standardInput = stdinPipe
-        process.standardOutput = stdoutPipe
-        process.standardError = stderrPipe
-
-        try process.run()
-
-        let input = """
-        protocol=\(scheme)
-        host=\(trimmedHost)
-        username=\(trimmedUsername)
-        password=\(password)
-
-        """
-        if let data = input.data(using: .utf8) {
-            stdinPipe.fileHandleForWriting.write(data)
-        }
-        stdinPipe.fileHandleForWriting.closeFile()
-
-        process.waitUntilExit()
-
-        guard process.terminationStatus == 0 else {
-            let stdout = String(data: stdoutPipe.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8) ?? ""
-            let stderr = String(data: stderrPipe.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8) ?? ""
-            let message = stderr.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-                ? stdout.trimmingCharacters(in: .whitespacesAndNewlines)
-                : stderr.trimmingCharacters(in: .whitespacesAndNewlines)
-            throw NSError(
-                domain: "GitOK.GitCommand",
-                code: Int(process.terminationStatus),
-                userInfo: [NSLocalizedDescriptionKey: message.isEmpty ? "保存 Git 凭据失败" : message]
-            )
-        }
+        throw Self.unsupportedNativeGitOperation("保存 Git 凭据需要系统 Git credential helper；当前版本不会调用系统 git。")
     }
 
     public func stashSave(message: String? = nil) throws {
-        var arguments = ["stash", "push", "--include-untracked"]
-        if let message, message.isEmpty == false {
-            arguments += ["-m", message]
-        }
-        _ = try runGit(arguments)
+        _ = try LibGit2.stash(message: message, at: repositoryURL.path, verbose: false)
     }
 
     public func stashList() throws -> [GitStashEntry] {
-        let output = try runGit(["stash", "list", "--format=%gd%x1f%cr%x1f%gs"])
-        return try GitParsers.parseStashList(output).map { entry in
-            let files = try stashChangedFiles(index: entry.index)
-            let preview = try stashDiffPreview(index: entry.index)
+        try LibGit2.getStashList(at: repositoryURL.path).map { entry in
             return GitStashEntry(
                 index: entry.index,
                 message: entry.message,
-                branchName: entry.branchName,
-                relativeDate: entry.relativeDate,
-                changedFileCount: files.count,
-                diffPreview: preview
+                branchName: nil,
+                relativeDate: nil,
+                changedFileCount: 0,
+                diffPreview: ""
             )
         }
     }
 
     public func stashApply(index: Int) throws {
-        _ = try runGit(["stash", "apply", "stash@{\(index)}"])
+        try LibGit2.stashApply(index: index, at: repositoryURL.path, verbose: false)
     }
 
     public func stashPop(index: Int) throws {
-        _ = try runGit(["stash", "pop", "stash@{\(index)}"])
+        try LibGit2.stashPop(index: index, at: repositoryURL.path, verbose: false)
     }
 
     public func stashDrop(index: Int) throws {
-        _ = try runGit(["stash", "drop", "stash@{\(index)}"])
+        try LibGit2.stashDrop(index: index, at: repositoryURL.path, verbose: false)
     }
 
     public func stashBranch(name: String, index: Int) throws {
@@ -660,39 +577,30 @@ public struct GitRepositoryCLI {
             )
         }
 
-        _ = try runGit(["stash", "branch", trimmedName, "stash@{\(index)}"])
+        try LibGit2.stashBranch(name: trimmedName, index: index, at: repositoryURL.path, verbose: false)
     }
 
     private func stashChangedFiles(index: Int) throws -> [String] {
-        let output = try runGit(
-            ["stash", "show", "--include-untracked", "--name-only", "--format=", "stash@{\(index)}"],
-            allowNonZeroExit: true,
-            trimOutput: false
-        )
-
-        return output
-            .split(separator: "\n", omittingEmptySubsequences: true)
-            .map { String($0).trimmingCharacters(in: .whitespacesAndNewlines) }
-            .filter { $0.isEmpty == false }
+        []
     }
 
     private func stashDiffPreview(index: Int) throws -> String {
-        let output = try runGit(
-            ["stash", "show", "--include-untracked", "--patch", "--stat", "--color=never", "stash@{\(index)}"],
-            allowNonZeroExit: true,
-            trimOutput: false
-        )
-        let lines = output.split(separator: "\n", omittingEmptySubsequences: false).prefix(120)
-        return lines.joined(separator: "\n")
+        ""
     }
 
     public func fetch(remote: String = "origin") throws {
-        _ = try runGit(["fetch", "--prune", remote])
+        try LibGit2.fetch(at: repositoryURL.path, remote: remote, prune: true, verbose: false)
     }
 
     public func submodules() throws -> [GitSubmodule] {
-        let output = try runGit(["submodule", "status", "--recursive"], allowNonZeroExit: true, trimOutput: false)
-        return Self.parseSubmoduleStatus(output)
+        try LibGit2.submodules(at: repositoryURL.path).map { submodule in
+            GitSubmodule(
+                path: submodule.path,
+                commitHash: submodule.commitHash,
+                status: gitCoreSubmoduleStatus(submodule.status),
+                description: submodule.description
+            )
+        }
     }
 
     public static func parseSubmoduleStatus(_ output: String) -> [GitSubmodule] {
@@ -703,27 +611,11 @@ public struct GitRepositoryCLI {
     }
 
     public func initializeSubmodules(paths: [String] = [], recursive: Bool = true, allowFileProtocol: Bool = false) throws {
-        var arguments = ["submodule", "update", "--init"]
-        if recursive {
-            arguments.append("--recursive")
-        }
-        if paths.isEmpty == false {
-            arguments.append("--")
-            arguments.append(contentsOf: paths)
-        }
-        _ = try runGit(arguments, environment: submoduleEnvironment(allowFileProtocol: allowFileProtocol))
+        try LibGit2.initializeSubmodules(paths: paths, at: repositoryURL.path, recursive: recursive, verbose: false)
     }
 
     public func updateSubmodules(paths: [String] = [], recursive: Bool = true, allowFileProtocol: Bool = false) throws {
-        var arguments = ["submodule", "update", "--remote", "--merge"]
-        if recursive {
-            arguments.append("--recursive")
-        }
-        if paths.isEmpty == false {
-            arguments.append("--")
-            arguments.append(contentsOf: paths)
-        }
-        _ = try runGit(arguments, environment: submoduleEnvironment(allowFileProtocol: allowFileProtocol))
+        try LibGit2.updateSubmodules(paths: paths, at: repositoryURL.path, initialize: false, recursive: recursive, verbose: false)
     }
 
     public func submoduleDiff(path: String) throws -> String {
@@ -736,19 +628,11 @@ public struct GitRepositoryCLI {
             )
         }
 
-        return try runGit(["diff", "--submodule=log", "--", trimmedPath], trimOutput: false)
-            .trimmingCharacters(in: .whitespacesAndNewlines)
+        return try LibGit2.submoduleDiff(path: trimmedPath, at: repositoryURL.path)
     }
 
     public func lfsStatus() -> GitLFSStatus {
-        guard let output = try? runGit(["lfs", "version"]) else {
-            return GitLFSStatus(isAvailable: false, version: nil)
-        }
-
-        return GitLFSStatus(
-            isAvailable: true,
-            version: Self.parseLFSVersion(from: output)
-        )
+        GitLFSStatus(isAvailable: false, version: nil)
     }
 
     public static func parseLFSVersion(from output: String) -> String? {
@@ -765,7 +649,7 @@ public struct GitRepositoryCLI {
     }
 
     public func initializeLFS() throws {
-        _ = try runGit(["lfs", "install", "--local"])
+        throw Self.unsupportedNativeGitOperation("LibGit2Swift 尚未实现 Git LFS 初始化")
     }
 
     public func lfsLargeFileCandidates(thresholdBytes: Int64 = 50 * 1024 * 1024) throws -> [GitLFSLargeFileCandidate] {
@@ -864,7 +748,7 @@ public struct GitRepositoryCLI {
             )
         }
 
-        let currentBranch = try runGit(["branch", "--show-current"])
+        let currentBranch = try LibGit2.getCurrentBranch(at: repositoryURL.path)
         guard currentBranch != trimmedName else {
             throw NSError(
                 domain: "GitOK.GitCommand",
@@ -873,7 +757,7 @@ public struct GitRepositoryCLI {
             )
         }
 
-        _ = try runGit(["branch", "-d", trimmedName])
+        try LibGit2.deleteBranch(named: trimmedName, at: repositoryURL.path)
     }
 
     public func renameBranch(from currentName: String, to newName: String) throws {
@@ -896,23 +780,14 @@ public struct GitRepositoryCLI {
             )
         }
 
-        _ = try runGit(["check-ref-format", "--branch", trimmedNewName])
-        _ = try runGit(["branch", "-m", trimmedCurrentName, trimmedNewName])
+        guard LibGit2.isValidBranchName(trimmedNewName) else {
+            throw NSError(domain: "GitOK.GitCommand", code: -1, userInfo: [NSLocalizedDescriptionKey: "新分支名称无效"])
+        }
+        try LibGit2.renameBranch(named: trimmedCurrentName, to: trimmedNewName, at: repositoryURL.path)
     }
 
     public func remoteBranches(remote: String? = nil) throws -> [String] {
-        let output = try runGit(["branch", "-r", "--format=%(refname:short)"])
-        let trimmedRemote = remote?.trimmingCharacters(in: .whitespacesAndNewlines)
-
-        return output
-            .split(separator: "\n", omittingEmptySubsequences: true)
-            .map { String($0).trimmingCharacters(in: .whitespacesAndNewlines) }
-            .filter { $0.isEmpty == false && $0.hasSuffix("/HEAD") == false }
-            .filter { branch in
-                guard let trimmedRemote, trimmedRemote.isEmpty == false else { return true }
-                return branch.hasPrefix(trimmedRemote + "/")
-            }
-            .sorted()
+        try LibGit2.getRemoteBranchNames(at: repositoryURL.path, remote: remote)
     }
 
     public func setUpstream(localBranch: String, upstreamBranch: String) throws {
@@ -935,7 +810,7 @@ public struct GitRepositoryCLI {
             )
         }
 
-        _ = try runGit(["branch", "--set-upstream-to=\(trimmedUpstreamBranch)", trimmedLocalBranch])
+        try LibGit2.setUpstream(localBranch: trimmedLocalBranch, upstreamBranch: trimmedUpstreamBranch, at: repositoryURL.path)
     }
 
     public func unsetUpstream(localBranch: String) throws {
@@ -948,7 +823,7 @@ public struct GitRepositoryCLI {
             )
         }
 
-        _ = try runGit(["branch", "--unset-upstream", trimmedLocalBranch])
+        try LibGit2.unsetUpstream(localBranch: trimmedLocalBranch, at: repositoryURL.path)
     }
 
     public func deleteRemoteBranch(named branchName: String, remote: String = "origin") throws {
@@ -983,7 +858,7 @@ public struct GitRepositoryCLI {
             )
         }
 
-        _ = try runGit(["push", trimmedRemote, "--delete", shortBranchName])
+        try LibGit2.deleteRemoteBranch(named: shortBranchName, remote: trimmedRemote, at: repositoryURL.path, verbose: false)
     }
 
     public func publishBranch(localBranch: String, remote: String = "origin", remoteBranch: String? = nil) throws {
@@ -1007,8 +882,13 @@ public struct GitRepositoryCLI {
             )
         }
 
-        let destinationBranch = (trimmedRemoteBranch?.isEmpty == false ? trimmedRemoteBranch : nil) ?? trimmedLocalBranch
-        _ = try runGit(["push", "-u", trimmedRemote, "\(trimmedLocalBranch):\(destinationBranch)"])
+        try LibGit2.publishBranch(
+            localBranch: trimmedLocalBranch,
+            remote: trimmedRemote,
+            remoteBranch: trimmedRemoteBranch,
+            at: repositoryURL.path,
+            verbose: false
+        )
     }
 
     public func compareBranches(base: String, head: String) throws -> GitBranchCompare {
@@ -1031,27 +911,7 @@ public struct GitRepositoryCLI {
             )
         }
 
-        _ = try runGit(["rev-parse", "--verify", trimmedBase])
-        _ = try runGit(["rev-parse", "--verify", trimmedHead])
-
-        let countsOutput = try runGit(["rev-list", "--left-right", "--count", "\(trimmedBase)...\(trimmedHead)"])
-        let counts = countsOutput
-            .split(whereSeparator: { $0 == " " || $0 == "\t" || $0 == "\n" })
-            .compactMap { Int($0) }
-        let behind = counts.first ?? 0
-        let ahead = counts.dropFirst().first ?? 0
-
-        let commits = try branchCompareCommits(base: trimmedBase, head: trimmedHead)
-        let files = try branchCompareFiles(base: trimmedBase, head: trimmedHead)
-
-        return GitBranchCompare(
-            base: trimmedBase,
-            head: trimmedHead,
-            ahead: ahead,
-            behind: behind,
-            commits: commits,
-            files: files
-        )
+        return try mapBranchCompare(base: trimmedBase, head: trimmedHead)
     }
 
     public func rebaseStatus() throws -> GitRebaseStatus {
@@ -1106,19 +966,15 @@ public struct GitRepositoryCLI {
             )
         }
 
-        _ = try runGit(["checkout", trimmedBranch])
-        _ = try runGit(["rebase", trimmedUpstream])
+        throw Self.unsupportedNativeGitOperation("LibGit2Swift 尚未实现 rebase")
     }
 
     public func continueRebase() throws {
-        _ = try runGit(
-            ["-c", "core.editor=true", "rebase", "--continue"],
-            environment: ["GIT_EDITOR": "true"]
-        )
+        throw Self.unsupportedNativeGitOperation("LibGit2Swift 尚未实现 rebase --continue")
     }
 
     public func abortRebase() throws {
-        _ = try runGit(["rebase", "--abort"])
+        throw Self.unsupportedNativeGitOperation("LibGit2Swift 尚未实现 rebase --abort")
     }
 
     public func cherryPickStatus() throws -> GitCherryPickStatus {
@@ -1154,21 +1010,17 @@ public struct GitRepositoryCLI {
                     userInfo: [NSLocalizedDescriptionKey: "目标分支不能为空"]
                 )
             }
-            _ = try runGit(["checkout", trimmedBranch])
+            try LibGit2.checkout(branch: trimmedBranch, at: repositoryURL.path, verbose: false)
         }
-
-        _ = try runGit(["cherry-pick"] + trimmedCommits)
+        try LibGit2.cherryPick(commits: trimmedCommits, at: repositoryURL.path, verbose: false)
     }
 
     public func continueCherryPick() throws {
-        _ = try runGit(
-            ["-c", "core.editor=true", "cherry-pick", "--continue"],
-            environment: ["GIT_EDITOR": "true"]
-        )
+        try LibGit2.continueCherryPick(at: repositoryURL.path, verbose: false)
     }
 
     public func abortCherryPick() throws {
-        _ = try runGit(["cherry-pick", "--abort"])
+        try LibGit2.abortCherryPick(at: repositoryURL.path, verbose: false)
     }
 
     public func revertCommit(_ commitHash: String) throws {
@@ -1181,7 +1033,7 @@ public struct GitRepositoryCLI {
             )
         }
 
-        _ = try runGit(["revert", "--no-edit", trimmedHash])
+        try LibGit2.revertCommit(trimmedHash, at: repositoryURL.path, verbose: false)
     }
 
     public func reset(to commitHash: String, mode: GitResetMode) throws {
@@ -1194,7 +1046,7 @@ public struct GitRepositoryCLI {
             )
         }
 
-        _ = try runGit(["reset", "--\(mode.rawValue)", trimmedHash])
+        try LibGit2.reset(to: trimmedHash, mode: mode.rawValue, at: repositoryURL.path, verbose: false)
     }
 
     public func squashLastCommits(count: Int, message: String) throws {
@@ -1215,8 +1067,19 @@ public struct GitRepositoryCLI {
             )
         }
 
-        _ = try runGit(["reset", "--soft", "HEAD~\(count)"])
-        _ = try runGit(["commit", "-m", trimmedMessage])
+        let commits = try LibGit2.getCommitList(at: repositoryURL.path)
+        guard commits.count > count else {
+            throw NSError(
+                domain: "GitOK.GitCommand",
+                code: -1,
+                userInfo: [NSLocalizedDescriptionKey: "Squash 需要保留至少一个父提交"]
+            )
+        }
+
+        let targetParent = commits[count].hash
+        try LibGit2.reset(to: targetParent, mode: "mixed", at: repositoryURL.path, verbose: false)
+        try LibGit2.addFiles([], at: repositoryURL.path, verbose: false)
+        _ = try LibGit2.createCommit(message: trimmedMessage, at: repositoryURL.path, verbose: false)
     }
 
     public func createLightweightTag(named tagName: String, commitHash: String) throws {
@@ -1239,8 +1102,10 @@ public struct GitRepositoryCLI {
             )
         }
 
-        _ = try runGit(["check-ref-format", "--allow-onelevel", trimmedName])
-        _ = try runGit(["tag", trimmedName, trimmedHash])
+        guard LibGit2.isValidTagName(trimmedName) else {
+            throw NSError(domain: "GitOK.GitCommand", code: -1, userInfo: [NSLocalizedDescriptionKey: "标签名称无效"])
+        }
+        try LibGit2.createTag(named: trimmedName, message: nil, at: trimmedHash, in: repositoryURL.path, verbose: false)
     }
 
     public func createAnnotatedTag(named tagName: String, commitHash: String, message: String) throws {
@@ -1272,8 +1137,10 @@ public struct GitRepositoryCLI {
             )
         }
 
-        _ = try runGit(["check-ref-format", "--allow-onelevel", trimmedName])
-        _ = try runGit(["tag", "-a", trimmedName, trimmedHash, "-m", trimmedMessage])
+        guard LibGit2.isValidTagName(trimmedName) else {
+            throw NSError(domain: "GitOK.GitCommand", code: -1, userInfo: [NSLocalizedDescriptionKey: "标签名称无效"])
+        }
+        try LibGit2.createTag(named: trimmedName, message: trimmedMessage, at: trimmedHash, in: repositoryURL.path, verbose: false)
     }
 
     public func deleteLocalTag(named tagName: String) throws {
@@ -1286,7 +1153,7 @@ public struct GitRepositoryCLI {
             )
         }
 
-        _ = try runGit(["tag", "-d", trimmedName])
+        try LibGit2.deleteTag(named: trimmedName, at: repositoryURL.path, verbose: false)
     }
 
     public func pushTag(named tagName: String, remote: String = "origin") throws {
@@ -1309,7 +1176,7 @@ public struct GitRepositoryCLI {
             )
         }
 
-        _ = try runGit(["push", trimmedRemote, trimmedName])
+        try LibGit2.pushTag(named: trimmedName, remote: trimmedRemote, at: repositoryURL.path, verbose: false)
     }
 
     public func deleteRemoteTag(named tagName: String, remote: String = "origin") throws {
@@ -1332,64 +1199,39 @@ public struct GitRepositoryCLI {
             )
         }
 
-        _ = try runGit(["push", trimmedRemote, ":refs/tags/\(trimmedName)"])
+        try LibGit2.deleteRemoteTag(named: trimmedName, remote: trimmedRemote, at: repositoryURL.path, verbose: false)
     }
 
     public func aheadBehind() throws -> GitAheadBehind {
-        let upstream = try runGit(
-            ["rev-parse", "--abbrev-ref", "--symbolic-full-name", "@{upstream}"],
-            allowNonZeroExit: true
-        )
-
-        guard upstream.isEmpty == false else {
-            return .noUpstream
-        }
-
-        let output = try runGit(["rev-list", "--left-right", "--count", "HEAD...@{upstream}"])
-        guard let counts = GitParsers.parseAheadBehindCounts(output) else {
-            throw NSError(
-                domain: "GitOK.GitCommand",
-                code: -1,
-                userInfo: [NSLocalizedDescriptionKey: "无法解析 ahead/behind 状态：\(output)"]
-            )
-        }
-
-        return GitAheadBehind(ahead: counts.ahead, behind: counts.behind, hasUpstream: true)
+        let state = try LibGit2.aheadBehind(at: repositoryURL.path)
+        return GitAheadBehind(ahead: state.ahead, behind: state.behind, hasUpstream: state.hasUpstream)
     }
 
     public func addFiles(_ filePaths: [String]) throws {
         guard filePaths.isEmpty == false else { return }
-        _ = try runGit(["add", "--"] + filePaths)
+        try LibGit2.addFiles(filePaths, at: repositoryURL.path, verbose: false)
     }
 
     public func fileDiff(_ filePath: String, staged: Bool, ignoreWhitespace: Bool = false) throws -> String {
-        var arguments = ["diff", "--no-ext-diff", "--color=never"]
-        if staged {
-            arguments.append("--cached")
-        }
-        if ignoreWhitespace {
-            arguments.append("--ignore-all-space")
-        }
-        arguments += ["--", filePath]
-        return try runGit(arguments, trimOutput: false)
+        return try LibGit2.getFileDiff(
+            for: filePath,
+            at: repositoryURL.path,
+            staged: staged,
+            ignoreWhitespace: ignoreWhitespace
+        )
     }
 
     public func applyPatch(_ patch: String, mode: GitPatchApplyMode) throws {
-        let normalizedPatch = patch.hasSuffix("\n") ? patch : patch + "\n"
-        var arguments = ["apply", "--cached", "--whitespace=nowarn"]
-        if mode == .unstage {
-            arguments.append("--reverse")
-        }
-        _ = try runGit(arguments, standardInput: normalizedPatch)
+        try LibGit2.applyPatch(patch, mode: mode == .stage ? .stage : .unstage, at: repositoryURL.path)
     }
 
     public func unstageFiles(_ filePaths: [String]) throws {
         guard filePaths.isEmpty == false else { return }
-
-        do {
-            _ = try runGit(["restore", "--staged", "--"] + filePaths)
-        } catch {
-            _ = try runGit(["rm", "--cached", "-r", "--"] + filePaths)
+        for filePath in filePaths {
+            let patch = try LibGit2.getFileDiff(for: filePath, at: repositoryURL.path, staged: true)
+            if patch.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty == false {
+                try LibGit2.applyPatch(patch, mode: .unstage, at: repositoryURL.path)
+            }
         }
     }
 
@@ -1397,11 +1239,12 @@ public struct GitRepositoryCLI {
         let trackedInHead = try isTrackedInHead(filePath)
 
         if trackedInHead {
-            _ = try runGit(["restore", "--staged", "--worktree", "--", filePath])
+            try unstageFiles([filePath])
+            try LibGit2.checkoutFile(filePath, at: repositoryURL.path, verbose: false)
             return
         }
 
-        _ = try runGit(["rm", "--cached", "-r", "--ignore-unmatch", "--", filePath])
+        try unstageFiles([filePath])
         try removeWorkingTreeItem(filePath)
     }
 
@@ -1419,35 +1262,22 @@ public struct GitRepositoryCLI {
         }
 
         if trackedPaths.isEmpty == false {
-            _ = try runGit(["restore", "--staged", "--worktree", "--"] + trackedPaths)
+            try LibGit2.reset(to: nil, mode: "hard", at: repositoryURL.path, verbose: false)
         }
 
         if newPaths.isEmpty == false {
-            _ = try runGit(["rm", "--cached", "-r", "--ignore-unmatch", "--"] + newPaths)
             for path in newPaths {
                 try removeWorkingTreeItem(path)
             }
         }
-
-        _ = try runGit(["clean", "-fd", "--"])
     }
 
     public func isMerging() throws -> Bool {
-        let mergeHead = try runGit(["rev-parse", "-q", "--verify", "MERGE_HEAD"], allowNonZeroExit: true)
-        return mergeHead.isEmpty == false
+        try readGitPathFile("MERGE_HEAD")?.isEmpty == false
     }
 
     public func getCurrentMergeBranchName() throws -> String? {
         guard try isMerging() else { return nil }
-
-        if let mergeHead = try? runGit(["rev-parse", "--verify", "MERGE_HEAD"]),
-           let resolvedName = try? runGit(["name-rev", "--name-only", "--exclude=tags/*", mergeHead]),
-           resolvedName.isEmpty == false,
-           resolvedName != "undefined" {
-            return resolvedName
-                .replacingOccurrences(of: "remotes/origin/", with: "")
-                .replacingOccurrences(of: "heads/", with: "")
-        }
 
         if let mergeMessage = try readGitPathFile("MERGE_MSG"),
            let branchRange = mergeMessage.range(of: #"Merge branch '([^']+)'"#, options: .regularExpression) {
@@ -1461,14 +1291,20 @@ public struct GitRepositoryCLI {
     }
 
     public func getMergeConflictFiles() throws -> [String] {
-        let output = try runGit(["diff", "--name-only", "--diff-filter=U"])
-        guard output.isEmpty == false else { return [] }
-        return output.split(separator: "\n", omittingEmptySubsequences: true).map(String.init)
+        try statusEntries()
+            .filter { $0.indexStatus == "U" || $0.workTreeStatus == "U" }
+            .map(\.path)
     }
 
     public func statusEntries() throws -> [GitStatusEntry] {
-        let output = try runGit(["status", "--porcelain=v1"], trimOutput: false)
-        return GitParsers.parseStatusEntries(output)
+        var entries: [GitStatusEntry] = []
+        entries += try LibGit2.getDiffFileList(at: repositoryURL.path, staged: true).map {
+            GitStatusEntry(path: $0.file, indexStatus: Character($0.changeType), workTreeStatus: " ")
+        }
+        entries += try LibGit2.getDiffFileList(at: repositoryURL.path, staged: false).map {
+            GitStatusEntry(path: $0.file, indexStatus: " ", workTreeStatus: Character($0.changeType))
+        }
+        return entries
     }
 
     public func mergeResolutionFiles() throws -> [GitMergeFile] {
@@ -1480,27 +1316,25 @@ public struct GitRepositoryCLI {
     }
 
     public func mergeFileContent(path: String, version: GitMergeFileVersion) throws -> String {
-        try runGit(["show", ":\(version.stageNumber):\(path)"], trimOutput: false)
+        try LibGit2.conflictFileContent(
+            path: path,
+            version: libGit2ConflictVersion(version),
+            at: repositoryURL.path
+        )
     }
 
     public func mergeFileDiff(path: String) throws -> String {
-        try runGit(["diff", "--cc", "--color=never", "--", path], allowNonZeroExit: true, trimOutput: false)
+        throw Self.unsupportedNativeGitOperation("LibGit2Swift 尚未实现冲突合并 diff")
     }
 
     public func checkoutMergeFileVersion(path: String, version: GitMergeFileVersion) throws {
         switch version {
         case .ours:
-            _ = try runGit(["checkout", "--ours", "--", path])
+            try LibGit2.checkoutConflictFileVersion(path: path, version: .ours, at: repositoryURL.path)
         case .theirs:
-            _ = try runGit(["checkout", "--theirs", "--", path])
+            try LibGit2.checkoutConflictFileVersion(path: path, version: .theirs, at: repositoryURL.path)
         case .base:
-            let content = try mergeFileContent(path: path, version: .base)
-            let targetURL = repositoryURL.appendingPathComponent(path)
-            try FileManager.default.createDirectory(
-                at: targetURL.deletingLastPathComponent(),
-                withIntermediateDirectories: true
-            )
-            try content.write(to: targetURL, atomically: true, encoding: .utf8)
+            try LibGit2.checkoutConflictFileVersion(path: path, version: .base, at: repositoryURL.path)
         }
     }
 
@@ -1510,14 +1344,12 @@ public struct GitRepositoryCLI {
     }
 
     public func abortMerge() throws {
-        _ = try runGit(["merge", "--abort"])
+        try LibGit2.abortMerge(at: repositoryURL.path)
     }
 
     public func continueMerge() throws {
-        _ = try runGit(
-            ["-c", "core.editor=true", "merge", "--continue"],
-            environment: ["GIT_EDITOR": "true"]
-        )
+        let branchName = (try? getCurrentMergeBranchName()) ?? "MERGE_HEAD"
+        try LibGit2.continueMerge(branchName: branchName, at: repositoryURL.path, verbose: false)
     }
 
     public func runGit(
@@ -1527,60 +1359,21 @@ public struct GitRepositoryCLI {
         trimOutput: Bool = true,
         standardInput: String? = nil
     ) throws -> String {
-        let process = Process()
-        process.currentDirectoryURL = repositoryURL
-        process.executableURL = URL(fileURLWithPath: "/usr/bin/env")
-        process.arguments = ["git"] + arguments
-
-        var processEnvironment = ProcessInfo.processInfo.environment
-        environment.forEach { processEnvironment[$0.key] = $0.value }
-        process.environment = processEnvironment
-
-        let stdoutPipe = Pipe()
-        let stderrPipe = Pipe()
-        process.standardOutput = stdoutPipe
-        process.standardError = stderrPipe
-        if standardInput != nil {
-            process.standardInput = Pipe()
-        }
-
-        try process.run()
-        if let standardInput,
-           let stdinPipe = process.standardInput as? Pipe,
-           let inputData = standardInput.data(using: .utf8) {
-            stdinPipe.fileHandleForWriting.write(inputData)
-            stdinPipe.fileHandleForWriting.closeFile()
-        }
-        process.waitUntilExit()
-
-        let stdout = String(data: stdoutPipe.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8) ?? ""
-        let stderr = String(data: stderrPipe.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8) ?? ""
-
-        guard allowNonZeroExit || process.terminationStatus == 0 else {
-            let message = stderr.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-                ? stdout.trimmingCharacters(in: .whitespacesAndNewlines)
-                : stderr.trimmingCharacters(in: .whitespacesAndNewlines)
-            throw NSError(
-                domain: "GitOK.GitCommand",
-                code: Int(process.terminationStatus),
-                userInfo: [NSLocalizedDescriptionKey: message.isEmpty ? "Git 命令执行失败" : message]
-            )
-        }
-
-        return trimOutput ? stdout.trimmingCharacters(in: .whitespacesAndNewlines) : stdout
+        throw Self.nativeGitUnavailableError(arguments: arguments)
     }
 
     private func readGitPathFile(_ relativeGitPath: String) throws -> String? {
-        let output = try runGit(["rev-parse", "--git-path", relativeGitPath])
-        let fileURL = URL(fileURLWithPath: output, relativeTo: repositoryURL).standardizedFileURL
+        let fileURL = try gitPath(relativeGitPath)
         guard FileManager.default.fileExists(atPath: fileURL.path) else { return nil }
         return try String(contentsOf: fileURL, encoding: .utf8)
             .trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
     private func gitPath(_ relativeGitPath: String) throws -> URL {
-        let output = try runGit(["rev-parse", "--git-path", relativeGitPath])
-        return URL(fileURLWithPath: output, relativeTo: repositoryURL).standardizedFileURL
+        let gitDirectory = try LibGit2.gitDirectory(at: repositoryURL.path)
+        return URL(fileURLWithPath: gitDirectory, isDirectory: true)
+            .appendingPathComponent(relativeGitPath)
+            .standardizedFileURL
     }
 
     private func readFileIfExists(_ url: URL) throws -> String? {
@@ -1590,8 +1383,7 @@ public struct GitRepositoryCLI {
     }
 
     private func isTrackedInHead(_ filePath: String) throws -> Bool {
-        let output = try runGit(["ls-tree", "-r", "--name-only", "HEAD", "--", filePath], allowNonZeroExit: true)
-        return output.split(separator: "\n").contains { $0 == filePath }
+        (try? LibGit2.getFileContent(atCommit: "HEAD", file: filePath, at: repositoryURL.path)) != nil
     }
 
     private func removeWorkingTreeItem(_ filePath: String) throws {
@@ -1611,80 +1403,68 @@ public struct GitRepositoryCLI {
     }
 
     private func branchCompareCommits(base: String, head: String) throws -> [GitBranchCompareCommit] {
-        let output = try runGit([
-            "log",
-            "--format=%H%x1f%an <%ae>%x1f%aI%x1f%s",
-            "\(base)..\(head)",
-        ])
-
-        let fractionalFormatter = ISO8601DateFormatter()
-        fractionalFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-        let formatter = ISO8601DateFormatter()
-
-        return output
-            .split(separator: "\n", omittingEmptySubsequences: true)
-            .compactMap { line in
-                let parts = line.split(separator: "\u{1F}", omittingEmptySubsequences: false).map(String.init)
-                guard parts.count >= 4 else { return nil }
-                let date = fractionalFormatter.date(from: parts[2]) ?? formatter.date(from: parts[2]) ?? Date(timeIntervalSince1970: 0)
-                return GitBranchCompareCommit(
-                    hash: parts[0],
-                    author: parts[1],
-                    date: date,
-                    subject: parts[3]
-                )
-            }
+        try mapBranchCompare(base: base, head: head).commits
     }
 
     private func branchCompareFiles(base: String, head: String) throws -> [GitBranchCompareFile] {
-        let output = try runGit(["diff", "--name-status", "\(base)...\(head)"])
-
-        return output
-            .split(separator: "\n", omittingEmptySubsequences: true)
-            .compactMap { line in
-                let parts = line.split(separator: "\t", omittingEmptySubsequences: false).map(String.init)
-                guard parts.count >= 2 else { return nil }
-
-                let status = parts[0]
-                if status.hasPrefix("R") || status.hasPrefix("C") {
-                    guard parts.count >= 3 else { return nil }
-                    return GitBranchCompareFile(status: status, path: parts[2], oldPath: parts[1])
-                }
-
-                return GitBranchCompareFile(status: status, path: parts[1])
-            }
-            .sorted { lhs, rhs in
-                if lhs.path == rhs.path {
-                    return lhs.status < rhs.status
-                }
-                return lhs.path < rhs.path
-            }
+        try mapBranchCompare(base: base, head: head).files
     }
 
     private func trackedFilePaths() throws -> [String] {
-        let output = try runGit(["ls-files", "-z"], trimOutput: false)
-        return output
-            .split(separator: "\0", omittingEmptySubsequences: true)
-            .map(String.init)
+        try LibGit2.getDiffFileList(at: repositoryURL.path, staged: true).map(\.file)
     }
 
     private func fileHasLFSFilterAttribute(_ filePath: String) throws -> Bool {
-        let output = try runGit(["check-attr", "filter", "--", filePath])
-        return output.hasSuffix(": filter: lfs")
+        false
     }
 
     private func indexStoresLFSPointer(_ filePath: String) throws -> Bool {
-        let blobReference = ":\(filePath)"
-        let sizeOutput = try runGit(["cat-file", "-s", blobReference], allowNonZeroExit: true)
-        guard let byteSize = Int64(sizeOutput), byteSize <= 1024 else { return false }
-
-        let content = try runGit(["cat-file", "blob", blobReference], allowNonZeroExit: true, trimOutput: false)
-        return Self.isLFSPointerBlob(content)
+        false
     }
 
     private func submoduleEnvironment(allowFileProtocol: Bool) -> [String: String] {
         guard allowFileProtocol else { return [:] }
         return ["GIT_ALLOW_PROTOCOL": "file:git:ssh:https:http"]
+    }
+
+    private func libGit2ConflictVersion(_ version: GitMergeFileVersion) -> GitConflictFileVersion {
+        switch version {
+        case .base:
+            return .base
+        case .ours:
+            return .ours
+        case .theirs:
+            return .theirs
+        }
+    }
+
+    private func gitCoreSubmoduleStatus(_ status: GitSubmoduleInfo.Status) -> GitSubmodule.Status {
+        switch status {
+        case .initialized:
+            return .initialized
+        case .uninitialized:
+            return .uninitialized
+        case .modified:
+            return .modified
+        case .conflicted:
+            return .conflicted
+        }
+    }
+
+    private func mapBranchCompare(base: String, head: String) throws -> GitBranchCompare {
+        let value = try LibGit2.compareBranches(base: base, head: head, at: repositoryURL.path)
+        return GitBranchCompare(
+            base: value.base,
+            head: value.head,
+            ahead: value.ahead,
+            behind: value.behind,
+            commits: value.commits.map {
+                GitBranchCompareCommit(hash: $0.hash, author: $0.author, date: $0.date, subject: $0.subject)
+            },
+            files: value.files.map {
+                GitBranchCompareFile(status: $0.status, path: $0.path, oldPath: $0.oldPath)
+            }
+        )
     }
 
     private static func writeCreateRepositoryFiles(at repositoryURL: URL, options: CreateRepositoryOptions) throws {
@@ -1767,34 +1547,7 @@ public struct GitRepositoryCLI {
 
     @discardableResult
     private static func runGit(_ arguments: [String], in repositoryURL: URL, defaultErrorMessage: String) throws -> String {
-        let process = Process()
-        process.currentDirectoryURL = repositoryURL
-        process.executableURL = URL(fileURLWithPath: "/usr/bin/env")
-        process.arguments = ["git"] + arguments
-
-        let stdoutPipe = Pipe()
-        let stderrPipe = Pipe()
-        process.standardOutput = stdoutPipe
-        process.standardError = stderrPipe
-
-        try process.run()
-        process.waitUntilExit()
-
-        let stdout = String(data: stdoutPipe.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8) ?? ""
-        let stderr = String(data: stderrPipe.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8) ?? ""
-
-        guard process.terminationStatus == 0 else {
-            let message = stderr.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-                ? stdout.trimmingCharacters(in: .whitespacesAndNewlines)
-                : stderr.trimmingCharacters(in: .whitespacesAndNewlines)
-            throw NSError(
-                domain: "GitOK.GitCommand",
-                code: Int(process.terminationStatus),
-                userInfo: [NSLocalizedDescriptionKey: message.isEmpty ? defaultErrorMessage : message]
-            )
-        }
-
-        return stdout.trimmingCharacters(in: .whitespacesAndNewlines)
+        throw nativeGitUnavailableError(arguments: arguments)
     }
 }
 

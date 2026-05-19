@@ -421,7 +421,7 @@ extension Project {
         }
     }
 
-    func compareBranches(base: GitBranch, head: GitBranch) throws -> GitBranchCompare {
+    func compareBranches(base: GitBranch, head: GitBranch) throws -> GitCoreKit.GitBranchCompare {
         try gitCLI.compareBranches(base: base.name, head: head.name)
     }
 
@@ -681,7 +681,7 @@ extension Project {
         try gitCLI.fileDiff(filePath, staged: staged, ignoreWhitespace: ignoreWhitespace)
     }
 
-    func applyPatch(_ patch: String, mode: GitPatchApplyMode, filePath: String) throws {
+    func applyPatch(_ patch: String, mode: GitCoreKit.GitPatchApplyMode, filePath: String) throws {
         do {
             try gitCLI.applyPatch(patch, mode: mode)
             postEvent(
@@ -868,7 +868,7 @@ extension Project {
         }
     }
 
-    func reset(to commit: GitCommit, mode: GitResetMode) throws {
+    func reset(to commit: GitCommit, mode: GitCoreKit.GitResetMode) throws {
         do {
             try gitCLI.reset(to: commit.hash, mode: mode)
             postEvent(
@@ -926,41 +926,11 @@ extension Project {
 
     /// 获取指定提交中文件的 diff 字符串
     func fileDiff(at commit: String, file: String, ignoreWhitespace: Bool = false) throws -> String {
-        if ignoreWhitespace {
-            return try gitCLI.runGit([
-                "show",
-                "--format=",
-                "--patch",
-                "--ignore-all-space",
-                "--color=never",
-                commit,
-                "--",
-                file,
-            ], trimOutput: false)
-        }
-
         return try LibGit2.getFileDiff(atCommit: commit, for: file, at: self.path)
     }
 
     /// 获取未提交文件的 diff 字符串
     func uncommittedFileDiff(file: String, ignoreWhitespace: Bool = false) throws -> String {
-        if ignoreWhitespace {
-            let arguments = [
-                "diff",
-                "--no-ext-diff",
-                "--ignore-all-space",
-                "--color=never",
-                "--",
-                file,
-            ]
-            let unstaged = try gitCLI.runGit(arguments, trimOutput: false)
-            let staged = try gitCLI.runGit(["diff", "--cached"] + Array(arguments.dropFirst()), trimOutput: false)
-            return [staged, unstaged]
-                .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
-                .filter { $0.isEmpty == false }
-                .joined(separator: "\n")
-        }
-
         return try LibGit2.getFileDiff(for: file, at: self.path, staged: false)
     }
 
@@ -1291,7 +1261,7 @@ extension Project {
         }
     }
 
-    func aheadBehind() throws -> GitAheadBehind {
+    func aheadBehind() throws -> GitCoreKit.GitAheadBehind {
         try gitCLI.aheadBehind()
     }
 

@@ -125,7 +125,7 @@ class ProjectVM: ObservableObject, SuperLog {
         self.isClean = isClean
     }
 
-    func updateAheadBehind(_ state: GitAheadBehind) {
+    func updateAheadBehind(_ state: GitCoreKit.GitAheadBehind) {
         self.aheadCount = state.ahead
         self.behindCount = state.behind
         self.hasUpstream = state.hasUpstream

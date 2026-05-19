@@ -1,5 +1,6 @@
 import AppKit
 import Foundation
+import LibGit2Swift
 
 struct DiagnosticEntry: Identifiable, Equatable {
     let id: UUID
@@ -163,24 +164,7 @@ final class DiagnosticsStore: ObservableObject {
     }
 
     private static func gitVersion() -> String {
-        let process = Process()
-        process.executableURL = URL(fileURLWithPath: "/usr/bin/env")
-        process.arguments = ["git", "--version"]
-
-        let pipe = Pipe()
-        process.standardOutput = pipe
-        process.standardError = pipe
-
-        do {
-            try process.run()
-            process.waitUntilExit()
-            let data = pipe.fileHandleForReading.readDataToEndOfFile()
-            let output = String(data: data, encoding: .utf8)?
-                .trimmingCharacters(in: .whitespacesAndNewlines)
-            return output?.isEmpty == false ? output! : "Unavailable"
-        } catch {
-            return "Unavailable"
-        }
+        "libgit2 \(LibGit2.versionString())"
     }
 
     private static func format(_ date: Date) -> String {

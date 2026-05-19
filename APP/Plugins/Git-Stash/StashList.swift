@@ -1,4 +1,5 @@
 import GitCoreKit
+import LibGit2Swift
 import MagicAlert
 import MagicKit
 import OSLog
@@ -448,7 +449,7 @@ extension StashList {
                 let (stashList, branchName) = try await Task.detached(priority: .userInitiated) {
                     let cli = GitRepositoryCLI(repositoryURL: repositoryURL)
                     let stashList = try cli.stashList()
-                    let branchName = try cli.runGit(["branch", "--show-current"], allowNonZeroExit: true)
+                    let branchName = (try? LibGit2.getCurrentBranch(at: repositoryURL.path)) ?? ""
                     return (stashList, branchName)
                 }.value
 

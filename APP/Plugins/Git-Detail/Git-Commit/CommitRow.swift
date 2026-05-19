@@ -604,7 +604,7 @@ struct CommitRow: View, SuperThread, SuperLog {
         }
     }
 
-    private func performReset(_ mode: GitResetMode) {
+    private func performReset(_ mode: GitCoreKit.GitResetMode) {
         guard let project = vm.project else {
             alert_error("项目不可用")
             return
