@@ -858,8 +858,8 @@
 				BannerCoreKit,
 				GitCoreKit,
 				GitOKAutomationKit,
-				ProjectSupportKit,
 				ProjectRulesKit,
+				ProjectSupportKit,
 			);
 			target = 0B0E167C2BD89A8F0078942B /* GitOK */;
 		};
