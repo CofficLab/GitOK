@@ -1,5 +1,5 @@
+import GitCoreKit
 import SwiftUI
-import Security
 
 /// Git 凭据输入视图
 /// 用于让用户输入并保存 Git 凭据（用户名和 Personal Access Token）
@@ -53,7 +53,7 @@ struct CredentialInputView: View {
             VStack(alignment: .leading, spacing: 12) {
                 // GitHub 用户名
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("GitHub 用户名")
+                    Text("Git 用户名")
                         .font(.headline)
                         .foregroundColor(.primary)
 
@@ -65,9 +65,9 @@ struct CredentialInputView: View {
                 // Personal Access Token
                 VStack(alignment: .leading, spacing: 4) {
                     HStack {
-                        Text("Personal Access Token")
-                            .font(.headline)
-                            .foregroundColor(.primary)
+                    Text("Personal Access Token 或密码")
+                        .font(.headline)
+                        .foregroundColor(.primary)
 
                         Spacer()
 
@@ -80,10 +80,10 @@ struct CredentialInputView: View {
                         }
                     }
 
-                    SecureField("ghp_xxxxxxxxxxxxxxxxxxxx", text: $token)
+                    SecureField("token 或密码", text: $token)
                         .textFieldStyle(.roundedBorder)
 
-                    Text("在 GitHub Settings → Developer settings → Personal access tokens 中创建")
+                    Text("GitOK 会通过当前 Git credential helper 保存凭据；GitHub/GitLab 等平台通常需要 token。")
                         .font(.caption)
                         .foregroundColor(.secondary)
                         .fixedSize(horizontal: false, vertical: true)
@@ -130,39 +130,25 @@ struct CredentialInputView: View {
         isSaving = true
 
         DispatchQueue.global(qos: .userInitiated).async {
-            let result = saveToKeychain(username: username, token: token, server: server)
+            do {
+                try GitRepositoryCLI.approveCredential(
+                    host: server,
+                    username: username,
+                    password: token
+                )
 
-            DispatchQueue.main.async {
-                isSaving = false
-
-                if result {
+                DispatchQueue.main.async {
+                    isSaving = false
                     showSuccessAlert = true
-                } else {
-                    errorMessage = "无法保存凭据到 Keychain，请重试"
+                }
+            } catch {
+                DispatchQueue.main.async {
+                    isSaving = false
+                    errorMessage = error.localizedDescription
                     showErrorAlert = true
                 }
             }
         }
-    }
-
-    /// 保存到 Keychain
-    private func saveToKeychain(username: String, token: String, server: String) -> Bool {
-        let tokenData = token.data(using: .utf8)!
-
-        let query: [String: Any] = [
-            kSecClass as String: kSecClassInternetPassword,
-            kSecAttrServer as String: server,
-            kSecAttrProtocol as String: "https",
-            kSecAttrAccount as String: username,
-            kSecValueData as String: tokenData
-        ]
-
-        // 先删除旧的凭据
-        SecItemDelete(query as CFDictionary)
-
-        // 添加新凭据
-        let status = SecItemAdd(query as CFDictionary, nil)
-        return status == errSecSuccess
     }
 
     /// 打开 Token 帮助文档

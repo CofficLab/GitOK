@@ -57,6 +57,15 @@ struct FileList: View, SuperThread, SuperLog {
     /// 当前错误信息
     @State private var errorMessage: String?
 
+    /// 文件过滤文本
+    @State private var filterText = ""
+
+    /// 批量操作选择的文件路径
+    @State private var selectedBatchFilePaths: Set<String> = []
+
+    /// 是否显示批量丢弃确认
+    @State private var showDiscardSelectedAlert = false
+
     var body: some View {
         VStack(spacing: 0) {
             fileInfoBar
@@ -87,6 +96,14 @@ struct FileList: View, SuperThread, SuperLog {
         } message: {
             Text(discardAllAlertMessage)
         }
+        .alert("确认丢弃所选更改", isPresented: $showDiscardSelectedAlert) {
+            Button("取消", role: .cancel) { }
+            Button("丢弃所选", role: .destructive) {
+                discardSelectedChanges()
+            }
+        } message: {
+            Text(discardSelectedAlertMessage)
+        }
     }
 }
 
@@ -95,56 +112,85 @@ struct FileList: View, SuperThread, SuperLog {
 extension FileList {
     /// 文件信息栏：显示文件数量和加载状态
     private var fileInfoBar: some View {
-        HStack {
-            if data.commit == nil && !files.isEmpty {
-                Button(action: {
-                    showDiscardAllAlert = true
-                }) {
+        VStack(spacing: 6) {
+            HStack {
+                if data.commit == nil && !files.isEmpty {
+                    Button(action: {
+                        showDiscardAllAlert = true
+                    }) {
+                        HStack(spacing: 4) {
+                            Image(systemName: "arrow.uturn.backward")
+                                .font(.system(size: 12))
+                            Text("丢弃所有更改")
+                                .font(.caption)
+                        }
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(
+                            Capsule()
+                                .fill(discardButtonHovered ? Color.red.opacity(0.15) : Color.clear)
+                        )
+                        .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.borderless)
+                    .foregroundColor(discardButtonHovered ? .white : .red)
+                    .help("丢弃所有文件的更改")
+                    .onHover { hovering in
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            discardButtonHovered = hovering
+                        }
+                    }
+                }
+
+                Spacer()
+
+                if isLoading {
                     HStack(spacing: 4) {
-                        Image(systemName: "arrow.uturn.backward")
-                            .font(.system(size: 12))
-                        Text("丢弃所有更改")
+                        ProgressView()
+                            .controlSize(.small)
+                        Text("加载中...")
                             .font(.caption)
+                            .foregroundColor(.secondary)
                     }
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 4)
-                    .background(
-                        Capsule()
-                            .fill(discardButtonHovered ? Color.red.opacity(0.15) : Color.clear)
-                    )
-                    .contentShape(Rectangle())
-                }
-                .buttonStyle(.borderless)
-                .foregroundColor(discardButtonHovered ? .white : .red)
-                .help("丢弃所有文件的更改")
-                .onHover { hovering in
-                    withAnimation(.easeInOut(duration: 0.2)) {
-                        discardButtonHovered = hovering
+                } else {
+                    HStack(spacing: 4) {
+                        Image.doc
+                            .foregroundColor(.secondary)
+                            .font(.system(size: 12))
+
+                        Text("\(files.count) 个文件")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
                     }
                 }
             }
 
-            Spacer()
+            HStack(spacing: 6) {
+                Image(systemName: "magnifyingglass")
+                    .font(.system(size: 11))
+                    .foregroundColor(.secondary)
+                TextField("过滤文件", text: $filterText)
+                    .textFieldStyle(.plain)
+                    .font(.caption)
 
-            if isLoading {
-                HStack(spacing: 4) {
-                    ProgressView()
-                        .controlSize(.small)
-                    Text("加载中...")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                }
-            } else {
-                HStack(spacing: 4) {
-                    Image.doc
-                        .foregroundColor(.secondary)
-                        .font(.system(size: 12))
-
-                    Text("\(files.count) 个文件")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
+                if filterText.isEmpty == false {
+                    Button {
+                        filterText = ""
+                    } label: {
+                        Image(systemName: "xmark.circle.fill")
+                            .font(.system(size: 11))
+                            .foregroundColor(.secondary)
+                    }
+                    .buttonStyle(.plain)
+                    .help("清除过滤")
                 }
             }
+            .padding(.horizontal, 8)
+            .padding(.vertical, 5)
+            .background(
+                RoundedRectangle(cornerRadius: 6)
+                    .fill(Color(NSColor.textBackgroundColor).opacity(0.75))
+            )
         }
         .padding(.horizontal, 3)
         .padding(.vertical, 6)
@@ -160,47 +206,178 @@ extension FileList {
     /// 文件列表视图：显示可滚动的文件列表
     private var fileListView: some View {
         ScrollViewReader { scrollProxy in
-            List(files, id: \.self, selection: $selection) { file in
-                FileTile(
-                    file: file,
-                    onDiscardChanges: data.commit == nil ? {
-                        discardChanges(for: $0)
-                    } : nil,
-                    stageState: stageState(for: file),
-                    showsStageBadge: data.commit == nil,
-                    onStage: data.commit == nil ? {
-                        stageFile($0)
-                    } : nil,
-                    onUnstage: data.commit == nil ? {
-                        unstageFile($0)
-                    } : nil,
-                    onSelect: {
-                        selection = $0
-                        vm.setFile($0)
-                    },
-                    onHoverChanged: { hovering in
-                        withAnimation(.easeInOut(duration: 0.12)) {
-                            if hovering {
-                                hoveredFile = file
-                            } else if hoveredFile == file {
-                                hoveredFile = nil
+            if filteredFiles.isEmpty {
+                emptyFilterState
+            } else {
+                List(selection: $selection) {
+                    if data.commit == nil {
+                        if changesFiles.isEmpty == false {
+                            Section {
+                                ForEach(changesFiles, id: \.self) { file in
+                                    fileRow(file)
+                                }
+                            } header: {
+                                sectionHeader(title: "Changes", count: changesFiles.count)
                             }
                         }
+
+                        if stagedFilesForSection.isEmpty == false {
+                            Section {
+                                ForEach(stagedFilesForSection, id: \.self) { file in
+                                    fileRow(file)
+                                }
+                            } header: {
+                                sectionHeader(title: "Staged Changes", count: stagedFilesForSection.count)
+                            }
+                        }
+                    } else {
+                        Section {
+                            ForEach(filteredFiles, id: \.self) { file in
+                                fileRow(file)
+                            }
+                        } header: {
+                            sectionHeader(title: "History Files", count: filteredFiles.count)
                     }
-                )
-                .tag(file as GitDiffFile?)
-                .listRowInsets(.init()) // 移除 List 的默认内边距
-                .listRowBackground(
-                    hoveredFile == file ? Color.accentColor.opacity(0.10) : Color.clear
-                )
             }
-            .listStyle(.plain) // 使用 plain 样式移除额外的 padding
-            .onChange(of: files, {
-                withAnimation {
-                    // 在主线程中调用 scrollTo 方法
-                    scrollProxy.scrollTo(vm.file, anchor: .top)
+
+            if data.commit == nil && selectedBatchFilePaths.isEmpty == false {
+                batchActionBar
+            }
+        }
+                .listStyle(.plain) // 使用 plain 样式移除额外的 padding
+                .onChange(of: files, {
+                    withAnimation {
+                        // 在主线程中调用 scrollTo 方法
+                        scrollProxy.scrollTo(vm.file, anchor: .top)
+                    }
+                })
+            }
+        }
+    }
+
+    private var batchActionBar: some View {
+        HStack(spacing: 8) {
+            Text("已选择 \(selectedBatchFiles.count)")
+                .font(.caption)
+                .foregroundColor(.secondary)
+                .monospacedDigit()
+
+            Button("暂存") {
+                stageSelectedFiles()
+            }
+            .disabled(selectedStageableFiles.isEmpty)
+            .keyboardShortcut("s", modifiers: [.command, .shift])
+            .accessibilityHint("暂存批量选择中仍可暂存的文件")
+
+            Button("取消暂存") {
+                unstageSelectedFiles()
+            }
+            .disabled(selectedUnstageableFiles.isEmpty)
+            .keyboardShortcut("u", modifiers: [.command, .shift])
+            .accessibilityHint("取消暂存批量选择中已暂存的文件")
+
+            Button("丢弃", role: .destructive) {
+                showDiscardSelectedAlert = true
+            }
+            .disabled(selectedBatchFiles.isEmpty)
+            .keyboardShortcut(.delete, modifiers: [.command])
+            .accessibilityHint("丢弃批量选择中的文件更改")
+
+            Spacer()
+
+            Button("全选当前") {
+                selectFilteredFiles()
+            }
+            .disabled(filteredFiles.isEmpty)
+            .keyboardShortcut("a", modifiers: [.command, .shift])
+            .accessibilityHint("选择当前过滤结果中的全部文件")
+
+            Button("清除选择") {
+                selectedBatchFilePaths.removeAll()
+            }
+            .accessibilityHint("清除当前批量选择")
+        }
+        .font(.caption)
+        .buttonStyle(.borderless)
+        .padding(.horizontal, 8)
+        .padding(.vertical, 5)
+        .background(
+            RoundedRectangle(cornerRadius: 6)
+                .fill(Color.accentColor.opacity(0.08))
+        )
+    }
+
+    private var emptyFilterState: some View {
+        VStack(spacing: 8) {
+            Image(systemName: "line.3.horizontal.decrease.circle")
+                .font(.system(size: 28))
+                .foregroundColor(.secondary)
+            Text(filterText.isEmpty ? "没有文件变更" : "没有匹配的文件")
+                .font(.caption)
+                .foregroundColor(.secondary)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+
+    private func sectionHeader(title: String, count: Int) -> some View {
+        HStack {
+            Text(title)
+                .font(.caption.weight(.semibold))
+            Spacer()
+            Text("\(count)")
+                .font(.caption2.monospacedDigit())
+                .foregroundColor(.secondary)
+        }
+        .textCase(nil)
+        .padding(.vertical, 2)
+    }
+
+    private func fileRow(_ file: GitDiffFile) -> some View {
+        FileTile(
+            file: file,
+            onDiscardChanges: data.commit == nil ? {
+                discardChanges(for: $0)
+            } : nil,
+            stageState: stageState(for: file),
+            showsStageBadge: data.commit == nil,
+            isBatchSelected: selectedBatchFilePaths.contains(file.file),
+            onToggleBatchSelection: data.commit == nil ? {
+                toggleBatchSelection(for: $0)
+            } : nil,
+            onStage: data.commit == nil ? {
+                stageFile($0)
+            } : nil,
+            onUnstage: data.commit == nil ? {
+                unstageFile($0)
+            } : nil,
+            onSelect: {
+                selection = $0
+                vm.setFile($0)
+            },
+            onHoverChanged: { hovering in
+                withAnimation(.easeInOut(duration: 0.12)) {
+                    if hovering {
+                        hoveredFile = file
+                    } else if hoveredFile == file {
+                        hoveredFile = nil
+                    }
                 }
-            })
+            }
+        )
+        .tag(file as GitDiffFile?)
+        .listRowInsets(.init()) // 移除 List 的默认内边距
+        .listRowBackground(
+            hoveredFile == file ? Color.accentColor.opacity(0.10) : Color.clear
+        )
+        .accessibilityAddTraits(selection == file ? .isSelected : [])
+        .onMoveCommand { direction in
+            moveSelection(direction)
+        }
+        .onDeleteCommand {
+            if let selection, data.commit == nil {
+                fileToDiscard = selection
+                showDiscardFileAlert = true
+            }
         }
     }
 }
@@ -208,6 +385,78 @@ extension FileList {
 // MARK: - Action
 
 extension FileList {
+    var filteredFiles: [GitDiffFile] {
+        let query = filterText.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard query.isEmpty == false else { return files }
+        return files.filter { $0.file.localizedCaseInsensitiveContains(query) }
+    }
+
+    var changesFiles: [GitDiffFile] {
+        filteredFiles.filter { file in
+            let state = stageState(for: file)
+            return state == .unstaged || state == .stagedAndUnstaged
+        }
+    }
+
+    var stagedFilesForSection: [GitDiffFile] {
+        filteredFiles.filter { stageState(for: $0) == .staged }
+    }
+
+    var selectedBatchFiles: [GitDiffFile] {
+        files.filter { selectedBatchFilePaths.contains($0.file) }
+    }
+
+    var selectedStageableFiles: [GitDiffFile] {
+        selectedBatchFiles.filter { stageState(for: $0).canStage }
+    }
+
+    var selectedUnstageableFiles: [GitDiffFile] {
+        selectedBatchFiles.filter { stageState(for: $0).canUnstage }
+    }
+
+    var discardSelectedAlertMessage: String {
+        let count = selectedBatchFiles.count
+        let untrackedCount = selectedBatchFiles.filter { untrackedFilePaths.contains($0.file) }.count
+        if untrackedCount > 0 {
+            return "确定要丢弃所选 \(count) 个文件的更改吗？其中 \(untrackedCount) 个未跟踪文件会被删除，此操作不可撤销。"
+        }
+        return "确定要丢弃所选 \(count) 个文件的更改吗？此操作不可撤销。"
+    }
+
+    func toggleBatchSelection(for file: GitDiffFile) {
+        if selectedBatchFilePaths.contains(file.file) {
+            selectedBatchFilePaths.remove(file.file)
+        } else {
+            selectedBatchFilePaths.insert(file.file)
+        }
+    }
+
+    func selectFilteredFiles() {
+        selectedBatchFilePaths.formUnion(filteredFiles.map(\.file))
+    }
+
+    func moveSelection(_ direction: MoveCommandDirection) {
+        guard filteredFiles.isEmpty == false else { return }
+
+        let currentIndex = selection.flatMap { selected in
+            filteredFiles.firstIndex(of: selected)
+        }
+
+        let nextIndex: Int
+        switch direction {
+        case .up:
+            nextIndex = max((currentIndex ?? 0) - 1, 0)
+        case .down:
+            nextIndex = min((currentIndex ?? -1) + 1, filteredFiles.count - 1)
+        default:
+            return
+        }
+
+        let nextFile = filteredFiles[nextIndex]
+        selection = nextFile
+        vm.setFile(nextFile)
+    }
+
     func stageState(for file: GitDiffFile) -> FileStageState {
         let isStaged = stagedFilePaths.contains(file.file)
         let isUnstaged = unstagedFilePaths.contains(file.file)
@@ -259,6 +508,27 @@ extension FileList {
         }
     }
 
+    func stageSelectedFiles() {
+        let filesToStage = selectedStageableFiles
+        guard let project = vm.project, filesToStage.isEmpty == false else { return }
+
+        Task.detached(priority: .userInitiated) {
+            do {
+                try project.addFiles(filesToStage.map(\.file))
+                await MainActor.run {
+                    alert_info("已暂存 \(filesToStage.count) 个文件")
+                    selectedBatchFilePaths.subtract(filesToStage.map(\.file))
+                }
+                await self.refresh(reason: "AfterStageSelectedFiles")
+            } catch {
+                await MainActor.run {
+                    os_log(.error, "\(Self.t)❌ 批量暂存失败: \(error.localizedDescription)")
+                    alert_error(error)
+                }
+            }
+        }
+    }
+
     func unstageFile(_ file: GitDiffFile) {
         guard let project = vm.project else { return }
 
@@ -272,6 +542,27 @@ extension FileList {
             } catch {
                 await MainActor.run {
                     os_log(.error, "\(Self.t)❌ 取消暂存失败: \(error.localizedDescription)")
+                    alert_error(error)
+                }
+            }
+        }
+    }
+
+    func unstageSelectedFiles() {
+        let filesToUnstage = selectedUnstageableFiles
+        guard let project = vm.project, filesToUnstage.isEmpty == false else { return }
+
+        Task.detached(priority: .userInitiated) {
+            do {
+                try project.unstageFiles(filesToUnstage.map(\.file))
+                await MainActor.run {
+                    alert_info("已取消暂存 \(filesToUnstage.count) 个文件")
+                    selectedBatchFilePaths.subtract(filesToUnstage.map(\.file))
+                }
+                await self.refresh(reason: "AfterUnstageSelectedFiles")
+            } catch {
+                await MainActor.run {
+                    os_log(.error, "\(Self.t)❌ 批量取消暂存失败: \(error.localizedDescription)")
                     alert_error(error)
                 }
             }
@@ -323,6 +614,31 @@ extension FileList {
             } catch {
                 await MainActor.run {
                     os_log(.error, "\(Self.t)❌ 丢弃所有更改失败: \(error.localizedDescription)")
+                    alert_error(error)
+                }
+            }
+        }
+    }
+
+    func discardSelectedChanges() {
+        let filesToDiscard = selectedBatchFiles
+        guard let project = vm.project, filesToDiscard.isEmpty == false else { return }
+
+        Task.detached(priority: .userInitiated) {
+            do {
+                for file in filesToDiscard {
+                    try project.discardFileChanges(file.file)
+                }
+
+                await MainActor.run {
+                    alert_info("已丢弃 \(filesToDiscard.count) 个文件的更改")
+                    selectedBatchFilePaths.subtract(filesToDiscard.map(\.file))
+                }
+
+                await self.refresh(reason: "AfterDiscardSelectedChanges")
+            } catch {
+                await MainActor.run {
+                    os_log(.error, "\(Self.t)❌ 批量丢弃失败: \(error.localizedDescription)")
                     alert_error(error)
                 }
             }
@@ -423,6 +739,7 @@ extension FileList {
                 self.stagedFilePaths = Set(statusEntries.filter { $0.indexStatus != " " && $0.indexStatus != "?" }.map(\.path))
                 self.unstagedFilePaths = Set(statusEntries.filter { $0.workTreeStatus != " " || $0.indexStatus == "?" }.map(\.path))
                 self.untrackedFilePaths = Set(statusEntries.filter { $0.indexStatus == "?" }.map(\.path))
+                self.selectedBatchFilePaths = self.selectedBatchFilePaths.intersection(Set(newFiles.map(\.file)))
                 self.selection = refreshedSelection
                 self.vm.setFile(self.selection)
                 self.isLoading = false

@@ -92,7 +92,8 @@ extension CommitList {
                 ForEach(Array(commits.enumerated()), id: \.element.hash) { index, commit in
                     CommitRow(
                         commit: commit,
-                        isFirstCommit: commit.hash == firstCommitHash
+                        isFirstCommit: commit.hash == firstCommitHash,
+                        commitIndex: index
                     )
                         .onAppear {
                             // 只在最后几个 commit 出现时触发加载更多

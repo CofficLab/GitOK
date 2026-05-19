@@ -1,7 +1,9 @@
 import LibGit2Swift
+import GitCoreKit
 import MagicKit
 import MagicAlert
 import OSLog
+import ProjectRulesKit
 import SwiftUI
 
 /// 提交记录行视图组件
@@ -19,6 +21,9 @@ struct CommitRow: View, SuperThread, SuperLog {
 
     /// 是否为列表中的第一个提交（最新的提交）
     let isFirstCommit: Bool
+
+    /// 当前提交在已加载历史中的位置，HEAD 为 0。
+    let commitIndex: Int
 
     /// 当前提交是否未推送
     private var isUnpushed: Bool {
@@ -50,19 +55,58 @@ struct CommitRow: View, SuperThread, SuperLog {
     /// 是否正在执行撤销操作
     @State private var isUndoing = false
 
+    @State private var showRevertConfirmation = false
+    @State private var showResetSoftConfirmation = false
+    @State private var showResetMixedConfirmation = false
+    @State private var showResetHardConfirmation = false
+    @State private var showSquashConfirmation = false
+    @State private var squashMessage = ""
+    @State private var isRunningHistoryOperation = false
+
     /// 是否显示创建标签弹窗
     @State private var showCreateTagAlert = false
+
+    /// 是否显示创建附注标签弹窗
+    @State private var showCreateAnnotatedTagAlert = false
 
     /// 新标签名称
     @State private var newTagName = ""
 
+    /// 新附注标签名称
+    @State private var newAnnotatedTagName = ""
+
+    /// 新附注标签说明
+    @State private var newAnnotatedTagMessage = ""
+
     /// 是否正在创建标签
     @State private var isCreatingTag = false
+
+    /// 是否正在创建附注标签
+    @State private var isCreatingAnnotatedTag = false
+
+    /// 是否显示删除标签确认弹窗
+    @State private var showDeleteTagConfirmation = false
+
+    /// 是否显示删除远端标签确认弹窗
+    @State private var showDeleteRemoteTagConfirmation = false
+
+    /// 是否正在删除标签
+    @State private var isDeletingTag = false
+
+    /// 是否正在删除远端标签
+    @State private var isDeletingRemoteTag = false
+
+    /// 是否正在推送标签
+    @State private var isPushingTag = false
 
     /// 是否可以撤销（第一个提交 + 未推送 + 无标签 + 有父提交）
     /// 与 GitHub Desktop 保持一致：只允许撤销最新的提交
     private var canUndo: Bool {
         isFirstCommit && isUnpushed && commit.tags.isEmpty && !commit.parentHashes.isEmpty
+    }
+
+    private var canSquashThroughHead: Bool {
+        commitIndex >= 1 && isUnpushed
     }
 
     var body: some View {
@@ -212,6 +256,52 @@ struct CommitRow: View, SuperThread, SuperLog {
                     }
                 }
 
+                Button {
+                    newAnnotatedTagName = ""
+                    newAnnotatedTagMessage = ""
+                    showCreateAnnotatedTagAlert = true
+                } label: {
+                    Label {
+                        Text("创建附注标签", tableName: "GitCommit")
+                    } icon: {
+                        Image(systemName: "tag.fill")
+                    }
+                }
+
+                if tag.isEmpty == false {
+                    Button {
+                        pushTag()
+                    } label: {
+                        Label {
+                            Text("推送标签", tableName: "GitCommit")
+                        } icon: {
+                            Image(systemName: "arrow.up.circle")
+                        }
+                    }
+                    .disabled(isPushingTag)
+
+                    Button(role: .destructive) {
+                        showDeleteRemoteTagConfirmation = true
+                    } label: {
+                        Label {
+                            Text("删除远端标签", tableName: "GitCommit")
+                        } icon: {
+                            Image(systemName: "icloud.slash")
+                        }
+                    }
+                    .disabled(isDeletingRemoteTag)
+
+                    Button(role: .destructive) {
+                        showDeleteTagConfirmation = true
+                    } label: {
+                        Label {
+                            Text("删除标签", tableName: "GitCommit")
+                        } icon: {
+                            Image(systemName: "tag.slash")
+                        }
+                    }
+                }
+
                 if canUndo {
                     Button(role: .destructive) {
                         showUndoConfirmation = true
@@ -219,6 +309,48 @@ struct CommitRow: View, SuperThread, SuperLog {
                         Label("撤销提交", systemImage: "arrow.uturn.backward")
                     }
                 }
+
+                Divider()
+
+                Button {
+                    showRevertConfirmation = true
+                } label: {
+                    Label("Revert 此提交", systemImage: "arrow.counterclockwise")
+                }
+                .disabled(isRunningHistoryOperation)
+
+                if canSquashThroughHead {
+                    Button {
+                        squashMessage = commit.message
+                        showSquashConfirmation = true
+                    } label: {
+                        Label("Squash 到此提交", systemImage: "arrow.triangle.merge")
+                    }
+                    .disabled(isRunningHistoryOperation)
+                }
+
+                Menu {
+                    Button {
+                        showResetSoftConfirmation = true
+                    } label: {
+                        Label("Soft Reset", systemImage: "text.badge.checkmark")
+                    }
+
+                    Button {
+                        showResetMixedConfirmation = true
+                    } label: {
+                        Label("Mixed Reset", systemImage: "list.bullet.rectangle")
+                    }
+
+                    Button(role: .destructive) {
+                        showResetHardConfirmation = true
+                    } label: {
+                        Label("Hard Reset", systemImage: "trash")
+                    }
+                } label: {
+                    Label("Reset 到此提交", systemImage: "arrow.down.to.line")
+                }
+                .disabled(isRunningHistoryOperation)
             }
             // 撤销确认弹窗
             .alert("确认撤销提交？", isPresented: $showUndoConfirmation) {
@@ -228,6 +360,52 @@ struct CommitRow: View, SuperThread, SuperLog {
                 }
             } message: {
                 Text("撤销后，此提交的文件变更将保留在工作区中，可以重新编辑和提交。")
+            }
+            .alert("确认 Revert 此提交？", isPresented: $showRevertConfirmation) {
+                Button("取消", role: .cancel) {}
+                Button("Revert") {
+                    performRevert()
+                }
+                .disabled(isRunningHistoryOperation)
+            } message: {
+                Text("GitOK 会创建一个新的反向提交来撤销此提交的改动，适合已推送提交。若有冲突，需要手动解决后继续。")
+            }
+            .alert("确认 Soft Reset？", isPresented: $showResetSoftConfirmation) {
+                Button("取消", role: .cancel) {}
+                Button("Soft Reset") {
+                    performReset(.soft)
+                }
+                .disabled(isRunningHistoryOperation)
+            } message: {
+                Text("HEAD 会移动到此提交，之后的提交改动会保留在暂存区。")
+            }
+            .alert("确认 Mixed Reset？", isPresented: $showResetMixedConfirmation) {
+                Button("取消", role: .cancel) {}
+                Button("Mixed Reset") {
+                    performReset(.mixed)
+                }
+                .disabled(isRunningHistoryOperation)
+            } message: {
+                Text("HEAD 会移动到此提交，之后的提交改动会保留在工作区但取消暂存。")
+            }
+            .alert("确认 Hard Reset？", isPresented: $showResetHardConfirmation) {
+                Button("取消", role: .cancel) {}
+                Button("Hard Reset", role: .destructive) {
+                    performReset(.hard)
+                }
+                .disabled(isRunningHistoryOperation)
+            } message: {
+                Text("HEAD、暂存区和工作区都会回到此提交。此提交之后的本地提交和未提交改动会被丢弃。")
+            }
+            .alert("确认 Squash 提交？", isPresented: $showSquashConfirmation) {
+                TextField("Squash 后的提交信息", text: $squashMessage)
+                Button("取消", role: .cancel) {}
+                Button("Squash") {
+                    performSquash()
+                }
+                .disabled(squashMessage.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || isRunningHistoryOperation)
+            } message: {
+                Text("会把从 HEAD 到此提交之间的 \(commitIndex + 1) 个提交合并为一个新提交。仅建议用于尚未推送的提交。")
             }
             .alert(String(localized: "创建标签", table: "GitCommit"), isPresented: $showCreateTagAlert) {
                 TextField(String(localized: "标签名称", table: "GitCommit"), text: $newTagName)
@@ -243,6 +421,57 @@ struct CommitRow: View, SuperThread, SuperLog {
                     String.localizedStringWithFormat(
                         String(localized: "为提交 %@ 创建 lightweight tag。", table: "GitCommit"),
                         String(commit.hash.prefix(8))
+                    )
+                )
+            }
+            .alert(String(localized: "创建附注标签", table: "GitCommit"), isPresented: $showCreateAnnotatedTagAlert) {
+                TextField(String(localized: "标签名称", table: "GitCommit"), text: $newAnnotatedTagName)
+                TextField(String(localized: "标签说明", table: "GitCommit"), text: $newAnnotatedTagMessage)
+                Button(String(localized: "取消", table: "GitCommit"), role: .cancel) {
+                    newAnnotatedTagName = ""
+                    newAnnotatedTagMessage = ""
+                }
+                Button(String(localized: "创建", table: "GitCommit")) {
+                    createAnnotatedTag()
+                }
+                .disabled(
+                    newAnnotatedTagName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ||
+                        newAnnotatedTagMessage.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ||
+                        isCreatingAnnotatedTag
+                )
+            } message: {
+                Text(
+                    String.localizedStringWithFormat(
+                        String(localized: "为提交 %@ 创建 annotated tag。", table: "GitCommit"),
+                        String(commit.hash.prefix(8))
+                    )
+                )
+            }
+            .alert(String(localized: "确认删除标签？", table: "GitCommit"), isPresented: $showDeleteTagConfirmation) {
+                Button(String(localized: "取消", table: "GitCommit"), role: .cancel) {}
+                Button(String(localized: "删除", table: "GitCommit"), role: .destructive) {
+                    deleteLocalTag()
+                }
+                .disabled(isDeletingTag)
+            } message: {
+                Text(
+                    String.localizedStringWithFormat(
+                        String(localized: "将删除本地标签 %@，远程标签不会受影响。", table: "GitCommit"),
+                        tag
+                    )
+                )
+            }
+            .alert(String(localized: "确认删除远端标签？", table: "GitCommit"), isPresented: $showDeleteRemoteTagConfirmation) {
+                Button(String(localized: "取消", table: "GitCommit"), role: .cancel) {}
+                Button(String(localized: "删除", table: "GitCommit"), role: .destructive) {
+                    deleteRemoteTag()
+                }
+                .disabled(isDeletingRemoteTag)
+            } message: {
+                Text(
+                    String.localizedStringWithFormat(
+                        String(localized: "将删除 origin 上的标签 %@，本地标签不会受影响。", table: "GitCommit"),
+                        tag
                     )
                 )
             }
@@ -347,6 +576,100 @@ struct CommitRow: View, SuperThread, SuperLog {
         }
     }
 
+    private func performRevert() {
+        guard let project = vm.project else {
+            alert_error("项目不可用")
+            return
+        }
+
+        let commitSnapshot = commit
+        isRunningHistoryOperation = true
+
+        Task.detached(priority: .userInitiated) {
+            do {
+                try project.revertCommit(commitSnapshot)
+                await MainActor.run {
+                    isRunningHistoryOperation = false
+                    showRevertConfirmation = false
+                    data.setCommit(nil)
+                    alert_info("已 Revert: \(commitSnapshot.hash.prefix(8))")
+                }
+            } catch {
+                await MainActor.run {
+                    isRunningHistoryOperation = false
+                    showRevertConfirmation = false
+                    alert_error(error)
+                }
+            }
+        }
+    }
+
+    private func performReset(_ mode: GitResetMode) {
+        guard let project = vm.project else {
+            alert_error("项目不可用")
+            return
+        }
+
+        let commitSnapshot = commit
+        isRunningHistoryOperation = true
+
+        Task.detached(priority: .userInitiated) {
+            do {
+                try project.reset(to: commitSnapshot, mode: mode)
+                await MainActor.run {
+                    isRunningHistoryOperation = false
+                    showResetSoftConfirmation = false
+                    showResetMixedConfirmation = false
+                    showResetHardConfirmation = false
+                    data.setCommit(nil)
+                    alert_info("已 \(mode.rawValue) reset 到: \(commitSnapshot.hash.prefix(8))")
+                }
+            } catch {
+                await MainActor.run {
+                    isRunningHistoryOperation = false
+                    showResetSoftConfirmation = false
+                    showResetMixedConfirmation = false
+                    showResetHardConfirmation = false
+                    alert_error(error)
+                }
+            }
+        }
+    }
+
+    private func performSquash() {
+        guard let project = vm.project else {
+            alert_error("项目不可用")
+            return
+        }
+
+        let message = squashMessage.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard message.isEmpty == false else {
+            alert_error("提交信息不能为空")
+            return
+        }
+
+        let count = commitIndex + 1
+        isRunningHistoryOperation = true
+
+        Task.detached(priority: .userInitiated) {
+            do {
+                try project.squashLastCommits(count: count, message: message)
+                await MainActor.run {
+                    isRunningHistoryOperation = false
+                    showSquashConfirmation = false
+                    data.setCommit(nil)
+                    alert_info("已 squash \(count) 个提交")
+                }
+            } catch {
+                await MainActor.run {
+                    isRunningHistoryOperation = false
+                    showSquashConfirmation = false
+                    alert_error(error)
+                }
+            }
+        }
+    }
+
     /// 为当前提交创建 lightweight tag。
     private func createLightweightTag() {
         guard let project = vm.project else {
@@ -383,6 +706,168 @@ struct CommitRow: View, SuperThread, SuperLog {
             } catch {
                 await MainActor.run {
                     isCreatingTag = false
+                    alert_error(error)
+                }
+            }
+        }
+    }
+
+    /// 为当前提交创建 annotated tag。
+    private func createAnnotatedTag() {
+        guard let project = vm.project else {
+            alert_error(String(localized: "项目不可用", table: "GitCommit"))
+            return
+        }
+
+        let tagName = newAnnotatedTagName.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard tagName.isEmpty == false else {
+            alert_error(String(localized: "标签名称不能为空", table: "GitCommit"))
+            return
+        }
+
+        let tagMessage = newAnnotatedTagMessage.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard tagMessage.isEmpty == false else {
+            alert_error(String(localized: "标签说明不能为空", table: "GitCommit"))
+            return
+        }
+
+        let commitHash = commit.hash
+        isCreatingAnnotatedTag = true
+
+        Task.detached(priority: .userInitiated) {
+            do {
+                try project.createAnnotatedTag(named: tagName, commitHash: commitHash, message: tagMessage)
+
+                await MainActor.run {
+                    isCreatingAnnotatedTag = false
+                    newAnnotatedTagName = ""
+                    newAnnotatedTagMessage = ""
+                    showCreateAnnotatedTagAlert = false
+                    let message = String.localizedStringWithFormat(
+                        String(localized: "已创建标签: %@", table: "GitCommit"),
+                        tagName
+                    )
+                    alert_info(message)
+                    Task {
+                        await loadTag()
+                    }
+                }
+            } catch {
+                await MainActor.run {
+                    isCreatingAnnotatedTag = false
+                    alert_error(error)
+                }
+            }
+        }
+    }
+
+    /// 删除当前提交显示的本地 tag。
+    private func deleteLocalTag() {
+        guard let project = vm.project else {
+            alert_error(String(localized: "项目不可用", table: "GitCommit"))
+            return
+        }
+
+        let tagName = tag.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard tagName.isEmpty == false else {
+            alert_error(String(localized: "标签名称不能为空", table: "GitCommit"))
+            return
+        }
+
+        isDeletingTag = true
+
+        Task.detached(priority: .userInitiated) {
+            do {
+                try project.deleteLocalTag(named: tagName)
+
+                await MainActor.run {
+                    isDeletingTag = false
+                    showDeleteTagConfirmation = false
+                    let message = String.localizedStringWithFormat(
+                        String(localized: "已删除标签: %@", table: "GitCommit"),
+                        tagName
+                    )
+                    alert_info(message)
+                    Task {
+                        await loadTag()
+                    }
+                }
+            } catch {
+                await MainActor.run {
+                    isDeletingTag = false
+                    alert_error(error)
+                }
+            }
+        }
+    }
+
+    /// 推送当前提交显示的 tag 到 origin。
+    private func pushTag() {
+        guard let project = vm.project else {
+            alert_error(String(localized: "项目不可用", table: "GitCommit"))
+            return
+        }
+
+        let tagName = tag.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard tagName.isEmpty == false else {
+            alert_error(String(localized: "标签名称不能为空", table: "GitCommit"))
+            return
+        }
+
+        isPushingTag = true
+
+        Task.detached(priority: .userInitiated) {
+            do {
+                try project.pushTag(named: tagName)
+
+                await MainActor.run {
+                    isPushingTag = false
+                    let message = String.localizedStringWithFormat(
+                        String(localized: "已推送标签: %@", table: "GitCommit"),
+                        tagName
+                    )
+                    alert_info(message)
+                }
+            } catch {
+                await MainActor.run {
+                    isPushingTag = false
+                    alert_error(error)
+                }
+            }
+        }
+    }
+
+    /// 删除 origin 上当前提交显示的 tag。
+    private func deleteRemoteTag() {
+        guard let project = vm.project else {
+            alert_error(String(localized: "项目不可用", table: "GitCommit"))
+            return
+        }
+
+        let tagName = tag.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard tagName.isEmpty == false else {
+            alert_error(String(localized: "标签名称不能为空", table: "GitCommit"))
+            return
+        }
+
+        isDeletingRemoteTag = true
+
+        Task.detached(priority: .userInitiated) {
+            do {
+                try project.deleteRemoteTag(named: tagName)
+
+                await MainActor.run {
+                    isDeletingRemoteTag = false
+                    showDeleteRemoteTagConfirmation = false
+                    let message = String.localizedStringWithFormat(
+                        String(localized: "已删除远端标签: %@", table: "GitCommit"),
+                        tagName
+                    )
+                    alert_info(message)
+                }
+            } catch {
+                await MainActor.run {
+                    isDeletingRemoteTag = false
                     alert_error(error)
                 }
             }
