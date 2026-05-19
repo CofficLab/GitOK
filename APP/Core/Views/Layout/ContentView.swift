@@ -189,6 +189,8 @@ struct ContentView: View, SuperLog {
         case "plugins": return .plugins
         case "repository": return .repository
         case "commitStyle": return .commitStyle
+        case "externalTools": return .externalTools
+        case "releaseNotes": return .releaseNotes
         default: return .userInfo
         }
     }
@@ -255,7 +257,9 @@ extension ContentView {
     /// - Returns: 详情内容视图
     @ViewBuilder
     private func detailContent(fullWidthStatusBar: Bool) -> some View {
-        if vm.projectExists == false {
+        if g.projects.isEmpty {
+            NoRepositoriesGuideView()
+        } else if vm.projectExists == false {
             GuideView(
                 systemImage: "folder.badge.questionmark",
                 title: "项目不存在"
@@ -327,21 +331,37 @@ extension ContentView {
 extension ContentView {
     /// 更新缓存的视图
     func updateCachedViews() {
+        let start = Date()
+        os_log("\(self.t)🔄 UpdateCachedViews begin tab=\(tab) project=\(vm.project?.path ?? "nil") plugins=\(p.plugins.count)")
+
         if Self.verbose {
             os_log("\(self.t)🔄 Updating cached views")
         }
 
+        let leadingStart = Date()
         toolbarLeadingViews = p.getEnabledToolbarLeadingViews()
+        os_log("\(self.t)✅ UpdateCachedViews leading count=\(toolbarLeadingViews.count) elapsed=\(String(format: "%.3f", Date().timeIntervalSince(leadingStart)))s")
+
+        let trailingStart = Date()
         toolbarTrailingViews = p.getEnabledToolbarTrailingViews()
+        os_log("\(self.t)✅ UpdateCachedViews trailing count=\(toolbarTrailingViews.count) elapsed=\(String(format: "%.3f", Date().timeIntervalSince(trailingStart)))s")
+
+        let listStart = Date()
         pluginListViews = p.getEnabledPluginListViews(tab: tab, project: vm.project)
+        os_log("\(self.t)✅ UpdateCachedViews list count=\(pluginListViews.count) elapsed=\(String(format: "%.3f", Date().timeIntervalSince(listStart)))s")
 
         if Self.verbose {
             os_log("\(self.t)✅ Cached views updated: \(toolbarLeadingViews.count) leading, \(toolbarTrailingViews.count) trailing, \(pluginListViews.count) list views")
         }
+
+        os_log("\(self.t)✅ UpdateCachedViews end elapsed=\(String(format: "%.3f", Date().timeIntervalSince(start)))s")
     }
 
     /// 视图出现时的事件处理
     func onAppear() {
+        let start = Date()
+        os_log("\(self.t)🚀 ContentView.onAppear begin")
+
         if let d = defaultColumnVisibility {
             self.columnVisibility = d
 
@@ -384,6 +404,8 @@ extension ContentView {
         }
 
         updateCachedViews()
+
+        os_log("\(self.t)✅ ContentView.onAppear end tab=\(tab) elapsed=\(String(format: "%.3f", Date().timeIntervalSince(start)))s")
     }
 
     /// 处理项目变更事件

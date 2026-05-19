@@ -38,36 +38,60 @@ struct RootView<Content>: View, SuperEvent, SuperLog where Content: View {
     private let repoManager: RepoManager
 
     init(@ViewBuilder content: () -> Content) {
-        self.content = content()
+        let start = Date()
+        os_log("\(Self.t)🚀 Startup begin: RootView.init")
 
+        let contentStart = Date()
+        self.content = content()
+        os_log("\(Self.t)✅ Startup step: RootView content built elapsed=\(String(format: "%.3f", Date().timeIntervalSince(contentStart)))s")
+
+        let containerStart = Date()
         let c = AppConfig.getContainer()
+        os_log("\(Self.t)✅ Startup step: RootView container ready elapsed=\(String(format: "%.3f", Date().timeIntervalSince(containerStart)))s")
+
+        let repoStart = Date()
         self.repoManager = RepoManager(modelContext: ModelContext(c))
+        os_log("\(Self.t)✅ Startup step: RepoManager ready elapsed=\(String(format: "%.3f", Date().timeIntervalSince(repoStart)))s")
 
         // 初始化提供者
+        let providersStart = Date()
         self.appProvider = AppVM(repoManager: self.repoManager)
         self.iconProvider = IconProvider()
         self.pluginProvider = PluginVM()
+        os_log("\(Self.t)✅ Startup step: providers ready elapsed=\(String(format: "%.3f", Date().timeIntervalSince(providersStart)))s")
 
         // 初始化数据提供者
         var initialProject: Project?
         do {
+            let projectsStart = Date()
+            os_log("\(Self.t)🚀 Startup begin: load projects")
             let projects = try self.repoManager.projectRepo.findAll(sortedBy: .ascending)
+            os_log("\(Self.t)✅ Startup end: load projects count=\(projects.count) elapsed=\(String(format: "%.3f", Date().timeIntervalSince(projectsStart)))s")
+
+            let dataStart = Date()
             self.git = DataVM(projects: projects, repoManager: self.repoManager)
+            os_log("\(Self.t)✅ Startup step: DataVM ready elapsed=\(String(format: "%.3f", Date().timeIntervalSince(dataStart)))s")
 
             // 恢复上次选中的项目
+            let restoreStart = Date()
             let savedPath = self.repoManager.stateRepo.projectPath
             initialProject = projects.first(where: { $0.path == savedPath })
             if initialProject == nil, let firstProject = projects.first {
                 initialProject = firstProject
                 self.repoManager.stateRepo.setProjectPath(firstProject.path)
             }
+            os_log("\(Self.t)✅ Startup step: restore project savedPath=\(savedPath) selected=\(initialProject?.path ?? "nil") elapsed=\(String(format: "%.3f", Date().timeIntervalSince(restoreStart)))s")
 
+            let projectVMStart = Date()
             self.projectVM = ProjectVM(project: initialProject, repoManager: self.repoManager)
+            os_log("\(Self.t)✅ Startup step: ProjectVM ready elapsed=\(String(format: "%.3f", Date().timeIntervalSince(projectVMStart)))s")
         } catch let e {
             os_log(.error, "\(Self.t) Failed to load projects: \(e.localizedDescription)")
             self.git = DataVM(projects: [], repoManager: self.repoManager)
             self.projectVM = ProjectVM(project: initialProject, repoManager: self.repoManager)
         }
+
+        os_log("\(Self.t)✅ Startup end: RootView.init elapsed=\(String(format: "%.3f", Date().timeIntervalSince(start)))s")
     }
 
     var body: some View {

@@ -44,27 +44,39 @@ struct Projects: View, SuperLog {
             }
 
             // 项目列表
-            ScrollView {
-                LazyVStack(spacing: 2) {
-                    ForEach(filteredProjects, id: \.self) { item in
-                        ProjectRow(
-                            title: item.title,
-                            isSelected: selection == item
-                        ) {
-                            selection = item
-                            projectVM.setProject(item, reason: self.className)
+            if data.projects.isEmpty {
+                VStack(spacing: 8) {
+                    Image(systemName: "folder.badge.plus")
+                        .font(.system(size: 28))
+                        .foregroundStyle(.secondary)
+                    Text("暂无项目")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            } else {
+                ScrollView {
+                    LazyVStack(spacing: 2) {
+                        ForEach(filteredProjects, id: \.self) { item in
+                            ProjectRow(
+                                title: item.title,
+                                isSelected: selection == item
+                            ) {
+                                selection = item
+                                projectVM.setProject(item, reason: self.className)
+                            }
+                            .contextMenu { ProjectContextMenu(item: item, pinAction: pinItem, deleteAction: deleteItem) }
                         }
-                        .contextMenu { ProjectContextMenu(item: item, pinAction: pinItem, deleteAction: deleteItem) }
                     }
+                    .padding(.horizontal, 8)
                 }
-                .padding(.horizontal, 8)
             }
-            .onAppear(perform: onAppear)
-            .onChange(of: projectVM.project) { newProject in
-                // 当 projectVM.project 被外部改变时（如 Dock 拖拽），同步 selection 高亮
-                if selection != newProject {
-                    selection = newProject
-                }
+        }
+        .onAppear(perform: onAppear)
+        .onChange(of: projectVM.project) { _, newProject in
+            // 当 projectVM.project 被外部改变时（如 Dock 拖拽），同步 selection 高亮
+            if selection != newProject {
+                selection = newProject
             }
         }
     }
