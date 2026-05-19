@@ -25,6 +25,9 @@ struct CommitRow: View, SuperThread, SuperLog {
     /// 当前提交在已加载历史中的位置，HEAD 为 0。
     let commitIndex: Int
 
+    let graphRow: CommitGraphLayoutRules.Row?
+    let graphLaneCount: Int
+
     /// 当前提交是否未推送
     private var isUnpushed: Bool {
         vm.isCommitUnpushed(commit.hash)
@@ -135,6 +138,9 @@ struct CommitRow: View, SuperThread, SuperLog {
         VStack(spacing: 0) {
             Button(action: selectCommit) {
                 HStack(alignment: .center, spacing: 12) {
+                    CommitGraphView(row: graphRow, laneCount: graphLaneCount)
+                        .padding(.leading, 2)
+
                     // 中间：主要内容
                     VStack(alignment: .leading, spacing: 2) {
                         // 第一行：提交消息标题

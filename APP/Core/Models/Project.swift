@@ -812,6 +812,10 @@ extension Project {
         return try LibGit2.getCommitListWithPagination(at: self.path, page: page, size: limit)
     }
 
+    func getCommitGraphWithPagination(_ page: Int, limit: Int) throws -> [GitCommit] {
+        return try LibGit2.getCommitGraphListWithPagination(at: self.path, page: page, size: limit)
+    }
+
     /// 撤销指定的提交（仅限未推送的 HEAD commit）
     /// 原理：执行 git reset --mixed <parentHash>，将提交的文件变更保留在工作区（未暂存状态）
     /// - Parameter commit: 要撤销的提交

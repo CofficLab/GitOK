@@ -1,6 +1,7 @@
 import LibGit2Swift
 import MagicKit
 import OSLog
+import ProjectRulesKit
 import SwiftUI
 
 /// Git 提交列表视图组件
@@ -22,6 +23,9 @@ struct CommitList: View, SuperThread, SuperLog {
 
     /// 提交列表数据
     @State private var commits: [GitCommit] = []
+
+    @State private var graphRowsByCommitHash: [String: CommitGraphLayoutRules.Row] = [:]
+    @State private var graphLaneCount = 1
 
     /// 是否正在加载数据
     @State private var loading = false
@@ -93,7 +97,9 @@ extension CommitList {
                     CommitRow(
                         commit: commit,
                         isFirstCommit: commit.hash == firstCommitHash,
-                        commitIndex: index
+                        commitIndex: index,
+                        graphRow: graphRowsByCommitHash[commit.hash],
+                        graphLaneCount: graphLaneCount
                     )
                         .onAppear {
                             // 只在最后几个 commit 出现时触发加载更多
@@ -137,6 +143,15 @@ extension CommitList {
 // MARK: - Action
 
 extension CommitList {
+    private func rebuildGraphRows() {
+        let rows = CommitGraphLayoutRules.layout(nodes: commits.map {
+            CommitGraphLayoutRules.Node(id: $0.hash, parentIDs: $0.parentHashes)
+        })
+
+        graphRowsByCommitHash = Dictionary(uniqueKeysWithValues: rows.map { ($0.commitID, $0) })
+        graphLaneCount = max(rows.map(\.laneCount).max() ?? 1, 1)
+    }
+
     /// 加载更多提交记录
     /// 使用分页方式获取下一页的提交数据
     private func loadMoreCommits() {
@@ -152,7 +167,7 @@ extension CommitList {
 
         Task.detached(priority: .userInitiated) {
             do {
-                let newCommits = try project.getCommitsWithPagination(
+                let newCommits = try project.getCommitGraphWithPagination(
                     currentPage,
                     limit: pageSize
                 )
@@ -168,6 +183,7 @@ extension CommitList {
 
                         if !uniqueNewCommits.isEmpty {
                             self.commits.append(contentsOf: uniqueNewCommits)
+                            self.rebuildGraphRows()
                         } else if Self.verbose {
                             os_log("\(Self.t)⚠️ LoadMoreCommits - all commits were duplicates!")
                         }
@@ -237,7 +253,7 @@ extension CommitList {
                         os_log("\(Self.t)🍋 Refresh(\(reason))")
                     }
 
-                    let commits = try project.getCommitsWithPagination(
+                    let commits = try project.getCommitGraphWithPagination(
                         0, limit: pageSize
                     )
 
@@ -255,6 +271,7 @@ extension CommitList {
                 await MainActor.run {
                     self.vm.updateUnpushedCommits(unpushedHashes.count, hashes: unpushedHashes)
                     self.commits = initialCommits
+                    self.rebuildGraphRows()
                     self.loading = false
                     self.currentPage = 1 // Next page to load
                 }
@@ -264,6 +281,7 @@ extension CommitList {
                 // 在主线程更新 UI 状态
                 await MainActor.run {
                     self.commits = []
+                    self.rebuildGraphRows()
                     self.loading = false
                 }
             }
@@ -304,7 +322,7 @@ extension CommitList {
 
         Task.detached(priority: .userInitiated) {
             do {
-                let newCommits = try project.getCommitsWithPagination(
+                let newCommits = try project.getCommitGraphWithPagination(
                     currentPage,
                     limit: pageSize
                 )
@@ -318,6 +336,7 @@ extension CommitList {
                             }
                         }
                         self.commits.append(contentsOf: uniqueNewCommits)
+                        self.rebuildGraphRows()
                         self.currentPage += 1
 
                         // 检查是否找到目标 commit
@@ -331,6 +350,7 @@ extension CommitList {
                         }
                     } else {
                         self.hasMoreCommits = false
+                        self.rebuildGraphRows()
                     }
                     self.loading = false
                 }
