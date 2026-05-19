@@ -31,9 +31,6 @@ struct ContentView: View, SuperLog {
     /// 项目操作按钮是否可见
     @State private var projectActionsVisibility = true
 
-    /// 控制状态栏布局：true 为全宽（底部跨越左右栏），false 为旧布局（仅 detail 内部）
-    var useFullWidthStatusBar: Bool = true
-
     /// 默认状态栏可见性
     var defaultStatusBarVisibility: Bool? = nil
 
@@ -62,21 +59,7 @@ struct ContentView: View, SuperLog {
     @State private var pluginListViews: [(plugin: SuperPlugin, view: AnyView)] = []
 
     var body: some View {
-        Group {
-            if useFullWidthStatusBar {
-                VStack(spacing: 0) {
-                    navigationSplitView(fullWidthStatusBar: true)
-
-                    if statusBarVisibility && vm.projectExists {
-                        Divider()
-                        StatusBar()
-                            .frame(maxWidth: .infinity)
-                    }
-                }
-            } else {
-                navigationSplitView(fullWidthStatusBar: false)
-            }
-        }
+        navigationSplitView()
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .sheet(isPresented: $app.showSettings) {
             SettingView(defaultTab: settingTabFromString(app.defaultSettingTab))
@@ -200,19 +183,16 @@ struct ContentView: View, SuperLog {
 
 extension ContentView {
     /// 创建导航分栏视图
-    /// - Parameter fullWidthStatusBar: 是否使用全宽状态栏
     /// - Returns: 配置好的导航分栏视图
-    private func navigationSplitView(fullWidthStatusBar: Bool) -> some View {
+    private func navigationSplitView() -> some View {
         NavigationSplitView(columnVisibility: $columnVisibility) {
-            Projects()
-                .navigationSplitViewColumnWidth(min: 200, ideal: 200, max: 300)
-                .toolbar(content: {
-                    ToolbarItem {
-                        BtnAdd()
-                    }
-                })
+            SidebarView()
         } detail: {
-            detailContent(fullWidthStatusBar: fullWidthStatusBar)
+            DetailView(
+                tab: tab,
+                pluginListViews: pluginListViews,
+                statusBarVisibility: statusBarVisibility
+            )
         }
         .onAppear(perform: onAppear)
         .onChange(of: vm.project, onProjectChange)
@@ -250,79 +230,6 @@ extension ContentView {
                     })
             }
         })
-    }
-
-    /// 创建详情内容视图
-    /// - Parameter fullWidthStatusBar: 是否使用全宽状态栏
-    /// - Returns: 详情内容视图
-    @ViewBuilder
-    private func detailContent(fullWidthStatusBar: Bool) -> some View {
-        if g.projects.isEmpty {
-            NoRepositoriesGuideView()
-        } else if vm.projectExists == false {
-            GuideView(
-                systemImage: "folder.badge.questionmark",
-                title: "项目不存在"
-            ).setIconColor(.red.opacity(0.5))
-        } else {
-            if pluginListViews.isEmpty {
-                VStack(spacing: 0) {
-                    if let tabDetailView = p.getEnabledTabDetailView(tab: tab) {
-                        tabDetailView
-                    } else {
-                        GuideView(
-                            systemImage: "puzzlepiece.extension",
-                            title: "暂无可用视图",
-                            subtitle: "请在设置中启用相关插件以显示内容",
-                            action: {
-                                app.openPluginSettings()
-                            },
-                            actionLabel: "打开插件设置"
-                        )
-                        .setIconColor(.secondary)
-                    }
-
-                    if fullWidthStatusBar == false, statusBarVisibility {
-                        StatusBar()
-                    }
-                }
-                .frame(maxHeight: .infinity)
-            } else {
-                HSplitView {
-                    VStack(spacing: 0) {
-                        ForEach(pluginListViews, id: \.plugin.instanceLabel) { item in
-                            item.view
-                        }
-                    }
-                    .frame(idealWidth: 200)
-                    .frame(minWidth: 120)
-                    .frame(maxWidth: 300)
-                    .frame(maxHeight: .infinity)
-
-                    VStack(spacing: 0) {
-                        if let tabDetailView = p.getEnabledTabDetailView(tab: tab) {
-                            tabDetailView
-                        } else {
-                            GuideView(
-                                systemImage: "puzzlepiece.extension",
-                                title: "暂无可用视图",
-                                subtitle: "请在设置中启用相关插件以显示内容",
-                                action: {
-                                    app.openPluginSettings()
-                                },
-                                actionLabel: "打开插件设置"
-                            )
-                            .setIconColor(.secondary)
-                        }
-
-                        if fullWidthStatusBar == false, statusBarVisibility {
-                            StatusBar()
-                    }
-                }
-                .frame(maxHeight: .infinity)
-                }
-            }
-        }
     }
 }
 
