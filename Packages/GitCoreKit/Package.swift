@@ -13,7 +13,7 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(path: "../../../LibGit2Swift"),
+        .package(url: "https://github.com/nookery/LibGit2Swift.git", branch: "main"),
     ],
     targets: [
         .target(
