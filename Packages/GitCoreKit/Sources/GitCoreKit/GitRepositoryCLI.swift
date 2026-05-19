@@ -580,14 +580,6 @@ public struct GitRepositoryCLI {
         try LibGit2.stashBranch(name: trimmedName, index: index, at: repositoryURL.path, verbose: false)
     }
 
-    private func stashChangedFiles(index: Int) throws -> [String] {
-        []
-    }
-
-    private func stashDiffPreview(index: Int) throws -> String {
-        ""
-    }
-
     public func fetch(remote: String = "origin") throws {
         try LibGit2.fetch(at: repositoryURL.path, remote: remote, prune: true, verbose: false)
     }
@@ -601,13 +593,6 @@ public struct GitRepositoryCLI {
                 description: submodule.description
             )
         }
-    }
-
-    public static func parseSubmoduleStatus(_ output: String) -> [GitSubmodule] {
-        output
-            .split(separator: "\n", omittingEmptySubsequences: true)
-            .compactMap { parseSubmoduleStatusLine(String($0)) }
-            .sorted { $0.path < $1.path }
     }
 
     public func initializeSubmodules(paths: [String] = [], recursive: Bool = true, allowFileProtocol: Bool = false) throws {
@@ -633,19 +618,6 @@ public struct GitRepositoryCLI {
 
     public func lfsStatus() -> GitLFSStatus {
         GitLFSStatus(isAvailable: false, version: nil)
-    }
-
-    public static func parseLFSVersion(from output: String) -> String? {
-        let trimmed = output.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard trimmed.hasPrefix("git-lfs/") else { return nil }
-
-        let version = trimmed
-            .dropFirst("git-lfs/".count)
-            .split(separator: " ")
-            .first
-            .map(String.init)
-
-        return version?.isEmpty == false ? version : nil
     }
 
     public func initializeLFS() throws {
@@ -722,20 +694,6 @@ public struct GitRepositoryCLI {
         }
 
         return mismatches.sorted { $0.path < $1.path }
-    }
-
-    public static func isLFSPointerBlob(_ content: String) -> Bool {
-        let lines = content.split(separator: "\n", omittingEmptySubsequences: false)
-        guard lines.first == "version https://git-lfs.github.com/spec/v1" else { return false }
-
-        let hasOID = lines.contains { line in
-            line.range(of: #"^oid sha256:[0-9a-f]{64}$"#, options: .regularExpression) != nil
-        }
-        let hasSize = lines.contains { line in
-            line.range(of: #"^size [0-9]+$"#, options: .regularExpression) != nil
-        }
-
-        return hasOID && hasSize
     }
 
     public func deleteLocalBranch(named branchName: String) throws {
@@ -942,10 +900,6 @@ public struct GitRepositoryCLI {
         )
     }
 
-    public func isRebasing() throws -> Bool {
-        try rebaseStatus().isRebasing
-    }
-
     public func startRebase(branch: String, onto upstream: String) throws {
         let trimmedBranch = branch.trimmingCharacters(in: .whitespacesAndNewlines)
         let trimmedUpstream = upstream.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -982,10 +936,6 @@ public struct GitRepositoryCLI {
             return .inactive
         }
         return GitCherryPickStatus(isCherryPicking: true, commitHash: commitHash)
-    }
-
-    public func isCherryPicking() throws -> Bool {
-        try cherryPickStatus().isCherryPicking
     }
 
     public func cherryPick(commits: [String], onto branch: String? = nil) throws {
@@ -1307,14 +1257,6 @@ public struct GitRepositoryCLI {
         return entries
     }
 
-    public func mergeResolutionFiles() throws -> [GitMergeFile] {
-        let unresolvedPaths = Set(try getMergeConflictFiles())
-        return GitParsers.classifyMergeFiles(
-            unresolvedPaths: unresolvedPaths,
-            statusEntries: try statusEntries()
-        )
-    }
-
     public func mergeFileContent(path: String, version: GitMergeFileVersion) throws -> String {
         try LibGit2.conflictFileContent(
             path: path,
@@ -1338,11 +1280,6 @@ public struct GitRepositoryCLI {
         }
     }
 
-    public func canContinueMerge() throws -> Bool {
-        let files = try mergeResolutionFiles()
-        return files.isEmpty == false && files.allSatisfy { $0.state == .staged }
-    }
-
     public func abortMerge() throws {
         try LibGit2.abortMerge(at: repositoryURL.path)
     }
@@ -1350,16 +1287,6 @@ public struct GitRepositoryCLI {
     public func continueMerge() throws {
         let branchName = (try? getCurrentMergeBranchName()) ?? "MERGE_HEAD"
         try LibGit2.continueMerge(branchName: branchName, at: repositoryURL.path, verbose: false)
-    }
-
-    public func runGit(
-        _ arguments: [String],
-        allowNonZeroExit: Bool = false,
-        environment: [String: String] = [:],
-        trimOutput: Bool = true,
-        standardInput: String? = nil
-    ) throws -> String {
-        throw Self.nativeGitUnavailableError(arguments: arguments)
     }
 
     private func readGitPathFile(_ relativeGitPath: String) throws -> String? {
@@ -1495,54 +1422,6 @@ public struct GitRepositoryCLI {
         }
 
         return String(filePath.dropFirst(repositoryPath.count + 1))
-    }
-
-    private static func parseSubmoduleStatusLine(_ line: String) -> GitSubmodule? {
-        guard line.count >= 42 else { return nil }
-
-        let marker = line[line.startIndex]
-        let hashStart = line.index(after: line.startIndex)
-        let hashEnd = line.index(hashStart, offsetBy: 40)
-        let commitHash = String(line[hashStart..<hashEnd])
-
-        guard commitHash.range(of: #"^[0-9a-fA-F]{40}$"#, options: .regularExpression) != nil else {
-            return nil
-        }
-
-        let details = line[hashEnd...].trimmingCharacters(in: .whitespacesAndNewlines)
-        guard details.isEmpty == false else { return nil }
-
-        let path: String
-        let description: String?
-        if let descriptionRange = details.range(of: #" \(.+\)$"#, options: .regularExpression) {
-            path = String(details[..<descriptionRange.lowerBound])
-            description = String(details[descriptionRange])
-                .trimmingCharacters(in: .whitespacesAndNewlines)
-                .trimmingCharacters(in: CharacterSet(charactersIn: "()"))
-        } else {
-            path = details
-            description = nil
-        }
-
-        return GitSubmodule(
-            path: path,
-            commitHash: commitHash,
-            status: submoduleStatus(for: marker),
-            description: description
-        )
-    }
-
-    private static func submoduleStatus(for marker: Character) -> GitSubmodule.Status {
-        switch marker {
-        case "-":
-            return .uninitialized
-        case "+":
-            return .modified
-        case "U":
-            return .conflicted
-        default:
-            return .initialized
-        }
     }
 
     @discardableResult
