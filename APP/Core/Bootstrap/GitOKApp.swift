@@ -1,5 +1,6 @@
 import LibGit2Swift
 import MagicKit
+import OSLog
 import Sparkle
 import SwiftData
 import SwiftUI
@@ -17,17 +18,19 @@ struct GitOKApp: App, SuperLog {
     /// macOS 应用代理
     @NSApplicationDelegateAdaptor private var appDelegate: MacAgent
 
-    /// Sparkle 更新控制器
-    private let updaterController: SPUStandardUpdaterController
-
     init() {
+        let start = Date()
+        os_log("\(Self.t)🚀 Startup begin: GitOKApp.init")
+
         // 初始化 libgit2
         LibGit2.initialize()
-        
-        updaterController = SPUStandardUpdaterController(startingUpdater: true, updaterDelegate: nil, userDriverDelegate: nil)
+
+        os_log("\(Self.t)✅ Startup end: GitOKApp.init elapsed=\(String(format: "%.3f", Date().timeIntervalSince(start)))s")
     }
 
     var body: some Scene {
+        let _ = os_log("\(Self.t)🚀 Startup phase: GitOKApp.body")
+
         WindowGroup {
             ContentLayout()
                 .inRootView()
@@ -60,7 +63,7 @@ struct GitOKApp: App, SuperLog {
             AppCommand()
 
             CommandGroup(after: .appInfo) {
-                UpdaterView(updater: updaterController.updater)
+                UpdaterView(updater: AppUpdateController.shared.updater)
             }
         })
     }

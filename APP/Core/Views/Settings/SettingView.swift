@@ -25,6 +25,10 @@ struct SettingView: View, SuperLog {
         case userInfo = "用户信息"
         case repository = "仓库设置"
         case commitStyle = "Commit 风格"
+        case network = "网络"
+        case externalTools = "外部工具"
+        case releaseNotes = "更新"
+        case diagnostics = "诊断"
 //        case appearance = "外观"
 //        case systemInfo = "系统信息"
         case plugins = "插件管理"
@@ -39,6 +43,10 @@ struct SettingView: View, SuperLog {
             case .userInfo: return "person.circle"
             case .repository: return "folder.badge.gearshape"
             case .commitStyle: return "text.alignleft"
+            case .network: return "network"
+            case .externalTools: return "terminal"
+            case .releaseNotes: return "arrow.triangle.2.circlepath"
+            case .diagnostics: return "stethoscope"
 //            case .appearance: return "paintbrush"
 //            case .systemInfo: return "desktopcomputer.trianglebadge.exclamationmark"
             case .plugins: return "puzzlepiece.extension"
@@ -88,6 +96,18 @@ struct SettingView: View, SuperLog {
             case .commitStyle:
                 CommitStyleSettingView()
                     .environmentObject(data)
+
+            case .network:
+                GitNetworkSettingView()
+
+            case .externalTools:
+                ExternalToolSettingView()
+
+            case .releaseNotes:
+                ReleaseNotesSettingView()
+
+            case .diagnostics:
+                DiagnosticsSettingView()
 
 //            case .appearance:
 //                AppAppearanceSettingView()

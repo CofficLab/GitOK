@@ -15,9 +15,19 @@ final class CheckForUpdatesViewModel: ObservableObject, SuperLog {
     /// 是否可以检查更新
     @Published var canCheckForUpdates = false
 
+    /// 是否启用后台自动检查更新
+    @Published var automaticallyChecksForUpdates = false
+
+    /// 当前更新源
+    @Published var feedURL: URL?
+
     init(updater: SPUUpdater) {
         updater.publisher(for: \.canCheckForUpdates)
             .assign(to: &$canCheckForUpdates)
+        updater.publisher(for: \.automaticallyChecksForUpdates)
+            .assign(to: &$automaticallyChecksForUpdates)
+        updater.publisher(for: \.feedURL)
+            .assign(to: &$feedURL)
     }
 }
 
@@ -36,14 +46,23 @@ struct UpdaterView: View, SuperLog {
     /// Sparkle 更新器
     private let updater: SPUUpdater
 
+    @State private var isChecking = false
+
     init(updater: SPUUpdater) {
         self.updater = updater
         self.checkForUpdatesViewModel = CheckForUpdatesViewModel(updater: updater)
     }
 
     var body: some View {
-        Button("检查更新", action: updater.checkForUpdates)
-            .disabled(!checkForUpdatesViewModel.canCheckForUpdates)
+        Button(isChecking ? "正在检查更新..." : "检查更新") {
+            isChecking = true
+            updater.checkForUpdates()
+
+            DispatchQueue.main.asyncAfter(deadline: .now() + 4) {
+                isChecking = false
+            }
+        }
+        .disabled(!checkForUpdatesViewModel.canCheckForUpdates || isChecking)
     }
 }
 
