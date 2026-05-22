@@ -1,4 +1,5 @@
 import Foundation
+import GitOKUI
 import MagicKit
 import OSLog
 import SwiftUI
@@ -42,7 +43,7 @@ struct GitUserInfoSettingView: View, SuperLog {
             VStack(alignment: .leading, spacing: 24) {
                 // 现有预设配置列表
                 if !savedConfigs.isEmpty {
-                    MagicSettingSection(title: String(localized: "现有预设", table: "Core"), titleAlignment: .leading) {
+                    GitOKUI.AppSettingsSection(title: String(localized: "现有预设", table: "Core")) {
                         VStack(spacing: 0) {
                             ForEach(savedConfigs) { config in
                                 presetConfigRow(config)
@@ -90,19 +91,31 @@ struct GitUserInfoSettingView: View, SuperLog {
     // MARK: - View Components
 
     private func presetConfigRow(_ config: GitUserConfig) -> some View {
-        MagicSettingRow(
-            title: config.name,
-            description: config.email,
-            icon: .iconUser
-        ) {
-            // 删除按钮
-            Button(action: { deletePreset(config) }) {
-                Image(systemName: .iconTrash)
-                    .foregroundColor(.red)
-                    .font(.system(size: 14))
+        GitOKUI.AppSettingsRow(verticalPadding: 10) {
+            HStack(spacing: 12) {
+                Image(systemName: "person")
+                    .foregroundColor(.secondary)
+                    .frame(width: 28)
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(config.name)
+                        .font(.system(size: 13, weight: .medium))
+
+                    Text(config.email)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+
+                Spacer()
+
+                Button(action: { deletePreset(config) }) {
+                    Image(systemName: "trash")
+                        .foregroundColor(.red)
+                        .font(.system(size: 14))
+                }
+                .buttonStyle(.plain)
+                .help(Text(String(localized: "删除此预设", table: "Core")))
             }
-            .buttonStyle(.plain)
-            .help(Text(String(localized: "删除此预设", table: "Core")))
         }
         .contentShape(Rectangle())
         .contextMenu {
@@ -118,7 +131,7 @@ struct GitUserInfoSettingView: View, SuperLog {
     }
 
     private var addNewPresetSection: some View {
-        MagicSettingSection(title: String(localized: "添加新预设", table: "Core"), titleAlignment: .leading) {
+        GitOKUI.AppSettingsSection(title: String(localized: "添加新预设", table: "Core")) {
             VStack(spacing: 0) {
                 userNameInputView
                 Divider()
