@@ -44,6 +44,8 @@
 		A1F300042F70000100ABC001 /* BannerCoreKit in Frameworks */ = {isa = PBXBuildFile; productRef = A1F300022F70000100ABC001 /* BannerCoreKit */; };
 		A1F400032F70000100ABC001 /* ProjectSupportKit in Frameworks */ = {isa = PBXBuildFile; productRef = A1F400022F70000100ABC001 /* ProjectSupportKit */; };
 		A1F400042F70000100ABC001 /* ProjectSupportKit in Frameworks */ = {isa = PBXBuildFile; productRef = A1F400022F70000100ABC001 /* ProjectSupportKit */; };
+		A1F500032F70000100ABC001 /* GitOKUI in Frameworks */ = {isa = PBXBuildFile; productRef = A1F500022F70000100ABC001 /* GitOKUI */; };
+		A1F500042F70000100ABC001 /* GitOKUI in Frameworks */ = {isa = PBXBuildFile; productRef = A1F500022F70000100ABC001 /* GitOKUI */; };
 		F5160A7B2FBBEE7C00F24BD9 /* LibGit2Swift in Frameworks */ = {isa = PBXBuildFile; productRef = F5160A7A2FBBEE7C00F24BD9 /* LibGit2Swift */; };
 		F5165B6D2FBC05F400F24BD9 /* LibGit2Swift in Frameworks */ = {isa = PBXBuildFile; productRef = F5165B6C2FBC05F400F24BD9 /* LibGit2Swift */; };
 		F5165B702FBC084A00F24BD9 /* LibGit2Swift in Frameworks */ = {isa = PBXBuildFile; productRef = F5165B6F2FBC084A00F24BD9 /* LibGit2Swift */; };
@@ -860,6 +862,7 @@
 				BannerCoreKit,
 				GitCoreKit,
 				GitOKAutomationKit,
+				GitOKUI,
 				ProjectRulesKit,
 				ProjectSupportKit,
 			);
@@ -883,6 +886,7 @@
 				A1F400032F70000100ABC001 /* ProjectSupportKit in Frameworks */,
 				A1F200032F70000100ABC001 /* ProjectRulesKit in Frameworks */,
 				A1F100032F70000100ABC001 /* GitCoreKit in Frameworks */,
+				A1F500032F70000100ABC001 /* GitOKUI in Frameworks */,
 				F5165B6D2FBC05F400F24BD9 /* LibGit2Swift in Frameworks */,
 				F5165B702FBC084A00F24BD9 /* LibGit2Swift in Frameworks */,
 				0B5178012F13D6A70085381F /* LibGit2Swift in Frameworks */,
@@ -917,6 +921,7 @@
 				A1F400042F70000100ABC001 /* ProjectSupportKit in Frameworks */,
 				A1F200042F70000100ABC001 /* ProjectRulesKit in Frameworks */,
 				A1F100042F70000100ABC001 /* GitCoreKit in Frameworks */,
+				A1F500042F70000100ABC001 /* GitOKUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1306,6 +1311,7 @@
 				A1F400022F70000100ABC001 /* ProjectSupportKit */,
 				A1F200022F70000100ABC001 /* ProjectRulesKit */,
 				A1F100022F70000100ABC001 /* GitCoreKit */,
+				A1F500022F70000100ABC001 /* GitOKUI */,
 				0B3CC95D2DF1C49000E22263 /* Sparkle */,
 				0B750F152E7F934F00140214 /* MarkdownUI */,
 				F5B9093A2EE8FB4B008BEB16 /* MagicDiffView */,
@@ -1356,6 +1362,7 @@
 				A1F400022F70000100ABC001 /* ProjectSupportKit */,
 				A1F200022F70000100ABC001 /* ProjectRulesKit */,
 				A1F100022F70000100ABC001 /* GitCoreKit */,
+				A1F500022F70000100ABC001 /* GitOKUI */,
 			);
 			productName = GitOKTests;
 			productReference = A1F000012F70000100ABC001 /* GitOKTests.xctest */;
@@ -1396,6 +1403,7 @@
 				A1F400012F70000100ABC001 /* XCLocalSwiftPackageReference "Packages/ProjectSupportKit" */,
 				A1F200012F70000100ABC001 /* XCLocalSwiftPackageReference "Packages/ProjectRulesKit" */,
 				A1F100012F70000100ABC001 /* XCLocalSwiftPackageReference "Packages/GitCoreKit" */,
+				A1F500012F70000100ABC001 /* XCLocalSwiftPackageReference "Packages/GitOKUI" */,
 				F5F794E72C5B192600DCB824 /* XCRemoteSwiftPackageReference "Sparkle" */,
 				F54178E22E00F91F00503C7B /* XCRemoteSwiftPackageReference "swift-markdown-ui" */,
 				0B1807AC2F1BCCF800E4E23B /* XCRemoteSwiftPackageReference "MagicDevice" */,
@@ -2611,6 +2619,10 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Packages/ProjectSupportKit;
 		};
+		A1F500012F70000100ABC001 /* XCLocalSwiftPackageReference "Packages/GitOKUI" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/GitOKUI;
+		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCRemoteSwiftPackageReference section */
@@ -2715,6 +2727,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = A1F400012F70000100ABC001 /* XCLocalSwiftPackageReference "Packages/ProjectSupportKit" */;
 			productName = ProjectSupportKit;
+		};
+		A1F500022F70000100ABC001 /* GitOKUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A1F500012F70000100ABC001 /* XCLocalSwiftPackageReference "Packages/GitOKUI" */;
+			productName = GitOKUI;
 		};
 		F5160A7A2FBBEE7C00F24BD9 /* LibGit2Swift */ = {
 			isa = XCSwiftPackageProductDependency;
