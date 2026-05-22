@@ -3,14 +3,13 @@ import SwiftUI
 
 struct ThemePickerPopover: View {
     @EnvironmentObject private var themeProvider: AppThemeVM
-    @Binding var isPresented: Bool
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             header
 
             if themeProvider.themes.isEmpty {
-                AppEmptyState(
+                GitOKUI.AppEmptyState(
                     icon: "paintbrush",
                     title: "No themes available"
                 )
@@ -25,7 +24,7 @@ struct ThemePickerPopover: View {
                 }
             }
         }
-        .padding(14)
+        .frame(height: 420)
     }
 
     private var header: some View {
@@ -44,9 +43,8 @@ struct ThemePickerPopover: View {
     private func themeRow(_ theme: GitOKUIThemeContribution) -> some View {
         let isSelected = theme.id == themeProvider.currentThemeId
 
-        return AppListRow(isSelected: isSelected, action: {
+        return GitOKUI.AppListRow(isSelected: isSelected, action: {
             themeProvider.selectTheme(theme.id)
-            isPresented = false
         }) {
             HStack(spacing: 10) {
                 ZStack {

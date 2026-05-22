@@ -1,20 +1,26 @@
+import GitOKUI
 import SwiftUI
 
 struct ThemeStatusBarView: View {
     @EnvironmentObject private var themeProvider: AppThemeVM
-    @State private var isPresented = false
 
     var body: some View {
-        StatusBarTile(icon: "paintbrush", onTap: {
-            isPresented.toggle()
-        }) {
-            Text(themeProvider.currentTheme?.compactName ?? "Theme")
-                .lineLimit(1)
+        StatusBarHoverContainer(
+            detailView: ThemePickerPopover(),
+            popoverWidth: 340,
+            id: "gitok-theme-picker"
+        ) {
+            HStack(spacing: 4) {
+                Image(systemName: "paintbrush")
+                    .font(.system(size: 11))
+
+                Text(themeProvider.currentTheme?.compactName ?? "Theme")
+                    .font(.system(size: 11))
+                    .lineLimit(1)
+            }
+            .padding(.horizontal, 8)
+            .padding(.vertical, 4)
         }
         .help("Switch theme")
-        .popover(isPresented: $isPresented) {
-            ThemePickerPopover(isPresented: $isPresented)
-                .frame(width: 340, height: 420)
-        }
     }
 }
