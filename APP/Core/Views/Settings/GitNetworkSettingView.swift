@@ -1,5 +1,5 @@
 import AppKit
-import MagicKit
+import GitOKUI
 import SwiftUI
 
 struct GitNetworkSettingView: View {
@@ -36,7 +36,7 @@ struct GitNetworkSettingView: View {
     }
 
     private var proxySection: some View {
-        MagicSettingSection(title: "代理", titleAlignment: .leading) {
+        GitOKUI.AppSettingsSection(title: "代理") {
             VStack(alignment: .leading, spacing: 14) {
                 TextField("http://127.0.0.1:7890", text: $settings.httpProxy)
                     .textFieldStyle(.roundedBorder)
@@ -70,7 +70,7 @@ struct GitNetworkSettingView: View {
     }
 
     private var certificateSection: some View {
-        MagicSettingSection(title: "证书", titleAlignment: .leading) {
+        GitOKUI.AppSettingsSection(title: "证书") {
             VStack(alignment: .leading, spacing: 14) {
                 Toggle("启用 Git SSL 证书验证", isOn: $settings.sslVerify)
                     .disabled(settings.isLoading || settings.isSaving)

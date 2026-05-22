@@ -1,4 +1,4 @@
-import MagicKit
+import GitOKUI
 import SwiftUI
 
 struct ExternalToolSettingView: View {
@@ -23,27 +23,17 @@ struct ExternalToolSettingView: View {
     }
 
     private var editorSection: some View {
-        MagicSettingSection(title: "默认编辑器", titleAlignment: .leading) {
-            VStack(spacing: 0) {
-                ForEach(ExternalEditor.allCases) { editor in
-                    editorRow(editor)
-                    if editor != ExternalEditor.allCases.last {
-                        Divider()
-                    }
-                }
+        GitOKUI.AppSettingsSection(title: "默认编辑器") {
+            ForEach(ExternalEditor.allCases) { editor in
+                editorRow(editor)
             }
         }
     }
 
     private var terminalSection: some View {
-        MagicSettingSection(title: "默认终端", titleAlignment: .leading) {
-            VStack(spacing: 0) {
-                ForEach(ExternalTerminal.allCases) { terminal in
-                    terminalRow(terminal)
-                    if terminal != ExternalTerminal.allCases.last {
-                        Divider()
-                    }
-                }
+        GitOKUI.AppSettingsSection(title: "默认终端") {
+            ForEach(ExternalTerminal.allCases) { terminal in
+                terminalRow(terminal)
             }
         }
     }
@@ -80,40 +70,39 @@ struct ExternalToolSettingView: View {
         isInstalled: Bool,
         select: @escaping () -> Void
     ) -> some View {
-        HStack(spacing: 12) {
-            Image(systemName: iconName)
-                .foregroundColor(isInstalled ? .accentColor : .secondary)
-                .frame(width: 28)
+        GitOKUI.AppSettingsRow(isSelected: isSelected, verticalPadding: 10) {
+            HStack(spacing: 12) {
+                Image(systemName: iconName)
+                    .foregroundColor(isInstalled ? .accentColor : .secondary)
+                    .frame(width: 28)
 
-            VStack(alignment: .leading, spacing: 4) {
-                HStack(spacing: 8) {
-                    Text(title)
-                        .font(.system(size: 13, weight: .medium))
+                VStack(alignment: .leading, spacing: 4) {
+                    HStack(spacing: 8) {
+                        Text(title)
+                            .font(.system(size: 13, weight: .medium))
 
-                    if !isInstalled {
-                        Text("未安装")
-                            .font(.caption2)
-                            .foregroundColor(.secondary)
+                        if !isInstalled {
+                            Text("未安装")
+                                .font(.caption2)
+                                .foregroundColor(.secondary)
+                        }
                     }
+
+                    Text(description)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
                 }
 
-                Text(description)
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-            }
+                Spacer()
 
-            Spacer()
-
-            if isSelected {
-                Image(systemName: "checkmark")
-                    .foregroundColor(.accentColor)
-                    .font(.system(size: 14, weight: .semibold))
+                if isSelected {
+                    Image(systemName: "checkmark")
+                        .foregroundColor(.accentColor)
+                        .font(.system(size: 14, weight: .semibold))
+                }
             }
         }
-        .contentShape(Rectangle())
         .onTapGesture(perform: select)
-        .padding(.horizontal)
-        .padding(.vertical, 12)
     }
 }
 
