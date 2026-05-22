@@ -109,14 +109,14 @@ struct RootView<Content>: View, SuperEvent, SuperLog where Content: View {
             pluginProvider.getRootViewWrapper {
                 content
                     .withMagicToast()
-                    .environmentObject(appProvider)
-                    .environmentObject(iconProvider)
-                    .environmentObject(pluginProvider)
-                    .environmentObject(themeProvider)
-                    .environmentObject(git)
-                    .environmentObject(projectVM)
                     .navigationTitle("")
             }
+            .environmentObject(appProvider)
+            .environmentObject(iconProvider)
+            .environmentObject(pluginProvider)
+            .environmentObject(themeProvider)
+            .environmentObject(git)
+            .environmentObject(projectVM)
 
             // 拖拽覆盖层
             if isDropTargeted {
