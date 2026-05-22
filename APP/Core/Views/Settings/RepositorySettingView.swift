@@ -1,4 +1,5 @@
 import Foundation
+import GitOKUI
 import LibGit2Swift
 import MagicKit
 import OSLog
@@ -94,22 +95,20 @@ struct RepositorySettingView: View, SuperLog {
 
     /// 当前项目信息
     private func currentProjectInfo(project: Project) -> some View {
-        MagicSettingSection(title: String(localized: "当前项目", table: "Core"), titleAlignment: .leading) {
+        GitOKUI.AppSettingsSection(title: String(localized: "当前项目", table: "Core")) {
             VStack(spacing: 0) {
-                MagicSettingRow(
+                repositoryInfoRow(
                     title: String(localized: "项目名称", table: "Core"),
                     description: project.title,
-                    icon: .iconFolder
-                ) {
-                    EmptyView()
-                }
+                    icon: "folder"
+                )
 
                 Divider()
 
-                MagicSettingRow(
+                repositoryInfoRow(
                     title: String(localized: "本地路径", table: "Core"),
                     description: project.path,
-                    icon: .iconFilter
+                    icon: "line.3.horizontal.decrease.circle"
                 ) {
                     Image.finder.inButtonWithAction {
                         project.url.openFolder()
@@ -121,7 +120,7 @@ struct RepositorySettingView: View, SuperLog {
 
     /// 远程仓库列表
     private var remoteRepositoryList: some View {
-        MagicSettingSection(title: String(localized: "远程仓库", table: "Core"), titleAlignment: .leading) {
+        GitOKUI.AppSettingsSection(title: String(localized: "远程仓库", table: "Core")) {
             VStack(spacing: 0) {
                 ForEach(remotes) { remote in
                     remoteRepositoryRow(remote)
@@ -135,12 +134,25 @@ struct RepositorySettingView: View, SuperLog {
 
     /// 单个远程仓库行
     private func remoteRepositoryRow(_ remote: GitRemote) -> some View {
-        MagicSettingRow(
-            title: remote.name,
-            description: remote.url,
-            icon: .iconCloud
-        ) {
+        GitOKUI.AppSettingsRow(verticalPadding: 10) {
             HStack(spacing: 8) {
+                Image(systemName: "cloud")
+                    .foregroundColor(.secondary)
+                    .frame(width: 28)
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(remote.name)
+                        .font(.system(size: 13, weight: .medium))
+
+                    Text(remote.url)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                        .lineLimit(1)
+                        .truncationMode(.middle)
+                }
+
+                Spacer()
+
                 // 在浏览器中打开（如果是 HTTPS）
                 if let httpsURL = RemoteRepositoryFormRules.remoteWebLink(for: remote.url)?.url {
                     Image.safari.inButtonWithAction {
@@ -163,7 +175,7 @@ struct RepositorySettingView: View, SuperLog {
 
     /// 空状态提示
     private var emptyRemoteRepositoryState: some View {
-        MagicSettingSection(title: String(localized: "远程仓库", table: "Core"), titleAlignment: .leading) {
+        GitOKUI.AppSettingsSection(title: String(localized: "远程仓库", table: "Core")) {
             VStack(spacing: 12) {
                 HStack {
                     Image(systemName: .iconCloud)
@@ -184,14 +196,12 @@ struct RepositorySettingView: View, SuperLog {
 
     /// 添加远程仓库按钮
     private var addRemoteRepositoryButton: some View {
-        MagicSettingSection(title: "", titleAlignment: .leading) {
-            MagicSettingRow(
+        GitOKUI.AppSettingsSection {
+            repositoryInfoRow(
                 title: String(localized: "添加远程仓库", table: "Core"),
                 description: String(localized: "添加新的远程仓库地址", table: "Core"),
-                icon: .iconPlus
-            ) {
-                EmptyView()
-            }
+                icon: "plus"
+            )
             .contentShape(Rectangle())
             .onTapGesture {
                 showAddRemoteSheet = true
@@ -201,7 +211,7 @@ struct RepositorySettingView: View, SuperLog {
 
     /// 没有选中项目
     private var noProjectSelected: some View {
-        MagicSettingSection(title: "", titleAlignment: .leading) {
+        GitOKUI.AppSettingsSection {
             VStack(spacing: 12) {
                 Image(systemName: "folder.badge.questionmark")
                     .font(.system(size: 48))
@@ -213,6 +223,46 @@ struct RepositorySettingView: View, SuperLog {
             }
             .frame(maxWidth: .infinity)
             .padding()
+        }
+    }
+
+    private func repositoryInfoRow<Accessory: View>(
+        title: String,
+        description: String,
+        icon: String,
+        @ViewBuilder accessory: () -> Accessory
+    ) -> some View {
+        GitOKUI.AppSettingsRow(verticalPadding: 10) {
+            HStack(spacing: 12) {
+                Image(systemName: icon)
+                    .foregroundColor(.secondary)
+                    .frame(width: 28)
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(title)
+                        .font(.system(size: 13, weight: .medium))
+
+                    Text(description)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                        .lineLimit(1)
+                        .truncationMode(.middle)
+                }
+
+                Spacer()
+
+                accessory()
+            }
+        }
+    }
+
+    private func repositoryInfoRow(
+        title: String,
+        description: String,
+        icon: String
+    ) -> some View {
+        repositoryInfoRow(title: title, description: description, icon: icon) {
+            EmptyView()
         }
     }
 
