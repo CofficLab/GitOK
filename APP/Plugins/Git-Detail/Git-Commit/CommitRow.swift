@@ -138,8 +138,10 @@ struct CommitRow: View, SuperThread, SuperLog {
         VStack(spacing: 0) {
             Button(action: selectCommit) {
                 HStack(alignment: .center, spacing: 12) {
-                    CommitGraphView(row: graphRow, laneCount: graphLaneCount)
-                        .padding(.leading, 2)
+                    if graphRow != nil {
+                        CommitGraphView(row: graphRow, laneCount: graphLaneCount)
+                            .padding(.leading, 2)
+                    }
 
                     // 中间：主要内容
                     VStack(alignment: .leading, spacing: 2) {

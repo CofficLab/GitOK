@@ -27,6 +27,10 @@ struct CommitList: View, SuperThread, SuperLog {
     @State private var graphRowsByCommitHash: [String: CommitGraphLayoutRules.Row] = [:]
     @State private var graphLaneCount = 1
 
+    /// 是否显示提交图（持久化到 UserDefaults）
+    @AppStorage("App.ShowCommitGraph")
+    private var showCommitGraph: Bool = false
+
     /// 是否正在加载数据
     @State private var loading = false
 
@@ -98,7 +102,7 @@ extension CommitList {
                         commit: commit,
                         isFirstCommit: commit.hash == firstCommitHash,
                         commitIndex: index,
-                        graphRow: graphRowsByCommitHash[commit.hash],
+                        graphRow: showCommitGraph ? graphRowsByCommitHash[commit.hash] : nil,
                         graphLaneCount: graphLaneCount
                     )
                         .onAppear {
@@ -137,6 +141,11 @@ extension CommitList {
             }
         }
         .background(Color(.controlBackgroundColor))
+        .contextMenu {
+            Toggle(isOn: $showCommitGraph) {
+                Label("显示提交图", systemImage: "point.topleft.down.curvedto.point.bottomright.up")
+            }
+        }
     }
 }
 
