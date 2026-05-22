@@ -27,7 +27,6 @@
 		A1F000242F70000100ABC001 /* APP/Plugins/Banner/Model/BannerTemplateDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F000252F70000100ABC001 /* APP/Plugins/Banner/Model/BannerTemplateDataStore.swift */; };
 		A1F000262F70000100ABC001 /* APP/Plugins/Banner/Model/BannerTemplateCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F000272F70000100ABC001 /* APP/Plugins/Banner/Model/BannerTemplateCatalog.swift */; };
 		A1F000282F70000100ABC001 /* APP/Plugins/Banner/Repo/BannerRepositoryIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F000292F70000100ABC001 /* APP/Plugins/Banner/Repo/BannerRepositoryIndex.swift */; };
-		A1F0002A2F70000100ABC001 /* APP/UI/ThemeVariantStatePersistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F0002B2F70000100ABC001 /* APP/UI/ThemeVariantStatePersistence.swift */; };
 		A1F0002C2F70000100ABC001 /* APP/Core/Models/CoAuthor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F0002D2F70000100ABC001 /* APP/Core/Models/CoAuthor.swift */; };
 		A1F0002E2F70000100ABC001 /* APP/Plugins/Git-Detail/Git-Commit/GitCommitSelectionStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F0002F2F70000100ABC001 /* APP/Plugins/Git-Detail/Git-Commit/GitCommitSelectionStore.swift */; };
 		A1F000302F70000100ABC001 /* APP/Plugins/ProjectPicker/ProjectPickerSelectionRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F000312F70000100ABC001 /* APP/Plugins/ProjectPicker/ProjectPickerSelectionRules.swift */; };
@@ -843,7 +842,6 @@
 		A1F000252F70000100ABC001 /* APP/Plugins/Banner/Model/BannerTemplateDataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APP/Plugins/Banner/Model/BannerTemplateDataStore.swift; sourceTree = "<group>"; };
 		A1F000272F70000100ABC001 /* APP/Plugins/Banner/Model/BannerTemplateCatalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APP/Plugins/Banner/Model/BannerTemplateCatalog.swift; sourceTree = "<group>"; };
 		A1F000292F70000100ABC001 /* APP/Plugins/Banner/Repo/BannerRepositoryIndex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APP/Plugins/Banner/Repo/BannerRepositoryIndex.swift; sourceTree = "<group>"; };
-		A1F0002B2F70000100ABC001 /* APP/UI/ThemeVariantStatePersistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APP/UI/ThemeVariantStatePersistence.swift; sourceTree = "<group>"; };
 		A1F0002D2F70000100ABC001 /* APP/Core/Models/CoAuthor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APP/Core/Models/CoAuthor.swift; sourceTree = "<group>"; };
 		A1F0002F2F70000100ABC001 /* APP/Plugins/Git-Detail/Git-Commit/GitCommitSelectionStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "APP/Plugins/Git-Detail/Git-Commit/GitCommitSelectionStore.swift"; sourceTree = "<group>"; };
 		A1F000312F70000100ABC001 /* APP/Plugins/ProjectPicker/ProjectPickerSelectionRules.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APP/Plugins/ProjectPicker/ProjectPickerSelectionRules.swift; sourceTree = "<group>"; };
@@ -1272,7 +1270,6 @@
 				A1F000252F70000100ABC001 /* APP/Plugins/Banner/Model/BannerTemplateDataStore.swift */,
 				A1F000272F70000100ABC001 /* APP/Plugins/Banner/Model/BannerTemplateCatalog.swift */,
 				A1F000292F70000100ABC001 /* APP/Plugins/Banner/Repo/BannerRepositoryIndex.swift */,
-				A1F0002B2F70000100ABC001 /* APP/UI/ThemeVariantStatePersistence.swift */,
 				A1F0002D2F70000100ABC001 /* APP/Core/Models/CoAuthor.swift */,
 				A1F0002F2F70000100ABC001 /* APP/Plugins/Git-Detail/Git-Commit/GitCommitSelectionStore.swift */,
 				A1F000312F70000100ABC001 /* APP/Plugins/ProjectPicker/ProjectPickerSelectionRules.swift */,
@@ -2303,7 +2300,6 @@
 				A1F000242F70000100ABC001 /* APP/Plugins/Banner/Model/BannerTemplateDataStore.swift in Sources */,
 				A1F000262F70000100ABC001 /* APP/Plugins/Banner/Model/BannerTemplateCatalog.swift in Sources */,
 				A1F000282F70000100ABC001 /* APP/Plugins/Banner/Repo/BannerRepositoryIndex.swift in Sources */,
-				A1F0002A2F70000100ABC001 /* APP/UI/ThemeVariantStatePersistence.swift in Sources */,
 				A1F0002C2F70000100ABC001 /* APP/Core/Models/CoAuthor.swift in Sources */,
 				A1F0002E2F70000100ABC001 /* APP/Plugins/Git-Detail/Git-Commit/GitCommitSelectionStore.swift in Sources */,
 				A1F000302F70000100ABC001 /* APP/Plugins/ProjectPicker/ProjectPickerSelectionRules.swift in Sources */,

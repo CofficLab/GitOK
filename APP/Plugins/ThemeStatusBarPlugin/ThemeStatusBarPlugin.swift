@@ -12,7 +12,6 @@ class ThemeStatusBarPlugin: NSObject, SuperPlugin {
 
     nonisolated var instanceLabel: String { "ThemeStatusBarPlugin" }
 
-    @MainActor
     func addStatusBarTrailingView() -> AnyView? {
         AnyView(ThemeStatusBarView())
     }

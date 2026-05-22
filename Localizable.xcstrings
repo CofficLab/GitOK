@@ -609,6 +609,9 @@
     "No remote repository" : {
 
     },
+    "No themes available" : {
+
+    },
     "no_branches" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1031,6 +1034,12 @@
 
     },
     "Submodule %lld" : {
+
+    },
+    "Switch theme" : {
+
+    },
+    "Theme" : {
 
     },
     "Token 会通过当前 Git credential helper 保存，仓库列表来自 GitHub/GitHub Enterprise API。" : {

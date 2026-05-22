@@ -1,3 +1,0 @@
-import ProjectSupportKit
-
-typealias ThemeVariantStatePersistence = ProjectSupportKit.ThemeVariantStatePersistence
