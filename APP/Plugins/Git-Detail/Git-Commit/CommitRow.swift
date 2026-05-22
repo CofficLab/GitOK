@@ -496,7 +496,7 @@ struct CommitRow: View, SuperThread, SuperLog {
         data.setCommit(commit)
     }
 
-    /// 执行推送操作
+    /// 执行推送操作（在后台线程执行 push，避免阻塞 UI）
     private func performPush() async throws {
         guard let project = vm.project else {
             throw NSError(domain: "GitOK", code: -1, userInfo: [
@@ -508,8 +508,10 @@ struct CommitRow: View, SuperThread, SuperLog {
             os_log("\(self.t)🚀 Pushing commit \(commit.hash.prefix(8)) to remote")
         }
 
-        // 执行推送
-        try project.push()
+        // 在后台线程执行 push，避免阻塞主线程
+        try await Task.detached(priority: .userInitiated) {
+            try project.push()
+        }.value
 
         // 注意：不再单独更新未推送状态，由父组件 CommitList 统一管理
 
