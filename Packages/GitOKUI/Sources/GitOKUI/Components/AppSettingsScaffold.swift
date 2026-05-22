@@ -89,7 +89,7 @@ public struct AppSettingsRow<Content: View>: View {
             .padding(.vertical, verticalPadding)
             .frame(maxWidth: .infinity, alignment: .leading)
             .contentShape(Rectangle())
-            .appSurface(
+            .gitOKUISurface(
                 style: surfaceStyle,
                 cornerRadius: 8,
                 borderColor: borderColor,

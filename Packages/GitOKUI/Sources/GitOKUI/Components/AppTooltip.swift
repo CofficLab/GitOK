@@ -1,15 +1,15 @@
 import SwiftUI
 
 public extension View {
-    func appTooltip(_ text: LocalizedStringKey) -> some View {
+    func gitOKUITooltip(_ text: LocalizedStringKey) -> some View {
         help(text)
     }
 
-    func appTooltip(_ text: LocalizedStringKey, shortcut: KeyboardShortcut?) -> some View {
+    func gitOKUITooltip(_ text: LocalizedStringKey, shortcut: KeyboardShortcut?) -> some View {
         Group {
             if let shortcut {
                 let shortcutStr = shortcutText(shortcut)
-                let tooltipText = Text("\(text) (\(shortcutStr))")
+                let tooltipText = Text(text) + Text(" (\(shortcutStr))")
                 help(tooltipText)
             } else {
                 help(text)
@@ -44,9 +44,9 @@ extension KeyboardShortcut {
 #Preview {
     VStack(spacing: 16) {
         Text("Hover me")
-            .appTooltip("Simple tooltip")
+            .gitOKUITooltip("Simple tooltip")
         Text("With shortcut")
-            .appTooltip("Save file", shortcut: .init("s", modifiers: .command))
+            .gitOKUITooltip("Save file", shortcut: .init("s", modifiers: .command))
     }
     .padding()
     .frame(width: 300)

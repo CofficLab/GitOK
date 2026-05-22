@@ -71,7 +71,7 @@ public struct AppCard<Content: View>: View {
             .background(glassBackground)
             .overlay(glassBorder)
             .modifier(CardShadowModifier(showShadow: showShadow, color: shadowColor, radius: shadowRadius, offset: shadowOffset))
-            .glowEffect(
+            .gitOKUIGlowEffect(
                 color: glowColor ?? theme.glowAccent,
                 radius: glowColor != nil ? 12 : 0,
                 intensity: glowColor != nil ? 0.3 : 0

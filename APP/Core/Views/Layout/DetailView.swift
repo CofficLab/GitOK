@@ -6,6 +6,7 @@ struct DetailView: View {
     @EnvironmentObject var app: AppVM
     @EnvironmentObject var g: DataVM
     @EnvironmentObject var p: PluginVM
+    @EnvironmentObject var themeProvider: AppThemeVM
     @EnvironmentObject var vm: ProjectVM
 
     let tab: String
@@ -13,16 +14,19 @@ struct DetailView: View {
     let statusBarVisibility: Bool
 
     var body: some View {
-        if g.projects.isEmpty {
-            NoRepositoriesGuideView()
-        } else if vm.projectExists == false {
-            GuideView(
-                systemImage: "folder.badge.questionmark",
-                title: "项目不存在"
-            ).setIconColor(.red.opacity(0.5))
-        } else {
-            content
+        Group {
+            if g.projects.isEmpty {
+                NoRepositoriesGuideView()
+            } else if vm.projectExists == false {
+                GuideView(
+                    systemImage: "folder.badge.questionmark",
+                    title: "项目不存在"
+                ).setIconColor(.red.opacity(0.5))
+            } else {
+                content
+            }
         }
+        .background(themeProvider.activeChromeTheme.workspaceBackgroundColor())
     }
 
     @ViewBuilder
@@ -55,6 +59,7 @@ struct DetailView: View {
         .frame(minWidth: 120)
         .frame(maxWidth: 300)
         .frame(maxHeight: .infinity)
+        .background(themeProvider.activeChromeTheme.sidebarBackgroundColor().opacity(0.92))
     }
 
     @ViewBuilder

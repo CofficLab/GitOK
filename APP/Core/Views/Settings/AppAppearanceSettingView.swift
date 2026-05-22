@@ -2,6 +2,7 @@ import Foundation
 import MagicKit
 import OSLog
 import SwiftUI
+import GitOKUI
 
 /// 应用外观设置视图
 struct AppAppearanceSettingView: View, SuperLog {
@@ -12,9 +13,13 @@ struct AppAppearanceSettingView: View, SuperLog {
     nonisolated static let verbose = false
 
     @StateObject private var settings = AppAppearanceSettingsStore.shared
+    @EnvironmentObject private var themeProvider: AppThemeVM
 
     /// 主题模式
     @State private var themeMode: AppAppearanceSettingsStore.ThemeMode = .system
+
+    /// 当前主题
+    @State private var selectedThemeId: String = ""
 
     /// 强调色
     @State private var accentColor: AppAppearanceSettingsStore.AccentColor = .blue
@@ -32,6 +37,8 @@ struct AppAppearanceSettingView: View, SuperLog {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
                 // 主题模式
+                themeSelectionSection
+
                 themeModeSection
 
                 // 强调色
@@ -71,6 +78,68 @@ struct AppAppearanceSettingView: View, SuperLog {
     }
 
     // MARK: - View Components
+
+    private var themeSelectionSection: some View {
+        MagicSettingSection(title: String(localized: "主题", table: "Core"), titleAlignment: .leading) {
+            VStack(spacing: 0) {
+                ForEach(themeProvider.themes) { theme in
+                    themeRow(theme)
+                    if theme.id != themeProvider.themes.last?.id {
+                        Divider()
+                    }
+                }
+            }
+        }
+    }
+
+    private func themeRow(_ theme: GitOKUIThemeContribution) -> some View {
+        HStack(spacing: 12) {
+            ZStack {
+                Circle()
+                    .fill(theme.iconColor.opacity(0.18))
+                    .frame(width: 32, height: 32)
+
+                Image(systemName: theme.iconName)
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundColor(theme.iconColor)
+            }
+
+            VStack(alignment: .leading, spacing: 4) {
+                Text(theme.displayName)
+                    .font(.system(size: 13, weight: .medium))
+
+                Text(theme.description)
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                    .lineLimit(2)
+            }
+
+            Spacer()
+
+            HStack(spacing: 5) {
+                Circle()
+                    .fill(theme.chromeTheme.accentColors().primary)
+                Circle()
+                    .fill(theme.chromeTheme.accentColors().secondary)
+                Circle()
+                    .fill(theme.chromeTheme.accentColors().tertiary)
+            }
+            .frame(width: 48, height: 14)
+
+            if selectedThemeId == theme.id {
+                Image(systemName: "checkmark")
+                    .foregroundColor(.accentColor)
+                    .font(.system(size: 14, weight: .semibold))
+            }
+        }
+        .contentShape(Rectangle())
+        .onTapGesture {
+            selectedThemeId = theme.id
+            themeProvider.selectTheme(theme.id)
+        }
+        .padding(.horizontal)
+        .padding(.vertical, 12)
+    }
 
     /// 主题模式设置
     private var themeModeSection: some View {
@@ -113,6 +182,7 @@ struct AppAppearanceSettingView: View, SuperLog {
         .onTapGesture {
             themeMode = mode
             settings.themeMode = mode
+            themeProvider.refreshAppearance()
             logThemeChange(mode)
         }
         .padding(.horizontal)
@@ -321,6 +391,7 @@ struct AppAppearanceSettingView: View, SuperLog {
 
     private func loadData() {
         themeMode = settings.themeMode
+        selectedThemeId = themeProvider.currentThemeId
         accentColor = settings.accentColor
         fontSize = settings.fontSize
         layoutDensity = settings.layoutDensity
@@ -336,6 +407,7 @@ struct AppAppearanceSettingView: View, SuperLog {
 
     private func resetToDefaults() {
         settings.resetToDefaults()
+        themeProvider.reloadThemes()
         loadData()
 
         if Self.verbose {

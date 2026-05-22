@@ -69,7 +69,7 @@ private struct AppSurfaceModifier: ViewModifier {
 }
 
 public extension View {
-    func appSurface(
+    func gitOKUISurface(
         style: AppSurfaceStyle = .glass,
         cornerRadius: CGFloat = 16,
         borderColor: Color? = nil,
@@ -85,7 +85,7 @@ public extension View {
         )
     }
 
-    func appClipRounded(_ cornerRadius: CGFloat) -> some View {
+    func gitOKUIClipRounded(_ cornerRadius: CGFloat) -> some View {
         clipShape(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
     }
 }
@@ -94,13 +94,13 @@ public extension View {
     VStack(spacing: 12) {
         Text("Glass Surface")
             .frame(width: 200, height: 60)
-            .appSurface(style: .glass)
+            .gitOKUISurface(style: .glass)
         Text("Glass Thick")
             .frame(width: 200, height: 60)
-            .appSurface(style: .glassThick)
+            .gitOKUISurface(style: .glassThick)
         Text("Subtle")
             .frame(width: 200, height: 60)
-            .appSurface(style: .subtle)
+            .gitOKUISurface(style: .subtle)
     }
     .padding()
     .frame(width: 300)

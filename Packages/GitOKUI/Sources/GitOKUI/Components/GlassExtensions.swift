@@ -1,7 +1,7 @@
 import SwiftUI
 
 public extension View {
-    func glowEffect(
+    func gitOKUIGlowEffect(
         color: SwiftUI.Color,
         radius: CGFloat = 8,
         intensity: Double = 0.3
@@ -14,7 +14,7 @@ public extension View {
         )
     }
 
-    func glassOverlay(opacity: Double = 0.1) -> some View {
+    func gitOKUIGlassOverlay(opacity: Double = 0.1) -> some View {
         overlay(
             SwiftUI.Color.black.opacity(opacity)
                 .background(DesignTokens.Material.glass)

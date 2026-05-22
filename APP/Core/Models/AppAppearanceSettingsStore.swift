@@ -8,6 +8,7 @@ class AppAppearanceSettingsStore: ObservableObject {
     // MARK: - UserDefaults Keys
 
     private let themeModeKey = "GitOK_Appearance_ThemeMode"
+    private let selectedThemeIdKey = "GitOK_Appearance_SelectedThemeId"
     private let accentColorKey = "GitOK_Appearance_AccentColor"
     private let fontSizeKey = "GitOK_Appearance_FontSize"
     private let layoutDensityKey = "GitOK_Appearance_LayoutDensity"
@@ -56,6 +57,19 @@ class AppAppearanceSettingsStore: ObservableObject {
         }
         set {
             UserDefaults.standard.set(newValue.rawValue, forKey: themeModeKey)
+        }
+    }
+
+    var selectedThemeId: String? {
+        get {
+            UserDefaults.standard.string(forKey: selectedThemeIdKey)
+        }
+        set {
+            if let newValue {
+                UserDefaults.standard.set(newValue, forKey: selectedThemeIdKey)
+            } else {
+                UserDefaults.standard.removeObject(forKey: selectedThemeIdKey)
+            }
         }
     }
 
@@ -196,6 +210,7 @@ class AppAppearanceSettingsStore: ObservableObject {
     /// 重置所有设置为默认值
     func resetToDefaults() {
         UserDefaults.standard.removeObject(forKey: themeModeKey)
+        UserDefaults.standard.removeObject(forKey: selectedThemeIdKey)
         UserDefaults.standard.removeObject(forKey: accentColorKey)
         UserDefaults.standard.removeObject(forKey: fontSizeKey)
         UserDefaults.standard.removeObject(forKey: layoutDensityKey)

@@ -25,6 +25,9 @@ struct RootView<Content>: View, SuperEvent, SuperLog where Content: View {
     /// 插件提供者
     var pluginProvider: PluginVM
 
+    /// 主题提供者
+    @ObservedObject var themeProvider: AppThemeVM
+
     /// Git 数据提供者
     var git: DataVM
 
@@ -58,6 +61,7 @@ struct RootView<Content>: View, SuperEvent, SuperLog where Content: View {
         self.appProvider = AppVM(repoManager: self.repoManager)
         self.iconProvider = IconProvider()
         self.pluginProvider = PluginVM()
+        self.themeProvider = AppThemeVM(pluginProvider: self.pluginProvider)
         os_log("\(Self.t)✅ Startup step: providers ready elapsed=\(String(format: "%.3f", Date().timeIntervalSince(providersStart)))s")
 
         // 初始化数据提供者
@@ -96,14 +100,23 @@ struct RootView<Content>: View, SuperEvent, SuperLog where Content: View {
 
     var body: some View {
         ZStack {
-            content
-                .withMagicToast()
-                .environmentObject(appProvider)
-                .environmentObject(iconProvider)
-                .environmentObject(pluginProvider)
-                .environmentObject(git)
-                .environmentObject(projectVM)
-                .navigationTitle("")
+            GeometryReader { proxy in
+                themeProvider.activeChromeTheme
+                    .makeGlobalBackground(proxy: proxy)
+                    .ignoresSafeArea()
+            }
+
+            pluginProvider.getRootViewWrapper {
+                content
+                    .withMagicToast()
+                    .environmentObject(appProvider)
+                    .environmentObject(iconProvider)
+                    .environmentObject(pluginProvider)
+                    .environmentObject(themeProvider)
+                    .environmentObject(git)
+                    .environmentObject(projectVM)
+                    .navigationTitle("")
+            }
 
             // 拖拽覆盖层
             if isDropTargeted {
@@ -114,6 +127,8 @@ struct RootView<Content>: View, SuperEvent, SuperLog where Content: View {
                 .transition(.opacity)
             }
         }
+        .tint(themeProvider.accentColor)
+        .preferredColorScheme(themeProvider.preferredColorScheme)
         .onDrop(of: [.fileURL], isTargeted: $isDropTargeted) { providers in
             handleDrop(providers: providers)
             return true

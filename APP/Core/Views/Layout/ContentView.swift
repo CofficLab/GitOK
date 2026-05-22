@@ -95,11 +95,6 @@ struct ContentView: View, SuperLog {
         .onReceive(NotificationCenter.default.publisher(for: .gitCommandRepositorySettings)) { _ in
             app.openRepositorySettings()
         }
-        .overlay(alignment: .bottom) {
-            p.getRootViewWrapper {
-                EmptyView()
-            }
-        }
         .focusedSceneObject(vm)
     }
 
@@ -172,6 +167,7 @@ struct ContentView: View, SuperLog {
         case "plugins": return .plugins
         case "repository": return .repository
         case "commitStyle": return .commitStyle
+        case "appearance": return .appearance
         case "externalTools": return .externalTools
         case "releaseNotes": return .releaseNotes
         default: return .userInfo

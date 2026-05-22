@@ -6,6 +6,7 @@ import StoreKit
 import SwiftData
 import SwiftUI
 import Combine
+import GitOKUI
 
 class PluginVM: ObservableObject, SuperLog, SuperThread {
     nonisolated static let emoji = "🧩"
@@ -289,6 +290,25 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
         plugins
             .filter { isPluginEnabled($0) }
             .compactMap { $0.addStatusBarTrailingView() }
+    }
+
+    // MARK: - Theme Contributions
+
+    @MainActor
+    func getThemeContributions() -> [GitOKUIThemeContribution] {
+        plugins.flatMap { plugin -> [GitOKUIThemeContribution] in
+            guard isPluginEnabled(plugin) else { return [] }
+            let pluginOrder = type(of: plugin).order
+            return plugin.addThemeContributions().map { contribution in
+                GitOKUIThemeContribution(
+                    sortKey: ThemeSortKey(pluginOrder: pluginOrder, themeId: contribution.id),
+                    chromeTheme: contribution.chromeTheme,
+                    editorThemeId: contribution.editorThemeId,
+                    uiTheme: contribution.uiTheme,
+                    attachments: contribution.attachments
+                )
+            }
+        }
     }
 
     // MARK: - Root View Wrapper
