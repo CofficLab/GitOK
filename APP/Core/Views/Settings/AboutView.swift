@@ -1,4 +1,5 @@
 import Foundation
+import GitOKUI
 import MagicKit
 import OSLog
 import SwiftUI
@@ -64,67 +65,50 @@ struct AboutView: View, SuperLog {
                     Divider()
 
                     // 基本信息
-                    MagicSettingSection(title: String(localized: "应用信息", table: "Core"), titleAlignment: .leading) {
-                        VStack(spacing: 0) {
-                            infoRow(
-                                title: String(localized: "应用名称", table: "Core"),
-                                value: appInfo.name,
-                                icon: .iconGear
-                            )
-
-                            Divider()
-
-                            infoRow(
-                                title: String(localized: "版本", table: "Core"),
-                                value: appInfo.version,
-                                icon: .iconVolume
-                            )
-
-                            Divider()
-
-                            infoRow(
-                                title: String(localized: "Build", table: "Core"),
-                                value: appInfo.build,
-                                icon: .iconBulletList
-                            )
-
-                            Divider()
-
-                            infoRow(
-                                title: String(localized: "Bundle ID", table: "Core"),
-                                value: appInfo.bundleIdentifier,
-                                icon: .iconInfo
-                            )
-                        }
+                    GitOKUI.AppSettingsSection(title: String(localized: "应用信息", table: "Core")) {
+                        infoRow(
+                            title: String(localized: "应用名称", table: "Core"),
+                            value: appInfo.name,
+                            icon: "gearshape"
+                        )
+                        infoRow(
+                            title: String(localized: "版本", table: "Core"),
+                            value: appInfo.version,
+                            icon: "speaker.wave.2"
+                        )
+                        infoRow(
+                            title: String(localized: "Build", table: "Core"),
+                            value: appInfo.build,
+                            icon: "list.bullet"
+                        )
+                        infoRow(
+                            title: String(localized: "Bundle ID", table: "Core"),
+                            value: appInfo.bundleIdentifier,
+                            icon: "info.circle"
+                        )
                     }
 
                     // 链接
-                    MagicSettingSection(title: String(localized: "链接", table: "Core"), titleAlignment: .leading) {
-                        VStack(spacing: 0) {
+                    GitOKUI.AppSettingsSection(title: String(localized: "链接", table: "Core")) {
+                        linkRow(
+                            title: String(localized: "官方网站", table: "Core"),
+                            url: appInfo.website,
+                            icon: "safari"
+                        )
+
+                        if !appInfo.repository.isEmpty {
                             linkRow(
-                                title: String(localized: "官方网站", table: "Core"),
-                                url: appInfo.website,
-                                icon: .iconSafari
-                            )
-
-                            if !appInfo.repository.isEmpty {
-                                Divider()
-
-                                linkRow(
-                                    title: String(localized: "源代码", table: "Core"),
-                                    url: appInfo.repository,
-                                    icon: .iconCalendar
-                                )
-                            }
-
-                            Divider()
-
-                            linkRow(
-                                title: "版本更新说明",
-                                url: "https://github.com/CofficLab/GitOK/releases/latest",
-                                icon: "doc.text"
+                                title: String(localized: "源代码", table: "Core"),
+                                url: appInfo.repository,
+                                icon: "calendar"
                             )
                         }
+
+                        linkRow(
+                            title: "版本更新说明",
+                            url: "https://github.com/CofficLab/GitOK/releases/latest",
+                            icon: "doc.text"
+                        )
                     }
                 }
                 .padding(.horizontal, 40)
@@ -146,25 +130,46 @@ struct AboutView: View, SuperLog {
     // MARK: - View Components
 
     private func infoRow(title: String, value: String, icon: String) -> some View {
-        MagicSettingRow(
-            title: title,
-            description: value,
-            icon: icon
-        ) {
+        settingsRow(title: title, description: value, icon: icon) {
             EmptyView()
         }
     }
 
     private func linkRow(title: String, url: String, icon: String) -> some View {
-        MagicSettingRow(
-            title: title,
-            description: url,
-            icon: icon
-        ) {
+        settingsRow(title: title, description: url, icon: icon) {
             Image.safari.inButtonWithAction {
                 if let url = URL(string: url) {
                     NSWorkspace.shared.open(url)
                 }
+            }
+        }
+    }
+
+    private func settingsRow<Accessory: View>(
+        title: String,
+        description: String,
+        icon: String,
+        @ViewBuilder accessory: () -> Accessory
+    ) -> some View {
+        GitOKUI.AppSettingsRow(verticalPadding: 10) {
+            HStack(spacing: 12) {
+                Image(systemName: icon)
+                    .foregroundColor(.secondary)
+                    .frame(width: 28)
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(title)
+                        .font(.system(size: 13, weight: .medium))
+
+                    Text(description)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                        .textSelection(.enabled)
+                }
+
+                Spacer()
+
+                accessory()
             }
         }
     }
