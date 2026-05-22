@@ -1,14 +1,14 @@
 import Foundation
 import GitOKUI
 
-class ThemeTerminalPlugin: NSObject, SuperPlugin {
-    @objc static let shared = ThemeTerminalPlugin()
+class ThemeMidnightPlugin: NSObject, SuperPlugin {
+    @objc static let shared = ThemeMidnightPlugin()
     static var order: Int { 123 }
-    static var displayName: String { "Terminal Theme" }
-    static var description: String { "Command-line oriented dark theme" }
+    static var displayName: String { "Midnight Theme" }
+    static var description: String { "Quiet terminal-green dark theme" }
     static var iconName: String { "terminal" }
     static var allowUserToggle: Bool { false }
-    nonisolated var instanceLabel: String { "ThemeTerminalPlugin" }
+    nonisolated var instanceLabel: String { "ThemeMidnightPlugin" }
 
     @MainActor
     func addThemeContributions() -> [GitOKUIThemeContribution] {

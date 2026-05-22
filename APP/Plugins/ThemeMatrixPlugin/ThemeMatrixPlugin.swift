@@ -1,14 +1,14 @@
 import Foundation
 import GitOKUI
 
-class ThemeAutomationPlugin: NSObject, SuperPlugin {
-    @objc static let shared = ThemeAutomationPlugin()
+class ThemeMatrixPlugin: NSObject, SuperPlugin {
+    @objc static let shared = ThemeMatrixPlugin()
     static var order: Int { 131 }
-    static var displayName: String { "Automation Theme" }
-    static var description: String { "Background Git task theme" }
+    static var displayName: String { "Matrix Theme" }
+    static var description: String { "Electric green dark theme" }
     static var iconName: String { "gearshape.2" }
     static var allowUserToggle: Bool { false }
-    nonisolated var instanceLabel: String { "ThemeAutomationPlugin" }
+    nonisolated var instanceLabel: String { "ThemeMatrixPlugin" }
 
     @MainActor
     func addThemeContributions() -> [GitOKUIThemeContribution] {

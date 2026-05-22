@@ -1,14 +1,14 @@
 import Foundation
 import GitOKUI
 
-class ThemeArchivePlugin: NSObject, SuperPlugin {
-    @objc static let shared = ThemeArchivePlugin()
+class ThemeMountainPlugin: NSObject, SuperPlugin {
+    @objc static let shared = ThemeMountainPlugin()
     static var order: Int { 132 }
-    static var displayName: String { "Archive Theme" }
-    static var description: String { "Repository cleanup and archive theme" }
+    static var displayName: String { "Mountain Theme" }
+    static var description: String { "Quiet stone light theme" }
     static var iconName: String { "archivebox" }
     static var allowUserToggle: Bool { false }
-    nonisolated var instanceLabel: String { "ThemeArchivePlugin" }
+    nonisolated var instanceLabel: String { "ThemeMountainPlugin" }
 
     @MainActor
     func addThemeContributions() -> [GitOKUIThemeContribution] {

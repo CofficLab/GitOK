@@ -1,14 +1,14 @@
 import Foundation
 import GitOKUI
 
-class ThemePullRequestPlugin: NSObject, SuperPlugin {
-    @objc static let shared = ThemePullRequestPlugin()
+class ThemeNebulaPlugin: NSObject, SuperPlugin {
+    @objc static let shared = ThemeNebulaPlugin()
     static var order: Int { 126 }
-    static var displayName: String { "Pull Request Theme" }
-    static var description: String { "Incoming changes review theme" }
+    static var displayName: String { "Nebula Theme" }
+    static var description: String { "Violet atmospheric dark theme" }
     static var iconName: String { "arrow.triangle.pull" }
     static var allowUserToggle: Bool { false }
-    nonisolated var instanceLabel: String { "ThemePullRequestPlugin" }
+    nonisolated var instanceLabel: String { "ThemeNebulaPlugin" }
 
     @MainActor
     func addThemeContributions() -> [GitOKUIThemeContribution] {

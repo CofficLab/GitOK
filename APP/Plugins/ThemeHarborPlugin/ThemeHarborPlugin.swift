@@ -1,14 +1,14 @@
 import Foundation
 import GitOKUI
 
-class ThemeRemotePlugin: NSObject, SuperPlugin {
-    @objc static let shared = ThemeRemotePlugin()
+class ThemeHarborPlugin: NSObject, SuperPlugin {
+    @objc static let shared = ThemeHarborPlugin()
     static var order: Int { 127 }
-    static var displayName: String { "Remote Theme" }
-    static var description: String { "Remote repository operations theme" }
+    static var displayName: String { "Harbor Theme" }
+    static var description: String { "Deep blue water theme" }
     static var iconName: String { "network" }
     static var allowUserToggle: Bool { false }
-    nonisolated var instanceLabel: String { "ThemeRemotePlugin" }
+    nonisolated var instanceLabel: String { "ThemeHarborPlugin" }
 
     @MainActor
     func addThemeContributions() -> [GitOKUIThemeContribution] {

@@ -98,9 +98,9 @@ struct GitOKScenarioTheme: GitOKAppChromeTheme {
 extension GitOKScenarioTheme {
     static let repository = GitOKScenarioTheme(
         identifier: "repository",
-        displayName: "Repository",
-        compactName: "Repo",
-        description: "Balanced repository workspace with GitHub-inspired contrast",
+        displayName: "GitOK",
+        compactName: "GitOK",
+        description: "Default GitOK dark theme with crisp blue, green, and violet accents",
         iconName: "folder.badge.gearshape",
         iconColor: Color.adaptive(light: "2563EB", dark: "58A6FF"),
         isDarkTheme: true,
@@ -118,9 +118,9 @@ extension GitOKScenarioTheme {
 
     static let worktree = GitOKScenarioTheme(
         identifier: "worktree",
-        displayName: "Worktree",
-        compactName: "Work",
-        description: "Calm light theme for scanning projects, branches, and files",
+        displayName: "Spring",
+        compactName: "Spring",
+        description: "Fresh light theme with soft greens and clear daytime contrast",
         iconName: "tree",
         iconColor: Color(hex: "047857"),
         isDarkTheme: false,
@@ -138,9 +138,9 @@ extension GitOKScenarioTheme {
 
     static let commitGraph = GitOKScenarioTheme(
         identifier: "commit-graph",
-        displayName: "Commit Graph",
-        compactName: "Graph",
-        description: "High-contrast dark theme for history, graph lines, and status review",
+        displayName: "Aurora",
+        compactName: "Aurora",
+        description: "Deep cyan night theme with bright green and amber highlights",
         iconName: "point.3.connected.trianglepath.dotted",
         iconColor: Color(hex: "22D3EE"),
         isDarkTheme: true,
@@ -158,9 +158,9 @@ extension GitOKScenarioTheme {
 
     static let terminal = GitOKScenarioTheme(
         identifier: "terminal",
-        displayName: "Terminal",
-        compactName: "Term",
-        description: "Quiet command-line palette for pull, push, fetch, and automation work",
+        displayName: "Midnight",
+        compactName: "Midnight",
+        description: "Quiet dark theme with terminal green and cool blue accents",
         iconName: "terminal",
         iconColor: Color(hex: "34D399"),
         isDarkTheme: true,
@@ -178,9 +178,9 @@ extension GitOKScenarioTheme {
 
     static let conflict = GitOKScenarioTheme(
         identifier: "conflict",
-        displayName: "Conflict",
-        compactName: "Conflict",
-        description: "Focused review theme for merge conflicts and risky changes",
+        displayName: "Ember",
+        compactName: "Ember",
+        description: "Warm dark theme with orange, red, and gold contrast",
         iconName: "exclamationmark.triangle",
         iconColor: Color(hex: "F97316"),
         isDarkTheme: true,
@@ -198,9 +198,9 @@ extension GitOKScenarioTheme {
 
     static let branchFlow = GitOKScenarioTheme(
         identifier: "branch-flow",
-        displayName: "Branch Flow",
-        compactName: "Branch",
-        description: "Green-blue branch management theme for switching, creating, and pruning branches",
+        displayName: "River",
+        compactName: "River",
+        description: "Flowing dark teal theme with blue and fresh green accents",
         iconName: "arrow.triangle.branch",
         iconColor: Color(hex: "2DD4BF"),
         isDarkTheme: true,
@@ -218,9 +218,9 @@ extension GitOKScenarioTheme {
 
     static let pullRequest = GitOKScenarioTheme(
         identifier: "pull-request",
-        displayName: "Pull Request",
-        compactName: "PR",
-        description: "Review-focused theme for comparing incoming changes and branch readiness",
+        displayName: "Nebula",
+        compactName: "Nebula",
+        description: "Violet dark theme with cyan and pink atmospheric accents",
         iconName: "arrow.triangle.pull",
         iconColor: Color(hex: "A78BFA"),
         isDarkTheme: true,
@@ -238,9 +238,9 @@ extension GitOKScenarioTheme {
 
     static let remote = GitOKScenarioTheme(
         identifier: "remote",
-        displayName: "Remote",
-        compactName: "Remote",
-        description: "Network-oriented theme for remotes, fetch, pull, and push operations",
+        displayName: "Harbor",
+        compactName: "Harbor",
+        description: "Deep blue theme with clear water tones and teal highlights",
         iconName: "network",
         iconColor: Color(hex: "38BDF8"),
         isDarkTheme: true,
@@ -258,9 +258,9 @@ extension GitOKScenarioTheme {
 
     static let stash = GitOKScenarioTheme(
         identifier: "stash",
-        displayName: "Stash",
-        compactName: "Stash",
-        description: "Low-noise theme for temporary work, shelves, and context switching",
+        displayName: "Orchard",
+        compactName: "Orchard",
+        description: "Earthy dark theme with amber, blue, and lime accents",
         iconName: "tray.full",
         iconColor: Color(hex: "FBBF24"),
         isDarkTheme: true,
@@ -278,9 +278,9 @@ extension GitOKScenarioTheme {
 
     static let lfs = GitOKScenarioTheme(
         identifier: "large-files",
-        displayName: "Large Files",
-        compactName: "LFS",
-        description: "Dense theme for Git LFS, binary assets, and repository storage review",
+        displayName: "Glacier",
+        compactName: "Glacier",
+        description: "Clean light theme with icy cyan, teal, and violet accents",
         iconName: "externaldrive",
         iconColor: Color(hex: "06B6D4"),
         isDarkTheme: false,
@@ -298,9 +298,9 @@ extension GitOKScenarioTheme {
 
     static let release = GitOKScenarioTheme(
         identifier: "release",
-        displayName: "Release",
-        compactName: "Release",
-        description: "Crisp theme for tags, versions, changelog checks, and release preparation",
+        displayName: "Summer",
+        compactName: "Summer",
+        description: "Warm light theme with golden, blue, and green accents",
         iconName: "tag",
         iconColor: Color(hex: "EAB308"),
         isDarkTheme: false,
@@ -318,9 +318,9 @@ extension GitOKScenarioTheme {
 
     static let automation = GitOKScenarioTheme(
         identifier: "automation",
-        displayName: "Automation",
-        compactName: "Auto",
-        description: "Signal-forward theme for watchers, auto-pull, auto-push, and background tasks",
+        displayName: "Matrix",
+        compactName: "Matrix",
+        description: "Dark green theme with electric cyan and yellow signal colors",
         iconName: "gearshape.2",
         iconColor: Color(hex: "22C55E"),
         isDarkTheme: true,
@@ -338,9 +338,9 @@ extension GitOKScenarioTheme {
 
     static let archive = GitOKScenarioTheme(
         identifier: "archive",
-        displayName: "Archive",
-        compactName: "Archive",
-        description: "Quiet light theme for old repositories, cleanup passes, and reference browsing",
+        displayName: "Mountain",
+        compactName: "Mountain",
+        description: "Quiet light theme with stone, pine, and warm earth accents",
         iconName: "archivebox",
         iconColor: Color(hex: "64748B"),
         isDarkTheme: false,
@@ -358,9 +358,9 @@ extension GitOKScenarioTheme {
 
     static let focus = GitOKScenarioTheme(
         identifier: "focus",
-        displayName: "Focus",
-        compactName: "Focus",
-        description: "Minimal light theme for long status review sessions and careful commits",
+        displayName: "Winter",
+        compactName: "Winter",
+        description: "Minimal light theme with cool blue, green, and violet accents",
         iconName: "scope",
         iconColor: Color(hex: "2563EB"),
         isDarkTheme: false,
@@ -380,7 +380,7 @@ extension GitOKScenarioTheme {
         identifier: "graphite",
         displayName: "Graphite",
         compactName: "Graphite",
-        description: "Neutral dark theme for dense repository dashboards and repeated operations",
+        description: "Neutral dark theme with graphite surfaces and restrained color",
         iconName: "square.grid.3x3",
         iconColor: Color(hex: "94A3B8"),
         isDarkTheme: true,
@@ -400,7 +400,7 @@ extension GitOKScenarioTheme {
         identifier: "dracula",
         displayName: "Dracula",
         compactName: "Dracula",
-        description: "Vivid dark theme for late-night Git work and high-visibility status colors",
+        description: "Vivid dark theme inspired by the classic Dracula palette",
         iconName: "moon.stars",
         iconColor: Color(hex: "BD93F9"),
         isDarkTheme: true,
@@ -420,7 +420,7 @@ extension GitOKScenarioTheme {
         identifier: "one-dark",
         displayName: "One Dark",
         compactName: "One",
-        description: "Editor-style dark theme for code-heavy diffs and commit message work",
+        description: "Editor-style dark theme inspired by the One Dark palette",
         iconName: "chevron.left.forwardslash.chevron.right",
         iconColor: Color(hex: "61AFEF"),
         isDarkTheme: true,
@@ -440,7 +440,7 @@ extension GitOKScenarioTheme {
         identifier: "xcode-light",
         displayName: "Xcode Light",
         compactName: "Xcode",
-        description: "Bright macOS-native theme for app repository work and Xcode handoffs",
+        description: "Bright macOS-native theme inspired by Xcode Light",
         iconName: "hammer",
         iconColor: Color(hex: "0A84FF"),
         isDarkTheme: false,
@@ -460,7 +460,7 @@ extension GitOKScenarioTheme {
         identifier: "github-light",
         displayName: "GitHub Light",
         compactName: "GitHub",
-        description: "Clean GitHub-like light theme for remote review and issue-linked work",
+        description: "Clean light theme inspired by GitHub's default interface",
         iconName: "globe",
         iconColor: Color(hex: "0969DA"),
         isDarkTheme: false,

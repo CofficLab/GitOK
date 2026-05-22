@@ -1,14 +1,14 @@
 import Foundation
 import GitOKUI
 
-class ThemeStashPlugin: NSObject, SuperPlugin {
-    @objc static let shared = ThemeStashPlugin()
+class ThemeOrchardPlugin: NSObject, SuperPlugin {
+    @objc static let shared = ThemeOrchardPlugin()
     static var order: Int { 128 }
-    static var displayName: String { "Stash Theme" }
-    static var description: String { "Temporary work theme" }
+    static var displayName: String { "Orchard Theme" }
+    static var description: String { "Earthy amber dark theme" }
     static var iconName: String { "tray.full" }
     static var allowUserToggle: Bool { false }
-    nonisolated var instanceLabel: String { "ThemeStashPlugin" }
+    nonisolated var instanceLabel: String { "ThemeOrchardPlugin" }
 
     @MainActor
     func addThemeContributions() -> [GitOKUIThemeContribution] {

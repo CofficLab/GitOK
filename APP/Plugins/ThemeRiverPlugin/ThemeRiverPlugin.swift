@@ -1,14 +1,14 @@
 import Foundation
 import GitOKUI
 
-class ThemeBranchFlowPlugin: NSObject, SuperPlugin {
-    @objc static let shared = ThemeBranchFlowPlugin()
+class ThemeRiverPlugin: NSObject, SuperPlugin {
+    @objc static let shared = ThemeRiverPlugin()
     static var order: Int { 125 }
-    static var displayName: String { "Branch Flow Theme" }
-    static var description: String { "Branch management theme" }
+    static var displayName: String { "River Theme" }
+    static var description: String { "Flowing teal dark theme" }
     static var iconName: String { "arrow.triangle.branch" }
     static var allowUserToggle: Bool { false }
-    nonisolated var instanceLabel: String { "ThemeBranchFlowPlugin" }
+    nonisolated var instanceLabel: String { "ThemeRiverPlugin" }
 
     @MainActor
     func addThemeContributions() -> [GitOKUIThemeContribution] {

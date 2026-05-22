@@ -1,14 +1,14 @@
 import Foundation
 import GitOKUI
 
-class ThemeConflictPlugin: NSObject, SuperPlugin {
-    @objc static let shared = ThemeConflictPlugin()
+class ThemeEmberPlugin: NSObject, SuperPlugin {
+    @objc static let shared = ThemeEmberPlugin()
     static var order: Int { 124 }
-    static var displayName: String { "Conflict Theme" }
-    static var description: String { "Focused merge conflict review theme" }
+    static var displayName: String { "Ember Theme" }
+    static var description: String { "Warm orange dark theme" }
     static var iconName: String { "exclamationmark.triangle" }
     static var allowUserToggle: Bool { false }
-    nonisolated var instanceLabel: String { "ThemeConflictPlugin" }
+    nonisolated var instanceLabel: String { "ThemeEmberPlugin" }
 
     @MainActor
     func addThemeContributions() -> [GitOKUIThemeContribution] {
