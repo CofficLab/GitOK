@@ -1,9 +1,15 @@
 import Combine
+import GitCoreKit
 import LibGit2Swift
 import MagicAlert
 import MagicKit
 import OSLog
 import SwiftUI
+
+private enum RemoteRetryOperation {
+    case pull
+    case push
+}
 
 /// 显示当前工作状态的视图组件
 /// 显示未提交文件数量、远程同步状态，并提供 git pull 功能
@@ -53,6 +59,12 @@ struct WorkingStateView: View, SuperLog {
 
     /// 是否显示凭据输入界面
     @State private var showCredentialInput = false
+    @State private var credentialHost = "github.com"
+    @State private var credentialRetryOperation: RemoteRetryOperation?
+    @State private var showSSHHelp = false
+    @State private var sshHelpRemoteURL: String?
+    @State private var sshHelpErrorMessage: String?
+    @State private var sshHelpRetryOperation: RemoteRetryOperation?
 
     /// 是否启用详细日志输出
     static let verbose = false
@@ -157,16 +169,28 @@ struct WorkingStateView: View, SuperLog {
         .onProjectGitHeadDidChange(perform: onGitDirectoryDidChange)
         .onNotification(.appDidBecomeActive, onAppDidBecomeActive)
         .sheet(isPresented: $showCredentialInput) {
-            CredentialInputView {
+            CredentialInputView(server: credentialHost) {
                 // 凭据保存后，重新执行 push/pull
-                if isPushing {
+                if credentialRetryOperation == .push {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                         performPush()
                     }
-                } else if isPulling {
+                } else if credentialRetryOperation == .pull {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                         performPull()
                     }
+                }
+            }
+        }
+        .sheet(isPresented: $showSSHHelp) {
+            SSHAuthenticationHelpView(
+                remoteURL: sshHelpRemoteURL,
+                errorMessage: sshHelpErrorMessage
+            ) {
+                if sshHelpRetryOperation == .push {
+                    performPush()
+                } else if sshHelpRetryOperation == .pull {
+                    performPull()
                 }
             }
         }
@@ -354,8 +378,10 @@ extension WorkingStateView {
                     self.loadSyncStatus()
                 case let .failure(error):
                     // 检查是否需要凭据
-                    if self.isCredentialError(error) {
+                    if self.prepareCredentialInput(for: error, operation: .pull) {
                         self.showCredentialInput = true
+                    } else if self.prepareSSHHelp(for: error, operation: .pull) {
+                        self.showSSHHelp = true
                     } else {
                         alert_error(error)
                     }
@@ -418,8 +444,10 @@ extension WorkingStateView {
                     self.loadSyncStatus()
                 case let .failure(error):
                     // 检查是否需要凭据
-                    if self.isCredentialError(error) {
+                    if self.prepareCredentialInput(for: error, operation: .push) {
                         self.showCredentialInput = true
+                    } else if self.prepareSSHHelp(for: error, operation: .push) {
+                        self.showSSHHelp = true
                     } else {
                         alert_error(error)
                     }
@@ -457,6 +485,68 @@ extension WorkingStateView {
         ]
 
         return authKeywords.contains { errorDescription.contains($0) }
+    }
+
+    private func prepareCredentialInput(for error: Error, operation: RemoteRetryOperation) -> Bool {
+        guard isCredentialError(error) else { return false }
+
+        if let host = currentHTTPSCredentialHost() {
+            credentialHost = host
+            credentialRetryOperation = operation
+            return true
+        }
+
+        return false
+    }
+
+    private func prepareSSHHelp(for error: Error, operation: RemoteRetryOperation) -> Bool {
+        let description = CloneRepositoryValidation.cloneFailureDescription(from: error.localizedDescription)
+        guard description.kind == .sshAuthentication || description.kind == .sshHostKey else {
+            return false
+        }
+
+        sshHelpRemoteURL = currentSSHRemoteURL()
+        sshHelpErrorMessage = error.localizedDescription
+        sshHelpRetryOperation = operation
+        return true
+    }
+
+    private func currentHTTPSCredentialHost() -> String? {
+        guard let project = vm.project,
+              let remotes = try? project.remoteList() else {
+            return nil
+        }
+
+        let preferredRemote = remotes.first(where: { $0.name == "origin" }) ?? remotes.first
+        let candidateURLs = [
+            preferredRemote?.pushURL,
+            preferredRemote?.fetchURL,
+            preferredRemote?.url
+        ].compactMap { $0 }
+
+        for remoteURL in candidateURLs {
+            if let host = CloneRepositoryValidation.credentialHost(from: remoteURL) {
+                return host
+            }
+        }
+
+        return nil
+    }
+
+    private func currentSSHRemoteURL() -> String? {
+        guard let project = vm.project,
+              let remotes = try? project.remoteList() else {
+            return nil
+        }
+
+        let preferredRemote = remotes.first(where: { $0.name == "origin" }) ?? remotes.first
+        let candidateURLs = [
+            preferredRemote?.pushURL,
+            preferredRemote?.fetchURL,
+            preferredRemote?.url
+        ].compactMap { $0 }
+
+        return candidateURLs.first { CloneRepositoryValidation.sshHost(from: $0) != nil }
     }
 }
 

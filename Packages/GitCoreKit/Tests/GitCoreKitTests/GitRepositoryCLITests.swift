@@ -3,113 +3,136 @@ import XCTest
 @testable import GitCoreKit
 
 final class GitRepositoryCLITests: XCTestCase {
-    func testParseStashListOutput() {
-        let output = """
-        stash@{0}\u{1F}WIP on main: abc123 first stash
-        stash@{1}\u{1F}custom message
-        """
-
-        XCTAssertEqual(
-            GitParsers.parseStashList(output),
-            [
-                GitStashEntry(index: 0, message: "WIP on main: abc123 first stash"),
-                GitStashEntry(index: 1, message: "custom message"),
-            ]
-        )
-    }
-
-    func testParseStashListNormalizesDefaultGitMessage() {
-        let output = "stash@{0}\u{1F}On feature/refactor: WIP work"
-
-        XCTAssertEqual(
-            GitParsers.parseStashList(output),
-            [GitStashEntry(index: 0, message: "WIP work")]
-        )
-    }
-
-    func testParseStashListSkipsMalformedLinesAndKeepsEmptyMessages() {
-        let output = """
-        malformed
-        stash@{0}\u{1F}
-        stash@{x}\u{1F}bad index
-        stash@{2}\u{1F}kept
-        """
-
-        XCTAssertEqual(
-            GitParsers.parseStashList(output),
-            [
-                GitStashEntry(index: 0, message: ""),
-                GitStashEntry(index: 2, message: "kept"),
-            ]
-        )
-    }
-
-    func testParseStatusEntriesSkipsShortLinesAndKeepsSpacesInPaths() {
-        let output = """
-         M README.md
-        R  old name.swift -> new name.swift
-        ??
-        ?? folder/file with spaces.txt
-        """
-
-        XCTAssertEqual(
-            GitParsers.parseStatusEntries(output),
-            [
-                GitStatusEntry(path: "README.md", indexStatus: " ", workTreeStatus: "M"),
-                GitStatusEntry(path: "old name.swift -> new name.swift", indexStatus: "R", workTreeStatus: " "),
-                GitStatusEntry(path: "folder/file with spaces.txt", indexStatus: "?", workTreeStatus: "?"),
-            ]
-        )
-    }
-
-    func testClassifyMergeFiles() {
-        let files = GitParsers.classifyMergeFiles(
-            unresolvedPaths: ["Sources/App.swift"],
-            statusEntries: [
-                GitStatusEntry(path: "Sources/App.swift", indexStatus: "U", workTreeStatus: "U"),
-                GitStatusEntry(path: "Sources/Ready.swift", indexStatus: "M", workTreeStatus: " "),
-                GitStatusEntry(path: "Sources/NeedsStage.swift", indexStatus: " ", workTreeStatus: "M"),
-            ]
-        )
-
-        XCTAssertEqual(
-            files,
-            [
-                GitMergeFile(path: "Sources/App.swift", state: .unresolved),
-                GitMergeFile(path: "Sources/NeedsStage.swift", state: .pendingStage),
-                GitMergeFile(path: "Sources/Ready.swift", state: .staged),
-            ]
-        )
-    }
-
-    func testClassifyMergeFilesSortsPathsAndMarksPendingStage() {
-        let files = GitParsers.classifyMergeFiles(
-            unresolvedPaths: ["b.swift"],
-            statusEntries: [
-                GitStatusEntry(path: "c.swift", indexStatus: "M", workTreeStatus: " "),
-                GitStatusEntry(path: "a.swift", indexStatus: " ", workTreeStatus: "M"),
-            ]
-        )
-
-        XCTAssertEqual(
-            files,
-            [
-                GitMergeFile(path: "a.swift", state: .pendingStage),
-                GitMergeFile(path: "b.swift", state: .unresolved),
-                GitMergeFile(path: "c.swift", state: .staged),
-            ]
-        )
-    }
-
     func testGitMergeFileIDUsesPath() {
         XCTAssertEqual(GitMergeFile(path: "Sources/App.swift", state: .staged).id, "Sources/App.swift")
     }
 
-    func testParseAheadBehindCounts() {
-        let counts = GitParsers.parseAheadBehindCounts("2\t3")
-        XCTAssertEqual(counts?.ahead, 2)
-        XCTAssertEqual(counts?.behind, 3)
-        XCTAssertNil(GitParsers.parseAheadBehindCounts("not-counts"))
+    func testInitializeLFSWritesLocalFilterConfigWhenAvailable() throws {
+        let repo = try TestGitRepository()
+        let client = GitRepositoryCLI(repositoryURL: repo.url)
+
+        guard client.lfsStatus().isAvailable else {
+            throw XCTSkip("git-lfs is not installed in this environment")
+        }
+
+        try client.initializeLFS()
+
+        XCTAssertEqual(try repo.run(["config", "--local", "filter.lfs.process"]), "git-lfs filter-process")
+        XCTAssertEqual(try repo.run(["config", "--local", "filter.lfs.required"]), "true")
+    }
+
+    func testLFSLargeFileCandidatesFindsFilesAboveThreshold() throws {
+        let repo = try TestGitRepository()
+        try repo.writeData("small.bin", data: Data(repeating: 1, count: 8))
+        try repo.writeData("assets/big.bin", data: Data(repeating: 2, count: 16))
+        try repo.writeData("assets/bigger.bin", data: Data(repeating: 3, count: 24))
+
+        let client = GitRepositoryCLI(repositoryURL: repo.url)
+
+        XCTAssertEqual(
+            try client.lfsLargeFileCandidates(thresholdBytes: 16),
+            [
+                GitRepositoryCLI.GitLFSLargeFileCandidate(path: "assets/bigger.bin", byteSize: 24),
+                GitRepositoryCLI.GitLFSLargeFileCandidate(path: "assets/big.bin", byteSize: 16),
+            ]
+        )
+    }
+
+    func testLFSLargeFileCandidatesSkipsGitDirectory() throws {
+        let repo = try TestGitRepository()
+        try repo.writeData(".git/objects/fake-large", data: Data(repeating: 1, count: 32))
+        try repo.writeData("tracked-large.bin", data: Data(repeating: 2, count: 32))
+
+        let client = GitRepositoryCLI(repositoryURL: repo.url)
+
+        XCTAssertEqual(
+            try client.lfsLargeFileCandidates(thresholdBytes: 16),
+            [GitRepositoryCLI.GitLFSLargeFileCandidate(path: "tracked-large.bin", byteSize: 32)]
+        )
+    }
+
+    func testLFSLargeFileCandidatesRejectsInvalidThreshold() throws {
+        let repo = try TestGitRepository()
+        let client = GitRepositoryCLI(repositoryURL: repo.url)
+
+        XCTAssertThrowsError(try client.lfsLargeFileCandidates(thresholdBytes: 0)) { error in
+            XCTAssertTrue((error as NSError).localizedDescription.contains("大文件阈值必须大于 0"))
+        }
+    }
+
+    func testLFSAttributeMismatchesFindsPointerWithoutAttribute() throws {
+        let repo = try TestGitRepository()
+        try repo.write("asset.bin", content: lfsPointer())
+        try repo.run(["add", "."])
+
+        let client = GitRepositoryCLI(repositoryURL: repo.url)
+
+        XCTAssertEqual(
+            try client.lfsAttributeMismatches(),
+            [
+                GitRepositoryCLI.GitLFSAttributeMismatch(
+                    path: "asset.bin",
+                    kind: .pointerWithoutLFSAttribute
+                )
+            ]
+        )
+    }
+
+    func testLFSAttributeMismatchesFindsAttributeWithoutPointer() throws {
+        let repo = try TestGitRepository()
+        try repo.write(".gitattributes", content: "*.bin filter=lfs diff=lfs merge=lfs -text\n")
+        try repo.write("asset.bin", content: "regular file content\n")
+        try repo.addWithDisabledLFSFilter()
+
+        let client = GitRepositoryCLI(repositoryURL: repo.url)
+
+        XCTAssertEqual(
+            try client.lfsAttributeMismatches(),
+            [
+                GitRepositoryCLI.GitLFSAttributeMismatch(
+                    path: "asset.bin",
+                    kind: .lfsAttributeWithoutPointer
+                )
+            ]
+        )
+    }
+
+    func testLFSAttributeMismatchesAcceptsPointerWithAttribute() throws {
+        let repo = try TestGitRepository()
+        try repo.write(".gitattributes", content: "*.bin filter=lfs diff=lfs merge=lfs -text\n")
+        try repo.write("asset.bin", content: lfsPointer())
+        try repo.addWithDisabledLFSFilter()
+
+        let client = GitRepositoryCLI(repositoryURL: repo.url)
+
+        XCTAssertEqual(try client.lfsAttributeMismatches(), [])
+    }
+
+    func testInitializeSubmodulesChecksOutUninitializedSubmodule() throws {
+        let child = try TestGitRepository()
+        try child.write("README.md", content: "child\n")
+        try child.run(["add", "."])
+        try child.run(["commit", "-m", "child"])
+
+        let parent = try TestGitRepository()
+        try parent.run(["-c", "protocol.file.allow=always", "submodule", "add", child.url.path, "Vendor/Child"])
+        try parent.run(["commit", "-am", "add submodule"])
+
+        let destinationRoot = FileManager.default.temporaryDirectory
+            .appendingPathComponent(UUID().uuidString, isDirectory: true)
+        try FileManager.default.createDirectory(at: destinationRoot, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: destinationRoot) }
+
+        let localURL = destinationRoot.appendingPathComponent("local", isDirectory: true)
+        try GitRepositoryCLI.clone(remoteURL: parent.url.path, destinationURL: localURL)
+
+        let client = GitRepositoryCLI(repositoryURL: localURL)
+        XCTAssertEqual(try client.submodules().map(\.status), [.uninitialized])
+
+        try client.initializeSubmodules(allowFileProtocol: true)
+
+        XCTAssertEqual(try String(contentsOf: localURL.appendingPathComponent("Vendor/Child/README.md"), encoding: .utf8), "child\n")
+        XCTAssertEqual(try client.submodules().map(\.status), [.initialized])
     }
 
     func testStashLifecycle() throws {
@@ -124,6 +147,10 @@ final class GitRepositoryCLITests: XCTestCase {
         let stashes = try client.stashList()
         XCTAssertEqual(stashes.count, 1)
         XCTAssertEqual(stashes[0].message, "save notes")
+        XCTAssertEqual(stashes[0].branchName, "master")
+        XCTAssertNotNil(stashes[0].relativeDate)
+        XCTAssertEqual(stashes[0].changedFileCount, 1)
+        XCTAssertTrue(stashes[0].diffPreview.contains("notes.txt"))
         XCTAssertEqual(try repo.read("notes.txt"), nil)
 
         try client.stashApply(index: 0)
@@ -154,12 +181,27 @@ final class GitRepositoryCLITests: XCTestCase {
         try client.stashSave(message: "untracked only")
 
         XCTAssertNil(try repo.read("draft.md"))
-        XCTAssertEqual(
-            try client.stashList(),
-            [GitStashEntry(index: 0, message: "untracked only")]
-        )
+        let stashes = try client.stashList()
+        XCTAssertEqual(stashes.count, 1)
+        XCTAssertEqual(stashes[0].message, "untracked only")
+        XCTAssertEqual(stashes[0].changedFileCount, 1)
 
         try client.stashPop(index: 0)
+        XCTAssertEqual(try repo.read("draft.md"), "hello\n")
+        XCTAssertTrue(try client.stashList().isEmpty)
+    }
+
+    func testStashBranchCreatesBranchAndRestoresChanges() throws {
+        let repo = try TestGitRepository()
+        try repo.run(["commit", "--allow-empty", "-m", "initial"])
+
+        try repo.write("draft.md", content: "hello\n")
+
+        let client = GitRepositoryCLI(repositoryURL: repo.url)
+        try client.stashSave(message: "branch me")
+        try client.stashBranch(name: "recover/stash", index: 0)
+
+        XCTAssertEqual(try repo.run(["branch", "--show-current"]), "recover/stash")
         XCTAssertEqual(try repo.read("draft.md"), "hello\n")
         XCTAssertTrue(try client.stashList().isEmpty)
     }
@@ -179,7 +221,10 @@ final class GitRepositoryCLITests: XCTestCase {
         try repo.run(["commit", "-am", "head change"])
 
         XCTAssertThrowsError(try client.stashPop(index: 0))
-        XCTAssertEqual(try client.stashList(), [GitStashEntry(index: 0, message: "pop conflict candidate")])
+        let stashes = try client.stashList()
+        XCTAssertEqual(stashes.count, 1)
+        XCTAssertEqual(stashes[0].message, "pop conflict candidate")
+        XCTAssertEqual(stashes[0].changedFileCount, 1)
         XCTAssertEqual(
             try client.statusEntries(),
             [GitStatusEntry(path: "shared.txt", indexStatus: "U", workTreeStatus: "U")]
@@ -201,7 +246,10 @@ final class GitRepositoryCLITests: XCTestCase {
         try repo.run(["commit", "-am", "head change"])
 
         XCTAssertThrowsError(try client.stashApply(index: 0))
-        XCTAssertEqual(try client.stashList(), [GitStashEntry(index: 0, message: "conflict candidate")])
+        let stashes = try client.stashList()
+        XCTAssertEqual(stashes.count, 1)
+        XCTAssertEqual(stashes[0].message, "conflict candidate")
+        XCTAssertEqual(stashes[0].changedFileCount, 1)
         XCTAssertEqual(try client.statusEntries(), [GitStatusEntry(path: "shared.txt", indexStatus: "U", workTreeStatus: "U")])
     }
 
@@ -223,6 +271,488 @@ final class GitRepositoryCLITests: XCTestCase {
         let client = GitRepositoryCLI(repositoryURL: repo.url)
 
         XCTAssertEqual(try client.aheadBehind(), .noUpstream)
+    }
+
+    func testDeleteLocalBranchRemovesMergedBranch() throws {
+        let repo = try TestGitRepository()
+        try repo.run(["commit", "--allow-empty", "-m", "initial"])
+        try repo.run(["checkout", "-b", "done"])
+        try repo.run(["checkout", "master"])
+
+        let client = GitRepositoryCLI(repositoryURL: repo.url)
+        try client.deleteLocalBranch(named: "done")
+
+        let branches = try repo.run(["branch", "--format=%(refname:short)"])
+            .split(separator: "\n")
+            .map(String.init)
+        XCTAssertFalse(branches.contains("done"))
+    }
+
+    func testDeleteLocalBranchRejectsCurrentBranch() throws {
+        let repo = try TestGitRepository()
+        try repo.run(["commit", "--allow-empty", "-m", "initial"])
+
+        let client = GitRepositoryCLI(repositoryURL: repo.url)
+
+        XCTAssertThrowsError(try client.deleteLocalBranch(named: "master")) { error in
+            XCTAssertTrue((error as NSError).localizedDescription.contains("不能删除当前分支"))
+        }
+    }
+
+    func testRenameBranchRenamesExistingBranch() throws {
+        let repo = try TestGitRepository()
+        try repo.run(["commit", "--allow-empty", "-m", "initial"])
+        try repo.run(["checkout", "-b", "feature/old"])
+
+        let client = GitRepositoryCLI(repositoryURL: repo.url)
+        try client.renameBranch(from: "feature/old", to: "feature/new")
+
+        let branches = try repo.run(["branch", "--format=%(refname:short)"])
+            .split(separator: "\n")
+            .map(String.init)
+        XCTAssertFalse(branches.contains("feature/old"))
+        XCTAssertTrue(branches.contains("feature/new"))
+    }
+
+    func testRenameBranchRejectsEmptyNewName() throws {
+        let repo = try TestGitRepository()
+        try repo.run(["commit", "--allow-empty", "-m", "initial"])
+
+        let client = GitRepositoryCLI(repositoryURL: repo.url)
+
+        XCTAssertThrowsError(try client.renameBranch(from: "master", to: "  ")) { error in
+            XCTAssertTrue((error as NSError).localizedDescription.contains("新分支名称不能为空"))
+        }
+    }
+
+    func testRemoteBranchesListsFetchedBranchesWithoutHeadAlias() throws {
+        let remote = try TestGitRepository()
+        try remote.run(["commit", "--allow-empty", "-m", "initial"])
+        try remote.run(["checkout", "-b", "feature/list"])
+        try remote.run(["checkout", "master"])
+
+        let localURL = FileManager.default.temporaryDirectory
+            .appendingPathComponent(UUID().uuidString, isDirectory: true)
+        defer { try? FileManager.default.removeItem(at: localURL) }
+        try GitRepositoryCLI.clone(remoteURL: remote.url.path, destinationURL: localURL)
+
+        let client = GitRepositoryCLI(repositoryURL: localURL)
+
+        XCTAssertEqual(try client.remoteBranches(remote: "origin"), ["origin/feature/list", "origin/master"])
+    }
+
+    func testSetAndUnsetUpstreamUpdatesBranchConfig() throws {
+        let remote = try TestGitRepository()
+        try remote.run(["commit", "--allow-empty", "-m", "initial"])
+        try remote.run(["checkout", "-b", "feature/upstream"])
+        try remote.run(["checkout", "master"])
+
+        let localURL = FileManager.default.temporaryDirectory
+            .appendingPathComponent(UUID().uuidString, isDirectory: true)
+        defer { try? FileManager.default.removeItem(at: localURL) }
+        try GitRepositoryCLI.clone(remoteURL: remote.url.path, destinationURL: localURL)
+
+        let repo = TestGitRepository(url: localURL)
+        try repo.run(["checkout", "-b", "local-upstream"])
+
+        let client = GitRepositoryCLI(repositoryURL: localURL)
+        try client.setUpstream(localBranch: "local-upstream", upstreamBranch: "origin/feature/upstream")
+
+        XCTAssertEqual(try repo.run(["rev-parse", "--abbrev-ref", "--symbolic-full-name", "@{upstream}"]), "origin/feature/upstream")
+
+        try client.unsetUpstream(localBranch: "local-upstream")
+
+        XCTAssertThrowsError(try repo.run(["rev-parse", "--abbrev-ref", "--symbolic-full-name", "@{upstream}"]))
+    }
+
+    func testDeleteRemoteBranchPushesDeleteRef() throws {
+        let remote = try TestGitRepository()
+        try remote.run(["commit", "--allow-empty", "-m", "initial"])
+        try remote.run(["checkout", "-b", "feature/delete-me"])
+        try remote.run(["checkout", "master"])
+
+        let localURL = FileManager.default.temporaryDirectory
+            .appendingPathComponent(UUID().uuidString, isDirectory: true)
+        defer { try? FileManager.default.removeItem(at: localURL) }
+        try GitRepositoryCLI.clone(remoteURL: remote.url.path, destinationURL: localURL)
+
+        let client = GitRepositoryCLI(repositoryURL: localURL)
+        try client.deleteRemoteBranch(named: "origin/feature/delete-me", remote: "origin")
+
+        let remoteBranches = try remote.run(["branch", "--format=%(refname:short)"])
+            .split(separator: "\n")
+            .map(String.init)
+        XCTAssertFalse(remoteBranches.contains("feature/delete-me"))
+    }
+
+    func testPublishBranchPushesBranchAndSetsUpstream() throws {
+        let remote = try TestGitRepository()
+        try remote.run(["commit", "--allow-empty", "-m", "initial"])
+
+        let localURL = FileManager.default.temporaryDirectory
+            .appendingPathComponent(UUID().uuidString, isDirectory: true)
+        defer { try? FileManager.default.removeItem(at: localURL) }
+        try GitRepositoryCLI.clone(remoteURL: remote.url.path, destinationURL: localURL)
+
+        let repo = TestGitRepository(url: localURL)
+        try repo.run(["checkout", "-b", "feature/publish"])
+        try repo.write("feature.txt", content: "published\n")
+        try repo.run(["add", "."])
+        try repo.run(["commit", "-m", "publish branch"])
+
+        let client = GitRepositoryCLI(repositoryURL: localURL)
+        try client.publishBranch(localBranch: "feature/publish", remote: "origin")
+
+        let remoteBranches = try remote.run(["branch", "--format=%(refname:short)"])
+            .split(separator: "\n")
+            .map(String.init)
+        XCTAssertTrue(remoteBranches.contains("feature/publish"))
+        XCTAssertEqual(try repo.run(["rev-parse", "--abbrev-ref", "--symbolic-full-name", "@{upstream}"]), "origin/feature/publish")
+    }
+
+    func testCompareBranchesReturnsAheadBehindCommitsAndFiles() throws {
+        let repo = try TestGitRepository()
+        try repo.write("shared.txt", content: "base\n")
+        try repo.run(["add", "."])
+        try repo.run(["commit", "-m", "initial"])
+
+        try repo.run(["checkout", "-b", "feature/compare"])
+        try repo.write("shared.txt", content: "feature\n")
+        try repo.write("added.txt", content: "added\n")
+        try repo.run(["add", "."])
+        try repo.run(["commit", "-m", "feature change"])
+
+        try repo.run(["checkout", "master"])
+        try repo.write("base-only.txt", content: "base\n")
+        try repo.run(["add", "."])
+        try repo.run(["commit", "-m", "base change"])
+
+        let client = GitRepositoryCLI(repositoryURL: repo.url)
+        let compare = try client.compareBranches(base: "master", head: "feature/compare")
+
+        XCTAssertEqual(compare.base, "master")
+        XCTAssertEqual(compare.head, "feature/compare")
+        XCTAssertEqual(compare.ahead, 1)
+        XCTAssertEqual(compare.behind, 1)
+        XCTAssertEqual(compare.commits.map(\.subject), ["feature change"])
+        XCTAssertEqual(
+            compare.files,
+            [
+                GitBranchCompareFile(status: "A", path: "added.txt"),
+                GitBranchCompareFile(status: "M", path: "shared.txt"),
+            ]
+        )
+    }
+
+    func testCompareBranchesRejectsMissingBase() throws {
+        let repo = try TestGitRepository()
+        try repo.run(["commit", "--allow-empty", "-m", "initial"])
+
+        let client = GitRepositoryCLI(repositoryURL: repo.url)
+
+        XCTAssertThrowsError(try client.compareBranches(base: "missing", head: "master"))
+    }
+
+    func testStartRebaseReplaysBranchOntoUpstream() throws {
+        let repo = try TestGitRepository()
+        try repo.write("README.md", content: "initial\n")
+        try repo.run(["add", "."])
+        try repo.run(["commit", "-m", "initial"])
+
+        try repo.run(["checkout", "-b", "feature/rebase"])
+        try repo.write("feature.txt", content: "feature\n")
+        try repo.run(["add", "."])
+        try repo.run(["commit", "-m", "feature change"])
+
+        try repo.run(["checkout", "master"])
+        try repo.write("base.txt", content: "base\n")
+        try repo.run(["add", "."])
+        try repo.run(["commit", "-m", "base change"])
+
+        let client = GitRepositoryCLI(repositoryURL: repo.url)
+        try client.startRebase(branch: "feature/rebase", onto: "master")
+
+        XCTAssertFalse(try client.rebaseStatus().isRebasing)
+        XCTAssertEqual(try repo.run(["branch", "--show-current"]), "feature/rebase")
+        XCTAssertEqual(try repo.run(["log", "--format=%s", "-2"]), "feature change\nbase change")
+    }
+
+    func testStartRebaseConflictCanAbort() throws {
+        let repo = try TestGitRepository()
+        try repo.write("shared.txt", content: "initial\n")
+        try repo.run(["add", "."])
+        try repo.run(["commit", "-m", "initial"])
+
+        try repo.run(["checkout", "-b", "feature/conflict-rebase"])
+        try repo.write("shared.txt", content: "feature\n")
+        try repo.run(["commit", "-am", "feature change"])
+
+        try repo.run(["checkout", "master"])
+        try repo.write("shared.txt", content: "base\n")
+        try repo.run(["commit", "-am", "base change"])
+
+        let client = GitRepositoryCLI(repositoryURL: repo.url)
+
+        XCTAssertThrowsError(try client.startRebase(branch: "feature/conflict-rebase", onto: "master"))
+        let status = try client.rebaseStatus()
+        XCTAssertTrue(status.isRebasing)
+        XCTAssertEqual(status.branchName, "feature/conflict-rebase")
+        XCTAssertEqual(try client.getMergeConflictFiles(), ["shared.txt"])
+
+        try client.abortRebase()
+
+        XCTAssertFalse(try client.rebaseStatus().isRebasing)
+        XCTAssertEqual(try repo.run(["branch", "--show-current"]), "feature/conflict-rebase")
+        XCTAssertEqual(try repo.read("shared.txt"), "feature\n")
+    }
+
+    func testContinueRebaseCompletesAfterConflictResolution() throws {
+        let repo = try TestGitRepository()
+        try repo.write("shared.txt", content: "initial\n")
+        try repo.run(["add", "."])
+        try repo.run(["commit", "-m", "initial"])
+
+        try repo.run(["checkout", "-b", "feature/continue-rebase"])
+        try repo.write("shared.txt", content: "feature\n")
+        try repo.run(["commit", "-am", "feature change"])
+
+        try repo.run(["checkout", "master"])
+        try repo.write("shared.txt", content: "base\n")
+        try repo.run(["commit", "-am", "base change"])
+
+        let client = GitRepositoryCLI(repositoryURL: repo.url)
+
+        XCTAssertThrowsError(try client.startRebase(branch: "feature/continue-rebase", onto: "master"))
+        try repo.write("shared.txt", content: "resolved\n")
+        try repo.run(["add", "shared.txt"])
+        XCTAssertEqual(try client.getMergeConflictFiles(), [])
+
+        try client.continueRebase()
+
+        XCTAssertFalse(try client.rebaseStatus().isRebasing)
+        XCTAssertEqual(try repo.run(["branch", "--show-current"]), "feature/continue-rebase")
+        XCTAssertEqual(try repo.read("shared.txt"), "resolved\n")
+    }
+
+    func testCherryPickMultipleCommitsOntoBranch() throws {
+        let repo = try TestGitRepository()
+        try repo.write("README.md", content: "initial\n")
+        try repo.run(["add", "."])
+        try repo.run(["commit", "-m", "initial"])
+
+        try repo.run(["checkout", "-b", "feature/cherry"])
+        try repo.write("one.txt", content: "one\n")
+        try repo.run(["add", "."])
+        try repo.run(["commit", "-m", "one"])
+        let first = try repo.run(["rev-parse", "HEAD"])
+        try repo.write("two.txt", content: "two\n")
+        try repo.run(["add", "."])
+        try repo.run(["commit", "-m", "two"])
+        let second = try repo.run(["rev-parse", "HEAD"])
+
+        try repo.run(["checkout", "master"])
+        let client = GitRepositoryCLI(repositoryURL: repo.url)
+        try client.cherryPick(commits: [first, second], onto: "master")
+
+        XCTAssertFalse(try client.cherryPickStatus().isCherryPicking)
+        XCTAssertEqual(try repo.run(["branch", "--show-current"]), "master")
+        XCTAssertEqual(try repo.run(["log", "--format=%s", "-2"]), "two\none")
+        XCTAssertEqual(try repo.read("one.txt"), "one\n")
+        XCTAssertEqual(try repo.read("two.txt"), "two\n")
+    }
+
+    func testCherryPickConflictCanAbort() throws {
+        let repo = try TestGitRepository()
+        try repo.write("shared.txt", content: "initial\n")
+        try repo.run(["add", "."])
+        try repo.run(["commit", "-m", "initial"])
+
+        try repo.run(["checkout", "-b", "feature/cherry-conflict"])
+        try repo.write("shared.txt", content: "feature\n")
+        try repo.run(["commit", "-am", "feature change"])
+        let commit = try repo.run(["rev-parse", "HEAD"])
+
+        try repo.run(["checkout", "master"])
+        try repo.write("shared.txt", content: "base\n")
+        try repo.run(["commit", "-am", "base change"])
+
+        let client = GitRepositoryCLI(repositoryURL: repo.url)
+
+        XCTAssertThrowsError(try client.cherryPick(commits: [commit], onto: "master"))
+        XCTAssertTrue(try client.cherryPickStatus().isCherryPicking)
+        XCTAssertEqual(try client.getMergeConflictFiles(), ["shared.txt"])
+
+        try client.abortCherryPick()
+
+        XCTAssertFalse(try client.cherryPickStatus().isCherryPicking)
+        XCTAssertEqual(try repo.run(["branch", "--show-current"]), "master")
+        XCTAssertEqual(try repo.read("shared.txt"), "base\n")
+    }
+
+    func testContinueCherryPickCompletesAfterConflictResolution() throws {
+        let repo = try TestGitRepository()
+        try repo.write("shared.txt", content: "initial\n")
+        try repo.run(["add", "."])
+        try repo.run(["commit", "-m", "initial"])
+
+        try repo.run(["checkout", "-b", "feature/cherry-continue"])
+        try repo.write("shared.txt", content: "feature\n")
+        try repo.run(["commit", "-am", "feature change"])
+        let commit = try repo.run(["rev-parse", "HEAD"])
+
+        try repo.run(["checkout", "master"])
+        try repo.write("shared.txt", content: "base\n")
+        try repo.run(["commit", "-am", "base change"])
+
+        let client = GitRepositoryCLI(repositoryURL: repo.url)
+
+        XCTAssertThrowsError(try client.cherryPick(commits: [commit], onto: "master"))
+        try repo.write("shared.txt", content: "resolved\n")
+        try repo.run(["add", "shared.txt"])
+
+        try client.continueCherryPick()
+
+        XCTAssertFalse(try client.cherryPickStatus().isCherryPicking)
+        XCTAssertEqual(try repo.run(["branch", "--show-current"]), "master")
+        XCTAssertEqual(try repo.read("shared.txt"), "resolved\n")
+        XCTAssertEqual(try repo.run(["log", "--format=%s", "-1"]), "feature change")
+    }
+
+    func testCreateLightweightTagCreatesTagAtCommit() throws {
+        let repo = try TestGitRepository()
+        try repo.run(["commit", "--allow-empty", "-m", "initial"])
+        let commitHash = try repo.run(["rev-parse", "HEAD"])
+
+        let client = GitRepositoryCLI(repositoryURL: repo.url)
+        try client.createLightweightTag(named: "v1.0.0", commitHash: commitHash)
+
+        XCTAssertEqual(try repo.run(["rev-parse", "v1.0.0"]), commitHash)
+    }
+
+    func testCreateLightweightTagRejectsEmptyName() throws {
+        let repo = try TestGitRepository()
+        try repo.run(["commit", "--allow-empty", "-m", "initial"])
+
+        let client = GitRepositoryCLI(repositoryURL: repo.url)
+
+        XCTAssertThrowsError(try client.createLightweightTag(named: "  ", commitHash: "HEAD")) { error in
+            XCTAssertTrue((error as NSError).localizedDescription.contains("标签名称不能为空"))
+        }
+    }
+
+    func testCreateAnnotatedTagCreatesAnnotatedTagAtCommit() throws {
+        let repo = try TestGitRepository()
+        try repo.run(["commit", "--allow-empty", "-m", "initial"])
+        let commitHash = try repo.run(["rev-parse", "HEAD"])
+
+        let client = GitRepositoryCLI(repositoryURL: repo.url)
+        try client.createAnnotatedTag(named: "v1.0.0", commitHash: commitHash, message: "Release 1.0.0")
+
+        XCTAssertEqual(try repo.run(["rev-list", "-n", "1", "v1.0.0"]), commitHash)
+        XCTAssertEqual(try repo.run(["for-each-ref", "refs/tags/v1.0.0", "--format=%(objecttype)"]), "tag")
+    }
+
+    func testCreateAnnotatedTagRejectsEmptyMessage() throws {
+        let repo = try TestGitRepository()
+        try repo.run(["commit", "--allow-empty", "-m", "initial"])
+
+        let client = GitRepositoryCLI(repositoryURL: repo.url)
+
+        XCTAssertThrowsError(try client.createAnnotatedTag(named: "v1.0.0", commitHash: "HEAD", message: "  ")) { error in
+            XCTAssertTrue((error as NSError).localizedDescription.contains("标签说明不能为空"))
+        }
+    }
+
+    func testDeleteLocalTagRemovesTag() throws {
+        let repo = try TestGitRepository()
+        try repo.run(["commit", "--allow-empty", "-m", "initial"])
+        try repo.run(["tag", "v1.0.0"])
+
+        let client = GitRepositoryCLI(repositoryURL: repo.url)
+        try client.deleteLocalTag(named: "v1.0.0")
+
+        let tags = try repo.run(["tag", "--list"])
+            .split(separator: "\n")
+            .map(String.init)
+        XCTAssertFalse(tags.contains("v1.0.0"))
+    }
+
+    func testDeleteLocalTagRejectsEmptyName() throws {
+        let repo = try TestGitRepository()
+        try repo.run(["commit", "--allow-empty", "-m", "initial"])
+
+        let client = GitRepositoryCLI(repositoryURL: repo.url)
+
+        XCTAssertThrowsError(try client.deleteLocalTag(named: "  ")) { error in
+            XCTAssertTrue((error as NSError).localizedDescription.contains("标签名称不能为空"))
+        }
+    }
+
+    func testPushTagPushesTagToOrigin() throws {
+        let remote = try TestGitRepository()
+        try remote.run(["commit", "--allow-empty", "-m", "initial"])
+
+        let destinationRoot = FileManager.default.temporaryDirectory
+            .appendingPathComponent(UUID().uuidString, isDirectory: true)
+        try FileManager.default.createDirectory(at: destinationRoot, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: destinationRoot) }
+
+        let localURL = destinationRoot.appendingPathComponent("local", isDirectory: true)
+        try GitRepositoryCLI.clone(remoteURL: remote.url.path, destinationURL: localURL)
+        let local = TestGitRepository(url: localURL)
+        try local.run(["tag", "v1.0.0"])
+
+        let client = GitRepositoryCLI(repositoryURL: localURL)
+        try client.pushTag(named: "v1.0.0")
+
+        let remoteTags = try remote.run(["tag", "--list"])
+            .split(separator: "\n")
+            .map(String.init)
+        XCTAssertTrue(remoteTags.contains("v1.0.0"))
+    }
+
+    func testPushTagRejectsEmptyName() throws {
+        let repo = try TestGitRepository()
+        try repo.run(["commit", "--allow-empty", "-m", "initial"])
+
+        let client = GitRepositoryCLI(repositoryURL: repo.url)
+
+        XCTAssertThrowsError(try client.pushTag(named: "  ")) { error in
+            XCTAssertTrue((error as NSError).localizedDescription.contains("标签名称不能为空"))
+        }
+    }
+
+    func testDeleteRemoteTagRemovesTagFromOrigin() throws {
+        let remote = try TestGitRepository()
+        try remote.run(["commit", "--allow-empty", "-m", "initial"])
+        try remote.run(["tag", "v1.0.0"])
+
+        let destinationRoot = FileManager.default.temporaryDirectory
+            .appendingPathComponent(UUID().uuidString, isDirectory: true)
+        try FileManager.default.createDirectory(at: destinationRoot, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: destinationRoot) }
+
+        let localURL = destinationRoot.appendingPathComponent("local", isDirectory: true)
+        try GitRepositoryCLI.clone(remoteURL: remote.url.path, destinationURL: localURL)
+
+        let client = GitRepositoryCLI(repositoryURL: localURL)
+        try client.deleteRemoteTag(named: "v1.0.0")
+
+        let remoteTags = try remote.run(["tag", "--list"])
+            .split(separator: "\n")
+            .map(String.init)
+        XCTAssertFalse(remoteTags.contains("v1.0.0"))
+    }
+
+    func testDeleteRemoteTagRejectsEmptyName() throws {
+        let repo = try TestGitRepository()
+        try repo.run(["commit", "--allow-empty", "-m", "initial"])
+
+        let client = GitRepositoryCLI(repositoryURL: repo.url)
+
+        XCTAssertThrowsError(try client.deleteRemoteTag(named: "  ")) { error in
+            XCTAssertTrue((error as NSError).localizedDescription.contains("标签名称不能为空"))
+        }
     }
 
     func testAheadBehindCountsLocalAndRemoteCommits() throws {
@@ -279,20 +809,42 @@ final class GitRepositoryCLITests: XCTestCase {
         XCTAssertTrue(try client.isMerging())
         XCTAssertEqual(try client.getCurrentMergeBranchName(), "feature")
         XCTAssertEqual(try client.getMergeConflictFiles(), ["shared.txt"])
+        XCTAssertEqual(try client.mergeFileContent(path: "shared.txt", version: .base), "base\n")
+        XCTAssertEqual(try client.mergeFileContent(path: "shared.txt", version: .ours), "master\n")
+        XCTAssertEqual(try client.mergeFileContent(path: "shared.txt", version: .theirs), "feature\n")
+        XCTAssertTrue(try client.mergeFileDiff(path: "shared.txt").contains("diff --cc shared.txt"))
 
-        let unresolvedFiles = try client.mergeResolutionFiles()
-        XCTAssertEqual(unresolvedFiles, [GitMergeFile(path: "shared.txt", state: .unresolved)])
-        XCTAssertFalse(try client.canContinueMerge())
+        XCTAssertEqual(try client.getMergeConflictFiles(), ["shared.txt"])
 
         try repo.write("shared.txt", content: "resolved\n")
         try client.addFiles(["shared.txt"])
 
-        let stagedFiles = try client.mergeResolutionFiles()
-        XCTAssertEqual(stagedFiles, [GitMergeFile(path: "shared.txt", state: .staged)])
-        XCTAssertTrue(try client.canContinueMerge())
-
         try client.continueMerge()
         XCTAssertFalse(try client.isMerging())
+    }
+
+    func testCheckoutMergeFileVersionUsesSelectedSide() throws {
+        let repo = try TestGitRepository()
+        try repo.write("shared.txt", content: "base\n")
+        try repo.run(["add", "."])
+        try repo.run(["commit", "-m", "base"])
+
+        try repo.run(["checkout", "-b", "feature"])
+        try repo.write("shared.txt", content: "feature\n")
+        try repo.run(["commit", "-am", "feature change"])
+
+        try repo.run(["checkout", "master"])
+        try repo.write("shared.txt", content: "master\n")
+        try repo.run(["commit", "-am", "master change"])
+
+        let client = GitRepositoryCLI(repositoryURL: repo.url)
+        XCTAssertThrowsError(try repo.run(["merge", "feature"])) { _ in }
+
+        try client.checkoutMergeFileVersion(path: "shared.txt", version: .theirs)
+        XCTAssertEqual(try repo.read("shared.txt"), "feature\n")
+
+        try client.addFiles(["shared.txt"])
+        XCTAssertEqual(try client.getMergeConflictFiles(), [])
     }
 
     func testGetCurrentMergeBranchNameReturnsNilOutsideMerge() throws {
@@ -346,40 +898,6 @@ final class GitRepositoryCLITests: XCTestCase {
 
         XCTAssertThrowsError(try client.continueMerge())
         XCTAssertTrue(try client.isMerging())
-        XCTAssertFalse(try client.canContinueMerge())
-    }
-
-    func testMergeResolutionFilesStayUnresolvedUntilStaged() throws {
-        let repo = try TestGitRepository()
-        try repo.write("shared.txt", content: "base\n")
-        try repo.run(["add", "."])
-        try repo.run(["commit", "-m", "base"])
-
-        try repo.run(["checkout", "-b", "feature"])
-        try repo.write("shared.txt", content: "feature\n")
-        try repo.run(["commit", "-am", "feature change"])
-
-        try repo.run(["checkout", "master"])
-        try repo.write("shared.txt", content: "master\n")
-        try repo.run(["commit", "-am", "master change"])
-
-        let client = GitRepositoryCLI(repositoryURL: repo.url)
-        XCTAssertThrowsError(try repo.run(["merge", "feature"])) { _ in }
-
-        try repo.write("shared.txt", content: "resolved but unstaged\n")
-
-        XCTAssertEqual(
-            try client.mergeResolutionFiles(),
-            [GitMergeFile(path: "shared.txt", state: .unresolved)]
-        )
-        XCTAssertFalse(try client.canContinueMerge())
-
-        try client.addFiles(["shared.txt"])
-        XCTAssertEqual(
-            try client.mergeResolutionFiles(),
-            [GitMergeFile(path: "shared.txt", state: .staged)]
-        )
-        XCTAssertTrue(try client.canContinueMerge())
     }
 
     func testAbortMergeRestoresRepositoryState() throws {
@@ -413,16 +931,6 @@ final class GitRepositoryCLITests: XCTestCase {
 
         let client = GitRepositoryCLI(repositoryURL: repo.url)
         XCTAssertThrowsError(try client.abortMerge())
-    }
-
-    func testRunGitPrefersStderrInThrownError() throws {
-        let repo = try TestGitRepository()
-        let client = GitRepositoryCLI(repositoryURL: repo.url)
-
-        XCTAssertThrowsError(try client.runGit(["not-a-real-command"])) { error in
-            let description = (error as NSError).localizedDescription
-            XCTAssertTrue(description.contains("not-a-real-command"))
-        }
     }
 
     func testInitializeCreatesGitRepository() throws {
@@ -467,6 +975,101 @@ final class GitRepositoryCLITests: XCTestCase {
         try client.unstageFiles(["README.md"])
 
         XCTAssertEqual(try client.statusEntries(), [GitStatusEntry(path: "README.md", indexStatus: "?", workTreeStatus: "?")])
+    }
+
+    func testApplyPatchStagesAndUnstagesSingleHunk() throws {
+        let repo = try TestGitRepository()
+        let base = (1...24).map { "line \($0)" }.joined(separator: "\n") + "\n"
+        try repo.write("notes.txt", content: base)
+        try repo.run(["add", "."])
+        try repo.run(["commit", "-m", "initial"])
+
+        let modified = (1...24).map { line -> String in
+            if line == 2 { return "line two" }
+            if line == 22 { return "line twenty two" }
+            return "line \(line)"
+        }.joined(separator: "\n") + "\n"
+        try repo.write("notes.txt", content: modified)
+
+        let client = GitRepositoryCLI(repositoryURL: repo.url)
+        let firstHunkPatch = try XCTUnwrap(firstHunkPatch(from: client.fileDiff("notes.txt", staged: false)))
+
+        try client.applyPatch(firstHunkPatch, mode: .stage)
+
+        XCTAssertEqual(try client.statusEntries(), [GitStatusEntry(path: "notes.txt", indexStatus: "M", workTreeStatus: "M")])
+        let stagedDiff = try client.fileDiff("notes.txt", staged: true)
+        XCTAssertTrue(stagedDiff.contains("line two"))
+        XCTAssertFalse(stagedDiff.contains("line twenty two"))
+
+        let unstagedDiff = try client.fileDiff("notes.txt", staged: false)
+        XCTAssertFalse(unstagedDiff.contains("line two"))
+        XCTAssertTrue(unstagedDiff.contains("line twenty two"))
+
+        try client.applyPatch(firstHunkPatch, mode: .unstage)
+
+        XCTAssertEqual(try client.statusEntries(), [GitStatusEntry(path: "notes.txt", indexStatus: " ", workTreeStatus: "M")])
+        XCTAssertEqual(try client.fileDiff("notes.txt", staged: true), "")
+    }
+
+    func testRevertCommitCreatesInverseCommit() throws {
+        let repo = try TestGitRepository()
+        try repo.write("README.md", content: "base\n")
+        try repo.run(["add", "."])
+        try repo.run(["commit", "-m", "initial"])
+        try repo.write("README.md", content: "changed\n")
+        try repo.run(["commit", "-am", "change readme"])
+        let commitToRevert = try repo.run(["rev-parse", "HEAD"])
+
+        let client = GitRepositoryCLI(repositoryURL: repo.url)
+        try client.revertCommit(commitToRevert)
+
+        XCTAssertEqual(try repo.read("README.md"), "base\n")
+        XCTAssertEqual(try repo.run(["log", "-1", "--pretty=%s"]), "Revert \"change readme\"")
+    }
+
+    func testResetSupportsSoftMixedAndHardModes() throws {
+        let repo = try TestGitRepository()
+        try repo.write("README.md", content: "base\n")
+        try repo.run(["add", "."])
+        try repo.run(["commit", "-m", "initial"])
+        let initial = try repo.run(["rev-parse", "HEAD"])
+        try repo.write("README.md", content: "changed\n")
+        try repo.run(["commit", "-am", "change readme"])
+
+        let client = GitRepositoryCLI(repositoryURL: repo.url)
+        try client.reset(to: initial, mode: .soft)
+        XCTAssertEqual(try client.statusEntries(), [GitStatusEntry(path: "README.md", indexStatus: "M", workTreeStatus: " ")])
+
+        try repo.run(["commit", "-m", "change readme again"])
+        try client.reset(to: initial, mode: .mixed)
+        XCTAssertEqual(try client.statusEntries(), [GitStatusEntry(path: "README.md", indexStatus: " ", workTreeStatus: "M")])
+
+        try repo.run(["add", "."])
+        try repo.run(["commit", "-m", "change readme third"])
+        try client.reset(to: initial, mode: .hard)
+        XCTAssertEqual(try repo.read("README.md"), "base\n")
+        XCTAssertEqual(try client.statusEntries(), [])
+    }
+
+    func testSquashLastCommitsCombinesHistory() throws {
+        let repo = try TestGitRepository()
+        try repo.write("README.md", content: "base\n")
+        try repo.run(["add", "."])
+        try repo.run(["commit", "-m", "initial"])
+        try repo.write("one.txt", content: "one\n")
+        try repo.run(["add", "."])
+        try repo.run(["commit", "-m", "one"])
+        try repo.write("two.txt", content: "two\n")
+        try repo.run(["add", "."])
+        try repo.run(["commit", "-m", "two"])
+
+        let client = GitRepositoryCLI(repositoryURL: repo.url)
+        try client.squashLastCommits(count: 2, message: "squashed work")
+
+        XCTAssertEqual(try repo.run(["log", "--pretty=%s"]), "squashed work\ninitial")
+        XCTAssertEqual(try repo.read("one.txt"), "one\n")
+        XCTAssertEqual(try repo.read("two.txt"), "two\n")
+        XCTAssertEqual(try client.statusEntries(), [])
     }
 
     func testDiscardFileChangesRestoresTrackedFileAndIndex() throws {
@@ -560,10 +1163,14 @@ final class GitRepositoryCLITests: XCTestCase {
         defer { try? FileManager.default.removeItem(at: destinationRoot) }
 
         let destinationURL = destinationRoot.appendingPathComponent("cloned-repo", isDirectory: true)
-        try GitRepositoryCLI.clone(remoteURL: remote.url.path, destinationURL: destinationURL)
+        let progressCollector = TestProgressCollector()
+        try GitRepositoryCLI.clone(remoteURL: remote.url.path, destinationURL: destinationURL) { line in
+            progressCollector.append(line)
+        }
 
         XCTAssertTrue(FileManager.default.fileExists(atPath: destinationURL.appendingPathComponent(".git").path))
         XCTAssertEqual(try String(contentsOf: destinationURL.appendingPathComponent("README.md"), encoding: .utf8), "hello\n")
+        XCTAssertFalse(progressCollector.lines.isEmpty)
     }
 
     func testCloneFailureRemovesNewlyCreatedDestinationDirectory() throws {
@@ -639,10 +1246,25 @@ private final class TestGitRepository {
         try content.data(using: .utf8)?.write(to: fileURL)
     }
 
+    func writeData(_ relativePath: String, data: Data) throws {
+        let fileURL = url.appendingPathComponent(relativePath)
+        try FileManager.default.createDirectory(at: fileURL.deletingLastPathComponent(), withIntermediateDirectories: true)
+        try data.write(to: fileURL)
+    }
+
     func read(_ relativePath: String) throws -> String? {
         let fileURL = url.appendingPathComponent(relativePath)
         guard FileManager.default.fileExists(atPath: fileURL.path) else { return nil }
         return try String(contentsOf: fileURL, encoding: .utf8)
+    }
+
+    func addWithDisabledLFSFilter() throws {
+        try run([
+            "-c", "filter.lfs.process=",
+            "-c", "filter.lfs.clean=cat",
+            "-c", "filter.lfs.required=false",
+            "add", ".",
+        ])
     }
 
     @discardableResult
@@ -671,5 +1293,56 @@ private final class TestGitRepository {
         }
 
         return stdout.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+}
+
+private func lfsPointer() -> String {
+    """
+    version https://git-lfs.github.com/spec/v1
+    oid sha256:0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+    size 123
+
+    """
+}
+
+private func firstHunkPatch(from diff: String) -> String? {
+    let lines = diff.components(separatedBy: "\n")
+    var fileHeader: [String] = []
+    var currentHunk: [String] = []
+
+    for line in lines {
+        if line.hasPrefix("@@ ") {
+            if currentHunk.isEmpty == false {
+                return (fileHeader + currentHunk).joined(separator: "\n") + "\n"
+            }
+            currentHunk = [line]
+            continue
+        }
+
+        if currentHunk.isEmpty {
+            fileHeader.append(line)
+        } else {
+            currentHunk.append(line)
+        }
+    }
+
+    guard currentHunk.isEmpty == false else { return nil }
+    return (fileHeader + currentHunk).joined(separator: "\n") + "\n"
+}
+
+private final class TestProgressCollector: @unchecked Sendable {
+    private let lock = NSLock()
+    private var storage: [String] = []
+
+    var lines: [String] {
+        lock.lock()
+        defer { lock.unlock() }
+        return storage
+    }
+
+    func append(_ line: String) {
+        lock.lock()
+        storage.append(line)
+        lock.unlock()
     }
 }

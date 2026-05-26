@@ -1,10 +1,12 @@
 import MagicKit
 import LibGit2Swift
+import ProjectRulesKit
 import SwiftUI
 
 struct RemoteRepositoryRowView: View {
     let remote: GitRemote
     let selectedRemote: GitRemote?
+    let isCurrentUpstreamRemote: Bool
     let onSelect: (GitRemote) -> Void
     let onEdit: (GitRemote) -> Void
     let onDelete: (GitRemote) -> Void
@@ -36,6 +38,10 @@ struct RemoteRepositoryRowView: View {
         }
     }
 
+    private var webLink: RemoteRepositoryFormRules.RemoteWebLink? {
+        RemoteRepositoryFormRules.remoteWebLink(for: remote.url)
+    }
+
     var body: some View {
         HStack(spacing: 12) {
             // Remote Info
@@ -50,6 +56,16 @@ struct RemoteRepositoryRowView: View {
                             .foregroundColor(.yellow)
                             .font(.caption)
                     }
+
+                    if isCurrentUpstreamRemote {
+                        Text("Upstream")
+                            .font(.caption2.weight(.medium))
+                            .foregroundColor(.blue)
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 2)
+                            .background(Color.blue.opacity(0.12))
+                            .cornerRadius(4)
+                    }
                 }
 
                 Text(remote.url)
@@ -57,6 +73,24 @@ struct RemoteRepositoryRowView: View {
                     .foregroundColor(.secondary)
                     .lineLimit(1)
                     .truncationMode(.middle)
+
+                if let webLink {
+                    HStack(spacing: 6) {
+                        Text(webLink.provider.rawValue)
+                            .font(.caption2.weight(.medium))
+                            .foregroundColor(.blue)
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 2)
+                            .background(Color.blue.opacity(0.12))
+                            .cornerRadius(4)
+
+                        Text(webLink.authenticationNote)
+                            .font(.caption2)
+                            .foregroundColor(.secondary)
+                            .lineLimit(1)
+                            .truncationMode(.tail)
+                    }
+                }
 
                 if let fetchURL = remote.fetchURL, fetchURL != remote.url {
                     HStack {
@@ -89,6 +123,18 @@ struct RemoteRepositoryRowView: View {
 
             // Action Buttons
             HStack(spacing: 8) {
+                if let webLink {
+                    Image.safari.inButtonWithAction {
+                        webLink.url.openInBrowser()
+                    }
+                    .help("打开远程页面")
+                }
+
+                Image.copyIcon.inButtonWithAction {
+                    remote.url.copy()
+                }
+                .help("复制远程 URL")
+
                 Image.edit.inButtonWithAction {
                     onEdit(remote)
                 }
@@ -127,7 +173,14 @@ struct RemoteRepositoryRowView: View {
                 onDelete(remote)
             }
         } message: {
-            Text("确定要删除远程仓库 \"\(remote.name)\" 吗？此操作不可撤销。")
+            Text(deleteWarningMessage)
         }
+    }
+
+    private var deleteWarningMessage: String {
+        RemoteRepositoryFormRules.deleteWarning(
+            remoteName: remote.name,
+            isCurrentUpstreamRemote: isCurrentUpstreamRemote
+        )
     }
 }

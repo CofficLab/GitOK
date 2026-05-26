@@ -1,5 +1,6 @@
 import Foundation
 import IOKit.ps
+import LibGit2Swift
 import SwiftUI
 
 /// 系统信息模型
@@ -152,31 +153,7 @@ struct SystemInfo {
 
     /// 获取 Git 版本
     private static func getGitVersion() -> String? {
-        let task = Process()
-        task.launchPath = "/usr/bin/git"
-        task.arguments = ["--version"]
-
-        let pipe = Pipe()
-        task.standardOutput = pipe
-        task.standardError = pipe
-
-        do {
-            try task.run()
-            task.waitUntilExit()
-
-            let data = pipe.fileHandleForReading.readDataToEndOfFile()
-            if let output = String(data: data, encoding: .utf8) {
-                // 输出格式: "git version 2.39.0"
-                let components = output.components(separatedBy: " ")
-                if components.count >= 3 {
-                    return components[2].trimmingCharacters(in: .whitespacesAndNewlines)
-                }
-            }
-        } catch {
-            NSLog("Failed to get git version: \(error)")
-        }
-
-        return nil
+        LibGit2.versionString()
     }
 
     // MARK: - 格式化方法

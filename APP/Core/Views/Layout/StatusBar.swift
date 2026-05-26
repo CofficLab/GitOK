@@ -12,6 +12,8 @@ struct StatusBar: View, SuperLog {
     /// 插件提供者环境对象
     @EnvironmentObject var p: PluginVM
 
+    @EnvironmentObject var themeProvider: AppThemeVM
+
     /// 视图主体
     var body: some View {
         HStack(spacing: 0) {
@@ -35,13 +37,15 @@ struct StatusBar: View, SuperLog {
             }
         }
         .labelStyle(.iconOnly)
+        .foregroundStyle(themeProvider.activeChromeTheme.workspaceSecondaryTextColor())
         .frame(maxWidth: .infinity)
         .frame(height: 32)
-        #if DEBUG
-            .background(Color.orange.opacity(0.9))
-        #else
-            .background(Color.accentColor.opacity(0.4))
-        #endif
+        .background(themeProvider.activeChromeTheme.sidebarBackgroundColor().opacity(0.96))
+        .overlay(alignment: .top) {
+            Rectangle()
+                .fill(themeProvider.activeChromeTheme.accentColors().primary.opacity(0.2))
+                .frame(height: 1)
+        }
     }
 }
 

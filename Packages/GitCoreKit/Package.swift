@@ -12,9 +12,15 @@ let package = Package(
             targets: ["GitCoreKit"]
         ),
     ],
+    dependencies: [
+        .package(url: "https://github.com/nookery/LibGit2Swift.git", branch: "main"),
+    ],
     targets: [
         .target(
-            name: "GitCoreKit"
+            name: "GitCoreKit",
+            dependencies: [
+                .product(name: "LibGit2Swift", package: "LibGit2Swift"),
+            ]
         ),
         .testTarget(
             name: "GitCoreKitTests",

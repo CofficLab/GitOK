@@ -21,6 +21,9 @@ struct ProjectRow: View {
                 .contentShape(Rectangle()) // 确保整个区域都可点击
         }
         .buttonStyle(.plain)
+        .accessibilityLabel(title)
+        .accessibilityHint(isSelected ? "当前项目" : "切换到此项目")
+        .accessibilityAddTraits(isSelected ? .isSelected : [])
         .onHover { hovering in
             withAnimation(.easeInOut(duration: 0.15)) {
                 isHovered = hovering

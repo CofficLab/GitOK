@@ -11,6 +11,7 @@ protocol StateRepoProtocol {
     var currentTab: String { get set }
     var sidebarVisibility: Bool { get set }
     var globalCommitStyle: CommitStyle { get set }
+    var showCommitGraph: Bool { get set }
 
     func setProjectPath(_ path: String)
     func setCurrentTaskUUID(_ id: String)
@@ -18,6 +19,7 @@ protocol StateRepoProtocol {
     func setSidebarVisibility(_ visible: Bool)
     func setGlobalCommitStyle(_ style: CommitStyle)
     func getCommitStyle(for project: Project?) -> CommitStyle
+    func setShowCommitGraph(_ show: Bool)
 }
 
 // MARK: - 状态管理Repository实现
@@ -43,6 +45,9 @@ class StateRepo: StateRepoProtocol, SuperLog, ObservableObject {
 
     @AppStorage("App.CommitStyle")
     var globalCommitStyle: CommitStyle = .lowercase
+
+    @AppStorage("App.ShowCommitGraph")
+    var showCommitGraph: Bool = false
     
     // MARK: - 初始化
     
@@ -108,6 +113,13 @@ class StateRepo: StateRepoProtocol, SuperLog, ObservableObject {
             return project.commitStyle
         }
         return globalCommitStyle
+    }
+
+    func setShowCommitGraph(_ show: Bool) {
+        self.showCommitGraph = show
+        if verbose {
+            os_log("\(self.t)Show commit graph set to \(show)")
+        }
     }
 }
 

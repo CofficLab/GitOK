@@ -59,6 +59,9 @@ struct TabBtn: View, SuperLog {
         onTap()
       }
     }
+    .accessibilityLabel(title)
+    .accessibilityHint(selected ? "当前标签页" : "切换到 \(title) 标签页")
+    .accessibilityAddTraits(selected ? .isSelected : [])
   }
 }
 

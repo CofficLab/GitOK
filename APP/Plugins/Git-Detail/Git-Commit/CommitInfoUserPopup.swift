@@ -1,3 +1,4 @@
+import GitOKUI
 import MagicKit
 import OSLog
 import SwiftUI
@@ -52,66 +53,56 @@ struct CommitInfoUserInfoPopup: View, SuperLog {
             // 信息列表
             VStack(spacing: 0) {
                 // 用户名
-                MagicSettingRow(
+                userInfoRow(
                     title: "用户名",
                     description: user.name,
-                    icon: .iconUser
-                ) {
-                    EmptyView()
-                }
+                    icon: "person"
+                )
 
                 Divider()
 
                 // 头像地址（总是显示）
                 if isLoadingAvatarURL {
-                    MagicSettingRow(
+                    userInfoRow(
                         title: "头像地址",
                         description: "加载中...",
-                        icon: .iconSafari
-                    ) {
-                        EmptyView()
-                    }
+                        icon: "safari"
+                    )
                 } else if let avatarURL = displayedAvatarURL {
-                    MagicSettingRow(
+                    userInfoRow(
                         title: "头像地址",
                         description: avatarURL.absoluteString,
-                        icon: .iconSafari
-                    ) {
-                        EmptyView()
-                    }
+                        icon: "safari"
+                    )
                 } else {
-                    MagicSettingRow(
+                    userInfoRow(
                         title: "头像地址",
                         description: "无",
-                        icon: .iconSafari
-                    ) {
-                        EmptyView()
-                    }
+                        icon: "safari"
+                    )
                 }
 
                 // 邮箱（如果有）
                 if !user.email.isEmpty {
                     Divider()
 
-                    MagicSettingRow(
+                    userInfoRow(
                         title: "邮箱",
                         description: user.email,
-                        icon: .iconMail
-                    ) {
-                        EmptyView()
-                    }
+                        icon: "envelope"
+                    )
                 }
 
                 // GitHub 主页按钮（如果有）
                 if let githubURL = gitHubURL {
                     Divider()
 
-                    AppSettingRow(
+                    userInfoRow(
                         title: "GitHub 主页",
                         description: githubURL.absoluteString,
-                        icon: .iconSafari
+                        icon: "safari"
                     ) {
-                        AppIconButton(systemImage: "safari", size: .regular) {
+                        GitOKUI.AppIconButton(systemImage: "safari", size: .regular) {
                             NSWorkspace.shared.open(githubURL)
                         }
                     }
@@ -121,6 +112,46 @@ struct CommitInfoUserInfoPopup: View, SuperLog {
         .frame(width: 600)
         .onAppear {
             loadAvatarURL()
+        }
+    }
+
+    private func userInfoRow<Accessory: View>(
+        title: String,
+        description: String,
+        icon: String,
+        @ViewBuilder accessory: () -> Accessory
+    ) -> some View {
+        GitOKUI.AppSettingsRow(verticalPadding: 10) {
+            HStack(spacing: 12) {
+                Image(systemName: icon)
+                    .foregroundColor(.secondary)
+                    .frame(width: 28)
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(title)
+                        .font(.system(size: 13, weight: .medium))
+
+                    Text(description)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                        .lineLimit(1)
+                        .truncationMode(.middle)
+                }
+
+                Spacer()
+
+                accessory()
+            }
+        }
+    }
+
+    private func userInfoRow(
+        title: String,
+        description: String,
+        icon: String
+    ) -> some View {
+        userInfoRow(title: title, description: description, icon: icon) {
+            EmptyView()
         }
     }
 

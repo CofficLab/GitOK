@@ -1,3 +1,4 @@
+import MagicAlert
 import SwiftUI
 
 // MARK: - ProjectContextMenu
@@ -13,10 +14,22 @@ struct ProjectContextMenu: View {
             pinAction(item)
         }
 
+        Button("复制项目路径") {
+            copyProjectPath()
+        }
+
         if FileManager.default.fileExists(atPath: item.path) {
             Button("在Finder中显示") {
                 let url = URL(fileURLWithPath: item.path)
                 NSWorkspace.shared.activateFileViewerSelecting([url])
+            }
+
+            Button("在默认编辑器中打开") {
+                ExternalToolSettingsStore.shared.openDefaultEditor(for: URL(fileURLWithPath: item.path))
+            }
+
+            Button("在默认终端中打开") {
+                ExternalToolSettingsStore.shared.openDefaultTerminal(for: URL(fileURLWithPath: item.path))
             }
 
             if isAppInstalled(at: "/Applications/Cursor.app") {
@@ -104,5 +117,11 @@ struct ProjectContextMenu: View {
             configuration: NSWorkspace.OpenConfiguration(),
             completionHandler: nil
         )
+    }
+
+    private func copyProjectPath() {
+        NSPasteboard.general.clearContents()
+        NSPasteboard.general.setString(item.path, forType: .string)
+        alert_success("已复制项目路径")
     }
 }

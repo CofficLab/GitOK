@@ -17,8 +17,11 @@ struct FileDetail: View, SuperLog, SuperEvent, SuperThread {
     @State private var showTextPreview = false
     @State private var textPreviewTitle = ""
     @State private var textPreviewContent = ""
+    @State private var imageDiffMode: ImageDiffMode = .twoUp
+    @State private var imageBlendAmount = 0.5
 
     static let emoji = "🌍"
+    private static let maxRenderableDiffCharacters = 500_000
 
     private var verbose = false
 
@@ -64,10 +67,21 @@ struct FileDetail: View, SuperLog, SuperEvent, SuperThread {
     private func diffContentView(for file: GitDiffFile) -> some View {
         if unifiedDiffText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             emptyDiffView(for: file)
+        } else if shouldSkipDiffRendering {
+            largeDiffView(for: file)
         } else {
-            MagicDiffView(diffOutput: unifiedDiffText)
-                .background(.background)
+            diffViewBody
         }
+    }
+
+    @ViewBuilder
+    private var diffViewBody: some View {
+        MagicDiffView(diffOutput: unifiedDiffText)
+            .background(.background)
+    }
+
+    private var shouldSkipDiffRendering: Bool {
+        unifiedDiffText.count > Self.maxRenderableDiffCharacters
     }
 
     /// 文件图标
@@ -101,35 +115,120 @@ struct FileDetail: View, SuperLog, SuperEvent, SuperThread {
             // 删除的图片
             imagePreviewSection(title: "已删除的图片", image: loadImageBefore(file: file))
         } else {
-            // 修改的图片：显示 before / after 对比
-            HStack(spacing: 0) {
-                // Before
-                VStack(spacing: 0) {
-                    Text("修改前")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                        .padding(.vertical, 6)
-                        .frame(maxWidth: .infinity)
-                        .background(Color(NSColor.controlBackgroundColor))
+            imageComparisonView(
+                before: loadImageBefore(file: file),
+                after: loadImageFromCommit(file: file)
+            )
+        }
+    }
 
-                    imagePreview(image: loadImageBefore(file: file))
+    private func imageComparisonView(before: NSImage?, after: NSImage?) -> some View {
+        VStack(spacing: 0) {
+            imageDiffToolbar
+
+            switch imageDiffMode {
+            case .twoUp:
+                HStack(spacing: 0) {
+                    imagePreviewSection(title: "修改前", image: before)
+
+                    Divider()
+
+                    imagePreviewSection(title: "修改后", image: after)
                 }
-
-                Divider()
-
-                // After
-                VStack(spacing: 0) {
-                    Text("修改后")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                        .padding(.vertical, 6)
-                        .frame(maxWidth: .infinity)
-                        .background(Color(NSColor.controlBackgroundColor))
-
-                    imagePreview(image: loadImageFromCommit(file: file))
-                }
+                .accessibilityElement(children: .contain)
+                .accessibilityLabel("图片并排对比")
+            case .swipe:
+                imageOverlayComparison(before: before, after: after, mode: .swipe)
+            case .onion:
+                imageOverlayComparison(before: before, after: after, mode: .onion)
+            case .difference:
+                imageOverlayComparison(before: before, after: after, mode: .difference)
             }
         }
+    }
+
+    private var imageDiffToolbar: some View {
+        HStack(spacing: 12) {
+            Picker("图片对比模式", selection: $imageDiffMode) {
+                ForEach(ImageDiffMode.allCases) { mode in
+                    Text(mode.title).tag(mode)
+                }
+            }
+            .pickerStyle(.segmented)
+            .frame(width: 360)
+            .accessibilityLabel("图片对比模式")
+
+            if imageDiffMode.usesBlendAmount {
+                Slider(value: $imageBlendAmount, in: 0...1)
+                    .frame(width: 160)
+                    .accessibilityLabel(imageDiffMode.sliderAccessibilityLabel)
+
+                Text(imageDiffMode.valueLabel(for: imageBlendAmount))
+                    .font(.caption2.monospacedDigit())
+                    .foregroundColor(.secondary)
+                    .frame(width: 52, alignment: .trailing)
+            }
+
+            Spacer()
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 6)
+        .background(Color(NSColor.controlBackgroundColor))
+    }
+
+    @ViewBuilder
+    private func imageOverlayComparison(before: NSImage?, after: NSImage?, mode: ImageDiffMode) -> some View {
+        if let before, let after {
+            GeometryReader { geometry in
+                ScrollView([.horizontal, .vertical]) {
+                    ZStack(alignment: .leading) {
+                        Color(NSColor.textBackgroundColor)
+
+                        imageLayer(before, in: geometry)
+
+                        switch mode {
+                        case .swipe:
+                            imageLayer(after, in: geometry)
+                                .frame(width: max(1, geometry.size.width * imageBlendAmount), alignment: .leading)
+                                .clipped()
+
+                            Rectangle()
+                                .fill(Color.accentColor)
+                                .frame(width: 2)
+                                .offset(x: max(0, geometry.size.width * imageBlendAmount - 1))
+                        case .onion:
+                            imageLayer(after, in: geometry)
+                                .opacity(imageBlendAmount)
+                        case .difference:
+                            imageLayer(after, in: geometry)
+                                .blendMode(.difference)
+                        case .twoUp:
+                            EmptyView()
+                        }
+                    }
+                    .frame(
+                        width: max(max(before.size.width, after.size.width), geometry.size.width),
+                        height: max(max(before.size.height, after.size.height), geometry.size.height)
+                    )
+                    .padding(8)
+                }
+            }
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel(mode.accessibilityLabel)
+            .accessibilityHint(mode.accessibilityHint)
+        } else {
+            imagePreview(image: before ?? after)
+        }
+    }
+
+    private func imageLayer(_ image: NSImage, in geometry: GeometryProxy) -> some View {
+        Image(nsImage: image)
+            .resizable()
+            .aspectRatio(contentMode: .fit)
+            .frame(
+                width: max(image.size.width, geometry.size.width),
+                height: max(image.size.height, geometry.size.height)
+            )
     }
 
     /// 单图预览区域
@@ -194,8 +293,52 @@ struct FileDetail: View, SuperLog, SuperEvent, SuperThread {
         .background(.background)
     }
 
+    private func largeDiffView(for file: GitDiffFile) -> some View {
+        VStack(spacing: 14) {
+            Spacer()
+
+            Image(systemName: "doc.text.magnifyingglass")
+                .font(.system(size: 36))
+                .foregroundColor(.orange)
+
+            Text("Diff 过大，已跳过渲染")
+                .font(.headline)
+
+            Text("当前 diff 大约 \(unifiedDiffText.count.formatted()) 个字符。为避免界面卡顿，GitOK 不直接渲染超大 patch；你仍然可以复制原始 diff 或查看文件文本。")
+                .font(.subheadline)
+                .foregroundColor(.secondary)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 24)
+
+            HStack(spacing: 10) {
+                Button("复制原始 diff") {
+                    copyToPasteboard(unifiedDiffText)
+                }
+
+                if hasBeforeText(for: file) {
+                    Button("查看原文本") {
+                        presentTextPreview(kind: .before, for: file)
+                    }
+                }
+
+                if hasAfterText(for: file) {
+                    Button("查看新文本") {
+                        presentTextPreview(kind: .after, for: file)
+                    }
+                }
+            }
+            .buttonStyle(.bordered)
+
+            Spacer()
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(.background)
+    }
+
     private func emptyDiffView(for file: GitDiffFile) -> some View {
         VStack(spacing: 14) {
+            Spacer()
+
             Image(systemName: diffIssueMessage == nil ? "doc.text.magnifyingglass" : "exclamationmark.triangle")
                 .font(.system(size: 34))
                 .foregroundColor(diffIssueMessage == nil ? .secondary : .orange)
@@ -246,6 +389,8 @@ struct FileDetail: View, SuperLog, SuperEvent, SuperThread {
                 }
             }
             .buttonStyle(.bordered)
+
+            Spacer()
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(.background)
@@ -327,6 +472,74 @@ struct FileDetail: View, SuperLog, SuperEvent, SuperThread {
         case "C": return "已复制"
         case "T": return "类型变更"
         default: return file.changeType
+        }
+    }
+
+    private enum ImageDiffMode: String, CaseIterable, Identifiable {
+        case twoUp
+        case swipe
+        case onion
+        case difference
+
+        var id: String { rawValue }
+
+        var title: String {
+            switch self {
+            case .twoUp: return "并排"
+            case .swipe: return "滑动"
+            case .onion: return "叠加"
+            case .difference: return "差异"
+            }
+        }
+
+        var usesBlendAmount: Bool {
+            switch self {
+            case .swipe, .onion:
+                return true
+            case .twoUp, .difference:
+                return false
+            }
+        }
+
+        var sliderAccessibilityLabel: String {
+            switch self {
+            case .swipe:
+                return "滑动分割位置"
+            case .onion:
+                return "修改后图片透明度"
+            case .twoUp, .difference:
+                return ""
+            }
+        }
+
+        var accessibilityLabel: String {
+            switch self {
+            case .twoUp:
+                return "图片并排对比"
+            case .swipe:
+                return "图片滑动对比"
+            case .onion:
+                return "图片叠加对比"
+            case .difference:
+                return "图片差异混合对比"
+            }
+        }
+
+        var accessibilityHint: String {
+            switch self {
+            case .twoUp:
+                return "左右显示修改前和修改后的图片"
+            case .swipe:
+                return "使用滑块调整修改后图片覆盖修改前图片的位置"
+            case .onion:
+                return "使用滑块调整修改后图片叠加在修改前图片上的透明度"
+            case .difference:
+                return "使用差异混合模式突出两张图片不一致的区域"
+            }
+        }
+
+        func valueLabel(for value: Double) -> String {
+            "\(Int((value * 100).rounded()))%"
         }
     }
 

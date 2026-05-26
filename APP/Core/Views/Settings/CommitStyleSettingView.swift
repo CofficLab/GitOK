@@ -1,4 +1,5 @@
 import Foundation
+import GitOKUI
 import MagicKit
 import OSLog
 import SwiftUI
@@ -26,12 +27,9 @@ struct CommitStyleSettingView: View, SuperLog {
                 // 风格示例展示
                 styleExamplesSection
 
-                MagicSettingSection(title: String(localized: "Commit 风格", table: "Core"), titleAlignment: .leading) {
-                    VStack(spacing: 0) {
-                        projectCommitStylePicker
-                        Divider()
-                        globalCommitStylePicker
-                    }
+                GitOKUI.AppSettingsSection(title: String(localized: "Commit 风格", table: "Core")) {
+                    projectCommitStylePicker
+                    globalCommitStylePicker
                 }
             }
             .padding()
@@ -54,7 +52,7 @@ struct CommitStyleSettingView: View, SuperLog {
 
     /// 风格示例展示区
     private var styleExamplesSection: some View {
-        MagicSettingSection(title: String(localized: "风格示例", table: "Core"), titleAlignment: .leading) {
+        GitOKUI.AppSettingsSection(title: String(localized: "风格示例", table: "Core")) {
             VStack(alignment: .leading, spacing: 16) {
                 Text("选择不同的风格会改变 Commit 消息的显示方式：", tableName: "Core")
                     .font(.subheadline)
@@ -116,41 +114,70 @@ struct CommitStyleSettingView: View, SuperLog {
     }
 
     private var projectCommitStylePicker: some View {
-        MagicSettingPicker(
+        commitStylePickerRow(
             title: String(localized: "当前项目风格", table: "Core"),
             description: String(localized: "此项目的 Commit 消息显示风格", table: "Core"),
-            icon: .iconTextEdit,
-            options: CommitStyle.allCases.map { String(localized: .init(String.LocalizationValue($0.rawValue), table: "Core")) },
+            icon: "square.and.pencil",
             selection: Binding(
-                get: { String(localized: .init(String.LocalizationValue(commitStyle.rawValue), table: "Core")) },
-                set: { newValue in
-                    if let style = CommitStyle.allCases.first(where: { String(localized: .init(String.LocalizationValue($0.rawValue), table: "Core")) == newValue }) {
-                        commitStyle = style
-                        if let project = vm.project {
-                            project.commitStyle = style
-                        }
+                get: { commitStyle },
+                set: { style in
+                    commitStyle = style
+                    if let project = vm.project {
+                        project.commitStyle = style
                     }
                 }
             )
-        ) { $0 }
+        )
     }
 
     private var globalCommitStylePicker: some View {
-        MagicSettingPicker(
+        commitStylePickerRow(
             title: String(localized: "全局默认风格", table: "Core"),
             description: String(localized: "新项目的默认 Commit 消息显示风格", table: "Core"),
-            icon: .iconSort,
-            options: CommitStyle.allCases.map { String(localized: .init(String.LocalizationValue($0.rawValue), table: "Core")) },
+            icon: "arrow.up.arrow.down",
             selection: Binding(
-                get: { String(localized: .init(String.LocalizationValue(globalCommitStyle.rawValue), table: "Core")) },
-                set: { newValue in
-                    if let style = CommitStyle.allCases.first(where: { String(localized: .init(String.LocalizationValue($0.rawValue), table: "Core")) == newValue }) {
-                        globalCommitStyle = style
-                        UserDefaults.standard.set(style.rawValue, forKey: "globalCommitStyle")
-                    }
+                get: { globalCommitStyle },
+                set: { style in
+                    globalCommitStyle = style
+                    UserDefaults.standard.set(style.rawValue, forKey: "globalCommitStyle")
                 }
             )
-        ) { $0 }
+        )
+    }
+
+    private func commitStylePickerRow(
+        title: String,
+        description: String,
+        icon: String,
+        selection: Binding<CommitStyle>
+    ) -> some View {
+        GitOKUI.AppSettingsRow(verticalPadding: 10) {
+            HStack(spacing: 12) {
+                Image(systemName: icon)
+                    .foregroundColor(.secondary)
+                    .frame(width: 28)
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(title)
+                        .font(.system(size: 13, weight: .medium))
+
+                    Text(description)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+
+                Spacer()
+
+                Picker("", selection: selection) {
+                    ForEach(CommitStyle.allCases, id: \.self) { style in
+                        Text(String(localized: .init(String.LocalizationValue(style.rawValue), table: "Core")))
+                            .tag(style)
+                    }
+                }
+                .labelsHidden()
+                .frame(width: 180)
+            }
+        }
     }
 
     // MARK: - Load Data

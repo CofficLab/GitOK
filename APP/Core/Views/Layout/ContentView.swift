@@ -1,3 +1,4 @@
+import MagicAlert
 import MagicKit
 import OSLog
 import SwiftUI
@@ -30,9 +31,6 @@ struct ContentView: View, SuperLog {
     /// 项目操作按钮是否可见
     @State private var projectActionsVisibility = true
 
-    /// 控制状态栏布局：true 为全宽（底部跨越左右栏），false 为旧布局（仅 detail 内部）
-    var useFullWidthStatusBar: Bool = true
-
     /// 默认状态栏可见性
     var defaultStatusBarVisibility: Bool? = nil
 
@@ -61,21 +59,7 @@ struct ContentView: View, SuperLog {
     @State private var pluginListViews: [(plugin: SuperPlugin, view: AnyView)] = []
 
     var body: some View {
-        Group {
-            if useFullWidthStatusBar {
-                VStack(spacing: 0) {
-                    navigationSplitView(fullWidthStatusBar: true)
-
-                    if statusBarVisibility && vm.projectExists {
-                        Divider()
-                        StatusBar()
-                            .frame(maxWidth: .infinity)
-                    }
-                }
-            } else {
-                navigationSplitView(fullWidthStatusBar: false)
-            }
-        }
+        navigationSplitView()
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .sheet(isPresented: $app.showSettings) {
             SettingView(defaultTab: settingTabFromString(app.defaultSettingTab))
@@ -96,10 +80,83 @@ struct ContentView: View, SuperLog {
         .onReceive(NotificationCenter.default.publisher(for: .openCommitStyleSettings)) { _ in
             app.openCommitStyleSettings()
         }
-        .overlay(alignment: .bottom) {
-            p.getRootViewWrapper {
-                EmptyView()
+        .onReceive(NotificationCenter.default.publisher(for: .gitCommandRefresh)) { _ in
+            performGitMenuCommand(.refresh)
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .gitCommandFetch)) { _ in
+            performGitMenuCommand(.fetch)
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .gitCommandPull)) { _ in
+            performGitMenuCommand(.pull)
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .gitCommandPush)) { _ in
+            performGitMenuCommand(.push)
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .gitCommandRepositorySettings)) { _ in
+            app.openRepositorySettings()
+        }
+        .focusedSceneObject(vm)
+    }
+
+    private enum GitMenuCommand {
+        case refresh
+        case fetch
+        case pull
+        case push
+    }
+
+    private func performGitMenuCommand(_ command: GitMenuCommand) {
+        guard let project = vm.project, project.isGitRepo else {
+            alert_error("当前没有可操作的 Git 仓库")
+            return
+        }
+
+        Task.detached(priority: .userInitiated) {
+            await MainActor.run {
+                g.activityStatus = statusText(for: command)
             }
+
+            do {
+                switch command {
+                case .refresh:
+                    project.postEvent(
+                        name: .projectGitDirectoryDidChange,
+                        operation: "menuRefresh"
+                    )
+                    project.postEvent(
+                        name: .projectGitRefsDidChange,
+                        operation: "menuRefresh"
+                    )
+                case .fetch:
+                    try project.fetch()
+                case .pull:
+                    try project.pull()
+                case .push:
+                    try project.push()
+                }
+
+                await MainActor.run {
+                    g.activityStatus = nil
+                }
+            } catch {
+                await MainActor.run {
+                    g.activityStatus = nil
+                    alert_error(error)
+                }
+            }
+        }
+    }
+
+    private func statusText(for command: GitMenuCommand) -> String {
+        switch command {
+        case .refresh:
+            return "刷新仓库状态中..."
+        case .fetch:
+            return "获取远程更新中..."
+        case .pull:
+            return "拉取中..."
+        case .push:
+            return "推送中..."
         }
     }
 
@@ -110,6 +167,9 @@ struct ContentView: View, SuperLog {
         case "plugins": return .plugins
         case "repository": return .repository
         case "commitStyle": return .commitStyle
+        case "appearance": return .appearance
+        case "externalTools": return .externalTools
+        case "releaseNotes": return .releaseNotes
         default: return .userInfo
         }
     }
@@ -119,19 +179,16 @@ struct ContentView: View, SuperLog {
 
 extension ContentView {
     /// 创建导航分栏视图
-    /// - Parameter fullWidthStatusBar: 是否使用全宽状态栏
     /// - Returns: 配置好的导航分栏视图
-    private func navigationSplitView(fullWidthStatusBar: Bool) -> some View {
+    private func navigationSplitView() -> some View {
         NavigationSplitView(columnVisibility: $columnVisibility) {
-            Projects()
-                .navigationSplitViewColumnWidth(min: 200, ideal: 200, max: 300)
-                .toolbar(content: {
-                    ToolbarItem {
-                        BtnAdd()
-                    }
-                })
+            SidebarView()
         } detail: {
-            detailContent(fullWidthStatusBar: fullWidthStatusBar)
+            DetailView(
+                tab: tab,
+                pluginListViews: pluginListViews,
+                statusBarVisibility: statusBarVisibility
+            )
         }
         .onAppear(perform: onAppear)
         .onChange(of: vm.project, onProjectChange)
@@ -170,77 +227,6 @@ extension ContentView {
             }
         })
     }
-
-    /// 创建详情内容视图
-    /// - Parameter fullWidthStatusBar: 是否使用全宽状态栏
-    /// - Returns: 详情内容视图
-    @ViewBuilder
-    private func detailContent(fullWidthStatusBar: Bool) -> some View {
-        if vm.projectExists == false {
-            GuideView(
-                systemImage: "folder.badge.questionmark",
-                title: "项目不存在"
-            ).setIconColor(.red.opacity(0.5))
-        } else {
-            if pluginListViews.isEmpty {
-                VStack(spacing: 0) {
-                    if let tabDetailView = p.getEnabledTabDetailView(tab: tab) {
-                        tabDetailView
-                    } else {
-                        GuideView(
-                            systemImage: "puzzlepiece.extension",
-                            title: "暂无可用视图",
-                            subtitle: "请在设置中启用相关插件以显示内容",
-                            action: {
-                                app.openPluginSettings()
-                            },
-                            actionLabel: "打开插件设置"
-                        )
-                        .setIconColor(.secondary)
-                    }
-
-                    if fullWidthStatusBar == false, statusBarVisibility {
-                        StatusBar()
-                    }
-                }
-                .frame(maxHeight: .infinity)
-            } else {
-                HSplitView {
-                    VStack(spacing: 0) {
-                        ForEach(pluginListViews, id: \.plugin.instanceLabel) { item in
-                            item.view
-                        }
-                    }
-                    .frame(idealWidth: 200)
-                    .frame(minWidth: 120)
-                    .frame(maxWidth: 300)
-                    .frame(maxHeight: .infinity)
-
-                    VStack(spacing: 0) {
-                        if let tabDetailView = p.getEnabledTabDetailView(tab: tab) {
-                            tabDetailView
-                        } else {
-                            GuideView(
-                                systemImage: "puzzlepiece.extension",
-                                title: "暂无可用视图",
-                                subtitle: "请在设置中启用相关插件以显示内容",
-                                action: {
-                                    app.openPluginSettings()
-                                },
-                                actionLabel: "打开插件设置"
-                            )
-                            .setIconColor(.secondary)
-                        }
-
-                        if fullWidthStatusBar == false, statusBarVisibility {
-                            StatusBar()
-                    }
-                }
-                .frame(maxHeight: .infinity)
-                }
-            }
-        }
-    }
 }
 
 // MARK: - Event Handler
@@ -248,21 +234,37 @@ extension ContentView {
 extension ContentView {
     /// 更新缓存的视图
     func updateCachedViews() {
+        let start = Date()
+        os_log("\(self.t)🔄 UpdateCachedViews begin tab=\(tab) project=\(vm.project?.path ?? "nil") plugins=\(p.plugins.count)")
+
         if Self.verbose {
             os_log("\(self.t)🔄 Updating cached views")
         }
 
+        let leadingStart = Date()
         toolbarLeadingViews = p.getEnabledToolbarLeadingViews()
+        os_log("\(self.t)✅ UpdateCachedViews leading count=\(toolbarLeadingViews.count) elapsed=\(String(format: "%.3f", Date().timeIntervalSince(leadingStart)))s")
+
+        let trailingStart = Date()
         toolbarTrailingViews = p.getEnabledToolbarTrailingViews()
+        os_log("\(self.t)✅ UpdateCachedViews trailing count=\(toolbarTrailingViews.count) elapsed=\(String(format: "%.3f", Date().timeIntervalSince(trailingStart)))s")
+
+        let listStart = Date()
         pluginListViews = p.getEnabledPluginListViews(tab: tab, project: vm.project)
+        os_log("\(self.t)✅ UpdateCachedViews list count=\(pluginListViews.count) elapsed=\(String(format: "%.3f", Date().timeIntervalSince(listStart)))s")
 
         if Self.verbose {
             os_log("\(self.t)✅ Cached views updated: \(toolbarLeadingViews.count) leading, \(toolbarTrailingViews.count) trailing, \(pluginListViews.count) list views")
         }
+
+        os_log("\(self.t)✅ UpdateCachedViews end elapsed=\(String(format: "%.3f", Date().timeIntervalSince(start)))s")
     }
 
     /// 视图出现时的事件处理
     func onAppear() {
+        let start = Date()
+        os_log("\(self.t)🚀 ContentView.onAppear begin")
+
         if let d = defaultColumnVisibility {
             self.columnVisibility = d
 
@@ -305,6 +307,8 @@ extension ContentView {
         }
 
         updateCachedViews()
+
+        os_log("\(self.t)✅ ContentView.onAppear end tab=\(tab) elapsed=\(String(format: "%.3f", Date().timeIntervalSince(start)))s")
     }
 
     /// 处理项目变更事件

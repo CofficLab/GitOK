@@ -56,7 +56,9 @@ extension AppConfig {
     static var dbFileName = AppConfig.debug ? "gitok_debug.db" : "gitok.db"
     
     static func getContainer() -> ModelContainer {
+        let start = Date()
         let url = AppConfig.getDBFolderURL().appendingPathComponent(dbFileName)
+        os_log("\(Self.emoji) AppConfig::🚀 Startup begin: ModelContainer url=\(url.path)")
 
         let schema = Schema([
             Project.self,
@@ -70,8 +72,11 @@ extension AppConfig {
         )
 
         do {
-            return try ModelContainer(for: schema, configurations: [modelConfiguration])
+            let container = try ModelContainer(for: schema, configurations: [modelConfiguration])
+            os_log("\(Self.emoji) AppConfig::✅ Startup end: ModelContainer elapsed=\(String(format: "%.3f", Date().timeIntervalSince(start)))s")
+            return container
         } catch {
+            os_log(.error, "\(Self.emoji) AppConfig::❌ ModelContainer failed: \(error.localizedDescription)")
             fatalError("Could not create ModelContainer: \(error)")
         }
     }

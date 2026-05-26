@@ -289,6 +289,262 @@ extension Project {
         }
     }
 
+    /// 删除本地分支。
+    /// - Parameter branch: 要删除的本地分支。当前分支不能删除，未合并分支由 git 自身阻止。
+    /// - Throws: Git 操作相关的错误
+    func deleteLocalBranch(_ branch: GitBranch) throws {
+        do {
+            try gitCLI.deleteLocalBranch(named: branch.name)
+            postEvent(
+                name: .projectGitRefsDidChange,
+                operation: "deleteLocalBranch",
+                additionalInfo: ["branchName": branch.name]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "deleteLocalBranch",
+                success: false,
+                error: error,
+                additionalInfo: ["branchName": branch.name]
+            )
+            throw error
+        }
+    }
+
+    /// 重命名本地分支。
+    /// - Parameters:
+    ///   - branch: 要重命名的本地分支
+    ///   - newName: 新分支名称
+    /// - Throws: Git 操作相关的错误
+    func renameBranch(_ branch: GitBranch, to newName: String) throws {
+        do {
+            try gitCLI.renameBranch(from: branch.name, to: newName)
+            postEvent(
+                name: .projectGitRefsDidChange,
+                operation: "renameBranch",
+                additionalInfo: ["oldBranchName": branch.name, "branchName": newName]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "renameBranch",
+                success: false,
+                error: error,
+                additionalInfo: ["oldBranchName": branch.name, "branchName": newName]
+            )
+            throw error
+        }
+    }
+
+    func remoteBranches(remote: String? = nil) throws -> [String] {
+        try gitCLI.remoteBranches(remote: remote)
+    }
+
+    func setUpstream(localBranch: GitBranch, upstreamBranch: String) throws {
+        do {
+            try gitCLI.setUpstream(localBranch: localBranch.name, upstreamBranch: upstreamBranch)
+            postEvent(
+                name: .projectGitRefsDidChange,
+                operation: "setBranchUpstream",
+                additionalInfo: ["branchName": localBranch.name, "upstream": upstreamBranch]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "setBranchUpstream",
+                success: false,
+                error: error,
+                additionalInfo: ["branchName": localBranch.name, "upstream": upstreamBranch]
+            )
+            throw error
+        }
+    }
+
+    func unsetUpstream(localBranch: GitBranch) throws {
+        do {
+            try gitCLI.unsetUpstream(localBranch: localBranch.name)
+            postEvent(
+                name: .projectGitRefsDidChange,
+                operation: "unsetBranchUpstream",
+                additionalInfo: ["branchName": localBranch.name]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "unsetBranchUpstream",
+                success: false,
+                error: error,
+                additionalInfo: ["branchName": localBranch.name]
+            )
+            throw error
+        }
+    }
+
+    func deleteRemoteBranch(named branchName: String, remote: String = "origin") throws {
+        do {
+            try gitCLI.deleteRemoteBranch(named: branchName, remote: remote)
+            postEvent(
+                name: .projectGitRefsDidChange,
+                operation: "deleteRemoteBranch",
+                additionalInfo: ["branchName": branchName, "remote": remote]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "deleteRemoteBranch",
+                success: false,
+                error: error,
+                additionalInfo: ["branchName": branchName, "remote": remote]
+            )
+            throw error
+        }
+    }
+
+    func publishBranch(_ branch: GitBranch, remote: String = "origin") throws {
+        do {
+            try gitCLI.publishBranch(localBranch: branch.name, remote: remote)
+            postEvent(
+                name: .projectGitRefsDidChange,
+                operation: "publishBranch",
+                additionalInfo: ["branchName": branch.name, "remote": remote]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "publishBranch",
+                success: false,
+                error: error,
+                additionalInfo: ["branchName": branch.name, "remote": remote]
+            )
+            throw error
+        }
+    }
+
+    func compareBranches(base: GitBranch, head: GitBranch) throws -> GitCoreKit.GitBranchCompare {
+        try gitCLI.compareBranches(base: base.name, head: head.name)
+    }
+
+    func rebaseStatus() throws -> GitRebaseStatus {
+        try gitCLI.rebaseStatus()
+    }
+
+    func startRebase(branch: GitBranch, onto upstream: GitBranch) throws {
+        do {
+            try gitCLI.startRebase(branch: branch.name, onto: upstream.name)
+            postEvent(
+                name: .projectGitHeadDidChange,
+                operation: "startRebase",
+                additionalInfo: ["branchName": branch.name, "upstream": upstream.name]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "startRebase",
+                success: false,
+                error: error,
+                additionalInfo: ["branchName": branch.name, "upstream": upstream.name]
+            )
+            throw error
+        }
+    }
+
+    func continueRebase() async throws {
+        do {
+            try gitCLI.continueRebase()
+            postEvent(
+                name: .projectGitHeadDidChange,
+                operation: "continueRebase"
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "continueRebase",
+                success: false,
+                error: error
+            )
+            throw error
+        }
+    }
+
+    func abortRebase() async throws {
+        do {
+            try gitCLI.abortRebase()
+            postEvent(
+                name: .projectGitHeadDidChange,
+                operation: "abortRebase"
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "abortRebase",
+                success: false,
+                error: error
+            )
+            throw error
+        }
+    }
+
+    func cherryPickStatus() throws -> GitCherryPickStatus {
+        try gitCLI.cherryPickStatus()
+    }
+
+    func cherryPick(commits: [String], onto branch: GitBranch? = nil) throws {
+        do {
+            try gitCLI.cherryPick(commits: commits, onto: branch?.name)
+            postEvent(
+                name: .projectGitHeadDidChange,
+                operation: "cherryPick",
+                additionalInfo: ["commitCount": commits.count, "branchName": branch?.name as Any]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "cherryPick",
+                success: false,
+                error: error,
+                additionalInfo: ["commitCount": commits.count, "branchName": branch?.name as Any]
+            )
+            throw error
+        }
+    }
+
+    func continueCherryPick() async throws {
+        do {
+            try gitCLI.continueCherryPick()
+            postEvent(
+                name: .projectGitHeadDidChange,
+                operation: "continueCherryPick"
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "continueCherryPick",
+                success: false,
+                error: error
+            )
+            throw error
+        }
+    }
+
+    func abortCherryPick() async throws {
+        do {
+            try gitCLI.abortCherryPick()
+            postEvent(
+                name: .projectGitHeadDidChange,
+                operation: "abortCherryPick"
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "abortCherryPick",
+                success: false,
+                error: error
+            )
+            throw error
+        }
+    }
+
     /// 合并分支
     /// - Parameter branchName: 要合并的分支名称
     /// - Throws: Git操作异常
@@ -421,6 +677,30 @@ extension Project {
         }
     }
 
+    func fileDiff(_ filePath: String, staged: Bool, ignoreWhitespace: Bool = false) throws -> String {
+        try gitCLI.fileDiff(filePath, staged: staged, ignoreWhitespace: ignoreWhitespace)
+    }
+
+    func applyPatch(_ patch: String, mode: GitCoreKit.GitPatchApplyMode, filePath: String) throws {
+        do {
+            try gitCLI.applyPatch(patch, mode: mode)
+            postEvent(
+                name: .projectDidAddFiles,
+                operation: mode == .stage ? "stagePatch" : "unstagePatch",
+                additionalInfo: ["filePath": filePath]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: mode == .stage ? "stagePatch" : "unstagePatch",
+                success: false,
+                error: error,
+                additionalInfo: ["filePath": filePath]
+            )
+            throw error
+        }
+    }
+
     func statusEntries() throws -> [GitStatusEntry] {
         try gitCLI.statusEntries()
     }
@@ -532,6 +812,10 @@ extension Project {
         return try LibGit2.getCommitListWithPagination(at: self.path, page: page, size: limit)
     }
 
+    func getCommitGraphWithPagination(_ page: Int, limit: Int) throws -> [GitCommit] {
+        return try LibGit2.getCommitGraphListWithPagination(at: self.path, page: page, size: limit)
+    }
+
     /// 撤销指定的提交（仅限未推送的 HEAD commit）
     /// 原理：执行 git reset --mixed <parentHash>，将提交的文件变更保留在工作区（未暂存状态）
     /// - Parameter commit: 要撤销的提交
@@ -567,6 +851,66 @@ extension Project {
             throw error
         }
     }
+
+    func revertCommit(_ commit: GitCommit) throws {
+        do {
+            try gitCLI.revertCommit(commit.hash)
+            postEvent(
+                name: .projectDidCommit,
+                operation: "revertCommit",
+                additionalInfo: ["commitHash": commit.hash]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "revertCommit",
+                success: false,
+                error: error,
+                additionalInfo: ["commitHash": commit.hash]
+            )
+            throw error
+        }
+    }
+
+    func reset(to commit: GitCommit, mode: GitCoreKit.GitResetMode) throws {
+        do {
+            try gitCLI.reset(to: commit.hash, mode: mode)
+            postEvent(
+                name: .projectDidCommit,
+                operation: "reset\(mode.rawValue.capitalized)",
+                additionalInfo: ["commitHash": commit.hash]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "reset\(mode.rawValue.capitalized)",
+                success: false,
+                error: error,
+                additionalInfo: ["commitHash": commit.hash]
+            )
+            throw error
+        }
+    }
+
+    func squashLastCommits(count: Int, message: String) throws {
+        do {
+            try gitCLI.squashLastCommits(count: count, message: message)
+            postEvent(
+                name: .projectDidCommit,
+                operation: "squashCommits",
+                additionalInfo: ["commitCount": count]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "squashCommits",
+                success: false,
+                error: error,
+                additionalInfo: ["commitCount": count]
+            )
+            throw error
+        }
+    }
 }
 
 // MARK: - File
@@ -585,13 +929,13 @@ extension Project {
     }
 
     /// 获取指定提交中文件的 diff 字符串
-    func fileDiff(at commit: String, file: String) throws -> String {
-        try LibGit2.getFileDiff(atCommit: commit, for: file, at: self.path)
+    func fileDiff(at commit: String, file: String, ignoreWhitespace: Bool = false) throws -> String {
+        return try LibGit2.getFileDiff(atCommit: commit, for: file, at: self.path)
     }
 
     /// 获取未提交文件的 diff 字符串
-    func uncommittedFileDiff(file: String) throws -> String {
-        try LibGit2.getFileDiff(for: file, at: self.path, staged: false)
+    func uncommittedFileDiff(file: String, ignoreWhitespace: Bool = false) throws -> String {
+        return try LibGit2.getFileDiff(for: file, at: self.path, staged: false)
     }
 
     /// 获取指定提交中文件的原始二进制数据（支持图片等二进制文件）
@@ -712,10 +1056,10 @@ extension Project {
     }
 
     /// 获取stash列表
-    /// - Returns: stash列表，每个stash包含索引和消息
+    /// - Returns: stash列表，包含索引、消息、分支、时间和预览信息
     /// - Throws: Git操作异常
-    func stashList() throws -> [(index: Int, message: String)] {
-        try gitCLI.stashList().map { (index: $0.index, message: $0.message) }
+    func stashList() throws -> [GitStashEntry] {
+        try gitCLI.stashList()
     }
 
     /// 应用指定的stash（保留stash）
@@ -757,6 +1101,16 @@ extension Project {
         }
     }
 
+    /// 基于指定 stash 创建分支并恢复改动。
+    /// - Parameters:
+    ///   - name: 新分支名称
+    ///   - index: stash 的索引
+    /// - Throws: Git 操作异常
+    func stashBranch(name: String, index: Int) throws {
+        try gitCLI.stashBranch(name: name, index: index)
+        postEvent(.stashPopSuccess(index: index))
+    }
+
     /// 获取当前正在合并的分支名
     /// - Returns: 当前合并来源分支名，如果无法解析则返回 nil
     func getCurrentMergeBranchName() throws -> String? {
@@ -782,6 +1136,23 @@ extension Project {
     /// - Throws: Git操作异常
     func hasMergeConflicts() async throws -> Bool {
         try await getMergeConflictFiles().isEmpty == false
+    }
+
+    func mergeFileContent(path: String, version: GitMergeFileVersion) throws -> String {
+        try gitCLI.mergeFileContent(path: path, version: version)
+    }
+
+    func mergeFileDiff(path: String) throws -> String {
+        try gitCLI.mergeFileDiff(path: path)
+    }
+
+    func checkoutMergeFileVersion(path: String, version: GitMergeFileVersion) throws {
+        try gitCLI.checkoutMergeFileVersion(path: path, version: version)
+        postEvent(
+            name: .projectGitIndexDidChange,
+            operation: "checkoutMergeFileVersion",
+            additionalInfo: ["filePath": path, "version": version.rawValue]
+        )
     }
 
     /// 中止合并操作
@@ -894,7 +1265,7 @@ extension Project {
         }
     }
 
-    func aheadBehind() throws -> GitAheadBehind {
+    func aheadBehind() throws -> GitCoreKit.GitAheadBehind {
         try gitCLI.aheadBehind()
     }
 
@@ -997,6 +1368,67 @@ extension Project {
     func remoteList() throws -> [GitRemote] {
         try LibGit2.getRemoteList(at: self.path)
     }
+
+    func addRemote(name: String, url: String) throws {
+        do {
+            try LibGit2.addRemote(name: name, url: url, at: self.path)
+            postEvent(
+                name: .projectGitRefsDidChange,
+                operation: "addRemote",
+                additionalInfo: ["remote": name, "url": url]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "addRemote",
+                success: false,
+                error: error,
+                additionalInfo: ["remote": name, "url": url]
+            )
+            throw error
+        }
+    }
+
+    func updateRemote(originalName: String, newName: String, newURL: String) throws {
+        do {
+            try LibGit2.removeRemote(name: originalName, at: self.path)
+            try LibGit2.addRemote(name: newName, url: newURL, at: self.path)
+            postEvent(
+                name: .projectGitRefsDidChange,
+                operation: "updateRemote",
+                additionalInfo: ["oldRemote": originalName, "remote": newName, "url": newURL]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "updateRemote",
+                success: false,
+                error: error,
+                additionalInfo: ["oldRemote": originalName, "remote": newName, "url": newURL]
+            )
+            throw error
+        }
+    }
+
+    func removeRemote(name: String) throws {
+        do {
+            try LibGit2.removeRemote(name: name, at: self.path)
+            postEvent(
+                name: .projectGitRefsDidChange,
+                operation: "removeRemote",
+                additionalInfo: ["remote": name]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "removeRemote",
+                success: false,
+                error: error,
+                additionalInfo: ["remote": name]
+            )
+            throw error
+        }
+    }
 }
 
 // MARK: - Tag
@@ -1008,6 +1440,146 @@ extension Project {
 
     func getTags(commit: String) throws -> [String] {
         try tags(for: commit)
+    }
+
+    func createLightweightTag(named tagName: String, commitHash: String) throws {
+        do {
+            try gitCLI.createLightweightTag(named: tagName, commitHash: commitHash)
+            postEvent(
+                name: .projectGitRefsDidChange,
+                operation: "createLightweightTag",
+                additionalInfo: ["tagName": tagName, "commitHash": commitHash]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "createLightweightTag",
+                success: false,
+                error: error,
+                additionalInfo: ["tagName": tagName, "commitHash": commitHash]
+            )
+            throw error
+        }
+    }
+
+    func createAnnotatedTag(named tagName: String, commitHash: String, message: String) throws {
+        do {
+            try gitCLI.createAnnotatedTag(named: tagName, commitHash: commitHash, message: message)
+            postEvent(
+                name: .projectGitRefsDidChange,
+                operation: "createAnnotatedTag",
+                additionalInfo: ["tagName": tagName, "commitHash": commitHash]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "createAnnotatedTag",
+                success: false,
+                error: error,
+                additionalInfo: ["tagName": tagName, "commitHash": commitHash]
+            )
+            throw error
+        }
+    }
+
+    func deleteLocalTag(named tagName: String) throws {
+        do {
+            try gitCLI.deleteLocalTag(named: tagName)
+            postEvent(
+                name: .projectGitRefsDidChange,
+                operation: "deleteLocalTag",
+                additionalInfo: ["tagName": tagName]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "deleteLocalTag",
+                success: false,
+                error: error,
+                additionalInfo: ["tagName": tagName]
+            )
+            throw error
+        }
+    }
+
+    func pushTag(named tagName: String, remote: String = "origin") throws {
+        do {
+            try gitCLI.pushTag(named: tagName, remote: remote)
+            postEvent(
+                name: .projectDidPush,
+                operation: "pushTag",
+                additionalInfo: ["tagName": tagName, "remote": remote]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "pushTag",
+                success: false,
+                error: error,
+                additionalInfo: ["tagName": tagName, "remote": remote]
+            )
+            throw error
+        }
+    }
+
+    func deleteRemoteTag(named tagName: String, remote: String = "origin") throws {
+        do {
+            try gitCLI.deleteRemoteTag(named: tagName, remote: remote)
+            postEvent(
+                name: .projectDidPush,
+                operation: "deleteRemoteTag",
+                additionalInfo: ["tagName": tagName, "remote": remote]
+            )
+        } catch {
+            postEvent(
+                name: .projectOperationDidFail,
+                operation: "deleteRemoteTag",
+                success: false,
+                error: error,
+                additionalInfo: ["tagName": tagName, "remote": remote]
+            )
+            throw error
+        }
+    }
+}
+
+// MARK: - Git LFS
+
+extension Project {
+    func lfsStatus() -> GitRepositoryCLI.GitLFSStatus {
+        gitCLI.lfsStatus()
+    }
+
+    func initializeLFS() throws {
+        try gitCLI.initializeLFS()
+    }
+
+    func lfsLargeFileCandidates(thresholdBytes: Int64 = 50 * 1024 * 1024) throws -> [GitRepositoryCLI.GitLFSLargeFileCandidate] {
+        try gitCLI.lfsLargeFileCandidates(thresholdBytes: thresholdBytes)
+    }
+
+    func lfsAttributeMismatches() throws -> [GitRepositoryCLI.GitLFSAttributeMismatch] {
+        try gitCLI.lfsAttributeMismatches()
+    }
+}
+
+// MARK: - Submodule
+
+extension Project {
+    func submodules() throws -> [GitRepositoryCLI.GitSubmodule] {
+        try gitCLI.submodules()
+    }
+
+    func initializeSubmodules(paths: [String] = [], recursive: Bool = true, allowFileProtocol: Bool = false) throws {
+        try gitCLI.initializeSubmodules(paths: paths, recursive: recursive, allowFileProtocol: allowFileProtocol)
+    }
+
+    func updateSubmodules(paths: [String] = [], recursive: Bool = true, allowFileProtocol: Bool = false) throws {
+        try gitCLI.updateSubmodules(paths: paths, recursive: recursive, allowFileProtocol: allowFileProtocol)
+    }
+
+    func submoduleDiff(path: String) throws -> String {
+        try gitCLI.submoduleDiff(path: path)
     }
 }
 

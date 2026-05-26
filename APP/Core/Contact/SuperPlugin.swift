@@ -1,4 +1,5 @@
 import SwiftUI
+import GitOKUI
 
 /// `SuperPlugin` 是 GitOK 应用的插件系统核心协议。
 /// 所有插件必须实现此协议以便集成到应用程序中。
@@ -86,6 +87,11 @@ protocol SuperPlugin {
     /// - Parameter content: 要被包裹的原始内容视图
     /// - Returns: 包裹后的视图，如果不需要则返回 nil
     func addRootView<Content>(@ViewBuilder content: () -> Content) -> AnyView? where Content: View
+
+    /// 返回插件贡献的应用主题。
+    /// 主题插件通过此入口登记主题，宿主负责聚合、排序和选择。
+    @MainActor
+    func addThemeContributions() -> [GitOKUIThemeContribution]
 }
 
 /// SuperPlugin 协议的默认实现
@@ -145,6 +151,9 @@ extension SuperPlugin {
     /// 默认应该注册
     static var shouldRegister: Bool { true }
 
+    /// 默认启用插件
+    static var defaultEnabled: Bool { true }
+
     /// 默认的工具栏前部视图实现，返回空视图
     func addToolBarLeadingView() -> AnyView? {
         nil
@@ -184,6 +193,11 @@ extension SuperPlugin {
     /// 默认的根视图包裹实现，返回 nil 表示不包裹
     func addRootView<Content>(@ViewBuilder content: () -> Content) -> AnyView? where Content: View {
         nil
+    }
+
+    @MainActor
+    func addThemeContributions() -> [GitOKUIThemeContribution] {
+        []
     }
 
     /// 提供根视图（接收 AnyView 参数的便捷方法）

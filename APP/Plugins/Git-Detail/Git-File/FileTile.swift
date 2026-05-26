@@ -24,6 +24,12 @@ struct FileTile: View, SuperLog {
 
     var stageState: FileStageState = .unstaged
 
+    var showsStageBadge = true
+
+    var isBatchSelected = false
+
+    var onToggleBatchSelection: ((GitDiffFile) -> Void)?
+
     var onStage: ((GitDiffFile) -> Void)?
 
     var onUnstage: ((GitDiffFile) -> Void)?
@@ -40,6 +46,20 @@ struct FileTile: View, SuperLog {
 
     var body: some View {
         HStack(spacing: 12) {
+            if onToggleBatchSelection != nil {
+                Button {
+                    onToggleBatchSelection?(file)
+                } label: {
+                    Image(systemName: isBatchSelected ? "checkmark.circle.fill" : "circle")
+                        .font(.system(size: 13, weight: .medium))
+                        .foregroundColor(isBatchSelected ? .accentColor : .secondary)
+                }
+                .buttonStyle(.plain)
+                .help(isBatchSelected ? "取消选择" : "选择文件")
+                .accessibilityLabel(isBatchSelected ? "取消选择 \(file.file)" : "选择 \(file.file)")
+                .accessibilityHint("用于批量暂存、取消暂存或丢弃")
+            }
+
             Text(file.file)
                 .font(.footnote)
                 .lineLimit(1)
@@ -47,9 +67,14 @@ struct FileTile: View, SuperLog {
 
             Spacer()
 
-            stageBadge
+            if showsStageBadge {
+                stageBadge
+            }
             statusIcon
         }
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(accessibilitySummary)
+        .accessibilityHint("按回车或点击查看差异。打开上下文菜单可暂存、取消暂存、复制路径或丢弃更改。")
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.vertical, 5)
         .padding(.horizontal, 8)
@@ -132,6 +157,7 @@ struct FileTile: View, SuperLog {
             .foregroundColor(color)
             .padding(2)
             .cornerRadius(6)
+            .accessibilityHidden(true)
     }
 
     private var stageBadge: some View {
@@ -144,6 +170,43 @@ struct FileTile: View, SuperLog {
                 Capsule()
                     .fill(stageState.color.opacity(0.12))
             )
+            .accessibilityHidden(true)
+    }
+
+    private var accessibilitySummary: String {
+        var parts = [
+            file.file,
+            changeTypeAccessibilityLabel,
+        ]
+
+        if showsStageBadge {
+            parts.append(stageState.title)
+        }
+
+        if isBatchSelected {
+            parts.append("已加入批量选择")
+        }
+
+        return parts.joined(separator: "，")
+    }
+
+    private var changeTypeAccessibilityLabel: String {
+        switch file.changeType.uppercased() {
+        case "M", "MODIFIED":
+            return "已修改"
+        case "A", "ADDED", "NEW":
+            return "新增"
+        case "D", "DELETED":
+            return "已删除"
+        case "R", "RENAMED":
+            return "已重命名"
+        case "C", "COPIED":
+            return "已复制"
+        case "?", "UNTRACKED":
+            return "未跟踪"
+        default:
+            return "状态 \(file.changeType)"
+        }
     }
 
     private var discardAlertMessage: String {

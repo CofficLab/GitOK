@@ -43,15 +43,25 @@ class ProjectVM: ObservableObject, SuperLog {
     // MARK: - Initialization
 
     init(project: Project?, repoManager: RepoManager) {
+        let start = Date()
+        os_log("\(Self.t)🚀 Startup begin: ProjectVM.init project=\(project?.path ?? "nil")")
+
         self.repoManager = repoManager
         self.project = project
 
+        let existsStart = Date()
         self.checkIfProjectExists()
+        os_log("\(Self.t)✅ Startup step: project exists=\(self.projectExists) elapsed=\(String(format: "%.3f", Date().timeIntervalSince(existsStart)))s")
 
         if let project = project {
+            let gitStart = Date()
+            os_log("\(Self.t)🚀 Startup begin: LibGit2.isGitRepository path=\(project.path)")
             let isGit = LibGit2.isGitRepository(at: project.path)
+            os_log("\(Self.t)✅ Startup end: LibGit2.isGitRepository result=\(isGit) elapsed=\(String(format: "%.3f", Date().timeIntervalSince(gitStart)))s")
             project.updateIsGitRepoCacheSync(isGit)
         }
+
+        os_log("\(Self.t)✅ Startup end: ProjectVM.init elapsed=\(String(format: "%.3f", Date().timeIntervalSince(start)))s")
     }
 
     // MARK: - Project Management
@@ -61,6 +71,9 @@ class ProjectVM: ObservableObject, SuperLog {
     ///   - p: 要设置的项目
     ///   - reason: 设置原因
     func setProject(_ p: Project?, reason: String) {
+        let start = Date()
+        os_log("\(self.t)🎯 SetProject begin reason=\(reason) path=\(p?.path ?? "nil")")
+
         if verbose {
             os_log("\(self.t)Set Project(\(reason)) \n ➡️ \(p?.path ?? "")")
         }
@@ -70,13 +83,17 @@ class ProjectVM: ObservableObject, SuperLog {
         self.checkIfProjectExists()
 
         if let project = p {
+            let gitStart = Date()
             let isGit = LibGit2.isGitRepository(at: project.path)
+            os_log("\(self.t)✅ SetProject LibGit2.isGitRepository result=\(isGit) elapsed=\(String(format: "%.3f", Date().timeIntervalSince(gitStart)))s")
             project.updateIsGitRepoCacheSync(isGit)
 
             Task.detached(priority: .userInitiated) {
                 await project.updateIsGitRepoCache()
             }
         }
+
+        os_log("\(self.t)✅ SetProject end reason=\(reason) elapsed=\(String(format: "%.3f", Date().timeIntervalSince(start)))s")
     }
 
     /// 设置当前选中的文件
@@ -108,7 +125,7 @@ class ProjectVM: ObservableObject, SuperLog {
         self.isClean = isClean
     }
 
-    func updateAheadBehind(_ state: GitAheadBehind) {
+    func updateAheadBehind(_ state: GitCoreKit.GitAheadBehind) {
         self.aheadCount = state.ahead
         self.behindCount = state.behind
         self.hasUpstream = state.hasUpstream

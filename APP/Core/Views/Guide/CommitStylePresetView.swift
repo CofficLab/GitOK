@@ -1,4 +1,5 @@
 import Foundation
+import GitOKUI
 import MagicKit
 import OSLog
 import SwiftUI
@@ -21,7 +22,7 @@ struct CommitStylePresetView: View, SuperLog {
     @State private var globalCommitStyle: CommitStyle = .emoji
 
     var body: some View {
-        AppSettingSection(title: "Commit 风格", titleAlignment: .leading) {
+        GitOKUI.AppSettingsSection(title: "Commit 风格") {
             VStack(spacing: 0) {
                 // 当前项目风格
                 projectCommitStylePicker
@@ -40,42 +41,71 @@ struct CommitStylePresetView: View, SuperLog {
 
     /// 当前项目风格选择器
     private var projectCommitStylePicker: some View {
-        MagicSettingPicker(
+        commitStylePickerRow(
             title: "当前项目风格",
             description: "此项目的 Commit 消息显示风格",
-            icon: .iconTextEdit,
-            options: CommitStyle.allCases.map { $0.label },
+            icon: "square.and.pencil",
             selection: Binding(
-                get: { projectCommitStyle.label },
-                set: { newValue in
-                    if let style = CommitStyle.allCases.first(where: { $0.label == newValue }) {
-                        projectCommitStyle = style
-                        if let project = vm.project {
-                            project.commitStyle = style
-                        }
+                get: { projectCommitStyle },
+                set: { style in
+                    projectCommitStyle = style
+                    if let project = vm.project {
+                        project.commitStyle = style
                     }
                 }
             )
-        ) { $0 }
+        )
     }
 
     /// 全局风格选择器
     private var globalCommitStylePicker: some View {
-        MagicSettingPicker(
+        commitStylePickerRow(
             title: "全局默认风格",
             description: "新项目的默认 Commit 消息显示风格",
-            icon: .iconSort,
-            options: CommitStyle.allCases.map { $0.label },
+            icon: "arrow.up.arrow.down",
             selection: Binding(
-                get: { globalCommitStyle.label },
-                set: { newValue in
-                    if let style = CommitStyle.allCases.first(where: { $0.label == newValue }) {
-                        globalCommitStyle = style
-                        UserDefaults.standard.set(style.rawValue, forKey: "globalCommitStyle")
-                    }
+                get: { globalCommitStyle },
+                set: { style in
+                    globalCommitStyle = style
+                    UserDefaults.standard.set(style.rawValue, forKey: "globalCommitStyle")
                 }
             )
-        ) { $0 }
+        )
+    }
+
+    private func commitStylePickerRow(
+        title: String,
+        description: String,
+        icon: String,
+        selection: Binding<CommitStyle>
+    ) -> some View {
+        GitOKUI.AppSettingsRow(verticalPadding: 10) {
+            HStack(spacing: 12) {
+                Image(systemName: icon)
+                    .foregroundColor(.secondary)
+                    .frame(width: 28)
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(title)
+                        .font(.system(size: 13, weight: .medium))
+
+                    Text(description)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+
+                Spacer()
+
+                Picker("", selection: selection) {
+                    ForEach(CommitStyle.allCases, id: \.self) { style in
+                        Text(style.label)
+                            .tag(style)
+                    }
+                }
+                .labelsHidden()
+                .frame(width: 180)
+            }
+        }
     }
 
     // MARK: - Load Data

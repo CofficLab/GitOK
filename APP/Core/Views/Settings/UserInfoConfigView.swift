@@ -1,4 +1,5 @@
 import Foundation
+import GitOKUI
 import MagicKit
 import OSLog
 import SwiftUI
@@ -90,19 +91,10 @@ struct UserInfoConfigView: View, SuperLog {
 
                 // 预设配置选择
                 if !savedConfigs.isEmpty {
-                    MagicSettingSection(title: String(localized: "预设配置", table: "Core"), titleAlignment: .leading) {
+                    GitOKUI.AppSettingsSection(title: String(localized: "预设配置", table: "Core")) {
                         VStack(spacing: 0) {
                             ForEach(savedConfigs) { config in
-                                MagicSettingRow(
-                                    title: config.name,
-                                    description: config.email,
-                                    icon: selectedConfig?.id == config.id ? .iconCheckmark : .iconUser
-                                ) {
-                                    if selectedConfig?.id == config.id {
-                                        Image(systemName: .iconCheckmark)
-                                            .foregroundColor(.accentColor)
-                                    }
-                                }
+                                presetConfigRow(config)
                                 .contentShape(Rectangle())
                                 .onTapGesture {
                                     selectedConfig = config
@@ -123,7 +115,7 @@ struct UserInfoConfigView: View, SuperLog {
                 }
 
                 // 用户信息输入
-                MagicSettingSection(title: String(localized: "用户信息", table: "Core"), titleAlignment: .leading) {
+                GitOKUI.AppSettingsSection(title: String(localized: "用户信息", table: "Core")) {
                     VStack(spacing: 0) {
                         // 用户名
                         HStack {
@@ -174,6 +166,32 @@ struct UserInfoConfigView: View, SuperLog {
                 }
             }
             .padding()
+        }
+    }
+
+    private func presetConfigRow(_ config: GitUserConfig) -> some View {
+        GitOKUI.AppSettingsRow(isSelected: selectedConfig?.id == config.id, verticalPadding: 10) {
+            HStack(spacing: 12) {
+                Image(systemName: selectedConfig?.id == config.id ? "checkmark.circle.fill" : "person")
+                    .foregroundColor(selectedConfig?.id == config.id ? .accentColor : .secondary)
+                    .frame(width: 28)
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(config.name)
+                        .font(.system(size: 13, weight: .medium))
+
+                    Text(config.email)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+
+                Spacer()
+
+                if selectedConfig?.id == config.id {
+                    Image(systemName: "checkmark")
+                        .foregroundColor(.accentColor)
+                }
+            }
         }
     }
 

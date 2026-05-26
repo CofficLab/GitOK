@@ -1,3 +1,5 @@
+import GitCoreKit
+import LibGit2Swift
 import MagicAlert
 import MagicKit
 import OSLog
@@ -17,13 +19,17 @@ struct StashList: View, SuperLog, SuperThread {
     @EnvironmentObject var data: DataVM
     @EnvironmentObject var vm: ProjectVM
 
-    @State private var stashes: [(index: Int, message: String)] = []
+    @State private var stashes: [GitStashEntry] = []
     @State private var isLoading = true
     @State private var showStashForm = false
+    @State private var showBranchForm = false
+    @State private var branchName = ""
     @State private var stashMessage = ""
     @State private var currentBranchName = "main"
     @State private var isPerformingAction = false
     @State private var activeStashIndex: Int?
+    @State private var pendingDirtyAction: PendingStashAction?
+    @State private var branchSourceStashIndex: Int?
 
     private init() {}
 
@@ -37,6 +43,22 @@ struct StashList: View, SuperLog, SuperThread {
         }
         .sheet(isPresented: $showStashForm) {
             stashFormView
+        }
+        .sheet(isPresented: $showBranchForm) {
+            branchFormView
+        }
+        .alert("工作区有未提交改动", isPresented: hasPendingDirtyAction) {
+            Button("取消", role: .cancel) {
+                pendingDirtyAction = nil
+            }
+            Button("继续", role: .destructive) {
+                if let pendingDirtyAction {
+                    performStashAction(pendingDirtyAction, skipCleanCheck: true)
+                }
+                pendingDirtyAction = nil
+            }
+        } message: {
+            Text("应用、弹出或基于 stash 创建分支可能与当前工作区改动冲突。建议先提交或再创建一个 stash。")
         }
         .onAppear(perform: onAppear)
         .onProjectDidCommit(perform: onProjectDidCommit)
@@ -162,8 +184,9 @@ extension StashList {
                             StashRow(
                                 stash: stash,
                                 branchName: currentBranchName,
-                                onApply: { applyStash(at: stash.index) },
-                                onPop: { popStash(at: stash.index) },
+                                onBranch: { prepareBranch(from: stash) },
+                                onApply: { performStashAction(.apply(index: stash.index)) },
+                                onPop: { performStashAction(.pop(index: stash.index)) },
                                 onDrop: { dropStash(at: stash.index) }
                             )
                             .disabled(isPerformingAction)
@@ -201,11 +224,47 @@ extension StashList {
         .padding()
         .frame(width: 350)
     }
+
+    private var branchFormView: some View {
+        VStack(spacing: 16) {
+            Text("从 Stash 创建分支")
+                .font(.headline)
+
+            TextField("新分支名称", text: $branchName)
+                .textFieldStyle(.roundedBorder)
+                .frame(width: 320)
+
+            HStack {
+                Button("取消") {
+                    branchName = ""
+                    branchSourceStashIndex = nil
+                    showBranchForm = false
+                }
+
+                Button("创建") {
+                    if let branchSourceStashIndex {
+                        performStashAction(.branch(index: branchSourceStashIndex, name: branchName))
+                    }
+                }
+                .keyboardShortcut(.defaultAction)
+                .disabled(branchName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || isPerformingAction)
+            }
+        }
+        .padding()
+        .frame(width: 380)
+    }
 }
 
 // MARK: - Action
 
 extension StashList {
+    private var hasPendingDirtyAction: Binding<Bool> {
+        Binding(
+            get: { pendingDirtyAction != nil },
+            set: { if $0 == false { pendingDirtyAction = nil } }
+        )
+    }
+
     private func createStash() {
         guard let project = vm.project, !isPerformingAction else { return }
 
@@ -230,6 +289,40 @@ extension StashList {
                     alert_error(error)
                 }
             }
+        }
+    }
+
+    private func prepareBranch(from stash: GitStashEntry) {
+        branchSourceStashIndex = stash.index
+        let sourceBranch = stash.branchName ?? currentBranchName
+        branchName = "stash/\(sourceBranch)-\(stash.index)"
+            .replacingOccurrences(of: " ", with: "-")
+            .replacingOccurrences(of: ":", with: "-")
+        showBranchForm = true
+    }
+
+    private func performStashAction(_ action: PendingStashAction, skipCleanCheck: Bool = false) {
+        guard let project = vm.project, !isPerformingAction else { return }
+
+        if skipCleanCheck == false, action.requiresCleanWorkingTree {
+            do {
+                if try project.statusEntries().isEmpty == false {
+                    pendingDirtyAction = action
+                    return
+                }
+            } catch {
+                alert_error(error)
+                return
+            }
+        }
+
+        switch action {
+        case let .apply(index):
+            applyStash(at: index)
+        case let .pop(index):
+            popStash(at: index)
+        case let .branch(index, name):
+            createBranch(from: index, name: name)
         }
     }
 
@@ -311,6 +404,35 @@ extension StashList {
         }
     }
 
+    private func createBranch(from index: Int, name: String) {
+        guard let project = vm.project, !isPerformingAction else { return }
+
+        isPerformingAction = true
+        activeStashIndex = index
+
+        Task(priority: .userInitiated) {
+            do {
+                try project.stashBranch(name: name, index: index)
+
+                await MainActor.run {
+                    alert_info("已从 stash@{\(index)} 创建分支")
+                    branchName = ""
+                    branchSourceStashIndex = nil
+                    showBranchForm = false
+                    isPerformingAction = false
+                    activeStashIndex = nil
+                    loadStashes()
+                }
+            } catch {
+                await MainActor.run {
+                    isPerformingAction = false
+                    activeStashIndex = nil
+                    alert_error(error)
+                }
+            }
+        }
+    }
+
     private func loadStashes() {
         guard let project = vm.project else {
             stashes = []
@@ -320,28 +442,42 @@ extension StashList {
         }
 
         isLoading = true
+        let repositoryURL = project.url
 
         Task(priority: .userInitiated) {
             do {
-                let stashList = try project.stashList()
-                let branchName = (try? project.getCurrentBranch()?.name) ?? "main"
+                let (stashList, branchName) = try await Task.detached(priority: .userInitiated) {
+                    let cli = GitRepositoryCLI(repositoryURL: repositoryURL)
+                    let stashList = try cli.stashList()
+                    let branchName = (try? LibGit2.getCurrentBranch(at: repositoryURL.path)) ?? ""
+                    return (stashList, branchName)
+                }.value
 
-                await MainActor.run {
-                    self.stashes = stashList
-                    self.currentBranchName = branchName
-                    self.isLoading = false
-                }
+                stashes = stashList
+                currentBranchName = branchName.isEmpty ? "main" : branchName
+                isLoading = false
             } catch {
                 if Self.verbose {
                     os_log("\(self.t)❌ Failed to load stashes: \(error)")
                 }
-                await MainActor.run {
-                    self.stashes = []
-                    self.currentBranchName = "main"
-                    self.isLoading = false
-                    alert_error(error)
-                }
+                stashes = []
+                currentBranchName = "main"
+                isLoading = false
+                alert_error(error)
             }
+        }
+    }
+}
+
+private enum PendingStashAction: Equatable {
+    case apply(index: Int)
+    case pop(index: Int)
+    case branch(index: Int, name: String)
+
+    var requiresCleanWorkingTree: Bool {
+        switch self {
+        case .apply, .pop, .branch:
+            return true
         }
     }
 }

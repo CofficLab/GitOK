@@ -26,7 +26,7 @@ struct ConflictStatusTile: View, SuperLog {
         .help(helpText)
         .popover(isPresented: $isPresented) {
             ConflictResolverList.shared
-                .frame(width: 440, height: 560)
+                .frame(width: 720, height: 640)
         }
         .onAppear(perform: loadConflictStatus)
         .onChange(of: vm.project, loadConflictStatus)

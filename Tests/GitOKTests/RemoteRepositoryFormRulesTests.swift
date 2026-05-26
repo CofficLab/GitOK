@@ -43,4 +43,35 @@ struct RemoteRepositoryFormRulesTests {
             editedURL: "https://github.com/c/d.git"
         ))
     }
+
+    @Test("Delete warning explains upstream impact")
+    func deleteWarningExplainsUpstreamImpact() {
+        #expect(RemoteRepositoryFormRules.deleteWarning(remoteName: "origin", isCurrentUpstreamRemote: true).contains("无 upstream"))
+        #expect(RemoteRepositoryFormRules.deleteWarning(remoteName: "mirror", isCurrentUpstreamRemote: false).contains("Fetch/Pull"))
+    }
+
+    @Test("Remote web link recognizes common hosting providers")
+    func remoteWebLinkRecognizesCommonHostingProviders() {
+        let cases: [(String, RemoteRepositoryFormRules.HostingProvider, String)] = [
+            ("git@github.com:owner/repo.git", .github, "https://github.com/owner/repo"),
+            ("ssh://git@gitlab.com/group/repo.git", .gitlab, "https://gitlab.com/group/repo"),
+            ("git://bitbucket.org/team/repo.git", .bitbucket, "https://bitbucket.org/team/repo"),
+            ("https://dev.azure.com/org/project/_git/repo", .azureDevOps, "https://dev.azure.com/org/project/_git/repo"),
+            ("git@ssh.dev.azure.com:v3/org/project/repo", .azureDevOps, "https://ssh.dev.azure.com/v3/org/project/repo"),
+        ]
+
+        for (remoteURL, provider, webURL) in cases {
+            let link = RemoteRepositoryFormRules.remoteWebLink(for: remoteURL)
+            #expect(link?.provider == provider)
+            #expect(link?.url.absoluteString == webURL)
+            #expect(link?.authenticationNote.isEmpty == false)
+        }
+    }
+
+    @Test("Remote web link rejects unsupported local paths")
+    func remoteWebLinkRejectsUnsupportedLocalPaths() {
+        #expect(RemoteRepositoryFormRules.remoteWebLink(for: "/tmp/repo.git") == nil)
+        #expect(RemoteRepositoryFormRules.remoteWebLink(for: "file:///tmp/repo.git") == nil)
+        #expect(RemoteRepositoryFormRules.remoteWebLink(for: "   ") == nil)
+    }
 }

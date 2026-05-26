@@ -6,6 +6,7 @@ import StoreKit
 import SwiftData
 import SwiftUI
 import Combine
+import GitOKUI
 
 class PluginVM: ObservableObject, SuperLog, SuperThread {
     nonisolated static let emoji = "🧩"
@@ -68,9 +69,12 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
     /// 自动发现并注册所有插件
     /// 通过扫描 Objective-C runtime 中所有以 "Plugin" 结尾的类
     private func autoDiscoverAndRegisterPlugins() {
+        let start = Date()
+        os_log("\(self.t)🚀 Startup begin: autoDiscoverAndRegisterPlugins")
+
         // 检查是否禁用所有插件注册
         if !Self.registerAllPlugins {
-            if Self.verbose { os_log("\(self.t)⚠️ Plugin registration is disabled via registerAllPlugins=false") }
+            os_log("\(self.t)⚠️ Plugin registration is disabled via registerAllPlugins=false")
             return
         }
 
@@ -83,6 +87,8 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
             return
         }
         defer { free(UnsafeMutableRawPointer(classList)) }
+
+        os_log("\(self.t)🔍 Runtime class count=\(count)")
 
         if Self.verbose { os_log("\(self.t)🔍 Scanning classes for plugins...") }
 
@@ -139,12 +145,10 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
 
         for (plugin, className, order) in discoveredPlugins {
             register(plugin)
-            if Self.verbose { os_log("\(self.t)🚀 #\(order) Registered: \(className)") }
+            os_log("\(self.t)🧩 Registered plugin #\(order): \(className)")
         }
 
-        if Self.verbose {
-            os_log("\(self.t)📊 Registered \(self.registeredCount) plugins total")
-        }
+        os_log("\(self.t)✅ Startup end: autoDiscoverAndRegisterPlugins registered=\(self.registeredCount) elapsed=\(String(format: "%.3f", Date().timeIntervalSince(start)))s")
     }
 
     // MARK: - Plugin Query Methods
@@ -203,21 +207,25 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
     /// 获取工具栏前导视图
     /// - Returns: 插件及其对应的工具栏前导视图数组
     func getEnabledToolbarLeadingViews() -> [(plugin: SuperPlugin, view: AnyView)] {
-        plugins.compactMap { plugin in
+        let start = Date()
+        return plugins.compactMap { plugin in
             guard isPluginEnabled(plugin) else { return nil }
             guard let view = plugin.addToolBarLeadingView() else { return nil }
             return (plugin, view)
         }
+        .loggingPluginViewBuild("toolbarLeading", start: start, logger: self)
     }
 
     /// 获取工具栏后置视图
     /// - Returns: 插件及其对应的工具栏后置视图数组
     func getEnabledToolbarTrailingViews() -> [(plugin: SuperPlugin, view: AnyView)] {
-        plugins.compactMap { plugin in
+        let start = Date()
+        return plugins.compactMap { plugin in
             guard isPluginEnabled(plugin) else { return nil }
             guard let view = plugin.addToolBarTrailingView() else { return nil }
             return (plugin, view)
         }
+        .loggingPluginViewBuild("toolbarTrailing", start: start, logger: self)
     }
 
     /// 获取插件列表视图
@@ -226,11 +234,13 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
     ///   - project: 当前选中的项目
     /// - Returns: 插件及其对应的列表视图数组
     func getEnabledPluginListViews(tab: String, project: Project?) -> [(plugin: SuperPlugin, view: AnyView)] {
-        plugins.compactMap { plugin in
+        let start = Date()
+        return plugins.compactMap { plugin in
             guard isPluginEnabled(plugin) else { return nil }
             guard let view = plugin.addListView(tab: tab, project: project) else { return nil }
             return (plugin, view)
         }
+        .loggingPluginViewBuild("list tab=\(tab)", start: start, logger: self)
     }
 
     /// 获取标签页详情视图
@@ -238,11 +248,20 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
     /// - Returns: 如果找到标签页插件，则返回其详情视图，否则返回nil
     @MainActor
     func getEnabledTabDetailView(tab: String) -> AnyView? {
+        let start = Date()
         for plugin in plugins {
             guard isPluginEnabled(plugin) else { continue }
             if let view = plugin.addDetailView(for: tab) {
+                let elapsed = Date().timeIntervalSince(start)
+                if elapsed > 0.2 {
+                    os_log("\(self.t)⏱️ Plugin detail view built tab=\(tab) plugin=\(plugin.instanceLabel) elapsed=\(String(format: "%.3f", elapsed))s")
+                }
                 return view
             }
+        }
+        let elapsed = Date().timeIntervalSince(start)
+        if elapsed > 0.2 {
+            os_log("\(self.t)⏱️ Plugin detail view missing tab=\(tab) elapsed=\(String(format: "%.3f", elapsed))s")
         }
         return nil
     }
@@ -273,6 +292,25 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
             .compactMap { $0.addStatusBarTrailingView() }
     }
 
+    // MARK: - Theme Contributions
+
+    @MainActor
+    func getThemeContributions() -> [GitOKUIThemeContribution] {
+        plugins.flatMap { plugin -> [GitOKUIThemeContribution] in
+            guard isPluginEnabled(plugin) else { return [] }
+            let pluginOrder = type(of: plugin).order
+            return plugin.addThemeContributions().map { contribution in
+                GitOKUIThemeContribution(
+                    sortKey: ThemeSortKey(pluginOrder: pluginOrder, themeId: contribution.id),
+                    chromeTheme: contribution.chromeTheme,
+                    editorThemeId: contribution.editorThemeId,
+                    uiTheme: contribution.uiTheme,
+                    attachments: contribution.attachments
+                )
+            }
+        }
+    }
+
     // MARK: - Root View Wrapper
 
     /// 获取所有插件的根视图包裹
@@ -295,11 +333,15 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
     // MARK: - Initialization
 
     init() {
+        let start = Date()
+        os_log("\(Self.t)🚀 Startup begin: PluginVM.init")
+
         // 自动发现并注册所有插件
         autoDiscoverAndRegisterPlugins()
 
         // 从内部注册表获取所有已注册的插件实例
         self.plugins = getAllPlugins()
+        os_log("\(Self.t)✅ Startup step: PluginVM plugins sorted count=\(self.plugins.count)")
 
         // 订阅设置变化，当设置改变时触发 UI 更新
         settingsStore.$settings
@@ -307,6 +349,18 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
                 self?.objectWillChange.send()
             }
             .store(in: &cancellables)
+
+        os_log("\(Self.t)✅ Startup end: PluginVM.init elapsed=\(String(format: "%.3f", Date().timeIntervalSince(start)))s")
+    }
+}
+
+private extension Array where Element == (plugin: SuperPlugin, view: AnyView) {
+    func loggingPluginViewBuild(_ label: String, start: Date, logger: PluginVM) -> Self {
+        let elapsed = Date().timeIntervalSince(start)
+        if elapsed > 0.2 {
+            os_log("\(logger.t)⏱️ Plugin views built type=\(label) count=\(self.count) elapsed=\(String(format: "%.3f", elapsed))s")
+        }
+        return self
     }
 }
 

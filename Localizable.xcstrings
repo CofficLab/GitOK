@@ -97,6 +97,9 @@
         }
       }
     },
+    "/path/to/company-ca.pem" : {
+
+    },
     "%@ (%@)" : {
       "localizations" : {
         "en" : {
@@ -115,6 +118,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@ (%@)"
+          }
+        }
+      }
+    },
+    "%@ / %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ / %2$@"
           }
         }
       }
@@ -151,6 +164,16 @@
         }
       }
     },
+    "%lld / %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld / %2$lld"
+          }
+        }
+      }
+    },
     "%lld × %lld" : {
       "localizations" : {
         "en" : {
@@ -174,6 +197,9 @@
       }
     },
     "%lld configs" : {
+
+    },
+    "%lld files" : {
 
     },
     "%lld Merge Files" : {
@@ -315,6 +341,9 @@
     "After enabling auto-push in the current project, the configuration will be displayed here" : {
 
     },
+    "Ahead %lld" : {
+
+    },
     "Amazing Description" : {
       "localizations" : {
         "zh-Hans" : {
@@ -346,6 +375,27 @@
           }
         }
       }
+    },
+    "Base" : {
+
+    },
+    "Behind %lld" : {
+
+    },
+    "CA 文件会写入 `http.sslCAInfo`。关闭 SSL 验证只适合临时排障；企业网络应优先导入可信 CA 证书。" : {
+
+    },
+    "Cherry-pick Head 到 Base" : {
+
+    },
+    "Cherry-pick 进行中" : {
+
+    },
+    "Clone" : {
+
+    },
+    "Clone 会从远程地址下载仓库并自动加入项目。" : {
+
     },
     "Commit 风格..." : {
       "localizations" : {
@@ -389,6 +439,18 @@
         }
       }
     },
+    "Diff" : {
+
+    },
+    "Diff Preview" : {
+
+    },
+    "Diff 过大，已跳过渲染" : {
+
+    },
+    "Diff: %@" : {
+
+    },
     "Fetch" : {
 
     },
@@ -409,6 +471,7 @@
       }
     },
     "ghp_xxxxxxxxxxxxxxxxxxxx" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -423,8 +486,21 @@
           }
         }
       }
+    },
+    "Git" : {
+
+    },
+    "Git LFS" : {
+
+    },
+    "Git 用户名" : {
+
+    },
+    "GitHub / Enterprise 账号 Clone" : {
+
     },
     "GitHub 用户名" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -440,7 +516,52 @@
         }
       }
     },
+    "github.com 或 ghe.example.com" : {
+
+    },
+    "GitOK 会创建一个新的反向提交来撤销此提交的改动，适合已推送提交。若有冲突，需要手动解决后继续。" : {
+
+    },
+    "GitOK 会通过当前 Git credential helper 保存凭据；GitHub/GitLab 等平台通常需要 token。" : {
+
+    },
+    "GitOK 无法在当前 Git 操作中直接读取 SSH passphrase。请把密钥加入 ssh-agent 或 macOS Keychain，再重试本次操作。" : {
+
+    },
+    "Hard Reset" : {
+
+    },
+    "Head" : {
+
+    },
+    "HEAD 会移动到此提交，之后的提交改动会保留在工作区但取消暂存。" : {
+
+    },
+    "HEAD 会移动到此提交，之后的提交改动会保留在暂存区。" : {
+
+    },
+    "Head 独有提交" : {
+
+    },
+    "HEAD、暂存区和工作区都会回到此提交。此提交之后的本地提交和未提交改动会被丢弃。" : {
+
+    },
+    "HTTP proxy" : {
+
+    },
+    "http://127.0.0.1:7890" : {
+
+    },
+    "HTTPS proxy" : {
+
+    },
     "https://github.com/owner/repo.git" : {
+
+    },
+    "LFS" : {
+
+    },
+    "LFS %lld" : {
 
     },
     "LICENSE" : {
@@ -482,7 +603,13 @@
         }
       }
     },
+    "Mixed Reset" : {
+
+    },
     "No remote repository" : {
+
+    },
+    "No themes available" : {
 
     },
     "no_branches" : {
@@ -649,7 +776,11 @@
         }
       }
     },
+    "Personal access token" : {
+
+    },
     "Personal Access Token" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -664,6 +795,15 @@
           }
         }
       }
+    },
+    "Personal access token 或密码" : {
+
+    },
+    "Personal Access Token 或密码" : {
+
+    },
+    "PR 列表" : {
+
     },
     "project_not_exist" : {
       "extractionState" : "manual",
@@ -688,6 +828,15 @@
         }
       }
     },
+    "Pull" : {
+
+    },
+    "Pull Request" : {
+
+    },
+    "Push" : {
+
+    },
     "README.md" : {
       "localizations" : {
         "zh-Hans" : {
@@ -703,6 +852,27 @@
           }
         }
       }
+    },
+    "Rebase Head 到 Base" : {
+
+    },
+    "Rebase 进行中" : {
+
+    },
+    "Reset 到此提交" : {
+
+    },
+    "Revert" : {
+
+    },
+    "Revert 此提交" : {
+
+    },
+    "Review / 通知" : {
+
+    },
+    "Review 请求" : {
+
     },
     "Search..." : {
       "localizations" : {
@@ -813,6 +983,18 @@
     "Selected" : {
 
     },
+    "Soft Reset" : {
+
+    },
+    "Squash" : {
+
+    },
+    "Squash 到此提交" : {
+
+    },
+    "Squash 后的提交信息" : {
+
+    },
     "Stash" : {
       "localizations" : {
         "zh-Hans" : {
@@ -848,6 +1030,27 @@
         }
       }
     },
+    "Submodule" : {
+
+    },
+    "Submodule %lld" : {
+
+    },
+    "Switch theme" : {
+
+    },
+    "Theme" : {
+
+    },
+    "Token 会通过当前 Git credential helper 保存，仓库列表来自 GitHub/GitHub Enterprise API。" : {
+
+    },
+    "token 或密码" : {
+
+    },
+    "Upstream" : {
+
+    },
     "Working Tree Ready" : {
 
     },
@@ -882,6 +1085,9 @@
           }
         }
       }
+    },
+    "上游分支" : {
+
     },
     "丢弃" : {
       "localizations" : {
@@ -947,6 +1153,12 @@
         }
       }
     },
+    "丢弃所选" : {
+
+    },
+    "丢弃批量选择中的文件更改" : {
+
+    },
     "丢弃更改" : {
       "localizations" : {
         "zh-Hans" : {
@@ -962,6 +1174,18 @@
           }
         }
       }
+    },
+    "两个分支没有差异。" : {
+
+    },
+    "中止 Cherry-pick" : {
+
+    },
+    "中止 Rebase" : {
+
+    },
+    "为 %@ 保存 HTTPS 凭据后，GitOK 会自动重试 clone。凭据会通过当前 Git credential helper 保存。" : {
+
     },
     "为 %@ 添加您的 Git 认证信息" : {
       "localizations" : {
@@ -998,6 +1222,9 @@
         }
       }
     },
+    "从 Stash 创建分支" : {
+
+    },
     "从远程地址克隆一个 Git 仓库，并自动导入到项目列表。" : {
 
     },
@@ -1019,6 +1246,12 @@
           }
         }
       }
+    },
+    "会写入 Git 全局配置 `http.proxy` 和 `https.proxy`。如果代理需要认证，可使用 `http://user:password@host:port` 格式。" : {
+
+    },
+    "会把从 HEAD 到此提交之间的 %lld 个提交合并为一个新提交。仅建议用于尚未推送的提交。" : {
+
     },
     "例如: CofficLab" : {
       "localizations" : {
@@ -1116,6 +1349,9 @@
         }
       }
     },
+    "保存并重试" : {
+
+    },
     "保存成功" : {
       "localizations" : {
         "zh-Hans" : {
@@ -1131,12 +1367,6 @@
           }
         }
       }
-    },
-    "修改前" : {
-
-    },
-    "修改后" : {
-
     },
     "修改远程仓库的名称和URL" : {
       "localizations" : {
@@ -1158,6 +1388,9 @@
 
     },
     "克隆仓库" : {
+
+    },
+    "全选当前" : {
 
     },
     "关闭" : {
@@ -1220,6 +1453,15 @@
         }
       }
     },
+    "分支比较" : {
+
+    },
+    "切换到 %@ 标签页" : {
+
+    },
+    "切换到此项目" : {
+
+    },
     "创建" : {
       "localizations" : {
         "zh-Hans" : {
@@ -1236,10 +1478,16 @@
         }
       }
     },
+    "创建 PR" : {
+
+    },
     "创建 README.md" : {
 
     },
     "创建 Stash" : {
+
+    },
+    "创建 Token" : {
 
     },
     "创建Stash" : {
@@ -1280,6 +1528,12 @@
           }
         }
       }
+    },
+    "初始化" : {
+
+    },
+    "初始化全部" : {
+
     },
     "初始提交会使用当前仓库或全局 Git 用户配置；如果未配置 user.name/user.email，Git 会返回错误。" : {
 
@@ -1368,7 +1622,13 @@
         }
       }
     },
+    "删除本地分支" : {
+
+    },
     "刷新" : {
+
+    },
+    "刷新状态" : {
 
     },
     "副标题" : {
@@ -1418,6 +1678,9 @@
           }
         }
       }
+    },
+    "加载冲突预览..." : {
+
     },
     "加载分类中..." : {
       "localizations" : {
@@ -1489,6 +1752,12 @@
     "参考 Desktop 的工作流，把临时改动放到可恢复的队列里。" : {
 
     },
+    "发布分支" : {
+
+    },
+    "发布当前分支" : {
+
+    },
     "取消" : {
       "localizations" : {
         "zh-Hans" : {
@@ -1505,7 +1774,25 @@
         }
       }
     },
+    "取消 upstream" : {
+
+    },
+    "取消后该分支不会再显示 ahead/behind 对比。" : {
+
+    },
     "取消暂存" : {
+
+    },
+    "取消暂存批量选择中已暂存的文件" : {
+
+    },
+    "取消选择" : {
+
+    },
+    "取消选择 %@" : {
+
+    },
+    "变更文件" : {
 
     },
     "合并" : {
@@ -1524,6 +1811,9 @@
         }
       }
     },
+    "合并 Head 到 Base" : {
+
+    },
     "合并分支" : {
       "localizations" : {
         "zh-Hans" : {
@@ -1541,6 +1831,12 @@
       }
     },
     "合并正常" : {
+
+    },
+    "后台自动检查" : {
+
+    },
+    "启用 Git SSL 证书验证" : {
 
     },
     "启用后，将定时自动推送到远程仓库（每 30 秒检查一次）" : {
@@ -1625,6 +1921,12 @@
         }
       }
     },
+    "图片对比模式" : {
+
+    },
+    "图片并排对比" : {
+
+    },
     "圆角 %lld" : {
       "localizations" : {
         "zh-Hans" : {
@@ -1641,10 +1943,20 @@
         }
       }
     },
+    "在 %@ 打开 base/head 创建页面" : {
+
+    },
+    "在 %@ 打开与当前账号相关的 PR review 请求筛选页" : {
+
+    },
+    "在 %@ 查找 head 分支相关 PR" : {
+
+    },
     "在 Cursor 中打开" : {
 
     },
     "在 GitHub Settings → Developer settings → Personal access tokens 中创建" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1732,6 +2044,7 @@
       }
     },
     "在终端打开" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1763,6 +2076,21 @@
         }
       }
     },
+    "在默认终端中打开" : {
+
+    },
+    "在默认终端打开" : {
+
+    },
+    "在默认编辑器中打开" : {
+
+    },
+    "复制" : {
+
+    },
+    "复制创建 PR 链接" : {
+
+    },
     "复制到剪贴板" : {
       "localizations" : {
         "zh-Hans" : {
@@ -1780,6 +2108,9 @@
       }
     },
     "复制原因" : {
+
+    },
+    "复制原始 diff" : {
 
     },
     "复制完整 Hash" : {
@@ -1817,6 +2148,15 @@
         }
       }
     },
+    "复制远程 URL" : {
+
+    },
+    "复制项目路径" : {
+
+    },
+    "外部工具" : {
+
+    },
     "姓名" : {
       "localizations" : {
         "zh-Hans" : {
@@ -1833,10 +2173,16 @@
         }
       }
     },
+    "完成" : {
+
+    },
     "将使用：%@" : {
 
     },
     "将文件夹拖到此处，自动切换为当前项目" : {
+
+    },
+    "工作区有未提交改动" : {
 
     },
     "已启用" : {
@@ -1905,6 +2251,9 @@
         }
       }
     },
+    "已选择 %lld" : {
+
+    },
     "已配置的项目分支" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -1937,6 +2286,9 @@
           }
         }
       }
+    },
+    "应用、弹出或基于 stash 创建分支可能与当前工作区改动冲突。建议先提交或再创建一个 stash。" : {
+
     },
     "应用stash（保留stash）" : {
       "extractionState" : "stale",
@@ -1971,6 +2323,12 @@
         }
       }
     },
+    "开启后 Sparkle 会按系统更新周期在后台检查新版本。" : {
+
+    },
+    "开始使用 GitOK" : {
+
+    },
     "弹出stash（应用并删除stash）" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -2004,11 +2362,28 @@
         }
       }
     },
+    "当前 diff 大约 %@ 个字符。为避免界面卡顿，GitOK 不直接渲染超大 patch；你仍然可以复制原始 diff 或查看文件文本。" : {
+
+    },
+    "当前 remote 暂不支持生成 Pull Request 链接。" : {
+
+    },
+    "当前仓库没有配置 Git submodule。" : {
+
+    },
+    "当前会话没有记录到错误。" : {
+
+    },
     "当前分支无法推送，因为远程分支包含本地还没有的提交。请先 Fetch，再选择 Pull 或 Rebase 后重新 Push。" : {
 
     },
+    "当前子模块没有可显示的 diff 摘要。" : {
+
+    },
+    "当前标签页" : {
+
+    },
     "当前项目" : {
-      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -2056,6 +2431,15 @@
         }
       }
     },
+    "打开 .ssh 目录" : {
+
+    },
+    "打开 %@ 的 PR 通知或活动入口" : {
+
+    },
+    "打开 PR 评论或活动相关筛选页" : {
+
+    },
     "打开App Support目录" : {
       "localizations" : {
         "zh-Hans" : {
@@ -2087,6 +2471,9 @@
           }
         }
       }
+    },
+    "打开当前分支 PR" : {
+
     },
     "打开数据库目录" : {
       "localizations" : {
@@ -2152,6 +2539,18 @@
         }
       }
     },
+    "打开远程仓库 Pull Request 列表" : {
+
+    },
+    "打开远程页面" : {
+
+    },
+    "打开钥匙串访问" : {
+
+    },
+    "执行 known_hosts 命令前，请先确认远程服务商公布的主机指纹可信。" : {
+
+    },
     "拉取" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -2185,6 +2584,9 @@
           }
         }
       }
+    },
+    "按回车或点击查看差异。打开上下文菜单可暂存、取消暂存、复制路径或丢弃更改。" : {
+
     },
     "换图" : {
       "localizations" : {
@@ -2331,6 +2733,15 @@
         }
       }
     },
+    "插入 %@" : {
+
+    },
+    "搜索仓库" : {
+
+    },
+    "搜索分支" : {
+
+    },
     "搜索分类..." : {
       "localizations" : {
         "zh-Hans" : {
@@ -2394,6 +2805,9 @@
     "文件状态：%@" : {
 
     },
+    "新分支名称" : {
+
+    },
     "新合作者信息" : {
       "localizations" : {
         "zh-Hans" : {
@@ -2411,6 +2825,9 @@
       }
     },
     "新建仓库" : {
+
+    },
+    "新建仓库会创建本地 Git 仓库和初始提交。" : {
 
     },
     "新建暂存" : {
@@ -2454,6 +2871,12 @@
           }
         }
       }
+    },
+    "暂存" : {
+
+    },
+    "暂存批量选择中仍可暂存的文件" : {
+
     },
     "暂存描述（可选）" : {
       "localizations" : {
@@ -2526,6 +2949,9 @@
         }
       }
     },
+    "暂无远程分支，请先 fetch 或添加远程仓库。" : {
+
+    },
     "暂无配置" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -2543,6 +2969,9 @@
         }
       }
     },
+    "暂无项目" : {
+
+    },
     "更换图片" : {
       "localizations" : {
         "zh-Hans" : {
@@ -2558,6 +2987,15 @@
           }
         }
       }
+    },
+    "更新" : {
+
+    },
+    "更新全部" : {
+
+    },
+    "未安装" : {
+
     },
     "未找到 .gitignore 文件" : {
       "localizations" : {
@@ -2607,6 +3045,9 @@
         }
       }
     },
+    "未读状态需要平台账号/API 授权；当前入口会跳转到托管平台的通知、review 和评论筛选页。" : {
+
+    },
     "本地仓库" : {
 
     },
@@ -2648,6 +3089,9 @@
         }
       }
     },
+    "查看 SSH 处理方式" : {
+
+    },
     "查看原文本" : {
 
     },
@@ -2668,6 +3112,9 @@
       }
     },
     "查看新文本" : {
+
+    },
+    "标记已解决" : {
 
     },
     "标题" : {
@@ -2782,7 +3229,16 @@
         }
       }
     },
+    "正在检查更新..." : {
+
+    },
+    "正在读取 Git 网络配置…" : {
+
+    },
     "此文件无法以文本方式显示差异" : {
+
+    },
+    "没有匹配的文件" : {
 
     },
     "没有可显示的差异内容" : {
@@ -2819,6 +3275,9 @@
           }
         }
       }
+    },
+    "没有文件变更" : {
+
     },
     "添加" : {
       "localizations" : {
@@ -2916,6 +3375,9 @@
         }
       }
     },
+    "添加已有仓库，或从远程 Clone / 新建一个仓库。" : {
+
+    },
     "添加忽略" : {
       "localizations" : {
         "zh-Hans" : {
@@ -2999,6 +3461,9 @@
         }
       }
     },
+    "添加项目会把本地已有 Git 仓库加入列表。" : {
+
+    },
     "清除" : {
       "localizations" : {
         "zh-Hans" : {
@@ -3014,6 +3479,15 @@
           }
         }
       }
+    },
+    "清除当前批量选择" : {
+
+    },
+    "清除过滤" : {
+
+    },
+    "清除选择" : {
+
     },
     "点击上方 + 按钮创建第一个stash" : {
       "extractionState" : "stale",
@@ -3259,6 +3733,12 @@
         }
       }
     },
+    "用于批量暂存、取消暂存或丢弃" : {
+
+    },
+    "用户名" : {
+
+    },
     "用终端打开" : {
       "localizations" : {
         "zh-Hans" : {
@@ -3347,7 +3827,11 @@
         }
       }
     },
+    "确定要删除本地分支 \"%@\" 吗？未合并的分支会由 Git 阻止删除。" : {
+
+    },
     "确定要删除远程仓库 \"%@\" 吗？此操作不可撤销。" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -3362,6 +3846,27 @@
           }
         }
       }
+    },
+    "确定要删除远程分支 \"%@\" 吗？该操作会推送删除请求到远端。" : {
+
+    },
+    "确认" : {
+
+    },
+    "确认 Hard Reset？" : {
+
+    },
+    "确认 Mixed Reset？" : {
+
+    },
+    "确认 Revert 此提交？" : {
+
+    },
+    "确认 Soft Reset？" : {
+
+    },
+    "确认 Squash 提交？" : {
+
     },
     "确认丢弃所有更改" : {
       "localizations" : {
@@ -3378,6 +3883,9 @@
           }
         }
       }
+    },
+    "确认丢弃所选更改" : {
+
     },
     "确认丢弃更改" : {
       "localizations" : {
@@ -3426,6 +3934,15 @@
           }
         }
       }
+    },
+    "确认删除分支" : {
+
+    },
+    "确认删除远程分支" : {
+
+    },
+    "确认取消 upstream" : {
+
     },
     "确认撤销提交？" : {
 
@@ -3479,6 +3996,15 @@
         }
       }
     },
+    "继续" : {
+
+    },
+    "继续 Cherry-pick" : {
+
+    },
+    "继续 Rebase" : {
+
+    },
     "编辑远程仓库" : {
       "localizations" : {
         "zh-Hans" : {
@@ -3510,6 +4036,9 @@
           }
         }
       }
+    },
+    "网络" : {
+
     },
     "置顶" : {
       "localizations" : {
@@ -3658,6 +4187,12 @@
         }
       }
     },
+    "设置" : {
+
+    },
+    "设置 upstream" : {
+
+    },
     "设置..." : {
       "localizations" : {
         "zh-Hans" : {
@@ -3673,6 +4208,12 @@
           }
         }
       }
+    },
+    "评论" : {
+
+    },
+    "诊断" : {
+
     },
     "该来源下没有可用的图标" : {
       "localizations" : {
@@ -3754,6 +4295,9 @@
         }
       }
     },
+    "输入凭据并重试" : {
+
+    },
     "输入副标题" : {
       "localizations" : {
         "zh-Hans" : {
@@ -3785,6 +4329,9 @@
           }
         }
       }
+    },
+    "过滤文件" : {
+
     },
     "远程URL" : {
       "localizations" : {
@@ -3840,6 +4387,18 @@
     "远程有新的提交" : {
 
     },
+    "连接并列出仓库" : {
+
+    },
+    "选择" : {
+
+    },
+    "选择 %@" : {
+
+    },
+    "选择 base/head 后查看 ahead/behind、提交与文件变化。" : {
+
+    },
     "选择一个图标开始制作，或创建新的设计" : {
       "localizations" : {
         "zh-Hans" : {
@@ -3856,6 +4415,9 @@
         }
       }
     },
+    "选择当前过滤结果中的全部文件" : {
+
+    },
     "选择或创建一个Banner" : {
       "localizations" : {
         "zh-Hans" : {
@@ -3871,6 +4433,9 @@
           }
         }
       }
+    },
+    "选择文件" : {
+
     },
     "选择标签" : {
       "localizations" : {
@@ -3955,6 +4520,9 @@
         }
       }
     },
+    "通知" : {
+
+    },
     "邮箱" : {
       "localizations" : {
         "zh-Hans" : {
@@ -3987,6 +4555,18 @@
         }
       }
     },
+    "采用 Ours" : {
+
+    },
+    "采用 Theirs" : {
+
+    },
+    "重命名" : {
+
+    },
+    "重命名分支" : {
+
+    },
     "重试" : {
       "localizations" : {
         "zh-Hans" : {
@@ -4002,6 +4582,12 @@
           }
         }
       }
+    },
+    "需要 Git 凭据" : {
+
+    },
+    "需要 SSH 凭据" : {
+
     },
     "非 Git 项目" : {
       "extractionState" : "stale",

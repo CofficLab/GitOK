@@ -4,6 +4,8 @@
 <dict>
 	<key>SUEnableInstallerLauncherService</key>
 	<true/>
+	<key>SUEnableAutomaticChecks</key>
+	<true/>
 	<key>SUFeedURL</key>
 	<string>https://raw.githubusercontent.com/CofficLab/GitOK/main/appcast.xml</string>
 	<key>SUPublicEDKey</key>

@@ -1,5 +1,6 @@
 import MagicKit
 import OSLog
+import ProjectRulesKit
 import SwiftUI
 
 /// 提交表单视图组件
@@ -29,6 +30,9 @@ struct CommitForm: View, SuperLog {
 
     /// 提交消息风格
     @State var commitStyle: CommitStyle = .emoji
+
+    @State private var issueReferences: [String] = []
+    @State private var userMentions: [String] = []
 
     /// 生成的完整提交消息
     /// 根据选择的分类和风格自动生成提交消息格式
@@ -65,7 +69,11 @@ struct CommitForm: View, SuperLog {
                 }
 
                 Spacer()
-                CommitMessageInput(text: $text)
+                CommitMessageInput(
+                    text: $text,
+                    issueReferences: issueReferences,
+                    userMentions: userMentions
+                )
             }
 
             HStack {
@@ -84,6 +92,15 @@ struct CommitForm: View, SuperLog {
         .onProjectDidCommit(perform: onProjectDidCommit)
         .onChange(of: category, onCategoryDidChange)
         .onChange(of: commitStyle, onCommitStyleDidChange)
+        .onChange(of: vm.project) {
+            loadAutocompleteCandidates()
+        }
+        .onProjectDidChangeBranch { _ in
+            loadAutocompleteCandidates()
+        }
+        .onProjectGitRefsDidChange { _ in
+            loadAutocompleteCandidates()
+        }
         .onAppear(perform: onAppear)
     }
 }
@@ -169,6 +186,37 @@ extension CommitForm {
         setText(defaultMessage(for: category, style: commitStyle))
         // 从当前项目读取 commitStyle，如果没有项目则使用默认值
         setCommitStyle(vm.project?.commitStyle ?? .emoji)
+        loadAutocompleteCandidates()
+    }
+
+    private func loadAutocompleteCandidates() {
+        let coAuthors = CoAuthorStore.shared.loadCoAuthors()
+        userMentions = CommitAutocompleteRules.userMentionCandidates(
+            namesAndEmails: coAuthors.map { (name: $0.name, email: $0.email) }
+        )
+
+        guard let project = vm.project else {
+            issueReferences = []
+            return
+        }
+
+        Task.detached(priority: .utility) {
+            var branchNames: [String] = []
+
+            if let branches = try? project.getBranches() {
+                branchNames.append(contentsOf: branches.map(\.name))
+            }
+
+            if let remoteBranches = try? project.remoteBranches() {
+                branchNames.append(contentsOf: remoteBranches)
+            }
+
+            let references = CommitAutocompleteRules.issueReferences(from: branchNames)
+
+            await MainActor.run {
+                self.issueReferences = references
+            }
+        }
     }
 }
 

@@ -1,3 +1,4 @@
+import GitCoreKit
 import MagicKit
 import OSLog
 import SwiftUI
@@ -71,22 +72,21 @@ struct StashStatusTile: View, SuperLog {
         }
 
         isLoading = true
+        let repositoryURL = project.url
 
         Task {
             do {
-                let stashes = try project.stashList()
-                await MainActor.run {
-                    self.stashCount = stashes.count
-                    self.isLoading = false
-                }
+                let stashes = try await Task.detached(priority: .utility) {
+                    try GitRepositoryCLI(repositoryURL: repositoryURL).stashList()
+                }.value
+                stashCount = stashes.count
+                isLoading = false
             } catch {
                 if Self.verbose {
                     os_log("\(self.t)❌ Failed to load stash count: \(error)")
                 }
-                await MainActor.run {
-                    self.stashCount = 0
-                    self.isLoading = false
-                }
+                stashCount = 0
+                isLoading = false
             }
         }
     }
