@@ -1531,12 +1531,31 @@ public struct GitRepositoryCLI {
             throw Self.nativeGitUnavailableError(arguments: ["push", remote, branch ?? ""])
         }
 
-        var arguments = ["push", remote]
+        // 获取当前分支名（如果未指定）
+        let effectiveBranch: String
         if let branch {
-            arguments.append(branch)
+            effectiveBranch = branch
+        } else {
+            let branchOutput = try Self.runGit(
+                ["branch", "--show-current"],
+                in: repositoryURL,
+                defaultErrorMessage: "Failed to get current branch"
+            )
+            effectiveBranch = branchOutput.trimmingCharacters(in: .whitespacesAndNewlines)
+            guard effectiveBranch.isEmpty == false else {
+                throw NSError(
+                    domain: "GitOK.GitCommand",
+                    code: -1,
+                    userInfo: [NSLocalizedDescriptionKey: "Cannot determine current branch"]
+                )
+            }
         }
 
-        try Self.runGit(arguments, in: repositoryURL, defaultErrorMessage: "Git CLI push failed")
+        try Self.runGit(
+            ["push", "-u", remote, effectiveBranch],
+            in: repositoryURL,
+            defaultErrorMessage: "Git CLI push failed"
+        )
     }
 }
 
