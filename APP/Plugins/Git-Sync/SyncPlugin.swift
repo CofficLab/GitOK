@@ -21,7 +21,7 @@ class SyncPlugin: NSObject, SuperPlugin {
     @objc static let shared = SyncPlugin()
 
     /// 是否启用该插件
-    @objc static let shouldRegister = true
+    @objc static let shouldRegister = false
 
     /// 插件注册顺序
     static var order: Int = 9999
