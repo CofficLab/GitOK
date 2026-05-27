@@ -1,7 +1,6 @@
 import SwiftUI
 import MagicAlert
 import MagicKit
-import MagicDevice
 import OSLog
 import UniformTypeIdentifiers
 

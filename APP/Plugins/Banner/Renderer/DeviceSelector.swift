@@ -1,6 +1,5 @@
 import SwiftUI
 import MagicKit
-import MagicDevice
 
 /**
  设备选择器组件
