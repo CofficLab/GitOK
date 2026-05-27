@@ -396,6 +396,7 @@ extension WorkingStateView {
     }
 
     /// 执行 git push 操作推送本地提交
+    /// 支持网络错误自动降级：指数退避重试 → CLI 回退 → 用户引导
     private func performPush() {
         guard let project = vm.project else {
             if Self.verbose {
@@ -418,32 +419,92 @@ extension WorkingStateView {
 
         // 使用 Task.detached 确保在后台执行
         Task.detached(priority: .userInitiated) {
-            let result: Result<Void, Error>
-
+            // 1️⃣ 尝试 libgit2 推送
             do {
-                // 在后台线程执行耗时操作
                 try LibGit2.push(at: projectPath, verbose: false)
-                result = .success(())
                 await MainActor.run {
                     os_log("\(Self.t)✅ Git push succeeded")
+                    self.isPushing = false
+                    self.loadSyncStatus()
+                    self.setStatus(nil)
+                }
+                return
+            } catch LibGit2Error.networkError {
+                // 2️⃣ 网络错误：指数退避重试（静默）
+                if Self.verbose {
+                    os_log("\(Self.t)Network error, starting retry with backoff")
+                }
+
+                let backoffDelays: [UInt64] = [2_000_000_000, 4_000_000_000] // 2s, 4s
+                for (attempt, delay) in backoffDelays.enumerated() {
+                    await MainActor.run {
+                        self.setStatus("网络波动，重试中 (\(attempt + 1)/\(backoffDelays.count))…")
+                    }
+
+                    try? await Task.sleep(nanoseconds: delay)
+
+                    do {
+                        try LibGit2.push(at: projectPath, verbose: false)
+                        await MainActor.run {
+                            os_log("\(Self.t)✅ Git push succeeded after retry \(attempt + 1)")
+                            self.isPushing = false
+                            self.loadSyncStatus()
+                            self.setStatus(nil)
+                        }
+                        return
+                    } catch is LibGit2Error {
+                        if Self.verbose {
+                            os_log("\(Self.t)Retry \(attempt + 1) failed")
+                        }
+                        continue
+                    }
+                }
+
+                // 3️⃣ CLI 回退（静默降级）
+                if GitRepositoryCLI.isGitCLIAvailable() {
+                    await MainActor.run {
+                        self.setStatus("正在通过系统 Git 推送…")
+                    }
+
+                    do {
+                        let cli = GitRepositoryCLI(repositoryURL: URL(fileURLWithPath: projectPath))
+                        try cli.cliPush()
+                        await MainActor.run {
+                            os_log("\(Self.t)✅ CLI push succeeded")
+                            self.isPushing = false
+                            self.loadSyncStatus()
+                            self.setStatus(nil)
+                        }
+                        return
+                    } catch {
+                        if Self.verbose {
+                            os_log("\(Self.t)CLI push also failed: \(error)")
+                        }
+                    }
+                }
+
+                // 4️⃣ 所有方案失败，弹窗引导用户
+                await MainActor.run {
+                    self.isPushing = false
+                    self.setStatus(nil)
+                    self.showNetworkErrorFallback()
+                }
+            } catch LibGit2Error.authenticationError {
+                // 认证错误：弹凭据输入
+                await MainActor.run {
+                    self.isPushing = false
+                    self.setStatus(nil)
+                    if self.prepareCredentialInput(for: LibGit2Error.authenticationError, operation: .push) {
+                        self.showCredentialInput = true
+                    } else {
+                        alert_error(LibGit2Error.authenticationError)
+                    }
                 }
             } catch {
-                result = .failure(error)
+                // 其他错误
                 await MainActor.run {
-                    os_log(.error, "\(Self.t)❌ Git push failed: \(error)")
-                }
-            }
-
-            // 在主线程处理结果和更新 UI
-            await MainActor.run {
-                self.isPushing = false
-
-                switch result {
-                case .success:
-                    // 重新加载同步状态
-                    self.loadSyncStatus()
-                case let .failure(error):
-                    // 检查是否需要凭据
+                    self.isPushing = false
+                    self.setStatus(nil)
                     if self.prepareCredentialInput(for: error, operation: .push) {
                         self.showCredentialInput = true
                     } else if self.prepareSSHHelp(for: error, operation: .push) {
@@ -453,11 +514,33 @@ extension WorkingStateView {
                     }
                 }
             }
+        }
+    }
 
-            // 清除状态日志
-            await MainActor.run {
-                self.setStatus(nil)
+    /// 网络错误降级全部失败后，引导用户选择备选方案
+    private func showNetworkErrorFallback() {
+        let alert = NSAlert()
+        alert.messageText = String(localized: "推送失败", table: "GitCommit")
+        alert.informativeText = String(localized: "网络连接异常，已自动重试但仍未成功。你可以尝试以下方案：", table: "GitCommit")
+        alert.alertStyle = .warning
+
+        alert.addButton(withTitle: String(localized: "重试", table: "GitCommit"))
+        alert.addButton(withTitle: String(localized: "切换 SSH 推送", table: "GitCommit"))
+        alert.addButton(withTitle: String(localized: "取消", table: "GitCommit"))
+
+        let response = alert.runModal()
+
+        switch response {
+        case .alertFirstButtonReturn:
+            // 重试
+            performPush()
+        case .alertSecondButtonReturn:
+            // 切换 SSH
+            if self.prepareSSHHelp(for: NSError(domain: "GitOK", code: -1, userInfo: nil), operation: .push) {
+                self.showSSHHelp = true
             }
+        default:
+            break
         }
     }
 

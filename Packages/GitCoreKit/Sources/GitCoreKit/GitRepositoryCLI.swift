@@ -344,8 +344,69 @@ public enum CloneRepositoryValidation {
 public struct GitRepositoryCLI {
     public let repositoryURL: URL
 
+    /// 系统 git CLI 的缓存路径（首次检测后缓存）
+    private nonisolated(unsafe) static var cachedGitPath: String?
+    private nonisolated(unsafe) static var hasCheckedGit = false
+
     public init(repositoryURL: URL) {
         self.repositoryURL = repositoryURL
+    }
+
+    /// 检测系统是否安装了 git CLI
+    /// - Returns: 如果系统有 git CLI 返回 true
+    public static func isGitCLIAvailable() -> Bool {
+        return gitCLIPath() != nil
+    }
+
+    /// 获取系统 git CLI 的路径
+    /// - Returns: git 可执行文件路径，不存在则返回 nil
+    public static func gitCLIPath() -> String? {
+        if hasCheckedGit {
+            return cachedGitPath
+        }
+
+        hasCheckedGit = true
+
+        let candidates = [
+            "/usr/bin/git",
+            "/usr/local/bin/git",
+            "/opt/homebrew/bin/git",
+        ]
+
+        for path in candidates {
+            if FileManager.default.isExecutableFile(atPath: path) {
+                cachedGitPath = path
+                return path
+            }
+        }
+
+        // 尝试通过 which 查找
+        let process = Process()
+        process.executableURL = URL(fileURLWithPath: "/usr/bin/env")
+        process.arguments = ["which", "git"]
+
+        let pipe = Pipe()
+        process.standardOutput = pipe
+        process.standardError = Pipe()
+
+        do {
+            try process.run()
+            process.waitUntilExit()
+
+            if process.terminationStatus == 0 {
+                let output = String(data: pipe.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8)?
+                    .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+
+                if output.isEmpty == false && FileManager.default.isExecutableFile(atPath: output) {
+                    cachedGitPath = output
+                    return output
+                }
+            }
+        } catch {
+            // which 命令失败，忽略
+        }
+
+        return nil
     }
 
     static func nativeGitUnavailableError(arguments: [String]) -> NSError {
@@ -1426,7 +1487,56 @@ public struct GitRepositoryCLI {
 
     @discardableResult
     private static func runGit(_ arguments: [String], in repositoryURL: URL, defaultErrorMessage: String) throws -> String {
-        throw nativeGitUnavailableError(arguments: arguments)
+        guard let gitPath = gitCLIPath() else {
+            throw nativeGitUnavailableError(arguments: arguments)
+        }
+
+        let process = Process()
+        process.executableURL = URL(fileURLWithPath: gitPath)
+        process.arguments = arguments
+        process.currentDirectoryURL = repositoryURL
+
+        let outputPipe = Pipe()
+        let errorPipe = Pipe()
+        process.standardOutput = outputPipe
+        process.standardError = errorPipe
+
+        try process.run()
+        process.waitUntilExit()
+
+        let outputData = outputPipe.fileHandleForReading.readDataToEndOfFile()
+        let errorData = errorPipe.fileHandleForReading.readDataToEndOfFile()
+        let output = String(data: outputData, encoding: .utf8)?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        let errorOutput = String(data: errorData, encoding: .utf8)?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+
+        if process.terminationStatus != 0 {
+            let message = errorOutput.isEmpty ? defaultErrorMessage : errorOutput
+            throw NSError(
+                domain: "GitOK.GitCommand",
+                code: Int(process.terminationStatus),
+                userInfo: [NSLocalizedDescriptionKey: message]
+            )
+        }
+
+        return output
+    }
+
+    /// 使用系统 git CLI 执行推送（网络错误降级方案）
+    /// - Parameters:
+    ///   - remote: 远程仓库名称
+    ///   - branch: 分支名称（nil 表示使用当前分支）
+    /// - Throws: git CLI 不存在或推送失败时抛出错误
+    public func cliPush(remote: String = "origin", branch: String? = nil) throws {
+        guard Self.isGitCLIAvailable() else {
+            throw Self.nativeGitUnavailableError(arguments: ["push", remote, branch ?? ""])
+        }
+
+        var arguments = ["push", remote]
+        if let branch {
+            arguments.append(branch)
+        }
+
+        try Self.runGit(arguments, in: repositoryURL, defaultErrorMessage: "Git CLI push failed")
     }
 }
 
