@@ -14,6 +14,7 @@ struct BtnAdd: View, SuperLog {
     @EnvironmentObject var g: DataVM
 
     @State private var showCreateRepositorySheet = false
+    @State private var showCloneRepositorySheet = false
 
     /// 按钮视图主体
     var body: some View {
@@ -29,11 +30,20 @@ struct BtnAdd: View, SuperLog {
             } label: {
                 Label("新建仓库", systemImage: "plus.square.on.square")
             }
+
+            Button {
+                showCloneRepositorySheet = true
+            } label: {
+                Label("克隆仓库", systemImage: "square.and.arrow.down")
+            }
         } label: {
             Label("添加项目", systemImage: "plus")
         }
         .sheet(isPresented: $showCreateRepositorySheet) {
             CreateRepositorySheet()
+        }
+        .sheet(isPresented: $showCloneRepositorySheet) {
+            CloneRepositorySheet()
         }
     }
 
