@@ -454,6 +454,9 @@
     "Fetch" : {
 
     },
+    "Fetch origin" : {
+
+    },
     "Flutter 模板" : {
       "localizations" : {
         "zh-Hans" : {
@@ -828,13 +831,22 @@
         }
       }
     },
+    "Publish branch" : {
+
+    },
     "Pull" : {
+
+    },
+    "Pull origin" : {
 
     },
     "Pull Request" : {
 
     },
     "Push" : {
+
+    },
+    "Push origin" : {
 
     },
     "README.md" : {
@@ -2871,6 +2883,9 @@
           }
         }
       }
+    },
+    "显示提交图" : {
+
     },
     "暂存" : {
 
