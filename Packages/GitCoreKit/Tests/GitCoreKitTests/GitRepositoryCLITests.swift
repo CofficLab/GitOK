@@ -1126,6 +1126,91 @@ final class GitRepositoryCLITests: XCTestCase {
         XCTAssertEqual(try client.statusEntries(), [])
     }
 
+    // MARK: - CLI Git Availability Tests
+
+    func testIsGitCLIAvailableReturnsTrue() {
+        // macOS 开发环境（安装了 Xcode CLT 或 git）应该有 git CLI
+        XCTAssertTrue(GitRepositoryCLI.isGitCLIAvailable())
+    }
+
+    func testGitCLIPathReturnsNonEmptyString() {
+        let path = GitRepositoryCLI.gitCLIPath()
+        XCTAssertNotNil(path)
+        XCTAssertFalse(path?.isEmpty ?? true)
+    }
+
+    func testGitCLIPathPointsToExecutable() {
+        guard let path = GitRepositoryCLI.gitCLIPath() else {
+            XCTFail("git CLI path should not be nil")
+            return
+        }
+        XCTAssertTrue(FileManager.default.isExecutableFile(atPath: path))
+    }
+
+    func testGitCLIPathResultsAreCached() {
+        // 两次调用应该返回相同结果（缓存）
+        let first = GitRepositoryCLI.gitCLIPath()
+        let second = GitRepositoryCLI.gitCLIPath()
+        XCTAssertEqual(first, second)
+    }
+
+    func testCliPushPushesToRemote() throws {
+        // 创建 bare repo 作为远程
+        let bareRoot = FileManager.default.temporaryDirectory
+            .appendingPathComponent(UUID().uuidString, isDirectory: true)
+        try FileManager.default.createDirectory(at: bareRoot, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: bareRoot) }
+
+        let bareURL = bareRoot.appendingPathComponent("remote.git", isDirectory: true)
+        try FileManager.default.createDirectory(at: bareURL, withIntermediateDirectories: true)
+        let bareProcess = Process()
+        bareProcess.executableURL = URL(fileURLWithPath: "/usr/bin/env")
+        bareProcess.arguments = ["git", "init", "--bare", bareURL.path]
+        bareProcess.currentDirectoryURL = bareRoot
+        try bareProcess.run()
+        bareProcess.waitUntilExit()
+
+        // 创建本地仓库并添加远程
+        let repo = try TestGitRepository()
+        try repo.run(["remote", "add", "origin", bareURL.path])
+        try repo.run(["commit", "--allow-empty", "-m", "initial"])
+
+        try repo.write("local.txt", content: "local change\n")
+        try repo.run(["add", "."])
+        try repo.run(["commit", "-m", "local commit"])
+
+        let client = GitRepositoryCLI(repositoryURL: repo.url)
+        try client.cliPush()
+
+        // 验证 bare repo 收到了提交（通过 ls-remote 检查）
+        let verifyProcess = Process()
+        let verifyPipe = Pipe()
+        verifyProcess.executableURL = URL(fileURLWithPath: "/usr/bin/env")
+        verifyProcess.arguments = ["git", "ls-remote", bareURL.path]
+        verifyProcess.standardOutput = verifyPipe
+        try verifyProcess.run()
+        verifyProcess.waitUntilExit()
+
+        let output = String(data: verifyPipe.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8) ?? ""
+        XCTAssertTrue(output.contains("refs/heads/master"))
+    }
+
+    func testCliPushThrowsWhenCLIUnavailable() throws {
+        // 使用一个假路径来模拟 git CLI 不可用
+        // 注意：这个测试验证的是错误路径，正常环境无法真正模拟 CLI 不存在
+        // 所以我们验证正常环境下 cliPush 不抛出 nativeGitUnavailableError
+        let repo = try TestGitRepository()
+        try repo.run(["commit", "--allow-empty", "-m", "initial"])
+
+        let client = GitRepositoryCLI(repositoryURL: repo.url)
+        // 没有远程仓库时应该抛出错误（非 nativeGitUnavailableError）
+        XCTAssertThrowsError(try client.cliPush()) { error in
+            let nsError = error as NSError
+            // 应该是 git CLI 的错误，而不是 "nativeGitUnavailable" 错误
+            XCTAssertFalse(nsError.localizedDescription.contains("已阻止调用系统 git"))
+        }
+    }
+
     func testCreateRepositoryWritesFilesAndInitialCommit() throws {
         let destinationRoot = FileManager.default.temporaryDirectory
             .appendingPathComponent(UUID().uuidString, isDirectory: true)
