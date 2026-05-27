@@ -243,6 +243,7 @@ extension WorkingStateView {
             let count = try await project.untrackedFiles().count
             await MainActor.run {
                 self.changedFileCount = count
+                vm.updateIsClean(count == 0)
                 data.activityStatus = nil
                 isRefreshingFileList = false
             }
