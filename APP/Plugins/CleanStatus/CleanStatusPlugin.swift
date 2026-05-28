@@ -25,7 +25,7 @@ class CleanStatusPlugin: NSObject, SuperPlugin {
     static var order: Int = 24
 
     /// 是否启用该插件
-    @objc static let shouldRegister = true
+    @objc static let shouldRegister = false
 
     /// 单例实例
     @objc static var shared = CleanStatusPlugin()

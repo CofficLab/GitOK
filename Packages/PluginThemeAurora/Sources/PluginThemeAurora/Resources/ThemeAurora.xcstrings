@@ -1,0 +1,18 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "Aurora Theme" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Aurora Theme" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "极光主题" } }
+      }
+    },
+    "Deep cyan night theme" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Deep cyan night theme" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "深青色夜间主题" } }
+      }
+    }
+  },
+  "version" : "1.0"
+}

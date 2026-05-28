@@ -10,7 +10,7 @@ class GitWatcherPlugin: NSObject, SuperPlugin {
     static var defaultEnabled: Bool = true
     static var order: Int = 23
 
-    @objc static let shouldRegister = true
+    @objc static let shouldRegister = false
     @objc static var shared = GitWatcherPlugin()
 
     func addRootView<Content>(@ViewBuilder content: () -> Content) -> AnyView? where Content: View {

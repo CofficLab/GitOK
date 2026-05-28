@@ -21,7 +21,7 @@ class StashPlugin: NSObject, SuperPlugin {
     @objc static let shared = StashPlugin()
 
     /// 是否启用该插件
-    @objc static let shouldRegister = true
+    @objc static let shouldRegister = false
 
     func addToolBarTrailingView() -> AnyView? { nil }
 

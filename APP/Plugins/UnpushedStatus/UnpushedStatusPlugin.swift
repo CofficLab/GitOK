@@ -25,7 +25,7 @@ class UnpushedStatusPlugin: NSObject, SuperPlugin {
     static var order: Int = 25
 
     /// 是否启用该插件
-    @objc static let shouldRegister = true
+    @objc static let shouldRegister = false
 
     /// 是否启用详细日志输出
     private let verbose = true

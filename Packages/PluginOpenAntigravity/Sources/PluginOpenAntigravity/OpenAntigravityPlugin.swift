@@ -1,0 +1,33 @@
+import Foundation
+import GitOKPluginKit
+import SwiftUI
+
+public struct OpenAntigravityPlugin: GitOKPackagedPlugin {
+    public static let shared = OpenAntigravityPlugin()
+
+    public static let metadata = GitOKPluginMetadata(
+        id: "OpenAntigravity",
+        displayName: PluginOpenAntigravityLocalization.string("Open Antigravity"),
+        description: PluginOpenAntigravityLocalization.string("Open the current project folder in Antigravity."),
+        iconName: "paperplane",
+        order: 8406,
+        allowUserToggle: true,
+        defaultEnabled: false,
+        tableName: PluginOpenAntigravityLocalization.table
+    )
+
+    private init() {}
+
+    public func toolBarTrailingView() -> AnyView? {
+        AnyView(OpenAntigravityButton())
+    }
+}
+
+public enum PluginOpenAntigravityLocalization {
+    public static let table = "OpenAntigravity"
+    public static let bundle = Bundle.module
+
+    public static func string(_ key: String) -> String {
+        NSLocalizedString(key, tableName: table, bundle: bundle, value: key, comment: "")
+    }
+}

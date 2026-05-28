@@ -1,0 +1,33 @@
+import Foundation
+import GitOKPluginKit
+import SwiftUI
+
+public struct OpenXcodePlugin: GitOKPackagedPlugin {
+    public static let shared = OpenXcodePlugin()
+
+    public static let metadata = GitOKPluginMetadata(
+        id: "OpenXcode",
+        displayName: PluginOpenXcodeLocalization.string("Open Xcode"),
+        description: PluginOpenXcodeLocalization.string("Open the current project folder in Xcode."),
+        iconName: "hammer",
+        order: 8402,
+        allowUserToggle: true,
+        defaultEnabled: false,
+        tableName: PluginOpenXcodeLocalization.table
+    )
+
+    private init() {}
+
+    public func toolBarTrailingView() -> AnyView? {
+        AnyView(OpenXcodeButton())
+    }
+}
+
+public enum PluginOpenXcodeLocalization {
+    public static let table = "OpenXcode"
+    public static let bundle = Bundle.module
+
+    public static func string(_ key: String) -> String {
+        NSLocalizedString(key, tableName: table, bundle: bundle, value: key, comment: "")
+    }
+}

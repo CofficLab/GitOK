@@ -1,0 +1,34 @@
+import XCTest
+@testable import PluginOpenTrae
+
+final class OpenTraePluginTests: XCTestCase {
+    func testPluginMetadataIsStable() {
+        let metadata = OpenTraePlugin.metadata
+
+        XCTAssertEqual(metadata.id, "OpenTrae")
+        XCTAssertEqual(metadata.iconName, "brain")
+        XCTAssertEqual(metadata.order, 8404)
+        XCTAssertTrue(metadata.allowUserToggle)
+        XCTAssertFalse(metadata.defaultEnabled)
+        XCTAssertEqual(metadata.tableName, "OpenTrae")
+        XCTAssertFalse(metadata.displayName.isEmpty)
+        XCTAssertFalse(metadata.description.isEmpty)
+    }
+
+    func testLocalizationCatalogIsPackaged() {
+        XCTAssertNotNil(PluginOpenTraeLocalization.bundle.url(forResource: "OpenTrae", withExtension: "xcstrings"))
+        XCTAssertFalse(PluginOpenTraeLocalization.string("Open Trae").isEmpty)
+        XCTAssertFalse(PluginOpenTraeLocalization.string("Open in Trae").isEmpty)
+    }
+
+    func testToolbarContributionIsAvailable() {
+        XCTAssertNotNil(OpenTraePlugin.shared.toolBarTrailingView())
+    }
+
+    func testLauncherConfigurationIsStable() {
+        let configuration = TraeProjectLauncher.configuration
+
+        XCTAssertEqual(configuration.bundleIdentifier, "com.trae.app")
+        XCTAssertTrue(configuration.fallbackApplicationPaths.contains("/Applications/Trae.app"))
+    }
+}

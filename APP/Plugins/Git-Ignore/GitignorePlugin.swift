@@ -7,7 +7,7 @@ class GitignorePlugin: NSObject, SuperPlugin {
     @objc static let shared = GitignorePlugin()
 
     /// 是否启用该插件
-    @objc static let shouldRegister = true
+    @objc static let shouldRegister = false
 
     /// 插件显示名称
     static var displayName: String = String(localized: "Gitignore", table: "GitIgnore")

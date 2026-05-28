@@ -1218,6 +1218,10 @@ public struct GitRepositoryCLI {
         return GitAheadBehind(ahead: state.ahead, behind: state.behind, hasUpstream: state.hasUpstream)
     }
 
+    public func unpushedCommitHashes() throws -> [String] {
+        try LibGit2.getUnPushedCommits(at: repositoryURL.path, verbose: false).map(\.hash)
+    }
+
     public func addFiles(_ filePaths: [String]) throws {
         guard filePaths.isEmpty == false else { return }
         try LibGit2.addFiles(filePaths, at: repositoryURL.path, verbose: false)
