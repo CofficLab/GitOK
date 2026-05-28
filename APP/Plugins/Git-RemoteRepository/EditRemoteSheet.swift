@@ -37,11 +37,11 @@ struct EditRemoteSheet: View {
     var body: some View {
         VStack(spacing: 20) {
             VStack(alignment: .leading, spacing: 8) {
-                Text("编辑远程仓库")
+                Text(String(localized: "Edit Remote Repository"))
                     .font(.title2)
                     .fontWeight(.medium)
                 
-                Text("修改远程仓库的名称和URL")
+                Text(String(localized: "Modify the remote repository's name and URL"))
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
@@ -49,20 +49,20 @@ struct EditRemoteSheet: View {
             
             VStack(spacing: 16) {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("远程名称")
+                    Text(String(localized: "Remote Name"))
                         .font(.subheadline)
                         .fontWeight(.medium)
                     
-                    TextField("例如: origin", text: $remoteName)
+                    TextField(String(localized: "e.g. origin"), text: $remoteName)
                         .textFieldStyle(.roundedBorder)
                 }
                 
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("远程URL")
+                    Text(String(localized: "Remote URL"))
                         .font(.subheadline)
                         .fontWeight(.medium)
                     
-                    TextField("例如: https://github.com/user/repo.git", text: $remoteURL)
+                    TextField(String(localized: "e.g. https://github.com/user/repo.git"), text: $remoteURL)
                         .textFieldStyle(.roundedBorder)
                 }
             }
@@ -85,14 +85,14 @@ struct EditRemoteSheet: View {
             Spacer()
             
             HStack {
-                Button("取消") {
+                Button(String(localized: "Cancel")) {
                     dismiss()
                 }
                 .buttonStyle(.bordered)
                 
                 Spacer()
                 
-                Button("保存") {
+                Button(String(localized: "Save")) {
                     saveRemote()
                 }
                 .buttonStyle(.borderedProminent)
@@ -110,7 +110,7 @@ struct EditRemoteSheet: View {
         let url = input.url
         
         guard !name.isEmpty && !url.isEmpty else {
-            errorMessage = "请填写完整信息"
+            errorMessage = String(localized: "Please fill in all required information")
             return
         }
         

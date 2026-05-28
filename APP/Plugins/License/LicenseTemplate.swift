@@ -10,9 +10,9 @@ enum LicenseTemplate: String, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .mit: return "MIT"
-        case .apache2: return "Apache 2.0"
-        case .gpl3: return "GPL-3.0"
+        case .mit: return String(localized: "MIT License", table: "License")
+        case .apache2: return String(localized: "Apache License 2.0", table: "License")
+        case .gpl3: return String(localized: "GPL v3", table: "License")
         }
     }
 

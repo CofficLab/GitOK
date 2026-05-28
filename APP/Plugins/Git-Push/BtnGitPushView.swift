@@ -109,14 +109,14 @@ struct BtnGitPushView: View, SuperLog, SuperThread {
             }
         }
         .onAppear(perform: onAppear)
-        .alert("远程有新的提交", isPresented: $showPushNeedsFetchAlert) {
+        .alert(String(localized: "New commits on remote"), isPresented: $showPushNeedsFetchAlert) {
             Button("Fetch") {
                 guard let project = vm.project else { return }
                 fetch(path: project.path, onComplete: {})
             }
-            Button("取消", role: .cancel) {}
+            Button(String(localized: "Cancel"), role: .cancel) {}
         } message: {
-            Text("当前分支无法推送，因为远程分支包含本地还没有的提交。请先 Fetch，再选择 Pull 或 Rebase 后重新 Push。")
+            Text(String(localized: "Cannot push because the remote branch has commits you don't have locally. Please Fetch first, then Pull or Rebase before pushing again."))
         }
     }
 }
@@ -184,18 +184,18 @@ extension BtnGitPushView {
 
     private var primaryActionHelp: String {
         if vm.hasUpstream, vm.behindCount > 0 {
-            return "远程有 \(vm.behindCount) 个新提交，点击 Pull；菜单中仍可 Fetch 或 Push"
+            return String(localized: "\(vm.behindCount) new commits on remote, click Pull; Fetch or Push available in menu")
         }
 
         if vm.hasUpstream, vm.aheadCount == 0 {
-            return "当前分支已同步，点击 Fetch 检查远程更新"
+            return String(localized: "Branch is up to date, click Fetch to check for remote updates")
         }
 
         if vm.hasUpstream {
-            return "本地有 \(vm.aheadCount) 个提交待推送"
+            return String(localized: "\(vm.aheadCount) commits ready to push")
         }
 
-        return "当前分支还没有 upstream，点击 Publish branch 推送并建立跟踪关系"
+        return String(localized: "Branch has no upstream yet, click Publish branch to push and set up tracking")
     }
 
     private func perform(_ action: RemotePrimaryAction, for project: Project) {
@@ -248,7 +248,7 @@ extension BtnGitPushView {
 
         // ✅ 修复：在后台线程执行 Git 操作，避免阻塞主线程
         Task.detached {
-            await setStatus("推送中…")
+            await setStatus(String(localized: "Pushing…"))
             
             do {
                 // ✅ 关键修复：push() 是阻塞操作，必须在后台线程执行，不能在 MainActor.run 中
@@ -294,7 +294,7 @@ extension BtnGitPushView {
         }
 
         Task.detached {
-            await setStatus("拉取中…")
+            await setStatus(String(localized: "Pulling…"))
             do {
                 try project?.pull()
                 await MainActor.run {

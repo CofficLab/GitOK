@@ -51,7 +51,7 @@ struct LicenseViewer: View, SuperLog {
         VStack(spacing: 12) {
             ProgressView()
                 .controlSize(.large)
-            Text("正在加载 LICENSE ...")
+            Text(String(localized: "Loading LICENSE...", table: "License"))
                 .font(.headline)
                 .foregroundColor(.secondary)
         }
@@ -71,7 +71,7 @@ struct LicenseViewer: View, SuperLog {
             VStack(spacing: 0) {
                 HStack {
                     VStack(alignment: .leading, spacing: 4) {
-                        Text("\(template.title) 模板")
+                        Text(String(localized: "Template", table: "License") + " " + template.title)
                             .font(.headline)
                         Text(template.description)
                             .font(.caption)
@@ -79,10 +79,11 @@ struct LicenseViewer: View, SuperLog {
                     }
                     Spacer()
                     
-                    Text("应用到当前").inButtonWithAction {
+                    Text(String(localized: "Apply to Current", table: "License")).inButtonWithAction {
                         content = template.content
                         pane = .current
-                        statusMessage = "已应用模板：\(template.title)"
+                        let title = template.title
+                        statusMessage = String(localized: "Template applied: \(title)", table: "License")
                     }
                     .frame(width: 120)
                 }
@@ -124,7 +125,8 @@ struct LicenseViewer: View, SuperLog {
                     self.content = LicenseTemplate.mit.content
                     self.isLoading = false
                     self.hasError = true
-                    self.statusMessage = "未找到 LICENSE，已加载模板 \(LicenseTemplate.mit.title)"
+                    let templateTitle = LicenseTemplate.mit.title
+                    self.statusMessage = String(localized: "LICENSE not found, loaded template \(templateTitle)", table: "License")
                 }
                 if verbose {
                     os_log(.info, "\(self.t)LICENSE not found: \(error.localizedDescription)")
@@ -144,14 +146,14 @@ struct LicenseViewer: View, SuperLog {
                 await MainActor.run {
                     self.isSaving = false
                     self.hasError = false
-                    self.statusMessage = "已保存 LICENSE"
+                    self.statusMessage = String(localized: "LICENSE saved", table: "License")
                     onComplete()
                 }
             } catch {
                 await MainActor.run {
                     self.isSaving = false
                     self.hasError = true
-                    self.statusMessage = "保存失败：\(error.localizedDescription)"
+                    self.statusMessage = String(localized: "Save failed: \(error.localizedDescription)", table: "License")
                     onComplete()
                 }
                 if verbose {

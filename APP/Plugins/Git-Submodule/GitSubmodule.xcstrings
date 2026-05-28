@@ -1,725 +1,355 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "%lld files" : {
-
-    },
-    "Abort Cherry-pick" : {
-
-    },
-    "Abort Rebase" : {
-
-    },
-    "After unsetting, this branch will no longer show ahead/behind comparison." : {
-
-    },
-    "Ahead %lld" : {
-
-    },
-    "Are you sure you want to delete remote branch \"%@\"? This will push a delete request to the remote." : {
-
-    },
-    "Behind %lld" : {
-
-    },
-    "Branch" : {
-
-    },
-    "Branch Compare" : {
-
-    },
-    "Branch deleted: %@" : {
-
-    },
-    "Branch merge failed: %@" : {
-
-    },
-    "Branch name" : {
-
-    },
-    "Branch published: %@" : {
-
-    },
-    "Branch renamed: %@ -> %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Branch renamed: %1$@ -> %2$@"
-          }
-        }
-      }
-    },
-    "Cancel" : {
-
-    },
-    "Cannot delete the current branch" : {
-
-    },
-    "Changed files" : {
-
-    },
-    "Cherry-pick aborted" : {
-
-    },
-    "Cherry-pick completed" : {
-
-    },
-    "Cherry-pick continued, commits remaining" : {
-
-    },
-    "Cherry-pick encountered conflicts. Please resolve and stage the files before continuing." : {
-
-    },
-    "Cherry-pick failed: %@" : {
-
-    },
-    "Cherry-pick Head into Base" : {
-
-    },
-    "Cherry-pick in progress" : {
-
-    },
-    "Cherry-picked %d commits into %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Cherry-picked %1$d commits into %2$@"
-          }
-        }
-      }
-    },
-    "Comments" : {
-
-    },
-    "Confirm" : {
-
-    },
-    "Confirm Delete Remote Branch" : {
-
-    },
-    "Confirm Unset Upstream" : {
-
-    },
-    "Continue Cherry-pick" : {
-
-    },
-    "Continue Rebase" : {
-
-    },
-    "Copy create PR link" : {
-
-    },
-    "Create PR" : {
-
-    },
-    "Created and switched to branch: %@" : {
-
-    },
-    "Delete" : {
-
-    },
-    "Failed to abort cherry-pick: %@" : {
-
-    },
-    "Failed to abort rebase: %@" : {
-
-    },
-    "Failed to continue cherry-pick: %@" : {
-
-    },
-    "Failed to continue rebase: %@" : {
-
-    },
-    "Failed to create branch: %@" : {
-
-    },
-    "Failed to delete branch: %@" : {
-
-    },
-    "Failed to delete remote branch: %@" : {
-
-    },
-    "Failed to load branch list: %@" : {
-
-    },
-    "Failed to publish branch: %@" : {
-
-    },
-    "Failed to rename branch: %@" : {
-
-    },
-    "Failed to set upstream: %@" : {
-
-    },
-    "Failed to switch branch: %@" : {
-
-    },
-    "Failed to unset upstream: %@" : {
-
-    },
-    "Find head branch related PR on %@" : {
-
-    },
-    "Git 分支管理" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Git Branch Management"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Git 分支管理"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Git 分支管理"
-          }
-        }
-      }
-    },
-    "Head unique commits" : {
-
-    },
-    "Invalid remote branch format" : {
-
-    },
-    "Merge Head into Base" : {
-
-    },
-    "Merged %@ into %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Merged %1$@ into %2$@"
-          }
-        }
-      }
-    },
-    "New Branch" : {
-
-    },
-    "New branch name" : {
-
-    },
-    "No Branch" : {
-
-    },
-    "No branches yet" : {
-
-    },
-    "No differences between the two branches." : {
-
-    },
-    "No Project Selected" : {
-
-    },
-    "No remote branches available. Fetch or add a remote first." : {
-
-    },
-    "Notifications" : {
-
-    },
-    "Open %@ PR notifications or activity page" : {
-
-    },
-    "Open base/head creation page on %@" : {
-
-    },
-    "Open Branch PR" : {
-
-    },
-    "Open PR comments or activity filter page" : {
-
-    },
-    "Open PR review requests for current account on %@" : {
-
-    },
-    "Open remote repository Pull Request list" : {
-
-    },
-    "PR link copied" : {
-
-    },
-    "PR List" : {
-
-    },
-    "Project does not exist" : {
-
-    },
-    "Pull Request" : {
-
-    },
-    "Rebase aborted" : {
-
-    },
-    "Rebase completed" : {
-
-    },
-    "Rebase continued, steps remaining" : {
-
-    },
-    "Rebase encountered conflicts. Please resolve and stage the files before continuing." : {
-
-    },
-    "Rebase failed: %@" : {
-
-    },
-    "Rebase Head onto Base" : {
-
-    },
-    "Rebase in progress" : {
-
-    },
-    "Rebased %@ onto %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Rebased %1$@ onto %2$@"
-          }
-        }
-      }
-    },
-    "Remote branch deleted: %@" : {
-
-    },
-    "Remote Branches" : {
-
-    },
-    "Rename" : {
-
-    },
-    "Rename Branch" : {
-
-    },
-    "Review / Notifications" : {
-
-    },
-    "Review Requests" : {
-
-    },
-    "Search branches" : {
-
-    },
-    "Select base/head to view ahead/behind counts, commits, and file changes." : {
-
-    },
-    "Set" : {
-
-    },
-    "Set Upstream" : {
-
-    },
-    "Switch Branch" : {
-
-    },
-    "Switched to branch: %@" : {
-
-    },
-    "The current remote does not support generating Pull Request links." : {
-
-    },
-    "Unread status requires platform account/API authorization; current entries will redirect to the hosting platform's notification, review, and comment filter pages." : {
-
-    },
-    "Upstream branch" : {
-
-    },
-    "Upstream set: %@ -> %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Upstream set: %1$@ -> %2$@"
-          }
-        }
-      }
-    },
-    "Upstream unset for branch: %@" : {
-
-    },
-    "分支" : {
+    "%lld submodules are up to date" : {
       "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Branches"
+            "value" : "%lld submodules are up to date"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "分支"
+            "value" : "%lld 个子模块已是最新"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "分支"
+            "value" : "%lld 個子模組已是最新"
           }
         }
       }
     },
-    "分支名称" : {
+    "%lld submodules total" : {
       "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Branch Name"
+            "value" : "%lld submodules total"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "分支名称"
+            "value" : "共 %lld 个子模块"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "分支名稱"
+            "value" : "共 %lld 個子模組"
           }
         }
       }
     },
-    "切换分支" : {
+    "%lld submodules, %lld need attention" : {
       "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Switch Branch"
+            "value" : "%lld submodules, %lld need attention"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "切换分支"
+            "value" : "%lld 个子模块，%lld 个需要注意"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "切換分支"
+            "value" : "%lld 個子模組，%lld 個需要注意"
           }
         }
       }
     },
-    "切换分支失败" : {
+    "Close" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Close"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "关闭"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "關閉"
+          }
+        }
+      }
+    },
+    "Conflicted" : {
       "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Switch Branch Failed"
+            "value" : "Conflicted"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "切换分支失败"
+            "value" : "冲突"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "切換分支失敗"
+            "value" : "衝突"
           }
         }
       }
     },
-    "切换分支失败: %@" : {
+    "Diff" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diff"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "差异"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "差異"
+          }
+        }
+      }
+    },
+    "Diff: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diff: %@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "差异：%@"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "差異：%@"
+          }
+        }
+      }
+    },
+    "Found %lld submodules that need attention" : {
       "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Failed to switch branch: %@"
+            "value" : "Found %lld submodules that need attention"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "切换分支失败: %@"
+            "value" : "发现 %lld 个子模块需要注意"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "切換分支失敗: %@"
+            "value" : "發現 %lld 個子模組需要注意"
           }
         }
       }
     },
-    "创建分支失败" : {
+    "HEAD differs from index" : {
       "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Create Branch Failed"
+            "value" : "HEAD differs from index"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "创建分支失败"
+            "value" : "HEAD 与索引不同"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "建立分支失敗"
+            "value" : "HEAD 與索引不同"
           }
         }
       }
     },
-    "创建分支失败: %@" : {
+    "Initialize" : {
       "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Failed to create branch: %@"
+            "value" : "Initialize"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "创建分支失败: %@"
+            "value" : "初始化"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "建立分支失敗: %@"
+            "value" : "初始化"
           }
         }
       }
     },
-    "删除分支失败: %@" : {
+    "Initialize All" : {
       "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Failed to delete branch: %@"
+            "value" : "Initialize All"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "删除分支失败: %@"
+            "value" : "全部初始化"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "刪除分支失敗: %@"
+            "value" : "全部初始化"
           }
         }
       }
     },
-    "加载分支列表失败: %@" : {
+    "Initialized" : {
       "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Failed to load branch list: %@"
+            "value" : "Initialized"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "加载分支列表失败: %@"
+            "value" : "已初始化"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "載入分支列表失敗: %@~"
+            "value" : "已初始化"
           }
         }
       }
     },
-    "已切换到分支: %@" : {
+    "Initialized %@" : {
       "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Switched to branch: %@"
+            "value" : "Initialized %@"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "已切换到分支: %@"
+            "value" : "已初始化 %@"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "已切換至分支: %@"
+            "value" : "已初始化 %@"
           }
         }
       }
     },
-    "已创建并切换到分支: %@" : {
+    "No diff summary available for this submodule." : {
       "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Created and switched to branch: %@"
+            "value" : "No diff summary available for this submodule."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "已创建并切换到分支: %@"
+            "value" : "此子模块没有可用的差异摘要。"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "已建立並切換至分支: %@"
+            "value" : "此子模組沒有可用的差異摘要。"
           }
         }
       }
     },
-    "已删除分支: %@" : {
+    "No Git submodules configured in this repository." : {
       "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Deleted branch: %@"
+            "value" : "No Git submodules configured in this repository."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "已删除分支: %@"
+            "value" : "此仓库中未配置 Git 子模块。"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "已刪除分支: %@"
+            "value" : "此儲存庫中未設定 Git 子模組。"
           }
         }
       }
     },
-    "当前" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Current"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "当前"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "目前"
-          }
-        }
-      }
-    },
-    "新建分支" : {
+    "No project selected" : {
       "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "New Branch"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "新建分支"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "新建分支"
-          }
-        }
-      }
-    },
-    "无分支" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No Branches"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "无分支"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "無分支"
-          }
-        }
-      }
-    },
-    "暂无分支" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No Branches Yet"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "暂无分支"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "暫無分支"
-          }
-        }
-      }
-    },
-    "未选择项目" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No Project Selected"
+            "value" : "No project selected"
           }
         },
         "zh-Hans" : {
@@ -736,94 +366,230 @@
         }
       }
     },
-    "确认切换分支？" : {
+    "No submodules found" : {
       "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Confirm switch branch?"
+            "value" : "No submodules found"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "确认切换分支？"
+            "value" : "未找到子模块"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "確認切換分支？"
+            "value" : "未找到子模組"
           }
         }
       }
     },
-    "远程分支" : {
+    "No submodules in this repository" : {
       "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Remote Branches"
+            "value" : "No submodules in this repository"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "远程分支"
+            "value" : "此仓库中没有子模块"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "遠端分支"
+            "value" : "此儲存庫中沒有子模組"
           }
         }
       }
     },
-    "项目不可用" : {
-      "extractionState" : "stale",
+    "Submodule" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Project Unavailable"
+            "value" : "Submodule"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "项目不可用"
+            "value" : "子模块"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "專案不可用~"
+            "value" : "子模組"
           }
         }
       }
     },
-    "项目不存在" : {
-      "extractionState" : "stale",
+    "Submodule %lld" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Project Not Found"
+            "value" : "Submodule %lld"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "项目不存在"
+            "value" : "子模块 %lld"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "專案不存在"
+            "value" : "子模組 %lld"
+          }
+        }
+      }
+    },
+    "Submodule initialized" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Submodule initialized"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "子模块已初始化"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "子模組已初始化"
+          }
+        }
+      }
+    },
+    "Submodules updated" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Submodules updated"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "子模块已更新"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "子模組已更新"
+          }
+        }
+      }
+    },
+    "Uninitialized" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uninitialized"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未初始化"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未初始化"
+          }
+        }
+      }
+    },
+    "Update" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Update"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "更新"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "更新"
+          }
+        }
+      }
+    },
+    "Update All" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Update All"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "全部更新"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "全部更新"
+          }
+        }
+      }
+    },
+    "Updated %@" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Updated %@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已更新 %@"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已更新 %@"
           }
         }
       }

@@ -94,7 +94,7 @@ struct RemoteRepositoryRowView: View {
 
                 if let fetchURL = remote.fetchURL, fetchURL != remote.url {
                     HStack {
-                        Text("获取:")
+                        Text(String(localized: "Fetch:"))
                             .font(.caption2)
                             .foregroundColor(.secondary)
                         Text(fetchURL)
@@ -107,7 +107,7 @@ struct RemoteRepositoryRowView: View {
 
                 if let pushURL = remote.pushURL, pushURL != remote.url {
                     HStack {
-                        Text("推送:")
+                        Text(String(localized: "Push:"))
                             .font(.caption2)
                             .foregroundColor(.secondary)
                         Text(pushURL)
@@ -127,13 +127,13 @@ struct RemoteRepositoryRowView: View {
                     Image.safari.inButtonWithAction {
                         webLink.url.openInBrowser()
                     }
-                    .help("打开远程页面")
+                    .help(String(localized: "Open Remote Page"))
                 }
 
                 Image.copyIcon.inButtonWithAction {
                     remote.url.copy()
                 }
-                .help("复制远程 URL")
+                .help(String(localized: "Copy Remote URL"))
 
                 Image.edit.inButtonWithAction {
                     onEdit(remote)

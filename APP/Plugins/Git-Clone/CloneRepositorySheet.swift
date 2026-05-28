@@ -71,7 +71,7 @@ struct CloneRepositorySheet: View, SuperLog {
 
     private var validationMessage: String? {
         if trimmedRemoteURL.isEmpty {
-            return "请输入远程仓库地址"
+            return String(localized: "Please enter a remote repository URL", table: "Git-Clone")
         }
 
         if let repositoryNameMessage = CloneRepositoryValidation.validateRepositoryName(trimmedRepositoryName) {
@@ -79,7 +79,7 @@ struct CloneRepositorySheet: View, SuperLog {
         }
 
         guard destinationURL != nil else {
-            return "目标路径无效"
+            return String(localized: "Invalid destination path", table: "Git-Clone")
         }
 
         if let destinationState {
@@ -120,11 +120,11 @@ struct CloneRepositorySheet: View, SuperLog {
 private extension CloneRepositorySheet {
     var header: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text("克隆仓库")
+            Text("Clone Repository", tableName: "Git-Clone")
                 .font(.title2)
                 .fontWeight(.semibold)
 
-            Text("从远程地址克隆一个 Git 仓库，并自动导入到项目列表。")
+            Text("Clone a Git repository from a remote URL and automatically add it to the project list.", tableName: "Git-Clone")
                 .font(.caption)
                 .foregroundColor(.secondary)
         }
@@ -132,13 +132,17 @@ private extension CloneRepositorySheet {
 
     var remoteSection: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text("远程仓库")
+            Text("Remote Repository", tableName: "Git-Clone")
                 .font(.headline)
 
             TextField("https://github.com/owner/repo.git", text: $remoteURL)
                 .textFieldStyle(.roundedBorder)
 
-            TextField("仓库名称", text: $repositoryName)
+            Text("Repository Name", tableName: "Git-Clone")
+                .font(.caption)
+                .foregroundColor(.secondary)
+
+            TextField(String(localized: "Repository Name", table: "Git-Clone"), text: $repositoryName)
                 .textFieldStyle(.roundedBorder)
                 .onChange(of: repositoryName) { oldValue, newValue in
                     defer { isAutoFillingRepositoryName = false }
@@ -149,7 +153,7 @@ private extension CloneRepositorySheet {
                 }
 
             if normalizedRemoteURL != trimmedRemoteURL, trimmedRemoteURL.isEmpty == false {
-                Text("将使用：\(normalizedRemoteURL)")
+                Text("Will use: \(normalizedRemoteURL)", tableName: "Git-Clone")
                     .font(.caption)
                     .foregroundColor(.secondary)
                     .textSelection(.enabled)
@@ -161,14 +165,14 @@ private extension CloneRepositorySheet {
         DisclosureGroup {
             VStack(alignment: .leading, spacing: 10) {
                 HStack(spacing: 8) {
-                    TextField("github.com 或 ghe.example.com", text: $githubHost)
+                    TextField(String(localized: "github.com or ghe.example.com", table: "Git-Clone"), text: $githubHost)
                         .textFieldStyle(.roundedBorder)
 
-                    TextField("用户名", text: $githubUsername)
+                    TextField(String(localized: "Username", table: "Git-Clone"), text: $githubUsername)
                         .textFieldStyle(.roundedBorder)
                 }
 
-                SecureField("Personal access token", text: $githubToken)
+                SecureField(String(localized: "Personal Access Token", table: "Git-Clone"), text: $githubToken)
                     .textFieldStyle(.roundedBorder)
 
                 HStack {
@@ -180,7 +184,7 @@ private extension CloneRepositorySheet {
                                 .controlSize(.small)
                                 .frame(minWidth: 110)
                         } else {
-                            Text("连接并列出仓库")
+                            Text("Connect and List Repositories", tableName: "Git-Clone")
                                 .frame(minWidth: 110)
                         }
                     }
@@ -192,7 +196,7 @@ private extension CloneRepositorySheet {
                             githubToken.isEmpty
                     )
 
-                    Button("创建 Token") {
+                    Button(String(localized: "Create Token", table: "Git-Clone")) {
                         openGitHubTokenSettings()
                     }
                     .buttonStyle(.borderless)
@@ -206,13 +210,13 @@ private extension CloneRepositorySheet {
                         .foregroundColor(.red)
                         .textSelection(.enabled)
                 } else {
-                    Text("Token 会通过当前 Git credential helper 保存，仓库列表来自 GitHub/GitHub Enterprise API。")
+                    Text("Token will be saved via the current Git credential helper. Repository list comes from GitHub/GitHub Enterprise API.", tableName: "Git-Clone")
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
 
                 if githubRepositories.isEmpty == false {
-                    TextField("搜索仓库", text: $githubSearchText)
+                    TextField(String(localized: "Search Repositories", table: "Git-Clone"), text: $githubSearchText)
                         .textFieldStyle(.roundedBorder)
 
                     ScrollView {
@@ -257,14 +261,14 @@ private extension CloneRepositorySheet {
             }
             .padding(.top, 8)
         } label: {
-            Label("GitHub / Enterprise 账号 Clone", systemImage: "person.crop.circle.badge.plus")
+            Label(String(localized: "GitHub / Enterprise Account Clone", table: "Git-Clone"), systemImage: "person.crop.circle.badge.plus")
                 .font(.headline)
         }
     }
 
     var destinationSection: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text("本地路径")
+            Text("Local Path", tableName: "Git-Clone")
                 .font(.headline)
 
             HStack {
@@ -276,14 +280,14 @@ private extension CloneRepositorySheet {
 
                 Spacer()
 
-                Button("选择目录") {
+                Button(String(localized: "Choose Directory", table: "Git-Clone")) {
                     chooseDestinationFolder()
                 }
             }
 
             if let destinationURL {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("最终路径")
+                    Text("Final Path", tableName: "Git-Clone")
                         .font(.caption)
                         .foregroundColor(.secondary)
                     Text(destinationURL.path)
@@ -295,7 +299,7 @@ private extension CloneRepositorySheet {
             }
 
             if destinationState == .existingEmptyDirectory {
-                Text("目标目录已存在但为空，允许直接克隆到该目录。")
+                Text("Target directory exists but is empty. Cloning directly into it is allowed.", tableName: "Git-Clone")
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
@@ -309,7 +313,7 @@ private extension CloneRepositorySheet {
                     .font(.caption)
                     .foregroundColor(.orange)
             } else {
-                Text("准备克隆")
+                Text("Ready to Clone", tableName: "Git-Clone")
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
@@ -322,7 +326,7 @@ private extension CloneRepositorySheet {
                         .textSelection(.enabled)
 
                     if credentialHost != nil {
-                        Button("输入凭据并重试") {
+                        Button(String(localized: "Enter Credentials and Retry", table: "Git-Clone")) {
                             showCredentialSheet = true
                         }
                         .buttonStyle(.bordered)
@@ -330,7 +334,7 @@ private extension CloneRepositorySheet {
                     }
 
                     if sshHelpRemoteURL != nil {
-                        Button("查看 SSH 处理方式") {
+                        Button(String(localized: "View SSH Handling", table: "Git-Clone")) {
                             showSSHHelpSheet = true
                         }
                         .buttonStyle(.bordered)
@@ -355,22 +359,22 @@ private extension CloneRepositorySheet {
     var credentialRetrySheet: some View {
         VStack(alignment: .leading, spacing: 18) {
             VStack(alignment: .leading, spacing: 6) {
-                Label("需要 Git 凭据", systemImage: "key.fill")
+                Label(String(localized: "Git Credentials Required", table: "Git-Clone"), systemImage: "key.fill")
                     .font(.title3)
                     .fontWeight(.semibold)
 
-                Text("为 \(credentialHost ?? "远程服务器") 保存 HTTPS 凭据后，GitOK 会自动重试 clone。凭据会通过当前 Git credential helper 保存。")
+                Text(String(localized: "After saving HTTPS credentials for %@, GitOK will automatically retry the clone. Credentials will be saved via the current Git credential helper.", table: "Git-Clone", comment: "Credential sheet description").replacingOccurrences(of: "%@", with: credentialHost ?? String(localized: "remote server", table: "Git-Clone")))
                     .font(.caption)
                     .foregroundColor(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
             }
 
             VStack(alignment: .leading, spacing: 10) {
-                TextField("用户名", text: $credentialUsername)
+                TextField(String(localized: "Username", table: "Git-Clone"), text: $credentialUsername)
                     .textFieldStyle(.roundedBorder)
                     .disabled(isSavingCredential)
 
-                SecureField("Personal access token 或密码", text: $credentialToken)
+                SecureField(String(localized: "Personal Access Token or Password", table: "Git-Clone"), text: $credentialToken)
                     .textFieldStyle(.roundedBorder)
                     .disabled(isSavingCredential)
 
@@ -385,7 +389,7 @@ private extension CloneRepositorySheet {
             HStack {
                 Spacer()
 
-                Button("取消") {
+                Button(String(localized: "Cancel", table: "Git-Clone")) {
                     showCredentialSheet = false
                 }
                 .disabled(isSavingCredential)
@@ -398,7 +402,7 @@ private extension CloneRepositorySheet {
                             .controlSize(.small)
                             .frame(minWidth: 96)
                     } else {
-                        Text("保存并重试")
+                        Text("Save and Retry", tableName: "Git-Clone")
                             .frame(minWidth: 96)
                     }
                 }
@@ -419,7 +423,7 @@ private extension CloneRepositorySheet {
         HStack {
             Spacer()
 
-            Button("取消") {
+            Button(String(localized: "Cancel", table: "Git-Clone")) {
                 dismiss()
             }
             .keyboardShortcut(.escape)
@@ -433,7 +437,7 @@ private extension CloneRepositorySheet {
                         .controlSize(.small)
                         .frame(minWidth: 80)
                 } else {
-                    Text("克隆")
+                    Text("Clone", tableName: "Git-Clone")
                         .frame(minWidth: 80)
                 }
             }
@@ -470,7 +474,7 @@ private extension CloneRepositorySheet {
         guard let destinationURL, let projectRepo = Optional(data.repoManager.projectRepo) else { return }
 
         errorMessage = nil
-        cloneProgressMessage = "准备克隆..."
+        cloneProgressMessage = String(localized: "Ready to Clone", table: "Git-Clone")
         isCloning = true
         credentialHost = nil
         credentialErrorMessage = nil
@@ -478,7 +482,7 @@ private extension CloneRepositorySheet {
         sshHelpErrorMessage = nil
 
         Task { @MainActor in
-            data.activityStatus = "克隆中…"
+            data.activityStatus = String(localized: "Cloning...", table: "Git-Clone")
         }
 
         let remote = normalizedRemoteURL
@@ -500,13 +504,13 @@ private extension CloneRepositorySheet {
                         data.activityStatus = nil
                         isCloning = false
                         cloneProgressMessage = nil
-                        alert_info("已克隆 \(repositoryName)")
+                        alert_info(String(localized: "Cloned %@", table: "Git-Clone", comment: "Success message after cloning a repository").replacingOccurrences(of: "%@", with: repositoryName))
                         dismiss()
                     } else {
                         data.activityStatus = nil
                         isCloning = false
                         cloneProgressMessage = nil
-                        errorMessage = "仓库已克隆到本地，但导入项目列表失败：\(destinationURL.path)"
+                        errorMessage = String(localized: "Repository cloned locally, but failed to add to project list: %@", table: "Git-Clone").replacingOccurrences(of: "%@", with: destinationURL.path)
                     }
                 }
             } catch {
@@ -602,7 +606,7 @@ private extension CloneRepositorySheet {
                     githubRepositories = repositories
                     isLoadingGitHubRepositories = false
                     githubToken = ""
-                    githubErrorMessage = repositories.isEmpty ? "未找到可访问仓库。请确认 token 权限包含 repo/read:org 或对应 Enterprise 权限。" : nil
+                    githubErrorMessage = repositories.isEmpty ? String(localized: "No accessible repositories found. Please verify that the token permissions include repo/read:org or corresponding Enterprise permissions.", table: "Git-Clone") : nil
                 }
             } catch {
                 await MainActor.run {
@@ -666,7 +670,7 @@ private enum GitHubCloneAPI {
 
         guard let url = components?.url else {
             throw NSError(domain: "GitOK.GitHubClone", code: -1, userInfo: [
-                NSLocalizedDescriptionKey: "GitHub API 地址无效"
+                NSLocalizedDescriptionKey: String(localized: "GitHub API URL is invalid", table: "Git-Clone")
             ])
         }
 
@@ -679,7 +683,7 @@ private enum GitHubCloneAPI {
         let (data, response) = try await URLSession.shared.data(for: request)
         guard let httpResponse = response as? HTTPURLResponse else {
             throw NSError(domain: "GitOK.GitHubClone", code: -1, userInfo: [
-                NSLocalizedDescriptionKey: "GitHub API 没有返回有效响应"
+                NSLocalizedDescriptionKey: String(localized: "GitHub API did not return a valid response", table: "Git-Clone")
             ])
         }
 
@@ -701,9 +705,9 @@ private enum GitHubCloneAPI {
 
     private static func apiErrorMessage(statusCode: Int, data: Data) -> String {
         if let payload = try? JSONDecoder().decode(GitHubAPIError.self, from: data) {
-            return "GitHub API 请求失败 (\(statusCode)): \(payload.message)"
+            return String(localized: "GitHub API request failed (\(statusCode)): \(payload.message)", table: "Git-Clone")
         }
-        return "GitHub API 请求失败 (\(statusCode))"
+        return String(localized: "GitHub API request failed (\(statusCode))", table: "Git-Clone")
     }
 
     private struct GitHubAPIError: Decodable {

@@ -125,7 +125,7 @@ struct CommitStyleConfigView: View, SuperLog {
                     }
 
                     if let project = vm.project {
-                        Text(verbatim: String.localizedStringWithFormat(NSLocalizedString("项目：%@", tableName: "Core", comment: ""), project.title))
+                        Text(verbatim: String.localizedStringWithFormat(NSLocalizedString("Project: %@", tableName: "Core", comment: ""), project.title))
                             .font(.caption)
                             .foregroundColor(.secondary)
 

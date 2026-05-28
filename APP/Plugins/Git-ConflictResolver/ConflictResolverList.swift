@@ -65,7 +65,7 @@ extension ConflictResolverList {
             VStack(alignment: .leading, spacing: DesignTokens.Spacing.md) {
                 HStack(alignment: .top, spacing: DesignTokens.Spacing.md) {
                     VStack(alignment: .leading, spacing: DesignTokens.Spacing.xs) {
-                        Text(String(localized: "冲突解决", table: "GitConflictResolver"))
+                        Text(String(localized: "Conflict Resolution", table: "GitConflictResolver"))
                             .font(DesignTokens.Typography.title3)
                             .foregroundColor(DesignTokens.Color.semantic.textPrimary)
 
@@ -79,13 +79,13 @@ extension ConflictResolverList {
                     if isMerging {
                         HStack(spacing: DesignTokens.Spacing.sm) {
                             compactActionButton(
-                                title: String(localized: "继续合并", table: "GitConflictResolver"),
+                                title: String(localized: "Continue Merge", table: "GitConflictResolver"),
                                 style: .primary,
                                 isDisabled: !resolutionState.canContinueMerge || isPerformingAction,
                                 action: continueMerge
                             )
                             compactActionButton(
-                                title: String(localized: "中止合并", table: "GitConflictResolver"),
+                                title: String(localized: "Abort Merge", table: "GitConflictResolver"),
                                 style: .danger,
                                 isDisabled: isPerformingAction,
                                 action: abortMerge
@@ -157,20 +157,20 @@ extension ConflictResolverList {
                 )
 
                 if isLoading {
-                    ProgressView(String(localized: "检查冲突状态...", table: "GitConflictResolver"))
+                    ProgressView(String(localized: "Checking conflict status...", table: "GitConflictResolver"))
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, DesignTokens.Spacing.xl)
                 } else if !isMerging {
                     emptyState(
                         icon: "checkmark.circle",
-                        title: String(localized: "没有正在进行的合并", table: "GitConflictResolver"),
-                        subtitle: String(localized: "当您执行合并操作遇到冲突时，此处会显示需要解决的文件", table: "GitConflictResolver")
+                        title: String(localized: "No merge in progress", table: "GitConflictResolver"),
+                        subtitle: String(localized: "When you encounter conflicts during a merge, files needing resolution will appear here", table: "GitConflictResolver")
                     )
                 } else if mergeFiles.isEmpty {
                     emptyState(
                         icon: "checkmark.circle.fill",
-                        title: String(localized: "没有需要处理的文件", table: "GitConflictResolver"),
-                        subtitle: "当前合并没有留下待处理的文件。"
+                        title: String(localized: "No files to handle", table: "GitConflictResolver"),
+                        subtitle: "The current merge left no pending files."
                     )
                 } else {
                     VStack(spacing: DesignTokens.Spacing.sm) {
@@ -258,7 +258,7 @@ extension ConflictResolverList {
                 }
 
                 if isLoadingPreview {
-                    ProgressView("加载冲突预览...")
+                    ProgressView("Loading conflict preview...")
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, DesignTokens.Spacing.lg)
                 } else if let previewErrorMessage {
@@ -280,11 +280,11 @@ extension ConflictResolverList {
     private var workflowHint: String {
         switch selectedMergeFile?.state {
         case .unresolved:
-            return "先编辑文件或采用一侧，再标记已解决。"
+            return "Edit the file or accept one side, then mark as resolved."
         case .pendingStage:
-            return "冲突标记已清理，暂存后即可继续合并。"
+            return "Conflict markers cleared, stage to continue merge."
         case .staged:
-            return "文件已暂存，等待所有文件完成后继续合并。"
+            return "File staged, waiting for all files to complete before continuing merge."
         case nil:
             return ""
         }
@@ -292,7 +292,7 @@ extension ConflictResolverList {
 
     private func diffPreview(text: String) -> some View {
         ScrollView([.horizontal, .vertical]) {
-            Text(text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? "没有可显示的冲突 diff。" : text)
+            Text(text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? "No conflict diff to display." : text)
                 .font(.system(size: 11, design: .monospaced))
                 .foregroundColor(DesignTokens.Color.semantic.textSecondary)
                 .textSelection(.enabled)

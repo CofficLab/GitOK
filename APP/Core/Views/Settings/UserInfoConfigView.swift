@@ -91,7 +91,7 @@ struct UserInfoConfigView: View, SuperLog {
 
                 // 预设配置选择
                 if !savedConfigs.isEmpty {
-                    GitOKUI.AppSettingsSection(title: String(localized: "预设配置", table: "Core")) {
+                    GitOKUI.AppSettingsSection(title: String(localized: "Preset Configs", table: "Core")) {
                         VStack(spacing: 0) {
                             ForEach(savedConfigs) { config in
                                 presetConfigRow(config)
@@ -115,13 +115,13 @@ struct UserInfoConfigView: View, SuperLog {
                 }
 
                 // 用户信息输入
-                GitOKUI.AppSettingsSection(title: String(localized: "用户信息", table: "Core")) {
+                GitOKUI.AppSettingsSection(title: String(localized: "User Info", table: "Core")) {
                     VStack(spacing: 0) {
                         // 用户名
                         HStack {
                             Text("用户名", tableName: "Core")
                                 .frame(width: 80, alignment: .leading)
-                            TextField(String(localized: "输入用户名", table: "Core"), text: $userName)
+                            TextField(String(localized: "Enter username", table: "Core"), text: $userName)
                                 .textFieldStyle(.plain)
                                 .onChange(of: userName) {
                                     hasChanges = true
@@ -138,7 +138,7 @@ struct UserInfoConfigView: View, SuperLog {
                         HStack {
                             Text("邮箱", tableName: "Core")
                                 .frame(width: 80, alignment: .leading)
-                            TextField(String(localized: "输入邮箱", table: "Core"), text: $userEmail)
+                            TextField(String(localized: "Enter email", table: "Core"), text: $userEmail)
                                 .textFieldStyle(.plain)
                                 .onChange(of: userEmail) {
                                     hasChanges = true
@@ -218,7 +218,7 @@ struct UserInfoConfigView: View, SuperLog {
             isLoading = false
             return true
         } catch {
-        errorMessage = String.localizedStringWithFormat(String(localized: "保存失败: %@", table: "Core"), error.localizedDescription)
+        errorMessage = String.localizedStringWithFormat(String(localized: "Save failed: %@", table: "Core"), error.localizedDescription)
             if Self.verbose {
                 os_log(.error, "\(Self.t)Failed to save user config: \(error)")
             }
@@ -252,7 +252,7 @@ struct UserInfoConfigView: View, SuperLog {
             }
 
         } catch {
-        errorMessage = String.localizedStringWithFormat(String(localized: "保存预设失败: %@", table: "Core"), error.localizedDescription)
+        errorMessage = String.localizedStringWithFormat(String(localized: "Failed to save preset: %@", table: "Core"), error.localizedDescription)
             if Self.verbose {
                 os_log(.error, "\(Self.t)Failed to save preset: \(error)")
             }
@@ -276,7 +276,7 @@ struct UserInfoConfigView: View, SuperLog {
                 os_log("\(Self.t)Loaded user info - name: \(userName), email: \(userEmail)")
             }
         } catch {
-        errorMessage = String.localizedStringWithFormat(String(localized: "无法加载当前用户信息: %@", table: "Core"), error.localizedDescription)
+        errorMessage = String.localizedStringWithFormat(String(localized: "Unable to load current user info: %@", table: "Core"), error.localizedDescription)
             if Self.verbose {
                 os_log(.error, "\(Self.t)Failed to load user info: \(error)")
             }

@@ -43,7 +43,7 @@ struct GitUserInfoSettingView: View, SuperLog {
             VStack(alignment: .leading, spacing: 24) {
                 // 现有预设配置列表
                 if !savedConfigs.isEmpty {
-                    GitOKUI.AppSettingsSection(title: String(localized: "现有预设", table: "Core")) {
+                    GitOKUI.AppSettingsSection(title: String(localized: "Existing Presets", table: "Core")) {
                         VStack(spacing: 0) {
                             ForEach(savedConfigs) { config in
                                 presetConfigRow(config)
@@ -74,14 +74,14 @@ struct GitUserInfoSettingView: View, SuperLog {
             }
             .padding()
         }
-        .navigationTitle(Text(String(localized: "用户信息", table: "Core")))
+        .navigationTitle(Text(String(localized: "User Info", table: "Core")))
         .toolbar {
             ToolbarItem(placement: .confirmationAction) {
                 Button(action: {
                     // 关闭设置视图（通过通知）
                     NotificationCenter.default.post(name: .didSaveGitUserConfig, object: nil)
                 }) {
-                    Text(String(localized: "完成", table: "Core"))
+                    Text(String(localized: "Done", table: "Core"))
                 }
             }
         }
@@ -114,7 +114,7 @@ struct GitUserInfoSettingView: View, SuperLog {
                         .font(.system(size: 14))
                 }
                 .buttonStyle(.plain)
-                .help(Text(String(localized: "删除此预设", table: "Core")))
+                .help(Text(String(localized: "Delete this preset", table: "Core")))
             }
         }
         .contentShape(Rectangle())
@@ -123,7 +123,7 @@ struct GitUserInfoSettingView: View, SuperLog {
                 deletePreset(config)
             } label: {
                 Label(
-                    title: { Text(String(localized: "删除预设", table: "Core")) },
+                    title: { Text(String(localized: "Delete Preset", table: "Core")) },
                     icon: { Image(systemName: .iconTrash) }
                 )
             }
@@ -131,7 +131,7 @@ struct GitUserInfoSettingView: View, SuperLog {
     }
 
     private var addNewPresetSection: some View {
-        GitOKUI.AppSettingsSection(title: String(localized: "添加新预设", table: "Core")) {
+        GitOKUI.AppSettingsSection(title: String(localized: "Add New Preset", table: "Core")) {
             VStack(spacing: 0) {
                 userNameInputView
                 Divider()
@@ -144,12 +144,12 @@ struct GitUserInfoSettingView: View, SuperLog {
 
     private var userNameInputView: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text(String(localized: "用户名", table: "Core"))
+            Text(String(localized: "Username", table: "Core"))
                 .font(.caption)
                 .foregroundColor(.secondary)
                 .padding(.horizontal)
 
-            TextField(String(localized: "输入用户名", table: "Core"), text: $userName)
+            TextField(String(localized: "Enter username", table: "Core"), text: $userName)
                 .textFieldStyle(.roundedBorder)
                 .onChange(of: userName) {
                     hasChanges = true
@@ -161,12 +161,12 @@ struct GitUserInfoSettingView: View, SuperLog {
 
     private var userEmailInputView: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text(String(localized: "邮箱", table: "Core"))
+            Text(String(localized: "Email", table: "Core"))
                 .font(.caption)
                 .foregroundColor(.secondary)
                 .padding(.horizontal)
 
-            TextField(String(localized: "输入邮箱", table: "Core"), text: $userEmail)
+            TextField(String(localized: "Enter email", table: "Core"), text: $userEmail)
                 .textFieldStyle(.roundedBorder)
                 .onChange(of: userEmail) {
                     hasChanges = true
@@ -214,7 +214,7 @@ struct GitUserInfoSettingView: View, SuperLog {
             // 保存成功后发送通知
             NotificationCenter.default.post(name: .didSaveGitUserConfig, object: nil)
         } catch {
-            errorMessage = String.localizedStringWithFormat(NSLocalizedString("保存失败: %@", tableName: "Core", comment: ""), error.localizedDescription)
+            errorMessage = String.localizedStringWithFormat(NSLocalizedString("Save failed: %@", tableName: "Core", comment: ""), error.localizedDescription)
             if Self.verbose {
                 os_log(.error, "\(Self.t)Failed to save user config: \(error)")
             }
@@ -243,7 +243,7 @@ struct GitUserInfoSettingView: View, SuperLog {
             }
 
         } catch {
-            errorMessage = String.localizedStringWithFormat(NSLocalizedString("保存预设失败: %@", tableName: "Core", comment: ""), error.localizedDescription)
+            errorMessage = String.localizedStringWithFormat(NSLocalizedString("Failed to save preset: %@", tableName: "Core", comment: ""), error.localizedDescription)
             if Self.verbose {
                 os_log(.error, "\(Self.t)Failed to save preset: \(error)")
             }
@@ -262,7 +262,7 @@ struct GitUserInfoSettingView: View, SuperLog {
             }
 
         } catch {
-            errorMessage = String.localizedStringWithFormat(NSLocalizedString("删除预设失败: %@", tableName: "Core", comment: ""), error.localizedDescription)
+            errorMessage = String.localizedStringWithFormat(NSLocalizedString("Failed to delete preset: %@", tableName: "Core", comment: ""), error.localizedDescription)
             if Self.verbose {
                 os_log(.error, "\(Self.t)Failed to delete preset: \(error)")
             }
@@ -290,7 +290,7 @@ struct GitUserInfoSettingView: View, SuperLog {
                 os_log("\(Self.t)Loaded user info - name: \(userName), email: \(userEmail)")
             }
         } catch {
-            errorMessage = String.localizedStringWithFormat(NSLocalizedString("无法加载当前用户信息: %@", tableName: "Core", comment: ""), error.localizedDescription)
+            errorMessage = String.localizedStringWithFormat(NSLocalizedString("Unable to load current user info: %@", tableName: "Core", comment: ""), error.localizedDescription)
             if Self.verbose {
                 os_log(.error, "\(Self.t)Failed to load user info: \(error)")
             }

@@ -79,7 +79,7 @@ struct GitignoreViewer: View, SuperLog {
                     statusMessage: $statusMessage
                 )
 
-                Button("关闭") {
+                Button(String(localized: "Close", table: "GitIgnore")) {
                     dismiss()
                 }
                 .keyboardShortcut(.cancelAction)
@@ -99,7 +99,7 @@ struct GitignoreViewer: View, SuperLog {
         VStack(spacing: 16) {
             ProgressView()
                 .controlSize(.large)
-            Text("正在加载 .gitignore ...")
+            Text(String(localized: "Loading .gitignore...", table: "GitIgnore"))
                 .font(.headline)
                 .foregroundColor(.secondary)
         }
@@ -112,10 +112,10 @@ struct GitignoreViewer: View, SuperLog {
             Image(systemName: "doc.text.below.ecg")
                 .font(.system(size: 48))
                 .foregroundColor(.secondary)
-            Text("未找到 .gitignore 文件")
+            Text(String(localized: "No .gitignore file found", table: "GitIgnore"))
                 .font(.headline)
                 .foregroundColor(.secondary)
-            Text("当前项目中没有找到 .gitignore 文件")
+            Text(String(localized: "No .gitignore file found in current project", table: "GitIgnore"))
                 .font(.caption)
                 .foregroundColor(.secondary)
         }
@@ -182,12 +182,12 @@ struct GitignoreViewer: View, SuperLog {
                     self.isLoading = false
                     self.hasError = false
                     self.isApplyingTemplate = false
-                    self.statusMessage = "\(template.header) 已添加"
+                    self.statusMessage = String(localized: "%@ has been added", table: "GitIgnore").replacingOccurrences(of: "%@", with: template.header)
                 }
             } catch {
                 await MainActor.run {
                     self.isApplyingTemplate = false
-                    self.statusMessage = "写入 .gitignore 失败：\(error.localizedDescription)"
+                    self.statusMessage = String(localized: "Failed to write .gitignore: %@", table: "GitIgnore").replacingOccurrences(of: "%@", with: error.localizedDescription)
                     self.hasError = true
                 }
 
@@ -295,12 +295,12 @@ struct GitignoreViewer: View, SuperLog {
                     self.isOrganizing = false
                     self.isLoading = false
                     self.hasError = false
-                    self.statusMessage = "已整理分组"
+                    self.statusMessage = String(localized: "Organized and grouped", table: "GitIgnore")
                 }
             } catch {
                 await MainActor.run {
                     self.isOrganizing = false
-                    self.statusMessage = "整理失败：\(error.localizedDescription)"
+                    self.statusMessage = String(localized: "Organize failed: %@", table: "GitIgnore").replacingOccurrences(of: "%@", with: error.localizedDescription)
                     self.hasError = true
                 }
             }
@@ -393,7 +393,7 @@ struct GitignoreViewer: View, SuperLog {
             cleanedUnknown.append(line)
         }
 
-        appendSection("# Other", lines: cleanedUnknown.filter { $0.trimmingCharacters(in: .whitespaces).isEmpty == false }, to: &result)
+        appendSection(String(localized: "# Other", table: "GitIgnore"), lines: cleanedUnknown.filter { $0.trimmingCharacters(in: .whitespaces).isEmpty == false }, to: &result)
 
         // collapse trailing/duplicate blanks
         var final: [String] = []

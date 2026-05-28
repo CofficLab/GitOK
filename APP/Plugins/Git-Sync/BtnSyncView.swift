@@ -44,7 +44,7 @@ struct BtnSyncView: View, SuperLog, SuperEvent, SuperThread {
                     .inButtonWithAction {
                         sync(path: project.path)
                     }
-                    .help("和远程仓库同步")
+                    .help(String(localized: "Sync with remote repository"))
                     .disabled(working)
                     .toolbarButtonStyle()
             } else {
@@ -98,7 +98,7 @@ extension BtnSyncView {
         }
 
         Task.detached {
-            await setStatus("同步中…")
+            await setStatus(String(localized: "Syncing…"))
             do {
                 // 检查是否有远程仓库
                 if let project {
@@ -110,7 +110,7 @@ extension BtnSyncView {
                         await MainActor.run {
                             MagicMessageProvider.shared.hideLoading()
                             self.reset()
-                            alert_info("该项目还没有配置远程仓库，请先推送代码建立远程连接")
+                            alert_info(String(localized: "No remote repository configured. Please push your code first to establish a remote connection."))
                         }
                         await setStatus(nil)
                         return

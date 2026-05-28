@@ -37,7 +37,7 @@ struct SystemInfoSettingView: View, SuperLog {
             }
             .padding()
         }
-        .navigationTitle(Text("系统信息", tableName: "Core"))
+        .navigationTitle(Text("System Info", tableName: "Core"))
         .toolbar {
             ToolbarItem(placement: .confirmationAction) {
                 Button(action: {
@@ -66,21 +66,21 @@ struct SystemInfoSettingView: View, SuperLog {
 
     /// 系统基本信息
     private var systemBasicInfoSection: some View {
-        GitOKUI.AppSettingsSection(title: String(localized: "系统", table: "Core")) {
-            infoRow(title: String(localized: "系统名称", table: "Core"), value: systemInfo.systemName, icon: "gearshape")
-            infoRow(title: String(localized: "系统版本", table: "Core"), value: systemInfo.systemVersion, icon: "gearshape")
-            infoRow(title: String(localized: "系统架构", table: "Core"), value: systemInfo.architecture, icon: "gearshape")
-            infoRow(title: String(localized: "主机名", table: "Core"), value: systemInfo.hostname, icon: "gearshape")
+        GitOKUI.AppSettingsSection(title: String(localized: "System", table: "Core")) {
+            infoRow(title: String(localized: "System Name", table: "Core"), value: systemInfo.systemName, icon: "gearshape")
+            infoRow(title: String(localized: "System Version", table: "Core"), value: systemInfo.systemVersion, icon: "gearshape")
+            infoRow(title: String(localized: "Architecture", table: "Core"), value: systemInfo.architecture, icon: "gearshape")
+            infoRow(title: String(localized: "Hostname", table: "Core"), value: systemInfo.hostname, icon: "gearshape")
         }
     }
 
     /// 硬件信息
     private var hardwareInfoSection: some View {
-        GitOKUI.AppSettingsSection(title: String(localized: "硬件", table: "Core")) {
-            infoRow(title: String(localized: "处理器", table: "Core"), value: systemInfo.cpuModel, icon: "cpu")
+        GitOKUI.AppSettingsSection(title: String(localized: "Hardware", table: "Core")) {
+            infoRow(title: String(localized: "Processor", table: "Core"), value: systemInfo.cpuModel, icon: "cpu")
             infoRow(
-                title: String(localized: "核心数", table: "Core"),
-                value: String.localizedStringWithFormat(String(localized: "%lld 核", table: "Core"), Int64(systemInfo.cpuCores)),
+                title: String(localized: "Cores", table: "Core"),
+                value: String.localizedStringWithFormat(String(localized: "%lld Cores", table: "Core"), Int64(systemInfo.cpuCores)),
                 icon: "cpu"
             )
         }
@@ -88,12 +88,12 @@ struct SystemInfoSettingView: View, SuperLog {
 
     /// 内存信息
     private var memoryInfoSection: some View {
-        GitOKUI.AppSettingsSection(title: String(localized: "内存", table: "Core")) {
+        GitOKUI.AppSettingsSection(title: String(localized: "Memory", table: "Core")) {
             VStack(alignment: .leading, spacing: 16) {
                 // 内存使用条
                 VStack(alignment: .leading, spacing: 8) {
                     HStack {
-                        Text("内存使用", tableName: "Core")
+                        Text("Memory Usage", tableName: "Core")
                             .font(.caption)
                             .foregroundColor(.secondary)
 
@@ -110,21 +110,21 @@ struct SystemInfoSettingView: View, SuperLog {
                 .padding(.horizontal, 8)
 
                 // 内存详情
-                infoRow(title: String(localized: "总内存", table: "Core"), value: systemInfo.totalMemory, icon: "memorychip")
-                infoRow(title: String(localized: "可用内存", table: "Core"), value: systemInfo.freeMemory, icon: "memorychip")
-                infoRow(title: String(localized: "已用内存", table: "Core"), value: systemInfo.usedMemory, icon: "memorychip")
+                infoRow(title: String(localized: "Total Memory", table: "Core"), value: systemInfo.totalMemory, icon: "memorychip")
+                infoRow(title: String(localized: "Free Memory", table: "Core"), value: systemInfo.freeMemory, icon: "memorychip")
+                infoRow(title: String(localized: "Used Memory", table: "Core"), value: systemInfo.usedMemory, icon: "memorychip")
             }
         }
     }
 
     /// 磁盘信息
     private var diskInfoSection: some View {
-        GitOKUI.AppSettingsSection(title: String(localized: "磁盘", table: "Core")) {
+        GitOKUI.AppSettingsSection(title: String(localized: "Disk", table: "Core")) {
             VStack(alignment: .leading, spacing: 16) {
                 // 磁盘使用条
                 VStack(alignment: .leading, spacing: 8) {
                     HStack {
-                        Text("磁盘使用", tableName: "Core")
+                        Text("Disk Usage", tableName: "Core")
                             .font(.caption)
                             .foregroundColor(.secondary)
 
@@ -141,9 +141,9 @@ struct SystemInfoSettingView: View, SuperLog {
                 .padding(.horizontal, 8)
 
                 // 磁盘详情
-                infoRow(title: String(localized: "总容量", table: "Core"), value: systemInfo.totalDiskSpace, icon: "internaldrive")
-                infoRow(title: String(localized: "可用容量", table: "Core"), value: systemInfo.freeDiskSpace, icon: "internaldrive")
-                infoRow(title: String(localized: "已用容量", table: "Core"), value: systemInfo.usedDiskSpace, icon: "internaldrive")
+                infoRow(title: String(localized: "Total Capacity", table: "Core"), value: systemInfo.totalDiskSpace, icon: "internaldrive")
+                infoRow(title: String(localized: "Free Capacity", table: "Core"), value: systemInfo.freeDiskSpace, icon: "internaldrive")
+                infoRow(title: String(localized: "Used Capacity", table: "Core"), value: systemInfo.usedDiskSpace, icon: "internaldrive")
             }
         }
     }
@@ -152,8 +152,8 @@ struct SystemInfoSettingView: View, SuperLog {
     private var gitInfoSection: some View {
         GitOKUI.AppSettingsSection(title: String(localized: "Git", table: "Core")) {
             infoRow(
-                title: String(localized: "Git 版本", table: "Core"),
-                value: systemInfo.gitVersion ?? String(localized: "未安装", table: "Core"),
+                title: String(localized: "Git Version", table: "Core"),
+                value: systemInfo.gitVersion ?? String(localized: "Not Installed", table: "Core"),
                 icon: "terminal"
             )
         }

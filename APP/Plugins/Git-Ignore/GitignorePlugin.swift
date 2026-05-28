@@ -10,10 +10,10 @@ class GitignorePlugin: NSObject, SuperPlugin {
     @objc static let shouldRegister = true
 
     /// 插件显示名称
-    static var displayName: String = "Gitignore"
+    static var displayName: String = String(localized: "Gitignore", table: "GitIgnore")
 
     /// 插件描述
-    static var description: String = "在状态栏提供 .gitignore 查看入口"
+    static var description: String = String(localized: "Provides .gitignore viewer in status bar", table: "GitIgnore")
 
     /// 插件图标名称
     static var iconName: String = "doc.badge.gearshape"

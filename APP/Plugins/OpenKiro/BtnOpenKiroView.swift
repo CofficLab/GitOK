@@ -18,7 +18,7 @@ struct BtnOpenKiroView: View {
                 .inButtonWithAction {
                     project.url.openInKiro()
                 }
-                .help("用 Kiro 打开")
+                .help(String(localized: "Open in Kiro", table: "OpenKiro"))
                 .toolbarButtonStyle()
         }
     }
@@ -30,7 +30,7 @@ fileprivate extension URL {
             openKiro(url: self)
         }, label: {
             Label(
-                title: { Text("用 Kiro 打开") },
+                title: { Text(String(localized: "Open in Kiro", table: "OpenKiro")) },
                 icon: {
                     Image(systemName: "water.waves")
                         .resizable()

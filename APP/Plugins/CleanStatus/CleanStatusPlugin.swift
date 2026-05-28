@@ -10,7 +10,7 @@ class CleanStatusPlugin: NSObject, SuperPlugin {
     static var displayName: String = "Clean Status"
 
     /// 插件描述
-    static var description: String = String(localized: "跟踪项目是否 clean（无未提交的更改）", table: "CleanStatus")
+    static var description: String = String(localized: "Track whether project is clean (no uncommitted changes)", table: "CleanStatus")
 
     /// 插件图标名称
     static var iconName: String = "checkmark.circle"

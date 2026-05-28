@@ -17,7 +17,7 @@ struct BtnOpenFinderView: View {
                 .inButtonWithAction {
                     project.url.openInFinder()
                 }
-                .help("在Finder中打开")
+                .help(String(localized: "Open in Finder"))
                 .toolbarButtonStyle()
         }
     }

@@ -14,7 +14,7 @@ struct ClassicTitleEditor: View {
     @State private var titleColor: Color = .primary
     
     var body: some View {
-        GroupBox("标题设置") {
+        GroupBox(String(localized: "Title Settings", table: "Banner")) {
             VStack(spacing: 12) {
                 // 标题输入
                 HStack {

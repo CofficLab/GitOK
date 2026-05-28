@@ -5,12 +5,12 @@ struct LicenseSidebar: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("当前")
+            Text(String(localized: "Current", table: "License"))
                 .font(.caption)
                 .foregroundColor(.secondary)
 
             SidebarRow(
-                title: "LICENSE",
+                title: String(localized: "LICENSE", table: "License"),
                 icon: "doc.plaintext",
                 isSelected: pane == .current
             ) {
@@ -19,7 +19,7 @@ struct LicenseSidebar: View {
 
             Divider()
 
-            Text("模板")
+            Text(String(localized: "Templates", table: "License"))
                 .font(.caption)
                 .foregroundColor(.secondary)
 

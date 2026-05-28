@@ -23,7 +23,7 @@ struct BtnRemoteRepositoryView: View, SuperLog {
                 }) {
                     EmptyView()
                 }
-                .help("管理远程仓库")
+                .help(String(localized: "Manage Remote Repositories"))
             }
         }
         .sheet(isPresented: $showRemoteManagement) {

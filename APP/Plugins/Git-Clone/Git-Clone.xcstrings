@@ -1,763 +1,780 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "Centered layout, clean and elegant" : {
+    "After saving HTTPS credentials for %@, GitOK will automatically retry the clone. Credentials will be saved via the current Git credential helper." : {
+      "comment" : "Credential sheet description",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "After saving HTTPS credentials for %@, GitOK will automatically retry the clone. Credentials will be saved via the current Git credential helper."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "为 %@ 保存 HTTPS 凭据后，GitOK 会自动重试 clone。凭据会通过当前 Git credential helper 保存。"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "為 %@ 儲存 HTTPS 憑證後，GitOK 會自動重試 clone。憑證會透過當前 Git credential helper 儲存。"
+          }
+        }
+      }
+    },
+    "Cancel" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancel"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "取消"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "取消"
+          }
+        }
+      }
+    },
+    "Choose Directory" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose Directory"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "选择目录"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "選擇目錄"
+          }
+        }
+      }
+    },
+    "Clone" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Clone"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "克隆"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "克隆"
+          }
+        }
+      }
+    },
+    "Clone a Git repository from a remote URL and automatically add it to the project list." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Clone a Git repository from a remote URL and automatically add it to the project list."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "从远程地址克隆一个 Git 仓库，并自动导入到项目列表。"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "從遠端地址克隆一個 Git 倉庫，並自動匯入到專案列表。"
+          }
+        }
+      }
+    },
+    "Clone Repository" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Clone Repository"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "克隆仓库"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "克隆倉庫"
+          }
+        }
+      }
+    },
+    "Cloned %@" : {
+      "comment" : "Success message after cloning a repository",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cloned %@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已克隆 %@"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已克隆 %@"
+          }
+        }
+      }
+    },
+    "Cloning..." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cloning..."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "克隆中…"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "克隆中…"
+          }
+        }
+      }
+    },
+    "Connect and List Repositories" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connect and List Repositories"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "连接并列出仓库"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "連接並列出倉庫"
+          }
+        }
+      }
+    },
+    "Create Token" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Create Token"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "创建 Token"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "建立 Token"
+          }
+        }
+      }
+    },
+    "Enter Credentials and Retry" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enter Credentials and Retry"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "输入凭据并重试"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "輸入憑證並重試"
+          }
+        }
+      }
+    },
+    "Final Path" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Final Path"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最终路径"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最終路徑"
+          }
+        }
+      }
+    },
+    "Git Credentials Required" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Git Credentials Required"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "需要 Git 凭据"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "需要 Git 憑證"
+          }
+        }
+      }
+    },
+    "GitHub / Enterprise Account Clone" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "GitHub / Enterprise Account Clone"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "GitHub / Enterprise 账号 Clone"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "GitHub / Enterprise 帳號 Clone"
+          }
+        }
+      }
+    },
+    "GitHub API did not return a valid response" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "GitHub API did not return a valid response"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "GitHub API 没有返回有效响应"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "GitHub API 沒有返回有效響應"
+          }
+        }
+      }
+    },
+    "GitHub API request failed (%lld)" : {
 
     },
-    "Classic Layout" : {
+    "GitHub API request failed (%lld): %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "GitHub API request failed (%lld): %@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "GitHub API 请求失败 (%lld): %@"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "GitHub API 請求失敗 (%lld): %@"
+          }
+        }
+      }
+    },
+    "GitHub API URL is invalid" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "GitHub API URL is invalid"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "GitHub API 地址无效"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "GitHub API 地址無效"
+          }
+        }
+      }
+    },
+    "github.com or ghe.example.com" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "github.com or ghe.example.com"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "github.com 或 ghe.example.com"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "github.com 或 ghe.example.com"
+          }
+        }
+      }
+    },
+    "Invalid destination path" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Invalid destination path"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "目标路径无效"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "目標路徑無效"
+          }
+        }
+      }
+    },
+    "Local Path" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Local Path"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "本地路径"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "本地路徑"
+          }
+        }
+      }
+    },
+    "No accessible repositories found. Please verify that the token permissions include repo/read:org or corresponding Enterprise permissions." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No accessible repositories found. Please verify that the token permissions include repo/read:org or corresponding Enterprise permissions."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未找到可访问仓库。请确认 token 权限包含 repo/read:org 或对应 Enterprise 权限。"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未找到可訪問倉庫。請確認 token 權限包含 repo/read:org 或對應 Enterprise 權限。"
+          }
+        }
+      }
+    },
+    "Personal Access Token" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Personal Access Token"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Personal Access Token"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Personal Access Token"
+          }
+        }
+      }
+    },
+    "Personal Access Token or Password" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Personal Access Token or Password"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Personal access token 或密码"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Personal access token 或密碼"
+          }
+        }
+      }
+    },
+    "Please enter a remote repository URL" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Please enter a remote repository URL"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请输入远程仓库地址"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "請輸入遠端倉庫地址"
+          }
+        }
+      }
+    },
+    "Ready to Clone" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ready to Clone"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "准备克隆"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "準備克隆"
+          }
+        }
+      }
+    },
+    "Remote Repository" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remote Repository"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "远程仓库"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "遠端倉庫"
+          }
+        }
+      }
+    },
+    "remote server" : {
 
     },
-    "Delete" : {
-
-    },
-    "Deleted" : {
-
-    },
-    "Download Standard PNG" : {
-
-    },
-    "Failed to create Banner: %@" : {
-
-    },
-    "Failed to create target directory: %@" : {
-
-    },
-    "Failed to delete Banner: %@" : {
-
-    },
-    "Failed to generate PNG %@: %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Failed to generate PNG %1$@: %2$@"
-          }
-        }
-      }
-    },
-    "Failed to generate screenshot %@: %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Failed to generate screenshot %1$@: %2$@"
-          }
-        }
-      }
-    },
-    "Generating %@ (%d/%d)..." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Generating %1$@ (%2$d/%3$d)..."
-          }
-        }
-      }
-    },
-    "Generating App Store screenshots..." : {
-
-    },
-    "Generating iPhone App Store screenshots..." : {
-
-    },
-    "Generating standard PNG..." : {
-
-    },
-    "Invalid template data" : {
-
-    },
-    "iPhone App Store Screenshots" : {
-
-    },
-    "iPhone App Store 截图" : {
-      "extractionState" : "stale",
+    "Repository cloned locally, but failed to add to project list: %@" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "iPhone App Store Screenshots"
+            "value" : "Repository cloned locally, but failed to add to project list: %@"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "iPhone App Store 截图"
+            "value" : "仓库已克隆到本地，但导入项目列表失败：%@"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "iPhone App Store 截圖"
+            "value" : "倉庫已克隆到本地，但匯入專案列表失敗：%@"
           }
         }
       }
     },
-    "Left: title, subtitle and features. Right: product image" : {
-
-    },
-    "Mac App Store Screenshots" : {
-
-    },
-    "Mac App Store 截图" : {
-      "extractionState" : "stale",
+    "Repository Name" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mac App Store Screenshots"
+            "value" : "Repository Name"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mac App Store 截图"
+            "value" : "仓库名称"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mac App Store 截圖"
+            "value" : "倉庫名稱"
           }
         }
       }
     },
-    "Minimal Style" : {
-
-    },
-    "New Banner" : {
+    "Save and Retry" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "New Banner"
+            "value" : "Save and Retry"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "新建横幅"
+            "value" : "保存并重试"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "新建橫幅"
+            "value" : "儲存並重試"
           }
         }
       }
     },
-    "New Banner file added" : {
-
-    },
-    "No access to Downloads folder" : {
-
-    },
-    "No Banners available" : {
-
-    },
-    "Only successfully generated %d/%d files" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Only successfully generated %1$d/%2$d files"
-          }
-        }
-      }
-    },
-    "Only successfully generated %d/%d screenshots" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Only successfully generated %1$d/%2$d screenshots"
-          }
-        }
-      }
-    },
-    "Successfully generated %d App Store screenshots" : {
-
-    },
-    "Successfully generated %d iPhone App Store screenshots" : {
-
-    },
-    "Successfully generated %d PNG files" : {
-
-    },
-    "Title Settings" : {
-
-    },
-    "下载 标准 PNG" : {
-      "extractionState" : "stale",
+    "Search Repositories" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Download Standard PNG"
+            "value" : "Search Repositories"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "下载 标准 PNG"
+            "value" : "搜索仓库"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "下載 標準 PNG"
+            "value" : "搜尋倉庫"
           }
         }
       }
     },
-    "创建Banner失败：%@" : {
-      "extractionState" : "stale",
+    "Target directory exists but is empty. Cloning directly into it is allowed." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Failed to create banner: %@"
+            "value" : "Target directory exists but is empty. Cloning directly into it is allowed."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "创建 Banner 失败：%@"
+            "value" : "目标目录已存在但为空，允许直接克隆到该目录。"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "建立 Banner 失敗：%@"
+            "value" : "目標目錄已存在但為空，允許直接克隆到該目錄。"
           }
         }
       }
     },
-    "创建目标目录失败：%@" : {
-      "extractionState" : "stale",
+    "Token will be saved via the current Git credential helper. Repository list comes from GitHub/GitHub Enterprise API." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Failed to create target directory: %@"
+            "value" : "Token will be saved via the current Git credential helper. Repository list comes from GitHub/GitHub Enterprise API."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "创建目标目录失败：%@"
+            "value" : "Token 会通过当前 Git credential helper 保存，仓库列表来自 GitHub/GitHub Enterprise API。"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "建立目標目錄失敗：%@"
+            "value" : "Token 會透過當前 Git credential helper 儲存，倉庫列表來自 GitHub/GitHub Enterprise API。"
           }
         }
       }
     },
-    "删除" : {
-      "extractionState" : "stale",
+    "Username" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Delete"
+            "value" : "Username"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "删除"
+            "value" : "用户名"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "刪除"
+            "value" : "用戶名"
           }
         }
       }
     },
-    "删除Banner失败：%@" : {
-      "extractionState" : "stale",
+    "View SSH Handling" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Failed to delete banner: %@"
+            "value" : "View SSH Handling"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "删除Banner失败：%@"
+            "value" : "查看 SSH 处理方式"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "刪除 Banner 失敗：%@"
+            "value" : "查看 SSH 處理方式"
           }
         }
       }
     },
-    "只成功生成了 %d/%d 个截图" : {
-      "extractionState" : "stale",
+    "Will use: %@" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Only %d/%d screenshots generated successfully"
+            "value" : "Will use: %@"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "只成功生成了 %d/%d 个截图"
+            "value" : "将使用：%@"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "只成功生成了 %d/%d 個截圖"
-          }
-        }
-      }
-    },
-    "只成功生成了 %d/%d 个文件" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Only %d/%d files generated successfully"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "只成功生成了 %d/%d 个文件"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "只成功生成了 %d/%d 個檔案"
-          }
-        }
-      }
-    },
-    "居中布局，简洁优雅" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Centered layout, clean and elegant"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "居中布局，简洁优雅"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "居中佈局，簡潔優雅"
-          }
-        }
-      }
-    },
-    "左侧标题副标题和特性，右侧产品图片" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Left title subtitle and features, right product image"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "左侧标题副标题和特性，右侧产品图片"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "左側標題副標題和特性，右側產品圖片"
-          }
-        }
-      }
-    },
-    "已删除" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Deleted"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "已删除"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "已刪除"
-          }
-        }
-      }
-    },
-    "已添加新的Banner文件" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "New banner file added"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "已添加新的 Banner 文件"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "已添加新的 Banner 檔案"
-          }
-        }
-      }
-    },
-    "成功生成 %d 个App Store截图" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Successfully generated %d App Store screenshots"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "成功生成 %d 个App Store截图"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "成功生成 %d 個 App Store 截圖"
-          }
-        }
-      }
-    },
-    "成功生成 %d 个iPhone App Store截图" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Successfully generated %d iPhone App Store screenshots"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "成功生成 %d 个iPhone App Store截图"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "成功生成 %d 個 iPhone App Store 截圖"
-          }
-        }
-      }
-    },
-    "成功生成 %d 个PNG文件" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Successfully generated %d PNG files"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "成功生成 %d 个PNG文件"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "成功生成 %d 個 PNG 檔案"
-          }
-        }
-      }
-    },
-    "无权访问下载文件夹" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No permission to access downloads folder"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "无权访问下载文件夹"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "無權存取下載資料夾"
-          }
-        }
-      }
-    },
-    "正在生成 %@ (%d/%d)..." : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Generating %@ (%d/%d)..."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "正在生成 %@ (%d/%d)..."
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "正在生成 %@ (%d/%d)..."
-          }
-        }
-      }
-    },
-    "正在生成App Store截图..." : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Generating App Store screenshots..."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "正在生成App Store截图..."
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "正在生成 App Store 截圖..."
-          }
-        }
-      }
-    },
-    "正在生成iPhone App Store截图..." : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Generating iPhone App Store screenshots..."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "正在生成iPhone App Store截图..."
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "正在生成 iPhone App Store 截圖..."
-          }
-        }
-      }
-    },
-    "正在生成标准PNG..." : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Generating standard PNG..."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "正在生成标准PNG..."
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "正在生成標準 PNG..."
-          }
-        }
-      }
-    },
-    "没有可用的Banner" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No banners available"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "没有可用的Banner"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "沒有可用的 Banner"
-          }
-        }
-      }
-    },
-    "生成PNG %@ 失败: %@" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Failed to generate PNG %@: %@"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "生成PNG %@ 失败: %@"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "生成 PNG %@ 失敗: %@"
-          }
-        }
-      }
-    },
-    "生成截图 %@ 失败: %@" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Failed to generate screenshot %@: %@"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "生成截图 %@ 失败: %@"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "生成截圖 %@ 失敗: %@"
-          }
-        }
-      }
-    },
-    "简约风格" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Minimalist Style"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "简约风格"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "簡約風格"
-          }
-        }
-      }
-    },
-    "经典布局" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Classic Layout"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "经典布局"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "經典佈局"
-          }
-        }
-      }
-    },
-    "请先选择一个Banner" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Please select a banner first"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "请先选择一个Banner"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "請先選擇一個 Banner"
+            "value" : "將使用：%@"
           }
         }
       }

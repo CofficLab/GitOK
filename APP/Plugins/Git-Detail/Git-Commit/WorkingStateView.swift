@@ -96,24 +96,24 @@ struct WorkingStateView: View, SuperLog {
             VStack(alignment: .leading, spacing: 2) {
                 if changedFileCount == 0 {
                     // 工作区干净
-                    Text("工作区干净", tableName: "GitCommit")
+                    Text(String(localized: "Working Tree Clean", table: "GitCommit"))
                         .font(.system(size: 14, weight: .medium))
 
                     if unpulledCount > 0 {
-                        Text("远程有 \(unpulledCount) 个提交可拉取", tableName: "GitCommit")
+                        Text("\(unpulledCount) remote commits available to pull", tableName: "GitCommit")
                             .font(.system(size: 11))
                             .foregroundColor(.secondary)
                     } else {
-                        Text("所有更改已提交", tableName: "GitCommit")
+                        Text(String(localized: "All Changes Committed", table: "GitCommit"))
                             .font(.system(size: 11))
                             .foregroundColor(.secondary)
                     }
                 } else {
                     // 有未提交文件
-                    Text("当前状态", tableName: "GitCommit")
+                    Text(String(localized: "Current Status", table: "GitCommit"))
                         .font(.system(size: 14, weight: .medium))
 
-                    Text("(\(changedFileCount)) 未提交", tableName: "GitCommit")
+                    Text("(\(changedFileCount)) Uncommitted", tableName: "GitCommit")
                         .font(.system(size: 11))
                         .foregroundColor(.secondary)
                 }
@@ -128,7 +128,7 @@ struct WorkingStateView: View, SuperLog {
                     ProgressView()
                         .controlSize(.small)
                         .scaleEffect(0.8)
-                    Text("刷新中", tableName: "GitCommit")
+                    Text("Refreshing", tableName: "GitCommit")
                         .font(.system(size: 12, weight: .medium))
                         .foregroundColor(.secondary)
                 }
@@ -199,7 +199,7 @@ struct WorkingStateView: View, SuperLog {
     /// 下载按钮（执行 git pull）
     private var downloadButton: some View {
         AppButton(
-            LocalizedStringKey(isPulling ? "拉取中..." : "拉取"),
+            LocalizedStringKey(isPulling ? "Pulling..." : "Pull"),
             systemImage: isPulling ? nil : "arrow.down.circle.fill",
             style: .tonal,
             size: .small
@@ -207,13 +207,13 @@ struct WorkingStateView: View, SuperLog {
             performPull()
         }
         .disabled(isPulling)
-        .help(String(localized: "点击执行 git pull 拉取远程提交", table: "GitCommit"))
+        .help(String(localized: "Click to run git pull and fetch remote commits", table: "GitCommit"))
     }
 
     /// 上传按钮（执行 git push）
     private var uploadButton: some View {
         AppButton(
-            LocalizedStringKey(isPushing ? "推送中..." : "推送"),
+            LocalizedStringKey(isPushing ? "Pushing..." : "Push"),
             systemImage: isPushing ? nil : "arrow.up.circle.fill",
             style: .tonal,
             size: .small
@@ -221,7 +221,7 @@ struct WorkingStateView: View, SuperLog {
             performPush()
         }
         .disabled(isPushing)
-        .help(String(localized: "点击执行 git push 推送本地提交", table: "GitCommit"))
+        .help(String(localized: "Click to run git push and push local commits", table: "GitCommit"))
     }
 }
 
@@ -235,7 +235,7 @@ extension WorkingStateView {
         }
 
         await MainActor.run {
-            data.activityStatus = String(localized: "刷新文件列表…", table: "GitCommit")
+            data.activityStatus = String(localized: "Refresh File List…", table: "GitCommit")
             isRefreshingFileList = true
         }
 
@@ -272,7 +272,7 @@ extension WorkingStateView {
         }
 
         // 设置活动状态
-        setStatus(String(localized: "检查远程状态…", table: "GitCommit"))
+        setStatus(String(localized: "Checking Remote Status…", table: "GitCommit"))
 
         // 使用 Task.detached 确保在后台执行，不继承 actor 上下文
         Task.detached(priority: .userInitiated) {
@@ -349,7 +349,7 @@ extension WorkingStateView {
         isPulling = true
 
         // 设置状态日志
-        setStatus(String(localized: "拉取中…", table: "GitCommit"))
+        setStatus(String(localized: "Pulling…", table: "GitCommit"))
 
         // 使用 Task.detached 确保在后台执行
         Task.detached(priority: .userInitiated) {
@@ -416,7 +416,7 @@ extension WorkingStateView {
         isPushing = true
 
         // 设置状态日志
-        setStatus("推送中…")
+        setStatus(String(localized: "Pushing…", table: "GitCommit"))
 
         // 使用 Task.detached 确保在后台执行
         Task.detached(priority: .userInitiated) {
@@ -439,7 +439,7 @@ extension WorkingStateView {
                 let backoffDelays: [UInt64] = [2_000_000_000, 4_000_000_000] // 2s, 4s
                 for (attempt, delay) in backoffDelays.enumerated() {
                     await MainActor.run {
-                        self.setStatus("网络波动，重试中 (\(attempt + 1)/\(backoffDelays.count))…")
+                        self.setStatus(String(localized: "Network fluctuation, retrying (\(attempt + 1)/\(backoffDelays.count))…", table: "GitCommit"))
                     }
 
                     try? await Task.sleep(nanoseconds: delay)
@@ -464,7 +464,7 @@ extension WorkingStateView {
                 // 3️⃣ CLI 回退（静默降级）
                 if GitRepositoryCLI.isGitCLIAvailable() {
                     await MainActor.run {
-                        self.setStatus("正在通过系统 Git 推送…")
+                        self.setStatus(String(localized: "Pushing via system Git…", table: "GitCommit"))
                     }
 
                     do {
@@ -521,13 +521,13 @@ extension WorkingStateView {
     /// 网络错误降级全部失败后，引导用户选择备选方案
     private func showNetworkErrorFallback() {
         let alert = NSAlert()
-        alert.messageText = String(localized: "推送失败", table: "GitCommit")
-        alert.informativeText = String(localized: "网络连接异常，已自动重试但仍未成功。你可以尝试以下方案：", table: "GitCommit")
+        alert.messageText = String(localized: "Push Failed", table: "GitCommit")
+        alert.informativeText = String(localized: "Network connection error, auto-retry failed. You can try:", table: "GitCommit")
         alert.alertStyle = .warning
 
-        alert.addButton(withTitle: String(localized: "重试", table: "GitCommit"))
-        alert.addButton(withTitle: String(localized: "切换 SSH 推送", table: "GitCommit"))
-        alert.addButton(withTitle: String(localized: "取消", table: "GitCommit"))
+        alert.addButton(withTitle: String(localized: "Retry", table: "GitCommit"))
+        alert.addButton(withTitle: String(localized: "Toggle SSH Push", table: "GitCommit"))
+        alert.addButton(withTitle: String(localized: "Cancel", table: "GitCommit"))
 
         let response = alert.runModal()
 

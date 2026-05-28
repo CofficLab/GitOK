@@ -42,7 +42,7 @@ struct CommitInfoUser: View, SuperLog {
             ) {
                 showingPopup = true
             }
-            .help(String(localized: "点击查看用户信息", table: "GitCommit"))
+            .help(String(localized: "Click to view user info", table: "GitCommit"))
             .popover(isPresented: $showingPopup, arrowEdge: .bottom) {
                 /// 直接使用 avatarUser
                 if let user = avatarUser {
@@ -51,7 +51,7 @@ struct CommitInfoUser: View, SuperLog {
                         .background(Color(nsColor: .windowBackgroundColor))
                 } else {
                     /// 只有在真的没有用户时才显示这个
-                    Text("未找到用户信息", tableName: "GitCommit")
+                    Text("User info not found", tableName: "GitCommit")
                         .frame(width: 200, height: 100)
                 }
             }

@@ -17,7 +17,7 @@ struct BtnOpenXcodeView: View {
                 .inButtonWithAction {
                     project.url.openInXcode()
                 }
-                .help("用 Xcode 打开")
+                .help(String(localized: "Open in Xcode"))
                 .toolbarButtonStyle()
         }
     }

@@ -55,13 +55,13 @@ struct BranchForm: View, SuperLog {
         if project != nil {
             ScrollView {
             VStack(spacing: 16) {
-                // 新建分支区域
+                // New branch area
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("新建分支", tableName: "GitBranch")
+                    Text(String(localized: "New Branch", table: "GitBranch"))
                         .font(.headline)
                     
                     HStack(spacing: 8) {
-                        TextField(String(localized: "分支名称", table: "GitBranch"), text: $newBranchName)
+                        TextField(String(localized: "Branch name", table: "GitBranch"), text: $newBranchName)
                             .textFieldStyle(RoundedBorderTextFieldStyle())
                         
                         Image.add.inButtonWithAction {
@@ -72,12 +72,12 @@ struct BranchForm: View, SuperLog {
                 
                 Divider()
 
-                TextField("搜索分支", text: $searchText)
+                TextField(String(localized: "Search branches", table: "GitBranch"), text: $searchText)
                     .textFieldStyle(.roundedBorder)
                 
                 // 分支列表
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("切换分支", tableName: "GitBranch")
+                    Text(String(localized: "Switch Branch", table: "GitBranch"))
                         .font(.headline)
                     
                     if isLoading {
@@ -89,7 +89,7 @@ struct BranchForm: View, SuperLog {
                         }
                         .frame(height: 60)
                     } else if filteredBranches.isEmpty {
-                        Text("暂无分支", tableName: "GitBranch")
+                        Text(String(localized: "No branches yet", table: "GitBranch"))
                             .font(.caption)
                             .foregroundColor(.secondary)
                             .frame(maxWidth: .infinity, alignment: .center)
@@ -131,7 +131,7 @@ struct BranchForm: View, SuperLog {
                     Divider()
 
                     VStack(alignment: .leading, spacing: 8) {
-                        Text("远程分支", tableName: "GitBranch")
+                        Text(String(localized: "Remote Branches", table: "GitBranch"))
                             .font(.headline)
 
                         ScrollView {
@@ -183,56 +183,56 @@ struct BranchForm: View, SuperLog {
             .sheet(item: $branchToSetUpstream) { branch in
                 upstreamSheet(branch)
             }
-            .alert("确认取消 upstream", isPresented: Binding(
+            .alert(String(localized: "Confirm Unset Upstream", table: "GitBranch"), isPresented: Binding(
                 get: { branchToUnsetUpstream != nil },
                 set: { if !$0 { branchToUnsetUpstream = nil } }
             )) {
-                Button("取消", role: .cancel) {
+                Button(String(localized: "Cancel", table: "GitBranch"), role: .cancel) {
                     branchToUnsetUpstream = nil
                 }
-                Button("确认", role: .destructive) {
+                Button(String(localized: "Confirm", table: "GitBranch"), role: .destructive) {
                     if let branch = branchToUnsetUpstream {
                         unsetUpstream(branch)
                     }
                     branchToUnsetUpstream = nil
                 }
             } message: {
-                Text("取消后该分支不会再显示 ahead/behind 对比。")
+                Text(String(localized: "After unsetting, this branch will no longer show ahead/behind comparison.", table: "GitBranch"))
             }
-            .alert("确认删除远程分支", isPresented: $showDeleteRemoteBranchAlert) {
-                Button("取消", role: .cancel) {
+            .alert(String(localized: "Confirm Delete Remote Branch", table: "GitBranch"), isPresented: $showDeleteRemoteBranchAlert) {
+                Button(String(localized: "Cancel", table: "GitBranch"), role: .cancel) {
                     remoteBranchToDelete = nil
                 }
-                Button("删除", role: .destructive) {
+                Button(String(localized: "Delete", table: "GitBranch"), role: .destructive) {
                     if let branchName = remoteBranchToDelete {
                         deleteRemoteBranch(branchName)
                     }
                     remoteBranchToDelete = nil
                 }
             } message: {
-                Text("确定要删除远程分支 \"\(remoteBranchToDelete ?? "")\" 吗？该操作会推送删除请求到远端。")
+                Text(String(localized: "Are you sure you want to delete remote branch \"\(remoteBranchToDelete ?? "")\"? This will push a delete request to the remote.", table: "GitBranch"))
             }
         }
     }
 
     private func renameSheet(_ branch: GitBranch) -> some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("重命名分支")
+            Text(String(localized: "Rename Branch", table: "GitBranch"))
                 .font(.headline)
 
             Text(branch.name)
                 .font(.caption)
                 .foregroundColor(.secondary)
 
-            TextField("新分支名称", text: $renameBranchName)
+            TextField(String(localized: "New branch name", table: "GitBranch"), text: $renameBranchName)
                 .textFieldStyle(.roundedBorder)
 
             HStack {
                 Spacer()
-                Button("取消") {
+                Button(String(localized: "Cancel", table: "GitBranch")) {
                     branchToRename = nil
                 }
-                Button("重命名") {
+                Button(String(localized: "Rename", table: "GitBranch")) {
                     renameBranch(branch)
                     branchToRename = nil
                 }
@@ -245,7 +245,7 @@ struct BranchForm: View, SuperLog {
 
     private func upstreamSheet(_ branch: GitBranch) -> some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("设置 upstream")
+            Text(String(localized: "Set Upstream", table: "GitBranch"))
                 .font(.headline)
 
             Text(branch.name)
@@ -253,11 +253,11 @@ struct BranchForm: View, SuperLog {
                 .foregroundColor(.secondary)
 
             if remoteBranches.isEmpty {
-                Text("暂无远程分支，请先 fetch 或添加远程仓库。")
+                Text(String(localized: "No remote branches available. Fetch or add a remote first.", table: "GitBranch"))
                     .font(.caption)
                     .foregroundColor(.secondary)
             } else {
-                Picker("上游分支", selection: $selectedUpstreamBranch) {
+                Picker(String(localized: "Upstream branch", table: "GitBranch"), selection: $selectedUpstreamBranch) {
                     ForEach(remoteBranches, id: \.self) { branchName in
                         Text(branchName).tag(branchName)
                     }
@@ -266,10 +266,10 @@ struct BranchForm: View, SuperLog {
 
             HStack {
                 Spacer()
-                Button("取消") {
+                Button(String(localized: "Cancel", table: "GitBranch")) {
                     branchToSetUpstream = nil
                 }
-                Button("设置") {
+                Button(String(localized: "Set", table: "GitBranch")) {
                     setUpstream(branch, upstreamBranch: selectedUpstreamBranch)
                     branchToSetUpstream = nil
                 }
@@ -282,7 +282,7 @@ struct BranchForm: View, SuperLog {
 
     private var compareSection: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text("分支比较")
+            Text(String(localized: "Branch Compare", table: "GitBranch"))
                 .font(.headline)
 
             Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 8) {
@@ -336,7 +336,7 @@ struct BranchForm: View, SuperLog {
             } else if let branchCompare {
                 compareResultView(branchCompare)
             } else {
-                Text("选择 base/head 后查看 ahead/behind、提交与文件变化。")
+                Text(String(localized: "Select base/head to view ahead/behind counts, commits, and file changes.", table: "GitBranch"))
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
@@ -349,25 +349,25 @@ struct BranchForm: View, SuperLog {
     private func compareResultView(_ compare: GitCoreKit.GitBranchCompare) -> some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 12) {
-                Text("Ahead \(compare.ahead)")
+                Text(String(localized: "Ahead \(compare.ahead)", table: "GitBranch"))
                     .font(.caption)
                     .foregroundColor(.green)
-                Text("Behind \(compare.behind)")
+                Text(String(localized: "Behind \(compare.behind)", table: "GitBranch"))
                     .font(.caption)
                     .foregroundColor(.orange)
-                Text("\(compare.files.count) 个文件")
+                Text(String(localized: "\(compare.files.count) files", table: "GitBranch"))
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
 
             if compare.commits.isEmpty && compare.files.isEmpty {
-                Text("两个分支没有差异。")
+                Text(String(localized: "No differences between the two branches.", table: "GitBranch"))
                     .font(.caption)
                     .foregroundColor(.secondary)
             } else {
                 if compare.commits.isEmpty == false {
                     VStack(alignment: .leading, spacing: 4) {
-                        Text("Head 独有提交")
+                        Text(String(localized: "Head unique commits", table: "GitBranch"))
                             .font(.caption)
                             .foregroundColor(.secondary)
 
@@ -386,7 +386,7 @@ struct BranchForm: View, SuperLog {
 
                 if compare.files.isEmpty == false {
                     VStack(alignment: .leading, spacing: 4) {
-                        Text("变更文件")
+                        Text(String(localized: "Changed files", table: "GitBranch"))
                             .font(.caption)
                             .foregroundColor(.secondary)
 
@@ -407,21 +407,21 @@ struct BranchForm: View, SuperLog {
                 Button {
                     mergeComparedBranches()
                 } label: {
-                    Text("合并 Head 到 Base")
+                    Text(String(localized: "Merge Head into Base", table: "GitBranch"))
                 }
                 .disabled(compareBaseBranch == nil || compareHeadBranch == nil || compare.ahead == 0)
 
                 Button {
                     startComparedRebase()
                 } label: {
-                    Text("Rebase Head 到 Base")
+                    Text(String(localized: "Rebase Head onto Base", table: "GitBranch"))
                 }
                 .disabled(compareBaseBranch == nil || compareHeadBranch == nil || compare.ahead == 0 || rebaseStatus.isRebasing)
 
                 Button {
                     cherryPickComparedCommits()
                 } label: {
-                    Text("Cherry-pick Head 到 Base")
+                    Text(String(localized: "Cherry-pick Head into Base", table: "GitBranch"))
                 }
                 .disabled(compareBaseBranch == nil || compareHeadBranch == nil || compare.commits.isEmpty || cherryPickStatus.isCherryPicking)
 
@@ -434,7 +434,7 @@ struct BranchForm: View, SuperLog {
     private func pullRequestActions(compare: GitCoreKit.GitBranchCompare) -> some View {
         if let links = pullRequestLinks() {
             VStack(alignment: .leading, spacing: 6) {
-                Text("Pull Request")
+                Text(String(localized: "Pull Request", table: "GitBranch"))
                     .font(.caption)
                     .foregroundColor(.secondary)
 
@@ -442,24 +442,24 @@ struct BranchForm: View, SuperLog {
                     Button {
                         links.createURL.openInBrowser()
                     } label: {
-                        Text("创建 PR")
+                        Text(String(localized: "Create PR", table: "GitBranch"))
                     }
                     .disabled(compare.ahead == 0)
-                    .help("在 \(links.provider.rawValue) 打开 base/head 创建页面")
+                    .help(String(localized: "Open base/head creation page on \(links.provider.rawValue)", table: "GitBranch"))
 
                     Button {
                         links.branchURL.openInBrowser()
                     } label: {
-                        Text("打开当前分支 PR")
+                        Text(String(localized: "Open Branch PR", table: "GitBranch"))
                     }
-                    .help("在 \(links.provider.rawValue) 查找 head 分支相关 PR")
+                    .help(String(localized: "Find head branch related PR on \(links.provider.rawValue)", table: "GitBranch"))
 
                     Button {
                         links.listURL.openInBrowser()
                     } label: {
-                        Text("PR 列表")
+                        Text(String(localized: "PR List", table: "GitBranch"))
                     }
-                    .help("打开远程仓库 Pull Request 列表")
+                    .help(String(localized: "Open remote repository Pull Request list", table: "GitBranch"))
 
                     Button {
                         copyPullRequestURL(links.createURL)
@@ -468,42 +468,42 @@ struct BranchForm: View, SuperLog {
                     }
                     .buttonStyle(.borderless)
                     .disabled(compare.ahead == 0)
-                    .help("复制创建 PR 链接")
+                    .help(String(localized: "Copy create PR link", table: "GitBranch"))
                 }
 
                 HStack(spacing: 8) {
-                    Label("Review / 通知", systemImage: "bell.badge")
+                    Label(String(localized: "Review / Notifications", table: "GitBranch"), systemImage: "bell.badge")
                         .font(.caption)
                         .foregroundColor(.secondary)
 
                     Button {
                         links.reviewRequestsURL.openInBrowser()
                     } label: {
-                        Text("Review 请求")
+                        Text(String(localized: "Review Requests", table: "GitBranch"))
                     }
-                    .help("在 \(links.provider.rawValue) 打开与当前账号相关的 PR review 请求筛选页")
+                    .help(String(localized: "Open PR review requests for current account on \(links.provider.rawValue)", table: "GitBranch"))
 
                     Button {
                         links.commentsURL.openInBrowser()
                     } label: {
-                        Text("评论")
+                        Text(String(localized: "Comments", table: "GitBranch"))
                     }
-                    .help("打开 PR 评论或活动相关筛选页")
+                    .help(String(localized: "Open PR comments or activity filter page", table: "GitBranch"))
 
                     Button {
                         links.notificationsURL.openInBrowser()
                     } label: {
-                        Text("通知")
+                        Text(String(localized: "Notifications", table: "GitBranch"))
                     }
-                    .help("打开 \(links.provider.rawValue) 的 PR 通知或活动入口")
+                    .help(String(localized: "Open \(links.provider.rawValue) PR notifications or activity page", table: "GitBranch"))
                 }
 
-                Text("未读状态需要平台账号/API 授权；当前入口会跳转到托管平台的通知、review 和评论筛选页。")
+                Text(String(localized: "Unread status requires platform account/API authorization; current entries will redirect to the hosting platform's notification, review, and comment filter pages.", table: "GitBranch"))
                     .font(.caption2)
                     .foregroundColor(.secondary)
             }
         } else {
-            Text("当前 remote 暂不支持生成 Pull Request 链接。")
+            Text(String(localized: "The current remote does not support generating Pull Request links.", table: "GitBranch"))
                 .font(.caption)
                 .foregroundColor(.secondary)
         }
@@ -513,7 +513,7 @@ struct BranchForm: View, SuperLog {
         Group {
             if rebaseStatus.isRebasing {
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("Rebase 进行中")
+                    Text(String(localized: "Rebase in progress", table: "GitBranch"))
                         .font(.caption)
                         .foregroundColor(.orange)
 
@@ -530,12 +530,12 @@ struct BranchForm: View, SuperLog {
                     }
 
                     HStack {
-                        Button("继续 Rebase") {
+                        Button(String(localized: "Continue Rebase", table: "GitBranch")) {
                             continueRebase()
                         }
                         .disabled(isRebaseActionRunning)
 
-                        Button("中止 Rebase", role: .destructive) {
+                        Button(String(localized: "Abort Rebase", table: "GitBranch"), role: .destructive) {
                             abortRebase()
                         }
                         .disabled(isRebaseActionRunning)
@@ -550,7 +550,7 @@ struct BranchForm: View, SuperLog {
         Group {
             if cherryPickStatus.isCherryPicking {
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("Cherry-pick 进行中")
+                    Text(String(localized: "Cherry-pick in progress", table: "GitBranch"))
                         .font(.caption)
                         .foregroundColor(.orange)
 
@@ -561,12 +561,12 @@ struct BranchForm: View, SuperLog {
                     }
 
                     HStack {
-                        Button("继续 Cherry-pick") {
+                        Button(String(localized: "Continue Cherry-pick", table: "GitBranch")) {
                             continueCherryPick()
                         }
                         .disabled(isCherryPickActionRunning)
 
-                        Button("中止 Cherry-pick", role: .destructive) {
+                        Button(String(localized: "Abort Cherry-pick", table: "GitBranch"), role: .destructive) {
                             abortCherryPick()
                         }
                         .disabled(isCherryPickActionRunning)
@@ -597,7 +597,7 @@ extension BranchForm {
                     self.isCreating = false
                     self.newBranchName = ""
                     let msg = String.localizedStringWithFormat(
-                        String(localized: "已创建并切换到分支: %@", table: "GitBranch"),
+                        String(localized: "Created and switched to branch: %@", table: "GitBranch"),
                         branchName
                     )
                     alert_info(msg)
@@ -606,9 +606,9 @@ extension BranchForm {
             } catch {
                 await MainActor.run {
                     self.isCreating = false
-                    os_log(.error, "❌ 创建分支失败: \(error.localizedDescription)")
+                    os_log(.error, "❌ Failed to create branch: \(error.localizedDescription)")
                     let msg = String.localizedStringWithFormat(
-                        String(localized: "创建分支失败: %@", table: "GitBranch"),
+                        String(localized: "Failed to create branch: %@", table: "GitBranch"),
                         error.localizedDescription
                     )
                     alert_error(msg)
@@ -627,7 +627,7 @@ extension BranchForm {
                 await MainActor.run {
                     self.selectedBranch = branch
                     let msg = String.localizedStringWithFormat(
-                        String(localized: "已切换到分支: %@", table: "GitBranch"),
+                        String(localized: "Switched to branch: %@", table: "GitBranch"),
                         branch.name
                     )
                     alert_info(msg)
@@ -637,7 +637,7 @@ extension BranchForm {
                 await MainActor.run {
                     os_log(.error, "❌ 切换分支失败: \(error.localizedDescription)")
                     let msg = String.localizedStringWithFormat(
-                        String(localized: "切换分支失败: %@", table: "GitBranch"),
+                        String(localized: "Failed to switch branch: %@", table: "GitBranch"),
                         error.localizedDescription
                     )
                     alert_error(msg)
@@ -649,7 +649,7 @@ extension BranchForm {
     private func deleteBranch(_ branch: GitBranch) {
         guard let project = project else { return }
         guard selectedBranch?.id != branch.id else {
-            alert_error("不能删除当前分支")
+            alert_error(String(localized: "Cannot delete the current branch", table: "GitBranch"))
             return
         }
 
@@ -659,7 +659,7 @@ extension BranchForm {
 
                 await MainActor.run {
                     let msg = String.localizedStringWithFormat(
-                        String(localized: "已删除分支: %@", table: "GitBranch"),
+                        String(localized: "Branch deleted: %@", table: "GitBranch"),
                         branch.name
                     )
                     alert_info(msg)
@@ -669,7 +669,7 @@ extension BranchForm {
                 await MainActor.run {
                     os_log(.error, "❌ 删除分支失败: \(error.localizedDescription)")
                     let msg = String.localizedStringWithFormat(
-                        String(localized: "删除分支失败: %@", table: "GitBranch"),
+                        String(localized: "Failed to delete branch: %@", table: "GitBranch"),
                         error.localizedDescription
                     )
                     alert_error(msg)
@@ -694,14 +694,20 @@ extension BranchForm {
                 try project.renameBranch(branch, to: newName)
 
                 await MainActor.run {
-                    let msg = String.localizedStringWithFormat("已重命名分支: %@ -> %@", branch.name, newName)
+                    let msg = String.localizedStringWithFormat(
+                        String(localized: "Branch renamed: %@ -> %@", table: "GitBranch"),
+                        branch.name, newName
+                    )
                     alert_info(msg)
                     self.loadBranches()
                 }
             } catch {
                 await MainActor.run {
                     os_log(.error, "❌ 重命名分支失败: \(error.localizedDescription)")
-                    alert_error("重命名分支失败: \(error.localizedDescription)")
+                    alert_error(String.localizedStringWithFormat(
+                        String(localized: "Failed to rename branch: %@", table: "GitBranch"),
+                        error.localizedDescription
+                    ))
                 }
             }
         }
@@ -722,13 +728,19 @@ extension BranchForm {
                 try project.publishBranch(branch)
 
                 await MainActor.run {
-                    alert_info("已发布分支: \(branch.name)")
+                    alert_info(String.localizedStringWithFormat(
+                        String(localized: "Branch published: %@", table: "GitBranch"),
+                        branch.name
+                    ))
                     self.loadBranches()
                 }
             } catch {
                 await MainActor.run {
                     os_log(.error, "❌ 发布分支失败: \(error.localizedDescription)")
-                    alert_error("发布分支失败: \(error.localizedDescription)")
+                    alert_error(String.localizedStringWithFormat(
+                        String(localized: "Failed to publish branch: %@", table: "GitBranch"),
+                        error.localizedDescription
+                    ))
                 }
             }
         }
@@ -742,13 +754,19 @@ extension BranchForm {
                 try project.setUpstream(localBranch: branch, upstreamBranch: upstreamBranch)
 
                 await MainActor.run {
-                    alert_info("已设置 upstream: \(branch.name) -> \(upstreamBranch)")
+                    alert_info(String.localizedStringWithFormat(
+                        String(localized: "Upstream set: %@ -> %@", table: "GitBranch"),
+                        branch.name, upstreamBranch
+                    ))
                     self.loadBranches()
                 }
             } catch {
                 await MainActor.run {
                     os_log(.error, "❌ 设置 upstream 失败: \(error.localizedDescription)")
-                    alert_error("设置 upstream 失败: \(error.localizedDescription)")
+                    alert_error(String.localizedStringWithFormat(
+                        String(localized: "Failed to set upstream: %@", table: "GitBranch"),
+                        error.localizedDescription
+                    ))
                 }
             }
         }
@@ -762,13 +780,19 @@ extension BranchForm {
                 try project.unsetUpstream(localBranch: branch)
 
                 await MainActor.run {
-                    alert_info("已取消 upstream: \(branch.name)")
+                    alert_info(String.localizedStringWithFormat(
+                        String(localized: "Upstream unset for branch: %@", table: "GitBranch"),
+                        branch.name
+                    ))
                     self.loadBranches()
                 }
             } catch {
                 await MainActor.run {
                     os_log(.error, "❌ 取消 upstream 失败: \(error.localizedDescription)")
-                    alert_error("取消 upstream 失败: \(error.localizedDescription)")
+                    alert_error(String.localizedStringWithFormat(
+                        String(localized: "Failed to unset upstream: %@", table: "GitBranch"),
+                        error.localizedDescription
+                    ))
                 }
             }
         }
@@ -778,7 +802,7 @@ extension BranchForm {
         guard let project = project else { return }
         let parts = branchName.split(separator: "/", maxSplits: 1).map(String.init)
         guard parts.count == 2 else {
-            alert_error("远程分支格式无效")
+            alert_error(String(localized: "Invalid remote branch format", table: "GitBranch"))
             return
         }
 
@@ -787,13 +811,19 @@ extension BranchForm {
                 try project.deleteRemoteBranch(named: parts[1], remote: parts[0])
 
                 await MainActor.run {
-                    alert_info("已删除远程分支: \(branchName)")
+                    alert_info(String.localizedStringWithFormat(
+                        String(localized: "Remote branch deleted: %@", table: "GitBranch"),
+                        branchName
+                    ))
                     self.loadBranches()
                 }
             } catch {
                 await MainActor.run {
                     os_log(.error, "❌ 删除远程分支失败: \(error.localizedDescription)")
-                    alert_error("删除远程分支失败: \(error.localizedDescription)")
+                    alert_error(String.localizedStringWithFormat(
+                        String(localized: "Failed to delete remote branch: %@", table: "GitBranch"),
+                        error.localizedDescription
+                    ))
                 }
             }
         }
@@ -848,7 +878,7 @@ extension BranchForm {
     private func copyPullRequestURL(_ url: URL) {
         NSPasteboard.general.clearContents()
         NSPasteboard.general.setString(url.absoluteString, forType: .string)
-        alert_info("已复制 PR 链接")
+        alert_info(String(localized: "PR link copied", table: "GitBranch"))
     }
 
     private func mergeComparedBranches() {
@@ -862,14 +892,20 @@ extension BranchForm {
                 try project.mergeBranches(fromBranch: head, toBranch: base)
 
                 await MainActor.run {
-                    alert_info("已将 \(head.name) 合并到 \(base.name)")
+                    alert_info(String.localizedStringWithFormat(
+                        String(localized: "Merged %@ into %@", table: "GitBranch"),
+                        head.name, base.name
+                    ))
                     self.loadBranches()
                     self.loadCompare()
                 }
             } catch {
                 await MainActor.run {
                     os_log(.error, "❌ 分支比较合并失败: \(error.localizedDescription)")
-                    alert_error("分支比较合并失败: \(error.localizedDescription)")
+                    alert_error(String.localizedStringWithFormat(
+                        String(localized: "Branch merge failed: %@", table: "GitBranch"),
+                        error.localizedDescription
+                    ))
                 }
             }
         }
@@ -888,7 +924,10 @@ extension BranchForm {
                 try project.startRebase(branch: head, onto: base)
 
                 await MainActor.run {
-                    alert_info("已将 \(head.name) rebase 到 \(base.name)")
+                    alert_info(String.localizedStringWithFormat(
+                        String(localized: "Rebased %@ onto %@", table: "GitBranch"),
+                        head.name, base.name
+                    ))
                     self.isRebaseActionRunning = false
                     self.loadBranches()
                     self.loadRebaseStatus()
@@ -903,9 +942,12 @@ extension BranchForm {
                         self.rebaseStatus = status
                     }
                     if status?.isRebasing == true {
-                        alert_error("Rebase 遇到冲突，请解决并暂存文件后继续。")
+                        alert_error(String(localized: "Rebase encountered conflicts. Please resolve and stage the files before continuing.", table: "GitBranch"))
                     } else {
-                        alert_error("Rebase 失败: \(error.localizedDescription)")
+                        alert_error(String.localizedStringWithFormat(
+                            String(localized: "Rebase failed: %@", table: "GitBranch"),
+                            error.localizedDescription
+                        ))
                     }
                     self.loadBranches()
                 }
@@ -925,7 +967,7 @@ extension BranchForm {
                 await MainActor.run {
                     self.rebaseStatus = status
                     self.isRebaseActionRunning = false
-                    alert_info(status.isRebasing ? "Rebase 已继续，仍有步骤待处理" : "Rebase 已完成")
+                    alert_info(status.isRebasing ? String(localized: "Rebase continued, steps remaining", table: "GitBranch") : String(localized: "Rebase completed", table: "GitBranch"))
                     self.loadBranches()
                     self.loadCompare()
                 }
@@ -937,7 +979,10 @@ extension BranchForm {
                         self.rebaseStatus = status
                     }
                     self.isRebaseActionRunning = false
-                    alert_error("继续 Rebase 失败: \(error.localizedDescription)")
+                    alert_error(String.localizedStringWithFormat(
+                        String(localized: "Failed to continue rebase: %@", table: "GitBranch"),
+                        error.localizedDescription
+                    ))
                     self.loadBranches()
                 }
             }
@@ -955,14 +1000,17 @@ extension BranchForm {
                 await MainActor.run {
                     self.rebaseStatus = .inactive
                     self.isRebaseActionRunning = false
-                    alert_info("已中止 Rebase")
+                    alert_info(String(localized: "Rebase aborted", table: "GitBranch"))
                     self.loadBranches()
                     self.loadCompare()
                 }
             } catch {
                 await MainActor.run {
                     self.isRebaseActionRunning = false
-                    alert_error("中止 Rebase 失败: \(error.localizedDescription)")
+                    alert_error(String.localizedStringWithFormat(
+                        String(localized: "Failed to abort rebase: %@", table: "GitBranch"),
+                        error.localizedDescription
+                    ))
                     self.loadRebaseStatus()
                 }
             }
@@ -984,7 +1032,10 @@ extension BranchForm {
 
                 await MainActor.run {
                     self.isCherryPickActionRunning = false
-                    alert_info("已 Cherry-pick \(commitHashes.count) 个提交到 \(base.name)")
+                    alert_info(String.localizedStringWithFormat(
+                        String(localized: "Cherry-picked %d commits into %@", table: "GitBranch"),
+                        commitHashes.count, base.name
+                    ))
                     self.loadBranches()
                     self.loadCherryPickStatus()
                     self.loadCompare()
@@ -998,9 +1049,12 @@ extension BranchForm {
                         self.cherryPickStatus = status
                     }
                     if status?.isCherryPicking == true {
-                        alert_error("Cherry-pick 遇到冲突，请解决并暂存文件后继续。")
+                        alert_error(String(localized: "Cherry-pick encountered conflicts. Please resolve and stage the files before continuing.", table: "GitBranch"))
                     } else {
-                        alert_error("Cherry-pick 失败: \(error.localizedDescription)")
+                        alert_error(String.localizedStringWithFormat(
+                            String(localized: "Cherry-pick failed: %@", table: "GitBranch"),
+                            error.localizedDescription
+                        ))
                     }
                     self.loadBranches()
                 }
@@ -1020,7 +1074,7 @@ extension BranchForm {
                 await MainActor.run {
                     self.cherryPickStatus = status
                     self.isCherryPickActionRunning = false
-                    alert_info(status.isCherryPicking ? "Cherry-pick 已继续，仍有提交待处理" : "Cherry-pick 已完成")
+                    alert_info(status.isCherryPicking ? String(localized: "Cherry-pick continued, commits remaining", table: "GitBranch") : String(localized: "Cherry-pick completed", table: "GitBranch"))
                     self.loadBranches()
                     self.loadCompare()
                 }
@@ -1032,7 +1086,10 @@ extension BranchForm {
                         self.cherryPickStatus = status
                     }
                     self.isCherryPickActionRunning = false
-                    alert_error("继续 Cherry-pick 失败: \(error.localizedDescription)")
+                    alert_error(String.localizedStringWithFormat(
+                        String(localized: "Failed to continue cherry-pick: %@", table: "GitBranch"),
+                        error.localizedDescription
+                    ))
                     self.loadBranches()
                 }
             }
@@ -1050,14 +1107,17 @@ extension BranchForm {
                 await MainActor.run {
                     self.cherryPickStatus = .inactive
                     self.isCherryPickActionRunning = false
-                    alert_info("已中止 Cherry-pick")
+                    alert_info(String(localized: "Cherry-pick aborted", table: "GitBranch"))
                     self.loadBranches()
                     self.loadCompare()
                 }
             } catch {
                 await MainActor.run {
                     self.isCherryPickActionRunning = false
-                    alert_error("中止 Cherry-pick 失败: \(error.localizedDescription)")
+                    alert_error(String.localizedStringWithFormat(
+                        String(localized: "Failed to abort cherry-pick: %@", table: "GitBranch"),
+                        error.localizedDescription
+                    ))
                     self.loadCherryPickStatus()
                 }
             }
@@ -1106,7 +1166,7 @@ extension BranchForm {
                     self.isLoading = false
                     os_log(.error, "❌ 加载分支列表失败: \(error.localizedDescription)")
                     let msg = String.localizedStringWithFormat(
-                        String(localized: "加载分支列表失败: %@", table: "GitBranch"),
+                        String(localized: "Failed to load branch list: %@", table: "GitBranch"),
                         error.localizedDescription
                     )
                     alert_error(msg)

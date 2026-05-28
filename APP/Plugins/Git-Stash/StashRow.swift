@@ -28,13 +28,13 @@ struct StashRow: View {
                     }
 
                     VStack(alignment: .leading, spacing: 4) {
-                        Text(stash.message.isEmpty ? "WIP on \(displayBranchName)" : stash.message)
+                        Text(stash.message.isEmpty ? String(localized: "WIP on \(displayBranchName)", table: "GitStash") : stash.message)
                             .font(DesignTokens.Typography.bodyEmphasized)
                             .foregroundColor(DesignTokens.Color.semantic.textPrimary)
                             .lineLimit(2)
 
                         HStack(spacing: DesignTokens.Spacing.xs) {
-                            Text("stash@{\(stash.index)}")
+                            Text(String(localized: "stash@{\(stash.index)}", table: "GitStash"))
                             Text("•")
                             Text(displayBranchName)
                             if let relativeDate = stash.relativeDate {
@@ -42,7 +42,7 @@ struct StashRow: View {
                                 Text(relativeDate)
                             }
                             Text("•")
-                            Text("\(stash.changedFileCount) files")
+                            Text(String(localized: "\(stash.changedFileCount) files", table: "GitStash"))
                         }
                         .font(DesignTokens.Typography.caption1)
                         .foregroundColor(DesignTokens.Color.semantic.textTertiary)
@@ -51,10 +51,10 @@ struct StashRow: View {
                     Spacer(minLength: DesignTokens.Spacing.sm)
 
                     HStack(spacing: DesignTokens.Spacing.xs) {
-                        actionButton(icon: "arrow.triangle.branch", help: "从 stash 创建分支", action: onBranch)
-                        actionButton(icon: "arrow.down.circle", help: "应用stash（保留stash）", action: onApply)
-                        actionButton(icon: "arrow.up.circle", help: "弹出stash（应用并删除stash）", action: onPop)
-                        actionButton(icon: "trash", tint: DesignTokens.Color.semantic.error, help: "删除stash") {
+                        actionButton(icon: "arrow.triangle.branch", help: String(localized: "Create branch from stash", table: "GitStash"), action: onBranch)
+                        actionButton(icon: "arrow.down.circle", help: String(localized: "Apply stash (keep stash)", table: "GitStash"), action: onApply)
+                        actionButton(icon: "arrow.up.circle", help: String(localized: "Pop stash (apply and delete)", table: "GitStash"), action: onPop)
+                        actionButton(icon: "trash", tint: DesignTokens.Color.semantic.error, help: String(localized: "Delete stash", table: "GitStash")) {
                             showDropAlert = true
                         }
                     }
@@ -76,7 +76,7 @@ struct StashRow: View {
                                 .fill(DesignTokens.Material.glass.opacity(0.08))
                         )
                     } label: {
-                        Label("Diff Preview", systemImage: "doc.text.magnifyingglass")
+                        Label(String(localized: "Diff Preview", table: "GitStash"), systemImage: "doc.text.magnifyingglass")
                             .font(DesignTokens.Typography.caption1)
                             .foregroundColor(DesignTokens.Color.semantic.textSecondary)
                     }
@@ -84,13 +84,13 @@ struct StashRow: View {
                 }
             }
         }
-        .alert("确认删除stash", isPresented: $showDropAlert) {
-            Button("取消", role: .cancel) { }
-            Button("删除", role: .destructive) {
+        .alert(String(localized: "Confirm Delete Stash"), isPresented: $showDropAlert) {
+            Button(String(localized: "Cancel"), role: .cancel) { }
+            Button(String(localized: "Delete"), role: .destructive) {
                 onDrop()
             }
         } message: {
-            Text("确定要删除stash@{\(stash.index)}吗？此操作不可撤销。")
+            Text(String(localized: "Are you sure you want to delete stash@{\(stash.index)}? This action cannot be undone."))
         }
     }
 

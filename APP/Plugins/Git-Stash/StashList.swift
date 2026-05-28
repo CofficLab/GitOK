@@ -47,18 +47,18 @@ struct StashList: View, SuperLog, SuperThread {
         .sheet(isPresented: $showBranchForm) {
             branchFormView
         }
-        .alert("工作区有未提交改动", isPresented: hasPendingDirtyAction) {
-            Button("取消", role: .cancel) {
+        .alert(String(localized: "Uncommitted Changes"), isPresented: hasPendingDirtyAction) {
+            Button(String(localized: "Cancel"), role: .cancel) {
                 pendingDirtyAction = nil
             }
-            Button("继续", role: .destructive) {
+            Button(String(localized: "Continue"), role: .destructive) {
                 if let pendingDirtyAction {
                     performStashAction(pendingDirtyAction, skipCleanCheck: true)
                 }
                 pendingDirtyAction = nil
             }
         } message: {
-            Text("应用、弹出或基于 stash 创建分支可能与当前工作区改动冲突。建议先提交或再创建一个 stash。")
+            Text(String(localized: "Applying, popping, or branching from a stash may conflict with your current working tree changes. Consider committing first or creating another stash."))
         }
         .onAppear(perform: onAppear)
         .onProjectDidCommit(perform: onProjectDidCommit)
@@ -74,11 +74,11 @@ extension StashList {
             VStack(alignment: .leading, spacing: DesignTokens.Spacing.md) {
                 HStack(alignment: .top, spacing: DesignTokens.Spacing.md) {
                     VStack(alignment: .leading, spacing: DesignTokens.Spacing.xs) {
-                        Text("Stash")
+                        Text(String(localized: "Stash", table: "GitStash"))
                             .font(DesignTokens.Typography.title3)
                             .foregroundColor(DesignTokens.Color.semantic.textPrimary)
 
-                        Text("参考 Desktop 的工作流，把临时改动放到可恢复的队列里。")
+                        Text(String(localized: "Reference the Desktop workflow to temporarily put changes into a restorable queue."))
                             .font(DesignTokens.Typography.caption1)
                             .foregroundColor(DesignTokens.Color.semantic.textSecondary)
                     }
@@ -88,7 +88,7 @@ extension StashList {
                     Button(action: {
                         showStashForm = true
                     }) {
-                        Label("新建暂存", systemImage: "plus")
+                        Label(String(localized: "New Stash"), systemImage: "plus")
                             .font(DesignTokens.Typography.bodyEmphasized)
                             .foregroundColor(DesignTokens.Color.semantic.textPrimary)
                             .padding(.horizontal, DesignTokens.Spacing.md)
@@ -100,21 +100,21 @@ extension StashList {
                     }
                     .buttonStyle(.plain)
                     .disabled(vm.project == nil || isPerformingAction)
-                    .help("创建新暂存")
+                    .help(String(localized: "Create a new stash"))
                 }
 
                 HStack(spacing: DesignTokens.Spacing.sm) {
                     metricPill(
                         icon: "archivebox.fill",
                         title: "\(stashes.count)",
-                        subtitle: "Stashes",
+                        subtitle: String(localized: "Stashes", table: "GitStash"),
                         color: DesignTokens.Color.semantic.info
                     )
 
                     metricPill(
                         icon: "arrow.triangle.branch",
                         title: currentBranchName,
-                        subtitle: "Current Branch",
+                        subtitle: String(localized: "Current Branch", table: "GitStash"),
                         color: DesignTokens.Color.semantic.primary
                     )
 
@@ -152,13 +152,13 @@ extension StashList {
             VStack(alignment: .leading, spacing: DesignTokens.Spacing.md) {
                 GlassSectionHeader(
                     icon: "tray.full",
-                    title: "Saved Work",
-                    subtitle: isLoading ? "Loading your saved changes" : "Review, restore, or discard individual stashes",
+                    title: String(localized: "Saved Work", table: "GitStash"),
+                    subtitle: isLoading ? String(localized: "Loading your saved changes", table: "GitStash") : String(localized: "Review, restore, or discard individual stashes", table: "GitStash"),
                     iconColor: DesignTokens.Color.semantic.info
                 )
 
                 if isLoading {
-                    ProgressView("加载暂存列表...")
+                    ProgressView(String(localized: "Loading stash list…"))
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, DesignTokens.Spacing.xl)
                 } else if stashes.isEmpty {
@@ -167,11 +167,11 @@ extension StashList {
                             .font(.system(size: 42))
                             .foregroundColor(DesignTokens.Color.semantic.textTertiary)
 
-                        Text("暂无 stash")
+                        Text(String(localized: "No Stashes Yet"))
                             .font(DesignTokens.Typography.bodyEmphasized)
                             .foregroundColor(DesignTokens.Color.semantic.textPrimary)
 
-                        Text("点击上方“新建暂存”把当前改动临时收起。")
+                        Text(String(localized: "Click \"New Stash\" above to temporarily store your current changes."))
                             .font(DesignTokens.Typography.caption1)
                             .foregroundColor(DesignTokens.Color.semantic.textSecondary)
                             .multilineTextAlignment(.center)
@@ -201,20 +201,20 @@ extension StashList {
 
     private var stashFormView: some View {
         VStack(spacing: 16) {
-            Text("创建 Stash")
+            Text(String(localized: "Create Stash"))
                 .font(.headline)
 
-            TextField("暂存描述（可选）", text: $stashMessage)
+            TextField(String(localized: "Stash description (optional)"), text: $stashMessage)
                 .textFieldStyle(.roundedBorder)
                 .frame(width: 300)
 
             HStack {
-                Button("取消") {
+                Button(String(localized: "Cancel")) {
                     stashMessage = ""
                     showStashForm = false
                 }
 
-                Button("创建") {
+                Button(String(localized: "Create")) {
                     createStash()
                 }
                 .keyboardShortcut(.defaultAction)
@@ -227,21 +227,21 @@ extension StashList {
 
     private var branchFormView: some View {
         VStack(spacing: 16) {
-            Text("从 Stash 创建分支")
+            Text(String(localized: "Create Branch from Stash"))
                 .font(.headline)
 
-            TextField("新分支名称", text: $branchName)
+            TextField(String(localized: "New branch name"), text: $branchName)
                 .textFieldStyle(.roundedBorder)
                 .frame(width: 320)
 
             HStack {
-                Button("取消") {
+                Button(String(localized: "Cancel")) {
                     branchName = ""
                     branchSourceStashIndex = nil
                     showBranchForm = false
                 }
 
-                Button("创建") {
+                Button(String(localized: "Create")) {
                     if let branchSourceStashIndex {
                         performStashAction(.branch(index: branchSourceStashIndex, name: branchName))
                     }
@@ -277,7 +277,7 @@ extension StashList {
                 try project.stashSave(message: message.isEmpty ? nil : message)
 
                 await MainActor.run {
-                    alert_info("已创建 stash")
+                    alert_info(String(localized: "Stash created"))
                     stashMessage = ""
                     showStashForm = false
                     isPerformingAction = false
@@ -337,7 +337,7 @@ extension StashList {
                 try project.stashApply(index: index)
 
                 await MainActor.run {
-                    alert_info("已应用 stash@{\(index)}")
+                    alert_info(String(localized: "Applied stash@{\(index)}"))
                     isPerformingAction = false
                     activeStashIndex = nil
                     loadStashes()
@@ -363,7 +363,7 @@ extension StashList {
                 try project.stashPop(index: index)
 
                 await MainActor.run {
-                    alert_info("已弹出 stash@{\(index)}")
+                    alert_info(String(localized: "Popped stash@{\(index)}"))
                     isPerformingAction = false
                     activeStashIndex = nil
                     loadStashes()
@@ -389,7 +389,7 @@ extension StashList {
                 try project.stashDrop(index: index)
 
                 await MainActor.run {
-                    alert_info("已删除 stash@{\(index)}")
+                    alert_info(String(localized: "Deleted stash@{\(index)}"))
                     isPerformingAction = false
                     activeStashIndex = nil
                     loadStashes()
@@ -415,7 +415,7 @@ extension StashList {
                 try project.stashBranch(name: name, index: index)
 
                 await MainActor.run {
-                    alert_info("已从 stash@{\(index)} 创建分支")
+                    alert_info(String(localized: "Created branch from stash@{\(index)}"))
                     branchName = ""
                     branchSourceStashIndex = nil
                     showBranchForm = false
