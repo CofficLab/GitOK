@@ -31,7 +31,7 @@ struct TileFile: View, SuperLog, SuperThread {
                             .font(.footnote.weight(idx == components.count - 1 ? .semibold : .regular))
                             .foregroundColor(idx == components.count - 1 ? .primary : .secondary)
                         if idx < components.count - 1 {
-                            Text("›")
+                            Text(String(localized: "›", table: "FileInfo"))
                                 .font(.footnote)
                                 .foregroundColor(.secondary)
                         }
@@ -49,7 +49,7 @@ struct TileFile: View, SuperLog, SuperThread {
             }
             .popover(isPresented: $isPopoverPresented) {
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("文件操作")
+                    Text(String(localized: "File Actions", table: "FileInfo"))
                         .font(.headline)
                         .padding(.bottom, 4)
 

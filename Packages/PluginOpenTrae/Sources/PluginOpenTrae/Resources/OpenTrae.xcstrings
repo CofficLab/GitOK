@@ -1,0 +1,24 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "Open Trae" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Open Trae" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "打开 Trae" } }
+      }
+    },
+    "Open in Trae" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Open in Trae" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "在 Trae 中打开" } }
+      }
+    },
+    "Open the current project folder in Trae." : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Open the current project folder in Trae." } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "在 Trae 中打开当前项目目录。" } }
+      }
+    }
+  },
+  "version" : "1.0"
+}

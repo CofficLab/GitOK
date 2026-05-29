@@ -1,6 +1,18 @@
 {
   "sourceLanguage" : "zh-Hans",
   "strings" : {
+    "Abort Merge" : {
+
+    },
+    "Checking conflict status..." : {
+
+    },
+    "Conflict Resolution" : {
+
+    },
+    "Continue Merge" : {
+
+    },
     "Git 冲突解决" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -15,8 +27,23 @@
             "state" : "translated",
             "value" : "Git 冲突解决"
           }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Git 衝突解決"
+          }
         }
       }
+    },
+    "No files to handle" : {
+
+    },
+    "No merge in progress" : {
+
+    },
+    "When you encounter conflicts during a merge, files needing resolution will appear here" : {
+
     },
     "中止合并" : {
       "extractionState" : "manual",
@@ -31,6 +58,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "中止合并"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "中止合併"
           }
         }
       }
@@ -49,6 +82,12 @@
             "state" : "translated",
             "value" : "冲突解决"
           }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "衝突解決"
+          }
         }
       }
     },
@@ -65,6 +104,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "发现 %lld 个冲突文件需要解决"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "發現 %lld 個衝突檔案需要解決"
           }
         }
       }
@@ -83,6 +128,12 @@
             "state" : "translated",
             "value" : "当您执行合并操作遇到冲突时，此处会显示需要解决的文件"
           }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "當您執行合併操作遇到衝突時，此處會顯示需要解決的檔案"
+          }
         }
       }
     },
@@ -99,6 +150,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "所有冲突已解决"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "所有衝突已解決"
           }
         }
       }
@@ -117,6 +174,12 @@
             "state" : "translated",
             "value" : "检查冲突状态..."
           }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "檢查衝突狀態..."
+          }
         }
       }
     },
@@ -134,11 +197,37 @@
             "state" : "translated",
             "value" : "没有正在进行的合并"
           }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "沒有正在進行的合併"
+          }
         }
       }
     },
     "没有需要处理的文件" : {
-
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No files to process"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "没有需要处理的文件"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "沒有需要處理的檔案"
+          }
+        }
+      }
     },
     "点击上方\"继续合并\"按钮完成合并操作" : {
       "extractionState" : "manual",
@@ -153,6 +242,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "点击上方\"继续合并\"按钮完成合并操作"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "點擊上方「繼續合併」按鈕完成合併操作"
           }
         }
       }
@@ -170,6 +265,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "继续合并"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "繼續合併"
           }
         }
       }

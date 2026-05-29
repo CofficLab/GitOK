@@ -14,7 +14,7 @@ struct BtnOpenVSCodeView: View {
                 .resizable()
                 .frame(height: 22)
                 .frame(width: 22)
-                .help("用 VSCode 打开")
+                .help(String(localized: "Open in VS Code"))
                 .toolbarButtonStyle()
         }
     }

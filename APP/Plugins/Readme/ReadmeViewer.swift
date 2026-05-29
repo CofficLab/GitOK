@@ -45,7 +45,7 @@ struct ReadmeViewer: View, SuperLog {
                             .controlSize(.small)
                     }
                     
-                    Button("关闭") {
+                    Button(String(localized: "Close", table: "Readme")) {
                         dismiss()
                     }
                     .keyboardShortcut(.cancelAction)
@@ -66,7 +66,7 @@ struct ReadmeViewer: View, SuperLog {
                     VStack(spacing: 16) {
                         ProgressView()
                             .controlSize(.large)
-                        Text("正在加载文档...")
+                        Text(String(localized: "Loading document...", table: "Readme"))
                             .font(.headline)
                             .foregroundColor(.secondary)
                     }
@@ -77,10 +77,10 @@ struct ReadmeViewer: View, SuperLog {
                         Image(systemName: "doc.text.below.ecg")
                             .font(.system(size: 48))
                             .foregroundColor(.secondary)
-                        Text("未找到 README.md 文件")
+                        Text(String(localized: "README.md not found", table: "Readme"))
                             .font(.headline)
                             .foregroundColor(.secondary)
-                        Text("当前项目中没有找到 README.md 文件")
+                        Text(String(localized: "No README.md file found in the current project", table: "Readme"))
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }

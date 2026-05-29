@@ -20,7 +20,7 @@ class ProjectPickerPlugin: NSObject, SuperPlugin {
 
 
     /// 是否启用该插件
-    @objc static let shouldRegister = true
+    @objc static let shouldRegister = false
 
 
     @objc static let shared = ProjectPickerPlugin()

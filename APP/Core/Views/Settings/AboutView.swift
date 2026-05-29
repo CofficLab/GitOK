@@ -38,7 +38,7 @@ struct AboutView: View, SuperLog {
 
                     // App 版本
                     VStack(spacing: 4) {
-                        Text(String.localizedStringWithFormat(String(localized: "版本 %@", table: "Core"), appInfo.version))
+                        Text(String.localizedStringWithFormat(String(localized: "Version %@", table: "Core"), appInfo.version))
                             .font(.body)
                             .foregroundColor(.secondary)
 
@@ -65,14 +65,14 @@ struct AboutView: View, SuperLog {
                     Divider()
 
                     // 基本信息
-                    GitOKUI.AppSettingsSection(title: String(localized: "应用信息", table: "Core")) {
+                    GitOKUI.AppSettingsSection(title: String(localized: "App Info", table: "Core")) {
                         infoRow(
-                            title: String(localized: "应用名称", table: "Core"),
+                            title: String(localized: "App Name", table: "Core"),
                             value: appInfo.name,
                             icon: "gearshape"
                         )
                         infoRow(
-                            title: String(localized: "版本", table: "Core"),
+                            title: String(localized: "Version", table: "Core"),
                             value: appInfo.version,
                             icon: "speaker.wave.2"
                         )
@@ -89,16 +89,16 @@ struct AboutView: View, SuperLog {
                     }
 
                     // 链接
-                    GitOKUI.AppSettingsSection(title: String(localized: "链接", table: "Core")) {
+                    GitOKUI.AppSettingsSection(title: String(localized: "Links", table: "Core")) {
                         linkRow(
-                            title: String(localized: "官方网站", table: "Core"),
+                            title: String(localized: "Website", table: "Core"),
                             url: appInfo.website,
                             icon: "safari"
                         )
 
                         if !appInfo.repository.isEmpty {
                             linkRow(
-                                title: String(localized: "源代码", table: "Core"),
+                                title: String(localized: "Source Code", table: "Core"),
                                 url: appInfo.repository,
                                 icon: "calendar"
                             )
@@ -119,7 +119,7 @@ struct AboutView: View, SuperLog {
         .navigationTitle(Text("关于", tableName: "Core"))
         .toolbar {
             ToolbarItem(placement: .confirmationAction) {
-                Button(String(localized: "完成", table: "Core")) {
+                Button(String(localized: "Done", table: "Core")) {
                     // 关闭设置视图
                     NotificationCenter.default.post(name: .didSaveGitUserConfig, object: nil)
                 }

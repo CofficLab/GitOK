@@ -55,12 +55,12 @@ struct StashStatusTile: View, SuperLog {
 
     private var helpText: String {
         if vm.project == nil {
-            return "未选择项目"
+            return String(localized: "No project selected")
         }
         if stashCount > 0 {
-            return "查看 \(stashCount) 个 stash"
+            return String(localized: "View \(stashCount) stashes")
         }
-        return "没有 stash，点击打开面板"
+        return String(localized: "No stashes, click to open panel")
     }
 
     /// 加载stash数量

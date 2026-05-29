@@ -37,15 +37,15 @@ struct BranchesView: View, SuperThread, SuperLog, SuperEvent {
     var body: some View {
         ZStack {
             if self.isGitProject && branches.isNotEmpty && selection != nil {
-                Picker(String(localized: "分支", table: "GitBranch"), selection: $selection, content: {
+                Picker(String(localized: "Branch", table: "GitBranch"), selection: $selection, content: {
                     ForEach(branches, id: \.id, content: {
                         Text($0.name)
                             .tag($0 as GitBranch?)
                     })
                 })
             } else {
-                Picker(String(localized: "分支", table: "GitBranch"), selection: .constant(nil as GitBranch?), content: {
-                    Text("项目不存在", tableName: "GitBranch")
+                Picker(String(localized: "Branch", table: "GitBranch"), selection: .constant(nil as GitBranch?), content: {
+                    Text("Project does not exist", tableName: "GitBranch")
                         .tag(nil as GitBranch?)
                 }).disabled(true)
             }

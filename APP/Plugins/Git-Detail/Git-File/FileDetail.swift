@@ -110,10 +110,10 @@ struct FileDetail: View, SuperLog, SuperEvent, SuperThread {
 
         if changeType == "A" || changeType == "?" {
             // 新增的图片
-            imagePreviewSection(title: "新增的图片", image: loadImageFromCommit(file: file))
+            imagePreviewSection(title: String(localized: "New Image"), image: loadImageFromCommit(file: file))
         } else if changeType == "D" {
             // 删除的图片
-            imagePreviewSection(title: "已删除的图片", image: loadImageBefore(file: file))
+            imagePreviewSection(title: String(localized: "Deleted Image"), image: loadImageBefore(file: file))
         } else {
             imageComparisonView(
                 before: loadImageBefore(file: file),
@@ -129,14 +129,14 @@ struct FileDetail: View, SuperLog, SuperEvent, SuperThread {
             switch imageDiffMode {
             case .twoUp:
                 HStack(spacing: 0) {
-                    imagePreviewSection(title: "修改前", image: before)
+                    imagePreviewSection(title: String(localized: "Before"), image: before)
 
                     Divider()
 
-                    imagePreviewSection(title: "修改后", image: after)
+                    imagePreviewSection(title: String(localized: "After"), image: after)
                 }
                 .accessibilityElement(children: .contain)
-                .accessibilityLabel("图片并排对比")
+                .accessibilityLabel(String(localized: "Image side-by-side comparison"))
             case .swipe:
                 imageOverlayComparison(before: before, after: after, mode: .swipe)
             case .onion:
@@ -149,14 +149,14 @@ struct FileDetail: View, SuperLog, SuperEvent, SuperThread {
 
     private var imageDiffToolbar: some View {
         HStack(spacing: 12) {
-            Picker("图片对比模式", selection: $imageDiffMode) {
+            Picker(String(localized: "Image Comparison Mode"), selection: $imageDiffMode) {
                 ForEach(ImageDiffMode.allCases) { mode in
                     Text(mode.title).tag(mode)
                 }
             }
             .pickerStyle(.segmented)
             .frame(width: 360)
-            .accessibilityLabel("图片对比模式")
+            .accessibilityLabel(String(localized: "Image Comparison Mode"))
 
             if imageDiffMode.usesBlendAmount {
                 Slider(value: $imageBlendAmount, in: 0...1)
@@ -266,7 +266,7 @@ struct FileDetail: View, SuperLog, SuperEvent, SuperThread {
                 Image(systemName: "photo.badge.exclamationmark")
                     .font(.system(size: 32))
                     .foregroundColor(.secondary)
-                Text("无法加载图片")
+                Text(String(localized: "Unable to load image"))
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
@@ -281,11 +281,11 @@ struct FileDetail: View, SuperLog, SuperEvent, SuperThread {
                 .font(.system(size: 40))
                 .foregroundColor(.secondary)
 
-            Text("二进制文件")
+            Text(String(localized: "Binary File"))
                 .font(.headline)
                 .foregroundColor(.primary)
 
-            Text("此文件无法以文本方式显示差异")
+            Text(String(localized: "Differences cannot be shown as text for this file"))
                 .font(.caption)
                 .foregroundColor(.secondary)
         }
@@ -301,28 +301,28 @@ struct FileDetail: View, SuperLog, SuperEvent, SuperThread {
                 .font(.system(size: 36))
                 .foregroundColor(.orange)
 
-            Text("Diff 过大，已跳过渲染")
+            Text(String(localized: "Diff is too large, rendering skipped"))
                 .font(.headline)
 
-            Text("当前 diff 大约 \(unifiedDiffText.count.formatted()) 个字符。为避免界面卡顿，GitOK 不直接渲染超大 patch；你仍然可以复制原始 diff 或查看文件文本。")
+            Text(String(localized: "The current diff is approximately \(unifiedDiffText.count.formatted()) characters. To avoid UI lag, GitOK does not render oversized patches directly; you can still copy the raw diff or view the file text."))
                 .font(.subheadline)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 24)
 
             HStack(spacing: 10) {
-                Button("复制原始 diff") {
+                Button(String(localized: "Copy Raw Diff")) {
                     copyToPasteboard(unifiedDiffText)
                 }
 
                 if hasBeforeText(for: file) {
-                    Button("查看原文本") {
+                    Button(String(localized: "View Original Text")) {
                         presentTextPreview(kind: .before, for: file)
                     }
                 }
 
                 if hasAfterText(for: file) {
-                    Button("查看新文本") {
+                    Button(String(localized: "View New Text")) {
                         presentTextPreview(kind: .after, for: file)
                     }
                 }
@@ -343,7 +343,7 @@ struct FileDetail: View, SuperLog, SuperEvent, SuperThread {
                 .font(.system(size: 34))
                 .foregroundColor(diffIssueMessage == nil ? .secondary : .orange)
 
-            Text(diffIssueMessage == nil ? "没有可显示的差异内容" : "无法显示差异")
+            Text(diffIssueMessage == nil ? String(localized: "No differences to display") : String(localized: "Unable to display differences"))
                 .font(.headline)
                 .foregroundColor(.primary)
 
@@ -354,36 +354,36 @@ struct FileDetail: View, SuperLog, SuperEvent, SuperThread {
                 .padding(.horizontal, 24)
 
             if let diffIssueMessage, !diffIssueMessage.isEmpty {
-                Text("原因：\(diffIssueMessage)")
+                Text(String(localized: "Reason: \(diffIssueMessage)"))
                     .font(.caption)
                     .foregroundColor(.secondary)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 24)
             }
 
-            Text("文件状态：\(changeTypeLabel(for: file))")
+            Text(String(localized: "File Status: \(changeTypeLabel(for: file))"))
                 .font(.caption)
                 .foregroundColor(.secondary)
 
             HStack(spacing: 10) {
-                Button("刷新") {
+                Button(String(localized: "Refresh")) {
                     refreshDiff()
                 }
 
                 if hasBeforeText(for: file) {
-                    Button("查看原文本") {
+                    Button(String(localized: "View Original Text")) {
                         presentTextPreview(kind: .before, for: file)
                     }
                 }
 
                 if hasAfterText(for: file) {
-                    Button("查看新文本") {
+                    Button(String(localized: "View New Text")) {
                         presentTextPreview(kind: .after, for: file)
                     }
                 }
 
                 if let diffIssueMessage, !diffIssueMessage.isEmpty {
-                    Button("复制原因") {
+                    Button(String(localized: "Copy Reason")) {
                         copyToPasteboard(diffIssueMessage)
                     }
                 }
@@ -449,28 +449,28 @@ struct FileDetail: View, SuperLog, SuperEvent, SuperThread {
 
     private func emptyDiffExplanation(for file: GitDiffFile) -> String {
         if let message = diffIssueMessage, !message.isEmpty {
-            return "Diff 数据没有成功生成。你可以先检查文件是否仍然存在、编码是否为文本，或者刷新当前视图。"
+            return String(localized: "Diff data could not be generated. You can check whether the file still exists, verify it is text-encoded, or refresh the current view.")
         }
 
         switch file.changeType.uppercased() {
         case "A", "?":
-            return "这个新增文件目前没有生成可解析的文本 diff。常见原因是文件为空、内容不是标准文本，或底层 Git 没返回 patch。你仍然可以直接查看新文本。"
+            return String(localized: "No parseable text diff was generated for this new file. Common causes include an empty file, non-text content, or Git not returning a patch. You can still view the new text directly.")
         case "D":
-            return "这个删除文件当前没有拿到可显示的 patch。常见原因是文件内容为空，或底层 Git 没返回删除差异。你仍然可以查看删除前的文本。"
+            return String(localized: "No displayable patch was retrieved for this deleted file. Common causes include an empty file or Git not returning a deletion diff. You can still view the text before deletion.")
         default:
-            return "当前文件没有可显示的文本差异。可能是内容未变化、文件为空，或 diff 输出为空。你可以直接查看原文本和新文本确认。"
+            return String(localized: "No text differences to display for this file. It may be unchanged, empty, or the diff output is empty. You can view the original and new text directly to confirm.")
         }
     }
 
     private func changeTypeLabel(for file: GitDiffFile) -> String {
         switch file.changeType.uppercased() {
-        case "A": return "已暂存新增"
-        case "?": return "未跟踪新增"
-        case "M": return "已修改"
-        case "D": return "已删除"
-        case "R": return "已重命名"
-        case "C": return "已复制"
-        case "T": return "类型变更"
+        case "A": return String(localized: "Staged New")
+        case "?": return String(localized: "Untracked New")
+        case "M": return String(localized: "Modified")
+        case "D": return String(localized: "Deleted")
+        case "R": return String(localized: "Renamed")
+        case "C": return String(localized: "Copied")
+        case "T": return String(localized: "Type Changed")
         default: return file.changeType
         }
     }
@@ -485,10 +485,10 @@ struct FileDetail: View, SuperLog, SuperEvent, SuperThread {
 
         var title: String {
             switch self {
-            case .twoUp: return "并排"
-            case .swipe: return "滑动"
-            case .onion: return "叠加"
-            case .difference: return "差异"
+            case .twoUp: return String(localized: "Side by Side")
+            case .swipe: return String(localized: "Swipe")
+            case .onion: return String(localized: "Overlay")
+            case .difference: return String(localized: "Difference")
             }
         }
 
@@ -504,9 +504,9 @@ struct FileDetail: View, SuperLog, SuperEvent, SuperThread {
         var sliderAccessibilityLabel: String {
             switch self {
             case .swipe:
-                return "滑动分割位置"
+                return String(localized: "Swipe divider position")
             case .onion:
-                return "修改后图片透明度"
+                return String(localized: "Modified image opacity")
             case .twoUp, .difference:
                 return ""
             }
@@ -515,26 +515,26 @@ struct FileDetail: View, SuperLog, SuperEvent, SuperThread {
         var accessibilityLabel: String {
             switch self {
             case .twoUp:
-                return "图片并排对比"
+                return String(localized: "Image side-by-side comparison")
             case .swipe:
-                return "图片滑动对比"
+                return String(localized: "Image swipe comparison")
             case .onion:
-                return "图片叠加对比"
+                return String(localized: "Image overlay comparison")
             case .difference:
-                return "图片差异混合对比"
+                return String(localized: "Image difference blend comparison")
             }
         }
 
         var accessibilityHint: String {
             switch self {
             case .twoUp:
-                return "左右显示修改前和修改后的图片"
+                return String(localized: "Shows the before and after images side by side")
             case .swipe:
-                return "使用滑块调整修改后图片覆盖修改前图片的位置"
+                return String(localized: "Use the slider to adjust the position where the modified image overlays the original")
             case .onion:
-                return "使用滑块调整修改后图片叠加在修改前图片上的透明度"
+                return String(localized: "Use the slider to adjust the opacity of the modified image overlaid on the original")
             case .difference:
-                return "使用差异混合模式突出两张图片不一致的区域"
+                return String(localized: "Uses difference blend mode to highlight areas where the two images differ")
             }
         }
 
@@ -599,7 +599,7 @@ struct FileDetail: View, SuperLog, SuperEvent, SuperThread {
         self.bg.async {
             do {
                 let content = try loadTextContent(kind: kind, for: file)
-                let title = kind == .before ? "原文本" : "新文本"
+                let title = kind == .before ? String(localized: "Original Text") : String(localized: "New Text")
 
                 DispatchQueue.main.async {
                     self.textPreviewTitle = "\(title) · \(file.file)"
@@ -607,7 +607,7 @@ struct FileDetail: View, SuperLog, SuperEvent, SuperThread {
                     self.showTextPreview = true
                 }
             } catch {
-                let message = "无法加载\(kind == .before ? "原文本" : "新文本"): \(error.localizedDescription)"
+                let message = String(localized: "Unable to load \(kind == .before ? "original" : "new") text: \(error.localizedDescription)")
                 os_log(.error, "\(Self.t)❌ \(message)")
                 DispatchQueue.main.async {
                     self.diffIssueMessage = message
@@ -632,14 +632,14 @@ struct FileDetail: View, SuperLog, SuperEvent, SuperThread {
         switch kind {
         case .before:
             guard let before = contents.before else {
-                throw GitDetailError.fileNotFound("原文本不存在")
+                throw GitDetailError.fileNotFound("original text does not exist")
             }
-            return before.isEmpty ? "/* 空文件 */" : before
+            return before.isEmpty ? String(localized: "/* Empty file */") : before
         case .after:
             guard let after = contents.after else {
-                throw GitDetailError.fileNotFound("新文本不存在")
+                throw GitDetailError.fileNotFound("new text does not exist")
             }
-            return after.isEmpty ? "/* 空文件 */" : after
+            return after.isEmpty ? String(localized: "/* Empty file */") : after
         }
     }
 

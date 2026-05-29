@@ -5,17 +5,17 @@ import SwiftUI
 class IconPlugin: NSObject, SuperPlugin {
 
     /// 是否启用该插件
-    @objc static let shouldRegister = true
+    @objc static let shouldRegister = false
 
 
     @objc static let shared = IconPlugin()
 
 
     /// 插件显示名称
-    static var displayName: String = "Icon Detail"
+    static var displayName: String = String(localized: "plugin-display-name", table: "Icon")
 
     /// 插件描述
-    static var description: String = "图标详情视图"
+    static var description: String = String(localized: "plugin-description", table: "Icon")
 
     /// 插件图标名称
     static var iconName: String = "photo"

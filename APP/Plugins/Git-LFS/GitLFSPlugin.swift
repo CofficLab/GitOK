@@ -14,7 +14,7 @@ class GitLFSPlugin: NSObject, SuperPlugin {
 
     @objc static let shared = GitLFSPlugin()
 
-    @objc static let shouldRegister = true
+    @objc static let shouldRegister = false
 
     func addStatusBarTrailingView() -> AnyView? {
         AnyView(GitLFSStatusTile())

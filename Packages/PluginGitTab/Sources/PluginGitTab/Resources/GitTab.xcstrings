@@ -1,0 +1,20 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "Git" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Git" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "Git" } },
+        "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "Git" } }
+      }
+    },
+    "Git version control" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Git version control" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "Git 版本控制" } },
+        "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "Git 版本控制" } }
+      }
+    }
+  },
+  "version" : "1.0"
+}

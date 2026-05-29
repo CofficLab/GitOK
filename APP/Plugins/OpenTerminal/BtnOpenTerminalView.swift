@@ -13,7 +13,7 @@ struct BtnOpenTerminalView: View {
                 .inButtonWithAction {
                     ExternalToolSettingsStore.shared.openDefaultTerminal(for: project.url)
                 }
-                .help("在默认终端打开")
+                .help(String(localized: "Open in Terminal"))
                 .toolbarButtonStyle()
         }
     }

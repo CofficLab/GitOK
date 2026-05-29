@@ -36,7 +36,7 @@ struct IconGrid: View {
                                 .font(.system(size: 16, weight: .medium))
                                 .foregroundColor(.primary)
                             Spacer()
-                            Text("\(iconAssets.count) 个图标")
+                            Text(String(localized: "icon-count", table: "Icon").replacingOccurrences(of: "%lld", with: "\(iconAssets.count)"))
                                 .font(.system(size: 12))
                                 .foregroundColor(.secondary)
                         }
@@ -44,9 +44,9 @@ struct IconGrid: View {
                         // 右侧：在分类标题下方放置添加/删除按钮（当来源支持增删时显示）
                         if IconRepo.shared.getAllIconSources().first(where: { $0.sourceIdentifier == sid })?.supportsMutations == true {
                             HStack(spacing: 8) {
-                                Button("添加图标…") { addImagesViaPanel() }
+                                Button(String(localized: "add-icon-button", table: "Icon")) { addImagesViaPanel() }
                                     .buttonStyle(.bordered)
-                                Button("删除图标…") { deleteImagesViaPanel() }
+                                Button(String(localized: "delete-icon-button", table: "Icon")) { deleteImagesViaPanel() }
                                     .buttonStyle(.bordered)
                                 Spacer()
                             }
@@ -70,13 +70,13 @@ struct IconGrid: View {
                                 .foregroundColor(.primary)
                             Spacer()
                             if source.supportsMutations {
-                                Button("添加图片") { addImagesViaPanel() }
+                                Button(String(localized: "add-image-button", table: "Icon")) { addImagesViaPanel() }
                                     .buttonStyle(.bordered)
-                                Button("删除所选") { deleteSelectedImage() }
+                                Button(String(localized: "delete-selected-button", table: "Icon")) { deleteSelectedImage() }
                                     .buttonStyle(.bordered)
                                     .disabled(!canDeleteSelected(in: sid))
                             }
-                            Text("\(iconAssets.count) 个图标")
+                            Text(String(localized: "icon-count", table: "Icon").replacingOccurrences(of: "%lld", with: "\(iconAssets.count)"))
                                 .font(.system(size: 12))
                                 .foregroundColor(.secondary)
                         }
@@ -96,7 +96,7 @@ struct IconGrid: View {
                 if isLoading {
                     VStack {
                         Spacer()
-                        ProgressView("加载图标中...")
+                        ProgressView(String(localized: "loading-icons", table: "Icon"))
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
                         Spacer()
                     }
@@ -109,7 +109,7 @@ struct IconGrid: View {
                                 .foregroundColor(.secondary)
 
                             let shouldSelectPrompt = (selectedSourceIdentifier == nil)
-                            Text(shouldSelectPrompt ? "请选择一个分类" : "该来源下没有可用的图标")
+                            Text(shouldSelectPrompt ? String(localized: "select-category-prompt", table: "Icon") : String(localized: "no-icons-in-source", table: "Icon"))
                                 .font(.system(size: 14))
                                 .foregroundColor(.secondary)
                                 .multilineTextAlignment(.center)

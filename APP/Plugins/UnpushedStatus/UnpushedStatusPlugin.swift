@@ -10,7 +10,7 @@ class UnpushedStatusPlugin: NSObject, SuperPlugin {
     static var displayName: String = "Unpushed Status"
 
     /// 插件描述
-    static var description: String = String(localized: "显示未推送提交数量", table: "UnpushedStatus")
+    static var description: String = String(localized: "Display unpushed commit count", table: "UnpushedStatus")
 
     /// 插件图标名称
     static var iconName: String = "arrow.up.circle"
@@ -25,7 +25,7 @@ class UnpushedStatusPlugin: NSObject, SuperPlugin {
     static var order: Int = 25
 
     /// 是否启用该插件
-    @objc static let shouldRegister = true
+    @objc static let shouldRegister = false
 
     /// 是否启用详细日志输出
     private let verbose = true

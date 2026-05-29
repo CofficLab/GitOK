@@ -58,22 +58,22 @@ struct GitLFSStatusTile: View, SuperLog {
             ProgressView()
                 .controlSize(.small)
         } else if issueCount > 0 {
-            Text("LFS \(issueCount)")
+            Text(String(localized: "LFS \(issueCount)", table: "GitLFS"))
                 .font(.footnote.weight(.medium))
                 .foregroundColor(.orange)
                 .monospacedDigit()
         } else {
-            Text("LFS")
+            Text(String(localized: "LFS", table: "GitLFS"))
                 .foregroundColor(.secondary)
         }
     }
 
     private var helpText: String {
-        guard vm.project != nil else { return "未选择项目" }
+        guard vm.project != nil else { return String(localized: "No project selected", table: "GitLFS") }
         if issueCount > 0 {
-            return "发现 \(issueCount) 个 Git LFS 建议或配置问题"
+            return String(localized: "Found \(issueCount) Git LFS suggestions or configuration issues", table: "GitLFS")
         }
-        return "Git LFS 状态正常"
+        return String(localized: "LFS status normal", table: "GitLFS")
     }
 
     private var popoverContent: some View {
@@ -96,14 +96,14 @@ struct GitLFSStatusTile: View, SuperLog {
             Image(systemName: iconName)
                 .foregroundColor(issueCount > 0 ? .orange : .secondary)
             VStack(alignment: .leading, spacing: 2) {
-                Text("Git LFS")
+                Text(String(localized: "Git LFS", table: "GitLFS"))
                     .font(.headline)
                 Text(statusText)
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
             Spacer()
-            Button("初始化") {
+            Button(String(localized: "Initialize", table: "GitLFS")) {
                 initializeLFS()
             }
             .disabled(vm.project == nil)
@@ -113,20 +113,20 @@ struct GitLFSStatusTile: View, SuperLog {
     private var statusText: String {
         if status.isAvailable {
             if let version = status.version {
-                return "可用，版本 \(version)"
+                return String(localized: "Available, version \(version)", table: "GitLFS")
             }
-            return "可用"
+            return String(localized: "Available", table: "GitLFS")
         }
-        return "未检测到 git-lfs"
+        return String(localized: "git-lfs not detected", table: "GitLFS")
     }
 
     @ViewBuilder
     private var mismatchSection: some View {
         VStack(alignment: .leading, spacing: 8) {
-            sectionTitle("Attribute mismatch", count: mismatches.count)
+            sectionTitle(String(localized: "Attribute mismatch", table: "GitLFS"), count: mismatches.count)
 
             if mismatches.isEmpty {
-                emptyText("未发现 LFS pointer 与 .gitattributes 不一致")
+                emptyText(String(localized: "No mismatches between LFS pointers and .gitattributes", table: "GitLFS"))
             } else {
                 ForEach(mismatches, id: \.path) { mismatch in
                     issueRow(
@@ -142,10 +142,10 @@ struct GitLFSStatusTile: View, SuperLog {
     @ViewBuilder
     private var largeFileSection: some View {
         VStack(alignment: .leading, spacing: 8) {
-            sectionTitle("大文件建议", count: largeFiles.count)
+            sectionTitle(String(localized: "Large File Recommendations", table: "GitLFS"), count: largeFiles.count)
 
             if largeFiles.isEmpty {
-                emptyText("未发现超过 \(formattedBytes(largeFileThresholdBytes)) 的候选文件")
+                emptyText(String(localized: "No candidate files larger than \(formattedBytes(largeFileThresholdBytes)) found", table: "GitLFS"))
             } else {
                 ForEach(largeFiles, id: \.path) { file in
                     issueRow(
@@ -241,7 +241,7 @@ struct GitLFSStatusTile: View, SuperLog {
             do {
                 try GitRepositoryCLI(repositoryURL: repositoryURL).initializeLFS()
                 await MainActor.run {
-                    alert_info("Git LFS 已初始化")
+                    alert_info(String(localized: "Git LFS initialized", table: "GitLFS"))
                     refresh()
                 }
             } catch {
@@ -255,9 +255,9 @@ struct GitLFSStatusTile: View, SuperLog {
     private func mismatchDescription(_ mismatch: GitRepositoryCLI.GitLFSAttributeMismatch) -> String {
         switch mismatch.kind {
         case .pointerWithoutLFSAttribute:
-            return "索引中是 LFS pointer，但当前属性未匹配 filter=lfs"
+            return String(localized: "LFS pointer in index without matching filter=lfs attribute", table: "GitLFS")
         case .lfsAttributeWithoutPointer:
-            return "当前属性匹配 filter=lfs，但索引中不是 LFS pointer"
+            return String(localized: "LFS attribute matches but index is not an LFS pointer", table: "GitLFS")
         }
     }
 

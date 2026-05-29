@@ -17,7 +17,7 @@ struct LicenseHeader: View {
                 .font(.title2)
 
             VStack(alignment: .leading, spacing: 2) {
-                Text("LICENSE")
+                Text(String(localized: "LICENSE", table: "License"))
                     .font(.headline)
                     .fontWeight(.semibold)
 

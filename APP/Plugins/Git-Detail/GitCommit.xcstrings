@@ -1,8 +1,18 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "(%lld) Uncommitted" : {
+
+    },
     "(%lld) 未提交" : {
+      "extractionState" : "stale",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "(%lld) Uncommitted"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -17,9 +27,99 @@
         }
       }
     },
+    "%lld remote commits available to pull" : {
+
+    },
+    "After undoing, the file changes from this commit will be kept in the working directory for re-editing and committing." : {
+
+    },
+    "All Changes Committed" : {
+
+    },
+    "Cancel" : {
+
+    },
+    "Checking Remote Status…" : {
+
+    },
+    "Click to push to remote" : {
+
+    },
+    "Click to run git pull and fetch remote commits" : {
+
+    },
+    "Click to run git push and push local commits" : {
+
+    },
+    "Click to view user info" : {
+
+    },
+    "Commit message cannot be empty" : {
+
+    },
+    "Confirm Delete Remote Tag?" : {
+
+    },
+    "Confirm Delete Tag?" : {
+
+    },
+    "Confirm Hard Reset?" : {
+
+    },
+    "Confirm Mixed Reset?" : {
+
+    },
+    "Confirm Revert This Commit?" : {
+
+    },
+    "Confirm Soft Reset?" : {
+
+    },
+    "Confirm Squash Commits?" : {
+
+    },
+    "Confirm Undo Commit?" : {
+
+    },
+    "Create" : {
+
+    },
+    "Create a lightweight tag for commit %@." : {
+
+    },
+    "Create an annotated tag for commit %@." : {
+
+    },
+    "Create Annotated Tag" : {
+
+    },
+    "Create Tag" : {
+
+    },
+    "Current commit has not been pushed to remote" : {
+
+    },
+    "Current Status" : {
+
+    },
+    "Delete" : {
+
+    },
+    "Delete Remote Tag" : {
+
+    },
+    "Delete Tag" : {
+
+    },
     "Emoji风格" : {
       "extractionState" : "stale",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Emoji Style"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -36,6 +136,12 @@
     },
     "Git 提交管理" : {
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Git Commit Management"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -50,9 +156,30 @@
         }
       }
     },
+    "GitOK will create a new reverse commit to undo the changes. Suitable for pushed commits. If there are conflicts, resolve them manually before continuing." : {
+
+    },
+    "Hard Reset" : {
+
+    },
+    "HEAD will move to this commit. Changes from subsequent commits will be preserved in the staging area." : {
+
+    },
+    "HEAD will move to this commit. Changes from subsequent commits will be preserved in the working directory but unstaged." : {
+
+    },
+    "HEAD, staging area, and working directory will all revert to this commit. Local commits and uncommitted changes after this commit will be discarded." : {
+
+    },
     "Loading" : {
       "extractionState" : "stale",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Loading"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -67,8 +194,135 @@
         }
       }
     },
+    "Mixed Reset" : {
+
+    },
+    "Network connection error, auto-retry failed. You can try:" : {
+
+    },
+    "Network fluctuation, retrying (%lld/%lld)…" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Network fluctuation, retrying (%1$lld/%2$lld)…"
+          }
+        }
+      }
+    },
+    "Project unavailable" : {
+
+    },
+    "Pulling…" : {
+
+    },
+    "Push" : {
+
+    },
+    "Push failed" : {
+
+    },
+    "Push Failed" : {
+
+    },
+    "Push failed: %@" : {
+
+    },
+    "Push Tag" : {
+
+    },
+    "Push to Remote" : {
+
+    },
+    "Pushing via system Git…" : {
+
+    },
+    "Pushing..." : {
+
+    },
+    "Pushing…" : {
+
+    },
+    "Refresh File List…" : {
+
+    },
+    "Refreshing" : {
+
+    },
+    "Remote tag deleted: %@" : {
+
+    },
+    "Reset to Here" : {
+
+    },
+    "Retry" : {
+
+    },
+    "Revert This Commit" : {
+
+    },
+    "Soft Reset" : {
+
+    },
+    "Squash commit message" : {
+
+    },
+    "Squash to Here" : {
+
+    },
+    "Tag created: %@" : {
+
+    },
+    "Tag deleted: %@" : {
+
+    },
+    "Tag Message" : {
+
+    },
+    "Tag message cannot be empty" : {
+
+    },
+    "Tag Name" : {
+
+    },
+    "Tag name cannot be empty" : {
+
+    },
+    "Tag pushed: %@" : {
+
+    },
+    "This will combine %lld commits from HEAD to this commit into one. Only recommended for unpushed commits." : {
+
+    },
+    "This will delete the local tag %@. Remote tags will not be affected." : {
+
+    },
+    "This will delete the tag %@ on origin. Local tags will not be affected." : {
+
+    },
+    "Toggle SSH Push" : {
+
+    },
+    "Undo" : {
+
+    },
+    "Undo Commit" : {
+
+    },
+    "Undo this commit" : {
+
+    },
+    "Undoing the initial commit is not supported" : {
+
+    },
     "Unknown" : {
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unknown"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -83,35 +337,251 @@
         }
       }
     },
-    "为提交 %@ 创建 annotated tag。" : {
+    "User info not found" : {
 
+    },
+    "Working Tree Clean" : {
+
+    },
+    "为提交 %@ 创建 annotated tag。" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Create an annotated tag for commit %@."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "为提交 %@ 创建 annotated tag。"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "為提交 %@ 建立 annotated tag。"
+          }
+        }
+      }
     },
     "为提交 %@ 创建 lightweight tag。" : {
-
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Create a lightweight tag for commit %@."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "为提交 %@ 创建 lightweight tag。"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "為提交 %@ 建立 lightweight tag。"
+          }
+        }
+      }
+    },
+    "切换 SSH 推送" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toggle SSH Push"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "切换 SSH 推送"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "切換 SSH 推送"
+          }
+        }
+      }
     },
     "创建" : {
-
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Create"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "创建"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "建立"
+          }
+        }
+      }
     },
     "创建标签" : {
-
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Create Tag"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "创建标签"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "建立標籤"
+          }
+        }
+      }
     },
     "创建附注标签" : {
-
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Create Annotated Tag"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "创建附注标签"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "建立附註標籤"
+          }
+        }
+      }
     },
     "删除" : {
-
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "删除"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "刪除"
+          }
+        }
+      }
     },
     "删除标签" : {
-
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete Tag"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "删除标签"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "刪除標籤"
+          }
+        }
+      }
     },
     "删除远端标签" : {
-
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete Remote Tag"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "删除远端标签"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "刪除遠端標籤"
+          }
+        }
+      }
     },
     "刷新中" : {
-
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Refreshing"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "刷新中"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重新整理中"
+          }
+        }
+      }
     },
     "刷新文件列表…" : {
+      "extractionState" : "stale",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Refresh File List…"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -127,7 +597,14 @@
       }
     },
     "取消" : {
+      "extractionState" : "stale",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancel"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -143,13 +620,60 @@
       }
     },
     "将删除 origin 上的标签 %@，本地标签不会受影响。" : {
-
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Will delete tag %@ from origin, local tag will not be affected."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "将删除 origin 上的标签 %@，本地标签不会受影响。"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "將刪除 origin 上的標籤 %@，本地標籤不會受影響。"
+          }
+        }
+      }
     },
     "将删除本地标签 %@，远程标签不会受影响。" : {
-
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Will delete local tag %@, remote tag will not be affected."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "将删除本地标签 %@，远程标签不会受影响。"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "將刪除本地標籤 %@，遠端標籤不會受影響。"
+          }
+        }
+      }
     },
     "工作区干净" : {
+      "extractionState" : "stale",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Working Tree Clean"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -165,17 +689,83 @@
       }
     },
     "已创建标签: %@" : {
-
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tag created: %@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已创建标签: %@"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已建立標籤: %@"
+          }
+        }
+      }
     },
     "已删除标签: %@" : {
-
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tag deleted: %@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已删除标签: %@"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已刪除標籤: %@"
+          }
+        }
+      }
     },
     "已删除远端标签: %@" : {
-
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remote tag deleted: %@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已删除远端标签: %@"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已刪除遠端標籤: %@"
+          }
+        }
+      }
     },
     "已推送到远程" : {
       "extractionState" : "stale",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pushed to Remote"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -191,10 +781,37 @@
       }
     },
     "已推送标签: %@" : {
-
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tag pushed: %@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已推送标签: %@"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已推送標籤: %@"
+          }
+        }
+      }
     },
     "当前提交尚未推送到远程" : {
+      "extractionState" : "stale",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Current commit not yet pushed to remote"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -210,7 +827,14 @@
       }
     },
     "当前状态" : {
+      "extractionState" : "stale",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Current Status"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -226,7 +850,14 @@
       }
     },
     "所有更改已提交" : {
+      "extractionState" : "stale",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All Changes Committed"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -242,7 +873,14 @@
       }
     },
     "拉取中…" : {
+      "extractionState" : "stale",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pulling…"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -258,7 +896,14 @@
       }
     },
     "推送" : {
+      "extractionState" : "stale",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Push"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -276,6 +921,12 @@
     "推送中..." : {
       "extractionState" : "stale",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pushing..."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -291,7 +942,14 @@
       }
     },
     "推送到远程" : {
+      "extractionState" : "stale",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Push to Remote"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -307,7 +965,14 @@
       }
     },
     "推送失败" : {
+      "extractionState" : "stale",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Push Failed"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -323,11 +988,37 @@
       }
     },
     "推送标签" : {
-
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Push Tag"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "推送标签"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "推送標籤"
+          }
+        }
+      }
     },
     "提交已推送" : {
       "extractionState" : "stale",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Commit Pushed"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -345,6 +1036,12 @@
     "暂未推送到远程" : {
       "extractionState" : "stale",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not Yet Pushed to Remote"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -360,7 +1057,14 @@
       }
     },
     "未找到用户信息" : {
+      "extractionState" : "stale",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "User Info Not Found"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -377,6 +1081,12 @@
     },
     "未配置用户信息" : {
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "User Info Not Configured"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -392,19 +1102,106 @@
       }
     },
     "标签名称" : {
-
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tag Name"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "标签名称"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "標籤名稱"
+          }
+        }
+      }
     },
     "标签名称不能为空" : {
-
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tag name cannot be empty"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "标签名称不能为空"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "標籤名稱不能為空"
+          }
+        }
+      }
     },
     "标签说明" : {
-
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tag Message"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "标签说明"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "標籤說明"
+          }
+        }
+      }
     },
     "标签说明不能为空" : {
-
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tag message cannot be empty"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "标签说明不能为空"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "標籤說明不能為空"
+          }
+        }
+      }
     },
     "检查远程状态…" : {
+      "extractionState" : "stale",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Checking Remote Status…"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -421,6 +1218,12 @@
     },
     "正在加载" : {
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Loading"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -436,7 +1239,14 @@
       }
     },
     "正在推送中..." : {
+      "extractionState" : "stale",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pushing..."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -452,7 +1262,14 @@
       }
     },
     "点击执行 git pull 拉取远程提交" : {
+      "extractionState" : "stale",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Click to run git pull and fetch remote commits"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -468,7 +1285,14 @@
       }
     },
     "点击执行 git push 推送本地提交" : {
+      "extractionState" : "stale",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Click to run git push and push local commits"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -484,7 +1308,14 @@
       }
     },
     "点击推送到远程仓库" : {
+      "extractionState" : "stale",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Click to push to remote repository"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -500,7 +1331,14 @@
       }
     },
     "点击查看用户信息" : {
+      "extractionState" : "stale",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Click to view user info"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -516,13 +1354,59 @@
       }
     },
     "确认删除标签？" : {
-
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Confirm delete tag?"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "确认删除标签？"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "確認刪除標籤？"
+          }
+        }
+      }
     },
     "确认删除远端标签？" : {
-
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Confirm delete remote tag?"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "确认删除远端标签？"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "確認刪除遠端標籤？"
+          }
+        }
+      }
     },
     "管理预设..." : {
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Manage Presets..."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -540,6 +1424,12 @@
     "纯文本小写" : {
       "extractionState" : "stale",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plain Text Lowercase"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -557,6 +1447,12 @@
     "纯文本风格" : {
       "extractionState" : "stale",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plain Text Style"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -571,8 +1467,38 @@
         }
       }
     },
-    "远程有 %lld 个提交可拉取" : {
+    "网络连接异常，已自动重试但仍未成功。你可以尝试以下方案：" : {
+      "extractionState" : "stale",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Network connection error, auto-retry failed. You can try:"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "网络连接异常，已自动重试但仍未成功。你可以尝试以下方案："
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "網路連線異常，已自動重試但仍未成功。你可以嘗試以下方案："
+          }
+        }
+      }
+    },
+    "远程有 %lld 个提交可拉取" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld remote commits available to pull"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -588,7 +1514,14 @@
       }
     },
     "重试" : {
+      "extractionState" : "stale",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Retry"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -604,7 +1537,14 @@
       }
     },
     "项目不可用" : {
+      "extractionState" : "stale",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Project Unavailable"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",

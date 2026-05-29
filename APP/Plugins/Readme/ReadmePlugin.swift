@@ -7,14 +7,14 @@ class ReadmePlugin: NSObject, SuperPlugin {
     @objc static let shared = ReadmePlugin()
 
     /// 是否启用该插件
-    @objc static let shouldRegister = true
+    @objc static let shouldRegister = false
 
 
     /// 插件显示名称
-    static var displayName: String = "Readme"
+    static var displayName: String = String(localized: "Readme", table: "Readme")
 
     /// 插件描述
-    static var description: String = "在状态栏提供 README 入口"
+    static var description: String = String(localized: "Provides README entry point in status bar", table: "Readme")
 
     /// 插件图标名称
     static var iconName: String = "book"

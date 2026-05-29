@@ -14,7 +14,7 @@ class SubmodulePlugin: NSObject, SuperPlugin {
 
     @objc static let shared = SubmodulePlugin()
 
-    @objc static let shouldRegister = true
+    @objc static let shouldRegister = false
 
     func addStatusBarTrailingView() -> AnyView? {
         AnyView(SubmoduleStatusTile())

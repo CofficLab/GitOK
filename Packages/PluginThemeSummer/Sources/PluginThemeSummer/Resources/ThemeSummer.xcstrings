@@ -1,0 +1,19 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "Summer Theme" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Summer Theme" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "夏日主题" } }
+      }
+    },
+    "Warm golden light theme" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Warm golden light theme" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "温暖的金色浅色主题" } }
+      }
+    }
+  },
+  "version" : "1.0"
+}
+

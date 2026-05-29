@@ -82,14 +82,14 @@ struct IconMaker: View {
                         self.isLoading = false
                     } else {
                         self.iconAsset = nil
-                        self.errorMessage = "未找到图标：\(i.selectedIconId)"
+                        self.errorMessage = String(localized: "icon-not-found", table: "Icon").replacingOccurrences(of: "%@", with: i.selectedIconId)
                         self.isLoading = false
                     }
                 }
             } catch {
                 await MainActor.run {
                     self.iconAsset = nil
-                    self.errorMessage = "加载图标失败：\(error.localizedDescription)"
+                    self.errorMessage = String(localized: "load-icon-failed", table: "Icon").replacingOccurrences(of: "%@", with: error.localizedDescription)
                     self.isLoading = false
                 }
             }
@@ -108,7 +108,7 @@ struct LoadingStateView: View {
                 .scaleEffect(1.5)
                 .frame(width: 60, height: 60)
             
-            Text("加载图标中...")
+            Text(String(localized: "loading-icons", table: "Icon"))
                 .font(.headline)
                 .foregroundColor(.secondary)
         }
@@ -129,7 +129,7 @@ struct ErrorStateView: View {
                 .font(.system(size: 48))
                 .foregroundColor(.orange)
             
-            Text("加载失败")
+            Text(String(localized: "loading-failed", table: "Icon"))
                 .font(.headline)
                 .foregroundColor(.primary)
             
@@ -138,7 +138,7 @@ struct ErrorStateView: View {
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
             
-            Button("重试") {
+            Button(String(localized: "retry", table: "Icon")) {
                 onRetry()
             }
             .buttonStyle(.borderedProminent)
@@ -174,21 +174,21 @@ struct EmptyStateView: View {
                     ))
             }
             
-            Text("图标制作工坊")
+            Text(String(localized: "icon-workshop", table: "Icon"))
                 .font(.title2)
                 .fontWeight(.semibold)
                 .foregroundColor(.primary)
 
-            Text("选择一个图标开始制作，或创建新的设计")
+            Text(String(localized: "select-icon-to-start", table: "Icon"))
                 .font(.subheadline)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
             
             // 制作功能提示
             HStack(spacing: 20) {
-                FeatureHint(icon: "pencil.and.outline", title: "编辑", description: "调整颜色和样式")
-                FeatureHint(icon: "square.and.arrow.down", title: "导出", description: "多种格式下载")
-                FeatureHint(icon: "doc.badge.plus", title: "草稿", description: "保存制作进度")
+                FeatureHint(icon: "pencil.and.outline", title: String(localized: "edit", table: "Icon"), description: String(localized: "adjust-colors-style", table: "Icon"))
+                FeatureHint(icon: "square.and.arrow.down", title: String(localized: "export", table: "Icon"), description: String(localized: "multiple-formats", table: "Icon"))
+                FeatureHint(icon: "doc.badge.plus", title: String(localized: "draft", table: "Icon"), description: String(localized: "save-progress", table: "Icon"))
             }
             .padding(.top, 8)
         }

@@ -44,7 +44,7 @@ struct BannerTab: View {
         }
         .contextMenu {
             Button(action: { deleteBanner() }) {
-                Label(String(localized: "删除", table: "Banner"), systemImage: "trash")
+                Label(String(localized: "Delete", table: "Banner"), systemImage: "trash")
             }
         }
     }
@@ -62,11 +62,11 @@ struct BannerTab: View {
                 b.clearBanner()
             }
 
-            alert_info(String(localized: "已删除", table: "Banner"))
+            alert_info(String(localized: "Deleted", table: "Banner"))
         } catch {
             os_log(.error, "❌ 删除 Banner 失败: \(error.localizedDescription)")
             let msg = String.localizedStringWithFormat(
-                String(localized: "删除Banner失败：%@", table: "Banner"),
+                String(localized: "Failed to delete Banner: %@", table: "Banner"),
                 error.localizedDescription
             )
             alert_error(msg)

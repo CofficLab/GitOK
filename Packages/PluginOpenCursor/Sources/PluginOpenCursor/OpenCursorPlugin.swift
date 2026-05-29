@@ -1,0 +1,33 @@
+import Foundation
+import GitOKPluginKit
+import SwiftUI
+
+public struct OpenCursorPlugin: GitOKPackagedPlugin {
+    public static let shared = OpenCursorPlugin()
+
+    public static let metadata = GitOKPluginMetadata(
+        id: "OpenCursor",
+        displayName: PluginOpenCursorLocalization.string("Open Cursor"),
+        description: PluginOpenCursorLocalization.string("Open the current project folder in Cursor."),
+        iconName: "cursor.rays",
+        order: 8401,
+        allowUserToggle: true,
+        defaultEnabled: true,
+        tableName: PluginOpenCursorLocalization.table
+    )
+
+    private init() {}
+
+    public func toolBarTrailingView() -> AnyView? {
+        AnyView(OpenCursorButton())
+    }
+}
+
+public enum PluginOpenCursorLocalization {
+    public static let table = "OpenCursor"
+    public static let bundle = Bundle.module
+
+    public static func string(_ key: String) -> String {
+        NSLocalizedString(key, tableName: table, bundle: bundle, value: key, comment: "")
+    }
+}

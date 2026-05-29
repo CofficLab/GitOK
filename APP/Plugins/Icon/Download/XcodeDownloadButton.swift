@@ -17,7 +17,7 @@ struct XcodeDownloadButton: View {
 
     var body: some View {
         DownloadButton(
-            title: progressText.isEmpty ? "下载 Xcode 格式" : progressText,
+            title: progressText.isEmpty ? String(localized: "Download Xcode Format") : progressText,
             icon: "applelogo",
             color: .blue,
             action: {
@@ -31,12 +31,12 @@ struct XcodeDownloadButton: View {
 
     @MainActor private func downloadXcode() async {
         guard let iconAsset = currentIconAsset else {
-            MagicMessageProvider.shared.error("没有可用的图标资源")
+            MagicMessageProvider.shared.error(String(localized: "No available icon assets"))
             return
         }
 
         isGenerating = true
-        progressText = "正在生成 Xcode 图标集..."
+        progressText = String(localized: "Generating Xcode Icon Set...")
         defer {
             isGenerating = false
             progressText = ""
@@ -45,14 +45,14 @@ struct XcodeDownloadButton: View {
         let tag = Date.nowCompact
 
         guard let downloadsURL = FileManager.default.urls(for: .downloadsDirectory, in: .userDomainMask).first else {
-            MagicMessageProvider.shared.error("无权访问下载文件夹")
+            MagicMessageProvider.shared.error(String(localized: "No access to downloads folder"))
             return
         }
 
         // 生成两种格式的图标集
         await generateBothFormats(downloadsURL: downloadsURL, tag: tag, iconAsset: iconAsset)
 
-        MagicMessageProvider.shared.success("两种格式的 Xcode 图标集已存储到下载目录")
+        MagicMessageProvider.shared.success(String(localized: "Both Xcode icon set formats saved to Downloads"))
     }
 
     @MainActor private func generateBothFormats(downloadsURL: URL, tag: String, iconAsset: IconAsset) async {
@@ -70,7 +70,7 @@ struct XcodeDownloadButton: View {
         do {
             try FileManager.default.createDirectory(at: folderPath, withIntermediateDirectories: true)
         } catch {
-            MagicMessageProvider.shared.error("创建传统格式目录失败：\(error)")
+            MagicMessageProvider.shared.error(String(localized: "Failed to create legacy format directory: \(error)"))
             return
         }
 
@@ -94,7 +94,7 @@ struct XcodeDownloadButton: View {
         do {
             try FileManager.default.createDirectory(at: folderPath, withIntermediateDirectories: true)
         } catch {
-            MagicMessageProvider.shared.error("创建现代格式目录失败：\(error)")
+            MagicMessageProvider.shared.error(String(localized: "Failed to create modern format directory: \(error)"))
             return
         }
 
@@ -113,7 +113,7 @@ struct XcodeDownloadButton: View {
 
     @MainActor private func generateMacOSIcons(folderPath: URL, tag: String, iconAsset: IconAsset, isLegacy: Bool) async {
         guard let iconData = iconProvider.currentData else {
-            MagicMessageProvider.shared.error("没有可用的图标数据")
+            MagicMessageProvider.shared.error(String(localized: "No available icon data"))
             return
         }
         

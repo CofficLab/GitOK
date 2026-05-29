@@ -67,9 +67,9 @@ struct AppAppearanceSettingView: View, SuperLog {
             }
         }
         .onAppear(perform: loadData)
-        .alert(String(localized: "重置外观设置", table: "Core"), isPresented: $showResetConfirmation) {
-            Button(String(localized: "取消", table: "Core"), role: .cancel) { }
-            Button(String(localized: "重置", table: "Core"), role: .destructive) {
+        .alert(String(localized: "Reset Appearance Settings", table: "Core"), isPresented: $showResetConfirmation) {
+            Button(String(localized: "Cancel", table: "Core"), role: .cancel) { }
+            Button(String(localized: "Reset", table: "Core"), role: .destructive) {
                 resetToDefaults()
             }
         } message: {
@@ -80,7 +80,7 @@ struct AppAppearanceSettingView: View, SuperLog {
     // MARK: - View Components
 
     private var themeSelectionSection: some View {
-        GitOKUI.AppSettingsSection(title: String(localized: "主题", table: "Core")) {
+        GitOKUI.AppSettingsSection(title: String(localized: "Theme", table: "Core")) {
             ForEach(themeProvider.themes) { theme in
                 themeRow(theme)
             }
@@ -137,7 +137,7 @@ struct AppAppearanceSettingView: View, SuperLog {
 
     /// 主题模式设置
     private var themeModeSection: some View {
-        GitOKUI.AppSettingsSection(title: String(localized: "主题模式", table: "Core")) {
+        GitOKUI.AppSettingsSection(title: String(localized: "Theme Mode", table: "Core")) {
             ForEach(AppAppearanceSettingsStore.ThemeMode.allCases) { mode in
                 themeModeRow(mode)
             }
@@ -180,17 +180,17 @@ struct AppAppearanceSettingView: View, SuperLog {
     private func modeDescription(_ mode: AppAppearanceSettingsStore.ThemeMode) -> String {
         switch mode {
         case .system:
-            return String(localized: "跟随系统设置自动切换", table: "Core")
+            return String(localized: "Automatically switch with system settings", table: "Core")
         case .light:
-            return String(localized: "始终使用浅色外观", table: "Core")
+            return String(localized: "Always use light appearance", table: "Core")
         case .dark:
-            return String(localized: "始终使用深色外观", table: "Core")
+            return String(localized: "Always use dark appearance", table: "Core")
         }
     }
 
     /// 强调色设置
     private var accentColorSection: some View {
-        GitOKUI.AppSettingsSection(title: String(localized: "强调色", table: "Core")) {
+        GitOKUI.AppSettingsSection(title: String(localized: "Accent Color", table: "Core")) {
             VStack(alignment: .leading, spacing: 16) {
                 Text("选择应用的主要强调色", tableName: "Core")
                     .font(.caption)
@@ -239,7 +239,7 @@ struct AppAppearanceSettingView: View, SuperLog {
 
     /// 字体大小设置
     private var fontSizeSection: some View {
-        GitOKUI.AppSettingsSection(title: String(localized: "字体大小", table: "Core")) {
+        GitOKUI.AppSettingsSection(title: String(localized: "Font Size", table: "Core")) {
             ForEach(AppAppearanceSettingsStore.FontSize.allCases) { size in
                 fontSizeRow(size)
             }
@@ -258,7 +258,7 @@ struct AppAppearanceSettingView: View, SuperLog {
                     Text(verbatim: size.displayName)
                         .font(.system(size: 13))
 
-                    Text(verbatim: String.localizedStringWithFormat(NSLocalizedString("缩放比例: %lld%%", tableName: "Core", comment: ""), Int64(size.scaleFactor * 100)))
+                    Text(verbatim: String.localizedStringWithFormat(NSLocalizedString("Scale: %lld%%", tableName: "Core", comment: ""), Int64(size.scaleFactor * 100)))
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
@@ -288,7 +288,7 @@ struct AppAppearanceSettingView: View, SuperLog {
 
     /// 布局密度设置
     private var layoutDensitySection: some View {
-        GitOKUI.AppSettingsSection(title: String(localized: "布局密度", table: "Core")) {
+        GitOKUI.AppSettingsSection(title: String(localized: "Layout Density", table: "Core")) {
             ForEach(AppAppearanceSettingsStore.LayoutDensity.allCases) { density in
                 layoutDensityRow(density)
             }
@@ -332,11 +332,11 @@ struct AppAppearanceSettingView: View, SuperLog {
     private func densityDescription(_ density: AppAppearanceSettingsStore.LayoutDensity) -> String {
         switch density {
         case .compact:
-            return String(localized: "更紧凑的布局，显示更多内容", table: "Core")
+            return String(localized: "More compact layout, displays more content", table: "Core")
         case .comfortable:
-            return String(localized: "平衡的布局，适合大多数场景", table: "Core")
+            return String(localized: "Balanced layout, suitable for most scenarios", table: "Core")
         case .spacious:
-            return String(localized: "更宽松的布局，视觉更舒适", table: "Core")
+            return String(localized: "More spacious layout, visually comfortable", table: "Core")
         }
     }
 
@@ -350,7 +350,7 @@ struct AppAppearanceSettingView: View, SuperLog {
 
     /// 重置设置
     private var resetSection: some View {
-        GitOKUI.AppSettingsSection(title: String(localized: "重置", table: "Core")) {
+        GitOKUI.AppSettingsSection(title: String(localized: "Reset", table: "Core")) {
             Button(role: .destructive) {
                 showResetConfirmation = true
             } label: {

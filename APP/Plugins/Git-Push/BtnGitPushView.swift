@@ -3,7 +3,7 @@ import MagicKit
 import OSLog
 import SwiftUI
 
-/// Git 推送按钮视图：提供将本地提交推送到远程仓库的功能按钮。
+/// Git 同步按钮视图：根据当前分支状态提供 Fetch、Pull 或 Push 主操作。
 struct BtnGitPushView: View, SuperLog, SuperThread {
     /// 日志标识符
     nonisolated static let emoji = "⬆️"
@@ -32,34 +32,91 @@ struct BtnGitPushView: View, SuperLog, SuperThread {
 
     private init() {}
 
-    /// 视图主体：当存在项目且为 Git 仓库时显示推送按钮
+    /// 视图主体：当存在项目且为 Git 仓库时显示同步按钮
     var body: some View {
         ZStack {
             if let project = vm.project, self.isGitProject {
-                actionIcon
-                    .resizable()
-                    .frame(height: 18)
-                    .frame(width: 18)
-                    .inButtonWithAction {
-                        performPrimaryAction(for: project)
+                HStack(spacing: 0) {
+                    Button {
+                        perform(primaryAction, for: project)
+                    } label: {
+                        HStack(spacing: 6) {
+                            actionIcon
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 16, height: 16)
+
+                            Text(primaryActionTitle)
+                                .font(.caption)
+                                .lineLimit(1)
+
+                            if let badgeText = aheadBehindBadgeText {
+                                Text(badgeText)
+                                    .font(.caption2.monospacedDigit())
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 28)
+                        .contentShape(Rectangle())
                     }
-                    .disabled(working)
-                    .toolbarButtonStyle()
-                    .help(primaryActionHelp)
+                    .buttonStyle(.plain)
+
+                    Menu {
+                        Button {
+                            fetch(path: project.path, onComplete: {})
+                        } label: {
+                            Label("Fetch origin", systemImage: "arrow.clockwise")
+                        }
+
+                        Button {
+                            pull(path: project.path, onComplete: {})
+                        } label: {
+                            Label("Pull origin", systemImage: "arrow.down")
+                        }
+                        .disabled(!vm.hasUpstream)
+
+                        Button {
+                            push(path: project.path, onComplete: {})
+                        } label: {
+                            Label(vm.hasUpstream ? "Push origin" : "Publish branch", systemImage: "arrow.up")
+                        }
+                    } label: {
+                        Image(systemName: "chevron.down")
+                            .font(.caption2.weight(.semibold))
+                            .frame(width: 18, height: 28)
+                    }
+                    .menuStyle(.borderlessButton)
+                    .menuIndicator(.hidden)
+                    .fixedSize()
+                }
+                .padding(.leading, 10)
+                .padding(.trailing, 6)
+                .frame(width: 148, height: 36)
+                .background(.quaternary.opacity(0.7))
+                .clipShape(RoundedRectangle(cornerRadius: 7, style: .continuous))
+                .overlay {
+                    RoundedRectangle(cornerRadius: 7, style: .continuous)
+                        .stroke(Color.primary.opacity(0.08), lineWidth: 1)
+                }
+                .contentShape(RoundedRectangle(cornerRadius: 7, style: .continuous))
+                .fixedSize(horizontal: true, vertical: false)
+                .disabled(working)
+                .help(primaryActionHelp)
             } else {
                 // 空状态占位符，确保视图始终有内容
                 Color.clear.frame(width: 24, height: 24)
             }
         }
         .onAppear(perform: onAppear)
-        .alert("远程有新的提交", isPresented: $showPushNeedsFetchAlert) {
+        .alert(String(localized: "New commits on remote"), isPresented: $showPushNeedsFetchAlert) {
             Button("Fetch") {
                 guard let project = vm.project else { return }
                 fetch(path: project.path, onComplete: {})
             }
-            Button("取消", role: .cancel) {}
+            Button(String(localized: "Cancel"), role: .cancel) {}
         } message: {
-            Text("当前分支无法推送，因为远程分支包含本地还没有的提交。请先 Fetch，再选择 Pull 或 Rebase 后重新 Push。")
+            Text(String(localized: "Cannot push because the remote branch has commits you don't have locally. Please Fetch first, then Pull or Rebase before pushing again."))
         }
     }
 }
@@ -67,42 +124,89 @@ struct BtnGitPushView: View, SuperLog, SuperThread {
 // MARK: - Action
 
 extension BtnGitPushView {
-    private var actionIcon: Image {
+    private enum RemotePrimaryAction {
+        case fetch
+        case pull
+        case push
+    }
+
+    private var primaryAction: RemotePrimaryAction {
         if vm.hasUpstream, vm.behindCount > 0 {
-            return Image.download
+            return .pull
         }
 
         if vm.hasUpstream, vm.aheadCount == 0 {
-            return Image(systemName: "arrow.clockwise")
+            return .fetch
         }
 
-        return Image.upload
+        return .push
+    }
+
+    private var actionIcon: Image {
+        switch primaryAction {
+        case .pull:
+            return Image.download
+        case .fetch:
+            return Image(systemName: "arrow.clockwise")
+        case .push:
+            return Image.upload
+        }
+    }
+
+    private var primaryActionTitle: String {
+        switch primaryAction {
+        case .pull:
+            return "Pull origin"
+        case .fetch:
+            return "Fetch origin"
+        case .push:
+            return vm.hasUpstream ? "Push origin" : "Publish branch"
+        }
+    }
+
+    private var aheadBehindBadgeText: String? {
+        guard vm.hasUpstream else { return nil }
+
+        if vm.aheadCount > 0, vm.behindCount > 0 {
+            return "↑\(vm.aheadCount) ↓\(vm.behindCount)"
+        }
+
+        if vm.aheadCount > 0 {
+            return "↑\(vm.aheadCount)"
+        }
+
+        if vm.behindCount > 0 {
+            return "↓\(vm.behindCount)"
+        }
+
+        return nil
     }
 
     private var primaryActionHelp: String {
         if vm.hasUpstream, vm.behindCount > 0 {
-            return "远程有 \(vm.behindCount) 个新提交，先拉取"
+            return String(localized: "\(vm.behindCount) new commits on remote, click Pull; Fetch or Push available in menu")
         }
 
         if vm.hasUpstream, vm.aheadCount == 0 {
-            return "获取远程更新"
+            return String(localized: "Branch is up to date, click Fetch to check for remote updates")
         }
 
-        return "推送本地提交"
+        if vm.hasUpstream {
+            return String(localized: "\(vm.aheadCount) commits ready to push")
+        }
+
+        return String(localized: "Branch has no upstream yet, click Publish branch to push and set up tracking")
     }
 
-    private func performPrimaryAction(for project: Project) {
-        if vm.hasUpstream, vm.behindCount > 0 {
+    private func perform(_ action: RemotePrimaryAction, for project: Project) {
+        switch action {
+        case .pull:
             pull(path: project.path, onComplete: {})
-            return
-        }
-
-        if vm.hasUpstream, vm.aheadCount == 0 {
+        case .fetch:
             fetch(path: project.path, onComplete: {})
-            return
+        case .push:
+            push(path: project.path, onComplete: {})
         }
-
-        push(path: project.path, onComplete: {})
     }
 
     /// 显示错误提示
@@ -144,7 +248,7 @@ extension BtnGitPushView {
 
         // ✅ 修复：在后台线程执行 Git 操作，避免阻塞主线程
         Task.detached {
-            await setStatus("推送中…")
+            await setStatus(String(localized: "Pushing…"))
             
             do {
                 // ✅ 关键修复：push() 是阻塞操作，必须在后台线程执行，不能在 MainActor.run 中
@@ -190,7 +294,7 @@ extension BtnGitPushView {
         }
 
         Task.detached {
-            await setStatus("拉取中…")
+            await setStatus(String(localized: "Pulling…"))
             do {
                 try project?.pull()
                 await MainActor.run {

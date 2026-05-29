@@ -5,7 +5,7 @@ import SwiftUI
 /// SmartFile 插件：在状态栏左侧展示当前文件信息的 Tile。
 class SmartFilePlugin: NSObject, SuperPlugin {
     /// 是否启用该插件
-    @objc static let shouldRegister = true
+    @objc static let shouldRegister = false
 
     @objc static let shared = SmartFilePlugin()
 

@@ -5,7 +5,7 @@ import SwiftUI
 /// Git 详情视图插件 - 负责提供 Git 标签页的详情视图
 class GitDetailPlugin: NSObject, SuperPlugin {
     /// 是否启用该插件
-    @objc static let shouldRegister = true
+    @objc static let shouldRegister = false
 
     @objc static let shared = GitDetailPlugin()
 

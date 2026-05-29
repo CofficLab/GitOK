@@ -7,7 +7,7 @@ import SwiftUI
 /// 负责管理和提供应用横幅生成功能
 class BannerPlugin: NSObject, SuperPlugin {
     /// 是否启用该插件
-    @objc static let shouldRegister = true
+    @objc static let shouldRegister = false
 
     @objc static let shared = BannerPlugin()
 

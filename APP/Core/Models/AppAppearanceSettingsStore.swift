@@ -25,9 +25,9 @@ class AppAppearanceSettingsStore: ObservableObject {
 
         var displayName: String {
             switch self {
-            case .system: return String(localized: "跟随系统", table: "Core")
-            case .light: return String(localized: "浅色模式", table: "Core")
-            case .dark: return String(localized: "深色模式", table: "Core")
+            case .system: return String(localized: "Follow System", table: "Core")
+            case .light: return String(localized: "Light Mode", table: "Core")
+            case .dark: return String(localized: "Dark Mode", table: "Core")
             }
         }
 
@@ -90,14 +90,14 @@ class AppAppearanceSettingsStore: ObservableObject {
 
         var displayName: String {
             switch self {
-            case .blue: return String(localized: "蓝色", table: "Core")
-            case .purple: return String(localized: "紫色", table: "Core")
-            case .pink: return String(localized: "粉色", table: "Core")
-            case .red: return String(localized: "红色", table: "Core")
-            case .orange: return String(localized: "橙色", table: "Core")
-            case .yellow: return String(localized: "黄色", table: "Core")
-            case .green: return String(localized: "绿色", table: "Core")
-            case .indigo: return String(localized: "靛蓝", table: "Core")
+            case .blue: return String(localized: "Blue", table: "Core")
+            case .purple: return String(localized: "Purple", table: "Core")
+            case .pink: return String(localized: "Pink", table: "Core")
+            case .red: return String(localized: "Red", table: "Core")
+            case .orange: return String(localized: "Orange", table: "Core")
+            case .yellow: return String(localized: "Yellow", table: "Core")
+            case .green: return String(localized: "Green", table: "Core")
+            case .indigo: return String(localized: "Indigo", table: "Core")
             }
         }
 
@@ -139,10 +139,10 @@ class AppAppearanceSettingsStore: ObservableObject {
 
         var displayName: String {
             switch self {
-            case .small: return String(localized: "小", table: "Core")
-            case .medium: return String(localized: "中", table: "Core")
-            case .large: return String(localized: "大", table: "Core")
-            case .extraLarge: return String(localized: "特大", table: "Core")
+            case .small: return String(localized: "Small", table: "Core")
+            case .medium: return String(localized: "Medium", table: "Core")
+            case .large: return String(localized: "Large", table: "Core")
+            case .extraLarge: return String(localized: "Extra Large", table: "Core")
             }
         }
 
@@ -179,9 +179,9 @@ class AppAppearanceSettingsStore: ObservableObject {
 
         var displayName: String {
             switch self {
-            case .compact: return String(localized: "紧凑", table: "Core")
-            case .comfortable: return String(localized: "舒适", table: "Core")
-            case .spacious: return String(localized: "宽松", table: "Core")
+            case .compact: return String(localized: "Compact", table: "Core")
+            case .comfortable: return String(localized: "Comfortable", table: "Core")
+            case .spacious: return String(localized: "Spacious", table: "Core")
             }
         }
 

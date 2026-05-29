@@ -57,15 +57,15 @@ struct SubmoduleStatusTile: View, SuperLog {
             ProgressView()
                 .controlSize(.small)
         } else if submodules.isEmpty {
-            Text("Submodule")
+            Text(String(localized: "Submodule", table: "GitSubmodule"))
                 .foregroundColor(.secondary)
         } else if issueCount > 0 {
-            Text("Submodule \(issueCount)")
+            Text(String(localized: "Submodule \(issueCount)", table: "GitSubmodule"))
                 .font(.footnote.weight(.medium))
                 .foregroundColor(.orange)
                 .monospacedDigit()
         } else {
-            Text("Submodule \(submodules.count)")
+            Text(String(localized: "Submodule \(submodules.count)", table: "GitSubmodule"))
                 .font(.footnote.weight(.medium))
                 .foregroundColor(.secondary)
                 .monospacedDigit()
@@ -73,14 +73,14 @@ struct SubmoduleStatusTile: View, SuperLog {
     }
 
     private var helpText: String {
-        guard vm.project != nil else { return "未选择项目" }
+        guard vm.project != nil else { return String(localized: "No project selected") }
         if submodules.isEmpty {
-            return "当前仓库没有子模块"
+            return String(localized: "No submodules in this repository")
         }
         if issueCount > 0 {
-            return "发现 \(issueCount) 个需要处理的子模块"
+            return String(localized: "Found \(issueCount) submodules that need attention")
         }
-        return "共有 \(submodules.count) 个子模块"
+        return String(localized: "\(submodules.count) submodules total")
     }
 
     private var popoverContent: some View {
@@ -113,19 +113,19 @@ struct SubmoduleStatusTile: View, SuperLog {
             Image(systemName: iconName)
                 .foregroundColor(issueCount > 0 ? .orange : .secondary)
             VStack(alignment: .leading, spacing: 2) {
-                Text("Submodule")
+                Text(String(localized: "Submodule", table: "GitSubmodule"))
                     .font(.headline)
                 Text(headerSubtitle)
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
             Spacer()
-            Button("初始化全部") {
+            Button(String(localized: "Initialize All")) {
                 initializeSubmodules()
             }
             .disabled(vm.project == nil || submodules.isEmpty)
 
-            Button("更新全部") {
+            Button(String(localized: "Update All")) {
                 updateSubmodules()
             }
             .disabled(vm.project == nil || submodules.isEmpty)
@@ -134,16 +134,16 @@ struct SubmoduleStatusTile: View, SuperLog {
 
     private var headerSubtitle: String {
         if submodules.isEmpty {
-            return "未发现子模块"
+            return String(localized: "No submodules found")
         }
         if issueCount > 0 {
-            return "\(submodules.count) 个子模块，\(issueCount) 个需要处理"
+            return String(localized: "\(submodules.count) submodules, \(issueCount) need attention")
         }
-        return "\(submodules.count) 个子模块状态正常"
+        return String(localized: "\(submodules.count) submodules are up to date")
     }
 
     private var emptyState: some View {
-        Text("当前仓库没有配置 Git submodule。")
+        Text(String(localized: "No Git submodules configured in this repository."))
             .font(.caption)
             .foregroundColor(.secondary)
     }
@@ -168,12 +168,12 @@ struct SubmoduleStatusTile: View, SuperLog {
 
                 Spacer()
 
-                Button("Diff") {
+                Button(String(localized: "Diff", table: "GitSubmodule")) {
                     loadDiff(for: submodule.path)
                 }
                 .disabled(vm.project == nil)
 
-                Button(submodule.status == .uninitialized ? "初始化" : "更新") {
+                Button(submodule.status == .uninitialized ? String(localized: "Initialize") : String(localized: "Update")) {
                     if submodule.status == .uninitialized {
                         initializeSubmodules(paths: [submodule.path])
                     } else {
@@ -190,12 +190,12 @@ struct SubmoduleStatusTile: View, SuperLog {
     private func diffSection(path: String) -> some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
-                Text("Diff: \(path)")
+                Text(String(localized: "Diff: \(path)", table: "GitSubmodule"))
                     .font(.subheadline.weight(.semibold))
                     .lineLimit(1)
                     .truncationMode(.middle)
                 Spacer()
-                Button("关闭") {
+                Button(String(localized: "Close", table: "GitSubmodule")) {
                     diffPath = nil
                     diffText = nil
                 }
@@ -210,7 +210,7 @@ struct SubmoduleStatusTile: View, SuperLog {
                     .textSelection(.enabled)
                     .frame(maxWidth: .infinity, alignment: .leading)
             } else {
-                Text("当前子模块没有可显示的 diff 摘要。")
+                Text(String(localized: "No diff summary available for this submodule."))
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
@@ -258,7 +258,7 @@ struct SubmoduleStatusTile: View, SuperLog {
             do {
                 try GitRepositoryCLI(repositoryURL: repositoryURL).initializeSubmodules(paths: paths)
                 await MainActor.run {
-                    alert_info(paths.isEmpty ? "已初始化子模块" : "已初始化 \(paths[0])")
+                    alert_info(paths.isEmpty ? String(localized: "Submodule initialized") : String(localized: "Initialized \(paths[0])"))
                     refresh()
                 }
             } catch {
@@ -277,7 +277,7 @@ struct SubmoduleStatusTile: View, SuperLog {
             do {
                 try GitRepositoryCLI(repositoryURL: repositoryURL).updateSubmodules(paths: paths)
                 await MainActor.run {
-                    alert_info(paths.isEmpty ? "已更新子模块" : "已更新 \(paths[0])")
+                    alert_info(paths.isEmpty ? String(localized: "Submodules updated") : String(localized: "Updated \(paths[0])"))
                     refresh()
                 }
             } catch {
@@ -321,13 +321,13 @@ struct SubmoduleStatusTile: View, SuperLog {
     private func statusText(for status: GitRepositoryCLI.GitSubmodule.Status) -> String {
         switch status {
         case .initialized:
-            return "已初始化"
+            return String(localized: "Initialized")
         case .uninitialized:
-            return "未初始化"
+            return String(localized: "Uninitialized")
         case .modified:
-            return "HEAD 与索引不一致"
+            return String(localized: "HEAD differs from index")
         case .conflicted:
-            return "存在冲突"
+            return String(localized: "Conflicted")
         }
     }
 

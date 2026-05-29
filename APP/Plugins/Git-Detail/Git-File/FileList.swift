@@ -88,17 +88,17 @@ struct FileList: View, SuperThread, SuperLog {
         .onProjectGitIndexDidChange(perform: onGitDirectoryDidChange)
         .onProjectGitHeadDidChange(perform: onGitDirectoryDidChange)
         .onApplicationWillBecomeActive(perform: onAppWillBecomeActive)
-        .alert("确认丢弃所有更改", isPresented: $showDiscardAllAlert) {
-            Button("取消", role: .cancel) { }
-            Button("丢弃所有", role: .destructive) {
+        .alert(String(localized: "Confirm Discard All Changes"), isPresented: $showDiscardAllAlert) {
+            Button(String(localized: "Cancel"), role: .cancel) { }
+            Button(String(localized: "Discard All"), role: .destructive) {
                 discardAllChanges()
             }
         } message: {
             Text(discardAllAlertMessage)
         }
-        .alert("确认丢弃所选更改", isPresented: $showDiscardSelectedAlert) {
-            Button("取消", role: .cancel) { }
-            Button("丢弃所选", role: .destructive) {
+        .alert(String(localized: "Confirm Discard Selected Changes"), isPresented: $showDiscardSelectedAlert) {
+            Button(String(localized: "Cancel"), role: .cancel) { }
+            Button(String(localized: "Discard Selected"), role: .destructive) {
                 discardSelectedChanges()
             }
         } message: {
@@ -121,7 +121,7 @@ extension FileList {
                         HStack(spacing: 4) {
                             Image(systemName: "arrow.uturn.backward")
                                 .font(.system(size: 12))
-                            Text("丢弃所有更改")
+                            Text(String(localized: "Discard All Changes"))
                                 .font(.caption)
                         }
                         .padding(.horizontal, 8)
@@ -134,7 +134,7 @@ extension FileList {
                     }
                     .buttonStyle(.borderless)
                     .foregroundColor(discardButtonHovered ? .white : .red)
-                    .help("丢弃所有文件的更改")
+                    .help(String(localized: "Discard changes of all files"))
                     .onHover { hovering in
                         withAnimation(.easeInOut(duration: 0.2)) {
                             discardButtonHovered = hovering
@@ -148,7 +148,7 @@ extension FileList {
                     HStack(spacing: 4) {
                         ProgressView()
                             .controlSize(.small)
-                        Text("加载中...")
+                        Text(String(localized: "Loading..."))
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }
@@ -158,7 +158,7 @@ extension FileList {
                             .foregroundColor(.secondary)
                             .font(.system(size: 12))
 
-                        Text("\(files.count) 个文件")
+                        Text("\(files.count) \(String(localized: "files"))")
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }
@@ -169,7 +169,7 @@ extension FileList {
                 Image(systemName: "magnifyingglass")
                     .font(.system(size: 11))
                     .foregroundColor(.secondary)
-                TextField("过滤文件", text: $filterText)
+                TextField(String(localized: "Filter files"), text: $filterText)
                     .textFieldStyle(.plain)
                     .font(.caption)
 
@@ -182,7 +182,7 @@ extension FileList {
                             .foregroundColor(.secondary)
                     }
                     .buttonStyle(.plain)
-                    .help("清除过滤")
+                    .help(String(localized: "Clear filter"))
                 }
             }
             .padding(.horizontal, 8)
@@ -217,7 +217,7 @@ extension FileList {
                                     fileRow(file)
                                 }
                             } header: {
-                                sectionHeader(title: "Changes", count: changesFiles.count)
+                                sectionHeader(title: String(localized: "Changes"), count: changesFiles.count)
                             }
                         }
 
@@ -227,7 +227,7 @@ extension FileList {
                                     fileRow(file)
                                 }
                             } header: {
-                                sectionHeader(title: "Staged Changes", count: stagedFilesForSection.count)
+                                sectionHeader(title: String(localized: "Staged Changes"), count: stagedFilesForSection.count)
                             }
                         }
                     } else {
@@ -236,7 +236,7 @@ extension FileList {
                                 fileRow(file)
                             }
                         } header: {
-                            sectionHeader(title: "History Files", count: filteredFiles.count)
+                            sectionHeader(title: String(localized: "History Files"), count: filteredFiles.count)
                     }
             }
 
@@ -257,45 +257,45 @@ extension FileList {
 
     private var batchActionBar: some View {
         HStack(spacing: 8) {
-            Text("已选择 \(selectedBatchFiles.count)")
+            Text("\(String(localized: "Selected")) \(selectedBatchFiles.count)")
                 .font(.caption)
                 .foregroundColor(.secondary)
                 .monospacedDigit()
 
-            Button("暂存") {
+            Button(String(localized: "Stage")) {
                 stageSelectedFiles()
             }
             .disabled(selectedStageableFiles.isEmpty)
             .keyboardShortcut("s", modifiers: [.command, .shift])
-            .accessibilityHint("暂存批量选择中仍可暂存的文件")
+            .accessibilityHint(String(localized: "Stage files that can still be staged in the batch selection"))
 
-            Button("取消暂存") {
+            Button(String(localized: "Unstage")) {
                 unstageSelectedFiles()
             }
             .disabled(selectedUnstageableFiles.isEmpty)
             .keyboardShortcut("u", modifiers: [.command, .shift])
-            .accessibilityHint("取消暂存批量选择中已暂存的文件")
+            .accessibilityHint(String(localized: "Unstage already staged files in the batch selection"))
 
-            Button("丢弃", role: .destructive) {
+            Button(String(localized: "Discard"), role: .destructive) {
                 showDiscardSelectedAlert = true
             }
             .disabled(selectedBatchFiles.isEmpty)
             .keyboardShortcut(.delete, modifiers: [.command])
-            .accessibilityHint("丢弃批量选择中的文件更改")
+            .accessibilityHint(String(localized: "Discard changes of files in the batch selection"))
 
             Spacer()
 
-            Button("全选当前") {
+            Button(String(localized: "Select All Current")) {
                 selectFilteredFiles()
             }
             .disabled(filteredFiles.isEmpty)
             .keyboardShortcut("a", modifiers: [.command, .shift])
-            .accessibilityHint("选择当前过滤结果中的全部文件")
+            .accessibilityHint(String(localized: "Select all files in the current filter result"))
 
-            Button("清除选择") {
+            Button(String(localized: "Clear Selection")) {
                 selectedBatchFilePaths.removeAll()
             }
-            .accessibilityHint("清除当前批量选择")
+            .accessibilityHint(String(localized: "Clear current batch selection"))
         }
         .font(.caption)
         .buttonStyle(.borderless)
@@ -312,7 +312,7 @@ extension FileList {
             Image(systemName: "line.3.horizontal.decrease.circle")
                 .font(.system(size: 28))
                 .foregroundColor(.secondary)
-            Text(filterText.isEmpty ? "没有文件变更" : "没有匹配的文件")
+            Text(filterText.isEmpty ? String(localized: "No files changed") : String(localized: "No matching files"))
                 .font(.caption)
                 .foregroundColor(.secondary)
         }
@@ -418,9 +418,9 @@ extension FileList {
         let count = selectedBatchFiles.count
         let untrackedCount = selectedBatchFiles.filter { untrackedFilePaths.contains($0.file) }.count
         if untrackedCount > 0 {
-            return "确定要丢弃所选 \(count) 个文件的更改吗？其中 \(untrackedCount) 个未跟踪文件会被删除，此操作不可撤销。"
+            return String(localized: "Are you sure you want to discard changes for \(count) files? \(untrackedCount) untracked files will be deleted. This action cannot be undone.")
         }
-        return "确定要丢弃所选 \(count) 个文件的更改吗？此操作不可撤销。"
+        return String(localized: "Are you sure you want to discard changes for \(count) files? This action cannot be undone.")
     }
 
     func toggleBatchSelection(for file: GitDiffFile) {
@@ -475,17 +475,17 @@ extension FileList {
     var discardAllAlertMessage: String {
         var details: [String] = []
         if stagedFilePaths.isEmpty == false {
-            details.append("\(stagedFilePaths.count) 个已暂存文件")
+            details.append(String(localized: "\(stagedFilePaths.count) staged files"))
         }
         if unstagedFilePaths.isEmpty == false {
-            details.append("\(unstagedFilePaths.count) 个未暂存文件")
+            details.append(String(localized: "\(unstagedFilePaths.count) unstaged files"))
         }
         if untrackedFilePaths.isEmpty == false {
-            details.append("\(untrackedFilePaths.count) 个未跟踪文件会被删除")
+            details.append(String(localized: "\(untrackedFilePaths.count) untracked files will be deleted"))
         }
 
-        let summary = details.isEmpty ? "\(files.count) 个文件" : details.joined(separator: "、")
-        return "确定要丢弃所有更改吗？将影响 \(summary)。此操作不可撤销。"
+        let summary = details.isEmpty ? String(localized: "\(files.count) files") : details.joined(separator: ", ")
+        return String(localized: "Are you sure you want to discard all changes? This will affect \(summary). This action cannot be undone.")
     }
 
 
@@ -496,12 +496,12 @@ extension FileList {
             do {
                 try project.addFiles([file.file])
                 await MainActor.run {
-                    alert_info("已暂存: \(file.file)")
+                    alert_info(String(localized: "Staged: \(file.file)"))
                 }
                 await self.refresh(reason: "AfterStageFile")
             } catch {
                 await MainActor.run {
-                    os_log(.error, "\(Self.t)❌ 暂存文件失败: \(error.localizedDescription)")
+                    os_log(.error, "\(Self.t)❌ Stage file failed: \(error.localizedDescription)")
                     alert_error(error)
                 }
             }
@@ -516,13 +516,13 @@ extension FileList {
             do {
                 try project.addFiles(filesToStage.map(\.file))
                 await MainActor.run {
-                    alert_info("已暂存 \(filesToStage.count) 个文件")
+                    alert_info(String(localized: "Staged \(filesToStage.count) files"))
                     selectedBatchFilePaths.subtract(filesToStage.map(\.file))
                 }
                 await self.refresh(reason: "AfterStageSelectedFiles")
             } catch {
                 await MainActor.run {
-                    os_log(.error, "\(Self.t)❌ 批量暂存失败: \(error.localizedDescription)")
+                    os_log(.error, "\(Self.t)❌ Batch stage failed: \(error.localizedDescription)")
                     alert_error(error)
                 }
             }
@@ -536,12 +536,12 @@ extension FileList {
             do {
                 try project.unstageFiles([file.file])
                 await MainActor.run {
-                    alert_info("已取消暂存: \(file.file)")
+                    alert_info(String(localized: "Unstaged: \(file.file)"))
                 }
                 await self.refresh(reason: "AfterUnstageFile")
             } catch {
                 await MainActor.run {
-                    os_log(.error, "\(Self.t)❌ 取消暂存失败: \(error.localizedDescription)")
+                    os_log(.error, "\(Self.t)❌ Unstage file failed: \(error.localizedDescription)")
                     alert_error(error)
                 }
             }
@@ -556,13 +556,13 @@ extension FileList {
             do {
                 try project.unstageFiles(filesToUnstage.map(\.file))
                 await MainActor.run {
-                    alert_info("已取消暂存 \(filesToUnstage.count) 个文件")
+                    alert_info(String(localized: "Unstaged \(filesToUnstage.count) files"))
                     selectedBatchFilePaths.subtract(filesToUnstage.map(\.file))
                 }
                 await self.refresh(reason: "AfterUnstageSelectedFiles")
             } catch {
                 await MainActor.run {
-                    os_log(.error, "\(Self.t)❌ 批量取消暂存失败: \(error.localizedDescription)")
+                    os_log(.error, "\(Self.t)❌ Batch unstage failed: \(error.localizedDescription)")
                     alert_error(error)
                 }
             }
@@ -581,14 +581,14 @@ extension FileList {
 
                 // 在主线程更新 UI
                 await MainActor.run {
-                    alert_info("已丢弃文件更改: \(file.file)")
+                    alert_info(String(localized: "Discarded file changes: \(file.file)"))
                 }
 
                 // 刷新文件列表（refresh 内部已经处理了后台线程）
                 await self.refresh(reason: "AfterDiscardChanges")
             } catch {
                 await MainActor.run {
-                    os_log(.error, "\(Self.t)❌ 丢弃文件更改失败: \(error.localizedDescription)")
+                    os_log(.error, "\(Self.t)❌ Failed to discard file changes: \(error.localizedDescription)")
                     alert_error(error)
                 }
             }
@@ -606,14 +606,14 @@ extension FileList {
 
                 // 在主线程更新 UI
                 await MainActor.run {
-                    alert_info("已丢弃所有文件的更改")
+                    alert_info(String(localized: "Discarded all file changes"))
                 }
 
                 // 刷新文件列表（refresh 内部已经处理了后台线程）
                 await self.refresh(reason: "AfterDiscardAllChanges")
             } catch {
                 await MainActor.run {
-                    os_log(.error, "\(Self.t)❌ 丢弃所有更改失败: \(error.localizedDescription)")
+                    os_log(.error, "\(Self.t)❌ Failed to discard all changes: \(error.localizedDescription)")
                     alert_error(error)
                 }
             }
@@ -631,14 +631,14 @@ extension FileList {
                 }
 
                 await MainActor.run {
-                    alert_info("已丢弃 \(filesToDiscard.count) 个文件的更改")
+                    alert_info(String(localized: "Discarded changes for \(filesToDiscard.count) files"))
                     selectedBatchFilePaths.subtract(filesToDiscard.map(\.file))
                 }
 
                 await self.refresh(reason: "AfterDiscardSelectedChanges")
             } catch {
                 await MainActor.run {
-                    os_log(.error, "\(Self.t)❌ 批量丢弃失败: \(error.localizedDescription)")
+                    os_log(.error, "\(Self.t)❌ Failed to batch discard: \(error.localizedDescription)")
                     alert_error(error)
                 }
             }
@@ -757,7 +757,7 @@ extension FileList {
                 self.isLoading = false
                 let gitDetailError = GitDetailError.from(error, context: "refreshFileList")
                 self.errorMessage = gitDetailError.localizedDescription
-                os_log(.error, "\(Self.t)❌ 刷新文件列表失败: \(gitDetailError.localizedDescription)")
+                os_log(.error, "\(Self.t)❌ Failed to refresh file list: \(gitDetailError.localizedDescription)")
             }
         }
     }

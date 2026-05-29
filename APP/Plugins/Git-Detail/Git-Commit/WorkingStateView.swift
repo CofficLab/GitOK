@@ -96,24 +96,24 @@ struct WorkingStateView: View, SuperLog {
             VStack(alignment: .leading, spacing: 2) {
                 if changedFileCount == 0 {
                     // 工作区干净
-                    Text("工作区干净", tableName: "GitCommit")
+                    Text(String(localized: "Working Tree Clean", table: "GitCommit"))
                         .font(.system(size: 14, weight: .medium))
 
                     if unpulledCount > 0 {
-                        Text("远程有 \(unpulledCount) 个提交可拉取", tableName: "GitCommit")
+                        Text("\(unpulledCount) remote commits available to pull", tableName: "GitCommit")
                             .font(.system(size: 11))
                             .foregroundColor(.secondary)
                     } else {
-                        Text("所有更改已提交", tableName: "GitCommit")
+                        Text(String(localized: "All Changes Committed", table: "GitCommit"))
                             .font(.system(size: 11))
                             .foregroundColor(.secondary)
                     }
                 } else {
                     // 有未提交文件
-                    Text("当前状态", tableName: "GitCommit")
+                    Text(String(localized: "Current Status", table: "GitCommit"))
                         .font(.system(size: 14, weight: .medium))
 
-                    Text("(\(changedFileCount)) 未提交", tableName: "GitCommit")
+                    Text("(\(changedFileCount)) Uncommitted", tableName: "GitCommit")
                         .font(.system(size: 11))
                         .foregroundColor(.secondary)
                 }
@@ -128,7 +128,7 @@ struct WorkingStateView: View, SuperLog {
                     ProgressView()
                         .controlSize(.small)
                         .scaleEffect(0.8)
-                    Text("刷新中", tableName: "GitCommit")
+                    Text("Refreshing", tableName: "GitCommit")
                         .font(.system(size: 12, weight: .medium))
                         .foregroundColor(.secondary)
                 }
@@ -199,7 +199,7 @@ struct WorkingStateView: View, SuperLog {
     /// 下载按钮（执行 git pull）
     private var downloadButton: some View {
         AppButton(
-            LocalizedStringKey(isPulling ? "拉取中..." : "拉取"),
+            LocalizedStringKey(isPulling ? "Pulling..." : "Pull"),
             systemImage: isPulling ? nil : "arrow.down.circle.fill",
             style: .tonal,
             size: .small
@@ -207,13 +207,13 @@ struct WorkingStateView: View, SuperLog {
             performPull()
         }
         .disabled(isPulling)
-        .help(String(localized: "点击执行 git pull 拉取远程提交", table: "GitCommit"))
+        .help(String(localized: "Click to run git pull and fetch remote commits", table: "GitCommit"))
     }
 
     /// 上传按钮（执行 git push）
     private var uploadButton: some View {
         AppButton(
-            LocalizedStringKey(isPushing ? "推送中..." : "推送"),
+            LocalizedStringKey(isPushing ? "Pushing..." : "Push"),
             systemImage: isPushing ? nil : "arrow.up.circle.fill",
             style: .tonal,
             size: .small
@@ -221,7 +221,7 @@ struct WorkingStateView: View, SuperLog {
             performPush()
         }
         .disabled(isPushing)
-        .help(String(localized: "点击执行 git push 推送本地提交", table: "GitCommit"))
+        .help(String(localized: "Click to run git push and push local commits", table: "GitCommit"))
     }
 }
 
@@ -235,7 +235,7 @@ extension WorkingStateView {
         }
 
         await MainActor.run {
-            data.activityStatus = String(localized: "刷新文件列表…", table: "GitCommit")
+            data.activityStatus = String(localized: "Refresh File List…", table: "GitCommit")
             isRefreshingFileList = true
         }
 
@@ -243,6 +243,7 @@ extension WorkingStateView {
             let count = try await project.untrackedFiles().count
             await MainActor.run {
                 self.changedFileCount = count
+                vm.updateIsClean(count == 0)
                 data.activityStatus = nil
                 isRefreshingFileList = false
             }
@@ -271,7 +272,7 @@ extension WorkingStateView {
         }
 
         // 设置活动状态
-        setStatus(String(localized: "检查远程状态…", table: "GitCommit"))
+        setStatus(String(localized: "Checking Remote Status…", table: "GitCommit"))
 
         // 使用 Task.detached 确保在后台执行，不继承 actor 上下文
         Task.detached(priority: .userInitiated) {
@@ -348,7 +349,7 @@ extension WorkingStateView {
         isPulling = true
 
         // 设置状态日志
-        setStatus(String(localized: "拉取中…", table: "GitCommit"))
+        setStatus(String(localized: "Pulling…", table: "GitCommit"))
 
         // 使用 Task.detached 确保在后台执行
         Task.detached(priority: .userInitiated) {
@@ -396,6 +397,7 @@ extension WorkingStateView {
     }
 
     /// 执行 git push 操作推送本地提交
+    /// 支持网络错误自动降级：指数退避重试 → CLI 回退 → 用户引导
     private func performPush() {
         guard let project = vm.project else {
             if Self.verbose {
@@ -414,36 +416,96 @@ extension WorkingStateView {
         isPushing = true
 
         // 设置状态日志
-        setStatus("推送中…")
+        setStatus(String(localized: "Pushing…", table: "GitCommit"))
 
         // 使用 Task.detached 确保在后台执行
         Task.detached(priority: .userInitiated) {
-            let result: Result<Void, Error>
-
+            // 1️⃣ 尝试 libgit2 推送
             do {
-                // 在后台线程执行耗时操作
                 try LibGit2.push(at: projectPath, verbose: false)
-                result = .success(())
                 await MainActor.run {
                     os_log("\(Self.t)✅ Git push succeeded")
+                    self.isPushing = false
+                    self.loadSyncStatus()
+                    self.setStatus(nil)
+                }
+                return
+            } catch LibGit2Error.networkError {
+                // 2️⃣ 网络错误：指数退避重试（静默）
+                if Self.verbose {
+                    os_log("\(Self.t)Network error, starting retry with backoff")
+                }
+
+                let backoffDelays: [UInt64] = [2_000_000_000, 4_000_000_000] // 2s, 4s
+                for (attempt, delay) in backoffDelays.enumerated() {
+                    await MainActor.run {
+                        self.setStatus(String(localized: "Network fluctuation, retrying (\(attempt + 1)/\(backoffDelays.count))…", table: "GitCommit"))
+                    }
+
+                    try? await Task.sleep(nanoseconds: delay)
+
+                    do {
+                        try LibGit2.push(at: projectPath, verbose: false)
+                        await MainActor.run {
+                            os_log("\(Self.t)✅ Git push succeeded after retry \(attempt + 1)")
+                            self.isPushing = false
+                            self.loadSyncStatus()
+                            self.setStatus(nil)
+                        }
+                        return
+                    } catch is LibGit2Error {
+                        if Self.verbose {
+                            os_log("\(Self.t)Retry \(attempt + 1) failed")
+                        }
+                        continue
+                    }
+                }
+
+                // 3️⃣ CLI 回退（静默降级）
+                if GitRepositoryCLI.isGitCLIAvailable() {
+                    await MainActor.run {
+                        self.setStatus(String(localized: "Pushing via system Git…", table: "GitCommit"))
+                    }
+
+                    do {
+                        let cli = GitRepositoryCLI(repositoryURL: URL(fileURLWithPath: projectPath))
+                        try cli.cliPush()
+                        await MainActor.run {
+                            os_log("\(Self.t)✅ CLI push succeeded")
+                            self.isPushing = false
+                            self.loadSyncStatus()
+                            self.setStatus(nil)
+                        }
+                        return
+                    } catch {
+                        if Self.verbose {
+                            os_log("\(Self.t)CLI push also failed: \(error)")
+                        }
+                    }
+                }
+
+                // 4️⃣ 所有方案失败，弹窗引导用户
+                await MainActor.run {
+                    self.isPushing = false
+                    self.setStatus(nil)
+                    self.showNetworkErrorFallback()
+                }
+            } catch LibGit2Error.authenticationError {
+                // 认证错误：弹凭据输入
+                await MainActor.run {
+                    self.isPushing = false
+                    self.setStatus(nil)
+                    if self.prepareCredentialInput(for: LibGit2Error.authenticationError, operation: .push) {
+                        self.showCredentialInput = true
+                    } else {
+                        alert_error(LibGit2Error.authenticationError)
+                    }
                 }
             } catch {
-                result = .failure(error)
+                // 其他错误
                 await MainActor.run {
-                    os_log(.error, "\(Self.t)❌ Git push failed: \(error)")
-                }
-            }
-
-            // 在主线程处理结果和更新 UI
-            await MainActor.run {
-                self.isPushing = false
-
-                switch result {
-                case .success:
-                    // 重新加载同步状态
-                    self.loadSyncStatus()
-                case let .failure(error):
-                    // 检查是否需要凭据
+                    self.isPushing = false
+                    self.setStatus(nil)
                     if self.prepareCredentialInput(for: error, operation: .push) {
                         self.showCredentialInput = true
                     } else if self.prepareSSHHelp(for: error, operation: .push) {
@@ -453,11 +515,33 @@ extension WorkingStateView {
                     }
                 }
             }
+        }
+    }
 
-            // 清除状态日志
-            await MainActor.run {
-                self.setStatus(nil)
+    /// 网络错误降级全部失败后，引导用户选择备选方案
+    private func showNetworkErrorFallback() {
+        let alert = NSAlert()
+        alert.messageText = String(localized: "Push Failed", table: "GitCommit")
+        alert.informativeText = String(localized: "Network connection error, auto-retry failed. You can try:", table: "GitCommit")
+        alert.alertStyle = .warning
+
+        alert.addButton(withTitle: String(localized: "Retry", table: "GitCommit"))
+        alert.addButton(withTitle: String(localized: "Toggle SSH Push", table: "GitCommit"))
+        alert.addButton(withTitle: String(localized: "Cancel", table: "GitCommit"))
+
+        let response = alert.runModal()
+
+        switch response {
+        case .alertFirstButtonReturn:
+            // 重试
+            performPush()
+        case .alertSecondButtonReturn:
+            // 切换 SSH
+            if self.prepareSSHHelp(for: NSError(domain: "GitOK", code: -1, userInfo: nil), operation: .push) {
+                self.showSSHHelp = true
             }
+        default:
+            break
         }
     }
 

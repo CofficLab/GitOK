@@ -43,11 +43,11 @@ struct BannerBtnAdd: View, SuperThread {
             // 设置为当前选中的Banner
             b.setBanner(newBanner)
 
-            alert_info(String(localized: "已添加新的Banner文件", table: "Banner"))
+            alert_info(String(localized: "New Banner file added", table: "Banner"))
         } catch {
             os_log(.error, "❌ 创建 Banner 失败: \(error.localizedDescription)")
             let msg = String.localizedStringWithFormat(
-                String(localized: "创建Banner失败：%@", table: "Banner"),
+                String(localized: "Failed to create Banner: %@", table: "Banner"),
                 error.localizedDescription
             )
             alert_error(msg)

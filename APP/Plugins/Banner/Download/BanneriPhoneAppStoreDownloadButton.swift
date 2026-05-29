@@ -1,5 +1,4 @@
 import SwiftUI
-import MagicDevice
 import MagicAlert
 import MagicKit
 
@@ -17,7 +16,7 @@ struct BanneriPhoneAppStoreDownloadButton: View {
 
     var body: some View {
         BannerDownloadButton(
-            title: progressText.isEmpty ? String(localized: "iPhone App Store 截图", table: "Banner") : progressText,
+            title: progressText.isEmpty ? String(localized: "iPhone App Store Screenshots", table: "Banner") : progressText,
             icon: "iphone",
             color: .purple,
             action: {
@@ -31,12 +30,12 @@ struct BanneriPhoneAppStoreDownloadButton: View {
 
     @MainActor private func downloadiPhoneAppStoreScreenshots() async {
         guard !bannerProvider.banner.path.isEmpty else {
-            MagicMessageProvider.shared.error(String(localized: "没有可用的Banner", table: "Banner"))
+            MagicMessageProvider.shared.error(String(localized: "No Banners available", table: "Banner"))
             return
         }
 
         isGenerating = true
-        progressText = String(localized: "正在生成iPhone App Store截图...", table: "Banner")
+        progressText = String(localized: "Generating iPhone App Store screenshots...", table: "Banner")
         defer { 
             isGenerating = false
             progressText = ""
@@ -46,7 +45,7 @@ struct BanneriPhoneAppStoreDownloadButton: View {
         let folderName = "Banner-iPhone-AppStore-Screenshots-\(tag)"
 
         guard let downloadsURL = FileManager.default.urls(for: .downloadsDirectory, in: .userDomainMask).first else {
-            MagicMessageProvider.shared.error(String(localized: "无权访问下载文件夹", table: "Banner"))
+            MagicMessageProvider.shared.error(String(localized: "No access to Downloads folder", table: "Banner"))
             return
         }
 
@@ -56,7 +55,7 @@ struct BanneriPhoneAppStoreDownloadButton: View {
             try FileManager.default.createDirectory(at: folderPath, withIntermediateDirectories: true)
         } catch {
             let msg = String.localizedStringWithFormat(
-                String(localized: "创建目标目录失败：%@", table: "Banner"),
+                String(localized: "Failed to create target directory: %@", table: "Banner"),
                 error.localizedDescription
             )
             MagicMessageProvider.shared.error(msg)
@@ -80,7 +79,7 @@ struct BanneriPhoneAppStoreDownloadButton: View {
             let description = "\(width)x\(height) (\(device.description))"
             
             progressText = String.localizedStringWithFormat(
-                String(localized: "正在生成 %@ (%d/%d)...", table: "Banner"),
+                String(localized: "Generating %@ (%d/%d)...", table: "Banner"),
                 description,
                 index + 1,
                 iPhoneDevices.count
@@ -97,7 +96,7 @@ struct BanneriPhoneAppStoreDownloadButton: View {
                 successCount += 1
             } catch {
                 let msg = String.localizedStringWithFormat(
-                    String(localized: "生成截图 %@ 失败: %@", table: "Banner"),
+                    String(localized: "Failed to generate screenshot %@: %@", table: "Banner"),
                     description,
                     error.localizedDescription
                 )
@@ -109,14 +108,14 @@ struct BanneriPhoneAppStoreDownloadButton: View {
             if successCount == iPhoneDevices.count {
                 MagicMessageProvider.shared.success(
                     String.localizedStringWithFormat(
-                        String(localized: "成功生成 %d 个iPhone App Store截图", table: "Banner"),
+                        String(localized: "Successfully generated %d iPhone App Store screenshots", table: "Banner"),
                         successCount
                     )
                 )
             } else {
                 MagicMessageProvider.shared.warning(
                     String.localizedStringWithFormat(
-                        String(localized: "只成功生成了 %d/%d 个截图", table: "Banner"),
+                        String(localized: "Only successfully generated %d/%d screenshots", table: "Banner"),
                         successCount,
                         iPhoneDevices.count
                     )

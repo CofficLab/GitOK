@@ -1,4 +1,6 @@
 import MagicKit
+import GitOKPluginKit
+import GitOKUI
 import SwiftUI
 
 /// 状态栏视图
@@ -12,28 +14,39 @@ struct StatusBar: View, SuperLog {
     /// 插件提供者环境对象
     @EnvironmentObject var p: PluginVM
 
+    @EnvironmentObject var data: DataVM
+
     @EnvironmentObject var themeProvider: AppThemeVM
+
+    @EnvironmentObject var projectVM: ProjectVM
 
     /// 视图主体
     var body: some View {
         HStack(spacing: 0) {
             // 状态栏左侧区域
-            ForEach(Array(p.getEnabledStatusBarLeadingViews().enumerated()), id: \.offset) { _, view in
+            ForEach(Array(p.getEnabledStatusBarLeadingViews(
+                selectedFilePath: projectVM.file?.file,
+                projectPath: projectVM.project?.path
+            ).enumerated()), id: \.offset) { _, view in
                 view
             }
 
             Spacer()
 
             // 状态栏中间区域
-            ForEach(Array(p.getEnabledStatusBarCenterViews().enumerated()), id: \.offset) { _, view in
+            ForEach(Array(p.getEnabledStatusBarCenterViews(activityStatus: data.activityStatus).enumerated()), id: \.offset) { _, view in
                 view
             }
 
             Spacer()
 
             // 状态栏右侧区域
-            ForEach(Array(p.getEnabledStatusBarTrailingViews().enumerated()), id: \.offset) { _, view in
+            ForEach(Array(p.getEnabledStatusBarTrailingViews(projectURL: projectVM.project?.url).enumerated()), id: \.offset) { _, view in
                 view
+                    .environmentObject(GitOKUIThemeRegistry.shared)
+                    .environment(\.gitOKThemeSelectionHandler) { themeId in
+                        themeProvider.selectTheme(themeId)
+                    }
             }
         }
         .labelStyle(.iconOnly)

@@ -24,7 +24,7 @@ class SmartMergePlugin: NSObject, SuperPlugin {
     @objc static let shared = SmartMergePlugin()
 
     /// 是否启用该插件
-    @objc static let shouldRegister = true
+    @objc static let shouldRegister = false
 
 
     /// 私有初始化方法

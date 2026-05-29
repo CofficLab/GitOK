@@ -1,0 +1,32 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "Display unpushed commit count" : {
+
+    },
+    "显示未推送提交数量" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show unpushed commit count"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "显示未推送提交数量"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "顯示未推送提交數量"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

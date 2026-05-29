@@ -10,7 +10,7 @@ enum BannerError: Error, LocalizedError {
     var errorDescription: String? {
         switch self {
         case .invalidTemplateData:
-            return "无效的模板数据"
+            return String(localized: "Invalid template data", table: "Banner")
         }
     }
 }

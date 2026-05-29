@@ -5,7 +5,7 @@ import SwiftUI
 /// 状态栏活动状态插件：展示当前长耗时操作的状态文本。
 class ActivityStatusPlugin: NSObject, SuperPlugin {
     /// 是否启用该插件
-    @objc static let shouldRegister = true
+    @objc static let shouldRegister = false
 
     @objc static let shared = ActivityStatusPlugin()
 
@@ -14,6 +14,7 @@ class ActivityStatusPlugin: NSObject, SuperPlugin {
     /// 插件默认启用状态
     static var defaultEnabled: Bool = true
 
+    @MainActor
     func addStatusBarCenterView() -> AnyView? {
         AnyView(ActivityStatusTile())
     }

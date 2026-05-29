@@ -210,7 +210,7 @@ struct CommitRow: View, SuperThread, SuperLog {
                                 ) {
                                     showUndoConfirmation = true
                                 }
-                                .help("撤销此提交")
+                                .help(String(localized: "Undo this commit", table: "GitCommit"))
                             }
 
                             // 推送按钮
@@ -221,7 +221,7 @@ struct CommitRow: View, SuperThread, SuperLog {
                             ) {
                                 showPushPopover = true
                             }
-                            .help(String(localized: "点击推送到远程仓库", table: "GitCommit"))
+                            .help(String(localized: "Click to push to remote", table: "GitCommit"))
                             .popover(isPresented: $showPushPopover) {
                                 PushPopoverContent(
                                     isPushing: $isPushing,
@@ -258,7 +258,7 @@ struct CommitRow: View, SuperThread, SuperLog {
                     showCreateTagAlert = true
                 } label: {
                     Label {
-                        Text("创建标签", tableName: "GitCommit")
+                        Text(String(localized: "Create Tag", table: "GitCommit"))
                     } icon: {
                         Image(systemName: "tag")
                     }
@@ -270,7 +270,7 @@ struct CommitRow: View, SuperThread, SuperLog {
                     showCreateAnnotatedTagAlert = true
                 } label: {
                     Label {
-                        Text("创建附注标签", tableName: "GitCommit")
+                        Text(String(localized: "Create Annotated Tag", table: "GitCommit"))
                     } icon: {
                         Image(systemName: "tag.fill")
                     }
@@ -281,7 +281,7 @@ struct CommitRow: View, SuperThread, SuperLog {
                         pushTag()
                     } label: {
                         Label {
-                            Text("推送标签", tableName: "GitCommit")
+                            Text(String(localized: "Push Tag", table: "GitCommit"))
                         } icon: {
                             Image(systemName: "arrow.up.circle")
                         }
@@ -292,7 +292,7 @@ struct CommitRow: View, SuperThread, SuperLog {
                         showDeleteRemoteTagConfirmation = true
                     } label: {
                         Label {
-                            Text("删除远端标签", tableName: "GitCommit")
+                            Text(String(localized: "Delete Remote Tag", table: "GitCommit"))
                         } icon: {
                             Image(systemName: "icloud.slash")
                         }
@@ -303,7 +303,7 @@ struct CommitRow: View, SuperThread, SuperLog {
                         showDeleteTagConfirmation = true
                     } label: {
                         Label {
-                            Text("删除标签", tableName: "GitCommit")
+                            Text(String(localized: "Delete Tag", table: "GitCommit"))
                         } icon: {
                             Image(systemName: "tag.slash")
                         }
@@ -314,7 +314,7 @@ struct CommitRow: View, SuperThread, SuperLog {
                     Button(role: .destructive) {
                         showUndoConfirmation = true
                     } label: {
-                        Label("撤销提交", systemImage: "arrow.uturn.backward")
+                        Label(String(localized: "Undo Commit", table: "GitCommit"), systemImage: "arrow.uturn.backward")
                     }
                 }
 
@@ -323,7 +323,7 @@ struct CommitRow: View, SuperThread, SuperLog {
                 Button {
                     showRevertConfirmation = true
                 } label: {
-                    Label("Revert 此提交", systemImage: "arrow.counterclockwise")
+                    Label(String(localized: "Revert This Commit", table: "GitCommit"), systemImage: "arrow.counterclockwise")
                 }
                 .disabled(isRunningHistoryOperation)
 
@@ -332,7 +332,7 @@ struct CommitRow: View, SuperThread, SuperLog {
                         squashMessage = commit.message
                         showSquashConfirmation = true
                     } label: {
-                        Label("Squash 到此提交", systemImage: "arrow.triangle.merge")
+                        Label(String(localized: "Squash to Here", table: "GitCommit"), systemImage: "arrow.triangle.merge")
                     }
                     .disabled(isRunningHistoryOperation)
                 }
@@ -341,105 +341,105 @@ struct CommitRow: View, SuperThread, SuperLog {
                     Button {
                         showResetSoftConfirmation = true
                     } label: {
-                        Label("Soft Reset", systemImage: "text.badge.checkmark")
+                        Label(String(localized: "Soft Reset", table: "GitCommit"), systemImage: "text.badge.checkmark")
                     }
 
                     Button {
                         showResetMixedConfirmation = true
                     } label: {
-                        Label("Mixed Reset", systemImage: "list.bullet.rectangle")
+                        Label(String(localized: "Mixed Reset", table: "GitCommit"), systemImage: "list.bullet.rectangle")
                     }
 
                     Button(role: .destructive) {
                         showResetHardConfirmation = true
                     } label: {
-                        Label("Hard Reset", systemImage: "trash")
+                        Label(String(localized: "Hard Reset", table: "GitCommit"), systemImage: "trash")
                     }
                 } label: {
-                    Label("Reset 到此提交", systemImage: "arrow.down.to.line")
+                    Label(String(localized: "Reset to Here", table: "GitCommit"), systemImage: "arrow.down.to.line")
                 }
                 .disabled(isRunningHistoryOperation)
             }
             // 撤销确认弹窗
-            .alert("确认撤销提交？", isPresented: $showUndoConfirmation) {
-                Button("取消", role: .cancel) {}
-                Button("撤销", role: .destructive) {
+            .alert(String(localized: "Confirm Undo Commit?", table: "GitCommit"), isPresented: $showUndoConfirmation) {
+                Button(String(localized: "Cancel", table: "GitCommit"), role: .cancel) {}
+                Button(String(localized: "Undo", table: "GitCommit"), role: .destructive) {
                     performUndo()
                 }
             } message: {
-                Text("撤销后，此提交的文件变更将保留在工作区中，可以重新编辑和提交。")
+                Text(String(localized: "After undoing, the file changes from this commit will be kept in the working directory for re-editing and committing.", table: "GitCommit"))
             }
-            .alert("确认 Revert 此提交？", isPresented: $showRevertConfirmation) {
-                Button("取消", role: .cancel) {}
+            .alert(String(localized: "Confirm Revert This Commit?", table: "GitCommit"), isPresented: $showRevertConfirmation) {
+                Button(String(localized: "Cancel", table: "GitCommit"), role: .cancel) {}
                 Button("Revert") {
                     performRevert()
                 }
                 .disabled(isRunningHistoryOperation)
             } message: {
-                Text("GitOK 会创建一个新的反向提交来撤销此提交的改动，适合已推送提交。若有冲突，需要手动解决后继续。")
+                Text(String(localized: "GitOK will create a new reverse commit to undo the changes. Suitable for pushed commits. If there are conflicts, resolve them manually before continuing.", table: "GitCommit"))
             }
-            .alert("确认 Soft Reset？", isPresented: $showResetSoftConfirmation) {
-                Button("取消", role: .cancel) {}
+            .alert(String(localized: "Confirm Soft Reset?", table: "GitCommit"), isPresented: $showResetSoftConfirmation) {
+                Button(String(localized: "Cancel", table: "GitCommit"), role: .cancel) {}
                 Button("Soft Reset") {
                     performReset(.soft)
                 }
                 .disabled(isRunningHistoryOperation)
             } message: {
-                Text("HEAD 会移动到此提交，之后的提交改动会保留在暂存区。")
+                Text(String(localized: "HEAD will move to this commit. Changes from subsequent commits will be preserved in the staging area.", table: "GitCommit"))
             }
-            .alert("确认 Mixed Reset？", isPresented: $showResetMixedConfirmation) {
-                Button("取消", role: .cancel) {}
+            .alert(String(localized: "Confirm Mixed Reset?", table: "GitCommit"), isPresented: $showResetMixedConfirmation) {
+                Button(String(localized: "Cancel", table: "GitCommit"), role: .cancel) {}
                 Button("Mixed Reset") {
                     performReset(.mixed)
                 }
                 .disabled(isRunningHistoryOperation)
             } message: {
-                Text("HEAD 会移动到此提交，之后的提交改动会保留在工作区但取消暂存。")
+                Text(String(localized: "HEAD will move to this commit. Changes from subsequent commits will be preserved in the working directory but unstaged.", table: "GitCommit"))
             }
-            .alert("确认 Hard Reset？", isPresented: $showResetHardConfirmation) {
-                Button("取消", role: .cancel) {}
+            .alert(String(localized: "Confirm Hard Reset?", table: "GitCommit"), isPresented: $showResetHardConfirmation) {
+                Button(String(localized: "Cancel", table: "GitCommit"), role: .cancel) {}
                 Button("Hard Reset", role: .destructive) {
                     performReset(.hard)
                 }
                 .disabled(isRunningHistoryOperation)
             } message: {
-                Text("HEAD、暂存区和工作区都会回到此提交。此提交之后的本地提交和未提交改动会被丢弃。")
+                Text(String(localized: "HEAD, staging area, and working directory will all revert to this commit. Local commits and uncommitted changes after this commit will be discarded.", table: "GitCommit"))
             }
-            .alert("确认 Squash 提交？", isPresented: $showSquashConfirmation) {
-                TextField("Squash 后的提交信息", text: $squashMessage)
-                Button("取消", role: .cancel) {}
+            .alert(String(localized: "Confirm Squash Commits?", table: "GitCommit"), isPresented: $showSquashConfirmation) {
+                TextField(String(localized: "Squash commit message", table: "GitCommit"), text: $squashMessage)
+                Button(String(localized: "Cancel", table: "GitCommit"), role: .cancel) {}
                 Button("Squash") {
                     performSquash()
                 }
                 .disabled(squashMessage.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || isRunningHistoryOperation)
             } message: {
-                Text("会把从 HEAD 到此提交之间的 \(commitIndex + 1) 个提交合并为一个新提交。仅建议用于尚未推送的提交。")
+                Text(String(localized: "This will combine \(commitIndex + 1) commits from HEAD to this commit into one. Only recommended for unpushed commits.", table: "GitCommit"))
             }
-            .alert(String(localized: "创建标签", table: "GitCommit"), isPresented: $showCreateTagAlert) {
-                TextField(String(localized: "标签名称", table: "GitCommit"), text: $newTagName)
-                Button(String(localized: "取消", table: "GitCommit"), role: .cancel) {
+            .alert(String(localized: "Create Tag", table: "GitCommit"), isPresented: $showCreateTagAlert) {
+                TextField(String(localized: "Tag Name", table: "GitCommit"), text: $newTagName)
+                Button(String(localized: "Cancel", table: "GitCommit"), role: .cancel) {
                     newTagName = ""
                 }
-                Button(String(localized: "创建", table: "GitCommit")) {
+                Button(String(localized: "Create", table: "GitCommit")) {
                     createLightweightTag()
                 }
                 .disabled(newTagName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || isCreatingTag)
             } message: {
                 Text(
                     String.localizedStringWithFormat(
-                        String(localized: "为提交 %@ 创建 lightweight tag。", table: "GitCommit"),
+                        String(localized: "Create a lightweight tag for commit %@.", table: "GitCommit"),
                         String(commit.hash.prefix(8))
                     )
                 )
             }
-            .alert(String(localized: "创建附注标签", table: "GitCommit"), isPresented: $showCreateAnnotatedTagAlert) {
-                TextField(String(localized: "标签名称", table: "GitCommit"), text: $newAnnotatedTagName)
-                TextField(String(localized: "标签说明", table: "GitCommit"), text: $newAnnotatedTagMessage)
-                Button(String(localized: "取消", table: "GitCommit"), role: .cancel) {
+            .alert(String(localized: "Create Annotated Tag", table: "GitCommit"), isPresented: $showCreateAnnotatedTagAlert) {
+                TextField(String(localized: "Tag Name", table: "GitCommit"), text: $newAnnotatedTagName)
+                TextField(String(localized: "Tag Message", table: "GitCommit"), text: $newAnnotatedTagMessage)
+                Button(String(localized: "Cancel", table: "GitCommit"), role: .cancel) {
                     newAnnotatedTagName = ""
                     newAnnotatedTagMessage = ""
                 }
-                Button(String(localized: "创建", table: "GitCommit")) {
+                Button(String(localized: "Create", table: "GitCommit")) {
                     createAnnotatedTag()
                 }
                 .disabled(
@@ -450,35 +450,35 @@ struct CommitRow: View, SuperThread, SuperLog {
             } message: {
                 Text(
                     String.localizedStringWithFormat(
-                        String(localized: "为提交 %@ 创建 annotated tag。", table: "GitCommit"),
+                        String(localized: "Create an annotated tag for commit %@.", table: "GitCommit"),
                         String(commit.hash.prefix(8))
                     )
                 )
             }
-            .alert(String(localized: "确认删除标签？", table: "GitCommit"), isPresented: $showDeleteTagConfirmation) {
-                Button(String(localized: "取消", table: "GitCommit"), role: .cancel) {}
-                Button(String(localized: "删除", table: "GitCommit"), role: .destructive) {
+            .alert(String(localized: "Confirm Delete Tag?", table: "GitCommit"), isPresented: $showDeleteTagConfirmation) {
+                Button(String(localized: "Cancel", table: "GitCommit"), role: .cancel) {}
+                Button(String(localized: "Delete", table: "GitCommit"), role: .destructive) {
                     deleteLocalTag()
                 }
                 .disabled(isDeletingTag)
             } message: {
                 Text(
                     String.localizedStringWithFormat(
-                        String(localized: "将删除本地标签 %@，远程标签不会受影响。", table: "GitCommit"),
+                        String(localized: "This will delete the local tag %@. Remote tags will not be affected.", table: "GitCommit"),
                         tag
                     )
                 )
             }
-            .alert(String(localized: "确认删除远端标签？", table: "GitCommit"), isPresented: $showDeleteRemoteTagConfirmation) {
-                Button(String(localized: "取消", table: "GitCommit"), role: .cancel) {}
-                Button(String(localized: "删除", table: "GitCommit"), role: .destructive) {
+            .alert(String(localized: "Confirm Delete Remote Tag?", table: "GitCommit"), isPresented: $showDeleteRemoteTagConfirmation) {
+                Button(String(localized: "Cancel", table: "GitCommit"), role: .cancel) {}
+                Button(String(localized: "Delete", table: "GitCommit"), role: .destructive) {
                     deleteRemoteTag()
                 }
                 .disabled(isDeletingRemoteTag)
             } message: {
                 Text(
                     String.localizedStringWithFormat(
-                        String(localized: "将删除 origin 上的标签 %@，本地标签不会受影响。", table: "GitCommit"),
+                        String(localized: "This will delete the tag %@ on origin. Local tags will not be affected.", table: "GitCommit"),
                         tag
                     )
                 )
@@ -502,7 +502,7 @@ struct CommitRow: View, SuperThread, SuperLog {
     private func performPush() async throws {
         guard let project = vm.project else {
             throw NSError(domain: "GitOK", code: -1, userInfo: [
-                NSLocalizedDescriptionKey: String(localized: "项目不可用", table: "GitCommit")
+                NSLocalizedDescriptionKey: String(localized: "Project unavailable", table: "GitCommit")
             ])
         }
 
@@ -526,7 +526,7 @@ struct CommitRow: View, SuperThread, SuperLog {
     /// 使用 git reset --mixed 回退到父提交，文件变更保留在工作区
     private func performUndo() {
         guard let project = vm.project else {
-            alert_error("项目不可用")
+            alert_error(String(localized: "Project unavailable", table: "GitCommit"))
             return
         }
 
@@ -541,7 +541,7 @@ struct CommitRow: View, SuperThread, SuperLog {
                     throw NSError(
                         domain: "GitOK",
                         code: -1,
-                        userInfo: [NSLocalizedDescriptionKey: "暂不支持撤销初始提交"]
+                        userInfo: [NSLocalizedDescriptionKey: String(localized: "Undoing the initial commit is not supported", table: "GitCommit")]
                     )
                 }
 
@@ -588,7 +588,7 @@ struct CommitRow: View, SuperThread, SuperLog {
 
     private func performRevert() {
         guard let project = vm.project else {
-            alert_error("项目不可用")
+            alert_error(String(localized: "Project unavailable", table: "GitCommit"))
             return
         }
 
@@ -602,7 +602,7 @@ struct CommitRow: View, SuperThread, SuperLog {
                     isRunningHistoryOperation = false
                     showRevertConfirmation = false
                     data.setCommit(nil)
-                    alert_info("已 Revert: \(commitSnapshot.hash.prefix(8))")
+                    alert_info(String(localized: "Reverted: \(commitSnapshot.hash.prefix(8))"))
                 }
             } catch {
                 await MainActor.run {
@@ -616,7 +616,7 @@ struct CommitRow: View, SuperThread, SuperLog {
 
     private func performReset(_ mode: GitCoreKit.GitResetMode) {
         guard let project = vm.project else {
-            alert_error("项目不可用")
+            alert_error(String(localized: "Project unavailable", table: "GitCommit"))
             return
         }
 
@@ -632,7 +632,7 @@ struct CommitRow: View, SuperThread, SuperLog {
                     showResetMixedConfirmation = false
                     showResetHardConfirmation = false
                     data.setCommit(nil)
-                    alert_info("已 \(mode.rawValue) reset 到: \(commitSnapshot.hash.prefix(8))")
+                    alert_info(String(localized: "Reset to: \(commitSnapshot.hash.prefix(8)) (\(mode.rawValue))"))
                 }
             } catch {
                 await MainActor.run {
@@ -648,13 +648,13 @@ struct CommitRow: View, SuperThread, SuperLog {
 
     private func performSquash() {
         guard let project = vm.project else {
-            alert_error("项目不可用")
+            alert_error(String(localized: "Project unavailable", table: "GitCommit"))
             return
         }
 
         let message = squashMessage.trimmingCharacters(in: .whitespacesAndNewlines)
         guard message.isEmpty == false else {
-            alert_error("提交信息不能为空")
+            alert_error(String(localized: "Commit message cannot be empty", table: "GitCommit"))
             return
         }
 
@@ -668,7 +668,7 @@ struct CommitRow: View, SuperThread, SuperLog {
                     isRunningHistoryOperation = false
                     showSquashConfirmation = false
                     data.setCommit(nil)
-                    alert_info("已 squash \(count) 个提交")
+                    alert_info(String(localized: "Squashed \(count) commits"))
                 }
             } catch {
                 await MainActor.run {
@@ -683,13 +683,13 @@ struct CommitRow: View, SuperThread, SuperLog {
     /// 为当前提交创建 lightweight tag。
     private func createLightweightTag() {
         guard let project = vm.project else {
-            alert_error(String(localized: "项目不可用", table: "GitCommit"))
+            alert_error(String(localized: "Project unavailable", table: "GitCommit"))
             return
         }
 
         let tagName = newTagName.trimmingCharacters(in: .whitespacesAndNewlines)
         guard tagName.isEmpty == false else {
-            alert_error(String(localized: "标签名称不能为空", table: "GitCommit"))
+            alert_error(String(localized: "Tag name cannot be empty", table: "GitCommit"))
             return
         }
 
@@ -705,7 +705,7 @@ struct CommitRow: View, SuperThread, SuperLog {
                     newTagName = ""
                     showCreateTagAlert = false
                     let message = String.localizedStringWithFormat(
-                        String(localized: "已创建标签: %@", table: "GitCommit"),
+                        String(localized: "Tag created: %@", table: "GitCommit"),
                         tagName
                     )
                     alert_info(message)
@@ -725,19 +725,19 @@ struct CommitRow: View, SuperThread, SuperLog {
     /// 为当前提交创建 annotated tag。
     private func createAnnotatedTag() {
         guard let project = vm.project else {
-            alert_error(String(localized: "项目不可用", table: "GitCommit"))
+            alert_error(String(localized: "Project unavailable", table: "GitCommit"))
             return
         }
 
         let tagName = newAnnotatedTagName.trimmingCharacters(in: .whitespacesAndNewlines)
         guard tagName.isEmpty == false else {
-            alert_error(String(localized: "标签名称不能为空", table: "GitCommit"))
+            alert_error(String(localized: "Tag name cannot be empty", table: "GitCommit"))
             return
         }
 
         let tagMessage = newAnnotatedTagMessage.trimmingCharacters(in: .whitespacesAndNewlines)
         guard tagMessage.isEmpty == false else {
-            alert_error(String(localized: "标签说明不能为空", table: "GitCommit"))
+            alert_error(String(localized: "Tag message cannot be empty", table: "GitCommit"))
             return
         }
 
@@ -754,7 +754,7 @@ struct CommitRow: View, SuperThread, SuperLog {
                     newAnnotatedTagMessage = ""
                     showCreateAnnotatedTagAlert = false
                     let message = String.localizedStringWithFormat(
-                        String(localized: "已创建标签: %@", table: "GitCommit"),
+                        String(localized: "Tag created: %@", table: "GitCommit"),
                         tagName
                     )
                     alert_info(message)
@@ -774,13 +774,13 @@ struct CommitRow: View, SuperThread, SuperLog {
     /// 删除当前提交显示的本地 tag。
     private func deleteLocalTag() {
         guard let project = vm.project else {
-            alert_error(String(localized: "项目不可用", table: "GitCommit"))
+            alert_error(String(localized: "Project unavailable", table: "GitCommit"))
             return
         }
 
         let tagName = tag.trimmingCharacters(in: .whitespacesAndNewlines)
         guard tagName.isEmpty == false else {
-            alert_error(String(localized: "标签名称不能为空", table: "GitCommit"))
+            alert_error(String(localized: "Tag name cannot be empty", table: "GitCommit"))
             return
         }
 
@@ -794,7 +794,7 @@ struct CommitRow: View, SuperThread, SuperLog {
                     isDeletingTag = false
                     showDeleteTagConfirmation = false
                     let message = String.localizedStringWithFormat(
-                        String(localized: "已删除标签: %@", table: "GitCommit"),
+                        String(localized: "Tag deleted: %@", table: "GitCommit"),
                         tagName
                     )
                     alert_info(message)
@@ -814,13 +814,13 @@ struct CommitRow: View, SuperThread, SuperLog {
     /// 推送当前提交显示的 tag 到 origin。
     private func pushTag() {
         guard let project = vm.project else {
-            alert_error(String(localized: "项目不可用", table: "GitCommit"))
+            alert_error(String(localized: "Project unavailable", table: "GitCommit"))
             return
         }
 
         let tagName = tag.trimmingCharacters(in: .whitespacesAndNewlines)
         guard tagName.isEmpty == false else {
-            alert_error(String(localized: "标签名称不能为空", table: "GitCommit"))
+            alert_error(String(localized: "Tag name cannot be empty", table: "GitCommit"))
             return
         }
 
@@ -833,7 +833,7 @@ struct CommitRow: View, SuperThread, SuperLog {
                 await MainActor.run {
                     isPushingTag = false
                     let message = String.localizedStringWithFormat(
-                        String(localized: "已推送标签: %@", table: "GitCommit"),
+                        String(localized: "Tag pushed: %@", table: "GitCommit"),
                         tagName
                     )
                     alert_info(message)
@@ -850,13 +850,13 @@ struct CommitRow: View, SuperThread, SuperLog {
     /// 删除 origin 上当前提交显示的 tag。
     private func deleteRemoteTag() {
         guard let project = vm.project else {
-            alert_error(String(localized: "项目不可用", table: "GitCommit"))
+            alert_error(String(localized: "Project unavailable", table: "GitCommit"))
             return
         }
 
         let tagName = tag.trimmingCharacters(in: .whitespacesAndNewlines)
         guard tagName.isEmpty == false else {
-            alert_error(String(localized: "标签名称不能为空", table: "GitCommit"))
+            alert_error(String(localized: "Tag name cannot be empty", table: "GitCommit"))
             return
         }
 
@@ -870,7 +870,7 @@ struct CommitRow: View, SuperThread, SuperLog {
                     isDeletingRemoteTag = false
                     showDeleteRemoteTagConfirmation = false
                     let message = String.localizedStringWithFormat(
-                        String(localized: "已删除远端标签: %@", table: "GitCommit"),
+                        String(localized: "Remote tag deleted: %@", table: "GitCommit"),
                         tagName
                     )
                     alert_info(message)
@@ -1063,7 +1063,7 @@ struct PushPopoverContent: View {
             HStack {
                 Image(systemName: "arrow.up.circle.fill")
                     .foregroundColor(.orange)
-                Text("推送到远程", tableName: "GitCommit")
+                Text(String(localized: "Push to Remote", table: "GitCommit"))
                     .font(.headline)
                 Spacer()
             }
@@ -1075,7 +1075,7 @@ struct PushPopoverContent: View {
                 VStack(spacing: 12) {
                     ProgressView()
                         .controlSize(.regular)
-                    Text("正在推送中...", tableName: "GitCommit")
+                    Text(String(localized: "Pushing...", table: "GitCommit"))
                         .font(.body)
                         .foregroundColor(.secondary)
                 }
@@ -1087,7 +1087,7 @@ struct PushPopoverContent: View {
                     HStack(spacing: 8) {
                         Image(systemName: "info.circle.fill")
                             .foregroundColor(.orange)
-                        Text("当前提交尚未推送到远程", tableName: "GitCommit")
+                        Text(String(localized: "Current commit has not been pushed to remote", table: "GitCommit"))
                             .font(.body)
                     }
 
@@ -1097,15 +1097,12 @@ struct PushPopoverContent: View {
                             HStack(spacing: 4) {
                                 Image(systemName: "exclamationmark.triangle.fill")
                                     .foregroundColor(.red)
-                                Text("推送失败", tableName: "GitCommit")
+                                Text(String(localized: "Push failed", table: "GitCommit"))
                                     .font(.subheadline)
                                     .fontWeight(.medium)
                                     .foregroundColor(.red)
                             }
-                            Text(String.localizedStringWithFormat(
-                                String(localized: "推送失败", table: "GitCommit") + ": %@",
-                                error.localizedDescription
-                            ))
+                            Text(String(localized: "Push failed: \(error.localizedDescription)", table: "GitCommit"))
                             .font(.caption)
                             .foregroundColor(.red)
                         }
@@ -1118,7 +1115,7 @@ struct PushPopoverContent: View {
                     // 按钮组
                     HStack(spacing: 12) {
                         AppButton(
-                            LocalizedStringKey(String(localized: "取消", table: "GitCommit")),
+                            LocalizedStringKey(String(localized: "Cancel", table: "GitCommit")),
                             style: .secondary,
                             size: .small
                         ) {
@@ -1127,7 +1124,7 @@ struct PushPopoverContent: View {
                         .keyboardShortcut(.cancelAction)
                         
                         AppButton(
-                            LocalizedStringKey(pushError == nil ? String(localized: "推送", table: "GitCommit") : String(localized: "重试", table: "GitCommit")),
+                            LocalizedStringKey(pushError == nil ? String(localized: "Push", table: "GitCommit") : String(localized: "Retry", table: "GitCommit")),
                             style: .primary,
                             size: .small
                         ) {
@@ -1136,7 +1133,7 @@ struct PushPopoverContent: View {
                                     isPushing = true
                                     pushError = nil
                                     try await onPush()
-                                    // 立即关闭（用户选择的模式）
+                                    // Close immediately (user selected mode)
                                     dismiss()
                                 } catch {
                                     isPushing = false

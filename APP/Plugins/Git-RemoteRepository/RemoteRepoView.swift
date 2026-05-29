@@ -31,7 +31,7 @@ struct RemoteRepositoryView: View, SuperLog {
             // Header with close button
             VStack(alignment: .leading, spacing: 8) {
                 HStack {
-                    Text("远程仓库管理")
+                    Text(String(localized: "Remote Repository Management"))
                         .font(.title2)
                         .fontWeight(.medium)
                     
@@ -45,10 +45,10 @@ struct RemoteRepositoryView: View, SuperLog {
                             .foregroundColor(.secondary)
                     }
                     .buttonStyle(.plain)
-                    .help("关闭")
+                    .help(String(localized: "Close"))
                 }
                 
-                Text("管理当前项目的Git远程仓库配置")
+                Text(String(localized: "Manage Git remote repository configuration for the current project"))
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
@@ -66,7 +66,7 @@ struct RemoteRepositoryView: View, SuperLog {
                         VStack {
                             ProgressView()
                                 .scaleEffect(0.8)
-                            Text("加载中...")
+                            Text(String(localized: "Loading..."))
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                         }
@@ -78,11 +78,11 @@ struct RemoteRepositoryView: View, SuperLog {
                                 .font(.system(size: 40))
                                 .foregroundColor(.secondary)
                             
-                            Text("暂无远程仓库")
+                            Text(String(localized: "No Remote Repositories"))
                                 .font(.headline)
                                 .foregroundColor(.secondary)
                             
-                            Text("点击下方按钮添加第一个远程仓库")
+                            Text(String(localized: "Click the button below to add your first remote repository"))
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                         }
@@ -123,7 +123,7 @@ struct RemoteRepositoryView: View, SuperLog {
                             .font(.caption)
                             .foregroundColor(.orange)
                         Spacer()
-                        Button("清除") {
+                        Button(String(localized: "Clear")) {
                             self.errorMessage = nil
                         }
                         .font(.caption)
@@ -144,7 +144,7 @@ struct RemoteRepositoryView: View, SuperLog {
                                 .foregroundColor(.secondary)
                                 .textSelection(.enabled)
                             Spacer()
-                            Button("清除") {
+                            Button(String(localized: "Clear")) {
                                 self.postRemoteActionMessage = nil
                             }
                             .font(.caption)
@@ -158,7 +158,7 @@ struct RemoteRepositoryView: View, SuperLog {
                                     ProgressView()
                                         .controlSize(.small)
                                 } else {
-                                    Text("发布当前分支")
+                                    Text(String(localized: "Publish Current Branch"))
                                 }
                             }
                             .buttonStyle(.borderedProminent)
@@ -178,7 +178,7 @@ struct RemoteRepositoryView: View, SuperLog {
             
             // Bottom toolbar
             HStack {
-                Button("添加远程仓库") {
+                Button(String(localized: "Add Remote Repository")) {
                     showAddRemoteSheet = true
                 }
                 .buttonStyle(.borderedProminent)
@@ -191,7 +191,7 @@ struct RemoteRepositoryView: View, SuperLog {
                             ProgressView()
                                 .controlSize(.small)
                         } else {
-                            Text("发布当前分支")
+                            Text(String(localized: "Publish Current Branch"))
                         }
                     }
                     .buttonStyle(.bordered)
@@ -200,7 +200,7 @@ struct RemoteRepositoryView: View, SuperLog {
                 
                 Spacer()
                 
-                Button("关闭") {
+                Button(String(localized: "Close")) {
                     dismiss()
                 }
                 .buttonStyle(.bordered)
@@ -247,7 +247,7 @@ struct RemoteRepositoryView: View, SuperLog {
 extension RemoteRepositoryView {
     private func loadRemotes() {
         guard let project = vm.project else {
-            errorMessage = "没有选择项目"
+            errorMessage = String(localized: "No project selected")
             return
         }
         
@@ -262,7 +262,7 @@ extension RemoteRepositoryView {
                 os_log("\(self.t)✅ Loaded \(remotes.count) remotes")
             }
         } catch {
-            errorMessage = "加载远程仓库失败: \(error.localizedDescription)"
+            errorMessage = String(localized: "Failed to load remote repositories: \(error.localizedDescription)")
             if verbose {
                 os_log(.error, "\(self.t)❌ Failed to load remotes: \(error)")
             }
@@ -273,7 +273,7 @@ extension RemoteRepositoryView {
     
     private func addRemote(name: String, url: String) {
         guard let project = vm.project else {
-            errorMessage = "没有选择项目"
+            errorMessage = String(localized: "No project selected")
             return
         }
 
@@ -282,14 +282,14 @@ extension RemoteRepositoryView {
 
         do {
             try project.addRemote(name: name, url: url)
-            loadRemotes() // 重新加载列表
+            loadRemotes() // Reload list
             postRemoteActionMessage = firstPushMessage(for: name)
 
             if verbose {
                 os_log("\(self.t)✅ Added remote: \(name) -> \(url)")
             }
         } catch {
-            errorMessage = "添加远程仓库失败: \(error.localizedDescription)"
+            errorMessage = String(localized: "Failed to add remote repository: \(error.localizedDescription)")
             if verbose {
                 os_log(.error, "\(self.t)❌ Failed to add remote: \(error)")
             }
@@ -308,12 +308,12 @@ extension RemoteRepositoryView {
 
     private func publishCurrentBranch() {
         guard let project = vm.project else {
-            errorMessage = "没有选择项目"
+            errorMessage = String(localized: "No project selected")
             return
         }
 
         guard let remote = preferredPublishRemote else {
-            errorMessage = "请先添加远程仓库"
+            errorMessage = String(localized: "Please add a remote repository first")
             return
         }
 
@@ -326,7 +326,7 @@ extension RemoteRepositoryView {
                     throw NSError(
                         domain: "GitOK.RemoteRepository",
                         code: -1,
-                        userInfo: [NSLocalizedDescriptionKey: "当前仓库没有可发布的分支"]
+                        userInfo: [NSLocalizedDescriptionKey: "Current repository has no publishable branch"]
                     )
                 }
 
@@ -334,14 +334,14 @@ extension RemoteRepositoryView {
 
                 await MainActor.run {
                     isPublishingCurrentBranch = false
-                    postRemoteActionMessage = "已发布当前分支 \(branch.name)，并设置 upstream 为 \(remote.name)/\(branch.name)。"
+                    postRemoteActionMessage = String(localized: "Published current branch \(branch.name), and set upstream to \(remote.name)/\(branch.name).")
                     loadRemotes()
-                    alert_info("已发布分支: \(branch.name)")
+                    alert_info(String(localized: "Published branch: \(branch.name)"))
                 }
             } catch {
                 await MainActor.run {
                     isPublishingCurrentBranch = false
-                    errorMessage = "发布当前分支失败: \(error.localizedDescription)"
+                    errorMessage = String(localized: "Failed to publish current branch: \(error.localizedDescription)")
                     os_log(.error, "\(self.t)❌ Failed to publish current branch: \(error.localizedDescription)")
                 }
             }
@@ -359,7 +359,7 @@ extension RemoteRepositoryView {
     
     private func updateRemote(originalName: String, newName: String, newURL: String) {
         guard let project = vm.project else {
-            errorMessage = "没有选择项目"
+            errorMessage = String(localized: "No project selected")
             return
         }
 
@@ -369,14 +369,14 @@ extension RemoteRepositoryView {
         do {
             try project.updateRemote(originalName: originalName, newName: newName, newURL: newURL)
 
-            loadRemotes() // 重新加载列表
-            postRemoteActionMessage = "已更新远程仓库 \(newName)。远程 URL 变化后，GitOK 会刷新当前分支 ahead/behind；如果当前分支没有 upstream，请先发布分支或执行首次 push。"
+            loadRemotes() // Reload list
+            postRemoteActionMessage = String(localized: "Updated remote repository \(newName). After the remote URL changes, GitOK refreshes the current branch ahead/behind state; if the branch has no upstream yet, please publish the branch or do the first push.")
 
             if verbose {
                 os_log("\(self.t)✅ Updated remote: \(originalName) -> \(newName): \(newURL)")
             }
         } catch {
-            errorMessage = "更新远程仓库失败: \(error.localizedDescription)"
+            errorMessage = String(localized: "Failed to update remote repository: \(error.localizedDescription)")
             if verbose {
                 os_log(.error, "\(self.t)❌ Failed to update remote: \(error)")
             }
@@ -387,7 +387,7 @@ extension RemoteRepositoryView {
     
     private func deleteRemote(_ remote: GitRemote) {
         guard let project = vm.project else {
-            errorMessage = "没有选择项目"
+            errorMessage = String(localized: "No project selected")
             return
         }
 
@@ -397,10 +397,10 @@ extension RemoteRepositoryView {
         do {
             let wasUpstreamRemote = remote.name == currentUpstreamRemoteName
             try project.removeRemote(name: remote.name)
-            loadRemotes() // 重新加载列表
+            loadRemotes() // Reload list
             postRemoteActionMessage = wasUpstreamRemote
-                ? "已删除当前 upstream 远程 \(remote.name)。当前分支会显示为无 upstream；后续 Push/Pull 前需要重新设置 upstream。"
-                : "已删除远程仓库 \(remote.name)。依赖该 remote 的 Fetch/Pull/Push 操作将不可用。"
+                ? String(localized: "Deleted the current upstream remote \(remote.name). The current branch will show as having no upstream; you need to re-set upstream before push/pull.")
+                : String(localized: "Deleted remote repository \(remote.name). Fetch/Pull/Push operations that depend on this remote will no longer be available.")
 
             if selectedRemote?.id == remote.id {
                 selectedRemote = nil
@@ -410,7 +410,7 @@ extension RemoteRepositoryView {
                 os_log("\(self.t)✅ Removed remote: \(remote.name)")
             }
         } catch {
-            errorMessage = "删除远程仓库失败: \(error.localizedDescription)"
+            errorMessage = String(localized: "Failed to delete remote repository: \(error.localizedDescription)")
             if verbose {
                 os_log(.error, "\(self.t)❌ Failed to remove remote: \(error)")
             }
@@ -444,10 +444,10 @@ extension RemoteRepositoryView {
 
     private func firstPushMessage(for remoteName: String) -> String {
         if aheadBehind.hasUpstream {
-            return "已添加远程仓库 \(remoteName)。当前分支已有 upstream；GitOK 已刷新远程跟踪状态。"
+            return String(localized: "Added remote repository \(remoteName). The current branch already has an upstream; GitOK has refreshed the remote tracking state.")
         }
 
-        return "已添加远程仓库 \(remoteName)。当前分支还没有 upstream，首次推送时请发布分支或执行 `git push -u \(remoteName) <branch>`。"
+        return String(localized: "Added remote repository \(remoteName). The current branch has no upstream yet. For the first push, please publish the branch or run `git push -u \(remoteName) <branch>`.")
     }
 }
 

@@ -1,7 +1,11 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "%lld Cores" : {
+
+    },
     "%lld 核" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -16,6 +20,48 @@
           }
         }
       }
+    },
+    "Accent Color" : {
+
+    },
+    "Add" : {
+
+    },
+    "Add a new remote repository URL" : {
+
+    },
+    "Add a remote repository to enable push and pull operations" : {
+
+    },
+    "Add New Preset" : {
+
+    },
+    "Add Remote Repository" : {
+
+    },
+    "Always use dark appearance" : {
+
+    },
+    "Always use light appearance" : {
+
+    },
+    "App Info" : {
+
+    },
+    "App Name" : {
+
+    },
+    "Architecture" : {
+
+    },
+    "Automatically switch with system settings" : {
+
+    },
+    "Balanced layout, suitable for most scenarios" : {
+
+    },
+    "Blue" : {
+
     },
     "Build" : {
       "localizations" : {
@@ -65,6 +111,15 @@
         }
       }
     },
+    "Cancel" : {
+
+    },
+    "Comfortable" : {
+
+    },
+    "Commit message display style for this project" : {
+
+    },
     "Commit 风格" : {
       "localizations" : {
         "zh-Hans" : {
@@ -80,6 +135,42 @@
           }
         }
       }
+    },
+    "Compact" : {
+
+    },
+    "Cores" : {
+
+    },
+    "Current Project" : {
+
+    },
+    "Current Project Style" : {
+
+    },
+    "Dark Mode" : {
+
+    },
+    "Default commit message display style for new projects" : {
+
+    },
+    "Delete Preset" : {
+
+    },
+    "Delete this preset" : {
+
+    },
+    "Disk" : {
+
+    },
+    "Disk Usage" : {
+
+    },
+    "Done" : {
+
+    },
+    "Email" : {
+
     },
     "Emoji 风格" : {
       "localizations" : {
@@ -114,6 +205,48 @@
         }
       }
     },
+    "Enable or disable GitOK plugins" : {
+
+    },
+    "Enter email" : {
+
+    },
+    "Enter username" : {
+
+    },
+    "Existing Presets" : {
+
+    },
+    "Extra Large" : {
+
+    },
+    "Failed to add remote repository: %@" : {
+
+    },
+    "Failed to delete preset: %@" : {
+
+    },
+    "Failed to load remote repository: %@" : {
+
+    },
+    "Failed to remove remote repository: %@" : {
+
+    },
+    "Failed to save preset: %@" : {
+
+    },
+    "Follow System" : {
+
+    },
+    "Font Size" : {
+
+    },
+    "Free Capacity" : {
+
+    },
+    "Free Memory" : {
+
+    },
     "Git" : {
       "localizations" : {
         "zh-Hans" : {
@@ -130,7 +263,11 @@
         }
       }
     },
+    "Git Version" : {
+
+    },
     "Git 版本" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -145,6 +282,162 @@
           }
         }
       }
+    },
+    "Global Default Style" : {
+
+    },
+    "Green" : {
+
+    },
+    "Hardware" : {
+
+    },
+    "Hostname" : {
+
+    },
+    "Indigo" : {
+
+    },
+    "Large" : {
+
+    },
+    "Layout Density" : {
+
+    },
+    "Light Mode" : {
+
+    },
+    "Links" : {
+
+    },
+    "Local Path" : {
+
+    },
+    "Medium" : {
+
+    },
+    "Memory" : {
+
+    },
+    "Memory Usage" : {
+
+    },
+    "More compact layout, displays more content" : {
+
+    },
+    "More spacious layout, visually comfortable" : {
+
+    },
+    "Name" : {
+
+    },
+    "No Configurable Plugins" : {
+
+    },
+    "No plugins available to manage in settings" : {
+
+    },
+    "No Remote Repository Configured" : {
+
+    },
+    "Not Installed" : {
+
+    },
+    "Orange" : {
+
+    },
+    "Pink" : {
+
+    },
+    "Plain Text Lowercase" : {
+
+    },
+    "Plain Text Style" : {
+
+    },
+    "Please enter a valid Git URL" : {
+
+    },
+    "Please Select a Project First" : {
+
+    },
+    "Plugin Management" : {
+
+    },
+    "Preset Configs" : {
+
+    },
+    "Processor" : {
+
+    },
+    "Project Name" : {
+
+    },
+    "Project: %@" : {
+
+    },
+    "Purple" : {
+
+    },
+    "Red" : {
+
+    },
+    "Remote Repository" : {
+
+    },
+    "Remote Repository Information" : {
+
+    },
+    "Reset" : {
+
+    },
+    "Reset Appearance Settings" : {
+
+    },
+    "Save failed: %@" : {
+
+    },
+    "Scale: %lld%%" : {
+
+    },
+    "Small" : {
+
+    },
+    "Source Code" : {
+
+    },
+    "Spacious" : {
+
+    },
+    "Style Examples" : {
+
+    },
+    "System" : {
+
+    },
+    "System Info" : {
+
+    },
+    "System Name" : {
+
+    },
+    "System Version" : {
+
+    },
+    "Theme" : {
+
+    },
+    "Theme Mode" : {
+
+    },
+    "Total Capacity" : {
+
+    },
+    "Total Memory" : {
+
+    },
+    "Unable to load current user info: %@" : {
+
     },
     "URL" : {
       "localizations" : {
@@ -162,6 +455,18 @@
         }
       }
     },
+    "Used Capacity" : {
+
+    },
+    "Used Memory" : {
+
+    },
+    "User Info" : {
+
+    },
+    "Username" : {
+
+    },
     "v%@" : {
       "localizations" : {
         "zh-Hans" : {
@@ -177,6 +482,18 @@
           }
         }
       }
+    },
+    "Version" : {
+
+    },
+    "Version %@" : {
+
+    },
+    "Website" : {
+
+    },
+    "Yellow" : {
+
     },
     "一个现代化的 Git 客户端，让 Git 操作更加简单高效。" : {
       "extractionState" : "stale",
@@ -196,6 +513,7 @@
       }
     },
     "中" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -212,6 +530,7 @@
       }
     },
     "主机名" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -227,10 +546,8 @@
         }
       }
     },
-    "主题" : {
-
-    },
     "主题模式" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -280,6 +597,7 @@
       }
     },
     "保存失败: %@" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -296,6 +614,7 @@
       }
     },
     "保存预设失败: %@" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -344,6 +663,7 @@
       }
     },
     "内存" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -360,6 +680,7 @@
       }
     },
     "内存使用" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -376,6 +697,7 @@
       }
     },
     "删除此预设" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -392,6 +714,7 @@
       }
     },
     "删除远程仓库失败: %@" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -408,6 +731,7 @@
       }
     },
     "删除预设" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -424,6 +748,7 @@
       }
     },
     "删除预设失败: %@" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -440,6 +765,7 @@
       }
     },
     "加载远程仓库失败: %@" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -456,6 +782,7 @@
       }
     },
     "取消" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -472,6 +799,7 @@
       }
     },
     "可用内存" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -488,6 +816,7 @@
       }
     },
     "可用容量" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -504,6 +833,7 @@
       }
     },
     "名称" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -520,6 +850,7 @@
       }
     },
     "启用或禁用 GitOK 的插件功能" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -536,6 +867,7 @@
       }
     },
     "处理器" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -568,6 +900,7 @@
       }
     },
     "大" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -584,6 +917,7 @@
       }
     },
     "始终使用浅色外观" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -600,6 +934,7 @@
       }
     },
     "始终使用深色外观" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -616,6 +951,7 @@
       }
     },
     "字体大小" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -648,6 +984,7 @@
       }
     },
     "官方网站" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -664,6 +1001,7 @@
       }
     },
     "宽松" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -680,6 +1018,7 @@
       }
     },
     "小" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -696,6 +1035,7 @@
       }
     },
     "已用内存" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -712,6 +1052,7 @@
       }
     },
     "已用容量" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -728,6 +1069,7 @@
       }
     },
     "布局密度" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -744,6 +1086,7 @@
       }
     },
     "平衡的布局，适合大多数场景" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -776,6 +1119,7 @@
       }
     },
     "应用信息" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -792,6 +1136,7 @@
       }
     },
     "应用名称" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -808,6 +1153,7 @@
       }
     },
     "强调色" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -824,6 +1170,7 @@
       }
     },
     "当前没有可以在设置中管理的插件" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -840,6 +1187,7 @@
       }
     },
     "当前项目" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -872,6 +1220,7 @@
       }
     },
     "总内存" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -888,6 +1237,7 @@
       }
     },
     "总容量" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -904,6 +1254,7 @@
       }
     },
     "插件管理" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -920,6 +1271,7 @@
       }
     },
     "新项目的默认 Commit 消息显示风格" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -936,6 +1288,7 @@
       }
     },
     "无法加载当前用户信息: %@" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -952,6 +1305,7 @@
       }
     },
     "暂无可配置插件" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -968,6 +1322,7 @@
       }
     },
     "更宽松的布局，视觉更舒适" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -984,6 +1339,7 @@
       }
     },
     "更紧凑的布局，显示更多内容" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1000,6 +1356,7 @@
       }
     },
     "未安装" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1032,6 +1389,7 @@
       }
     },
     "未配置远程仓库" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1048,6 +1406,7 @@
       }
     },
     "本地路径" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1064,6 +1423,7 @@
       }
     },
     "核心数" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1080,6 +1440,7 @@
       }
     },
     "橙色" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1096,6 +1457,7 @@
       }
     },
     "此项目的 Commit 消息显示风格" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1112,6 +1474,7 @@
       }
     },
     "浅色模式" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1128,6 +1491,7 @@
       }
     },
     "深色模式" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1144,6 +1508,7 @@
       }
     },
     "添加" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1160,6 +1525,7 @@
       }
     },
     "添加新的远程仓库地址" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1176,6 +1542,7 @@
       }
     },
     "添加新预设" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1192,6 +1559,7 @@
       }
     },
     "添加远程仓库" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1208,6 +1576,7 @@
       }
     },
     "添加远程仓库以便进行推送和拉取操作" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1224,6 +1593,7 @@
       }
     },
     "添加远程仓库失败: %@" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1240,6 +1610,7 @@
       }
     },
     "源代码" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1256,6 +1627,7 @@
       }
     },
     "版本" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1272,6 +1644,7 @@
       }
     },
     "版本 %@" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1288,6 +1661,7 @@
       }
     },
     "特大" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1304,6 +1678,7 @@
       }
     },
     "现有预设" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1320,6 +1695,7 @@
       }
     },
     "用户信息" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1352,6 +1728,7 @@
       }
     },
     "硬件" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1401,6 +1778,7 @@
       }
     },
     "磁盘" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1417,6 +1795,7 @@
       }
     },
     "磁盘使用" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1433,6 +1812,7 @@
       }
     },
     "粉色" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1449,6 +1829,7 @@
       }
     },
     "系统" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1465,6 +1846,7 @@
       }
     },
     "系统信息" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1481,6 +1863,7 @@
       }
     },
     "系统名称" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1497,6 +1880,7 @@
       }
     },
     "系统架构" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1513,6 +1897,7 @@
       }
     },
     "系统版本" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1529,6 +1914,7 @@
       }
     },
     "红色" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1545,6 +1931,7 @@
       }
     },
     "紧凑" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1561,6 +1948,7 @@
       }
     },
     "纯文本小写" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1577,6 +1965,7 @@
       }
     },
     "纯文本风格" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1593,6 +1982,7 @@
       }
     },
     "紫色" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1609,6 +1999,7 @@
       }
     },
     "绿色" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1625,6 +2016,7 @@
       }
     },
     "缩放比例: %lld%%" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1641,6 +2033,7 @@
       }
     },
     "舒适" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1657,6 +2050,7 @@
       }
     },
     "蓝色" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1690,6 +2084,7 @@
       }
     },
     "请先选择一个项目" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1706,6 +2101,7 @@
       }
     },
     "请输入有效的 Git URL" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1722,6 +2118,7 @@
       }
     },
     "跟随系统" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1738,6 +2135,7 @@
       }
     },
     "跟随系统设置自动切换" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1754,6 +2152,7 @@
       }
     },
     "输入用户名" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1770,6 +2169,7 @@
       }
     },
     "输入邮箱" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1802,6 +2202,7 @@
       }
     },
     "远程仓库" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1818,6 +2219,7 @@
       }
     },
     "远程仓库信息" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1914,6 +2316,7 @@
       }
     },
     "重置" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1930,6 +2333,7 @@
       }
     },
     "重置外观设置" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1962,6 +2366,7 @@
       }
     },
     "链接" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1978,6 +2383,7 @@
       }
     },
     "靛蓝" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1994,6 +2400,7 @@
       }
     },
     "项目：%@" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -2010,6 +2417,7 @@
       }
     },
     "项目名称" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -2058,6 +2466,7 @@
       }
     },
     "预设配置" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -2090,6 +2499,7 @@
       }
     },
     "风格示例" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -2106,6 +2516,7 @@
       }
     },
     "黄色" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {

@@ -52,7 +52,7 @@ struct CommitStyleSettingView: View, SuperLog {
 
     /// 风格示例展示区
     private var styleExamplesSection: some View {
-        GitOKUI.AppSettingsSection(title: String(localized: "风格示例", table: "Core")) {
+        GitOKUI.AppSettingsSection(title: String(localized: "Style Examples", table: "Core")) {
             VStack(alignment: .leading, spacing: 16) {
                 Text("选择不同的风格会改变 Commit 消息的显示方式：", tableName: "Core")
                     .font(.subheadline)
@@ -69,7 +69,7 @@ struct CommitStyleSettingView: View, SuperLog {
                     )
 
                     exampleCard(
-                        title: String(localized: "纯文本风格", table: "Core"),
+                        title: String(localized: "Plain Text Style", table: "Core"),
                         examples: [
                             "Feature: Add periodic remote status check",
                             "Fix: Plugin still shows when disabled",
@@ -78,7 +78,7 @@ struct CommitStyleSettingView: View, SuperLog {
                     )
 
                     exampleCard(
-                        title: String(localized: "纯文本小写", table: "Core"),
+                        title: String(localized: "Plain Text Lowercase", table: "Core"),
                         examples: [
                             "feature: Add periodic remote status check",
                             "fix: Plugin still shows when disabled",
@@ -115,8 +115,8 @@ struct CommitStyleSettingView: View, SuperLog {
 
     private var projectCommitStylePicker: some View {
         commitStylePickerRow(
-            title: String(localized: "当前项目风格", table: "Core"),
-            description: String(localized: "此项目的 Commit 消息显示风格", table: "Core"),
+            title: String(localized: "Current Project Style", table: "Core"),
+            description: String(localized: "Commit message display style for this project", table: "Core"),
             icon: "square.and.pencil",
             selection: Binding(
                 get: { commitStyle },
@@ -132,8 +132,8 @@ struct CommitStyleSettingView: View, SuperLog {
 
     private var globalCommitStylePicker: some View {
         commitStylePickerRow(
-            title: String(localized: "全局默认风格", table: "Core"),
-            description: String(localized: "新项目的默认 Commit 消息显示风格", table: "Core"),
+            title: String(localized: "Global Default Style", table: "Core"),
+            description: String(localized: "Default commit message display style for new projects", table: "Core"),
             icon: "arrow.up.arrow.down",
             selection: Binding(
                 get: { globalCommitStyle },

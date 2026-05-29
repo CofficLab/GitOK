@@ -1,0 +1,34 @@
+import Foundation
+import GitOKPluginKit
+import SwiftUI
+
+public struct UnpushedStatusPlugin: GitOKPackagedPlugin {
+    public static let shared = UnpushedStatusPlugin()
+
+    public static let metadata = GitOKPluginMetadata(
+        id: "UnpushedStatusPlugin",
+        displayName: PluginUnpushedStatusLocalization.string("Unpushed Status"),
+        description: PluginUnpushedStatusLocalization.string("Display unpushed commit count"),
+        iconName: "arrow.up.circle",
+        order: 25,
+        allowUserToggle: false,
+        defaultEnabled: true,
+        tableName: PluginUnpushedStatusLocalization.table
+    )
+
+    private init() {}
+
+    @MainActor
+    public func rootView(_ content: AnyView) -> AnyView? {
+        AnyView(UnpushedStatusRootView(content: content))
+    }
+}
+
+public enum PluginUnpushedStatusLocalization {
+    public static let table = "UnpushedStatus"
+    public static let bundle = Bundle.module
+
+    public static func string(_ key: String) -> String {
+        NSLocalizedString(key, tableName: table, bundle: bundle, value: key, comment: "")
+    }
+}

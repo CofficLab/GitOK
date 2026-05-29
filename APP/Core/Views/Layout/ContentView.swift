@@ -246,7 +246,7 @@ extension ContentView {
         os_log("\(self.t)✅ UpdateCachedViews leading count=\(toolbarLeadingViews.count) elapsed=\(String(format: "%.3f", Date().timeIntervalSince(leadingStart)))s")
 
         let trailingStart = Date()
-        toolbarTrailingViews = p.getEnabledToolbarTrailingViews()
+        toolbarTrailingViews = p.getEnabledToolbarTrailingViews(projectURL: vm.project?.url)
         os_log("\(self.t)✅ UpdateCachedViews trailing count=\(toolbarTrailingViews.count) elapsed=\(String(format: "%.3f", Date().timeIntervalSince(trailingStart)))s")
 
         let listStart = Date()

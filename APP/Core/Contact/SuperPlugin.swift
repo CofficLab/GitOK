@@ -13,6 +13,27 @@ protocol SuperPlugin {
     /// 默认实现使用反射获取类名
     var instanceLabel: String { get }
 
+    /// 实例级插件注册顺序。默认转发到静态属性，package adapter 可按被包装插件覆盖。
+    var pluginOrder: Int { get }
+
+    /// 实例级显示名称。默认转发到静态属性，package adapter 可按被包装插件覆盖。
+    var pluginDisplayName: String { get }
+
+    /// 实例级描述。默认转发到静态属性，package adapter 可按被包装插件覆盖。
+    var pluginDescription: String { get }
+
+    /// 实例级图标。默认转发到静态属性，package adapter 可按被包装插件覆盖。
+    var pluginIconName: String { get }
+
+    /// 实例级用户开关能力。默认转发到静态属性，package adapter 可按被包装插件覆盖。
+    var pluginAllowUserToggle: Bool { get }
+
+    /// 实例级默认启用状态。默认转发到静态属性，package adapter 可按被包装插件覆盖。
+    var pluginDefaultEnabled: Bool { get }
+
+    /// 实例级多语言表名。默认转发到静态属性，package adapter 可按被包装插件覆盖。
+    var pluginTableName: String { get }
+
     /// 插件注册顺序，数字越小越先注册
     static var order: Int { get }
 
@@ -67,14 +88,17 @@ protocol SuperPlugin {
 
     /// 返回插件在状态栏前部区域的视图
     /// - Returns: 包装在 AnyView 中的状态栏前部视图
+    @MainActor
     func addStatusBarLeadingView() -> AnyView?
 
     /// 返回插件在状态栏中间区域的视图
     /// - Returns: 包装在 AnyView 中的状态栏中间视图
+    @MainActor
     func addStatusBarCenterView() -> AnyView?
 
     /// 返回插件在状态栏后部区域的视图
     /// - Returns: 包装在 AnyView 中的状态栏后部视图
+    @MainActor
     func addStatusBarTrailingView() -> AnyView?
 
     /// 添加根视图包裹
@@ -92,6 +116,9 @@ protocol SuperPlugin {
     /// 主题插件通过此入口登记主题，宿主负责聚合、排序和选择。
     @MainActor
     func addThemeContributions() -> [GitOKUIThemeContribution]
+
+    /// 给插件视图注入当前项目 URL。旧插件默认不处理，package adapter 可覆盖。
+    func viewWithProjectURL(_ view: AnyView, projectURL: URL?) -> AnyView
 }
 
 /// SuperPlugin 协议的默认实现
@@ -119,6 +146,20 @@ extension SuperPlugin {
         }
         return typeName
     }
+
+    var pluginOrder: Int { type(of: self).order }
+
+    var pluginDisplayName: String { type(of: self).displayName }
+
+    var pluginDescription: String { type(of: self).description }
+
+    var pluginIconName: String { type(of: self).iconName }
+
+    var pluginAllowUserToggle: Bool { type(of: self).allowUserToggle }
+
+    var pluginDefaultEnabled: Bool { type(of: self).defaultEnabled }
+
+    var pluginTableName: String { type(of: self).tableName }
 
     /// 默认的注册顺序实现
     static var order: Int {
@@ -165,16 +206,19 @@ extension SuperPlugin {
     }
 
     /// 默认的状态栏前部视图实现，返回空视图
+    @MainActor
     func addStatusBarLeadingView() -> AnyView? {
         nil
     }
 
     /// 默认的状态栏中间视图实现，返回空视图
+    @MainActor
     func addStatusBarCenterView() -> AnyView? {
         nil
     }
 
     /// 默认的状态栏后部视图实现，返回空视图
+    @MainActor
     func addStatusBarTrailingView() -> AnyView? {
         nil
     }
@@ -198,6 +242,10 @@ extension SuperPlugin {
     @MainActor
     func addThemeContributions() -> [GitOKUIThemeContribution] {
         []
+    }
+
+    func viewWithProjectURL(_ view: AnyView, projectURL: URL?) -> AnyView {
+        view
     }
 
     /// 提供根视图（接收 AnyView 参数的便捷方法）

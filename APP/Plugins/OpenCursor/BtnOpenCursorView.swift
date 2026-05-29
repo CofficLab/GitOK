@@ -17,7 +17,7 @@ struct BtnOpenCursorView: View {
                 .inButtonWithAction {
                     project.url.openInCursor()
                 }
-                .help("用 Cursor 打开")
+                .help(String(localized: "Open in Cursor"))
                 .toolbarButtonStyle()
         }
     }

@@ -41,7 +41,7 @@ struct MergeForm: View, SuperLog {
                             })
                         })
 
-                        Text("至").padding()
+                        Text(String(localized: "to", table: "GitMerge")).padding()
 
                         Picker("", selection: $branch2, content: {
                             ForEach(branches, id: \.self, content: {
