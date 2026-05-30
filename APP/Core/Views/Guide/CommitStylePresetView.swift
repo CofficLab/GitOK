@@ -2,6 +2,7 @@ import Foundation
 import GitOKUI
 import MagicKit
 import OSLog
+import PluginCommit
 import SwiftUI
 
 /// Commit 风格预设管理视图组件

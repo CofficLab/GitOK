@@ -10,11 +10,12 @@ let package = Package(
     ],
     dependencies: [
         .package(path: "../GitOKPluginKit"),
+        .package(path: "../GitCoreKit"),
     ],
     targets: [
         .target(
             name: "PluginSmartMerge",
-            dependencies: ["GitOKPluginKit"],
+            dependencies: ["GitOKPluginKit", "GitCoreKit"],
             path: "Sources/PluginSmartMerge",
             resources: [.process("Resources")]
         ),

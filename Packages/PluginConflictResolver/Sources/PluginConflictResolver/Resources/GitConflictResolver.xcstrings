@@ -1,50 +1,43 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "ConflictResolver" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Conflict Resolver"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "冲突解决"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "衝突解決"
-          }
-        }
-      }
-    },
-    "Git 冲突解决" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Git Conflict Resolution"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Git 冲突解决"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Git 衝突解決"
-          }
-        }
-      }
-    }
+    "Abort Merge" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Abort Merge" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "中止合并" } }, "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "中止合併" } } } },
+    "Checking conflict status..." : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Checking conflict status..." } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "正在检查冲突状态..." } }, "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "正在檢查衝突狀態..." } } } },
+    "Conflict Resolution" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Conflict Resolution" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "冲突解决" } }, "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "衝突解決" } } } },
+    "Conflict operation failed" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Conflict operation failed" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "冲突操作失败" } }, "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "衝突操作失敗" } } } },
+    "Conflict markers cleared, stage to continue merge." : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Conflict markers cleared, stage to continue merge." } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "冲突标记已清除，暂存后继续合并。" } }, "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "衝突標記已清除，暫存後繼續合併。" } } } },
+    "ConflictResolver" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Conflict Resolver" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "冲突解决" } }, "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "衝突解決" } } } },
+    "Continue Merge" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Continue Merge" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "继续合并" } }, "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "繼續合併" } } } },
+    "Edit" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Edit" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "编辑" } }, "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "編輯" } } } },
+    "Edit the file or accept one side, then mark as resolved." : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Edit the file or accept one side, then mark as resolved." } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "编辑文件或采用一侧版本，然后标记为已解决。" } }, "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "編輯檔案或採用一側版本，然後標記為已解決。" } } } },
+    "File staged, waiting for all files to complete before continuing merge." : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "File staged, waiting for all files to complete before continuing merge." } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "文件已暂存，等待所有文件完成后继续合并。" } }, "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "檔案已暫存，等待所有檔案完成後繼續合併。" } } } },
+    "Git 冲突解决" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Git Conflict Resolution" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "Git 冲突解决" } }, "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "Git 衝突解決" } } } },
+    "Loading conflict preview..." : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Loading conflict preview..." } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "正在加载冲突预览..." } }, "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "正在載入衝突預覽..." } } } },
+    "Mark Resolved" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Mark Resolved" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "标记已解决" } }, "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "標記已解決" } } } },
+    "Mark as resolved and stage" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Mark as resolved and stage" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "标记为已解决并暂存" } }, "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "標記為已解決並暫存" } } } },
+    "Merge Files" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Merge Files" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "合并文件" } }, "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "合併檔案" } } } },
+    "Merge OK" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Merge OK" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "合并正常" } }, "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "合併正常" } } } },
+    "No conflict diff to display." : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "No conflict diff to display." } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "没有可显示的冲突 diff。" } }, "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "沒有可顯示的衝突 diff。" } } } },
+    "No files to handle" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "No files to handle" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "没有需要处理的文件" } }, "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "沒有需要處理的檔案" } } } },
+    "No merge conflicts" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "No merge conflicts" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "当前没有合并冲突" } }, "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "目前沒有合併衝突" } } } },
+    "No merge in progress" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "No merge in progress" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "没有正在进行的合并" } }, "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "沒有正在進行的合併" } } } },
+    "Open base version" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Open base version" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "打开 Base 版本" } }, "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "開啟 Base 版本" } } } },
+    "Open file" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Open file" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "打开文件" } }, "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "開啟檔案" } } } },
+    "Open ours version" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Open ours version" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "打开 Ours 版本" } }, "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "開啟 Ours 版本" } } } },
+    "Open the conflicted file in the default editor" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Open the conflicted file in the default editor" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "用默认编辑器打开冲突文件" } }, "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "用預設編輯器開啟衝突檔案" } } } },
+    "Open theirs version" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Open theirs version" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "打开 Theirs 版本" } }, "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "開啟 Theirs 版本" } } } },
+    "Pending Stage" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Pending Stage" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "待暂存" } }, "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "待暫存" } } } },
+    "Reveal in Finder" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Reveal in Finder" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "在 Finder 中显示" } }, "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "在 Finder 中顯示" } } } },
+    "Selected" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Selected" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "已选择" } }, "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "已選取" } } } },
+    "Stage resolved file" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Stage resolved file" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "暂存已解决文件" } }, "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "暫存已解決檔案" } } } },
+    "Staged" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Staged" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "已暂存" } }, "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "已暫存" } } } },
+    "The current merge left no pending files." : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "The current merge left no pending files." } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "当前合并没有待处理文件。" } }, "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "目前合併沒有待處理檔案。" } } } },
+    "There are %d conflicted files. Click to resolve them." : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "There are %d conflicted files. Click to resolve them." } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "存在 %d 个冲突文件，点击打开冲突处理。" } }, "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "存在 %d 個衝突檔案，點擊開啟衝突處理。" } } } },
+    "Unresolved" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Unresolved" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "未解决" } }, "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "未解決" } } } },
+    "Use Ours" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Use Ours" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "采用 Ours" } }, "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "採用 Ours" } } } },
+    "Use Theirs" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Use Theirs" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "采用 Theirs" } }, "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "採用 Theirs" } } } },
+    "When you encounter conflicts during a merge, files needing resolution will appear here" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "When you encounter conflicts during a merge, files needing resolution will appear here" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "合并中遇到冲突时，需要解决的文件会显示在这里" } }, "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "合併中遇到衝突時，需要解決的檔案會顯示在這裡" } } } },
+    "Working Tree Ready" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Working Tree Ready" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "工作区就绪" } }, "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "工作區就緒" } } } }
   },
   "version" : "1.0"
 }

@@ -1,5 +1,6 @@
 import Foundation
 import GitOKPluginKit
+import SwiftUI
 
 public struct ProjectPickerPlugin: GitOKPackagedPlugin {
     public static let shared = ProjectPickerPlugin()
@@ -15,6 +16,10 @@ public struct ProjectPickerPlugin: GitOKPackagedPlugin {
     )
 
     private init() {}
+
+    public func toolBarLeadingView() -> AnyView? {
+        AnyView(ProjectPickerView())
+    }
 }
 
 public enum PluginProjectPickerLocalization {

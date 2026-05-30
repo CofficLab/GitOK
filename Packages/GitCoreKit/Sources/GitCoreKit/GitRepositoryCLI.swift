@@ -645,6 +645,124 @@ public struct GitRepositoryCLI {
         try LibGit2.fetch(at: repositoryURL.path, remote: remote, prune: true, verbose: false)
     }
 
+    public func remoteNames() throws -> [String] {
+        try LibGit2.getRemoteList(at: repositoryURL.path).map(\.name)
+    }
+
+    public func remotes() throws -> [GitRemoteSummary] {
+        try LibGit2.getRemoteList(at: repositoryURL.path).map { remote in
+            GitRemoteSummary(
+                id: remote.id,
+                name: remote.name,
+                url: remote.url,
+                fetchURL: remote.fetchURL,
+                pushURL: remote.pushURL,
+                isDefault: remote.isDefault
+            )
+        }
+    }
+
+    public func addRemote(name: String, url: String) throws {
+        try LibGit2.addRemote(name: name, url: url, at: repositoryURL.path, verbose: false)
+    }
+
+    public func updateRemote(originalName: String, newName: String, newURL: String) throws {
+        let trimmedOriginalName = originalName.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedNewName = newName.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedNewURL = newURL.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        guard trimmedOriginalName.isEmpty == false else {
+            throw NSError(domain: "GitOK.GitCommand", code: -1, userInfo: [NSLocalizedDescriptionKey: "原远程仓库名称不能为空"])
+        }
+
+        guard trimmedNewName.isEmpty == false else {
+            throw NSError(domain: "GitOK.GitCommand", code: -1, userInfo: [NSLocalizedDescriptionKey: "远程仓库名称不能为空"])
+        }
+
+        guard trimmedNewURL.isEmpty == false else {
+            throw NSError(domain: "GitOK.GitCommand", code: -1, userInfo: [NSLocalizedDescriptionKey: "远程仓库 URL 不能为空"])
+        }
+
+        if trimmedOriginalName != trimmedNewName {
+            try LibGit2.removeRemote(name: trimmedOriginalName, at: repositoryURL.path, verbose: false)
+            try LibGit2.addRemote(name: trimmedNewName, url: trimmedNewURL, at: repositoryURL.path, verbose: false)
+        } else {
+            try LibGit2.setRemoteURL(name: trimmedOriginalName, url: trimmedNewURL, at: repositoryURL.path, verbose: false)
+        }
+    }
+
+    public func removeRemote(name: String) throws {
+        try LibGit2.removeRemote(name: name, at: repositoryURL.path, verbose: false)
+    }
+
+    public func currentBranchName() throws -> String? {
+        let branch = try LibGit2.getCurrentBranch(at: repositoryURL.path)
+        return branch.isEmpty ? nil : branch
+    }
+
+    public func currentUpstreamRemoteName() throws -> String? {
+        guard let branch = try currentBranchName() else { return nil }
+        let upstream = try LibGit2.getConfig(key: "branch.\(branch).remote", at: repositoryURL.path, verbose: false)
+        return upstream.isEmpty ? nil : upstream
+    }
+
+    public func pull() throws {
+        try performWithResolvedSSHURL(operation: "pull") {
+            try LibGit2.pull(at: repositoryURL.path, verbose: false)
+        }
+    }
+
+    public func push() throws {
+        try performWithResolvedSSHURL(operation: "push") {
+            try LibGit2.push(at: repositoryURL.path, verbose: false)
+        }
+    }
+
+    public func sync() throws {
+        try fetch()
+        let trackingState = try aheadBehind()
+
+        if trackingState.hasUpstream,
+           trackingState.ahead > 0,
+           trackingState.behind > 0 {
+            throw NSError(
+                domain: "GitOK.GitCommand",
+                code: -2,
+                userInfo: [
+                    NSLocalizedDescriptionKey: "Local and remote branches have diverged. Pull or push manually."
+                ]
+            )
+        }
+
+        if trackingState.hasUpstream, trackingState.behind > 0 {
+            try pull()
+        }
+
+        if trackingState.hasUpstream == false || trackingState.ahead > 0 {
+            try push()
+        }
+    }
+
+    private func performWithResolvedSSHURL(operation _: String, block: () throws -> Void) throws {
+        guard let remoteURL = LibGit2.getRemoteURL(at: repositoryURL.path, remote: "origin") else {
+            try block()
+            return
+        }
+
+        let resolvedURL = SSHConfigURLResolver.applySSHConfig(to: remoteURL)
+        guard resolvedURL != remoteURL else {
+            try block()
+            return
+        }
+
+        try LibGit2.setRemoteURL(at: repositoryURL.path, remote: "origin", url: resolvedURL)
+        defer {
+            try? LibGit2.setRemoteURL(at: repositoryURL.path, remote: "origin", url: remoteURL)
+        }
+
+        try block()
+    }
+
     public func submodules() throws -> [GitSubmodule] {
         try LibGit2.submodules(at: repositoryURL.path).map { submodule in
             GitSubmodule(
@@ -807,6 +925,55 @@ public struct GitRepositoryCLI {
 
     public func remoteBranches(remote: String? = nil) throws -> [String] {
         try LibGit2.getRemoteBranchNames(at: repositoryURL.path, remote: remote)
+    }
+
+    public func branches() throws -> [GitBranchSummary] {
+        let currentBranch = try? LibGit2.getCurrentBranch(at: repositoryURL.path)
+        return try LibGit2.getBranchList(at: repositoryURL.path).map { branch in
+            GitBranchSummary(
+                name: branch.name,
+                isRemote: false,
+                isCurrent: branch.isCurrent || branch.name == currentBranch
+            )
+        }
+    }
+
+    public func createBranch(named branchName: String) throws {
+        let trimmedName = branchName.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard trimmedName.isEmpty == false else {
+            throw NSError(domain: "GitOK.GitCommand", code: -1, userInfo: [NSLocalizedDescriptionKey: "分支名称不能为空"])
+        }
+
+        guard LibGit2.isValidBranchName(trimmedName) else {
+            throw NSError(domain: "GitOK.GitCommand", code: -1, userInfo: [NSLocalizedDescriptionKey: "分支名称无效"])
+        }
+
+        try LibGit2.checkoutNewBranch(named: trimmedName, at: repositoryURL.path)
+    }
+
+    public func checkoutBranch(named branchName: String) throws {
+        let trimmedName = branchName.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard trimmedName.isEmpty == false else {
+            throw NSError(domain: "GitOK.GitCommand", code: -1, userInfo: [NSLocalizedDescriptionKey: "分支名称不能为空"])
+        }
+
+        _ = try LibGit2.checkout(branch: trimmedName, at: repositoryURL.path, verbose: false)
+    }
+
+    public func mergeBranches(fromBranch sourceBranchName: String, toBranch targetBranchName: String) throws {
+        let source = sourceBranchName.trimmingCharacters(in: .whitespacesAndNewlines)
+        let target = targetBranchName.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        guard source.isEmpty == false else {
+            throw NSError(domain: "GitOK.GitCommand", code: -1, userInfo: [NSLocalizedDescriptionKey: "来源分支不能为空"])
+        }
+
+        guard target.isEmpty == false else {
+            throw NSError(domain: "GitOK.GitCommand", code: -1, userInfo: [NSLocalizedDescriptionKey: "目标分支不能为空"])
+        }
+
+        _ = try LibGit2.checkout(branch: target, at: repositoryURL.path, verbose: false)
+        try LibGit2.merge(branchName: source, at: repositoryURL.path, verbose: false)
     }
 
     public func setUpstream(localBranch: String, upstreamBranch: String) throws {

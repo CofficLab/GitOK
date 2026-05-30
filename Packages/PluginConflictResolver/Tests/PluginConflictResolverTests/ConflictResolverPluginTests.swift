@@ -1,4 +1,5 @@
 @testable import PluginConflictResolver
+import GitCoreKit
 import Testing
 
 @Suite("PluginConflictResolver")
@@ -16,5 +17,27 @@ struct ConflictResolverPluginTests {
     func localizedStringsResolve() {
         #expect(ConflictResolverPlugin.metadata.displayName.isEmpty == false)
         #expect(ConflictResolverPlugin.metadata.description.isEmpty == false)
+    }
+
+    @MainActor
+    @Test("plugin contributes status bar trailing view")
+    func statusBarTrailingView() {
+        #expect(ConflictResolverPlugin.shared.statusBarTrailingView() != nil)
+    }
+
+    @Test("state builder prioritizes unresolved files")
+    func stateBuilder() {
+        let files = ConflictResolverStateBuilder.mergeFiles(
+            unresolvedPaths: ["a.txt"],
+            statusEntries: [
+                GitStatusEntry(path: "a.txt", indexStatus: " ", workTreeStatus: "M"),
+                GitStatusEntry(path: "b.txt", indexStatus: "M", workTreeStatus: " ")
+            ]
+        )
+
+        #expect(files == [
+            GitMergeFile(path: "a.txt", state: .unresolved),
+            GitMergeFile(path: "b.txt", state: .staged)
+        ])
     }
 }

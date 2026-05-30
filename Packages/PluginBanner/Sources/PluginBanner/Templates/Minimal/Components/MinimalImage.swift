@@ -1,0 +1,62 @@
+import MagicKit
+import MagicAlert
+import SwiftUI
+
+/**
+ 简约模板的图片组件
+ 专门为简约布局设计的图片显示组件
+ */
+struct MinimalImage: View {
+    @EnvironmentObject var b: BannerProvider
+
+
+    var banner: BannerFile { b.banner }
+    var minimalData: MinimalBannerData? { banner.minimalData }
+    var image: Image { minimalData?.getImage(banner.projectURL) ?? Image("Snapshot-1") }
+
+    var body: some View {
+        ZStack {
+            if let device = minimalData?.selectedDevice {
+                switch device {
+                case .iMac:
+                    iMacScreen(content: {
+                        image.resizable().scaledToFit()
+                    })
+                case .MacBook:
+                    MacBookScreen(content: {
+                        image.resizable().scaledToFit()
+                    })
+                case .iPhoneBig:
+                    iPhoneScreen(content: {
+                        image.resizable().scaledToFit()
+                    })
+                case .iPhoneSmall:
+                    iPhoneScreen(content: {
+                        image.resizable().scaledToFit()
+                    })
+                case .iPad_mini:
+                    iPadScreen(content: {
+                        image.resizable().scaledToFit()
+                    })
+                case .iPhone_15:
+                    iPhoneScreen(content: {
+                        image.resizable().scaledToFit()
+                    })
+                case .iPhone_SE:
+                    iPhoneScreen(content: {
+                        image.resizable().scaledToFit()
+                    })
+                }
+            } else {
+                image
+                    .resizable()
+                    .scaledToFit()
+            }
+        }
+    }
+
+    private func getCornerRadius() -> CGFloat {
+        // 简约模板使用较大的圆角
+        return 16.0
+    }
+}

@@ -17,4 +17,10 @@ struct RemoteRepositoryPluginTests {
         #expect(RemoteRepositoryPlugin.metadata.displayName.isEmpty == false)
         #expect(RemoteRepositoryPlugin.metadata.description.isEmpty == false)
     }
+
+    @MainActor
+    @Test("plugin contributes status bar trailing view")
+    func statusBarTrailingView() {
+        #expect(RemoteRepositoryPlugin.shared.statusBarTrailingView() != nil)
+    }
 }

@@ -41,6 +41,8 @@ public protocol GitOKPackagedPlugin: Sendable {
 
     func tabItem() -> String?
 
+    func toolBarLeadingView() -> AnyView?
+
     func toolBarTrailingView() -> AnyView?
 
     @MainActor
@@ -75,7 +77,36 @@ private struct GitOKProjectPathEnvironmentKey: EnvironmentKey {
     static let defaultValue: String? = nil
 }
 
+private struct GitOKProjectTitleEnvironmentKey: EnvironmentKey {
+    static let defaultValue: String? = nil
+}
+
+private struct GitOKBranchNameEnvironmentKey: EnvironmentKey {
+    static let defaultValue: String? = nil
+}
+
+private struct GitOKIsGitRepositoryEnvironmentKey: EnvironmentKey {
+    static let defaultValue: Bool = false
+}
+
+private struct GitOKRemoteTrackingStatusEnvironmentKey: EnvironmentKey {
+    static let defaultValue: GitOKRemoteTrackingStatus? = nil
+}
+
+private struct GitOKProjectsEnvironmentKey: EnvironmentKey {
+    static let defaultValue: [GitOKProjectSummary] = []
+}
+
+private struct GitOKSelectedProjectURLEnvironmentKey: EnvironmentKey {
+    static let defaultValue: URL? = nil
+}
+
+private struct GitOKSidebarVisibleEnvironmentKey: EnvironmentKey {
+    static let defaultValue: Bool = true
+}
+
 public typealias GitOKThemeSelectionHandler = @MainActor (String) -> Void
+public typealias GitOKProjectSelectionHandler = @MainActor (URL) -> Void
 public typealias GitOKCleanStatusUpdateHandler = @MainActor (Bool) -> Void
 public typealias GitOKGitDirectoryChangeHandler = @MainActor (GitOKGitDirectoryChange) -> Void
 public typealias GitOKUnpushedCommitsUpdateHandler = @MainActor (Int, [String]) -> Void
@@ -115,6 +146,20 @@ public struct GitOKGitDirectoryChange: Equatable, Sendable {
     }
 }
 
+public struct GitOKProjectSummary: Identifiable, Equatable, Sendable, Hashable {
+    public let url: URL
+    public let title: String
+    public let path: String
+
+    public init(url: URL, title: String, path: String) {
+        self.url = url
+        self.title = title
+        self.path = path
+    }
+
+    public var id: URL { url }
+}
+
 public struct GitOKRemoteTrackingStatus: Equatable, Sendable {
     public let ahead: Int
     public let behind: Int
@@ -131,6 +176,10 @@ private struct GitOKThemeSelectionHandlerEnvironmentKey: EnvironmentKey {
     static let defaultValue: GitOKThemeSelectionHandler = { themeId in
         try? GitOKUIThemeRegistry.shared.select(themeId: themeId)
     }
+}
+
+private struct GitOKProjectSelectionHandlerEnvironmentKey: EnvironmentKey {
+    static let defaultValue: GitOKProjectSelectionHandler = { _ in }
 }
 
 private struct GitOKCleanStatusUpdateHandlerEnvironmentKey: EnvironmentKey {
@@ -170,6 +219,46 @@ public extension EnvironmentValues {
         set { self[GitOKProjectPathEnvironmentKey.self] = newValue }
     }
 
+    var gitOKProjectTitle: String? {
+        get { self[GitOKProjectTitleEnvironmentKey.self] }
+        set { self[GitOKProjectTitleEnvironmentKey.self] = newValue }
+    }
+
+    var gitOKBranchName: String? {
+        get { self[GitOKBranchNameEnvironmentKey.self] }
+        set { self[GitOKBranchNameEnvironmentKey.self] = newValue }
+    }
+
+    var gitOKIsGitRepository: Bool {
+        get { self[GitOKIsGitRepositoryEnvironmentKey.self] }
+        set { self[GitOKIsGitRepositoryEnvironmentKey.self] = newValue }
+    }
+
+    var gitOKRemoteTrackingStatus: GitOKRemoteTrackingStatus? {
+        get { self[GitOKRemoteTrackingStatusEnvironmentKey.self] }
+        set { self[GitOKRemoteTrackingStatusEnvironmentKey.self] = newValue }
+    }
+
+    var gitOKProjects: [GitOKProjectSummary] {
+        get { self[GitOKProjectsEnvironmentKey.self] }
+        set { self[GitOKProjectsEnvironmentKey.self] = newValue }
+    }
+
+    var gitOKSelectedProjectURL: URL? {
+        get { self[GitOKSelectedProjectURLEnvironmentKey.self] }
+        set { self[GitOKSelectedProjectURLEnvironmentKey.self] = newValue }
+    }
+
+    var gitOKSidebarVisible: Bool {
+        get { self[GitOKSidebarVisibleEnvironmentKey.self] }
+        set { self[GitOKSidebarVisibleEnvironmentKey.self] = newValue }
+    }
+
+    var gitOKProjectSelectionHandler: GitOKProjectSelectionHandler {
+        get { self[GitOKProjectSelectionHandlerEnvironmentKey.self] }
+        set { self[GitOKProjectSelectionHandlerEnvironmentKey.self] = newValue }
+    }
+
     var gitOKThemeSelectionHandler: GitOKThemeSelectionHandler {
         get { self[GitOKThemeSelectionHandlerEnvironmentKey.self] }
         set { self[GitOKThemeSelectionHandlerEnvironmentKey.self] = newValue }
@@ -204,6 +293,10 @@ public extension GitOKPackagedPlugin {
     }
 
     func tabItem() -> String? {
+        nil
+    }
+
+    func toolBarLeadingView() -> AnyView? {
         nil
     }
 

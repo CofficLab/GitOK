@@ -1,5 +1,6 @@
 import Foundation
 import GitOKPluginKit
+import SwiftUI
 
 public struct RemoteRepositoryPlugin: GitOKPackagedPlugin {
     public static let shared = RemoteRepositoryPlugin()
@@ -15,6 +16,10 @@ public struct RemoteRepositoryPlugin: GitOKPackagedPlugin {
     )
 
     private init() {}
+
+    public func statusBarTrailingView() -> AnyView? {
+        AnyView(RemoteRepositoryStatusButton())
+    }
 }
 
 public enum PluginRemoteRepositoryLocalization {

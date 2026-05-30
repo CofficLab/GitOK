@@ -19,6 +19,9 @@
 		2EBD279C11E8F66D637D90C5 /* PluginOpenRemote in Frameworks */ = {isa = PBXBuildFile; productRef = 38D466126A73169D8B822532 /* PluginOpenRemote */; };
 		2FBE17303949F4E4FC84FF72 /* PluginThemeGitOK in Frameworks */ = {isa = PBXBuildFile; productRef = 93F890CFE933742CE59AA58A /* PluginThemeGitOK */; };
 		30088A310922816BDAA62788 /* PluginLicense in Frameworks */ = {isa = PBXBuildFile; productRef = 45DE3A439D3C9C3FF7D1BE6A /* PluginLicense */; };
+		3A7100012F90000100ABC001 /* PluginGitTab in Frameworks */ = {isa = PBXBuildFile; productRef = 3A7200012F90000100ABC001 /* PluginGitTab */; };
+		3A7100022F90000100ABC001 /* PluginIconTab in Frameworks */ = {isa = PBXBuildFile; productRef = 3A7200022F90000100ABC001 /* PluginIconTab */; };
+		3A7100032F90000100ABC001 /* PluginBannerTab in Frameworks */ = {isa = PBXBuildFile; productRef = 3A7200032F90000100ABC001 /* PluginBannerTab */; };
 		3A7100042F90000100ABC001 /* PluginActivityStatus in Frameworks */ = {isa = PBXBuildFile; productRef = 3A7200042F90000100ABC001 /* PluginActivityStatus */; };
 		3A7100052F90000100ABC001 /* PluginFileInfo in Frameworks */ = {isa = PBXBuildFile; productRef = 3A7200052F90000100ABC001 /* PluginFileInfo */; };
 		3A7100062F90000100ABC001 /* PluginSubmodule in Frameworks */ = {isa = PBXBuildFile; productRef = 3A7200062F90000100ABC001 /* PluginSubmodule */; };
@@ -36,9 +39,10 @@
 		3A7100182F90000100ABC001 /* PluginCommit in Frameworks */ = {isa = PBXBuildFile; productRef = 3A7200182F90000100ABC001 /* PluginCommit */; };
 		3A7100192F90000100ABC001 /* PluginBanner in Frameworks */ = {isa = PBXBuildFile; productRef = 3A7200192F90000100ABC001 /* PluginBanner */; };
 		3A7100202F90000100ABC001 /* PluginIcon in Frameworks */ = {isa = PBXBuildFile; productRef = 3A7200202F90000100ABC001 /* PluginIcon */; };
-		3A7100012F90000100ABC001 /* PluginGitTab in Frameworks */ = {isa = PBXBuildFile; productRef = 3A7200012F90000100ABC001 /* PluginGitTab */; };
-		3A7100022F90000100ABC001 /* PluginIconTab in Frameworks */ = {isa = PBXBuildFile; productRef = 3A7200022F90000100ABC001 /* PluginIconTab */; };
-		3A7100032F90000100ABC001 /* PluginBannerTab in Frameworks */ = {isa = PBXBuildFile; productRef = 3A7200032F90000100ABC001 /* PluginBannerTab */; };
+		3A7100212F90000100ABC001 /* PluginGitPull in Frameworks */ = {isa = PBXBuildFile; productRef = 3A7200212F90000100ABC001 /* PluginGitPull */; };
+		3A7100222F90000100ABC001 /* PluginGitSync in Frameworks */ = {isa = PBXBuildFile; productRef = 3A7200222F90000100ABC001 /* PluginGitSync */; };
+		3A7100232F90000100ABC001 /* PluginAutoPush in Frameworks */ = {isa = PBXBuildFile; productRef = 3A7200232F90000100ABC001 /* PluginAutoPush */; };
+		3A7100242F90000100ABC001 /* PluginGitClone in Frameworks */ = {isa = PBXBuildFile; productRef = 3A7200242F90000100ABC001 /* PluginGitClone */; };
 		491FDAE909B1F7AA9853C453 /* PluginOpenFinder in Frameworks */ = {isa = PBXBuildFile; productRef = 2623463505DC40563C1AB9E9 /* PluginOpenFinder */; };
 		4938B5DC3C12BF6EA6C301DF /* PluginThemeEmber in Frameworks */ = {isa = PBXBuildFile; productRef = 151BC0B9AD57ADA322F23133 /* PluginThemeEmber */; };
 		5304BD80FB4667D5FF433F11 /* PluginThemeStatusBar in Frameworks */ = {isa = PBXBuildFile; productRef = BF0919B72D17F72C122ABB0C /* PluginThemeStatusBar */; };
@@ -52,24 +56,11 @@
 		A043725A45391B0FD39E09BB /* PluginOpenGitHubDesktop in Frameworks */ = {isa = PBXBuildFile; productRef = F1CDA9223BDDD2D986F5D5B3 /* PluginOpenGitHubDesktop */; };
 		A1F000122F70000100ABC001 /* APP/Core/Models/AppAppearanceSettingsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F000102F70000100ABC001 /* APP/Core/Models/AppAppearanceSettingsStore.swift */; };
 		A1F000132F70000100ABC001 /* APP/Core/Models/PluginSettingsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F000112F70000100ABC001 /* APP/Core/Models/PluginSettingsStore.swift */; };
-		A1F000142F70000100ABC001 /* APP/Plugins/Git-ConflictResolver/ConflictResolutionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F000152F70000100ABC001 /* APP/Plugins/Git-ConflictResolver/ConflictResolutionState.swift */; };
 		A1F000162F70000100ABC001 /* APP/Core/Models/ProjectDocumentResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F000172F70000100ABC001 /* APP/Core/Models/ProjectDocumentResolver.swift */; };
 		A1F000182F70000100ABC001 /* APP/Core/Events/ProjectGitOperationEventDescriptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F000192F70000100ABC001 /* APP/Core/Events/ProjectGitOperationEventDescriptor.swift */; };
 		A1F0001C2F70000100ABC001 /* APP/Core/Bootstrap/OpenProjectPathResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F0001D2F70000100ABC001 /* APP/Core/Bootstrap/OpenProjectPathResolver.swift */; };
-		A1F0001E2F70000100ABC001 /* APP/Plugins/AutoPush/AutoPushDecision.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F0001F2F70000100ABC001 /* APP/Plugins/AutoPush/AutoPushDecision.swift */; };
-		A1F000202F70000100ABC001 /* APP/Plugins/AutoPush/AutoPushSettingsPersistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F000212F70000100ABC001 /* APP/Plugins/AutoPush/AutoPushSettingsPersistence.swift */; };
-		A1F000222F70000100ABC001 /* APP/Plugins/AutoPush/ProjectBranchAutoPushConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F000232F70000100ABC001 /* APP/Plugins/AutoPush/ProjectBranchAutoPushConfig.swift */; };
-		A1F000242F70000100ABC001 /* APP/Plugins/Banner/Model/BannerTemplateDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F000252F70000100ABC001 /* APP/Plugins/Banner/Model/BannerTemplateDataStore.swift */; };
-		A1F000262F70000100ABC001 /* APP/Plugins/Banner/Model/BannerTemplateCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F000272F70000100ABC001 /* APP/Plugins/Banner/Model/BannerTemplateCatalog.swift */; };
-		A1F000282F70000100ABC001 /* APP/Plugins/Banner/Repo/BannerRepositoryIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F000292F70000100ABC001 /* APP/Plugins/Banner/Repo/BannerRepositoryIndex.swift */; };
 		A1F0002C2F70000100ABC001 /* APP/Core/Models/CoAuthor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F0002D2F70000100ABC001 /* APP/Core/Models/CoAuthor.swift */; };
-		A1F0002E2F70000100ABC001 /* APP/Plugins/Git-Detail/Git-Commit/GitCommitSelectionStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F0002F2F70000100ABC001 /* APP/Plugins/Git-Detail/Git-Commit/GitCommitSelectionStore.swift */; };
-		A1F000302F70000100ABC001 /* APP/Plugins/ProjectPicker/ProjectPickerSelectionRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F000312F70000100ABC001 /* APP/Plugins/ProjectPicker/ProjectPickerSelectionRules.swift */; };
 		A1F000322F70000100ABC001 /* APP/Core/Services/AvatarIdentityRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F000332F70000100ABC001 /* APP/Core/Services/AvatarIdentityRules.swift */; };
-		A1F000342F70000100ABC001 /* APP/Plugins/Banner/Model/BannerTemplateSelectionRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F000352F70000100ABC001 /* APP/Plugins/Banner/Model/BannerTemplateSelectionRules.swift */; };
-		A1F000362F70000100ABC001 /* APP/Plugins/Banner/Repo/BannerStorageRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F000372F70000100ABC001 /* APP/Plugins/Banner/Repo/BannerStorageRules.swift */; };
-		A1F000382F70000100ABC001 /* APP/Plugins/Git-RemoteRepository/RemoteRepositoryFormRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F000392F70000100ABC001 /* APP/Plugins/Git-RemoteRepository/RemoteRepositoryFormRules.swift */; };
-		A1F0003A2F70000100ABC001 /* APP/Plugins/Icon/Repo/IconFileRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F0003B2F70000100ABC001 /* APP/Plugins/Icon/Repo/IconFileRules.swift */; };
 		A1F100032F70000100ABC001 /* GitCoreKit in Frameworks */ = {isa = PBXBuildFile; productRef = A1F100022F70000100ABC001 /* GitCoreKit */; };
 		A1F100042F70000100ABC001 /* GitCoreKit in Frameworks */ = {isa = PBXBuildFile; productRef = A1F100022F70000100ABC001 /* GitCoreKit */; };
 		A1F200032F70000100ABC001 /* ProjectRulesKit in Frameworks */ = {isa = PBXBuildFile; productRef = A1F200022F70000100ABC001 /* ProjectRulesKit */; };
@@ -876,24 +867,11 @@
 		A1F000012F70000100ABC001 /* GitOKTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GitOKTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1F000102F70000100ABC001 /* APP/Core/Models/AppAppearanceSettingsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APP/Core/Models/AppAppearanceSettingsStore.swift; sourceTree = "<group>"; };
 		A1F000112F70000100ABC001 /* APP/Core/Models/PluginSettingsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APP/Core/Models/PluginSettingsStore.swift; sourceTree = "<group>"; };
-		A1F000152F70000100ABC001 /* APP/Plugins/Git-ConflictResolver/ConflictResolutionState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "APP/Plugins/Git-ConflictResolver/ConflictResolutionState.swift"; sourceTree = "<group>"; };
 		A1F000172F70000100ABC001 /* APP/Core/Models/ProjectDocumentResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APP/Core/Models/ProjectDocumentResolver.swift; sourceTree = "<group>"; };
 		A1F000192F70000100ABC001 /* APP/Core/Events/ProjectGitOperationEventDescriptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APP/Core/Events/ProjectGitOperationEventDescriptor.swift; sourceTree = "<group>"; };
 		A1F0001D2F70000100ABC001 /* APP/Core/Bootstrap/OpenProjectPathResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APP/Core/Bootstrap/OpenProjectPathResolver.swift; sourceTree = "<group>"; };
-		A1F0001F2F70000100ABC001 /* APP/Plugins/AutoPush/AutoPushDecision.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APP/Plugins/AutoPush/AutoPushDecision.swift; sourceTree = "<group>"; };
-		A1F000212F70000100ABC001 /* APP/Plugins/AutoPush/AutoPushSettingsPersistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APP/Plugins/AutoPush/AutoPushSettingsPersistence.swift; sourceTree = "<group>"; };
-		A1F000232F70000100ABC001 /* APP/Plugins/AutoPush/ProjectBranchAutoPushConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APP/Plugins/AutoPush/ProjectBranchAutoPushConfig.swift; sourceTree = "<group>"; };
-		A1F000252F70000100ABC001 /* APP/Plugins/Banner/Model/BannerTemplateDataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APP/Plugins/Banner/Model/BannerTemplateDataStore.swift; sourceTree = "<group>"; };
-		A1F000272F70000100ABC001 /* APP/Plugins/Banner/Model/BannerTemplateCatalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APP/Plugins/Banner/Model/BannerTemplateCatalog.swift; sourceTree = "<group>"; };
-		A1F000292F70000100ABC001 /* APP/Plugins/Banner/Repo/BannerRepositoryIndex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APP/Plugins/Banner/Repo/BannerRepositoryIndex.swift; sourceTree = "<group>"; };
 		A1F0002D2F70000100ABC001 /* APP/Core/Models/CoAuthor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APP/Core/Models/CoAuthor.swift; sourceTree = "<group>"; };
-		A1F0002F2F70000100ABC001 /* APP/Plugins/Git-Detail/Git-Commit/GitCommitSelectionStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "APP/Plugins/Git-Detail/Git-Commit/GitCommitSelectionStore.swift"; sourceTree = "<group>"; };
-		A1F000312F70000100ABC001 /* APP/Plugins/ProjectPicker/ProjectPickerSelectionRules.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APP/Plugins/ProjectPicker/ProjectPickerSelectionRules.swift; sourceTree = "<group>"; };
 		A1F000332F70000100ABC001 /* APP/Core/Services/AvatarIdentityRules.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APP/Core/Services/AvatarIdentityRules.swift; sourceTree = "<group>"; };
-		A1F000352F70000100ABC001 /* APP/Plugins/Banner/Model/BannerTemplateSelectionRules.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APP/Plugins/Banner/Model/BannerTemplateSelectionRules.swift; sourceTree = "<group>"; };
-		A1F000372F70000100ABC001 /* APP/Plugins/Banner/Repo/BannerStorageRules.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APP/Plugins/Banner/Repo/BannerStorageRules.swift; sourceTree = "<group>"; };
-		A1F000392F70000100ABC001 /* APP/Plugins/Git-RemoteRepository/RemoteRepositoryFormRules.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "APP/Plugins/Git-RemoteRepository/RemoteRepositoryFormRules.swift"; sourceTree = "<group>"; };
-		A1F0003B2F70000100ABC001 /* APP/Plugins/Icon/Repo/IconFileRules.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APP/Plugins/Icon/Repo/IconFileRules.swift; sourceTree = "<group>"; };
 		F54D04C32DF2D01300FFB434 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -1020,6 +998,10 @@
 				3A7100182F90000100ABC001 /* PluginCommit in Frameworks */,
 				3A7100192F90000100ABC001 /* PluginBanner in Frameworks */,
 				3A7100202F90000100ABC001 /* PluginIcon in Frameworks */,
+				3A7100212F90000100ABC001 /* PluginGitPull in Frameworks */,
+				3A7100222F90000100ABC001 /* PluginGitSync in Frameworks */,
+				3A7100232F90000100ABC001 /* PluginAutoPush in Frameworks */,
+				3A7100242F90000100ABC001 /* PluginGitClone in Frameworks */,
 				3A7100012F90000100ABC001 /* PluginGitTab in Frameworks */,
 				3A7100022F90000100ABC001 /* PluginIconTab in Frameworks */,
 				3A7100032F90000100ABC001 /* PluginBannerTab in Frameworks */,
@@ -1376,24 +1358,11 @@
 				A1F0000D2F70000100ABC001 /* APP/Core/GitCore */,
 				A1F000102F70000100ABC001 /* APP/Core/Models/AppAppearanceSettingsStore.swift */,
 				A1F000112F70000100ABC001 /* APP/Core/Models/PluginSettingsStore.swift */,
-				A1F000152F70000100ABC001 /* APP/Plugins/Git-ConflictResolver/ConflictResolutionState.swift */,
 				A1F000172F70000100ABC001 /* APP/Core/Models/ProjectDocumentResolver.swift */,
 				A1F000192F70000100ABC001 /* APP/Core/Events/ProjectGitOperationEventDescriptor.swift */,
 				A1F0001D2F70000100ABC001 /* APP/Core/Bootstrap/OpenProjectPathResolver.swift */,
-				A1F0001F2F70000100ABC001 /* APP/Plugins/AutoPush/AutoPushDecision.swift */,
-				A1F000212F70000100ABC001 /* APP/Plugins/AutoPush/AutoPushSettingsPersistence.swift */,
-				A1F000232F70000100ABC001 /* APP/Plugins/AutoPush/ProjectBranchAutoPushConfig.swift */,
-				A1F000252F70000100ABC001 /* APP/Plugins/Banner/Model/BannerTemplateDataStore.swift */,
-				A1F000272F70000100ABC001 /* APP/Plugins/Banner/Model/BannerTemplateCatalog.swift */,
-				A1F000292F70000100ABC001 /* APP/Plugins/Banner/Repo/BannerRepositoryIndex.swift */,
 				A1F0002D2F70000100ABC001 /* APP/Core/Models/CoAuthor.swift */,
-				A1F0002F2F70000100ABC001 /* APP/Plugins/Git-Detail/Git-Commit/GitCommitSelectionStore.swift */,
-				A1F000312F70000100ABC001 /* APP/Plugins/ProjectPicker/ProjectPickerSelectionRules.swift */,
 				A1F000332F70000100ABC001 /* APP/Core/Services/AvatarIdentityRules.swift */,
-				A1F000352F70000100ABC001 /* APP/Plugins/Banner/Model/BannerTemplateSelectionRules.swift */,
-				A1F000372F70000100ABC001 /* APP/Plugins/Banner/Repo/BannerStorageRules.swift */,
-				A1F000392F70000100ABC001 /* APP/Plugins/Git-RemoteRepository/RemoteRepositoryFormRules.swift */,
-				A1F0003B2F70000100ABC001 /* APP/Plugins/Icon/Repo/IconFileRules.swift */,
 			);
 			name = "Recovered References";
 			sourceTree = "<group>";
@@ -1488,6 +1457,10 @@
 				3A7200182F90000100ABC001 /* PluginCommit */,
 				3A7200192F90000100ABC001 /* PluginBanner */,
 				3A7200202F90000100ABC001 /* PluginIcon */,
+				3A7200212F90000100ABC001 /* PluginGitPull */,
+				3A7200222F90000100ABC001 /* PluginGitSync */,
+				3A7200232F90000100ABC001 /* PluginAutoPush */,
+				3A7200242F90000100ABC001 /* PluginGitClone */,
 				3A7200012F90000100ABC001 /* PluginGitTab */,
 				3A7200022F90000100ABC001 /* PluginIconTab */,
 				3A7200032F90000100ABC001 /* PluginBannerTab */,
@@ -1619,6 +1592,9 @@
 				3A7300182F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginCommit" */,
 				3A7300192F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginBanner" */,
 				3A7300202F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginIcon" */,
+				3A7300212F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginGitPull" */,
+				3A7300222F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginGitSync" */,
+				3A7300232F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginAutoPush" */,
 				3A7300012F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginGitTab" */,
 				3A7300022F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginIconTab" */,
 				3A7300032F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginBannerTab" */,
@@ -2505,24 +2481,11 @@
 			files = (
 				A1F000122F70000100ABC001 /* APP/Core/Models/AppAppearanceSettingsStore.swift in Sources */,
 				A1F000132F70000100ABC001 /* APP/Core/Models/PluginSettingsStore.swift in Sources */,
-				A1F000142F70000100ABC001 /* APP/Plugins/Git-ConflictResolver/ConflictResolutionState.swift in Sources */,
 				A1F000162F70000100ABC001 /* APP/Core/Models/ProjectDocumentResolver.swift in Sources */,
 				A1F000182F70000100ABC001 /* APP/Core/Events/ProjectGitOperationEventDescriptor.swift in Sources */,
 				A1F0001C2F70000100ABC001 /* APP/Core/Bootstrap/OpenProjectPathResolver.swift in Sources */,
-				A1F0001E2F70000100ABC001 /* APP/Plugins/AutoPush/AutoPushDecision.swift in Sources */,
-				A1F000202F70000100ABC001 /* APP/Plugins/AutoPush/AutoPushSettingsPersistence.swift in Sources */,
-				A1F000222F70000100ABC001 /* APP/Plugins/AutoPush/ProjectBranchAutoPushConfig.swift in Sources */,
-				A1F000242F70000100ABC001 /* APP/Plugins/Banner/Model/BannerTemplateDataStore.swift in Sources */,
-				A1F000262F70000100ABC001 /* APP/Plugins/Banner/Model/BannerTemplateCatalog.swift in Sources */,
-				A1F000282F70000100ABC001 /* APP/Plugins/Banner/Repo/BannerRepositoryIndex.swift in Sources */,
 				A1F0002C2F70000100ABC001 /* APP/Core/Models/CoAuthor.swift in Sources */,
-				A1F0002E2F70000100ABC001 /* APP/Plugins/Git-Detail/Git-Commit/GitCommitSelectionStore.swift in Sources */,
-				A1F000302F70000100ABC001 /* APP/Plugins/ProjectPicker/ProjectPickerSelectionRules.swift in Sources */,
 				A1F000322F70000100ABC001 /* APP/Core/Services/AvatarIdentityRules.swift in Sources */,
-				A1F000342F70000100ABC001 /* APP/Plugins/Banner/Model/BannerTemplateSelectionRules.swift in Sources */,
-				A1F000362F70000100ABC001 /* APP/Plugins/Banner/Repo/BannerStorageRules.swift in Sources */,
-				A1F000382F70000100ABC001 /* APP/Plugins/Git-RemoteRepository/RemoteRepositoryFormRules.swift in Sources */,
-				A1F0003A2F70000100ABC001 /* APP/Plugins/Icon/Repo/IconFileRules.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2685,6 +2648,12 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 17.4;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Packages/PluginGitSync/.build/arm64-apple-macosx/debug",
+					"$(PROJECT_DIR)/Packages/PluginGitPull/.build/arm64-apple-macosx/debug",
+					"$(PROJECT_DIR)/Packages/PluginAutoPush/.build/arm64-apple-macosx/debug",
+				);
 				MACOSX_DEPLOYMENT_TARGET = 15.0;
 				MARKETING_VERSION = 2.2.38;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yueyi.GitOK;
@@ -2729,6 +2698,12 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 17.4;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Packages/PluginGitSync/.build/arm64-apple-macosx/debug",
+					"$(PROJECT_DIR)/Packages/PluginGitPull/.build/arm64-apple-macosx/debug",
+					"$(PROJECT_DIR)/Packages/PluginAutoPush/.build/arm64-apple-macosx/debug",
+				);
 				MACOSX_DEPLOYMENT_TARGET = 15.0;
 				MARKETING_VERSION = 2.2.38;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yueyi.GitOK;
@@ -2864,42 +2839,6 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Packages/PluginOpenTrae;
 		};
-		44FF7A256774CBC01B210B88 /* XCLocalSwiftPackageReference "Packages/PluginThemeMidnight" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/PluginThemeMidnight;
-		};
-		565F16D117692CFAEFD7989A /* XCLocalSwiftPackageReference "Packages/PluginOpenFinder" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/PluginOpenFinder;
-		};
-		5A28F7F70BE9FE1673DDA5F7 /* XCLocalSwiftPackageReference "Packages/PluginOpenGitHubDesktop" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/PluginOpenGitHubDesktop;
-		};
-		602F00B06AD2D5D2306150EC /* XCLocalSwiftPackageReference "Packages/PluginThemeOneDark" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/PluginThemeOneDark;
-		};
-		67F7FAC4D1101BEAFA9CF874 /* XCLocalSwiftPackageReference "Packages/PluginThemeEmber" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/PluginThemeEmber;
-		};
-		6BBE8E2ECCEABD5CB2D62979 /* XCLocalSwiftPackageReference "Packages/PluginOpenAntigravity" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/PluginOpenAntigravity;
-		};
-		6E8A3DE5FC74E95DE09BCCCA /* XCLocalSwiftPackageReference "Packages/PluginThemeWinter" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/PluginThemeWinter;
-		};
-		7160472A308891E900A412BC /* XCLocalSwiftPackageReference "Packages/PluginThemeSpring" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/PluginThemeSpring;
-		};
-		71B51C5F6F2A44CF3F36AB55 /* XCLocalSwiftPackageReference "Packages/PluginLicense" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/PluginLicense;
-		};
 		3A7300012F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginGitTab" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Packages/PluginGitTab;
@@ -2979,6 +2918,58 @@
 		3A7300202F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginIcon" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Packages/PluginIcon;
+		};
+		3A7300212F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginGitPull" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/PluginGitPull;
+		};
+		3A7300222F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginGitSync" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/PluginGitSync;
+		};
+		3A7300232F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginAutoPush" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/PluginAutoPush;
+		};
+		3A7300242F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginGitClone" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/PluginGitClone;
+		};
+		44FF7A256774CBC01B210B88 /* XCLocalSwiftPackageReference "Packages/PluginThemeMidnight" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/PluginThemeMidnight;
+		};
+		565F16D117692CFAEFD7989A /* XCLocalSwiftPackageReference "Packages/PluginOpenFinder" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/PluginOpenFinder;
+		};
+		5A28F7F70BE9FE1673DDA5F7 /* XCLocalSwiftPackageReference "Packages/PluginOpenGitHubDesktop" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/PluginOpenGitHubDesktop;
+		};
+		602F00B06AD2D5D2306150EC /* XCLocalSwiftPackageReference "Packages/PluginThemeOneDark" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/PluginThemeOneDark;
+		};
+		67F7FAC4D1101BEAFA9CF874 /* XCLocalSwiftPackageReference "Packages/PluginThemeEmber" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/PluginThemeEmber;
+		};
+		6BBE8E2ECCEABD5CB2D62979 /* XCLocalSwiftPackageReference "Packages/PluginOpenAntigravity" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/PluginOpenAntigravity;
+		};
+		6E8A3DE5FC74E95DE09BCCCA /* XCLocalSwiftPackageReference "Packages/PluginThemeWinter" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/PluginThemeWinter;
+		};
+		7160472A308891E900A412BC /* XCLocalSwiftPackageReference "Packages/PluginThemeSpring" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/PluginThemeSpring;
+		};
+		71B51C5F6F2A44CF3F36AB55 /* XCLocalSwiftPackageReference "Packages/PluginLicense" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/PluginLicense;
 		};
 		8B8DE5E8263E6C42F3C64445 /* XCLocalSwiftPackageReference "Packages/PluginThemeGitHubLight" */ = {
 			isa = XCLocalSwiftPackageReference;
@@ -3133,6 +3124,36 @@
 			package = F54178E22E00F91F00503C7B /* XCRemoteSwiftPackageReference "swift-markdown-ui" */;
 			productName = MarkdownUI;
 		};
+		151BC0B9AD57ADA322F23133 /* PluginThemeEmber */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 67F7FAC4D1101BEAFA9CF874 /* XCLocalSwiftPackageReference "Packages/PluginThemeEmber" */;
+			productName = PluginThemeEmber;
+		};
+		15E941019068B3AEBE6FFBCD /* PluginOpenXcode */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9091D09084906B37EE7DE309 /* XCLocalSwiftPackageReference "Packages/PluginOpenXcode" */;
+			productName = PluginOpenXcode;
+		};
+		1CFFD02788D4D9E076C77A62 /* PluginThemeXcodeLight */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A66BA82D671C08FFA57F520D /* XCLocalSwiftPackageReference "Packages/PluginThemeXcodeLight" */;
+			productName = PluginThemeXcodeLight;
+		};
+		2623463505DC40563C1AB9E9 /* PluginOpenFinder */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 565F16D117692CFAEFD7989A /* XCLocalSwiftPackageReference "Packages/PluginOpenFinder" */;
+			productName = PluginOpenFinder;
+		};
+		2C922ADBF517387A7CB31A97 /* PluginGitLFS */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0A50094BF5547EBF325E8924 /* XCLocalSwiftPackageReference "Packages/PluginGitLFS" */;
+			productName = PluginGitLFS;
+		};
+		38D466126A73169D8B822532 /* PluginOpenRemote */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1C98D78D08ECECCCA36F224F /* XCLocalSwiftPackageReference "Packages/PluginOpenRemote" */;
+			productName = PluginOpenRemote;
+		};
 		3A7200012F90000100ABC001 /* PluginGitTab */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 3A7300012F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginGitTab" */;
@@ -3233,35 +3254,25 @@
 			package = 3A7300202F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginIcon" */;
 			productName = PluginIcon;
 		};
-		151BC0B9AD57ADA322F23133 /* PluginThemeEmber */ = {
+		3A7200212F90000100ABC001 /* PluginGitPull */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 67F7FAC4D1101BEAFA9CF874 /* XCLocalSwiftPackageReference "Packages/PluginThemeEmber" */;
-			productName = PluginThemeEmber;
+			package = 3A7300212F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginGitPull" */;
+			productName = PluginGitPull;
 		};
-		15E941019068B3AEBE6FFBCD /* PluginOpenXcode */ = {
+		3A7200222F90000100ABC001 /* PluginGitSync */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 9091D09084906B37EE7DE309 /* XCLocalSwiftPackageReference "Packages/PluginOpenXcode" */;
-			productName = PluginOpenXcode;
+			package = 3A7300222F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginGitSync" */;
+			productName = PluginGitSync;
 		};
-		1CFFD02788D4D9E076C77A62 /* PluginThemeXcodeLight */ = {
+		3A7200232F90000100ABC001 /* PluginAutoPush */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = A66BA82D671C08FFA57F520D /* XCLocalSwiftPackageReference "Packages/PluginThemeXcodeLight" */;
-			productName = PluginThemeXcodeLight;
+			package = 3A7300232F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginAutoPush" */;
+			productName = PluginAutoPush;
 		};
-		2623463505DC40563C1AB9E9 /* PluginOpenFinder */ = {
+		3A7200242F90000100ABC001 /* PluginGitClone */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 565F16D117692CFAEFD7989A /* XCLocalSwiftPackageReference "Packages/PluginOpenFinder" */;
-			productName = PluginOpenFinder;
-		};
-		2C922ADBF517387A7CB31A97 /* PluginGitLFS */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 0A50094BF5547EBF325E8924 /* XCLocalSwiftPackageReference "Packages/PluginGitLFS" */;
-			productName = PluginGitLFS;
-		};
-		38D466126A73169D8B822532 /* PluginOpenRemote */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 1C98D78D08ECECCCA36F224F /* XCLocalSwiftPackageReference "Packages/PluginOpenRemote" */;
-			productName = PluginOpenRemote;
+			package = 3A7300242F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginGitClone" */;
+			productName = PluginGitClone;
 		};
 		45AEF6595B159D762662CAEB /* PluginOpenAntigravity */ = {
 			isa = XCSwiftPackageProductDependency;

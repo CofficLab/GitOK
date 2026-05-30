@@ -1,5 +1,6 @@
 import Foundation
 import GitOKPluginKit
+import SwiftUI
 
 public struct SmartMergePlugin: GitOKPackagedPlugin {
     public static let shared = SmartMergePlugin()
@@ -15,6 +16,10 @@ public struct SmartMergePlugin: GitOKPackagedPlugin {
     )
 
     private init() {}
+
+    public func statusBarTrailingView() -> AnyView? {
+        AnyView(SmartMergeStatusTile())
+    }
 }
 
 public enum PluginSmartMergeLocalization {

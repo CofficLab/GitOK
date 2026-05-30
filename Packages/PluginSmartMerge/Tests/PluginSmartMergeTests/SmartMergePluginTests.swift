@@ -17,4 +17,10 @@ struct SmartMergePluginTests {
         #expect(SmartMergePlugin.metadata.displayName.isEmpty == false)
         #expect(SmartMergePlugin.metadata.description.isEmpty == false)
     }
+
+    @MainActor
+    @Test("plugin contributes status bar trailing view")
+    func statusBarTrailingView() {
+        #expect(SmartMergePlugin.shared.statusBarTrailingView() != nil)
+    }
 }

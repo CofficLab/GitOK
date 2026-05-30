@@ -1,50 +1,44 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "RemoteRepository" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Remote Repository"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "远程仓库"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "遠程倉庫"
-          }
-        }
-      }
-    },
-    "远程仓库管理" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Remote repository management"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "远程仓库管理"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "遠程倉庫管理"
-          }
-        }
-      }
-    }
+    "Add" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Add" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "添加" } }, "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "加入" } } } },
+    "Add Remote Repository" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Add Remote Repository" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "添加远程仓库" } }, "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "加入遠端倉庫" } } } },
+    "Add a new Git remote repository" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Add a new Git remote repository" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "添加一个新的 Git 远程仓库" } }, "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "加入一個新的 Git 遠端倉庫" } } } },
+    "Cancel" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Cancel" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "取消" } }, "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "取消" } } } },
+    "Clear" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Clear" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "清除" } }, "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "清除" } } } },
+    "Click the button below to add your first remote repository" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Click the button below to add your first remote repository" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "点击下方按钮添加第一个远程仓库" } }, "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "點擊下方按鈕加入第一個遠端倉庫" } } } },
+    "Close" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Close" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "关闭" } }, "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "關閉" } } } },
+    "Confirm Delete" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Confirm Delete" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "确认删除" } }, "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "確認刪除" } } } },
+    "Copy Remote URL" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Copy Remote URL" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "复制远程 URL" } }, "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "複製遠端 URL" } } } },
+    "Current repository has no publishable branch" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Current repository has no publishable branch" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "当前仓库没有可发布的分支" } }, "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "目前倉庫沒有可發布的分支" } } } },
+    "Delete" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Delete" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "删除" } }, "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "刪除" } } } },
+    "Edit" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Edit" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "编辑" } }, "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "編輯" } } } },
+    "Edit Remote Repository" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Edit Remote Repository" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "编辑远程仓库" } }, "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "編輯遠端倉庫" } } } },
+    "Failed to add remote repository: %@" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Failed to add remote repository: %@" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "添加远程仓库失败：%@" } }, "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "加入遠端倉庫失敗：%@" } } } },
+    "Failed to delete remote repository: %@" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Failed to delete remote repository: %@" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "删除远程仓库失败：%@" } }, "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "刪除遠端倉庫失敗：%@" } } } },
+    "Failed to load remote repositories: %@" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Failed to load remote repositories: %@" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "加载远程仓库失败：%@" } }, "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "載入遠端倉庫失敗：%@" } } } },
+    "Failed to publish current branch: %@" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Failed to publish current branch: %@" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "发布当前分支失败：%@" } }, "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "發布目前分支失敗：%@" } } } },
+    "Failed to update remote repository: %@" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Failed to update remote repository: %@" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "更新远程仓库失败：%@" } }, "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "更新遠端倉庫失敗：%@" } } } },
+    "Loading..." : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Loading..." } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "加载中..." } }, "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "載入中..." } } } },
+    "Manage Git remote repository configuration for the current project" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Manage Git remote repository configuration for the current project" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "管理当前项目的 Git 远程仓库配置" } }, "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "管理目前專案的 Git 遠端倉庫設定" } } } },
+    "Manage Remote Repositories" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Manage Remote Repositories" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "管理远程仓库" } }, "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "管理遠端倉庫" } } } },
+    "Modify the remote repository's name and URL" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Modify the remote repository's name and URL" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "修改远程仓库名称和 URL" } }, "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "修改遠端倉庫名稱和 URL" } } } },
+    "No Remote Repositories" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "No Remote Repositories" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "没有远程仓库" } }, "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "沒有遠端倉庫" } } } },
+    "No project selected" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "No project selected" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "未选择项目" } }, "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "未選擇專案" } } } },
+    "Open Remote Page" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Open Remote Page" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "打开远程页面" } }, "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "開啟遠端頁面" } } } },
+    "Please add a remote repository first" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Please add a remote repository first" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "请先添加远程仓库" } }, "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "請先加入遠端倉庫" } } } },
+    "Please fill in all fields" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Please fill in all fields" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "请填写所有字段" } }, "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "請填寫所有欄位" } } } },
+    "Please fill in all required information" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Please fill in all required information" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "请填写所有必填信息" } }, "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "請填寫所有必填資訊" } } } },
+    "Publish Current Branch" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Publish Current Branch" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "发布当前分支" } }, "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "發布目前分支" } } } },
+    "Remote Name" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Remote Name" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "远程名称" } }, "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "遠端名稱" } } } },
+    "Remote Repository Management" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Remote Repository Management" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "远程仓库管理" } }, "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "遠端倉庫管理" } } } },
+    "Remote URL" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Remote URL" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "远程 URL" } }, "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "遠端 URL" } } } },
+    "RemoteRepository" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Remote Repository" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "远程仓库" } }, "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "遠端倉庫" } } } },
+    "Save" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Save" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "保存" } }, "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "儲存" } } } },
+    "Upstream" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Upstream" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "上游" } }, "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "上游" } } } },
+    "e.g. https://github.com/user/repo.git" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "e.g. https://github.com/user/repo.git" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "例如 https://github.com/user/repo.git" } }, "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "例如 https://github.com/user/repo.git" } } } },
+    "e.g. origin" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "e.g. origin" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "例如 origin" } }, "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "例如 origin" } } } },
+    "远程仓库管理" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Remote repository management" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "远程仓库管理" } }, "zh-HK" : { "stringUnit" : { "state" : "translated", "value" : "遠端倉庫管理" } } } }
   },
   "version" : "1.0"
 }

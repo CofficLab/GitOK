@@ -1,0 +1,53 @@
+import Testing
+@testable import PluginGitClone
+
+@Suite("PluginGitClone")
+struct PluginGitCloneTests {
+    @Test("localized strings resolve from package bundle")
+    func localizedStringsResolve() {
+        #expect(PluginGitCloneLocalization.string("Clone Repository").isEmpty == false)
+        #expect(PluginGitCloneLocalization.string("GitHub API URL is invalid").isEmpty == false)
+        #expect(PluginGitCloneLocalization.bundle.url(forResource: "Git-Clone", withExtension: "xcstrings") != nil)
+    }
+
+    @Test("GitHub host normalizes URL input")
+    func normalizesGitHubHost() {
+        #expect(CloneRepositorySheet.normalizedGitHubHost("https://github.example.com/team") == "github.example.com")
+        #expect(CloneRepositorySheet.normalizedGitHubHost(" github.com ") == "github.com")
+    }
+
+    @Test("bridge reason stays compatible with App project selection")
+    func bridgeReason() {
+        #expect(GitCloneBridgeRules.projectSelectionReason == "GitClone")
+        #expect(GitCloneBridgeRules.projectExists(urlPath: "/repo") { path in
+            path == "/repo"
+        })
+        struct URLFixture {
+            let path: String
+        }
+        #expect(GitCloneBridgeRules.projectExists(
+            url: URLFixture(path: "/repo"),
+            path: \.path,
+            exists: { $0 == "/repo" }
+        ))
+
+        var selections: [String] = []
+        #expect(GitCloneBridgeRules.performCloneCompletion(
+            addProject: { "repo" },
+            selectProject: { selections.append("\($0):\($1)") }
+        ))
+        #expect(selections == ["repo:\(GitCloneBridgeRules.projectSelectionReason)"])
+
+        #expect(GitCloneBridgeRules.performCloneCompletion(
+            addProject: { nil as String? },
+            selectProject: { selections.append("\($0):\($1)") }
+        ) == false)
+        #expect(selections == ["repo:\(GitCloneBridgeRules.projectSelectionReason)"])
+
+        var infoMessages: [String] = []
+        GitCloneBridgeRules.performCloneSuccessMessage("clone completed") {
+            infoMessages.append($0)
+        }
+        #expect(infoMessages == ["clone completed"])
+    }
+}

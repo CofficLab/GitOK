@@ -1,6 +1,0 @@
-import ProjectRulesKit
-
-typealias AutoPushCheckDecision = ProjectRulesKit.AutoPushCheckDecision
-typealias AutoPushSkipReason = ProjectRulesKit.AutoPushSkipReason
-typealias AutoPushExecutionDecision = ProjectRulesKit.AutoPushExecutionDecision
-typealias AutoPushDecision = ProjectRulesKit.AutoPushDecision

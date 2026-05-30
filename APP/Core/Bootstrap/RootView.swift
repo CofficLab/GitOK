@@ -1,6 +1,7 @@
 import MagicAlert
 import MagicKit
 import OSLog
+import PluginIcon
 import SwiftData
 import SwiftUI
 

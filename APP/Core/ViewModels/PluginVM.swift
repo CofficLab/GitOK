@@ -9,6 +9,7 @@ import Combine
 import GitOKPluginKit
 import GitOKUI
 import PluginActivityStatus
+import PluginAutoPush
 import PluginBanner
 import PluginBannerTab
 import PluginBranch
@@ -19,7 +20,9 @@ import PluginFileInfo
 import PluginGitIgnore
 import PluginGitDetail
 import PluginGitLFS
+import PluginGitPull
 import PluginGitPush
+import PluginGitSync
 import PluginGitTab
 import PluginGitWatcher
 import PluginIcon
@@ -191,7 +194,7 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
                 if Self.verbose { os_log("\(self.t)⏭️ Skipping plugin (shouldRegister=false): \(className)") }
                 continue
             }
-            
+
             // 添加到临时数组，稍后按 order 排序
             discoveredPlugins.append((plugin, className, pluginOrder))
         }
@@ -244,7 +247,7 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
             .map { plugin in
                 let pluginId = plugin.instanceLabel
                 let tableName = plugin.pluginTableName
-                
+
                 return PluginInfo(
                     id: pluginId,
                     name: String(localized: .init(stringLiteral: plugin.pluginDisplayName), table: tableName),
@@ -259,24 +262,50 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
 
     /// 获取工具栏前导视图
     /// - Returns: 插件及其对应的工具栏前导视图数组
-    func getEnabledToolbarLeadingViews() -> [(plugin: SuperPlugin, view: AnyView)] {
+    func getEnabledToolbarLeadingViews(
+        projects: [GitOKProjectSummary] = [],
+        selectedProjectURL: URL? = nil,
+        isSidebarVisible: Bool = true,
+        onSelectProject: @escaping GitOKProjectSelectionHandler = { _ in }
+    ) -> [(plugin: SuperPlugin, view: AnyView)] {
         let start = Date()
         return plugins.compactMap { plugin in
             guard isPluginEnabled(plugin) else { return nil }
             guard let view = plugin.addToolBarLeadingView() else { return nil }
-            return (plugin, view)
+            return (
+                plugin,
+                AnyView(
+                    view
+                        .environment(\.gitOKProjects, projects)
+                        .environment(\.gitOKSelectedProjectURL, selectedProjectURL)
+                        .environment(\.gitOKSidebarVisible, isSidebarVisible)
+                        .environment(\.gitOKProjectSelectionHandler, onSelectProject)
+                )
+            )
         }
         .loggingPluginViewBuild("toolbarLeading", start: start, logger: self)
     }
 
     /// 获取工具栏后置视图
     /// - Returns: 插件及其对应的工具栏后置视图数组
-    func getEnabledToolbarTrailingViews(projectURL: URL? = nil) -> [(plugin: SuperPlugin, view: AnyView)] {
+    func getEnabledToolbarTrailingViews(
+        projectURL: URL? = nil,
+        remoteTrackingStatus: GitOKRemoteTrackingStatus? = nil,
+        isGitRepository: Bool = false
+    ) -> [(plugin: SuperPlugin, view: AnyView)] {
         let start = Date()
         return plugins.compactMap { plugin in
             guard isPluginEnabled(plugin) else { return nil }
             guard let view = plugin.addToolBarTrailingView() else { return nil }
-            return (plugin, plugin.viewWithProjectURL(view, projectURL: projectURL))
+            return (
+                plugin,
+                AnyView(
+                    view
+                        .environment(\.gitOKProjectURL, projectURL)
+                        .environment(\.gitOKRemoteTrackingStatus, remoteTrackingStatus)
+                        .environment(\.gitOKIsGitRepository, isGitRepository)
+                )
+            )
         }
         .loggingPluginViewBuild("toolbarTrailing", start: start, logger: self)
     }
@@ -300,7 +329,7 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
     /// - Parameter tab: 标签页标识符
     /// - Returns: 如果找到标签页插件，则返回其详情视图，否则返回nil
     @MainActor
-    func getEnabledTabDetailView(tab: String) -> AnyView? {
+    func getEnabledTabDetailView(tab: String, projectURL: URL? = nil) -> AnyView? {
         let start = Date()
         for plugin in plugins {
             guard isPluginEnabled(plugin) else { continue }
@@ -309,7 +338,7 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
                 if elapsed > 0.2 {
                     os_log("\(self.t)⏱️ Plugin detail view built tab=\(tab) plugin=\(plugin.instanceLabel) elapsed=\(String(format: "%.3f", elapsed))s")
                 }
-                return view
+                return AnyView(view.environment(\.gitOKProjectURL, projectURL))
             }
         }
         let elapsed = Date().timeIntervalSince(start)
@@ -352,12 +381,25 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
     /// 获取状态栏后置视图
     /// - Returns: 启用插件的状态栏后置视图数组
     @MainActor
-    func getEnabledStatusBarTrailingViews(projectURL: URL? = nil) -> [AnyView] {
+    func getEnabledStatusBarTrailingViews(
+        projectURL: URL? = nil,
+        projectPath: String? = nil,
+        projectTitle: String? = nil,
+        branchName: String? = nil,
+        isGitRepository: Bool = false
+    ) -> [AnyView] {
         plugins
             .filter { isPluginEnabled($0) }
             .compactMap { $0.addStatusBarTrailingView() }
             .map { view in
-                AnyView(view.environment(\.gitOKProjectURL, projectURL))
+                AnyView(
+                    view
+                        .environment(\.gitOKProjectURL, projectURL)
+                        .environment(\.gitOKProjectPath, projectPath)
+                        .environment(\.gitOKProjectTitle, projectTitle)
+                        .environment(\.gitOKBranchName, branchName)
+                        .environment(\.gitOKIsGitRepository, isGitRepository)
+                )
             }
     }
 
@@ -516,60 +558,45 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
         if type(of: gitWatcher).shouldRegister {
             register(gitWatcher)
         }
-        let gitPush = PackagedPluginAdapter<PluginGitPush.GitPushPlugin>(
-            toolBarTrailingViewProvider: {
-                AnyView(BtnGitPushView.shared)
-            }
-        )
+        let gitPush = PackagedPluginAdapter<PluginGitPush.GitPushPlugin>()
         if type(of: gitPush).shouldRegister {
             register(gitPush)
         }
-        let projectPicker = PackagedPluginAdapter<PluginProjectPicker.ProjectPickerPlugin>(
-            toolBarLeadingViewProvider: {
-                AnyView(ProjectPickerView.shared)
-            }
-        )
+        let gitPull = PackagedPluginAdapter<PluginGitPull.GitPullPlugin>()
+        if type(of: gitPull).shouldRegister {
+            register(gitPull)
+        }
+        let gitSync = PackagedPluginAdapter<PluginGitSync.GitSyncPlugin>()
+        if type(of: gitSync).shouldRegister {
+            register(gitSync)
+        }
+        let autoPush = PackagedPluginAdapter<PluginAutoPush.AutoPushPlugin>()
+        if type(of: autoPush).shouldRegister {
+            register(autoPush)
+        }
+        let projectPicker = PackagedPluginAdapter<PluginProjectPicker.ProjectPickerPlugin>()
         if type(of: projectPicker).shouldRegister {
             register(projectPicker)
         }
-        let smartMerge = PackagedPluginAdapter<PluginSmartMerge.SmartMergePlugin>(
-            statusBarTrailingViewProvider: {
-                AnyView(TileMerge.shared)
-            }
-        )
+        let smartMerge = PackagedPluginAdapter<PluginSmartMerge.SmartMergePlugin>()
         if type(of: smartMerge).shouldRegister {
             register(smartMerge)
         }
-        let remoteRepository = PackagedPluginAdapter<PluginRemoteRepository.RemoteRepositoryPlugin>(
-            statusBarTrailingViewProvider: {
-                AnyView(BtnRemoteRepositoryView.shared)
-            }
-        )
+        let remoteRepository = PackagedPluginAdapter<PluginRemoteRepository.RemoteRepositoryPlugin>()
         if type(of: remoteRepository).shouldRegister {
             register(remoteRepository)
         }
-        let branch = PackagedPluginAdapter<PluginBranch.BranchPlugin>(
-            toolBarTrailingViewProvider: {
-                AnyView(BranchesView.shared)
-            },
-            statusBarLeadingViewProvider: {
-                AnyView(BranchStatusTile())
-            }
-        )
+        let branch = PackagedPluginAdapter<PluginBranch.BranchPlugin>()
         if type(of: branch).shouldRegister {
             register(branch)
         }
-        let conflictResolver = PackagedPluginAdapter<PluginConflictResolver.ConflictResolverPlugin>(
-            statusBarTrailingViewProvider: {
-                AnyView(ConflictStatusTile())
-            }
-        )
+        let conflictResolver = PackagedPluginAdapter<PluginConflictResolver.ConflictResolverPlugin>()
         if type(of: conflictResolver).shouldRegister {
             register(conflictResolver)
         }
         let gitDetail = PackagedPluginAdapter<PluginGitDetail.GitDetailPlugin>(
             detailViewProvider: { tab in
-                guard tab == GitTabPlugin.displayName else { return nil }
+                guard tab == PluginGitTab.GitTabPlugin.metadata.displayName else { return nil }
                 return AnyView(GitDetail.shared)
             }
         )
@@ -588,7 +615,7 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
         let banner = PackagedPluginAdapter<PluginBanner.BannerPlugin>(
             detailViewProvider: { tab in
                 guard tab == "Banner" else { return nil }
-                return AnyView(BannerDetailLayout.shared.environmentObject(BannerProvider.shared))
+                return AnyView(PluginBanner.BannerDetailLayout.shared)
             }
         )
         if type(of: banner).shouldRegister {
@@ -597,7 +624,7 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
         let icon = PackagedPluginAdapter<PluginIcon.IconPlugin>(
             detailViewProvider: { tab in
                 guard tab == "Icon" else { return nil }
-                return AnyView(IconDetailLayout.shared)
+                return AnyView(PluginIcon.IconDetailLayout.shared)
             }
         )
         if type(of: icon).shouldRegister {

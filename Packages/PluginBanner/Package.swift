@@ -10,11 +10,21 @@ let package = Package(
     ],
     dependencies: [
         .package(path: "../GitOKPluginKit"),
+        .package(path: "../BannerCoreKit"),
+        .package(path: "../MagicAlert"),
+        .package(path: "../MagicKit"),
+        .package(path: "../ProjectRulesKit"),
     ],
     targets: [
         .target(
             name: "PluginBanner",
-            dependencies: ["GitOKPluginKit"],
+            dependencies: [
+                "GitOKPluginKit",
+                "BannerCoreKit",
+                "MagicAlert",
+                "MagicKit",
+                "ProjectRulesKit",
+            ],
             path: "Sources/PluginBanner",
             resources: [.process("Resources")]
         ),

@@ -80,7 +80,7 @@ final class PackagedPluginAdapter<Plugin: GitOKPackagedPlugin>: SuperPlugin {
     }
 
     func addToolBarLeadingView() -> AnyView? {
-        toolBarLeadingViewProvider?()
+        toolBarLeadingViewProvider?() ?? plugin.toolBarLeadingView()
     }
 
     func addToolBarTrailingView() -> AnyView? {

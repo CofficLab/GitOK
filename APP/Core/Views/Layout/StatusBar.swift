@@ -41,7 +41,13 @@ struct StatusBar: View, SuperLog {
             Spacer()
 
             // 状态栏右侧区域
-            ForEach(Array(p.getEnabledStatusBarTrailingViews(projectURL: projectVM.project?.url).enumerated()), id: \.offset) { _, view in
+            ForEach(Array(p.getEnabledStatusBarTrailingViews(
+                projectURL: projectVM.project?.url,
+                projectPath: projectVM.project?.path,
+                projectTitle: projectVM.project?.title,
+                branchName: data.branch?.name,
+                isGitRepository: projectVM.project?.isGitRepo ?? false
+            ).enumerated()), id: \.offset) { _, view in
                 view
                     .environmentObject(GitOKUIThemeRegistry.shared)
                     .environment(\.gitOKThemeSelectionHandler) { themeId in

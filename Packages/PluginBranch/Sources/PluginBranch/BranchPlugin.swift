@@ -1,5 +1,6 @@
 import Foundation
 import GitOKPluginKit
+import SwiftUI
 
 public struct BranchPlugin: GitOKPackagedPlugin {
     public static let shared = BranchPlugin()
@@ -16,6 +17,15 @@ public struct BranchPlugin: GitOKPackagedPlugin {
     )
 
     private init() {}
+
+    public func toolBarTrailingView() -> AnyView? {
+        AnyView(BranchPickerView())
+    }
+
+    @MainActor
+    public func statusBarLeadingView() -> AnyView? {
+        AnyView(BranchStatusTile())
+    }
 }
 
 public enum PluginBranchLocalization {

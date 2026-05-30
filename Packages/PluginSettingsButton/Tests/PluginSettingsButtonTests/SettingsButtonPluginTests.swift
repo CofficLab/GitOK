@@ -21,6 +21,7 @@ final class SettingsButtonPluginTests: XCTestCase {
         XCTAssertFalse(PluginSettingsButtonLocalization.string("Open Settings").isEmpty)
     }
 
+    @MainActor
     func testStatusBarContributionIsAvailable() {
         XCTAssertNotNil(SettingsButtonPlugin.shared.statusBarTrailingView())
     }

@@ -3,6 +3,7 @@ import GitCoreKit
 import LibGit2Swift
 import MagicKit
 import OSLog
+import PluginCommit
 import SwiftData
 import SwiftUI
 
@@ -108,10 +109,6 @@ final class Project: SuperLog {
 
             return []
         }
-    }
-
-    func getBanners() -> [BannerFile] {
-        return BannerRepo.shared.getBanners(from: self)
     }
 
     func isExist() -> Bool {

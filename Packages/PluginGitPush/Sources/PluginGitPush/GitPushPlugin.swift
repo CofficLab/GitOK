@@ -1,5 +1,6 @@
 import Foundation
 import GitOKPluginKit
+import SwiftUI
 
 public struct GitPushPlugin: GitOKPackagedPlugin {
     public static let shared = GitPushPlugin()
@@ -15,6 +16,10 @@ public struct GitPushPlugin: GitOKPackagedPlugin {
     )
 
     private init() {}
+
+    public func toolBarTrailingView() -> AnyView? {
+        AnyView(GitPushButton())
+    }
 }
 
 public enum PluginGitPushLocalization {

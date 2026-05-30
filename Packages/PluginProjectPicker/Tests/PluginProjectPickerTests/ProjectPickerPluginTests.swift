@@ -17,4 +17,9 @@ struct ProjectPickerPluginTests {
         #expect(ProjectPickerPlugin.metadata.displayName.isEmpty == false)
         #expect(ProjectPickerPlugin.metadata.description.isEmpty == false)
     }
+
+    @Test("toolbar contribution is available")
+    func toolbarContribution() {
+        #expect(ProjectPickerPlugin.shared.toolBarLeadingView() != nil)
+    }
 }

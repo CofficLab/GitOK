@@ -64,7 +64,7 @@ struct DetailView: View {
 
     @ViewBuilder
     private var tabDetailView: some View {
-        if let tabDetailView = p.getEnabledTabDetailView(tab: tab) {
+        if let tabDetailView = p.getEnabledTabDetailView(tab: tab, projectURL: vm.project?.url) {
             tabDetailView
         } else {
             GuideView(

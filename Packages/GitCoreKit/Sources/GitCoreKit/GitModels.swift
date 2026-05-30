@@ -157,6 +157,38 @@ public struct GitBranchCompare: Equatable, Sendable {
     }
 }
 
+public struct GitBranchSummary: Identifiable, Equatable, Hashable, Sendable {
+    public let name: String
+    public let isRemote: Bool
+    public let isCurrent: Bool
+
+    public init(name: String, isRemote: Bool, isCurrent: Bool) {
+        self.name = name
+        self.isRemote = isRemote
+        self.isCurrent = isCurrent
+    }
+
+    public var id: String { name }
+}
+
+public struct GitRemoteSummary: Identifiable, Equatable, Hashable, Sendable {
+    public let id: String
+    public let name: String
+    public let url: String
+    public let fetchURL: String?
+    public let pushURL: String?
+    public let isDefault: Bool
+
+    public init(id: String, name: String, url: String, fetchURL: String?, pushURL: String?, isDefault: Bool) {
+        self.id = id
+        self.name = name
+        self.url = url
+        self.fetchURL = fetchURL
+        self.pushURL = pushURL
+        self.isDefault = isDefault
+    }
+}
+
 public struct GitRebaseStatus: Equatable, Sendable {
     public let isRebasing: Bool
     public let branchName: String?

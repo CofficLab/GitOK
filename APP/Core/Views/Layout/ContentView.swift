@@ -1,4 +1,5 @@
 import MagicAlert
+import GitOKPluginKit
 import MagicKit
 import OSLog
 import SwiftUI
@@ -242,11 +243,28 @@ extension ContentView {
         }
 
         let leadingStart = Date()
-        toolbarLeadingViews = p.getEnabledToolbarLeadingViews()
+        toolbarLeadingViews = p.getEnabledToolbarLeadingViews(
+            projects: g.projects.map {
+                GitOKProjectSummary(url: $0.url, title: $0.title, path: $0.path)
+            },
+            selectedProjectURL: vm.project?.url,
+            isSidebarVisible: app.sidebarVisibility
+        ) { selectedURL in
+            guard let project = g.projects.first(where: { $0.url == selectedURL }) else { return }
+            vm.setProject(project, reason: "ProjectPicker")
+        }
         os_log("\(self.t)✅ UpdateCachedViews leading count=\(toolbarLeadingViews.count) elapsed=\(String(format: "%.3f", Date().timeIntervalSince(leadingStart)))s")
 
         let trailingStart = Date()
-        toolbarTrailingViews = p.getEnabledToolbarTrailingViews(projectURL: vm.project?.url)
+        toolbarTrailingViews = p.getEnabledToolbarTrailingViews(
+            projectURL: vm.project?.url,
+            remoteTrackingStatus: GitOKRemoteTrackingStatus(
+                ahead: vm.aheadCount,
+                behind: vm.behindCount,
+                hasUpstream: vm.hasUpstream
+            ),
+            isGitRepository: vm.project?.isGitRepo ?? false
+        )
         os_log("\(self.t)✅ UpdateCachedViews trailing count=\(toolbarTrailingViews.count) elapsed=\(String(format: "%.3f", Date().timeIntervalSince(trailingStart)))s")
 
         let listStart = Date()

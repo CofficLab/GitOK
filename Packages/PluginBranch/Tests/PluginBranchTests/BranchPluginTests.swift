@@ -18,4 +18,11 @@ struct BranchPluginTests {
         #expect(BranchPlugin.metadata.displayName.isEmpty == false)
         #expect(BranchPlugin.metadata.description.isEmpty == false)
     }
+
+    @MainActor
+    @Test("plugin contributes toolbar and status bar views")
+    func contributesViews() {
+        #expect(BranchPlugin.shared.toolBarTrailingView() != nil)
+        #expect(BranchPlugin.shared.statusBarLeadingView() != nil)
+    }
 }

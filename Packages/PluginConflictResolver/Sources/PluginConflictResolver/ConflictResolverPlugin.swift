@@ -1,5 +1,6 @@
 import Foundation
 import GitOKPluginKit
+import SwiftUI
 
 public struct ConflictResolverPlugin: GitOKPackagedPlugin {
     public static let shared = ConflictResolverPlugin()
@@ -15,6 +16,10 @@ public struct ConflictResolverPlugin: GitOKPackagedPlugin {
     )
 
     private init() {}
+
+    public func statusBarTrailingView() -> AnyView? {
+        AnyView(ConflictStatusTile())
+    }
 }
 
 public enum PluginConflictResolverLocalization {

@@ -1,121 +1,64 @@
-import AppKit
-import MagicAlert
 import MagicKit
-import OSLog
+import PluginCommit
+import PluginGitDetail
 import SwiftUI
 
-/// Git 详情视图：显示 Git 项目的状态、提交信息和文件变更列表。
+/// Git 详情入口。详情布局和状态逻辑在 PluginGitDetail 的 GitDetailHostView 中。
 struct GitDetail: View, SuperEvent, SuperLog {
     nonisolated static let emoji = "🚄"
     nonisolated static let verbose = true
 
-    @EnvironmentObject var app: AppVM
     @EnvironmentObject var data: DataVM
     @EnvironmentObject var vm: ProjectVM
 
-    /// 是否为 Git 项目
-    @State private var isGitProject: Bool = false
+    @State private var projectChangeToken = 0
+    @State private var appWillBecomeActiveToken = 0
 
-    /// 单例实例
     static let shared = GitDetail()
 
     var body: some View {
-        ZStack {
-            if vm.project != nil {
-                if self.isGitProject {
-                    VStack(alignment: .leading, spacing: 0) {
-                        Group {
-                            if let commit = data.commit {
-                                CommitInfoView(commit: commit)
-                            } else if !vm.isClean {
-                                CommitForm()
-                            }
-                        }
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 8)
-
-                        if !vm.isClean || self.data.commit != nil {
-                            HSplitView {
-                                FileList()
-                                    .frame(idealWidth: 200)
-                                    .frame(minWidth: 200, maxWidth: 420)
-                                    .layoutPriority(1)
-
-                                FileDetail()
-                            }
-                            .padding(.horizontal, 0)
-                            .padding(.vertical, 0)
-                        } else {
-                            NoLocalChanges()
-                        }
-                    }
-                } else {
-                    ProjectNotGitView()
-                }
+        GitDetailHostView(
+            project: vm.project,
+            selectedCommit: data.commit,
+            isClean: vm.isClean,
+            projectIsGitRepository: { $0.isGit() },
+            commitMessage: \.message,
+            commitBodyText: \.body,
+            commitAuthor: \.author,
+            commitDate: \.date,
+            commitHash: \.hash,
+            projectChangeToken: projectChangeToken,
+            appWillBecomeActiveToken: appWillBecomeActiveToken,
+            commitInfoContent: { state in
+                CommitInfoView(
+                    message: state.message,
+                    bodyText: state.bodyText,
+                    author: state.author,
+                    date: state.date,
+                    hash: state.hash
+                )
+            },
+            fileListContent: {
+                FileList()
+            },
+            fileDetailContent: {
+                FileDetail()
+            },
+            emptyContent: {
+                NoLocalChanges()
+            },
+            notGitContent: {
+                ProjectNotGitView()
+            },
+            commitFormContent: {
+                CommitForm()
             }
+        )
+        .onChange(of: vm.project) {
+            projectChangeToken += 1
         }
-        .onAppear(perform: onAppear)
-        .onChange(of: vm.project, onProjectChange)
-        .onProjectDidCommit(perform: onGitCommitSuccess)
-        .onChange(of: data.commit, onCommitChange)
-        .onApplicationWillBecomeActive(perform: onAppWillBecomeActive)
-    }
-}
-
-// MARK: - Action
-
-extension GitDetail {
-    /// 更新 Git 项目状态
-    func updateIsGitProject() {
-        guard let project = vm.project else {
-            self.isGitProject = false
-            return
+        .onApplicationWillBecomeActive {
+            appWillBecomeActiveToken += 1
         }
-
-        self.isGitProject = project.isGit()
     }
-}
-
-// MARK: - Event Handler
-
-extension GitDetail {
-    /// 应用即将变为活跃状态的事件处理
-    func onAppWillBecomeActive() {
-        self.updateIsGitProject()
-    }
-
-    /// Git 提交成功时的事件处理
-    func onGitCommitSuccess(_ eventInfo: ProjectEventInfo) {
-    }
-
-    /// 视图出现时的事件处理
-    func onAppear() {
-        self.updateIsGitProject()
-    }
-
-    /// 项目变更时的事件处理
-    func onProjectChange() {
-        self.updateIsGitProject()
-    }
-
-    /// 选择的Commit变动时的事件处理
-    func onCommitChange() {
-    }
-}
-
-#Preview("App - Small Screen") {
-    ContentLayout()
-        .hideSidebar()
-        .hideProjectActions()
-        .inRootView()
-        .frame(width: 600)
-        .frame(height: 600)
-}
-
-#Preview("App - Big Screen") {
-    ContentLayout()
-        .hideSidebar()
-        .inRootView()
-        .frame(width: 1200)
-        .frame(height: 1200)
 }

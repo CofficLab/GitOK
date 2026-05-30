@@ -1,3 +1,0 @@
-import ProjectRulesKit
-
-typealias RemoteRepositoryFormRules = ProjectRulesKit.RemoteRepositoryFormRules
