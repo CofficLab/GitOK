@@ -5,7 +5,7 @@ import SwiftUI
 
 final class PluginAdapter<Plugin: GitOKPlugin>: SuperPlugin {
     private let plugin: Plugin
-    private let listViewProvider: ((String, Project?, GitOKPluginContext) -> AnyView?)?
+    private let listViewProvider: ((String, URL?, GitOKPluginContext) -> AnyView?)?
     private let detailViewProvider: (@MainActor (String, GitOKPluginContext) -> AnyView?)?
     private let toolBarLeadingViewProvider: (() -> AnyView?)?
     private let toolBarTrailingViewProvider: (() -> AnyView?)?
@@ -14,7 +14,7 @@ final class PluginAdapter<Plugin: GitOKPlugin>: SuperPlugin {
 
     init(
         _ plugin: Plugin = Plugin.shared,
-        listViewProvider: ((String, Project?, GitOKPluginContext) -> AnyView?)? = nil,
+        listViewProvider: ((String, URL?, GitOKPluginContext) -> AnyView?)? = nil,
         detailViewProvider: (@MainActor (String, GitOKPluginContext) -> AnyView?)? = nil,
         toolBarLeadingViewProvider: (() -> AnyView?)? = nil,
         toolBarTrailingViewProvider: (() -> AnyView?)? = nil,
@@ -71,8 +71,8 @@ final class PluginAdapter<Plugin: GitOKPlugin>: SuperPlugin {
     }
 
     @MainActor
-    func addListView(tab: String, project: Project?, context: GitOKPluginContext) -> AnyView? {
-        listViewProvider?(tab, project, context)
+    func addListView(tab: String, projectURL: URL?, context: GitOKPluginContext) -> AnyView? {
+        listViewProvider?(tab, projectURL, context)
     }
 
     @MainActor

@@ -272,7 +272,7 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
         )
         return plugins.compactMap { plugin in
             guard isPluginEnabled(plugin) else { return nil }
-            guard let view = plugin.addListView(tab: tab, project: project, context: context) else { return nil }
+            guard let view = plugin.addListView(tab: tab, projectURL: project?.url, context: context) else { return nil }
             return (plugin, view)
         }
         .loggingPluginViewBuild("list tab=\(tab)", start: start, logger: self)
@@ -426,8 +426,8 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
                 }
             ),
             CommitPlugin.metadata.id: PluginAdapter<CommitPlugin>(
-                listViewProvider: { tab, project, _ in
-                    guard tab == "Git", let project, project.isGitRepo else { return nil }
+                listViewProvider: { tab, _, context in
+                    guard tab == "Git", context.isGitRepository else { return nil }
                     return AnyView(CommitList.shared)
                 }
             ),
