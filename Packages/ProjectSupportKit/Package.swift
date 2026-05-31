@@ -22,7 +22,8 @@ let package = Package(
         ),
         .testTarget(
             name: "ProjectSupportKitTests",
-            dependencies: ["ProjectSupportKit"]
+            dependencies: ["ProjectSupportKit"],
+            path: "Tests"
         ),
     ]
 )

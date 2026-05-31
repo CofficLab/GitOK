@@ -18,7 +18,8 @@ let package = Package(
         ),
         .testTarget(
             name: "ProjectRulesKitTests",
-            dependencies: ["ProjectRulesKit"]
+            dependencies: ["ProjectRulesKit"],
+            path: "Tests"
         ),
     ]
 )

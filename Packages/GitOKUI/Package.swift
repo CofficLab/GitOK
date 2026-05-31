@@ -20,7 +20,7 @@ let package = Package(
         .testTarget(
             name: "GitOKUITests",
             dependencies: ["GitOKUI"],
-            path: "Tests/GitOKUITests"
+            path: "Tests"
         )
     ]
 )

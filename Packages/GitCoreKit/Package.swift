@@ -24,7 +24,8 @@ let package = Package(
         ),
         .testTarget(
             name: "GitCoreKitTests",
-            dependencies: ["GitCoreKit"]
+            dependencies: ["GitCoreKit"],
+            path: "Tests"
         ),
     ]
 )

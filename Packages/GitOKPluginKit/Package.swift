@@ -25,7 +25,7 @@ let package = Package(
         .testTarget(
             name: "GitOKPluginKitTests",
             dependencies: ["GitOKPluginKit"],
-            path: "Tests/GitOKPluginKitTests"
+            path: "Tests"
         ),
     ]
 )

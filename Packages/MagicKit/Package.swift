@@ -31,7 +31,8 @@ let package = Package(
        ),
        .testTarget(
            name: "Tests",
-           dependencies: ["MagicKit"]
+           dependencies: ["MagicKit"],
+           path: "Tests"
        )
     ]
 )

@@ -18,7 +18,8 @@ let package = Package(
         ),
         .testTarget(
             name: "GitOKAutomationKitTests",
-            dependencies: ["GitOKAutomationKit"]
+            dependencies: ["GitOKAutomationKit"],
+            path: "Tests"
         ),
     ]
 )

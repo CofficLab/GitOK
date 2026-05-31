@@ -18,7 +18,8 @@ let package = Package(
         ),
         .testTarget(
             name: "BannerCoreKitTests",
-            dependencies: ["BannerCoreKit"]
+            dependencies: ["BannerCoreKit"],
+            path: "Tests"
         ),
     ]
 )
