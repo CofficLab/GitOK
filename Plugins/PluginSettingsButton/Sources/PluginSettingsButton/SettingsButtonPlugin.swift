@@ -2,7 +2,7 @@ import Foundation
 import GitOKCoreKit
 import SwiftUI
 
-public struct SettingsButtonPlugin: GitOKPackagedPlugin {
+public struct SettingsButtonPlugin: GitOKPlugin {
     public static let shared = SettingsButtonPlugin()
 
     public static let metadata = GitOKPluginMetadata(

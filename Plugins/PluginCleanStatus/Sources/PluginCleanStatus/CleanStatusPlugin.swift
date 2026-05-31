@@ -2,7 +2,7 @@ import Foundation
 import GitOKCoreKit
 import SwiftUI
 
-public struct CleanStatusPlugin: GitOKPackagedPlugin {
+public struct CleanStatusPlugin: GitOKPlugin {
     public static let shared = CleanStatusPlugin()
 
     public static let metadata = GitOKPluginMetadata(

@@ -62,11 +62,11 @@ import PluginThemeXcodeLight
 import PluginUnpushedStatus
 
 /// Auto-generated plugin registry.
-/// Lists every `GitOKPackagedPlugin` found in Plugins/Plugin*.
+/// Lists every `GitOKPlugin` found in Plugins/Plugin*.
 enum GeneratedPluginRegistry {
     /// All discovered packaged-plugin instances.
-    static var plugins: [any GitOKPackagedPlugin] {
-        var plugins: [any GitOKPackagedPlugin] = []
+    static var plugins: [any GitOKPlugin] {
+        var plugins: [any GitOKPlugin] = []
         plugins.append(ActivityStatusPlugin.shared)
         plugins.append(AuroraThemePlugin.shared)
         plugins.append(AutoPushPlugin.shared)
@@ -128,72 +128,72 @@ enum GeneratedPluginRegistry {
         return plugins
     }
 
-    /// Register default `PackagedPluginAdapter` instances for all plugins.
+    /// Register default `PluginAdapter` instances for all plugins.
     /// Each adapter preserves the concrete generic type so that
     /// `shouldRegister` / `order` etc. are resolved at compile time.
     ///
     /// Plugins that need custom view providers should be registered
-    /// separately with `PackagedPluginAdapter<XxxPlugin>(...viewProvider:...)`.
+    /// separately with `PluginAdapter<XxxPlugin>(...viewProvider:...)`.
     ///
     /// - Parameter register: Closure that handles the actual registration.
     static func registerDefaultAdapters(_ register: (any SuperPlugin) -> Void) {
-        do { let a = PackagedPluginAdapter<ActivityStatusPlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PackagedPluginAdapter<AuroraThemePlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PackagedPluginAdapter<AutoPushPlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PackagedPluginAdapter<BannerPlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PackagedPluginAdapter<BannerTabPlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PackagedPluginAdapter<BranchPlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PackagedPluginAdapter<CleanStatusPlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PackagedPluginAdapter<CommitPlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PackagedPluginAdapter<ConflictResolverPlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PackagedPluginAdapter<DraculaThemePlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PackagedPluginAdapter<EmberThemePlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PackagedPluginAdapter<FileInfoPlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PackagedPluginAdapter<GitDetailPlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PackagedPluginAdapter<GitHubLightThemePlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PackagedPluginAdapter<GitIgnorePlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PackagedPluginAdapter<GitLFSPlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PackagedPluginAdapter<GitOKThemePlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PackagedPluginAdapter<GitPullPlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PackagedPluginAdapter<GitPushPlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PackagedPluginAdapter<GitSyncPlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PackagedPluginAdapter<GitTabPlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PackagedPluginAdapter<GitWatcherPlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PackagedPluginAdapter<GlacierThemePlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PackagedPluginAdapter<GraphiteThemePlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PackagedPluginAdapter<HarborThemePlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PackagedPluginAdapter<IconPlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PackagedPluginAdapter<IconTabPlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PackagedPluginAdapter<LicensePlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PackagedPluginAdapter<MatrixThemePlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PackagedPluginAdapter<MidnightThemePlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PackagedPluginAdapter<MountainThemePlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PackagedPluginAdapter<NebulaThemePlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PackagedPluginAdapter<OneDarkThemePlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PackagedPluginAdapter<OpenAntigravityPlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PackagedPluginAdapter<OpenCursorPlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PackagedPluginAdapter<OpenFinderPlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PackagedPluginAdapter<OpenGitHubDesktopPlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PackagedPluginAdapter<OpenKiroPlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PackagedPluginAdapter<OpenRemotePlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PackagedPluginAdapter<OpenTerminalPlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PackagedPluginAdapter<OpenTraePlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PackagedPluginAdapter<OpenVSCodePlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PackagedPluginAdapter<OpenXcodePlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PackagedPluginAdapter<OrchardThemePlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PackagedPluginAdapter<ProjectPickerPlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PackagedPluginAdapter<ReadmePlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PackagedPluginAdapter<RemoteRepositoryPlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PackagedPluginAdapter<RiverThemePlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PackagedPluginAdapter<SettingsButtonPlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PackagedPluginAdapter<SmartMergePlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PackagedPluginAdapter<SpringThemePlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PackagedPluginAdapter<StashPlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PackagedPluginAdapter<SubmodulePlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PackagedPluginAdapter<SummerThemePlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PackagedPluginAdapter<ThemeStatusBarPlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PackagedPluginAdapter<UnpushedStatusPlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PackagedPluginAdapter<WinterThemePlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PackagedPluginAdapter<XcodeLightThemePlugin>(); if type(of: a).shouldRegister { register(a) } }
+        do { let a = PluginAdapter<ActivityStatusPlugin>(); if type(of: a).shouldRegister { register(a) } }
+        do { let a = PluginAdapter<AuroraThemePlugin>(); if type(of: a).shouldRegister { register(a) } }
+        do { let a = PluginAdapter<AutoPushPlugin>(); if type(of: a).shouldRegister { register(a) } }
+        do { let a = PluginAdapter<BannerPlugin>(); if type(of: a).shouldRegister { register(a) } }
+        do { let a = PluginAdapter<BannerTabPlugin>(); if type(of: a).shouldRegister { register(a) } }
+        do { let a = PluginAdapter<BranchPlugin>(); if type(of: a).shouldRegister { register(a) } }
+        do { let a = PluginAdapter<CleanStatusPlugin>(); if type(of: a).shouldRegister { register(a) } }
+        do { let a = PluginAdapter<CommitPlugin>(); if type(of: a).shouldRegister { register(a) } }
+        do { let a = PluginAdapter<ConflictResolverPlugin>(); if type(of: a).shouldRegister { register(a) } }
+        do { let a = PluginAdapter<DraculaThemePlugin>(); if type(of: a).shouldRegister { register(a) } }
+        do { let a = PluginAdapter<EmberThemePlugin>(); if type(of: a).shouldRegister { register(a) } }
+        do { let a = PluginAdapter<FileInfoPlugin>(); if type(of: a).shouldRegister { register(a) } }
+        do { let a = PluginAdapter<GitDetailPlugin>(); if type(of: a).shouldRegister { register(a) } }
+        do { let a = PluginAdapter<GitHubLightThemePlugin>(); if type(of: a).shouldRegister { register(a) } }
+        do { let a = PluginAdapter<GitIgnorePlugin>(); if type(of: a).shouldRegister { register(a) } }
+        do { let a = PluginAdapter<GitLFSPlugin>(); if type(of: a).shouldRegister { register(a) } }
+        do { let a = PluginAdapter<GitOKThemePlugin>(); if type(of: a).shouldRegister { register(a) } }
+        do { let a = PluginAdapter<GitPullPlugin>(); if type(of: a).shouldRegister { register(a) } }
+        do { let a = PluginAdapter<GitPushPlugin>(); if type(of: a).shouldRegister { register(a) } }
+        do { let a = PluginAdapter<GitSyncPlugin>(); if type(of: a).shouldRegister { register(a) } }
+        do { let a = PluginAdapter<GitTabPlugin>(); if type(of: a).shouldRegister { register(a) } }
+        do { let a = PluginAdapter<GitWatcherPlugin>(); if type(of: a).shouldRegister { register(a) } }
+        do { let a = PluginAdapter<GlacierThemePlugin>(); if type(of: a).shouldRegister { register(a) } }
+        do { let a = PluginAdapter<GraphiteThemePlugin>(); if type(of: a).shouldRegister { register(a) } }
+        do { let a = PluginAdapter<HarborThemePlugin>(); if type(of: a).shouldRegister { register(a) } }
+        do { let a = PluginAdapter<IconPlugin>(); if type(of: a).shouldRegister { register(a) } }
+        do { let a = PluginAdapter<IconTabPlugin>(); if type(of: a).shouldRegister { register(a) } }
+        do { let a = PluginAdapter<LicensePlugin>(); if type(of: a).shouldRegister { register(a) } }
+        do { let a = PluginAdapter<MatrixThemePlugin>(); if type(of: a).shouldRegister { register(a) } }
+        do { let a = PluginAdapter<MidnightThemePlugin>(); if type(of: a).shouldRegister { register(a) } }
+        do { let a = PluginAdapter<MountainThemePlugin>(); if type(of: a).shouldRegister { register(a) } }
+        do { let a = PluginAdapter<NebulaThemePlugin>(); if type(of: a).shouldRegister { register(a) } }
+        do { let a = PluginAdapter<OneDarkThemePlugin>(); if type(of: a).shouldRegister { register(a) } }
+        do { let a = PluginAdapter<OpenAntigravityPlugin>(); if type(of: a).shouldRegister { register(a) } }
+        do { let a = PluginAdapter<OpenCursorPlugin>(); if type(of: a).shouldRegister { register(a) } }
+        do { let a = PluginAdapter<OpenFinderPlugin>(); if type(of: a).shouldRegister { register(a) } }
+        do { let a = PluginAdapter<OpenGitHubDesktopPlugin>(); if type(of: a).shouldRegister { register(a) } }
+        do { let a = PluginAdapter<OpenKiroPlugin>(); if type(of: a).shouldRegister { register(a) } }
+        do { let a = PluginAdapter<OpenRemotePlugin>(); if type(of: a).shouldRegister { register(a) } }
+        do { let a = PluginAdapter<OpenTerminalPlugin>(); if type(of: a).shouldRegister { register(a) } }
+        do { let a = PluginAdapter<OpenTraePlugin>(); if type(of: a).shouldRegister { register(a) } }
+        do { let a = PluginAdapter<OpenVSCodePlugin>(); if type(of: a).shouldRegister { register(a) } }
+        do { let a = PluginAdapter<OpenXcodePlugin>(); if type(of: a).shouldRegister { register(a) } }
+        do { let a = PluginAdapter<OrchardThemePlugin>(); if type(of: a).shouldRegister { register(a) } }
+        do { let a = PluginAdapter<ProjectPickerPlugin>(); if type(of: a).shouldRegister { register(a) } }
+        do { let a = PluginAdapter<ReadmePlugin>(); if type(of: a).shouldRegister { register(a) } }
+        do { let a = PluginAdapter<RemoteRepositoryPlugin>(); if type(of: a).shouldRegister { register(a) } }
+        do { let a = PluginAdapter<RiverThemePlugin>(); if type(of: a).shouldRegister { register(a) } }
+        do { let a = PluginAdapter<SettingsButtonPlugin>(); if type(of: a).shouldRegister { register(a) } }
+        do { let a = PluginAdapter<SmartMergePlugin>(); if type(of: a).shouldRegister { register(a) } }
+        do { let a = PluginAdapter<SpringThemePlugin>(); if type(of: a).shouldRegister { register(a) } }
+        do { let a = PluginAdapter<StashPlugin>(); if type(of: a).shouldRegister { register(a) } }
+        do { let a = PluginAdapter<SubmodulePlugin>(); if type(of: a).shouldRegister { register(a) } }
+        do { let a = PluginAdapter<SummerThemePlugin>(); if type(of: a).shouldRegister { register(a) } }
+        do { let a = PluginAdapter<ThemeStatusBarPlugin>(); if type(of: a).shouldRegister { register(a) } }
+        do { let a = PluginAdapter<UnpushedStatusPlugin>(); if type(of: a).shouldRegister { register(a) } }
+        do { let a = PluginAdapter<WinterThemePlugin>(); if type(of: a).shouldRegister { register(a) } }
+        do { let a = PluginAdapter<XcodeLightThemePlugin>(); if type(of: a).shouldRegister { register(a) } }
     }
 }

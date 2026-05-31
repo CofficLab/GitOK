@@ -1,7 +1,7 @@
 import GitOKCoreKit
 import GitOKUI
 
-public struct MatrixThemePlugin: GitOKPackagedPlugin {
+public struct MatrixThemePlugin: GitOKPlugin {
     public static let metadata = GitOKPluginMetadata(
         id: "ThemeMatrixPlugin",
         displayName: "Matrix Theme",

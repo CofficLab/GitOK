@@ -3,7 +3,7 @@ import GitOKCoreKit
 import GitOKUI
 import SwiftUI
 
-public struct ThemeStatusBarPlugin: GitOKPackagedPlugin {
+public struct ThemeStatusBarPlugin: GitOKPlugin {
     public static let shared = ThemeStatusBarPlugin()
 
     public static let metadata = GitOKPluginMetadata(

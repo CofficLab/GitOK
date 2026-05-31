@@ -2,7 +2,7 @@ import Foundation
 import GitOKCoreKit
 import SwiftUI
 
-public struct ReadmePlugin: GitOKPackagedPlugin {
+public struct ReadmePlugin: GitOKPlugin {
     public static let shared = ReadmePlugin()
 
     public static let metadata = GitOKPluginMetadata(

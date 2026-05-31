@@ -2,7 +2,7 @@ import Foundation
 import GitOKCoreKit
 import SwiftUI
 
-public struct FileInfoPlugin: GitOKPackagedPlugin {
+public struct FileInfoPlugin: GitOKPlugin {
     public static let shared = FileInfoPlugin()
 
     public static let metadata = GitOKPluginMetadata(

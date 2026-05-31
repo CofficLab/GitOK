@@ -32,7 +32,7 @@ public struct GitOKPluginMetadata: Equatable, Sendable {
     }
 }
 
-public protocol GitOKPackagedPlugin: Sendable {
+public protocol GitOKPlugin: Sendable {
     static var metadata: GitOKPluginMetadata { get }
     static var shouldRegister: Bool { get }
     static var shared: Self { get }
@@ -132,7 +132,7 @@ public struct GitOKRemoteTrackingStatus: Equatable, Sendable {
     }
 }
 
-public extension GitOKPackagedPlugin {
+public extension GitOKPlugin {
     static var shouldRegister: Bool { true }
 
     var instanceLabel: String {

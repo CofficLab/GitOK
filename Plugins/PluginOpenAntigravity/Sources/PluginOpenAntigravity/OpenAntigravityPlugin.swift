@@ -2,7 +2,7 @@ import Foundation
 import GitOKCoreKit
 import SwiftUI
 
-public struct OpenAntigravityPlugin: GitOKPackagedPlugin {
+public struct OpenAntigravityPlugin: GitOKPlugin {
     public static let shared = OpenAntigravityPlugin()
 
     public static let metadata = GitOKPluginMetadata(

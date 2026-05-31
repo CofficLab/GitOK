@@ -2,7 +2,7 @@ import Foundation
 import GitOKCoreKit
 import SwiftUI
 
-public struct RemoteRepositoryPlugin: GitOKPackagedPlugin {
+public struct RemoteRepositoryPlugin: GitOKPlugin {
     public static let shared = RemoteRepositoryPlugin()
 
     public static let metadata = GitOKPluginMetadata(

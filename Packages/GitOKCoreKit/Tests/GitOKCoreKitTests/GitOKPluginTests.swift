@@ -2,7 +2,7 @@ import SwiftUI
 import XCTest
 @testable import GitOKCoreKit
 
-private struct SamplePlugin: GitOKPackagedPlugin {
+private struct SamplePlugin: GitOKPlugin {
     static let shared = SamplePlugin()
     static let metadata = GitOKPluginMetadata(
         id: "Sample",
@@ -12,7 +12,7 @@ private struct SamplePlugin: GitOKPackagedPlugin {
     )
 }
 
-final class GitOKPackagedPluginTests: XCTestCase {
+final class GitOKPluginTests: XCTestCase {
     func testMetadataDefaultsAreStable() {
         let metadata = SamplePlugin.metadata
 

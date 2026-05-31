@@ -28,7 +28,7 @@ public struct BranchPluginContext: Sendable {
     }
 }
 
-public struct BranchPlugin: GitOKPackagedPlugin {
+public struct BranchPlugin: GitOKPlugin {
     public static let shared = BranchPlugin()
 
     public static let metadata = GitOKPluginMetadata(

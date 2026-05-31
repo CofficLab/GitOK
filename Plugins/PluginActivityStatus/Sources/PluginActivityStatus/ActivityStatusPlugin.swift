@@ -2,7 +2,7 @@ import Foundation
 import GitOKCoreKit
 import SwiftUI
 
-public struct ActivityStatusPlugin: GitOKPackagedPlugin {
+public struct ActivityStatusPlugin: GitOKPlugin {
     public static let shared = ActivityStatusPlugin()
 
     public static let metadata = GitOKPluginMetadata(

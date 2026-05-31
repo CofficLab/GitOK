@@ -1,7 +1,7 @@
 import GitOKCoreKit
 import GitOKUI
 
-public struct AuroraThemePlugin: GitOKPackagedPlugin {
+public struct AuroraThemePlugin: GitOKPlugin {
     public static let metadata = GitOKPluginMetadata(
         id: "ThemeAuroraPlugin",
         displayName: "Aurora Theme",

@@ -1,7 +1,7 @@
 import GitOKCoreKit
 import GitOKUI
 
-public struct XcodeLightThemePlugin: GitOKPackagedPlugin {
+public struct XcodeLightThemePlugin: GitOKPlugin {
     public static let metadata = GitOKPluginMetadata(
         id: "ThemeXcodeLightPlugin",
         displayName: "Xcode Light Theme",

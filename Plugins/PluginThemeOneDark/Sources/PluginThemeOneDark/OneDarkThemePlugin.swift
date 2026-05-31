@@ -1,7 +1,7 @@
 import GitOKCoreKit
 import GitOKUI
 
-public struct OneDarkThemePlugin: GitOKPackagedPlugin {
+public struct OneDarkThemePlugin: GitOKPlugin {
     public static let metadata = GitOKPluginMetadata(
         id: "ThemeOneDarkPlugin",
         displayName: "One Dark Theme",

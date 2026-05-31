@@ -2,7 +2,7 @@ import Foundation
 import GitOKCoreKit
 import SwiftUI
 
-public struct SmartMergePlugin: GitOKPackagedPlugin {
+public struct SmartMergePlugin: GitOKPlugin {
     public static let shared = SmartMergePlugin()
 
     public static let metadata = GitOKPluginMetadata(

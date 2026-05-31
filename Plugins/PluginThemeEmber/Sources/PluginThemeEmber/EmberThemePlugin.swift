@@ -1,7 +1,7 @@
 import GitOKCoreKit
 import GitOKUI
 
-public struct EmberThemePlugin: GitOKPackagedPlugin {
+public struct EmberThemePlugin: GitOKPlugin {
     public static let metadata = GitOKPluginMetadata(
         id: "ThemeEmberPlugin",
         displayName: "Ember Theme",

@@ -1,7 +1,7 @@
 import GitOKCoreKit
 import GitOKUI
 
-public struct NebulaThemePlugin: GitOKPackagedPlugin {
+public struct NebulaThemePlugin: GitOKPlugin {
     public static let metadata = GitOKPluginMetadata(
         id: "ThemeNebulaPlugin",
         displayName: "Nebula Theme",

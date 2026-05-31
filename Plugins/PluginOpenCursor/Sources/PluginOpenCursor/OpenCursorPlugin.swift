@@ -2,7 +2,7 @@ import Foundation
 import GitOKCoreKit
 import SwiftUI
 
-public struct OpenCursorPlugin: GitOKPackagedPlugin {
+public struct OpenCursorPlugin: GitOKPlugin {
     public static let shared = OpenCursorPlugin()
 
     public static let metadata = GitOKPluginMetadata(

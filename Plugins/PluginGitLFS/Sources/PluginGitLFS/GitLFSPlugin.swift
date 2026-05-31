@@ -2,7 +2,7 @@ import Foundation
 import GitOKCoreKit
 import SwiftUI
 
-public struct GitLFSPlugin: GitOKPackagedPlugin {
+public struct GitLFSPlugin: GitOKPlugin {
     public static let shared = GitLFSPlugin()
 
     public static let metadata = GitOKPluginMetadata(

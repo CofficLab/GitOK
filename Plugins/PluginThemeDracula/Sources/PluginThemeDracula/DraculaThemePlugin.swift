@@ -1,7 +1,7 @@
 import GitOKCoreKit
 import GitOKUI
 
-public struct DraculaThemePlugin: GitOKPackagedPlugin {
+public struct DraculaThemePlugin: GitOKPlugin {
     public static let metadata = GitOKPluginMetadata(
         id: "ThemeDraculaPlugin",
         displayName: "Dracula Theme",

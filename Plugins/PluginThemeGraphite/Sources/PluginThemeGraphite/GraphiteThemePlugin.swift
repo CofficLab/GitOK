@@ -1,7 +1,7 @@
 import GitOKCoreKit
 import GitOKUI
 
-public struct GraphiteThemePlugin: GitOKPackagedPlugin {
+public struct GraphiteThemePlugin: GitOKPlugin {
     public static let metadata = GitOKPluginMetadata(
         id: "ThemeGraphitePlugin",
         displayName: "Graphite Theme",

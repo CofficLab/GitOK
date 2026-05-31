@@ -2,7 +2,7 @@ import Foundation
 import GitOKCoreKit
 import SwiftUI
 
-public struct LicensePlugin: GitOKPackagedPlugin {
+public struct LicensePlugin: GitOKPlugin {
     public static let shared = LicensePlugin()
 
     public static let metadata = GitOKPluginMetadata(

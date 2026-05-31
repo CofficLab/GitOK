@@ -2,7 +2,7 @@ import Foundation
 import GitOKCoreKit
 import SwiftUI
 
-public struct GitWatcherPlugin: GitOKPackagedPlugin {
+public struct GitWatcherPlugin: GitOKPlugin {
     public static let shared = GitWatcherPlugin()
 
     public static let metadata = GitOKPluginMetadata(

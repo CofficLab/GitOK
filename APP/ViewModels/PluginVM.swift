@@ -419,25 +419,25 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
     /// Key = instanceLabel of the packaged plugin, Value = adapter with injected closures.
     private var customProviders: [String: any SuperPlugin] {
         [
-            GitDetailPlugin.metadata.id: PackagedPluginAdapter<GitDetailPlugin>(
+            GitDetailPlugin.metadata.id: PluginAdapter<GitDetailPlugin>(
                 detailViewProvider: { tab, _ in
                     guard tab == GitTabPlugin.metadata.displayName else { return nil }
                     return AnyView(GitDetail.shared)
                 }
             ),
-            CommitPlugin.metadata.id: PackagedPluginAdapter<CommitPlugin>(
+            CommitPlugin.metadata.id: PluginAdapter<CommitPlugin>(
                 listViewProvider: { tab, project, _ in
                     guard tab == "Git", let project, project.isGitRepo else { return nil }
                     return AnyView(CommitList.shared)
                 }
             ),
-            BannerPlugin.metadata.id: PackagedPluginAdapter<BannerPlugin>(
+            BannerPlugin.metadata.id: PluginAdapter<BannerPlugin>(
                 detailViewProvider: { tab, context in
                     guard tab == "Banner" else { return nil }
                     return AnyView(PluginBanner.BannerDetailLayout(projectURL: context.projectURL))
                 }
             ),
-            IconPlugin.metadata.id: PackagedPluginAdapter<IconPlugin>(
+            IconPlugin.metadata.id: PluginAdapter<IconPlugin>(
                 detailViewProvider: { tab, context in
                     guard tab == "Icon" else { return nil }
                     return AnyView(PluginIcon.IconDetailLayout(projectURL: context.projectURL))

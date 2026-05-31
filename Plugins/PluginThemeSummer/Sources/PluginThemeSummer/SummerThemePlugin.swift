@@ -1,7 +1,7 @@
 import GitOKCoreKit
 import GitOKUI
 
-public struct SummerThemePlugin: GitOKPackagedPlugin {
+public struct SummerThemePlugin: GitOKPlugin {
     public static let metadata = GitOKPluginMetadata(
         id: "ThemeSummerPlugin",
         displayName: "Summer Theme",

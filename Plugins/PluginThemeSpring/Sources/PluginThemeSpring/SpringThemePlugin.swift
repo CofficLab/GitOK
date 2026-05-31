@@ -1,7 +1,7 @@
 import GitOKCoreKit
 import GitOKUI
 
-public struct SpringThemePlugin: GitOKPackagedPlugin {
+public struct SpringThemePlugin: GitOKPlugin {
     public static let metadata = GitOKPluginMetadata(
         id: "ThemeSpringPlugin",
         displayName: "Spring Theme",

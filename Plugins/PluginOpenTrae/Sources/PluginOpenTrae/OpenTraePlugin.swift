@@ -2,7 +2,7 @@ import Foundation
 import GitOKCoreKit
 import SwiftUI
 
-public struct OpenTraePlugin: GitOKPackagedPlugin {
+public struct OpenTraePlugin: GitOKPlugin {
     public static let shared = OpenTraePlugin()
 
     public static let metadata = GitOKPluginMetadata(

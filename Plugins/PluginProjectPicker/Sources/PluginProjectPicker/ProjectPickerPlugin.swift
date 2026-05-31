@@ -2,7 +2,7 @@ import Foundation
 import GitOKCoreKit
 import SwiftUI
 
-public struct ProjectPickerPlugin: GitOKPackagedPlugin {
+public struct ProjectPickerPlugin: GitOKPlugin {
     public static let shared = ProjectPickerPlugin()
 
     public static let metadata = GitOKPluginMetadata(

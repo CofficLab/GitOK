@@ -8,7 +8,7 @@
 - [x] Phase 2：toolbar 视图方法（`addToolBarLeadingView`、`addToolBarTrailingView`）注入 `GitOKPluginContext` 参数
 - [x] Phase 2：statusBar 视图方法（`addStatusBarLeadingView`、`addStatusBarCenterView`、`addStatusBarTrailingView`）注入 `GitOKPluginContext` 参数
 - [x] 扩充 `GitOKPluginContext`：添加 `remoteTrackingStatus`、`projects`、`selectedProjectURL`、`isSidebarVisible`、操作回调等属性
-- [x] 更新 `SuperPlugin` 协议、`GitOKPackagedPlugin` 协议、`PackagedPluginAdapter` 和 13 个插件的 toolbar 方法签名
+- [x] 更新 `SuperPlugin` 协议、`GitOKPlugin` 协议、`PluginAdapter` 和 13 个插件的 toolbar 方法签名
 - [x] 更新架构文档（`architecture.md`、`quickstart.md`、`system.md`）
 - [x] `addListView` / `addDetailView` 注入 `GitOKPluginContext`（协议、适配器、PluginVM）
 - [x] 清理 PluginVM 中所有视图方法的冗余 `.environment()` 注入

@@ -2,7 +2,7 @@ import Foundation
 import GitOKCoreKit
 import SwiftUI
 
-public struct ConflictResolverPlugin: GitOKPackagedPlugin {
+public struct ConflictResolverPlugin: GitOKPlugin {
     public static let shared = ConflictResolverPlugin()
 
     public static let metadata = GitOKPluginMetadata(

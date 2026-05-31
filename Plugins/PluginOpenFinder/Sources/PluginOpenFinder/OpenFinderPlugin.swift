@@ -2,7 +2,7 @@ import Foundation
 import GitOKCoreKit
 import SwiftUI
 
-public struct OpenFinderPlugin: GitOKPackagedPlugin {
+public struct OpenFinderPlugin: GitOKPlugin {
     public static let shared = OpenFinderPlugin()
 
     public static let metadata = GitOKPluginMetadata(

@@ -3,7 +3,7 @@ import GitOKCoreKit
 import GitOKUI
 import SwiftUI
 
-final class PackagedPluginAdapter<Plugin: GitOKPackagedPlugin>: SuperPlugin {
+final class PluginAdapter<Plugin: GitOKPlugin>: SuperPlugin {
     private let plugin: Plugin
     private let listViewProvider: ((String, Project?, GitOKPluginContext) -> AnyView?)?
     private let detailViewProvider: (@MainActor (String, GitOKPluginContext) -> AnyView?)?
@@ -119,7 +119,7 @@ final class PackagedPluginAdapter<Plugin: GitOKPackagedPlugin>: SuperPlugin {
     }
 }
 
-private struct PackagedPluginRootHost<Plugin: GitOKPackagedPlugin, Content: View>: View {
+private struct PackagedPluginRootHost<Plugin: GitOKPlugin, Content: View>: View {
     let plugin: Plugin
     let content: Content
 

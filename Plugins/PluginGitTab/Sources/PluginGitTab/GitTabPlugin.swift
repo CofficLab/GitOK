@@ -1,7 +1,7 @@
 import Foundation
 import GitOKCoreKit
 
-public struct GitTabPlugin: GitOKPackagedPlugin {
+public struct GitTabPlugin: GitOKPlugin {
     public static let shared = GitTabPlugin()
 
     public static let metadata = GitOKPluginMetadata(

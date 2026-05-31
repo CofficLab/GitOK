@@ -2,7 +2,7 @@ import Foundation
 import GitOKCoreKit
 import SwiftUI
 
-public struct OpenKiroPlugin: GitOKPackagedPlugin {
+public struct OpenKiroPlugin: GitOKPlugin {
     public static let shared = OpenKiroPlugin()
 
     public static let metadata = GitOKPluginMetadata(
