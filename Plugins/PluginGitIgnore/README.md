@@ -1,0 +1,34 @@
+# PluginGitIgnore
+
+Manages .gitignore files with template support, syntax highlighting, and organization tools.
+
+## Overview
+
+This plugin registers with ID `GitignorePlugin` and provides functionality through the GitOK plugin system.
+
+## Architecture
+
+```
+PluginGitIgnore/
+├── Package.swift
+├── Sources/PluginGitIgnore/
+│   ├── GitIgnorePlugin.swift
+│   ├── GitIgnoreDocument.swift
+│   ├── GitIgnoreOrganizer.swift
+│   ├── GitIgnoreStatusIcon.swift
+│   ├── GitIgnoreTemplate.swift
+│   ├── GitIgnoreViewer.swift
+│   └── Resources/GitIgnore.xcstrings
+└── Tests/
+```
+
+## Dependencies
+
+- `GitOKPluginKit`
+
+## Configuration
+
+| Property           | Value   |
+|-------------------|---------|
+| `allowUserToggle`  | `false` |
+| `defaultEnabled`   | `true` |

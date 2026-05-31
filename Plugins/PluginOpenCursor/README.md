@@ -1,0 +1,31 @@
+# PluginOpenCursor
+
+Opens the current project in Cursor editor.
+
+## Overview
+
+This plugin registers with ID `OpenCursor` and provides functionality through the GitOK plugin system.
+
+## Architecture
+
+```
+PluginOpenCursor/
+├── Package.swift
+├── Sources/PluginOpenCursor/
+│   ├── OpenCursorPlugin.swift
+│   ├── OpenCursorButton.swift
+│   ├── CursorProjectLauncher.swift
+│   └── Resources/OpenCursor.xcstrings
+└── Tests/
+```
+
+## Dependencies
+
+- `GitOKPluginKit`
+
+## Configuration
+
+| Property           | Value   |
+|-------------------|---------|
+| `allowUserToggle`  | `false` |
+| `defaultEnabled`   | `true` |

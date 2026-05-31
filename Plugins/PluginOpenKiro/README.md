@@ -1,0 +1,31 @@
+# PluginOpenKiro
+
+Opens the current project in Kiro IDE.
+
+## Overview
+
+This plugin registers with ID `OpenKiro` and provides functionality through the GitOK plugin system.
+
+## Architecture
+
+```
+PluginOpenKiro/
+├── Package.swift
+├── Sources/PluginOpenKiro/
+│   ├── OpenKiroPlugin.swift
+│   ├── OpenKiroButton.swift
+│   ├── KiroProjectLauncher.swift
+│   └── Resources/OpenKiro.xcstrings
+└── Tests/
+```
+
+## Dependencies
+
+- `GitOKPluginKit`
+
+## Configuration
+
+| Property           | Value   |
+|-------------------|---------|
+| `allowUserToggle`  | `false` |
+| `defaultEnabled`   | `true` |
