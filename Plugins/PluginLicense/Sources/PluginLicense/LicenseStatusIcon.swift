@@ -1,11 +1,14 @@
-import GitOKPluginKit
 import SwiftUI
 
 struct LicenseStatusIcon: View {
-    @Environment(\.gitOKProjectURL) private var projectURL
+    let projectURL: URL
 
     @State private var isSheetPresented = false
     @State private var hasLicense = false
+
+    init(projectURL: URL) {
+        self.projectURL = projectURL
+    }
 
     var body: some View {
         Button {
@@ -19,9 +22,8 @@ struct LicenseStatusIcon: View {
         }
         .buttonStyle(.plain)
         .help(hasLicense ? PluginLicenseLocalization.string("View or edit LICENSE") : PluginLicenseLocalization.string("LICENSE not found, click to create"))
-        .disabled(projectURL == nil)
         .sheet(isPresented: $isSheetPresented) {
-            LicenseViewer()
+            LicenseViewer(projectURL: projectURL)
                 .frame(minWidth: 800, minHeight: 600)
         }
         .onAppear(perform: checkLicenseExistence)
@@ -31,11 +33,6 @@ struct LicenseStatusIcon: View {
     }
 
     private func checkLicenseExistence() {
-        guard let projectURL else {
-            hasLicense = false
-            return
-        }
-
         hasLicense = LicenseDocument.exists(in: projectURL)
     }
 }

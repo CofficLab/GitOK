@@ -1,8 +1,7 @@
-import GitOKPluginKit
 import SwiftUI
 
 struct LicenseViewer: View {
-    @Environment(\.gitOKProjectURL) private var projectURL
+    let projectURL: URL
     @Environment(\.dismiss) private var dismiss
 
     @State private var content = ""
@@ -11,6 +10,10 @@ struct LicenseViewer: View {
     @State private var hasError = false
     @State private var statusMessage: String?
     @State private var selectedPane = LicensePane.current
+
+    init(projectURL: URL) {
+        self.projectURL = projectURL
+    }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -48,11 +51,9 @@ struct LicenseViewer: View {
                         .font(.headline)
                         .fontWeight(.semibold)
 
-                    if let projectURL {
-                        Text(projectURL.lastPathComponent)
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    }
+                    Text(projectURL.lastPathComponent)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
                 }
             }
 
@@ -74,7 +75,7 @@ struct LicenseViewer: View {
                 saveLicense()
             }
             .keyboardShortcut("s", modifiers: .command)
-            .disabled(isLoading || isSaving || projectURL == nil)
+            .disabled(isLoading || isSaving)
 
             Button(PluginLicenseLocalization.string("Close")) {
                 dismiss()
@@ -159,14 +160,6 @@ struct LicenseViewer: View {
     }
 
     private func loadLicense() {
-        guard let projectURL else {
-            content = ""
-            isLoading = false
-            hasError = true
-            statusMessage = PluginLicenseLocalization.string("No project selected")
-            return
-        }
-
         isLoading = true
         hasError = false
         statusMessage = nil
@@ -192,8 +185,6 @@ struct LicenseViewer: View {
     }
 
     private func saveLicense() {
-        guard let projectURL else { return }
-
         isSaving = true
         statusMessage = nil
 

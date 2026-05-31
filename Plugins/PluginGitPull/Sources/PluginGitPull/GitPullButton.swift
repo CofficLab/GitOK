@@ -12,17 +12,16 @@ public struct GitPullButton: View {
 
     public var body: some View {
         Button {
-                pull(projectURL: projectURL)
-            } label: {
-                Image(systemName: "arrow.down")
-                    .font(.system(size: 14, weight: .semibold))
-                    .frame(width: 24, height: 24)
-                    .contentShape(Rectangle())
-            }
-            .buttonStyle(.plain)
-            .disabled(isWorking)
-            .help(PluginGitPullLocalization.string("Pull from remote"))
+            pull(projectURL: projectURL)
+        } label: {
+            Image(systemName: "arrow.down")
+                .font(.system(size: 14, weight: .semibold))
+                .frame(width: 24, height: 24)
+                .contentShape(Rectangle())
         }
+        .buttonStyle(.plain)
+        .disabled(isWorking)
+        .help(PluginGitPullLocalization.string("Pull from remote"))
     }
 
     private func pull(projectURL: URL) {
