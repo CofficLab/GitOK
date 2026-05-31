@@ -20,7 +20,7 @@ PluginThemeWinter/
 
 ## Dependencies
 
-- `GitOKPluginKit`
+- `GitOKCoreKit`
 - `GitOKUI`
 
 ## Configuration

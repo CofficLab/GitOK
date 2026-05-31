@@ -20,7 +20,7 @@ PluginThemeNebula/
 
 ## Dependencies
 
-- `GitOKPluginKit`
+- `GitOKCoreKit`
 - `GitOKUI`
 
 ## Configuration

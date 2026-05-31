@@ -20,7 +20,7 @@ PluginThemeHarbor/
 
 ## Dependencies
 
-- `GitOKPluginKit`
+- `GitOKCoreKit`
 - `GitOKUI`
 
 ## Configuration

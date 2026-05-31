@@ -23,7 +23,7 @@ PluginBranch/
 
 ## Dependencies
 
-- `GitOKPluginKit`
+- `GitOKCoreKit`
 - `GitCoreKit`
 - `ProjectRulesKit`
 

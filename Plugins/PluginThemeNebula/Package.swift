@@ -7,13 +7,13 @@ let package = Package(
     platforms: [.macOS(.v15)],
     products: [.library(name: "PluginThemeNebula", targets: ["PluginThemeNebula"])],
     dependencies: [
-        .package(path: "../../Packages/GitOKPluginKit"),
+        .package(path: "../../Packages/GitOKCoreKit"),
         .package(path: "../../Packages/GitOKUI"),
     ],
     targets: [
         .target(
             name: "PluginThemeNebula",
-            dependencies: ["GitOKPluginKit", "GitOKUI"],
+            dependencies: ["GitOKCoreKit", "GitOKUI"],
             path: "Sources/PluginThemeNebula",
             resources: [.process("Resources")]
         ),

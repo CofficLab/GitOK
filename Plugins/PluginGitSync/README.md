@@ -20,7 +20,7 @@ PluginGitSync/
 
 ## Dependencies
 
-- `GitOKPluginKit`
+- `GitOKCoreKit`
 - `GitCoreKit`
 
 ## Configuration

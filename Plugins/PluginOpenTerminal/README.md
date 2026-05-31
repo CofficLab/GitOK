@@ -21,7 +21,7 @@ PluginOpenTerminal/
 
 ## Dependencies
 
-- `GitOKPluginKit`
+- `GitOKCoreKit`
 
 ## Configuration
 

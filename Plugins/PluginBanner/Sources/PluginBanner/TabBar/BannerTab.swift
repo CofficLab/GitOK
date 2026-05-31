@@ -1,5 +1,5 @@
 import MagicAlert
-import GitOKPluginKit
+import GitOKCoreKit
 import OSLog
 import SwiftUI
 

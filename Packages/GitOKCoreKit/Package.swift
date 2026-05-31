@@ -2,15 +2,15 @@
 import PackageDescription
 
 let package = Package(
-    name: "GitOKPluginKit",
+    name: "GitOKCoreKit",
     defaultLocalization: "en",
     platforms: [
         .macOS(.v15),
     ],
     products: [
         .library(
-            name: "GitOKPluginKit",
-            targets: ["GitOKPluginKit"]
+            name: "GitOKCoreKit",
+            targets: ["GitOKCoreKit"]
         ),
     ],
     dependencies: [
@@ -18,13 +18,13 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "GitOKPluginKit",
+            name: "GitOKCoreKit",
             dependencies: ["GitOKUI"],
-            path: "Sources/GitOKPluginKit"
+            path: "Sources/GitOKCoreKit"
         ),
         .testTarget(
-            name: "GitOKPluginKitTests",
-            dependencies: ["GitOKPluginKit"],
+            name: "GitOKCoreKitTests",
+            dependencies: ["GitOKCoreKit"],
             path: "Tests"
         ),
     ]

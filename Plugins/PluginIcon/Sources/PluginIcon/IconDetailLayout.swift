@@ -1,5 +1,5 @@
 import OSLog
-import GitOKPluginKit
+import GitOKCoreKit
 import SwiftUI
 
 public struct IconDetailLayout: View {

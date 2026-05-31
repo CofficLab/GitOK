@@ -9,12 +9,12 @@ let package = Package(
         .library(name: "PluginGitIgnore", targets: ["PluginGitIgnore"]),
     ],
     dependencies: [
-        .package(path: "../../Packages/GitOKPluginKit"),
+        .package(path: "../../Packages/GitOKCoreKit"),
     ],
     targets: [
         .target(
             name: "PluginGitIgnore",
-            dependencies: ["GitOKPluginKit"],
+            dependencies: ["GitOKCoreKit"],
             path: "Sources/PluginGitIgnore",
             resources: [.process("Resources")]
         ),

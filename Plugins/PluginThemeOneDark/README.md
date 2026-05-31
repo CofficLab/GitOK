@@ -20,7 +20,7 @@ PluginThemeOneDark/
 
 ## Dependencies
 
-- `GitOKPluginKit`
+- `GitOKCoreKit`
 - `GitOKUI`
 
 ## Configuration

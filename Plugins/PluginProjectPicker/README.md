@@ -20,7 +20,7 @@ PluginProjectPicker/
 
 ## Dependencies
 
-- `GitOKPluginKit`
+- `GitOKCoreKit`
 - `ProjectRulesKit`
 
 ## Configuration

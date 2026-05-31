@@ -29,7 +29,7 @@ PluginActivityStatus/
 
 ## Dependencies
 
-- `GitOKPluginKit` — Plugin protocol and shared infrastructure
+- `GitOKCoreKit` — Plugin protocol and shared infrastructure
 
 ## Configuration
 

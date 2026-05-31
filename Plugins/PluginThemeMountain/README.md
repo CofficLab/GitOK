@@ -20,7 +20,7 @@ PluginThemeMountain/
 
 ## Dependencies
 
-- `GitOKPluginKit`
+- `GitOKCoreKit`
 - `GitOKUI`
 
 ## Configuration

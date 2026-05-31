@@ -22,7 +22,7 @@ PluginCleanStatus/
 ## Dependencies
 
 - `GitCoreKit`
-- `GitOKPluginKit`
+- `GitOKCoreKit`
 
 ## Configuration
 

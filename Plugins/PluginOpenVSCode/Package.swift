@@ -14,12 +14,12 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(path: "../../Packages/GitOKPluginKit"),
+        .package(path: "../../Packages/GitOKCoreKit"),
     ],
     targets: [
         .target(
             name: "PluginOpenVSCode",
-            dependencies: ["GitOKPluginKit"],
+            dependencies: ["GitOKCoreKit"],
             path: "Sources/PluginOpenVSCode",
             resources: [
                 .process("Resources"),

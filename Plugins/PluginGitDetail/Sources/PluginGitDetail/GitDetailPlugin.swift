@@ -1,5 +1,5 @@
 import Foundation
-import GitOKPluginKit
+import GitOKCoreKit
 
 public struct GitDetailPlugin: GitOKPackagedPlugin {
     public static let shared = GitDetailPlugin()

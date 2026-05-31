@@ -1,6 +1,6 @@
 import AppKit
 import GitCoreKit
-import GitOKPluginKit
+import GitOKCoreKit
 import SwiftUI
 
 public struct GitPushButton: View {

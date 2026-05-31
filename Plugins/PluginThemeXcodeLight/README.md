@@ -20,7 +20,7 @@ PluginThemeXcodeLight/
 
 ## Dependencies
 
-- `GitOKPluginKit`
+- `GitOKCoreKit`
 - `GitOKUI`
 
 ## Configuration

@@ -21,7 +21,7 @@ PluginOpenTrae/
 
 ## Dependencies
 
-- `GitOKPluginKit`
+- `GitOKCoreKit`
 
 ## Configuration
 

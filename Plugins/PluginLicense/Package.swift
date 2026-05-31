@@ -9,14 +9,14 @@ let package = Package(
         .library(name: "PluginLicense", targets: ["PluginLicense"]),
     ],
     dependencies: [
-        .package(path: "../../Packages/GitOKPluginKit"),
+        .package(path: "../../Packages/GitOKCoreKit"),
         .package(path: "../../Packages/ProjectSupportKit"),
     ],
     targets: [
         .target(
             name: "PluginLicense",
             dependencies: [
-                "GitOKPluginKit",
+                "GitOKCoreKit",
                 "ProjectSupportKit",
             ],
             path: "Sources/PluginLicense",

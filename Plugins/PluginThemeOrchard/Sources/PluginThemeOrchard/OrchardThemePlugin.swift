@@ -1,4 +1,4 @@
-import GitOKPluginKit
+import GitOKCoreKit
 import GitOKUI
 
 public struct OrchardThemePlugin: GitOKPackagedPlugin {

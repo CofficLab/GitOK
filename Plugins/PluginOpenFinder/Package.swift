@@ -14,12 +14,12 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(path: "../../Packages/GitOKPluginKit"),
+        .package(path: "../../Packages/GitOKCoreKit"),
     ],
     targets: [
         .target(
             name: "PluginOpenFinder",
-            dependencies: ["GitOKPluginKit"],
+            dependencies: ["GitOKCoreKit"],
             path: "Sources/PluginOpenFinder",
             resources: [
                 .process("Resources"),

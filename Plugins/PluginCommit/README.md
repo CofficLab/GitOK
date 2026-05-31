@@ -44,7 +44,7 @@ PluginCommit/
 
 ## Dependencies
 
-- `GitOKPluginKit`
+- `GitOKCoreKit`
 - `GitCoreKit`
 - `ProjectSupportKit`
 - `ProjectRulesKit`

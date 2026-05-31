@@ -22,7 +22,7 @@ PluginOpenRemote/
 
 ## Dependencies
 
-- `GitOKPluginKit`
+- `GitOKCoreKit`
 - `ProjectRulesKit`
 
 ## Configuration

@@ -23,7 +23,7 @@ PluginRemoteRepository/
 
 ## Dependencies
 
-- `GitOKPluginKit`
+- `GitOKCoreKit`
 - `GitCoreKit`
 - `ProjectRulesKit`
 

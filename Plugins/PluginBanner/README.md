@@ -40,7 +40,7 @@ PluginBanner/
 
 ## Dependencies
 
-- `GitOKPluginKit`
+- `GitOKCoreKit`
 - `BannerCoreKit`
 - `MagicAlert`
 - `MagicKit`

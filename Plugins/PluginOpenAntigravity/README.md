@@ -21,7 +21,7 @@ PluginOpenAntigravity/
 
 ## Dependencies
 
-- `GitOKPluginKit`
+- `GitOKCoreKit`
 
 ## Configuration
 

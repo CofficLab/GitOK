@@ -1,4 +1,4 @@
-import GitOKPluginKit
+import GitOKCoreKit
 import SwiftUI
 
 public struct ActivityStatusTile: View {

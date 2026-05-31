@@ -9,7 +9,7 @@ import SwiftUI
 
 // Auto-generated imports for packaged plugins.
 // When adding a new Plugin package, re-run Scripts/generate_plugin_registry.sh.
-import GitOKPluginKit
+import GitOKCoreKit
 import GitOKUI
 import PluginBanner
 import PluginCommit

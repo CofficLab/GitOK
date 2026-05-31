@@ -19,7 +19,7 @@ PluginGitTab/
 
 ## Dependencies
 
-- `GitOKPluginKit`
+- `GitOKCoreKit`
 
 ## Configuration
 

@@ -1,6 +1,6 @@
 @testable import PluginBranch
 import Foundation
-import GitOKPluginKit
+import GitOKCoreKit
 import Testing
 
 @Suite("PluginBranch")

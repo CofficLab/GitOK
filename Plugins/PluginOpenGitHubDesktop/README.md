@@ -21,7 +21,7 @@ PluginOpenGitHubDesktop/
 
 ## Dependencies
 
-- `GitOKPluginKit`
+- `GitOKCoreKit`
 
 ## Configuration
 

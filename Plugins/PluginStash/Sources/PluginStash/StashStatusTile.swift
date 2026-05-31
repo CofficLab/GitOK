@@ -1,5 +1,5 @@
 import GitCoreKit
-import GitOKPluginKit
+import GitOKCoreKit
 import SwiftUI
 
 public struct StashStatusTile: View {

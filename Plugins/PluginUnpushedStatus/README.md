@@ -22,7 +22,7 @@ PluginUnpushedStatus/
 ## Dependencies
 
 - `GitCoreKit`
-- `GitOKPluginKit`
+- `GitOKCoreKit`
 
 ## Configuration
 

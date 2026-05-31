@@ -28,7 +28,7 @@ PluginAutoPush/
 
 ## Dependencies
 
-- `GitOKPluginKit`
+- `GitOKCoreKit`
 - `GitCoreKit`
 - `ProjectRulesKit`
 - `ProjectSupportKit`

@@ -23,7 +23,7 @@ PluginSubmodule/
 ## Dependencies
 
 - `GitCoreKit`
-- `GitOKPluginKit`
+- `GitOKCoreKit`
 
 ## Configuration
 

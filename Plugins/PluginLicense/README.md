@@ -26,7 +26,7 @@ PluginLicense/
 
 ## Dependencies
 
-- `GitOKPluginKit`
+- `GitOKCoreKit`
 - `ProjectSupportKit`
 
 ## Configuration

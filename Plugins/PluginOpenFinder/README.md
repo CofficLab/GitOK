@@ -20,7 +20,7 @@ PluginOpenFinder/
 
 ## Dependencies
 
-- `GitOKPluginKit`
+- `GitOKCoreKit`
 
 ## Configuration
 

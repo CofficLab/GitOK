@@ -24,7 +24,7 @@ PluginConflictResolver/
 
 ## Dependencies
 
-- `GitOKPluginKit`
+- `GitOKCoreKit`
 - `GitCoreKit`
 - `GitOKUI`
 - `ProjectSupportKit`

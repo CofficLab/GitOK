@@ -9,14 +9,14 @@ let package = Package(
         .library(name: "PluginRemoteRepository", targets: ["PluginRemoteRepository"]),
     ],
     dependencies: [
-        .package(path: "../../Packages/GitOKPluginKit"),
+        .package(path: "../../Packages/GitOKCoreKit"),
         .package(path: "../../Packages/GitCoreKit"),
         .package(path: "../../Packages/ProjectRulesKit"),
     ],
     targets: [
         .target(
             name: "PluginRemoteRepository",
-            dependencies: ["GitOKPluginKit", "GitCoreKit", "ProjectRulesKit"],
+            dependencies: ["GitOKCoreKit", "GitCoreKit", "ProjectRulesKit"],
             path: "Sources/PluginRemoteRepository",
             resources: [.process("Resources")]
         ),

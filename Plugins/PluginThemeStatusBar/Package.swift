@@ -9,14 +9,14 @@ let package = Package(
         .library(name: "PluginThemeStatusBar", targets: ["PluginThemeStatusBar"]),
     ],
     dependencies: [
-        .package(path: "../../Packages/GitOKPluginKit"),
+        .package(path: "../../Packages/GitOKCoreKit"),
         .package(path: "../../Packages/GitOKUI"),
     ],
     targets: [
         .target(
             name: "PluginThemeStatusBar",
             dependencies: [
-                "GitOKPluginKit",
+                "GitOKCoreKit",
                 "GitOKUI",
             ],
             path: "Sources/PluginThemeStatusBar",

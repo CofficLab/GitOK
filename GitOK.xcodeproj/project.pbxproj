@@ -75,13 +75,13 @@
 		AABD3322F8CC16104D2EDCB5 /* PluginSettingsButton in Frameworks */ = {isa = PBXBuildFile; productRef = 4F504F220B085A174C9DB9EF /* PluginSettingsButton */; };
 		B2954F8C44997FD7B1F0FE81 /* PluginThemeWinter in Frameworks */ = {isa = PBXBuildFile; productRef = CCB81D6D993A55C4575B2605 /* PluginThemeWinter */; };
 		BE9DD1EE2BBE08C4E05CD0CD /* PluginThemeMountain in Frameworks */ = {isa = PBXBuildFile; productRef = 9FB60420DF22FC9DA401357B /* PluginThemeMountain */; };
-		CC73F006457981A7C3AE5D86 /* GitOKPluginKit in Frameworks */ = {isa = PBXBuildFile; productRef = 4EC50CECD060E698BF493AED /* GitOKPluginKit */; };
+		CC73F006457981A7C3AE5D86 /* GitOKCoreKit in Frameworks */ = {isa = PBXBuildFile; productRef = 4EC50CECD060E698BF493AED /* GitOKCoreKit */; };
 		CD985AF77F00EEB37FBCE39B /* PluginReadme in Frameworks */ = {isa = PBXBuildFile; productRef = 04D790802D37197CD563A70C /* PluginReadme */; };
 		D8E0DC888C79E39937D3FBB3 /* PluginThemeRiver in Frameworks */ = {isa = PBXBuildFile; productRef = 7EE903AEE5001B00948791A1 /* PluginThemeRiver */; };
 		DB8AF9E9E88ECB2E96981AA7 /* PluginThemeHarbor in Frameworks */ = {isa = PBXBuildFile; productRef = 991A8664232B8249489A8AED /* PluginThemeHarbor */; };
 		DF89521C1443E034E584F48C /* PluginThemeAurora in Frameworks */ = {isa = PBXBuildFile; productRef = 98342CFB955D2B01952FACFB /* PluginThemeAurora */; };
 		E0785FEE51EBA42429327451 /* PluginThemeOrchard in Frameworks */ = {isa = PBXBuildFile; productRef = 034F75CBA35B7736D77296B9 /* PluginThemeOrchard */; };
-		E45D8E48A323B0CC5A961EE4 /* GitOKPluginKit in Frameworks */ = {isa = PBXBuildFile; productRef = 4EC50CECD060E698BF493AED /* GitOKPluginKit */; };
+		E45D8E48A323B0CC5A961EE4 /* GitOKCoreKit in Frameworks */ = {isa = PBXBuildFile; productRef = 4EC50CECD060E698BF493AED /* GitOKCoreKit */; };
 		E5897417296AD98ACAB4B478 /* PluginThemeDracula in Frameworks */ = {isa = PBXBuildFile; productRef = D7918C898F231F73EF228CC0 /* PluginThemeDracula */; };
 		E7BA909AB3A605932F214E9C /* PluginThemeSummer in Frameworks */ = {isa = PBXBuildFile; productRef = 700A741DB9C1E0C7BDA3E0E1 /* PluginThemeSummer */; };
 		E873A629D55048749565A422 /* PluginOpenVSCode in Frameworks */ = {isa = PBXBuildFile; productRef = 4DA931B6614C89645F5399D3 /* PluginOpenVSCode */; };
@@ -882,7 +882,7 @@
 				BannerCoreKit,
 				GitCoreKit,
 				GitOKAutomationKit,
-				GitOKPluginKit,
+				GitOKCoreKit,
 				GitOKUI,
 				PluginGitLFS,
 				PluginOpenAntigravity,
@@ -945,7 +945,7 @@
 				F5E60E1D2F3314B700F79149 /* MagicKit in Frameworks */,
 				F5B9093B2EE8FB4B008BEB16 /* MagicDiffView in Frameworks */,
 				0B3CC95E2DF1C49000E22263 /* Sparkle in Frameworks */,
-				CC73F006457981A7C3AE5D86 /* GitOKPluginKit in Frameworks */,
+				CC73F006457981A7C3AE5D86 /* GitOKCoreKit in Frameworks */,
 				AABD3322F8CC16104D2EDCB5 /* PluginSettingsButton in Frameworks */,
 				491FDAE909B1F7AA9853C453 /* PluginOpenFinder in Frameworks */,
 				5EBF3B07EDCE4453880C9E80 /* PluginOpenTerminal in Frameworks */,
@@ -1017,7 +1017,7 @@
 				A1F200042F70000100ABC001 /* ProjectRulesKit in Frameworks */,
 				A1F100042F70000100ABC001 /* GitCoreKit in Frameworks */,
 				A1F500042F70000100ABC001 /* GitOKUI in Frameworks */,
-				E45D8E48A323B0CC5A961EE4 /* GitOKPluginKit in Frameworks */,
+				E45D8E48A323B0CC5A961EE4 /* GitOKCoreKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1404,7 +1404,7 @@
 				F5A3DF692F85FA4B00D4DD4A /* MagicDiffView */,
 				F5A3E6C12F8610E100D4DD4A /* MagicDiffView */,
 				0B4A1BFF2F80000100AA0001 /* LibGit2Swift */,
-				4EC50CECD060E698BF493AED /* GitOKPluginKit */,
+				4EC50CECD060E698BF493AED /* GitOKCoreKit */,
 				4F504F220B085A174C9DB9EF /* PluginSettingsButton */,
 				2623463505DC40563C1AB9E9 /* PluginOpenFinder */,
 				E6FA9A917BE5F6E57866E02F /* PluginOpenTerminal */,
@@ -1492,7 +1492,7 @@
 				A1F200022F70000100ABC001 /* ProjectRulesKit */,
 				A1F100022F70000100ABC001 /* GitCoreKit */,
 				A1F500022F70000100ABC001 /* GitOKUI */,
-				4EC50CECD060E698BF493AED /* GitOKPluginKit */,
+				4EC50CECD060E698BF493AED /* GitOKCoreKit */,
 			);
 			productName = GitOKTests;
 			productReference = A1F000012F70000100ABC001 /* GitOKTests.xctest */;
@@ -1539,7 +1539,7 @@
 				F5E6143D2F33311F00F79149 /* XCLocalSwiftPackageReference "Packages/MagicKit" */,
 				F5A3E6C02F8610E100D4DD4A /* XCRemoteSwiftPackageReference "MagicDiffView" */,
 				F5165B6E2FBC084A00F24BD9 /* XCRemoteSwiftPackageReference "LibGit2Swift" */,
-				917255476993285F764073A8 /* XCLocalSwiftPackageReference "Packages/GitOKPluginKit" */,
+				917255476993285F764073A8 /* XCLocalSwiftPackageReference "Packages/GitOKCoreKit" */,
 				04854420ECB4294D4F6EC13B /* XCLocalSwiftPackageReference "Plugins/PluginSettingsButton" */,
 				565F16D117692CFAEFD7989A /* XCLocalSwiftPackageReference "Plugins/PluginOpenFinder" */,
 				C565F22CA062E59B38440B0F /* XCLocalSwiftPackageReference "Plugins/PluginOpenTerminal" */,
@@ -2980,9 +2980,9 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Plugins/PluginOpenXcode;
 		};
-		917255476993285F764073A8 /* XCLocalSwiftPackageReference "Packages/GitOKPluginKit" */ = {
+		917255476993285F764073A8 /* XCLocalSwiftPackageReference "Packages/GitOKCoreKit" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/GitOKPluginKit;
+			relativePath = Packages/GitOKCoreKit;
 		};
 		9754272AAEB2CBF3B60E1EF8 /* XCLocalSwiftPackageReference "Plugins/PluginThemeSummer" */ = {
 			isa = XCLocalSwiftPackageReference;
@@ -3290,10 +3290,10 @@
 			package = BA80C8622E256A0B19F95294 /* XCLocalSwiftPackageReference "Plugins/PluginOpenVSCode" */;
 			productName = PluginOpenVSCode;
 		};
-		4EC50CECD060E698BF493AED /* GitOKPluginKit */ = {
+		4EC50CECD060E698BF493AED /* GitOKCoreKit */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 917255476993285F764073A8 /* XCLocalSwiftPackageReference "Packages/GitOKPluginKit" */;
-			productName = GitOKPluginKit;
+			package = 917255476993285F764073A8 /* XCLocalSwiftPackageReference "Packages/GitOKCoreKit" */;
+			productName = GitOKCoreKit;
 		};
 		4F504F220B085A174C9DB9EF /* PluginSettingsButton */ = {
 			isa = XCSwiftPackageProductDependency;

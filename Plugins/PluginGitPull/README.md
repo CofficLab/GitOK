@@ -20,7 +20,7 @@ PluginGitPull/
 
 ## Dependencies
 
-- `GitOKPluginKit`
+- `GitOKCoreKit`
 - `GitCoreKit`
 
 ## Configuration

@@ -24,7 +24,7 @@ PluginGitIgnore/
 
 ## Dependencies
 
-- `GitOKPluginKit`
+- `GitOKCoreKit`
 
 ## Configuration
 

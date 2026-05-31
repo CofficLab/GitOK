@@ -9,7 +9,7 @@ let package = Package(
         .library(name: "PluginCommit", targets: ["PluginCommit"]),
     ],
     dependencies: [
-        .package(path: "../../Packages/GitOKPluginKit"),
+        .package(path: "../../Packages/GitOKCoreKit"),
         .package(path: "../../Packages/GitCoreKit"),
         .package(path: "../../Packages/ProjectSupportKit"),
         .package(path: "../../Packages/ProjectRulesKit"),
@@ -17,7 +17,7 @@ let package = Package(
     targets: [
         .target(
             name: "PluginCommit",
-            dependencies: ["GitOKPluginKit", "GitCoreKit", "ProjectSupportKit", "ProjectRulesKit"],
+            dependencies: ["GitOKCoreKit", "GitCoreKit", "ProjectSupportKit", "ProjectRulesKit"],
             path: "Sources/PluginCommit",
             resources: [.process("Resources")]
         ),

@@ -20,7 +20,7 @@ PluginSmartMerge/
 
 ## Dependencies
 
-- `GitOKPluginKit`
+- `GitOKCoreKit`
 - `GitCoreKit`
 
 ## Configuration

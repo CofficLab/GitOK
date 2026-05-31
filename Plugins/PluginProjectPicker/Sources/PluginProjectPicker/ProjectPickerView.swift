@@ -1,4 +1,4 @@
-import GitOKPluginKit
+import GitOKCoreKit
 import ProjectRulesKit
 import SwiftUI
 

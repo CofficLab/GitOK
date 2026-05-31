@@ -1,6 +1,6 @@
 import SwiftUI
 import XCTest
-import GitOKPluginKit
+import GitOKCoreKit
 @testable import PluginActivityStatus
 
 final class ActivityStatusPluginTests: XCTestCase {

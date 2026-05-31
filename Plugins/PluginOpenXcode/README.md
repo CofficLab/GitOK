@@ -21,7 +21,7 @@ PluginOpenXcode/
 
 ## Dependencies
 
-- `GitOKPluginKit`
+- `GitOKCoreKit`
 
 ## Configuration
 

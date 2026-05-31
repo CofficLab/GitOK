@@ -9,12 +9,12 @@ let package = Package(
         .library(name: "PluginIconTab", targets: ["PluginIconTab"]),
     ],
     dependencies: [
-        .package(path: "../../Packages/GitOKPluginKit"),
+        .package(path: "../../Packages/GitOKCoreKit"),
     ],
     targets: [
         .target(
             name: "PluginIconTab",
-            dependencies: ["GitOKPluginKit"],
+            dependencies: ["GitOKCoreKit"],
             path: "Sources/PluginIconTab",
             resources: [.process("Resources")]
         ),

@@ -56,7 +56,7 @@ PluginIcon/
 
 ## Dependencies
 
-- `GitOKPluginKit`
+- `GitOKCoreKit`
 - `MagicAlert`
 - `MagicKit`
 - `ProjectRulesKit`

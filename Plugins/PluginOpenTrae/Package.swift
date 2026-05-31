@@ -11,12 +11,12 @@ let package = Package(
         .library(name: "PluginOpenTrae", targets: ["PluginOpenTrae"]),
     ],
     dependencies: [
-        .package(path: "../../Packages/GitOKPluginKit"),
+        .package(path: "../../Packages/GitOKCoreKit"),
     ],
     targets: [
         .target(
             name: "PluginOpenTrae",
-            dependencies: ["GitOKPluginKit"],
+            dependencies: ["GitOKCoreKit"],
             path: "Sources/PluginOpenTrae",
             resources: [.process("Resources")]
         ),

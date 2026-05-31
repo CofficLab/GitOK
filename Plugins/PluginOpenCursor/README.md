@@ -21,7 +21,7 @@ PluginOpenCursor/
 
 ## Dependencies
 
-- `GitOKPluginKit`
+- `GitOKCoreKit`
 
 ## Configuration
 

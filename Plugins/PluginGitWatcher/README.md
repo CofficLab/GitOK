@@ -21,7 +21,7 @@ PluginGitWatcher/
 
 ## Dependencies
 
-- `GitOKPluginKit`
+- `GitOKCoreKit`
 
 ## Configuration
 

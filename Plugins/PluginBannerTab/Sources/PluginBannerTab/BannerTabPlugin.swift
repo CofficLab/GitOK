@@ -1,5 +1,5 @@
 import Foundation
-import GitOKPluginKit
+import GitOKCoreKit
 
 public struct BannerTabPlugin: GitOKPackagedPlugin {
     public static let shared = BannerTabPlugin()

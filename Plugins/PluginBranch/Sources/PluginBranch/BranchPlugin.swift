@@ -1,5 +1,5 @@
 import Foundation
-import GitOKPluginKit
+import GitOKCoreKit
 import SwiftUI
 
 /// BranchPlugin 内部使用的上下文，由 GitOKPluginContext 转换而来。

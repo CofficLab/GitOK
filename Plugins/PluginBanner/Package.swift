@@ -9,7 +9,7 @@ let package = Package(
         .library(name: "PluginBanner", targets: ["PluginBanner"]),
     ],
     dependencies: [
-        .package(path: "../../Packages/GitOKPluginKit"),
+        .package(path: "../../Packages/GitOKCoreKit"),
         .package(path: "../../Packages/BannerCoreKit"),
         .package(path: "../../Packages/MagicAlert"),
         .package(path: "../../Packages/MagicKit"),
@@ -19,7 +19,7 @@ let package = Package(
         .target(
             name: "PluginBanner",
             dependencies: [
-                "GitOKPluginKit",
+                "GitOKCoreKit",
                 "BannerCoreKit",
                 "MagicAlert",
                 "MagicKit",

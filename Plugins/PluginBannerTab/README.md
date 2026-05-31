@@ -19,7 +19,7 @@ PluginBannerTab/
 
 ## Dependencies
 
-- `GitOKPluginKit`
+- `GitOKCoreKit`
 
 ## Configuration
 

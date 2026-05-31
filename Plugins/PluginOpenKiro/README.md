@@ -21,7 +21,7 @@ PluginOpenKiro/
 
 ## Dependencies
 
-- `GitOKPluginKit`
+- `GitOKCoreKit`
 
 ## Configuration
 

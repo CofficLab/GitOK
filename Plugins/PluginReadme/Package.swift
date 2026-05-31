@@ -9,7 +9,7 @@ let package = Package(
         .library(name: "PluginReadme", targets: ["PluginReadme"]),
     ],
     dependencies: [
-        .package(path: "../../Packages/GitOKPluginKit"),
+        .package(path: "../../Packages/GitOKCoreKit"),
         .package(path: "../../Packages/ProjectSupportKit"),
         .package(url: "https://github.com/gonzalezreal/swift-markdown-ui", from: "2.4.1"),
     ],
@@ -17,7 +17,7 @@ let package = Package(
         .target(
             name: "PluginReadme",
             dependencies: [
-                "GitOKPluginKit",
+                "GitOKCoreKit",
                 "ProjectSupportKit",
                 .product(name: "MarkdownUI", package: "swift-markdown-ui"),
             ],

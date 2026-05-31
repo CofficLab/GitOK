@@ -20,7 +20,7 @@ PluginSettingsButton/
 
 ## Dependencies
 
-- `GitOKPluginKit`
+- `GitOKCoreKit`
 
 ## Configuration
 

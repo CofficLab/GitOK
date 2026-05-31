@@ -11,12 +11,12 @@ let package = Package(
         .library(name: "PluginOpenAntigravity", targets: ["PluginOpenAntigravity"]),
     ],
     dependencies: [
-        .package(path: "../../Packages/GitOKPluginKit"),
+        .package(path: "../../Packages/GitOKCoreKit"),
     ],
     targets: [
         .target(
             name: "PluginOpenAntigravity",
-            dependencies: ["GitOKPluginKit"],
+            dependencies: ["GitOKCoreKit"],
             path: "Sources/PluginOpenAntigravity",
             resources: [.process("Resources")]
         ),

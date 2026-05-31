@@ -20,7 +20,7 @@ PluginGitLFS/
 
 ## Dependencies
 
-- `GitOKPluginKit`
+- `GitOKCoreKit`
 - `GitOKUI`
 - `GitCoreKit`
 

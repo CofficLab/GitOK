@@ -11,14 +11,14 @@ let package = Package(
         .library(name: "PluginOpenRemote", targets: ["PluginOpenRemote"]),
     ],
     dependencies: [
-        .package(path: "../../Packages/GitOKPluginKit"),
+        .package(path: "../../Packages/GitOKCoreKit"),
         .package(path: "../../Packages/ProjectRulesKit"),
     ],
     targets: [
         .target(
             name: "PluginOpenRemote",
             dependencies: [
-                "GitOKPluginKit",
+                "GitOKCoreKit",
                 "ProjectRulesKit",
             ],
             path: "Sources/PluginOpenRemote",

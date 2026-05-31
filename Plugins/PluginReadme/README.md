@@ -21,7 +21,7 @@ PluginReadme/
 
 ## Dependencies
 
-- `GitOKPluginKit`
+- `GitOKCoreKit`
 - `ProjectSupportKit`
 
 ## Configuration

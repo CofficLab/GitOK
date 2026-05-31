@@ -7,11 +7,11 @@ let package = Package(
     platforms: [.macOS(.v15)],
     products: [.library(name: "PluginThemeHarbor", targets: ["PluginThemeHarbor"])],
     dependencies: [
-        .package(path: "../../Packages/GitOKPluginKit"),
+        .package(path: "../../Packages/GitOKCoreKit"),
         .package(path: "../../Packages/GitOKUI"),
     ],
     targets: [
-        .target(name: "PluginThemeHarbor", dependencies: ["GitOKPluginKit", "GitOKUI"], path: "Sources/PluginThemeHarbor", resources: [.process("Resources")]),
+        .target(name: "PluginThemeHarbor", dependencies: ["GitOKCoreKit", "GitOKUI"], path: "Sources/PluginThemeHarbor", resources: [.process("Resources")]),
         .testTarget(name: "PluginThemeHarborTests", dependencies: ["PluginThemeHarbor"], path: "Tests"),
     ]
 )

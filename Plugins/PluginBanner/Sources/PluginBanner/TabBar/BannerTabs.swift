@@ -1,6 +1,6 @@
 import SwiftUI
 
-import GitOKPluginKit
+import GitOKCoreKit
 import MagicAlert
 
 /**

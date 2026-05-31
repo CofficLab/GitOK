@@ -1,5 +1,5 @@
 import MagicKit
-import GitOKPluginKit
+import GitOKCoreKit
 import GitOKUI
 import SwiftUI
 

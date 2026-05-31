@@ -9,7 +9,7 @@ let package = Package(
         .library(name: "PluginAutoPush", targets: ["PluginAutoPush"]),
     ],
     dependencies: [
-        .package(path: "../../Packages/GitOKPluginKit"),
+        .package(path: "../../Packages/GitOKCoreKit"),
         .package(path: "../../Packages/GitCoreKit"),
         .package(path: "../../Packages/ProjectRulesKit"),
         .package(path: "../../Packages/ProjectSupportKit"),
@@ -18,7 +18,7 @@ let package = Package(
         .target(
             name: "PluginAutoPush",
             dependencies: [
-                "GitOKPluginKit",
+                "GitOKCoreKit",
                 "GitCoreKit",
                 "ProjectRulesKit",
                 "ProjectSupportKit",

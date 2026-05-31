@@ -11,12 +11,12 @@ let package = Package(
         .library(name: "PluginOpenKiro", targets: ["PluginOpenKiro"]),
     ],
     dependencies: [
-        .package(path: "../../Packages/GitOKPluginKit"),
+        .package(path: "../../Packages/GitOKCoreKit"),
     ],
     targets: [
         .target(
             name: "PluginOpenKiro",
-            dependencies: ["GitOKPluginKit"],
+            dependencies: ["GitOKCoreKit"],
             path: "Sources/PluginOpenKiro",
             resources: [.process("Resources")]
         ),

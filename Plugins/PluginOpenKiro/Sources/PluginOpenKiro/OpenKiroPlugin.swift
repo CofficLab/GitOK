@@ -1,5 +1,5 @@
 import Foundation
-import GitOKPluginKit
+import GitOKCoreKit
 import SwiftUI
 
 public struct OpenKiroPlugin: GitOKPackagedPlugin {

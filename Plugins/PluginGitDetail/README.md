@@ -34,7 +34,7 @@ PluginGitDetail/
 
 ## Dependencies
 
-- `GitOKPluginKit`
+- `GitOKCoreKit`
 
 ## Configuration
 

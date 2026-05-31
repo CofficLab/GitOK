@@ -1,6 +1,6 @@
 import SwiftUI
 import XCTest
-@testable import GitOKPluginKit
+@testable import GitOKCoreKit
 
 private struct SamplePlugin: GitOKPackagedPlugin {
     static let shared = SamplePlugin()

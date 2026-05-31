@@ -25,7 +25,7 @@ PluginStash/
 ## Dependencies
 
 - `GitCoreKit`
-- `GitOKPluginKit`
+- `GitOKCoreKit`
 
 ## Configuration
 

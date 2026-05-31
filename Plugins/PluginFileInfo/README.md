@@ -21,7 +21,7 @@ PluginFileInfo/
 
 ## Dependencies
 
-- `GitOKPluginKit`
+- `GitOKCoreKit`
 
 ## Configuration
 

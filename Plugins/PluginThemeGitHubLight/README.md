@@ -20,7 +20,7 @@ PluginThemeGitHubLight/
 
 ## Dependencies
 
-- `GitOKPluginKit`
+- `GitOKCoreKit`
 - `GitOKUI`
 
 ## Configuration

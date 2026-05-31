@@ -21,7 +21,7 @@ PluginThemeStatusBar/
 
 ## Dependencies
 
-- `GitOKPluginKit`
+- `GitOKCoreKit`
 - `GitOKUI`
 
 ## Configuration

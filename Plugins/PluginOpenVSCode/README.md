@@ -21,7 +21,7 @@ PluginOpenVSCode/
 
 ## Dependencies
 
-- `GitOKPluginKit`
+- `GitOKCoreKit`
 
 ## Configuration
 
