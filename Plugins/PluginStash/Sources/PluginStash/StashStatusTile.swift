@@ -3,14 +3,16 @@ import GitOKCoreKit
 import SwiftUI
 
 public struct StashStatusTile: View {
-    @Environment(\.gitOKProjectURL) private var projectURL
+    let projectURL: URL?
 
     @State private var stashCount = 0
     @State private var isLoading = false
     @State private var isPresented = false
     @State private var refreshToken = 0
 
-    public init() {}
+    public init(projectURL: URL?) {
+        self.projectURL = projectURL
+    }
 
     public var body: some View {
         Button {
@@ -28,11 +30,10 @@ public struct StashStatusTile: View {
         .buttonStyle(.plain)
         .help(helpText)
         .popover(isPresented: $isPresented) {
-            StashListView(refreshToken: refreshToken) {
+            StashListView(projectURL: projectURL, refreshToken: refreshToken) {
                 refresh()
             }
             .frame(width: 460, height: 540)
-            .environment(\.gitOKProjectURL, projectURL)
         }
         .onAppear(perform: refresh)
         .onChange(of: projectURL) { _, _ in refresh() }

@@ -9,11 +9,15 @@ import SwiftUI
      提供创建新Banner的功能，直接与BannerRepo交互进行创建操作。
  **/
 struct BannerBtnAdd: View, SuperThread {
-    @Environment(\.gitOKProjectURL) private var projectURL
+    let projectURL: URL?
     @EnvironmentObject var b: BannerProvider
 
     /// Banner仓库实例
     private let bannerRepo = BannerRepo.shared
+
+    init(projectURL: URL? = nil) {
+        self.projectURL = projectURL
+    }
 
     var body: some View {
         if let projectURL {

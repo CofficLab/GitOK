@@ -16,11 +16,16 @@ import SwiftUI
      - 直接与BannerProvider交互，无需外部参数
  **/
 struct BannerTab: View {
-    @Environment(\.gitOKProjectURL) private var projectURL
+    let projectURL: URL?
     @EnvironmentObject var b: BannerProvider
 
     /// Banner数据
     let banner: BannerFile
+
+    init(projectURL: URL?, banner: BannerFile) {
+        self.projectURL = projectURL
+        self.banner = banner
+    }
 
     /// Banner仓库实例
     private let bannerRepo = BannerRepo.shared

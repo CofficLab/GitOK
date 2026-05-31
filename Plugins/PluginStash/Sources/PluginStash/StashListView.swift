@@ -3,8 +3,7 @@ import GitOKCoreKit
 import SwiftUI
 
 struct StashListView: View {
-    @Environment(\.gitOKProjectURL) private var projectURL
-
+    let projectURL: URL?
     let refreshToken: Int
     let onStashesChanged: () -> Void
 

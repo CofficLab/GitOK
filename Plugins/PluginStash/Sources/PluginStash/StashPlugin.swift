@@ -19,7 +19,7 @@ public struct StashPlugin: GitOKPackagedPlugin {
 
     @MainActor
     public func statusBarTrailingView(context: GitOKPluginContext) -> AnyView? {
-        AnyView(StashStatusTile())
+        AnyView(StashStatusTile(projectURL: context.projectURL))
     }
 }
 

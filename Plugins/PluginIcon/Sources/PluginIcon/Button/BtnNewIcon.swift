@@ -5,7 +5,11 @@ import OSLog
 import SwiftUI
 
 struct BtnNewIcon: View {
-    @Environment(\.gitOKProjectURL) private var projectURL
+    let projectURL: URL?
+
+    init(projectURL: URL? = nil) {
+        self.projectURL = projectURL
+    }
 
     var body: some View {
         if let projectURL {

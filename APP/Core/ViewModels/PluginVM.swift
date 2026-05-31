@@ -432,15 +432,15 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
                 }
             ),
             BannerPlugin.metadata.id: PackagedPluginAdapter<BannerPlugin>(
-                detailViewProvider: { tab, _ in
+                detailViewProvider: { tab, context in
                     guard tab == "Banner" else { return nil }
-                    return AnyView(PluginBanner.BannerDetailLayout.shared)
+                    return AnyView(PluginBanner.BannerDetailLayout(projectURL: context.projectURL))
                 }
             ),
             IconPlugin.metadata.id: PackagedPluginAdapter<IconPlugin>(
-                detailViewProvider: { tab, _ in
+                detailViewProvider: { tab, context in
                     guard tab == "Icon" else { return nil }
-                    return AnyView(PluginIcon.IconDetailLayout.shared)
+                    return AnyView(PluginIcon.IconDetailLayout(projectURL: context.projectURL))
                 }
             ),
         ]

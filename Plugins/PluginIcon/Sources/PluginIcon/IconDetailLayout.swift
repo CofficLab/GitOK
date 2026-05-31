@@ -3,7 +3,7 @@ import GitOKCoreKit
 import SwiftUI
 
 public struct IconDetailLayout: View {
-    @Environment(\.gitOKProjectURL) private var projectURL
+    let projectURL: URL?
     @EnvironmentObject var i: IconProvider
 
     @State private var showWelcome = false
@@ -15,7 +15,9 @@ public struct IconDetailLayout: View {
 
     public static let shared = IconDetailLayout()
 
-    public init() {}
+    public init(projectURL: URL? = nil) {
+        self.projectURL = projectURL
+    }
 
     public var body: some View {
         ZStack {

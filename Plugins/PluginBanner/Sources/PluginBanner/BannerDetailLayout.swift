@@ -10,18 +10,21 @@ import SwiftUI
 public struct BannerDetailLayout: View {
     public static var shared = BannerDetailLayout()
 
+    let projectURL: URL?
     @EnvironmentObject var b: BannerProvider
 
     @State private var scale: CGFloat = 1.0
     @State private var lastScale: CGFloat = 1.0
 
-    public init() {}
+    public init(projectURL: URL? = nil) {
+        self.projectURL = projectURL
+    }
 
     public var body: some View {
         GeometryReader { geometry in
             HSplitView {
                 VStack(spacing: 0) {
-                    BannerTabs()
+                    BannerTabs(projectURL: projectURL)
                         .background(.gray.opacity(0.1))
 
                     Divider()

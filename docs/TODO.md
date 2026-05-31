@@ -10,41 +10,10 @@
 - [x] 扩充 `GitOKPluginContext`：添加 `remoteTrackingStatus`、`projects`、`selectedProjectURL`、`isSidebarVisible`、操作回调等属性
 - [x] 更新 `SuperPlugin` 协议、`GitOKPackagedPlugin` 协议、`PackagedPluginAdapter` 和 13 个插件的 toolbar 方法签名
 - [x] 更新架构文档（`architecture.md`、`quickstart.md`、`system.md`）
-
-### 待完成
-
-- [ ] **A. 消除插件视图中的 `@Environment(\.gitOK*)` 依赖（64 处）**
-  - 39 处 `gitOKProjectURL` → 从 Context 获取
-  - 6 处 `gitOKIsGitRepository` → 从 Context 获取
-  - 3 处 `gitOKProjectPath` → 从 Context 获取
-  - 3 处 `gitOKSelectedFilePath` → 从 Context 获取
-  - 2 处 `gitOKRemoteTrackingUpdateHandler` → 从 Context 获取
-  - 2 处 `gitOKProjectTitle` → 从 Context 获取
-  - 2 处 `gitOKBranchName` → 从 Context 获取
-  - 1 处 `gitOKUnpushedCommitsUpdateHandler` → 从 Context 获取
-  - 1 处 `gitOKThemeSelectionHandler` → 从 Context 获取
-  - 1 处 `gitOKSidebarVisible` → 从 Context 获取
-  - 1 处 `gitOKSelectedProjectURL` → 从 Context 获取
-  - 1 处 `gitOKRemoteTrackingStatus` → 从 Context 获取
-  - 1 处 `gitOKProjectSelectionHandler` → 从 Context 获取
-  - 1 处 `gitOKProjects` → 从 Context 获取
-  - 1 处 `gitOKGitDirectoryChangeHandler` → 从 Context 获取
-  - 1 处 `gitOKCleanStatusUpdateHandler` → 从 Context 获取
-  - 涉及插件：GitPull、License、Stash、GitWatcher、CleanStatus、OpenKiro、OpenFinder、ProjectPicker、RemoteRepository、UnpushedStatus、GitLFS、OpenXcode、OpenVSCode、Banner、GitIgnore、OpenRemote、Submodule、GitSync、ConflictResolver、FileInfo、OpenCursor、OpenTrae、OpenAntigravity、OpenGitHubDesktop、OpenTerminal 等
-
-- [ ] **B. 为 `addListView` / `addDetailView` 等剩余方法注入 Context**
-  - `addListView(tab:project:)` → `addListView(tab:project:context:)`
-  - `addDetailView(for:)` → `addDetailView(for:context:)`
-  - 同步更新 `GitOKPackagedPlugin`、`SuperPlugin`、`PackagedPluginAdapter`、`PluginVM`
-
-- [ ] **C. 清理 PluginVM 中的双重注入（Context + Environment 并存）**
-  - PluginVM 的 `getEnabledToolbarLeadingViews` 等方法中既构造 Context 又 `.environment()` 注入旧值
-  - 在 A 完成后，逐步移除 `.environment(\.gitOK*, ...)` 冗余注入
-  - 最终目标：PluginVM 只通过 Context 传数据，不再使用 Environment 注入插件数据
-
-- [ ] **D. 清理或标记废弃 Environment Key 定义**
-  - `GitOKPackagedPlugin.swift` 中 17 个 `EnvironmentKey` 定义和对应的 `Environment` 扩展
-  - 在所有插件不再使用后，可标记 `@available(*, deprecated)` 或直接删除
+- [x] `addListView` / `addDetailView` 注入 `GitOKPluginContext`（协议、适配器、PluginVM）
+- [x] 清理 PluginVM 中所有视图方法的冗余 `.environment()` 注入
+- [x] 标记 17 个 EnvironmentKey 及 EnvironmentValues 扩展为 `@available(*, deprecated)`
+- [ ] 消除剩余 9 处 `@Environment(\.gitOKProjectURL)`（PluginStash 2 + PluginBanner 3 + PluginIcon 4）
 
 ## P0：核心 Git 工作流
 

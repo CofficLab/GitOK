@@ -9,7 +9,7 @@ import MagicAlert
     直接与BannerRepo交互获取Banner列表数据，与BannerProvider保持同步。
 **/
 struct BannerTabs: View {
-    @Environment(\.gitOKProjectURL) private var projectURL
+    let projectURL: URL?
     @EnvironmentObject var b: BannerProvider
 
     /// Banner数据源
@@ -18,19 +18,23 @@ struct BannerTabs: View {
     /// Banner仓库实例
     private let repo = BannerRepo.shared
 
+    init(projectURL: URL?) {
+        self.projectURL = projectURL
+    }
+
     var body: some View {
         HStack(spacing: 8) {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 8) {
                     ForEach(banners) { banner in
-                        BannerTab(banner: banner)
+                        BannerTab(projectURL: projectURL, banner: banner)
                     }
                 }
                 .padding(.horizontal, 12)
             }
 
             // 添加新Banner按钮
-            BannerBtnAdd()
+            BannerBtnAdd(projectURL: projectURL)
                 .frame(height: 28)
                 .frame(width: 28)
                 .padding(.trailing, 12)

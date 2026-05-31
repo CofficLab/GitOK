@@ -5,11 +5,15 @@ import OSLog
 import SwiftUI
 
 struct IconList: View {
-    @Environment(\.gitOKProjectURL) private var projectURL
+    let projectURL: URL?
     @EnvironmentObject var i: IconProvider
 
     @State var icons: [IconData] = []
     @State var selection: IconData?
+
+    init(projectURL: URL?) {
+        self.projectURL = projectURL
+    }
 
     static let emoji = "🐈"
 
