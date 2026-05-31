@@ -2,11 +2,17 @@ import GitOKUI
 import SwiftUI
 
 struct ThemeStatusBarView: View {
-    @EnvironmentObject private var registry: GitOKUIThemeRegistry
+    let registry: GitOKUIThemeRegistry
+    let selectTheme: (String) -> Void
+
+    init(registry: GitOKUIThemeRegistry, selectTheme: @escaping (String) -> Void) {
+        self.registry = registry
+        self.selectTheme = selectTheme
+    }
 
     var body: some View {
         StatusBarHoverContainer(
-            detailView: ThemePickerPopover(),
+            detailView: ThemePickerPopover(registry: registry, selectTheme: selectTheme),
             popoverWidth: 340,
             id: "gitok-theme-picker"
         ) {

@@ -19,7 +19,8 @@ public struct GitSyncPlugin: GitOKPackagedPlugin {
     private init() {}
 
     public func toolBarTrailingView(context: GitOKPluginContext) -> AnyView? {
-        AnyView(GitSyncButton())
+        guard let projectURL = context.projectURL else { return nil }
+        return AnyView(GitSyncButton(projectURL: projectURL))
     }
 }
 

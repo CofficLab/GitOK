@@ -19,7 +19,8 @@ public struct OpenTraePlugin: GitOKPackagedPlugin {
     private init() {}
 
     public func toolBarTrailingView(context: GitOKPluginContext) -> AnyView? {
-        AnyView(OpenTraeButton())
+        guard let projectURL = context.projectURL else { return nil }
+        return AnyView(OpenTraeButton(projectURL: projectURL))
     }
 }
 

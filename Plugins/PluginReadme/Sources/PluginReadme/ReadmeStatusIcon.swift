@@ -1,12 +1,15 @@
-import GitOKPluginKit
 import ProjectSupportKit
 import SwiftUI
 
 struct ReadmeStatusIcon: View {
-    @Environment(\.gitOKProjectURL) private var projectURL
+    let projectURL: URL
 
     @State private var isSheetPresented = false
     @State private var hasReadme = false
+
+    public init(projectURL: URL) {
+        self.projectURL = projectURL
+    }
 
     var body: some View {
         Button {
@@ -22,23 +25,14 @@ struct ReadmeStatusIcon: View {
         }
         .buttonStyle(.plain)
         .help(hasReadme ? PluginReadmeLocalization.string("View README.md document") : PluginReadmeLocalization.string("README.md file not found"))
-        .disabled(projectURL == nil)
         .sheet(isPresented: $isSheetPresented) {
-            ReadmeViewer()
+            ReadmeViewer(projectURL: projectURL)
                 .frame(minWidth: 800, minHeight: 600)
         }
         .onAppear(perform: checkReadmeExistence)
-        .onChange(of: projectURL) {
-            checkReadmeExistence()
-        }
     }
 
     private func checkReadmeExistence() {
-        guard let projectURL else {
-            hasReadme = false
-            return
-        }
-
         hasReadme = (try? ProjectDocumentResolver.readReadmeContent(in: projectURL)) != nil
     }
 }

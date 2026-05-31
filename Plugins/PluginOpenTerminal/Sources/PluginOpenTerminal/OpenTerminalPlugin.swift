@@ -19,7 +19,8 @@ public struct OpenTerminalPlugin: GitOKPackagedPlugin {
     private init() {}
 
     public func toolBarTrailingView(context: GitOKPluginContext) -> AnyView? {
-        AnyView(OpenTerminalButton())
+        guard let projectURL = context.projectURL else { return nil }
+        return AnyView(OpenTerminalButton(projectURL: projectURL))
     }
 }
 

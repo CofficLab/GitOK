@@ -18,7 +18,8 @@ public struct SmartMergePlugin: GitOKPackagedPlugin {
     private init() {}
 
     public func statusBarTrailingView(context: GitOKPluginContext) -> AnyView? {
-        AnyView(SmartMergeStatusTile())
+        guard let projectURL = context.projectURL else { return nil }
+        return AnyView(SmartMergeStatusTile(projectURL: projectURL, isGitRepository: context.isGitRepository))
     }
 }
 

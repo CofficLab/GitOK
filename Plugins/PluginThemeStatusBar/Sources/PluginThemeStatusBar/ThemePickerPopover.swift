@@ -1,10 +1,14 @@
-import GitOKPluginKit
 import GitOKUI
 import SwiftUI
 
 struct ThemePickerPopover: View {
-    @EnvironmentObject private var registry: GitOKUIThemeRegistry
-    @Environment(\.gitOKThemeSelectionHandler) private var selectTheme
+    let registry: GitOKUIThemeRegistry
+    let selectTheme: (String) -> Void
+
+    init(registry: GitOKUIThemeRegistry, selectTheme: @escaping (String) -> Void) {
+        self.registry = registry
+        self.selectTheme = selectTheme
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {

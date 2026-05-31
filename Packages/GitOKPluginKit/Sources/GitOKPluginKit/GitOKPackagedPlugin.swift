@@ -48,7 +48,7 @@ public protocol GitOKPackagedPlugin: Sendable {
     func toolBarTrailingView(context: GitOKPluginContext) -> AnyView?
 
     @MainActor
-    func rootView(_ content: AnyView) -> AnyView?
+    func rootView(_ content: AnyView, context: GitOKPluginContext) -> AnyView?
 
     @MainActor
     func statusBarLeadingView(context: GitOKPluginContext) -> AnyView?
@@ -309,7 +309,7 @@ public extension GitOKPackagedPlugin {
     }
 
     @MainActor
-    func rootView(_ content: AnyView) -> AnyView? {
+    func rootView(_ content: AnyView, context: GitOKPluginContext) -> AnyView? {
         nil
     }
 

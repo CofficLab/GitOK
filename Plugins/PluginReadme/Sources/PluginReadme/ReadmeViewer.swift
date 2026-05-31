@@ -1,15 +1,18 @@
-import GitOKPluginKit
 import MarkdownUI
 import ProjectSupportKit
 import SwiftUI
 
 struct ReadmeViewer: View {
-    @Environment(\.gitOKProjectURL) private var projectURL
+    let projectURL: URL
     @Environment(\.dismiss) private var dismiss
 
     @State private var readmeContent = ""
     @State private var isLoading = true
     @State private var hasError = false
+
+    public init(projectURL: URL) {
+        self.projectURL = projectURL
+    }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -18,9 +21,6 @@ struct ReadmeViewer: View {
         }
         .frame(minWidth: 600, minHeight: 400)
         .onAppear(perform: loadReadme)
-        .onChange(of: projectURL) {
-            loadReadme()
-        }
     }
 
     private var header: some View {
@@ -35,11 +35,9 @@ struct ReadmeViewer: View {
                         .font(.headline)
                         .fontWeight(.semibold)
 
-                    if let projectURL {
-                        Text(projectURL.lastPathComponent)
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    }
+                    Text(projectURL.lastPathComponent)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
                 }
             }
 
@@ -105,13 +103,6 @@ struct ReadmeViewer: View {
     }
 
     private func loadReadme() {
-        guard let projectURL else {
-            readmeContent = ""
-            isLoading = false
-            hasError = true
-            return
-        }
-
         isLoading = true
         hasError = false
 

@@ -19,7 +19,8 @@ public struct OpenFinderPlugin: GitOKPackagedPlugin {
     private init() {}
 
     public func toolBarTrailingView(context: GitOKPluginContext) -> AnyView? {
-        AnyView(OpenFinderButton())
+        guard let projectURL = context.projectURL else { return nil }
+        return AnyView(OpenFinderButton(projectURL: projectURL))
     }
 }
 

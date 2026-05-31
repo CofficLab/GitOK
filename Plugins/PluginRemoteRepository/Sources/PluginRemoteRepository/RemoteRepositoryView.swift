@@ -1,12 +1,11 @@
 import AppKit
 import GitCoreKit
-import GitOKPluginKit
 import ProjectRulesKit
 import SwiftUI
 
 public struct RemoteRepositoryView: View {
+    let projectURL: URL
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.gitOKProjectURL) private var projectURL
     @State private var remotes: [GitRemoteSummary] = []
     @State private var isLoading = false
     @State private var errorMessage: String?
@@ -18,7 +17,9 @@ public struct RemoteRepositoryView: View {
     @State private var postRemoteActionMessage: String?
     @State private var isPublishingCurrentBranch = false
 
-    public init() {}
+    public init(projectURL: URL) {
+        self.projectURL = projectURL
+    }
 
     public var body: some View {
         VStack(spacing: 0) {
@@ -209,8 +210,8 @@ public struct RemoteRepositoryView: View {
 }
 
 private extension RemoteRepositoryView {
-    var repository: GitRepositoryCLI? {
-        projectURL.map(GitRepositoryCLI.init(repositoryURL:))
+    var repository: GitRepositoryCLI {
+        GitRepositoryCLI(repositoryURL: projectURL)
     }
 
     var canPublishCurrentBranch: Bool {
@@ -222,11 +223,6 @@ private extension RemoteRepositoryView {
     }
 
     func loadRemotes() {
-        guard let repository else {
-            errorMessage = PluginRemoteRepositoryLocalization.string("No project selected")
-            return
-        }
-
         isLoading = true
         errorMessage = nil
 
@@ -241,11 +237,6 @@ private extension RemoteRepositoryView {
     }
 
     func addRemote(name: String, url: String) {
-        guard let repository else {
-            errorMessage = PluginRemoteRepositoryLocalization.string("No project selected")
-            return
-        }
-
         isLoading = true
         errorMessage = nil
 
@@ -261,11 +252,6 @@ private extension RemoteRepositoryView {
     }
 
     func updateRemote(originalName: String, newName: String, newURL: String) {
-        guard let repository else {
-            errorMessage = PluginRemoteRepositoryLocalization.string("No project selected")
-            return
-        }
-
         isLoading = true
         errorMessage = nil
 
@@ -281,11 +267,6 @@ private extension RemoteRepositoryView {
     }
 
     func deleteRemote(_ remote: GitRemoteSummary) {
-        guard let repository else {
-            errorMessage = PluginRemoteRepositoryLocalization.string("No project selected")
-            return
-        }
-
         isLoading = true
         errorMessage = nil
 
@@ -308,7 +289,7 @@ private extension RemoteRepositoryView {
     }
 
     func publishCurrentBranch() {
-        guard let projectURL, let remote = preferredPublishRemote else {
+        guard let remote = preferredPublishRemote else {
             errorMessage = PluginRemoteRepositoryLocalization.string("Please add a remote repository first")
             return
         }
@@ -344,12 +325,6 @@ private extension RemoteRepositoryView {
     }
 
     func loadRemoteTrackingState() {
-        guard let repository else {
-            aheadBehind = .noUpstream
-            currentUpstreamRemoteName = nil
-            return
-        }
-
         do {
             aheadBehind = try repository.aheadBehind()
             currentUpstreamRemoteName = try repository.currentUpstreamRemoteName()

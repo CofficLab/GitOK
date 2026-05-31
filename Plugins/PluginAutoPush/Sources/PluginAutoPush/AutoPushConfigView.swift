@@ -3,15 +3,22 @@ import SwiftUI
 
 struct AutoPushConfigView: View {
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.gitOKProjectPath) private var projectPath
-    @Environment(\.gitOKProjectTitle) private var projectTitle
-    @Environment(\.gitOKBranchName) private var branchName
-    @Environment(\.gitOKIsGitRepository) private var isGitRepository
+    let projectPath: String?
+    let projectTitle: String?
+    let branchName: String?
+    let isGitRepository: Bool
 
     @ObservedObject private var settingsStore = AutoPushSettingsStore.shared
     @State private var currentProjectAutoPushEnabled = false
     @State private var isLoading = false
     @State private var statusMessage: String?
+
+    public init(projectPath: String?, projectTitle: String?, branchName: String?, isGitRepository: Bool) {
+        self.projectPath = projectPath
+        self.projectTitle = projectTitle
+        self.branchName = branchName
+        self.isGitRepository = isGitRepository
+    }
 
     var body: some View {
         VStack(spacing: 0) {

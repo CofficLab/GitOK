@@ -19,7 +19,8 @@ public struct OpenRemotePlugin: GitOKPackagedPlugin {
     private init() {}
 
     public func toolBarTrailingView(context: GitOKPluginContext) -> AnyView? {
-        AnyView(OpenRemoteButton())
+        guard let projectURL = context.projectURL else { return nil }
+        return AnyView(OpenRemoteButton(projectURL: projectURL))
     }
 }
 

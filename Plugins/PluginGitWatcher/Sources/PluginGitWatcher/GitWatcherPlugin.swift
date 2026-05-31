@@ -19,8 +19,12 @@ public struct GitWatcherPlugin: GitOKPackagedPlugin {
     private init() {}
 
     @MainActor
-    public func rootView(_ content: AnyView) -> AnyView? {
-        AnyView(GitWatcherRootView(content: content))
+    public func rootView(_ content: AnyView, context: GitOKPluginContext) -> AnyView? {
+        AnyView(GitWatcherRootView(
+            content: content,
+            projectURL: context.projectURL,
+            gitDirectoryChangeHandler: context.onGitDirectoryChange
+        ))
     }
 }
 

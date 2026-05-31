@@ -19,7 +19,8 @@ public struct SubmodulePlugin: GitOKPackagedPlugin {
 
     @MainActor
     public func statusBarTrailingView(context: GitOKPluginContext) -> AnyView? {
-        AnyView(SubmoduleStatusTile())
+        guard let projectURL = context.projectURL else { return nil }
+        return AnyView(SubmoduleStatusTile(projectURL: projectURL))
     }
 }
 

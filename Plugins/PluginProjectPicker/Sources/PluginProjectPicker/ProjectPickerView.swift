@@ -3,12 +3,24 @@ import ProjectRulesKit
 import SwiftUI
 
 struct ProjectPickerView: View {
-    @Environment(\.gitOKProjects) private var projects
-    @Environment(\.gitOKSelectedProjectURL) private var selectedProjectURL
-    @Environment(\.gitOKSidebarVisible) private var isSidebarVisible
-    @Environment(\.gitOKProjectSelectionHandler) private var selectProject
+    let projects: [GitOKProjectSummary]
+    let selectedProjectURL: URL?
+    let isSidebarVisible: Bool
+    let selectProject: (URL) -> Void
 
     @State private var selection: URL?
+
+    init(
+        projects: [GitOKProjectSummary],
+        selectedProjectURL: URL?,
+        isSidebarVisible: Bool,
+        selectProject: @escaping (URL) -> Void
+    ) {
+        self.projects = projects
+        self.selectedProjectURL = selectedProjectURL
+        self.isSidebarVisible = isSidebarVisible
+        self.selectProject = selectProject
+    }
 
     var body: some View {
         Group {

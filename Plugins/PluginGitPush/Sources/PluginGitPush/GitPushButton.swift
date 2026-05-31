@@ -4,96 +4,100 @@ import GitOKPluginKit
 import SwiftUI
 
 public struct GitPushButton: View {
-    @Environment(\.gitOKProjectURL) private var projectURL
-    @Environment(\.gitOKIsGitRepository) private var isGitRepository
-    @Environment(\.gitOKRemoteTrackingStatus) private var remoteTrackingStatus
-    @Environment(\.gitOKRemoteTrackingUpdateHandler) private var updateRemoteTracking
+    let projectURL: URL
+    let isGitRepository: Bool
+    let trackingStatus: GitOKRemoteTrackingStatus
+    let updateRemoteTracking: GitOKRemoteTrackingUpdateHandler
     @State private var working = false
     @State private var showPushNeedsFetchAlert = false
 
-    nonisolated public init() {}
-
-    public var body: some View {
-        if let projectURL, isGitRepository {
-            HStack(spacing: 0) {
-                Button {
-                    perform(primaryAction, projectURL: projectURL)
-                } label: {
-                    HStack(spacing: 6) {
-                        primaryAction.icon
-                            .font(.system(size: 14, weight: .semibold))
-                            .frame(width: 16, height: 16)
-
-                        Text(primaryAction.title)
-                            .font(.caption)
-                            .lineLimit(1)
-
-                        if let badgeText {
-                            Text(badgeText)
-                                .font(.caption2.monospacedDigit())
-                                .foregroundStyle(.secondary)
-                        }
-                    }
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 28)
-                    .contentShape(Rectangle())
-                }
-                .buttonStyle(.plain)
-
-                Menu {
-                    Button {
-                        run(.fetch, projectURL: projectURL)
-                    } label: {
-                        Label(PluginGitPushLocalization.string("Fetch origin"), systemImage: "arrow.clockwise")
-                    }
-
-                    Button {
-                        run(.pull, projectURL: projectURL)
-                    } label: {
-                        Label(PluginGitPushLocalization.string("Pull origin"), systemImage: "arrow.down")
-                    }
-                    .disabled(remoteTrackingStatus?.hasUpstream != true)
-
-                    Button {
-                        run(.push, projectURL: projectURL)
-                    } label: {
-                        Label(pushTitle, systemImage: "arrow.up")
-                    }
-                } label: {
-                    Image(systemName: "chevron.down")
-                        .font(.caption2.weight(.semibold))
-                        .frame(width: 18, height: 28)
-                }
-                .menuStyle(.borderlessButton)
-                .menuIndicator(.hidden)
-                .fixedSize()
-            }
-            .padding(.leading, 10)
-            .padding(.trailing, 6)
-            .frame(width: 148, height: 36)
-            .background(.quaternary.opacity(0.7))
-            .clipShape(RoundedRectangle(cornerRadius: 7, style: .continuous))
-            .overlay {
-                RoundedRectangle(cornerRadius: 7, style: .continuous)
-                    .stroke(Color.primary.opacity(0.08), lineWidth: 1)
-            }
-            .contentShape(RoundedRectangle(cornerRadius: 7, style: .continuous))
-            .fixedSize(horizontal: true, vertical: false)
-            .disabled(working)
-            .help(primaryAction.help)
-            .alert(PluginGitPushLocalization.string("New commits on remote"), isPresented: $showPushNeedsFetchAlert) {
-                Button(PluginGitPushLocalization.string("Fetch")) {
-                    run(.fetch, projectURL: projectURL)
-                }
-                Button(PluginGitPushLocalization.string("Cancel"), role: .cancel) {}
-            } message: {
-                Text(PluginGitPushLocalization.string("Cannot push because the remote branch has commits you don't have locally. Please Fetch first, then Pull or Rebase before pushing again."))
-            }
-        }
+    public init(
+        projectURL: URL,
+        isGitRepository: Bool,
+        trackingStatus: GitOKRemoteTrackingStatus,
+        updateRemoteTracking: @escaping GitOKRemoteTrackingUpdateHandler
+    ) {
+        self.projectURL = projectURL
+        self.isGitRepository = isGitRepository
+        self.trackingStatus = trackingStatus
+        self.updateRemoteTracking = updateRemoteTracking
     }
 
-    private var trackingStatus: GitOKRemoteTrackingStatus {
-        remoteTrackingStatus ?? GitOKRemoteTrackingStatus(ahead: 0, behind: 0, hasUpstream: false)
+    public var body: some View {
+        HStack(spacing: 0) {
+            Button {
+                perform(primaryAction, projectURL: projectURL)
+            } label: {
+                HStack(spacing: 6) {
+                    primaryAction.icon
+                        .font(.system(size: 14, weight: .semibold))
+                        .frame(width: 16, height: 16)
+
+                    Text(primaryAction.title)
+                        .font(.caption)
+                        .lineLimit(1)
+
+                    if let badgeText {
+                        Text(badgeText)
+                            .font(.caption2.monospacedDigit())
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                .frame(maxWidth: .infinity)
+                .frame(height: 28)
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+
+            Menu {
+                Button {
+                    run(.fetch, projectURL: projectURL)
+                } label: {
+                    Label(PluginGitPushLocalization.string("Fetch origin"), systemImage: "arrow.clockwise")
+                }
+
+                Button {
+                    run(.pull, projectURL: projectURL)
+                } label: {
+                    Label(PluginGitPushLocalization.string("Pull origin"), systemImage: "arrow.down")
+                }
+                .disabled(trackingStatus.hasUpstream != true)
+
+                Button {
+                    run(.push, projectURL: projectURL)
+                } label: {
+                    Label(pushTitle, systemImage: "arrow.up")
+                }
+            } label: {
+                Image(systemName: "chevron.down")
+                    .font(.caption2.weight(.semibold))
+                    .frame(width: 18, height: 28)
+            }
+            .menuStyle(.borderlessButton)
+            .menuIndicator(.hidden)
+            .fixedSize()
+        }
+        .padding(.leading, 10)
+        .padding(.trailing, 6)
+        .frame(width: 148, height: 36)
+        .background(.quaternary.opacity(0.7))
+        .clipShape(RoundedRectangle(cornerRadius: 7, style: .continuous))
+        .overlay {
+            RoundedRectangle(cornerRadius: 7, style: .continuous)
+                .stroke(Color.primary.opacity(0.08), lineWidth: 1)
+        }
+        .contentShape(RoundedRectangle(cornerRadius: 7, style: .continuous))
+        .fixedSize(horizontal: true, vertical: false)
+        .disabled(working)
+        .help(primaryAction.help)
+        .alert(PluginGitPushLocalization.string("New commits on remote"), isPresented: $showPushNeedsFetchAlert) {
+            Button(PluginGitPushLocalization.string("Fetch")) {
+                run(.fetch, projectURL: projectURL)
+            }
+            Button(PluginGitPushLocalization.string("Cancel"), role: .cancel) {}
+        } message: {
+            Text(PluginGitPushLocalization.string("Cannot push because the remote branch has commits you don't have locally. Please Fetch first, then Pull or Rebase before pushing again."))
+        }
     }
 
     private var primaryAction: GitPushPrimaryAction {

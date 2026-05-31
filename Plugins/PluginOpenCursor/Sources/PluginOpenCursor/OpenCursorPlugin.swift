@@ -19,7 +19,8 @@ public struct OpenCursorPlugin: GitOKPackagedPlugin {
     private init() {}
 
     public func toolBarTrailingView(context: GitOKPluginContext) -> AnyView? {
-        AnyView(OpenCursorButton())
+        guard let projectURL = context.projectURL else { return nil }
+        return AnyView(OpenCursorButton(projectURL: projectURL))
     }
 }
 

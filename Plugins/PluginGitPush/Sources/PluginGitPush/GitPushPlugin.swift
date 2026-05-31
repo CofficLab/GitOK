@@ -18,7 +18,18 @@ public struct GitPushPlugin: GitOKPackagedPlugin {
     private init() {}
 
     public func toolBarTrailingView(context: GitOKPluginContext) -> AnyView? {
-        AnyView(GitPushButton())
+        guard let projectURL = context.projectURL else { return nil }
+
+        let trackingStatus = context.remoteTrackingStatus ?? GitOKRemoteTrackingStatus(
+            ahead: 0, behind: 0, hasUpstream: false
+        )
+
+        return AnyView(GitPushButton(
+            projectURL: projectURL,
+            isGitRepository: context.isGitRepository,
+            trackingStatus: trackingStatus,
+            updateRemoteTracking: context.onRemoteTrackingUpdate
+        ))
     }
 }
 

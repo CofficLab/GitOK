@@ -19,7 +19,8 @@ public struct OpenVSCodePlugin: GitOKPackagedPlugin {
     private init() {}
 
     public func toolBarTrailingView(context: GitOKPluginContext) -> AnyView? {
-        AnyView(OpenVSCodeButton())
+        guard let projectURL = context.projectURL else { return nil }
+        return AnyView(OpenVSCodeButton(projectURL: projectURL))
     }
 }
 

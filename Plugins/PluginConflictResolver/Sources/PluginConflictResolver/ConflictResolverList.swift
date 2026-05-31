@@ -1,11 +1,10 @@
 import AppKit
 import GitCoreKit
-import GitOKPluginKit
 import GitOKUI
 import SwiftUI
 
 public struct ConflictResolverList: View {
-    @Environment(\.gitOKProjectURL) private var projectURL
+    let projectURL: URL
     @State private var mergeFiles: [GitMergeFile] = []
     @State private var isLoading = true
     @State private var isMerging = false
@@ -17,7 +16,9 @@ public struct ConflictResolverList: View {
     @State private var isLoadingPreview = false
     @State private var previewErrorMessage: String?
 
-    public init() {}
+    public init(projectURL: URL) {
+        self.projectURL = projectURL
+    }
 
     public var body: some View {
         ScrollView {
@@ -28,11 +29,10 @@ public struct ConflictResolverList: View {
             .padding(DesignTokens.Spacing.md)
         }
         .onAppear(perform: loadConflictStatus)
-        .onChange(of: projectURL) { _, _ in loadConflictStatus() }
     }
 
     private var repository: GitRepositoryCLI? {
-        projectURL.map(GitRepositoryCLI.init(repositoryURL:))
+        GitRepositoryCLI(repositoryURL: projectURL)
     }
 
     private var resolutionState: ConflictResolutionState {
@@ -285,7 +285,7 @@ public struct ConflictResolverList: View {
 
 private extension ConflictResolverList {
     func continueMerge() {
-        guard let projectURL, resolutionState.canContinueMerge, !isPerformingAction else { return }
+        guard resolutionState.canContinueMerge, !isPerformingAction else { return }
         isPerformingAction = true
 
         Task.detached(priority: .userInitiated) {
@@ -306,7 +306,7 @@ private extension ConflictResolverList {
     }
 
     func abortMerge() {
-        guard let projectURL, !isPerformingAction else { return }
+        guard !isPerformingAction else { return }
         isPerformingAction = true
 
         Task.detached(priority: .userInitiated) {
@@ -327,7 +327,7 @@ private extension ConflictResolverList {
     }
 
     func stageFile(_ filePath: String) {
-        guard let projectURL, !isPerformingAction else { return }
+        guard !isPerformingAction else { return }
         isPerformingAction = true
         activeActionFile = filePath
 
@@ -356,7 +356,6 @@ private extension ConflictResolverList {
     }
 
     func loadConflictPreview(_ filePath: String) {
-        guard let projectURL else { return }
         isLoadingPreview = true
         previewErrorMessage = nil
 
@@ -384,8 +383,6 @@ private extension ConflictResolverList {
     }
 
     func openConflictVersion(_ version: GitMergeFileVersion, path: String) {
-        guard let projectURL else { return }
-
         Task.detached(priority: .userInitiated) {
             do {
                 let repository = GitRepositoryCLI(repositoryURL: projectURL)
@@ -404,7 +401,7 @@ private extension ConflictResolverList {
     }
 
     func checkoutMergeVersion(_ version: GitMergeFileVersion, path: String) {
-        guard let projectURL, !isPerformingAction else { return }
+        guard !isPerformingAction else { return }
         isPerformingAction = true
         activeActionFile = path
 
@@ -435,7 +432,6 @@ private extension ConflictResolverList {
     }
 
     func resolveFileURL(_ filePath: String) -> URL? {
-        guard let projectURL else { return nil }
         let repoURL = projectURL.standardizedFileURL
         let fileURL = URL(fileURLWithPath: filePath, relativeTo: repoURL).standardizedFileURL
         guard fileURL.path.hasPrefix(repoURL.path + "/") || fileURL.path == repoURL.path else {
@@ -458,14 +454,6 @@ private extension ConflictResolverList {
     }
 
     func loadConflictStatus() {
-        guard let projectURL else {
-            mergeFiles = []
-            isMerging = false
-            mergeBranchName = "unknown"
-            isLoading = false
-            return
-        }
-
         isLoading = true
         Task.detached(priority: .userInitiated) {
             do {

@@ -1,11 +1,14 @@
-import GitOKPluginKit
 import SwiftUI
 
 struct GitIgnoreStatusIcon: View {
-    @Environment(\.gitOKProjectURL) private var projectURL
+    let projectURL: URL
 
     @State private var isSheetPresented = false
     @State private var hasGitIgnore = false
+
+    public init(projectURL: URL) {
+        self.projectURL = projectURL
+    }
 
     var body: some View {
         Button {
@@ -21,23 +24,14 @@ struct GitIgnoreStatusIcon: View {
         }
         .buttonStyle(.plain)
         .help(hasGitIgnore ? PluginGitIgnoreLocalization.string("View .gitignore file") : PluginGitIgnoreLocalization.string("No .gitignore file found"))
-        .disabled(projectURL == nil)
         .sheet(isPresented: $isSheetPresented) {
-            GitIgnoreViewer()
+            GitIgnoreViewer(projectURL: projectURL)
                 .frame(minWidth: 800, minHeight: 600)
         }
         .onAppear(perform: checkGitIgnoreExistence)
-        .onChange(of: projectURL) {
-            checkGitIgnoreExistence()
-        }
     }
 
     private func checkGitIgnoreExistence() {
-        guard let projectURL else {
-            hasGitIgnore = false
-            return
-        }
-
         hasGitIgnore = GitIgnoreDocument.exists(in: projectURL)
     }
 }

@@ -1,8 +1,7 @@
-import GitOKPluginKit
 import SwiftUI
 
 struct GitIgnoreViewer: View {
-    @Environment(\.gitOKProjectURL) private var projectURL
+    let projectURL: URL
     @Environment(\.dismiss) private var dismiss
 
     @State private var content = ""
@@ -11,6 +10,10 @@ struct GitIgnoreViewer: View {
     @State private var isApplyingTemplate = false
     @State private var isOrganizing = false
     @State private var statusMessage: String?
+
+    public init(projectURL: URL) {
+        self.projectURL = projectURL
+    }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -36,9 +39,6 @@ struct GitIgnoreViewer: View {
         }
         .frame(minWidth: 600, minHeight: 400)
         .onAppear(perform: loadGitIgnore)
-        .onChange(of: projectURL) {
-            loadGitIgnore()
-        }
     }
 
     private var header: some View {
@@ -53,11 +53,9 @@ struct GitIgnoreViewer: View {
                         .font(.headline)
                         .fontWeight(.semibold)
 
-                    if let projectURL {
-                        Text(projectURL.lastPathComponent)
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    }
+                    Text(projectURL.lastPathComponent)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
                 }
             }
 
@@ -103,13 +101,13 @@ struct GitIgnoreViewer: View {
             .menuStyle(.borderedButton)
             .controlSize(.small)
             .fixedSize()
-            .disabled(isApplyingTemplate || isOrganizing || isLoading || projectURL == nil)
+            .disabled(isApplyingTemplate || isOrganizing || isLoading)
 
             Button(PluginGitIgnoreLocalization.string("Organize Groups")) {
                 organizeGitIgnore()
             }
             .controlSize(.small)
-            .disabled(isApplyingTemplate || isOrganizing || isLoading || projectURL == nil)
+            .disabled(isApplyingTemplate || isOrganizing || isLoading)
         }
     }
 
@@ -147,13 +145,6 @@ struct GitIgnoreViewer: View {
     }
 
     private func loadGitIgnore() {
-        guard let projectURL else {
-            content = ""
-            isLoading = false
-            hasError = true
-            return
-        }
-
         isLoading = true
         hasError = false
 
@@ -176,8 +167,6 @@ struct GitIgnoreViewer: View {
     }
 
     private func applyTemplate(_ template: GitIgnoreTemplate) {
-        guard let projectURL else { return }
-
         isApplyingTemplate = true
         statusMessage = nil
 
@@ -205,8 +194,6 @@ struct GitIgnoreViewer: View {
     }
 
     private func organizeGitIgnore() {
-        guard let projectURL else { return }
-
         isOrganizing = true
         statusMessage = nil
 

@@ -18,7 +18,8 @@ public struct ConflictResolverPlugin: GitOKPackagedPlugin {
     private init() {}
 
     public func statusBarTrailingView(context: GitOKPluginContext) -> AnyView? {
-        AnyView(ConflictStatusTile())
+        guard let projectURL = context.projectURL else { return nil }
+        return AnyView(ConflictStatusTile(projectURL: projectURL, isGitRepository: context.isGitRepository))
     }
 }
 

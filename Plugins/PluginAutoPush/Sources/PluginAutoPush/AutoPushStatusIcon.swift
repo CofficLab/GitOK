@@ -1,12 +1,11 @@
 import GitCoreKit
-import GitOKPluginKit
 import SwiftUI
 
 public struct AutoPushStatusIcon: View {
-    @Environment(\.gitOKProjectPath) private var projectPath
-    @Environment(\.gitOKProjectTitle) private var projectTitle
-    @Environment(\.gitOKBranchName) private var branchName
-    @Environment(\.gitOKIsGitRepository) private var isGitRepository
+    let projectPath: String?
+    let projectTitle: String?
+    let branchName: String?
+    let isGitRepository: Bool
 
     @ObservedObject private var settingsStore = AutoPushSettingsStore.shared
     @ObservedObject private var service = AutoPushService.shared
@@ -14,7 +13,12 @@ public struct AutoPushStatusIcon: View {
     @State private var isSheetPresented = false
     @State private var isAutoPushEnabled = false
 
-    public init() {}
+    public init(projectPath: String?, projectTitle: String?, branchName: String?, isGitRepository: Bool) {
+        self.projectPath = projectPath
+        self.projectTitle = projectTitle
+        self.branchName = branchName
+        self.isGitRepository = isGitRepository
+    }
 
     public var body: some View {
         Button {
@@ -29,7 +33,7 @@ public struct AutoPushStatusIcon: View {
         .buttonStyle(.plain)
         .help(isAutoPushEnabled ? PluginAutoPushLocalization.string("Auto-push is enabled - Click to manage") : PluginAutoPushLocalization.string("Auto-push is disabled - Click to configure"))
         .sheet(isPresented: $isSheetPresented) {
-            AutoPushConfigView()
+            AutoPushConfigView(projectPath: projectPath, projectTitle: projectTitle, branchName: branchName, isGitRepository: isGitRepository)
                 .frame(minWidth: 500, minHeight: 400)
         }
         .onAppear {

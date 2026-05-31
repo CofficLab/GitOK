@@ -1,5 +1,6 @@
 import Foundation
 import GitOKPluginKit
+import GitOKUI
 import SwiftUI
 
 public struct ThemeStatusBarPlugin: GitOKPackagedPlugin {
@@ -20,7 +21,10 @@ public struct ThemeStatusBarPlugin: GitOKPackagedPlugin {
 
     @MainActor
     public func statusBarTrailingView(context: GitOKPluginContext) -> AnyView? {
-        AnyView(ThemeStatusBarView())
+        AnyView(ThemeStatusBarView(
+            registry: GitOKUIThemeRegistry.shared,
+            selectTheme: context.onThemeSelection
+        ))
     }
 }
 

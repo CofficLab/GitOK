@@ -1,13 +1,14 @@
 import AppKit
-import GitOKPluginKit
 import SwiftUI
 
 public struct OpenRemoteButton: View {
-    @Environment(\.gitOKProjectURL) private var projectURL
+    let projectURL: URL
     @State private var webURL: URL?
     @State private var loadTask: Task<Void, Never>?
 
-    nonisolated public init() {}
+    public init(projectURL: URL) {
+        self.projectURL = projectURL
+    }
 
     public var body: some View {
         Group {
@@ -38,11 +39,6 @@ public struct OpenRemoteButton: View {
     @MainActor
     private func reloadWebURL() async {
         loadTask?.cancel()
-
-        guard let projectURL else {
-            webURL = nil
-            return
-        }
 
         let task = Task {
             await OpenRemoteURLProvider.webURL(for: projectURL)

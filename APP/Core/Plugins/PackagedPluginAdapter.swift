@@ -126,20 +126,18 @@ private struct PackagedPluginRootHost<Plugin: GitOKPackagedPlugin, Content: View
 
     var body: some View {
         let base = AnyView(content)
-        let wrapped = plugin.rootView(base) ?? base
-
-        return wrapped
-            .environment(\.gitOKProjectURL, projectVM.project?.url)
-            .environment(\.gitOKCleanStatusUpdateHandler) { isClean in
+        let context = GitOKPluginContext(
+            projectURL: projectVM.project?.url,
+            onCleanStatusUpdate: { isClean in
                 projectVM.updateIsClean(isClean)
-            }
-            .environment(\.gitOKGitDirectoryChangeHandler) { change in
+            },
+            onGitDirectoryChange: { change in
                 postGitDirectoryChange(change)
-            }
-            .environment(\.gitOKUnpushedCommitsUpdateHandler) { count, hashes in
+            },
+            onUnpushedCommitsUpdate: { count, hashes in
                 projectVM.updateUnpushedCommits(count, hashes: hashes)
-            }
-            .environment(\.gitOKRemoteTrackingUpdateHandler) { status, fetchedAt in
+            },
+            onRemoteTrackingUpdate: { status, fetchedAt in
                 if let status {
                     projectVM.updateAheadBehind(
                         GitCoreKit.GitAheadBehind(
@@ -156,6 +154,10 @@ private struct PackagedPluginRootHost<Plugin: GitOKPackagedPlugin, Content: View
                     projectVM.updateLastFetchedAt(fetchedAt)
                 }
             }
+        )
+        let wrapped = plugin.rootView(base, context: context) ?? base
+
+        return wrapped
     }
 
     private func postGitDirectoryChange(_ change: GitOKGitDirectoryChange) {

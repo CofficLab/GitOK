@@ -3,18 +3,14 @@ import SwiftUI
 
 struct GitWatcherRootView: View {
     let content: AnyView
-
-    @Environment(\.gitOKProjectURL) private var projectURL
-    @Environment(\.gitOKGitDirectoryChangeHandler) private var gitDirectoryChangeHandler
+    let projectURL: URL?
+    let gitDirectoryChangeHandler: GitOKGitDirectoryChangeHandler
 
     @StateObject private var coordinator = GitWatcherCoordinator()
 
     var body: some View {
         content
             .onAppear {
-                coordinator.update(projectURL: projectURL, onChange: gitDirectoryChangeHandler)
-            }
-            .onChange(of: projectURL) { _, projectURL in
                 coordinator.update(projectURL: projectURL, onChange: gitDirectoryChangeHandler)
             }
             .onDisappear {

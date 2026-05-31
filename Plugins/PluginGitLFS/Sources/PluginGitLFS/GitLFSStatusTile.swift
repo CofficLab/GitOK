@@ -1,11 +1,9 @@
 import AppKit
 import GitCoreKit
-import GitOKPluginKit
 import SwiftUI
 
 struct GitLFSStatusTile: View {
-    @Environment(\.gitOKProjectURL) private var projectURL
-
+    let projectURL: URL
     @State private var status = GitRepositoryCLI.GitLFSStatus(isAvailable: false, version: nil)
     @State private var largeFiles: [GitRepositoryCLI.GitLFSLargeFileCandidate] = []
     @State private var mismatches: [GitRepositoryCLI.GitLFSAttributeMismatch] = []
@@ -14,6 +12,10 @@ struct GitLFSStatusTile: View {
     @State private var message: PluginGitLFSMessage?
 
     private let largeFileThresholdBytes: Int64 = 50 * 1024 * 1024
+
+    public init(projectURL: URL) {
+        self.projectURL = projectURL
+    }
 
     var body: some View {
         Button {
@@ -36,9 +38,6 @@ struct GitLFSStatusTile: View {
                 .frame(width: 440, height: 420)
         }
         .onAppear(perform: refresh)
-        .onChange(of: projectURL) {
-            refresh()
-        }
         .onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)) { _ in
             refresh()
         }
@@ -69,9 +68,6 @@ struct GitLFSStatusTile: View {
     }
 
     private var helpText: String {
-        guard projectURL != nil else {
-            return PluginGitLFSLocalization.string("No project selected")
-        }
         if issueCount > 0 {
             return String(
                 format: PluginGitLFSLocalization.string("Found %d Git LFS suggestions or configuration issues"),
@@ -114,7 +110,6 @@ struct GitLFSStatusTile: View {
             Button(PluginGitLFSLocalization.string("Initialize")) {
                 initializeLFS()
             }
-            .disabled(projectURL == nil)
         }
     }
 
@@ -225,14 +220,6 @@ struct GitLFSStatusTile: View {
     }
 
     private func refresh() {
-        guard let projectURL else {
-            status = GitRepositoryCLI.GitLFSStatus(isAvailable: false, version: nil)
-            largeFiles = []
-            mismatches = []
-            isLoading = false
-            return
-        }
-
         isLoading = true
 
         Task.detached(priority: .utility) {
@@ -261,8 +248,6 @@ struct GitLFSStatusTile: View {
     }
 
     private func initializeLFS() {
-        guard let projectURL else { return }
-
         Task.detached(priority: .userInitiated) {
             do {
                 try GitRepositoryCLI(repositoryURL: projectURL).initializeLFS()

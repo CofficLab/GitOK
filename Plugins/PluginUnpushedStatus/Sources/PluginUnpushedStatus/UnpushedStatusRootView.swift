@@ -4,18 +4,13 @@ import SwiftUI
 
 struct UnpushedStatusRootView: View {
     let content: AnyView
-
-    @Environment(\.gitOKProjectURL) private var projectURL
-    @Environment(\.gitOKUnpushedCommitsUpdateHandler) private var updateUnpushedCommits
-    @Environment(\.gitOKRemoteTrackingUpdateHandler) private var updateRemoteTracking
+    let projectURL: URL?
+    let updateUnpushedCommits: GitOKUnpushedCommitsUpdateHandler
+    let updateRemoteTracking: GitOKRemoteTrackingUpdateHandler
 
     var body: some View {
         content
             .onAppear {
-                refreshUnpushedCount()
-                refreshAheadBehind()
-            }
-            .onChange(of: projectURL) { _, _ in
                 refreshUnpushedCount()
                 refreshAheadBehind()
             }

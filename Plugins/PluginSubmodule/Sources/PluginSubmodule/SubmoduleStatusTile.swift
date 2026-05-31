@@ -1,9 +1,8 @@
 import GitCoreKit
-import GitOKPluginKit
 import SwiftUI
 
 public struct SubmoduleStatusTile: View {
-    @Environment(\.gitOKProjectURL) private var projectURL
+    let projectURL: URL
 
     @State private var submodules: [GitRepositoryCLI.GitSubmodule] = []
     @State private var isLoading = false
@@ -14,7 +13,9 @@ public struct SubmoduleStatusTile: View {
     @State private var message: String?
     @State private var errorMessage: String?
 
-    public init() {}
+    public init(projectURL: URL) {
+        self.projectURL = projectURL
+    }
 
     public var body: some View {
         Button {
@@ -36,7 +37,6 @@ public struct SubmoduleStatusTile: View {
                 .frame(width: 500, height: 500)
         }
         .onAppear(perform: refresh)
-        .onChange(of: projectURL) { _, _ in refresh() }
         .onReceive(NotificationCenter.default.publisher(for: .pluginSubmoduleAppDidBecomeActive)) { _ in
             refresh()
         }
@@ -78,7 +78,6 @@ public struct SubmoduleStatusTile: View {
     }
 
     private var helpText: String {
-        guard projectURL != nil else { return PluginSubmoduleLocalization.string("No project selected") }
         if submodules.isEmpty {
             return PluginSubmoduleLocalization.string("No submodules in this repository")
         }
@@ -142,12 +141,12 @@ public struct SubmoduleStatusTile: View {
             Button(PluginSubmoduleLocalization.string("Initialize All")) {
                 initializeSubmodules()
             }
-            .disabled(projectURL == nil || submodules.isEmpty)
+            .disabled(submodules.isEmpty)
 
             Button(PluginSubmoduleLocalization.string("Update All")) {
                 updateSubmodules()
             }
-            .disabled(projectURL == nil || submodules.isEmpty)
+            .disabled(submodules.isEmpty)
         }
     }
 
@@ -190,7 +189,6 @@ public struct SubmoduleStatusTile: View {
                 Button(PluginSubmoduleLocalization.string("Diff")) {
                     loadDiff(for: submodule.path)
                 }
-                .disabled(projectURL == nil)
 
                 Button(submodule.status == .uninitialized ? PluginSubmoduleLocalization.string("Initialize") : PluginSubmoduleLocalization.string("Update")) {
                     if submodule.status == .uninitialized {
@@ -237,12 +235,6 @@ public struct SubmoduleStatusTile: View {
     }
 
     private func refresh() {
-        guard let projectURL else {
-            submodules = []
-            isLoading = false
-            return
-        }
-
         isLoading = true
         Task.detached(priority: .utility) {
             do {
@@ -263,8 +255,6 @@ public struct SubmoduleStatusTile: View {
     }
 
     private func initializeSubmodules(paths: [String] = []) {
-        guard let projectURL else { return }
-
         Task.detached(priority: .userInitiated) {
             do {
                 try GitRepositoryCLI(repositoryURL: projectURL).initializeSubmodules(paths: paths)
@@ -282,8 +272,6 @@ public struct SubmoduleStatusTile: View {
     }
 
     private func updateSubmodules(paths: [String] = []) {
-        guard let projectURL else { return }
-
         Task.detached(priority: .userInitiated) {
             do {
                 try GitRepositoryCLI(repositoryURL: projectURL).updateSubmodules(paths: paths)
@@ -301,8 +289,6 @@ public struct SubmoduleStatusTile: View {
     }
 
     private func loadDiff(for path: String) {
-        guard let projectURL else { return }
-
         diffPath = path
         diffText = nil
         isDiffLoading = true

@@ -1,49 +1,48 @@
 import GitCoreKit
-import GitOKPluginKit
 import SwiftUI
 
 public struct ConflictStatusTile: View {
-    @Environment(\.gitOKProjectURL) private var projectURL
-    @Environment(\.gitOKIsGitRepository) private var isGitRepository
+    let projectURL: URL
+    let isGitRepository: Bool
     @State private var conflictCount = 0
     @State private var isLoading = false
     @State private var isMerging = false
     @State private var isPresented = false
 
-    public init() {}
+    public init(projectURL: URL, isGitRepository: Bool) {
+        self.projectURL = projectURL
+        self.isGitRepository = isGitRepository
+    }
 
     public var body: some View {
-        if projectURL != nil, isGitRepository {
-            Button {
-                isPresented.toggle()
-            } label: {
-                HStack(spacing: 4) {
-                    Image(systemName: isMerging ? "exclamationmark.triangle.fill" : "checkmark.circle")
-                        .font(.system(size: 12, weight: .semibold))
-                        .foregroundStyle(isMerging ? .red : .secondary)
+        Button {
+            isPresented.toggle()
+        } label: {
+            HStack(spacing: 4) {
+                Image(systemName: isMerging ? "exclamationmark.triangle.fill" : "checkmark.circle")
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundStyle(isMerging ? .red : .secondary)
 
-                    if isLoading {
-                        ProgressView()
-                            .controlSize(.small)
-                    } else {
-                        Text(isMerging ? PluginConflictResolverLocalization.string("Conflicts \(conflictCount)") : PluginConflictResolverLocalization.string("Merge OK"))
-                            .font(.footnote.weight(.medium))
-                            .foregroundStyle(isMerging ? .red : .secondary)
-                            .monospacedDigit()
-                    }
+                if isLoading {
+                    ProgressView()
+                        .controlSize(.small)
+                } else {
+                    Text(isMerging ? PluginConflictResolverLocalization.string("Conflicts \(conflictCount)") : PluginConflictResolverLocalization.string("Merge OK"))
+                        .font(.footnote.weight(.medium))
+                        .foregroundStyle(isMerging ? .red : .secondary)
+                        .monospacedDigit()
                 }
-                .frame(height: 22)
-                .contentShape(Rectangle())
             }
-            .buttonStyle(.plain)
-            .help(helpText)
-            .popover(isPresented: $isPresented) {
-                ConflictResolverList()
-                    .frame(width: 720, height: 640)
-            }
-            .onAppear(perform: loadConflictStatus)
-            .onChange(of: projectURL) { _, _ in loadConflictStatus() }
+            .frame(height: 22)
+            .contentShape(Rectangle())
         }
+        .buttonStyle(.plain)
+        .help(helpText)
+        .popover(isPresented: $isPresented) {
+            ConflictResolverList(projectURL: projectURL)
+                .frame(width: 720, height: 640)
+        }
+        .onAppear(perform: loadConflictStatus)
     }
 
     private var helpText: String {
@@ -57,13 +56,6 @@ public struct ConflictStatusTile: View {
     }
 
     private func loadConflictStatus() {
-        guard let projectURL else {
-            conflictCount = 0
-            isMerging = false
-            isLoading = false
-            return
-        }
-
         isLoading = true
         Task.detached(priority: .userInitiated) {
             do {

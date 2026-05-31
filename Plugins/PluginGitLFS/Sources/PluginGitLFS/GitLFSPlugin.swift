@@ -20,7 +20,8 @@ public struct GitLFSPlugin: GitOKPackagedPlugin {
 
     @MainActor
     public func statusBarTrailingView(context: GitOKPluginContext) -> AnyView? {
-        AnyView(GitLFSStatusTile())
+        guard let projectURL = context.projectURL else { return nil }
+        return AnyView(GitLFSStatusTile(projectURL: projectURL))
     }
 }
 

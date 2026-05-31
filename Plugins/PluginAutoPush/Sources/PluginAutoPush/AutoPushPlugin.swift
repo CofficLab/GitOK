@@ -19,7 +19,12 @@ public struct AutoPushPlugin: GitOKPackagedPlugin {
 
     @MainActor
     public func statusBarTrailingView(context: GitOKPluginContext) -> AnyView? {
-        AnyView(AutoPushStatusIcon())
+        AnyView(AutoPushStatusIcon(
+            projectPath: context.projectPath,
+            projectTitle: context.projectTitle,
+            branchName: context.branchName,
+            isGitRepository: context.isGitRepository
+        ))
     }
 }
 

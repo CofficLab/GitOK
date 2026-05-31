@@ -19,8 +19,13 @@ public struct UnpushedStatusPlugin: GitOKPackagedPlugin {
     private init() {}
 
     @MainActor
-    public func rootView(_ content: AnyView) -> AnyView? {
-        AnyView(UnpushedStatusRootView(content: content))
+    public func rootView(_ content: AnyView, context: GitOKPluginContext) -> AnyView? {
+        AnyView(UnpushedStatusRootView(
+            content: content,
+            projectURL: context.projectURL,
+            updateUnpushedCommits: context.onUnpushedCommitsUpdate,
+            updateRemoteTracking: context.onRemoteTrackingUpdate
+        ))
     }
 }
 

@@ -20,7 +20,8 @@ public struct ReadmePlugin: GitOKPackagedPlugin {
 
     @MainActor
     public func statusBarTrailingView(context: GitOKPluginContext) -> AnyView? {
-        AnyView(ReadmeStatusIcon())
+        guard let projectURL = context.projectURL else { return nil }
+        return AnyView(ReadmeStatusIcon(projectURL: projectURL))
     }
 }
 

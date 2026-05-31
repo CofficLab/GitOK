@@ -1,17 +1,19 @@
 import AppKit
 import GitCoreKit
-import GitOKPluginKit
 import SwiftUI
 
 public struct SmartMergeStatusTile: View {
-    @Environment(\.gitOKProjectURL) private var projectURL
-    @Environment(\.gitOKIsGitRepository) private var isGitRepository
+    let projectURL: URL
+    let isGitRepository: Bool
     @State private var isPresented = false
 
-    public init() {}
+    public init(projectURL: URL, isGitRepository: Bool) {
+        self.projectURL = projectURL
+        self.isGitRepository = isGitRepository
+    }
 
     public var body: some View {
-        if projectURL != nil, isGitRepository {
+        if isGitRepository {
             Button {
                 isPresented.toggle()
             } label: {
@@ -23,7 +25,7 @@ public struct SmartMergeStatusTile: View {
             .buttonStyle(.plain)
             .help(PluginSmartMergeLocalization.string("Merge branches"))
             .popover(isPresented: $isPresented) {
-                SmartMergeForm()
+                SmartMergeForm(projectURL: projectURL)
                     .padding()
                     .frame(width: 240, height: 250)
             }
@@ -32,13 +34,15 @@ public struct SmartMergeStatusTile: View {
 }
 
 public struct SmartMergeForm: View {
-    @Environment(\.gitOKProjectURL) private var projectURL
+    let projectURL: URL
     @State private var branches: [GitBranchSummary] = []
     @State private var sourceBranch: GitBranchSummary?
     @State private var targetBranch: GitBranchSummary?
     @State private var isWorking = false
 
-    public init() {}
+    public init(projectURL: URL) {
+        self.projectURL = projectURL
+    }
 
     public var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -69,8 +73,6 @@ public struct SmartMergeForm: View {
     }
 
     private func loadBranches() {
-        guard let projectURL else { return }
-
         do {
             let loadedBranches = try GitRepositoryCLI(repositoryURL: projectURL)
                 .branches()
@@ -85,7 +87,7 @@ public struct SmartMergeForm: View {
     }
 
     private func merge() {
-        guard let projectURL, let sourceBranch, let targetBranch else { return }
+        guard let sourceBranch, let targetBranch else { return }
         isWorking = true
 
         Task.detached {

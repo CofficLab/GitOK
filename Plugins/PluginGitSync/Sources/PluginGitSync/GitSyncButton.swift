@@ -1,28 +1,27 @@
 import AppKit
 import GitCoreKit
-import GitOKPluginKit
 import SwiftUI
 
 public struct GitSyncButton: View {
-    @Environment(\.gitOKProjectURL) private var projectURL
+    let projectURL: URL
     @State private var isWorking = false
 
-    nonisolated public init() {}
+    public init(projectURL: URL) {
+        self.projectURL = projectURL
+    }
 
     public var body: some View {
-        if let projectURL {
-            Button {
-                sync(projectURL: projectURL)
-            } label: {
-                Image(systemName: "arrow.triangle.2.circlepath")
-                    .font(.system(size: 14, weight: .semibold))
-                    .frame(width: 24, height: 24)
-                    .contentShape(Rectangle())
-            }
-            .buttonStyle(.plain)
-            .disabled(isWorking)
-            .help(PluginGitSyncLocalization.string("Sync with remote repository"))
+        Button {
+            sync(projectURL: projectURL)
+        } label: {
+            Image(systemName: "arrow.triangle.2.circlepath")
+                .font(.system(size: 14, weight: .semibold))
+                .frame(width: 24, height: 24)
+                .contentShape(Rectangle())
         }
+        .buttonStyle(.plain)
+        .disabled(isWorking)
+        .help(PluginGitSyncLocalization.string("Sync with remote repository"))
     }
 
     private func sync(projectURL: URL) {

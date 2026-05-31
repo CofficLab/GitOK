@@ -1,40 +1,40 @@
 import AppKit
-import GitOKPluginKit
 import SwiftUI
 
 public struct FileInfoTile: View {
-    @Environment(\.gitOKSelectedFilePath) private var selectedFilePath
-    @Environment(\.gitOKProjectPath) private var projectPath
+    let selectedFilePath: String
+    let projectPath: String?
 
     @State private var isPopoverPresented = false
 
-    public init() {}
+    public init(selectedFilePath: String, projectPath: String?) {
+        self.selectedFilePath = selectedFilePath
+        self.projectPath = projectPath
+    }
 
     public var body: some View {
-        if let selectedFilePath, selectedFilePath.isEmpty == false {
-            Button {
-                isPopoverPresented.toggle()
-            } label: {
-                HStack(spacing: 6) {
-                    Image(systemName: "doc.text")
-                        .font(.system(size: 11, weight: .semibold))
-                    pathComponentsView(for: selectedFilePath)
-                }
-                .padding(.horizontal, 8)
-                .frame(height: 24)
-                .contentShape(Rectangle())
+        Button {
+            isPopoverPresented.toggle()
+        } label: {
+            HStack(spacing: 6) {
+                Image(systemName: "doc.text")
+                    .font(.system(size: 11, weight: .semibold))
+                pathComponentsView()
             }
-            .buttonStyle(.plain)
-            .help(selectedFilePath)
-            .popover(isPresented: $isPopoverPresented) {
-                popoverContent
-            }
+            .padding(.horizontal, 8)
+            .frame(height: 24)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .help(selectedFilePath)
+        .popover(isPresented: $isPopoverPresented) {
+            popoverContent
         }
     }
 
-    private func pathComponentsView(for filePath: String) -> some View {
+    private func pathComponentsView() -> some View {
         HStack(spacing: 4) {
-            let components = FileInfoPathPresentation.displayComponents(for: filePath)
+            let components = FileInfoPathPresentation.displayComponents(for: selectedFilePath)
             ForEach(Array(components.enumerated()), id: \.offset) { index, component in
                 Text(component)
                     .font(.footnote.weight(index == components.count - 1 ? .semibold : .regular))
