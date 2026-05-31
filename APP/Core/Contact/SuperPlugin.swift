@@ -70,14 +70,18 @@ protocol SuperPlugin {
     /// - Parameters:
     ///   - tab: 标签页的名称
     ///   - project: 当前的项目
+    ///   - context: 插件上下文，包含当前项目、分支等运行时状态
     /// - Returns: 包装在 AnyView 中的列表视图
-    func addListView(tab: String, project: Project?) -> AnyView?
+    @MainActor
+    func addListView(tab: String, project: Project?, context: GitOKPluginContext) -> AnyView?
 
     /// 返回插件的详情视图
-    /// - Parameter tab: 标签页的名称
+    /// - Parameters:
+    ///   - tab: 标签页的名称
+    ///   - context: 插件上下文，包含当前项目、分支等运行时状态
     /// - Returns: 包装在 AnyView 中的详情视图
     @MainActor
-    func addDetailView(for tab: String) -> AnyView?
+    func addDetailView(for tab: String, context: GitOKPluginContext) -> AnyView?
 
     /// 返回插件在工具栏前部区域的视图
     /// - Parameter context: 插件上下文，包含当前项目、分支等运行时状态
@@ -232,12 +236,13 @@ extension SuperPlugin {
 
     /// 默认的详情视图实现，返回空视图
     @MainActor
-    func addDetailView(for tab: String) -> AnyView? {
+    func addDetailView(for tab: String, context: GitOKPluginContext) -> AnyView? {
         nil
     }
 
     /// 默认的列表视图实现，返回空
-    func addListView(tab: String, project: Project?) -> AnyView? {
+    @MainActor
+    func addListView(tab: String, project: Project?, context: GitOKPluginContext) -> AnyView? {
         nil
     }
 

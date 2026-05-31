@@ -5,8 +5,8 @@ import SwiftUI
 
 final class PackagedPluginAdapter<Plugin: GitOKPackagedPlugin>: SuperPlugin {
     private let plugin: Plugin
-    private let listViewProvider: ((String, Project?) -> AnyView?)?
-    private let detailViewProvider: (@MainActor (String) -> AnyView?)?
+    private let listViewProvider: ((String, Project?, GitOKPluginContext) -> AnyView?)?
+    private let detailViewProvider: (@MainActor (String, GitOKPluginContext) -> AnyView?)?
     private let toolBarLeadingViewProvider: (() -> AnyView?)?
     private let toolBarTrailingViewProvider: (() -> AnyView?)?
     private let statusBarLeadingViewProvider: (() -> AnyView?)?
@@ -14,8 +14,8 @@ final class PackagedPluginAdapter<Plugin: GitOKPackagedPlugin>: SuperPlugin {
 
     init(
         _ plugin: Plugin = Plugin.shared,
-        listViewProvider: ((String, Project?) -> AnyView?)? = nil,
-        detailViewProvider: (@MainActor (String) -> AnyView?)? = nil,
+        listViewProvider: ((String, Project?, GitOKPluginContext) -> AnyView?)? = nil,
+        detailViewProvider: (@MainActor (String, GitOKPluginContext) -> AnyView?)? = nil,
         toolBarLeadingViewProvider: (() -> AnyView?)? = nil,
         toolBarTrailingViewProvider: (() -> AnyView?)? = nil,
         statusBarLeadingViewProvider: (() -> AnyView?)? = nil,
@@ -70,13 +70,14 @@ final class PackagedPluginAdapter<Plugin: GitOKPackagedPlugin>: SuperPlugin {
         plugin.tabItem()
     }
 
-    func addListView(tab: String, project: Project?) -> AnyView? {
-        listViewProvider?(tab, project)
+    @MainActor
+    func addListView(tab: String, project: Project?, context: GitOKPluginContext) -> AnyView? {
+        listViewProvider?(tab, project, context)
     }
 
     @MainActor
-    func addDetailView(for tab: String) -> AnyView? {
-        detailViewProvider?(tab)
+    func addDetailView(for tab: String, context: GitOKPluginContext) -> AnyView? {
+        detailViewProvider?(tab, context)
     }
 
     @MainActor
@@ -114,7 +115,7 @@ final class PackagedPluginAdapter<Plugin: GitOKPackagedPlugin>: SuperPlugin {
     }
 
     func viewWithProjectURL(_ view: AnyView, projectURL: URL?) -> AnyView {
-        AnyView(view.environment(\.gitOKProjectURL, projectURL))
+        view
     }
 }
 

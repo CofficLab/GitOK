@@ -229,16 +229,7 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
         return plugins.compactMap { plugin in
             guard isPluginEnabled(plugin) else { return nil }
             guard let view = plugin.addToolBarLeadingView(context: context) else { return nil }
-            return (
-                plugin,
-                AnyView(
-                    view
-                        .environment(\.gitOKProjects, projects)
-                        .environment(\.gitOKSelectedProjectURL, selectedProjectURL)
-                        .environment(\.gitOKSidebarVisible, isSidebarVisible)
-                        .environment(\.gitOKProjectSelectionHandler, onSelectProject)
-                )
-            )
+            return (plugin, view)
         }
         .loggingPluginViewBuild("toolbarLeading", start: start, logger: self)
     }
@@ -260,15 +251,7 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
         return plugins.compactMap { plugin in
             guard isPluginEnabled(plugin) else { return nil }
             guard let view = plugin.addToolBarTrailingView(context: context) else { return nil }
-            return (
-                plugin,
-                AnyView(
-                    view
-                        .environment(\.gitOKProjectURL, projectURL)
-                        .environment(\.gitOKRemoteTrackingStatus, remoteTrackingStatus)
-                        .environment(\.gitOKIsGitRepository, isGitRepository)
-                )
-            )
+            return (plugin, view)
         }
         .loggingPluginViewBuild("toolbarTrailing", start: start, logger: self)
     }
@@ -278,11 +261,18 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
     ///   - tab: 当前选中的标签页
     ///   - project: 当前选中的项目
     /// - Returns: 插件及其对应的列表视图数组
+    @MainActor
     func getEnabledPluginListViews(tab: String, project: Project?) -> [(plugin: SuperPlugin, view: AnyView)] {
         let start = Date()
+        let context = GitOKPluginContext(
+            projectURL: project?.url,
+            projectPath: project.map { $0.url.path },
+            projectTitle: project?.title,
+            isGitRepository: project?.isGitRepo ?? false
+        )
         return plugins.compactMap { plugin in
             guard isPluginEnabled(plugin) else { return nil }
-            guard let view = plugin.addListView(tab: tab, project: project) else { return nil }
+            guard let view = plugin.addListView(tab: tab, project: project, context: context) else { return nil }
             return (plugin, view)
         }
         .loggingPluginViewBuild("list tab=\(tab)", start: start, logger: self)
@@ -294,14 +284,15 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
     @MainActor
     func getEnabledTabDetailView(tab: String, projectURL: URL? = nil) -> AnyView? {
         let start = Date()
+        let context = GitOKPluginContext(projectURL: projectURL)
         for plugin in plugins {
             guard isPluginEnabled(plugin) else { continue }
-            if let view = plugin.addDetailView(for: tab) {
+            if let view = plugin.addDetailView(for: tab, context: context) {
                 let elapsed = Date().timeIntervalSince(start)
                 if elapsed > 0.2 {
                     os_log("\(self.t)⏱️ Plugin detail view built tab=\(tab) plugin=\(plugin.instanceLabel) elapsed=\(String(format: "%.3f", elapsed))s")
                 }
-                return AnyView(view.environment(\.gitOKProjectURL, projectURL))
+                return view
             }
         }
         let elapsed = Date().timeIntervalSince(start)
@@ -324,13 +315,6 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
         return plugins
             .filter { isPluginEnabled($0) }
             .compactMap { $0.addStatusBarLeadingView(context: context) }
-            .map { view in
-                AnyView(
-                    view
-                        .environment(\.gitOKSelectedFilePath, selectedFilePath)
-                        .environment(\.gitOKProjectPath, projectPath)
-                )
-            }
     }
 
     /// 获取状态栏中间视图
@@ -343,9 +327,6 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
         return plugins
             .filter { isPluginEnabled($0) }
             .compactMap { $0.addStatusBarCenterView(context: context) }
-            .map { view in
-                AnyView(view.environment(\.gitOKActivityStatus, activityStatus))
-            }
     }
 
     /// 获取状态栏后置视图
@@ -368,16 +349,6 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
         return plugins
             .filter { isPluginEnabled($0) }
             .compactMap { $0.addStatusBarTrailingView(context: context) }
-            .map { view in
-                AnyView(
-                    view
-                        .environment(\.gitOKProjectURL, projectURL)
-                        .environment(\.gitOKProjectPath, projectPath)
-                        .environment(\.gitOKProjectTitle, projectTitle)
-                        .environment(\.gitOKBranchName, branchName)
-                        .environment(\.gitOKIsGitRepository, isGitRepository)
-                )
-            }
     }
 
     // MARK: - Theme Contributions
@@ -449,25 +420,25 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
     private var customProviders: [String: any SuperPlugin] {
         [
             GitDetailPlugin.metadata.id: PackagedPluginAdapter<GitDetailPlugin>(
-                detailViewProvider: { tab in
+                detailViewProvider: { tab, _ in
                     guard tab == GitTabPlugin.metadata.displayName else { return nil }
                     return AnyView(GitDetail.shared)
                 }
             ),
             CommitPlugin.metadata.id: PackagedPluginAdapter<CommitPlugin>(
-                listViewProvider: { tab, project in
+                listViewProvider: { tab, project, _ in
                     guard tab == "Git", let project, project.isGitRepo else { return nil }
                     return AnyView(CommitList.shared)
                 }
             ),
             BannerPlugin.metadata.id: PackagedPluginAdapter<BannerPlugin>(
-                detailViewProvider: { tab in
+                detailViewProvider: { tab, _ in
                     guard tab == "Banner" else { return nil }
                     return AnyView(PluginBanner.BannerDetailLayout.shared)
                 }
             ),
             IconPlugin.metadata.id: PackagedPluginAdapter<IconPlugin>(
-                detailViewProvider: { tab in
+                detailViewProvider: { tab, _ in
                     guard tab == "Icon" else { return nil }
                     return AnyView(PluginIcon.IconDetailLayout.shared)
                 }
