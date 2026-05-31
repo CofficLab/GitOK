@@ -12,7 +12,7 @@ set -eu
 
 ROOT_DIR="${SRCROOT:-$(cd "$(dirname "$0")/.." && pwd)}"
 PLUGINS_DIR="$ROOT_DIR/Plugins"
-OUTPUT="$ROOT_DIR/APP/Core/Generated/GeneratedPluginRegistry.swift"
+OUTPUT="$ROOT_DIR/APP/Generated/GeneratedPluginRegistry.swift"
 TMP_OUTPUT="$OUTPUT.tmp"
 
 mkdir -p "$(dirname "$OUTPUT")"
