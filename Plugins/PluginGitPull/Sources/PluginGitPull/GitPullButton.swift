@@ -1,17 +1,17 @@
 import AppKit
 import GitCoreKit
-import GitOKPluginKit
 import SwiftUI
 
 public struct GitPullButton: View {
-    @Environment(\.gitOKProjectURL) private var projectURL
+    let projectURL: URL
     @State private var isWorking = false
 
-    nonisolated public init() {}
+    public init(projectURL: URL) {
+        self.projectURL = projectURL
+    }
 
     public var body: some View {
-        if let projectURL {
-            Button {
+        Button {
                 pull(projectURL: projectURL)
             } label: {
                 Image(systemName: "arrow.down")

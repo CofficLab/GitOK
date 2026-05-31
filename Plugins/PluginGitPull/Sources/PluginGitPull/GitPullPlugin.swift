@@ -18,7 +18,8 @@ public struct GitPullPlugin: GitOKPackagedPlugin {
     private init() {}
 
     public func toolBarTrailingView(context: GitOKPluginContext) -> AnyView? {
-        AnyView(GitPullButton())
+        guard let projectURL = context.projectURL else { return nil }
+        return AnyView(GitPullButton(projectURL: projectURL))
     }
 }
 

@@ -20,6 +20,7 @@ struct GitPullPluginTests {
 
     @Test("toolbar contribution is available")
     func toolbarContribution() {
-        #expect(GitPullPlugin.shared.toolBarTrailingView() != nil)
+        let context = GitOKPluginContext(projectURL: URL(fileURLWithPath: "/tmp/test"))
+        #expect(GitPullPlugin.shared.toolBarTrailingView(context: context) != nil)
     }
 }
