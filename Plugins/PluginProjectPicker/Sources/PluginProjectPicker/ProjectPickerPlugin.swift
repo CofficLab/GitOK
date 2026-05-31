@@ -17,7 +17,7 @@ public struct ProjectPickerPlugin: GitOKPackagedPlugin {
 
     private init() {}
 
-    public func toolBarLeadingView() -> AnyView? {
+    public func toolBarLeadingView(context: GitOKPluginContext) -> AnyView? {
         AnyView(ProjectPickerView())
     }
 }

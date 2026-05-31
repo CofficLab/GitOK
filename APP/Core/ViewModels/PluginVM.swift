@@ -212,6 +212,7 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
 
     /// 获取工具栏前导视图
     /// - Returns: 插件及其对应的工具栏前导视图数组
+    @MainActor
     func getEnabledToolbarLeadingViews(
         projects: [GitOKProjectSummary] = [],
         selectedProjectURL: URL? = nil,
@@ -219,9 +220,15 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
         onSelectProject: @escaping GitOKProjectSelectionHandler = { _ in }
     ) -> [(plugin: SuperPlugin, view: AnyView)] {
         let start = Date()
+        let context = GitOKPluginContext(
+            projects: projects,
+            selectedProjectURL: selectedProjectURL,
+            isSidebarVisible: isSidebarVisible,
+            onProjectSelection: onSelectProject
+        )
         return plugins.compactMap { plugin in
             guard isPluginEnabled(plugin) else { return nil }
-            guard let view = plugin.addToolBarLeadingView() else { return nil }
+            guard let view = plugin.addToolBarLeadingView(context: context) else { return nil }
             return (
                 plugin,
                 AnyView(
@@ -238,15 +245,21 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
 
     /// 获取工具栏后置视图
     /// - Returns: 插件及其对应的工具栏后置视图数组
+    @MainActor
     func getEnabledToolbarTrailingViews(
         projectURL: URL? = nil,
         remoteTrackingStatus: GitOKRemoteTrackingStatus? = nil,
         isGitRepository: Bool = false
     ) -> [(plugin: SuperPlugin, view: AnyView)] {
         let start = Date()
+        let context = GitOKPluginContext(
+            projectURL: projectURL,
+            isGitRepository: isGitRepository,
+            remoteTrackingStatus: remoteTrackingStatus
+        )
         return plugins.compactMap { plugin in
             guard isPluginEnabled(plugin) else { return nil }
-            guard let view = plugin.addToolBarTrailingView() else { return nil }
+            guard let view = plugin.addToolBarTrailingView(context: context) else { return nil }
             return (
                 plugin,
                 AnyView(

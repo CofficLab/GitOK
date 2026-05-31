@@ -61,7 +61,7 @@ extension MyFeaturePlugin {
 
 ```swift
 extension MyFeaturePlugin {
-    func addToolBarTrailingView() -> AnyView? {
+    func addToolBarTrailingView(context: GitOKPluginContext) -> AnyView? {
         AnyView(
             Button(action: {
                 print("按钮被点击")
@@ -171,7 +171,7 @@ extension MyFeaturePlugin {
 // MARK: - 视图提供
 
 extension MyFeaturePlugin {
-    func addToolBarTrailingView() -> AnyView? {
+    func addToolBarTrailingView(context: GitOKPluginContext) -> AnyView? {
         AnyView(
             Button(action: {
                 showAlert()

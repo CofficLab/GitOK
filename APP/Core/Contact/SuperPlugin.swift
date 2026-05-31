@@ -80,12 +80,16 @@ protocol SuperPlugin {
     func addDetailView(for tab: String) -> AnyView?
 
     /// 返回插件在工具栏前部区域的视图
+    /// - Parameter context: 插件上下文，包含当前项目、分支等运行时状态
     /// - Returns: 包装在 AnyView 中的工具栏前部视图
-    func addToolBarLeadingView() -> AnyView?
+    @MainActor
+    func addToolBarLeadingView(context: GitOKPluginContext) -> AnyView?
 
     /// 返回插件在工具栏后部区域的视图
+    /// - Parameter context: 插件上下文，包含当前项目、分支等运行时状态
     /// - Returns: 包装在 AnyView 中的工具栏后部视图
-    func addToolBarTrailingView() -> AnyView?
+    @MainActor
+    func addToolBarTrailingView(context: GitOKPluginContext) -> AnyView?
 
     /// 返回插件在状态栏前部区域的视图
     /// - Returns: 包装在 AnyView 中的状态栏前部视图
@@ -197,12 +201,14 @@ extension SuperPlugin {
     static var defaultEnabled: Bool { true }
 
     /// 默认的工具栏前部视图实现，返回空视图
-    func addToolBarLeadingView() -> AnyView? {
+    @MainActor
+    func addToolBarLeadingView(context: GitOKPluginContext) -> AnyView? {
         nil
     }
 
     /// 默认的工具栏后部视图实现，返回空视图
-    func addToolBarTrailingView() -> AnyView? {
+    @MainActor
+    func addToolBarTrailingView(context: GitOKPluginContext) -> AnyView? {
         nil
     }
 

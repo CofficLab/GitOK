@@ -18,7 +18,7 @@ public struct OpenTraePlugin: GitOKPackagedPlugin {
 
     private init() {}
 
-    public func toolBarTrailingView() -> AnyView? {
+    public func toolBarTrailingView(context: GitOKPluginContext) -> AnyView? {
         AnyView(OpenTraeButton())
     }
 }

@@ -79,12 +79,14 @@ final class PackagedPluginAdapter<Plugin: GitOKPackagedPlugin>: SuperPlugin {
         detailViewProvider?(tab)
     }
 
-    func addToolBarLeadingView() -> AnyView? {
-        toolBarLeadingViewProvider?() ?? plugin.toolBarLeadingView()
+    @MainActor
+    func addToolBarLeadingView(context: GitOKPluginContext) -> AnyView? {
+        toolBarLeadingViewProvider?() ?? plugin.toolBarLeadingView(context: context)
     }
 
-    func addToolBarTrailingView() -> AnyView? {
-        toolBarTrailingViewProvider?() ?? plugin.toolBarTrailingView()
+    @MainActor
+    func addToolBarTrailingView(context: GitOKPluginContext) -> AnyView? {
+        toolBarTrailingViewProvider?() ?? plugin.toolBarTrailingView(context: context)
     }
 
     func addRootView<Content>(@ViewBuilder content: () -> Content) -> AnyView? where Content: View {

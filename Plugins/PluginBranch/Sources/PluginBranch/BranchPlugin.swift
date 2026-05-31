@@ -44,7 +44,7 @@ public struct BranchPlugin: GitOKPackagedPlugin {
 
     private init() {}
 
-    public func toolBarTrailingView() -> AnyView? {
+    public func toolBarTrailingView(context: GitOKPluginContext) -> AnyView? {
         AnyView(BranchPickerView(context: BranchPluginContext()))
     }
 
