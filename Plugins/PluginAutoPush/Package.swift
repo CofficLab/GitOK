@@ -29,7 +29,7 @@ let package = Package(
         .testTarget(
             name: "PluginAutoPushTests",
             dependencies: ["PluginAutoPush"],
-            path: "Tests/PluginAutoPushTests"
+            path: "Tests"
         ),
     ]
 )
