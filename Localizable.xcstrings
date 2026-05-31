@@ -83,6 +83,7 @@
       }
     },
     "/" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -98,13 +99,11 @@
         }
       }
     },
-    "/* Empty file */" : {
-
-    },
     "/path/to/company-ca.pem" : {
 
     },
     "%@ (%@)" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -136,16 +135,6 @@
         }
       }
     },
-    "%@ %lld" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ %2$lld"
-          }
-        }
-      }
-    },
     "%@ 模板" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -164,6 +153,7 @@
       }
     },
     "%lld" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -179,27 +169,8 @@
         }
       }
     },
-    "%lld / %lld" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$lld / %2$lld"
-          }
-        }
-      }
-    },
-    "%lld %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$lld %2$@"
-          }
-        }
-      }
-    },
     "%lld × %lld" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -220,46 +191,6 @@
           }
         }
       }
-    },
-    "%lld commits ready to push" : {
-
-    },
-    "%lld configs" : {
-
-    },
-    "%lld files" : {
-
-    },
-    "%lld Merge Files" : {
-
-    },
-    "%lld new commits on remote, click Pull; Fetch or Push available in menu" : {
-
-    },
-    "%lld staged files" : {
-
-    },
-    "%lld submodules are up to date" : {
-
-    },
-    "%lld submodules total" : {
-
-    },
-    "%lld submodules, %lld need attention" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$lld submodules, %2$lld need attention"
-          }
-        }
-      }
-    },
-    "%lld unstaged files" : {
-
-    },
-    "%lld untracked files will be deleted" : {
-
     },
     "%lld 个图标" : {
       "extractionState" : "stale",
@@ -345,10 +276,8 @@
         }
       }
     },
-    "•" : {
-
-    },
     "• %@" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -365,6 +294,7 @@
       }
     },
     "+%lld" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -396,35 +326,8 @@
         }
       }
     },
-    "Add" : {
-
-    },
-    "Add a new Git remote repository" : {
-
-    },
-    "Add Remote Repository" : {
-
-    },
-    "Added remote repository %@. The current branch already has an upstream; GitOK has refreshed the remote tracking state." : {
-
-    },
-    "Added remote repository %@. The current branch has no upstream yet. For the first push, please publish the branch or run `git push -u %@ <branch>`." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Added remote repository %1$@. The current branch has no upstream yet. For the first push, please publish the branch or run `git push -u %2$@ <branch>`."
-          }
-        }
-      }
-    },
-    "After" : {
-
-    },
-    "After enabling auto-push in the current project, the configuration will be displayed here" : {
-
-    },
     "Amazing Description" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -441,6 +344,7 @@
       }
     },
     "App Name" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -456,86 +360,13 @@
         }
       }
     },
-    "Applied stash@{%lld}" : {
-
-    },
-    "Applying, popping, or branching from a stash may conflict with your current working tree changes. Consider committing first or creating another stash." : {
-
-    },
-    "Are you sure you want to delete stash@{%lld}? This action cannot be undone." : {
-
-    },
-    "Are you sure you want to discard all changes? This will affect %@. This action cannot be undone." : {
-
-    },
-    "Are you sure you want to discard changes for %lld files? %lld untracked files will be deleted. This action cannot be undone." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Are you sure you want to discard changes for %1$lld files? %2$lld untracked files will be deleted. This action cannot be undone."
-          }
-        }
-      }
-    },
-    "Are you sure you want to discard changes for %lld files? This action cannot be undone." : {
-
-    },
-    "Base" : {
-
-    },
-    "Before" : {
-
-    },
-    "Binary File" : {
-
-    },
-    "Both Xcode icon set formats saved to Downloads" : {
-
-    },
-    "Branch has no upstream yet, click Publish branch to push and set up tracking" : {
-
-    },
-    "Branch is up to date, click Fetch to check for remote updates" : {
-
-    },
     "CA 文件会写入 `http.sslCAInfo`。关闭 SSL 验证只适合临时排障；企业网络应优先导入可信 CA 证书。" : {
-
-    },
-    "Cancel" : {
-
-    },
-    "Cannot push because the remote branch has commits you don't have locally. Please Fetch first, then Pull or Rebase before pushing again." : {
-
-    },
-    "Changes" : {
-
-    },
-    "Clear" : {
-
-    },
-    "Clear current batch selection" : {
-
-    },
-    "Clear filter" : {
-
-    },
-    "Clear Selection" : {
-
-    },
-    "Click \"New Stash\" above to temporarily store your current changes." : {
-
-    },
-    "Click the button below to add your first remote repository" : {
 
     },
     "Clone" : {
 
     },
     "Clone 会从远程地址下载仓库并自动加入项目。" : {
-
-    },
-    "Close" : {
 
     },
     "Commit 风格..." : {
@@ -553,51 +384,6 @@
           }
         }
       }
-    },
-    "Confirm Delete Stash" : {
-
-    },
-    "Confirm Discard All Changes" : {
-
-    },
-    "Confirm Discard Selected Changes" : {
-
-    },
-    "Conflicted" : {
-
-    },
-    "Continue" : {
-
-    },
-    "Copied" : {
-
-    },
-    "Copy Raw Diff" : {
-
-    },
-    "Copy Reason" : {
-
-    },
-    "Copy Remote URL" : {
-
-    },
-    "Create" : {
-
-    },
-    "Create a new stash" : {
-
-    },
-    "Create Branch from Stash" : {
-
-    },
-    "Create Stash" : {
-
-    },
-    "Created branch from stash@{%lld}" : {
-
-    },
-    "Current" : {
-
     },
     "current_head" : {
       "extractionState" : "stale",
@@ -622,115 +408,11 @@
         }
       }
     },
-    "Delete" : {
-
-    },
-    "Deleted" : {
-
-    },
-    "Deleted Image" : {
-
-    },
-    "Deleted remote repository %@. Fetch/Pull/Push operations that depend on this remote will no longer be available." : {
-
-    },
-    "Deleted stash@{%lld}" : {
-
-    },
-    "Deleted the current upstream remote %@. The current branch will show as having no upstream; you need to re-set upstream before push/pull." : {
-
-    },
-    "Diff data could not be generated. You can check whether the file still exists, verify it is text-encoded, or refresh the current view." : {
-
-    },
-    "Diff is too large, rendering skipped" : {
-
-    },
-    "Difference" : {
-
-    },
-    "Differences cannot be shown as text for this file" : {
-
-    },
-    "Discard" : {
-
-    },
-    "Discard All" : {
-
-    },
-    "Discard All Changes" : {
-
-    },
-    "Discard changes of all files" : {
-
-    },
-    "Discard changes of files in the batch selection" : {
-
-    },
-    "Discard Selected" : {
-
-    },
-    "Discarded all file changes" : {
-
-    },
-    "Discarded changes for %lld files" : {
-
-    },
-    "Discarded file changes: %@" : {
-
-    },
-    "Download Xcode Format" : {
-
-    },
-    "e.g. https://github.com/user/repo.git" : {
-
-    },
-    "e.g. origin" : {
-
-    },
-    "Edit Remote Repository" : {
-
-    },
-    "Failed to add remote repository: %@" : {
-
-    },
-    "Failed to create legacy format directory: %@" : {
-
-    },
-    "Failed to create modern format directory: %@" : {
-
-    },
-    "Failed to delete remote repository: %@" : {
-
-    },
-    "Failed to load remote repositories: %@" : {
-
-    },
-    "Failed to publish current branch: %@" : {
-
-    },
-    "Failed to update remote repository: %@" : {
-
-    },
     "Fetch" : {
 
     },
-    "Fetch origin" : {
-
-    },
-    "Fetch:" : {
-
-    },
-    "File Status: %@" : {
-
-    },
-    "files" : {
-
-    },
-    "Filter files" : {
-
-    },
     "Flutter 模板" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -745,12 +427,6 @@
           }
         }
       }
-    },
-    "Found %lld submodules that need attention" : {
-
-    },
-    "Generating Xcode Icon Set..." : {
-
     },
     "ghp_xxxxxxxxxxxxxxxxxxxx" : {
       "extractionState" : "stale",
@@ -772,9 +448,6 @@
     "Git" : {
 
     },
-    "Git 用户名" : {
-
-    },
     "GitHub 用户名" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -792,22 +465,7 @@
         }
       }
     },
-    "GitOK 会通过当前 Git credential helper 保存凭据；GitHub/GitLab 等平台通常需要 token。" : {
-
-    },
     "GitOK 无法在当前 Git 操作中直接读取 SSH passphrase。请把密钥加入 ssh-agent 或 macOS Keychain，再重试本次操作。" : {
-
-    },
-    "Hard Reset" : {
-
-    },
-    "Head" : {
-
-    },
-    "HEAD differs from index" : {
-
-    },
-    "History Files" : {
 
     },
     "HTTP proxy" : {
@@ -817,36 +475,6 @@
 
     },
     "HTTPS proxy" : {
-
-    },
-    "https://github.com/owner/repo.git" : {
-
-    },
-    "Image Comparison Mode" : {
-
-    },
-    "Image difference blend comparison" : {
-
-    },
-    "Image overlay comparison" : {
-
-    },
-    "Image side-by-side comparison" : {
-
-    },
-    "Image swipe comparison" : {
-
-    },
-    "Initialize" : {
-
-    },
-    "Initialize All" : {
-
-    },
-    "Initialized" : {
-
-    },
-    "Initialized %@" : {
 
     },
     "LICENSE" : {
@@ -887,108 +515,6 @@
           }
         }
       }
-    },
-    "Loading conflict preview..." : {
-
-    },
-    "Loading stash list…" : {
-
-    },
-    "Loading..." : {
-
-    },
-    "Manage Git remote repository configuration for the current project" : {
-
-    },
-    "Manage Remote Repositories" : {
-
-    },
-    "Mixed Reset" : {
-
-    },
-    "Modified" : {
-
-    },
-    "Modified image opacity" : {
-
-    },
-    "Modify the remote repository's name and URL" : {
-
-    },
-    "New branch name" : {
-
-    },
-    "New commits on remote" : {
-
-    },
-    "New Image" : {
-
-    },
-    "New Stash" : {
-
-    },
-    "New Text" : {
-
-    },
-    "No access to downloads folder" : {
-
-    },
-    "No available icon assets" : {
-
-    },
-    "No available icon data" : {
-
-    },
-    "No diff summary available for this submodule." : {
-
-    },
-    "No differences to display" : {
-
-    },
-    "No displayable patch was retrieved for this deleted file. Common causes include an empty file or Git not returning a deletion diff. You can still view the text before deletion." : {
-
-    },
-    "No files changed" : {
-
-    },
-    "No Git submodules configured in this repository." : {
-
-    },
-    "No matching files" : {
-
-    },
-    "No parseable text diff was generated for this new file. Common causes include an empty file, non-text content, or Git not returning a patch. You can still view the new text directly." : {
-
-    },
-    "No project selected" : {
-
-    },
-    "No Remote Repositories" : {
-
-    },
-    "No remote repository" : {
-
-    },
-    "No remote repository configured. Please push your code first to establish a remote connection." : {
-
-    },
-    "No Stashes Yet" : {
-
-    },
-    "No stashes, click to open panel" : {
-
-    },
-    "No submodules found" : {
-
-    },
-    "No submodules in this repository" : {
-
-    },
-    "No text differences to display for this file. It may be unchanged, empty, or the diff output is empty. You can view the original and new text directly to confirm." : {
-
-    },
-    "No themes available" : {
-
     },
     "no_branches" : {
       "extractionState" : "manual",
@@ -1128,9 +654,6 @@
         }
       }
     },
-    "Not a Git repository" : {
-
-    },
     "not_git_project" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -1154,30 +677,6 @@
         }
       }
     },
-    "Open in Cursor" : {
-
-    },
-    "Open in Finder" : {
-
-    },
-    "Open in Terminal" : {
-
-    },
-    "Open in VS Code" : {
-
-    },
-    "Open in Xcode" : {
-
-    },
-    "Open Remote Page" : {
-
-    },
-    "Original Text" : {
-
-    },
-    "Overlay" : {
-
-    },
     "Personal Access Token" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -1194,21 +693,6 @@
           }
         }
       }
-    },
-    "Personal Access Token 或密码" : {
-
-    },
-    "Please add a remote repository first" : {
-
-    },
-    "Please fill in all fields" : {
-
-    },
-    "Please fill in all required information" : {
-
-    },
-    "Popped stash@{%lld}" : {
-
     },
     "project_not_exist" : {
       "extractionState" : "manual",
@@ -1233,47 +717,14 @@
         }
       }
     },
-    "Publish branch" : {
-
-    },
-    "Publish Current Branch" : {
-
-    },
-    "Published branch: %@" : {
-
-    },
-    "Published current branch %@, and set upstream to %@/%@." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Published current branch %1$@, and set upstream to %2$@/%3$@."
-          }
-        }
-      }
-    },
     "Pull" : {
-
-    },
-    "Pull origin" : {
-
-    },
-    "Pulling…" : {
 
     },
     "Push" : {
 
     },
-    "Push origin" : {
-
-    },
-    "Push:" : {
-
-    },
-    "Pushing…" : {
-
-    },
     "README.md" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1288,46 +739,6 @@
           }
         }
       }
-    },
-    "Reason: %@" : {
-
-    },
-    "Reference the Desktop workflow to temporarily put changes into a restorable queue." : {
-
-    },
-    "Refresh" : {
-
-    },
-    "Remote Name" : {
-
-    },
-    "Remote Repository Management" : {
-
-    },
-    "Remote URL" : {
-
-    },
-    "Renamed" : {
-
-    },
-    "Reset to: %@ (%@)" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Reset to: %1$@ (%2$@)"
-          }
-        }
-      }
-    },
-    "Revert" : {
-
-    },
-    "Reverted: %@" : {
-
-    },
-    "Save" : {
-
     },
     "Search..." : {
       "localizations" : {
@@ -1344,12 +755,6 @@
           }
         }
       }
-    },
-    "Select All Current" : {
-
-    },
-    "Select all files in the current filter result" : {
-
     },
     "select_a_project" : {
       "extractionState" : "stale",
@@ -1441,43 +846,8 @@
         }
       }
     },
-    "Selected" : {
-
-    },
-    "Shows the before and after images side by side" : {
-
-    },
-    "Side by Side" : {
-
-    },
-    "Soft Reset" : {
-
-    },
-    "Squash" : {
-
-    },
-    "Squashed %lld commits" : {
-
-    },
-    "Stage" : {
-
-    },
-    "Stage files that can still be staged in the batch selection" : {
-
-    },
-    "Staged %lld files" : {
-
-    },
-    "Staged Changes" : {
-
-    },
-    "Staged New" : {
-
-    },
-    "Staged: %@" : {
-
-    },
     "Stash" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1492,15 +862,6 @@
           }
         }
       }
-    },
-    "Stash %lld" : {
-
-    },
-    "Stash created" : {
-
-    },
-    "Stash description (optional)" : {
-
     },
     "stash@{%lld}" : {
       "extractionState" : "stale",
@@ -1519,113 +880,8 @@
         }
       }
     },
-    "Submodule initialized" : {
-
-    },
-    "Submodules updated" : {
-
-    },
-    "Swipe" : {
-
-    },
-    "Swipe divider position" : {
-
-    },
-    "Switch theme" : {
-
-    },
-    "Sync with remote repository" : {
-
-    },
-    "Syncing…" : {
-
-    },
-    "The current diff is approximately %@ characters. To avoid UI lag, GitOK does not render oversized patches directly; you can still copy the raw diff or view the file text." : {
-
-    },
-    "Theme" : {
-
-    },
-    "token 或密码" : {
-
-    },
-    "Type Changed" : {
-
-    },
-    "Unable to display differences" : {
-
-    },
-    "Unable to load %@ text: %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Unable to load %1$@ text: %2$@"
-          }
-        }
-      }
-    },
-    "Unable to load image" : {
-
-    },
-    "Uncommitted Changes" : {
-
-    },
-    "Uninitialized" : {
-
-    },
-    "Unstage" : {
-
-    },
-    "Unstage already staged files in the batch selection" : {
-
-    },
-    "Unstaged %lld files" : {
-
-    },
-    "Unstaged: %@" : {
-
-    },
-    "Untracked New" : {
-
-    },
-    "Update" : {
-
-    },
-    "Update All" : {
-
-    },
-    "Updated %@" : {
-
-    },
-    "Updated remote repository %@. After the remote URL changes, GitOK refreshes the current branch ahead/behind state; if the branch has no upstream yet, please publish the branch or do the first push." : {
-
-    },
-    "Upstream" : {
-
-    },
-    "Use the slider to adjust the opacity of the modified image overlaid on the original" : {
-
-    },
-    "Use the slider to adjust the position where the modified image overlays the original" : {
-
-    },
-    "Uses difference blend mode to highlight areas where the two images differ" : {
-
-    },
-    "View %lld stashes" : {
-
-    },
-    "View New Text" : {
-
-    },
-    "View Original Text" : {
-
-    },
-    "Working Tree Ready" : {
-
-    },
     "Xcode 16 格式会自动调整，Xcode 26 格式保持用户设置" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1642,6 +898,7 @@
       }
     },
     "Xcode 模板" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1658,6 +915,7 @@
       }
     },
     "丢弃" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1725,6 +983,7 @@
       }
     },
     "丢弃更改" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1741,6 +1000,7 @@
       }
     },
     "为 %@ 添加您的 Git 认证信息" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1757,6 +1017,7 @@
       }
     },
     "产品图片" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1795,6 +1056,7 @@
 
     },
     "例如: CofficLab" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1861,6 +1123,7 @@
       }
     },
     "保存凭据" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1877,6 +1140,7 @@
       }
     },
     "保存失败" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1893,6 +1157,7 @@
       }
     },
     "保存成功" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1946,6 +1211,7 @@
       }
     },
     "内边距 %@" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1964,13 +1230,11 @@
     "最终路径" : {
 
     },
-    "冲突 %lld" : {
-
-    },
     "准备创建" : {
 
     },
     "凭据已安全保存到 macOS Keychain" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -2074,6 +1338,7 @@
       }
     },
     "删除「%@」" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -2140,13 +1405,11 @@
         }
       }
     },
-    "删除本地分支" : {
-
-    },
     "刷新状态" : {
 
     },
     "副标题" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -2163,6 +1426,7 @@
       }
     },
     "副标题设置" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -2230,6 +1494,7 @@
       }
     },
     "加载失败" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -2262,9 +1527,6 @@
         }
       }
     },
-    "发布分支" : {
-
-    },
     "取消" : {
       "localizations" : {
         "zh-Hans" : {
@@ -2281,19 +1543,8 @@
         }
       }
     },
-    "取消 upstream" : {
-
-    },
-    "取消暂存" : {
-
-    },
-    "取消选择" : {
-
-    },
-    "取消选择 %@" : {
-
-    },
     "合并" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -2310,6 +1561,7 @@
       }
     },
     "合并分支" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -2324,9 +1576,6 @@
           }
         }
       }
-    },
-    "合并正常" : {
-
     },
     "后台自动检查" : {
 
@@ -2403,6 +1652,7 @@
       }
     },
     "图标工坊" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -2419,6 +1669,7 @@
       }
     },
     "圆角 %lld" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -2511,6 +1762,7 @@
       }
     },
     "在浏览器打开" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -2544,6 +1796,7 @@
       }
     },
     "在这里，您可以轻松为您的 macOS 和 iOS 应用创建精美的图标。" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -2569,6 +1822,7 @@
 
     },
     "复制到剪贴板" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -2585,6 +1839,7 @@
       }
     },
     "复制完整 Hash" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -2599,9 +1854,6 @@
           }
         }
       }
-    },
-    "复制文件路径" : {
-
     },
     "复制消息内容" : {
       "localizations" : {
@@ -2961,6 +2213,7 @@
       }
     },
     "打开设置 (⌘,)" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -3016,10 +2269,8 @@
         }
       }
     },
-    "按回车或点击查看差异。打开上下文菜单可暂存、取消暂存、复制路径或丢弃更改。" : {
-
-    },
     "换图" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -3086,6 +2337,7 @@
       }
     },
     "提交" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -3102,6 +2354,7 @@
       }
     },
     "提交 Hash 详情" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -3118,6 +2371,7 @@
       }
     },
     "提交并推送" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -3134,6 +2388,7 @@
       }
     },
     "提交时间详情" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -3165,9 +2420,6 @@
         }
       }
     },
-    "插入 %@" : {
-
-    },
     "搜索分类..." : {
       "extractionState" : "stale",
       "localizations" : {
@@ -3186,6 +2438,7 @@
       }
     },
     "整理分组" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -3241,6 +2494,7 @@
 
     },
     "无边框" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -3273,9 +2527,6 @@
         }
       }
     },
-    "显示提交图" : {
-
-    },
     "暂存描述（可选）" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -3292,9 +2543,6 @@
           }
         }
       }
-    },
-    "暂存文件" : {
-
     },
     "暂无stash" : {
       "extractionState" : "stale",
@@ -3314,6 +2562,7 @@
       }
     },
     "暂无特性" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -3367,6 +2616,7 @@
 
     },
     "更换图片" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -3389,6 +2639,7 @@
 
     },
     "未找到 .gitignore 文件" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -3405,6 +2656,7 @@
       }
     },
     "未找到 LICENSE，点击创建" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -3421,6 +2673,7 @@
       }
     },
     "未找到 README.md 文件" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -3443,6 +2696,7 @@
 
     },
     "查看 .gitignore 文件" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -3459,6 +2713,7 @@
       }
     },
     "查看 README.md 文档" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -3475,6 +2730,7 @@
       }
     },
     "查看或编辑 LICENSE" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -3490,10 +2746,8 @@
         }
       }
     },
-    "标记已解决" : {
-
-    },
     "标题" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -3510,6 +2764,7 @@
       }
     },
     "标题设置" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -3666,6 +2921,7 @@
       }
     },
     "添加 Git 凭据" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -3752,6 +3008,7 @@
 
     },
     "添加忽略" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -3768,6 +3025,7 @@
       }
     },
     "添加新特性" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -3889,6 +3147,7 @@
       }
     },
     "点击查看完整 Hash 信息" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -3905,6 +3164,7 @@
       }
     },
     "点击查看完整时间信息" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -3921,6 +3181,7 @@
       }
     },
     "点击选择图片" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -3937,6 +3198,7 @@
       }
     },
     "特性列表" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -3953,6 +3215,7 @@
       }
     },
     "用 Antigravity 打开" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -3985,6 +3248,7 @@
       }
     },
     "用 GitHub Desktop 打开" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -4099,9 +3363,6 @@
         }
       }
     },
-    "用于批量暂存、取消暂存或丢弃" : {
-
-    },
     "用终端打开" : {
       "localizations" : {
         "zh-Hans" : {
@@ -4188,9 +3449,6 @@
         }
       }
     },
-    "确定要删除本地分支 \"%@\" 吗？未合并的分支会由 Git 阻止删除。" : {
-
-    },
     "确定要删除远程仓库 \"%@\" 吗？此操作不可撤销。" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -4226,6 +3484,7 @@
       }
     },
     "确认丢弃更改" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -4242,6 +3501,7 @@
       }
     },
     "确认删除" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -4273,9 +3533,6 @@
           }
         }
       }
-    },
-    "确认删除分支" : {
-
     },
     "管理当前项目的Git远程仓库配置" : {
       "extractionState" : "stale",
@@ -4346,6 +3603,7 @@
       }
     },
     "缩放 %@" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -4381,6 +3639,7 @@
       }
     },
     "背景设置" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -4397,6 +3656,7 @@
       }
     },
     "背景透明度 %@" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -4498,6 +3758,7 @@
       }
     },
     "设备边框" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -4512,9 +3773,6 @@
           }
         }
       }
-    },
-    "设置 upstream" : {
-
     },
     "设置..." : {
       "localizations" : {
@@ -4553,6 +3811,7 @@
       }
     },
     "请先选择一个图标" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -4586,6 +3845,7 @@
       }
     },
     "请选择项目" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -4618,6 +3878,7 @@
       }
     },
     "输入副标题" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -4634,6 +3895,7 @@
       }
     },
     "输入标题" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -4703,9 +3965,6 @@
     "选择" : {
 
     },
-    "选择 %@" : {
-
-    },
     "选择一个图标开始制作，或创建新的设计" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -4724,6 +3983,7 @@
       }
     },
     "选择或创建一个Banner" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -4738,9 +3998,6 @@
           }
         }
       }
-    },
-    "选择文件" : {
-
     },
     "选择标签" : {
       "localizations" : {
@@ -4762,6 +4019,7 @@
 
     },
     "选择设备" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -4778,6 +4036,7 @@
       }
     },
     "选择项目" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -4794,6 +4053,7 @@
       }
     },
     "选择颜色" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -4810,6 +4070,7 @@
       }
     },
     "透明度设置" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -4856,15 +4117,6 @@
           }
         }
       }
-    },
-    "采用 Ours" : {
-
-    },
-    "采用 Theirs" : {
-
-    },
-    "重命名分支" : {
-
     },
     "重试" : {
       "localizations" : {
@@ -4919,6 +4171,7 @@
       }
     },
     "颜色" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {

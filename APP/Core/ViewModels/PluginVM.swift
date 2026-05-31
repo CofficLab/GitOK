@@ -1,3 +1,4 @@
+import Combine
 import Foundation
 import MagicKit
 import ObjectiveC.runtime
@@ -5,67 +6,16 @@ import OSLog
 import StoreKit
 import SwiftData
 import SwiftUI
-import Combine
+
+// Auto-generated imports for packaged plugins.
+// When adding a new Plugin package, re-run Scripts/generate_plugin_registry.sh.
 import GitOKPluginKit
 import GitOKUI
-import PluginActivityStatus
-import PluginAutoPush
 import PluginBanner
-import PluginBannerTab
-import PluginBranch
-import PluginCleanStatus
 import PluginCommit
-import PluginConflictResolver
-import PluginFileInfo
-import PluginGitIgnore
 import PluginGitDetail
-import PluginGitLFS
-import PluginGitPull
-import PluginGitPush
-import PluginGitSync
 import PluginGitTab
-import PluginGitWatcher
 import PluginIcon
-import PluginIconTab
-import PluginLicense
-import PluginOpenAntigravity
-import PluginOpenGitHubDesktop
-import PluginOpenCursor
-import PluginOpenFinder
-import PluginOpenKiro
-import PluginOpenRemote
-import PluginOpenTerminal
-import PluginOpenTrae
-import PluginOpenVSCode
-import PluginOpenXcode
-import PluginProjectPicker
-import PluginReadme
-import PluginRemoteRepository
-import PluginSettingsButton
-import PluginSmartMerge
-import PluginStash
-import PluginSubmodule
-import PluginThemeAurora
-import PluginThemeDracula
-import PluginThemeEmber
-import PluginThemeGitOK
-import PluginThemeGraphite
-import PluginThemeHarbor
-import PluginThemeGitHubLight
-import PluginThemeGlacier
-import PluginThemeMatrix
-import PluginThemeMidnight
-import PluginThemeMountain
-import PluginThemeNebula
-import PluginThemeOneDark
-import PluginThemeOrchard
-import PluginThemeRiver
-import PluginThemeSpring
-import PluginThemeStatusBar
-import PluginThemeSummer
-import PluginThemeWinter
-import PluginThemeXcodeLight
-import PluginUnpushedStatus
 
 class PluginVM: ObservableObject, SuperLog, SuperThread {
     nonisolated static let emoji = "🧩"
@@ -465,259 +415,59 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
         os_log("\(Self.t)✅ Startup end: PluginVM.init elapsed=\(String(format: "%.3f", Date().timeIntervalSince(start)))s")
     }
 
+    // MARK: - Custom Plugin Providers
+
+    /// Plugins that need custom view providers (closures referencing APP-internal types).
+    /// Key = instanceLabel of the packaged plugin, Value = adapter with injected closures.
+    private var customProviders: [String: any SuperPlugin] {
+        [
+            GitDetailPlugin.metadata.id: PackagedPluginAdapter<GitDetailPlugin>(
+                detailViewProvider: { tab in
+                    guard tab == GitTabPlugin.metadata.displayName else { return nil }
+                    return AnyView(GitDetail.shared)
+                }
+            ),
+            CommitPlugin.metadata.id: PackagedPluginAdapter<CommitPlugin>(
+                listViewProvider: { tab, project in
+                    guard tab == "Git", let project, project.isGitRepo else { return nil }
+                    return AnyView(CommitList.shared)
+                }
+            ),
+            BannerPlugin.metadata.id: PackagedPluginAdapter<BannerPlugin>(
+                detailViewProvider: { tab in
+                    guard tab == "Banner" else { return nil }
+                    return AnyView(PluginBanner.BannerDetailLayout.shared)
+                }
+            ),
+            IconPlugin.metadata.id: PackagedPluginAdapter<IconPlugin>(
+                detailViewProvider: { tab in
+                    guard tab == "Icon" else { return nil }
+                    return AnyView(PluginIcon.IconDetailLayout.shared)
+                }
+            ),
+        ]
+    }
+
+    /// Register all packaged plugins using the auto-generated registry.
+    /// Plugins with custom view providers are handled separately via `customProviders`.
     private func registerPackagedPlugins() {
-        let activityStatus = PackagedPluginAdapter<PluginActivityStatus.ActivityStatusPlugin>()
-        if type(of: activityStatus).shouldRegister {
-            register(activityStatus)
-        }
-        let fileInfo = PackagedPluginAdapter<PluginFileInfo.FileInfoPlugin>()
-        if type(of: fileInfo).shouldRegister {
-            register(fileInfo)
-        }
-        let gitTab = PackagedPluginAdapter<PluginGitTab.GitTabPlugin>()
-        if type(of: gitTab).shouldRegister {
-            register(gitTab)
-        }
-        let iconTab = PackagedPluginAdapter<PluginIconTab.IconTabPlugin>()
-        if type(of: iconTab).shouldRegister {
-            register(iconTab)
-        }
-        let bannerTab = PackagedPluginAdapter<PluginBannerTab.BannerTabPlugin>()
-        if type(of: bannerTab).shouldRegister {
-            register(bannerTab)
-        }
-        let settingsButton = PackagedPluginAdapter<PluginSettingsButton.SettingsButtonPlugin>()
-        if type(of: settingsButton).shouldRegister {
-            register(settingsButton)
-        }
-        let openFinder = PackagedPluginAdapter<PluginOpenFinder.OpenFinderPlugin>()
-        if type(of: openFinder).shouldRegister {
-            register(openFinder)
-        }
-        let openTerminal = PackagedPluginAdapter<PluginOpenTerminal.OpenTerminalPlugin>()
-        if type(of: openTerminal).shouldRegister {
-            register(openTerminal)
-        }
-        let openCursor = PackagedPluginAdapter<PluginOpenCursor.OpenCursorPlugin>()
-        if type(of: openCursor).shouldRegister {
-            register(openCursor)
-        }
-        let openVSCode = PackagedPluginAdapter<PluginOpenVSCode.OpenVSCodePlugin>()
-        if type(of: openVSCode).shouldRegister {
-            register(openVSCode)
-        }
-        let openXcode = PackagedPluginAdapter<PluginOpenXcode.OpenXcodePlugin>()
-        if type(of: openXcode).shouldRegister {
-            register(openXcode)
-        }
-        let openGitHubDesktop = PackagedPluginAdapter<PluginOpenGitHubDesktop.OpenGitHubDesktopPlugin>()
-        if type(of: openGitHubDesktop).shouldRegister {
-            register(openGitHubDesktop)
-        }
-        let openTrae = PackagedPluginAdapter<PluginOpenTrae.OpenTraePlugin>()
-        if type(of: openTrae).shouldRegister {
-            register(openTrae)
-        }
-        let openKiro = PackagedPluginAdapter<PluginOpenKiro.OpenKiroPlugin>()
-        if type(of: openKiro).shouldRegister {
-            register(openKiro)
-        }
-        let openAntigravity = PackagedPluginAdapter<PluginOpenAntigravity.OpenAntigravityPlugin>()
-        if type(of: openAntigravity).shouldRegister {
-            register(openAntigravity)
-        }
-        let openRemote = PackagedPluginAdapter<PluginOpenRemote.OpenRemotePlugin>()
-        if type(of: openRemote).shouldRegister {
-            register(openRemote)
-        }
-        let themeStatusBar = PackagedPluginAdapter<PluginThemeStatusBar.ThemeStatusBarPlugin>()
-        if type(of: themeStatusBar).shouldRegister {
-            register(themeStatusBar)
-        }
-        let gitLFS = PackagedPluginAdapter<PluginGitLFS.GitLFSPlugin>()
-        if type(of: gitLFS).shouldRegister {
-            register(gitLFS)
-        }
-        let gitIgnore = PackagedPluginAdapter<PluginGitIgnore.GitIgnorePlugin>()
-        if type(of: gitIgnore).shouldRegister {
-            register(gitIgnore)
-        }
-        let readme = PackagedPluginAdapter<PluginReadme.ReadmePlugin>()
-        if type(of: readme).shouldRegister {
-            register(readme)
-        }
-        let license = PackagedPluginAdapter<PluginLicense.LicensePlugin>()
-        if type(of: license).shouldRegister {
-            register(license)
-        }
-        let cleanStatus = PackagedPluginAdapter<PluginCleanStatus.CleanStatusPlugin>()
-        if type(of: cleanStatus).shouldRegister {
-            register(cleanStatus)
-        }
-        let gitWatcher = PackagedPluginAdapter<PluginGitWatcher.GitWatcherPlugin>()
-        if type(of: gitWatcher).shouldRegister {
-            register(gitWatcher)
-        }
-        let gitPush = PackagedPluginAdapter<PluginGitPush.GitPushPlugin>()
-        if type(of: gitPush).shouldRegister {
-            register(gitPush)
-        }
-        let gitPull = PackagedPluginAdapter<PluginGitPull.GitPullPlugin>()
-        if type(of: gitPull).shouldRegister {
-            register(gitPull)
-        }
-        let gitSync = PackagedPluginAdapter<PluginGitSync.GitSyncPlugin>()
-        if type(of: gitSync).shouldRegister {
-            register(gitSync)
-        }
-        let autoPush = PackagedPluginAdapter<PluginAutoPush.AutoPushPlugin>()
-        if type(of: autoPush).shouldRegister {
-            register(autoPush)
-        }
-        let projectPicker = PackagedPluginAdapter<PluginProjectPicker.ProjectPickerPlugin>()
-        if type(of: projectPicker).shouldRegister {
-            register(projectPicker)
-        }
-        let smartMerge = PackagedPluginAdapter<PluginSmartMerge.SmartMergePlugin>()
-        if type(of: smartMerge).shouldRegister {
-            register(smartMerge)
-        }
-        let remoteRepository = PackagedPluginAdapter<PluginRemoteRepository.RemoteRepositoryPlugin>()
-        if type(of: remoteRepository).shouldRegister {
-            register(remoteRepository)
-        }
-        let branch = PackagedPluginAdapter<PluginBranch.BranchPlugin>()
-        if type(of: branch).shouldRegister {
-            register(branch)
-        }
-        let conflictResolver = PackagedPluginAdapter<PluginConflictResolver.ConflictResolverPlugin>()
-        if type(of: conflictResolver).shouldRegister {
-            register(conflictResolver)
-        }
-        let gitDetail = PackagedPluginAdapter<PluginGitDetail.GitDetailPlugin>(
-            detailViewProvider: { tab in
-                guard tab == PluginGitTab.GitTabPlugin.metadata.displayName else { return nil }
-                return AnyView(GitDetail.shared)
+        let customIds = Set(customProviders.keys)
+
+        // Register default adapters, skipping those that have custom providers
+        GeneratedPluginRegistry.registerDefaultAdapters { adapter in
+            let label = adapter.instanceLabel
+            if customIds.contains(label) {
+                // Will be registered below with custom closures
+                return
             }
-        )
-        if type(of: gitDetail).shouldRegister {
-            register(gitDetail)
-        }
-        let commit = PackagedPluginAdapter<PluginCommit.CommitPlugin>(
-            listViewProvider: { tab, project in
-                guard tab == "Git", let project, project.isGitRepo else { return nil }
-                return AnyView(CommitList.shared)
-            }
-        )
-        if type(of: commit).shouldRegister {
-            register(commit)
-        }
-        let banner = PackagedPluginAdapter<PluginBanner.BannerPlugin>(
-            detailViewProvider: { tab in
-                guard tab == "Banner" else { return nil }
-                return AnyView(PluginBanner.BannerDetailLayout.shared)
-            }
-        )
-        if type(of: banner).shouldRegister {
-            register(banner)
-        }
-        let icon = PackagedPluginAdapter<PluginIcon.IconPlugin>(
-            detailViewProvider: { tab in
-                guard tab == "Icon" else { return nil }
-                return AnyView(PluginIcon.IconDetailLayout.shared)
-            }
-        )
-        if type(of: icon).shouldRegister {
-            register(icon)
-        }
-        let unpushedStatus = PackagedPluginAdapter<PluginUnpushedStatus.UnpushedStatusPlugin>()
-        if type(of: unpushedStatus).shouldRegister {
-            register(unpushedStatus)
-        }
-        let submodule = PackagedPluginAdapter<PluginSubmodule.SubmodulePlugin>()
-        if type(of: submodule).shouldRegister {
-            register(submodule)
-        }
-        let stash = PackagedPluginAdapter<PluginStash.StashPlugin>()
-        if type(of: stash).shouldRegister {
-            register(stash)
-        }
-        let themeGitOK = PackagedPluginAdapter<PluginThemeGitOK.GitOKThemePlugin>()
-        if type(of: themeGitOK).shouldRegister {
-            register(themeGitOK)
-        }
-        let themeSpring = PackagedPluginAdapter<PluginThemeSpring.SpringThemePlugin>()
-        if type(of: themeSpring).shouldRegister {
-            register(themeSpring)
+            self.register(adapter)
         }
 
-        let themeSummer = PackagedPluginAdapter<PluginThemeSummer.SummerThemePlugin>()
-        if type(of: themeSummer).shouldRegister {
-            register(themeSummer)
-        }
-        let themeWinter = PackagedPluginAdapter<PluginThemeWinter.WinterThemePlugin>()
-        if type(of: themeWinter).shouldRegister {
-            register(themeWinter)
-        }
-        let themeGraphite = PackagedPluginAdapter<PluginThemeGraphite.GraphiteThemePlugin>()
-        if type(of: themeGraphite).shouldRegister {
-            register(themeGraphite)
-        }
-        let themeDracula = PackagedPluginAdapter<PluginThemeDracula.DraculaThemePlugin>()
-        if type(of: themeDracula).shouldRegister {
-            register(themeDracula)
-        }
-        let themeOneDark = PackagedPluginAdapter<PluginThemeOneDark.OneDarkThemePlugin>()
-        if type(of: themeOneDark).shouldRegister {
-            register(themeOneDark)
-        }
-        let themeXcodeLight = PackagedPluginAdapter<PluginThemeXcodeLight.XcodeLightThemePlugin>()
-        if type(of: themeXcodeLight).shouldRegister {
-            register(themeXcodeLight)
-        }
-        let themeGitHubLight = PackagedPluginAdapter<PluginThemeGitHubLight.GitHubLightThemePlugin>()
-        if type(of: themeGitHubLight).shouldRegister {
-            register(themeGitHubLight)
-        }
-        let themeMatrix = PackagedPluginAdapter<PluginThemeMatrix.MatrixThemePlugin>()
-        if type(of: themeMatrix).shouldRegister {
-            register(themeMatrix)
-        }
-        let themeNebula = PackagedPluginAdapter<PluginThemeNebula.NebulaThemePlugin>()
-        if type(of: themeNebula).shouldRegister {
-            register(themeNebula)
-        }
-        let themeHarbor = PackagedPluginAdapter<PluginThemeHarbor.HarborThemePlugin>()
-        if type(of: themeHarbor).shouldRegister {
-            register(themeHarbor)
-        }
-        let themeOrchard = PackagedPluginAdapter<PluginThemeOrchard.OrchardThemePlugin>()
-        if type(of: themeOrchard).shouldRegister {
-            register(themeOrchard)
-        }
-        let themeGlacier = PackagedPluginAdapter<PluginThemeGlacier.GlacierThemePlugin>()
-        if type(of: themeGlacier).shouldRegister {
-            register(themeGlacier)
-        }
-        let themeMountain = PackagedPluginAdapter<PluginThemeMountain.MountainThemePlugin>()
-        if type(of: themeMountain).shouldRegister {
-            register(themeMountain)
-        }
-        let themeAurora = PackagedPluginAdapter<PluginThemeAurora.AuroraThemePlugin>()
-        if type(of: themeAurora).shouldRegister {
-            register(themeAurora)
-        }
-        let themeMidnight = PackagedPluginAdapter<PluginThemeMidnight.MidnightThemePlugin>()
-        if type(of: themeMidnight).shouldRegister {
-            register(themeMidnight)
-        }
-        let themeEmber = PackagedPluginAdapter<PluginThemeEmber.EmberThemePlugin>()
-        if type(of: themeEmber).shouldRegister {
-            register(themeEmber)
-        }
-        let themeRiver = PackagedPluginAdapter<PluginThemeRiver.RiverThemePlugin>()
-        if type(of: themeRiver).shouldRegister {
-            register(themeRiver)
+        // Register plugins with custom view providers (closures referencing APP-internal types)
+        for (_, adapter) in customProviders {
+            if type(of: adapter).shouldRegister {
+                register(adapter)
+            }
         }
     }
 }

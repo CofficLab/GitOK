@@ -1540,64 +1540,65 @@
 				F5A3E6C02F8610E100D4DD4A /* XCRemoteSwiftPackageReference "MagicDiffView" */,
 				F5165B6E2FBC084A00F24BD9 /* XCRemoteSwiftPackageReference "LibGit2Swift" */,
 				917255476993285F764073A8 /* XCLocalSwiftPackageReference "Packages/GitOKPluginKit" */,
-				04854420ECB4294D4F6EC13B /* XCLocalSwiftPackageReference "Packages/PluginSettingsButton" */,
-				565F16D117692CFAEFD7989A /* XCLocalSwiftPackageReference "Packages/PluginOpenFinder" */,
-				C565F22CA062E59B38440B0F /* XCLocalSwiftPackageReference "Packages/PluginOpenTerminal" */,
-				BA80C8622E256A0B19F95294 /* XCLocalSwiftPackageReference "Packages/PluginOpenVSCode" */,
-				1163E191DF457D033A658385 /* XCLocalSwiftPackageReference "Packages/PluginOpenCursor" */,
-				9091D09084906B37EE7DE309 /* XCLocalSwiftPackageReference "Packages/PluginOpenXcode" */,
-				5A28F7F70BE9FE1673DDA5F7 /* XCLocalSwiftPackageReference "Packages/PluginOpenGitHubDesktop" */,
-				39598E0F430D82798DA93B01 /* XCLocalSwiftPackageReference "Packages/PluginOpenTrae" */,
-				1D65034ACCC1314FDD9AF6A6 /* XCLocalSwiftPackageReference "Packages/PluginOpenKiro" */,
-				6BBE8E2ECCEABD5CB2D62979 /* XCLocalSwiftPackageReference "Packages/PluginOpenAntigravity" */,
-				1C98D78D08ECECCCA36F224F /* XCLocalSwiftPackageReference "Packages/PluginOpenRemote" */,
-				2BA8D7461A96F8A7317A4C13 /* XCLocalSwiftPackageReference "Packages/PluginThemeGitOK" */,
-				7160472A308891E900A412BC /* XCLocalSwiftPackageReference "Packages/PluginThemeSpring" */,
-				2156C80BD5691D7A552871E1 /* XCLocalSwiftPackageReference "Packages/PluginThemeAurora" */,
-				44FF7A256774CBC01B210B88 /* XCLocalSwiftPackageReference "Packages/PluginThemeMidnight" */,
-				67F7FAC4D1101BEAFA9CF874 /* XCLocalSwiftPackageReference "Packages/PluginThemeEmber" */,
-				1DAA4AA53B26DD94925011B1 /* XCLocalSwiftPackageReference "Packages/PluginThemeRiver" */,
-				9754272AAEB2CBF3B60E1EF8 /* XCLocalSwiftPackageReference "Packages/PluginThemeSummer" */,
-				6E8A3DE5FC74E95DE09BCCCA /* XCLocalSwiftPackageReference "Packages/PluginThemeWinter" */,
-				1BD0E998169CB47913436216 /* XCLocalSwiftPackageReference "Packages/PluginThemeGraphite" */,
-				0EA0489D17E6645A122074A1 /* XCLocalSwiftPackageReference "Packages/PluginThemeDracula" */,
-				602F00B06AD2D5D2306150EC /* XCLocalSwiftPackageReference "Packages/PluginThemeOneDark" */,
-				A66BA82D671C08FFA57F520D /* XCLocalSwiftPackageReference "Packages/PluginThemeXcodeLight" */,
-				8B8DE5E8263E6C42F3C64445 /* XCLocalSwiftPackageReference "Packages/PluginThemeGitHubLight" */,
-				CAAE0D603A5F7B532BDE83ED /* XCLocalSwiftPackageReference "Packages/PluginThemeMatrix" */,
-				B0F4167B51860AE8CBB80FF1 /* XCLocalSwiftPackageReference "Packages/PluginThemeNebula" */,
-				EC5F6904F184A027E8051782 /* XCLocalSwiftPackageReference "Packages/PluginThemeHarbor" */,
-				32E0AB63FFEE01BAFC424B78 /* XCLocalSwiftPackageReference "Packages/PluginThemeOrchard" */,
-				CB7D310625CE24DAE0AF59B8 /* XCLocalSwiftPackageReference "Packages/PluginThemeGlacier" */,
-				F494BB22561FC8AAEE51ECE3 /* XCLocalSwiftPackageReference "Packages/PluginThemeMountain" */,
-				EF5C5E5DE62CD4149D3DD54B /* XCLocalSwiftPackageReference "Packages/PluginThemeStatusBar" */,
-				0A50094BF5547EBF325E8924 /* XCLocalSwiftPackageReference "Packages/PluginGitLFS" */,
-				EA2DBB3316035456AB633BD4 /* XCLocalSwiftPackageReference "Packages/PluginGitIgnore" */,
-				01A3FA2FF51443936D72AE98 /* XCLocalSwiftPackageReference "Packages/PluginReadme" */,
-				71B51C5F6F2A44CF3F36AB55 /* XCLocalSwiftPackageReference "Packages/PluginLicense" */,
-				3A7300042F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginActivityStatus" */,
-				3A7300052F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginFileInfo" */,
-				3A7300062F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginSubmodule" */,
-				3A7300072F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginStash" */,
-				3A7300082F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginCleanStatus" */,
-				3A7300092F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginGitWatcher" */,
-				3A7300102F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginUnpushedStatus" */,
-				3A7300112F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginGitPush" */,
-				3A7300122F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginProjectPicker" */,
-				3A7300132F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginSmartMerge" */,
-				3A7300142F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginRemoteRepository" */,
-				3A7300152F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginBranch" */,
-				3A7300162F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginConflictResolver" */,
-				3A7300172F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginGitDetail" */,
-				3A7300182F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginCommit" */,
-				3A7300192F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginBanner" */,
-				3A7300202F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginIcon" */,
-				3A7300212F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginGitPull" */,
-				3A7300222F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginGitSync" */,
-				3A7300232F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginAutoPush" */,
-				3A7300012F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginGitTab" */,
-				3A7300022F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginIconTab" */,
-				3A7300032F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginBannerTab" */,
+				04854420ECB4294D4F6EC13B /* XCLocalSwiftPackageReference "Plugins/PluginSettingsButton" */,
+				565F16D117692CFAEFD7989A /* XCLocalSwiftPackageReference "Plugins/PluginOpenFinder" */,
+				C565F22CA062E59B38440B0F /* XCLocalSwiftPackageReference "Plugins/PluginOpenTerminal" */,
+				BA80C8622E256A0B19F95294 /* XCLocalSwiftPackageReference "Plugins/PluginOpenVSCode" */,
+				1163E191DF457D033A658385 /* XCLocalSwiftPackageReference "Plugins/PluginOpenCursor" */,
+				9091D09084906B37EE7DE309 /* XCLocalSwiftPackageReference "Plugins/PluginOpenXcode" */,
+				5A28F7F70BE9FE1673DDA5F7 /* XCLocalSwiftPackageReference "Plugins/PluginOpenGitHubDesktop" */,
+				39598E0F430D82798DA93B01 /* XCLocalSwiftPackageReference "Plugins/PluginOpenTrae" */,
+				1D65034ACCC1314FDD9AF6A6 /* XCLocalSwiftPackageReference "Plugins/PluginOpenKiro" */,
+				6BBE8E2ECCEABD5CB2D62979 /* XCLocalSwiftPackageReference "Plugins/PluginOpenAntigravity" */,
+				1C98D78D08ECECCCA36F224F /* XCLocalSwiftPackageReference "Plugins/PluginOpenRemote" */,
+				2BA8D7461A96F8A7317A4C13 /* XCLocalSwiftPackageReference "Plugins/PluginThemeGitOK" */,
+				7160472A308891E900A412BC /* XCLocalSwiftPackageReference "Plugins/PluginThemeSpring" */,
+				2156C80BD5691D7A552871E1 /* XCLocalSwiftPackageReference "Plugins/PluginThemeAurora" */,
+				44FF7A256774CBC01B210B88 /* XCLocalSwiftPackageReference "Plugins/PluginThemeMidnight" */,
+				67F7FAC4D1101BEAFA9CF874 /* XCLocalSwiftPackageReference "Plugins/PluginThemeEmber" */,
+				1DAA4AA53B26DD94925011B1 /* XCLocalSwiftPackageReference "Plugins/PluginThemeRiver" */,
+				9754272AAEB2CBF3B60E1EF8 /* XCLocalSwiftPackageReference "Plugins/PluginThemeSummer" */,
+				6E8A3DE5FC74E95DE09BCCCA /* XCLocalSwiftPackageReference "Plugins/PluginThemeWinter" */,
+				1BD0E998169CB47913436216 /* XCLocalSwiftPackageReference "Plugins/PluginThemeGraphite" */,
+				0EA0489D17E6645A122074A1 /* XCLocalSwiftPackageReference "Plugins/PluginThemeDracula" */,
+				602F00B06AD2D5D2306150EC /* XCLocalSwiftPackageReference "Plugins/PluginThemeOneDark" */,
+				A66BA82D671C08FFA57F520D /* XCLocalSwiftPackageReference "Plugins/PluginThemeXcodeLight" */,
+				8B8DE5E8263E6C42F3C64445 /* XCLocalSwiftPackageReference "Plugins/PluginThemeGitHubLight" */,
+				CAAE0D603A5F7B532BDE83ED /* XCLocalSwiftPackageReference "Plugins/PluginThemeMatrix" */,
+				B0F4167B51860AE8CBB80FF1 /* XCLocalSwiftPackageReference "Plugins/PluginThemeNebula" */,
+				EC5F6904F184A027E8051782 /* XCLocalSwiftPackageReference "Plugins/PluginThemeHarbor" */,
+				32E0AB63FFEE01BAFC424B78 /* XCLocalSwiftPackageReference "Plugins/PluginThemeOrchard" */,
+				CB7D310625CE24DAE0AF59B8 /* XCLocalSwiftPackageReference "Plugins/PluginThemeGlacier" */,
+				F494BB22561FC8AAEE51ECE3 /* XCLocalSwiftPackageReference "Plugins/PluginThemeMountain" */,
+				EF5C5E5DE62CD4149D3DD54B /* XCLocalSwiftPackageReference "Plugins/PluginThemeStatusBar" */,
+				0A50094BF5547EBF325E8924 /* XCLocalSwiftPackageReference "Plugins/PluginGitLFS" */,
+				EA2DBB3316035456AB633BD4 /* XCLocalSwiftPackageReference "Plugins/PluginGitIgnore" */,
+				01A3FA2FF51443936D72AE98 /* XCLocalSwiftPackageReference "Plugins/PluginReadme" */,
+				71B51C5F6F2A44CF3F36AB55 /* XCLocalSwiftPackageReference "Plugins/PluginLicense" */,
+				3A7300042F90000100ABC001 /* XCLocalSwiftPackageReference "Plugins/PluginActivityStatus" */,
+				3A7300052F90000100ABC001 /* XCLocalSwiftPackageReference "Plugins/PluginFileInfo" */,
+				3A7300062F90000100ABC001 /* XCLocalSwiftPackageReference "Plugins/PluginSubmodule" */,
+				3A7300072F90000100ABC001 /* XCLocalSwiftPackageReference "Plugins/PluginStash" */,
+				3A7300082F90000100ABC001 /* XCLocalSwiftPackageReference "Plugins/PluginCleanStatus" */,
+				3A7300092F90000100ABC001 /* XCLocalSwiftPackageReference "Plugins/PluginGitWatcher" */,
+				3A7300102F90000100ABC001 /* XCLocalSwiftPackageReference "Plugins/PluginUnpushedStatus" */,
+				3A7300112F90000100ABC001 /* XCLocalSwiftPackageReference "Plugins/PluginGitPush" */,
+				3A7300122F90000100ABC001 /* XCLocalSwiftPackageReference "Plugins/PluginProjectPicker" */,
+				3A7300132F90000100ABC001 /* XCLocalSwiftPackageReference "Plugins/PluginSmartMerge" */,
+				3A7300142F90000100ABC001 /* XCLocalSwiftPackageReference "Plugins/PluginRemoteRepository" */,
+				3A7300152F90000100ABC001 /* XCLocalSwiftPackageReference "Plugins/PluginBranch" */,
+				3A7300162F90000100ABC001 /* XCLocalSwiftPackageReference "Plugins/PluginConflictResolver" */,
+				3A7300172F90000100ABC001 /* XCLocalSwiftPackageReference "Plugins/PluginGitDetail" */,
+				3A7300182F90000100ABC001 /* XCLocalSwiftPackageReference "Plugins/PluginCommit" */,
+				3A7300192F90000100ABC001 /* XCLocalSwiftPackageReference "Plugins/PluginBanner" */,
+				3A7300202F90000100ABC001 /* XCLocalSwiftPackageReference "Plugins/PluginIcon" */,
+				3A7300212F90000100ABC001 /* XCLocalSwiftPackageReference "Plugins/PluginGitPull" */,
+				3A7300222F90000100ABC001 /* XCLocalSwiftPackageReference "Plugins/PluginGitSync" */,
+				3A7300232F90000100ABC001 /* XCLocalSwiftPackageReference "Plugins/PluginAutoPush" */,
+				3A7300242F90000100ABC001 /* XCLocalSwiftPackageReference "Plugins/PluginGitClone" */,
+				3A7300012F90000100ABC001 /* XCLocalSwiftPackageReference "Plugins/PluginGitTab" */,
+				3A7300022F90000100ABC001 /* XCLocalSwiftPackageReference "Plugins/PluginIconTab" */,
+				3A7300032F90000100ABC001 /* XCLocalSwiftPackageReference "Plugins/PluginBannerTab" */,
 			);
 			productRefGroup = 0B0E16742BD89A8F0078942B;
 			projectDirPath = "";
@@ -2650,9 +2651,9 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Packages/PluginGitSync/.build/arm64-apple-macosx/debug",
-					"$(PROJECT_DIR)/Packages/PluginGitPull/.build/arm64-apple-macosx/debug",
-					"$(PROJECT_DIR)/Packages/PluginAutoPush/.build/arm64-apple-macosx/debug",
+					"$(PROJECT_DIR)/Plugins/PluginGitSync/.build/arm64-apple-macosx/debug",
+					"$(PROJECT_DIR)/Plugins/PluginGitPull/.build/arm64-apple-macosx/debug",
+					"$(PROJECT_DIR)/Plugins/PluginAutoPush/.build/arm64-apple-macosx/debug",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 15.0;
 				MARKETING_VERSION = 2.2.38;
@@ -2700,9 +2701,9 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Packages/PluginGitSync/.build/arm64-apple-macosx/debug",
-					"$(PROJECT_DIR)/Packages/PluginGitPull/.build/arm64-apple-macosx/debug",
-					"$(PROJECT_DIR)/Packages/PluginAutoPush/.build/arm64-apple-macosx/debug",
+					"$(PROJECT_DIR)/Plugins/PluginGitSync/.build/arm64-apple-macosx/debug",
+					"$(PROJECT_DIR)/Plugins/PluginGitPull/.build/arm64-apple-macosx/debug",
+					"$(PROJECT_DIR)/Plugins/PluginAutoPush/.build/arm64-apple-macosx/debug",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 15.0;
 				MARKETING_VERSION = 2.2.38;
@@ -2787,205 +2788,205 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		01A3FA2FF51443936D72AE98 /* XCLocalSwiftPackageReference "Packages/PluginReadme" */ = {
+		01A3FA2FF51443936D72AE98 /* XCLocalSwiftPackageReference "Plugins/PluginReadme" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/PluginReadme;
+			relativePath = Plugins/PluginReadme;
 		};
-		04854420ECB4294D4F6EC13B /* XCLocalSwiftPackageReference "Packages/PluginSettingsButton" */ = {
+		04854420ECB4294D4F6EC13B /* XCLocalSwiftPackageReference "Plugins/PluginSettingsButton" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/PluginSettingsButton;
+			relativePath = Plugins/PluginSettingsButton;
 		};
-		0A50094BF5547EBF325E8924 /* XCLocalSwiftPackageReference "Packages/PluginGitLFS" */ = {
+		0A50094BF5547EBF325E8924 /* XCLocalSwiftPackageReference "Plugins/PluginGitLFS" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/PluginGitLFS;
+			relativePath = Plugins/PluginGitLFS;
 		};
-		0EA0489D17E6645A122074A1 /* XCLocalSwiftPackageReference "Packages/PluginThemeDracula" */ = {
+		0EA0489D17E6645A122074A1 /* XCLocalSwiftPackageReference "Plugins/PluginThemeDracula" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/PluginThemeDracula;
+			relativePath = Plugins/PluginThemeDracula;
 		};
-		1163E191DF457D033A658385 /* XCLocalSwiftPackageReference "Packages/PluginOpenCursor" */ = {
+		1163E191DF457D033A658385 /* XCLocalSwiftPackageReference "Plugins/PluginOpenCursor" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/PluginOpenCursor;
+			relativePath = Plugins/PluginOpenCursor;
 		};
-		1BD0E998169CB47913436216 /* XCLocalSwiftPackageReference "Packages/PluginThemeGraphite" */ = {
+		1BD0E998169CB47913436216 /* XCLocalSwiftPackageReference "Plugins/PluginThemeGraphite" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/PluginThemeGraphite;
+			relativePath = Plugins/PluginThemeGraphite;
 		};
-		1C98D78D08ECECCCA36F224F /* XCLocalSwiftPackageReference "Packages/PluginOpenRemote" */ = {
+		1C98D78D08ECECCCA36F224F /* XCLocalSwiftPackageReference "Plugins/PluginOpenRemote" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/PluginOpenRemote;
+			relativePath = Plugins/PluginOpenRemote;
 		};
-		1D65034ACCC1314FDD9AF6A6 /* XCLocalSwiftPackageReference "Packages/PluginOpenKiro" */ = {
+		1D65034ACCC1314FDD9AF6A6 /* XCLocalSwiftPackageReference "Plugins/PluginOpenKiro" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/PluginOpenKiro;
+			relativePath = Plugins/PluginOpenKiro;
 		};
-		1DAA4AA53B26DD94925011B1 /* XCLocalSwiftPackageReference "Packages/PluginThemeRiver" */ = {
+		1DAA4AA53B26DD94925011B1 /* XCLocalSwiftPackageReference "Plugins/PluginThemeRiver" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/PluginThemeRiver;
+			relativePath = Plugins/PluginThemeRiver;
 		};
-		2156C80BD5691D7A552871E1 /* XCLocalSwiftPackageReference "Packages/PluginThemeAurora" */ = {
+		2156C80BD5691D7A552871E1 /* XCLocalSwiftPackageReference "Plugins/PluginThemeAurora" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/PluginThemeAurora;
+			relativePath = Plugins/PluginThemeAurora;
 		};
-		2BA8D7461A96F8A7317A4C13 /* XCLocalSwiftPackageReference "Packages/PluginThemeGitOK" */ = {
+		2BA8D7461A96F8A7317A4C13 /* XCLocalSwiftPackageReference "Plugins/PluginThemeGitOK" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/PluginThemeGitOK;
+			relativePath = Plugins/PluginThemeGitOK;
 		};
-		32E0AB63FFEE01BAFC424B78 /* XCLocalSwiftPackageReference "Packages/PluginThemeOrchard" */ = {
+		32E0AB63FFEE01BAFC424B78 /* XCLocalSwiftPackageReference "Plugins/PluginThemeOrchard" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/PluginThemeOrchard;
+			relativePath = Plugins/PluginThemeOrchard;
 		};
-		39598E0F430D82798DA93B01 /* XCLocalSwiftPackageReference "Packages/PluginOpenTrae" */ = {
+		39598E0F430D82798DA93B01 /* XCLocalSwiftPackageReference "Plugins/PluginOpenTrae" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/PluginOpenTrae;
+			relativePath = Plugins/PluginOpenTrae;
 		};
-		3A7300012F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginGitTab" */ = {
+		3A7300012F90000100ABC001 /* XCLocalSwiftPackageReference "Plugins/PluginGitTab" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/PluginGitTab;
+			relativePath = Plugins/PluginGitTab;
 		};
-		3A7300022F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginIconTab" */ = {
+		3A7300022F90000100ABC001 /* XCLocalSwiftPackageReference "Plugins/PluginIconTab" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/PluginIconTab;
+			relativePath = Plugins/PluginIconTab;
 		};
-		3A7300032F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginBannerTab" */ = {
+		3A7300032F90000100ABC001 /* XCLocalSwiftPackageReference "Plugins/PluginBannerTab" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/PluginBannerTab;
+			relativePath = Plugins/PluginBannerTab;
 		};
-		3A7300042F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginActivityStatus" */ = {
+		3A7300042F90000100ABC001 /* XCLocalSwiftPackageReference "Plugins/PluginActivityStatus" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/PluginActivityStatus;
+			relativePath = Plugins/PluginActivityStatus;
 		};
-		3A7300052F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginFileInfo" */ = {
+		3A7300052F90000100ABC001 /* XCLocalSwiftPackageReference "Plugins/PluginFileInfo" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/PluginFileInfo;
+			relativePath = Plugins/PluginFileInfo;
 		};
-		3A7300062F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginSubmodule" */ = {
+		3A7300062F90000100ABC001 /* XCLocalSwiftPackageReference "Plugins/PluginSubmodule" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/PluginSubmodule;
+			relativePath = Plugins/PluginSubmodule;
 		};
-		3A7300072F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginStash" */ = {
+		3A7300072F90000100ABC001 /* XCLocalSwiftPackageReference "Plugins/PluginStash" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/PluginStash;
+			relativePath = Plugins/PluginStash;
 		};
-		3A7300082F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginCleanStatus" */ = {
+		3A7300082F90000100ABC001 /* XCLocalSwiftPackageReference "Plugins/PluginCleanStatus" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/PluginCleanStatus;
+			relativePath = Plugins/PluginCleanStatus;
 		};
-		3A7300092F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginGitWatcher" */ = {
+		3A7300092F90000100ABC001 /* XCLocalSwiftPackageReference "Plugins/PluginGitWatcher" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/PluginGitWatcher;
+			relativePath = Plugins/PluginGitWatcher;
 		};
-		3A7300102F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginUnpushedStatus" */ = {
+		3A7300102F90000100ABC001 /* XCLocalSwiftPackageReference "Plugins/PluginUnpushedStatus" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/PluginUnpushedStatus;
+			relativePath = Plugins/PluginUnpushedStatus;
 		};
-		3A7300112F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginGitPush" */ = {
+		3A7300112F90000100ABC001 /* XCLocalSwiftPackageReference "Plugins/PluginGitPush" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/PluginGitPush;
+			relativePath = Plugins/PluginGitPush;
 		};
-		3A7300122F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginProjectPicker" */ = {
+		3A7300122F90000100ABC001 /* XCLocalSwiftPackageReference "Plugins/PluginProjectPicker" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/PluginProjectPicker;
+			relativePath = Plugins/PluginProjectPicker;
 		};
-		3A7300132F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginSmartMerge" */ = {
+		3A7300132F90000100ABC001 /* XCLocalSwiftPackageReference "Plugins/PluginSmartMerge" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/PluginSmartMerge;
+			relativePath = Plugins/PluginSmartMerge;
 		};
-		3A7300142F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginRemoteRepository" */ = {
+		3A7300142F90000100ABC001 /* XCLocalSwiftPackageReference "Plugins/PluginRemoteRepository" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/PluginRemoteRepository;
+			relativePath = Plugins/PluginRemoteRepository;
 		};
-		3A7300152F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginBranch" */ = {
+		3A7300152F90000100ABC001 /* XCLocalSwiftPackageReference "Plugins/PluginBranch" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/PluginBranch;
+			relativePath = Plugins/PluginBranch;
 		};
-		3A7300162F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginConflictResolver" */ = {
+		3A7300162F90000100ABC001 /* XCLocalSwiftPackageReference "Plugins/PluginConflictResolver" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/PluginConflictResolver;
+			relativePath = Plugins/PluginConflictResolver;
 		};
-		3A7300172F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginGitDetail" */ = {
+		3A7300172F90000100ABC001 /* XCLocalSwiftPackageReference "Plugins/PluginGitDetail" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/PluginGitDetail;
+			relativePath = Plugins/PluginGitDetail;
 		};
-		3A7300182F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginCommit" */ = {
+		3A7300182F90000100ABC001 /* XCLocalSwiftPackageReference "Plugins/PluginCommit" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/PluginCommit;
+			relativePath = Plugins/PluginCommit;
 		};
-		3A7300192F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginBanner" */ = {
+		3A7300192F90000100ABC001 /* XCLocalSwiftPackageReference "Plugins/PluginBanner" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/PluginBanner;
+			relativePath = Plugins/PluginBanner;
 		};
-		3A7300202F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginIcon" */ = {
+		3A7300202F90000100ABC001 /* XCLocalSwiftPackageReference "Plugins/PluginIcon" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/PluginIcon;
+			relativePath = Plugins/PluginIcon;
 		};
-		3A7300212F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginGitPull" */ = {
+		3A7300212F90000100ABC001 /* XCLocalSwiftPackageReference "Plugins/PluginGitPull" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/PluginGitPull;
+			relativePath = Plugins/PluginGitPull;
 		};
-		3A7300222F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginGitSync" */ = {
+		3A7300222F90000100ABC001 /* XCLocalSwiftPackageReference "Plugins/PluginGitSync" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/PluginGitSync;
+			relativePath = Plugins/PluginGitSync;
 		};
-		3A7300232F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginAutoPush" */ = {
+		3A7300232F90000100ABC001 /* XCLocalSwiftPackageReference "Plugins/PluginAutoPush" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/PluginAutoPush;
+			relativePath = Plugins/PluginAutoPush;
 		};
-		3A7300242F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginGitClone" */ = {
+		3A7300242F90000100ABC001 /* XCLocalSwiftPackageReference "Plugins/PluginGitClone" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/PluginGitClone;
+			relativePath = Plugins/PluginGitClone;
 		};
-		44FF7A256774CBC01B210B88 /* XCLocalSwiftPackageReference "Packages/PluginThemeMidnight" */ = {
+		44FF7A256774CBC01B210B88 /* XCLocalSwiftPackageReference "Plugins/PluginThemeMidnight" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/PluginThemeMidnight;
+			relativePath = Plugins/PluginThemeMidnight;
 		};
-		565F16D117692CFAEFD7989A /* XCLocalSwiftPackageReference "Packages/PluginOpenFinder" */ = {
+		565F16D117692CFAEFD7989A /* XCLocalSwiftPackageReference "Plugins/PluginOpenFinder" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/PluginOpenFinder;
+			relativePath = Plugins/PluginOpenFinder;
 		};
-		5A28F7F70BE9FE1673DDA5F7 /* XCLocalSwiftPackageReference "Packages/PluginOpenGitHubDesktop" */ = {
+		5A28F7F70BE9FE1673DDA5F7 /* XCLocalSwiftPackageReference "Plugins/PluginOpenGitHubDesktop" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/PluginOpenGitHubDesktop;
+			relativePath = Plugins/PluginOpenGitHubDesktop;
 		};
-		602F00B06AD2D5D2306150EC /* XCLocalSwiftPackageReference "Packages/PluginThemeOneDark" */ = {
+		602F00B06AD2D5D2306150EC /* XCLocalSwiftPackageReference "Plugins/PluginThemeOneDark" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/PluginThemeOneDark;
+			relativePath = Plugins/PluginThemeOneDark;
 		};
-		67F7FAC4D1101BEAFA9CF874 /* XCLocalSwiftPackageReference "Packages/PluginThemeEmber" */ = {
+		67F7FAC4D1101BEAFA9CF874 /* XCLocalSwiftPackageReference "Plugins/PluginThemeEmber" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/PluginThemeEmber;
+			relativePath = Plugins/PluginThemeEmber;
 		};
-		6BBE8E2ECCEABD5CB2D62979 /* XCLocalSwiftPackageReference "Packages/PluginOpenAntigravity" */ = {
+		6BBE8E2ECCEABD5CB2D62979 /* XCLocalSwiftPackageReference "Plugins/PluginOpenAntigravity" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/PluginOpenAntigravity;
+			relativePath = Plugins/PluginOpenAntigravity;
 		};
-		6E8A3DE5FC74E95DE09BCCCA /* XCLocalSwiftPackageReference "Packages/PluginThemeWinter" */ = {
+		6E8A3DE5FC74E95DE09BCCCA /* XCLocalSwiftPackageReference "Plugins/PluginThemeWinter" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/PluginThemeWinter;
+			relativePath = Plugins/PluginThemeWinter;
 		};
-		7160472A308891E900A412BC /* XCLocalSwiftPackageReference "Packages/PluginThemeSpring" */ = {
+		7160472A308891E900A412BC /* XCLocalSwiftPackageReference "Plugins/PluginThemeSpring" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/PluginThemeSpring;
+			relativePath = Plugins/PluginThemeSpring;
 		};
-		71B51C5F6F2A44CF3F36AB55 /* XCLocalSwiftPackageReference "Packages/PluginLicense" */ = {
+		71B51C5F6F2A44CF3F36AB55 /* XCLocalSwiftPackageReference "Plugins/PluginLicense" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/PluginLicense;
+			relativePath = Plugins/PluginLicense;
 		};
-		8B8DE5E8263E6C42F3C64445 /* XCLocalSwiftPackageReference "Packages/PluginThemeGitHubLight" */ = {
+		8B8DE5E8263E6C42F3C64445 /* XCLocalSwiftPackageReference "Plugins/PluginThemeGitHubLight" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/PluginThemeGitHubLight;
+			relativePath = Plugins/PluginThemeGitHubLight;
 		};
-		9091D09084906B37EE7DE309 /* XCLocalSwiftPackageReference "Packages/PluginOpenXcode" */ = {
+		9091D09084906B37EE7DE309 /* XCLocalSwiftPackageReference "Plugins/PluginOpenXcode" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/PluginOpenXcode;
+			relativePath = Plugins/PluginOpenXcode;
 		};
 		917255476993285F764073A8 /* XCLocalSwiftPackageReference "Packages/GitOKPluginKit" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Packages/GitOKPluginKit;
 		};
-		9754272AAEB2CBF3B60E1EF8 /* XCLocalSwiftPackageReference "Packages/PluginThemeSummer" */ = {
+		9754272AAEB2CBF3B60E1EF8 /* XCLocalSwiftPackageReference "Plugins/PluginThemeSummer" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/PluginThemeSummer;
+			relativePath = Plugins/PluginThemeSummer;
 		};
 		A1F100012F70000100ABC001 /* XCLocalSwiftPackageReference "Packages/GitCoreKit" */ = {
 			isa = XCLocalSwiftPackageReference;
@@ -3007,45 +3008,45 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Packages/GitOKUI;
 		};
-		A66BA82D671C08FFA57F520D /* XCLocalSwiftPackageReference "Packages/PluginThemeXcodeLight" */ = {
+		A66BA82D671C08FFA57F520D /* XCLocalSwiftPackageReference "Plugins/PluginThemeXcodeLight" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/PluginThemeXcodeLight;
+			relativePath = Plugins/PluginThemeXcodeLight;
 		};
-		B0F4167B51860AE8CBB80FF1 /* XCLocalSwiftPackageReference "Packages/PluginThemeNebula" */ = {
+		B0F4167B51860AE8CBB80FF1 /* XCLocalSwiftPackageReference "Plugins/PluginThemeNebula" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/PluginThemeNebula;
+			relativePath = Plugins/PluginThemeNebula;
 		};
-		BA80C8622E256A0B19F95294 /* XCLocalSwiftPackageReference "Packages/PluginOpenVSCode" */ = {
+		BA80C8622E256A0B19F95294 /* XCLocalSwiftPackageReference "Plugins/PluginOpenVSCode" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/PluginOpenVSCode;
+			relativePath = Plugins/PluginOpenVSCode;
 		};
-		C565F22CA062E59B38440B0F /* XCLocalSwiftPackageReference "Packages/PluginOpenTerminal" */ = {
+		C565F22CA062E59B38440B0F /* XCLocalSwiftPackageReference "Plugins/PluginOpenTerminal" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/PluginOpenTerminal;
+			relativePath = Plugins/PluginOpenTerminal;
 		};
-		CAAE0D603A5F7B532BDE83ED /* XCLocalSwiftPackageReference "Packages/PluginThemeMatrix" */ = {
+		CAAE0D603A5F7B532BDE83ED /* XCLocalSwiftPackageReference "Plugins/PluginThemeMatrix" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/PluginThemeMatrix;
+			relativePath = Plugins/PluginThemeMatrix;
 		};
-		CB7D310625CE24DAE0AF59B8 /* XCLocalSwiftPackageReference "Packages/PluginThemeGlacier" */ = {
+		CB7D310625CE24DAE0AF59B8 /* XCLocalSwiftPackageReference "Plugins/PluginThemeGlacier" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/PluginThemeGlacier;
+			relativePath = Plugins/PluginThemeGlacier;
 		};
-		EA2DBB3316035456AB633BD4 /* XCLocalSwiftPackageReference "Packages/PluginGitIgnore" */ = {
+		EA2DBB3316035456AB633BD4 /* XCLocalSwiftPackageReference "Plugins/PluginGitIgnore" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/PluginGitIgnore;
+			relativePath = Plugins/PluginGitIgnore;
 		};
-		EC5F6904F184A027E8051782 /* XCLocalSwiftPackageReference "Packages/PluginThemeHarbor" */ = {
+		EC5F6904F184A027E8051782 /* XCLocalSwiftPackageReference "Plugins/PluginThemeHarbor" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/PluginThemeHarbor;
+			relativePath = Plugins/PluginThemeHarbor;
 		};
-		EF5C5E5DE62CD4149D3DD54B /* XCLocalSwiftPackageReference "Packages/PluginThemeStatusBar" */ = {
+		EF5C5E5DE62CD4149D3DD54B /* XCLocalSwiftPackageReference "Plugins/PluginThemeStatusBar" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/PluginThemeStatusBar;
+			relativePath = Plugins/PluginThemeStatusBar;
 		};
-		F494BB22561FC8AAEE51ECE3 /* XCLocalSwiftPackageReference "Packages/PluginThemeMountain" */ = {
+		F494BB22561FC8AAEE51ECE3 /* XCLocalSwiftPackageReference "Plugins/PluginThemeMountain" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/PluginThemeMountain;
+			relativePath = Plugins/PluginThemeMountain;
 		};
 		F5E6143D2F33311F00F79149 /* XCLocalSwiftPackageReference "Packages/MagicKit" */ = {
 			isa = XCLocalSwiftPackageReference;
@@ -3091,22 +3092,22 @@
 /* Begin XCSwiftPackageProductDependency section */
 		034F75CBA35B7736D77296B9 /* PluginThemeOrchard */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 32E0AB63FFEE01BAFC424B78 /* XCLocalSwiftPackageReference "Packages/PluginThemeOrchard" */;
+			package = 32E0AB63FFEE01BAFC424B78 /* XCLocalSwiftPackageReference "Plugins/PluginThemeOrchard" */;
 			productName = PluginThemeOrchard;
 		};
 		038A7F30D64F6E827F0D89E9 /* PluginThemeNebula */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B0F4167B51860AE8CBB80FF1 /* XCLocalSwiftPackageReference "Packages/PluginThemeNebula" */;
+			package = B0F4167B51860AE8CBB80FF1 /* XCLocalSwiftPackageReference "Plugins/PluginThemeNebula" */;
 			productName = PluginThemeNebula;
 		};
 		04D790802D37197CD563A70C /* PluginReadme */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 01A3FA2FF51443936D72AE98 /* XCLocalSwiftPackageReference "Packages/PluginReadme" */;
+			package = 01A3FA2FF51443936D72AE98 /* XCLocalSwiftPackageReference "Plugins/PluginReadme" */;
 			productName = PluginReadme;
 		};
 		0AD0DF1D507D1DF85F212D84 /* PluginThemeGitHubLight */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 8B8DE5E8263E6C42F3C64445 /* XCLocalSwiftPackageReference "Packages/PluginThemeGitHubLight" */;
+			package = 8B8DE5E8263E6C42F3C64445 /* XCLocalSwiftPackageReference "Plugins/PluginThemeGitHubLight" */;
 			productName = PluginThemeGitHubLight;
 		};
 		0B3CC95D2DF1C49000E22263 /* Sparkle */ = {
@@ -3126,167 +3127,167 @@
 		};
 		151BC0B9AD57ADA322F23133 /* PluginThemeEmber */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 67F7FAC4D1101BEAFA9CF874 /* XCLocalSwiftPackageReference "Packages/PluginThemeEmber" */;
+			package = 67F7FAC4D1101BEAFA9CF874 /* XCLocalSwiftPackageReference "Plugins/PluginThemeEmber" */;
 			productName = PluginThemeEmber;
 		};
 		15E941019068B3AEBE6FFBCD /* PluginOpenXcode */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 9091D09084906B37EE7DE309 /* XCLocalSwiftPackageReference "Packages/PluginOpenXcode" */;
+			package = 9091D09084906B37EE7DE309 /* XCLocalSwiftPackageReference "Plugins/PluginOpenXcode" */;
 			productName = PluginOpenXcode;
 		};
 		1CFFD02788D4D9E076C77A62 /* PluginThemeXcodeLight */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = A66BA82D671C08FFA57F520D /* XCLocalSwiftPackageReference "Packages/PluginThemeXcodeLight" */;
+			package = A66BA82D671C08FFA57F520D /* XCLocalSwiftPackageReference "Plugins/PluginThemeXcodeLight" */;
 			productName = PluginThemeXcodeLight;
 		};
 		2623463505DC40563C1AB9E9 /* PluginOpenFinder */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 565F16D117692CFAEFD7989A /* XCLocalSwiftPackageReference "Packages/PluginOpenFinder" */;
+			package = 565F16D117692CFAEFD7989A /* XCLocalSwiftPackageReference "Plugins/PluginOpenFinder" */;
 			productName = PluginOpenFinder;
 		};
 		2C922ADBF517387A7CB31A97 /* PluginGitLFS */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 0A50094BF5547EBF325E8924 /* XCLocalSwiftPackageReference "Packages/PluginGitLFS" */;
+			package = 0A50094BF5547EBF325E8924 /* XCLocalSwiftPackageReference "Plugins/PluginGitLFS" */;
 			productName = PluginGitLFS;
 		};
 		38D466126A73169D8B822532 /* PluginOpenRemote */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 1C98D78D08ECECCCA36F224F /* XCLocalSwiftPackageReference "Packages/PluginOpenRemote" */;
+			package = 1C98D78D08ECECCCA36F224F /* XCLocalSwiftPackageReference "Plugins/PluginOpenRemote" */;
 			productName = PluginOpenRemote;
 		};
 		3A7200012F90000100ABC001 /* PluginGitTab */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 3A7300012F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginGitTab" */;
+			package = 3A7300012F90000100ABC001 /* XCLocalSwiftPackageReference "Plugins/PluginGitTab" */;
 			productName = PluginGitTab;
 		};
 		3A7200022F90000100ABC001 /* PluginIconTab */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 3A7300022F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginIconTab" */;
+			package = 3A7300022F90000100ABC001 /* XCLocalSwiftPackageReference "Plugins/PluginIconTab" */;
 			productName = PluginIconTab;
 		};
 		3A7200032F90000100ABC001 /* PluginBannerTab */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 3A7300032F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginBannerTab" */;
+			package = 3A7300032F90000100ABC001 /* XCLocalSwiftPackageReference "Plugins/PluginBannerTab" */;
 			productName = PluginBannerTab;
 		};
 		3A7200042F90000100ABC001 /* PluginActivityStatus */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 3A7300042F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginActivityStatus" */;
+			package = 3A7300042F90000100ABC001 /* XCLocalSwiftPackageReference "Plugins/PluginActivityStatus" */;
 			productName = PluginActivityStatus;
 		};
 		3A7200052F90000100ABC001 /* PluginFileInfo */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 3A7300052F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginFileInfo" */;
+			package = 3A7300052F90000100ABC001 /* XCLocalSwiftPackageReference "Plugins/PluginFileInfo" */;
 			productName = PluginFileInfo;
 		};
 		3A7200062F90000100ABC001 /* PluginSubmodule */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 3A7300062F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginSubmodule" */;
+			package = 3A7300062F90000100ABC001 /* XCLocalSwiftPackageReference "Plugins/PluginSubmodule" */;
 			productName = PluginSubmodule;
 		};
 		3A7200072F90000100ABC001 /* PluginStash */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 3A7300072F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginStash" */;
+			package = 3A7300072F90000100ABC001 /* XCLocalSwiftPackageReference "Plugins/PluginStash" */;
 			productName = PluginStash;
 		};
 		3A7200082F90000100ABC001 /* PluginCleanStatus */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 3A7300082F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginCleanStatus" */;
+			package = 3A7300082F90000100ABC001 /* XCLocalSwiftPackageReference "Plugins/PluginCleanStatus" */;
 			productName = PluginCleanStatus;
 		};
 		3A7200092F90000100ABC001 /* PluginGitWatcher */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 3A7300092F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginGitWatcher" */;
+			package = 3A7300092F90000100ABC001 /* XCLocalSwiftPackageReference "Plugins/PluginGitWatcher" */;
 			productName = PluginGitWatcher;
 		};
 		3A7200102F90000100ABC001 /* PluginUnpushedStatus */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 3A7300102F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginUnpushedStatus" */;
+			package = 3A7300102F90000100ABC001 /* XCLocalSwiftPackageReference "Plugins/PluginUnpushedStatus" */;
 			productName = PluginUnpushedStatus;
 		};
 		3A7200112F90000100ABC001 /* PluginGitPush */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 3A7300112F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginGitPush" */;
+			package = 3A7300112F90000100ABC001 /* XCLocalSwiftPackageReference "Plugins/PluginGitPush" */;
 			productName = PluginGitPush;
 		};
 		3A7200122F90000100ABC001 /* PluginProjectPicker */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 3A7300122F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginProjectPicker" */;
+			package = 3A7300122F90000100ABC001 /* XCLocalSwiftPackageReference "Plugins/PluginProjectPicker" */;
 			productName = PluginProjectPicker;
 		};
 		3A7200132F90000100ABC001 /* PluginSmartMerge */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 3A7300132F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginSmartMerge" */;
+			package = 3A7300132F90000100ABC001 /* XCLocalSwiftPackageReference "Plugins/PluginSmartMerge" */;
 			productName = PluginSmartMerge;
 		};
 		3A7200142F90000100ABC001 /* PluginRemoteRepository */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 3A7300142F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginRemoteRepository" */;
+			package = 3A7300142F90000100ABC001 /* XCLocalSwiftPackageReference "Plugins/PluginRemoteRepository" */;
 			productName = PluginRemoteRepository;
 		};
 		3A7200152F90000100ABC001 /* PluginBranch */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 3A7300152F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginBranch" */;
+			package = 3A7300152F90000100ABC001 /* XCLocalSwiftPackageReference "Plugins/PluginBranch" */;
 			productName = PluginBranch;
 		};
 		3A7200162F90000100ABC001 /* PluginConflictResolver */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 3A7300162F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginConflictResolver" */;
+			package = 3A7300162F90000100ABC001 /* XCLocalSwiftPackageReference "Plugins/PluginConflictResolver" */;
 			productName = PluginConflictResolver;
 		};
 		3A7200172F90000100ABC001 /* PluginGitDetail */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 3A7300172F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginGitDetail" */;
+			package = 3A7300172F90000100ABC001 /* XCLocalSwiftPackageReference "Plugins/PluginGitDetail" */;
 			productName = PluginGitDetail;
 		};
 		3A7200182F90000100ABC001 /* PluginCommit */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 3A7300182F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginCommit" */;
+			package = 3A7300182F90000100ABC001 /* XCLocalSwiftPackageReference "Plugins/PluginCommit" */;
 			productName = PluginCommit;
 		};
 		3A7200192F90000100ABC001 /* PluginBanner */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 3A7300192F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginBanner" */;
+			package = 3A7300192F90000100ABC001 /* XCLocalSwiftPackageReference "Plugins/PluginBanner" */;
 			productName = PluginBanner;
 		};
 		3A7200202F90000100ABC001 /* PluginIcon */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 3A7300202F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginIcon" */;
+			package = 3A7300202F90000100ABC001 /* XCLocalSwiftPackageReference "Plugins/PluginIcon" */;
 			productName = PluginIcon;
 		};
 		3A7200212F90000100ABC001 /* PluginGitPull */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 3A7300212F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginGitPull" */;
+			package = 3A7300212F90000100ABC001 /* XCLocalSwiftPackageReference "Plugins/PluginGitPull" */;
 			productName = PluginGitPull;
 		};
 		3A7200222F90000100ABC001 /* PluginGitSync */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 3A7300222F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginGitSync" */;
+			package = 3A7300222F90000100ABC001 /* XCLocalSwiftPackageReference "Plugins/PluginGitSync" */;
 			productName = PluginGitSync;
 		};
 		3A7200232F90000100ABC001 /* PluginAutoPush */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 3A7300232F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginAutoPush" */;
+			package = 3A7300232F90000100ABC001 /* XCLocalSwiftPackageReference "Plugins/PluginAutoPush" */;
 			productName = PluginAutoPush;
 		};
 		3A7200242F90000100ABC001 /* PluginGitClone */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 3A7300242F90000100ABC001 /* XCLocalSwiftPackageReference "Packages/PluginGitClone" */;
+			package = 3A7300242F90000100ABC001 /* XCLocalSwiftPackageReference "Plugins/PluginGitClone" */;
 			productName = PluginGitClone;
 		};
 		45AEF6595B159D762662CAEB /* PluginOpenAntigravity */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 6BBE8E2ECCEABD5CB2D62979 /* XCLocalSwiftPackageReference "Packages/PluginOpenAntigravity" */;
+			package = 6BBE8E2ECCEABD5CB2D62979 /* XCLocalSwiftPackageReference "Plugins/PluginOpenAntigravity" */;
 			productName = PluginOpenAntigravity;
 		};
 		45DE3A439D3C9C3FF7D1BE6A /* PluginLicense */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 71B51C5F6F2A44CF3F36AB55 /* XCLocalSwiftPackageReference "Packages/PluginLicense" */;
+			package = 71B51C5F6F2A44CF3F36AB55 /* XCLocalSwiftPackageReference "Plugins/PluginLicense" */;
 			productName = PluginLicense;
 		};
 		4DA931B6614C89645F5399D3 /* PluginOpenVSCode */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = BA80C8622E256A0B19F95294 /* XCLocalSwiftPackageReference "Packages/PluginOpenVSCode" */;
+			package = BA80C8622E256A0B19F95294 /* XCLocalSwiftPackageReference "Plugins/PluginOpenVSCode" */;
 			productName = PluginOpenVSCode;
 		};
 		4EC50CECD060E698BF493AED /* GitOKPluginKit */ = {
@@ -3296,47 +3297,47 @@
 		};
 		4F504F220B085A174C9DB9EF /* PluginSettingsButton */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 04854420ECB4294D4F6EC13B /* XCLocalSwiftPackageReference "Packages/PluginSettingsButton" */;
+			package = 04854420ECB4294D4F6EC13B /* XCLocalSwiftPackageReference "Plugins/PluginSettingsButton" */;
 			productName = PluginSettingsButton;
 		};
 		6937A30513E36671CC70EE46 /* PluginOpenTrae */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 39598E0F430D82798DA93B01 /* XCLocalSwiftPackageReference "Packages/PluginOpenTrae" */;
+			package = 39598E0F430D82798DA93B01 /* XCLocalSwiftPackageReference "Plugins/PluginOpenTrae" */;
 			productName = PluginOpenTrae;
 		};
 		6A6EA16520A9667ED1A236C1 /* PluginThemeMidnight */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 44FF7A256774CBC01B210B88 /* XCLocalSwiftPackageReference "Packages/PluginThemeMidnight" */;
+			package = 44FF7A256774CBC01B210B88 /* XCLocalSwiftPackageReference "Plugins/PluginThemeMidnight" */;
 			productName = PluginThemeMidnight;
 		};
 		700A741DB9C1E0C7BDA3E0E1 /* PluginThemeSummer */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 9754272AAEB2CBF3B60E1EF8 /* XCLocalSwiftPackageReference "Packages/PluginThemeSummer" */;
+			package = 9754272AAEB2CBF3B60E1EF8 /* XCLocalSwiftPackageReference "Plugins/PluginThemeSummer" */;
 			productName = PluginThemeSummer;
 		};
 		7EE903AEE5001B00948791A1 /* PluginThemeRiver */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 1DAA4AA53B26DD94925011B1 /* XCLocalSwiftPackageReference "Packages/PluginThemeRiver" */;
+			package = 1DAA4AA53B26DD94925011B1 /* XCLocalSwiftPackageReference "Plugins/PluginThemeRiver" */;
 			productName = PluginThemeRiver;
 		};
 		93F890CFE933742CE59AA58A /* PluginThemeGitOK */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 2BA8D7461A96F8A7317A4C13 /* XCLocalSwiftPackageReference "Packages/PluginThemeGitOK" */;
+			package = 2BA8D7461A96F8A7317A4C13 /* XCLocalSwiftPackageReference "Plugins/PluginThemeGitOK" */;
 			productName = PluginThemeGitOK;
 		};
 		98342CFB955D2B01952FACFB /* PluginThemeAurora */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 2156C80BD5691D7A552871E1 /* XCLocalSwiftPackageReference "Packages/PluginThemeAurora" */;
+			package = 2156C80BD5691D7A552871E1 /* XCLocalSwiftPackageReference "Plugins/PluginThemeAurora" */;
 			productName = PluginThemeAurora;
 		};
 		991A8664232B8249489A8AED /* PluginThemeHarbor */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = EC5F6904F184A027E8051782 /* XCLocalSwiftPackageReference "Packages/PluginThemeHarbor" */;
+			package = EC5F6904F184A027E8051782 /* XCLocalSwiftPackageReference "Plugins/PluginThemeHarbor" */;
 			productName = PluginThemeHarbor;
 		};
 		9FB60420DF22FC9DA401357B /* PluginThemeMountain */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = F494BB22561FC8AAEE51ECE3 /* XCLocalSwiftPackageReference "Packages/PluginThemeMountain" */;
+			package = F494BB22561FC8AAEE51ECE3 /* XCLocalSwiftPackageReference "Plugins/PluginThemeMountain" */;
 			productName = PluginThemeMountain;
 		};
 		A1F100022F70000100ABC001 /* GitCoreKit */ = {
@@ -3366,67 +3367,67 @@
 		};
 		A5AE1DB16801920B79FC0766 /* PluginOpenCursor */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 1163E191DF457D033A658385 /* XCLocalSwiftPackageReference "Packages/PluginOpenCursor" */;
+			package = 1163E191DF457D033A658385 /* XCLocalSwiftPackageReference "Plugins/PluginOpenCursor" */;
 			productName = PluginOpenCursor;
 		};
 		B925B6C5C17C4939C80FEF3B /* PluginThemeGraphite */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 1BD0E998169CB47913436216 /* XCLocalSwiftPackageReference "Packages/PluginThemeGraphite" */;
+			package = 1BD0E998169CB47913436216 /* XCLocalSwiftPackageReference "Plugins/PluginThemeGraphite" */;
 			productName = PluginThemeGraphite;
 		};
 		BF0919B72D17F72C122ABB0C /* PluginThemeStatusBar */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = EF5C5E5DE62CD4149D3DD54B /* XCLocalSwiftPackageReference "Packages/PluginThemeStatusBar" */;
+			package = EF5C5E5DE62CD4149D3DD54B /* XCLocalSwiftPackageReference "Plugins/PluginThemeStatusBar" */;
 			productName = PluginThemeStatusBar;
 		};
 		C124FBA21B370436F8BEFD84 /* PluginThemeOneDark */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 602F00B06AD2D5D2306150EC /* XCLocalSwiftPackageReference "Packages/PluginThemeOneDark" */;
+			package = 602F00B06AD2D5D2306150EC /* XCLocalSwiftPackageReference "Plugins/PluginThemeOneDark" */;
 			productName = PluginThemeOneDark;
 		};
 		C5F992DBE36F60B7EB90DC1E /* PluginOpenKiro */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 1D65034ACCC1314FDD9AF6A6 /* XCLocalSwiftPackageReference "Packages/PluginOpenKiro" */;
+			package = 1D65034ACCC1314FDD9AF6A6 /* XCLocalSwiftPackageReference "Plugins/PluginOpenKiro" */;
 			productName = PluginOpenKiro;
 		};
 		C81D10DCBCBEB135C254C2B2 /* PluginThemeMatrix */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = CAAE0D603A5F7B532BDE83ED /* XCLocalSwiftPackageReference "Packages/PluginThemeMatrix" */;
+			package = CAAE0D603A5F7B532BDE83ED /* XCLocalSwiftPackageReference "Plugins/PluginThemeMatrix" */;
 			productName = PluginThemeMatrix;
 		};
 		CCB81D6D993A55C4575B2605 /* PluginThemeWinter */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 6E8A3DE5FC74E95DE09BCCCA /* XCLocalSwiftPackageReference "Packages/PluginThemeWinter" */;
+			package = 6E8A3DE5FC74E95DE09BCCCA /* XCLocalSwiftPackageReference "Plugins/PluginThemeWinter" */;
 			productName = PluginThemeWinter;
 		};
 		D2CEDD6D0BDDC32910AF2C40 /* PluginGitIgnore */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = EA2DBB3316035456AB633BD4 /* XCLocalSwiftPackageReference "Packages/PluginGitIgnore" */;
+			package = EA2DBB3316035456AB633BD4 /* XCLocalSwiftPackageReference "Plugins/PluginGitIgnore" */;
 			productName = PluginGitIgnore;
 		};
 		D7918C898F231F73EF228CC0 /* PluginThemeDracula */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 0EA0489D17E6645A122074A1 /* XCLocalSwiftPackageReference "Packages/PluginThemeDracula" */;
+			package = 0EA0489D17E6645A122074A1 /* XCLocalSwiftPackageReference "Plugins/PluginThemeDracula" */;
 			productName = PluginThemeDracula;
 		};
 		DD85D767C1BB9741FC31CAB8 /* PluginThemeGlacier */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = CB7D310625CE24DAE0AF59B8 /* XCLocalSwiftPackageReference "Packages/PluginThemeGlacier" */;
+			package = CB7D310625CE24DAE0AF59B8 /* XCLocalSwiftPackageReference "Plugins/PluginThemeGlacier" */;
 			productName = PluginThemeGlacier;
 		};
 		E6FA9A917BE5F6E57866E02F /* PluginOpenTerminal */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = C565F22CA062E59B38440B0F /* XCLocalSwiftPackageReference "Packages/PluginOpenTerminal" */;
+			package = C565F22CA062E59B38440B0F /* XCLocalSwiftPackageReference "Plugins/PluginOpenTerminal" */;
 			productName = PluginOpenTerminal;
 		};
 		E731CCE210F9D0309B5201F1 /* PluginThemeSpring */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 7160472A308891E900A412BC /* XCLocalSwiftPackageReference "Packages/PluginThemeSpring" */;
+			package = 7160472A308891E900A412BC /* XCLocalSwiftPackageReference "Plugins/PluginThemeSpring" */;
 			productName = PluginThemeSpring;
 		};
 		F1CDA9223BDDD2D986F5D5B3 /* PluginOpenGitHubDesktop */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 5A28F7F70BE9FE1673DDA5F7 /* XCLocalSwiftPackageReference "Packages/PluginOpenGitHubDesktop" */;
+			package = 5A28F7F70BE9FE1673DDA5F7 /* XCLocalSwiftPackageReference "Plugins/PluginOpenGitHubDesktop" */;
 			productName = PluginOpenGitHubDesktop;
 		};
 		F5A3DF692F85FA4B00D4DD4A /* MagicDiffView */ = {
