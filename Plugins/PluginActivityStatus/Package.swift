@@ -21,7 +21,7 @@ let package = Package(
         .testTarget(
             name: "PluginActivityStatusTests",
             dependencies: ["PluginActivityStatus"],
-            path: "Tests/PluginActivityStatusTests"
+            path: "Tests"
         ),
     ]
 )
