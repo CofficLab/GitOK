@@ -15,71 +15,71 @@ import SwiftUI
 /// 现在支持浅色/深色模式自动适配。
 ///
 extension DesignTokens {
-    enum Color {
+    public enum Color {
         // MARK: - 响应式颜色（支持浅色/深色模式）
         /// 响应式语义化颜色 - 根据 ColorScheme 自动适配
         /// 使用 @Environment(\.colorScheme) 获取当前配色方案
-        static let adaptive = AdaptiveSemanticColors()
+        public static let adaptive = AdaptiveSemanticColors()
 
         // MARK: - 基础色板（保持向后兼容）
         /// 基础色调（神秘深色）
-        static let basePalette = BasePalette()
+        public static let basePalette = BasePalette()
 
         /// 语义化颜色（静态，仅用于深色模式）
         /// ⚠️ 建议使用 adaptive 替代
-        static let semantic = SemanticColors()
+        public static let semantic = SemanticColors()
 
         /// 渐变色
-        static let gradients = GradientColors()
+        public static let gradients = GradientColors()
 
         // MARK: - 基础色调
         /// 基础色调 - 定义应用的基础背景和氛围色
-        struct BasePalette {
+        public struct BasePalette: Sendable {
             // 深色背景（OLED 优化）
-            let deepBackground = SwiftUI.Color(hex: "050508")      // 接近纯黑，带神秘蓝调
-            let surfaceBackground = SwiftUI.Color(hex: "0D0D12")   // 卡片表面
-            let elevatedSurface = SwiftUI.Color(hex: "14141A")     // 悬浮表面
-            let overlayBackground = SwiftUI.Color(hex: "1A1A22")   // 叠加层
+            public let deepBackground = SwiftUI.Color(hex: "050508")      // 接近纯黑，带神秘蓝调
+            public let surfaceBackground = SwiftUI.Color(hex: "0D0D12")   // 卡片表面
+            public let elevatedSurface = SwiftUI.Color(hex: "14141A")     // 悬浮表面
+            public let overlayBackground = SwiftUI.Color(hex: "1A1A22")   // 叠加层
 
             // 神秘氛围色
-            let mysticIndigo = SwiftUI.Color(hex: "1E1B2E")       // 靛紫
-            let mysticViolet = SwiftUI.Color(hex: "2D1B3D")       // 紫罗兰
-            let mysticAzure = SwiftUI.Color(hex: "0B1A2E")         // 深蔚蓝
+            public let mysticIndigo = SwiftUI.Color(hex: "1E1B2E")       // 靛紫
+            public let mysticViolet = SwiftUI.Color(hex: "2D1B3D")       // 紫罗兰
+            public let mysticAzure = SwiftUI.Color(hex: "0B1A2E")         // 深蔚蓝
 
             // 高光和边框
-            let subtleBorder = SwiftUI.Color(hex: "FFFFFF")        // 微妙白边
-            let glowAccent = SwiftUI.Color(hex: "6B5CE7")         // 幽光紫
+            public let subtleBorder = SwiftUI.Color(hex: "FFFFFF")        // 微妙白边
+            public let glowAccent = SwiftUI.Color(hex: "6B5CE7")         // 幽光紫
         }
 
         // MARK: - 语义化颜色
         /// 语义化颜色 - 具有特定含义的颜色
-        struct SemanticColors {
+        public struct SemanticColors: Sendable {
             // 主色调
-            let primary = SwiftUI.Color.adaptive(light: "7C6FFF", dark: "7C6FFF")             // 主紫
-            let primarySecondary = SwiftUI.Color.adaptive(light: "A99CFF", dark: "A99CFF")    // 次紫
+            public let primary = SwiftUI.Color.adaptive(light: "7C6FFF", dark: "7C6FFF")             // 主紫
+            public let primarySecondary = SwiftUI.Color.adaptive(light: "A99CFF", dark: "A99CFF")    // 次紫
 
             // 状态色
-            let success = SwiftUI.Color.adaptive(light: "30D158", dark: "30D158")             // 成功绿
-            let successGlow = SwiftUI.Color.adaptive(light: "7CFFB5", dark: "7CFFB5")         // 成功光晕
-            let warning = SwiftUI.Color.adaptive(light: "FF9F0A", dark: "FF9F0A")             // 警告橙
-            let warningGlow = SwiftUI.Color.adaptive(light: "FFD57F", dark: "FFD57F")         // 警告光晕
-            let error = SwiftUI.Color.adaptive(light: "FF453A", dark: "FF453A")               // 错误红
-            let errorGlow = SwiftUI.Color.adaptive(light: "FF7A73", dark: "FF7A73")           // 错误光晕
-            let info = SwiftUI.Color.adaptive(light: "0A84FF", dark: "0A84FF")                // 信息蓝
-            let infoGlow = SwiftUI.Color.adaptive(light: "7AB8FF", dark: "7AB8FF")            // 信息光晕
+            public let success = SwiftUI.Color.adaptive(light: "30D158", dark: "30D158")             // 成功绿
+            public let successGlow = SwiftUI.Color.adaptive(light: "7CFFB5", dark: "7CFFB5")         // 成功光晕
+            public let warning = SwiftUI.Color.adaptive(light: "FF9F0A", dark: "FF9F0A")             // 警告橙
+            public let warningGlow = SwiftUI.Color.adaptive(light: "FFD57F", dark: "FFD57F")         // 警告光晕
+            public let error = SwiftUI.Color.adaptive(light: "FF453A", dark: "FF453A")               // 错误红
+            public let errorGlow = SwiftUI.Color.adaptive(light: "FF7A73", dark: "FF7A73")           // 错误光晕
+            public let info = SwiftUI.Color.adaptive(light: "0A84FF", dark: "0A84FF")                // 信息蓝
+            public let infoGlow = SwiftUI.Color.adaptive(light: "7AB8FF", dark: "7AB8FF")            // 信息光晕
 
             // 文本色（确保 WCAG AA 对比度 ≥ 4.5:1）
-            let textPrimary = SwiftUI.Color.adaptive(light: "1C1C1E", dark: "FFFFFF")         // 主要文本
-            let textSecondary = SwiftUI.Color.adaptive(light: "6B6B7B", dark: "EBEBF5")       // 次要文本
-            let textTertiary = SwiftUI.Color.adaptive(light: "98989E", dark: "98989E")        // 三级文本
-            let textDisabled = SwiftUI.Color.adaptive(light: "BDBDBD", dark: "48484F")        // 禁用文本
+            public let textPrimary = SwiftUI.Color.adaptive(light: "1C1C1E", dark: "FFFFFF")         // 主要文本
+            public let textSecondary = SwiftUI.Color.adaptive(light: "6B6B7B", dark: "EBEBF5")       // 次要文本
+            public let textTertiary = SwiftUI.Color.adaptive(light: "98989E", dark: "98989E")        // 三级文本
+            public let textDisabled = SwiftUI.Color.adaptive(light: "BDBDBD", dark: "48484F")        // 禁用文本
         }
 
         // MARK: - 渐变色
         /// 渐变色 - 预定义的渐变效果
-        struct GradientColors {
+        public struct GradientColors: Sendable {
             // 主渐变（神秘紫）
-            var primaryGradient = LinearGradient(
+            public var primaryGradient = LinearGradient(
                 colors: [
                     SwiftUI.Color(hex: "7C6FFF"),
                     SwiftUI.Color(hex: "B4A5FF")
@@ -89,7 +89,7 @@ extension DesignTokens {
             )
 
             // 深海渐变
-            var oceanGradient = LinearGradient(
+            public var oceanGradient = LinearGradient(
                 colors: [
                     SwiftUI.Color(hex: "0A1A3E"),
                     SwiftUI.Color(hex: "1A2A5E")
@@ -99,7 +99,7 @@ extension DesignTokens {
             )
 
             // 极光渐变
-            var auroraGradient = LinearGradient(
+            public var auroraGradient = LinearGradient(
                 colors: [
                     SwiftUI.Color(hex: "6B5CE7"),
                     SwiftUI.Color(hex: "A78BFA"),
@@ -110,7 +110,7 @@ extension DesignTokens {
             )
 
             // 能量渐变（用于进度、活跃状态）
-            var energyGradient = LinearGradient(
+            public var energyGradient = LinearGradient(
                 colors: [
                     SwiftUI.Color(hex: "00D4FF"),
                     SwiftUI.Color(hex: "7C6FFF")
@@ -120,7 +120,7 @@ extension DesignTokens {
             )
 
             // 发光边框渐变
-            var glowBorderGradient = LinearGradient(
+            public var glowBorderGradient = LinearGradient(
                 colors: [
                     SwiftUI.Color.clear,
                     SwiftUI.Color.white.opacity(0.08),
@@ -135,7 +135,7 @@ extension DesignTokens {
     // MARK: - 响应式语义化颜色
     /// 响应式语义化颜色 - 根据 ColorScheme 自动适配
     /// 提供动态颜色选择，支持浅色和深色模式
-    struct AdaptiveSemanticColors {
+    public struct AdaptiveSemanticColors: Sendable {
         // MARK: - 环境依赖的颜色计算
 
         /// 主要文本色（根据配色方案动态调整）

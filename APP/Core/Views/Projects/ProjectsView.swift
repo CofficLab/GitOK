@@ -1,3 +1,4 @@
+import GitOKUI
 import MagicKit
 import OSLog
 import SwiftData

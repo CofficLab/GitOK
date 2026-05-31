@@ -1,4 +1,5 @@
 import Foundation
+import GitOKUI
 import LibGit2Swift
 import MagicKit
 import OSLog

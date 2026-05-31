@@ -1,3 +1,4 @@
+import GitOKUI
 import MagicAlert
 import MagicKit
 import OSLog
