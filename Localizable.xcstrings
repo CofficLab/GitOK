@@ -18,6 +18,7 @@
       }
     },
     ":" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -50,6 +51,7 @@
       }
     },
     "·" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -361,9 +363,6 @@
       }
     },
     "CA 文件会写入 `http.sslCAInfo`。关闭 SSL 验证只适合临时排障；企业网络应优先导入可信 CA 证书。" : {
-
-    },
-    "Clone" : {
 
     },
     "Clone 会从远程地址下载仓库并自动加入项目。" : {
@@ -1856,6 +1855,7 @@
       }
     },
     "复制消息内容" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1917,6 +1917,7 @@
       }
     },
     "已复制" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
