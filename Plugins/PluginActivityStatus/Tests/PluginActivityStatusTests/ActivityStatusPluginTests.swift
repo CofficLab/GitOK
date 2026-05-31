@@ -1,7 +1,11 @@
+import SwiftUI
 import XCTest
+import GitOKPluginKit
 @testable import PluginActivityStatus
 
 final class ActivityStatusPluginTests: XCTestCase {
+    // MARK: - Metadata
+
     func testPluginMetadataIsStable() {
         let metadata = ActivityStatusPlugin.metadata
 
@@ -15,14 +19,89 @@ final class ActivityStatusPluginTests: XCTestCase {
         XCTAssertFalse(metadata.description.isEmpty)
     }
 
+    func testPluginConformsToPackagedPlugin() {
+        // Verify the shared singleton pattern
+        let instance = ActivityStatusPlugin.shared
+        XCTAssertFalse(instance.instanceLabel.isEmpty)
+        XCTAssertEqual(instance.instanceLabel, "ActivityStatusPlugin")
+    }
+
+    // MARK: - Localization
+
     func testLocalizationCatalogIsPackaged() {
-        XCTAssertNotNil(PluginActivityStatusLocalization.bundle.url(forResource: "ActivityStatus", withExtension: "xcstrings"))
-        XCTAssertFalse(PluginActivityStatusLocalization.string("Activity Status").isEmpty)
-        XCTAssertFalse(PluginActivityStatusLocalization.string("Current activity").isEmpty)
+        XCTAssertNotNil(
+            PluginActivityStatusLocalization.bundle.url(forResource: "ActivityStatus", withExtension: "xcstrings")
+        )
+    }
+
+    func testLocalizedStringsResolve() {
+        let displayName = PluginActivityStatusLocalization.string("Activity Status")
+        XCTAssertFalse(displayName.isEmpty)
+
+        let description = PluginActivityStatusLocalization.string(
+            "Displays current long-running activity in the status bar."
+        )
+        XCTAssertFalse(description.isEmpty)
+
+        let tooltip = PluginActivityStatusLocalization.string("Current activity")
+        XCTAssertFalse(tooltip.isEmpty)
+    }
+
+    func testUnknownKeyReturnsKeyItself() {
+        // NSLocalizedString falls back to the key when not found
+        let key = "NonExistent.Key.12345"
+        let result = PluginActivityStatusLocalization.string(key)
+        XCTAssertEqual(result, key)
+    }
+
+    // MARK: - Status Bar View
+
+    @MainActor
+    func testStatusBarCenterViewReturnsViewWithNonNilStatus() {
+        let context = GitOKPluginContext(activityStatus: "Cloning repository...")
+        let view = ActivityStatusPlugin.shared.statusBarCenterView(context: context)
+        XCTAssertNotNil(view)
     }
 
     @MainActor
-    func testStatusBarCenterContributionIsAvailable() {
-        XCTAssertNotNil(ActivityStatusPlugin.shared.statusBarCenterView(context: GitOKPluginContext()))
+    func testStatusBarCenterViewReturnsViewWithNilStatus() {
+        let context = GitOKPluginContext(activityStatus: nil)
+        // Plugin always returns a tile view; the tile handles nil internally
+        let view = ActivityStatusPlugin.shared.statusBarCenterView(context: context)
+        XCTAssertNotNil(view)
+    }
+
+    @MainActor
+    func testStatusBarCenterViewReturnsViewWithEmptyStatus() {
+        let context = GitOKPluginContext(activityStatus: "")
+        let view = ActivityStatusPlugin.shared.statusBarCenterView(context: context)
+        XCTAssertNotNil(view)
+    }
+
+    @MainActor
+    func testStatusBarCenterViewReturnsViewWithDefaultContext() {
+        let context = GitOKPluginContext()
+        let view = ActivityStatusPlugin.shared.statusBarCenterView(context: context)
+        XCTAssertNotNil(view)
+    }
+
+    // MARK: - ActivityStatusTile
+
+    @MainActor
+    func testTileCanBeCreatedWithStatus() {
+        let tile = ActivityStatusTile(activityStatus: "Pushing changes...")
+        XCTAssertNotNil(tile.body)
+    }
+
+    @MainActor
+    func testTileCanBeCreatedWithNilStatus() {
+        let tile = ActivityStatusTile(activityStatus: nil)
+        XCTAssertNotNil(tile.body)
+    }
+
+    @MainActor
+    func testTileCanBeCreatedWithDefaultInit() {
+        let tile = ActivityStatusTile()
+        XCTAssertNotNil(tile.body)
     }
 }

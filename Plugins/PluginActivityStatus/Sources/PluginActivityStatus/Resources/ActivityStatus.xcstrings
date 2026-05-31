@@ -2,7 +2,7 @@
   "sourceLanguage" : "en",
   "strings" : {
     "Activity Status" : {
-      "extractionState" : "stale",
+      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -19,7 +19,7 @@
       }
     },
     "Current activity" : {
-      "extractionState" : "stale",
+      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -36,7 +36,7 @@
       }
     },
     "Displays current long-running activity in the status bar." : {
-      "extractionState" : "stale",
+      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
