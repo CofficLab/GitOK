@@ -1,17 +1,16 @@
 import GitCoreKit
-import GitOKPluginKit
 import SwiftUI
 
 public struct BranchStatusTile: View {
-    @Environment(\.gitOKProjectURL) private var projectURL
-    @Environment(\.gitOKBranchName) private var branchName
-    @Environment(\.gitOKIsGitRepository) private var isGitRepository
+    let context: BranchPluginContext
     @State private var isPresented = false
 
-    public init() {}
+    public init(context: BranchPluginContext) {
+        self.context = context
+    }
 
     public var body: some View {
-        if projectURL != nil, isGitRepository {
+        if context.projectURL != nil, context.isGitRepository {
             Button {
                 isPresented.toggle()
             } label: {
@@ -27,14 +26,14 @@ public struct BranchStatusTile: View {
             .buttonStyle(.plain)
             .help(PluginBranchLocalization.string("Manage Branches"))
             .popover(isPresented: $isPresented) {
-                BranchManagementView()
+                BranchManagementView(context: context)
                     .frame(width: 560, height: 640)
             }
         }
     }
 
     private var displayBranchName: String {
-        guard let branchName, branchName.isEmpty == false else {
+        guard let branchName = context.branchName, branchName.isEmpty == false else {
             return PluginBranchLocalization.string("No Branch")
         }
         return branchName

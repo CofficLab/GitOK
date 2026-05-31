@@ -2,6 +2,32 @@ import Foundation
 import GitOKPluginKit
 import SwiftUI
 
+/// BranchPlugin 内部使用的上下文，由 GitOKPluginContext 转换而来。
+///
+/// 所有子视图通过此结构体获取内核数据，不再依赖 SwiftUI Environment。
+public struct BranchPluginContext: Sendable {
+    public let projectURL: URL?
+    public let branchName: String?
+    public let isGitRepository: Bool
+
+    public init(
+        projectURL: URL? = nil,
+        branchName: String? = nil,
+        isGitRepository: Bool = false
+    ) {
+        self.projectURL = projectURL
+        self.branchName = branchName
+        self.isGitRepository = isGitRepository
+    }
+
+    @MainActor
+    public init(_ context: GitOKPluginContext) {
+        self.projectURL = context.projectURL
+        self.branchName = context.branchName
+        self.isGitRepository = context.isGitRepository
+    }
+}
+
 public struct BranchPlugin: GitOKPackagedPlugin {
     public static let shared = BranchPlugin()
 
@@ -19,12 +45,13 @@ public struct BranchPlugin: GitOKPackagedPlugin {
     private init() {}
 
     public func toolBarTrailingView() -> AnyView? {
-        AnyView(BranchPickerView())
+        AnyView(BranchPickerView(context: BranchPluginContext()))
     }
 
     @MainActor
     public func statusBarLeadingView(context: GitOKPluginContext) -> AnyView? {
-        AnyView(BranchStatusTile())
+        let pluginContext = BranchPluginContext(context)
+        return AnyView(BranchStatusTile(context: pluginContext))
     }
 }
 

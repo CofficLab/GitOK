@@ -1,11 +1,10 @@
 import AppKit
 import GitCoreKit
-import GitOKPluginKit
 import ProjectRulesKit
 import SwiftUI
 
 public struct BranchManagementView: View {
-    @Environment(\.gitOKProjectURL) private var projectURL
+    let context: BranchPluginContext
     @State private var branches: [GitBranchSummary] = []
     @State private var remoteBranches: [String] = []
     @State private var newBranchName = ""
@@ -23,7 +22,9 @@ public struct BranchManagementView: View {
     @State private var isComparing = false
     @State private var compareError: String?
 
-    public init() {}
+    public init(context: BranchPluginContext) {
+        self.context = context
+    }
 
     public var body: some View {
         ScrollView {
@@ -59,7 +60,7 @@ public struct BranchManagementView: View {
     }
 
     private var repository: GitRepositoryCLI? {
-        projectURL.map(GitRepositoryCLI.init(repositoryURL:))
+        context.projectURL.map(GitRepositoryCLI.init(repositoryURL:))
     }
 
     private var filteredBranches: [GitBranchSummary] {
@@ -335,7 +336,7 @@ private extension BranchManagementView {
     }
 
     func loadCompare() {
-        guard let projectURL, let base = compareBaseBranch, let head = compareHeadBranch, base.id != head.id else { return }
+        guard let projectURL = context.projectURL, let base = compareBaseBranch, let head = compareHeadBranch, base.id != head.id else { return }
         let baseBranchName = base.name
         let headBranchName = head.name
         isComparing = true
@@ -380,7 +381,7 @@ private extension BranchManagementView {
     }
 
     func loadBranches() {
-        guard let projectURL else {
+        guard let projectURL = context.projectURL else {
             branches = []
             remoteBranches = []
             selectedBranch = nil
@@ -431,7 +432,7 @@ private extension BranchManagementView {
         _ action: @escaping @Sendable (GitRepositoryCLI) throws -> Void,
         onSuccess: @escaping @MainActor @Sendable () -> Void
     ) {
-        guard let projectURL else { return }
+        guard let projectURL = context.projectURL else { return }
         isLoading = true
         errorMessage = nil
         Task.detached(priority: .userInitiated) {

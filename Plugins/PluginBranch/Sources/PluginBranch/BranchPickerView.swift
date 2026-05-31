@@ -1,17 +1,16 @@
 import GitCoreKit
-import GitOKPluginKit
 import SwiftUI
 
 public struct BranchPickerView: View {
-    @Environment(\.gitOKProjectURL) private var projectURL
-    @Environment(\.gitOKIsGitRepository) private var isGitRepository
-    @Environment(\.gitOKBranchName) private var branchName
+    let context: BranchPluginContext
     @State private var branches: [GitBranchSummary] = []
     @State private var selection: GitBranchSummary?
     @State private var isRefreshing = false
     @State private var errorMessage: String?
 
-    nonisolated public init() {}
+    nonisolated public init(context: BranchPluginContext) {
+        self.context = context
+    }
 
     public var body: some View {
         Picker(PluginBranchLocalization.string("Branch"), selection: $selection) {
@@ -25,20 +24,20 @@ public struct BranchPickerView: View {
                 }
             }
         }
-        .disabled(projectURL == nil || isGitRepository == false || branches.isEmpty || isRefreshing)
+        .disabled(context.projectURL == nil || !context.isGitRepository || branches.isEmpty || isRefreshing)
         .frame(width: 170)
         .onAppear(perform: refreshBranches)
-        .onChange(of: projectURL) { _, _ in refreshBranches() }
-        .onChange(of: branchName) { _, _ in refreshBranches() }
+        .onChange(of: context.projectURL) { _, _ in refreshBranches() }
+        .onChange(of: context.branchName) { _, _ in refreshBranches() }
         .onChange(of: selection) { _, branch in
-            guard let branch, branch.name != branchName else { return }
+            guard let branch, branch.name != context.branchName else { return }
             checkout(branch)
         }
         .help(errorMessage ?? PluginBranchLocalization.string("Switch Branch"))
     }
 
     private func refreshBranches() {
-        guard let projectURL, isGitRepository else {
+        guard let projectURL = context.projectURL, context.isGitRepository else {
             branches = []
             selection = nil
             return
@@ -46,7 +45,7 @@ public struct BranchPickerView: View {
 
         isRefreshing = true
         errorMessage = nil
-        let currentBranchName = branchName
+        let currentBranchName = context.branchName
         Task.detached(priority: .userInitiated) {
             do {
                 let repository = GitRepositoryCLI(repositoryURL: projectURL)
@@ -70,7 +69,7 @@ public struct BranchPickerView: View {
     }
 
     private func checkout(_ branch: GitBranchSummary) {
-        guard let projectURL else { return }
+        guard let projectURL = context.projectURL else { return }
         let branchName = branch.name
         isRefreshing = true
         errorMessage = nil
