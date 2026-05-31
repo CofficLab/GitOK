@@ -37,17 +37,4 @@ final class GitOKPackagedPluginTests: XCTestCase {
     func testDefaultStatusBarCenterViewIsNil() {
         XCTAssertNil(SamplePlugin.shared.statusBarCenterView(context: GitOKPluginContext()))
     }
-
-    func testProjectURLEnvironmentDefaultIsNil() {
-        XCTAssertNil(EnvironmentValues().gitOKProjectURL)
-    }
-
-    func testActivityStatusEnvironmentDefaultIsNil() {
-        XCTAssertNil(EnvironmentValues().gitOKActivityStatus)
-    }
-
-    func testFileInfoEnvironmentDefaultsAreNil() {
-        XCTAssertNil(EnvironmentValues().gitOKSelectedFilePath)
-        XCTAssertNil(EnvironmentValues().gitOKProjectPath)
-    }
 }

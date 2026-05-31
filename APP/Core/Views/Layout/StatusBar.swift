@@ -49,10 +49,6 @@ struct StatusBar: View, SuperLog {
                 isGitRepository: projectVM.project?.isGitRepo ?? false
             ).enumerated()), id: \.offset) { _, view in
                 view
-                    .environmentObject(GitOKUIThemeRegistry.shared)
-                    .environment(\.gitOKThemeSelectionHandler) { themeId in
-                        themeProvider.selectTheme(themeId)
-                    }
             }
         }
         .labelStyle(.iconOnly)
