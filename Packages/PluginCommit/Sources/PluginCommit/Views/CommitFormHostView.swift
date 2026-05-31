@@ -117,13 +117,16 @@ private extension CommitFormHostView {
     }
 
     func performCommitAndPush(_ command: CommitMessageRules.ProjectSubmitRequest<Project>) {
+        // Extract project value before Task to avoid Sendable crossing
+        nonisolated(unsafe) let project = command.project
+
         Task(priority: .userInitiated) { @MainActor in
             var clearsActivityStatusAfterCompletion = true
 
             do {
                 let executionState = try await CommitMessageRules.submitExecutionState(
                     message: command.request.message,
-                    hasStagedChanges: hasStagedChanges(command.project),
+                    hasStagedChanges: hasStagedChanges(project),
                     commitOnly: command.request.commitOnly
                 )
 
@@ -131,11 +134,11 @@ private extension CommitFormHostView {
                     setActivityStatus(CommitMessageRules.activityStatus(for: step))
                     switch step {
                     case .addAllFiles:
-                        try await addAllFiles(command.project)
+                        try await addAllFiles(project)
                     case .commit:
-                        try await commit(command.project, executionState.plan)
+                        try await commit(project, executionState.plan)
                     case .push:
-                        try await push(command.project)
+                        try await push(project)
                     }
                 }
 
@@ -220,7 +223,17 @@ private extension CommitFormHostView {
         let namesAndEmails = CommitMessageRules.autocompleteNameEmailPairs(
             coAuthors: loadCoAuthors()
         )
-        let project = project
+        guard let project else {
+            Task(priority: .utility) { @MainActor in
+                CommitMessageRules.performAutocompleteState(
+                    CommitMessageRules.autocompleteInitialState(namesAndEmails: namesAndEmails),
+                    setUserMentions: { userMentions = $0 },
+                    setIssueReferences: { issueReferences = $0 }
+                )
+            }
+            return
+        }
+        nonisolated(unsafe) let _project = project
 
         Task(priority: .utility) { @MainActor in
             CommitMessageRules.performAutocompleteState(
@@ -229,12 +242,8 @@ private extension CommitFormHostView {
                 setIssueReferences: { issueReferences = $0 }
             )
 
-            guard let project else {
-                return
-            }
-
-            let localBranches = (try? await loadLocalBranches(project)) ?? []
-            let remoteBranches = (try? await loadRemoteBranches(project)) ?? []
+            let localBranches = (try? await loadLocalBranches(_project)) ?? []
+            let remoteBranches = (try? await loadRemoteBranches(_project)) ?? []
             let state = CommitMessageRules.autocompleteState(
                 namesAndEmails: namesAndEmails,
                 localBranches: localBranches,

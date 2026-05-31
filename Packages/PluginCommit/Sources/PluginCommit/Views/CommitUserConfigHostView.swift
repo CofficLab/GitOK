@@ -142,6 +142,9 @@ private extension CommitUserConfigHostView {
     }
 
     func applyConfig(_ command: CommitUserConfigRules.ProjectApplyConfigRequest<Project>) {
+        // Extract project value before Task to avoid Sendable crossing
+        nonisolated(unsafe) let project = command.project
+
         Task(priority: .userInitiated) { @MainActor in
             let configName = command.request.name
             let configEmail = command.request.email
@@ -152,7 +155,7 @@ private extension CommitUserConfigHostView {
 
             do {
                 let identity = CommitUserConfigRules.identity(name: configName, email: configEmail)
-                try await applyProjectConfig(command.project, identity)
+                try await applyProjectConfig(project, identity)
                 CommitUserConfigRules.performApplyConfigState(
                     CommitUserConfigRules.applyConfigSuccessState(name: identity.name, email: identity.email),
                     setName: { currentUser = $0 },
