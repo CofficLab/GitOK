@@ -21,6 +21,6 @@ struct RemoteRepositoryPluginTests {
     @MainActor
     @Test("plugin contributes status bar trailing view")
     func statusBarTrailingView() {
-        #expect(RemoteRepositoryPlugin.shared.statusBarTrailingView() != nil)
+        #expect(RemoteRepositoryPlugin.shared.statusBarTrailingView(context: GitOKPluginContext()) != nil)
     }
 }

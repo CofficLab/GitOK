@@ -24,7 +24,7 @@ final class LicensePluginTests: XCTestCase {
 
     @MainActor
     func testStatusBarContributionIsAvailable() {
-        XCTAssertNotNil(LicensePlugin.shared.statusBarTrailingView())
+        XCTAssertNotNil(LicensePlugin.shared.statusBarTrailingView(context: GitOKPluginContext()))
     }
 
     func testLicenseDocumentWritesCanonicalLicenseFile() throws {

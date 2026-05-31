@@ -17,7 +17,7 @@ public struct RemoteRepositoryPlugin: GitOKPackagedPlugin {
 
     private init() {}
 
-    public func statusBarTrailingView() -> AnyView? {
+    public func statusBarTrailingView(context: GitOKPluginContext) -> AnyView? {
         AnyView(RemoteRepositoryStatusButton())
     }
 }

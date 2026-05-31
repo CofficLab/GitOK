@@ -22,7 +22,7 @@ struct ConflictResolverPluginTests {
     @MainActor
     @Test("plugin contributes status bar trailing view")
     func statusBarTrailingView() {
-        #expect(ConflictResolverPlugin.shared.statusBarTrailingView() != nil)
+        #expect(ConflictResolverPlugin.shared.statusBarTrailingView(context: GitOKPluginContext()) != nil)
     }
 
     @Test("state builder prioritizes unresolved files")

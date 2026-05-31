@@ -24,7 +24,7 @@ final class ReadmePluginTests: XCTestCase {
 
     @MainActor
     func testStatusBarContributionIsAvailable() {
-        XCTAssertNotNil(ReadmePlugin.shared.statusBarTrailingView())
+        XCTAssertNotNil(ReadmePlugin.shared.statusBarTrailingView(context: GitOKPluginContext()))
     }
 
     func testReadmeResolverFindsLowercaseCandidate() throws {

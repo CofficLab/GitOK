@@ -18,7 +18,7 @@ public struct AutoPushPlugin: GitOKPackagedPlugin {
     private init() {}
 
     @MainActor
-    public func statusBarTrailingView() -> AnyView? {
+    public func statusBarTrailingView(context: GitOKPluginContext) -> AnyView? {
         AnyView(AutoPushStatusIcon())
     }
 }

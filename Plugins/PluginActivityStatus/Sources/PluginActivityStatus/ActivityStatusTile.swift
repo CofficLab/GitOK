@@ -2,9 +2,11 @@ import GitOKPluginKit
 import SwiftUI
 
 public struct ActivityStatusTile: View {
-    @Environment(\.gitOKActivityStatus) private var activityStatus
+    private let activityStatus: String?
 
-    public init() {}
+    public init(activityStatus: String? = nil) {
+        self.activityStatus = activityStatus
+    }
 
     public var body: some View {
         if let status = activityStatus, status.isEmpty == false {

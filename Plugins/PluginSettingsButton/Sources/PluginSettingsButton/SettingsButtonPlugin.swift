@@ -18,7 +18,7 @@ public struct SettingsButtonPlugin: GitOKPackagedPlugin {
 
     private init() {}
 
-    public func statusBarTrailingView() -> AnyView? {
+    public func statusBarTrailingView(context: GitOKPluginContext) -> AnyView? {
         AnyView(SettingsButtonView())
     }
 }

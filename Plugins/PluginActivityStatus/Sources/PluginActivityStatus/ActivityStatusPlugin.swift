@@ -19,8 +19,8 @@ public struct ActivityStatusPlugin: GitOKPackagedPlugin {
     private init() {}
 
     @MainActor
-    public func statusBarCenterView() -> AnyView? {
-        AnyView(ActivityStatusTile())
+    public func statusBarCenterView(context: GitOKPluginContext) -> AnyView? {
+        AnyView(ActivityStatusTile(activityStatus: context.activityStatus))
     }
 }
 

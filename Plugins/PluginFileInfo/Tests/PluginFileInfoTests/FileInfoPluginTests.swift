@@ -23,7 +23,7 @@ final class FileInfoPluginTests: XCTestCase {
 
     @MainActor
     func testStatusBarLeadingContributionIsAvailable() {
-        XCTAssertNotNil(FileInfoPlugin.shared.statusBarLeadingView())
+        XCTAssertNotNil(FileInfoPlugin.shared.statusBarLeadingView(context: GitOKPluginContext()))
     }
 
     func testPathComponents() {

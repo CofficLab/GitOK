@@ -92,18 +92,18 @@ final class PackagedPluginAdapter<Plugin: GitOKPackagedPlugin>: SuperPlugin {
     }
 
     @MainActor
-    func addStatusBarLeadingView() -> AnyView? {
-        statusBarLeadingViewProvider?() ?? plugin.statusBarLeadingView()
+    func addStatusBarLeadingView(context: GitOKPluginContext) -> AnyView? {
+        statusBarLeadingViewProvider?() ?? plugin.statusBarLeadingView(context: context)
     }
 
     @MainActor
-    func addStatusBarCenterView() -> AnyView? {
-        plugin.statusBarCenterView()
+    func addStatusBarCenterView(context: GitOKPluginContext) -> AnyView? {
+        plugin.statusBarCenterView(context: context)
     }
 
     @MainActor
-    func addStatusBarTrailingView() -> AnyView? {
-        statusBarTrailingViewProvider?() ?? plugin.statusBarTrailingView()
+    func addStatusBarTrailingView(context: GitOKPluginContext) -> AnyView? {
+        statusBarTrailingViewProvider?() ?? plugin.statusBarTrailingView(context: context)
     }
 
     @MainActor

@@ -23,7 +23,7 @@ final class GitIgnorePluginTests: XCTestCase {
 
     @MainActor
     func testStatusBarContributionIsAvailable() {
-        XCTAssertNotNil(GitIgnorePlugin.shared.statusBarTrailingView())
+        XCTAssertNotNil(GitIgnorePlugin.shared.statusBarTrailingView(context: GitOKPluginContext()))
     }
 
     func testXcodeTemplateMergeIsStable() {

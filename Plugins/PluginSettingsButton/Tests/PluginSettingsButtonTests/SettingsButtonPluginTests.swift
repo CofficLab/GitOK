@@ -23,6 +23,6 @@ final class SettingsButtonPluginTests: XCTestCase {
 
     @MainActor
     func testStatusBarContributionIsAvailable() {
-        XCTAssertNotNil(SettingsButtonPlugin.shared.statusBarTrailingView())
+        XCTAssertNotNil(SettingsButtonPlugin.shared.statusBarTrailingView(context: GitOKPluginContext()))
     }
 }

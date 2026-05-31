@@ -18,7 +18,7 @@ public struct SubmodulePlugin: GitOKPackagedPlugin {
     private init() {}
 
     @MainActor
-    public func statusBarTrailingView() -> AnyView? {
+    public func statusBarTrailingView(context: GitOKPluginContext) -> AnyView? {
         AnyView(SubmoduleStatusTile())
     }
 }

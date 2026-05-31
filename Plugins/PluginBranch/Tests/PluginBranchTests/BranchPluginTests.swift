@@ -23,6 +23,6 @@ struct BranchPluginTests {
     @Test("plugin contributes toolbar and status bar views")
     func contributesViews() {
         #expect(BranchPlugin.shared.toolBarTrailingView() != nil)
-        #expect(BranchPlugin.shared.statusBarLeadingView() != nil)
+        #expect(BranchPlugin.shared.statusBarLeadingView(context: GitOKPluginContext()) != nil)
     }
 }

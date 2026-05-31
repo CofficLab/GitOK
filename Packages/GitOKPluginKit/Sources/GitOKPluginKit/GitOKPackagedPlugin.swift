@@ -49,13 +49,13 @@ public protocol GitOKPackagedPlugin: Sendable {
     func rootView(_ content: AnyView) -> AnyView?
 
     @MainActor
-    func statusBarLeadingView() -> AnyView?
+    func statusBarLeadingView(context: GitOKPluginContext) -> AnyView?
 
     @MainActor
-    func statusBarCenterView() -> AnyView?
+    func statusBarCenterView(context: GitOKPluginContext) -> AnyView?
 
     @MainActor
-    func statusBarTrailingView() -> AnyView?
+    func statusBarTrailingView(context: GitOKPluginContext) -> AnyView?
 
     @MainActor
     func themeContributions() -> [GitOKUIThemeContribution]
@@ -310,17 +310,17 @@ public extension GitOKPackagedPlugin {
     }
 
     @MainActor
-    func statusBarLeadingView() -> AnyView? {
+    func statusBarLeadingView(context: GitOKPluginContext) -> AnyView? {
         nil
     }
 
     @MainActor
-    func statusBarCenterView() -> AnyView? {
+    func statusBarCenterView(context: GitOKPluginContext) -> AnyView? {
         nil
     }
 
     @MainActor
-    func statusBarTrailingView() -> AnyView? {
+    func statusBarTrailingView(context: GitOKPluginContext) -> AnyView? {
         nil
     }
 

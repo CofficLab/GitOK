@@ -21,6 +21,6 @@ struct SmartMergePluginTests {
     @MainActor
     @Test("plugin contributes status bar trailing view")
     func statusBarTrailingView() {
-        #expect(SmartMergePlugin.shared.statusBarTrailingView() != nil)
+        #expect(SmartMergePlugin.shared.statusBarTrailingView(context: GitOKPluginContext()) != nil)
     }
 }

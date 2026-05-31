@@ -18,7 +18,7 @@ public struct FileInfoPlugin: GitOKPackagedPlugin {
     private init() {}
 
     @MainActor
-    public func statusBarLeadingView() -> AnyView? {
+    public func statusBarLeadingView(context: GitOKPluginContext) -> AnyView? {
         AnyView(FileInfoTile())
     }
 }

@@ -30,12 +30,12 @@ final class GitOKPackagedPluginTests: XCTestCase {
 
     @MainActor
     func testDefaultStatusBarLeadingViewIsNil() {
-        XCTAssertNil(SamplePlugin.shared.statusBarLeadingView())
+        XCTAssertNil(SamplePlugin.shared.statusBarLeadingView(context: GitOKPluginContext()))
     }
 
     @MainActor
     func testDefaultStatusBarCenterViewIsNil() {
-        XCTAssertNil(SamplePlugin.shared.statusBarCenterView())
+        XCTAssertNil(SamplePlugin.shared.statusBarCenterView(context: GitOKPluginContext()))
     }
 
     func testProjectURLEnvironmentDefaultIsNil() {

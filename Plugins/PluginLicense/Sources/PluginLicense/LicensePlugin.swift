@@ -19,7 +19,7 @@ public struct LicensePlugin: GitOKPackagedPlugin {
     private init() {}
 
     @MainActor
-    public func statusBarTrailingView() -> AnyView? {
+    public func statusBarTrailingView(context: GitOKPluginContext) -> AnyView? {
         AnyView(LicenseStatusIcon())
     }
 }

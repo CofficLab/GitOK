@@ -23,6 +23,6 @@ final class ActivityStatusPluginTests: XCTestCase {
 
     @MainActor
     func testStatusBarCenterContributionIsAvailable() {
-        XCTAssertNotNil(ActivityStatusPlugin.shared.statusBarCenterView())
+        XCTAssertNotNil(ActivityStatusPlugin.shared.statusBarCenterView(context: GitOKPluginContext()))
     }
 }

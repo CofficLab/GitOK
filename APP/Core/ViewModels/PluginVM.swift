@@ -304,9 +304,13 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
     /// - Returns: 启用插件的状态栏前导视图数组
     @MainActor
     func getEnabledStatusBarLeadingViews(selectedFilePath: String? = nil, projectPath: String? = nil) -> [AnyView] {
-        plugins
+        let context = GitOKPluginContext(
+            projectPath: projectPath,
+            selectedFilePath: selectedFilePath
+        )
+        return plugins
             .filter { isPluginEnabled($0) }
-            .compactMap { $0.addStatusBarLeadingView() }
+            .compactMap { $0.addStatusBarLeadingView(context: context) }
             .map { view in
                 AnyView(
                     view
@@ -320,9 +324,12 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
     /// - Returns: 启用插件的状态栏中间视图数组
     @MainActor
     func getEnabledStatusBarCenterViews(activityStatus: String? = nil) -> [AnyView] {
-        plugins
+        let context = GitOKPluginContext(
+            activityStatus: activityStatus
+        )
+        return plugins
             .filter { isPluginEnabled($0) }
-            .compactMap { $0.addStatusBarCenterView() }
+            .compactMap { $0.addStatusBarCenterView(context: context) }
             .map { view in
                 AnyView(view.environment(\.gitOKActivityStatus, activityStatus))
             }
@@ -338,9 +345,16 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
         branchName: String? = nil,
         isGitRepository: Bool = false
     ) -> [AnyView] {
-        plugins
+        let context = GitOKPluginContext(
+            projectURL: projectURL,
+            projectPath: projectPath,
+            projectTitle: projectTitle,
+            branchName: branchName,
+            isGitRepository: isGitRepository
+        )
+        return plugins
             .filter { isPluginEnabled($0) }
-            .compactMap { $0.addStatusBarTrailingView() }
+            .compactMap { $0.addStatusBarTrailingView(context: context) }
             .map { view in
                 AnyView(
                     view

@@ -1,5 +1,6 @@
-import SwiftUI
+import GitOKPluginKit
 import GitOKUI
+import SwiftUI
 
 /// `SuperPlugin` 是 GitOK 应用的插件系统核心协议。
 /// 所有插件必须实现此协议以便集成到应用程序中。
@@ -89,17 +90,17 @@ protocol SuperPlugin {
     /// 返回插件在状态栏前部区域的视图
     /// - Returns: 包装在 AnyView 中的状态栏前部视图
     @MainActor
-    func addStatusBarLeadingView() -> AnyView?
+    func addStatusBarLeadingView(context: GitOKPluginContext) -> AnyView?
 
     /// 返回插件在状态栏中间区域的视图
     /// - Returns: 包装在 AnyView 中的状态栏中间视图
     @MainActor
-    func addStatusBarCenterView() -> AnyView?
+    func addStatusBarCenterView(context: GitOKPluginContext) -> AnyView?
 
     /// 返回插件在状态栏后部区域的视图
     /// - Returns: 包装在 AnyView 中的状态栏后部视图
     @MainActor
-    func addStatusBarTrailingView() -> AnyView?
+    func addStatusBarTrailingView(context: GitOKPluginContext) -> AnyView?
 
     /// 添加根视图包裹
     /// 允许插件包裹整个应用的内容视图，实现全局拦截、修饰等功能。
@@ -207,19 +208,19 @@ extension SuperPlugin {
 
     /// 默认的状态栏前部视图实现，返回空视图
     @MainActor
-    func addStatusBarLeadingView() -> AnyView? {
+    func addStatusBarLeadingView(context: GitOKPluginContext) -> AnyView? {
         nil
     }
 
     /// 默认的状态栏中间视图实现，返回空视图
     @MainActor
-    func addStatusBarCenterView() -> AnyView? {
+    func addStatusBarCenterView(context: GitOKPluginContext) -> AnyView? {
         nil
     }
 
     /// 默认的状态栏后部视图实现，返回空视图
     @MainActor
-    func addStatusBarTrailingView() -> AnyView? {
+    func addStatusBarTrailingView(context: GitOKPluginContext) -> AnyView? {
         nil
     }
 

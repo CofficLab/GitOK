@@ -23,6 +23,6 @@ final class GitLFSPluginTests: XCTestCase {
 
     @MainActor
     func testStatusBarContributionIsAvailable() {
-        XCTAssertNotNil(GitLFSPlugin.shared.statusBarTrailingView())
+        XCTAssertNotNil(GitLFSPlugin.shared.statusBarTrailingView(context: GitOKPluginContext()))
     }
 }

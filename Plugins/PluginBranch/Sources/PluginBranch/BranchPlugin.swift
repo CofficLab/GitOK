@@ -23,7 +23,7 @@ public struct BranchPlugin: GitOKPackagedPlugin {
     }
 
     @MainActor
-    public func statusBarLeadingView() -> AnyView? {
+    public func statusBarLeadingView(context: GitOKPluginContext) -> AnyView? {
         AnyView(BranchStatusTile())
     }
 }

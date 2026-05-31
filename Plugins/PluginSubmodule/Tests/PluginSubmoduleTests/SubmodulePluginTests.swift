@@ -24,7 +24,7 @@ final class SubmodulePluginTests: XCTestCase {
 
     @MainActor
     func testStatusBarTrailingContributionIsAvailable() {
-        XCTAssertNotNil(SubmodulePlugin.shared.statusBarTrailingView())
+        XCTAssertNotNil(SubmodulePlugin.shared.statusBarTrailingView(context: GitOKPluginContext()))
     }
 
     func testPresentationCalculatesIssueCountAndIcon() {

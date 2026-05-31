@@ -19,7 +19,7 @@ public struct GitIgnorePlugin: GitOKPackagedPlugin {
     private init() {}
 
     @MainActor
-    public func statusBarTrailingView() -> AnyView? {
+    public func statusBarTrailingView(context: GitOKPluginContext) -> AnyView? {
         AnyView(GitIgnoreStatusIcon())
     }
 }

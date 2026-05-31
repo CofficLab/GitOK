@@ -23,6 +23,6 @@ final class ThemeStatusBarPluginTests: XCTestCase {
 
     @MainActor
     func testStatusBarContributionIsAvailable() {
-        XCTAssertNotNil(ThemeStatusBarPlugin.shared.statusBarTrailingView())
+        XCTAssertNotNil(ThemeStatusBarPlugin.shared.statusBarTrailingView(context: GitOKPluginContext()))
     }
 }
