@@ -32,7 +32,7 @@ let package = Package(
         .testTarget(
             name: "PluginThemeAuroraTests",
             dependencies: ["PluginThemeAurora"],
-            path: "Tests/PluginThemeAuroraTests"
+            path: "Tests"
         ),
     ]
 )

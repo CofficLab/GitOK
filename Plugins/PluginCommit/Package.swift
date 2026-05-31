@@ -24,7 +24,7 @@ let package = Package(
         .testTarget(
             name: "PluginCommitTests",
             dependencies: ["PluginCommit"],
-            path: "Tests/PluginCommitTests"
+            path: "Tests"
         ),
     ]
 )

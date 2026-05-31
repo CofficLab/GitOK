@@ -25,7 +25,7 @@ let package = Package(
         .testTarget(
             name: "PluginUnpushedStatusTests",
             dependencies: ["PluginUnpushedStatus"],
-            path: "Tests/PluginUnpushedStatusTests"
+            path: "Tests"
         ),
     ]
 )

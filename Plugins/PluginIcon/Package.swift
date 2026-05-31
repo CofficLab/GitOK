@@ -29,7 +29,7 @@ let package = Package(
         .testTarget(
             name: "PluginIconTests",
             dependencies: ["PluginIcon"],
-            path: "Tests/PluginIconTests"
+            path: "Tests"
         ),
     ]
 )

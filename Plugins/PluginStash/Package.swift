@@ -25,7 +25,7 @@ let package = Package(
         .testTarget(
             name: "PluginStashTests",
             dependencies: ["PluginStash"],
-            path: "Tests/PluginStashTests"
+            path: "Tests"
         ),
     ]
 )

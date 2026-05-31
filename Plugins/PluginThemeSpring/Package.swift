@@ -32,7 +32,7 @@ let package = Package(
         .testTarget(
             name: "PluginThemeSpringTests",
             dependencies: ["PluginThemeSpring"],
-            path: "Tests/PluginThemeSpringTests"
+            path: "Tests"
         ),
     ]
 )

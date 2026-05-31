@@ -20,7 +20,7 @@ let package = Package(
         .testTarget(
             name: "PluginThemeNebulaTests",
             dependencies: ["PluginThemeNebula"],
-            path: "Tests/PluginThemeNebulaTests"
+            path: "Tests"
         ),
     ]
 )

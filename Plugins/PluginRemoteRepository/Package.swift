@@ -23,7 +23,7 @@ let package = Package(
         .testTarget(
             name: "PluginRemoteRepositoryTests",
             dependencies: ["PluginRemoteRepository"],
-            path: "Tests/PluginRemoteRepositoryTests"
+            path: "Tests"
         ),
     ]
 )

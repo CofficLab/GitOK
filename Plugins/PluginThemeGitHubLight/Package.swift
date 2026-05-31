@@ -32,7 +32,7 @@ let package = Package(
         .testTarget(
             name: "PluginThemeGitHubLightTests",
             dependencies: ["PluginThemeGitHubLight"],
-            path: "Tests/PluginThemeGitHubLightTests"
+            path: "Tests"
         ),
     ]
 )

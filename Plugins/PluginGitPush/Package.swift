@@ -22,7 +22,7 @@ let package = Package(
         .testTarget(
             name: "PluginGitPushTests",
             dependencies: ["PluginGitPush"],
-            path: "Tests/PluginGitPushTests"
+            path: "Tests"
         ),
     ]
 )

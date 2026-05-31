@@ -24,7 +24,7 @@ let package = Package(
         .testTarget(
             name: "PluginConflictResolverTests",
             dependencies: ["PluginConflictResolver"],
-            path: "Tests/PluginConflictResolverTests"
+            path: "Tests"
         ),
     ]
 )

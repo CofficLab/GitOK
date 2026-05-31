@@ -28,7 +28,7 @@ let package = Package(
         .testTarget(
             name: "PluginOpenCursorTests",
             dependencies: ["PluginOpenCursor"],
-            path: "Tests/PluginOpenCursorTests"
+            path: "Tests"
         ),
     ]
 )

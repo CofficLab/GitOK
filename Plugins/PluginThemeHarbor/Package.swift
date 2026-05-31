@@ -12,6 +12,6 @@ let package = Package(
     ],
     targets: [
         .target(name: "PluginThemeHarbor", dependencies: ["GitOKPluginKit", "GitOKUI"], path: "Sources/PluginThemeHarbor", resources: [.process("Resources")]),
-        .testTarget(name: "PluginThemeHarborTests", dependencies: ["PluginThemeHarbor"], path: "Tests/PluginThemeHarborTests"),
+        .testTarget(name: "PluginThemeHarborTests", dependencies: ["PluginThemeHarbor"], path: "Tests"),
     ]
 )

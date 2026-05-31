@@ -25,7 +25,7 @@ let package = Package(
         .testTarget(
             name: "PluginSubmoduleTests",
             dependencies: ["PluginSubmodule"],
-            path: "Tests/PluginSubmoduleTests"
+            path: "Tests"
         ),
     ]
 )

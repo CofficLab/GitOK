@@ -28,7 +28,7 @@ let package = Package(
         .testTarget(
             name: "PluginSettingsButtonTests",
             dependencies: ["PluginSettingsButton"],
-            path: "Tests/PluginSettingsButtonTests"
+            path: "Tests"
         ),
     ]
 )

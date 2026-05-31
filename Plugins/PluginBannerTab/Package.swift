@@ -21,7 +21,7 @@ let package = Package(
         .testTarget(
             name: "PluginBannerTabTests",
             dependencies: ["PluginBannerTab"],
-            path: "Tests/PluginBannerTabTests"
+            path: "Tests"
         ),
     ]
 )

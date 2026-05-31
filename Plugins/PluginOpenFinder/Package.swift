@@ -28,7 +28,7 @@ let package = Package(
         .testTarget(
             name: "PluginOpenFinderTests",
             dependencies: ["PluginOpenFinder"],
-            path: "Tests/PluginOpenFinderTests"
+            path: "Tests"
         ),
     ]
 )

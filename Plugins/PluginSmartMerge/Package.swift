@@ -22,7 +22,7 @@ let package = Package(
         .testTarget(
             name: "PluginSmartMergeTests",
             dependencies: ["PluginSmartMerge"],
-            path: "Tests/PluginSmartMergeTests"
+            path: "Tests"
         ),
     ]
 )

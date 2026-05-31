@@ -28,7 +28,7 @@ let package = Package(
         .testTarget(
             name: "PluginOpenTerminalTests",
             dependencies: ["PluginOpenTerminal"],
-            path: "Tests/PluginOpenTerminalTests"
+            path: "Tests"
         ),
     ]
 )

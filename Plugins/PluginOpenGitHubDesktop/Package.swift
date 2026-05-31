@@ -28,7 +28,7 @@ let package = Package(
         .testTarget(
             name: "PluginOpenGitHubDesktopTests",
             dependencies: ["PluginOpenGitHubDesktop"],
-            path: "Tests/PluginOpenGitHubDesktopTests"
+            path: "Tests"
         ),
     ]
 )
