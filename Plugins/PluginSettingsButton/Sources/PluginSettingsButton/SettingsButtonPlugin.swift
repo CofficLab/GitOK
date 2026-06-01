@@ -11,7 +11,7 @@ public struct SettingsButtonPlugin: GitOKPlugin {
         description: PluginSettingsButtonLocalization.string("Show a settings button in the status bar."),
         iconName: "gearshape",
         order: 9000,
-        policy: .disabled,
+        policy: .optIn,
         tableName: PluginSettingsButtonLocalization.table
     )
 

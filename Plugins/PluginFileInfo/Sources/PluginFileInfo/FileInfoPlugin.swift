@@ -10,7 +10,7 @@ public struct FileInfoPlugin: GitOKPlugin {
         displayName: PluginFileInfoLocalization.string("FileInfo"),
         description: PluginFileInfoLocalization.string("Show selected file information in the status bar."),
         iconName: "doc.text",
-        policy: .disabled,
+        policy: .optIn,
         tableName: PluginFileInfoLocalization.table
     )
 

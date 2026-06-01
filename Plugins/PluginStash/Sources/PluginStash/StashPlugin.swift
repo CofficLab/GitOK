@@ -10,7 +10,7 @@ public struct StashPlugin: GitOKPlugin {
         displayName: PluginStashLocalization.string("Stash"),
         description: PluginStashLocalization.string("Git stash management"),
         iconName: "archivebox",
-        policy: .disabled,
+        policy: .optIn,
         tableName: PluginStashLocalization.table
     )
 

@@ -10,7 +10,7 @@ public struct AutoPushPlugin: GitOKPlugin {
         displayName: PluginAutoPushLocalization.string("Auto Push"),
         description: PluginAutoPushLocalization.string("Automatically push the current branch to remote repository."),
         iconName: "arrow.up.circle",
-        policy: .disabled,
+        policy: .optIn,
         tableName: PluginAutoPushLocalization.table
     )
 

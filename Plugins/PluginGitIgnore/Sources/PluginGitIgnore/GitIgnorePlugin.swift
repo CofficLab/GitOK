@@ -11,7 +11,7 @@ public struct GitIgnorePlugin: GitOKPlugin {
         description: PluginGitIgnoreLocalization.string("Provides .gitignore viewer in status bar"),
         iconName: "doc.badge.gearshape",
         order: 9999,
-        policy: .disabled,
+        policy: .optIn,
         tableName: PluginGitIgnoreLocalization.table
     )
 
