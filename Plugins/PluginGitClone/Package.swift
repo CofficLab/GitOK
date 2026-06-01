@@ -15,7 +15,10 @@ let package = Package(
         .target(
             name: "PluginGitClone",
             dependencies: ["GitOKCoreKit"],
-            path: "Sources/PluginGitClone"
+            path: "Sources/PluginGitClone",
+            resources: [
+                .process("Resources"),
+            ]
         ),
         .testTarget(
             name: "PluginGitCloneTests",

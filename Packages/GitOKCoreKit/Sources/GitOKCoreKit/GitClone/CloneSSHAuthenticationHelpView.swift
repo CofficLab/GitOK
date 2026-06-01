@@ -34,11 +34,11 @@ public struct CloneSSHAuthenticationHelpView: View {
     public var body: some View {
         VStack(alignment: .leading, spacing: 18) {
             VStack(alignment: .leading, spacing: 6) {
-                Label(GitCloneLocalization.string("SSH Credentials Required"), systemImage: "key.radiowaves.forward.fill")
+                Label(GitAuthenticationLocalization.string("SSH Credentials Required"), systemImage: "key.radiowaves.forward.fill")
                     .font(.title3)
                     .fontWeight(.semibold)
 
-                Text(GitCloneLocalization.string("GitOK cannot directly read the SSH passphrase for the current Git operation. Add the key to ssh-agent or macOS Keychain, then retry."))
+                Text(GitAuthenticationLocalization.string("GitOK cannot directly read the SSH passphrase for the current Git operation. Add the key to ssh-agent or macOS Keychain, then retry."))
                     .font(.caption)
                     .foregroundColor(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
@@ -46,18 +46,18 @@ public struct CloneSSHAuthenticationHelpView: View {
 
             VStack(alignment: .leading, spacing: 10) {
                 if let remoteURL {
-                    infoRow(title: GitCloneLocalization.string("Remote URL"), value: remoteURL)
+                    infoRow(title: GitAuthenticationLocalization.string("Remote URL"), value: remoteURL)
                 }
 
                 if let host {
-                    infoRow(title: GitCloneLocalization.string("SSH Host"), value: host)
+                    infoRow(title: GitAuthenticationLocalization.string("SSH Host"), value: host)
                 }
 
-                commandRow(title: GitCloneLocalization.string("Add Key"), command: sshAddCommand)
+                commandRow(title: GitAuthenticationLocalization.string("Add Key"), command: sshAddCommand)
 
                 if let knownHostsCommand {
-                    commandRow(title: GitCloneLocalization.string("Update known_hosts"), command: knownHostsCommand)
-                    Text(GitCloneLocalization.string("Before running the known_hosts command, verify the host fingerprint published by the remote provider."))
+                    commandRow(title: GitAuthenticationLocalization.string("Update known_hosts"), command: knownHostsCommand)
+                    Text(GitAuthenticationLocalization.string("Before running the known_hosts command, verify the host fingerprint published by the remote provider."))
                         .font(.caption)
                         .foregroundColor(.secondary)
                         .fixedSize(horizontal: false, vertical: true)
@@ -73,18 +73,18 @@ public struct CloneSSHAuthenticationHelpView: View {
             }
 
             HStack {
-                Button(GitCloneLocalization.string("Open .ssh Folder")) {
+                Button(GitAuthenticationLocalization.string("Open .ssh Folder")) {
                     openSSHDirectory()
                 }
                 .buttonStyle(.bordered)
 
                 Spacer()
 
-                Button(GitCloneLocalization.string("Cancel")) {
+                Button(GitAuthenticationLocalization.string("Cancel")) {
                     dismiss()
                 }
 
-                Button(GitCloneLocalization.string("Retry")) {
+                Button(GitAuthenticationLocalization.string("Retry")) {
                     dismiss()
                     onRetry()
                 }
@@ -124,7 +124,7 @@ public struct CloneSSHAuthenticationHelpView: View {
 
                 Spacer()
 
-                Button(GitCloneLocalization.string("Copy")) {
+                Button(GitAuthenticationLocalization.string("Copy")) {
                     copy(command)
                 }
                 .controlSize(.small)
