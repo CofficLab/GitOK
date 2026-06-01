@@ -6,6 +6,8 @@ import GitOKCoreKit
 /// Auto-generated plugin registry.
 /// Registers plugin adapters generated from enabled plugin packages.
 enum GeneratedPluginRegistry {
+    static let hasDefaultAdapters = false
+
     /// Register default `PluginAdapter` instances for all plugins.
     /// Each adapter preserves the concrete generic type so that
     /// `shouldRegister` / `order` etc. are resolved at compile time.

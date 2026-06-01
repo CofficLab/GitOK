@@ -60,6 +60,11 @@ registry_imports=$(printf '%s\n' "$registry_entries" | awk -F'|' '{ print $2 }' 
     printf '/// Auto-generated plugin registry.\n'
     printf '/// Registers plugin adapters generated from enabled plugin packages.\n'
     printf 'enum GeneratedPluginRegistry {\n'
+    if [ -n "$registry_entries" ]; then
+        printf '    static let hasDefaultAdapters = true\n\n'
+    else
+        printf '    static let hasDefaultAdapters = false\n\n'
+    fi
     printf '    /// Register default `PluginAdapter` instances for all plugins.\n'
     printf '    /// Each adapter preserves the concrete generic type so that\n'
     printf '    /// `shouldRegister` / `order` etc. are resolved at compile time.\n'

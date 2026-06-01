@@ -238,6 +238,14 @@ extension ContentView {
         let start = Date()
         os_log("\(self.t)🔄 UpdateCachedViews begin tab=\(tab) project=\(vm.project?.path ?? "nil") plugins=\(p.plugins.count)")
 
+        guard p.hasPlugins else {
+            toolbarLeadingViews = []
+            toolbarTrailingViews = []
+            pluginListViews = []
+            os_log("\(self.t)✅ UpdateCachedViews skipped: no registered plugins")
+            return
+        }
+
         if Self.verbose {
             os_log("\(self.t)🔄 Updating cached views")
         }
@@ -388,6 +396,7 @@ extension ContentView {
     }
 
     func onPluginProviderChange() {
+        guard p.hasPlugins else { return }
         if Self.verbose {
             os_log("\(self.t)🔔 PluginProvider changed, updating cached views")
         }

@@ -19,9 +19,7 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
 
     @Published private(set) var plugins: [SuperPlugin] = []
 
-    /// 插件设置存储
-    private let settingsStore = PluginSettingsStore.shared
-    private let runtime = GitOKPluginRuntime()
+    private lazy var runtime = GitOKPluginRuntime()
 
     /// Combine 订阅集合
     private var cancellables = Set<AnyCancellable>()
@@ -56,19 +54,26 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
     /// - Parameter plugin: 要检查的插件
     /// - Returns: 如果插件被启用则返回true
     func isPluginEnabled(_ plugin: any SuperPlugin) -> Bool {
-        runtime.isPluginEnabled(plugin)
+        guard hasPlugins else { return false }
+        return runtime.isPluginEnabled(plugin)
     }
 
     /// 获取所有可用的标签页名称
     /// - Returns: 标签页名称数组
     var tabNames: [String] {
-        runtime.tabNames
+        guard hasPlugins else { return [] }
+        return runtime.tabNames
     }
 
     /// 获取可配置的插件信息列表（用于设置界面）
     /// - Returns: 允许用户切换启用/禁用状态的插件信息数组
     var configurablePlugins: [PluginInfo] {
-        runtime.configurablePlugins
+        guard hasPlugins else { return [] }
+        return runtime.configurablePlugins
+    }
+
+    var hasPlugins: Bool {
+        !plugins.isEmpty
     }
 
     /// 获取工具栏前导视图
@@ -85,6 +90,7 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
         onActivityStatusUpdate: @escaping GitOKActivityStatusUpdateHandler = { _ in },
         onInfoMessage: @escaping GitOKUserMessageHandler = { _ in }
     ) -> [(plugin: SuperPlugin, view: AnyView)] {
+        guard hasPlugins else { return [] }
         let start = Date()
         let context = GitOKPluginContext(
             projects: projects,
@@ -109,6 +115,7 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
         remoteTrackingStatus: GitOKRemoteTrackingStatus? = nil,
         isGitRepository: Bool = false
     ) -> [(plugin: SuperPlugin, view: AnyView)] {
+        guard hasPlugins else { return [] }
         let start = Date()
         let context = GitOKPluginContext(
             projectURL: projectURL,
@@ -126,6 +133,7 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
     /// - Returns: 插件及其对应的列表视图数组
     @MainActor
     func getEnabledPluginListViews(tab: String, project: Project?) -> [(plugin: SuperPlugin, view: AnyView)] {
+        guard hasPlugins else { return [] }
         let start = Date()
         let context = GitOKPluginContext(
             projectURL: project?.url,
@@ -142,6 +150,7 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
     /// - Returns: 如果找到标签页插件，则返回其详情视图，否则返回nil
     @MainActor
     func getEnabledTabDetailView(tab: String, projectURL: URL? = nil) -> AnyView? {
+        guard hasPlugins else { return nil }
         let start = Date()
         let context = GitOKPluginContext(projectURL: projectURL)
         if let view = runtime.enabledDetailView(for: tab, context: context) {
@@ -164,6 +173,7 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
     /// - Returns: 启用插件的状态栏前导视图数组
     @MainActor
     func getEnabledStatusBarLeadingViews(selectedFilePath: String? = nil, projectPath: String? = nil) -> [AnyView] {
+        guard hasPlugins else { return [] }
         let context = GitOKPluginContext(
             projectPath: projectPath,
             selectedFilePath: selectedFilePath
@@ -175,6 +185,7 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
     /// - Returns: 启用插件的状态栏中间视图数组
     @MainActor
     func getEnabledStatusBarCenterViews(activityStatus: String? = nil) -> [AnyView] {
+        guard hasPlugins else { return [] }
         let context = GitOKPluginContext(
             activityStatus: activityStatus
         )
@@ -191,6 +202,7 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
         branchName: String? = nil,
         isGitRepository: Bool = false
     ) -> [AnyView] {
+        guard hasPlugins else { return [] }
         let context = GitOKPluginContext(
             projectURL: projectURL,
             projectPath: projectPath,
@@ -205,7 +217,8 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
 
     @MainActor
     func getThemeContributions() -> [GitOKUIThemeContribution] {
-        runtime.themeContributions()
+        guard hasPlugins else { return [] }
+        return runtime.themeContributions()
     }
 
     // MARK: - Root View Wrapper
@@ -217,7 +230,8 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
     /// - Parameter content: 原始内容视图
     /// - Returns: 经过所有插件依次包裹后的视图
     func getRootViewWrapper<Content: View>(@ViewBuilder content: () -> Content) -> AnyView {
-        runtime.rootViewWrapper(content: content)
+        guard hasPlugins else { return AnyView(content()) }
+        return runtime.rootViewWrapper(content: content)
     }
 
     // MARK: - Initialization
@@ -226,18 +240,22 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
         let start = Date()
         os_log("\(Self.t)🚀 Startup begin: PluginVM.init")
 
-        registerPackagedPlugins()
+        if GeneratedPluginRegistry.hasDefaultAdapters {
+            registerPackagedPlugins()
+        }
 
         // 从内部注册表获取所有已注册的插件实例
-        self.plugins = getAllPlugins()
+        self.plugins = GeneratedPluginRegistry.hasDefaultAdapters ? getAllPlugins() : []
         os_log("\(Self.t)✅ Startup step: PluginVM plugins sorted count=\(self.plugins.count)")
 
         // 订阅设置变化，当设置改变时触发 UI 更新
-        settingsStore.$settings
-            .sink { [weak self] _ in
-                self?.objectWillChange.send()
-            }
-            .store(in: &cancellables)
+        if hasPlugins {
+            PluginSettingsStore.shared.$settings
+                .sink { [weak self] _ in
+                    self?.objectWillChange.send()
+                }
+                .store(in: &cancellables)
+        }
 
         os_log("\(Self.t)✅ Startup end: PluginVM.init elapsed=\(String(format: "%.3f", Date().timeIntervalSince(start)))s")
     }
