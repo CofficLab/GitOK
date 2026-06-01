@@ -132,20 +132,13 @@ private extension WorkingStateView {
         projectPath: String,
         setStatus: @escaping (String?) -> Void
     ) async -> Bool {
-        await CommitRemoteSyncRules.performSystemGitPushFallback(
-            isGitCLIAvailable: GitRepositoryCLI.isGitCLIAvailable(),
+        await project.runSystemGitPushFallback(
             setStatus: { statusText in
                 await MainActor.run {
                     setStatus(statusText)
                 }
             },
-            runSystemGit: {
-                let cli = GitRepositoryCLI(
-                    repositoryURL: CommitRemoteSyncRules.repositoryURL(projectPath: projectPath)
-                )
-                try cli.cliPush()
-            },
-            onSystemGitFailure: { error in
+            onFailure: { error in
                 await MainActor.run {
                     handleEvent(.log(.systemGitPushFailure(error)))
                 }
@@ -153,26 +146,8 @@ private extension WorkingStateView {
         )
     }
 
-    nonisolated func remoteErrorKind(_ error: Error) -> CommitRemoteSyncRules.RemoteErrorKind {
-        CommitRemoteSyncRules.remoteErrorKind(
-            isNetworkError: {
-                if case LibGit2Error.networkError = error {
-                    return true
-                }
-                return false
-            }(),
-            isAuthenticationError: {
-                if case LibGit2Error.authenticationError = error {
-                    return true
-                }
-                return false
-            }(),
-            isKnownError: error is LibGit2Error
-        )
-    }
-
     nonisolated func pushErrorClassification(_ error: Error) -> CommitRemoteSyncRules.PushErrorClassification {
-        CommitRemoteSyncRules.pushErrorClassification(kind: remoteErrorKind(error))
+        CommitRemoteSyncRules.pushErrorClassification(error: error)
     }
 }
 

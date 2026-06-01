@@ -1,4 +1,5 @@
 import Foundation
+import GitCoreKit
 
 public enum CommitRemoteSyncRules {
     public enum Activity {
@@ -586,6 +587,28 @@ public enum CommitRemoteSyncRules {
             isAuthenticationError: kind == .authentication,
             isRetryablePushError: kind == .network || kind == .authentication || kind == .known
         )
+    }
+
+    public static func remoteErrorKind(error: Error) -> RemoteErrorKind {
+        remoteErrorKind(
+            isNetworkError: {
+                if case LibGit2Error.networkError = error {
+                    return true
+                }
+                return false
+            }(),
+            isAuthenticationError: {
+                if case LibGit2Error.authenticationError = error {
+                    return true
+                }
+                return false
+            }(),
+            isKnownError: error is LibGit2Error
+        )
+    }
+
+    public static func pushErrorClassification(error: Error) -> PushErrorClassification {
+        pushErrorClassification(kind: remoteErrorKind(error: error))
     }
 
     public static func pushNetworkFallbackAction(isGitCLIAvailable: Bool) -> PushNetworkFallbackAction {

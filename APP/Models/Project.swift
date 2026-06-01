@@ -1280,6 +1280,20 @@ extension Project {
         }
     }
 
+    func runSystemGitPushFallback(
+        setStatus: @escaping (String) async -> Void,
+        onFailure: @escaping (Error) async -> Void
+    ) async -> Bool {
+        await CommitRemoteSyncRules.performSystemGitPushFallback(
+            isGitCLIAvailable: GitRepositoryCLI.isGitCLIAvailable(),
+            setStatus: setStatus,
+            runSystemGit: {
+                try gitCLI.cliPush()
+            },
+            onSystemGitFailure: onFailure
+        )
+    }
+
     func sync() throws {
         do {
             try self.fetch()
