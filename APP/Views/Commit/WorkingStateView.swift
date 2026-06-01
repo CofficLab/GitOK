@@ -67,7 +67,7 @@ struct WorkingStateView: View, SuperLog {
             gitDirectoryDidHeadChange: gitDirectoryDidHeadChange,
             appDidBecomeActiveToken: appDidBecomeActiveToken
         ) { remoteURL, errorMessage, onDismiss in
-            SSHAuthenticationHelpView(
+            CloneSSHAuthenticationHelpView(
                 remoteURL: remoteURL,
                 errorMessage: errorMessage,
                 onRetry: onDismiss

@@ -1,12 +1,22 @@
 import AppKit
 import SwiftUI
 
-struct CloneSSHAuthenticationHelpView: View {
+public struct CloneSSHAuthenticationHelpView: View {
     @Environment(\.dismiss) private var dismiss
 
     let remoteURL: String?
     let errorMessage: String?
     let onRetry: () -> Void
+
+    public init(
+        remoteURL: String?,
+        errorMessage: String?,
+        onRetry: @escaping () -> Void
+    ) {
+        self.remoteURL = remoteURL
+        self.errorMessage = errorMessage
+        self.onRetry = onRetry
+    }
 
     private var host: String? {
         remoteURL.flatMap(CloneRepositoryValidation.sshHost(from:))
@@ -21,7 +31,7 @@ struct CloneSSHAuthenticationHelpView: View {
         return "ssh-keyscan -H \(host) >> ~/.ssh/known_hosts"
     }
 
-    var body: some View {
+    public var body: some View {
         VStack(alignment: .leading, spacing: 18) {
             VStack(alignment: .leading, spacing: 6) {
                 Label(GitCloneLocalization.string("SSH Credentials Required"), systemImage: "key.radiowaves.forward.fill")

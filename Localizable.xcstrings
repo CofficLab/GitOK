@@ -983,22 +983,6 @@
         }
       }
     },
-    "GitOK 无法在当前 Git 操作中直接读取 SSH passphrase。请把密钥加入 ssh-agent 或 macOS Keychain，再重试本次操作。" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "GitOK 无法在当前 Git 操作中直接读取 SSH passphrase。请把密钥加入 ssh-agent 或 macOS Keychain，再重试本次操作。"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "GitOK 無法在目前 Git 操作中直接讀取 SSH passphrase。請將密鑰加入 ssh-agent 或 macOS 鑰匙圈，然後重試本次操作。"
-          }
-        }
-      }
-    },
     "Global Default Style" : {
       "localizations" : {
         "zh-Hans" : {
@@ -2932,22 +2916,6 @@
         }
       }
     },
-    "打开 .ssh 目录" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "打开 .ssh 目录"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "開啟 .ssh 目錄"
-          }
-        }
-      }
-    },
     "打开App Support目录" : {
       "localizations" : {
         "zh-Hans" : {
@@ -3024,22 +2992,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "開啟鑰匙圈存取"
-          }
-        }
-      }
-    },
-    "执行 known_hosts 命令前，请先确认远程服务商公布的主机指纹可信。" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "执行 known_hosts 命令前，请先确认远程服务商公布的主机指纹可信。"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "執行 known_hosts 指令前，請先確認遠端服務商公布的主機指紋可信。"
           }
         }
       }
@@ -3744,22 +3696,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "重试"
-          }
-        }
-      }
-    },
-    "需要 SSH 凭据" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "需要 SSH 凭据"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "需要 SSH 憑證"
           }
         }
       }
