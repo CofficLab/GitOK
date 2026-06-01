@@ -1,4 +1,5 @@
 import XCTest
+import GitOKCoreKit
 @testable import PluginThemeRiver
 
 final class RiverThemePluginTests: XCTestCase {

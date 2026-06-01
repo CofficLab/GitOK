@@ -1,5 +1,5 @@
-import ProjectRulesKit
 import SwiftUI
+import GitOKCoreKit
 
 public struct CommitGraphView: View {
     let row: CommitGraphLayoutRules.Row?

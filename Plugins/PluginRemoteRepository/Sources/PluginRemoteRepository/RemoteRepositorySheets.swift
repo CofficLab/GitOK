@@ -1,5 +1,4 @@
-import GitCoreKit
-import ProjectRulesKit
+import GitOKCoreKit
 import SwiftUI
 
 struct AddRemoteSheet: View {

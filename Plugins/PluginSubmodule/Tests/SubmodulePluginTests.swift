@@ -1,4 +1,4 @@
-import GitCoreKit
+import GitOKCoreKit
 import XCTest
 @testable import PluginSubmodule
 
@@ -24,7 +24,8 @@ final class SubmodulePluginTests: XCTestCase {
 
     @MainActor
     func testStatusBarTrailingContributionIsAvailable() {
-        XCTAssertNotNil(SubmodulePlugin.shared.statusBarTrailingView(context: GitOKPluginContext()))
+        let context = GitOKPluginContext(projectURL: URL(fileURLWithPath: "/tmp/repo"))
+        XCTAssertNotNil(SubmodulePlugin.shared.statusBarTrailingView(context: context))
     }
 
     func testPresentationCalculatesIssueCountAndIcon() {

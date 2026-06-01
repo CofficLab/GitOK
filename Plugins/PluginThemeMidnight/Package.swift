@@ -15,14 +15,12 @@ let package = Package(
     ],
     dependencies: [
         .package(path: "../../Packages/GitOKCoreKit"),
-        .package(path: "../../Packages/GitOKUI"),
     ],
     targets: [
         .target(
             name: "PluginThemeMidnight",
             dependencies: [
                 "GitOKCoreKit",
-                "GitOKUI",
             ],
             path: "Sources/PluginThemeMidnight",
             resources: [

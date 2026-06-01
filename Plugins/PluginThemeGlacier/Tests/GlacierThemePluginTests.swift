@@ -1,4 +1,5 @@
 import XCTest
+import GitOKCoreKit
 @testable import PluginThemeGlacier
 
 final class GlacierThemePluginTests: XCTestCase {

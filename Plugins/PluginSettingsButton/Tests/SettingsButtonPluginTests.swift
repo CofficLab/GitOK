@@ -1,3 +1,4 @@
+import GitOKCoreKit
 import XCTest
 @testable import PluginSettingsButton
 

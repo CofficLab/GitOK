@@ -1,4 +1,5 @@
 import XCTest
+import GitOKCoreKit
 @testable import PluginThemeAurora
 
 final class AuroraThemePluginTests: XCTestCase {

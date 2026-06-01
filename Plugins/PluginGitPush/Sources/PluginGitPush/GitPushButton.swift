@@ -1,5 +1,4 @@
 import AppKit
-import GitCoreKit
 import GitOKCoreKit
 import SwiftUI
 

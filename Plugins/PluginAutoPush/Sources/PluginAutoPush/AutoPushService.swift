@@ -1,8 +1,6 @@
 import Combine
 import Foundation
-import GitCoreKit
-import ProjectRulesKit
-import ProjectSupportKit
+import GitOKCoreKit
 
 @MainActor
 public final class AutoPushService: ObservableObject {

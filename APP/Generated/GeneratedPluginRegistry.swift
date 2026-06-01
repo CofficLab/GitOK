@@ -11,6 +11,7 @@ import PluginCleanStatus
 import PluginCommit
 import PluginConflictResolver
 import PluginFileInfo
+import PluginGitClone
 import PluginGitDetail
 import PluginGitIgnore
 import PluginGitLFS
@@ -79,6 +80,7 @@ enum GeneratedPluginRegistry {
         plugins.append(DraculaThemePlugin.shared)
         plugins.append(EmberThemePlugin.shared)
         plugins.append(FileInfoPlugin.shared)
+        plugins.append(GitClonePlugin.shared)
         plugins.append(GitDetailPlugin.shared)
         plugins.append(GitHubLightThemePlugin.shared)
         plugins.append(GitIgnorePlugin.shared)
@@ -149,6 +151,7 @@ enum GeneratedPluginRegistry {
         do { let a = PluginAdapter<DraculaThemePlugin>(); if type(of: a).shouldRegister { register(a) } }
         do { let a = PluginAdapter<EmberThemePlugin>(); if type(of: a).shouldRegister { register(a) } }
         do { let a = PluginAdapter<FileInfoPlugin>(); if type(of: a).shouldRegister { register(a) } }
+        do { let a = PluginAdapter<GitClonePlugin>(); if type(of: a).shouldRegister { register(a) } }
         do { let a = PluginAdapter<GitDetailPlugin>(); if type(of: a).shouldRegister { register(a) } }
         do { let a = PluginAdapter<GitHubLightThemePlugin>(); if type(of: a).shouldRegister { register(a) } }
         do { let a = PluginAdapter<GitIgnorePlugin>(); if type(of: a).shouldRegister { register(a) } }

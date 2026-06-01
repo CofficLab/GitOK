@@ -1,6 +1,6 @@
 
 import SwiftUI
-import MagicKit
+import GitOKCoreKit
 
 /**
  经典Banner布局视图

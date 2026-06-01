@@ -1,6 +1,6 @@
 import Foundation
-import ProjectRulesKit
 import SwiftUI
+import GitOKCoreKit
 
 public struct CommitRowSummaryView: View {
     private let graphRow: CommitGraphLayoutRules.Row?

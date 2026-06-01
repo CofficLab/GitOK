@@ -1,4 +1,5 @@
 @testable import PluginCleanStatus
+import GitOKCoreKit
 import SwiftUI
 import Testing
 
@@ -19,52 +20,52 @@ struct CleanStatusPluginTests {
         #expect(CleanStatusPlugin.metadata.description.isEmpty == false)
     }
 
-    @Test("CleanStatusPluginContext default values")
+    @Test("GitOKPluginContext clean status defaults")
     @MainActor
     func contextDefaults() {
-        let context = CleanStatusPluginContext()
+        let context = GitOKPluginContext()
         #expect(context.projectURL == nil)
-        context.updateCleanStatus(true)
-        context.updateCleanStatus(false)
+        context.onCleanStatusUpdate(true)
+        context.onCleanStatusUpdate(false)
     }
 
-    @Test("CleanStatusPluginContext with explicit projectURL")
+    @Test("GitOKPluginContext with explicit projectURL")
     @MainActor
     func contextWithProjectURL() {
         let url = URL(fileURLWithPath: "/tmp/test-repo")
         var capturedValue: Bool?
-        let context = CleanStatusPluginContext(
+        let context = GitOKPluginContext(
             projectURL: url,
-            updateCleanStatus: { isClean in
+            onCleanStatusUpdate: { isClean in
                 capturedValue = isClean
             }
         )
         #expect(context.projectURL == url)
-        context.updateCleanStatus(true)
+        context.onCleanStatusUpdate(true)
         #expect(capturedValue == true)
-        context.updateCleanStatus(false)
+        context.onCleanStatusUpdate(false)
         #expect(capturedValue == false)
     }
 
-    @Test("CleanStatusPluginContext with nil projectURL")
+    @Test("GitOKPluginContext with nil projectURL")
     @MainActor
     func contextWithNilURL() {
         var capturedValue: Bool?
-        let context = CleanStatusPluginContext(
+        let context = GitOKPluginContext(
             projectURL: nil,
-            updateCleanStatus: { isClean in
+            onCleanStatusUpdate: { isClean in
                 capturedValue = isClean
             }
         )
         #expect(context.projectURL == nil)
-        context.updateCleanStatus(true)
+        context.onCleanStatusUpdate(true)
         #expect(capturedValue == true)
     }
 
     @Test("rootView returns a non-nil view")
     @MainActor
     func rootViewReturnsView() {
-        let view = CleanStatusPlugin.shared.rootView(AnyView(EmptyView()))
+        let view = CleanStatusPlugin.shared.rootView(AnyView(EmptyView()), context: GitOKPluginContext())
         #expect(view != nil)
     }
 

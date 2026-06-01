@@ -1,4 +1,5 @@
 import XCTest
+import GitOKCoreKit
 @testable import PluginThemeGraphite
 
 final class GraphiteThemePluginTests: XCTestCase {

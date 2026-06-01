@@ -1,4 +1,5 @@
 import XCTest
+import GitOKCoreKit
 @testable import PluginThemeXcodeLight
 
 final class XcodeLightThemePluginTests: XCTestCase {

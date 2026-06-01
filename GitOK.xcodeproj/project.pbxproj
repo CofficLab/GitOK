@@ -54,13 +54,6 @@
 		80F14AC3ED8796E8243D9055 /* PluginThemeSpring in Frameworks */ = {isa = PBXBuildFile; productRef = E731CCE210F9D0309B5201F1 /* PluginThemeSpring */; };
 		8619CDCA3B6D854BE034BD96 /* PluginOpenTrae in Frameworks */ = {isa = PBXBuildFile; productRef = 6937A30513E36671CC70EE46 /* PluginOpenTrae */; };
 		A043725A45391B0FD39E09BB /* PluginOpenGitHubDesktop in Frameworks */ = {isa = PBXBuildFile; productRef = F1CDA9223BDDD2D986F5D5B3 /* PluginOpenGitHubDesktop */; };
-		A1F000122F70000100ABC001 /* APP/Core/Models/AppAppearanceSettingsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F000102F70000100ABC001 /* APP/Core/Models/AppAppearanceSettingsStore.swift */; };
-		A1F000132F70000100ABC001 /* APP/Core/Models/PluginSettingsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F000112F70000100ABC001 /* APP/Core/Models/PluginSettingsStore.swift */; };
-		A1F000162F70000100ABC001 /* APP/Core/Models/ProjectDocumentResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F000172F70000100ABC001 /* APP/Core/Models/ProjectDocumentResolver.swift */; };
-		A1F000182F70000100ABC001 /* APP/Core/Events/ProjectGitOperationEventDescriptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F000192F70000100ABC001 /* APP/Core/Events/ProjectGitOperationEventDescriptor.swift */; };
-		A1F0001C2F70000100ABC001 /* APP/Core/Bootstrap/OpenProjectPathResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F0001D2F70000100ABC001 /* APP/Core/Bootstrap/OpenProjectPathResolver.swift */; };
-		A1F0002C2F70000100ABC001 /* APP/Core/Models/CoAuthor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F0002D2F70000100ABC001 /* APP/Core/Models/CoAuthor.swift */; };
-		A1F000322F70000100ABC001 /* APP/Core/Services/AvatarIdentityRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F000332F70000100ABC001 /* APP/Core/Services/AvatarIdentityRules.swift */; };
 		A1F100032F70000100ABC001 /* GitCoreKit in Frameworks */ = {isa = PBXBuildFile; productRef = A1F100022F70000100ABC001 /* GitCoreKit */; };
 		A1F100042F70000100ABC001 /* GitCoreKit in Frameworks */ = {isa = PBXBuildFile; productRef = A1F100022F70000100ABC001 /* GitCoreKit */; };
 		A1F200032F70000100ABC001 /* ProjectRulesKit in Frameworks */ = {isa = PBXBuildFile; productRef = A1F200022F70000100ABC001 /* ProjectRulesKit */; };
@@ -865,13 +858,6 @@
 		0BDAF6A52F136A5A00A4283A /* ZIPFoundation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = ZIPFoundation.xcodeproj; sourceTree = "<group>"; };
 		0BDAF7F12F136A5B00A4283A /* MagicApp.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = MagicApp.xcodeproj; sourceTree = "<group>"; };
 		A1F000012F70000100ABC001 /* GitOKTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GitOKTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		A1F000102F70000100ABC001 /* APP/Core/Models/AppAppearanceSettingsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APP/Core/Models/AppAppearanceSettingsStore.swift; sourceTree = "<group>"; };
-		A1F000112F70000100ABC001 /* APP/Core/Models/PluginSettingsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APP/Core/Models/PluginSettingsStore.swift; sourceTree = "<group>"; };
-		A1F000172F70000100ABC001 /* APP/Core/Models/ProjectDocumentResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APP/Core/Models/ProjectDocumentResolver.swift; sourceTree = "<group>"; };
-		A1F000192F70000100ABC001 /* APP/Core/Events/ProjectGitOperationEventDescriptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APP/Core/Events/ProjectGitOperationEventDescriptor.swift; sourceTree = "<group>"; };
-		A1F0001D2F70000100ABC001 /* APP/Core/Bootstrap/OpenProjectPathResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APP/Core/Bootstrap/OpenProjectPathResolver.swift; sourceTree = "<group>"; };
-		A1F0002D2F70000100ABC001 /* APP/Core/Models/CoAuthor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APP/Core/Models/CoAuthor.swift; sourceTree = "<group>"; };
-		A1F000332F70000100ABC001 /* APP/Core/Services/AvatarIdentityRules.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APP/Core/Services/AvatarIdentityRules.swift; sourceTree = "<group>"; };
 		F54D04C32DF2D01300FFB434 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -884,33 +870,6 @@
 				GitOKAutomationKit,
 				GitOKCoreKit,
 				GitOKUI,
-				PluginGitLFS,
-				PluginOpenAntigravity,
-				PluginOpenCursor,
-				PluginOpenFinder,
-				PluginOpenGitHubDesktop,
-				PluginOpenKiro,
-				PluginOpenRemote,
-				PluginOpenTerminal,
-				PluginOpenTrae,
-				PluginOpenVSCode,
-				PluginOpenXcode,
-				PluginReadme,
-				PluginSettingsButton,
-				PluginThemeAurora,
-				PluginThemeEmber,
-				PluginThemeGitHubLight,
-				PluginThemeGitOK,
-				PluginThemeGlacier,
-				PluginThemeHarbor,
-				PluginThemeMatrix,
-				PluginThemeMidnight,
-				PluginThemeMountain,
-				PluginThemeNebula,
-				PluginThemeOrchard,
-				PluginThemeRiver,
-				PluginThemeSpring,
-				PluginThemeStatusBar,
 				ProjectRulesKit,
 				ProjectSupportKit,
 			);
@@ -919,8 +878,6 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		A1F000032F70000100ABC001 /* Tests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Tests; sourceTree = "<group>"; };
-		A1F0000D2F70000100ABC001 /* APP/Core/GitCore */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = APP/Core/GitCore; sourceTree = "<group>"; };
 		F526CF512FADB9FB00EFAB27 /* Packages */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (F526CF522FADB9FB00EFAB27 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Packages; sourceTree = "<group>"; };
 		F5AE82732FAB49C900F014F8 /* APP */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = APP; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -1035,8 +992,6 @@
 				0B0E16882BD89A910078942B /* GitOK.entitlements */,
 				0B332F062BDA02BC00DFA5BB /* Info.plist */,
 				F54D04C32DF2D01300FFB434 /* Localizable.xcstrings */,
-				A1F000032F70000100ABC001 /* Tests */,
-				F5AE8E422FAB512000F014F8 /* Recovered References */,
 			);
 			sourceTree = "<group>";
 		};
@@ -1352,21 +1307,6 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		F5AE8E422FAB512000F014F8 /* Recovered References */ = {
-			isa = PBXGroup;
-			children = (
-				A1F0000D2F70000100ABC001 /* APP/Core/GitCore */,
-				A1F000102F70000100ABC001 /* APP/Core/Models/AppAppearanceSettingsStore.swift */,
-				A1F000112F70000100ABC001 /* APP/Core/Models/PluginSettingsStore.swift */,
-				A1F000172F70000100ABC001 /* APP/Core/Models/ProjectDocumentResolver.swift */,
-				A1F000192F70000100ABC001 /* APP/Core/Events/ProjectGitOperationEventDescriptor.swift */,
-				A1F0001D2F70000100ABC001 /* APP/Core/Bootstrap/OpenProjectPathResolver.swift */,
-				A1F0002D2F70000100ABC001 /* APP/Core/Models/CoAuthor.swift */,
-				A1F000332F70000100ABC001 /* APP/Core/Services/AvatarIdentityRules.swift */,
-			);
-			name = "Recovered References";
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -1384,7 +1324,6 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				F526CF512FADB9FB00EFAB27 /* Packages */,
 				F5AE82732FAB49C900F014F8 /* APP */,
 			);
 			name = GitOK;
@@ -1480,10 +1419,6 @@
 			buildRules = (
 			);
 			dependencies = (
-			);
-			fileSystemSynchronizedGroups = (
-				A1F000032F70000100ABC001 /* Tests */,
-				A1F0000D2F70000100ABC001 /* APP/Core/GitCore */,
 			);
 			name = GitOKTests;
 			packageProductDependencies = (
@@ -2480,13 +2415,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A1F000122F70000100ABC001 /* APP/Core/Models/AppAppearanceSettingsStore.swift in Sources */,
-				A1F000132F70000100ABC001 /* APP/Core/Models/PluginSettingsStore.swift in Sources */,
-				A1F000162F70000100ABC001 /* APP/Core/Models/ProjectDocumentResolver.swift in Sources */,
-				A1F000182F70000100ABC001 /* APP/Core/Events/ProjectGitOperationEventDescriptor.swift in Sources */,
-				A1F0001C2F70000100ABC001 /* APP/Core/Bootstrap/OpenProjectPathResolver.swift in Sources */,
-				A1F0002C2F70000100ABC001 /* APP/Core/Models/CoAuthor.swift in Sources */,
-				A1F000322F70000100ABC001 /* APP/Core/Services/AvatarIdentityRules.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

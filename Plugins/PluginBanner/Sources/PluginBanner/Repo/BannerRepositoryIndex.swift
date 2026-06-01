@@ -1,3 +1,0 @@
-import BannerCoreKit
-
-typealias BannerRepositoryIndex = BannerCoreKit.BannerRepositoryIndex

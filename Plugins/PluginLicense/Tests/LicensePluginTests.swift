@@ -1,4 +1,4 @@
-import ProjectSupportKit
+import GitOKCoreKit
 import XCTest
 @testable import PluginLicense
 

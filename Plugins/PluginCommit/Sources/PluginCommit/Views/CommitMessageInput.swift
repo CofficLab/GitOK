@@ -1,5 +1,5 @@
 import SwiftUI
-import ProjectRulesKit
+import GitOKCoreKit
 
 /// Commit 消息输入框组件
 /// 提供提交消息的文本输入功能，支持占位符显示

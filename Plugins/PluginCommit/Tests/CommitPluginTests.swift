@@ -1,6 +1,6 @@
 @testable import PluginCommit
 import Foundation
-import ProjectSupportKit
+import GitOKCoreKit
 import SwiftUI
 import Testing
 

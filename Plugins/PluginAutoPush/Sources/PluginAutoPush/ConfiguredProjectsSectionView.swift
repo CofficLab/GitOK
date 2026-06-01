@@ -1,4 +1,4 @@
-import ProjectSupportKit
+import GitOKCoreKit
 import SwiftUI
 
 /// 已配置的项目分支列表区块

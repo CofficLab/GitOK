@@ -1,5 +1,6 @@
 import MagicKit
 import OSLog
+import PluginGitClone
 import SwiftUI
 
 /// 添加项目按钮组件
@@ -12,6 +13,7 @@ struct BtnAdd: View, SuperLog {
 
     /// 数据提供者环境对象
     @EnvironmentObject var g: DataVM
+    @EnvironmentObject var vm: ProjectVM
 
     @State private var showCreateRepositorySheet = false
     @State private var showCloneRepositorySheet = false
@@ -43,7 +45,7 @@ struct BtnAdd: View, SuperLog {
             CreateRepositorySheet()
         }
         .sheet(isPresented: $showCloneRepositorySheet) {
-            CloneRepositorySheet()
+            PluginGitClone.CloneRepositorySheet(context: GitClonePluginContextFactory.make(data: g, projectVM: vm))
         }
     }
 

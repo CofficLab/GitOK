@@ -1,4 +1,5 @@
 import XCTest
+import GitOKCoreKit
 @testable import PluginThemeNebula
 
 final class NebulaThemePluginTests: XCTestCase {

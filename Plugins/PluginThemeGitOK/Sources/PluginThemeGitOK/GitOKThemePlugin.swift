@@ -1,5 +1,4 @@
 import GitOKCoreKit
-import GitOKUI
 
 public struct GitOKThemePlugin: GitOKPlugin {
     public static let metadata = GitOKPluginMetadata(

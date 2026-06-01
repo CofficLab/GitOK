@@ -1,4 +1,10 @@
-import GitOKUI
+@_exported import BannerCoreKit
+@_exported import GitCoreKit
+@_exported import GitOKUI
+@_exported import MagicAlert
+@_exported import MagicKit
+@_exported import ProjectRulesKit
+@_exported import ProjectSupportKit
 import SwiftUI
 
 public struct GitOKPluginMetadata: Equatable, Sendable {
@@ -67,6 +73,10 @@ public protocol GitOKPlugin: Sendable {
 
 public typealias GitOKThemeSelectionHandler = @MainActor (String) -> Void
 public typealias GitOKProjectSelectionHandler = @MainActor (URL) -> Void
+public typealias GitOKProjectExistenceHandler = @MainActor (URL) -> Bool
+public typealias GitOKCloneRepositoryCompletionHandler = @MainActor (URL) -> Bool
+public typealias GitOKActivityStatusUpdateHandler = @MainActor (String?) -> Void
+public typealias GitOKUserMessageHandler = @MainActor (String) -> Void
 public typealias GitOKCleanStatusUpdateHandler = @MainActor (Bool) -> Void
 public typealias GitOKGitDirectoryChangeHandler = @MainActor (GitOKGitDirectoryChange) -> Void
 public typealias GitOKUnpushedCommitsUpdateHandler = @MainActor (Int, [String]) -> Void

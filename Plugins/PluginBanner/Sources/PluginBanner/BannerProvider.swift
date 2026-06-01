@@ -1,7 +1,7 @@
 import AVKit
 import Combine
 import Foundation
-import MagicKit
+import GitOKCoreKit
 import MediaPlayer
 import OSLog
 import SwiftUI

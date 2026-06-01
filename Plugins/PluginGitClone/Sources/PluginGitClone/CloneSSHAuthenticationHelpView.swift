@@ -1,5 +1,5 @@
 import AppKit
-import GitCoreKit
+import GitOKCoreKit
 import SwiftUI
 
 struct CloneSSHAuthenticationHelpView: View {

@@ -1,5 +1,4 @@
-import MagicKit
-import MagicAlert
+import GitOKCoreKit
 import SwiftUI
 
 /**

@@ -10,16 +10,12 @@ let package = Package(
     ],
     dependencies: [
         .package(path: "../../Packages/GitOKCoreKit"),
-        .package(path: "../../Packages/GitOKUI"),
-        .package(path: "../../Packages/GitCoreKit"),
     ],
     targets: [
         .target(
             name: "PluginGitLFS",
             dependencies: [
                 "GitOKCoreKit",
-                "GitOKUI",
-                "GitCoreKit",
             ],
             path: "Sources/PluginGitLFS",
             resources: [.process("Resources")]

@@ -1,7 +1,7 @@
 import Foundation
+import GitOKCoreKit
 import OSLog
 import SwiftUI
-import MagicKit
 
 /**
  * 项目图标仓库（当前项目内）

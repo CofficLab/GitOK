@@ -1,4 +1,5 @@
 import XCTest
+import GitOKCoreKit
 @testable import PluginThemeMountain
 
 final class MountainThemePluginTests: XCTestCase {

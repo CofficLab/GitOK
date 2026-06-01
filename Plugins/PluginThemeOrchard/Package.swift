@@ -8,10 +8,9 @@ let package = Package(
     products: [.library(name: "PluginThemeOrchard", targets: ["PluginThemeOrchard"])],
     dependencies: [
         .package(path: "../../Packages/GitOKCoreKit"),
-        .package(path: "../../Packages/GitOKUI"),
     ],
     targets: [
-        .target(name: "PluginThemeOrchard", dependencies: ["GitOKCoreKit", "GitOKUI"], path: "Sources/PluginThemeOrchard", resources: [.process("Resources")]),
+        .target(name: "PluginThemeOrchard", dependencies: ["GitOKCoreKit"], path: "Sources/PluginThemeOrchard", resources: [.process("Resources")]),
         .testTarget(name: "PluginThemeOrchardTests", dependencies: ["PluginThemeOrchard"], path: "Tests"),
     ]
 )

@@ -1,4 +1,5 @@
 import XCTest
+import GitOKCoreKit
 @testable import PluginOpenRemote
 
 final class OpenRemotePluginTests: XCTestCase {
@@ -21,8 +22,10 @@ final class OpenRemotePluginTests: XCTestCase {
         XCTAssertFalse(PluginOpenRemoteLocalization.string("Open in Browser").isEmpty)
     }
 
+    @MainActor
     func testToolbarContributionIsAvailable() {
-        XCTAssertNotNil(OpenRemotePlugin.shared.toolBarTrailingView())
+        let context = GitOKPluginContext(projectURL: URL(fileURLWithPath: "/tmp/repo"), isGitRepository: true)
+        XCTAssertNotNil(OpenRemotePlugin.shared.toolBarTrailingView(context: context))
     }
 
     func testRemoteURLConversion() {

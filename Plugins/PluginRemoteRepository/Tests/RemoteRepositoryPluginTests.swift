@@ -1,4 +1,6 @@
 @testable import PluginRemoteRepository
+import Foundation
+import GitOKCoreKit
 import Testing
 
 @Suite("PluginRemoteRepository")
@@ -21,6 +23,7 @@ struct RemoteRepositoryPluginTests {
     @MainActor
     @Test("plugin contributes status bar trailing view")
     func statusBarTrailingView() {
-        #expect(RemoteRepositoryPlugin.shared.statusBarTrailingView(context: GitOKPluginContext()) != nil)
+        let context = GitOKPluginContext(projectURL: URL(fileURLWithPath: "/tmp/repo"), isGitRepository: true)
+        #expect(RemoteRepositoryPlugin.shared.statusBarTrailingView(context: context) != nil)
     }
 }

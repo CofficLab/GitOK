@@ -1,4 +1,4 @@
-import ProjectSupportKit
+import GitOKCoreKit
 import XCTest
 @testable import PluginReadme
 
@@ -24,7 +24,8 @@ final class ReadmePluginTests: XCTestCase {
 
     @MainActor
     func testStatusBarContributionIsAvailable() {
-        XCTAssertNotNil(ReadmePlugin.shared.statusBarTrailingView(context: GitOKPluginContext()))
+        let context = GitOKPluginContext(projectURL: URL(fileURLWithPath: "/tmp/repo"))
+        XCTAssertNotNil(ReadmePlugin.shared.statusBarTrailingView(context: context))
     }
 
     func testReadmeResolverFindsLowercaseCandidate() throws {

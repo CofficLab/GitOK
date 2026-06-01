@@ -1,4 +1,4 @@
-import GitCoreKit
+import GitOKCoreKit
 import SwiftUI
 
 struct BranchRowView: View {

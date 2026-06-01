@@ -1,4 +1,5 @@
 import XCTest
+import GitOKCoreKit
 @testable import PluginThemeWinter
 
 final class WinterThemePluginTests: XCTestCase {

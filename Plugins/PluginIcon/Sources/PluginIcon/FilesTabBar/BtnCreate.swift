@@ -1,8 +1,6 @@
-import MagicAlert
 import GitOKCoreKit
 import OSLog
 import SwiftUI
-import MagicKit
 
 struct BtnCreate: View {
     let projectURL: URL?

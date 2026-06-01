@@ -28,21 +28,21 @@ struct CommitStyleSettingView: View, SuperLog {
                 // 风格示例展示
                 styleExamplesSection
 
-                GitOKUI.AppSettingsSection(title: String(localized: "Commit 风格", table: "Core")) {
+                GitOKUI.AppSettingsSection(title: String(localized: "Commit 风格")) {
                     projectCommitStylePicker
                     globalCommitStylePicker
                 }
             }
             .padding()
         }
-        .navigationTitle(Text("Commit 风格", tableName: "Core"))
+        .navigationTitle(Text("Commit 风格"))
         .toolbar {
             ToolbarItem(placement: .confirmationAction) {
                 Button(action: {
                     // 关闭设置视图
                     NotificationCenter.default.post(name: .didSaveGitUserConfig, object: nil)
                 }) {
-                    Text("完成", tableName: "Core")
+                    Text("完成")
                 }
             }
         }
@@ -53,15 +53,15 @@ struct CommitStyleSettingView: View, SuperLog {
 
     /// 风格示例展示区
     private var styleExamplesSection: some View {
-        GitOKUI.AppSettingsSection(title: String(localized: "Style Examples", table: "Core")) {
+        GitOKUI.AppSettingsSection(title: String(localized: "Style Examples")) {
             VStack(alignment: .leading, spacing: 16) {
-                Text("选择不同的风格会改变 Commit 消息的显示方式：", tableName: "Core")
+                Text("选择不同的风格会改变 Commit 消息的显示方式：")
                     .font(.subheadline)
                     .foregroundColor(.secondary)
 
                 VStack(alignment: .leading, spacing: 12) {
                     exampleCard(
-                        title: String(localized: "Emoji 风格", table: "Core"),
+                        title: String(localized: "Emoji 风格"),
                         examples: [
                             "✨ Feature: Add periodic remote status check",
                             "🐛 Fix: Plugin still shows when disabled",
@@ -70,7 +70,7 @@ struct CommitStyleSettingView: View, SuperLog {
                     )
 
                     exampleCard(
-                        title: String(localized: "Plain Text Style", table: "Core"),
+                        title: String(localized: "Plain Text Style"),
                         examples: [
                             "Feature: Add periodic remote status check",
                             "Fix: Plugin still shows when disabled",
@@ -79,7 +79,7 @@ struct CommitStyleSettingView: View, SuperLog {
                     )
 
                     exampleCard(
-                        title: String(localized: "Plain Text Lowercase", table: "Core"),
+                        title: String(localized: "Plain Text Lowercase"),
                         examples: [
                             "feature: Add periodic remote status check",
                             "fix: Plugin still shows when disabled",
@@ -116,8 +116,8 @@ struct CommitStyleSettingView: View, SuperLog {
 
     private var projectCommitStylePicker: some View {
         commitStylePickerRow(
-            title: String(localized: "Current Project Style", table: "Core"),
-            description: String(localized: "Commit message display style for this project", table: "Core"),
+            title: String(localized: "Current Project Style"),
+            description: String(localized: "Commit message display style for this project"),
             icon: "square.and.pencil",
             selection: Binding(
                 get: { commitStyle },
@@ -133,8 +133,8 @@ struct CommitStyleSettingView: View, SuperLog {
 
     private var globalCommitStylePicker: some View {
         commitStylePickerRow(
-            title: String(localized: "Global Default Style", table: "Core"),
-            description: String(localized: "Default commit message display style for new projects", table: "Core"),
+            title: String(localized: "Global Default Style"),
+            description: String(localized: "Default commit message display style for new projects"),
             icon: "arrow.up.arrow.down",
             selection: Binding(
                 get: { globalCommitStyle },
@@ -171,7 +171,7 @@ struct CommitStyleSettingView: View, SuperLog {
 
                 Picker("", selection: selection) {
                     ForEach(CommitStyle.allCases, id: \.self) { style in
-                        Text(String(localized: .init(String.LocalizationValue(style.rawValue), table: "Core")))
+                        Text(String(localized: .init(String.LocalizationValue(style.rawValue))))
                             .tag(style)
                     }
                 }

@@ -1,5 +1,5 @@
 import AppKit
-import GitCoreKit
+import GitOKCoreKit
 import SwiftUI
 
 public struct CloneRepositorySheet: View {
@@ -45,6 +45,15 @@ public struct CloneRepositorySheet: View {
         self.onCloneCompleted = onCloneCompleted
         self.setActivityStatus = setActivityStatus
         self.onCloneSucceeded = onCloneSucceeded
+    }
+
+    public init(context: GitOKPluginContext) {
+        self.init(
+            projectExists: context.onProjectExists,
+            onCloneCompleted: context.onCloneRepositoryCompleted,
+            setActivityStatus: context.onActivityStatusUpdate,
+            onCloneSucceeded: context.onInfoMessage
+        )
     }
 
     private var trimmedRemoteURL: String {

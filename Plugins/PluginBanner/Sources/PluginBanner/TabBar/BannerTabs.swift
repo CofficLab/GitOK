@@ -1,7 +1,6 @@
 import SwiftUI
 
 import GitOKCoreKit
-import MagicAlert
 
 /**
     Banner标签栏视图

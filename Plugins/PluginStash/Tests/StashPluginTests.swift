@@ -1,4 +1,4 @@
-import GitCoreKit
+import GitOKCoreKit
 @testable import PluginStash
 import Testing
 

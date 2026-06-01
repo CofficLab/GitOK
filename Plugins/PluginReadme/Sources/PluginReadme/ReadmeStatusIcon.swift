@@ -1,4 +1,4 @@
-import ProjectSupportKit
+import GitOKCoreKit
 import SwiftUI
 
 struct ReadmeStatusIcon: View {

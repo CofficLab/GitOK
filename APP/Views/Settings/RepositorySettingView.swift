@@ -65,14 +65,14 @@ struct RepositorySettingView: View, SuperLog {
             }
             .padding()
         }
-        .navigationTitle(Text("仓库设置", tableName: "Core"))
+        .navigationTitle(Text("仓库设置"))
         .toolbar {
             ToolbarItem(placement: .confirmationAction) {
                 Button(action: {
                     // 关闭设置视图（通过通知）
                     NotificationCenter.default.post(name: .didUpdateRemoteRepository, object: nil)
                 }) {
-                    Text("完成", tableName: "Core")
+                    Text("完成")
                 }
             }
         }
@@ -95,10 +95,10 @@ struct RepositorySettingView: View, SuperLog {
 
     /// 当前项目信息
     private func currentProjectInfo(project: Project) -> some View {
-        GitOKUI.AppSettingsSection(title: String(localized: "Current Project", table: "Core")) {
+        GitOKUI.AppSettingsSection(title: String(localized: "Current Project")) {
             VStack(spacing: 0) {
                 repositoryInfoRow(
-                    title: String(localized: "Project Name", table: "Core"),
+                    title: String(localized: "Project Name"),
                     description: project.title,
                     icon: "folder"
                 )
@@ -106,7 +106,7 @@ struct RepositorySettingView: View, SuperLog {
                 Divider()
 
                 repositoryInfoRow(
-                    title: String(localized: "Local Path", table: "Core"),
+                    title: String(localized: "Local Path"),
                     description: project.path,
                     icon: "line.3.horizontal.decrease.circle"
                 ) {
@@ -120,7 +120,7 @@ struct RepositorySettingView: View, SuperLog {
 
     /// 远程仓库列表
     private var remoteRepositoryList: some View {
-        GitOKUI.AppSettingsSection(title: String(localized: "Remote Repository", table: "Core")) {
+        GitOKUI.AppSettingsSection(title: String(localized: "Remote Repository")) {
             VStack(spacing: 0) {
                 ForEach(remotes) { remote in
                     remoteRepositoryRow(remote)
@@ -175,18 +175,18 @@ struct RepositorySettingView: View, SuperLog {
 
     /// 空状态提示
     private var emptyRemoteRepositoryState: some View {
-        GitOKUI.AppSettingsSection(title: String(localized: "Remote Repository", table: "Core")) {
+        GitOKUI.AppSettingsSection(title: String(localized: "Remote Repository")) {
             VStack(spacing: 12) {
                 HStack {
                     Image(systemName: .iconCloud)
                         .foregroundColor(.secondary)
-                    Text(String(localized: "No Remote Repository Configured", table: "Core"))
+                    Text(String(localized: "No Remote Repository Configured"))
                         .font(.body)
                         .foregroundColor(.secondary)
                 }
                 .padding()
 
-                Text(String(localized: "Add a remote repository to enable push and pull operations", table: "Core"))
+                Text(String(localized: "Add a remote repository to enable push and pull operations"))
                     .font(.caption)
                     .foregroundColor(.secondary)
                     .multilineTextAlignment(.center)
@@ -198,8 +198,8 @@ struct RepositorySettingView: View, SuperLog {
     private var addRemoteRepositoryButton: some View {
         GitOKUI.AppSettingsSection {
             repositoryInfoRow(
-                title: String(localized: "Add Remote Repository", table: "Core"),
-                description: String(localized: "Add a new remote repository URL", table: "Core"),
+                title: String(localized: "Add Remote Repository"),
+                description: String(localized: "Add a new remote repository URL"),
                 icon: "plus"
             )
             .contentShape(Rectangle())
@@ -217,7 +217,7 @@ struct RepositorySettingView: View, SuperLog {
                     .font(.system(size: 48))
                     .foregroundColor(.secondary)
 
-                Text(String(localized: "Please Select a Project First", table: "Core"))
+                Text(String(localized: "Please Select a Project First"))
                     .font(.body)
                     .foregroundColor(.secondary)
             }
@@ -271,7 +271,7 @@ struct RepositorySettingView: View, SuperLog {
     /// 添加远程仓库
     private func addRemoteRepository(name: String, url: String) {
         guard let project = vm.project else {
-        errorMessage = String(localized: "Please Select a Project First", table: "Core")
+        errorMessage = String(localized: "Please Select a Project First")
             return
         }
 
@@ -289,7 +289,7 @@ struct RepositorySettingView: View, SuperLog {
             loadData()
         } catch {
             isLoading = false
-        errorMessage = String.localizedStringWithFormat(String(localized: "Failed to add remote repository: %@", table: "Core"), error.localizedDescription)
+        errorMessage = String.localizedStringWithFormat(String(localized: "Failed to add remote repository: %@"), error.localizedDescription)
 
             if Self.verbose {
                 os_log(.error, "\(Self.t)❌ Failed to add remote: \(error)")
@@ -317,7 +317,7 @@ struct RepositorySettingView: View, SuperLog {
             loadData()
         } catch {
             isLoading = false
-        errorMessage = String.localizedStringWithFormat(String(localized: "Failed to remove remote repository: %@", table: "Core"), error.localizedDescription)
+        errorMessage = String.localizedStringWithFormat(String(localized: "Failed to remove remote repository: %@"), error.localizedDescription)
 
             if Self.verbose {
                 os_log(.error, "\(Self.t)❌ Failed to remove remote: \(error)")
@@ -353,7 +353,7 @@ struct RepositorySettingView: View, SuperLog {
                 await MainActor.run {
                     self.remotes = []
                     self.isLoading = false
-                    self.errorMessage = String.localizedStringWithFormat(String(localized: "Failed to load remote repository: %@", table: "Core"), error.localizedDescription)
+                    self.errorMessage = String.localizedStringWithFormat(String(localized: "Failed to load remote repository: %@"), error.localizedDescription)
 
                     if Self.verbose {
                         os_log(.error, "\(Self.t)❌ Failed to load remotes: \(error)")
@@ -382,11 +382,11 @@ struct AddRemoteRepositorySheet: View {
     var body: some View {
         NavigationView {
             Form {
-                Section(header: Text("Remote Repository Information", tableName: "Core")) {
-                    TextField(String(localized: "Name", table: "Core"), text: $remoteName)
+                Section(header: Text("Remote Repository Information")) {
+                    TextField(String(localized: "Name"), text: $remoteName)
                         .textFieldStyle(.plain)
 
-                    TextField(String(localized: "URL", table: "Core"), text: $remoteURL)
+                    TextField(String(localized: "URL"), text: $remoteURL)
                         .textFieldStyle(.plain)
                         .disableAutocorrection(true)
                 }
@@ -404,13 +404,13 @@ struct AddRemoteRepositorySheet: View {
                 }
             }
             .formStyle(.grouped)
-            .navigationTitle(Text("Add Remote Repository", tableName: "Core"))
+            .navigationTitle(Text("Add Remote Repository"))
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button(action: {
                         dismiss()
                     }) {
-                        Text("Cancel", tableName: "Core")
+                        Text("Cancel")
                     }
                 }
 
@@ -418,7 +418,7 @@ struct AddRemoteRepositorySheet: View {
                     Button(action: {
                         addRemote()
                     }) {
-                        Text("Add", tableName: "Core")
+                        Text("Add")
                     }
                     .disabled(!RemoteRepositoryFormRules.isFormValid(name: remoteName, url: remoteURL) || isLoading)
                 }
@@ -438,7 +438,7 @@ struct AddRemoteRepositorySheet: View {
             if !isValidGitURL(input.url) {
                 await MainActor.run {
                     isLoading = false
-                    errorMessage = String(localized: "Please enter a valid Git URL", table: "Core")
+                    errorMessage = String(localized: "Please enter a valid Git URL")
                 }
                 return
             }

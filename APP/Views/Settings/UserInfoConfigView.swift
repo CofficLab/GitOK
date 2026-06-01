@@ -79,11 +79,11 @@ struct UserInfoConfigView: View, SuperLog {
             VStack(spacing: 20) {
                 // 说明文本
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("配置当前项目的Git用户信息", tableName: "Core")
+                    Text("配置当前项目的Git用户信息")
                         .font(.title2)
                         .fontWeight(.medium)
 
-                    Text("这些设置仅适用于当前项目，不会影响全局Git配置", tableName: "Core")
+                    Text("这些设置仅适用于当前项目，不会影响全局Git配置")
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
@@ -91,7 +91,7 @@ struct UserInfoConfigView: View, SuperLog {
 
                 // 预设配置选择
                 if !savedConfigs.isEmpty {
-                    GitOKUI.AppSettingsSection(title: String(localized: "Preset Configs", table: "Core")) {
+                    GitOKUI.AppSettingsSection(title: String(localized: "Preset Configs")) {
                         VStack(spacing: 0) {
                             ForEach(savedConfigs) { config in
                                 presetConfigRow(config)
@@ -115,13 +115,13 @@ struct UserInfoConfigView: View, SuperLog {
                 }
 
                 // 用户信息输入
-                GitOKUI.AppSettingsSection(title: String(localized: "User Info", table: "Core")) {
+                GitOKUI.AppSettingsSection(title: String(localized: "User Info")) {
                     VStack(spacing: 0) {
                         // 用户名
                         HStack {
-                            Text("用户名", tableName: "Core")
+                            Text("用户名")
                                 .frame(width: 80, alignment: .leading)
-                            TextField(String(localized: "Enter username", table: "Core"), text: $userName)
+                            TextField(String(localized: "Enter username"), text: $userName)
                                 .textFieldStyle(.plain)
                                 .onChange(of: userName) {
                                     hasChanges = true
@@ -136,9 +136,9 @@ struct UserInfoConfigView: View, SuperLog {
 
                         // 邮箱
                         HStack {
-                            Text("邮箱", tableName: "Core")
+                            Text("邮箱")
                                 .frame(width: 80, alignment: .leading)
-                            TextField(String(localized: "Enter email", table: "Core"), text: $userEmail)
+                            TextField(String(localized: "Enter email"), text: $userEmail)
                                 .textFieldStyle(.plain)
                                 .onChange(of: userEmail) {
                                     hasChanges = true
@@ -218,7 +218,7 @@ struct UserInfoConfigView: View, SuperLog {
             isLoading = false
             return true
         } catch {
-        errorMessage = String.localizedStringWithFormat(String(localized: "Save failed: %@", table: "Core"), error.localizedDescription)
+        errorMessage = String.localizedStringWithFormat(String(localized: "Save failed: %@"), error.localizedDescription)
             if Self.verbose {
                 os_log(.error, "\(Self.t)Failed to save user config: \(error)")
             }
@@ -252,7 +252,7 @@ struct UserInfoConfigView: View, SuperLog {
             }
 
         } catch {
-        errorMessage = String.localizedStringWithFormat(String(localized: "Failed to save preset: %@", table: "Core"), error.localizedDescription)
+        errorMessage = String.localizedStringWithFormat(String(localized: "Failed to save preset: %@"), error.localizedDescription)
             if Self.verbose {
                 os_log(.error, "\(Self.t)Failed to save preset: \(error)")
             }
@@ -276,7 +276,7 @@ struct UserInfoConfigView: View, SuperLog {
                 os_log("\(Self.t)Loaded user info - name: \(userName), email: \(userEmail)")
             }
         } catch {
-        errorMessage = String.localizedStringWithFormat(String(localized: "Unable to load current user info: %@", table: "Core"), error.localizedDescription)
+        errorMessage = String.localizedStringWithFormat(String(localized: "Unable to load current user info: %@"), error.localizedDescription)
             if Self.verbose {
                 os_log(.error, "\(Self.t)Failed to load user info: \(error)")
             }

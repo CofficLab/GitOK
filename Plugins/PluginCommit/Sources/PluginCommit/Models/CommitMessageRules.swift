@@ -1,6 +1,5 @@
 import Foundation
-import ProjectSupportKit
-import ProjectRulesKit
+import GitOKCoreKit
 
 public enum CommitMessageRules {
     public static let fallbackSubject = "Auto Committed by GitOK"

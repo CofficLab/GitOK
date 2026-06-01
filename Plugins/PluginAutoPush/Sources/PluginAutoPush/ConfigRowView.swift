@@ -1,5 +1,5 @@
 import AppKit
-import ProjectSupportKit
+import GitOKCoreKit
 import SwiftUI
 
 /// 配置行视图：显示单个项目分支的自动推送配置

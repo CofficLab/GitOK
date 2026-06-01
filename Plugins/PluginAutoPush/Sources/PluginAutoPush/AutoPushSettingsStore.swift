@@ -1,6 +1,6 @@
 import Combine
 import Foundation
-import ProjectSupportKit
+import GitOKCoreKit
 
 @MainActor
 public final class AutoPushSettingsStore: ObservableObject {

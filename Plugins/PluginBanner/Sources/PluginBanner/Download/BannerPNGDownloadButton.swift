@@ -1,6 +1,5 @@
-import MagicAlert
+import GitOKCoreKit
 import SwiftUI
-import MagicKit
 
 /**
  * Banner PNG格式下载按钮

@@ -1,6 +1,5 @@
 import AppKit
-import GitCoreKit
-import ProjectRulesKit
+import GitOKCoreKit
 import SwiftUI
 
 public struct RemoteRepositoryView: View {

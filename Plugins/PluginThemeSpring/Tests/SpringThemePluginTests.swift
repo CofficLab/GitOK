@@ -1,4 +1,5 @@
 import XCTest
+import GitOKCoreKit
 @testable import PluginThemeSpring
 
 final class SpringThemePluginTests: XCTestCase {

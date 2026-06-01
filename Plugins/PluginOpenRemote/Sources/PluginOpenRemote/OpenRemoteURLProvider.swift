@@ -1,5 +1,5 @@
 import Foundation
-import ProjectRulesKit
+import GitOKCoreKit
 
 public enum OpenRemoteURLProvider {
     public static func webURL(for projectURL: URL) async -> URL? {

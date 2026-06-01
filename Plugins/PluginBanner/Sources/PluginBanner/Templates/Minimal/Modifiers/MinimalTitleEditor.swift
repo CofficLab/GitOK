@@ -1,5 +1,5 @@
 import SwiftUI
-import MagicAlert
+import GitOKCoreKit
 
 /**
  简约模板的标题编辑器

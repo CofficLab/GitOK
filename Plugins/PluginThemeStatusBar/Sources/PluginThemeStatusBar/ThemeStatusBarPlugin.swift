@@ -1,6 +1,5 @@
 import Foundation
 import GitOKCoreKit
-import GitOKUI
 import SwiftUI
 
 public struct ThemeStatusBarPlugin: GitOKPlugin {

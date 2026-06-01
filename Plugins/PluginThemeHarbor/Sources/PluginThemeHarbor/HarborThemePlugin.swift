@@ -1,5 +1,4 @@
 import GitOKCoreKit
-import GitOKUI
 
 public struct HarborThemePlugin: GitOKPlugin {
     public static let metadata = GitOKPluginMetadata(id: "ThemeHarborPlugin", displayName: "Harbor Theme", description: "Deep blue water theme", iconName: "network", order: 127, allowUserToggle: false, defaultEnabled: true, tableName: "ThemeHarbor")

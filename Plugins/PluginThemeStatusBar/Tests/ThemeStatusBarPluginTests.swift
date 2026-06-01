@@ -1,4 +1,5 @@
 import XCTest
+import GitOKCoreKit
 @testable import PluginThemeStatusBar
 
 final class ThemeStatusBarPluginTests: XCTestCase {

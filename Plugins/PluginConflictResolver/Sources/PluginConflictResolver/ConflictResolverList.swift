@@ -1,6 +1,5 @@
 import AppKit
-import GitCoreKit
-import GitOKUI
+import GitOKCoreKit
 import SwiftUI
 
 public struct ConflictResolverList: View {

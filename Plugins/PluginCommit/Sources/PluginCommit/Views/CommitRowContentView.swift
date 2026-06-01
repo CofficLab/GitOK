@@ -1,5 +1,4 @@
-import GitCoreKit
-import ProjectRulesKit
+import GitOKCoreKit
 import SwiftUI
 
 public struct CommitRowContentView: View {

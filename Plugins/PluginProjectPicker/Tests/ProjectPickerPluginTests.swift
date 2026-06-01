@@ -1,4 +1,5 @@
 @testable import PluginProjectPicker
+import GitOKCoreKit
 import Testing
 
 @Suite("PluginProjectPicker")
@@ -18,8 +19,9 @@ struct ProjectPickerPluginTests {
         #expect(ProjectPickerPlugin.metadata.description.isEmpty == false)
     }
 
+    @MainActor
     @Test("toolbar contribution is available")
     func toolbarContribution() {
-        #expect(ProjectPickerPlugin.shared.toolBarLeadingView() != nil)
+        #expect(ProjectPickerPlugin.shared.toolBarLeadingView(context: GitOKPluginContext()) != nil)
     }
 }

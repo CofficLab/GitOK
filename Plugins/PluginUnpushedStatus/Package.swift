@@ -9,15 +9,13 @@ let package = Package(
         .library(name: "PluginUnpushedStatus", targets: ["PluginUnpushedStatus"]),
     ],
     dependencies: [
-        .package(path: "../../Packages/GitCoreKit"),
         .package(path: "../../Packages/GitOKCoreKit"),
     ],
     targets: [
         .target(
             name: "PluginUnpushedStatus",
             dependencies: [
-                "GitCoreKit",
-                "GitOKCoreKit",
+                                "GitOKCoreKit",
             ],
             path: "Sources/PluginUnpushedStatus",
             resources: [.process("Resources")]

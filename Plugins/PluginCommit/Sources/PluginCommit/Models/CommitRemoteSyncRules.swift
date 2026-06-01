@@ -1,5 +1,5 @@
 import Foundation
-import GitCoreKit
+import GitOKCoreKit
 
 public enum CommitRemoteSyncRules {
     public enum Activity {

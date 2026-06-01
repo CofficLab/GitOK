@@ -1,5 +1,5 @@
-import GitOKUI
 import SwiftUI
+import GitOKCoreKit
 
 struct ThemePickerPopover: View {
     let registry: GitOKUIThemeRegistry
@@ -15,7 +15,7 @@ struct ThemePickerPopover: View {
             header
 
             if registry.themes.isEmpty {
-                GitOKUI.AppEmptyState(
+                AppEmptyState(
                     icon: "paintbrush",
                     title: "No themes available"
                 )
@@ -49,7 +49,7 @@ struct ThemePickerPopover: View {
     private func themeRow(_ theme: GitOKUIThemeContribution) -> some View {
         let isSelected = theme.id == registry.selectedThemeId
 
-        return GitOKUI.AppListRow(isSelected: isSelected, action: {
+        return AppListRow(isSelected: isSelected, action: {
             selectTheme(theme.id)
         }) {
             HStack(spacing: 10) {

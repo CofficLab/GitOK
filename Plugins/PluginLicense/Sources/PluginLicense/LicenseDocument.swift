@@ -1,5 +1,5 @@
 import Foundation
-import ProjectSupportKit
+import GitOKCoreKit
 
 enum LicenseDocument {
     static func fileURL(for projectURL: URL) -> URL {

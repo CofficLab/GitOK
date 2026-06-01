@@ -1,4 +1,6 @@
 @testable import PluginSmartMerge
+import Foundation
+import GitOKCoreKit
 import Testing
 
 @Suite("PluginSmartMerge")
@@ -21,6 +23,7 @@ struct SmartMergePluginTests {
     @MainActor
     @Test("plugin contributes status bar trailing view")
     func statusBarTrailingView() {
-        #expect(SmartMergePlugin.shared.statusBarTrailingView(context: GitOKPluginContext()) != nil)
+        let context = GitOKPluginContext(projectURL: URL(fileURLWithPath: "/tmp/test"))
+        #expect(SmartMergePlugin.shared.statusBarTrailingView(context: context) != nil)
     }
 }

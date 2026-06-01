@@ -1,4 +1,4 @@
-import ProjectRulesKit
+import GitOKCoreKit
 
 public enum CommitGraphPresentationRules {
     public typealias Node = CommitGraphLayoutRules.Node

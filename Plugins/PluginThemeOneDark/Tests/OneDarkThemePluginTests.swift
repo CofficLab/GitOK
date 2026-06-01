@@ -1,4 +1,5 @@
 import XCTest
+import GitOKCoreKit
 @testable import PluginThemeOneDark
 
 final class OneDarkThemePluginTests: XCTestCase {

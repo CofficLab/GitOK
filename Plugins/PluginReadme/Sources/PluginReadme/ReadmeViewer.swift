@@ -1,5 +1,5 @@
 import MarkdownUI
-import ProjectSupportKit
+import GitOKCoreKit
 import SwiftUI
 
 struct ReadmeViewer: View {

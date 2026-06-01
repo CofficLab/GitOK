@@ -17,6 +17,7 @@ import PluginGitDetail
 import PluginGitTab
 import PluginIcon
 
+@MainActor
 class PluginVM: ObservableObject, SuperLog, SuperThread {
     nonisolated static let emoji = "🧩"
     static let verbose = false
@@ -28,51 +29,33 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
 
     /// 插件设置存储
     private let settingsStore = PluginSettingsStore.shared
+    private let runtime = GitOKPluginRuntime()
 
     /// Combine 订阅集合
     private var cancellables = Set<AnyCancellable>()
 
     // MARK: - Plugin Registration
 
-    /// 已注册的插件实例列表
-    private var registeredPlugins: [any SuperPlugin] = []
-
-    /// 已使用的插件标签集合（用于检测重复）
-    private var usedLabels: Set<String> = []
-
     /// 注册一个插件实例
     /// - Parameter plugin: 要注册的插件实例
     private func register(_ plugin: any SuperPlugin) {
-        let label = plugin.instanceLabel
-
-        // 检查标签是否已存在
-        if usedLabels.contains(label) {
-            let pluginType = String(describing: type(of: plugin))
-            os_log(.error, "\(Self.t)❌ Duplicate plugin label '\(label)' in \(pluginType)")
-            assertionFailure("Duplicate plugin label: \(label)")
-            return
-        }
-
-        // 标记该标签已使用
-        usedLabels.insert(label)
-        registeredPlugins.append(plugin)
+        runtime.register(plugin)
     }
 
     /// 获取所有已注册的插件实例，按 order 排序
     /// - Returns: 排序后的插件实例数组
     private func getAllPlugins() -> [any SuperPlugin] {
-        registeredPlugins.sorted { $0.pluginOrder < $1.pluginOrder }
+        runtime.sortedRegisteredPlugins()
     }
 
     /// 清空所有注册的插件
     private func clearRegisteredPlugins() {
-        registeredPlugins.removeAll()
-        usedLabels.removeAll()
+        runtime.clearRegisteredPlugins()
     }
 
     /// 已注册插件数量
     private var registeredCount: Int {
-        registeredPlugins.count
+        runtime.registeredCount
     }
 
     /// 自动发现并注册所有插件
@@ -166,48 +149,19 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
     /// - Parameter plugin: 要检查的插件
     /// - Returns: 如果插件被启用则返回true
     func isPluginEnabled(_ plugin: any SuperPlugin) -> Bool {
-        // 如果不允许用户切换，则始终启用
-        if !plugin.pluginAllowUserToggle {
-            return true
-        }
-
-        // 检查用户配置
-        let pluginId = plugin.instanceLabel
-        if PluginSettingsStore.shared.hasUserConfigured(pluginId) {
-            return PluginSettingsStore.shared.isPluginEnabled(pluginId, defaultEnabled: plugin.pluginDefaultEnabled)
-        }
-
-        // 用户未配置过，使用插件的默认启用状态
-        return plugin.pluginDefaultEnabled
+        runtime.isPluginEnabled(plugin)
     }
 
     /// 获取所有可用的标签页名称
     /// - Returns: 标签页名称数组
     var tabNames: [String] {
-        plugins
-            .filter { isPluginEnabled($0) }
-            .compactMap { $0.addTabItem() }
+        runtime.tabNames
     }
 
     /// 获取可配置的插件信息列表（用于设置界面）
     /// - Returns: 允许用户切换启用/禁用状态的插件信息数组
     var configurablePlugins: [PluginInfo] {
-        plugins
-            .filter { $0.pluginAllowUserToggle }
-            .map { plugin in
-                let pluginId = plugin.instanceLabel
-                let tableName = plugin.pluginTableName
-
-                return PluginInfo(
-                    id: pluginId,
-                    name: String(localized: .init(stringLiteral: plugin.pluginDisplayName), table: tableName),
-                    description: String(localized: .init(stringLiteral: plugin.pluginDescription), table: tableName),
-                    icon: plugin.pluginIconName,
-                    defaultEnabled: plugin.pluginDefaultEnabled,
-                    isDeveloperEnabled: { true }
-                )
-            }
-            .sorted { $0.name < $1.name }
+        runtime.configurablePlugins
     }
 
     /// 获取工具栏前导视图
@@ -217,20 +171,26 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
         projects: [GitOKProjectSummary] = [],
         selectedProjectURL: URL? = nil,
         isSidebarVisible: Bool = true,
-        onSelectProject: @escaping GitOKProjectSelectionHandler = { _ in }
+        onSelectProject: @escaping GitOKProjectSelectionHandler = { _ in },
+        canCloneRepository: Bool = false,
+        onProjectExists: @escaping GitOKProjectExistenceHandler = { _ in false },
+        onCloneRepositoryCompleted: @escaping GitOKCloneRepositoryCompletionHandler = { _ in false },
+        onActivityStatusUpdate: @escaping GitOKActivityStatusUpdateHandler = { _ in },
+        onInfoMessage: @escaping GitOKUserMessageHandler = { _ in }
     ) -> [(plugin: SuperPlugin, view: AnyView)] {
         let start = Date()
         let context = GitOKPluginContext(
             projects: projects,
             selectedProjectURL: selectedProjectURL,
             isSidebarVisible: isSidebarVisible,
-            onProjectSelection: onSelectProject
+            canCloneRepository: canCloneRepository,
+            onProjectSelection: onSelectProject,
+            onProjectExists: onProjectExists,
+            onCloneRepositoryCompleted: onCloneRepositoryCompleted,
+            onActivityStatusUpdate: onActivityStatusUpdate,
+            onInfoMessage: onInfoMessage
         )
-        return plugins.compactMap { plugin in
-            guard isPluginEnabled(plugin) else { return nil }
-            guard let view = plugin.addToolBarLeadingView(context: context) else { return nil }
-            return (plugin, view)
-        }
+        return runtime.enabledToolbarLeadingViews(context: context)
         .loggingPluginViewBuild("toolbarLeading", start: start, logger: self)
     }
 
@@ -248,11 +208,7 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
             isGitRepository: isGitRepository,
             remoteTrackingStatus: remoteTrackingStatus
         )
-        return plugins.compactMap { plugin in
-            guard isPluginEnabled(plugin) else { return nil }
-            guard let view = plugin.addToolBarTrailingView(context: context) else { return nil }
-            return (plugin, view)
-        }
+        return runtime.enabledToolbarTrailingViews(context: context)
         .loggingPluginViewBuild("toolbarTrailing", start: start, logger: self)
     }
 
@@ -270,11 +226,7 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
             projectTitle: project?.title,
             isGitRepository: project?.isGitRepo ?? false
         )
-        return plugins.compactMap { plugin in
-            guard isPluginEnabled(plugin) else { return nil }
-            guard let view = plugin.addListView(tab: tab, projectURL: project?.url, context: context) else { return nil }
-            return (plugin, view)
-        }
+        return runtime.enabledListViews(tab: tab, projectURL: project?.url, context: context)
         .loggingPluginViewBuild("list tab=\(tab)", start: start, logger: self)
     }
 
@@ -285,15 +237,12 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
     func getEnabledTabDetailView(tab: String, projectURL: URL? = nil) -> AnyView? {
         let start = Date()
         let context = GitOKPluginContext(projectURL: projectURL)
-        for plugin in plugins {
-            guard isPluginEnabled(plugin) else { continue }
-            if let view = plugin.addDetailView(for: tab, context: context) {
-                let elapsed = Date().timeIntervalSince(start)
-                if elapsed > 0.2 {
-                    os_log("\(self.t)⏱️ Plugin detail view built tab=\(tab) plugin=\(plugin.instanceLabel) elapsed=\(String(format: "%.3f", elapsed))s")
-                }
-                return view
+        if let view = runtime.enabledDetailView(for: tab, context: context) {
+            let elapsed = Date().timeIntervalSince(start)
+            if elapsed > 0.2 {
+                os_log("\(self.t)⏱️ Plugin detail view built tab=\(tab) elapsed=\(String(format: "%.3f", elapsed))s")
             }
+            return view
         }
         let elapsed = Date().timeIntervalSince(start)
         if elapsed > 0.2 {
@@ -312,9 +261,7 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
             projectPath: projectPath,
             selectedFilePath: selectedFilePath
         )
-        return plugins
-            .filter { isPluginEnabled($0) }
-            .compactMap { $0.addStatusBarLeadingView(context: context) }
+        return runtime.enabledStatusBarLeadingViews(context: context)
     }
 
     /// 获取状态栏中间视图
@@ -324,9 +271,7 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
         let context = GitOKPluginContext(
             activityStatus: activityStatus
         )
-        return plugins
-            .filter { isPluginEnabled($0) }
-            .compactMap { $0.addStatusBarCenterView(context: context) }
+        return runtime.enabledStatusBarCenterViews(context: context)
     }
 
     /// 获取状态栏后置视图
@@ -346,28 +291,14 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
             branchName: branchName,
             isGitRepository: isGitRepository
         )
-        return plugins
-            .filter { isPluginEnabled($0) }
-            .compactMap { $0.addStatusBarTrailingView(context: context) }
+        return runtime.enabledStatusBarTrailingViews(context: context)
     }
 
     // MARK: - Theme Contributions
 
     @MainActor
     func getThemeContributions() -> [GitOKUIThemeContribution] {
-        plugins.flatMap { plugin -> [GitOKUIThemeContribution] in
-            guard isPluginEnabled(plugin) else { return [] }
-            let pluginOrder = plugin.pluginOrder
-            return plugin.addThemeContributions().map { contribution in
-                GitOKUIThemeContribution(
-                    sortKey: ThemeSortKey(pluginOrder: pluginOrder, themeId: contribution.id),
-                    chromeTheme: contribution.chromeTheme,
-                    editorThemeId: contribution.editorThemeId,
-                    uiTheme: contribution.uiTheme,
-                    attachments: contribution.attachments
-                )
-            }
-        }
+        runtime.themeContributions()
     }
 
     // MARK: - Root View Wrapper
@@ -379,14 +310,7 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
     /// - Parameter content: 原始内容视图
     /// - Returns: 经过所有插件依次包裹后的视图
     func getRootViewWrapper<Content: View>(@ViewBuilder content: () -> Content) -> AnyView {
-        var wrapped: AnyView = AnyView(content())
-
-        for plugin in plugins {
-            guard isPluginEnabled(plugin) else { continue }
-            wrapped = plugin.wrapRoot(wrapped)
-        }
-
-        return wrapped
+        runtime.rootViewWrapper(content: content)
     }
 
     // MARK: - Initialization

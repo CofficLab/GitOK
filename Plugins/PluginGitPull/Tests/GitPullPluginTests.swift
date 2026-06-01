@@ -1,4 +1,6 @@
 @testable import PluginGitPull
+import Foundation
+import GitOKCoreKit
 import Testing
 
 @Suite("PluginGitPull")
@@ -19,6 +21,7 @@ struct GitPullPluginTests {
     }
 
     @Test("toolbar contribution is available")
+    @MainActor
     func toolbarContribution() {
         let context = GitOKPluginContext(projectURL: URL(fileURLWithPath: "/tmp/test"))
         #expect(GitPullPlugin.shared.toolBarTrailingView(context: context) != nil)

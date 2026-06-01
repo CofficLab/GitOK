@@ -15,11 +15,25 @@ let package = Package(
     ],
     dependencies: [
         .package(path: "../GitOKUI"),
+        .package(path: "../ProjectRulesKit"),
+        .package(path: "../BannerCoreKit"),
+        .package(path: "../ProjectSupportKit"),
+        .package(path: "../GitCoreKit"),
+        .package(path: "../MagicAlert"),
+        .package(path: "../MagicKit"),
     ],
     targets: [
         .target(
             name: "GitOKCoreKit",
-            dependencies: ["GitOKUI"],
+            dependencies: [
+                "GitOKUI",
+                "ProjectRulesKit",
+                "BannerCoreKit",
+                "ProjectSupportKit",
+                "GitCoreKit",
+                "MagicAlert",
+                "MagicKit",
+            ],
             path: "Sources/GitOKCoreKit"
         ),
         .testTarget(

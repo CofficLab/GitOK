@@ -1,5 +1,5 @@
-import GitOKUI
 import SwiftUI
+import GitOKCoreKit
 
 struct AuroraTheme: GitOKAppChromeTheme {
     let identifier: String

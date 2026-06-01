@@ -1,3 +1,5 @@
+import Foundation
+import GitOKCoreKit
 import XCTest
 @testable import PluginGitLFS
 
@@ -23,6 +25,8 @@ final class GitLFSPluginTests: XCTestCase {
 
     @MainActor
     func testStatusBarContributionIsAvailable() {
-        XCTAssertNotNil(GitLFSPlugin.shared.statusBarTrailingView(context: GitOKPluginContext()))
+        let context = GitOKPluginContext(projectURL: URL(fileURLWithPath: "/tmp/repo"))
+
+        XCTAssertNotNil(GitLFSPlugin.shared.statusBarTrailingView(context: context))
     }
 }

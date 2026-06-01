@@ -1,4 +1,4 @@
-import GitCoreKit
+import GitOKCoreKit
 import SwiftUI
 
 public struct BranchPickerView: View {

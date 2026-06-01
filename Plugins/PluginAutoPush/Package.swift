@@ -10,18 +10,12 @@ let package = Package(
     ],
     dependencies: [
         .package(path: "../../Packages/GitOKCoreKit"),
-        .package(path: "../../Packages/GitCoreKit"),
-        .package(path: "../../Packages/ProjectRulesKit"),
-        .package(path: "../../Packages/ProjectSupportKit"),
     ],
     targets: [
         .target(
             name: "PluginAutoPush",
             dependencies: [
                 "GitOKCoreKit",
-                "GitCoreKit",
-                "ProjectRulesKit",
-                "ProjectSupportKit",
             ],
             path: "Sources/PluginAutoPush",
             resources: [.process("Resources")]

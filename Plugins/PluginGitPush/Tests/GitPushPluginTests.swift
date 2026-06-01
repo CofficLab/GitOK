@@ -1,4 +1,6 @@
 @testable import PluginGitPush
+import Foundation
+import GitOKCoreKit
 import Testing
 
 @Suite("PluginGitPush")
@@ -18,8 +20,10 @@ struct GitPushPluginTests {
     }
 
     @Test("plugin contributes toolbar trailing view")
+    @MainActor
     func toolbarTrailingView() {
-        #expect(GitPushPlugin.shared.toolBarTrailingView() != nil)
+        let context = GitOKPluginContext(projectURL: URL(fileURLWithPath: "/tmp/test"))
+        #expect(GitPushPlugin.shared.toolBarTrailingView(context: context) != nil)
     }
 
     @Test("primary action follows remote tracking state")

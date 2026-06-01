@@ -35,7 +35,7 @@ struct SettingView: View, SuperLog {
         case about = "关于"
 
         var displayName: String {
-            String(localized: String.LocalizationValue(self.rawValue), table: "Core")
+            String(localized: String.LocalizationValue(self.rawValue))
         }
 
         var icon: String {
@@ -154,11 +154,11 @@ struct SettingView: View, SuperLog {
 
             // 版本和 Build 信息
             VStack(alignment: .center, spacing: 2) {
-                Text(String.localizedStringWithFormat(NSLocalizedString("v%@", tableName: "Core", comment: ""), appInfo.version))
+                Text(String.localizedStringWithFormat(NSLocalizedString("v%@", comment: ""), appInfo.version))
                     .font(.caption2)
                     .foregroundColor(.secondary)
 
-                Text(String.localizedStringWithFormat(NSLocalizedString("Build %@", tableName: "Core", comment: ""), appInfo.build))
+                Text(String.localizedStringWithFormat(NSLocalizedString("Build %@", comment: ""), appInfo.build))
                     .font(.caption2)
                     .foregroundColor(.secondary)
             }

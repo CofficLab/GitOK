@@ -9,15 +9,13 @@ let package = Package(
         .library(name: "PluginStash", targets: ["PluginStash"]),
     ],
     dependencies: [
-        .package(path: "../../Packages/GitCoreKit"),
         .package(path: "../../Packages/GitOKCoreKit"),
     ],
     targets: [
         .target(
             name: "PluginStash",
             dependencies: [
-                "GitCoreKit",
-                "GitOKCoreKit",
+                                "GitOKCoreKit",
             ],
             path: "Sources/PluginStash",
             resources: [.process("Resources")]

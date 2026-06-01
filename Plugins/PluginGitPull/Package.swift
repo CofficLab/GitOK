@@ -10,14 +10,12 @@ let package = Package(
     ],
     dependencies: [
         .package(path: "../../Packages/GitOKCoreKit"),
-        .package(path: "../../Packages/GitCoreKit"),
     ],
     targets: [
         .target(
             name: "PluginGitPull",
             dependencies: [
                 "GitOKCoreKit",
-                "GitCoreKit",
             ],
             path: "Sources/PluginGitPull",
             resources: [.process("Resources")]

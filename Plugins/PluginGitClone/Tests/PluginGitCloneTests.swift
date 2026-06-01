@@ -1,4 +1,5 @@
 import Testing
+import GitOKCoreKit
 @testable import PluginGitClone
 
 @Suite("PluginGitClone")
@@ -14,6 +15,22 @@ struct PluginGitCloneTests {
     func normalizesGitHubHost() {
         #expect(CloneRepositorySheet.normalizedGitHubHost("https://github.example.com/team") == "github.example.com")
         #expect(CloneRepositorySheet.normalizedGitHubHost(" github.com ") == "github.com")
+    }
+
+    @MainActor
+    @Test("plugin metadata and toolbar contribution use CoreKit context")
+    func pluginMetadataAndToolbarContribution() {
+        #expect(GitClonePlugin.metadata.id == "GitClonePlugin")
+        #expect(GitClonePlugin.metadata.iconName == "square.and.arrow.down")
+        #expect(GitClonePlugin.metadata.allowUserToggle == false)
+        #expect(GitClonePlugin.metadata.defaultEnabled == true)
+        #expect(GitClonePlugin.metadata.tableName == "Git-Clone")
+
+        #expect(GitClonePlugin.shared.toolBarLeadingView(context: GitOKPluginContext()) == nil)
+
+        let context = GitOKPluginContext(canCloneRepository: true)
+        #expect(GitClonePlugin.shared.toolBarLeadingView(context: context) != nil)
+        _ = CloneRepositorySheet(context: context)
     }
 
     @Test("bridge reason stays compatible with App project selection")

@@ -1,4 +1,5 @@
 import XCTest
+import GitOKCoreKit
 @testable import PluginThemeEmber
 
 final class EmberThemePluginTests: XCTestCase {

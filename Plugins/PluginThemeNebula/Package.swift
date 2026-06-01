@@ -8,12 +8,11 @@ let package = Package(
     products: [.library(name: "PluginThemeNebula", targets: ["PluginThemeNebula"])],
     dependencies: [
         .package(path: "../../Packages/GitOKCoreKit"),
-        .package(path: "../../Packages/GitOKUI"),
     ],
     targets: [
         .target(
             name: "PluginThemeNebula",
-            dependencies: ["GitOKCoreKit", "GitOKUI"],
+            dependencies: ["GitOKCoreKit"],
             path: "Sources/PluginThemeNebula",
             resources: [.process("Resources")]
         ),

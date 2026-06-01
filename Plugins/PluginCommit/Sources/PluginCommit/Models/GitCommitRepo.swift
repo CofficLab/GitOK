@@ -1,6 +1,6 @@
 import Foundation
 import OSLog
-import ProjectSupportKit
+import GitOKCoreKit
 
 /// Git 提交仓库协议
 /// 定义提交数据持久化的接口

@@ -1,7 +1,7 @@
 import Combine
 import Foundation
 import OSLog
-import ProjectRulesKit
+import GitOKCoreKit
 
 /// 头像服务：负责获取用户头像 URL
 /// 优先级：GitHub API > Gravatar > 默认头像

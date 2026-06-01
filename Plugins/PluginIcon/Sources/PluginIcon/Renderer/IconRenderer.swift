@@ -1,5 +1,5 @@
 import SwiftUI
-import MagicKit
+import GitOKCoreKit
 
 /**
  * 图标渲染器

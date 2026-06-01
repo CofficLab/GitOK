@@ -23,12 +23,12 @@ struct PluginSettingsView: View, SuperLog {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
                 // 标题
-                Text(String(localized: "Plugin Management", table: "Core"))
+                Text(String(localized: "Plugin Management"))
                     .font(.title2)
                     .fontWeight(.bold)
                     .padding(.bottom, 16)
 
-                Text(String(localized: "Enable or disable GitOK plugins", table: "Core"))
+                Text(String(localized: "Enable or disable GitOK plugins"))
                     .font(.subheadline)
                     .foregroundColor(.secondary)
                     .padding(.bottom, 24)
@@ -64,14 +64,14 @@ struct PluginSettingsView: View, SuperLog {
             }
             .padding(24)
         }
-        .navigationTitle(Text(String(localized: "Plugin Management", table: "Core")))
+        .navigationTitle(Text(String(localized: "Plugin Management")))
         .toolbar {
             ToolbarItem(placement: .confirmationAction) {
                 Button(action: {
                     // 关闭设置视图
                     NotificationCenter.default.post(name: .didSaveGitUserConfig, object: nil)
                 }) {
-                    Text(String(localized: "Done", table: "Core"))
+                    Text(String(localized: "Done"))
                 }
             }
         }
@@ -91,10 +91,10 @@ struct PluginSettingsView: View, SuperLog {
                 .font(.system(size: 48))
                 .foregroundColor(.secondary)
 
-            Text(String(localized: "No Configurable Plugins", table: "Core"))
+            Text(String(localized: "No Configurable Plugins"))
                 .font(.headline)
 
-            Text(String(localized: "No plugins available to manage in settings", table: "Core"))
+            Text(String(localized: "No plugins available to manage in settings"))
                 .font(.subheadline)
                 .foregroundColor(.secondary)
         }

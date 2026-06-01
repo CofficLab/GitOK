@@ -48,11 +48,11 @@ struct CommitStyleConfigView: View, SuperLog {
         ScrollView {
             VStack(spacing: 20) {
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("配置 Commit 消息风格", tableName: "Core")
+                    Text("配置 Commit 消息风格")
                         .font(.title2)
                         .fontWeight(.medium)
 
-                    Text("项目配置优先级高于全局配置", tableName: "Core")
+                    Text("项目配置优先级高于全局配置")
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
@@ -63,16 +63,16 @@ struct CommitStyleConfigView: View, SuperLog {
                     HStack {
                         Image(systemName: "globe")
                             .foregroundColor(.blue)
-                        Text("全局默认风格", tableName: "Core")
+                        Text("全局默认风格")
                             .font(.headline)
                     }
 
-                    Text("应用于所有新项目的默认风格", tableName: "Core")
+                    Text("应用于所有新项目的默认风格")
                         .font(.caption)
                         .foregroundColor(.secondary)
 
                     HStack {
-                        Text("风格", tableName: "Core")
+                        Text("风格")
                             .font(.subheadline)
 
                         Spacer()
@@ -92,7 +92,7 @@ struct CommitStyleConfigView: View, SuperLog {
 
                     // 全局风格预览
                     VStack(alignment: .leading, spacing: 6) {
-                        Text("预览", tableName: "Core")
+                        Text("预览")
                             .font(.subheadline)
                             .foregroundColor(.secondary)
 
@@ -121,17 +121,17 @@ struct CommitStyleConfigView: View, SuperLog {
                     HStack {
                         Image(systemName: "folder")
                             .foregroundColor(.orange)
-                        Text("当前项目风格", tableName: "Core")
+                        Text("当前项目风格")
                             .font(.headline)
                     }
 
                     if let project = vm.project {
-                        Text(verbatim: String.localizedStringWithFormat(NSLocalizedString("Project: %@", tableName: "Core", comment: ""), project.title))
+                        Text(verbatim: String.localizedStringWithFormat(NSLocalizedString("Project: %@", comment: ""), project.title))
                             .font(.caption)
                             .foregroundColor(.secondary)
 
                         HStack {
-                            Text("风格", tableName: "Core")
+                            Text("风格")
                                 .font(.subheadline)
 
                             Spacer()
@@ -151,7 +151,7 @@ struct CommitStyleConfigView: View, SuperLog {
 
                         // 项目风格预览
                         VStack(alignment: .leading, spacing: 6) {
-                            Text("预览", tableName: "Core")
+                            Text("预览")
                                 .font(.subheadline)
                                 .foregroundColor(.secondary)
 
@@ -171,7 +171,7 @@ struct CommitStyleConfigView: View, SuperLog {
                             .cornerRadius(6)
                         }
                     } else {
-                        Text("未打开项目", tableName: "Core")
+                        Text("未打开项目")
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }

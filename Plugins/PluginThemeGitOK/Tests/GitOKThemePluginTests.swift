@@ -1,5 +1,6 @@
 import SwiftUI
 import XCTest
+import GitOKCoreKit
 @testable import PluginThemeGitOK
 
 final class GitOKThemePluginTests: XCTestCase {

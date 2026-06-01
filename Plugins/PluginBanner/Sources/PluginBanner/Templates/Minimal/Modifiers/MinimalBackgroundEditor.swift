@@ -1,6 +1,5 @@
 import SwiftUI
-import MagicAlert
-import MagicKit
+import GitOKCoreKit
 
 /**
  经典模板的背景编辑器

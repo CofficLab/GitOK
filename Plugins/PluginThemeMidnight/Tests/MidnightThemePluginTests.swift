@@ -1,4 +1,5 @@
 import XCTest
+import GitOKCoreKit
 @testable import PluginThemeMidnight
 
 final class MidnightThemePluginTests: XCTestCase {

@@ -1,4 +1,5 @@
 import XCTest
+import GitOKCoreKit
 @testable import PluginThemeHarbor
 
 final class HarborThemePluginTests: XCTestCase {

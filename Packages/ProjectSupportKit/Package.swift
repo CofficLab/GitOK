@@ -12,13 +12,11 @@ let package = Package(
             targets: ["ProjectSupportKit"]
         ),
     ],
-    dependencies: [
-        .package(path: "../GitCoreKit"),
-    ],
+    dependencies: [],
     targets: [
         .target(
             name: "ProjectSupportKit",
-            dependencies: ["GitCoreKit"]
+            dependencies: []
         ),
         .testTarget(
             name: "ProjectSupportKitTests",

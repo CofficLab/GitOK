@@ -1,4 +1,5 @@
 import XCTest
+import GitOKCoreKit
 @testable import PluginThemeMatrix
 
 final class MatrixThemePluginTests: XCTestCase {

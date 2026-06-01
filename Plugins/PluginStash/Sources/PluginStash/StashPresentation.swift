@@ -1,5 +1,5 @@
 import Foundation
-import GitCoreKit
+import GitOKCoreKit
 
 public enum StashPresentation {
     public static func displayMessage(for stash: GitStashEntry, fallbackBranchName: String) -> String {

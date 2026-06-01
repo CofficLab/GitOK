@@ -24,7 +24,7 @@ struct BranchPluginTests {
     @MainActor
     @Test("plugin contributes toolbar and status bar views")
     func contributesViews() {
-        #expect(BranchPlugin.shared.toolBarTrailingView() != nil)
+        #expect(BranchPlugin.shared.toolBarTrailingView(context: GitOKPluginContext()) != nil)
         #expect(BranchPlugin.shared.statusBarLeadingView(context: GitOKPluginContext()) != nil)
     }
 
@@ -52,13 +52,13 @@ struct BranchPluginTests {
     func contextFromPluginContext() {
         let url = URL(fileURLWithPath: "/tmp/project")
         let pluginCtx = GitOKPluginContext(
-            activityStatus: "cloning",
             projectURL: url,
             projectPath: "/tmp/project",
             projectTitle: "Project",
             branchName: "develop",
             isGitRepository: true,
-            selectedFilePath: "README.md"
+            selectedFilePath: "README.md",
+            activityStatus: "cloning"
         )
         let ctx = BranchPluginContext(pluginCtx)
 

@@ -2,6 +2,7 @@ import MagicAlert
 import GitOKCoreKit
 import MagicKit
 import OSLog
+import PluginGitClone
 import SwiftUI
 
 /// 主内容视图，管理应用的整体布局和导航结构
@@ -248,11 +249,34 @@ extension ContentView {
                 GitOKProjectSummary(url: $0.url, title: $0.title, path: $0.path)
             },
             selectedProjectURL: vm.project?.url,
-            isSidebarVisible: app.sidebarVisibility
-        ) { selectedURL in
-            guard let project = g.projects.first(where: { $0.url == selectedURL }) else { return }
-            vm.setProject(project, reason: "ProjectPicker")
-        }
+            isSidebarVisible: app.sidebarVisibility,
+            onSelectProject: { selectedURL in
+                guard let project = g.projects.first(where: { $0.url == selectedURL }) else { return }
+                vm.setProject(project, reason: "ProjectPicker")
+            },
+            canCloneRepository: true,
+            onProjectExists: { url in
+                GitCloneBridgeRules.projectExists(
+                    url: url,
+                    path: \.path,
+                    exists: g.repoManager.projectRepo.exists(path:)
+                )
+            },
+            onCloneRepositoryCompleted: { url in
+                GitCloneBridgeRules.performCloneCompletion(
+                    addProject: { g.addProject(url: url, using: g.repoManager.projectRepo) },
+                    selectProject: vm.setProject
+                )
+            },
+            onActivityStatusUpdate: { status in
+                g.activityStatus = status
+            },
+            onInfoMessage: { message in
+                GitCloneBridgeRules.performCloneSuccessMessage(message) {
+                    alert_info($0)
+                }
+            }
+        )
         os_log("\(self.t)✅ UpdateCachedViews leading count=\(toolbarLeadingViews.count) elapsed=\(String(format: "%.3f", Date().timeIntervalSince(leadingStart)))s")
 
         let trailingStart = Date()
