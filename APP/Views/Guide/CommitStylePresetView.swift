@@ -22,6 +22,10 @@ struct CommitStylePresetView: View, SuperLog {
     /// 全局 Commit 风格
     @State private var globalCommitStyle: CommitStyle = .emoji
 
+    private var stateRepo: any StateRepoProtocol {
+        data.repoManager.stateRepo
+    }
+
     var body: some View {
         AppSettingSection(title: "Commit 风格", titleAlignment: .leading) {
             VStack(spacing: 0) {
@@ -68,7 +72,7 @@ struct CommitStylePresetView: View, SuperLog {
                 get: { globalCommitStyle },
                 set: { style in
                     globalCommitStyle = style
-                    UserDefaults.standard.set(style.rawValue, forKey: "globalCommitStyle")
+                    stateRepo.setGlobalCommitStyle(style)
                 }
             )
         )
@@ -103,12 +107,7 @@ struct CommitStylePresetView: View, SuperLog {
             projectCommitStyle = project.commitStyle
         }
 
-        if let savedStyleRaw = UserDefaults.standard.string(forKey: "globalCommitStyle"),
-           let savedStyle = CommitStyle(rawValue: savedStyleRaw) {
-            globalCommitStyle = savedStyle
-        } else {
-            globalCommitStyle = .emoji
-        }
+        globalCommitStyle = stateRepo.globalCommitStyle
     }
 }
 
