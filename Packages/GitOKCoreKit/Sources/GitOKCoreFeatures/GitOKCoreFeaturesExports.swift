@@ -1,4 +1,3 @@
-@_exported import BannerCoreKit
 @_exported import GitCoreKit
 @_exported import GitOKCoreKit
 @_exported import MagicAlert

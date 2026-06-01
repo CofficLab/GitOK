@@ -20,7 +20,6 @@ let package = Package(
     dependencies: [
         .package(path: "../GitOKUI"),
         .package(path: "../ProjectRulesKit"),
-        .package(path: "../BannerCoreKit"),
         .package(path: "../ProjectSupportKit"),
         .package(path: "../GitCoreKit"),
         .package(path: "../MagicAlert"),
@@ -43,7 +42,6 @@ let package = Package(
                 "GitOKCoreKit",
                 "GitOKUI",
                 "ProjectRulesKit",
-                "BannerCoreKit",
                 "ProjectSupportKit",
                 "GitCoreKit",
                 "MagicAlert",
