@@ -18,7 +18,7 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
 
     @Published private(set) var plugins: [SuperPlugin] = []
 
-    private lazy var runtime = GitOKPluginRuntime()
+    private var runtime: GitOKPluginRuntime?
 
     /// Combine 订阅集合
     private var cancellables = Set<AnyCancellable>()
@@ -28,14 +28,14 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
     /// 获取所有可用的标签页名称
     /// - Returns: 标签页名称数组
     var tabNames: [String] {
-        guard hasPlugins else { return [] }
+        guard hasPlugins, let runtime else { return [] }
         return runtime.tabNames
     }
 
     /// 获取可配置的插件信息列表（用于设置界面）
     /// - Returns: 允许用户切换启用/禁用状态的插件信息数组
     var configurablePlugins: [PluginInfo] {
-        guard hasPlugins else { return [] }
+        guard hasPlugins, let runtime else { return [] }
         return runtime.configurablePlugins
     }
 
@@ -57,7 +57,7 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
         onActivityStatusUpdate: @escaping GitOKActivityStatusUpdateHandler = { _ in },
         onInfoMessage: @escaping GitOKUserMessageHandler = { _ in }
     ) -> [(plugin: SuperPlugin, view: AnyView)] {
-        guard hasPlugins else { return [] }
+        guard hasPlugins, let runtime else { return [] }
         let start = Date()
         let context = GitOKPluginContext(
             projects: projects,
@@ -82,7 +82,7 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
         remoteTrackingStatus: GitOKRemoteTrackingStatus? = nil,
         isGitRepository: Bool = false
     ) -> [(plugin: SuperPlugin, view: AnyView)] {
-        guard hasPlugins else { return [] }
+        guard hasPlugins, let runtime else { return [] }
         let start = Date()
         let context = GitOKPluginContext(
             projectURL: projectURL,
@@ -100,7 +100,7 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
     /// - Returns: 插件及其对应的列表视图数组
     @MainActor
     func getEnabledPluginListViews(tab: String, project: Project?) -> [(plugin: SuperPlugin, view: AnyView)] {
-        guard hasPlugins else { return [] }
+        guard hasPlugins, let runtime else { return [] }
         let start = Date()
         let context = GitOKPluginContext(
             projectURL: project?.url,
@@ -117,7 +117,7 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
     /// - Returns: 如果找到标签页插件，则返回其详情视图，否则返回nil
     @MainActor
     func getEnabledTabDetailView(tab: String, projectURL: URL? = nil) -> AnyView? {
-        guard hasPlugins else { return nil }
+        guard hasPlugins, let runtime else { return nil }
         let start = Date()
         let context = GitOKPluginContext(projectURL: projectURL)
         if let view = runtime.enabledDetailView(for: tab, context: context) {
@@ -140,7 +140,7 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
     /// - Returns: 启用插件的状态栏前导视图数组
     @MainActor
     func getEnabledStatusBarLeadingViews(selectedFilePath: String? = nil, projectPath: String? = nil) -> [AnyView] {
-        guard hasPlugins else { return [] }
+        guard hasPlugins, let runtime else { return [] }
         let context = GitOKPluginContext(
             projectPath: projectPath,
             selectedFilePath: selectedFilePath
@@ -152,7 +152,7 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
     /// - Returns: 启用插件的状态栏中间视图数组
     @MainActor
     func getEnabledStatusBarCenterViews(activityStatus: String? = nil) -> [AnyView] {
-        guard hasPlugins else { return [] }
+        guard hasPlugins, let runtime else { return [] }
         let context = GitOKPluginContext(
             activityStatus: activityStatus
         )
@@ -169,7 +169,7 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
         branchName: String? = nil,
         isGitRepository: Bool = false
     ) -> [AnyView] {
-        guard hasPlugins else { return [] }
+        guard hasPlugins, let runtime else { return [] }
         let context = GitOKPluginContext(
             projectURL: projectURL,
             projectPath: projectPath,
@@ -184,7 +184,7 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
 
     @MainActor
     func getThemeContributions() -> [GitOKUIThemeContribution] {
-        guard hasPlugins else { return [] }
+        guard hasPlugins, let runtime else { return [] }
         return runtime.themeContributions()
     }
 
@@ -197,7 +197,7 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
     /// - Parameter content: 原始内容视图
     /// - Returns: 经过所有插件依次包裹后的视图
     func getRootViewWrapper<Content: View>(@ViewBuilder content: () -> Content) -> AnyView {
-        guard hasPlugins else { return AnyView(content()) }
+        guard hasPlugins, let runtime else { return AnyView(content()) }
         return runtime.rootViewWrapper(content: content)
     }
 
@@ -207,12 +207,13 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
         let start = Date()
         os_log("\(Self.t)🚀 Startup begin: PluginVM.init")
 
-        if GeneratedPluginRegistry.hasDefaultAdapters {
-            registerPackagedPlugins()
-        }
+        let pluginRuntime = GeneratedPluginRegistry.hasDefaultAdapters ? GitOKPluginRuntime() : nil
+        self.runtime = pluginRuntime
+
+        registerPackagedPlugins()
 
         // 从内部注册表获取所有已注册的插件实例
-        self.plugins = GeneratedPluginRegistry.hasDefaultAdapters ? runtime.sortedRegisteredPlugins() : []
+        self.plugins = pluginRuntime?.sortedRegisteredPlugins() ?? []
         os_log("\(Self.t)✅ Startup step: PluginVM plugins sorted count=\(self.plugins.count)")
 
         // 订阅设置变化，当设置改变时触发 UI 更新
@@ -231,6 +232,8 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
 
     /// Register all packaged plugins using the auto-generated registry.
     private func registerPackagedPlugins() {
+        guard let runtime else { return }
+
         if !Self.registerAllPlugins {
             os_log("\(self.t)⚠️ Plugin registration is disabled via registerAllPlugins=false")
             return
@@ -239,7 +242,7 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
         runtime.clearRegisteredPlugins()
 
         GeneratedPluginRegistry.registerDefaultAdapters(adapterFactory: AppPluginAdapterFactory()) { adapter in
-            self.runtime.register(adapter)
+            runtime.register(adapter)
         }
     }
 }
