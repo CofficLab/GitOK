@@ -1,3 +1,3 @@
-import ProjectRulesKit
+import GitOKCoreFeatures
 
 typealias ProjectEventRefreshRules = ProjectRulesKit.ProjectEventRefreshRules

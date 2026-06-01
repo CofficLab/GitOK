@@ -1,9 +1,9 @@
 import Foundation
+import GitOKCoreFeatures
 import GitOKUI
 import LibGit2Swift
 import MagicKit
 import OSLog
-import ProjectRulesKit
 import SwiftUI
 
 /// 仓库设置视图

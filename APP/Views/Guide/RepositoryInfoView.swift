@@ -1,9 +1,9 @@
 import Foundation
+import GitOKCoreFeatures
 import GitOKUI
 import LibGit2Swift
 import MagicKit
 import OSLog
-import ProjectRulesKit
 import SwiftUI
 
 /// 显示仓库信息的视图组件（包含本地和远程仓库）
