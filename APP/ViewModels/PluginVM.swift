@@ -1,21 +1,16 @@
 import Combine
 import Foundation
-import MagicKit
-import OSLog
 import SwiftUI
 
 import GitOKCoreKit
 import GitOKUI
 
 @MainActor
-class PluginVM: ObservableObject, SuperLog, SuperThread {
+class PluginVM: ObservableObject {
     typealias PluginRegistrationHandler = (
         _ adapterFactory: AppPluginAdapterFactory,
         _ register: (any SuperPlugin) -> Void
     ) -> Void
-
-    nonisolated static let emoji = "🧩"
-    static let verbose = false
 
     private var runtime: GitOKPluginRuntime?
     private let registerPackagedPlugins: PluginRegistrationHandler?
@@ -62,7 +57,6 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
         onInfoMessage: @escaping GitOKUserMessageHandler = { _ in }
     ) -> [(plugin: SuperPlugin, view: AnyView)] {
         guard hasPlugins, let runtime else { return [] }
-        let start = Date()
         let context = GitOKPluginContext(
             projects: projects,
             selectedProjectURL: selectedProjectURL,
@@ -75,7 +69,6 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
             onInfoMessage: onInfoMessage
         )
         return runtime.enabledToolbarLeadingViews(context: context)
-        .loggingPluginViewBuild("toolbarLeading", start: start, logger: self)
     }
 
     /// 获取工具栏后置视图
@@ -87,14 +80,12 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
         isGitRepository: Bool = false
     ) -> [(plugin: SuperPlugin, view: AnyView)] {
         guard hasPlugins, let runtime else { return [] }
-        let start = Date()
         let context = GitOKPluginContext(
             projectURL: projectURL,
             isGitRepository: isGitRepository,
             remoteTrackingStatus: remoteTrackingStatus
         )
         return runtime.enabledToolbarTrailingViews(context: context)
-        .loggingPluginViewBuild("toolbarTrailing", start: start, logger: self)
     }
 
     /// 获取插件列表视图
@@ -105,7 +96,6 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
     @MainActor
     func getEnabledPluginListViews(tab: String, project: Project?) -> [(plugin: SuperPlugin, view: AnyView)] {
         guard hasPlugins, let runtime else { return [] }
-        let start = Date()
         let context = GitOKPluginContext(
             projectURL: project?.url,
             projectPath: project.map { $0.url.path },
@@ -113,7 +103,6 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
             isGitRepository: project?.isGitRepo ?? false
         )
         return runtime.enabledListViews(tab: tab, projectURL: project?.url, context: context)
-        .loggingPluginViewBuild("list tab=\(tab)", start: start, logger: self)
     }
 
     /// 获取标签页详情视图
@@ -122,20 +111,8 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
     @MainActor
     func getEnabledTabDetailView(tab: String, projectURL: URL? = nil) -> AnyView? {
         guard hasPlugins, let runtime else { return nil }
-        let start = Date()
         let context = GitOKPluginContext(projectURL: projectURL)
-        if let view = runtime.enabledDetailView(for: tab, context: context) {
-            let elapsed = Date().timeIntervalSince(start)
-            if elapsed > 0.2 {
-                os_log("\(self.t)⏱️ Plugin detail view built tab=\(tab) elapsed=\(String(format: "%.3f", elapsed))s")
-            }
-            return view
-        }
-        let elapsed = Date().timeIntervalSince(start)
-        if elapsed > 0.2 {
-            os_log("\(self.t)⏱️ Plugin detail view missing tab=\(tab) elapsed=\(String(format: "%.3f", elapsed))s")
-        }
-        return nil
+        return runtime.enabledDetailView(for: tab, context: context)
     }
 
     // MARK: - StatusBar Views
@@ -208,17 +185,12 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
     // MARK: - Initialization
 
     init(registerPackagedPlugins: PluginRegistrationHandler? = nil) {
-        let start = Date()
-        os_log("\(Self.t)🚀 Startup begin: PluginVM.init")
-
         self.registerPackagedPlugins = registerPackagedPlugins
 
         let pluginRuntime = registerPackagedPlugins == nil ? nil : GitOKPluginRuntime()
         self.runtime = pluginRuntime
 
         registerPackagedPluginAdapters()
-
-        os_log("\(Self.t)✅ Startup step: PluginVM plugins sorted count=\(self.plugins.count)")
 
         // 订阅设置变化，当设置改变时触发 UI 更新
         if hasPlugins {
@@ -228,8 +200,6 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
                 }
                 .store(in: &cancellables)
         }
-
-        os_log("\(Self.t)✅ Startup end: PluginVM.init elapsed=\(String(format: "%.3f", Date().timeIntervalSince(start)))s")
     }
 
     // MARK: - Custom Plugin Providers
@@ -243,16 +213,6 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
         registerPackagedPlugins(AppPluginAdapterFactory()) { adapter in
             runtime.register(adapter)
         }
-    }
-}
-
-private extension Array where Element == (plugin: SuperPlugin, view: AnyView) {
-    func loggingPluginViewBuild(_ label: String, start: Date, logger: PluginVM) -> Self {
-        let elapsed = Date().timeIntervalSince(start)
-        if elapsed > 0.2 {
-            os_log("\(logger.t)⏱️ Plugin views built type=\(label) count=\(self.count) elapsed=\(String(format: "%.3f", elapsed))s")
-        }
-        return self
     }
 }
 
