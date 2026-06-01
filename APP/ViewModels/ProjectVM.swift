@@ -1,4 +1,5 @@
-import GitOKCoreFeatures
+import GitCoreKit
+import GitOKCoreKit
 import MagicKit
 import OSLog
 import SwiftUI
@@ -21,7 +22,7 @@ class ProjectVM: ObservableObject, SuperLog {
     /// 当前项目路径是否存在
     @Published private(set) var projectExists = true
 
-    /// 未推送提交数量（由 UnpushedStatusPlugin 插件更新）
+    /// 未推送提交数量
     @Published private(set) var unpushedCommitsCount: Int = 0
 
     /// 未推送提交的哈希集合（用于快速查询某个 commit 是否未推送）
@@ -102,7 +103,7 @@ class ProjectVM: ObservableObject, SuperLog {
         file = f
     }
 
-    /// 更新未推送提交数量和哈希集合（供插件调用）
+    /// 更新未推送提交数量和哈希集合
     /// - Parameters:
     ///   - count: 未推送提交数量
     ///   - hashes: 未推送提交的哈希数组
@@ -118,7 +119,7 @@ class ProjectVM: ObservableObject, SuperLog {
         return unpushedCommitHashes.contains(commitHash)
     }
 
-    /// 更新项目的 clean 状态（供插件调用）
+    /// 更新项目的 clean 状态
     /// - Parameter isClean: 项目是否 clean
     func updateIsClean(_ isClean: Bool) {
         self.isClean = isClean

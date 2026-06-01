@@ -1,4 +1,4 @@
-import GitOKCoreFeatures
+import GitCoreKit
 import MagicKit
 import Combine
 import Foundation
