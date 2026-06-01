@@ -23,7 +23,7 @@ struct CommitStylePresetView: View, SuperLog {
     @State private var globalCommitStyle: CommitStyle = .emoji
 
     var body: some View {
-        GitOKUI.AppSettingsSection(title: "Commit 风格") {
+        AppSettingSection(title: "Commit 风格", titleAlignment: .leading) {
             VStack(spacing: 0) {
                 // 当前项目风格
                 projectCommitStylePicker
@@ -80,32 +80,19 @@ struct CommitStylePresetView: View, SuperLog {
         icon: String,
         selection: Binding<CommitStyle>
     ) -> some View {
-        GitOKUI.AppSettingsRow(verticalPadding: 10) {
-            HStack(spacing: 12) {
-                Image(systemName: icon)
-                    .foregroundColor(.secondary)
-                    .frame(width: 28)
-
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(title)
-                        .font(.system(size: 13, weight: .medium))
-
-                    Text(description)
-                        .font(.caption)
-                        .foregroundColor(.secondary)
+        AppSettingRow(
+            title: title,
+            description: description,
+            icon: icon
+        ) {
+            Picker("", selection: selection) {
+                ForEach(CommitStyle.allCases, id: \.self) { style in
+                    Text(style.label)
+                        .tag(style)
                 }
-
-                Spacer()
-
-                Picker("", selection: selection) {
-                    ForEach(CommitStyle.allCases, id: \.self) { style in
-                        Text(style.label)
-                            .tag(style)
-                    }
-                }
-                .labelsHidden()
-                .frame(width: 180)
             }
+            .labelsHidden()
+            .frame(width: 180)
         }
     }
 
