@@ -1300,7 +1300,7 @@ extension Project {
         }
 
         // 检查是否需要转换
-        let convertedURL = SSHHelper.applySSHConfig(to: remoteURL)
+        let convertedURL = SSHConfigURLResolver.applySSHConfig(to: remoteURL)
 
         if convertedURL == remoteURL {
             try block()

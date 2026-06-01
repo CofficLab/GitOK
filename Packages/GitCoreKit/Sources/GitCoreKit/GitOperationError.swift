@@ -1,10 +1,10 @@
 import Foundation
 
-enum GitOperationError: LocalizedError {
+public enum GitOperationError: LocalizedError {
     case pushNeedsFetch(message: String)
     case syncNeedsUserDecision(ahead: Int, behind: Int)
 
-    var errorDescription: String? {
+    public var errorDescription: String? {
         switch self {
         case let .pushNeedsFetch(message):
             return message
@@ -13,7 +13,7 @@ enum GitOperationError: LocalizedError {
         }
     }
 
-    var recoverySuggestion: String? {
+    public var recoverySuggestion: String? {
         switch self {
         case .pushNeedsFetch:
             return "请先获取远程更新，然后选择 Pull 或 Rebase 处理本地与远程提交。"
@@ -22,7 +22,7 @@ enum GitOperationError: LocalizedError {
         }
     }
 
-    static func pushNeedsFetchMessage(from error: Error) -> String? {
+    public static func pushNeedsFetchMessage(from error: Error) -> String? {
         let message = error.localizedDescription
         let lowercased = message.lowercased()
         let markers = [
@@ -31,7 +31,7 @@ enum GitOperationError: LocalizedError {
             "failed to push some refs",
             "remote contains work that you do not have locally",
             "repository has been updated since you last pulled",
-            "tip of your current branch is behind"
+            "tip of your current branch is behind",
         ]
 
         guard markers.contains(where: { lowercased.contains($0) }) else {
