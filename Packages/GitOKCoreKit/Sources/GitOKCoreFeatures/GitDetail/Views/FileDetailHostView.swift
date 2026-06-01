@@ -8,7 +8,7 @@ public enum FileDetailHostEvent {
     case diffFailure(errorDescription: String)
 }
 
-public struct FileDetailHostView<Project, File, SelectedCommit, LoadedCommit, RenderContent: View>: View {
+public struct FileDetailHostView<Project, File, SelectedCommit, LoadedCommit>: View {
     private let project: Project?
     private let file: File?
     private let selectedCommit: SelectedCommit?
@@ -34,7 +34,6 @@ public struct FileDetailHostView<Project, File, SelectedCommit, LoadedCommit, Re
     private let handleEvent: (FileDetailHostEvent) -> Void
     private let fileChangeToken: Int
     private let commitChangeToken: Int
-    private let renderContent: (String) -> RenderContent
 
     @State private var unifiedDiffText = ""
     @State private var diffIssueMessage: String?
@@ -69,8 +68,7 @@ public struct FileDetailHostView<Project, File, SelectedCommit, LoadedCommit, Re
         copyText: @escaping (String) -> Void,
         handleEvent: @escaping (FileDetailHostEvent) -> Void,
         fileChangeToken: Int = 0,
-        commitChangeToken: Int = 0,
-        @ViewBuilder renderContent: @escaping (String) -> RenderContent
+        commitChangeToken: Int = 0
     ) {
         self.project = project
         self.file = file
@@ -97,7 +95,6 @@ public struct FileDetailHostView<Project, File, SelectedCommit, LoadedCommit, Re
         self.handleEvent = handleEvent
         self.fileChangeToken = fileChangeToken
         self.commitChangeToken = commitChangeToken
-        self.renderContent = renderContent
     }
 
     public var body: some View {
@@ -114,9 +111,6 @@ public struct FileDetailHostView<Project, File, SelectedCommit, LoadedCommit, Re
                     afterImage: loadImageFromCommit(file: file),
                     imageDiffMode: $imageDiffMode,
                     imageBlendAmount: $imageBlendAmount,
-                    renderContent: {
-                        renderContent(unifiedDiffText)
-                    },
                     onRefresh: refreshDiff,
                     onCopyRawDiff: {
                         GitDetailDiffDisplayRules.performRawDiffCopy(diffText: unifiedDiffText, copy: copyText)

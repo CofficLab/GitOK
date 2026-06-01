@@ -1,5 +1,4 @@
 import MagicAlert
-import MagicDiffView
 import MagicKit
 import OSLog
 import GitOKCoreFeatures
@@ -67,10 +66,7 @@ struct FileDetail: View, SuperLog {
             handleEvent: handleEvent,
             fileChangeToken: fileChangeToken,
             commitChangeToken: commitChangeToken
-        ) { diffText in
-            MagicDiffView(diffOutput: diffText)
-                .background(.background)
-        }
+        )
         .onChange(of: vm.file) {
             fileChangeToken += 1
         }

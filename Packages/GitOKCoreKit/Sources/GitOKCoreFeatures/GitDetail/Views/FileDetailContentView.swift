@@ -1,7 +1,8 @@
 import AppKit
+import MagicDiffView
 import SwiftUI
 
-public struct FileDetailContentView<RenderContent: View>: View {
+public struct FileDetailContentView: View {
     private let filePath: String
     private let isImage: Bool
     private let isBinary: Bool
@@ -12,7 +13,6 @@ public struct FileDetailContentView<RenderContent: View>: View {
     private let afterImage: NSImage?
     @Binding private var imageDiffMode: GitDetailImageDiffMode
     @Binding private var imageBlendAmount: Double
-    private let renderContent: () -> RenderContent
     private let onRefresh: () -> Void
     private let onCopyRawDiff: () -> Void
     private let onShowBeforeText: () -> Void
@@ -30,7 +30,6 @@ public struct FileDetailContentView<RenderContent: View>: View {
         afterImage: NSImage?,
         imageDiffMode: Binding<GitDetailImageDiffMode>,
         imageBlendAmount: Binding<Double>,
-        @ViewBuilder renderContent: @escaping () -> RenderContent,
         onRefresh: @escaping () -> Void,
         onCopyRawDiff: @escaping () -> Void,
         onShowBeforeText: @escaping () -> Void,
@@ -47,7 +46,6 @@ public struct FileDetailContentView<RenderContent: View>: View {
         self.afterImage = afterImage
         _imageDiffMode = imageDiffMode
         _imageBlendAmount = imageBlendAmount
-        self.renderContent = renderContent
         self.onRefresh = onRefresh
         self.onCopyRawDiff = onCopyRawDiff
         self.onShowBeforeText = onShowBeforeText
@@ -83,7 +81,8 @@ public struct FileDetailContentView<RenderContent: View>: View {
         } largeContent: {
             largeDiffView
         } renderContent: {
-            renderContent()
+            MagicDiffView(diffOutput: diffText)
+                .background(.background)
         }
     }
 
