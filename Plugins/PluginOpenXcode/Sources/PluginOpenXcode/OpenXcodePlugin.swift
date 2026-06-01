@@ -11,7 +11,7 @@ public struct OpenXcodePlugin: GitOKPlugin {
         description: PluginOpenXcodeLocalization.string("Open the current project folder in Xcode."),
         iconName: "hammer",
         order: 8402,
-        policy: .disabled,
+        policy: .optIn,
         tableName: PluginOpenXcodeLocalization.table
     )
 

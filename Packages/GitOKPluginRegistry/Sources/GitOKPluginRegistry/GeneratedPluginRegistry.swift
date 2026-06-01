@@ -2,7 +2,16 @@
 // Do not edit by hand.
 
 import GitOKCoreKit
+import PluginOpenAntigravity
+import PluginOpenCursor
+import PluginOpenFinder
+import PluginOpenGitHubDesktop
+import PluginOpenKiro
+import PluginOpenRemote
+import PluginOpenTerminal
+import PluginOpenTrae
 import PluginOpenVSCode
+import PluginOpenXcode
 
 /// Auto-generated plugin registry.
 /// Registers plugin adapters generated from enabled plugin packages.
@@ -19,6 +28,15 @@ public enum GeneratedPluginRegistry {
         adapterFactory: any GitOKPluginAdapterFactory,
         _ register: (any SuperPlugin) -> Void
     ) {
+        if OpenAntigravityPlugin.shouldRegister { register(adapterFactory.makeAdapter(for: OpenAntigravityPlugin.shared)) }
+        if OpenCursorPlugin.shouldRegister { register(adapterFactory.makeAdapter(for: OpenCursorPlugin.shared)) }
+        if OpenFinderPlugin.shouldRegister { register(adapterFactory.makeAdapter(for: OpenFinderPlugin.shared)) }
+        if OpenGitHubDesktopPlugin.shouldRegister { register(adapterFactory.makeAdapter(for: OpenGitHubDesktopPlugin.shared)) }
+        if OpenKiroPlugin.shouldRegister { register(adapterFactory.makeAdapter(for: OpenKiroPlugin.shared)) }
+        if OpenRemotePlugin.shouldRegister { register(adapterFactory.makeAdapter(for: OpenRemotePlugin.shared)) }
+        if OpenTerminalPlugin.shouldRegister { register(adapterFactory.makeAdapter(for: OpenTerminalPlugin.shared)) }
+        if OpenTraePlugin.shouldRegister { register(adapterFactory.makeAdapter(for: OpenTraePlugin.shared)) }
         if OpenVSCodePlugin.shouldRegister { register(adapterFactory.makeAdapter(for: OpenVSCodePlugin.shared)) }
+        if OpenXcodePlugin.shouldRegister { register(adapterFactory.makeAdapter(for: OpenXcodePlugin.shared)) }
     }
 }

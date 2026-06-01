@@ -11,7 +11,7 @@ public struct OpenFinderPlugin: GitOKPlugin {
         description: PluginOpenFinderLocalization.string("Open the current project folder in Finder."),
         iconName: "folder",
         order: 8300,
-        policy: .disabled,
+        policy: .optIn,
         tableName: PluginOpenFinderLocalization.table
     )
 
