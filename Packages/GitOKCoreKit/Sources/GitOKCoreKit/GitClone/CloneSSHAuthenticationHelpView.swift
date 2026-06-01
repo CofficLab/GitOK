@@ -1,4 +1,5 @@
 import AppKit
+import Foundation
 import SwiftUI
 
 public struct CloneSSHAuthenticationHelpView: View {
@@ -19,7 +20,7 @@ public struct CloneSSHAuthenticationHelpView: View {
     }
 
     private var host: String? {
-        remoteURL.flatMap(CloneRepositoryValidation.sshHost(from:))
+        remoteURL.flatMap(Self.sshHost(from:))
     }
 
     private var sshAddCommand: String {
@@ -143,5 +144,26 @@ public struct CloneSSHAuthenticationHelpView: View {
     private func openSSHDirectory() {
         let sshURL = FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent(".ssh", isDirectory: true)
         NSWorkspace.shared.open(sshURL)
+    }
+
+    private static func sshHost(from remote: String) -> String? {
+        let trimmed = remote.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard trimmed.isEmpty == false else { return nil }
+
+        if let components = URLComponents(string: trimmed),
+           components.scheme?.lowercased() == "ssh",
+           let host = components.host,
+           host.isEmpty == false {
+            return host
+        }
+
+        let pattern = #"^[^@/\s]+@([^:\s]+):.+$"#
+        guard let regex = try? NSRegularExpression(pattern: pattern),
+              let match = regex.firstMatch(in: trimmed, range: NSRange(trimmed.startIndex..., in: trimmed)),
+              let range = Range(match.range(at: 1), in: trimmed) else {
+            return nil
+        }
+
+        return String(trimmed[range])
     }
 }

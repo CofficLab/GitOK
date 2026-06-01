@@ -31,12 +31,6 @@ let package = Package(
             name: "GitOKCoreKit",
             dependencies: [
                 "GitOKUI",
-                "ProjectRulesKit",
-                "BannerCoreKit",
-                "ProjectSupportKit",
-                "GitCoreKit",
-                "MagicAlert",
-                "MagicKit",
             ],
             path: "Sources/GitOKCoreKit",
             resources: [
@@ -47,6 +41,13 @@ let package = Package(
             name: "GitOKCoreFeatures",
             dependencies: [
                 "GitOKCoreKit",
+                "GitOKUI",
+                "ProjectRulesKit",
+                "BannerCoreKit",
+                "ProjectSupportKit",
+                "GitCoreKit",
+                "MagicAlert",
+                "MagicKit",
             ],
             path: "Sources/GitOKCoreFeatures"
         ),
