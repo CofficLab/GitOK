@@ -10,7 +10,6 @@
 		0B3CC95E2DF1C49000E22263 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = 0B3CC95D2DF1C49000E22263 /* Sparkle */; };
 		0B4A1C002F80000100AA0001 /* LibGit2Swift in Frameworks */ = {isa = PBXBuildFile; productRef = 0B4A1BFF2F80000100AA0001 /* LibGit2Swift */; };
 		0B559DBC2F1A5D41005C6809 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0B559D792F1A5D41005C6809 /* Assets.xcassets */; };
-		A1F100032F70000100ABC001 /* GitCoreKit in Frameworks */ = {isa = PBXBuildFile; productRef = A1F100022F70000100ABC001 /* GitCoreKit */; };
 		A1F100042F70000100ABC001 /* GitCoreKit in Frameworks */ = {isa = PBXBuildFile; productRef = A1F100022F70000100ABC001 /* GitCoreKit */; };
 		A1F200032F70000100ABC001 /* ProjectRulesKit in Frameworks */ = {isa = PBXBuildFile; productRef = A1F200022F70000100ABC001 /* ProjectRulesKit */; };
 		A1F200042F70000100ABC001 /* ProjectRulesKit in Frameworks */ = {isa = PBXBuildFile; productRef = A1F200022F70000100ABC001 /* ProjectRulesKit */; };
@@ -805,7 +804,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A1F100032F70000100ABC001 /* GitCoreKit in Frameworks */,
 				A1F500032F70000100ABC001 /* GitOKUI in Frameworks */,
 				0B4A1C002F80000100AA0001 /* LibGit2Swift in Frameworks */,
 				F5D122802F0E5B040001A5D2 /* MagicDiffView in Frameworks */,
@@ -1178,7 +1176,6 @@
 			);
 			name = GitOK;
 			packageProductDependencies = (
-				A1F100022F70000100ABC001 /* GitCoreKit */,
 				A1F500022F70000100ABC001 /* GitOKUI */,
 				0B3CC95D2DF1C49000E22263 /* Sparkle */,
 				F5D1227F2F0E5B040001A5D2 /* MagicDiffView */,
