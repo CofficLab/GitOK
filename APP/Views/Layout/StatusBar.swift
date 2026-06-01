@@ -1,5 +1,4 @@
 import MagicKit
-import GitOKCoreKit
 import GitOKUI
 import SwiftUI
 
@@ -23,32 +22,36 @@ struct StatusBar: View, SuperLog {
     /// 视图主体
     var body: some View {
         HStack(spacing: 0) {
-            // 状态栏左侧区域
-            ForEach(Array(p.getEnabledStatusBarLeadingViews(
-                selectedFilePath: projectVM.file?.file,
-                projectPath: projectVM.project?.path
-            ).enumerated()), id: \.offset) { _, view in
-                view
-            }
+            if p.hasPlugins {
+                // 状态栏左侧区域
+                ForEach(Array(p.getEnabledStatusBarLeadingViews(
+                    selectedFilePath: projectVM.file?.file,
+                    projectPath: projectVM.project?.path
+                ).enumerated()), id: \.offset) { _, view in
+                    view
+                }
 
-            Spacer()
+                Spacer()
 
-            // 状态栏中间区域
-            ForEach(Array(p.getEnabledStatusBarCenterViews(activityStatus: data.activityStatus).enumerated()), id: \.offset) { _, view in
-                view
-            }
+                // 状态栏中间区域
+                ForEach(Array(p.getEnabledStatusBarCenterViews(activityStatus: data.activityStatus).enumerated()), id: \.offset) { _, view in
+                    view
+                }
 
-            Spacer()
+                Spacer()
 
-            // 状态栏右侧区域
-            ForEach(Array(p.getEnabledStatusBarTrailingViews(
-                projectURL: projectVM.project?.url,
-                projectPath: projectVM.project?.path,
-                projectTitle: projectVM.project?.title,
-                branchName: data.branch?.name,
-                isGitRepository: projectVM.project?.isGitRepo ?? false
-            ).enumerated()), id: \.offset) { _, view in
-                view
+                // 状态栏右侧区域
+                ForEach(Array(p.getEnabledStatusBarTrailingViews(
+                    projectURL: projectVM.project?.url,
+                    projectPath: projectVM.project?.path,
+                    projectTitle: projectVM.project?.title,
+                    branchName: data.branch?.name,
+                    isGitRepository: projectVM.project?.isGitRepo ?? false
+                ).enumerated()), id: \.offset) { _, view in
+                    view
+                }
+            } else {
+                Spacer(minLength: 0)
             }
         }
         .labelStyle(.iconOnly)
