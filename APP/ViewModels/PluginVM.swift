@@ -51,9 +51,9 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
         selectedProjectURL: URL? = nil,
         isSidebarVisible: Bool = true,
         onSelectProject: @escaping GitOKProjectSelectionHandler = { _ in },
-        canCloneRepository: Bool = false,
+        canImportRepository: Bool = false,
         onProjectExists: @escaping GitOKProjectExistenceHandler = { _ in false },
-        onCloneRepositoryCompleted: @escaping GitOKCloneRepositoryCompletionHandler = { _ in false },
+        onRepositoryImported: @escaping GitOKRepositoryImportCompletionHandler = { _ in false },
         onActivityStatusUpdate: @escaping GitOKActivityStatusUpdateHandler = { _ in },
         onInfoMessage: @escaping GitOKUserMessageHandler = { _ in }
     ) -> [(plugin: SuperPlugin, view: AnyView)] {
@@ -63,10 +63,10 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
             projects: projects,
             selectedProjectURL: selectedProjectURL,
             isSidebarVisible: isSidebarVisible,
-            canCloneRepository: canCloneRepository,
+            canImportRepository: canImportRepository,
             onProjectSelection: onSelectProject,
             onProjectExists: onProjectExists,
-            onCloneRepositoryCompleted: onCloneRepositoryCompleted,
+            onRepositoryImported: onRepositoryImported,
             onActivityStatusUpdate: onActivityStatusUpdate,
             onInfoMessage: onInfoMessage
         )

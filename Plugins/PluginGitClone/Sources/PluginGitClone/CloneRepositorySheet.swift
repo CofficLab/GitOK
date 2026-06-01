@@ -50,7 +50,7 @@ public struct CloneRepositorySheet: View {
     public init(context: GitOKPluginContext) {
         self.init(
             projectExists: context.onProjectExists,
-            onCloneCompleted: context.onCloneRepositoryCompleted,
+            onCloneCompleted: context.onRepositoryImported,
             setActivityStatus: context.onActivityStatusUpdate,
             onCloneSucceeded: context.onInfoMessage
         )

@@ -18,7 +18,7 @@ public struct GitClonePlugin: GitOKPlugin {
 
     @MainActor
     public func toolBarLeadingView(context: GitOKPluginContext) -> AnyView? {
-        guard context.canCloneRepository else { return nil }
+        guard context.canImportRepository else { return nil }
         return AnyView(GitCloneToolbarButton(context: context))
     }
 }

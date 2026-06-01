@@ -1,5 +1,5 @@
-public enum GitCloneBridgeRules {
-    public static let projectSelectionReason = "GitClone"
+public enum GitRepositoryBridgeRules {
+    public static let projectSelectionReason = "RepositoryImport"
 
     public static func projectExists(
         urlPath: String,
@@ -16,7 +16,7 @@ public enum GitCloneBridgeRules {
         projectExists(urlPath: path(url), exists: exists)
     }
 
-    public static func performCloneCompletion<Project>(
+    public static func performRepositoryImportCompletion<Project>(
         addProject: () -> Project?,
         selectProject: (Project, String) -> Void
     ) -> Bool {
@@ -28,7 +28,7 @@ public enum GitCloneBridgeRules {
         return true
     }
 
-    public static func performCloneSuccessMessage(
+    public static func performRepositoryImportSuccessMessage(
         _ message: String,
         showInfo: (String) -> Void
     ) {

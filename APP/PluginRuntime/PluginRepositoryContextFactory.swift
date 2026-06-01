@@ -1,28 +1,28 @@
 import GitOKCoreKit
 import MagicAlert
 
-struct GitCloneContextHandlers {
-    let canCloneRepository: Bool
+struct PluginRepositoryContextHandlers {
+    let canImportRepository: Bool
     let onProjectExists: GitOKProjectExistenceHandler
-    let onCloneRepositoryCompleted: GitOKCloneRepositoryCompletionHandler
+    let onRepositoryImported: GitOKRepositoryImportCompletionHandler
     let onActivityStatusUpdate: GitOKActivityStatusUpdateHandler
     let onInfoMessage: GitOKUserMessageHandler
 }
 
-enum GitCloneContextFactory {
+enum PluginRepositoryContextFactory {
     @MainActor
-    static func handlers(data: DataVM, projectVM: ProjectVM) -> GitCloneContextHandlers {
-        GitCloneContextHandlers(
-            canCloneRepository: true,
+    static func handlers(data: DataVM, projectVM: ProjectVM) -> PluginRepositoryContextHandlers {
+        PluginRepositoryContextHandlers(
+            canImportRepository: true,
             onProjectExists: { url in
-                GitCloneBridgeRules.projectExists(
+                GitRepositoryBridgeRules.projectExists(
                     url: url,
                     path: \.path,
                     exists: data.repoManager.projectRepo.exists(path:)
                 )
             },
-            onCloneRepositoryCompleted: { url in
-                GitCloneBridgeRules.performCloneCompletion(
+            onRepositoryImported: { url in
+                GitRepositoryBridgeRules.performRepositoryImportCompletion(
                     addProject: { data.addProject(url: url, using: data.repoManager.projectRepo) },
                     selectProject: projectVM.setProject
                 )
@@ -31,7 +31,7 @@ enum GitCloneContextFactory {
                 data.activityStatus = status
             },
             onInfoMessage: { message in
-                GitCloneBridgeRules.performCloneSuccessMessage(message) {
+                GitRepositoryBridgeRules.performRepositoryImportSuccessMessage(message) {
                     alert_info($0)
                 }
             }
@@ -42,9 +42,9 @@ enum GitCloneContextFactory {
     static func make(data: DataVM, projectVM: ProjectVM) -> GitOKPluginContext {
         let handlers = handlers(data: data, projectVM: projectVM)
         return GitOKPluginContext(
-            canCloneRepository: handlers.canCloneRepository,
+            canImportRepository: handlers.canImportRepository,
             onProjectExists: handlers.onProjectExists,
-            onCloneRepositoryCompleted: handlers.onCloneRepositoryCompleted,
+            onRepositoryImported: handlers.onRepositoryImported,
             onActivityStatusUpdate: handlers.onActivityStatusUpdate,
             onInfoMessage: handlers.onInfoMessage
         )

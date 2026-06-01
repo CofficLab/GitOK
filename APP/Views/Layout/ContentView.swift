@@ -249,7 +249,7 @@ extension ContentView {
         }
 
         let leadingStart = Date()
-        let cloneHandlers = GitCloneContextFactory.handlers(data: g, projectVM: vm)
+        let repositoryHandlers = PluginRepositoryContextFactory.handlers(data: g, projectVM: vm)
         toolbarLeadingViews = p.getEnabledToolbarLeadingViews(
             projects: g.projects.map {
                 GitOKProjectSummary(url: $0.url, title: $0.title, path: $0.path)
@@ -260,11 +260,11 @@ extension ContentView {
                 guard let project = g.projects.first(where: { $0.url == selectedURL }) else { return }
                 vm.setProject(project, reason: "ProjectPicker")
             },
-            canCloneRepository: cloneHandlers.canCloneRepository,
-            onProjectExists: cloneHandlers.onProjectExists,
-            onCloneRepositoryCompleted: cloneHandlers.onCloneRepositoryCompleted,
-            onActivityStatusUpdate: cloneHandlers.onActivityStatusUpdate,
-            onInfoMessage: cloneHandlers.onInfoMessage
+            canImportRepository: repositoryHandlers.canImportRepository,
+            onProjectExists: repositoryHandlers.onProjectExists,
+            onRepositoryImported: repositoryHandlers.onRepositoryImported,
+            onActivityStatusUpdate: repositoryHandlers.onActivityStatusUpdate,
+            onInfoMessage: repositoryHandlers.onInfoMessage
         )
         os_log("\(self.t)✅ UpdateCachedViews leading count=\(toolbarLeadingViews.count) elapsed=\(String(format: "%.3f", Date().timeIntervalSince(leadingStart)))s")
 

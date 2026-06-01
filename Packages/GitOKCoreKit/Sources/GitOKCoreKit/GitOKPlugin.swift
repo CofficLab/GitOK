@@ -107,7 +107,7 @@ public protocol GitOKPlugin: Sendable {
 public typealias GitOKThemeSelectionHandler = @MainActor (String) -> Void
 public typealias GitOKProjectSelectionHandler = @MainActor (URL) -> Void
 public typealias GitOKProjectExistenceHandler = @MainActor (URL) -> Bool
-public typealias GitOKCloneRepositoryCompletionHandler = @MainActor (URL) -> Bool
+public typealias GitOKRepositoryImportCompletionHandler = @MainActor (URL) -> Bool
 public typealias GitOKActivityStatusUpdateHandler = @MainActor (String?) -> Void
 public typealias GitOKUserMessageHandler = @MainActor (String) -> Void
 public typealias GitOKCleanStatusUpdateHandler = @MainActor (Bool) -> Void

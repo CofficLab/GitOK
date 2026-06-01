@@ -27,41 +27,41 @@ struct PluginGitCloneTests {
 
         #expect(GitClonePlugin.shared.toolBarLeadingView(context: GitOKPluginContext()) == nil)
 
-        let context = GitOKPluginContext(canCloneRepository: true)
+        let context = GitOKPluginContext(canImportRepository: true)
         #expect(GitClonePlugin.shared.toolBarLeadingView(context: context) != nil)
         _ = CloneRepositorySheet(context: context)
     }
 
-    @Test("bridge reason stays compatible with App project selection")
+    @Test("repository bridge stays compatible with App project selection")
     func bridgeReason() {
-        #expect(GitCloneBridgeRules.projectSelectionReason == "GitClone")
-        #expect(GitCloneBridgeRules.projectExists(urlPath: "/repo") { path in
+        #expect(GitRepositoryBridgeRules.projectSelectionReason == "RepositoryImport")
+        #expect(GitRepositoryBridgeRules.projectExists(urlPath: "/repo") { path in
             path == "/repo"
         })
         struct URLFixture {
             let path: String
         }
-        #expect(GitCloneBridgeRules.projectExists(
+        #expect(GitRepositoryBridgeRules.projectExists(
             url: URLFixture(path: "/repo"),
             path: \.path,
             exists: { $0 == "/repo" }
         ))
 
         var selections: [String] = []
-        #expect(GitCloneBridgeRules.performCloneCompletion(
+        #expect(GitRepositoryBridgeRules.performRepositoryImportCompletion(
             addProject: { "repo" },
             selectProject: { selections.append("\($0):\($1)") }
         ))
-        #expect(selections == ["repo:\(GitCloneBridgeRules.projectSelectionReason)"])
+        #expect(selections == ["repo:\(GitRepositoryBridgeRules.projectSelectionReason)"])
 
-        #expect(GitCloneBridgeRules.performCloneCompletion(
+        #expect(GitRepositoryBridgeRules.performRepositoryImportCompletion(
             addProject: { nil as String? },
             selectProject: { selections.append("\($0):\($1)") }
         ) == false)
-        #expect(selections == ["repo:\(GitCloneBridgeRules.projectSelectionReason)"])
+        #expect(selections == ["repo:\(GitRepositoryBridgeRules.projectSelectionReason)"])
 
         var infoMessages: [String] = []
-        GitCloneBridgeRules.performCloneSuccessMessage("clone completed") {
+        GitRepositoryBridgeRules.performRepositoryImportSuccessMessage("clone completed") {
             infoMessages.append($0)
         }
         #expect(infoMessages == ["clone completed"])

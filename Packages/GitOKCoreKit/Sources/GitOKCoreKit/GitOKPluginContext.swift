@@ -64,19 +64,19 @@ public struct GitOKPluginContext {
     /// 为 `nil` 表示当前无活动任务。
     public let activityStatus: String?
 
-    /// 当前上下文是否提供 clone 仓库所需的 App 桥接能力
-    public let canCloneRepository: Bool
+    /// 当前上下文是否提供导入仓库所需的 App 桥接能力
+    public let canImportRepository: Bool
 
     // MARK: - 操作回调
 
     /// 项目选择回调（用于项目选择器）
     public let onProjectSelection: GitOKProjectSelectionHandler
 
-    /// 项目是否已存在回调（用于 clone 目标校验）
+    /// 项目是否已存在回调（用于仓库导入目标校验）
     public let onProjectExists: GitOKProjectExistenceHandler
 
-    /// clone 完成后注册并选中项目的回调
-    public let onCloneRepositoryCompleted: GitOKCloneRepositoryCompletionHandler
+    /// 仓库导入完成后注册并选中项目的回调
+    public let onRepositoryImported: GitOKRepositoryImportCompletionHandler
 
     /// 活动状态更新回调
     public let onActivityStatusUpdate: GitOKActivityStatusUpdateHandler
@@ -111,10 +111,10 @@ public struct GitOKPluginContext {
         selectedProjectURL: URL? = nil,
         isSidebarVisible: Bool = true,
         activityStatus: String? = nil,
-        canCloneRepository: Bool = false,
+        canImportRepository: Bool = false,
         onProjectSelection: @escaping GitOKProjectSelectionHandler = { _ in },
         onProjectExists: @escaping GitOKProjectExistenceHandler = { _ in false },
-        onCloneRepositoryCompleted: @escaping GitOKCloneRepositoryCompletionHandler = { _ in false },
+        onRepositoryImported: @escaping GitOKRepositoryImportCompletionHandler = { _ in false },
         onActivityStatusUpdate: @escaping GitOKActivityStatusUpdateHandler = { _ in },
         onInfoMessage: @escaping GitOKUserMessageHandler = { _ in },
         onThemeSelection: @escaping GitOKThemeSelectionHandler = { _ in },
@@ -134,10 +134,10 @@ public struct GitOKPluginContext {
         self.selectedProjectURL = selectedProjectURL
         self.isSidebarVisible = isSidebarVisible
         self.activityStatus = activityStatus
-        self.canCloneRepository = canCloneRepository
+        self.canImportRepository = canImportRepository
         self.onProjectSelection = onProjectSelection
         self.onProjectExists = onProjectExists
-        self.onCloneRepositoryCompleted = onCloneRepositoryCompleted
+        self.onRepositoryImported = onRepositoryImported
         self.onActivityStatusUpdate = onActivityStatusUpdate
         self.onInfoMessage = onInfoMessage
         self.onThemeSelection = onThemeSelection
