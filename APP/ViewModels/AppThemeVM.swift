@@ -40,12 +40,14 @@ final class AppThemeVM: ObservableObject {
         self.currentThemeId = initialId
         applySelection(themeId: initialId, shouldPersist: false)
 
-        pluginProvider.objectWillChange
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] _ in
-                self?.reloadThemes()
-            }
-            .store(in: &cancellables)
+        if pluginProvider.hasPlugins {
+            pluginProvider.objectWillChange
+                .receive(on: DispatchQueue.main)
+                .sink { [weak self] _ in
+                    self?.reloadThemes()
+                }
+                .store(in: &cancellables)
+        }
     }
 
     var currentTheme: GitOKUIThemeContribution? {
