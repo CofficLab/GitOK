@@ -1,4 +1,3 @@
-import MarkdownUI
 import GitOKCoreKit
 import SwiftUI
 

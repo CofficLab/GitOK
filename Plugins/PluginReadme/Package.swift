@@ -10,14 +10,12 @@ let package = Package(
     ],
     dependencies: [
         .package(path: "../../Packages/GitOKCoreKit"),
-        .package(url: "https://github.com/gonzalezreal/swift-markdown-ui", from: "2.4.1"),
     ],
     targets: [
         .target(
             name: "PluginReadme",
             dependencies: [
                 "GitOKCoreKit",
-                .product(name: "MarkdownUI", package: "swift-markdown-ui"),
             ],
             path: "Sources/PluginReadme",
             resources: [.process("Resources")]
