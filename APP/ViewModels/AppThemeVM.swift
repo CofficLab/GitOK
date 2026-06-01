@@ -124,22 +124,33 @@ final class AppThemeVM: ObservableObject {
     }
 
     private static func sync(pluginProvider: PluginVM, registry: GitOKUIThemeRegistry) {
+        guard pluginProvider.hasPlugins else {
+            do {
+                try registry.replaceAll([defaultThemeContribution()])
+            } catch {
+                assertionFailure("Failed to register default theme: \(error)")
+            }
+            return
+        }
+
         let contributions = pluginProvider.getThemeContributions()
         do {
             try registry.replaceAll(contributions)
         } catch {
             do {
-                try registry.replaceAll([
-                    GitOKUIThemeContribution(
-                        sortKey: ThemeSortKey(pluginOrder: 0, themeId: GitOKDefaultChromeTheme().identifier),
-                        chromeTheme: GitOKDefaultChromeTheme(),
-                        editorThemeId: "gitok-default"
-                    )
-                ])
+                try registry.replaceAll([defaultThemeContribution()])
             } catch {
                 assertionFailure("Failed to register fallback theme: \(error)")
             }
         }
+    }
+
+    private static func defaultThemeContribution() -> GitOKUIThemeContribution {
+        GitOKUIThemeContribution(
+            sortKey: ThemeSortKey(pluginOrder: 0, themeId: GitOKDefaultChromeTheme().identifier),
+            chromeTheme: GitOKDefaultChromeTheme(),
+            editorThemeId: "gitok-default"
+        )
     }
 
     private static func initialThemeId(
