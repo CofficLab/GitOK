@@ -10,6 +10,7 @@
 		0B3CC95E2DF1C49000E22263 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = 0B3CC95D2DF1C49000E22263 /* Sparkle */; };
 		0B559DBC2F1A5D41005C6809 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0B559D792F1A5D41005C6809 /* Assets.xcassets */; };
 		0BE645F52FCDB75300DA2C72 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
+		0BE64B5E2FCDBB3100DA2C72 /* GitOKPluginRegistry in Frameworks */ = {isa = PBXBuildFile; productRef = A1F500B23000000100ABC001 /* GitOKPluginRegistry */; };
 		A1F500032F70000100ABC001 /* GitOKUI in Frameworks */ = {isa = PBXBuildFile; productRef = A1F500022F70000100ABC001 /* GitOKUI */; };
 		CC73F006457981A7C3AE5D86 /* GitOKCoreKit in Frameworks */ = {isa = PBXBuildFile; productRef = 4EC50CECD060E698BF493AED /* GitOKCoreKit */; };
 		CC73F007457981A7C3AE5D86 /* GitOKCoreFeatures in Frameworks */ = {isa = PBXBuildFile; productRef = CC73F008457981A7C3AE5D86 /* GitOKCoreFeatures */; };
@@ -795,6 +796,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0BE64B5E2FCDBB3100DA2C72 /* GitOKPluginRegistry in Frameworks */,
 				0BE645F52FCDB75300DA2C72 /* (null) in Frameworks */,
 				A1F500032F70000100ABC001 /* GitOKUI in Frameworks */,
 				F5E6143F2F33311F00F79149 /* MagicKit in Frameworks */,
@@ -1139,7 +1141,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 0B0E168E2BD89A910078942B /* Build configuration list for PBXNativeTarget "GitOK" */;
 			buildPhases = (
-				A1F500B03000000100ABC001 /* Generate Plugin Registry */,
 				0B0E16792BD89A8F0078942B /* Sources */,
 				0B0E167A2BD89A8F0078942B /* Frameworks */,
 				0B0E167B2BD89A8F0078942B /* Resources */,
@@ -2058,27 +2059,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		A1F500B03000000100ABC001 /* Generate Plugin Registry */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"$(SRCROOT)/Plugins",
-				"$(SRCROOT)/Scripts/generate_plugin_registry.sh",
-			);
-			name = "Generate Plugin Registry";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "cd \"$SRCROOT\" && sh Scripts/generate_plugin_registry.sh\n";
-		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
