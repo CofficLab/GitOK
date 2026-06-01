@@ -1141,6 +1141,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 0B0E168E2BD89A910078942B /* Build configuration list for PBXNativeTarget "GitOK" */;
 			buildPhases = (
+				A1F500B03000000100ABC001 /* Generate Plugin Registry */,
 				0B0E16792BD89A8F0078942B /* Sources */,
 				0B0E167A2BD89A8F0078942B /* Frameworks */,
 				0B0E167B2BD89A8F0078942B /* Resources */,
@@ -2059,6 +2060,29 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		A1F500B03000000100ABC001 /* Generate Plugin Registry */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Plugins",
+				"$(SRCROOT)/Scripts/generate_plugin_registry.sh",
+			);
+			name = "Generate Plugin Registry";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(SRCROOT)/Packages/GitOKPluginRegistry/Package.swift",
+				"$(SRCROOT)/Packages/GitOKPluginRegistry/Sources/GitOKPluginRegistry/GeneratedPluginRegistry.swift",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cd \"$SRCROOT\" && sh Scripts/generate_plugin_registry.sh\n";
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */

@@ -10,6 +10,7 @@ import PluginFileInfo
 import PluginGitIgnore
 import PluginGitLFS
 import PluginGitTab
+import PluginIconTab
 import PluginLicense
 import PluginOpenAntigravity
 import PluginOpenCursor
@@ -52,6 +53,7 @@ public enum GeneratedPluginRegistry {
         if GitIgnorePlugin.shouldRegister { register(adapterFactory.makeAdapter(for: GitIgnorePlugin.shared)) }
         if GitLFSPlugin.shouldRegister { register(adapterFactory.makeAdapter(for: GitLFSPlugin.shared)) }
         if GitTabPlugin.shouldRegister { register(adapterFactory.makeAdapter(for: GitTabPlugin.shared)) }
+        if IconTabPlugin.shouldRegister { register(adapterFactory.makeAdapter(for: IconTabPlugin.shared)) }
         if LicensePlugin.shouldRegister { register(adapterFactory.makeAdapter(for: LicensePlugin.shared)) }
         if OpenAntigravityPlugin.shouldRegister { register(adapterFactory.makeAdapter(for: OpenAntigravityPlugin.shared)) }
         if OpenCursorPlugin.shouldRegister { register(adapterFactory.makeAdapter(for: OpenCursorPlugin.shared)) }

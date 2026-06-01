@@ -10,7 +10,7 @@ public struct IconTabPlugin: GitOKPlugin {
         description: PluginIconTabLocalization.string("Icon management"),
         iconName: "photo",
         order: 1,
-        policy: .disabled,
+        policy: .optIn,
         tableName: PluginIconTabLocalization.table
     )
 
