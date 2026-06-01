@@ -6,9 +6,8 @@ import GitOKCoreKit
 struct PluginGitCloneTests {
     @Test("localized strings resolve from package bundle")
     func localizedStringsResolve() {
-        #expect(PluginGitCloneLocalization.string("Clone Repository").isEmpty == false)
-        #expect(PluginGitCloneLocalization.string("GitHub API URL is invalid").isEmpty == false)
-        #expect(PluginGitCloneLocalization.bundle.url(forResource: "Git-Clone", withExtension: "xcstrings") != nil)
+        #expect(GitCloneLocalization.string("Clone Repository").isEmpty == false)
+        #expect(GitCloneLocalization.string("GitHub API URL is invalid").isEmpty == false)
     }
 
     @Test("GitHub host normalizes URL input")
@@ -23,7 +22,7 @@ struct PluginGitCloneTests {
         #expect(GitClonePlugin.metadata.id == "GitClonePlugin")
         #expect(GitClonePlugin.metadata.iconName == "square.and.arrow.down")
         #expect(GitClonePlugin.metadata.allowUserToggle == false)
-        #expect(GitClonePlugin.metadata.defaultEnabled == true)
+        #expect(GitClonePlugin.metadata.defaultEnabled == false)
         #expect(GitClonePlugin.metadata.tableName == "Git-Clone")
 
         #expect(GitClonePlugin.shared.toolBarLeadingView(context: GitOKPluginContext()) == nil)

@@ -6,21 +6,12 @@ public struct GitDetailPlugin: GitOKPlugin {
 
     public static let metadata = GitOKPluginMetadata(
         id: "GitDetailPlugin",
-        displayName: PluginGitDetailLocalization.string("GitDetailPlugin"),
+        displayName: GitDetailLocalization.string("GitDetailPlugin"),
         description: "",
         order: 0,
         policy: .disabled,
-        tableName: PluginGitDetailLocalization.table
+        tableName: GitDetailLocalization.table
     )
 
     private init() {}
-}
-
-public enum PluginGitDetailLocalization {
-    public static let table = "GitDetail"
-    public static let bundle = Bundle.module
-
-    public static func string(_ key: String) -> String {
-        NSLocalizedString(key, tableName: table, bundle: bundle, value: key, comment: "")
-    }
 }

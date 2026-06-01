@@ -6,12 +6,12 @@ public struct GitClonePlugin: GitOKPlugin {
 
     public static let metadata = GitOKPluginMetadata(
         id: "GitClonePlugin",
-        displayName: PluginGitCloneLocalization.string("Clone Repository"),
-        description: PluginGitCloneLocalization.string("Clone a Git repository from a remote URL and automatically add it to the project list."),
+        displayName: GitCloneLocalization.string("Clone Repository"),
+        description: GitCloneLocalization.string("Clone a Git repository from a remote URL and automatically add it to the project list."),
         iconName: "square.and.arrow.down",
         order: 11,
         policy: .disabled,
-        tableName: PluginGitCloneLocalization.table
+        tableName: GitCloneLocalization.table
     )
 
     private init() {}

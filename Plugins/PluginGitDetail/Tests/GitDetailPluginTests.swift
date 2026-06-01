@@ -1,6 +1,7 @@
 @testable import PluginGitDetail
 import AppKit
 import Foundation
+import GitOKCoreKit
 import SwiftUI
 import Testing
 
@@ -12,7 +13,7 @@ struct GitDetailPluginTests {
         #expect(GitDetailPlugin.metadata.iconName == "puzzlepiece.extension")
         #expect(GitDetailPlugin.metadata.order == 0)
         #expect(GitDetailPlugin.metadata.allowUserToggle == false)
-        #expect(GitDetailPlugin.metadata.defaultEnabled == true)
+        #expect(GitDetailPlugin.metadata.defaultEnabled == false)
         #expect(GitDetailPlugin.metadata.tableName == "GitDetail")
     }
 
