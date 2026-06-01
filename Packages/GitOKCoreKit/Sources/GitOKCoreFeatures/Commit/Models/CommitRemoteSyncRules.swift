@@ -590,21 +590,16 @@ public enum CommitRemoteSyncRules {
     }
 
     public static func remoteErrorKind(error: Error) -> RemoteErrorKind {
-        remoteErrorKind(
-            isNetworkError: {
-                if case LibGit2Error.networkError = error {
-                    return true
-                }
-                return false
-            }(),
-            isAuthenticationError: {
-                if case LibGit2Error.authenticationError = error {
-                    return true
-                }
-                return false
-            }(),
-            isKnownError: error is LibGit2Error
-        )
+        switch GitOperationError.remoteErrorKind(from: error) {
+        case .network:
+            return .network
+        case .authentication:
+            return .authentication
+        case .known:
+            return .known
+        case .other:
+            return .other
+        }
     }
 
     public static func pushErrorClassification(error: Error) -> PushErrorClassification {

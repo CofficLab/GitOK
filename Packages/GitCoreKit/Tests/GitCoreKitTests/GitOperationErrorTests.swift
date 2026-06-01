@@ -1,4 +1,5 @@
 import XCTest
+import LibGit2Swift
 @testable import GitCoreKit
 
 final class GitOperationErrorTests: XCTestCase {
@@ -22,5 +23,12 @@ final class GitOperationErrorTests: XCTestCase {
 
         XCTAssertEqual(error.errorDescription, "本地有 2 个未推送提交，远程有 3 个本地没有的提交。")
         XCTAssertEqual(error.recoverySuggestion, "请先 Pull 或 Rebase 处理分叉后，再执行 Push。")
+    }
+
+    func testRemoteErrorKindHidesLibGit2ErrorDetails() {
+        XCTAssertEqual(GitOperationError.remoteErrorKind(from: LibGit2Error.networkError(-1)), .network)
+        XCTAssertEqual(GitOperationError.remoteErrorKind(from: LibGit2Error.authenticationError), .authentication)
+        XCTAssertEqual(GitOperationError.remoteErrorKind(from: LibGit2Error.configNotFound), .known)
+        XCTAssertEqual(GitOperationError.remoteErrorKind(from: NSError(domain: "Other", code: 1)), .other)
     }
 }

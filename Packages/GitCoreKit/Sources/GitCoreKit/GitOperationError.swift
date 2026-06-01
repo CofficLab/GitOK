@@ -1,4 +1,12 @@
 import Foundation
+import LibGit2Swift
+
+public enum GitRemoteErrorKind: Sendable, Equatable {
+    case network
+    case authentication
+    case known
+    case other
+}
 
 public enum GitOperationError: LocalizedError {
     case pushNeedsFetch(message: String)
@@ -39,5 +47,21 @@ public enum GitOperationError: LocalizedError {
         }
 
         return message.isEmpty ? "远程有新的提交，当前分支无法直接推送。" : message
+    }
+
+    public static func remoteErrorKind(from error: Error) -> GitRemoteErrorKind {
+        if case LibGit2Error.networkError = error {
+            return .network
+        }
+
+        if case LibGit2Error.authenticationError = error {
+            return .authentication
+        }
+
+        if error is LibGit2Error {
+            return .known
+        }
+
+        return .other
     }
 }
