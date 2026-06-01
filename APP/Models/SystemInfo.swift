@@ -1,6 +1,6 @@
 import Foundation
+import GitOKCoreFeatures
 import IOKit.ps
-import LibGit2Swift
 import SwiftUI
 
 /// 系统信息模型
@@ -153,7 +153,7 @@ struct SystemInfo {
 
     /// 获取 Git 版本
     private static func getGitVersion() -> String? {
-        LibGit2.versionString()
+        GitRuntime.versionString()
     }
 
     // MARK: - 格式化方法

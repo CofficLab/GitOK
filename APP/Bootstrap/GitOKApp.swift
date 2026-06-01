@@ -1,4 +1,4 @@
-import LibGit2Swift
+import GitOKCoreFeatures
 import MagicKit
 import OSLog
 import Sparkle
@@ -23,7 +23,7 @@ struct GitOKApp: App, SuperLog {
         os_log("\(Self.t)🚀 Startup begin: GitOKApp.init")
 
         // 初始化 libgit2
-        LibGit2.initialize()
+        GitRuntime.initialize()
 
         os_log("\(Self.t)✅ Startup end: GitOKApp.init elapsed=\(String(format: "%.3f", Date().timeIntervalSince(start)))s")
     }

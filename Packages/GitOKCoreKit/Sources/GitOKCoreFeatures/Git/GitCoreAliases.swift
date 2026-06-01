@@ -1,4 +1,4 @@
-import GitCoreKit
+@_exported import GitCoreKit
 
 public typealias GitOKBranchCompare = GitCoreKit.GitBranchCompare
 public typealias GitOKPatchApplyMode = GitCoreKit.GitPatchApplyMode

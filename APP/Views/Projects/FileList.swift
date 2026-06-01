@@ -1,5 +1,4 @@
 import GitOKCoreFeatures
-import LibGit2Swift
 import MagicAlert
 import MagicKit
 import OSLog

@@ -1,8 +1,7 @@
 import Foundation
-import LibGit2Swift
+import GitOKCoreFeatures
 import MagicKit
 import OSLog
-import GitOKCoreFeatures
 import SwiftData
 import SwiftUI
 
@@ -265,7 +264,7 @@ extension Project {
     /// - Throws: Git操作异常
     func createBranch(_ branchName: String) throws {
         do {
-            // 使用 LibGit2Swift 创建并切换到新分支
+            // 使用 Git 运行时创建并切换到新分支
             try LibGit2.checkoutNewBranch(named: branchName, at: self.path)
 
             postEvent(
@@ -765,16 +764,16 @@ extension Project {
 
 extension Project {
     /// 获取未推送的提交（本地领先远程的提交）
-    /// 使用 LibGit2Swift 原生实现
+    /// 使用 Git 运行时原生实现
     func getUnPushedCommits() async throws -> [GitCommit] {
         return try LibGit2.getUnPushedCommits(at: self.path, verbose: false)
     }
 
     /// 获取未拉取的提交（远程领先本地的提交）
-    /// 注意：当前返回空数组，因为 LibGit2Swift 无法直接访问远程提交
+    /// 注意：当前返回空数组，因为当前 Git 运行时无法直接访问远程提交
     /// 但可以通过 getUnPulledCount() 获取数量
     func getUnPulledCommits() async throws -> [GitCommit] {
-        // 由于 LibGit2Swift 无法直接访问远程提交，暂时返回空数组
+        // 由于当前 Git 运行时无法直接访问远程提交，暂时返回空数组
         return []
     }
 
@@ -959,7 +958,7 @@ extension Project {
             os_log(.info, "\(self.t)🍋 changedFilesDetail(in: \(atCommit))")
         }
 
-        // 使用 LibGit2Swift 获取指定commit修改的文件列表，并按文件路径排序
+        // 使用 Git 运行时获取指定 commit 修改的文件列表，并按文件路径排序
         return try LibGit2.getCommitDiffFiles(atCommit: atCommit, at: self.path)
             .sorted { $0.file < $1.file }
     }

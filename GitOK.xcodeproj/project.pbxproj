@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		0B3CC95E2DF1C49000E22263 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = 0B3CC95D2DF1C49000E22263 /* Sparkle */; };
-		0B4A1C002F80000100AA0001 /* LibGit2Swift in Frameworks */ = {isa = PBXBuildFile; productRef = 0B4A1BFF2F80000100AA0001 /* LibGit2Swift */; };
 		0B559DBC2F1A5D41005C6809 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0B559D792F1A5D41005C6809 /* Assets.xcassets */; };
 		A1F100042F70000100ABC001 /* GitCoreKit in Frameworks */ = {isa = PBXBuildFile; productRef = A1F100022F70000100ABC001 /* GitCoreKit */; };
 		A1F200032F70000100ABC001 /* ProjectRulesKit in Frameworks */ = {isa = PBXBuildFile; productRef = A1F200022F70000100ABC001 /* ProjectRulesKit */; };
@@ -805,7 +804,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				A1F500032F70000100ABC001 /* GitOKUI in Frameworks */,
-				0B4A1C002F80000100AA0001 /* LibGit2Swift in Frameworks */,
 				F5D122802F0E5B040001A5D2 /* MagicDiffView in Frameworks */,
 				F5E6143F2F33311F00F79149 /* MagicKit in Frameworks */,
 				0B3CC95E2DF1C49000E22263 /* Sparkle in Frameworks */,
@@ -1180,7 +1178,6 @@
 				0B3CC95D2DF1C49000E22263 /* Sparkle */,
 				F5D1227F2F0E5B040001A5D2 /* MagicDiffView */,
 				F5E6143E2F33311F00F79149 /* MagicKit */,
-				0B4A1BFF2F80000100AA0001 /* LibGit2Swift */,
 				4EC50CECD060E698BF493AED /* GitOKCoreKit */,
 				CC73F008457981A7C3AE5D86 /* GitOKCoreFeatures */,
 			);
@@ -1250,7 +1247,6 @@
 				F5F794E72C5B192600DCB824 /* XCRemoteSwiftPackageReference "Sparkle" */,
 				F5E6143D2F33311F00F79149 /* XCLocalSwiftPackageReference "Packages/MagicKit" */,
 				F5A3E6C02F8610E100D4DD4A /* XCRemoteSwiftPackageReference "MagicDiffView" */,
-				F5165B6E2FBC084A00F24BD9 /* XCRemoteSwiftPackageReference "LibGit2Swift" */,
 				917255476993285F764073A8 /* XCLocalSwiftPackageReference "Packages/GitOKCoreKit" */,
 			);
 			productRefGroup = 0B0E16742BD89A8F0078942B;
@@ -2451,14 +2447,6 @@
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		F5165B6E2FBC084A00F24BD9 /* XCRemoteSwiftPackageReference "LibGit2Swift" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/nookery/LibGit2Swift.git";
-			requirement = {
-				branch = main;
-				kind = branch;
-			};
-		};
 		F5A3E6C02F8610E100D4DD4A /* XCRemoteSwiftPackageReference "MagicDiffView" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/nookery/MagicDiffView";
@@ -2482,11 +2470,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = F5F794E72C5B192600DCB824 /* XCRemoteSwiftPackageReference "Sparkle" */;
 			productName = Sparkle;
-		};
-		0B4A1BFF2F80000100AA0001 /* LibGit2Swift */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = F5165B6E2FBC084A00F24BD9 /* XCRemoteSwiftPackageReference "LibGit2Swift" */;
-			productName = LibGit2Swift;
 		};
 		4EC50CECD060E698BF493AED /* GitOKCoreKit */ = {
 			isa = XCSwiftPackageProductDependency;

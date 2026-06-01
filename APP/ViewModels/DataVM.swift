@@ -1,4 +1,4 @@
-import LibGit2Swift
+import GitOKCoreFeatures
 import MagicKit
 import Combine
 import Foundation

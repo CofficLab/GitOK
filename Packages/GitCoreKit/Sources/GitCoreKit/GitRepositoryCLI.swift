@@ -349,6 +349,7 @@ public struct GitRepositoryCLI {
     private nonisolated(unsafe) static var hasCheckedGit = false
 
     public init(repositoryURL: URL) {
+        GitRuntime.initialize()
         self.repositoryURL = repositoryURL
     }
 
@@ -518,6 +519,7 @@ public struct GitRepositoryCLI {
     }
 
     public static func create(at repositoryURL: URL, options: CreateRepositoryOptions = CreateRepositoryOptions()) throws {
+        GitRuntime.initialize()
         let destinationExistsBeforeCreate = FileManager.default.fileExists(atPath: repositoryURL.path)
 
         do {
@@ -551,6 +553,7 @@ public struct GitRepositoryCLI {
         destinationURL: URL,
         progress: (@Sendable (String) -> Void)? = nil
     ) throws {
+        GitRuntime.initialize()
         let parentURL = destinationURL.deletingLastPathComponent()
         let destinationExistsBeforeClone = FileManager.default.fileExists(atPath: destinationURL.path)
 

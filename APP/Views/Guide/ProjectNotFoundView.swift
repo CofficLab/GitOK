@@ -1,5 +1,4 @@
 import GitOKUI
-import LibGit2Swift
 import MagicKit
 import SwiftUI
 

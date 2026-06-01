@@ -1,6 +1,6 @@
 import AppKit
 import Foundation
-import LibGit2Swift
+import GitOKCoreFeatures
 
 struct DiagnosticEntry: Identifiable, Equatable {
     let id: UUID
@@ -164,7 +164,7 @@ final class DiagnosticsStore: ObservableObject {
     }
 
     private static func gitVersion() -> String {
-        "libgit2 \(LibGit2.versionString())"
+        "libgit2 \(GitRuntime.versionString())"
     }
 
     private static func format(_ date: Date) -> String {
