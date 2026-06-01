@@ -1,4 +1,3 @@
-import MagicAlert
 import GitOKCoreKit
 import MagicKit
 import OSLog
@@ -250,6 +249,7 @@ extension ContentView {
         }
 
         let leadingStart = Date()
+        let cloneHandlers = GitCloneContextFactory.handlers(data: g, projectVM: vm)
         toolbarLeadingViews = p.getEnabledToolbarLeadingViews(
             projects: g.projects.map {
                 GitOKProjectSummary(url: $0.url, title: $0.title, path: $0.path)
@@ -260,28 +260,11 @@ extension ContentView {
                 guard let project = g.projects.first(where: { $0.url == selectedURL }) else { return }
                 vm.setProject(project, reason: "ProjectPicker")
             },
-            canCloneRepository: true,
-            onProjectExists: { url in
-                GitCloneBridgeRules.projectExists(
-                    url: url,
-                    path: \.path,
-                    exists: g.repoManager.projectRepo.exists(path:)
-                )
-            },
-            onCloneRepositoryCompleted: { url in
-                GitCloneBridgeRules.performCloneCompletion(
-                    addProject: { g.addProject(url: url, using: g.repoManager.projectRepo) },
-                    selectProject: vm.setProject
-                )
-            },
-            onActivityStatusUpdate: { status in
-                g.activityStatus = status
-            },
-            onInfoMessage: { message in
-                GitCloneBridgeRules.performCloneSuccessMessage(message) {
-                    alert_info($0)
-                }
-            }
+            canCloneRepository: cloneHandlers.canCloneRepository,
+            onProjectExists: cloneHandlers.onProjectExists,
+            onCloneRepositoryCompleted: cloneHandlers.onCloneRepositoryCompleted,
+            onActivityStatusUpdate: cloneHandlers.onActivityStatusUpdate,
+            onInfoMessage: cloneHandlers.onInfoMessage
         )
         os_log("\(self.t)✅ UpdateCachedViews leading count=\(toolbarLeadingViews.count) elapsed=\(String(format: "%.3f", Date().timeIntervalSince(leadingStart)))s")
 
