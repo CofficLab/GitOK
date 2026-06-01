@@ -21,7 +21,6 @@ let package = Package(
         .package(path: "../GitCoreKit"),
         .package(path: "../MagicAlert"),
         .package(path: "../MagicKit"),
-        .package(url: "https://github.com/gonzalezreal/swift-markdown-ui", from: "2.4.1"),
     ],
     targets: [
         .target(
@@ -34,7 +33,6 @@ let package = Package(
                 "GitCoreKit",
                 "MagicAlert",
                 "MagicKit",
-                .product(name: "MarkdownUI", package: "swift-markdown-ui"),
             ],
             path: "Sources/GitOKCoreKit",
             resources: [

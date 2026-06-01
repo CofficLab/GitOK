@@ -91,14 +91,17 @@ struct ReadmeViewer: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .frame(minHeight: 300)
             } else {
-                Markdown(readmeContent)
-                    .markdownTheme(.gitHub)
+                Text(renderedReadme)
                     .textSelection(.enabled)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.horizontal, 20)
                     .padding(.vertical, 16)
             }
         }
+    }
+
+    private var renderedReadme: AttributedString {
+        (try? AttributedString(markdown: readmeContent)) ?? AttributedString(readmeContent)
     }
 
     private func loadReadme() {
