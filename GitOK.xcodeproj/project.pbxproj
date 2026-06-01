@@ -802,24 +802,8 @@
 		F54D04C32DF2D01300FFB434 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
-/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		F526CF522FADB9FB00EFAB27 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				BannerCoreKit,
-				GitCoreKit,
-				GitOKAutomationKit,
-				GitOKCoreKit,
-				GitOKUI,
-				ProjectRulesKit,
-				ProjectSupportKit,
-			);
-			target = 0B0E167C2BD89A8F0078942B /* GitOK */;
-		};
-/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
-
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		F526CF512FADB9FB00EFAB27 /* Packages */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (F526CF522FADB9FB00EFAB27 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Packages; sourceTree = "<group>"; };
+		F526CF512FADB9FB00EFAB27 /* Packages */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Packages; sourceTree = "<group>"; };
 		F5AE82732FAB49C900F014F8 /* APP */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = APP; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
