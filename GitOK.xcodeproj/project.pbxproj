@@ -2076,8 +2076,6 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(SRCROOT)/Packages/GitOKPluginRegistry/Package.swift",
-				"$(SRCROOT)/Packages/GitOKPluginRegistry/Sources/GitOKPluginRegistry/GeneratedPluginRegistry.swift",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
