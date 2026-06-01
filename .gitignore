@@ -27,3 +27,11 @@ build/
 build.log
 Packages/LibGit2Swift/build_result.txt
 /.build
+
+# Swift Package Manager local artifacts
+Packages/*/.build/
+Packages/*/.swiftpm/
+Packages/*/Package.resolved
+Plugins/*/.build/
+Plugins/*/.swiftpm/
+Plugins/*/Package.resolved
