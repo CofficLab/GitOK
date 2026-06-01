@@ -1,3 +1,0 @@
-import GitOKCoreFeatures
-
-typealias OpenProjectPathResolver = ProjectSupportKit.OpenProjectPathResolver

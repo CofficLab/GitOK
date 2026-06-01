@@ -1,3 +1,0 @@
-import GitOKCoreFeatures
-
-typealias ProjectDocumentResolver = ProjectSupportKit.ProjectDocumentResolver

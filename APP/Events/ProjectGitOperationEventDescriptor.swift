@@ -1,3 +1,0 @@
-import GitOKCoreFeatures
-
-typealias ProjectGitOperationEventDescriptor = ProjectSupportKit.ProjectGitOperationEventDescriptor
