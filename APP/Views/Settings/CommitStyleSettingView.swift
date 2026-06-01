@@ -1,8 +1,8 @@
 import Foundation
+import GitOKCoreKit
 import GitOKUI
 import MagicKit
 import OSLog
-import GitOKCoreFeatures
 import SwiftUI
 
 /// Commit 风格设置视图
