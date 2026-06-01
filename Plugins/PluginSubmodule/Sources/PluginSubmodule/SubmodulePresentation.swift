@@ -1,4 +1,5 @@
 import GitOKCoreKit
+import GitCoreKit
 
 public enum SubmodulePresentation {
     public static func issueCount(_ submodules: [GitRepositoryCLI.GitSubmodule]) -> Int {

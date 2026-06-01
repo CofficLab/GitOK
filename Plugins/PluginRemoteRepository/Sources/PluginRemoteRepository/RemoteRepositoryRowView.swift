@@ -1,4 +1,6 @@
 import AppKit
+import ProjectRulesKit
+import GitCoreKit
 import GitOKCoreKit
 import SwiftUI
 

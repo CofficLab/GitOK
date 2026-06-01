@@ -2,6 +2,14 @@
 // Do not edit by hand.
 
 import GitOKCoreKit
+import PluginActivityStatus
+import PluginAutoPush
+import PluginBranch
+import PluginConflictResolver
+import PluginFileInfo
+import PluginGitIgnore
+import PluginGitLFS
+import PluginLicense
 import PluginOpenAntigravity
 import PluginOpenCursor
 import PluginOpenFinder
@@ -12,6 +20,13 @@ import PluginOpenTerminal
 import PluginOpenTrae
 import PluginOpenVSCode
 import PluginOpenXcode
+import PluginReadme
+import PluginRemoteRepository
+import PluginSettingsButton
+import PluginSmartMerge
+import PluginStash
+import PluginSubmodule
+import PluginThemeStatusBar
 
 /// Auto-generated plugin registry.
 /// Registers plugin adapters generated from enabled plugin packages.
@@ -28,6 +43,14 @@ public enum GeneratedPluginRegistry {
         adapterFactory: any GitOKPluginAdapterFactory,
         _ register: (any SuperPlugin) -> Void
     ) {
+        if ActivityStatusPlugin.shouldRegister { register(adapterFactory.makeAdapter(for: ActivityStatusPlugin.shared)) }
+        if AutoPushPlugin.shouldRegister { register(adapterFactory.makeAdapter(for: AutoPushPlugin.shared)) }
+        if BranchPlugin.shouldRegister { register(adapterFactory.makeAdapter(for: BranchPlugin.shared)) }
+        if ConflictResolverPlugin.shouldRegister { register(adapterFactory.makeAdapter(for: ConflictResolverPlugin.shared)) }
+        if FileInfoPlugin.shouldRegister { register(adapterFactory.makeAdapter(for: FileInfoPlugin.shared)) }
+        if GitIgnorePlugin.shouldRegister { register(adapterFactory.makeAdapter(for: GitIgnorePlugin.shared)) }
+        if GitLFSPlugin.shouldRegister { register(adapterFactory.makeAdapter(for: GitLFSPlugin.shared)) }
+        if LicensePlugin.shouldRegister { register(adapterFactory.makeAdapter(for: LicensePlugin.shared)) }
         if OpenAntigravityPlugin.shouldRegister { register(adapterFactory.makeAdapter(for: OpenAntigravityPlugin.shared)) }
         if OpenCursorPlugin.shouldRegister { register(adapterFactory.makeAdapter(for: OpenCursorPlugin.shared)) }
         if OpenFinderPlugin.shouldRegister { register(adapterFactory.makeAdapter(for: OpenFinderPlugin.shared)) }
@@ -38,5 +61,12 @@ public enum GeneratedPluginRegistry {
         if OpenTraePlugin.shouldRegister { register(adapterFactory.makeAdapter(for: OpenTraePlugin.shared)) }
         if OpenVSCodePlugin.shouldRegister { register(adapterFactory.makeAdapter(for: OpenVSCodePlugin.shared)) }
         if OpenXcodePlugin.shouldRegister { register(adapterFactory.makeAdapter(for: OpenXcodePlugin.shared)) }
+        if ReadmePlugin.shouldRegister { register(adapterFactory.makeAdapter(for: ReadmePlugin.shared)) }
+        if RemoteRepositoryPlugin.shouldRegister { register(adapterFactory.makeAdapter(for: RemoteRepositoryPlugin.shared)) }
+        if SettingsButtonPlugin.shouldRegister { register(adapterFactory.makeAdapter(for: SettingsButtonPlugin.shared)) }
+        if SmartMergePlugin.shouldRegister { register(adapterFactory.makeAdapter(for: SmartMergePlugin.shared)) }
+        if StashPlugin.shouldRegister { register(adapterFactory.makeAdapter(for: StashPlugin.shared)) }
+        if SubmodulePlugin.shouldRegister { register(adapterFactory.makeAdapter(for: SubmodulePlugin.shared)) }
+        if ThemeStatusBarPlugin.shouldRegister { register(adapterFactory.makeAdapter(for: ThemeStatusBarPlugin.shared)) }
     }
 }

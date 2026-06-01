@@ -1,4 +1,5 @@
 import GitOKCoreKit
+import GitCoreKit
 
 public struct ConflictResolutionState: Equatable {
     public let isMerging: Bool

@@ -1,4 +1,5 @@
 import GitOKCoreKit
+import GitCoreKit
 import SwiftUI
 
 public struct ConflictResolverRow: View {

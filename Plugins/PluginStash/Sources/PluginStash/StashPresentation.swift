@@ -1,4 +1,5 @@
 import Foundation
+import GitCoreKit
 import GitOKCoreKit
 
 public enum StashPresentation {

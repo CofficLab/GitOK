@@ -1,4 +1,6 @@
 import Combine
+import ProjectRulesKit
+import GitCoreKit
 import Foundation
 import GitOKCoreKit
 

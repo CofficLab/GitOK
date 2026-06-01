@@ -1,4 +1,5 @@
 import GitOKCoreKit
+import GitCoreKit
 import SwiftUI
 
 struct StashRow: View {
