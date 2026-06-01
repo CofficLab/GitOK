@@ -18,8 +18,6 @@ TMP_OUTPUT="$OUTPUT.tmp"
 MANIFEST="$REGISTRY_PACKAGE_DIR/Package.swift"
 TMP_MANIFEST="$MANIFEST.tmp"
 
-mkdir -p "$(dirname "$OUTPUT")"
-
 # ---------------------------------------------------------------------------
 # 1. Scan for GitOKPlugin conformances
 #    Pattern: public struct <Name>Plugin: GitOKPlugin {
@@ -56,6 +54,7 @@ fi
 # ---------------------------------------------------------------------------
 
 mkdir -p "$REGISTRY_PACKAGE_DIR"
+mkdir -p "$(dirname "$OUTPUT")"
 
 {
     printf '// swift-tools-version: 6.0\n'
