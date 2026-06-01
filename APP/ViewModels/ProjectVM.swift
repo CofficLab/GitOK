@@ -1,5 +1,4 @@
-import GitCoreKit
-import GitOKCoreKit
+import GitOKCoreFeatures
 import LibGit2Swift
 import MagicKit
 import OSLog
@@ -56,9 +55,9 @@ class ProjectVM: ObservableObject, SuperLog {
 
         if let project = project {
             let gitStart = Date()
-            os_log("\(Self.t)🚀 Startup begin: LibGit2.isGitRepository path=\(project.path)")
-            let isGit = LibGit2.isGitRepository(at: project.path)
-            os_log("\(Self.t)✅ Startup end: LibGit2.isGitRepository result=\(isGit) elapsed=\(String(format: "%.3f", Date().timeIntervalSince(gitStart)))s")
+            os_log("\(Self.t)🚀 Startup begin: Project.isGit path=\(project.path)")
+            let isGit = project.isGit()
+            os_log("\(Self.t)✅ Startup end: Project.isGit result=\(isGit) elapsed=\(String(format: "%.3f", Date().timeIntervalSince(gitStart)))s")
             project.updateIsGitRepoCacheSync(isGit)
         }
 
@@ -85,8 +84,8 @@ class ProjectVM: ObservableObject, SuperLog {
 
         if let project = p {
             let gitStart = Date()
-            let isGit = LibGit2.isGitRepository(at: project.path)
-            os_log("\(self.t)✅ SetProject LibGit2.isGitRepository result=\(isGit) elapsed=\(String(format: "%.3f", Date().timeIntervalSince(gitStart)))s")
+            let isGit = project.isGit()
+            os_log("\(self.t)✅ SetProject Project.isGit result=\(isGit) elapsed=\(String(format: "%.3f", Date().timeIntervalSince(gitStart)))s")
             project.updateIsGitRepoCacheSync(isGit)
 
             Task.detached(priority: .userInitiated) {
@@ -124,12 +123,6 @@ class ProjectVM: ObservableObject, SuperLog {
     /// - Parameter isClean: 项目是否 clean
     func updateIsClean(_ isClean: Bool) {
         self.isClean = isClean
-    }
-
-    func updateAheadBehind(_ state: GitCoreKit.GitAheadBehind) {
-        self.aheadCount = state.ahead
-        self.behindCount = state.behind
-        self.hasUpstream = state.hasUpstream
     }
 
     func updateRemoteTracking(_ status: GitOKRemoteTrackingStatus?, fetchedAt: Date?) {
