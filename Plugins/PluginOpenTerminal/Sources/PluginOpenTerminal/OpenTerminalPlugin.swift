@@ -11,8 +11,7 @@ public struct OpenTerminalPlugin: GitOKPlugin {
         description: PluginOpenTerminalLocalization.string("Open the current project folder in Terminal."),
         iconName: "terminal",
         order: 8310,
-        allowUserToggle: true,
-        defaultEnabled: true,
+        policy: .optOut,
         tableName: PluginOpenTerminalLocalization.table
     )
 

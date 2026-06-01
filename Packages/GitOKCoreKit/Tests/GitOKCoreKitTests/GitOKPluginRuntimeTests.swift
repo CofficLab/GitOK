@@ -4,8 +4,7 @@ import XCTest
 private struct RuntimeTestPlugin: SuperPlugin {
     let instanceLabel: String
     let pluginOrder: Int
-    let pluginAllowUserToggle: Bool
-    let pluginDefaultEnabled: Bool
+    let pluginPolicy: GitOKPluginPolicy
     let tabName: String?
 
     var pluginDisplayName: String { instanceLabel }
@@ -16,14 +15,12 @@ private struct RuntimeTestPlugin: SuperPlugin {
     init(
         instanceLabel: String,
         pluginOrder: Int = 9999,
-        pluginAllowUserToggle: Bool = true,
-        pluginDefaultEnabled: Bool = true,
+        pluginPolicy: GitOKPluginPolicy = .optOut,
         tabName: String? = nil
     ) {
         self.instanceLabel = instanceLabel
         self.pluginOrder = pluginOrder
-        self.pluginAllowUserToggle = pluginAllowUserToggle
-        self.pluginDefaultEnabled = pluginDefaultEnabled
+        self.pluginPolicy = pluginPolicy
         self.tabName = tabName
     }
 
@@ -49,7 +46,7 @@ final class GitOKPluginRuntimeTests: XCTestCase {
 
         runtime.register(RuntimeTestPlugin(
             instanceLabel: "disabled-by-default-\(UUID().uuidString)",
-            pluginDefaultEnabled: false,
+            pluginPolicy: .optIn,
             tabName: "Hidden"
         ))
 
@@ -61,8 +58,7 @@ final class GitOKPluginRuntimeTests: XCTestCase {
 
         runtime.register(RuntimeTestPlugin(
             instanceLabel: "forced-on-\(UUID().uuidString)",
-            pluginAllowUserToggle: false,
-            pluginDefaultEnabled: false,
+            pluginPolicy: .alwaysOn,
             tabName: "Visible"
         ))
 

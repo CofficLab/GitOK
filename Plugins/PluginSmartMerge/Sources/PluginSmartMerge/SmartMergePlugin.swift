@@ -10,8 +10,7 @@ public struct SmartMergePlugin: GitOKPlugin {
         displayName: PluginSmartMergeLocalization.string("SmartMerge"),
         description: PluginSmartMergeLocalization.string("智能合并工具"),
         iconName: "arrow.merge",
-        allowUserToggle: true,
-        defaultEnabled: true,
+        policy: .optOut,
         tableName: PluginSmartMergeLocalization.table
     )
 

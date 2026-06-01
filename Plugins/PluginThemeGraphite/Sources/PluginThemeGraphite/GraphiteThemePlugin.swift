@@ -7,8 +7,7 @@ public struct GraphiteThemePlugin: GitOKPlugin {
         description: "Neutral graphite dark theme",
         iconName: "square.grid.3x3",
         order: 134,
-        allowUserToggle: false,
-        defaultEnabled: true,
+        policy: .alwaysOn,
         tableName: "ThemeGraphite"
     )
 

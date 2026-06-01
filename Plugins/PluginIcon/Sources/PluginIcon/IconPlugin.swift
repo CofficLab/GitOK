@@ -9,8 +9,7 @@ public struct IconPlugin: GitOKPlugin {
         displayName: PluginIconLocalization.string("plugin-display-name"),
         description: PluginIconLocalization.string("plugin-description"),
         iconName: "photo",
-        allowUserToggle: false,
-        defaultEnabled: true,
+        policy: .alwaysOn,
         tableName: PluginIconLocalization.table
     )
 

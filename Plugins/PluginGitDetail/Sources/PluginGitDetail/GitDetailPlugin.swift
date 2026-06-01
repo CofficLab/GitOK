@@ -9,8 +9,7 @@ public struct GitDetailPlugin: GitOKPlugin {
         displayName: PluginGitDetailLocalization.string("GitDetailPlugin"),
         description: "",
         order: 0,
-        allowUserToggle: false,
-        defaultEnabled: true,
+        policy: .alwaysOn,
         tableName: PluginGitDetailLocalization.table
     )
 

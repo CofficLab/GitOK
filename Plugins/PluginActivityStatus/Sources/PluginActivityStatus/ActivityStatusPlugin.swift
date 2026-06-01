@@ -11,8 +11,7 @@ public struct ActivityStatusPlugin: GitOKPlugin {
         description: PluginActivityStatusLocalization.string("Displays current long-running activity in the status bar."),
         iconName: "arrow.triangle.2.circlepath",
         order: 9999,
-        allowUserToggle: false,
-        defaultEnabled: true,
+        policy: .alwaysOn,
         tableName: PluginActivityStatusLocalization.table
     )
 

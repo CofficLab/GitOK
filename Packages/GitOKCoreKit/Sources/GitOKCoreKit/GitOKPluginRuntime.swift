@@ -43,16 +43,20 @@ public final class GitOKPluginRuntime {
     }
 
     public func isPluginEnabled(_ plugin: any SuperPlugin) -> Bool {
-        if !plugin.pluginAllowUserToggle {
+        if !plugin.pluginPolicy.shouldRegister {
+            return false
+        }
+
+        if !plugin.pluginPolicy.allowUserToggle {
             return true
         }
 
         let pluginId = plugin.instanceLabel
         if settingsStore.hasUserConfigured(pluginId) {
-            return settingsStore.isPluginEnabled(pluginId, defaultEnabled: plugin.pluginDefaultEnabled)
+            return settingsStore.isPluginEnabled(pluginId, defaultEnabled: plugin.pluginPolicy.defaultEnabled)
         }
 
-        return plugin.pluginDefaultEnabled
+        return plugin.pluginPolicy.defaultEnabled
     }
 
     public var tabNames: [String] {
@@ -63,7 +67,7 @@ public final class GitOKPluginRuntime {
 
     public var configurablePlugins: [PluginInfo] {
         plugins
-            .filter { $0.pluginAllowUserToggle }
+            .filter { $0.pluginPolicy.allowUserToggle }
             .map { plugin in
                 let tableName = plugin.pluginTableName
                 return PluginInfo(
@@ -71,8 +75,8 @@ public final class GitOKPluginRuntime {
                     name: String(localized: .init(stringLiteral: plugin.pluginDisplayName), table: tableName),
                     description: String(localized: .init(stringLiteral: plugin.pluginDescription), table: tableName),
                     icon: plugin.pluginIconName,
-                    defaultEnabled: plugin.pluginDefaultEnabled,
-                    isDeveloperEnabled: { true }
+                    defaultEnabled: plugin.pluginPolicy.defaultEnabled,
+                    isDeveloperEnabled: { plugin.pluginPolicy.shouldRegister }
                 )
             }
             .sorted { $0.name < $1.name }

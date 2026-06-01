@@ -10,8 +10,7 @@ public struct SubmodulePlugin: GitOKPlugin {
         displayName: PluginSubmoduleLocalization.string("Submodule"),
         description: PluginSubmoduleLocalization.string("Git submodule status and updates"),
         iconName: "shippingbox",
-        allowUserToggle: true,
-        defaultEnabled: true,
+        policy: .optOut,
         tableName: PluginSubmoduleLocalization.table
     )
 

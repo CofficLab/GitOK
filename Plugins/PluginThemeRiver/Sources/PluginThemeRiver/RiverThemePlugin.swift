@@ -7,8 +7,7 @@ public struct RiverThemePlugin: GitOKPlugin {
         description: "Flowing teal dark theme",
         iconName: "arrow.triangle.branch",
         order: 125,
-        allowUserToggle: false,
-        defaultEnabled: true,
+        policy: .alwaysOn,
         tableName: "ThemeRiver"
     )
 

@@ -7,8 +7,7 @@ public struct AuroraThemePlugin: GitOKPlugin {
         description: "Deep cyan night theme",
         iconName: "point.3.connected.trianglepath.dotted",
         order: 122,
-        allowUserToggle: false,
-        defaultEnabled: true,
+        policy: .alwaysOn,
         tableName: "ThemeAurora"
     )
 

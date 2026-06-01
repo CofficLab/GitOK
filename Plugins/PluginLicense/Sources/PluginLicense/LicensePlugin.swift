@@ -11,8 +11,7 @@ public struct LicensePlugin: GitOKPlugin {
         description: PluginLicenseLocalization.string("LICENSE entry in status bar"),
         iconName: "doc.on.doc",
         order: 9999,
-        allowUserToggle: true,
-        defaultEnabled: true,
+        policy: .optOut,
         tableName: PluginLicenseLocalization.table
     )
 

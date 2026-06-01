@@ -11,8 +11,7 @@ public struct OpenCursorPlugin: GitOKPlugin {
         description: PluginOpenCursorLocalization.string("Open the current project folder in Cursor."),
         iconName: "cursor.rays",
         order: 8401,
-        allowUserToggle: true,
-        defaultEnabled: true,
+        policy: .optOut,
         tableName: PluginOpenCursorLocalization.table
     )
 

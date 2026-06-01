@@ -10,8 +10,7 @@ public struct ProjectPickerPlugin: GitOKPlugin {
         displayName: PluginProjectPickerLocalization.string("ProjectPicker"),
         description: PluginProjectPickerLocalization.string("项目选择器"),
         iconName: "folder",
-        allowUserToggle: false,
-        defaultEnabled: true,
+        policy: .alwaysOn,
         tableName: PluginProjectPickerLocalization.table
     )
 

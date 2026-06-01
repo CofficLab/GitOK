@@ -7,8 +7,7 @@ public struct GitOKThemePlugin: GitOKPlugin {
         description: "Default GitOK dark theme",
         iconName: "folder.badge.gearshape",
         order: 120,
-        allowUserToggle: false,
-        defaultEnabled: true,
+        policy: .alwaysOn,
         tableName: "ThemeGitOK"
     )
 

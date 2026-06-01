@@ -10,8 +10,7 @@ public struct RemoteRepositoryPlugin: GitOKPlugin {
         displayName: PluginRemoteRepositoryLocalization.string("RemoteRepository"),
         description: PluginRemoteRepositoryLocalization.string("远程仓库管理"),
         iconName: "network",
-        allowUserToggle: false,
-        defaultEnabled: true,
+        policy: .alwaysOn,
         tableName: PluginRemoteRepositoryLocalization.table
     )
 

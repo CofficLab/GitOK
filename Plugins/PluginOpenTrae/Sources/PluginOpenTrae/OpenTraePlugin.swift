@@ -11,8 +11,7 @@ public struct OpenTraePlugin: GitOKPlugin {
         description: PluginOpenTraeLocalization.string("Open the current project folder in Trae."),
         iconName: "brain",
         order: 8404,
-        allowUserToggle: true,
-        defaultEnabled: false,
+        policy: .optIn,
         tableName: PluginOpenTraeLocalization.table
     )
 

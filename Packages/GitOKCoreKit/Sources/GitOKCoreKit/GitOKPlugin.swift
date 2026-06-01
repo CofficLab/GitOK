@@ -7,15 +7,54 @@
 @_exported import ProjectSupportKit
 import SwiftUI
 
+public enum GitOKPluginPolicy: String, Sendable, Codable {
+    /// Always registered and enabled; users cannot disable it.
+    case alwaysOn
+
+    /// Registered and enabled by default; users can disable it.
+    case optOut
+
+    /// Registered but disabled by default; users can enable it.
+    case optIn
+
+    /// Not registered.
+    case disabled
+
+    public var shouldRegister: Bool {
+        self != .disabled
+    }
+
+    public var allowUserToggle: Bool {
+        switch self {
+        case .alwaysOn, .disabled: false
+        case .optOut, .optIn: true
+        }
+    }
+
+    public var defaultEnabled: Bool {
+        switch self {
+        case .alwaysOn, .optOut: true
+        case .optIn, .disabled: false
+        }
+    }
+}
+
 public struct GitOKPluginMetadata: Equatable, Sendable {
     public let id: String
     public let displayName: String
     public let description: String
     public let iconName: String
     public let order: Int
-    public let allowUserToggle: Bool
-    public let defaultEnabled: Bool
+    public let policy: GitOKPluginPolicy
     public let tableName: String
+
+    public var allowUserToggle: Bool {
+        policy.allowUserToggle
+    }
+
+    public var defaultEnabled: Bool {
+        policy.defaultEnabled
+    }
 
     public init(
         id: String,
@@ -23,8 +62,7 @@ public struct GitOKPluginMetadata: Equatable, Sendable {
         description: String,
         iconName: String = "puzzlepiece.extension",
         order: Int = 9999,
-        allowUserToggle: Bool = true,
-        defaultEnabled: Bool = true,
+        policy: GitOKPluginPolicy = .optOut,
         tableName: String
     ) {
         self.id = id
@@ -32,14 +70,14 @@ public struct GitOKPluginMetadata: Equatable, Sendable {
         self.description = description
         self.iconName = iconName
         self.order = order
-        self.allowUserToggle = allowUserToggle
-        self.defaultEnabled = defaultEnabled
+        self.policy = policy
         self.tableName = tableName
     }
 }
 
 public protocol GitOKPlugin: Sendable {
     static var metadata: GitOKPluginMetadata { get }
+    static var policy: GitOKPluginPolicy { get }
     static var shouldRegister: Bool { get }
     static var shared: Self { get }
 
@@ -143,7 +181,9 @@ public struct GitOKRemoteTrackingStatus: Equatable, Sendable {
 }
 
 public extension GitOKPlugin {
-    static var shouldRegister: Bool { true }
+    static var policy: GitOKPluginPolicy { metadata.policy }
+
+    static var shouldRegister: Bool { policy.shouldRegister }
 
     var instanceLabel: String {
         Self.metadata.id

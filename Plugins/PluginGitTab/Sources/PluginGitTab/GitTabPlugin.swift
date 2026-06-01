@@ -10,8 +10,7 @@ public struct GitTabPlugin: GitOKPlugin {
         description: PluginGitTabLocalization.string("Git version control"),
         iconName: "arrow.up.arrow.down",
         order: 0,
-        allowUserToggle: false,
-        defaultEnabled: true,
+        policy: .alwaysOn,
         tableName: PluginGitTabLocalization.table
     )
 

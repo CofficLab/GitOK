@@ -11,8 +11,7 @@ public struct OpenKiroPlugin: GitOKPlugin {
         description: PluginOpenKiroLocalization.string("Open the current project folder in Kiro."),
         iconName: "water.waves",
         order: 8405,
-        allowUserToggle: true,
-        defaultEnabled: false,
+        policy: .optIn,
         tableName: PluginOpenKiroLocalization.table
     )
 

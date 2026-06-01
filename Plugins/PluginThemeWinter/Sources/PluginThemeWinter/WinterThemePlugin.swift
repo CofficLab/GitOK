@@ -7,8 +7,7 @@ public struct WinterThemePlugin: GitOKPlugin {
         description: "Cool minimal light theme",
         iconName: "scope",
         order: 133,
-        allowUserToggle: false,
-        defaultEnabled: true,
+        policy: .alwaysOn,
         tableName: "ThemeWinter"
     )
 

@@ -7,8 +7,7 @@ public struct GitHubLightThemePlugin: GitOKPlugin {
         description: "GitHub-inspired light theme",
         iconName: "globe",
         order: 138,
-        allowUserToggle: false,
-        defaultEnabled: true,
+        policy: .alwaysOn,
         tableName: "ThemeGitHubLight"
     )
 

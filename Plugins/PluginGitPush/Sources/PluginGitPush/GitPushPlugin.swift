@@ -10,8 +10,7 @@ public struct GitPushPlugin: GitOKPlugin {
         displayName: PluginGitPushLocalization.string("Git Sync"),
         description: PluginGitPushLocalization.string("根据分支状态执行 Fetch、Pull 或 Push"),
         iconName: "arrow.triangle.2.circlepath",
-        allowUserToggle: true,
-        defaultEnabled: true,
+        policy: .optOut,
         tableName: PluginGitPushLocalization.table
     )
 

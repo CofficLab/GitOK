@@ -37,8 +37,7 @@ public struct BranchPlugin: GitOKPlugin {
         description: PluginBranchLocalization.string("Git 分支管理"),
         iconName: "arrow.triangle.branch",
         order: 22,
-        allowUserToggle: true,
-        defaultEnabled: true,
+        policy: .optOut,
         tableName: PluginBranchLocalization.table
     )
 

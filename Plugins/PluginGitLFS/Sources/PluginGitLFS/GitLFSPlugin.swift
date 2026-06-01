@@ -11,8 +11,7 @@ public struct GitLFSPlugin: GitOKPlugin {
         description: PluginGitLFSLocalization.string("Git LFS status and large file recommendations"),
         iconName: "externaldrive.badge.timemachine",
         order: 9999,
-        allowUserToggle: true,
-        defaultEnabled: true,
+        policy: .optOut,
         tableName: PluginGitLFSLocalization.table
     )
 

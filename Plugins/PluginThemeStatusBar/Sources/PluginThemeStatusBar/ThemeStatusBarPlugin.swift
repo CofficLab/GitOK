@@ -11,8 +11,7 @@ public struct ThemeStatusBarPlugin: GitOKPlugin {
         description: PluginThemeStatusBarLocalization.string("Switch themes from the status bar"),
         iconName: "paintbrush",
         order: 119,
-        allowUserToggle: false,
-        defaultEnabled: true,
+        policy: .alwaysOn,
         tableName: PluginThemeStatusBarLocalization.table
     )
 

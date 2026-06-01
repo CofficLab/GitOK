@@ -10,8 +10,7 @@ public struct GitPullPlugin: GitOKPlugin {
         displayName: PluginGitPullLocalization.string("GitPull"),
         description: PluginGitPullLocalization.string("Git pull operation"),
         iconName: "arrow.down",
-        allowUserToggle: true,
-        defaultEnabled: true,
+        policy: .optOut,
         tableName: PluginGitPullLocalization.table
     )
 

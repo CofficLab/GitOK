@@ -25,6 +25,9 @@ public protocol SuperPlugin {
     /// 实例级图标。默认转发到静态属性，package adapter 可按被包装插件覆盖。
     var pluginIconName: String { get }
 
+    /// 实例级注册和用户启用策略。默认转发到静态属性，package adapter 可按被包装插件覆盖。
+    var pluginPolicy: GitOKPluginPolicy { get }
+
     /// 实例级用户开关能力。默认转发到静态属性，package adapter 可按被包装插件覆盖。
     var pluginAllowUserToggle: Bool { get }
 
@@ -45,6 +48,9 @@ public protocol SuperPlugin {
 
     /// 插件图标名称
     static var iconName: String { get }
+
+    /// 插件注册和用户启用策略。
+    static var policy: GitOKPluginPolicy { get }
 
     /// 是否允许用户在设置中切换启用/禁用此插件
     /// 如果为 false，插件始终启用且不在设置中显示
@@ -165,9 +171,11 @@ public extension SuperPlugin {
 
     var pluginIconName: String { type(of: self).iconName }
 
-    var pluginAllowUserToggle: Bool { type(of: self).allowUserToggle }
+    var pluginPolicy: GitOKPluginPolicy { type(of: self).policy }
 
-    var pluginDefaultEnabled: Bool { type(of: self).defaultEnabled }
+    var pluginAllowUserToggle: Bool { pluginPolicy.allowUserToggle }
+
+    var pluginDefaultEnabled: Bool { pluginPolicy.defaultEnabled }
 
     var pluginTableName: String { type(of: self).tableName }
 
@@ -190,14 +198,17 @@ public extension SuperPlugin {
     /// 默认的图标名称实现
     static var iconName: String { "puzzlepiece.extension" }
 
-    /// 默认允许用户切换
-    static var allowUserToggle: Bool { true }
+    /// 默认策略：注册并默认启用，用户可关闭。
+    static var policy: GitOKPluginPolicy { .optOut }
 
-    /// 默认应该注册
-    static var shouldRegister: Bool { true }
+    /// 默认从 policy 派生用户开关能力
+    static var allowUserToggle: Bool { policy.allowUserToggle }
 
-    /// 默认启用插件
-    static var defaultEnabled: Bool { true }
+    /// 默认从 policy 派生是否注册
+    static var shouldRegister: Bool { policy.shouldRegister }
+
+    /// 默认从 policy 派生默认启用状态
+    static var defaultEnabled: Bool { policy.defaultEnabled }
 
     /// 默认的工具栏前部视图实现，返回空视图
     @MainActor

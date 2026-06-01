@@ -49,12 +49,20 @@ open class GitOKPluginAdapter<Plugin: GitOKPlugin>: SuperPlugin {
         Plugin.metadata.iconName
     }
 
+    open class var policy: GitOKPluginPolicy {
+        Plugin.policy
+    }
+
+    open var pluginPolicy: GitOKPluginPolicy {
+        Plugin.policy
+    }
+
     open var pluginAllowUserToggle: Bool {
-        Plugin.metadata.allowUserToggle
+        pluginPolicy.allowUserToggle
     }
 
     open var pluginDefaultEnabled: Bool {
-        Plugin.metadata.defaultEnabled
+        pluginPolicy.defaultEnabled
     }
 
     open var pluginTableName: String {

@@ -11,8 +11,7 @@ public struct OpenRemotePlugin: GitOKPlugin {
         description: PluginOpenRemoteLocalization.string("Open the current project's remote repository link."),
         iconName: "link",
         order: 8407,
-        allowUserToggle: true,
-        defaultEnabled: true,
+        policy: .optOut,
         tableName: PluginOpenRemoteLocalization.table
     )
 
