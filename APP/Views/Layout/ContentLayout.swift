@@ -1,6 +1,4 @@
 import MagicKit
-import OSLog
-import SwiftData
 import SwiftUI
 
 /// 应用程序的主视图组件。
@@ -10,12 +8,6 @@ struct ContentLayout: View, SuperThread, SuperEvent, SuperLog {
 
   /// 是否启用详细日志输出
   nonisolated static let verbose = false
-  /// 应用状态提供者环境对象
-  @EnvironmentObject var app: AppVM
-
-  /// 插件提供者环境对象
-  @EnvironmentObject var p: PluginVM
-
   /// 当前选中的标签页
   private(set) var tab: String?
 

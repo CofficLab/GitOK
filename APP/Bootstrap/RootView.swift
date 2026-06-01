@@ -104,11 +104,7 @@ struct RootView<Content>: View, SuperEvent, SuperLog where Content: View {
                     .ignoresSafeArea()
             }
 
-            pluginProvider.getRootViewWrapper {
-                content
-                    .withMagicToast()
-                    .navigationTitle("")
-            }
+            hostedContent
             .environmentObject(appProvider)
             .environmentObject(pluginProvider)
             .environmentObject(themeProvider)
@@ -136,6 +132,23 @@ struct RootView<Content>: View, SuperEvent, SuperLog where Content: View {
                 self.handleOpenProject(path: path)
             }
         }
+    }
+
+    @ViewBuilder
+    private var hostedContent: some View {
+        if pluginProvider.hasPlugins {
+            pluginProvider.getRootViewWrapper {
+                baseContent
+            }
+        } else {
+            baseContent
+        }
+    }
+
+    private var baseContent: some View {
+        content
+            .withMagicToast()
+            .navigationTitle("")
     }
 
     // MARK: - Drop Handler
