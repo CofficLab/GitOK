@@ -234,16 +234,15 @@ extension ContentView {
 extension ContentView {
     /// 更新缓存的视图
     func updateCachedViews() {
-        let start = Date()
-        os_log("\(self.t)🔄 UpdateCachedViews begin tab=\(tab) project=\(vm.project?.path ?? "nil") plugins=\(p.registeredPluginCount)")
-
         guard p.hasPlugins else {
             toolbarLeadingViews = []
             toolbarTrailingViews = []
             pluginListViews = []
-            os_log("\(self.t)✅ UpdateCachedViews skipped: no registered plugins")
             return
         }
+
+        let start = Date()
+        os_log("\(self.t)🔄 UpdateCachedViews begin tab=\(tab) project=\(vm.project?.path ?? "nil") plugins=\(p.registeredPluginCount)")
 
         if Self.verbose {
             os_log("\(self.t)🔄 Updating cached views")
