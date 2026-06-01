@@ -8,8 +8,6 @@ struct CommitList: View, SuperLog {
     nonisolated static let emoji = "🖥️"
     nonisolated static let verbose = false
 
-    static var shared = CommitList()
-
     @EnvironmentObject var data: DataVM
     @EnvironmentObject var vm: ProjectVM
 

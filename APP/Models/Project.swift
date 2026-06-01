@@ -3,7 +3,6 @@ import GitOKCoreFeatures
 import MagicKit
 import OSLog
 import SwiftData
-import SwiftUI
 
 /// 项目模型类
 /// 表示一个Git项目的核心数据模型，包含项目的基本信息和操作方法
@@ -1549,26 +1548,3 @@ extension Project {
 }
 
 // MARK: - Project Events
-
-
-// MARK: - Preview
-
-#Preview("App - Small Screen") {
-    ContentLayout()
-        .hideSidebar()
-        .hideTabPicker()
-        .hideProjectActions()
-        .inRootView()
-        .frame(width: 800)
-        .frame(height: 600)
-}
-
-#Preview("App - Big Screen") {
-    ContentLayout()
-        .hideSidebar()
-        .hideProjectActions()
-        .hideTabPicker()
-        .inRootView()
-        .frame(width: 800)
-        .frame(height: 1000)
-}

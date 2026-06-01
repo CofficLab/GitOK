@@ -1,8 +1,8 @@
+import Combine
 import Foundation
 import MagicKit
 import SwiftData
 import OSLog
-import SwiftUI
 
 // MARK: - Repository管理器
 
@@ -50,24 +50,4 @@ extension RepoManager {
         let context = ModelContext(container)
         return RepoManager(modelContext: context)
     }
-}
-
-#Preview("App - Small Screen") {
-    ContentLayout()
-        .hideSidebar()
-        .hideTabPicker()
-        .hideProjectActions()
-        .inRootView()
-        .frame(width: 800)
-        .frame(height: 600)
-}
-
-#Preview("App - Big Screen") {
-    ContentLayout()
-        .hideSidebar()
-        .hideProjectActions()
-        .hideTabPicker()
-        .inRootView()
-        .frame(width: 800)
-        .frame(height: 1000)
 }

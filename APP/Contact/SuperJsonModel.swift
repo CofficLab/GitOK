@@ -1,5 +1,4 @@
 import OSLog
-import SwiftUI
 
 protocol SuperJsonModel: Encodable, Identifiable, Equatable, Hashable {
     var path: String { get }
@@ -67,24 +66,4 @@ extension SuperJsonModel {
             }
         }
     }
-}
-
-#Preview("App - Small Screen") {
-    ContentLayout()
-        .hideSidebar()
-        .hideTabPicker()
-        .hideProjectActions()
-        .inRootView()
-        .frame(width: 800)
-        .frame(height: 600)
-}
-
-#Preview("App - Big Screen") {
-    ContentLayout()
-        .hideSidebar()
-        .hideProjectActions()
-        .hideTabPicker()
-        .inRootView()
-        .frame(width: 800)
-        .frame(height: 1000)
 }

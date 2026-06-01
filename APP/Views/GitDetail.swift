@@ -13,8 +13,6 @@ struct GitDetail: View, SuperEvent, SuperLog {
     @State private var projectChangeToken = 0
     @State private var appWillBecomeActiveToken = 0
 
-    static let shared = GitDetail()
-
     var body: some View {
         GitDetailHostView(
             project: vm.project,

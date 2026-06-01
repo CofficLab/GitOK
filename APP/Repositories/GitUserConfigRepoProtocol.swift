@@ -1,6 +1,5 @@
 import Foundation
 import SwiftData
-import SwiftUI
 
 protocol GitUserConfigRepoProtocol: BaseRepo where Entity == GitUserConfig {
     // 基础CRUD操作
@@ -20,26 +19,4 @@ protocol GitUserConfigRepoProtocol: BaseRepo where Entity == GitUserConfig {
     func clearAllDefaults() throws
     func getConfigCount() throws -> Int
     func getRecentConfigs(limit: Int) throws -> [GitUserConfig]
-}
-
-#Preview("App - Small Screen") {
-    ContentLayout()
-        .setInitialTab("Icon")
-        .hideSidebar()
-        .hideProjectActions()
-        .setInitialTab("Icon")
-        .inRootView()
-        .frame(width: 800)
-        .frame(height: 800)
-}
-
-#Preview("App - Big Screen") {
-    ContentLayout()
-        .hideProjectActions()
-        .setInitialTab("Icon")
-        .hideSidebar()
-        .setInitialTab("Icon")
-        .inRootView()
-        .frame(width: 800)
-        .frame(height: 1200)
 }

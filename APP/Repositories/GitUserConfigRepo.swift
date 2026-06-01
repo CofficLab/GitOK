@@ -2,7 +2,6 @@ import Foundation
 import MagicKit
 import SwiftData
 import OSLog
-import SwiftUI
 
 /// Git 用户配置模型
 /// 存储用户的 Git 姓名和邮箱信息
@@ -199,24 +198,4 @@ class GitUserConfigRepo: BaseRepositoryImpl<GitUserConfig>, GitUserConfigRepoPro
         )
         return try fetch(descriptor)
     }
-}
-
-#Preview("App - Small Screen") {
-    ContentLayout()
-        .hideSidebar()
-        .hideTabPicker()
-        .hideProjectActions()
-        .inRootView()
-        .frame(width: 800)
-        .frame(height: 600)
-}
-
-#Preview("App - Big Screen") {
-    ContentLayout()
-        .hideSidebar()
-        .hideProjectActions()
-        .hideTabPicker()
-        .inRootView()
-        .frame(width: 800)
-        .frame(height: 1000)
 }

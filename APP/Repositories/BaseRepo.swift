@@ -2,7 +2,6 @@ import Foundation
 import SwiftData
 import OSLog
 import MagicKit
-import SwiftUI
 
 // MARK: - Repository基础协议
 
@@ -64,24 +63,4 @@ class BaseRepositoryImpl<T: PersistentModel>: BaseRepo, SuperLog {
         try save()
         logger.info("🗑️ Deleted all \(entities.count) \(String(describing: T.self))")
     }
-}
-
-#Preview("App - Small Screen") {
-    ContentLayout()
-        .hideSidebar()
-        .hideTabPicker()
-        .hideProjectActions()
-        .inRootView()
-        .frame(width: 800)
-        .frame(height: 600)
-}
-
-#Preview("App - Big Screen") {
-    ContentLayout()
-        .hideSidebar()
-        .hideProjectActions()
-        .hideTabPicker()
-        .inRootView()
-        .frame(width: 800)
-        .frame(height: 1000)
 }

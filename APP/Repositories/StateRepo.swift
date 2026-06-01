@@ -123,7 +123,3 @@ class StateRepo: StateRepoProtocol, SuperLog, ObservableObject {
         }
     }
 }
-
-#Preview {
-    MagicUserDefaultsView(defaultSearchText: "App.")
-}

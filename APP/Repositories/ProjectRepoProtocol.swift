@@ -1,6 +1,5 @@
 import Foundation
 import SwiftData
-import SwiftUI
 
 protocol ProjectRepoProtocol: BaseRepo where Entity == Project {
     // 基础CRUD操作
@@ -21,24 +20,4 @@ protocol ProjectRepoProtocol: BaseRepo where Entity == Project {
 enum SortOrder {
     case ascending
     case descending
-}
-
-#Preview("App - Small Screen") {
-    ContentLayout()
-        .hideSidebar()
-        .hideTabPicker()
-        .hideProjectActions()
-        .inRootView()
-        .frame(width: 800)
-        .frame(height: 600)
-}
-
-#Preview("App - Big Screen") {
-    ContentLayout()
-        .hideSidebar()
-        .hideProjectActions()
-        .hideTabPicker()
-        .inRootView()
-        .frame(width: 800)
-        .frame(height: 1000)
 }

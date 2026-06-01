@@ -4,7 +4,6 @@ import Combine
 import Foundation
 import MediaPlayer
 import OSLog
-import SwiftUI
 
 /// 应用状态提供者，管理全局应用状态和用户界面控制
 class AppVM: NSObject, ObservableObject, AVAudioPlayerDelegate, SuperLog {
@@ -104,25 +103,4 @@ extension AppVM {
         defaultSettingTab = "commitStyle"
         showSettings = true
     }
-}
-
-// MARK: - Preview
-
-#Preview("App - Small Screen") {
-    ContentLayout()
-        .hideSidebar()
-        .hideTabPicker()
-        .hideProjectActions()
-        .inRootView()
-        .frame(width: 800)
-        .frame(height: 600)
-}
-
-#Preview("App - Big Screen") {
-    ContentLayout()
-        .hideSidebar()
-        .hideTabPicker()
-        .inRootView()
-        .frame(width: 1200)
-        .frame(height: 1200)
 }

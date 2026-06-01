@@ -1,7 +1,6 @@
 import Foundation
 import OSLog
 import SwiftData
-import SwiftUI
 
 /// 应用配置枚举
 /// 提供应用的基本配置信息和数据库设置
@@ -80,24 +79,4 @@ extension AppConfig {
             fatalError("Could not create ModelContainer: \(error)")
         }
     }
-}
-
-#Preview("App - Small Screen") {
-    ContentLayout()
-        .hideSidebar()
-        .hideTabPicker()
-        .hideProjectActions()
-        .inRootView()
-        .frame(width: 800)
-        .frame(height: 600)
-}
-
-#Preview("App - Big Screen") {
-    ContentLayout()
-        .hideSidebar()
-        .hideProjectActions()
-        .hideTabPicker()
-        .inRootView()
-        .frame(width: 800)
-        .frame(height: 1000)
 }
