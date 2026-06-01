@@ -20,6 +20,7 @@
 		A1F500042F70000100ABC001 /* GitOKUI in Frameworks */ = {isa = PBXBuildFile; productRef = A1F500022F70000100ABC001 /* GitOKUI */; };
 		B70000032FC0000000000001 /* GitOKPluginRegistry in Frameworks */ = {isa = PBXBuildFile; productRef = B70000022FC0000000000001 /* GitOKPluginRegistry */; };
 		CC73F006457981A7C3AE5D86 /* GitOKCoreKit in Frameworks */ = {isa = PBXBuildFile; productRef = 4EC50CECD060E698BF493AED /* GitOKCoreKit */; };
+		CC73F007457981A7C3AE5D86 /* GitOKCoreFeatures in Frameworks */ = {isa = PBXBuildFile; productRef = CC73F008457981A7C3AE5D86 /* GitOKCoreFeatures */; };
 		E45D8E48A323B0CC5A961EE4 /* GitOKCoreKit in Frameworks */ = {isa = PBXBuildFile; productRef = 4EC50CECD060E698BF493AED /* GitOKCoreKit */; };
 		F54D04C42DF2D01300FFB434 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = F54D04C32DF2D01300FFB434 /* Localizable.xcstrings */; };
 		F5D122802F0E5B040001A5D2 /* MagicDiffView in Frameworks */ = {isa = PBXBuildFile; productRef = F5D1227F2F0E5B040001A5D2 /* MagicDiffView */; };
@@ -814,6 +815,7 @@
 				F5E6143F2F33311F00F79149 /* MagicKit in Frameworks */,
 				0B3CC95E2DF1C49000E22263 /* Sparkle in Frameworks */,
 				CC73F006457981A7C3AE5D86 /* GitOKCoreKit in Frameworks */,
+				CC73F007457981A7C3AE5D86 /* GitOKCoreFeatures in Frameworks */,
 				B70000032FC0000000000001 /* GitOKPluginRegistry in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1189,6 +1191,7 @@
 				F5E6143E2F33311F00F79149 /* MagicKit */,
 				0B4A1BFF2F80000100AA0001 /* LibGit2Swift */,
 				4EC50CECD060E698BF493AED /* GitOKCoreKit */,
+				CC73F008457981A7C3AE5D86 /* GitOKCoreFeatures */,
 				B70000022FC0000000000001 /* GitOKPluginRegistry */,
 			);
 			productName = GitOK;
@@ -2504,6 +2507,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 917255476993285F764073A8 /* XCLocalSwiftPackageReference "Packages/GitOKCoreKit" */;
 			productName = GitOKCoreKit;
+		};
+		CC73F008457981A7C3AE5D86 /* GitOKCoreFeatures */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 917255476993285F764073A8 /* XCLocalSwiftPackageReference "Packages/GitOKCoreKit" */;
+			productName = GitOKCoreFeatures;
 		};
 		A1F100022F70000100ABC001 /* GitCoreKit */ = {
 			isa = XCSwiftPackageProductDependency;

@@ -3,7 +3,7 @@ import LibGit2Swift
 import MagicAlert
 import MagicKit
 import OSLog
-import GitOKCoreKit
+import GitOKCoreFeatures
 import SwiftUI
 
 /// Git 文件变更列表入口。列表实现逻辑由 CoreKit 的 FileListHostView 提供。

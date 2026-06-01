@@ -3,7 +3,7 @@ import LibGit2Swift
 import MagicAlert
 import MagicKit
 import OSLog
-import GitOKCoreKit
+import GitOKCoreFeatures
 import SwiftUI
 
 /// 当前工作状态入口。实现逻辑由 CoreKit 的 WorkingStateHostView 提供。

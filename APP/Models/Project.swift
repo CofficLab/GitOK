@@ -3,7 +3,7 @@ import GitCoreKit
 import LibGit2Swift
 import MagicKit
 import OSLog
-import GitOKCoreKit
+import GitOKCoreFeatures
 import SwiftData
 import SwiftUI
 

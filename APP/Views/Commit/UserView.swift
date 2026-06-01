@@ -1,6 +1,6 @@
 import MagicKit
 import OSLog
-import GitOKCoreKit
+import GitOKCoreFeatures
 import SwiftUI
 
 /// 用户信息显示视图

@@ -9,11 +9,7 @@ public enum CommitStyle: String, CaseIterable {
 
     /// 显示标签
     public var label: String {
-        String(
-            localized: String.LocalizationValue(rawValue),
-            table: "GitCommit",
-            bundle: .module
-        )
+        CommitLocalization.string(rawValue)
     }
 
     /// 是否包含 emoji

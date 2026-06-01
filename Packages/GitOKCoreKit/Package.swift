@@ -12,6 +12,10 @@ let package = Package(
             name: "GitOKCoreKit",
             targets: ["GitOKCoreKit"]
         ),
+        .library(
+            name: "GitOKCoreFeatures",
+            targets: ["GitOKCoreFeatures"]
+        ),
     ],
     dependencies: [
         .package(path: "../GitOKUI"),
@@ -38,6 +42,13 @@ let package = Package(
             resources: [
                 .process("Resources"),
             ]
+        ),
+        .target(
+            name: "GitOKCoreFeatures",
+            dependencies: [
+                "GitOKCoreKit",
+            ],
+            path: "Sources/GitOKCoreFeatures"
         ),
         .testTarget(
             name: "GitOKCoreKitTests",

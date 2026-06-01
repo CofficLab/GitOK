@@ -1,7 +1,7 @@
 import LibGit2Swift
 import MagicKit
 import OSLog
-import GitOKCoreKit
+import GitOKCoreFeatures
 import SwiftUI
 
 /// Git 提交列表视图组件

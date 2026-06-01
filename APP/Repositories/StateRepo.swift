@@ -1,7 +1,7 @@
 import SwiftUI
 import MagicKit
 import OSLog
-import GitOKCoreKit
+import GitOKCoreFeatures
 
 
 // MARK: - 状态管理Repository协议

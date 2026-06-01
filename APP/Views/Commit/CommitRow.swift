@@ -3,7 +3,7 @@ import LibGit2Swift
 import MagicAlert
 import MagicKit
 import OSLog
-import GitOKCoreKit
+import GitOKCoreFeatures
 import SwiftUI
 
 /// 提交记录行入口。行状态和操作逻辑由 CoreKit 的 CommitRowHostView 提供。

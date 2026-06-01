@@ -1,5 +1,5 @@
 import MagicKit
-import GitOKCoreKit
+import GitOKCoreFeatures
 import SwiftUI
 
 /// Git 详情入口。详情布局和状态逻辑由 CoreKit 的 GitDetailHostView 提供。

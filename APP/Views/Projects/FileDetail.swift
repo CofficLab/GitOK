@@ -2,7 +2,7 @@ import MagicAlert
 import MagicDiffView
 import MagicKit
 import OSLog
-import GitOKCoreKit
+import GitOKCoreFeatures
 import SwiftUI
 
 struct FileDetail: View, SuperLog {
