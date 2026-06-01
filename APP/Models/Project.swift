@@ -1,5 +1,4 @@
 import Foundation
-import GitCoreKit
 import LibGit2Swift
 import MagicKit
 import OSLog
@@ -418,7 +417,7 @@ extension Project {
         }
     }
 
-    func compareBranches(base: GitBranch, head: GitBranch) throws -> GitCoreKit.GitBranchCompare {
+    func compareBranches(base: GitBranch, head: GitBranch) throws -> GitOKBranchCompare {
         try gitCLI.compareBranches(base: base.name, head: head.name)
     }
 
@@ -678,7 +677,7 @@ extension Project {
         try gitCLI.fileDiff(filePath, staged: staged, ignoreWhitespace: ignoreWhitespace)
     }
 
-    func applyPatch(_ patch: String, mode: GitCoreKit.GitPatchApplyMode, filePath: String) throws {
+    func applyPatch(_ patch: String, mode: GitOKPatchApplyMode, filePath: String) throws {
         do {
             try gitCLI.applyPatch(patch, mode: mode)
             postEvent(
@@ -869,7 +868,7 @@ extension Project {
         }
     }
 
-    func reset(to commit: GitCommit, mode: GitCoreKit.GitResetMode) throws {
+    func reset(to commit: GitCommit, mode: GitOKResetMode) throws {
         do {
             try gitCLI.reset(to: commit.hash, mode: mode)
             postEvent(
@@ -1262,7 +1261,7 @@ extension Project {
         }
     }
 
-    func aheadBehind() throws -> GitCoreKit.GitAheadBehind {
+    func aheadBehind() throws -> GitOKAheadBehind {
         try gitCLI.aheadBehind()
     }
 
