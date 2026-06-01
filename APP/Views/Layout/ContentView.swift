@@ -195,7 +195,7 @@ extension ContentView {
         .onChange(of: self.tab, onChangeOfTab)
         .onChange(of: self.columnVisibility, onChangeColumnVisibility)
         .onChange(of: p.plugins.count, onPluginsLoaded)
-        .onReceive(p.objectWillChange, perform: onPluginProviderChange)
+        .onPluginProviderChange(if: p.hasPlugins, provider: p, perform: onPluginProviderChange)
         .toolbarVisibility(toolbarVisibility ? .visible : .hidden)
         .toolbar(content: {
             ToolbarItem(placement: .navigation) {
@@ -430,6 +430,23 @@ extension ContentView {
         }
 
         return tabNames.first ?? ""
+    }
+}
+
+private extension View {
+    @ViewBuilder
+    func onPluginProviderChange(
+        if isEnabled: Bool,
+        provider: PluginVM,
+        perform action: @escaping () -> Void
+    ) -> some View {
+        if isEnabled {
+            onReceive(provider.objectWillChange) { _ in
+                action()
+            }
+        } else {
+            self
+        }
     }
 }
 
