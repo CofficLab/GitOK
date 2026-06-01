@@ -1,5 +1,4 @@
 import AppKit
-import GitOKCoreFeatures
 import GitOKUI
 import SwiftUI
 

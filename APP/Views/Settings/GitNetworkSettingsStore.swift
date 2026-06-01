@@ -1,20 +1,19 @@
+import Combine
 import Foundation
 import GitCoreKit
 
 @MainActor
-public final class GitNetworkSettingsStore: ObservableObject {
-    @Published public var httpProxy = ""
-    @Published public var httpsProxy = ""
-    @Published public var sslVerify = true
-    @Published public var sslCAInfo = ""
-    @Published public var isLoading = false
-    @Published public var isSaving = false
-    @Published public var message: String?
-    @Published public var errorMessage: String?
+final class GitNetworkSettingsStore: ObservableObject {
+    @Published var httpProxy = ""
+    @Published var httpsProxy = ""
+    @Published var sslVerify = true
+    @Published var sslCAInfo = ""
+    @Published var isLoading = false
+    @Published var isSaving = false
+    @Published var message: String?
+    @Published var errorMessage: String?
 
-    public init() {}
-
-    public func load() {
+    func load() {
         isLoading = true
         errorMessage = nil
         message = nil
@@ -38,7 +37,7 @@ public final class GitNetworkSettingsStore: ObservableObject {
         }
     }
 
-    public func save() {
+    func save() {
         isSaving = true
         errorMessage = nil
         message = nil
