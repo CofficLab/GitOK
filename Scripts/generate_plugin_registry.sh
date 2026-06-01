@@ -5,15 +5,18 @@ set -eu
 # generate_plugin_registry.sh
 #
 # Scans plugin packages for enabled types conforming to GitOKPlugin and
-# generates APP/Generated/GeneratedPluginRegistry.swift.
+# generates Packages/GitOKPluginRegistry.
 #
 # Inspired by Cisum's Scripts/generate_plugin_registry.sh.
 # ==============================================================================
 
 ROOT_DIR="${SRCROOT:-$(cd "$(dirname "$0")/.." && pwd)}"
 PLUGINS_DIR="$ROOT_DIR/Plugins"
-OUTPUT="$ROOT_DIR/APP/Generated/GeneratedPluginRegistry.swift"
+REGISTRY_PACKAGE_DIR="$ROOT_DIR/Packages/GitOKPluginRegistry"
+OUTPUT="$REGISTRY_PACKAGE_DIR/Sources/GitOKPluginRegistry/GeneratedPluginRegistry.swift"
 TMP_OUTPUT="$OUTPUT.tmp"
+MANIFEST="$REGISTRY_PACKAGE_DIR/Package.swift"
+TMP_MANIFEST="$MANIFEST.tmp"
 
 mkdir -p "$(dirname "$OUTPUT")"
 
@@ -44,7 +47,58 @@ registry_entries=$(printf '%s\n' "$registry_entries" | awk 'NF > 0' | sort -u)
 registry_imports=$(printf '%s\n' "$registry_entries" | awk -F'|' '{ print $2 }' | sort -u)
 
 # ---------------------------------------------------------------------------
-# 2. Generate the Swift file
+# 2. Generate the Swift package manifest
+# ---------------------------------------------------------------------------
+
+mkdir -p "$REGISTRY_PACKAGE_DIR"
+
+{
+    printf '// swift-tools-version: 6.0\n'
+    printf 'import PackageDescription\n\n'
+    printf 'let package = Package(\n'
+    printf '    name: "GitOKPluginRegistry",\n'
+    printf '    platforms: [\n'
+    printf '        .macOS(.v15),\n'
+    printf '    ],\n'
+    printf '    products: [\n'
+    printf '        .library(\n'
+    printf '            name: "GitOKPluginRegistry",\n'
+    printf '            targets: ["GitOKPluginRegistry"]\n'
+    printf '        ),\n'
+    printf '    ],\n'
+    printf '    dependencies: [\n'
+    printf '        .package(path: "../GitOKCoreKit"),\n'
+    printf '%s\n' "$registry_imports" |
+    while IFS= read -r package_name; do
+        [ -n "$package_name" ] || continue
+        printf '        .package(path: "../../Plugins/%s"),\n' "$package_name"
+    done
+    printf '    ],\n'
+    printf '    targets: [\n'
+    printf '        .target(\n'
+    printf '            name: "GitOKPluginRegistry",\n'
+    printf '            dependencies: [\n'
+    printf '                "GitOKCoreKit",\n'
+    printf '%s\n' "$registry_imports" |
+    while IFS= read -r package_name; do
+        [ -n "$package_name" ] || continue
+        printf '                "%s",\n' "$package_name"
+    done
+    printf '            ],\n'
+    printf '            path: "Sources/GitOKPluginRegistry"\n'
+    printf '        ),\n'
+    printf '    ]\n'
+    printf ')\n'
+} > "$TMP_MANIFEST"
+
+if [ -f "$MANIFEST" ] && cmp -s "$TMP_MANIFEST" "$MANIFEST"; then
+    rm "$TMP_MANIFEST"
+else
+    mv "$TMP_MANIFEST" "$MANIFEST"
+fi
+
+# ---------------------------------------------------------------------------
+# 3. Generate the Swift file
 # ---------------------------------------------------------------------------
 
 {
@@ -59,25 +113,26 @@ registry_imports=$(printf '%s\n' "$registry_entries" | awk -F'|' '{ print $2 }' 
     printf '\n'
     printf '/// Auto-generated plugin registry.\n'
     printf '/// Registers plugin adapters generated from enabled plugin packages.\n'
-    printf 'enum GeneratedPluginRegistry {\n'
+    printf 'public enum GeneratedPluginRegistry {\n'
     if [ -n "$registry_entries" ]; then
-        printf '    static let hasDefaultAdapters = true\n\n'
+        printf '    public static let hasDefaultAdapters = true\n\n'
     else
-        printf '    static let hasDefaultAdapters = false\n\n'
+        printf '    public static let hasDefaultAdapters = false\n\n'
     fi
-    printf '    /// Register default `PluginAdapter` instances for all plugins.\n'
-    printf '    /// Each adapter preserves the concrete generic type so that\n'
-    printf '    /// `shouldRegister` / `order` etc. are resolved at compile time.\n'
+    printf '    /// Register default plugin adapters for all enabled plugin packages.\n'
     printf '    ///\n'
-    printf '    /// Plugins that need custom view providers should be registered\n'
-    printf '    /// separately with `PluginAdapter<XxxPlugin>(...viewProvider:...)`.\n'
-    printf '    ///\n'
-    printf '    /// - Parameter register: Closure that handles the actual registration.\n'
-    printf '    static func registerDefaultAdapters(_ register: (any SuperPlugin) -> Void) {\n'
+    printf '    /// - Parameters:\n'
+    printf '    ///   - adapterFactory: Factory supplied by the host app to preserve app-specific bridging.\n'
+    printf '    ///   - register: Closure that handles the actual registration.\n'
+    printf '    @MainActor\n'
+    printf '    public static func registerDefaultAdapters(\n'
+    printf '        adapterFactory: some GitOKPluginAdapterFactory,\n'
+    printf '        _ register: (any SuperPlugin) -> Void\n'
+    printf '    ) {\n'
     printf '%s\n' "$registry_entries" |
     while IFS='|' read -r struct_name package_name; do
         [ -n "$struct_name" ] || continue
-        printf '        if %s.shouldRegister { register(PluginAdapter<%s>()) }\n' "$struct_name" "$struct_name"
+        printf '        if %s.shouldRegister { register(adapterFactory.makeAdapter(for: %s.shared)) }\n' "$struct_name" "$struct_name"
     done
     printf '    }\n'
     printf '}\n'

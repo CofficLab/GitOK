@@ -7,6 +7,7 @@ import SwiftData
 import SwiftUI
 
 import GitOKCoreKit
+import GitOKPluginRegistry
 import GitOKUI
 
 @MainActor
@@ -271,7 +272,7 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
 
         clearRegisteredPlugins()
 
-        GeneratedPluginRegistry.registerDefaultAdapters { adapter in
+        GeneratedPluginRegistry.registerDefaultAdapters(adapterFactory: AppPluginAdapterFactory()) { adapter in
             self.register(adapter)
         }
     }

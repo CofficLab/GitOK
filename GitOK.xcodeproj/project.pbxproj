@@ -20,6 +20,7 @@
 		A1F400042F70000100ABC001 /* ProjectSupportKit in Frameworks */ = {isa = PBXBuildFile; productRef = A1F400022F70000100ABC001 /* ProjectSupportKit */; };
 		A1F500032F70000100ABC001 /* GitOKUI in Frameworks */ = {isa = PBXBuildFile; productRef = A1F500022F70000100ABC001 /* GitOKUI */; };
 		A1F500042F70000100ABC001 /* GitOKUI in Frameworks */ = {isa = PBXBuildFile; productRef = A1F500022F70000100ABC001 /* GitOKUI */; };
+		B70000032FC0000000000001 /* GitOKPluginRegistry in Frameworks */ = {isa = PBXBuildFile; productRef = B70000022FC0000000000001 /* GitOKPluginRegistry */; };
 		CC73F006457981A7C3AE5D86 /* GitOKCoreKit in Frameworks */ = {isa = PBXBuildFile; productRef = 4EC50CECD060E698BF493AED /* GitOKCoreKit */; };
 		E45D8E48A323B0CC5A961EE4 /* GitOKCoreKit in Frameworks */ = {isa = PBXBuildFile; productRef = 4EC50CECD060E698BF493AED /* GitOKCoreKit */; };
 		F54D04C42DF2D01300FFB434 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = F54D04C32DF2D01300FFB434 /* Localizable.xcstrings */; };
@@ -826,6 +827,7 @@
 				F5B9093B2EE8FB4B008BEB16 /* MagicDiffView in Frameworks */,
 				0B3CC95E2DF1C49000E22263 /* Sparkle in Frameworks */,
 				CC73F006457981A7C3AE5D86 /* GitOKCoreKit in Frameworks */,
+				B70000032FC0000000000001 /* GitOKPluginRegistry in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1207,6 +1209,7 @@
 				F5A3E6C12F8610E100D4DD4A /* MagicDiffView */,
 				0B4A1BFF2F80000100AA0001 /* LibGit2Swift */,
 				4EC50CECD060E698BF493AED /* GitOKCoreKit */,
+				B70000022FC0000000000001 /* GitOKPluginRegistry */,
 			);
 			productName = GitOK;
 			productReference = 0B55A0222F1B0F38005C6809 /* GitOK.app */;
@@ -1278,6 +1281,7 @@
 				F5A3E6C02F8610E100D4DD4A /* XCRemoteSwiftPackageReference "MagicDiffView" */,
 				F5165B6E2FBC084A00F24BD9 /* XCRemoteSwiftPackageReference "LibGit2Swift" */,
 				917255476993285F764073A8 /* XCLocalSwiftPackageReference "Packages/GitOKCoreKit" */,
+				B70000012FC0000000000001 /* XCLocalSwiftPackageReference "Packages/GitOKPluginRegistry" */,
 			);
 			productRefGroup = 0B0E16742BD89A8F0078942B;
 			projectDirPath = "";
@@ -2474,6 +2478,10 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Packages/GitOKUI;
 		};
+		B70000012FC0000000000001 /* XCLocalSwiftPackageReference "Packages/GitOKPluginRegistry" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/GitOKPluginRegistry;
+		};
 		F5E6143D2F33311F00F79149 /* XCLocalSwiftPackageReference "Packages/MagicKit" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Packages/MagicKit;
@@ -2547,6 +2555,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = A1F500012F70000100ABC001 /* XCLocalSwiftPackageReference "Packages/GitOKUI" */;
 			productName = GitOKUI;
+		};
+		B70000022FC0000000000001 /* GitOKPluginRegistry */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B70000012FC0000000000001 /* XCLocalSwiftPackageReference "Packages/GitOKPluginRegistry" */;
+			productName = GitOKPluginRegistry;
 		};
 		F5A3DF692F85FA4B00D4DD4A /* MagicDiffView */ = {
 			isa = XCSwiftPackageProductDependency;

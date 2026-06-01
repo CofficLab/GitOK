@@ -8,6 +8,12 @@ final class PluginAdapter<Plugin: GitOKPlugin>: GitOKPluginAdapter<Plugin> {
     }
 }
 
+struct AppPluginAdapterFactory: GitOKPluginAdapterFactory {
+    func makeAdapter<Plugin: GitOKPlugin>(for plugin: Plugin) -> any SuperPlugin {
+        PluginAdapter(plugin)
+    }
+}
+
 private struct PackagedPluginRootHost<Plugin: GitOKPlugin, Content: View>: View {
     let plugin: Plugin
     let content: Content
