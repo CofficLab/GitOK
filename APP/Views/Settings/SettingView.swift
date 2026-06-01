@@ -29,7 +29,6 @@ struct SettingView: View, SuperLog {
         case releaseNotes = "更新"
         case diagnostics = "诊断"
         case appearance = "外观"
-//        case systemInfo = "系统信息"
         case plugins = "插件管理"
         case about = "关于"
 
@@ -46,7 +45,6 @@ struct SettingView: View, SuperLog {
             case .releaseNotes: return "arrow.triangle.2.circlepath"
             case .diagnostics: return "stethoscope"
             case .appearance: return "paintbrush"
-//            case .systemInfo: return "desktopcomputer.trianglebadge.exclamationmark"
             case .plugins: return "puzzlepiece.extension"
             case .about: return "info.circle"
             }
@@ -106,9 +104,6 @@ struct SettingView: View, SuperLog {
 
             case .appearance:
                 AppAppearanceSettingView()
-
-//            case .systemInfo:
-//                SystemInfoSettingView()
 
             case .plugins:
                 PluginSettingsView()
