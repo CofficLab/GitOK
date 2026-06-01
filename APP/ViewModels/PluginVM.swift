@@ -13,7 +13,6 @@ class PluginVM: ObservableObject {
     ) -> Void
 
     private var runtime: GitOKPluginRuntime?
-    private let registerPackagedPlugins: PluginRegistrationHandler?
 
     /// Combine 订阅集合
     private var cancellables = Set<AnyCancellable>()
@@ -185,12 +184,12 @@ class PluginVM: ObservableObject {
     // MARK: - Initialization
 
     init(registerPackagedPlugins: PluginRegistrationHandler? = nil) {
-        self.registerPackagedPlugins = registerPackagedPlugins
-
         let pluginRuntime = registerPackagedPlugins == nil ? nil : GitOKPluginRuntime()
         self.runtime = pluginRuntime
 
-        registerPackagedPluginAdapters()
+        if let registerPackagedPlugins {
+            registerPackagedPluginAdapters(registerPackagedPlugins)
+        }
 
         // 订阅设置变化，当设置改变时触发 UI 更新
         if hasPlugins {
@@ -205,8 +204,8 @@ class PluginVM: ObservableObject {
     // MARK: - Custom Plugin Providers
 
     /// Register all packaged plugins using the auto-generated registry.
-    private func registerPackagedPluginAdapters() {
-        guard let runtime, let registerPackagedPlugins else { return }
+    private func registerPackagedPluginAdapters(_ registerPackagedPlugins: PluginRegistrationHandler) {
+        guard let runtime else { return }
 
         runtime.clearRegisteredPlugins()
 
