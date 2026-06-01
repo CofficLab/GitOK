@@ -25,7 +25,6 @@ let package = Package(
         .package(path: "../GitCoreKit"),
         .package(path: "../MagicAlert"),
         .package(path: "../MagicKit"),
-        .package(url: "https://github.com/nookery/MagicDiffView", branch: "main"),
     ],
     targets: [
         .target(
@@ -49,7 +48,6 @@ let package = Package(
                 "GitCoreKit",
                 "MagicAlert",
                 "MagicKit",
-                "MagicDiffView",
             ],
             path: "Sources/GitOKCoreFeatures"
         ),
