@@ -1,0 +1,10 @@
+import Foundation
+
+public enum IconLocalization {
+    public static let table = "Icon"
+    public static let bundle = Bundle.module
+
+    public static func string(_ key: String) -> String {
+        NSLocalizedString(key, tableName: table, bundle: bundle, value: key, comment: "")
+    }
+}

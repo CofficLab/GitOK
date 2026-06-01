@@ -2,7 +2,6 @@ import MagicAlert
 import GitOKCoreKit
 import MagicKit
 import OSLog
-import PluginGitClone
 import SwiftUI
 
 /// 主内容视图，管理应用的整体布局和导航结构

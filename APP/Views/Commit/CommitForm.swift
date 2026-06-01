@@ -1,7 +1,7 @@
 import MagicAlert
 import MagicKit
 import OSLog
-import PluginCommit
+import GitOKCoreKit
 import SwiftUI
 
 /// 提交表单视图组件

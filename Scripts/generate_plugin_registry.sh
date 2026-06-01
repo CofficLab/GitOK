@@ -4,7 +4,7 @@ set -eu
 # ==============================================================================
 # generate_plugin_registry.sh
 #
-# Scans Plugins/Plugin* for types conforming to GitOKPlugin and
+# Scans plugin packages for enabled types conforming to GitOKPlugin and
 # generates APP/Generated/GeneratedPluginRegistry.swift.
 #
 # Inspired by Cisum's Scripts/generate_plugin_registry.sh.
@@ -28,6 +28,10 @@ registry_entries=$(
     while IFS= read -r plugin_file; do
         struct_name=$(sed -n 's/^[[:space:]]*public struct \([A-Za-z0-9_]*Plugin\):.*GitOKPlugin.*/\1/p' "$plugin_file" | head -1)
         [ -n "$struct_name" ] || continue
+
+        if grep -Eq 'policy:[[:space:]]*\.disabled' "$plugin_file"; then
+            continue
+        fi
 
         package_name=$(printf '%s\n' "$plugin_file" | sed "s#^$PLUGINS_DIR/##; s#/.*##")
         [ -n "$package_name" ] || continue
@@ -54,7 +58,7 @@ registry_imports=$(printf '%s\n' "$registry_entries" | awk -F'|' '{ print $2 }' 
     done
     printf '\n'
     printf '/// Auto-generated plugin registry.\n'
-    printf '/// Lists every `GitOKPlugin` found in Plugins/Plugin*.\n'
+    printf '/// Registers plugin adapters generated from enabled plugin packages.\n'
     printf 'enum GeneratedPluginRegistry {\n'
     printf '    /// Register default `PluginAdapter` instances for all plugins.\n'
     printf '    /// Each adapter preserves the concrete generic type so that\n'

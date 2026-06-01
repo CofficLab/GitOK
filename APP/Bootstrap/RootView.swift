@@ -2,7 +2,7 @@ import GitOKUI
 import MagicAlert
 import MagicKit
 import OSLog
-import PluginIcon
+import GitOKCoreKit
 import SwiftData
 import SwiftUI
 

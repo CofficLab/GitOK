@@ -1,6 +1,6 @@
 import MagicKit
 import OSLog
-import PluginGitClone
+import GitOKCoreKit
 import SwiftUI
 
 /// 添加项目按钮组件
@@ -45,7 +45,7 @@ struct BtnAdd: View, SuperLog {
             CreateRepositorySheet()
         }
         .sheet(isPresented: $showCloneRepositorySheet) {
-            PluginGitClone.CloneRepositorySheet(context: GitClonePluginContextFactory.make(data: g, projectVM: vm))
+            CloneRepositorySheet(context: GitCloneContextFactory.make(data: g, projectVM: vm))
         }
     }
 

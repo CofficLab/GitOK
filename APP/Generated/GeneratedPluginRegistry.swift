@@ -2,68 +2,9 @@
 // Do not edit by hand.
 
 import GitOKCoreKit
-import PluginActivityStatus
-import PluginAutoPush
-import PluginBanner
-import PluginBannerTab
-import PluginBranch
-import PluginCleanStatus
-import PluginCommit
-import PluginConflictResolver
-import PluginFileInfo
-import PluginGitClone
-import PluginGitDetail
-import PluginGitIgnore
-import PluginGitLFS
-import PluginGitPull
-import PluginGitPush
-import PluginGitSync
-import PluginGitTab
-import PluginGitWatcher
-import PluginIcon
-import PluginIconTab
-import PluginLicense
-import PluginOpenAntigravity
-import PluginOpenCursor
-import PluginOpenFinder
-import PluginOpenGitHubDesktop
-import PluginOpenKiro
-import PluginOpenRemote
-import PluginOpenTerminal
-import PluginOpenTrae
-import PluginOpenVSCode
-import PluginOpenXcode
-import PluginProjectPicker
-import PluginReadme
-import PluginRemoteRepository
-import PluginSettingsButton
-import PluginSmartMerge
-import PluginStash
-import PluginSubmodule
-import PluginThemeAurora
-import PluginThemeDracula
-import PluginThemeEmber
-import PluginThemeGitHubLight
-import PluginThemeGitOK
-import PluginThemeGlacier
-import PluginThemeGraphite
-import PluginThemeHarbor
-import PluginThemeMatrix
-import PluginThemeMidnight
-import PluginThemeMountain
-import PluginThemeNebula
-import PluginThemeOneDark
-import PluginThemeOrchard
-import PluginThemeRiver
-import PluginThemeSpring
-import PluginThemeStatusBar
-import PluginThemeSummer
-import PluginThemeWinter
-import PluginThemeXcodeLight
-import PluginUnpushedStatus
 
 /// Auto-generated plugin registry.
-/// Lists every `GitOKPlugin` found in Plugins/Plugin*.
+/// Registers plugin adapters generated from enabled plugin packages.
 enum GeneratedPluginRegistry {
     /// Register default `PluginAdapter` instances for all plugins.
     /// Each adapter preserves the concrete generic type so that
@@ -74,64 +15,5 @@ enum GeneratedPluginRegistry {
     ///
     /// - Parameter register: Closure that handles the actual registration.
     static func registerDefaultAdapters(_ register: (any SuperPlugin) -> Void) {
-        if ActivityStatusPlugin.shouldRegister { register(PluginAdapter<ActivityStatusPlugin>()) }
-        if AuroraThemePlugin.shouldRegister { register(PluginAdapter<AuroraThemePlugin>()) }
-        if AutoPushPlugin.shouldRegister { register(PluginAdapter<AutoPushPlugin>()) }
-        if BannerPlugin.shouldRegister { register(PluginAdapter<BannerPlugin>()) }
-        if BannerTabPlugin.shouldRegister { register(PluginAdapter<BannerTabPlugin>()) }
-        if BranchPlugin.shouldRegister { register(PluginAdapter<BranchPlugin>()) }
-        if CleanStatusPlugin.shouldRegister { register(PluginAdapter<CleanStatusPlugin>()) }
-        if CommitPlugin.shouldRegister { register(PluginAdapter<CommitPlugin>()) }
-        if ConflictResolverPlugin.shouldRegister { register(PluginAdapter<ConflictResolverPlugin>()) }
-        if DraculaThemePlugin.shouldRegister { register(PluginAdapter<DraculaThemePlugin>()) }
-        if EmberThemePlugin.shouldRegister { register(PluginAdapter<EmberThemePlugin>()) }
-        if FileInfoPlugin.shouldRegister { register(PluginAdapter<FileInfoPlugin>()) }
-        if GitClonePlugin.shouldRegister { register(PluginAdapter<GitClonePlugin>()) }
-        if GitDetailPlugin.shouldRegister { register(PluginAdapter<GitDetailPlugin>()) }
-        if GitHubLightThemePlugin.shouldRegister { register(PluginAdapter<GitHubLightThemePlugin>()) }
-        if GitIgnorePlugin.shouldRegister { register(PluginAdapter<GitIgnorePlugin>()) }
-        if GitLFSPlugin.shouldRegister { register(PluginAdapter<GitLFSPlugin>()) }
-        if GitOKThemePlugin.shouldRegister { register(PluginAdapter<GitOKThemePlugin>()) }
-        if GitPullPlugin.shouldRegister { register(PluginAdapter<GitPullPlugin>()) }
-        if GitPushPlugin.shouldRegister { register(PluginAdapter<GitPushPlugin>()) }
-        if GitSyncPlugin.shouldRegister { register(PluginAdapter<GitSyncPlugin>()) }
-        if GitTabPlugin.shouldRegister { register(PluginAdapter<GitTabPlugin>()) }
-        if GitWatcherPlugin.shouldRegister { register(PluginAdapter<GitWatcherPlugin>()) }
-        if GlacierThemePlugin.shouldRegister { register(PluginAdapter<GlacierThemePlugin>()) }
-        if GraphiteThemePlugin.shouldRegister { register(PluginAdapter<GraphiteThemePlugin>()) }
-        if HarborThemePlugin.shouldRegister { register(PluginAdapter<HarborThemePlugin>()) }
-        if IconPlugin.shouldRegister { register(PluginAdapter<IconPlugin>()) }
-        if IconTabPlugin.shouldRegister { register(PluginAdapter<IconTabPlugin>()) }
-        if LicensePlugin.shouldRegister { register(PluginAdapter<LicensePlugin>()) }
-        if MatrixThemePlugin.shouldRegister { register(PluginAdapter<MatrixThemePlugin>()) }
-        if MidnightThemePlugin.shouldRegister { register(PluginAdapter<MidnightThemePlugin>()) }
-        if MountainThemePlugin.shouldRegister { register(PluginAdapter<MountainThemePlugin>()) }
-        if NebulaThemePlugin.shouldRegister { register(PluginAdapter<NebulaThemePlugin>()) }
-        if OneDarkThemePlugin.shouldRegister { register(PluginAdapter<OneDarkThemePlugin>()) }
-        if OpenAntigravityPlugin.shouldRegister { register(PluginAdapter<OpenAntigravityPlugin>()) }
-        if OpenCursorPlugin.shouldRegister { register(PluginAdapter<OpenCursorPlugin>()) }
-        if OpenFinderPlugin.shouldRegister { register(PluginAdapter<OpenFinderPlugin>()) }
-        if OpenGitHubDesktopPlugin.shouldRegister { register(PluginAdapter<OpenGitHubDesktopPlugin>()) }
-        if OpenKiroPlugin.shouldRegister { register(PluginAdapter<OpenKiroPlugin>()) }
-        if OpenRemotePlugin.shouldRegister { register(PluginAdapter<OpenRemotePlugin>()) }
-        if OpenTerminalPlugin.shouldRegister { register(PluginAdapter<OpenTerminalPlugin>()) }
-        if OpenTraePlugin.shouldRegister { register(PluginAdapter<OpenTraePlugin>()) }
-        if OpenVSCodePlugin.shouldRegister { register(PluginAdapter<OpenVSCodePlugin>()) }
-        if OpenXcodePlugin.shouldRegister { register(PluginAdapter<OpenXcodePlugin>()) }
-        if OrchardThemePlugin.shouldRegister { register(PluginAdapter<OrchardThemePlugin>()) }
-        if ProjectPickerPlugin.shouldRegister { register(PluginAdapter<ProjectPickerPlugin>()) }
-        if ReadmePlugin.shouldRegister { register(PluginAdapter<ReadmePlugin>()) }
-        if RemoteRepositoryPlugin.shouldRegister { register(PluginAdapter<RemoteRepositoryPlugin>()) }
-        if RiverThemePlugin.shouldRegister { register(PluginAdapter<RiverThemePlugin>()) }
-        if SettingsButtonPlugin.shouldRegister { register(PluginAdapter<SettingsButtonPlugin>()) }
-        if SmartMergePlugin.shouldRegister { register(PluginAdapter<SmartMergePlugin>()) }
-        if SpringThemePlugin.shouldRegister { register(PluginAdapter<SpringThemePlugin>()) }
-        if StashPlugin.shouldRegister { register(PluginAdapter<StashPlugin>()) }
-        if SubmodulePlugin.shouldRegister { register(PluginAdapter<SubmodulePlugin>()) }
-        if SummerThemePlugin.shouldRegister { register(PluginAdapter<SummerThemePlugin>()) }
-        if ThemeStatusBarPlugin.shouldRegister { register(PluginAdapter<ThemeStatusBarPlugin>()) }
-        if UnpushedStatusPlugin.shouldRegister { register(PluginAdapter<UnpushedStatusPlugin>()) }
-        if WinterThemePlugin.shouldRegister { register(PluginAdapter<WinterThemePlugin>()) }
-        if XcodeLightThemePlugin.shouldRegister { register(PluginAdapter<XcodeLightThemePlugin>()) }
     }
 }

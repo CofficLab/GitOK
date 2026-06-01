@@ -3,10 +3,10 @@ import LibGit2Swift
 import MagicAlert
 import MagicKit
 import OSLog
-import PluginGitDetail
+import GitOKCoreKit
 import SwiftUI
 
-/// Git 文件变更列表入口。列表实现逻辑在 PluginGitDetail 的 FileListHostView 中。
+/// Git 文件变更列表入口。列表实现逻辑由 CoreKit 的 FileListHostView 提供。
 struct FileList: View, SuperLog {
     nonisolated static let emoji = "📁"
     nonisolated static let verbose = false

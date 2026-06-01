@@ -1,9 +1,8 @@
 import MagicKit
-import PluginCommit
-import PluginGitDetail
+import GitOKCoreKit
 import SwiftUI
 
-/// Git 详情入口。详情布局和状态逻辑在 PluginGitDetail 的 GitDetailHostView 中。
+/// Git 详情入口。详情布局和状态逻辑由 CoreKit 的 GitDetailHostView 提供。
 struct GitDetail: View, SuperEvent, SuperLog {
     nonisolated static let emoji = "🚄"
     nonisolated static let verbose = true

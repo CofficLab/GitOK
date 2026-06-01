@@ -1,6 +1,6 @@
 import GitOKUI
 import MagicKit
-import PluginGitClone
+import GitOKCoreKit
 import SwiftUI
 
 struct NoRepositoriesGuideView: View {
@@ -60,7 +60,7 @@ struct NoRepositoriesGuideView: View {
             CreateRepositorySheet()
         }
         .sheet(isPresented: $showCloneRepositorySheet) {
-            PluginGitClone.CloneRepositorySheet(context: GitClonePluginContextFactory.make(data: data, projectVM: vm))
+            CloneRepositorySheet(context: GitCloneContextFactory.make(data: data, projectVM: vm))
         }
     }
 

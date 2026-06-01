@@ -3,10 +3,10 @@ import LibGit2Swift
 import MagicAlert
 import MagicKit
 import OSLog
-import PluginCommit
+import GitOKCoreKit
 import SwiftUI
 
-/// 提交记录行入口。行状态和操作逻辑在 PluginCommit 的 CommitRowHostView 中。
+/// 提交记录行入口。行状态和操作逻辑由 CoreKit 的 CommitRowHostView 提供。
 struct CommitRow: View, SuperLog {
     nonisolated static let emoji = "📝"
     nonisolated static let verbose = false

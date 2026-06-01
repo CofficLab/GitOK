@@ -34,7 +34,10 @@ let package = Package(
                 "MagicAlert",
                 "MagicKit",
             ],
-            path: "Sources/GitOKCoreKit"
+            path: "Sources/GitOKCoreKit",
+            resources: [
+                .process("Resources"),
+            ]
         ),
         .testTarget(
             name: "GitOKCoreKitTests",

@@ -1,8 +1,7 @@
 import GitOKCoreKit
 import MagicAlert
-import PluginGitClone
 
-enum GitClonePluginContextFactory {
+enum GitCloneContextFactory {
     @MainActor
     static func make(data: DataVM, projectVM: ProjectVM) -> GitOKPluginContext {
         GitOKPluginContext(

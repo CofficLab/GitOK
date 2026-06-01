@@ -6,15 +6,8 @@ import StoreKit
 import SwiftData
 import SwiftUI
 
-// Auto-generated imports for packaged plugins.
-// When adding a new Plugin package, re-run Scripts/generate_plugin_registry.sh.
 import GitOKCoreKit
 import GitOKUI
-import PluginBanner
-import PluginCommit
-import PluginGitDetail
-import PluginGitTab
-import PluginIcon
 
 @MainActor
 class PluginVM: ObservableObject, SuperLog, SuperThread {
@@ -251,54 +244,7 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
 
     // MARK: - Custom Plugin Providers
 
-    /// Plugins that need custom view providers (closures referencing APP-internal types).
-    private static let customProviderIds: Set<String> = [
-        GitDetailPlugin.metadata.id,
-        CommitPlugin.metadata.id,
-        BannerPlugin.metadata.id,
-        IconPlugin.metadata.id,
-    ]
-
-    private func registerCustomProviders() {
-        if GitDetailPlugin.shouldRegister {
-            register(PluginAdapter<GitDetailPlugin>(
-                detailViewProvider: { tab, _ in
-                    guard tab == GitTabPlugin.metadata.displayName else { return nil }
-                    return AnyView(GitDetail.shared)
-                }
-            ))
-        }
-
-        if CommitPlugin.shouldRegister {
-            register(PluginAdapter<CommitPlugin>(
-                listViewProvider: { tab, _, context in
-                    guard tab == "Git", context.isGitRepository else { return nil }
-                    return AnyView(CommitList.shared)
-                }
-            ))
-        }
-
-        if BannerPlugin.shouldRegister {
-            register(PluginAdapter<BannerPlugin>(
-                detailViewProvider: { tab, context in
-                    guard tab == "Banner" else { return nil }
-                    return AnyView(PluginBanner.BannerDetailLayout(projectURL: context.projectURL))
-                }
-            ))
-        }
-
-        if IconPlugin.shouldRegister {
-            register(PluginAdapter<IconPlugin>(
-                detailViewProvider: { tab, context in
-                    guard tab == "Icon" else { return nil }
-                    return AnyView(PluginIcon.IconDetailLayout(projectURL: context.projectURL))
-                }
-            ))
-        }
-    }
-
     /// Register all packaged plugins using the auto-generated registry.
-    /// Plugins with custom view providers are handled separately via `registerCustomProviders()`.
     private func registerPackagedPlugins() {
         if !Self.registerAllPlugins {
             os_log("\(self.t)⚠️ Plugin registration is disabled via registerAllPlugins=false")
@@ -307,18 +253,9 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
 
         clearRegisteredPlugins()
 
-        // Register default adapters, skipping those that have custom providers
         GeneratedPluginRegistry.registerDefaultAdapters { adapter in
-            let label = adapter.instanceLabel
-            if Self.customProviderIds.contains(label) {
-                // Will be registered below with custom closures
-                return
-            }
             self.register(adapter)
         }
-
-        // Register plugins with custom view providers (closures referencing APP-internal types)
-        registerCustomProviders()
     }
 }
 
