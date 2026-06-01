@@ -100,23 +100,6 @@ public struct FileTile: View {
                     copyFilePath()
                 }
 
-                if isAppInstalled(at: "/Applications/Cursor.app") {
-                    Button("在 Cursor 中打开") {
-                        openFileInApp(at: "/Applications/Cursor.app")
-                    }
-                }
-
-                if isAppInstalled(at: "/Applications/Visual Studio Code.app") {
-                    Button("在 VS Code 中打开") {
-                        openFileInApp(at: "/Applications/Visual Studio Code.app")
-                    }
-                }
-
-                if isAppInstalled(at: "/Applications/Xcode.app") {
-                    Button("在 Xcode 中打开") {
-                        openFileInApp(at: "/Applications/Xcode.app")
-                    }
-                }
             }
 
             if onDiscardChanges != nil {
@@ -279,25 +262,6 @@ public struct FileTile: View {
         guard let url = targetFileURL, targetFileExists else { return }
         NSPasteboard.general.clearContents()
         NSPasteboard.general.setString(url.path, forType: .string)
-    }
-
-    private func isAppInstalled(at path: String) -> Bool {
-        NSWorkspace.shared.urlForApplication(toOpen: URL(fileURLWithPath: path)) != nil
-    }
-
-    private func openFileInApp(at appPath: String) {
-        guard let url = targetFileURL,
-              targetFileExists,
-              let appURL = NSWorkspace.shared.urlForApplication(toOpen: URL(fileURLWithPath: appPath)) else {
-            return
-        }
-
-        NSWorkspace.shared.open(
-            [url],
-            withApplicationAt: appURL,
-            configuration: NSWorkspace.OpenConfiguration(),
-            completionHandler: nil
-        )
     }
 
     private func filePathItemProvider() -> NSItemProvider {

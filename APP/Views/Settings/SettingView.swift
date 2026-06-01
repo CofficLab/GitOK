@@ -26,7 +26,6 @@ struct SettingView: View, SuperLog {
         case repository = "仓库设置"
         case commitStyle = "Commit 风格"
         case network = "网络"
-        case externalTools = "外部工具"
         case releaseNotes = "更新"
         case diagnostics = "诊断"
         case appearance = "外观"
@@ -44,7 +43,6 @@ struct SettingView: View, SuperLog {
             case .repository: return "folder.badge.gearshape"
             case .commitStyle: return "text.alignleft"
             case .network: return "network"
-            case .externalTools: return "terminal"
             case .releaseNotes: return "arrow.triangle.2.circlepath"
             case .diagnostics: return "stethoscope"
             case .appearance: return "paintbrush"
@@ -99,9 +97,6 @@ struct SettingView: View, SuperLog {
 
             case .network:
                 GitNetworkSettingView()
-
-            case .externalTools:
-                ExternalToolSettingView()
 
             case .releaseNotes:
                 ReleaseNotesSettingView()

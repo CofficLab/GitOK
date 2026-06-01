@@ -2676,54 +2676,6 @@
         }
       }
     },
-    "在 Cursor 中打开" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "在 Cursor 中打开"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "在 Cursor 中開啟"
-          }
-        }
-      }
-    },
-    "在 VS Code 中打开" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "在 VS Code 中打开"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "在 VS Code 中開啟"
-          }
-        }
-      }
-    },
-    "在 Xcode 中打开" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "在 Xcode 中打开"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "在 Xcode 中開啟"
-          }
-        }
-      }
-    },
     "在Finder中显示" : {
       "localizations" : {
         "zh-Hans" : {
@@ -2736,38 +2688,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "在Finder中显示"
-          }
-        }
-      }
-    },
-    "在默认终端中打开" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "在默认终端中打开"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "在預設終端機中開啟"
-          }
-        }
-      }
-    },
-    "在默认编辑器中打开" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "在默认编辑器中打开"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "在預設編輯器中開啟"
           }
         }
       }
@@ -2816,22 +2736,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "外觀"
-          }
-        }
-      }
-    },
-    "外部工具" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "外部工具"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "外部工具"
           }
         }
       }
@@ -3488,70 +3392,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "清除"
-          }
-        }
-      }
-    },
-    "用 Cursor 打开" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "用 Cursor 打开"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "用 Cursor 開啟"
-          }
-        }
-      }
-    },
-    "用 Trae 打开" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "用 Trae 打开"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "用 Trae 開啟"
-          }
-        }
-      }
-    },
-    "用VSCode打开" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "用VSCode打开"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "用VSCode開啟"
-          }
-        }
-      }
-    },
-    "用Xcode打开" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "用Xcode打开"
-          }
-        },
-        "zh-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "用Xcode開啟"
           }
         }
       }

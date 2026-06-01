@@ -169,7 +169,6 @@ struct ContentView: View, SuperLog {
         case "repository": return .repository
         case "commitStyle": return .commitStyle
         case "appearance": return .appearance
-        case "externalTools": return .externalTools
         case "releaseNotes": return .releaseNotes
         default: return .userInfo
         }
