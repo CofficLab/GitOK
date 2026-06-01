@@ -11,7 +11,7 @@ final class HarborThemePluginTests: XCTestCase {
         XCTAssertEqual(metadata.iconName, "network")
         XCTAssertEqual(metadata.order, 127)
         XCTAssertFalse(metadata.allowUserToggle)
-        XCTAssertTrue(metadata.defaultEnabled)
+        XCTAssertFalse(metadata.defaultEnabled)
         XCTAssertEqual(metadata.tableName, "ThemeHarbor")
     }
 

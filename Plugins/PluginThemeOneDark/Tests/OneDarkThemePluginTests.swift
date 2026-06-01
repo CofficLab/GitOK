@@ -12,7 +12,7 @@ final class OneDarkThemePluginTests: XCTestCase {
         XCTAssertEqual(metadata.iconName, "chevron.left.forwardslash.chevron.right")
         XCTAssertEqual(metadata.order, 136)
         XCTAssertFalse(metadata.allowUserToggle)
-        XCTAssertTrue(metadata.defaultEnabled)
+        XCTAssertFalse(metadata.defaultEnabled)
         XCTAssertEqual(metadata.tableName, "ThemeOneDark")
     }
 

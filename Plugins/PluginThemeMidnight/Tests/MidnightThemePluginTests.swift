@@ -12,7 +12,7 @@ final class MidnightThemePluginTests: XCTestCase {
         XCTAssertEqual(metadata.iconName, "terminal")
         XCTAssertEqual(metadata.order, 123)
         XCTAssertFalse(metadata.allowUserToggle)
-        XCTAssertTrue(metadata.defaultEnabled)
+        XCTAssertFalse(metadata.defaultEnabled)
         XCTAssertEqual(metadata.tableName, "ThemeMidnight")
     }
 

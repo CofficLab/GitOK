@@ -12,7 +12,7 @@ final class RiverThemePluginTests: XCTestCase {
         XCTAssertEqual(metadata.iconName, "arrow.triangle.branch")
         XCTAssertEqual(metadata.order, 125)
         XCTAssertFalse(metadata.allowUserToggle)
-        XCTAssertTrue(metadata.defaultEnabled)
+        XCTAssertFalse(metadata.defaultEnabled)
         XCTAssertEqual(metadata.tableName, "ThemeRiver")
     }
 

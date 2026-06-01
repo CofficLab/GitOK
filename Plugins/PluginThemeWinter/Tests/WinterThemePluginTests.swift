@@ -12,7 +12,7 @@ final class WinterThemePluginTests: XCTestCase {
         XCTAssertEqual(metadata.iconName, "scope")
         XCTAssertEqual(metadata.order, 133)
         XCTAssertFalse(metadata.allowUserToggle)
-        XCTAssertTrue(metadata.defaultEnabled)
+        XCTAssertFalse(metadata.defaultEnabled)
         XCTAssertEqual(metadata.tableName, "ThemeWinter")
     }
 

@@ -8,7 +8,7 @@ final class OpenKiroPluginTests: XCTestCase {
         XCTAssertEqual(metadata.id, "OpenKiro")
         XCTAssertEqual(metadata.iconName, "water.waves")
         XCTAssertEqual(metadata.order, 8405)
-        XCTAssertTrue(metadata.allowUserToggle)
+        XCTAssertFalse(metadata.allowUserToggle)
         XCTAssertFalse(metadata.defaultEnabled)
         XCTAssertEqual(metadata.tableName, "OpenKiro")
         XCTAssertFalse(metadata.displayName.isEmpty)

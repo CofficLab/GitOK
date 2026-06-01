@@ -11,7 +11,7 @@ struct CleanStatusPluginTests {
         #expect(CleanStatusPlugin.metadata.iconName == "checkmark.circle")
         #expect(CleanStatusPlugin.metadata.order == 24)
         #expect(CleanStatusPlugin.metadata.allowUserToggle == false)
-        #expect(CleanStatusPlugin.metadata.defaultEnabled == true)
+        #expect(CleanStatusPlugin.metadata.defaultEnabled == false)
         #expect(CleanStatusPlugin.metadata.tableName == "CleanStatus")
     }
 

@@ -9,7 +9,7 @@ final class IconTabPluginTests: XCTestCase {
         XCTAssertEqual(metadata.iconName, "photo")
         XCTAssertEqual(metadata.order, 1)
         XCTAssertFalse(metadata.allowUserToggle)
-        XCTAssertTrue(metadata.defaultEnabled)
+        XCTAssertFalse(metadata.defaultEnabled)
         XCTAssertEqual(metadata.tableName, "IconTab")
         XCTAssertFalse(metadata.displayName.isEmpty)
         XCTAssertFalse(metadata.description.isEmpty)

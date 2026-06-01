@@ -8,7 +8,7 @@ final class OpenAntigravityPluginTests: XCTestCase {
         XCTAssertEqual(metadata.id, "OpenAntigravity")
         XCTAssertEqual(metadata.iconName, "paperplane")
         XCTAssertEqual(metadata.order, 8406)
-        XCTAssertTrue(metadata.allowUserToggle)
+        XCTAssertFalse(metadata.allowUserToggle)
         XCTAssertFalse(metadata.defaultEnabled)
         XCTAssertEqual(metadata.tableName, "OpenAntigravity")
         XCTAssertFalse(metadata.displayName.isEmpty)

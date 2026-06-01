@@ -12,7 +12,7 @@ final class SummerThemePluginTests: XCTestCase {
         XCTAssertEqual(metadata.iconName, "tag")
         XCTAssertEqual(metadata.order, 130)
         XCTAssertFalse(metadata.allowUserToggle)
-        XCTAssertTrue(metadata.defaultEnabled)
+        XCTAssertFalse(metadata.defaultEnabled)
         XCTAssertEqual(metadata.tableName, "ThemeSummer")
     }
 

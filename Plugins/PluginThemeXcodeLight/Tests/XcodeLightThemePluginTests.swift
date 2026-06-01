@@ -12,7 +12,7 @@ final class XcodeLightThemePluginTests: XCTestCase {
         XCTAssertEqual(metadata.iconName, "hammer")
         XCTAssertEqual(metadata.order, 137)
         XCTAssertFalse(metadata.allowUserToggle)
-        XCTAssertTrue(metadata.defaultEnabled)
+        XCTAssertFalse(metadata.defaultEnabled)
         XCTAssertEqual(metadata.tableName, "ThemeXcodeLight")
     }
 

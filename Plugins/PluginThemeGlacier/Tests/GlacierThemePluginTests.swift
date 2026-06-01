@@ -11,7 +11,7 @@ final class GlacierThemePluginTests: XCTestCase {
         XCTAssertEqual(metadata.iconName, "externaldrive")
         XCTAssertEqual(metadata.order, 129)
         XCTAssertFalse(metadata.allowUserToggle)
-        XCTAssertTrue(metadata.defaultEnabled)
+        XCTAssertFalse(metadata.defaultEnabled)
         XCTAssertEqual(metadata.tableName, "ThemeGlacier")
     }
 

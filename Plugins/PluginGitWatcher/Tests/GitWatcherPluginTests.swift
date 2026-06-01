@@ -10,7 +10,7 @@ struct GitWatcherPluginTests {
         #expect(GitWatcherPlugin.metadata.iconName == "dot.radiowaves.left.and.right")
         #expect(GitWatcherPlugin.metadata.order == 23)
         #expect(GitWatcherPlugin.metadata.allowUserToggle == false)
-        #expect(GitWatcherPlugin.metadata.defaultEnabled == true)
+        #expect(GitWatcherPlugin.metadata.defaultEnabled == false)
         #expect(GitWatcherPlugin.metadata.tableName == "GitWatcher")
     }
 

@@ -10,7 +10,7 @@ final class ThemeStatusBarPluginTests: XCTestCase {
         XCTAssertEqual(metadata.iconName, "paintbrush")
         XCTAssertEqual(metadata.order, 119)
         XCTAssertFalse(metadata.allowUserToggle)
-        XCTAssertTrue(metadata.defaultEnabled)
+        XCTAssertFalse(metadata.defaultEnabled)
         XCTAssertEqual(metadata.tableName, "ThemeStatusBar")
         XCTAssertFalse(metadata.displayName.isEmpty)
         XCTAssertFalse(metadata.description.isEmpty)

@@ -13,7 +13,7 @@ final class GitOKThemePluginTests: XCTestCase {
         XCTAssertEqual(metadata.iconName, "folder.badge.gearshape")
         XCTAssertEqual(metadata.order, 120)
         XCTAssertFalse(metadata.allowUserToggle)
-        XCTAssertTrue(metadata.defaultEnabled)
+        XCTAssertFalse(metadata.defaultEnabled)
         XCTAssertEqual(metadata.tableName, "ThemeGitOK")
     }
 

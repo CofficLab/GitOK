@@ -62,7 +62,7 @@ public struct GitOKPluginMetadata: Equatable, Sendable {
         description: String,
         iconName: String = "puzzlepiece.extension",
         order: Int = 9999,
-        policy: GitOKPluginPolicy = .optOut,
+        policy: GitOKPluginPolicy = .disabled,
         tableName: String
     ) {
         self.id = id

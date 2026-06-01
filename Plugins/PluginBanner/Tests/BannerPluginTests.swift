@@ -9,7 +9,7 @@ struct BannerPluginTests {
         #expect(BannerPlugin.metadata.iconName == "puzzlepiece.extension")
         #expect(BannerPlugin.metadata.order == 2)
         #expect(BannerPlugin.metadata.allowUserToggle == false)
-        #expect(BannerPlugin.metadata.defaultEnabled == true)
+        #expect(BannerPlugin.metadata.defaultEnabled == false)
         #expect(BannerPlugin.metadata.tableName == "Banner")
     }
 

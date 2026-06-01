@@ -12,7 +12,7 @@ final class EmberThemePluginTests: XCTestCase {
         XCTAssertEqual(metadata.iconName, "exclamationmark.triangle")
         XCTAssertEqual(metadata.order, 124)
         XCTAssertFalse(metadata.allowUserToggle)
-        XCTAssertTrue(metadata.defaultEnabled)
+        XCTAssertFalse(metadata.defaultEnabled)
         XCTAssertEqual(metadata.tableName, "ThemeEmber")
     }
 

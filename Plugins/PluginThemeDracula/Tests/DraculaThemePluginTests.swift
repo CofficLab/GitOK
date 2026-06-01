@@ -12,7 +12,7 @@ final class DraculaThemePluginTests: XCTestCase {
         XCTAssertEqual(metadata.iconName, "moon.stars")
         XCTAssertEqual(metadata.order, 135)
         XCTAssertFalse(metadata.allowUserToggle)
-        XCTAssertTrue(metadata.defaultEnabled)
+        XCTAssertFalse(metadata.defaultEnabled)
         XCTAssertEqual(metadata.tableName, "ThemeDracula")
     }
 

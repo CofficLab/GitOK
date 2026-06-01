@@ -12,7 +12,7 @@ final class MatrixThemePluginTests: XCTestCase {
         XCTAssertEqual(metadata.iconName, "gearshape.2")
         XCTAssertEqual(metadata.order, 131)
         XCTAssertFalse(metadata.allowUserToggle)
-        XCTAssertTrue(metadata.defaultEnabled)
+        XCTAssertFalse(metadata.defaultEnabled)
         XCTAssertEqual(metadata.tableName, "ThemeMatrix")
     }
 

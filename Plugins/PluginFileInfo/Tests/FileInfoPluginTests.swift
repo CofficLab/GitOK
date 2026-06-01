@@ -9,8 +9,8 @@ final class FileInfoPluginTests: XCTestCase {
         XCTAssertEqual(metadata.displayName, "FileInfo")
         XCTAssertEqual(metadata.iconName, "doc.text")
         XCTAssertEqual(metadata.order, 9999)
-        XCTAssertTrue(metadata.allowUserToggle)
-        XCTAssertTrue(metadata.defaultEnabled)
+        XCTAssertFalse(metadata.allowUserToggle)
+        XCTAssertFalse(metadata.defaultEnabled)
         XCTAssertEqual(metadata.tableName, "FileInfo")
         XCTAssertFalse(metadata.description.isEmpty)
     }

@@ -9,8 +9,8 @@ struct GitPushPluginTests {
     func metadata() {
         #expect(GitPushPlugin.metadata.id == "GitPushPlugin")
         #expect(GitPushPlugin.metadata.iconName == "arrow.triangle.2.circlepath")
-        #expect(GitPushPlugin.metadata.allowUserToggle == true)
-        #expect(GitPushPlugin.metadata.defaultEnabled == true)
+        #expect(GitPushPlugin.metadata.allowUserToggle == false)
+        #expect(GitPushPlugin.metadata.defaultEnabled == false)
         #expect(GitPushPlugin.metadata.tableName == "GitPush")
     }
 

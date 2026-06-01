@@ -11,7 +11,7 @@ final class NebulaThemePluginTests: XCTestCase {
         XCTAssertEqual(metadata.iconName, "arrow.triangle.pull")
         XCTAssertEqual(metadata.order, 126)
         XCTAssertFalse(metadata.allowUserToggle)
-        XCTAssertTrue(metadata.defaultEnabled)
+        XCTAssertFalse(metadata.defaultEnabled)
         XCTAssertEqual(metadata.tableName, "ThemeNebula")
     }
 

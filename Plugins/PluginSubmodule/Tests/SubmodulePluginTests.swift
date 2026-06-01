@@ -10,8 +10,8 @@ final class SubmodulePluginTests: XCTestCase {
         XCTAssertEqual(metadata.displayName, "Submodule")
         XCTAssertEqual(metadata.iconName, "shippingbox")
         XCTAssertEqual(metadata.order, 9999)
-        XCTAssertTrue(metadata.allowUserToggle)
-        XCTAssertTrue(metadata.defaultEnabled)
+        XCTAssertFalse(metadata.allowUserToggle)
+        XCTAssertFalse(metadata.defaultEnabled)
         XCTAssertEqual(metadata.tableName, "GitSubmodule")
         XCTAssertFalse(metadata.description.isEmpty)
     }

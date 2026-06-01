@@ -12,7 +12,7 @@ final class GitHubLightThemePluginTests: XCTestCase {
         XCTAssertEqual(metadata.iconName, "globe")
         XCTAssertEqual(metadata.order, 138)
         XCTAssertFalse(metadata.allowUserToggle)
-        XCTAssertTrue(metadata.defaultEnabled)
+        XCTAssertFalse(metadata.defaultEnabled)
         XCTAssertEqual(metadata.tableName, "ThemeGitHubLight")
     }
 

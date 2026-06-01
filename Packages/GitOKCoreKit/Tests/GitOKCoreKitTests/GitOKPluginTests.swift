@@ -19,8 +19,8 @@ final class GitOKPluginTests: XCTestCase {
         XCTAssertEqual(metadata.id, "Sample")
         XCTAssertEqual(metadata.iconName, "puzzlepiece.extension")
         XCTAssertEqual(metadata.order, 9999)
-        XCTAssertTrue(metadata.allowUserToggle)
-        XCTAssertTrue(metadata.defaultEnabled)
+        XCTAssertFalse(metadata.allowUserToggle)
+        XCTAssertFalse(metadata.defaultEnabled)
         XCTAssertEqual(metadata.tableName, "Sample")
     }
 

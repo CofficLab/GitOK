@@ -11,7 +11,7 @@ final class MountainThemePluginTests: XCTestCase {
         XCTAssertEqual(metadata.iconName, "archivebox")
         XCTAssertEqual(metadata.order, 132)
         XCTAssertFalse(metadata.allowUserToggle)
-        XCTAssertTrue(metadata.defaultEnabled)
+        XCTAssertFalse(metadata.defaultEnabled)
         XCTAssertEqual(metadata.tableName, "ThemeMountain")
     }
 

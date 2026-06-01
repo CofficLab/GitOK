@@ -12,7 +12,7 @@ final class SpringThemePluginTests: XCTestCase {
         XCTAssertEqual(metadata.iconName, "tree")
         XCTAssertEqual(metadata.order, 121)
         XCTAssertFalse(metadata.allowUserToggle)
-        XCTAssertTrue(metadata.defaultEnabled)
+        XCTAssertFalse(metadata.defaultEnabled)
         XCTAssertEqual(metadata.tableName, "ThemeSpring")
     }
 

@@ -13,7 +13,7 @@ final class ActivityStatusPluginTests: XCTestCase {
         XCTAssertEqual(metadata.iconName, "arrow.triangle.2.circlepath")
         XCTAssertEqual(metadata.order, 9999)
         XCTAssertFalse(metadata.allowUserToggle)
-        XCTAssertTrue(metadata.defaultEnabled)
+        XCTAssertFalse(metadata.defaultEnabled)
         XCTAssertEqual(metadata.tableName, "ActivityStatus")
         XCTAssertFalse(metadata.displayName.isEmpty)
         XCTAssertFalse(metadata.description.isEmpty)

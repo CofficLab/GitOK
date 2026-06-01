@@ -10,8 +10,8 @@ struct GitSyncPluginTests {
         #expect(GitSyncPlugin.metadata.id == "SyncPlugin")
         #expect(GitSyncPlugin.metadata.iconName == "arrow.clockwise")
         #expect(GitSyncPlugin.metadata.order == 9999)
-        #expect(GitSyncPlugin.metadata.allowUserToggle == true)
-        #expect(GitSyncPlugin.metadata.defaultEnabled == true)
+        #expect(GitSyncPlugin.metadata.allowUserToggle == false)
+        #expect(GitSyncPlugin.metadata.defaultEnabled == false)
         #expect(GitSyncPlugin.metadata.tableName == "GitSync")
     }
 

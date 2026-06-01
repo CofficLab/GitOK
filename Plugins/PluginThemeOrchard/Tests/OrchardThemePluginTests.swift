@@ -11,7 +11,7 @@ final class OrchardThemePluginTests: XCTestCase {
         XCTAssertEqual(metadata.iconName, "tray.full")
         XCTAssertEqual(metadata.order, 128)
         XCTAssertFalse(metadata.allowUserToggle)
-        XCTAssertTrue(metadata.defaultEnabled)
+        XCTAssertFalse(metadata.defaultEnabled)
         XCTAssertEqual(metadata.tableName, "ThemeOrchard")
     }
 

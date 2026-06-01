@@ -10,7 +10,7 @@ struct ConflictResolverPluginTests {
         #expect(ConflictResolverPlugin.metadata.id == "ConflictResolverPlugin")
         #expect(ConflictResolverPlugin.metadata.iconName == "exclamationmark.triangle")
         #expect(ConflictResolverPlugin.metadata.allowUserToggle == false)
-        #expect(ConflictResolverPlugin.metadata.defaultEnabled == true)
+        #expect(ConflictResolverPlugin.metadata.defaultEnabled == false)
         #expect(ConflictResolverPlugin.metadata.tableName == "GitConflictResolver")
     }
 

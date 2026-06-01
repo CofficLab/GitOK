@@ -12,7 +12,7 @@ final class GraphiteThemePluginTests: XCTestCase {
         XCTAssertEqual(metadata.iconName, "square.grid.3x3")
         XCTAssertEqual(metadata.order, 134)
         XCTAssertFalse(metadata.allowUserToggle)
-        XCTAssertTrue(metadata.defaultEnabled)
+        XCTAssertFalse(metadata.defaultEnabled)
         XCTAssertEqual(metadata.tableName, "ThemeGraphite")
     }
 

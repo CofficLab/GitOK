@@ -9,7 +9,7 @@ struct ProjectPickerPluginTests {
         #expect(ProjectPickerPlugin.metadata.id == "ProjectPickerPlugin")
         #expect(ProjectPickerPlugin.metadata.iconName == "folder")
         #expect(ProjectPickerPlugin.metadata.allowUserToggle == false)
-        #expect(ProjectPickerPlugin.metadata.defaultEnabled == true)
+        #expect(ProjectPickerPlugin.metadata.defaultEnabled == false)
         #expect(ProjectPickerPlugin.metadata.tableName == "ProjectPicker")
     }
 
