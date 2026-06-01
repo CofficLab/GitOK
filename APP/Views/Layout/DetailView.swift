@@ -91,7 +91,7 @@ struct DetailView: View {
 
 #Preview("Detail") {
     DetailView(
-        tab: "Git",
+        tab: "",
         pluginListViews: [],
         statusBarVisibility: true
     )

@@ -18,7 +18,7 @@ struct ContentView: View, SuperLog {
     @State private var columnVisibility: NavigationSplitViewVisibility = .automatic
 
     /// 当前选中的标签页
-    @State private var tab: String = "Git"
+    @State private var tab: String = ""
 
     /// 状态栏是否可见
     @State private var statusBarVisibility = true
@@ -204,7 +204,7 @@ extension ContentView {
                 }
             }
 
-            if tabPickerVisibility {
+            if tabPickerVisibility, p.tabNames.isEmpty == false {
                 ToolbarItem(placement: .principal) {
                     Picker("选择标签", selection: $tab) {
                         ForEach(p.tabNames, id: \.self) { tabName in
@@ -326,17 +326,7 @@ extension ContentView {
             }
         }
 
-        if let d = defaultTab {
-            if Self.verbose {
-                os_log("\(self.t)Setting default tab to: \(d)")
-            }
-            self.tab = d
-        } else {
-            if Self.verbose {
-                os_log("\(self.t)No default tab provided, using default tab: Git")
-            }
-            self.tab = "Git"
-        }
+        selectResolvedTab(preferred: defaultTab, reason: "onAppear")
 
         if let d = defaultStatusBarVisibility {
             self.statusBarVisibility = d
@@ -390,6 +380,7 @@ extension ContentView {
             if Self.verbose {
                 os_log("\(self.t)🔌 Plugins loaded, updating cached views")
             }
+            selectResolvedTab(preferred: defaultTab, reason: "pluginsLoaded")
             updateCachedViews()
         }
     }
@@ -400,6 +391,45 @@ extension ContentView {
             os_log("\(self.t)🔔 PluginProvider changed, updating cached views")
         }
         updateCachedViews()
+    }
+
+    private func selectResolvedTab(preferred: String?, reason: String) {
+        let resolvedTab = resolvedInitialTab(preferred: preferred)
+        guard tab != resolvedTab else {
+            if app.currentTab != resolvedTab {
+                app.setTab(resolvedTab)
+            }
+            return
+        }
+
+        if Self.verbose {
+            os_log("\(self.t)Selected tab resolved reason=\(reason) tab=\(resolvedTab)")
+        }
+
+        tab = resolvedTab
+        app.setTab(resolvedTab)
+    }
+
+    private func resolvedInitialTab(preferred: String?) -> String {
+        let tabNames = p.tabNames
+
+        if tabNames.isEmpty {
+            return preferred ?? ""
+        }
+
+        if let preferred, preferred.isEmpty == false {
+            if tabNames.contains(preferred) {
+                return preferred
+            }
+        }
+
+        if app.currentTab.isEmpty == false {
+            if tabNames.contains(app.currentTab) {
+                return app.currentTab
+            }
+        }
+
+        return tabNames.first ?? ""
     }
 }
 

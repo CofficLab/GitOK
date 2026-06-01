@@ -15,7 +15,7 @@ class AppVM: NSObject, ObservableObject, AVAudioPlayerDelegate, SuperLog {
     nonisolated static let verbose = false
 
     /// 当前选中的标签页
-    @Published var currentTab: String = "Git"
+    @Published var currentTab: String = ""
 
     /// 侧边栏是否可见
     @Published var sidebarVisibility: Bool
@@ -33,6 +33,7 @@ class AppVM: NSObject, ObservableObject, AVAudioPlayerDelegate, SuperLog {
     /// - Parameter repoManager: 仓库管理器实例
     init(repoManager: RepoManager) {
         self.repoManager = repoManager
+        self.currentTab = repoManager.stateRepo.currentTab
         self.sidebarVisibility = repoManager.stateRepo.sidebarVisibility
 
         super.init()
@@ -125,4 +126,3 @@ extension AppVM {
         .frame(width: 1200)
         .frame(height: 1200)
 }
-
