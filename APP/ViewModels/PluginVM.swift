@@ -1,7 +1,6 @@
 import Combine
 import Foundation
 import MagicKit
-import ObjectiveC.runtime
 import OSLog
 import StoreKit
 import SwiftData
@@ -56,91 +55,6 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
     /// 已注册插件数量
     private var registeredCount: Int {
         runtime.registeredCount
-    }
-
-    /// 自动发现并注册所有插件
-    /// 通过扫描 Objective-C runtime 中所有以 "Plugin" 结尾的类
-    private func autoDiscoverAndRegisterPlugins() {
-        let start = Date()
-        os_log("\(self.t)🚀 Startup begin: autoDiscoverAndRegisterPlugins")
-
-        // 检查是否禁用所有插件注册
-        if !Self.registerAllPlugins {
-            os_log("\(self.t)⚠️ Plugin registration is disabled via registerAllPlugins=false")
-            return
-        }
-
-        // 清空已有注册（防止重复注册）
-        clearRegisteredPlugins()
-
-        var count: UInt32 = 0
-        guard let classList = objc_copyClassList(&count) else {
-            os_log(.error, "\(self.t)❌ Failed to get class list")
-            return
-        }
-        defer { free(UnsafeMutableRawPointer(classList)) }
-
-        os_log("\(self.t)🔍 Runtime class count=\(count)")
-
-        if Self.verbose { os_log("\(self.t)🔍 Scanning classes for plugins...") }
-
-        let classes = UnsafeBufferPointer(start: classList, count: Int(count))
-
-        // 临时存储发现的插件，用于排序
-        var discoveredPlugins: [(plugin: any SuperPlugin, className: String, order: Int)] = []
-
-        for i in 0 ..< classes.count {
-            let cls: AnyClass = classes[i]
-            let className = NSStringFromClass(cls)
-
-            // 只检查 GitOK 命名空间下以 "Plugin" 结尾的类
-            guard className.hasPrefix("GitOK."), className.hasSuffix("Plugin") else { continue }
-
-            // 尝试获取 shared 单例实例
-            let sharedSelector = NSSelectorFromString("shared")
-            guard let sharedMethod = class_getClassMethod(cls, sharedSelector) else {
-                os_log("\(Self.t)⚠️ No @objc shared found for \(className), skipping")
-                continue
-            }
-
-            // 调用 shared 方法获取实例
-            typealias SharedGetter = @convention(c) (AnyClass, Selector) -> AnyObject?
-            let getter = unsafeBitCast(method_getImplementation(sharedMethod), to: SharedGetter.self)
-
-            guard let instance = getter(cls, sharedSelector) else {
-                os_log("⚠️ Failed to get shared instance for \(className)")
-                continue
-            }
-
-            // 检查实例是否符合 SuperPlugin 协议
-            guard let plugin = instance as? any SuperPlugin else {
-                os_log("⚠️ Instance of \(className) does not conform to SuperPlugin")
-                continue
-            }
-
-            // 获取插件类型
-            let pluginType = type(of: plugin)
-            let pluginOrder = plugin.pluginOrder
-
-            // 检查插件是否应该注册
-            if !pluginType.shouldRegister {
-                if Self.verbose { os_log("\(self.t)⏭️ Skipping plugin (shouldRegister=false): \(className)") }
-                continue
-            }
-
-            // 添加到临时数组，稍后按 order 排序
-            discoveredPlugins.append((plugin, className, pluginOrder))
-        }
-
-        // 按 order 排序后注册
-        discoveredPlugins.sort { $0.order < $1.order }
-
-        for (plugin, className, order) in discoveredPlugins {
-            register(plugin)
-            os_log("\(self.t)🧩 Registered plugin #\(order): \(className)")
-        }
-
-        os_log("\(self.t)✅ Startup end: autoDiscoverAndRegisterPlugins registered=\(self.registeredCount) elapsed=\(String(format: "%.3f", Date().timeIntervalSince(start)))s")
     }
 
     // MARK: - Plugin Query Methods
@@ -319,8 +233,6 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
         let start = Date()
         os_log("\(Self.t)🚀 Startup begin: PluginVM.init")
 
-        // 自动发现并注册所有插件
-        autoDiscoverAndRegisterPlugins()
         registerPackagedPlugins()
 
         // 从内部注册表获取所有已注册的插件实例
@@ -340,45 +252,65 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
     // MARK: - Custom Plugin Providers
 
     /// Plugins that need custom view providers (closures referencing APP-internal types).
-    /// Key = instanceLabel of the packaged plugin, Value = adapter with injected closures.
-    private var customProviders: [String: any SuperPlugin] {
-        [
-            GitDetailPlugin.metadata.id: PluginAdapter<GitDetailPlugin>(
+    private static let customProviderIds: Set<String> = [
+        GitDetailPlugin.metadata.id,
+        CommitPlugin.metadata.id,
+        BannerPlugin.metadata.id,
+        IconPlugin.metadata.id,
+    ]
+
+    private func registerCustomProviders() {
+        if GitDetailPlugin.shouldRegister {
+            register(PluginAdapter<GitDetailPlugin>(
                 detailViewProvider: { tab, _ in
                     guard tab == GitTabPlugin.metadata.displayName else { return nil }
                     return AnyView(GitDetail.shared)
                 }
-            ),
-            CommitPlugin.metadata.id: PluginAdapter<CommitPlugin>(
+            ))
+        }
+
+        if CommitPlugin.shouldRegister {
+            register(PluginAdapter<CommitPlugin>(
                 listViewProvider: { tab, _, context in
                     guard tab == "Git", context.isGitRepository else { return nil }
                     return AnyView(CommitList.shared)
                 }
-            ),
-            BannerPlugin.metadata.id: PluginAdapter<BannerPlugin>(
+            ))
+        }
+
+        if BannerPlugin.shouldRegister {
+            register(PluginAdapter<BannerPlugin>(
                 detailViewProvider: { tab, context in
                     guard tab == "Banner" else { return nil }
                     return AnyView(PluginBanner.BannerDetailLayout(projectURL: context.projectURL))
                 }
-            ),
-            IconPlugin.metadata.id: PluginAdapter<IconPlugin>(
+            ))
+        }
+
+        if IconPlugin.shouldRegister {
+            register(PluginAdapter<IconPlugin>(
                 detailViewProvider: { tab, context in
                     guard tab == "Icon" else { return nil }
                     return AnyView(PluginIcon.IconDetailLayout(projectURL: context.projectURL))
                 }
-            ),
-        ]
+            ))
+        }
     }
 
     /// Register all packaged plugins using the auto-generated registry.
-    /// Plugins with custom view providers are handled separately via `customProviders`.
+    /// Plugins with custom view providers are handled separately via `registerCustomProviders()`.
     private func registerPackagedPlugins() {
-        let customIds = Set(customProviders.keys)
+        if !Self.registerAllPlugins {
+            os_log("\(self.t)⚠️ Plugin registration is disabled via registerAllPlugins=false")
+            return
+        }
+
+        clearRegisteredPlugins()
 
         // Register default adapters, skipping those that have custom providers
         GeneratedPluginRegistry.registerDefaultAdapters { adapter in
             let label = adapter.instanceLabel
-            if customIds.contains(label) {
+            if Self.customProviderIds.contains(label) {
                 // Will be registered below with custom closures
                 return
             }
@@ -386,11 +318,7 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
         }
 
         // Register plugins with custom view providers (closures referencing APP-internal types)
-        for (_, adapter) in customProviders {
-            if type(of: adapter).shouldRegister {
-                register(adapter)
-            }
-        }
+        registerCustomProviders()
     }
 }
 

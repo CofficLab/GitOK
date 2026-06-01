@@ -5,7 +5,7 @@ set -eu
 # generate_plugin_registry.sh
 #
 # Scans Plugins/Plugin* for types conforming to GitOKPlugin and
-# generates APP/Core/Generated/GeneratedPluginRegistry.swift.
+# generates APP/Generated/GeneratedPluginRegistry.swift.
 #
 # Inspired by Cisum's Scripts/generate_plugin_registry.sh.
 # ==============================================================================
@@ -56,17 +56,6 @@ registry_imports=$(printf '%s\n' "$registry_entries" | awk -F'|' '{ print $2 }' 
     printf '/// Auto-generated plugin registry.\n'
     printf '/// Lists every `GitOKPlugin` found in Plugins/Plugin*.\n'
     printf 'enum GeneratedPluginRegistry {\n'
-    printf '    /// All discovered packaged-plugin instances.\n'
-    printf '    static var plugins: [any GitOKPlugin] {\n'
-    printf '        var plugins: [any GitOKPlugin] = []\n'
-    printf '%s\n' "$registry_entries" |
-    while IFS='|' read -r struct_name package_name; do
-        [ -n "$struct_name" ] || continue
-        printf '        plugins.append(%s.shared)\n' "$struct_name"
-    done
-    printf '        return plugins\n'
-    printf '    }\n'
-    printf '\n'
     printf '    /// Register default `PluginAdapter` instances for all plugins.\n'
     printf '    /// Each adapter preserves the concrete generic type so that\n'
     printf '    /// `shouldRegister` / `order` etc. are resolved at compile time.\n'
@@ -79,8 +68,7 @@ registry_imports=$(printf '%s\n' "$registry_entries" | awk -F'|' '{ print $2 }' 
     printf '%s\n' "$registry_entries" |
     while IFS='|' read -r struct_name package_name; do
         [ -n "$struct_name" ] || continue
-        # Use a simple index-like variable to avoid casing issues
-        printf '        do { let a = PluginAdapter<%s>(); if type(of: a).shouldRegister { register(a) } }\n' "$struct_name"
+        printf '        if %s.shouldRegister { register(PluginAdapter<%s>()) }\n' "$struct_name" "$struct_name"
     done
     printf '    }\n'
     printf '}\n'

@@ -65,71 +65,6 @@ import PluginUnpushedStatus
 /// Auto-generated plugin registry.
 /// Lists every `GitOKPlugin` found in Plugins/Plugin*.
 enum GeneratedPluginRegistry {
-    /// All discovered packaged-plugin instances.
-    static var plugins: [any GitOKPlugin] {
-        var plugins: [any GitOKPlugin] = []
-        plugins.append(ActivityStatusPlugin.shared)
-        plugins.append(AuroraThemePlugin.shared)
-        plugins.append(AutoPushPlugin.shared)
-        plugins.append(BannerPlugin.shared)
-        plugins.append(BannerTabPlugin.shared)
-        plugins.append(BranchPlugin.shared)
-        plugins.append(CleanStatusPlugin.shared)
-        plugins.append(CommitPlugin.shared)
-        plugins.append(ConflictResolverPlugin.shared)
-        plugins.append(DraculaThemePlugin.shared)
-        plugins.append(EmberThemePlugin.shared)
-        plugins.append(FileInfoPlugin.shared)
-        plugins.append(GitClonePlugin.shared)
-        plugins.append(GitDetailPlugin.shared)
-        plugins.append(GitHubLightThemePlugin.shared)
-        plugins.append(GitIgnorePlugin.shared)
-        plugins.append(GitLFSPlugin.shared)
-        plugins.append(GitOKThemePlugin.shared)
-        plugins.append(GitPullPlugin.shared)
-        plugins.append(GitPushPlugin.shared)
-        plugins.append(GitSyncPlugin.shared)
-        plugins.append(GitTabPlugin.shared)
-        plugins.append(GitWatcherPlugin.shared)
-        plugins.append(GlacierThemePlugin.shared)
-        plugins.append(GraphiteThemePlugin.shared)
-        plugins.append(HarborThemePlugin.shared)
-        plugins.append(IconPlugin.shared)
-        plugins.append(IconTabPlugin.shared)
-        plugins.append(LicensePlugin.shared)
-        plugins.append(MatrixThemePlugin.shared)
-        plugins.append(MidnightThemePlugin.shared)
-        plugins.append(MountainThemePlugin.shared)
-        plugins.append(NebulaThemePlugin.shared)
-        plugins.append(OneDarkThemePlugin.shared)
-        plugins.append(OpenAntigravityPlugin.shared)
-        plugins.append(OpenCursorPlugin.shared)
-        plugins.append(OpenFinderPlugin.shared)
-        plugins.append(OpenGitHubDesktopPlugin.shared)
-        plugins.append(OpenKiroPlugin.shared)
-        plugins.append(OpenRemotePlugin.shared)
-        plugins.append(OpenTerminalPlugin.shared)
-        plugins.append(OpenTraePlugin.shared)
-        plugins.append(OpenVSCodePlugin.shared)
-        plugins.append(OpenXcodePlugin.shared)
-        plugins.append(OrchardThemePlugin.shared)
-        plugins.append(ProjectPickerPlugin.shared)
-        plugins.append(ReadmePlugin.shared)
-        plugins.append(RemoteRepositoryPlugin.shared)
-        plugins.append(RiverThemePlugin.shared)
-        plugins.append(SettingsButtonPlugin.shared)
-        plugins.append(SmartMergePlugin.shared)
-        plugins.append(SpringThemePlugin.shared)
-        plugins.append(StashPlugin.shared)
-        plugins.append(SubmodulePlugin.shared)
-        plugins.append(SummerThemePlugin.shared)
-        plugins.append(ThemeStatusBarPlugin.shared)
-        plugins.append(UnpushedStatusPlugin.shared)
-        plugins.append(WinterThemePlugin.shared)
-        plugins.append(XcodeLightThemePlugin.shared)
-        return plugins
-    }
-
     /// Register default `PluginAdapter` instances for all plugins.
     /// Each adapter preserves the concrete generic type so that
     /// `shouldRegister` / `order` etc. are resolved at compile time.
@@ -139,64 +74,64 @@ enum GeneratedPluginRegistry {
     ///
     /// - Parameter register: Closure that handles the actual registration.
     static func registerDefaultAdapters(_ register: (any SuperPlugin) -> Void) {
-        do { let a = PluginAdapter<ActivityStatusPlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PluginAdapter<AuroraThemePlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PluginAdapter<AutoPushPlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PluginAdapter<BannerPlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PluginAdapter<BannerTabPlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PluginAdapter<BranchPlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PluginAdapter<CleanStatusPlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PluginAdapter<CommitPlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PluginAdapter<ConflictResolverPlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PluginAdapter<DraculaThemePlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PluginAdapter<EmberThemePlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PluginAdapter<FileInfoPlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PluginAdapter<GitClonePlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PluginAdapter<GitDetailPlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PluginAdapter<GitHubLightThemePlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PluginAdapter<GitIgnorePlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PluginAdapter<GitLFSPlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PluginAdapter<GitOKThemePlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PluginAdapter<GitPullPlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PluginAdapter<GitPushPlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PluginAdapter<GitSyncPlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PluginAdapter<GitTabPlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PluginAdapter<GitWatcherPlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PluginAdapter<GlacierThemePlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PluginAdapter<GraphiteThemePlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PluginAdapter<HarborThemePlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PluginAdapter<IconPlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PluginAdapter<IconTabPlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PluginAdapter<LicensePlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PluginAdapter<MatrixThemePlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PluginAdapter<MidnightThemePlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PluginAdapter<MountainThemePlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PluginAdapter<NebulaThemePlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PluginAdapter<OneDarkThemePlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PluginAdapter<OpenAntigravityPlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PluginAdapter<OpenCursorPlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PluginAdapter<OpenFinderPlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PluginAdapter<OpenGitHubDesktopPlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PluginAdapter<OpenKiroPlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PluginAdapter<OpenRemotePlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PluginAdapter<OpenTerminalPlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PluginAdapter<OpenTraePlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PluginAdapter<OpenVSCodePlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PluginAdapter<OpenXcodePlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PluginAdapter<OrchardThemePlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PluginAdapter<ProjectPickerPlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PluginAdapter<ReadmePlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PluginAdapter<RemoteRepositoryPlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PluginAdapter<RiverThemePlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PluginAdapter<SettingsButtonPlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PluginAdapter<SmartMergePlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PluginAdapter<SpringThemePlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PluginAdapter<StashPlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PluginAdapter<SubmodulePlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PluginAdapter<SummerThemePlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PluginAdapter<ThemeStatusBarPlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PluginAdapter<UnpushedStatusPlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PluginAdapter<WinterThemePlugin>(); if type(of: a).shouldRegister { register(a) } }
-        do { let a = PluginAdapter<XcodeLightThemePlugin>(); if type(of: a).shouldRegister { register(a) } }
+        if ActivityStatusPlugin.shouldRegister { register(PluginAdapter<ActivityStatusPlugin>()) }
+        if AuroraThemePlugin.shouldRegister { register(PluginAdapter<AuroraThemePlugin>()) }
+        if AutoPushPlugin.shouldRegister { register(PluginAdapter<AutoPushPlugin>()) }
+        if BannerPlugin.shouldRegister { register(PluginAdapter<BannerPlugin>()) }
+        if BannerTabPlugin.shouldRegister { register(PluginAdapter<BannerTabPlugin>()) }
+        if BranchPlugin.shouldRegister { register(PluginAdapter<BranchPlugin>()) }
+        if CleanStatusPlugin.shouldRegister { register(PluginAdapter<CleanStatusPlugin>()) }
+        if CommitPlugin.shouldRegister { register(PluginAdapter<CommitPlugin>()) }
+        if ConflictResolverPlugin.shouldRegister { register(PluginAdapter<ConflictResolverPlugin>()) }
+        if DraculaThemePlugin.shouldRegister { register(PluginAdapter<DraculaThemePlugin>()) }
+        if EmberThemePlugin.shouldRegister { register(PluginAdapter<EmberThemePlugin>()) }
+        if FileInfoPlugin.shouldRegister { register(PluginAdapter<FileInfoPlugin>()) }
+        if GitClonePlugin.shouldRegister { register(PluginAdapter<GitClonePlugin>()) }
+        if GitDetailPlugin.shouldRegister { register(PluginAdapter<GitDetailPlugin>()) }
+        if GitHubLightThemePlugin.shouldRegister { register(PluginAdapter<GitHubLightThemePlugin>()) }
+        if GitIgnorePlugin.shouldRegister { register(PluginAdapter<GitIgnorePlugin>()) }
+        if GitLFSPlugin.shouldRegister { register(PluginAdapter<GitLFSPlugin>()) }
+        if GitOKThemePlugin.shouldRegister { register(PluginAdapter<GitOKThemePlugin>()) }
+        if GitPullPlugin.shouldRegister { register(PluginAdapter<GitPullPlugin>()) }
+        if GitPushPlugin.shouldRegister { register(PluginAdapter<GitPushPlugin>()) }
+        if GitSyncPlugin.shouldRegister { register(PluginAdapter<GitSyncPlugin>()) }
+        if GitTabPlugin.shouldRegister { register(PluginAdapter<GitTabPlugin>()) }
+        if GitWatcherPlugin.shouldRegister { register(PluginAdapter<GitWatcherPlugin>()) }
+        if GlacierThemePlugin.shouldRegister { register(PluginAdapter<GlacierThemePlugin>()) }
+        if GraphiteThemePlugin.shouldRegister { register(PluginAdapter<GraphiteThemePlugin>()) }
+        if HarborThemePlugin.shouldRegister { register(PluginAdapter<HarborThemePlugin>()) }
+        if IconPlugin.shouldRegister { register(PluginAdapter<IconPlugin>()) }
+        if IconTabPlugin.shouldRegister { register(PluginAdapter<IconTabPlugin>()) }
+        if LicensePlugin.shouldRegister { register(PluginAdapter<LicensePlugin>()) }
+        if MatrixThemePlugin.shouldRegister { register(PluginAdapter<MatrixThemePlugin>()) }
+        if MidnightThemePlugin.shouldRegister { register(PluginAdapter<MidnightThemePlugin>()) }
+        if MountainThemePlugin.shouldRegister { register(PluginAdapter<MountainThemePlugin>()) }
+        if NebulaThemePlugin.shouldRegister { register(PluginAdapter<NebulaThemePlugin>()) }
+        if OneDarkThemePlugin.shouldRegister { register(PluginAdapter<OneDarkThemePlugin>()) }
+        if OpenAntigravityPlugin.shouldRegister { register(PluginAdapter<OpenAntigravityPlugin>()) }
+        if OpenCursorPlugin.shouldRegister { register(PluginAdapter<OpenCursorPlugin>()) }
+        if OpenFinderPlugin.shouldRegister { register(PluginAdapter<OpenFinderPlugin>()) }
+        if OpenGitHubDesktopPlugin.shouldRegister { register(PluginAdapter<OpenGitHubDesktopPlugin>()) }
+        if OpenKiroPlugin.shouldRegister { register(PluginAdapter<OpenKiroPlugin>()) }
+        if OpenRemotePlugin.shouldRegister { register(PluginAdapter<OpenRemotePlugin>()) }
+        if OpenTerminalPlugin.shouldRegister { register(PluginAdapter<OpenTerminalPlugin>()) }
+        if OpenTraePlugin.shouldRegister { register(PluginAdapter<OpenTraePlugin>()) }
+        if OpenVSCodePlugin.shouldRegister { register(PluginAdapter<OpenVSCodePlugin>()) }
+        if OpenXcodePlugin.shouldRegister { register(PluginAdapter<OpenXcodePlugin>()) }
+        if OrchardThemePlugin.shouldRegister { register(PluginAdapter<OrchardThemePlugin>()) }
+        if ProjectPickerPlugin.shouldRegister { register(PluginAdapter<ProjectPickerPlugin>()) }
+        if ReadmePlugin.shouldRegister { register(PluginAdapter<ReadmePlugin>()) }
+        if RemoteRepositoryPlugin.shouldRegister { register(PluginAdapter<RemoteRepositoryPlugin>()) }
+        if RiverThemePlugin.shouldRegister { register(PluginAdapter<RiverThemePlugin>()) }
+        if SettingsButtonPlugin.shouldRegister { register(PluginAdapter<SettingsButtonPlugin>()) }
+        if SmartMergePlugin.shouldRegister { register(PluginAdapter<SmartMergePlugin>()) }
+        if SpringThemePlugin.shouldRegister { register(PluginAdapter<SpringThemePlugin>()) }
+        if StashPlugin.shouldRegister { register(PluginAdapter<StashPlugin>()) }
+        if SubmodulePlugin.shouldRegister { register(PluginAdapter<SubmodulePlugin>()) }
+        if SummerThemePlugin.shouldRegister { register(PluginAdapter<SummerThemePlugin>()) }
+        if ThemeStatusBarPlugin.shouldRegister { register(PluginAdapter<ThemeStatusBarPlugin>()) }
+        if UnpushedStatusPlugin.shouldRegister { register(PluginAdapter<UnpushedStatusPlugin>()) }
+        if WinterThemePlugin.shouldRegister { register(PluginAdapter<WinterThemePlugin>()) }
+        if XcodeLightThemePlugin.shouldRegister { register(PluginAdapter<XcodeLightThemePlugin>()) }
     }
 }
