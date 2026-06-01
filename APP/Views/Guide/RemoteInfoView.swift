@@ -1,4 +1,4 @@
-import GitOKCoreFeatures
+import GitCoreKit
 import GitOKUI
 import MagicKit
 import SwiftUI

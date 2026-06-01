@@ -1,5 +1,5 @@
-import GitOKCoreFeatures
 import MagicKit
+import ProjectSupportKit
 import SwiftUI
 
 /// 合作者选择器：允许用户添加和选择共同作者

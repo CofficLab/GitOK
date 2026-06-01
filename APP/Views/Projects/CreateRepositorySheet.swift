@@ -1,5 +1,5 @@
 import AppKit
-import GitOKCoreFeatures
+import GitCoreKit
 import MagicAlert
 import MagicKit
 import SwiftUI
