@@ -46,6 +46,11 @@ registry_entries=$(
 registry_entries=$(printf '%s\n' "$registry_entries" | awk 'NF > 0' | sort -u)
 registry_imports=$(printf '%s\n' "$registry_entries" | awk -F'|' '{ print $2 }' | sort -u)
 
+if [ -z "$registry_entries" ]; then
+    rm -rf "$REGISTRY_PACKAGE_DIR"
+    exit 0
+fi
+
 # ---------------------------------------------------------------------------
 # 2. Generate the Swift package manifest
 # ---------------------------------------------------------------------------
