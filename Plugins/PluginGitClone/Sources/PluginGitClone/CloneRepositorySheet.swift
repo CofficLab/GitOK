@@ -1,4 +1,5 @@
 import AppKit
+import GitOKCoreKit
 import SwiftUI
 
 public struct CloneRepositorySheet: View {
