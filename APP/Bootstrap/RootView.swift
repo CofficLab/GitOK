@@ -3,6 +3,7 @@ import MagicAlert
 import MagicKit
 import OSLog
 import GitOKCoreKit
+import GitOKPluginRegistry
 import SwiftData
 import SwiftUI
 
@@ -58,7 +59,9 @@ struct RootView<Content>: View, SuperEvent, SuperLog where Content: View {
         // 初始化提供者
         let providersStart = Date()
         self.appProvider = AppVM(repoManager: self.repoManager)
-        self.pluginProvider = PluginVM()
+        self.pluginProvider = PluginVM { adapterFactory, register in
+            GeneratedPluginRegistry.registerDefaultAdapters(adapterFactory: adapterFactory, register)
+        }
         self.themeProvider = AppThemeVM(pluginProvider: self.pluginProvider)
         os_log("\(Self.t)✅ Startup step: providers ready elapsed=\(String(format: "%.3f", Date().timeIntervalSince(providersStart)))s")
 

@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		0B3CC95E2DF1C49000E22263 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = 0B3CC95D2DF1C49000E22263 /* Sparkle */; };
 		0B559DBC2F1A5D41005C6809 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0B559D792F1A5D41005C6809 /* Assets.xcassets */; };
+		0BE645F52FCDB75300DA2C72 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
 		A1F500032F70000100ABC001 /* GitOKUI in Frameworks */ = {isa = PBXBuildFile; productRef = A1F500022F70000100ABC001 /* GitOKUI */; };
 		CC73F006457981A7C3AE5D86 /* GitOKCoreKit in Frameworks */ = {isa = PBXBuildFile; productRef = 4EC50CECD060E698BF493AED /* GitOKCoreKit */; };
 		CC73F007457981A7C3AE5D86 /* GitOKCoreFeatures in Frameworks */ = {isa = PBXBuildFile; productRef = CC73F008457981A7C3AE5D86 /* GitOKCoreFeatures */; };
@@ -794,6 +795,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0BE645F52FCDB75300DA2C72 /* (null) in Frameworks */,
 				A1F500032F70000100ABC001 /* GitOKUI in Frameworks */,
 				F5E6143F2F33311F00F79149 /* MagicKit in Frameworks */,
 				0B3CC95E2DF1C49000E22263 /* Sparkle in Frameworks */,
@@ -1137,6 +1139,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 0B0E168E2BD89A910078942B /* Build configuration list for PBXNativeTarget "GitOK" */;
 			buildPhases = (
+				A1F500B03000000100ABC001 /* Generate Plugin Registry */,
 				0B0E16792BD89A8F0078942B /* Sources */,
 				0B0E167A2BD89A8F0078942B /* Frameworks */,
 				0B0E167B2BD89A8F0078942B /* Resources */,
@@ -1156,6 +1159,7 @@
 				F5E6143E2F33311F00F79149 /* MagicKit */,
 				4EC50CECD060E698BF493AED /* GitOKCoreKit */,
 				CC73F008457981A7C3AE5D86 /* GitOKCoreFeatures */,
+				A1F500B23000000100ABC001 /* GitOKPluginRegistry */,
 			);
 			productName = GitOK;
 			productReference = 0B55A0222F1B0F38005C6809 /* GitOK.app */;
@@ -2053,6 +2057,30 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		A1F500B03000000100ABC001 /* Generate Plugin Registry */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Plugins",
+				"$(SRCROOT)/Scripts/generate_plugin_registry.sh",
+			);
+			name = "Generate Plugin Registry";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cd \"$SRCROOT\" && sh Scripts/generate_plugin_registry.sh\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		0B0E16792BD89A8F0078942B /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -2104,7 +2132,7 @@
 				DEVELOPMENT_TEAM = Y6HZ9JJYV6;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -2170,7 +2198,7 @@
 				DEVELOPMENT_TEAM = Y6HZ9JJYV6;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -2310,6 +2338,10 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Packages/GitOKUI;
 		};
+		A1F500B13000000100ABC001 /* XCLocalSwiftPackageReference "Packages/GitOKPluginRegistry" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/GitOKPluginRegistry;
+		};
 		F5E6143D2F33311F00F79149 /* XCLocalSwiftPackageReference "Packages/MagicKit" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Packages/MagicKit;
@@ -2338,15 +2370,20 @@
 			package = 917255476993285F764073A8 /* XCLocalSwiftPackageReference "Packages/GitOKCoreKit" */;
 			productName = GitOKCoreKit;
 		};
-		CC73F008457981A7C3AE5D86 /* GitOKCoreFeatures */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 917255476993285F764073A8 /* XCLocalSwiftPackageReference "Packages/GitOKCoreKit" */;
-			productName = GitOKCoreFeatures;
-		};
 		A1F500022F70000100ABC001 /* GitOKUI */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = A1F500012F70000100ABC001 /* XCLocalSwiftPackageReference "Packages/GitOKUI" */;
 			productName = GitOKUI;
+		};
+		A1F500B23000000100ABC001 /* GitOKPluginRegistry */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A1F500B13000000100ABC001 /* XCLocalSwiftPackageReference "Packages/GitOKPluginRegistry" */;
+			productName = GitOKPluginRegistry;
+		};
+		CC73F008457981A7C3AE5D86 /* GitOKCoreFeatures */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 917255476993285F764073A8 /* XCLocalSwiftPackageReference "Packages/GitOKCoreKit" */;
+			productName = GitOKCoreFeatures;
 		};
 		F5E6143E2F33311F00F79149 /* MagicKit */ = {
 			isa = XCSwiftPackageProductDependency;

@@ -45,7 +45,29 @@ registry_entries=$(printf '%s\n' "$registry_entries" | awk 'NF > 0' | sort -u)
 registry_imports=$(printf '%s\n' "$registry_entries" | awk -F'|' '{ print $2 }' | sort -u)
 
 if [ -z "$registry_entries" ]; then
-    rm -rf "$REGISTRY_PACKAGE_DIR"
+    # No active plugins — generate an empty registry stub instead of deleting
+    # the package so the Xcode project reference remains valid.
+    mkdir -p "$REGISTRY_PACKAGE_DIR"
+    mkdir -p "$(dirname "$OUTPUT")"
+    {
+        printf 'import GitOKCoreKit\n\n'
+        printf '/// Auto-generated plugin registry.\n'
+        printf '/// No active plugins found (all use `.disabled` policy).\n'
+        printf 'public enum GeneratedPluginRegistry {\n'
+        printf '    public static let hasDefaultAdapters = false\n\n'
+        printf '    @MainActor\n'
+        printf '    public static func registerDefaultAdapters(\n'
+        printf '        adapterFactory: any GitOKPluginAdapterFactory,\n'
+        printf '        _ register: (any SuperPlugin) -> Void\n'
+        printf '    ) {\n'
+        printf '    }\n'
+        printf '}\n'
+    } > "$TMP_OUTPUT"
+    if [ -f "$OUTPUT" ] && cmp -s "$TMP_OUTPUT" "$OUTPUT"; then
+        rm "$TMP_OUTPUT"
+    else
+        mv "$TMP_OUTPUT" "$OUTPUT"
+    fi
     exit 0
 fi
 
