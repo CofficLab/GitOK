@@ -1,4 +1,3 @@
-import GitCoreKit
 import GitOKCoreKit
 import SwiftUI
 
@@ -34,21 +33,7 @@ private struct PackagedPluginRootHost<Plugin: GitOKPlugin, Content: View>: View 
                 projectVM.updateUnpushedCommits(count, hashes: hashes)
             },
             onRemoteTrackingUpdate: { status, fetchedAt in
-                if let status {
-                    projectVM.updateAheadBehind(
-                        GitCoreKit.GitAheadBehind(
-                            ahead: status.ahead,
-                            behind: status.behind,
-                            hasUpstream: status.hasUpstream
-                        )
-                    )
-                } else {
-                    projectVM.resetRemoteTrackingState()
-                }
-
-                if let fetchedAt {
-                    projectVM.updateLastFetchedAt(fetchedAt)
-                }
+                projectVM.updateRemoteTracking(status, fetchedAt: fetchedAt)
             }
         )
         let wrapped = plugin.rootView(base, context: context) ?? base

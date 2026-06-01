@@ -1,4 +1,5 @@
 import GitCoreKit
+import GitOKCoreKit
 import LibGit2Swift
 import MagicKit
 import OSLog
@@ -129,6 +130,20 @@ class ProjectVM: ObservableObject, SuperLog {
         self.aheadCount = state.ahead
         self.behindCount = state.behind
         self.hasUpstream = state.hasUpstream
+    }
+
+    func updateRemoteTracking(_ status: GitOKRemoteTrackingStatus?, fetchedAt: Date?) {
+        if let status {
+            self.aheadCount = status.ahead
+            self.behindCount = status.behind
+            self.hasUpstream = status.hasUpstream
+        } else {
+            resetRemoteTrackingState()
+        }
+
+        if let fetchedAt {
+            updateLastFetchedAt(fetchedAt)
+        }
     }
 
     func updateLastFetchedAt(_ date: Date?) {
