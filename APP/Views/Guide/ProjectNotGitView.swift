@@ -1,4 +1,4 @@
-import GitCoreKit
+import GitOKCoreFeatures
 import MagicAlert
 import MagicKit
 import OSLog
