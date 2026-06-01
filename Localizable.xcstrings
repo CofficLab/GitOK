@@ -1705,6 +1705,7 @@
       }
     },
     "Project: %@" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -2414,6 +2415,7 @@
       }
     },
     "全局默认风格" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -2831,6 +2833,7 @@
       }
     },
     "应用于所有新项目的默认风格" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -2927,6 +2930,7 @@
       }
     },
     "当前项目风格" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -3152,6 +3156,7 @@
       }
     },
     "未打开项目" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -3688,6 +3693,7 @@
       }
     },
     "配置 Commit 消息风格" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -3769,6 +3775,7 @@
       }
     },
     "项目配置优先级高于全局配置" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -3785,6 +3792,7 @@
       }
     },
     "预览" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -3801,6 +3809,7 @@
       }
     },
     "风格" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {

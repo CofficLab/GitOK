@@ -1,9 +1,6 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "(%lld) Uncommitted" : {
-
-    },
     "(%lld) 未提交" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -27,33 +24,6 @@
         }
       }
     },
-    "%lld remote commits available to pull" : {
-
-    },
-    "After undoing, the file changes from this commit will be kept in the working directory for re-editing and committing." : {
-
-    },
-    "All Changes Committed" : {
-
-    },
-    "Cancel" : {
-
-    },
-    "Checking Remote Status…" : {
-
-    },
-    "Click to push to remote" : {
-
-    },
-    "Click to run git pull and fetch remote commits" : {
-
-    },
-    "Click to run git push and push local commits" : {
-
-    },
-    "Click to view user info" : {
-
-    },
     "Commit" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -76,63 +46,6 @@
           }
         }
       }
-    },
-    "Commit message cannot be empty" : {
-
-    },
-    "Confirm Delete Remote Tag?" : {
-
-    },
-    "Confirm Delete Tag?" : {
-
-    },
-    "Confirm Hard Reset?" : {
-
-    },
-    "Confirm Mixed Reset?" : {
-
-    },
-    "Confirm Revert This Commit?" : {
-
-    },
-    "Confirm Soft Reset?" : {
-
-    },
-    "Confirm Squash Commits?" : {
-
-    },
-    "Confirm Undo Commit?" : {
-
-    },
-    "Create" : {
-
-    },
-    "Create a lightweight tag for commit %@." : {
-
-    },
-    "Create an annotated tag for commit %@." : {
-
-    },
-    "Create Annotated Tag" : {
-
-    },
-    "Create Tag" : {
-
-    },
-    "Current commit has not been pushed to remote" : {
-
-    },
-    "Current Status" : {
-
-    },
-    "Delete" : {
-
-    },
-    "Delete Remote Tag" : {
-
-    },
-    "Delete Tag" : {
-
     },
     "Emoji风格" : {
       "extractionState" : "stale",
@@ -180,21 +93,6 @@
         }
       }
     },
-    "GitOK will create a new reverse commit to undo the changes. Suitable for pushed commits. If there are conflicts, resolve them manually before continuing." : {
-
-    },
-    "Hard Reset" : {
-
-    },
-    "HEAD will move to this commit. Changes from subsequent commits will be preserved in the staging area." : {
-
-    },
-    "HEAD will move to this commit. Changes from subsequent commits will be preserved in the working directory but unstaged." : {
-
-    },
-    "HEAD, staging area, and working directory will all revert to this commit. Local commits and uncommitted changes after this commit will be discarded." : {
-
-    },
     "Loading" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -218,144 +116,8 @@
         }
       }
     },
-    "Mixed Reset" : {
-
-    },
-    "Network connection error, auto-retry failed. You can try:" : {
-
-    },
-    "Network fluctuation, retrying (%lld/%lld)…" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Network fluctuation, retrying (%1$lld/%2$lld)…"
-          }
-        }
-      }
-    },
-    "Project unavailable" : {
-
-    },
-    "Pulling…" : {
-
-    },
-    "Push" : {
-
-    },
-    "Push failed" : {
-
-    },
-    "Push Failed" : {
-
-    },
-    "Push failed: %@" : {
-
-    },
-    "Push Tag" : {
-
-    },
-    "Push to Remote" : {
-
-    },
-    "Pushing via system Git…" : {
-
-    },
-    "Pushing..." : {
-
-    },
-    "Pushing…" : {
-
-    },
-    "Refresh File List…" : {
-
-    },
-    "Refreshing" : {
-
-    },
-    "Remote tag deleted: %@" : {
-
-    },
-    "Reset to Here" : {
-
-    },
-    "Reset to: %@ (%@)" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Reset to: %1$@ (%2$@)"
-          }
-        }
-      }
-    },
-    "Retry" : {
-
-    },
-    "Revert This Commit" : {
-
-    },
-    "Reverted: %@" : {
-
-    },
-    "Soft Reset" : {
-
-    },
-    "Squash commit message" : {
-
-    },
-    "Squash to Here" : {
-
-    },
-    "Squashed %lld commits" : {
-
-    },
-    "Tag created: %@" : {
-
-    },
-    "Tag deleted: %@" : {
-
-    },
-    "Tag Message" : {
-
-    },
-    "Tag message cannot be empty" : {
-
-    },
-    "Tag Name" : {
-
-    },
-    "Tag name cannot be empty" : {
-
-    },
-    "Tag pushed: %@" : {
-
-    },
-    "This will combine %lld commits from HEAD to this commit into one. Only recommended for unpushed commits." : {
-
-    },
-    "This will delete the local tag %@. Remote tags will not be affected." : {
-
-    },
-    "This will delete the tag %@ on origin. Local tags will not be affected." : {
-
-    },
-    "Toggle SSH Push" : {
-
-    },
-    "Undo" : {
-
-    },
-    "Undo Commit" : {
-
-    },
-    "Undo this commit" : {
-
-    },
-    "Undoing the initial commit is not supported" : {
-
-    },
     "Unknown" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -376,12 +138,6 @@
           }
         }
       }
-    },
-    "User info not found" : {
-
-    },
-    "Working Tree Clean" : {
-
     },
     "为提交 %@ 创建 annotated tag。" : {
       "extractionState" : "stale",
@@ -981,9 +737,6 @@
         }
       }
     },
-    "推送中…" : {
-
-    },
     "推送到远程" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -1053,9 +806,6 @@
         }
       }
     },
-    "提交中…" : {
-
-    },
     "提交已推送" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -1078,12 +828,6 @@
           }
         }
       }
-    },
-    "提交并推送成功" : {
-
-    },
-    "提交成功" : {
-
     },
     "暂未推送到远程" : {
       "extractionState" : "stale",
@@ -1132,6 +876,7 @@
       }
     },
     "未配置用户信息" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1269,6 +1014,7 @@
       }
     },
     "正在加载" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1312,9 +1058,6 @@
           }
         }
       }
-    },
-    "添加文件中…" : {
-
     },
     "点击执行 git pull 拉取远程提交" : {
       "extractionState" : "stale",
@@ -1455,6 +1198,7 @@
       }
     },
     "管理预设..." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
