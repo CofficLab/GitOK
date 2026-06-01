@@ -766,6 +766,118 @@ public struct GitRepositoryCLI {
         try block()
     }
 
+    public func isGitRepository() -> Bool {
+        LibGit2.isGitRepository(at: repositoryURL.path)
+    }
+
+    public func commitList() throws -> [GitCommit] {
+        try LibGit2.getCommitList(at: repositoryURL.path)
+    }
+
+    public func hasUncommittedChanges(verbose: Bool = true) throws -> Bool {
+        try LibGit2.hasUncommittedChanges(at: repositoryURL.path, verbose: verbose)
+    }
+
+    public func diffFileList(staged: Bool = false) throws -> [GitDiffFile] {
+        try LibGit2.getDiffFileList(at: repositoryURL.path, staged: staged)
+    }
+
+    public func currentBranchInfo() throws -> GitBranch? {
+        try LibGit2.getCurrentBranchInfo(at: repositoryURL.path)
+    }
+
+    public func checkout(branch: String) throws {
+        try LibGit2.checkout(branch: branch, at: repositoryURL.path)
+    }
+
+    public func branchList(includeRemote: Bool = false) throws -> [GitBranch] {
+        try LibGit2.getBranchList(at: repositoryURL.path, includeRemote: includeRemote)
+    }
+
+    public func checkoutNewBranch(named branchName: String) throws {
+        try LibGit2.checkoutNewBranch(named: branchName, at: repositoryURL.path)
+    }
+
+    public func merge(branchName: String, verbose: Bool = false) throws {
+        try LibGit2.merge(branchName: branchName, at: repositoryURL.path, verbose: verbose)
+    }
+
+    public func addAllFiles() throws {
+        try LibGit2.addFiles([], at: repositoryURL.path, verbose: false)
+    }
+
+    public func configValue(key: String) throws -> String {
+        try LibGit2.getConfig(key: key, at: repositoryURL.path, verbose: false)
+    }
+
+    public func userConfig() throws -> (name: String, email: String) {
+        try LibGit2.getUserConfig(at: repositoryURL.path, verbose: false)
+    }
+
+    public func setUserConfig(name: String, email: String) throws {
+        try LibGit2.setUserConfig(name: name, email: email, at: repositoryURL.path, verbose: false)
+    }
+
+    public func unpushedCommits() throws -> [GitCommit] {
+        try LibGit2.getUnPushedCommits(at: repositoryURL.path, verbose: false)
+    }
+
+    public func unpulledCount() throws -> Int {
+        try LibGit2.getUnPulledCount(at: repositoryURL.path)
+    }
+
+    public func createCommit(message: String) throws -> String {
+        try LibGit2.createCommit(message: message, at: repositoryURL.path, verbose: false)
+    }
+
+    public func commitList(page: Int, size: Int) throws -> [GitCommit] {
+        try LibGit2.getCommitListWithPagination(at: repositoryURL.path, page: page, size: size)
+    }
+
+    public func commitGraphList(page: Int, size: Int) throws -> [GitCommit] {
+        try LibGit2.getCommitGraphListWithPagination(at: repositoryURL.path, page: page, size: size)
+    }
+
+    public func reset(to commitHash: String?, mode: String) throws {
+        try LibGit2.reset(to: commitHash, mode: mode, at: repositoryURL.path, verbose: false)
+    }
+
+    public func fileContent(atCommit commitHash: String, file filePath: String) throws -> String {
+        try LibGit2.getFileContent(atCommit: commitHash, file: filePath, at: repositoryURL.path)
+    }
+
+    public func fileContentChange(atCommit commitHash: String, file filePath: String) throws -> (before: String?, after: String?) {
+        try LibGit2.getFileContentChange(atCommit: commitHash, file: filePath, at: repositoryURL.path)
+    }
+
+    public func uncommittedFileContentChange(for filePath: String) throws -> (before: String?, after: String?) {
+        try LibGit2.getUncommittedFileContentChange(for: filePath, at: repositoryURL.path)
+    }
+
+    public func fileDiff(atCommit commitHash: String, for filePath: String) throws -> String {
+        try LibGit2.getFileDiff(atCommit: commitHash, for: filePath, at: repositoryURL.path)
+    }
+
+    public func uncommittedFileDiff(for filePath: String, ignoreWhitespace: Bool = false) throws -> String {
+        try LibGit2.getFileDiff(for: filePath, at: repositoryURL.path, staged: false, ignoreWhitespace: ignoreWhitespace)
+    }
+
+    public func fileData(atCommit commitHash: String, file filePath: String) throws -> Data {
+        try LibGit2.getFileData(atCommit: commitHash, file: filePath, at: repositoryURL.path)
+    }
+
+    public func commitDiffFiles(atCommit commitHash: String) throws -> [GitDiffFile] {
+        try LibGit2.getCommitDiffFiles(atCommit: commitHash, at: repositoryURL.path)
+    }
+
+    public func remoteList() throws -> [GitRemote] {
+        try LibGit2.getRemoteList(at: repositoryURL.path)
+    }
+
+    public func tags(for commitHash: String) throws -> [String] {
+        try LibGit2.getTags(at: repositoryURL.path, for: commitHash)
+    }
+
     public func submodules() throws -> [GitSubmodule] {
         try LibGit2.submodules(at: repositoryURL.path).map { submodule in
             GitSubmodule(

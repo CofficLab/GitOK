@@ -100,7 +100,7 @@ final class Project: SuperLog {
 
     func getCommits(_ reason: String) -> [GitCommit] {
         do {
-            return (try LibGit2.getCommitList(at: self.path))
+            return (try gitCLI.commitList())
         } catch let error {
             os_log(.error, "\(self.t)GetCommits has error")
             os_log(.error, "\(error)")
@@ -130,7 +130,7 @@ extension Project {
     }
 
     func isGit() -> Bool {
-        return LibGit2.isGitRepository(at: self.path)
+        return gitCLI.isGitRepository()
     }
 
     func isNotGit() -> Bool { !isGitRepo }
@@ -173,7 +173,7 @@ extension Project {
         }
 
         // 检查是否有未提交的已跟踪文件变更
-        let hasUncommittedChanges = try LibGit2.hasUncommittedChanges(at: self.path, verbose: verbose)
+        let hasUncommittedChanges = try gitCLI.hasUncommittedChanges(verbose: verbose)
         if hasUncommittedChanges {
             if verbose {
                 os_log("\(self.t)🔄 Project has uncommitted changes")
@@ -201,7 +201,7 @@ extension Project {
     /// - Returns: 如果有未跟踪文件返回 true，否则返回 false
     private func hasUntrackedFiles(verbose: Bool = false) throws -> Bool {
         // 获取 unstaged 文件列表（包含未跟踪文件）
-        let unstagedFiles = try LibGit2.getDiffFileList(at: self.path, staged: false)
+        let unstagedFiles = try gitCLI.diffFileList(staged: false)
 
         // 检查是否有未跟踪文件（change type 为 "?"）
         let hasUntracked = unstagedFiles.contains { $0.changeType == "?" }
@@ -218,7 +218,7 @@ extension Project {
     /// - Returns: 如果没有未提交的更改返回 true，否则返回 false
     /// - Throws: Git 操作相关的错误
     func hasNoUncommittedChanges() throws -> Bool {
-        return try LibGit2.hasUncommittedChanges(at: self.path, verbose: false) == false
+        return try gitCLI.hasUncommittedChanges(verbose: false) == false
     }
 }
 
@@ -229,7 +229,7 @@ extension Project {
     /// - Returns: 当前分支对象，如果获取失败返回 nil
     /// - Throws: Git 操作相关的错误
     func getCurrentBranch() throws -> GitBranch? {
-        try LibGit2.getCurrentBranchInfo(at: self.path)
+        try gitCLI.currentBranchInfo()
     }
 
     /// 切换到指定分支
@@ -237,7 +237,7 @@ extension Project {
     /// - Throws: Git 操作相关的错误
     func checkout(branch: GitBranch) throws {
         do {
-            _ = try LibGit2.checkout(branch: branch.name, at: self.path)
+            try gitCLI.checkout(branch: branch.name)
             postEvent(
                 name: .projectDidChangeBranch,
                 operation: "checkout",
@@ -256,7 +256,7 @@ extension Project {
     }
 
     func getBranches() throws -> [GitBranch] {
-        try LibGit2.getBranchList(at: self.path)
+        try gitCLI.branchList()
     }
 
     /// 创建新分支并切换到该分支
@@ -265,7 +265,7 @@ extension Project {
     func createBranch(_ branchName: String) throws {
         do {
             // 使用 Git 运行时创建并切换到新分支
-            try LibGit2.checkoutNewBranch(named: branchName, at: self.path)
+            try gitCLI.checkoutNewBranch(named: branchName)
 
             postEvent(
                 name: .projectDidChangeBranch,
@@ -551,7 +551,7 @@ extension Project {
     func mergeBranches(fromBranch: GitBranch, toBranch: GitBranch) throws {
         do {
             // 切换到目标分支
-            _ = try LibGit2.checkout(branch: toBranch.name, at: self.path)
+            try gitCLI.checkout(branch: toBranch.name)
             postEvent(
                 name: .projectDidChangeBranch,
                 operation: "checkout",
@@ -559,7 +559,7 @@ extension Project {
             )
 
             // 执行合并
-            try LibGit2.merge(branchName: fromBranch.name, at: self.path, verbose: false)
+            try gitCLI.merge(branchName: fromBranch.name, verbose: false)
             postEvent(
                 name: .projectDidMerge,
                 operation: "merge",
@@ -582,7 +582,7 @@ extension Project {
     /// - Throws: Git 错误
     func merge(branchName: String) throws {
         do {
-            try LibGit2.merge(branchName: branchName, at: self.path, verbose: false)
+            try gitCLI.merge(branchName: branchName, verbose: false)
 
             postEvent(
                 name: .projectDidMerge,
@@ -613,7 +613,7 @@ extension Project {
     /// - Throws: Git 操作相关的错误
     func addAll() throws {
         do {
-            try LibGit2.addFiles([], at: self.path, verbose: false)
+            try gitCLI.addAllFiles()
             postEvent(
                 name: .projectDidAddFiles,
                 operation: "addAll"
@@ -711,11 +711,11 @@ extension Project {
 
 extension Project {
     func getUserName() throws -> String {
-        try LibGit2.getConfig(key: "user.name", at: self.path, verbose: false)
+        try gitCLI.configValue(key: "user.name")
     }
 
     func getUserEmail() throws -> String {
-        try LibGit2.getConfig(key: "user.email", at: self.path, verbose: false)
+        try gitCLI.configValue(key: "user.email")
     }
 
     /// 设置项目的Git用户信息（仅针对当前项目）
@@ -725,7 +725,7 @@ extension Project {
     /// - Throws: Git操作异常
     func setUserConfig(name userName: String, email userEmail: String) throws {
         do {
-            _ = try LibGit2.setUserConfig(name: userName, email: userEmail, at: self.path, verbose: false)
+            try gitCLI.setUserConfig(name: userName, email: userEmail)
             postEvent(
                 name: .projectDidUpdateUserInfo,
                 operation: "setUserConfig",
@@ -747,7 +747,7 @@ extension Project {
     /// - Returns: 用户配置信息（用户名，邮箱）
     /// - Throws: Git操作异常
     func getUserConfig() throws -> (name: String, email: String) {
-        try LibGit2.getUserConfig(at: self.path, verbose: false)
+        try gitCLI.userConfig()
     }
 
     /// 批量设置用户信息
@@ -766,7 +766,7 @@ extension Project {
     /// 获取未推送的提交（本地领先远程的提交）
     /// 使用 Git 运行时原生实现
     func getUnPushedCommits() async throws -> [GitCommit] {
-        return try LibGit2.getUnPushedCommits(at: self.path, verbose: false)
+        return try gitCLI.unpushedCommits()
     }
 
     /// 获取未拉取的提交（远程领先本地的提交）
@@ -779,13 +779,13 @@ extension Project {
 
     /// 获取未拉取的提交数量（远程领先本地的提交数量）
     func getUnPulledCount() throws -> Int {
-        return try LibGit2.getUnPulledCount(at: self.path)
+        return try gitCLI.unpulledCount()
     }
 
     func submit(_ message: String) throws {
         assert(Thread.isMainThread, "setCommit(_:) 必须在主线程调用，否则会导致线程安全问题！")
         do {
-            _ = try LibGit2.createCommit(message: message, at: self.path, verbose: false)
+            _ = try gitCLI.createCommit(message: message)
             postEvent(
                 name: .projectDidCommit,
                 operation: "commit",
@@ -804,11 +804,11 @@ extension Project {
     }
 
     func getCommitsWithPagination(_ page: Int, limit: Int) throws -> [GitCommit] {
-        return try LibGit2.getCommitListWithPagination(at: self.path, page: page, size: limit)
+        return try gitCLI.commitList(page: page, size: limit)
     }
 
     func getCommitGraphWithPagination(_ page: Int, limit: Int) throws -> [GitCommit] {
-        return try LibGit2.getCommitGraphListWithPagination(at: self.path, page: page, size: limit)
+        return try gitCLI.commitGraphList(page: page, size: limit)
     }
 
     /// 撤销指定的提交（仅限未推送的 HEAD commit）
@@ -828,7 +828,7 @@ extension Project {
 
             // 使用 mixed reset：HEAD 回退到 parent，文件变更保留在工作区
             let parentHash = commit.parentHashes[0]
-            try LibGit2.reset(to: parentHash, mode: "mixed", at: self.path, verbose: false)
+            try gitCLI.reset(to: parentHash, mode: "mixed")
 
             postEvent(
                 name: .projectDidCommit,
@@ -912,35 +912,35 @@ extension Project {
 
 extension Project {
     func fileContent(at: String, file: String) throws -> String {
-        try LibGit2.getFileContent(atCommit: at, file: file, at: self.path)
+        try gitCLI.fileContent(atCommit: at, file: file)
     }
 
     func fileContentChange(at commit: String, file: String) throws -> (before: String?, after: String?) {
-        try LibGit2.getFileContentChange(atCommit: commit, file: file, at: self.path)
+        try gitCLI.fileContentChange(atCommit: commit, file: file)
     }
 
     func uncommittedFileContentChange(file: String) throws -> (before: String?, after: String?) {
-        try LibGit2.getUncommittedFileContentChange(for: file, at: self.path)
+        try gitCLI.uncommittedFileContentChange(for: file)
     }
 
     /// 获取指定提交中文件的 diff 字符串
     func fileDiff(at commit: String, file: String, ignoreWhitespace: Bool = false) throws -> String {
-        return try LibGit2.getFileDiff(atCommit: commit, for: file, at: self.path)
+        return try gitCLI.fileDiff(atCommit: commit, for: file)
     }
 
     /// 获取未提交文件的 diff 字符串
     func uncommittedFileDiff(file: String, ignoreWhitespace: Bool = false) throws -> String {
-        return try LibGit2.getFileDiff(for: file, at: self.path, staged: false)
+        return try gitCLI.uncommittedFileDiff(for: file, ignoreWhitespace: ignoreWhitespace)
     }
 
     /// 获取指定提交中文件的原始二进制数据（支持图片等二进制文件）
     func fileData(at commit: String, file: String) throws -> Data {
-        try LibGit2.getFileData(atCommit: commit, file: file, at: self.path)
+        try gitCLI.fileData(atCommit: commit, file: file)
     }
 
     /// 获取 HEAD 提交的哈希值
     func headCommitHash() -> String? {
-        guard let commits = try? LibGit2.getCommitList(at: self.path),
+        guard let commits = try? gitCLI.commitList(),
               let first = commits.first else {
             return nil
         }
@@ -959,14 +959,14 @@ extension Project {
         }
 
         // 使用 Git 运行时获取指定 commit 修改的文件列表，并按文件路径排序
-        return try LibGit2.getCommitDiffFiles(atCommit: atCommit, at: self.path)
+        return try gitCLI.commitDiffFiles(atCommit: atCommit)
             .sorted { $0.file < $1.file }
     }
 
     func untrackedFiles() async throws -> [GitDiffFile] {
         // Get both staged and unstaged changes to show all uncommitted changes
-        let stagedFiles = try LibGit2.getDiffFileList(at: self.path, staged: true)
-        let unstagedFiles = try LibGit2.getDiffFileList(at: self.path, staged: false)
+        let stagedFiles = try gitCLI.diffFileList(staged: true)
+        let unstagedFiles = try gitCLI.diffFileList(staged: false)
 
         // Merge the two lists, removing duplicates by file path
         var mergedFiles: [String: GitDiffFile] = [:]
@@ -982,12 +982,12 @@ extension Project {
     }
 
     func stagedDiffFileList() async throws -> [GitDiffFile] {
-        return try LibGit2.getDiffFileList(at: self.path, staged: true)
+        return try gitCLI.diffFileList(staged: true)
             .sorted { $0.file < $1.file }
     }
 
     func unstagedDiffFileList() async throws -> [GitDiffFile] {
-        return try LibGit2.getDiffFileList(at: self.path, staged: false)
+        return try gitCLI.diffFileList(staged: false)
             .sorted { $0.file < $1.file }
     }
 
@@ -1208,13 +1208,10 @@ extension Project {
     func push() throws {
         do {
             // 获取当前分支信息
-            let currentBranch = try LibGit2.getCurrentBranch(at: self.path)
+            let currentBranch = try gitCLI.currentBranchName() ?? ""
             os_log(.default, "📍 Current branch: \(currentBranch)")
 
-            // 处理 SSH URL 转换
-            try performWithConvertedSSHURL(operation: "push") {
-                try LibGit2.push(at: self.path, verbose: false)
-            }
+            try gitCLI.push()
 
             postEvent(
                 name: .projectDidPush,
@@ -1266,10 +1263,7 @@ extension Project {
 
     func pull() throws {
         do {
-            // 处理 SSH URL 转换
-            try performWithConvertedSSHURL(operation: "pull") {
-                try LibGit2.pull(at: self.path, verbose: false)
-            }
+            try gitCLI.pull()
 
             postEvent(
                 name: .projectDidPull,
@@ -1283,43 +1277,6 @@ extension Project {
                 error: error
             )
             throw error
-        }
-    }
-
-    /// 执行 Git 操作，如果需要则转换 SSH URL
-    /// - Parameters:
-    ///   - operation: 操作名称（push/pull）
-    ///   - block: 要执行的操作
-    private func performWithConvertedSSHURL(operation: String, block: () throws -> Void) throws {
-        // 获取当前远程 URL
-        guard let remoteURL = LibGit2.getRemoteURL(at: self.path, remote: "origin") else {
-            try block()
-            return
-        }
-
-        // 检查是否需要转换
-        let convertedURL = SSHConfigURLResolver.applySSHConfig(to: remoteURL)
-
-        if convertedURL == remoteURL {
-            try block()
-        } else {
-            // 保存原始 URL
-            let originalURL = remoteURL
-
-            // 修改为转换后的 URL
-            try LibGit2.setRemoteURL(at: self.path, remote: "origin", url: convertedURL)
-
-            // 设置 defer 确保恢复原始 URL
-            defer {
-                do {
-                    try LibGit2.setRemoteURL(at: self.path, remote: "origin", url: originalURL)
-                } catch {
-                    os_log(.error, "\(self.t)Failed to restore original URL: \(error)")
-                }
-            }
-
-            // 执行操作
-            try block()
         }
     }
 
@@ -1361,12 +1318,12 @@ extension Project {
     }
 
     func remoteList() throws -> [GitRemote] {
-        try LibGit2.getRemoteList(at: self.path)
+        try gitCLI.remoteList()
     }
 
     func addRemote(name: String, url: String) throws {
         do {
-            try LibGit2.addRemote(name: name, url: url, at: self.path)
+            try gitCLI.addRemote(name: name, url: url)
             postEvent(
                 name: .projectGitRefsDidChange,
                 operation: "addRemote",
@@ -1386,8 +1343,7 @@ extension Project {
 
     func updateRemote(originalName: String, newName: String, newURL: String) throws {
         do {
-            try LibGit2.removeRemote(name: originalName, at: self.path)
-            try LibGit2.addRemote(name: newName, url: newURL, at: self.path)
+            try gitCLI.updateRemote(originalName: originalName, newName: newName, newURL: newURL)
             postEvent(
                 name: .projectGitRefsDidChange,
                 operation: "updateRemote",
@@ -1407,7 +1363,7 @@ extension Project {
 
     func removeRemote(name: String) throws {
         do {
-            try LibGit2.removeRemote(name: name, at: self.path)
+            try gitCLI.removeRemote(name: name)
             postEvent(
                 name: .projectGitRefsDidChange,
                 operation: "removeRemote",
@@ -1430,7 +1386,7 @@ extension Project {
 
 extension Project {
     func tags(for commit: String) throws -> [String] {
-        try LibGit2.getTags(at: self.path, for: commit)
+        try gitCLI.tags(for: commit)
     }
 
     func getTags(commit: String) throws -> [String] {
