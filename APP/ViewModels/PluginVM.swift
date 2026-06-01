@@ -2,8 +2,6 @@ import Combine
 import Foundation
 import MagicKit
 import OSLog
-import StoreKit
-import SwiftData
 import SwiftUI
 
 import GitOKCoreKit
