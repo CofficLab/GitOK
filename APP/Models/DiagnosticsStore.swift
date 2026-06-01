@@ -1,6 +1,6 @@
 import AppKit
 import Foundation
-import GitOKCoreFeatures
+import GitCoreKit
 
 struct DiagnosticEntry: Identifiable, Equatable {
     let id: UUID
