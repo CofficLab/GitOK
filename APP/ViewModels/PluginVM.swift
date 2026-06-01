@@ -8,7 +8,7 @@ import GitOKUI
 @MainActor
 class PluginVM: ObservableObject {
     typealias PluginRegistrationHandler = (
-        _ adapterFactory: AppPluginAdapterFactory,
+        _ adapterFactory: any GitOKPluginAdapterFactory,
         _ register: (any SuperPlugin) -> Void
     ) -> Void
 
@@ -35,11 +35,11 @@ class PluginVM: ObservableObject {
     }
 
     var hasPlugins: Bool {
-        !plugins.isEmpty
+        registeredPluginCount > 0
     }
 
-    var plugins: [any SuperPlugin] {
-        runtime?.plugins ?? []
+    var registeredPluginCount: Int {
+        runtime?.registeredCount ?? 0
     }
 
     /// 获取工具栏前导视图
@@ -55,7 +55,7 @@ class PluginVM: ObservableObject {
         onRepositoryImported: @escaping GitOKRepositoryImportCompletionHandler = { _ in false },
         onActivityStatusUpdate: @escaping GitOKActivityStatusUpdateHandler = { _ in },
         onInfoMessage: @escaping GitOKUserMessageHandler = { _ in }
-    ) -> [(plugin: SuperPlugin, view: AnyView)] {
+    ) -> [GitOKPluginViewContribution] {
         guard hasPlugins, let runtime else { return [] }
         let context = GitOKPluginContext(
             projects: projects,
@@ -78,7 +78,7 @@ class PluginVM: ObservableObject {
         projectURL: URL? = nil,
         remoteTrackingStatus: GitOKRemoteTrackingStatus? = nil,
         isGitRepository: Bool = false
-    ) -> [(plugin: SuperPlugin, view: AnyView)] {
+    ) -> [GitOKPluginViewContribution] {
         guard hasPlugins, let runtime else { return [] }
         let context = GitOKPluginContext(
             projectURL: projectURL,
@@ -94,7 +94,7 @@ class PluginVM: ObservableObject {
     ///   - project: 当前选中的项目
     /// - Returns: 插件及其对应的列表视图数组
     @MainActor
-    func getEnabledPluginListViews(tab: String, project: Project?) -> [(plugin: SuperPlugin, view: AnyView)] {
+    func getEnabledPluginListViews(tab: String, project: Project?) -> [GitOKPluginViewContribution] {
         guard hasPlugins, let runtime else { return [] }
         let context = GitOKPluginContext(
             projectURL: project?.url,

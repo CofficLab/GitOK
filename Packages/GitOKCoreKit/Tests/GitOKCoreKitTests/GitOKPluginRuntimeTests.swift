@@ -37,7 +37,7 @@ final class GitOKPluginRuntimeTests: XCTestCase {
         runtime.register(RuntimeTestPlugin(instanceLabel: "last", pluginOrder: 20))
         runtime.register(RuntimeTestPlugin(instanceLabel: "first", pluginOrder: 10))
 
-        XCTAssertEqual(runtime.plugins.map(\.instanceLabel), ["first", "last"])
+        XCTAssertEqual(runtime.registeredPluginLabels, ["first", "last"])
         XCTAssertEqual(runtime.registeredCount, 2)
     }
 

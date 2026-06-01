@@ -50,14 +50,14 @@ struct ContentView: View, SuperLog {
     /// 默认标签页可见性
     var defaultTabVisibility: Bool? = nil
 
-    /// 缓存工具栏前导视图的插件和视图对
-    @State private var toolbarLeadingViews: [(plugin: SuperPlugin, view: AnyView)] = []
+    /// 缓存工具栏前导视图贡献
+    @State private var toolbarLeadingViews: [GitOKPluginViewContribution] = []
 
-    /// 缓存工具栏后置视图的插件和视图对
-    @State private var toolbarTrailingViews: [(plugin: SuperPlugin, view: AnyView)] = []
+    /// 缓存工具栏后置视图贡献
+    @State private var toolbarTrailingViews: [GitOKPluginViewContribution] = []
 
-    /// 缓存插件列表视图的插件和视图对
-    @State private var pluginListViews: [(plugin: SuperPlugin, view: AnyView)] = []
+    /// 缓存插件列表视图贡献
+    @State private var pluginListViews: [GitOKPluginViewContribution] = []
 
     var body: some View {
         navigationSplitView()
@@ -194,12 +194,12 @@ extension ContentView {
         .onChange(of: vm.project, onProjectChange)
         .onChange(of: self.tab, onChangeOfTab)
         .onChange(of: self.columnVisibility, onChangeColumnVisibility)
-        .onChange(of: p.plugins.count, onPluginsLoaded)
+        .onChange(of: p.registeredPluginCount, onPluginsLoaded)
         .onPluginProviderChange(if: p.hasPlugins, provider: p, perform: onPluginProviderChange)
         .toolbarVisibility(toolbarVisibility ? .visible : .hidden)
         .toolbar(content: {
             ToolbarItem(placement: .navigation) {
-                ForEach(toolbarLeadingViews, id: \.plugin.instanceLabel) { item in
+                ForEach(toolbarLeadingViews) { item in
                     item.view
                 }
             }
@@ -220,7 +220,7 @@ extension ContentView {
                 ToolbarItemGroup(
                     placement: .cancellationAction,
                     content: {
-                        ForEach(toolbarTrailingViews, id: \.plugin.instanceLabel) { item in
+                        ForEach(toolbarTrailingViews) { item in
                             item.view
                         }
                     })
@@ -235,7 +235,7 @@ extension ContentView {
     /// 更新缓存的视图
     func updateCachedViews() {
         let start = Date()
-        os_log("\(self.t)🔄 UpdateCachedViews begin tab=\(tab) project=\(vm.project?.path ?? "nil") plugins=\(p.plugins.count)")
+        os_log("\(self.t)🔄 UpdateCachedViews begin tab=\(tab) project=\(vm.project?.path ?? "nil") plugins=\(p.registeredPluginCount)")
 
         guard p.hasPlugins else {
             toolbarLeadingViews = []
@@ -360,7 +360,7 @@ extension ContentView {
     }
 
     func onPluginsLoaded() {
-        if !p.plugins.isEmpty {
+        if p.hasPlugins {
             if Self.verbose {
                 os_log("\(self.t)🔌 Plugins loaded, updating cached views")
             }

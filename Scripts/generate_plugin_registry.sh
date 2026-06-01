@@ -130,7 +130,7 @@ fi
     printf '    ///   - register: Closure that handles the actual registration.\n'
     printf '    @MainActor\n'
     printf '    public static func registerDefaultAdapters(\n'
-    printf '        adapterFactory: some GitOKPluginAdapterFactory,\n'
+    printf '        adapterFactory: any GitOKPluginAdapterFactory,\n'
     printf '        _ register: (any SuperPlugin) -> Void\n'
     printf '    ) {\n'
     printf '%s\n' "$registry_entries" |

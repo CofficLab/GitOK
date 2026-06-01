@@ -4,7 +4,7 @@ import SwiftUI
 
 @MainActor
 public final class GitOKPluginRuntime {
-    public private(set) var plugins: [any SuperPlugin] = []
+    private var plugins: [any SuperPlugin] = []
 
     private var usedLabels: Set<String> = []
     private let settingsStore: PluginSettingsStore
@@ -15,6 +15,10 @@ public final class GitOKPluginRuntime {
 
     public var registeredCount: Int {
         plugins.count
+    }
+
+    public var registeredPluginLabels: [String] {
+        plugins.map(\.instanceLabel)
     }
 
     public func clearRegisteredPlugins() {
@@ -36,11 +40,7 @@ public final class GitOKPluginRuntime {
         plugins.sort { $0.pluginOrder < $1.pluginOrder }
     }
 
-    public func sortedRegisteredPlugins() -> [any SuperPlugin] {
-        plugins
-    }
-
-    public func isPluginEnabled(_ plugin: any SuperPlugin) -> Bool {
+    private func isPluginEnabled(_ plugin: any SuperPlugin) -> Bool {
         if !plugin.pluginPolicy.shouldRegister {
             return false
         }
@@ -80,19 +80,19 @@ public final class GitOKPluginRuntime {
             .sorted { $0.name < $1.name }
     }
 
-    public func enabledToolbarLeadingViews(context: GitOKPluginContext) -> [(plugin: any SuperPlugin, view: AnyView)] {
+    public func enabledToolbarLeadingViews(context: GitOKPluginContext) -> [GitOKPluginViewContribution] {
         plugins.compactMap { plugin in
             guard isPluginEnabled(plugin) else { return nil }
             guard let view = plugin.addToolBarLeadingView(context: context) else { return nil }
-            return (plugin, view)
+            return GitOKPluginViewContribution(id: plugin.instanceLabel, view: view)
         }
     }
 
-    public func enabledToolbarTrailingViews(context: GitOKPluginContext) -> [(plugin: any SuperPlugin, view: AnyView)] {
+    public func enabledToolbarTrailingViews(context: GitOKPluginContext) -> [GitOKPluginViewContribution] {
         plugins.compactMap { plugin in
             guard isPluginEnabled(plugin) else { return nil }
             guard let view = plugin.addToolBarTrailingView(context: context) else { return nil }
-            return (plugin, view)
+            return GitOKPluginViewContribution(id: plugin.instanceLabel, view: view)
         }
     }
 
@@ -100,11 +100,11 @@ public final class GitOKPluginRuntime {
         tab: String,
         projectURL: URL?,
         context: GitOKPluginContext
-    ) -> [(plugin: any SuperPlugin, view: AnyView)] {
+    ) -> [GitOKPluginViewContribution] {
         plugins.compactMap { plugin in
             guard isPluginEnabled(plugin) else { return nil }
             guard let view = plugin.addListView(tab: tab, projectURL: projectURL, context: context) else { return nil }
-            return (plugin, view)
+            return GitOKPluginViewContribution(id: plugin.instanceLabel, view: view)
         }
     }
 

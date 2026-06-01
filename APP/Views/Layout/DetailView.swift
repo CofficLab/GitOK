@@ -11,7 +11,7 @@ struct DetailView: View {
     @EnvironmentObject var vm: ProjectVM
 
     let tab: String
-    let pluginListViews: [(plugin: SuperPlugin, view: AnyView)]
+    let pluginListViews: [GitOKPluginViewContribution]
     let statusBarVisibility: Bool
 
     var body: some View {
@@ -52,7 +52,7 @@ struct DetailView: View {
 
     private var pluginList: some View {
         VStack(spacing: 0) {
-            ForEach(pluginListViews, id: \.plugin.instanceLabel) { item in
+            ForEach(pluginListViews) { item in
                 item.view
             }
         }
