@@ -11,9 +11,6 @@ struct PluginSettingsView: View, SuperLog {
     /// 是否启用详细日志输出
     nonisolated static let verbose = false
 
-    /// 插件设置存储
-    private let settingsStore = PluginSettingsStore.shared
-
     /// 插件提供者
     @EnvironmentObject var pluginProvider: PluginVM
 
@@ -45,7 +42,7 @@ struct PluginSettingsView: View, SuperLog {
                                 get: { pluginStates[plugin.id, default: plugin.defaultEnabled] },
                                 set: { newValue in
                                     pluginStates[plugin.id] = newValue
-                                    settingsStore.setPluginEnabled(plugin.id, enabled: newValue)
+                                    PluginSettingsStore.shared.setPluginEnabled(plugin.id, enabled: newValue)
 
                                     if Self.verbose {
                                         os_log("\(Self.t)🔌 Plugin '\(plugin.id)' is now \(newValue ? "enabled" : "disabled")")
@@ -105,6 +102,12 @@ struct PluginSettingsView: View, SuperLog {
 
     /// 加载插件状态
     private func loadPluginStates() {
+        guard configurablePlugins.isEmpty == false else {
+            pluginStates = [:]
+            return
+        }
+
+        let settingsStore = PluginSettingsStore.shared
         var states: [String: Bool] = [:]
         for plugin in configurablePlugins {
             // 检查用户配置，如果没有配置则使用插件的默认启用状态
