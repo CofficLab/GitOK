@@ -1,8 +1,8 @@
 import CloudKit
-import GitOKCoreFeatures
 import MagicKit
 import Foundation
 import OSLog
+import ProjectSupportKit
 import SwiftData
 import SwiftUI
 
