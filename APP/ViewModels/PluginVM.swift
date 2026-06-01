@@ -20,8 +20,6 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
     /// 是否注册所有插件（开发调试用，设为 false 可禁用所有插件）
     static var registerAllPlugins: Bool = true
 
-    @Published private(set) var plugins: [SuperPlugin] = []
-
     private var runtime: GitOKPluginRuntime?
     private let registerPackagedPlugins: PluginRegistrationHandler?
 
@@ -46,6 +44,10 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
 
     var hasPlugins: Bool {
         !plugins.isEmpty
+    }
+
+    var plugins: [any SuperPlugin] {
+        runtime?.plugins ?? []
     }
 
     /// 获取工具栏前导视图
@@ -219,8 +221,6 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
 
         registerPackagedPluginAdapters()
 
-        // 从内部注册表获取所有已注册的插件实例
-        self.plugins = pluginRuntime?.sortedRegisteredPlugins() ?? []
         os_log("\(Self.t)✅ Startup step: PluginVM plugins sorted count=\(self.plugins.count)")
 
         // 订阅设置变化，当设置改变时触发 UI 更新

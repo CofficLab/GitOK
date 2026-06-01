@@ -6,7 +6,6 @@ import SwiftUI
 public final class GitOKPluginRuntime {
     public private(set) var plugins: [any SuperPlugin] = []
 
-    private var registeredPlugins: [any SuperPlugin] = []
     private var usedLabels: Set<String> = []
     private let settingsStore: PluginSettingsStore
 
@@ -15,11 +14,10 @@ public final class GitOKPluginRuntime {
     }
 
     public var registeredCount: Int {
-        registeredPlugins.count
+        plugins.count
     }
 
     public func clearRegisteredPlugins() {
-        registeredPlugins.removeAll()
         usedLabels.removeAll()
         plugins.removeAll()
     }
@@ -34,12 +32,12 @@ public final class GitOKPluginRuntime {
         }
 
         usedLabels.insert(label)
-        registeredPlugins.append(plugin)
-        plugins = sortedRegisteredPlugins()
+        plugins.append(plugin)
+        plugins.sort { $0.pluginOrder < $1.pluginOrder }
     }
 
     public func sortedRegisteredPlugins() -> [any SuperPlugin] {
-        registeredPlugins.sorted { $0.pluginOrder < $1.pluginOrder }
+        plugins
     }
 
     public func isPluginEnabled(_ plugin: any SuperPlugin) -> Bool {
