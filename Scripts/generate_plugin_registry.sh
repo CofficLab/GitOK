@@ -32,7 +32,7 @@ registry_entries=$(
         struct_name=$(sed -n 's/^[[:space:]]*public struct \([A-Za-z0-9_]*Plugin\):.*GitOKPlugin.*/\1/p' "$plugin_file" | head -1)
         [ -n "$struct_name" ] || continue
 
-        if grep -Eq 'policy:[[:space:]]*\.disabled' "$plugin_file"; then
+        if ! grep -Eq 'policy:[[:space:]]*\.(alwaysOn|optOut|optIn)' "$plugin_file"; then
             continue
         fi
 
