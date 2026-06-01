@@ -23,39 +23,7 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
     /// Combine 订阅集合
     private var cancellables = Set<AnyCancellable>()
 
-    // MARK: - Plugin Registration
-
-    /// 注册一个插件实例
-    /// - Parameter plugin: 要注册的插件实例
-    private func register(_ plugin: any SuperPlugin) {
-        runtime.register(plugin)
-    }
-
-    /// 获取所有已注册的插件实例，按 order 排序
-    /// - Returns: 排序后的插件实例数组
-    private func getAllPlugins() -> [any SuperPlugin] {
-        runtime.sortedRegisteredPlugins()
-    }
-
-    /// 清空所有注册的插件
-    private func clearRegisteredPlugins() {
-        runtime.clearRegisteredPlugins()
-    }
-
-    /// 已注册插件数量
-    private var registeredCount: Int {
-        runtime.registeredCount
-    }
-
     // MARK: - Plugin Query Methods
-
-    /// 检查插件是否被用户启用
-    /// - Parameter plugin: 要检查的插件
-    /// - Returns: 如果插件被启用则返回true
-    func isPluginEnabled(_ plugin: any SuperPlugin) -> Bool {
-        guard hasPlugins else { return false }
-        return runtime.isPluginEnabled(plugin)
-    }
 
     /// 获取所有可用的标签页名称
     /// - Returns: 标签页名称数组
@@ -244,7 +212,7 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
         }
 
         // 从内部注册表获取所有已注册的插件实例
-        self.plugins = GeneratedPluginRegistry.hasDefaultAdapters ? getAllPlugins() : []
+        self.plugins = GeneratedPluginRegistry.hasDefaultAdapters ? runtime.sortedRegisteredPlugins() : []
         os_log("\(Self.t)✅ Startup step: PluginVM plugins sorted count=\(self.plugins.count)")
 
         // 订阅设置变化，当设置改变时触发 UI 更新
@@ -268,10 +236,10 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
             return
         }
 
-        clearRegisteredPlugins()
+        runtime.clearRegisteredPlugins()
 
         GeneratedPluginRegistry.registerDefaultAdapters(adapterFactory: AppPluginAdapterFactory()) { adapter in
-            self.register(adapter)
+            self.runtime.register(adapter)
         }
     }
 }
