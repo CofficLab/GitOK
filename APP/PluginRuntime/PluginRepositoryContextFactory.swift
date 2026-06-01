@@ -37,16 +37,4 @@ enum PluginRepositoryContextFactory {
             }
         )
     }
-
-    @MainActor
-    static func make(data: DataVM, projectVM: ProjectVM) -> GitOKPluginContext {
-        let handlers = handlers(data: data, projectVM: projectVM)
-        return GitOKPluginContext(
-            canImportRepository: handlers.canImportRepository,
-            onProjectExists: handlers.onProjectExists,
-            onRepositoryImported: handlers.onRepositoryImported,
-            onActivityStatusUpdate: handlers.onActivityStatusUpdate,
-            onInfoMessage: handlers.onInfoMessage
-        )
-    }
 }

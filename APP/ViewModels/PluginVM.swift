@@ -17,9 +17,6 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
     nonisolated static let emoji = "🧩"
     static let verbose = false
 
-    /// 是否注册所有插件（开发调试用，设为 false 可禁用所有插件）
-    static var registerAllPlugins: Bool = true
-
     private var runtime: GitOKPluginRuntime?
     private let registerPackagedPlugins: PluginRegistrationHandler?
 
@@ -240,11 +237,6 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
     /// Register all packaged plugins using the auto-generated registry.
     private func registerPackagedPluginAdapters() {
         guard let runtime, let registerPackagedPlugins else { return }
-
-        if !Self.registerAllPlugins {
-            os_log("\(self.t)⚠️ Plugin registration is disabled via registerAllPlugins=false")
-            return
-        }
 
         runtime.clearRegisteredPlugins()
 
