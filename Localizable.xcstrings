@@ -72,6 +72,7 @@
       }
     },
     "%lld Cores" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -88,6 +89,7 @@
       }
     },
     "%lld%%" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -280,6 +282,7 @@
       }
     },
     "Architecture" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -424,6 +427,7 @@
       }
     },
     "Clone 会从远程地址下载仓库并自动加入项目。" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -520,6 +524,7 @@
       }
     },
     "Cores" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -632,6 +637,7 @@
       }
     },
     "Disk" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -648,6 +654,7 @@
       }
     },
     "Disk Usage" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -920,6 +927,7 @@
       }
     },
     "Free Capacity" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -936,6 +944,7 @@
       }
     },
     "Free Memory" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -968,6 +977,7 @@
       }
     },
     "Git Version" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1016,6 +1026,7 @@
       }
     },
     "Hardware" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1032,6 +1043,7 @@
       }
     },
     "Hostname" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1224,6 +1236,7 @@
       }
     },
     "Memory" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1240,6 +1253,7 @@
       }
     },
     "Memory Usage" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1490,6 +1504,7 @@
       }
     },
     "Not Installed" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1634,6 +1649,7 @@
       }
     },
     "Processor" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1989,6 +2005,7 @@
       }
     },
     "System" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -2005,6 +2022,7 @@
       }
     },
     "System Info" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -2021,6 +2039,7 @@
       }
     },
     "System Name" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -2037,6 +2056,7 @@
       }
     },
     "System Version" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -2085,6 +2105,7 @@
       }
     },
     "Total Capacity" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -2101,6 +2122,7 @@
       }
     },
     "Total Memory" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -2149,6 +2171,7 @@
       }
     },
     "Used Capacity" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -2165,6 +2188,7 @@
       }
     },
     "Used Memory" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -2373,6 +2397,7 @@
       }
     },
     "克隆仓库" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -2677,6 +2702,7 @@
       }
     },
     "复制" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -3109,6 +3135,7 @@
       }
     },
     "未安装" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -3253,6 +3280,7 @@
       }
     },
     "添加已有仓库，或从远程 Clone / 新建一个仓库。" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -3264,6 +3292,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "加入現有倉庫，或從遠端 Clone / 新增一個倉庫。"
+          }
+        }
+      }
+    },
+    "添加已有仓库，或新建一个本地仓库。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add an existing repository, or create a new local repository."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "添加已有仓库，或新建一个本地仓库。"
+          }
+        },
+        "zh-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "加入現有倉庫，或新增一個本地倉庫。"
           }
         }
       }
@@ -3365,6 +3415,7 @@
       }
     },
     "用终端打开" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -3685,6 +3736,7 @@
       }
     },
     "重试" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
