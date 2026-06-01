@@ -5,11 +5,15 @@ import OSLog
 import SwiftUI
 
 import GitOKCoreKit
-import GitOKPluginRegistry
 import GitOKUI
 
 @MainActor
 class PluginVM: ObservableObject, SuperLog, SuperThread {
+    typealias PluginRegistrationHandler = (
+        _ adapterFactory: AppPluginAdapterFactory,
+        _ register: (any SuperPlugin) -> Void
+    ) -> Void
+
     nonisolated static let emoji = "🧩"
     static let verbose = false
 
@@ -19,6 +23,7 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
     @Published private(set) var plugins: [SuperPlugin] = []
 
     private var runtime: GitOKPluginRuntime?
+    private let registerPackagedPlugins: PluginRegistrationHandler?
 
     /// Combine 订阅集合
     private var cancellables = Set<AnyCancellable>()
@@ -203,14 +208,16 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
 
     // MARK: - Initialization
 
-    init() {
+    init(registerPackagedPlugins: PluginRegistrationHandler? = nil) {
         let start = Date()
         os_log("\(Self.t)🚀 Startup begin: PluginVM.init")
 
-        let pluginRuntime = GeneratedPluginRegistry.hasDefaultAdapters ? GitOKPluginRuntime() : nil
+        self.registerPackagedPlugins = registerPackagedPlugins
+
+        let pluginRuntime = registerPackagedPlugins == nil ? nil : GitOKPluginRuntime()
         self.runtime = pluginRuntime
 
-        registerPackagedPlugins()
+        registerPackagedPluginAdapters()
 
         // 从内部注册表获取所有已注册的插件实例
         self.plugins = pluginRuntime?.sortedRegisteredPlugins() ?? []
@@ -231,8 +238,8 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
     // MARK: - Custom Plugin Providers
 
     /// Register all packaged plugins using the auto-generated registry.
-    private func registerPackagedPlugins() {
-        guard let runtime else { return }
+    private func registerPackagedPluginAdapters() {
+        guard let runtime, let registerPackagedPlugins else { return }
 
         if !Self.registerAllPlugins {
             os_log("\(self.t)⚠️ Plugin registration is disabled via registerAllPlugins=false")
@@ -241,7 +248,7 @@ class PluginVM: ObservableObject, SuperLog, SuperThread {
 
         runtime.clearRegisteredPlugins()
 
-        GeneratedPluginRegistry.registerDefaultAdapters(adapterFactory: AppPluginAdapterFactory()) { adapter in
+        registerPackagedPlugins(AppPluginAdapterFactory()) { adapter in
             runtime.register(adapter)
         }
     }
