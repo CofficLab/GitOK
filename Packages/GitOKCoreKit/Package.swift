@@ -22,7 +22,6 @@ let package = Package(
         .package(path: "../ProjectRulesKit"),
         .package(path: "../ProjectSupportKit"),
         .package(path: "../GitCoreKit"),
-        .package(path: "../MagicAlert"),
         .package(path: "../MagicKit"),
     ],
     targets: [
@@ -40,11 +39,9 @@ let package = Package(
             name: "GitOKCoreFeatures",
             dependencies: [
                 "GitOKCoreKit",
-                "GitOKUI",
                 "ProjectRulesKit",
                 "ProjectSupportKit",
                 "GitCoreKit",
-                "MagicAlert",
                 "MagicKit",
             ],
             path: "Sources/GitOKCoreFeatures"
