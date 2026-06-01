@@ -11,7 +11,7 @@ public struct GitWatcherPlugin: GitOKPlugin {
         description: PluginGitWatcherLocalization.string("Monitor .git directory changes"),
         iconName: "dot.radiowaves.left.and.right",
         order: 23,
-        policy: .alwaysOn,
+        policy: .disabled,
         tableName: PluginGitWatcherLocalization.table
     )
 

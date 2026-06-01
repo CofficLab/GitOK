@@ -11,7 +11,7 @@ public struct UnpushedStatusPlugin: GitOKPlugin {
         description: PluginUnpushedStatusLocalization.string("Display unpushed commit count"),
         iconName: "arrow.up.circle",
         order: 25,
-        policy: .alwaysOn,
+        policy: .disabled,
         tableName: PluginUnpushedStatusLocalization.table
     )
 

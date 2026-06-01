@@ -7,7 +7,7 @@ public struct SummerThemePlugin: GitOKPlugin {
         description: "Warm golden light theme",
         iconName: "tag",
         order: 130,
-        policy: .alwaysOn,
+        policy: .disabled,
         tableName: "ThemeSummer"
     )
 

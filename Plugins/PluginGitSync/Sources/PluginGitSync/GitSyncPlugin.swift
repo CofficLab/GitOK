@@ -11,7 +11,7 @@ public struct GitSyncPlugin: GitOKPlugin {
         description: PluginGitSyncLocalization.string("Synchronize with remote repository"),
         iconName: "arrow.clockwise",
         order: 9999,
-        policy: .optOut,
+        policy: .disabled,
         tableName: PluginGitSyncLocalization.table
     )
 

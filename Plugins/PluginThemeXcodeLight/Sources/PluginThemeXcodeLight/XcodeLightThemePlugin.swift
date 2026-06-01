@@ -7,7 +7,7 @@ public struct XcodeLightThemePlugin: GitOKPlugin {
         description: "Xcode-inspired light theme",
         iconName: "hammer",
         order: 137,
-        policy: .alwaysOn,
+        policy: .disabled,
         tableName: "ThemeXcodeLight"
     )
 

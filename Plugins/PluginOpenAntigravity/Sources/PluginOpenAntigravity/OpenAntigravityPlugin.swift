@@ -11,7 +11,7 @@ public struct OpenAntigravityPlugin: GitOKPlugin {
         description: PluginOpenAntigravityLocalization.string("Open the current project folder in Antigravity."),
         iconName: "paperplane",
         order: 8406,
-        policy: .optIn,
+        policy: .disabled,
         tableName: PluginOpenAntigravityLocalization.table
     )
 

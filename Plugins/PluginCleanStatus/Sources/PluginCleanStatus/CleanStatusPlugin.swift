@@ -11,7 +11,7 @@ public struct CleanStatusPlugin: GitOKPlugin {
         description: PluginCleanStatusLocalization.string("Track whether project is clean (no uncommitted changes)"),
         iconName: "checkmark.circle",
         order: 24,
-        policy: .alwaysOn,
+        policy: .disabled,
         tableName: PluginCleanStatusLocalization.table
     )
 

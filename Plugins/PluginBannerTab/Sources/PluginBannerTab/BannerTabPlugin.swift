@@ -10,7 +10,7 @@ public struct BannerTabPlugin: GitOKPlugin {
         description: PluginBannerTabLocalization.string("Banner tab entry"),
         iconName: "rectangle.topthird.inset.filled",
         order: 2,
-        policy: .alwaysOn,
+        policy: .disabled,
         tableName: PluginBannerTabLocalization.table
     )
 

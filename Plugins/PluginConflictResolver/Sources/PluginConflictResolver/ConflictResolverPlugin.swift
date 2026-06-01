@@ -10,7 +10,7 @@ public struct ConflictResolverPlugin: GitOKPlugin {
         displayName: PluginConflictResolverLocalization.string("ConflictResolver"),
         description: PluginConflictResolverLocalization.string("Git 冲突解决"),
         iconName: "exclamationmark.triangle",
-        policy: .alwaysOn,
+        policy: .disabled,
         tableName: PluginConflictResolverLocalization.table
     )
 

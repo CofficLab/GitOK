@@ -10,7 +10,7 @@ public struct GitClonePlugin: GitOKPlugin {
         description: PluginGitCloneLocalization.string("Clone a Git repository from a remote URL and automatically add it to the project list."),
         iconName: "square.and.arrow.down",
         order: 11,
-        policy: .alwaysOn,
+        policy: .disabled,
         tableName: PluginGitCloneLocalization.table
     )
 

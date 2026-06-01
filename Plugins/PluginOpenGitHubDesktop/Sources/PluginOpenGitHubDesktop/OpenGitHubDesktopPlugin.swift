@@ -11,7 +11,7 @@ public struct OpenGitHubDesktopPlugin: GitOKPlugin {
         description: PluginOpenGitHubDesktopLocalization.string("Open the current project folder in GitHub Desktop."),
         iconName: "desktopcomputer",
         order: 8403,
-        policy: .optIn,
+        policy: .disabled,
         tableName: PluginOpenGitHubDesktopLocalization.table
     )
 

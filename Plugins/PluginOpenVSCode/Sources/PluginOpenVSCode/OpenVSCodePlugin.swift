@@ -11,7 +11,7 @@ public struct OpenVSCodePlugin: GitOKPlugin {
         description: PluginOpenVSCodeLocalization.string("Open the current project folder in VS Code."),
         iconName: "chevron.left.forwardslash.chevron.right",
         order: 8400,
-        policy: .optOut,
+        policy: .disabled,
         tableName: PluginOpenVSCodeLocalization.table
     )
 

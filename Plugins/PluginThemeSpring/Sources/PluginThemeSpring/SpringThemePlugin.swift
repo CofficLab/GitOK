@@ -7,7 +7,7 @@ public struct SpringThemePlugin: GitOKPlugin {
         description: "Fresh green light theme",
         iconName: "tree",
         order: 121,
-        policy: .alwaysOn,
+        policy: .disabled,
         tableName: "ThemeSpring"
     )
 

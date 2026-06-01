@@ -11,7 +11,7 @@ public struct ReadmePlugin: GitOKPlugin {
         description: PluginReadmeLocalization.string("Provides README entry point in status bar"),
         iconName: "book",
         order: 9999,
-        policy: .optOut,
+        policy: .disabled,
         tableName: PluginReadmeLocalization.table
     )
 

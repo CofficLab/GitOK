@@ -7,7 +7,7 @@ public struct NebulaThemePlugin: GitOKPlugin {
         description: "Violet atmospheric dark theme",
         iconName: "arrow.triangle.pull",
         order: 126,
-        policy: .alwaysOn,
+        policy: .disabled,
         tableName: "ThemeNebula"
     )
 

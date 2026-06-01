@@ -7,7 +7,7 @@ public struct DraculaThemePlugin: GitOKPlugin {
         description: "Classic vivid dark theme",
         iconName: "moon.stars",
         order: 135,
-        policy: .alwaysOn,
+        policy: .disabled,
         tableName: "ThemeDracula"
     )
 
