@@ -9,16 +9,9 @@
 /* Begin PBXBuildFile section */
 		0B3CC95E2DF1C49000E22263 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = 0B3CC95D2DF1C49000E22263 /* Sparkle */; };
 		0B559DBC2F1A5D41005C6809 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0B559D792F1A5D41005C6809 /* Assets.xcassets */; };
-		A1F100042F70000100ABC001 /* GitCoreKit in Frameworks */ = {isa = PBXBuildFile; productRef = A1F100022F70000100ABC001 /* GitCoreKit */; };
-		A1F200032F70000100ABC001 /* ProjectRulesKit in Frameworks */ = {isa = PBXBuildFile; productRef = A1F200022F70000100ABC001 /* ProjectRulesKit */; };
-		A1F200042F70000100ABC001 /* ProjectRulesKit in Frameworks */ = {isa = PBXBuildFile; productRef = A1F200022F70000100ABC001 /* ProjectRulesKit */; };
-		A1F400032F70000100ABC001 /* ProjectSupportKit in Frameworks */ = {isa = PBXBuildFile; productRef = A1F400022F70000100ABC001 /* ProjectSupportKit */; };
-		A1F400042F70000100ABC001 /* ProjectSupportKit in Frameworks */ = {isa = PBXBuildFile; productRef = A1F400022F70000100ABC001 /* ProjectSupportKit */; };
 		A1F500032F70000100ABC001 /* GitOKUI in Frameworks */ = {isa = PBXBuildFile; productRef = A1F500022F70000100ABC001 /* GitOKUI */; };
-		A1F500042F70000100ABC001 /* GitOKUI in Frameworks */ = {isa = PBXBuildFile; productRef = A1F500022F70000100ABC001 /* GitOKUI */; };
 		CC73F006457981A7C3AE5D86 /* GitOKCoreKit in Frameworks */ = {isa = PBXBuildFile; productRef = 4EC50CECD060E698BF493AED /* GitOKCoreKit */; };
 		CC73F007457981A7C3AE5D86 /* GitOKCoreFeatures in Frameworks */ = {isa = PBXBuildFile; productRef = CC73F008457981A7C3AE5D86 /* GitOKCoreFeatures */; };
-		E45D8E48A323B0CC5A961EE4 /* GitOKCoreKit in Frameworks */ = {isa = PBXBuildFile; productRef = 4EC50CECD060E698BF493AED /* GitOKCoreKit */; };
 		F54D04C42DF2D01300FFB434 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = F54D04C32DF2D01300FFB434 /* Localizable.xcstrings */; };
 		F5E6143F2F33311F00F79149 /* MagicKit in Frameworks */ = {isa = PBXBuildFile; productRef = F5E6143E2F33311F00F79149 /* MagicKit */; };
 /* End PBXBuildFile section */
@@ -788,7 +781,6 @@
 		0BDAF47B2F136A5A00A4283A /* ID3TagEditor.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = ID3TagEditor.xcodeproj; sourceTree = "<group>"; };
 		0BDAF6A52F136A5A00A4283A /* ZIPFoundation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = ZIPFoundation.xcodeproj; sourceTree = "<group>"; };
 		0BDAF7F12F136A5B00A4283A /* MagicApp.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = MagicApp.xcodeproj; sourceTree = "<group>"; };
-		A1F000012F70000100ABC001 /* GitOKTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GitOKTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F54D04C32DF2D01300FFB434 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -810,18 +802,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		A1F000062F70000100ABC001 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				A1F400042F70000100ABC001 /* ProjectSupportKit in Frameworks */,
-				A1F200042F70000100ABC001 /* ProjectRulesKit in Frameworks */,
-				A1F100042F70000100ABC001 /* GitCoreKit in Frameworks */,
-				A1F500042F70000100ABC001 /* GitOKUI in Frameworks */,
-				E45D8E48A323B0CC5A961EE4 /* GitOKCoreKit in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -832,7 +812,6 @@
 				F5AE82732FAB49C900F014F8 /* APP */,
 				0B559D792F1A5D41005C6809 /* Assets.xcassets */,
 				0B55A0222F1B0F38005C6809 /* GitOK.app */,
-				A1F000012F70000100ABC001 /* GitOKTests.xctest */,
 				0B0E16882BD89A910078942B /* GitOK.entitlements */,
 				0B332F062BDA02BC00DFA5BB /* Info.plist */,
 				F54D04C32DF2D01300FFB434 /* Localizable.xcstrings */,
@@ -1182,30 +1161,6 @@
 			productReference = 0B55A0222F1B0F38005C6809 /* GitOK.app */;
 			productType = "com.apple.product-type.application";
 		};
-		A1F000042F70000100ABC001 /* GitOKTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = A1F0000C2F70000100ABC001 /* Build configuration list for PBXNativeTarget "GitOKTests" */;
-			buildPhases = (
-				A1F000052F70000100ABC001 /* Sources */,
-				A1F000062F70000100ABC001 /* Frameworks */,
-				A1F000072F70000100ABC001 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = GitOKTests;
-			packageProductDependencies = (
-				A1F400022F70000100ABC001 /* ProjectSupportKit */,
-				A1F200022F70000100ABC001 /* ProjectRulesKit */,
-				A1F100022F70000100ABC001 /* GitCoreKit */,
-				A1F500022F70000100ABC001 /* GitOKUI */,
-				4EC50CECD060E698BF493AED /* GitOKCoreKit */,
-			);
-			productName = GitOKTests;
-			productReference = A1F000012F70000100ABC001 /* GitOKTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -1218,10 +1173,6 @@
 				TargetAttributes = {
 					0B0E167C2BD89A8F0078942B = {
 						CreatedOnToolsVersion = 15.3;
-					};
-					A1F000042F70000100ABC001 = {
-						CreatedOnToolsVersion = 26.2;
-						TestTargetID = 0B0E167C2BD89A8F0078942B;
 					};
 				};
 			};
@@ -1237,9 +1188,6 @@
 			);
 			mainGroup = 0B0E16742BD89A8F0078942B;
 			packageReferences = (
-				A1F400012F70000100ABC001 /* XCLocalSwiftPackageReference "Packages/ProjectSupportKit" */,
-				A1F200012F70000100ABC001 /* XCLocalSwiftPackageReference "Packages/ProjectRulesKit" */,
-				A1F100012F70000100ABC001 /* XCLocalSwiftPackageReference "Packages/GitCoreKit" */,
 				A1F500012F70000100ABC001 /* XCLocalSwiftPackageReference "Packages/GitOKUI" */,
 				F5F794E72C5B192600DCB824 /* XCRemoteSwiftPackageReference "Sparkle" */,
 				F5E6143D2F33311F00F79149 /* XCLocalSwiftPackageReference "Packages/MagicKit" */,
@@ -1372,7 +1320,6 @@
 			projectRoot = "";
 			targets = (
 				0B0E167C2BD89A8F0078942B /* GitOK */,
-				A1F000042F70000100ABC001 /* GitOKTests */,
 			);
 		};
 /* End PBXProject section */
@@ -2104,24 +2051,10 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		A1F000072F70000100ABC001 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		0B0E16792BD89A8F0078942B /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		A1F000052F70000100ABC001 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -2345,44 +2278,6 @@
 			};
 			name = Release;
 		};
-		A1F0000A2F70000100ABC001 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				GENERATE_INFOPLIST_FILE = YES;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@loader_path/../Frameworks",
-				);
-				MACOSX_DEPLOYMENT_TARGET = 15.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.yueyi.GitOKTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-			};
-			name = Debug;
-		};
-		A1F0000B2F70000100ABC001 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				GENERATE_INFOPLIST_FILE = YES;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@loader_path/../Frameworks",
-				);
-				MACOSX_DEPLOYMENT_TARGET = 15.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.yueyi.GitOKTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -2404,33 +2299,12 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		A1F0000C2F70000100ABC001 /* Build configuration list for PBXNativeTarget "GitOKTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				A1F0000A2F70000100ABC001 /* Debug */,
-				A1F0000B2F70000100ABC001 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
 		917255476993285F764073A8 /* XCLocalSwiftPackageReference "Packages/GitOKCoreKit" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Packages/GitOKCoreKit;
-		};
-		A1F100012F70000100ABC001 /* XCLocalSwiftPackageReference "Packages/GitCoreKit" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/GitCoreKit;
-		};
-		A1F200012F70000100ABC001 /* XCLocalSwiftPackageReference "Packages/ProjectRulesKit" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/ProjectRulesKit;
-		};
-		A1F400012F70000100ABC001 /* XCLocalSwiftPackageReference "Packages/ProjectSupportKit" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/ProjectSupportKit;
 		};
 		A1F500012F70000100ABC001 /* XCLocalSwiftPackageReference "Packages/GitOKUI" */ = {
 			isa = XCLocalSwiftPackageReference;
@@ -2468,21 +2342,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 917255476993285F764073A8 /* XCLocalSwiftPackageReference "Packages/GitOKCoreKit" */;
 			productName = GitOKCoreFeatures;
-		};
-		A1F100022F70000100ABC001 /* GitCoreKit */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = A1F100012F70000100ABC001 /* XCLocalSwiftPackageReference "Packages/GitCoreKit" */;
-			productName = GitCoreKit;
-		};
-		A1F200022F70000100ABC001 /* ProjectRulesKit */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = A1F200012F70000100ABC001 /* XCLocalSwiftPackageReference "Packages/ProjectRulesKit" */;
-			productName = ProjectRulesKit;
-		};
-		A1F400022F70000100ABC001 /* ProjectSupportKit */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = A1F400012F70000100ABC001 /* XCLocalSwiftPackageReference "Packages/ProjectSupportKit" */;
-			productName = ProjectSupportKit;
 		};
 		A1F500022F70000100ABC001 /* GitOKUI */ = {
 			isa = XCSwiftPackageProductDependency;
