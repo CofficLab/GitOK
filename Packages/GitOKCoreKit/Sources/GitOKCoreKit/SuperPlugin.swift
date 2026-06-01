@@ -198,8 +198,8 @@ public extension SuperPlugin {
     /// 默认的图标名称实现
     static var iconName: String { "puzzlepiece.extension" }
 
-    /// 默认策略：注册并默认启用，用户可关闭。
-    static var policy: GitOKPluginPolicy { .optOut }
+    /// 默认策略：不注册。插件需要显式声明策略才能进入运行时。
+    static var policy: GitOKPluginPolicy { .disabled }
 
     /// 默认从 policy 派生用户开关能力
     static var allowUserToggle: Bool { policy.allowUserToggle }
