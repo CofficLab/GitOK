@@ -152,12 +152,15 @@ public final class GitOKPluginRuntime {
         }
     }
 
-    public func rootViewWrapper<Content: View>(@ViewBuilder content: () -> Content) -> AnyView {
+    public func rootViewWrapper<Content: View>(
+        context: GitOKPluginContext = GitOKPluginContext(),
+        @ViewBuilder content: () -> Content
+    ) -> AnyView {
         var wrapped = AnyView(content())
 
         for plugin in plugins {
             guard isPluginEnabled(plugin) else { continue }
-            wrapped = plugin.wrapRoot(wrapped)
+            wrapped = plugin.wrapRoot(wrapped, context: context)
         }
 
         return wrapped

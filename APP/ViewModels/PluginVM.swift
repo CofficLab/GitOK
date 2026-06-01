@@ -176,9 +176,12 @@ class PluginVM: ObservableObject {
     ///
     /// - Parameter content: 原始内容视图
     /// - Returns: 经过所有插件依次包裹后的视图
-    func getRootViewWrapper<Content: View>(@ViewBuilder content: () -> Content) -> AnyView {
+    func getRootViewWrapper<Content: View>(
+        context: GitOKPluginContext,
+        @ViewBuilder content: () -> Content
+    ) -> AnyView {
         guard hasPlugins, let runtime else { return AnyView(content()) }
-        return runtime.rootViewWrapper(content: content)
+        return runtime.rootViewWrapper(context: context, content: content)
     }
 
     // MARK: - Initialization
@@ -209,7 +212,7 @@ class PluginVM: ObservableObject {
 
         runtime.clearRegisteredPlugins()
 
-        registerPackagedPlugins(AppPluginAdapterFactory()) { adapter in
+        registerPackagedPlugins(DefaultGitOKPluginAdapterFactory()) { adapter in
             runtime.register(adapter)
         }
     }

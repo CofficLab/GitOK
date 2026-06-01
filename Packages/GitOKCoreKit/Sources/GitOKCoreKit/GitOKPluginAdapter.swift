@@ -102,6 +102,11 @@ open class GitOKPluginAdapter<Plugin: GitOKPlugin>: SuperPlugin {
     }
 
     @MainActor
+    open func addRootView(_ content: AnyView, context: GitOKPluginContext) -> AnyView? {
+        plugin.rootView(content, context: context)
+    }
+
+    @MainActor
     open func addStatusBarLeadingView(context: GitOKPluginContext) -> AnyView? {
         statusBarLeadingViewProvider?() ?? plugin.statusBarLeadingView(context: context)
     }

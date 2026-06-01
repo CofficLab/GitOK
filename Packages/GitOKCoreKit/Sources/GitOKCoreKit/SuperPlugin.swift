@@ -126,6 +126,13 @@ public protocol SuperPlugin {
     /// - Returns: 包裹后的视图，如果不需要则返回 nil
     func addRootView<Content>(@ViewBuilder content: () -> Content) -> AnyView? where Content: View
 
+    /// 添加带上下文的根视图包裹。
+    ///
+    /// 新 package 插件通过 `GitOKPluginContext` 获取宿主状态；旧插件可继续实现
+    /// `addRootView(content:)`。
+    @MainActor
+    func addRootView(_ content: AnyView, context: GitOKPluginContext) -> AnyView?
+
     /// 返回插件贡献的应用主题。
     /// 主题插件通过此入口登记主题，宿主负责聚合、排序和选择。
     @MainActor
@@ -242,6 +249,11 @@ public extension SuperPlugin {
     func addRootView<Content>(@ViewBuilder content: () -> Content) -> AnyView? where Content: View { nil }
 
     @MainActor
+    func addRootView(_ content: AnyView, context: GitOKPluginContext) -> AnyView? {
+        self.addRootView { content }
+    }
+
+    @MainActor
     func addThemeContributions() -> [GitOKUIThemeContribution] { [] }
 
     func viewWithProjectURL(_ view: AnyView, projectURL: URL?) -> AnyView { view }
@@ -262,6 +274,14 @@ public extension SuperPlugin {
     /// - Returns: 包裹后的视图
     func wrapRoot(_ content: AnyView) -> AnyView {
         if let wrapped = self.provideRootView(content) {
+            return wrapped
+        }
+        return content
+    }
+
+    @MainActor
+    func wrapRoot(_ content: AnyView, context: GitOKPluginContext) -> AnyView {
+        if let wrapped = self.addRootView(content, context: context) {
             return wrapped
         }
         return content

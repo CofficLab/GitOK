@@ -137,7 +137,7 @@ struct RootView<Content>: View, SuperEvent, SuperLog where Content: View {
     @ViewBuilder
     private var hostedContent: some View {
         if pluginProvider.hasPlugins {
-            pluginProvider.getRootViewWrapper {
+            pluginProvider.getRootViewWrapper(context: pluginRootContext) {
                 baseContent
             }
         } else {
@@ -149,6 +149,24 @@ struct RootView<Content>: View, SuperEvent, SuperLog where Content: View {
         content
             .withMagicToast()
             .navigationTitle("")
+    }
+
+    private var pluginRootContext: GitOKPluginContext {
+        GitOKPluginContext(
+            projectURL: projectVM.project?.url,
+            onCleanStatusUpdate: { isClean in
+                projectVM.updateIsClean(isClean)
+            },
+            onGitDirectoryChange: { change in
+                postGitDirectoryChange(change)
+            },
+            onUnpushedCommitsUpdate: { count, hashes in
+                projectVM.updateUnpushedCommits(count, hashes: hashes)
+            },
+            onRemoteTrackingUpdate: { status, fetchedAt in
+                projectVM.updateRemoteTracking(status, fetchedAt: fetchedAt)
+            }
+        )
     }
 
     // MARK: - Drop Handler
@@ -224,6 +242,50 @@ struct RootView<Content>: View, SuperEvent, SuperLog where Content: View {
 
         // 显示侧边栏以确保项目列表可见
         appProvider.showSidebar(reason: "OpenProject")
+    }
+
+    private func postGitDirectoryChange(_ change: GitOKGitDirectoryChange) {
+        guard let project = projectVM.project else { return }
+        guard project.url.standardizedFileURL == change.projectURL.standardizedFileURL else { return }
+
+        var additionalInfo: [String: Any] = [
+            "gitPath": change.gitDirectoryPath,
+            "changeKind": change.changeKind,
+            "headChanged": change.headChanged,
+            "indexChanged": change.indexChanged,
+            "stashChanged": change.stashChanged,
+            "refsChanged": change.refsChanged
+        ]
+
+        if let previousHead = change.previousHead {
+            additionalInfo["previousHead"] = previousHead
+        }
+
+        if let head = change.head {
+            additionalInfo["head"] = head
+        }
+
+        project.postEvent(
+            name: .projectGitDirectoryDidChange,
+            operation: "gitDirectoryChanged",
+            additionalInfo: additionalInfo
+        )
+
+        if change.headChanged {
+            project.postEvent(name: .projectGitHeadDidChange, operation: "gitHeadChanged", additionalInfo: additionalInfo)
+        }
+
+        if change.indexChanged {
+            project.postEvent(name: .projectGitIndexDidChange, operation: "gitIndexChanged", additionalInfo: additionalInfo)
+        }
+
+        if change.stashChanged {
+            project.postEvent(name: .projectGitStashDidChange, operation: "gitStashChanged", additionalInfo: additionalInfo)
+        }
+
+        if change.refsChanged {
+            project.postEvent(name: .projectGitRefsDidChange, operation: "gitRefsChanged", additionalInfo: additionalInfo)
+        }
     }
 }
 
