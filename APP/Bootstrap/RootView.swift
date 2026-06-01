@@ -7,7 +7,7 @@ import SwiftData
 import SwiftUI
 
 /// 根视图容器组件
-/// 为应用提供统一的上下文环境，包括数据提供者、图标提供者和插件提供者
+/// 为应用提供统一的上下文环境，包括数据提供者和插件提供者
 struct RootView<Content>: View, SuperEvent, SuperLog where Content: View {
     /// 日志标识符
     static var emoji: String { "🚉" }
@@ -20,9 +20,6 @@ struct RootView<Content>: View, SuperEvent, SuperLog where Content: View {
 
     /// 应用提供者
     var appProvider: AppVM
-
-    /// 图标提供者
-    var iconProvider: IconProvider
 
     /// 插件提供者
     var pluginProvider: PluginVM
@@ -61,7 +58,6 @@ struct RootView<Content>: View, SuperEvent, SuperLog where Content: View {
         // 初始化提供者
         let providersStart = Date()
         self.appProvider = AppVM(repoManager: self.repoManager)
-        self.iconProvider = IconProvider()
         self.pluginProvider = PluginVM()
         self.themeProvider = AppThemeVM(pluginProvider: self.pluginProvider)
         os_log("\(Self.t)✅ Startup step: providers ready elapsed=\(String(format: "%.3f", Date().timeIntervalSince(providersStart)))s")
@@ -114,7 +110,6 @@ struct RootView<Content>: View, SuperEvent, SuperLog where Content: View {
                     .navigationTitle("")
             }
             .environmentObject(appProvider)
-            .environmentObject(iconProvider)
             .environmentObject(pluginProvider)
             .environmentObject(themeProvider)
             .environmentObject(git)
