@@ -6,19 +6,6 @@ xcuserdata/
 *.moved-aside
 *.xcscmblueprint
 
-# Flutter
-.dart_tool/
-.flutter-plugins
-.flutter-plugins-dependencies
-.packages
-Flutter.podspec
-.symlinks/
-pubspec.lock
-.generated/
-ios/Flutter/Flutter.framework
-ios/Flutter/Flutter.podspec
-ios/ServiceDefinitions.json
-
 # Other
 .DS_Store
 node_modules
@@ -26,12 +13,13 @@ temp/
 build/
 build.log
 Packages/LibGit2Swift/build_result.txt
-/.build
 
 # Swift Package Manager local artifacts
 Packages/*/.build/
 Packages/*/.swiftpm/
 Packages/*/Package.resolved
+Packages/*/Package.pins
 Plugins/*/.build/
 Plugins/*/.swiftpm/
 Plugins/*/Package.resolved
+Plugins/*/Package.pins
