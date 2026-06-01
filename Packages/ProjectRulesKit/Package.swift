@@ -12,9 +12,15 @@ let package = Package(
             targets: ["ProjectRulesKit"]
         ),
     ],
+    dependencies: [
+        .package(path: "../GitCoreKit"),
+    ],
     targets: [
         .target(
-            name: "ProjectRulesKit"
+            name: "ProjectRulesKit",
+            dependencies: [
+                "GitCoreKit",
+            ]
         ),
         .testTarget(
             name: "ProjectRulesKitTests",

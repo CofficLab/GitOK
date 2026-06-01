@@ -1,7 +1,10 @@
 import Foundation
-import GitOKCoreFeatures
+import GitCoreKit
+import GitOKCoreKit
 import MagicKit
 import OSLog
+import ProjectRulesKit
+import ProjectSupportKit
 import SwiftData
 
 /// 项目模型类
@@ -415,7 +418,7 @@ extension Project {
         }
     }
 
-    func compareBranches(base: GitBranch, head: GitBranch) throws -> GitOKBranchCompare {
+    func compareBranches(base: GitBranch, head: GitBranch) throws -> GitBranchCompare {
         try gitCLI.compareBranches(base: base.name, head: head.name)
     }
 
@@ -675,7 +678,7 @@ extension Project {
         try gitCLI.fileDiff(filePath, staged: staged, ignoreWhitespace: ignoreWhitespace)
     }
 
-    func applyPatch(_ patch: String, mode: GitOKPatchApplyMode, filePath: String) throws {
+    func applyPatch(_ patch: String, mode: GitPatchApplyMode, filePath: String) throws {
         do {
             try gitCLI.applyPatch(patch, mode: mode)
             postEvent(
@@ -866,7 +869,7 @@ extension Project {
         }
     }
 
-    func reset(to commit: GitCommit, mode: GitOKResetMode) throws {
+    func reset(to commit: GitCommit, mode: GitResetMode) throws {
         do {
             try gitCLI.reset(to: commit.hash, mode: mode)
             postEvent(
@@ -1256,7 +1259,7 @@ extension Project {
         }
     }
 
-    func aheadBehind() throws -> GitOKAheadBehind {
+    func aheadBehind() throws -> GitAheadBehind {
         try gitCLI.aheadBehind()
     }
 
