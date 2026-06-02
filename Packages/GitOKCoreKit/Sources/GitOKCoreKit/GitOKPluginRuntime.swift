@@ -5,10 +5,13 @@ import SwiftUI
 @MainActor
 public final class GitOKPluginRuntime {
     private var plugins: [any SuperPlugin] = []
+    private let settingsStore: PluginSettingsStore
 
     private var usedLabels: Set<String> = []
 
-    public init(settingsStore: PluginSettingsStore = .shared) {}
+    public init(settingsStore: PluginSettingsStore = .shared) {
+        self.settingsStore = settingsStore
+    }
 
     public var registeredCount: Int {
         plugins.count
@@ -38,7 +41,15 @@ public final class GitOKPluginRuntime {
     }
 
     private func isPluginEnabled(_ plugin: any SuperPlugin) -> Bool {
-        true
+        let policy = plugin.pluginPolicy
+
+        guard policy.shouldRegister else { return false }
+        guard policy.allowUserToggle else { return policy.defaultEnabled }
+
+        return settingsStore.isPluginEnabled(
+            plugin.instanceLabel,
+            defaultEnabled: policy.defaultEnabled
+        )
     }
 
     public var tabNames: [String] {

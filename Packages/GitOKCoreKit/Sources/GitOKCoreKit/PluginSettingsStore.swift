@@ -6,11 +6,17 @@ import Foundation
 public final class PluginSettingsStore: ObservableObject {
     public static let shared = PluginSettingsStore()
 
-    private let userDefaultsKey = "GitOK_PluginSettings"
+    private let userDefaults: UserDefaults
+    private let userDefaultsKey: String
 
     @Published public private(set) var settings: [String: Bool] = [:]
 
-    private init() {
+    init(
+        userDefaults: UserDefaults = .standard,
+        userDefaultsKey: String = "GitOK_PluginSettings"
+    ) {
+        self.userDefaults = userDefaults
+        self.userDefaultsKey = userDefaultsKey
         settings = loadSettings()
     }
 
@@ -28,11 +34,11 @@ public final class PluginSettingsStore: ObservableObject {
     }
 
     private func loadSettings() -> [String: Bool] {
-        UserDefaults.standard.object(forKey: userDefaultsKey) as? [String: Bool] ?? [:]
+        userDefaults.object(forKey: userDefaultsKey) as? [String: Bool] ?? [:]
     }
 
     private func saveSettings() {
-        UserDefaults.standard.set(settings, forKey: userDefaultsKey)
+        userDefaults.set(settings, forKey: userDefaultsKey)
     }
 }
 
