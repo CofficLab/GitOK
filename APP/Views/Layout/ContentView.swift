@@ -218,7 +218,6 @@ extension ContentView {
                         }
                     }
                     .pickerStyle(SegmentedPickerStyle())
-                    .frame(width: 200)
                 }
             }
 
