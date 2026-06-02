@@ -12,11 +12,8 @@ public struct OpenCursorButton: View {
             CursorProjectLauncher.open(projectURL)
         } label: {
             Image(systemName: "cursor.rays")
-                .font(.system(size: 14, weight: .semibold))
-                .frame(width: 24, height: 24)
-                .contentShape(Rectangle())
+                .frame(width: 24)
         }
-        .buttonStyle(.plain)
         .help(OpenCursorPluginLocalization.string("Open in Cursor"))
     }
 }

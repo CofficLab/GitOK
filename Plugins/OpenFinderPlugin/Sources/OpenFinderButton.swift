@@ -13,11 +13,8 @@ public struct OpenFinderButton: View {
             NSWorkspace.shared.activateFileViewerSelecting([projectURL])
         } label: {
             Image(systemName: "folder")
-                .font(.system(size: 14, weight: .semibold))
-                .frame(width: 24, height: 24)
-                .contentShape(Rectangle())
+                .frame(width: 24)
         }
-        .buttonStyle(.plain)
         .help(OpenFinderPluginLocalization.string("Open in Finder"))
     }
 }

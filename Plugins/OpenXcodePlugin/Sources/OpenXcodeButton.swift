@@ -12,11 +12,8 @@ public struct OpenXcodeButton: View {
             XcodeProjectLauncher.open(projectURL)
         } label: {
             Image(systemName: "hammer")
-                .font(.system(size: 14, weight: .semibold))
-                .frame(width: 24, height: 24)
-                .contentShape(Rectangle())
+                .frame(width: 24)
         }
-        .buttonStyle(.plain)
         .help(OpenXcodePluginLocalization.string("Open in Xcode"))
     }
 }

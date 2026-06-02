@@ -17,11 +17,8 @@ public struct OpenRemoteButton: View {
                     NSWorkspace.shared.open(webURL)
                 } label: {
                     Image(systemName: "link")
-                        .font(.system(size: 14, weight: .semibold))
-                        .frame(width: 24, height: 24)
-                        .contentShape(Rectangle())
+                        .frame(width: 24)
                 }
-                .buttonStyle(.plain)
                 .help(OpenRemotePluginLocalization.string("Open in Browser"))
             } else {
                 Color.clear

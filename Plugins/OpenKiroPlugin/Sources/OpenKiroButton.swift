@@ -12,11 +12,8 @@ public struct OpenKiroButton: View {
             KiroProjectLauncher.open(projectURL)
         } label: {
             Image(systemName: "water.waves")
-                .font(.system(size: 14, weight: .semibold))
-                .frame(width: 24, height: 24)
-                .contentShape(Rectangle())
+                .frame(width: 24)
         }
-        .buttonStyle(.plain)
         .help(OpenKiroPluginLocalization.string("Open in Kiro"))
     }
 }

@@ -12,11 +12,8 @@ public struct OpenAntigravityButton: View {
             AntigravityProjectLauncher.open(projectURL)
         } label: {
             Image(systemName: "paperplane")
-                .font(.system(size: 14, weight: .semibold))
-                .frame(width: 24, height: 24)
-                .contentShape(Rectangle())
+                .frame(width: 24)
         }
-        .buttonStyle(.plain)
         .help(OpenAntigravityPluginLocalization.string("Open in Antigravity"))
     }
 }
