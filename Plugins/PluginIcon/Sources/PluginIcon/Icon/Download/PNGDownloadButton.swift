@@ -1,6 +1,7 @@
 
 import SwiftUI
 import GitOKCoreKit
+import MagicAlert
 
 /**
  * PNG 格式下载按钮

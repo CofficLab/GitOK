@@ -1,6 +1,7 @@
 
 import SwiftUI
 import GitOKCoreKit
+import MagicAlert
 
 /**
  * Favicon 下载按钮

@@ -1,5 +1,6 @@
 import SwiftUI
 import GitOKCoreKit
+import MagicKit
 
 /**
  设备选择器组件

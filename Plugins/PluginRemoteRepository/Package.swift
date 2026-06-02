@@ -9,12 +9,18 @@ let package = Package(
         .library(name: "PluginRemoteRepository", targets: ["PluginRemoteRepository"]),
     ],
     dependencies: [
+        .package(path: "../../Packages/GitCoreKit"),
         .package(path: "../../Packages/GitOKCoreKit"),
+        .package(path: "../../Packages/ProjectRulesKit"),
     ],
     targets: [
         .target(
             name: "PluginRemoteRepository",
-            dependencies: ["GitOKCoreKit"],
+            dependencies: [
+                "GitCoreKit",
+                "GitOKCoreKit",
+                "ProjectRulesKit",
+            ],
             path: "Sources/PluginRemoteRepository",
             resources: [.process("Resources")]
         ),

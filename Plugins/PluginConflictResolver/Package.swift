@@ -9,12 +9,16 @@ let package = Package(
         .library(name: "PluginConflictResolver", targets: ["PluginConflictResolver"]),
     ],
     dependencies: [
+        .package(path: "../../Packages/GitCoreKit"),
         .package(path: "../../Packages/GitOKCoreKit"),
     ],
     targets: [
         .target(
             name: "PluginConflictResolver",
-            dependencies: ["GitOKCoreKit"],
+            dependencies: [
+                "GitCoreKit",
+                "GitOKCoreKit",
+            ],
             path: "Sources/PluginConflictResolver",
             resources: [.process("Resources")]
         ),

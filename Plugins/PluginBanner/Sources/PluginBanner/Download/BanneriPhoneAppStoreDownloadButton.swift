@@ -1,5 +1,7 @@
 import SwiftUI
+import MagicKit
 import GitOKCoreKit
+import MagicAlert
 
 /**
  * Banner iPhone App Store截图下载按钮

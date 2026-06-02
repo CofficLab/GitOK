@@ -9,12 +9,16 @@ let package = Package(
         .library(name: "PluginGitClone", targets: ["PluginGitClone"]),
     ],
     dependencies: [
+        .package(path: "../../Packages/GitCoreKit"),
         .package(path: "../../Packages/GitOKCoreKit"),
     ],
     targets: [
         .target(
             name: "PluginGitClone",
-            dependencies: ["GitOKCoreKit"],
+            dependencies: [
+                "GitCoreKit",
+                "GitOKCoreKit",
+            ],
             path: "Sources/PluginGitClone",
             resources: [
                 .process("Resources"),

@@ -1,8 +1,9 @@
+import AppKit
 import Foundation
 import GitOKCoreKit
+import MagicKit
 import OSLog
 import SwiftUI
-import AppKit
 
 class ProjectImage: SuperLog {
     nonisolated static let dir: String = ".gitok/images"

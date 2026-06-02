@@ -1,5 +1,7 @@
 import SwiftUI
 import GitOKCoreKit
+import MagicAlert
+import MagicKit
 import OSLog
 import UniformTypeIdentifiers
 

@@ -9,13 +9,21 @@ let package = Package(
         .library(name: "PluginBanner", targets: ["PluginBanner"]),
     ],
     dependencies: [
+        .package(path: "../../Packages/BannerCoreKit"),
         .package(path: "../../Packages/GitOKCoreKit"),
+        .package(path: "../../Packages/MagicAlert"),
+        .package(path: "../../Packages/MagicKit"),
+        .package(path: "../../Packages/ProjectRulesKit"),
     ],
     targets: [
         .target(
             name: "PluginBanner",
             dependencies: [
+                "BannerCoreKit",
                 "GitOKCoreKit",
+                "MagicAlert",
+                "MagicKit",
+                "ProjectRulesKit",
             ],
             path: "Sources/PluginBanner",
             resources: [.process("Resources")]

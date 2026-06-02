@@ -10,12 +10,14 @@ let package = Package(
     ],
     dependencies: [
         .package(path: "../../Packages/GitOKCoreKit"),
+        .package(path: "../../Packages/ProjectSupportKit"),
     ],
     targets: [
         .target(
             name: "PluginLicense",
             dependencies: [
                 "GitOKCoreKit",
+                "ProjectSupportKit",
             ],
             path: "Sources/PluginLicense",
             resources: [.process("Resources")]

@@ -9,13 +9,15 @@ let package = Package(
         .library(name: "PluginSubmodule", targets: ["PluginSubmodule"]),
     ],
     dependencies: [
+        .package(path: "../../Packages/GitCoreKit"),
         .package(path: "../../Packages/GitOKCoreKit"),
     ],
     targets: [
         .target(
             name: "PluginSubmodule",
             dependencies: [
-                                "GitOKCoreKit",
+                "GitCoreKit",
+                "GitOKCoreKit",
             ],
             path: "Sources/PluginSubmodule",
             resources: [.process("Resources")]

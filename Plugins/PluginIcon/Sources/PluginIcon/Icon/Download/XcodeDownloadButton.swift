@@ -1,6 +1,7 @@
 
 import SwiftUI
 import GitOKCoreKit
+import MagicAlert
 
 /**
  * Xcode 格式下载按钮

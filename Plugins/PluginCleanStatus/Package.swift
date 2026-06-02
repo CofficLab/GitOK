@@ -9,13 +9,15 @@ let package = Package(
         .library(name: "PluginCleanStatus", targets: ["PluginCleanStatus"]),
     ],
     dependencies: [
+        .package(path: "../../Packages/GitCoreKit"),
         .package(path: "../../Packages/GitOKCoreKit"),
     ],
     targets: [
         .target(
             name: "PluginCleanStatus",
             dependencies: [
-                                "GitOKCoreKit",
+                "GitCoreKit",
+                "GitOKCoreKit",
             ],
             path: "Sources/PluginCleanStatus",
             resources: [.process("Resources")]

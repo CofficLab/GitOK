@@ -1,4 +1,5 @@
 import GitOKCoreKit
+import ProjectRulesKit
 import SwiftUI
 
 struct ProjectPickerView: View {

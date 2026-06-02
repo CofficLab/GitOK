@@ -1,4 +1,5 @@
 import AVKit
+import MagicLog
 import GitOKCoreKit
 import Combine
 import Foundation

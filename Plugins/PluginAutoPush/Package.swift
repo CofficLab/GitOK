@@ -9,13 +9,19 @@ let package = Package(
         .library(name: "PluginAutoPush", targets: ["PluginAutoPush"]),
     ],
     dependencies: [
+        .package(path: "../../Packages/GitCoreKit"),
         .package(path: "../../Packages/GitOKCoreKit"),
+        .package(path: "../../Packages/ProjectRulesKit"),
+        .package(path: "../../Packages/ProjectSupportKit"),
     ],
     targets: [
         .target(
             name: "PluginAutoPush",
             dependencies: [
+                "GitCoreKit",
                 "GitOKCoreKit",
+                "ProjectRulesKit",
+                "ProjectSupportKit",
             ],
             path: "Sources/PluginAutoPush",
             resources: [.process("Resources")]

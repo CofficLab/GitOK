@@ -1,5 +1,6 @@
 
 import OSLog
+import MagicAlert
 import GitOKCoreKit
 import SwiftUI
 

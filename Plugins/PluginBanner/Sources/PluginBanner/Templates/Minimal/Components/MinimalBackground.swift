@@ -1,5 +1,6 @@
 import SwiftUI
 import GitOKCoreKit
+import MagicKit
 
 /**
  简约模板的背景组件

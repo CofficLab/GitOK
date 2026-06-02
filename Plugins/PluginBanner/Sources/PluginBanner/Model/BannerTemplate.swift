@@ -1,3 +1,4 @@
+import BannerCoreKit
 import Foundation
 import GitOKCoreKit
 import SwiftUI

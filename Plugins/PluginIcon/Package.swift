@@ -10,12 +10,20 @@ let package = Package(
     ],
     dependencies: [
         .package(path: "../../Packages/GitOKCoreKit"),
+        .package(path: "../../Packages/MagicAlert"),
+        .package(path: "../../Packages/MagicKit"),
+        .package(path: "../../Packages/ProjectRulesKit"),
+        .package(url: "https://github.com/nookery/MagicLog.git", branch: "main"),
     ],
     targets: [
         .target(
             name: "PluginIcon",
             dependencies: [
                 "GitOKCoreKit",
+                "MagicAlert",
+                "MagicKit",
+                "ProjectRulesKit",
+                "MagicLog",
             ],
             path: "Sources/PluginIcon",
             resources: [

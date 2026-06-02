@@ -1,4 +1,5 @@
 import Foundation
+import MagicLog
 import GitOKCoreKit
 import SwiftUI
 

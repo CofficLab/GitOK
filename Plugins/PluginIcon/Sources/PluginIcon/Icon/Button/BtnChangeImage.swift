@@ -1,5 +1,6 @@
 import SwiftUI
 import GitOKCoreKit
+import MagicAlert
 import OSLog
 
 struct BtnChangeImage: View {
