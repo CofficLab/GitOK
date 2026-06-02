@@ -799,7 +799,6 @@
 				CommitPlugin,
 				ConflictResolverPlugin,
 				FileInfoPlugin,
-				GitClonePlugin,
 				GitDetailPlugin,
 				GitIgnorePlugin,
 				GitLFSPlugin,

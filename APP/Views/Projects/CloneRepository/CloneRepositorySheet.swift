@@ -3,7 +3,7 @@ import GitCoreKit
 import GitOKCoreKit
 import SwiftUI
 
-public struct CloneRepositorySheet: View {
+struct CloneRepositorySheet: View {
     private let projectExists: @MainActor @Sendable (URL) -> Bool
     private let onCloneCompleted: @MainActor @Sendable (URL) -> Bool
     private let setActivityStatus: @MainActor @Sendable (String?) -> Void
@@ -36,7 +36,7 @@ public struct CloneRepositorySheet: View {
     @State private var isLoadingGitHubRepositories = false
     @State private var githubErrorMessage: String?
 
-    public init(
+    init(
         projectExists: @escaping @MainActor @Sendable (URL) -> Bool,
         onCloneCompleted: @escaping @MainActor @Sendable (URL) -> Bool,
         setActivityStatus: @escaping @MainActor @Sendable (String?) -> Void,
@@ -46,15 +46,6 @@ public struct CloneRepositorySheet: View {
         self.onCloneCompleted = onCloneCompleted
         self.setActivityStatus = setActivityStatus
         self.onCloneSucceeded = onCloneSucceeded
-    }
-
-    public init(context: GitOKPluginContext) {
-        self.init(
-            projectExists: context.onProjectExists,
-            onCloneCompleted: context.onRepositoryImported,
-            setActivityStatus: context.onActivityStatusUpdate,
-            onCloneSucceeded: context.onInfoMessage
-        )
     }
 
     private var trimmedRemoteURL: String {
@@ -108,7 +99,7 @@ public struct CloneRepositorySheet: View {
         return nil
     }
 
-    public var body: some View {
+    var body: some View {
         VStack(alignment: .leading, spacing: 20) {
             header
             githubAccountSection
@@ -154,7 +145,11 @@ extension CloneRepositorySheet {
             Text(GitCloneLocalization.string("Remote Repository"))
                 .font(.headline)
 
-            TextField("https://github.com/owner/repo.git", text: $remoteURL)
+            TextField(
+                GitCloneLocalization.string("Remote Repository URL"),
+                text: $remoteURL,
+                prompt: Text(verbatim: "https://github.com/owner/repo.git")
+            )
                 .textFieldStyle(.roundedBorder)
 
             Text(GitCloneLocalization.string("Repository Name"))
@@ -651,7 +646,7 @@ extension CloneRepositorySheet {
         }
     }
 
-    nonisolated public static func normalizedGitHubHost(_ value: String) -> String {
+    nonisolated static func normalizedGitHubHost(_ value: String) -> String {
         let trimmed = value
             .trimmingCharacters(in: .whitespacesAndNewlines)
             .replacingOccurrences(of: "https://", with: "")

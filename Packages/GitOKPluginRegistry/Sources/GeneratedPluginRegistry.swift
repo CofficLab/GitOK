@@ -8,7 +8,6 @@ import CleanStatusPlugin
 import CommitPlugin
 import ConflictResolverPlugin
 import FileInfoPlugin
-import GitClonePlugin
 import GitDetailPlugin
 import GitIgnorePlugin
 import GitLFSPlugin
@@ -82,7 +81,6 @@ public enum GeneratedPluginRegistry {
         if CommitPlugin.shouldRegister { register(adapterFactory.makeAdapter(for: CommitPlugin.shared)) }
         if ConflictResolverPlugin.shouldRegister { register(adapterFactory.makeAdapter(for: ConflictResolverPlugin.shared)) }
         if FileInfoPlugin.shouldRegister { register(adapterFactory.makeAdapter(for: FileInfoPlugin.shared)) }
-        if GitClonePlugin.shouldRegister { register(adapterFactory.makeAdapter(for: GitClonePlugin.shared)) }
         if GitDetailPlugin.shouldRegister { register(adapterFactory.makeAdapter(for: GitDetailPlugin.shared)) }
         if GitIgnorePlugin.shouldRegister { register(adapterFactory.makeAdapter(for: GitIgnorePlugin.shared)) }
         if GitLFSPlugin.shouldRegister { register(adapterFactory.makeAdapter(for: GitLFSPlugin.shared)) }
