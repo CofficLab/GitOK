@@ -1,3 +1,4 @@
+import GitOKDesignKit
 import SwiftUI
 
 public struct OpenXcodeButton: View {
@@ -11,8 +12,10 @@ public struct OpenXcodeButton: View {
         Button {
             XcodeProjectLauncher.open(projectURL)
         } label: {
-            Image(systemName: "hammer")
-                .frame(width: 24)
+            Image.xcodeApp
+                .resizable()
+                .frame(height: 22)
+                .frame(width: 22)
         }
         .help(OpenXcodePluginLocalization.string("Open in Xcode"))
     }

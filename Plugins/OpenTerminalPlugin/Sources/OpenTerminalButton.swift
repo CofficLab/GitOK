@@ -1,4 +1,5 @@
 import AppKit
+import GitOKDesignKit
 import SwiftUI
 
 public struct OpenTerminalButton: View {
@@ -12,8 +13,10 @@ public struct OpenTerminalButton: View {
         Button {
             TerminalLauncher.open(projectURL)
         } label: {
-            Image(systemName: "terminal")
-                .frame(width: 24)
+            Image.terminalRealApp
+                .resizable()
+                .frame(height: 22)
+                .frame(width: 22)
         }
         .help(OpenTerminalPluginLocalization.string("Open in Terminal"))
     }

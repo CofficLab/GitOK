@@ -1,3 +1,4 @@
+import GitOKDesignKit
 import SwiftUI
 
 public struct OpenAntigravityButton: View {
@@ -11,8 +12,10 @@ public struct OpenAntigravityButton: View {
         Button {
             AntigravityProjectLauncher.open(projectURL)
         } label: {
-            Image(systemName: "paperplane")
-                .frame(width: 24)
+            Image.antigravityApp
+                .resizable()
+                .frame(height: 22)
+                .frame(width: 22)
         }
         .help(OpenAntigravityPluginLocalization.string("Open in Antigravity"))
     }

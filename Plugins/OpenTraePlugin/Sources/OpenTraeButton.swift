@@ -1,3 +1,4 @@
+import GitOKDesignKit
 import SwiftUI
 
 public struct OpenTraeButton: View {
@@ -11,8 +12,10 @@ public struct OpenTraeButton: View {
         Button {
             TraeProjectLauncher.open(projectURL)
         } label: {
-            Image(systemName: "brain")
-                .frame(width: 24)
+            Image.traeApp
+                .resizable()
+                .frame(height: 22)
+                .frame(width: 22)
         }
         .help(OpenTraePluginLocalization.string("Open in Trae"))
     }

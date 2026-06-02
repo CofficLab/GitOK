@@ -1,3 +1,4 @@
+import GitOKDesignKit
 import SwiftUI
 
 public struct OpenCursorButton: View {
@@ -11,8 +12,10 @@ public struct OpenCursorButton: View {
         Button {
             CursorProjectLauncher.open(projectURL)
         } label: {
-            Image(systemName: "cursor.rays")
-                .frame(width: 24)
+            Image.cursorApp
+                .resizable()
+                .frame(height: 22)
+                .frame(width: 22)
         }
         .help(OpenCursorPluginLocalization.string("Open in Cursor"))
     }

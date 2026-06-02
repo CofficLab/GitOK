@@ -1,3 +1,4 @@
+import GitOKDesignKit
 import SwiftUI
 
 public struct OpenGitHubDesktopButton: View {
@@ -11,8 +12,10 @@ public struct OpenGitHubDesktopButton: View {
         Button {
             GitHubDesktopProjectLauncher.open(projectURL)
         } label: {
-            Image(systemName: "desktopcomputer")
-                .frame(width: 24)
+            Image.githubDesktopApp
+                .resizable()
+                .frame(height: 22)
+                .frame(width: 22)
         }
         .help(OpenGitHubDesktopPluginLocalization.string("Open in GitHub Desktop"))
     }

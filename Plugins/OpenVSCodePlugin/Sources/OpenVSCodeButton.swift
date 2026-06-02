@@ -1,3 +1,4 @@
+import GitOKDesignKit
 import SwiftUI
 
 public struct OpenVSCodeButton: View {
@@ -11,8 +12,10 @@ public struct OpenVSCodeButton: View {
         Button {
             VSCodeProjectLauncher.open(projectURL)
         } label: {
-            Image(systemName: "chevron.left.forwardslash.chevron.right")
-                .frame(width: 24)
+            Image.vscodeApp
+                .resizable()
+                .frame(height: 22)
+                .frame(width: 22)
         }
         .help(OpenVSCodePluginLocalization.string("Open in VS Code"))
     }

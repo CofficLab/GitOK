@@ -1,3 +1,4 @@
+import GitOKDesignKit
 import SwiftUI
 
 public struct OpenKiroButton: View {
@@ -11,8 +12,10 @@ public struct OpenKiroButton: View {
         Button {
             KiroProjectLauncher.open(projectURL)
         } label: {
-            Image(systemName: "water.waves")
-                .frame(width: 24)
+            Image.kiroApp
+                .resizable()
+                .frame(height: 22)
+                .frame(width: 22)
         }
         .help(OpenKiroPluginLocalization.string("Open in Kiro"))
     }

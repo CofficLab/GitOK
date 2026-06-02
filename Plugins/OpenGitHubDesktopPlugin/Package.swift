@@ -15,11 +15,15 @@ let package = Package(
     ],
     dependencies: [
         .package(path: "../../Packages/GitOKCoreKit"),
+        .package(path: "../../Packages/GitOKSupportKit"),
     ],
     targets: [
         .target(
             name: "OpenGitHubDesktopPlugin",
-            dependencies: ["GitOKCoreKit"],
+            dependencies: [
+                "GitOKCoreKit",
+                .product(name: "GitOKDesignKit", package: "GitOKSupportKit"),
+            ],
             path: "Sources",
             resources: [
                 .process("Localizable.xcstrings"),
