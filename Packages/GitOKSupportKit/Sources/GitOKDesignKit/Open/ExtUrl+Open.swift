@@ -183,16 +183,6 @@ public extension URL {
             openIn(.kiro)
         }
     #endif
-
-    /// 打开包含该文件的文件夹
-    func openFolder() {
-        let folderURL = self.hasDirectoryPath ? self : self.deletingLastPathComponent()
-        #if os(iOS)
-            UIApplication.shared.open(folderURL)
-        #elseif os(macOS)
-            NSWorkspace.shared.open(folderURL)
-        #endif
-    }
 }
 
 #if macOS

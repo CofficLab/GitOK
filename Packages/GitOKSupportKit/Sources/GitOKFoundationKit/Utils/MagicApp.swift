@@ -354,43 +354,43 @@ public class MagicApp {
             CommandMenu("调试") {
                 Group {
                     Button("打开 App Support 目录") {
-                        self.getAppSpecificSupportDirectory().open()
+                        self.getAppSpecificSupportDirectory().openFolder()
                     }
                     
                     Button("打开容器目录") {
-                        self.getContainerDirectory().open()
+                        self.getContainerDirectory().openFolder()
                     }
                     
                     Button("打开文档目录") {
-                        self.getDocumentsDirectory().open()
+                        self.getDocumentsDirectory().openFolder()
                     }
                     
                     Button("打开数据库目录") {
-                        self.getDatabaseDirectory().open()
+                        self.getDatabaseDirectory().openFolder()
                     }
                     
                     Button("打开 iCloud Documents") {
-                        self.getCloudDocumentsDirectory()?.open()
+                        self.getCloudDocumentsDirectory()?.openFolder()
                     }
 
                     Button("打开缓存目录") {
-                        self.getCacheDirectory().open()
+                        self.getCacheDirectory().openFolder()
                     }
                     
                     Button("打开下载目录") {
-                        try? URL.downloads.open()
+                        try? URL.downloads.openFolder()
                     }
                     
                     Button("打开临时目录") {
-                        URL.temp.open()
+                        URL.temp.openFolder()
                     }
                     
                     Button("打开 iCloud 容器") {
-                        self.getCloudContainerDirectory()?.open()
+                        self.getCloudContainerDirectory()?.openFolder()
                     }
                     
                     Button("打开系统 App Support") {
-                        try? URL.applicationSupport.open()
+                        try? URL.applicationSupport.openFolder()
                     }
                 
                 }
@@ -515,4 +515,3 @@ public class MagicApp {
 
         
 }
-

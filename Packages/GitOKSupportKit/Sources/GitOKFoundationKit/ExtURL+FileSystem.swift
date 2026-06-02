@@ -52,8 +52,4 @@ public extension URL {
         UIApplication.shared.open(self)
         #endif
     }
-
-    func open() {
-        openFolder()
-    }
 }
