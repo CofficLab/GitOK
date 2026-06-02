@@ -13,7 +13,7 @@
 - [x] `addListView` / `addDetailView` 注入 `GitOKPluginContext`（协议、适配器、PluginVM）
 - [x] 清理 PluginVM 中所有视图方法的冗余 `.environment()` 注入
 - [x] 标记 17 个 EnvironmentKey 及 EnvironmentValues 扩展为 `@available(*, deprecated)`
-- [x] 消除全部 13 处 `@Environment(\.gitOKProjectURL)`（PluginStash 2 + PluginBanner 3 + PluginIcon 4 + 其他 4）→ 全插件包归零 ✅
+- [x] 消除全部 13 处 `@Environment(\.gitOKProjectURL)`（StashPlugin 2 + BannerPlugin 3 + IconPlugin 4 + 其他 4）→ 全插件包归零 ✅
 
 ## P0：核心 Git 工作流
 

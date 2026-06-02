@@ -1,0 +1,36 @@
+// swift-tools-version: 6.0
+import PackageDescription
+
+let package = Package(
+    name: "ThemeSpringPlugin",
+    defaultLocalization: "en",
+    platforms: [
+        .macOS(.v15),
+    ],
+    products: [
+        .library(
+            name: "ThemeSpringPlugin",
+            targets: ["ThemeSpringPlugin"]
+        ),
+    ],
+    dependencies: [
+        .package(path: "../../Packages/GitOKCoreKit"),
+    ],
+    targets: [
+        .target(
+            name: "ThemeSpringPlugin",
+            dependencies: [
+                "GitOKCoreKit",
+            ],
+            path: "Sources",
+            resources: [
+                .process("Resources"),
+            ]
+        ),
+        .testTarget(
+            name: "ThemeSpringPluginTests",
+            dependencies: ["ThemeSpringPlugin"],
+            path: "Tests"
+        ),
+    ]
+)

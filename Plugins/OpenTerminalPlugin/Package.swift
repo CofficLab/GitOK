@@ -1,0 +1,34 @@
+// swift-tools-version: 6.0
+import PackageDescription
+
+let package = Package(
+    name: "OpenTerminalPlugin",
+    defaultLocalization: "en",
+    platforms: [
+        .macOS(.v15),
+    ],
+    products: [
+        .library(
+            name: "OpenTerminalPlugin",
+            targets: ["OpenTerminalPlugin"]
+        ),
+    ],
+    dependencies: [
+        .package(path: "../../Packages/GitOKCoreKit"),
+    ],
+    targets: [
+        .target(
+            name: "OpenTerminalPlugin",
+            dependencies: ["GitOKCoreKit"],
+            path: "Sources",
+            resources: [
+                .process("Resources"),
+            ]
+        ),
+        .testTarget(
+            name: "OpenTerminalPluginTests",
+            dependencies: ["OpenTerminalPlugin"],
+            path: "Tests"
+        ),
+    ]
+)
