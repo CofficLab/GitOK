@@ -737,7 +737,7 @@ public enum CommitHistoryActionRules {
     }
 
     public static func projectUnavailableMessage() -> String {
-        String(localized: "Project unavailable", table: "GitCommit")
+        String(localized: "Project unavailable")
     }
 
     public static func operationError(message: String) -> NSError {
@@ -866,23 +866,23 @@ public enum CommitHistoryActionRules {
     }
 
     public static func undoInitialCommitUnsupportedMessage() -> String {
-        String(localized: "Undoing the initial commit is not supported", table: "GitCommit")
+        String(localized: "Undoing the initial commit is not supported")
     }
 
     public static func squashMessageRequiredMessage() -> String {
-        String(localized: "Commit message cannot be empty", table: "GitCommit")
+        String(localized: "Commit message cannot be empty")
     }
 
     public static func revertedMessage(hash: String) -> String {
-        String(localized: "Reverted: \(shortHash(hash))", table: "GitCommit")
+        String(localized: "Reverted: \(shortHash(hash))")
     }
 
     public static func resetMessage(hash: String, mode: String) -> String {
-        String(localized: "Reset to: \(shortHash(hash)) (\(mode))", table: "GitCommit")
+        String(localized: "Reset to: \(shortHash(hash)) (\(mode))")
     }
 
     public static func squashedMessage(count: Int) -> String {
-        String(localized: "Squashed \(count) commits", table: "GitCommit")
+        String(localized: "Squashed \(count) commits")
     }
 
     private static func shortHash(_ hash: String, length: Int = 8) -> String {

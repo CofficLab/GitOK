@@ -33,7 +33,7 @@ public struct UnpushedCommitActionsView: View {
                         .foregroundColor(.red)
                 }
                 .buttonStyle(.plain)
-                .help(String(localized: "Undo this commit", table: "GitCommit"))
+                .help(String(localized: "Undo this commit"))
             }
 
             Button {
@@ -44,7 +44,7 @@ public struct UnpushedCommitActionsView: View {
                     .foregroundColor(.orange)
             }
             .buttonStyle(.plain)
-            .help(String(localized: "Click to push to remote", table: "GitCommit"))
+            .help(String(localized: "Click to push to remote"))
             .popover(isPresented: $showPushPopover) {
                 PushPopoverContent(
                     isPushing: $isPushing,

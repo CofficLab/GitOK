@@ -66,23 +66,23 @@ public struct WorkingStateSummaryView: View {
     private var statusText: some View {
         VStack(alignment: .leading, spacing: 2) {
             if state.changedFileCount == 0 {
-                Text(String(localized: "Working Tree Clean", table: "GitCommit"))
+                Text(String(localized: "Working Tree Clean"))
                     .font(.system(size: 14, weight: .medium))
 
                 if state.unpulledCount > 0 {
-                    Text("\(state.unpulledCount) remote commits available to pull", tableName: "GitCommit")
+                    Text("\(state.unpulledCount) remote commits available to pull")
                         .font(.system(size: 11))
                         .foregroundColor(.secondary)
                 } else {
-                    Text(String(localized: "All Changes Committed", table: "GitCommit"))
+                    Text(String(localized: "All Changes Committed"))
                         .font(.system(size: 11))
                         .foregroundColor(.secondary)
                 }
             } else {
-                Text(String(localized: "Current Status", table: "GitCommit"))
+                Text(String(localized: "Current Status"))
                     .font(.system(size: 14, weight: .medium))
 
-                Text("(\(state.changedFileCount)) Uncommitted", tableName: "GitCommit")
+                Text("(\(state.changedFileCount)) Uncommitted")
                     .font(.system(size: 11))
                     .foregroundColor(.secondary)
             }
@@ -97,7 +97,7 @@ public struct WorkingStateSummaryView: View {
                 ProgressView()
                     .controlSize(.small)
                     .scaleEffect(0.8)
-                Text("Refreshing", tableName: "GitCommit")
+                Text("Refreshing")
                     .font(.system(size: 12, weight: .medium))
                     .foregroundColor(.secondary)
             }
@@ -112,7 +112,7 @@ public struct WorkingStateSummaryView: View {
                 Label(state.isPulling ? "Pulling..." : "Pull", systemImage: "arrow.down.circle.fill")
             }
             .disabled(state.isPulling)
-            .help(String(localized: "Click to run git pull and fetch remote commits", table: "GitCommit"))
+            .help(String(localized: "Click to run git pull and fetch remote commits"))
         case .push:
             Button {
                 onPush()
@@ -120,7 +120,7 @@ public struct WorkingStateSummaryView: View {
                 Label(state.isPushing ? "Pushing..." : "Push", systemImage: "arrow.up.circle.fill")
             }
             .disabled(state.isPushing)
-            .help(String(localized: "Click to run git push and push local commits", table: "GitCommit"))
+            .help(String(localized: "Click to run git push and push local commits"))
         case .none:
             EmptyView()
         }

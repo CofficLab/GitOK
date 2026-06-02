@@ -604,37 +604,37 @@ public enum CommitTagRules {
     }
 
     public static func tagNameRequiredMessage() -> String {
-        String(localized: "Tag name cannot be empty", table: "GitCommit")
+        String(localized: "Tag name cannot be empty")
     }
 
     public static func tagMessageRequiredMessage() -> String {
-        String(localized: "Tag message cannot be empty", table: "GitCommit")
+        String(localized: "Tag message cannot be empty")
     }
 
     public static func createdMessage(tagName: String) -> String {
         String.localizedStringWithFormat(
-            String(localized: "Tag created: %@", table: "GitCommit"),
+            String(localized: "Tag created: %@"),
             tagName
         )
     }
 
     public static func deletedMessage(tagName: String) -> String {
         String.localizedStringWithFormat(
-            String(localized: "Tag deleted: %@", table: "GitCommit"),
+            String(localized: "Tag deleted: %@"),
             tagName
         )
     }
 
     public static func pushedMessage(tagName: String) -> String {
         String.localizedStringWithFormat(
-            String(localized: "Tag pushed: %@", table: "GitCommit"),
+            String(localized: "Tag pushed: %@"),
             tagName
         )
     }
 
     public static func remoteDeletedMessage(tagName: String) -> String {
         String.localizedStringWithFormat(
-            String(localized: "Remote tag deleted: %@", table: "GitCommit"),
+            String(localized: "Remote tag deleted: %@"),
             tagName
         )
     }

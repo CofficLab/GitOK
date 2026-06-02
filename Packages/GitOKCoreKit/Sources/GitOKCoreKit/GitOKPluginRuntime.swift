@@ -51,11 +51,10 @@ public final class GitOKPluginRuntime {
         plugins
             .filter { $0.pluginPolicy.allowUserToggle }
             .map { plugin in
-                let tableName = plugin.pluginTableName
                 return PluginInfo(
                     id: plugin.instanceLabel,
-                    name: String(localized: .init(stringLiteral: plugin.pluginDisplayName), table: tableName),
-                    description: String(localized: .init(stringLiteral: plugin.pluginDescription), table: tableName),
+                    name: String(localized: .init(stringLiteral: plugin.pluginDisplayName)),
+                    description: String(localized: .init(stringLiteral: plugin.pluginDescription)),
                     icon: plugin.pluginIconName,
                     defaultEnabled: plugin.pluginPolicy.defaultEnabled,
                     isDeveloperEnabled: { plugin.pluginPolicy.shouldRegister }

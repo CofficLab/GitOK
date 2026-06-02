@@ -674,11 +674,11 @@ public enum CommitMessageRules {
     public static func activityStatus(_ activity: Activity) -> String {
         switch activity {
         case .addingFiles:
-            return String(localized: "添加文件中…", table: "GitCommit")
+            return String(localized: "添加文件中…")
         case .committing:
-            return String(localized: "提交中…", table: "GitCommit")
+            return String(localized: "提交中…")
         case .pushing:
-            return String(localized: "推送中…", table: "GitCommit")
+            return String(localized: "推送中…")
         }
     }
 
@@ -835,10 +835,10 @@ public enum CommitMessageRules {
 
     public static func successMessage(commitOnly: Bool) -> String {
         if commitOnly {
-            return String(localized: "提交成功", table: "GitCommit")
+            return String(localized: "提交成功")
         }
 
-        return String(localized: "提交并推送成功", table: "GitCommit")
+        return String(localized: "提交并推送成功")
     }
 
     public static func submitSuccessState(commitOnly: Bool) -> SubmitSuccessState {

@@ -46,7 +46,7 @@ public struct CommitUserMenu: View {
             Button {
                 onManagePresets()
             } label: {
-                Text("管理预设...", tableName: "GitCommit")
+                Text("管理预设...")
             }
         } label: {
             labelView
@@ -97,7 +97,7 @@ public struct CommitUserMenu: View {
                 .foregroundColor(.orange)
                 .font(.system(size: 14))
 
-            Text("未配置用户信息", tableName: "GitCommit")
+            Text("未配置用户信息")
                 .font(.caption)
                 .foregroundColor(.orange)
 

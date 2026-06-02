@@ -27,7 +27,7 @@ public struct CommitListWorkspaceView<WorkingStateContent: View, HistoryContent:
                 GeometryReader { geometry in
                     VStack(spacing: 0) {
                         if isInitialLoading {
-                            Text("正在加载", tableName: "GitCommit")
+                            Text("正在加载")
                                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                         } else {
                             workingStateContent()
