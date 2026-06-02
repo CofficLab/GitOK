@@ -206,7 +206,7 @@ class PluginVM: ObservableObject {
 
     // MARK: - Custom Plugin Providers
 
-    /// Register all packaged plugins using the auto-generated registry.
+    /// Register all packaged plugins supplied by the registry package.
     private func registerPackagedPluginAdapters(_ registerPackagedPlugins: PluginRegistrationHandler) {
         guard let runtime else { return }
 
