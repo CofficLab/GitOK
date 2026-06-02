@@ -1,14 +1,15 @@
+import Foundation
 import GitOKCoreKit
 
 public struct SpringThemePlugin: GitOKPlugin {
     public static let metadata = GitOKPluginMetadata(
         id: "ThemeSpringPlugin",
-        displayName: "Spring Theme",
-        description: "Fresh green light theme",
+        displayName: SpringThemePluginLocalization.string("Spring Theme"),
+        description: SpringThemePluginLocalization.string("Fresh green light theme"),
         iconName: "tree",
         order: 121,
         policy: .disabled,
-        tableName: "Localizable"
+        tableName: SpringThemePluginLocalization.table
     )
 
     public static let shared = SpringThemePlugin()
@@ -24,5 +25,15 @@ public struct SpringThemePlugin: GitOKPlugin {
                 editorThemeId: SpringTheme.worktree.identifier
             ),
         ]
+    }
+}
+
+
+public enum SpringThemePluginLocalization {
+    public static let table = "Localizable"
+    public static let bundle = Bundle.module
+
+    public static func string(_ key: String) -> String {
+        NSLocalizedString(key, tableName: table, bundle: bundle, value: key, comment: "")
     }
 }

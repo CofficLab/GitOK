@@ -21,7 +21,7 @@ struct BannerDownloadButtons: View {
                 .environmentObject(bannerProvider)
 
             if bannerProvider.banner.path.isEmpty {
-                Text("请先选择一个Banner", tableName: "Localizable")
+                Text(BannerPluginLocalization.string("请先选择一个Banner"))
                     .font(.caption)
                     .foregroundColor(.secondary)
                     .padding(.top, 8)

@@ -27,7 +27,7 @@ struct ConfiguredProjectsSectionView: View {
         HStack {
             Image(systemName: "list.bullet")
                 .foregroundColor(.blue)
-            Text(String(localized: "Configured Projects", table: "AutoPush"))
+            Text(AutoPushPluginLocalization.string("Configured Projects"))
                 .font(.headline)
             Spacer()
 
@@ -45,7 +45,7 @@ struct ConfiguredProjectsSectionView: View {
                 .font(.system(size: 48))
                 .foregroundColor(.secondary)
 
-            Text(String(localized: "No configured projects", table: "AutoPush"))
+            Text(AutoPushPluginLocalization.string("No configured projects"))
                 .font(.headline)
                 .foregroundColor(.secondary)
 

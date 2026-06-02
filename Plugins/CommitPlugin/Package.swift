@@ -15,7 +15,8 @@ let package = Package(
         .target(
             name: "CommitPlugin",
             dependencies: ["GitOKCoreKit"],
-            path: "Sources"
+            path: "Sources",
+            resources: [.process("Localizable.xcstrings")]
         ),
         .testTarget(
             name: "CommitPluginTests",

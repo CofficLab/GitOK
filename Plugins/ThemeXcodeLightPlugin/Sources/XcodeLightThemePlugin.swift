@@ -1,14 +1,15 @@
+import Foundation
 import GitOKCoreKit
 
 public struct XcodeLightThemePlugin: GitOKPlugin {
     public static let metadata = GitOKPluginMetadata(
         id: "ThemeXcodeLightPlugin",
-        displayName: "Xcode Light Theme",
-        description: "Xcode-inspired light theme",
+        displayName: XcodeLightThemePluginLocalization.string("Xcode Light Theme"),
+        description: XcodeLightThemePluginLocalization.string("Xcode-inspired light theme"),
         iconName: "hammer",
         order: 137,
         policy: .disabled,
-        tableName: "Localizable"
+        tableName: XcodeLightThemePluginLocalization.table
     )
 
     public static let shared = XcodeLightThemePlugin()
@@ -27,3 +28,13 @@ public struct XcodeLightThemePlugin: GitOKPlugin {
     }
 }
 
+
+
+public enum XcodeLightThemePluginLocalization {
+    public static let table = "Localizable"
+    public static let bundle = Bundle.module
+
+    public static func string(_ key: String) -> String {
+        NSLocalizedString(key, tableName: table, bundle: bundle, value: key, comment: "")
+    }
+}

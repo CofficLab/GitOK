@@ -1,14 +1,15 @@
+import Foundation
 import GitOKCoreKit
 
 public struct DraculaThemePlugin: GitOKPlugin {
     public static let metadata = GitOKPluginMetadata(
         id: "ThemeDraculaPlugin",
-        displayName: "Dracula Theme",
-        description: "Classic vivid dark theme",
+        displayName: DraculaThemePluginLocalization.string("Dracula Theme"),
+        description: DraculaThemePluginLocalization.string("Classic vivid dark theme"),
         iconName: "moon.stars",
         order: 135,
         policy: .disabled,
-        tableName: "Localizable"
+        tableName: DraculaThemePluginLocalization.table
     )
 
     public static let shared = DraculaThemePlugin()
@@ -27,3 +28,13 @@ public struct DraculaThemePlugin: GitOKPlugin {
     }
 }
 
+
+
+public enum DraculaThemePluginLocalization {
+    public static let table = "Localizable"
+    public static let bundle = Bundle.module
+
+    public static func string(_ key: String) -> String {
+        NSLocalizedString(key, tableName: table, bundle: bundle, value: key, comment: "")
+    }
+}

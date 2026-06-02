@@ -80,7 +80,7 @@ struct ConfigRowView: View {
     @ViewBuilder
     private var lastPushedTime: some View {
         if let lastPushed = config.lastPushedAt {
-            Text(String(localized: "Last pushed: \(formatDate(lastPushed))", table: "AutoPush"))
+            Text(String.localizedStringWithFormat(AutoPushPluginLocalization.string("Last pushed: %@"), formatDate(lastPushed)))
                 .font(.caption)
                 .foregroundColor(.secondary)
         }

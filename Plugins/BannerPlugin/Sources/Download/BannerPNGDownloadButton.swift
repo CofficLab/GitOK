@@ -17,7 +17,7 @@ struct BannerPNGDownloadButton: View {
 
     var body: some View {
         BannerDownloadButton(
-            title: progressText.isEmpty ? String(localized: "Download Standard PNG", table: "Banner") : progressText,
+            title: progressText.isEmpty ? BannerPluginLocalization.string("Download Standard PNG") : progressText,
             icon: "photo",
             color: .green,
             action: {
@@ -31,12 +31,12 @@ struct BannerPNGDownloadButton: View {
 
     @MainActor private func downloadPNG() async {
         guard !bannerProvider.banner.path.isEmpty else {
-            MagicMessageProvider.shared.error(String(localized: "No Banners available", table: "Banner"))
+            MagicMessageProvider.shared.error(BannerPluginLocalization.string("No Banners available"))
             return
         }
 
         isGenerating = true
-        progressText = String(localized: "Generating standard PNG...", table: "Banner")
+        progressText = BannerPluginLocalization.string("Generating standard PNG...")
         defer {
             isGenerating = false
             progressText = ""
@@ -46,7 +46,7 @@ struct BannerPNGDownloadButton: View {
         let folderName = "Banner-Standard-PNG-\(tag)"
 
         guard let downloadsURL = FileManager.default.urls(for: .downloadsDirectory, in: .userDomainMask).first else {
-            MagicMessageProvider.shared.error(String(localized: "No access to Downloads folder", table: "Banner"))
+            MagicMessageProvider.shared.error(BannerPluginLocalization.string("No access to Downloads folder"))
             return
         }
 
@@ -56,7 +56,7 @@ struct BannerPNGDownloadButton: View {
             try FileManager.default.createDirectory(at: folderPath, withIntermediateDirectories: true)
         } catch {
             let msg = String.localizedStringWithFormat(
-                String(localized: "Failed to create target directory: %@", table: "Banner"),
+                BannerPluginLocalization.string("Failed to create target directory: %@"),
                 error.localizedDescription
             )
             MagicMessageProvider.shared.error(msg)
@@ -73,7 +73,7 @@ struct BannerPNGDownloadButton: View {
             let description = "\(width)x\(height) (\(device.description))"
 
             progressText = String.localizedStringWithFormat(
-                String(localized: "Generating %@ (%d/%d)...", table: "Banner"),
+                BannerPluginLocalization.string("Generating %@ (%d/%d)..."),
                 description,
                 index + 1,
                 allDevices.count
@@ -90,7 +90,7 @@ struct BannerPNGDownloadButton: View {
                 successCount += 1
             } catch {
                 let msg = String.localizedStringWithFormat(
-                    String(localized: "Failed to generate PNG %@: %@", table: "Banner"),
+                    BannerPluginLocalization.string("Failed to generate PNG %@: %@"),
                     description,
                     error.localizedDescription
                 )
@@ -101,7 +101,7 @@ struct BannerPNGDownloadButton: View {
         // 显示结果
         if successCount == allDevices.count {
             let msg = String.localizedStringWithFormat(
-                String(localized: "Successfully generated %d PNG files", table: "Banner"),
+                BannerPluginLocalization.string("Successfully generated %d PNG files"),
                 successCount
             )
             MagicMessageProvider.shared.success(msg)
@@ -109,7 +109,7 @@ struct BannerPNGDownloadButton: View {
             NSWorkspace.shared.open(folderPath)
         } else {
             let msg = String.localizedStringWithFormat(
-                String(localized: "Only successfully generated %d/%d files", table: "Banner"),
+                BannerPluginLocalization.string("Only successfully generated %d/%d files"),
                 successCount,
                 allDevices.count
             )

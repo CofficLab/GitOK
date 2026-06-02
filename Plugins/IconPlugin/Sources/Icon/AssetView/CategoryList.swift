@@ -42,21 +42,21 @@ struct CategoryList: View {
             if isLoading {
                 VStack {
                     Spacer()
-                    ProgressView(String(localized: "loading-categories", table: "Icon"))
+                    ProgressView(IconLocalization.string("loading-categories"))
                         .frame(maxWidth: .infinity)
                     Spacer()
                 }
             } else if let error = error {
                 VStack {
                     error.makeView().padding()
-                    Button(String(localized: "open-cache-directory", table: "Icon")){
+                    Button(IconLocalization.string("open-cache-directory")){
                         URL.temp.openHttpCacheDirectory()
                     }
                 }
             } else if filteredCategories.isEmpty {
                 VStack {
                     Spacer()
-                    Text(searchText.isEmpty ? String(localized: "no-categories-available", table: "Icon") : String(localized: "no-matching-categories", table: "Icon"))
+                    Text(searchText.isEmpty ? IconLocalization.string("no-categories-available") : IconLocalization.string("no-matching-categories"))
                         .foregroundColor(.secondary)
                         .font(.system(size: 12))
                         .multilineTextAlignment(.center)
@@ -132,7 +132,7 @@ struct SearchBar: View {
                 .foregroundColor(.secondary)
                 .font(.system(size: 12))
 
-            TextField(String(localized: "search-categories", table: "Icon"), text: $text)
+            TextField(IconLocalization.string("search-categories"), text: $text)
                 .textFieldStyle(PlainTextFieldStyle())
                 .font(.system(size: 12))
 
@@ -170,7 +170,7 @@ struct CategoryRow: View {
                         .foregroundColor(isSelected ? .accentColor : .primary)
                         .lineLimit(1)
 
-                    Text(String(localized: "icon-count", table: "Icon").replacingOccurrences(of: "%lld", with: "\(category.iconCount)"))
+                    Text(IconLocalization.string("icon-count").replacingOccurrences(of: "%lld", with: "\(category.iconCount)"))
                         .font(.system(size: 11))
                         .foregroundColor(.secondary)
                         .lineLimit(1)

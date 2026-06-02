@@ -31,7 +31,7 @@ GitDetailPlugin/
 └── Tests/
 ```
 
-Localization is provided by the `GitOKCoreKit` `GitDetail` table.
+Localization is provided by this package's `Localizable` table.
 
 ## Dependencies
 

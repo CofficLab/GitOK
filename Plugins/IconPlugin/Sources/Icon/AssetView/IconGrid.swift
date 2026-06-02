@@ -37,7 +37,7 @@ struct IconGrid: View {
                                 .font(.system(size: 16, weight: .medium))
                                 .foregroundColor(.primary)
                             Spacer()
-                            Text(String(localized: "icon-count", table: "Icon").replacingOccurrences(of: "%lld", with: "\(iconAssets.count)"))
+                            Text(IconLocalization.string("icon-count").replacingOccurrences(of: "%lld", with: "\(iconAssets.count)"))
                                 .font(.system(size: 12))
                                 .foregroundColor(.secondary)
                         }
@@ -45,9 +45,9 @@ struct IconGrid: View {
                         // 右侧：在分类标题下方放置添加/删除按钮（当来源支持增删时显示）
                         if IconRepo.shared.getAllIconSources().first(where: { $0.sourceIdentifier == sid })?.supportsMutations == true {
                             HStack(spacing: 8) {
-                                Button(String(localized: "add-icon-button", table: "Icon")) { addImagesViaPanel() }
+                                Button(IconLocalization.string("add-icon-button")) { addImagesViaPanel() }
                                     .buttonStyle(.bordered)
-                                Button(String(localized: "delete-icon-button", table: "Icon")) { deleteImagesViaPanel() }
+                                Button(IconLocalization.string("delete-icon-button")) { deleteImagesViaPanel() }
                                     .buttonStyle(.bordered)
                                 Spacer()
                             }
@@ -71,13 +71,13 @@ struct IconGrid: View {
                                 .foregroundColor(.primary)
                             Spacer()
                             if source.supportsMutations {
-                                Button(String(localized: "add-image-button", table: "Icon")) { addImagesViaPanel() }
+                                Button(IconLocalization.string("add-image-button")) { addImagesViaPanel() }
                                     .buttonStyle(.bordered)
-                                Button(String(localized: "delete-selected-button", table: "Icon")) { deleteSelectedImage() }
+                                Button(IconLocalization.string("delete-selected-button")) { deleteSelectedImage() }
                                     .buttonStyle(.bordered)
                                     .disabled(!canDeleteSelected(in: sid))
                             }
-                            Text(String(localized: "icon-count", table: "Icon").replacingOccurrences(of: "%lld", with: "\(iconAssets.count)"))
+                            Text(IconLocalization.string("icon-count").replacingOccurrences(of: "%lld", with: "\(iconAssets.count)"))
                                 .font(.system(size: 12))
                                 .foregroundColor(.secondary)
                         }
@@ -97,7 +97,7 @@ struct IconGrid: View {
                 if isLoading {
                     VStack {
                         Spacer()
-                        ProgressView(String(localized: "loading-icons", table: "Icon"))
+                        ProgressView(IconLocalization.string("loading-icons"))
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
                         Spacer()
                     }
@@ -110,7 +110,7 @@ struct IconGrid: View {
                                 .foregroundColor(.secondary)
 
                             let shouldSelectPrompt = (selectedSourceIdentifier == nil)
-                            Text(shouldSelectPrompt ? String(localized: "select-category-prompt", table: "Icon") : String(localized: "no-icons-in-source", table: "Icon"))
+                            Text(shouldSelectPrompt ? IconLocalization.string("select-category-prompt") : IconLocalization.string("no-icons-in-source"))
                                 .font(.system(size: 14))
                                 .foregroundColor(.secondary)
                                 .multilineTextAlignment(.center)

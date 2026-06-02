@@ -1,14 +1,15 @@
+import Foundation
 import GitOKCoreKit
 
 public struct EmberThemePlugin: GitOKPlugin {
     public static let metadata = GitOKPluginMetadata(
         id: "ThemeEmberPlugin",
-        displayName: "Ember Theme",
-        description: "Warm orange dark theme",
+        displayName: EmberThemePluginLocalization.string("Ember Theme"),
+        description: EmberThemePluginLocalization.string("Warm orange dark theme"),
         iconName: "exclamationmark.triangle",
         order: 124,
         policy: .disabled,
-        tableName: "Localizable"
+        tableName: EmberThemePluginLocalization.table
     )
 
     public static let shared = EmberThemePlugin()
@@ -24,5 +25,15 @@ public struct EmberThemePlugin: GitOKPlugin {
                 editorThemeId: EmberTheme.conflict.identifier
             ),
         ]
+    }
+}
+
+
+public enum EmberThemePluginLocalization {
+    public static let table = "Localizable"
+    public static let bundle = Bundle.module
+
+    public static func string(_ key: String) -> String {
+        NSLocalizedString(key, tableName: table, bundle: bundle, value: key, comment: "")
     }
 }

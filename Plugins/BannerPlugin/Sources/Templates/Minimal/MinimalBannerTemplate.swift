@@ -6,8 +6,8 @@ import SwiftUI
  */
 struct MinimalBannerTemplate: BannerTemplateProtocol {
     let id = "minimal"
-    let name = String(localized: "Minimal Style", table: "Banner")
-    let description = String(localized: "Centered layout, clean and elegant", table: "Banner")
+    let name = BannerPluginLocalization.string("Minimal Style")
+    let description = BannerPluginLocalization.string("Centered layout, clean and elegant")
     let systemImageName = "rectangle.center.inset.filled"
 
     @MainActor

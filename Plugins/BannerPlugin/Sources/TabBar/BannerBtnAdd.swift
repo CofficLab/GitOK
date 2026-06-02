@@ -38,17 +38,17 @@ struct BannerBtnAdd: View, SuperThread {
         do {
             let newBanner = try bannerRepo.createBanner(
                 in: projectURL,
-                title: String(localized: "New Banner", table: "Banner")
+                title: BannerPluginLocalization.string("New Banner")
             )
 
             // 设置为当前选中的Banner
             b.setBanner(newBanner)
 
-            alert_info(String(localized: "New Banner file added", table: "Banner"))
+            alert_info(BannerPluginLocalization.string("New Banner file added"))
         } catch {
             os_log(.error, "❌ 创建 Banner 失败: \(error.localizedDescription)")
             let msg = String.localizedStringWithFormat(
-                String(localized: "Failed to create Banner: %@", table: "Banner"),
+                BannerPluginLocalization.string("Failed to create Banner: %@"),
                 error.localizedDescription
             )
             alert_error(msg)

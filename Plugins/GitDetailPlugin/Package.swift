@@ -15,7 +15,8 @@ let package = Package(
         .target(
             name: "GitDetailPlugin",
             dependencies: ["GitOKCoreKit"],
-            path: "Sources"
+            path: "Sources",
+            resources: [.process("Localizable.xcstrings")]
         ),
         .testTarget(
             name: "GitDetailPluginTests",

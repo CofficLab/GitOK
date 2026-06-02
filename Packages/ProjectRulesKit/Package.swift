@@ -3,6 +3,7 @@ import PackageDescription
 
 let package = Package(
     name: "ProjectRulesKit",
+    defaultLocalization: "en",
     platforms: [
         .macOS(.v14),
     ],
@@ -20,7 +21,8 @@ let package = Package(
             name: "ProjectRulesKit",
             dependencies: [
                 "GitCoreKit",
-            ]
+            ],
+            resources: [.process("Localizable.xcstrings")]
         ),
         .testTarget(
             name: "ProjectRulesKitTests",

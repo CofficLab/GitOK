@@ -533,7 +533,11 @@ public enum CommitRemoteSyncRules {
     }
 
     public static func retryStatus(attempt: Int, totalAttempts: Int) -> String {
-        String(localized: "Network fluctuation, retrying (\(attempt)/\(totalAttempts))…", table: "GitCommit")
+        String.localizedStringWithFormat(
+            ProjectRulesLocalization.string("Network fluctuation, retrying (%lld/%lld)…"),
+            attempt,
+            totalAttempts
+        )
     }
 
     public static func pushRetryAttempts(delays: [UInt64] = pushRetryDelays) -> [PushRetryAttempt] {
@@ -815,15 +819,15 @@ public enum CommitRemoteSyncRules {
     public static func activityStatus(_ activity: Activity) -> String {
         switch activity {
         case .refreshingFiles:
-            return String(localized: "Refresh File List…", table: "GitCommit")
+            return ProjectRulesLocalization.string("Refresh File List…")
         case .checkingRemoteStatus:
-            return String(localized: "Checking Remote Status…", table: "GitCommit")
+            return ProjectRulesLocalization.string("Checking Remote Status…")
         case .pulling:
-            return String(localized: "Pulling…", table: "GitCommit")
+            return ProjectRulesLocalization.string("Pulling…")
         case .pushing:
-            return String(localized: "Pushing…", table: "GitCommit")
+            return ProjectRulesLocalization.string("Pushing…")
         case .pushingViaSystemGit:
-            return String(localized: "Pushing via system Git…", table: "GitCommit")
+            return ProjectRulesLocalization.string("Pushing via system Git…")
         }
     }
 
@@ -1528,11 +1532,11 @@ public enum CommitRemoteSyncRules {
 
     public static func networkFallbackAlertText() -> NetworkFallbackAlertText {
         NetworkFallbackAlertText(
-            title: String(localized: "Push Failed", table: "GitCommit"),
-            message: String(localized: "Network connection error, auto-retry failed. You can try:", table: "GitCommit"),
-            retryButtonTitle: String(localized: "Retry", table: "GitCommit"),
-            toggleSSHPushButtonTitle: String(localized: "Toggle SSH Push", table: "GitCommit"),
-            cancelButtonTitle: String(localized: "Cancel", table: "GitCommit")
+            title: ProjectRulesLocalization.string("Push Failed"),
+            message: ProjectRulesLocalization.string("Network connection error, auto-retry failed. You can try:"),
+            retryButtonTitle: ProjectRulesLocalization.string("Retry"),
+            toggleSSHPushButtonTitle: ProjectRulesLocalization.string("Toggle SSH Push"),
+            cancelButtonTitle: ProjectRulesLocalization.string("Cancel")
         )
     }
 

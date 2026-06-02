@@ -41,7 +41,7 @@ CommitPlugin/
 └── Tests/
 ```
 
-Localization is provided by the `GitOKCoreKit` `GitCommit` table.
+Localization is provided by this package's `Localizable` table.
 
 ## Dependencies
 

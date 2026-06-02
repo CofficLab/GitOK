@@ -12,7 +12,7 @@ enum BannerError: Error, LocalizedError {
     var errorDescription: String? {
         switch self {
         case .invalidTemplateData:
-            return String(localized: "Invalid template data", table: "Banner")
+            return BannerPluginLocalization.string("Invalid template data")
         }
     }
 }

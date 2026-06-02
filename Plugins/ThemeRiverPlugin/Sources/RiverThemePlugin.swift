@@ -1,14 +1,15 @@
+import Foundation
 import GitOKCoreKit
 
 public struct RiverThemePlugin: GitOKPlugin {
     public static let metadata = GitOKPluginMetadata(
         id: "ThemeRiverPlugin",
-        displayName: "River Theme",
-        description: "Flowing teal dark theme",
+        displayName: RiverThemePluginLocalization.string("River Theme"),
+        description: RiverThemePluginLocalization.string("Flowing teal dark theme"),
         iconName: "arrow.triangle.branch",
         order: 125,
         policy: .disabled,
-        tableName: "Localizable"
+        tableName: RiverThemePluginLocalization.table
     )
 
     public static let shared = RiverThemePlugin()
@@ -24,5 +25,15 @@ public struct RiverThemePlugin: GitOKPlugin {
                 editorThemeId: RiverTheme.branchFlow.identifier
             ),
         ]
+    }
+}
+
+
+public enum RiverThemePluginLocalization {
+    public static let table = "Localizable"
+    public static let bundle = Bundle.module
+
+    public static func string(_ key: String) -> String {
+        NSLocalizedString(key, tableName: table, bundle: bundle, value: key, comment: "")
     }
 }

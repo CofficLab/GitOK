@@ -1,14 +1,15 @@
+import Foundation
 import GitOKCoreKit
 
 public struct WinterThemePlugin: GitOKPlugin {
     public static let metadata = GitOKPluginMetadata(
         id: "ThemeWinterPlugin",
-        displayName: "Winter Theme",
-        description: "Cool minimal light theme",
+        displayName: WinterThemePluginLocalization.string("Winter Theme"),
+        description: WinterThemePluginLocalization.string("Cool minimal light theme"),
         iconName: "scope",
         order: 133,
         policy: .disabled,
-        tableName: "Localizable"
+        tableName: WinterThemePluginLocalization.table
     )
 
     public static let shared = WinterThemePlugin()
@@ -27,3 +28,13 @@ public struct WinterThemePlugin: GitOKPlugin {
     }
 }
 
+
+
+public enum WinterThemePluginLocalization {
+    public static let table = "Localizable"
+    public static let bundle = Bundle.module
+
+    public static func string(_ key: String) -> String {
+        NSLocalizedString(key, tableName: table, bundle: bundle, value: key, comment: "")
+    }
+}

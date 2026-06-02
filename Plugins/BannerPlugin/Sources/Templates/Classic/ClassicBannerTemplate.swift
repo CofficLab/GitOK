@@ -6,8 +6,8 @@ import SwiftUI
  */
 struct ClassicBannerTemplate: BannerTemplateProtocol {
     let id = "classic"
-    let name = String(localized: "Classic Layout", table: "Banner")
-    let description = String(localized: "Left: title, subtitle and features. Right: product image", table: "Banner")
+    let name = BannerPluginLocalization.string("Classic Layout")
+    let description = BannerPluginLocalization.string("Left: title, subtitle and features. Right: product image")
     let systemImageName = "rectangle.split.2x1"
 
     @MainActor

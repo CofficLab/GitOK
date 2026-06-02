@@ -1,14 +1,15 @@
+import Foundation
 import GitOKCoreKit
 
 public struct AuroraThemePlugin: GitOKPlugin {
     public static let metadata = GitOKPluginMetadata(
         id: "ThemeAuroraPlugin",
-        displayName: "Aurora Theme",
-        description: "Deep cyan night theme",
+        displayName: AuroraThemePluginLocalization.string("Aurora Theme"),
+        description: AuroraThemePluginLocalization.string("Deep cyan night theme"),
         iconName: "point.3.connected.trianglepath.dotted",
         order: 122,
         policy: .disabled,
-        tableName: "Localizable"
+        tableName: AuroraThemePluginLocalization.table
     )
 
     public static let shared = AuroraThemePlugin()
@@ -24,5 +25,15 @@ public struct AuroraThemePlugin: GitOKPlugin {
                 editorThemeId: AuroraTheme.commitGraph.identifier
             ),
         ]
+    }
+}
+
+
+public enum AuroraThemePluginLocalization {
+    public static let table = "Localizable"
+    public static let bundle = Bundle.module
+
+    public static func string(_ key: String) -> String {
+        NSLocalizedString(key, tableName: table, bundle: bundle, value: key, comment: "")
     }
 }

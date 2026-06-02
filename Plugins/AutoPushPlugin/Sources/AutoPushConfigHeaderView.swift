@@ -26,11 +26,11 @@ struct AutoPushConfigHeaderView: View {
                 .font(.title2)
 
             VStack(alignment: .leading, spacing: 2) {
-                Text(String(localized: "Auto Push Configuration", table: "AutoPush"))
+                Text(AutoPushPluginLocalization.string("Auto Push Configuration"))
                     .font(.headline)
                     .fontWeight(.semibold)
 
-                Text(String(localized: "Manage auto-push settings for project branches.", table: "AutoPush"))
+                Text(AutoPushPluginLocalization.string("Manage auto-push settings for project branches."))
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
@@ -44,7 +44,7 @@ struct AutoPushConfigHeaderView: View {
                     .controlSize(.small)
             }
 
-            Button(String(localized: "Close", table: "AutoPush")) {
+            Button(AutoPushPluginLocalization.string("Close")) {
                 onClose()
             }
             .keyboardShortcut(.cancelAction)

@@ -17,7 +17,7 @@ struct BannerAppStoreDownloadButton: View {
 
     var body: some View {
         BannerDownloadButton(
-            title: progressText.isEmpty ? String(localized: "Mac App Store Screenshots", table: "Banner") : progressText,
+            title: progressText.isEmpty ? BannerPluginLocalization.string("Mac App Store Screenshots") : progressText,
             icon: "app.badge",
             color: .blue,
             action: {
@@ -31,12 +31,12 @@ struct BannerAppStoreDownloadButton: View {
 
     @MainActor private func downloadAppStoreScreenshots() async {
         guard !bannerProvider.banner.path.isEmpty else {
-            MagicMessageProvider.shared.error(String(localized: "No Banners available", table: "Banner"))
+            MagicMessageProvider.shared.error(BannerPluginLocalization.string("No Banners available"))
             return
         }
 
         isGenerating = true
-        progressText = String(localized: "Generating App Store screenshots...", table: "Banner")
+        progressText = BannerPluginLocalization.string("Generating App Store screenshots...")
         defer {
             isGenerating = false
             progressText = ""
@@ -46,7 +46,7 @@ struct BannerAppStoreDownloadButton: View {
         let folderName = "Banner-AppStore-Screenshots-\(tag)"
 
         guard let downloadsURL = FileManager.default.urls(for: .downloadsDirectory, in: .userDomainMask).first else {
-            MagicMessageProvider.shared.error(String(localized: "No access to Downloads folder", table: "Banner"))
+            MagicMessageProvider.shared.error(BannerPluginLocalization.string("No access to Downloads folder"))
             return
         }
 
@@ -56,7 +56,7 @@ struct BannerAppStoreDownloadButton: View {
             try FileManager.default.createDirectory(at: folderPath, withIntermediateDirectories: true)
         } catch {
             let msg = String.localizedStringWithFormat(
-                String(localized: "Failed to create target directory: %@", table: "Banner"),
+                BannerPluginLocalization.string("Failed to create target directory: %@"),
                 error.localizedDescription
             )
             MagicMessageProvider.shared.error(msg)
@@ -80,7 +80,7 @@ struct BannerAppStoreDownloadButton: View {
             let description = "\(width)x\(height) (\(device.description))"
 
             progressText = String.localizedStringWithFormat(
-                String(localized: "Generating %@ (%d/%d)...", table: "Banner"),
+                BannerPluginLocalization.string("Generating %@ (%d/%d)..."),
                 description,
                 index + 1,
                 macDevices.count
@@ -97,7 +97,7 @@ struct BannerAppStoreDownloadButton: View {
                 successCount += 1
             } catch {
                 let msg = String.localizedStringWithFormat(
-                    String(localized: "Failed to generate screenshot %@: %@", table: "Banner"),
+                    BannerPluginLocalization.string("Failed to generate screenshot %@: %@"),
                     description,
                     error.localizedDescription
                 )
@@ -108,7 +108,7 @@ struct BannerAppStoreDownloadButton: View {
         // 显示结果
         if successCount == macDevices.count {
             let msg = String.localizedStringWithFormat(
-                String(localized: "Successfully generated %d App Store screenshots", table: "Banner"),
+                BannerPluginLocalization.string("Successfully generated %d App Store screenshots"),
                 successCount
             )
             MagicMessageProvider.shared.success(msg)
@@ -116,7 +116,7 @@ struct BannerAppStoreDownloadButton: View {
             NSWorkspace.shared.open(folderPath)
         } else {
             let msg = String.localizedStringWithFormat(
-                String(localized: "Only successfully generated %d/%d screenshots", table: "Banner"),
+                BannerPluginLocalization.string("Only successfully generated %d/%d screenshots"),
                 successCount,
                 macDevices.count
             )

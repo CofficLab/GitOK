@@ -17,7 +17,7 @@ struct BanneriPhoneAppStoreDownloadButton: View {
 
     var body: some View {
         BannerDownloadButton(
-            title: progressText.isEmpty ? String(localized: "iPhone App Store Screenshots", table: "Banner") : progressText,
+            title: progressText.isEmpty ? BannerPluginLocalization.string("iPhone App Store Screenshots") : progressText,
             icon: "iphone",
             color: .purple,
             action: {
@@ -31,12 +31,12 @@ struct BanneriPhoneAppStoreDownloadButton: View {
 
     @MainActor private func downloadiPhoneAppStoreScreenshots() async {
         guard !bannerProvider.banner.path.isEmpty else {
-            MagicMessageProvider.shared.error(String(localized: "No Banners available", table: "Banner"))
+            MagicMessageProvider.shared.error(BannerPluginLocalization.string("No Banners available"))
             return
         }
 
         isGenerating = true
-        progressText = String(localized: "Generating iPhone App Store screenshots...", table: "Banner")
+        progressText = BannerPluginLocalization.string("Generating iPhone App Store screenshots...")
         defer {
             isGenerating = false
             progressText = ""
@@ -46,7 +46,7 @@ struct BanneriPhoneAppStoreDownloadButton: View {
         let folderName = "Banner-iPhone-AppStore-Screenshots-\(tag)"
 
         guard let downloadsURL = FileManager.default.urls(for: .downloadsDirectory, in: .userDomainMask).first else {
-            MagicMessageProvider.shared.error(String(localized: "No access to Downloads folder", table: "Banner"))
+            MagicMessageProvider.shared.error(BannerPluginLocalization.string("No access to Downloads folder"))
             return
         }
 
@@ -56,7 +56,7 @@ struct BanneriPhoneAppStoreDownloadButton: View {
             try FileManager.default.createDirectory(at: folderPath, withIntermediateDirectories: true)
         } catch {
             let msg = String.localizedStringWithFormat(
-                String(localized: "Failed to create target directory: %@", table: "Banner"),
+                BannerPluginLocalization.string("Failed to create target directory: %@"),
                 error.localizedDescription
             )
             MagicMessageProvider.shared.error(msg)
@@ -80,7 +80,7 @@ struct BanneriPhoneAppStoreDownloadButton: View {
             let description = "\(width)x\(height) (\(device.description))"
 
             progressText = String.localizedStringWithFormat(
-                String(localized: "Generating %@ (%d/%d)...", table: "Banner"),
+                BannerPluginLocalization.string("Generating %@ (%d/%d)..."),
                 description,
                 index + 1,
                 iPhoneDevices.count
@@ -97,7 +97,7 @@ struct BanneriPhoneAppStoreDownloadButton: View {
                 successCount += 1
             } catch {
                 let msg = String.localizedStringWithFormat(
-                    String(localized: "Failed to generate screenshot %@: %@", table: "Banner"),
+                    BannerPluginLocalization.string("Failed to generate screenshot %@: %@"),
                     description,
                     error.localizedDescription
                 )
@@ -109,14 +109,14 @@ struct BanneriPhoneAppStoreDownloadButton: View {
             if successCount == iPhoneDevices.count {
                 MagicMessageProvider.shared.success(
                     String.localizedStringWithFormat(
-                        String(localized: "Successfully generated %d iPhone App Store screenshots", table: "Banner"),
+                        BannerPluginLocalization.string("Successfully generated %d iPhone App Store screenshots"),
                         successCount
                     )
                 )
             } else {
                 MagicMessageProvider.shared.warning(
                     String.localizedStringWithFormat(
-                        String(localized: "Only successfully generated %d/%d screenshots", table: "Banner"),
+                        BannerPluginLocalization.string("Only successfully generated %d/%d screenshots"),
                         successCount,
                         iPhoneDevices.count
                     )

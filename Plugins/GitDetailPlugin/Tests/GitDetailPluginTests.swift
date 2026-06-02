@@ -8,7 +8,7 @@ struct GitDetailPluginTests {
         #expect(GitDetailPlugin.metadata.id == "GitDetailPlugin")
         #expect(GitDetailPlugin.metadata.iconName == "puzzlepiece.extension")
         #expect(GitDetailPlugin.metadata.order == 0)
-        #expect(GitDetailPlugin.metadata.tableName == "GitDetail")
+        #expect(GitDetailPlugin.metadata.tableName == "Localizable")
     }
 
     @Test("localized strings resolve")

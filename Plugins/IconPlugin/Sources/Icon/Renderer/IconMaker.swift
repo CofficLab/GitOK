@@ -80,14 +80,14 @@ struct IconMaker: View {
                         self.isLoading = false
                     } else {
                         self.iconAsset = nil
-                        self.errorMessage = String(localized: "icon-not-found", table: "Icon").replacingOccurrences(of: "%@", with: i.selectedIconId)
+                        self.errorMessage = IconLocalization.string("icon-not-found").replacingOccurrences(of: "%@", with: i.selectedIconId)
                         self.isLoading = false
                     }
                 }
             } catch {
                 await MainActor.run {
                     self.iconAsset = nil
-                    self.errorMessage = String(localized: "load-icon-failed", table: "Icon").replacingOccurrences(of: "%@", with: error.localizedDescription)
+                    self.errorMessage = IconLocalization.string("load-icon-failed").replacingOccurrences(of: "%@", with: error.localizedDescription)
                     self.isLoading = false
                 }
             }
@@ -106,7 +106,7 @@ struct LoadingStateView: View {
                 .scaleEffect(1.5)
                 .frame(width: 60, height: 60)
 
-            Text(String(localized: "loading-icons", table: "Icon"))
+            Text(IconLocalization.string("loading-icons"))
                 .font(.headline)
                 .foregroundColor(.secondary)
         }
@@ -127,7 +127,7 @@ struct ErrorStateView: View {
                 .font(.system(size: 48))
                 .foregroundColor(.orange)
 
-            Text(String(localized: "loading-failed", table: "Icon"))
+            Text(IconLocalization.string("loading-failed"))
                 .font(.headline)
                 .foregroundColor(.primary)
 
@@ -136,7 +136,7 @@ struct ErrorStateView: View {
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
 
-            Button(String(localized: "retry", table: "Icon")) {
+            Button(IconLocalization.string("retry")) {
                 onRetry()
             }
             .buttonStyle(.borderedProminent)
@@ -172,21 +172,21 @@ struct EmptyStateView: View {
                     ))
             }
 
-            Text(String(localized: "icon-workshop", table: "Icon"))
+            Text(IconLocalization.string("icon-workshop"))
                 .font(.title2)
                 .fontWeight(.semibold)
                 .foregroundColor(.primary)
 
-            Text(String(localized: "select-icon-to-start", table: "Icon"))
+            Text(IconLocalization.string("select-icon-to-start"))
                 .font(.subheadline)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
 
             // 制作功能提示
             HStack(spacing: 20) {
-                FeatureHint(icon: "pencil.and.outline", title: String(localized: "edit", table: "Icon"), description: String(localized: "adjust-colors-style", table: "Icon"))
-                FeatureHint(icon: "square.and.arrow.down", title: String(localized: "export", table: "Icon"), description: String(localized: "multiple-formats", table: "Icon"))
-                FeatureHint(icon: "doc.badge.plus", title: String(localized: "draft", table: "Icon"), description: String(localized: "save-progress", table: "Icon"))
+                FeatureHint(icon: "pencil.and.outline", title: IconLocalization.string("edit"), description: IconLocalization.string("adjust-colors-style"))
+                FeatureHint(icon: "square.and.arrow.down", title: IconLocalization.string("export"), description: IconLocalization.string("multiple-formats"))
+                FeatureHint(icon: "doc.badge.plus", title: IconLocalization.string("draft"), description: IconLocalization.string("save-progress"))
             }
             .padding(.top, 8)
         }

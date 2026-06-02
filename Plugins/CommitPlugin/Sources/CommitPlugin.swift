@@ -6,12 +6,21 @@ public struct CommitPlugin: GitOKPlugin {
 
     public static let metadata = GitOKPluginMetadata(
         id: "CommitPlugin",
-        displayName: CommitLocalization.string("Commit"),
-        description: CommitLocalization.string("Git 提交管理"),
+        displayName: CommitPluginLocalization.string("Commit"),
+        description: CommitPluginLocalization.string("Git commit management"),
         iconName: "arrow.up.arrow.down",
         policy: .disabled,
-        tableName: CommitLocalization.table
+        tableName: CommitPluginLocalization.table
     )
 
     private init() {}
+}
+
+public enum CommitPluginLocalization {
+    public static let table = "Localizable"
+    public static let bundle = Bundle.module
+
+    public static func string(_ key: String) -> String {
+        NSLocalizedString(key, tableName: table, bundle: bundle, value: key, comment: "")
+    }
 }
