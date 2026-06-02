@@ -22,7 +22,8 @@ struct BranchPluginTests {
     @MainActor
     @Test("plugin contributes toolbar and status bar views")
     func contributesViews() {
-        #expect(BranchPlugin.shared.toolBarTrailingView(context: GitOKPluginContext()) != nil)
+        #expect(BranchPlugin.shared.toolBarLeadingView(context: GitOKPluginContext()) != nil)
+        #expect(BranchPlugin.shared.toolBarTrailingView(context: GitOKPluginContext()) == nil)
         #expect(BranchPlugin.shared.statusBarLeadingView(context: GitOKPluginContext()) != nil)
     }
 
@@ -120,5 +121,17 @@ struct BranchPluginTests {
     func statusBarLeadingEmptyContext() {
         let view = BranchPlugin.shared.statusBarLeadingView(context: GitOKPluginContext())
         #expect(view != nil)
+    }
+
+    @MainActor
+    @Test("toolbar context preserves project and branch state")
+    func toolbarContextPreservesProjectAndBranchState() {
+        let url = URL(fileURLWithPath: "/tmp/repo")
+        let pluginCtx = GitOKPluginContext(projectURL: url, branchName: "main", isGitRepository: true)
+        let ctx = BranchPlugin.toolBarContext(from: pluginCtx)
+
+        #expect(ctx.projectURL == url)
+        #expect(ctx.branchName == "main")
+        #expect(ctx.isGitRepository == true)
     }
 }

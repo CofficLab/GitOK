@@ -45,6 +45,9 @@ class PluginVM: ObservableObject {
     /// - Returns: 插件及其对应的工具栏前导视图数组
     @MainActor
     func getEnabledToolbarLeadingViews(
+        projectURL: URL? = nil,
+        branchName: String? = nil,
+        isGitRepository: Bool = false,
         projects: [GitOKProjectSummary] = [],
         selectedProjectURL: URL? = nil,
         isSidebarVisible: Bool = true,
@@ -57,6 +60,9 @@ class PluginVM: ObservableObject {
     ) -> [GitOKPluginViewContribution] {
         guard hasPlugins, let runtime else { return [] }
         let context = GitOKPluginContext(
+            projectURL: projectURL,
+            branchName: branchName,
+            isGitRepository: isGitRepository,
             projects: projects,
             selectedProjectURL: selectedProjectURL,
             isSidebarVisible: isSidebarVisible,

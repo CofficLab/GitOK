@@ -277,6 +277,9 @@ extension ContentView {
         let leadingStart = Date()
         let repositoryHandlers = PluginRepositoryContextFactory.handlers(data: g, projectVM: vm)
         toolbarLeadingViews = p.getEnabledToolbarLeadingViews(
+            projectURL: vm.project?.url,
+            branchName: g.branch?.name,
+            isGitRepository: vm.project?.isGitRepo ?? false,
             projects: g.projects.map {
                 GitOKProjectSummary(url: $0.url, title: $0.title, path: $0.path)
             },

@@ -43,14 +43,21 @@ public struct BranchPlugin: GitOKPlugin {
 
     private init() {}
 
-    public func toolBarTrailingView(context: GitOKPluginContext) -> AnyView? {
-        AnyView(BranchPickerView(context: BranchPluginContext()))
+    @MainActor
+    public func toolBarLeadingView(context: GitOKPluginContext) -> AnyView? {
+        let pluginContext = Self.toolBarContext(from: context)
+        return AnyView(BranchPickerView(context: pluginContext))
     }
 
     @MainActor
     public func statusBarLeadingView(context: GitOKPluginContext) -> AnyView? {
         let pluginContext = BranchPluginContext(context)
         return AnyView(BranchStatusTile(context: pluginContext))
+    }
+
+    @MainActor
+    static func toolBarContext(from context: GitOKPluginContext) -> BranchPluginContext {
+        BranchPluginContext(context)
     }
 }
 
