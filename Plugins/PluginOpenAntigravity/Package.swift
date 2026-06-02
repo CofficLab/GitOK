@@ -17,7 +17,7 @@ let package = Package(
         .target(
             name: "PluginOpenAntigravity",
             dependencies: ["GitOKCoreKit"],
-            path: "Sources/PluginOpenAntigravity",
+            path: "Sources",
             resources: [.process("Resources")]
         ),
         .testTarget(

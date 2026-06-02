@@ -22,7 +22,7 @@ let package = Package(
             dependencies: [
                 "GitOKCoreKit",
             ],
-            path: "Sources/PluginThemeWinter",
+            path: "Sources",
             resources: [
                 .process("Resources"),
             ]

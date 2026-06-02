@@ -20,7 +20,7 @@ let package = Package(
         .target(
             name: "PluginOpenVSCode",
             dependencies: ["GitOKCoreKit"],
-            path: "Sources/PluginOpenVSCode",
+            path: "Sources",
             resources: [
                 .process("Resources"),
             ]

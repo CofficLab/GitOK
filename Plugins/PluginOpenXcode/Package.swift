@@ -20,7 +20,7 @@ let package = Package(
         .target(
             name: "PluginOpenXcode",
             dependencies: ["GitOKCoreKit"],
-            path: "Sources/PluginOpenXcode",
+            path: "Sources",
             resources: [
                 .process("Resources"),
             ]

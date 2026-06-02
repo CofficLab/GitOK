@@ -20,7 +20,7 @@ let package = Package(
         .target(
             name: "PluginOpenTerminal",
             dependencies: ["GitOKCoreKit"],
-            path: "Sources/PluginOpenTerminal",
+            path: "Sources",
             resources: [
                 .process("Resources"),
             ]

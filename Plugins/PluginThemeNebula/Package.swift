@@ -13,7 +13,7 @@ let package = Package(
         .target(
             name: "PluginThemeNebula",
             dependencies: ["GitOKCoreKit"],
-            path: "Sources/PluginThemeNebula",
+            path: "Sources",
             resources: [.process("Resources")]
         ),
         .testTarget(

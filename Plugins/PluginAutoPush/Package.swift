@@ -23,7 +23,7 @@ let package = Package(
                 "ProjectRulesKit",
                 "ProjectSupportKit",
             ],
-            path: "Sources/PluginAutoPush",
+            path: "Sources",
             resources: [.process("Resources")]
         ),
         .testTarget(

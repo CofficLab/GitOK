@@ -17,7 +17,7 @@ let package = Package(
         .target(
             name: "PluginOpenKiro",
             dependencies: ["GitOKCoreKit"],
-            path: "Sources/PluginOpenKiro",
+            path: "Sources",
             resources: [.process("Resources")]
         ),
         .testTarget(

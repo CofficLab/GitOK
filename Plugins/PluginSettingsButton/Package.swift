@@ -20,7 +20,7 @@ let package = Package(
         .target(
             name: "PluginSettingsButton",
             dependencies: ["GitOKCoreKit"],
-            path: "Sources/PluginSettingsButton",
+            path: "Sources",
             resources: [
                 .process("Resources"),
             ]

@@ -15,7 +15,7 @@ let package = Package(
         .target(
             name: "PluginGitTab",
             dependencies: ["GitOKCoreKit"],
-            path: "Sources/PluginGitTab",
+            path: "Sources",
             resources: [.process("Resources")]
         ),
         .testTarget(

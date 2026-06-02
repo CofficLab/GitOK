@@ -22,7 +22,7 @@ let package = Package(
             dependencies: [
                 "GitOKCoreKit",
             ],
-            path: "Sources/PluginThemeXcodeLight",
+            path: "Sources",
             resources: [
                 .process("Resources"),
             ]

@@ -20,7 +20,7 @@ let package = Package(
         .target(
             name: "PluginOpenGitHubDesktop",
             dependencies: ["GitOKCoreKit"],
-            path: "Sources/PluginOpenGitHubDesktop",
+            path: "Sources",
             resources: [
                 .process("Resources"),
             ]

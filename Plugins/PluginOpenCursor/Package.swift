@@ -20,7 +20,7 @@ let package = Package(
         .target(
             name: "PluginOpenCursor",
             dependencies: ["GitOKCoreKit"],
-            path: "Sources/PluginOpenCursor",
+            path: "Sources",
             resources: [
                 .process("Resources"),
             ]

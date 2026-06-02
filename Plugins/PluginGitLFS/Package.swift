@@ -19,7 +19,7 @@ let package = Package(
                 "GitCoreKit",
                 "GitOKCoreKit",
             ],
-            path: "Sources/PluginGitLFS",
+            path: "Sources",
             resources: [.process("Resources")]
         ),
         .testTarget(

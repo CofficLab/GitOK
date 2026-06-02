@@ -19,7 +19,7 @@ let package = Package(
                 "GitCoreKit",
                 "GitOKCoreKit",
             ],
-            path: "Sources/PluginSmartMerge",
+            path: "Sources",
             resources: [.process("Resources")]
         ),
         .testTarget(

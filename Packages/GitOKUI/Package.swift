@@ -15,7 +15,7 @@ let package = Package(
     targets: [
         .target(
             name: "GitOKUI",
-            path: "Sources/GitOKUI"
+            path: "Sources"
         ),
         .testTarget(
             name: "GitOKUITests",

@@ -21,7 +21,7 @@ let package = Package(
                 "GitOKCoreKit",
                 "ProjectRulesKit",
             ],
-            path: "Sources/PluginRemoteRepository",
+            path: "Sources",
             resources: [.process("Resources")]
         ),
         .testTarget(

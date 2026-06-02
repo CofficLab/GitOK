@@ -17,7 +17,7 @@ let package = Package(
         .target(
             name: "PluginOpenTrae",
             dependencies: ["GitOKCoreKit"],
-            path: "Sources/PluginOpenTrae",
+            path: "Sources",
             resources: [.process("Resources")]
         ),
         .testTarget(

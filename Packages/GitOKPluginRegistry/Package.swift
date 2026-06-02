@@ -139,7 +139,7 @@ let package = Package(
                 "PluginThemeXcodeLight",
                 "PluginUnpushedStatus",
             ],
-            path: "Sources/GitOKPluginRegistry"
+            path: "Sources"
         ),
     ]
 )

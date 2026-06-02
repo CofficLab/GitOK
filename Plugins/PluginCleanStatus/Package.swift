@@ -19,7 +19,7 @@ let package = Package(
                 "GitCoreKit",
                 "GitOKCoreKit",
             ],
-            path: "Sources/PluginCleanStatus",
+            path: "Sources",
             resources: [.process("Resources")]
         ),
         .testTarget(

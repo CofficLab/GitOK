@@ -25,7 +25,7 @@ let package = Package(
                 "MagicKit",
                 "ProjectRulesKit",
             ],
-            path: "Sources/PluginBanner",
+            path: "Sources",
             resources: [.process("Resources")]
         ),
         .testTarget(

@@ -17,7 +17,7 @@ let package = Package(
             dependencies: [
                 "GitOKCoreKit",
             ],
-            path: "Sources/PluginReadme",
+            path: "Sources",
             resources: [.process("Resources")]
         ),
         .testTarget(

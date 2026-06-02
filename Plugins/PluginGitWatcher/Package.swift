@@ -15,7 +15,7 @@ let package = Package(
         .target(
             name: "PluginGitWatcher",
             dependencies: ["GitOKCoreKit"],
-            path: "Sources/PluginGitWatcher",
+            path: "Sources",
             resources: [.process("Resources")]
         ),
         .testTarget(

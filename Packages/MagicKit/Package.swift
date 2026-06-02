@@ -27,6 +27,7 @@ let package = Package(
                "ID3TagEditor",
                "ZIPFoundation",
            ],
+           path: "Sources",
            resources: [.process("Icons.xcassets")]
        ),
        .testTarget(

@@ -19,7 +19,7 @@ let package = Package(
                 "GitCoreKit",
                 "GitOKCoreKit",
             ],
-            path: "Sources/PluginGitClone",
+            path: "Sources",
             resources: [
                 .process("Resources"),
             ]

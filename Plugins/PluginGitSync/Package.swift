@@ -19,7 +19,7 @@ let package = Package(
                 "GitCoreKit",
                 "GitOKCoreKit",
             ],
-            path: "Sources/PluginGitSync",
+            path: "Sources",
             resources: [.process("Resources")]
         ),
         .testTarget(

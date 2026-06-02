@@ -10,7 +10,7 @@ let package = Package(
         .package(path: "../../Packages/GitOKCoreKit"),
     ],
     targets: [
-        .target(name: "PluginThemeHarbor", dependencies: ["GitOKCoreKit"], path: "Sources/PluginThemeHarbor", resources: [.process("Resources")]),
+        .target(name: "PluginThemeHarbor", dependencies: ["GitOKCoreKit"], path: "Sources", resources: [.process("Resources")]),
         .testTarget(name: "PluginThemeHarborTests", dependencies: ["PluginThemeHarbor"], path: "Tests"),
     ]
 )

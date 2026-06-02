@@ -15,7 +15,7 @@ let package = Package(
         .target(
             name: "PluginActivityStatus",
             dependencies: ["GitOKCoreKit"],
-            path: "Sources/PluginActivityStatus",
+            path: "Sources",
             resources: [.process("Resources")]
         ),
         .testTarget(

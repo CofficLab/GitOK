@@ -25,7 +25,7 @@ let package = Package(
                 "ProjectRulesKit",
                 "MagicLog",
             ],
-            path: "Sources/PluginIcon",
+            path: "Sources",
             resources: [
                 .process("Resources"),
             ]
