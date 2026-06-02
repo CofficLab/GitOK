@@ -1,6 +1,9 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "•" : {
+
+    },
     "Abort Merge" : {
       "extractionState" : "stale",
       "localizations" : {

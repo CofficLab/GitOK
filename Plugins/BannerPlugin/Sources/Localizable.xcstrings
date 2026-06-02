@@ -1,6 +1,28 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "%lld × %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld × %2$lld"
+          }
+        }
+      }
+    },
+    "%lld%%" : {
+
+    },
+    "• %@" : {
+
+    },
+    "Amazing Description" : {
+
+    },
+    "App Name" : {
+
+    },
     "BannerPlugin" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -234,6 +256,9 @@
         }
       }
     },
+    "产品图片" : {
+
+    },
     "创建Banner失败：%@" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -325,6 +350,12 @@
           }
         }
       }
+    },
+    "副标题" : {
+
+    },
+    "副标题设置" : {
+
     },
     "只成功生成了 %d/%d 个截图" : {
       "extractionState" : "stale",
@@ -556,6 +587,21 @@
         }
       }
     },
+    "无边框" : {
+
+    },
+    "暂无特性" : {
+
+    },
+    "更换图片" : {
+
+    },
+    "标题" : {
+
+    },
+    "标题设置" : {
+
+    },
     "正在生成 %@ (%d/%d)..." : {
       "extractionState" : "stale",
       "localizations" : {
@@ -671,6 +717,18 @@
         }
       }
     },
+    "添加" : {
+
+    },
+    "添加新特性" : {
+
+    },
+    "点击选择图片" : {
+
+    },
+    "特性列表" : {
+
+    },
     "生成PNG %@ 失败: %@" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -763,6 +821,12 @@
         }
       }
     },
+    "背景设置" : {
+
+    },
+    "设备边框" : {
+
+    },
     "请先选择一个Banner" : {
       "localizations" : {
         "en" : {
@@ -784,6 +848,27 @@
           }
         }
       }
+    },
+    "输入副标题" : {
+
+    },
+    "输入标题" : {
+
+    },
+    "选择或创建一个Banner" : {
+
+    },
+    "选择设备" : {
+
+    },
+    "选择颜色" : {
+
+    },
+    "透明度设置" : {
+
+    },
+    "颜色" : {
+
     }
   },
   "version" : "1.0"

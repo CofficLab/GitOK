@@ -1,6 +1,12 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "No themes available" : {
+
+    },
+    "Switch theme" : {
+
+    },
     "Switch themes from the status bar" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -17,6 +23,9 @@
           }
         }
       }
+    },
+    "Theme" : {
+
     },
     "Theme Status" : {
       "extractionState" : "stale",

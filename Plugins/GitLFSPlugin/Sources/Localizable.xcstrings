@@ -1,6 +1,9 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "%lld" : {
+
+    },
     "Attribute mismatch" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -204,6 +207,9 @@
           }
         }
       }
+    },
+    "LFS %lld" : {
+
     },
     "LFS attribute matches but index is not an LFS pointer" : {
       "extractionState" : "stale",

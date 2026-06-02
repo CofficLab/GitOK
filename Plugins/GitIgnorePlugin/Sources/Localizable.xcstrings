@@ -1,6 +1,9 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    ".gitignore" : {
+
+    },
     "%@ has been added" : {
       "extractionState" : "stale",
       "localizations" : {

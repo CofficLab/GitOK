@@ -1,6 +1,15 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "/" : {
+
+    },
+    "%lld configs" : {
+
+    },
+    "After enabling auto-push in the current project, the configuration will be displayed here" : {
+
+    },
     "Auto Push" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -345,6 +354,9 @@
           }
         }
       }
+    },
+    "Current" : {
+
     },
     "Current Project" : {
       "extractionState" : "manual",

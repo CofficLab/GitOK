@@ -52,6 +52,9 @@
         }
       }
     },
+    "Both Xcode icon set formats saved to Downloads" : {
+
+    },
     "delete-icon-button" : {
       "comment" : "Button to delete icons",
       "localizations" : {
@@ -85,6 +88,9 @@
           }
         }
       }
+    },
+    "Download Xcode Format" : {
+
     },
     "draft" : {
       "comment" : "Draft feature title",
@@ -136,6 +142,9 @@
           }
         }
       }
+    },
+    "Generating Xcode Icon Set..." : {
+
     },
     "icon-count" : {
       "comment" : "Number of icons with count placeholder",
@@ -272,6 +281,15 @@
           }
         }
       }
+    },
+    "No access to downloads folder" : {
+
+    },
+    "No available icon assets" : {
+
+    },
+    "No available icon data" : {
+
     },
     "no-categories-available" : {
       "comment" : "Message when no categories are available",
@@ -461,6 +479,42 @@
           }
         }
       }
+    },
+    "Xcode 16 格式会自动调整，Xcode 26 格式保持用户设置" : {
+
+    },
+    "内边距 %@" : {
+
+    },
+    "删除「%@」" : {
+
+    },
+    "图标工坊" : {
+
+    },
+    "圆角 %lld" : {
+
+    },
+    "在这里，您可以轻松为您的 macOS 和 iOS 应用创建精美的图标。" : {
+
+    },
+    "换图" : {
+
+    },
+    "新建 Icon" : {
+
+    },
+    "缩放 %@" : {
+
+    },
+    "背景透明度 %@" : {
+
+    },
+    "请先选择一个图标" : {
+
+    },
+    "重试" : {
+
     }
   },
   "version" : "1.0"

@@ -509,6 +509,9 @@
         }
       }
     },
+    "https://github.com/owner/repo.git" : {
+
+    },
     "Invalid destination path" : {
       "extractionState" : "stale",
       "localizations" : {
