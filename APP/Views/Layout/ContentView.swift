@@ -197,6 +197,9 @@ extension ContentView {
         .onChange(of: self.columnVisibility, onChangeColumnVisibility)
         .onChange(of: p.registeredPluginCount, onPluginsLoaded)
         .onPluginProviderChange(if: p.hasPlugins, provider: p, perform: onPluginProviderChange)
+        .onReceive(app.$sidebarVisibility) { _ in
+            updateCachedViews()
+        }
         .gitOKToolbarVisibility(toolbarVisibility)
         .toolbar(content: {
             ToolbarItem(placement: .navigation) {

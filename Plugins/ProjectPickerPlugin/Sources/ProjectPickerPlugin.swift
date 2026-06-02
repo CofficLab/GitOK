@@ -20,6 +20,7 @@ public struct ProjectPickerPlugin: GitOKPlugin {
         AnyView(ProjectPickerView(
             projects: context.projects,
             selectedProjectURL: context.selectedProjectURL,
+            isSidebarVisible: context.isSidebarVisible,
             selectProject: context.onProjectSelection
         ))
     }
