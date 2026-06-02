@@ -17,6 +17,24 @@ struct GitPushPluginTests {
         #expect(GitPushPlugin.metadata.displayName.isEmpty == false)
     }
 
+    @Test("localization catalog contains active translations")
+    func localizationCatalog() throws {
+        let url = try #require(GitPushPluginLocalization.bundle.url(forResource: "Localizable", withExtension: "xcstrings"))
+        let data = try Data(contentsOf: url)
+        let catalog = try JSONSerialization.jsonObject(with: data) as? [String: Any]
+        let strings = try #require(catalog?["strings"] as? [String: Any])
+
+        #expect(strings["根据分支状态执行 Fetch、Pull 或 Push"] == nil)
+
+        let fetchOrigin = try #require(strings["Fetch origin"] as? [String: Any])
+        #expect(fetchOrigin["extractionState"] == nil)
+
+        let localizations = try #require(fetchOrigin["localizations"] as? [String: Any])
+        let simplified = try #require(localizations["zh-Hans"] as? [String: Any])
+        let stringUnit = try #require(simplified["stringUnit"] as? [String: Any])
+        #expect(stringUnit["value"] as? String == "获取 origin")
+    }
+
     @Test("plugin contributes toolbar trailing view")
     @MainActor
     func toolbarTrailingView() {

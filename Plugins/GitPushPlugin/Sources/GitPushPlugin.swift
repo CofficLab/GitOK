@@ -8,7 +8,7 @@ public struct GitPushPlugin: GitOKPlugin {
     public static let metadata = GitOKPluginMetadata(
         id: "GitPushPlugin",
         displayName: GitPushPluginLocalization.string("Git Sync"),
-        description: GitPushPluginLocalization.string("根据分支状态执行 Fetch、Pull 或 Push"),
+        description: GitPushPluginLocalization.string("Run Fetch, Pull, or Push based on branch state"),
         iconName: "arrow.triangle.2.circlepath",
         policy: .disabled,
         tableName: GitPushPluginLocalization.table
