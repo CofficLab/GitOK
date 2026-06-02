@@ -786,9 +786,78 @@
 		F54D04C32DF2D01300FFB434 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		F5B1DB072FCE800F00A9544C /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				PluginActivityStatus,
+				PluginAutoPush,
+				PluginBanner,
+				PluginBannerTab,
+				PluginBranch,
+				PluginCleanStatus,
+				PluginCommit,
+				PluginConflictResolver,
+				PluginFileInfo,
+				PluginGitClone,
+				PluginGitDetail,
+				PluginGitIgnore,
+				PluginGitLFS,
+				PluginGitPull,
+				PluginGitPush,
+				PluginGitSync,
+				PluginGitTab,
+				PluginGitWatcher,
+				PluginIcon,
+				PluginIconTab,
+				PluginLicense,
+				PluginOpenAntigravity,
+				PluginOpenCursor,
+				PluginOpenFinder,
+				PluginOpenGitHubDesktop,
+				PluginOpenKiro,
+				PluginOpenRemote,
+				PluginOpenTerminal,
+				PluginOpenTrae,
+				PluginOpenVSCode,
+				PluginOpenXcode,
+				PluginProjectPicker,
+				PluginReadme,
+				PluginRemoteRepository,
+				PluginSettingsButton,
+				PluginSmartMerge,
+				PluginStash,
+				PluginSubmodule,
+				PluginThemeAurora,
+				PluginThemeDracula,
+				PluginThemeEmber,
+				PluginThemeGitHubLight,
+				PluginThemeGitOK,
+				PluginThemeGlacier,
+				PluginThemeGraphite,
+				PluginThemeHarbor,
+				PluginThemeMatrix,
+				PluginThemeMidnight,
+				PluginThemeMountain,
+				PluginThemeNebula,
+				PluginThemeOneDark,
+				PluginThemeOrchard,
+				PluginThemeRiver,
+				PluginThemeSpring,
+				PluginThemeStatusBar,
+				PluginThemeSummer,
+				PluginThemeWinter,
+				PluginThemeXcodeLight,
+				PluginUnpushedStatus,
+			);
+			target = 0B0E167C2BD89A8F0078942B /* GitOK */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		F526CF512FADB9FB00EFAB27 /* Packages */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Packages; sourceTree = "<group>"; };
 		F5AE82732FAB49C900F014F8 /* APP */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = APP; sourceTree = "<group>"; };
+		F5B1DB062FCE800F00A9544C /* Plugins */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (F5B1DB072FCE800F00A9544C /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Plugins; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -812,6 +881,7 @@
 		0B0E16742BD89A8F0078942B = {
 			isa = PBXGroup;
 			children = (
+				F5B1DB062FCE800F00A9544C /* Plugins */,
 				F526CF512FADB9FB00EFAB27 /* Packages */,
 				F5AE82732FAB49C900F014F8 /* APP */,
 				0B559D792F1A5D41005C6809 /* Assets.xcassets */,
@@ -1152,6 +1222,7 @@
 			);
 			fileSystemSynchronizedGroups = (
 				F5AE82732FAB49C900F014F8 /* APP */,
+				F5B1DB062FCE800F00A9544C /* Plugins */,
 			);
 			name = GitOK;
 			packageProductDependencies = (
