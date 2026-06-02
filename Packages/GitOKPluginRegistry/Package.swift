@@ -3,6 +3,7 @@ import PackageDescription
 
 let package = Package(
     name: "GitOKPluginRegistry",
+    defaultLocalization: "en",
     platforms: [
         .macOS(.v14),
     ],

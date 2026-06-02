@@ -3,6 +3,7 @@ import PackageDescription
 
 let package = Package(
     name: "ProjectSupportKit",
+    defaultLocalization: "en",
     platforms: [
         .macOS(.v14),
     ],
