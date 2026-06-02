@@ -42,10 +42,7 @@ public struct GitPushButton: View {
                     }
                 }
                 .frame(maxWidth: .infinity)
-                .frame(height: 28)
-                .contentShape(Rectangle())
             }
-            .buttonStyle(.plain)
 
             Menu {
                 Button {
@@ -69,7 +66,7 @@ public struct GitPushButton: View {
             } label: {
                 Image(systemName: "chevron.down")
                     .font(.caption2.weight(.semibold))
-                    .frame(width: 18, height: 28)
+                    .frame(width: 18)
             }
             .menuStyle(.borderlessButton)
             .menuIndicator(.hidden)
@@ -77,14 +74,7 @@ public struct GitPushButton: View {
         }
         .padding(.leading, 10)
         .padding(.trailing, 6)
-        .frame(width: 148, height: 36)
-        .background(.quaternary.opacity(0.7))
-        .clipShape(RoundedRectangle(cornerRadius: 7, style: .continuous))
-        .overlay {
-            RoundedRectangle(cornerRadius: 7, style: .continuous)
-                .stroke(Color.primary.opacity(0.08), lineWidth: 1)
-        }
-        .contentShape(RoundedRectangle(cornerRadius: 7, style: .continuous))
+        .frame(width: 148)
         .fixedSize(horizontal: true, vertical: false)
         .disabled(working)
         .help(primaryAction.help)

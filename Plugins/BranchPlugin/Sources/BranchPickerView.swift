@@ -26,7 +26,6 @@ public struct BranchPickerView: View {
             }
         }
         .disabled(context.projectURL == nil || !context.isGitRepository || branches.isEmpty || isRefreshing)
-        .frame(width: 170)
         .onAppear(perform: refreshBranches)
         .onChange(of: context.projectURL) { _, _ in refreshBranches() }
         .onChange(of: context.branchName) { _, _ in refreshBranches() }
