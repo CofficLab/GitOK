@@ -14,7 +14,7 @@ GitPullPlugin/
 ├── Sources/GitPullPlugin/
 │   ├── GitPullPlugin.swift
 │   ├── GitPullButton.swift
-│   └── Resources/GitPull.xcstrings
+│   └── Localizable.xcstrings
 └── Tests/
 ```
 

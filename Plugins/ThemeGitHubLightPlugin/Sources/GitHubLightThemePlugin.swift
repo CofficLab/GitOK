@@ -8,7 +8,7 @@ public struct GitHubLightThemePlugin: GitOKPlugin {
         iconName: "globe",
         order: 138,
         policy: .disabled,
-        tableName: "ThemeGitHubLight"
+        tableName: "Localizable"
     )
 
     public static let shared = GitHubLightThemePlugin()

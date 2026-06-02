@@ -24,7 +24,7 @@ public struct OpenAntigravityPlugin: GitOKPlugin {
 }
 
 public enum OpenAntigravityPluginLocalization {
-    public static let table = "OpenAntigravity"
+    public static let table = "Localizable"
     public static let bundle = Bundle.module
 
     public static func string(_ key: String) -> String {

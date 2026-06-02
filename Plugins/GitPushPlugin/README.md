@@ -14,7 +14,7 @@ GitPushPlugin/
 ├── Sources/GitPushPlugin/
 │   ├── GitPushPlugin.swift
 │   ├── GitPushButton.swift
-│   └── Resources/GitPush.xcstrings
+│   └── Localizable.xcstrings
 └── Tests/
 ```
 

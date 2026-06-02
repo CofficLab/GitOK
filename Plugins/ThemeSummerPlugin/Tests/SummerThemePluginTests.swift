@@ -13,7 +13,7 @@ final class SummerThemePluginTests: XCTestCase {
         XCTAssertEqual(metadata.order, 130)
         XCTAssertFalse(metadata.allowUserToggle)
         XCTAssertFalse(metadata.defaultEnabled)
-        XCTAssertEqual(metadata.tableName, "ThemeSummer")
+        XCTAssertEqual(metadata.tableName, "Localizable")
     }
 
     @MainActor
@@ -30,7 +30,7 @@ final class SummerThemePluginTests: XCTestCase {
     }
 
     func testLocalizationCatalogIsPackaged() {
-        let resourceURL = Bundle.module.url(forResource: "ThemeSummer", withExtension: "xcstrings")
+        let resourceURL = Bundle.module.url(forResource: "Localizable", withExtension: "xcstrings")
 
         XCTAssertNotNil(resourceURL)
     }

@@ -20,7 +20,7 @@ LicensePlugin/
 │   ├── MITLicense.swift
 │   ├── Apache2License.swift
 │   ├── GPL3License.swift
-│   └── Resources/License.xcstrings
+│   └── Localizable.xcstrings
 └── Tests/
 ```
 

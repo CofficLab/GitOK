@@ -16,7 +16,7 @@ OpenRemotePlugin/
 │   ├── OpenRemoteButton.swift
 │   ├── OpenRemoteURLProvider.swift
 │   ├── GitOriginRemoteReader.swift
-│   └── Resources/OpenRemote.xcstrings
+│   └── Localizable.xcstrings
 └── Tests/
 ```
 

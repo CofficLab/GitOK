@@ -14,7 +14,7 @@ OpenFinderPlugin/
 ├── Sources/OpenFinderPlugin/
 │   ├── OpenFinderPlugin.swift
 │   ├── OpenFinderButton.swift
-│   └── Resources/OpenFinder.xcstrings
+│   └── Localizable.xcstrings
 └── Tests/
 ```
 

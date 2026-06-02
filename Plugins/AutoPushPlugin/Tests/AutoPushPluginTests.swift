@@ -11,12 +11,12 @@ struct AutoPushPluginTests {
         #expect(AutoPushPlugin.metadata.iconName == "arrow.up.circle")
         #expect(AutoPushPlugin.metadata.allowUserToggle == false)
         #expect(AutoPushPlugin.metadata.defaultEnabled == false)
-        #expect(AutoPushPlugin.metadata.tableName == "AutoPush")
+        #expect(AutoPushPlugin.metadata.tableName == "Localizable")
     }
 
     @Test("localization catalog is packaged")
     func localizationCatalog() {
-        #expect(AutoPushPluginLocalization.bundle.url(forResource: "AutoPush", withExtension: "xcstrings") != nil)
+        #expect(AutoPushPluginLocalization.bundle.url(forResource: "Localizable", withExtension: "xcstrings") != nil)
         #expect(AutoPushPluginLocalization.string("Auto Push").isEmpty == false)
     }
 }

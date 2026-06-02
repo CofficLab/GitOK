@@ -12,7 +12,7 @@ struct BranchPluginTests {
         #expect(BranchPlugin.metadata.allowUserToggle == false)
         #expect(BranchPlugin.metadata.defaultEnabled == false)
         #expect(BranchPlugin.metadata.order == 22)
-        #expect(BranchPlugin.metadata.tableName == "GitBranch")
+        #expect(BranchPlugin.metadata.tableName == "Localizable")
     }
 
     @Test("localized strings resolve")

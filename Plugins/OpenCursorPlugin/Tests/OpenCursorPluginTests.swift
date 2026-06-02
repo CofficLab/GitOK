@@ -10,13 +10,13 @@ final class OpenCursorPluginTests: XCTestCase {
         XCTAssertEqual(metadata.order, 8401)
         XCTAssertFalse(metadata.allowUserToggle)
         XCTAssertFalse(metadata.defaultEnabled)
-        XCTAssertEqual(metadata.tableName, "OpenCursor")
+        XCTAssertEqual(metadata.tableName, "Localizable")
         XCTAssertFalse(metadata.displayName.isEmpty)
         XCTAssertFalse(metadata.description.isEmpty)
     }
 
     func testLocalizationCatalogIsPackaged() {
-        XCTAssertNotNil(OpenCursorPluginLocalization.bundle.url(forResource: "OpenCursor", withExtension: "xcstrings"))
+        XCTAssertNotNil(OpenCursorPluginLocalization.bundle.url(forResource: "Localizable", withExtension: "xcstrings"))
         XCTAssertFalse(OpenCursorPluginLocalization.string("Open Cursor").isEmpty)
         XCTAssertFalse(OpenCursorPluginLocalization.string("Open in Cursor").isEmpty)
     }

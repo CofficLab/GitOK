@@ -24,7 +24,7 @@ public struct OpenGitHubDesktopPlugin: GitOKPlugin {
 }
 
 public enum OpenGitHubDesktopPluginLocalization {
-    public static let table = "OpenGitHubDesktop"
+    public static let table = "Localizable"
     public static let bundle = Bundle.module
 
     public static func string(_ key: String) -> String {

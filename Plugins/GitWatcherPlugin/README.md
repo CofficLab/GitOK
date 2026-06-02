@@ -15,7 +15,7 @@ GitWatcherPlugin/
 │   ├── GitWatcherPlugin.swift
 │   ├── GitDirectoryWatcher.swift
 │   ├── GitWatcherRootView.swift
-│   └── Resources/GitWatcher.xcstrings
+│   └── Localizable.xcstrings
 └── Tests/
 ```
 

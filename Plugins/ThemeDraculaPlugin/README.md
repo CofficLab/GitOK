@@ -14,7 +14,7 @@ ThemeDraculaPlugin/
 ├── Sources/ThemeDraculaPlugin/
 │   ├── DraculaThemePlugin.swift
 │   ├── DraculaTheme.swift
-│   └── Resources/ThemeDracula.xcstrings
+│   └── Localizable.xcstrings
 └── Tests/
 ```
 

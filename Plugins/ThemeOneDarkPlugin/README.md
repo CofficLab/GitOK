@@ -14,7 +14,7 @@ ThemeOneDarkPlugin/
 ├── Sources/ThemeOneDarkPlugin/
 │   ├── OneDarkThemePlugin.swift
 │   ├── OneDarkTheme.swift
-│   └── Resources/ThemeOneDark.xcstrings
+│   └── Localizable.xcstrings
 └── Tests/
 ```
 

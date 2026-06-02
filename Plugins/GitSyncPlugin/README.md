@@ -14,7 +14,7 @@ GitSyncPlugin/
 ├── Sources/GitSyncPlugin/
 │   ├── GitSyncPlugin.swift
 │   ├── GitSyncButton.swift
-│   └── Resources/GitSync.xcstrings
+│   └── Localizable.xcstrings
 └── Tests/
 ```
 

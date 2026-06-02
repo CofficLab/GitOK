@@ -8,7 +8,7 @@ public struct MidnightThemePlugin: GitOKPlugin {
         iconName: "terminal",
         order: 123,
         policy: .disabled,
-        tableName: "ThemeMidnight"
+        tableName: "Localizable"
     )
 
     public static let shared = MidnightThemePlugin()

@@ -10,7 +10,7 @@ let package = Package(
         .package(path: "../../Packages/GitOKCoreKit"),
     ],
     targets: [
-        .target(name: "ThemeGlacierPlugin", dependencies: ["GitOKCoreKit"], path: "Sources", resources: [.process("Resources")]),
+        .target(name: "ThemeGlacierPlugin", dependencies: ["GitOKCoreKit"], path: "Sources", resources: [.process("Localizable.xcstrings")]),
         .testTarget(name: "ThemeGlacierPluginTests", dependencies: ["ThemeGlacierPlugin"], path: "Tests"),
     ]
 )

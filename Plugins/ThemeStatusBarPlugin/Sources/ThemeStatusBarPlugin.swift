@@ -27,7 +27,7 @@ public struct ThemeStatusBarPlugin: GitOKPlugin {
 }
 
 public enum ThemeStatusBarPluginLocalization {
-    public static let table = "ThemeStatusBar"
+    public static let table = "Localizable"
     public static let bundle = Bundle.module
 
     public static func string(_ key: String) -> String {

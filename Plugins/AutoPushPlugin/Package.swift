@@ -24,7 +24,7 @@ let package = Package(
                 "ProjectSupportKit",
             ],
             path: "Sources",
-            resources: [.process("Resources")]
+            resources: [.process("Localizable.xcstrings")]
         ),
         .testTarget(
             name: "AutoPushPluginTests",

@@ -14,7 +14,7 @@ ThemeGlacierPlugin/
 ├── Sources/ThemeGlacierPlugin/
 │   ├── GlacierThemePlugin.swift
 │   ├── GlacierTheme.swift
-│   └── Resources/ThemeGlacier.xcstrings
+│   └── Localizable.xcstrings
 └── Tests/
 ```
 

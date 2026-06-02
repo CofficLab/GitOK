@@ -12,7 +12,7 @@ final class GlacierThemePluginTests: XCTestCase {
         XCTAssertEqual(metadata.order, 129)
         XCTAssertFalse(metadata.allowUserToggle)
         XCTAssertFalse(metadata.defaultEnabled)
-        XCTAssertEqual(metadata.tableName, "ThemeGlacier")
+        XCTAssertEqual(metadata.tableName, "Localizable")
     }
 
     @MainActor
@@ -28,6 +28,6 @@ final class GlacierThemePluginTests: XCTestCase {
     }
 
     func testLocalizationCatalogIsPackaged() {
-        XCTAssertNotNil(Bundle.module.url(forResource: "ThemeGlacier", withExtension: "xcstrings"))
+        XCTAssertNotNil(Bundle.module.url(forResource: "Localizable", withExtension: "xcstrings"))
     }
 }

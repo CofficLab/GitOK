@@ -14,7 +14,7 @@ ThemeEmberPlugin/
 ├── Sources/ThemeEmberPlugin/
 │   ├── EmberThemePlugin.swift
 │   ├── EmberTheme.swift
-│   └── Resources/ThemeEmber.xcstrings
+│   └── Localizable.xcstrings
 └── Tests/
 ```
 

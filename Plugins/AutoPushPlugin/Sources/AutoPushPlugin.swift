@@ -28,7 +28,7 @@ public struct AutoPushPlugin: GitOKPlugin {
 }
 
 public enum AutoPushPluginLocalization {
-    public static let table = "AutoPush"
+    public static let table = "Localizable"
     public static let bundle = Bundle.module
 
     public static func string(_ key: String) -> String {

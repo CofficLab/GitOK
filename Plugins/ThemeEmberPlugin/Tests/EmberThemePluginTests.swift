@@ -13,7 +13,7 @@ final class EmberThemePluginTests: XCTestCase {
         XCTAssertEqual(metadata.order, 124)
         XCTAssertFalse(metadata.allowUserToggle)
         XCTAssertFalse(metadata.defaultEnabled)
-        XCTAssertEqual(metadata.tableName, "ThemeEmber")
+        XCTAssertEqual(metadata.tableName, "Localizable")
     }
 
     @MainActor
@@ -30,7 +30,7 @@ final class EmberThemePluginTests: XCTestCase {
     }
 
     func testLocalizationCatalogIsPackaged() {
-        let resourceURL = Bundle.module.url(forResource: "ThemeEmber", withExtension: "xcstrings")
+        let resourceURL = Bundle.module.url(forResource: "Localizable", withExtension: "xcstrings")
 
         XCTAssertNotNil(resourceURL)
     }

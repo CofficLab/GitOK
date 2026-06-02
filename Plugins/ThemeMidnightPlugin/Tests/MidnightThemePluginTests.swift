@@ -13,7 +13,7 @@ final class MidnightThemePluginTests: XCTestCase {
         XCTAssertEqual(metadata.order, 123)
         XCTAssertFalse(metadata.allowUserToggle)
         XCTAssertFalse(metadata.defaultEnabled)
-        XCTAssertEqual(metadata.tableName, "ThemeMidnight")
+        XCTAssertEqual(metadata.tableName, "Localizable")
     }
 
     @MainActor
@@ -30,7 +30,7 @@ final class MidnightThemePluginTests: XCTestCase {
     }
 
     func testLocalizationCatalogIsPackaged() {
-        let resourceURL = Bundle.module.url(forResource: "ThemeMidnight", withExtension: "xcstrings")
+        let resourceURL = Bundle.module.url(forResource: "Localizable", withExtension: "xcstrings")
 
         XCTAssertNotNil(resourceURL)
     }

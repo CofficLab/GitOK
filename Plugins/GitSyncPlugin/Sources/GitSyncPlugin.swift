@@ -24,7 +24,7 @@ public struct GitSyncPlugin: GitOKPlugin {
 }
 
 public enum GitSyncPluginLocalization {
-    public static let table = "GitSync"
+    public static let table = "Localizable"
     public static let bundle = Bundle.module
 
     public static func string(_ key: String) -> String {

@@ -16,7 +16,7 @@ GitClonePlugin/
 │   ├── CloneSSHAuthenticationHelpView.swift
 │   ├── GitCloneBridgeRules.swift
 │   ├── GitClonePluginLocalization.swift
-│   └── Resources/Git-Clone.xcstrings
+│   └── Localizable.xcstrings
 └── Tests/
 ```
 

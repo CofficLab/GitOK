@@ -8,7 +8,7 @@ public struct NebulaThemePlugin: GitOKPlugin {
         iconName: "arrow.triangle.pull",
         order: 126,
         policy: .disabled,
-        tableName: "ThemeNebula"
+        tableName: "Localizable"
     )
 
     public static let shared = NebulaThemePlugin()

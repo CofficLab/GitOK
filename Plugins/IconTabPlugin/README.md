@@ -13,7 +13,7 @@ IconTabPlugin/
 ├── Package.swift
 ├── Sources/IconTabPlugin/
 │   ├── IconTabPlugin.swift
-│   └── Resources/IconTab.xcstrings
+│   └── Localizable.xcstrings
 └── Tests/
 ```
 

@@ -14,7 +14,7 @@ ThemeSummerPlugin/
 ├── Sources/ThemeSummerPlugin/
 │   ├── SummerThemePlugin.swift
 │   ├── SummerTheme.swift
-│   └── Resources/ThemeSummer.xcstrings
+│   └── Localizable.xcstrings
 └── Tests/
 ```
 

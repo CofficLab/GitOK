@@ -11,7 +11,7 @@ struct SmartMergePluginTests {
         #expect(SmartMergePlugin.metadata.iconName == "arrow.merge")
         #expect(SmartMergePlugin.metadata.allowUserToggle == false)
         #expect(SmartMergePlugin.metadata.defaultEnabled == false)
-        #expect(SmartMergePlugin.metadata.tableName == "GitMerge")
+        #expect(SmartMergePlugin.metadata.tableName == "Localizable")
     }
 
     @Test("localized strings resolve")

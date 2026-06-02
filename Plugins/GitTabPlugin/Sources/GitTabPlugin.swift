@@ -22,7 +22,7 @@ public struct GitTabPlugin: GitOKPlugin {
 }
 
 public enum GitTabPluginLocalization {
-    public static let table = "GitTab"
+    public static let table = "Localizable"
     public static let bundle = Bundle.module
 
     public static func string(_ key: String) -> String {

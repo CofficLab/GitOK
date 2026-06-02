@@ -24,7 +24,7 @@ public struct OpenRemotePlugin: GitOKPlugin {
 }
 
 public enum OpenRemotePluginLocalization {
-    public static let table = "OpenRemote"
+    public static let table = "Localizable"
     public static let bundle = Bundle.module
 
     public static func string(_ key: String) -> String {

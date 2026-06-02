@@ -14,7 +14,7 @@ ThemeHarborPlugin/
 ├── Sources/ThemeHarborPlugin/
 │   ├── HarborThemePlugin.swift
 │   ├── HarborTheme.swift
-│   └── Resources/ThemeHarbor.xcstrings
+│   └── Localizable.xcstrings
 └── Tests/
 ```
 

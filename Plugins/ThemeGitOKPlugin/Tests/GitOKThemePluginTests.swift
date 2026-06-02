@@ -14,7 +14,7 @@ final class GitOKThemePluginTests: XCTestCase {
         XCTAssertEqual(metadata.order, 120)
         XCTAssertFalse(metadata.allowUserToggle)
         XCTAssertFalse(metadata.defaultEnabled)
-        XCTAssertEqual(metadata.tableName, "ThemeGitOK")
+        XCTAssertEqual(metadata.tableName, "Localizable")
     }
 
     @MainActor
@@ -31,7 +31,7 @@ final class GitOKThemePluginTests: XCTestCase {
     }
 
     func testLocalizationCatalogIsPackaged() {
-        let resourceURL = Bundle.module.url(forResource: "ThemeGitOK", withExtension: "xcstrings")
+        let resourceURL = Bundle.module.url(forResource: "Localizable", withExtension: "xcstrings")
 
         XCTAssertNotNil(resourceURL)
     }

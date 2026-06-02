@@ -14,7 +14,7 @@ final class ActivityStatusPluginTests: XCTestCase {
         XCTAssertEqual(metadata.order, 9999)
         XCTAssertFalse(metadata.allowUserToggle)
         XCTAssertFalse(metadata.defaultEnabled)
-        XCTAssertEqual(metadata.tableName, "ActivityStatus")
+        XCTAssertEqual(metadata.tableName, "Localizable")
         XCTAssertFalse(metadata.displayName.isEmpty)
         XCTAssertFalse(metadata.description.isEmpty)
     }
@@ -30,7 +30,7 @@ final class ActivityStatusPluginTests: XCTestCase {
 
     func testLocalizationCatalogIsPackaged() {
         XCTAssertNotNil(
-            ActivityStatusPluginLocalization.bundle.url(forResource: "ActivityStatus", withExtension: "xcstrings")
+            ActivityStatusPluginLocalization.bundle.url(forResource: "Localizable", withExtension: "xcstrings")
         )
     }
 

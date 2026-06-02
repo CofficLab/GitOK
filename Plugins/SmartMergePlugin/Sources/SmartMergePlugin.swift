@@ -23,7 +23,7 @@ public struct SmartMergePlugin: GitOKPlugin {
 }
 
 public enum SmartMergePluginLocalization {
-    public static let table = "GitMerge"
+    public static let table = "Localizable"
     public static let bundle = Bundle.module
 
     public static func string(_ key: String) -> String {

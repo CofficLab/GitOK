@@ -11,13 +11,13 @@ final class OpenRemotePluginTests: XCTestCase {
         XCTAssertEqual(metadata.order, 8407)
         XCTAssertFalse(metadata.allowUserToggle)
         XCTAssertFalse(metadata.defaultEnabled)
-        XCTAssertEqual(metadata.tableName, "OpenRemote")
+        XCTAssertEqual(metadata.tableName, "Localizable")
         XCTAssertFalse(metadata.displayName.isEmpty)
         XCTAssertFalse(metadata.description.isEmpty)
     }
 
     func testLocalizationCatalogIsPackaged() {
-        XCTAssertNotNil(OpenRemotePluginLocalization.bundle.url(forResource: "OpenRemote", withExtension: "xcstrings"))
+        XCTAssertNotNil(OpenRemotePluginLocalization.bundle.url(forResource: "Localizable", withExtension: "xcstrings"))
         XCTAssertFalse(OpenRemotePluginLocalization.string("Open Remote").isEmpty)
         XCTAssertFalse(OpenRemotePluginLocalization.string("Open in Browser").isEmpty)
     }

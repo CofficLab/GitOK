@@ -8,7 +8,7 @@ public struct DraculaThemePlugin: GitOKPlugin {
         iconName: "moon.stars",
         order: 135,
         policy: .disabled,
-        tableName: "ThemeDracula"
+        tableName: "Localizable"
     )
 
     public static let shared = DraculaThemePlugin()

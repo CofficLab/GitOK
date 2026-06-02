@@ -14,7 +14,7 @@ ProjectPickerPlugin/
 ├── Sources/ProjectPickerPlugin/
 │   ├── ProjectPickerPlugin.swift
 │   ├── ProjectPickerView.swift
-│   └── Resources/ProjectPicker.xcstrings
+│   └── Localizable.xcstrings
 └── Tests/
 ```
 

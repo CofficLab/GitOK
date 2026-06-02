@@ -8,7 +8,7 @@ public struct AuroraThemePlugin: GitOKPlugin {
         iconName: "point.3.connected.trianglepath.dotted",
         order: 122,
         policy: .disabled,
-        tableName: "ThemeAurora"
+        tableName: "Localizable"
     )
 
     public static let shared = AuroraThemePlugin()

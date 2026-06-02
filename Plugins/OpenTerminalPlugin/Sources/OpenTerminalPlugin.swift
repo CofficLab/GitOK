@@ -24,7 +24,7 @@ public struct OpenTerminalPlugin: GitOKPlugin {
 }
 
 public enum OpenTerminalPluginLocalization {
-    public static let table = "OpenTerminal"
+    public static let table = "Localizable"
     public static let bundle = Bundle.module
 
     public static func string(_ key: String) -> String {

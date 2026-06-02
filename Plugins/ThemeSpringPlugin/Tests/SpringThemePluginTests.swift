@@ -13,7 +13,7 @@ final class SpringThemePluginTests: XCTestCase {
         XCTAssertEqual(metadata.order, 121)
         XCTAssertFalse(metadata.allowUserToggle)
         XCTAssertFalse(metadata.defaultEnabled)
-        XCTAssertEqual(metadata.tableName, "ThemeSpring")
+        XCTAssertEqual(metadata.tableName, "Localizable")
     }
 
     @MainActor
@@ -30,7 +30,7 @@ final class SpringThemePluginTests: XCTestCase {
     }
 
     func testLocalizationCatalogIsPackaged() {
-        let resourceURL = Bundle.module.url(forResource: "ThemeSpring", withExtension: "xcstrings")
+        let resourceURL = Bundle.module.url(forResource: "Localizable", withExtension: "xcstrings")
 
         XCTAssertNotNil(resourceURL)
     }

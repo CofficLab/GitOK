@@ -15,7 +15,7 @@ OpenGitHubDesktopPlugin/
 │   ├── OpenGitHubDesktopPlugin.swift
 │   ├── OpenGitHubDesktopButton.swift
 │   ├── GitHubDesktopProjectLauncher.swift
-│   └── Resources/OpenGitHubDesktop.xcstrings
+│   └── Localizable.xcstrings
 └── Tests/
 ```
 

@@ -34,7 +34,7 @@ BannerPlugin/
 │   ├── Tips/EmptyBannerTip.swift
 │   ├── Templates/Classic/...
 │   ├── Templates/Minimal/...
-│   └── Resources/Banner.xcstrings
+│   └── Localizable.xcstrings
 └── Tests/
 ```
 

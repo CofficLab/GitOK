@@ -28,7 +28,7 @@ public struct CleanStatusPlugin: GitOKPlugin {
 }
 
 public enum CleanStatusPluginLocalization {
-    public static let table = "CleanStatus"
+    public static let table = "Localizable"
     public static let bundle = Bundle.module
 
     public static func string(_ key: String) -> String {

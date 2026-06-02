@@ -15,7 +15,7 @@ OpenKiroPlugin/
 │   ├── OpenKiroPlugin.swift
 │   ├── OpenKiroButton.swift
 │   ├── KiroProjectLauncher.swift
-│   └── Resources/OpenKiro.xcstrings
+│   └── Localizable.xcstrings
 └── Tests/
 ```
 

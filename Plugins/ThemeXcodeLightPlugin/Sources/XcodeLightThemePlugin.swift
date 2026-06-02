@@ -8,7 +8,7 @@ public struct XcodeLightThemePlugin: GitOKPlugin {
         iconName: "hammer",
         order: 137,
         policy: .disabled,
-        tableName: "ThemeXcodeLight"
+        tableName: "Localizable"
     )
 
     public static let shared = XcodeLightThemePlugin()

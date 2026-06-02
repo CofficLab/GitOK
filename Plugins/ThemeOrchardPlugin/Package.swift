@@ -10,7 +10,7 @@ let package = Package(
         .package(path: "../../Packages/GitOKCoreKit"),
     ],
     targets: [
-        .target(name: "ThemeOrchardPlugin", dependencies: ["GitOKCoreKit"], path: "Sources", resources: [.process("Resources")]),
+        .target(name: "ThemeOrchardPlugin", dependencies: ["GitOKCoreKit"], path: "Sources", resources: [.process("Localizable.xcstrings")]),
         .testTarget(name: "ThemeOrchardPluginTests", dependencies: ["ThemeOrchardPlugin"], path: "Tests"),
     ]
 )

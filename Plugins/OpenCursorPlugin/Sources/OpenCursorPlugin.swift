@@ -24,7 +24,7 @@ public struct OpenCursorPlugin: GitOKPlugin {
 }
 
 public enum OpenCursorPluginLocalization {
-    public static let table = "OpenCursor"
+    public static let table = "Localizable"
     public static let bundle = Bundle.module
 
     public static func string(_ key: String) -> String {

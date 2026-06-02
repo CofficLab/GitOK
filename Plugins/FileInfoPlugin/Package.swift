@@ -16,7 +16,7 @@ let package = Package(
             name: "FileInfoPlugin",
             dependencies: ["GitOKCoreKit"],
             path: "Sources",
-            resources: [.process("Resources")]
+            resources: [.process("Localizable.xcstrings")]
         ),
         .testTarget(
             name: "FileInfoPluginTests",

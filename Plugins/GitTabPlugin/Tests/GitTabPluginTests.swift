@@ -10,13 +10,13 @@ final class GitTabPluginTests: XCTestCase {
         XCTAssertEqual(metadata.order, 0)
         XCTAssertFalse(metadata.allowUserToggle)
         XCTAssertFalse(metadata.defaultEnabled)
-        XCTAssertEqual(metadata.tableName, "GitTab")
+        XCTAssertEqual(metadata.tableName, "Localizable")
         XCTAssertFalse(metadata.displayName.isEmpty)
         XCTAssertFalse(metadata.description.isEmpty)
     }
 
     func testLocalizationCatalogIsPackaged() {
-        XCTAssertNotNil(GitTabPluginLocalization.bundle.url(forResource: "GitTab", withExtension: "xcstrings"))
+        XCTAssertNotNil(GitTabPluginLocalization.bundle.url(forResource: "Localizable", withExtension: "xcstrings"))
         XCTAssertFalse(GitTabPluginLocalization.string("Git").isEmpty)
         XCTAssertFalse(GitTabPluginLocalization.string("Git version control").isEmpty)
     }

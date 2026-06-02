@@ -9,7 +9,7 @@ struct IconPluginTests {
         #expect(IconPlugin.metadata.iconName == "photo")
         #expect(IconPlugin.metadata.allowUserToggle == false)
         #expect(IconPlugin.metadata.defaultEnabled == false)
-        #expect(IconPlugin.metadata.tableName == "Icon")
+        #expect(IconPlugin.metadata.tableName == "Localizable")
     }
 
     @Test("localized strings resolve")

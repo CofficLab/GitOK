@@ -15,7 +15,7 @@ OpenTraePlugin/
 │   ├── OpenTraePlugin.swift
 │   ├── OpenTraeButton.swift
 │   ├── TraeProjectLauncher.swift
-│   └── Resources/OpenTrae.xcstrings
+│   └── Localizable.xcstrings
 └── Tests/
 ```
 

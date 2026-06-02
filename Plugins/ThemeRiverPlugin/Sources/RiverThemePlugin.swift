@@ -8,7 +8,7 @@ public struct RiverThemePlugin: GitOKPlugin {
         iconName: "arrow.triangle.branch",
         order: 125,
         policy: .disabled,
-        tableName: "ThemeRiver"
+        tableName: "Localizable"
     )
 
     public static let shared = RiverThemePlugin()

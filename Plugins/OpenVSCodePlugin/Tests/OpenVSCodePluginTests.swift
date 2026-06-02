@@ -10,13 +10,13 @@ final class OpenVSCodePluginTests: XCTestCase {
         XCTAssertEqual(metadata.order, 8400)
         XCTAssertTrue(metadata.allowUserToggle)
         XCTAssertFalse(metadata.defaultEnabled)
-        XCTAssertEqual(metadata.tableName, "OpenVSCode")
+        XCTAssertEqual(metadata.tableName, "Localizable")
         XCTAssertFalse(metadata.displayName.isEmpty)
         XCTAssertFalse(metadata.description.isEmpty)
     }
 
     func testLocalizationCatalogIsPackaged() {
-        XCTAssertNotNil(OpenVSCodePluginLocalization.bundle.url(forResource: "OpenVSCode", withExtension: "xcstrings"))
+        XCTAssertNotNil(OpenVSCodePluginLocalization.bundle.url(forResource: "Localizable", withExtension: "xcstrings"))
         XCTAssertFalse(OpenVSCodePluginLocalization.string("Open VS Code").isEmpty)
         XCTAssertFalse(OpenVSCodePluginLocalization.string("Open in VS Code").isEmpty)
     }

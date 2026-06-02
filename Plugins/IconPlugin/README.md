@@ -50,7 +50,7 @@ IconPlugin/
 │   ├── Repo/ProjectImagesRepo.swift
 │   ├── Repo/WebIconRepo.swift
 │   ├── Tips/IconStateView.swift
-│   └── Resources/Icon.xcstrings
+│   └── Localizable.xcstrings
 └── Tests/
 ```
 

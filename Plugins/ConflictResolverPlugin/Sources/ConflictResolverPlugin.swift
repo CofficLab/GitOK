@@ -23,7 +23,7 @@ public struct ConflictResolverPlugin: GitOKPlugin {
 }
 
 public enum ConflictResolverPluginLocalization {
-    public static let table = "GitConflictResolver"
+    public static let table = "Localizable"
     public static let bundle = Bundle.module
 
     public static func string(_ key: String) -> String {

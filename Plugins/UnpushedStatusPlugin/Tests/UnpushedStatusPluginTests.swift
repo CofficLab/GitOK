@@ -11,7 +11,7 @@ struct UnpushedStatusPluginTests {
         #expect(UnpushedStatusPlugin.metadata.order == 25)
         #expect(UnpushedStatusPlugin.metadata.allowUserToggle == false)
         #expect(UnpushedStatusPlugin.metadata.defaultEnabled == false)
-        #expect(UnpushedStatusPlugin.metadata.tableName == "UnpushedStatus")
+        #expect(UnpushedStatusPlugin.metadata.tableName == "Localizable")
     }
 
     @Test("remote tracking status maps from GitCoreKit")

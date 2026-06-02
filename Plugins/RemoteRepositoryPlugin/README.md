@@ -17,7 +17,7 @@ RemoteRepositoryPlugin/
 │   ├── RemoteRepositoryRowView.swift
 │   ├── RemoteRepositorySheets.swift
 │   ├── RemoteRepositoryStatusButton.swift
-│   └── Resources/GitRemoteRepository.xcstrings
+│   └── Localizable.xcstrings
 └── Tests/
 ```
 

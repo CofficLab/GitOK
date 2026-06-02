@@ -11,7 +11,7 @@ struct GitWatcherPluginTests {
         #expect(GitWatcherPlugin.metadata.order == 23)
         #expect(GitWatcherPlugin.metadata.allowUserToggle == false)
         #expect(GitWatcherPlugin.metadata.defaultEnabled == false)
-        #expect(GitWatcherPlugin.metadata.tableName == "GitWatcher")
+        #expect(GitWatcherPlugin.metadata.tableName == "Localizable")
     }
 
     @Test("change kind reports single or multiple changes")

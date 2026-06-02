@@ -12,7 +12,7 @@ final class HarborThemePluginTests: XCTestCase {
         XCTAssertEqual(metadata.order, 127)
         XCTAssertFalse(metadata.allowUserToggle)
         XCTAssertFalse(metadata.defaultEnabled)
-        XCTAssertEqual(metadata.tableName, "ThemeHarbor")
+        XCTAssertEqual(metadata.tableName, "Localizable")
     }
 
     @MainActor
@@ -28,6 +28,6 @@ final class HarborThemePluginTests: XCTestCase {
     }
 
     func testLocalizationCatalogIsPackaged() {
-        XCTAssertNotNil(Bundle.module.url(forResource: "ThemeHarbor", withExtension: "xcstrings"))
+        XCTAssertNotNil(Bundle.module.url(forResource: "Localizable", withExtension: "xcstrings"))
     }
 }

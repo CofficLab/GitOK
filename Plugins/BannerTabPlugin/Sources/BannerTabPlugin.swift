@@ -22,7 +22,7 @@ public struct BannerTabPlugin: GitOKPlugin {
 }
 
 public enum BannerTabPluginLocalization {
-    public static let table = "BannerTab"
+    public static let table = "Localizable"
     public static let bundle = Bundle.module
 
     public static func string(_ key: String) -> String {

@@ -16,7 +16,7 @@ let package = Package(
             name: "IconTabPlugin",
             dependencies: ["GitOKCoreKit"],
             path: "Sources",
-            resources: [.process("Resources")]
+            resources: [.process("Localizable.xcstrings")]
         ),
         .testTarget(
             name: "IconTabPluginTests",

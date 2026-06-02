@@ -15,7 +15,7 @@ OpenVSCodePlugin/
 │   ├── OpenVSCodePlugin.swift
 │   ├── OpenVSCodeButton.swift
 │   ├── VSCodeProjectLauncher.swift
-│   └── Resources/OpenVSCode.xcstrings
+│   └── Localizable.xcstrings
 └── Tests/
 ```
 

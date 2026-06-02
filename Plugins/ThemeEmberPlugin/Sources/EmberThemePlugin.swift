@@ -8,7 +8,7 @@ public struct EmberThemePlugin: GitOKPlugin {
         iconName: "exclamationmark.triangle",
         order: 124,
         policy: .disabled,
-        tableName: "ThemeEmber"
+        tableName: "Localizable"
     )
 
     public static let shared = EmberThemePlugin()

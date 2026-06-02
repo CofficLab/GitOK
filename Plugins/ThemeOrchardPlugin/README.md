@@ -14,7 +14,7 @@ ThemeOrchardPlugin/
 ├── Sources/ThemeOrchardPlugin/
 │   ├── OrchardThemePlugin.swift
 │   ├── OrchardTheme.swift
-│   └── Resources/ThemeOrchard.xcstrings
+│   └── Localizable.xcstrings
 └── Tests/
 ```
 

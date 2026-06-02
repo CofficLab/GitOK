@@ -23,7 +23,7 @@ public struct SettingsButtonPlugin: GitOKPlugin {
 }
 
 public enum SettingsButtonPluginLocalization {
-    public static let table = "SettingsButton"
+    public static let table = "Localizable"
     public static let bundle = Bundle.module
 
     public static func string(_ key: String) -> String {

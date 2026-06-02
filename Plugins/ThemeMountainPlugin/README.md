@@ -14,7 +14,7 @@ ThemeMountainPlugin/
 ├── Sources/ThemeMountainPlugin/
 │   ├── MountainThemePlugin.swift
 │   ├── MountainTheme.swift
-│   └── Resources/ThemeMountain.xcstrings
+│   └── Localizable.xcstrings
 └── Tests/
 ```
 

@@ -8,7 +8,7 @@ public struct MatrixThemePlugin: GitOKPlugin {
         iconName: "gearshape.2",
         order: 131,
         policy: .disabled,
-        tableName: "ThemeMatrix"
+        tableName: "Localizable"
     )
 
     public static let shared = MatrixThemePlugin()

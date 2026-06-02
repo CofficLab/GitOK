@@ -22,7 +22,7 @@ let package = Package(
                 "ProjectRulesKit",
             ],
             path: "Sources",
-            resources: [.process("Resources")]
+            resources: [.process("Localizable.xcstrings")]
         ),
         .testTarget(
             name: "RemoteRepositoryPluginTests",

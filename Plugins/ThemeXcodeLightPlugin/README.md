@@ -14,7 +14,7 @@ ThemeXcodeLightPlugin/
 ├── Sources/ThemeXcodeLightPlugin/
 │   ├── XcodeLightThemePlugin.swift
 │   ├── XcodeLightTheme.swift
-│   └── Resources/ThemeXcodeLight.xcstrings
+│   └── Localizable.xcstrings
 └── Tests/
 ```
 

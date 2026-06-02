@@ -10,7 +10,7 @@ struct BannerPluginTests {
         #expect(BannerPlugin.metadata.order == 2)
         #expect(BannerPlugin.metadata.allowUserToggle == false)
         #expect(BannerPlugin.metadata.defaultEnabled == false)
-        #expect(BannerPlugin.metadata.tableName == "Banner")
+        #expect(BannerPlugin.metadata.tableName == "Localizable")
     }
 
     @Test("localized strings resolve")

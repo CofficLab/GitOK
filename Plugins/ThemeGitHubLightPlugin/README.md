@@ -14,7 +14,7 @@ ThemeGitHubLightPlugin/
 ├── Sources/ThemeGitHubLightPlugin/
 │   ├── GitHubLightThemePlugin.swift
 │   ├── GitHubLightTheme.swift
-│   └── Resources/ThemeGitHubLight.xcstrings
+│   └── Localizable.xcstrings
 └── Tests/
 ```
 

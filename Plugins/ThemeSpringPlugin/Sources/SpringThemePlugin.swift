@@ -8,7 +8,7 @@ public struct SpringThemePlugin: GitOKPlugin {
         iconName: "tree",
         order: 121,
         policy: .disabled,
-        tableName: "ThemeSpring"
+        tableName: "Localizable"
     )
 
     public static let shared = SpringThemePlugin()

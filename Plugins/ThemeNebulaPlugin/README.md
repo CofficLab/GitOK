@@ -14,7 +14,7 @@ ThemeNebulaPlugin/
 ├── Sources/ThemeNebulaPlugin/
 │   ├── NebulaThemePlugin.swift
 │   ├── NebulaTheme.swift
-│   └── Resources/ThemeNebula.xcstrings
+│   └── Localizable.xcstrings
 └── Tests/
 ```
 

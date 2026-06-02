@@ -14,7 +14,7 @@ ThemeMatrixPlugin/
 ├── Sources/ThemeMatrixPlugin/
 │   ├── MatrixThemePlugin.swift
 │   ├── MatrixTheme.swift
-│   └── Resources/ThemeMatrix.xcstrings
+│   └── Localizable.xcstrings
 └── Tests/
 ```
 

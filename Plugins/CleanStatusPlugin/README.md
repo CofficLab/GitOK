@@ -15,7 +15,7 @@ CleanStatusPlugin/
 │   ├── CleanStatusPlugin.swift
 │   ├── CleanStatusEvents.swift
 │   ├── CleanStatusRootView.swift
-│   └── Resources/CleanStatus.xcstrings
+│   └── Localizable.xcstrings
 └── Tests/
 ```
 

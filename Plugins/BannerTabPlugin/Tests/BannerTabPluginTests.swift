@@ -10,13 +10,13 @@ final class BannerTabPluginTests: XCTestCase {
         XCTAssertEqual(metadata.order, 2)
         XCTAssertFalse(metadata.allowUserToggle)
         XCTAssertFalse(metadata.defaultEnabled)
-        XCTAssertEqual(metadata.tableName, "BannerTab")
+        XCTAssertEqual(metadata.tableName, "Localizable")
         XCTAssertFalse(metadata.displayName.isEmpty)
         XCTAssertFalse(metadata.description.isEmpty)
     }
 
     func testLocalizationCatalogIsPackaged() {
-        XCTAssertNotNil(BannerTabPluginLocalization.bundle.url(forResource: "BannerTab", withExtension: "xcstrings"))
+        XCTAssertNotNil(BannerTabPluginLocalization.bundle.url(forResource: "Localizable", withExtension: "xcstrings"))
         XCTAssertFalse(BannerTabPluginLocalization.string("Banner").isEmpty)
         XCTAssertFalse(BannerTabPluginLocalization.string("Banner tab entry").isEmpty)
     }

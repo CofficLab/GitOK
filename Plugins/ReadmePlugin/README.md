@@ -15,7 +15,7 @@ ReadmePlugin/
 │   ├── ReadmePlugin.swift
 │   ├── ReadmeViewer.swift
 │   ├── ReadmeStatusIcon.swift
-│   └── Resources/Readme.xcstrings
+│   └── Localizable.xcstrings
 └── Tests/
 ```
 

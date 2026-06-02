@@ -25,7 +25,7 @@ public struct FileInfoPlugin: GitOKPlugin {
 }
 
 public enum FileInfoPluginLocalization {
-    public static let table = "FileInfo"
+    public static let table = "Localizable"
     public static let bundle = Bundle.module
 
     public static func string(_ key: String) -> String {

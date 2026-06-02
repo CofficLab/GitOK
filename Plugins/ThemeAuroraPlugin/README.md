@@ -14,7 +14,7 @@ ThemeAuroraPlugin/
 ├── Sources/ThemeAuroraPlugin/
 │   ├── AuroraThemePlugin.swift
 │   ├── AuroraTheme.swift
-│   └── Resources/ThemeAurora.xcstrings
+│   └── Localizable.xcstrings
 └── Tests/
 ```
 

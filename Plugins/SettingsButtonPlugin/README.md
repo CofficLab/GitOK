@@ -14,7 +14,7 @@ SettingsButtonPlugin/
 ├── Sources/SettingsButtonPlugin/
 │   ├── SettingsButtonPlugin.swift
 │   ├── SettingsButtonView.swift
-│   └── Resources/SettingsButton.xcstrings
+│   └── Localizable.xcstrings
 └── Tests/
 ```
 

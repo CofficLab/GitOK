@@ -8,7 +8,7 @@ public struct GitOKThemePlugin: GitOKPlugin {
         iconName: "folder.badge.gearshape",
         order: 120,
         policy: .disabled,
-        tableName: "ThemeGitOK"
+        tableName: "Localizable"
     )
 
     public static let shared = GitOKThemePlugin()

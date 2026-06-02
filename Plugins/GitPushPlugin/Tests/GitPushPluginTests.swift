@@ -11,7 +11,7 @@ struct GitPushPluginTests {
         #expect(GitPushPlugin.metadata.iconName == "arrow.triangle.2.circlepath")
         #expect(GitPushPlugin.metadata.allowUserToggle == false)
         #expect(GitPushPlugin.metadata.defaultEnabled == false)
-        #expect(GitPushPlugin.metadata.tableName == "GitPush")
+        #expect(GitPushPlugin.metadata.tableName == "Localizable")
     }
 
     @Test("localized display name resolves")

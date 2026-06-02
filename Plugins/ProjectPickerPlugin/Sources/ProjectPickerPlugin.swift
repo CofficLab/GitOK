@@ -27,7 +27,7 @@ public struct ProjectPickerPlugin: GitOKPlugin {
 }
 
 public enum ProjectPickerPluginLocalization {
-    public static let table = "ProjectPicker"
+    public static let table = "Localizable"
     public static let bundle = Bundle.module
 
     public static func string(_ key: String) -> String {

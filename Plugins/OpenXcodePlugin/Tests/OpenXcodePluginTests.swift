@@ -10,13 +10,13 @@ final class OpenXcodePluginTests: XCTestCase {
         XCTAssertEqual(metadata.order, 8402)
         XCTAssertFalse(metadata.allowUserToggle)
         XCTAssertFalse(metadata.defaultEnabled)
-        XCTAssertEqual(metadata.tableName, "OpenXcode")
+        XCTAssertEqual(metadata.tableName, "Localizable")
         XCTAssertFalse(metadata.displayName.isEmpty)
         XCTAssertFalse(metadata.description.isEmpty)
     }
 
     func testLocalizationCatalogIsPackaged() {
-        XCTAssertNotNil(OpenXcodePluginLocalization.bundle.url(forResource: "OpenXcode", withExtension: "xcstrings"))
+        XCTAssertNotNil(OpenXcodePluginLocalization.bundle.url(forResource: "Localizable", withExtension: "xcstrings"))
         XCTAssertFalse(OpenXcodePluginLocalization.string("Open Xcode").isEmpty)
         XCTAssertFalse(OpenXcodePluginLocalization.string("Open in Xcode").isEmpty)
     }

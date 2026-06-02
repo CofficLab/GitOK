@@ -15,7 +15,7 @@ UnpushedStatusPlugin/
 │   ├── UnpushedStatusPlugin.swift
 │   ├── UnpushedStatusRootView.swift
 │   ├── UnpushedStatusEvents.swift
-│   └── Resources/UnpushedStatus.xcstrings
+│   └── Localizable.xcstrings
 └── Tests/
 ```
 

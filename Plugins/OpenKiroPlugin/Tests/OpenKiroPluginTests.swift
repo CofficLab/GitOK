@@ -10,13 +10,13 @@ final class OpenKiroPluginTests: XCTestCase {
         XCTAssertEqual(metadata.order, 8405)
         XCTAssertFalse(metadata.allowUserToggle)
         XCTAssertFalse(metadata.defaultEnabled)
-        XCTAssertEqual(metadata.tableName, "OpenKiro")
+        XCTAssertEqual(metadata.tableName, "Localizable")
         XCTAssertFalse(metadata.displayName.isEmpty)
         XCTAssertFalse(metadata.description.isEmpty)
     }
 
     func testLocalizationCatalogIsPackaged() {
-        XCTAssertNotNil(OpenKiroPluginLocalization.bundle.url(forResource: "OpenKiro", withExtension: "xcstrings"))
+        XCTAssertNotNil(OpenKiroPluginLocalization.bundle.url(forResource: "Localizable", withExtension: "xcstrings"))
         XCTAssertFalse(OpenKiroPluginLocalization.string("Open Kiro").isEmpty)
         XCTAssertFalse(OpenKiroPluginLocalization.string("Open in Kiro").isEmpty)
     }

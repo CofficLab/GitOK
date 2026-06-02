@@ -14,7 +14,7 @@ ThemeGitOKPlugin/
 ├── Sources/ThemeGitOKPlugin/
 │   ├── GitOKThemePlugin.swift
 │   ├── GitOKTheme.swift
-│   └── Resources/ThemeGitOK.xcstrings
+│   └── Localizable.xcstrings
 └── Tests/
 ```
 

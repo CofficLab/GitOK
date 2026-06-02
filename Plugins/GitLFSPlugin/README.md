@@ -14,7 +14,7 @@ GitLFSPlugin/
 ├── Sources/GitLFSPlugin/
 │   ├── GitLFSPlugin.swift
 │   ├── GitLFSStatusTile.swift
-│   └── Resources/GitLFS.xcstrings
+│   └── Localizable.xcstrings
 └── Tests/
 ```
 

@@ -11,7 +11,7 @@ struct RemoteRepositoryPluginTests {
         #expect(RemoteRepositoryPlugin.metadata.iconName == "network")
         #expect(RemoteRepositoryPlugin.metadata.allowUserToggle == false)
         #expect(RemoteRepositoryPlugin.metadata.defaultEnabled == false)
-        #expect(RemoteRepositoryPlugin.metadata.tableName == "GitRemoteRepository")
+        #expect(RemoteRepositoryPlugin.metadata.tableName == "Localizable")
     }
 
     @Test("localized strings resolve")

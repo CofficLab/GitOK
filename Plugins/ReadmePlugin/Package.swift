@@ -18,7 +18,7 @@ let package = Package(
                 "GitOKCoreKit",
             ],
             path: "Sources",
-            resources: [.process("Resources")]
+            resources: [.process("Localizable.xcstrings")]
         ),
         .testTarget(
             name: "ReadmePluginTests",

@@ -24,7 +24,7 @@ public struct OpenVSCodePlugin: GitOKPlugin {
 }
 
 public enum OpenVSCodePluginLocalization {
-    public static let table = "OpenVSCode"
+    public static let table = "Localizable"
     public static let bundle = Bundle.module
 
     public static func string(_ key: String) -> String {

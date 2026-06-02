@@ -14,7 +14,7 @@ ThemeSpringPlugin/
 ├── Sources/ThemeSpringPlugin/
 │   ├── SpringThemePlugin.swift
 │   ├── SpringTheme.swift
-│   └── Resources/ThemeSpring.xcstrings
+│   └── Localizable.xcstrings
 └── Tests/
 ```
 

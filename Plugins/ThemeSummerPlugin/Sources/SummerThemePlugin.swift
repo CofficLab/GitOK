@@ -8,7 +8,7 @@ public struct SummerThemePlugin: GitOKPlugin {
         iconName: "tag",
         order: 130,
         policy: .disabled,
-        tableName: "ThemeSummer"
+        tableName: "Localizable"
     )
 
     public static let shared = SummerThemePlugin()

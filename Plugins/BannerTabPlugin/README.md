@@ -13,7 +13,7 @@ BannerTabPlugin/
 ├── Package.swift
 ├── Sources/BannerTabPlugin/
 │   ├── BannerTabPlugin.swift
-│   └── Resources/BannerTab.xcstrings
+│   └── Localizable.xcstrings
 └── Tests/
 ```
 

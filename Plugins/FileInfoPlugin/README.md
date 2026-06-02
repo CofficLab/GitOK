@@ -15,7 +15,7 @@ FileInfoPlugin/
 │   ├── FileInfoPlugin.swift
 │   ├── FileInfoPathPresentation.swift
 │   ├── FileInfoTile.swift
-│   └── Resources/FileInfo.xcstrings
+│   └── Localizable.xcstrings
 └── Tests/
 ```
 

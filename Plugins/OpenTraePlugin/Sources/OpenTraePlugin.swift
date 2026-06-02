@@ -24,7 +24,7 @@ public struct OpenTraePlugin: GitOKPlugin {
 }
 
 public enum OpenTraePluginLocalization {
-    public static let table = "OpenTrae"
+    public static let table = "Localizable"
     public static let bundle = Bundle.module
 
     public static func string(_ key: String) -> String {

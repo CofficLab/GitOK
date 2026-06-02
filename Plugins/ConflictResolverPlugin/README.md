@@ -18,7 +18,7 @@ ConflictResolverPlugin/
 │   ├── ConflictResolverState.swift
 │   ├── ConflictResolverDesignTokens.swift
 │   ├── ConflictStatusTile.swift
-│   └── Resources/GitConflictResolver.xcstrings
+│   └── Localizable.xcstrings
 └── Tests/
 ```
 

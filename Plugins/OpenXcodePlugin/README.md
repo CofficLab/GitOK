@@ -15,7 +15,7 @@ OpenXcodePlugin/
 │   ├── OpenXcodePlugin.swift
 │   ├── OpenXcodeButton.swift
 │   ├── XcodeProjectLauncher.swift
-│   └── Resources/OpenXcode.xcstrings
+│   └── Localizable.xcstrings
 └── Tests/
 ```
 

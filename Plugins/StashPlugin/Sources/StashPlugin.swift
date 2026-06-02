@@ -23,7 +23,7 @@ public struct StashPlugin: GitOKPlugin {
 }
 
 public enum StashPluginLocalization {
-    public static let table = "GitStash"
+    public static let table = "Localizable"
     public static let bundle = Bundle.module
 
     public static func string(_ key: String) -> String {

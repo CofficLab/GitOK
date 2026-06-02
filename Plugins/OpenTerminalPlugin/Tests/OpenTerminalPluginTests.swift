@@ -10,13 +10,13 @@ final class OpenTerminalPluginTests: XCTestCase {
         XCTAssertEqual(metadata.order, 8310)
         XCTAssertFalse(metadata.allowUserToggle)
         XCTAssertFalse(metadata.defaultEnabled)
-        XCTAssertEqual(metadata.tableName, "OpenTerminal")
+        XCTAssertEqual(metadata.tableName, "Localizable")
         XCTAssertFalse(metadata.displayName.isEmpty)
         XCTAssertFalse(metadata.description.isEmpty)
     }
 
     func testLocalizationCatalogIsPackaged() {
-        XCTAssertNotNil(OpenTerminalPluginLocalization.bundle.url(forResource: "OpenTerminal", withExtension: "xcstrings"))
+        XCTAssertNotNil(OpenTerminalPluginLocalization.bundle.url(forResource: "Localizable", withExtension: "xcstrings"))
         XCTAssertFalse(OpenTerminalPluginLocalization.string("Open Terminal").isEmpty)
         XCTAssertFalse(OpenTerminalPluginLocalization.string("Open in Terminal").isEmpty)
     }

@@ -14,7 +14,7 @@ ThemeMidnightPlugin/
 ├── Sources/ThemeMidnightPlugin/
 │   ├── MidnightThemePlugin.swift
 │   ├── MidnightTheme.swift
-│   └── Resources/ThemeMidnight.xcstrings
+│   └── Localizable.xcstrings
 └── Tests/
 ```
 

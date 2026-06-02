@@ -11,13 +11,13 @@ final class ThemeStatusBarPluginTests: XCTestCase {
         XCTAssertEqual(metadata.order, 119)
         XCTAssertFalse(metadata.allowUserToggle)
         XCTAssertFalse(metadata.defaultEnabled)
-        XCTAssertEqual(metadata.tableName, "ThemeStatusBar")
+        XCTAssertEqual(metadata.tableName, "Localizable")
         XCTAssertFalse(metadata.displayName.isEmpty)
         XCTAssertFalse(metadata.description.isEmpty)
     }
 
     func testLocalizationCatalogIsPackaged() {
-        XCTAssertNotNil(ThemeStatusBarPluginLocalization.bundle.url(forResource: "ThemeStatusBar", withExtension: "xcstrings"))
+        XCTAssertNotNil(ThemeStatusBarPluginLocalization.bundle.url(forResource: "Localizable", withExtension: "xcstrings"))
         XCTAssertFalse(ThemeStatusBarPluginLocalization.string("Theme Status").isEmpty)
         XCTAssertFalse(ThemeStatusBarPluginLocalization.string("Switch themes from the status bar").isEmpty)
     }

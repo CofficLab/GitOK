@@ -15,7 +15,7 @@ OpenAntigravityPlugin/
 │   ├── OpenAntigravityPlugin.swift
 │   ├── OpenAntigravityButton.swift
 │   ├── AntigravityProjectLauncher.swift
-│   └── Resources/OpenAntigravity.xcstrings
+│   └── Localizable.xcstrings
 └── Tests/
 ```
 

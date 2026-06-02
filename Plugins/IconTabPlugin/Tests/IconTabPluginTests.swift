@@ -10,13 +10,13 @@ final class IconTabPluginTests: XCTestCase {
         XCTAssertEqual(metadata.order, 1)
         XCTAssertFalse(metadata.allowUserToggle)
         XCTAssertFalse(metadata.defaultEnabled)
-        XCTAssertEqual(metadata.tableName, "IconTab")
+        XCTAssertEqual(metadata.tableName, "Localizable")
         XCTAssertFalse(metadata.displayName.isEmpty)
         XCTAssertFalse(metadata.description.isEmpty)
     }
 
     func testLocalizationCatalogIsPackaged() {
-        XCTAssertNotNil(IconTabPluginLocalization.bundle.url(forResource: "IconTab", withExtension: "xcstrings"))
+        XCTAssertNotNil(IconTabPluginLocalization.bundle.url(forResource: "Localizable", withExtension: "xcstrings"))
         XCTAssertFalse(IconTabPluginLocalization.string("Icon").isEmpty)
         XCTAssertFalse(IconTabPluginLocalization.string("Icon management").isEmpty)
     }

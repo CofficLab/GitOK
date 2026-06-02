@@ -15,7 +15,7 @@ ThemeStatusBarPlugin/
 │   ├── ThemeStatusBarPlugin.swift
 │   ├── ThemeStatusBarView.swift
 │   ├── ThemePickerPopover.swift
-│   └── Resources/ThemeStatusBar.xcstrings
+│   └── Localizable.xcstrings
 └── Tests/
 ```
 

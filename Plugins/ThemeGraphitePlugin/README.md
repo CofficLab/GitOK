@@ -14,7 +14,7 @@ ThemeGraphitePlugin/
 ├── Sources/ThemeGraphitePlugin/
 │   ├── GraphiteThemePlugin.swift
 │   ├── GraphiteTheme.swift
-│   └── Resources/ThemeGraphite.xcstrings
+│   └── Localizable.xcstrings
 └── Tests/
 ```
 

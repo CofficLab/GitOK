@@ -24,7 +24,7 @@ public struct ActivityStatusPlugin: GitOKPlugin {
 }
 
 public enum ActivityStatusPluginLocalization {
-    public static let table = "ActivityStatus"
+    public static let table = "Localizable"
     public static let bundle = Bundle.module
 
     public static func string(_ key: String) -> String {

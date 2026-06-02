@@ -13,7 +13,7 @@ GitTabPlugin/
 ├── Package.swift
 ├── Sources/GitTabPlugin/
 │   ├── GitTabPlugin.swift
-│   └── Resources/GitTab.xcstrings
+│   └── Localizable.xcstrings
 └── Tests/
 ```
 

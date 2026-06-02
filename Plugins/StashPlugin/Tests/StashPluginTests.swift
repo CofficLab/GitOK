@@ -10,7 +10,7 @@ struct StashPluginTests {
         #expect(StashPlugin.metadata.iconName == "archivebox")
         #expect(StashPlugin.metadata.allowUserToggle == false)
         #expect(StashPlugin.metadata.defaultEnabled == false)
-        #expect(StashPlugin.metadata.tableName == "GitStash")
+        #expect(StashPlugin.metadata.tableName == "Localizable")
     }
 
     @Test("display message prefers stash message")

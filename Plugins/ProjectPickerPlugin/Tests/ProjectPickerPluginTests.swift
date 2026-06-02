@@ -10,7 +10,7 @@ struct ProjectPickerPluginTests {
         #expect(ProjectPickerPlugin.metadata.iconName == "folder")
         #expect(ProjectPickerPlugin.metadata.allowUserToggle == false)
         #expect(ProjectPickerPlugin.metadata.defaultEnabled == false)
-        #expect(ProjectPickerPlugin.metadata.tableName == "ProjectPicker")
+        #expect(ProjectPickerPlugin.metadata.tableName == "Localizable")
     }
 
     @Test("localized strings resolve")

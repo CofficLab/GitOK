@@ -10,13 +10,13 @@ final class GitIgnorePluginTests: XCTestCase {
         XCTAssertEqual(metadata.order, 9999)
         XCTAssertFalse(metadata.allowUserToggle)
         XCTAssertFalse(metadata.defaultEnabled)
-        XCTAssertEqual(metadata.tableName, "GitIgnore")
+        XCTAssertEqual(metadata.tableName, "Localizable")
         XCTAssertFalse(metadata.displayName.isEmpty)
         XCTAssertFalse(metadata.description.isEmpty)
     }
 
     func testLocalizationCatalogIsPackaged() {
-        XCTAssertNotNil(GitIgnorePluginLocalization.bundle.url(forResource: "GitIgnore", withExtension: "xcstrings"))
+        XCTAssertNotNil(GitIgnorePluginLocalization.bundle.url(forResource: "Localizable", withExtension: "xcstrings"))
         XCTAssertFalse(GitIgnorePluginLocalization.string("Gitignore").isEmpty)
         XCTAssertFalse(GitIgnorePluginLocalization.string("Provides .gitignore viewer in status bar").isEmpty)
     }

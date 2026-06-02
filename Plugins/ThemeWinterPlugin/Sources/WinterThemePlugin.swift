@@ -8,7 +8,7 @@ public struct WinterThemePlugin: GitOKPlugin {
         iconName: "scope",
         order: 133,
         policy: .disabled,
-        tableName: "ThemeWinter"
+        tableName: "Localizable"
     )
 
     public static let shared = WinterThemePlugin()

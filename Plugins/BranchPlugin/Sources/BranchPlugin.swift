@@ -55,7 +55,7 @@ public struct BranchPlugin: GitOKPlugin {
 }
 
 public enum BranchPluginLocalization {
-    public static let table = "GitBranch"
+    public static let table = "Localizable"
     public static let bundle = Bundle.module
 
     public static func string(_ key: String) -> String {

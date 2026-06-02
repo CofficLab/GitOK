@@ -12,12 +12,12 @@ final class SubmodulePluginTests: XCTestCase {
         XCTAssertEqual(metadata.order, 9999)
         XCTAssertFalse(metadata.allowUserToggle)
         XCTAssertFalse(metadata.defaultEnabled)
-        XCTAssertEqual(metadata.tableName, "GitSubmodule")
+        XCTAssertEqual(metadata.tableName, "Localizable")
         XCTAssertFalse(metadata.description.isEmpty)
     }
 
     func testLocalizationCatalogIsPackaged() {
-        XCTAssertNotNil(SubmodulePluginLocalization.bundle.url(forResource: "GitSubmodule", withExtension: "xcstrings"))
+        XCTAssertNotNil(SubmodulePluginLocalization.bundle.url(forResource: "Localizable", withExtension: "xcstrings"))
         XCTAssertFalse(SubmodulePluginLocalization.string("Submodule").isEmpty)
         XCTAssertFalse(SubmodulePluginLocalization.string("Initialize").isEmpty)
     }

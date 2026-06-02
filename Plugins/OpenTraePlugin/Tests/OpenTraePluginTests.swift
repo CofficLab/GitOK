@@ -10,13 +10,13 @@ final class OpenTraePluginTests: XCTestCase {
         XCTAssertEqual(metadata.order, 8404)
         XCTAssertFalse(metadata.allowUserToggle)
         XCTAssertFalse(metadata.defaultEnabled)
-        XCTAssertEqual(metadata.tableName, "OpenTrae")
+        XCTAssertEqual(metadata.tableName, "Localizable")
         XCTAssertFalse(metadata.displayName.isEmpty)
         XCTAssertFalse(metadata.description.isEmpty)
     }
 
     func testLocalizationCatalogIsPackaged() {
-        XCTAssertNotNil(OpenTraePluginLocalization.bundle.url(forResource: "OpenTrae", withExtension: "xcstrings"))
+        XCTAssertNotNil(OpenTraePluginLocalization.bundle.url(forResource: "Localizable", withExtension: "xcstrings"))
         XCTAssertFalse(OpenTraePluginLocalization.string("Open Trae").isEmpty)
         XCTAssertFalse(OpenTraePluginLocalization.string("Open in Trae").isEmpty)
     }

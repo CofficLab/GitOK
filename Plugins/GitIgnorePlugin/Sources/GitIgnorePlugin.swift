@@ -25,7 +25,7 @@ public struct GitIgnorePlugin: GitOKPlugin {
 }
 
 public enum GitIgnorePluginLocalization {
-    public static let table = "GitIgnore"
+    public static let table = "Localizable"
     public static let bundle = Bundle.module
 
     public static func string(_ key: String) -> String {

@@ -16,7 +16,7 @@ SubmodulePlugin/
 │   ├── SubmoduleEvents.swift
 │   ├── SubmodulePresentation.swift
 │   ├── SubmoduleStatusTile.swift
-│   └── Resources/GitSubmodule.xcstrings
+│   └── Localizable.xcstrings
 └── Tests/
 ```
 

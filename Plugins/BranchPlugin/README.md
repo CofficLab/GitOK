@@ -17,7 +17,7 @@ BranchPlugin/
 │   ├── BranchPickerView.swift
 │   ├── BranchRowView.swift
 │   ├── BranchStatusTile.swift
-│   └── Resources/GitBranch.xcstrings
+│   └── Localizable.xcstrings
 └── Tests/
 ```
 

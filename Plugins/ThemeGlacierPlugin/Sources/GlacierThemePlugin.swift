@@ -1,7 +1,7 @@
 import GitOKCoreKit
 
 public struct GlacierThemePlugin: GitOKPlugin {
-    public static let metadata = GitOKPluginMetadata(id: "ThemeGlacierPlugin", displayName: "Glacier Theme", description: "Icy cyan light theme", iconName: "externaldrive", order: 129, policy: .disabled, tableName: "ThemeGlacier")
+    public static let metadata = GitOKPluginMetadata(id: "ThemeGlacierPlugin", displayName: "Glacier Theme", description: "Icy cyan light theme", iconName: "externaldrive", order: 129, policy: .disabled, tableName: "Localizable")
     public static let shared = GlacierThemePlugin()
     private init() {}
 

@@ -16,7 +16,7 @@ let package = Package(
             name: "ActivityStatusPlugin",
             dependencies: ["GitOKCoreKit"],
             path: "Sources",
-            resources: [.process("Resources")]
+            resources: [.process("Localizable.xcstrings")]
         ),
         .testTarget(
             name: "ActivityStatusPluginTests",

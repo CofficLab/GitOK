@@ -12,12 +12,12 @@ struct GitSyncPluginTests {
         #expect(GitSyncPlugin.metadata.order == 9999)
         #expect(GitSyncPlugin.metadata.allowUserToggle == false)
         #expect(GitSyncPlugin.metadata.defaultEnabled == false)
-        #expect(GitSyncPlugin.metadata.tableName == "GitSync")
+        #expect(GitSyncPlugin.metadata.tableName == "Localizable")
     }
 
     @Test("localization catalog is packaged")
     func localizationCatalog() {
-        #expect(GitSyncPluginLocalization.bundle.url(forResource: "GitSync", withExtension: "xcstrings") != nil)
+        #expect(GitSyncPluginLocalization.bundle.url(forResource: "Localizable", withExtension: "xcstrings") != nil)
         #expect(GitSyncPluginLocalization.string("Sync with remote repository").isEmpty == false)
     }
 

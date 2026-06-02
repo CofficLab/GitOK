@@ -12,13 +12,13 @@ final class GitLFSPluginTests: XCTestCase {
         XCTAssertEqual(metadata.order, 9999)
         XCTAssertFalse(metadata.allowUserToggle)
         XCTAssertFalse(metadata.defaultEnabled)
-        XCTAssertEqual(metadata.tableName, "GitLFS")
+        XCTAssertEqual(metadata.tableName, "Localizable")
         XCTAssertFalse(metadata.displayName.isEmpty)
         XCTAssertFalse(metadata.description.isEmpty)
     }
 
     func testLocalizationCatalogIsPackaged() {
-        XCTAssertNotNil(GitLFSPluginLocalization.bundle.url(forResource: "GitLFS", withExtension: "xcstrings"))
+        XCTAssertNotNil(GitLFSPluginLocalization.bundle.url(forResource: "Localizable", withExtension: "xcstrings"))
         XCTAssertFalse(GitLFSPluginLocalization.string("Git LFS").isEmpty)
         XCTAssertFalse(GitLFSPluginLocalization.string("Git LFS status and large file recommendations").isEmpty)
     }

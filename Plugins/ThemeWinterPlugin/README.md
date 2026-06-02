@@ -14,7 +14,7 @@ ThemeWinterPlugin/
 ├── Sources/ThemeWinterPlugin/
 │   ├── WinterThemePlugin.swift
 │   ├── WinterTheme.swift
-│   └── Resources/ThemeWinter.xcstrings
+│   └── Localizable.xcstrings
 └── Tests/
 ```
 

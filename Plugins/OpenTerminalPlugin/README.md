@@ -15,7 +15,7 @@ OpenTerminalPlugin/
 │   ├── OpenTerminalPlugin.swift
 │   ├── OpenTerminalButton.swift
 │   ├── TerminalLauncher.swift
-│   └── Resources/OpenTerminal.xcstrings
+│   └── Localizable.xcstrings
 └── Tests/
 ```
 

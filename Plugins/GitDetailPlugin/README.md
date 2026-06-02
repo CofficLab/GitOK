@@ -27,10 +27,11 @@ GitDetailPlugin/
 │   ├── Views/FileDiffContentView.swift
 │   ├── Views/ImageDiffContentView.swift
 │   ├── Views/ImageComparisonView.swift
-│   ├── ...
-│   └── Resources/GitDetail.xcstrings
+│   └── ...
 └── Tests/
 ```
+
+Localization is provided by the `GitOKCoreKit` `GitDetail` table.
 
 ## Dependencies
 

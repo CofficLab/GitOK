@@ -15,7 +15,7 @@ OpenCursorPlugin/
 │   ├── OpenCursorPlugin.swift
 │   ├── OpenCursorButton.swift
 │   ├── CursorProjectLauncher.swift
-│   └── Resources/OpenCursor.xcstrings
+│   └── Localizable.xcstrings
 └── Tests/
 ```
 

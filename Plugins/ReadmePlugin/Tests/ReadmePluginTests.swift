@@ -11,13 +11,13 @@ final class ReadmePluginTests: XCTestCase {
         XCTAssertEqual(metadata.order, 9999)
         XCTAssertFalse(metadata.allowUserToggle)
         XCTAssertFalse(metadata.defaultEnabled)
-        XCTAssertEqual(metadata.tableName, "Readme")
+        XCTAssertEqual(metadata.tableName, "Localizable")
         XCTAssertFalse(metadata.displayName.isEmpty)
         XCTAssertFalse(metadata.description.isEmpty)
     }
 
     func testLocalizationCatalogIsPackaged() {
-        XCTAssertNotNil(ReadmePluginLocalization.bundle.url(forResource: "Readme", withExtension: "xcstrings"))
+        XCTAssertNotNil(ReadmePluginLocalization.bundle.url(forResource: "Localizable", withExtension: "xcstrings"))
         XCTAssertFalse(ReadmePluginLocalization.string("Readme").isEmpty)
         XCTAssertFalse(ReadmePluginLocalization.string("Provides README entry point in status bar").isEmpty)
     }

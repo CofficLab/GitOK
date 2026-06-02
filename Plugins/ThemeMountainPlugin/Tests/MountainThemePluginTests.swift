@@ -12,7 +12,7 @@ final class MountainThemePluginTests: XCTestCase {
         XCTAssertEqual(metadata.order, 132)
         XCTAssertFalse(metadata.allowUserToggle)
         XCTAssertFalse(metadata.defaultEnabled)
-        XCTAssertEqual(metadata.tableName, "ThemeMountain")
+        XCTAssertEqual(metadata.tableName, "Localizable")
     }
 
     @MainActor
@@ -28,6 +28,6 @@ final class MountainThemePluginTests: XCTestCase {
     }
 
     func testLocalizationCatalogIsPackaged() {
-        XCTAssertNotNil(Bundle.module.url(forResource: "ThemeMountain", withExtension: "xcstrings"))
+        XCTAssertNotNil(Bundle.module.url(forResource: "Localizable", withExtension: "xcstrings"))
     }
 }

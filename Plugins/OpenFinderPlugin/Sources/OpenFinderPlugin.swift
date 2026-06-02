@@ -24,7 +24,7 @@ public struct OpenFinderPlugin: GitOKPlugin {
 }
 
 public enum OpenFinderPluginLocalization {
-    public static let table = "OpenFinder"
+    public static let table = "Localizable"
     public static let bundle = Bundle.module
 
     public static func string(_ key: String) -> String {

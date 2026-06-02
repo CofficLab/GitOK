@@ -11,12 +11,12 @@ final class FileInfoPluginTests: XCTestCase {
         XCTAssertEqual(metadata.order, 9999)
         XCTAssertFalse(metadata.allowUserToggle)
         XCTAssertFalse(metadata.defaultEnabled)
-        XCTAssertEqual(metadata.tableName, "FileInfo")
+        XCTAssertEqual(metadata.tableName, "Localizable")
         XCTAssertFalse(metadata.description.isEmpty)
     }
 
     func testLocalizationCatalogIsPackaged() {
-        XCTAssertNotNil(FileInfoPluginLocalization.bundle.url(forResource: "FileInfo", withExtension: "xcstrings"))
+        XCTAssertNotNil(FileInfoPluginLocalization.bundle.url(forResource: "Localizable", withExtension: "xcstrings"))
         XCTAssertFalse(FileInfoPluginLocalization.string("File Actions").isEmpty)
         XCTAssertFalse(FileInfoPluginLocalization.string("Copy Path").isEmpty)
     }

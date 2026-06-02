@@ -14,7 +14,7 @@ ThemeRiverPlugin/
 ├── Sources/ThemeRiverPlugin/
 │   ├── RiverThemePlugin.swift
 │   ├── RiverTheme.swift
-│   └── Resources/ThemeRiver.xcstrings
+│   └── Localizable.xcstrings
 └── Tests/
 ```
 

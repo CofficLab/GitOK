@@ -23,7 +23,7 @@ public struct GitPullPlugin: GitOKPlugin {
 }
 
 public enum GitPullPluginLocalization {
-    public static let table = "GitPull"
+    public static let table = "Localizable"
     public static let bundle = Bundle.module
 
     public static func string(_ key: String) -> String {

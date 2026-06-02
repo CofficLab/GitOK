@@ -11,13 +11,13 @@ final class SettingsButtonPluginTests: XCTestCase {
         XCTAssertEqual(metadata.order, 9000)
         XCTAssertFalse(metadata.allowUserToggle)
         XCTAssertFalse(metadata.defaultEnabled)
-        XCTAssertEqual(metadata.tableName, "SettingsButton")
+        XCTAssertEqual(metadata.tableName, "Localizable")
         XCTAssertFalse(metadata.displayName.isEmpty)
         XCTAssertFalse(metadata.description.isEmpty)
     }
 
     func testLocalizationCatalogIsPackaged() {
-        XCTAssertNotNil(SettingsButtonPluginLocalization.bundle.url(forResource: "SettingsButton", withExtension: "xcstrings"))
+        XCTAssertNotNil(SettingsButtonPluginLocalization.bundle.url(forResource: "Localizable", withExtension: "xcstrings"))
         XCTAssertFalse(SettingsButtonPluginLocalization.string("Settings Button").isEmpty)
         XCTAssertFalse(SettingsButtonPluginLocalization.string("Open Settings").isEmpty)
     }

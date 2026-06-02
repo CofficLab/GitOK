@@ -37,10 +37,11 @@ CommitPlugin/
 │   ├── Views/CommitMessageInput.swift
 │   ├── Views/CommitSubmitButton.swift
 │   ├── Views/WorkingStateContentView.swift
-│   ├── ...
-│   └── Resources/GitCommit.xcstrings
+│   └── ...
 └── Tests/
 ```
+
+Localization is provided by the `GitOKCoreKit` `GitCommit` table.
 
 ## Dependencies
 

@@ -14,7 +14,7 @@ SmartMergePlugin/
 ├── Sources/SmartMergePlugin/
 │   ├── SmartMergePlugin.swift
 │   ├── SmartMergeStatusTile.swift
-│   └── Resources/GitMerge.xcstrings
+│   └── Localizable.xcstrings
 └── Tests/
 ```
 

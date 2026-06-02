@@ -18,7 +18,7 @@ GitIgnorePlugin/
 │   ├── GitIgnoreStatusIcon.swift
 │   ├── GitIgnoreTemplate.swift
 │   ├── GitIgnoreViewer.swift
-│   └── Resources/GitIgnore.xcstrings
+│   └── Localizable.xcstrings
 └── Tests/
 ```
 

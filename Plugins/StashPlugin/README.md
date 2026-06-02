@@ -18,7 +18,7 @@ StashPlugin/
 │   ├── StashEvents.swift
 │   ├── StashPresentation.swift
 │   ├── StashStatusTile.swift
-│   └── Resources/GitStash.xcstrings
+│   └── Localizable.xcstrings
 └── Tests/
 ```
 

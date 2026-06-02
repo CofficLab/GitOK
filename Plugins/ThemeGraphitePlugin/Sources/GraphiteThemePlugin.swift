@@ -8,7 +8,7 @@ public struct GraphiteThemePlugin: GitOKPlugin {
         iconName: "square.grid.3x3",
         order: 134,
         policy: .disabled,
-        tableName: "ThemeGraphite"
+        tableName: "Localizable"
     )
 
     public static let shared = GraphiteThemePlugin()

@@ -17,7 +17,7 @@ public struct BannerPlugin: GitOKPlugin {
 }
 
 public enum BannerPluginLocalization {
-    public static let table = "Banner"
+    public static let table = "Localizable"
     public static let bundle = Bundle.module
 
     public static func string(_ key: String) -> String {

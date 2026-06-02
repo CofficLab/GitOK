@@ -8,7 +8,7 @@ public struct OneDarkThemePlugin: GitOKPlugin {
         iconName: "chevron.left.forwardslash.chevron.right",
         order: 136,
         policy: .disabled,
-        tableName: "ThemeOneDark"
+        tableName: "Localizable"
     )
 
     public static let shared = OneDarkThemePlugin()

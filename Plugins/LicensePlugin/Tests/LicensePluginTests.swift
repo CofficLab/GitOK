@@ -11,13 +11,13 @@ final class LicensePluginTests: XCTestCase {
         XCTAssertEqual(metadata.order, 9999)
         XCTAssertFalse(metadata.allowUserToggle)
         XCTAssertFalse(metadata.defaultEnabled)
-        XCTAssertEqual(metadata.tableName, "License")
+        XCTAssertEqual(metadata.tableName, "Localizable")
         XCTAssertFalse(metadata.displayName.isEmpty)
         XCTAssertFalse(metadata.description.isEmpty)
     }
 
     func testLocalizationCatalogIsPackaged() {
-        XCTAssertNotNil(LicensePluginLocalization.bundle.url(forResource: "License", withExtension: "xcstrings"))
+        XCTAssertNotNil(LicensePluginLocalization.bundle.url(forResource: "Localizable", withExtension: "xcstrings"))
         XCTAssertFalse(LicensePluginLocalization.string("License").isEmpty)
         XCTAssertFalse(LicensePluginLocalization.string("LICENSE entry in status bar").isEmpty)
     }

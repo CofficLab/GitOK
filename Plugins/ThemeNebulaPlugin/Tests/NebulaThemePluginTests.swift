@@ -12,7 +12,7 @@ final class NebulaThemePluginTests: XCTestCase {
         XCTAssertEqual(metadata.order, 126)
         XCTAssertFalse(metadata.allowUserToggle)
         XCTAssertFalse(metadata.defaultEnabled)
-        XCTAssertEqual(metadata.tableName, "ThemeNebula")
+        XCTAssertEqual(metadata.tableName, "Localizable")
     }
 
     @MainActor
@@ -28,6 +28,6 @@ final class NebulaThemePluginTests: XCTestCase {
     }
 
     func testLocalizationCatalogIsPackaged() {
-        XCTAssertNotNil(Bundle.module.url(forResource: "ThemeNebula", withExtension: "xcstrings"))
+        XCTAssertNotNil(Bundle.module.url(forResource: "Localizable", withExtension: "xcstrings"))
     }
 }

@@ -12,7 +12,7 @@ final class OrchardThemePluginTests: XCTestCase {
         XCTAssertEqual(metadata.order, 128)
         XCTAssertFalse(metadata.allowUserToggle)
         XCTAssertFalse(metadata.defaultEnabled)
-        XCTAssertEqual(metadata.tableName, "ThemeOrchard")
+        XCTAssertEqual(metadata.tableName, "Localizable")
     }
 
     @MainActor
@@ -28,6 +28,6 @@ final class OrchardThemePluginTests: XCTestCase {
     }
 
     func testLocalizationCatalogIsPackaged() {
-        XCTAssertNotNil(Bundle.module.url(forResource: "ThemeOrchard", withExtension: "xcstrings"))
+        XCTAssertNotNil(Bundle.module.url(forResource: "Localizable", withExtension: "xcstrings"))
     }
 }

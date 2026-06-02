@@ -10,13 +10,13 @@ final class OpenAntigravityPluginTests: XCTestCase {
         XCTAssertEqual(metadata.order, 8406)
         XCTAssertFalse(metadata.allowUserToggle)
         XCTAssertFalse(metadata.defaultEnabled)
-        XCTAssertEqual(metadata.tableName, "OpenAntigravity")
+        XCTAssertEqual(metadata.tableName, "Localizable")
         XCTAssertFalse(metadata.displayName.isEmpty)
         XCTAssertFalse(metadata.description.isEmpty)
     }
 
     func testLocalizationCatalogIsPackaged() {
-        XCTAssertNotNil(OpenAntigravityPluginLocalization.bundle.url(forResource: "OpenAntigravity", withExtension: "xcstrings"))
+        XCTAssertNotNil(OpenAntigravityPluginLocalization.bundle.url(forResource: "Localizable", withExtension: "xcstrings"))
         XCTAssertFalse(OpenAntigravityPluginLocalization.string("Open Antigravity").isEmpty)
         XCTAssertFalse(OpenAntigravityPluginLocalization.string("Open in Antigravity").isEmpty)
     }

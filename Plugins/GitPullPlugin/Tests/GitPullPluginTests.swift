@@ -11,12 +11,12 @@ struct GitPullPluginTests {
         #expect(GitPullPlugin.metadata.iconName == "arrow.down")
         #expect(GitPullPlugin.metadata.allowUserToggle == false)
         #expect(GitPullPlugin.metadata.defaultEnabled == false)
-        #expect(GitPullPlugin.metadata.tableName == "GitPull")
+        #expect(GitPullPlugin.metadata.tableName == "Localizable")
     }
 
     @Test("localization catalog is packaged")
     func localizationCatalog() {
-        #expect(GitPullPluginLocalization.bundle.url(forResource: "GitPull", withExtension: "xcstrings") != nil)
+        #expect(GitPullPluginLocalization.bundle.url(forResource: "Localizable", withExtension: "xcstrings") != nil)
         #expect(GitPullPluginLocalization.string("Pull from remote").isEmpty == false)
     }
 

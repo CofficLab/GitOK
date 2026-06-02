@@ -22,7 +22,7 @@ AutoPushPlugin/
 │   ├── ConfigRowView.swift
 │   ├── ConfiguredProjectsSectionView.swift
 │   ├── CurrentProjectSectionView.swift
-│   └── Resources/AutoPush.xcstrings
+│   └── Localizable.xcstrings
 └── Tests/
 ```
 

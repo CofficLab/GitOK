@@ -24,7 +24,7 @@ public struct SubmodulePlugin: GitOKPlugin {
 }
 
 public enum SubmodulePluginLocalization {
-    public static let table = "GitSubmodule"
+    public static let table = "Localizable"
     public static let bundle = Bundle.module
 
     public static func string(_ key: String) -> String {
