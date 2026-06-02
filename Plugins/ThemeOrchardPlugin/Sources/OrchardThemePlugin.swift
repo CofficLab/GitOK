@@ -2,7 +2,7 @@ import Foundation
 import GitOKCoreKit
 
 public struct OrchardThemePlugin: GitOKPlugin {
-    public static let metadata = GitOKPluginMetadata(id: "ThemeOrchardPlugin", displayName: OrchardThemePluginLocalization.string("Orchard Theme"), description: OrchardThemePluginLocalization.string("Earthy amber dark theme"), iconName: "tray.full", order: 128, policy: .disabled, tableName: OrchardThemePluginLocalization.table)
+    public static let metadata = GitOKPluginMetadata(id: "ThemeOrchardPlugin", displayName: OrchardThemePluginLocalization.string("Orchard Theme"), description: OrchardThemePluginLocalization.string("Earthy amber dark theme"), iconName: "tray.full", order: 128, policy: .alwaysOn, tableName: OrchardThemePluginLocalization.table)
     public static let shared = OrchardThemePlugin()
     private init() {}
 

@@ -8,7 +8,7 @@ public struct RiverThemePlugin: GitOKPlugin {
         description: RiverThemePluginLocalization.string("Flowing teal dark theme"),
         iconName: "arrow.triangle.branch",
         order: 125,
-        policy: .disabled,
+        policy: .alwaysOn,
         tableName: RiverThemePluginLocalization.table
     )
 

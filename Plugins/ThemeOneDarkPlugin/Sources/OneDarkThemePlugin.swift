@@ -8,7 +8,7 @@ public struct OneDarkThemePlugin: GitOKPlugin {
         description: OneDarkThemePluginLocalization.string("Classic editor dark theme"),
         iconName: "chevron.left.forwardslash.chevron.right",
         order: 136,
-        policy: .disabled,
+        policy: .alwaysOn,
         tableName: OneDarkThemePluginLocalization.table
     )
 

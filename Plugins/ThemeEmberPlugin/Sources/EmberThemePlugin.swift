@@ -8,7 +8,7 @@ public struct EmberThemePlugin: GitOKPlugin {
         description: EmberThemePluginLocalization.string("Warm orange dark theme"),
         iconName: "exclamationmark.triangle",
         order: 124,
-        policy: .disabled,
+        policy: .alwaysOn,
         tableName: EmberThemePluginLocalization.table
     )
 

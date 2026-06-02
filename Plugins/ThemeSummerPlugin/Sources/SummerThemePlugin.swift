@@ -8,7 +8,7 @@ public struct SummerThemePlugin: GitOKPlugin {
         description: SummerThemePluginLocalization.string("Warm golden light theme"),
         iconName: "tag",
         order: 130,
-        policy: .disabled,
+        policy: .alwaysOn,
         tableName: SummerThemePluginLocalization.table
     )
 

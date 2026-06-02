@@ -9,7 +9,7 @@ public struct CommitPlugin: GitOKPlugin {
         displayName: CommitPluginLocalization.string("Commit"),
         description: CommitPluginLocalization.string("Git commit management"),
         iconName: "arrow.up.arrow.down",
-        policy: .disabled,
+        policy: .alwaysOn,
         tableName: CommitPluginLocalization.table
     )
 

@@ -2,7 +2,7 @@ import Foundation
 import GitOKCoreKit
 
 public struct GlacierThemePlugin: GitOKPlugin {
-    public static let metadata = GitOKPluginMetadata(id: "ThemeGlacierPlugin", displayName: GlacierThemePluginLocalization.string("Glacier Theme"), description: GlacierThemePluginLocalization.string("Icy cyan light theme"), iconName: "externaldrive", order: 129, policy: .disabled, tableName: GlacierThemePluginLocalization.table)
+    public static let metadata = GitOKPluginMetadata(id: "ThemeGlacierPlugin", displayName: GlacierThemePluginLocalization.string("Glacier Theme"), description: GlacierThemePluginLocalization.string("Icy cyan light theme"), iconName: "externaldrive", order: 129, policy: .alwaysOn, tableName: GlacierThemePluginLocalization.table)
     public static let shared = GlacierThemePlugin()
     private init() {}
 

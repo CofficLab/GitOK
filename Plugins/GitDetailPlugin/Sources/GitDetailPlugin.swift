@@ -9,7 +9,7 @@ public struct GitDetailPlugin: GitOKPlugin {
         displayName: GitDetailPluginLocalization.string("GitDetailPlugin"),
         description: "",
         order: 0,
-        policy: .disabled,
+        policy: .alwaysOn,
         tableName: GitDetailPluginLocalization.table
     )
 

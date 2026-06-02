@@ -8,7 +8,7 @@ public struct XcodeLightThemePlugin: GitOKPlugin {
         description: XcodeLightThemePluginLocalization.string("Xcode-inspired light theme"),
         iconName: "hammer",
         order: 137,
-        policy: .disabled,
+        policy: .alwaysOn,
         tableName: XcodeLightThemePluginLocalization.table
     )
 

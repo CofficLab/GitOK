@@ -9,7 +9,7 @@ public struct BannerPlugin: GitOKPlugin {
         displayName: BannerPluginLocalization.string("BannerPlugin"),
         description: "",
         order: 2,
-        policy: .disabled,
+        policy: .alwaysOn,
         tableName: BannerPluginLocalization.table
     )
 

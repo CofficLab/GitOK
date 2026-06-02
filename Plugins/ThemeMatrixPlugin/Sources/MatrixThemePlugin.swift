@@ -8,7 +8,7 @@ public struct MatrixThemePlugin: GitOKPlugin {
         description: MatrixThemePluginLocalization.string("Electric green dark theme"),
         iconName: "gearshape.2",
         order: 131,
-        policy: .disabled,
+        policy: .alwaysOn,
         tableName: MatrixThemePluginLocalization.table
     )
 

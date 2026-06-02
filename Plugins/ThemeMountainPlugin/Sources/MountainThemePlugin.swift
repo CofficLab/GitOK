@@ -2,7 +2,7 @@ import Foundation
 import GitOKCoreKit
 
 public struct MountainThemePlugin: GitOKPlugin {
-    public static let metadata = GitOKPluginMetadata(id: "ThemeMountainPlugin", displayName: MountainThemePluginLocalization.string("Mountain Theme"), description: MountainThemePluginLocalization.string("Quiet stone light theme"), iconName: "archivebox", order: 132, policy: .disabled, tableName: MountainThemePluginLocalization.table)
+    public static let metadata = GitOKPluginMetadata(id: "ThemeMountainPlugin", displayName: MountainThemePluginLocalization.string("Mountain Theme"), description: MountainThemePluginLocalization.string("Quiet stone light theme"), iconName: "archivebox", order: 132, policy: .alwaysOn, tableName: MountainThemePluginLocalization.table)
     public static let shared = MountainThemePlugin()
     private init() {}
 

@@ -2,7 +2,7 @@ import Foundation
 import GitOKCoreKit
 
 public struct HarborThemePlugin: GitOKPlugin {
-    public static let metadata = GitOKPluginMetadata(id: "ThemeHarborPlugin", displayName: HarborThemePluginLocalization.string("Harbor Theme"), description: HarborThemePluginLocalization.string("Deep blue water theme"), iconName: "network", order: 127, policy: .disabled, tableName: HarborThemePluginLocalization.table)
+    public static let metadata = GitOKPluginMetadata(id: "ThemeHarborPlugin", displayName: HarborThemePluginLocalization.string("Harbor Theme"), description: HarborThemePluginLocalization.string("Deep blue water theme"), iconName: "network", order: 127, policy: .alwaysOn, tableName: HarborThemePluginLocalization.table)
     public static let shared = HarborThemePlugin()
     private init() {}
 

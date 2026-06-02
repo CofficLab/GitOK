@@ -10,7 +10,7 @@ public struct GitPushPlugin: GitOKPlugin {
         displayName: GitPushPluginLocalization.string("Git Sync"),
         description: GitPushPluginLocalization.string("Run Fetch, Pull, or Push based on branch state"),
         iconName: "arrow.triangle.2.circlepath",
-        policy: .disabled,
+        policy: .alwaysOn,
         tableName: GitPushPluginLocalization.table
     )
 

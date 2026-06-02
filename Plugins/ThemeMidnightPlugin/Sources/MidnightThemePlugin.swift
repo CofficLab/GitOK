@@ -8,7 +8,7 @@ public struct MidnightThemePlugin: GitOKPlugin {
         description: MidnightThemePluginLocalization.string("Quiet terminal-green dark theme"),
         iconName: "terminal",
         order: 123,
-        policy: .disabled,
+        policy: .alwaysOn,
         tableName: MidnightThemePluginLocalization.table
     )
 
