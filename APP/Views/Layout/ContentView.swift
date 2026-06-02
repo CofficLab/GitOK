@@ -200,8 +200,10 @@ extension ContentView {
         .gitOKToolbarVisibility(toolbarVisibility)
         .toolbar(content: {
             ToolbarItem(placement: .navigation) {
-                ForEach(toolbarLeadingViews) { item in
-                    item.view
+                HStack(spacing: 8) {
+                    ForEach(toolbarLeadingViews) { item in
+                        item.view
+                    }
                 }
             }
 
