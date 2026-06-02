@@ -59,7 +59,7 @@ struct RootView<Content>: View, SuperEvent, SuperLog where Content: View {
         // 初始化提供者
         let providersStart = Date()
         self.appProvider = AppVM(repoManager: self.repoManager)
-        self.pluginProvider = PluginVM { adapterFactory, register in
+        self.pluginProvider = PluginVM(adapterFactory: AppGitOKPluginAdapterFactory()) { adapterFactory, register in
             GeneratedPluginRegistry.registerDefaultAdapters(adapterFactory: adapterFactory, register)
         }
         self.themeProvider = AppThemeVM(pluginProvider: self.pluginProvider)

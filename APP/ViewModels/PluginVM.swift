@@ -186,12 +186,16 @@ class PluginVM: ObservableObject {
 
     // MARK: - Initialization
 
-    init(registerPackagedPlugins: PluginRegistrationHandler? = nil) {
+    init(
+        adapterFactory: (any GitOKPluginAdapterFactory)? = nil,
+        registerPackagedPlugins: PluginRegistrationHandler? = nil
+    ) {
         let pluginRuntime = registerPackagedPlugins == nil ? nil : GitOKPluginRuntime()
         self.runtime = pluginRuntime
 
         if let registerPackagedPlugins {
-            registerPackagedPluginAdapters(registerPackagedPlugins)
+            let adapterFactory = adapterFactory ?? DefaultGitOKPluginAdapterFactory()
+            registerPackagedPluginAdapters(adapterFactory, registerPackagedPlugins)
         }
 
         // 订阅设置变化，当设置改变时触发 UI 更新
@@ -207,12 +211,15 @@ class PluginVM: ObservableObject {
     // MARK: - Custom Plugin Providers
 
     /// Register all packaged plugins supplied by the registry package.
-    private func registerPackagedPluginAdapters(_ registerPackagedPlugins: PluginRegistrationHandler) {
+    private func registerPackagedPluginAdapters(
+        _ adapterFactory: any GitOKPluginAdapterFactory,
+        _ registerPackagedPlugins: PluginRegistrationHandler
+    ) {
         guard let runtime else { return }
 
         runtime.clearRegisteredPlugins()
 
-        registerPackagedPlugins(DefaultGitOKPluginAdapterFactory()) { adapter in
+        registerPackagedPlugins(adapterFactory) { adapter in
             runtime.register(adapter)
         }
     }
