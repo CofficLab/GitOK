@@ -1,6 +1,7 @@
 import GitOKCoreKit
 import MagicAlert
 import GitOKSupportKit
+import AppKit
 import OSLog
 import SwiftUI
 
@@ -196,7 +197,7 @@ extension ContentView {
         .onChange(of: self.columnVisibility, onChangeColumnVisibility)
         .onChange(of: p.registeredPluginCount, onPluginsLoaded)
         .onPluginProviderChange(if: p.hasPlugins, provider: p, perform: onPluginProviderChange)
-        .toolbarVisibility(toolbarVisibility ? .visible : .hidden)
+        .gitOKToolbarVisibility(toolbarVisibility)
         .toolbar(content: {
             ToolbarItem(placement: .navigation) {
                 ForEach(toolbarLeadingViews) { item in
@@ -226,6 +227,31 @@ extension ContentView {
                     })
             }
         })
+    }
+}
+
+private extension View {
+    @ViewBuilder
+    func gitOKToolbarVisibility(_ visible: Bool) -> some View {
+        if #available(macOS 15.0, *) {
+            self.toolbarVisibility(visible ? .visible : .hidden)
+        } else {
+            self.background(WindowToolbarVisibilityBridge(isVisible: visible))
+        }
+    }
+}
+
+private struct WindowToolbarVisibilityBridge: NSViewRepresentable {
+    let isVisible: Bool
+
+    func makeNSView(context: Context) -> NSView {
+        NSView()
+    }
+
+    func updateNSView(_ nsView: NSView, context: Context) {
+        DispatchQueue.main.async {
+            nsView.window?.toolbar?.isVisible = isVisible
+        }
     }
 }
 

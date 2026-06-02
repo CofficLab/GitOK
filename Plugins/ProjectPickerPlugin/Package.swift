@@ -4,7 +4,7 @@ import PackageDescription
 let package = Package(
     name: "ProjectPickerPlugin",
     defaultLocalization: "en",
-    platforms: [.macOS(.v15)],
+    platforms: [.macOS(.v14)],
     products: [
         .library(name: "ProjectPickerPlugin", targets: ["ProjectPickerPlugin"]),
     ],

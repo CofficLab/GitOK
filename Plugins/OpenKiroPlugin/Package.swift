@@ -5,7 +5,7 @@ let package = Package(
     name: "OpenKiroPlugin",
     defaultLocalization: "en",
     platforms: [
-        .macOS(.v15),
+        .macOS(.v14),
     ],
     products: [
         .library(name: "OpenKiroPlugin", targets: ["OpenKiroPlugin"]),

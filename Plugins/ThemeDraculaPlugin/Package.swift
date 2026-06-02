@@ -5,7 +5,7 @@ let package = Package(
     name: "ThemeDraculaPlugin",
     defaultLocalization: "en",
     platforms: [
-        .macOS(.v15),
+        .macOS(.v14),
     ],
     products: [
         .library(

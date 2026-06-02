@@ -4,7 +4,7 @@ import PackageDescription
 let package = Package(
     name: "UnpushedStatusPlugin",
     defaultLocalization: "en",
-    platforms: [.macOS(.v15)],
+    platforms: [.macOS(.v14)],
     products: [
         .library(name: "UnpushedStatusPlugin", targets: ["UnpushedStatusPlugin"]),
     ],

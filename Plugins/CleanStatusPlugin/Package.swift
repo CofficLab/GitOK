@@ -4,7 +4,7 @@ import PackageDescription
 let package = Package(
     name: "CleanStatusPlugin",
     defaultLocalization: "en",
-    platforms: [.macOS(.v15)],
+    platforms: [.macOS(.v14)],
     products: [
         .library(name: "CleanStatusPlugin", targets: ["CleanStatusPlugin"]),
     ],

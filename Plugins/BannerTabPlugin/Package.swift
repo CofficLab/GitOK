@@ -4,7 +4,7 @@ import PackageDescription
 let package = Package(
     name: "BannerTabPlugin",
     defaultLocalization: "en",
-    platforms: [.macOS(.v15)],
+    platforms: [.macOS(.v14)],
     products: [
         .library(name: "BannerTabPlugin", targets: ["BannerTabPlugin"]),
     ],

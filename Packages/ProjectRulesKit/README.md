@@ -17,7 +17,7 @@ ProjectRulesKit 是 GitOK 的项目规则引擎库，集中管理各类项目相
 
 ## 系统要求
 
-- macOS 15.0+
+- macOS 14.0+
 - Swift 6.0+
 
 ## 安装

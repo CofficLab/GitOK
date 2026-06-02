@@ -14,7 +14,7 @@ GitCoreKit 是 GitOK 的 Git 操作核心库，封装了 Git 仓库模型、CLI 
 
 ## 系统要求
 
-- macOS 15.0+
+- macOS 14.0+
 - Swift 6.0+
 
 ## 安装

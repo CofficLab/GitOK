@@ -4,7 +4,7 @@ import PackageDescription
 let package = Package(
     name: "BannerCoreKit",
     platforms: [
-        .macOS(.v15),
+        .macOS(.v14),
     ],
     products: [
         .library(

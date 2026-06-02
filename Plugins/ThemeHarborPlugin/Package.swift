@@ -4,7 +4,7 @@ import PackageDescription
 let package = Package(
     name: "ThemeHarborPlugin",
     defaultLocalization: "en",
-    platforms: [.macOS(.v15)],
+    platforms: [.macOS(.v14)],
     products: [.library(name: "ThemeHarborPlugin", targets: ["ThemeHarborPlugin"])],
     dependencies: [
         .package(path: "../../Packages/GitOKCoreKit"),

@@ -5,7 +5,7 @@ let package = Package(
     name: "OpenAntigravityPlugin",
     defaultLocalization: "en",
     platforms: [
-        .macOS(.v15),
+        .macOS(.v14),
     ],
     products: [
         .library(name: "OpenAntigravityPlugin", targets: ["OpenAntigravityPlugin"]),

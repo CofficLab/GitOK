@@ -4,7 +4,7 @@ import PackageDescription
 let package = Package(
     name: "ThemeMountainPlugin",
     defaultLocalization: "en",
-    platforms: [.macOS(.v15)],
+    platforms: [.macOS(.v14)],
     products: [.library(name: "ThemeMountainPlugin", targets: ["ThemeMountainPlugin"])],
     dependencies: [
         .package(path: "../../Packages/GitOKCoreKit"),

@@ -4,7 +4,7 @@ import PackageDescription
 let package = Package(
     name: "ThemeOrchardPlugin",
     defaultLocalization: "en",
-    platforms: [.macOS(.v15)],
+    platforms: [.macOS(.v14)],
     products: [.library(name: "ThemeOrchardPlugin", targets: ["ThemeOrchardPlugin"])],
     dependencies: [
         .package(path: "../../Packages/GitOKCoreKit"),

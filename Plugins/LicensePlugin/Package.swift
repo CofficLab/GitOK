@@ -4,7 +4,7 @@ import PackageDescription
 let package = Package(
     name: "LicensePlugin",
     defaultLocalization: "en",
-    platforms: [.macOS(.v15)],
+    platforms: [.macOS(.v14)],
     products: [
         .library(name: "LicensePlugin", targets: ["LicensePlugin"]),
     ],

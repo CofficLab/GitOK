@@ -4,7 +4,7 @@ import PackageDescription
 let package = Package(
     name: "ThemeNebulaPlugin",
     defaultLocalization: "en",
-    platforms: [.macOS(.v15)],
+    platforms: [.macOS(.v14)],
     products: [.library(name: "ThemeNebulaPlugin", targets: ["ThemeNebulaPlugin"])],
     dependencies: [
         .package(path: "../../Packages/GitOKCoreKit"),

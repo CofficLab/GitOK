@@ -14,7 +14,7 @@ GitOKCoreKit 是 GitOK 的插件框架库，定义了插件的上下文环境、
 
 ## 系统要求
 
-- macOS 15.0+
+- macOS 14.0+
 - Swift 6.0+
 
 ## 安装

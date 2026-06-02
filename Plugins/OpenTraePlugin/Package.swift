@@ -5,7 +5,7 @@ let package = Package(
     name: "OpenTraePlugin",
     defaultLocalization: "en",
     platforms: [
-        .macOS(.v15),
+        .macOS(.v14),
     ],
     products: [
         .library(name: "OpenTraePlugin", targets: ["OpenTraePlugin"]),
