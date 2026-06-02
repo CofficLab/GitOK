@@ -1,4 +1,5 @@
 import AppKit
+import MagicDiffView
 import SwiftUI
 
 public struct FileDetailContentView: View {
@@ -80,7 +81,8 @@ public struct FileDetailContentView: View {
         } largeContent: {
             largeDiffView
         } renderContent: {
-            UnifiedDiffTextView(diffText: diffText)
+            MagicDiffView(diffOutput: diffText)
+                .background(.background)
         }
     }
 
@@ -121,20 +123,5 @@ public struct FileDetailContentView: View {
             onShowAfterText: onShowAfterText,
             onCopyReason: onCopyReason
         )
-    }
-}
-
-private struct UnifiedDiffTextView: View {
-    let diffText: String
-
-    var body: some View {
-        ScrollView([.vertical, .horizontal]) {
-            Text(diffText)
-                .font(.system(.body, design: .monospaced))
-                .textSelection(.enabled)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(12)
-        }
-        .background(.background)
     }
 }
