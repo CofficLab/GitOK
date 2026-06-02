@@ -11,8 +11,6 @@ final class EmberThemePluginTests: XCTestCase {
         XCTAssertEqual(metadata.description, "Warm orange dark theme")
         XCTAssertEqual(metadata.iconName, "exclamationmark.triangle")
         XCTAssertEqual(metadata.order, 124)
-        XCTAssertFalse(metadata.allowUserToggle)
-        XCTAssertFalse(metadata.defaultEnabled)
         XCTAssertEqual(metadata.tableName, "Localizable")
     }
 

@@ -12,8 +12,6 @@ final class GitOKThemePluginTests: XCTestCase {
         XCTAssertEqual(metadata.description, "Default GitOK dark theme")
         XCTAssertEqual(metadata.iconName, "folder.badge.gearshape")
         XCTAssertEqual(metadata.order, 120)
-        XCTAssertFalse(metadata.allowUserToggle)
-        XCTAssertFalse(metadata.defaultEnabled)
         XCTAssertEqual(metadata.tableName, "Localizable")
     }
 

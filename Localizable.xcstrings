@@ -718,18 +718,18 @@
         }
       }
     },
-    "Enable or disable GitOK plugins" : {
+    "GitOK plugins are always enabled" : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "启用或停用 GitOK 插件"
+            "value" : "GitOK 插件始终启用"
           }
         },
         "zh-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "啟用或停用 GitOK 外掛"
+            "value" : "GitOK 外掛始終啟用"
           }
         }
       }

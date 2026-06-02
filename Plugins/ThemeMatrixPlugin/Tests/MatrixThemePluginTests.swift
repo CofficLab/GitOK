@@ -11,8 +11,6 @@ final class MatrixThemePluginTests: XCTestCase {
         XCTAssertEqual(metadata.description, "Electric green dark theme")
         XCTAssertEqual(metadata.iconName, "gearshape.2")
         XCTAssertEqual(metadata.order, 131)
-        XCTAssertFalse(metadata.allowUserToggle)
-        XCTAssertFalse(metadata.defaultEnabled)
         XCTAssertEqual(metadata.tableName, "Localizable")
     }
 

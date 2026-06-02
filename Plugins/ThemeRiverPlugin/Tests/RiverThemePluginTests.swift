@@ -11,8 +11,6 @@ final class RiverThemePluginTests: XCTestCase {
         XCTAssertEqual(metadata.description, "Flowing teal dark theme")
         XCTAssertEqual(metadata.iconName, "arrow.triangle.branch")
         XCTAssertEqual(metadata.order, 125)
-        XCTAssertFalse(metadata.allowUserToggle)
-        XCTAssertFalse(metadata.defaultEnabled)
         XCTAssertEqual(metadata.tableName, "Localizable")
     }
 

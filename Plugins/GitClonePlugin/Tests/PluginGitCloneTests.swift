@@ -21,8 +21,6 @@ struct GitClonePluginTests {
     func pluginMetadataAndToolbarContribution() {
         #expect(GitClonePlugin.metadata.id == "GitClonePlugin")
         #expect(GitClonePlugin.metadata.iconName == "square.and.arrow.down")
-        #expect(GitClonePlugin.metadata.allowUserToggle == false)
-        #expect(GitClonePlugin.metadata.defaultEnabled == false)
         #expect(GitClonePlugin.metadata.tableName == "Localizable")
 
         #expect(GitClonePlugin.shared.toolBarLeadingView(context: GitOKPluginContext()) == nil)

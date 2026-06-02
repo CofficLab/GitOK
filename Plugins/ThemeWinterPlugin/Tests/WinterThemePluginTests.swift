@@ -11,8 +11,6 @@ final class WinterThemePluginTests: XCTestCase {
         XCTAssertEqual(metadata.description, "Cool minimal light theme")
         XCTAssertEqual(metadata.iconName, "scope")
         XCTAssertEqual(metadata.order, 133)
-        XCTAssertFalse(metadata.allowUserToggle)
-        XCTAssertFalse(metadata.defaultEnabled)
         XCTAssertEqual(metadata.tableName, "Localizable")
     }
 

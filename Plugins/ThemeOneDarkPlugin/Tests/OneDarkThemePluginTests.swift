@@ -11,8 +11,6 @@ final class OneDarkThemePluginTests: XCTestCase {
         XCTAssertEqual(metadata.description, "Classic editor dark theme")
         XCTAssertEqual(metadata.iconName, "chevron.left.forwardslash.chevron.right")
         XCTAssertEqual(metadata.order, 136)
-        XCTAssertFalse(metadata.allowUserToggle)
-        XCTAssertFalse(metadata.defaultEnabled)
         XCTAssertEqual(metadata.tableName, "Localizable")
     }
 

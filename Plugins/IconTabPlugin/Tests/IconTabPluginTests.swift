@@ -8,8 +8,6 @@ final class IconTabPluginTests: XCTestCase {
         XCTAssertEqual(metadata.id, "IconTabPlugin")
         XCTAssertEqual(metadata.iconName, "photo")
         XCTAssertEqual(metadata.order, 1)
-        XCTAssertFalse(metadata.allowUserToggle)
-        XCTAssertFalse(metadata.defaultEnabled)
         XCTAssertEqual(metadata.tableName, "Localizable")
         XCTAssertFalse(metadata.displayName.isEmpty)
         XCTAssertFalse(metadata.description.isEmpty)

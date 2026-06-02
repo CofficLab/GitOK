@@ -7,8 +7,6 @@ struct CommitPluginTests {
     func metadata() {
         #expect(CommitPlugin.metadata.id == "CommitPlugin")
         #expect(CommitPlugin.metadata.iconName == "arrow.up.arrow.down")
-        #expect(CommitPlugin.metadata.allowUserToggle == false)
-        #expect(CommitPlugin.metadata.defaultEnabled == false)
         #expect(CommitPlugin.metadata.tableName == "GitCommit")
     }
 

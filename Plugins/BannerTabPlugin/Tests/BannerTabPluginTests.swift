@@ -8,8 +8,6 @@ final class BannerTabPluginTests: XCTestCase {
         XCTAssertEqual(metadata.id, "BannerTabPlugin")
         XCTAssertEqual(metadata.iconName, "rectangle.topthird.inset.filled")
         XCTAssertEqual(metadata.order, 2)
-        XCTAssertFalse(metadata.allowUserToggle)
-        XCTAssertFalse(metadata.defaultEnabled)
         XCTAssertEqual(metadata.tableName, "Localizable")
         XCTAssertFalse(metadata.displayName.isEmpty)
         XCTAssertFalse(metadata.description.isEmpty)

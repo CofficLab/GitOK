@@ -9,8 +9,6 @@ final class OpenRemotePluginTests: XCTestCase {
         XCTAssertEqual(metadata.id, "OpenRemote")
         XCTAssertEqual(metadata.iconName, "link")
         XCTAssertEqual(metadata.order, 8407)
-        XCTAssertFalse(metadata.allowUserToggle)
-        XCTAssertFalse(metadata.defaultEnabled)
         XCTAssertEqual(metadata.tableName, "Localizable")
         XCTAssertFalse(metadata.displayName.isEmpty)
         XCTAssertFalse(metadata.description.isEmpty)

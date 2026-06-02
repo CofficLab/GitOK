@@ -11,8 +11,6 @@ final class MidnightThemePluginTests: XCTestCase {
         XCTAssertEqual(metadata.description, "Quiet terminal-green dark theme")
         XCTAssertEqual(metadata.iconName, "terminal")
         XCTAssertEqual(metadata.order, 123)
-        XCTAssertFalse(metadata.allowUserToggle)
-        XCTAssertFalse(metadata.defaultEnabled)
         XCTAssertEqual(metadata.tableName, "Localizable")
     }
 

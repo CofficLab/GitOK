@@ -8,8 +8,6 @@ final class GitTabPluginTests: XCTestCase {
         XCTAssertEqual(metadata.id, "GitTabPlugin")
         XCTAssertEqual(metadata.iconName, "arrow.up.arrow.down")
         XCTAssertEqual(metadata.order, 0)
-        XCTAssertFalse(metadata.allowUserToggle)
-        XCTAssertFalse(metadata.defaultEnabled)
         XCTAssertEqual(metadata.tableName, "Localizable")
         XCTAssertFalse(metadata.displayName.isEmpty)
         XCTAssertFalse(metadata.description.isEmpty)

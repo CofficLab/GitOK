@@ -9,8 +9,6 @@ final class ThemeStatusBarPluginTests: XCTestCase {
         XCTAssertEqual(metadata.id, "ThemeStatusBarPlugin")
         XCTAssertEqual(metadata.iconName, "paintbrush")
         XCTAssertEqual(metadata.order, 119)
-        XCTAssertFalse(metadata.allowUserToggle)
-        XCTAssertFalse(metadata.defaultEnabled)
         XCTAssertEqual(metadata.tableName, "Localizable")
         XCTAssertFalse(metadata.displayName.isEmpty)
         XCTAssertFalse(metadata.description.isEmpty)

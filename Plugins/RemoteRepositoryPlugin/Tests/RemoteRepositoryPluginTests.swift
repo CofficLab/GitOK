@@ -9,8 +9,6 @@ struct RemoteRepositoryPluginTests {
     func metadata() {
         #expect(RemoteRepositoryPlugin.metadata.id == "RemoteRepositoryPlugin")
         #expect(RemoteRepositoryPlugin.metadata.iconName == "network")
-        #expect(RemoteRepositoryPlugin.metadata.allowUserToggle == false)
-        #expect(RemoteRepositoryPlugin.metadata.defaultEnabled == false)
         #expect(RemoteRepositoryPlugin.metadata.tableName == "Localizable")
     }
 

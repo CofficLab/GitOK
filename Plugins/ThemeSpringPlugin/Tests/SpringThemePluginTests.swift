@@ -11,8 +11,6 @@ final class SpringThemePluginTests: XCTestCase {
         XCTAssertEqual(metadata.description, "Fresh green light theme")
         XCTAssertEqual(metadata.iconName, "tree")
         XCTAssertEqual(metadata.order, 121)
-        XCTAssertFalse(metadata.allowUserToggle)
-        XCTAssertFalse(metadata.defaultEnabled)
         XCTAssertEqual(metadata.tableName, "Localizable")
     }
 

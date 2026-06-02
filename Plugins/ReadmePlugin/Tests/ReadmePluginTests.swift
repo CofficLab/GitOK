@@ -9,8 +9,6 @@ final class ReadmePluginTests: XCTestCase {
         XCTAssertEqual(metadata.id, "ReadmePlugin")
         XCTAssertEqual(metadata.iconName, "book")
         XCTAssertEqual(metadata.order, 9999)
-        XCTAssertFalse(metadata.allowUserToggle)
-        XCTAssertFalse(metadata.defaultEnabled)
         XCTAssertEqual(metadata.tableName, "Localizable")
         XCTAssertFalse(metadata.displayName.isEmpty)
         XCTAssertFalse(metadata.description.isEmpty)

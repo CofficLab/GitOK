@@ -11,8 +11,6 @@ final class GraphiteThemePluginTests: XCTestCase {
         XCTAssertEqual(metadata.description, "Neutral graphite dark theme")
         XCTAssertEqual(metadata.iconName, "square.grid.3x3")
         XCTAssertEqual(metadata.order, 134)
-        XCTAssertFalse(metadata.allowUserToggle)
-        XCTAssertFalse(metadata.defaultEnabled)
         XCTAssertEqual(metadata.tableName, "Localizable")
     }
 

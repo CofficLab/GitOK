@@ -11,8 +11,6 @@ final class XcodeLightThemePluginTests: XCTestCase {
         XCTAssertEqual(metadata.description, "Xcode-inspired light theme")
         XCTAssertEqual(metadata.iconName, "hammer")
         XCTAssertEqual(metadata.order, 137)
-        XCTAssertFalse(metadata.allowUserToggle)
-        XCTAssertFalse(metadata.defaultEnabled)
         XCTAssertEqual(metadata.tableName, "Localizable")
     }
 

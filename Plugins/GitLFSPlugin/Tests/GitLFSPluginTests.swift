@@ -10,8 +10,6 @@ final class GitLFSPluginTests: XCTestCase {
         XCTAssertEqual(metadata.id, "GitLFSPlugin")
         XCTAssertEqual(metadata.iconName, "externaldrive.badge.timemachine")
         XCTAssertEqual(metadata.order, 9999)
-        XCTAssertFalse(metadata.allowUserToggle)
-        XCTAssertFalse(metadata.defaultEnabled)
         XCTAssertEqual(metadata.tableName, "Localizable")
         XCTAssertFalse(metadata.displayName.isEmpty)
         XCTAssertFalse(metadata.description.isEmpty)

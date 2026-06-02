@@ -8,8 +8,6 @@ struct ProjectPickerPluginTests {
     func metadata() {
         #expect(ProjectPickerPlugin.metadata.id == "ProjectPickerPlugin")
         #expect(ProjectPickerPlugin.metadata.iconName == "folder")
-        #expect(ProjectPickerPlugin.metadata.allowUserToggle == false)
-        #expect(ProjectPickerPlugin.metadata.defaultEnabled == false)
         #expect(ProjectPickerPlugin.metadata.tableName == "Localizable")
     }
 

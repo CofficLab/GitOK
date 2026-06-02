@@ -10,8 +10,6 @@ final class MountainThemePluginTests: XCTestCase {
         XCTAssertEqual(metadata.description, "Quiet stone light theme")
         XCTAssertEqual(metadata.iconName, "archivebox")
         XCTAssertEqual(metadata.order, 132)
-        XCTAssertFalse(metadata.allowUserToggle)
-        XCTAssertFalse(metadata.defaultEnabled)
         XCTAssertEqual(metadata.tableName, "Localizable")
     }
 

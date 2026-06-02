@@ -8,8 +8,6 @@ final class OpenCursorPluginTests: XCTestCase {
         XCTAssertEqual(metadata.id, "OpenCursor")
         XCTAssertEqual(metadata.iconName, "cursor.rays")
         XCTAssertEqual(metadata.order, 8401)
-        XCTAssertFalse(metadata.allowUserToggle)
-        XCTAssertFalse(metadata.defaultEnabled)
         XCTAssertEqual(metadata.tableName, "Localizable")
         XCTAssertFalse(metadata.displayName.isEmpty)
         XCTAssertFalse(metadata.description.isEmpty)

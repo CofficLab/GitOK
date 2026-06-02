@@ -8,8 +8,6 @@ final class OpenGitHubDesktopPluginTests: XCTestCase {
         XCTAssertEqual(metadata.id, "OpenGitHubDesktop")
         XCTAssertEqual(metadata.iconName, "desktopcomputer")
         XCTAssertEqual(metadata.order, 8403)
-        XCTAssertFalse(metadata.allowUserToggle)
-        XCTAssertFalse(metadata.defaultEnabled)
         XCTAssertEqual(metadata.tableName, "Localizable")
         XCTAssertFalse(metadata.displayName.isEmpty)
         XCTAssertFalse(metadata.description.isEmpty)

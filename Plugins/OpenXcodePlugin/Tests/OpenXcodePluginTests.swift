@@ -8,8 +8,6 @@ final class OpenXcodePluginTests: XCTestCase {
         XCTAssertEqual(metadata.id, "OpenXcode")
         XCTAssertEqual(metadata.iconName, "hammer")
         XCTAssertEqual(metadata.order, 8402)
-        XCTAssertFalse(metadata.allowUserToggle)
-        XCTAssertFalse(metadata.defaultEnabled)
         XCTAssertEqual(metadata.tableName, "Localizable")
         XCTAssertFalse(metadata.displayName.isEmpty)
         XCTAssertFalse(metadata.description.isEmpty)

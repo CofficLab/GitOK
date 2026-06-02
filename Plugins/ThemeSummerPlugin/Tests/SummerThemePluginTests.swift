@@ -11,8 +11,6 @@ final class SummerThemePluginTests: XCTestCase {
         XCTAssertEqual(metadata.description, "Warm golden light theme")
         XCTAssertEqual(metadata.iconName, "tag")
         XCTAssertEqual(metadata.order, 130)
-        XCTAssertFalse(metadata.allowUserToggle)
-        XCTAssertFalse(metadata.defaultEnabled)
         XCTAssertEqual(metadata.tableName, "Localizable")
     }
 

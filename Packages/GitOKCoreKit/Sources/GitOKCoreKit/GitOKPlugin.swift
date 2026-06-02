@@ -3,34 +3,28 @@ import GitOKUI
 import SwiftUI
 
 public enum GitOKPluginPolicy: String, Sendable, Codable {
-    /// Always registered and enabled; users cannot disable it.
+    /// Registered and enabled.
     case alwaysOn
 
-    /// Registered and enabled by default; users can disable it.
+    /// Registered and enabled. Kept for metadata compatibility.
     case optOut
 
-    /// Registered but disabled by default; users can enable it.
+    /// Registered and enabled. Kept for metadata compatibility.
     case optIn
 
-    /// Not registered.
+    /// Registered and enabled. Kept for metadata compatibility.
     case disabled
 
     public var shouldRegister: Bool {
-        self != .disabled
+        true
     }
 
     public var allowUserToggle: Bool {
-        switch self {
-        case .alwaysOn, .disabled: false
-        case .optOut, .optIn: true
-        }
+        false
     }
 
     public var defaultEnabled: Bool {
-        switch self {
-        case .alwaysOn, .optOut: true
-        case .optIn, .disabled: false
-        }
+        true
     }
 }
 

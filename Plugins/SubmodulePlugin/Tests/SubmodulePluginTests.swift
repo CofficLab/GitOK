@@ -10,8 +10,6 @@ final class SubmodulePluginTests: XCTestCase {
         XCTAssertEqual(metadata.displayName, "Submodule")
         XCTAssertEqual(metadata.iconName, "shippingbox")
         XCTAssertEqual(metadata.order, 9999)
-        XCTAssertFalse(metadata.allowUserToggle)
-        XCTAssertFalse(metadata.defaultEnabled)
         XCTAssertEqual(metadata.tableName, "Localizable")
         XCTAssertFalse(metadata.description.isEmpty)
     }

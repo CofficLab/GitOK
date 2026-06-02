@@ -11,8 +11,6 @@ final class AuroraThemePluginTests: XCTestCase {
         XCTAssertEqual(metadata.description, "Deep cyan night theme")
         XCTAssertEqual(metadata.iconName, "point.3.connected.trianglepath.dotted")
         XCTAssertEqual(metadata.order, 122)
-        XCTAssertFalse(metadata.allowUserToggle)
-        XCTAssertFalse(metadata.defaultEnabled)
         XCTAssertEqual(metadata.tableName, "Localizable")
     }
 

@@ -7,11 +7,8 @@ public final class GitOKPluginRuntime {
     private var plugins: [any SuperPlugin] = []
 
     private var usedLabels: Set<String> = []
-    private let settingsStore: PluginSettingsStore
 
-    public init(settingsStore: PluginSettingsStore = .shared) {
-        self.settingsStore = settingsStore
-    }
+    public init(settingsStore: PluginSettingsStore = .shared) {}
 
     public var registeredCount: Int {
         plugins.count
@@ -41,20 +38,7 @@ public final class GitOKPluginRuntime {
     }
 
     private func isPluginEnabled(_ plugin: any SuperPlugin) -> Bool {
-        if !plugin.pluginPolicy.shouldRegister {
-            return false
-        }
-
-        if !plugin.pluginPolicy.allowUserToggle {
-            return true
-        }
-
-        let pluginId = plugin.instanceLabel
-        if settingsStore.hasUserConfigured(pluginId) {
-            return settingsStore.isPluginEnabled(pluginId, defaultEnabled: plugin.pluginPolicy.defaultEnabled)
-        }
-
-        return plugin.pluginPolicy.defaultEnabled
+        true
     }
 
     public var tabNames: [String] {

@@ -8,8 +8,6 @@ final class OpenFinderPluginTests: XCTestCase {
         XCTAssertEqual(metadata.id, "OpenFinder")
         XCTAssertEqual(metadata.iconName, "folder")
         XCTAssertEqual(metadata.order, 8300)
-        XCTAssertFalse(metadata.allowUserToggle)
-        XCTAssertFalse(metadata.defaultEnabled)
         XCTAssertEqual(metadata.tableName, "Localizable")
         XCTAssertFalse(metadata.displayName.isEmpty)
         XCTAssertFalse(metadata.description.isEmpty)

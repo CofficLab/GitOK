@@ -7,8 +7,6 @@ struct IconPluginTests {
     func metadata() {
         #expect(IconPlugin.metadata.id == "IconPlugin")
         #expect(IconPlugin.metadata.iconName == "photo")
-        #expect(IconPlugin.metadata.allowUserToggle == false)
-        #expect(IconPlugin.metadata.defaultEnabled == false)
         #expect(IconPlugin.metadata.tableName == "Localizable")
     }
 

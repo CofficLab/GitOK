@@ -8,8 +8,6 @@ final class OpenKiroPluginTests: XCTestCase {
         XCTAssertEqual(metadata.id, "OpenKiro")
         XCTAssertEqual(metadata.iconName, "water.waves")
         XCTAssertEqual(metadata.order, 8405)
-        XCTAssertFalse(metadata.allowUserToggle)
-        XCTAssertFalse(metadata.defaultEnabled)
         XCTAssertEqual(metadata.tableName, "Localizable")
         XCTAssertFalse(metadata.displayName.isEmpty)
         XCTAssertFalse(metadata.description.isEmpty)

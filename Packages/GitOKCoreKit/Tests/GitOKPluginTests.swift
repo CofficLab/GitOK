@@ -12,8 +12,6 @@ private struct SamplePlugin: GitOKPlugin {
     )
 }
 
-private struct LegacySamplePlugin: SuperPlugin {}
-
 final class GitOKPluginTests: XCTestCase {
     func testMetadataDefaultsAreStable() {
         let metadata = SamplePlugin.metadata
@@ -21,18 +19,11 @@ final class GitOKPluginTests: XCTestCase {
         XCTAssertEqual(metadata.id, "Sample")
         XCTAssertEqual(metadata.iconName, "puzzlepiece.extension")
         XCTAssertEqual(metadata.order, 9999)
-        XCTAssertFalse(metadata.allowUserToggle)
-        XCTAssertFalse(metadata.defaultEnabled)
         XCTAssertEqual(metadata.tableName, "Sample")
     }
 
     func testDefaultInstanceLabelUsesMetadataId() {
         XCTAssertEqual(SamplePlugin.shared.instanceLabel, "Sample")
-    }
-
-    func testLegacyPluginDefaultPolicyIsDisabled() {
-        XCTAssertEqual(LegacySamplePlugin.policy, .disabled)
-        XCTAssertFalse(LegacySamplePlugin.shouldRegister)
     }
 
     @MainActor

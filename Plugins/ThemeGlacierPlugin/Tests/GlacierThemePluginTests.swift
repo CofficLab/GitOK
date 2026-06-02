@@ -10,8 +10,6 @@ final class GlacierThemePluginTests: XCTestCase {
         XCTAssertEqual(metadata.description, "Icy cyan light theme")
         XCTAssertEqual(metadata.iconName, "externaldrive")
         XCTAssertEqual(metadata.order, 129)
-        XCTAssertFalse(metadata.allowUserToggle)
-        XCTAssertFalse(metadata.defaultEnabled)
         XCTAssertEqual(metadata.tableName, "Localizable")
     }
 

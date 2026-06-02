@@ -8,8 +8,6 @@ struct StashPluginTests {
     func metadata() {
         #expect(StashPlugin.metadata.id == "StashPlugin")
         #expect(StashPlugin.metadata.iconName == "archivebox")
-        #expect(StashPlugin.metadata.allowUserToggle == false)
-        #expect(StashPlugin.metadata.defaultEnabled == false)
         #expect(StashPlugin.metadata.tableName == "Localizable")
     }
 

@@ -9,8 +9,6 @@ struct GitPullPluginTests {
     func metadata() {
         #expect(GitPullPlugin.metadata.id == "GitPullPlugin")
         #expect(GitPullPlugin.metadata.iconName == "arrow.down")
-        #expect(GitPullPlugin.metadata.allowUserToggle == false)
-        #expect(GitPullPlugin.metadata.defaultEnabled == false)
         #expect(GitPullPlugin.metadata.tableName == "Localizable")
     }
 

@@ -9,8 +9,6 @@ struct SmartMergePluginTests {
     func metadata() {
         #expect(SmartMergePlugin.metadata.id == "SmartMergePlugin")
         #expect(SmartMergePlugin.metadata.iconName == "arrow.merge")
-        #expect(SmartMergePlugin.metadata.allowUserToggle == false)
-        #expect(SmartMergePlugin.metadata.defaultEnabled == false)
         #expect(SmartMergePlugin.metadata.tableName == "Localizable")
     }
 

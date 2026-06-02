@@ -9,8 +9,6 @@ struct UnpushedStatusPluginTests {
         #expect(UnpushedStatusPlugin.metadata.id == "UnpushedStatusPlugin")
         #expect(UnpushedStatusPlugin.metadata.iconName == "arrow.up.circle")
         #expect(UnpushedStatusPlugin.metadata.order == 25)
-        #expect(UnpushedStatusPlugin.metadata.allowUserToggle == false)
-        #expect(UnpushedStatusPlugin.metadata.defaultEnabled == false)
         #expect(UnpushedStatusPlugin.metadata.tableName == "Localizable")
     }
 

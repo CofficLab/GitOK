@@ -9,8 +9,6 @@ final class SettingsButtonPluginTests: XCTestCase {
         XCTAssertEqual(metadata.id, "SettingsButton")
         XCTAssertEqual(metadata.iconName, "gearshape")
         XCTAssertEqual(metadata.order, 9000)
-        XCTAssertFalse(metadata.allowUserToggle)
-        XCTAssertFalse(metadata.defaultEnabled)
         XCTAssertEqual(metadata.tableName, "Localizable")
         XCTAssertFalse(metadata.displayName.isEmpty)
         XCTAssertFalse(metadata.description.isEmpty)

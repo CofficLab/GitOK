@@ -8,8 +8,6 @@ final class GitIgnorePluginTests: XCTestCase {
         XCTAssertEqual(metadata.id, "GitignorePlugin")
         XCTAssertEqual(metadata.iconName, "doc.badge.gearshape")
         XCTAssertEqual(metadata.order, 9999)
-        XCTAssertFalse(metadata.allowUserToggle)
-        XCTAssertFalse(metadata.defaultEnabled)
         XCTAssertEqual(metadata.tableName, "Localizable")
         XCTAssertFalse(metadata.displayName.isEmpty)
         XCTAssertFalse(metadata.description.isEmpty)

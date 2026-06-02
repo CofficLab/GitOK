@@ -8,8 +8,6 @@ final class OpenTraePluginTests: XCTestCase {
         XCTAssertEqual(metadata.id, "OpenTrae")
         XCTAssertEqual(metadata.iconName, "brain")
         XCTAssertEqual(metadata.order, 8404)
-        XCTAssertFalse(metadata.allowUserToggle)
-        XCTAssertFalse(metadata.defaultEnabled)
         XCTAssertEqual(metadata.tableName, "Localizable")
         XCTAssertFalse(metadata.displayName.isEmpty)
         XCTAssertFalse(metadata.description.isEmpty)

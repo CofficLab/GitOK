@@ -11,8 +11,6 @@ final class GitHubLightThemePluginTests: XCTestCase {
         XCTAssertEqual(metadata.description, "GitHub-inspired light theme")
         XCTAssertEqual(metadata.iconName, "globe")
         XCTAssertEqual(metadata.order, 138)
-        XCTAssertFalse(metadata.allowUserToggle)
-        XCTAssertFalse(metadata.defaultEnabled)
         XCTAssertEqual(metadata.tableName, "Localizable")
     }
 

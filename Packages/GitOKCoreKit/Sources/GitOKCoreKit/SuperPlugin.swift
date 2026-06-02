@@ -25,13 +25,13 @@ public protocol SuperPlugin {
     /// 实例级图标。默认转发到静态属性，package adapter 可按被包装插件覆盖。
     var pluginIconName: String { get }
 
-    /// 实例级注册和用户启用策略。默认转发到静态属性，package adapter 可按被包装插件覆盖。
+    /// 实例级注册策略。当前所有插件都会强制注册并启用。
     var pluginPolicy: GitOKPluginPolicy { get }
 
-    /// 实例级用户开关能力。默认转发到静态属性，package adapter 可按被包装插件覆盖。
+    /// 实例级用户开关能力。当前插件不允许用户禁用。
     var pluginAllowUserToggle: Bool { get }
 
-    /// 实例级默认启用状态。默认转发到静态属性，package adapter 可按被包装插件覆盖。
+    /// 实例级默认启用状态。当前所有插件默认启用。
     var pluginDefaultEnabled: Bool { get }
 
     /// 实例级多语言表名。默认转发到静态属性，package adapter 可按被包装插件覆盖。
@@ -49,23 +49,19 @@ public protocol SuperPlugin {
     /// 插件图标名称
     static var iconName: String { get }
 
-    /// 插件注册和用户启用策略。
+    /// 插件注册策略。当前所有策略值都会强制注册并启用。
     static var policy: GitOKPluginPolicy { get }
 
-    /// 是否允许用户在设置中切换启用/禁用此插件
-    /// 如果为 false，插件始终启用且不在设置中显示
-    /// 如果为 true，插件显示在设置中，用户可控制启用状态
+    /// 是否允许用户在设置中切换启用/禁用此插件。当前固定为 false。
     static var allowUserToggle: Bool { get }
 
-    /// 插件默认启用状态（仅在用户未配置时生效）
-    /// 如果用户配置过，以用户配置为准
+    /// 插件默认启用状态。当前固定为 true。
     static var defaultEnabled: Bool { get }
 
     /// 插件多语言表名，默认为插件类名
     static var tableName: String { get }
 
-    /// 插件是否应该注册到系统中
-    /// 开发者可通过此属性控制插件是否启用
+    /// 插件是否应该注册到系统中。当前固定为 true。
     static var shouldRegister: Bool { get }
 
     /// 返回插件的标签项名称，如果插件提供标签页则返回标签名称，否则返回 nil
@@ -205,7 +201,7 @@ public extension SuperPlugin {
     /// 默认的图标名称实现
     static var iconName: String { "puzzlepiece.extension" }
 
-    /// 默认策略：不注册。插件需要显式声明策略才能进入运行时。
+    /// 默认策略保留为 disabled 以兼容旧 metadata；运行时仍会强制注册并启用。
     static var policy: GitOKPluginPolicy { .disabled }
 
     /// 默认从 policy 派生用户开关能力

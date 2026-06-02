@@ -9,8 +9,6 @@ struct AutoPushPluginTests {
     func metadata() {
         #expect(AutoPushPlugin.metadata.id == "AutoPushPlugin")
         #expect(AutoPushPlugin.metadata.iconName == "arrow.up.circle")
-        #expect(AutoPushPlugin.metadata.allowUserToggle == false)
-        #expect(AutoPushPlugin.metadata.defaultEnabled == false)
         #expect(AutoPushPlugin.metadata.tableName == "Localizable")
     }
 

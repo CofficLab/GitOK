@@ -26,7 +26,7 @@ struct PluginSettingsView: View, SuperLog {
                     .fontWeight(.bold)
                     .padding(.bottom, 16)
 
-                Text(String(localized: "Enable or disable GitOK plugins"))
+                Text(String(localized: "GitOK plugins are always enabled"))
                     .font(.subheadline)
                     .foregroundColor(.secondary)
                     .padding(.bottom, 24)

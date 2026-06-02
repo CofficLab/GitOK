@@ -10,8 +10,6 @@ final class OrchardThemePluginTests: XCTestCase {
         XCTAssertEqual(metadata.description, "Earthy amber dark theme")
         XCTAssertEqual(metadata.iconName, "tray.full")
         XCTAssertEqual(metadata.order, 128)
-        XCTAssertFalse(metadata.allowUserToggle)
-        XCTAssertFalse(metadata.defaultEnabled)
         XCTAssertEqual(metadata.tableName, "Localizable")
     }
 

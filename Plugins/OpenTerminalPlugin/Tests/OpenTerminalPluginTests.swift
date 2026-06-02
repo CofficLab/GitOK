@@ -8,8 +8,6 @@ final class OpenTerminalPluginTests: XCTestCase {
         XCTAssertEqual(metadata.id, "OpenTerminal")
         XCTAssertEqual(metadata.iconName, "terminal")
         XCTAssertEqual(metadata.order, 8310)
-        XCTAssertFalse(metadata.allowUserToggle)
-        XCTAssertFalse(metadata.defaultEnabled)
         XCTAssertEqual(metadata.tableName, "Localizable")
         XCTAssertFalse(metadata.displayName.isEmpty)
         XCTAssertFalse(metadata.description.isEmpty)

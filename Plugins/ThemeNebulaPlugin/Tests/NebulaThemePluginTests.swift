@@ -10,8 +10,6 @@ final class NebulaThemePluginTests: XCTestCase {
         XCTAssertEqual(metadata.description, "Violet atmospheric dark theme")
         XCTAssertEqual(metadata.iconName, "arrow.triangle.pull")
         XCTAssertEqual(metadata.order, 126)
-        XCTAssertFalse(metadata.allowUserToggle)
-        XCTAssertFalse(metadata.defaultEnabled)
         XCTAssertEqual(metadata.tableName, "Localizable")
     }
 

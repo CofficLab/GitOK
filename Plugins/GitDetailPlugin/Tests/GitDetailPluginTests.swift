@@ -8,8 +8,6 @@ struct GitDetailPluginTests {
         #expect(GitDetailPlugin.metadata.id == "GitDetailPlugin")
         #expect(GitDetailPlugin.metadata.iconName == "puzzlepiece.extension")
         #expect(GitDetailPlugin.metadata.order == 0)
-        #expect(GitDetailPlugin.metadata.allowUserToggle == false)
-        #expect(GitDetailPlugin.metadata.defaultEnabled == false)
         #expect(GitDetailPlugin.metadata.tableName == "GitDetail")
     }
 

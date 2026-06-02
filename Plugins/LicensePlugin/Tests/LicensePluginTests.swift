@@ -9,8 +9,6 @@ final class LicensePluginTests: XCTestCase {
         XCTAssertEqual(metadata.id, "LicensePlugin")
         XCTAssertEqual(metadata.iconName, "doc.on.doc")
         XCTAssertEqual(metadata.order, 9999)
-        XCTAssertFalse(metadata.allowUserToggle)
-        XCTAssertFalse(metadata.defaultEnabled)
         XCTAssertEqual(metadata.tableName, "Localizable")
         XCTAssertFalse(metadata.displayName.isEmpty)
         XCTAssertFalse(metadata.description.isEmpty)

@@ -8,8 +8,6 @@ final class OpenVSCodePluginTests: XCTestCase {
         XCTAssertEqual(metadata.id, "OpenVSCode")
         XCTAssertEqual(metadata.iconName, "chevron.left.forwardslash.chevron.right")
         XCTAssertEqual(metadata.order, 8400)
-        XCTAssertTrue(metadata.allowUserToggle)
-        XCTAssertFalse(metadata.defaultEnabled)
         XCTAssertEqual(metadata.tableName, "Localizable")
         XCTAssertFalse(metadata.displayName.isEmpty)
         XCTAssertFalse(metadata.description.isEmpty)

@@ -11,8 +11,6 @@ final class DraculaThemePluginTests: XCTestCase {
         XCTAssertEqual(metadata.description, "Classic vivid dark theme")
         XCTAssertEqual(metadata.iconName, "moon.stars")
         XCTAssertEqual(metadata.order, 135)
-        XCTAssertFalse(metadata.allowUserToggle)
-        XCTAssertFalse(metadata.defaultEnabled)
         XCTAssertEqual(metadata.tableName, "Localizable")
     }
 
