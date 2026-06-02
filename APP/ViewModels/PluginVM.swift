@@ -81,12 +81,14 @@ class PluginVM: ObservableObject {
     @MainActor
     func getEnabledToolbarTrailingViews(
         projectURL: URL? = nil,
+        branchName: String? = nil,
         remoteTrackingStatus: GitOKRemoteTrackingStatus? = nil,
         isGitRepository: Bool = false
     ) -> [GitOKPluginViewContribution] {
         guard hasPlugins, let runtime else { return [] }
         let context = GitOKPluginContext(
             projectURL: projectURL,
+            branchName: branchName,
             isGitRepository: isGitRepository,
             remoteTrackingStatus: remoteTrackingStatus
         )

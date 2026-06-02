@@ -305,6 +305,7 @@ extension ContentView {
         let trailingStart = Date()
         toolbarTrailingViews = p.getEnabledToolbarTrailingViews(
             projectURL: vm.project?.url,
+            branchName: g.branch?.name,
             remoteTrackingStatus: GitOKRemoteTrackingStatus(
                 ahead: vm.aheadCount,
                 behind: vm.behindCount,
