@@ -20,8 +20,21 @@ struct GitPushPluginTests {
     @Test("plugin contributes toolbar trailing view")
     @MainActor
     func toolbarTrailingView() {
-        let context = GitOKPluginContext(projectURL: URL(fileURLWithPath: "/tmp/test"))
+        let context = GitOKPluginContext(
+            projectURL: URL(fileURLWithPath: "/tmp/test"),
+            isGitRepository: true
+        )
         #expect(GitPushPlugin.shared.toolBarTrailingView(context: context) != nil)
+    }
+
+    @Test("plugin hides toolbar view outside git repositories")
+    @MainActor
+    func hidesOutsideGitRepository() {
+        let context = GitOKPluginContext(
+            projectURL: URL(fileURLWithPath: "/tmp/test"),
+            isGitRepository: false
+        )
+        #expect(GitPushPlugin.shared.toolBarTrailingView(context: context) == nil)
     }
 
     @Test("primary action follows remote tracking state")
