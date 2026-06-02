@@ -9,7 +9,7 @@ struct BranchPluginTests {
     func metadata() {
         #expect(BranchPlugin.metadata.id == "BranchPlugin")
         #expect(BranchPlugin.metadata.iconName == "arrow.triangle.branch")
-        #expect(BranchPlugin.metadata.order == 22)
+        #expect(BranchPlugin.metadata.order == 10000)
         #expect(BranchPlugin.metadata.tableName == "Localizable")
     }
 

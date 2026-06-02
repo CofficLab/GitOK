@@ -36,7 +36,7 @@ public struct BranchPlugin: GitOKPlugin {
         displayName: BranchPluginLocalization.string("Branch"),
         description: BranchPluginLocalization.string("Git 分支管理"),
         iconName: "arrow.triangle.branch",
-        order: 22,
+        order: 10000,
         policy: .optIn,
         tableName: BranchPluginLocalization.table
     )
