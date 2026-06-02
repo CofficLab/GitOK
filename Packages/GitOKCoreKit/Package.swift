@@ -22,7 +22,7 @@ let package = Package(
         .package(path: "../ProjectRulesKit"),
         .package(path: "../ProjectSupportKit"),
         .package(path: "../GitCoreKit"),
-        .package(path: "../MagicKit"),
+        .package(path: "../GitOKSupportKit"),
     ],
     targets: [
         .target(
@@ -42,7 +42,7 @@ let package = Package(
                 "ProjectRulesKit",
                 "ProjectSupportKit",
                 "GitCoreKit",
-                "MagicKit",
+                "GitOKSupportKit",
             ],
             path: "Sources/GitOKCoreFeatures"
         ),

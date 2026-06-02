@@ -1,4 +1,4 @@
-import MagicKit
+import GitOKSupportKit
 import SwiftUI
 
 /// 工具栏按钮样式修饰符

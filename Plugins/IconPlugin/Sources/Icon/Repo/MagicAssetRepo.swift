@@ -5,7 +5,7 @@ import SwiftUI
 
 /**
  * MagicAsset 图标仓库
- * 读取 MagicKit 提供的内置 SwiftUI 图标（如书本、相机、音乐等），
+ * 读取 GitOKSupportKit 提供的内置 SwiftUI 图标（如书本、相机、音乐等），
  * 将其以只读方式暴露给 GitOK 的图标系统。
  */
 final class MagicAssetRepo: IconSourceProtocol, SuperLog, @unchecked Sendable {

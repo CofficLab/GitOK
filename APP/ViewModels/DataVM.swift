@@ -1,5 +1,5 @@
 import GitCoreKit
-import MagicKit
+import GitOKSupportKit
 import Combine
 import Foundation
 import OSLog

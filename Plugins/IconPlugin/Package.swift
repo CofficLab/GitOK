@@ -11,7 +11,7 @@ let package = Package(
     dependencies: [
         .package(path: "../../Packages/GitOKCoreKit"),
         .package(path: "../../Packages/MagicAlert"),
-        .package(path: "../../Packages/MagicKit"),
+        .package(path: "../../Packages/GitOKSupportKit"),
         .package(path: "../../Packages/ProjectRulesKit"),
         .package(url: "https://github.com/nookery/MagicLog.git", branch: "main"),
     ],
@@ -21,7 +21,7 @@ let package = Package(
             dependencies: [
                 "GitOKCoreKit",
                 "MagicAlert",
-                "MagicKit",
+                "GitOKSupportKit",
                 "ProjectRulesKit",
                 "MagicLog",
             ],

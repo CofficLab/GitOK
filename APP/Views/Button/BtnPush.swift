@@ -1,5 +1,5 @@
 import MagicAlert
-import MagicKit
+import GitOKSupportKit
 import SwiftUI
 
 /// 推送按钮组件

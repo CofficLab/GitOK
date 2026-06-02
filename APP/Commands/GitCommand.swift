@@ -1,5 +1,5 @@
 import SwiftUI
-import MagicKit
+import GitOKSupportKit
 
 /// Git 菜单命令：集中暴露常用仓库操作和快捷键。
 struct GitCommand: Commands, SuperLog {

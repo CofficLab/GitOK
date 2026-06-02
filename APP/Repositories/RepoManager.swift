@@ -1,6 +1,6 @@
 import Combine
 import Foundation
-import MagicKit
+import GitOKSupportKit
 import SwiftData
 import OSLog
 

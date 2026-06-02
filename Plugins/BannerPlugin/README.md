@@ -43,7 +43,7 @@ BannerPlugin/
 - `GitOKCoreKit`
 - `BannerCoreKit`
 - `MagicAlert`
-- `MagicKit`
+- `GitOKSupportKit`
 - `ProjectRulesKit`
 
 ## Configuration

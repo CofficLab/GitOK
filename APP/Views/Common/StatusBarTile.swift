@@ -1,4 +1,4 @@
-import MagicKit
+import GitOKSupportKit
 import SwiftUI
 
 /// 通用状态栏 Tile：统一 hover 背景、内边距与形状。

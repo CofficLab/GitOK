@@ -1,5 +1,5 @@
 import GitOKUI
-import MagicKit
+import GitOKSupportKit
 import SwiftUI
 
 /// 显示当前项目信息的视图组件

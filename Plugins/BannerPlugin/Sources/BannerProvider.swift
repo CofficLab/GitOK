@@ -2,7 +2,7 @@ import AVKit
 import Combine
 import Foundation
 import GitOKCoreKit
-import MagicKit
+import GitOKSupportKit
 import MediaPlayer
 import OSLog
 import SwiftUI

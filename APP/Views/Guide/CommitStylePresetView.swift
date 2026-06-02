@@ -1,7 +1,7 @@
 import Foundation
 import GitOKCoreKit
 import GitOKUI
-import MagicKit
+import GitOKSupportKit
 import OSLog
 import SwiftUI
 

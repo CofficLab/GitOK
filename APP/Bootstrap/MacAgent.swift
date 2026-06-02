@@ -1,5 +1,5 @@
 import CloudKit
-import MagicKit
+import GitOKSupportKit
 import Foundation
 import OSLog
 import ProjectSupportKit

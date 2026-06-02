@@ -58,7 +58,7 @@ IconPlugin/
 
 - `GitOKCoreKit`
 - `MagicAlert`
-- `MagicKit`
+- `GitOKSupportKit`
 - `ProjectRulesKit`
 
 ## Configuration

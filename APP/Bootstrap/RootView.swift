@@ -1,6 +1,6 @@
 import GitOKUI
 import MagicAlert
-import MagicKit
+import GitOKSupportKit
 import OSLog
 import GitOKCoreKit
 import GitOKPluginRegistry

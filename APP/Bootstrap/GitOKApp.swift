@@ -1,5 +1,5 @@
 import GitCoreKit
-import MagicKit
+import GitOKSupportKit
 import OSLog
 import Sparkle
 import SwiftData

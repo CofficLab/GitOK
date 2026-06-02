@@ -1,5 +1,5 @@
 import GitOKCoreFeatures
-import MagicKit
+import GitOKSupportKit
 import OSLog
 import SwiftUI
 

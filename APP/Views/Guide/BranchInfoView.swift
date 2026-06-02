@@ -1,6 +1,6 @@
 import GitCoreKit
 import GitOKUI
-import MagicKit
+import GitOKSupportKit
 import SwiftUI
 
 /// 显示当前分支信息的视图组件

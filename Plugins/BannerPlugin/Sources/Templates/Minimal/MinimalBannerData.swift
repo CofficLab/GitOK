@@ -1,6 +1,6 @@
 import SwiftUI
 import GitOKCoreKit
-import MagicKit
+import GitOKSupportKit
 
 /**
  简约布局的数据模型

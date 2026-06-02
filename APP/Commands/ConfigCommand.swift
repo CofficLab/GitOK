@@ -1,5 +1,5 @@
 import SwiftUI
-import MagicKit
+import GitOKSupportKit
 
 /// 配置命令：在应用菜单中添加配置相关的功能入口
 struct ConfigCommand: Commands, SuperLog {

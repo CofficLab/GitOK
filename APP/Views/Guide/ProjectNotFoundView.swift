@@ -1,5 +1,5 @@
 import GitOKUI
-import MagicKit
+import GitOKSupportKit
 import SwiftUI
 
 /// 显示项目不存在时删除选项的视图组件

@@ -1,5 +1,5 @@
 import Foundation
-import MagicKit
+import GitOKSupportKit
 import OSLog
 
 /// 打开项目请求处理器（单例）

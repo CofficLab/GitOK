@@ -1,5 +1,5 @@
 import GitOKUI
-import MagicKit
+import GitOKSupportKit
 import SwiftUI
 
 struct NoRepositoriesGuideView: View {

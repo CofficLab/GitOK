@@ -1,4 +1,4 @@
-import MagicKit
+import GitOKSupportKit
 import SwiftUI
 
 /// 应用程序的主视图组件。

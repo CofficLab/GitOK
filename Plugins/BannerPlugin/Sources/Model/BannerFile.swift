@@ -1,7 +1,7 @@
 import BannerCoreKit
 import Foundation
 import GitOKCoreKit
-import MagicKit
+import GitOKSupportKit
 import OSLog
 import ProjectRulesKit
 import SwiftUI

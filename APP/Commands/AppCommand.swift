@@ -1,5 +1,5 @@
 import SwiftUI
-import MagicKit
+import GitOKSupportKit
 import AppKit
 
 /// 在应用菜单中添加入口

@@ -1,4 +1,4 @@
-import MagicKit
+import GitOKSupportKit
 import GitOKCoreFeatures
 import SwiftUI
 

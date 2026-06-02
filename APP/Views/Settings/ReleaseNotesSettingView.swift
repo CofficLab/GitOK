@@ -1,5 +1,5 @@
 import GitOKUI
-import MagicKit
+import GitOKSupportKit
 import Sparkle
 import SwiftUI
 

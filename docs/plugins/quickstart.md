@@ -15,7 +15,7 @@ Plugins/
 ## 步骤 2：实现插件协议
 
 ```swift
-import MagicKit
+import GitOKSupportKit
 import OSLog
 import SwiftUI
 
@@ -127,7 +127,7 @@ extension MyFeaturePlugin {
 ## 完整示例代码
 
 ```swift
-import MagicKit
+import GitOKSupportKit
 import OSLog
 import SwiftUI
 

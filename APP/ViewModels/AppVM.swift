@@ -1,5 +1,5 @@
 import AVKit
-import MagicKit
+import GitOKSupportKit
 import Combine
 import Foundation
 import MediaPlayer
