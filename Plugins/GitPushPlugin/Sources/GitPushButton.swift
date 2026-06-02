@@ -29,9 +29,7 @@ public struct GitPushButton: View {
                 perform(primaryAction, projectURL: projectURL)
             } label: {
                 HStack(spacing: 6) {
-                    primaryAction.icon
-                        .font(.system(size: 14, weight: .semibold))
-                        .frame(width: 16, height: 16)
+                    actionIcon
 
                     Text(primaryAction.title)
                         .font(.caption)
@@ -114,6 +112,17 @@ public struct GitPushButton: View {
         GitPushPrimaryAction.badgeText(for: trackingStatus)
     }
 
+    @ViewBuilder
+    private var actionIcon: some View {
+        if working {
+            SpinningSyncIcon()
+        } else {
+            primaryAction.icon
+                .font(.system(size: 14, weight: .semibold))
+                .frame(width: 16, height: 16)
+        }
+    }
+
     private func perform(_ action: GitPushPrimaryAction, projectURL: URL) {
         run(action, projectURL: projectURL)
     }
@@ -166,6 +175,22 @@ public struct GitPushButton: View {
         alert.informativeText = error.localizedDescription
         alert.alertStyle = .warning
         alert.runModal()
+    }
+}
+
+private struct SpinningSyncIcon: View {
+    @State private var isRotating = false
+
+    var body: some View {
+        Image(systemName: "arrow.triangle.2.circlepath")
+            .font(.system(size: 14, weight: .semibold))
+            .frame(width: 16, height: 16)
+            .rotationEffect(.degrees(isRotating ? 360 : 0))
+            .onAppear {
+                withAnimation(.linear(duration: 0.85).repeatForever(autoreverses: false)) {
+                    isRotating = true
+                }
+            }
     }
 }
 
