@@ -1588,7 +1588,7 @@ public struct GitRepositoryCLI {
     }
 
     public func getMergeConflictFiles() throws -> [String] {
-        try statusEntries()
+        try lightweightStatusEntries()
             .filter { $0.indexStatus == "U" || $0.workTreeStatus == "U" }
             .map(\.path)
     }
@@ -1605,22 +1605,65 @@ public struct GitRepositoryCLI {
     }
 
     public func lightweightStatusEntries() throws -> [GitStatusEntry] {
-        try LibGit2.getStatus(at: repositoryURL.path, verbose: false)
-            .split(separator: "\n")
-            .compactMap { line -> GitStatusEntry? in
-                guard line.count >= 4 else { return nil }
-                let indexStatus = line[line.startIndex]
-                let workTreeStatus = line[line.index(after: line.startIndex)]
-                let pathStartIndex = line.index(line.startIndex, offsetBy: 3)
-                let path = String(line[pathStartIndex...])
-                guard path.isEmpty == false else { return nil }
-                return GitStatusEntry(
+        let output = try Self.runGitData(
+            ["status", "--porcelain=v1", "-z", "--untracked-files=all"],
+            in: repositoryURL,
+            defaultErrorMessage: "无法读取工作区状态"
+        )
+        return Self.parsePorcelainStatusEntries(output)
+    }
+
+    static func parsePorcelainStatusEntries(_ data: Data) -> [GitStatusEntry] {
+        var entries: [GitStatusEntry] = []
+        var recordStart = data.startIndex
+
+        while recordStart < data.endIndex {
+            var recordEnd = recordStart
+            while recordEnd < data.endIndex && data[recordEnd] != 0 {
+                recordEnd = data.index(after: recordEnd)
+            }
+
+            let nextRecordStart = recordEnd < data.endIndex ? data.index(after: recordEnd) : data.endIndex
+
+            guard recordEnd > recordStart else {
+                recordStart = nextRecordStart
+                continue
+            }
+
+            let record = data[recordStart..<recordEnd]
+            guard record.count >= 4,
+                  record[record.index(record.startIndex, offsetBy: 2)] == UInt8(ascii: " ") else {
+                recordStart = nextRecordStart
+                continue
+            }
+
+            let line = String(decoding: record, as: UTF8.self)
+            let indexStatus = Character(String(line[line.startIndex]))
+            let workTreeStatus = Character(String(line[line.index(after: line.startIndex)]))
+            let pathStartIndex = line.index(line.startIndex, offsetBy: 3)
+            let path = String(line[pathStartIndex...])
+            if path.isEmpty == false {
+                entries.append(GitStatusEntry(
                     path: path,
                     indexStatus: indexStatus,
                     workTreeStatus: workTreeStatus
-                )
+                ))
             }
-            .sorted { $0.path < $1.path }
+
+            recordStart = nextRecordStart
+
+            if indexStatus == "R" || indexStatus == "C" {
+                while recordStart < data.endIndex {
+                    let byte = data[recordStart]
+                    recordStart = data.index(after: recordStart)
+                    if byte == 0 {
+                        break
+                    }
+                }
+            }
+        }
+
+        return entries.sorted { $0.path < $1.path }
     }
 
     private func mergedStatusEntries(_ entries: [GitStatusEntry]) -> [GitStatusEntry] {
@@ -1811,6 +1854,12 @@ public struct GitRepositoryCLI {
 
     @discardableResult
     private static func runGit(_ arguments: [String], in repositoryURL: URL, defaultErrorMessage: String) throws -> String {
+        let outputData = try runGitData(arguments, in: repositoryURL, defaultErrorMessage: defaultErrorMessage)
+        return String(data: outputData, encoding: .utf8)?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+    }
+
+    @discardableResult
+    private static func runGitData(_ arguments: [String], in repositoryURL: URL, defaultErrorMessage: String) throws -> Data {
         guard let gitPath = gitCLIPath() else {
             throw nativeGitUnavailableError(arguments: arguments)
         }
@@ -1830,7 +1879,6 @@ public struct GitRepositoryCLI {
 
         let outputData = outputPipe.fileHandleForReading.readDataToEndOfFile()
         let errorData = errorPipe.fileHandleForReading.readDataToEndOfFile()
-        let output = String(data: outputData, encoding: .utf8)?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
         let errorOutput = String(data: errorData, encoding: .utf8)?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
 
         if process.terminationStatus != 0 {
@@ -1842,7 +1890,7 @@ public struct GitRepositoryCLI {
             )
         }
 
-        return output
+        return outputData
     }
 
     /// 使用系统 git CLI 执行推送（网络错误降级方案）

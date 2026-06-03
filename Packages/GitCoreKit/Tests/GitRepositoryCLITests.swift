@@ -977,6 +977,77 @@ final class GitRepositoryCLITests: XCTestCase {
         )
     }
 
+    func testLightweightStatusEntriesHandlesSpecialFileNames() throws {
+        let repo = try TestGitRepository()
+        let path = "folder/file\nname \"quoted\".txt"
+        try repo.write(path, content: "hello\n")
+
+        let client = GitRepositoryCLI(repositoryURL: repo.url)
+
+        XCTAssertEqual(
+            try client.lightweightStatusEntries(),
+            [GitStatusEntry(path: path, indexStatus: "?", workTreeStatus: "?")]
+        )
+    }
+
+    func testLightweightStatusEntriesReportsRenameDestinationOnly() throws {
+        let repo = try TestGitRepository()
+        try repo.write("old.txt", content: "hello\n")
+        try repo.run(["add", "."])
+        try repo.run(["commit", "-m", "initial"])
+        try repo.run(["mv", "old.txt", "new.txt"])
+
+        let client = GitRepositoryCLI(repositoryURL: repo.url)
+
+        XCTAssertEqual(
+            try client.lightweightStatusEntries(),
+            [GitStatusEntry(path: "new.txt", indexStatus: "R", workTreeStatus: " ")]
+        )
+    }
+
+    func testPorcelainStatusParserHandlesLargeStatusOutput() throws {
+        let recordCount = 100_000
+        var data = Data()
+
+        for index in 0..<recordCount {
+            data.append(contentsOf: " M Sources/File\(index).swift".utf8)
+            data.append(0)
+        }
+
+        let entries = GitRepositoryCLI.parsePorcelainStatusEntries(data)
+
+        XCTAssertEqual(entries.count, recordCount)
+        XCTAssertEqual(entries.first, GitStatusEntry(path: "Sources/File0.swift", indexStatus: " ", workTreeStatus: "M"))
+        XCTAssertEqual(entries.last, GitStatusEntry(path: "Sources/File99999.swift", indexStatus: " ", workTreeStatus: "M"))
+    }
+
+    func testLightweightStatusEntriesHandlesLargeUntrackedRepository() throws {
+        let repo = try TestGitRepository()
+        let fileCount = ProcessInfo.processInfo.environment["GITOK_LARGE_STATUS_FILE_COUNT"]
+            .flatMap(Int.init) ?? 1_000
+        let sourceDirectory = repo.url.appendingPathComponent("Sources", isDirectory: true)
+        try FileManager.default.createDirectory(at: sourceDirectory, withIntermediateDirectories: true)
+
+        let content = Data("hello\n".utf8)
+        for index in 0..<fileCount {
+            let fileName = String(format: "File%05d.swift", index)
+            try content.write(to: sourceDirectory.appendingPathComponent(fileName))
+        }
+
+        let entries = try GitRepositoryCLI(repositoryURL: repo.url).lightweightStatusEntries()
+
+        XCTAssertEqual(entries.count, fileCount)
+        XCTAssertEqual(entries.first, GitStatusEntry(path: "Sources/File00000.swift", indexStatus: "?", workTreeStatus: "?"))
+        XCTAssertEqual(
+            entries.last,
+            GitStatusEntry(
+                path: String(format: "Sources/File%05d.swift", fileCount - 1),
+                indexStatus: "?",
+                workTreeStatus: "?"
+            )
+        )
+    }
+
     func testUnstageFilesHandlesInitialRepositoryWithoutHead() throws {
         let destinationRoot = FileManager.default.temporaryDirectory
             .appendingPathComponent(UUID().uuidString, isDirectory: true)

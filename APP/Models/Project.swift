@@ -202,14 +202,11 @@ extension Project {
     /// - Parameter verbose: 是否启用详细日志
     /// - Returns: 如果有未跟踪文件返回 true，否则返回 false
     private func hasUntrackedFiles(verbose: Bool = false) throws -> Bool {
-        // 获取 unstaged 文件列表（包含未跟踪文件）
-        let unstagedFiles = try gitCLI.diffFileList(staged: false)
-
-        // 检查是否有未跟踪文件（change type 为 "?"）
-        let hasUntracked = unstagedFiles.contains { $0.changeType == "?" }
+        let statusEntries = try gitCLI.lightweightStatusEntries()
+        let hasUntracked = statusEntries.contains { $0.indexStatus == "?" || $0.workTreeStatus == "?" }
 
         if verbose && hasUntracked {
-            let untrackedCount = unstagedFiles.filter { $0.changeType == "?" }.count
+            let untrackedCount = statusEntries.filter { $0.indexStatus == "?" || $0.workTreeStatus == "?" }.count
             os_log(.info, "\(self.t)🔄 Found \(untrackedCount) untracked files")
         }
 
@@ -706,8 +703,15 @@ extension Project {
         try gitCLI.lightweightStatusEntries()
     }
 
+    func lightweightStatusEntriesAsync() async throws -> [GitStatusEntry] {
+        let repositoryURL = url
+        return try await Task.detached(priority: .userInitiated) {
+            try GitRepositoryCLI(repositoryURL: repositoryURL).lightweightStatusEntries()
+        }.value
+    }
+
     func hasStagedChanges() throws -> Bool {
-        try statusEntries().contains { entry in
+        try lightweightStatusEntries().contains { entry in
             entry.indexStatus != " " && entry.indexStatus != "?"
         }
     }
@@ -970,7 +974,7 @@ extension Project {
     }
 
     func untrackedFiles() async throws -> [GitDiffFile] {
-        try lightweightStatusEntries()
+        try await lightweightStatusEntriesAsync()
             .map { entry in
                 GitDiffFile(
                     id: entry.path,

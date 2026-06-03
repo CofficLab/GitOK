@@ -480,6 +480,27 @@ public enum FileListRules {
         return items.filter { pathSet.contains(path($0)) }
     }
 
+    public static func itemLookup<Item>(
+        from items: [Item],
+        path: (Item) -> String
+    ) -> [String: Item] {
+        var result: [String: Item] = [:]
+        result.reserveCapacity(items.count)
+
+        for item in items {
+            result[path(item)] = item
+        }
+
+        return result
+    }
+
+    public static func items<Item>(
+        from itemLookup: [String: Item],
+        matching paths: [String]
+    ) -> [Item] {
+        paths.compactMap { itemLookup[$0] }
+    }
+
     public static func visibleItems<Item>(
         from items: [Item],
         presentationState: PresentationState,
@@ -2207,13 +2228,18 @@ public enum FileListRules {
             return [FileSection(kind: .historyFiles, paths: visiblePaths)]
         }
 
-        let changes = visiblePaths.filter { path in
-            let state = stageState(path: path, stagedPaths: stagedPaths, unstagedPaths: unstagedPaths)
-            return state == .unstaged || state == .stagedAndUnstaged
-        }
+        var changes: [String] = []
+        var staged: [String] = []
+        changes.reserveCapacity(visiblePaths.count)
+        staged.reserveCapacity(visiblePaths.count)
 
-        let staged = visiblePaths.filter {
-            stageState(path: $0, stagedPaths: stagedPaths, unstagedPaths: unstagedPaths) == .staged
+        for path in visiblePaths {
+            let state = stageState(path: path, stagedPaths: stagedPaths, unstagedPaths: unstagedPaths)
+            if state == .unstaged || state == .stagedAndUnstaged {
+                changes.append(path)
+            } else if state == .staged {
+                staged.append(path)
+            }
         }
 
         var sections: [FileSection] = []
@@ -2233,6 +2259,15 @@ public enum FileListRules {
         unstagedPaths: Set<String>,
         untrackedPaths: Set<String>
     ) -> BatchActionState {
+        guard selectedPaths.isEmpty == false else {
+            return BatchActionState(
+                selectedPaths: [],
+                stageablePaths: [],
+                unstageablePaths: [],
+                untrackedCount: 0
+            )
+        }
+
         let selected = allPaths.filter { selectedPaths.contains($0) }
         let stageable = selected.filter {
             stageState(path: $0, stagedPaths: stagedPaths, unstagedPaths: unstagedPaths).canStage

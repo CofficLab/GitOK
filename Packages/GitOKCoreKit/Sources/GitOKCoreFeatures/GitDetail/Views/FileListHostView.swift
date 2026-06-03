@@ -47,6 +47,8 @@ public struct FileListHostView<Project, Commit, FileItem, StatusEntry>: View whe
     private let appWillBecomeActiveToken: Int
 
     @State private var files: [FileItem] = []
+    @State private var filePaths: [String] = []
+    @State private var filesByPath: [String: FileItem] = [:]
     @State private var isLoading = true
     @State private var selection: FileItem?
     @State private var hoveredFile: FileItem?
@@ -61,6 +63,8 @@ public struct FileListHostView<Project, Commit, FileItem, StatusEntry>: View whe
     @State private var lastRefreshTime: Date = .distantPast
     @State private var errorMessage: String?
     @State private var filterText = ""
+    @State private var appliedFilterText = ""
+    @State private var filterTask: Task<Void, Never>?
     @State private var selectedBatchFilePaths: Set<String> = []
     @State private var showDiscardSelectedAlert = false
 
@@ -127,6 +131,8 @@ public struct FileListHostView<Project, Commit, FileItem, StatusEntry>: View whe
     }
 
     public var body: some View {
+        let presentationState = filePresentationState
+
         FileListRootView(
             filterText: $filterText,
             showDiscardFileAlert: $showDiscardFileAlert,
@@ -134,7 +140,7 @@ public struct FileListHostView<Project, Commit, FileItem, StatusEntry>: View whe
             showDiscardSelectedAlert: $showDiscardSelectedAlert,
             fileCount: files.count,
             isLoading: isLoading,
-            presentationState: filePresentationState,
+            presentationState: presentationState,
             errorMessage: errorMessage,
             discardFileAlertMessage: discardFileAlertMessage,
             onRetry: {
@@ -150,12 +156,14 @@ public struct FileListHostView<Project, Commit, FileItem, StatusEntry>: View whe
             onDiscardAll: discardAllChangesAction,
             onDiscardSelected: discardSelectedChanges
         ) {
-            fileListView
+            fileListView(presentationState: presentationState)
         }
         .onAppear(perform: onAppear)
+        .onDisappear(perform: onDisappear)
         .onChange(of: projectChangeToken) { onProjectChange() }
         .onChange(of: commitChangeToken) { onCommitChange() }
         .onChange(of: selection) { onSelectionChange() }
+        .onChange(of: filterText) { onFilterTextChange() }
         .onChange(of: projectDidCommitToken) { onProjectDidCommit() }
         .onChange(of: projectDidAddFilesToken) { onProjectDidAddFiles() }
         .onChange(of: gitDirectoryChangeToken) { onGitDirectoryDidChange() }
@@ -164,14 +172,18 @@ public struct FileListHostView<Project, Commit, FileItem, StatusEntry>: View whe
 }
 
 private extension FileListHostView {
-    var fileListView: some View {
-        FileListContentView(
+    func fileListView(presentationState: FileListRules.PresentationState) -> some View {
+        let itemLookup = filesByPath
+
+        return FileListContentView(
             selection: $selection,
             files: files,
-            sections: fileSections,
-            presentationState: filePresentationState,
+            sections: presentationState.sections,
+            presentationState: presentationState,
             scrollTarget: scrollTarget,
-            filesInSection: files(for:),
+            filesInSection: { section in
+                FileListRules.items(from: itemLookup, matching: section.paths)
+            },
             rowContent: fileRow,
             onStageSelected: stageSelectedFiles,
             onUnstageSelected: unstageSelectedFiles,
@@ -231,19 +243,14 @@ private extension FileListHostView {
     }
 
     var filteredFiles: [FileItem] {
-        FileListRules.visibleItems(
-            from: files,
-            presentationState: filePresentationState,
-            path: filePath
-        )
+        FileListRules.items(from: filesByPath, matching: filePresentationState.visiblePaths)
     }
 
     var filePresentationState: FileListRules.PresentationState {
         FileListRules.presentationState(
-            items: files,
-            path: filePath,
-            filterText: filterText,
-            selectedCommit: selectedCommit,
+            allPaths: filePaths,
+            filterText: appliedFilterText,
+            isHistoryMode: isHistoryMode,
             stagedPaths: stagedFilePaths,
             unstagedPaths: unstagedFilePaths,
             untrackedPaths: untrackedFilePaths,
@@ -260,7 +267,7 @@ private extension FileListHostView {
     }
 
     func files(for section: FileListRules.FileSection) -> [FileItem] {
-        FileListRules.items(from: filteredFiles, in: section, path: filePath)
+        FileListRules.items(from: filesByPath, matching: section.paths)
     }
 
     var batchActionState: FileListRules.BatchActionState {
@@ -552,7 +559,11 @@ private extension FileListHostView {
                             items: items,
                             refreshState: refreshState,
                             refreshedSelection: refreshedSelection,
-                            setItems: { self.files = $0 },
+                            setItems: { items in
+                                self.files = items
+                                self.filePaths = items.map(filePath)
+                                self.filesByPath = FileListRules.itemLookup(from: items, path: filePath)
+                            },
                             setStagedPaths: { self.stagedFilePaths = $0 },
                             setUnstagedPaths: { self.unstagedFilePaths = $0 },
                             setUntrackedPaths: { self.untrackedFilePaths = $0 },
@@ -602,6 +613,12 @@ private extension FileListHostView {
         FileListRules.performAppear(performRefreshAction: performRefreshAction)
     }
 
+    func onDisappear() {
+        filterTask?.cancel()
+        refreshTask?.cancel()
+        refreshWorkerTask?.cancel()
+    }
+
     func onProjectChange() {
         FileListRules.performProjectChange(performRefreshAction: performRefreshAction)
     }
@@ -612,6 +629,22 @@ private extension FileListHostView {
 
     func onSelectionChange() {
         FileListRules.performSelectionChange(selection, syncSelection: syncSelection)
+    }
+
+    func onFilterTextChange() {
+        filterTask?.cancel()
+        let nextFilterText = filterText
+
+        if nextFilterText.isEmpty {
+            appliedFilterText = ""
+            return
+        }
+
+        filterTask = Task { @MainActor in
+            try? await Task.sleep(nanoseconds: 200_000_000)
+            guard Task.isCancelled == false else { return }
+            appliedFilterText = nextFilterText
+        }
     }
 
     func onProjectDidCommit() {

@@ -42,7 +42,7 @@ struct FileList: View, SuperLog {
                 try await project.untrackedFiles()
             },
             loadStatusEntries: { project in
-                try project.lightweightStatusEntries()
+                try await project.lightweightStatusEntriesAsync()
             },
             addFiles: { project, paths in
                 try project.addFiles(paths)
