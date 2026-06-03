@@ -1,4 +1,5 @@
 import XCTest
+import GitOKCoreKit
 @testable import OpenKiroPlugin
 
 final class OpenKiroPluginTests: XCTestCase {
@@ -19,8 +20,16 @@ final class OpenKiroPluginTests: XCTestCase {
         XCTAssertFalse(OpenKiroPluginLocalization.string("Open in Kiro").isEmpty)
     }
 
-    func testToolbarContributionIsAvailable() {
-        XCTAssertNotNil(OpenKiroPlugin.shared.toolBarTrailingView())
+    @MainActor
+    func testToolbarContributionMatchesApplicationAvailability() {
+        let context = GitOKPluginContext(projectURL: URL(fileURLWithPath: "/tmp"))
+        let view = OpenKiroPlugin.shared.toolBarTrailingView(context: context)
+
+        if KiroProjectLauncher.isInstalled {
+            XCTAssertNotNil(view)
+        } else {
+            XCTAssertNil(view)
+        }
     }
 
     func testLauncherConfigurationIsStable() {

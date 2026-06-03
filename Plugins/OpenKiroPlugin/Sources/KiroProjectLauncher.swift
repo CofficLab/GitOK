@@ -20,6 +20,10 @@ public struct KiroApplicationConfiguration: Equatable, Sendable {
 public enum KiroProjectLauncher {
     public static let configuration = KiroApplicationConfiguration()
 
+    public static var isInstalled: Bool {
+        applicationURL() != nil
+    }
+
     @MainActor
     public static func open(_ projectURL: URL, configuration: KiroApplicationConfiguration = configuration) {
         guard let appURL = applicationURL(configuration: configuration) else {

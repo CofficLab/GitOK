@@ -1,4 +1,5 @@
 import XCTest
+import GitOKCoreKit
 @testable import OpenVSCodePlugin
 
 final class OpenVSCodePluginTests: XCTestCase {
@@ -19,8 +20,16 @@ final class OpenVSCodePluginTests: XCTestCase {
         XCTAssertFalse(OpenVSCodePluginLocalization.string("Open in VS Code").isEmpty)
     }
 
-    func testToolbarContributionIsAvailable() {
-        XCTAssertNotNil(OpenVSCodePlugin.shared.toolBarTrailingView())
+    @MainActor
+    func testToolbarContributionMatchesApplicationAvailability() {
+        let context = GitOKPluginContext(projectURL: URL(fileURLWithPath: "/tmp"))
+        let view = OpenVSCodePlugin.shared.toolBarTrailingView(context: context)
+
+        if VSCodeProjectLauncher.isInstalled {
+            XCTAssertNotNil(view)
+        } else {
+            XCTAssertNil(view)
+        }
     }
 
     func testLauncherConfigurationIsStable() {

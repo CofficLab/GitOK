@@ -20,6 +20,10 @@ public struct AntigravityApplicationConfiguration: Equatable, Sendable {
 public enum AntigravityProjectLauncher {
     public static let configuration = AntigravityApplicationConfiguration()
 
+    public static var isInstalled: Bool {
+        applicationURL() != nil
+    }
+
     @MainActor
     public static func open(_ projectURL: URL, configuration: AntigravityApplicationConfiguration = configuration) {
         guard let appURL = applicationURL(configuration: configuration) else {

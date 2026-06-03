@@ -1,4 +1,5 @@
 import XCTest
+import GitOKCoreKit
 @testable import OpenGitHubDesktopPlugin
 
 final class OpenGitHubDesktopPluginTests: XCTestCase {
@@ -19,8 +20,16 @@ final class OpenGitHubDesktopPluginTests: XCTestCase {
         XCTAssertFalse(OpenGitHubDesktopPluginLocalization.string("Open in GitHub Desktop").isEmpty)
     }
 
-    func testToolbarContributionIsAvailable() {
-        XCTAssertNotNil(OpenGitHubDesktopPlugin.shared.toolBarTrailingView())
+    @MainActor
+    func testToolbarContributionMatchesApplicationAvailability() {
+        let context = GitOKPluginContext(projectURL: URL(fileURLWithPath: "/tmp"))
+        let view = OpenGitHubDesktopPlugin.shared.toolBarTrailingView(context: context)
+
+        if GitHubDesktopProjectLauncher.isInstalled {
+            XCTAssertNotNil(view)
+        } else {
+            XCTAssertNil(view)
+        }
     }
 
     func testLauncherConfigurationIsStable() {

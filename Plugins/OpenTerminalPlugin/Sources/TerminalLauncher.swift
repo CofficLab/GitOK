@@ -4,6 +4,10 @@ import Foundation
 enum TerminalLauncher {
     static let defaultTerminalKey = "ExternalTools.DefaultTerminal"
 
+    static var hasInstalledTerminal: Bool {
+        ExternalTerminal.allCases.contains(where: isInstalled)
+    }
+
     static func open(_ projectURL: URL) {
         let terminal = resolvedTerminal()
         guard let appURL = appURL(bundleIdentifier: terminal.bundleIdentifier, appPaths: terminal.appPaths) else {

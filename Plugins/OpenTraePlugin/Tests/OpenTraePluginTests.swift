@@ -1,4 +1,5 @@
 import XCTest
+import GitOKCoreKit
 @testable import OpenTraePlugin
 
 final class OpenTraePluginTests: XCTestCase {
@@ -19,8 +20,16 @@ final class OpenTraePluginTests: XCTestCase {
         XCTAssertFalse(OpenTraePluginLocalization.string("Open in Trae").isEmpty)
     }
 
-    func testToolbarContributionIsAvailable() {
-        XCTAssertNotNil(OpenTraePlugin.shared.toolBarTrailingView())
+    @MainActor
+    func testToolbarContributionMatchesApplicationAvailability() {
+        let context = GitOKPluginContext(projectURL: URL(fileURLWithPath: "/tmp"))
+        let view = OpenTraePlugin.shared.toolBarTrailingView(context: context)
+
+        if TraeProjectLauncher.isInstalled {
+            XCTAssertNotNil(view)
+        } else {
+            XCTAssertNil(view)
+        }
     }
 
     func testLauncherConfigurationIsStable() {

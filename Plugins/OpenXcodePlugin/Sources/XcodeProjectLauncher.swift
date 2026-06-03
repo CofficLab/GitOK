@@ -20,6 +20,10 @@ public struct XcodeApplicationConfiguration: Equatable, Sendable {
 public enum XcodeProjectLauncher {
     public static let configuration = XcodeApplicationConfiguration()
 
+    public static var isInstalled: Bool {
+        applicationURL() != nil
+    }
+
     @MainActor
     public static func open(_ projectURL: URL, configuration: XcodeApplicationConfiguration = configuration) {
         guard let appURL = applicationURL(configuration: configuration) else {

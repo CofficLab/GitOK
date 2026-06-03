@@ -20,6 +20,10 @@ public struct CursorApplicationConfiguration: Equatable, Sendable {
 public enum CursorProjectLauncher {
     public static let configuration = CursorApplicationConfiguration()
 
+    public static var isInstalled: Bool {
+        applicationURL() != nil
+    }
+
     @MainActor
     public static func open(_ projectURL: URL, configuration: CursorApplicationConfiguration = configuration) {
         guard let appURL = applicationURL(configuration: configuration) else {

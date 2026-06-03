@@ -18,7 +18,7 @@ public struct OpenCursorPlugin: GitOKPlugin {
     private init() {}
 
     public func toolBarTrailingView(context: GitOKPluginContext) -> AnyView? {
-        guard let projectURL = context.projectURL else { return nil }
+        guard CursorProjectLauncher.isInstalled, let projectURL = context.projectURL else { return nil }
         return AnyView(OpenCursorButton(projectURL: projectURL))
     }
 }

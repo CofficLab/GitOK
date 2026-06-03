@@ -1,4 +1,5 @@
 import XCTest
+import GitOKCoreKit
 @testable import OpenTerminalPlugin
 
 final class OpenTerminalPluginTests: XCTestCase {
@@ -19,8 +20,16 @@ final class OpenTerminalPluginTests: XCTestCase {
         XCTAssertFalse(OpenTerminalPluginLocalization.string("Open in Terminal").isEmpty)
     }
 
-    func testToolbarContributionIsAvailable() {
-        XCTAssertNotNil(OpenTerminalPlugin.shared.toolBarTrailingView())
+    @MainActor
+    func testToolbarContributionMatchesApplicationAvailability() {
+        let context = GitOKPluginContext(projectURL: URL(fileURLWithPath: "/tmp"))
+        let view = OpenTerminalPlugin.shared.toolBarTrailingView(context: context)
+
+        if TerminalLauncher.hasInstalledTerminal {
+            XCTAssertNotNil(view)
+        } else {
+            XCTAssertNil(view)
+        }
     }
 
     func testTerminalUserDefaultsKeyMatchesAppSetting() {

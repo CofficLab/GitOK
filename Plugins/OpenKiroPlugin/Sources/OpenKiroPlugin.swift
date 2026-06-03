@@ -18,7 +18,7 @@ public struct OpenKiroPlugin: GitOKPlugin {
     private init() {}
 
     public func toolBarTrailingView(context: GitOKPluginContext) -> AnyView? {
-        guard let projectURL = context.projectURL else { return nil }
+        guard KiroProjectLauncher.isInstalled, let projectURL = context.projectURL else { return nil }
         return AnyView(OpenKiroButton(projectURL: projectURL))
     }
 }

@@ -20,6 +20,10 @@ public struct GitHubDesktopApplicationConfiguration: Equatable, Sendable {
 public enum GitHubDesktopProjectLauncher {
     public static let configuration = GitHubDesktopApplicationConfiguration()
 
+    public static var isInstalled: Bool {
+        applicationURL() != nil
+    }
+
     @MainActor
     public static func open(_ projectURL: URL, configuration: GitHubDesktopApplicationConfiguration = configuration) {
         if let url = localRepositoryURL(for: projectURL), NSWorkspace.shared.open(url) {

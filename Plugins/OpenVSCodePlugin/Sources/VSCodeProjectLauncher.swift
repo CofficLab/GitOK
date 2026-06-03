@@ -20,6 +20,10 @@ public struct VSCodeApplicationConfiguration: Equatable, Sendable {
 public enum VSCodeProjectLauncher {
     public static let configuration = VSCodeApplicationConfiguration()
 
+    public static var isInstalled: Bool {
+        applicationURL() != nil
+    }
+
     @MainActor
     public static func open(_ projectURL: URL, configuration: VSCodeApplicationConfiguration = configuration) {
         guard let appURL = applicationURL(configuration: configuration) else {

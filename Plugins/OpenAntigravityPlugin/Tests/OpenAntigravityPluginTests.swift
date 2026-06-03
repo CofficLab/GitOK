@@ -1,4 +1,5 @@
 import XCTest
+import GitOKCoreKit
 @testable import OpenAntigravityPlugin
 
 final class OpenAntigravityPluginTests: XCTestCase {
@@ -19,8 +20,16 @@ final class OpenAntigravityPluginTests: XCTestCase {
         XCTAssertFalse(OpenAntigravityPluginLocalization.string("Open in Antigravity").isEmpty)
     }
 
-    func testToolbarContributionIsAvailable() {
-        XCTAssertNotNil(OpenAntigravityPlugin.shared.toolBarTrailingView())
+    @MainActor
+    func testToolbarContributionMatchesApplicationAvailability() {
+        let context = GitOKPluginContext(projectURL: URL(fileURLWithPath: "/tmp"))
+        let view = OpenAntigravityPlugin.shared.toolBarTrailingView(context: context)
+
+        if AntigravityProjectLauncher.isInstalled {
+            XCTAssertNotNil(view)
+        } else {
+            XCTAssertNil(view)
+        }
     }
 
     func testLauncherConfigurationIsStable() {

@@ -20,6 +20,10 @@ public struct TraeApplicationConfiguration: Equatable, Sendable {
 public enum TraeProjectLauncher {
     public static let configuration = TraeApplicationConfiguration()
 
+    public static var isInstalled: Bool {
+        applicationURL() != nil
+    }
+
     @MainActor
     public static func open(_ projectURL: URL, configuration: TraeApplicationConfiguration = configuration) {
         guard let appURL = applicationURL(configuration: configuration) else {

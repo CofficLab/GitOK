@@ -4,6 +4,7 @@ import SwiftUI
 public struct OpenRemoteButton: View {
     let projectURL: URL
     @State private var webURL: URL?
+    @State private var browserIcon: NSImage?
     @State private var loadTask: Task<Void, Never>?
 
     public init(projectURL: URL) {
@@ -16,8 +17,7 @@ public struct OpenRemoteButton: View {
                 Button {
                     NSWorkspace.shared.open(webURL)
                 } label: {
-                    Image(systemName: "link")
-                        .frame(width: 24)
+                    buttonIcon
                 }
                 .help(OpenRemotePluginLocalization.string("Open in Browser"))
             } else {
@@ -33,6 +33,19 @@ public struct OpenRemoteButton: View {
         }
     }
 
+    @ViewBuilder
+    private var buttonIcon: some View {
+        if let browserIcon {
+            Image(nsImage: browserIcon)
+                .resizable()
+                .scaledToFit()
+                .frame(width: 22, height: 22)
+        } else {
+            Image(systemName: "link")
+                .frame(width: 22, height: 22)
+        }
+    }
+
     @MainActor
     private func reloadWebURL() async {
         loadTask?.cancel()
@@ -44,8 +57,16 @@ public struct OpenRemoteButton: View {
             let nextURL = await task.value
             await MainActor.run {
                 webURL = nextURL
+                browserIcon = nextURL.flatMap(Self.browserIcon)
             }
         }
         await loadTask?.value
+    }
+
+    private static func browserIcon(for webURL: URL) -> NSImage? {
+        guard let appURL = NSWorkspace.shared.urlForApplication(toOpen: webURL) else {
+            return nil
+        }
+        return NSWorkspace.shared.icon(forFile: appURL.path)
     }
 }

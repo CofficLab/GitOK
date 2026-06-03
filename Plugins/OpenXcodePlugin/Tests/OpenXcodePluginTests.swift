@@ -1,4 +1,5 @@
 import XCTest
+import GitOKCoreKit
 @testable import OpenXcodePlugin
 
 final class OpenXcodePluginTests: XCTestCase {
@@ -19,8 +20,16 @@ final class OpenXcodePluginTests: XCTestCase {
         XCTAssertFalse(OpenXcodePluginLocalization.string("Open in Xcode").isEmpty)
     }
 
-    func testToolbarContributionIsAvailable() {
-        XCTAssertNotNil(OpenXcodePlugin.shared.toolBarTrailingView())
+    @MainActor
+    func testToolbarContributionMatchesApplicationAvailability() {
+        let context = GitOKPluginContext(projectURL: URL(fileURLWithPath: "/tmp"))
+        let view = OpenXcodePlugin.shared.toolBarTrailingView(context: context)
+
+        if XcodeProjectLauncher.isInstalled {
+            XCTAssertNotNil(view)
+        } else {
+            XCTAssertNil(view)
+        }
     }
 
     func testLauncherConfigurationIsStable() {
