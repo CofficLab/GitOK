@@ -11,8 +11,8 @@ import SwiftUI
      Banner状态管理器
  **/
 @MainActor
-class BannerProvider: NSObject, ObservableObject, SuperLog {
-    static let shared = BannerProvider()
+public class BannerProvider: NSObject, ObservableObject, SuperLog {
+    public static let shared = BannerProvider()
 
 
 
