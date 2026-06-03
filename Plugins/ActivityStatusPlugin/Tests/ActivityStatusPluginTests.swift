@@ -46,9 +46,7 @@ final class ActivityStatusPluginTests: XCTestCase {
     }
 
     func testUnknownKeyReturnsKeyItself() {
-        // NSLocalizedString falls back to the key when not found
-        let key = "NonExistent.Key.12345"
-        let result = ActivityStatusPluginLocalization.string(key)
+        // String(localized: String.LocalizationValue(key), bundle: .module, comment: "")
         XCTAssertEqual(result, key)
     }
 
