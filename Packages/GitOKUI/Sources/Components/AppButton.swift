@@ -139,7 +139,7 @@ public struct AppButton: View {
         Button(action: action) {
             HStack(spacing: 6) {
                 if isLoading {
-                    AppSpinningIcon(systemImage: systemImage ?? "arrow.triangle.2.circlepath", size: loadingIconSize)
+                    AppSpinningIcon(size: loadingIconSize)
                 } else if let systemImage {
                     Image(systemName: systemImage)
                 }

@@ -8,6 +8,7 @@ public struct AppSplitActionMenu<MenuContent: View>: View {
     private let title: String
     private let detail: String?
     private let systemImage: String
+    private let showsTitle: Bool
     private let isLoading: Bool
     private let isDisabled: Bool
     private let action: () -> Void
@@ -17,6 +18,7 @@ public struct AppSplitActionMenu<MenuContent: View>: View {
         title: String,
         detail: String? = nil,
         systemImage: String,
+        showsTitle: Bool = true,
         isLoading: Bool = false,
         isDisabled: Bool = false,
         action: @escaping () -> Void,
@@ -25,6 +27,7 @@ public struct AppSplitActionMenu<MenuContent: View>: View {
         self.title = title
         self.detail = detail
         self.systemImage = systemImage
+        self.showsTitle = showsTitle
         self.isLoading = isLoading
         self.isDisabled = isDisabled
         self.action = action
@@ -36,7 +39,7 @@ public struct AppSplitActionMenu<MenuContent: View>: View {
             Button(action: action) {
                 HStack(spacing: 8) {
                     if isLoading {
-                        AppSpinningIcon(systemImage: systemImage, size: 14)
+                        AppSpinningIcon(size: 14)
                             .transition(.opacity.combined(with: .scale(scale: 0.86)))
                     } else {
                         Image(systemName: systemImage)
@@ -45,10 +48,12 @@ public struct AppSplitActionMenu<MenuContent: View>: View {
                             .transition(.opacity.combined(with: .scale(scale: 0.86)))
                     }
 
-                    Text(title)
-                        .font(DesignTokens.Typography.subheadline.weight(.semibold))
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.85)
+                    if showsTitle {
+                        Text(title)
+                            .font(DesignTokens.Typography.subheadline.weight(.semibold))
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.85)
+                    }
 
                     if let detail {
                         Text(detail)
@@ -61,7 +66,7 @@ public struct AppSplitActionMenu<MenuContent: View>: View {
                 .foregroundStyle(.white)
                 .padding(.horizontal, 12)
                 .frame(height: 40)
-                .frame(minWidth: 150)
+                .frame(minWidth: showsTitle ? 150 : 76)
                 .background(
                     UnevenRoundedRectangle(
                         topLeadingRadius: DesignTokens.Radius.sm,
@@ -76,6 +81,7 @@ public struct AppSplitActionMenu<MenuContent: View>: View {
             }
             .buttonStyle(.plain)
             .disabled(isDisabled || isLoading)
+            .accessibilityLabel(Text(title))
 
             Menu {
                 menuContent()

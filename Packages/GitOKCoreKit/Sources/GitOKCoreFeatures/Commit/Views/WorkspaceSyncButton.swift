@@ -27,6 +27,7 @@ public struct WorkspaceSyncButton: View {
             title: primaryAction.title,
             detail: syncMetricText,
             systemImage: primaryAction.systemImage,
+            showsTitle: false,
             isLoading: isWorking,
             action: {
                 perform(primaryAction)
