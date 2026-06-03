@@ -1698,6 +1698,27 @@ public struct GitRepositoryCLI {
     }
 
     public func checkoutMergeFileVersion(path: String, version: GitMergeFileVersion) throws {
+        let stages = try unmergedStages(for: path)
+        if stages.isEmpty || stages.contains(version.stageNumber) {
+            try checkoutExistingMergeFileVersion(path: path, version: version)
+            try addFiles([path])
+            return
+        }
+
+        switch version {
+        case .ours, .theirs:
+            try Self.runGit(
+                ["rm", "--ignore-unmatch", "-f", "--", path],
+                in: repositoryURL,
+                defaultErrorMessage: "无法选择合并文件版本"
+            )
+        case .base:
+            try checkoutExistingMergeFileVersion(path: path, version: version)
+            try addFiles([path])
+        }
+    }
+
+    private func checkoutExistingMergeFileVersion(path: String, version: GitMergeFileVersion) throws {
         switch version {
         case .ours:
             try LibGit2.checkoutConflictFileVersion(path: path, version: .ours, at: repositoryURL.path)
@@ -1706,6 +1727,26 @@ public struct GitRepositoryCLI {
         case .base:
             try LibGit2.checkoutConflictFileVersion(path: path, version: .base, at: repositoryURL.path)
         }
+    }
+
+    private func unmergedStages(for path: String) throws -> Set<Int> {
+        let output = try Self.runGit(
+            ["ls-files", "-u", "--", path],
+            in: repositoryURL,
+            defaultErrorMessage: "无法读取合并冲突状态"
+        )
+
+        return Set(
+            output
+                .split(separator: "\n")
+                .compactMap { line in
+                    let components = line.split(maxSplits: 3, omittingEmptySubsequences: true) {
+                        $0 == " " || $0 == "\t"
+                    }
+                    guard components.count >= 3 else { return nil }
+                    return Int(components[2])
+                }
+        )
     }
 
     public func abortMerge() throws {

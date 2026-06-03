@@ -58,7 +58,7 @@ struct DetailView: View {
         }
         .frame(idealWidth: 200)
         .frame(minWidth: 120)
-        .frame(maxWidth: 300)
+        .frame(maxWidth: 600)
         .frame(maxHeight: .infinity)
         .background(themeProvider.activeChromeTheme.sidebarBackgroundColor().opacity(0.92))
     }

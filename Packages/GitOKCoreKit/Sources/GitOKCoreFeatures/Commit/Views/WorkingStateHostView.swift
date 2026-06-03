@@ -1,4 +1,5 @@
 import Combine
+import GitCoreKit
 import ProjectRulesKit
 import SwiftUI
 
@@ -47,6 +48,13 @@ public struct WorkingStateHostView<Project, Commit, SSHHelpContent: View>: View 
     private let fetch: @MainActor (Project) async throws -> Void
     private let pull: @MainActor (Project) async throws -> Void
     private let push: @MainActor (Project) async throws -> Void
+    private let loadConflictState: @MainActor (Project) async throws -> WorkingStateConflictState
+    private let stageConflictFile: @MainActor (Project, String) async throws -> Void
+    private let useConflictFileVersion: @MainActor (Project, String, GitMergeFileVersion) async throws -> Void
+    private let continueMerge: @MainActor (Project) async throws -> Void
+    private let abortMerge: @MainActor (Project) async throws -> Void
+    private let openConflictFile: @MainActor (Project, String) -> Void
+    private let revealConflictFile: @MainActor (Project, String) -> Void
     private let pushErrorClassification: @MainActor (Error) -> CommitRemoteSyncRules.PushErrorClassification
     private let runNetworkFallback: @MainActor (Project, String, @escaping (String?) -> Void) async -> Bool
     private let currentRemoteAccess: @MainActor () -> CommitRemoteSyncRules.RemoteAccess
@@ -72,6 +80,9 @@ public struct WorkingStateHostView<Project, Commit, SSHHelpContent: View>: View 
     @State private var isFetching = false
     @State private var isPulling = false
     @State private var isPushing = false
+    @State private var conflictState: WorkingStateConflictState?
+    @State private var isConflictActionRunning = false
+    @State private var activeConflictPath: String?
     @State private var showCredentialInput = false
     @State private var credentialHost = CommitRemoteSyncRules.defaultCredentialHost
     @State private var credentialRetryOperation: CommitRemoteSyncRules.RetryOperation?
@@ -96,6 +107,13 @@ public struct WorkingStateHostView<Project, Commit, SSHHelpContent: View>: View 
         fetch: @MainActor @escaping (Project) async throws -> Void,
         pull: @MainActor @escaping (Project) async throws -> Void,
         push: @MainActor @escaping (Project) async throws -> Void,
+        loadConflictState: @MainActor @escaping (Project) async throws -> WorkingStateConflictState = { _ in .inactive },
+        stageConflictFile: @MainActor @escaping (Project, String) async throws -> Void = { _, _ in },
+        useConflictFileVersion: @MainActor @escaping (Project, String, GitMergeFileVersion) async throws -> Void = { _, _, _ in },
+        continueMerge: @MainActor @escaping (Project) async throws -> Void = { _ in },
+        abortMerge: @MainActor @escaping (Project) async throws -> Void = { _ in },
+        openConflictFile: @MainActor @escaping (Project, String) -> Void = { _, _ in },
+        revealConflictFile: @MainActor @escaping (Project, String) -> Void = { _, _ in },
         pushErrorClassification: @MainActor @escaping (Error) -> CommitRemoteSyncRules.PushErrorClassification,
         runNetworkFallback: @MainActor @escaping (Project, String, @escaping (String?) -> Void) async -> Bool,
         currentRemoteAccess: @MainActor @escaping () -> CommitRemoteSyncRules.RemoteAccess,
@@ -126,6 +144,13 @@ public struct WorkingStateHostView<Project, Commit, SSHHelpContent: View>: View 
         self.fetch = fetch
         self.pull = pull
         self.push = push
+        self.loadConflictState = loadConflictState
+        self.stageConflictFile = stageConflictFile
+        self.useConflictFileVersion = useConflictFileVersion
+        self.continueMerge = continueMerge
+        self.abortMerge = abortMerge
+        self.openConflictFile = openConflictFile
+        self.revealConflictFile = revealConflictFile
         self.pushErrorClassification = pushErrorClassification
         self.runNetworkFallback = runNetworkFallback
         self.currentRemoteAccess = currentRemoteAccess
@@ -152,6 +177,9 @@ public struct WorkingStateHostView<Project, Commit, SSHHelpContent: View>: View 
             isPushing: isPushing,
             trackingStatus: remoteTrackingStatus,
             isSyncWorking: isSyncLoading || isFetching || isPulling || isPushing,
+            conflictState: conflictState,
+            isConflictActionRunning: isConflictActionRunning,
+            activeConflictPath: activeConflictPath,
             showCredentialInput: $showCredentialInput,
             showSSHHelp: $showSSHHelp,
             credentialHost: credentialHost,
@@ -170,6 +198,13 @@ public struct WorkingStateHostView<Project, Commit, SSHHelpContent: View>: View 
             onFetch: performFetch,
             onPull: performPull,
             onPush: performPush,
+            onOpenConflictFile: performOpenConflictFile,
+            onRevealConflictFile: performRevealConflictFile,
+            onStageConflictFile: performStageConflictFile,
+            onUseOursConflictFile: { path in performUseConflictVersion(.ours, path: path) },
+            onUseTheirsConflictFile: { path in performUseConflictVersion(.theirs, path: path) },
+            onContinueMerge: performContinueMerge,
+            onAbortMerge: performAbortMerge,
             onTap: onTap,
             onAppear: onAppear,
             onDisappear: onDisappear,
@@ -426,6 +461,10 @@ private extension WorkingStateHostView {
                 } catch {
                     eventHandler(.log(.pullFailure(error)))
                     applyRemoteOperationState(CommitRemoteSyncRules.remoteOperationFinishedState(operation: .pull, succeeded: false))
+                    if await refreshConflictState(for: command.project), conflictState?.isMerging == true {
+                        setStatus(nil)
+                        return
+                    }
                     presentRemoteFailure(error, operation: .pull)
                 }
             case .push:
@@ -512,6 +551,83 @@ private extension WorkingStateHostView {
             }
         )
     }
+
+    @discardableResult
+    func refreshConflictState(for project: Project) async -> Bool {
+        do {
+            let state = try await loadConflictState(project)
+            conflictState = state.isMerging ? state : nil
+            return true
+        } catch {
+            conflictState = nil
+            return false
+        }
+    }
+
+    func refreshConflictStateForCurrentProject() {
+        guard let project else { return }
+        Task { @MainActor in
+            _ = await refreshConflictState(for: project)
+        }
+    }
+
+    func performOpenConflictFile(_ path: String) {
+        guard let project else { return }
+        openConflictFile(project, path)
+    }
+
+    func performRevealConflictFile(_ path: String) {
+        guard let project else { return }
+        revealConflictFile(project, path)
+    }
+
+    func performStageConflictFile(_ path: String) {
+        performConflictAction(path: path) { project in
+            try await stageConflictFile(project, path)
+        }
+    }
+
+    func performUseConflictVersion(_ version: GitMergeFileVersion, path: String) {
+        performConflictAction(path: path) { project in
+            try await useConflictFileVersion(project, path, version)
+        }
+    }
+
+    func performContinueMerge() {
+        performConflictAction(path: nil) { project in
+            try await continueMerge(project)
+        }
+    }
+
+    func performAbortMerge() {
+        performConflictAction(path: nil) { project in
+            try await abortMerge(project)
+        }
+    }
+
+    func performConflictAction(
+        path: String?,
+        action: @escaping @MainActor (Project) async throws -> Void
+    ) {
+        guard let project, isConflictActionRunning == false else { return }
+        isConflictActionRunning = true
+        activeConflictPath = path
+
+        Task { @MainActor in
+            do {
+                try await action(project)
+                isConflictActionRunning = false
+                activeConflictPath = nil
+                _ = await refreshConflictState(for: project)
+                await loadChangedFileCount()
+            } catch {
+                isConflictActionRunning = false
+                activeConflictPath = nil
+                eventHandler(.showError(error))
+                _ = await refreshConflictState(for: project)
+            }
+        }
+    }
 }
 
 private extension WorkingStateHostView {
@@ -532,6 +648,7 @@ private extension WorkingStateHostView {
             performRefreshAction: performRefreshAction,
             startTimer: startRemoteStatusTimer
         )
+        refreshConflictStateForCurrentProject()
     }
 
     func onDisappear() {
@@ -569,18 +686,22 @@ private extension WorkingStateHostView {
 
     func onProjectDidCommit() {
         CommitRemoteSyncRules.performProjectDidCommit(performRefreshAction: performRefreshAction)
+        refreshConflictStateForCurrentProject()
     }
 
     func onProjectDidChange() {
         CommitRemoteSyncRules.performProjectDidChange(performRefreshAction: performRefreshAction)
+        refreshConflictStateForCurrentProject()
     }
 
     func onProjectDidPush() {
         CommitRemoteSyncRules.performProjectDidPush(performRefreshAction: performRefreshAction)
+        refreshConflictStateForCurrentProject()
     }
 
     func onProjectDidPull() {
         CommitRemoteSyncRules.performProjectDidPull(performRefreshAction: performRefreshAction)
+        refreshConflictStateForCurrentProject()
     }
 
     func onGitDirectoryDidChange() {
@@ -595,12 +716,14 @@ private extension WorkingStateHostView {
             didHeadChange: gitDirectoryDidHeadChange,
             performRefreshAction: performRefreshAction
         )
+        refreshConflictStateForCurrentProject()
     }
 
     func onAppDidBecomeActive() {
         Task { @MainActor in
             try? await Task.sleep(nanoseconds: CommitRemoteSyncRules.appActivationRefreshDelayNanoseconds)
             performRefreshAction(CommitRemoteSyncRules.refreshAction(for: .appDidBecomeActive))
+            refreshConflictStateForCurrentProject()
         }
     }
 }

@@ -1,3 +1,5 @@
+import AppKit
+import GitCoreKit
 import GitOKCoreFeatures
 import MagicAlert
 import GitOKSupportKit
@@ -79,6 +81,34 @@ struct WorkingStateView: View, SuperLog {
                 try await runOffMain {
                     try project.push()
                 }
+            },
+            loadConflictState: { project in
+                try await loadConflictState(for: project)
+            },
+            stageConflictFile: { project, path in
+                try await runOffMain {
+                    try project.addFiles([path])
+                }
+            },
+            useConflictFileVersion: { project, path, version in
+                try await runOffMain {
+                    try project.checkoutMergeFileVersion(path: path, version: version)
+                }
+            },
+            continueMerge: { project in
+                let branchName = (try? await runOffMain {
+                    try project.getCurrentMergeBranchName()
+                }) ?? "MERGE_HEAD"
+                try await project.continueMerge(branchName: branchName)
+            },
+            abortMerge: { project in
+                try await project.abortMerge()
+            },
+            openConflictFile: { project, path in
+                openConflictFile(project: project, path: path)
+            },
+            revealConflictFile: { project, path in
+                revealConflictFile(project: project, path: path)
             },
             pushErrorClassification: pushErrorClassification,
             runNetworkFallback: runNetworkFallback,
@@ -181,6 +211,50 @@ private extension WorkingStateView {
 }
 
 private extension WorkingStateView {
+    func loadConflictState(for project: Project) async throws -> WorkingStateConflictState {
+        let isMerging = try await project.isMerging()
+        let unresolvedPaths = Set(try await project.getMergeConflictFiles())
+        guard isMerging || unresolvedPaths.isEmpty == false else {
+            return .inactive
+        }
+
+        let statusEntries = try await runOffMain {
+            try project.lightweightStatusEntries()
+        }
+        let mergeBranchName = try? await runOffMain {
+            try project.getCurrentMergeBranchName()
+        }
+        let flattenedMergeBranchName = mergeBranchName.flatMap { $0 }
+
+        return WorkingStateConflictState(
+            isMerging: true,
+            mergeBranchName: flattenedMergeBranchName,
+            files: WorkingStateConflictRules.mergeFiles(
+                unresolvedPaths: unresolvedPaths,
+                statusEntries: statusEntries
+            )
+        )
+    }
+
+    func openConflictFile(project: Project, path: String) {
+        guard let url = conflictFileURL(project: project, path: path) else { return }
+        NSWorkspace.shared.open(url)
+    }
+
+    func revealConflictFile(project: Project, path: String) {
+        guard let url = conflictFileURL(project: project, path: path) else { return }
+        NSWorkspace.shared.activateFileViewerSelecting([url])
+    }
+
+    func conflictFileURL(project: Project, path: String) -> URL? {
+        let repoURL = project.url.standardizedFileURL
+        let fileURL = URL(fileURLWithPath: path, relativeTo: repoURL).standardizedFileURL
+        guard fileURL.path == repoURL.path || fileURL.path.hasPrefix(repoURL.path + "/") else {
+            return nil
+        }
+        return fileURL
+    }
+
     func runOffMain<T>(_ operation: @escaping () throws -> T) async throws -> T {
         try await withCheckedThrowingContinuation { continuation in
             DispatchQueue.global(qos: .userInitiated).async {

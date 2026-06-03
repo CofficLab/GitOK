@@ -847,6 +847,54 @@ final class GitRepositoryCLITests: XCTestCase {
         XCTAssertEqual(try client.getMergeConflictFiles(), [])
     }
 
+    func testCheckoutMergeFileVersionAcceptsOurDeletion() throws {
+        let repo = try TestGitRepository()
+        try repo.write("shared.txt", content: "base\n")
+        try repo.run(["add", "."])
+        try repo.run(["commit", "-m", "base"])
+
+        try repo.run(["checkout", "-b", "feature"])
+        try repo.write("shared.txt", content: "feature\n")
+        try repo.run(["commit", "-am", "feature change"])
+
+        try repo.run(["checkout", "master"])
+        try repo.run(["rm", "shared.txt"])
+        try repo.run(["commit", "-m", "delete shared"])
+
+        let client = GitRepositoryCLI(repositoryURL: repo.url)
+        XCTAssertThrowsError(try repo.run(["merge", "feature"])) { _ in }
+        XCTAssertEqual(try client.getMergeConflictFiles(), ["shared.txt"])
+
+        try client.checkoutMergeFileVersion(path: "shared.txt", version: .ours)
+
+        XCTAssertFalse(FileManager.default.fileExists(atPath: repo.url.appendingPathComponent("shared.txt").path))
+        XCTAssertEqual(try client.getMergeConflictFiles(), [])
+    }
+
+    func testCheckoutMergeFileVersionAcceptsTheirFileWhenOursDeleted() throws {
+        let repo = try TestGitRepository()
+        try repo.write("shared.txt", content: "base\n")
+        try repo.run(["add", "."])
+        try repo.run(["commit", "-m", "base"])
+
+        try repo.run(["checkout", "-b", "feature"])
+        try repo.write("shared.txt", content: "feature\n")
+        try repo.run(["commit", "-am", "feature change"])
+
+        try repo.run(["checkout", "master"])
+        try repo.run(["rm", "shared.txt"])
+        try repo.run(["commit", "-m", "delete shared"])
+
+        let client = GitRepositoryCLI(repositoryURL: repo.url)
+        XCTAssertThrowsError(try repo.run(["merge", "feature"])) { _ in }
+        XCTAssertEqual(try client.getMergeConflictFiles(), ["shared.txt"])
+
+        try client.checkoutMergeFileVersion(path: "shared.txt", version: .theirs)
+
+        XCTAssertEqual(try repo.read("shared.txt"), "feature\n")
+        XCTAssertEqual(try client.getMergeConflictFiles(), [])
+    }
+
     func testGetCurrentMergeBranchNameReturnsNilOutsideMerge() throws {
         let repo = try TestGitRepository()
         try repo.run(["commit", "--allow-empty", "-m", "initial"])
