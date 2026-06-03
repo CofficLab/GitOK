@@ -351,45 +351,45 @@ public class MagicApp {
         /// - Returns: 用于系统调试的 CommandMenu
         @available(iOS 14.0, macOS 11.0, *)
         public static func debugCommand() -> CommandMenu<some View> {
-            CommandMenu("调试") {
+            CommandMenu("Debug") {
                 Group {
-                    Button("打开 App Support 目录") {
+                    Button("Open App Support Directory") {
                         self.getAppSpecificSupportDirectory().openFolder()
                     }
                     
-                    Button("打开容器目录") {
+                    Button("Open Container Directory") {
                         self.getContainerDirectory().openFolder()
                     }
                     
-                    Button("打开文档目录") {
+                    Button("Open Documents Directory") {
                         self.getDocumentsDirectory().openFolder()
                     }
                     
-                    Button("打开数据库目录") {
+                    Button("Open Database Directory") {
                         self.getDatabaseDirectory().openFolder()
                     }
                     
-                    Button("打开 iCloud Documents") {
+                    Button("Open iCloud Documents") {
                         self.getCloudDocumentsDirectory()?.openFolder()
                     }
 
-                    Button("打开缓存目录") {
+                    Button("Open Cache Directory") {
                         self.getCacheDirectory().openFolder()
                     }
                     
-                    Button("打开下载目录") {
+                    Button("Open Downloads Directory") {
                         try? URL.downloads.openFolder()
                     }
                     
-                    Button("打开临时目录") {
+                    Button("Open Temporary Directory") {
                         URL.temp.openFolder()
                     }
                     
-                    Button("打开 iCloud 容器") {
+                    Button("Open iCloud Container") {
                         self.getCloudContainerDirectory()?.openFolder()
                     }
                     
-                    Button("打开系统 App Support") {
+                    Button("Open System App Support") {
                         try? URL.applicationSupport.openFolder()
                     }
                 

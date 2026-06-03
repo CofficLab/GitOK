@@ -118,10 +118,10 @@ struct StringEmojiPreview: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             ForEach(examples, id: \.self) { text in
-                Text("原始文本：\(text)")
+                Text("Original Text: \(text)")
                     .font(.subheadline)
                     .foregroundColor(.gray)
-                Text("添加 Emoji：\(text.withContextEmoji)")
+                Text("Add Emoji: \(text.withContextEmoji)")
                     .font(.body)
             }
             .padding(.vertical, 4)
