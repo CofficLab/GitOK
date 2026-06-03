@@ -1,7 +1,34 @@
 {
   "sourceLanguage": "en",
   "strings": {
-    ".gitignore": {},
+    ".gitignore": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": ".gitignore"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": ".gitignore"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": ".gitignore"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": ".gitignore"
+          }
+        }
+      }
+    },
     "%@ has been added": {
       "extractionState": "stale",
       "localizations": {

@@ -1,7 +1,34 @@
 {
   "sourceLanguage": "en",
   "strings": {
-    "%lld": {},
+    "%lld": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld"
+          }
+        }
+      }
+    },
     "Attribute mismatch": {
       "extractionState": "stale",
       "localizations": {
@@ -350,7 +377,34 @@
         }
       }
     },
-    "LFS %lld": {},
+    "LFS %lld": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "LFS %lld"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "LFS %lld"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "LFS %lld"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "LFS %lld"
+          }
+        }
+      }
+    },
     "LFS attribute matches but index is not an LFS pointer": {
       "extractionState": "stale",
       "localizations": {

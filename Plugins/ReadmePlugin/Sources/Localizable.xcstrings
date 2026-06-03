@@ -146,7 +146,34 @@
         }
       }
     },
-    "README.md": {},
+    "README.md": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "README.md"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "README.md"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "README.md"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "README.md"
+          }
+        }
+      }
+    },
     "README.md file not found": {
       "extractionState": "stale",
       "localizations": {

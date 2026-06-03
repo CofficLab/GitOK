@@ -1,9 +1,90 @@
 {
   "sourceLanguage": "en",
   "strings": {
-    "/": {},
-    "%lld configs": {},
-    "After enabling auto-push in the current project, the configuration will be displayed here": {},
+    "/": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "/"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "/"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "/"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "/"
+          }
+        }
+      }
+    },
+    "%lld configs": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld configs"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld 个配置"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld 個設定"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld 個設定"
+          }
+        }
+      }
+    },
+    "After enabling auto-push in the current project, the configuration will be displayed here": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "After enabling auto-push in the current project, the configuration will be displayed here"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "启用自动推送后，当前项目的配置将在此处显示"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "啟用自動推送後，目前專案的設定將在此處顯示"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "啟用自動推送後，目前專案的設定將在此處顯示"
+          }
+        }
+      }
+    },
     "Auto Push": {
       "extractionState": "manual",
       "localizations": {
@@ -439,7 +520,34 @@
         }
       }
     },
-    "Current": {},
+    "Current": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Current"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "当前"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "目前"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "目前"
+          }
+        }
+      }
+    },
     "Current Project": {
       "extractionState": "manual",
       "localizations": {
@@ -755,6 +863,34 @@
           "stringUnit": {
             "state": "translated",
             "value": "正在推送..."
+          }
+        }
+      }
+    },
+    "After enabling auto-push in the current project, the configuration file will be automatically created and managed in the project's .auto-push directory.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "After enabling auto-push in the current project, the configuration file will be automatically created and managed in the project's .auto-push directory."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在当前项目中启用自动推送后，配置文件将在项目的 .auto-push 目录中自动创建和管理。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在目前專案中啟用自動推送後，設定檔將在專案的 .auto-push 目錄中自動建立和管理。"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在目前專案中啟用自動推送後，設定檔將在專案的 .auto-push 目錄中自動建立和管理。"
           }
         }
       }
