@@ -76,7 +76,7 @@ public class MagicToastManager: ObservableObject {
     ///   - autoDismiss: 是否自动消失
     public func error(_ error: Error, title: String? = nil, duration: TimeInterval = 0, autoDismiss: Bool = false) {
         // 使用详细视图显示错误
-        let errorTitle = title ?? "错误"
+        let errorTitle = title ?? MagicAlertLocalization.string("Error")
         let toast = ToastModel(
             type: .errorDetail(error: error, title: errorTitle),
             title: errorTitle,
@@ -104,26 +104,26 @@ public class MagicToastManager: ObservableObject {
         // 错误域和代码
         let nsError = error as NSError
         if nsError.domain != "NSCocoaErrorDomain" || nsError.code != 0 {
-            details.append("域: \(nsError.domain)")
-            details.append("代码: \(nsError.code)")
+            details.append("\(MagicAlertLocalization.string("Domain")): \(nsError.domain)")
+            details.append("\(MagicAlertLocalization.string("Code")): \(nsError.code)")
         }
 
         // 用户信息中的额外详情
         if let failureReason = nsError.localizedFailureReason, !failureReason.isEmpty {
-            details.append("原因: \(failureReason)")
+            details.append("\(MagicAlertLocalization.string("Reason")): \(failureReason)")
         }
 
         if let recoverySuggestion = nsError.localizedRecoverySuggestion, !recoverySuggestion.isEmpty {
-            details.append("建议: \(recoverySuggestion)")
+            details.append("\(MagicAlertLocalization.string("Suggestion")): \(recoverySuggestion)")
         }
 
         if let helpAnchor = nsError.helpAnchor, !helpAnchor.isEmpty {
-            details.append("帮助: \(helpAnchor)")
+            details.append("\(MagicAlertLocalization.string("Help")): \(helpAnchor)")
         }
 
         // 底层错误
         if let underlyingError = nsError.userInfo[NSUnderlyingErrorKey] as? NSError {
-            details.append("底层错误: \(underlyingError.localizedDescription)")
+            details.append("\(MagicAlertLocalization.string("Underlying Error")): \(underlyingError.localizedDescription)")
         }
 
         // 调试描述（仅在DEBUG模式下）
@@ -131,7 +131,7 @@ public class MagicToastManager: ObservableObject {
             let debugDescription = String(reflecting: error)
             let errorDescription = "\(error)"
             if debugDescription != errorDescription && !debugDescription.isEmpty {
-                details.append("调试: \(debugDescription)")
+                details.append("\(MagicAlertLocalization.string("Debug")): \(debugDescription)")
             }
         #endif
 
@@ -226,7 +226,7 @@ public class MagicToastManager: ObservableObject {
 
     /// 显示操作失败
     public func operationError(_ operation: String, error: Error) {
-        self.error(error, title: "\(operation)失败", autoDismiss: false)
+        self.error(error, title: String(format: MagicAlertLocalization.string("%@ failed"), operation), autoDismiss: false)
     }
 
     /// 显示操作开始

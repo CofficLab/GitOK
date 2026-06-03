@@ -31,7 +31,7 @@ struct ToastErrorView: View {
                             .foregroundStyle(.blue)
                     }
                     .buttonStyle(.borderless)
-                    .help("复制内容")
+                    .help(MagicAlertLocalization.string("Copy"))
 
                     Button(action: {
                         withAnimation(.easeInOut(duration: 0.3)) {
@@ -43,7 +43,7 @@ struct ToastErrorView: View {
                             .font(.title)
                     }
                     .buttonStyle(.borderless)
-                    .help("关闭")
+                    .help(MagicAlertLocalization.string("Close"))
                 }
             }
 

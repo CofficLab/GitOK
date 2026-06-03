@@ -132,31 +132,32 @@ extension Image {
 }
 
 #if DEBUG
-    #Preview("图标样式预览") {
-        VStack(spacing: 20) {
+    #Preview("Icon Style Preview") {
+        let L = MagicAlertLocalization.self
+        return VStack(spacing: 20) {
             HStack(spacing: 20) {
                 VStack {
                     Image.successIcon
                         .foregroundStyle(.green)
-                    Text("成功").font(.caption)
+                    Text(L.string("Success")).font(.caption)
                 }
 
                 VStack {
                     Image.errorIcon
                         .foregroundStyle(.red)
-                    Text("错误").font(.caption)
+                    Text(L.string("Error")).font(.caption)
                 }
 
                 VStack {
                     Image.warningIcon
                         .foregroundStyle(.orange)
-                    Text("警告").font(.caption)
+                    Text(L.string("Warning")).font(.caption)
                 }
 
                 VStack {
                     Image.infoIcon
                         .foregroundStyle(.blue)
-                    Text("信息").font(.caption)
+                    Text(L.string("Info")).font(.caption)
                 }
             }
 
@@ -164,19 +165,19 @@ extension Image {
                 VStack {
                     Image.system("star.fill", style: .small)
                         .foregroundStyle(.yellow)
-                    Text("小图标").font(.caption)
+                    Text(L.string("Small")).font(.caption)
                 }
 
                 VStack {
                     Image.system("heart.fill", style: .medium)
                         .foregroundStyle(.pink)
-                    Text("中图标").font(.caption)
+                    Text(L.string("Medium")).font(.caption)
                 }
 
                 VStack {
                     Image.system("moon.fill", style: .large)
                         .foregroundStyle(.purple)
-                    Text("大图标").font(.caption)
+                    Text(L.string("Large")).font(.caption)
                 }
             }
 
@@ -184,19 +185,19 @@ extension Image {
                 VStack {
                     Image.copyIcon
                         .foregroundStyle(.blue)
-                    Text("复制").font(.caption)
+                    Text(L.string("Copy")).font(.caption)
                 }
 
                 VStack {
                     Image.closeIcon
                         .foregroundStyle(.gray)
-                    Text("关闭").font(.caption)
+                    Text(L.string("Close")).font(.caption)
                 }
 
                 VStack {
                     Image.loadingIcon
                         .foregroundStyle(.blue)
-                    Text("加载").font(.caption)
+                    Text(L.string("Loading")).font(.caption)
                 }
             }
         }

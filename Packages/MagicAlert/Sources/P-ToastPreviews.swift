@@ -3,55 +3,56 @@
 
     struct MagicToastExampleView: View {
         var body: some View {
+            let L = MagicAlertLocalization.self
+
             VStack(spacing: 20) {
-                Text("全局函数示例")
+                Text(L.string("Global Function Demo"))
                     .font(.title)
                     .padding(.bottom)
 
-                Button("信息 - 短文字") {
-                    alert_info("这是信息", subtitle: "详细描述")
+                Button(L.string("Info - Short Text")) {
+                    alert_info("This is info", subtitle: "Detailed description")
                 }
 
-                Button("信息 - 长文字") {
-                    alert_info("开始下载你选择的文档")
+                Button(L.string("Info - Long Text")) {
+                    alert_info("Start downloading your selected document")
                 }
 
-                Button("成功") {
-                    alert_success("操作成功")
+                Button(L.string("Success")) {
+                    alert_success("Operation successful")
                 }
 
-                Button("警告") {
-                    alert_warning("注意事项")
+                Button(L.string("Warning")) {
+                    alert_warning("Please note")
                 }
 
-                Button("错误 - Toast 视图") {
-                    alert_error("操作失败", autoDismiss: false)
+                Button(L.string("Error - Toast View")) {
+                    alert_error("Operation failed", autoDismiss: false)
                 }
 
-                Button("错误 - 详细视图") {
-                    // 创建一个模拟的复杂错误来展示新功能
+                Button(L.string("Error - Detail View")) {
                     let customError = NSError(
                         domain: "com.magickit.test",
                         code: 1001,
                         userInfo: [
-                            NSLocalizedDescriptionKey: "网络连接失败，无法访问服务器端点",
-                            NSLocalizedFailureReasonErrorKey: "服务器响应超时，可能是网络不稳定、服务器维护或防火墙阻拦",
-                            NSLocalizedRecoverySuggestionErrorKey: "请检查网络连接状态，确认VPN设置，稍后重试。如果问题持续存在，请联系技术支持团队。",
-                            NSHelpAnchorErrorKey: "访问帮助中心获取更多网络故障排除信息和常见问题解答",
+                            NSLocalizedDescriptionKey: "Network connection failed, unable to access server endpoint",
+                            NSLocalizedFailureReasonErrorKey: "Server response timed out, possibly due to network instability, server maintenance, or firewall blocking",
+                            NSLocalizedRecoverySuggestionErrorKey: "Please check your network connection status, confirm VPN settings, and try again later. If the problem persists, contact the technical support team.",
+                            NSHelpAnchorErrorKey: "Visit the help center for more network troubleshooting information and FAQs",
                         ]
                     )
-                    alert_error(customError, title: "网络请求失败")
+                    alert_error(customError, title: "Network Request Failed")
                 }
 
-                Button("加载中") {
-                    alert_loading("正在处理...")
+                Button(L.string("Loading")) {
+                    alert_loading("Processing...")
                 }
 
-                Button("隐藏加载") {
+                Button(L.string("Hide Loading")) {
                     alert_dismiss_loading()
                 }
 
-                Button("隐藏所有") {
+                Button(L.string("Dismiss All")) {
                     alert_dismiss_all()
                 }
             }
@@ -62,19 +63,19 @@
 #endif
 
 #if DEBUG
-    #Preview("正常宽度") {
+    #Preview("Normal Width") {
         MagicToastExampleView()
             .withMagicToast()
             .frame(width: 600, height: 600)
     }
 
-    #Preview("窄屏宽度") {
+    #Preview("Narrow Width") {
         MagicToastExampleView()
             .withMagicToast()
             .frame(width: 320, height: 600)
     }
 
-    #Preview("iPad宽度") {
+    #Preview("iPad Width") {
         MagicToastExampleView()
             .withMagicToast()
             .frame(width: 800, height: 600)

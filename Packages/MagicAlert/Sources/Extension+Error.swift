@@ -13,28 +13,30 @@ public extension Error {
     func copy() {
         var errorInfo = [String]()
 
-        errorInfo.append("错误描述：\n\(localizedDescription)")
+        let L = MagicAlertLocalization.self
+
+        errorInfo.append("\(L.string("Error")):\n\(localizedDescription)")
 
         if let failureReason = (self as? LocalizedError)?.failureReason {
-            errorInfo.append("\n失败原因：\n\(failureReason)")
+            errorInfo.append("\n\(L.string("Reason")):\n\(failureReason)")
         }
 
         if let recoverySuggestion = (self as? LocalizedError)?.recoverySuggestion {
-            errorInfo.append("\n恢复建议：\n\(recoverySuggestion)")
+            errorInfo.append("\n\(L.string("Suggestion")):\n\(recoverySuggestion)")
         }
 
         // 添加 NSError 信息
         let nsError = self as NSError
         if nsError.domain != "NSCocoaErrorDomain" || nsError.code != 0 {
-            errorInfo.append("\n错误信息：\n域: \(nsError.domain)\n代码: \(nsError.code)")
+            errorInfo.append("\n\(L.string("Error")):\n\(L.string("Domain")): \(nsError.domain)\n\(L.string("Code")): \(nsError.code)")
         }
 
         if let helpAnchor = nsError.helpAnchor, !helpAnchor.isEmpty {
-            errorInfo.append("\n帮助信息：\n\(helpAnchor)")
+            errorInfo.append("\n\(L.string("Help")):\n\(helpAnchor)")
         }
 
         if let underlyingError = nsError.userInfo[NSUnderlyingErrorKey] as? NSError {
-            errorInfo.append("\n底层错误：\n\(underlyingError.localizedDescription)")
+            errorInfo.append("\n\(L.string("Underlying Error")): \(underlyingError.localizedDescription)")
         }
 
         let fullErrorInfo = errorInfo.joined(separator: "\n")
@@ -53,28 +55,30 @@ public extension Error {
     func formattedDescription() -> String {
         var errorInfo = [String]()
 
-        errorInfo.append("错误描述：\n\(localizedDescription)")
+        let L = MagicAlertLocalization.self
+
+        errorInfo.append("\(L.string("Error")):\n\(localizedDescription)")
 
         if let failureReason = (self as? LocalizedError)?.failureReason {
-            errorInfo.append("\n失败原因：\n\(failureReason)")
+            errorInfo.append("\n\(L.string("Reason")):\n\(failureReason)")
         }
 
         if let recoverySuggestion = (self as? LocalizedError)?.recoverySuggestion {
-            errorInfo.append("\n恢复建议：\n\(recoverySuggestion)")
+            errorInfo.append("\n\(L.string("Suggestion")):\n\(recoverySuggestion)")
         }
 
         // 添加 NSError 信息
         let nsError = self as NSError
         if nsError.domain != "NSCocoaErrorDomain" || nsError.code != 0 {
-            errorInfo.append("\n错误信息：\n域: \(nsError.domain)\n代码: \(nsError.code)")
+            errorInfo.append("\n\(L.string("Error")):\n\(L.string("Domain")): \(nsError.domain)\n\(L.string("Code")): \(nsError.code)")
         }
 
         if let helpAnchor = nsError.helpAnchor, !helpAnchor.isEmpty {
-            errorInfo.append("\n帮助信息：\n\(helpAnchor)")
+            errorInfo.append("\n\(L.string("Help")):\n\(helpAnchor)")
         }
 
         if let underlyingError = nsError.userInfo[NSUnderlyingErrorKey] as? NSError {
-            errorInfo.append("\n底层错误：\n\(underlyingError.localizedDescription)")
+            errorInfo.append("\n\(L.string("Underlying Error")): \(underlyingError.localizedDescription)")
         }
 
         return errorInfo.joined(separator: "\n")
